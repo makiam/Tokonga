@@ -90,8 +90,7 @@ public class InstallSplitPane extends SPMSplitPane
 	    installAllButton.setIcon( new ImageIcon( getClass().getResource( "/artofillusion/spmanager/icons/Refresh16.gif" ) ) );
 	    //buttonRow.add( installSingleButton = SPMTranslate.bButton( "updateSingle", this, "doInstallSingle" ), layout );
 	    //installSingleButton.setIcon( new ImageIcon( getClass().getResource( "/artofillusion/spmanager/icons/Refresh16.gif" ) ) );
-	    buttonRow.add( selectAllButton = SPMTranslate.bButton( "selectAll", this, "doSelectAll" ), layout );
-	    //selectAllButton.setIcon( new ImageIcon( getClass().getResource( "/artofillusion/spmanager/icons/Refresh16.gif" ) ) );
+    //selectAllButton.setIcon( new ImageIcon( getClass().getResource( "/artofillusion/spmanager/icons/Refresh16.gif" ) ) );
 	}
 	else
 	{
@@ -99,7 +98,6 @@ public class InstallSplitPane extends SPMSplitPane
 	    installAllButton.setIcon( new ImageIcon( getClass().getResource( "/artofillusion/spmanager/icons/Import16.gif" ) ) );
 	    //buttonRow.add( installSingleButton = SPMTranslate.bButton( "installSingle", this, "doInstallSingle" ), layout );
 	    //installSingleButton.setIcon( new ImageIcon( getClass().getResource( "/artofillusion/spmanager/icons/Import16.gif" ) ) );
-	    buttonRow.add( selectAllButton = SPMTranslate.bButton( "selectAll", this, "doSelectAll" ), layout );
 	    //selectAllButton.setIcon( new ImageIcon( getClass().getResource( "/artofillusion/spmanager/icons/Import16.gif" ) ) );
 	}
 	buttonRow.add( selectCB = SPMTranslate.bCheckBox( "selected", false, this, "doSelectCB" ) );
@@ -804,22 +802,6 @@ public class InstallSplitPane extends SPMSplitPane
     }
 
 
-    /**
-     *  Description of the Method
-     */
-    public void doSelectAll()
-    {
-	selectAllInfos( pluginsPath );
-	selectAllInfos( toolScriptsPath );
-	selectAllInfos( objectScriptsPath );
-	selectAllInfos( startupScriptsPath );
-	SPMObjectInfo nodeInfo = getSelectedNodeInfo();
-	if ( nodeInfo != null )
-	{
-	    selectCB.setState( true );
-	}
-	repaint();
-    }
 
 
     /**
