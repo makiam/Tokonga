@@ -108,7 +108,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 
 	private Vector vert;
 
-	private Vector vertInfo;
+	private List<VertexParamInfo> vertInfo;
 
 	private List<Integer> faceInfo;
 
@@ -1459,11 +1459,10 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 								.getValue();
 						double newval[] = new double[vert.size()];
 						for (int j = 0; j < vert.size(); ++j) {
-							int[] vf = ((VertexParamInfo) vertInfo.elementAt(j)).vert;
-							double[] coef = ((VertexParamInfo) vertInfo
-									.elementAt(j)).coef;
+							int[] vf = vertInfo.get(j).vert;
+							double[] coef = vertInfo.get(j).coef;
 							for (int k = 0; k < vf.length; ++k)
-								newval[j] += coef[k] * oldval[vf[k]];
+                                                            newval[j] += coef[k] * oldval[vf[k]];
 						}
 						newParamVal[i] = new VertexParameterValue(newval);
 
@@ -1497,10 +1496,8 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 								}
 								int pmeFace = faceInfo.get(j);
 								int[] fv = getFaceVertices(faces[pmeFace]);
-								int[] vf = ((VertexParamInfo) vertInfo
-										.elementAt(vertex)).vert;
-								double[] coef = ((VertexParamInfo) vertInfo
-										.elementAt(vertex)).coef;
+								int[] vf = vertInfo.get(vertex).vert;
+								double[] coef = vertInfo.get(vertex).coef;
 								for (int l = 0; l < vf.length; ++l) {
 									int vv = -1;
 									for (int m = 0; m < fv.length; ++m) {
@@ -1695,20 +1692,19 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 	 * @return The number of vertices
 	 */
 	public int getFaceVertCount(Wface f) {
-		Wedge e = edges[f.edge];
-		int start = e.vertex;
-		int count = 1;
-		while (edges[e.next].vertex != start) {
-			++count;
-			if (count > edges.length) {
-				System.out
-						.println("Error in getFaceVertices : face is not closed");
-				System.out.println(f.edge);
-				return -1;
-			}
-			e = edges[e.next];
-		}
-		return count;
+            Wedge e = edges[f.edge];
+            int start = e.vertex;
+            int count = 1;
+            while (edges[e.next].vertex != start) {
+                    ++count;
+                    if (count > edges.length) {
+                            System.out.println("Error in getFaceVertices : face is not closed");
+                            System.out.println(f.edge);
+                            return -1;
+                    }
+                    e = edges[e.next];
+            }
+            return count;
 	}
 
 	/**
@@ -1730,8 +1726,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 		while (ne[e.next].vertex != start) {
 			++count;
 			if (count > ne.length) {
-				System.out
-						.println("Error in getFaceVertices : face is not closed");
+				System.out.println("Error in getFaceVertices : face is not closed");
 				System.out.println(nf[f].edge);
 				return null;
 			}
@@ -1787,27 +1782,27 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 	 * @return Array of indices for edges around the specified vertex
 	 */
 	public int[] getVertexEdges(Wvertex v) {
-		Wedge e = edges[v.edge];
-		int start = v.edge;
-		int count = 1;
-		while (edges[e.hedge].next != start) {
-			++count;
-			if (count > edges.length) {
-				System.out.println("Error : too many edges around a vertex");
-				System.out.println("ref " + v.edge);
-				return null;
-			}
-			e = edges[edges[e.hedge].next];
-		}
-		int[] ed = new int[count];
-		e = edges[v.edge];
-		ed[0] = v.edge;
-		count = 0;
-		while (edges[e.hedge].next != start) {
-			ed[++count] = edges[e.hedge].next;
-			e = edges[edges[e.hedge].next];
-		}
-		return ed;
+            Wedge e = edges[v.edge];
+            int start = v.edge;
+            int count = 1;
+            while (edges[e.hedge].next != start) {
+                    ++count;
+                    if (count > edges.length) {
+                            System.out.println("Error : too many edges around a vertex");
+                            System.out.println("ref " + v.edge);
+                            return null;
+                    }
+                    e = edges[edges[e.hedge].next];
+            }
+            int[] ed = new int[count];
+            e = edges[v.edge];
+            ed[0] = v.edge;
+            count = 0;
+            while (edges[e.hedge].next != start) {
+                    ed[++count] = edges[e.hedge].next;
+                    e = edges[edges[e.hedge].next];
+            }
+            return ed;
 	}
 
 	/**
@@ -1820,19 +1815,18 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 	 * @return Index of the previous edge
 	 */
 	public int getPreviousEdge(Wedge[] nEdges, int start) {
-		Wedge e = nEdges[start];
-		int count = 1;
-		while (nEdges[e.hedge].next != start) {
-			++count;
-			if (count > nEdges.length) {
-				System.out
-						.println("Error : too many edges around a vertex (tmp edges)");
-				System.out.println("edge : " + start);
-				return -1;
-			}
-			e = nEdges[nEdges[e.hedge].next];
-		}
-		return e.hedge;
+            Wedge e = nEdges[start];
+            int count = 1;
+            while (nEdges[e.hedge].next != start) {
+                    ++count;
+                    if (count > nEdges.length) {
+                            System.out.println("Error : too many edges around a vertex (tmp edges)");
+                            System.out.println("edge : " + start);
+                            return -1;
+                    }
+                    e = nEdges[nEdges[e.hedge].next];
+            }
+            return e.hedge;
 	}
 
 	/**
@@ -1843,18 +1837,18 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 	 * @return Index of the previous edge
 	 */
 	public int getPreviousEdge(int index) {
-		Wedge e = edges[index];
-		int count = 1;
-		while (edges[e.hedge].next != index) {
-			++count;
-			if (count > edges.length) {
-				System.out.println("Error : too many edges around a vertex");
-				System.out.println("edge : " + index);
-				return -1;
-			}
-			e = edges[edges[e.hedge].next];
-		}
-		return e.hedge;
+            Wedge e = edges[index];
+            int count = 1;
+            while (edges[e.hedge].next != index) {
+                    ++count;
+                    if (count > edges.length) {
+                            System.out.println("Error : too many edges around a vertex");
+                            System.out.println("edge : " + index);
+                            return -1;
+                    }
+                    e = edges[edges[e.hedge].next];
+            }
+            return e.hedge;
 	}
 
 	/**
@@ -1898,7 +1892,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 				v1 = new Vector();
 				v2 = new Vector();
 				v3 = new Vector();
-				vertInfo = new Vector();
+				vertInfo = new Vector<>();
 				faceInfo = new Vector();
 				/*
 				 * s1 = null; s2 = null; s3 = null;
@@ -3074,8 +3068,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 
 		for (int i = 0; i < vertices.length; ++i) {
 			vert.addElement(vertices[i].r);
-			vertInfo.add(new VertexParamInfo(new int[] { i },
-					new double[] { 1.0 }));
+			vertInfo.add(new VertexParamInfo(new int[] { i }, new double[] { 1.0 }));
 		}
 		for (int i = 0; i < faces.length; ++i) {
 			int[] vf = getFaceVertices(faces[i]);
@@ -3184,15 +3177,13 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 			ParameterValue newParamVal[] = new ParameterValue[oldParamVal.length];
 			for (int i = 0; i < oldParamVal.length; i++) {
 				if (oldParamVal[i] instanceof VertexParameterValue) {
-					double oldval[] = ((VertexParameterValue) oldParamVal[i])
-							.getValue();
+					double oldval[] = ((VertexParameterValue) oldParamVal[i]).getValue();
 					double newval[] = new double[vert.size()];
 					for (int j = 0; j < vert.size(); ++j) {
-						int[] vf = ((VertexParamInfo) vertInfo.elementAt(j)).vert;
-						double[] coef = ((VertexParamInfo) vertInfo
-								.elementAt(j)).coef;
+						int[] vf = vertInfo.get(j).vert;
+						double[] coef = vertInfo.get(j).coef;
 						for (int k = 0; k < vf.length; ++k)
-							newval[j] += coef[k] * oldval[vf[k]];
+                                                    newval[j] += coef[k] * oldval[vf[k]];
 					}
 					newParamVal[i] = new VertexParameterValue(newval);
 
@@ -3225,10 +3216,8 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 							int pmeFace = faceInfo.get(j);
                                                         
 							int[] fv = getFaceVertices(faces[pmeFace]);
-							int[] vf = ((VertexParamInfo) vertInfo
-									.elementAt(vertex)).vert;
-							double[] coef = ((VertexParamInfo) vertInfo
-									.elementAt(vertex)).coef;
+							int[] vf = vertInfo.get(vertex).vert;
+							double[] coef = vertInfo.get(vertex).coef;
 							for (int l = 0; l < vf.length; ++l) {
 								int vv = -1;
 								for (int m = 0; m < fv.length; ++m) {
@@ -3285,13 +3274,13 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 	 *         relative to themselves with a coefficient of 1.0.
 	 */
 	public VertexParamInfo[] getTriangleVertexParamInfo() {
-		if (vertInfo == null || vertInfo.size() == 0)
-			return null;
-		VertexParamInfo[] vpi = new VertexParamInfo[vertInfo.size()];
-		for (int i = 0; i < vpi.length; i++) {
-			vpi[i] = (VertexParamInfo) vertInfo.get(i);
-		}
-		return vpi;
+            if (vertInfo == null || vertInfo.isEmpty())
+                    return null;
+            VertexParamInfo[] vpi = new VertexParamInfo[vertInfo.size()];
+            for (int i = 0; i < vpi.length; i++) {
+                    vpi[i] = vertInfo.get(i);
+            }
+            return vpi;
 	}
 
 	/**
