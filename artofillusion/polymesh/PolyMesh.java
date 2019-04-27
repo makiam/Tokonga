@@ -448,33 +448,37 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 			}
 			break;
 		}
+                // Switch end
+
+                // Now scale mesh using constructor scale parameters
 		for (int i = 0; i < vertices.length; ++i) {
-			vertices[i].r.x *= sx;
-			vertices[i].r.y *= sy;
-			vertices[i].r.z *= sz;
+                    vertices[i].r.x *= sx;
+                    vertices[i].r.y *= sy;
+                    vertices[i].r.z *= sz;
 		}
+
 		smoothingMethod = Mesh.NO_SMOOTHING;
-		setSkeleton(new Skeleton());
+		skeleton = new Skeleton();
 	}
 	
 	private PolyMesh() {
-		smoothingMethod = Mesh.NO_SMOOTHING;
-		initialize();
-		setSkeleton(new Skeleton());
+            smoothingMethod = Mesh.NO_SMOOTHING;
+            initialize();
+            skeleton = new Skeleton();
 	}
 
 	/**
 	 * Initialization stuff common to several constructors
 	 */
 	private void initialize() {
-		controlledSmoothing = false;
-		minAngle = 0;
-		maxAngle = 90;
-		minSmoothness = 1.0f;
-		maxSmoothness = 0.0f;
-		interactiveSmoothLevel = 1;
-		//display properties
-		loadFromDisplayPropertiesPreferences();	
+            controlledSmoothing = false;
+            minAngle = 0;
+            maxAngle = 90;
+            minSmoothness = 1.0f;
+            maxSmoothness = 0.0f;
+            interactiveSmoothLevel = 1;
+            //display properties
+            loadFromDisplayPropertiesPreferences();
 	}
 	
 	/**
@@ -595,11 +599,11 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 	 *            The faces list
 	 */
 	public PolyMesh(Wvertex[] v, Wedge[] e, Wface[] f) {
-		vertices = v;
-		edges = e;
-		faces = f;
-		initialize();
-		setSkeleton(new Skeleton());
+            vertices = v;
+            edges = e;
+            faces = f;
+            initialize();
+            skeleton = new Skeleton();
 	}
 
 	/**
@@ -794,11 +798,11 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 			v = (int) Math.round(vertices[i].r.y);
 			vertices[i].r = new Vec3(vp[u + uSize * v]);
 		}
-		setSkeleton(new Skeleton());
+		skeleton = new Skeleton();
 		if (smesh.getSmoothingMethod() == Mesh.APPROXIMATING || smesh.getSmoothingMethod() == Mesh.INTERPOLATING) {
-			setSmoothingMethod(Mesh.APPROXIMATING);
+                    setSmoothingMethod(Mesh.APPROXIMATING);
 		} else {
-			setSmoothingMethod(Mesh.NO_SMOOTHING);
+                    setSmoothingMethod(Mesh.NO_SMOOTHING);
 		}
 		copyTextureAndMaterial(smesh);
 		resetMesh();
@@ -913,7 +917,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 				}
 			}
 		}
-		setSkeleton(new Skeleton());
+                skeleton = new Skeleton();		
 		setSmoothingMethod(trimesh.getSmoothingMethod());
 		copyTextureAndMaterial(trimesh);
 	}
@@ -925,7 +929,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 
         @Override
 	public int getFaceCount() {
-		return faces.length;
+            return faces.length;
 	}
 
 	/**
@@ -1186,11 +1190,11 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 			}
 		}
 		for (int i = 0; i < vertices.length; ++i)
-			vertices[i].edge = edgeTable[vertices[i].edge];
+                    vertices[i].edge = edgeTable[vertices[i].edge];
 		for (int i = 0; i < faces.length; ++i)
-			faces[i].edge = edgeTable[faces[i].edge];
+                    faces[i].edge = edgeTable[faces[i].edge];
 		edges = newEdges;
-		setSkeleton(new Skeleton());
+                skeleton = new Skeleton();
 	}
 
 	/**
@@ -1205,9 +1209,9 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 
         @Override
 	public BoundingBox getBounds() {
-		if (bounds == null)
-			findBounds();
-		return bounds;
+            if (bounds == null)
+                    findBounds();
+            return bounds;
 	}
 
 	/**
@@ -1287,7 +1291,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 	 * @return The smoothingMethod value
 	 */
 	public int getSmoothingMethod() {
-		return smoothingMethod;
+            return smoothingMethod;
 	}
 
 	/**
@@ -1297,8 +1301,8 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 	 *            The new smoothingMethod value
 	 */
 	public void setSmoothingMethod(int smoothingMethod) {
-		this.smoothingMethod = smoothingMethod;
-		resetMesh();
+            this.smoothingMethod = smoothingMethod;
+            resetMesh();
 	}
 
 	/**
@@ -2923,7 +2927,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 
         @Override
 	public void setSkeleton(Skeleton s) {
-		skeleton = s;
+            skeleton = s;
 	}
 
 	/**
@@ -3369,8 +3373,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 			if (edges.length / 2 != seams.length)
 				seams = null;
 		if (mappingData != null) {
-			if (vertices.length != mappingVerts || edges.length != mappingEdges
-					|| faces.length != mappingFaces) {
+			if (vertices.length != mappingVerts || edges.length != mappingEdges || faces.length != mappingFaces) {
 				mappingData = null;
 			}
 		}
@@ -3415,8 +3418,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 	 * @param deletedFaces
 	 *            An array describing which faces must be deleted
 	 */
-	private int[] deletion(boolean[] deletedVertices, boolean[] deletedEdges,
-			boolean[] deletedFaces, boolean mirrorOp) {
+	private int[] deletion(boolean[] deletedVertices, boolean[] deletedEdges, boolean[] deletedFaces, boolean mirrorOp) {
 		Wvertex[] newVertices;
 		Wedge[] newEdges;
 		Wface[] newFaces;
@@ -3429,22 +3431,22 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 		int count;
 		boolean newDelete = true;
 		while (newDelete) {
-			newDelete = false;
-			for (int i = 0; i < edges.length; ++i) {
-				if ((!deletedEdges[i]) && deletedEdges[edges[i].next]) {
-					int[] de = getVertexEdges(vertices[edges[i].vertex]);
-					count = 0;
-					for (int j = 0; j < de.length; ++j)
-						if (!deletedEdges[de[j]])
-							++count;
-					if (count < 2) {
-						deletedVertices[edges[i].vertex] = true;
-						deletedEdges[i] = true;
-						deletedEdges[edges[i].hedge] = true;
-						newDelete = true;
-					}
-				}
-			}
+                    newDelete = false;
+                    for (int i = 0; i < edges.length; ++i) {
+                            if ((!deletedEdges[i]) && deletedEdges[edges[i].next]) {
+                                    int[] de = getVertexEdges(vertices[edges[i].vertex]);
+                                    count = 0;
+                                    for (int j = 0; j < de.length; ++j)
+                                            if (!deletedEdges[de[j]])
+                                                    ++count;
+                                    if (count < 2) {
+                                            deletedVertices[edges[i].vertex] = true;
+                                            deletedEdges[i] = true;
+                                            deletedEdges[edges[i].hedge] = true;
+                                            newDelete = true;
+                                    }
+                            }
+                    }
 		}
 		int index;
 		for (int i = 0; i < vertices.length; ++i) {
