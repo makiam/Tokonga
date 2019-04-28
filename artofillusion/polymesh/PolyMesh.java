@@ -3049,8 +3049,8 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 	public TriangleMesh convertToTriangleMesh(double tol) {
 		
 		if (smoothingMethod == Mesh.APPROXIMATING) {
-				QuadMesh qmesh = smoothWholeMesh(tol, true, Integer.MAX_VALUE, false);
-				return qmesh.convertToTriangleMesh(tol);
+                    QuadMesh qmesh = smoothWholeMesh(tol, true, Integer.MAX_VALUE, false);
+                    return qmesh.convertToTriangleMesh(tol);
 		}
 		
 		TriangleMesh mesh;
@@ -3063,9 +3063,10 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 		polyedge = null;
 
 		for (int i = 0; i < vertices.length; ++i) {
-			vert.add(vertices[i].r);
-			vertInfo.add(new VertexParamInfo(new int[] { i }, new double[] { 1.0 }));
+                    vert.add(vertices[i].r);
+                    vertInfo.add(new VertexParamInfo(new int[] { i }, new double[] { 1.0 }));
 		}
+
 		for (int i = 0; i < faces.length; ++i) {
 			int[] vf = getFaceVertices(faces[i]);
 			if (vf.length == 3) {
@@ -3078,6 +3079,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 				triangulate(vf, i, false);
 			}
 		}
+                
 		int[][] tfaces = new int[v1.size()][3];
 		Vec3[] v = new Vec3[vert.size()];
 		for (int i = 0; i < v.length; ++i)
@@ -3228,8 +3230,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
                                                                     System.out.println("pb per face per vertex : point doesn't belong to face");
                                                                     vv = 0;
 								}
-								newval[j][k] += coef[l]
-										* fvpv.getValue(pmeFace, vv);
+								newval[j][k] += coef[l] * fvpv.getValue(pmeFace, vv);
 							}
 
 						}
@@ -11888,50 +11889,6 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 		return -1;
 	}
 
-	/**
-	 * Returns an array to a continuous selection of edges. If the selection
-	 * consists in several interconnected lines then an arbitray line is
-	 * returned.
-	 * 
-	 * @param sel
-	 *            The current edge selection
-	 * @param start
-	 *            An edge along the selected line
-	 * @return the indew array describing the edge line
-	 */
-	private int[] findEdgeLine(boolean[] sel, int start) {
-		ArrayList edgeLine = new ArrayList();
-		int edge = start;
-		int firstEdge = start;
-		int newEdge;
-		while (edge != -1) {
-			newEdge = -1;
-			int vertex = edges[edges[edge].hedge].vertex;
-			int ve[] = getVertexEdges(vertices[vertex]);
-			for (int i = 0; i < ve.length; i++) {
-				if (ve[i] != edge && ve[i] != edges[edge].hedge
-						&& isEdgeSelected(ve[i], seams))
-					firstEdge = newEdge = ve[i];
-			}
-			edge = newEdge;
-		}
-		edge = firstEdge;
-		while (edge != -1) {
-			newEdge = -1;
-			int vertex = edges[edge].vertex;
-			int ve[] = getVertexEdges(vertices[vertex]);
-			for (int i = 0; i < ve.length; i++) {
-				if (ve[i] != edge && ve[i] != edges[edge].hedge
-						&& isEdgeSelected(ve[i], seams))
-					edgeLine.add(new Integer(newEdge = ve[i]));
-			}
-			edge = newEdge;
-		}
-		int[] indices = new int[edgeLine.size()];
-		for (int i = 0; i < indices.length; i++)
-			indices[i] = ((Integer) edgeLine.get(i)).intValue();
-		return indices;
-	}
 
 	/**
 	 * Finds appropriate seams in a mesh. Postponed to a later date.
@@ -12039,69 +11996,66 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 		newFaces = new Wface[faces.length + 1];
 		translateMesh(newVertices, newEdges, newFaces);
 		ArrayList v;
-		ArrayList v1 = new ArrayList();
-		ArrayList v2 = new ArrayList();
+		ArrayList<Integer> v1 = new ArrayList<>();
+		ArrayList v2 = new ArrayList<>();
 		boolean found;
 		int fromPoint = from;
 		while (fromPoint != to) {
-			found = false;
-			int[] ve = getVertexEdges(vertices[fromPoint]);
-			for (int i = 0; i < ve.length; i++) {
-				if (edges[ve[i]].face < 0) {
-					found = true;
-					if (ve[i] < edges.length / 2)
-						v1.add(new Integer(ve[i]));
-					else
-						v1.add(new Integer(ve[i] + newEdges.length / 2
-								- edges.length / 2));
-					fromPoint = edges[ve[i]].vertex;
-					break;
-				}
-			}
-			if (fromPoint == from) {
-				return false;
-			}
-			if (!found) {
-				v1 = null;
-				fromPoint = to;
-			}
+                    found = false;
+                    int[] ve = getVertexEdges(vertices[fromPoint]);
+                    for (int i = 0; i < ve.length; i++) {
+                            if (edges[ve[i]].face < 0) {
+                                found = true;
+                                if (ve[i] < edges.length / 2)
+                                    v1.add(ve[i]);
+                                else
+                                    v1.add(ve[i] + newEdges.length / 2 - edges.length / 2);
+                                fromPoint = edges[ve[i]].vertex;
+                                break;
+                            }
+                    }
+                    if (fromPoint == from) {
+                            return false;
+                    }
+                    if (!found) {
+                        v1 = null;
+                        fromPoint = to;
+                    }
 
 		}
 		fromPoint = to;
 		while (fromPoint != from) {
-			found = false;
-			int[] ve = getVertexEdges(vertices[fromPoint]);
-			for (int i = 0; i < ve.length; i++) {
-				if (edges[ve[i]].face < 0) {
-					found = true;
-					if (ve[i] < edges.length / 2)
-						v2.add(new Integer(ve[i]));
-					else
-						v2.add(new Integer(ve[i] + newEdges.length / 2
-								- edges.length / 2));
-					fromPoint = edges[ve[i]].vertex;
-					break;
-				}
-			}
-			if (fromPoint == to)
-				return false;
-			if (!found) {
-				v2 = null;
-				break;
-			}
+                    found = false;
+                    int[] ve = getVertexEdges(vertices[fromPoint]);
+                    for (int i = 0; i < ve.length; i++) {
+                            if (edges[ve[i]].face < 0) {
+                                found = true;
+                                if (ve[i] < edges.length / 2)
+                                    v2.add(ve[i]);
+                                else
+                                    v2.add(ve[i] + newEdges.length / 2 - edges.length / 2);
+                                fromPoint = edges[ve[i]].vertex;
+                                break;
+                            }
+                    }
+                    if (fromPoint == to)
+                            return false;
+                    if (!found) {
+                            v2 = null;
+                            break;
+                    }
 		}
 		v = v1;
 		if (v1 == null && v2 == null)
 			return false;
 		boolean invert = false;
 		if (v1 == null || (v2 != null && v1.size() > v2.size())) {
-			v = v2;
-			invert = true;
-
+                    v = v2;
+                    invert = true;
 		}
 		for (int i = 0; i < v.size(); i++) {
-			int k = ((Integer) v.get(i)).intValue();
-			newEdges[k].face = faces.length;
+                    int k = ((Integer) v.get(i)).intValue();
+                    newEdges[k].face = faces.length;
 		}
 		int f, t;
 		for (int i = 0; i < newPoints.length + 1; i++) {
@@ -12396,9 +12350,8 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 	 */
 
         @Override
-	public MeshViewer createMeshViewer(MeshEditController controller,
-			RowContainer options) {
-		return new PolyMeshViewer(controller, options);
+	public MeshViewer createMeshViewer(MeshEditController controller, RowContainer options) {
+            return new PolyMeshViewer(controller, options);
 	}
 
 	/**
@@ -12412,9 +12365,9 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 
         @Override
 	public void setTexture(Texture tex, TextureMapping mapping) {
-		super.setTexture(tex, mapping);
-		cachedMesh = null;
-		mirroredMesh = null;
+            super.setTexture(tex, mapping);
+            cachedMesh = null;
+            mirroredMesh = null;
 	}
 
 	/**
@@ -12442,54 +12395,39 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 
         @Override
 	public void setParameterValue(TextureParameter param, ParameterValue val) {
-		super.setParameterValue(param, val);
-		cachedMesh = null;
-		mirroredMesh = null;
+            super.setParameterValue(param, val);
+            cachedMesh = null;
+            mirroredMesh = null;
 	}
 
 	/**
 	 * dumps the mesh to console (debugging purposes)
 	 */
 	protected void dumpMesh() {
-		dumpNewMesh(vertices, edges, faces);
+            dumpNewMesh(vertices, edges, faces);
 	}
 
 	/**
 	 * dumps the mesh to console (debugging purposes)
 	 */
 	protected void dumpNewMesh(Wvertex[] vertices, Wedge[] edges, Wface[] faces) {
-		for (int i = 0; i < vertices.length; ++i) {
-			if (vertices[i] != null)
-				System.out.println("vertex " + i + " " + vertices[i].edge + " "
-						+ vertices[i].r);
-		}
-		for (int i = 0; i < faces.length; ++i) {
 
-			if (faces[i] != null)
-				System.out.println("face " + i + " " + faces[i].edge);
-		}
-		for (int i = 0; i < edges.length; ++i) {
-			if (edges[i] != null)
-				System.out.println("edge " + i + " " + edges[i]);
-		}
+            for (int i = 0; i < vertices.length; ++i) {
+                    if (vertices[i] != null)
+                            System.out.println("vertex " + i + " " + vertices[i].edge + " " + vertices[i].r);
+            }
+            for (int i = 0; i < faces.length; ++i) {
+
+                    if (faces[i] != null)
+                            System.out.println("face " + i + " " + faces[i].edge);
+            }
+            for (int i = 0; i < edges.length; ++i) {
+                    if (edges[i] != null)
+                            System.out.println("edge " + i + " " + edges[i]);
+            }
 
 	}
 
-	/**
-	 * dumps currently built mesh to console (debugging purposes)
-	 */
-	protected void dumpMesh(Wvertex[] nv, Wedge[] ne, Wface[] nf) {
-		Wvertex[] v = vertices;
-		vertices = nv;
-		Wedge[] e = edges;
-		edges = ne;
-		Wface[] f = faces;
-		faces = nf;
-		dumpMesh();
-		vertices = v;
-		edges = e;
-		faces = f;
-	}
 
 	/**
 	 * Gets the mirror state attribute of the PolyMesh object
@@ -12497,7 +12435,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 	 * @return The mirrorState value
 	 */
 	public short getMirrorState() {
-		return mirrorState;
+            return mirrorState;
 	}
 
 	/**
@@ -12507,48 +12445,48 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 	 *            The new mirrorState value
 	 */
 	public void setMirrorState(short state) {
-		mirrorState = state;
-		resetMesh();
+            mirrorState = state;
+            resetMesh();
 	}
 
 	public boolean isControlledSmoothing() {
-		return controlledSmoothing;
+            return controlledSmoothing;
 	}
 
 	public void setControlledSmoothing(boolean controlledSmoothing) {
-		this.controlledSmoothing = controlledSmoothing;
-		resetMesh();
+            this.controlledSmoothing = controlledSmoothing;
+            resetMesh();
 	}
 
 	public double getMinAngle() {
-		return minAngle;
+            return minAngle;
 	}
 
 	public void setMinAngle(double minAngle) {
-		this.minAngle = minAngle;
-		resetMesh();
+            this.minAngle = minAngle;
+            resetMesh();
 	}
 
 	public double getMaxAngle() {
-		return maxAngle;
+            return maxAngle;
 	}
 
 	public void setMaxAngle(double maxAngle) {
-		this.maxAngle = maxAngle;
-		resetMesh();
+            this.maxAngle = maxAngle;
+            resetMesh();
 	}
 
 	public float getMinSmoothness() {
-		return minSmoothness;
+            return minSmoothness;
 	}
 
 	public void setMinSmoothness(float minSmoothness) {
-		this.minSmoothness = minSmoothness;
-		resetMesh();
+            this.minSmoothness = minSmoothness;
+            resetMesh();
 	}
 
 	public float getMaxSmoothness() {
-		return maxSmoothness;
+            return maxSmoothness;
 	}
 
 	public void setMaxSmoothness(float maxSmoothness) {
@@ -12563,19 +12501,19 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 
         @Override
 	public Object getPropertyValue(int index) {
-		switch (index) {
-		case 0:
-			return new Integer(interactiveSmoothLevel);
-		default:
-			return null;
-		}
+            switch (index) {
+            case 0:
+                    return interactiveSmoothLevel;
+            default:
+                    return null;
+            }
 	}
 
         @Override
 	public void setPropertyValue(int index, Object value) {
-		int val = ((Integer) value).intValue();
-		if (index == 0)
-			setInteractiveSmoothLevel(val);
+            int val = ((Integer) value);
+            if (index == 0)
+                setInteractiveSmoothLevel(val);
 	}
 
 	/**
@@ -12589,8 +12527,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 	 *                I/O exception
 	 */
         @Override
-	public void writeToFile(DataOutputStream out, Scene theScene)
-			throws IOException {
+	public void writeToFile(DataOutputStream out, Scene theScene) throws IOException {
 		if (theScene != null)
 			super.writeToFile(out, theScene);
 
@@ -12734,7 +12671,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 
         @Override
 	public boolean canConvertToActor() {
-		return true;
+            return true;
 	}
 
 	/**
