@@ -3070,13 +3070,12 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 		for (int i = 0; i < faces.length; ++i) {
 			int[] vf = getFaceVertices(faces[i]);
 			if (vf.length == 3) {
-				v1.add(vf[0]);
-				v2.add(vf[1]);
-				v3.add(vf[2]);
-				if (faceInfo != null)
-					faceInfo.add(i);
+                            v1.add(vf[0]);
+                            v2.add(vf[1]);
+                            v3.add(vf[2]);
+                            faceInfo.add(i);
 			} else if (vf.length > 3) {
-				triangulate(vf, i, false);
+                            triangulate(vf, i, false);
 			}
 		}
                 
