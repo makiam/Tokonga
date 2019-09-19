@@ -1,5 +1,7 @@
 /*
  *  Copyright 2004 Francois Guillet
+ *  Changes copyright (C) 2019 by Maksim Khramov
+
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -13,11 +15,11 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 import buoy.widget.*;
-import buoy.event.*;
-//import artofillusion.ModellingApp;
+
 import java.io.*;
-import java.util.*;
-import java.util.zip.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  *  Description of the Class
@@ -27,8 +29,7 @@ import java.util.zip.*;
  */
 public class ManageSplitPane extends SPMSplitPane
 {
-    private BButton deleteButton;
-    private BButton deleteAllButton;
+    private final BButton deleteButton;
 
 
     /**
@@ -54,6 +55,7 @@ public class ManageSplitPane extends SPMSplitPane
     /**
      *  Description of the Method
      */
+    @Override
     protected void updateTree()
     {
         /*
@@ -115,46 +117,30 @@ public class ManageSplitPane extends SPMSplitPane
      *@param  addTo  Description of the Parameter
      *@param  infos  Description of the Parameter
      */
-    private void getFiles( TreePath addTo, Vector infos )
+    private void getFiles( TreePath addTo, List<SPMObjectInfo> infos )
     {
-        DefaultMutableTreeNode tn;
-        SPMObjectInfo info;
+        for(SPMObjectInfo info: infos)
+            tree.addNode(addTo, new DefaultMutableTreeNode(info, false));
 
-        for ( int i = 0; i < infos.size(); i++ )
-        {
-            info = (SPMObjectInfo) infos.elementAt( i );
-            tn = new DefaultMutableTreeNode( info.getName() );
-            tn.setAllowsChildren( false );
-            tn.setUserObject( info );
-            tree.addNode( addTo, tn );
-            //System.out.println( "added " + info.getName() + " to " + addTo );
-        }
 
 	// NTJ: set reference counts
-	for (int i = 0; i < infos.size(); i++) {
-            info = (SPMObjectInfo) infos.elementAt( i );
-	    //System.out.println("SPManager: file=" + info.getName());
-
+	for (SPMObjectInfo info: infos) {
 	    Collection externals = info.getExternals();
+
+            if (null == externals) continue;
 	    String extName, extType;
 	    SPMObjectInfo ext;
-	    if (externals != null) {
-		//for (int j = 0; j < externals.size(); j++) {
-		for (Iterator iter = externals.iterator(); iter.hasNext(); ) {
-		    //extName = (String) externals.get(j);
-		    extName = (String) iter.next();
 
-		    if (extName.endsWith("= required")) {
-			extType = extName.substring(extName.indexOf(':')+1,
-						    extName.indexOf('=')).trim();
-			extName = extName.substring(0, extName.indexOf(':'));
+            for( Object exxt: externals)
+            {
+                extName = (String) exxt;
+                extType = extName.substring(extName.indexOf(':')+1, extName.indexOf('=')).trim();
+                extName = extName.substring(0, extName.indexOf(':'));
 
-			//System.out.println("getFiles: extName=" + extName + "<<");
-			ext = getInfo(extName, (TreePath)pathMap.get(extType));
-			if (ext != null) ext.refcount++;
-		    }
-		}
-	    }
+                //System.out.println("getFiles: extName=" + extName + "<<");
+                ext = getInfo(extName, (TreePath)pathMap.get(extType));
+                if (ext != null) ext.refcount++;
+            }
 	}
     }
 
@@ -249,12 +235,10 @@ public class ManageSplitPane extends SPMSplitPane
             voidSelection();
 
         }
-        for ( int i = 0; i < splitPaneList.size(); ++i )
+        for (SPMSplitPane pane: splitPaneList)
         {
-            if ( splitPaneList.elementAt( i ) != this )
-            {
-                ( (SPMSplitPane) splitPaneList.elementAt( i ) ).doUpdate();
-            }
+            if (pane == this) continue;
+            pane.doUpdate();
         }
 
     }
@@ -306,6 +290,7 @@ public class ManageSplitPane extends SPMSplitPane
      *
      *@param  deletable  Description of the Parameter
      */
+    @Override
     public void scriptSelection( boolean deletable )
     {
         deleteButton.setText( SPMTranslate.text( "deleteScript" ) );
@@ -319,6 +304,7 @@ public class ManageSplitPane extends SPMSplitPane
      *
      *@param  deletable  Description of the Parameter
      */
+    @Override
     public void pluginSelection( boolean deletable )
     {
         deleteButton.setText( SPMTranslate.text( "deletePlugin" ) );
@@ -330,6 +316,7 @@ public class ManageSplitPane extends SPMSplitPane
     /**
      *  Description of the Method
      */
+    @Override
     public void voidSelection()
     {
         deleteButton.setEnabled( false );

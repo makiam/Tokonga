@@ -1,6 +1,8 @@
 
 /*
  *  Copyright 2004 Francois Guillet
+ *  Changes copyright (C) 2019 by Maksim Khramov
+
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -30,7 +32,7 @@ public class SPMSetupFrame extends BDialog
     private SPManagerFrame frame;
     private BComboBox repositoriesCB;
     private ColumnContainer filterContainer;
-    private BButton okButton, cancelButton, addButton, removeButton;
+    private BButton addButton, removeButton;
     private BTextField repEntry, proxyHostEntry, proxyPortEntry, usernameEntry;
     private BPasswordField passwordEntry;
     private BLabel proxyHostLabel, proxyPortLabel, usernameLabel, passwordLabel;
@@ -81,7 +83,6 @@ public class SPMSetupFrame extends BDialog
 	    //RadioButtonGroup group;
 	    BComboBox sel=null;
 	    LayoutInfo right = new LayoutInfo(LayoutInfo.EAST,LayoutInfo.NONE);
-	    LayoutInfo left = new LayoutInfo(LayoutInfo.WEST,LayoutInfo.NONE);
 	    for (i = 0; i < keys.length; i++) {
 		filtName = keys[i];
 		filtVal = (String) filters.get(filtName);
@@ -129,7 +130,6 @@ public class SPMSetupFrame extends BDialog
         useCacheCB =  SPMTranslate.bCheckBox( "useCache", parameters.getUseCache(), this, "doUseCacheCB" );
         cc.add( useCacheCB, new LayoutInfo( LayoutInfo.CENTER, LayoutInfo.NONE, new Insets( 2, 3, 2, 3 ), new Dimension( 0, 0 ) ));
 
-        LayoutInfo buttonLayout = new LayoutInfo( LayoutInfo.WEST, LayoutInfo.BOTH, new Insets( 2, 0, 2, 0 ), new Dimension( 0, 0 ) );
         LayoutInfo rcLayout = new LayoutInfo( LayoutInfo.CENTER, LayoutInfo.NONE, new Insets( 4, 3, 4, 3 ), new Dimension( 0, 0 ) );
 
         FormContainer fm = new FormContainer( 2, 5 );
@@ -169,8 +169,8 @@ public class SPMSetupFrame extends BDialog
         }
 
         RowContainer buttons = new RowContainer();
-        buttons.add( okButton = SPMTranslate.bButton( "ok", this, "doOK" ) );
-        buttons.add( cancelButton = SPMTranslate.bButton( "cancel", this, "doCancel" ) );
+        buttons.add(SPMTranslate.bButton( "ok", this, "doOK" ) );
+        buttons.add(SPMTranslate.bButton( "cancel", this, "doCancel" ) );
         cc.add( buttons, new LayoutInfo() );
         setContent( cc );
         addEventLink( WindowClosingEvent.class, this, "doCancel" );
@@ -192,18 +192,7 @@ public class SPMSetupFrame extends BDialog
      */
     private void doUseProxyCB()
     {
-        if ( !useProxyCB.getState() )
-        {
-            proxyHostEntry.setEnabled( false );
-            proxyPortEntry.setEnabled( false );
-            usernameEntry.setEnabled( false );
-            passwordEntry.setEnabled( false );
-            proxyHostLabel.setEnabled( false );
-            proxyPortLabel.setEnabled( false );
-            usernameLabel.setEnabled( false );
-            passwordLabel.setEnabled( false );
-        }
-        else
+        if ( useProxyCB.getState() )
         {
             proxyHostEntry.setEnabled( true );
             proxyPortEntry.setEnabled( true );
@@ -213,6 +202,17 @@ public class SPMSetupFrame extends BDialog
             proxyPortLabel.setEnabled( true );
             usernameLabel.setEnabled( true );
             passwordLabel.setEnabled( true );
+        }
+        else
+        {
+            proxyHostEntry.setEnabled( false );
+            proxyPortEntry.setEnabled( false );
+            usernameEntry.setEnabled( false );
+            passwordEntry.setEnabled( false );
+            proxyHostLabel.setEnabled( false );
+            proxyPortLabel.setEnabled( false );
+            usernameLabel.setEnabled( false );
+            passwordLabel.setEnabled( false );
         }
     }
 

@@ -1,5 +1,7 @@
 /*
  *  Copyright 2004 Francois Guillet
+ *  Changes copyright (C) 2019 by Maksim Khramov
+
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -9,22 +11,21 @@
  */
 package artofillusion.spmanager;
 
-import artofillusion.*;
-import artofillusion.ui.Translate;
 import artofillusion.ui.UIUtilities;
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.tree.*;
 import buoy.widget.*;
 import buoy.event.*;
-//import artofillusion.ModellingApp;
 import java.io.*;
-import java.util.*;
-import java.util.zip.*;
+import java.util.List;
 import java.net.*;
-import java.text.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 
 
 /**
@@ -35,19 +36,17 @@ import java.text.*;
  */
 public class InstallSplitPane extends SPMSplitPane
 {
-    private URL repository;
 
-    private BButton installAllButton, installSingleButton, selectAllButton;
+    private BButton installAllButton;
     private BCheckBox selectCB;
     private boolean setup = false;
-    private boolean unknownHost = false;
     private StatusDialog status;
     private long downloadedLength = 0;
     private long lengthToDownload;
     private boolean isDownloading;
     private SPMObjectInfo installNodeInfo;
 
-    protected ArrayList errors=null;
+    protected ArrayList<String> errors = null;
 
     /**
      *  Constructor for the InstallSplitPane object
@@ -57,9 +56,7 @@ public class InstallSplitPane extends SPMSplitPane
      */
     public InstallSplitPane( short workMode, URL repository )
     {
-	super( ( workMode == INSTALL ? "installScriptsPlugins" : "updateScriptsPlugins" ), workMode );
-	fs = new HttpSPMFileSystem( repository );
-	initialize();
+        this(workMode, new HttpSPMFileSystem(repository));
     }
 
 
@@ -111,14 +108,15 @@ public class InstallSplitPane extends SPMSplitPane
     /**
      *  Description of the Method
      */
+    @Override
     protected void updateTree()
     {
 	if ( setup )
 	{
 	    //get the scripts
-	    fs.getRemoteInfo(
-		    new Runnable()
+	    fs.getRemoteInfo(new Runnable()
 		    {
+                        @Override
 			public void run()
 			{
 			    doCallbackUpdate();
@@ -147,14 +145,15 @@ public class InstallSplitPane extends SPMSplitPane
     /**
      *  Pane setup
      */
+    @Override
     public void doSetup()
     {
 	if ( !setup )
 	{
 	    //get the scripts
-	    fs.getRemoteInfo(
-		    new Runnable()
+	    fs.getRemoteInfo(new Runnable()
 		    {
+                        @Override
 			public void run()
 			{
 			    doCallbackUpdate();
@@ -205,37 +204,32 @@ public class InstallSplitPane extends SPMSplitPane
      *
      *@param  addTo              Description of the Parameter
      *@param  infos              Description of the Parameter
-     *@param  managerInfoVector  Description of the Parameter
+     *@param  managerInfoList    Description of the Parameter
      */
-    private void getFiles( TreePath addTo, Vector infos, Vector managerInfoVector )
+    private void getFiles( TreePath addTo, List<SPMObjectInfo> infos, List<SPMObjectInfo> managerInfoList )
     {
-	DefaultMutableTreeNode tn;
-	SPMObjectInfo info;
-	SPMObjectInfo managerInfo;
+
 	boolean eligible;
-	TreeMap map = new TreeMap();
+	TreeMap<String, SPMObjectInfo> map = new TreeMap<>();
 
-	for ( int i = 0; i < infos.size(); i++ )
+	for (SPMObjectInfo info: infos)
 	{
-	    info = (SPMObjectInfo) infos.elementAt( i );
-
 	    if (info.restriction >= SPMParameters.HIDE) continue;
-
 	    {
 		//check if file candidate for update or install
 		eligible = ( workMode == INSTALL );
-		managerInfo = null;
-		String name = info.getName();
-		for ( int j = 0; j < managerInfoVector.size(); ++j )
+		
+		for ( int j = 0; j < managerInfoList.size(); ++j )
 		{
-		    if ( ( (SPMObjectInfo) managerInfoVector.elementAt( j ) ).getName().equals( name ) )
+                    SPMObjectInfo managerInfo = managerInfoList.get( j );
+		    if ( managerInfo.getName().equals( info.getName() ) )
 		    {
 			eligible = ( workMode == UPDATE );
 			if ( eligible )
 			{
 			    //check if valid update
 
-			    managerInfo = (SPMObjectInfo) managerInfoVector.elementAt( j );
+			    
 			    System.out.println( info.getName() );
 			    System.out.println( "major distant local :" + info.getMajor() + " " + managerInfo.getMajor() );
 			    System.out.println( "minor distant local :" + info.getMinor() + " " + managerInfo.getMinor() );
@@ -254,8 +248,7 @@ public class InstallSplitPane extends SPMSplitPane
 				else if ( info.getMinor() == managerInfo.getMinor() )
 				{
 				    if (managerInfo.isBeta()) {
-					if (info.isBeta() && info.getBeta()
-						<= managerInfo.getBeta())
+					if (info.isBeta() && info.getBeta() <= managerInfo.getBeta())
 					{
 					    eligible = false;
 					}
@@ -274,18 +267,11 @@ public class InstallSplitPane extends SPMSplitPane
 		}
 	    }
 	}
-	Collection col = map.values();
-	if ( ! col.isEmpty() )
-	{
-	    for( Iterator iter = col.iterator(); iter.hasNext(); )
-	    {
-		info = (SPMObjectInfo) iter.next();
-		tn = new DefaultMutableTreeNode( info.getName() );
-		tn.setAllowsChildren( false );
-		tn.setUserObject( info );
-		tree.addNode( addTo, tn );
-	    }
-	}
+
+        for(SPMObjectInfo entry: map.values())
+        {
+            tree.addNode(addTo, new DefaultMutableTreeNode(entry, false));
+        }
     }
 
 
@@ -309,6 +295,7 @@ public class InstallSplitPane extends SPMSplitPane
 		(
 			new Thread()
 			{
+                            @Override
 			    public void run()
 			    {
 				installAllSelected( pluginsPath );
@@ -318,6 +305,7 @@ public class InstallSplitPane extends SPMSplitPane
 
 				try {
 				    SwingUtilities.invokeAndWait(new Runnable() {
+                                        @Override
 					public void run()
 					{
 					    voidSelection();
@@ -498,6 +486,7 @@ public class InstallSplitPane extends SPMSplitPane
 		(
 			new Thread()
 			{
+                            @Override
 			    public void run()
 			    {
 				installFile( installNodeInfo );
@@ -508,6 +497,7 @@ public class InstallSplitPane extends SPMSplitPane
 				//SPManagerPlugin.restart();
 				try {
 				    SwingUtilities.invokeAndWait(new Runnable() {
+                                        @Override
 					public void run()
 					{
 					    /*  NTJ - replaced by restart()  */
@@ -651,8 +641,7 @@ public class InstallSplitPane extends SPMSplitPane
 
 		update = new File(folder, file.getName() + ".upd");
 
-		System.out.println("downloading to " +
-			update.getAbsolutePath());
+		System.out.println("downloading to " + update.getAbsolutePath());
 
 		if ( status != null )
 		{
@@ -682,9 +671,7 @@ public class InstallSplitPane extends SPMSplitPane
 		if (errors.size() > errCount) {
 
 		    if (!update.delete()) {
-			System.out.println("SPManager: tx abort: " +
-				" update file not deleted: " +
-				update.getAbsolutePath());
+			System.out.println("SPManager: tx abort: update file not deleted: " + update.getAbsolutePath());
 
 			// NTJ Happens normally on some Wincrap boxes, so don't
 			// display an error
@@ -692,8 +679,7 @@ public class InstallSplitPane extends SPMSplitPane
 			//   update.getAbsolutePath());
 
 			// make file zero-length
-			RandomAccessFile raf =
-			    new RandomAccessFile(update, "rw");
+			RandomAccessFile raf = new RandomAccessFile(update, "rw");
 			raf.setLength(0);
 			raf.close();
 		    }
@@ -730,8 +716,7 @@ public class InstallSplitPane extends SPMSplitPane
 			    //   update.getAbsolutePath());
 
 			    // make file zero-length
-			    RandomAccessFile raf =
-				new RandomAccessFile(update, "rw");
+			    RandomAccessFile raf = new RandomAccessFile(update, "rw");
 			    raf.setLength(0);
 			    raf.close();
 			}
@@ -826,6 +811,7 @@ public class InstallSplitPane extends SPMSplitPane
      *
      *@param  info  Description of the Parameter
      */
+    @Override
     protected void notifyObjectInfoSelection( SPMObjectInfo info )
     {
 	selectCB.removeEventLink( ValueChangedEvent.class, this );
@@ -841,6 +827,7 @@ public class InstallSplitPane extends SPMSplitPane
      *
      *@param  deletable  Description of the Parameter
      */
+    @Override
     public void scriptSelection( boolean deletable )
     {
 	//Button.setEnabled( true );
@@ -873,6 +860,7 @@ public class InstallSplitPane extends SPMSplitPane
      *
      *@param  deletable  Description of the Parameter
      */
+    @Override
     public void pluginSelection( boolean deletable )
     {
 	//installSingleButton.setEnabled( true );
@@ -908,6 +896,7 @@ public class InstallSplitPane extends SPMSplitPane
     /**
      *  Description of the Method
      */
+    @Override
     public void voidSelection()
     {
 	//installSingleButton.setEnabled( false );
@@ -923,25 +912,26 @@ public class InstallSplitPane extends SPMSplitPane
      */
     public void setRepository( URL newRep )
     {
-	repository = newRep;
 	fs = new HttpSPMFileSystem( newRep );
 	doSetup();
     }
 
     public void showErrors()
-    { if (errors != null && errors.size() > 0) showErrors(errors); }
+    { 
+        if (errors != null && errors.size() > 0) showErrors(errors);
+    }
     
     /**
      *  show errors in a panel
      */
-    public static void showErrors(ArrayList errs)
+    public static void showErrors(List<String> errs)
     {
 	BTextArea txt = new BTextArea(5, 45);
 	txt.setEditable(false);
 	txt.setWrapStyle(BTextArea.WRAP_WORD);
 
-	for (int i = 0; i < errs.size(); i++)
-	    txt.append(errs.get(i) + "\n");
+	for (String err: errs)
+	    txt.append(err + "\n");
 
 	BScrollPane detail =
 	    new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER,

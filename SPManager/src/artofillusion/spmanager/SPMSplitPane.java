@@ -1,5 +1,7 @@
 /*
  *  Copyright 2004 Francois Guillet
+ *  Changes copyright (C) 2019 by Maksim Khramov
+
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -14,10 +16,9 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 import java.awt.event.*;
-import javax.swing.event.*;
-import javax.swing.plaf.*;
 import buoy.widget.*;
 import buoy.event.*;
+import java.util.List;
 
 /**
  *  Description of the Class
@@ -77,7 +78,7 @@ public class SPMSplitPane extends BSplitPane
 	/**
 	 *  Description of the Field
 	 */
-	protected static Vector splitPaneList;
+	protected static List<SPMSplitPane> splitPaneList;
 
 	/**
 	 *  Description of the Field
@@ -95,7 +96,7 @@ public class SPMSplitPane extends BSplitPane
 	private BScrollPane nameSP, descriptionSP;
 	private BComboBox descSelect;
 
-	private Vector descText;
+	private List<String> descText;
 
 	/**
 	 *  Description of the Field
@@ -126,9 +127,9 @@ public class SPMSplitPane extends BSplitPane
 	 */
 	public SPMSplitPane( String s )
 	{
-		super( BSplitPane.HORIZONTAL );
-		workMode = BROWSE;
-		initialize( s );
+            super( BSplitPane.HORIZONTAL );
+            workMode = BROWSE;
+            initialize( s );
 	}
 
 
@@ -173,14 +174,14 @@ public class SPMSplitPane extends BSplitPane
 
 		if ( splitPaneList == null )
 		{
-			splitPaneList = new Vector();
+                    splitPaneList = new ArrayList<>();
 		}
 		splitPaneList.add( this );
 
 		ColumnContainer cc = new ColumnContainer();
 
-		BScrollPane sc;
-		add( sc = new BScrollPane( tree = new BTree( new DefaultMutableTreeNode( SPMTranslate.text( s ) ) ) ), 0 );
+		
+		add(new BScrollPane( tree = new BTree( new DefaultMutableTreeNode( SPMTranslate.text( s ) ) ) ), 0 );
 
 		add( cc, 1 );
 
@@ -203,6 +204,7 @@ public class SPMSplitPane extends BSplitPane
 					objectDescription.setText((String)descText.get(index));
 
 					SwingUtilities.invokeLater(new Runnable() {
+                                                @Override
 						public void run() {
 							BScrollBar bar =
 								descriptionSP.getVerticalScrollBar();
@@ -263,6 +265,7 @@ public class SPMSplitPane extends BSplitPane
 		MouseListener ml =
 			new MouseAdapter()
 		{
+                        @Override
 			public void mousePressed( MouseEvent e )
 			{
 				int selRow = ( (JTree) tree.getComponent() ).getRowForLocation( e.getX(), e.getY() );
@@ -459,21 +462,21 @@ public class SPMSplitPane extends BSplitPane
 				objectDescription.setText( (String) descText.get(0) );
 			else objectDescription.setText("");
 
-			Vector changeLog = info.getChangeLog();
+			List<String> changeLog = info.getChangeLog();
 			if (changeLog != null) descSelect.setContents(changeLog);
 			else {
-				descSelect.removeAll();
-				descSelect.add(SPMTranslate.text("description"));
-				descSelect.add(SPMTranslate.text("history"));
+                            descSelect.removeAll();
+                            descSelect.add(SPMTranslate.text("description"));
+                            descSelect.add(SPMTranslate.text("history"));
 			}
 		}
 		else
 		{
-			objectName.setText( "" );
-			objectDescription.setText( "" );
+                    objectName.setText( "" );
+                    objectDescription.setText( "" );
 
-			descSelect.removeAll();
-			descSelect.add( SPMTranslate.text( "description" ));
+                    descSelect.removeAll();
+                    descSelect.add( SPMTranslate.text( "description" ));
 		}
 
 		//SPManagerFrame.getBFrame()
@@ -482,6 +485,7 @@ public class SPMSplitPane extends BSplitPane
 		SwingUtilities.invokeLater(
 				new Runnable()
 				{
+                                        @Override
 					public void run()
 					{
 						BScrollBar bar = descriptionSP.getVerticalScrollBar();
@@ -505,9 +509,9 @@ public class SPMSplitPane extends BSplitPane
 	public SPMObjectInfo getInfo(String name, TreePath path)
 	{
 		if (path == null) {
-			System.out.println("SPManager: poor XML content: " +
+                    System.out.println("SPManager: poor XML content: " +
 					"invalid external type (" + name + ")");
-			return null;
+                    return null;
 		}
 
 		Object info;
@@ -569,10 +573,10 @@ public class SPMSplitPane extends BSplitPane
 	 */
 	public void doUpdate()
 	{
-		clearTree();
-		updateTree();
-		layoutChildren();
-		voidSelection();
+            clearTree();
+            updateTree();
+            layoutChildren();
+            voidSelection();
 	}
 
 
@@ -583,14 +587,11 @@ public class SPMSplitPane extends BSplitPane
 	 */
 	public SPMSplitPane getManager()
 	{
-		for ( int i = 0; i < splitPaneList.size(); ++i )
-		{
-			if ( ( (SPMSplitPane) splitPaneList.elementAt( i ) ).workMode == BROWSE )
-			{
-				return (SPMSplitPane) splitPaneList.elementAt( i );
-			}
-		}
-		return null;
+            for (SPMSplitPane pane: splitPaneList)
+            {
+                if (pane.workMode == BROWSE) return pane;
+            }
+            return null;
 	}
 
 
@@ -601,7 +602,7 @@ public class SPMSplitPane extends BSplitPane
 	 */
 	public SPMFileSystem getFileSystem()
 	{
-		return fs;
+            return fs;
 	}
 
 
@@ -610,10 +611,10 @@ public class SPMSplitPane extends BSplitPane
 	 */
 	protected void clearTree()
 	{
-		clearPath( pluginsPath );
-		clearPath( toolScriptsPath );
-		clearPath( objectScriptsPath );
-		clearPath( startupScriptsPath );
+            clearPath( pluginsPath );
+            clearPath( toolScriptsPath );
+            clearPath( objectScriptsPath );
+            clearPath( startupScriptsPath );
 	}
 
 
@@ -645,7 +646,7 @@ public class SPMSplitPane extends BSplitPane
 	 */
 	public boolean isModified()
 	{
-		return modified;
+            return modified;
 	}
 
 
@@ -662,8 +663,8 @@ public class SPMSplitPane extends BSplitPane
 		SPMObjectInfo nodeInfo = getSelectedNodeInfo();
 		if ( nodeInfo != null )
 		{
-			nodeInfo.setSelected( !nodeInfo.isSelected() );
-			notifyObjectInfoSelection( nodeInfo );
+                    nodeInfo.setSelected( !nodeInfo.isSelected() );
+                    notifyObjectInfoSelection( nodeInfo );
 		}
 		repaint();
 	}
@@ -688,15 +689,15 @@ public class SPMSplitPane extends BSplitPane
 		if (extMap == null) extMap = new Hashtable(32);
 
 		if (extMap.containsKey(info)) {
-			System.out.println("SPMSplitPane: dependency loop detected: " +
+                    System.out.println("SPMSplitPane: dependency loop detected: " +
 					info.getName());
-			return;
+                    return;
 		}
 
 		extMap.put(info, info);
 
 		Collection externals = info.getExternals();
-		if (externals == null || externals.size() == 0) return;
+		if (externals == null || externals.isEmpty()) return;
 
 		String extName, extType;
 		SPMObjectInfo ext;
@@ -751,6 +752,7 @@ public class SPMSplitPane extends BSplitPane
 		 *@param  hasFocus  Description of the Parameter
 		 *@return           The treeCellRendererComponent value
 		 */
+                @Override
 		public Component getTreeCellRendererComponent(
 				JTree tree,
 				Object value,
@@ -832,6 +834,7 @@ public class SPMSplitPane extends BSplitPane
 		 *
 		 *@return    The iconHeight value
 		 */
+                @Override
 		public int getIconHeight()
 		{
 			return originalIcon.getIconHeight();
@@ -843,6 +846,7 @@ public class SPMSplitPane extends BSplitPane
 		 *
 		 *@return    The iconWidth value
 		 */
+                @Override
 		public int getIconWidth()
 		{
 			return originalIcon.getIconWidth();
@@ -857,6 +861,7 @@ public class SPMSplitPane extends BSplitPane
 		 *@param  x  Description of the Parameter
 		 *@param  y  Description of the Parameter
 		 */
+                @Override
 		public void paintIcon( Component c, Graphics g, int x, int y )
 		{
 			originalIcon.paintIcon( c, g, x, y );

@@ -1,6 +1,7 @@
-
 /*
  *  Copyright 2004 Francois Guillet
+ *  Changes copyright (C) 2019 by Maksim Khramov
+
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -15,11 +16,9 @@ import artofillusion.ui.UIUtilities;
 
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.Timer.*;
 import javax.swing.border.*;
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.util.Vector;
+import java.util.List;
 
 import buoy.widget.*;
 import buoy.event.*;
@@ -42,7 +41,7 @@ public class SPManagerFrame extends BFrame
     private String statusText;
     private javax.swing.Timer timer;
     private Action statusTextClearAction;
-    BButton setupButton, quitButton, scanButton;
+    
     public static final String YES_NO[] = {
         SPMTranslate.text("Yes"), SPMTranslate.text("No")
     };
@@ -89,6 +88,7 @@ public class SPManagerFrame extends BFrame
         statusTextClearAction =
             new AbstractAction()
             {
+                @Override
                 public void actionPerformed( ActionEvent e )
                 {
                     statusLabel.setText( " " );
@@ -100,7 +100,6 @@ public class SPManagerFrame extends BFrame
         installSplitPane = new InstallSplitPane( SPMSplitPane.INSTALL, updateSplitPane.getFileSystem() );
         ( (HttpSPMFileSystem) updateSplitPane.getFileSystem() ).setRepository( parameters.getCurrentRepository() );
         RowContainer rc = new RowContainer();
-        LayoutInfo layout = new LayoutInfo( LayoutInfo.CENTER, LayoutInfo.NONE, new Insets( 5, 3, 3, 3 ), new Dimension( 0, 0 ) );
         ColumnContainer cc = new ColumnContainer();
         LayoutInfo headLayout = new LayoutInfo( LayoutInfo.WEST, LayoutInfo.NONE, new Insets( 3, 5, 5, 3 ), new Dimension( 0, 0 ) );
         rc.add( new BLabel( new ImageIcon( getClass().getResource( "/artofillusion/spmanager/icons/gear.png" ) ) ), headLayout );
@@ -121,9 +120,9 @@ public class SPManagerFrame extends BFrame
 
         //buttons setup
         RowContainer buttons = new RowContainer();
-        buttons.add( setupButton = SPMTranslate.bButton( "setup", this, "doSetup" ) );
-        buttons.add( scanButton = SPMTranslate.bButton( "rescan", this, "doRescan" ) );
-        buttons.add( quitButton = SPMTranslate.bButton( "close", this, "hideSPManager" ) );
+        buttons.add(SPMTranslate.bButton( "setup", this, "doSetup" ) );
+        buttons.add(SPMTranslate.bButton( "rescan", this, "doRescan" ) );
+        buttons.add(SPMTranslate.bButton( "close", this, "hideSPManager" ) );
         cc.add( buttons, new LayoutInfo( LayoutInfo.CENTER, LayoutInfo.NONE, new Insets( 3, 0, 0, 0 ), null ) );
 
         cc.add( new BOutline( statusLabel, BorderFactory.createTitledBorder( BorderFactory.createBevelBorder( BevelBorder.LOWERED ), SPMTranslate.text( "remoteStatus" ) ) ), new LayoutInfo( LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets( 1, 1, 1, 1 ), new Dimension( 0, 0 ) ) );
@@ -137,28 +136,6 @@ public class SPManagerFrame extends BFrame
         updateSplitPane.setDividerLocation( updateSplitPane.getChild( 0 ).getPreferredSize().width );
         installSplitPane.setDividerLocation( installSplitPane.getChild( 0 ).getPreferredSize().width );
     }
-
-
-    /**
-     *  Dumps the sizes of a widget container children Used for debug purposes
-     *
-     *@param  wc  WidgetContainer
-     */
-    public void printBounds( WidgetContainer wc )
-    {
-        java.util.Iterator childEnum = wc.getChildren().iterator();
-        while ( childEnum.hasNext() )
-        {
-            Widget w = (Widget) childEnum.next();
-            System.out.println( "Widget: " + w );
-            System.out.println( "Bounds: " + w.getBounds() );
-            System.out.println( "Min size: " + w.getMinimumSize() );
-            System.out.println( "Pref size: " + w.getPreferredSize() );
-            if ( w instanceof WidgetContainer )
-                printBounds( (WidgetContainer) w );
-        }
-    }
-
 
     /**
      *  Hides the SPManager main window
@@ -200,8 +177,8 @@ public class SPManagerFrame extends BFrame
      */
     protected void checkForUpdatedMe()
     {
-	Vector localList = manageSplitPane.getFileSystem().getPlugins();
-	Vector remoteList = updateSplitPane.getFileSystem().getPlugins();
+	List<SPMObjectInfo> localList = manageSplitPane.getFileSystem().getPlugins();
+	List<SPMObjectInfo> remoteList = updateSplitPane.getFileSystem().getPlugins();
 	SPMObjectInfo localinfo=null, remoteinfo=null;
 
 	for (int i = 0; i < localList.size(); i++) {
@@ -250,12 +227,14 @@ public class SPManagerFrame extends BFrame
 		final SPMObjectInfo info = remoteinfo;
 
 		(new Thread() {
+                    @Override
 		    public void run()
 		    {
 			updateSplitPane.installFile(info);
 			updateSplitPane.showErrors();
 
 			SwingUtilities.invokeLater(new Runnable() {
+                            @Override
 			    public void run()
 			    {
 				status.dispose();
@@ -385,6 +364,7 @@ public class SPManagerFrame extends BFrame
 				   //new Thread()
 				   new Runnable()
             {
+                @Override
                 public void run()
                 {
                     statusLabel.setText( statusText );

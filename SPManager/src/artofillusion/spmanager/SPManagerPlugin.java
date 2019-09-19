@@ -1,6 +1,8 @@
 
 /*
  *  Copyright 2004 Francois Guillet
+ *  Changes copyright (C) 2019 by Maksim Khramov
+
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -15,14 +17,16 @@ import artofillusion.util.SearchlistClassLoader;
 import artofillusion.ui.*;
 
 import java.awt.*;
-import java.awt.event.*;
 import buoy.event.*;
 import buoy.widget.*;
 
-import java.util.*;
 import java.io.*;
 import java.net.*;
 import java.lang.reflect.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  *  The Plugin corresponding to the SPManager
@@ -32,8 +36,7 @@ import java.lang.reflect.*;
  */
 public class SPManagerPlugin implements Plugin
 {
-    public static String AOI_VERSION;
-    public static String UNIQUE_PATH;
+
     public static String TEMP_DIR;
     public static String APP_DIRECTORY;
     public static String PLUGIN_DIRECTORY;
@@ -53,14 +56,9 @@ public class SPManagerPlugin implements Plugin
      *@param  message  Description of the Parameter
      *@param  args     Description of the Parameter
      */
+    @Override
     public void processMessage( int message, Object args[] )
     {
-	// NTJ: get the AOI run-time (*not* compile-time) version
-	if (AOI_VERSION == null) {
-	    AOI_VERSION = ArtOfIllusion.getMajorVersion();
-	    System.setProperty("artofillusion.version", ArtOfIllusion.getVersion());
-	    System.setProperty("artofillusion.version.major", ArtOfIllusion.getMajorVersion());
-	}
 
 	switch (message) {
 	case Plugin.APPLICATION_STARTING:
@@ -75,50 +73,31 @@ public class SPManagerPlugin implements Plugin
 	    System.out.println("SPManager starting...");
 
 	    // get details of plugin classloaders
-	    int i, j, idx;
+	    int i;
 	    URL urlList[];
-	    ArrayList aoiloaders;
+
 	    ClassLoader ldr = null;
 	    URLClassLoader urlldr = null;
 	    SearchlistClassLoader searchldr = null;
 	    Object obj;
 
-	    java.util.List list = PluginRegistry.getPluginClassLoaders();
-	    HashMap loaders = new HashMap(list.size());
-	    for (i = 0; i < list.size(); i++) {
-		obj = list.get(i);
-		if (obj instanceof URLClassLoader)
-		    urlList = ((URLClassLoader) obj).getURLs();
+	    HashMap<URL, ClassLoader> loaders = new HashMap<>();
+	    for (ClassLoader loader: PluginRegistry.getPluginClassLoaders()) {
+		if (loader instanceof URLClassLoader)
+		    urlList = ((URLClassLoader) loader).getURLs();
 		else
-		    urlList = ((SearchlistClassLoader) obj).getURLs();
+		    urlList = ((SearchlistClassLoader) loader).getURLs();
 
 		if (urlList.length > 0)
-		    loaders.put(urlList[0], obj);
+		    loaders.put(urlList[0], loader);
 	    }
 
-	    /*
-	    try {
-		Field ldrfield =
-		    PluginRegistry.class.getDeclaredField("pluginLoaders");
 
-		ldrfield.setAccessible(true);
-
-		aoiloaders = (ArrayList) ldrfield.get(null);
-
-	    } catch (Exception e) {
-		System.out.println("SPManager: cannot get pluginsLoaders: " +
-				   e);
-		aoiloaders = new ArrayList();
-	    }
-	     */
-
-	    URL[] urlarg = new URL[1];
 	    Class[] sig = new Class[] { URL.class };
 	    Method addUrl = null;
 
 	    try {
-		addUrl =
-		    URLClassLoader.class.getDeclaredMethod("addURL", sig);
+		addUrl = URLClassLoader.class.getDeclaredMethod("addURL", sig);
 		addUrl.setAccessible(true);
 	    } catch (Exception e) {
 		System.out.println("Error getting addURL method: " + e);
@@ -127,10 +106,10 @@ public class SPManagerPlugin implements Plugin
 	    // get details of all local plugins
 	    SPMObjectInfo info;
 	    StringBuffer errs = null;
-	    Class plugType;
+
 	    File files[], urlfile;
 	    URL url;
-	    Map.Entry entry;
+	    
 	    String key[], value;
 	    File plugdir = new File(PLUGIN_DIRECTORY);
 	    if (plugdir.exists()) {
@@ -141,8 +120,7 @@ public class SPManagerPlugin implements Plugin
 		    if (info.invalid) {
 			if (errs == null) errs = new StringBuffer(1024);
 			if (errs.length() > 0) errs.append('\n');
-			errs.append(SPMTranslate.text("pluginFailure",
-				info.getName()));
+			errs.append(SPMTranslate.text("pluginFailure", info.getName()));
 		    }
 
 		    if (info.actions != null && info.actions.size() > 0) {
@@ -186,14 +164,10 @@ public class SPManagerPlugin implements Plugin
 			}
 
 			// ok, now perform the actions
-			for (Iterator iter = info.actions.entrySet().iterator();
-			iter.hasNext(); ) {
 
-			    entry = (Map.Entry) iter.next();
-			    key = entry.getKey().toString().split(":");
-
-			    //System.out.println("SPM: action=" +
-			    //	       entry.getValue().toString());
+			for (Map.Entry<String, String> entry: info.actions.entrySet())
+                        {
+			    key = entry.getKey().split(":");
 
 			    try {
 				if (key[0].startsWith("/"))
@@ -209,25 +183,8 @@ public class SPManagerPlugin implements Plugin
 
 			    System.out.println("SPM: adding path: " + url);
 
-			    value = entry.getValue().toString();
+			    value = entry.getValue();
 
-			    /*
-			    if ("merge".equalsIgnoreCase(value)) {
-				if (searchldr != null)
-				    searchldr.merge(url);
-				else if (addUrl != null) {
-				    try {
-					urlarg[0] = url;
-					addUrl.invoke(urlldr, urlarg);
-				    } catch (Exception e) {
-					System.out.println("Error invoking: "
-							   + e);
-				    }
-				}
-				else System.out.println("Could not merge path"
-							+ url);				    
-			    }
-			     */
 			    if ("classpath".equalsIgnoreCase(value)) {
 				if (searchldr != null)
 				    searchldr.add(url);
@@ -237,20 +194,17 @@ public class SPManagerPlugin implements Plugin
 					//addUrl.invoke(urlldr, urlarg);        // non-varargs call (1.4)
 					addUrl.invoke(urlldr, url);		// varargs call (1.5)
 				    } catch (Exception e) {
-					System.out.println("Error invoking: "
-						+ e);
+					System.out.println("Error invoking: " + e);
 				    }
 				}
-				else System.out.println("Could not add path" +
-					url);				    
+				else System.out.println("Could not add path" + url);
 			    }
 			    else if ("import".equalsIgnoreCase(value)) {
 				ldr = (ClassLoader) loaders.get(url);
 				
 				if (key.length == 1) {
 				    if (obj != null) searchldr.add(ldr);
-				    else System.out.println("SPM: could not find"
-					    + " loader for: " + url);
+				    else System.out.println("SPM: could not find loader for: " + url);
 				}
 				/*
 				 * NTJ - disabled. No longer needed, and requires a new method in SearchlistClassLoader
@@ -293,8 +247,7 @@ public class SPManagerPlugin implements Plugin
 		    .showMessageDialog(null);
 		}
 	    }
-	    else System.out.println("SPManager: could not find plugin dir: " +
-		    PLUGIN_DIRECTORY);
+	    else System.out.println("SPManager: could not find plugin dir: " + PLUGIN_DIRECTORY);
 
 
 	    init();
@@ -307,8 +260,7 @@ public class SPManagerPlugin implements Plugin
 	    //BMenu toolsMenu = menuBar.getChild( 3 );
 	    BMenu toolsMenu = layout.getToolsMenu();
 	    toolsMenu.addSeparator();
-	    BMenuItem menuItem =
-		SPMTranslate.bMenuItem( "SPManager", this, "doMenu" );
+	    BMenuItem menuItem = SPMTranslate.bMenuItem("SPManager", CommandEvent.class, this, "doMenu" );
 
 	    toolsMenu.add( menuItem );
 	}
@@ -475,8 +427,7 @@ public class SPManagerPlugin implements Plugin
 	}
     }
 
-    public void registerResource(String type, String id, ClassLoader loader,
-	    String baseName, Locale locale)
+    public void registerResource(String type, String id, ClassLoader loader, String baseName, Locale locale)
     {
 	String suffix = "";
 
@@ -495,8 +446,7 @@ public class SPManagerPlugin implements Plugin
 		url = loader.getResource(baseName + suffix + ".properties");
 
 		if (url != null) {
-		    PluginRegistry.registerResource(type, id, loader,
-			    url.getPath(), locale);
+		    PluginRegistry.registerResource(type, id, loader, url.getPath(), locale);
 		    break;
 		}
 	    } catch (Exception e) {}
@@ -518,7 +468,6 @@ public class SPManagerPlugin implements Plugin
     {
 	final BFrame context = frame;
 	final URL url = from;
-	final URL toUrl = to;
 
 	final StatusDialog status = new StatusDialog(context) {
 	    SPMObjectInfo info;
@@ -530,6 +479,7 @@ public class SPManagerPlugin implements Plugin
 	    BTextField savePath;
 	    Thread worker;
 
+            @Override
 	    public void setVisible(boolean vis)
 	    {
 		if (!vis) {
@@ -591,6 +541,7 @@ public class SPManagerPlugin implements Plugin
 		    System.out.println("DOWNLOAD: creating ObjectInfo..."+
 			    url.toString());
 		    worker = new Thread() {
+                        @Override
 			public void run()
 			{
 			    info = new SPMObjectInfo(url);
@@ -695,14 +646,14 @@ public class SPManagerPlugin implements Plugin
 
 		}
 		else if (cmd.equals("install")) {
-		    System.out.println("DOWNLOAD: downloading " +
-			    url.toString());
+		    System.out.println("DOWNLOAD: downloading " + url.toString());
 
 		    setText(SPMTranslate.text("downloading", info.getName()));
 		    pack();
 
 		    final ArrayList errs = new ArrayList();
 		    worker = new Thread() {
+                        @Override
 			public void run()
 			{
 			    long total = info.getTotalLength();
@@ -898,6 +849,7 @@ public class SPManagerPlugin implements Plugin
 
 	// create Frame with overridden 'close' method
 	spmFrame = new SPManagerFrame() {
+            @Override
 	    protected void hideSPManager()
 	    {
 		setVisible(false);

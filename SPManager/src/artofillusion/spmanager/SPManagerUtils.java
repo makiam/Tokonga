@@ -3,6 +3,8 @@
  */
 /*
  *  Copyright (C) 2003 by Francois Guillet
+ *  Changes copyright (C) 2019 by Maksim Khramov
+
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -12,14 +14,10 @@
  */
 package artofillusion.spmanager;
 
-import java.awt.*;
-import javax.swing.*;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.*;
-import java.io.*;
-import java.util.zip.*;
 import artofillusion.*;
 import artofillusion.ui.*;
 
@@ -31,85 +29,18 @@ import artofillusion.ui.*;
  */
 public class SPManagerUtils
 {
-    public static DocumentBuilderFactory factory;
     public static DocumentBuilder builder;
 
     static {
-        factory = DocumentBuilderFactory.newInstance();
+
         try
         {
-            builder = factory.newDocumentBuilder();
+            builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         }
         catch (ParserConfigurationException ex)
         {
             ex.printStackTrace();
         }
-    }
-
-    /**
-     *  Description of the Method
-     *
-     *@param  intArray  Description of the Parameter
-     *@return           Description of the Return Value
-     */
-    public static int[] increaseIntArray( int[] intArray )
-    {
-        if ( intArray == null )
-        {
-            int[] tmpArray = new int[1];
-            return tmpArray;
-        }
-        else
-        {
-            int[] tmpArray = new int[intArray.length + 1];
-            System.arraycopy( intArray, 0, tmpArray, 0, intArray.length );
-            return tmpArray;
-        }
-    }
-
-
-    /**
-     *  Description of the Method
-     *
-     *@param  intArray  Description of the Parameter
-     *@param  element   Description of the Parameter
-     *@return           Description of the Return Value
-     */
-    public static int[] deleteIntArrayElement( int[] intArray, int element )
-    {
-        if ( intArray == null )
-            return null;
-        else if ( intArray.length == 1 )
-            return null;
-        else
-        {
-            int[] tmpArray = new int[intArray.length - 1];
-            if ( element > 0 )
-                System.arraycopy( intArray, 0, tmpArray, 0, element );
-            if ( element < intArray.length - 1 )
-                System.arraycopy( intArray, element + 1, tmpArray, element, tmpArray.length - element );
-            int i;
-            return tmpArray;
-        }
-    }
-
-
-    /**
-     *  Sets the dialogLocation attribute of the SPManagerUtils class
-     *
-     *@param  frame        The new dialogLocation value
-     *@param  parentFrame  The new dialogLocation value
-     */
-    public static void setDialogLocation( JFrame frame, JFrame parentFrame )
-    {
-        Point location = new Point();
-        location.x = parentFrame.getLocation().x + parentFrame.getWidth() / 2 - frame.getWidth() / 2;
-        location.y = parentFrame.getLocation().y + parentFrame.getHeight() / 2 - frame.getHeight() / 2;
-        if ( location.x < 0 )
-            location.x = 0;
-        if ( location.y < 0 )
-            location.y = 0;
-        frame.setLocation( location );
     }
 
 
@@ -118,117 +49,19 @@ public class SPManagerUtils
      */
     public static void updateAllAoIWindows()
     {
-	try {
-	    EditingWindow allWindows[] = ArtOfIllusion.getWindows();
-	    for ( int i = 0; i < allWindows.length; i++ )
-		if ( allWindows[i] instanceof LayoutWindow )
-		    ( (LayoutWindow) allWindows[i] ).rebuildScriptsMenu();
+	try
+        {
+            for (EditingWindow window : ArtOfIllusion.getWindows()) {
+                if (window instanceof LayoutWindow) {
+                    ((LayoutWindow) window).rebuildScriptsMenu();
+                }
+            }
 	} catch (Throwable t) {}
     }
 
 
-    /**
-     *  Gets the jarFileContent attribute of the SPManagerUtils class
-     *
-     *@param  filename  Description of the Parameter
-     *@return           The jarFileContent value
-     */
-    public static byte[] getJarFileContent( String filename )
-    {
-        File dir = new File( SPManagerPlugin.PLUGIN_DIRECTORY );
-        if ( dir.exists() )
-        {
-            String[] files = dir.list();
-            for ( int i = 0; i < files.length; i++ )
-                if ( files[i].startsWith( "SPManager" ) )
-                {
-                    ZipFile zf = null;
-                    try
-                    {
-                        zf = new ZipFile( new File( dir, files[i] ) );
-                    }
-                    catch ( IOException ex )
-                    {
-                        continue;
-                        // Not a zip file.
-                    }
-                    if ( zf != null )
-                    {
-                        ZipEntry ze = zf.getEntry( filename );
-                        if ( ze != null )
-                        {
-                            int size = (int) ze.getSize();
-                            byte data[] = new byte[size];
-                            try
-                            {
-                                BufferedInputStream in = new BufferedInputStream( zf.getInputStream( ze ) );
-                                for ( int j = 0; j < size; j++ )
-                                    data[j] = (byte) in.read();
-                                in.close();
-                            }
-                            catch ( IOException ex )
-                            {
-                                System.out.println( "IOException in getJarFileContent" );
-                            }
-                            return data;
-                        }
-                        else
-                            System.out.println( "File " + filename + " not found within zip file" );
-                    }
-                }
-        }
-        else
-        {
-            System.out.println( "Dir does not exist" );
-        }
-        return null;
-    }
 
 
-    /**
-     *  Gets the jarFileContent attribute of the SPManagerUtils class
-     *
-     *@param  jarPath   Description of the Parameter
-     *@param  filename  Description of the Parameter
-     *@return           The jarFileContent value
-     */
-    public static byte[] getJarFileContent( String jarPath, String filename )
-    {
-        ZipFile zf = null;
-        try
-        {
-            zf = new ZipFile( new File( jarPath ) );
-        }
-        catch ( IOException ex )
-        {
-            return null;
-            // Not a zip file.
-        }
-        if ( zf != null )
-        {
-            ZipEntry ze = zf.getEntry( filename );
-            if ( ze != null )
-            {
-                int size = (int) ze.getSize();
-                byte data[] = new byte[size];
-                try
-                {
-                    BufferedInputStream in = new BufferedInputStream( zf.getInputStream( ze ) );
-                    for ( int j = 0; j < size; j++ )
-                        data[j] = (byte) in.read();
-                    in.close();
-                }
-                catch ( IOException ex )
-                {
-                    System.out.println( "IOException in getJarFileContent" );
-                }
-                return data;
-            }
-            else
-                System.out.println( "File " + filename + " not found within zip file" );
-        }
-        return null;
-    }
 
     /**
      *  Gets a named node from a node list. Returns null if the node does not
@@ -238,8 +71,7 @@ public class SPManagerUtils
      *@param  nodeName  The node name
      *@return           The node named nodeName
      */
-    public static Node getNodeFromNodeList( NodeList nl, String nodeName,
-														  int index )
+    public static Node getNodeFromNodeList( NodeList nl, String nodeName, int index )
     {
         for ( int i = 0; i < nl.getLength(); ++i )
         {
@@ -278,8 +110,7 @@ public class SPManagerUtils
      *@param  node  The node
      *@return       The attribute value
      */
-    public static String getNodeValue( Node node, String name,
-													String defaultVal, int index)
+    public static String getNodeValue( Node node, String name, String defaultVal, int index)
     {
         NodeList nl = node.getChildNodes();
         if ( nl.getLength() == 0 ) return defaultVal;

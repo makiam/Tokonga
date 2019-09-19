@@ -1,5 +1,7 @@
 /*
  *  Copyright 2004 Francois Guillet
+ *  Changes copyright (C) 2019 by Maksim Khramov
+
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -42,7 +44,7 @@ public class StatusDialog extends BDialog
         progressBar.setShowProgressText( true );
         setContent( cc );
         pack();
-        centerAndSizeWindow();
+        UIUtilities.centerDialog(this, (WindowWidget) getParent());
         setVisible( true );
         layoutChildren();
         addEventLink( WindowClosingEvent.class, this, "doClose" );
@@ -102,35 +104,10 @@ public class StatusDialog extends BDialog
      *
      */
     public void setIdle(boolean flag)
-    { progressBar.setIndeterminate(flag); }
-
-    /**
-     *  Description of the Method
-     */
-    private void centerAndSizeWindow()
-    {
-	UIUtilities.centerDialog(this, (WindowWidget) getParent());
-
-	/*
-        Dimension d1 = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension d2 = getComponent().getSize();
-        int x;
-        int y;
-
-        d2.width = d2.width * 2;
-        x = ( d1.width - d2.width ) / 2;
-        y = ( d1.height - d2.height ) / 2;
-        if ( x < 0 )
-        {
-            x = 0;
-        }
-        if ( y < 0 )
-        {
-            y = 0;
-        }
-        setBounds( new Rectangle( x, y, d2.width, d2.height + 2 ) );
-	*/
+    { 
+        progressBar.setIndeterminate(flag);
     }
+
 
 
     /**

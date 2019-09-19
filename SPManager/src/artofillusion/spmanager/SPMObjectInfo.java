@@ -1,5 +1,7 @@
 /*
  *  Copyright 2004 Francois Guillet
+ *  Changes copyright (C) 2019 by Maksim Khramov
+
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -63,19 +65,19 @@ public class SPMObjectInfo
 	private String description = null;
 	private String comments = null;
 
-	private HashMap externals;
-	private Vector changeLog;
-	private Vector details;
+	private Map<String, String> externals;
+	private List<String> changeLog;
+	private List<String> details;
 
-	protected HashMap exports;
-	public HashMap actions;
+	protected Map<String, String> exports;
+	public Map<String, String> actions;
 
 	/**
 	 *  Script file name
 	 */
 	public String fileName = "**Uninitialised**";
-	static String textBoxString = "";
-	/**
+
+        /**
 	 *  URL of the script
 	 */
 	public URL httpFile;
@@ -108,7 +110,6 @@ public class SPMObjectInfo
 	boolean selected = false;
 	boolean deletable = true;
 	private boolean remote;
-	private boolean filesetRecord;
 
 	/**
 	 *  Constructor for the SPMObjectInfo object
@@ -124,20 +125,20 @@ public class SPMObjectInfo
 	 */
 	public SPMObjectInfo( String fn )
 	{
-		fileName = fn;
-		separatorChar = File.separatorChar;
-		getName();
-		remote = false;
-		if ( fn.endsWith( ".bsh" ) )
-		{
-			loadXmlInfoFromScript();
-		}
-		else if ( fn.endsWith( ".jar" ) )
-		{
-			loadXmlInfoFromJarFile();
-		}
-		File f = new File( fn );
-		length = f.length();
+            fileName = fn;
+            separatorChar = File.separatorChar;
+            getName();
+            remote = false;
+            if ( fn.endsWith( ".bsh" ) )
+            {
+                    loadXmlInfoFromScript();
+            }
+            else if ( fn.endsWith( ".jar" ) )
+            {
+                    loadXmlInfoFromJarFile();
+            }
+            File f = new File( fn );
+            length = f.length();
 		//length = 0;
 
 	}
@@ -194,19 +195,19 @@ public class SPMObjectInfo
 	 */
 	public String getName()
 	{
-		if ( name.equals( "" ) )
-		{
-			int cut = fileName.lastIndexOf( separatorChar );
-			if (cut >= 0 && cut < fileName.length()-1)
-				name = fileName.substring(cut+1);
-			else
-				name = fileName;
+            if ( name.equals( "" ) )
+            {
+                    int cut = fileName.lastIndexOf( separatorChar );
+                    if (cut >= 0 && cut < fileName.length()-1)
+                            name = fileName.substring(cut+1);
+                    else
+                            name = fileName;
 
-			cut = name.lastIndexOf('.');
-			if (cut >= 0) name = name.substring(0, cut);
-		}
+                    cut = name.lastIndexOf('.');
+                    if (cut >= 0) name = name.substring(0, cut);
+            }
 
-		return name;
+            return name;
 	}
 
 
@@ -251,9 +252,7 @@ public class SPMObjectInfo
 		{
 			kbsize = 1;
 		}
-		return ( SPMTranslate.text( "fullname", new Object[]{
-				getName(), author, version + betaString, date,
-				String.valueOf( kbsize )} ) + addFiles );
+		return SPMTranslate.text( "fullname", getName(), author, version + betaString, date, String.valueOf( kbsize )) + addFiles;
 	}
 
 
@@ -262,9 +261,10 @@ public class SPMObjectInfo
 	 *
 	 *@return    Description of the Return Value
 	 */
+        @Override
 	public String toString()
 	{
-		return getName();
+            return getName();
 	}
 
 
@@ -276,7 +276,7 @@ public class SPMObjectInfo
 	 */
 	private String getXmlHeaderAsString( BufferedReader reader )
 	{
-		//Vector c = new Vector();
+
 		char c1 = ' ';
 		char c2 = ' ';
 		//String s = "";
@@ -289,7 +289,7 @@ public class SPMObjectInfo
 		}
 		catch ( IOException e )
 		{
-			e.printStackTrace();
+                    e.printStackTrace();
 		}
 		while ( ( ( c1 != '/' ) || ( c2 != '*' ) ) && ( status != -1 ) )
 		{
@@ -301,23 +301,23 @@ public class SPMObjectInfo
 			}
 			catch ( IOException e )
 			{
-				e.printStackTrace();
+                            e.printStackTrace();
 			}
 		}
 		while ( c1 != '<'  )
 		{
 			try
 			{
-				status = reader.read();
-				if ( status == -1 )
-				{
-					return null;
-				}
-				c1 = (char) status;
+                            status = reader.read();
+                            if ( status == -1 )
+                            {
+                                    return null;
+                            }
+                            c1 = (char) status;
 			}
 			catch ( IOException e )
 			{
-				e.printStackTrace();
+                            e.printStackTrace();
 			}
 		}
 		//s = s + c1;
@@ -361,35 +361,35 @@ public class SPMObjectInfo
 		String s = null;
 		try
 		{
-			fileReader = new BufferedReader( new FileReader( fileName ) );
-			s = getXmlHeaderAsString( fileReader );
+                    fileReader = new BufferedReader( new FileReader( fileName ) );
+                    s = getXmlHeaderAsString( fileReader );
 		}
 		catch ( FileNotFoundException e )
 		{
-			e.printStackTrace();
-			return;
+                    e.printStackTrace();
+                    return;
 		}
 		try
 		{
-			fileReader.close();
+                    fileReader.close();
 		}
 		catch ( IOException e )
 		{
-			e.printStackTrace();
-			return;
+                    e.printStackTrace();
+                    return;
 		}
 
 		if ( s == null )
 		{
-			return;
+                    return;
 		}
 		try
 		{
-			byte[] xmlByteArray = s.getBytes();
-			BufferedInputStream xmlStream = new BufferedInputStream( new ByteArrayInputStream( xmlByteArray ) );
-			xmlDescription = SPManagerUtils.builder.parse( xmlStream );
-			readInfoFromXmlHeader( xmlDescription );
-			xmlStream.close();
+                    byte[] xmlByteArray = s.getBytes();
+                    BufferedInputStream xmlStream = new BufferedInputStream( new ByteArrayInputStream( xmlByteArray ) );
+                    xmlDescription = SPManagerUtils.builder.parse( xmlStream );
+                    readInfoFromXmlHeader( xmlDescription );
+                    xmlStream.close();
 		}
 		catch ( Exception e )
 		{
@@ -403,38 +403,6 @@ public class SPMObjectInfo
 	 */
 	private void loadXmlInfoFromJarFile()
 	{
-		/*
-		 * NTJ: AOI 2.5. Default XML file name changed to 'extensions.xml'
-		 * For compatibility we try the new name first, then the old...
-		 */
-		//String fn = getName() + ".xml";
-
-		/*
-		 *  byte[] xmlByteArray = SPManagerUtils.getJarFileContent( fileName, fn );
-		 *  if ( xmlByteArray != null )
-		 *  {
-		 *  try
-		 *  {
-		 *  ByteArrayInputStream xmlStream = new ByteArrayInputStream( xmlByteArray );
-		 *  BufferedReader xmlReader = new BufferedReader( new InputStreamReader( xmlStream ) );
-		 *  XmlParser parser = new XmlParser( xmlReader );
-		 *  try
-		 *  {
-		 *  traverse( parser, "" );
-		 *  }
-		 *  catch ( Exception exc )
-		 *  {
-		 *  System.out.println( "File " + fileName + " does not have a valid XML optional header." );
-		 *  }
-		 *  xmlReader.close();
-		 *  xmlStream.close();
-		 *  }
-		 *  catch ( Exception e )
-		 *  {
-		 *  e.printStackTrace();
-		 *  }
-		 *  }
-		 */
 
 		String fn = "extensions.xml";
 
@@ -449,9 +417,9 @@ public class SPMObjectInfo
 
 			// try new name first
 			try {
-				is = url.openStream();
+                            is = url.openStream();
 			} catch (Exception e) {
-				is = null;
+                            is = null;
 			}
 
 			// ok... try old name...
@@ -462,19 +430,19 @@ public class SPMObjectInfo
 			}
 
 			try {
-				//InputStreamReader r;
-				//BufferedReader xmlReader = new BufferedReader( new InputStreamReader( (InputStream) obj ) );
-				//BufferedInputStream xmlStream = new BufferedInputStream( (InputStream) obj );
-				BufferedInputStream xmlStream = new BufferedInputStream(is);
-				xmlDescription = SPManagerUtils.builder.parse( xmlStream );
-				readInfoFromXmlHeader( xmlDescription );
-				xmlStream.close();
-				//r.close();
-				//( (InputStream) obj ).close();
+                            //InputStreamReader r;
+                            //BufferedReader xmlReader = new BufferedReader( new InputStreamReader( (InputStream) obj ) );
+                            //BufferedInputStream xmlStream = new BufferedInputStream( (InputStream) obj );
+                            BufferedInputStream xmlStream = new BufferedInputStream(is);
+                            xmlDescription = SPManagerUtils.builder.parse( xmlStream );
+                            readInfoFromXmlHeader( xmlDescription );
+                            xmlStream.close();
+                            //r.close();
+                            //( (InputStream) obj ).close();
 			}
 			catch ( Throwable t ) {
-				System.out.println("Reading: " + url);
-				t.printStackTrace();
+                            System.out.println("Reading: " + url);
+                            t.printStackTrace();
 			}
 			//}
 		}
@@ -740,7 +708,6 @@ public class SPMObjectInfo
 	private long getRemoteAddFileSize( String addFileName )
 	{
 		int i = fileName.lastIndexOf( separatorChar );
-		long fileSize = 0;
 		String name = fileName.substring( 0, i + 1 );
 
 		return getRemoteFileSize( name + addFileName );
@@ -778,25 +745,25 @@ public class SPMObjectInfo
 	{
 		int i, j, filtType;
 		String val, filtName, filtVal;
-		Iterator iter;
-		Map.Entry entry;
+		
 		SPMParameters params = SPManagerFrame.getParameters();
 
-		if (changeLog == null) {
-			changeLog = new Vector(16);
-			details = new Vector(16);
-			externals = new HashMap(16);
-			destination = new ArrayList(16);
-			actions = new HashMap(16);
-			exports = new HashMap(32);
+		if (changeLog == null)
+                {
+                    changeLog = new ArrayList<>(16);
+                    details = new ArrayList<>(16);
+                    externals = new HashMap<>(16);
+                    destination = new ArrayList(16);
+                    actions = new HashMap<>(16);
+                    exports = new HashMap(32);
 		}
 		else {
-			changeLog.clear();
-			details.clear();
-			externals.clear();
-			destination.clear();
-			actions.clear();
-			exports.clear();
+                    changeLog.clear();
+                    details.clear();
+                    externals.clear();
+                    destination.clear();
+                    actions.clear();
+                    exports.clear();
 		}
 
 		flags = "";
@@ -846,9 +813,8 @@ public class SPMObjectInfo
 		String extName, extType, extAssoc, extAction;
 
 		// NTJ: infer depedencies from other tags
-		for (i = 0;
-		(node = SPManagerUtils.getNodeFromNodeList(nl, "import", i)) != null;
-		i++) {
+		for (i = 0; (node = SPManagerUtils.getNodeFromNodeList(nl, "import", i)) != null; i++)
+                {
 
 			extName = SPManagerUtils.getAttribute(node, "name");
 
@@ -858,10 +824,8 @@ public class SPMObjectInfo
 		}
 
 		// NTJ: get explicit dependencies
-		for (i = 0;
-		(node = SPManagerUtils.getNodeFromNodeList(nl, "external", i))
-		!= null;
-		i++) {
+		for (i = 0; (node = SPManagerUtils.getNodeFromNodeList(nl, "external", i)) != null; i++)
+                {
 
 			extName = SPManagerUtils.getAttribute(node, "name");
 
@@ -885,10 +849,8 @@ public class SPMObjectInfo
 		String plugClass, methName, methId, methHelp, exportList="";
 
 		// get details of plugin classes
-		for (i = 0;
-		(node = SPManagerUtils.getNodeFromNodeList(nl, "plugin", i))
-		!= null;
-		i++) {
+		for (i = 0; (node = SPManagerUtils.getNodeFromNodeList(nl, "plugin", i)) != null; i++)
+                {
 
 			plugClass = SPManagerUtils.getAttribute(node, "class");
 
@@ -927,11 +889,10 @@ public class SPMObjectInfo
 
 		// create the display lists
 		String extList = "";
-		iter = externals.entrySet().iterator();
-		while (iter.hasNext()) {
-			extList += (extList.length() > 0 ? "\n" : "") +
-			((Map.Entry) iter.next()).getValue().toString();
-		}
+                for(String ext: externals.values())
+                {
+                    extList += (extList.length() > 0 ? "\n" : "") + ext;
+                }
 
 		setLog(SPMTranslate.text("flags"), flags, 1);
 		setLog(SPMTranslate.text("otherFiles"), extList, 2);
@@ -1046,44 +1007,44 @@ public class SPMObjectInfo
 		if (fileSet != null)
 		{
 			NodeList filesList = fileSet.getChildNodes();
-			Vector fileNames = new Vector();
+			List<String> fileNames = new ArrayList<>();
 			for (i = 0; i < filesList.getLength(); ++i )
 			{
-				if( ! "file".equals( filesList.item(i).getNodeName() ) )
-					continue;
+                            if( ! "file".equals( filesList.item(i).getNodeName() ) )
+                                    continue;
 
-				// NTJ: get attributes
-				todir = SPManagerUtils.getAttribute(filesList.item(i),"todir");
-				src = SPManagerUtils.getAttribute(filesList.item(i),"src");
-				NodeList tmp = filesList.item(i).getChildNodes();
-				if (tmp.getLength() > 0) {
-					fileNames.add( (src != null && src.length() > 0 ? src : tmp.item(0).getNodeValue()) );
+                            // NTJ: get attributes
+                            todir = SPManagerUtils.getAttribute(filesList.item(i),"todir");
+                            src = SPManagerUtils.getAttribute(filesList.item(i),"src");
+                            NodeList tmp = filesList.item(i).getChildNodes();
+                            if (tmp.getLength() > 0) {
+                                    fileNames.add( (src != null && src.length() > 0 ? src : tmp.item(0).getNodeValue()) );
 
-					destination.add( (todir != null ? todir+separatorChar : "") + tmp.item(0).getNodeValue());
+                                    destination.add( (todir != null ? todir+separatorChar : "") + tmp.item(0).getNodeValue());
 
-					System.out.println("file: " + tmp.item(0).getNodeValue());
-				}
+                                    System.out.println("file: " + tmp.item(0).getNodeValue());
+                            }
 			}
 			if (fileNames.size() > 0)
 			{
-				files = new String[ fileNames.size() ];
-				for (i = 0; i < files.length; ++i )
-					files[i] = (String) fileNames.elementAt(i);
-				httpFiles = new String[files.length];
-				fileSizes = new long[files.length];
-				for (i = 0; i < files.length; ++i )
-				{
-					files[i] = files[i].trim();
-					httpFiles[i] = files[i].replaceAll( " ", "%20" );
-					if ( remote )
-					{
-						fileSizes[i] = getRemoteAddFileSize( httpFiles[i] );
-					}
-					else
-					{
-						fileSizes[i] = getAddFileSize( files[i] );
-					}
-				}
+                            files = new String[ fileNames.size() ];
+                            for (i = 0; i < files.length; ++i )
+                                    files[i] = fileNames.get(i);
+                            httpFiles = new String[files.length];
+                            fileSizes = new long[files.length];
+                            for (i = 0; i < files.length; ++i )
+                            {
+                                    files[i] = files[i].trim();
+                                    httpFiles[i] = files[i].replaceAll( " ", "%20" );
+                                    if ( remote )
+                                    {
+                                            fileSizes[i] = getRemoteAddFileSize( httpFiles[i] );
+                                    }
+                                    else
+                                    {
+                                            fileSizes[i] = getAddFileSize( files[i] );
+                                    }
+                            }
 			}
 		}
 	}
@@ -1205,7 +1166,7 @@ public class SPMObjectInfo
 	 */
 	public String getDescription()
 	{
-		return description;
+            return description;
 	}
 
 
@@ -1223,14 +1184,16 @@ public class SPMObjectInfo
 	 *  get the list of external dependencies.
 	 */
 	public Collection getExternals()
-	{ return (externals != null ? externals.values() : null); }
+	{
+            return externals == null ? null : externals.values();
+        }
 
 	/**
 	 *  get the change log
 	 */
-	public Vector getChangeLog()
+	public List<String> getChangeLog()
 	{
-		return changeLog;
+            return changeLog;
 	}
 
 	/**
@@ -1238,9 +1201,9 @@ public class SPMObjectInfo
 	 *
 	 *@return    The details vector
 	 */
-	public Vector getDetails()
+	public List<String> getDetails()
 	{
-		return details;
+            return details;
 	}
 
 	/**
@@ -1291,14 +1254,14 @@ public class SPMObjectInfo
 	 */
 	public void setLog( String name, String text, int index )
 	{
-		if (index >= changeLog.size())
-			changeLog.add(name);
-		else changeLog.set(index, name);
+            if (index >= changeLog.size())
+                changeLog.add(name);
+            else changeLog.set(index, name);
 
-		if (text.startsWith("\n")) text = text.substring(1);
-		if (index >= details.size())
-			details.add(text);
-		else details.set(index, text);
+            if (text.startsWith("\n")) text = text.substring(1);
+            if (index >= details.size())
+                details.add(text);
+            else details.set(index, text);
 	}
 
 	/**

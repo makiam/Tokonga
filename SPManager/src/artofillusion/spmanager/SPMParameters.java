@@ -1,6 +1,8 @@
 
 /*
  *  Copyright 2004 Francois Guillet
+ *  Changes copyright (C) 2019 by Maksim Khramov
+
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -13,11 +15,8 @@ package artofillusion.spmanager;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.regex.*;
-import java.awt.*;
 import javax.swing.*;
 import buoy.widget.*;
-import buoy.event.*;
 
 import artofillusion.ui.*;
 
@@ -29,9 +28,8 @@ import artofillusion.ui.*;
  */
 public class SPMParameters
 {
-    private static Vector repositories;
+    private static List<String> repositories;
     private static int current;
-    private static String repoList;
     private static HashMap filters;
     private static boolean useProxy;
     private static String proxyHost;
@@ -65,7 +63,7 @@ public class SPMParameters
      */
     public SPMParameters()
     {
-        repositories = new Vector();
+        repositories = new ArrayList<>();
 
         repositories.add( "http://aoisp.sourceforge.net/AoIRepository/" );
         //hack
@@ -102,13 +100,12 @@ public class SPMParameters
 	    savePropertiesFile();
             return;
         }
-        try
+        try(InputStream in = new BufferedInputStream( new FileInputStream( f ) ))
         {
-            InputStream in = new BufferedInputStream( new FileInputStream( f ) );
+
             Properties props = new Properties();
             props.load( in );
             parseProperties( props );
-            in.close();
         }
         catch ( IOException ex )
         {
@@ -130,6 +127,7 @@ public class SPMParameters
             (
                 new Thread()
                 {
+                    @Override
                     public void run()
                     {
                         getThreadedRepositoriesList( true );
@@ -141,6 +139,7 @@ public class SPMParameters
             (
                 new Thread()
                 {
+                    @Override
                     public void run()
                     {
                         getThreadedRepositoriesList( false );
@@ -164,6 +163,7 @@ public class SPMParameters
 	dlg.setEnabled(true);
 
 	(new Thread() {
+                @Override
 		public void run()
 		{
 		    try {
@@ -228,14 +228,14 @@ public class SPMParameters
 
             String repoName;
 	    boolean modified = true;
-	    String currentString = (String) repositories.elementAt( current );
+	    String currentString = repositories.get( current );
 
 	    System.out.println("current repo (" + current + "): " +
 			       currentString);
 
 	    int previous = current;
 	    current = 0;
-	    Vector newRepositories = new Vector();
+	    List<String> newRepositories = new ArrayList<>();
 	    while (true) {
 		repoName = rd.readLine();
 		if (repoName == null || repoName.length() == 0) break;
@@ -255,7 +255,7 @@ public class SPMParameters
 
 		System.out.println("repoName: " + repoName + "<<");
 
-		newRepositories.addElement( repoName );
+		newRepositories.add( repoName );
 		if ( repoName.equals( currentString ) ) {
 		    current = rd.getLineNumber() - 1;
 
@@ -271,9 +271,10 @@ public class SPMParameters
             if ( modified )
             {
                 SwingUtilities.invokeLater(
-					   //new Thread()
-					   new Runnable()
+                    //new Thread()
+                    new Runnable()
                     {
+                        @Override
                         public void run()
                         {
                             SPManagerFrame.getInstance().updatePanes();
@@ -286,7 +287,7 @@ public class SPMParameters
         {
             if ( !( ( e instanceof UnknownHostException ) || ( e instanceof SocketException ) ) )
                 e.printStackTrace();
-            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "unknownRepositoriesHost", new String[]{repListURL.toString()} ), -1 );
+            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "unknownRepositoriesHost", repListURL.toString() ), -1 );
             //live on saved repositories.
             //System.out.println( "Remote repository list : Not connected. Try later" );
         }
@@ -312,6 +313,7 @@ public class SPMParameters
 					   //new Thread()
 					   new Runnable()
                     {
+                        @Override
                         public void run()
                         {
                             SPManagerFrame.getInstance().updatePanes();
@@ -330,12 +332,12 @@ public class SPMParameters
     {
 
         File f = new File( System.getProperty( "user.home" ), ".spmanagerprefs" );
-        try
+       
+        try(OutputStream out = new BufferedOutputStream( new FileOutputStream( f ) ))
         {
-            OutputStream out = new BufferedOutputStream( new FileOutputStream( f ) );
             Properties props = newProperties();
             props.store( out, "Scripts & Plugins Manager Preferences File" );
-            out.close();
+
         }
         catch ( IOException ex )
         {
@@ -395,19 +397,15 @@ public class SPMParameters
         //current = 0;
         //repositories.add( "http://localhost/AoIRepository/" );
 
-	Iterator iter = p.entrySet().iterator();
-	Map.Entry entry;
-	while (iter.hasNext()) {
-	    entry = (Map.Entry) iter.next();
-	    s = (String) entry.getKey();
-	    if (s.startsWith("FILTER_")) {
-		filters.put(s.substring("FILTER_".length()),
-			   (String) entry.getValue());
-	    }
-	}
+        for (Map.Entry entry: p.entrySet())
+        {
+            s = (String) entry.getKey();
+            if (s.startsWith("FILTER_"))
+                filters.put(s.substring("FILTER_".length()), (String) entry.getValue());
+        }
 
 	// initialise an empty filter set
-	if (filters.size() == 0) {
+	if (filters.isEmpty()) {
 	    filters.put("beta", "mark");
 	    filters.put("earlyAccess", "confirm");
 	    filters.put("experimental", "hide");
@@ -426,14 +424,14 @@ public class SPMParameters
         s = p.getProperty( "useProxy", "false" );
         try
         {
-            useProxy = Boolean.valueOf( s ).booleanValue();
+            useProxy = Boolean.valueOf( s );
         }
         catch ( Exception e )
         {
             useProxy = false;
             System.out.println( "SPManager : Invalid use of proxy setting in properties file: useProxy=" + s);
         }
-        useCache = Boolean.valueOf( p.getProperty( "usecache", "true" )).booleanValue();
+        useCache = Boolean.valueOf( p.getProperty( "usecache", "true" ));
 
     }
 
@@ -449,7 +447,7 @@ public class SPMParameters
 
         for ( int i = 0; i < repositories.size(); ++i )
         {
-            p.setProperty( "URL_" + i, (String) repositories.elementAt( i ) );
+            p.setProperty( "URL_" + i, repositories.get( i ) );
         }
         p.setProperty( "default", String.valueOf( current ) );
 
@@ -506,7 +504,7 @@ public class SPMParameters
         String[] s = new String[repositories.size()];
         for ( int i = 0; i < repositories.size(); ++i )
         {
-            s[i] = new String( (String) repositories.elementAt( i ) );
+            s[i] = new String(repositories.get( i ) );
         }
         return s;
     }
@@ -525,7 +523,7 @@ public class SPMParameters
 	    // NTJ: DEBUG!!
 	    //if (true) return new URL("http://localhost/AoIRepository/");
 
-            url = new URL( (String) repositories.elementAt( current ) );
+            url = new URL(repositories.get( current ) );
         }
         catch ( MalformedURLException e )
         {
@@ -786,6 +784,7 @@ public class SPMParameters
          *
          *@return    The passwordAuthentication value
          */
+        @Override
         protected PasswordAuthentication getPasswordAuthentication()
         {
             // if we have no stored credentials, prompt the user now

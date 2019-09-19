@@ -1,4 +1,5 @@
 /* Copyright 2004 Francois Guillet
+ *  Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,15 +12,11 @@
 
 package artofillusion.spmanager;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.tree.*;
-import buoy.widget.*;
-import buoy.event.*;
-//import artofillusion.ModellingApp;
+
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
-import java.util.zip.*;
 
 public class LocalSPMFileSystem extends SPMFileSystem
 {   
@@ -28,6 +25,7 @@ public class LocalSPMFileSystem extends SPMFileSystem
         super();
     }
     
+    @Override
     public void initialize()
     {
         super.initialize();
@@ -59,21 +57,19 @@ public class LocalSPMFileSystem extends SPMFileSystem
         scanFiles(SPManagerPlugin.STARTUP_SCRIPT_DIRECTORY, startupInfo, ".bsh");
     }
     
-    private void scanFiles(String directory, Vector infoVector, String suffix)
+    private void scanFiles(String directory, List<SPMObjectInfo> infoList, String suffix)
     {
-        SPMObjectInfo info;
-        
-        File dir = new File(directory);
-        if (dir.exists())
-        {
-            String[] files = dir.list();
-            if (files.length > 0) Arrays.sort(files);
-            for (int i = 0; i < files.length; i++)
-                if (files[i].endsWith(suffix))
-                {   info = new SPMObjectInfo(directory+File.separatorChar+files[i]);
-                    infoVector.add(info);
-                }
-        }
+        if (Files.notExists(Paths.get(directory))) return;
+
+        String[] files = Paths.get(directory).toFile().list();
+        if (files.length > 0) Arrays.sort(files);
+
+        for (String file: files)
+            if (file.endsWith(suffix))
+            {   
+                SPMObjectInfo info = new SPMObjectInfo(directory + File.separatorChar + file);
+                infoList.add(info);
+            }
     }
 
 }
