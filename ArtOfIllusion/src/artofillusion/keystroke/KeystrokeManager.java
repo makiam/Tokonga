@@ -1,4 +1,6 @@
 /* Copyright (C) 2006-2013 by Peter Eastman
+   Changes Copyright (C) 2016 by Petri Ihalainen
+   Changes copyright (C) 2017 by Maksim Khramov
    Changes copyright (C) 2017-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
