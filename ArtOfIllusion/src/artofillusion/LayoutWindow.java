@@ -1,7 +1,5 @@
 /* Copyright (C) 1999-2015 by Peter Eastman
    Changes copyright (C) 2016-2019 by Maksim Khramov
-   Changes copyright (C) 2017 by Petri Ihalainen
-   Changes copyright (C) 2016-2017 by Maksim Khramov
    Changes copyright (C) 2017-2019 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -65,7 +63,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
   private UndoStack undoStack = new UndoStack();
   int numViewsShown, currentView;
   private ActionProcessor uiEventProcessor;
-  private boolean modified, sceneChangePending;
+  private boolean modified, sceneChangePending, objectListShown;;
   private final KeyEventPostProcessor keyEventHandler;
   private SceneChangedEvent sceneChangedEvent;
   
@@ -602,15 +600,16 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     viewMenu.add(displayMenu = Translate.menu("displayMode"));
     displayItem = new BCheckBoxMenuItem [6];
-    displayMenu.add(displayItem[0] = Translate.checkboxMenuItem("wireframeDisplay", this, "displayModeCommand", theView[0].getRenderMode() == ViewerCanvas.RENDER_WIREFRAME));
-    displayMenu.add(displayItem[1] = Translate.checkboxMenuItem("shadedDisplay", this, "displayModeCommand", theView[0].getRenderMode() == ViewerCanvas.RENDER_FLAT));
-    displayMenu.add(displayItem[2] = Translate.checkboxMenuItem("smoothDisplay", this, "displayModeCommand", theView[0].getRenderMode() == ViewerCanvas.RENDER_SMOOTH));
-    displayMenu.add(displayItem[3] = Translate.checkboxMenuItem("texturedDisplay", this, "displayModeCommand", theView[0].getRenderMode() == ViewerCanvas.RENDER_TEXTURED));
-    displayMenu.add(displayItem[4] = Translate.checkboxMenuItem("transparentDisplay", this, "displayModeCommand", theView[0].getRenderMode() == ViewerCanvas.RENDER_TEXTURED));
-    displayMenu.add(displayItem[5] = Translate.checkboxMenuItem("renderedDisplay", this, "displayModeCommand", theView[0].getRenderMode() == ViewerCanvas.RENDER_RENDERED));
+    int renderMode = theView[0].getRenderMode();
+    
+    displayMenu.add(displayItem[0] = Translate.checkboxMenuItem("wireframeDisplay", this, "setDisplayModeWireframe",  renderMode == ViewerCanvas.RENDER_WIREFRAME));
+    displayMenu.add(displayItem[1] = Translate.checkboxMenuItem("shadedDisplay", this, "setDisplayModeShaded", renderMode == ViewerCanvas.RENDER_FLAT));
+    displayMenu.add(displayItem[2] = Translate.checkboxMenuItem("smoothDisplay", this, "setDisplayModeSmooth", renderMode == ViewerCanvas.RENDER_SMOOTH));
+    displayMenu.add(displayItem[3] = Translate.checkboxMenuItem("texturedDisplay", this, "setDisplayModeTextured", renderMode == ViewerCanvas.RENDER_TEXTURED));
+    displayMenu.add(displayItem[4] = Translate.checkboxMenuItem("transparentDisplay", this, "setDisplayModeTransparent", renderMode == ViewerCanvas.RENDER_TRANSPARENT));
+    displayMenu.add(displayItem[5] = Translate.checkboxMenuItem("renderedDisplay", this, "setDisplayModeRendered", renderMode == ViewerCanvas.RENDER_RENDERED));
 
-    viewMenu.add(viewMenuItem[0] = Translate.menuItem("fourViews", this, "toggleViewsCommand"));
-    viewMenu.add(viewMenuItem[1] = Translate.menuItem("hideObjectList", this, "hideObjectsListAction"));
+    viewMenu.add(viewMenuItem[0] = Translate.menuItem("fourViews", this, "toggleViewsCommand"));    
     viewMenu.add(Translate.menuItem("grid", this, "setGridCommand"));
     viewMenu.add(viewMenuItem[2] = Translate.menuItem("showCoordinateAxes", this, "showCoordinateAxisAction"));
     viewMenu.add(viewMenuItem[3] = Translate.menuItem("showTemplate", this, "showTemplateAction"));
@@ -619,7 +618,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     viewMenu.add(viewMenuItem[4] = Translate.menuItem("fitToSelection", this, "fitToSelectionAction"));
     viewMenu.add(viewMenuItem[5] = Translate.menuItem("fitToAll", this, "fitToAllAction"));
     viewMenu.add(viewMenuItem[6] = Translate.menuItem("alignWithClosestAxis", this, "alignWithClosestAxisAction"));
-
+    viewMenu.addSeparator();
+    viewMenu.add(viewMenuItem[1] = Translate.menuItem("hideObjectList", this, "hideObjectsListAction"));
   }
 
   /** Rebuild the list of tool scripts in the Tools menu.  This should be called whenever a
@@ -729,15 +729,13 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     animationMenu.add(animationMenuItem[10] = Translate.menuItem("pathFromCurve", this, "createPathFromCurveAction"));
     animationMenu.add(animationMenuItem[11] = Translate.menuItem("bindToParent", this, "bindToParentCommand"));
     animationMenu.addSeparator();
-    animationMenu.add(animationMenuItem[12] = Translate.menuItem("showScore", this, "showScoreAction"));
-    animationMenu.add(Translate.menuItem("previewAnimation", this, "previewAnimationAction"));
-    animationMenu.addSeparator();
     animationMenu.add(Translate.menuItem("forwardFrame", this, "frameForwardAction"));
     animationMenu.add(Translate.menuItem("backFrame", this, "frameBackAction"));
     animationMenu.add(Translate.menuItem("jumpToTime", this, "jumpToTimeCommand"));
     animationMenu.addSeparator();
-    animationMenu.add(Translate.menuItem("previewAnimation", this, "actionPerformed"));
-    animationMenu.add(animationMenuItem[12] = Translate.menuItem("showScore", this, "actionPerformed"));
+    animationMenu.add(animationMenuItem[12] = Translate.menuItem("showScore", this, "showScoreAction"));
+    animationMenu.add(Translate.menuItem("previewAnimation", this, "previewAnimationAction"));
+    
   }
 
   private void createSceneMenu()
@@ -1118,7 +1116,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     addTrackMenu.setEnabled(numSelObjects > 0);
     
     
-    viewMenuItem[1].setText(Translate.text(itemTreeScroller.getBounds().width == 0 || itemTreeScroller.getBounds().height == 0 ? "menu.showObjectList" : "menu.hideObjectList"));
+    viewMenuItem[1].setText(Translate.text(!objectListShown ? "menu.showObjectList" : "menu.hideObjectList"));
     viewMenuItem[2].setText(Translate.text(view.getShowAxes() ? "menu.hideCoordinateAxes" : "menu.showCoordinateAxes"));
     viewMenuItem[3].setEnabled(view.getTemplateImage() != null); // Show template
     viewMenuItem[3].setText(Translate.text(view.getTemplateShown() ? "menu.hideTemplate" : "menu.showTemplate"));
@@ -1415,24 +1413,47 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     updateImage();
   }
 
-  private void displayModeCommand(CommandEvent ev)
+  private void setViewMode(Widget source, int mode)
   {
-    Widget source = ev.getWidget();
-    if (source == displayItem[0])
-      theView[currentView].setRenderMode(ViewerCanvas.RENDER_WIREFRAME);
-    else if (source == displayItem[1])
-      theView[currentView].setRenderMode(ViewerCanvas.RENDER_FLAT);
-    else if (source == displayItem[2])
-      theView[currentView].setRenderMode(ViewerCanvas.RENDER_SMOOTH);
-    else if (source == displayItem[3])
-      theView[currentView].setRenderMode(ViewerCanvas.RENDER_TEXTURED);
-    else if (source == displayItem[4])
-      theView[currentView].setRenderMode(ViewerCanvas.RENDER_TRANSPARENT);
-    else if (source == displayItem[5])
-      theView[currentView].setRenderMode(ViewerCanvas.RENDER_RENDERED);
-    for (int i = 0; i < displayItem.length; i++)
-      displayItem[i].setState(source == displayItem[i]);
+    theView[currentView].setRenderMode(mode);
+    for(BCheckBoxMenuItem item: displayItem) item.setState(item == source);
     savePreferences();
+  }
+  
+  @SuppressWarnings("unused")
+  private void setDisplayModeWireframe(CommandEvent event)
+  {
+    setViewMode(event.getWidget(), ViewerCanvas.RENDER_WIREFRAME);
+  }
+  
+  @SuppressWarnings("unused")
+  private void setDisplayModeShaded(CommandEvent event)
+  {
+    setViewMode(event.getWidget(), ViewerCanvas.RENDER_FLAT);
+  }
+  
+  @SuppressWarnings("unused")
+  private void setDisplayModeSmooth(CommandEvent event)
+  {
+    setViewMode(event.getWidget(), ViewerCanvas.RENDER_SMOOTH);
+  }
+ 
+  @SuppressWarnings("unused")
+  private void setDisplayModeTextured(CommandEvent event)
+  {
+    setViewMode(event.getWidget(), ViewerCanvas.RENDER_TEXTURED);  
+  }
+
+  @SuppressWarnings("unused")
+  private void setDisplayModeTransparent(CommandEvent event)
+  {
+    setViewMode(event.getWidget(), ViewerCanvas.RENDER_TRANSPARENT);  
+  }
+
+  @SuppressWarnings("unused")
+  private void setDisplayModeRendered(CommandEvent event)
+  {
+    setViewMode(event.getWidget(), ViewerCanvas.RENDER_RENDERED);
   }
 
   /** Get a list of the indices of all selected objects. */
