@@ -1,5 +1,6 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
    Changes copyright (C) 2016-2019 by Petri Ihalainen
+   Changes copyright (C) 2017 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -21,6 +22,9 @@ import buoy.event.*;
 import java.awt.*;
 
 /** MoveViewTool is an EditingTool used for moving the viewpoint. */
+@EditingTool.ButtonImage("moveView")
+@EditingTool.Tooltip("moveViewTool.tipText")
+@EditingTool.ActivatedToolText("moveViewTool.helpText")
 public class MoveViewTool extends EditingTool
 {
   private Point clickPoint;
@@ -34,32 +38,12 @@ public class MoveViewTool extends EditingTool
   public MoveViewTool(EditingWindow fr)
   {
     super(fr);
-    initButton("moveView");
-  }
-
-  @Override
-  public void activate()
-  {
-    super.activate();
-    theWindow.setHelpText(Translate.text("moveViewTool.helpText"));
-  }
-
-  @Override
-  public int whichClicks()
-  {
-    return ALL_CLICKS;
   }
   
   @Override
   public boolean hilightSelection()
   {
       return true;
-  }
-
-  @Override
-  public String getToolTipText()
-  {
-    return Translate.text("moveViewTool.tipText");
   }
 
   @Override
@@ -276,4 +260,5 @@ public class MoveViewTool extends EditingTool
       moveChildren(parent.getChildren()[i], transform, undo);
     }  
   }
+
 }

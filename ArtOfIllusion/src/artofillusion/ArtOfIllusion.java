@@ -186,7 +186,7 @@ public class ArtOfIllusion
     PluginRegistry.registerResource("UITheme", "default", ArtOfIllusion.class.getClassLoader(), "artofillusion/Icons/defaultTheme.xml", null);
     PluginRegistry.scanPlugins();
     ThemeManager.initThemes();
-    preferences = new ApplicationPreferences();
+    
     KeystrokeManager.loadRecords();
     ViewerCanvas.addViewerControl(new ViewerOrientationControl());
     ViewerCanvas.addViewerControl(new ViewerPerspectiveControl());
@@ -234,11 +234,16 @@ public class ArtOfIllusion
     return "3.1";
   }
 
+  private static class ApplicationPreferencesHolder
+  {
+    public static ApplicationPreferences INSTANCE = new ApplicationPreferences();
+  }
+  
   /** Get the application preferences object. */
 
   public static ApplicationPreferences getPreferences()
   {
-    return preferences;
+    return ApplicationPreferencesHolder.INSTANCE;
   }
 
   /** Create a new Scene, and display it in a window. */
