@@ -13,7 +13,6 @@
 package artofillusion;
 
 import artofillusion.image.*;
-import artofillusion.image.filter.*;
 import artofillusion.material.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
@@ -163,13 +162,11 @@ public class ArtOfIllusion
     PluginRegistry.registerPlugin(new ProceduralTexture3D());
     PluginRegistry.registerPlugin(new UniformMaterial());
     PluginRegistry.registerPlugin(new ProceduralMaterial3D());
-
     PluginRegistry.registerPlugin(new UniformMapping());
     PluginRegistry.registerPlugin(new ProjectionMapping());
     PluginRegistry.registerPlugin(new CylindricalMapping());
     PluginRegistry.registerPlugin(new SphericalMapping());
     PluginRegistry.registerPlugin(new UVMapping());
-    
     PluginRegistry.registerPlugin(new LinearMapping3D());
     PluginRegistry.registerPlugin(new LinearMaterialMapping());
     
@@ -182,6 +179,7 @@ public class ArtOfIllusion
     PluginRegistry.registerPlugin(new OutlineFilter());
     PluginRegistry.registerPlugin(new NoiseReductionFilter());
     PluginRegistry.registerPlugin(new DepthOfFieldFilter());
+
     PluginRegistry.registerResource("TranslateBundle", "artofillusion", ArtOfIllusion.class.getClassLoader(), "artofillusion", null);
     PluginRegistry.registerResource("UITheme", "default", ArtOfIllusion.class.getClassLoader(), "artofillusion/Icons/defaultTheme.xml", null);
     PluginRegistry.scanPlugins();
