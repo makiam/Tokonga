@@ -51,7 +51,8 @@ public class ProceduralTexture2D extends Texture2D implements ProcedureOwner
     };
   }
 
-  public static String getTypeName()
+  @Override
+  public String getTypeName()
   {
     return "Procedural 2D";
   }
