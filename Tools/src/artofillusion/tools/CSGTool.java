@@ -1,4 +1,5 @@
 /* Copyright (C) 2001-2008 by Peter Eastman
+   Modifications Copyright (C) 2019 by Petri Ihalainen
    Changes copyright (C) 2018 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -18,7 +19,10 @@ import artofillusion.math.*;
 import artofillusion.ui.*;
 import java.util.*;
 
-/** The CSG tool creates Constructive Solid Geometry (CSG) objects. */
+/** 
+    The CSG tool creates Constructive Solid Geometry (CSG) objects.
+    In other words it performs boolean modelling operations.
+*/
 
 public class CSGTool implements ModellingTool
 {
@@ -37,7 +41,7 @@ public class CSGTool implements ModellingTool
   }
 
   /* See whether an appropriate set of objects is selected and either display an error
-     message, or bring up the extrude window. */
+     message, or bring up the CSG operation dialog. */
 
   @Override
   public void commandSelected(LayoutWindow window)
@@ -47,16 +51,16 @@ public class CSGTool implements ModellingTool
     Vector<ObjectInfo> inputObj = new Vector<ObjectInfo>();
 
     for (int i = 0; i < selection.length; i++)
-      {
-        ObjectInfo obj = scene.getObject(selection[i]);
-        if (obj.getObject().canSetTexture())
-          if (obj.getObject() instanceof TriangleMesh || obj.getObject().canConvertToTriangleMesh() != Object3D.CANT_CONVERT)
-            {
-              inputObj.addElement(obj);
-              if (obj.getObject().isClosed())
-                closedCount++;
-            }
-      }
+    {
+      ObjectInfo obj = scene.getObject(selection[i]);
+      if (obj.getObject().canSetTexture())
+        if (obj.getObject() instanceof TriangleMesh || obj.getObject().canConvertToTriangleMesh() != Object3D.CANT_CONVERT)
+        {
+          inputObj.addElement(obj);
+          if (obj.getObject().isClosed())
+            closedCount++;
+        }
+    }
     if (inputObj.size() < 2 || closedCount < 1)
       {
         //TODO: Localize message
@@ -68,6 +72,14 @@ public class CSGTool implements ModellingTool
     CSGDialog dial = new CSGDialog(window, newobj);
     if (!dial.clickedOk())
       return;
+
+    // Either hide or leave unchanged
+
+    if (dial.hideOriginals.getState())
+    {
+      inputObj.elementAt(0).setVisible(false);
+      inputObj.elementAt(1).setVisible(false);
+    }
     ObjectInfo info = new ObjectInfo(newobj, new CoordinateSystem(center, Vec3.vz(), Vec3.vy()), "Boolean "+(counter++));
     info.addTrack(new PositionTrack(info), 0);
     info.addTrack(new RotationTrack(info), 1);
