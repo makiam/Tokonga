@@ -11,25 +11,30 @@
 
 package artofillusion;
 
-import artofillusion.animation.*;
-import artofillusion.math.*;
-import artofillusion.object.*;
-import artofillusion.ui.*;
-
-import java.awt.*;
 import java.io.*;
 import java.lang.ref.*;
 import java.lang.reflect.*;
-import java.nio.file.Files;
 import java.util.*;
-import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /** The UndoRecord class records a series of commands, allowing the user to undo a previous
     action. */
 
 public class UndoRecord
 {
-  private String name;
+  private static final ExecutorService service = Executors.newCachedThreadPool();
+  
+  static {
+    Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+      @Override
+      public void run()
+      {
+          System.out.println("Shutdown undo cache writer service...");
+          service.shutdown();
+      }
+    }, "Undo write service shutdown thread"));
+  }
   
   private final LinkedList<UndoAction> commands = new LinkedList<UndoAction>();
   
@@ -110,7 +115,7 @@ public class UndoRecord
   public UndoRecord(EditingWindow win, boolean isRedo, int theCommand, Object commandData[])
   {
     this(win, isRedo);
-    commands.add(new UndoAction(theCommand, commandData));    
+    commands.add(new UndoAction(theCommand, commandData));
   }
 
   /**
@@ -123,13 +128,12 @@ public class UndoRecord
 
   public Boolean isCommandChangesSelectionOnly()
   {
-    boolean result = true;
     for(UndoAction action: commands)
     {
       if(action.getCommand() == UndoRecord.SET_SCENE_SELECTION) continue;
-      result = false;
+      return false;
     }    
-    return result;
+    return true;
   }
   
   /**
@@ -339,40 +343,27 @@ public class UndoRecord
     redoRecord.cacheToDisk();
     return redoRecord;
   }
-
-  /**
-   * Cache the data in this record to disk, allowing it to potentially be unloaded from memory.
-   */
+	
   /**
    * Cache the data in this record to disk, allowing it to potentially be unloaded from memory.
    */
   protected void cacheToDisk()
   {
-    // We need to make sure the caching gets done 1) after we're certain no more commands will be added, and 2) on a
-    // separate thread, so we don't slow down the UI.
-
-    EventQueue.invokeLater(new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        Thread thread = new Thread() {
-          @Override
-          public void run()
-          {
-            writeCache();
-          }
-        };
-        thread.setPriority(Thread.NORM_PRIORITY);
-        thread.start();
-      }
-    });
+    service.submit(cacheWriteRunner);
   }
+  
+  
+  private final Runnable cacheWriteRunner = new Runnable() {
+      @Override
+      public void run() {
+          UndoRecord.this.writeCache();
+      }
+  };
 
   /**
    * This routine does the actual caching.
    */
-  private synchronized void writeCache()
+  protected final synchronized void writeCache()
   {
     boolean anyToCache = false;
     for (UndoAction action: commands)
@@ -458,8 +449,8 @@ public class UndoRecord
           int c = action.getCommand();
           if (c == COPY_OBJECT && theWindow.getScene() != null)
           {
-            Class cls = ArtOfIllusion.getClass(in.readUTF());
-            Constructor con = cls.getDeclaredConstructor(DataInputStream.class, Scene.class);
+            Class<?> cls = ArtOfIllusion.getClass(in.readUTF());
+            Constructor<?> con = cls.getDeclaredConstructor(DataInputStream.class, Scene.class);
             d[1] = con.newInstance(in, theWindow.getScene());
           }
           else if (c == COPY_VERTEX_POSITIONS)
