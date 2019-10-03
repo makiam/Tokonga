@@ -127,7 +127,7 @@ public class StringEncrypter
             byte[] enc = ecipher.doFinal( utf8 );
 
             // Encode bytes to base64 to get a string
-            return new sun.misc.BASE64Encoder().encode( enc );
+            return java.util.Base64.getEncoder().encodeToString(enc);
         }
         catch (Exception e) {}
         return null;
@@ -148,7 +148,7 @@ public class StringEncrypter
         {
 
             // Decode base64 to get bytes
-            byte[] dec = new sun.misc.BASE64Decoder().decodeBuffer( str );
+            byte[] dec = java.util.Base64.getDecoder().decode(str);
 
             // Decrypt
             byte[] utf8 = dcipher.doFinal( dec );
