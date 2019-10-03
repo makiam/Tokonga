@@ -1078,7 +1078,7 @@ public class SPMObjectInfo {
     /**
      * get the list of external dependencies.
      */
-    public Collection getExternals() {
+    public Collection<String> getExternals() {
         return externals == null ? null : externals.values();
     }
 

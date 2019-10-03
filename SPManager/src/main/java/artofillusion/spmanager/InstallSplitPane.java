@@ -44,7 +44,7 @@ public class InstallSplitPane extends SPMSplitPane {
     private boolean isDownloading;
     private SPMObjectInfo installNodeInfo;
 
-    protected ArrayList<String> errors = null;
+    protected List<String> errors = null;
 
     /**
      * Constructor for the InstallSplitPane object
@@ -302,7 +302,7 @@ public class InstallSplitPane extends SPMSplitPane {
         int count = tree.getChildNodeCount(path);
         if (count > 0) {
             if (errors == null) {
-                errors = new ArrayList(128);
+                errors = new ArrayList<String>(128);
             } else {
                 errors.clear();
             }
@@ -376,7 +376,7 @@ public class InstallSplitPane extends SPMSplitPane {
      */
     public void doInstallSingle() {
         if (errors == null) {
-            errors = new ArrayList(128);
+            errors = new ArrayList<String>(128);
         } else {
             errors.clear();
         }
@@ -400,8 +400,7 @@ public class InstallSplitPane extends SPMSplitPane {
                 reason = "\n";
             }
 
-            reason = SPMTranslate.text("markedConfirm", installNodeInfo.getName())
-                    + reason + SPMTranslate.text("Confirm");
+            reason = SPMTranslate.text("markedConfirm", installNodeInfo.getName()) + reason + SPMTranslate.text("Confirm");
             if (new BStandardDialog("SPManager", UIUtilities.breakString(reason),
                     BStandardDialog.QUESTION)
                     .showOptionDialog(null, SPManagerFrame.YES_NO, SPManagerFrame.YES_NO[1]) == 1) {
@@ -421,7 +420,7 @@ public class InstallSplitPane extends SPMSplitPane {
             downloadedLength = 0;
             if (lengthToDownload > 0) {
                 if (errors == null) {
-                    errors = new ArrayList(128);
+                    errors = new ArrayList<String>(128);
                 } else {
                     errors.clear();
                 }
@@ -471,7 +470,7 @@ public class InstallSplitPane extends SPMSplitPane {
      * @param nodeInfo Description of the Parameter
      */
     public void installFile(SPMObjectInfo nodeInfo) {
-        HashMap transaction = new HashMap(32);
+        Map transaction = new HashMap(32);
 
         if (errors == null) {
             errors = new ArrayList(16);
@@ -495,17 +494,14 @@ public class InstallSplitPane extends SPMSplitPane {
                 break;
         }
 
-        File folder = new File(SPManagerPlugin.TEMP_DIR,
-                file.getParentFile().getName());
+        File folder = new File(SPManagerPlugin.TEMP_DIR, file.getParentFile().getName());
 
         System.out.println("folder=" + folder.getAbsolutePath());
 
         if (!folder.exists() && !folder.mkdirs()) {
-            errors.add(SPMTranslate.text("error") + "cannot open/create "
-                    + folder.getAbsolutePath());
+            errors.add(SPMTranslate.text("error") + "cannot open/create " + folder.getAbsolutePath());
 
-            System.out.println("cannot open/create "
-                    + folder.getAbsolutePath());
+            System.out.println("cannot open/create " + folder.getAbsolutePath());
         }
 
         File update = new File(folder, file.getName() + ".upd");
@@ -562,16 +558,12 @@ public class InstallSplitPane extends SPMSplitPane {
 
                 // now add the actual file name
                 //file = new File(file, nodeInfo.files[j]);  NTJ: now added in SPMObjectInfo when XML is parsed
-                folder = new File(SPManagerPlugin.TEMP_DIR,
-                        file.getParentFile().getName());
+                folder = new File(SPManagerPlugin.TEMP_DIR, file.getParentFile().getName());
 
                 if (!folder.exists() && !folder.mkdirs()) {
-                    errors.add(SPMTranslate.text("error")
-                            + "cannot open/create "
-                            + folder.getAbsolutePath());
+                    errors.add(SPMTranslate.text("error") + "cannot open/create " + folder.getAbsolutePath());
 
-                    System.out.println("cannot open/create "
-                            + folder.getAbsolutePath());
+                    System.out.println("cannot open/create " + folder.getAbsolutePath());
                 }
 
                 update = new File(folder, file.getName() + ".upd");
@@ -655,15 +647,13 @@ public class InstallSplitPane extends SPMSplitPane {
                             raf.close();
                         }
                     } else {
-                        System.out.println("SPManager.cleanup: "
-                                + "could not copy " + file.getPath());
+                        System.out.println("SPManager.cleanup: " + "could not copy " + file.getPath());
 
                         errors.add("couldn't copy " + file.getName());
                     }
                 }
             } catch (Exception e) {
-                errors.add(SPMTranslate.text("error")
-                        + "(" + file.getName() + ")" + e);
+                errors.add(SPMTranslate.text("error") + "(" + file.getName() + ")" + e);
             }
         }
 

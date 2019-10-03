@@ -638,14 +638,13 @@ public class SPMSplitPane extends BSplitPane {
         }
 
         if (extMap.containsKey(info)) {
-            System.out.println("SPMSplitPane: dependency loop detected: "
-                    + info.getName());
+            System.out.println("SPMSplitPane: dependency loop detected: " + info.getName());
             return;
         }
 
         extMap.put(info, info);
 
-        Collection externals = info.getExternals();
+        Collection<String> externals = info.getExternals();
         if (externals == null || externals.isEmpty()) {
             return;
         }
@@ -653,13 +652,12 @@ public class SPMSplitPane extends BSplitPane {
         String extName, extType;
         SPMObjectInfo ext;
         //for (int i = externals.size() - 1; i >= 0; i--) {
-        for (Iterator iter = externals.iterator(); iter.hasNext();) {
+        for (Iterator<String> iter = externals.iterator(); iter.hasNext();) {
             //extName = (String) externals.get(i);
-            extName = (String) iter.next();
+            extName = iter.next();
 
             if (extName.endsWith("= required")) {
-                extType = extName.substring(extName.indexOf(':') + 1,
-                        extName.indexOf('=')).trim();
+                extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
                 extName = extName.substring(0, extName.indexOf(':'));
 
                 ext = getInfo(extName, (TreePath) pathMap.get(extType));
@@ -704,22 +702,10 @@ public class SPMSplitPane extends BSplitPane {
          * @return The treeCellRendererComponent value
          */
         @Override
-        public Component getTreeCellRendererComponent(
-                JTree tree,
-                Object value,
-                boolean sel,
-                boolean expanded,
-                boolean leaf,
-                int row,
-                boolean hasFocus) {
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+            super.getTreeCellRendererComponent(tree, value, sel,expanded, leaf, row,hasFocus);
 
-            super.getTreeCellRendererComponent(
-                    tree, value, sel,
-                    expanded, leaf, row,
-                    hasFocus);
-
-            DefaultMutableTreeNode node
-                    = (DefaultMutableTreeNode) value;
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 
             if (node.getUserObject() instanceof SPMObjectInfo) {
                 SPMObjectInfo nodeInfo = (SPMObjectInfo) node.getUserObject();

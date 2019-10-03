@@ -523,7 +523,7 @@ public class HttpSPMFileSystem extends SPMFileSystem {
      * @param downloadedLength Description of the Parameter
      * @return Description of the Return Value
      */
-    public static long downloadRemoteBinaryFile(URL from, String fileName, long size, StatusDialog status, long totalDownload, long downloadedLength, ArrayList errors) {
+    public static long downloadRemoteBinaryFile(URL from, String fileName, long size, StatusDialog status, long totalDownload, long downloadedLength, List<String> errors) {
         System.out.println("download: size=" + size + "; total=" + totalDownload + "; downloaded=" + downloadedLength);
 
         //if (fileName.endsWith(".upd")) return 0;
