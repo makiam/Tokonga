@@ -175,7 +175,7 @@ public class UVMappingEditorDialog extends BDialog {
                 }
             }
         }
-        if (texList.size() == 0) {
+        if (texList.isEmpty()) {
             texList = null;
             mappingList = null;
             oldCoordList = null;
@@ -571,7 +571,7 @@ public class UVMappingEditorDialog extends BDialog {
     }
 
     private int getTextureFromID(Integer id) {
-        if (texList == null || texList.size() == 0) {
+        if (texList == null || texList.isEmpty()) {
             return -1;
         }
         for (int i = 0; i < texList.size(); i++) {

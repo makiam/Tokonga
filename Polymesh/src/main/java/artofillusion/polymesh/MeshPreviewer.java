@@ -433,9 +433,8 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
     }
 
     public void clearVertexSelection() {
-        if (selection.size() == 0) {
-            return;
-        }
+        if (selection.isEmpty()) return;
+        
         for (int i = selection.size() - 1; i >= 0; i--) {
             theScene.removeObject(spheresIndex + i, null);
         }

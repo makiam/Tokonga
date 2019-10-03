@@ -889,9 +889,8 @@ public class Scene {
      * @deprecated Call clearSelection() on the LayoutWindow instead.
      */
     public void clearSelection() {
-        if (selection.size() == 0) {
-            return;
-        }
+        if (selection.isEmpty()) return;
+        
         selection.removeAllElements();
         for (int i = 0; i < objects.size(); i++) {
             objects.elementAt(i).selected = false;

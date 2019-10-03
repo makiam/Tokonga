@@ -123,14 +123,14 @@ public class PMCreateFaceTool extends EditingTool {
                 closestz = z;
             }
         }
-        if (clickPoints.size() == 0 && from == -1 && which != -1) {
+        if (clickPoints.isEmpty() && from == -1 && which != -1) {
             from = which;
             fromPoint = pr[from];
             return;
         }
         if (canvas == view && from != -1) {
             if (which == -1) {
-                if (clickPoints.size() == 0) {
+                if (clickPoints.isEmpty()) {
                     clickPoints.add(fromPoint = get3DPoint(fromPoint, e));
                     return;
                 }

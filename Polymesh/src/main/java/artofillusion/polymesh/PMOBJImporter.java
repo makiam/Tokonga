@@ -224,9 +224,7 @@ public class PMOBJImporter {
             while (enumarate.hasMoreElements()) {
                 String group = (String) enumarate.nextElement();
                 Vector groupFaces = (Vector) groupTable.get(group);
-                if (groupFaces.size() == 0) {
-                    continue;
-                }
+                if (groupFaces.isEmpty()) continue;
 
                 // Find which vertices are used by faces in this group.
                 int realIndex[] = new int[vertex.size()];

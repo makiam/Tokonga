@@ -12556,7 +12556,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
             }
             setParameterValues(newParamVal);
         }
-        if (vertTable.size() == 0) {
+        if (vertTable.isEmpty()) {
             return null;
         } else {
             int[] table = new int[vertTable.size() + orVertsLength];

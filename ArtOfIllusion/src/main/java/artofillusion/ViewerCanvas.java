@@ -975,9 +975,7 @@ public abstract class ViewerCanvas extends CustomWidget {
      * Each object is given the space of a sphere, that would just fits tt's bounding box.
      */
     public void fitToObjects(Collection<ObjectInfo> objects) {
-        if (objects.size() == 0) {
-            return;
-        }
+        if (objects.isEmpty()) return;
 
         CoordinateSystem newCoords;
         BoundingBox b;
