@@ -11,6 +11,15 @@
 
 package artofillusion;
 
+import artofillusion.animation.Skeleton;
+import artofillusion.animation.Track;
+import artofillusion.math.CoordinateSystem;
+import artofillusion.math.Vec3;
+import artofillusion.object.Mesh;
+import artofillusion.object.Object3D;
+import artofillusion.object.ObjectInfo;
+import artofillusion.ui.EditingWindow;
+import artofillusion.ui.MeshEditController;
 import java.io.*;
 import java.lang.ref.*;
 import java.lang.reflect.*;
