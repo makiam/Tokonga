@@ -7,7 +7,6 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.animation;
 
 import artofillusion.Scene;
@@ -27,10 +26,9 @@ import org.junit.Test;
  * @author maksim.khramov
  */
 public class PoseTrackTest {
-    
+
     @Test
-    public void testCreatePoseTrack()
-    {
+    public void testCreatePoseTrack() {
         Object3D obj = new Cube(1, 1, 1);
         ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
         PoseTrack pt = new PoseTrack(oi);
@@ -40,26 +38,24 @@ public class PoseTrackTest {
     }
 
     @Test(expected = InvalidObjectException.class)
-    public void testLoadPoseTrackBadVersion0() throws IOException
-    {
+    public void testLoadPoseTrackBadVersion0() throws IOException {
         ByteBuffer wrap = ByteBuffer.allocate(200);
-        wrap.putShort((short)-1); // Track Version
-        
+        wrap.putShort((short) -1); // Track Version
+
         Object3D obj = new Cube(1, 1, 1);
         ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
         PoseTrack pt = new PoseTrack(oi);
-        pt.initFromStream(StreamUtil.stream(wrap), (Scene)null);   
+        pt.initFromStream(StreamUtil.stream(wrap), (Scene) null);
     }
-    
+
     @Test(expected = InvalidObjectException.class)
-    public void testLoadPoseTrackBadVersion1() throws IOException
-    {
+    public void testLoadPoseTrackBadVersion1() throws IOException {
         ByteBuffer wrap = ByteBuffer.allocate(200);
-        wrap.putShort((short)3); // Track Version
-        
+        wrap.putShort((short) 3); // Track Version
+
         Object3D obj = new Cube(1, 1, 1);
         ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
         PoseTrack pt = new PoseTrack(oi);
-        pt.initFromStream(StreamUtil.stream(wrap), (Scene)null);
+        pt.initFromStream(StreamUtil.stream(wrap), (Scene) null);
     }
 }

@@ -7,66 +7,79 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.ui;
 
 import artofillusion.*;
 import buoy.widget.*;
 
-/** EditingWindow represents a window used for editing an object or scene. */
+/**
+ * EditingWindow represents a window used for editing an object or scene.
+ */
+public interface EditingWindow {
 
-public interface EditingWindow
-{
-  /** Get the ToolPalette for this window. */
+    /**
+     * Get the ToolPalette for this window.
+     */
 
-  public ToolPalette getToolPalette();
+    public ToolPalette getToolPalette();
 
-  /** Set the currently selected EditingTool. */
-  
-  public void setTool(EditingTool tool);
-  
-  /** Set the text to display at the bottom of the window. */
-  
-  public void setHelpText(String text);
-  
-  /** Get the BFrame for this EditingWindow: either the EditingWindow itself if it is a
-      BFrame, or its parent if it is a BDialog. */
-  
-  public BFrame getFrame();
+    /**
+     * Set the currently selected EditingTool.
+     */
+    public void setTool(EditingTool tool);
 
-  /** Update the image displayed in this window. */
+    /**
+     * Set the text to display at the bottom of the window.
+     */
+    public void setHelpText(String text);
 
-  public void updateImage();
+    /**
+     * Get the BFrame for this EditingWindow: either the EditingWindow itself if it is a BFrame, or
+     * its parent if it is a BDialog.
+     */
+    public BFrame getFrame();
 
-  /** Update which menus are enabled. */
+    /**
+     * Update the image displayed in this window.
+     */
+    public void updateImage();
 
-  public void updateMenus();
-  
-  /** Set the current UndoRecord for this EditingWindow. */
-  
-  public void setUndoRecord(UndoRecord command);
+    /**
+     * Update which menus are enabled.
+     */
+    public void updateMenus();
 
-  /** Register that the scene or object contained in the window has been modified. */
-  
-  public void setModified();
-  
-  /** Get the Scene which is being edited in this window.  If it is not a window for
-      editing a scene, this should return null. */
+    /**
+     * Set the current UndoRecord for this EditingWindow.
+     */
+    public void setUndoRecord(UndoRecord command);
 
-  public Scene getScene();
-  
-  /** Get the ViewerCanvas in which editing is taking place.  This may return null
-      if there is no ViewerCanvas. */
-  
-  public ViewerCanvas getView();
+    /**
+     * Register that the scene or object contained in the window has been modified.
+     */
+    public void setModified();
 
-  /** Get all ViewerCanvases contained in this window.  This may return null
-      if there is no ViewerCanvas. */
+    /**
+     * Get the Scene which is being edited in this window. If it is not a window for editing a
+     * scene, this should return null.
+     */
+    public Scene getScene();
 
-  public ViewerCanvas[] getAllViews();
+    /**
+     * Get the ViewerCanvas in which editing is taking place. This may return null if there is no
+     * ViewerCanvas.
+     */
+    public ViewerCanvas getView();
 
-  /** Confirm whether this window should be closed (possibly by displaying a message to the
-      user), and then close it.  If the closing is canceled, this should return false. */
+    /**
+     * Get all ViewerCanvases contained in this window. This may return null if there is no
+     * ViewerCanvas.
+     */
+    public ViewerCanvas[] getAllViews();
 
-  public boolean confirmClose();
+    /**
+     * Confirm whether this window should be closed (possibly by displaying a message to the user),
+     * and then close it. If the closing is canceled, this should return false.
+     */
+    public boolean confirmClose();
 }

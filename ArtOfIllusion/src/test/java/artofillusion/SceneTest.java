@@ -134,8 +134,6 @@ public class SceneTest {
         assertEquals(++sceneObjects, scene.getNumObjects());
         assertNotNull(scene);
 
-
-
     }
 
     /**

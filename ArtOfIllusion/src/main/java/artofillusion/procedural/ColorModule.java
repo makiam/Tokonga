@@ -7,7 +7,6 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.procedural;
 
 import artofillusion.*;
@@ -17,101 +16,87 @@ import buoy.event.*;
 import java.awt.*;
 import java.io.*;
 
-/** This is a Module which outputs a color. */
+/**
+ * This is a Module which outputs a color.
+ */
+public class ColorModule extends ProceduralModule {
 
-public class ColorModule extends ProceduralModule
-{
-  RGBColor color;
+    RGBColor color;
 
-  public ColorModule(Point position)
-  {
-    this(position, new RGBColor(1.0f, 1.0f, 1.0f));
-  }
+    public ColorModule(Point position) {
+        this(position, new RGBColor(1.0f, 1.0f, 1.0f));
+    }
 
-  public ColorModule(Point position, RGBColor color)
-  {
-    super("", new IOPort [] {}, new IOPort [] {
-      new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, new String [] {"Color"})},
-      position);
-    this.color = color;
-  }
+    public ColorModule(Point position, RGBColor color) {
+        super("", new IOPort[]{}, new IOPort[]{
+            new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, new String[]{"Color"})},
+                position);
+        this.color = color;
+    }
 
-  /** Get the color. */
+    /**
+     * Get the color.
+     */
+    public RGBColor getColor() {
+        return color;
+    }
 
-  public RGBColor getColor()
-  {
-    return color;
-  }
+    /**
+     * Set the color.
+     */
+    public void setColor(RGBColor c) {
+        color = c;
+    }
 
-  /** Set the color. */
+    /* Allow the user to set a new value. */
+    @Override
+    public boolean edit(final ProcedureEditor editor, Scene theScene) {
+        final ColorChooser cc = new ColorChooser(editor.getParentFrame(), "Select Color", color, false);
+        cc.addEventLink(ValueChangedEvent.class, new Object() {
+            void processEvent() {
+                color.copy(cc.getColor());
+                editor.updatePreview();
+            }
+        });
+        cc.setVisible(true);
+        return cc.clickedOk();
+    }
 
-  public void setColor(RGBColor c)
-  {
-    color = c;
-  }
+    /* This module simply outputs the color. */
+    @Override
+    public void getColor(int which, RGBColor c, double blur) {
+        c.copy(color);
+    }
 
-  /* Allow the user to set a new value. */
+    @Override
+    public void calcSize() {
+        bounds.width = bounds.height = 20 + IOPort.SIZE * 2;
+    }
 
-  @Override
-  public boolean edit(final ProcedureEditor editor, Scene theScene)
-  {
-    final ColorChooser cc = new ColorChooser(editor.getParentFrame(), "Select Color", color, false);
-    cc.addEventLink(ValueChangedEvent.class, new Object() {
-      void processEvent()
-      {
-        color.copy(cc.getColor());
-        editor.updatePreview();
-      }
-    });
-    cc.setVisible(true);
-    return cc.clickedOk();
-  }
+    @Override
+    protected void drawContents(Graphics2D g) {
+        g.setColor(color.getColor());
+        g.fillRect(bounds.x + IOPort.SIZE, bounds.y + IOPort.SIZE, 20, 20);
+    }
 
-  /* This module simply outputs the color. */
+    /* Create a duplicate of this module. */
+    @Override
+    public Module duplicate() {
+        ColorModule mod = new ColorModule(new Point(bounds.x, bounds.y));
 
-  @Override
-  public void getColor(int which, RGBColor c, double blur)
-  {
-    c.copy(color);
-  }
+        mod.color.copy(color);
+        return mod;
+    }
 
-  @Override
-  public void calcSize()
-  {
-    bounds.width = bounds.height = 20+IOPort.SIZE*2;
-  }
+    /* Write out the parameters. */
+    @Override
+    public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
+        color.writeToFile(out);
+    }
 
-  @Override
-  protected void drawContents(Graphics2D g)
-  {
-    g.setColor(color.getColor());
-    g.fillRect(bounds.x+IOPort.SIZE, bounds.y+IOPort.SIZE, 20, 20);
-  }
-
-  /* Create a duplicate of this module. */
-
-  @Override
-  public Module duplicate()
-  {
-    ColorModule mod = new ColorModule(new Point(bounds.x, bounds.y));
-
-    mod.color.copy(color);
-    return mod;
-  }
-
-  /* Write out the parameters. */
-
-  @Override
-  public void writeToStream(DataOutputStream out, Scene theScene) throws IOException
-  {
-    color.writeToFile(out);
-  }
-
-  /* Read in the parameters. */
-
-  @Override
-  public void readFromStream(DataInputStream in, Scene theScene) throws IOException
-  {
-    color = new RGBColor(in);
-  }
+    /* Read in the parameters. */
+    @Override
+    public void readFromStream(DataInputStream in, Scene theScene) throws IOException {
+        color = new RGBColor(in);
+    }
 }

@@ -7,7 +7,6 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.object;
 
 import artofillusion.Scene;
@@ -22,28 +21,25 @@ import org.junit.Test;
  * @author maksim.khramov
  */
 public class CubeTest {
-    
+
     @Test(expected = InvalidObjectException.class)
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void createCubeTestBadVersionLess() throws IOException {
         Scene scene = new Scene();
         ByteBuffer wrap = ByteBuffer.allocate(2);
-        wrap.putShort((short)-1);
+        wrap.putShort((short) -1);
 
-        
         new Cube(StreamUtil.stream(wrap), scene);
     }
-    
-    
+
     @Test(expected = InvalidObjectException.class)
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void createCubeTestBadVersionMore() throws IOException {
         Scene scene = new Scene();
         ByteBuffer wrap = ByteBuffer.allocate(2);
-        wrap.putShort((short)2);
-        
+        wrap.putShort((short) 2);
+
         new Cube(StreamUtil.stream(wrap), scene);
     }
-    
-    
+
 }

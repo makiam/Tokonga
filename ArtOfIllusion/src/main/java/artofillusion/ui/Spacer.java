@@ -7,7 +7,6 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.ui;
 
 import buoy.widget.*;
@@ -15,22 +14,19 @@ import java.awt.*;
 
 /* This is a Widget which acts as a spacer.  It displays a blank background, and copies
    its width and height from specified other Widgets. */
+public class Spacer extends CustomWidget {
 
-public class Spacer extends CustomWidget
-{
-  private Widget vertical, horizontal;
+    private Widget vertical, horizontal;
 
-  public Spacer(Widget copyHoriz, Widget copyVert)
-  {
-    horizontal = copyHoriz;
-    vertical = copyVert;
-  }
+    public Spacer(Widget copyHoriz, Widget copyVert) {
+        horizontal = copyHoriz;
+        vertical = copyVert;
+    }
 
-  @Override
-  public Dimension getPreferredSize()
-  {
-    Dimension v = vertical.getPreferredSize(), h = horizontal.getPreferredSize();
+    @Override
+    public Dimension getPreferredSize() {
+        Dimension v = vertical.getPreferredSize(), h = horizontal.getPreferredSize();
 
-    return new Dimension(h.width, v.height);
-  }
+        return new Dimension(h.width, v.height);
+    }
 }

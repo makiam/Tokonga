@@ -7,7 +7,6 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.material;
 
 import artofillusion.MaterialPreviewer;
@@ -24,25 +23,22 @@ import org.junit.Test;
  * @author maksim.khramov
  */
 public class MaterialMappingTest {
-    
+
     @Test
-    public void createMaterialMapping()
-    {
-        
+    public void createMaterialMapping() {
+
     }
-    
-    public static class DummyMapping extends MaterialMapping
-    {
-        public DummyMapping(Object3D obj, Material mat)
-        {
+
+    public static class DummyMapping extends MaterialMapping {
+
+        public DummyMapping(Object3D obj, Material mat) {
             super(obj, mat);
         }
-        
-        public DummyMapping(DataInputStream in, Object3D obj, Material mat)
-        {
+
+        public DummyMapping(DataInputStream in, Object3D obj, Material mat) {
             this(obj, mat);
         }
-        
+
         @Override
         public void writeToFile(DataOutputStream out) throws IOException {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -77,6 +73,6 @@ public class MaterialMappingTest {
         public Widget getEditingPanel(Object3D obj, MaterialPreviewer preview) {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-        
+
     }
 }

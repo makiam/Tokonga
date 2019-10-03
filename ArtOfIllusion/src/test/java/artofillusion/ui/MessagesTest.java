@@ -7,7 +7,6 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.ui;
 
 import artofillusion.ArtOfIllusion;
@@ -27,9 +26,9 @@ import org.junit.Test;
  * @author maksim.khramov
  */
 public class MessagesTest {
-    
+
     private static final Logger logger = Logger.getLogger(MessagesTest.class.getName());
-    
+
     @BeforeClass
     public static void setupClass() {
         try {
@@ -44,28 +43,28 @@ public class MessagesTest {
     public void testError() {
         Messages.error("Hello Errors");
     }
-    
+
     @Test
     public void testWarning() {
         Messages.warning("This is warning");
     }
-    
+
     @Test
     public void testInformation() {
-      Messages.information("Information message");
+        Messages.information("Information message");
     }
-    
+
     @Test
     public void testPlain() {
-      JOptionPane.showMessageDialog(null, "Plain message", "", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Plain message", "", JOptionPane.PLAIN_MESSAGE);
     }
-    
+
     @Test
     public void testPlainStyleDialog() {
         BStandardDialog dlg = new BStandardDialog("Art Of Illusion", Translate.text("savePoseAsGesture"), BStandardDialog.PLAIN);
         String name = dlg.showInputDialog(new BDialog(), null, "New Gesture");
     }
-    
+
     @Test
     public void testMessageString() {
         String name = "namme";

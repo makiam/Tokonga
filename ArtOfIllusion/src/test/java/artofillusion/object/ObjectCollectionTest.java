@@ -7,7 +7,6 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.object;
 
 import artofillusion.Scene;
@@ -31,59 +30,53 @@ public class ObjectCollectionTest {
         Assert.assertNotNull(oc);
         Assert.assertTrue(oc.isClosed());
     }
-    
+
     @Test
-    public void testClosedSingleItemCollectionObjectIsClosed()
-    {
+    public void testClosedSingleItemCollectionObjectIsClosed() {
         ObjectCollection oc = new CustomObjectCollection();
-        oc.cachedObjects.add(new ObjectInfo(new Cube(1,1,1), new CoordinateSystem(), "Cube"));
+        oc.cachedObjects.add(new ObjectInfo(new Cube(1, 1, 1), new CoordinateSystem(), "Cube"));
         Assert.assertNotNull(oc);
         Assert.assertTrue(oc.isClosed());
-    }
-    
-    @Test
-    public void testOpenedSingleItemCollectionObjectIsNotClosed()
-    {
-        ObjectCollection oc = new CustomObjectCollection();
-        Curve curve = new Curve(new Vec3[0], new float[0], Mesh.APPROXIMATING, false);        
-        oc.cachedObjects.add(new ObjectInfo(curve, new CoordinateSystem(), "Curve"));
-        Assert.assertNotNull(oc);
-        Assert.assertFalse(oc.isClosed());
-        
     }
 
     @Test
-    public void testObjectCollectionIsClosed()
-    {
+    public void testOpenedSingleItemCollectionObjectIsNotClosed() {
         ObjectCollection oc = new CustomObjectCollection();
-        
-        oc.cachedObjects.add(new ObjectInfo(new Cube(1,1,1), new CoordinateSystem(),"Cube1"));
-        oc.cachedObjects.add(new ObjectInfo(new Cube(1,1,1), new CoordinateSystem(),"Cube2"));
-        
+        Curve curve = new Curve(new Vec3[0], new float[0], Mesh.APPROXIMATING, false);
+        oc.cachedObjects.add(new ObjectInfo(curve, new CoordinateSystem(), "Curve"));
+        Assert.assertNotNull(oc);
+        Assert.assertFalse(oc.isClosed());
+
+    }
+
+    @Test
+    public void testObjectCollectionIsClosed() {
+        ObjectCollection oc = new CustomObjectCollection();
+
+        oc.cachedObjects.add(new ObjectInfo(new Cube(1, 1, 1), new CoordinateSystem(), "Cube1"));
+        oc.cachedObjects.add(new ObjectInfo(new Cube(1, 1, 1), new CoordinateSystem(), "Cube2"));
+
         Assert.assertNotNull(oc);
         Assert.assertTrue(oc.isClosed());
     }
-    
+
     @Test
-    public void testObjectCollectionIsNotClosed()
-    {
+    public void testObjectCollectionIsNotClosed() {
         ObjectCollection oc = new CustomObjectCollection();
         Curve curve = new Curve(new Vec3[0], new float[0], Mesh.APPROXIMATING, false);
-        oc.cachedObjects.add(new ObjectInfo(new Cube(1,1,1), new CoordinateSystem(),"Cube"));
+        oc.cachedObjects.add(new ObjectInfo(new Cube(1, 1, 1), new CoordinateSystem(), "Cube"));
         oc.cachedObjects.add(new ObjectInfo(curve, new CoordinateSystem(), "Curve"));
         Assert.assertNotNull(oc);
-        Assert.assertFalse(oc.isClosed());        
+        Assert.assertFalse(oc.isClosed());
     }
-    
-    
-    public class CustomObjectCollection extends ObjectCollection
-    {
-        public CustomObjectCollection()
-        {
+
+    public class CustomObjectCollection extends ObjectCollection {
+
+        public CustomObjectCollection() {
             super();
             cachedObjects = new Vector<>();
         }
-        
+
         @Override
         protected Enumeration<ObjectInfo> enumerateObjects(ObjectInfo info, boolean interactive, Scene scene) {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -113,6 +106,6 @@ public class ObjectCollectionTest {
         public void applyPoseKeyframe(Keyframe k) {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-        
+
     }
 }

@@ -7,7 +7,6 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.procedural;
 
 import artofillusion.*;
@@ -18,239 +17,218 @@ import buoy.widget.*;
 import java.awt.*;
 import java.io.*;
 
-/** This is a Module which generates a grid of dots. */
+/**
+ * This is a Module which generates a grid of dots.
+ */
+public class GridModule extends ProceduralModule {
 
-public class GridModule extends ProceduralModule
-{
-  boolean valueOk, errorOk, gradOk;
-  double value, error, xspace, yspace, zspace, lastBlur;
-  double xinv, yinv, zinv;
-  PointInfo point;
-  Vec3 gradient;
+    boolean valueOk, errorOk, gradOk;
+    double value, error, xspace, yspace, zspace, lastBlur;
+    double xinv, yinv, zinv;
+    PointInfo point;
+    Vec3 gradient;
 
-  public GridModule(Point position)
-  {
-    super(Translate.text("menu.gridModule"), new IOPort [] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, new String [] {"X", "(X)"}),
-      new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, new String [] {"Y", "(Y)"}),
-      new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, new String [] {"Z", "(Z)"})},
-      new IOPort [] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, new String [] {"Value"})},
-      position);
-    xspace = yspace = zspace = 1.0;
-    xinv = yinv = zinv = 1.0;
-    gradient = new Vec3();
-  }
+    public GridModule(Point position) {
+        super(Translate.text("menu.gridModule"), new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, new String[]{"X", "(X)"}),
+            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, new String[]{"Y", "(Y)"}),
+            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, new String[]{"Z", "(Z)"})},
+                new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, new String[]{"Value"})},
+                position);
+        xspace = yspace = zspace = 1.0;
+        xinv = yinv = zinv = 1.0;
+        gradient = new Vec3();
+    }
 
-  /** Get the X spacing. */
+    /**
+     * Get the X spacing.
+     */
+    public double getXSpacing() {
+        return xspace;
+    }
 
-  public double getXSpacing()
-  {
-    return xspace;
-  }
+    /**
+     * Set the X spacing.
+     */
+    public void setXSpacing(double space) {
+        xspace = space;
+        xinv = 1.0 / space;
+    }
 
-  /** Set the X spacing. */
+    /**
+     * Get the Y spacing.
+     */
+    public double getYSpacing() {
+        return yspace;
+    }
 
-  public void setXSpacing(double space)
-  {
-    xspace = space;
-    xinv = 1.0/space;
-  }
+    /**
+     * Set the Y spacing.
+     */
+    public void setYSpacing(double space) {
+        yspace = space;
+        yinv = 1.0 / space;
+    }
 
-  /** Get the Y spacing. */
+    /**
+     * Get the Z spacing.
+     */
+    public double getZSpacing() {
+        return zspace;
+    }
 
-  public double getYSpacing()
-  {
-    return yspace;
-  }
+    /**
+     * Set the Z spacing.
+     */
+    public void setZSpacing(double space) {
+        zspace = space;
+        zinv = 1.0 / space;
+    }
 
-  /** Set the Y spacing. */
+    /* New point, so the value will need to be recalculated. */
+    @Override
+    public void init(PointInfo p) {
+        point = p;
+        valueOk = errorOk = gradOk = false;
+    }
 
-  public void setYSpacing(double space)
-  {
-    yspace = space;
-    yinv = 1.0/space;
-  }
+    /* Calculate the average value of the function. */
+    @Override
+    public double getAverageValue(int which, double blur) {
+        if (valueOk && blur == lastBlur) {
+            return value;
+        }
+        valueOk = true;
+        lastBlur = blur;
 
-  /** Get the Z spacing. */
+        double x = (linkFrom[0] == null) ? point.x : linkFrom[0].getAverageValue(linkFromIndex[0], blur);
+        double y = (linkFrom[1] == null) ? point.y : linkFrom[1].getAverageValue(linkFromIndex[1], blur);
+        double z = (linkFrom[2] == null) ? point.z : linkFrom[2].getAverageValue(linkFromIndex[2], blur);
+        double xi = xspace * FastMath.round(x * xinv), yi = yspace * FastMath.round(y * yinv), zi = zspace * FastMath.round(z * zinv);
+        double xf = x - xi, yf = y - yi, zf = z - zi;
 
-  public double getZSpacing()
-  {
-    return zspace;
-  }
+        value = Math.sqrt(xf * xf + yf * yf + zf * zf);
+        gradient.set(xf, yf, zf);
+        gradient.scale(1.0 / value);
+        return value;
+    }
 
-  /** Set the Z spacing. */
+    /* The error is calculated at the same time as the value. */
+    @Override
+    public double getValueError(int which, double blur) {
+        if (errorOk && blur == lastBlur) {
+            return error;
+        }
+        double xsize = (linkFrom[0] == null) ? 0.5 * point.xsize + blur : linkFrom[0].getValueError(linkFromIndex[0], blur);
+        double ysize = (linkFrom[1] == null) ? 0.5 * point.ysize + blur : linkFrom[1].getValueError(linkFromIndex[1], blur);
+        double zsize = (linkFrom[2] == null) ? 0.5 * point.zsize + blur : linkFrom[2].getValueError(linkFromIndex[2], blur);
 
-  public void setZSpacing(double space)
-  {
-    zspace = space;
-    zinv = 1.0/space;
-  }
+        error = Math.max(Math.max(xsize, ysize), zsize);
+        errorOk = true;
+        return error;
+    }
 
-  /* New point, so the value will need to be recalculated. */
-
-  @Override
-  public void init(PointInfo p)
-  {
-    point = p;
-    valueOk = errorOk = gradOk = false;
-  }
-
-  /* Calculate the average value of the function. */
-
-  @Override
-  public double getAverageValue(int which, double blur)
-  {
-    if (valueOk && blur == lastBlur)
-      return value;
-    valueOk = true;
-    lastBlur = blur;
-
-    double x = (linkFrom[0] == null) ? point.x : linkFrom[0].getAverageValue(linkFromIndex[0], blur);
-    double y = (linkFrom[1] == null) ? point.y : linkFrom[1].getAverageValue(linkFromIndex[1], blur);
-    double z = (linkFrom[2] == null) ? point.z : linkFrom[2].getAverageValue(linkFromIndex[2], blur);
-    double xi = xspace*FastMath.round(x*xinv), yi = yspace*FastMath.round(y*yinv), zi = zspace*FastMath.round(z*zinv);
-    double xf = x-xi, yf = y-yi, zf = z-zi;
-
-    value = Math.sqrt(xf*xf + yf*yf + zf*zf);
-    gradient.set(xf, yf, zf);
-    gradient.scale(1.0/value);
-    return value;
-  }
-
-  /* The error is calculated at the same time as the value. */
-
-  @Override
-  public double getValueError(int which, double blur)
-  {
-    if (errorOk && blur == lastBlur)
-      return error;
-    double xsize = (linkFrom[0] == null) ? 0.5*point.xsize+blur : linkFrom[0].getValueError(linkFromIndex[0], blur);
-    double ysize = (linkFrom[1] == null) ? 0.5*point.ysize+blur : linkFrom[1].getValueError(linkFromIndex[1], blur);
-    double zsize = (linkFrom[2] == null) ? 0.5*point.zsize+blur : linkFrom[2].getValueError(linkFromIndex[2], blur);
-
-    error = Math.max(Math.max(xsize, ysize), zsize);
-    errorOk = true;
-    return error;
-  }
-
-  /* Calculate the gradient. */
-
-  @Override
-  public void getValueGradient(int which, Vec3 grad, double blur)
-  {
-    if (!valueOk || blur != lastBlur)
-      getAverageValue(which, blur);
-    if (gradOk)
-      {
+    /* Calculate the gradient. */
+    @Override
+    public void getValueGradient(int which, Vec3 grad, double blur) {
+        if (!valueOk || blur != lastBlur) {
+            getAverageValue(which, blur);
+        }
+        if (gradOk) {
+            grad.set(gradient);
+            return;
+        }
+        double dx = gradient.x, dy = gradient.y, dz = gradient.z;
+        if (dx != 0.0) {
+            if (linkFrom[0] == null) {
+                gradient.set(dx, 0.0, 0.0);
+            } else {
+                linkFrom[0].getValueGradient(linkFromIndex[0], grad, blur);
+                gradient.x = dx * grad.x;
+                gradient.y = dx * grad.y;
+                gradient.z = dx * grad.z;
+            }
+        } else {
+            gradient.set(0.0, 0.0, 0.0);
+        }
+        if (dy != 0.0) {
+            if (linkFrom[1] == null) {
+                gradient.y += dy;
+            } else {
+                linkFrom[1].getValueGradient(linkFromIndex[1], grad, blur);
+                gradient.x += dy * grad.x;
+                gradient.y += dy * grad.y;
+                gradient.z += dy * grad.z;
+            }
+        }
+        if (dz != 0.0) {
+            if (linkFrom[2] == null) {
+                gradient.z += dz;
+            } else {
+                linkFrom[2].getValueGradient(linkFromIndex[2], grad, blur);
+                gradient.x += dz * grad.x;
+                gradient.y += dz * grad.y;
+                gradient.z += dz * grad.z;
+            }
+        }
+        gradOk = true;
         grad.set(gradient);
-        return;
-      }
-    double dx = gradient.x, dy = gradient.y, dz = gradient.z;
-    if (dx != 0.0)
-      {
-        if (linkFrom[0] == null)
-          gradient.set(dx, 0.0, 0.0);
-        else
-          {
-            linkFrom[0].getValueGradient(linkFromIndex[0], grad, blur);
-            gradient.x = dx*grad.x;
-            gradient.y = dx*grad.y;
-            gradient.z = dx*grad.z;
-          }
-      }
-    else
-      gradient.set(0.0, 0.0, 0.0);
-    if (dy != 0.0)
-      {
-        if (linkFrom[1] == null)
-          gradient.y += dy;
-        else
-          {
-            linkFrom[1].getValueGradient(linkFromIndex[1], grad, blur);
-            gradient.x += dy*grad.x;
-            gradient.y += dy*grad.y;
-            gradient.z += dy*grad.z;
-          }
-      }
-    if (dz != 0.0)
-      {
-        if (linkFrom[2] == null)
-          gradient.z += dz;
-        else
-          {
-            linkFrom[2].getValueGradient(linkFromIndex[2], grad, blur);
-            gradient.x += dz*grad.x;
-            gradient.y += dz*grad.y;
-            gradient.z += dz*grad.z;
-          }
-      }
-    gradOk = true;
-    grad.set(gradient);
-  }
+    }
 
-  /* Allow the user to set the parameters. */
+    /* Allow the user to set the parameters. */
+    @Override
+    public boolean edit(final ProcedureEditor editor, Scene theScene) {
+        final ValueField xField = new ValueField(xspace, ValueField.POSITIVE, 5);
+        final ValueField yField = new ValueField(yspace, ValueField.POSITIVE, 5);
+        final ValueField zField = new ValueField(zspace, ValueField.POSITIVE, 5);
+        Object listener = new Object() {
+            void processEvent() {
+                xspace = xField.getValue();
+                yspace = yField.getValue();
+                zspace = zField.getValue();
+                xinv = 1.0 / xspace;
+                yinv = 1.0 / yspace;
+                zinv = 1.0 / zspace;
+                editor.updatePreview();
+            }
+        };
+        xField.addEventLink(ValueChangedEvent.class, listener);
+        yField.addEventLink(ValueChangedEvent.class, listener);
+        zField.addEventLink(ValueChangedEvent.class, listener);
+        ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), "Set Grid Spacing:", new Widget[]{xField, yField, zField},
+                new String[]{"X", "Y", "Z"});
+        return dlg.clickedOk();
+    }
 
-  @Override
-  public boolean edit(final ProcedureEditor editor, Scene theScene)
-  {
-    final ValueField xField = new ValueField(xspace, ValueField.POSITIVE, 5);
-    final ValueField yField = new ValueField(yspace, ValueField.POSITIVE, 5);
-    final ValueField zField = new ValueField(zspace, ValueField.POSITIVE, 5);
-    Object listener = new Object() {
-      void processEvent()
-      {
-        xspace = xField.getValue();
-        yspace = yField.getValue();
-        zspace = zField.getValue();
-        xinv = 1.0/xspace;
-        yinv = 1.0/yspace;
-        zinv = 1.0/zspace;
-        editor.updatePreview();
-      }
-    };
-    xField.addEventLink(ValueChangedEvent.class, listener);
-    yField.addEventLink(ValueChangedEvent.class, listener);
-    zField.addEventLink(ValueChangedEvent.class, listener);
-    ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), "Set Grid Spacing:", new Widget [] {xField, yField, zField},
-      new String [] {"X", "Y", "Z"});
-    return dlg.clickedOk();
-  }
+    /* Create a duplicate of this module. */
+    @Override
+    public Module duplicate() {
+        GridModule mod = new GridModule(new Point(bounds.x, bounds.y));
 
-  /* Create a duplicate of this module. */
+        mod.xspace = xspace;
+        mod.yspace = yspace;
+        mod.zspace = zspace;
+        mod.xinv = xinv;
+        mod.yinv = yinv;
+        mod.zinv = zinv;
+        return mod;
+    }
 
-  @Override
-  public Module duplicate()
-  {
-    GridModule mod = new GridModule(new Point(bounds.x, bounds.y));
+    /* Write out the parameters. */
+    @Override
+    public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
+        out.writeDouble(xspace);
+        out.writeDouble(yspace);
+        out.writeDouble(zspace);
+    }
 
-    mod.xspace = xspace;
-    mod.yspace = yspace;
-    mod.zspace = zspace;
-    mod.xinv = xinv;
-    mod.yinv = yinv;
-    mod.zinv = zinv;
-    return mod;
-  }
-
-  /* Write out the parameters. */
-
-  @Override
-  public void writeToStream(DataOutputStream out, Scene theScene) throws IOException
-  {
-    out.writeDouble(xspace);
-    out.writeDouble(yspace);
-    out.writeDouble(zspace);
-  }
-
-  /* Read in the parameters. */
-
-  @Override
-  public void readFromStream(DataInputStream in, Scene theScene) throws IOException
-  {
-    xspace = in.readDouble();
-    yspace = in.readDouble();
-    zspace = in.readDouble();
-    xinv = 1.0/xspace;
-    yinv = 1.0/yspace;
-    zinv = 1.0/zspace;
-  }
+    /* Read in the parameters. */
+    @Override
+    public void readFromStream(DataInputStream in, Scene theScene) throws IOException {
+        xspace = in.readDouble();
+        yspace = in.readDouble();
+        zspace = in.readDouble();
+        xinv = 1.0 / xspace;
+        yinv = 1.0 / yspace;
+        zinv = 1.0 / zspace;
+    }
 }

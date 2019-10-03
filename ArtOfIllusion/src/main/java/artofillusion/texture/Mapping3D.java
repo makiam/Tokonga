@@ -8,40 +8,36 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.texture;
 
 import artofillusion.object.*;
 
-/** Mapping3D is an abstract class describing a linear mapping between 3D texture coordinates
-    and 3D space. */
+/**
+ * Mapping3D is an abstract class describing a linear mapping between 3D texture coordinates and 3D
+ * space.
+ */
+public abstract class Mapping3D extends TextureMapping {
 
-public abstract class Mapping3D extends TextureMapping
-{
-  Object3D object;
-  Texture3D texture;
+    Object3D object;
+    Texture3D texture;
 
-  public Mapping3D(Object3D theObject, Texture theTexture)
-  {
-    object = theObject;
-    texture = (Texture3D) theTexture;
-  }
+    public Mapping3D(Object3D theObject, Texture theTexture) {
+        object = theObject;
+        texture = (Texture3D) theTexture;
+    }
 
-  @Override
-  public Texture getTexture()
-  {
-    return texture;
-  }
+    @Override
+    public Texture getTexture() {
+        return texture;
+    }
 
-  @Override
-  public Object3D getObject()
-  {
-    return object;
-  }
+    @Override
+    public Object3D getObject() {
+        return object;
+    }
 
-  @Override
-  public boolean legalMapping(Object3D obj, Texture tex)
-  {
-    return (tex instanceof Texture3D);
-  }
+    @Override
+    public boolean legalMapping(Object3D obj, Texture tex) {
+        return (tex instanceof Texture3D);
+    }
 }

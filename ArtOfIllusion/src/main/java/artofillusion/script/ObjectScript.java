@@ -7,12 +7,12 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.script;
 
-/** This interface represents a parsed Object script. */
+/**
+ * This interface represents a parsed Object script.
+ */
+public interface ObjectScript {
 
-public interface ObjectScript
-{
-  public void execute(ScriptedObjectController script) throws ScriptException;
+    public void execute(ScriptedObjectController script) throws ScriptException;
 }
