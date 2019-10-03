@@ -1,0 +1,43 @@
+apply plugin: 'java'
+apply plugin: 'base'
+apply plugin: 'jacoco'
+
+sourceCompatibility = '1.8'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    
+    testCompile('junit:junit:4.12') {
+        exclude group: 'org.hamcrest'
+    }
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
+    testCompile group: 'org.netbeans', name: 'jemmy', version: '2.2.7.5'
+    
+    implementation group: 'org.jogamp.gluegen', name: 'gluegen-rt-main', version: '2.3.2'
+    implementation group: 'org.jogamp.jogl', name: 'jogl-all-main', version: '2.3.2'
+
+    implementation group: 'com.kitfox.svg', name: 'svg-salamander', version: '1.0'
+    implementation group: 'gov.nist.math', name: 'jama', version: '1.0.3'
+    implementation group: 'com.googlecode.matrix-toolkits-java', name: 'mtj', version: '0.9.14'
+    implementation group: 'org.beanshell', name: 'bsh', version: '2.0b5'
+    implementation group: 'org.codehaus.groovy', name: 'groovy', version: '2.5.4'
+
+    implementation "javax.xml.bind:jaxb-api:2.2.11"
+    implementation "com.sun.xml.bind:jaxb-core:2.2.11"
+    implementation "com.sun.xml.bind:jaxb-impl:2.2.11"
+    implementation "javax.activation:activation:1.1.1"
+    
+    // only buoy and QuickTimeWriter need to be local. Other locals can be removed
+    implementation fileTree(dir: '../lib', include: '*.jar')
+
+
+}
+
+test {
+    ignoreFailures = true
+    testLogging.showStandardStreams = true
+}

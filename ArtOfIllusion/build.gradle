@@ -1,0 +1,25 @@
+
+
+plugins {
+    id 'application'
+}
+
+description = 'ArtOfIllusion'
+
+mainClassName = 'artofillusion.ArtOfIllusion'
+
+jar {
+    manifest {
+        attributes('Main-Class': 'artofillusion.ArtOfIllusion', "Class-Path": configurations.compile.collect { it.getName() }.join(' '))
+    }
+}
+
+distributions {
+    main { contents { 
+            from("../Plugins") { into("Plugins") }
+            from("../Textures And Materials") { into("Textures And Materials") }
+        } 
+    }
+}
+
+tasks.distTar.enabled = false

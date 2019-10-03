@@ -1,0 +1,29 @@
+apply plugin: 'base'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            url uri('http://files.viva64.com/java/pvsstudio-maven-repository/')
+        }
+    }
+    dependencies {
+        classpath group: 'com.pvsstudio',              name: 'pvsstudio-gradle-plugin',              version: '7.04.34029'
+    }
+}
+
+subprojects {
+    apply from: rootProject.file('common.gradle')
+}
+
+apply plugin: com.pvsstudio.PvsStudioGradlePlugin
+
+pvsstudio {
+    outputType = 'fullhtml'
+    outputFile = 'reports'
+    verbose = true
+    disabledWarnings = ["V6071"];
+}
+
+assemble.dependsOn subprojects.jar
