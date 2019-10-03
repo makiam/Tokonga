@@ -55,7 +55,7 @@ public class ArraySpec
         
         // general paramters
 
-        /** Set to METHOD_LINEAR to create a liniar array.
+        /** Set to METHOD_LINEAR to create a linear array.
             Set to METHOD_CURVE to create an array along a curve. */
         public int method;
         /** the objects that should be copied to create an array */
