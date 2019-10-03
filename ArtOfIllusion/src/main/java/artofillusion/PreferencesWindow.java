@@ -201,7 +201,7 @@ public class PreferencesWindow {
             showTravelCuesScrollingBox.setState(showTravelCuesOnIdleBox.getState());
         }
 
-        themes = new ArrayList<ThemeManager.ThemeInfo>();
+        themes = new ArrayList<>();
         for (ThemeManager.ThemeInfo theme : ThemeManager.getThemes()) {
             if (theme.selectable) {
                 themes.add(theme);

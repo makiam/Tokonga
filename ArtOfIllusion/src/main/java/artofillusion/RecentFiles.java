@@ -59,7 +59,7 @@ public class RecentFiles {
         String newPath = file.getAbsolutePath();
         Preferences pref = Preferences.userNodeForPackage(RecentFiles.class);
         String recent[] = pref.get("recentFiles", "").split(File.pathSeparator);
-        ArrayList<String> newFiles = new ArrayList<String>();
+        ArrayList<String> newFiles = new ArrayList<>();
         newFiles.add(newPath);
         for (int i = 0; i < recent.length && newFiles.size() < MAX_RECENT; i++) {
             if (!newPath.equals(recent[i])) {

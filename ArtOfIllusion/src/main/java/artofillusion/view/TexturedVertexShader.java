@@ -89,7 +89,7 @@ public class TexturedVertexShader implements VertexShader {
                 return shader;
             }
         }
-        cachedShaderMap.put(mesh, new SoftReference<TexturedVertexShader>(this));
+        cachedShaderMap.put(mesh, new SoftReference<>(this));
         return this;
     }
 

@@ -358,7 +358,7 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
         /* We now have two lists of edges: one for each direction of traversal.
      * Determine which ones are duplicates, and add any unique edges from
      * edges2 into edges1.*/
-        Hashtable<Point, Integer> edgeTable = new Hashtable<Point, Integer>();
+        Hashtable<Point, Integer> edgeTable = new Hashtable<>();
         for (i = 0; i < numEdges1; i++) {
             edgeTable.put(new Point(edges1[i].v1, edges1[i].v2), i);
         }
@@ -620,7 +620,7 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
     public int[][] findBoundaryEdges() {
         // First, find every edge which is on a boundary.
 
-        Vector<Integer> allEdges = new Vector<Integer>();
+        Vector<Integer> allEdges = new Vector<>();
         for (int i = 0; i < edge.length; i++) {
             if (edge[i].f2 == -1) {
                 allEdges.addElement(i);
@@ -628,11 +628,11 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
         }
 
         // Form boundaries one at a time.
-        Vector<Vector<Integer>> boundary = new Vector<Vector<Integer>>();
+        Vector<Vector<Integer>> boundary = new Vector<>();
         while (allEdges.size() > 0) {
             // Take one edge as a starting point, and follow around.
 
-            Vector<Integer> current = new Vector<Integer>();
+            Vector<Integer> current = new Vector<>();
             Integer start = allEdges.elementAt(0);
             allEdges.removeElementAt(0);
             current.addElement(start);
@@ -766,7 +766,7 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
             to[i] = e[i].v2;
         }
         WireframeMesh wire = new WireframeMesh(point, from, to);
-        cachedWire = new SoftReference<WireframeMesh>(wire);
+        cachedWire = new SoftReference<>(wire);
         return wire;
     }
 
@@ -820,7 +820,7 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
 
         // Create the RenderingMesh.
         vert = new Vec3[v.length];
-        norm = new Vector<Vec3>();
+        norm = new Vector<>();
         tri = new RenderingTriangle[f.length];
         facenorm = new int[f.length * 3];
         normals = 0;
@@ -1022,7 +1022,7 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
         RenderingMesh rend = new RenderingMesh(vert, normalArray, tri, texMapping, matMapping);
         rend.setParameters(mesh.paramValue);
         if (interactive) {
-            cachedMesh = new SoftReference<RenderingMesh>(rend);
+            cachedMesh = new SoftReference<>(rend);
         }
         return rend;
     }

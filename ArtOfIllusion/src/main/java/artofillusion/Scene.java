@@ -61,14 +61,14 @@ public class Scene {
     public Scene() {
         UniformTexture defTex = new UniformTexture();
 
-        objects = new Vector<ObjectInfo>();
-        materials = new Vector<Material>();
-        textures = new Vector<Texture>();
-        images = new Vector<ImageMap>();
-        selection = new Vector<Integer>();
-        metadataMap = new HashMap<String, Object>();
-        textureListeners = new Vector<ListChangeListener>();
-        materialListeners = new Vector<ListChangeListener>();
+        objects = new Vector<>();
+        materials = new Vector<>();
+        textures = new Vector<>();
+        images = new Vector<>();
+        selection = new Vector<>();
+        metadataMap = new HashMap<>();
+        textureListeners = new Vector<>();
+        materialListeners = new Vector<>();
         defTex.setName("Default Texture");
         textures.addElement(defTex);
         ambientColor = new RGBColor(0.3f, 0.3f, 0.3f);
@@ -998,7 +998,7 @@ public class Scene {
         if (objectIndexMap == null) {
             // Build an index for fast lookup.
 
-            objectIndexMap = new HashMap<ObjectInfo, Integer>();
+            objectIndexMap = new HashMap<>();
             for (int i = 0; i < objects.size(); i++) {
                 objectIndexMap.put(objects.get(i), i);
             }
@@ -1018,7 +1018,7 @@ public class Scene {
      * Get the list of scene cameras.
      */
     public List<ObjectInfo> getCameras() {
-        List<ObjectInfo> list = new ArrayList<ObjectInfo>();
+        List<ObjectInfo> list = new ArrayList<>();
         for (ObjectInfo sceneObject : objects) {
             if (sceneObject.getObject() instanceof SceneCamera) {
                 list.add(sceneObject);
@@ -1239,7 +1239,7 @@ public class Scene {
 
         // Read the image maps.
         count = in.readInt();
-        images = new Vector<ImageMap>(count);
+        images = new Vector<>(count);
         for (int i = 0; i < count; i++) {
             if (version == 0) {
                 images.addElement(new MIPMappedImage(in, (short) 0));
@@ -1260,7 +1260,7 @@ public class Scene {
 
         // Read the materials.
         count = in.readInt();
-        materials = new Vector<Material>(count);
+        materials = new Vector<>(count);
         for (int i = 0; i < count; i++) {
             try {
                 String classname = in.readUTF();
@@ -1294,7 +1294,7 @@ public class Scene {
 
         // Read the textures.
         count = in.readInt();
-        textures = new Vector<Texture>(count);
+        textures = new Vector<>(count);
         for (int i = 0; i < count; i++) {
             try {
                 String classname = in.readUTF();
@@ -1328,13 +1328,13 @@ public class Scene {
 
         // Read the objects.
         count = in.readInt();
-        objects = new Vector<ObjectInfo>(count);
-        table = new Hashtable<Integer, Object3D>(count);
+        objects = new Vector<>(count);
+        table = new Hashtable<>(count);
         for (int i = 0; i < count; i++) {
             objects.addElement(readObjectFromFile(in, table, version));
         }
         objectIndexMap = null;
-        selection = new Vector<Integer>();
+        selection = new Vector<>();
 
         // Read the list of children for each object.
         for (int i = 0; i < objects.size(); i++) {
@@ -1386,7 +1386,7 @@ public class Scene {
         }
 
         // Read the metadata.
-        metadataMap = new HashMap<String, Object>();
+        metadataMap = new HashMap<>();
         if (version > 3) {
             count = in.readInt();
             SearchlistClassLoader loader = new SearchlistClassLoader(getClass().getClassLoader());
@@ -1406,8 +1406,8 @@ public class Scene {
                 }
             }
         }
-        textureListeners = new Vector<ListChangeListener>();
-        materialListeners = new Vector<ListChangeListener>();
+        textureListeners = new Vector<>();
+        materialListeners = new Vector<>();
         setTime(0.0);
     }
 
@@ -1522,7 +1522,7 @@ public class Scene {
         Material mat;
         Texture tex;
         int i, j, index = 0;
-        Hashtable<Object3D, Integer> table = new Hashtable<Object3D, Integer>(objects.size());
+        Hashtable<Object3D, Integer> table = new Hashtable<>(objects.size());
 
         out.writeShort(4);
         ambientColor.writeToFile(out);

@@ -143,7 +143,7 @@ public class ExternalObject extends ObjectWrapper {
                 if (includeChildren && foundObject.getChildren().length > 0) {
                     // Create an ObjectCollection containing the object and all its children.
 
-                    ArrayList<ObjectInfo> allObjects = new ArrayList<ObjectInfo>();
+                    ArrayList<ObjectInfo> allObjects = new ArrayList<>();
                     addObjectsToList(foundObject, allObjects, foundObject.getCoords().toLocal());
                     theObject = new ExternalObjectCollection(allObjects);
                 } else {

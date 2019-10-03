@@ -213,7 +213,7 @@ public class UIUtilities {
             return new String[]{s};
         }
         int lineLength = s.length() / lines;
-        Vector<String> line = new Vector<String>();
+        Vector<String> line = new Vector<>();
         int index = 0;
         while (index + lineLength < s.length()) {
             int next = s.indexOf(' ', index + lineLength);
@@ -249,7 +249,7 @@ public class UIUtilities {
      * through multiple levels of nesting.
      */
     public static List<Widget> findAllChildren(Widget w) {
-        ArrayList<Widget> list = new ArrayList<Widget>();
+        ArrayList<Widget> list = new ArrayList<>();
         addChildrenToList(w, list);
         return list;
     }

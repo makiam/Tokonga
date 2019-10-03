@@ -170,7 +170,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
         hilightButtons();
 
         addEventLink(WindowClosingEvent.class, this, "dispose");
-        rootNodes = new ArrayList<Object>();
+        rootNodes = new ArrayList<>();
         showTextures = true;
         showMaterials = true;
         rootNodes.add(new SceneTreeNode(null, theScene));
@@ -634,18 +634,18 @@ public class TexturesAndMaterialsDialog extends BDialog {
 
         SceneTreeNode(File file, Scene scene) {
             this.file = file;
-            this.scene = new SoftReference<Scene>(scene);
+            this.scene = new SoftReference<>(scene);
         }
 
         void ensureChildrenValid() {
             if (textures == null) {
                 try {
                     Scene theScene = getScene();
-                    textures = new ArrayList<TextureTreeNode>();
+                    textures = new ArrayList<>();
                     for (int i = 0; i < theScene.getNumTextures(); i++) {
                         textures.add(new TextureTreeNode(this, i));
                     }
-                    materials = new ArrayList<MaterialTreeNode>();
+                    materials = new ArrayList<>();
                     for (int i = 0; i < theScene.getNumMaterials(); i++) {
                         materials.add(new MaterialTreeNode(this, i));
                     }
@@ -663,7 +663,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
                 }
             }
             Scene theScene = new Scene(file, true);
-            scene = new SoftReference<Scene>(theScene);
+            scene = new SoftReference<>(theScene);
             return theScene;
         }
 
@@ -687,7 +687,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
 
         ArrayList<Object> getChildren() {
             if (children == null) {
-                children = new ArrayList<Object>();
+                children = new ArrayList<>();
                 for (File f : file.listFiles()) {
                     if (f.isDirectory()) {
                         children.add(new FolderTreeNode(f));
@@ -707,7 +707,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
 
     private class SceneTreeModel implements TreeModel {
 
-        private ArrayList<TreeModelListener> listeners = new ArrayList<TreeModelListener>();
+        private ArrayList<TreeModelListener> listeners = new ArrayList<>();
         private DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
         @Override

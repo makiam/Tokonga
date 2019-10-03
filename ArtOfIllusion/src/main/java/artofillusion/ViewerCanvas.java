@@ -121,7 +121,7 @@ public abstract class ViewerCanvas extends CustomWidget {
     public ViewerCanvas(boolean useOpenGL) {
         CoordinateSystem coords = new CoordinateSystem(new Vec3(0.0, 0.0, Camera.DEFAULT_DISTANCE_TO_SCREEN), new Vec3(0.0, 0.0, -1.0), Vec3.vy());
         viewChangedEvent = new ViewChangedEvent(this);
-        controlMap = new HashMap<ViewerControl, Widget>();
+        controlMap = new HashMap<>();
         theCamera = new Camera();
         theCamera.setCameraCoordinates(coords);
         finder = new ClickedPointFinder();

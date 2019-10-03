@@ -289,7 +289,7 @@ public class ProceduralDirectionalLight extends DirectionalLight {
 
         public ProceduralLightKeyframe(ProceduralDirectionalLight light) {
             this.light = light;
-            paramValues = new HashMap<TextureParameter, Double>();
+            paramValues = new HashMap<>();
             for (int i = 0; i < light.parameters.length; i++) {
                 paramValues.put(light.parameters[i], light.parameterValues[i]);
             }

@@ -91,7 +91,7 @@ public class ObjectInfo {
      */
     public static ObjectInfo[] duplicateAll(ObjectInfo info[]) {
         ObjectInfo newobj[] = new ObjectInfo[info.length];
-        HashMap<ObjectInfo, ObjectInfo> objectMap = new HashMap<ObjectInfo, ObjectInfo>();
+        HashMap<ObjectInfo, ObjectInfo> objectMap = new HashMap<>();
         for (int i = 0; i < newobj.length; i++) {
             newobj[i] = info[i].duplicate(info[i].getObject().duplicate());
             objectMap.put(info[i], newobj[i]);
@@ -364,7 +364,7 @@ public class ObjectInfo {
             double tol = ArtOfIllusion.getPreferences().getInteractiveSurfaceError();
             Object3D obj = getDistortedObject(tol);
             cached = obj.getRenderingMesh(tol, true, this);
-            cachedMesh = new SoftReference<RenderingMesh>(cached);
+            cachedMesh = new SoftReference<>(cached);
             if (cachedBounds == null) {
                 cachedBounds = obj.getBounds();
             }
@@ -389,7 +389,7 @@ public class ObjectInfo {
             double tol = ArtOfIllusion.getPreferences().getInteractiveSurfaceError();
             Object3D obj = getDistortedObject(tol);
             cached = obj.getWireframeMesh();
-            cachedWire = new SoftReference<WireframeMesh>(cached);
+            cachedWire = new SoftReference<>(cached);
             if (cachedBounds == null) {
                 cachedBounds = obj.getBounds();
             }
@@ -417,9 +417,9 @@ public class ObjectInfo {
             }
             if (!(realObject instanceof ObjectCollection)) {
                 if (lastPreviewWasWireframe && cachedWire == null) {
-                    cachedWire = new SoftReference<WireframeMesh>(obj.getWireframeMesh());
+                    cachedWire = new SoftReference<>(obj.getWireframeMesh());
                 } else if (!lastPreviewWasWireframe && cachedMesh == null) {
-                    cachedMesh = new SoftReference<RenderingMesh>(obj.getRenderingMesh(tol, true, this));
+                    cachedMesh = new SoftReference<>(obj.getRenderingMesh(tol, true, this));
                 }
             }
         }

@@ -345,8 +345,8 @@ public class CSGObject extends Object3D {
             from[i] = edge[i].v2;
         }
         WireframeMesh wire = new WireframeMesh(rendering.vert, from, to);
-        cachedMesh = new SoftReference<RenderingMesh>(rendering);
-        cachedWire = new SoftReference<WireframeMesh>(wire);
+        cachedMesh = new SoftReference<>(rendering);
+        cachedWire = new SoftReference<>(wire);
         return new Object[]{rendering, wire}; // Return these to make sure the references don't get cleared instantly.
     }
 

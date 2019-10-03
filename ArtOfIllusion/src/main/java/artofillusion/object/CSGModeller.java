@@ -69,10 +69,10 @@ public class CSGModeller {
         }
 
         // Create the lists of vertices, edges, and faces for each mesh.
-        vert1 = new Vector<VertexInfo>();
-        vert2 = new Vector<VertexInfo>();
-        face1 = new Vector<FaceInfo>();
-        face2 = new Vector<FaceInfo>();
+        vert1 = new Vector<>();
+        vert2 = new Vector<>();
+        face1 = new Vector<>();
+        face2 = new Vector<>();
         TriangleMesh.Vertex vert[] = (TriangleMesh.Vertex[]) obj1.getVertices();
         Mat4 trans = coords1.fromLocal();
         for (int i = 0; i < vert.length; i++) {
@@ -124,9 +124,9 @@ public class CSGModeller {
      * @param op the operation to perform (one of the constants defined by CSGObject)
      */
     public TriangleMesh getMesh(int op, Texture texture) {
-        Vector<VertexInfo> allVert = new Vector<VertexInfo>();
-        Vector<int[]> faceIndex = new Vector<int[]>();
-        Vector<float[]> faceSmoothness = new Vector<float[]>();
+        Vector<VertexInfo> allVert = new Vector<>();
+        Vector<int[]> faceIndex = new Vector<>();
+        Vector<float[]> faceSmoothness = new Vector<>();
         int index1[] = new int[vert1.size()], index2[] = new int[vert2.size()];
         int firstBoundary = -1, faces1;
 

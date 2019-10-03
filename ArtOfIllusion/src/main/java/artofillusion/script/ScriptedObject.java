@@ -371,7 +371,7 @@ public class ScriptedObject extends ObjectCollection {
 
         public ScriptedObjectKeyframe(ScriptedObject object, String names[], double values[]) {
             script = object;
-            valueTable = new Hashtable<String, Double>();
+            valueTable = new Hashtable<>();
             for (int i = 0; i < names.length; i++) {
                 valueTable.put(names[i], values[i]);
             }
@@ -500,7 +500,7 @@ public class ScriptedObject extends ObjectCollection {
             for (int i = 0; i < values.length; i++) {
                 values[i] = in.readDouble();
             }
-            valueTable = new Hashtable<String, Double>();
+            valueTable = new Hashtable<>();
             for (int i = 0; i < values.length; i++) {
                 valueTable.put(script.paramName[i], values[i]);
             }

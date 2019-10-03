@@ -295,7 +295,7 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
         public FiltersPanel(SceneCamera camera, Runnable filterChangedCallback) {
             super(1, 2);
             this.filterChangedCallback = filterChangedCallback;
-            filters = new ArrayList<ImageFilter>();
+            filters = new ArrayList<>();
             ImageFilter oldFilters[] = camera.getImageFilters();
             for (int i = 0; i < oldFilters.length; i++) {
                 filters.add(oldFilters[i]);

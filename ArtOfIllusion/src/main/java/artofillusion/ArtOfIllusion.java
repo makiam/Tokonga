@@ -289,7 +289,7 @@ public class ArtOfIllusion {
         if (null == files) {
             return;
         }
-        HashMap<String, Object> variables = new HashMap<String, Object>();
+        HashMap<String, Object> variables = new HashMap<>();
 
         for (String file : files) {
             try {
@@ -441,7 +441,7 @@ public class ArtOfIllusion {
     public static void copyToClipboard(ObjectInfo obj[], Scene scene) {
         // First make a list of all textures used by the objects.
 
-        ArrayList<Texture> textures = new ArrayList<Texture>();
+        ArrayList<Texture> textures = new ArrayList<>();
         for (int i = 0; i < obj.length; i++) {
             Texture tex = obj[i].getObject().getTexture();
             if (tex instanceof LayeredTexture) {
@@ -463,7 +463,7 @@ public class ArtOfIllusion {
         }
 
         // Next make a list of all materials used by the objects.
-        ArrayList<Material> materials = new ArrayList<Material>();
+        ArrayList<Material> materials = new ArrayList<>();
         for (int i = 0; i < obj.length; i++) {
             Material mat = obj[i].getObject().getMaterial();
             if (mat != null) {
@@ -475,7 +475,7 @@ public class ArtOfIllusion {
         }
 
         // Now make a list of all ImageMaps used by any of them.
-        ArrayList<ImageMap> images = new ArrayList<ImageMap>();
+        ArrayList<ImageMap> images = new ArrayList<>();
         for (int i = 0; i < scene.getNumImages(); i++) {
             ImageMap map = scene.getImage(i);
             boolean used = false;

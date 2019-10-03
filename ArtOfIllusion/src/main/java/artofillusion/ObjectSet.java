@@ -78,7 +78,7 @@ public class ObjectSet {
      * Get the objects in the set.
      */
     public List<ObjectInfo> getObjects(Scene scene) {
-        ArrayList<ObjectInfo> list = new ArrayList<ObjectInfo>();
+        ArrayList<ObjectInfo> list = new ArrayList<>();
         for (int id : objectIDs) {
             ObjectInfo info = scene.getObjectById(id);
             if (info != null) {

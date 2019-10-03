@@ -28,8 +28,8 @@ public class CompoundImplicitObject extends ImplicitObject {
     private double cutoff;
 
     public CompoundImplicitObject() {
-        objects = new ArrayList<ImplicitObject>();
-        objectCoords = new ArrayList<CoordinateSystem>();
+        objects = new ArrayList<>();
+        objectCoords = new ArrayList<>();
         cutoff = 1.0;
     }
 
@@ -121,7 +121,7 @@ public class CompoundImplicitObject extends ImplicitObject {
             synchronized (this) {
                 if (grid == null) {
                     gridSize = (int) Math.ceil(Math.pow(objects.size(), 1.0 / 3.0));
-                    grid = new ArrayList<ArrayList<Integer>>(gridSize * gridSize * gridSize);
+                    grid = new ArrayList<>(gridSize * gridSize * gridSize);
                     for (int i = 0; i < gridSize * gridSize * gridSize; i++) {
                         grid.add(null);
                     }
@@ -144,7 +144,7 @@ public class CompoundImplicitObject extends ImplicitObject {
                                 for (int k = minz; k <= maxz; k++) {
                                     int n = k + gridSize * (j + gridSize * i);
                                     if (grid.get(n) == null) {
-                                        grid.set(n, new ArrayList<Integer>());
+                                        grid.set(n, new ArrayList<>());
                                     }
                                     grid.get(n).add(index);
                                 }
@@ -153,7 +153,7 @@ public class CompoundImplicitObject extends ImplicitObject {
                     }
                 }
             }
-            ArrayList<Integer> empty = new ArrayList<Integer>();
+            ArrayList<Integer> empty = new ArrayList<>();
             for (int i = 0; i < gridSize * gridSize * gridSize; i++) {
                 if (grid.get(i) == null) {
                     grid.set(i, empty);
@@ -225,8 +225,8 @@ public class CompoundImplicitObject extends ImplicitObject {
 
     @Override
     public Keyframe getPoseKeyframe() {
-        ArrayList<Keyframe> key = new ArrayList<Keyframe>();
-        ArrayList<CoordinateSystem> coords = new ArrayList<CoordinateSystem>();
+        ArrayList<Keyframe> key = new ArrayList<>();
+        ArrayList<CoordinateSystem> coords = new ArrayList<>();
         for (int i = 0; i < getNumObjects(); i++) {
             key.add(getObject(i).getPoseKeyframe());
             coords.add(getObjectCoordinates(i).duplicate());
@@ -280,8 +280,8 @@ public class CompoundImplicitObject extends ImplicitObject {
          */
         @Override
         public Keyframe duplicate() {
-            ArrayList<Keyframe> newKey = new ArrayList<Keyframe>();
-            ArrayList<CoordinateSystem> newCoords = new ArrayList<CoordinateSystem>();
+            ArrayList<Keyframe> newKey = new ArrayList<>();
+            ArrayList<CoordinateSystem> newCoords = new ArrayList<>();
             for (int i = 0; i < key.size(); i++) {
                 newKey.add(key.get(i).duplicate());
                 newCoords.add(coords.get(i).duplicate());
@@ -295,8 +295,8 @@ public class CompoundImplicitObject extends ImplicitObject {
         @Override
         public Keyframe duplicate(Object owner) {
             CompoundImplicitObject other = (CompoundImplicitObject) ((ObjectInfo) owner).getObject();
-            ArrayList<Keyframe> newKey = new ArrayList<Keyframe>();
-            ArrayList<CoordinateSystem> newCoords = new ArrayList<CoordinateSystem>();
+            ArrayList<Keyframe> newKey = new ArrayList<>();
+            ArrayList<CoordinateSystem> newCoords = new ArrayList<>();
             for (int i = 0; i < key.size(); i++) {
                 newKey.add(key.get(i).duplicate(other.getObject(i)));
                 newCoords.add(coords.get(i).duplicate());
@@ -324,8 +324,8 @@ public class CompoundImplicitObject extends ImplicitObject {
         @Override
         public Keyframe blend(Keyframe o2, double weight1, double weight2) {
             CompoundImplicitKeyframe k2 = (CompoundImplicitKeyframe) o2;
-            ArrayList<Keyframe> newKey = new ArrayList<Keyframe>();
-            ArrayList<CoordinateSystem> newCoords = new ArrayList<CoordinateSystem>();
+            ArrayList<Keyframe> newKey = new ArrayList<>();
+            ArrayList<CoordinateSystem> newCoords = new ArrayList<>();
             for (int i = 0; i < key.size(); i++) {
                 // Blend the new coordinate systems.
 
@@ -350,8 +350,8 @@ public class CompoundImplicitObject extends ImplicitObject {
         @Override
         public Keyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3) {
             CompoundImplicitKeyframe k2 = (CompoundImplicitKeyframe) o2, k3 = (CompoundImplicitKeyframe) o3;
-            ArrayList<Keyframe> newKey = new ArrayList<Keyframe>();
-            ArrayList<CoordinateSystem> newCoords = new ArrayList<CoordinateSystem>();
+            ArrayList<Keyframe> newKey = new ArrayList<>();
+            ArrayList<CoordinateSystem> newCoords = new ArrayList<>();
             for (int i = 0; i < key.size(); i++) {
                 // Blend the new coordinate systems.
 
@@ -380,8 +380,8 @@ public class CompoundImplicitObject extends ImplicitObject {
         @Override
         public Keyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4) {
             CompoundImplicitKeyframe k2 = (CompoundImplicitKeyframe) o2, k3 = (CompoundImplicitKeyframe) o3, k4 = (CompoundImplicitKeyframe) o4;
-            ArrayList<Keyframe> newKey = new ArrayList<Keyframe>();
-            ArrayList<CoordinateSystem> newCoords = new ArrayList<CoordinateSystem>();
+            ArrayList<Keyframe> newKey = new ArrayList<>();
+            ArrayList<CoordinateSystem> newCoords = new ArrayList<>();
             for (int i = 0; i < key.size(); i++) {
                 // Blend the new coordinate systems.
 
@@ -467,8 +467,8 @@ public class CompoundImplicitObject extends ImplicitObject {
             if (in.readInt() != obj.getNumObjects()) {
                 throw new InvalidObjectException("Keyframe contains the wrong number of component objects");
             }
-            key = new ArrayList<Keyframe>();
-            coords = new ArrayList<CoordinateSystem>();
+            key = new ArrayList<>();
+            coords = new ArrayList<>();
             try {
                 for (int i = 0; i < obj.getNumObjects(); i++) {
                     Class cl = ArtOfIllusion.getClass(in.readUTF());

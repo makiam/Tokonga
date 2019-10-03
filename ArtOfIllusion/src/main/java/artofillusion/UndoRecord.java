@@ -43,7 +43,7 @@ public class UndoRecord {
         }, "Undo write service shutdown thread"));
     }
 
-    private final LinkedList<UndoAction> commands = new LinkedList<UndoAction>();
+    private final LinkedList<UndoAction> commands = new LinkedList<>();
 
     private ArrayList<SoftReference[]> dataRef;
     private File cacheFile;
@@ -359,7 +359,7 @@ public class UndoRecord {
         }
 
         try {
-            dataRef = new ArrayList<SoftReference[]>();
+            dataRef = new ArrayList<>();
             cacheFile = File.createTempFile("undoCache", "dat");
             cacheFile.deleteOnExit();
 
@@ -372,7 +372,7 @@ public class UndoRecord {
                     if (c == COPY_OBJECT && theWindow.getScene() != null) {
                         out.writeUTF(d[1].getClass().getName());
                         ((Object3D) d[1]).writeToFile(out, theWindow.getScene());
-                        ref[1] = new SoftReference<Object>(d[1]);
+                        ref[1] = new SoftReference<>(d[1]);
                         d[1] = null;
                     } else if (c == COPY_VERTEX_POSITIONS) {
                         Vec3 positions[] = (Vec3[]) d[1];
@@ -380,7 +380,7 @@ public class UndoRecord {
                         for (Vec3 v : positions) {
                             v.writeToFile(out);
                         }
-                        ref[1] = new SoftReference<Object>(d[1]);
+                        ref[1] = new SoftReference<>(d[1]);
                         d[1] = null;
                     }
                 }

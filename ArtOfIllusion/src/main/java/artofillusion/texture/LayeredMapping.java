@@ -105,7 +105,7 @@ public class LayeredMapping extends TextureMapping {
      */
     @Override
     public TextureParameter[] getParameters() {
-        Vector<TextureParameter> param = new Vector<TextureParameter>();
+        Vector<TextureParameter> param = new Vector<>();
         TextureParameter p[];
         int i, j;
 

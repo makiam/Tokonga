@@ -326,7 +326,7 @@ public abstract class ObjectViewer extends ViewerCanvas {
         squareBox = square;
         dragPoint = null;
         if (freehandSelection) {
-            selectBoundsPoints = new Vector<Point>();
+            selectBoundsPoints = new Vector<>();
         }
     }
 

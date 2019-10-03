@@ -1527,7 +1527,7 @@ public class IconGenerator {
                         }
                         if (end > pos) {
                             if (method == null) {
-                                method = new ArrayList<String>(4);
+                                method = new ArrayList<>(4);
                             }
 
                             method.add(macro.substring(pos + 1, end + 1).trim());
@@ -1600,7 +1600,7 @@ public class IconGenerator {
                     default:
                         if (end < len && macro.charAt(end) == '(') {
                             if (method == null) {
-                                method = new ArrayList<String>(4);
+                                method = new ArrayList<>(4);
                             }
                             method.add(macro.substring(pos, end - 1).trim());
                         } else {

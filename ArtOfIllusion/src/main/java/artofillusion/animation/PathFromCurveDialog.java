@@ -45,8 +45,8 @@ public class PathFromCurveDialog extends BDialog {
         theScene = window.getScene();
 
         // Find the object and curves.
-        objects = new Vector<ObjectInfo>();
-        curves = new Vector<ObjectInfo>();
+        objects = new Vector<>();
+        curves = new Vector<>();
         objList = new BList();
         curveList = new BList();
         for (int i = 0; i < sel.length; i++) {

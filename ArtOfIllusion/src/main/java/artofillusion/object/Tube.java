@@ -471,9 +471,9 @@ public class Tube extends Curve {
             return cachedMesh;
         }
 
-        Vector<MeshVertex> vert = new Vector<MeshVertex>();
-        Vector<Vec3> norm = new Vector<Vec3>();
-        Vector<int[]> face = new Vector<int[]>();
+        Vector<MeshVertex> vert = new Vector<>();
+        Vector<Vec3> norm = new Vector<>();
+        Vector<int[]> face = new Vector<>();
 
         Vector param = new Vector();
 
@@ -554,9 +554,9 @@ public class Tube extends Curve {
     public TriangleMesh convertToTriangleMesh(double tol) {
         // Subdivide the surface and create the triangle mesh.
 
-        Vector<MeshVertex> vert = new Vector<MeshVertex>();
-        Vector<Vec3> norm = new Vector<Vec3>();
-        Vector<int[]> face = new Vector<int[]>();
+        Vector<MeshVertex> vert = new Vector<>();
+        Vector<Vec3> norm = new Vector<>();
+        Vector<int[]> face = new Vector<>();
 
         Vector param = new Vector();
 

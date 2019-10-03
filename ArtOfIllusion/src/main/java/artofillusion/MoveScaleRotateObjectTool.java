@@ -155,7 +155,7 @@ public class MoveScaleRotateObjectTool extends EditingTool {
     }
 
     protected void handlePressed(HandlePressedEvent ev) {
-        objects = new ArrayList<ObjectInfo>();
+        objects = new ArrayList<>();
         int sel[];
         if (applyToChildren) {
             sel = getWindow().getSelectionWithChildren();
@@ -411,7 +411,7 @@ public class MoveScaleRotateObjectTool extends EditingTool {
             v = cam.findDragVector(origin, dx, dy);
         }
         theWindow.setUndoRecord(undo = new UndoRecord(getWindow(), false));
-        ArrayList<ObjectInfo> toMove = new ArrayList<ObjectInfo>();
+        ArrayList<ObjectInfo> toMove = new ArrayList<>();
         for (int i = 0; i < sel.length; i++) {
             toMove.add(theScene.getObject(sel[i]));
         }

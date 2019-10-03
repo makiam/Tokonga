@@ -31,7 +31,7 @@ public class GenericTreeElement extends TreeElement {
         this.tree = tree;
         this.children = children;
         if (null == children) {
-            this.children = new Vector<TreeElement>();
+            this.children = new Vector<>();
         } else {
             for (TreeElement item : children) {
                 item.parent = this;

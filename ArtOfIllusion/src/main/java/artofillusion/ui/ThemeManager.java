@@ -268,7 +268,7 @@ public class ThemeManager {
         protected int width = -1;
         protected int height = -1;
 
-        protected Map<String, String> attributes = new HashMap<String, String>();
+        protected Map<String, String> attributes = new HashMap<>();
         protected ButtonStyle next;
 
         /**
@@ -709,10 +709,10 @@ public class ThemeManager {
         if (themeList != null) {
             throw new IllegalStateException("The themes have already been initialized.");
         }
-        themeIdMap = new HashMap<String, ThemeInfo>();
+        themeIdMap = new HashMap<>();
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
         List resources = PluginRegistry.getResources("UITheme");
-        ArrayList<ThemeInfo> list = new ArrayList<ThemeInfo>();
+        ArrayList<ThemeInfo> list = new ArrayList<>();
         for (int i = 0; i < resources.size(); i++) {
             try {
                 ThemeInfo themeInfo = new ThemeInfo((PluginRegistry.PluginResource) resources.get(i));

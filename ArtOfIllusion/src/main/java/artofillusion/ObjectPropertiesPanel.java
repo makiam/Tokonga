@@ -171,7 +171,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
             canSetTexture &= objects[i].getObject().canSetTexture();
         }
         if (canSetTexture) {
-            Vector<String> names = new Vector<String>();
+            Vector<String> names = new Vector<>();
             int selected = -1;
             for (int i = 0; i < scene.getNumTextures(); i++) {
                 names.add(scene.getTexture(i).getName());
@@ -190,7 +190,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
             for (Texture texture : PluginRegistry.getPlugins(Texture.class)) {
                 names.add(Translate.text("newTextureOfType", texture.getTypeName()));
             }
-            textureChoice.setModel(new DefaultComboBoxModel<String>(names));
+            textureChoice.setModel(new DefaultComboBoxModel<>(names));
             textureChoice.setSelectedIndex(selected);
         }
 
@@ -206,7 +206,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
             canSetMaterial &= objects[i].getObject().canSetMaterial();
         }
         if (canSetMaterial) {
-            Vector<String> names = new Vector<String>();
+            Vector<String> names = new Vector<>();
             int selected = -1;
             for (int i = 0; i < scene.getNumMaterials(); i++) {
                 names.add(scene.getMaterial(i).getName());
@@ -226,7 +226,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
             for (Material material : PluginRegistry.getPlugins(Material.class)) {
                 names.add(Translate.text("newMaterialOfType", material.getTypeName()));
             }
-            materialChoice.setModel(new DefaultComboBoxModel<String>(names));
+            materialChoice.setModel(new DefaultComboBoxModel<>(names));
             materialChoice.setSelectedIndex(selected);
         }
 

@@ -166,7 +166,7 @@ public class DefaultToolButton extends ToolButton {
 
         // we're still here, so apply the style...
         // initialise the namespace
-        HashMap<String, Object> namespace = new HashMap<String, Object>(style.attributes);
+        HashMap<String, Object> namespace = new HashMap<>(style.attributes);
 
         if (image != null) {
             Image img = image.getImage();

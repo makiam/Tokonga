@@ -622,7 +622,7 @@ public class ImagesDialog extends BDialog {
 
         private void addUnusedImagesTable(boolean intent) // intent = to delete or not
         {
-            unusedImages = new ArrayList<ImageMap>();
+            unusedImages = new ArrayList<>();
             ImageMap im;
             boolean unused;
             FormContainer unusedTable;

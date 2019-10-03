@@ -449,7 +449,7 @@ public class TextureTrack extends Track {
         smoothChoice.setSelectedIndex(smoothingMethod);
         TreeList tree = new TreeList(win);
         BScrollPane sp = new BScrollPane(tree);
-        Vector<TreeElement> elements = new Vector<TreeElement>();
+        Vector<TreeElement> elements = new Vector<>();
 
         // Create a tree of all the texture parameters.
         TextureParameter texParam[] = info.getObject().getParameters();
@@ -458,7 +458,7 @@ public class TextureTrack extends Track {
             LayeredMapping map = (LayeredMapping) info.getObject().getTextureMapping();
             Texture layer[] = map.getLayers();
             for (int i = 0; i < layer.length; i++) {
-                Vector<TreeElement> v = new Vector<TreeElement>();
+                Vector<TreeElement> v = new Vector<>();
                 for (TextureParameter p : map.getLayerParameters(i)) {
                     int k;
                     for (k = 0; !texParam[k].equals(p); k++);

@@ -51,7 +51,7 @@ public class MoveObjectTool extends EditingTool {
         Scene theScene = theWindow.getScene();
         int i, sel[];
 
-        toMove = new Vector<ObjectInfo>();
+        toMove = new Vector<>();
         clickedObject = theScene.getObject(obj);
         if (applyToChildren) {
             sel = theScene.getSelectionWithChildren();
@@ -183,7 +183,7 @@ public class MoveObjectTool extends EditingTool {
             v = cam.findDragVector(origin, dx, dy);
         }
         theWindow.setUndoRecord(undo = new UndoRecord(theWindow, false));
-        toMove = new Vector<ObjectInfo>();
+        toMove = new Vector<>();
         for (i = 0; i < sel.length; i++) {
             toMove.addElement(theScene.getObject(sel[i]));
         }

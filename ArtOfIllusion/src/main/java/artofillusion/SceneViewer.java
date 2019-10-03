@@ -45,7 +45,7 @@ public class SceneViewer extends ViewerCanvas {
         parentFrame = fr;
         addEventLink(MouseClickedEvent.class, this, "mouseClicked");
         draggingBox = draggingSelectionBox = false;
-        cameras = new Vector<ObjectInfo>();
+        cameras = new Vector<>();
         buildChoices(p);
         rebuildCameraList();
         setRenderMode(ArtOfIllusion.getPreferences().getDefaultDisplayMode());
@@ -266,8 +266,8 @@ public class SceneViewer extends ViewerCanvas {
         // Hilight the selection.
         if (currentTool.hilightSelection())// && !animation.changingPerspective())
         {
-            ArrayList<Rectangle> selectedBoxes = new ArrayList<Rectangle>();
-            ArrayList<Rectangle> parentSelectedBoxes = new ArrayList<Rectangle>();
+            ArrayList<Rectangle> selectedBoxes = new ArrayList<>();
+            ArrayList<Rectangle> parentSelectedBoxes = new ArrayList<>();
             for (ObjectInfo obj : theScene.getObjects()) {
                 int hsize;
                 ArrayList<Rectangle> boxes;

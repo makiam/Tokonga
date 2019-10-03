@@ -1638,7 +1638,7 @@ public class SoftwareCanvasDrawer implements CanvasDrawer {
                 }
             }
             mesh = new RenderingMesh(vert, norm, tri, null, null);
-            imageMeshMap.put(image, new SoftReference<RenderingMesh>(mesh));
+            imageMeshMap.put(image, new SoftReference<>(mesh));
         } else {
             // Just position the vertices correctly.
 
@@ -1691,7 +1691,7 @@ public class SoftwareCanvasDrawer implements CanvasDrawer {
 
             try {
                 record = new ImageRecord(image);
-                imageMap.put(image, new SoftReference<ImageRecord>(record));
+                imageMap.put(image, new SoftReference<>(record));
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
                 return null;

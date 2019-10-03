@@ -31,7 +31,7 @@ public abstract class MeshViewer extends ObjectViewer {
 
     public MeshViewer(MeshEditController controller, RowContainer p) {
         super(controller, p);
-        lockedJoints = new Vector<Integer>();
+        lockedJoints = new Vector<>();
     }
 
     /**
