@@ -19,7 +19,6 @@ import artofillusion.texture.*;
 import artofillusion.material.*;
 
 import javax.swing.*;
-import java.lang.reflect.*;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;

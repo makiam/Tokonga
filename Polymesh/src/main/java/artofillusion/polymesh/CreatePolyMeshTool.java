@@ -9,16 +9,13 @@ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.polymesh;
 
-import java.awt.Image;
 import java.awt.Point;
-import java.awt.Window;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner;
 

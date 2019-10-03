@@ -13,7 +13,6 @@ package artofillusion;
 import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
-import artofillusion.texture.UVMappingWindow;
 import buoy.event.*;
 import java.awt.*;
 import java.awt.event.*;

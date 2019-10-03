@@ -17,17 +17,9 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
-
-import artofillusion.math.Mat4;
 import artofillusion.math.Vec2;
-import artofillusion.math.Vec3;
-import artofillusion.object.TriangleMesh;
-import artofillusion.object.TriangleMesh.Edge;
-import artofillusion.object.TriangleMesh.Face;
 import artofillusion.polymesh.UVMappingCanvas.Range;
 import artofillusion.polymesh.UVMappingCanvas.SelectionCommand;
-import artofillusion.polymesh.UnfoldedMesh.UnfoldedEdge;
 import artofillusion.ui.ThemeManager;
 import buoy.event.MouseScrolledEvent;
 import buoy.event.WidgetMouseEvent;

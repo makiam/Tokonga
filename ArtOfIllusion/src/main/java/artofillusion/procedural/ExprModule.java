@@ -17,7 +17,6 @@ package artofillusion.procedural;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
-import java.util.List;
 import java.util.*;
 import java.lang.reflect.*;
 import java.io.*;

@@ -15,14 +15,11 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 import artofillusion.ui.Translate;
-import buoy.event.EventSource;
 import buoy.event.RepaintEvent;
 import buoy.widget.BButton;
 import buoy.widget.BColorChooser;
 import buoy.widget.CustomWidget;
-import buoy.widget.OverlayContainer;
 import buoy.widget.RowContainer;
-import buoy.widget.Widget;
 
 public class ColorButton extends RowContainer {
 

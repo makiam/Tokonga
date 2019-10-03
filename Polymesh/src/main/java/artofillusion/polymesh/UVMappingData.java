@@ -10,7 +10,6 @@
 package artofillusion.polymesh;
 
 import java.awt.Color;
-import java.awt.Point;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -19,11 +18,8 @@ import java.util.ArrayList;
 
 import artofillusion.Scene;
 import artofillusion.math.Vec2;
-import artofillusion.polymesh.UnfoldedMesh.UnfoldedEdge;
-import artofillusion.polymesh.UnfoldedMesh.UnfoldedFace;
 import artofillusion.polymesh.UnfoldedMesh.UnfoldedVertex;
 import artofillusion.texture.Texture;
-import artofillusion.texture.TextureMapping;
 import artofillusion.ui.Translate;
 
 /**

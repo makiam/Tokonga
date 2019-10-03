@@ -23,7 +23,6 @@ import java.io.*;
 import java.lang.ref.*;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
 /**

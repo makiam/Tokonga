@@ -12,7 +12,6 @@ package artofillusion.translators;
 import artofillusion.image.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
-import artofillusion.procedural.*;
 import artofillusion.texture.*;
 import java.awt.Image;
 import java.io.*;

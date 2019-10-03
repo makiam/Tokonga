@@ -12,7 +12,6 @@ package artofillusion.polymesh;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InvalidObjectException;
-import java.util.Date;
 import java.util.Stack;
 import java.util.Vector;
 
@@ -31,7 +30,6 @@ import artofillusion.object.MeshVertex;
 import artofillusion.object.Object3D;
 import artofillusion.object.ObjectInfo;
 import artofillusion.object.TriangleMesh;
-import artofillusion.polymesh.PolyMesh.VertexParamInfo;
 import artofillusion.polymesh.PolyMesh.Wedge;
 import artofillusion.polymesh.PolyMesh.Wface;
 import artofillusion.polymesh.PolyMesh.Wvertex;

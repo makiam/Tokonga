@@ -50,8 +50,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 import java.io.*;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A class loader which loads classes using a searchlist of other classloaders.

@@ -21,16 +21,11 @@ import java.util.Locale;
 
 import artofillusion.ArtOfIllusion;
 import artofillusion.Scene;
-import artofillusion.math.Mat4;
 import artofillusion.math.RGBColor;
-import artofillusion.math.Vec2;
-import artofillusion.math.Vec3;
-import artofillusion.object.MeshVertex;
 import artofillusion.object.ObjectInfo;
 import artofillusion.polymesh.PolyMesh.Wedge;
 import artofillusion.polymesh.PolyMesh.Wface;
 import artofillusion.polymesh.PolyMesh.Wvertex;
-import artofillusion.texture.Mapping2D;
 import artofillusion.texture.TextureSpec;
 import artofillusion.ui.ComponentsDialog;
 import artofillusion.ui.Translate;

@@ -16,7 +16,6 @@ import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
 import static artofillusion.ui.UIUtilities.*;
-import artofillusion.texture.UVMappingWindow;
 import buoy.event.*;
 import java.awt.*;
 

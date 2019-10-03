@@ -12,7 +12,6 @@ package artofillusion.view;
 import buoy.widget.*;
 import buoy.event.*;
 import artofillusion.*;
-import artofillusion.object.*;
 import artofillusion.ui.*;
 
 /**

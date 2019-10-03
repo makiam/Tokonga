@@ -20,7 +20,6 @@ import buoy.widget.*;
 
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 import java.util.prefs.*;
 
 /**

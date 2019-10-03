@@ -20,7 +20,6 @@ import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 /**
  * This dialog box allows the user to specify options for creating extruded objects.

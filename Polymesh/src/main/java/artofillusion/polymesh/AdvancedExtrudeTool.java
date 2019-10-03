@@ -9,11 +9,9 @@
  PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.polymesh;
 
-import java.awt.Image;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import javax.swing.ImageIcon;
 
 import artofillusion.MeshViewer;
 import artofillusion.UndoRecord;
