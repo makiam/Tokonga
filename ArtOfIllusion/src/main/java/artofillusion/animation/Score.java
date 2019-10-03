@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import javax.swing.*;
 
@@ -784,27 +785,28 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * Enable or disable all selected tracks.
      */
     public void setTracksEnabled(boolean enable) {
-        Object sel[] = theList.getSelectedObjects();
-        UndoRecord undo = new UndoRecord(window, false);
-        Vector v = new Vector();
 
-        for (int i = 0; i < sel.length; i++) {
-            if (sel[i] instanceof Track) {
-                Track tr = (Track) sel[i];
+        UndoRecord undo = new UndoRecord(window, false);
+        List<ObjectInfo> v = new Vector<>();
+
+        for (Object item : theList.getSelectedObjects()) {
+            if (item instanceof Track) {
+                Track tr = (Track) item;
                 Object parent = tr.getParent();
                 while (parent instanceof Track) {
                     parent = ((Track) parent).getParent();
                 }
                 if (parent instanceof ObjectInfo && v.indexOf(parent) == -1) {
-                    v.addElement(parent);
+                    v.add((ObjectInfo)parent);
                     undo.addCommand(UndoRecord.COPY_OBJECT_INFO, new Object[]{parent, ((ObjectInfo) parent).duplicate()});
                 }
                 tr.setEnabled(enable);
             }
         }
-        for (int i = 0; i < v.size(); i++) {
-            window.getScene().applyTracksToObject((ObjectInfo) v.elementAt(i));
-        }
+        
+        Scene scene = window.getScene();
+        v.forEach((ObjectInfo item) -> { scene.applyTracksToObject(item); });
+
         theList.repaint();
         window.setUndoRecord(undo);
         window.updateImage();
@@ -1000,7 +1002,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
     public void addTrack(Object obj[], Class trackClass, Object extraArgs[], boolean deselectOthers) {
         Scene theScene = window.getScene();
         UndoRecord undo = new UndoRecord(window, false);
-        Vector<Track> added = new Vector<>();
+        List<Track> added = new Vector<>();
         Object args[];
         if (extraArgs == null) {
             args = new Object[1];
@@ -1010,7 +1012,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
                 args[i + 1] = extraArgs[i];
             }
         }
-        Constructor con[] = trackClass.getConstructors();
+        Constructor<?> con[] = trackClass.getConstructors();
         int which;
         for (which = 0; which < con.length && con[which].getParameterTypes().length != args.length; which++);
         try {
@@ -1068,12 +1070,13 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * Delete all selected keyframes.
      */
     public void deleteSelectedKeyframes() {
-        Hashtable changedTracks = new Hashtable();
-        for (int i = 0; i < selection.length; i++) {
-            Track tr = selection[i].track;
+        Map<Track, Track> changedTracks = new Hashtable<>();
+        
+        for (SelectionInfo item: selection) {
+            Track tr = item.track;
             Keyframe keys[] = tr.getTimecourse().getValues();
             for (int j = 0; j < keys.length; j++) {
-                if (keys[j] == selection[i].key) {
+                if (keys[j] == item.key) {
                     if (changedTracks.get(tr) == null) {
                         changedTracks.put(tr, tr.duplicate(tr.getParent()));
                     }
@@ -1082,20 +1085,22 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
                 }
             }
         }
+        
         selection = new SelectionInfo[0];
         UndoRecord undo = new UndoRecord(window, false);
-        Enumeration tracks = changedTracks.keys();
-        while (tracks.hasMoreElements()) {
-            Track tr = (Track) tracks.nextElement();
-            Object parent = tr.getParent();
+        Scene scene = window.getScene();
+        
+        changedTracks.forEach((Track track, Track value) -> {
+            Object parent = track.getParent();
             while (parent != null && parent instanceof Track) {
                 parent = ((Track) parent).getParent();
             }
             if (parent instanceof ObjectInfo) {
-                window.getScene().applyTracksToObject((ObjectInfo) parent);
+                scene.applyTracksToObject((ObjectInfo) parent);
             }
-            undo.addCommand(UndoRecord.COPY_TRACK, new Object[]{tr, changedTracks.get(tr)});
-        }
+            undo.addCommand(UndoRecord.COPY_TRACK, new Object[]{track, value});
+        });
+     
         window.setUndoRecord(undo);
         window.updateMenus();
         tracksModified(true);
