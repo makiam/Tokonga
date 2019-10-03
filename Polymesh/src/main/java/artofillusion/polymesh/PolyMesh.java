@@ -12255,7 +12255,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         Wedge[] newEdges;
         Wface[] newFaces;
         boolean[] seamsCopy = new boolean[seams.length];
-        ArrayList<Integer> vertTable = new ArrayList<Integer>();
+        ArrayList<Integer> vertTable = new ArrayList<>();
         // System.out.println("Open seams " + seams);
         // dumpMesh();
         int count = 0;

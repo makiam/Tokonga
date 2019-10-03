@@ -698,7 +698,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
         for (int i = 0; i < edges.length; i++) {
             edges[i].mark = false;
         }
-        Stack<QuadEdge> stack = new Stack<QuadEdge>();
+        Stack<QuadEdge> stack = new Stack<>();
         //check for initial critical edges
         for (int i = 0; i < faces.length; i++) {
             checkEdge(i, faces[i].e1, stack);
@@ -1847,7 +1847,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
             }
         }
 
-        Vector<Vec3> norm = new Vector<Vec3>();
+        Vector<Vec3> norm = new Vector<>();
         int[] facenorm = new int[faces.length * 4];
         int normals = 0;
 

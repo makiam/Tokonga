@@ -160,8 +160,8 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
                 }
             }
         });
-        selection = new ArrayList<ObjectInfo>();
-        selPos = new ArrayList<Vec3>();
+        selection = new ArrayList<>();
+        selPos = new ArrayList<>();
         theScene.addTexture(selTexture = new UniformTexture());
         selTexture.diffuseColor = new RGBColor(255, 0, 0);
         sphere = new Sphere(0.03, 0.03, 0.03);

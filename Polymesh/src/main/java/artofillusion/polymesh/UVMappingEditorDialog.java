@@ -149,9 +149,9 @@ public class UVMappingEditorDialog extends BDialog {
 
         // find out the UVMapped texture on parFacePerVertex basis
         // record current coordinates in order to undo if the user cancels
-        texList = new ArrayList<Texture>();
-        mappingList = new ArrayList<UVMapping>();
-        oldCoordList = new ArrayList<Vec2[][]>();
+        texList = new ArrayList<>();
+        mappingList = new ArrayList<>();
+        oldCoordList = new ArrayList<>();
         Texture tex = objInfo.object.getTexture();
         TextureMapping mapping = objInfo.object.getTextureMapping();
         if (tex instanceof LayeredTexture) {

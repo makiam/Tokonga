@@ -88,7 +88,7 @@ public class PolyMeshViewer extends MeshViewer {
         super(window, p);
         PolyMesh mesh = (PolyMesh) window.getObject().object;
         visible = new boolean[mesh.getVertices().length];
-        manipulators = new ArrayList<Manipulator>();
+        manipulators = new ArrayList<>();
         manipulatorArray = new Manipulator[0];
         addEventLink(MouseMovedEvent.class, this, "mouseMoved");
         addEventLink(MouseClickedEvent.class, this, "mouseClicked");
