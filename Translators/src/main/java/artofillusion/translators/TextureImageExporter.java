@@ -49,7 +49,7 @@ public class TextureImageExporter {
      * @param height the height to use for images
      */
     public TextureImageExporter(File dir, String baseFilename, int quality, int components, int width, int height) {
-        textureTable = new Hashtable<Texture, TextureImageInfo>();
+        textureTable = new Hashtable<>();
         this.dir = dir;
         this.baseFilename = baseFilename;
         this.quality = quality;
