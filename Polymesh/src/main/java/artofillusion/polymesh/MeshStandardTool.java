@@ -45,6 +45,7 @@ public class MeshStandardTool extends AdvancedEditingTool {
         manip3dHashMap = new HashMap();
     }
 
+    @Override
     public void activateManipulators(ViewerCanvas view) {
         if (!manip2dHashMap.containsKey(view)) {
             PolyMeshValueWidget valueWidget = null;
@@ -77,12 +78,14 @@ public class MeshStandardTool extends AdvancedEditingTool {
         }
     }
 
+    @Override
     public void activate() {
         super.activate();
         theWindow.setHelpText(Translate.text("polymesh:meshStandardTool.helpText"));
         ViewerCanvas view = theWindow.getView();
     }
 
+    @Override
     public void deactivate() {
         super.deactivate();
         Iterator iter = manip2dHashMap.keySet().iterator();
@@ -94,6 +97,7 @@ public class MeshStandardTool extends AdvancedEditingTool {
         }
     }
 
+    @Override
     public int whichClicks() {
         return ALL_CLICKS;
     }
@@ -106,6 +110,7 @@ public class MeshStandardTool extends AdvancedEditingTool {
         return selectedIcon;
     }
 
+    @Override
     public String getToolTipText() {
         return Translate.text("polymesh:meshStandardTool.tipText");
     }

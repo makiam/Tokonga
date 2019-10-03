@@ -43,6 +43,7 @@ public class PMToolTip extends BToolTip {
      *
      * @return The text value
      */
+    @Override
     public String getText() {
 
         if (component instanceof JToolTip) {
@@ -57,6 +58,7 @@ public class PMToolTip extends BToolTip {
      *
      * @param text The new text value
      */
+    @Override
     public void setText(String text) {
         if (component instanceof JToolTip) {
             ((JToolTip) component).setTipText(text);

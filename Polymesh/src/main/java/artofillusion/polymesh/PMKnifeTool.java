@@ -53,19 +53,23 @@ public class PMKnifeTool extends EditingTool {
         initButton("polymesh:knife");
     }
 
+    @Override
     public void activate() {
         super.activate();
         theWindow.setHelpText(Translate.text("polymesh:knifeTool.helpText"));
     }
 
+    @Override
     public int whichClicks() {
         return ALL_CLICKS;
     }
 
+    @Override
     public String getToolTipText() {
         return Translate.text("polymesh:knifeTool.tipText");
     }
 
+    @Override
     public void mousePressed(WidgetMouseEvent e, ViewerCanvas view) {
         if (!dragging) {
             dragging = true;
@@ -103,6 +107,7 @@ public class PMKnifeTool extends EditingTool {
         }
     }
 
+    @Override
     public void mouseDragged(WidgetMouseEvent e, ViewerCanvas view) {
         MeshViewer mv = (MeshViewer) view;
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
@@ -159,6 +164,7 @@ public class PMKnifeTool extends EditingTool {
         theWindow.setHelpText(Translate.text("polymesh:knifeTool.dragText"));
     }
 
+    @Override
     public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view) {
         if ((e.getModifiers() & ActionEvent.CTRL_MASK) == 0) {
             dragPoint = e.getPoint();
@@ -184,6 +190,7 @@ public class PMKnifeTool extends EditingTool {
     /**
      * Draw any graphics that this tool overlays on top of the view.
      */
+    @Override
     public void drawOverlay(ViewerCanvas view) {
         if (dragging && canvas == view) {
             for (int k = 0; k < clickPoints.size() - 1; ++k) {

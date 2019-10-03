@@ -141,11 +141,13 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
 
         // Set up other listeners.
         getComponent().addComponentListener(new ComponentAdapter() {
+            @Override
             public void componentResized(ComponentEvent ev) {
                 render();
             }
         });
         getComponent().addHierarchyListener(new HierarchyListener() {
+            @Override
             public void hierarchyChanged(HierarchyEvent ev) {
                 if ((ev.getChangeFlags() & HierarchyEvent.DISPLAYABILITY_CHANGED) != 0) {
                     if (!getComponent().isDisplayable()) {
@@ -289,6 +291,7 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
     /**
      * Called when more pixels are available for the current image.
      */
+    @Override
     public void imageUpdated(Image image) {
         theImage = image;
         repaint();
@@ -298,12 +301,14 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
      * The renderer may call this method periodically during rendering, to give the listener text
      * descriptions of the current status of rendering.
      */
+    @Override
     public void statusChanged(String status) {
     }
 
     /**
      * Called when rendering is complete.
      */
+    @Override
     public void imageComplete(ComplexImage image) {
         theImage = image.getImage();
         renderInProgress = false;
@@ -313,6 +318,7 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
     /**
      * Called when rendering is cancelled.
      */
+    @Override
     public void renderingCanceled() {
     }
 

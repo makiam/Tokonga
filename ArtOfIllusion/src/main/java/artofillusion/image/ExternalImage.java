@@ -90,6 +90,7 @@ public class ExternalImage extends ImageMap {
         return lastAbsolutePath;
     }
 
+    @Override
     public String getType() {
         if (connected) {
             return imageMap.getType();

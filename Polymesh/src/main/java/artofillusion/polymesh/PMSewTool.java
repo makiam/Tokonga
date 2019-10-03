@@ -51,19 +51,23 @@ public class PMSewTool extends EditingTool {
         initButton("polymesh:sew");
     }
 
+    @Override
     public void activate() {
         super.activate();
         theWindow.setHelpText(Translate.text("polymesh:sewTool.helpText"));
     }
 
+    @Override
     public int whichClicks() {
         return ALL_CLICKS;
     }
 
+    @Override
     public String getToolTipText() {
         return Translate.text("polymesh:sewTool.tipText");
     }
 
+    @Override
     public void mousePressed(WidgetMouseEvent e, ViewerCanvas view) {
         if (!dragging) {
             dragging = true;
@@ -119,6 +123,7 @@ public class PMSewTool extends EditingTool {
         }
     }
 
+    @Override
     public void mouseDragged(WidgetMouseEvent e, ViewerCanvas view) {
         MeshViewer mv = (MeshViewer) view;
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
@@ -212,6 +217,7 @@ public class PMSewTool extends EditingTool {
         }
     }
 
+    @Override
     public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view) {
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
         dragging = false;
@@ -226,6 +232,7 @@ public class PMSewTool extends EditingTool {
     /**
      * Draw any graphics that this tool overlays on top of the view.
      */
+    @Override
     public void drawOverlay(ViewerCanvas view) {
         if (dragging && canvas == view) {
             view.drawLine(clickPoint, dragPoint, Color.black);

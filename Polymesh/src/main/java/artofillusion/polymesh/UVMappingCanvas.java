@@ -1151,10 +1151,12 @@ public class UVMappingCanvas extends CustomWidget {
             }
         }
 
+        @Override
         public void execute() {
             redo();
         }
 
+        @Override
         public void redo() {
             for (int i = 0; i < mapping.v.length; i++) {
                 for (int j = 0; j < mapping.v[i].length; j++) {
@@ -1167,6 +1169,7 @@ public class UVMappingCanvas extends CustomWidget {
             repaint();
         }
 
+        @Override
         public void undo() {
             for (int i = 0; i < mapping.v.length; i++) {
                 for (int j = 0; j < mapping.v[i].length; j++) {
@@ -1191,10 +1194,12 @@ public class UVMappingCanvas extends CustomWidget {
             this.selection = selection;
         }
 
+        @Override
         public void execute() {
             redo();
         }
 
+        @Override
         public void redo() {
             for (int i = 0; i < selection.length; i++) {
                 mappingData.meshes[currentPiece].vertices[mappingData.verticesTable[currentPiece][selection[i]]].pinned
@@ -1203,6 +1208,7 @@ public class UVMappingCanvas extends CustomWidget {
             repaint();
         }
 
+        @Override
         public void undo() {
             redo();
         }
@@ -1220,10 +1226,12 @@ public class UVMappingCanvas extends CustomWidget {
             this.selection = selection;
         }
 
+        @Override
         public void execute() {
             redo();
         }
 
+        @Override
         public void redo() {
             for (int i = 0; i < selection.length; i++) {
                 selected[selection[i]] = !selected[selection[i]];
@@ -1232,6 +1240,7 @@ public class UVMappingCanvas extends CustomWidget {
             repaint();
         }
 
+        @Override
         public void undo() {
             redo();
         }
@@ -1270,10 +1279,12 @@ public class UVMappingCanvas extends CustomWidget {
             this.piece = piece;
         }
 
+        @Override
         public void execute() {
             redo();
         }
 
+        @Override
         public void redo() {
             Vec2[] v = mapping.v[piece];
             for (int i = 0; i < vertIndices.length; i++) {
@@ -1284,6 +1295,7 @@ public class UVMappingCanvas extends CustomWidget {
             repaint();
         }
 
+        @Override
         public void undo() {
             Vec2[] v = mapping.v[piece];
             for (int i = 0; i < vertIndices.length; i++) {

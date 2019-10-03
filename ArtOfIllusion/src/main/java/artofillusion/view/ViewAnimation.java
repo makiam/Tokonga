@@ -88,6 +88,7 @@ public class ViewAnimation {
      * The timer that keeps launcing animation 'frames'
      */
     private Timer timer = new Timer(timerInterval, new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (step >= steps) {
                 endAnimation();

@@ -46,6 +46,7 @@ public class PMExtrudeCurveTool extends EditingTool {
         initButton("polymesh:extrudecurve");
     }
 
+    @Override
     public void activate() {
         super.activate();
         theWindow.setHelpText(Translate.text("polymesh:extrudeCurveTool.helpText"));
@@ -53,14 +54,17 @@ public class PMExtrudeCurveTool extends EditingTool {
         fromPoint = null;
     }
 
+    @Override
     public int whichClicks() {
         return ALL_CLICKS;
     }
 
+    @Override
     public String getToolTipText() {
         return Translate.text("polymesh:extrudeCurveTool.tipText");
     }
 
+    @Override
     public void mousePressed(WidgetMouseEvent ev, ViewerCanvas view) {
         dragging = -1;
         if (clickPoints.size() == 0) {
@@ -87,6 +91,7 @@ public class PMExtrudeCurveTool extends EditingTool {
 
     }
 
+    @Override
     public void mouseDragged(WidgetMouseEvent ev, ViewerCanvas view) {
         if (dragging < 1) {
             return;
@@ -104,6 +109,7 @@ public class PMExtrudeCurveTool extends EditingTool {
         theWindow.updateImage();
     }
 
+    @Override
     public void mouseReleased(WidgetMouseEvent ev, ViewerCanvas view) {
         Point e = ev.getPoint();
         canvas = view;
@@ -212,6 +218,7 @@ public class PMExtrudeCurveTool extends EditingTool {
         }
     }
 
+    @Override
     public void keyPressed(KeyPressedEvent e, ViewerCanvas view) {
         if (!(canvas == view)) {
             return;
@@ -359,6 +366,7 @@ public class PMExtrudeCurveTool extends EditingTool {
     /**
      * Draw any graphics that this tool overlays on top of the view.
      */
+    @Override
     public void drawOverlay(ViewerCanvas view) {
         Vec3 aPoint = getInitialPoint();
         if (aPoint == null) {

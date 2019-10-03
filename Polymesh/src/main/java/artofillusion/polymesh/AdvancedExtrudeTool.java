@@ -51,6 +51,7 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool {
         manip3dHashMap = new HashMap();
     }
 
+    @Override
     public void activateManipulators(ViewerCanvas view) {
         if (!manip3dHashMap.containsKey(view)) {
             PolyMeshValueWidget valueWidget = null;
@@ -73,12 +74,14 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool {
         }
     }
 
+    @Override
     public void activate() {
         super.activate();
         theWindow.setHelpText(Translate.text("polymesh:advancedExtrudeTool.helpText"));
         ViewerCanvas view = theWindow.getView();
     }
 
+    @Override
     public void deactivate() {
         super.deactivate();
         Iterator iter = manip3dHashMap.keySet().iterator();
@@ -89,10 +92,12 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool {
         }
     }
 
+    @Override
     public int whichClicks() {
         return ALL_CLICKS;
     }
 
+    @Override
     public String getToolTipText() {
         return Translate.text("polymesh:advancedExtrudeTool.tipText");
     }
@@ -192,6 +197,7 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool {
         theWindow.updateImage();
     }
 
+    @Override
     public void iconDoubleClicked() {
         BComboBox c = new BComboBox(new String[]{
             Translate.text("polymesh:selectionAsWhole"),

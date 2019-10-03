@@ -143,6 +143,7 @@ public class SSMR3DManipulator
         valueWidgetCallback
                 = new Runnable() {
 
+            @Override
             public void run() {
                 doValueWidgetCallback();
             }
@@ -150,6 +151,7 @@ public class SSMR3DManipulator
         validateWidgetValue
                 = new Runnable() {
 
+            @Override
             public void run() {
                 doValueWidgetValidate();
             }
@@ -157,6 +159,7 @@ public class SSMR3DManipulator
         abortWidgetValue
                 = new Runnable() {
 
+            @Override
             public void run() {
                 doValueWidgetAbort();
             }
@@ -170,6 +173,7 @@ public class SSMR3DManipulator
         }
     }
 
+    @Override
     public void setPerspective(boolean perspective) {
         //this manipulator is active in perspective views
         if (perspective) {
@@ -177,6 +181,7 @@ public class SSMR3DManipulator
         }
     }
 
+    @Override
     public void draw() {
         if (!active) {
             return;
@@ -439,6 +444,7 @@ public class SSMR3DManipulator
         }
     }
 
+    @Override
     public boolean mousePressedOnHandle(WidgetMouseEvent e, int handle, Vec3 pos) {
         if (!active) {
             return false;
@@ -452,6 +458,7 @@ public class SSMR3DManipulator
         return false;
     }
 
+    @Override
     public boolean mousePressed(WidgetMouseEvent e) {
         if (!active) {
             return false;
@@ -688,6 +695,7 @@ public class SSMR3DManipulator
         dispatchEvent(new ManipulatorRotatingEvent(this, mat, view));
     }
 
+    @Override
     public boolean mouseDragged(WidgetMouseEvent e) {
         if (!active) {
             return false;
@@ -941,6 +949,7 @@ public class SSMR3DManipulator
         return true;
     }
 
+    @Override
     public boolean mouseReleased(WidgetMouseEvent e) {
         if (!active) {
             return false;
@@ -1154,6 +1163,7 @@ public class SSMR3DManipulator
         dispatchEvent(new ManipulatorAbortChangingEvent(this, view));
     }
 
+    @Override
     public boolean keyPressed(KeyPressedEvent e) {
         if (!active) {
             return false;
@@ -1196,6 +1206,7 @@ public class SSMR3DManipulator
     /**
      * toggles the view mode, selecting the next view mode available
      */
+    @Override
     public void toggleViewMode() {
         viewMode++;
         if (viewMode > 2) {

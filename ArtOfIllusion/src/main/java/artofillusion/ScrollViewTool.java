@@ -233,6 +233,7 @@ public class ScrollViewTool {
     }
 
     private Timer scrollTimer = new Timer(500, new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
             scrollTimer.stop();
             view.scrolling = false;

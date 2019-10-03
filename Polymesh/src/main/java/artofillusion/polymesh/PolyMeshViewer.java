@@ -191,6 +191,7 @@ public class PolyMeshViewer extends MeshViewer {
         super.updateImage();
     }
 
+    @Override
     protected void drawObject() {
         // Now draw the object.
         PolyMesh mesh = (PolyMesh) getController().getObject().getObject();
@@ -810,6 +811,7 @@ public class PolyMeshViewer extends MeshViewer {
      *
      * @param e Description of the Parameter
      */
+    @Override
     protected void mousePressed(WidgetMouseEvent e) {
         if (e.isAltDown() && e.getButton() == MouseEvent.BUTTON3) {
             ((PolyMeshEditorWindow) getController()).triggerPopupEvent(e);
@@ -1013,6 +1015,7 @@ public class PolyMeshViewer extends MeshViewer {
      *
      * @param e Description of the Parameter
      */
+    @Override
     protected void mouseDragged(WidgetMouseEvent e) {
         if (!dragging && clickPoint == null) {
             return;
@@ -1039,6 +1042,7 @@ public class PolyMeshViewer extends MeshViewer {
      *
      * @param e Description of the Parameter
      */
+    @Override
     protected void mouseReleased(WidgetMouseEvent e) {
 
         if (e.isAltDown() && e.getButton() == MouseEvent.BUTTON3) {
@@ -1223,6 +1227,7 @@ public class PolyMeshViewer extends MeshViewer {
     /**
      * Set the currently selected tool.
      */
+    @Override
     public void setTool(EditingTool tool) {
         manipulators.clear();
         manipulatorArray = new Manipulator[0];
@@ -1538,6 +1543,7 @@ public class PolyMeshViewer extends MeshViewer {
         }
     }
 
+    @Override
     public void setPerspective(boolean perspective) {
         for (int i = 0; i < manipulatorArray.length; i++) {
             manipulatorArray[i].setPerspective(perspective);
