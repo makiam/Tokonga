@@ -70,7 +70,7 @@ public class SPMParameters {
         //repositories.add( "http://localhost/AoIRepository/" );
         // NTJ: testing
 
-        filters = new HashMap();
+        filters = new HashMap<>();
         filters.put("beta", "mark");
         filters.put("earlyAccess", "confirm");
         filters.put("experimental", "hide");
@@ -348,7 +348,7 @@ public class SPMParameters {
         //repositories.clear();
         //current = 0;
         //repositories.add( "http://localhost/AoIRepository/" );
-        for (Map.Entry entry : p.entrySet()) {
+        for (Map.Entry<Object, Object> entry : p.entrySet()) {
             s = (String) entry.getKey();
             if (s.startsWith("FILTER_")) {
                 filters.put(s.substring("FILTER_".length()), (String) entry.getValue());

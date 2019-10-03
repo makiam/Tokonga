@@ -11,14 +11,14 @@
  */
 package artofillusion.spmanager;
 
-import java.util.*;
+import buoy.event.*;
+import buoy.widget.*;
 import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.tree.*;
-import java.awt.event.*;
-import buoy.widget.*;
-import buoy.event.*;
-import java.util.List;
 
 /**
  * Description of the Class
@@ -218,20 +218,15 @@ public class SPMSplitPane extends BSplitPane {
 
         rc.add(new BLabel(SPMTranslate.text("flags") + ":"));
 
-        rc.add(new BLabel("=" + SPMTranslate.text("alertFlag"), alertIcon,
-                BLabel.CENTER, BLabel.EAST));
+        rc.add(new BLabel("=" + SPMTranslate.text("alertFlag"), alertIcon, BLabel.CENTER, BLabel.EAST));
 
-        rc.add(new BLabel("=" + SPMTranslate.text("filtMark"), flagIcon,
-                BLabel.CENTER, BLabel.EAST));
+        rc.add(new BLabel("=" + SPMTranslate.text("filtMark"), flagIcon, BLabel.CENTER, BLabel.EAST));
 
-        rc.add(new BLabel("=" + SPMTranslate.text("filtDisable"),
-                disableIcon, BLabel.CENTER, BLabel.EAST));
+        rc.add(new BLabel("=" + SPMTranslate.text("filtDisable"), disableIcon, BLabel.CENTER, BLabel.EAST));
 
-        rc.add(new BLabel("=" + SPMTranslate.text("filtConfirm"),
-                confirmIcon, BLabel.CENTER, BLabel.EAST));
+        rc.add(new BLabel("=" + SPMTranslate.text("filtConfirm"), confirmIcon, BLabel.CENTER, BLabel.EAST));
 
-        rc.add(new BLabel("=" + SPMTranslate.text("required"),
-                referedIcon, BLabel.CENTER, BLabel.EAST));
+        rc.add(new BLabel("=" + SPMTranslate.text("required"), referedIcon, BLabel.CENTER, BLabel.EAST));
 
         objectDescription = new BTextArea("", 8, 50);
         objectDescription.setWrapStyle(BTextArea.WRAP_WORD);

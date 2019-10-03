@@ -11,15 +11,14 @@
  */
 package artofillusion.spmanager;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.tree.*;
 import buoy.widget.*;
-
+import java.awt.*;
 import java.io.*;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.tree.*;
 
 /**
  * Description of the Class
@@ -189,18 +188,17 @@ public class ManageSplitPane extends SPMSplitPane {
                 }
             }
 
-            Collection externals = info.getExternals();
+            Collection<String> externals = info.getExternals();
             String extName, extType;
             SPMObjectInfo ext;
             if (externals != null) {
                 //for (int j = 0; j < externals.size(); j++) {
-                for (Iterator iter = externals.iterator(); iter.hasNext();) {
+                for (Iterator<String> iter = externals.iterator(); iter.hasNext();) {
                     //extName = (String) externals.get(j);
-                    extName = (String) iter.next();
+                    extName = iter.next();
 
                     if (extName.endsWith("= required")) {
-                        extType = extName.substring(extName.indexOf(':') + 1,
-                                extName.indexOf('=')).trim();
+                        extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
 
                         extName = extName.substring(0, extName.indexOf(':'));
 

@@ -12,20 +12,20 @@
 package artofillusion.spmanager;
 
 import artofillusion.ui.UIUtilities;
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.tree.*;
-import buoy.widget.*;
 import buoy.event.*;
+import buoy.widget.*;
+import java.awt.*;
 import java.io.*;
-import java.util.List;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import javax.swing.*;
+import javax.swing.tree.*;
 
 /**
  * Description of the Class
@@ -470,7 +470,7 @@ public class InstallSplitPane extends SPMSplitPane {
      * @param nodeInfo Description of the Parameter
      */
     public void installFile(SPMObjectInfo nodeInfo) {
-        Map transaction = new HashMap(32);
+        Map<File, File> transaction = new HashMap<>(32);
 
         if (errors == null) {
             errors = new ArrayList(16);
@@ -583,7 +583,7 @@ public class InstallSplitPane extends SPMSplitPane {
         }
 
         File orig;
-        Map.Entry entry;
+        Map.Entry<File, File> entry;
         Iterator iter = transaction.entrySet().iterator();
         while (iter.hasNext()) {
             try {
