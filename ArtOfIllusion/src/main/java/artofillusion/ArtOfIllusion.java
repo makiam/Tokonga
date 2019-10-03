@@ -25,7 +25,7 @@ import artofillusion.view.*;
 import buoy.widget.*;
 
 import java.io.*;
-import java.net.*;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 
@@ -43,7 +43,6 @@ public class ArtOfIllusion
   public static final String TOOL_SCRIPT_DIRECTORY, OBJECT_SCRIPT_DIRECTORY, STARTUP_SCRIPT_DIRECTORY;
   public static final ImageIcon APP_ICON;
 
-  private static ApplicationPreferences preferences;
   private static ObjectInfo clipboardObject[];
   private static Texture clipboardTexture[];
   private static Material clipboardMaterial[];
@@ -54,36 +53,12 @@ public class ArtOfIllusion
 
   static
   {
-    // A clever trick for getting the location of the jar file, which David Smiley
-    // posted to the Apple java-dev mailing list on April 14, 2002.  It works on
-    // most, but not all, platforms, so in case of a problem we fall back to using
-    // user.dir.
+      APP_DIRECTORY = Paths.get(System.getProperty("user.dir")).getParent().toString();
+      PLUGIN_DIRECTORY = Paths.get(APP_DIRECTORY, "Plugins").toString();
 
-    String dir = System.getProperty("user.dir");
-    try
-      {
-        URL url = ArtOfIllusion.class.getResource("/artofillusion/ArtOfIllusion.class");
-        if (url.toString().startsWith("jar:"))
-          {
-            String furl = url.getFile();
-            furl = furl.substring(0, furl.indexOf('!'));
-            dir = new File(new URL(furl).getFile()).getParent();
-            if (!new File(dir).exists())
-              dir = System.getProperty("user.dir");
-          }
-      }
-      catch (MalformedURLException ex)
-      {
-      }
-
-    // Set up the standard directories.
-
-    APP_DIRECTORY = dir;
-    PLUGIN_DIRECTORY = new File(APP_DIRECTORY, "Plugins").getAbsolutePath();
-    File scripts = new File(APP_DIRECTORY, "Scripts");
-    TOOL_SCRIPT_DIRECTORY = new File(scripts, "Tools").getAbsolutePath();
-    OBJECT_SCRIPT_DIRECTORY = new File(scripts, "Objects").getAbsolutePath();
-    STARTUP_SCRIPT_DIRECTORY = new File(scripts, "Startup").getAbsolutePath();
+      TOOL_SCRIPT_DIRECTORY = Paths.get(APP_DIRECTORY, "Scripts", "Tools").toString();
+      OBJECT_SCRIPT_DIRECTORY = Paths.get(APP_DIRECTORY, "Scripts", "Objects").toString();
+      STARTUP_SCRIPT_DIRECTORY = Paths.get(APP_DIRECTORY, "Scripts", "Startup").toString();
 
     // Load the application's icon.
 
@@ -154,7 +129,7 @@ public class ArtOfIllusion
     PluginRegistry.addCategory(Material.class);
     PluginRegistry.addCategory(TextureMapping.class);
     PluginRegistry.addCategory(MaterialMapping.class);
-    PluginRegistry.addCategory(ImageFilter.class);
+    
     PluginRegistry.addCategory(artofillusion.procedural.Module.class);
     PluginRegistry.registerPlugin(new UniformTexture());
     PluginRegistry.registerPlugin(new ImageMapTexture());
@@ -169,16 +144,6 @@ public class ArtOfIllusion
     PluginRegistry.registerPlugin(new UVMapping());
     PluginRegistry.registerPlugin(new LinearMapping3D());
     PluginRegistry.registerPlugin(new LinearMaterialMapping());
-    
-    PluginRegistry.registerPlugin(new BrightnessFilter());
-    PluginRegistry.registerPlugin(new SaturationFilter());
-    PluginRegistry.registerPlugin(new ExposureFilter());
-    PluginRegistry.registerPlugin(new TintFilter());
-    PluginRegistry.registerPlugin(new BlurFilter());
-    PluginRegistry.registerPlugin(new GlowFilter());
-    PluginRegistry.registerPlugin(new OutlineFilter());
-    PluginRegistry.registerPlugin(new NoiseReductionFilter());
-    PluginRegistry.registerPlugin(new DepthOfFieldFilter());
 
     PluginRegistry.registerResource("TranslateBundle", "artofillusion", ArtOfIllusion.class.getClassLoader(), "artofillusion", null);
     PluginRegistry.registerResource("UITheme", "default", ArtOfIllusion.class.getClassLoader(), "artofillusion/Icons/defaultTheme.xml", null);
