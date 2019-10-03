@@ -7,12 +7,11 @@
  *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  *  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  */
-
 package artofillusion.polymesh;
 
 /**
- * The command interface is implemented by all editing operations in 
- * the UV mapper for undo/redo.
+ * The command interface is implemented by all editing operations in the UV mapper for undo/redo.
+ *
  * @author pims
  *
  */
@@ -23,13 +22,13 @@ public interface Command {
      *
      */
     public void execute();
-    
+
     /**
      * Undo the command
      *
      */
     public void undo();
-    
+
     /**
      * Redo the command
      *
