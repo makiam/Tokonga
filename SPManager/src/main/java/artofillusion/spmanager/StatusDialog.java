@@ -18,105 +18,92 @@ import buoy.widget.*;
 import buoy.event.*;
 
 /**
- *  Description of the Class
+ * Description of the Class
  *
- *@author     pims
- *@created    20 mars 2004
+ * @author pims
+ * @created 20 mars 2004
  */
-public class StatusDialog extends BDialog
-{
+public class StatusDialog extends BDialog {
+
     protected BLabel label;
     protected BProgressBar progressBar;
 
-
     /**
-     *  Constructor for the StatusDialog object
+     * Constructor for the StatusDialog object
      */
-    public StatusDialog(BFrame parent)
-    {
-        super( parent, SPMTranslate.text( "remoteStatus" ), false );
+    public StatusDialog(BFrame parent) {
+        super(parent, SPMTranslate.text("remoteStatus"), false);
         ColumnContainer cc = new ColumnContainer();
-        LayoutInfo layout = new LayoutInfo( LayoutInfo.CENTER, LayoutInfo.NONE, new Insets( 10, 10, 10, 10 ), new Dimension( 0, 0 ) );
-        cc.add( label = SPMTranslate.bLabel( "status" ), layout );
-        label.setText( SPMTranslate.text( "scanningPlugins" ) );
-        layout = new LayoutInfo( LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets( 10, 10, 10, 10 ), new Dimension( 0, 0 ) );
-        cc.add( progressBar = new BProgressBar( 0, 100 ), layout );
-        progressBar.setShowProgressText( true );
-        setContent( cc );
+        LayoutInfo layout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(10, 10, 10, 10), new Dimension(0, 0));
+        cc.add(label = SPMTranslate.bLabel("status"), layout);
+        label.setText(SPMTranslate.text("scanningPlugins"));
+        layout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(10, 10, 10, 10), new Dimension(0, 0));
+        cc.add(progressBar = new BProgressBar(0, 100), layout);
+        progressBar.setShowProgressText(true);
+        setContent(cc);
         pack();
         UIUtilities.centerDialog(this, (WindowWidget) getParent());
-        setVisible( true );
+        setVisible(true);
         layoutChildren();
-        addEventLink( WindowClosingEvent.class, this, "doClose" );
+        addEventLink(WindowClosingEvent.class, this, "doClose");
     }
 
-
-
     /**
-     *  Sets the text attribute of the StatusDialog object
+     * Sets the text attribute of the StatusDialog object
      *
-     *@param  text  The new text value
+     * @param text The new text value
      */
-    public void setText( String text )
-    {
-        label.setText( text );
+    public void setText(String text) {
+        label.setText(text);
         pack();
         //layoutChildren();
     }
 
-
     /**
-     *  Sets the progressText attribute of the StatusDialog object
+     * Sets the progressText attribute of the StatusDialog object
      *
-     *@param  text  The new progressText value
+     * @param text The new progressText value
      */
-    public void setProgressText( String text )
-    {
-        progressBar.setProgressText( text );
+    public void setProgressText(String text) {
+        progressBar.setProgressText(text);
     }
 
-
     /**
-     *  Sets the barValue attribute of the StatusDialog object
+     * Sets the barValue attribute of the StatusDialog object
      *
-     *@param  i  The new barValue value
+     * @param i The new barValue value
      */
-    public void setBarValue( int i )
-    {
-	if (i < 0) setIdle(true);
-	else setIdle(false);
+    public void setBarValue(int i) {
+        if (i < 0) {
+            setIdle(true);
+        } else {
+            setIdle(false);
+        }
 
-        progressBar.setValue( i );
+        progressBar.setValue(i);
     }
 
-
     /**
-     *  Gets the barValue attribute of the StatusDialog object
+     * Gets the barValue attribute of the StatusDialog object
      *
-     *@return    The barValue value
+     * @return The barValue value
      */
-    public int getBarValue()
-    {
+    public int getBarValue() {
         return progressBar.getValue();
     }
 
     /**
      *
      */
-    public void setIdle(boolean flag)
-    { 
+    public void setIdle(boolean flag) {
         progressBar.setIndeterminate(flag);
     }
 
-
-
     /**
-     *  Description of the Method
+     * Description of the Method
      */
-    protected void doClose()
-    {
-        setVisible( false );
-	dispose();
+    protected void doClose() {
+        setVisible(false);
+        dispose();
     }
 }
-
