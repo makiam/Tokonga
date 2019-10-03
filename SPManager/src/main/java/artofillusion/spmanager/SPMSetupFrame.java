@@ -24,7 +24,7 @@ import java.util.*;
 /**
  * Description of the Class
  *
- * @author François Guillet
+ * @author Fran?ois Guillet
  * @created March, 13 2004
  */
 public class SPMSetupFrame extends BDialog {

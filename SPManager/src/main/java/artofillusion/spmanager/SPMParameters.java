@@ -23,7 +23,7 @@ import artofillusion.ui.*;
 /**
  * Description of the Class
  *
- * @author François Guillet
+ * @author Fran?ois Guillet
  * @created 20 mars 2004
  */
 public class SPMParameters {

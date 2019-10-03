@@ -26,7 +26,7 @@ import buoy.event.*;
 /**
  * Main frame of the scripts and plugins manager.
  *
- * @author françois guillet
+ * @author Fran?ois Guillet
  * @created 13 mars 2004
  */
 public class SPManagerFrame extends BFrame {

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002,2004 by Peter Eastman, Modifications (C) 2005 by François Guillet for PolyMesh adaptation
+ *  Copyright (C) 2002,2004 by Peter Eastman, Modifications (C) 2005 by Fran?ois Guillet for PolyMesh adaptation
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -45,7 +45,7 @@ import buoy.widget.BStandardDialog;
 /**
  * PMOBJImporter imports .OBJ files to Polymeshes.
  *
- * @author François Guillet
+ * @author Fran?ois Guillet
  * @created 13 juin 2005
  */
 public class PMOBJImporter {
@@ -663,7 +663,7 @@ public class PMOBJImporter {
     /**
      * Inner class for storing information about a texture in a .mtl file.
      *
-     * @author François Guillet
+     * @author Fran?ois Guillet
      * @created 13 juin 2005
      */
     private static class TextureInfo {

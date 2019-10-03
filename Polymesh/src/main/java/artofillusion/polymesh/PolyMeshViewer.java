@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2004 by Peter Eastman (TriMeshViewer.java),
- *  Modifications for Winged Edge Mesh Copyright (C) 2004-2005 by François Guillet
+ *  Modifications for Winged Edge Mesh Copyright (C) 2004-2005 by Fran?ois Guillet
  *
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software

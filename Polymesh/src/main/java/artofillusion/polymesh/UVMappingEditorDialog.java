@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2007 by François Guillet
+ *  Copyright (C) 2007 by Fran?ois Guillet
  *  This program is free software; you can redistribute it and/or modify it under the 
  *  terms of the GNU General Public License as published by the Free Software 
  *  Foundation; either version 2 of the License, or (at your option) any later version. 
@@ -79,7 +79,7 @@ import buoy.xml.WidgetDecoder;
  * This window allows the user to edit UV mapping using unfolded pieces of mesh displayed over the
  * texture image.
  *
- * @author François Guillet
+ * @author Fran?ois Guillet
  */
 public class UVMappingEditorDialog extends BDialog {
 
@@ -1252,7 +1252,7 @@ public class UVMappingEditorDialog extends BDialog {
     /**
      * Implementation of ExportImage dialog as a subclass of UVMappingEditor Dialog.
      *
-     * @author François Guillet
+     * @author Fran?ois Guillet
      */
     private class ExportImageDialog extends BDialog {
 
