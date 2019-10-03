@@ -15,8 +15,6 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
-
-import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.*;
 import java.text.*;
@@ -25,6 +23,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
+import javax.swing.*;
 
 /**
  * This is a Widget which displays all the tracks for objects in a scene, and shows where their
@@ -573,20 +572,20 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * of selected keyframes, removing any which are no longer appropriate.
      */
     private void selectedTracksChanged() {
-        Vector v = new Vector();
+        List<SelectionInfo> v = new Vector<>();
         Track sel[] = getSelectedTracks();
 
         for (int i = 0; i < selection.length; i++) {
             for (int j = 0; j < sel.length; j++) {
                 if (selection[i].track == sel[j]) {
-                    v.addElement(selection[i]);
+                    v.add(selection[i]);
                     break;
                 }
             }
         }
         selection = new SelectionInfo[v.size()];
         for (int i = 0; i < selection.length; i++) {
-            selection[i] = (SelectionInfo) v.elementAt(i);
+            selection[i] = v.get(i);
         }
         if (view == SINGLE_GRAPH_MODE) {
             ((TrackGraph) graphs.get(0)).setTracks(sel);
