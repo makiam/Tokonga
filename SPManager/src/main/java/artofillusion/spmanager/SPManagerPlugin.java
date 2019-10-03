@@ -287,7 +287,7 @@ public class SPManagerPlugin implements Plugin {
      */
     public void init() {
 
-        List<String> err = new ArrayList(8);
+        List<String> err = new ArrayList<>(8);
 
         System.out.println("SPManager: java temp dir is " + System.getProperty("java.io.tmpdir"));
 
