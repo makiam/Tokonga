@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
-   Changes copyright (C) 2106-2019 by Petri Ihalainen
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2016-2019 by Petri Ihalainen
+   Changes copyright (C) 2017-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -16,7 +16,7 @@ import static artofillusion.ViewerCanvas.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
-import artofillusion.texture.UVMappingWindow;
+import static artofillusion.ui.UIUtilities.*;
 import buoy.event.*;
 import java.awt.*;
 
