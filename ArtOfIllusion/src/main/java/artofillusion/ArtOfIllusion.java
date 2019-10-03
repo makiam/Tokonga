@@ -51,6 +51,8 @@ public class ArtOfIllusion
   private static final HashMap<String, String> classTranslations = new HashMap<String, String>();
   private static int numNewWindows = 0;
 
+  private static String currentDirectory;
+  
   static
   {
       APP_DIRECTORY = Paths.get(System.getProperty("user.dir")).getParent().toString();
@@ -646,14 +648,14 @@ public class ArtOfIllusion
 
   public static String getCurrentDirectory()
   {
-    return ModellingApp.currentDirectory;
+    return currentDirectory;
   }
 
   /** Set the directory in which the user most recently accessed a file. */
 
   public static void setCurrentDirectory(String currentDirectory)
   {
-    ModellingApp.currentDirectory = currentDirectory;
+    currentDirectory = currentDirectory;
   }
 
 }
