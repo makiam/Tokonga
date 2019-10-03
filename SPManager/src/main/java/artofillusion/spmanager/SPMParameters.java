@@ -12,25 +12,24 @@
  */
 package artofillusion.spmanager;
 
+import artofillusion.ui.*;
+import buoy.widget.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
-import buoy.widget.*;
-
-import artofillusion.ui.*;
 
 /**
  * Description of the Class
  *
- * @author Fran?ois Guillet
+ * @author François Guillet
  * @created 20 mars 2004
  */
 public class SPMParameters {
 
     private static List<String> repositories;
     private static int current;
-    private static HashMap filters;
+    private static Map<String, String> filters;
     private static boolean useProxy;
     private static String proxyHost;
     private static String proxyPort;
@@ -138,9 +137,7 @@ public class SPMParameters {
      * @param forceUpdate Description of the Parameter
      */
     private void getThreadedRepositoriesList(boolean forceUpdate) {
-        final BDialog dlg = new BDialog(SPManagerFrame.getInstance(),
-                SPMTranslate.text("remoteStatus"),
-                true);
+        final BDialog dlg = new BDialog(SPManagerFrame.getInstance(), SPMTranslate.text("remoteStatus"), true);
 
         dlg.setEnabled(true);
 
@@ -493,7 +490,7 @@ public class SPMParameters {
     /**
      * return the current filter map
      */
-    public HashMap getFilters() {
+    public Map<String, String> getFilters() {
         return filters;
     }
 

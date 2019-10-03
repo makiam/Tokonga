@@ -13,20 +13,18 @@ package artofillusion.spmanager;
 
 import artofillusion.*;
 import artofillusion.ui.UIUtilities;
-
+import buoy.event.*;
+import buoy.widget.*;
 import java.awt.*;
-import javax.swing.*;
-import javax.swing.border.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
-
-import buoy.widget.*;
-import buoy.event.*;
+import javax.swing.*;
+import javax.swing.border.*;
 
 /**
  * Main frame of the scripts and plugins manager.
  *
- * @author Fran?ois Guillet
+ * @author François Guillet
  * @created 13 mars 2004
  */
 public class SPManagerFrame extends BFrame {
@@ -79,8 +77,7 @@ public class SPManagerFrame extends BFrame {
 
         statusLabel = new BLabel(" ");
 
-        statusTextClearAction
-                = new AbstractAction() {
+        statusTextClearAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 statusLabel.setText(" ");

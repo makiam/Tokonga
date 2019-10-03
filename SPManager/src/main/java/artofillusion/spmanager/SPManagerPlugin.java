@@ -13,18 +13,17 @@
 package artofillusion.spmanager;
 
 import artofillusion.*;
-import artofillusion.util.SearchlistClassLoader;
 import artofillusion.ui.*;
-
-import java.awt.*;
+import artofillusion.util.SearchlistClassLoader;
 import buoy.event.*;
 import buoy.widget.*;
-
+import java.awt.Window;
 import java.io.*;
-import java.net.*;
 import java.lang.reflect.*;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -79,7 +78,7 @@ public class SPManagerPlugin implements Plugin {
                 SearchlistClassLoader searchldr = null;
                 Object obj;
 
-                HashMap<URL, ClassLoader> loaders = new HashMap<>();
+                Map<URL, ClassLoader> loaders = new HashMap<>();
                 for (ClassLoader loader : PluginRegistry.getPluginClassLoaders()) {
                     if (loader instanceof URLClassLoader) {
                         urlList = ((URLClassLoader) loader).getURLs();
@@ -141,9 +140,7 @@ public class SPManagerPlugin implements Plugin {
                             obj = loaders.get(url);
 
                             if (obj == null) {
-                                System.out.println("SPManager: could not find"
-                                        + " classloader: "
-                                        + files[i].getPath());
+                                System.out.println("SPManager: could not find classloader: " + files[i].getPath());
                                 continue;
                             }
 
@@ -240,16 +237,11 @@ public class SPManagerPlugin implements Plugin {
 
                         txt.append(errs.toString());
 
-                        BScrollPane detail
-                                = new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER,
-                                        BScrollPane.SCROLLBAR_AS_NEEDED);
+                        BScrollPane detail = new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_AS_NEEDED);
 
                         BLabel messg = SPMTranslate.bLabel("loadError");
 
-                        new BStandardDialog("SPManager initialise",
-                                new Widget[]{messg, detail},
-                                BStandardDialog.ERROR)
-                                .showMessageDialog(null);
+                        new BStandardDialog("SPManager initialise", new Widget[]{messg, detail}, BStandardDialog.ERROR).showMessageDialog(null);
                     }
                 } else {
                     System.out.println("SPManager: could not find plugin dir: " + PLUGIN_DIRECTORY);
@@ -291,42 +283,37 @@ public class SPManagerPlugin implements Plugin {
     }
 
     /**
-     * initialise the plugin
+     * initialize the plugin
      */
     public void init() {
 
-        ArrayList err = new ArrayList(8);
+        List<String> err = new ArrayList(8);
 
-        System.out.println("SPManager: java temp dir is "
-                + System.getProperty("java.io.tmpdir"));
+        System.out.println("SPManager: java temp dir is " + System.getProperty("java.io.tmpdir"));
 
         // try system TEMP directory
         File temp = new File(System.getProperty("java.io.tmpdir"));
 
         // try 'temp' in AOI installation directory
         if (!((temp.exists() && temp.isDirectory()) || temp.mkdir())) {
-            System.out.println("SPManager: could not open/create temp dir: "
-                    + temp.getAbsolutePath());
+            System.out.println("SPManager: could not open/create temp dir: " + temp.getAbsolutePath());
 
             temp = new File(APP_DIRECTORY, "temp");
         }
 
         // try 'SPtemp' in user's home directory
         if (!((temp.exists() && temp.isDirectory()) || temp.mkdir())) {
-            System.out.println("Cannot create temp folder: "
-                    + temp.getAbsolutePath());
+            System.out.println("Cannot create temp folder: " + temp.getAbsolutePath());
 
             temp = new File(System.getProperty("user.dir"), "SPMtemp");
         }
 
         if (!((temp.exists() && temp.isDirectory()) || temp.mkdir())) {
-            err.add("Cannot create temp folder: "
-                    + temp.getAbsolutePath());
+            err.add("Cannot create temp folder: " + temp.getAbsolutePath());
         }
 
         if (!temp.canWrite()) {
-            err.add("Write permission denied to temp folder: "
-                    + temp.getAbsolutePath());
+            err.add("Write permission denied to temp folder: " + temp.getAbsolutePath());
         }
 
         // create temporary private sub-tree
@@ -340,11 +327,9 @@ public class SPManagerPlugin implements Plugin {
             path = path.substring(0, path.length() - ".lck".length());
         } catch (Exception e) {
             // failed to create temp file, use fallback naming algorithm
-            System.out.println("SPManager: could not create temp file: "
-                    + t.getAbsolutePath() + e);
+            System.out.println("SPManager: could not create temp file: " + t.getAbsolutePath() + e);
 
-            path = System.getProperty("user.name") + "-"
-                    + String.valueOf(System.currentTimeMillis());
+            path = System.getProperty("user.name") + "-" + String.valueOf(System.currentTimeMillis());
         }
 
         temp = new File(temp, path);
@@ -355,42 +340,36 @@ public class SPManagerPlugin implements Plugin {
         }
 
         if (!temp.canWrite()) {
-            err.add("Write permission denied to temp folder: "
-                    + temp.getAbsolutePath());
+            err.add("Write permission denied to temp folder: " + temp.getAbsolutePath());
         }
 
         TEMP_DIR = temp.getAbsolutePath();
 
-        System.out.println("SPManager: temp dir set to: "
-                + temp.getAbsolutePath());
+        System.out.println("SPManager: temp dir set to: " + temp.getAbsolutePath());
 
         // make sure all temp directories are created
         File subfolder = new File(PLUGIN_DIRECTORY);
         temp = new File(TEMP_DIR, subfolder.getName());
         if (!temp.exists() && !temp.mkdirs()) {
-            err.add("Cannot create temp plugin folder: "
-                    + temp.getAbsolutePath());
+            err.add("Cannot create temp plugin folder: " + temp.getAbsolutePath());
         }
 
         subfolder = new File(TOOL_SCRIPT_DIRECTORY);
         temp = new File(TEMP_DIR, subfolder.getName());
         if (!temp.exists() && !temp.mkdirs()) {
-            err.add("Cannot create temp script folder: "
-                    + temp.getAbsolutePath());
+            err.add("Cannot create temp script folder: " + temp.getAbsolutePath());
         }
 
         subfolder = new File(OBJECT_SCRIPT_DIRECTORY);
         temp = new File(TEMP_DIR, subfolder.getName());
         if (!temp.exists() && !temp.mkdirs()) {
-            err.add("Cannot create temp script folder: "
-                    + temp.getAbsolutePath());
+            err.add("Cannot create temp script folder: " + temp.getAbsolutePath());
         }
 
         subfolder = new File(STARTUP_SCRIPT_DIRECTORY);
         temp = new File(TEMP_DIR, subfolder.getName());
         if (!temp.exists() && !temp.mkdirs()) {
-            err.add("Cannot create temp script folder: "
-                    + temp.getAbsolutePath());
+            err.add("Cannot create temp script folder: " + temp.getAbsolutePath());
         }
 
         // make sure all live directories exist
@@ -402,20 +381,17 @@ public class SPManagerPlugin implements Plugin {
 
         temp = new File(TOOL_SCRIPT_DIRECTORY);
         if (!temp.exists() && !temp.mkdirs()) {
-            err.add("Cannot create missing script folder: "
-                    + temp.getAbsolutePath());
+            err.add("Cannot create missing script folder: " + temp.getAbsolutePath());
         }
 
         temp = new File(OBJECT_SCRIPT_DIRECTORY);
         if (!temp.exists() && !temp.mkdirs()) {
-            err.add("Cannot create missing script folder: "
-                    + temp.getAbsolutePath());
+            err.add("Cannot create missing script folder: " + temp.getAbsolutePath());
         }
 
         temp = new File(STARTUP_SCRIPT_DIRECTORY);
         if (!temp.exists() && !temp.mkdirs()) {
-            err.add("Cannot create missing script folder: "
-                    + temp.getAbsolutePath());
+            err.add("Cannot create missing script folder: " + temp.getAbsolutePath());
         }
 
         if (err.size() > 0) {
@@ -668,7 +644,7 @@ public class SPManagerPlugin implements Plugin {
                     setText(SPMTranslate.text("downloading", info.getName()));
                     pack();
 
-                    final ArrayList errs = new ArrayList();
+                    final List<String> errs = new ArrayList<>();
                     worker = new Thread() {
                         @Override
                         public void run() {
