@@ -1,4 +1,4 @@
-/* Copyright (C) 2018 by Maksim Khramov
+/* Copyright (C) 2018-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -36,7 +36,7 @@ public class LinearMaterialMappingTest{
         LinearMaterialMapping lmm = new LinearMaterialMapping(cube, mat);
         
         Assert.assertEquals(mat, lmm.getMaterial());
-        Assert.assertEquals("Linear", LinearMaterialMapping.getName());
+        Assert.assertEquals("Linear", lmm.getName());
     }
     
     @Test(expected = InvalidObjectException.class)
