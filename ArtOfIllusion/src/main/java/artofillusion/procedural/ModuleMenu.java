@@ -40,7 +40,7 @@ public class ModuleMenu extends CustomWidget {
         addEventLink(MousePressedEvent.class, this, "mousePressed");
         addEventLink(MouseDraggedEvent.class, this, "mouseDragged");
         addEventLink(MouseReleasedEvent.class, this, "mouseReleased");
-        categories = new ArrayList<Category>();
+        categories = new ArrayList<>();
         Category category;
         categories.add(category = new Category(Translate.text("menu.values")));
         category.add(new Entry(Translate.text("menu.numberModule"), NumberModule.class));
@@ -290,7 +290,7 @@ public class ModuleMenu extends CustomWidget {
 
         public Category(String name) {
             this.name = name;
-            entries = new ArrayList<Entry>();
+            entries = new ArrayList<>();
         }
 
         public void add(Entry entry) {

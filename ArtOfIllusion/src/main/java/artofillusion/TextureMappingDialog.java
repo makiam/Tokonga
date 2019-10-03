@@ -55,7 +55,7 @@ public class TextureMappingDialog extends BDialog {
         oldMapping = map.duplicate();
 
         // Make a list of all texture mappings which can be used for this object and texture.
-        mappings = new Vector<TextureMapping>();
+        mappings = new Vector<>();
         Texture probe = layered ? ((LayeredMapping) editObj.getTextureMapping()).getLayer(layer) : editObj.getTexture();
 
         for (TextureMapping mapping : PluginRegistry.getPlugins(TextureMapping.class)) {

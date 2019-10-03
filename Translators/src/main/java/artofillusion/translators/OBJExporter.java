@@ -118,7 +118,7 @@ public class OBJExporter {
 
         // Write the objects in the scene.
         int numVert = 0, numNorm = 0, numTexVert = 0;
-        Hashtable<String, String> groupNames = new Hashtable<String, String>();
+        Hashtable<String, String> groupNames = new Hashtable<>();
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
         nf.setMaximumFractionDigits(5);
         nf.setGroupingUsed(false);
@@ -330,7 +330,7 @@ public class OBJExporter {
         // Write out the .mtl file.
         out.println("#Produced by Art of Illusion " + ArtOfIllusion.getVersion() + ", " + (new Date()).toString());
         Enumeration textures = textureExporter.getTextures();
-        Hashtable<String, TextureImageInfo> names = new Hashtable<String, TextureImageInfo>();
+        Hashtable<String, TextureImageInfo> names = new Hashtable<>();
         TextureSpec spec = new TextureSpec();
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
         nf.setMaximumFractionDigits(5);

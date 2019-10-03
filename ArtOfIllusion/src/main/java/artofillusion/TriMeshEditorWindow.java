@@ -657,7 +657,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                 }
 
                 // Now trace along the edges to find the other one.
-                ArrayList<Integer> sequential = new ArrayList<Integer>();
+                ArrayList<Integer> sequential = new ArrayList<>();
                 int currentEdge = specialEdge[i];
                 int v2 = -1;
                 while (true) {
@@ -831,7 +831,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                 return 0;
             }
         }
-        Vector<EdgeScore> scoreVec = new Vector<EdgeScore>(e.length);
+        Vector<EdgeScore> scoreVec = new Vector<>(e.length);
         Vec3 temp0 = new Vec3(), temp1 = new Vec3(), temp2 = new Vec3();
         for (int i = 0; i < e.length; i++) {
             if (!candidate[i]) {
@@ -1688,7 +1688,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         if (boundary == null) {
             boundary = ((TriangleMesh) getObject().getObject()).findBoundaryEdges();
         }
-        Vector<int[]> all = new Vector<int[]>();
+        Vector<int[]> all = new Vector<>();
         for (int i = 0; i < boundary.length; i++) {
             // Add one "selected boundary" for every continuous run of selected edges.
 
@@ -1700,7 +1700,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                 boolean isSelected = selected[boundary[i][j]];
                 if (isSelected) {
                     if (current == null) {
-                        current = new Vector<Integer>();
+                        current = new Vector<>();
                     }
                     current.addElement(boundary[i][j]);
                 }
@@ -2160,8 +2160,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         TriangleMesh theMesh = (TriangleMesh) objInfo.getObject();
         Vertex vt[] = (Vertex[]) theMesh.getVertices();
         Face fc[] = theMesh.getFaces();
-        Vector<Integer> faces = new Vector<Integer>();
-        TreeSet<Integer> vertices = new TreeSet<Integer>();
+        Vector<Integer> faces = new Vector<>();
+        TreeSet<Integer> vertices = new TreeSet<>();
 
         if (selectMode != FACE_MODE) {
             return;
@@ -2275,7 +2275,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         TriangleMesh theMesh = (TriangleMesh) objInfo.getObject();
         Vertex vt[] = (Vertex[]) theMesh.getVertices();
         Edge ed[] = theMesh.getEdges();
-        Vector<Edge> edges = new Vector<Edge>();
+        Vector<Edge> edges = new Vector<>();
         int i;
 
         if (selectMode != EDGE_MODE) {
@@ -2292,7 +2292,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
             return;
         }
         Edge first = edges.elementAt(0), last = first;
-        Vector<Edge> ordered = new Vector<Edge>();
+        Vector<Edge> ordered = new Vector<>();
         ordered.addElement(first);
         edges.removeElementAt(0);
         while (edges.size() > 0) {

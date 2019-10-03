@@ -101,8 +101,8 @@ public class CreateCurveTool extends EditingTool {
     @Override
     public void mousePressed(WidgetMouseEvent e, ViewerCanvas view) {
         if (clickPoint == null) {
-            clickPoint = new Vector<Vec3>();
-            smoothness = new Vector<Float>();
+            clickPoint = new Vector<>();
+            smoothness = new Vector<>();
             view.repaint();
         } else {
             Vec3 pos = clickPoint.get(clickPoint.size() - 1);

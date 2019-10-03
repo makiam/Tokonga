@@ -65,8 +65,8 @@ public class ProcedureEditor extends CustomWidget {
         inputInfo = new InfoBox();
         outputInfo = new InfoBox();
         cancelBuffer = new ByteArrayOutputStream();
-        undoStack = new ArrayList<ByteArrayOutputStream>();
-        redoStack = new ArrayList<ByteArrayOutputStream>();
+        undoStack = new ArrayList<>();
+        redoStack = new ArrayList<>();
         parent = new BFrame(owner.getWindowTitle());
         BorderContainer content = new BorderContainer();
         parent.setContent(content);
@@ -910,8 +910,8 @@ public class ProcedureEditor extends CustomWidget {
         public ClipboardSelection(Procedure proc, boolean selectedModule[], boolean selectedLink[]) {
             // Determine which modules and links to copy.
 
-            ArrayList<Module> mod = new ArrayList<Module>();
-            ArrayList<Link> ln = new ArrayList<Link>();
+            ArrayList<Module> mod = new ArrayList<>();
+            ArrayList<Link> ln = new ArrayList<>();
             Module allModules[] = proc.getModules();
             Link allLinks[] = proc.getLinks();
             for (int i = 0; i < selectedModule.length; i++) {

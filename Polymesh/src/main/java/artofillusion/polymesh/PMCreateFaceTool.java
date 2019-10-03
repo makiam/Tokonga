@@ -10,12 +10,10 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.polymesh;
 
 import java.awt.Color;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.util.Vector;
 
-import javax.swing.ImageIcon;
 
 import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
@@ -58,6 +56,7 @@ public class PMCreateFaceTool extends EditingTool {
         initButton("polymesh:createface");
     }
 
+    @Override
     public void activate() {
         super.activate();
         theWindow.setHelpText(Translate.text("polymesh:createFaceTool.helpText"));
@@ -66,14 +65,17 @@ public class PMCreateFaceTool extends EditingTool {
         fromPoint = null;
     }
 
+    @Override
     public int whichClicks() {
         return ALL_CLICKS;
     }
 
+    @Override
     public String getToolTipText() {
         return Translate.text("polymesh:createFaceTool.tipText");
     }
 
+    @Override
     public void mouseReleased(WidgetMouseEvent ev, ViewerCanvas view) {
         Point e = ev.getPoint();
         PolyMesh mesh, viewMesh;
@@ -121,14 +123,14 @@ public class PMCreateFaceTool extends EditingTool {
                 closestz = z;
             }
         }
-        if (clickPoints.size() == 0 && from == -1 && which != -1) {
+        if (clickPoints.isEmpty() && from == -1 && which != -1) {
             from = which;
             fromPoint = pr[from];
             return;
         }
         if (canvas == view && from != -1) {
             if (which == -1) {
-                if (clickPoints.size() == 0) {
+                if (clickPoints.isEmpty()) {
                     clickPoints.add(fromPoint = get3DPoint(fromPoint, e));
                     return;
                 }
@@ -156,6 +158,7 @@ public class PMCreateFaceTool extends EditingTool {
         }
     }
 
+    @Override
     public void keyPressed(KeyPressedEvent e, ViewerCanvas view) {
         if (!(canvas == view)) {
             return;
@@ -212,6 +215,7 @@ public class PMCreateFaceTool extends EditingTool {
     /**
      * Draw any graphics that this tool overlays on top of the view.
      */
+    @Override
     public void drawOverlay(ViewerCanvas view) {
         if (canvas == view && from != -1) {
             Vec2 p = view.getCamera().getObjectToScreen().timesXY(pr[from]);

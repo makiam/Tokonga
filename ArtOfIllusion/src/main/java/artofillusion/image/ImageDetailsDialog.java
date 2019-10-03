@@ -21,9 +21,6 @@ import javax.imageio.*;
 import java.io.*;
 import buoy.event.*;
 import buoy.widget.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 
 public class ImageDetailsDialog extends BDialog {
 

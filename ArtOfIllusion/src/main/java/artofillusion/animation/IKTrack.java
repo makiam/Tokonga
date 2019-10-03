@@ -34,7 +34,7 @@ public class IKTrack extends Track {
         super("Inverse Kinematics");
         this.info = info;
         theWeight = new WeightTrack(this);
-        constraints = new Vector<Constraint>();
+        constraints = new Vector<>();
         useGestures = true;
     }
 
@@ -113,7 +113,7 @@ public class IKTrack extends Track {
         t.name = name;
         t.enabled = enabled;
         t.quantized = quantized;
-        t.constraints = new Vector<Constraint>();
+        t.constraints = new Vector<>();
         for (int i = 0; i < constraints.size(); i++) {
             Constraint c = constraints.get(i);
             t.constraints.add(c.duplicate());
@@ -132,7 +132,7 @@ public class IKTrack extends Track {
         name = t.name;
         enabled = t.enabled;
         quantized = t.quantized;
-        constraints = new Vector<Constraint>();
+        constraints = new Vector<>();
         for (int i = 0; i < t.constraints.size(); i++) {
             Constraint c = t.constraints.get(i);
             constraints.add(c.duplicate());
@@ -214,7 +214,7 @@ public class IKTrack extends Track {
      */
     @Override
     public ObjectInfo[] getDependencies() {
-        Vector<ObjectInfo> v = new Vector<ObjectInfo>();
+        Vector<ObjectInfo> v = new Vector<>();
         for (int i = 0; i < constraints.size(); i++) {
             Constraint c = constraints.get(i);
             if (c.target != null) {
@@ -290,7 +290,7 @@ public class IKTrack extends Track {
             useGestures = in.readBoolean();
         }
         int numConstraints = in.readInt();
-        constraints = new Vector<Constraint>();
+        constraints = new Vector<>();
         for (int i = 0; i < numConstraints; i++) {
             Constraint c = new Constraint(in.readInt(), in.readBoolean() ? new ObjectRef(in, scene) : null);
             constraints.add(c);
@@ -336,7 +336,7 @@ public class IKTrack extends Track {
         public Editor(LayoutWindow win) {
             super(win, Translate.text("ikTrackTitle"), true);
             window = win;
-            tempConstraints = new Vector<Constraint>();
+            tempConstraints = new Vector<>();
             for (int i = 0; i < constraints.size(); i++) {
                 tempConstraints.add(constraints.get(i).duplicate());
             }

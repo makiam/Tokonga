@@ -52,10 +52,10 @@ public class TreeList extends CustomWidget {
 
     public TreeList(EditingWindow win) {
         window = win;
-        elements = new Vector<TreeElement>();
-        showing = new Vector<TreeElement>();
-        indent = new Vector<Integer>();
-        selected = new Vector<TreeElement>();
+        elements = new Vector<>();
+        showing = new Vector<>();
+        indent = new Vector<>();
+        selected = new Vector<>();
         origSelected = new boolean[0];
         allowMultiple = true;
         lastClickRow = -1;
@@ -193,7 +193,7 @@ public class TreeList extends CustomWidget {
      * Get an array of all the TreeElements in the tree.
      */
     public TreeElement[] getElements() {
-        Vector<TreeElement> v = new Vector<TreeElement>();
+        Vector<TreeElement> v = new Vector<>();
         TreeElement el;
 
         for (int i = 0; i < elements.size(); i++) {

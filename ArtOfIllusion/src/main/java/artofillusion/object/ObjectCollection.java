@@ -49,7 +49,7 @@ public abstract class ObjectCollection extends Object3D {
         if (interactive && cachedObjects != null && info.getDistortion() == previousDistortion) {
             return cachedObjects.elements();
         }
-        Vector<ObjectInfo> objectVec = new Vector<ObjectInfo>();
+        Vector<ObjectInfo> objectVec = new Vector<>();
         Enumeration<ObjectInfo> objects = enumerateObjects(info, interactive, scene);
         while (objects.hasMoreElements()) {
             ObjectInfo childInfo = objects.nextElement();
@@ -189,9 +189,9 @@ public abstract class ObjectCollection extends Object3D {
      */
     @Override
     public TriangleMesh convertToTriangleMesh(double tol) {
-        ArrayList<Vec3> allVert = new ArrayList<Vec3>();
-        ArrayList<Float> vertSmoothness = new ArrayList<Float>();
-        ArrayList<int[]> allFace = new ArrayList<int[]>();
+        ArrayList<Vec3> allVert = new ArrayList<>();
+        ArrayList<Float> vertSmoothness = new ArrayList<>();
+        ArrayList<int[]> allFace = new ArrayList<>();
         class Edge {
 
             public int v1, v2;
@@ -203,7 +203,7 @@ public abstract class ObjectCollection extends Object3D {
                 this.smoothness = smoothness;
             }
         }
-        ArrayList<Edge> edgeSmoothness = new ArrayList<Edge>();
+        ArrayList<Edge> edgeSmoothness = new ArrayList<>();
         int start = 0;
         Enumeration objects = getObjects(new ObjectInfo(this, lastCoords, ""), false, lastScene);
         while (objects.hasMoreElements()) {

@@ -48,7 +48,7 @@ public class TracksPanel extends CustomWidget implements TrackDisplay {
         theScore = sc;
         this.subdivisions = subdivisions;
         this.scale = scale;
-        markers = new Vector<Marker>();
+        markers = new Vector<>();
         setPreferredSize(new Dimension(200, 100));
         addEventLink(MousePressedEvent.class, this, "mousePressed");
         addEventLink(MouseReleasedEvent.class, this, "mouseReleased");
@@ -321,7 +321,7 @@ public class TracksPanel extends CustomWidget implements TrackDisplay {
             if (row2 > obj.length) {
                 row2 = obj.length;
             }
-            Vector<SelectionInfo> v = new Vector<SelectionInfo>();
+            Vector<SelectionInfo> v = new Vector<>();
             for (int row = row1; row < row2; row++) {
                 if (!(obj[row] instanceof Track)) {
                     continue;

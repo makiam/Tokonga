@@ -1,12 +1,10 @@
 package artofillusion.polymesh;
 
 import java.awt.Color;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.util.Vector;
 
-import javax.swing.ImageIcon;
 
 import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
@@ -46,6 +44,7 @@ public class PMExtrudeCurveTool extends EditingTool {
         initButton("polymesh:extrudecurve");
     }
 
+    @Override
     public void activate() {
         super.activate();
         theWindow.setHelpText(Translate.text("polymesh:extrudeCurveTool.helpText"));
@@ -53,19 +52,20 @@ public class PMExtrudeCurveTool extends EditingTool {
         fromPoint = null;
     }
 
+    @Override
     public int whichClicks() {
         return ALL_CLICKS;
     }
 
+    @Override
     public String getToolTipText() {
         return Translate.text("polymesh:extrudeCurveTool.tipText");
     }
 
+    @Override
     public void mousePressed(WidgetMouseEvent ev, ViewerCanvas view) {
         dragging = -1;
-        if (clickPoints.size() == 0) {
-            return;
-        }
+        if (clickPoints.isEmpty()) return;
         if (canvas == view) {
             Point e = ev.getPoint();
             for (int i = 0; i < clickPoints.size(); i++) {
@@ -87,6 +87,7 @@ public class PMExtrudeCurveTool extends EditingTool {
 
     }
 
+    @Override
     public void mouseDragged(WidgetMouseEvent ev, ViewerCanvas view) {
         if (dragging < 1) {
             return;
@@ -104,10 +105,11 @@ public class PMExtrudeCurveTool extends EditingTool {
         theWindow.updateImage();
     }
 
+    @Override
     public void mouseReleased(WidgetMouseEvent ev, ViewerCanvas view) {
         Point e = ev.getPoint();
         canvas = view;
-        if (clickPoints.size() == 0 && fromPoint == null) {
+        if (clickPoints.isEmpty() && fromPoint == null) {
             fromPoint = getInitialPoint();
             if (fromPoint == null) {
                 return;
@@ -150,7 +152,7 @@ public class PMExtrudeCurveTool extends EditingTool {
     }
 
     private Vec3 getInitialPoint() {
-        if (clickPoints.size() == 0) {
+        if (clickPoints.isEmpty()) {
             orSel = controller.getSelection();
             orMesh = (PolyMesh) controller.getObject().object;
         }
@@ -212,6 +214,7 @@ public class PMExtrudeCurveTool extends EditingTool {
         }
     }
 
+    @Override
     public void keyPressed(KeyPressedEvent e, ViewerCanvas view) {
         if (!(canvas == view)) {
             return;
@@ -234,9 +237,9 @@ public class PMExtrudeCurveTool extends EditingTool {
                     break;
                 case KeyPressedEvent.VK_J:
                     previewMode = !previewMode;
-                    if (previewMode && clickPoints.size() != 0) {
+                    if (previewMode && !clickPoints.isEmpty()) {
                         extrudeFaces(false);
-                    } else if (clickPoints.size() != 0) {
+                    } else if (!clickPoints.isEmpty()) {
                         controller.setMesh((PolyMesh) orMesh.duplicate());
                         controller.setSelection(orSel);
                     }
@@ -247,7 +250,7 @@ public class PMExtrudeCurveTool extends EditingTool {
     }
 
     private void doCancel() {
-        if (previewMode && clickPoints.size() != 0) {
+        if (previewMode && !clickPoints.isEmpty()) {
             controller.setMesh((PolyMesh) orMesh.duplicate());
             controller.setSelection(orSel);
         }
@@ -359,6 +362,7 @@ public class PMExtrudeCurveTool extends EditingTool {
     /**
      * Draw any graphics that this tool overlays on top of the view.
      */
+    @Override
     public void drawOverlay(ViewerCanvas view) {
         Vec3 aPoint = getInitialPoint();
         if (aPoint == null) {

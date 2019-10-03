@@ -28,7 +28,7 @@ public class OctreeNodeTest {
         // Create a scene for testing.
 
         Texture tex = new UniformTexture();
-        ArrayList<RTSphere> objectList = new ArrayList<RTSphere>();
+        ArrayList<RTSphere> objectList = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             Vec3 pos = new Vec3(Math.random() * 10, Math.random() * 10, 0.0);
             objectList.add(createSphere(pos, tex));
@@ -114,7 +114,7 @@ public class OctreeNodeTest {
             r.getDirection().normalize();
 
             // Find every leaf node that the ray passes through.
-            HashSet<OctreeNode> intersections = new HashSet<OctreeNode>();
+            HashSet<OctreeNode> intersections = new HashSet<>();
             findIntersectingNodes(rootNode, r, intersections);
 
             // Now trace the ray through the tree and see if it hits all of the correct nodes.

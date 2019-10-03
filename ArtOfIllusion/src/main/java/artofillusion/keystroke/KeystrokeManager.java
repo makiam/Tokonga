@@ -100,11 +100,11 @@ public class KeystrokeManager {
         if (keyIndex == null) {
             // We need to build an index for quickly looking up KeystrokeRecords.
 
-            keyIndex = new HashMap<Integer, List<KeystrokeRecord>>(keystrokes.items.size());
+            keyIndex = new HashMap<>(keystrokes.items.size());
             for (KeystrokeRecord record : keystrokes.items) {
                 List<KeystrokeRecord> list = keyIndex.get(record.getKeyCode());
                 if (list == null) {
-                    list = new ArrayList<KeystrokeRecord>(1);
+                    list = new ArrayList<>(1);
                     keyIndex.put(record.getKeyCode(), list);
                 }
                 list.add(record);
@@ -117,7 +117,7 @@ public class KeystrokeManager {
             return;
         }
 
-        Map<String, Object> variables = new HashMap<String, Object>();
+        Map<String, Object> variables = new HashMap<>();
         variables.put("window", window);
         for (KeystrokeRecord record : list) {
             if (record.getModifiers() == event.getModifiers()) {
@@ -157,7 +157,7 @@ public class KeystrokeManager {
     public static void addRecordsFromXML(InputStream in) throws Exception {
         // Build a table of existing records.
 
-        HashMap<String, KeystrokeRecord> existing = new HashMap<String, KeystrokeRecord>();
+        HashMap<String, KeystrokeRecord> existing = new HashMap<>();
         keystrokes.items.forEach((record) -> {
             existing.put(record.getName(), record);
         });

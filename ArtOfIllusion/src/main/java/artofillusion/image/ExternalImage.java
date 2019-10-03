@@ -11,7 +11,6 @@ package artofillusion.image;
 
 import artofillusion.*;
 import artofillusion.math.*;
-import buoy.widget.BStandardDialog;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
@@ -90,6 +89,7 @@ public class ExternalImage extends ImageMap {
         return lastAbsolutePath;
     }
 
+    @Override
     public String getType() {
         if (connected) {
             return imageMap.getType();

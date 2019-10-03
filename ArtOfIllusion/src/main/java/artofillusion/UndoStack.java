@@ -22,8 +22,8 @@ public class UndoStack {
     private final LinkedList<UndoRecord> redoList;
 
     public UndoStack() {
-        undoList = new LinkedList<UndoRecord>();
-        redoList = new LinkedList<UndoRecord>();
+        undoList = new LinkedList<>();
+        redoList = new LinkedList<>();
     }
 
     /**

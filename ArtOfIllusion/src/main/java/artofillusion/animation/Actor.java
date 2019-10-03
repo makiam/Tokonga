@@ -355,8 +355,8 @@ public class Actor extends ObjectWrapper {
         }
 
         // Construct the output pose.
-        Vector<Gesture> gestureList = new Vector<Gesture>();
-        Vector<Double> weightList = new Vector<Double>();
+        Vector<Gesture> gestureList = new Vector<>();
+        Vector<Double> weightList = new Vector<>();
 
         for (int i = 0; i < weight.length; i++) {
             if (weight[i] > 0.0) {
@@ -746,8 +746,8 @@ public class Actor extends ObjectWrapper {
          * Create a keyframe for the Actor's "inner" object, based on this keyframes list of poses.
          */
         public Keyframe createObjectKeyframe(Actor actor) {
-            List<Gesture> poseVec = new Vector<Gesture>();
-            List<Double> weightVec = new Vector<Double>();
+            List<Gesture> poseVec = new Vector<>();
+            List<Double> weightVec = new Vector<>();
 
             for (int i = 0; i < id.length; i++) {
                 int which = actor.findPoseIndex(id[i]);

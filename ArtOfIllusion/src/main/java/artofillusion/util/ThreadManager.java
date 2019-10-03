@@ -54,7 +54,7 @@ public class ThreadManager {
         nextIndex = new AtomicInteger(numIndices);
         controller = new Object();
         controllerWaiting = false;
-        waitingThreads = new HashSet<Thread>();
+        waitingThreads = new HashSet<>();
         maxThreads = -1;
     }
 

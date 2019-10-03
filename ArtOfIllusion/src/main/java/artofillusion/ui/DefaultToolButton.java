@@ -1,4 +1,4 @@
-/* Copyright (C) 2007 by François Guillet
+/* Copyright (C) 2007 by Fran?ois Guillet
    Changes copyright (C) 2017-2018 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -166,7 +166,7 @@ public class DefaultToolButton extends ToolButton {
 
         // we're still here, so apply the style...
         // initialise the namespace
-        HashMap<String, Object> namespace = new HashMap<String, Object>(style.attributes);
+        HashMap<String, Object> namespace = new HashMap<>(style.attributes);
 
         if (image != null) {
             Image img = image.getImage();

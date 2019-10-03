@@ -19,7 +19,7 @@ import java.net.*;
 /**
  * Description of the Class
  *
- * @author François Guillet
+ * @author Fran?ois Guillet
  * @created 15 mars 2004
  */
 public class SPMObjectInfo {

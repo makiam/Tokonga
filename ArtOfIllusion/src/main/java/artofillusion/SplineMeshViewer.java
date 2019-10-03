@@ -149,8 +149,8 @@ public class SplineMeshViewer extends MeshViewer {
         MeshVertex v[] = mesh.getVertices();
 
         // First, draw any unselected portions of the object.
-        ArrayList<Rectangle> boxes = new ArrayList<Rectangle>();
-        ArrayList<Double> depths = new ArrayList<Double>();
+        ArrayList<Rectangle> boxes = new ArrayList<>();
+        ArrayList<Double> depths = new ArrayList<>();
         boolean selected[] = controller.getSelection();
         for (int i = 0; i < v.length; i++) {
             if (!selected[i] && visible[i]) {

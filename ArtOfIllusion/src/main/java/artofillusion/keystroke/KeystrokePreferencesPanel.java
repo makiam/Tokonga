@@ -36,7 +36,7 @@ public class KeystrokePreferencesPanel extends FormContainer {
     public KeystrokePreferencesPanel() {
         super(new double[]{1}, new double[]{1, 0});
         KeystrokeRecord allRecords[] = KeystrokeManager.getAllRecords();
-        records = new ArrayList<KeystrokeRecord>(allRecords.length);
+        records = new ArrayList<>(allRecords.length);
         for (int i = 0; i < allRecords.length; i++) {
             records.add(allRecords[i]);
         }

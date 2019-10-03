@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2007 by François Guillet
+ *  Copyright (C) 2007 by Fran?ois Guillet
  *  This program is free software; you can redistribute it and/or modify it under the 
  *  terms of the GNU General Public License as published by the Free Software 
  *  Foundation; either version 2 of the License, or (at your option) any later version. 
@@ -22,11 +22,9 @@ import java.awt.Stroke;
 import artofillusion.TextureParameter;
 import artofillusion.math.BoundingBox;
 import artofillusion.math.Vec2;
-import artofillusion.math.Vec3;
 import artofillusion.object.FacetedMesh;
 import artofillusion.object.Mesh;
 import artofillusion.object.MeshVertex;
-import artofillusion.object.TriangleMesh;
 import artofillusion.polymesh.UVMappingData.UVMeshMapping;
 import artofillusion.polymesh.UnfoldedMesh.UnfoldedEdge;
 import artofillusion.polymesh.UnfoldedMesh.UnfoldedFace;
@@ -43,7 +41,7 @@ import buoy.widget.CustomWidget;
  * meshes as the location of the mesh vertices over the background image. Editing tools allow to
  * move, rotate, resize meshes.
  *
- * @author François Guillet
+ * @author Fran?ois Guillet
  */
 public class UVMappingCanvas extends CustomWidget {
 
@@ -1151,10 +1149,12 @@ public class UVMappingCanvas extends CustomWidget {
             }
         }
 
+        @Override
         public void execute() {
             redo();
         }
 
+        @Override
         public void redo() {
             for (int i = 0; i < mapping.v.length; i++) {
                 for (int j = 0; j < mapping.v[i].length; j++) {
@@ -1167,6 +1167,7 @@ public class UVMappingCanvas extends CustomWidget {
             repaint();
         }
 
+        @Override
         public void undo() {
             for (int i = 0; i < mapping.v.length; i++) {
                 for (int j = 0; j < mapping.v[i].length; j++) {
@@ -1191,10 +1192,12 @@ public class UVMappingCanvas extends CustomWidget {
             this.selection = selection;
         }
 
+        @Override
         public void execute() {
             redo();
         }
 
+        @Override
         public void redo() {
             for (int i = 0; i < selection.length; i++) {
                 mappingData.meshes[currentPiece].vertices[mappingData.verticesTable[currentPiece][selection[i]]].pinned
@@ -1203,6 +1206,7 @@ public class UVMappingCanvas extends CustomWidget {
             repaint();
         }
 
+        @Override
         public void undo() {
             redo();
         }
@@ -1220,10 +1224,12 @@ public class UVMappingCanvas extends CustomWidget {
             this.selection = selection;
         }
 
+        @Override
         public void execute() {
             redo();
         }
 
+        @Override
         public void redo() {
             for (int i = 0; i < selection.length; i++) {
                 selected[selection[i]] = !selected[selection[i]];
@@ -1232,6 +1238,7 @@ public class UVMappingCanvas extends CustomWidget {
             repaint();
         }
 
+        @Override
         public void undo() {
             redo();
         }
@@ -1240,7 +1247,7 @@ public class UVMappingCanvas extends CustomWidget {
     /**
      * Undo/Redo command for dragged vertices
      *
-     * @author François Guillet
+     * @author Fran?ois Guillet
      */
     public class DragMappingVerticesCommand implements Command {
 
@@ -1270,10 +1277,12 @@ public class UVMappingCanvas extends CustomWidget {
             this.piece = piece;
         }
 
+        @Override
         public void execute() {
             redo();
         }
 
+        @Override
         public void redo() {
             Vec2[] v = mapping.v[piece];
             for (int i = 0; i < vertIndices.length; i++) {
@@ -1284,6 +1293,7 @@ public class UVMappingCanvas extends CustomWidget {
             repaint();
         }
 
+        @Override
         public void undo() {
             Vec2[] v = mapping.v[piece];
             for (int i = 0; i < vertIndices.length; i++) {

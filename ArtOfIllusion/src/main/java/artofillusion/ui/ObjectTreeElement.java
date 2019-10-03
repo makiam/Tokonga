@@ -32,7 +32,7 @@ public class ObjectTreeElement extends TreeElement {
         this.info = info;
         this.parent = parent;
         this.tree = tree;
-        children = new Vector<TreeElement>();
+        children = new Vector<>();
         if (addChildren) {
             for (int i = 0; i < info.getChildren().length; i++) {
                 children.add(new ObjectTreeElement(info.getChildren()[i], this, tree, true));

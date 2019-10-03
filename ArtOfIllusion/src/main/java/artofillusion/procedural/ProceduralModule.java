@@ -9,12 +9,7 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.procedural;
 
-import artofillusion.*;
-import artofillusion.math.*;
-import buoy.widget.*;
 import java.awt.*;
-import java.io.*;
-import java.lang.reflect.*;
 
 /**
  * This represents a module in a procedure. This is an abstract class, whose subclasses represent

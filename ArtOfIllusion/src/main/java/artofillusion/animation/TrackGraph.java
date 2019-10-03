@@ -68,7 +68,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
         addEventLink(MouseClickedEvent.class, this, "mouseClicked");
         addEventLink(RepaintEvent.class, this, "paint");
         tracks = new TrackInfo[0];
-        markers = new Vector<Marker>();
+        markers = new Vector<>();
     }
 
     /**
@@ -457,7 +457,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
         int x1 = Math.min(lastPos.x, dragPos.x), x2 = Math.max(lastPos.x, dragPos.x);
         int y1 = Math.min(lastPos.y, dragPos.y), y2 = Math.max(lastPos.y, dragPos.y);
         dragPos = null;
-        Vector<SelectionInfo> v = new Vector<SelectionInfo>();
+        Vector<SelectionInfo> v = new Vector<>();
         Rectangle dim = getBounds();
         for (int i = 0; i < tracks.length; i++) {
             for (int j = 0; j < tracks[i].keyValue.length; j++) {

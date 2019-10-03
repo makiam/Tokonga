@@ -7,7 +7,6 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
-import javax.swing.ImageIcon;
 
 import artofillusion.Camera;
 import artofillusion.MeshEditorWindow;
@@ -107,6 +106,7 @@ public class SSMR2DManipulator
         valueWidgetCallback
                 = new Runnable() {
 
+            @Override
             public void run() {
                 doValueWidgetCallback();
             }
@@ -114,6 +114,7 @@ public class SSMR2DManipulator
         validateWidgetValue
                 = new Runnable() {
 
+            @Override
             public void run() {
                 doValueWidgetValidate();
             }
@@ -121,6 +122,7 @@ public class SSMR2DManipulator
         abortWidgetValue
                 = new Runnable() {
 
+            @Override
             public void run() {
                 doValueWidgetAbort();
             }
@@ -133,6 +135,7 @@ public class SSMR2DManipulator
         }
     }
 
+    @Override
     public void setPerspective(boolean perspective) {
         //this manipulator is not active in perspective views
         if (perspective) {
@@ -140,6 +143,7 @@ public class SSMR2DManipulator
         }
     }
 
+    @Override
     public void draw() {
         if (!active) {
             return;
@@ -214,6 +218,7 @@ public class SSMR2DManipulator
 
     }
 
+    @Override
     public boolean mousePressedOnHandle(WidgetMouseEvent e, int handle, Vec3 pos) {
         if (!active) {
             return false;
@@ -226,6 +231,7 @@ public class SSMR2DManipulator
         return true;
     }
 
+    @Override
     public boolean mousePressed(WidgetMouseEvent e) {
         if (!active) {
             return false;
@@ -454,6 +460,7 @@ public class SSMR2DManipulator
         dispatchEvent(new ManipulatorRotatingEvent(this, m, view));
     }
 
+    @Override
     public boolean mouseDragged(WidgetMouseEvent e) {
         if (!active) {
             return false;
@@ -803,6 +810,7 @@ public class SSMR2DManipulator
         return true;
     }
 
+    @Override
     public boolean mouseReleased(WidgetMouseEvent e) {
         if (!active) {
             return false;
@@ -917,6 +925,7 @@ public class SSMR2DManipulator
         return false;
     }
 
+    @Override
     public boolean keyPressed(KeyPressedEvent e) {
         if (!active) {
             return false;

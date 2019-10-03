@@ -306,6 +306,7 @@ public abstract class ObjectViewer extends ViewerCanvas {
     /**
      * Set orientation of this view
      */
+    @Override
     public void setOrientation(int which) {
         if (which < 6) {
             super.setOrientation(which);
@@ -325,7 +326,7 @@ public abstract class ObjectViewer extends ViewerCanvas {
         squareBox = square;
         dragPoint = null;
         if (freehandSelection) {
-            selectBoundsPoints = new Vector<Point>();
+            selectBoundsPoints = new Vector<>();
         }
     }
 

@@ -1,4 +1,4 @@
-/* Copyright (C) 2007 by François Guillet
+/* Copyright (C) 2007 by Fran?ois Guillet
    Some parts copyright 2007 by Peter Eastman
    Changes copyright (C) 2017 by Maksim Khramov
 
@@ -41,7 +41,7 @@ import artofillusion.math.RGBColor;
  * AoI GUI as well as the look and feel of some GUI elements (eg buttons). In this respect, the
  * theme manager is thus a factory of GUI elements.
  *
- * @author François Guillet
+ * @author Fran?ois Guillet
  *
  */
 public class ThemeManager {
@@ -49,7 +49,7 @@ public class ThemeManager {
     /**
      * This class hold all the colors used by a theme. A theme can propose several color sets.
      *
-     * @author François Guillet
+     * @author Fran?ois Guillet
      *
      */
     public static class ColorSet {
@@ -268,7 +268,7 @@ public class ThemeManager {
         protected int width = -1;
         protected int height = -1;
 
-        protected Map<String, String> attributes = new HashMap<String, String>();
+        protected Map<String, String> attributes = new HashMap<>();
         protected ButtonStyle next;
 
         /**
@@ -709,10 +709,10 @@ public class ThemeManager {
         if (themeList != null) {
             throw new IllegalStateException("The themes have already been initialized.");
         }
-        themeIdMap = new HashMap<String, ThemeInfo>();
+        themeIdMap = new HashMap<>();
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
         List resources = PluginRegistry.getResources("UITheme");
-        ArrayList<ThemeInfo> list = new ArrayList<ThemeInfo>();
+        ArrayList<ThemeInfo> list = new ArrayList<>();
         for (int i = 0; i < resources.size(); i++) {
             try {
                 ThemeInfo themeInfo = new ThemeInfo((PluginRegistry.PluginResource) resources.get(i));

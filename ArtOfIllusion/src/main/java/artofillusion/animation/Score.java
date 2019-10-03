@@ -109,7 +109,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         int fps = window.getScene().getFramesPerSecond();
         timeScale = fps * 5.0;
         theAxis = new TimeAxis(fps, timeScale, this);
-        graphs = new Vector<TrackDisplay>();
+        graphs = new Vector<>();
         timeMarker = new Marker(window.getScene().getTime(), Translate.text("Time"), Color.green);
         theAxis.addMarker(timeMarker);
         scroll = new BScrollBar(0, 0, 0, 0, BScrollBar.VERTICAL);
@@ -231,7 +231,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * Add a set of keyframes to the selection.
      */
     public void addSelectedKeyframes(SelectionInfo newsel[]) {
-        List<SelectionInfo> v = new Vector<SelectionInfo>();
+        List<SelectionInfo> v = new Vector<>();
         int i, j;
 
         for (i = 0; i < selection.length; i++) {
@@ -261,7 +261,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * Remove a keyframe from the selection.
      */
     public void removeSelectedKeyframe(Keyframe key) {
-        List<SelectionInfo> v = new Vector<SelectionInfo>();
+        List<SelectionInfo> v = new Vector<>();
 
         for (int i = 0; i < selection.length; i++) {
             if (selection[i].key != key) {
@@ -614,7 +614,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         }
 
         // Find the list of tracks with selected keyframes.
-        List<Track> v = new Vector<Track>();
+        List<Track> v = new Vector<>();
         for (int i = 0; i < selection.length; i++) {
             if (!v.contains(selection[i].track)) {
                 v.add(selection[i].track);
@@ -1001,7 +1001,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
     public void addTrack(Object obj[], Class trackClass, Object extraArgs[], boolean deselectOthers) {
         Scene theScene = window.getScene();
         UndoRecord undo = new UndoRecord(window, false);
-        Vector<Track> added = new Vector<Track>();
+        Vector<Track> added = new Vector<>();
         Object args[];
         if (extraArgs == null) {
             args = new Object[1];

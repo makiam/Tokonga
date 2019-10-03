@@ -117,7 +117,7 @@ public class ScriptRunner {
         } catch (Exception ex2) {
             ex2.printStackTrace();
         }
-        ArrayList<String> v = new ArrayList<String>();
+        ArrayList<String> v = new ArrayList<>();
         v.add(head);
         if (message != null) {
             if (!message.contains("Inline eval of")) {

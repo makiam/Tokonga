@@ -17,7 +17,6 @@ package artofillusion.procedural;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
-import java.util.List;
 import java.util.*;
 import java.lang.reflect.*;
 import java.io.*;
@@ -115,7 +114,7 @@ class Token {
     //    static Hashtable portMap = createPortMap ();
 
     static Hashtable<String, OPort> createFunMap() {
-        Hashtable<String, OPort> fm = new Hashtable<String, OPort>();
+        Hashtable<String, OPort> fm = new Hashtable<>();
         //For version two, pull these out of a config file
         fm.put("sin", new OPort(new SineModule(new Point()), 0));
         fm.put("cos", new OPort(new CosineModule(new Point()), 0));
@@ -329,7 +328,7 @@ public class ExprModule extends ProceduralModule {
         if (!dlg.clickedOk()) {
             return false;
         }
-        errors = new Vector<String>();
+        errors = new Vector<>();
         try {
             setExpr(exprField.getText().toLowerCase());
         } catch (Exception ex) {
@@ -464,8 +463,8 @@ public class ExprModule extends ProceduralModule {
     }
 
     void initVarTable() {
-        varTable = new Hashtable<String, OPort>();
-        moduleVec = new Vector<Module>();
+        varTable = new Hashtable<>();
+        moduleVec = new Vector<>();
 
         CoordinateModule x, y, z, t;
         x = (CoordinateModule) ModuleLoader.createModule(CoordinateModule.class);
@@ -652,7 +651,7 @@ public class ExprModule extends ProceduralModule {
 
         OPort func = getOPort(name);
 
-        Vector<OPort> s = new Vector<OPort>();
+        Vector<OPort> s = new Vector<>();
         //get args
         while (currTok.ty != Token.RP && currTok.ty != Token.END) {
             s.add(expr(false));

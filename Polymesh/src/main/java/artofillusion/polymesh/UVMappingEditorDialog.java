@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2007 by François Guillet
+ *  Copyright (C) 2007 by Fran?ois Guillet
  *  This program is free software; you can redistribute it and/or modify it under the 
  *  terms of the GNU General Public License as published by the Free Software 
  *  Foundation; either version 2 of the License, or (at your option) any later version. 
@@ -12,7 +12,6 @@ package artofillusion.polymesh;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Insets;
-import java.awt.Window;
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
@@ -80,7 +79,7 @@ import buoy.xml.WidgetDecoder;
  * This window allows the user to edit UV mapping using unfolded pieces of mesh displayed over the
  * texture image.
  *
- * @author François Guillet
+ * @author Fran?ois Guillet
  */
 public class UVMappingEditorDialog extends BDialog {
 
@@ -149,9 +148,9 @@ public class UVMappingEditorDialog extends BDialog {
 
         // find out the UVMapped texture on parFacePerVertex basis
         // record current coordinates in order to undo if the user cancels
-        texList = new ArrayList<Texture>();
-        mappingList = new ArrayList<UVMapping>();
-        oldCoordList = new ArrayList<Vec2[][]>();
+        texList = new ArrayList<>();
+        mappingList = new ArrayList<>();
+        oldCoordList = new ArrayList<>();
         Texture tex = objInfo.object.getTexture();
         TextureMapping mapping = objInfo.object.getTextureMapping();
         if (tex instanceof LayeredTexture) {
@@ -176,7 +175,7 @@ public class UVMappingEditorDialog extends BDialog {
                 }
             }
         }
-        if (texList.size() == 0) {
+        if (texList.isEmpty()) {
             texList = null;
             mappingList = null;
             oldCoordList = null;
@@ -572,7 +571,7 @@ public class UVMappingEditorDialog extends BDialog {
     }
 
     private int getTextureFromID(Integer id) {
-        if (texList == null || texList.size() == 0) {
+        if (texList == null || texList.isEmpty()) {
             return -1;
         }
         for (int i = 0; i < texList.size(); i++) {
@@ -786,6 +785,7 @@ public class UVMappingEditorDialog extends BDialog {
     private void processMouseDragged(final WidgetMouseEvent ev) {
         if (mouseProcessor != null) {
             mouseProcessor.addEvent(new Runnable() {
+                @Override
                 public void run() {
                     doMouseDragged(ev);
                 }
@@ -796,6 +796,7 @@ public class UVMappingEditorDialog extends BDialog {
     private void processMouseMoved(final WidgetMouseEvent ev) {
         if (mouseProcessor != null) {
             mouseProcessor.addEvent(new Runnable() {
+                @Override
                 public void run() {
                     doMouseMoved(ev);
                 }
@@ -963,15 +964,18 @@ public class UVMappingEditorDialog extends BDialog {
             this.newTexture = newTexture;
         }
 
+        @Override
         public void execute() {
             redo();
         }
 
+        @Override
         public void redo() {
             textureCB.setSelectedIndex(newTexture);
             doTextureChanged();
         }
 
+        @Override
         public void undo() {
             textureCB.setSelectedIndex(oldTexture);
             doTextureChanged();
@@ -991,14 +995,17 @@ public class UVMappingEditorDialog extends BDialog {
             this.newMapping = newMapping;
         }
 
+        @Override
         public void execute() {
             redo();
         }
 
+        @Override
         public void redo() {
             sendToMapping(oldMapping, newMapping);
         }
 
+        @Override
         public void undo() {
             sendToMapping(newMapping, oldMapping);
         }
@@ -1035,14 +1042,17 @@ public class UVMappingEditorDialog extends BDialog {
             this.newMapping = newMapping;
         }
 
+        @Override
         public void execute() {
             redo();
         }
 
+        @Override
         public void redo() {
             changeMapping(newMapping);
         }
 
+        @Override
         public void undo() {
             changeMapping(oldMapping);
         }
@@ -1062,10 +1072,12 @@ public class UVMappingEditorDialog extends BDialog {
             this.index = index;
         }
 
+        @Override
         public void execute() {
             redo();
         }
 
+        @Override
         public void redo() {
             ArrayList<UVMeshMapping> mappings = mappingData.getMappings();
             mappingCB.remove(index);
@@ -1092,6 +1104,7 @@ public class UVMappingEditorDialog extends BDialog {
             mappingCanvas.repaint();
         }
 
+        @Override
         public void undo() {
             ArrayList<UVMeshMapping> mappings = mappingData.getMappings();
             UVMeshMapping newMapping = mapping.duplicate();
@@ -1134,10 +1147,12 @@ public class UVMappingEditorDialog extends BDialog {
             this.selected = selected;
         }
 
+        @Override
         public void execute() {
             redo();
         }
 
+        @Override
         public void redo() {
             UVMeshMapping newMapping = mapping.duplicate();
             mappingData.mappings.add(newMapping);
@@ -1151,6 +1166,7 @@ public class UVMappingEditorDialog extends BDialog {
             updateState();
         }
 
+        @Override
         public void undo() {
             ArrayList<UVMeshMapping> mappings = mappingData.getMappings();
             int index = mappings.size() - 1;
@@ -1178,16 +1194,19 @@ public class UVMappingEditorDialog extends BDialog {
             this.newPiece = newPiece;
         }
 
+        @Override
         public void execute() {
             redo();
         }
 
+        @Override
         public void redo() {
             mappingCanvas.setSelectedPiece(newPiece);
             pieceList.setSelected(newPiece, true);
             repaint();
         }
 
+        @Override
         public void undo() {
             mappingCanvas.setSelectedPiece(oldPiece);
             pieceList.setSelected(oldPiece, true);
@@ -1212,15 +1231,18 @@ public class UVMappingEditorDialog extends BDialog {
             this.newName = newName;
         }
 
+        @Override
         public void execute() {
             redo();
         }
 
+        @Override
         public void redo() {
             setPieceName(piece, newName);
             repaint();
         }
 
+        @Override
         public void undo() {
             setPieceName(piece, oldName);
         }
@@ -1230,7 +1252,7 @@ public class UVMappingEditorDialog extends BDialog {
     /**
      * Implementation of ExportImage dialog as a subclass of UVMappingEditor Dialog.
      *
-     * @author François Guillet
+     * @author Fran?ois Guillet
      */
     private class ExportImageDialog extends BDialog {
 

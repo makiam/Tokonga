@@ -78,8 +78,8 @@ public class TriMeshBeveler {
         Edge e[] = mesh.getEdges();
         Face f[] = mesh.getFaces();
         int i, j;
-        List<int[]> face = new Vector<int[]>();
-        List<Vertex> vert = new Vector<Vertex>();
+        List<int[]> face = new Vector<>();
+        List<Vertex> vert = new Vector<>();
 
         newIndex = new Vector();
         findVertexInsets(height, width);
@@ -187,9 +187,9 @@ public class TriMeshBeveler {
         int group[], touchCount[], groupCount;
         Vec3 temp = new Vec3();
 
-        List<int[]> face = new Vector<int[]>();
-        Vector<Vertex> vert = new Vector<Vertex>();
-        List<int[]> bevel = new Vector<int[]>();
+        List<int[]> face = new Vector<>();
+        Vector<Vertex> vert = new Vector<>();
+        List<int[]> bevel = new Vector<>();
 
         boolean someSelected[] = new boolean[v.length], allSelected[] = new boolean[v.length];
         boolean touching[][], inGroup[], beveled[] = new boolean[e.length];
@@ -556,8 +556,8 @@ public class TriMeshBeveler {
         int vertIndex[] = new int[v.length];
         int extraVertIndex[][] = new int[v.length][], vertEdgeIndex[][] = new int[v.length][];
         boolean forward[] = new boolean[v.length];
-        List<int[]> face = new Vector<int[]>();
-        List<Vertex> vert = new Vector<Vertex>();
+        List<int[]> face = new Vector<>();
+        List<Vertex> vert = new Vector<>();
 
         // Create the vertices of the new mesh.
         for (int i = 0; i < v.length; i++) {
@@ -718,8 +718,8 @@ public class TriMeshBeveler {
         int extraVertIndex[][] = new int[v.length][];
         int faceVertIndex[][] = new int[v.length][];
         boolean forward[] = new boolean[v.length];
-        Vector<int[]> face = new Vector<int[]>();
-        Vector<Vertex> vert = new Vector<Vertex>();
+        Vector<int[]> face = new Vector<>();
+        Vector<Vertex> vert = new Vector<>();
 
         // Find the bevel and extrude directions for every edge.
         Vec3 edgeDir[] = new Vec3[e.length];

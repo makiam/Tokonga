@@ -9,16 +9,13 @@ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.polymesh;
 
-import java.awt.Image;
 import java.awt.Point;
-import java.awt.Window;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner;
 
@@ -74,6 +71,7 @@ public class CreatePolyMeshTool extends EditingTool {
         initButton("polymesh:polymesh");
     }
 
+    @Override
     public void activate() {
         super.activate();
         setHelpText();
@@ -122,20 +120,24 @@ public class CreatePolyMeshTool extends EditingTool {
         }
     }
 
+    @Override
     public int whichClicks() {
         return ALL_CLICKS;
     }
 
+    @Override
     public String getToolTipText() {
         return Translate.text("polymesh:createPolyMeshTool.tipText");
     }
 
+    @Override
     public void mousePressed(WidgetMouseEvent e, ViewerCanvas view) {
         clickPoint = e.getPoint();
         shiftDown = e.isShiftDown();
         ((SceneViewer) view).beginDraggingBox(clickPoint, shiftDown);
     }
 
+    @Override
     public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view) {
         Scene theScene = ((LayoutWindow) theWindow).getScene();
         Camera cam = view.getCamera();
@@ -205,6 +207,7 @@ public class CreatePolyMeshTool extends EditingTool {
         theWindow.setModified();
     }
 
+    @Override
     public void iconDoubleClicked() {
         new PolyMeshToolDialog(edw.getFrame());
         setHelpText();

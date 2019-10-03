@@ -396,6 +396,7 @@ public class ImagesDialog extends BDialog {
          * The timer that keeps launcing animation 'frames'
          */
         private Timer timer = new Timer((int) (1f / 61f * 1000f), new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 BScrollBar bar = sp.getVerticalScrollBar();
                 if ((scrollIncrement < 0 && bar.getValue() + scrollIncrement <= scrollFinalValue)
@@ -621,7 +622,7 @@ public class ImagesDialog extends BDialog {
 
         private void addUnusedImagesTable(boolean intent) // intent = to delete or not
         {
-            unusedImages = new ArrayList<ImageMap>();
+            unusedImages = new ArrayList<>();
             ImageMap im;
             boolean unused;
             FormContainer unusedTable;

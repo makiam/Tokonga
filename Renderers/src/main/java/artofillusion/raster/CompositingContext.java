@@ -44,7 +44,7 @@ public class CompositingContext {
         subpixelColor = new RGBColor();
         totalColor = new RGBColor();
         totalTransparency = new RGBColor();
-        materialStack = new ArrayList<ObjectMaterialInfo>();
+        materialStack = new ArrayList<>();
     }
 
     /**

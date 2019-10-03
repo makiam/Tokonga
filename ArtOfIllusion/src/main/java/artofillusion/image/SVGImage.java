@@ -48,7 +48,7 @@ public class SVGImage extends ImageMap {
         URI uri = universe.loadSVG(new InputStreamReader(new ByteArrayInputStream(xml)), "image");
         svg = universe.getDiagram(uri);
         svg.setIgnoringClipHeuristic(true);
-        tiles = new HashMap<TileKey, SoftReference<int[]>>();
+        tiles = new HashMap<>();
 
         aspectRatio = svg.getWidth() / svg.getHeight();
         BufferedImage pim = createPreview(PREVIEW_SIZE_TEMPLATE);
@@ -123,7 +123,7 @@ public class SVGImage extends ImageMap {
                     ex.printStackTrace();
                     tile = new int[TILE_SIZE * TILE_SIZE];
                 }
-                tiles.put(key.clone(), new SoftReference<int[]>(tile));
+                tiles.put(key.clone(), new SoftReference<>(tile));
             }
         }
         return tile;

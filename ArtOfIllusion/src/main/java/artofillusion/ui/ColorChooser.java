@@ -44,7 +44,7 @@ public class ColorChooser extends BDialog {
             mode = 1;
             rangeMode = 0;
         }
-        recentColors = new ArrayList<RGBColor>();
+        recentColors = new ArrayList<>();
         for (int i = 0; i < RECENT_COLOR_COUNT; i++) {
             recentColors.add(new RGBColor(1.0, 1.0, 1.0));
         }

@@ -50,6 +50,7 @@ public class MouseDragManipulator extends Manipulator {
         helpText = "";
     }
 
+    @Override
     public void draw() {
         if (!active) {
             return;
@@ -74,6 +75,7 @@ public class MouseDragManipulator extends Manipulator {
 
     }
 
+    @Override
     public boolean mousePressed(WidgetMouseEvent e) {
         if (!active) {
             return false;
@@ -112,6 +114,7 @@ public class MouseDragManipulator extends Manipulator {
         return false;
     }
 
+    @Override
     public boolean mousePressedOnHandle(WidgetMouseEvent e, int handle, Vec3 pos) {
         if (!active) {
             return false;
@@ -122,6 +125,7 @@ public class MouseDragManipulator extends Manipulator {
         return false;
     }
 
+    @Override
     public boolean mouseDragged(WidgetMouseEvent e) {
         if (!active) {
             return false;
@@ -194,6 +198,7 @@ public class MouseDragManipulator extends Manipulator {
         }
     }
 
+    @Override
     public boolean mouseReleased(WidgetMouseEvent e) {
         if (!active) {
             return false;

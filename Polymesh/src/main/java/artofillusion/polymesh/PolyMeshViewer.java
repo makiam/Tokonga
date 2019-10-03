@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2004 by Peter Eastman (TriMeshViewer.java),
- *  Modifications for Winged Edge Mesh Copyright (C) 2004-2005 by François Guillet
+ *  Modifications for Winged Edge Mesh Copyright (C) 2004-2005 by Fran?ois Guillet
  *
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
@@ -16,15 +16,10 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Iterator;
-
-import artofillusion.MeshEditorWindow;
 import artofillusion.MeshViewer;
 import artofillusion.RenderingMesh;
 import artofillusion.TextureParameter;
-import artofillusion.TriMeshEditorWindow;
 import artofillusion.UndoRecord;
-import artofillusion.ViewerCanvas;
 import artofillusion.animation.SkeletonTool;
 import artofillusion.math.RGBColor;
 import artofillusion.math.Vec2;
@@ -35,7 +30,6 @@ import artofillusion.polymesh.PolyMesh.Wedge;
 import artofillusion.polymesh.PolyMesh.Wface;
 import artofillusion.polymesh.PolyMesh.Wvertex;
 import artofillusion.polymesh.QuadMesh.QuadEdge;
-import artofillusion.polymesh.QuadMesh.QuadVertex;
 import artofillusion.texture.FaceParameterValue;
 import artofillusion.ui.EditingTool;
 import artofillusion.ui.MeshEditController;
@@ -49,7 +43,6 @@ import artofillusion.view.VertexShader;
 import buoy.event.KeyPressedEvent;
 import buoy.event.MouseClickedEvent;
 import buoy.event.MouseMovedEvent;
-import buoy.event.WidgetEvent;
 import buoy.event.WidgetMouseEvent;
 import buoy.widget.RowContainer;
 
@@ -88,7 +81,7 @@ public class PolyMeshViewer extends MeshViewer {
         super(window, p);
         PolyMesh mesh = (PolyMesh) window.getObject().object;
         visible = new boolean[mesh.getVertices().length];
-        manipulators = new ArrayList<Manipulator>();
+        manipulators = new ArrayList<>();
         manipulatorArray = new Manipulator[0];
         addEventLink(MouseMovedEvent.class, this, "mouseMoved");
         addEventLink(MouseClickedEvent.class, this, "mouseClicked");
@@ -191,6 +184,7 @@ public class PolyMeshViewer extends MeshViewer {
         super.updateImage();
     }
 
+    @Override
     protected void drawObject() {
         // Now draw the object.
         PolyMesh mesh = (PolyMesh) getController().getObject().getObject();
@@ -810,6 +804,7 @@ public class PolyMeshViewer extends MeshViewer {
      *
      * @param e Description of the Parameter
      */
+    @Override
     protected void mousePressed(WidgetMouseEvent e) {
         if (e.isAltDown() && e.getButton() == MouseEvent.BUTTON3) {
             ((PolyMeshEditorWindow) getController()).triggerPopupEvent(e);
@@ -1013,6 +1008,7 @@ public class PolyMeshViewer extends MeshViewer {
      *
      * @param e Description of the Parameter
      */
+    @Override
     protected void mouseDragged(WidgetMouseEvent e) {
         if (!dragging && clickPoint == null) {
             return;
@@ -1039,6 +1035,7 @@ public class PolyMeshViewer extends MeshViewer {
      *
      * @param e Description of the Parameter
      */
+    @Override
     protected void mouseReleased(WidgetMouseEvent e) {
 
         if (e.isAltDown() && e.getButton() == MouseEvent.BUTTON3) {
@@ -1223,6 +1220,7 @@ public class PolyMeshViewer extends MeshViewer {
     /**
      * Set the currently selected tool.
      */
+    @Override
     public void setTool(EditingTool tool) {
         manipulators.clear();
         manipulatorArray = new Manipulator[0];
@@ -1538,6 +1536,7 @@ public class PolyMeshViewer extends MeshViewer {
         }
     }
 
+    @Override
     public void setPerspective(boolean perspective) {
         for (int i = 0; i < manipulatorArray.length; i++) {
             manipulatorArray[i].setPerspective(perspective);
