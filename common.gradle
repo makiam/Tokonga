@@ -41,3 +41,8 @@ test {
     ignoreFailures = true
     testLogging.showStandardStreams = true
 }
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:rawtypes'
+    options.deprecation = true
+}

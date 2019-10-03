@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2007 by Fran?ois Guillet
+ *  Copyright (C) 2007 by François Guillet
  *  This program is free software; you can redistribute it and/or modify it under the 
  *  terms of the GNU General Public License as published by the Free Software 
  *  Foundation; either version 2 of the License, or (at your option) any later version. 
@@ -8,20 +8,6 @@
  *  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  */
 package artofillusion.polymesh;
-
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.image.BufferedImage;
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 
 import artofillusion.image.BMPEncoder;
 import artofillusion.math.Vec2;
@@ -74,6 +60,19 @@ import buoy.widget.LayoutInfo;
 import buoy.widget.RowContainer;
 import buoy.widget.Widget;
 import buoy.xml.WidgetDecoder;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 /**
  * This window allows the user to edit UV mapping using unfolded pieces of mesh displayed over the

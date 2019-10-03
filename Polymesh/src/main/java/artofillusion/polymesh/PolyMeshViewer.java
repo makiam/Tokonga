@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2004 by Peter Eastman (TriMeshViewer.java),
- *  Modifications for Winged Edge Mesh Copyright (C) 2004-2005 by Fran?ois Guillet
+ *  Modifications for Winged Edge Mesh Copyright (C) 2004-2005 by François Guillet
  *
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
@@ -11,11 +11,6 @@
  */
 package artofillusion.polymesh;
 
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.Polygon;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import artofillusion.MeshViewer;
 import artofillusion.RenderingMesh;
 import artofillusion.TextureParameter;
@@ -45,6 +40,11 @@ import buoy.event.MouseClickedEvent;
 import buoy.event.MouseMovedEvent;
 import buoy.event.WidgetMouseEvent;
 import buoy.widget.RowContainer;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 /**
  * The PolyMeshViewer class is a component which displays a PolyMesh object and allow the user to
