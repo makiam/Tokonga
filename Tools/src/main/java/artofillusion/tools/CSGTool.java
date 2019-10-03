@@ -41,7 +41,7 @@ public class CSGTool implements ModellingTool {
     public void commandSelected(LayoutWindow window) {
         Scene scene = window.getScene();
         int selection[] = window.getSelectedIndices(), closedCount = 0;
-        Vector<ObjectInfo> inputObj = new Vector<ObjectInfo>();
+        Vector<ObjectInfo> inputObj = new Vector<>();
 
         for (int i = 0; i < selection.length; i++) {
             ObjectInfo obj = scene.getObject(selection[i]);
