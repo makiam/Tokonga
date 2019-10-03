@@ -7,7 +7,6 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.polymesh;
 
 import java.awt.Image;
@@ -25,32 +24,33 @@ import artofillusion.ui.EditingWindow;
 import artofillusion.ui.MeshEditController;
 import artofillusion.ui.Translate;
 
-/** MeshStandardTool is the standard, default, editing tool. It can be used to move, scale and rotate selections.*/
+/**
+ * MeshStandardTool is the standard, default, editing tool. It can be used to move, scale and rotate selections.
+ */
+public class MeshStandardTool extends AdvancedEditingTool {
 
-public class MeshStandardTool extends AdvancedEditingTool
-{
     private Vec3 baseVertPos[];
     private UndoRecord undo;
     private static Image icon, selectedIcon;
-    /** hash maps are used to store manipulators for views */
+    /**
+     * hash maps are used to store manipulators for views
+     */
     private HashMap manip2dHashMap, manip3dHashMap;
 
-    public MeshStandardTool(EditingWindow fr, MeshEditController controller)
-    {
+    public MeshStandardTool(EditingWindow fr, MeshEditController controller) {
         super(fr, controller);
-        
+
         initButton("polymesh:movePoints");
         manip2dHashMap = new HashMap();
         manip3dHashMap = new HashMap();
     }
 
-    public void activateManipulators(ViewerCanvas view)
-    {
-        if (! manip2dHashMap.containsKey(view))
-        {
+    public void activateManipulators(ViewerCanvas view) {
+        if (!manip2dHashMap.containsKey(view)) {
             PolyMeshValueWidget valueWidget = null;
-            if (controller instanceof PolyMeshEditorWindow)
-                valueWidget = ((PolyMeshEditorWindow)controller).getValueWidget();
+            if (controller instanceof PolyMeshEditorWindow) {
+                valueWidget = ((PolyMeshEditorWindow) controller).getValueWidget();
+            }
             Manipulator manip2d = new SSMR2DManipulator(this, view, valueWidget);
             manip2d.addEventLink(Manipulator.ManipulatorPrepareChangingEvent.class, this, "doManipulatorPrepareShapingMesh");
             manip2d.addEventLink(SSMRManipulator.ManipulatorScalingEvent.class, this, "doManipulatorScalingMesh");
@@ -67,68 +67,58 @@ public class MeshStandardTool extends AdvancedEditingTool
             manip3d.addEventLink(SSMRManipulator.ManipulatorMovingEvent.class, this, "doManipulatorMovingMesh");
             manip3d.addEventLink(Manipulator.ManipulatorAbortChangingEvent.class, this, "doAbortChangingMesh");
             manip3d.setActive(true);
-            ((PolyMeshViewer)view).setManipulator(manip2d);
-            ((PolyMeshViewer)view).addManipulator(manip3d);
+            ((PolyMeshViewer) view).setManipulator(manip2d);
+            ((PolyMeshViewer) view).addManipulator(manip3d);
             manip2dHashMap.put(view, manip2d);
             manip3dHashMap.put(view, manip3d);
-        }
-        else
-        {
-            ((PolyMeshViewer)view).setManipulator((Manipulator)manip2dHashMap.get(view));
-            ((PolyMeshViewer)view).addManipulator((Manipulator)manip3dHashMap.get(view));
+        } else {
+            ((PolyMeshViewer) view).setManipulator((Manipulator) manip2dHashMap.get(view));
+            ((PolyMeshViewer) view).addManipulator((Manipulator) manip3dHashMap.get(view));
         }
     }
 
-    public void activate()
-    {
+    public void activate() {
         super.activate();
         theWindow.setHelpText(Translate.text("polymesh:meshStandardTool.helpText"));
         ViewerCanvas view = theWindow.getView();
     }
 
-    public void deactivate()
-    {
-    	super.deactivate();
-    	Iterator iter = manip2dHashMap.keySet().iterator();
+    public void deactivate() {
+        super.deactivate();
+        Iterator iter = manip2dHashMap.keySet().iterator();
         PolyMeshViewer view;
-        while (iter.hasNext())
-        {
-            view = (PolyMeshViewer)iter.next();
-            view.removeManipulator((Manipulator)manip2dHashMap.get(view));
-            view.removeManipulator((Manipulator)manip3dHashMap.get(view));
+        while (iter.hasNext()) {
+            view = (PolyMeshViewer) iter.next();
+            view.removeManipulator((Manipulator) manip2dHashMap.get(view));
+            view.removeManipulator((Manipulator) manip3dHashMap.get(view));
         }
     }
 
-    public int whichClicks()
-    {
+    public int whichClicks() {
         return ALL_CLICKS;
     }
 
-    public Image getIcon()
-    {
+    public Image getIcon() {
         return icon;
     }
 
-    public Image getSelectedIcon()
-    {
+    public Image getSelectedIcon() {
         return selectedIcon;
     }
 
-    public String getToolTipText()
-    {
+    public String getToolTipText() {
         return Translate.text("polymesh:meshStandardTool.tipText");
     }
 
-    private void doManipulatorPrepareShapingMesh(Manipulator.ManipulatorEvent e)
-    {
+    private void doManipulatorPrepareShapingMesh(Manipulator.ManipulatorEvent e) {
         Mesh mesh = (Mesh) controller.getObject().object;
-        if (undo == null)
-            undo = new UndoRecord(theWindow, false, UndoRecord.COPY_VERTEX_POSITIONS, new Object [] {mesh, mesh.getVertexPositions()});
+        if (undo == null) {
+            undo = new UndoRecord(theWindow, false, UndoRecord.COPY_VERTEX_POSITIONS, new Object[]{mesh, mesh.getVertexPositions()});
+        }
         baseVertPos = mesh.getVertexPositions();
     }
 
-    private void doAbortChangingMesh()
-    {
+    private void doAbortChangingMesh() {
         Mesh mesh = (Mesh) controller.getObject().object;
         mesh.setVertexPositions(baseVertPos);
         baseVertPos = null;
@@ -137,8 +127,7 @@ public class MeshStandardTool extends AdvancedEditingTool
         theWindow.updateImage();
     }
 
-    private void doManipulatorScalingMesh(SSMR2DManipulator.ManipulatorScalingEvent e)
-    {
+    private void doManipulatorScalingMesh(SSMR2DManipulator.ManipulatorScalingEvent e) {
         Mesh mesh = (Mesh) controller.getObject().object;
         Vec3[] v = findScaledPositions(baseVertPos, e.getScaleMatrix(), (MeshViewer) e.getView());
         mesh.setVertexPositions(v);
@@ -146,23 +135,19 @@ public class MeshStandardTool extends AdvancedEditingTool
         theWindow.updateImage();
     }
 
-    private void doManipulatorRotatingMesh(SSMR2DManipulator.ManipulatorRotatingEvent e)
-    {
+    private void doManipulatorRotatingMesh(SSMR2DManipulator.ManipulatorRotatingEvent e) {
         Mesh mesh = (Mesh) controller.getObject().object;
         Vec3[] v = null;
-        v = findRotatedPositions(baseVertPos, e.getMatrix(), (MeshViewer)e.getView());
-        if (v != null)
-        {
+        v = findRotatedPositions(baseVertPos, e.getMatrix(), (MeshViewer) e.getView());
+        if (v != null) {
             mesh.setVertexPositions(v);
             controller.objectChanged();
             theWindow.updateImage();
         }
     }
 
-    private void doManipulatorShapedMesh(Manipulator.ManipulatorEvent e)
-    {
-        if (undo != null)
-        {
+    private void doManipulatorShapedMesh(Manipulator.ManipulatorEvent e) {
+        if (undo != null) {
             theWindow.setUndoRecord(undo);
             undo = null;
         }
@@ -172,8 +157,7 @@ public class MeshStandardTool extends AdvancedEditingTool
         theWindow.updateImage();
     }
 
-    private void doManipulatorMovingMesh(SSMR2DManipulator.ManipulatorMovingEvent e)
-    {
+    private void doManipulatorMovingMesh(SSMR2DManipulator.ManipulatorMovingEvent e) {
         MeshViewer mv = (MeshViewer) e.getView();
         Mesh mesh = (Mesh) controller.getObject().object;
         Vec3 v[], drag;

@@ -7,7 +7,6 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.object;
 
 import artofillusion.WireframeMesh;
@@ -16,33 +15,29 @@ import artofillusion.math.BoundingBox;
 import org.junit.Assert;
 import org.junit.Test;
 
-
-
 /**
  *
  * @author maksim.khramov
  */
 public class Object3DTextureAndMaterialCopyTest {
-    
+
     @Test
-    public void testSetNullSourceMaterial()
-    {
+    public void testSetNullSourceMaterial() {
         Dummy3DObject target = new Dummy3DObject();
         Dummy3DObject source = new Dummy3DObject();
         source.setMaterial(null, null);
-        
+
         target.copyTextureAndMaterial(source);
         Assert.assertNull(target.getMaterial());
         Assert.assertNull(target.getMaterialMapping());
     }
-    
-    private class Dummy3DObject extends Object3D
-    {
-        public Dummy3DObject()
-        {
+
+    private class Dummy3DObject extends Object3D {
+
+        public Dummy3DObject() {
             super();
         }
-        
+
         @Override
         public Object3D duplicate() {
             return new Dummy3DObject();
@@ -79,6 +74,5 @@ public class Object3DTextureAndMaterialCopyTest {
         }
 
     }
-            
-            
+
 }

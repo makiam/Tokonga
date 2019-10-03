@@ -7,14 +7,14 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.script;
 
 import artofillusion.*;
 
-/** This interface represents a parsed Tool script. */
+/**
+ * This interface represents a parsed Tool script.
+ */
+public interface ToolScript {
 
-public interface ToolScript
-{
-  public void execute(LayoutWindow window) throws ScriptException;
+    public void execute(LayoutWindow window) throws ScriptException;
 }

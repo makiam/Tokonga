@@ -16,7 +16,7 @@ public class StringEncrypterTest {
 
     private final String secretString = "Attack at dawn!";
     private final String passPhrase = "My Pass Phrase";
-        
+
     /**
      * Test of encrypt method, of class StringEncrypter.
      */
@@ -24,13 +24,11 @@ public class StringEncrypterTest {
     public void testEncrypt() {
         StringEncrypter se = new StringEncrypter(passPhrase);
         String encoded = se.encrypt(secretString);
-        
+
         String decoded = se.decrypt(encoded);
-        
+
         Assert.assertEquals(secretString, decoded);
-        
+
     }
 
-
-    
 }

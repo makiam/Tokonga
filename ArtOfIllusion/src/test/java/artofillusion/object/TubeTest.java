@@ -7,7 +7,6 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.object;
 
 import artofillusion.math.Vec3;
@@ -19,14 +18,12 @@ import org.junit.Test;
  * @author MaksK
  */
 public class TubeTest {
-    
+
     @Test
-    public void testCreateTubeFromCurve()
-    {
-        Tube tube = new Tube(new Curve(new Vec3[] {new Vec3(), new Vec3()}, new float[] {0f, 1f}, Mesh.APPROXIMATING, false), new double[] {0f, 1f}, Tube.CLOSED_ENDS);
+    public void testCreateTubeFromCurve() {
+        Tube tube = new Tube(new Curve(new Vec3[]{new Vec3(), new Vec3()}, new float[]{0f, 1f}, Mesh.APPROXIMATING, false), new double[]{0f, 1f}, Tube.CLOSED_ENDS);
         Assert.assertNotNull(tube);
-        
+
     }
 
-    
 }

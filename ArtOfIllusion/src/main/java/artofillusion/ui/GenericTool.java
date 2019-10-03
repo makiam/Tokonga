@@ -8,33 +8,30 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.ui;
 
-/** GenericTool is an EditingTool which performs no operations.  It is generally used simply
-    as a button, for allowing the user to select various options.  The constructor takes
-    the name of an image file, which is used as the tool's icon. */
+/**
+ * GenericTool is an EditingTool which performs no operations. It is generally used simply as a
+ * button, for allowing the user to select various options. The constructor takes the name of an
+ * image file, which is used as the tool's icon.
+ */
+public class GenericTool extends EditingTool {
 
-public class GenericTool extends EditingTool
-{
-  private final String tipText;
+    private final String tipText;
 
-  public GenericTool(EditingWindow fr, String imageName, String tipText)
-  {
-    super(fr);
-    initButton(imageName);
-    this.tipText = tipText;
-  }
+    public GenericTool(EditingWindow fr, String imageName, String tipText) {
+        super(fr);
+        initButton(imageName);
+        this.tipText = tipText;
+    }
 
-  @Override
-  public int whichClicks()
-  {
-    return HANDLE_CLICKS;
-  }
+    @Override
+    public int whichClicks() {
+        return HANDLE_CLICKS;
+    }
 
-  @Override
-  public String getToolTipText()
-  {
-    return tipText;
-  }
+    @Override
+    public String getToolTipText() {
+        return tipText;
+    }
 }

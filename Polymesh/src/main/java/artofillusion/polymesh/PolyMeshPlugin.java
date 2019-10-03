@@ -30,28 +30,25 @@ import buoy.widget.BMenuItem;
 import buoy.widget.BStandardDialog;
 import buoy.widget.MenuWidget;
 
-
 /**
- *  This is the plugin class that plugs PolyMesh structure and editing features into AoI
+ * This is the plugin class that plugs PolyMesh structure and editing features into AoI
  *
- *@author     Francois Guillet
+ * @author Francois Guillet
  */
-public class PolyMeshPlugin implements Plugin
-{   
+public class PolyMeshPlugin implements Plugin {
+
     public static ResourceBundle resources;
-	
-	/**
-     *  Process messages sent to plugin by AoI (see AoI API description)
+
+    /**
+     * Process messages sent to plugin by AoI (see AoI API description)
      *
-     *@param  message  The message
-     *@param  args     Arguments depending on the message
+     * @param message The message
+     * @param args Arguments depending on the message
      */
     @Override
-    public void processMessage( int message, Object args[] )
-    {
-        if ( message == Plugin.APPLICATION_STARTING )
-        {
-            resources = ResourceBundle.getBundle( "polymesh", ArtOfIllusion.getPreferences().getLocale() );
+    public void processMessage(int message, Object args[]) {
+        if (message == Plugin.APPLICATION_STARTING) {
+            resources = ResourceBundle.getBundle("polymesh", ArtOfIllusion.getPreferences().getLocale());
             boolean keysImplemented = false;
             for (KeystrokeRecord key : KeystrokeManager.getAllRecords()) {
                 if (key.getName().endsWith("(PolyMesh)")) {
@@ -59,81 +56,74 @@ public class PolyMeshPlugin implements Plugin
                     break;
                 }
             }
-            if (keysImplemented) return;
+            if (keysImplemented) {
+                return;
+            }
 
-            try
-            {
+            try {
                 InputStream in = getClass().getResourceAsStream("/PMkeystrokes.xml");
                 KeystrokeManager.addRecordsFromXML(in);
                 in.close();
                 KeystrokeManager.saveRecords();
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
 
-        }
-        else if ( message == Plugin.SCENE_WINDOW_CREATED )
-        {
+        } else if (message == Plugin.SCENE_WINDOW_CREATED) {
             LayoutWindow layout = (LayoutWindow) args[0];
             ToolPalette palette = layout.getToolPalette();
-            palette.addTool( 8, new CreatePolyMeshTool( layout ));
+            palette.addTool(8, new CreatePolyMeshTool(layout));
             palette.toggleDefaultTool();
             palette.toggleDefaultTool();
-            BMenuItem menuItem = Translate.menuItem( "polymesh:convertToPolyMesh", new ConvertObject( layout ), "doConvert" );
+            BMenuItem menuItem = Translate.menuItem("polymesh:convertToPolyMesh", new ConvertObject(layout), "doConvert");
             BMenu toolsMenu = layout.getObjectMenu();
             int count = toolsMenu.getChildCount();
             MenuWidget[] mw = new MenuWidget[count];
-            for (int i = count - 1; i >= 0; i-- )
+            for (int i = count - 1; i >= 0; i--) {
                 mw[i] = toolsMenu.getChild(i);
+            }
             toolsMenu.removeAll();
-            for (int i = 0; i <= 7; i++ )
+            for (int i = 0; i <= 7; i++) {
                 toolsMenu.add(mw[i]);
-            toolsMenu.add( menuItem );
-            for (int i = 8; i < count; i++ )
+            }
+            toolsMenu.add(menuItem);
+            for (int i = 8; i < count; i++) {
                 toolsMenu.add(mw[i]);
+            }
             layout.layoutChildren();
         }
     }
-    
-    
-    private class ConvertObject
-    {
+
+    private class ConvertObject {
+
         private final LayoutWindow window;
-        
-        public ConvertObject( LayoutWindow window )
-        {
+
+        public ConvertObject(LayoutWindow window) {
             this.window = window;
         }
-        
-        private void doConvert()
-        {
+
+        private void doConvert() {
             PolyMesh mesh;
             BStandardDialog dlg = new BStandardDialog(Translate.text("polymesh:triangleToPolyTitle"), Translate.text("polymesh:convertToQuads"), BStandardDialog.QUESTION);
-            String[] options = new String[] { Translate.text("polymesh:findQuadsDistance"), Translate.text("polymesh:findQuadsAngular"), Translate.text("polymesh:keepTriangles") };
-            
+            String[] options = new String[]{Translate.text("polymesh:findQuadsDistance"), Translate.text("polymesh:findQuadsAngular"), Translate.text("polymesh:keepTriangles")};
+
             //NB!!! optionDefault is not match to any option button defined above... 
             String optionDefault = Translate.text("polymesh:convertToQuads");
-            
-            for(ObjectInfo item: window.getSelectedObjects()) 
-            {
-                if(item.getObject() instanceof SplineMesh)
-                {
-                    mesh = new PolyMesh( (SplineMesh) item.getObject() );
+
+            for (ObjectInfo item : window.getSelectedObjects()) {
+                if (item.getObject() instanceof SplineMesh) {
+                    mesh = new PolyMesh((SplineMesh) item.getObject());
                     CoordinateSystem coords = new CoordinateSystem();
                     coords.copyCoords(item.getCoords());
                     String name = "Polymesh" + item.getName();
-                    window.addObject( mesh, coords, name, (UndoRecord)null );
-                }
-                else if(item.getObject() instanceof TriangleMesh)
-                {                    
-                    int r = dlg.showOptionDialog( window, options, optionDefault );
-                    mesh = new PolyMesh( (TriangleMesh) item.getObject(), r == 0 || r == 1, r == 1  );
+                    window.addObject(mesh, coords, name, (UndoRecord) null);
+                } else if (item.getObject() instanceof TriangleMesh) {
+                    int r = dlg.showOptionDialog(window, options, optionDefault);
+                    mesh = new PolyMesh((TriangleMesh) item.getObject(), r == 0 || r == 1, r == 1);
                     CoordinateSystem coords = new CoordinateSystem();
                     coords.copyCoords(item.getCoords());
                     String name = "Polymesh" + item.getName();
-                    window.addObject( mesh, coords, name, (UndoRecord)null );
+                    window.addObject(mesh, coords, name, (UndoRecord) null);
                 }
             }
 
@@ -141,4 +131,3 @@ public class PolyMeshPlugin implements Plugin
         }
     }
 }
-

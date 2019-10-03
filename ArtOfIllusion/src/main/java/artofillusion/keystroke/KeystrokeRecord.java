@@ -8,7 +8,6 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.keystroke;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -17,120 +16,110 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
 
 /**
- * This class contains information about a keyboard shortcut which automates some operation.
- * A keystroke pairs a key description (key code and modifier) with a Beanshell/Groovy script to execute
- * when the key is pressed.
+ * This class contains information about a keyboard shortcut which automates some operation. A
+ * keystroke pairs a key description (key code and modifier) with a Beanshell/Groovy script to
+ * execute when the key is pressed.
  */
-
 @XmlAccessorType(XmlAccessType.FIELD)
-public class KeystrokeRecord
-{
-  @XmlAttribute private int keyCode;
-  @XmlAttribute private int modifiers;
+public class KeystrokeRecord {
 
-  @XmlAttribute public String name;
-  @XmlValue private String script;
-  @XmlAttribute private String language;
+    @XmlAttribute
+    private int keyCode;
+    @XmlAttribute
+    private int modifiers;
 
-  public KeystrokeRecord() {
-  }
-  
-  /**
-   * Create a new KeystrokeRecord.
-   *
-   * @param keyCode   the key code (as defined by KeyEvent) for the key which activates this keystroke
-   * @param modifiers the modifier keys which must be held down to activate this keystroke
-   * @param name      a name to identify this keystroke
-   * @param script    a script to execute when the keystroke is activated
-   * @param language  the language in which the script is written
-   */
-  public KeystrokeRecord(int keyCode, int modifiers, String name, String script, String language)
-  {
-    this.keyCode = keyCode;
-    this.modifiers = modifiers;
-    this.name = name;
-    this.script = script;
-    this.language = language;
-  }
+    @XmlAttribute
+    public String name;
+    @XmlValue
+    private String script;
+    @XmlAttribute
+    private String language;
 
-  /**
-   * Create a new KeystrokeRecord.  This constructor assumes the script is written in BeanShell, and exists
-   * only for backward compatibility.
-   *
-   * @param keyCode   the key code (as defined by KeyEvent) for the key which activates this keystroke
-   * @param modifiers the modifier keys which must be held down to activate this keystroke
-   * @param name      a name to identify this keystroke
-   * @param script    a BeanShell script to execute when the keystroke is activated
-   */
+    public KeystrokeRecord() {
+    }
 
-  public KeystrokeRecord(int keyCode, int modifiers, String name, String script)
-  {
-    this(keyCode, modifiers, name, script, "BeanShell");
-  }
+    /**
+     * Create a new KeystrokeRecord.
+     *
+     * @param keyCode the key code (as defined by KeyEvent) for the key which activates this
+     * keystroke
+     * @param modifiers the modifier keys which must be held down to activate this keystroke
+     * @param name a name to identify this keystroke
+     * @param script a script to execute when the keystroke is activated
+     * @param language the language in which the script is written
+     */
+    public KeystrokeRecord(int keyCode, int modifiers, String name, String script, String language) {
+        this.keyCode = keyCode;
+        this.modifiers = modifiers;
+        this.name = name;
+        this.script = script;
+        this.language = language;
+    }
 
-  public int getKeyCode()
-  {
-    return keyCode;
-  }
+    /**
+     * Create a new KeystrokeRecord. This constructor assumes the script is written in BeanShell,
+     * and exists only for backward compatibility.
+     *
+     * @param keyCode the key code (as defined by KeyEvent) for the key which activates this
+     * keystroke
+     * @param modifiers the modifier keys which must be held down to activate this keystroke
+     * @param name a name to identify this keystroke
+     * @param script a BeanShell script to execute when the keystroke is activated
+     */
+    public KeystrokeRecord(int keyCode, int modifiers, String name, String script) {
+        this(keyCode, modifiers, name, script, "BeanShell");
+    }
 
-  public void setKeyCode(int keyCode)
-  {
-    this.keyCode = keyCode;
-  }
+    public int getKeyCode() {
+        return keyCode;
+    }
 
-  public int getModifiers()
-  {
-    return modifiers;
-  }
+    public void setKeyCode(int keyCode) {
+        this.keyCode = keyCode;
+    }
 
-  public void setModifiers(int modifiers)
-  {
-    this.modifiers = modifiers;
-  }
+    public int getModifiers() {
+        return modifiers;
+    }
 
-  public String getName()
-  {
-    return name;
-  }
+    public void setModifiers(int modifiers) {
+        this.modifiers = modifiers;
+    }
 
-  public void setName(String name)
-  {
-    this.name = name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public String getScript()
-  {
-    return script;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public void setScript(String script)
-  {
-    this.script = script;
-  }
+    public String getScript() {
+        return script;
+    }
 
-  public String getLanguage()
-  {
-    return language;
-  }
+    public void setScript(String script) {
+        this.script = script;
+    }
 
-  public void setLanguage(String language)
-  {
-    this.language = language;
-  }
+    public String getLanguage() {
+        return language;
+    }
 
-  /**
-   * Create an exact duplicate of this record.
-   */
+    public void setLanguage(String language) {
+        this.language = language;
+    }
 
-  public KeystrokeRecord duplicate()
-  {
-    return new KeystrokeRecord(keyCode, modifiers, name, script, language);
-  }
+    /**
+     * Create an exact duplicate of this record.
+     */
+    public KeystrokeRecord duplicate() {
+        return new KeystrokeRecord(keyCode, modifiers, name, script, language);
+    }
 
     @Override
     public String toString() {
         return "KeystrokeRecord{" + "keyCode=" + keyCode + ", modifiers=" + modifiers + ", name=" + name + ", script=" + script + ", language=" + language + '}';
     }
-  
-  
+
 }

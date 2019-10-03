@@ -8,93 +8,103 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. 
-*/
-
+ */
 package artofillusion.spmanager;
 
 import java.util.ArrayList;
 import java.util.List;
 
+public class SPMFileSystem {
 
-public class SPMFileSystem
-{   
     protected List<SPMObjectInfo> pluginsInfo, toolInfo, objectInfo, startupInfo;
     protected boolean initialized;
-    
+
     public final static short PLUGIN_TYPE = 0;
     public final static short TOOL_SCRIPT_TYPE = 1;
     public final static short OBJECT_SCRIPT_TYPE = 2;
     public final static short STARTUP_SCRIPT_TYPE = 3;
-    
-    public SPMFileSystem()
-    {
+
+    public SPMFileSystem() {
         pluginsInfo = new ArrayList<>();
         toolInfo = new ArrayList<>();
         objectInfo = new ArrayList<>();
         startupInfo = new ArrayList<>();
         initialized = false;
     }
-    
-    public short getInfoType(SPMObjectInfo info)
-    {
-        for (SPMObjectInfo item: pluginsInfo)
-            if (info == item) return PLUGIN_TYPE;
-        for (SPMObjectInfo item: toolInfo)
-            if (info == item) return TOOL_SCRIPT_TYPE;
-        for (SPMObjectInfo item: objectInfo)
-            if (info == item) return OBJECT_SCRIPT_TYPE;
-        for (SPMObjectInfo item: startupInfo)
-            if (info == item) return STARTUP_SCRIPT_TYPE;
+
+    public short getInfoType(SPMObjectInfo info) {
+        for (SPMObjectInfo item : pluginsInfo) {
+            if (info == item) {
+                return PLUGIN_TYPE;
+            }
+        }
+        for (SPMObjectInfo item : toolInfo) {
+            if (info == item) {
+                return TOOL_SCRIPT_TYPE;
+            }
+        }
+        for (SPMObjectInfo item : objectInfo) {
+            if (info == item) {
+                return OBJECT_SCRIPT_TYPE;
+            }
+        }
+        for (SPMObjectInfo item : startupInfo) {
+            if (info == item) {
+                return STARTUP_SCRIPT_TYPE;
+            }
+        }
         return PLUGIN_TYPE;
     }
-    
-    public void deleteInfo(SPMObjectInfo info)
-    {
+
+    public void deleteInfo(SPMObjectInfo info) {
         pluginsInfo.remove(info);
         toolInfo.remove(info);
         objectInfo.remove(info);
         startupInfo.remove(info);
     }
-    
-    public void downloadRemoteFile(SPMObjectInfo nodeInfo, String fileName)
-    {
+
+    public void downloadRemoteFile(SPMObjectInfo nodeInfo, String fileName) {
         System.out.println("Download request for a non able SPMFileSystem");
     }
-    
-    public void initialize()
-    {
+
+    public void initialize() {
         pluginsInfo.clear();
         toolInfo.clear();
         objectInfo.clear();
         startupInfo.clear();
     }
-    
-    public List<SPMObjectInfo> getPlugins()
-    {
-        if (!initialized) initialize();
+
+    public List<SPMObjectInfo> getPlugins() {
+        if (!initialized) {
+            initialize();
+        }
         return pluginsInfo;
     }
-    
-    public List<SPMObjectInfo> getToolScripts()
-    {
-        if (!initialized) initialize();
+
+    public List<SPMObjectInfo> getToolScripts() {
+        if (!initialized) {
+            initialize();
+        }
         return toolInfo;
     }
-    
-    public List<SPMObjectInfo> getObjectScripts()
-    {
-        if (!initialized) initialize();
+
+    public List<SPMObjectInfo> getObjectScripts() {
+        if (!initialized) {
+            initialize();
+        }
         return objectInfo;
     }
-    
-    public List<SPMObjectInfo> getStartupScripts()
-    {
-        if (!initialized) initialize();
+
+    public List<SPMObjectInfo> getStartupScripts() {
+        if (!initialized) {
+            initialize();
+        }
         return startupInfo;
     }
-    
-    public void getRemoteInfo(Runnable cb)
-    {
-        if (!initialized) initialize();
+
+    public void getRemoteInfo(Runnable cb) {
+        if (!initialized) {
+            initialize();
+        }
     }
 }

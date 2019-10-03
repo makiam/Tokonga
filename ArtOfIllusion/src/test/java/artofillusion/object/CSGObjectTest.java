@@ -7,7 +7,6 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.object;
 
 import artofillusion.math.CoordinateSystem;
@@ -21,23 +20,21 @@ import org.junit.Test;
 public class CSGObjectTest {
 
     @Test
-    public void testCreateCSGObject()
-    {
+    public void testCreateCSGObject() {
 
-        ObjectInfo cube = new ObjectInfo(new Cube(1,2,3), new CoordinateSystem(), "cube");
-        ObjectInfo sphere = new ObjectInfo(new Sphere(1,2,3), new CoordinateSystem(), "sphere");
+        ObjectInfo cube = new ObjectInfo(new Cube(1, 2, 3), new CoordinateSystem(), "cube");
+        ObjectInfo sphere = new ObjectInfo(new Sphere(1, 2, 3), new CoordinateSystem(), "sphere");
         CSGObject cso = new CSGObject(cube, sphere, CSGObject.UNION);
-        
+
         Assert.assertNotNull(cso);
     }
-    
+
     @Test(expected = ClassCastException.class)
-    public void testCopyObjectFromBadSource()
-    {
-        ObjectInfo cube = new ObjectInfo(new Cube(1,2,3), new CoordinateSystem(), "cube");
-        ObjectInfo sphere = new ObjectInfo(new Sphere(1,2,3), new CoordinateSystem(), "sphere");
+    public void testCopyObjectFromBadSource() {
+        ObjectInfo cube = new ObjectInfo(new Cube(1, 2, 3), new CoordinateSystem(), "cube");
+        ObjectInfo sphere = new ObjectInfo(new Sphere(1, 2, 3), new CoordinateSystem(), "sphere");
         CSGObject cso = new CSGObject(cube, sphere, CSGObject.UNION);
-        
-        cso.copyObject(new Cube(1,2,3));
+
+        cso.copyObject(new Cube(1, 2, 3));
     }
 }

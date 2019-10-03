@@ -15,81 +15,70 @@ import artofillusion.ui.ValueField;
 import buoy.widget.BTextField;
 
 /**
- *  A PMValueField is a ValueField for which the BTextField can be set
+ * A PMValueField is a ValueField for which the BTextField can be set
  *
- *@author     Francois Guillet
- *@created    January, 18 2005
+ * @author Francois Guillet
+ * @created January, 18 2005
  */
+public class PMValueField extends ValueField {
 
-public class PMValueField extends ValueField
-{
     /**
-     *  Constructor for the ValueField object
+     * Constructor for the ValueField object
      *
-     *@param  value        Description of the Parameter
-     *@param  constraints  Description of the Parameter
+     * @param value Description of the Parameter
+     * @param constraints Description of the Parameter
      */
-    public PMValueField( double value, int constraints )
-    {
-        super( value, constraints, 5 );
+    public PMValueField(double value, int constraints) {
+        super(value, constraints, 5);
     }
 
-
     /**
-     *  Constructor for the ValueField object
+     * Constructor for the ValueField object
      *
-     *@param  value        Description of the Parameter
-     *@param  constraints  Description of the Parameter
+     * @param value Description of the Parameter
+     * @param constraints Description of the Parameter
      */
-    public PMValueField( float value, int constraints )
-    {
-        super( (double) value, constraints, 5 );
+    public PMValueField(float value, int constraints) {
+        super((double) value, constraints, 5);
     }
 
-
     /**
-     *  Constructor for the ValueField object
+     * Constructor for the ValueField object
      *
-     *@param  value        Description of the Parameter
-     *@param  constraints  Description of the Parameter
-     *@param  columns      Description of the Parameter
+     * @param value Description of the Parameter
+     * @param constraints Description of the Parameter
+     * @param columns Description of the Parameter
      */
-    public PMValueField( float value, int constraints, int columns )
-    {
-        super( (double) value, constraints, columns );
+    public PMValueField(float value, int constraints, int columns) {
+        super((double) value, constraints, columns);
     }
 
-
     /**
-     *  Constructor for the ValueField object
+     * Constructor for the ValueField object
      *
-     *@param  value        Description of the Parameter
-     *@param  constraints  Description of the Parameter
-     *@param  columns      Description of the Parameter
+     * @param value Description of the Parameter
+     * @param constraints Description of the Parameter
+     * @param columns Description of the Parameter
      */
-    public PMValueField( double value, int constraints, int columns )
-    {
-        super( value, constraints, columns );
+    public PMValueField(double value, int constraints, int columns) {
+        super(value, constraints, columns);
     }
 
-
-
     /**
-     *  Sets the textField attribute of the ValueField object
+     * Sets the textField attribute of the ValueField object
      *
-     *@param  tf  The new textField value
+     * @param tf The new textField value
      */
-    public void setTextField( BTextField tf )
-    {
+    public void setTextField(BTextField tf) {
         String text = getText();
         int c = getColumns();
         component = tf.getComponent();
         JTextField jtf = (JTextField) component;
-        jtf.setText( text );
-        jtf.setColumns( c );
-        jtf.addCaretListener( caretListener );
-        jtf.getDocument().addDocumentListener( documentListener );
-/*        addEventLink( MousePressedEvent.class,
+        jtf.setText(text);
+        jtf.setColumns(c);
+        jtf.addCaretListener(caretListener);
+        jtf.getDocument().addDocumentListener(documentListener);
+        /*        addEventLink( MousePressedEvent.class,
             new Object()
             {
                 void processEvent()
@@ -108,4 +97,3 @@ public class PMValueField extends ValueField
             } );  */
     }
 }
-

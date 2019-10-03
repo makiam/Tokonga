@@ -7,7 +7,6 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.animation;
 
 import org.junit.Before;
@@ -17,19 +16,17 @@ import org.junit.runners.Suite;
 /**
  *
  * @author makiam
- * 
+ *
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses(
-{
-  artofillusion.animation.JointEqualityTest.class, artofillusion.animation.JointDOFEqualityTest.class
-})
-public class AnimationSuite
-{
+        {
+            artofillusion.animation.JointEqualityTest.class, artofillusion.animation.JointDOFEqualityTest.class
+        })
+public class AnimationSuite {
 
-  @Before
-  public void setUp() throws Exception
-  {
-  }
-  
+    @Before
+    public void setUp() throws Exception {
+    }
+
 }
