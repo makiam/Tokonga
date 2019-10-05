@@ -11,7 +11,9 @@ package artofillusion.ui;
 
 import buoy.event.*;
 import buoy.widget.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.util.*;
 import javax.swing.*;
 
@@ -164,11 +166,11 @@ public class ValueSlider extends WidgetContainer {
     }
 
     /**
-     * Get an Iterator listing all child Widgets.
+     * @return Collection listing all child Widgets
      */
     @Override
-    public Collection getChildren() {
-        ArrayList children = new ArrayList(2);
+    public Collection<Widget> getChildren() {        
+        List<Widget> children = new ArrayList<>(2);
         children.add(field);
         children.add(slider);
         return children;
