@@ -19,6 +19,7 @@ import artofillusion.ui.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.BiConsumer;
 
 /**
  * An Actor is an object with a set of predefined gestures. Gestures can be blended in arbitrary
@@ -646,46 +647,44 @@ public class Actor extends ObjectWrapper {
         /**
          * Add the weights from a keyframe into a hashtable.
          */
-        private void addWeightsToTable(ActorKeyframe k, Hashtable table, double scale) {
-            for (int i = 0; i < k.id.length; i++) {
-                Object key = k.id[i];
-                Double weight = (Double) table.get(key);
+        private static void addWeightsToTable(ActorKeyframe keyframe, Map<Integer, Double> map, double scale) {
+            for (int i = 0; i < keyframe.id.length; i++) {
+                Integer key = keyframe.id[i];
+                Double weight = map.get(key);
                 if (weight == null) {
-                    weight = k.weight[i] * scale;
+                    weight = keyframe.weight[i] * scale;
                 } else {
-                    weight = k.weight[i] * scale + weight;
+                    weight = keyframe.weight[i] * scale + weight;
                 }
-                table.put(key, weight);
+                map.put(key, weight);
             }
         }
 
         /**
          * Create a keyframe from the information in a hashtable.
          */
-        private ActorKeyframe getKeyframeFromTable(Hashtable table) {
-            ActorKeyframe k = new ActorKeyframe();
-            k.id = new int[table.size()];
-            k.weight = new double[k.id.length];
-            Enumeration keys = table.keys();
+        private static ActorKeyframe getKeyframeFromTable(Map<Integer, Double> table) {
+            ActorKeyframe keyframe = new ActorKeyframe();
+            keyframe.id = new int[table.size()];
+            keyframe.weight = new double[keyframe.id.length];
+            
             int j = 0;
-            for (int i = 0; i < k.id.length; i++) {
-                Integer key = (Integer) keys.nextElement();
-                Double weight = (Double) table.get(key);
-                k.id[j] = key;
-                k.weight[j] = weight;
-                if (k.weight[j] != 0.0) {
-                    j++;
-                }
+            
+            for(Map.Entry<Integer, Double> item: table.entrySet()) {
+                keyframe.id[j] = item.getKey();
+                keyframe.weight[j] = item.getValue();
+                if(keyframe.weight[j] != 0.0) j++;   
             }
-            if (j < k.id.length) {
+            
+            if (j < keyframe.id.length) {
                 int id[] = new int[j];
                 double weight[] = new double[j];
-                System.arraycopy(k.id, 0, id, 0, j);
-                System.arraycopy(k.weight, 0, weight, 0, j);
-                k.id = id;
-                k.weight = weight;
+                System.arraycopy(keyframe.id, 0, id, 0, j);
+                System.arraycopy(keyframe.weight, 0, weight, 0, j);
+                keyframe.id = id;
+                keyframe.weight = weight;
             }
-            return k;
+            return keyframe;
         }
 
         /**
@@ -694,7 +693,7 @@ public class Actor extends ObjectWrapper {
          */
         @Override
         public Keyframe blend(Keyframe o2, double weight1, double weight2) {
-            Hashtable table = new Hashtable();
+            Map<Integer, Double> table = new Hashtable<>();
 
             addWeightsToTable(this, table, weight1);
             addWeightsToTable((ActorKeyframe) o2, table, weight2);
@@ -703,7 +702,7 @@ public class Actor extends ObjectWrapper {
 
         @Override
         public Keyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3) {
-            Hashtable table = new Hashtable();
+            Map<Integer, Double> table = new Hashtable<>();
 
             addWeightsToTable(this, table, weight1);
             addWeightsToTable((ActorKeyframe) o2, table, weight2);
@@ -713,7 +712,7 @@ public class Actor extends ObjectWrapper {
 
         @Override
         public Keyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4) {
-            Hashtable table = new Hashtable();
+            Map<Integer, Double> table = new Hashtable<>();
 
             addWeightsToTable(this, table, weight1);
             addWeightsToTable((ActorKeyframe) o2, table, weight2);
