@@ -1,4 +1,5 @@
 /* Copyright (C) 2006-2007 by Francois Guillet
+   Changes copyright (C) 2019 by Maksim Khramov
 
  This program is free software; you can redistribute it and/or modify it under the
  terms of the GNU General Public License as published by the Free Software
@@ -27,6 +28,7 @@ import artofillusion.ui.ThemeManager;
 import artofillusion.ui.Translate;
 import buoy.widget.BComboBox;
 import buoy.widget.Widget;
+import java.util.Map;
 
 /**
  * AdvancedExtrudeTool is the stool used to extrude selection. In addition, it can scale/rotate the
@@ -36,7 +38,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
 
     private Vec3 baseVertPos[];
     private UndoRecord undo;
-    private HashMap mouseDragManipHashMap;
+    private Map<ViewerCanvas, Manipulator> mouseDragManipHashMap;
     private boolean selected[], separateFaces;
     private PolyMesh origMesh;
     private short NO_EXTRUDE = 0;
@@ -53,13 +55,15 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
             AdvancedBevelExtrudeTool.bevelExtrudeEdgesIcon = ThemeManager.getIcon("polymesh:bevelextrudeedges");
             AdvancedBevelExtrudeTool.bevelExtrudeVerticesIcon = ThemeManager.getIcon("polymesh:bevelextrudevertices");
         }
-        mouseDragManipHashMap = new HashMap();
+        mouseDragManipHashMap = new HashMap<>();
     }
 
     @Override
     public void activateManipulators(ViewerCanvas view) {
-        if (!mouseDragManipHashMap.containsKey(view)) {
-            PolyMeshValueWidget valueWidget = null;
+        if (mouseDragManipHashMap.containsKey(view)) {
+            ((PolyMeshViewer) view).addManipulator(mouseDragManipHashMap.get(view));
+        } else {
+            
             Manipulator mouseDragManip = new MouseDragManipulator(this, view, AdvancedBevelExtrudeTool.bevelExtrudeFacesIcon);
             mouseDragManip.addEventLink(Manipulator.ManipulatorPrepareChangingEvent.class, this, "doManipulatorPrepareShapingMesh");
             mouseDragManip.addEventLink(Manipulator.ManipulatorCompletedEvent.class, this, "doManipulatorShapedMesh");
@@ -69,8 +73,6 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
             ((PolyMeshViewer) view).setManipulator(mouseDragManip);
             mouseDragManipHashMap.put(view, mouseDragManip);
             selectionModeChanged(controller.getSelectionMode());
-        } else {
-            ((PolyMeshViewer) view).addManipulator((Manipulator) mouseDragManipHashMap.get(view));
         }
     }
 
@@ -84,12 +86,9 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
     @Override
     public void deactivate() {
         super.deactivate();
-        Iterator iter = mouseDragManipHashMap.keySet().iterator();
-        PolyMeshViewer view;
-        while (iter.hasNext()) {
-            view = (PolyMeshViewer) iter.next();
-            view.removeManipulator((Manipulator) mouseDragManipHashMap.get(view));
-        }
+        mouseDragManipHashMap.forEach((ViewerCanvas view, Manipulator manipulator) -> {
+            ((PolyMeshViewer)view).removeManipulator(manipulator);
+        });
     }
 
     @Override
@@ -215,12 +214,10 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
                 image = AdvancedBevelExtrudeTool.bevelExtrudeFacesIcon;
                 break;
         }
-        Iterator iter = mouseDragManipHashMap.keySet().iterator();
-        PolyMeshViewer view;
-        while (iter.hasNext()) {
-            view = (PolyMeshViewer) iter.next();
-            ((MouseDragManipulator) mouseDragManipHashMap.get(view)).setImage(image);
-        }
+        final ImageIcon imageF = image;
+        mouseDragManipHashMap.values().forEach((Manipulator manipulator) -> {
+            ((MouseDragManipulator)manipulator).setImage(imageF);
+        });
     }
 
     @Override
