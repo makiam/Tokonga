@@ -16,7 +16,6 @@ import artofillusion.animation.Joint.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
-import java.util.*;
 
 /**
  * This is a dialog box for editing joints in a skeleton.
@@ -321,10 +320,9 @@ public class JointEditorDialog extends BDialog {
         @Override
         public void setEnabled(boolean enabled) {
             super.setEnabled(enabled);
-            Iterator child = getChildren().iterator();
-            while (child.hasNext()) {
-                ((Widget) child.next()).setEnabled(enabled);
-            }
+            getChildren().forEach((Widget widget) -> {
+                widget.setEnabled(enabled);
+            });
         }
 
         /**
