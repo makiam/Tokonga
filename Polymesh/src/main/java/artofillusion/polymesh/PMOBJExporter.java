@@ -1,5 +1,7 @@
 /*
  *  Copyright (C) 2002-2004 by Peter Eastman
+ *  Changes copyright 2019 by Maksim Khramov
+
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -15,7 +17,6 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Locale;
 
@@ -37,6 +38,7 @@ import buoy.widget.BFileChooser;
 import buoy.widget.BFrame;
 import buoy.widget.BStandardDialog;
 import buoy.widget.Widget;
+import java.util.Map;
 
 /**
  * PMOBJExporter contains the actual routines for exporting OBJ files for PolyMeshes.
@@ -199,25 +201,19 @@ public class PMOBJExporter {
      */
     private static void writeTextures(Scene theScene, PrintWriter out, boolean wholeScene, TextureImageExporter textureExporter) {
         // Find all the textures.
-
-        for (int i = 0; i < theScene.getNumObjects(); i++) {
-            ObjectInfo info = theScene.getObject(i);
-            if (!wholeScene && !info.selected) {
-                continue;
-            }
-            textureExporter.addObject(info);
+        for(ObjectInfo item: theScene.getObjects()) {
+            if (!wholeScene && !item.selected) continue;
+            textureExporter.addObject(item);
         }
 
         // Write out the .mtl file.
         out.println("#Produced by Art of Illusion " + ArtOfIllusion.getVersion() + ", PolyMesh Plugin, " + (new Date()).toString());
-        Enumeration enumerate = textureExporter.getTextures();
-        Hashtable names = new Hashtable();
+        
+        Map<String, TextureImageInfo> names = new Hashtable<>();
         TextureSpec spec = new TextureSpec();
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
         nf.setMaximumFractionDigits(5);
-        while (enumerate.hasMoreElements()) {
-            TextureImageInfo info = (TextureImageInfo) enumerate.nextElement();
-
+        for(TextureImageInfo info: textureExporter.getTextures()) {
             // Select a name for the texture.
             String baseName = info.texture.getName().replace(' ', '_');
             if (names.get(baseName) == null) {
