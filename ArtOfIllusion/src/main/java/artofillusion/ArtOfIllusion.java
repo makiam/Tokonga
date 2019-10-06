@@ -335,10 +335,10 @@ public class ArtOfIllusion {
             return Class.forName(name);
         } catch (ClassNotFoundException ex) {
         }
-        List pluginLoaders = PluginRegistry.getPluginClassLoaders();
+        List<ClassLoader> pluginLoaders = PluginRegistry.getPluginClassLoaders();
         for (int i = 0; i < pluginLoaders.size(); i++) {
             try {
-                return ((ClassLoader) pluginLoaders.get(i)).loadClass(name);
+                return pluginLoaders.get(i).loadClass(name);
             } catch (ClassNotFoundException ex) {
                 if (i == pluginLoaders.size() - 1) {
                     throw ex;
