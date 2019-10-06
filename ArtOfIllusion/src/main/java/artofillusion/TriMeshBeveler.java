@@ -195,7 +195,7 @@ public class TriMeshBeveler {
         boolean touching[][], inGroup[], beveled[] = new boolean[e.length];
         double coeff[][] = new double[3][3], rhs[] = new double[3];
 
-        newIndex = new Vector();
+        newIndex = new Vector<>();
         findEdgeInsets(height, width);
 
         // First copy over the old faces and vertices.  (Some of these will be modified later.)
