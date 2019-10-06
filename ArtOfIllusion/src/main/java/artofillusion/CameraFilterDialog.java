@@ -34,7 +34,7 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
     private ComplexImage unfilteredImage;
     private Image displayImage;
     private boolean doneRendering, doneFiltering;
-    private Map savedConfiguration;
+    private Map<String, Object> savedConfiguration;
     private Thread filterThread;
 
     private static Renderer previewRenderer = ArtOfIllusion.getPreferences().getTexturePreviewRenderer();
@@ -100,15 +100,13 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
     /**
      * Apply a saved configure to the renderer.
      */
-    private void configureRenderer(Map config, Renderer renderer) {
+    private void configureRenderer(Map<String, Object> config, Renderer renderer) {
         if (config == null) {
             return;
         }
-        Iterator options = config.entrySet().iterator();
-        while (options.hasNext()) {
-            Map.Entry entry = (Map.Entry) options.next();
-            renderer.setConfiguration((String) entry.getKey(), entry.getValue());
-        }
+        config.forEach((String key, Object value) -> {
+            renderer.setConfiguration(key, value);
+        });
     }
 
     /**
