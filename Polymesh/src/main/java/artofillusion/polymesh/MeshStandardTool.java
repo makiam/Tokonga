@@ -11,7 +11,6 @@ package artofillusion.polymesh;
 
 import java.awt.Image;
 import java.util.HashMap;
-import java.util.Iterator;
 
 
 import artofillusion.MeshViewer;
@@ -22,6 +21,7 @@ import artofillusion.object.Mesh;
 import artofillusion.ui.EditingWindow;
 import artofillusion.ui.MeshEditController;
 import artofillusion.ui.Translate;
+import java.util.Map;
 
 /**
  * MeshStandardTool is the standard, default, editing tool. It can be used to move, scale and rotate selections.
@@ -34,19 +34,23 @@ public class MeshStandardTool extends AdvancedEditingTool {
     /**
      * hash maps are used to store manipulators for views
      */
-    private HashMap manip2dHashMap, manip3dHashMap;
+    private final Map<ViewerCanvas, Manipulator> manip2dHashMap;
+    private final Map<ViewerCanvas, Manipulator> manip3dHashMap;
 
     public MeshStandardTool(EditingWindow fr, MeshEditController controller) {
         super(fr, controller);
 
         initButton("polymesh:movePoints");
-        manip2dHashMap = new HashMap();
-        manip3dHashMap = new HashMap();
+        manip2dHashMap = new HashMap<>();
+        manip3dHashMap = new HashMap<>();
     }
 
     @Override
     public void activateManipulators(ViewerCanvas view) {
-        if (!manip2dHashMap.containsKey(view)) {
+        if (manip2dHashMap.containsKey(view)) {
+            ((PolyMeshViewer) view).setManipulator(manip2dHashMap.get(view));
+            ((PolyMeshViewer) view).addManipulator(manip3dHashMap.get(view));
+        } else {
             PolyMeshValueWidget valueWidget = null;
             if (controller instanceof PolyMeshEditorWindow) {
                 valueWidget = ((PolyMeshEditorWindow) controller).getValueWidget();
@@ -71,9 +75,6 @@ public class MeshStandardTool extends AdvancedEditingTool {
             ((PolyMeshViewer) view).addManipulator(manip3d);
             manip2dHashMap.put(view, manip2d);
             manip3dHashMap.put(view, manip3d);
-        } else {
-            ((PolyMeshViewer) view).setManipulator((Manipulator) manip2dHashMap.get(view));
-            ((PolyMeshViewer) view).addManipulator((Manipulator) manip3dHashMap.get(view));
         }
     }
 
@@ -87,13 +88,12 @@ public class MeshStandardTool extends AdvancedEditingTool {
     @Override
     public void deactivate() {
         super.deactivate();
-        Iterator iter = manip2dHashMap.keySet().iterator();
-        PolyMeshViewer view;
-        while (iter.hasNext()) {
-            view = (PolyMeshViewer) iter.next();
-            view.removeManipulator((Manipulator) manip2dHashMap.get(view));
-            view.removeManipulator((Manipulator) manip3dHashMap.get(view));
-        }
+        manip2dHashMap.forEach((ViewerCanvas view, Manipulator manipulator) -> {
+            ((PolyMeshViewer)view).removeManipulator(manipulator);
+        });
+        manip3dHashMap.forEach((ViewerCanvas view, Manipulator manipulator) -> {
+            ((PolyMeshViewer)view).removeManipulator(manipulator);
+        });
     }
 
     @Override
