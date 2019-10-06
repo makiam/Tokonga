@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2004 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -26,7 +26,7 @@ public class TriMeshBeveler {
     private boolean selected[], newSelection[];
     private int mode;
     private Vec3 faceInsets[][], faceNormal[];
-    private Vector newIndex;
+    private List<Integer> newIndex;
 
     public static final int BEVEL_FACES = 0;
     public static final int BEVEL_FACE_GROUPS = 1;
@@ -81,7 +81,7 @@ public class TriMeshBeveler {
         List<int[]> face = new Vector<>();
         List<Vertex> vert = new Vector<>();
 
-        newIndex = new Vector();
+        newIndex = new Vector<>();
         findVertexInsets(height, width);
 
         // All old vertices will be in the new mesh, so first copy them over.
@@ -96,7 +96,7 @@ public class TriMeshBeveler {
                 vert.add(offsetVertex(mesh, v[f[i].v1], faceInsets[i][0]));
                 vert.add(offsetVertex(mesh, v[f[i].v2], faceInsets[i][1]));
                 vert.add(offsetVertex(mesh, v[f[i].v3], faceInsets[i][2]));
-                newIndex.addElement(face.size());
+                newIndex.add(face.size());
                 face.add(new int[]{j, j + 1, j + 2, i});
                 face.add(new int[]{f[i].v1, f[i].v2, j, i});
                 face.add(new int[]{j, f[i].v2, j + 1, i});
@@ -124,9 +124,9 @@ public class TriMeshBeveler {
 
         // Record which faces should be selected.
         newSelection = new boolean[mesh.getFaces().length];
-        for (i = 0; i < newIndex.size(); i++) {
-            newSelection[((Integer) newIndex.elementAt(i))] = true;
-        }
+        newIndex.forEach((Integer index) -> {
+            newSelection[index] = true;
+        });
         return mesh;
     }
 
@@ -269,7 +269,7 @@ public class TriMeshBeveler {
                     rhs[0] += height * faceNormal[vertFace[i][j]].x;
                     rhs[1] += height * faceNormal[vertFace[i][j]].y;
                     rhs[2] += height * faceNormal[vertFace[i][j]].z;
-                    newIndex.addElement(vertFace[i][j]);
+                    newIndex.add(vertFace[i][j]);
                 }
                 coeff[1][0] = coeff[0][1];
                 coeff[2][0] = coeff[0][2];
@@ -418,7 +418,7 @@ public class TriMeshBeveler {
                         } else {
                             tempFace[2] = k;
                         }
-                        newIndex.addElement(vertFace[i][group[j]]);
+                        newIndex.add(vertFace[i][group[j]]);
                     }
                 }
             }
@@ -477,9 +477,9 @@ public class TriMeshBeveler {
 
         // Record which faces should be selected.
         newSelection = new boolean[mesh.getFaces().length];
-        for (i = 0; i < newIndex.size(); i++) {
-            newSelection[((Integer) newIndex.elementAt(i))] = true;
-        }
+        newIndex.forEach((Integer index) -> {
+            newSelection[index] = true;
+        });
         return mesh;
     }
 
