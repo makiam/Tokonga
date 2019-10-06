@@ -22,7 +22,6 @@ import java.util.Locale;
 
 import artofillusion.ArtOfIllusion;
 import artofillusion.Scene;
-import artofillusion.math.RGBColor;
 import artofillusion.object.ObjectInfo;
 import artofillusion.polymesh.PolyMesh.Wedge;
 import artofillusion.polymesh.PolyMesh.Wface;
@@ -141,30 +140,23 @@ public class PMOBJExporter {
      * @param mtlFilename Description of the Parameter
      */
     public static void writePolyMesh(Scene theScene, PrintWriter out, TextureImageExporter textureExporter, String mtlFilename) {
-        RGBColor color;
-
+        
         // Write the header information.
         //out.println( "#Produced by Art of Illusion " + ArtOfIllusion.VERSION + ", PolyMesh Plugin, " + ( new Date() ).toString() );
         if (mtlFilename != null) {
             out.println("mtllib " + mtlFilename);
         }
 
-        // Write the objects in the scene.
-        int numVert = 0;
 
         // Write the objects in the scene.
-        int numNorm = 0;
 
-        // Write the objects in the scene.
-        int numTexVert = 0;
-        Hashtable groupNames = new Hashtable();
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
         nf.setMaximumFractionDigits(5);
         nf.setGroupingUsed(false);
-        for (int i = 0; i < theScene.getNumObjects(); i++) {
+        
+        for (ObjectInfo info: theScene.getObjects()) {
             // Get a rendering mesh for the object.
 
-            ObjectInfo info = theScene.getObject(i);
             if (!info.selected || !(info.object instanceof PolyMesh)) {
                 continue;
             }
