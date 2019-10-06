@@ -7313,8 +7313,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
      * @param value Extrude amplitude
      * @param scale Scale value for extrude/bevel combo
      */
-    public void extrudeRegion(boolean[] selected, double value, Vec3 direction,
-            double scale, Vec3 camZ, boolean useNormals, boolean constrainAxis) {
+    public void extrudeRegion(boolean[] selected, double value, Vec3 direction, double scale, Vec3 camZ, boolean useNormals, boolean constrainAxis) {
         // dumpMesh();
         Vec3[] normals = getNormals();
         int count;
@@ -7368,7 +7367,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
                     sclFaceVert[i].add(v[fv[j]]);
                 }
                 sclFaceVert[i].scale(1.0 / fv.length);
-                List<Integer> vv = new Vector();
+                List<Integer> vv = new Vector<>();
                 if (sclFace[i] == null) {
                     sclFace[i] = vv;
                     vv.add(i);
