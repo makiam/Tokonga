@@ -11,17 +11,6 @@
  */
 package artofillusion.polymesh;
 
-import java.awt.Color;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InvalidObjectException;
-import java.util.ArrayList;
-
-import java.util.HashMap;
-import java.util.Vector;
-import java.util.prefs.Preferences;
-
 import artofillusion.MeshViewer;
 import artofillusion.ObjectViewer;
 import artofillusion.Property;
@@ -51,8 +40,8 @@ import artofillusion.object.TriangleMesh.Edge;
 import artofillusion.object.TriangleMesh.Face;
 import artofillusion.object.TriangleMesh.Vertex;
 import artofillusion.polymesh.QuadMesh.QuadEdge;
-import artofillusion.polymesh.QuadMesh.QuadVertex;
 import artofillusion.polymesh.QuadMesh.QuadFace;
+import artofillusion.polymesh.QuadMesh.QuadVertex;
 import artofillusion.texture.FaceParameterValue;
 import artofillusion.texture.FaceVertexParameterValue;
 import artofillusion.texture.ParameterValue;
@@ -65,8 +54,17 @@ import artofillusion.ui.Translate;
 import artofillusion.ui.UIUtilities;
 import buoy.widget.BStandardDialog;
 import buoy.widget.RowContainer;
+import java.awt.Color;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
+import java.util.prefs.Preferences;
 
 /**
  * Winged edge mesh implementation for Art of Illusion.
@@ -5422,7 +5420,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         boolean newSel[] = new boolean[edges.length];
         int currentEdge = startEdge;
         int currentVert = edges[startEdge].vertex;
-        Vector v = new Vector();
+        List<Vec3> v = new Vector<>();
         Vec3 normDir = null;
 
         Vec3 vv = vertices[edges[startEdge].vertex].r.minus(vertices[edges[edges[startEdge].hedge].vertex].r);
@@ -5492,8 +5490,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
             if (v.size() > 1) {
                 normDir = new Vec3();
                 for (int i = 0; i < v.size() - 1; i++) {
-                    normDir.add(((Vec3) v.elementAt(i)).cross((Vec3) v
-                            .elementAt(i + 1)));
+                    normDir.add(v.get(i).cross(v.get(i + 1)));
                 }
                 normDir.normalize();
             }
