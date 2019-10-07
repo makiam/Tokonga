@@ -13,10 +13,13 @@ package artofillusion.spmanager;
 
 import buoy.event.*;
 import buoy.widget.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Insets;
 import java.awt.event.*;
 import java.util.*;
-import java.util.List;
 import javax.swing.*;
 import javax.swing.tree.*;
 
@@ -93,7 +96,8 @@ public class SPMSplitPane extends BSplitPane {
     /**
      * map of externals being processed - for loop detection
      */
-    protected Hashtable extMap, pathMap;
+    protected Map<SPMObjectInfo, SPMObjectInfo> extMap; 
+    protected Map<String, TreePath> pathMap;
 
     private BScrollPane nameSP, descriptionSP;
     private BComboBox descSelect;
@@ -350,21 +354,18 @@ public class SPMSplitPane extends BSplitPane {
             if (info.refcount > 0) {
                 name += "\n\nRequired by " + info.refcount + " other(s).";
             }
-            String ext;
+
             String extName, extType;
             String extList = "\n";
             boolean missing = false;
-            Collection externals = info.getExternals();
+            Collection<String> externals = info.getExternals();
             if (externals != null) {
                 //for (int i = 0; i < externals.size(); i++) {
-                for (Iterator iter = externals.iterator(); iter.hasNext();) {
-                    //ext = (String) externals.get(i);
-                    ext = (String) iter.next();
+                for (String ext: externals) {
 
                     if (ext.endsWith("= required")) {
                         extName = ext.substring(0, ext.indexOf(':'));
-                        extType = ext.substring(ext.indexOf(':') + 1,
-                                ext.indexOf('=')).trim();
+                        extType = ext.substring(ext.indexOf(':') + 1, ext.indexOf('=')).trim();
 
                         //System.out.println("extName=" + extName + "<<");
                         if (getInfo(extName, (TreePath) pathMap.get(extType)) == null) {
@@ -404,18 +405,12 @@ public class SPMSplitPane extends BSplitPane {
                 }
 
                 if (missing) {
-                    name += "\n"
-                            + SPMTranslate.text("missingFile",
-                                    SPMTranslate.text("otherFiles"));
-
+                    name += "\n" + SPMTranslate.text("missingFile", SPMTranslate.text("otherFiles"));
                     objectName.setBackground(Color.PINK);
                 }
 
                 if (info.invalid) {
-                    name += "\n"
-                            + SPMTranslate.text("failedRequirement",
-                                    SPMTranslate.text("flags"));
-
+                    name += "\n" + SPMTranslate.text("failedRequirement", SPMTranslate.text("flags"));
                     objectName.setBackground(Color.PINK);
                 }
 
@@ -452,16 +447,16 @@ public class SPMSplitPane extends BSplitPane {
 
         SwingUtilities.invokeLater(
                 new Runnable() {
-            @Override
-            public void run() {
-                BScrollBar bar = descriptionSP.getVerticalScrollBar();
-                bar.setValue(bar.getMinimum());
-            }
+                    @Override
+                    public void run() {
+                        BScrollBar bar = descriptionSP.getVerticalScrollBar();
+                        bar.setValue(bar.getMinimum());
+                    }
         });
     }
 
     /**
-     * get the infor for the named item of the named type
+     * get the info for the named item of the named type
      */
     public SPMObjectInfo getInfo(String name, String type) {
         TreePath path = (TreePath) pathMap.get(type);
@@ -629,7 +624,7 @@ public class SPMSplitPane extends BSplitPane {
      */
     protected void selectExternals(SPMObjectInfo info) {
         if (extMap == null) {
-            extMap = new Hashtable(32);
+            extMap = new Hashtable<>(32);
         }
 
         if (extMap.containsKey(info)) {
