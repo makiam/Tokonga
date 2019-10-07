@@ -25,7 +25,7 @@ public abstract class RenderingTriangle implements Cloneable {
     public RenderingMesh theMesh;
 
     private static double EMPTY_ARRAY[] = new double[0];
-    protected static ThreadLocal<double[]> tempParamValues = new ThreadLocal(); // Used when rendering layered textures
+    protected static ThreadLocal<double[]> tempParamValues = new ThreadLocal<>(); // Used when rendering layered textures
 
     public RenderingTriangle(int v1, int v2, int v3, int n1, int n2, int n3) {
         this.v1 = v1;
