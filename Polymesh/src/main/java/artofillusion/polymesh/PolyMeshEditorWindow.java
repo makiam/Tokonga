@@ -11,27 +11,6 @@
  */
 package artofillusion.polymesh;
 
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.Window;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import javax.swing.JFormattedTextField;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.JSpinner.NumberEditor;
-
 import artofillusion.ArtOfIllusion;
 import artofillusion.Camera;
 import artofillusion.LayoutWindow;
@@ -45,7 +24,6 @@ import artofillusion.SkewMeshTool;
 import artofillusion.TaperMeshTool;
 import artofillusion.TextureParameter;
 import artofillusion.ThickenMeshTool;
-
 import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
 import artofillusion.animation.Joint;
@@ -68,9 +46,8 @@ import artofillusion.polymesh.PolyMesh.Wvertex;
 import artofillusion.polymesh.PolyMeshValueWidget.ValueWidgetOwner;
 import artofillusion.polymesh.ui.ColorButton;
 import artofillusion.texture.FaceParameterValue;
-import artofillusion.texture.VertexParameterValue;
-
 import artofillusion.texture.ParameterValue;
+import artofillusion.texture.VertexParameterValue;
 import artofillusion.ui.ActionProcessor;
 import artofillusion.ui.ComponentsDialog;
 import artofillusion.ui.EditingTool;
@@ -117,7 +94,24 @@ import buoy.widget.RowContainer;
 import buoy.widget.Shortcut;
 import buoy.widget.Widget;
 import buoy.xml.WidgetDecoder;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
+import javax.swing.JFormattedTextField;
+import javax.swing.JSpinner;
+import javax.swing.JSpinner.NumberEditor;
+import javax.swing.SpinnerNumberModel;
 
 /**
  * The PolyMeshEditorWindow class represents the window for editing PolyMesh objects.
@@ -2028,13 +2022,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      */
     public void toggleManipulatorViewMode() {
         PolyMeshViewer view = (PolyMeshViewer) getView();
-        ArrayList manipulators = view.getManipulators();
-        Iterator iter = manipulators.iterator();
-        Manipulator manipulator;
-        while (iter.hasNext()) {
-            manipulator = (Manipulator) iter.next();
-            manipulator.toggleViewMode();
-        }
+        view.getManipulators().forEach((Manipulator item) -> {
+            item.toggleViewMode();
+        });
         view.repaint();
     }
 
@@ -2243,12 +2233,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         if (mesh.getSmoothingMethod() == Mesh.APPROXIMATING) {
             enable = true;
         }
-        Iterator iter = levelContainer.getChildren().iterator();
-        Widget w;
-        while (iter.hasNext()) {
-            w = (Widget) iter.next();
-            w.setEnabled(enable);
-        }
+        final boolean ef = enable;
+        levelContainer.getChildren().forEach((Widget w) ->{
+            w.setEnabled(ef);
+        });
+
     }
 
     /**
@@ -4607,24 +4596,20 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private void doSaveAsTemplate() {
         BFileChooser chooser;
 
-        File templateDir = new File(ArtOfIllusion.PLUGIN_DIRECTORY
-                + File.separator + "PolyMeshTemplates");
+        File templateDir = new File(ArtOfIllusion.PLUGIN_DIRECTORY + File.separator + "PolyMeshTemplates");
         if (!templateDir.exists()) {
             if (!templateDir.mkdir()) {
                 new BStandardDialog(Translate.text("polymesh:errorTemplateDir"),
-                        UIUtilities
-                                .breakString(Translate.text("illegalDelete")),
+                        UIUtilities.breakString(Translate.text("illegalDelete")),
                         BStandardDialog.ERROR).showMessageDialog(null);
                 return;
             }
         }
-        chooser = new BFileChooser(BFileChooser.SAVE_FILE, Translate
-                .text("polymesh:saveTemplate"), templateDir);
+        chooser = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("polymesh:saveTemplate"), templateDir);
         if (chooser.showDialog(null)) {
             try {
                 File file = chooser.getSelectedFile();
-                DataOutputStream dos = new DataOutputStream(
-                        new FileOutputStream(file));
+                DataOutputStream dos = new DataOutputStream(new FileOutputStream(file));
                 ((PolyMesh) objInfo.object).writeToFile(dos, null);
                 dos.close();
             } catch (Exception ex) {
