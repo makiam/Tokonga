@@ -22,14 +22,17 @@ import artofillusion.object.MeshVertex;
 import artofillusion.ui.MeshEditController;
 import artofillusion.ui.ThemeManager;
 import artofillusion.ui.Translate;
+
+import static artofillusion.ui.UIUtilities.*;
+
 import buoy.event.KeyPressedEvent;
 import buoy.event.ToolTipEvent;
 import buoy.event.WidgetMouseEvent;
 import buoy.widget.BToolTip;
 
 /**
- * This is the manipulator responsible for moving, resizing and rotating selections (2D). SSMR =
- * Select Scale Move Rotate
+ * This is the manipulator responsible for moving, resizing and rotating
+ * selections (2D). SSMR = Select Scale Move Rotate
  */
 public class SSMR3DManipulator
         extends SSMRManipulator {
@@ -42,7 +45,6 @@ public class SSMR3DManipulator
     private Point baseClick;
     private Runnable valueWidgetCallback, validateWidgetValue, abortWidgetValue;
     private boolean isCtrlDown, isShiftDown;
-    private int button;
     private Vec3 rotateCenter;
     private Vec3 xaxis, yaxis, zaxis;
     private Vec2 x2Daxis, y2Daxis, z2Daxis;
@@ -111,10 +113,6 @@ public class SSMR3DManipulator
             specificHandleImages[Y_SCALE] = ThemeManager.getIcon("polymesh:yscale").getImage();
             specificHandleImages[Z_MOVE] = ThemeManager.getIcon("polymesh:nhandle").getImage();
             specificHandleImages[Z_SCALE] = ThemeManager.getIcon("polymesh:zscale").getImage();
-            /*moveToolTip = PMToolTip.areaToolTip(Translate.text("polymesh:moveToolTip3d.tipText"),40);
-            scaleToolTip = PMToolTip.areaToolTip(Translate.text("polymesh:scaleToolTip3d.tipText"),40);
-            rotateToolTip = PMToolTip.areaToolTip(Translate.text("polymesh:rotateToolTip3d.tipText"),40);
-            centerToolTip = PMToolTip.areaToolTip(Translate.text("polymesh:centerToolTip3d.tipText"),40);*/
             moveToolTip = new BToolTip(Translate.text("polymesh:moveToolTip3d.tipText"));
             scaleToolTip = new BToolTip(Translate.text("polymesh:scaleToolTip3d.tipText"));
             rotateToolTip = new BToolTip(Translate.text("polymesh:rotateToolTip3d.tipText"));
@@ -405,15 +403,6 @@ public class SSMR3DManipulator
             extraUVBox.x = (int) screenHandle.x - HANDLE_SIZE / 2;
             extraUVBox.y = (int) screenHandle.y - HANDLE_SIZE / 2;
             view.drawImage(handles[X_SCALE], extraUVBox.x, extraUVBox.y);
-            /*extraUVBoxes[UV_TOPRIGHT_BOX].x = udeltax + vdeltax + centerPoint.x - HANDLE_SIZE/2;
-            extraUVBoxes[UV_TOPRIGHT_BOX].y = udeltay + vdeltay + centerPoint.y - HANDLE_SIZE/2;
-            view.drawImage(handles[X_SCALE], boxes[UV_TOPRIGHT_BOX].x, boxes[UV_TOPRIGHT_BOX].y);
-            extraUVBoxes[UV_BOTTOMRIGHT_BOX].x = udeltax - vdeltax + centerPoint.x - HANDLE_SIZE/2;
-            extraUVBoxes[UV_BOTTOMRIGHT_BOX].y = udeltay - vdeltay + centerPoint.y - HANDLE_SIZE/2;
-            view.drawImage(handles[X_SCALE], boxes[UV_BOTTOMRIGHT_BOX].x, boxes[UV_BOTTOMRIGHT_BOX].y);
-            extraUVBoxes[UV_BOTTOMLEFT_BOX].x = -udeltax - vdeltax + centerPoint.x - HANDLE_SIZE/2;
-            extraUVBoxes[UV_BOTTOMLEFT_BOX].y = -udeltay - vdeltay + centerPoint.y - HANDLE_SIZE/2;
-            view.drawImage(handles[X_SCALE], boxes[UV_BOTTOMLEFT_BOX].x, boxes[UV_BOTTOMLEFT_BOX].y);*/
         }
 
         //draw the rotation handles
@@ -467,10 +456,9 @@ public class SSMR3DManipulator
         if (bounds == null) {
             return false;
         }
-        button = e.getButton();
+
         //ignore MMB events
-        if (e.getButton() == MouseEvent.BUTTON2) // && ( e.getModifiers() & ActionEvent.CTRL_MASK) == 0)
-        {
+        if (mouseButtonTwo(e)) {
             Camera cam = view.getCamera();
             baseClick = e.getPoint();
             oldCoords = cam.getCameraCoordinates().duplicate();
@@ -485,14 +473,6 @@ public class SSMR3DManipulator
                 continue;
             }
             if (boxes[i].contains(p)) {
-                /*
-                if (e.getButton() == MouseEvent.BUTTON3)
-                {
-                    ((PolyMeshEditorWindow)((PolyMeshViewer)view).getController()).triggerPopupEvent(e);
-                    return true;
-                }
-                else
-                {*/
                 if (i == CENTER) {
                     if ((e.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
                         //center drag on feature points
@@ -516,7 +496,6 @@ public class SSMR3DManipulator
                 baseClick = new Point(e.getPoint());
                 dispatchEvent(new ManipulatorPrepareChangingEvent(this, view));
                 return true;
-                //}
             }
         }
         //select proper rotation handles
@@ -702,7 +681,7 @@ public class SSMR3DManipulator
         if (!dragging) {
             return false;
         }
-        if (button == MouseEvent.BUTTON2) {
+        if (mouseButtonTwo(e)) {
             viewDragged(e);
         } else {
             switch (handle) {
@@ -941,8 +920,6 @@ public class SSMR3DManipulator
         Mat4 mat = Mat4.translation(-center.x, -center.y, -center.z);
         mat = m.times(mat);
         mat = Mat4.translation(center.x, center.y, center.z).times(mat);
-        //System.out.println("center: " + rotateCenter);
-        //System.out.println("angle: " + ( rotAngle * 180 / Math.PI) );
         dispatchEvent(new ManipulatorRotatingEvent(this, mat, view));
         ((MeshEditorWindow) ((MeshViewer) view).getController()).setHelpText(Translate.text("polymesh:rotateBy", new String[]{String.valueOf(Math.round(rotAngle * 180 * 1e5 / Math.PI) / 1e5)}));
         return true;
@@ -988,7 +965,7 @@ public class SSMR3DManipulator
                     handle = ROTATE;
                 }
             }
-            if (e.getButton() == MouseEvent.BUTTON2 && handle != CENTER && e.isControlDown()) {
+            if (mouseButtonTwo(e) && handle != CENTER && e.isControlDown()) {
                 if (valueWidget != null) {
                     dispatchEvent(new ManipulatorPrepareChangingEvent(this, view));
                     isCtrlDown = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
@@ -1005,7 +982,7 @@ public class SSMR3DManipulator
                     }
                     return true;
                 }
-            } else if (e.getButton() == MouseEvent.BUTTON1 && (handle == X_MOVE || handle == Y_MOVE || handle == Z_MOVE
+            } else if (mouseButtonOne(e) && (handle == X_MOVE || handle == Y_MOVE || handle == Z_MOVE
                     || handle == X_SCALE || handle == Y_SCALE || handle == Z_SCALE)) {
                 if ((e.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
                     if (e.isShiftDown()) {
@@ -1072,7 +1049,6 @@ public class SSMR3DManipulator
                                 case Z_SCALE:
                                     view.setOrientation(ViewerCanvas.VIEW_FRONT);
                                     break;
-
                             }
                             CoordinateSystem coords = camera.getCameraCoordinates();
                             coords.setOrigin(center);
@@ -1111,14 +1087,10 @@ public class SSMR3DManipulator
                     view.repaint();
                 }
             }
-        } else if (e.getButton() == MouseEvent.BUTTON2) {
+        } else if (mouseButtonTwo(e)) {
             view.setOrientation(ViewerCanvas.VIEW_OTHER);
             view.updateImage();
-        } /*else if (e.getButton() == MouseEvent.BUTTON3)
-        {
-            if (!e.isControlDown() && !e.isShiftDown())
-                ((PolyMeshEditorWindow)((PolyMeshViewer)view).getController()).triggerPopupEvent(e);
-        }*/ else {
+        } else {
             switch (handle) {
                 case X_MOVE:
                 case Y_MOVE:

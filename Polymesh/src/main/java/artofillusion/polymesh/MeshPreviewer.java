@@ -1,7 +1,9 @@
-/* Copyright (C) 1999-2005 by Peter Eastman, 2007 by Francois Guillet
+/* 
+ Copyright (C) 1999-2005 by Peter Eastman, 2007 by Francois Guillet
+ Modification Copyright (C) 2019 by Petri Ihalainen (mouse button detection)
 
- This program is free software; you can redistribute it and/or modify it under the
- terms of the GNU General Public License as published by the Free Software
+ This program is free software; you can redistribute it and/or modify it under the 
+ terms of the GNU General Public License as published by the Free Software 
  Foundation; either version 2 of the License, or (at your option) any later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT ANY 
@@ -19,7 +21,10 @@ import artofillusion.image.*;
 import artofillusion.material.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
+import artofillusion.polymesh.AdvancedEditingTool.SelectionProperties;
 import artofillusion.texture.*;
+import artofillusion.ui.*;
+import static artofillusion.ui.UIUtilities.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
@@ -32,50 +37,35 @@ import java.util.ArrayList;
 public class MeshPreviewer extends CustomWidget implements RenderListener {
 
     Scene theScene;
-
     Camera theCamera;
-
     ObjectInfo info;
-
     CoordinateSystem objectCoords;
-
     Image theImage;
-
     boolean mouseInside, renderInProgress;
-
     Point clickPoint;
-
     private Mat4 dragTransform;
-
     public static final int HANDLE_SIZE = 5;
-
     static final double DRAG_SCALE = Math.PI / 360.0;
-
     ArrayList<ObjectInfo> selection;
-
     ArrayList<Vec3> selPos;
-
     private UniformTexture selTexture;
-
     private Sphere sphere;
-
     private int spheresIndex;
-
     private boolean showSelection;
 
     /**
-     * Same as above, except you can specify a different object to use instead of a sphere.
+     * Same as above, except you can specify a different object to use instead
+     * of a sphere.
      */
-    public MeshPreviewer(Texture tex, Material mat, Object3D obj, int width,
-            int height) {
+    public MeshPreviewer(Texture tex, Material mat, Object3D obj, int width, int height) {
         ObjectInfo objInfo = new ObjectInfo(obj, new CoordinateSystem(), "");
         initObject(tex, mat, objInfo);
         init(objInfo, width, height);
     }
 
     /**
-     * Create a MaterialPreviewer to display the specified object, with its current texture and
-     * material.
+     * Create a MaterialPreviewer to display the specified object, with its
+     * current texture and material.
      */
     public MeshPreviewer(ObjectInfo obj, int width, int height) {
         init(obj.duplicate(), width, height);
@@ -177,8 +167,8 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
     }
 
     /*
-         * The following methods are used to modify the properties of the object
-         * being displayed.
+     * The following methods are used to modify the properties of the object
+     * being displayed.
      */
     public void setTexture(Texture tex, TextureMapping map) {
         if (tex == null) {
@@ -248,8 +238,7 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
         g.fillRect(0, 0, HANDLE_SIZE, HANDLE_SIZE);
         g.fillRect(bounds.width - HANDLE_SIZE, 0, HANDLE_SIZE, HANDLE_SIZE);
         g.fillRect(0, bounds.height - HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE);
-        g.fillRect(bounds.width - HANDLE_SIZE, bounds.height - HANDLE_SIZE,
-                HANDLE_SIZE, HANDLE_SIZE);
+        g.fillRect(bounds.width - HANDLE_SIZE, bounds.height - HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE);
     }
 
     private void drawObject(Graphics g) {
@@ -276,11 +265,10 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
      * Rotate the object to show a specific side.
      */
     private void changeView(int view) {
-        double angles[][] = new double[][]{{0.0, 0.0, 0.0},
-        {0.0, 180.0, 0.0}, {0.0, -90.0, 0.0}, {0.0, 90.0, 0.0},
+        double angles[][] = new double[][]{{0.0, 0.0, 0.0}, {0.0, 180.0, 0.0},
+        {0.0, -90.0, 0.0}, {0.0, 90.0, 0.0},
         {-90.0, 0.0, 0.0}, {90.0, 0.0, 0.0},};
-        objectCoords.setOrientation(angles[view][0], angles[view][1],
-                angles[view][2]);
+        objectCoords.setOrientation(angles[view][0], angles[view][1], angles[view][2]);
         objectCoords.setOrigin(new Vec3());
         updateSelectionPositions();
         render();
@@ -296,8 +284,8 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
     }
 
     /**
-     * The renderer may call this method periodically during rendering, to give the listener text
-     * descriptions of the current status of rendering.
+     * The renderer may call this method periodically during rendering, to give
+     * the listener text descriptions of the current status of rendering.
      */
     @Override
     public void statusChanged(String status) {
@@ -335,8 +323,7 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
     private void mousePressed(MousePressedEvent e) {
         Graphics g = getComponent().getGraphics();
         clickPoint = e.getPoint();
-        Renderer rend = ArtOfIllusion.getPreferences()
-                .getTexturePreviewRenderer();
+        Renderer rend = ArtOfIllusion.getPreferences().getTexturePreviewRenderer();
         if (rend != null) {
             rend.cancelRendering(theScene);
         }
@@ -351,21 +338,16 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
         }
         Point dragPoint = e.getPoint();
         if (!clickPoint.equals(dragPoint)) {
-            if (e.isMetaDown()) {
+            if (mouseButtonThree(e)) {
                 if (e.isControlDown()) {
-                    dragTransform = Mat4.translation(0.0, 0.0,
-                            (dragPoint.y - clickPoint.y) * 0.01);
+                    dragTransform = Mat4.translation(0.0, 0.0, (dragPoint.y - clickPoint.y) * 0.01);
                 } else {
-                    dragTransform = Mat4.translation(
-                            (dragPoint.x - clickPoint.x) * 0.01,
-                            (clickPoint.y - dragPoint.y) * 0.01, 0.0);
+                    dragTransform = Mat4.translation((dragPoint.x - clickPoint.x) * 0.01, (clickPoint.y - dragPoint.y) * 0.01, 0.0);
                 }
                 objectCoords.transformOrigin(dragTransform);
                 updateSelectionPositions();
             } else {
-                Vec3 rotAxis = new Vec3((clickPoint.y - dragPoint.y)
-                        * DRAG_SCALE,
-                        (dragPoint.x - clickPoint.x) * DRAG_SCALE, 0.0);
+                Vec3 rotAxis = new Vec3((clickPoint.y - dragPoint.y) * DRAG_SCALE, (dragPoint.x - clickPoint.x) * DRAG_SCALE, 0.0);
                 double angle = rotAxis.length();
                 rotAxis = rotAxis.times(1.0 / angle);
                 rotAxis = theCamera.getViewToWorld().timesDirection(rotAxis);
@@ -383,14 +365,11 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
         }
         Graphics g = getComponent().getGraphics();
         Point dragPoint = e.getPoint();
-        if (e.isMetaDown()) {
+        if (mouseButtonThree(e)) {
             if (e.isControlDown()) {
-                dragTransform = Mat4.translation(0.0, 0.0,
-                        (dragPoint.y - clickPoint.y) * 0.01);
+                dragTransform = Mat4.translation(0.0, 0.0, (dragPoint.y - clickPoint.y) * 0.01);
             } else {
-                dragTransform = Mat4.translation(
-                        (dragPoint.x - clickPoint.x) * 0.01,
-                        (clickPoint.y - dragPoint.y) * 0.01, 0.0);
+                dragTransform = Mat4.translation((dragPoint.x - clickPoint.x) * 0.01, (clickPoint.y - dragPoint.y) * 0.01, 0.0);
             }
         } else {
             Vec3 rotAxis = new Vec3((clickPoint.y - dragPoint.y) * DRAG_SCALE,
@@ -410,6 +389,7 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
         if (!showSelection) {
             return;
         }
+
         clearVertexSelection();
         PolyMesh mesh = (PolyMesh) info.object;
         //Vec3[] normals = mesh.getNormals();
@@ -423,8 +403,7 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
                 selPos.add(pos);
                 pos = m.times(pos);
                 CoordinateSystem c = new CoordinateSystem(pos, 0, 0, 0);
-                ObjectInfo sphereInfo = new ObjectInfo(sphere, c, new String(
-                        "sphere" + i));
+                ObjectInfo sphereInfo = new ObjectInfo(sphere, c, new String("sphere" + i));
                 selection.add(sphereInfo);
                 theScene.addObject(sphereInfo, null);
             }
