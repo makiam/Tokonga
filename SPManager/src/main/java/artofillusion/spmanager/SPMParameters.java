@@ -396,13 +396,10 @@ public class SPMParameters {
         }
         p.setProperty("default", String.valueOf(current));
 
-        Iterator iter = filters.entrySet().iterator();
-        Map.Entry entry;
-        while (iter.hasNext()) {
-            entry = (Map.Entry) iter.next();
-            p.setProperty("FILTER_" + entry.getKey(),
-                    (String) entry.getValue());
-        }
+        filters.forEach((String key, String value) -> {
+            p.setProperty("FILTER_" + key, value);
+        });
+
 
         p.setProperty("proxyHost", proxyHost);
         p.setProperty("proxyPort", proxyPort);

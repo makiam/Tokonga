@@ -110,7 +110,7 @@ public class ManageSplitPane extends SPMSplitPane {
 
         // NTJ: set reference counts
         for (SPMObjectInfo info : infos) {
-            Collection externals = info.getExternals();
+            Collection<String> externals = info.getExternals();
 
             if (null == externals) {
                 continue;
@@ -118,8 +118,8 @@ public class ManageSplitPane extends SPMSplitPane {
             String extName, extType;
             SPMObjectInfo ext;
 
-            for (Object exxt : externals) {
-                extName = (String) exxt;
+            for (String exxt : externals) {
+                extName = exxt;
                 extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
                 extName = extName.substring(0, extName.indexOf(':'));
 
@@ -144,8 +144,7 @@ public class ManageSplitPane extends SPMSplitPane {
             return;
         }
 
-        int r = JOptionPane.showConfirmDialog((JFrame) SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("permanentlyDelete", info.fileName),
-                SPMTranslate.text("warning"), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+        int r = JOptionPane.showConfirmDialog((JFrame) SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("permanentlyDelete", info.fileName), SPMTranslate.text("warning"), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
         if (r == JOptionPane.YES_OPTION) {
             deleteFile(info);
         }

@@ -273,7 +273,7 @@ public class SPMSplitPane extends BSplitPane {
         ((JTree) tree.getComponent()).addMouseListener(ml);
         //setResizeWeight( 0.3 );
 
-        pathMap = new Hashtable(8);
+        pathMap = new Hashtable<>(8);
         pathMap.put("plugin", pluginsPath);
         pathMap.put("library", pluginsPath);
         pathMap.put("script", scriptsPath);

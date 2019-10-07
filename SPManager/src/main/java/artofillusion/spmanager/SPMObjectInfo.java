@@ -657,7 +657,7 @@ public class SPMObjectInfo {
             externals = new HashMap<>(16);
             destination = new ArrayList<>(16);
             actions = new HashMap<>(16);
-            exports = new HashMap(32);
+            exports = new HashMap<>(32);
         } else {
             changeLog.clear();
             details.clear();

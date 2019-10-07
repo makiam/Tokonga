@@ -18,7 +18,6 @@ import java.awt.*;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -473,7 +472,7 @@ public class InstallSplitPane extends SPMSplitPane {
         Map<File, File> transaction = new HashMap<>(32);
 
         if (errors == null) {
-            errors = new ArrayList(16);
+            errors = new ArrayList<>(16);
         }
         int errCount = errors.size();
 
@@ -757,11 +756,7 @@ public class InstallSplitPane extends SPMSplitPane {
             if (nodeInfo.refcount > 0) {
                 selectCB.setEnabled(false);
             }
-
-            // disable install single if script has dependents
-            Collection externals = nodeInfo.getExternals();
-            //if (externals != null && externals.size() > 0)
-            //installSingleButton.setEnabled(false);
+            
         }
         super.scriptSelection(deletable);
     }
@@ -794,10 +789,7 @@ public class InstallSplitPane extends SPMSplitPane {
                 selectCB.setEnabled(false);
             }
 
-            // disable install single if plugin has dependents
-            Collection externals = nodeInfo.getExternals();
-            //if (externals != null && externals.size() > 0)
-            //installSingleButton.setEnabled(false);
+
         }
         super.pluginSelection(deletable);
     }
