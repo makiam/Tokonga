@@ -39,7 +39,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -87,7 +86,7 @@ public class PMOBJImporter {
         theScene.addObject(info, null);
 
         // Open the file and read the contents.
-        Hashtable groupTable = new Hashtable();
+        Map<String, List<FaceInfo>> groupTable = new Hashtable<>();
 
         // Open the file and read the contents.
         Map<String, TextureInfo> textureTable = new Hashtable<>();
@@ -219,14 +218,16 @@ public class PMOBJImporter {
             for (int i = 0; i < vertex.size(); i++) {
                 vertex.get(i).scale(scale);
             }
+            
 
+            
             // Create a poly mesh for each group.
-            Enumeration enumarate = groupTable.keys();
-            Hashtable realizedTextures = new Hashtable();
-            Hashtable imageMaps = new Hashtable();
-            while (enumarate.hasMoreElements()) {
-                String group = (String) enumarate.nextElement();
-                Vector groupFaces = (Vector) groupTable.get(group);
+
+            Map<String, Texture> realizedTextures = new Hashtable<>();
+            Map<String, ImageMap> imageMaps = new Hashtable<>();
+            for(Map.Entry<String, List<FaceInfo>> entry: groupTable.entrySet()) {
+                String group = entry.getKey();
+                List<FaceInfo> groupFaces = entry.getValue();
                 if (groupFaces.isEmpty()) continue;
 
                 // Find which vertices are used by faces in this group.
@@ -237,7 +238,7 @@ public class PMOBJImporter {
                 int fc[][] = new int[groupFaces.size()][];
                 int numVert = 0;
                 for (int i = 0; i < fc.length; i++) {
-                    FaceInfo fi = (FaceInfo) groupFaces.elementAt(i);
+                    FaceInfo fi = groupFaces.get(i);
                     for (int j = 0; j < fi.vi.length; j++) {
                         if (realIndex[fi.getVertex(j).vert] == -1) {
                             realIndex[fi.getVertex(j).vert] = numVert++;
@@ -276,8 +277,8 @@ public class PMOBJImporter {
                     if (edges[i].face == -1 || edges[edges[i].hedge].face == -1) {
                         continue;
                     }
-                    FaceInfo f1 = (FaceInfo) groupFaces.elementAt(edges[i].face);
-                    FaceInfo f2 = (FaceInfo) groupFaces.elementAt(edges[edges[i].hedge].face);
+                    FaceInfo f1 = groupFaces.get(edges[i].face);
+                    FaceInfo f2 = groupFaces.get(edges[edges[i].hedge].face);
                     if (f1.smoothingGroup == 0 || f1.smoothingGroup != f2.smoothingGroup) {
                         // They are in different smoothing groups.
 
@@ -302,7 +303,7 @@ public class PMOBJImporter {
 
                 // Set the texture.  For the moment, assume a single texture per group.  In the future, this could possibly
                 // be improved to deal correctly with per-face textures.
-                String texName = ((FaceInfo) groupFaces.elementAt(0)).texture;
+                String texName = groupFaces.get(0).texture;
                 if (texName != null && textureTable.get(texName) != null) {
                     Texture tex = (Texture) realizedTextures.get(texName);
                     if (tex == null) {
@@ -317,7 +318,7 @@ public class PMOBJImporter {
                         Vec2 uv[] = new Vec2[numVert];
                         boolean needPerFace = false;
                         for (int j = 0; j < groupFaces.size() && !needPerFace; j++) {
-                            FaceInfo fi = (FaceInfo) groupFaces.elementAt(j);
+                            FaceInfo fi = groupFaces.get(j);
                             for (int k = 0; k < fi.vi.length; k++) {
                                 VertexInfo vi = fi.getVertex(k);
                                 Vec3 texCoords = vi.tex < texture.size() ? texture.get(vi.tex) : vertex.get(vi.vert);
@@ -504,8 +505,7 @@ public class PMOBJImporter {
      * @return Description of the Return Value
      * @exception Exception Description of the Exception
      */
-    private static Texture createTexture(TextureInfo info, Scene scene, File baseDir, Hashtable imageMaps, BFrame parent)
-            throws Exception {
+    private static Texture createTexture(TextureInfo info, Scene scene, File baseDir, Map<String, ImageMap> imageMaps, BFrame parent) throws Exception {
         info.resolveColors();
         ImageMap diffuseMap = loadMap(info.diffuseMap, scene, baseDir, imageMaps, parent);
         ImageMap specularMap = loadMap(info.specularMap, scene, baseDir, imageMaps, parent);
@@ -557,12 +557,11 @@ public class PMOBJImporter {
      * @return Description of the Return Value
      * @exception Exception Description of the Exception
      */
-    private static ImageMap loadMap(String name, Scene scene, File baseDir, Hashtable imageMaps, BFrame parent)
-            throws Exception {
+    private static ImageMap loadMap(String name, Scene scene, File baseDir, Map<String, ImageMap> imageMaps, BFrame parent) throws Exception {
         if (name == null) {
             return null;
         }
-        ImageMap map = (ImageMap) imageMaps.get(name);
+        ImageMap map = imageMaps.get(name);
         if (map != null) {
             return map;
         }
