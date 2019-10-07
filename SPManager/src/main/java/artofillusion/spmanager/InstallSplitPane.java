@@ -614,8 +614,7 @@ public class InstallSplitPane extends SPMSplitPane {
 
                 folder = file.getParentFile();
                 if (!folder.exists() && !folder.mkdirs()) {
-                    throw new RuntimeException("cannot open/create "
-                            + folder.getAbsolutePath());
+                    throw new RuntimeException("cannot open/create " + folder.getAbsolutePath());
                 }
 
                 // now delete the original, and rename the new file
@@ -623,8 +622,7 @@ public class InstallSplitPane extends SPMSplitPane {
                     orig.delete();
                 }
 
-                System.out.println("copying file to "
-                        + orig.getAbsolutePath());
+                System.out.println("copying file to " + orig.getAbsolutePath());
 
                 if (!update.renameTo(orig)) {
 
@@ -633,9 +631,7 @@ public class InstallSplitPane extends SPMSplitPane {
 
                         // make sure update file really was deleted
                         if (!update.delete()) {
-                            System.out.println("SPManager:"
-                                    + " update file not deleted: "
-                                    + update.getAbsolutePath());
+                            System.out.println("SPManager: update file not deleted: " + update.getAbsolutePath());
 
                             // NTJ Happens normally on some Wincrap boxes, so don't
                             // display an error
