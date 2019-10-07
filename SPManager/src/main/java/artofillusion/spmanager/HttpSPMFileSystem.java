@@ -657,7 +657,7 @@ public class HttpSPMFileSystem extends SPMFileSystem {
      * @return Description of the Return Value
      */
     private List<String> htmlFindFilesVersioning(InputStream is, URL from) {
-        List<String> v = new ArrayList();
+        List<String> v = new ArrayList<>();
 
         HtmlVersioningParserCallback callback = new HtmlVersioningParserCallback(v, from);
 

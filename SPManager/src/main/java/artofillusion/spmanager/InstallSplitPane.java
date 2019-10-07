@@ -526,7 +526,7 @@ public class InstallSplitPane extends SPMSplitPane {
             String dest;
             int sep;
             for (int j = 0; j < nodeInfo.files.length; ++j) {
-                dest = (String) nodeInfo.destination.get(j);
+                dest = nodeInfo.destination.get(j);
                 sep = dest.indexOf('/');
 
                 // build the destination path
