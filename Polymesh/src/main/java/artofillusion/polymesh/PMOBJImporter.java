@@ -38,6 +38,7 @@ import buoy.widget.BStandardDialog;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -91,8 +92,8 @@ public class PMOBJImporter {
         // Open the file and read the contents.
         Map<String, TextureInfo> textureTable = new Hashtable<>();
         List<Vec3> vertex = new Vector<>();
-        Vector normal = new Vector();
-        Vector texture = new Vector();
+        List<Vec3> normal = new Vector<>();
+        List<Vec3> texture = new Vector<>();
         Vector face[] = new Vector[]{new Vector()};
         groupTable.put("default", face[0]);
         int lineno = 0;
@@ -146,11 +147,10 @@ public class PMOBJImporter {
                         try {
                             val[i] = new Double(fields[i + 1]).doubleValue();
                         } catch (NumberFormatException ex) {
-                            throw new Exception("Illegal value '" + fields[i + 1]
-                                    + "' found in line " + lineno + ".");
+                            throw new Exception("Illegal value '" + fields[i + 1] + "' found in line " + lineno + ".");
                         }
                     }
-                    normal.addElement(new Vec3(val[0], val[1], val[2]));
+                    normal.add(new Vec3(val[0], val[1], val[2]));
                 } else if ("vt".equals(fields[0]) && fields.length > 1) {
                     // Read in a texture vertex.
 
@@ -166,7 +166,7 @@ public class PMOBJImporter {
                                     + "' found in line " + lineno + ".");
                         }
                     }
-                    texture.addElement(new Vec3(val[0], val[1], val[2]));
+                    texture.add(new Vec3(val[0], val[1], val[2]));
                 } else if ("f".equals(fields[0])) {
                     vertIndex = new VertexInfo[fields.length - 1];
                     for (int i = 0; i < vertIndex.length; i++) {
@@ -291,7 +291,7 @@ public class PMOBJImporter {
                             if (f1.getVertex(j).vert == f2.getVertex(k).vert) {
                                 int n1 = f1.getVertex(j).norm;
                                 int n2 = f2.getVertex(k).norm;
-                                if (n1 != n2 && ((Vec3) normal.elementAt(n1)).distance((Vec3) normal.elementAt(n2)) > 1e-10) {
+                                if (n1 != n2 && (normal.get(n1)).distance(normal.get(n2)) > 1e-10) {
                                     edges[i].smoothness = 0.0f;
                                 }
                                 break;
@@ -320,7 +320,7 @@ public class PMOBJImporter {
                             FaceInfo fi = (FaceInfo) groupFaces.elementAt(j);
                             for (int k = 0; k < fi.vi.length; k++) {
                                 VertexInfo vi = fi.getVertex(k);
-                                Vec3 texCoords = (Vec3) (vi.tex < texture.size() ? texture.elementAt(vi.tex) : vertex.get(vi.vert));
+                                Vec3 texCoords = vi.tex < texture.size() ? texture.get(vi.tex) : vertex.get(vi.vert);
                                 Vec2 tc = new Vec2(texCoords.x, texCoords.y);
                                 //per face per vertex texture is not handled in PolyMeshes
                                 //if (uv[realIndex[vi.vert]] != null && !uv[realIndex[vi.vert]].equals(tc))
@@ -357,14 +357,12 @@ public class PMOBJImporter {
      */
     private static String[] breakLine(String line) {
         StringTokenizer st = new StringTokenizer(line);
-        Vector v = new Vector();
+        List<String> v = new ArrayList<>();
 
         while (st.hasMoreTokens()) {
-            v.addElement(st.nextToken());
+            v.add(st.nextToken());
         }
-        String result[] = new String[v.size()];
-        v.copyInto(result);
-        return result;
+        return v.toArray(new String[0]);
     }
 
     /**
@@ -378,7 +376,7 @@ public class PMOBJImporter {
      * @return Description of the Return Value
      * @exception Exception Description of the Exception
      */
-    private static VertexInfo parseVertexSpec(String spec, List<Vec3> vertex, Vector texture, Vector normal, int lineno) throws Exception {
+    private static VertexInfo parseVertexSpec(String spec, List<Vec3> vertex, List<Vec3> texture, List<Vec3> normal, int lineno) throws Exception {
         VertexInfo info = new VertexInfo();
         StringTokenizer st = new StringTokenizer(spec, "/", true);
         info.tex = info.norm = Integer.MAX_VALUE;
