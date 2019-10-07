@@ -46,8 +46,6 @@ public class SPManagerPlugin implements Plugin {
 
     private static SPManagerFrame spmFrame;
 
-    protected static HashMap plugins;
-
     /**
      * Description of the Method
      *
@@ -105,12 +103,10 @@ public class SPManagerPlugin implements Plugin {
                 SPMObjectInfo info;
                 StringBuffer errs = null;
 
-                File files[],
-                 urlfile;
+                File files[], urlfile;
                 URL url;
 
-                String key[],
-                 value;
+                String key[], value;
                 File plugdir = new File(PLUGIN_DIRECTORY);
                 if (plugdir.exists()) {
                     files = plugdir.listFiles();
@@ -320,8 +316,7 @@ public class SPManagerPlugin implements Plugin {
         String path;
         File t = null;
         try {
-            t = File.createTempFile("spmanager-temp-"
-                    + System.getProperty("user.name") + "-", ".lck", temp);
+            t = File.createTempFile("spmanager-temp-" + System.getProperty("user.name") + "-", ".lck", temp);
             t.deleteOnExit();
             path = t.getName();
             path = path.substring(0, path.length() - ".lck".length());
@@ -335,8 +330,7 @@ public class SPManagerPlugin implements Plugin {
         temp = new File(temp, path);
 
         if (!((temp.exists() && temp.isDirectory()) || temp.mkdir())) {
-            err.add("Cannot create temp folder: "
-                    + temp.getAbsolutePath());
+            err.add("Cannot create temp folder: " + temp.getAbsolutePath());
         }
 
         if (!temp.canWrite()) {
@@ -402,16 +396,11 @@ public class SPManagerPlugin implements Plugin {
                 txt.append(err.get(i) + "\n");
             }
 
-            BScrollPane detail
-                    = new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER,
-                            BScrollPane.SCROLLBAR_AS_NEEDED);
+            BScrollPane detail = new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_AS_NEEDED);
 
             BLabel messg = SPMTranslate.bLabel("errMsg");
 
-            new BStandardDialog("SPManager initialise",
-                    new Widget[]{messg, detail},
-                    BStandardDialog.WARNING)
-                    .showMessageDialog(null);
+            new BStandardDialog("SPManager initialise", new Widget[]{messg, detail}, BStandardDialog.WARNING) .showMessageDialog(null);
         }
     }
 
@@ -604,8 +593,7 @@ public class SPManagerPlugin implements Plugin {
                         }
 
                         public void browse() {
-                            BFileChooser fc = new BFileChooser(BFileChooser.SAVE_FILE,
-                                    Translate.text("savePath"));
+                            BFileChooser fc = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("savePath"));
 
                             File file = null;
                             String path = null;
@@ -670,8 +658,7 @@ public class SPManagerPlugin implements Plugin {
                                 setBarValue(total > 0 ? 0 : -1);
                             }
 
-                            long dl = HttpSPMFileSystem
-                                    .downloadRemoteBinaryFile(url, path, info.length, stat, total, 0, errs);
+                            long dl = HttpSPMFileSystem.downloadRemoteBinaryFile(url, path, info.length, stat, total, 0, errs);
 
                             for (int i = 0; info.files != null && i < info.files.length; i++) {
                                 if (worker.interrupted()) {
@@ -684,8 +671,7 @@ public class SPManagerPlugin implements Plugin {
                                 setText(SPMTranslate.text("downloading", info.files[i]));
                                 pack();
 
-                                dl += HttpSPMFileSystem
-                                        .downloadRemoteBinaryFile(info.getAddFileURL(i), name, info.fileSizes[i], stat, total, dl, errs);
+                                dl += HttpSPMFileSystem.downloadRemoteBinaryFile(info.getAddFileURL(i), name, info.fileSizes[i], stat, total, dl, errs);
                             }
 
                             if (errs != null && errs.size() > 0) {
@@ -780,11 +766,9 @@ public class SPManagerPlugin implements Plugin {
 
         APP_DIRECTORY = System.getProperty("user.dir");
         try {
-            URL url = SPManagerPlugin.class
-                    .getResource("/artofillusion/spmanager/SPManagerPlugin.class");
+            URL url = SPManagerPlugin.class.getResource("/artofillusion/spmanager/SPManagerPlugin.class");
 
             System.out.println("SPManager.main: url=" + url);
-
             System.out.println("SPManager.main: path=" + url.getPath());
 
             String furl = url.getPath();
@@ -809,11 +793,9 @@ public class SPManagerPlugin implements Plugin {
 
                 System.out.println("SPManager.main: furl=" + furl);
 
-                File dir = new File(new URL(furl).getPath()).getParentFile()
-                        .getParentFile();
+                File dir = new File(new URL(furl).getPath()).getParentFile().getParentFile();
 
-                System.out.println("SPManager.main: dir="
-                        + dir.getAbsolutePath());
+                System.out.println("SPManager.main: dir="+ dir.getAbsolutePath());
 
                 if (dir.exists()) {
                     APP_DIRECTORY = dir.getAbsolutePath();
