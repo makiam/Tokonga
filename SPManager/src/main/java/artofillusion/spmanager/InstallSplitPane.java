@@ -19,7 +19,6 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -582,15 +581,11 @@ public class InstallSplitPane extends SPMSplitPane {
         }
 
         File orig;
-        Map.Entry<File, File> entry;
-        Iterator iter = transaction.entrySet().iterator();
-        while (iter.hasNext()) {
+        for(Map.Entry<File, File> entry: transaction.entrySet()) {
             try {
 
-                entry = (Map.Entry) iter.next();
-
-                orig = (File) entry.getKey();
-                update = (File) entry.getValue();
+                orig = entry.getKey();
+                update = entry.getValue();
 
                 // if there are errors, just clean up...
                 if (errors.size() > errCount) {
@@ -623,36 +618,34 @@ public class InstallSplitPane extends SPMSplitPane {
 
                 System.out.println("copying file to " + orig.getAbsolutePath());
 
-                if (!update.renameTo(orig)) {
+                if(update.renameTo(orig)) continue;
 
-                    System.out.println("SPManager: old-style copy...");
-                    if (copyFile(update, orig)) {
+                System.out.println("SPManager: old-style copy...");
+                if (copyFile(update, orig)) {
 
-                        // make sure update file really was deleted
-                        if (!update.delete()) {
-                            System.out.println("SPManager: update file not deleted: " + update.getAbsolutePath());
+                    // make sure update file really was deleted
+                    if (!update.delete()) {
+                        System.out.println("SPManager: update file not deleted: " + update.getAbsolutePath());
 
-                            // NTJ Happens normally on some Wincrap boxes, so don't
-                            // display an error
-                            //errors.add("couldn't delete " +
-                            //   update.getAbsolutePath());
-                            // make file zero-length
-                            RandomAccessFile raf = new RandomAccessFile(update, "rw");
-                            raf.setLength(0);
-                            raf.close();
-                        }
-                    } else {
-                        System.out.println("SPManager.cleanup: " + "could not copy " + file.getPath());
-
-                        errors.add("couldn't copy " + file.getName());
+                        // NTJ Happens normally on some Wincrap boxes, so don't
+                        // display an error
+                        //errors.add("couldn't delete " +
+                        //   update.getAbsolutePath());
+                        // make file zero-length
+                        RandomAccessFile raf = new RandomAccessFile(update, "rw");
+                        raf.setLength(0);
+                        raf.close();
                     }
+                } else {
+                    System.out.println("SPManager.cleanup: could not copy " + file.getPath());
+                    errors.add("couldn't copy " + file.getName());
                 }
+
             } catch (Exception e) {
                 errors.add(SPMTranslate.text("error") + "(" + file.getName() + ")" + e);
             }
         }
 
-        //fs.deleteInfo(nodeInfo);
     }
 
     /**
@@ -661,6 +654,7 @@ public class InstallSplitPane extends SPMSplitPane {
     protected static boolean copyFile(File in, File out) {
         InputStream is = null;
         OutputStream os = null;
+        
         try {
             is = new BufferedInputStream(new FileInputStream(in));
             os = new BufferedOutputStream(new FileOutputStream(out));
@@ -681,26 +675,6 @@ public class InstallSplitPane extends SPMSplitPane {
         }
 
         return true;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @param path Description of the Parameter
-     */
-    private void selectAllInfos(TreePath path) {
-        SPMObjectInfo info;
-        int count = tree.getChildNodeCount(path);
-        for (int j = 0; j < count; ++j) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getChildNode(path, j).getLastPathComponent();
-            SPMObjectInfo nodeInfo = (SPMObjectInfo) node.getUserObject();
-            nodeInfo.setSelected(true);
-
-            if (extMap != null) {
-                extMap.clear();
-            }
-            selectExternals(nodeInfo);
-        }
     }
 
     /**
@@ -832,16 +806,11 @@ public class InstallSplitPane extends SPMSplitPane {
             txt.append(err + "\n");
         }
 
-        BScrollPane detail
-                = new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER,
-                        BScrollPane.SCROLLBAR_AS_NEEDED);
+        BScrollPane detail = new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_AS_NEEDED);
 
-        BLabel messg = SPMTranslate.bLabel("errMsg");
+        BLabel message = SPMTranslate.bLabel("errMsg");
 
-        new BStandardDialog("SPManager",
-                new Widget[]{messg, detail},
-                BStandardDialog.WARNING)
-                .showMessageDialog(null);
+        new BStandardDialog("SPManager", new Widget[]{message, detail}, BStandardDialog.WARNING).showMessageDialog(null);
     }
 
 }
