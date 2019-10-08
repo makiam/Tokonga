@@ -1,4 +1,4 @@
-/* Copyright (C) 2007 by Fran?ois Guillet
+/* Copyright (C) 2007 by François Guillet
    Some parts copyright 2007 by Peter Eastman
    Changes copyright (C) 2017 by Maksim Khramov
 
@@ -11,6 +11,8 @@
  PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.ui;
 
+import artofillusion.*;
+import artofillusion.math.RGBColor;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -21,27 +23,22 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
-
 import javax.swing.ImageIcon;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import artofillusion.*;
-import artofillusion.math.RGBColor;
-
 /**
  * This class holds GUI customization information. Customization consists of various colors used in
  * AoI GUI as well as the look and feel of some GUI elements (eg buttons). In this respect, the
  * theme manager is thus a factory of GUI elements.
  *
- * @author Fran?ois Guillet
+ * @author François Guillet
  *
  */
 public class ThemeManager {
@@ -49,7 +46,7 @@ public class ThemeManager {
     /**
      * This class hold all the colors used by a theme. A theme can propose several color sets.
      *
-     * @author Fran?ois Guillet
+     * @author François Guillet
      *
      */
     public static class ColorSet {
@@ -119,7 +116,7 @@ public class ThemeManager {
      * theme content and author, or very specific information such as the button styling for this
      * theme.
      *
-     * @author Francois Guillet
+     * @author François Guillet
      *
      */
     public static class ThemeInfo {

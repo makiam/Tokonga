@@ -617,9 +617,9 @@ public class POVExporter {
             }
         } // if it is a grouping object
         else if ((obj.getObject()) instanceof ObjectCollection) {
-            Enumeration objects = ((ObjectCollection) obj.getObject()).getObjects(obj, false, theScene);
+            Enumeration<ObjectInfo> objects = ((ObjectCollection) obj.getObject()).getObjects(obj, false, theScene);
             while (objects.hasMoreElements()) {
-                writeObjects(theScene, (ObjectInfo) objects.nextElement(), out, smooth, tolerance);
+                writeObjects(theScene, objects.nextElement(), out, smooth, tolerance);
             }
         } // any other object
         else {

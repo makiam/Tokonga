@@ -11,14 +11,17 @@
  */
 package artofillusion.spmanager;
 
+import buoy.event.*;
+import buoy.widget.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.event.*;
 import java.util.*;
-import java.awt.*;
 import javax.swing.*;
 import javax.swing.tree.*;
-import java.awt.event.*;
-import buoy.widget.*;
-import buoy.event.*;
-import java.util.List;
 
 /**
  * Description of the Class
@@ -93,7 +96,8 @@ public class SPMSplitPane extends BSplitPane {
     /**
      * map of externals being processed - for loop detection
      */
-    protected Hashtable extMap, pathMap;
+    protected Map<SPMObjectInfo, SPMObjectInfo> extMap; 
+    protected Map<String, TreePath> pathMap;
 
     private BScrollPane nameSP, descriptionSP;
     private BComboBox descSelect;
@@ -218,20 +222,15 @@ public class SPMSplitPane extends BSplitPane {
 
         rc.add(new BLabel(SPMTranslate.text("flags") + ":"));
 
-        rc.add(new BLabel("=" + SPMTranslate.text("alertFlag"), alertIcon,
-                BLabel.CENTER, BLabel.EAST));
+        rc.add(new BLabel("=" + SPMTranslate.text("alertFlag"), alertIcon, BLabel.CENTER, BLabel.EAST));
 
-        rc.add(new BLabel("=" + SPMTranslate.text("filtMark"), flagIcon,
-                BLabel.CENTER, BLabel.EAST));
+        rc.add(new BLabel("=" + SPMTranslate.text("filtMark"), flagIcon, BLabel.CENTER, BLabel.EAST));
 
-        rc.add(new BLabel("=" + SPMTranslate.text("filtDisable"),
-                disableIcon, BLabel.CENTER, BLabel.EAST));
+        rc.add(new BLabel("=" + SPMTranslate.text("filtDisable"), disableIcon, BLabel.CENTER, BLabel.EAST));
 
-        rc.add(new BLabel("=" + SPMTranslate.text("filtConfirm"),
-                confirmIcon, BLabel.CENTER, BLabel.EAST));
+        rc.add(new BLabel("=" + SPMTranslate.text("filtConfirm"), confirmIcon, BLabel.CENTER, BLabel.EAST));
 
-        rc.add(new BLabel("=" + SPMTranslate.text("required"),
-                referedIcon, BLabel.CENTER, BLabel.EAST));
+        rc.add(new BLabel("=" + SPMTranslate.text("required"), referedIcon, BLabel.CENTER, BLabel.EAST));
 
         objectDescription = new BTextArea("", 8, 50);
         objectDescription.setWrapStyle(BTextArea.WRAP_WORD);
@@ -274,7 +273,7 @@ public class SPMSplitPane extends BSplitPane {
         ((JTree) tree.getComponent()).addMouseListener(ml);
         //setResizeWeight( 0.3 );
 
-        pathMap = new Hashtable(8);
+        pathMap = new Hashtable<>(8);
         pathMap.put("plugin", pluginsPath);
         pathMap.put("library", pluginsPath);
         pathMap.put("script", scriptsPath);
@@ -355,21 +354,18 @@ public class SPMSplitPane extends BSplitPane {
             if (info.refcount > 0) {
                 name += "\n\nRequired by " + info.refcount + " other(s).";
             }
-            String ext;
+
             String extName, extType;
             String extList = "\n";
             boolean missing = false;
-            Collection externals = info.getExternals();
+            Collection<String> externals = info.getExternals();
             if (externals != null) {
                 //for (int i = 0; i < externals.size(); i++) {
-                for (Iterator iter = externals.iterator(); iter.hasNext();) {
-                    //ext = (String) externals.get(i);
-                    ext = (String) iter.next();
+                for (String ext: externals) {
 
                     if (ext.endsWith("= required")) {
                         extName = ext.substring(0, ext.indexOf(':'));
-                        extType = ext.substring(ext.indexOf(':') + 1,
-                                ext.indexOf('=')).trim();
+                        extType = ext.substring(ext.indexOf(':') + 1, ext.indexOf('=')).trim();
 
                         //System.out.println("extName=" + extName + "<<");
                         if (getInfo(extName, (TreePath) pathMap.get(extType)) == null) {
@@ -409,18 +405,12 @@ public class SPMSplitPane extends BSplitPane {
                 }
 
                 if (missing) {
-                    name += "\n"
-                            + SPMTranslate.text("missingFile",
-                                    SPMTranslate.text("otherFiles"));
-
+                    name += "\n" + SPMTranslate.text("missingFile", SPMTranslate.text("otherFiles"));
                     objectName.setBackground(Color.PINK);
                 }
 
                 if (info.invalid) {
-                    name += "\n"
-                            + SPMTranslate.text("failedRequirement",
-                                    SPMTranslate.text("flags"));
-
+                    name += "\n" + SPMTranslate.text("failedRequirement", SPMTranslate.text("flags"));
                     objectName.setBackground(Color.PINK);
                 }
 
@@ -457,16 +447,16 @@ public class SPMSplitPane extends BSplitPane {
 
         SwingUtilities.invokeLater(
                 new Runnable() {
-            @Override
-            public void run() {
-                BScrollBar bar = descriptionSP.getVerticalScrollBar();
-                bar.setValue(bar.getMinimum());
-            }
+                    @Override
+                    public void run() {
+                        BScrollBar bar = descriptionSP.getVerticalScrollBar();
+                        bar.setValue(bar.getMinimum());
+                    }
         });
     }
 
     /**
-     * get the infor for the named item of the named type
+     * get the info for the named item of the named type
      */
     public SPMObjectInfo getInfo(String name, String type) {
         TreePath path = (TreePath) pathMap.get(type);
@@ -634,18 +624,17 @@ public class SPMSplitPane extends BSplitPane {
      */
     protected void selectExternals(SPMObjectInfo info) {
         if (extMap == null) {
-            extMap = new Hashtable(32);
+            extMap = new Hashtable<>(32);
         }
 
         if (extMap.containsKey(info)) {
-            System.out.println("SPMSplitPane: dependency loop detected: "
-                    + info.getName());
+            System.out.println("SPMSplitPane: dependency loop detected: " + info.getName());
             return;
         }
 
         extMap.put(info, info);
 
-        Collection externals = info.getExternals();
+        Collection<String> externals = info.getExternals();
         if (externals == null || externals.isEmpty()) {
             return;
         }
@@ -653,13 +642,12 @@ public class SPMSplitPane extends BSplitPane {
         String extName, extType;
         SPMObjectInfo ext;
         //for (int i = externals.size() - 1; i >= 0; i--) {
-        for (Iterator iter = externals.iterator(); iter.hasNext();) {
+        for (Iterator<String> iter = externals.iterator(); iter.hasNext();) {
             //extName = (String) externals.get(i);
-            extName = (String) iter.next();
+            extName = iter.next();
 
             if (extName.endsWith("= required")) {
-                extType = extName.substring(extName.indexOf(':') + 1,
-                        extName.indexOf('=')).trim();
+                extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
                 extName = extName.substring(0, extName.indexOf(':'));
 
                 ext = getInfo(extName, (TreePath) pathMap.get(extType));
@@ -704,22 +692,10 @@ public class SPMSplitPane extends BSplitPane {
          * @return The treeCellRendererComponent value
          */
         @Override
-        public Component getTreeCellRendererComponent(
-                JTree tree,
-                Object value,
-                boolean sel,
-                boolean expanded,
-                boolean leaf,
-                int row,
-                boolean hasFocus) {
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+            super.getTreeCellRendererComponent(tree, value, sel,expanded, leaf, row,hasFocus);
 
-            super.getTreeCellRendererComponent(
-                    tree, value, sel,
-                    expanded, leaf, row,
-                    hasFocus);
-
-            DefaultMutableTreeNode node
-                    = (DefaultMutableTreeNode) value;
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 
             if (node.getUserObject() instanceof SPMObjectInfo) {
                 SPMObjectInfo nodeInfo = (SPMObjectInfo) node.getUserObject();

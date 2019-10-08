@@ -117,10 +117,9 @@ public class UIUtilities {
         }
         w.setFont(UIUtilities.getDefaultFont());
         if (w instanceof WidgetContainer && !(w instanceof BMenuBar)) {
-            Iterator children = ((WidgetContainer) w).getChildren().iterator();
-            while (children.hasNext()) {
-                applyDefaultFont((Widget) children.next());
-            }
+            ((WidgetContainer) w).getChildren().forEach((Widget item) -> {
+                applyDefaultFont(item);
+            });
         }
     }
 
@@ -139,10 +138,9 @@ public class UIUtilities {
     public static void applyBackground(Widget w, Color color) {
         if (w instanceof WidgetContainer) {
             w.setBackground(color);
-            Iterator children = ((WidgetContainer) w).getChildren().iterator();
-            while (children.hasNext()) {
-                applyBackground((Widget) children.next(), color);
-            }
+            ((WidgetContainer) w).getChildren().forEach((Widget item) -> {
+                applyBackground(item, color);
+            });
         } else if (w instanceof BLabel) {
             w.setBackground(color);
         } else if (w instanceof BButton || w instanceof BComboBox || w instanceof BCheckBox || w instanceof BRadioButton) {
@@ -155,10 +153,9 @@ public class UIUtilities {
      */
     public static void applyTextColor(Widget w, Color color) {
         if (w instanceof WidgetContainer) {
-            Iterator children = ((WidgetContainer) w).getChildren().iterator();
-            while (children.hasNext()) {
-                applyTextColor((Widget) children.next(), color);
-            }
+            ((WidgetContainer) w).getChildren().forEach((Widget item) -> {
+                applyTextColor(item, color);
+            });
         } else if (w instanceof BLabel || w instanceof BCheckBox || w instanceof BRadioButton) {
             w.getComponent().setForeground(color);
         }
@@ -237,10 +234,9 @@ public class UIUtilities {
     public static void setEnabled(Widget w, boolean enabled) {
         w.setEnabled(enabled);
         if (w instanceof WidgetContainer) {
-            Iterator children = ((WidgetContainer) w).getChildren().iterator();
-            while (children.hasNext()) {
-                setEnabled((Widget) children.next(), enabled);
-            }
+            ((WidgetContainer) w).getChildren().forEach((Widget item) -> {
+                setEnabled(item, enabled);
+            });
         }
     }
 

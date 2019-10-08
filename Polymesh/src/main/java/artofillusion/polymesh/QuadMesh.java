@@ -1,4 +1,4 @@
-/* Copyright (C) 2007 by Fran?ois Guillet
+/* Copyright (C) 2007 by François Guillet
 
  This program is free software; you can redistribute it and/or modify it under the
  terms of the GNU General Public License as published by the Free Software
@@ -9,13 +9,6 @@
  PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.polymesh;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InvalidObjectException;
-import java.util.Stack;
-import java.util.Vector;
-
-import buoy.widget.RowContainer;
 import artofillusion.MeshViewer;
 import artofillusion.RenderingMesh;
 import artofillusion.RenderingTriangle;
@@ -39,6 +32,12 @@ import artofillusion.texture.ParameterValue;
 import artofillusion.texture.TextureMapping;
 import artofillusion.texture.VertexParameterValue;
 import artofillusion.ui.MeshEditController;
+import buoy.widget.RowContainer;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.util.Stack;
+import java.util.Vector;
 
 /**
  * A QuadMesh is a mesh exclusively made up of quads. This mesh is not meant to be edited by users

@@ -10,7 +10,6 @@
 package artofillusion.polymesh;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 
 import artofillusion.MeshViewer;
@@ -24,6 +23,7 @@ import artofillusion.ui.MeshEditController;
 import artofillusion.ui.Translate;
 import buoy.widget.BComboBox;
 import buoy.widget.Widget;
+import java.util.Map;
 
 /**
  * AdvancedExtrudeTool is the stool used to extrude selection. In addition, it can scale/rotate the
@@ -33,7 +33,7 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool {
 
     private Vec3 baseVertPos[];
     private UndoRecord undo;
-    private HashMap manip3dHashMap;
+    private Map<ViewerCanvas, Manipulator> manip3dHashMap;
     private boolean selected[], separateFaces;
     private PolyMesh origMesh;
     private short NO_EXTRUDE = 0;
@@ -46,12 +46,14 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool {
     public AdvancedExtrudeTool(EditingWindow fr, MeshEditController controller) {
         super(fr, controller);
         initButton("polymesh:extrude");
-        manip3dHashMap = new HashMap();
+        manip3dHashMap = new HashMap<>();
     }
 
     @Override
     public void activateManipulators(ViewerCanvas view) {
-        if (!manip3dHashMap.containsKey(view)) {
+        if (manip3dHashMap.containsKey(view)) {
+            ((PolyMeshViewer) view).setManipulator(manip3dHashMap.get(view));
+        } else {
             PolyMeshValueWidget valueWidget = null;
             if (controller instanceof PolyMeshEditorWindow) {
                 valueWidget = ((PolyMeshEditorWindow) controller).getValueWidget();
@@ -67,8 +69,6 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool {
             ((PolyMeshViewer) view).setManipulator(manip3d);
             manip3dHashMap.put(view, manip3d);
             selectionModeChanged(((MeshViewer) view).getController().getSelectionMode());
-        } else {
-            ((PolyMeshViewer) view).setManipulator((Manipulator) manip3dHashMap.get(view));
         }
     }
 
@@ -82,12 +82,9 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool {
     @Override
     public void deactivate() {
         super.deactivate();
-        Iterator iter = manip3dHashMap.keySet().iterator();
-        PolyMeshViewer view;
-        while (iter.hasNext()) {
-            view = (PolyMeshViewer) iter.next();
-            view.removeManipulator((Manipulator) manip3dHashMap.get(view));
-        }
+        manip3dHashMap.forEach((ViewerCanvas view, Manipulator manipulator) -> {
+            ((PolyMeshViewer)view).removeManipulator(manipulator);
+        });
     }
 
     @Override

@@ -15,7 +15,6 @@ import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.texture.*;
 import java.util.*;
-import java.util.List;
 
 /**
  * <p>
@@ -311,9 +310,9 @@ public class Raytracer {
             theObject = ((ObjectWrapper) theObject).getWrappedObject();
         }
         if (theObject instanceof ObjectCollection) {
-            Enumeration enm = ((ObjectCollection) theObject).getObjects(info, false, scene);
+            Enumeration<ObjectInfo> enm = ((ObjectCollection) theObject).getObjects(info, false, scene);
             while (enm.hasMoreElements()) {
-                ObjectInfo elem = (ObjectInfo) enm.nextElement();
+                ObjectInfo elem = enm.nextElement();
                 if (!elem.isVisible()) {
                     continue;
                 }

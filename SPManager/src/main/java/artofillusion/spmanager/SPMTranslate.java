@@ -12,10 +12,10 @@
  */
 package artofillusion.spmanager;
 
-import java.text.*;
-import java.util.*;
 import buoy.event.*;
 import buoy.widget.*;
+import java.text.*;
+import java.util.*;
 
 /**
  * This class extends AoI Translate Class so that i) the spmanager properties file is used instead
@@ -57,7 +57,7 @@ public class SPMTranslate {
      * @param method Description of the Parameter
      * @return Description of the Return Value
      */
-    public static BMenuItem bMenuItem(String name, java.lang.Class eventType, java.lang.Object target, String method) {
+    public static BMenuItem bMenuItem(String name, Class<?> eventType, java.lang.Object target, String method) {
         String command = name;
         BMenuItem item = null;
         try {
@@ -98,7 +98,7 @@ public class SPMTranslate {
      * @param method Description of the Parameter
      * @return Description of the Return Value
      */
-    public static BButton bButton(String name, java.lang.Class eventType, Object target, String method) {
+    public static BButton bButton(String name, Class<?> eventType, Object target, String method) {
         String command = name;
         try {
             command = resources.getString("button." + name);

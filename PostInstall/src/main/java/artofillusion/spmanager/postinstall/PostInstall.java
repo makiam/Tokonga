@@ -26,9 +26,7 @@ package artofillusion.spmanager.postinstall;
  */
 import artofillusion.*;
 import artofillusion.ui.*;
-
 import buoy.widget.*;
-
 import java.io.*;
 import java.util.*;
 
@@ -114,13 +112,13 @@ public class PostInstall implements Plugin {
                 try {
                     File tmp;
                     String[] sub = tempDir.list();
-                    ArrayList list = new ArrayList(sub.length);
+                    List<String> list = new ArrayList<>(sub.length);
                     for (i = 0; i < sub.length; i++) {
                         list.add(tempDir + File.separator + sub[i]);
                     }
 
                     for (i = 0; i < list.size(); i++) {
-                        tmp = new File((String) list.get(i));
+                        tmp = new File(list.get(i));
 
                         // make sure we empty all sub-directories first
                         if (tmp.isDirectory()) {

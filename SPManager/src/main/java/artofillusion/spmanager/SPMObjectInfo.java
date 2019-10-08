@@ -12,9 +12,9 @@
 package artofillusion.spmanager;
 
 import java.io.*;
+import java.net.*;
 import java.util.*;
 import org.w3c.dom.*;
-import java.net.*;
 
 /**
  * Description of the Class
@@ -100,7 +100,7 @@ public class SPMObjectInfo {
     /**
      * local destination to copy to
      */
-    public ArrayList destination;
+    public List<String> destination;
     /**
      * sizes of the fileset files
      */
@@ -655,9 +655,9 @@ public class SPMObjectInfo {
             changeLog = new ArrayList<>(16);
             details = new ArrayList<>(16);
             externals = new HashMap<>(16);
-            destination = new ArrayList(16);
+            destination = new ArrayList<>(16);
             actions = new HashMap<>(16);
-            exports = new HashMap(32);
+            exports = new HashMap<>(32);
         } else {
             changeLog.clear();
             details.clear();
@@ -1078,7 +1078,7 @@ public class SPMObjectInfo {
     /**
      * get the list of external dependencies.
      */
-    public Collection getExternals() {
+    public Collection<String> getExternals() {
         return externals == null ? null : externals.values();
     }
 

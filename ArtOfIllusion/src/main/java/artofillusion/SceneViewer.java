@@ -79,12 +79,11 @@ public class SceneViewer extends ViewerCanvas {
                 cameras.add(info);
             }
         }
-        for (Iterator iter = getViewerControlWidgets().values().iterator(); iter.hasNext();) {
-            Widget w = (Widget) iter.next();
-            if (w instanceof ViewerOrientationControl.OrientationChoice) {
-                ((ViewerOrientationControl.OrientationChoice) w).rebuildCameraList();
+        getViewerControlWidgets().values().forEach((Widget widget) -> {
+            if(widget instanceof ViewerOrientationControl.OrientationChoice) {
+                ((ViewerOrientationControl.OrientationChoice) widget).rebuildCameraList();
             }
-        }
+        });
     }
 
     /**

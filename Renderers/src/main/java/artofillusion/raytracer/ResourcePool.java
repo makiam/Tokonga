@@ -18,7 +18,7 @@ package artofillusion.raytracer;
  */
 public class ResourcePool {
 
-    private Class objectClass;
+    private final Class<?> objectClass;
     private Object pool[];
     private int next;
 
@@ -28,7 +28,7 @@ public class ResourcePool {
      * @param objectClass the type of object this pool should contain. The class must have a
      * constructor which takes no arguments.
      */
-    public ResourcePool(Class objectClass) {
+    public ResourcePool(Class<?> objectClass) {
         this.objectClass = objectClass;
         pool = new Object[0];
     }

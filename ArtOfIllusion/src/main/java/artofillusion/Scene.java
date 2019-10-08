@@ -1367,7 +1367,7 @@ public class Scene {
             } else {
                 environTexture = textures.elementAt(texIndex);
                 try {
-                    Class mapClass = ArtOfIllusion.getClass(in.readUTF());
+                    Class<?> mapClass = ArtOfIllusion.getClass(in.readUTF());
                     con = mapClass.getConstructor(DataInputStream.class, Object3D.class, Texture.class);
                     environMapping = (TextureMapping) con.newInstance(in, new Sphere(1.0, 1.0, 1.0), environTexture);
                 } catch (Exception ex) {

@@ -1,4 +1,4 @@
-/* Copyright (C) 2007 by Fran�ois Guillet
+/* Copyright (C) 2007 by François Guillet
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -9,10 +9,9 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.ui;
 
-import java.awt.Dimension;
-
 import buoy.event.*;
 import buoy.widget.CustomWidget;
+import java.awt.Dimension;
 
 /**
  * A ToolBarButton is a simple button that relies on a ToolButton for graphic representation.

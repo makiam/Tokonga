@@ -1636,7 +1636,7 @@ public abstract class ViewerCanvas extends CustomWidget {
     /**
      * Get the list of ViewerControls which will be added to each new ViewerCanvas.
      */
-    public static List getViewerControls() {
+    public static List<ViewerControl> getViewerControls() {
         return Collections.unmodifiableList(controls);
     }
 
@@ -1672,7 +1672,7 @@ public abstract class ViewerCanvas extends CustomWidget {
      * Get a Map whose keys are the defined ViewerControls, and whose values are the corresponding
      * Widgets for this canvas.
      */
-    public Map getViewerControlWidgets() {
+    public Map<ViewerControl, Widget> getViewerControlWidgets() {
         return Collections.unmodifiableMap(controlMap);
     }
 

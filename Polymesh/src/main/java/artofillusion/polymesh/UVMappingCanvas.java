@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2007 by Fran?ois Guillet
+ *  Copyright (C) 2007 by François Guillet
  *  This program is free software; you can redistribute it and/or modify it under the 
  *  terms of the GNU General Public License as published by the Free Software 
  *  Foundation; either version 2 of the License, or (at your option) any later version. 
@@ -8,16 +8,6 @@
  *  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  */
 package artofillusion.polymesh;
-
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Stroke;
 
 import artofillusion.TextureParameter;
 import artofillusion.math.BoundingBox;
@@ -35,13 +25,22 @@ import artofillusion.texture.UVMapping;
 import buoy.event.RepaintEvent;
 import buoy.widget.BScrollPane;
 import buoy.widget.CustomWidget;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Stroke;
 
 /**
  * This canvas displays several mesh pieces over a bitmap image. The goal is to define UV mapping of
  * meshes as the location of the mesh vertices over the background image. Editing tools allow to
  * move, rotate, resize meshes.
  *
- * @author Fran?ois Guillet
+ * @author François Guillet
  */
 public class UVMappingCanvas extends CustomWidget {
 
@@ -1247,7 +1246,7 @@ public class UVMappingCanvas extends CustomWidget {
     /**
      * Undo/Redo command for dragged vertices
      *
-     * @author Fran?ois Guillet
+     * @author François Guillet
      */
     public class DragMappingVerticesCommand implements Command {
 

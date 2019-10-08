@@ -13,23 +13,21 @@ package artofillusion.spmanager;
 
 import artofillusion.ArtOfIllusion;
 import artofillusion.ui.*;
-import java.awt.*;
-import javax.swing.*;
-import buoy.widget.*;
 import buoy.event.*;
+import buoy.widget.*;
+import java.awt.*;
 import java.io.*;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.zip.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.zip.*;
+import javax.swing.*;
 import javax.swing.text.*;
 import javax.swing.text.html.*;
 import javax.swing.text.html.parser.*;
-
-import org.xml.sax.*;
 import org.w3c.dom.*;
-import org.w3c.dom.Document;
+import org.xml.sax.*;
 
 /**
  * Description of the Class
@@ -273,7 +271,7 @@ public class HttpSPMFileSystem extends SPMFileSystem {
         SPMObjectInfo info;
         boolean eligible;
 
-        List v = null;
+        List<String> v = null;
 
         try {
             Object obj = from.getContent();
@@ -315,8 +313,7 @@ public class HttpSPMFileSystem extends SPMFileSystem {
                          */
                         eligible = true;
                         String sxml;
-                        sxml = s.substring(0, s.lastIndexOf('/'))
-                                + "extensions.xml";
+                        sxml = s.substring(0, s.lastIndexOf('/')) + "extensions.xml";
 
                         URL xmlURL = null;
                         try {
@@ -327,31 +324,23 @@ public class HttpSPMFileSystem extends SPMFileSystem {
 
                         try {
                             HttpURLConnection.setFollowRedirects(false);
-                            HttpURLConnection conn
-                                    = (HttpURLConnection) xmlURL.openConnection();
+                            HttpURLConnection conn = (HttpURLConnection) xmlURL.openConnection();
 
-                            if (conn.getResponseCode()
-                                    != HttpURLConnection.HTTP_OK) {
-
+                            if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
                                 eligible = false;
                             } else {
-                                sxml = s.substring(0, s.lastIndexOf('.'))
-                                        + ".xml";
+                                sxml = s.substring(0, s.lastIndexOf('.')) + ".xml";
                                 xmlURL = new URL(from, sxml);
 
-                                conn
-                                        = (HttpURLConnection) xmlURL.openConnection();
+                                conn = (HttpURLConnection) xmlURL.openConnection();
 
-                                if (conn.getResponseCode()
-                                        != HttpURLConnection.HTTP_OK) {
-
+                                if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
                                     eligible = false;
                                 }
                             }
 
                             if (eligible) {
                                 InputStreamReader in = new InputStreamReader(conn.getInputStream());
-
                                 in.close();
                             }
                         } catch (IOException e) {
@@ -435,7 +424,7 @@ public class HttpSPMFileSystem extends SPMFileSystem {
 
                 System.out.println("Encoding: " + input.getEncoding());
 
-                Document doc = SPManagerUtils.builder.parse(input);
+                org.w3c.dom.Document doc = SPManagerUtils.builder.parse(input);
                 NodeList tst = doc.getElementsByTagName("scriptcollection");
                 if (tst.getLength() > 0) {
                     received = true;
@@ -523,7 +512,7 @@ public class HttpSPMFileSystem extends SPMFileSystem {
      * @param downloadedLength Description of the Parameter
      * @return Description of the Return Value
      */
-    public static long downloadRemoteBinaryFile(URL from, String fileName, long size, StatusDialog status, long totalDownload, long downloadedLength, ArrayList errors) {
+    public static long downloadRemoteBinaryFile(URL from, String fileName, long size, StatusDialog status, long totalDownload, long downloadedLength, List<String> errors) {
         System.out.println("download: size=" + size + "; total=" + totalDownload + "; downloaded=" + downloadedLength);
 
         //if (fileName.endsWith(".upd")) return 0;
@@ -667,8 +656,8 @@ public class HttpSPMFileSystem extends SPMFileSystem {
      * @param from Description of the Parameter
      * @return Description of the Return Value
      */
-    private List htmlFindFilesVersioning(InputStream is, URL from) {
-        List v = new ArrayList();
+    private List<String> htmlFindFilesVersioning(InputStream is, URL from) {
+        List<String> v = new ArrayList<>();
 
         HtmlVersioningParserCallback callback = new HtmlVersioningParserCallback(v, from);
 
@@ -696,7 +685,7 @@ public class HttpSPMFileSystem extends SPMFileSystem {
      */
     private class HtmlVersioningParserCallback extends HTMLEditorKit.ParserCallback {
 
-        private List v;
+        private List<String> v;
         private URL from;
 
         /**
@@ -705,7 +694,7 @@ public class HttpSPMFileSystem extends SPMFileSystem {
          * @param v Description of the Parameter
          * @param from Description of the Parameter
          */
-        public HtmlVersioningParserCallback(List v, URL from) {
+        public HtmlVersioningParserCallback(List<String> v, URL from) {
             this.v = v;
             this.from = from;
         }

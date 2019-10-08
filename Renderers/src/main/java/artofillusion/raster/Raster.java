@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2014 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,13 +11,13 @@
 package artofillusion.raster;
 
 import artofillusion.*;
-import artofillusion.util.*;
 import artofillusion.image.*;
 import artofillusion.material.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.texture.*;
 import artofillusion.ui.*;
+import artofillusion.util.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
@@ -46,7 +46,8 @@ public class Raster implements Renderer, Runnable {
     private Thread renderThread;
     private RGBColor ambColor, envColor, fogColor;
     private TextureMapping envMapping;
-    private ThreadLocal threadRasterContext, threadCompositingContext;
+    private ThreadLocal<RasterContext> threadRasterContext;
+    private final ThreadLocal<CompositingContext> threadCompositingContext;
     private RowLock lock[];
     private double envParamValue[];
     private double time, smoothing = 1.0, smoothScale, focalDist, surfaceError = 0.02, fogDist;
@@ -64,15 +65,15 @@ public class Raster implements Renderer, Runnable {
     private static final int WHITE_ERGB = new RGBColor(1.0f, 1.0f, 1.0f).getERGB();
 
     public Raster() {
-        threadRasterContext = new ThreadLocal() {
+        threadRasterContext = new ThreadLocal<RasterContext>() {
             @Override
-            protected Object initialValue() {
+            protected RasterContext initialValue() {
                 return new RasterContext(theCamera, width);
             }
         };
-        threadCompositingContext = new ThreadLocal() {
+        threadCompositingContext = new ThreadLocal<CompositingContext>() {
             @Override
-            protected Object initialValue() {
+            protected CompositingContext initialValue() {
                 return new CompositingContext(theCamera);
             }
         };
@@ -400,7 +401,7 @@ public class Raster implements Renderer, Runnable {
         ThreadManager threads = new ThreadManager(sortedObjects.length, new ThreadManager.Task() {
             @Override
             public void execute(int index) {
-                RasterContext context = (RasterContext) threadRasterContext.get();
+                RasterContext context = threadRasterContext.get();
                 ObjectInfo obj = sortedObjects[index];
                 context.camera.setObjectTransform(obj.getCoords().fromLocal());
                 renderObject(obj, orig, viewdir, obj.getCoords().toLocal(), context, thisThread);
@@ -414,7 +415,7 @@ public class Raster implements Renderer, Runnable {
 
             @Override
             public void cleanup() {
-                ((RasterContext) threadRasterContext.get()).cleanup();
+                threadRasterContext.get().cleanup();
             }
         });
         threads.run();
@@ -519,7 +520,7 @@ public class Raster implements Renderer, Runnable {
         ThreadManager threads = new ThreadManager(imageHeight, new ThreadManager.Task() {
             @Override
             public void execute(int i1) {
-                CompositingContext context = (CompositingContext) threadCompositingContext.get();
+                CompositingContext context = threadCompositingContext.get();
                 Vec3 dir = context.tempVec[1];
                 RGBColor totalColor = context.totalColor;
                 RGBColor totalTransparency = context.totalTransparency;
@@ -628,7 +629,7 @@ public class Raster implements Renderer, Runnable {
 
             @Override
             public void cleanup() {
-                ((CompositingContext) threadCompositingContext.get()).cleanup();
+                threadCompositingContext.get().cleanup();
             }
         });
         threads.run();
@@ -822,10 +823,10 @@ public class Raster implements Renderer, Runnable {
             theObject = ((ObjectWrapper) theObject).getWrappedObject();
         }
         if (theObject instanceof ObjectCollection) {
-            Enumeration objects = ((ObjectCollection) theObject).getObjects(obj, false, theScene);
+            Enumeration<ObjectInfo> objects = ((ObjectCollection) theObject).getObjects(obj, false, theScene);
             Mat4 fromLocal = context.camera.getObjectToWorld();
             while (objects.hasMoreElements()) {
-                ObjectInfo elem = (ObjectInfo) objects.nextElement();
+                ObjectInfo elem = objects.nextElement();
                 CoordinateSystem coords = elem.getCoords().duplicate();
                 coords.transformCoordinates(fromLocal);
                 context.camera.setObjectTransform(coords.fromLocal());

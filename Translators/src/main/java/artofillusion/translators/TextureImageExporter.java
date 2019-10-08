@@ -1,4 +1,5 @@
 /* Copyright (C) 2003 by Peter Eastman
+ *  Changes copyright 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -151,20 +152,18 @@ public class TextureImageExporter {
     }
 
     /**
-     * Get an Enumeration of all TextureImageInfos.
+     * @return Collection of TextureImageInfo's
      */
-    public Enumeration getTextures() {
-        return textureTable.elements();
+    public Collection<TextureImageInfo> getTextures() {
+        return textureTable.values();
     }
+
 
     /**
      * Write out all of the images for the various textures.
      */
     public void saveImages() throws IOException, InterruptedException {
-        Enumeration e = textureTable.keys();
-        while (e.hasMoreElements()) {
-            Texture tex = (Texture) e.nextElement();
-            TextureImageInfo info = textureTable.get(tex);
+        for(TextureImageInfo info: textureTable.values()) {
             if ((components & DIFFUSE) != 0) {
                 writeComponentImage(info, Texture2D.DIFFUSE_COLOR_COMPONENT, info.diffuseFilename);
             }
@@ -190,8 +189,7 @@ public class TextureImageExporter {
         if (filename == null || !(info.texture instanceof Texture2D)) {
             return;
         }
-        Image img = ((Texture2D) info.texture).createComponentImage(info.minu, info.maxu, info.minv, info.maxv,
-                width, height, component, 0.0, info.paramValue);
+        Image img = ((Texture2D) info.texture).createComponentImage(info.minu, info.maxu, info.minv, info.maxv, width, height, component, 0.0, info.paramValue);
         ImageSaver.saveImage(img, new File(dir, filename), ImageSaver.FORMAT_JPEG, quality);
     }
 }

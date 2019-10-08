@@ -11,15 +11,14 @@
  */
 package artofillusion.spmanager;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.tree.*;
 import buoy.widget.*;
-
+import java.awt.*;
 import java.io.*;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.tree.*;
 
 /**
  * Description of the Class
@@ -111,7 +110,7 @@ public class ManageSplitPane extends SPMSplitPane {
 
         // NTJ: set reference counts
         for (SPMObjectInfo info : infos) {
-            Collection externals = info.getExternals();
+            Collection<String> externals = info.getExternals();
 
             if (null == externals) {
                 continue;
@@ -119,8 +118,8 @@ public class ManageSplitPane extends SPMSplitPane {
             String extName, extType;
             SPMObjectInfo ext;
 
-            for (Object exxt : externals) {
-                extName = (String) exxt;
+            for (String exxt : externals) {
+                extName = exxt;
                 extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
                 extName = extName.substring(0, extName.indexOf(':'));
 
@@ -145,8 +144,7 @@ public class ManageSplitPane extends SPMSplitPane {
             return;
         }
 
-        int r = JOptionPane.showConfirmDialog((JFrame) SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("permanentlyDelete", info.fileName),
-                SPMTranslate.text("warning"), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+        int r = JOptionPane.showConfirmDialog((JFrame) SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("permanentlyDelete", info.fileName), SPMTranslate.text("warning"), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
         if (r == JOptionPane.YES_OPTION) {
             deleteFile(info);
         }
@@ -189,18 +187,17 @@ public class ManageSplitPane extends SPMSplitPane {
                 }
             }
 
-            Collection externals = info.getExternals();
+            Collection<String> externals = info.getExternals();
             String extName, extType;
             SPMObjectInfo ext;
             if (externals != null) {
                 //for (int j = 0; j < externals.size(); j++) {
-                for (Iterator iter = externals.iterator(); iter.hasNext();) {
+                for (Iterator<String> iter = externals.iterator(); iter.hasNext();) {
                     //extName = (String) externals.get(j);
-                    extName = (String) iter.next();
+                    extName = iter.next();
 
                     if (extName.endsWith("= required")) {
-                        extType = extName.substring(extName.indexOf(':') + 1,
-                                extName.indexOf('=')).trim();
+                        extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
 
                         extName = extName.substring(0, extName.indexOf(':'));
 

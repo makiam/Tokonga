@@ -206,7 +206,7 @@ public class ModuleMenu extends CustomWidget {
                     // They clicked on an entry, so construct a Module object.
 
                     Object args[] = new Object[entry.args.length];
-                    Class argTypes[] = new Class[entry.args.length];
+                    Class<?> argTypes[] = new Class<?>[entry.args.length];
                     for (int j = 0; j < args.length; j++) {
                         args[j] = (entry.args[j] == null ? new Point() : entry.args[j]);
                         argTypes[j] = args[j].getClass();

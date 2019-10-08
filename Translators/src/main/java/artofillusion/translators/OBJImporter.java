@@ -49,11 +49,11 @@ public class OBJImporter {
         theScene.addObject(info, (UndoRecord) null);
 
         // Open the file and read the contents.
-        Hashtable<String, Vector<FaceInfo>> groupTable = new Hashtable<>();
-        Hashtable<String, TextureInfo> textureTable = new Hashtable<>();
-        Vector<Vec3> vertex = new Vector<>();
-        Vector<Vec3> normal = new Vector<>();
-        Vector<Vec3> texture = new Vector<>();
+        Map<String, Vector<FaceInfo>> groupTable = new Hashtable<>();
+        Map<String, TextureInfo> textureTable = new Hashtable<>();
+        List<Vec3> vertex = new Vector<>();
+        List<Vec3> normal = new Vector<>();
+        List<Vec3> texture = new Vector<>();
         Vector<Vector<FaceInfo>> face = new Vector<>();
         face.add(new Vector<>());
         groupTable.put("default", face.get(0));
@@ -98,7 +98,7 @@ public class OBJImporter {
                                     + "' found in line " + lineno + ".");
                         }
                     }
-                    vertex.addElement(new Vec3(val[0], val[1], val[2]));
+                    vertex.add(new Vec3(val[0], val[1], val[2]));
                 } else if ("vn".equals(fields[0]) && fields.length == 4) {
                     // Read in a vertex normal.
 
@@ -106,11 +106,10 @@ public class OBJImporter {
                         try {
                             val[i] = Double.parseDouble(fields[i + 1]);
                         } catch (NumberFormatException ex) {
-                            throw new Exception("Illegal value '" + fields[i + 1]
-                                    + "' found in line " + lineno + ".");
+                            throw new Exception("Illegal value '" + fields[i + 1] + "' found in line " + lineno + ".");
                         }
                     }
-                    normal.addElement(new Vec3(val[0], val[1], val[2]));
+                    normal.add(new Vec3(val[0], val[1], val[2]));
                 } else if ("vt".equals(fields[0]) && fields.length > 1) {
                     // Read in a texture vertex.
 
@@ -126,7 +125,7 @@ public class OBJImporter {
                                     + "' found in line " + lineno + ".");
                         }
                     }
-                    texture.addElement(new Vec3(val[0], val[1], val[2]));
+                    texture.add(new Vec3(val[0], val[1], val[2]));
                 } else if ("f".equals(fields[0])) {
                     if (vertIndex.length != fields.length - 1) {
                         vertIndex = new VertexInfo[fields.length - 1];
@@ -220,13 +219,13 @@ public class OBJImporter {
             double maxSize = Math.max(Math.max(max[0] - min[0], max[1] - min[1]), max[2] - min[2]);
             double scale = Math.pow(10.0, -Math.floor(Math.log(maxSize) / Math.log(10.0)));
             for (int i = 0; i < vertex.size(); i++) {
-                vertex.elementAt(i).scale(scale);
+                vertex.get(i).scale(scale);
             }
 
             // Create a triangle mesh for each group.
-            Enumeration<String> keys = groupTable.keys();
-            Hashtable<String, Texture> realizedTextures = new Hashtable<>();
-            Hashtable<String, ImageMap> imageMaps = new Hashtable<>();
+            Enumeration<String> keys = Collections.enumeration(groupTable.keySet());
+            Map<String, Texture> realizedTextures = new Hashtable<>();
+            Map<String, ImageMap> imageMaps = new Hashtable<>();
             while (keys.hasMoreElements()) {
                 String group = keys.nextElement();
                 Vector<FaceInfo> groupFaces = groupTable.get(group);
@@ -254,7 +253,7 @@ public class OBJImporter {
                 Vec3 vert[] = new Vec3[numVert], center = new Vec3();
                 for (int i = 0; i < realIndex.length; i++) {
                     if (realIndex[i] > -1) {
-                        vert[realIndex[i]] = vertex.elementAt(i);
+                        vert[realIndex[i]] = vertex.get(i);
                         center.add(vert[realIndex[i]]);
                     }
                 }
@@ -288,7 +287,7 @@ public class OBJImporter {
                             if (f1.getVertex(j).vert == f2.getVertex(k).vert) {
                                 int n1 = f1.getVertex(j).norm;
                                 int n2 = f2.getVertex(k).norm;
-                                if (n1 != n2 && normal.elementAt(n1).distance(normal.elementAt(n2)) > 1e-10) {
+                                if (n1 != n2 && normal.get(n1).distance(normal.get(n2)) > 1e-10) {
                                     edge[i].smoothness = 0.0f;
                                 }
                                 break;
@@ -336,7 +335,7 @@ public class OBJImporter {
                             FaceInfo fi = groupFaces.elementAt(j);
                             for (int k = 0; k < 3; k++) {
                                 VertexInfo vi = fi.getVertex(k);
-                                Vec3 texCoords = (vi.tex < texture.size() ? texture.elementAt(vi.tex) : vertex.elementAt(vi.vert));
+                                Vec3 texCoords = (vi.tex < texture.size() ? texture.get(vi.tex) : vertex.get(vi.vert));
                                 Vec2 tc = new Vec2(texCoords.x, texCoords.y);
                                 if (uv[realIndex[vi.vert]] != null && !uv[realIndex[vi.vert]].equals(tc)) {
                                     needPerFace = true;
@@ -359,7 +358,7 @@ public class OBJImporter {
                                 FaceInfo fi = groupFaces.elementAt(j);
                                 for (int k = 0; k < 3; k++) {
                                     VertexInfo vi = fi.getVertex(k);
-                                    Vec3 texCoords = (vi.tex < texture.size() ? texture.elementAt(vi.tex) : vertex.elementAt(vi.vert));
+                                    Vec3 texCoords = (vi.tex < texture.size() ? texture.get(vi.tex) : vertex.get(vi.vert));
                                     uvf[j][k] = new Vec2(texCoords.x, texCoords.y);
                                 }
                             }
@@ -439,7 +438,7 @@ public class OBJImporter {
     /**
      * Parse the specification for a vertex and return the index of the vertex to use.
      */
-    private static VertexInfo parseVertexSpec(String spec, Vector vertex, Vector texture, Vector normal, int lineno) throws Exception {
+    private static VertexInfo parseVertexSpec(String spec, List<Vec3> vertex, List<Vec3> texture, List<Vec3> normal, int lineno) throws Exception {
         VertexInfo info = new VertexInfo();
         StringTokenizer st = new StringTokenizer(spec, "/", true);
         info.tex = info.norm = Integer.MAX_VALUE;
@@ -488,7 +487,7 @@ public class OBJImporter {
     /**
      * Parse the contents of a .mtl file and add TextureInfo object to a hashtable.
      */
-    private static void parseTextures(String file, File baseDir, Hashtable<String, TextureInfo> textures) throws Exception {
+    private static void parseTextures(String file, File baseDir, Map<String, TextureInfo> textures) throws Exception {
         File f = new File(baseDir, file);
         if (!f.isFile()) {
             f = new File(file);
@@ -555,7 +554,7 @@ public class OBJImporter {
     /**
      * Create a texture from a TextureInfo and add it to the scene.
      */
-    private static Texture createTexture(TextureInfo info, String name, Scene scene, File baseDir, Hashtable<String, ImageMap> imageMaps) throws Exception {
+    private static Texture createTexture(TextureInfo info, String name, Scene scene, File baseDir, Map<String, ImageMap> imageMaps) throws Exception {
         if (info == null) {
             // This texture was not defined in an MTL file.  Create an empty image mapped texture
             // so that texture coordinates will be preserved and the user can specify the images
@@ -615,7 +614,7 @@ public class OBJImporter {
     /**
      * Return the image map corresponding to the specified filename, and add it to the scene.
      */
-    private static ImageMap loadMap(String name, Scene scene, File baseDir, Hashtable<String, ImageMap> imageMaps) throws Exception {
+    private static ImageMap loadMap(String name, Scene scene, File baseDir, Map<String, ImageMap> imageMaps) throws Exception {
         if (name == null) {
             return null;
         }

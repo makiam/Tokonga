@@ -381,9 +381,9 @@ public class VRMLExporter {
         } else if (obj instanceof FacetedMesh && !smooth) {
             writeMesh((FacetedMesh) obj, info, out, indent + 2, theScene, textureExporter, false);
         } else if (obj instanceof ObjectCollection) {
-            Enumeration e = ((ObjectCollection) obj).getObjects(info, false, theScene);
+            Enumeration<ObjectInfo> e = ((ObjectCollection) obj).getObjects(info, false, theScene);
             while (e.hasMoreElements()) {
-                writeObject((ObjectInfo) e.nextElement(), info, out, tol, smooth, indent + 2, theScene, textureExporter);
+                writeObject(e.nextElement(), info, out, tol, smooth, indent + 2, theScene, textureExporter);
             }
         } else {
             // All other objects are represented as IndexedFaceSets.

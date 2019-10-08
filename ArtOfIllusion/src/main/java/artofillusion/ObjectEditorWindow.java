@@ -153,15 +153,14 @@ public abstract class ObjectEditorWindow extends BFrame implements EditingWindow
      * this happens, we need to add the window as a KeyPressed listener to every component contained
      * in it.
      */
-    protected void recursivelyAddListeners(Widget w) {
-        if (!(w instanceof TextWidget)) {
-            w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
+    protected void recursivelyAddListeners(Widget widget) {
+        if (!(widget instanceof TextWidget)) {
+            widget.addEventLink(KeyPressedEvent.class, this, "keyPressed");
         }
-        if (w instanceof WidgetContainer) {
-            Iterator children = ((WidgetContainer) w).getChildren().iterator();
-            while (children.hasNext()) {
-                recursivelyAddListeners((Widget) children.next());
-            }
+        if (widget instanceof WidgetContainer) {
+            ((WidgetContainer) widget).getChildren().forEach((Widget item) -> {
+                recursivelyAddListeners(item);
+            });
         }
     }
 

@@ -107,8 +107,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner;
 import javax.swing.JSpinner.NumberEditor;
@@ -2018,13 +2017,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      */
     public void toggleManipulatorViewMode() {
         PolyMeshViewer view = (PolyMeshViewer) getView();
-        ArrayList manipulators = view.getManipulators();
-        Iterator iter = manipulators.iterator();
-        Manipulator manipulator;
-        while (iter.hasNext()) {
-            manipulator = (Manipulator) iter.next();
-            manipulator.toggleViewMode();
-        }
+        view.getManipulators().forEach((Manipulator item) -> {
+            item.toggleViewMode();
+        });
         view.repaint();
     }
 
@@ -2233,12 +2228,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         if (mesh.getSmoothingMethod() == Mesh.APPROXIMATING) {
             enable = true;
         }
-        Iterator iter = levelContainer.getChildren().iterator();
-        Widget w;
-        while (iter.hasNext()) {
-            w = (Widget) iter.next();
-            w.setEnabled(enable);
-        }
+        final boolean ef = enable;
+        levelContainer.getChildren().forEach((Widget w) ->{
+            w.setEnabled(ef);
+        });
+
     }
 
     /**
@@ -4596,24 +4590,20 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private void doSaveAsTemplate() {
         BFileChooser chooser;
 
-        File templateDir = new File(ArtOfIllusion.PLUGIN_DIRECTORY
-                + File.separator + "PolyMeshTemplates");
+        File templateDir = new File(ArtOfIllusion.PLUGIN_DIRECTORY + File.separator + "PolyMeshTemplates");
         if (!templateDir.exists()) {
             if (!templateDir.mkdir()) {
                 new BStandardDialog(Translate.text("polymesh:errorTemplateDir"),
-                        UIUtilities
-                                .breakString(Translate.text("illegalDelete")),
+                        UIUtilities.breakString(Translate.text("illegalDelete")),
                         BStandardDialog.ERROR).showMessageDialog(null);
                 return;
             }
         }
-        chooser = new BFileChooser(BFileChooser.SAVE_FILE, Translate
-                .text("polymesh:saveTemplate"), templateDir);
+        chooser = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("polymesh:saveTemplate"), templateDir);
         if (chooser.showDialog(null)) {
             try {
                 File file = chooser.getSelectedFile();
-                DataOutputStream dos = new DataOutputStream(
-                        new FileOutputStream(file));
+                DataOutputStream dos = new DataOutputStream(new FileOutputStream(file));
                 ((PolyMesh) objInfo.object).writeToFile(dos, null);
                 dos.close();
             } catch (Exception ex) {
@@ -4932,20 +4922,18 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      */
     private void doExtractToCurve() {
         PolyMesh mesh = (PolyMesh) objInfo.object;
-        ArrayList curves = mesh.extractCurveFromSelection(selected);
-        ArrayList closed = (ArrayList) curves.get(curves.size() - 1);
+        List<List<?>> curves = mesh.extractCurveFromSelection(selected);
+        List<Boolean> closed = (List<Boolean>)curves.get(curves.size() - 1);
         for (int i = 0; i < curves.size() - 1; i++) {
-            ArrayList curve = (ArrayList) curves.get(i);
+            List<Vec3> curve = (List<Vec3>)curves.get(i);
             Vec3[] v = new Vec3[curve.size()];
             float[] s = new float[v.length];
             for (int j = 0; j < v.length; j++) {
                 v[j] = (Vec3) curve.get(j);
                 s[j] = 1.0f;
             }
-            boolean b = ((Boolean) closed.get(i));
-            Curve c = new Curve(v, s, mesh.getSmoothingMethod(), b);
-            ((LayoutWindow) parentWindow).addObject(c, objInfo.coords,
-                    ("PMCurve " + i), null);
+            Curve c = new Curve(v, s, mesh.getSmoothingMethod(), closed.get(i));
+            ((LayoutWindow) parentWindow).addObject(c, objInfo.coords, ("PMCurve " + i), null);
         }
         ((LayoutWindow) parentWindow).repaint();
     }

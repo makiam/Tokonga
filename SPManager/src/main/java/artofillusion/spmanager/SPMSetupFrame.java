@@ -1,6 +1,6 @@
 
 /*
- *  Copyright 2004 Francois Guillet
+ *  Copyright 2004 François Guillet
  *  Changes copyright (C) 2019 by Maksim Khramov
 
  *  This program is free software; you can redistribute it and/or modify it under the
@@ -12,19 +12,18 @@
  */
 package artofillusion.spmanager;
 
+import buoy.event.*;
+import buoy.widget.*;
 import java.awt.*;
+import java.net.*;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
-import java.net.*;
-import buoy.widget.*;
-import buoy.event.*;
-
-import java.util.*;
 
 /**
  * Description of the Class
  *
- * @author Fran?ois Guillet
+ * @author François Guillet
  * @created March, 13 2004
  */
 public class SPMSetupFrame extends BDialog {
@@ -70,7 +69,7 @@ public class SPMSetupFrame extends BDialog {
         // NTJ: populate filters
         filterContainer = new ColumnContainer();
 
-        HashMap filters = parameters.getFilters();
+        Map<String, String> filters = parameters.getFilters();
 
         if (filters.size() > 0) {
             String[] keys = (String[]) filters.keySet().toArray(EMPTY_STRING_ARRAY);
@@ -268,7 +267,7 @@ public class SPMSetupFrame extends BDialog {
                 usernameEntry.getText(),
                 passwordEntry.getText());
 
-        HashMap filters = parameters.getFilters();
+        Map<String, String> filters = parameters.getFilters();
         filters.clear();
         RowContainer line;
         //RadioButtonGroup group;
