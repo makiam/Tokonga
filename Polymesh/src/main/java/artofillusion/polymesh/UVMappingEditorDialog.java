@@ -9,20 +9,6 @@
  */
 package artofillusion.polymesh;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.image.BufferedImage;
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-
 import artofillusion.image.BMPEncoder;
 import artofillusion.math.Vec2;
 import artofillusion.object.FacetedMesh;
@@ -74,6 +60,19 @@ import buoy.widget.LayoutInfo;
 import buoy.widget.RowContainer;
 import buoy.widget.Widget;
 import buoy.xml.WidgetDecoder;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 /**
  * This window allows the user to edit UV mapping using unfolded pieces of mesh displayed over the
@@ -257,7 +256,7 @@ public class UVMappingEditorDialog extends BDialog {
                 Translate.text("Emissive")});
             componentCB.addEventLink(ValueChangedEvent.class, this, "doChangeComponent");
             resSpinner = ((BSpinner) decoder.getObject("resSpinner"));
-            resSpinner.setValue(new Integer(mappingData.sampling));
+            resSpinner.setValue(mappingData.sampling);
             resSpinner.addEventLink(ValueChangedEvent.class, this, "doSamplingChanged");
             meshTensionCB = ((BCheckBox) decoder.getObject("meshTensionCB"));
             meshTensionCB.addEventLink(ValueChangedEvent.class, this, "doTensionChanged");
@@ -1014,14 +1013,14 @@ public class UVMappingEditorDialog extends BDialog {
             UVMeshMapping fromMapping = mappingData.mappings.get(from);
             UVMeshMapping toMapping = mappingData.mappings.get(to);
             for (int j = 0; j < fromMapping.textures.size(); j++) {
-                if (texture == fromMapping.textures.get(j).intValue()) {
+                if (texture == fromMapping.textures.get(j)) {
                     fromMapping.textures.remove(j);
                     break;
                 }
             }
 
             mappingMenuItems[from].setState(false);
-            toMapping.textures.add(new Integer(texture));
+            toMapping.textures.add(texture);
             mappingMenuItems[from].setState(false);
             mappingMenuItems[to].setState(true);
             changeMapping(to);
@@ -1280,9 +1279,9 @@ public class UVMappingEditorDialog extends BDialog {
                         PolyMeshPlugin.resources);
                 borderContainer1 = (BorderContainer) decoder.getRootObject();
                 widthSpinner = ((BSpinner) decoder.getObject("widthSpinner"));
-                widthSpinner.setValue(new Integer(width));
+                widthSpinner.setValue(width);
                 heightSpinner = ((BSpinner) decoder.getObject("heightSpinner"));
-                heightSpinner.setValue(new Integer(height));
+                heightSpinner.setValue(height);
                 fileTextField = ((BTextField) decoder.getObject("fileTextField"));
                 fileButton = ((BButton) decoder.getObject("fileButton"));
                 okButton = ((BButton) decoder.getObject("okButton"));
@@ -1311,8 +1310,8 @@ public class UVMappingEditorDialog extends BDialog {
 
         private void doOK() {
             clickedOk = true;
-            width = ((Integer) widthSpinner.getValue()).intValue();
-            height = ((Integer) heightSpinner.getValue()).intValue();
+            width = ((Integer) widthSpinner.getValue());
+            height = ((Integer) heightSpinner.getValue());
             dispose();
         }
 

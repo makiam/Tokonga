@@ -9,16 +9,6 @@ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.polymesh;
 
-import java.awt.Point;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.swing.JFormattedTextField;
-import javax.swing.JSpinner;
-
 import artofillusion.ArtOfIllusion;
 import artofillusion.Camera;
 import artofillusion.LayoutWindow;
@@ -48,6 +38,14 @@ import buoy.widget.BLabel;
 import buoy.widget.BSpinner;
 import buoy.widget.BorderContainer;
 import buoy.xml.WidgetDecoder;
+import java.awt.Point;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import javax.swing.JFormattedTextField;
+import javax.swing.JSpinner;
 
 /**
  * CreatePolyMeshTool is an EditingTool used for creating PolyMesh objects.
@@ -261,11 +259,11 @@ public class CreatePolyMeshTool extends EditingTool {
                 sizeLabel = ((BLabel) decoder.getObject("sizeLabel"));
                 sizeLabel.setText(Translate.text("polymesh:" + sizeLabel.getText()));
                 xSpinner = ((BSpinner) decoder.getObject("xSpinner"));
-                xSpinner.setValue(new Integer(usize));
+                xSpinner.setValue(usize);
                 byLabel = ((BLabel) decoder.getObject("byLabel"));
                 byLabel.setText(Translate.text("polymesh:" + byLabel.getText()));
                 ySpinner = ((BSpinner) decoder.getObject("ySpinner"));
-                ySpinner.setValue(new Integer(vsize));
+                ySpinner.setValue(vsize);
                 meshType = ((BLabel) decoder.getObject("meshType"));
                 meshType.setText(Translate.text("polymesh:" + meshType.getText()));
                 okButton = ((BButton) decoder.getObject("okButton"));
@@ -343,12 +341,12 @@ public class CreatePolyMeshTool extends EditingTool {
                 enableSize();
                 switch (typeCombo.getSelectedIndex()) {
                     case 3:
-                        xSpinner.setValue(new Integer(12));
-                        ySpinner.setValue(new Integer(1));
+                        xSpinner.setValue(12);
+                        ySpinner.setValue(1);
                         break;
                     case 4:
-                        xSpinner.setValue(new Integer(3));
-                        ySpinner.setValue(new Integer(3));
+                        xSpinner.setValue(3);
+                        ySpinner.setValue(3);
                         break;
                 }
             } else {

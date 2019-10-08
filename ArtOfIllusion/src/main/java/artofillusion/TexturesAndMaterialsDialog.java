@@ -1,5 +1,5 @@
 /* Copyright (C) 2011 by Helge Hansen and Peter Eastman
-   Changes copyright (C) 2016-2018 by Maksim Khramov
+   Changes copyright (C) 2016-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -16,16 +16,17 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
-
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.tree.*;
-import java.awt.*;
+import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.datatransfer.*;
 import java.io.*;
 import java.lang.ref.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.tree.*;
 
 public class TexturesAndMaterialsDialog extends BDialog {
 
@@ -412,6 +413,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
             parentFrame.setModified();
         } else if (selectedMaterial != null) {
             Material mat = selectedMaterial;
+            
             mat.edit(parentFrame.getFrame(), theScene);
             mat.assignNewID();
             theScene.changeMaterial(theScene.indexOf(mat));

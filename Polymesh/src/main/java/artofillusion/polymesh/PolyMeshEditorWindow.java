@@ -11,27 +11,6 @@
  */
 package artofillusion.polymesh;
 
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.Window;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import javax.swing.JFormattedTextField;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.JSpinner.NumberEditor;
-
 import artofillusion.ArtOfIllusion;
 import artofillusion.Camera;
 import artofillusion.LayoutWindow;
@@ -45,7 +24,6 @@ import artofillusion.SkewMeshTool;
 import artofillusion.TaperMeshTool;
 import artofillusion.TextureParameter;
 import artofillusion.ThickenMeshTool;
-
 import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
 import artofillusion.animation.Joint;
@@ -68,9 +46,8 @@ import artofillusion.polymesh.PolyMesh.Wvertex;
 import artofillusion.polymesh.PolyMeshValueWidget.ValueWidgetOwner;
 import artofillusion.polymesh.ui.ColorButton;
 import artofillusion.texture.FaceParameterValue;
-import artofillusion.texture.VertexParameterValue;
-
 import artofillusion.texture.ParameterValue;
+import artofillusion.texture.VertexParameterValue;
 import artofillusion.ui.ActionProcessor;
 import artofillusion.ui.ComponentsDialog;
 import artofillusion.ui.EditingTool;
@@ -117,6 +94,25 @@ import buoy.widget.RowContainer;
 import buoy.widget.Shortcut;
 import buoy.widget.Widget;
 import buoy.xml.WidgetDecoder;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import javax.swing.JFormattedTextField;
+import javax.swing.JSpinner;
+import javax.swing.JSpinner.NumberEditor;
+import javax.swing.SpinnerNumberModel;
 
 /**
  * The PolyMeshEditorWindow class represents the window for editing PolyMesh objects.
@@ -401,7 +397,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         levelContainer.add(new BLabel(Translate.text("polymesh:interactiveSubdiv")));
         ispin = new BSpinner(1, 1, 6, 1);
         levelContainer.add(ispin);
-        ispin.setValue(new Integer(mesh.getInteractiveSmoothLevel()));
+        ispin.setValue(mesh.getInteractiveSmoothLevel());
         ispin.addEventLink(ValueChangedEvent.class, this, "doInteractiveLevel");
         //levelContainer.add(new BLabel(Translate.text("polymesh:render")));
         //rspin = new BSpinner(1, 1, 6, 1);
@@ -413,8 +409,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         cornerCB.addEventLink(ValueChangedEvent.class, this, "doCornerChanged");
         vertexContainer.add(cornerCB);
         edgeSlider = new ValueSlider(0.0, 1.0, 1000, 0.0);
-        edgeSlider.addEventLink(ValueChangedEvent.class, this,
-                "doEdgeSliderChanged");
+        edgeSlider.addEventLink(ValueChangedEvent.class, this, "doEdgeSliderChanged");
         edgeContainer.add(new BLabel(Translate.text("polymesh:smoothness")));
         edgeContainer.add(edgeSlider);
         overlayVertexEdgeFace = new OverlayContainer();
@@ -1337,9 +1332,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Select the entire mesh.
      */
     void selectAllCommand() {
-        setUndoRecord(new UndoRecord(this, false,
-                UndoRecord.SET_MESH_SELECTION, new Object[]{this,
-                    new Integer(selectMode), selected.clone()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, new Object[]{this, selectMode, selected.clone()}));
         for (int i = 0; i < selected.length; i++) {
             selected[i] = true;
         }
@@ -1369,8 +1362,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         Wedge edges[] = theMesh.getEdges();
 
         setUndoRecord(new UndoRecord(this, false,
-                UndoRecord.SET_MESH_SELECTION, new Object[]{this,
-                    new Integer(selectMode), selected.clone()}));
+                UndoRecord.SET_MESH_SELECTION, new Object[]{this, selectMode, selected.clone()}));
         for (int i = 0; i < edges.length; i++) {
             if ((dist[edges[i].vertex] == 0 || dist[edges[edges[i].hedge].vertex] == 0)) {
                 selectedVert[edges[i].vertex] = selectedVert[edges[edges[i].hedge].vertex] = true;
@@ -1611,8 +1603,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             }
             if (undoItem != null) {
                 setUndoRecord(new UndoRecord(this, false,
-                        UndoRecord.SET_MESH_SELECTION, new Object[]{this,
-                            new Integer(selectMode), selected}));
+                        UndoRecord.SET_MESH_SELECTION, new Object[]{this, selectMode, selected}));
             }
             setSelectionMode(modes.getSelection());
             theView[currentView].getCurrentTool().activate();
@@ -1931,7 +1922,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         level = mesh.getInteractiveSmoothLevel();
         if (level + amount > 0) {
             mesh.setInteractiveSmoothLevel(level + amount);
-            ispin.setValue(new Integer(level + amount));
+            ispin.setValue(level + amount);
             objectChanged();
             updateImage();
         }
@@ -4299,8 +4290,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             newSel[i] = !selected[i];
         }
         setUndoRecord(new UndoRecord(this, false,
-                UndoRecord.SET_MESH_SELECTION, new Object[]{this,
-                    new Integer(selectMode), selected}));
+                UndoRecord.SET_MESH_SELECTION, new Object[]{this, selectMode, selected}));
         setSelection(newSel);
     }
 
@@ -4929,12 +4919,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     @Override
     public void setTensionCommand() {
         super.setTensionCommand();
-        tensionSpin.setValue(new Integer(tensionDistance));
+        tensionSpin.setValue(tensionDistance);
     }
 
     public void doTensionChanged() {
-        lastTensionDistance = tensionDistance = ((Integer) tensionSpin
-                .getValue()).intValue();
+        lastTensionDistance = tensionDistance = ((Integer) tensionSpin.getValue());
         savePreferences();
     }
 
@@ -4953,7 +4942,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 v[j] = (Vec3) curve.get(j);
                 s[j] = 1.0f;
             }
-            boolean b = ((Boolean) closed.get(i)).booleanValue();
+            boolean b = ((Boolean) closed.get(i));
             Curve c = new Curve(v, s, mesh.getSmoothingMethod(), b);
             ((LayoutWindow) parentWindow).addObject(c, objInfo.coords,
                     ("PMCurve " + i), null);
@@ -5758,45 +5747,30 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         private PolyMesh prevMesh;
 
         public SubdivisionDialog(BFrame parent) {
-            super(parent, Translate.text("polymesh:subdivisionLevelDialogTitle"),
-                    false);
+            super(parent, Translate.text("polymesh:subdivisionLevelDialogTitle"), false);
             PolyMesh mesh = (PolyMesh) objInfo.object;
             backInteractiveSmoothness = mesh.getInteractiveSmoothLevel();
             prevMesh = (PolyMesh) mesh.duplicate();
             InputStream inputStream = null;
             try {
-                WidgetDecoder decoder = new WidgetDecoder(getClass()
-                        .getResource("interfaces/subdivision.xml").openStream());
-                BorderContainer borderContainer1 = (BorderContainer) decoder
-                        .getRootObject();
-                BLabel interactiveLabel = ((BLabel) decoder
-                        .getObject("interactiveLabel"));
-                interactiveLabel.setText(Translate.text("polymesh:" + interactiveLabel
-                        .getText()));
-                BLabel renderingLabel = ((BLabel) decoder
-                        .getObject("renderingLabel"));
-                renderingLabel.setText(Translate.text("polymesh:" + renderingLabel
-                        .getText()));
-                interactiveSpinner = ((BSpinner) decoder
-                        .getObject("interactiveSpinner"));
-                interactiveSpinner.setValue(new Integer(
-                        backInteractiveSmoothness));
-                interactiveSpinner.addEventLink(ValueChangedEvent.class, this,
-                        "doInteractiveSpinnerChanged");
-                SpinnerNumberModel model = (SpinnerNumberModel) interactiveSpinner
-                        .getModel();
-                model.setMaximum(new Integer(6));
-                BLabel chooseLevelsLabel = ((BLabel) decoder
-                        .getObject("chooseLevelsLabel"));
-                chooseLevelsLabel.setText(Translate.text("polymesh:" + chooseLevelsLabel
-                        .getText()));
-                GridContainer okCancelGrid = ((GridContainer) decoder
-                        .getObject("OkCancelGrid"));
+                WidgetDecoder decoder = new WidgetDecoder(getClass().getResource("interfaces/subdivision.xml").openStream());
+                BorderContainer borderContainer1 = (BorderContainer) decoder.getRootObject();
+                BLabel interactiveLabel = ((BLabel) decoder.getObject("interactiveLabel"));
+                interactiveLabel.setText(Translate.text("polymesh:" + interactiveLabel.getText()));
+                BLabel renderingLabel = ((BLabel) decoder.getObject("renderingLabel"));
+                renderingLabel.setText(Translate.text("polymesh:" + renderingLabel.getText()));
+                interactiveSpinner = ((BSpinner) decoder.getObject("interactiveSpinner"));
+                interactiveSpinner.setValue(backInteractiveSmoothness);
+                interactiveSpinner.addEventLink(ValueChangedEvent.class, this, "doInteractiveSpinnerChanged");
+                SpinnerNumberModel model = (SpinnerNumberModel) interactiveSpinner.getModel();
+                model.setMaximum(6);
+                BLabel chooseLevelsLabel = ((BLabel) decoder.getObject("chooseLevelsLabel"));
+                chooseLevelsLabel.setText(Translate.text("polymesh:" + chooseLevelsLabel.getText()));
+                GridContainer okCancelGrid = ((GridContainer) decoder.getObject("OkCancelGrid"));
                 BButton okButton = ((BButton) decoder.getObject("okButton"));
                 okButton.addEventLink(CommandEvent.class, this, "doOK");
                 okButton.setText(Translate.text("polymesh:ok"));
-                BButton cancelButton = ((BButton) decoder
-                        .getObject("cancelButton"));
+                BButton cancelButton = ((BButton) decoder.getObject("cancelButton"));
                 cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
                 cancelButton.setText(Translate.text("polymesh:cancel"));
                 setContent(borderContainer1);
@@ -5828,16 +5802,14 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
         private void doInteractiveSpinnerChanged() {
             PolyMesh mesh = (PolyMesh) objInfo.object;
-            mesh.setInteractiveSmoothLevel(((Integer) interactiveSpinner
-                    .getValue()).intValue());
+            mesh.setInteractiveSmoothLevel(((Integer) interactiveSpinner.getValue()));
             objectChanged();
             updateImage();
         }
 
         private void doOK() {
             PolyMesh mesh = (PolyMesh) objInfo.object;
-            setUndoRecord(new UndoRecord(PolyMeshEditorWindow.this, false,
-                    UndoRecord.COPY_OBJECT, new Object[]{mesh, prevMesh}));
+            setUndoRecord(new UndoRecord(PolyMeshEditorWindow.this, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, prevMesh}));
             dispose();
         }
     }

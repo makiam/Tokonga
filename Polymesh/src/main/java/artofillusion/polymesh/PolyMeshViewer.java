@@ -11,11 +11,6 @@
  */
 package artofillusion.polymesh;
 
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.Polygon;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import artofillusion.MeshViewer;
 import artofillusion.RenderingMesh;
 import artofillusion.TextureParameter;
@@ -45,6 +40,11 @@ import buoy.event.MouseClickedEvent;
 import buoy.event.MouseMovedEvent;
 import buoy.event.WidgetMouseEvent;
 import buoy.widget.RowContainer;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 /**
  * The PolyMeshViewer class is a component which displays a PolyMesh object and allow the user to
@@ -964,8 +964,7 @@ public class PolyMeshViewer extends MeshViewer {
         currentTool.getWindow().setUndoRecord(
                 new UndoRecord(currentTool.getWindow(), false,
                         UndoRecord.SET_MESH_SELECTION, new Object[]{
-                    controller,
-                    new Integer(controller.getSelectionMode()),
+                    controller, controller.getSelectionMode(),
                     oldSelection}));
         controller.setSelection(selected);
         currentTool.getWindow().updateMenus();
@@ -1206,9 +1205,8 @@ public class PolyMeshViewer extends MeshViewer {
                 currentTool.getWindow().setUndoRecord(
                         new UndoRecord(currentTool.getWindow(), false,
                                 UndoRecord.SET_MESH_SELECTION, new Object[]{
-                            controller,
-                            new Integer(controller
-                                    .getSelectionMode()),
+                            controller, controller
+                                    .getSelectionMode(),
                             oldSelection}));
                 controller.setSelection(selected);
                 break;

@@ -1,15 +1,5 @@
 package artofillusion.polymesh;
 
-import java.awt.event.InputEvent;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-
-import javax.swing.JFormattedTextField;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-
 import artofillusion.ui.Translate;
 import artofillusion.ui.ValueField;
 import buoy.event.CommandEvent;
@@ -24,6 +14,14 @@ import buoy.widget.BTextField;
 import buoy.widget.BorderContainer;
 import buoy.widget.Widget;
 import buoy.xml.WidgetDecoder;
+import java.awt.event.InputEvent;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import javax.swing.JFormattedTextField;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
 /**
  * This class displays a composite widget that allows to enter a value either using a slider or a
@@ -289,14 +287,14 @@ public class PolyMeshValueWidget extends BorderContainer {
      */
     private void doValueFieldChanged() {
         value = valueField.getValue();
-        double min = ((Double) minSpinner.getValue()).doubleValue();
-        double max = ((Double) maxSpinner.getValue()).doubleValue();
+        double min = ((Double) minSpinner.getValue());
+        double max = ((Double) maxSpinner.getValue());
         if (value < min) {
-            minSpinner.setValue(new Double(value));
+            minSpinner.setValue(value);
             valueSlider.setValue(0);
         }
         if (value > max) {
-            maxSpinner.setValue(new Double(value));
+            maxSpinner.setValue(value);
             valueSlider.setValue(1000);
         } else {
             valueSlider.setValue((int) Math.round((value - min) * 1000 / (max - min)));
@@ -333,21 +331,21 @@ public class PolyMeshValueWidget extends BorderContainer {
     }
 
     public double getValueMin() {
-        return ((Double) minSpinner.getValue()).doubleValue();
+        return ((Double) minSpinner.getValue());
     }
 
     public void setValueMin(double valueMin) {
         this.valueMin = valueMin;
-        minSpinner.setValue(new Double(valueMin));
+        minSpinner.setValue(valueMin);
     }
 
     public double getValueMax() {
-        return ((Double) maxSpinner.getValue()).doubleValue();
+        return ((Double) maxSpinner.getValue());
     }
 
     public void setValueMax(double valueMax) {
         this.valueMax = valueMax;
-        maxSpinner.setValue(new Double(valueMax));
+        maxSpinner.setValue(valueMax);
     }
 
     /**
@@ -360,10 +358,10 @@ public class PolyMeshValueWidget extends BorderContainer {
     public void setTempValueRange(double tmpValueMin, double tmpValueMax) {
         if (!temporaryRange) {
             temporaryRange = true;
-            valueMin = ((Double) minSpinner.getValue()).doubleValue();
-            valueMax = ((Double) maxSpinner.getValue()).doubleValue();
-            minSpinner.setValue(new Double(tmpValueMin));
-            maxSpinner.setValue(new Double(tmpValueMax));
+            valueMin = ((Double) minSpinner.getValue());
+            valueMax = ((Double) maxSpinner.getValue());
+            minSpinner.setValue(tmpValueMin);
+            maxSpinner.setValue(tmpValueMax);
             if (value < tmpValueMin) {
                 value = tmpValueMin;
             }

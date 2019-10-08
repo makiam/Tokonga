@@ -11,17 +11,6 @@
  */
 package artofillusion.polymesh;
 
-import java.awt.Color;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InvalidObjectException;
-import java.util.ArrayList;
-
-import java.util.HashMap;
-import java.util.Vector;
-import java.util.prefs.Preferences;
-
 import artofillusion.MeshViewer;
 import artofillusion.ObjectViewer;
 import artofillusion.Property;
@@ -51,8 +40,8 @@ import artofillusion.object.TriangleMesh.Edge;
 import artofillusion.object.TriangleMesh.Face;
 import artofillusion.object.TriangleMesh.Vertex;
 import artofillusion.polymesh.QuadMesh.QuadEdge;
-import artofillusion.polymesh.QuadMesh.QuadVertex;
 import artofillusion.polymesh.QuadMesh.QuadFace;
+import artofillusion.polymesh.QuadMesh.QuadVertex;
 import artofillusion.texture.FaceParameterValue;
 import artofillusion.texture.FaceVertexParameterValue;
 import artofillusion.texture.ParameterValue;
@@ -65,7 +54,16 @@ import artofillusion.ui.Translate;
 import artofillusion.ui.UIUtilities;
 import buoy.widget.BStandardDialog;
 import buoy.widget.RowContainer;
+import java.awt.Color;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
+import java.util.prefs.Preferences;
 
 /**
  * Winged edge mesh implementation for Art of Illusion.
@@ -2139,7 +2137,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
                             }
 
                             int[] newIndices = getFaceVertices(faces[j]);
-                            int[] oldIndices = (int[]) facesTextureIndexMap.get(new Integer(faceRef));
+                            int[] oldIndices = (int[]) facesTextureIndexMap.get(faceRef);
                             for (int m = 0; m < 2; m++) {
                                 if (newIndices[m] >= vertCount) {
                                     double meanVal = 0;
@@ -2612,34 +2610,34 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         if (s1 != null) {
             int e = getEdge(fe, i1, i2);
             if (e != -1) {
-                s1.add(new Float(edges[e].smoothness));
+                s1.add(edges[e].smoothness);
                 if (edges[e].smoothness != edges[edges[e].hedge].smoothness) {
                     System.out.println("Pb smoothness");
                 }
             } else {
-                s1.add(new Float(s));
+                s1.add(s);
             }
         }
         if (s2 != null) {
             int e = getEdge(fe, i2, i3);
             if (e != -1) {
-                s2.add(new Float(edges[e].smoothness));
+                s2.add(edges[e].smoothness);
                 if (edges[e].smoothness != edges[edges[e].hedge].smoothness) {
                     System.out.println("Pb smoothness");
                 }
             } else {
-                s2.add(new Float(s));
+                s2.add(s);
             }
         }
         if (s3 != null) {
             int e = getEdge(fe, i3, i1);
             if (e != -1) {
-                s3.add(new Float(edges[e].smoothness));
+                s3.add(edges[e].smoothness);
                 if (edges[e].smoothness != edges[edges[e].hedge].smoothness) {
                     System.out.println("Pb smoothness");
                 }
             } else {
-                s3.add(new Float(s));
+                s3.add(s);
             }
         }
     }
@@ -12379,7 +12377,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
                             while (ref >= orVertsLength) {
                                 ref = vertTable.get(ref - orVertsLength);
                             }
-                            vertTable.add(new Integer(ref));
+                            vertTable.add(ref);
                             newEdges[ne1] = new Wedge(vertCount, nhe1, -1, ne2);
                             newEdges[nhe1] = new Wedge(v1, ne1,
                                     newEdges[he1].face, newEdges[he1].next);
@@ -12431,7 +12429,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
                         while (ref >= orVertsLength) {
                             ref = vertTable.get(ref - orVertsLength);
                         }
-                        vertTable.add(new Integer(ref));
+                        vertTable.add(ref);
                         newVertices[v1].edge = e;
                         newVertices[v2].edge = he;
                         newFaces[newEdges[nhe].face].edge = nhe;
@@ -12473,12 +12471,12 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
                         while (ref >= orVertsLength) {
                             ref = vertTable.get(ref - orVertsLength);
                         }
-                        vertTable.add(new Integer(ref));
+                        vertTable.add(ref);
                         ref = v2;
                         while (ref >= orVertsLength) {
                             ref = vertTable.get(ref - orVertsLength);
                         }
-                        vertTable.add(new Integer(ref));
+                        vertTable.add(ref);
                         newVertices[v1].edge = e;
                         newVertices[v2].edge = he;
                         newEdges[he].face = -1;
