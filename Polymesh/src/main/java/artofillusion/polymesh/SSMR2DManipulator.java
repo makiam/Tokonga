@@ -19,14 +19,17 @@ import artofillusion.math.Vec3;
 import artofillusion.ui.MeshEditController;
 import artofillusion.ui.ThemeManager;
 import artofillusion.ui.Translate;
+
+import static artofillusion.ui.UIUtilities.*;
+
 import buoy.event.KeyPressedEvent;
 import buoy.event.ToolTipEvent;
 import buoy.event.WidgetMouseEvent;
 import buoy.widget.BToolTip;
 
 /**
- * This is the manipulator responsible for moving, resizing and rotating mesh selections (2D). SSMR
- * = Select Scale Move Rotate
+ * This is the manipulator responsible for moving, resizing and rotating mesh
+ * selections (2D). SSMR = Select Scale Move Rotate
  */
 public class SSMR2DManipulator
         extends SSMRManipulator {
@@ -476,8 +479,6 @@ public class SSMR2DManipulator
     }
 
     public boolean scaleDragged(WidgetMouseEvent e) {
-        //if (view instanceof PolyMeshViewer)
-        //    ((PolyMeshViewer)view).moveToGrid(e);
         Point p = e.getPoint();
         Rectangle newBounds = new Rectangle();
         boolean move = false;
@@ -819,7 +820,7 @@ public class SSMR2DManipulator
             return false;
         }
         if (baseClick.x == e.getPoint().x && baseClick.y == e.getPoint().y && handle != TOOL_HANDLE) {
-            if (e.getButton() == MouseEvent.BUTTON2 && handle != CENTER) {
+            if (mouseButtonTwo(e) && handle != CENTER) {
                 if (valueWidget != null) {
                     isCtrlDown = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
                     isShiftDown = e.isShiftDown();
@@ -833,11 +834,7 @@ public class SSMR2DManipulator
                     dragging = false;
                     return true;
                 }
-            } /*else if (e.getButton() == MouseEvent.BUTTON3)
-            {
-                if (!e.isControlDown() && !e.isShiftDown())
-                    ((PolyMeshEditorWindow)((PolyMeshViewer)view).getController()).triggerPopupEvent(e);
-            }*/ else {
+            } else {
                 rotateX = bounds.x + bounds.width / 2;
                 rotateY = bounds.y + bounds.height / 2;
                 dragX = dragY = 0;
@@ -850,7 +847,6 @@ public class SSMR2DManipulator
                 dispatchEvent(new ManipulatorAbortChangingEvent(this, view));
             }
         } else {
-            //mouseDragged(e);
             if (handle == CENTER || handle == TOOL_HANDLE) {
                 if (state == SCALE || handle == TOOL_HANDLE) {
                     dispatchEvent(new ManipulatorCompletedEvent(this, view));

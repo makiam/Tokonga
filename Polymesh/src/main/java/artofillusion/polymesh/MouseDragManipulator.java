@@ -17,11 +17,13 @@ import artofillusion.math.Vec3;
 import artofillusion.object.Mesh;
 import artofillusion.object.MeshVertex;
 import artofillusion.ui.MeshEditController;
+import static artofillusion.ui.UIUtilities.*;
 import buoy.event.WidgetMouseEvent;
 
 /**
- * This manipulator simply sends two float values along x and y direction when the mouse is dragged.
- * A specific icon is displayed when set and help text is custom to the client tool
+ * This manipulator simply sends two float values along x and y direction when
+ * the mouse is dragged. A specific icon is displayed when set and help text is
+ * custom to the client tool
  */
 public class MouseDragManipulator extends Manipulator {
 
@@ -35,10 +37,10 @@ public class MouseDragManipulator extends Manipulator {
     private static final double DRAG_SCALE = 0.01;
     private Vec3 center;
     private Vec2 axisCenter;
-    private int button;
 
     /**
-     * Creates a mouse drag manipulator that displays the given image at selection center
+     * Creates a mouse drag manipulator that displays the given image at
+     * selection center
      *
      * @param tool The tool responsible for the manipulator
      * @param view The view in which the manipulators are displayed
@@ -86,16 +88,14 @@ public class MouseDragManipulator extends Manipulator {
             return false;
         }
         //good enough for us
-        button = e.getButton();
-        if (button == MouseEvent.BUTTON2) // && ( e.getModifiers() & ActionEvent.CTRL_MASK) == 0)
-        {
+        if (mouseButtonTwo(e)) {
             Camera cam = view.getCamera();
             baseClick = e.getPoint();
             oldCoords = cam.getCameraCoordinates().duplicate();
             viewToWorld = cam.getViewToWorld();
             dragging = true;
             return true;
-        } else if (e.getButton() == MouseEvent.BUTTON1) {
+        } else if (mouseButtonOne(e)) {
             Point p = e.getPoint();
             if (image != null) {
                 int x = (int) (axisCenter.x - image.getIconWidth() / 2);
@@ -125,7 +125,6 @@ public class MouseDragManipulator extends Manipulator {
         return false;
     }
 
-    @Override
     public boolean mouseDragged(WidgetMouseEvent e) {
         if (!active) {
             return false;
@@ -133,7 +132,7 @@ public class MouseDragManipulator extends Manipulator {
         if (!dragging) {
             return false;
         }
-        if (button == MouseEvent.BUTTON2) {
+        if (mouseButtonTwo(e)) {
             viewDragged(e);
             return true;
         }
@@ -207,7 +206,7 @@ public class MouseDragManipulator extends Manipulator {
             return false;
         }
         dragging = false;
-        if (button != MouseEvent.BUTTON2) {
+        if (!mouseButtonTwo(e)) {
             dispatchEvent(new ManipulatorCompletedEvent(this, view));
         }
         return true;
