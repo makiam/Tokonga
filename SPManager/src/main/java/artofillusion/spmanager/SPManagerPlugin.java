@@ -89,11 +89,10 @@ public class SPManagerPlugin implements Plugin {
                     }
                 }
 
-                Class[] sig = new Class[]{URL.class};
                 Method addUrl = null;
 
                 try {
-                    addUrl = URLClassLoader.class.getDeclaredMethod("addURL", sig);
+                    addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
                     addUrl.setAccessible(true);
                 } catch (Exception e) {
                     System.out.println("Error getting addURL method: " + e);
