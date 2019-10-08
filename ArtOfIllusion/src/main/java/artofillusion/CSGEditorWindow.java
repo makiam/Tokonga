@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
    Modifications copyright (C) 2016-2017 Petri Ihalainen
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -16,9 +16,12 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * The CSGEditorWindow class represents the window for editing CSGObjects.
@@ -628,7 +631,7 @@ public class CSGEditorWindow extends ObjectEditorWindow {
             return;
         }
 
-        ArrayList<ObjectInfo> selection = new ArrayList<>();
+        List<ObjectInfo> selection = new ArrayList<>();
 
         // This did not work if only object 1 was selected. Strange bug.
         //for (int s : selected)
@@ -643,6 +646,6 @@ public class CSGEditorWindow extends ObjectEditorWindow {
      * Fit the active view to the whole boolean
      */
     public void fitToBooleanCommand() {
-        getView().fitToObjects(theScene.getAllObjects());
+        getView().fitToObjects(theScene.getObjects());
     }
 }
