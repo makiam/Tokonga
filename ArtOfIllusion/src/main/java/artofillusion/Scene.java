@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2013 by Peter Eastman
-   Changes copyright (C) 2016-2018 by Maksim Khramov
+   Changes copyright (C) 2016-2019 by Maksim Khramov
    Changes copyright (C) 2017 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -19,12 +19,11 @@ import artofillusion.object.*;
 import artofillusion.texture.*;
 import artofillusion.ui.*;
 import artofillusion.util.*;
+import java.beans.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.List;
 import java.util.zip.*;
-import java.beans.*;
 
 /**
  * The Scene class describes a collection of objects, arranged relative to each other to form a
@@ -979,7 +978,7 @@ public class Scene {
      */
     @Deprecated
     public List<ObjectInfo> getAllObjects() {
-        return Collections.unmodifiableList(objects);
+        return getObjects();
     }
 
     /**

@@ -73,7 +73,7 @@ public class SceneViewer extends ViewerCanvas {
         cameras.clear();
         cameras.addAll(theScene.getCameras());
 
-        for (ObjectInfo info : theScene.getAllObjects()) {
+        for (ObjectInfo info : theScene.getObjects()) {
             Object3D obj = info.getObject();
             if (obj instanceof DirectionalLight || obj instanceof SpotLight) {
                 cameras.add(info);

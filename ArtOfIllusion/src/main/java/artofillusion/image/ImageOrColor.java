@@ -128,14 +128,14 @@ public class ImageOrColor {
     public Widget getEditingPanel(final WindowWidget parent, final Scene theScene) {
         final RowContainer row = new RowContainer();
         final CustomWidget preview = new CustomWidget();
-        preview.setPreferredSize(new Dimension(ImageMap.PREVIEW_WIDTH, ImageMap.PREVIEW_HEIGHT));
+        preview.setPreferredSize(new Dimension(ImageMap.PREVIEW_SIZE_DEFAULT, ImageMap.PREVIEW_SIZE_DEFAULT));
         preview.addEventLink(RepaintEvent.class, new Object() {
             void processEvent(RepaintEvent ev) {
                 Graphics2D g = ev.getGraphics();
                 if (map != null) {
                     g.drawImage(map.getPreview(), 0, 0, null);
                 } else {
-                    g.drawRect(1, 1, ImageMap.PREVIEW_WIDTH - 2, ImageMap.PREVIEW_HEIGHT - 2);
+                    g.drawRect(1, 1, ImageMap.PREVIEW_SIZE_DEFAULT - 2, ImageMap.PREVIEW_SIZE_DEFAULT - 2);
                 }
             }
         });
@@ -147,7 +147,7 @@ public class ImageOrColor {
                 row.dispatchEvent(new ValueChangedEvent(row));
             }
         });
-        final Widget colorPatch = color.getSample(ImageMap.PREVIEW_WIDTH, ImageMap.PREVIEW_HEIGHT);
+        final Widget colorPatch = color.getSample(ImageMap.PREVIEW_SIZE_DEFAULT, ImageMap.PREVIEW_SIZE_DEFAULT);
         colorPatch.addEventLink(MouseClickedEvent.class, new Object() {
             void processEvent(MouseClickedEvent ev) {
                 new ColorChooser(parent, Translate.text("Color"), color);

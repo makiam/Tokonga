@@ -12,9 +12,9 @@ package artofillusion.translators;
 
 import artofillusion.*;
 import artofillusion.math.*;
-import artofillusion.ui.*;
 import artofillusion.object.*;
 import artofillusion.texture.*;
+import artofillusion.ui.*;
 import buoy.widget.*;
 import java.io.*;
 import java.util.*;
@@ -388,7 +388,7 @@ public class POVExporter {
             float dr = light.getDecayRate();
             double fadeDistance = MAXIMAL_LIGHT_FADE_DISTANCE;
             if (dr != 0.0) {
-                fadeDistance = 0.5 / (new Float(dr).doubleValue());
+                fadeDistance = 0.5 / Float.valueOf(dr).doubleValue();
             }
             double fadePower = 2.0;
             if (fadeDistance >= 5.0) {
@@ -434,7 +434,7 @@ public class POVExporter {
             float dr = light.getDecayRate();
             double fadeDistance = MAXIMAL_LIGHT_FADE_DISTANCE;
             if (dr != 0.0) {
-                fadeDistance = 0.5 / (new Float(dr).doubleValue());
+                fadeDistance = 0.5 / Float.valueOf(dr).doubleValue();
             }
             double fadePower = 2.0;
             if (fadeDistance >= 5.0) {

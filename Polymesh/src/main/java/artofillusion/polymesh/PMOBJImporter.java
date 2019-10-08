@@ -9,14 +9,6 @@
  */
 package artofillusion.polymesh;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
 import artofillusion.ArtOfIllusion;
 import artofillusion.Camera;
 import artofillusion.Scene;
@@ -41,6 +33,13 @@ import artofillusion.ui.Translate;
 import buoy.widget.BFileChooser;
 import buoy.widget.BFrame;
 import buoy.widget.BStandardDialog;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  * PMOBJImporter imports .OBJ files to Polymeshes.
@@ -123,7 +122,7 @@ public class PMOBJImporter {
 
                     for (int i = 0; i < 3; i++) {
                         try {
-                            val[i] = new Double(fields[i + 1]).doubleValue();
+                            val[i] = Double.parseDouble(fields[i + 1]);
                             if (val[i] < min[i]) {
                                 min[i] = val[i];
                             }
@@ -141,10 +140,9 @@ public class PMOBJImporter {
 
                     for (int i = 0; i < 3; i++) {
                         try {
-                            val[i] = new Double(fields[i + 1]).doubleValue();
+                            val[i] = Double.parseDouble(fields[i + 1]);
                         } catch (NumberFormatException ex) {
-                            throw new Exception("Illegal value '" + fields[i + 1]
-                                    + "' found in line " + lineno + ".");
+                            throw new Exception("Illegal value '" + fields[i + 1] + "' found in line " + lineno + ".");
                         }
                     }
                     normal.addElement(new Vec3(val[0], val[1], val[2]));
@@ -154,7 +152,7 @@ public class PMOBJImporter {
                     for (int i = 0; i < 3; i++) {
                         try {
                             if (i < fields.length - 1) {
-                                val[i] = new Double(fields[i + 1]).doubleValue();
+                                val[i] = Double.parseDouble(fields[i + 1]);
                             } else {
                                 val[i] = 0.0;
                             }
@@ -472,9 +470,9 @@ public class PMOBJImporter {
                 } else if ("Ks".equals(fields[0])) {
                     currentTexture.specular = parseColor(fields);
                 } else if ("d".equals(fields[0]) || "Tr".equals(fields[0])) {
-                    currentTexture.transparency = 1.0 - (new Double(fields[1]).doubleValue());
+                    currentTexture.transparency = 1.0 - (Double.parseDouble(fields[1]));
                 } else if ("Ns".equals(fields[0])) {
-                    currentTexture.shininess = new Double(fields[1]).doubleValue();
+                    currentTexture.shininess = Double.parseDouble(fields[1]);
                 } else if ("map_Kd".equals(fields[0])) {
                     currentTexture.diffuseMap = fields[1];
                 } else if ("map_Ka".equals(fields[0])) {
@@ -591,14 +589,11 @@ public class PMOBJImporter {
      * @return Description of the Return Value
      * @exception NumberFormatException Description of the Exception
      */
-    private static RGBColor parseColor(String fields[])
-            throws NumberFormatException {
+    private static RGBColor parseColor(String fields[]) throws NumberFormatException {
         if (fields.length < 4) {
             return null;
         }
-        return new RGBColor(new Double(fields[1]).doubleValue(),
-                new Double(fields[2]).doubleValue(),
-                new Double(fields[3]).doubleValue());
+        return new RGBColor(Double.parseDouble(fields[1]), Double.parseDouble(fields[2]), Double.parseDouble(fields[3]));
     }
 
     /**

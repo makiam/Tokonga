@@ -2,7 +2,8 @@
  *  Copyright (C) 1999-2004 by Peter Eastman (TriMeshViewer.java),
  *  Modifications for Winged Edge Mesh Copyright (C) 2004-2005 by Francois Guillet
  *  Modifications for mouse buttons Copyright (C) 2019 by Petri Ihalainen
- *
+    Changes copyright (C) 2019 by Maksim Khramov
+
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -12,20 +13,10 @@
  */
 package artofillusion.polymesh;
 
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.Polygon;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import artofillusion.MeshEditorWindow;
 import artofillusion.MeshViewer;
 import artofillusion.RenderingMesh;
 import artofillusion.TextureParameter;
-import artofillusion.TriMeshEditorWindow;
 import artofillusion.UndoRecord;
-import artofillusion.ViewerCanvas;
 import artofillusion.animation.SkeletonTool;
 import artofillusion.math.RGBColor;
 import artofillusion.math.Vec2;
@@ -36,13 +27,10 @@ import artofillusion.polymesh.PolyMesh.Wedge;
 import artofillusion.polymesh.PolyMesh.Wface;
 import artofillusion.polymesh.PolyMesh.Wvertex;
 import artofillusion.polymesh.QuadMesh.QuadEdge;
-import artofillusion.polymesh.QuadMesh.QuadVertex;
 import artofillusion.texture.FaceParameterValue;
 import artofillusion.ui.EditingTool;
 import artofillusion.ui.MeshEditController;
-
 import static artofillusion.ui.UIUtilities.*;
-
 import artofillusion.view.ConstantVertexShader;
 import artofillusion.view.FlatVertexShader;
 import artofillusion.view.ParameterVertexShader;
@@ -53,9 +41,12 @@ import artofillusion.view.VertexShader;
 import buoy.event.KeyPressedEvent;
 import buoy.event.MouseClickedEvent;
 import buoy.event.MouseMovedEvent;
-import buoy.event.WidgetEvent;
 import buoy.event.WidgetMouseEvent;
 import buoy.widget.RowContainer;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.Polygon;
+import java.util.ArrayList;
 
 /**
  * The PolyMeshViewer class is a component which displays a PolyMesh object and
@@ -839,11 +830,10 @@ public class PolyMeshViewer extends MeshViewer {
         }
 
         selected[i] = true;
-        currentTool.getWindow().setUndoRecord(new UndoRecord(currentTool.getWindow(),
-                false,
-                UndoRecord.SET_MESH_SELECTION,
-                new Object[]{controller,
-                    new Integer(controller.getSelectionMode()),
+        currentTool.getWindow().setUndoRecord(
+                new UndoRecord(currentTool.getWindow(), false,
+                        UndoRecord.SET_MESH_SELECTION, new Object[]{
+                    controller, controller.getSelectionMode(),
                     oldSelection}));
         controller.setSelection(selected);
         currentTool.getWindow().updateMenus();
@@ -1068,11 +1058,11 @@ public class PolyMeshViewer extends MeshViewer {
         }
         for (int k = 0; k < selected.length; k++) {
             if (selected[k] != oldSelection[k]) {
-                currentTool.getWindow().setUndoRecord(new UndoRecord(currentTool.getWindow(),
-                        false,
-                        UndoRecord.SET_MESH_SELECTION,
-                        new Object[]{controller,
-                            new Integer(controller.getSelectionMode()),
+                currentTool.getWindow().setUndoRecord(
+                        new UndoRecord(currentTool.getWindow(), false,
+                                UndoRecord.SET_MESH_SELECTION, new Object[]{
+                            controller, controller
+                                    .getSelectionMode(),
                             oldSelection}));
                 controller.setSelection(selected);
                 break;

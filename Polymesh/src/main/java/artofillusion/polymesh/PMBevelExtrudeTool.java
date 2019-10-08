@@ -9,9 +9,6 @@
  */
 package artofillusion.polymesh;
 
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-
 import artofillusion.Camera;
 import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
@@ -24,6 +21,8 @@ import artofillusion.ui.Translate;
 import buoy.event.WidgetMouseEvent;
 import buoy.widget.BComboBox;
 import buoy.widget.Widget;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
 
 /**
  * PMBevelExtrudeTool is an EditingTool used for beveling and extruding PolyMesh objects.
@@ -171,10 +170,10 @@ public class PMBevelExtrudeTool extends EditingTool {
         mesh.copyObject(origMesh);
         if (selectMode == PolyMeshEditorWindow.POINT_MODE) {
             sel = mesh.bevelVertices(selected, height);
-            theWindow.setHelpText(Translate.text("bevelExtrudeTool.dragText", new Double(1.0 - width), new Double(height)));
+            theWindow.setHelpText(Translate.text("bevelExtrudeTool.dragText", 1.0 - width, height));
         } else if (selectMode == PolyMeshEditorWindow.EDGE_MODE) {
             sel = mesh.bevelEdges(selected, height);
-            theWindow.setHelpText(Translate.text("bevelExtrudeTool.dragText", new Double(1.0 - width), new Double(height)));
+            theWindow.setHelpText(Translate.text("bevelExtrudeTool.dragText", 1.0 - width, height));
         } else {
             if (separateFaces) {
                 mesh.extrudeFaces(selected, height, (Vec3) null, Math.abs(1.0 - width), camZ, ctrlMod, shiftMod);
@@ -187,7 +186,7 @@ public class PMBevelExtrudeTool extends EditingTool {
                     sel[i] = selected[i];
                 }
             }
-            theWindow.setHelpText(Translate.text("bevelExtrudeTool.dragText", new Double(1.0 - width), new Double(height)));
+            theWindow.setHelpText(Translate.text("bevelExtrudeTool.dragText", 1.0 - width, height));
         }
         //mesh.copyObject( beveler.bevelMesh( height, width ) );
         controller.setMesh(mesh);

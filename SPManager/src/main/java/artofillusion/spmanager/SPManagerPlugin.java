@@ -13,16 +13,14 @@
 package artofillusion.spmanager;
 
 import artofillusion.*;
-import artofillusion.util.SearchlistClassLoader;
 import artofillusion.ui.*;
-
-import java.awt.*;
+import artofillusion.util.SearchlistClassLoader;
 import buoy.event.*;
 import buoy.widget.*;
-
+import java.awt.*;
 import java.io.*;
-import java.net.*;
 import java.lang.reflect.*;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -694,8 +692,7 @@ public class SPManagerPlugin implements Plugin {
                                 setBarValue(total > 0 ? 0 : -1);
                             }
 
-                            long dl = HttpSPMFileSystem
-                                    .downloadRemoteBinaryFile(url, path, info.length, stat, total, 0, errs);
+                            long dl = HttpSPMFileSystem.downloadRemoteBinaryFile(url, path, info.length, stat, total, 0, errs);
 
                             for (int i = 0; info.files != null && i < info.files.length; i++) {
                                 if (worker.interrupted()) {
@@ -708,8 +705,7 @@ public class SPManagerPlugin implements Plugin {
                                 setText(SPMTranslate.text("downloading", info.files[i]));
                                 pack();
 
-                                dl += HttpSPMFileSystem
-                                        .downloadRemoteBinaryFile(info.getAddFileURL(i), name, info.fileSizes[i], stat, total, dl, errs);
+                                dl += HttpSPMFileSystem.downloadRemoteBinaryFile(info.getAddFileURL(i), name, info.fileSizes[i], stat, total, dl, errs);
                             }
 
                             if (errs != null && errs.size() > 0) {
@@ -744,7 +740,7 @@ public class SPManagerPlugin implements Plugin {
         }
         ((Window) spmFrame.getComponent()).toFront();
         //spmFrame.layoutChildren();
-        ((Window) spmFrame.getComponent()).show();
+        ((Window) spmFrame.getComponent()).setVisible(true);
         //spmFrame.printBounds( spmFrame );
     }
 
@@ -756,7 +752,7 @@ public class SPManagerPlugin implements Plugin {
 
         spmFrame = new SPManagerFrame();
         ((Window) spmFrame.getComponent()).toFront();
-        ((Window) spmFrame.getComponent()).show();
+        ((Window) spmFrame.getComponent()).setVisible(true);
 
         old.dispose();
     }

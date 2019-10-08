@@ -70,7 +70,7 @@ public abstract class ObjectViewer extends ViewerCanvas {
 
         // Now check the rest of the scene.
         if (showScene) {
-            for (ObjectInfo info : theScene.getAllObjects()) {
+            for (ObjectInfo info : theScene.getObjects()) {
                 if (info == thisObjectInScene) {
                     continue;
                 }

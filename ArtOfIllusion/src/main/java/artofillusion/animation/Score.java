@@ -15,8 +15,6 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
-
-import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.*;
 import java.text.*;
@@ -25,6 +23,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
+import javax.swing.*;
 
 /**
  * This is a Widget which displays all the tracks for objects in a scene, and shows where their
@@ -1114,7 +1113,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         // Find the earliest keyframe on any track of any object.
 
         double minTime = Math.min(0.0, window.getScene().getTime());
-        for (ObjectInfo obj : window.getScene().getAllObjects()) {
+        for (ObjectInfo obj : window.getScene().getObjects()) {
             for (Track track : obj.getTracks()) {
                 double keyTimes[] = track.getKeyTimes();
                 if (keyTimes.length > 0) {
@@ -1131,7 +1130,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         // Find the latest keyframe on any track of any object.
 
         double maxTime = Math.max(0.0, window.getScene().getTime());
-        for (ObjectInfo obj : window.getScene().getAllObjects()) {
+        for (ObjectInfo obj : window.getScene().getObjects()) {
             for (Track track : obj.getTracks()) {
                 double keyTimes[] = track.getKeyTimes();
                 if (keyTimes.length > 0) {

@@ -74,7 +74,7 @@ public class ValueField extends BTextField {
             if ((constraints & INTEGER) != 0) {
                 val = (double) Integer.parseInt(getText());
             } else {
-                val = new Double(getText());
+                val = Double.valueOf(getText());
             }
         } catch (NumberFormatException ex) {
             return false;
@@ -118,7 +118,7 @@ public class ValueField extends BTextField {
             if ((constraints & INTEGER) != 0) {
                 val = (double) Integer.parseInt(getText());
             } else {
-                val = new Double(getText());
+                val = Double.valueOf(getText());
             }
         } catch (NumberFormatException ex) {
             setTextColor(false);

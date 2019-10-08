@@ -51,7 +51,7 @@ public class ArrayDialog extends BDialog {
 
         // get available curves
         curvesVector = new Vector<>(10, 10);
-        for (ObjectInfo obj : window.getScene().getAllObjects()) {
+        for (ObjectInfo obj : window.getScene().getObjects()) {
             if (obj.getObject() instanceof Curve) {
                 curvesVector.add(obj);
             }

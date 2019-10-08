@@ -71,7 +71,7 @@ public class ValueSlider extends WidgetContainer {
         double val;
 
         try {
-            val = new Double(field.getText());
+            val = Double.valueOf(field.getText());
         } catch (NumberFormatException ex) {
             field.getComponent().setForeground(Color.red);
             return;
