@@ -10,10 +10,16 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion;
 
-import artofillusion.math.*;
-import artofillusion.object.*;
-import artofillusion.object.TriangleMesh.*;
-import artofillusion.texture.*;
+import artofillusion.math.SVD;
+import artofillusion.math.Vec3;
+import artofillusion.object.TriangleMesh;
+import artofillusion.object.TriangleMesh.Edge;
+import artofillusion.object.TriangleMesh.Face;
+import artofillusion.object.TriangleMesh.Vertex;
+import artofillusion.texture.FaceParameterValue;
+import artofillusion.texture.FaceVertexParameterValue;
+import artofillusion.texture.ParameterValue;
+import artofillusion.texture.VertexParameterValue;
 import java.util.List;
 import java.util.Vector;
 
@@ -188,7 +194,7 @@ public class TriMeshBeveler {
         Vec3 temp = new Vec3();
 
         List<int[]> face = new Vector<>();
-        Vector<Vertex> vert = new Vector<>();
+        List<Vertex> vert = new Vector<>();
         List<int[]> bevel = new Vector<>();
 
         boolean someSelected[] = new boolean[v.length], allSelected[] = new boolean[v.length];
@@ -275,9 +281,8 @@ public class TriMeshBeveler {
                 coeff[2][0] = coeff[0][2];
                 coeff[2][1] = coeff[1][2];
                 SVD.solve(coeff, rhs, 1e-3);
-                temp.set(rhs[0], rhs[1], rhs[2]);
-                vert.setElementAt(offsetVertex(mesh, (Vertex) vert.get(i), temp), i);
-
+                temp.set(rhs[0], rhs[1], rhs[2]); 
+                vert.set(i, offsetVertex(mesh, vert.get(i), temp));
             } else if (someSelected[i]) {
                 // Find which faces directly touch each other.
 
@@ -404,7 +409,7 @@ public class TriMeshBeveler {
                     rhs[2] = 2.0 * height;
                     SVD.solve(coeff, rhs, 1e-3);
                     temp.set(rhs[0], rhs[1], rhs[2]);
-                    vert.addElement(offsetVertex(mesh, vert.get(i), temp));
+                    vert.add(offsetVertex(mesh, vert.get(i), temp));
 
                     // Modify the faces to use the new vertex.
                     k = vert.size() - 1;

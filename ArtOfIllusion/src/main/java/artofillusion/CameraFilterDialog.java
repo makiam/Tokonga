@@ -1,4 +1,5 @@
 /* Copyright (C) 2003-2009 by Peter Eastman
+ *  Changes copyright 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -16,9 +17,16 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is dialog in which the user can edit the list of filters attached to a camera.
@@ -358,7 +366,7 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
             upButton.setEnabled(selection > 0);
             downButton.setEnabled(selection > -1 && selection < filters.size() - 1);
             if (selection > -1) {
-                editorPane.setContent(((ImageFilter) filters.get(cameraFiltersList.getSelectedIndex())).getConfigPanel(filterChangedCallback));
+                editorPane.setContent(filters.get(cameraFiltersList.getSelectedIndex()).getConfigPanel(filterChangedCallback));
             } else {
                 editorPane.setContent(null);
             }
@@ -370,9 +378,9 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
          */
         private void rebuildFilterList() {
             cameraFiltersList.removeAll();
-            for (int i = 0; i < filters.size(); i++) {
-                cameraFiltersList.add(((ImageFilter) filters.get(i)).getName());
-            }
+            filters.forEach((filter) -> {
+                cameraFiltersList.add(filter.getName());
+            });
         }
 
         /**
@@ -433,7 +441,7 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
             if (sel == -1 || sel == filters.size() - 1) {
                 return;
             }
-            ImageFilter filt = (ImageFilter) filters.get(sel);
+            ImageFilter filt = filters.get(sel);
             filters.remove(sel);
             filters.add(sel + 1, filt);
             rebuildFilterList();

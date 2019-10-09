@@ -7,7 +7,7 @@ package artofillusion.util;
  *
  * Author: Nik Trevallyn-Jones, nik777@users.sourceforge.net
  * $Id: Exp $
- * Changes copyright (C) 2017-2018 by Maksim Khramov
+ * Changes copyright (C) 2017-2019 by Maksim Khramov
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
@@ -43,13 +43,14 @@ package artofillusion.util;
  *  V1.0	NTJ, April 2007.
  *		- Initial coding, based on a RemoteClassLoader used in AOS.
  */
-import java.util.ArrayList;
-import java.util.Vector;
-import java.util.Hashtable;
+import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
-
-import java.io.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * A class loader which loads classes using a searchlist of other classloaders.
@@ -109,9 +110,9 @@ import java.io.*;
  */
 public class SearchlistClassLoader extends ClassLoader {
 
-    protected Vector<Loader> list;
-    protected Vector<Loader> search;
-    protected Hashtable<String, Class> cache;
+    protected List<Loader> list;
+    protected List<Loader> search;
+    protected Map<String, Class> cache;
     protected Loader content = null;
     protected byte searchMode = SHARED;
     protected int divide = 0;
@@ -257,7 +258,7 @@ public class SearchlistClassLoader extends ClassLoader {
             }
         }
 
-        return (path.size() > 0 ? (URL[]) path.toArray(EMPTY_URL) : EMPTY_URL);
+        return path.size() > 0 ? path.toArray(EMPTY_URL) : EMPTY_URL;
     }
 
     /**
@@ -309,7 +310,7 @@ public class SearchlistClassLoader extends ClassLoader {
 
                     // cache the result
                     if (cache == null) {
-                        cache = new Hashtable(1024);
+                        cache = new Hashtable<>(1024);
                     }
                     cache.put(name, result);
 
@@ -371,8 +372,7 @@ public class SearchlistClassLoader extends ClassLoader {
      * @throws ClassNotFoundException if the class could not be loaded.
      */
     @Override
-    public Class findClass(String name)
-            throws ClassNotFoundException {
+    public Class findClass(String name) throws ClassNotFoundException {
         Loader ldr;
         Throwable err = null;
         Class result;
@@ -386,7 +386,7 @@ public class SearchlistClassLoader extends ClassLoader {
                 } // for non-shared loaders, we have to define the class manually
                 else {
                     // check the cache first
-                    result = (cache != null ? (Class) cache.get(name) : null);
+                    result = cache == null ? null : cache.get(name);
                     if (result != null) {
                         return result;
                     }
@@ -403,7 +403,7 @@ public class SearchlistClassLoader extends ClassLoader {
 
                             // cache the result
                             if (cache == null) {
-                                cache = new Hashtable(1024);
+                                cache = new Hashtable<>(1024);
                             }
                             cache.put(name, result);
 
@@ -416,9 +416,7 @@ public class SearchlistClassLoader extends ClassLoader {
             }
         }
 
-        throw (err != null
-                ? new ClassNotFoundException(name, err)
-                : new ClassNotFoundException(name));
+        throw (null == err ? new ClassNotFoundException(name) : new ClassNotFoundException(name, err));
     }
 
     /**
@@ -434,8 +432,7 @@ public class SearchlistClassLoader extends ClassLoader {
      */
     @Override
     public URL findResource(String path) {
-        System.out.println("findResource: looking in " + this + " for "
-                + path);
+        System.out.println("findResource: looking in " + this + " for " + path);
 
         URL url = null;
         Loader ldr;
@@ -444,8 +441,7 @@ public class SearchlistClassLoader extends ClassLoader {
             url = ldr.loader.getResource(path);
 
             if (url != null) {
-                System.out.println("found " + path + " in loader: "
-                        + ldr.loader);
+                System.out.println("found " + path + " in loader: " + ldr.loader);
 
                 break;
             }
@@ -466,8 +462,7 @@ public class SearchlistClassLoader extends ClassLoader {
     @Override
     public String findLibrary(String libname) {
         String fileName = System.mapLibraryName(libname);
-        System.out.println("findLibrary: looking in " + this + " for "
-                + libname + " as " + fileName);
+        System.out.println("findLibrary: looking in " + this + " for " + libname + " as " + fileName);
 
         int i, j;
         URL[] url;
@@ -493,14 +488,12 @@ public class SearchlistClassLoader extends ClassLoader {
                         file = new File(dir, fileName);
 
                         if (file.exists()) {
-                            System.out.println("found: "
-                                    + file.getAbsolutePath());
+                            System.out.println("found: " + file.getAbsolutePath());
 
                             return file.getAbsolutePath();
                         }
                     } catch (Exception e) {
-                        System.out.println("Ignoring url: " + url[j] + ": "
-                                + e);
+                        System.out.println("Ignoring url: " + url[j] + ": " + e);
                     }
                 }
             }
@@ -537,21 +530,19 @@ public class SearchlistClassLoader extends ClassLoader {
         switch (mode) {
             case SHARED:
                 // return shared loaders before non-shared loaders
-                result = (Loader) search.get(index);
+                result = search.get(index);
                 break;
 
             case NONSHARED: // return non-shared loaders before shared loaders
             {
                 int pos = index + divide;
-                result = (Loader) (pos < search.size()
-                        ? search.get(pos)
-                        : search.get(pos - divide));
+                result =  pos < search.size() ? search.get(pos) : search.get(pos - divide);
             }
             break;
 
             default:
                 // return loaders in the order in which they were added
-                result = (Loader) list.get(index);
+                result = list.get(index);
         }
 
         return result;

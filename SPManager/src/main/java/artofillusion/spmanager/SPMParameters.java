@@ -1,4 +1,3 @@
-
 /*
  *  Copyright 2004 Francois Guillet
  *  Changes copyright (C) 2019 by Maksim Khramov
@@ -495,11 +494,11 @@ public class SPMParameters {
      * get a filter value
      */
     public int getFilter(String name) {
-        return getFilterType((String) filters.get(name));
+        return getFilterType(filters.get(name));
     }
 
     public String getFilterString(String name) {
-        return (String) filters.get(name);
+        return filters.get(name);
     }
 
     /**

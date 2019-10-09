@@ -10,12 +10,6 @@ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.polymesh;
 
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.util.Vector;
-
-
 import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
 import artofillusion.math.Vec2;
@@ -27,7 +21,11 @@ import artofillusion.ui.MeshEditController;
 import artofillusion.ui.Translate;
 import buoy.event.KeyPressedEvent;
 import buoy.event.WidgetMouseEvent;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * PMKnifeTool is an EditingTool used fto divide edges of PolyMesh objects.
@@ -137,7 +135,7 @@ public class PMCreateFaceTool extends EditingTool {
                     return;
                 }
                 for (int i = 0; i < clickPoints.size(); i++) {
-                    Vec3 cpv = (Vec3) clickPoints.get(i);
+                    Vec3 cpv = clickPoints.get(i);
                     Vec2 ps = canvas.getCamera().getObjectToScreen().timesXY(cpv);
                     if (e.x < ps.x - PolyMeshViewer.HANDLE_SIZE / 2 || e.x > ps.x + PolyMeshViewer.HANDLE_SIZE / 2
                             || e.y < ps.y - PolyMeshViewer.HANDLE_SIZE / 2 || e.y > ps.y + PolyMeshViewer.HANDLE_SIZE / 2) {
@@ -192,7 +190,7 @@ public class PMCreateFaceTool extends EditingTool {
             newPoints[i] = clickPoints.get(i);
         }
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
-        PolyMesh origMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh origMesh = mesh.duplicate();
         if (to != -1) {
             if (!mesh.addFaceFromPoints(from, to, newPoints)) {
                 to = -1;

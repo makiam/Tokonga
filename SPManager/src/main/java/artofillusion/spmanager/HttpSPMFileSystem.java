@@ -292,7 +292,7 @@ public class HttpSPMFileSystem extends SPMFileSystem {
         }
         if (v != null) {
             // sort the list
-            String[] sarray = (String[]) v.toArray(EMPTY_STRING_ARRAY);
+            String[] sarray = v.toArray(EMPTY_STRING_ARRAY);
             Arrays.sort(sarray);
             for (int i = 0; i < sarray.length; i++) {
                 //String s = (String) v.elementAt( i );
@@ -484,10 +484,10 @@ public class HttpSPMFileSystem extends SPMFileSystem {
         int i, j;
         for (i = addTo.size() - 1; i > 0; i--) {
             j = i;
-            right = (SPMObjectInfo) addTo.get(i);
+            right = addTo.get(i);
 
             while (j > 0) {
-                left = (SPMObjectInfo) addTo.get(j - 1);
+                left = addTo.get(j - 1);
                 if (right.getName().compareTo(left.getName()) >= 0) {
                     break;
                 }

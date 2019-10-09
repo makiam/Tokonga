@@ -124,7 +124,7 @@ public class ManageSplitPane extends SPMSplitPane {
                 extName = extName.substring(0, extName.indexOf(':'));
 
                 //System.out.println("getFiles: extName=" + extName + "<<");
-                ext = getInfo(extName, (TreePath) pathMap.get(extType));
+                ext = getInfo(extName, pathMap.get(extType));
                 if (ext != null) {
                     ext.refcount++;
                 }
@@ -139,12 +139,12 @@ public class ManageSplitPane extends SPMSplitPane {
         SPMObjectInfo info = getSelectedNodeInfo();
 
         if (info.refcount > 0) {
-            JOptionPane.showMessageDialog((JFrame) SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("cannotDeleteRequired"), SPMTranslate.text("Delete", info.fileName), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("cannotDeleteRequired"), SPMTranslate.text("Delete", info.fileName), JOptionPane.ERROR_MESSAGE);
 
             return;
         }
 
-        int r = JOptionPane.showConfirmDialog((JFrame) SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("permanentlyDelete", info.fileName), SPMTranslate.text("warning"), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+        int r = JOptionPane.showConfirmDialog(SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("permanentlyDelete", info.fileName), SPMTranslate.text("warning"), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
         if (r == JOptionPane.YES_OPTION) {
             deleteFile(info);
         }
@@ -202,7 +202,7 @@ public class ManageSplitPane extends SPMSplitPane {
                         extName = extName.substring(0, extName.indexOf(':'));
 
                         //System.out.println("deleteFile: extName=" + extName + "<<");
-                        ext = getInfo(extName, (TreePath) pathMap.get(extType));
+                        ext = getInfo(extName, pathMap.get(extType));
                         if (ext != null) {
                             ext.refcount--;
                         }
@@ -228,7 +228,7 @@ public class ManageSplitPane extends SPMSplitPane {
      * Description of the Method
      */
     public void doDeleteAll() {
-        int r = JOptionPane.showConfirmDialog((JFrame) SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("permanentlyDeleteAll"),
+        int r = JOptionPane.showConfirmDialog(SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("permanentlyDeleteAll"),
                 SPMTranslate.text("warning"), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
         if (r == JOptionPane.YES_OPTION) {
             deleteAllSelected(toolScriptsPath);

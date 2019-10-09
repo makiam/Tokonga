@@ -13,14 +13,14 @@ package artofillusion.image;
 
 import artofillusion.*;
 import artofillusion.ui.*;
-import java.awt.*;
-import java.awt.image.*;
-import java.util.*;
-import javax.swing.*;
-import javax.imageio.*;
-import java.io.*;
 import buoy.event.*;
 import buoy.widget.*;
+import java.awt.*;
+import java.awt.image.*;
+import java.io.*;
+import java.util.*;
+import javax.imageio.*;
+import javax.swing.*;
 
 public class ImageDetailsDialog extends BDialog {
 
@@ -172,7 +172,7 @@ public class ImageDetailsDialog extends BDialog {
 
     private void paintImage() {
         try {
-            Graphics2D g = (Graphics2D) canvasImage.createGraphics();
+            Graphics2D g = canvasImage.createGraphics();
             Image image = im.getPreview(600);
             if (image == null) {
                 return;

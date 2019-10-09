@@ -152,9 +152,9 @@ public class PolyMeshViewer extends MeshViewer {
                 && ((PolyMeshEditorWindow) controller).getProjectOntoSurface());
         if (project && viewMesh.getSubdividedMesh() != null) {
             subMesh = viewMesh.getSubdividedMesh();
-            sv = (MeshVertex[]) subMesh.getVertices();
+            sv = subMesh.getVertices();
         } else {
-            sv = (MeshVertex[]) viewMesh.getVertices();
+            sv = viewMesh.getVertices();
         }
         Vec2 npt;
         for (int i = 0; i < length; i++) {
@@ -321,9 +321,9 @@ public class PolyMeshViewer extends MeshViewer {
         boolean project = (controller instanceof PolyMeshEditorWindow && ((PolyMeshEditorWindow) controller).getProjectOntoSurface());
         if (project && viewMesh.getSubdividedMesh() != null) {
             subMesh = viewMesh.getSubdividedMesh();
-            sv = (MeshVertex[]) subMesh.getVertices();
+            sv = subMesh.getVertices();
         } else {
-            sv = (MeshVertex[]) viewMesh.getVertices();
+            sv = viewMesh.getVertices();
         }
 
         for (int i = 0; i < screenVert.length; i++) {
@@ -688,7 +688,7 @@ public class PolyMeshViewer extends MeshViewer {
     @Override
     protected void mousePressed(WidgetMouseEvent e) {
         PolyMesh mesh = (PolyMesh) getController().getObject().getObject();
-        MeshVertex v[] = (MeshVertex[]) mesh.getVertices();
+        MeshVertex v[] = mesh.getVertices();
         Wedge ed[] = mesh.getEdges();
         Wface f[] = mesh.getFaces();
         int i;
@@ -822,7 +822,7 @@ public class PolyMeshViewer extends MeshViewer {
 
         // The click was on an unselected object. Select it and send an event to
         // the current tool.
-        boolean oldSelection[] = (boolean[]) selected.clone();
+        boolean oldSelection[] = selected.clone();
         if (!e.isShiftDown()) {
             for (k = 0; k < selected.length; k++) {
                 selected[k] = false;
@@ -924,7 +924,7 @@ public class PolyMeshViewer extends MeshViewer {
             moveToGrid(e);
         }
         endDraggingSelection();
-        boolean oldSelection[] = (boolean[]) selected.clone();
+        boolean oldSelection[] = selected.clone();
         boolean tolerant = (controller instanceof PolyMeshEditorWindow && ((PolyMeshEditorWindow) controller).tolerant);
         boolean hideFace[] = (controller instanceof PolyMeshEditorWindow
                 ? ((PolyMeshEditorWindow) controller).hideFace : new boolean[fc.length]);
@@ -1133,7 +1133,7 @@ public class PolyMeshViewer extends MeshViewer {
         Wface[] trueFaces = polymesh.getFaces();
         MeshVertex vt[] = pv;
         if (submesh != null) {
-            vt = (MeshVertex[]) submesh.getVertices();
+            vt = submesh.getVertices();
         }
 
         double u;

@@ -2137,7 +2137,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
                             }
 
                             int[] newIndices = getFaceVertices(faces[j]);
-                            int[] oldIndices = (int[]) facesTextureIndexMap.get(faceRef);
+                            int[] oldIndices = facesTextureIndexMap.get(faceRef);
                             for (int m = 0; m < 2; m++) {
                                 if (newIndices[m] >= vertCount) {
                                     double meanVal = 0;
@@ -5901,7 +5901,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         }
         if (!onePass) {
             //long time = new Date().getTime();
-            PolyMesh smoothedMesh = (PolyMesh) this.duplicate();
+            PolyMesh smoothedMesh = this.duplicate();
             smoothedMesh.smoothWholeMesh(tol, calcProjectedEdges, maxNs, true);
             int[] pe = null;
             if (calcProjectedEdges) {
@@ -11245,7 +11245,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         }
         short state = mirrorState;
         mirrorState = NO_MIRROR;
-        PolyMesh mesh = (PolyMesh) this.duplicate();
+        PolyMesh mesh = this.duplicate();
         //dumpMesh();
         mesh.setMirrorState(state);
         mesh.mirrorMesh();
@@ -13152,7 +13152,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 
     @Override
     public Property[] getProperties() {
-        return (Property[]) PROPERTIES.clone();
+        return PROPERTIES.clone();
     }
 
     @Override
@@ -13307,14 +13307,9 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
             }
         }
         for (int i = 0; i < edges.length; i++) {
-            edges[i].smoothness = (float) key.edgeSmoothness[i];
+            edges[i].smoothness = key.edgeSmoothness[i];
         }
-        /*
-		 * for ( int i = 0; i < faces.length; i++ ) { //1.0f = (float)
-		 * key.faceEdgeSmoothness[i]; //faces[i].centerSmoothness = (float)
-		 * key.facePointSmoothness[i]; //faces[i].convex = (boolean)
-		 * key.faceConvex[i]; }
-         */
+
         skeleton.copy(key.skeleton);
         resetMesh();
     }
@@ -13337,8 +13332,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
      */
     @Override
     public Object3D getPosableObject() {
-        PolyMesh m = (PolyMesh) duplicate();
-        return new Actor(m);
+        return new Actor(duplicate());
     }
 
     /**

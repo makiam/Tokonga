@@ -1,4 +1,3 @@
-
 /*
  *  Copyright 2004 François Guillet
  *  Changes copyright (C) 2019 by Maksim Khramov
@@ -72,7 +71,7 @@ public class SPMSetupFrame extends BDialog {
         Map<String, String> filters = parameters.getFilters();
 
         if (filters.size() > 0) {
-            String[] keys = (String[]) filters.keySet().toArray(EMPTY_STRING_ARRAY);
+            String[] keys = filters.keySet().toArray(EMPTY_STRING_ARRAY);
             Arrays.sort(keys);
 
             String filtName, filtVal, filtType;
@@ -83,7 +82,7 @@ public class SPMSetupFrame extends BDialog {
             LayoutInfo right = new LayoutInfo(LayoutInfo.EAST, LayoutInfo.NONE);
             for (i = 0; i < keys.length; i++) {
                 filtName = keys[i];
-                filtVal = (String) filters.get(filtName);
+                filtVal = filters.get(filtName);
 
                 System.out.println("filter: " + filtName + "=" + filtVal);
 
@@ -173,7 +172,7 @@ public class SPMSetupFrame extends BDialog {
         setContent(cc);
         addEventLink(WindowClosingEvent.class, this, "doCancel");
         pack();
-        ((JDialog) getComponent()).setLocationRelativeTo(frame.getComponent());
+        getComponent().setLocationRelativeTo(frame.getComponent());
         /*
          *  addButton.setEnabled( false );
          *  if ( rep.length <= 1 )
@@ -327,7 +326,7 @@ public class SPMSetupFrame extends BDialog {
         try {
             String text = repEntry.getText();
             new URL(text);
-            ((JTextField) repEntry.getComponent()).setForeground(Color.black);
+            repEntry.getComponent().setForeground(Color.black);
             String s[] = parameters.getRepositories();
             addButton.setEnabled(true);
             removeButton.setEnabled(false);
@@ -338,7 +337,7 @@ public class SPMSetupFrame extends BDialog {
                 }
             }
         } catch (MalformedURLException e) {
-            ((JTextField) repEntry.getComponent()).setForeground(Color.red);
+            repEntry.getComponent().setForeground(Color.red);
             addButton.setEnabled(false);
             removeButton.setEnabled(false);
         }

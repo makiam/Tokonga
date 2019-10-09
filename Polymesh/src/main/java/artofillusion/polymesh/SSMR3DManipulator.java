@@ -1,13 +1,15 @@
+/*
+ *  Changes copyright 2019 by Maksim Khramov
+
+ *  This program is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later version.
+ *  This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ *  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ */
+
 package artofillusion.polymesh;
-
-import java.awt.Color;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Polygon;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-
 
 import artofillusion.Camera;
 import artofillusion.MeshEditorWindow;
@@ -22,13 +24,17 @@ import artofillusion.object.MeshVertex;
 import artofillusion.ui.MeshEditController;
 import artofillusion.ui.ThemeManager;
 import artofillusion.ui.Translate;
-
 import static artofillusion.ui.UIUtilities.*;
-
 import buoy.event.KeyPressedEvent;
 import buoy.event.ToolTipEvent;
 import buoy.event.WidgetMouseEvent;
 import buoy.widget.BToolTip;
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 
 /**
  * This is the manipulator responsible for moving, resizing and rotating
@@ -137,24 +143,21 @@ public class SSMR3DManipulator
         specificRotHandles[0] = new RotationHandle(64, XAXIS, Color.blue);
         specificRotHandles[1] = new RotationHandle(64, YAXIS, Color.green);
         specificRotHandles[2] = new RotationHandle(64, ZAXIS, Color.red);
-        valueWidgetCallback
-                = new Runnable() {
+        valueWidgetCallback = new Runnable() {
 
             @Override
             public void run() {
                 doValueWidgetCallback();
             }
         };
-        validateWidgetValue
-                = new Runnable() {
+        validateWidgetValue = new Runnable() {
 
             @Override
             public void run() {
                 doValueWidgetValidate();
             }
         };
-        abortWidgetValue
-                = new Runnable() {
+        abortWidgetValue = new Runnable() {
 
             @Override
             public void run() {
@@ -371,8 +374,8 @@ public class SSMR3DManipulator
         view.drawLine(centerPoint, new Point((int) screenZ.x, (int) screenZ.y), zColor);
 
         // Draw the handles.
-        boxes[CENTER].x = (int) (centerPoint.x - HANDLE_SIZE / 2);
-        boxes[CENTER].y = (int) (centerPoint.y - HANDLE_SIZE / 2);
+        boxes[CENTER].x = centerPoint.x - HANDLE_SIZE / 2;
+        boxes[CENTER].y = centerPoint.y - HANDLE_SIZE / 2;
         view.drawImage(centerhandle, boxes[CENTER].x, boxes[CENTER].y);
         for (int i = 0; i < 2; i++) {
             boxes[X_MOVE + i].x = (int) (screenXHandle.x - HANDLE_SIZE / 2 + i * x2DHandleOffset.x);

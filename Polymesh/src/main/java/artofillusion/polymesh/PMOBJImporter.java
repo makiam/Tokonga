@@ -305,9 +305,9 @@ public class PMOBJImporter {
                 // be improved to deal correctly with per-face textures.
                 String texName = groupFaces.get(0).texture;
                 if (texName != null && textureTable.get(texName) != null) {
-                    Texture tex = (Texture) realizedTextures.get(texName);
+                    Texture tex = realizedTextures.get(texName);
                     if (tex == null) {
-                        tex = createTexture((TextureInfo) textureTable.get(texName), theScene, bfc.getDirectory(), imageMaps, parent);
+                        tex = createTexture(textureTable.get(texName), theScene, bfc.getDirectory(), imageMaps, parent);
                         realizedTextures.put(texName, tex);
                     }
                     if (tex instanceof Texture2D) {

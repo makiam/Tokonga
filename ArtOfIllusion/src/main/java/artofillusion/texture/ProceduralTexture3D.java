@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2008 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -59,7 +59,7 @@ public class ProceduralTexture3D extends Texture3D implements ProcedureOwner {
 
     @Override
     public void getTextureSpec(TextureSpec spec, double x, double y, double z, double xsize, double ysize, double zsize, double angle, double t, double param[]) {
-        Procedure pr = (Procedure) renderingProc.get();
+        Procedure pr = renderingProc.get();
         OutputModule output[] = pr.getOutputModules();
         PointInfo info = new PointInfo();
         info.x = x;
@@ -122,7 +122,7 @@ public class ProceduralTexture3D extends Texture3D implements ProcedureOwner {
 
     @Override
     public void getTransparency(RGBColor trans, double x, double y, double z, double xsize, double ysize, double zsize, double angle, double t, double param[]) {
-        Procedure pr = (Procedure) renderingProc.get();
+        Procedure pr = renderingProc.get();
         OutputModule output[] = pr.getOutputModules();
         PointInfo info = new PointInfo();
         info.x = x;
@@ -163,7 +163,7 @@ public class ProceduralTexture3D extends Texture3D implements ProcedureOwner {
 
     @Override
     public double getDisplacement(double x, double y, double z, double xsize, double ysize, double zsize, double t, double param[]) {
-        Procedure pr = (Procedure) renderingProc.get();
+        Procedure pr = renderingProc.get();
         OutputModule output[] = pr.getOutputModules();
         PointInfo info = new PointInfo();
         info.x = x;

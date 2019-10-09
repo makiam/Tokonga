@@ -1,5 +1,6 @@
 /* Copyright (C) 2001-2009 by Peter Eastman
    Modifications copyright (C) 2017 by Petri Ihalainen
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -14,8 +15,8 @@ import artofillusion.math.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
-import java.util.Date;
 import java.lang.ref.SoftReference;
+import java.util.Date;
 
 /**
  * HDRImage is an ImageMap subclass. It represents a high dynamic range image stored in Greg Ward's
@@ -178,8 +179,8 @@ public class HDRImage extends ImageMap {
             w = width[0];
             h = height[0];
         } else {
-            w = Math.max(Math.min(size, (int) Math.round(size * aspectRatio)), 1);
-            h = Math.max(Math.min(size, (int) Math.round(size / aspectRatio)), 1);
+            w = Math.max(Math.min(size, Math.round(size * aspectRatio)), 1);
+            h = Math.max(Math.min(size, Math.round(size / aspectRatio)), 1);
         }
         int data[] = new int[w * h];
         float xstep = width[0] / (float) w;

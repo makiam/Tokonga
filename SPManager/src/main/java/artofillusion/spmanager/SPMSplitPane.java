@@ -201,7 +201,7 @@ public class SPMSplitPane extends BSplitPane {
             void processEvent() {
                 int index = descSelect.getSelectedIndex();
                 if (descText != null && index < descText.size()) {
-                    objectDescription.setText((String) descText.get(index));
+                    objectDescription.setText(descText.get(index));
 
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
@@ -244,7 +244,7 @@ public class SPMSplitPane extends BSplitPane {
         objectName.setEditable(false);
         objectDescription.setEditable(false);
 
-        ((JTree) tree.getComponent()).putClientProperty("JTree.lineStyle", "Angled");
+        tree.getComponent().putClientProperty("JTree.lineStyle", "Angled");
         tree.setCellRenderer(new SPMTreeRenderer());
         tree.addEventLink(SelectionChangedEvent.class, this, "doTreeNodeSelection");
         tree.setMultipleSelectionEnabled(false);
@@ -261,8 +261,8 @@ public class SPMSplitPane extends BSplitPane {
                 = new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                int selRow = ((JTree) tree.getComponent()).getRowForLocation(e.getX(), e.getY());
-                TreePath selPath = ((JTree) tree.getComponent()).getPathForLocation(e.getX(), e.getY());
+                int selRow = tree.getComponent().getRowForLocation(e.getX(), e.getY());
+                TreePath selPath = tree.getComponent().getPathForLocation(e.getX(), e.getY());
                 if (selRow != -1) {
                     if (e.getClickCount() == 2) {
                         treeDoubleClick(selRow, selPath);
@@ -270,7 +270,7 @@ public class SPMSplitPane extends BSplitPane {
                 }
             }
         };
-        ((JTree) tree.getComponent()).addMouseListener(ml);
+        tree.getComponent().addMouseListener(ml);
         //setResizeWeight( 0.3 );
 
         pathMap = new Hashtable<>(8);
@@ -285,18 +285,12 @@ public class SPMSplitPane extends BSplitPane {
     protected void updateTree() {
     }
 
-
-    /*
-	 *  protected void updateTree(boolean force)
-	 *  {
-	 *  }
-     */
     /**
      * Description of the Method
      */
     public void doTreeNodeSelection() {
         TreePath[] tp = tree.getSelectedNodes();
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) ((JTree) tree.getComponent()).getLastSelectedPathComponent();
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getComponent().getLastSelectedPathComponent();
         if (node != null) {
             if (node.isLeaf() && (!node.getAllowsChildren())) {
                 if (node.getUserObject() != null) {
@@ -322,7 +316,7 @@ public class SPMSplitPane extends BSplitPane {
      */
     public SPMObjectInfo getSelectedNodeInfo() {
         TreePath[] tp = tree.getSelectedNodes();
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) ((JTree) tree.getComponent()).getLastSelectedPathComponent();
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) (tree.getComponent()).getLastSelectedPathComponent();
         if (node != null) {
             if (node.isLeaf() && (!node.getAllowsChildren())) {
                 if (node.getUserObject() != null) {
@@ -368,7 +362,7 @@ public class SPMSplitPane extends BSplitPane {
                         extType = ext.substring(ext.indexOf(':') + 1, ext.indexOf('=')).trim();
 
                         //System.out.println("extName=" + extName + "<<");
-                        if (getInfo(extName, (TreePath) pathMap.get(extType)) == null) {
+                        if (getInfo(extName, pathMap.get(extType)) == null) {
 
                             //TODO check for externals with pathnames
                             /*
@@ -421,7 +415,7 @@ public class SPMSplitPane extends BSplitPane {
             objectName.setText(name);
 
             if (descText != null && descText.size() > 0) {
-                objectDescription.setText((String) descText.get(0));
+                objectDescription.setText(descText.get(0));
             } else {
                 objectDescription.setText("");
             }
@@ -459,8 +453,7 @@ public class SPMSplitPane extends BSplitPane {
      * get the info for the named item of the named type
      */
     public SPMObjectInfo getInfo(String name, String type) {
-        TreePath path = (TreePath) pathMap.get(type);
-        return getInfo(name, path);
+        return getInfo(name, pathMap.get(type));
     }
 
     /**
@@ -468,16 +461,14 @@ public class SPMSplitPane extends BSplitPane {
      */
     public SPMObjectInfo getInfo(String name, TreePath path) {
         if (path == null) {
-            System.out.println("SPManager: poor XML content: "
-                    + "invalid external type (" + name + ")");
+            System.out.println("SPManager: poor XML content: invalid external type (" + name + ")");
             return null;
         }
 
         Object info;
         int max = tree.getChildNodeCount(path);
         for (int j = 0; j < max; j++) {
-            info = ((DefaultMutableTreeNode) tree.getChildNode(path, j)
-                    .getLastPathComponent()).getUserObject();
+            info = ((DefaultMutableTreeNode) tree.getChildNode(path, j).getLastPathComponent()).getUserObject();
 
             //System.out.println("info=" + info.toString() + "<<");
             if (name.equals(info.toString())) {
@@ -650,7 +641,7 @@ public class SPMSplitPane extends BSplitPane {
                 extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
                 extName = extName.substring(0, extName.indexOf(':'));
 
-                ext = getInfo(extName, (TreePath) pathMap.get(extType));
+                ext = getInfo(extName, pathMap.get(extType));
 
                 if (ext != null) {
                     if (info.isSelected()) {

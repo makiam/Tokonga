@@ -114,7 +114,7 @@ public class CSGEditorWindow extends ObjectEditorWindow {
         menubar.add(viewMenu);
         viewMenu.add(displayMenu = Translate.menu("displayMode"));
         displayItem = new BCheckBoxMenuItem[5];
-        ViewerCanvas view = (ViewerCanvas) theView[currentView];
+        ViewerCanvas view = theView[currentView];
         displayMenu.add(displayItem[0] = Translate.checkboxMenuItem("wireframeDisplay", this, "displayModeChanged", view.getRenderMode() == ViewerCanvas.RENDER_WIREFRAME));
         displayMenu.add(displayItem[1] = Translate.checkboxMenuItem("shadedDisplay", this, "displayModeChanged", view.getRenderMode() == ViewerCanvas.RENDER_FLAT));
         displayMenu.add(displayItem[2] = Translate.checkboxMenuItem("smoothDisplay", this, "displayModeChanged", view.getRenderMode() == ViewerCanvas.RENDER_SMOOTH));

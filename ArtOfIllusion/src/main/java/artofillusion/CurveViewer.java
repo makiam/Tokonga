@@ -1,5 +1,6 @@
 /* Copyright (C) 1999-2006 by Peter Eastman
    Modifications copyright (C) 2017 Petri Ihalainen
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -144,7 +145,7 @@ public class CurveViewer extends MeshViewer {
         }
         if (j > -1) {
             if (allowSelectionChange) {
-                boolean oldSelection[] = (boolean[]) selected.clone();
+                boolean oldSelection[] = selected.clone();
                 if (!e.isShiftDown()) {
                     for (i = 0; i < selected.length; i++) {
                         selected[i] = false;
@@ -194,7 +195,7 @@ public class CurveViewer extends MeshViewer {
         moveToGrid(e);
         endDraggingSelection();
         boolean selected[] = controller.getSelection();
-        boolean oldSelection[] = (boolean[]) selected.clone();
+        boolean oldSelection[] = selected.clone();
         if (draggingSelectionBox && !e.isShiftDown() && !e.isControlDown()) {
             for (i = 0; i < selected.length; i++) {
                 selected[i] = false;

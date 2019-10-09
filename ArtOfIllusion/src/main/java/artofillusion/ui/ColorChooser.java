@@ -1,4 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -108,7 +109,7 @@ public class ColorChooser extends BDialog {
         RowContainer recentColorRow = new RowContainer();
         center.add(recentColorRow, 0, 8, 3, 1);
         for (int i = 0; i < recentColors.size(); i++) {
-            final RGBColor color = ((RGBColor) recentColors.get(i));
+            final RGBColor color = recentColors.get(i);
             Widget sample = color.getSample(16, 16);
             recentColorRow.add(sample);
             sample.addEventLink(MousePressedEvent.class, new Object() {

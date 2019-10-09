@@ -10,12 +10,6 @@ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.polymesh;
 
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.util.Vector;
-
-
 import artofillusion.Camera;
 import artofillusion.MeshViewer;
 import artofillusion.UndoRecord;
@@ -29,7 +23,11 @@ import artofillusion.ui.EditingWindow;
 import artofillusion.ui.MeshEditController;
 import artofillusion.ui.Translate;
 import buoy.event.WidgetMouseEvent;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * PMKnifeTool is an EditingTool used fto divide edges of PolyMesh objects.
@@ -94,7 +92,7 @@ public class PMKnifeTool extends EditingTool {
             clickPoints.clear();
             clickPoints.add(e.getPoint());
             dragPoint = e.getPoint();
-            originalMesh = (PolyMesh) ((PolyMesh) controller.getObject().object).duplicate();
+            originalMesh = ((PolyMesh) controller.getObject().object).duplicate();
             //controller.setSelection( new boolean[originalMesh.getVertices().length] );
             MeshVertex[] v = originalMesh.getVertices();
             screenVert = new Point[v.length];
@@ -196,7 +194,7 @@ public class PMKnifeTool extends EditingTool {
             for (int k = 0; k < clickPoints.size() - 1; ++k) {
                 view.drawLine(clickPoints.get(k), clickPoints.get(k + 1), Color.black);
             }
-            view.drawLine((Point) clickPoints.get(clickPoints.size() - 1), dragPoint, Color.black);
+            view.drawLine(clickPoints.get(clickPoints.size() - 1), dragPoint, Color.black);
             for (int k = 0; k < clickPoints.size(); ++k) {
                 Point p1 = new Point(clickPoints.get(k));
                 Point p2 = new Point(p1);

@@ -1,5 +1,6 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
    Modifications Copyright (C) 2016-2017 Petri Ihalainen
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,14 +12,13 @@
 package artofillusion.view;
 
 import artofillusion.*;
-import artofillusion.texture.*;
 import artofillusion.math.*;
+import artofillusion.texture.*;
 import buoy.event.*;
-
 import java.awt.*;
 import java.awt.image.*;
-import java.util.*;
 import java.lang.ref.*;
+import java.util.*;
 
 /**
  * This is a CanvasDrawer which implements a software renderer for generating the contents of a
@@ -111,7 +111,7 @@ public class SoftwareCanvasDrawer implements CanvasDrawer {
                 bounds.width = bounds.height = 0;
             }
             theImage = new BufferedImage(bounds.width, bounds.height, BufferedImage.TYPE_INT_ARGB_PRE);
-            pixel = ((DataBufferInt) ((BufferedImage) theImage).getRaster().getDataBuffer()).getData();
+            pixel = ((DataBufferInt) theImage.getRaster().getDataBuffer()).getData();
             zbuffer = new int[bounds.width * bounds.height];
             if (imageGraphics != null) {
                 imageGraphics.dispose();
@@ -391,10 +391,10 @@ public class SoftwareCanvasDrawer implements CanvasDrawer {
                 if (z2 < clip) {
                     return;
                 }
-                double f = ((double) (clip - z1)) / (z2 - z1);
+                double f = (clip - z1) / (z2 - z1);
                 p1 = new Vec3(p1.x + f * (p2.x - p1.x), p1.y + f * (p2.y - p1.y), p1.z + f * (p2.z - p1.z));
             } else if (z2 < clip) {
-                double f = ((double) (clip - z2)) / (z1 - z2);
+                double f = (clip - z2) / (z1 - z2);
                 p2 = new Vec3(p2.x + f * (p1.x - p2.x), p2.y + f * (p1.y - p2.y), p2.z + f * (p1.z - p2.z));
             }
         }
