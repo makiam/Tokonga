@@ -1215,7 +1215,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }
         itemTree.removeObject(info);
         if (childIndex > -1 && info.getParent() == null) {
-            undo.addCommandAtBeginning(UndoRecord.ADD_TO_GROUP, new Object[]{parent, info, childIndex});
+            undo.addCommandAtBeginning(UndoRecord.ADD_TO_GROUP, parent, info, childIndex);
         }
         theScene.removeObject(which, undo);
         uiEventProcessor.addEvent(new Runnable() {

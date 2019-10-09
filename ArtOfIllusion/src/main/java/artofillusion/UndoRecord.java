@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
-   Changes copyright (C) 2017-2018 by Maksim Khramov
+   Changes copyright (C) 2017-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -45,7 +45,7 @@ public class UndoRecord {
 
     private final LinkedList<UndoAction> commands = new LinkedList<>();
 
-    private ArrayList<SoftReference[]> dataRef;
+    private List<SoftReference[]> dataRef;
     private File cacheFile;
     private boolean redo;
     private EditingWindow theWindow;
@@ -87,7 +87,7 @@ public class UndoRecord {
             return commandsToCache.contains(command);
         }
 
-        public UndoAction(Integer command, Object[] data) {
+        public UndoAction(Integer command, Object... data) {
             this.command = command;
             this.data = data;
         }
@@ -116,7 +116,7 @@ public class UndoRecord {
      * @param theCommand the command to add to the script
      * @param commandData data to include as arguments to the command
      */
-    public UndoRecord(EditingWindow win, boolean isRedo, int theCommand, Object commandData[]) {
+    public UndoRecord(EditingWindow win, boolean isRedo, int theCommand, Object... commandData) {
         this(win, isRedo);
         commands.add(new UndoAction(theCommand, commandData));
     }
@@ -144,7 +144,7 @@ public class UndoRecord {
      * @param theCommand the command to add to the script
      * @param commandData data to include as arguments to the command
      */
-    public final void addCommand(int theCommand, Object commandData[]) {
+    public final void addCommand(int theCommand, Object... commandData) {
         commands.add(new UndoAction(theCommand, commandData));
     }
 
@@ -154,7 +154,7 @@ public class UndoRecord {
      * @param theCommand the command to add to the script
      * @param commandData data to include as arguments to the command
      */
-    public void addCommandAtBeginning(int theCommand, Object commandData[]) {
+    public void addCommandAtBeginning(int theCommand, Object... commandData) {
         commands.addFirst(new UndoAction(theCommand, commandData));
     }
 
@@ -178,7 +178,7 @@ public class UndoRecord {
             switch (action.getCommand()) {
                 case COPY_OBJECT: {
                     Object3D obj1 = (Object3D) d[0], obj2 = (Object3D) d[1];
-                    redoRecord.addCommandAtBeginning(COPY_OBJECT, new Object[]{obj1, obj1.duplicate()});
+                    redoRecord.addCommandAtBeginning(COPY_OBJECT, obj1, obj1.duplicate());
                     obj1.copyObject(obj2);
                     if (theWindow.getScene() != null) {
                         theWindow.getScene().objectModified(obj1);
@@ -187,20 +187,20 @@ public class UndoRecord {
                 }
                 case COPY_COORDS: {
                     CoordinateSystem coords1 = (CoordinateSystem) d[0], coords2 = (CoordinateSystem) d[1];
-                    redoRecord.addCommandAtBeginning(COPY_COORDS, new Object[]{coords1, coords1.duplicate()});
+                    redoRecord.addCommandAtBeginning(COPY_COORDS, coords1, coords1.duplicate());
                     coords1.copyCoords(coords2);
                     break;
                 }
                 case COPY_OBJECT_INFO: {
                     ObjectInfo info1 = (ObjectInfo) d[0], info2 = (ObjectInfo) d[1];
-                    redoRecord.addCommandAtBeginning(COPY_OBJECT_INFO, new Object[]{info1, info1.duplicate()});
+                    redoRecord.addCommandAtBeginning(COPY_OBJECT_INFO, info1, info1.duplicate());
                     info1.copyInfo(info2);
                     break;
                 }
                 case SET_OBJECT: {
                     ObjectInfo info = (ObjectInfo) d[0];
                     Object3D obj = (Object3D) d[1];
-                    redoRecord.addCommandAtBeginning(SET_OBJECT, new Object[]{info, info.getObject()});
+                    redoRecord.addCommandAtBeginning(SET_OBJECT, info, info.getObject());
                     info.setObject(obj);
                     break;
                 }
@@ -226,7 +226,7 @@ public class UndoRecord {
                     LayoutWindow win = (LayoutWindow) theWindow;
                     int which = (Integer) d[0];
                     String oldName = (win.getScene().getObject(which)).getName();
-                    redoRecord.addCommandAtBeginning(RENAME_OBJECT, new Object[]{d[0], oldName});
+                    redoRecord.addCommandAtBeginning(RENAME_OBJECT, d[0], oldName);
                     win.setObjectName(which, (String) d[1]);
                     break;
                 }
@@ -234,7 +234,7 @@ public class UndoRecord {
                     int pos = (Integer) d[2];
                     ObjectInfo group = (ObjectInfo) d[0];
                     ObjectInfo child = (ObjectInfo) d[1];
-                    redoRecord.addCommandAtBeginning(REMOVE_FROM_GROUP, new Object[]{group, child});
+                    redoRecord.addCommandAtBeginning(REMOVE_FROM_GROUP, group, child);
                     group.addChild(child, pos);
                     break;
                 }
@@ -246,7 +246,7 @@ public class UndoRecord {
                     if (pos == group.getChildren().length) {
                         break;
                     }
-                    redoRecord.addCommandAtBeginning(ADD_TO_GROUP, new Object[]{group, child, pos});
+                    redoRecord.addCommandAtBeginning(ADD_TO_GROUP, group, child, pos);
                     group.removeChild(child);
                     break;
                 }
@@ -254,7 +254,7 @@ public class UndoRecord {
                     ObjectInfo group = (ObjectInfo) d[0];
                     ObjectInfo oldobj[] = group.getChildren();
                     ObjectInfo newobj[] = (ObjectInfo[]) d[1];
-                    redoRecord.addCommandAtBeginning(SET_GROUP_CONTENTS, new Object[]{group, oldobj});
+                    redoRecord.addCommandAtBeginning(SET_GROUP_CONTENTS, group, oldobj);
                     for (int j = 0; j < oldobj.length; j++) {
                         oldobj[j].setParent(null);
                     }
@@ -267,27 +267,27 @@ public class UndoRecord {
                 case SET_TRACK: {
                     ObjectInfo info = (ObjectInfo) d[0];
                     int which = (Integer) d[1];
-                    redoRecord.addCommandAtBeginning(SET_TRACK, new Object[]{info, d[1], info.getTracks()[which]});
+                    redoRecord.addCommandAtBeginning(SET_TRACK, info, d[1], info.getTracks()[which]);
                     info.getTracks()[which] = (Track) d[2];
                     break;
                 }
                 case SET_TRACK_LIST: {
                     ObjectInfo info = (ObjectInfo) d[0];
-                    redoRecord.addCommandAtBeginning(SET_TRACK_LIST, new Object[]{info, info.getTracks()});
+                    redoRecord.addCommandAtBeginning(SET_TRACK_LIST, info, info.getTracks());
                     info.tracks = (Track[]) d[1];
                     break;
                 }
                 case COPY_TRACK: {
                     Track tr1 = (Track) d[0];
                     Track tr2 = (Track) d[1];
-                    redoRecord.addCommandAtBeginning(COPY_TRACK, new Object[]{tr1, tr1.duplicate(tr1.getParent())});
+                    redoRecord.addCommandAtBeginning(COPY_TRACK, tr1, tr1.duplicate(tr1.getParent()));
                     tr1.copy(tr2);
                     break;
                 }
                 case COPY_VERTEX_POSITIONS: {
                     Mesh mesh = (Mesh) d[0];
                     Vec3 pos[] = (Vec3[]) d[1];
-                    redoRecord.addCommandAtBeginning(COPY_VERTEX_POSITIONS, new Object[]{mesh, mesh.getVertexPositions()});
+                    redoRecord.addCommandAtBeginning(COPY_VERTEX_POSITIONS, mesh, mesh.getVertexPositions());
                     mesh.setVertexPositions(pos);
                     if (theWindow.getScene() != null) {
                         theWindow.getScene().objectModified((Object3D) mesh);
@@ -296,7 +296,7 @@ public class UndoRecord {
                 }
                 case COPY_SKELETON: {
                     Skeleton s1 = (Skeleton) d[0], s2 = (Skeleton) d[1];
-                    redoRecord.addCommandAtBeginning(COPY_SKELETON, new Object[]{s1, s1.duplicate()});
+                    redoRecord.addCommandAtBeginning(COPY_SKELETON, s1, s1.duplicate());
                     s1.copy(s2);
                     break;
                 }
@@ -304,7 +304,7 @@ public class UndoRecord {
                     MeshEditController controller = (MeshEditController) d[0];
                     int mode = (Integer) d[1];
                     boolean selected[] = (boolean[]) d[2];
-                    redoRecord.addCommandAtBeginning(SET_MESH_SELECTION, new Object[]{controller, controller.getSelectionMode(), controller.getSelection().clone()});
+                    redoRecord.addCommandAtBeginning(SET_MESH_SELECTION, controller, controller.getSelectionMode(), controller.getSelection().clone());
                     controller.setSelectionMode(mode);
                     controller.setSelection(selected);
                     break;
@@ -322,7 +322,7 @@ public class UndoRecord {
             }
         }
         if (needRestoreSelection) {
-            redoRecord.addCommand(SET_SCENE_SELECTION, new Object[]{selection});
+            redoRecord.addCommand(SET_SCENE_SELECTION, selection);
         }
         theWindow.setModified();
         redoRecord.cacheToDisk();
@@ -362,7 +362,7 @@ public class UndoRecord {
             dataRef = new ArrayList<>();
             cacheFile = File.createTempFile("undoCache", "dat");
             cacheFile.deleteOnExit();
-
+            
             try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(cacheFile)))) {
                 for (UndoAction action : commands) {
                     Object d[] = action.getData();
@@ -385,7 +385,7 @@ public class UndoRecord {
                     }
                 }
             }
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             // Ignore errors, and just keep the data in memory.
         }
     }

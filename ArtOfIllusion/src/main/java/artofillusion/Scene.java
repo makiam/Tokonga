@@ -481,7 +481,7 @@ public class Scene {
         objectIndexMap = null;
 
         if (undo != null) {
-            undo.addCommandAtBeginning(UndoRecord.DELETE_OBJECT, new Object[]{index});
+            undo.addCommandAtBeginning(UndoRecord.DELETE_OBJECT, index);
         }
 
         updateSelectionInfo();
@@ -496,13 +496,13 @@ public class Scene {
         objects.removeElementAt(which);
         objectIndexMap = null;
         if (undo != null) {
-            undo.addCommandAtBeginning(UndoRecord.ADD_OBJECT, new Object[]{info, which});
+            undo.addCommandAtBeginning(UndoRecord.ADD_OBJECT, info, which);
         }
         if (info.getParent() != null) {
             int j;
             for (j = 0; info.getParent().getChildren()[j] != info; j++);
             if (undo != null) {
-                undo.addCommandAtBeginning(UndoRecord.ADD_TO_GROUP, new Object[]{info.getParent(), info, j});
+                undo.addCommandAtBeginning(UndoRecord.ADD_TO_GROUP, info.getParent(), info, j);
             }
             info.getParent().removeChild(j);
         }
@@ -514,7 +514,7 @@ public class Scene {
                 for (int k = 0; k < depends.length; k++) {
                     if (depends[k] == info) {
                         if (undo != null) {
-                            undo.addCommandAtBeginning(UndoRecord.COPY_TRACK, new Object[]{tr, tr.duplicate(tr.getParent())});
+                            undo.addCommandAtBeginning(UndoRecord.COPY_TRACK, tr, tr.duplicate(tr.getParent()));
                         }
                         obj.getTracks()[j].deleteDependencies(info);
                     }
