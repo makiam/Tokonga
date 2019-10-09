@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -84,7 +84,7 @@ public class MoveObjectTool extends EditingTool {
             for (i = 0; i < toMove.size(); i++) {
                 ObjectInfo info = toMove.elementAt(i);
                 c = info.getCoords();
-                undo.addCommand(UndoRecord.COPY_COORDS, new Object[]{c, c.duplicate()});
+                undo.addCommand(UndoRecord.COPY_COORDS, c, c.duplicate());
             }
             dragged = true;
         }
@@ -189,7 +189,7 @@ public class MoveObjectTool extends EditingTool {
         }
         for (i = 0; i < toMove.size(); i++) {
             c = toMove.elementAt(i).getCoords();
-            undo.addCommand(UndoRecord.COPY_COORDS, new Object[]{c, c.duplicate()});
+            undo.addCommand(UndoRecord.COPY_COORDS, c, c.duplicate());
             c.setOrigin(c.getOrigin().plus(v));
         }
         theWindow.getScene().applyTracksAfterModification(toMove);
