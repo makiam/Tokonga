@@ -1,4 +1,5 @@
 /* Copyright (C) 2007 by François Guillet
+ *  Changes copyright 2019 by Maksim Khramov
 
  This program is free software; you can redistribute it and/or modify it under the
  terms of the GNU General Public License as published by the Free Software
@@ -609,7 +610,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
     public TriangleMesh convertToTriangleMesh(double tol) {
         Vec3[] vertArray = new Vec3[vertices.length];
         for (int i = 0; i < vertArray.length; ++i) {
-            vertArray[i] = (Vec3) vertices[i].r;
+            vertArray[i] = vertices[i].r;
         }
         int[][] facesArray = new int[2 * faces.length][3];
         for (int i = 0; i < faces.length; i++) {
@@ -704,7 +705,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
             checkEdge(i, faces[i].e4, stack);
         }
         while (!stack.isEmpty()) {
-            QuadEdge ed = (QuadEdge) stack.pop();
+            QuadEdge ed = stack.pop();
             if (ed.mark) {
                 solveCriticalEdge(ed, stack);
             }
@@ -1827,7 +1828,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 
         Vec3[] vertArray = new Vec3[vertices.length];
         for (int i = 0; i < vertArray.length; ++i) {
-            vertArray[i] = (Vec3) vertices[i].r;
+            vertArray[i] = vertices[i].r;
         }
 
         // The mesh needs to be smooth shaded, so we need to calculate the normal vectors.

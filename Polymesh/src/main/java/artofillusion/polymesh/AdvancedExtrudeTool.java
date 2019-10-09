@@ -1,4 +1,5 @@
 /* Copyright (C) 2006-2007 by Francois Guillet
+   Changes copyright (C) 2019 by Maksim Khramov
 
  This program is free software; you can redistribute it and/or modify it under the
  terms of the GNU General Public License as published by the Free Software
@@ -8,9 +9,6 @@
  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
  PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.polymesh;
-
-import java.util.HashMap;
-
 
 import artofillusion.MeshViewer;
 import artofillusion.UndoRecord;
@@ -23,6 +21,7 @@ import artofillusion.ui.MeshEditController;
 import artofillusion.ui.Translate;
 import buoy.widget.BComboBox;
 import buoy.widget.Widget;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -100,7 +99,7 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool {
     private void doManipulatorPrepareShapingMesh(Manipulator.ManipulatorEvent e) {
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
         baseVertPos = mesh.getVertexPositions();
-        origMesh = (PolyMesh) mesh.duplicate();
+        origMesh = mesh.duplicate();
         selected = controller.getSelection();
         int selectMode = controller.getSelectionMode();
         if (selectMode == PolyMeshEditorWindow.FACE_MODE) {

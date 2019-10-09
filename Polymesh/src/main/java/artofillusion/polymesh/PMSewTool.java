@@ -1,4 +1,5 @@
 /* Copyright (C) 1999-2004 by Peter Eastman
+ *  Changes copyright 2019 by Maksim Khramov
 
 This program is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
@@ -8,11 +9,6 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
 PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.polymesh;
-
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-
 
 import artofillusion.Camera;
 import artofillusion.MeshViewer;
@@ -27,6 +23,9 @@ import artofillusion.ui.EditingWindow;
 import artofillusion.ui.MeshEditController;
 import artofillusion.ui.Translate;
 import buoy.event.WidgetMouseEvent;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
 
 /**
  * PMKnifeTool is an EditingTool used fto divide edges of PolyMesh objects.
@@ -70,7 +69,7 @@ public class PMSewTool extends EditingTool {
         if (!dragging) {
             dragging = true;
             selection = null;
-            originalMesh = (PolyMesh) ((PolyMesh) controller.getObject().object).duplicate();
+            originalMesh = ((PolyMesh) controller.getObject().object).duplicate();
             PolyMesh.Wedge[] edges = originalMesh.getEdges();
             MeshVertex[] v = originalMesh.getVertices();
             Vec3[] pr = new Vec3[v.length];

@@ -1,3 +1,13 @@
+/*
+ *  Changes copyright 2019 by Maksim Khramov
+
+ *  This program is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later version.
+ *  This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ *  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ */
 package artofillusion.polymesh;
 
 import artofillusion.ui.Translate;
@@ -311,10 +321,10 @@ public class PolyMeshValueWidget extends BorderContainer {
      * @param numCol The new number of columns to show
      */
     public static void setSpinnerColumns(BSpinner spinner, int numCol) {
-        JSpinner.NumberEditor ed = (JSpinner.NumberEditor) ((JSpinner) spinner.getComponent()).getEditor();
+        JSpinner.NumberEditor ed = (JSpinner.NumberEditor) spinner.getComponent().getEditor();
         JFormattedTextField field = ed.getTextField();
         field.setColumns(numCol);
-        ((JSpinner) spinner.getComponent()).setEditor(ed);
+        spinner.getComponent().setEditor(ed);
     }
 
     /**
@@ -324,10 +334,10 @@ public class PolyMeshValueWidget extends BorderContainer {
      * @param numDigits The new minimum number of fraction digits
      */
     public static void setSpinnerFractionDigits(BSpinner spinner, int numDigits) {
-        JSpinner.NumberEditor ed = (JSpinner.NumberEditor) ((JSpinner) spinner.getComponent()).getEditor();
+        JSpinner.NumberEditor ed = (JSpinner.NumberEditor) spinner.getComponent().getEditor();
         DecimalFormat format = ed.getFormat();
         format.setMinimumFractionDigits(1);
-        ((JSpinner) spinner.getComponent()).setEditor(ed);
+        spinner.getComponent().setEditor(ed);
     }
 
     public double getValueMin() {
