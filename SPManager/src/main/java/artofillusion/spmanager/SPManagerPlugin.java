@@ -1,4 +1,3 @@
-
 /*
  *  Copyright 2004 Francois Guillet
  *  Changes copyright (C) 2019 by Maksim Khramov
@@ -194,7 +193,7 @@ public class SPManagerPlugin implements Plugin {
                                         System.out.println("Could not add path" + url);
                                     }
                                 } else if ("import".equalsIgnoreCase(value)) {
-                                    ldr = (ClassLoader) loaders.get(url);
+                                    ldr = loaders.get(url);
 
                                     if (key.length == 1) {
                                         if (obj != null) {

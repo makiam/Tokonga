@@ -17,7 +17,6 @@ import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.List;
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -162,19 +161,17 @@ public class SPManagerFrame extends BFrame {
      * check for an update to ourselves (SPManager)
      */
     protected void checkForUpdatedMe() {
-        List<SPMObjectInfo> localList = manageSplitPane.getFileSystem().getPlugins();
-        List<SPMObjectInfo> remoteList = updateSplitPane.getFileSystem().getPlugins();
         SPMObjectInfo localinfo = null, remoteinfo = null;
 
-        for (int i = 0; i < localList.size(); i++) {
-            localinfo = (SPMObjectInfo) localList.get(i);
+        for (SPMObjectInfo item: manageSplitPane.getFileSystem().getPlugins()) {
+            localinfo = item;
             if ("SPManager".equals(localinfo.getName())) {
                 break;
             }
         }
 
-        for (int i = 0; i < remoteList.size(); i++) {
-            remoteinfo = (SPMObjectInfo) remoteList.get(i);
+        for (SPMObjectInfo item: updateSplitPane.getFileSystem().getPlugins()) {
+            remoteinfo = item;
             if ("SPManager".equals(remoteinfo.getName())) {
                 break;
             }
