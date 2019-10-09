@@ -380,7 +380,7 @@ public class RotateViewTool extends EditingTool {
             CoordinateSystem coords = parent.getChildren()[i].getCoords();
             CoordinateSystem oldCoords = coords.duplicate();
             coords.transformCoordinates(transform);
-            undo.addCommand(UndoRecord.COPY_COORDS, new Object[]{coords, oldCoords});
+            undo.addCommand(UndoRecord.COPY_COORDS, coords, oldCoords);
             moveChildren(parent.getChildren()[i], transform, undo);
         }
     }
