@@ -1,4 +1,5 @@
 /* Copyright (C) 2006 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -9,14 +10,11 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.ui;
 
+import artofillusion.*;
+import artofillusion.math.*;
 import buoy.event.*;
-
 import java.awt.*;
 import java.io.*;
-
-import artofillusion.math.*;
-import artofillusion.*;
-
 import javax.imageio.*;
 
 /**
@@ -82,7 +80,7 @@ public class NinePointManipulator extends EventSource implements Manipulator {
      * corresponding position. All images should be of the same size.
      */
     public NinePointManipulator(Image images[]) {
-        this.images = (Image[]) images.clone();
+        this.images = images.clone();
         for (int i = 0; i < images.length; i++) {
             if (images[i] != null) {
                 imageWidth = images[i].getWidth(null);

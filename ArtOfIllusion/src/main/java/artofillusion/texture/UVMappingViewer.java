@@ -1,4 +1,5 @@
 /* Copyright (C) 2002-2009 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,7 +18,6 @@ import artofillusion.ui.*;
 import static artofillusion.ui.UIUtilities.*;
 import buoy.event.*;
 import buoy.widget.*;
-
 import java.awt.*;
 import java.awt.event.*;
 
@@ -430,11 +430,11 @@ public class UVMappingViewer extends MeshViewer {
         MeshVertex v[] = uvmesh.getVertices();
 
         for (int i = v.length - 1; i >= 0; i--) {
-            int dx = (int) (screenVert[i].x - pos.x);
+            int dx = screenVert[i].x - pos.x;
             if (dx < -MARKER_SIZE || dx > MARKER_SIZE) {
                 continue;
             }
-            int dy = (int) (screenVert[i].y - pos.y);
+            int dy = screenVert[i].y - pos.y;
             if (dy < -MARKER_SIZE || dy > MARKER_SIZE) {
                 continue;
             }

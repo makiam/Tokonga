@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2012 by Peter Eastman
-   Changes copyright (C) 2017-2018 by Maksim Khramov
+   Changes copyright (C) 2017-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -19,7 +19,6 @@ import java.awt.*;
 import java.lang.reflect.*;
 import java.text.*;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -444,7 +443,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
     public void setScale(double s) {
         theAxis.setScale(s);
         for (int i = 0; i < graphs.size(); i++) {
-            ((TrackDisplay) graphs.get(i)).setScale(s);
+            graphs.get(i).setScale(s);
         }
         timeScale = s;
         repaintGraphs();

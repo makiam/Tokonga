@@ -24,11 +24,18 @@ import artofillusion.view.ViewAnimation;
 import buoy.event.*;
 import buoy.widget.*;
 import buoyx.docking.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.KeyEventPostProcessor;
+import java.awt.KeyboardFocusManager;
+import java.awt.Rectangle;
 import java.awt.event.*;
 import java.io.*;
 import java.text.*;
-import java.util.List;
 import java.util.*;
 import java.util.prefs.*;
 import javax.swing.*;
@@ -2709,7 +2716,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }
         double t = timeField.getValue();
         double fps = theScene.getFramesPerSecond();
-        t = Math.round(t * fps) / (double) fps;
+        t = Math.round(t * fps) / fps;
         setTime(t);
     }
 

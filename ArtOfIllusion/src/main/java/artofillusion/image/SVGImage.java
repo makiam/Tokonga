@@ -1,5 +1,6 @@
 /* Copyright (C) 2011-2012 by Peter Eastman
    Modifications copyright (C) 2017 by Petri Ihalainen
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -13,7 +14,6 @@ package artofillusion.image;
 import artofillusion.*;
 import artofillusion.math.*;
 import com.kitfox.svg.*;
-
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
@@ -78,8 +78,8 @@ public class SVGImage extends ImageMap {
     private BufferedImage createPreview(int size) throws SVGException {
         float aspectRatio = svg.getWidth() / svg.getHeight();
         int previewWidth, previewHeight;
-        previewWidth = Math.max(Math.min(size, (int) Math.round(size * aspectRatio)), 1);
-        previewHeight = Math.max(Math.min(size, (int) Math.round(size / aspectRatio)), 1);
+        previewWidth = Math.max(Math.min(size, Math.round(size * aspectRatio)), 1);
+        previewHeight = Math.max(Math.min(size, Math.round(size / aspectRatio)), 1);
         BufferedImage bi = new BufferedImage(previewWidth, previewHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = bi.createGraphics();
         g.setClip(0, 0, (int) svg.getWidth(), (int) svg.getHeight());
@@ -118,7 +118,7 @@ public class SVGImage extends ImageMap {
 
                 try {
                     BufferedImage image = createImage(x, y, scale);
-                    tile = ((DataBufferInt) ((BufferedImage) image).getRaster().getDataBuffer()).getData();
+                    tile = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
                 } catch (SVGException ex) {
                     ex.printStackTrace();
                     tile = new int[TILE_SIZE * TILE_SIZE];

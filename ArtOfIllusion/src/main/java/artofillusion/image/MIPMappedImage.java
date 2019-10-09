@@ -1,5 +1,6 @@
 /* Copyright (C) 2001-2009 by Peter Eastman
    Modifications copyright (C) 2017 by Petri Ihalainen
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -14,11 +15,11 @@ import artofillusion.math.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
+import static java.lang.Math.*;
+import java.lang.ref.SoftReference;
 import java.util.Date;
 import javax.imageio.*;
 import javax.swing.*;
-import static java.lang.Math.*;
-import java.lang.ref.SoftReference;
 
 /**
  * MIPMappedImage is an ImageMap subclass. It stores 8 bits per color component, and uses MIP
@@ -580,8 +581,8 @@ public class MIPMappedImage extends ImageMap {
 
     private int getMapNumber(int size) {
         int n, pw, ph;
-        pw = max(min(size, (int) round(size * aspectRatio)), 1);
-        ph = max(min(size, (int) round(size / aspectRatio)), 1);
+        pw = max(min(size, round(size * aspectRatio)), 1);
+        ph = max(min(size, round(size / aspectRatio)), 1);
         for (n = 0; ((n + 1 < maps.length) && (width[n + 1] >= pw) && (height[n + 1] >= ph)); n++);
 
         return n;
@@ -589,14 +590,14 @@ public class MIPMappedImage extends ImageMap {
 
     /**
      * Create a scaled image in the requested size. If size is larger than the original image a
-     * non-sclaed image is returned.
+     * non-scaled image is returned.
      */
     private Image createScaledImage(Image im, int size) {
         if (getWidth() <= size && getHeight() <= size) {
             return im;
         }
-        int pw = max(min(size, (int) round(size * aspectRatio)), 1);
-        int ph = max(min(size, (int) round(size / aspectRatio)), 1);
+        int pw = max(min(size, round(size * aspectRatio)), 1);
+        int ph = max(min(size, round(size / aspectRatio)), 1);
         return im.getScaledInstance(pw, ph, Image.SCALE_SMOOTH);
     }
 

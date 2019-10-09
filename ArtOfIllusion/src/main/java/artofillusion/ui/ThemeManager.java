@@ -1,6 +1,6 @@
 /* Copyright (C) 2007 by François Guillet
    Some parts copyright 2007 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2019 by Maksim Khramov
 
  This program is free software; you can redistribute it and/or modify it under the
  terms of the GNU General Public License as published by the Free Software
@@ -484,7 +484,7 @@ public class ThemeManager {
         ThemeInfo defaultSource = defaultTheme;
         int colon = name.indexOf(':');
         if (colon > -1) {
-            defaultSource = (ThemeInfo) themeIdMap.get(name.substring(0, colon));
+            defaultSource = themeIdMap.get(name.substring(0, colon));
             name = name.substring(colon + 1);
         }
         URL url = null;

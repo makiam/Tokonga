@@ -1,4 +1,5 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,7 +12,6 @@ package artofillusion.ui;
 
 import buoy.widget.*;
 import java.awt.*;
-import javax.swing.*;
 
 /**
  * A ValueField is a BTextField used for entering a numerical value. Constraints can be specified
@@ -107,7 +107,7 @@ public class ValueField extends BTextField {
      * Set the text color appropriately for whether the text is valid.
      */
     private void setTextColor(boolean valid) {
-        ((JTextField) getComponent()).setForeground(valid ? Color.black : Color.red);
+        getComponent().setForeground(valid ? Color.black : Color.red);
     }
 
     @Override

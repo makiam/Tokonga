@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -16,8 +16,8 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
-import java.util.Vector;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * ScaleObjectTool is an EditingTool used for resizing objects in a scene. For convenience, it also
@@ -391,28 +391,28 @@ public class ScaleObjectTool extends EditingTool {
             if (size < 1.0) {
                 size = 1.0;
             }
-            vscale = ((double) size) / ((double) halfy);
+            vscale = size / halfy;
         }
         if ((whichSides & BOTTOM) > 0) {
             size = dragPoint.y - centery;
             if (size < 1.0) {
                 size = 1.0;
             }
-            vscale = ((double) size) / ((double) halfy);
+            vscale = size / halfy;
         }
         if ((whichSides & LEFT) > 0) {
             size = centerx - dragPoint.x;
             if (size < 1.0) {
                 size = 1.0;
             }
-            hscale = ((double) size) / ((double) halfx);
+            hscale = size / halfx;
         }
         if ((whichSides & RIGHT) > 0) {
             size = dragPoint.x - centerx;
             if (size < 1.0) {
                 size = 1.0;
             }
-            hscale = ((double) size) / ((double) halfx);
+            hscale = size / halfx;
         }
         for (int i = 0; i < toMove.size(); i++) {
             if (scaleAll) {

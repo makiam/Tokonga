@@ -16,14 +16,15 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
-import java.awt.image.*;
 import java.awt.event.*;
+import java.awt.image.*;
 import java.io.*;
+import static java.lang.Math.*;
 import java.util.*;
 import javax.imageio.*;
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JViewport;
 import javax.swing.Timer;
-import static java.lang.Math.*;
 
 /**
  * ImagesDialog is a dialog box for editing the list of ImageMaps used in a scene.
@@ -393,7 +394,7 @@ public class ImagesDialog extends BDialog {
         }
 
         /**
-         * The timer that keeps launcing animation 'frames'
+         * The timer that keeps launching animation 'frames'
          */
         private Timer timer = new Timer((int) (1f / 61f * 1000f), new ActionListener() {
             @Override
@@ -463,7 +464,7 @@ public class ImagesDialog extends BDialog {
             Graphics2D g = ev.getGraphics();
             Font textFont = templateFont.deriveFont((float) (previewSize / 40 + 7));
 
-            textSize = (int) Math.round(textFont.getSize2D());
+            textSize = Math.round(textFont.getSize2D());
             iconSize = textSize + 21 + previewSize / 50;
             if (iconSize != lastIconSize) {
                 inUseIcon = loadIcon("in_use.png").getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);

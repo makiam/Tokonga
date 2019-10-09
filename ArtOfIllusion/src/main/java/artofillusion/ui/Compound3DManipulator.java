@@ -1,4 +1,5 @@
 /* Copyright (C) 2006-2009 by Francois Guillet and Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -9,14 +10,13 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.ui;
 
-import buoy.event.*;
 import artofillusion.*;
 import artofillusion.math.*;
-
-import javax.imageio.*;
+import buoy.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import javax.imageio.*;
 
 /**
  * This class displays a set of curves and handles around a selection in a ViewerCanvas. It
@@ -317,8 +317,8 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
         y2DaxisNormed.normalize();
         z2DaxisNormed.normalize();
         centerPoint = new Point((int) Math.round(axisCenter.x), (int) Math.round(axisCenter.y));
-        boxes[CENTER_INDEX].x = (int) (centerPoint.x - HANDLE_SIZE / 2);
-        boxes[CENTER_INDEX].y = (int) (centerPoint.y - HANDLE_SIZE / 2);
+        boxes[CENTER_INDEX].x = centerPoint.x - HANDLE_SIZE / 2;
+        boxes[CENTER_INDEX].y = centerPoint.y - HANDLE_SIZE / 2;
         view.drawImage(centerhandle, boxes[CENTER_INDEX].x, boxes[CENTER_INDEX].y);
         for (int i = 0; i < 2; i++) {
             boxes[X_MOVE_INDEX + i].x = (int) (screenXHandle.x - HANDLE_SIZE / 2 + i * x2DHandleOffset.x);
