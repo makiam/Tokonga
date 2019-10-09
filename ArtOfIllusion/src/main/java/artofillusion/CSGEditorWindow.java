@@ -260,8 +260,8 @@ public class CSGEditorWindow extends ObjectEditorWindow {
         for (i = 0; i < sel.length; i++) {
             obj[i] = theScene.getObject(sel[i]).getObject();
             coords[i] = theScene.getObject(sel[i]).getCoords();
-            undo.addCommand(UndoRecord.COPY_OBJECT, new Object[]{obj[i], obj[i].duplicate()});
-            undo.addCommand(UndoRecord.COPY_COORDS, new Object[]{coords[i], coords[i].duplicate()});
+            undo.addCommand(UndoRecord.COPY_OBJECT, obj[i], obj[i].duplicate());
+            undo.addCommand(UndoRecord.COPY_COORDS, coords[i], coords[i].duplicate());
         }
         if (sel.length == 1) {
             orig = coords[0].getOrigin();
@@ -369,8 +369,8 @@ public class CSGEditorWindow extends ObjectEditorWindow {
         for (i = 0; i < sel.length; i++) {
             obj = theScene.getObject(sel[i]).getObject();
             coords = theScene.getObject(sel[i]).getCoords();
-            undo.addCommand(UndoRecord.COPY_OBJECT, new Object[]{obj, obj.duplicate()});
-            undo.addCommand(UndoRecord.COPY_COORDS, new Object[]{coords, coords.duplicate()});
+            undo.addCommand(UndoRecord.COPY_OBJECT, obj, obj.duplicate());
+            undo.addCommand(UndoRecord.COPY_COORDS, coords, coords.duplicate());
             orig = coords.getOrigin();
             size = obj.getBounds().getSize();
             if (!Double.isNaN(values[0])) {
@@ -510,7 +510,7 @@ public class CSGEditorWindow extends ObjectEditorWindow {
             bounds = bounds.transformAndOutset(coords.fromLocal());
             center = bounds.getCenter();
             orig = coords.getOrigin();
-            undo.addCommand(UndoRecord.COPY_COORDS, new Object[]{coords, coords.duplicate()});
+            undo.addCommand(UndoRecord.COPY_COORDS, coords, coords.duplicate());
             if (xchoice.getSelectedIndex() == 1) {
                 orig.x += alignTo.x - bounds.maxx;
             } else if (xchoice.getSelectedIndex() == 2) {
@@ -562,7 +562,7 @@ public class CSGEditorWindow extends ObjectEditorWindow {
 
         // Center the objects.
         for (ObjectInfo info : objects) {
-            undo.addCommand(UndoRecord.COPY_COORDS, new Object[]{info.getCoords(), info.getCoords().duplicate()});
+            undo.addCommand(UndoRecord.COPY_COORDS, info.getCoords(), info.getCoords().duplicate());
             info.getCoords().setOrigin(info.getCoords().getOrigin().minus(center));
         }
         updateImage();

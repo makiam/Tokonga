@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman
-   Changes copyright (C) 2017-2018 by Maksim Khramov
+   Changes copyright (C) 2017-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -203,7 +203,7 @@ public class EditKeyframesDialog {
             } else {
                 dup = track[i].duplicate(null);
             }
-            undo.addCommand(UndoRecord.COPY_TRACK, new Object[]{track[i], dup});
+            undo.addCommand(UndoRecord.COPY_TRACK, track[i], dup);
         }
 
         // Perform the operation.

@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
    Modifications copyright (C) 2016-2017 Petri Ihalainen
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -1652,8 +1652,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         }
         double height = heightField.getValue();
         double width = widthField.getValue();
-        UndoRecord undo = new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{theMesh, theMesh.duplicate()});
-        undo.addCommand(UndoRecord.SET_MESH_SELECTION, new Object[]{this, selectMode, selected});
+        UndoRecord undo = new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, theMesh.duplicate());
+        undo.addCommand(UndoRecord.SET_MESH_SELECTION, this, selectMode, selected);
         setUndoRecord(undo);
 
         // Generate the new mesh.

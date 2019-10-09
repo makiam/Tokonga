@@ -333,7 +333,7 @@ public class ScaleObjectTool extends EditingTool {
             for (i = 0; i < toMove.size(); i++) {
                 ObjectInfo info = toMove.get(i);
                 c = info.getCoords();
-                undo.addCommand(UndoRecord.COPY_COORDS, new Object[]{c, c.duplicate()});
+                undo.addCommand(UndoRecord.COPY_COORDS, c, c.duplicate());
             }
             dragged = true;
         }
@@ -376,8 +376,8 @@ public class ScaleObjectTool extends EditingTool {
                 ObjectInfo info = toMove.get(i);
                 oldObj[i] = info.getObject().duplicate();
                 oldCoords[i] = info.getCoords().duplicate();
-                undo.addCommand(UndoRecord.COPY_COORDS, new Object[]{info.getCoords(), oldCoords[i]});
-                undo.addCommand(UndoRecord.COPY_OBJECT, new Object[]{info.getObject(), oldObj[i]});
+                undo.addCommand(UndoRecord.COPY_COORDS, info.getCoords(), oldCoords[i]);
+                undo.addCommand(UndoRecord.COPY_OBJECT, info.getObject(), oldObj[i]);
             }
             dragged = true;
         }

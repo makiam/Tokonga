@@ -137,6 +137,7 @@ public class CreatePolyMeshTool extends EditingTool {
     }
 
     @Override
+    @SuppressWarnings({"ConfusingArrayVararg", "PrimitiveArrayArgumentToVariableArgMethod"})
     public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view) {
         Scene theScene = ((LayoutWindow) theWindow).getScene();
         Camera cam = view.getCamera();
@@ -198,7 +199,7 @@ public class CreatePolyMeshTool extends EditingTool {
         info.addTrack(new PositionTrack(info), 0);
         info.addTrack(new RotationTrack(info), 1);
         UndoRecord undo = new UndoRecord(theWindow, false);
-        undo.addCommandAtBeginning(UndoRecord.SET_SCENE_SELECTION, new Object[]{((LayoutWindow) theWindow).getSelectedIndices()});
+        undo.addCommandAtBeginning(UndoRecord.SET_SCENE_SELECTION, ((LayoutWindow) theWindow).getSelectedIndices());
         ((LayoutWindow) theWindow).addObject(info, undo);
         theWindow.setUndoRecord(undo);
         ((LayoutWindow) theWindow).setSelection(theScene.getNumObjects() - 1);

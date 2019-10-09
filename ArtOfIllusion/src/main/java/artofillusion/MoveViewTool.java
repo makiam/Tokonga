@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
    Changes copyright (C) 2016-2019 by Petri Ihalainen
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -244,7 +244,7 @@ public class MoveViewTool extends EditingTool {
             CoordinateSystem coords = parent.getChildren()[i].getCoords();
             CoordinateSystem oldCoords = coords.duplicate();
             coords.transformCoordinates(transform);
-            undo.addCommand(UndoRecord.COPY_COORDS, new Object[]{coords, oldCoords});
+            undo.addCommand(UndoRecord.COPY_COORDS, coords, oldCoords);
             moveChildren(parent.getChildren()[i], transform, undo);
         }
     }

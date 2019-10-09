@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2008 by Peter Eastman
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -210,7 +210,7 @@ public class TubeEditorWindow extends CurveEditorWindow {
             Messages.information(Translate.text("tubeNeeds3Points"), this.getComponent());
             return;
         }
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{theTube, theTube.duplicate()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theTube, theTube.duplicate()));
         newv = new MeshVertex[vt.length - num];
         newt = new double[vt.length - num];
         news = new float[vt.length - num];
@@ -354,7 +354,7 @@ public class TubeEditorWindow extends CurveEditorWindow {
             newparam[j] = param[i];
             newsel[j] = selected[i];
         }
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{theTube, theTube.duplicate()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theTube, theTube.duplicate()));
         theTube.setShape(newpos, news, newt);
         for (i = 0; i < numParam; i++) {
             if (paramValue[i] instanceof VertexParameterValue) {
@@ -397,7 +397,7 @@ public class TubeEditorWindow extends CurveEditorWindow {
         if (!dlg.clickedOk() || Double.isNaN(thicknessField.getValue())) {
             return;
         }
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{theTube, theTube.duplicate()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theTube, theTube.duplicate()));
         for (int i = 0; i < selectDist.length; i++) {
             if (selectDist[i] == 0) {
                 thickness[i] = thicknessField.getValue();
