@@ -819,7 +819,7 @@ public class Scene {
                 continue;
             }
             if (undo != null) {
-                undo.addCommand(UndoRecord.SET_OBJECT, new Object[]{info, original});
+                undo.addCommand(UndoRecord.SET_OBJECT, info, original);
             }
             info.setObject(replaceWith);
             info.clearCachedMeshes();
