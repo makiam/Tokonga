@@ -685,7 +685,7 @@ public class SceneViewer extends ViewerCanvas {
         CoordinateSystem coords = obj.getCoords();
         CoordinateSystem oldCoords = coords.duplicate();
         coords.transformCoordinates(transform);
-        undo.addCommand(UndoRecord.COPY_COORDS, new Object[]{coords, oldCoords});
+        undo.addCommand(UndoRecord.COPY_COORDS, coords, oldCoords);
         for (int i = 0; i < obj.getChildren().length; i++) {
             moveChildren(obj.getChildren()[i], transform, undo);
         }
