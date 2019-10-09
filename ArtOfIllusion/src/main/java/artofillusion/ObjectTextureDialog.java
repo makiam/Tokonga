@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2015 by Peter Eastman
-   Changes copyright (C) 2016-2017 by Maksim Khramov
+   Changes copyright (C) 2016-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -562,7 +562,7 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
         ParameterValue paramValue[] = editObj.getObject().getParameterValues();
         UndoRecord undo = new UndoRecord(window, false);
         for (int i = 0; i < obj.length; i++) {
-            undo.addCommand(UndoRecord.COPY_OBJECT, new Object[]{obj[i].getObject(), obj[i].getObject().duplicate()});
+            undo.addCommand(UndoRecord.COPY_OBJECT, obj[i].getObject(), obj[i].getObject().duplicate());
             if (editObj.getObject().getTexture() instanceof LayeredTexture) {
                 LayeredMapping m = (LayeredMapping) editObj.getObject().getTextureMapping().duplicate(obj[i].getObject(), editObj.getObject().getTexture());
                 obj[i].setTexture(new LayeredTexture(m), m);
