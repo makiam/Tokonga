@@ -34,6 +34,8 @@ import java.awt.KeyEventPostProcessor;
 import java.awt.KeyboardFocusManager;
 import java.awt.Rectangle;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.text.*;
 import java.util.*;
@@ -44,7 +46,7 @@ import javax.swing.text.*;
 /**
  * The LayoutWindow class represents the main window for creating and laying out scenes.
  */
-public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuManager {
+public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuManager, PropertyChangeListener {
 
     SceneViewer theView[];
     BorderContainer viewPanel[];
@@ -81,7 +83,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     /**
      * Create a new LayoutWindow for editing a Scene. Usually, you will not use this constructor
-     * directly. Instead, call ModellingApp.newWindow(Scene s).
+     * directly. Instead, call ArtOfIllusion.newWindow(Scene s).
      */
     public LayoutWindow(Scene s) {
         super(s.getName() == null ? "Untitled" : s.getName());
@@ -216,6 +218,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         createViewMenu();
         createPopupMenu();
         preferences = Preferences.userNodeForPackage(getClass()).node("LayoutWindow");
+        ArtOfIllusion.getPreferences().addPropertyChangeListener(this);
         loadPreferences();
         numViewsShown = (numViewsShown == 1 ? 4 : 1);
         toggleViewsCommand();
@@ -926,11 +929,18 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             }
         }
         PluginRegistry.notifyPlugins(Plugin.class, Plugin.SCENE_WINDOW_CLOSING, this);
-        dispose();
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventPostProcessor(keyEventHandler);
+        dispose();        
         return true;
     }
 
+    @Override
+    public void dispose() {
+        super.dispose();
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventPostProcessor(keyEventHandler);
+        ArtOfIllusion.getPreferences().removePropertyChangeListener(this);
+    }
+
+    
     /**
      * Set the selected EditingTool for this window.
      */
@@ -3021,5 +3031,13 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     public BLabel getHelpText() {
         return helpText;
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        if(event.getPropertyName().equals("interactiveSurfaceError")) {
+            theScene.getObjects().forEach((item) -> { item.clearCachedMeshes(); });
+            updateImage();
+        }
     }
 }
