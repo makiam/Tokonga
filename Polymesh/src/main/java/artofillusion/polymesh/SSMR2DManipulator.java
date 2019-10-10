@@ -1,13 +1,5 @@
 package artofillusion.polymesh;
 
-import java.awt.Color;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-
-
 import artofillusion.Camera;
 import artofillusion.MeshEditorWindow;
 import artofillusion.MeshViewer;
@@ -19,13 +11,16 @@ import artofillusion.math.Vec3;
 import artofillusion.ui.MeshEditController;
 import artofillusion.ui.ThemeManager;
 import artofillusion.ui.Translate;
-
 import static artofillusion.ui.UIUtilities.*;
-
 import buoy.event.KeyPressedEvent;
 import buoy.event.ToolTipEvent;
 import buoy.event.WidgetMouseEvent;
 import buoy.widget.BToolTip;
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 
 /**
  * This is the manipulator responsible for moving, resizing and rotating mesh
@@ -553,7 +548,7 @@ public class SSMR2DManipulator
                         amplitude *= gridSize;
                     }
                     drag = view.getCamera().getCameraCoordinates().getZDirection().times(amplitude);
-                    ((MeshEditorWindow) ((MeshViewer) view).getController()).setHelpText(Translate.text("polymesh:moveCenterBy", new String[]{String.valueOf(Math.round(drag.x * 1e5) / 1e5), String.valueOf(Math.round(drag.y * 1e5) / 1e5), String.valueOf(Math.round(drag.z * 1e5) / 1e5)}));
+                    ((MeshEditorWindow) ((MeshViewer) view).getController()).setHelpText(Translate.text("polymesh:moveCenterBy", String.valueOf(Math.round(drag.x * 1e5) / 1e5), String.valueOf(Math.round(drag.y * 1e5) / 1e5), String.valueOf(Math.round(drag.z * 1e5) / 1e5)));
                     break;
             }
         } else {
@@ -646,7 +641,7 @@ public class SSMR2DManipulator
                         dragY = (int) Math.round(d * view.getScale());
                     }
                     drag = view.getCamera().findDragVector(moveCenter, dragX, dragY);
-                    ((MeshEditorWindow) ((MeshViewer) view).getController()).setHelpText(Translate.text("polymesh:moveCenterBy", new String[]{String.valueOf(Math.round(drag.x * 1e5) / 1e5), String.valueOf(Math.round(drag.y * 1e5) / 1e5), String.valueOf(Math.round(drag.z * 1e5) / 1e5)}));
+                    ((MeshEditorWindow) ((MeshViewer) view).getController()).setHelpText(Translate.text("polymesh:moveCenterBy", String.valueOf(Math.round(drag.x * 1e5) / 1e5), String.valueOf(Math.round(drag.y * 1e5) / 1e5), String.valueOf(Math.round(drag.z * 1e5) / 1e5)));
                     break;
             }
         }
@@ -719,7 +714,7 @@ public class SSMR2DManipulator
             m = Mat4.translation(scaleCenter.x, scaleCenter.y, scaleCenter.z).times(m);
             m = cam.getViewToWorld().times(m);
             m = ((MeshViewer) view).getDisplayCoordinates().toLocal().times(m);
-            ((MeshEditorWindow) ((MeshViewer) view).getController()).setHelpText(Translate.text("polymesh:scaleUVBy", new String[]{String.valueOf(Math.round(scaleX * 1e5) / 1e5), String.valueOf(Math.round(scaleY * 1e5) / 1e5)}));
+            ((MeshEditorWindow) ((MeshViewer) view).getController()).setHelpText(Translate.text("polymesh:scaleUVBy", String.valueOf(Math.round(scaleX * 1e5) / 1e5), String.valueOf(Math.round(scaleY * 1e5) / 1e5)));
             dispatchEvent(new ManipulatorScalingEvent(this, m, view));
         } else {
             dispatchEvent(new ManipulatorMovingEvent(this, drag, view));
@@ -804,7 +799,7 @@ public class SSMR2DManipulator
         m = coords.toLocal().times(m);
         if (!move) {
             dispatchEvent(new ManipulatorRotatingEvent(this, m, view));
-            ((MeshEditorWindow) ((MeshViewer) view).getController()).setHelpText(Translate.text("polymesh:rotateBy", new String[]{String.valueOf(Math.round(angle * 180 * 1e5 / Math.PI) / 1e5)}));
+            ((MeshEditorWindow) ((MeshViewer) view).getController()).setHelpText(Translate.text("polymesh:rotateBy", String.valueOf(Math.round(angle * 180 * 1e5 / Math.PI) / 1e5)));
         } else {
             view.repaint();
         }

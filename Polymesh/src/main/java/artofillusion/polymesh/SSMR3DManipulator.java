@@ -768,7 +768,7 @@ public class SSMR3DManipulator
             drag.z = Math.round(drag.z);
             drag.z /= gridSize;
         }
-        ((MeshEditorWindow) ((MeshViewer) view).getController()).setHelpText(Translate.text("polymesh:moveCenterBy", new String[]{String.valueOf(Math.round(drag.x * 1e5) / 1e5), String.valueOf(Math.round(drag.y * 1e5) / 1e5), String.valueOf(Math.round(drag.z * 1e5) / 1e5)}));
+        ((MeshEditorWindow) ((MeshViewer) view).getController()).setHelpText(Translate.text("polymesh:moveCenterBy", String.valueOf(Math.round(drag.x * 1e5) / 1e5), String.valueOf(Math.round(drag.y * 1e5) / 1e5), String.valueOf(Math.round(drag.z * 1e5) / 1e5)));
         dispatchEvent(new ManipulatorMovingEvent(this, drag, view));
     }
 
@@ -827,7 +827,7 @@ public class SSMR3DManipulator
                 break;
 
         }
-        ((MeshEditorWindow) ((MeshViewer) view).getController()).setHelpText(Translate.text("polymesh:moveBy", new String[]{String.valueOf(Math.round(amplitude * 1e5) / 1e5)}));
+        ((MeshEditorWindow) ((MeshViewer) view).getController()).setHelpText(Translate.text("polymesh:moveBy", String.valueOf(Math.round(amplitude * 1e5) / 1e5)));
         dispatchEvent(new ManipulatorMovingEvent(this, drag, view));
     }
 
@@ -893,10 +893,10 @@ public class SSMR3DManipulator
             CoordinateSystem coords = new CoordinateSystem(center, zaxis, yaxis);
             Mat4 m = Mat4.scale(scaleX, scaleY, scaleZ).times(coords.toLocal());
             m = coords.fromLocal().times(m);
-            if (handle != UV_EXTRA) {
-                ((MeshEditorWindow) ((MeshViewer) view).getController()).setHelpText(Translate.text("polymesh:scaleBy", new String[]{String.valueOf(Math.round(scale * 1e5) / 1e5)}));
+            if (handle == UV_EXTRA) {
+                ((MeshEditorWindow) ((MeshViewer) view).getController()).setHelpText(Translate.text("polymesh:scaleUVBy", String.valueOf(Math.round(scaleX * 1e5) / 1e5), String.valueOf(Math.round(scaleY * 1e5) / 1e5)));
             } else {
-                ((MeshEditorWindow) ((MeshViewer) view).getController()).setHelpText(Translate.text("polymesh:scaleUVBy", new String[]{String.valueOf(Math.round(scaleX * 1e5) / 1e5), String.valueOf(Math.round(scaleY * 1e5) / 1e5)}));
+                ((MeshEditorWindow) ((MeshViewer) view).getController()).setHelpText(Translate.text("polymesh:scaleBy", String.valueOf(Math.round(scale * 1e5) / 1e5)));
             }
 
             dispatchEvent(new ManipulatorScalingEvent(this, m, view));
@@ -924,7 +924,7 @@ public class SSMR3DManipulator
         mat = m.times(mat);
         mat = Mat4.translation(center.x, center.y, center.z).times(mat);
         dispatchEvent(new ManipulatorRotatingEvent(this, mat, view));
-        ((MeshEditorWindow) ((MeshViewer) view).getController()).setHelpText(Translate.text("polymesh:rotateBy", new String[]{String.valueOf(Math.round(rotAngle * 180 * 1e5 / Math.PI) / 1e5)}));
+        ((MeshEditorWindow) ((MeshViewer) view).getController()).setHelpText(Translate.text("polymesh:rotateBy", String.valueOf(Math.round(rotAngle * 180 * 1e5 / Math.PI) / 1e5)));
         return true;
     }
 
