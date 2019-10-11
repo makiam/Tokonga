@@ -32,16 +32,20 @@ import java.util.zip.*;
 public class Scene {
 
     private Vector<ObjectInfo> objects;
-    private Vector<Material> materials;
+    private List<Material> materials;
     private Vector<Texture> textures;
     private Vector<ImageMap> images;
+    
     private Vector<Integer> selection;
-    private Vector<ListChangeListener> textureListeners, materialListeners;
-    private HashMap<String, Object> metadataMap;
-    private HashMap<ObjectInfo, Integer> objectIndexMap;
+    private List<ListChangeListener> textureListeners, materialListeners;
+    
+    private Map<String, Object> metadataMap;
+    private Map<ObjectInfo, Integer> objectIndexMap;
+    
     private RGBColor ambientColor, environColor, fogColor;
     private Texture environTexture;
     private TextureMapping environMapping;
+    
     private int gridSubdivisions, environMode, framesPerSecond, nextID;
     private double fogDist, gridSpacing, time;
     private boolean fog, showGrid, snapToGrid, errorsLoading;
@@ -534,32 +538,27 @@ public class Scene {
     /**
      * Add a new Material to the scene.
      *
-     * @param mat the Material to add
+     * @param material the Material to add
      * @param index the position in the list to add it at
      */
-    public void addMaterial(Material mat, int index) {
-        materials.add(index, mat);
-        for (int i = 0; i < materialListeners.size(); i++) {
-            materialListeners.elementAt(i).itemAdded(materials.size() - 1, mat);
-        }
+    public void addMaterial(Material material, int index) {
+        materials.add(index, material);
+        final int pos = materials.size() - 1;
+        materialListeners.forEach((item) -> { item.itemAdded(pos, material); });
     }
 
     /**
      * Remove a Material from the scene.
      */
     public void removeMaterial(int which) {
-        Material mat = materials.elementAt(which);
+        Material mat = materials.get(which);
+        materials.remove(which);
+        materialListeners.forEach((item) -> { item.itemRemoved(which, mat); });
+        
+        objects.forEach((ObjectInfo item) -> {
+            if(item.getObject().getMaterial() == mat) item.setMaterial(null, null);
+        });
 
-        materials.removeElementAt(which);
-        for (int i = 0; i < materialListeners.size(); i++) {
-            materialListeners.elementAt(i).itemRemoved(which, mat);
-        }
-        for (int i = 0; i < objects.size(); i++) {
-            ObjectInfo obj = objects.elementAt(i);
-            if (obj.getObject().getMaterial() == mat) {
-                obj.setMaterial(null, null);
-            }
-        }
     }
 
     /**
@@ -592,7 +591,7 @@ public class Scene {
     public void addTexture(Texture tex, int index) {
         textures.add(index, tex);
         for (int i = 0; i < textureListeners.size(); i++) {
-            textureListeners.elementAt(i).itemAdded(textures.size() - 1, tex);
+            textureListeners.get(i).itemAdded(textures.size() - 1, tex);
         }
     }
 
@@ -604,14 +603,14 @@ public class Scene {
 
         textures.removeElementAt(which);
         for (int i = 0; i < textureListeners.size(); i++) {
-            textureListeners.elementAt(i).itemRemoved(which, tex);
+            textureListeners.get(i).itemRemoved(which, tex);
         }
         if (textures.isEmpty()) {
             UniformTexture defTex = new UniformTexture();
             defTex.setName("Default Texture");
             textures.addElement(defTex);
             for (int i = 0; i < textureListeners.size(); i++) {
-                textureListeners.elementAt(i).itemAdded(0, defTex);
+                textureListeners.get(i).itemAdded(0, defTex);
             }
         }
         Texture def = textures.elementAt(0);
@@ -668,18 +667,14 @@ public class Scene {
      * the Material that it has changed.
      */
     public void changeMaterial(int which) {
-        Material mat = materials.elementAt(which);
-        Object3D obj;
+        Material mat = materials.get(which);
 
-        for (int i = 0; i < objects.size(); i++) {
-            obj = objects.elementAt(i).getObject();
-            if (obj.getMaterial() == mat) {
-                obj.setMaterial(mat, obj.getMaterialMapping());
+        objects.forEach((item) -> {
+            if(item.getObject().getMaterial() == mat) {
+                item.getObject().setMaterial(mat, item.getObject().getMaterialMapping());
             }
-        }
-        for (int i = 0; i < materialListeners.size(); i++) {
-            materialListeners.elementAt(i).itemChanged(which, mat);
-        }
+        });
+        materialListeners.forEach((item) -> { item.itemChanged(which, mat); });
     }
 
     /**
@@ -702,37 +697,36 @@ public class Scene {
                 }
             }
         }
-        for (int i = 0; i < textureListeners.size(); i++) {
-            textureListeners.elementAt(i).itemChanged(which, tex);
-        }
+        textureListeners.forEach((item) -> { item.itemChanged(which, tex); });
+
     }
 
     /**
      * Add an object which wants to be notified when the list of Materials in the Scene changes.
      */
     public void addMaterialListener(ListChangeListener ls) {
-        materialListeners.addElement(ls);
+        materialListeners.add(ls);
     }
 
     /**
      * Remove an object from the set to be notified when the list of Materials changes.
      */
     public void removeMaterialListener(ListChangeListener ls) {
-        materialListeners.removeElement(ls);
+        materialListeners.remove(ls);
     }
 
     /**
      * Add an object which wants to be notified when the list of Textures in the Scene changes.
      */
     public void addTextureListener(ListChangeListener ls) {
-        textureListeners.addElement(ls);
+        textureListeners.add(ls);
     }
 
     /**
      * Remove an object from the set to be notified when the list of Textures changes.
      */
     public void removeTextureListener(ListChangeListener ls) {
-        textureListeners.removeElement(ls);
+        textureListeners.remove(ls);
     }
 
     /**
@@ -793,7 +787,7 @@ public class Scene {
             }
         }
         for (int i = 0; i < materials.size(); i++) {
-            if (materials.elementAt(i).usesImage(image)) {
+            if (materials.get(i).usesImage(image)) {
                 return false;
             }
         }
@@ -1064,7 +1058,7 @@ public class Scene {
      * Get the i'th material.
      */
     public Material getMaterial(int i) {
-        return materials.elementAt(i);
+        return materials.get(i);
     }
 
     /**
@@ -1073,7 +1067,7 @@ public class Scene {
      */
     public Material getMaterial(String name) {
         for (int i = 0; i < materials.size(); i++) {
-            Material mat = materials.elementAt(i);
+            Material mat = materials.get(i);
             if (mat.getName().equals(name)) {
                 return mat;
             }
@@ -1271,7 +1265,7 @@ public class Scene {
                         throw new IOException("Unknown class: " + classname);
                     }
                     con = cls.getConstructor(DataInputStream.class, Scene.class);
-                    materials.addElement((Material) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this));
+                    materials.add((Material) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this));
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     if (ex instanceof ClassNotFoundException) {
@@ -1281,7 +1275,7 @@ public class Scene {
                     }
                     UniformMaterial m = new UniformMaterial();
                     m.setName("<unreadable>");
-                    materials.addElement(m);
+                    materials.add(m);
                     errorsLoading = true;
                 }
             } catch (Exception ex) {
@@ -1548,7 +1542,7 @@ public class Scene {
         // Save the materials.
         out.writeInt(materials.size());
         for (i = 0; i < materials.size(); i++) {
-            mat = materials.elementAt(i);
+            mat = materials.get(i);
             out.writeUTF(mat.getClass().getName());
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             mat.writeToFile(new DataOutputStream(bos), this);
