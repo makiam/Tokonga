@@ -209,18 +209,10 @@ public class UVMappingEditorDialog extends BDialog {
         buttons.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(2, 2, 2, 2), new Dimension(0, 0)));
         buttons.add(Translate.button("ok", this, "doOk"));
         buttons.add(Translate.button("cancel", this, "doCancel"));
-        content.add(buttons,
-                BorderContainer.SOUTH,
-                new LayoutInfo(LayoutInfo.CENTER,
-                        LayoutInfo.NONE,
-                        new Insets(2, 2, 2, 2),
-                        new Dimension(0, 0)));
+        content.add(buttons, BorderContainer.SOUTH, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(2, 2, 2, 2), new Dimension(0, 0)));
         InputStream inputStream = null;
         try {
-            WidgetDecoder decoder
-                    = new WidgetDecoder(inputStream
-                            = getClass().getResource("interfaces/unfoldEditor.xml").openStream(),
-                            PolyMeshPlugin.resources);
+            WidgetDecoder decoder= new WidgetDecoder(inputStream = getClass().getResource("interfaces/unfoldEditor.xml").openStream(), PolyMeshPlugin.resources);
             borderContainer1 = (BorderContainer) decoder.getRootObject();
             uMinValue = ((BLabel) decoder.getObject("uMinValue"));
             uMaxValue = ((BLabel) decoder.getObject("uMaxValue"));
@@ -236,12 +228,7 @@ public class UVMappingEditorDialog extends BDialog {
             textureCB.addEventLink(ValueChangedEvent.class, this, "doTextureChanged");
             componentLabel = ((BLabel) decoder.getObject("componentLabel"));
             componentCB = ((BComboBox) decoder.getObject("componentCB"));
-            content.add(borderContainer1,
-                    BorderContainer.WEST,
-                    new LayoutInfo(LayoutInfo.CENTER,
-                            LayoutInfo.BOTH,
-                            new Insets(2, 2, 2, 2),
-                            new Dimension(0, 0)));
+            content.add(borderContainer1, BorderContainer.WEST, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets(2, 2, 2, 2), new Dimension(0, 0)));
             ArrayList<UVMeshMapping> mappings = mappingData.getMappings();
 
             for (int i = 0; i < mappings.size(); i++) {

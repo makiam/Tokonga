@@ -5472,52 +5472,36 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             backMaxSmoothness = mesh.getMaxSmoothness();
             InputStream inputStream = null;
             try {
-                WidgetDecoder decoder = new WidgetDecoder(getClass()
-                        .getResource("interfaces/controlledSmoothing.xml")
-                        .openStream());
-                ColumnContainer columnContainer1 = (ColumnContainer) decoder
-                        .getRootObject();
-                BLabel controlledSmoothing = ((BLabel) decoder
-                        .getObject("controlledSmoothing"));
-                controlledSmoothing.setText(Translate
-                        .text("polymesh:" + controlledSmoothing.getText()));
+                WidgetDecoder decoder = new WidgetDecoder(getClass().getResource("interfaces/controlledSmoothing.xml").openStream());
+                ColumnContainer columnContainer1 = (ColumnContainer) decoder.getRootObject();
+                BLabel controlledSmoothing = ((BLabel) decoder.getObject("controlledSmoothing"));
+                controlledSmoothing.setText(Translate.text("polymesh:" + controlledSmoothing.getText()));
                 applyCB = ((BCheckBox) decoder.getObject("applyCB"));
                 applyCB.setText(Translate.text("polymesh:" + applyCB.getText()));
-                applyCB
-                        .addEventLink(ValueChangedEvent.class, this,
-                                "doApplyCB");
+                applyCB.addEventLink(ValueChangedEvent.class, this, "doApplyCB");
                 maxAngle = ((BLabel) decoder.getObject("maxAngle"));
                 maxAngle.setText(Translate.text("polymesh:" + maxAngle.getText()));
-                BTextField maxAngleValue = ((BTextField) decoder
-                        .getObject("maxAngleValue"));
-                BTextField minAngleValue = ((BTextField) decoder
-                        .getObject("minAngleValue"));
+                BTextField maxAngleValue = ((BTextField) decoder .getObject("maxAngleValue"));
+                BTextField minAngleValue = ((BTextField) decoder.getObject("minAngleValue"));
                 minAngle = ((BLabel) decoder.getObject("minAngle"));
                 minAngle.setText(Translate.text("polymesh:" + minAngle.getText()));
                 angleRange = ((BLabel) decoder.getObject("angleRange"));
                 angleRange.setText(Translate.text("polymesh:" + angleRange.getText()));
-                smoothnessRange = ((BLabel) decoder
-                        .getObject("smoothnessRange"));
-                smoothnessRange.setText(Translate.text("polymesh:" + smoothnessRange
-                        .getText()));
+                smoothnessRange = ((BLabel) decoder.getObject("smoothnessRange"));
+                smoothnessRange.setText(Translate.text("polymesh:" + smoothnessRange.getText()));
                 minSmoothness = ((BLabel) decoder.getObject("minSmoothness"));
-                minSmoothness
-                        .setText(Translate.text("polymesh:" + minSmoothness.getText()));
-                BTextField minSmoothnessValue = ((BTextField) decoder
-                        .getObject("minSmoothnessValue"));
+                minSmoothness.setText(Translate.text("polymesh:" + minSmoothness.getText()));
+                BTextField minSmoothnessValue = ((BTextField) decoder.getObject("minSmoothnessValue"));
                 maxSmoothness = ((BLabel) decoder.getObject("maxSmoothness"));
-                maxSmoothness
-                        .setText(Translate.text("polymesh:" + maxSmoothness.getText()));
-                BTextField maxSmoothnessValue = ((BTextField) decoder
-                        .getObject("maxSmoothnessValue"));
+                maxSmoothness.setText(Translate.text("polymesh:" + maxSmoothness.getText()));
+                BTextField maxSmoothnessValue = ((BTextField) decoder.getObject("maxSmoothnessValue"));
                 BButton okButton = ((BButton) decoder.getObject("okButton"));
                 okButton.addEventLink(CommandEvent.class, this, "doOK");
                 okButton.setText(Translate.text("polymesh:ok"));
                 // applyButton = ((BButton) decoder.getObject("applyButton"));
                 // applyButton.addEventLink( CommandEvent.class, this, "doApply"
                 // );
-                BButton cancelButton = ((BButton) decoder
-                        .getObject("cancelButton"));
+                BButton cancelButton = ((BButton) decoder.getObject("cancelButton"));
                 cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
                 cancelButton.setText(Translate.text("polymesh:cancel"));
                 minAngleVF = new PMValueField(0.0, ValueField.NONNEGATIVE);
@@ -5533,28 +5517,18 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 maxAngleVF.setValue(mesh.getMaxAngle());
                 minSmoothnessVF.setValue(mesh.getMinSmoothness());
                 maxSmoothnessVF.setValue(mesh.getMaxSmoothness());
-                minAngleVF.addEventLink(ValueChangedEvent.class, this,
-                        "doApplyVF");
-                maxAngleVF.addEventLink(ValueChangedEvent.class, this,
-                        "doApplyVF");
-                minSmoothnessVF.addEventLink(ValueChangedEvent.class, this,
-                        "doApplyVF");
-                maxSmoothnessVF.addEventLink(ValueChangedEvent.class, this,
-                        "doApplyVF");
+                minAngleVF.addEventLink(ValueChangedEvent.class, this, "doApplyVF");
+                maxAngleVF.addEventLink(ValueChangedEvent.class, this, "doApplyVF");
+                minSmoothnessVF.addEventLink(ValueChangedEvent.class, this, "doApplyVF");
+                maxSmoothnessVF.addEventLink(ValueChangedEvent.class, this, "doApplyVF");
                 minAngleSlider = ((BSlider) decoder.getObject("minAngleSlider"));
                 maxAngleSlider = ((BSlider) decoder.getObject("maxAngleSlider"));
-                minSmoothnessSlider = ((BSlider) decoder
-                        .getObject("minSmoothnessSlider"));
-                maxSmoothnessSlider = ((BSlider) decoder
-                        .getObject("maxSmoothnessSlider"));
-                minAngleSlider.addEventLink(ValueChangedEvent.class, this,
-                        "doApplySL");
-                maxAngleSlider.addEventLink(ValueChangedEvent.class, this,
-                        "doApplySL");
-                minSmoothnessSlider.addEventLink(ValueChangedEvent.class, this,
-                        "doApplySL");
-                maxSmoothnessSlider.addEventLink(ValueChangedEvent.class, this,
-                        "doApplySL");
+                minSmoothnessSlider = ((BSlider) decoder.getObject("minSmoothnessSlider"));
+                maxSmoothnessSlider = ((BSlider) decoder.getObject("maxSmoothnessSlider"));
+                minAngleSlider.addEventLink(ValueChangedEvent.class, this, "doApplySL");
+                maxAngleSlider.addEventLink(ValueChangedEvent.class, this, "doApplySL");
+                minSmoothnessSlider.addEventLink(ValueChangedEvent.class, this, "doApplySL");
+                maxSmoothnessSlider.addEventLink(ValueChangedEvent.class, this, "doApplySL");
                 doApplyCB();
                 setContent(columnContainer1);
             } catch (IOException ex) {
@@ -5779,29 +5753,22 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             }
             InputStream inputStream = null;
             try {
-                WidgetDecoder decoder = new WidgetDecoder(
-                        inputStream = getClass().getResource(
-                                "interfaces/unfoldStatus.xml").openStream(),
-                        PolyMeshPlugin.resources);
+                WidgetDecoder decoder = new WidgetDecoder(inputStream = getClass().getResource("interfaces/unfoldStatus.xml").openStream(), PolyMeshPlugin.resources);
                 borderContainer1 = (BorderContainer) decoder.getRootObject();
                 progressBar = ((BProgressBar) decoder.getObject("progressBar"));
                 textArea = ((BTextArea) decoder.getObject("TextArea"));
-                rowContainer1 = ((RowContainer) decoder
-                        .getObject("RowContainer1"));
+                rowContainer1 = ((RowContainer) decoder.getObject("RowContainer1"));
                 proceedButton = ((BButton) decoder.getObject("proceedButton"));
                 advancedButton = ((BButton) decoder.getObject("advancedButton"));
-                advancedButton.addEventLink(CommandEvent.class, this,
-                        "doAdvancedButton");
+                advancedButton.addEventLink(CommandEvent.class, this, "doAdvancedButton");
                 residualLabel = ((BLabel) decoder.getObject("residualLabel"));
                 residualTF = ((BTextField) decoder.getObject("residualTF"));
                 setContent(borderContainer1);
-                proceedButton.addEventLink(CommandEvent.class, this,
-                        "doProceedButton");
+                proceedButton.addEventLink(CommandEvent.class, this, "doProceedButton");
                 residualVF = new PMValueField(residual, ValueField.POSITIVE);
                 residualVF.setTextField(residualTF);
                 residualVF.setValue(residual);
-                residualVF.addEventLink(ValueChangedEvent.class, this,
-                        "doResidualChanged");
+                residualVF.addEventLink(ValueChangedEvent.class, this, "doResidualChanged");
                 residualLabel.setVisible(false);
                 residualVF.setVisible(false);
             } catch (IOException ex) {
@@ -5922,8 +5889,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         private boolean[] orSel, newSel;
 
         public EdgeSmoothnessRangeDialog() {
-            super(PolyMeshEditorWindow.this, Translate
-                    .text("polymesh:smoothnessRange"), true);
+            super(PolyMeshEditorWindow.this, Translate.text("polymesh:smoothnessRange"), true);
             orSel = new boolean[selected.length];
             newSel = new boolean[selected.length];
             for (int i = 0; i < selected.length; i++) {
@@ -5932,19 +5898,12 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             setSelection(newSel);
             InputStream inputStream = null;
             try {
-                WidgetDecoder decoder = new WidgetDecoder(
-                        inputStream = getClass().getResource(
-                                "interfaces/smoothnessRange.xml").openStream(),
-                        PolyMeshPlugin.resources);
+                WidgetDecoder decoder = new WidgetDecoder(inputStream = getClass().getResource( "interfaces/smoothnessRange.xml").openStream(), PolyMeshPlugin.resources);
                 borderContainer1 = (BorderContainer) decoder.getRootObject();
-                minSmoothnessTF = ((BTextField) decoder
-                        .getObject("minSmoothnessTF"));
-                minSmoothnessSlider = ((BSlider) decoder
-                        .getObject("minSmoothnessSlider"));
-                maxSmoothnessTF = ((BTextField) decoder
-                        .getObject("maxSmoothnessTF"));
-                maxSmoothnessSlider = ((BSlider) decoder
-                        .getObject("maxSmoothnessSlider"));
+                minSmoothnessTF = ((BTextField) decoder.getObject("minSmoothnessTF"));
+                minSmoothnessSlider = ((BSlider) decoder.getObject("minSmoothnessSlider"));
+                maxSmoothnessTF = ((BTextField) decoder.getObject("maxSmoothnessTF"));
+                maxSmoothnessSlider = ((BSlider) decoder.getObject("maxSmoothnessSlider"));
                 minSmoothnessSlider.addEventLink(ValueChangedEvent.class, this, "doMinSliderChanged");
                 maxSmoothnessSlider.addEventLink(ValueChangedEvent.class, this, "doMaxSliderChanged");
                 addButton = ((BButton) decoder.getObject("addButton"));
