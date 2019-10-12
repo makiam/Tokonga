@@ -29,15 +29,17 @@ import java.util.zip.*;
  * The Scene class describes a collection of objects, arranged relative to each other to form a
  * scene, as well as the available textures and materials, environment options, etc.
  */
-public class Scene extends MaterialLibrary {
+public class Scene {
 
     private List<ObjectInfo> objects;
     private List<Material> materials;
     private List<Texture> textures;
     private List<ImageMap> images;
     
-    private Vector<Integer> selection;
-    private List<ListChangeListener> textureListeners, materialListeners;
+    private Vector<Integer> selection = new Vector<>();
+    
+    private List<ListChangeListener> textureListeners = new Vector<>();
+    private List<ListChangeListener> materialListeners = new Vector<>();
     
     private Map<String, Object> metadataMap;
     private Map<ObjectInfo, Integer> objectIndexMap;
@@ -68,10 +70,9 @@ public class Scene extends MaterialLibrary {
         materials = new Vector<>();
         textures = new Vector<>();
         images = new Vector<>();
-        selection = new Vector<>();
+        
         metadataMap = new HashMap<>();
-        textureListeners = new Vector<>();
-        materialListeners = new Vector<>();
+
         defTex.setName("Default Texture");
         textures.add(defTex);
         ambientColor = new RGBColor(0.3f, 0.3f, 0.3f);
@@ -507,16 +508,15 @@ public class Scene extends MaterialLibrary {
             }
             info.getParent().removeChild(j);
         }
+        
         for (ObjectInfo obj: objects) {            
-            for (int j = 0; j < obj.getTracks().length; j++) {
-                Track tr = obj.getTracks()[j];
-                ObjectInfo depends[] = tr.getDependencies();
-                for (int k = 0; k < depends.length; k++) {
-                    if (depends[k] == info) {
+            for (Track track: obj.getTracks()) {
+                for (ObjectInfo dependency:  track.getDependencies()) {
+                    if (dependency == info) {
                         if (undo != null) {
-                            undo.addCommandAtBeginning(UndoRecord.COPY_TRACK, tr, tr.duplicate(tr.getParent()));
+                            undo.addCommandAtBeginning(UndoRecord.COPY_TRACK, track, track.duplicate(track.getParent()));
                         }
-                        obj.getTracks()[j].deleteDependencies(info);
+                        track.deleteDependencies(info);
                     }
                 }
             }
@@ -1080,7 +1080,7 @@ public class Scene extends MaterialLibrary {
         int sel[] = new int[selection.size()];
 
         for (int i = 0; i < sel.length; i++) {
-            sel[i] = selection.elementAt(i);
+            sel[i] = selection.get(i);
         }
         return sel;
     }
