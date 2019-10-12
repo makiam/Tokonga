@@ -9,7 +9,6 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.tool.hint;
 
-import artofillusion.ArtOfIllusion;
 import artofillusion.BevelExtrudeTool;
 import artofillusion.CreateCameraTool;
 import artofillusion.CreateCubeTool;
@@ -24,7 +23,6 @@ import artofillusion.MoveObjectTool;
 import artofillusion.MoveScaleRotateMeshTool;
 import artofillusion.MoveScaleRotateObjectTool;
 import artofillusion.MoveViewTool;
-import artofillusion.PluginRegistry;
 import artofillusion.ReshapeMeshTool;
 import artofillusion.RotateMeshTool;
 import artofillusion.RotateObjectTool;
@@ -35,31 +33,29 @@ import artofillusion.SkewMeshTool;
 import artofillusion.TaperMeshTool;
 import artofillusion.ThickenMeshTool;
 import artofillusion.animation.SkeletonTool;
+import artofillusion.test.util.RegisterTestResources;
 import artofillusion.texture.MoveUVViewTool;
 import artofillusion.ui.EditingTool;
 import artofillusion.ui.GenericTool;
-import artofillusion.ui.ThemeManager;
 import artofillusion.ui.Translate;
 import java.util.Locale;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
 
 /**
  *
  * @author MaksK
  */
 public class TestToolsHints {
-
-    public TestToolsHints() {
-    }
-
+    
+    @ClassRule
+    public static final RegisterTestResources res = new RegisterTestResources();
+    
     @BeforeClass
     public static void setUpClass() {
         Translate.setLocale(Locale.ENGLISH);
-        PluginRegistry.registerResource("TranslateBundle", "artofillusion", ArtOfIllusion.class.getClassLoader(), "artofillusion", null);
-        PluginRegistry.registerResource("UITheme", "default", ArtOfIllusion.class.getClassLoader(), "artofillusion/Icons/defaultTheme.xml", null);
-        ThemeManager.initThemes();
     }
 
     @Test

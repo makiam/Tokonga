@@ -9,6 +9,7 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.tool.help;
 
+import artofillusion.test.util.RegisterTestResources;
 import artofillusion.ArtOfIllusion;
 
 import artofillusion.BevelExtrudeTool;
@@ -50,6 +51,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.ClassRule;
 
 /**
  *
@@ -59,16 +61,12 @@ public class TestToolsHelp {
 
     private static LayoutWindow layout;
 
-    public TestToolsHelp() {
-    }
-
+    @ClassRule
+    public static final RegisterTestResources res = new RegisterTestResources();
+    
     @BeforeClass
     public static void setUpClass() {
         Translate.setLocale(Locale.ENGLISH);
-        PluginRegistry.registerResource("TranslateBundle", "artofillusion", ArtOfIllusion.class.getClassLoader(), "artofillusion", null);
-        PluginRegistry.registerResource("UITheme", "default", ArtOfIllusion.class.getClassLoader(), "artofillusion/Icons/defaultTheme.xml", null);
-        ThemeManager.initThemes();
-
         layout = new LayoutWindow(new Scene());
     }
 
