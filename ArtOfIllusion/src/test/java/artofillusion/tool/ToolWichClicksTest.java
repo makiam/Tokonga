@@ -36,12 +36,14 @@ import artofillusion.TaperMeshTool;
 import artofillusion.ThickenMeshTool;
 import artofillusion.animation.SkeletonTool;
 import artofillusion.texture.MoveUVViewTool;
+import artofillusion.test.util.RegisterTestResources;
 import artofillusion.ui.EditingTool;
 import artofillusion.ui.GenericTool;
 import artofillusion.ui.ThemeManager;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.ClassRule;
 
 /**
  *
@@ -49,15 +51,8 @@ import static org.junit.Assert.*;
  */
 public class ToolWichClicksTest {
 
-    public ToolWichClicksTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-        PluginRegistry.registerResource("TranslateBundle", "artofillusion", ArtOfIllusion.class.getClassLoader(), "artofillusion", null);
-        PluginRegistry.registerResource("UITheme", "default", ArtOfIllusion.class.getClassLoader(), "artofillusion/Icons/defaultTheme.xml", null);
-        ThemeManager.initThemes();
-    }
+    @ClassRule
+    public static final RegisterTestResources res = new RegisterTestResources();
 
     @Test
     public void testCreateCameraToolCheckWhichClickValue() {
