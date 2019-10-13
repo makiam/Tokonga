@@ -3037,7 +3037,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     public void propertyChange(PropertyChangeEvent event) {
         if(event.getPropertyName().equals("interactiveSurfaceError")) {
             theScene.getObjects().forEach((item) -> { item.clearCachedMeshes(); });
-            updateImage();
         }
+        updateImage();
     }
 }
