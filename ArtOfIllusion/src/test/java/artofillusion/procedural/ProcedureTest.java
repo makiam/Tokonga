@@ -9,11 +9,18 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.procedural;
 
+import artofillusion.TextureParameter;
+import artofillusion.image.ImageMap;
+import artofillusion.image.MIPMappedImage;
 import artofillusion.math.RGBColor;
 import artofillusion.math.Vec3;
+import artofillusion.object.Object3DTest.MockTexture;
+import artofillusion.texture.Texture;
 import java.awt.Point;
-import org.junit.Test;
+import java.awt.image.BufferedImage;
+import org.junit.Assert;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  *
@@ -21,6 +28,20 @@ import static org.junit.Assert.*;
  */
 public class ProcedureTest {
 
+    @Test
+    public void testCreateProcedureNoOutputs() {
+        Procedure procedure = new Procedure();
+        assertNotNull(procedure);
+        assertNotNull(procedure.getOutputModules());
+        assertEquals(0, procedure.getOutputModules().length);
+        assertNotNull(procedure.getModules());
+        assertEquals(0, procedure.getModules().length);
+
+        assertNotNull(procedure.getLinks());
+        assertEquals(0, procedure.getLinks().length);
+    }
+    
+    
     @Test
     public void testCreateNewProcedure() {
         Procedure procedure = new Procedure(new OutputModule[]{});
@@ -122,7 +143,7 @@ public class ProcedureTest {
         procedure.deleteModule(0);
     }
 
-    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    @Test(expected = IndexOutOfBoundsException.class)
     public void testDeleteMissedModule() {
         Module mod = new Module("Test", new IOPort[]{}, new IOPort[]{}, new Point());
         Procedure procedure = new Procedure(new OutputModule[]{});
@@ -481,4 +502,74 @@ public class ProcedureTest {
         assertNull(sine.linkFrom[0]);
 
     }
+    
+    @Test
+    public void testProcedureHasNoModulesHasNoImage() throws InterruptedException {
+        Procedure origin = new Procedure();
+        ImageMap map = new MIPMappedImage(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB));
+        Assert.assertFalse(origin.usesImage(map));
+    }
+    
+    @Test
+    public void testProcedureHasModulesHasNoImage() throws InterruptedException {
+        Procedure origin = new Procedure();
+        ImageMap map = new MIPMappedImage(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB));
+        origin.addModule(new SineModule(new Point()));
+        Assert.assertFalse(origin.usesImage(map));
+        
+    }
+    
+    @Test
+    public void testProcedureHasImageModuleImage() throws InterruptedException {
+        Procedure origin = new Procedure();
+        ImageMap map = new MIPMappedImage(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB));
+        ImageModule imm = new ImageModule(new Point());
+        imm.setMap(map);
+        origin.addModule(imm);
+        Assert.assertTrue(origin.usesImage(map));
+    }
+    
+    @Test
+    public void testProcedureHasImageModuleWithOtherImage() throws InterruptedException {
+        Procedure origin = new Procedure();
+        ImageMap map = new MIPMappedImage(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB));
+        ImageMap map2 = new MIPMappedImage(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB));
+        ImageModule imm = new ImageModule(new Point());
+        imm.setMap(map);
+        origin.addModule(imm);
+        Assert.assertFalse(origin.usesImage(map2));
+    }
+    
+    @Test
+    public void testGetTextureParametersHasNoModules() {
+        Procedure origin = new Procedure();
+        Texture mock = new MockTexture();
+        TextureParameter[] params = origin.getTextureParameters(mock);
+        Assert.assertNotNull(params);
+        Assert.assertEquals(0, params.length);
+        
+    }
+    
+    
+    @Test
+    public void testGetTextureParametersWithOtherModules() {
+        Procedure origin = new Procedure();
+        origin.addModule(new SineModule(new Point()));
+        Texture mock = new MockTexture();
+        TextureParameter[] params = origin.getTextureParameters(mock);
+        Assert.assertNotNull(params);
+        Assert.assertEquals(0, params.length);
+        
+    }
+
+    @Test
+    public void testGetTextureParametersFromModule() {
+        Procedure origin = new Procedure();
+        origin.addModule(new ParameterModule(new Point()));
+        Texture mock = new MockTexture();
+        TextureParameter[] params = origin.getTextureParameters(mock);
+        Assert.assertNotNull(params);
+        Assert.assertEquals(1, params.length);        
+    }
+    
 }
