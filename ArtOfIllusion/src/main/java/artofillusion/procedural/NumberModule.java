@@ -1,4 +1,5 @@
 /* Copyright (C) 2000-2011 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -63,8 +64,7 @@ public class NumberModule extends ProceduralModule {
                 editor.updatePreview();
             }
         });
-        ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), Translate.text("selectValue"), new Widget[]{field},
-                new String[]{null});
+        ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), Translate.text("selectValue"), new Widget[]{field}, new String[]{null});
         if (!dlg.clickedOk()) {
             return false;
         }
@@ -88,7 +88,7 @@ public class NumberModule extends ProceduralModule {
 
     /* Create a duplicate of this module. */
     @Override
-    public Module duplicate() {
+    public NumberModule duplicate() {
         NumberModule mod = new NumberModule(new Point(bounds.x, bounds.y));
 
         mod.value = value;

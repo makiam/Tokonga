@@ -1,4 +1,5 @@
 /* Copyright (C) 2000-2011 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -194,14 +195,13 @@ public class GridModule extends ProceduralModule {
         xField.addEventLink(ValueChangedEvent.class, listener);
         yField.addEventLink(ValueChangedEvent.class, listener);
         zField.addEventLink(ValueChangedEvent.class, listener);
-        ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), "Set Grid Spacing:", new Widget[]{xField, yField, zField},
-                new String[]{"X", "Y", "Z"});
+        ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), "Set Grid Spacing:", new Widget[]{xField, yField, zField}, new String[]{"X", "Y", "Z"});
         return dlg.clickedOk();
     }
 
     /* Create a duplicate of this module. */
     @Override
-    public Module duplicate() {
+    public GridModule duplicate() {
         GridModule mod = new GridModule(new Point(bounds.x, bounds.y));
 
         mod.xspace = xspace;

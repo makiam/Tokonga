@@ -1,4 +1,5 @@
 /* Copyright (C) 2003-2011 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -60,7 +61,7 @@ public class ViewAngleModule extends ProceduralModule {
 
     /* Create a duplicate of this module. */
     @Override
-    public Module duplicate() {
+    public ViewAngleModule duplicate() {
         ViewAngleModule mod = new ViewAngleModule(new Point(bounds.x, bounds.y));
         mod.abs = abs;
         mod.layout();

@@ -1,4 +1,5 @@
 /* Copyright (C) 2000 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -104,7 +105,7 @@ public class CoordinateModule extends ProceduralModule {
 
     /* Create a duplicate of this module. */
     @Override
-    public Module duplicate() {
+    public CoordinateModule duplicate() {
         CoordinateModule mod = new CoordinateModule(new Point(bounds.x, bounds.y), coordinate);
 
         mod.layout();
