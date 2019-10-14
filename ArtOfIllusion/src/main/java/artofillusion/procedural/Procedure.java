@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2004 by Peter Eastman
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -186,14 +186,17 @@ public class Procedure {
         links = new Link[source.links.length];
         
         for (int i = 0; i < links.length; i++) {
-            Module fromModule = source.links[i].from.getModule();
-            Module toModule = source.links[i].to.getModule();
+            Link item = source.links[i];
+            
+            Module fromModule = item.from.getModule();
+            Module toModule = item.to.getModule();
+            
             int fromIndex = source.getModuleIndex(fromModule);
             int toIndex = toModule instanceof OutputModule ? source.getOutputIndex(toModule) : source.getModuleIndex(toModule);
-            IOPort from = modules.get(fromIndex).getOutputPorts()[source.modules.get(fromIndex).getOutputIndex(source.links[i].from)];
+            IOPort from = modules.get(fromIndex).getOutputPorts()[source.modules.get(fromIndex).getOutputIndex(item.from)];
             IOPort to = toModule instanceof OutputModule
-                    ? output[toIndex].getInputPorts()[source.output[toIndex].getInputIndex(source.links[i].to)]
-                    : modules.get(toIndex).getInputPorts()[source.modules.get(toIndex).getInputIndex(source.links[i].to)];
+                    ? output[toIndex].getInputPorts()[source.output[toIndex].getInputIndex(item.to)]
+                    : modules.get(toIndex).getInputPorts()[source.modules.get(toIndex).getInputIndex(item.to)];
             links[i] = new Link(from, to);
             to.getModule().setInput(to, from);
         }
