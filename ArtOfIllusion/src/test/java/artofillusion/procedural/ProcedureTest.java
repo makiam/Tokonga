@@ -585,4 +585,12 @@ public class ProcedureTest {
         Assert.assertEquals(1, params.length);        
     }
     
+    
+    @Test
+    public void testCreateTextureProcedure() {
+        Procedure test = Procedure.createTextureProcedure();
+        test.getOutputModules();
+        Assert.assertNotNull(test.getOutputModules());
+        Assert.assertEquals(11, test.getOutputModules().length);
+    }
 }
