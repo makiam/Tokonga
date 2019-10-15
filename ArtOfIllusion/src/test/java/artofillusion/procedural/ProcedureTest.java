@@ -357,7 +357,7 @@ public class ProcedureTest {
         assertEquals(1, color.blue, 0);
     }
 
-    @Test(expected = NegativeArraySizeException.class)
+    @Test(expected = IndexOutOfBoundsException.class)
     public void testDeleteLinkFromNoLinks() {
         //Create source procedure
         OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
@@ -366,7 +366,7 @@ public class ProcedureTest {
         origin.deleteLink(0);
     }
 
-    @Test(expected = NegativeArraySizeException.class)
+    @Test(expected = IndexOutOfBoundsException.class)
     public void testDeleteIllegalIndexLinkFromNoLinks() {
         //Create source procedure
         OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
