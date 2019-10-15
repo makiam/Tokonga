@@ -186,17 +186,17 @@ public class Procedure {
         links = new Link[source.links.length];
         
         for (int i = 0; i < links.length; i++) {
-            Link item = source.links[i];
+            Link link = source.links[i];
             
-            Module fromModule = item.from.getModule();
-            Module toModule = item.to.getModule();
+            Module toModule = link.to.getModule();
             
-            int fromIndex = source.getModuleIndex(fromModule);
+            int fromIndex = source.getModuleIndex(link.from.getModule());
+            
             int toIndex = toModule instanceof OutputModule ? source.getOutputIndex(toModule) : source.getModuleIndex(toModule);
-            IOPort from = modules.get(fromIndex).getOutputPorts()[source.modules.get(fromIndex).getOutputIndex(item.from)];
+            IOPort from = modules.get(fromIndex).getOutputPorts()[source.modules.get(fromIndex).getOutputIndex(link.from)];
             IOPort to = toModule instanceof OutputModule
-                    ? output[toIndex].getInputPorts()[source.output[toIndex].getInputIndex(item.to)]
-                    : modules.get(toIndex).getInputPorts()[source.modules.get(toIndex).getInputIndex(item.to)];
+                    ? output[toIndex].getInputPorts()[source.output[toIndex].getInputIndex(link.to)]
+                    : modules.get(toIndex).getInputPorts()[source.modules.get(toIndex).getInputIndex(link.to)];
             links[i] = new Link(from, to);
             to.getModule().setInput(to, from);
         }

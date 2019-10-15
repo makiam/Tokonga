@@ -572,4 +572,17 @@ public class ProcedureTest {
         Assert.assertEquals(1, params.length);        
     }
     
+    @Test
+    public void testGetTextureParametersFromModuleWithOtherModules() {
+        Procedure origin = new Procedure();
+        origin.addModule(new ParameterModule(new Point()));
+        origin.addModule(new SineModule(new Point()));
+        ImageModule imm = new ImageModule(new Point());
+        origin.addModule(imm);
+        Texture mock = new MockTexture();
+        TextureParameter[] params = origin.getTextureParameters(mock);
+        Assert.assertNotNull(params);
+        Assert.assertEquals(1, params.length);        
+    }
+    
 }
