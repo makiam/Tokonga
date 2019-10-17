@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2008 by Peter Eastman
    Modifications copyright (C) 2016-2017 Petri Ihalainen
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -16,7 +16,6 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
-
 import java.awt.*;
 
 /**
@@ -315,7 +314,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
      * Select the entire curve.
      */
     public void selectAllCommand() {
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, new Object[]{this, 0, selected.clone()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, this, 0, selected.clone()));
         for (int i = 0; i < selected.length; i++) {
             selected[i] = true;
         }
@@ -326,7 +325,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
      * Select nothing.
      */
     public void deselectAllCommand() {
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, new Object[]{this, 0, selected.clone()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, this, 0, selected.clone()));
         for (int i = 0; i < selected.length; i++) {
             selected[i] = false;
         }
@@ -343,7 +342,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
         boolean newSel[] = new boolean[dist.length];
         tensionDistance = oldDist;
 
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, new Object[]{this, 0, selected.clone()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, this, 0, selected.clone()));
         for (int i = 0; i < dist.length; i++) {
             newSel[i] = (dist[i] == 0 || dist[i] == 1);
         }
@@ -358,7 +357,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
         for (int i = 0; i < newSel.length; i++) {
             newSel[i] = !selected[i];
         }
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, new Object[]{this, 0, selected}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, this, 0, selected));
         setSelection(newSel);
     }
 
@@ -390,7 +389,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
             Messages.information(Translate.text("curveNeeds3Points"), this.getComponent());
             return;
         }
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{theCurve, theCurve.duplicate()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theCurve, theCurve.duplicate()));
         v = new Vec3[vt.length - num];
         news = new float[vt.length - num];
         newsel = new boolean[vt.length - num];
@@ -494,7 +493,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
             news[j] = s[i];
             newsel[j] = selected[i];
         }
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{theCurve, theCurve.duplicate()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theCurve, theCurve.duplicate()));
         theCurve.setShape(newpos, news);
         setSelection(newsel);
     }
@@ -531,7 +530,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
         ComponentsDialog dlg = new ComponentsDialog(this, Translate.text("setPointSmoothness"), new Widget[]{smoothness},
                 new String[]{Translate.text("Smoothness")});
         if (dlg.clickedOk()) {
-            setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{theCurve, oldCurve}));
+            setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theCurve, oldCurve));
         } else {
             theCurve.copyObject(oldCurve);
             objectChanged();
@@ -544,7 +543,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
     void setSmoothingMethod(int method) {
         Curve theCurve = (Curve) objInfo.getObject();
 
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{theCurve, theCurve.duplicate()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theCurve, theCurve.duplicate()));
         for (int i = 0; i < smoothItem.length; i++) {
             smoothItem[i].setState(false);
         }
@@ -565,7 +564,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
     public void toggleClosedCommand() {
         Curve theCurve = (Curve) objInfo.getObject();
 
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{theCurve, theCurve.duplicate()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theCurve, theCurve.duplicate()));
         if (theCurve.isClosed()) {
             theCurve.setClosed(false);
             meshMenuItem[6].setText(Translate.text("menu.closedEnds"));

@@ -1,4 +1,5 @@
 /* Copyright (C) 2001-2013 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -588,7 +589,7 @@ public class RotationTrack extends Track {
         if (!dlg.clickedOk()) {
             return;
         }
-        win.setUndoRecord(new UndoRecord(win, false, UndoRecord.COPY_TRACK, new Object[]{this, duplicate(info)}));
+        win.setUndoRecord(new UndoRecord(win, false, UndoRecord.COPY_TRACK, this, duplicate(info)));
         key.set(xField.getValue(), yField.getValue(), zField.getValue());
         if (sameBox.getState()) {
             s.setSmoothness(s1Slider.getValue(), s2Slider.getValue());
@@ -675,7 +676,7 @@ public class RotationTrack extends Track {
         if (!dlg.clickedOk()) {
             return;
         }
-        win.setUndoRecord(new UndoRecord(win, false, UndoRecord.COPY_OBJECT_INFO, new Object[]{info, info.duplicate()}));
+        win.setUndoRecord(new UndoRecord(win, false, UndoRecord.COPY_OBJECT_INFO, info, info.duplicate()));
         this.setName(nameField.getText());
         smoothingMethod = smoothChoice.getSelectedIndex();
         mode = modeChoice.getSelectedIndex();

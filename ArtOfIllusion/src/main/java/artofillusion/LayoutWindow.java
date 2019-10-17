@@ -2410,7 +2410,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         if (val == null) {
             return;
         }
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.RENAME_OBJECT, new Object[]{sel[0], info.getName()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.RENAME_OBJECT, sel[0], info.getName()));
         setObjectName(sel[0], val);
     }
 
@@ -2449,7 +2449,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         if (confirmed) {
             theScore.repaintAll();
         }
-        UndoRecord undo = new UndoRecord(this, false, UndoRecord.COPY_OBJECT_INFO, new Object[]{info, info.duplicate()});
+        UndoRecord undo = new UndoRecord(this, false, UndoRecord.COPY_OBJECT_INFO, info, info.duplicate());
         if (obj.canConvertToTriangleMesh() == Object3D.EXACTLY) {
             if (!confirmed) {
                 String options[] = Messages.optionsOkCancel();
@@ -2502,7 +2502,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         if (new BStandardDialog("", UIUtilities.breakString(Translate.text("confirmConvertToActor", info.getName())), BStandardDialog.QUESTION).showOptionDialog(this, options, options[0]) == 1) {
             return;
         }
-        UndoRecord undo = new UndoRecord(this, false, UndoRecord.COPY_OBJECT_INFO, new Object[]{info, info.duplicate()});
+        UndoRecord undo = new UndoRecord(this, false, UndoRecord.COPY_OBJECT_INFO, info, info.duplicate());
         theScene.replaceObject(obj, posable, undo);
         setUndoRecord(undo);
         updateImage();

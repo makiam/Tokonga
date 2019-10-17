@@ -10,19 +10,18 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion;
 
-import buoy.widget.*;
-import buoy.event.*;
-import artofillusion.ui.*;
-import artofillusion.object.*;
-import artofillusion.math.*;
-import artofillusion.texture.*;
 import artofillusion.material.*;
-
-import javax.swing.*;
-import java.util.*;
+import artofillusion.math.*;
+import artofillusion.object.*;
+import artofillusion.texture.*;
+import artofillusion.ui.*;
+import buoy.event.*;
+import buoy.widget.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 import java.util.List;
+import javax.swing.*;
 
 /**
  * This is a panel which displays information about the currently selected objects, and allows them
@@ -403,7 +402,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
             return;
         }
         int which = window.getScene().indexOf(objects[0]);
-        window.setUndoRecord(new UndoRecord(window, false, UndoRecord.RENAME_OBJECT, new Object[]{which, objects[0].getName()}));
+        window.setUndoRecord(new UndoRecord(window, false, UndoRecord.RENAME_OBJECT, which, objects[0].getName()));
         window.setObjectName(which, nameField.getText());
         if (ev instanceof KeyPressedEvent) {
             window.getView().requestFocus(); // This is where they'll probably expect it to go

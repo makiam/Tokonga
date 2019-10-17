@@ -177,7 +177,7 @@ public class PMKnifeTool extends EditingTool {
             }
             controller.setSelection(sel);
             theWindow.updateImage();
-            theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, originalMesh}));
+            theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, mesh, originalMesh));
             undo = null;
         } else {
             clickPoints.add(dragPoint);

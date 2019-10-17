@@ -201,7 +201,7 @@ public class PMCreateFaceTool extends EditingTool {
             mesh.addStandaloneFace(newPoints);
         }
         controller.setMesh(mesh);
-        theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, origMesh}));
+        theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, mesh, origMesh));
         clickPoints.clear();
         fromPoint = null;
         from = to = -1;

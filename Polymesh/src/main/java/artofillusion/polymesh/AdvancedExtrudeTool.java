@@ -145,7 +145,7 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool {
 
     private void doManipulatorShapedMesh(Manipulator.ManipulatorEvent e) {
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
-        undo = new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, origMesh});
+        undo = new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, mesh, origMesh);
         theWindow.setUndoRecord(undo);
         baseVertPos = null;
         origMesh = null;
