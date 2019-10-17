@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2007 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -13,7 +13,9 @@ package artofillusion;
 import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
-import artofillusion.ui.NinePointManipulator.*;
+import artofillusion.ui.NinePointManipulator.HandleDraggedEvent;
+import artofillusion.ui.NinePointManipulator.HandlePressedEvent;
+import artofillusion.ui.NinePointManipulator.HandleReleasedEvent;
 import buoy.event.*;
 import java.awt.*;
 import java.text.*;
@@ -89,7 +91,7 @@ public class ThickenMeshTool extends MeshEditingTool {
         Point dragPoint = ev.getMouseEvent().getPoint();
 
         if (undo == null) {
-            undo = new UndoRecord(theWindow, false, UndoRecord.COPY_VERTEX_POSITIONS, new Object[]{mesh, mesh.getVertexPositions()});
+            undo = new UndoRecord(theWindow, false, UndoRecord.COPY_VERTEX_POSITIONS, mesh, mesh.getVertexPositions());
         }
         double distance = 0.01 * (clickPoint.y - dragPoint.y);
         Vec3 v[] = findNewPositions(baseVertPos, distance);

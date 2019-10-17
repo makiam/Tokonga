@@ -21,7 +21,7 @@ import javax.swing.Timer;
 
 /**
  * ScrollViewTool is a tool to handle mouse scroll wheel events in scene and object views. It moves
- * the viewpoint in view z-directi and/or in some cases changes view orientation.
+ * the viewpoint in view z-direction and/or in some cases changes view orientation.
  */
 public class ScrollViewTool {
 
@@ -224,7 +224,7 @@ public class ScrollViewTool {
 
     public void mouseStoppedScrolling() {
         if (window != null && boundCamera != null) {
-            UndoRecord undo = new UndoRecord(window, false, UndoRecord.COPY_COORDS, new Object[]{boundCamera.getCoords(), startCoords});
+            UndoRecord undo = new UndoRecord(window, false, UndoRecord.COPY_COORDS, boundCamera.getCoords(), startCoords);
             moveCameraChildren(boundCamera, boundCamera.getCoords().fromLocal().times(startCoords.toLocal()), undo);
             window.setUndoRecord(undo);
         }

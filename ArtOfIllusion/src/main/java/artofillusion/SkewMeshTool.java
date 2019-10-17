@@ -1,4 +1,5 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,7 +13,10 @@ package artofillusion;
 import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
-import artofillusion.ui.NinePointManipulator.*;
+import artofillusion.ui.NinePointManipulator.HandleDraggedEvent;
+import artofillusion.ui.NinePointManipulator.HandlePosition;
+import artofillusion.ui.NinePointManipulator.HandlePressedEvent;
+import artofillusion.ui.NinePointManipulator.HandleReleasedEvent;
 import buoy.event.*;
 import java.awt.*;
 
@@ -128,7 +132,7 @@ public class SkewMeshTool extends MeshEditingTool {
         double max, xskew, yskew;
 
         if (undo == null) {
-            undo = new UndoRecord(theWindow, false, UndoRecord.COPY_VERTEX_POSITIONS, new Object[]{mesh, mesh.getVertexPositions()});
+            undo = new UndoRecord(theWindow, false, UndoRecord.COPY_VERTEX_POSITIONS, mesh, mesh.getVertexPositions());
         }
         xskew = yskew = 0.0;
         if (skewX) {

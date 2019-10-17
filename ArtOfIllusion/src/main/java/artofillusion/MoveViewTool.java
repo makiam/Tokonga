@@ -227,7 +227,7 @@ public class MoveViewTool extends EditingTool {
                 // This view corresponds to an actual camera in the scene.  Create an undo record, and move any children of
                 // the camera.
                 bound.getCoords().copyCoords(view.getCamera().getCameraCoordinates());
-                UndoRecord undo = new UndoRecord(theWindow, false, UndoRecord.COPY_COORDS, new Object[]{bound.getCoords(), oldCoords});
+                UndoRecord undo = new UndoRecord(theWindow, false, UndoRecord.COPY_COORDS, bound.getCoords(), oldCoords);
                 moveChildren(bound, bound.getCoords().fromLocal().times(oldCoords.toLocal()), undo);
                 theWindow.setUndoRecord(undo);
             }

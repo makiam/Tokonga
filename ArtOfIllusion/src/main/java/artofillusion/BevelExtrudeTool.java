@@ -14,6 +14,9 @@ import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
 import artofillusion.ui.NinePointManipulator.*;
+import artofillusion.ui.NinePointManipulator.HandleDraggedEvent;
+import artofillusion.ui.NinePointManipulator.HandlePressedEvent;
+import artofillusion.ui.NinePointManipulator.HandleReleasedEvent;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
@@ -123,7 +126,7 @@ public class BevelExtrudeTool extends MeshEditingTool {
 
         // Update the mesh and redisplay.
         if (undo == null) {
-            undo = new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, origMesh});
+            undo = new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, mesh, origMesh);
             undo.addCommand(UndoRecord.SET_MESH_SELECTION, controller, controller.getSelectionMode(), controller.getSelection().clone());
         }
         mesh.copyObject(beveler.bevelMesh(height, width));
