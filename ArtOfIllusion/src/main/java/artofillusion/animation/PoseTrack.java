@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -371,8 +371,7 @@ public class PoseTrack extends Track {
      */
     @Override
     public void editKeyframe(LayoutWindow win, int which) {
-        win.setUndoRecord(new UndoRecord(win, false, UndoRecord.COPY_TRACK,
-                new Object[]{this, duplicate(info)}));
+        win.setUndoRecord(new UndoRecord(win, false, UndoRecord.COPY_TRACK, this, duplicate(info)));
         info.getObject().editKeyframe(win, tc.getValues()[which], info);
     }
 
@@ -398,7 +397,7 @@ public class PoseTrack extends Track {
         if (!dlg.clickedOk()) {
             return;
         }
-        win.setUndoRecord(new UndoRecord(win, false, UndoRecord.COPY_TRACK, new Object[]{this, duplicate(info)}));
+        win.setUndoRecord(new UndoRecord(win, false, UndoRecord.COPY_TRACK, this, duplicate(info)));
         this.setName(nameField.getText());
         smoothingMethod = smoothChoice.getSelectedIndex();
         relative = (modeChoice.getSelectedIndex() == 1);

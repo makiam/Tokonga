@@ -1,4 +1,5 @@
 /* Copyright (C) 2002-2004 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -10,9 +11,9 @@
 package artofillusion.animation;
 
 import artofillusion.*;
-import artofillusion.ui.*;
+import artofillusion.animation.Joint.DOF;
 import artofillusion.object.*;
-import artofillusion.animation.Joint.*;
+import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
@@ -76,7 +77,7 @@ public class JointEditorDialog extends BDialog {
     private void doOk() {
         valueChanged();
         joint.name = nameField.getText();
-        window.setUndoRecord(new UndoRecord(window, false, UndoRecord.COPY_OBJECT, new Object[]{theMesh, oldMesh}));
+        window.setUndoRecord(new UndoRecord(window, false, UndoRecord.COPY_OBJECT, theMesh, oldMesh));
         dispose();
     }
 

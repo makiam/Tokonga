@@ -1,4 +1,5 @@
 /* Copyright (C) 2003-2009 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -10,8 +11,8 @@
 package artofillusion.animation;
 
 import artofillusion.*;
-import artofillusion.math.*;
 import artofillusion.image.filter.*;
+import artofillusion.math.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
@@ -384,7 +385,7 @@ public class FilterParameterTrack extends Track {
         if (!dlg.clickedOk()) {
             return;
         }
-        win.setUndoRecord(new UndoRecord(win, false, UndoRecord.COPY_TRACK, new Object[]{this, duplicate(filter)}));
+        win.setUndoRecord(new UndoRecord(win, false, UndoRecord.COPY_TRACK, this, duplicate(filter)));
         index = 0;
         for (PropertyEditor editor : editors) {
             if (editor.getProperty().getType() == Property.DOUBLE) {
@@ -421,7 +422,7 @@ public class FilterParameterTrack extends Track {
         if (!dlg.clickedOk()) {
             return;
         }
-        win.setUndoRecord(new UndoRecord(win, false, UndoRecord.COPY_TRACK, new Object[]{this, duplicate(filter)}));
+        win.setUndoRecord(new UndoRecord(win, false, UndoRecord.COPY_TRACK, this, duplicate(filter)));
         this.setName(nameField.getText());
         smoothingMethod = smoothChoice.getSelectedIndex();
     }
