@@ -11,14 +11,14 @@
 package artofillusion.view;
 
 import artofillusion.*;
-import artofillusion.ui.*;
 import artofillusion.math.*;
 import artofillusion.object.ObjectInfo;
-import javax.swing.Timer;
+import artofillusion.ui.*;
 import java.awt.event.*;
+import javax.swing.Timer;
 
 /**
- * ViewAnimation is the animation engine, that is used to produce eg. smooth swithcing between view
+ * ViewAnimation is the animation engine, that is used to produce ex. smooth switching between view
  * orientations. It sets the animation to happen within a maximum duration so that shorter
  * transitions happen at slower speed than larger ones, but still take less time to perform.
  *
@@ -85,7 +85,7 @@ public class ViewAnimation {
     }
 
     /**
-     * The timer that keeps launcing animation 'frames'
+     * The timer that keeps launching animation 'frames'
      */
     private Timer timer = new Timer(timerInterval, new ActionListener() {
         @Override
@@ -449,7 +449,7 @@ public class ViewAnimation {
         if (window != null) {
             if (boundCamera != null) {
                 boundCamera.getCoords().copyCoords(view.getCamera().getCameraCoordinates());
-                UndoRecord undo = new UndoRecord(window, false, UndoRecord.COPY_COORDS, new Object[]{boundCamera.getCoords(), startCoords});
+                UndoRecord undo = new UndoRecord(window, false, UndoRecord.COPY_COORDS, boundCamera.getCoords(), startCoords);
                 moveChildren(boundCamera, boundCamera.getCoords().fromLocal().times(startCoords.toLocal()), undo);
                 window.setUndoRecord(undo);
             }
