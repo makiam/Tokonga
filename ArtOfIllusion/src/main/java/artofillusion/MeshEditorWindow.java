@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
    Modifications copyright (C) 2016 Petri Ihalainen
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,6 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
-
 import java.awt.*;
 import java.util.*;
 
@@ -501,7 +500,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
                     }
                 }
             }
-            setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{theMesh, oldMesh}));
+            setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, oldMesh));
         } else {
             theMesh.copyObject((Object3D) oldMesh);
             setMesh(theMesh);
@@ -551,7 +550,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         if (!dlg.clickedOk()) {
             return;
         }
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_VERTEX_POSITIONS, new Object[]{theMesh, theMesh.getVertexPositions()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_VERTEX_POSITIONS, theMesh, theMesh.getVertexPositions()));
         double val[] = new double[9];
         for (i = 0; i < val.length; i++) {
             val[i] = fields[i].getValue();
@@ -613,7 +612,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         if (!dlg.clickedOk()) {
             return;
         }
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_VERTEX_POSITIONS, new Object[]{theMesh, theMesh.getVertexPositions()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_VERTEX_POSITIONS, theMesh, theMesh.getVertexPositions()));
         for (i = 0; i < selectDist.length; i++) {
             points[i] = vert[i].r;
             if (selectDist[i] == 0) {
@@ -641,7 +640,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         CoordinateSystem coords = view.thisObjectInScene.getCoords();
         Vec3 center = theMesh.getBounds().getCenter(), points[] = new Vec3[vert.length];
 
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_VERTEX_POSITIONS, new Object[]{theMesh, theMesh.getVertexPositions()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_VERTEX_POSITIONS, theMesh, theMesh.getVertexPositions()));
         if (view.getUseWorldCoords() && coords != null) {
             coords.fromLocal().transform(center);
             coords.toLocal().transformDirection(center);
@@ -965,7 +964,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         if (!dlg.clickedOk()) {
             return;
         }
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{theMesh, theMesh.duplicate()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, theMesh.duplicate()));
         for (j = 0; j < editWidget.length; j++) {
             double d;
             if (editWidget[j] instanceof ValueField) {
@@ -1121,7 +1120,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         if (!dlg.clickedOk()) {
             return;
         }
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{theMesh, theMesh.duplicate()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, theMesh.duplicate()));
         for (j = 0; j < editWidget.length; j++) {
             if (paramValue[paramIndex[j]] instanceof FaceParameterValue) {
                 double d;
@@ -1188,7 +1187,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         if (dlg.showOptionDialog(this, options, options[1]) == 1) {
             return;
         }
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_SKELETON, new Object[]{theMesh.getSkeleton(), theMesh.getSkeleton().duplicate()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_SKELETON, theMesh.getSkeleton(), theMesh.getSkeleton().duplicate()));
         s.deleteJoint(view.getSelectedJoint());
         for (int i = 0; i < theView.length; i++) {
             ((MeshViewer) theView[i]).setSelectedJoint(j.parent == null ? -1 : j.parent.id);
@@ -1241,7 +1240,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         }
 
         // Set the parent.
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_SKELETON, new Object[]{theMesh.getSkeleton(), theMesh.getSkeleton().duplicate()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_SKELETON, theMesh.getSkeleton(), theMesh.getSkeleton().duplicate()));
         if (ls.getSelectedIndex() == 0) {
             s.setJointParent(j, null);
         } else {
@@ -1332,7 +1331,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         if (!dlg.clickedOk()) {
             return;
         }
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{theMesh, theMesh.duplicate()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, theMesh.duplicate()));
         double blend = blendSlider.getValue();
 
         // Find the position and axis vectors for each joint.
@@ -1425,7 +1424,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         }
 
         // Detach the vertices.
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{theMesh, theMesh.duplicate()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, theMesh.duplicate()));
         for (MeshVertex vert : theMesh.getVertices()) {
             if (vert.ikJoint == j.id) {
                 vert.ikJoint = -1;
@@ -1498,7 +1497,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
             return;
         }
         Mesh theMesh = (Mesh) getObject().getObject();
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_SKELETON, new Object[]{theMesh.getSkeleton(), theMesh.getSkeleton().duplicate()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_SKELETON, theMesh.getSkeleton(), theMesh.getSkeleton().duplicate()));
         ObjectInfo info = (ObjectInfo) tree.getSelectedObjects()[0];
         theMesh.getSkeleton().addAllJoints(info.getObject().getSkeleton());
         updateImage();

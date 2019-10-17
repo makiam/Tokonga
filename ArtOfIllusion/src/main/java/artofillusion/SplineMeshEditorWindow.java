@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
    Modifications copyright (C) 2016-2017 Petri Ihalainen
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,6 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
-
 import java.awt.*;
 
 /**
@@ -358,7 +357,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
                 return;
             }
             if (undoItem != null) {
-                setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, new Object[]{this, selectMode, selected}));
+                setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, this, selectMode, selected));
             }
             setSelectionMode(modes.getSelection());
             theView[currentView].getCurrentTool().activate();
@@ -605,7 +604,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
      * Select the entire mesh.
      */
     public void selectAllCommand() {
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, new Object[]{this, selectMode, selected.clone()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, this, selectMode, selected.clone()));
         for (int i = 0; i < selected.length; i++) {
             selected[i] = true;
         }
@@ -616,7 +615,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
      * Select nothing.
      */
     public void deselectAllCommand() {
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, new Object[]{this, selectMode, selected.clone()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, this, selectMode, selected.clone()));
         for (int i = 0; i < selected.length; i++) {
             selected[i] = false;
         }
@@ -628,7 +627,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
      */
     public void extendSelectionCommand() {
         SplineMesh theMesh = (SplineMesh) objInfo.getObject();
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, new Object[]{this, selectMode, selected.clone()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, this, selectMode, selected.clone()));
         if (selectMode == POINT_MODE) {
             int oldDist = tensionDistance;
             tensionDistance = 1;
@@ -671,7 +670,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         for (int i = 0; i < newSel.length; i++) {
             newSel[i] = !selected[i];
         }
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, new Object[]{this, selectMode, selected}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, this, selectMode, selected));
         setSelection(newSel);
     }
 
@@ -713,7 +712,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
             Messages.information(Translate.text("curveNeeds3Points"), this.getComponent());
             return;
         }
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{theMesh, theMesh.duplicate()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, theMesh.duplicate()));
         v = new MeshVertex[usize - unum][vsize - vnum];
         newus = new float[usize - unum];
         newvs = new float[vsize - vnum];
@@ -839,7 +838,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
             }
             j++;
         }
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{theMesh, theMesh.duplicate()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, theMesh.duplicate()));
         theMesh.setShape(newv, newus, newvs);
         for (int k = 0; k < numParam; k++) {
             if (theMesh.getParameterValues()[k] instanceof VertexParameterValue) {
@@ -1045,7 +1044,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         ComponentsDialog dlg = new ComponentsDialog(this, Translate.text("setCurveSmoothness"),
                 new Widget[]{smoothness}, new String[]{Translate.text("Smoothness")});
         if (dlg.clickedOk()) {
-            setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{theMesh, oldMesh}));
+            setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, oldMesh));
         } else {
             theMesh.copyObject(oldMesh);
             objectChanged();
@@ -1055,7 +1054,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
 
     void reverseNormalsCommand() {
         SplineMesh theMesh = (SplineMesh) objInfo.getObject();
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{theMesh, theMesh.duplicate()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, theMesh.duplicate()));
         theMesh.reverseOrientation();
         objectChanged();
         updateImage();
@@ -1064,7 +1063,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
     void setSmoothingMethod(int method) {
         SplineMesh theMesh = (SplineMesh) objInfo.getObject();
 
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{theMesh, theMesh.duplicate()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, theMesh.duplicate()));
         for (int i = 0; i < smoothItem.length; i++) {
             smoothItem[i].setState(false);
         }
@@ -1077,7 +1076,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
     void setClosed(int item) {
         SplineMesh theMesh = (SplineMesh) objInfo.getObject();
 
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{theMesh, theMesh.duplicate()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, theMesh.duplicate()));
         for (int i = 0; i < closedItem.length; i++) {
             closedItem[i].setState(i == item);
         }

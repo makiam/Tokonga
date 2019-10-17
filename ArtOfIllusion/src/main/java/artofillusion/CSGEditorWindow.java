@@ -232,7 +232,7 @@ public class CSGEditorWindow extends ObjectEditorWindow {
         }
         final Object3D obj = theScene.getObject(sel[0]).getObject();
         if (obj.isEditable()) {
-            final UndoRecord undo = new UndoRecord(this, false, UndoRecord.COPY_OBJECT, new Object[]{obj, obj.duplicate()});
+            final UndoRecord undo = new UndoRecord(this, false, UndoRecord.COPY_OBJECT, obj, obj.duplicate());
             obj.edit(this, theScene.getObject(sel[0]), new Runnable() {
                 @Override
                 public void run() {
@@ -581,7 +581,7 @@ public class CSGEditorWindow extends ObjectEditorWindow {
         if (obj.canConvertToTriangleMesh() == Object3D.CANT_CONVERT) {
             return;
         }
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT_INFO, new Object[]{info, info.duplicate()}));
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT_INFO, info, info.duplicate()));
         if (obj.canConvertToTriangleMesh() == Object3D.EXACTLY) {
             mesh = obj.convertToTriangleMesh(0.0);
         } else {
