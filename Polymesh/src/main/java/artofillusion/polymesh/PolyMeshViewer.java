@@ -830,11 +830,7 @@ public class PolyMeshViewer extends MeshViewer {
         }
 
         selected[i] = true;
-        currentTool.getWindow().setUndoRecord(
-                new UndoRecord(currentTool.getWindow(), false,
-                        UndoRecord.SET_MESH_SELECTION, new Object[]{
-                    controller, controller.getSelectionMode(),
-                    oldSelection}));
+        currentTool.getWindow().setUndoRecord(new UndoRecord(currentTool.getWindow(), false, UndoRecord.SET_MESH_SELECTION, controller, controller.getSelectionMode(),oldSelection));
         controller.setSelection(selected);
         currentTool.getWindow().updateMenus();
         if (e.isShiftDown()) {
@@ -1058,12 +1054,7 @@ public class PolyMeshViewer extends MeshViewer {
         }
         for (int k = 0; k < selected.length; k++) {
             if (selected[k] != oldSelection[k]) {
-                currentTool.getWindow().setUndoRecord(
-                        new UndoRecord(currentTool.getWindow(), false,
-                                UndoRecord.SET_MESH_SELECTION, new Object[]{
-                            controller, controller
-                                    .getSelectionMode(),
-                            oldSelection}));
+                currentTool.getWindow().setUndoRecord(new UndoRecord(currentTool.getWindow(), false, UndoRecord.SET_MESH_SELECTION, controller, controller.getSelectionMode(), oldSelection));
                 controller.setSelection(selected);
                 break;
             }
@@ -1075,6 +1066,7 @@ public class PolyMeshViewer extends MeshViewer {
     /**
      * Set the currently selected tool.
      */
+    @Override
     public void setTool(EditingTool tool) {
         manipulators.clear();
         manipulatorArray = new Manipulator[0];
@@ -1097,8 +1089,7 @@ public class PolyMeshViewer extends MeshViewer {
      */
     public int findClickTarget(Point pos, Vec3 uvw) {
         PolyMesh polymesh = (PolyMesh) getController().getObject().getObject();
-        int loose = (controller instanceof PolyMeshEditorWindow
-                ? ((PolyMeshEditorWindow) controller).getLooseSelectionRange() : 0);
+        int loose = (controller instanceof PolyMeshEditorWindow ? ((PolyMeshEditorWindow) controller).getLooseSelectionRange() : 0);
         int handleSize = polymesh.getHandleSize();
         QuadEdge[] sed = null;
         int projectedEdge[] = null;
