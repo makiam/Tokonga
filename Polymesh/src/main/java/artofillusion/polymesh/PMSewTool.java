@@ -221,7 +221,7 @@ public class PMSewTool extends EditingTool {
         controller.objectChanged();
         theWindow.updateImage();
         theWindow.setHelpText(Translate.text("polymesh:sewTool.helpText"));
-        theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, originalMesh}));
+        theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, mesh, originalMesh));
         undo = null;
 
     }

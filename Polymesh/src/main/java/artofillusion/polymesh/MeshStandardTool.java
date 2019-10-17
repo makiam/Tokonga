@@ -1,4 +1,5 @@
 /* Copyright (C) 1999-2005 by Peter Eastman (ReshapeMeshTool) 2006 by Francois Guillet (MeshStandardTool)
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -9,10 +10,6 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.polymesh;
 
-import java.awt.Image;
-import java.util.HashMap;
-
-
 import artofillusion.MeshViewer;
 import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
@@ -21,6 +18,8 @@ import artofillusion.object.Mesh;
 import artofillusion.ui.EditingWindow;
 import artofillusion.ui.MeshEditController;
 import artofillusion.ui.Translate;
+import java.awt.Image;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -117,7 +116,7 @@ public class MeshStandardTool extends AdvancedEditingTool {
     private void doManipulatorPrepareShapingMesh(Manipulator.ManipulatorEvent e) {
         Mesh mesh = (Mesh) controller.getObject().object;
         if (undo == null) {
-            undo = new UndoRecord(theWindow, false, UndoRecord.COPY_VERTEX_POSITIONS, new Object[]{mesh, mesh.getVertexPositions()});
+            undo = new UndoRecord(theWindow, false, UndoRecord.COPY_VERTEX_POSITIONS, mesh, mesh.getVertexPositions());
         }
         baseVertPos = mesh.getVertexPositions();
     }

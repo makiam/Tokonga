@@ -359,7 +359,7 @@ public class PMExtrudeCurveTool extends EditingTool {
         if (done) {
             fromPoint = null;
             clickPoints.clear();
-            theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, orMesh}));
+            theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, mesh, orMesh));
         }
     }
 

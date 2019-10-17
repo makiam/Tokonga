@@ -209,7 +209,7 @@ public class PMBevelExtrudeTool extends EditingTool {
         }
         PolyMeshViewer mv = (PolyMeshViewer) view;
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
-        theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, origMesh}));
+        theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, mesh, origMesh));
         controller.objectChanged();
         theWindow.updateImage();
         theWindow.setHelpText(Translate.text("bevelExtrudeTool.helpText"));
