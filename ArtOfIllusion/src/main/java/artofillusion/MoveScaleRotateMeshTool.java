@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2007 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -10,15 +10,17 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion;
 
-import artofillusion.ui.*;
-import artofillusion.ui.Compound3DManipulator.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
-
-import java.awt.event.*;
-
+import artofillusion.ui.*;
+import artofillusion.ui.Compound3DManipulator.HandleDraggedEvent;
+import artofillusion.ui.Compound3DManipulator.HandlePressedEvent;
+import artofillusion.ui.Compound3DManipulator.HandleReleasedEvent;
+import artofillusion.ui.Compound3DManipulator.HandleType;
+import artofillusion.ui.Compound3DManipulator.ViewMode;
 import buoy.event.*;
 import buoy.widget.*;
+import java.awt.event.*;
 
 /**
  * This editing tool presents as a compound interface for move, scale, and rotating parts of a mesh.
@@ -131,7 +133,7 @@ public class MoveScaleRotateMeshTool extends MeshEditingTool {
     protected void handleDragged(HandleDraggedEvent ev) {
         if (undo == null) {
             Mesh mesh = (Mesh) controller.getObject().getObject();
-            undo = new UndoRecord(theWindow, false, UndoRecord.COPY_VERTEX_POSITIONS, new Object[]{mesh, mesh.getVertexPositions()});
+            undo = new UndoRecord(theWindow, false, UndoRecord.COPY_VERTEX_POSITIONS, mesh, mesh.getVertexPositions());
         }
 
         transformMesh(ev.getTransform());
@@ -261,7 +263,7 @@ public class MoveScaleRotateMeshTool extends MeshEditingTool {
         } else {
             drag = view.getCamera().findDragVector(baseVertPos[i], dx, dy);
         }
-        theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_VERTEX_POSITIONS, new Object[]{mesh, baseVertPos}));
+        theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_VERTEX_POSITIONS, mesh, baseVertPos));
         transformMesh(Mat4.translation(drag.x, drag.y, drag.z));
         theWindow.updateImage();
     }
