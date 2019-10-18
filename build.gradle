@@ -9,7 +9,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath group: 'com.pvsstudio',              name: 'pvsstudio-gradle-plugin',              version: '7.04.34029'
+        classpath group: 'com.pvsstudio', name: 'pvsstudio-gradle-plugin', version: '7.04.34029'
     }
 }
 
