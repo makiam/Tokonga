@@ -1494,10 +1494,11 @@ public class CSGModeller {
         float smoothness1, smoothness2, smoothness3;
         double distRoot, min, max;
 
-        public FaceInfo(int v1, int v2, int v3, Vector vertices, float s1, float s2, float s3) {
-            Vec3 vert1 = ((VertexInfo) vertices.elementAt(v1)).r;
-            Vec3 vert2 = ((VertexInfo) vertices.elementAt(v2)).r;
-            Vec3 vert3 = ((VertexInfo) vertices.elementAt(v3)).r;
+        public FaceInfo(int v1, int v2, int v3, List<VertexInfo> vertices, float s1, float s2, float s3) {
+            Vec3 vert1 = vertices.get(v1).r;
+            Vec3 vert2 = vertices.get(v2).r;
+            Vec3 vert3 = vertices.get(v3).r;
+            
             Vec3 normal = vert2.minus(vert1).cross(vert3.minus(vert1));
             double length = normal.length();
             if (length > 0.0) {
@@ -1507,11 +1508,11 @@ public class CSGModeller {
             init(v1, v2, v3, vertices, s1, s2, s3, normal, dist);
         }
 
-        public FaceInfo(int v1, int v2, int v3, Vector vertices, float s1, float s2, float s3, Vec3 norm, double distRoot) {
+        public FaceInfo(int v1, int v2, int v3, List<VertexInfo> vertices, float s1, float s2, float s3, Vec3 norm, double distRoot) {
             init(v1, v2, v3, vertices, s1, s2, s3, norm, distRoot);
         }
 
-        private void init(int v1, int v2, int v3, Vector vertices, float s1, float s2, float s3, Vec3 norm, double distRoot) {
+        private void init(int v1, int v2, int v3, List<VertexInfo> vertices, float s1, float s2, float s3, Vec3 norm, double distRoot) {
             this.norm = norm;
             this.distRoot = distRoot;
             this.v1 = v1;
@@ -1522,9 +1523,11 @@ public class CSGModeller {
             smoothness3 = s3;
             type = UNKNOWN;
             double minx, miny, minz, maxx, maxy, maxz;
-            Vec3 vert1 = ((VertexInfo) vertices.elementAt(v1)).r;
-            Vec3 vert2 = ((VertexInfo) vertices.elementAt(v2)).r;
-            Vec3 vert3 = ((VertexInfo) vertices.elementAt(v3)).r;
+            
+            Vec3 vert1 = vertices.get(v1).r;
+            Vec3 vert2 = vertices.get(v2).r;
+            Vec3 vert3 = vertices.get(v3).r;
+            
             minx = Math.min(Math.min(vert1.x, vert2.x), vert3.x);
             miny = Math.min(Math.min(vert1.y, vert2.y), vert3.y);
             minz = Math.min(Math.min(vert1.z, vert2.z), vert3.z);
