@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2011 by Peter Eastman
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -349,9 +349,8 @@ public class Module {
      */
     public Module duplicate() {
         try {
-            Constructor<?> con = getClass().getConstructor(Point.class);
-            return (Module) con.newInstance(new Point(bounds.x, bounds.y));
-        } catch (Exception ex) {
+            return (Module) getClass().getConstructor(Point.class).newInstance(new Point(bounds.x, bounds.y));
+        } catch (IllegalAccessException | IllegalArgumentException | InstantiationException | NoSuchMethodException | SecurityException | InvocationTargetException ex) {
             return null;
         }
     }

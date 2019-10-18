@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2011 by David M. Turner <novalis@novalis.org>
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2019 by Maksim Khramov
 
    Various bug fixes and enhancements added by Peter Eastman, Aug. 25, 2001.
 
@@ -14,15 +14,15 @@
    for more details. */
 package artofillusion.procedural;
 
-import buoy.event.*;
-import buoy.widget.*;
-import java.awt.*;
-import java.util.*;
-import java.lang.reflect.*;
-import java.io.*;
 import artofillusion.*;
 import artofillusion.math.*;
 import artofillusion.ui.*;
+import buoy.event.*;
+import buoy.widget.*;
+import java.awt.*;
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.*;
 
 class debug {
 
@@ -345,7 +345,7 @@ public class ExprModule extends ProceduralModule {
 
     /* Create a duplicate of this module. */
     @Override
-    public Module duplicate() {
+    public ExprModule duplicate() {
         ExprModule mod = new ExprModule(new Point(bounds.x, bounds.y));
 
         mod.setExpr(expr);

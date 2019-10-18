@@ -1,4 +1,5 @@
 /* Copyright (C) 2000-2011 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -276,7 +277,7 @@ public class TransformModule extends ProceduralModule {
 
     /* Create a duplicate of this module. */
     @Override
-    public Module duplicate() {
+    public TransformModule duplicate() {
         TransformModule mod = new TransformModule(new Point(bounds.x, bounds.y));
 
         mod.coords = coords.duplicate();

@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2004 by Peter Eastman
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -15,9 +15,12 @@ import artofillusion.image.ImageMap;
 import artofillusion.math.*;
 import artofillusion.texture.Texture;
 import artofillusion.ui.Translate;
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.io.*;
 import java.lang.reflect.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This represents a procedure for calculating a set of values (typically, the parameters for a
@@ -26,13 +29,11 @@ import java.lang.reflect.*;
 public class Procedure {
 
     OutputModule output[];
-    Module module[];
-    Link link[];
+    private final List<Module> modules = new ArrayList<>();
+    private final List<Link> links = new ArrayList<>();
 
-    public Procedure(OutputModule output[]) {
+    public Procedure(OutputModule... output) {
         this.output = output;
-        module = new Module[0];
-        link = new Link[0];
     }
 
     /**
@@ -46,19 +47,14 @@ public class Procedure {
      * Get the list of all other modules.
      */
     public Module[] getModules() {
-        return module;
+        return modules.toArray(new Module[0]);
     }
 
     /**
      * Get the index of a particular module.
      */
     public int getModuleIndex(Module mod) {
-        for (int i = 0; i < module.length; i++) {
-            if (module[i] == mod) {
-                return i;
-            }
-        }
-        return -1;
+        return modules.indexOf(mod);
     }
 
     /**
@@ -77,12 +73,7 @@ public class Procedure {
      * Add a module to the procedure.
      */
     public void addModule(Module mod) {
-        Module newmod[] = new Module[module.length + 1];
-        for (int i = 0; i < module.length; i++) {
-            newmod[i] = module[i];
-        }
-        newmod[module.length] = mod;
-        module = newmod;
+        modules.add(mod);
     }
 
     /**
@@ -90,54 +81,35 @@ public class Procedure {
      * calling this method.
      */
     public void deleteModule(int which) {
-        Module newmod[] = new Module[module.length - 1];
-        int i, j;
-        for (i = 0, j = 0; i < module.length; i++) {
-            if (i != which) {
-                newmod[j++] = module[i];
-            }
-        }
-        module = newmod;
+        modules.remove(which);
     }
 
     /**
      * Get the list of links between modules.
      */
     public Link[] getLinks() {
-        return link;
+        return links.toArray(new Link[0]);
     }
 
     /**
      * Add a link to the procedure.
      */
-    public void addLink(Link ln) {
-        Link newlink[] = new Link[link.length + 1];
-        for (int i = 0; i < link.length; i++) {
-            newlink[i] = link[i];
-        }
-        newlink[link.length] = ln;
-        link = newlink;
-        ln.to.getModule().setInput(ln.to, ln.from);
+    public void addLink(Link link) {
+        link.to.getModule().setInput(link.to, link.from);
+        links.add(link);
     }
 
     /**
      * Delete a link from the procedure.
      */
     public void deleteLink(int which) {
-        Link newlink[] = new Link[link.length - 1];
-        int i, j;
-
-        if (link[which].to.getType() == IOPort.INPUT) {
-            link[which].to.getModule().setInput(link[which].to, null);
+        Link link = links.get(which);
+        if(link.to.getType() == IOPort.INPUT) {
+            link.to.getModule().setInput(link.to, null);
         } else {
-            link[which].from.getModule().setInput(link[which].from, null);
+            link.from.getModule().setInput(link.from, null);
         }
-        for (i = 0, j = 0; i < link.length; i++) {
-            if (i != which) {
-                newlink[j++] = link[i];
-            }
-        }
-        link = newlink;
+        links.remove(link);
     }
 
     /**
@@ -148,9 +120,8 @@ public class Procedure {
             for (int j = 0; j < output.length; j++) {
                 output[j].checked = false;
             }
-            for (int j = 0; j < module.length; j++) {
-                module[j].checked = false;
-            }
+            modules.forEach(module -> module.checked = false);
+
             if (output[i].checkFeedback()) {
                 return true;
             }
@@ -163,9 +134,7 @@ public class Procedure {
      * point for which it is to be evaluated.
      */
     public void initForPoint(PointInfo p) {
-        for (int i = 0; i < module.length; i++) {
-            module[i].init(p);
-        }
+        modules.forEach(module -> module.init(p));
     }
 
     /**
@@ -196,24 +165,25 @@ public class Procedure {
      * Make this procedure identical to another one. The output modules must already be set up
      * before calling this method.
      */
-    public void copy(Procedure proc) {
-        module = new Module[proc.module.length];
-        for (int i = 0; i < module.length; i++) {
-            module[i] = proc.module[i].duplicate();
-        }
-        link = new Link[proc.link.length];
-        for (int i = 0; i < link.length; i++) {
-            Module fromModule = proc.link[i].from.getModule();
-            Module toModule = proc.link[i].to.getModule();
-            int fromIndex = proc.getModuleIndex(fromModule);
-            int toIndex = toModule instanceof OutputModule ? proc.getOutputIndex(toModule) : proc.getModuleIndex(toModule);
-            IOPort from = module[fromIndex].getOutputPorts()[proc.module[fromIndex].getOutputIndex(proc.link[i].from)];
+    public void copy(Procedure source) {
+        modules.clear();
+        source.modules.forEach(module -> modules.add(module.duplicate()));
+
+        links.clear();
+        source.links.forEach((Link link) -> {
+            int fromIndex = source.getModuleIndex(link.from.getModule());
+            
+            Module toModule = link.to.getModule();
+            
+            int toIndex = toModule instanceof OutputModule ? source.getOutputIndex(toModule) : source.getModuleIndex(toModule);
+            IOPort from = modules.get(fromIndex).getOutputPorts()[source.modules.get(fromIndex).getOutputIndex(link.from)];
             IOPort to = toModule instanceof OutputModule
-                    ? output[toIndex].getInputPorts()[proc.output[toIndex].getInputIndex(proc.link[i].to)]
-                    : module[toIndex].getInputPorts()[proc.module[toIndex].getInputIndex(proc.link[i].to)];
-            link[i] = new Link(from, to);
+                    ? output[toIndex].getInputPorts()[source.output[toIndex].getInputIndex(link.to)]
+                    : modules.get(toIndex).getInputPorts()[source.modules.get(toIndex).getInputIndex(link.to)];
+            links.add(new Link(from, to));
             to.getModule().setInput(to, from);
-        }
+        });
+
     }
 
     /**
@@ -221,22 +191,24 @@ public class Procedure {
      */
     public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
         out.writeShort(0);
-        out.writeInt(module.length);
-        for (int i = 0; i < module.length; i++) {
-            out.writeUTF(module[i].getClass().getName());
-            out.writeInt(module[i].getBounds().x);
-            out.writeInt(module[i].getBounds().y);
-            module[i].writeToStream(out, theScene);
+        out.writeInt(modules.size());
+        for(Module module: modules) {
+           Rectangle bounds = module.getBounds();
+           out.writeUTF(module.getClass().getName());
+           out.writeInt(bounds.x);
+           out.writeInt(bounds.y);
+           module.writeToStream(out, theScene);            
         }
-        out.writeInt(link.length);
-        for (int i = 0; i < link.length; i++) {
-            out.writeInt(getModuleIndex(link[i].from.getModule()));
-            out.writeInt(link[i].from.getModule().getOutputIndex(link[i].from));
-            if (link[i].to.getModule() instanceof OutputModule) {
-                out.writeInt(-getOutputIndex(link[i].to.getModule()) - 1);
+
+        out.writeInt(links.size());
+        for (Link link: links) {
+            out.writeInt(getModuleIndex(link.from.getModule()));
+            out.writeInt(link.from.getModule().getOutputIndex(link.from));
+            if (link.to.getModule() instanceof OutputModule) {
+                out.writeInt(-getOutputIndex(link.to.getModule()) - 1);
             } else {
-                out.writeInt(getModuleIndex(link[i].to.getModule()));
-                out.writeInt(link[i].to.getModule().getInputIndex(link[i].to));
+                out.writeInt(getModuleIndex(link.to.getModule()));
+                out.writeInt(link.to.getModule().getInputIndex(link.to));
             }
         }
     }
@@ -254,15 +226,18 @@ public class Procedure {
         for (int i = 0; i < output.length; i++) {
             output[i].setInput(output[i].getInputPorts()[0], null);
         }
-        module = new Module[in.readInt()];
+        int counter = in.readInt();
+        modules.clear();
         try {
-            for (int i = 0; i < module.length; i++) {
+            for (int i = 0; i < counter; i++) {
                 String classname = in.readUTF();
                 Point point = new Point(in.readInt(), in.readInt());
                 Class<?> cls = ArtOfIllusion.getClass(classname);
                 Constructor<?> con = cls.getConstructor(Point.class);
-                module[i] = (Module) con.newInstance(point);
-                module[i].readFromStream(in, theScene);
+                Module module = (Module) con.newInstance(point);
+                module.readFromStream(in, theScene);
+                modules.add(module);
+                
             }
         } catch (InvocationTargetException ex) {
             ex.getTargetException().printStackTrace();
@@ -271,23 +246,25 @@ public class Procedure {
             ex.printStackTrace();
             throw new IOException();
         }
-        link = new Link[in.readInt()];
-        for (int i = 0; i < link.length; i++) {
-            IOPort to, from = module[in.readInt()].getOutputPorts()[in.readInt()];
+        
+        counter = in.readInt();
+        links.clear();
+        for (int i = 0; i < counter; i++) {
+            IOPort to, from = modules.get(in.readInt()).getOutputPorts()[in.readInt()];
             int j = in.readInt();
             if (j < 0) {
                 to = output[-j - 1].getInputPorts()[0];
             } else {
-                to = module[j].getInputPorts()[in.readInt()];
+                to = modules.get(j).getInputPorts()[in.readInt()];
             }
-            link[i] = new Link(from, to);
+            links.add(new Link(from, to));
             to.getModule().setInput(to, from);
         }
     }
 
     public TextureParameter[] getTextureParameters(Object texture) {
         int count = 0;
-        for (Module mod : module) {
+        for (Module mod : modules) {
             if (mod instanceof ParameterModule) {
                 count++;
             }
@@ -295,7 +272,7 @@ public class Procedure {
 
         TextureParameter[] params = new TextureParameter[count];
         count = 0;
-        for (Module mod : module) {
+        for (Module mod : modules) {
             if (mod instanceof ParameterModule) {
                 params[count] = ((ParameterModule) mod).getParameter(texture);
                 ((ParameterModule) mod).setIndex(count++);
@@ -332,21 +309,19 @@ public class Procedure {
     }
 
     public boolean usesImage(ImageMap image) {
-        for (Module mod : module) {
-            if (mod instanceof ImageModule && ((ImageModule) mod).getMap() == image) {
-                return true;
-            }
-        }
-        return false;
+         return modules.stream().anyMatch((mod) -> (mod instanceof ImageModule && ((ImageModule) mod).getMap() == image));
     }
 
     /**
      * Create a Procedure object for texture.
      */
     public static Procedure createTextureProcedure() {
-        return new Procedure(new OutputModule[]{new OutputModule(Translate.text("Diffuse"), Translate.text("white"), 0.0, new RGBColor(1.0F, 1.0F, 1.0F), IOPort.COLOR),
-            new OutputModule(Translate.text("Specular"), Translate.text("white"), 0.0, new RGBColor(1.0F, 1.0F, 1.0F), IOPort.COLOR),
-            new OutputModule(Translate.text("Transparent"), Translate.text("white"), 0.0, new RGBColor(1.0F, 1.0F, 1.0F), IOPort.COLOR),
+        final String white = Translate.text("white");
+        final RGBColor whiteColor = new RGBColor(1.0F, 1.0F, 1.0F);
+        return new Procedure(
+            new OutputModule(Translate.text("Diffuse"), white, 0.0, whiteColor, IOPort.COLOR),
+            new OutputModule(Translate.text("Specular"), white, 0.0, whiteColor, IOPort.COLOR),
+            new OutputModule(Translate.text("Transparent"), white, 0.0, whiteColor, IOPort.COLOR),
             new OutputModule(Translate.text("Emissive"), Translate.text("black"), 0.0, new RGBColor(0.0F, 0.0F, 0.0F), IOPort.COLOR),
             new OutputModule(Translate.text("Transparency"), "0", 0.0, null, IOPort.NUMBER),
             new OutputModule(Translate.text("Specularity"), "0", 0.0, null, IOPort.NUMBER),
@@ -354,7 +329,7 @@ public class Procedure {
             new OutputModule(Translate.text("Roughness"), "0", 0.0, null, IOPort.NUMBER),
             new OutputModule(Translate.text("Cloudiness"), "0", 0.0, null, IOPort.NUMBER),
             new OutputModule(Translate.text("BumpHeight"), "0", 0.0, null, IOPort.NUMBER),
-            new OutputModule(Translate.text("Displacement"), "0", 0.0, null, IOPort.NUMBER)});
+            new OutputModule(Translate.text("Displacement"), "0", 0.0, null, IOPort.NUMBER));
     }
 
 }
