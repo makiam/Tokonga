@@ -1386,19 +1386,20 @@ public class CSGModeller {
 
     /* Mark a vertex as inside or outside, the recursively call this routine for vertices of adjacent faces. */
     @VisibleForTesting
-    public static void markVertex(int which, int value, Vector v1, Vector f1, int vertFace[][], int stackDepth) {
-        VertexInfo v = (VertexInfo) v1.elementAt(which);
+    @SuppressWarnings("NonPublicExported")
+    public static void markVertex(int which, int value, List<VertexInfo> v1, List<FaceInfo> f1, int vertFace[][], int stackDepth) {
+        VertexInfo v = v1.get(which);
         v.type = value;
         if (stackDepth == 500) {
             return; // Limit recursion to prevent stack overflows.
         }
         for (int i = 0; i < vertFace[which].length; i++) {
-            FaceInfo f = (FaceInfo) f1.elementAt(vertFace[which][i]);
+            FaceInfo f = f1.get(vertFace[which][i]);
             if (f.type == UNKNOWN || f.type == value) {
                 f.type = value;
-                VertexInfo vi1 = (VertexInfo) v1.elementAt(f.v1);
-                VertexInfo vi2 = (VertexInfo) v1.elementAt(f.v2);
-                VertexInfo vi3 = (VertexInfo) v1.elementAt(f.v3);
+                VertexInfo vi1 = v1.get(f.v1);
+                VertexInfo vi2 = v1.get(f.v2);
+                VertexInfo vi3 = v1.get(f.v3);
                 if (vi1.type == UNKNOWN) {
                     markVertex(f.v1, value, v1, f1, vertFace, stackDepth + 1);
                 }
