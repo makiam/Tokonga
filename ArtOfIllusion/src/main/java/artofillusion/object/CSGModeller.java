@@ -12,6 +12,7 @@ package artofillusion.object;
 import artofillusion.*;
 import artofillusion.math.*;
 import artofillusion.texture.*;
+import com.google.common.annotations.VisibleForTesting;
 import java.util.*;
 
 /**
@@ -1074,6 +1075,7 @@ public class CSGModeller {
     /**
      * Determine which vertices of one object are inside or outside the other object.
      */
+    
     private void findInsideVertices(Vector<VertexInfo> v1, Vector<FaceInfo> f1, Vector<VertexInfo> v2, Vector<FaceInfo> f2) {
         // Make a list of the faces sharing each vertex.
 
@@ -1459,18 +1461,20 @@ public class CSGModeller {
     }
 
     /* Inner classes for keeping track of information about vertices and faces. */
-    private static class VertexInfo {
+    @VisibleForTesting
+    public static class VertexInfo {
 
         Vec3 r;
         float smoothness;
         double param[];
         int type;
 
+        public VertexInfo(Vec3 r, float smoothness) {
+            this(r, smoothness, null);
+        }
+        
         public VertexInfo(Vec3 r, float smoothness, double param[]) {
-            this.r = r;
-            this.smoothness = smoothness;
-            this.param = param;
-            type = UNKNOWN;
+            this(r, smoothness, param, UNKNOWN);
         }
 
         public VertexInfo(Vec3 r, float smoothness, double param[], int type) {

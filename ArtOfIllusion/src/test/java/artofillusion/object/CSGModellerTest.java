@@ -17,9 +17,6 @@ import org.junit.Test;
  */
 public class CSGModellerTest {
     
-    public CSGModellerTest() {
-    }
-    
     @BeforeClass
     public static void setUpClass() {
     }
@@ -28,9 +25,16 @@ public class CSGModellerTest {
     public static void tearDownClass() {
     }
 
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
+    @Test
+    public void testCSGModellerVertexInfoConstructors2() {
+        CSGModeller.VertexInfo vi = new CSGModeller.VertexInfo(Vec3.vy(), 1);
+        Assert.assertEquals(Vec3.vy(), vi.r);
+        Assert.assertEquals(1, vi.smoothness, 0);
+        Assert.assertEquals(CSGModeller.UNKNOWN, vi.type);
+        Assert.assertNull(vi.param);
+    }
+    
+    
     @Test
     public void testCSGModellerVertexInfoConstructors3() {
         CSGModeller.VertexInfo vi = new CSGModeller.VertexInfo(Vec3.vy(), 1, new double[10]);
