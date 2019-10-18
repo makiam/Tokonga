@@ -34,7 +34,14 @@ dependencies {
     // only buoy and QuickTimeWriter need to be local. Other locals can be removed
     implementation fileTree(dir: '../lib', include: '*.jar')
 
-
+    implementation 'com.google.guava:guava:28.1-jre'
+    implementation 'com.google.flogger:flogger:0.4'
+    implementation('com.google.flogger:flogger-log4j-backend:0.4') {
+        exclude group: 'javax.jms', module: 'jms'
+        exclude group: 'com.sun.jdmk', module: 'jmxtools'
+        exclude group: 'com.sun.jmx', module: 'jmxri'
+    }
+    
 }
 
 test {
