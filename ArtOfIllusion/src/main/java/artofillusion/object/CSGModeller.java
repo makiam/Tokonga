@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2015 by Peter Eastman and Marco Brenco
-
+   Changes copyright (C) 2019 by Maksim Khramov
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
@@ -9,10 +9,9 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.object;
 
-import artofillusion.texture.*;
-import artofillusion.math.*;
 import artofillusion.*;
-
+import artofillusion.math.*;
+import artofillusion.texture.*;
 import java.util.*;
 
 /**
@@ -128,7 +127,7 @@ public class CSGModeller {
         Vector<int[]> faceIndex = new Vector<>();
         Vector<float[]> faceSmoothness = new Vector<>();
         int index1[] = new int[vert1.size()], index2[] = new int[vert2.size()];
-        int firstBoundary = -1, faces1;
+        int faces1;
 
         // Original algorithm has been modified. It claimed that BOUNDARY vertices must never be deleted,
         // but this is not always true when doing difference between two objects with an overlapping surface.
