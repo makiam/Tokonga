@@ -674,10 +674,10 @@ public class SceneTest {
     }
 
     /**
-     * Test to check scene objectModified(...) code. Failed as not initialized AOI preferences
-     * system @ test time. Code is depends of interactive surface error value
+     * Test to check scene objectModified(...) code.
+     * 
      */
-    @Test(expected = NullPointerException.class) // This throws NPE due uninitialized AOI preferences 
+    @Test
     public void testSceneObjectModified() {
         ObjectInfo target = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube");
         scene.addObject(target, (UndoRecord) null);
@@ -686,7 +686,7 @@ public class SceneTest {
         scene.objectModified(target.getObject());
 
         assertNull(target.getPose());
-        assertNull(target.getPreviewMesh());
+        assertNotNull(target.getPreviewMesh());
 
     }
 
