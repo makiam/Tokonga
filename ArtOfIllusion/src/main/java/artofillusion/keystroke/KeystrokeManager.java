@@ -133,7 +133,7 @@ public class KeystrokeManager {
      */
     public static void loadRecords() {
         try {
-            Path keys = Paths.get(ApplicationPreferences.getPreferencesDirectory().getPath()).resolve(KEYSTROKE_FILENAME);
+            Path keys = ApplicationPreferences.getPreferencesPath().resolve(KEYSTROKE_FILENAME);
             InputStream in;
             if (Files.exists(keys)) {
                 in = new BufferedInputStream(Files.newInputStream(keys));
