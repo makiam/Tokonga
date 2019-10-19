@@ -30,22 +30,16 @@ import java.util.Vector;
 /**
  * PMKnifeTool is an EditingTool used fto divide edges of PolyMesh objects.
  */
+@EditingTool.ButtonImage("polymesh:createface")
+@EditingTool.Tooltip("polymesh:createFaceTool.tipText")
 public class PMCreateFaceTool extends EditingTool {
 
-    private List<Vec3> clickPoints;
-    private UndoRecord undo;
-    private MeshEditController controller;
-    private PolyMesh originalMesh;
-    private boolean dragging;
-    private Point dragPoint;
+    private final List<Vec3> clickPoints;
+    private final MeshEditController controller;
     private ViewerCanvas canvas;
-    private Point screenVert[];
-    private boolean[] selection, vertSelection;
-    private boolean eligible;
-    private int boundaryEdge;
     private int from, to;
     private Vec3 fromPoint;
-    Vec3[] pr;
+    private Vec3[] pr;
 
     public PMCreateFaceTool(EditingWindow fr, MeshEditController controller) {
         super(fr);
@@ -53,7 +47,6 @@ public class PMCreateFaceTool extends EditingTool {
         from = to = -1;
         fromPoint = null;
         this.controller = controller;
-        initButton("polymesh:createface");
     }
 
     @Override
@@ -65,26 +58,17 @@ public class PMCreateFaceTool extends EditingTool {
         fromPoint = null;
     }
 
-    @Override
-    public int whichClicks() {
-        return ALL_CLICKS;
-    }
-
-    @Override
-    public String getToolTipText() {
-        return Translate.text("polymesh:createFaceTool.tipText");
-    }
 
     @Override
     public void mouseReleased(WidgetMouseEvent ev, ViewerCanvas view) {
         Point e = ev.getPoint();
         PolyMesh mesh, viewMesh;
         viewMesh = mesh = (PolyMesh) controller.getObject().object;
-        boolean mirror;
+
         int[] invVertTable = null;
         int length = mesh.getVertices().length;
         if (mesh.getMirrorState() != PolyMesh.NO_MIRROR) {
-            mirror = true;
+
             viewMesh = mesh.getMirroredMesh();
             invVertTable = mesh.getInvMirroredVerts();
             length = invVertTable.length;
