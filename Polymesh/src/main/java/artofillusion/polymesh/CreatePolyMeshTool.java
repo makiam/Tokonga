@@ -17,8 +17,6 @@ import artofillusion.Scene;
 import artofillusion.SceneViewer;
 import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
-import artofillusion.animation.PositionTrack;
-import artofillusion.animation.RotationTrack;
 import artofillusion.math.CoordinateSystem;
 import artofillusion.math.Vec3;
 import artofillusion.object.Mesh;
@@ -45,15 +43,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner;
 
 /**
  * CreatePolyMeshTool is an EditingTool used for creating PolyMesh objects.
  */
+@EditingTool.ButtonImage("polymesh:polymesh")
+@EditingTool.Tooltip("polymesh:createPolyMeshTool.tipText")
 public class CreatePolyMeshTool extends EditingTool {
 
-    private EditingWindow edw;
     private int counter = 1;
     private int shape = 0;
     private int usize = 3;
@@ -64,10 +64,8 @@ public class CreatePolyMeshTool extends EditingTool {
     boolean shiftDown;
     Point clickPoint;
 
-    public CreatePolyMeshTool(EditingWindow fr) {
-        super(fr);
-        edw = fr;
-        initButton("polymesh:polymesh");
+    public CreatePolyMeshTool(EditingWindow view) {
+        super(view);
     }
 
     @Override
@@ -85,7 +83,7 @@ public class CreatePolyMeshTool extends EditingTool {
         } else if (shape == 3) {
             shapeDesc = "cylinder";
         } else if (shape == 1) {
-            shapeDesc = "single face";
+            shapeDesc = "face";
         } else {
             shapeDesc = "flat";
         }
@@ -110,23 +108,10 @@ public class CreatePolyMeshTool extends EditingTool {
             smoothingDesc = Translate.text("menu." + smoothingDesc).toLowerCase();
         }
         if (shape <= 2) {
-            theWindow.setHelpText(Translate.text("polymesh:createPolyMeshTool.helpText1",
-                    new Object[]{Translate.text("polymesh:createPolyMeshTool." + shapeDesc), smoothingDesc}));
+            theWindow.setHelpText(Translate.text("polymesh:createPolyMeshTool.helpText1", Translate.text("polymesh:createPolyMeshTool." + shapeDesc), smoothingDesc));
         } else {
-            theWindow.setHelpText(Translate.text("polymesh:createPolyMeshTool.helpText2",
-                    new Object[]{Translate.text("polymesh:createPolyMeshTool." + shapeDesc),
-                        Integer.toString(usize), Integer.toString(vsize), smoothingDesc}));
+            theWindow.setHelpText(Translate.text("polymesh:createPolyMeshTool.helpText2", Translate.text("polymesh:createPolyMeshTool." + shapeDesc), usize, vsize, smoothingDesc));
         }
-    }
-
-    @Override
-    public int whichClicks() {
-        return ALL_CLICKS;
-    }
-
-    @Override
-    public String getToolTipText() {
-        return Translate.text("polymesh:createPolyMeshTool.tipText");
     }
 
     @Override
@@ -144,7 +129,6 @@ public class CreatePolyMeshTool extends EditingTool {
         Point dragPoint = e.getPoint();
         Vec3 v1, v2, v3, orig, xdir, ydir, zdir;
         double xsize, ysize, zsize;
-        int i;
 
         if (shiftDown) {
             if (Math.abs(dragPoint.x - clickPoint.x) > Math.abs(dragPoint.y - clickPoint.y)) {
@@ -196,8 +180,7 @@ public class CreatePolyMeshTool extends EditingTool {
         }
         obj.setSmoothingMethod(smoothingMethod);
         ObjectInfo info = new ObjectInfo(obj, new CoordinateSystem(orig, zdir, ydir), "PolyMesh " + (counter++));
-        info.addTrack(new PositionTrack(info), 0);
-        info.addTrack(new RotationTrack(info), 1);
+
         UndoRecord undo = new UndoRecord(theWindow, false);
         undo.addCommandAtBeginning(UndoRecord.SET_SCENE_SELECTION, ((LayoutWindow) theWindow).getSelectedIndices());
         ((LayoutWindow) theWindow).addObject(info, undo);
@@ -208,8 +191,9 @@ public class CreatePolyMeshTool extends EditingTool {
     }
 
     @Override
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void iconDoubleClicked() {
-        new PolyMeshToolDialog(edw.getFrame());
+        new PolyMeshToolDialog(theWindow.getFrame());
         setHelpText();
     }
 
@@ -394,15 +378,16 @@ public class CreatePolyMeshTool extends EditingTool {
          */
         private void doOK() {
             shape = typeCombo.getSelectedIndex();
-            usize = ((Integer) xSpinner.getValue()).intValue();
-            vsize = ((Integer) ySpinner.getValue()).intValue();
+            usize = ((Integer) xSpinner.getValue());
+            vsize = ((Integer) ySpinner.getValue());
             int type = typeCombo.getSelectedIndex();
             if (type < templateStart) {
                 templateMesh = null;
             } else {
                 templateMesh = null;
                 try {
-                    File file = new File(ArtOfIllusion.PLUGIN_DIRECTORY + File.separator + "PolyMeshTemplates" + File.separator + (String) typeCombo.getSelectedValue());
+
+                    File file = Paths.get(ArtOfIllusion.PLUGIN_DIRECTORY, "PolyMeshTemplates", typeCombo.getSelectedValue().toString()).toFile();
                     DataInputStream dis = new DataInputStream(new FileInputStream(file));
                     templateMesh = new PolyMesh(dis);
                     templateMesh.setSmoothingMethod(smoothingMethod);
@@ -419,7 +404,7 @@ public class CreatePolyMeshTool extends EditingTool {
          * @param spinner The concerned BSpinner
          * @param numCol The new number of columns to show
          */
-        public void setSpinnerColumns(BSpinner spinner, int numCol) {
+        public final void setSpinnerColumns(BSpinner spinner, int numCol) {
             JSpinner.NumberEditor ed = (JSpinner.NumberEditor) spinner.getComponent().getEditor();
             JFormattedTextField field = ed.getTextField();
             field.setColumns(numCol);
