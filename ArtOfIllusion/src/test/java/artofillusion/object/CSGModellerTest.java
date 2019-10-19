@@ -72,4 +72,10 @@ public class CSGModellerTest {
         Assert.assertEquals(CSGModeller.BOUNDARY, vi.type);
         Assert.assertNull(vi.param);
     }
+    
+    
+    @Test
+    public void testCSGModellerFaceInfo() {
+        
+    }
 }

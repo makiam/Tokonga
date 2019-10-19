@@ -27,8 +27,11 @@ import java.util.*;
  */
 public class CSGModeller {
 
-    private Vector<VertexInfo> vert1, vert2;
-    private Vector<FaceInfo> face1, face2;
+    private Vector<VertexInfo> vert1;
+    private Vector<VertexInfo> vert2;
+    
+    private Vector<FaceInfo> face1;
+    private Vector<FaceInfo> face2;
     private int mainAxis;
 
     static final int VERTEX = 0;
@@ -73,8 +76,10 @@ public class CSGModeller {
         vert2 = new Vector<>();
         face1 = new Vector<>();
         face2 = new Vector<>();
+        
         TriangleMesh.Vertex vert[] = (TriangleMesh.Vertex[]) obj1.getVertices();
         Mat4 trans = coords1.fromLocal();
+        
         for (int i = 0; i < vert.length; i++) {
             vert1.addElement(new VertexInfo(trans.times(vert[i].r), vert[i].smoothness, null));
         }
@@ -83,6 +88,7 @@ public class CSGModeller {
         for (int i = 0; i < vert.length; i++) {
             vert2.addElement(new VertexInfo(trans.times(vert[i].r), vert[i].smoothness, null));
         }
+        
         TriangleMesh.Edge edge[] = obj1.getEdges();
         TriangleMesh.Face face[] = obj1.getFaces();
         if (obj1.getSmoothingMethod() == Mesh.NO_SMOOTHING) {
@@ -249,7 +255,7 @@ public class CSGModeller {
     /**
      * Add a polygon with its vertices to the final mesh
      */
-    private void addPolygon(FaceInfo f, boolean reverseNormal, Vector<VertexInfo> objVert,
+    private static void addPolygon(FaceInfo f, boolean reverseNormal, Vector<VertexInfo> objVert,
             Vector<VertexInfo> allVert, int[] vertIndex, Vector<int[]> faceIndex, Vector<float[]> faceSmoothness) {
         // Add polygon's vertices
 
@@ -1415,18 +1421,18 @@ public class CSGModeller {
 
     /* Given the three vertices of a face and a point incide that face, calculate
      the texture parameters for that point. */
-    private double[] interpTextureParams(Vec3 pos, VertexInfo v1, VertexInfo v2, VertexInfo v3, FaceInfo f) {
+    private static double[] interpTextureParams(Vec3 pos, VertexInfo v1, VertexInfo v2, VertexInfo v3, FaceInfo faceInfo) {
         if (v1.param == null) {
             return null;
         }
         Vec2 edge2d1, edge2d2;
         double vx, vy;
-        if (f.norm.x > 0.5 || f.norm.x < -0.5) {
+        if (faceInfo.norm.x > 0.5 || faceInfo.norm.x < -0.5) {
             edge2d1 = new Vec2(v1.r.y - v2.r.y, v1.r.z - v2.r.z);
             edge2d2 = new Vec2(v1.r.y - v3.r.y, v1.r.z - v3.r.z);
             vx = pos.y - v1.r.y;
             vy = pos.z - v1.r.z;
-        } else if (f.norm.y > 0.5 || f.norm.y < -0.5) {
+        } else if (faceInfo.norm.y > 0.5 || faceInfo.norm.y < -0.5) {
             edge2d1 = new Vec2(v1.r.x - v2.r.x, v1.r.z - v2.r.z);
             edge2d2 = new Vec2(v1.r.x - v3.r.x, v1.r.z - v3.r.z);
             vx = pos.x - v1.r.x;
@@ -1485,8 +1491,9 @@ public class CSGModeller {
             this.type = type;
         }
     }
-
-    private class FaceInfo {
+    
+    @VisibleForTesting
+    public class FaceInfo {
 
         int v1, v2, v3;
         int type;
