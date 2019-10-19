@@ -5533,7 +5533,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             }
             pack();
             addEventLink(WindowClosingEvent.class, this, "doCancel");
-            UIUtilities.centerWindow(PolyMeshEditorWindow.this);
+            UIUtilities.centerWindow(this);
             setVisible(true);
 
         }
