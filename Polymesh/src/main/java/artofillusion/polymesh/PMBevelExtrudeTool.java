@@ -32,24 +32,25 @@ import java.awt.event.ActionEvent;
  * @author Peter Eastman, modifications by Francois Guillet
  * @created april, 26 2005
  */
+@EditingTool.ButtonImage("polymesh:bevel")
+@EditingTool.Tooltip("bevelExtrudeTool.tipText")
 public class PMBevelExtrudeTool extends EditingTool {
 
     private boolean selected[], noSelection, separateFaces;
     private PolyMesh origMesh;
     private Point clickPoint;
     private double width, height;
-    private MeshEditController controller;
+    private final MeshEditController controller;
 
     /**
      * Constructor for the BevelExtrudeTool object
      *
-     * @param fr Description of the Parameter
+     * @param view Description of the Parameter
      * @param controller Description of the Parameter
      */
-    public PMBevelExtrudeTool(EditingWindow fr, MeshEditController controller) {
-        super(fr);
+    public PMBevelExtrudeTool(EditingWindow view, MeshEditController controller) {
+        super(view);
         this.controller = controller;
-        initButton("polymesh:bevel");
     }
 
     /**
@@ -83,26 +84,6 @@ public class PMBevelExtrudeTool extends EditingTool {
     /**
      * Description of the Method
      *
-     * @return Description of the Return Value
-     */
-    @Override
-    public int whichClicks() {
-        return ALL_CLICKS;
-    }
-
-    /**
-     * Gets the toolTipText attribute of the BevelExtrudeTool object
-     *
-     * @return The toolTipText value
-     */
-    @Override
-    public String getToolTipText() {
-        return Translate.text("bevelExtrudeTool.tipText");
-    }
-
-    /**
-     * Description of the Method
-     *
      * @param e Description of the Parameter
      * @param view Description of the Parameter
      */
@@ -112,10 +93,9 @@ public class PMBevelExtrudeTool extends EditingTool {
         if (noSelection) {
             return;
         }
-        PolyMeshViewer mv = (PolyMeshViewer) view;
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
         origMesh = mesh.duplicate();
-        //beveler = new PolyMeshBeveler( origMesh, selected, mode );
+
         clickPoint = e.getPoint();
     }
 
@@ -130,9 +110,7 @@ public class PMBevelExtrudeTool extends EditingTool {
         if (noSelection) {
             return;
         }
-        PolyMeshViewer mv = (PolyMeshViewer) view;
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
-        Camera cam = view.getCamera();
         Point dragPoint = e.getPoint();
         // Determine the bevel width and extrude height.
 
@@ -225,8 +203,7 @@ public class PMBevelExtrudeTool extends EditingTool {
             Translate.text("individualFaces")
         });
         c.setSelectedIndex(separateFaces ? 1 : 0);
-        ComponentsDialog dlg = new ComponentsDialog(theFrame, Translate.text("applyExtrudeTo"),
-                new Widget[]{c}, new String[]{null});
+        ComponentsDialog dlg = new ComponentsDialog(theFrame, Translate.text("applyExtrudeTo"), new Widget[]{c}, new String[]{null});
         if (dlg.clickedOk()) {
             separateFaces = (c.getSelectedIndex() == 1);
         }
