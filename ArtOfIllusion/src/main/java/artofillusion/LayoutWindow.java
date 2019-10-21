@@ -28,8 +28,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.text.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.*;
 import java.util.prefs.*;
 import javax.swing.*;
 import javax.swing.text.*;
@@ -429,12 +435,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         fileMenu.add(Translate.menuItem("close", this, "closeSceneAction"));
         fileMenu.addSeparator();
 
-        Collections.sort(translators, new Comparator<Translator>() {
-            @Override
-            public int compare(Translator t1, Translator t2) {
-                return t1.getName().compareTo(t2.getName());
-            }
-        });
+        Collections.sort(translators, Comparator.comparing(Translator::getName));
 
         for (Translator translator : translators) {
             if (translator.canImport()) {
@@ -529,23 +530,18 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     private void createToolsMenu() {
         List<ModellingTool> modellingTools = PluginRegistry.getPlugins(ModellingTool.class);
-        Collections.sort(modellingTools, new Comparator<ModellingTool>() {
-            @Override
-            public int compare(ModellingTool m1, ModellingTool m2) {
-                return m1.getName().compareTo(m2.getName());
-            }
-        });
+        Collections.sort(modellingTools, Comparator.comparing(ModellingTool::getName));
 
         toolsMenu = Translate.menu("tools");
         getMenuBar().add(toolsMenu);
 
-        for (ModellingTool tool : modellingTools) {
+        modellingTools.forEach((ModellingTool tool) -> {
             BMenuItem item = new BMenuItem(tool.getName());
 
             item.addEventLink(CommandEvent.class, this, "modellingToolCommand");
             item.getComponent().putClientProperty("tool", tool);
             toolsMenu.add(item);
-        }
+        });
 
         toolsMenu.addSeparator();
         toolsMenu.add(Translate.menuItem("createScriptObject", this, "createScriptObjectCommand"));
@@ -2880,6 +2876,10 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     public void environmentCommand() {
+        SwingUtilities.invokeLater(() -> {
+            new SceneEnvironmentDialog(this.getComponent()).setVisible(true);
+        });
+        
         final RGBColor ambColor = theScene.getAmbientColor(), envColor = theScene.getEnvironmentColor(), fogColor = theScene.getFogColor();
         final RGBColor oldAmbColor = ambColor.duplicate(), oldEnvColor = envColor.duplicate(), oldFogColor = fogColor.duplicate();
         final Widget ambPatch = ambColor.getSample(50, 30), envPatch = envColor.getSample(50, 30), fogPatch = fogColor.getSample(50, 30);
