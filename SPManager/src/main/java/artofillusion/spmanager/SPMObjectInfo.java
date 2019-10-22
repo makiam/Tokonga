@@ -768,8 +768,7 @@ public class SPMObjectInfo {
                 methId = SPManagerUtils.getAttribute(subnode, "id");
                 exports.put(methId, plugClass + "." + methName);
 
-                if (subnode.getChildNodes() != null
-                        && subnode.getChildNodes().item(0) != null) {
+                if (subnode.getChildNodes() != null && subnode.getChildNodes().item(0) != null) {
                     methHelp = subnode.getChildNodes().item(0).getNodeValue();
                     if (exportList.length() > 0) {
                         exportList += "========================\n";
@@ -820,8 +819,7 @@ public class SPMObjectInfo {
 
                 val = System.getProperty(filtName);
                 if (val == null || val.length() == 0) {
-                    System.out.println("SPMObjectInfo: could not resolve "
-                            + "<assert> value: " + fileName);
+                    System.out.println("SPMObjectInfo: could not resolve <assert> value: " + fileName);
                     continue;
                 }
 
@@ -1243,8 +1241,7 @@ public class SPMObjectInfo {
 
         int comp = 0;
 
-        System.out.println("test: lhs:" + lhs + "; rhs:" + rhs
-                + "; oper:" + oper);
+        System.out.println("test: lhs:" + lhs + "; rhs:" + rhs + "; oper:" + oper);
 
         if (oper == null || oper.length() == 0) {
             oper = "=";

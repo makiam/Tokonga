@@ -92,7 +92,7 @@ public class SPManagerFrame extends BFrame {
         LayoutInfo headLayout = new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE, new Insets(3, 5, 5, 3), new Dimension(0, 0));
         rc.add(new BLabel(new ImageIcon(getClass().getResource("/artofillusion/spmanager/icons/gear.png"))), headLayout);
         //Icon gear.png taken from the KDE desktop environment !!!
-        rc.add(SPMTranslate.bLabel("Version", new Object[]{version}), headLayout);
+        rc.add(SPMTranslate.bLabel("Version", version), headLayout);
         LayoutInfo cclayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets(3, 3, 5, 3), new Dimension(0, 0));
         cc.add(rc, cclayout);
 

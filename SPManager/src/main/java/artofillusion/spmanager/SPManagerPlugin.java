@@ -12,7 +12,6 @@
 package artofillusion.spmanager;
 
 import artofillusion.*;
-import artofillusion.ui.*;
 import artofillusion.util.SearchlistClassLoader;
 import buoy.event.*;
 import buoy.widget.*;
@@ -202,24 +201,6 @@ public class SPManagerPlugin implements Plugin {
                                             System.out.println("SPM: could not find loader for: " + url);
                                         }
                                     }
-                                    /*
-				 * NTJ - disabled. No longer needed, and requires a new method in SearchlistClassLoader
-				 * 
-				else {
-				    System.out.println("SPM: importing: " + key[1]);
-				    if (searchldr != null) {
-					try {
-					    searchldr.add(ldr.loadClass(key[1]));
-					} catch (Exception e) {
-					    System.out.println("SPM: Error importing class: " + key[1] + " into " + url);
-					}
-				    }
-				    else {
-					System.out.println("SPM: Error: Class cannot be imported without a SearchListClassLoader: " + url
-						+ "(" + key[1] + ")");
-				    }
-				}
-                                     */
                                 }
                             }
                         }
@@ -253,21 +234,6 @@ public class SPManagerPlugin implements Plugin {
                 BMenuItem menuItem = SPMTranslate.bMenuItem("SPManager", CommandEvent.class, this, "doMenu");
 
                 toolsMenu.add(menuItem);
-            }
-            break;
-
-            case APPLICATION_STOPPING:
-
-                break;
-
-            case DOWNLOAD: {
-                System.out.println("DOWNLOAD...");
-
-                BFrame frame = (BFrame) args[0];
-                URL from = (URL) args[1];
-                URL to = (URL) (args.length > 2 ? args[2] : null);
-
-                download(frame, from, to);
             }
             break;
 
@@ -367,8 +333,7 @@ public class SPManagerPlugin implements Plugin {
         // make sure all live directories exist
         temp = new File(PLUGIN_DIRECTORY);
         if (!temp.exists() && !temp.mkdir()) {
-            err.add("Cannot create missing plugin folder: "
-                    + temp.getAbsolutePath());
+            err.add("Cannot create missing plugin folder: " + temp.getAbsolutePath());
         }
 
         temp = new File(TOOL_SCRIPT_DIRECTORY);
@@ -402,302 +367,11 @@ public class SPManagerPlugin implements Plugin {
         }
     }
 
-    public void registerResource(String type, String id, ClassLoader loader, String baseName, Locale locale) {
-        String suffix = "";
-
-        if (locale.getLanguage().length() > 0) {
-            suffix += "_" + locale.getLanguage();
-        }
-        if (locale.getCountry().length() > 0) {
-            suffix += "_" + locale.getCountry();
-        }
-        if (locale.getVariant().length() > 0) {
-            suffix += "_" + locale.getVariant();
-        }
-
-        URL url;
-        int cut;
-
-        for (int i = 0; i < 3; i++) {
-            try {
-                url = loader.getResource(baseName + suffix + ".properties");
-
-                if (url != null) {
-                    PluginRegistry.registerResource(type, id, loader, url.getPath(), locale);
-                    break;
-                }
-            } catch (Exception e) {
-            }
-
-            // can we remove part of the suffix?
-            cut = suffix.lastIndexOf('_');
-            if (cut > 0) {
-                suffix = suffix.substring(0, cut);
-            } else {
-                break;
-            }
-        }
-    }
-
-    public void download(BFrame frame, URL from) {
-        download(frame, from, null);
-    }
-
-    /**
-     * download (and install if possible) the specified file(set).
-     */
-    public void download(BFrame frame, URL from, URL to) {
-        final BFrame context = frame;
-        final URL url = from;
-
-        final StatusDialog status = new StatusDialog(context) {
-            SPMObjectInfo info;
-            BLabel size;
-            BButton okbtn;
-            String filename, name;
-            ColumnContainer col;
-            RowContainer buttons;
-            BTextField savePath;
-            Thread worker;
-
-            @Override
-            public void setVisible(boolean vis) {
-                if (!vis) {
-                    super.setVisible(vis);
-                    return;
-                }
-
-                col = (ColumnContainer) getContent();
-
-                filename = url.getFile();
-                int cut = filename.lastIndexOf('/');
-                if (cut > 0 && cut < filename.length()) {
-                    filename = filename.substring(cut + 1);
-                }
-
-                cut = filename.lastIndexOf('?');
-                if (cut > 0) {
-                    filename = filename.substring(0, cut);
-                }
-
-                name = new String(filename);
-                cut = name.lastIndexOf('.');
-                if (cut > 0) {
-                    name = name.substring(0, cut);
-                }
-
-                setText(name);
-                setProgressText(SPMTranslate.text("clickStart"));
-
-                okbtn = SPMTranslate.bButton("start", this, "ok");
-
-                buttons = new RowContainer();
-                buttons.add(okbtn);
-                buttons.add(SPMTranslate.bButton("cancel", this, "close"));
-
-                okbtn.setActionCommand("ok");
-
-                col.add(buttons);
-                pack();
-                super.setVisible(true);
-            }
-
-            public void close() {
-                if (worker != null) {
-                    worker.interrupt();
-                }
-                doClose();
-            }
-
-            public void ok(CommandEvent ev) {
-                String cmd = ev.getActionCommand();
-                okbtn.setEnabled(false);
-
-                final BButton okbut = okbtn;
-
-                final StatusDialog stat = this;
-
-                if (cmd.equals("ok")) {
-
-                    setProgressText(SPMTranslate.text("contacting"));
-                    setIdle(true);
-
-                    System.out.println("DOWNLOAD: creating ObjectInfo..."
-                            + url.toString());
-                    worker = new Thread() {
-                        @Override
-                        public void run() {
-                            info = new SPMObjectInfo(url);
-                            if (info.length == 0) {
-                                System.out.println("DOWNLOAD: no info");
-                                info.length = info.getRemoteFileSize(url.toString());
-                            }
-
-                            /* NTJ: don't give up yet...
-			     *
-				    if (info.length < 0) {
-					new BStandardDialog("SPManager", SPMTranslate.text("httpError"), BStandardDialog.ERROR).showMessageDialog(null);
-
-					doClose();
-				    }
-                             */
-                            // get destination if needed
-                            if (info.name == null
-                                    || info.name.length() == 0) {
-
-                                System.out.println("need path...");
-
-                                RowContainer row = new RowContainer();
-                                row.add(SPMTranslate.bLabel("savePath"));
-                                savePath = new BTextField("", 25);
-                                savePath.addEventLink(ValueChangedEvent.class, this, "savePath");
-                                row.add(savePath);
-                                row.add(SPMTranslate.bButton("browse",
-                                        this,
-                                        "browse"));
-                                col.remove(buttons);
-                                col.add(row);
-                                col.add(buttons);
-                                pack();
-                            }
-
-                            long total = info.getTotalLength();
-
-                            String sz = (total > 1000000
-                                    ? " "
-                                    + (total / 1000000)
-                                    + " MB"
-                                    : total > 1000
-                                            ? " " + (total / 1000)
-                                            + " kB"
-                                            : (total > 0)
-                                                    ? " " + total
-                                                    + " bytes"
-                                                    : "");
-
-                            setText(info.getName() + " " + sz);
-                            setIdle(false);
-                            setProgressText(SPMTranslate.text("ready"));
-
-                            okbut.setActionCommand("install");
-                            okbut.setText(SPMTranslate.text("install"));
-                            okbut.setEnabled(true);
-                            pack();
-                        }
-
-                        public void savePath() {
-                            String val = savePath.getText();
-                            okbtn.setEnabled(val != null && val.length() > 0);
-                        }
-
-                        public void browse() {
-                            BFileChooser fc = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("savePath"));
-
-                            File file = null;
-                            String path = null;
-                            String fname = savePath.getText();
-
-                            if (fname == null || fname.length() == 0) {
-                                path = System.getProperty("user.home");
-                                fname = filename;
-                            }
-
-                            if (fname != null) {
-                                if (path != null) {
-                                    file = new File(path, fname);
-                                } else {
-                                    file = new File(fname);
-                                }
-
-                                fc.setDirectory(file.getParentFile());
-                                fc.setSelectedFile(file);
-                            } else {
-                                fc.setDirectory(new File(path));
-                            }
-
-                            if (fc.showDialog(context)) {
-                                savePath.setText(fc.getSelectedFile().getAbsolutePath());
-                            }
-                        }
-
-                    };
-
-                    worker.start();
-
-                } else if (cmd.equals("install")) {
-                    System.out.println("DOWNLOAD: downloading " + url.toString());
-
-                    setText(SPMTranslate.text("downloading", info.getName()));
-                    pack();
-
-                    final List<String> errs = new ArrayList<>();
-                    worker = new Thread() {
-                        @Override
-                        public void run() {
-                            long total = info.getTotalLength();
-
-                            // full save path
-                            String path = null;
-                            if (savePath != null) {
-                                path = savePath.getText();
-                            } else if (info.name != null) {
-                                path = ArtOfIllusion.PLUGIN_DIRECTORY + File.separatorChar + info.name + ".jar";
-                            }
-
-                            if (path == null || path.length() == 0) {
-                                System.out.println("DOWNLOAD: no save location");
-                                new BStandardDialog("SPManager", SPMTranslate.text("noSaveLocation"), BStandardDialog.ERROR).showMessageDialog(null);
-
-                                doClose();
-                            }
-
-                            System.out.println("DOWNLOAD: downloading file...");
-                            if (total > 0) {
-                                setBarValue(total > 0 ? 0 : -1);
-                            }
-
-                            long dl = HttpSPMFileSystem.downloadRemoteBinaryFile(url, path, info.length, stat, total, 0, errs);
-
-                            for (int i = 0; info.files != null && i < info.files.length; i++) {
-                                if (worker.interrupted()) {
-                                    doClose();
-                                    return;
-                                }
-
-                                name = PLUGIN_DIRECTORY + File.separatorChar + info.destination.get(i) + info.files[i];
-
-                                setText(SPMTranslate.text("downloading", info.files[i]));
-                                pack();
-
-                                dl += HttpSPMFileSystem.downloadRemoteBinaryFile(info.getAddFileURL(i), name, info.fileSizes[i], stat, total, dl, errs);
-                            }
-
-                            if (errs != null && errs.size() > 0) {
-                                InstallSplitPane.showErrors(errs);
-                            } else {
-                                new BStandardDialog("SPManager", SPMTranslate.text("modified"), BStandardDialog.ERROR).showMessageDialog(null);
-                            }
-
-                            System.out.println("DOWNLOAD: done");
-                            doClose();
-                        }
-                    };
-
-                    worker.start();
-                } else {
-                    System.out.println("?? cmd=" + cmd);
-                }
-            }
-        };
-    }
 
     /**
      * Description of the Method
      */
     public void doMenu() {
-        // NTJ: don't implement yet... (Nov 2006)
-        //if (!Translate.getLocale().equals(Locale.getDefault())) {
-        //}
 
         if (spmFrame == null) {
             spmFrame = new SPManagerFrame();
@@ -708,18 +382,6 @@ public class SPManagerPlugin implements Plugin {
         //spmFrame.printBounds( spmFrame );
     }
 
-    /**
-     * restart the plugin
-     */
-    public static void restart() {
-        SPManagerFrame old = spmFrame;
-
-        spmFrame = new SPManagerFrame();
-        ((Window) spmFrame.getComponent()).toFront();
-        ((Window) spmFrame.getComponent()).setVisible(true);
-
-        old.dispose();
-    }
 
     /**
      * close the frame
@@ -749,83 +411,5 @@ public class SPManagerPlugin implements Plugin {
         return spmFrame;
     }
 
-    /**
-     * update an already-loaded plugin
-     */
-    public static void updatePlugin(String name, String action, String target) {
 
-    }
-
-    /**
-     * main routine so SPManager can be run standalone
-     */
-    public static void main(String[] argv) {
-        char slash = File.separatorChar;
-
-        APP_DIRECTORY = System.getProperty("user.dir");
-        try {
-            URL url = SPManagerPlugin.class.getResource("/artofillusion/spmanager/SPManagerPlugin.class");
-
-            System.out.println("SPManager.main: url=" + url);
-            System.out.println("SPManager.main: path=" + url.getPath());
-
-            String furl = url.getPath();
-            if (furl.indexOf('!') < 0) {
-                furl = url.toString();
-            }
-
-            int cut = furl.indexOf('!');
-
-            if (cut > 0) {
-
-                furl = furl.substring(0, cut);
-
-                cut = furl.indexOf("jar:");
-                if (cut >= 0) {
-                    furl = furl.substring(cut + "jar:".length());
-                }
-
-                if (!furl.startsWith("file:")) {
-                    furl = "file:" + furl;
-                }
-
-                System.out.println("SPManager.main: furl=" + furl);
-
-                File dir = new File(new URL(furl).getPath()).getParentFile().getParentFile();
-
-                System.out.println("SPManager.main: dir="+ dir.getAbsolutePath());
-
-                if (dir.exists()) {
-                    APP_DIRECTORY = dir.getAbsolutePath();
-                } else {
-                    APP_DIRECTORY = System.getProperty("user.dir");
-                }
-
-                System.out.println("SPManager.main: app_dir=" + APP_DIRECTORY);
-            }
-        } catch (Exception ex) {
-            System.out.println("Error looking up app_dir: " + ex);
-        }
-
-        SPMTranslate.setLocale(Locale.getDefault());
-
-        PLUGIN_DIRECTORY = APP_DIRECTORY + slash + "Plugins";
-        TOOL_SCRIPT_DIRECTORY = APP_DIRECTORY + slash + "Scripts" + slash + "Tools";
-        OBJECT_SCRIPT_DIRECTORY = APP_DIRECTORY + slash + "Scripts" + slash + "Objects";
-        STARTUP_SCRIPT_DIRECTORY = APP_DIRECTORY + slash + "Scripts" + slash + "Startup";
-
-        SPManagerPlugin spm = new SPManagerPlugin();
-        spm.init();
-
-        // create Frame with overridden 'close' method
-        spmFrame = new SPManagerFrame() {
-            @Override
-            protected void hideSPManager() {
-                setVisible(false);
-                dispose();
-            }
-        };
-
-        spm.doMenu();
-    }
 }

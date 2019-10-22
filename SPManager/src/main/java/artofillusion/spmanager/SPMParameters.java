@@ -661,9 +661,7 @@ public class SPMParameters {
             if (username == null || username.length() == 0) {
                 Authenticator.setDefault(new FirewallAuthenticator(null));
             } else {
-                PasswordAuthentication pw = new PasswordAuthentication(
-                        username, password.toCharArray()
-                );
+                PasswordAuthentication pw = new PasswordAuthentication(username, password.toCharArray());
                 Authenticator.setDefault(new FirewallAuthenticator(pw));
             }
         }
