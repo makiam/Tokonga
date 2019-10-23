@@ -12,22 +12,18 @@
 package artofillusion;
 
 import artofillusion.image.*;
+import artofillusion.keystroke.*;
 import artofillusion.material.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
-
 import artofillusion.script.*;
 import artofillusion.texture.*;
 import artofillusion.ui.*;
-import artofillusion.keystroke.*;
 import artofillusion.view.*;
 import buoy.widget.*;
-
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.List;
-
 import java.util.prefs.Preferences;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -38,7 +34,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * variables.
  */
 public class ArtOfIllusion {
-
+    
     public static final String APP_DIRECTORY, PLUGIN_DIRECTORY;
     public static final String TOOL_SCRIPT_DIRECTORY, OBJECT_SCRIPT_DIRECTORY, STARTUP_SCRIPT_DIRECTORY;
     public static final ImageIcon APP_ICON;
@@ -153,7 +149,7 @@ public class ArtOfIllusion {
 
         for (Plugin plugin : PluginRegistry.getPlugins(Plugin.class)) {
             try {
-                plugin.processMessage(Plugin.APPLICATION_STARTING, new Object[0]);
+                plugin.processMessage(Plugin.APPLICATION_STARTING);
             } catch (Throwable tx) {
                 tx.printStackTrace();
                 Messages.error(UIUtilities.breakString(Translate.text("pluginInitError", plugin.getClass().getSimpleName())));
@@ -375,7 +371,7 @@ public class ArtOfIllusion {
 
             for (Plugin plugin : PluginRegistry.getPlugins(Plugin.class)) {
                 try {
-                    plugin.processMessage(Plugin.SCENE_SAVED, new Object[]{f, fr});
+                    plugin.processMessage(Plugin.SCENE_SAVED, f, fr);
                 } catch (Throwable tx) {
                     tx.printStackTrace();
                     Messages.error(UIUtilities.breakString(Translate.text("pluginNotifyError", plugin.getClass().getSimpleName())));
