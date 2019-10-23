@@ -46,7 +46,6 @@ import java.io.InputStream;
 import java.nio.file.Paths;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner;
-import javax.swing.SwingUtilities;
 
 /**
  * CreatePolyMeshTool is an EditingTool used for creating PolyMesh objects.
@@ -191,12 +190,9 @@ public class CreatePolyMeshTool extends EditingTool {
         theWindow.setModified();
     }
 
-    @Override    
+    @Override
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void iconDoubleClicked() {
-        
-        SwingUtilities.invokeLater(() -> {
-            new artofillusion.polymesh.PolyMeshToolDialog(theWindow.getFrame().getComponent()).setVisible(true);
-        });
         new PolyMeshToolDialog(theWindow.getFrame());
         setHelpText();
     }
