@@ -602,7 +602,7 @@ public class ArtOfIllusion {
      * Set the directory in which the user most recently accessed a file.
      */
     public static void setCurrentDirectory(String currentDirectory) {
-        currentDirectory = currentDirectory;
+        ArtOfIllusion.currentDirectory = currentDirectory;
     }
 
 }
