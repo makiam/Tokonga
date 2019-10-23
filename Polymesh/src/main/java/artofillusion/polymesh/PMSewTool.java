@@ -10,11 +10,8 @@ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.polymesh;
 
-import artofillusion.Camera;
-import artofillusion.MeshViewer;
 import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
-import artofillusion.math.Mat4;
 import artofillusion.math.Vec2;
 import artofillusion.math.Vec3;
 import artofillusion.object.MeshVertex;
@@ -30,11 +27,12 @@ import java.awt.event.ActionEvent;
 /**
  * PMKnifeTool is an EditingTool used fto divide edges of PolyMesh objects.
  */
+@EditingTool.ButtonImage("polymesh:sew")
+@EditingTool.Tooltip("polymesh:sewTool.tipText")
 public class PMSewTool extends EditingTool {
 
     private Point clickPoint;
-    private UndoRecord undo;
-    private MeshEditController controller;
+    private final MeshEditController controller;
     private PolyMesh originalMesh;
     private boolean dragging;
     private Point dragPoint;
@@ -42,26 +40,15 @@ public class PMSewTool extends EditingTool {
     private Point screenVert[];
     private boolean[] selection;
 
-    public PMSewTool(EditingWindow fr, MeshEditController controller) {
-        super(fr);
+    public PMSewTool(EditingWindow view, MeshEditController controller) {
+        super(view);
         this.controller = controller;
-        initButton("polymesh:sew");
     }
 
     @Override
     public void activate() {
         super.activate();
         theWindow.setHelpText(Translate.text("polymesh:sewTool.helpText"));
-    }
-
-    @Override
-    public int whichClicks() {
-        return ALL_CLICKS;
-    }
-
-    @Override
-    public String getToolTipText() {
-        return Translate.text("polymesh:sewTool.tipText");
     }
 
     @Override
@@ -122,35 +109,16 @@ public class PMSewTool extends EditingTool {
 
     @Override
     public void mouseDragged(WidgetMouseEvent e, ViewerCanvas view) {
-        MeshViewer mv = (MeshViewer) view;
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
-        Camera cam = view.getCamera();
         dragPoint = new Point(e.getPoint());
 
         PolyMesh.Wedge[] edges = originalMesh.getEdges();
         PolyMesh.Wvertex[] v = (PolyMesh.Wvertex[]) originalMesh.getVertices();
         Vec3[] normals = originalMesh.getFaceNormals();
         int[] sewEdges = new int[2];
-        double f, dist;
-        Camera theCamera = mv.getCamera();
-        Vec3 zdir = theCamera.getCameraCoordinates().getZDirection();
-        Mat4 m = theCamera.getObjectToWorld();
+        double f;
         double minDist = Double.MAX_VALUE;
-        /* if ( ( e.getModifiers() & ActionEvent.SHIFT_MASK ) == 0 )
-            {
-                if (edges[i].face > -1)
-                    s1 = m.times(normals[edges[i].face]).dot(zdir);
-                else
-                    s1 = -1;
-                if ( edges[edges[i].hedge].face > -1)
-                    s2 = m.times(normals[edges[edges[i].hedge].face]).dot(zdir);
-                else
-                    s2 = -1;
-                if ( s1 > 0 && s2 > 0)
-                    continue;
-            }
-            if ( selection != null && ! selection[i] )
-                continue;*/
+
         sewEdges[0] = sewEdges[1] = -1;
         for (int i = 0; i < edges.length / 2; i++) {
             if (edges[i].face != -1 && edges[edges[i].hedge].face != -1) {
@@ -169,7 +137,6 @@ public class PMSewTool extends EditingTool {
         if ((e.getModifiers() & ActionEvent.CTRL_MASK) == 0) {
             if (sewEdges[0] >= 0) {
                 minDist = Double.MAX_VALUE;
-                double z;
                 for (int i = 0; i < edges.length / 2; i++) {
                     if (edges[i].face != -1 && edges[edges[i].hedge].face != -1) {
                         continue;
@@ -222,7 +189,6 @@ public class PMSewTool extends EditingTool {
         theWindow.updateImage();
         theWindow.setHelpText(Translate.text("polymesh:sewTool.helpText"));
         theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, mesh, originalMesh));
-        undo = null;
 
     }
 

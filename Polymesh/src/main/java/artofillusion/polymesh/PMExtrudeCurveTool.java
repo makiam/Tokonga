@@ -31,12 +31,14 @@ import java.util.Vector;
 /**
  * PMExtrudeCurveTool lets the user extrude faces along a curve.
  */
+@EditingTool.ButtonImage("polymesh:extrudecurve")
+@EditingTool.Tooltip("polymesh:extrudeCurveTool.tipText")
 public class PMExtrudeCurveTool extends EditingTool {
 
-    private List<CurvePoint> clickPoints;
+    private final List<CurvePoint> clickPoints;
     private PolyMesh orMesh;
     private boolean[] orSel;
-    private MeshEditController controller;
+    private final MeshEditController controller;
     private ViewerCanvas canvas;
     private Vec3 fromPoint, currentPoint;
     Vec3[] pr;
@@ -45,12 +47,11 @@ public class PMExtrudeCurveTool extends EditingTool {
     boolean previewMode = true;
     private static final int HANDLE_SIZE = 7;
 
-    public PMExtrudeCurveTool(EditingWindow fr, MeshEditController controller) {
-        super(fr);
+    public PMExtrudeCurveTool(EditingWindow view, MeshEditController controller) {
+        super(view);
         clickPoints = new Vector<>();
         fromPoint = null;
         this.controller = controller;
-        initButton("polymesh:extrudecurve");
     }
 
     @Override
@@ -61,15 +62,6 @@ public class PMExtrudeCurveTool extends EditingTool {
         fromPoint = null;
     }
 
-    @Override
-    public int whichClicks() {
-        return ALL_CLICKS;
-    }
-
-    @Override
-    public String getToolTipText() {
-        return Translate.text("polymesh:extrudeCurveTool.tipText");
-    }
 
     @Override
     public void mousePressed(WidgetMouseEvent ev, ViewerCanvas view) {
@@ -212,7 +204,6 @@ public class PMExtrudeCurveTool extends EditingTool {
             if (!sel[i]) {
                 continue;
             }
-            Vec3 p = new Vec3();
             int[] fe = mesh.getFaceVertices(faces[i]);
             for (int j = 0; j < fe.length; j++) {
                 if (!rotated[fe[j]]) {
@@ -269,14 +260,13 @@ public class PMExtrudeCurveTool extends EditingTool {
     }
 
     private void computeScales() {
-        double[] sizes = null;
-        sizes = new double[clickPoints.size()];
+
         double length = 0;
         double cumul = 0;
         Vec3 previous = fromPoint;
-        for (int i = 0; i < clickPoints.size(); i++) {
-            length += clickPoints.get(i).position.minus(previous).length();
-            previous = clickPoints.get(i).position;
+        for (CurvePoint point: clickPoints) {
+            length += point.position.minus(previous).length();
+            previous = point.position;
         }
         if (length < 0.005) {
             for (int i = 0; i < clickPoints.size(); i++) {
@@ -431,7 +421,6 @@ public class PMExtrudeCurveTool extends EditingTool {
             Vec2 p = view.getCamera().getObjectToScreen().timesXY(position);
             Point pf = new Point((int) p.x, (int) p.y);
             view.drawBox(pf.x - HANDLE_SIZE / 2, pf.y - HANDLE_SIZE / 2, HANDLE_SIZE, HANDLE_SIZE, Color.red);
-            double scaleFactor = view.getScale();
             Point handleup = new Point(pf.x, (int) Math.round(pf.y + amplitude * SCALE_HEIGHT));
             Point handledown = new Point(pf.x, (int) Math.round(pf.y - amplitude * SCALE_HEIGHT));
             //Shape dot = new Ellipse2D.Float(handleup.x,handleup.y,8,8);

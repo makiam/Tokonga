@@ -32,10 +32,11 @@ import java.util.Vector;
 /**
  * PMKnifeTool is an EditingTool used fto divide edges of PolyMesh objects.
  */
+@EditingTool.ButtonImage("polymesh:knife")
+@EditingTool.Tooltip("polymesh:knifeTool.tipText")
 public class PMKnifeTool extends EditingTool {
 
     private List<Point> clickPoints;
-    private UndoRecord undo;
     private MeshEditController controller;
     private PolyMesh originalMesh;
     private boolean dragging;
@@ -48,23 +49,12 @@ public class PMKnifeTool extends EditingTool {
         super(fr);
         clickPoints = new Vector<>();
         this.controller = controller;
-        initButton("polymesh:knife");
     }
 
     @Override
     public void activate() {
         super.activate();
         theWindow.setHelpText(Translate.text("polymesh:knifeTool.helpText"));
-    }
-
-    @Override
-    public int whichClicks() {
-        return ALL_CLICKS;
-    }
-
-    @Override
-    public String getToolTipText() {
-        return Translate.text("polymesh:knifeTool.tipText");
     }
 
     @Override
@@ -109,7 +99,6 @@ public class PMKnifeTool extends EditingTool {
     public void mouseDragged(WidgetMouseEvent e, ViewerCanvas view) {
         MeshViewer mv = (MeshViewer) view;
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
-        Camera cam = view.getCamera();
         dragPoint = e.getPoint();
 
         PolyMesh.Wedge[] edges = originalMesh.getEdges();
@@ -178,7 +167,7 @@ public class PMKnifeTool extends EditingTool {
             controller.setSelection(sel);
             theWindow.updateImage();
             theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, mesh, originalMesh));
-            undo = null;
+
         } else {
             clickPoints.add(dragPoint);
         }
