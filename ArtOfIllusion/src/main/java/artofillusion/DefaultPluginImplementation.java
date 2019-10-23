@@ -17,20 +17,18 @@ import java.io.File;
  * @author maksim.khramov
  */
 
- public class EmptyPluginImplementation implements Plugin {
+ public class DefaultPluginImplementation implements Plugin {
      
     protected void onApplicationStarting() {
-        
     }
     
     protected void onApplicationStopping() {
     }
     
     protected void onSceneWindowCreated(LayoutWindow view) {
-        
     }
    
-    protected void onSceneSaved(File file, LayoutWindow view) {        
+    protected void onSceneSaved(File file, LayoutWindow view) {
     }
 
     protected void onSceneClosing(LayoutWindow layoutWindow) {        
