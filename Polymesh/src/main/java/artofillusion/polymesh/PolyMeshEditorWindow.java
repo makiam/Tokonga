@@ -338,7 +338,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     public PolyMeshEditorWindow(EditingWindow parent, String title, ObjectInfo obj, Runnable onClose) {
         super(parent, title, obj);
 
-        PolyMesh mesh = (PolyMesh) objInfo.object;
+        PolyMesh mesh = (PolyMesh) objInfo.getObject();
         if (eventSource == null) {
             eventSource = new EventSource();
         }
