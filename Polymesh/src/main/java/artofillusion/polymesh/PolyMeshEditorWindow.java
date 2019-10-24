@@ -1179,9 +1179,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      */
     public boolean getProjectOntoSurface() {
         PolyMesh mesh = (PolyMesh) objInfo.object;
-        if (!projectOntoSurface
-                || (mesh.getSmoothingMethod() != Mesh.APPROXIMATING && mesh
-                .getSmoothingMethod() != Mesh.INTERPOLATING)) {
+        if (!projectOntoSurface || (mesh.getSmoothingMethod() != Mesh.APPROXIMATING && mesh .getSmoothingMethod() != Mesh.INTERPOLATING)) {
             return false;
         } else {
             return true;
