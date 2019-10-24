@@ -246,8 +246,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     private BDialog valueWidgetDialog;
 
-    private Runnable validateWidgetValue, abortWidgetValue;
-
     private BMenuItem[] extrudeItem, extrudeEdgeItem;
 
     private BMenuItem[] extrudeRegionItem, extrudeEdgeRegionItem;
@@ -368,8 +366,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         looseSelectCB.addEventLink(ValueChangedEvent.class, this, "doLooseSelectionChanged");
         meshContainer.add(looseSelectSpinner = new BSpinner(looseSelectValue, 1, 100, 1));
         looseSelectSpinner.addEventLink(ValueChangedEvent.class, this, "doLooseSelectionValueChanged");
-        meshContainer.add(frontSelectCB = new BCheckBox(Translate
-                .text("polymesh:frontSelect"), selectVisible));
+        meshContainer.add(frontSelectCB = new BCheckBox(Translate.text("polymesh:frontSelect"), selectVisible));
         frontSelectCB.addEventLink(ValueChangedEvent.class, this, "doFrontSelectionChanged");
         meshContainer.add(new BLabel(Translate.text("polymesh:meshTension") + ": "));
         tensionSpin = new BSpinner(tensionDistance, 0, 999, 1);
@@ -462,21 +459,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         addExtraParameters();
         doLevelContainerEnable();
         selected = new boolean[((Mesh) objInfo.object).getVertices().length];
-        // addEventLink( WindowClosingEvent.class, this, "doCancel" );
-        validateWidgetValue = new Runnable() {
 
-            @Override
-            public void run() {
-                doValueWidgetValidate();
-            }
-        };
-        abortWidgetValue = new Runnable() {
-
-            @Override
-            public void run() {
-                doValueWidgetAbort();
-            }
-        };
         overlayVertexEdgeFace.setVisibleChild(vertexContainer);
     }
 
@@ -908,17 +891,13 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     public void doEditProperties() {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         ColorButton vertColorButton = new ColorButton(mesh.getVertColor());
-        ColorButton selectedVertColorButton = new ColorButton(mesh
-                .getSelectedVertColor());
+        ColorButton selectedVertColorButton = new ColorButton(mesh.getSelectedVertColor());
         ColorButton edgeColorButton = new ColorButton(mesh.getEdgeColor());
-        ColorButton selectedEdgeColorButton = new ColorButton(mesh
-                .getSelectedEdgeColor());
+        ColorButton selectedEdgeColorButton = new ColorButton(mesh.getSelectedEdgeColor());
         ColorButton seamColorButton = new ColorButton(mesh.getSeamColor());
-        ColorButton selectedSeamColorButton = new ColorButton(mesh
-                .getSelectedSeamColor());
+        ColorButton selectedSeamColorButton = new ColorButton(mesh.getSelectedSeamColor());
         ColorButton meshColorButton = new ColorButton(mesh.getMeshColor());
-        ColorButton selectedFaceColorButton = new ColorButton(mesh
-                .getSelectedFaceColor());
+        ColorButton selectedFaceColorButton = new ColorButton(mesh.getSelectedFaceColor());
         BSpinner handleSpinner = new BSpinner(mesh.getHandleSize(), 2, 100, 1);
         BCheckBox useCustomColors = new BCheckBox(Translate.text("polymesh:useCustomColors"), mesh.useCustomColors());
         propertiesPanel = new FormContainer(2, 12);
@@ -2476,8 +2455,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         PolyMesh mesh = (PolyMesh) objInfo.object;
         mesh.copyObject(priorValueMesh);
         mesh.copyObject(priorValueMesh);
-        mesh.extrudeRegion(valueSelection, valueWidget.getValue(),
-                direction);
+        mesh.extrudeRegion(valueSelection, valueWidget.getValue(), direction);
         boolean[] sel = new boolean[mesh.getFaces().length];
         for (int i = 0; i < valueSelection.length; ++i) {
             sel[i] = valueSelection[i];
