@@ -37,20 +37,16 @@ public class PluginRegistry {
 
     }
 
-    private static final ArrayList<ClassLoader> pluginLoaders = new ArrayList<ClassLoader>();
-    private static final HashSet<Class> categories = new HashSet<Class>();
-    private static final HashMap<Class, List<Object>> categoryClasses = new HashMap<Class, List<Object>>();
-    private static final HashMap<String, Map<String, PluginResource>> resources = new HashMap<String, Map<String, PluginResource>>();
-    private static final HashMap<String, ExportInfo> exports = new HashMap<String, ExportInfo>();
-    private static final HashMap<String, Object> classMap = new HashMap<String, Object>();
+    private static final List<ClassLoader> pluginLoaders = new ArrayList<ClassLoader>();
+    private static final Set<Class> categories = new HashSet<Class>();
+    private static final Map<Class, List<Object>> categoryClasses = new HashMap<Class, List<Object>>();
+    private static final Map<String, Map<String, PluginResource>> resources = new HashMap<String, Map<String, PluginResource>>();
+    private static final Map<String, ExportInfo> exports = new HashMap<String, ExportInfo>();
+    private static final Map<String, Object> classMap = new HashMap<String, Object>();
 
     static {
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Object[] pso = new Object[0];
-                PluginRegistry.notifyPlugins(Plugin.class, Plugin.APPLICATION_STOPPING, pso);
-            }
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            PluginRegistry.notifyPlugins(Plugin.class, Plugin.APPLICATION_STOPPING);
         }, "Plugin shutdown thread"));
     }
 

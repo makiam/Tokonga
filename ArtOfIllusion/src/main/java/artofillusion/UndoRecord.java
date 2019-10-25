@@ -34,12 +34,9 @@ public class UndoRecord {
     private static final ExecutorService service = Executors.newCachedThreadPool();
 
     static {
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("Shutdown undo cache writer service...");
-                service.shutdown();
-            }
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("Shutdown undo cache writer service...");
+            service.shutdown();
         }, "Undo write service shutdown thread"));
     }
 
