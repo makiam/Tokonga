@@ -1,6 +1,6 @@
 /* 
  Copyright (C) 1999-2005 by Peter Eastman, 2007 by Francois Guillet
- Modification Copyright (C) 2019 by Petri Ihalainen (mouse button detection)
+ Modifications Copyright (C) 2019 by Petri Ihalainen
 
  This program is free software; you can redistribute it and/or modify it under the 
  terms of the GNU General Public License as published by the Free Software 
@@ -8,7 +8,8 @@
 
  This program is distributed in the hope that it will be useful, but WITHOUT ANY 
  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
- PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ */
 package artofillusion.polymesh;
 
 import artofillusion.ArtOfIllusion;
@@ -21,15 +22,21 @@ import artofillusion.image.*;
 import artofillusion.material.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
-import artofillusion.polymesh.AdvancedEditingTool.SelectionProperties;
 import artofillusion.texture.*;
-import artofillusion.ui.*;
 import static artofillusion.ui.UIUtilities.*;
 import buoy.event.*;
 import buoy.widget.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.List;
+import javax.swing.Timer;
 
 /**
  * MeshPreviewer is a component used for renderering previews of Mesh.
@@ -45,13 +52,17 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
     Point clickPoint;
     private Mat4 dragTransform;
     public static final int HANDLE_SIZE = 5;
-    static final double DRAG_SCALE = Math.PI / 360.0;
-    ArrayList<ObjectInfo> selection;
-    ArrayList<Vec3> selPos;
+    static final double DRAG_SCALE = Math.PI / 360.0; // Half a degree
+    List<ObjectInfo> selection;
+    List<Vec3> selPos;
     private UniformTexture selTexture;
     private Sphere sphere;
     private int spheresIndex;
     private boolean showSelection;
+    private double boundR; // Bound radius is used as reference size of the object.
+    private boolean reverseWheel;
+    private int amount, scrollAmount;
+    private Timer scrollTimer;
 
     /**
      * Same as above, except you can specify a different object to use instead
@@ -90,29 +101,21 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
     private void init(ObjectInfo obj, int width, int height) {
         BoundingBox bounds = obj.getBounds();
         Vec3 size = bounds.getSize();
-        double max = Math.max(size.x, Math.max(size.y, size.z)) / 2.0;
-        double floor = -bounds.getSize().length() / 2.0;
-        CoordinateSystem coords = new CoordinateSystem(new Vec3(0.0, 0.0,
-                10.0 * max), new Vec3(0.0, 0.0, -1.0), Vec3.vy());
-        if (max > 10.0) {
-            max = 10.0;
-        }
-        Vec3 vert[] = new Vec3[]{new Vec3(100.0 * max, floor, 100.0 * max),
-            new Vec3(-100.0 * max, floor, 100.0 * max),
-            new Vec3(0.0, floor, -100.0 * max)};
+        boundR = bounds.getSize().length() * 0.5;
+        CoordinateSystem coords = new CoordinateSystem(new Vec3(0.0, 0.0, 8.0 * boundR),
+                new Vec3(0.0, 0.0, -1.0), Vec3.vy());
+        Vec3 vert[] = new Vec3[]{new Vec3(100.0 * boundR, -boundR, 100.0 * boundR),
+            new Vec3(-100.0 * boundR, -boundR, 100.0 * boundR),
+            new Vec3(0.0, -boundR, -100.0 * boundR)};
         int face[][] = {{0, 1, 2}};
         TriangleMesh tri;
-
         theScene = new Scene();
         theCamera = new Camera();
         theCamera.setCameraCoordinates(coords);
-        coords = new CoordinateSystem(new Vec3(), new Vec3(-0.5, -0.4, -1.0),
-                Vec3.vy());
-        theScene.addObject(new DirectionalLight(new RGBColor(1.0f, 1.0f, 1.0f),
-                0.8f), coords, "", null);
+        coords = new CoordinateSystem(new Vec3(), new Vec3(-0.5, -0.4, -1.0), Vec3.vy());
+        theScene.addObject(new DirectionalLight(new RGBColor(1.0f, 1.0f, 1.0f), 0.8f), coords, "", null);
         coords = new CoordinateSystem(new Vec3(), Vec3.vz(), Vec3.vy());
-        theScene
-                .addObject(tri = new TriangleMesh(vert, face), coords, "", null);
+        theScene.addObject(tri = new TriangleMesh(vert, face), coords, "", null);
         Texture tex = theScene.getDefaultTexture();
         tri.setTexture(tex, tex.getDefaultMapping(tri));
         info = obj;
@@ -121,10 +124,10 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
         setPreferredSize(new Dimension(width, height));
         addEventLink(MousePressedEvent.class, this, "mousePressed");
         addEventLink(MouseReleasedEvent.class, this, "mouseReleased");
-        // addEventLink(MouseClickedEvent.class, this, "mouseClicked");
         addEventLink(MouseEnteredEvent.class, this, "mouseEntered");
         addEventLink(MouseExitedEvent.class, this, "mouseExited");
         addEventLink(MouseDraggedEvent.class, this, "mouseDragged");
+        addEventLink(MouseScrolledEvent.class, this, "mouseScrolled");
         addEventLink(RepaintEvent.class, this, "paint");
 
         // Set up other listeners.
@@ -139,13 +142,12 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
             public void hierarchyChanged(HierarchyEvent ev) {
                 if ((ev.getChangeFlags() & HierarchyEvent.DISPLAYABILITY_CHANGED) != 0) {
                     if (!getComponent().isDisplayable()) {
-                        Renderer rend = ArtOfIllusion.getPreferences()
-                                .getTexturePreviewRenderer();
-                        if (rend != null) {
-                            rend.cancelRendering(theScene);
-                        }
+                        Renderer rend = ArtOfIllusion.getPreferences().getTexturePreviewRenderer();
+                    if (rend != null) {
+                        rend.cancelRendering(theScene);
                     }
                 }
+            }
             }
         });
         selection = new ArrayList<>();
@@ -156,6 +158,14 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
         sphere.setTexture(selTexture, selTexture.getDefaultMapping(sphere));
         spheresIndex = theScene.getNumObjects();
         showSelection = true;
+        reverseWheel = ArtOfIllusion.getPreferences().getReverseZooming();
+        scrollAmount = 0;
+        scrollTimer = new Timer(250, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mouseStoppedScrolling();
+            }
+        });
         render();
     }
 
@@ -188,8 +198,7 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
      * Render the preview.
      */
     public synchronized void render() {
-        Renderer rend = ArtOfIllusion.getPreferences()
-                .getTexturePreviewRenderer();
+        Renderer rend = ArtOfIllusion.getPreferences().getTexturePreviewRenderer();
         if (rend == null) {
             return;
         }
@@ -198,10 +207,11 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
         if (bounds.width == 0 || bounds.height == 0) {
             return;
         }
-        theCamera.setSize(bounds.width, bounds.height);
-        theCamera.setDistToScreen((bounds.height / 200.0) / Math.tan(0.14));
+        SceneCamera sc = new SceneCamera();
+        sc.setFieldOfView(16.0);
+        theCamera.setScreenTransform(sc.getScreenTransform(bounds.width, bounds.height), bounds.width, bounds.height);
         rend.configurePreview();
-        rend.renderScene(theScene, theCamera, this, null);
+        rend.renderScene(theScene, theCamera, this, sc);
         renderInProgress = true;
         repaint();
     }
@@ -210,8 +220,7 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
      * Cancel rendering.
      */
     public synchronized void cancelRendering() {
-        Renderer rend = ArtOfIllusion.getPreferences()
-                .getTexturePreviewRenderer();
+        Renderer rend = ArtOfIllusion.getPreferences().getTexturePreviewRenderer();
         if (rend != null) {
             rend.cancelRendering(theScene);
         }
@@ -267,7 +276,7 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
     private void changeView(int view) {
         double angles[][] = new double[][]{{0.0, 0.0, 0.0}, {0.0, 180.0, 0.0},
         {0.0, -90.0, 0.0}, {0.0, 90.0, 0.0},
-        {-90.0, 0.0, 0.0}, {90.0, 0.0, 0.0},};
+        {-90.0, 0.0, 0.0}, {90.0, 0.0, 0.0}};
         objectCoords.setOrientation(angles[view][0], angles[view][1], angles[view][2]);
         objectCoords.setOrigin(new Vec3());
         updateSelectionPositions();
@@ -337,10 +346,12 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
             return;
         }
         Point dragPoint = e.getPoint();
+
+        // Why is dragTransform recalculated here, nothing is moving any more?
         if (!clickPoint.equals(dragPoint)) {
             if (mouseButtonThree(e)) {
                 if (e.isControlDown()) {
-                    dragTransform = Mat4.translation(0.0, 0.0, (dragPoint.y - clickPoint.y) * 0.01);
+                    dragTransform = Mat4.translation(0.0, 0.0, (dragPoint.y - clickPoint.y) * 0.05);
                 } else {
                     dragTransform = Mat4.translation((dragPoint.x - clickPoint.x) * 0.01, (clickPoint.y - dragPoint.y) * 0.01, 0.0);
                 }
@@ -367,13 +378,12 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
         Point dragPoint = e.getPoint();
         if (mouseButtonThree(e)) {
             if (e.isControlDown()) {
-                dragTransform = Mat4.translation(0.0, 0.0, (dragPoint.y - clickPoint.y) * 0.01);
+                dragTransform = Mat4.translation(0.0, 0.0, (dragPoint.y - clickPoint.y) * 0.05);
             } else {
                 dragTransform = Mat4.translation((dragPoint.x - clickPoint.x) * 0.01, (clickPoint.y - dragPoint.y) * 0.01, 0.0);
             }
         } else {
-            Vec3 rotAxis = new Vec3((clickPoint.y - dragPoint.y) * DRAG_SCALE,
-                    (dragPoint.x - clickPoint.x) * DRAG_SCALE, 0.0);
+            Vec3 rotAxis = new Vec3((clickPoint.y - dragPoint.y) * DRAG_SCALE, (dragPoint.x - clickPoint.x) * DRAG_SCALE, 0.0);
             double angle = rotAxis.length();
             rotAxis = rotAxis.times(1.0 / angle);
             rotAxis = theCamera.getViewToWorld().timesDirection(rotAxis);
@@ -385,6 +395,33 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
         g.dispose();
     }
 
+    private void mouseScrolled(MouseScrolledEvent e) {
+        scrollTimer.restart();
+        amount = e.getWheelRotation();
+        if (!e.isAltDown()) {
+            amount *= 5;
+        }
+        if (reverseWheel) {
+            scrollAmount += amount;
+        } else {
+            scrollAmount -= amount;
+        }
+
+        dragTransform = Mat4.translation(0.0, 0.0, scrollAmount * boundR * 0.075);
+        Graphics g = getComponent().getGraphics();
+        g.drawImage(theImage, 0, 0, getComponent());
+        drawHilight(g);
+        drawObject(g);
+        g.dispose();
+    }
+
+    private void mouseStoppedScrolling() {
+        scrollTimer.stop();
+        scrollAmount = 0;
+        objectCoords.transformOrigin(dragTransform);
+        render();
+    }
+
     public void setVertexSelection(boolean[] sel) {
         if (!showSelection) {
             return;
@@ -392,18 +429,16 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
 
         clearVertexSelection();
         PolyMesh mesh = (PolyMesh) info.object;
-        //Vec3[] normals = mesh.getNormals();
         MeshVertex[] v = mesh.getVertices();
         selPos.clear();
         Mat4 m = objectCoords.fromLocal();
         for (int i = 0; i < sel.length; i++) {
             if (sel[i]) {
                 Vec3 pos = new Vec3(v[i].r);
-                //pos.add(normals[i].times(0.03));
                 selPos.add(pos);
                 pos = m.times(pos);
                 CoordinateSystem c = new CoordinateSystem(pos, 0, 0, 0);
-                ObjectInfo sphereInfo = new ObjectInfo(sphere, c, new String("sphere" + i));
+                ObjectInfo sphereInfo = new ObjectInfo(sphere, c, "Sphere" + i);
                 selection.add(sphereInfo);
                 theScene.addObject(sphereInfo, null);
             }
@@ -435,12 +470,12 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
     }
 
     public void setShowSelection(boolean state) {
-        if (!state) {
+        if (state) {
+            showSelection = true;
+        } else {
             clearVertexSelection();
             render();
             showSelection = false;
-        } else {
-            showSelection = true;
         }
 
     }
