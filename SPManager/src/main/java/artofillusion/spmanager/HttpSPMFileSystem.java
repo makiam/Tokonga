@@ -19,7 +19,7 @@ import java.awt.*;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.*;
 import javax.swing.*;
@@ -44,7 +44,6 @@ public class HttpSPMFileSystem extends SPMFileSystem {
     private boolean isDownloading;
     private List<Runnable> callbacks;
 
-    private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
     /**
      * Constructor for the HttpSPMFileSystem object
@@ -271,12 +270,12 @@ public class HttpSPMFileSystem extends SPMFileSystem {
         SPMObjectInfo info;
         boolean eligible;
 
-        List<String> v = null;
+        List<String> versions = null;
 
         try {
-            Object obj = from.getContent();
+            Object obj = from.openConnection().getContent();
             if (obj instanceof InputStream) {
-                v = htmlFindFilesVersioning((InputStream) (obj), from);
+                versions = htmlFindFilesVersioning((InputStream) (obj), from);
             }
             ((InputStream) obj).close();
         } catch (IOException e) {
@@ -290,88 +289,85 @@ public class HttpSPMFileSystem extends SPMFileSystem {
                 e.printStackTrace();
             }
         }
-        if (v != null) {
-            // sort the list
-            String[] sarray = v.toArray(EMPTY_STRING_ARRAY);
-            Arrays.sort(sarray);
-            for (int i = 0; i < sarray.length; i++) {
-                //String s = (String) v.elementAt( i );
-                String s = sarray[i];
-                System.out.println(s);
-                if (s.endsWith(suffix)) {
-                    //check if file candidate for update or install
+        if (null == versions) return;
+        Collections.sort(versions);
+
+        for (String item: versions) {
+
+            System.out.println(item);
+            if (item.endsWith(suffix)) {
+                //check if file candidate for update or install
+                eligible = true;
+
+                if (suffix.equals(".jar")) {
+                    //look for xml file
+
+                    /*
+                        *  NTJ: for AOI 2.5: The XML file name has changed to
+                        *  'extensions.xml'. For compatibility, the old name
+                        *  is checked if the new name does not exist.
+                     */
                     eligible = true;
+                    String sxml;
+                    sxml = item.substring(0, item.lastIndexOf('/')) + "extensions.xml";
 
-                    String name = s.substring(0, s.length() - 4);
-                    if (suffix.equals(".jar")) {
-                        //look for xml file
+                    URL xmlURL = null;
+                    try {
+                        xmlURL = new URL(from, sxml);
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
 
-                        /*
-			 *  NTJ: for AOI 2.5: The XML file name has changed to
-			 *  'extensions.xml'. For compatibility, the old name
-			 *  is checked if the new name does not exist.
-                         */
-                        eligible = true;
-                        String sxml;
-                        sxml = s.substring(0, s.lastIndexOf('/')) + "extensions.xml";
+                    try {
+                        HttpURLConnection.setFollowRedirects(false);
+                        HttpURLConnection conn = (HttpURLConnection) xmlURL.openConnection();
 
-                        URL xmlURL = null;
-                        try {
+                        if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                            sxml = item.substring(0, item.lastIndexOf('.')) + ".xml";
                             xmlURL = new URL(from, sxml);
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
-                        }
 
-                        try {
-                            HttpURLConnection.setFollowRedirects(false);
-                            HttpURLConnection conn = (HttpURLConnection) xmlURL.openConnection();
+                            conn = (HttpURLConnection) xmlURL.openConnection();
 
                             if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
                                 eligible = false;
-                            } else {
-                                sxml = s.substring(0, s.lastIndexOf('.')) + ".xml";
-                                xmlURL = new URL(from, sxml);
-
-                                conn = (HttpURLConnection) xmlURL.openConnection();
-
-                                if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                                    eligible = false;
-                                }
                             }
-
-                            if (eligible) {
-                                InputStreamReader in = new InputStreamReader(conn.getInputStream());
-                                in.close();
-                            }
-                        } catch (IOException e) {
+                        } else {
                             eligible = false;
                         }
-                    }
 
-                    info = null;
-                    if (eligible) {
-                        System.out.println("adding: " + s);
-                        try {
-                            info = new SPMObjectInfo(new URL(from, s));
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        if (eligible) {
+                            InputStreamReader in = new InputStreamReader(conn.getInputStream());
+                            in.close();
                         }
+                    } catch (IOException e) {
+                        eligible = false;
                     }
-                    if (info != null) {
-                        addTo.add(info);
+                }
+
+                info = null;
+                if (eligible) {
+                    System.out.println("adding: " + item);
+                    try {
+                        info = new SPMObjectInfo(new URL(from, item));
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
                     }
+                }
+                if (info != null) {
+                    addTo.add(info);
                 }
             }
         }
-    }
+
+    } // scanFiles()
 
     /**
      * Scans file using server cgi
      *
      * @param dir directory to fetch scripts from
-     * @param addTo Which list to add info to
+     * @param target Which list to add info to
      */
-    private void scanFiles(String dir, List<SPMObjectInfo> addTo) {
+    private void scanFiles(String dir, List<SPMObjectInfo> target) {
 
         URL cgiUrl = null;
         try {
@@ -410,15 +406,11 @@ public class HttpSPMFileSystem extends SPMFileSystem {
                     is = new GZIPInputStream(is);
                 }
 
-                /*
-                byte[] prolog = new byte[40];
-                int chunk = is.read(prolog, 0, 40);
-                System.out.println("first " + chunk + " bytes >>" + new String(prolog, "UTF-8") + "<<");
-                 */
+
                 InputSource input = null;
                 try {
                     input = new InputSource(new InputStreamReader(is, "UTF-8"));
-                } catch (Exception e) {
+                } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
 
@@ -452,7 +444,7 @@ public class HttpSPMFileSystem extends SPMFileSystem {
                         }
                         //System.out.println( location + " / " + script + " / " + length);
                         if (script != null && location != null) {
-                            addTo.add(new SPMObjectInfo(script, new URL(location), length));
+                            target.add(new SPMObjectInfo(script, new URL(location), length));
                         }
                     }
 
@@ -460,9 +452,7 @@ public class HttpSPMFileSystem extends SPMFileSystem {
                 is.close();
             }
             if (!received) {
-                JOptionPane.showMessageDialog(null, cgiUrl.toString() + ": " + SPMTranslate.text("scriptServerFailed"), SPMTranslate.text("error") + " "
-                        + err,
-                        JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, cgiUrl.toString() + ": " + SPMTranslate.text("scriptServerFailed"), SPMTranslate.text("error") + " " + err, JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -479,27 +469,8 @@ public class HttpSPMFileSystem extends SPMFileSystem {
             }
         }
 
-        // sort the result
-        SPMObjectInfo left, right;
-        int i, j;
-        for (i = addTo.size() - 1; i > 0; i--) {
-            j = i;
-            right = addTo.get(i);
+        Collections.sort(target, (SPMObjectInfo t1, SPMObjectInfo t2) -> t1.getName().compareTo(t2.getName()));
 
-            while (j > 0) {
-                left = addTo.get(j - 1);
-                if (right.getName().compareTo(left.getName()) >= 0) {
-                    break;
-                }
-                j--;
-            }
-
-            // relocate
-            if (j < i) {
-                addTo.remove(i);
-                addTo.add(j, right);
-            }
-        }
     }
 
     /**
@@ -560,15 +531,13 @@ public class HttpSPMFileSystem extends SPMFileSystem {
                     thread.interrupt();
 
                     if (!update.delete()) {
-                        RandomAccessFile raf
-                                = new RandomAccessFile(update, "rw");
+                        RandomAccessFile raf = new RandomAccessFile(update, "rw");
 
                         raf.setLength(0);
                         raf.close();
                     }
 
-                    throw new InterruptedException("download cancelled: "
-                            + fileName);
+                    throw new InterruptedException("download cancelled: " + fileName);
                 }
 
                 file.write((byte) result);
