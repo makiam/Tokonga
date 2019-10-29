@@ -1,4 +1,5 @@
 /* Copyright (C) 1999-2015 by Peter Eastman
+ *  Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -126,10 +127,9 @@ public class OctreeNode {
     public OctreeNode[] findChildNodes() {
         ArrayList<OctreeNode> nodes = new ArrayList<>();
         if (child != null) {
-            for (int i = 0; i < child.length; i++) {
-                if (child[i] != null) {
-                    nodes.add(child[i]);
-                }
+            for (OctreeNode childNode : child) {
+                if(null == childNode) continue;
+                nodes.add(childNode);
             }
         }
         return nodes.toArray(new OctreeNode[nodes.size()]);
@@ -429,9 +429,9 @@ public class OctreeNode {
         float min = findMinimum(this, axis);
         float max = findMaximum(this, axis);
         float invwidth = CELLS / (max - min);
-        for (int i = 0; i < objBounds.length; i++) {
-            float objmin = findMinimum(objBounds[i], axis);
-            float objmax = findMaximum(objBounds[i], axis);
+        for (BoundingBox box: objBounds) {
+            float objmin = findMinimum(box, axis);
+            float objmax = findMaximum(box, axis);
             if (objmin <= min) {
                 leftCount[0]++;
             } else {
@@ -463,8 +463,8 @@ public class OctreeNode {
         float mid = min + j / invwidth;
         float limit = mid + 1.0f / invwidth;
         boolean found = false;
-        for (int i = 0; i < objBounds.length; i++) {
-            float objmin = findMinimum(objBounds[i], axis);
+        for (BoundingBox box: objBounds) {
+            float objmin = findMinimum(box, axis);
             if (objmin > mid && objmin < limit) {
                 limit = objmin;
                 found = true;
@@ -475,8 +475,8 @@ public class OctreeNode {
         }
         limit = mid - 1.0f / invwidth;
         found = false;
-        for (int i = 0; i < objBounds.length; i++) {
-            float objmax = findMaximum(objBounds[i], axis);
+        for (BoundingBox box: objBounds) {
+            float objmax = findMaximum(box, axis);
             if (objmax < mid && objmax > limit) {
                 limit = objmax;
                 found = true;

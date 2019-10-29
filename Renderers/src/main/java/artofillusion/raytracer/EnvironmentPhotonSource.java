@@ -1,4 +1,5 @@
 /* Copyright (C) 2003-2013 by Peter Eastman
+ * Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -33,10 +34,10 @@ public class EnvironmentPhotonSource implements PhotonSource {
         // Find the center and radius of the scene.
 
         center = map.getBounds().getCenter();
-        Vec3 corner[] = map.getBounds().getCorners();
+        Vec3 corners[] = map.getBounds().getCorners();
         double maxDist2 = 0.0;
-        for (int i = 0; i < corner.length; i++) {
-            double dist2 = center.distance2(corner[i]);
+        for (Vec3 corner : corners) {
+            double dist2 = center.distance2(corner);
             if (dist2 > maxDist2) {
                 maxDist2 = dist2;
             }

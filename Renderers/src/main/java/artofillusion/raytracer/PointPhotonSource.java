@@ -1,12 +1,13 @@
-/* Copyright (C) 2003-2013 by Peter Eastman
+/*  Copyright (C) 2003-2013 by Peter Eastman
+ *  Changes copyright (C) 2019 by Maksim Khramov
 
-   This program is free software; you can redistribute it and/or modify it under the
-   terms of the GNU General Public License as published by the Free Software
-   Foundation; either version 2 of the License, or (at your option) any later version.
+    This program is free software; you can redistribute it and/or modify it under the
+    terms of the GNU General Public License as published by the Free Software
+    Foundation; either version 2 of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-   PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+    This program is distributed in the hope that it will be useful, but WITHOUT ANY
+    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.raytracer;
 
 import artofillusion.math.*;
@@ -32,10 +33,10 @@ public class PointPhotonSource implements PhotonSource {
 
         // Because the light does not fall off exactly as 1/r^2, the "intensity" varies with distance.
         // Select an average intensity based on the size of the scene.
-        Vec3 corner[] = map.getBounds().getCorners();
+        Vec3 corners[] = map.getBounds().getCorners();
         double maxDist2 = 0.0;
-        for (int i = 0; i < corner.length; i++) {
-            double dist2 = pos.distance2(corner[i]);
+        for (Vec3 corner : corners) {
+            double dist2 = pos.distance2(corner);
             if (dist2 > maxDist2) {
                 maxDist2 = dist2;
             }

@@ -1,4 +1,5 @@
 /* Copyright (C) 2003-2013 by Peter Eastman
+ * Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -35,11 +36,11 @@ public class SpotlightPhotonSource implements PhotonSource {
 
         // Because the light does not fall off exactly as 1/r^2, the "intensity" varies with distance.
         // Select an effective intensity based on the furthest point in the scene from the light.
-        Vec3 corner[] = map.getBounds().getCorners();
+        Vec3 corners[] = map.getBounds().getCorners();
         Vec3 pos = coords.getOrigin();
         double maxDist2 = 0.0;
-        for (int i = 0; i < corner.length; i++) {
-            double dist2 = pos.distance2(corner[i]);
+        for (Vec3 corner : corners) {
+            double dist2 = pos.distance2(corner);
             if (dist2 > maxDist2) {
                 maxDist2 = dist2;
             }
