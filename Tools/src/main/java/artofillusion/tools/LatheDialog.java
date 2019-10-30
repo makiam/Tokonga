@@ -157,8 +157,8 @@ public class LatheDialog extends BDialog {
             axis.normalize();
             center.set(vert[0].r);
             radius = new Vec3();
-            for (int i = 0; i < vert.length; i++) {
-                radius.add(vert[i].r);
+            for (MeshVertex vert1 : vert) {
+                radius.add(vert1.r);
             }
             radius.scale(1.0 / vert.length);
             radius.subtract(center);
