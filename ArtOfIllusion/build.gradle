@@ -2,6 +2,7 @@
 
 plugins {
     id 'application'
+    id "edu.sc.seis.macAppBundle" version "2.3.0"
 }
 
 description = 'ArtOfIllusion'
@@ -23,3 +24,20 @@ distributions {
 }
 
 tasks.distTar.enabled = false
+
+
+task copyPlugins(type: Copy) {
+    def dest = project.file("${->project.buildDir}/${->project.macAppBundle.appOutputDir}/ArtOfIllusion.app/Contents/Plugins")
+    from("../Plugins") into(dest)
+}
+
+macAppBundle {
+    mainClassName = "artofillusion.ArtOfIllusion"
+    icon = "../InstallerSrc/aoi.ico"
+    bundleJRE = false
+    javaProperties.put("apple.laf.useScreenMenuBar", "true")
+    
+    runtimeConfigurationName = 'runtimeClasspath'
+}
+
+createApp.dependsOn copyPlugins
