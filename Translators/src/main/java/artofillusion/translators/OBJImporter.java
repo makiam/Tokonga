@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2015 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -228,7 +228,7 @@ public class OBJImporter {
             Map<String, ImageMap> imageMaps = new Hashtable<>();
             while (keys.hasMoreElements()) {
                 String group = keys.nextElement();
-                Vector<FaceInfo> groupFaces = groupTable.get(group);
+                List<FaceInfo> groupFaces = groupTable.get(group);
                 if (groupFaces.isEmpty()) {
                     continue;
                 }
@@ -240,7 +240,7 @@ public class OBJImporter {
                 }
                 int fc[][] = new int[groupFaces.size()][], numVert = 0;
                 for (int i = 0; i < fc.length; i++) {
-                    FaceInfo fi = groupFaces.elementAt(i);
+                    FaceInfo fi = groupFaces.get(i);
                     for (int j = 0; j < 3; j++) {
                         if (realIndex[fi.getVertex(j).vert] == -1) {
                             realIndex[fi.getVertex(j).vert] = numVert++;
@@ -267,20 +267,18 @@ public class OBJImporter {
                 info.addTrack(new RotationTrack(info), 1);
 
                 // Find the smoothness values for the edges.
-                TriangleMesh.Edge edge[] = ((TriangleMesh) info.getObject()).getEdges();
-                for (int i = 0; i < edge.length; i++) {
-                    if (edge[i].f2 == -1) {
+                TriangleMesh.Edge edges[] = ((TriangleMesh) info.getObject()).getEdges();
+                for (TriangleMesh.Edge edge : edges) {
+                    if (edge.f2 == -1) {
                         continue;
                     }
-                    FaceInfo f1 = groupFaces.elementAt(edge[i].f1);
-                    FaceInfo f2 = groupFaces.elementAt(edge[i].f2);
+                    FaceInfo f1 = groupFaces.get(edge.f1);
+                    FaceInfo f2 = groupFaces.get(edge.f2);
                     if (f1.smoothingGroup == 0 || f1.smoothingGroup != f2.smoothingGroup) {
                         // They are in different smoothing groups.
-
-                        edge[i].smoothness = 0.0f;
+                        edge.smoothness = 0.0f;
                         continue;
                     }
-
                     // Find matching vertices and compare their normals.
                     for (int j = 0; j < 3; j++) {
                         for (int k = 0; k < 3; k++) {
@@ -288,7 +286,7 @@ public class OBJImporter {
                                 int n1 = f1.getVertex(j).norm;
                                 int n2 = f2.getVertex(k).norm;
                                 if (n1 != n2 && normal.get(n1).distance(normal.get(n2)) > 1e-10) {
-                                    edge[i].smoothness = 0.0f;
+                                    edge.smoothness = 0.0f;
                                 }
                                 break;
                             }
@@ -332,7 +330,7 @@ public class OBJImporter {
                         Vec2 uv[] = new Vec2[numVert];
                         boolean needPerFace = false;
                         for (int j = 0; j < groupFaces.size() && !needPerFace; j++) {
-                            FaceInfo fi = groupFaces.elementAt(j);
+                            FaceInfo fi = groupFaces.get(j);
                             for (int k = 0; k < 3; k++) {
                                 VertexInfo vi = fi.getVertex(k);
                                 Vec3 texCoords = (vi.tex < texture.size() ? texture.get(vi.tex) : vertex.get(vi.vert));
@@ -355,7 +353,7 @@ public class OBJImporter {
 
                             Vec2 uvf[][] = new Vec2[groupFaces.size()][3];
                             for (int j = 0; j < groupFaces.size(); j++) {
-                                FaceInfo fi = groupFaces.elementAt(j);
+                                FaceInfo fi = groupFaces.get(j);
                                 for (int k = 0; k < 3; k++) {
                                     VertexInfo vi = fi.getVertex(k);
                                     Vec3 texCoords = (vi.tex < texture.size() ? texture.get(vi.tex) : vertex.get(vi.vert));
