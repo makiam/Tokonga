@@ -24,7 +24,7 @@ import java.util.*;
  */
 public class TextureImageExporter {
 
-    private Hashtable<Texture, TextureImageInfo> textureTable;
+    private Map<Texture, TextureImageInfo> textureTable;
     private File dir;
     private String baseFilename;
     private int quality, components, width, height;
@@ -100,37 +100,37 @@ public class TextureImageExporter {
             Mesh mesh = (obj.getObject() instanceof Mesh ? (Mesh) obj.getObject() : obj.getObject().convertToTriangleMesh(0.1));
             Mapping2D map = (Mapping2D) obj.getObject().getTextureMapping();
             if (map instanceof UVMapping && mesh instanceof FacetedMesh && ((UVMapping) map).isPerFaceVertex((FacetedMesh) mesh)) {
-                Vec2 coords[][] = ((UVMapping) map).findFaceTextureCoordinates((FacetedMesh) mesh);
-                for (int i = 0; i < coords.length; i++) {
-                    for (int j = 0; j < coords[i].length; j++) {
-                        if (coords[i][j].x < info.minu) {
-                            info.minu = coords[i][j].x;
+                Vec2 coordinates[][] = ((UVMapping) map).findFaceTextureCoordinates((FacetedMesh) mesh);
+                for (Vec2[] coordinatesLine : coordinates) {
+                    for (Vec2 coordinate : coordinatesLine) {
+                        if (coordinate.x < info.minu) {
+                            info.minu = coordinate.x;
                         }
-                        if (coords[i][j].x > info.maxu) {
-                            info.maxu = coords[i][j].x;
+                        if (coordinate.x > info.maxu) {
+                            info.maxu = coordinate.x;
                         }
-                        if (coords[i][j].y < info.minv) {
-                            info.minv = coords[i][j].y;
+                        if (coordinate.y < info.minv) {
+                            info.minv = coordinate.y;
                         }
-                        if (coords[i][j].y > info.maxv) {
-                            info.maxv = coords[i][j].y;
+                        if (coordinate.y > info.maxv) {
+                            info.maxv = coordinate.y;
                         }
                     }
                 }
             } else {
-                Vec2 coords[] = map.findTextureCoordinates(mesh);
-                for (int i = 0; i < coords.length; i++) {
-                    if (coords[i].x < info.minu) {
-                        info.minu = coords[i].x;
+                Vec2 coordinates[] = map.findTextureCoordinates(mesh);
+                for (Vec2 coordinate : coordinates) {
+                    if (coordinate.x < info.minu) {
+                        info.minu = coordinate.x;
                     }
-                    if (coords[i].x > info.maxu) {
-                        info.maxu = coords[i].x;
+                    if (coordinate.x > info.maxu) {
+                        info.maxu = coordinate.x;
                     }
-                    if (coords[i].y < info.minv) {
-                        info.minv = coords[i].y;
+                    if (coordinate.y < info.minv) {
+                        info.minv = coordinate.y;
                     }
-                    if (coords[i].y > info.maxv) {
-                        info.maxv = coords[i].y;
+                    if (coordinate.y > info.maxv) {
+                        info.maxv = coordinate.y;
                     }
                 }
             }
@@ -183,7 +183,7 @@ public class TextureImageExporter {
     }
 
     /**
-     * Write an image file to disk representating a component of a texture.
+     * Write an image file to disk representing a component of a texture.
      */
     private void writeComponentImage(TextureImageInfo info, int component, String filename) throws IOException, InterruptedException {
         if (filename == null || !(info.texture instanceof Texture2D)) {
