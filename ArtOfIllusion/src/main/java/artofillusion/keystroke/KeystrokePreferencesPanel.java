@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2013 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -16,18 +16,19 @@ import buoy.event.*;
 
 import javax.swing.table.*;
 import java.awt.event.*;
-import java.awt.*;
+
 import java.util.*;
 import java.text.*;
 
 import artofillusion.ui.*;
+import java.awt.Dimension;
 
 /**
  * This class presents a user interface for editing the list of KeystrokeRecords.
  */
 public class KeystrokePreferencesPanel extends FormContainer {
 
-    private final ArrayList<KeystrokeRecord> records;
+    private final List<KeystrokeRecord> records;
     private BTable table;
     private BButton editButton, addButton, deleteButton;
     private boolean changed;
