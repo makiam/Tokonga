@@ -1,4 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
+   Changes copyright 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -259,7 +260,7 @@ public class Cylinder extends Object3D {
 
     @Override
     public RenderingMesh getRenderingMesh(double tol, boolean interactive, ObjectInfo info) {
-        Vec3 vert[], norm[];
+        Vec3 vert[], normals[];
         Vec2 v[], vtemp[];
         double angle, y1, y2;
         RenderingTriangle tri[];
@@ -285,14 +286,14 @@ public class Cylinder extends Object3D {
         // Build the mesh.
         if (ratio == 0.0) {
             vert = new Vec3[v.length + 2];
-            norm = new Vec3[v.length + 1];
+            normals = new Vec3[v.length + 1];
             tri = new RenderingTriangle[v.length * 2];
             vert[0] = new Vec3(0.0, y1, 0.0);
             vert[v.length + 1] = new Vec3(0.0, y2, 0.0);
-            norm[0] = new Vec3(0.0, y1, 0.0);
+            normals[0] = new Vec3(0.0, y1, 0.0);
             for (int i = 0; i < v.length; i++) {
                 vert[i + 1] = new Vec3(v[i].x, y1, v[i].y);
-                norm[i + 1] = new Vec3(v[i].x / (rx * rx), 1.0 / (y2 - y1), v[i].y / (rz * rz));
+                normals[i + 1] = new Vec3(v[i].x / (rx * rx), 1.0 / (y2 - y1), v[i].y / (rz * rz));
             }
             for (int i = 0; i < v.length - 1; i++) {
                 tri[i] = texMapping.mapTriangle(i + 2, i + 1, 0, 0, 0, 0, vert);
@@ -302,16 +303,16 @@ public class Cylinder extends Object3D {
             tri[v.length * 2 - 1] = texMapping.mapTriangle(v.length + 1, v.length, 1, v.length, v.length, 1, vert);
         } else {
             vert = new Vec3[v.length * 2 + 2];
-            norm = new Vec3[v.length + 2];
+            normals = new Vec3[v.length + 2];
             tri = new RenderingTriangle[v.length * 4];
             vert[0] = new Vec3(0.0, y1, 0.0);
             vert[v.length * 2 + 1] = new Vec3(0.0, y2, 0.0);
-            norm[0] = new Vec3(0.0, y1, 0.0);
-            norm[v.length + 1] = new Vec3(0.0, y2, 0.0);
+            normals[0] = new Vec3(0.0, y1, 0.0);
+            normals[v.length + 1] = new Vec3(0.0, y2, 0.0);
             for (int i = 0; i < v.length; i++) {
                 vert[i + 1] = new Vec3(v[i].x, y1, v[i].y);
                 vert[i + v.length + 1] = new Vec3(v[i].x * ratio, y2, v[i].y * ratio);
-                norm[i + 1] = new Vec3(v[i].x / (rx * rx), (1.0 - ratio) / (y2 - y1), v[i].y / (rz * rz));
+                normals[i + 1] = new Vec3(v[i].x / (rx * rx), (1.0 - ratio) / (y2 - y1), v[i].y / (rz * rz));
             }
             for (int i = 0; i < v.length - 1; i++) {
                 tri[i] = texMapping.mapTriangle(i + 2, i + 1, 0, 0, 0, 0, vert);
@@ -324,10 +325,10 @@ public class Cylinder extends Object3D {
             tri[v.length * 3 - 1] = texMapping.mapTriangle(v.length * 2, 1, v.length + 1, v.length, 1, 1, vert);
             tri[v.length * 4 - 1] = texMapping.mapTriangle(v.length * 2 + 1, v.length * 2, v.length + 1, v.length + 1, v.length + 1, v.length + 1, vert);
         }
-        for (int i = 0; i < norm.length; i++) {
-            norm[i].normalize();
+        for (Vec3 normal : normals) {
+            normal.normalize();
         }
-        RenderingMesh mesh = new RenderingMesh(vert, norm, tri, texMapping, matMapping);
+        RenderingMesh mesh = new RenderingMesh(vert, normals, tri, texMapping, matMapping);
         mesh.setParameters(paramValue);
         if (interactive) {
             cachedMesh = mesh;
