@@ -1,4 +1,5 @@
 /* Copyright (C) 2002-2013 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -130,10 +131,9 @@ public class ExecuteScriptWindow extends BFrame {
         setScriptNameFromFile(fc.getSelectedFile().getName());
 
         // Update the Scripts menus in all windows.
-        EditingWindow allWindows[] = ArtOfIllusion.getWindows();
-        for (int i = 0; i < allWindows.length; i++) {
-            if (allWindows[i] instanceof LayoutWindow) {
-                ((LayoutWindow) allWindows[i]).rebuildScriptsMenu();
+        for (EditingWindow layout : ArtOfIllusion.getWindows()) {
+            if (layout instanceof LayoutWindow) {
+                ((LayoutWindow) layout).rebuildScriptsMenu();
             }
         }
         setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
