@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -437,9 +437,9 @@ public abstract class Object3D {
                 out.writeUTF(texMapping.getClass().getName());
                 texMapping.writeToFile(out);
             }
-            for (int i = 0; i < paramValue.length; i++) {
-                out.writeUTF(paramValue[i].getClass().getName());
-                paramValue[i].writeToStream(out);
+            for (ParameterValue value : paramValue) {
+                out.writeUTF(value.getClass().getName());
+                value.writeToStream(out);
             }
         }
     }
