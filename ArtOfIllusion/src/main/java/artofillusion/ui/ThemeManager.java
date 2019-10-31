@@ -708,19 +708,20 @@ public class ThemeManager {
         }
         themeIdMap = new HashMap<>();
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        List resources = PluginRegistry.getResources("UITheme");
+
         ArrayList<ThemeInfo> list = new ArrayList<>();
-        for (int i = 0; i < resources.size(); i++) {
+
+        for (PluginRegistry.PluginResource resource: PluginRegistry.getResources("UITheme")) {
             try {
-                ThemeInfo themeInfo = new ThemeInfo((PluginRegistry.PluginResource) resources.get(i));
+                ThemeInfo themeInfo = new ThemeInfo(resource);
                 list.add(themeInfo);
-            } catch (Exception ex) {
+            } catch (IOException | ParserConfigurationException | SAXException ex) {
                 ex.printStackTrace();
             }
         }
         themeList = list.toArray(new ThemeInfo[list.size()]);
-        for (int i = 0; i < themeList.length; i++) {
-            themeIdMap.put(themeList[i].resource.getId(), themeList[i]);
+        for (ThemeInfo theme : themeList) {
+            themeIdMap.put(theme.resource.getId(), theme);
         }
         defaultTheme = themeIdMap.get("default");
         setSelectedTheme(defaultTheme);
