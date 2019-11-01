@@ -40,10 +40,10 @@ public class LayeredTexture extends Texture {
      */
     @Override
     public boolean usesImage(ImageMap image) {
-        Texture tex[] = mapping.getLayers();
+        Texture textures[] = mapping.getLayers();
 
-        for (int i = 0; i < tex.length; i++) {
-            if (tex[i].usesImage(image)) {
+        for (Texture texture : textures) {
+            if (texture.usesImage(image)) {
                 return true;
             }
         }
@@ -88,30 +88,30 @@ public class LayeredTexture extends Texture {
      */
     @Override
     public boolean hasComponent(int component) {
-        Texture tex[] = mapping.getLayers();
+        Texture textures[] = mapping.getLayers();
 
         if (component == TRANSPARENT_COLOR_COMPONENT) {
-            if (tex.length == 0) {
+            if (textures.length == 0) {
                 return true;
             }
-            for (int i = 0; i < tex.length; i++) {
-                if (tex[i].hasComponent(component)) {
+            for (int i = 0; i < textures.length; i++) {
+                if (textures[i].hasComponent(component)) {
                     // A layer in overlay mode being transparent doesn't necessarily mean the
                     // layered texture is transparent.
 
                     int mode = mapping.getLayerMode(i);
-                    if (i == tex.length - 1 || (mode != LayeredMapping.OVERLAY_ADD_BUMPS && mode != LayeredMapping.OVERLAY_BLEND_BUMPS)) {
+                    if (i == textures.length - 1 || (mode != LayeredMapping.OVERLAY_ADD_BUMPS && mode != LayeredMapping.OVERLAY_BLEND_BUMPS)) {
                         return true;
                     }
                 }
             }
             return false;
         }
-        if (tex.length == 0) {
+        if (textures.length == 0) {
             return false;
         }
-        for (int i = 0; i < tex.length; i++) {
-            if (tex[i].hasComponent(component)) {
+        for (Texture texture : textures) {
+            if (texture.hasComponent(component)) {
                 return true;
             }
         }
