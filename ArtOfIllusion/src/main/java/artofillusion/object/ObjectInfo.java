@@ -106,11 +106,11 @@ public class ObjectInfo {
                 }
             }
         }
-        for (int i = 0; i < newobj.length; i++) {
-            if (newobj[i].tracks != null) {
-                for (int j = 0; j < newobj[i].tracks.length; j++) {
-                    newobj[i].tracks[j].updateObjectReferences(objectMap);
-                }
+        
+        for (ObjectInfo item : newobj) {
+            if(null == item.getTracks()) continue;
+            for (Track track : item.getTracks()) {
+                track.updateObjectReferences(objectMap);
             }
         }
         return newobj;
