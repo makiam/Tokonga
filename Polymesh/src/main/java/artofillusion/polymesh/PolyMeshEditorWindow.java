@@ -94,6 +94,7 @@ import buoy.widget.RowContainer;
 import buoy.widget.Shortcut;
 import buoy.widget.Widget;
 import buoy.xml.WidgetDecoder;
+import com.google.common.flogger.FluentLogger;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
@@ -108,6 +109,7 @@ import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
+import java.util.logging.Level;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner.NumberEditor;
 import javax.swing.SpinnerNumberModel;
@@ -119,6 +121,8 @@ import javax.swing.SpinnerNumberModel;
  */
 public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWindow, PopupMenuManager, ValueWidgetOwner {
 
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
+    
     private ToolPalette modes;
 
     private Runnable onClose;
