@@ -176,7 +176,7 @@ public class KeystrokeManager {
      * Save the list of keystrokes to an XML file.
      */
     public static void saveRecords() throws Exception {
-        ms.marshal(keystrokes, Paths.get(ApplicationPreferences.getPreferencesDirectory().getPath()).resolve(KEYSTROKE_FILENAME).toFile());
+        ms.marshal(keystrokes, ApplicationPreferences.getPreferencesPath().resolve(KEYSTROKE_FILENAME).toFile());
     }
 
     @XmlRootElement(name = "keystrokes")
@@ -184,6 +184,10 @@ public class KeystrokeManager {
 
         @XmlElement(name = "keystroke")
         List<KeystrokeRecord> items = new ArrayList<KeystrokeRecord>();
+
+        public List<KeystrokeRecord> getItems() {
+            return items;
+        }
 
         public void addAll(KeystrokeRecord... elements) {
             items.clear();

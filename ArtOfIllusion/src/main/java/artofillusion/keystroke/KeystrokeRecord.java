@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class KeystrokeRecord {
 
-    @XmlAttribute
+    @XmlAttribute(name = "code")
     private int keyCode;
-    @XmlAttribute
+    @XmlAttribute(name = "modifiers")
     private int modifiers;
 
     @XmlAttribute
@@ -33,7 +33,7 @@ public class KeystrokeRecord {
     @XmlValue
     private String script;
     @XmlAttribute
-    private String language;
+    private String language = "BeanShell";
 
     public KeystrokeRecord() {
     }
