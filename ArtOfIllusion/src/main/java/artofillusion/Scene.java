@@ -1130,8 +1130,8 @@ public class Scene {
      * and Materials are read.
      */
     public Scene(File f, boolean fullScene) throws IOException, InvalidObjectException {
-        setName(f.getName());
-        setDirectory(f.getParent());
+        this.name = f.getName();
+        this.directory = f.getParent();        
         BufferedInputStream buf = new BufferedInputStream(new FileInputStream(f));
         buf.mark(FILE_PREFIX.length);
 
@@ -1206,7 +1206,7 @@ public class Scene {
                 }
                 con = cls.getConstructor(DataInputStream.class);
                 images.add((ImageMap) con.newInstance(in));
-            } catch (Exception ex) {
+            } catch (IOException | ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException | NoSuchMethodException | SecurityException | InvocationTargetException ex) {
                 throw new IOException("Error loading image: " + ex.getMessage());
             }
         }
@@ -1227,7 +1227,7 @@ public class Scene {
                     }
                     con = cls.getConstructor(DataInputStream.class, Scene.class);
                     materials.add((Material) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this));
-                } catch (Exception ex) {
+                } catch (IOException | IllegalAccessException | IllegalArgumentException | InstantiationException | NoSuchMethodException | SecurityException | InvocationTargetException ex) {
                     ex.printStackTrace();
                     if (ex instanceof ClassNotFoundException) {
                         loadingErrors.append(Translate.text("errorFindingClass", classname)).append('\n');
