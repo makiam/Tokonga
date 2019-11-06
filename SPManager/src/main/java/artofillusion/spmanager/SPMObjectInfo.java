@@ -264,7 +264,7 @@ public class SPMObjectInfo {
         char c1 = ' ';
         char c2 = ' ';
         //String s = "";
-        StringBuffer sb = new StringBuffer(1024);
+        StringBuilder sb = new StringBuilder(1024);
         int status = 0;
         try {
             c1 = (char) reader.read();
