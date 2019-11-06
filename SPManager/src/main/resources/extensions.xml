@@ -3,7 +3,9 @@
 <extension name="SPManager" version="1.102">
     <author>Nik TJ et Francois Guillet (fpgui@users.sourceforge.net)</author>
     <date>March 2013</date>
-
+    <plugin class="artofillusion.spmanager.SPManagerPlugin2">
+        
+    </plugin>
     <plugin class="artofillusion.spmanager.SPManagerPlugin" >
         <export method="download" id="artofillusion.SPManager.download" >
             Request SPManager to download a file to the local computer.
@@ -15,8 +17,7 @@
             AOI plugin repository, or just the URL of a file on a server somewhere.
         </export>
 
-        <export method="registerResource"
-                id="artofillusion.SPManager.registerResource" >
+        <export method="registerResource" id="artofillusion.SPManager.registerResource" >
             Request SPManager to scan the specified ClassLoader for resources that match
             the specified locale, and register the best-matching resouce found.
 
