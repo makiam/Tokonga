@@ -1,4 +1,5 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -167,8 +168,7 @@ public class RenderingMesh implements Cloneable {
         if (vert.length != norm.length) {
             return null;
         }
-        for (int i = 0; i < triangle.length; i++) {
-            RenderingTriangle tri = triangle[i];
+        for (RenderingTriangle tri : triangle) {
             if (tri.v1 != tri.n1 || tri.v2 != tri.n2 || tri.v3 != tri.n3) {
                 return null;
             }
