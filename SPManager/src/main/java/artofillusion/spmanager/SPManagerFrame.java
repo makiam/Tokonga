@@ -12,6 +12,7 @@
 package artofillusion.spmanager;
 
 import artofillusion.*;
+import artofillusion.ui.Messages;
 import artofillusion.ui.UIUtilities;
 import buoy.event.*;
 import buoy.widget.*;
@@ -130,7 +131,8 @@ public class SPManagerFrame extends BFrame {
      */
     protected void hideSPManager() {
         if (manageSplitPane.isModified() || updateSplitPane.isModified() || installSplitPane.isModified()) {
-            JOptionPane.showMessageDialog(null, SPMTranslate.text("modified"), SPMTranslate.text("alert"), JOptionPane.ERROR_MESSAGE);
+            Messages.warning(SPMTranslate.text("modified"), this.getComponent());
+            
         }
         getComponent().setVisible(false);
     }
