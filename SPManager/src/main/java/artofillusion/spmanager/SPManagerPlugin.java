@@ -100,7 +100,7 @@ public class SPManagerPlugin implements Plugin {
                 // get details of all local plugins
                 SPMObjectInfo info;
                 StringBuffer errs = null;
-
+                
                 File files[], urlfile;
                 URL url;
 
@@ -145,16 +145,6 @@ public class SPManagerPlugin implements Plugin {
                             } else {
                                 urlldr = (URLClassLoader) obj;
 
-                                /*
-			    searchldr =
-				new SearchlistClassLoader((ClassLoader) obj);
-
-			    idx = aoiloaders.indexOf(obj);
-			    if (idx >= 0) aoiloaders.set(idx, searchldr);
-			    else System.out.println("SPM: loader not in list");
-
-			    loaders.put(url, searchldr);
-                                 */
                             }
 
                             // ok, now perform the actions
@@ -202,24 +192,6 @@ public class SPManagerPlugin implements Plugin {
                                             System.out.println("SPM: could not find loader for: " + url);
                                         }
                                     }
-                                    /*
-				 * NTJ - disabled. No longer needed, and requires a new method in SearchlistClassLoader
-				 * 
-				else {
-				    System.out.println("SPM: importing: " + key[1]);
-				    if (searchldr != null) {
-					try {
-					    searchldr.add(ldr.loadClass(key[1]));
-					} catch (Exception e) {
-					    System.out.println("SPM: Error importing class: " + key[1] + " into " + url);
-					}
-				    }
-				    else {
-					System.out.println("SPM: Error: Class cannot be imported without a SearchListClassLoader: " + url
-						+ "(" + key[1] + ")");
-				    }
-				}
-                                     */
                                 }
                             }
                         }
@@ -695,9 +667,6 @@ public class SPManagerPlugin implements Plugin {
      * Description of the Method
      */
     public void doMenu() {
-        // NTJ: don't implement yet... (Nov 2006)
-        //if (!Translate.getLocale().equals(Locale.getDefault())) {
-        //}
 
         if (spmFrame == null) {
             spmFrame = new SPManagerFrame();
@@ -749,83 +718,5 @@ public class SPManagerPlugin implements Plugin {
         return spmFrame;
     }
 
-    /**
-     * update an already-loaded plugin
-     */
-    public static void updatePlugin(String name, String action, String target) {
 
-    }
-
-    /**
-     * main routine so SPManager can be run standalone
-     */
-    public static void main(String[] argv) {
-        char slash = File.separatorChar;
-
-        APP_DIRECTORY = System.getProperty("user.dir");
-        try {
-            URL url = SPManagerPlugin.class.getResource("/artofillusion/spmanager/SPManagerPlugin.class");
-
-            System.out.println("SPManager.main: url=" + url);
-            System.out.println("SPManager.main: path=" + url.getPath());
-
-            String furl = url.getPath();
-            if (furl.indexOf('!') < 0) {
-                furl = url.toString();
-            }
-
-            int cut = furl.indexOf('!');
-
-            if (cut > 0) {
-
-                furl = furl.substring(0, cut);
-
-                cut = furl.indexOf("jar:");
-                if (cut >= 0) {
-                    furl = furl.substring(cut + "jar:".length());
-                }
-
-                if (!furl.startsWith("file:")) {
-                    furl = "file:" + furl;
-                }
-
-                System.out.println("SPManager.main: furl=" + furl);
-
-                File dir = new File(new URL(furl).getPath()).getParentFile().getParentFile();
-
-                System.out.println("SPManager.main: dir="+ dir.getAbsolutePath());
-
-                if (dir.exists()) {
-                    APP_DIRECTORY = dir.getAbsolutePath();
-                } else {
-                    APP_DIRECTORY = System.getProperty("user.dir");
-                }
-
-                System.out.println("SPManager.main: app_dir=" + APP_DIRECTORY);
-            }
-        } catch (Exception ex) {
-            System.out.println("Error looking up app_dir: " + ex);
-        }
-
-        SPMTranslate.setLocale(Locale.getDefault());
-
-        PLUGIN_DIRECTORY = APP_DIRECTORY + slash + "Plugins";
-        TOOL_SCRIPT_DIRECTORY = APP_DIRECTORY + slash + "Scripts" + slash + "Tools";
-        OBJECT_SCRIPT_DIRECTORY = APP_DIRECTORY + slash + "Scripts" + slash + "Objects";
-        STARTUP_SCRIPT_DIRECTORY = APP_DIRECTORY + slash + "Scripts" + slash + "Startup";
-
-        SPManagerPlugin spm = new SPManagerPlugin();
-        spm.init();
-
-        // create Frame with overridden 'close' method
-        spmFrame = new SPManagerFrame() {
-            @Override
-            protected void hideSPManager() {
-                setVisible(false);
-                dispose();
-            }
-        };
-
-        spm.doMenu();
-    }
 }
