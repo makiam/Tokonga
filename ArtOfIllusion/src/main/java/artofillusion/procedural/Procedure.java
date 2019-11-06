@@ -223,15 +223,15 @@ public class Procedure {
         if (version != 0) {
             throw new InvalidObjectException("");
         }
-        for (int i = 0; i < output.length; i++) {
-            output[i].setInput(output[i].getInputPorts()[0], null);
+        for (OutputModule item : output) {
+            item.setInput(item.getInputPorts()[0], null);
         }
         int counter = in.readInt();
         modules.clear();
         try {
             for (int i = 0; i < counter; i++) {
                 String classname = in.readUTF();
-                Point point = new Point(in.readInt(), in.readInt());
+                Point point = new Point(in.readInt(), in.readInt());                
                 Class<?> cls = ArtOfIllusion.getClass(classname);
                 Constructor<?> con = cls.getConstructor(Point.class);
                 Module module = (Module) con.newInstance(point);
