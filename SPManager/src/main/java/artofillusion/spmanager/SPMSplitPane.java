@@ -403,7 +403,7 @@ public class SPMSplitPane extends BSplitPane {
                     objectName.setBackground(Color.PINK);
                 }
 
-                if (info.invalid) {
+                if (info.isInvalid()) {
                     name += "\n" + SPMTranslate.text("failedRequirement", SPMTranslate.text("flags"));
                     objectName.setBackground(Color.PINK);
                 }
@@ -697,7 +697,7 @@ public class SPMSplitPane extends BSplitPane {
                 } else if (workMode != BROWSE
                         && nodeInfo.restriction == SPMParameters.DISABLE) {
                     setIcon(disableIcon);
-                } else if (nodeInfo.invalid) {
+                } else if (nodeInfo.isInvalid()) {
                     setIcon(alertIcon);
                 } else if (nodeInfo.isSelected()) {
                     setIcon(checkedIcon);

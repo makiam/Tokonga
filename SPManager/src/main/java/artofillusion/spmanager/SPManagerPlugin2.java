@@ -1,7 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* 
+   Copyright (C) 2019 by Maksim Khramov
+
+   This program is free software; you can redistribute it and/or modify it under the
+   terms of the GNU General Public License as published by the Free Software
+   Foundation; either version 2 of the License, or (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY 
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+   PARTICULAR PURPOSE.  See the GNU General Public License for more details. 
  */
 package artofillusion.spmanager;
 
@@ -11,14 +17,9 @@ import buoy.event.CommandEvent;
 import buoy.widget.BMenu;
 import buoy.widget.BMenuItem;
 import com.google.common.flogger.FluentLogger;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 import javax.swing.SwingUtilities;
 
 /**
@@ -52,28 +53,8 @@ public class SPManagerPlugin2 extends DefaultPluginImplementation {
             return;
         }
         
-        final List<String> errors = new ArrayList<>();
-        
-        Consumer<Path> validatePath = new Consumer<Path>() {
-            @Override
-            public void accept(Path path) {
-                System.out.println("Look at: " + path);
-            }
-            
-        };
-        
-        try(Stream<Path> walk = Files.list(pluginsPath)){
-            walk.forEach(validatePath);
-        } catch(IOException ioex) {
-            logger.atSevere().withCause(ioex).log("Error list plugins");
-        }
+        new Thread(new PluginValidator(pluginsPath)).start();
 
-        
-    }
-
-    private void validatePlugin(Path path) {
-        SPMObjectInfo soi = new SPMObjectInfo();
-        
     }
     
     

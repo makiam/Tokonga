@@ -101,17 +101,17 @@ public class SPManagerPlugin implements Plugin {
                 SPMObjectInfo info;
                 StringBuffer errs = null;
                 
-                File files[], urlfile;
+                File urlfile;
                 URL url;
 
                 String key[], value;
                 File plugdir = new File(PLUGIN_DIRECTORY);
                 if (plugdir.exists()) {
-                    files = plugdir.listFiles();
-                    for (i = 0; i < files.length; i++) {
-                        info = new SPMObjectInfo(files[i].getAbsolutePath());
 
-                        if (info.invalid) {
+                    for (File item: plugdir.listFiles()) {
+                        info = new SPMObjectInfo(item.getAbsolutePath());
+
+                        if (info.isInvalid()) {
                             if (errs == null) {
                                 errs = new StringBuffer(1024);
                             }
@@ -124,7 +124,7 @@ public class SPManagerPlugin implements Plugin {
                         if (info.actions != null && info.actions.size() > 0) {
 
                             try {
-                                url = files[i].toURI().toURL();
+                                url = item.toURI().toURL();
                             } catch (Exception e) {
                                 continue;
                             }
@@ -134,7 +134,7 @@ public class SPManagerPlugin implements Plugin {
                             obj = loaders.get(url);
 
                             if (obj == null) {
-                                System.out.println("SPManager: could not find classloader: " + files[i].getPath());
+                                System.out.println("SPManager: could not find classloader: " + item.getPath());
                                 continue;
                             }
 
@@ -173,8 +173,6 @@ public class SPManagerPlugin implements Plugin {
                                         searchldr.add(url);
                                     } else if (addUrl != null) {
                                         try {
-                                            //urlarg[0] = url;
-                                            //addUrl.invoke(urlldr, urlarg);        // non-varargs call (1.4)
                                             addUrl.invoke(urlldr, url);		// varargs call (1.5)
                                         } catch (Exception e) {
                                             System.out.println("Error invoking: " + e);
@@ -186,10 +184,10 @@ public class SPManagerPlugin implements Plugin {
                                     ldr = loaders.get(url);
 
                                     if (key.length == 1) {
-                                        if (obj != null) {
-                                            searchldr.add(ldr);
-                                        } else {
+                                        if (obj == null) {
                                             System.out.println("SPM: could not find loader for: " + url);
+                                        } else {
+                                            searchldr.add(ldr);
                                         }
                                     }
                                 }

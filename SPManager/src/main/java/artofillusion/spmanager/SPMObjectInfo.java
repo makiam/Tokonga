@@ -19,7 +19,7 @@ import org.w3c.dom.*;
 /**
  * Description of the Class
  *
- * @author Fran?ois Guillet
+ * @author François Guillet
  * @created 15 mars 2004
  */
 public class SPMObjectInfo {
@@ -67,7 +67,7 @@ public class SPMObjectInfo {
     /**
      * invalid flag
      */
-    public boolean invalid = false;
+    private boolean invalid = false;
 
     private String description = null;
     private String comments = null;
@@ -580,8 +580,7 @@ public class SPMObjectInfo {
         try {
             URL addFile = new URL(url);
             HttpURLConnection.setFollowRedirects(false);
-            HttpURLConnection connection
-                    = (HttpURLConnection) addFile.openConnection();
+            HttpURLConnection connection = (HttpURLConnection) addFile.openConnection();
 
             String key = connection.getHeaderField(0);
             int i = 1;
@@ -1177,8 +1176,7 @@ public class SPMObjectInfo {
         String oper = "=";
         int cut;
 
-        System.out.println("test: lhs:" + lhs + "; rhs:" + rhs
-                + "; rhs[0]:" + rhs.charAt(0));
+        System.out.println("test: lhs:" + lhs + "; rhs:" + rhs + "; rhs[0]:" + rhs.charAt(0));
 
         // does lhs have an operator?
         cut = lhs.indexOf('<');
@@ -1305,5 +1303,9 @@ public class SPMObjectInfo {
             default:
                 return (comp == 0);
         }
+    }
+
+    public boolean isInvalid() {
+        return invalid;
     }
 }
