@@ -173,8 +173,9 @@ public class SPManagerPlugin implements Plugin {
                                         searchldr.add(url);
                                     } else if (addUrl != null) {
                                         try {
+                                            //Call to private URLClassLoader.addURL() via reflection
                                             addUrl.invoke(urlldr, url);		// varargs call (1.5)
-                                        } catch (Exception e) {
+                                        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                                             System.out.println("Error invoking: " + e);
                                         }
                                     } else {

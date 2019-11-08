@@ -126,8 +126,7 @@ public class SPManagerUtils {
     /**
      * method to parse digits into an int
      */
-    public static int parseInt(String val, int start, int max)
-            throws NumberFormatException {
+    public static int parseInt(String val, int start, int max) throws NumberFormatException {
         if (val == null || val.length() <= start) {
             return 0;
         }
@@ -231,8 +230,7 @@ public class SPManagerUtils {
      * <br>Eg 1.2 is parsed into 1002; 1.20 is parsed into 1020; and 1.20.3 is parsed into 1020003
      *
      */
-    public static long parseVersion(String val)
-            throws NumberFormatException {
+    public static long parseVersion(String val) throws NumberFormatException {
         long result = parseInt(val, 0, -1);
 
         int pos = 0;

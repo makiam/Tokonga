@@ -27,7 +27,7 @@ public class SPMObjectInfo {
     /**
      * Author name
      */
-    public String author = "?";
+    private String author = "?";
     /**
      * Script name
      */
@@ -35,7 +35,7 @@ public class SPMObjectInfo {
     /**
      * Release date
      */
-    public String date = "00/00/0000";
+    private String date = "00/00/0000";
     /**
      * Version
      */
@@ -767,8 +767,7 @@ public class SPMObjectInfo {
                 methId = SPManagerUtils.getAttribute(subnode, "id");
                 exports.put(methId, plugClass + "." + methName);
 
-                if (subnode.getChildNodes() != null
-                        && subnode.getChildNodes().item(0) != null) {
+                if (subnode.getChildNodes() != null && subnode.getChildNodes().item(0) != null) {
                     methHelp = subnode.getChildNodes().item(0).getNodeValue();
                     if (exportList.length() > 0) {
                         exportList += "========================\n";
@@ -819,8 +818,7 @@ public class SPMObjectInfo {
 
                 val = System.getProperty(filtName);
                 if (val == null || val.length() == 0) {
-                    System.out.println("SPMObjectInfo: could not resolve "
-                            + "<assert> value: " + fileName);
+                    System.out.println("SPMObjectInfo: could not resolve " + "<assert> value: " + fileName);
                     continue;
                 }
 
@@ -879,9 +877,7 @@ public class SPMObjectInfo {
 
             // iterate the child log nodes
             NodeList hl = node.getChildNodes();
-            for (i = 0;
-                    (node = SPManagerUtils.getNodeFromNodeList(hl, "log", i)) != null;
-                    i++) {
+            for (i = 0; (node = SPManagerUtils.getNodeFromNodeList(hl, "log", i)) != null; i++) {
 
                 String name = "v ";
                 String str = SPManagerUtils.getAttribute(node, "version");
@@ -1044,7 +1040,7 @@ public class SPMObjectInfo {
      * @return The beta value
      */
     public boolean isBeta() {
-        return ((beta == -1) ? false : true);
+        return beta != -1;
     }
 
     /**
@@ -1241,8 +1237,7 @@ public class SPMObjectInfo {
 
         int comp = 0;
 
-        System.out.println("test: lhs:" + lhs + "; rhs:" + rhs
-                + "; oper:" + oper);
+        System.out.println("test: lhs:" + lhs + "; rhs:" + rhs + "; oper:" + oper);
 
         if (oper == null || oper.length() == 0) {
             oper = "=";
@@ -1254,15 +1249,13 @@ public class SPMObjectInfo {
             int pos = 0;
 
             // compare multi-component numbers (eg, version numbers)
-            if (lhs.lastIndexOf('.') > lhs.indexOf('.')
-                    || rhs.lastIndexOf('.') > rhs.indexOf('.')) {
+            if(lhs.lastIndexOf('.') > lhs.indexOf('.') || rhs.lastIndexOf('.') > rhs.indexOf('.')) {
 
                 lval = SPManagerUtils.parseVersion(lhs);
                 rval = SPManagerUtils.parseVersion(rhs);
 
                 // scale both to the same number of digits
-                int delta = String.valueOf(lval).length()
-                        - String.valueOf(rval).length();
+                int delta = String.valueOf(lval).length() - String.valueOf(rval).length();
 
                 if (delta > 0) {
                     rval *= Math.pow(10, delta);
