@@ -1,4 +1,5 @@
 /* Copyright (C) 2003-2012 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -73,7 +74,7 @@ public class IKDistortion extends Distortion {
      * Create a duplicate of this object.
      */
     @Override
-    public Distortion duplicate() {
+    public IKDistortion duplicate() {
         IKDistortion d = new IKDistortion(locked, target, weight, actor);
         if (previous != null) {
             d.previous = previous.duplicate();

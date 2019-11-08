@@ -1,5 +1,6 @@
 /* Copyright (C) 2002-2012 by Peter Eastman
    A modification copyright (C) 2017 Petri Ihalainen
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -69,7 +70,7 @@ public class ShatterDistortion extends Distortion {
      * Create a duplicate of this object.
      */
     @Override
-    public Distortion duplicate() {
+    public ShatterDistortion duplicate() {
         ShatterDistortion d = new ShatterDistortion(time, size, speed, randomness, gravity, spin, disappear, gravityAxis, gravityDirTransform);
         if (previous != null) {
             d.previous = previous.duplicate();
