@@ -1,4 +1,5 @@
 /* Copyright (C) 2004-2012 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -57,7 +58,7 @@ public class PoseDistortion extends Distortion {
      * Create a duplicate of this object.
      */
     @Override
-    public Distortion duplicate() {
+    public PoseDistortion duplicate() {
         PoseDistortion d = new PoseDistortion(weight, pose.duplicate(), actor, relative);
         if (previous != null) {
             d.previous = previous.duplicate();

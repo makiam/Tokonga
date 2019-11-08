@@ -1,4 +1,5 @@
 /* Copyright (C) 2002-2012 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -57,7 +58,7 @@ public class ScaleDistortion extends Distortion {
      * Create a duplicate of this object.
      */
     @Override
-    public Distortion duplicate() {
+    public ScaleDistortion duplicate() {
         ScaleDistortion d = new ScaleDistortion(xscale, yscale, zscale, preTransform, postTransform);
         if (previous != null) {
             d.previous = previous.duplicate();

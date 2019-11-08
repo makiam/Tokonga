@@ -1,4 +1,5 @@
 /* Copyright (C) 2002-2012 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -71,15 +72,14 @@ public class CustomDistortion extends Distortion {
         if (preTransform == s.preTransform && postTransform == s.postTransform) {
             return true;
         }
-        return (preTransform != null && preTransform.equals(s.preTransform)
-                && postTransform != null && postTransform.equals(s.postTransform));
+        return (preTransform != null && preTransform.equals(s.preTransform) && postTransform != null && postTransform.equals(s.postTransform));
     }
 
     /**
      * Create a duplicate of this object.
      */
     @Override
-    public Distortion duplicate() {
+    public CustomDistortion duplicate() {
         CustomDistortion d = new CustomDistortion(proc, procVersion, point, weight, preTransform, postTransform);
         if (previous != null) {
             d.previous = previous.duplicate();
