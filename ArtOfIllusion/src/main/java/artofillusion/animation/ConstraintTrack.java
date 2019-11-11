@@ -148,7 +148,7 @@ public class ConstraintTrack extends Track {
      * Create a duplicate of this track.
      */
     @Override
-    public Track duplicate(Object obj) {
+    public ConstraintTrack duplicate(Object obj) {
         ConstraintTrack t = new ConstraintTrack((ObjectInfo) obj);
 
         t.name = name;

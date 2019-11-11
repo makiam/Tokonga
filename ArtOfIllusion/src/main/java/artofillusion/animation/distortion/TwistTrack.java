@@ -65,7 +65,7 @@ public class TwistTrack extends Track {
      * Create a duplicate of this track.
      */
     @Override
-    public Track duplicate(Object obj) {
+    public TwistTrack duplicate(Object obj) {
         TwistTrack t = new TwistTrack((ObjectInfo) obj);
 
         t.name = name;

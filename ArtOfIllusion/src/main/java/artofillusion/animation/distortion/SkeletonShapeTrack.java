@@ -74,7 +74,7 @@ public class SkeletonShapeTrack extends Track {
      * Create a duplicate of this track.
      */
     @Override
-    public Track duplicate(Object obj) {
+    public SkeletonShapeTrack duplicate(Object obj) {
         SkeletonShapeTrack t = new SkeletonShapeTrack((ObjectInfo) obj);
         t.name = name;
         t.enabled = enabled;

@@ -43,7 +43,7 @@ public class VisibilityTrack extends Track {
 
     /* Create a duplicate of this track. */
     @Override
-    public Track duplicate(Object obj) {
+    public VisibilityTrack duplicate(Object obj) {
         VisibilityTrack t = new VisibilityTrack((ObjectInfo) obj);
 
         t.name = name;

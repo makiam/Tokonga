@@ -127,7 +127,7 @@ public class ProceduralPositionTrack extends Track implements ProcedureOwner {
 
     /* Create a duplicate of this track. */
     @Override
-    public Track duplicate(Object obj) {
+    public ProceduralPositionTrack duplicate(Object obj) {
         ProceduralPositionTrack t = new ProceduralPositionTrack((ObjectInfo) obj);
 
         t.name = name;
@@ -139,7 +139,7 @@ public class ProceduralPositionTrack extends Track implements ProcedureOwner {
         t.smoothingMethod = smoothingMethod;
         t.tc = tc.duplicate((ObjectInfo) obj);
         t.relObject = relObject.duplicate();
-        t.theWeight = (WeightTrack) theWeight.duplicate(t);
+        t.theWeight = theWeight.duplicate(t);
         t.joint = joint;
         return t;
     }
