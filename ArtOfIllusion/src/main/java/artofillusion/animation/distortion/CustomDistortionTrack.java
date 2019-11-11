@@ -67,7 +67,7 @@ public class CustomDistortionTrack extends Track implements ProcedureOwner {
 
     /* Create a duplicate of this track. */
     @Override
-    public Track duplicate(Object obj) {
+    public CustomDistortionTrack duplicate(Object obj) {
         CustomDistortionTrack t = new CustomDistortionTrack((ObjectInfo) obj);
 
         t.name = name;

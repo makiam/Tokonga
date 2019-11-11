@@ -130,7 +130,7 @@ public class PositionTrack extends Track {
      * Create a duplicate of this track.
      */
     @Override
-    public Track duplicate(Object obj) {
+    public PositionTrack duplicate(Object obj) {
         PositionTrack t = new PositionTrack((ObjectInfo) obj);
 
         t.name = name;

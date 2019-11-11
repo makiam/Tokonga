@@ -56,7 +56,7 @@ public class ScaleTrack extends Track {
 
     /* Create a duplicate of this track. */
     @Override
-    public Track duplicate(Object obj) {
+    public ScaleTrack duplicate(Object obj) {
         ScaleTrack t = new ScaleTrack((ObjectInfo) obj);
 
         t.name = name;
@@ -65,7 +65,7 @@ public class ScaleTrack extends Track {
         t.smoothingMethod = smoothingMethod;
         t.worldCoords = worldCoords;
         t.tc = tc.duplicate((ObjectInfo) obj);
-        t.theWeight = (WeightTrack) theWeight.duplicate(t);
+        t.theWeight = theWeight.duplicate(t);
         return t;
     }
 
@@ -80,7 +80,7 @@ public class ScaleTrack extends Track {
         smoothingMethod = t.smoothingMethod;
         worldCoords = t.worldCoords;
         tc = t.tc.duplicate(info);
-        theWeight = (WeightTrack) t.theWeight.duplicate(this);
+        theWeight = t.theWeight.duplicate(this);
     }
 
     /* Get a list of all keyframe times for this track. */

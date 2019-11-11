@@ -102,7 +102,7 @@ public class RotationTrack extends Track {
      * Create a duplicate of this track.
      */
     @Override
-    public Track duplicate(Object obj) {
+    public RotationTrack duplicate(Object obj) {
         RotationTrack t = new RotationTrack((ObjectInfo) obj);
 
         t.name = name;

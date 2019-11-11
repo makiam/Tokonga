@@ -107,18 +107,15 @@ public class IKTrack extends Track {
      * Create a duplicate of this track.
      */
     @Override
-    public Track duplicate(Object obj) {
+    public IKTrack duplicate(Object obj) {
         IKTrack t = new IKTrack((ObjectInfo) obj);
 
         t.name = name;
         t.enabled = enabled;
         t.quantized = quantized;
         t.constraints = new Vector<>();
-        for (int i = 0; i < constraints.size(); i++) {
-            Constraint c = constraints.get(i);
-            t.constraints.add(c.duplicate());
-        }
-        t.theWeight = (WeightTrack) theWeight.duplicate(t);
+        constraints.forEach((c) -> { t.constraints.add(c.duplicate()); });
+        t.theWeight = theWeight.duplicate(t);
         return t;
     }
 

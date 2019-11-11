@@ -73,7 +73,7 @@ public class PoseTrack extends Track {
      * Create a duplicate of this track.
      */
     @Override
-    public Track duplicate(Object obj) {
+    public PoseTrack duplicate(Object obj) {
         PoseTrack t = new PoseTrack((ObjectInfo) obj);
 
         t.name = name;
@@ -82,7 +82,7 @@ public class PoseTrack extends Track {
         t.smoothingMethod = smoothingMethod;
         t.tc = tc.duplicate((ObjectInfo) obj);
         t.relative = relative;
-        t.theWeight = (WeightTrack) theWeight.duplicate(t);
+        t.theWeight = theWeight.duplicate(t);
         t.subtracks = new Track[]{theWeight};
         return t;
     }
@@ -100,7 +100,7 @@ public class PoseTrack extends Track {
         smoothingMethod = t.smoothingMethod;
         tc = t.tc.duplicate(info);
         relative = t.relative;
-        theWeight = (WeightTrack) t.theWeight.duplicate(this);
+        theWeight = t.theWeight.duplicate(this);
         subtracks = new Track[]{theWeight};
     }
 

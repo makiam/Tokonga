@@ -109,7 +109,7 @@ public class ProceduralRotationTrack extends Track implements ProcedureOwner {
 
     /* Create a duplicate of this track. */
     @Override
-    public Track duplicate(Object obj) {
+    public ProceduralRotationTrack duplicate(Object obj) {
         ProceduralRotationTrack t = new ProceduralRotationTrack((ObjectInfo) obj);
 
         t.name = name;
@@ -121,7 +121,7 @@ public class ProceduralRotationTrack extends Track implements ProcedureOwner {
         t.smoothingMethod = smoothingMethod;
         t.tc = tc.duplicate((ObjectInfo) obj);
         t.relObject = relObject.duplicate();
-        t.theWeight = (WeightTrack) theWeight.duplicate(t);
+        t.theWeight = theWeight.duplicate(t);
         t.joint = joint;
         return t;
     }
@@ -140,7 +140,7 @@ public class ProceduralRotationTrack extends Track implements ProcedureOwner {
         smoothingMethod = t.smoothingMethod;
         tc = t.tc.duplicate(info);
         relObject = t.relObject.duplicate();
-        theWeight = (WeightTrack) t.theWeight.duplicate(this);
+        theWeight = t.theWeight.duplicate(this);
         joint = t.joint;
     }
 

@@ -56,7 +56,7 @@ public class ShatterTrack extends Track {
 
     /* Create a duplicate of this track. */
     @Override
-    public Track duplicate(Object obj) {
+    public ShatterTrack duplicate(Object obj) {
         ShatterTrack t = new ShatterTrack((ObjectInfo) obj);
 
         t.name = name;

@@ -75,7 +75,7 @@ public class TextureTrack extends Track {
 
     /* Create a duplicate of this track. */
     @Override
-    public Track duplicate(Object obj) {
+    public TextureTrack duplicate(Object obj) {
         TextureTrack t = new TextureTrack((ObjectInfo) obj);
 
         t.name = name;
