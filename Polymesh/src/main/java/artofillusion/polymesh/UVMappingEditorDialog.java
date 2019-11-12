@@ -751,11 +751,7 @@ public class UVMappingEditorDialog extends BDialog {
             BMPEncoder bmp = new BMPEncoder(offscreen);
             bmp.writeImage(dos);
             dos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -1069,9 +1065,7 @@ public class UVMappingEditorDialog extends BDialog {
             mappingCB.remove(index);
             mappings.remove(index);
             UVMeshMapping firstMapping = mappings.get(0);
-            for (int j = 0; j < currentMapping.textures.size(); j++) {
-                firstMapping.textures.add(currentMapping.textures.get(j));
-            }
+            firstMapping.textures.addAll(currentMapping.textures);
             if (firstMapping.textures.size() > 0) {
                 currentTexture = getTextureFromID(firstMapping.textures.get(0));
                 mappingCanvas.setTexture(texList.get(currentTexture), mappingList.get(currentTexture));
