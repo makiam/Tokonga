@@ -43,6 +43,7 @@ import artofillusion.polymesh.PolyMesh.Wedge;
 import artofillusion.polymesh.PolyMesh.Wface;
 import artofillusion.polymesh.PolyMesh.Wvertex;
 import artofillusion.polymesh.PolyMeshValueWidget.ValueWidgetOwner;
+import artofillusion.polymesh.dialogs.PolymeshDisplayProperties;
 import artofillusion.polymesh.ui.ColorButton;
 import artofillusion.texture.FaceParameterValue;
 import artofillusion.texture.ParameterValue;
@@ -109,10 +110,10 @@ import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
-import java.util.logging.Level;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner.NumberEditor;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 
 /**
  * The PolyMeshEditorWindow class represents the window for editing PolyMesh objects.
@@ -893,6 +894,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      *
      */
     public void doEditProperties() {
+        SwingUtilities.invokeLater(() -> {
+            new PolymeshDisplayProperties(this.getComponent()).setVisible(true);
+        });
         PolyMesh mesh = (PolyMesh) objInfo.object;
         ColorButton vertColorButton = new ColorButton(mesh.getVertColor());
         ColorButton selectedVertColorButton = new ColorButton(mesh.getSelectedVertColor());
@@ -4608,9 +4612,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         public FindSimilarFacesDialog(boolean selected[]) {
             super(PolyMeshEditorWindow.this, Translate.text("polymesh:similarFacesTitle"), true);
             this.orSelection = selected;
-            InputStream is = null;
-            try {
-                is = getClass().getResource("interfaces/similar.xml").openStream();
+
+            try(InputStream is = getClass().getResource("interfaces/similar.xml").openStream()) {
+
                 WidgetDecoder decoder = new WidgetDecoder(is);
                 borderContainer1 = (BorderContainer) decoder.getRootObject();
                 BLabel titleTextLabel = ((BLabel) decoder.getObject("titleTextLabel"));
@@ -4643,14 +4647,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 cancelButton.setText(Translate.text("polymesh:cancel"));
             } catch (IOException ex) {
                 ex.printStackTrace();
-            } finally {
-                if (is != null)
-                try {
-                    is.close();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
             }
+            
             setContent(borderContainer1);
             normalCBVF.addEventLink(ValueChangedEvent.class, this, "doTolValueChanged");
             strictShapeCBVF.addEventLink(ValueChangedEvent.class, this, "doTolValueChanged");
@@ -4751,10 +4749,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         public FindSimilarEdgesDialog(boolean selected[]) {
             super(PolyMeshEditorWindow.this, Translate.text("polymesh:similarEdgesTitle"), true);
             this.orSelection = selected;
-            InputStream inputStream = null;
-            try {
-                inputStream = getClass().getResource("interfaces/similaredges.xml").openStream();
-                WidgetDecoder decoder = new WidgetDecoder(inputStream);
+            try(InputStream is = getClass().getResource("interfaces/similaredges.xml").openStream()) {
+                WidgetDecoder decoder = new WidgetDecoder(is);
                 borderContainer1 = (BorderContainer) decoder.getRootObject();
                 BLabel tolerance1 = ((BLabel) decoder.getObject("tolerance1"));
                 tolerance1.setText(Translate.text("polymesh:" + tolerance1.getText()));
@@ -4769,15 +4765,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 cancelButton.setText(Translate.text("polymesh:cancel"));
             } catch (IOException ex) {
                 ex.printStackTrace();
-            } finally {
-                try {
-                    if (inputStream != null) {
-                        inputStream.close();
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
             }
+            
             setContent(borderContainer1);
             toleranceVF.addEventLink(ValueChangedEvent.class, this, "doTolValueChanged");
             okButton.addEventLink(CommandEvent.class, this, "doOK");
@@ -4791,8 +4780,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
         private void doTolValueChanged() {
             fetchTolValues();
-            selected = ((PolyMesh) objInfo.object).findSimilarEdges(
-                    orSelection, edgeTol);
+            selected = ((PolyMesh) objInfo.object).findSimilarEdges(orSelection, edgeTol);
             objectChanged();
             updateImage();
         }
@@ -4834,9 +4822,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
          */
         public DivideDialog() {
             super(PolyMeshEditorWindow.this, Translate.text("polymesh:subdivideEdgesTitle"), true);
-            InputStream is = null;
-            try {
-                WidgetDecoder decoder = new WidgetDecoder(is = getClass().getResource("interfaces/divide.xml").openStream());
+  
+            try(InputStream is = getClass().getResource("interfaces/divide.xml").openStream()) {
+                WidgetDecoder decoder = new WidgetDecoder(is);
                 setContent((BorderContainer) decoder.getRootObject());
                 divideSpinner = ((BSpinner) decoder.getObject("divideSpinner"));
                 BLabel divideLabel = ((BLabel) decoder.getObject("divideLabel"));
@@ -4847,13 +4835,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 cancelButton.setText(Translate.text("polymesh:cancel"));
             } catch (IOException ex) {
                 ex.printStackTrace();
-            } finally {
-                if (is != null)
-					try {
-                    is.close();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
             }
             okButton.addEventLink(CommandEvent.class, this, "doOK");
             cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
@@ -4866,7 +4847,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
          * OK button selected
          */
         private void doOK() {
-            num = ((Integer) divideSpinner.getValue()).intValue();
+            num = ((Integer) divideSpinner.getValue());
             dispose();
         }
 
@@ -4911,9 +4892,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
          */
         public BevelPropertiesDialog() {
             super(PolyMeshEditorWindow.this, Translate.text("polymesh:bevelPropertiesTitle"), true);
-            InputStream is = null;
-            try {
-                WidgetDecoder decoder = new WidgetDecoder(getClass().getResource("interfaces/bevelArea.xml").openStream());
+            
+            try(InputStream is = getClass().getResource("interfaces/bevelArea.xml").openStream()) {
+                WidgetDecoder decoder = new WidgetDecoder(is);
                 borderContainer1 = (BorderContainer) decoder.getRootObject();
                 BLabel areaLimit = ((BLabel) decoder.getObject("areaLimit"));
                 areaLimit.setText(Translate.text("polymesh:" + areaLimit.getText()));
@@ -4930,14 +4911,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 cancelButton.setText(Translate.text("polymesh:cancel"));
             } catch (IOException ex) {
                 ex.printStackTrace();
-            } finally {
-                if (is != null)
-					try {
-                    is.close();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
             }
+            
             setContent(borderContainer1);
             okButton.addEventLink(CommandEvent.class, this, "doOK");
             cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
@@ -4984,23 +4959,17 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             super(PolyMeshEditorWindow.this, Translate.text("polymesh:checkRepair"), true);
 
             BorderContainer borderContainer1 = null;
-            InputStream is = null;
-            try {
-                WidgetDecoder decoder = new WidgetDecoder(is = getClass().getResource("interfaces/check.xml").openStream());
+            
+            try(InputStream is = getClass().getResource("interfaces/check.xml").openStream()) {
+                WidgetDecoder decoder = new WidgetDecoder(is);
                 borderContainer1 = (BorderContainer) decoder.getRootObject();
                 textArea = ((BTextArea) decoder.getObject("TextArea"));
                 dismiss = ((BButton) decoder.getObject("dismiss"));
                 dismiss.setText(Translate.text("polymesh:dismiss"));
             } catch (IOException ex) {
                 ex.printStackTrace();
-            } finally {
-                if (is != null)
-					try {
-                    is.close();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
             }
+            
             setContent(borderContainer1);
             dismiss.addEventLink(CommandEvent.class, this, "doDismiss");
             pack();
@@ -5076,9 +5045,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             backMaxAngle = mesh.getMaxAngle();
             backMinSmoothness = mesh.getMinSmoothness();
             backMaxSmoothness = mesh.getMaxSmoothness();
-            InputStream inputStream = null;
-            try {
-                WidgetDecoder decoder = new WidgetDecoder(getClass().getResource("interfaces/controlledSmoothing.xml").openStream());
+            
+            try(InputStream is = getClass().getResource("interfaces/controlledSmoothing.xml").openStream()) {
+                WidgetDecoder decoder = new WidgetDecoder(is);
                 ColumnContainer columnContainer1 = (ColumnContainer) decoder.getRootObject();
                 BLabel controlledSmoothing = ((BLabel) decoder.getObject("controlledSmoothing"));
                 controlledSmoothing.setText(Translate.text("polymesh:" + controlledSmoothing.getText()));
@@ -5139,15 +5108,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 setContent(columnContainer1);
             } catch (IOException ex) {
                 ex.printStackTrace();
-            } finally {
-                try {
-                    if (inputStream != null) {
-                        inputStream.close();
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
             }
+            
             pack();
             addEventLink(WindowClosingEvent.class, this, "doCancel");
             UIUtilities.centerWindow(this);
@@ -5255,9 +5217,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             PolyMesh mesh = (PolyMesh) objInfo.object;
             backInteractiveSmoothness = mesh.getInteractiveSmoothLevel();
             prevMesh = mesh.duplicate();
-            InputStream inputStream = null;
-            try {
-                WidgetDecoder decoder = new WidgetDecoder(getClass().getResource("interfaces/subdivision.xml").openStream());
+            
+            try(InputStream is = getClass().getResource("interfaces/subdivision.xml").openStream()) {
+                WidgetDecoder decoder = new WidgetDecoder(is);
                 BorderContainer borderContainer1 = (BorderContainer) decoder.getRootObject();
                 BLabel interactiveLabel = ((BLabel) decoder.getObject("interactiveLabel"));
                 interactiveLabel.setText(Translate.text("polymesh:" + interactiveLabel.getText()));
@@ -5280,15 +5242,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 setContent(borderContainer1);
             } catch (IOException ex) {
                 ex.printStackTrace();
-            } finally {
-                try {
-                    if (inputStream != null) {
-                        inputStream.close();
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
             }
+            
             pack();
             addEventLink(WindowClosingEvent.class, this, "doCancel");
             UIUtilities.centerDialog(this, PolyMeshEditorWindow.this);
@@ -5354,9 +5309,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             } else {
                 residual = 1;
             }
-            InputStream inputStream = null;
-            try {
-                WidgetDecoder decoder = new WidgetDecoder(inputStream = getClass().getResource("interfaces/unfoldStatus.xml").openStream(), PolyMeshPlugin.resources);
+            
+            try(InputStream is = getClass().getResource("interfaces/unfoldStatus.xml").openStream()) {
+                WidgetDecoder decoder = new WidgetDecoder(is, PolyMeshPlugin.resources);
                 borderContainer1 = (BorderContainer) decoder.getRootObject();
                 progressBar = ((BProgressBar) decoder.getObject("progressBar"));
                 textArea = ((BTextArea) decoder.getObject("TextArea"));
@@ -5376,15 +5331,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 residualVF.setVisible(false);
             } catch (IOException ex) {
                 ex.printStackTrace();
-            } finally {
-                try {
-                    if (inputStream != null) {
-                        inputStream.close();
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
             }
+            
             status = 0;
             cancelled = false;
             pack();
@@ -5499,9 +5447,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 orSel[i] = selected[i];
             }
             setSelection(newSel);
-            InputStream inputStream = null;
-            try {
-                WidgetDecoder decoder = new WidgetDecoder(inputStream = getClass().getResource("interfaces/smoothnessRange.xml").openStream(), PolyMeshPlugin.resources);
+            
+            try(InputStream is = getClass().getResource("interfaces/unfoldStatus.xml").openStream()) {
+                WidgetDecoder decoder = new WidgetDecoder(is, PolyMeshPlugin.resources);
                 borderContainer1 = (BorderContainer) decoder.getRootObject();
                 minSmoothnessTF = ((BTextField) decoder.getObject("minSmoothnessTF"));
                 minSmoothnessSlider = ((BSlider) decoder.getObject("minSmoothnessSlider"));
@@ -5528,15 +5476,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 addEventLink(WindowClosingEvent.class, this, "doCancel");
             } catch (IOException ex) {
                 ex.printStackTrace();
-            } finally {
-                try {
-                    if (inputStream != null) {
-                        inputStream.close();
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
             }
+            
             updateSelection();
             pack();
             setVisible(true);
