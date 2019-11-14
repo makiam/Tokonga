@@ -895,8 +895,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      */
     public void doEditProperties() {
         SwingUtilities.invokeLater(() -> {
-            new PolymeshDisplayProperties(this.getComponent()).setVisible(true);
+            PolymeshDisplayProperties pdp = new PolymeshDisplayProperties(this.getComponent(), (PolyMesh) objInfo.getObject());            
+            pdp.setVisible(true);
+            if(pdp.getReturnStatus() ==  PolymeshDisplayProperties.RET_OK) updateImage();
         });
+        
         PolyMesh mesh = (PolyMesh) objInfo.object;
         ColorButton vertColorButton = new ColorButton(mesh.getVertColor());
         ColorButton selectedVertColorButton = new ColorButton(mesh.getSelectedVertColor());

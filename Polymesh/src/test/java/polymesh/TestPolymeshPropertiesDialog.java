@@ -45,7 +45,7 @@ public class TestPolymeshPropertiesDialog {
     }
     
     public void createDialog() {
-        PolymeshDisplayProperties pd = new PolymeshDisplayProperties(null);
+        PolymeshDisplayProperties pd = new PolymeshDisplayProperties(null, null);
         pd.setVisible(true);
     }
 }
