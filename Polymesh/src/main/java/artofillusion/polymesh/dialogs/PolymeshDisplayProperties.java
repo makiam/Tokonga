@@ -7,12 +7,14 @@ package artofillusion.polymesh.dialogs;
 
 import artofillusion.polymesh.PolyMesh;
 import com.google.common.flogger.FluentLogger;
+import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
+import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
@@ -32,15 +34,14 @@ public final class PolymeshDisplayProperties extends javax.swing.JDialog {
      */
     public static final int RET_OK = 1;
 
-    private PolyMesh target;
+    private final PolyMesh target;
     
     /**
      * Creates new form PolymeshDisplayProperties
      */
     public PolymeshDisplayProperties(Frame parent, PolyMesh source) {
         super(parent, true);
-        this.target = source;
-        
+        this.target = source;        
         initComponents();
 
         // Close the dialog when Esc is pressed
@@ -59,7 +60,6 @@ public final class PolymeshDisplayProperties extends javax.swing.JDialog {
     @Override
     protected void dialogInit() {
         super.dialogInit();
-        logger.atInfo().log("dialogInit");
     }
 
     /**
@@ -99,19 +99,20 @@ public final class PolymeshDisplayProperties extends javax.swing.JDialog {
         jButton6 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
-        canvas1 = new javax.swing.JPanel();
-        canvas2 = new javax.swing.JPanel();
-        canvas3 = new javax.swing.JPanel();
-        canvas4 = new javax.swing.JPanel();
-        canvas5 = new javax.swing.JPanel();
-        canvas6 = new javax.swing.JPanel();
-        canvas7 = new javax.swing.JPanel();
-        canvas8 = new javax.swing.JPanel();
+        swatch2 = new javax.swing.JPanel();
+        swatch1 = new javax.swing.JPanel();
+        swatch3 = new javax.swing.JPanel();
+        swatch6 = new javax.swing.JPanel();
+        swatch5 = new javax.swing.JPanel();
+        swatch4 = new javax.swing.JPanel();
+        swatch8 = new javax.swing.JPanel();
+        swatch7 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("polymesh"); // NOI18N
         setTitle(bundle.getString("setMeshProperties")); // NOI18N
         setModal(true);
+        setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 closeDialog(evt);
@@ -156,36 +157,76 @@ public final class PolymeshDisplayProperties extends javax.swing.JDialog {
         jLabel8.setText(bundle.getString("selectedFaceColor")); // NOI18N
 
         jButton1.setText(bundle.getString("button.setColor")); // NOI18N
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
 
         jButton2.setText(bundle.getString("button.setColor")); // NOI18N
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText(bundle.getString("button.setColor")); // NOI18N
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText(bundle.getString("button.setColor")); // NOI18N
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton5.setText(bundle.getString("button.setColor")); // NOI18N
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         jButton6.setText(bundle.getString("button.setColor")); // NOI18N
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
 
         jButton7.setText(bundle.getString("button.setColor")); // NOI18N
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
 
         jButton8.setText(bundle.getString("button.setColor")); // NOI18N
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
 
-        canvas1.setBackground(new java.awt.Color(204, 255, 153));
+        swatch2.setBackground(new java.awt.Color(204, 255, 153));
 
-        canvas2.setBackground(new java.awt.Color(204, 255, 153));
+        swatch1.setBackground(new java.awt.Color(204, 255, 153));
 
-        canvas3.setBackground(new java.awt.Color(204, 255, 153));
+        swatch3.setBackground(new java.awt.Color(204, 255, 153));
 
-        canvas4.setBackground(new java.awt.Color(204, 255, 153));
+        swatch6.setBackground(new java.awt.Color(204, 255, 153));
 
-        canvas5.setBackground(new java.awt.Color(204, 255, 153));
+        swatch5.setBackground(new java.awt.Color(204, 255, 153));
 
-        canvas6.setBackground(new java.awt.Color(204, 255, 153));
+        swatch4.setBackground(new java.awt.Color(204, 255, 153));
 
-        canvas7.setBackground(new java.awt.Color(204, 255, 153));
+        swatch8.setBackground(new java.awt.Color(204, 255, 153));
 
-        canvas8.setBackground(new java.awt.Color(204, 255, 153));
+        swatch7.setBackground(new java.awt.Color(204, 255, 153));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -228,16 +269,21 @@ public final class PolymeshDisplayProperties extends javax.swing.JDialog {
                                     .addComponent(jButton3)
                                     .addComponent(jButton2)
                                     .addComponent(jButton1))))
-                        .addGap(0, 20, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(canvas1, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(canvas3, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(canvas5, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(canvas6, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(canvas4, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(canvas8, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(canvas7, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(canvas2, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                                .addComponent(swatch1, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 2, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(swatch8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(swatch4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(swatch5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(swatch3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(swatch2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(swatch6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(swatch7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
                 .addGap(10, 10, 10))
         );
 
@@ -248,68 +294,71 @@ public final class PolymeshDisplayProperties extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(11, 11, 11)
                 .addComponent(enableCustomSettingsCheckBox)
-                .addGap(30, 30, 30)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel1)
-                        .addComponent(jButton1))
-                    .addComponent(canvas2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(19, 19, 19)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel1)
+                                .addComponent(jButton1))
+                            .addComponent(swatch1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(19, 19, 19)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                .addComponent(jLabel2)
-                                                .addComponent(jButton2))
-                                            .addComponent(canvas1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel2)
+                                                        .addComponent(jButton2))
+                                                    .addComponent(swatch2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGap(18, 18, 18)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                    .addComponent(jLabel3)
+                                                    .addComponent(jButton3)))
+                                            .addComponent(swatch3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGap(18, 18, 18)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                            .addComponent(jLabel3)
-                                            .addComponent(jButton3)))
-                                    .addComponent(canvas3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(jLabel4)
+                                            .addComponent(jButton4))
+                                        .addGap(18, 18, 18)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(jLabel5)
+                                            .addComponent(jButton5))
+                                        .addGap(18, 18, 18)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(jLabel6)
+                                            .addComponent(jButton6)))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(swatch4, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(19, 19, 19)
+                                        .addComponent(swatch5, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(41, 41, 41))
+                                    .addComponent(swatch6, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jButton4))
+                                    .addComponent(jLabel7)
+                                    .addComponent(jButton7))
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel5)
-                                    .addComponent(jButton5))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jButton6)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(canvas6, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(19, 19, 19)
-                                .addComponent(canvas5, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(41, 41, 41))
-                            .addComponent(canvas4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel8)
+                                    .addComponent(jButton8)))
+                            .addComponent(swatch8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(handleSizeLabel)
+                            .addComponent(handleSizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel7)
-                            .addComponent(jButton7))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel8)
-                            .addComponent(jButton8)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(canvas8, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(41, 41, 41))
-                    .addComponent(canvas7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(handleSizeLabel)
-                    .addComponent(handleSizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton)
-                    .addComponent(okButton))
-                .addContainerGap())
+                            .addComponent(cancelButton)
+                            .addComponent(okButton))
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(278, 278, 278)
+                        .addComponent(swatch7, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(119, 119, 119))))
         );
 
         getRootPane().setDefaultButton(okButton);
@@ -332,6 +381,63 @@ public final class PolymeshDisplayProperties extends javax.swing.JDialog {
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        // TODO add your handling code here:
+        Color newColor = JColorChooser.showDialog(this, java.util.ResourceBundle.getBundle("polymesh").getString("chooseColor"), swatch1.getBackground());
+        if(null == newColor) return;
+        swatch1.setBackground(newColor);
+        
+    }//GEN-LAST:event_jButton1MouseClicked
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        Color newColor = JColorChooser.showDialog(this, java.util.ResourceBundle.getBundle("polymesh").getString("chooseColor"), swatch2.getBackground());
+        if(null == newColor) return;
+        swatch2.setBackground(newColor);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        Color newColor = JColorChooser.showDialog(this, java.util.ResourceBundle.getBundle("polymesh").getString("chooseColor"), swatch3.getBackground());
+        if(null == newColor) return;
+        swatch3.setBackground(newColor);
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        Color newColor = JColorChooser.showDialog(this, java.util.ResourceBundle.getBundle("polymesh").getString("chooseColor"), swatch4.getBackground());
+        if(null == newColor) return;
+        swatch4.setBackground(newColor);
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        Color newColor = JColorChooser.showDialog(this, java.util.ResourceBundle.getBundle("polymesh").getString("chooseColor"), swatch5.getBackground());
+        if(null == newColor) return;
+        swatch5.setBackground(newColor);
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+        Color newColor = JColorChooser.showDialog(this, java.util.ResourceBundle.getBundle("polymesh").getString("chooseColor"), swatch6.getBackground());
+        if(null == newColor) return;
+        swatch6.setBackground(newColor);
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // TODO add your handling code here:
+        Color newColor = JColorChooser.showDialog(this, java.util.ResourceBundle.getBundle("polymesh").getString("chooseColor"), swatch7.getBackground());
+        if(null == newColor) return;
+        swatch7.setBackground(newColor);
+    }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        // TODO add your handling code here:
+        Color newColor = JColorChooser.showDialog(this, java.util.ResourceBundle.getBundle("polymesh").getString("chooseColor"), swatch8.getBackground());
+        if(null == newColor) return;
+        swatch8.setBackground(newColor);
+    }//GEN-LAST:event_jButton8ActionPerformed
     
     private void doClose(int retStatus) {
         returnStatus = retStatus;
@@ -342,14 +448,6 @@ public final class PolymeshDisplayProperties extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
-    private javax.swing.JPanel canvas1;
-    private javax.swing.JPanel canvas2;
-    private javax.swing.JPanel canvas3;
-    private javax.swing.JPanel canvas4;
-    private javax.swing.JPanel canvas5;
-    private javax.swing.JPanel canvas6;
-    private javax.swing.JPanel canvas7;
-    private javax.swing.JPanel canvas8;
     private javax.swing.JCheckBox enableCustomSettingsCheckBox;
     private javax.swing.JLabel handleSizeLabel;
     private javax.swing.JSpinner handleSizeSpinner;
@@ -370,6 +468,14 @@ public final class PolymeshDisplayProperties extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JButton okButton;
+    private javax.swing.JPanel swatch1;
+    private javax.swing.JPanel swatch2;
+    private javax.swing.JPanel swatch3;
+    private javax.swing.JPanel swatch4;
+    private javax.swing.JPanel swatch5;
+    private javax.swing.JPanel swatch6;
+    private javax.swing.JPanel swatch7;
+    private javax.swing.JPanel swatch8;
     // End of variables declaration//GEN-END:variables
 
     private int returnStatus = RET_CANCEL;

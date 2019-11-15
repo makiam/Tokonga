@@ -7,6 +7,7 @@
       <ResourceString bundle="polymesh.properties" key="setMeshProperties" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
     </Property>
     <Property name="modal" type="boolean" value="true"/>
+    <Property name="resizable" type="boolean" value="false"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -75,16 +76,24 @@
                               </Group>
                           </Group>
                       </Group>
-                      <EmptySpace min="0" pref="20" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="canvas1" min="-2" pref="93" max="-2" attributes="0"/>
-                          <Component id="canvas3" min="-2" pref="93" max="-2" attributes="0"/>
-                          <Component id="canvas5" alignment="0" min="-2" pref="93" max="-2" attributes="0"/>
-                          <Component id="canvas6" alignment="0" min="-2" pref="93" max="-2" attributes="0"/>
-                          <Component id="canvas4" alignment="0" min="-2" pref="93" max="-2" attributes="0"/>
-                          <Component id="canvas8" alignment="0" min="-2" pref="93" max="-2" attributes="0"/>
-                          <Component id="canvas7" alignment="0" min="-2" pref="93" max="-2" attributes="0"/>
-                          <Component id="canvas2" min="-2" pref="93" max="-2" attributes="0"/>
+                          <Group type="102" alignment="1" attributes="0">
+                              <EmptySpace pref="7" max="32767" attributes="0"/>
+                              <Component id="swatch1" min="-2" pref="84" max="-2" attributes="0"/>
+                              <EmptySpace min="0" pref="2" max="32767" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="swatch8" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="swatch4" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="swatch5" max="32767" attributes="0"/>
+                                  <Component id="swatch3" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="swatch2" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="swatch6" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="swatch7" alignment="1" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
                       </Group>
                   </Group>
               </Group>
@@ -97,88 +106,93 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
               <Component id="enableCustomSettingsCheckBox" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" attributes="0">
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Component id="canvas2" min="-2" pref="22" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="1" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="swatch1" min="-2" pref="22" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="1" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="103" groupAlignment="1" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Group type="103" groupAlignment="3" attributes="0">
-                                              <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                                              <Component id="jButton2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Group type="102" alignment="1" attributes="0">
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Group type="103" groupAlignment="3" attributes="0">
+                                                      <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="jButton2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                                  </Group>
+                                                  <Component id="swatch2" min="-2" pref="22" max="-2" attributes="0"/>
+                                              </Group>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="3" attributes="0">
+                                                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="jButton3" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              </Group>
                                           </Group>
-                                          <Component id="canvas1" min="-2" pref="22" max="-2" attributes="0"/>
+                                          <Component id="swatch3" alignment="1" min="-2" pref="22" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jButton3" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jButton4" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="3" attributes="0">
+                                          <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jButton5" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="3" attributes="0">
+                                          <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jButton6" alignment="3" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
-                                  <Component id="canvas3" alignment="1" min="-2" pref="22" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <Component id="swatch4" min="-2" pref="22" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
+                                      <Component id="swatch5" min="-2" pref="22" max="-2" attributes="0"/>
+                                      <EmptySpace min="41" pref="41" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="swatch6" alignment="1" min="-2" pref="22" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jButton4" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButton7" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jButton5" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jButton6" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButton8" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Component id="canvas6" min="-2" pref="22" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
-                              <Component id="canvas5" min="-2" pref="22" max="-2" attributes="0"/>
-                              <EmptySpace min="41" pref="41" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="canvas4" alignment="1" min="-2" pref="22" max="-2" attributes="0"/>
+                          <Component id="swatch8" alignment="1" min="-2" pref="22" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButton7" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="2" attributes="0">
+                          <Component id="handleSizeLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="handleSizeSpinner" alignment="2" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButton8" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="cancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="okButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
-                  <Group type="102" alignment="1" attributes="0">
-                      <Component id="canvas8" min="-2" pref="22" max="-2" attributes="0"/>
-                      <EmptySpace min="41" pref="41" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="-2" pref="278" max="-2" attributes="0"/>
+                      <Component id="swatch7" min="-2" pref="22" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="119" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="canvas7" alignment="1" min="-2" pref="22" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="2" attributes="0">
-                  <Component id="handleSizeLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                  <Component id="handleSizeSpinner" alignment="2" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace pref="34" max="32767" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="cancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="okButton" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -289,6 +303,9 @@
           <ResourceString bundle="polymesh.properties" key="button.setColor" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jButton1MouseClicked"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jButton2">
       <Properties>
@@ -296,6 +313,9 @@
           <ResourceString bundle="polymesh.properties" key="button.setColor" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton2ActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jButton3">
       <Properties>
@@ -303,6 +323,9 @@
           <ResourceString bundle="polymesh.properties" key="button.setColor" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3ActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jButton4">
       <Properties>
@@ -310,6 +333,9 @@
           <ResourceString bundle="polymesh.properties" key="button.setColor" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton4ActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jButton5">
       <Properties>
@@ -317,6 +343,9 @@
           <ResourceString bundle="polymesh.properties" key="button.setColor" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton5ActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jButton6">
       <Properties>
@@ -324,6 +353,9 @@
           <ResourceString bundle="polymesh.properties" key="button.setColor" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton6ActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jButton7">
       <Properties>
@@ -331,6 +363,9 @@
           <ResourceString bundle="polymesh.properties" key="button.setColor" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton7ActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jButton8">
       <Properties>
@@ -338,57 +373,60 @@
           <ResourceString bundle="polymesh.properties" key="button.setColor" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton8ActionPerformed"/>
+      </Events>
     </Component>
-    <Component class="javax.swing.JPanel" name="canvas1">
+    <Component class="javax.swing.JPanel" name="swatch2">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="99" green="ff" red="cc" type="rgb"/>
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JPanel" name="canvas2">
+    <Component class="javax.swing.JPanel" name="swatch1">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="99" green="ff" red="cc" type="rgb"/>
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JPanel" name="canvas3">
+    <Component class="javax.swing.JPanel" name="swatch3">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="99" green="ff" red="cc" type="rgb"/>
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JPanel" name="canvas4">
+    <Component class="javax.swing.JPanel" name="swatch6">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="99" green="ff" red="cc" type="rgb"/>
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JPanel" name="canvas5">
+    <Component class="javax.swing.JPanel" name="swatch5">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="99" green="ff" red="cc" type="rgb"/>
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JPanel" name="canvas6">
+    <Component class="javax.swing.JPanel" name="swatch4">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="99" green="ff" red="cc" type="rgb"/>
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JPanel" name="canvas7">
+    <Component class="javax.swing.JPanel" name="swatch8">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="99" green="ff" red="cc" type="rgb"/>
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JPanel" name="canvas8">
+    <Component class="javax.swing.JPanel" name="swatch7">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="99" green="ff" red="cc" type="rgb"/>
