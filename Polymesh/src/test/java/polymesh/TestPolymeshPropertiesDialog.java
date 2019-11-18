@@ -5,8 +5,11 @@
  */
 package polymesh;
 
+import artofillusion.ViewerCanvas;
+import artofillusion.math.RGBColor;
+import artofillusion.polymesh.PolyMesh;
+import artofillusion.polymesh.PolymeshTest;
 import artofillusion.polymesh.dialogs.PolymeshDisplayProperties;
-import java.util.ResourceBundle;
 import javax.swing.SwingUtilities;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -19,20 +22,17 @@ import org.netbeans.jemmy.operators.JDialogOperator;
  */
 public class TestPolymeshPropertiesDialog {
     
-    public TestPolymeshPropertiesDialog() {
-    }
-    
     @BeforeClass
     public static void setUpClass() {
+        ViewerCanvas.lineColor = java.awt.Color.PINK;
+        ViewerCanvas.highlightColor = java.awt.Color.GREEN;
+        ViewerCanvas.transparentColor = new RGBColor();
     }
     
     @Before
     public void setUp() {
     }
 
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
     @Test
     public void hello() {
         SwingUtilities.invokeLater(this::createDialog);
@@ -45,7 +45,8 @@ public class TestPolymeshPropertiesDialog {
     }
     
     public void createDialog() {
-        PolymeshDisplayProperties pd = new PolymeshDisplayProperties(null, null);
+        PolyMesh pm = new PolyMesh(0, 0, 0, 0, 1, 1);
+        PolymeshDisplayProperties pd = new PolymeshDisplayProperties(null, pm);
         pd.setVisible(true);
     }
 }

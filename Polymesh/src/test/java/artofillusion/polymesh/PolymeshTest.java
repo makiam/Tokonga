@@ -5,19 +5,14 @@
  */
 package artofillusion.polymesh;
 
-import artofillusion.ArtOfIllusion;
 import artofillusion.ViewerCanvas;
 import artofillusion.math.RGBColor;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
-import java.util.Locale;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.netbeans.jemmy.ClassReference;
-import org.netbeans.jemmy.JemmyProperties;
-import org.netbeans.jemmy.TestOut;
 
 /**
  *

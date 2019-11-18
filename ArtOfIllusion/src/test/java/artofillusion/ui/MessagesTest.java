@@ -9,19 +9,22 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.ui;
 
-import artofillusion.ArtOfIllusion;
-import artofillusion.PluginRegistry;
 import artofillusion.test.util.RegisterTestResources;
 import buoy.widget.BDialog;
 import buoy.widget.BStandardDialog;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import org.junit.Assert;
+
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.netbeans.jemmy.operators.JButtonOperator;
+import org.netbeans.jemmy.operators.JDialogOperator;
 
 /**
  *
@@ -45,28 +48,58 @@ public class MessagesTest {
 
     @Test
     public void testError() {
-        Messages.error("Hello Errors");
+        SwingUtilities.invokeLater(() -> {
+            Messages.error("Hello Errors");
+        });
+        JDialogOperator dialog = new JDialogOperator();
+        JButtonOperator ok = new JButtonOperator(dialog);
+        ok.clickMouse();
     }
 
     @Test
     public void testWarning() {
-        Messages.warning("This is warning");
+        SwingUtilities.invokeLater(() -> {
+            Messages.warning("This is warning");
+        });
+        
+        JDialogOperator dialog = new JDialogOperator();
+        JButtonOperator ok = new JButtonOperator(dialog);
+        ok.clickMouse();
     }
 
     @Test
     public void testInformation() {
-        Messages.information("Information message");
+        SwingUtilities.invokeLater(() -> {
+            Messages.information("Information message");
+        });
+        
+        JDialogOperator dialog = new JDialogOperator();
+        JButtonOperator ok = new JButtonOperator(dialog);
+        ok.clickMouse();
     }
 
     @Test
     public void testPlain() {
-        JOptionPane.showMessageDialog(null, "Plain message", "", JOptionPane.PLAIN_MESSAGE);
+        SwingUtilities.invokeLater(() -> {
+            JOptionPane.showMessageDialog(null, "Plain message", "", JOptionPane.PLAIN_MESSAGE);
+        });
+        
+        JDialogOperator dialog = new JDialogOperator();
+        JButtonOperator ok = new JButtonOperator(dialog);
+        ok.clickMouse();
     }
 
     @Test
     public void testPlainStyleDialog() {
+        SwingUtilities.invokeLater(() -> {
+            JDialogOperator dialog = new JDialogOperator();
+            JButtonOperator ok = new JButtonOperator(dialog, 1);
+            ok.clickMouse();
+        });
+        
         BStandardDialog dlg = new BStandardDialog("Art Of Illusion", Translate.text("savePoseAsGesture"), BStandardDialog.PLAIN);
         String name = dlg.showInputDialog(new BDialog(), null, "New Gesture");
+        Assert.assertNull(name);
     }
 
     @Test
