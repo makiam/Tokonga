@@ -5761,8 +5761,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
      * @exception InvalidObjectException Signals that the PolyMesh structure is
      * invalid
      */
-    public PolyMesh(DataInputStream in, Scene theScene) throws IOException,
-            InvalidObjectException {
+    public PolyMesh(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
         super(in, theScene);
         initialize();
         readData(in, theScene);
@@ -5776,8 +5775,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         skeleton = new Skeleton();
     }
 
-    private void readData(DataInputStream in, Scene scene) throws IOException,
-            InvalidObjectException {
+    private void readData(DataInputStream in, Scene scene) throws IOException, InvalidObjectException {
 
         short version = in.readShort();
         if (version < 0 || version > 10) {
@@ -5810,8 +5808,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         }
         edges = new Wedge[in.readInt()];
         for (int i = 0; i < edges.length; i++) {
-            edges[i] = new Wedge(in.readInt(), in.readInt(), in.readInt(), in
-                    .readInt());
+            edges[i] = new Wedge(in.readInt(), in.readInt(), in.readInt(), in.readInt());
             edges[i].smoothness = in.readFloat();
         }
         faces = new Wface[in.readInt()];
@@ -13637,8 +13634,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
          * @param newParams Description of the Parameter
          */
         @Override
-        public void textureChanged(TextureParameter oldParams[],
-                TextureParameter newParams[]) {
+        public void textureChanged(TextureParameter oldParams[], TextureParameter newParams[]) {
             ParameterValue newval[] = new ParameterValue[newParams.length];
 
             for (int i = 0; i < newParams.length; i++) {
@@ -13742,8 +13738,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
          * @exception IOException Description of the Exception
          * @exception InvalidObjectException Description of the Exception
          */
-        public PolyMeshKeyframe(DataInputStream in, Object parent)
-                throws IOException, InvalidObjectException {
+        public PolyMeshKeyframe(DataInputStream in, Object parent) throws IOException, InvalidObjectException {
             this();
             short version = in.readShort();
             if (version < 0 || version > 2) {
@@ -13923,8 +13918,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
          */
         @Override
         public String toString() {
-            return ("vertex:" + vertex + " hedge:" + hedge + " face:" + face
-                    + " next:" + next + " smoothness:" + smoothness);
+            return ("vertex:" + vertex + " hedge:" + hedge + " face:" + face + " next:" + next + " smoothness:" + smoothness);
         }
     }
 

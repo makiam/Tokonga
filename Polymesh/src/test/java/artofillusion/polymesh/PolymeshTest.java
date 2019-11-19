@@ -7,9 +7,12 @@ package artofillusion.polymesh;
 
 import artofillusion.ViewerCanvas;
 import artofillusion.math.RGBColor;
+import artofillusion.test.util.StreamUtil;
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -47,5 +50,12 @@ public class PolymeshTest {
         PolyMesh pm = new PolyMesh(MeshType.CUBE.type, 0, 0, 0, 1, 1);
         
         Assert.assertEquals(8, pm.getVertices().length);
+    }
+    
+    @Test(expected = InvalidObjectException.class)
+    public void testLoadMesh() throws IOException {
+        ByteBuffer wrap = ByteBuffer.allocate(200);
+        wrap.put((byte) 11);
+        new PolyMesh(StreamUtil.stream(wrap));
     }
 }

@@ -2,6 +2,7 @@ description = 'Polymesh'
 
 dependencies {
     compile project(':ArtOfIllusion')
+    testCompile project(':ArtOfIllusion').sourceSets.test.output
 }
 
 tasks.withType(Jar) {
