@@ -3412,16 +3412,13 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
             for (int i = 0; i < edges.length / 2; i++) {
                 smoothness = 0f;
                 if ((edges[i].face >= 0) && (edges[edges[i].hedge].face >= 0)) {
-                    dot = normals[edges[i].face]
-                            .dot(normals[edges[edges[i].hedge].face]);
+                    dot = normals[edges[i].face].dot(normals[edges[edges[i].hedge].face]);
                     if (dot <= mina) {
                         smoothness = maxSmoothness;
                     } else if (dot >= maxa) {
                         smoothness = minSmoothness;
                     } else {
-                        smoothness = (float) ((dot - mina) / (maxa - mina))
-                                * (minSmoothness - maxSmoothness)
-                                + maxSmoothness;
+                        smoothness = (float) ((dot - mina) / (maxa - mina)) * (minSmoothness - maxSmoothness) + maxSmoothness;
                     }
                 }
                 edges[i].smoothness = edges[edges[i].hedge].smoothness = smoothness;

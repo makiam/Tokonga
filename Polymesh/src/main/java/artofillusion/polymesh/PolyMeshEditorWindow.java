@@ -120,7 +120,7 @@ import javax.swing.SwingUtilities;
  *
  * @author Francois Guillet
  */
-public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWindow, PopupMenuManager, ValueWidgetOwner {
+public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuManager, ValueWidgetOwner {
 
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     
@@ -2136,16 +2136,13 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         switch (selectMode) {
             default:
             case POINT_MODE:
-                mesh.moveVertices(valueSelection, valueWidget.getValue(),
-                        moveDirection);
+                mesh.moveVertices(valueSelection, valueWidget.getValue(), moveDirection);
                 break;
             case EDGE_MODE:
-                mesh.moveEdges(valueSelection, valueWidget.getValue(),
-                        moveDirection);
+                mesh.moveEdges(valueSelection, valueWidget.getValue(), moveDirection);
                 break;
             case FACE_MODE:
-                mesh.moveFaces(valueSelection, valueWidget.getValue(),
-                        moveDirection);
+                mesh.moveFaces(valueSelection, valueWidget.getValue(), moveDirection);
                 break;
         }
         objectChanged();
@@ -2175,8 +2172,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private void doBevelEdgesCallback() {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         mesh.copyObject(priorValueMesh);
-        boolean[] sel = mesh.bevelEdges(valueSelection, valueWidget
-                .getValue());
+        boolean[] sel = mesh.bevelEdges(valueSelection, valueWidget.getValue());
         objectChanged();
         setSelection(sel);
     }
