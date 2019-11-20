@@ -735,8 +735,8 @@ public class ImagesDialog extends BDialog {
 
         private void deleteAndReturn() {
             int count = 0;
-            for (int r = 0; r < removeBox.length; r++) {
-                if (removeBox[r].getState()) {
+            for(BCheckBox removeBoxItem: removeBox) {
+                if(removeBoxItem.getState()) {
                     count++;
                 }
             }
@@ -751,8 +751,8 @@ public class ImagesDialog extends BDialog {
 
         private void deleteAndClose() {
             int count = 0;
-            for (int r = 0; r < removeBox.length; r++) {
-                if (removeBox[r].getState()) {
+            for(BCheckBox removeBoxItem: removeBox) {
+                if(removeBoxItem.getState()) {
                     count++;
                 }
             }

@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class Procedure {
 
-    OutputModule output[];
+    private final OutputModule output[];
     private final List<Module> modules = new ArrayList<>();
     private final List<Link> links = new ArrayList<>();
 
@@ -116,13 +116,12 @@ public class Procedure {
      * Check for feedback loops in this procedure.
      */
     public boolean checkFeedback() {
-        for (int i = 0; i < output.length; i++) {
-            for (int j = 0; j < output.length; j++) {
-                output[j].checked = false;
+        for(OutputModule output2: output) {
+            for(OutputModule output1: output) {
+                output1.checked = false;
             }
             modules.forEach(module -> module.checked = false);
-
-            if (output[i].checkFeedback()) {
+            if(output2.checkFeedback()) {
                 return true;
             }
         }
