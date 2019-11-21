@@ -81,11 +81,10 @@ public class NinePointManipulator extends EventSource implements Manipulator {
      */
     public NinePointManipulator(Image images[]) {
         this.images = images.clone();
-        for (int i = 0; i < images.length; i++) {
-            if (images[i] != null) {
-                imageWidth = images[i].getWidth(null);
-                imageHeight = images[i].getHeight(null);
-            }
+        for (Image image : images) {
+            if(null == image) continue;
+            imageWidth = image.getWidth(null);
+            imageHeight = image.getHeight(null);
         }
     }
 

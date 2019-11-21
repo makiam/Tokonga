@@ -214,16 +214,16 @@ public class OBJExporter {
                 }
             }
             Mat4 trans = info.getCoords().fromLocal();
-            for (int j = 0; j < vert.length; j++) {
-                Vec3 v = trans.times(vert[j].r);
+            for (MeshVertex vert1 : vert) {
+                Vec3 v = trans.times(vert1.r);
                 out.println("v " + nf.format(v.x) + " " + nf.format(v.y) + " " + nf.format(v.z));
             }
             if (needNormals) {
-                for (int j = 0; j < norm.length; j++) {
-                    if (norm[j] == null) {
+                for (Vec3 norm1 : norm) {
+                    if (norm1 == null) {
                         out.println("vn 1 0 0");
                     } else {
-                        Vec3 v = trans.timesDirection(norm[j]);
+                        Vec3 v = trans.timesDirection(norm1);
                         out.println("vn " + nf.format(v.x) + " " + nf.format(v.y) + " " + nf.format(v.z));
                     }
                 }
@@ -231,13 +231,13 @@ public class OBJExporter {
             if (ti != null && ((Object3D) mesh).getTextureMapping() instanceof UVMapping && ((UVMapping) ((Object3D) mesh).getTextureMapping()).isPerFaceVertex(mesh)) {
                 // A per-face-vertex texture mapping.
 
-                Vec2 coords[][] = ((UVMapping) ((Object3D) mesh).getTextureMapping()).findFaceTextureCoordinates(mesh);
+                Vec2 faceTextureCoordinates[][] = ((UVMapping) ((Object3D) mesh).getTextureMapping()).findFaceTextureCoordinates(mesh);
                 double uscale = (ti.maxu == ti.minu ? 1.0 : 1.0 / (ti.maxu - ti.minu));
                 double vscale = (ti.maxv == ti.minv ? 1.0 : 1.0 / (ti.maxv - ti.minv));
-                for (int j = 0; j < coords.length; j++) {
-                    for (int k = 0; k < coords[j].length; k++) {
-                        double u = (coords[j][k].x - ti.minu) * uscale;
-                        double v = (coords[j][k].y - ti.minv) * vscale;
+                for (Vec2[] faceTextureCoordinateLine : faceTextureCoordinates) {
+                    for (Vec2 faceTextureCoordinate : faceTextureCoordinateLine) {
+                        double u = (faceTextureCoordinate.x - ti.minu) * uscale;
+                        double v = (faceTextureCoordinate.y - ti.minv) * vscale;
                         out.println("vt " + nf.format(u) + " " + nf.format(v));
                     }
                 }
@@ -257,17 +257,17 @@ public class OBJExporter {
                         }
                     }
                     out.println();
-                    numTexVert += coords[j].length;
+                    numTexVert += faceTextureCoordinates[j].length;
                 }
             } else if (ti != null && ((Object3D) mesh).getTextureMapping() instanceof Mapping2D) {
                 // A per-vertex texture mapping.
 
-                Vec2 coords[] = ((Mapping2D) ((Object3D) mesh).getTextureMapping()).findTextureCoordinates(mesh);
+                Vec2 textureCoordinates[] = ((Mapping2D) ((Object3D) mesh).getTextureMapping()).findTextureCoordinates(mesh);
                 double uscale = (ti.maxu == ti.minu ? 1.0 : 1.0 / (ti.maxu - ti.minu));
                 double vscale = (ti.maxv == ti.minv ? 1.0 : 1.0 / (ti.maxv - ti.minv));
-                for (int j = 0; j < coords.length; j++) {
-                    double u = (coords[j].x - ti.minu) * uscale;
-                    double v = (coords[j].y - ti.minv) * vscale;
+                for (Vec2 coordinate : textureCoordinates) {
+                    double u = (coordinate.x - ti.minu) * uscale;
+                    double v = (coordinate.y - ti.minv) * vscale;
                     out.println("vt " + nf.format(u) + " " + nf.format(v));
                 }
                 for (int j = 0; j < mesh.getFaceCount(); j++) {
@@ -287,7 +287,7 @@ public class OBJExporter {
                     }
                     out.println();
                 }
-                numTexVert += coords.length;
+                numTexVert += textureCoordinates.length;
             } else {
                 // No texture coordinates.
 

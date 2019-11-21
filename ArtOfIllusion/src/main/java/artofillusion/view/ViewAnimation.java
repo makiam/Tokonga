@@ -459,12 +459,12 @@ public class ViewAnimation {
     }
 
     private void moveChildren(ObjectInfo parent, Mat4 transform, UndoRecord undo) {
-        for (int i = 0; i < parent.getChildren().length; i++) {
-            CoordinateSystem coords = parent.getChildren()[i].getCoords();
+        for(ObjectInfo children: parent.getChildren()) {
+            CoordinateSystem coords = children.getCoords();
             CoordinateSystem oldCoords = coords.duplicate();
             coords.transformCoordinates(transform);
             undo.addCommand(UndoRecord.COPY_COORDS, coords, oldCoords);
-            moveChildren(parent.getChildren()[i], transform, undo);
+            moveChildren(children, transform, undo);
         }
     }
 }

@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2013 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -16,30 +16,34 @@ import buoy.event.*;
 
 import javax.swing.table.*;
 import java.awt.event.*;
-import java.awt.*;
+
 import java.util.*;
 import java.text.*;
 
 import artofillusion.ui.*;
+import java.awt.Dimension;
 
 /**
  * This class presents a user interface for editing the list of KeystrokeRecords.
  */
 public class KeystrokePreferencesPanel extends FormContainer {
 
-    private final ArrayList<KeystrokeRecord> records;
+    private final List<KeystrokeRecord> records;
     private BTable table;
-    private BButton editButton, addButton, deleteButton;
+    
+    private final BButton editButton;
+    
+    private final BButton deleteButton;
+    
     private boolean changed;
     private int sortColumn = 1;
 
     public KeystrokePreferencesPanel() {
         super(new double[]{1}, new double[]{1, 0});
-        KeystrokeRecord allRecords[] = KeystrokeManager.getAllRecords();
-        records = new ArrayList<>(allRecords.length);
-        for (int i = 0; i < allRecords.length; i++) {
-            records.add(allRecords[i]);
-        }
+        
+        records = new ArrayList<>(Arrays.asList(KeystrokeManager.getAllRecords()));
+        
+        
         table = new BTable(new KeystrokeTableModel());
         table.setColumnWidth(0, 100);
         table.setColumnWidth(1, 250);
@@ -61,7 +65,7 @@ public class KeystrokePreferencesPanel extends FormContainer {
         RowContainer buttons = new RowContainer();
         add(buttons, 0, 1, new LayoutInfo());
         buttons.add(editButton = Translate.button("edit", "...", this, "editRecord"));
-        buttons.add(addButton = Translate.button("add", "...", this, "addRecord"));
+        buttons.add(Translate.button("add", "...", this, "addRecord"));
         buttons.add(deleteButton = Translate.button("delete", this, "deleteRecords"));
         selectionChanged();
     }

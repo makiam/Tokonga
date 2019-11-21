@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
-
+   Changes copyright (C) 2019 by Maksim Khramov
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
@@ -125,8 +125,8 @@ public class ComponentsDialog extends BDialog {
             cancelCallback.run();
         }
         dispose();
-        for (int i = 0; i < comp.length; i++) {
-            comp[i].removeEventLink(KeyPressedEvent.class, this);
+        for (Widget widget : comp) {
+            widget.removeEventLink(KeyPressedEvent.class, this);
         }
     }
 

@@ -24,6 +24,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -295,17 +296,13 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
         private BList allFiltersList, cameraFiltersList;
         private BButton addButton, deleteButton, upButton, downButton;
         private Class filterClasses[];
-        private ArrayList<ImageFilter> filters;
+        private List<ImageFilter> filters;
         Runnable filterChangedCallback;
 
         public FiltersPanel(SceneCamera camera, Runnable filterChangedCallback) {
             super(1, 2);
             this.filterChangedCallback = filterChangedCallback;
-            filters = new ArrayList<>();
-            ImageFilter oldFilters[] = camera.getImageFilters();
-            for (int i = 0; i < oldFilters.length; i++) {
-                filters.add(oldFilters[i]);
-            }
+            filters = new ArrayList<>(Arrays.asList(camera.getImageFilters()));
 
             // Layout the major sections of the window.
             LayoutInfo fillLayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null);
@@ -352,7 +349,7 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
         /**
          * Get the filters to apply.
          */
-        public ArrayList<ImageFilter> getFilters() {
+        public List<ImageFilter> getFilters() {
             return filters;
         }
 

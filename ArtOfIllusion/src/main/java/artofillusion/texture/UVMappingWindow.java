@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2012 by Peter Eastman
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -60,19 +60,11 @@ public class UVMappingWindow extends BDialog implements MeshEditController, Edit
         // Find the range of coordinates displayed.
         double minu = Double.MAX_VALUE, maxu = -Double.MAX_VALUE;
         double minv = Double.MAX_VALUE, maxv = -Double.MAX_VALUE;
-        for (int i = 0; i < coord.length; i++) {
-            if (coord[i].x < minu) {
-                minu = coord[i].x;
-            }
-            if (coord[i].x > maxu) {
-                maxu = coord[i].x;
-            }
-            if (coord[i].y < minv) {
-                minv = coord[i].y;
-            }
-            if (coord[i].y > maxv) {
-                maxv = coord[i].y;
-            }
+        for(Vec2 coord1: coord) {
+            minu = Math.min(minu, coord1.x);
+            maxu = Math.max(maxu, coord1.x);
+            minv = Math.min(minv, coord1.y);
+            maxv = Math.max(maxv, coord1.y);
         }
         double padu = 0.1 * (maxu - minu), padv = 0.1 * (maxv - minv);
         minu -= padu;
@@ -293,10 +285,8 @@ public class UVMappingWindow extends BDialog implements MeshEditController, Edit
             FacetedMesh mesh = (FacetedMesh) editObj;
             Vec2 faceCoord[][] = map.findFaceTextureCoordinates(mesh);
             ArrayList<Vec2> coordList = new ArrayList<>();
-            for (int i = 0; i < faceCoord.length; i++) {
-                for (int j = 0; j < faceCoord[i].length; j++) {
-                    coordList.add(faceCoord[i][j]);
-                }
+            for(Vec2[] faceCoordLine: faceCoord) {
+                coordList.addAll(Arrays.asList(faceCoordLine));
             }
             coord = coordList.toArray(new Vec2[coordList.size()]);
         } else {

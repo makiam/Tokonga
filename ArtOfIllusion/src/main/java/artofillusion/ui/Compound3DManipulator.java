@@ -50,7 +50,7 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
     private RotationHandle[] uvRotationHandle;
     private RotationHandle[] activeRotationHandleSet;
     private RotationHandle currentRotationHandle;
-    private ViewMode viewMode;
+    private ViewMode viewMode = XYZ_MODE;
     private boolean rotateAroundSelectionCenter = true;
 
     public final static ViewMode XYZ_MODE = new ViewMode();
@@ -252,10 +252,9 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
             rotHandles = npqRotHandles;
         }
         //and detect if click happened in one of them
-        for (int i = 0; i < rotHandles.length; i++) {
-            if ((rotSegment = rotHandles[i].findClickTarget(location, view.getCamera())) != -1) {
-                return ROTATE;
-            }
+        for(RotationHandle handle :rotHandles) {
+            if((rotSegment = handle.findClickTarget(location, view.getCamera())) == -1) continue;
+            return ROTATE;            
         }
         //check for extra UV handle
         if (viewMode == UV_MODE && extraUVBox.contains(location)) {
@@ -513,19 +512,21 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
         } else if (viewMode == NPQ_MODE) {
             rotHandles = npqRotHandles;
         }
+        
         //and detect if click happened in one of them
-        for (int i = 0; i < rotHandles.length; i++) {
-            if ((rotSegment = rotHandles[i].findClickTarget(p, view.getCamera())) != -1) {
-                currentRotationHandle = rotHandles[i];
-                dragHandleType = ROTATE;
-                dragAxis = currentRotationHandle.axis;
-                dragging = true;
-                baseClick = new Point(ev.getPoint());
-                dispatchEvent(new HandlePressedEvent(view, dragHandleType, dragAxis, bounds, selectionBounds, ev));
-                rotAngle = 0;
-                return true;
-            }
+        for(RotationHandle handle: rotHandles) {
+            if((rotSegment = handle.findClickTarget(p, view.getCamera())) == -1) continue;
+
+            currentRotationHandle = handle;
+            dragHandleType = ROTATE;
+            dragAxis = currentRotationHandle.axis;
+            dragging = true;
+            baseClick = new Point(ev.getPoint());
+            dispatchEvent(new HandlePressedEvent(view, dragHandleType, dragAxis, bounds, selectionBounds, ev));
+            rotAngle = 0;
+            return true;
         }
+        
         //check for extra UV handle
         if (viewMode == UV_MODE && extraUVBox.contains(p)) {
             dragHandleType = SCALE;

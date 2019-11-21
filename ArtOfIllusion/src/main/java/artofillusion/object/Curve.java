@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2008 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -230,10 +230,10 @@ public class Curve extends Object3D implements Mesh {
         } else {
             zscale = zsize / size.z;
         }
-        for (int i = 0; i < vertex.length; i++) {
-            vertex[i].r.x *= xscale;
-            vertex[i].r.y *= yscale;
-            vertex[i].r.z *= zscale;
+        for (MeshVertex vertex1 : vertex) {
+            vertex1.r.x *= xscale;
+            vertex1.r.y *= yscale;
+            vertex1.r.z *= zscale;
         }
         clearCachedMesh();
     }
@@ -620,8 +620,8 @@ public class Curve extends Object3D implements Mesh {
     public void editGesture(final EditingWindow parent, ObjectInfo info, Runnable cb, ObjectInfo realObject) {
         CurveEditorWindow ed = new CurveEditorWindow(parent, "Gesture '" + info.getName() + "'", info, cb, false);
         ViewerCanvas views[] = ed.getAllViews();
-        for (int i = 0; i < views.length; i++) {
-            ((MeshViewer) views[i]).setScene(parent.getScene(), realObject);
+        for (ViewerCanvas view : views) {
+            ((MeshViewer) view).setScene(parent.getScene(), realObject);
         }
         ed.setVisible(true);
     }

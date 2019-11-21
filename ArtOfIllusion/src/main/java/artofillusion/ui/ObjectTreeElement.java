@@ -34,8 +34,8 @@ public class ObjectTreeElement extends TreeElement {
         this.tree = tree;
         children = new Vector<>();
         if (addChildren) {
-            for (int i = 0; i < info.getChildren().length; i++) {
-                children.add(new ObjectTreeElement(info.getChildren()[i], this, tree, true));
+            for (ObjectInfo child : info.getChildren()) {
+                children.add(new ObjectTreeElement(child, this, tree, true));
             }
         }
     }

@@ -50,11 +50,13 @@ public class Module {
         this.output = output;
         linkFrom = new Module[input.length];
         linkFromIndex = new int[input.length];
-        for (int i = 0; i < input.length; i++) {
-            input[i].setModule(this);
+        
+        for (IOPort item : input) {
+            item.setModule(this);
         }
-        for (int i = 0; i < output.length; i++) {
-            output[i].setModule(this);
+        
+        for (IOPort item : output) {
+            item.setModule(this);
         }
         bounds = new Rectangle(position.x, position.y, 0, 0);
         layout();
@@ -132,14 +134,14 @@ public class Module {
      * Determine whether the specified point is over an IOPort, and if so, return the port.
      */
     public IOPort getClickedPort(Point pos) {
-        for (int i = 0; i < input.length; i++) {
-            if (input[i].contains(pos)) {
-                return input[i];
+        for (IOPort item : input) {
+            if (item.contains(pos)) {
+                return item;
             }
         }
-        for (int i = 0; i < output.length; i++) {
-            if (output[i].contains(pos)) {
-                return output[i];
+        for (IOPort item : output) {
+            if (item.contains(pos)) {
+                return item;
             }
         }
         return null;
@@ -240,11 +242,13 @@ public class Module {
         g.setStroke(contourStroke);
         g.drawRoundRect(bounds.x - 1, bounds.y - 1, bounds.width + 2, bounds.height + 2, 4, 4);
         g.setStroke(currentStroke);
-        for (int i = 0; i < input.length; i++) {
-            input[i].draw(g);
+        
+        for (IOPort item : input) {
+            item.draw(g);
         }
-        for (int i = 0; i < output.length; i++) {
-            output[i].draw(g);
+        
+        for (IOPort item : output) {
+            item.draw(g);
         }
         drawContents(g);
     }
@@ -267,11 +271,10 @@ public class Module {
             return true;
         }
         checked = true;
-        for (int i = 0; i < linkFrom.length; i++) {
-            if (linkFrom[i] != null) {
-                if (linkFrom[i].checkFeedback()) {
-                    return true;
-                }
+        for (Module link : linkFrom) {
+            if(null == link) continue;
+            if (link.checkFeedback()) {
+                return true;
             }
         }
         checked = false;

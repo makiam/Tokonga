@@ -224,9 +224,9 @@ public class RenderingDialog extends BDialog implements RenderListener {
      * Make sure all filters can be applied, and show a warning message if now.
      */
     private void verifyFilters(WindowWidget parent) {
-        ImageFilter[] filters = cameraForFilters.getImageFilters();
-        for (int i = 0; i < filters.length; i++) {
-            int required = filters[i].getDesiredComponents();
+        
+        for(ImageFilter filter: cameraForFilters.getImageFilters()) {
+            int required = filter.getDesiredComponents();
             while (required != 0) {
                 int component = required - (required & (required - 1));
                 if (!originalImage.hasFloatData(component)) {

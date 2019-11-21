@@ -1,5 +1,7 @@
 /*
  *  Copyright (C) 2007 by Francois Guillet
+   Changes copyright (C) 2019 by Maksim Khramov
+
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -18,7 +20,7 @@ import artofillusion.math.Vec2;
 import artofillusion.object.TriangleMesh;
 
 /**
- * An unfolded mesh is a 2D triangle mesh that represents a piece of a facetted mesh which has been
+ * An unfolded mesh is a 2D triangle mesh that represents a piece of a faceted mesh which has been
  * unfolded. Heavily derived from triangle mesh class.
  *
  * @author Francois Guillet
@@ -48,10 +50,10 @@ public class UnfoldedMesh {
 
         public UnfoldedVertex duplicate() {
             UnfoldedVertex v = null;
-            if (r != null) {
-                v = new UnfoldedVertex(new Vec2(r));
-            } else {
+            if (null == r) {
                 v = new UnfoldedVertex((Vec2) null);
+            } else {
+                v = new UnfoldedVertex(new Vec2(r));
             }
             v.edge = edge;
             v.id = id;
@@ -59,8 +61,7 @@ public class UnfoldedMesh {
             return v;
         }
 
-        public void writeToFile(DataOutputStream out)
-                throws IOException {
+        public void writeToFile(DataOutputStream out) throws IOException {
             out.writeShort(0);
             out.writeInt(edge);
             out.writeInt(id);
@@ -68,8 +69,7 @@ public class UnfoldedMesh {
             r.writeToFile(out);
         }
 
-        public UnfoldedVertex(DataInputStream in) throws IOException,
-                InvalidObjectException {
+        public UnfoldedVertex(DataInputStream in) throws IOException, InvalidObjectException {
             short version = in.readShort();
             if (version < 0 || version > 0) {
                 throw new InvalidObjectException("");
@@ -125,8 +125,7 @@ public class UnfoldedMesh {
             return e;
         }
 
-        public void writeToFile(DataOutputStream out)
-                throws IOException {
+        public void writeToFile(DataOutputStream out) throws IOException {
             out.writeShort(0);
             out.writeInt(v1);
             out.writeInt(v2);
@@ -135,8 +134,7 @@ public class UnfoldedMesh {
             out.writeBoolean(hidden);
         }
 
-        public UnfoldedEdge(DataInputStream in) throws IOException,
-                InvalidObjectException {
+        public UnfoldedEdge(DataInputStream in) throws IOException, InvalidObjectException {
             short version = in.readShort();
             if (version < 0 || version > 0) {
                 throw new InvalidObjectException("");
@@ -182,8 +180,7 @@ public class UnfoldedMesh {
             return f;
         }
 
-        public void writeToFile(DataOutputStream out)
-                throws IOException {
+        public void writeToFile(DataOutputStream out) throws IOException {
             out.writeShort(0);
             out.writeInt(v1);
             out.writeInt(v2);
@@ -194,8 +191,7 @@ public class UnfoldedMesh {
             out.writeInt(id);
         }
 
-        public UnfoldedFace(DataInputStream in) throws IOException,
-                InvalidObjectException {
+        public UnfoldedFace(DataInputStream in) throws IOException, InvalidObjectException {
             short version = in.readShort();
             if (version < 0 || version > 0) {
                 throw new InvalidObjectException("");
@@ -218,8 +214,7 @@ public class UnfoldedMesh {
 
     private String name;
 
-    public UnfoldedMesh(UnfoldedVertex[] vertices, UnfoldedEdge[] edges,
-            UnfoldedFace[] faces) {
+    public UnfoldedMesh(UnfoldedVertex[] vertices, UnfoldedEdge[] edges, UnfoldedFace[] faces) {
         super();
         this.vertices = vertices;
         this.edges = edges;
@@ -245,21 +240,23 @@ public class UnfoldedMesh {
         return mesh;
     }
 
-    public void writeToFile(DataOutputStream out)
-            throws IOException {
+    public void writeToFile(DataOutputStream out) throws IOException {
         out.writeShort(0);
         out.writeUTF(name);
-        out.writeInt(vertices.length);
-        for (int i = 0; i < vertices.length; i++) {
-            vertices[i].writeToFile(out);
+        
+        out.writeInt(vertices.length);        
+        for(UnfoldedVertex vertex: vertices) {
+            vertex.writeToFile(out);
         }
+        
         out.writeInt(edges.length);
-        for (int i = 0; i < edges.length; i++) {
-            edges[i].writeToFile(out);
+        for(UnfoldedEdge edge: edges) {
+            edge.writeToFile(out);
         }
+        
         out.writeInt(faces.length);
-        for (int i = 0; i < faces.length; i++) {
-            faces[i].writeToFile(out);
+        for(UnfoldedFace face: faces) {
+            face.writeToFile(out);
         }
     }
 

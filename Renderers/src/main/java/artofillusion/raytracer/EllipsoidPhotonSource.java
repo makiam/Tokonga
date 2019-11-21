@@ -1,4 +1,5 @@
 /* Copyright (C) 2003-2013 by Peter Eastman
+ *  Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -50,8 +51,8 @@ public class EllipsoidPhotonSource implements PhotonSource {
         ObjectInfo info = new ObjectInfo(obj.theSphere, new CoordinateSystem(), "");
         RenderingMesh mesh = info.getPreviewMesh();
         double area = 0.0;
-        for (int i = 0; i < mesh.triangle.length; i++) {
-            RenderingTriangle tri = mesh.triangle[i];
+        for (RenderingTriangle tri: mesh.triangle) {
+            
             Vec3 v1 = mesh.vert[tri.v1], v2 = mesh.vert[tri.v2], v3 = mesh.vert[tri.v3];
             Vec3 e1 = v2.minus(v1);
             Vec3 e2 = v3.minus(v1);

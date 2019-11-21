@@ -98,8 +98,8 @@ public class ImageSaver {
         index = startFrameNumber;
 
         final BComboBox formatChoice = new BComboBox();
-        for (int i = 0; i < FORMAT_NAME.length; i++) {
-            formatChoice.add(FORMAT_NAME[i]);
+        for (String FORMAT : FORMAT_NAME) {
+            formatChoice.add(FORMAT);
         }
         formatChoice.setSelectedValue(FORMAT_NAME[animate ? lastMovieFormat : lastImageFormat]);
         BCheckBox premultBox = new BCheckBox("Premultiply Transparency", premultiplyDefault);

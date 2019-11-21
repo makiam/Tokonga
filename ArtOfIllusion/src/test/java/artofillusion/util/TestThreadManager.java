@@ -38,14 +38,14 @@ public class TestThreadManager {
             }
         });
         for (int repeat = 0; repeat < 50; repeat++) {
-            for (int i = 0; i < flags.length; i++) {
-                flags[i].set(false);
+            for(AtomicBoolean flag: flags) {
+                flag.set(false);
             }
             error.set(false);
             tm.run();
             assertFalse(error.get());
-            for (int i = 0; i < flags.length; i++) {
-                assertTrue(flags[i].get());
+            for(AtomicBoolean flag: flags) {
+                assertTrue(flag.get());
             }
         }
     }

@@ -1,4 +1,5 @@
 /* Copyright (C) 2004-2017 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -52,12 +53,11 @@ public class TexturedVertexShader implements VertexShader {
         textureID = mesh.mapping.getTexture().getID();
 
         // Determine whether we can cache the color components for each vertex.
-        ParameterValue value[] = object.getParameterValues();
-        for (int i = 0; i < value.length; i++) {
-            if (!(value[i] instanceof ConstantParameterValue || value[i] instanceof VertexParameterValue)) {
-                cachePerFace = true;
-                return;
-            }
+
+        for(ParameterValue value: object.getParameterValues()) {
+            if(value instanceof ConstantParameterValue || value instanceof VertexParameterValue) continue;
+            cachePerFace = true;
+            return;
         }
     }
 
@@ -227,7 +227,7 @@ public class TexturedVertexShader implements VertexShader {
      */
     @Override
     public boolean isUniformTexture() {
-        return (mesh.mapping instanceof UniformMapping);
+        return mesh.mapping instanceof UniformMapping;
     }
 
     /**

@@ -1,4 +1,5 @@
 /* Copyright (C) 2003-2013 by Peter Eastman
+ *  Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -179,11 +180,11 @@ public class PhotonMap {
         PhotonList nearbyPhotons = new PhotonList(numEstimate);
         RGBColor tempColor = new RGBColor();
         nearbyPhotons.init(0.0f);
-        for (int i = 0; i < photon.length; i++) {
-            tempColor.setERGB(photon[i].ergb);
+        for (Photon photon1 : photon) {
+            tempColor.setERGB(photon1.ergb);
             float intensity = -(tempColor.getRed() + tempColor.getGreen() + tempColor.getBlue());
             if (intensity <= nearbyPhotons.cutoff2) {
-                nearbyPhotons.addPhoton(photon[i], intensity);
+                nearbyPhotons.addPhoton(photon1, intensity);
             }
         }
         float red = 0.0f, green = 0.0f, blue = 0.0f;

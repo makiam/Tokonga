@@ -1,4 +1,5 @@
 /* Copyright (C) 1999-2014 by Peter Eastman
+ * Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -892,9 +893,9 @@ public class RaytracerRenderer implements Renderer, Runnable {
         PixelInfo tempPixel = new PixelInfo();
         RGBColor tempColor = new RGBColor();
         final PixelInfo pix[][] = new PixelInfo[6][rtWidth];
-        for (int i = 0; i < pix.length; i++) {
-            for (int j = 0; j < pix[i].length; j++) {
-                pix[i][j] = new PixelInfo();
+        for (PixelInfo[] pixl : pix) {
+            for (int j = 0; j < pixl.length; j++) {
+                pixl[j] = new PixelInfo();
             }
         }
         loadRow(pix[0], 0, tempColor);

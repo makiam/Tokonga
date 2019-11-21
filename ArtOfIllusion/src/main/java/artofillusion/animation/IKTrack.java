@@ -26,7 +26,7 @@ import java.util.*;
 public class IKTrack extends Track {
 
     private ObjectInfo info;
-    private Vector<Constraint> constraints;
+    private List<Constraint> constraints;
     private boolean useGestures;
     private WeightTrack theWeight;
 
@@ -325,7 +325,7 @@ public class IKTrack extends Track {
         BList constraintList;
         BTextField nameField;
         BCheckBox gesturesBox;
-        Vector<Constraint> tempConstraints;
+        List<Constraint> tempConstraints;
         int tempJointID[];
         ObjectRef tempTarget[];
         BButton editButton, deleteButton;
@@ -441,10 +441,10 @@ public class IKTrack extends Track {
          */
         private boolean editConstraint(Constraint c) {
             Skeleton skeleton = info.getSkeleton();
-            Joint joint[] = skeleton.getJoints();
+            Joint joints[] = skeleton.getJoints();
             BList jointList = new BList();
-            for (int i = 0; i < joint.length; i++) {
-                jointList.add(joint[i].name);
+            for(Joint joint: joints) {
+                jointList.add(joint.name);
             }
             if (skeleton.findJointIndex(c.jointID) > -1) {
                 jointList.setSelected(skeleton.findJointIndex(c.jointID), true);
@@ -472,7 +472,7 @@ public class IKTrack extends Track {
                 return false;
             }
             if (jointList.getSelectedIndex() > -1) {
-                c.jointID = joint[jointList.getSelectedIndex()].id;
+                c.jointID = joints[jointList.getSelectedIndex()].id;
             }
             if (lockedBox.getState()) {
                 c.target = null;

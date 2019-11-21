@@ -74,17 +74,19 @@ public class ProceduralPointLight extends PointLight {
     private void findParameters() {
         artofillusion.procedural.Module module[] = procedure.getModules();
         int count = 0;
-        for (int i = 0; i < module.length; i++) {
-            if (module[i] instanceof ParameterModule) {
+        
+        for (artofillusion.procedural.Module item : module) {
+            if (item instanceof ParameterModule) {
                 count++;
             }
         }
+        
         TextureParameter newParameters[] = new TextureParameter[count];
         double newValues[] = new double[count];
         count = 0;
-        for (int i = 0; i < module.length; i++) {
-            if (module[i] instanceof ParameterModule) {
-                newParameters[count] = ((ParameterModule) module[i]).getParameter(this);
+        for (artofillusion.procedural.Module item : module) {
+            if (item instanceof ParameterModule) {
+                newParameters[count] = ((ParameterModule) item).getParameter(this);
                 newValues[count] = newParameters[count].defaultVal;
                 if (parameters != null) {
                     for (int j = 0; j < parameters.length; j++) {
@@ -93,7 +95,7 @@ public class ProceduralPointLight extends PointLight {
                         }
                     }
                 }
-                ((ParameterModule) module[i]).setIndex(count++);
+                ((ParameterModule) item).setIndex(count++);
             }
         }
         parameters = newParameters;

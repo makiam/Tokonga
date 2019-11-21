@@ -93,22 +93,19 @@ public class TwistDistortion extends Distortion {
 
         // Find the range along the appropriate axis.
         double min = Double.MAX_VALUE, max = Double.MIN_VALUE;
-        for (int i = 0; i < newvert.length; i++) {
+        for (Vec3 newvert1 : newvert) {
             double value;
             if (axis == X_AXIS) {
-                value = newvert[i].x;
+                value = newvert1.x;
             } else if (axis == Y_AXIS) {
-                value = newvert[i].y;
+                value = newvert1.y;
             } else {
-                value = newvert[i].z;
+                value = newvert1.z;
             }
-            if (value < min) {
-                min = value;
-            }
-            if (value > max) {
-                max = value;
-            }
+            min = Math.min(min, value);
+            max = Math.max(max, value);
         }
+        
         if (min >= max) {
             return obj;
         }
@@ -119,27 +116,27 @@ public class TwistDistortion extends Distortion {
         }
         double scale = angle * (Math.PI / 180.0);
         if (axis == X_AXIS) {
-            for (int i = 0; i < newvert.length; i++) {
-                double c = Math.cos(scale * (newvert[i].x - min));
-                double s = Math.sin(scale * (newvert[i].x - min));
-                newvert[i].set(newvert[i].x, newvert[i].y * c - newvert[i].z * s, newvert[i].y * s + newvert[i].z * c);
+            for (Vec3 vertex: newvert) {
+                double c = Math.cos(scale * (vertex.x - min));
+                double s = Math.sin(scale * (vertex.x - min));
+                vertex.set(vertex.x, vertex.y * c - vertex.z * s, vertex.y * s + vertex.z * c);
             }
         } else if (axis == Y_AXIS) {
-            for (int i = 0; i < newvert.length; i++) {
-                double c = Math.cos(scale * (newvert[i].y - min));
-                double s = Math.sin(scale * (newvert[i].y - min));
-                newvert[i].set(newvert[i].x * c - newvert[i].z * s, newvert[i].y, newvert[i].x * s + newvert[i].z * c);
+            for (Vec3 vertex: newvert) {
+                double c = Math.cos(scale * (vertex.y - min));
+                double s = Math.sin(scale * (vertex.y - min));
+                vertex.set(vertex.x * c - vertex.z * s, vertex.y, vertex.x * s + vertex.z * c);
             }
         } else {
-            for (int i = 0; i < newvert.length; i++) {
-                double c = Math.cos(scale * (newvert[i].z - min));
-                double s = Math.sin(scale * (newvert[i].z - min));
-                newvert[i].set(newvert[i].x * c - newvert[i].y * s, newvert[i].x * s + newvert[i].y * c, newvert[i].z);
+            for (Vec3 vertex: newvert) {
+                double c = Math.cos(scale * (vertex.z - min));
+                double s = Math.sin(scale * (vertex.z - min));
+                vertex.set(vertex.x * c - vertex.y * s, vertex.x * s + vertex.y * c, vertex.z);
             }
         }
         if (postTransform != null) {
-            for (int i = 0; i < newvert.length; i++) {
-                postTransform.transform(newvert[i]);
+            for (Vec3 newvert1 : newvert) {
+                postTransform.transform(newvert1);
             }
         }
         newmesh.setVertexPositions(newvert);

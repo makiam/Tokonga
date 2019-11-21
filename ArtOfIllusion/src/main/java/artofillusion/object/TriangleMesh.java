@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2015 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2019 by Maksim Khramov
    A modification copyright (C) 2017 Petri Ihalainen
    
    This program is free software; you can redistribute it and/or modify it under the
@@ -598,10 +598,10 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
         } else {
             zscale = zsize / size.z;
         }
-        for (int i = 0; i < vertex.length; i++) {
-            vertex[i].r.x *= xscale;
-            vertex[i].r.y *= yscale;
-            vertex[i].r.z *= zscale;
+        for (Vertex item : vertex) {
+            item.r.x *= xscale;
+            item.r.y *= yscale;
+            item.r.z *= zscale;
         }
         if (xscale * yscale * zscale < 0.0) {
             reverseNormals();
@@ -2903,8 +2903,8 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
             norm[face[i].v2].add(faceNorm.times(Math.acos(dot2)));
             norm[face[i].v3].add(faceNorm.times(Math.acos(dot3)));
         }
-        for (int i = 0; i < norm.length; i++) {
-            norm[i].normalize();
+        for (Vec3 item : norm) {
+            item.normalize();
         }
         return norm;
     }
@@ -3280,28 +3280,28 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
 
         out.writeShort(1);
         out.writeInt(vertex.length);
-        for (int i = 0; i < vertex.length; i++) {
-            vertex[i].r.writeToFile(out);
-            out.writeFloat(vertex[i].smoothness);
-            out.writeInt(vertex[i].ikJoint);
-            out.writeDouble(vertex[i].ikWeight);
+        for (Vertex item : vertex) {
+            item.r.writeToFile(out);
+            out.writeFloat(item.smoothness);
+            out.writeInt(item.ikJoint);
+            out.writeDouble(item.ikWeight);
         }
         out.writeInt(edge.length);
-        for (int i = 0; i < edge.length; i++) {
-            out.writeInt(edge[i].v1);
-            out.writeInt(edge[i].v2);
-            out.writeInt(edge[i].f1);
-            out.writeInt(edge[i].f2);
-            out.writeFloat(edge[i].smoothness);
+        for (Edge item : edge) {
+            out.writeInt(item.v1);
+            out.writeInt(item.v2);
+            out.writeInt(item.f1);
+            out.writeInt(item.f2);
+            out.writeFloat(item.smoothness);
         }
         out.writeInt(face.length);
-        for (int i = 0; i < face.length; i++) {
-            out.writeInt(face[i].v1);
-            out.writeInt(face[i].v2);
-            out.writeInt(face[i].v3);
-            out.writeInt(face[i].e1);
-            out.writeInt(face[i].e2);
-            out.writeInt(face[i].e3);
+        for (Face item : face) {
+            out.writeInt(item.v1);
+            out.writeInt(item.v2);
+            out.writeInt(item.v3);
+            out.writeInt(item.e1);
+            out.writeInt(item.e2);
+            out.writeInt(item.e3);
         }
         out.writeBoolean(closed);
         out.writeInt(smoothingMethod);
@@ -3676,13 +3676,13 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
             for (int i = 0; i < edgeSmoothness.length; i++) {
                 out.writeFloat(edgeSmoothness[i]);
             }
-            Joint joint[] = skeleton.getJoints();
-            for (int i = 0; i < joint.length; i++) {
-                joint[i].coords.writeToFile(out);
-                out.writeDouble(joint[i].angle1.pos);
-                out.writeDouble(joint[i].angle2.pos);
-                out.writeDouble(joint[i].twist.pos);
-                out.writeDouble(joint[i].length.pos);
+
+            for (Joint joint : skeleton.getJoints()) {
+                joint.coords.writeToFile(out);
+                out.writeDouble(joint.angle1.pos);
+                out.writeDouble(joint.angle2.pos);
+                out.writeDouble(joint.twist.pos);
+                out.writeDouble(joint.length.pos);
             }
         }
 
@@ -3709,8 +3709,8 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
                 vertPos[i] = new Vec3(in);
                 vertSmoothness[i] = in.readFloat();
                 if (version == 0) {
-                    for (int j = 0; j < paramValue.length; j++) {
-                        ((VertexParameterValue) paramValue[j]).getValue()[i] = in.readDouble();
+                    for (ParameterValue paramValue1 : paramValue) {
+                        ((VertexParameterValue) paramValue1).getValue()[i] = in.readDouble();
                     }
                 }
             }
@@ -3724,13 +3724,13 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
                 edgeSmoothness[i] = in.readFloat();
             }
             skeleton = mesh.getSkeleton().duplicate();
-            Joint joint[] = skeleton.getJoints();
-            for (int i = 0; i < joint.length; i++) {
-                joint[i].coords = new CoordinateSystem(in);
-                joint[i].angle1.pos = in.readDouble();
-                joint[i].angle2.pos = in.readDouble();
-                joint[i].twist.pos = in.readDouble();
-                joint[i].length.pos = in.readDouble();
+            
+            for (Joint joint : skeleton.getJoints()) {
+                joint.coords = new CoordinateSystem(in);
+                joint.angle1.pos = in.readDouble();
+                joint.angle2.pos = in.readDouble();
+                joint.twist.pos = in.readDouble();
+                joint.length.pos = in.readDouble();
             }
         }
     }

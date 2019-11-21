@@ -1,4 +1,5 @@
 /* Copyright (C) 2002-2013 by Peter Eastman
+   Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -68,6 +69,7 @@ public class ScriptedObjectEditorWindow extends BFrame {
     /**
      * Display a dialog for editing the parameters.
      */
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
     private void editParameters() {
         new ParametersDialog();
     }
@@ -215,8 +217,8 @@ public class ScriptedObjectEditorWindow extends BFrame {
          */
         private void buildParameterList() {
             paramList.removeAll();
-            for (int i = 0; i < name.length; i++) {
-                paramList.add(name[i]);
+            for (String name1 : name) {
+                paramList.add(name1);
             }
             if (name.length == 0) {
                 paramList.add("(no parameters)");

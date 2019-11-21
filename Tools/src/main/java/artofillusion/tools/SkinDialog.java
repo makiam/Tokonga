@@ -169,9 +169,9 @@ public class SkinDialog extends BDialog {
 
         // Center it.
         center.scale(1.0 / (v.length * v[0].length));
-        for (int i = 0; i < v.length; i++) {
-            for (int j = 0; j < v[i].length; j++) {
-                v[i][j].subtract(center);
+        for (Vec3[] v1 : v) {
+            for (Vec3 item : v1) {
+                item.subtract(center);
             }
         }
         centerOffset = center;

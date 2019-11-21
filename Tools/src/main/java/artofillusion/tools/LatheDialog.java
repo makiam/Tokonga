@@ -92,17 +92,17 @@ public class LatheDialog extends BDialog {
 
     // Select default values for the various options.
     private void selectDefaults() {
-        MeshVertex vert[] = theCurve.getVertices();
+        MeshVertex vertices[] = theCurve.getVertices();
 
-        if (!theCurve.isClosed() && vert[0].r.distance(vert[vert.length - 1].r) > 0.0) {
+        if (!theCurve.isClosed() && vertices[0].r.distance(vertices[vertices.length - 1].r) > 0.0) {
             axisGroup.setSelection(endsBox);
             return;
         }
         endsBox.setEnabled(false);
         double minx = Double.MAX_VALUE;
-        for (int i = 0; i < vert.length; i++) {
-            if (vert[i].r.x < minx) {
-                minx = vert[i].r.x;
+        for (MeshVertex vertex : vertices) {
+            if (vertex.r.x < minx) {
+                minx = vertex.r.x;
             }
         }
         minx = Math.max(-minx, 0.0);
@@ -157,8 +157,8 @@ public class LatheDialog extends BDialog {
             axis.normalize();
             center.set(vert[0].r);
             radius = new Vec3();
-            for (int i = 0; i < vert.length; i++) {
-                radius.add(vert[i].r);
+            for (MeshVertex vert1 : vert) {
+                radius.add(vert1.r);
             }
             radius.scale(1.0 / vert.length);
             radius.subtract(center);
@@ -203,9 +203,9 @@ public class LatheDialog extends BDialog {
 
         // Center it.
         cm.scale(1.0 / (segments * vert.length));
-        for (int i = 0; i < v.length; i++) {
-            for (int j = 0; j < v[i].length; j++) {
-                v[i][j].subtract(cm);
+        for (Vec3[] v1 : v) {
+            for (Vec3 item : v1) {
+                item.subtract(cm);
             }
         }
         SplineMesh mesh = new SplineMesh(v, usmooth, vsmooth, smoothMethod, closed, theCurve.isClosed());

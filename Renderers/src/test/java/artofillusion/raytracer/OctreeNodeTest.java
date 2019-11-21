@@ -1,5 +1,5 @@
 /* Copyright (C) 2007 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -136,8 +136,8 @@ public class OctreeNodeTest {
         }
         if (node.getObjects() == null) {
             OctreeNode children[] = node.findChildNodes();
-            for (int i = 0; i < children.length; i++) {
-                findIntersectingNodes(children[i], ray, intersections);
+            for (OctreeNode child: children) {
+                findIntersectingNodes(child, ray, intersections);
             }
         } else {
             intersections.add(node);
