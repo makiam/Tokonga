@@ -26,7 +26,7 @@ import java.util.*;
 public class IKTrack extends Track {
 
     private ObjectInfo info;
-    private Vector<Constraint> constraints;
+    private List<Constraint> constraints;
     private boolean useGestures;
     private WeightTrack theWeight;
 
@@ -328,7 +328,7 @@ public class IKTrack extends Track {
         BList constraintList;
         BTextField nameField;
         BCheckBox gesturesBox;
-        Vector<Constraint> tempConstraints;
+        List<Constraint> tempConstraints;
         int tempJointID[];
         ObjectRef tempTarget[];
         BButton editButton, deleteButton;

@@ -167,29 +167,31 @@ public class ScaleTrack extends Track {
         smoothingMethod = method;
     }
 
+    private static final String[] valueNames = new String[]{"X Scale", "Y Scale", "Z Scale"};
+    
     /* Get the names of all graphable values for this track. */
     @Override
     public String[] getValueNames() {
-        return new String[]{"X Scale", "Y Scale", "Z Scale"};
+        return valueNames;
     }
 
+    private static final double[] defaultGraphValues = new double[]{1.0, 1.0, 1.0};
+    
     /* Get the default list of graphable values (for a track which has no keyframes). */
     @Override
     public double[] getDefaultGraphValues() {
-        return new double[]{1.0, 1.0, 1.0};
+        return defaultGraphValues;
     }
 
+    
+    private static final double[][] valuesRange = {{-Double.MAX_VALUE, Double.MAX_VALUE}, {-Double.MAX_VALUE, Double.MAX_VALUE}, {-Double.MAX_VALUE, Double.MAX_VALUE}};
+    
     /* Get the allowed range for graphable values.  This returns a 2D array, where elements
      [n][0] and [n][1] are the minimum and maximum allowed values, respectively, for
      the nth graphable value. */
     @Override
     public double[][] getValueRange() {
-        double range[][] = new double[3][2];
-        for (int i = 0; i < range.length; i++) {
-            range[i][0] = -Double.MAX_VALUE;
-            range[i][1] = Double.MAX_VALUE;
-        }
-        return range;
+        return valuesRange;
     }
 
     /* Get an array of any objects which this track depends on (and which therefore must
