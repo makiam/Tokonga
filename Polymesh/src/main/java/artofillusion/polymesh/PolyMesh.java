@@ -248,6 +248,12 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
     private static final Property PROPERTIES[] = new Property[]{
         new Property(Translate.text("polymesh:intersubdiv"), 1, 6, 1)};
 
+    private PolyMesh() {
+        smoothingMethod = Mesh.NO_SMOOTHING;
+        initialize();
+        skeleton = new Skeleton();
+    }
+    
     /**
      * Constructor for the PolyMesh object
      *
@@ -259,7 +265,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
      * @param sz Mesh size along z
      */
     public PolyMesh(int type, int u, int v, double sx, double sy, double sz) {
-        super();
+        
         initialize();
         switch (type) {
             case 0:
@@ -446,11 +452,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         skeleton = new Skeleton();
     }
 
-    private PolyMesh() {
-        smoothingMethod = Mesh.NO_SMOOTHING;
-        initialize();
-        skeleton = new Skeleton();
-    }
+
 
     /**
      * Initialization stuff common to several constructors
@@ -820,8 +822,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
      *
      * @param trimesh Traingle Mesh
      */
-    public PolyMesh(TriangleMesh trimesh, boolean findQuads,
-            boolean angularSearch) {
+    public PolyMesh(TriangleMesh trimesh, boolean findQuads, boolean angularSearch) {
         initialize();
 
         Edge[] triEdges = trimesh.getEdges();

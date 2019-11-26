@@ -7,6 +7,7 @@ package artofillusion.polymesh;
 
 import artofillusion.ViewerCanvas;
 import artofillusion.math.RGBColor;
+import artofillusion.object.Mesh;
 import artofillusion.test.util.StreamUtil;
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -50,9 +51,23 @@ public class PolymeshTest {
         PolyMesh pm = new PolyMesh(MeshType.CUBE.type, 0, 0, 0, 1, 1);
         
         Assert.assertEquals(8, pm.getVertices().length);
+        Assert.assertNotNull(pm.getSkeleton());
+        Assert.assertEquals(Mesh.NO_SMOOTHING, pm.getSmoothingMethod());
     }
     
+    @Test
+    public void testCreatePolymeshOctahedron() {
+        PolyMesh pm = new PolyMesh(MeshType.OCTAHEDRON.type, 0, 0, 0, 1, 1);
+        
+        Assert.assertEquals(6, pm.getVertices().length);
+        Assert.assertNotNull(pm.getSkeleton());
+        Assert.assertEquals(Mesh.NO_SMOOTHING, pm.getSmoothingMethod());
+    }
+    
+    
+    
     @Test(expected = InvalidObjectException.class)
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void testLoadMesh() throws IOException {
         ByteBuffer wrap = ByteBuffer.allocate(200);
         wrap.put((byte) 11);
