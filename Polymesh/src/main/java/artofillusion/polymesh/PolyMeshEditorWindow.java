@@ -170,8 +170,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
 
     private BMenuItem pasteItem;
 
-    private MenuWidget[] textureMenuItem;
-
+    private BMenuItem meshUnfold;
+    private BMenuItem editMapping;
+    
     private RowContainer levelContainer;
 
     private RowContainer vertexContainer;
@@ -834,9 +835,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
     void createTextureMenu() {
         BMenu textureMenu = Translate.menu("polymesh:texture");
         menubar.add(textureMenu);
-        textureMenuItem = new BMenuItem[6];
-        textureMenu.add(textureMenuItem[0] = Translate.menuItem("polymesh:unfoldMesh", this, "doUnfoldMesh"));
-        textureMenu.add(textureMenuItem[1] = Translate.menuItem("polymesh:editMapping", this, "doEditMapping"));
+        
+        textureMenu.add(meshUnfold = Translate.menuItem("polymesh:unfoldMesh", this, "doUnfoldMesh"));
+        textureMenu.add(editMapping = Translate.menuItem("polymesh:editMapping", this, "doEditMapping"));
     }
 
     private void createPrefsMenu() {
@@ -1537,11 +1538,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
                 editMenuItem[1].setEnabled(true);
             }
         }
-        if (mesh.getMappingData() != null) {
-            ((BMenuItem) textureMenuItem[1]).setEnabled(true);
-        } else {
-            ((BMenuItem) textureMenuItem[1]).setEnabled(false);
-        }
+                
+        editMapping.setEnabled(null != mesh.getMappingData());
+        
         if (mesh.isClosed()) {
             ((BMenuItem) vertexMenuItem[8]).setEnabled(false);
             ((BMenuItem) vertexMenuItem[9]).setEnabled(false);
@@ -1553,11 +1552,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
             ((BMenuItem) edgePopupMenuItem[11]).setEnabled(false);
             meshMenuItem[3].setEnabled(false);
             meshMenuItem[4].setEnabled(false);
-            if (mesh.getSeams() == null) {
-                ((BMenuItem) textureMenuItem[0]).setEnabled(false);
-            } else {
-                ((BMenuItem) textureMenuItem[0]).setEnabled(true);
-            }
+            
+            
+            meshUnfold.setEnabled(null != mesh.getSeams());
+            
         } else {
             ((BMenuItem) vertexMenuItem[8]).setEnabled(true);
             ((BMenuItem) vertexPopupMenuItem[8]).setEnabled(true);
@@ -1569,8 +1567,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
             ((BMenuItem) edgePopupMenuItem[11]).setEnabled(true);
             meshMenuItem[3].setEnabled(true);
             meshMenuItem[4].setEnabled(true);
-            ((BMenuItem) textureMenuItem[0]).setEnabled(true);
+            meshUnfold.setEnabled(true);
         }
+        
         if (mesh.getSeams() != null) {
             for (int j = 15; j <= 19; j++) {
                 ((BMenuItem) edgeMenuItem[j]).setEnabled(true);
@@ -1583,14 +1582,14 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
                 ((BMenuItem) edgePopupMenuItem[j]).setEnabled(false);
             }
         }
+        
         // ( (BMenuItem) edgeMenuItem[4] ).setEnabled( false );
-        templateItem
-                .setEnabled(theView[currentView].getTemplateImage() != null);
+        templateItem.setEnabled(theView[currentView].getTemplateImage() != null);
+        
         Skeleton s = mesh.getSkeleton();
         Joint selJoint = s.getJoint(view.getSelectedJoint());
         ((BMenuItem) skeletonMenuItem[0]).setEnabled(selJoint != null);
-        ((BMenuItem) skeletonMenuItem[1]).setEnabled(selJoint != null
-                && selJoint.children.length == 0);
+        ((BMenuItem) skeletonMenuItem[1]).setEnabled(selJoint != null && selJoint.children.length == 0);
         ((BMenuItem) skeletonMenuItem[2]).setEnabled(selJoint != null);
         ((BMenuItem) skeletonMenuItem[4]).setEnabled(any);
         ((BMenuItem) edgeMenuItem[14]).setEnabled(true);
@@ -4241,10 +4240,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
     }
 
     private void skeletonDetachedChanged() {
-        for (int i = 0; i < theView.length; i++) {
-            ((PolyMeshViewer) theView[i])
-                    .setSkeletonDetached(((BCheckBoxMenuItem) skeletonMenuItem[5])
-                            .getState());
+        for(ViewerCanvas theView1: theView) {
+            ((PolyMeshViewer) theView1).setSkeletonDetached(((BCheckBoxMenuItem) skeletonMenuItem[5]).getState());
         }
     }
 

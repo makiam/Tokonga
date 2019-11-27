@@ -3348,7 +3348,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
      * Call this method to get the underlying representation of the polymesh as
      * a trimesh.
      *
-     * @return Indices array describing convertion between triangle mesh edges
+     * @return Indices array describing conversion between triangle mesh edges
      * and polymesh edges.
      */
     public TriangleMesh getTriangleMesh() {
@@ -3361,7 +3361,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
      * of -1 means that the edge of the trimesh is not an original edge of the
      * polymesh.
      *
-     * @return Indices array describing convertion between triangle mesh edges
+     * @return Indices array describing conversion between triangle mesh edges
      * and polymesh edges.
      */
     public int[] getPolyEdge() {
@@ -3378,8 +3378,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
      */
     @Override
     public void edit(EditingWindow parent, ObjectInfo info, Runnable cb) {
-        PolyMeshEditorWindow ed = new PolyMeshEditorWindow(parent, "PolyMesh '"
-                + info.name + "'", info, cb);
+        PolyMeshEditorWindow ed = new PolyMeshEditorWindow(parent, "PolyMesh '" + info.name + "'", info, cb);
         ((ObjectViewer) ed.getView()).setScene(parent.getScene(), info);
         ed.setVisible(true);
     }
