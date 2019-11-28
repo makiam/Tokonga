@@ -154,8 +154,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
 
     private MenuWidget[] edgePopupMenuItem;
 
-    private BMenuItem[] divideMenuItem, popupDivideMenuItem;
-
     private BMenu faceMenu;
 
     private BPopupMenu facePopupMenu;
@@ -622,12 +620,14 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         menubar.add(edgeMenu);
         edgeMenuItem = new MenuWidget[22];
         edgeMenu.add(edgeMenuItem[0] = Translate.menu("polymesh:divide"));
-        divideMenuItem = new BMenuItem[5];
-        ((BMenu) edgeMenuItem[0]).add(divideMenuItem[0] = Translate.menuItem("polymesh:two", this, "doDivideEdges"));
-        ((BMenu) edgeMenuItem[0]).add(divideMenuItem[1] = Translate.menuItem("polymesh:three", this, "doDivideEdges"));
-        ((BMenu) edgeMenuItem[0]).add(divideMenuItem[2] = Translate.menuItem("polymesh:four", this, "doDivideEdges"));
-        ((BMenu) edgeMenuItem[0]).add(divideMenuItem[3] = Translate.menuItem("polymesh:five", this, "doDivideEdges"));
-        ((BMenu) edgeMenuItem[0]).add(divideMenuItem[4] = Translate.menuItem("polymesh:specify", this, "doDivideEdges"));
+        
+        BMenu divideEdgeMenuItem = (BMenu)edgeMenuItem[0];
+        divideEdgeMenuItem.add(Translate.menuItem("polymesh:two", this, "doDivideEdges"));
+        divideEdgeMenuItem.add(Translate.menuItem("polymesh:three", this, "doDivideEdges"));
+        divideEdgeMenuItem.add(Translate.menuItem("polymesh:four", this, "doDivideEdges"));
+        divideEdgeMenuItem.add(Translate.menuItem("polymesh:five", this, "doDivideEdges"));
+        divideEdgeMenuItem.add(Translate.menuItem("polymesh:specify", this, "doDivideEdges"));
+        
         edgeMenu.add(edgeMenuItem[1] = Translate.menu("polymesh:moveAlong"));
         ((BMenu) edgeMenuItem[1]).add(Translate.menuItem("polymesh:normal", this, "doMoveEdgesNormal"));
         ((BMenu) edgeMenuItem[1]).add(Translate.menuItem("polymesh:x", this, "doMoveEdgesX"));
@@ -684,12 +684,15 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         edgePopupMenu = new BPopupMenu();
         edgePopupMenuItem = new MenuWidget[22];
         edgePopupMenu.add(edgePopupMenuItem[0] = Translate.menu("polymesh:divide"));
-        popupDivideMenuItem = new BMenuItem[5];
-        ((BMenu) edgePopupMenuItem[0]).add(popupDivideMenuItem[0] = Translate.menuItem("polymesh:two", this, "doDivideEdges"));
-        ((BMenu) edgePopupMenuItem[0]).add(popupDivideMenuItem[1] = Translate.menuItem("polymesh:three", this, "doDivideEdges"));
-        ((BMenu) edgePopupMenuItem[0]).add(popupDivideMenuItem[2] = Translate.menuItem("polymesh:four", this, "doDivideEdges"));
-        ((BMenu) edgePopupMenuItem[0]).add(popupDivideMenuItem[3] = Translate.menuItem("polymesh:five", this, "doDivideEdges"));
-        ((BMenu) edgePopupMenuItem[0]).add(popupDivideMenuItem[4] = Translate.menuItem("polymesh:specify", this, "doDivideEdges"));
+        
+        
+        divideEdgeMenuItem = (BMenu)edgePopupMenuItem[0];
+        divideEdgeMenuItem.add(Translate.menuItem("polymesh:two", this, "doDivideEdges"));
+        divideEdgeMenuItem.add(Translate.menuItem("polymesh:three", this, "doDivideEdges"));
+        divideEdgeMenuItem.add(Translate.menuItem("polymesh:four", this, "doDivideEdges"));
+        divideEdgeMenuItem.add(Translate.menuItem("polymesh:five", this, "doDivideEdges"));
+        divideEdgeMenuItem.add(Translate.menuItem("polymesh:specify", this, "doDivideEdges"));
+        
         edgePopupMenu.add(edgePopupMenuItem[1] = Translate.menu("polymesh:moveAlong"));
         ((BMenu) edgePopupMenuItem[1]).add(Translate.menuItem("polymesh:normal", this, "doMoveEdgesNormal"));
         ((BMenu) edgePopupMenuItem[1]).add(Translate.menuItem("polymesh:x", this, "doMoveEdgesX"));
@@ -1823,20 +1826,15 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         PolyMesh prevMesh = mesh.duplicate();
         boolean[] sel = null;
 
-        if (ev.getWidget() == divideMenuItem[0]
-                || ev.getWidget() == popupDivideMenuItem[0]) {
+        if (ev.getWidget() == divideMenuItem[0] || ev.getWidget() == popupDivideMenuItem[0]) {
             sel = mesh.divideEdges(selected, 2);
-        } else if (ev.getWidget() == divideMenuItem[1]
-                || ev.getWidget() == popupDivideMenuItem[1]) {
+        } else if (ev.getWidget() == divideMenuItem[1] || ev.getWidget() == popupDivideMenuItem[1]) {
             sel = mesh.divideEdges(selected, 3);
-        } else if (ev.getWidget() == divideMenuItem[2]
-                || ev.getWidget() == popupDivideMenuItem[2]) {
+        } else if (ev.getWidget() == divideMenuItem[2] || ev.getWidget() == popupDivideMenuItem[2]) {
             sel = mesh.divideEdges(selected, 4);
-        } else if (ev.getWidget() == divideMenuItem[3]
-                || ev.getWidget() == popupDivideMenuItem[3]) {
+        } else if (ev.getWidget() == divideMenuItem[3] || ev.getWidget() == popupDivideMenuItem[3]) {
             sel = mesh.divideEdges(selected, 5);
-        } else if (ev.getWidget() == divideMenuItem[4]
-                || ev.getWidget() == popupDivideMenuItem[4]) {
+        } else if (ev.getWidget() == divideMenuItem[4] || ev.getWidget() == popupDivideMenuItem[4]) {
             DivideDialog dlg = new DivideDialog();
             int num = dlg.getNumber();
             if (num > 0) {
@@ -1855,6 +1853,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
 
     }
 
+    private void doDivideEdgesTwo() {
+        
+    }
     /**
      * Called when a smoothing method command is selected
      *
