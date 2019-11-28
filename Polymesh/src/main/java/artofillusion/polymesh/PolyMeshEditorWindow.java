@@ -1170,11 +1170,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
      */
     public boolean getProjectOntoSurface() {
         PolyMesh mesh = (PolyMesh) objInfo.object;
-        if (!projectOntoSurface || (mesh.getSmoothingMethod() != Mesh.APPROXIMATING && mesh .getSmoothingMethod() != Mesh.INTERPOLATING)) {
-            return false;
-        } else {
-            return true;
-        }
+        return projectOntoSurface && (mesh.getSmoothingMethod() == Mesh.APPROXIMATING || mesh .getSmoothingMethod() == Mesh.INTERPOLATING);
     }
 
     /**
@@ -1213,30 +1209,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         return projectedEdge;
     }
 
-    /**
-     * Add an extra texture parameter to a triangle mesh.
-     */
-    private void addTriangleMeshExtraParameter(TriangleMesh mesh) {
-        TextureParameter hideFaceParam = new TextureParameter(this,
-                "Hide Face", 0.0, 1.0, 0.0);
-        TextureParameter params[] = mesh.getParameters();
-        TextureParameter newparams[] = new TextureParameter[params.length + 1];
-        ParameterValue values[] = mesh.getParameterValues();
-        ParameterValue newvalues[] = new ParameterValue[values.length + 1];
-        for (int i = 0; i < params.length; i++) {
-            newparams[i] = params[i];
-            newvalues[i] = values[i];
-        }
-        newparams[params.length] = hideFaceParam;
-        newvalues[values.length] = new FaceParameterValue(mesh, hideFaceParam);
-        double index[] = new double[mesh.getFaces().length];
-        for (int i = 0; i < index.length; i++) {
-            index[i] = i;
-        }
-        ((FaceParameterValue) newvalues[values.length]).setValue(index);
-        mesh.setParameters(newparams);
-        mesh.setParameterValues(newvalues);
-    }
 
     /**
      * Get the subdivided mesh which represents the surface. If the mesh is not subdivided, this
