@@ -43,6 +43,7 @@ import artofillusion.polymesh.PolyMesh.Wedge;
 import artofillusion.polymesh.PolyMesh.Wface;
 import artofillusion.polymesh.PolyMesh.Wvertex;
 import artofillusion.polymesh.PolyMeshValueWidget.ValueWidgetOwner;
+import artofillusion.polymesh.dialogs.DivideDialog;
 import artofillusion.polymesh.dialogs.PolymeshDisplayProperties;
 import artofillusion.polymesh.ui.ColorButton;
 import artofillusion.texture.FaceParameterValue;
@@ -622,11 +623,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         edgeMenu.add(edgeMenuItem[0] = Translate.menu("polymesh:divide"));
         
         BMenu divideEdgeMenuItem = (BMenu)edgeMenuItem[0];
-        divideEdgeMenuItem.add(Translate.menuItem("polymesh:two", this, "doDivideEdges"));
-        divideEdgeMenuItem.add(Translate.menuItem("polymesh:three", this, "doDivideEdges"));
-        divideEdgeMenuItem.add(Translate.menuItem("polymesh:four", this, "doDivideEdges"));
-        divideEdgeMenuItem.add(Translate.menuItem("polymesh:five", this, "doDivideEdges"));
-        divideEdgeMenuItem.add(Translate.menuItem("polymesh:specify", this, "doDivideEdges"));
+        divideEdgeMenuItem.add(Translate.menuItem("polymesh:two", this, "doDivideEdgesTwo"));
+        divideEdgeMenuItem.add(Translate.menuItem("polymesh:three", this, "doDivideEdgesThree"));
+        divideEdgeMenuItem.add(Translate.menuItem("polymesh:four", this, "doDivideEdgesFour"));
+        divideEdgeMenuItem.add(Translate.menuItem("polymesh:five", this, "doDivideEdgesFive"));
+        divideEdgeMenuItem.add(Translate.menuItem("polymesh:specify", this, "doDivideEdgesInteractive"));
         
         edgeMenu.add(edgeMenuItem[1] = Translate.menu("polymesh:moveAlong"));
         ((BMenu) edgeMenuItem[1]).add(Translate.menuItem("polymesh:normal", this, "doMoveEdgesNormal"));
@@ -642,12 +643,14 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         ((BMenu) edgeMenuItem[2]).add(extrudeEdgeItem[2] = Translate.menuItem("polymesh:yExtrude", this, "doExtrudeEdge"));
         ((BMenu) edgeMenuItem[2]).add(extrudeEdgeItem[3] = Translate.menuItem("polymesh:zExtrude", this, "doExtrudeEdge"));
         singleNormalShortcut = extrudeEdgeItem[0].getShortcut();
+        
         edgeMenu.add(edgeMenuItem[3] = Translate.menu("polymesh:extrudeRegion"));
         ((BMenu) edgeMenuItem[3]).add(extrudeEdgeRegionItem[0] = Translate.menuItem("polymesh:extrudeRegionNormal", this, "doExtrudeEdgeRegion"));
         ((BMenu) edgeMenuItem[3]).add(extrudeEdgeRegionItem[1] = Translate.menuItem("polymesh:xExtrude", this, "doExtrudeEdgeRegion"));
         ((BMenu) edgeMenuItem[3]).add(extrudeEdgeRegionItem[2] = Translate.menuItem("polymesh:yExtrude", this, "doExtrudeEdgeRegion"));
         ((BMenu) edgeMenuItem[3]).add(extrudeEdgeRegionItem[3] = Translate.menuItem("polymesh:zExtrude", this, "doExtrudeEdgeRegion"));
         groupNormalShortcut = extrudeEdgeRegionItem[0].getShortcut();
+        
         edgeMenu.addSeparator();
         edgeMenu.add(edgeMenuItem[4] = Translate.menuItem("polymesh:collapse", this, "doCollapseEdges"));
         edgeMenu.add(edgeMenuItem[5] = Translate.menuItem("polymesh:merge", this, "doMergeEdges"));
@@ -687,11 +690,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         
         
         divideEdgeMenuItem = (BMenu)edgePopupMenuItem[0];
-        divideEdgeMenuItem.add(Translate.menuItem("polymesh:two", this, "doDivideEdges"));
-        divideEdgeMenuItem.add(Translate.menuItem("polymesh:three", this, "doDivideEdges"));
-        divideEdgeMenuItem.add(Translate.menuItem("polymesh:four", this, "doDivideEdges"));
-        divideEdgeMenuItem.add(Translate.menuItem("polymesh:five", this, "doDivideEdges"));
-        divideEdgeMenuItem.add(Translate.menuItem("polymesh:specify", this, "doDivideEdges"));
+        divideEdgeMenuItem.add(Translate.menuItem("polymesh:two", this, "doDivideEdgesTwo"));
+        divideEdgeMenuItem.add(Translate.menuItem("polymesh:three", this, "doDivideEdgesThree"));
+        divideEdgeMenuItem.add(Translate.menuItem("polymesh:four", this, "doDivideEdgesFour"));
+        divideEdgeMenuItem.add(Translate.menuItem("polymesh:five", this, "doDivideEdgesFive"));
+        divideEdgeMenuItem.add(Translate.menuItem("polymesh:specify", this, "doDivideEdgesInteractive"));
         
         edgePopupMenu.add(edgePopupMenuItem[1] = Translate.menu("polymesh:moveAlong"));
         ((BMenu) edgePopupMenuItem[1]).add(Translate.menuItem("polymesh:normal", this, "doMoveEdgesNormal"));
@@ -900,7 +903,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         SwingUtilities.invokeLater(() -> {
             PolymeshDisplayProperties pdp = new PolymeshDisplayProperties(this.getComponent(), (PolyMesh) objInfo.getObject());            
             pdp.setVisible(true);
-            if(pdp.getReturnStatus() ==  PolymeshDisplayProperties.RET_OK) updateImage();
+            if(pdp.getReturnStatus() == PolymeshDisplayProperties.RET_OK) updateImage();
         });
         
         PolyMesh mesh = (PolyMesh) objInfo.object;
@@ -1147,10 +1150,13 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
     
     @SuppressWarnings("unused")
     private void doSelectRingInteractive() {
-        DivideDialog dlg = new DivideDialog();
-        int num = dlg.getNumber();
-        if(num == 0) return;
-        doSelectRing(num);
+        SwingUtilities.invokeLater(() -> {
+            DivideDialog dsd = new DivideDialog(this.getComponent());            
+            dsd.setVisible(true);
+            if(dsd.getReturnStatus() == DivideDialog.RET_OK && dsd.getValue() > 0) {
+                doSelectRing(dsd.getValue());
+            }
+        });
     }
     
     /**
@@ -1819,30 +1825,20 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
     /**
      * Divides selected edges into n segments
      *
-     * @param ev The command event
+     * @param count The segments count
      */
-    private void doDivideEdges(CommandEvent ev) {
+    private void doDivideEdges(int count) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         PolyMesh prevMesh = mesh.duplicate();
-        boolean[] sel = null;
-
-        if (ev.getWidget() == divideMenuItem[0] || ev.getWidget() == popupDivideMenuItem[0]) {
-            sel = mesh.divideEdges(selected, 2);
-        } else if (ev.getWidget() == divideMenuItem[1] || ev.getWidget() == popupDivideMenuItem[1]) {
-            sel = mesh.divideEdges(selected, 3);
-        } else if (ev.getWidget() == divideMenuItem[2] || ev.getWidget() == popupDivideMenuItem[2]) {
-            sel = mesh.divideEdges(selected, 4);
-        } else if (ev.getWidget() == divideMenuItem[3] || ev.getWidget() == popupDivideMenuItem[3]) {
-            sel = mesh.divideEdges(selected, 5);
-        } else if (ev.getWidget() == divideMenuItem[4] || ev.getWidget() == popupDivideMenuItem[4]) {
-            DivideDialog dlg = new DivideDialog();
-            int num = dlg.getNumber();
-            if (num > 0) {
-                sel = mesh.divideEdges(selected, num);
-            }
-        }
+        boolean[] sel = mesh.divideEdges(selected, count);
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
-        objectChanged();
+        /*  ^^^
+            undoStack.addRecord(...)
+            setModified()
+            updateMenus();
+        */
+        objectChanged(); // Calls to setMesh which calls to updateImage();
+        
         if (sel != null) {
             modes.selectTool(pointTool);
             setSelectionMode(POINT_MODE);
@@ -1850,12 +1846,22 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
             updateMenus();
         }
         updateImage();
-
     }
-
-    private void doDivideEdgesTwo() {
-        
+    
+    private void doDivideEdgesTwo() { doDivideEdges(2); }
+    private void doDivideEdgesThree() { doDivideEdges(3); }
+    private void doDivideEdgesFour() { doDivideEdges(4); }
+    private void doDivideEdgesFive() { doDivideEdges(5); }
+    private void doDivideEdgesInteractive() {         
+        SwingUtilities.invokeLater(() -> {
+            DivideDialog dsd = new DivideDialog(this.getComponent());            
+            dsd.setVisible(true);
+            if(dsd.getReturnStatus() == DivideDialog.RET_OK && dsd.getValue() > 0) {
+                doDivideEdges(dsd.getValue());
+            }
+        });
     }
+    
     /**
      * Called when a smoothing method command is selected
      *
@@ -3228,8 +3234,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
             if (selectMode == FACE_MODE) {
                 for (i = 0; i < f.length; i++) {
                     if (selected[i]) {
-                        int[] vf = ((PolyMesh) objInfo.object)
-                                .getFaceVertices(f[i]);
+                        int[] vf = ((PolyMesh) objInfo.object).getFaceVertices(f[i]);
                         for (int j = 0; j < vf.length; ++j) {
                             newSel[vf[j]] = true;
                         }
@@ -3278,8 +3283,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
             if (selectMode == POINT_MODE) {
                 if (tolerant) {
                     for (i = 0; i < f.length; i++) {
-                        int[] vf = ((PolyMesh) objInfo.object)
-                                .getFaceVertices(f[i]);
+                        int[] vf = ((PolyMesh) objInfo.object).getFaceVertices(f[i]);
                         for (int j = 0; j < vf.length; ++j) {
                             newSel[i] |= selected[vf[j]];
                         }
@@ -3463,7 +3467,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
      */
     @Override
     public void objectChanged() {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
+        PolyMesh mesh = (PolyMesh) objInfo.getObject();
         mesh.resetMesh();
         setMesh(mesh);
         super.objectChanged();
@@ -4769,74 +4773,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
 
         private void fetchTolValues() {
             edgeTol = toleranceVF.getValue();
-        }
-    }
-
-    /**
-     * A dialog to enter the number of segments when subdividing edges
-     *
-     * @author Francois Guillet
-     */
-    public class DivideDialog extends BDialog {
-
-        private BSpinner divideSpinner;
-
-        private BButton okButton;
-
-        private BButton cancelButton;
-
-        private int num = -1;
-
-        /**
-         * Constructor for the DivideDialog object
-         */
-        public DivideDialog() {
-            super(PolyMeshEditorWindow.this, Translate.text("polymesh:subdivideEdgesTitle"), true);
-  
-            try(InputStream is = getClass().getResource("interfaces/divide.xml").openStream()) {
-                WidgetDecoder decoder = new WidgetDecoder(is);
-                setContent((BorderContainer) decoder.getRootObject());
-                divideSpinner = ((BSpinner) decoder.getObject("divideSpinner"));
-                BLabel divideLabel = ((BLabel) decoder.getObject("divideLabel"));
-                divideLabel.setText(Translate.text("polymesh:" + divideLabel.getText()));
-                okButton = ((BButton) decoder.getObject("okButton"));
-                okButton.setText(Translate.text("polymesh:ok"));
-                cancelButton = ((BButton) decoder.getObject("cancelButton"));
-                cancelButton.setText(Translate.text("polymesh:cancel"));
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            okButton.addEventLink(CommandEvent.class, this, "doOK");
-            cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
-            pack();
-            UIUtilities.centerWindow(this);
-            setVisible(true);
-        }
-
-        /**
-         * OK button selected
-         */
-        private void doOK() {
-            num = ((Integer) divideSpinner.getValue());
-            dispose();
-        }
-
-        /**
-         * Cancel button selected
-         */
-        private void doCancel() {
-            dispose();
-            num = -1;
-        }
-
-        /**
-         * Returns spinner valueWidget.getValue() if the user clicked on the OK button else return
-         * -1.
-         *
-         * @return number of segments
-         */
-        public int getNumber() {
-            return num;
         }
     }
 

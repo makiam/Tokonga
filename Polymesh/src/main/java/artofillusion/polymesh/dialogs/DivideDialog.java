@@ -11,6 +11,7 @@ import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
+import javax.swing.JSpinner;
 import javax.swing.KeyStroke;
 
 /**
@@ -31,7 +32,7 @@ public class DivideDialog extends javax.swing.JDialog {
     /**
      * Creates new form DivideDialog
      */
-    public DivideDialog(java.awt.Frame parent, boolean modal) {
+    public DivideDialog(java.awt.Frame parent) {
         super(parent, true);
         initComponents();
 
@@ -66,8 +67,8 @@ public class DivideDialog extends javax.swing.JDialog {
 
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        jSpinner1 = new javax.swing.JSpinner();
+        segmentsCountSpinner = new javax.swing.JLabel();
+        divideSegmentsSpinner = new javax.swing.JSpinner();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("polymesh"); // NOI18N
@@ -93,10 +94,10 @@ public class DivideDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel1.setLabelFor(jSpinner1);
-        jLabel1.setText(bundle.getString("divideLabel")); // NOI18N
+        segmentsCountSpinner.setLabelFor(divideSegmentsSpinner);
+        segmentsCountSpinner.setText(bundle.getString("divideLabel")); // NOI18N
 
-        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(10, 0, 100, 1));
+        divideSegmentsSpinner.setModel(new javax.swing.SpinnerNumberModel(10, 0, 100, 1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -111,9 +112,9 @@ public class DivideDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(segmentsCountSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jSpinner1)))
+                        .addComponent(divideSegmentsSpinner)))
                 .addContainerGap())
         );
 
@@ -124,8 +125,8 @@ public class DivideDialog extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(segmentsCountSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(divideSegmentsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
@@ -160,12 +161,19 @@ public class DivideDialog extends javax.swing.JDialog {
         dispose();
     }
 
+    public JSpinner getSpinner() {
+        return divideSegmentsSpinner;
+    }
 
+    public int getValue() {
+        return (Integer)getSpinner().getModel().getValue();
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JSpinner jSpinner1;
+    private javax.swing.JSpinner divideSegmentsSpinner;
     private javax.swing.JButton okButton;
+    private javax.swing.JLabel segmentsCountSpinner;
     // End of variables declaration//GEN-END:variables
 
     private int returnStatus = RET_CANCEL;

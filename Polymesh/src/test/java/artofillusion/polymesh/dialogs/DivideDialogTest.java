@@ -5,10 +5,11 @@
  */
 package artofillusion.polymesh.dialogs;
 
-import java.util.concurrent.TimeUnit;
 import javax.swing.SwingUtilities;
 import org.junit.Test;
+import org.netbeans.jemmy.operators.JButtonOperator;
 import org.netbeans.jemmy.operators.JDialogOperator;
+import org.netbeans.jemmy.operators.JSpinnerOperator;
 
 /**
  *
@@ -25,13 +26,17 @@ public class DivideDialogTest {
 
         
         JDialogOperator op = new JDialogOperator(caption);
-        TimeUnit.MINUTES.sleep(1);
-        op.close();
+        JSpinnerOperator jsp = new JSpinnerOperator(op, 0);
+        jsp.setValue(7);
+        JButtonOperator ok = new JButtonOperator(op, 0);
+        ok.clickMouse();
+        
     }
 
     public void createDialog() {
-        DivideDialog dialog = new DivideDialog(null, true);
+        DivideDialog dialog = new DivideDialog(null);
         dialog.setVisible(true);
+        System.out.println(dialog.getValue());
     }
     
 }
