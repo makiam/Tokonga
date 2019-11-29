@@ -251,11 +251,13 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
 
     private BDialog valueWidgetDialog;
 
-    private BMenuItem[] extrudeItem, extrudeEdgeItem;
+    private BMenuItem[] extrudeItem;
 
+    private BMenuItem extrudeEdgeItem;
+    
     private BMenuItem[] extrudeRegionItem, extrudeEdgeRegionItem;
 
-    private BMenuItem[] popupExtrudeItem, popupExtrudeEdgeItem;
+    private BMenuItem[] popupExtrudeItem;
 
     private BMenuItem[] popupExtrudeRegionItem, popupExtrudeEdgeRegionItem;
 
@@ -636,13 +638,14 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         ((BMenu) edgeMenuItem[1]).add(Translate.menuItem("polymesh:z", this, "doMoveEdgesZ"));
         edgeMenu.addSeparator();
         edgeMenu.add(edgeMenuItem[2] = Translate.menu("polymesh:extrude"));
-        extrudeEdgeItem = new BMenuItem[4];
+        
         extrudeEdgeRegionItem = new BMenuItem[4];
-        ((BMenu) edgeMenuItem[2]).add(extrudeEdgeItem[0] = Translate.menuItem("polymesh:extrudeNormal", this, "doExtrudeEdge"));
-        ((BMenu) edgeMenuItem[2]).add(extrudeEdgeItem[1] = Translate.menuItem("polymesh:xExtrude", this, "doExtrudeEdge"));
-        ((BMenu) edgeMenuItem[2]).add(extrudeEdgeItem[2] = Translate.menuItem("polymesh:yExtrude", this, "doExtrudeEdge"));
-        ((BMenu) edgeMenuItem[2]).add(extrudeEdgeItem[3] = Translate.menuItem("polymesh:zExtrude", this, "doExtrudeEdge"));
-        singleNormalShortcut = extrudeEdgeItem[0].getShortcut();
+        BMenu menuItem = (BMenu)edgeMenuItem[2];
+        menuItem.add(extrudeEdgeItem = Translate.menuItem("polymesh:extrudeNormal", this, "doExtrudeEdgeNormal"));
+        menuItem.add(Translate.menuItem("polymesh:xExtrude", this, "doExtrudeEdgeXAxis"));
+        menuItem.add(Translate.menuItem("polymesh:yExtrude", this, "doExtrudeEdgeYAxis"));
+        menuItem.add(Translate.menuItem("polymesh:zExtrude", this, "doExtrudeEdgeZAxis"));
+        singleNormalShortcut = extrudeEdgeItem.getShortcut();
         
         edgeMenu.add(edgeMenuItem[3] = Translate.menu("polymesh:extrudeRegion"));
         ((BMenu) edgeMenuItem[3]).add(extrudeEdgeRegionItem[0] = Translate.menuItem("polymesh:extrudeRegionNormal", this, "doExtrudeEdgeRegion"));
@@ -659,13 +662,13 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         edgeMenu.add(edgeMenuItem[7] = Translate.menuItem("polymesh:selectLoop", this, "doSelectLoop"));
         edgeMenu.add(edgeMenuItem[8] = Translate.menu("polymesh:selectRing"));
         
-        BMenu ringSelectMenu = (BMenu)edgeMenuItem[8];
-        ringSelectMenu.add(Translate.menuItem("polymesh:all", this, "doSelectRingAll"));
-        ringSelectMenu.add(Translate.menuItem("polymesh:two", this, "doSelectRingTwo"));
-        ringSelectMenu.add(Translate.menuItem("polymesh:three", this, "doSelectRingThree"));
-        ringSelectMenu.add(Translate.menuItem("polymesh:four", this, "doSelectRingFour"));
-        ringSelectMenu.add(Translate.menuItem("polymesh:five", this, "doSelectRingFive"));
-        ringSelectMenu.add(Translate.menuItem("polymesh:specify", this, "doSelectRingInteractive"));
+        menuItem = (BMenu)edgeMenuItem[8];
+        menuItem.add(Translate.menuItem("polymesh:all", this, "doSelectRingAll"));
+        menuItem.add(Translate.menuItem("polymesh:two", this, "doSelectRingTwo"));
+        menuItem.add(Translate.menuItem("polymesh:three", this, "doSelectRingThree"));
+        menuItem.add(Translate.menuItem("polymesh:four", this, "doSelectRingFour"));
+        menuItem.add(Translate.menuItem("polymesh:five", this, "doSelectRingFive"));
+        menuItem.add(Translate.menuItem("polymesh:specify", this, "doSelectRingInteractive"));
         
         edgeMenu.add(edgeMenuItem[9] = Translate.menuItem("polymesh:insertLoops", this, "doInsertLoops"));
         edgeMenu.add(edgeMenuItem[10] = Translate.menuItem("polymesh:selectBoundary", this, "doSelectBoundary"));
@@ -703,12 +706,15 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         ((BMenu) edgePopupMenuItem[1]).add(Translate.menuItem("polymesh:z", this, "doMoveEdgesZ"));
         edgePopupMenu.addSeparator();
         edgePopupMenu.add(edgePopupMenuItem[2] = Translate.menu("polymesh:extrude"));
-        popupExtrudeEdgeItem = new BMenuItem[4];
+        
         popupExtrudeEdgeRegionItem = new BMenuItem[4];
-        ((BMenu) edgePopupMenuItem[2]).add(popupExtrudeEdgeItem[0] = Translate.menuItem("polymesh:extrudeNormal", this, "doExtrudeEdge"));
-        ((BMenu) edgePopupMenuItem[2]).add(popupExtrudeEdgeItem[1] = Translate.menuItem("polymesh:xExtrude", this, "doExtrudeEdge"));
-        ((BMenu) edgePopupMenuItem[2]).add(popupExtrudeEdgeItem[2] = Translate.menuItem("polymesh:yExtrude", this, "doExtrudeEdge"));
-        ((BMenu) edgePopupMenuItem[2]).add(popupExtrudeEdgeItem[3] = Translate.menuItem("polymesh:zExtrude", this, "doExtrudeEdge"));
+        
+        menuItem = (BMenu)edgePopupMenuItem[2];
+        menuItem.add(Translate.menuItem("polymesh:extrudeNormal", this, "doExtrudeEdgeNormal"));
+        menuItem.add(Translate.menuItem("polymesh:xExtrude", this, "doExtrudeEdgeXAxis"));
+        menuItem.add(Translate.menuItem("polymesh:yExtrude", this, "doExtrudeEdgeYAxis"));
+        menuItem.add(Translate.menuItem("polymesh:zExtrude", this, "doExtrudeEdgeZAxis"));
+        
         edgePopupMenu.add(edgePopupMenuItem[3] = Translate.menu("polymesh:extrudeRegion"));
         ((BMenu) edgePopupMenuItem[3]).add(popupExtrudeEdgeRegionItem[0] = Translate.menuItem("polymesh:extrudeRegionNormal", this, "doExtrudeEdgeRegion"));
         ((BMenu) edgePopupMenuItem[3]).add(popupExtrudeEdgeRegionItem[1] = Translate.menuItem("polymesh:xExtrude", this, "doExtrudeEdgeRegion"));
@@ -723,13 +729,13 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         edgePopupMenu.add(edgePopupMenuItem[7] = Translate.menuItem("polymesh:selectLoop", this, "doSelectLoop"));
         edgePopupMenu.add(edgePopupMenuItem[8] = Translate.menu("polymesh:selectRing"));
         
-        ringSelectMenu = (BMenu)edgePopupMenuItem[8]; 
-        ringSelectMenu.add(Translate.menuItem("polymesh:all", this, "doSelectRingAll"));
-        ringSelectMenu.add(Translate.menuItem("polymesh:two", this, "doSelectRingTwo"));
-        ringSelectMenu.add(Translate.menuItem("polymesh:three", this, "doSelectRingThree"));
-        ringSelectMenu.add(Translate.menuItem("polymesh:four", this, "doSelectRingFour"));
-        ringSelectMenu.add(Translate.menuItem("polymesh:five", this, "doSelectRingFive"));
-        ringSelectMenu.add(Translate.menuItem("polymesh:specify", this, "doSelectRingInteractive"));
+        menuItem = (BMenu)edgePopupMenuItem[8];
+        menuItem.add(Translate.menuItem("polymesh:all", this, "doSelectRingAll"));
+        menuItem.add(Translate.menuItem("polymesh:two", this, "doSelectRingTwo"));
+        menuItem.add(Translate.menuItem("polymesh:three", this, "doSelectRingThree"));
+        menuItem.add(Translate.menuItem("polymesh:four", this, "doSelectRingFour"));
+        menuItem.add(Translate.menuItem("polymesh:five", this, "doSelectRingFive"));
+        menuItem.add(Translate.menuItem("polymesh:specify", this, "doSelectRingInteractive"));
         
         edgePopupMenu.add(edgePopupMenuItem[9] = Translate.menuItem("polymesh:insertLoops", this, "doInsertLoops"));
         edgePopupMenu.add(edgePopupMenuItem[10] = Translate.menuItem("polymesh:selectBoundary", this, "doSelectBoundary"));
@@ -1369,7 +1375,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
             case EDGE_MODE:
                 vertexMenu.setEnabled(false);
                 edgeMenu.setEnabled(true);
-                extrudeEdgeItem[0].setShortcut(singleNormalShortcut);
+                extrudeEdgeItem.setShortcut(singleNormalShortcut);
                 extrudeEdgeRegionItem[0].setShortcut(groupNormalShortcut);
                 extrudeItem[0].setShortcut(null);
                 extrudeRegionItem[0].setShortcut(null);
@@ -1381,7 +1387,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
                 faceMenu.setEnabled(true);
                 extrudeItem[0].setShortcut(singleNormalShortcut);
                 extrudeRegionItem[0].setShortcut(groupNormalShortcut);
-                extrudeEdgeItem[0].setShortcut(null);
+                extrudeEdgeItem.setShortcut(null);
                 extrudeEdgeRegionItem[0].setShortcut(null);
                 break;
         }
@@ -2260,46 +2266,34 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         } else if (w == extrudeItem[3] || w == popupExtrudeItem[3]) {
             direction = Vec3.vz();
         }
-        Runnable callback = new Runnable() {
 
-            @Override
-            public void run() {
-                doExtrudeCallback();
-            }
-        };
-        valueWidget.activate(callback);
+        valueWidget.activate(this::doExtrudeCallback);
     }
 
-    /**
-     * Edge extrusion
-     *
-     * @param ev The command event
-     */
-    private void doExtrudeEdge(CommandEvent ev) {
-
-        if (valueWidget.isActivated()) {
-            return;
-        }
-        Widget w = ev.getWidget();
-        if (w == extrudeEdgeItem[0] || w == popupExtrudeEdgeItem[0]) {
-            direction = null;
-        } else if (w == extrudeEdgeItem[1] || w == popupExtrudeEdgeItem[1]) {
-            direction = Vec3.vx();
-        } else if (w == extrudeEdgeItem[2] || w == popupExtrudeEdgeItem[2]) {
-            direction = Vec3.vy();
-        } else if (w == extrudeEdgeItem[3] || w == popupExtrudeEdgeItem[3]) {
-            direction = Vec3.vz();
-        }
-        Runnable callback = new Runnable() {
-
-            @Override
-            public void run() {
-                doExtrudeEdgeCallback();
-            }
-        };
-        valueWidget.activate(callback);
+    private void doExtrudeEdgeNormal() {
+        if(valueWidget.isActivated()) return;
+        direction = null;
+        valueWidget.activate(this::doExtrudeEdgeCallback);
+    }
+    
+    private void doExtrudeEdgeXAxis() {
+        if(valueWidget.isActivated()) return;
+        direction = Vec3.vx();
+        valueWidget.activate(this::doExtrudeEdgeCallback);
     }
 
+    private void doExtrudeEdgeYAxis() {
+        if(valueWidget.isActivated()) return;
+        direction = Vec3.vy();
+        valueWidget.activate(this::doExtrudeEdgeCallback);
+    }
+
+    private void doExtrudeEdgeZAxis() {
+        if(valueWidget.isActivated()) return;
+        direction = Vec3.vz();
+        valueWidget.activate(this::doExtrudeEdgeCallback);
+    }
+    
     /**
      * Region extrusion
      *
@@ -2320,14 +2314,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         } else if (w == extrudeRegionItem[3] || w == popupExtrudeRegionItem[3]) {
             direction = Vec3.vz();
         }
-        Runnable callback = new Runnable() {
 
-            @Override
-            public void run() {
-                doExtrudeRegionCallback();
-            }
-        };
-        valueWidget.activate(callback);
+        valueWidget.activate(this::doExtrudeEdgeRegionCallback);
     }
 
     /**
@@ -2353,14 +2341,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
                 || w == popupExtrudeEdgeRegionItem[3]) {
             direction = Vec3.vz();
         }
-        Runnable callback = new Runnable() {
-
-            @Override
-            public void run() {
-                doExtrudeEdgeRegionCallback();
-            }
-        };
-        valueWidget.activate(callback);
+        valueWidget.activate(this::doExtrudeEdgeRegionCallback);
     }
 
     /**
@@ -2387,8 +2368,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
     private void doExtrudeEdgeCallback() {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         mesh.copyObject(priorValueMesh);
-        mesh.extrudeEdges(valueSelection, valueWidget.getValue(),
-                direction);
+        mesh.extrudeEdges(valueSelection, valueWidget.getValue(), direction);
         boolean[] sel = new boolean[mesh.getEdges().length / 2];
         for (int i = 0; i < valueSelection.length; ++i) {
             sel[i] = valueSelection[i];
@@ -2493,8 +2473,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
     private void doInsertLoopsCallback() {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         mesh.copyObject(priorValueMesh);
-        boolean sel[] = mesh.divideEdges(valueSelection, valueWidget
-                .getValue());
+        boolean sel[] = mesh.divideEdges(valueSelection, valueWidget.getValue());
         mesh.connectVertices(sel);
         objectChanged();
         setSelectionMode(POINT_MODE);
