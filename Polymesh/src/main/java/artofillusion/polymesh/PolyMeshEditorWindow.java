@@ -2102,14 +2102,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
             return;
         }
         moveDirection = direction;
-        Runnable callback = new Runnable() {
-
-            @Override
-            public void run() {
-                doMoveCallback();
-            }
-        };
-        valueWidget.activate(callback);
+        valueWidget.activate(this::doMoveCallback);
     }
 
     /**
@@ -2141,13 +2134,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         if (valueWidget.isActivated()) {
             return;
         }
-        Runnable callback = new Runnable() {
-            @Override
-            public void run() {
-                doBevelEdgesCallback();
-            }
-        };
-        valueWidget.activate(callback);
+        valueWidget.activate(this::doBevelEdgesCallback);
     }
 
     /**
@@ -2169,14 +2156,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         if (valueWidget.isActivated()) {
             return;
         }
-        Runnable callback = new Runnable() {
-
-            @Override
-            public void run() {
-                doBevelVerticesCallback();
-            }
-        };
-        valueWidget.activate(callback);
+        valueWidget.activate(this::doBevelVerticesCallback);
     }
 
     /**
@@ -2210,7 +2190,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         PolyMesh mesh = (PolyMesh) objInfo.object;
         mesh.copyObject(priorValueMesh);
         objectChanged();
-        PolyMesh valueMesh = null;
+
         priorValueMesh = null;
         setSelection(valueSelection);
         updateImage();
@@ -2380,24 +2360,18 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
     /**
      * Mesh thickening
      */
-    private void doThickenMesh(CommandEvent ev) {
+    private void doThickenMesh(CommandEvent event) {
 
         if (valueWidget.isActivated()) {
             return;
         }
-        if (ev.getWidget() == meshMenuItem[3]) {
+        if (event.getWidget() == meshMenuItem[3]) {
             thickenFaces = true;
         } else {
             thickenFaces = false;
         }
-        Runnable callback = new Runnable() {
 
-            @Override
-            public void run() {
-                doThickenMeshCallback();
-            }
-        };
-        valueWidget.activate(callback);
+        valueWidget.activate(this::doThickenMeshCallback);
     }
 
     /**
@@ -2408,7 +2382,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         PolyMesh mesh = (PolyMesh) objInfo.object;
         mesh.copyObject(priorValueMesh);
         mesh.thickenMesh(valueWidget.getValue(), thickenFaces);
-        boolean[] sel = new boolean[mesh.getFaces().length];
+
         objectChanged();
         updateImage();
     }
@@ -2455,15 +2429,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         if (valueWidget.isActivated()) {
             return;
         }
-        Runnable callback = new Runnable() {
 
-            @Override
-            public void run() {
-                doInsertLoopsCallback();
-            }
-        };
         valueWidget.setTempValueRange(0, 1.0);
-        valueWidget.activate(0.5, callback);
+        valueWidget.activate(0.5, this::doInsertLoopsCallback);
     }
 
     /**
@@ -2529,14 +2497,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         if (checkForNullMovement(vertDisplacements)) {
             return;
         }
-        Runnable callback = new Runnable() {
-
-            @Override
-            public void run() {
-                doBringCallback();
-            }
-        };
-        valueWidget.activate(callback);
+        valueWidget.activate(this::doBringCallback);
     }
 
     /**
@@ -2550,8 +2511,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         int count = 0;
         for (int i = 0; i < vert.length; ++i) {
             if (selected[i]) {
-                vert[i].r.add(vertDisplacements[count].times(valueWidget
-                        .getValue()));
+                vert[i].r.add(vertDisplacements[count].times(valueWidget.getValue()));
                 ++count;
             }
         }
@@ -2636,20 +2596,16 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
             newc = origin.z + l * lc;
             delta = 0;
             if (Math.max(Math.abs(newa), Math.abs(a)) > 1e-6) {
-                delta += Math.abs(newa - a)
-                        / Math.max(Math.abs(newa), Math.abs(a));
+                delta += Math.abs(newa - a) / Math.max(Math.abs(newa), Math.abs(a));
             }
             if (Math.max(Math.abs(newb), Math.abs(b)) > 1e-6) {
-                delta += Math.abs(newb - b)
-                        / Math.max(Math.abs(newb), Math.abs(b));
+                delta += Math.abs(newb - b) / Math.max(Math.abs(newb), Math.abs(b));
             }
             if (Math.max(Math.abs(newc), Math.abs(c)) > 1e-6) {
-                delta += Math.abs(newc - c)
-                        / Math.max(Math.abs(newc), Math.abs(c));
+                delta += Math.abs(newc - c) / Math.max(Math.abs(newc), Math.abs(c));
             }
             if (Math.max(Math.abs(radius), Math.abs(l)) > 1e-6) {
-                delta += Math.abs(l - radius)
-                        / Math.max(Math.abs(radius), Math.abs(l));
+                delta += Math.abs(l - radius) / Math.max(Math.abs(radius), Math.abs(l));
             }
             a = newa;
             b = newb;
@@ -2683,14 +2639,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         if (checkForNullMovement(vertDisplacements)) {
             return;
         }
-        Runnable callback = new Runnable() {
-
-            @Override
-            public void run() {
-                doBringCallback();
-            }
-        };
-        valueWidget.activate(callback);
+        valueWidget.activate(this::doBringCallback);
     }
 
     /**
@@ -2760,14 +2709,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         if (checkForNullMovement(vertDisplacements)) {
             return;
         }
-        Runnable callback = new Runnable() {
 
-            @Override
-            public void run() {
-                doBringCallback();
-            }
-        };
-        valueWidget.activate(callback);
+        valueWidget.activate(this::doBringCallback);
     }
 
     /**
@@ -3871,14 +3814,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
             return;
         }
         initSelPoints();
-        Runnable callback = new Runnable() {
-
-            @Override
-            public void run() {
-                doScaleSelectionCallback();
-            }
-        };
-        valueWidget.activate(1.0, callback);
+        valueWidget.activate(1.0, this::doScaleSelectionCallback);
     }
 
     /**
@@ -3889,14 +3825,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
             return;
         }
         initSelPoints();
-        Runnable callback = new Runnable() {
-
-            @Override
-            public void run() {
-                doScaleNormalSelectionCallback();
-            }
-        };
-        valueWidget.activate(callback);
+        valueWidget.activate(this::doScaleNormalSelectionCallback);
     }
 
     private void initSelPoints() {
