@@ -4696,13 +4696,12 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         boolean[] deleted = new boolean[edges.length];
         Wedge[] newEdges = null;
         boolean hasDeleted = false;
+        
         for (int i = 0; i < edges.length; ++i) {
             if (!deleted[i]) {
-                if (edges[i].face == -1 && edges[edges[i].next].next == i
-                        && edges[i].next != i && !deleted[edges[i].next]) {
+                if (edges[i].face == -1 && edges[edges[i].next].next == i && edges[i].next != i && !deleted[edges[i].next]) {
                     if (edges[edges[i].next].face != -1) {
-                        System.out
-                                .println("Houston, We've got a problem in removeTwoEdgeBoundaries");
+                        System.out.println("Houston, We've got a problem in removeTwoEdgeBoundaries");
                     }
                     int e2 = edges[i].next;
                     int he2 = edges[e2].hedge;
@@ -4718,6 +4717,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
                 }
             }
         }
+        
         if (!hasDeleted) {
             return;
         }
@@ -4740,11 +4740,13 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         }
         newEdges = new Wedge[count];
         count = 0;
+        
         for (int i = 0; i < edges.length; ++i) {
             if (!deleted[i]) {
                 newEdges[count++] = new Wedge(edges[i]);
             }
         }
+        
         for (int j = 0; j < newEdges.length; ++j) {
             newEdges[j].next = edgeTable[newEdges[j].next];
             newEdges[j].hedge = edgeTable[newEdges[j].hedge];
@@ -5704,22 +5706,22 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
     /**
      * Changes a face reference to another one
      *
-     * @param ed The edge array
+     * @param edge The edge array
      * @param newFace The new face reference
      * @param eref An edge bordering the face
      */
-    private void changeFace(Wedge[] ed, int eref, int newFace) {
-        Wedge e = ed[eref];
+    private void changeFace(Wedge[] edge, int eref, int newFace) {
+        Wedge e = edge[eref];
         e.face = newFace;
         int start = e.vertex;
         int count = 1;
-        while (ed[e.next].vertex != start) {
+        while (edge[e.next].vertex != start) {
             ++count;
             if (count > edges.length) {
                 System.out.println("Error in changeFace: face is not closed");
                 return;
             }
-            e = ed[e.next];
+            e = edge[e.next];
             e.face = newFace;
         }
         return;
@@ -12869,8 +12871,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         for (int i = 0; i < vertices.length; ++i) {
             ed = vertices[i].edge;
             counter = 0;
-            while (edges[edges[ed].hedge].next != vertices[i].edge
-                    && counter < edges.length) {
+            while (edges[edges[ed].hedge].next != vertices[i].edge && counter < edges.length) {
                 ed = edges[edges[ed].hedge].next;
                 counter++;
             }

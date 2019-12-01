@@ -301,8 +301,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
 
     private static double edgeTol = 0.01;
 
-    protected static boolean lastFreehand, lastProjectOntoSurface,
-            lastTolerant;
+    protected static boolean lastFreehand, lastProjectOntoSurface, lastTolerant;
 
     private RenderingMesh lastPreview;
 
@@ -4163,7 +4162,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
      */
     @SuppressWarnings({"unused", "ResultOfObjectAllocationIgnored"})
     private void doCheckMesh() {
-        // dumps selection
+        
         PolyMesh mesh = ((PolyMesh) objInfo.object);
         String name = "";
         switch (selectMode) {
@@ -4185,7 +4184,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
                 System.out.println(name + i + " selected.");
             }
         }
-        new CheckMeshDialog();
+
+        SwingUtilities.invokeLater(() ->{
+            new artofillusion.polymesh.dialogs.CheckMeshDialog(this.getComponent(), mesh).setVisible(true);
+        });
     }
 
     @SuppressWarnings({"unused", "ResultOfObjectAllocationIgnored"})
@@ -4755,51 +4757,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         }
     }
 
-    /**
-     * A dialog which show the result of check/repair operation
-     *
-     * @author Francois Guillet
-     */
-    public class CheckMeshDialog extends BDialog {
-
-        private BButton dismiss;
-
-        private BTextArea textArea;
-
-        /**
-         * Constructor for the CheckMeshDialog object
-         */
-        public CheckMeshDialog() {
-            super(PolyMeshEditorWindow.this, Translate.text("polymesh:checkRepair"), true);
-
-            BorderContainer borderContainer1 = null;
-            
-            try(InputStream is = getClass().getResource("interfaces/check.xml").openStream()) {
-                WidgetDecoder decoder = new WidgetDecoder(is);
-                borderContainer1 = (BorderContainer) decoder.getRootObject();
-                textArea = ((BTextArea) decoder.getObject("TextArea"));
-                dismiss = ((BButton) decoder.getObject("dismiss"));
-                dismiss.setText(Translate.text("polymesh:dismiss"));
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            
-            setContent(borderContainer1);
-            dismiss.addEventLink(CommandEvent.class, this, "doDismiss");
-            pack();
-            UIUtilities.centerWindow(this);
-            PolyMesh mesh = (PolyMesh) objInfo.object;
-            textArea.append(mesh.checkMesh());
-            setVisible(true);
-        }
-
-        /**
-         * Description of the Method
-         */
-        private void doDismiss() {
-            dispose();
-        }
-    }
 
     private class CopyEvent implements WidgetEvent {
 
