@@ -78,22 +78,6 @@ public class PMValueField extends ValueField {
         jtf.setColumns(c);
         jtf.addCaretListener(caretListener);
         jtf.getDocument().addDocumentListener(documentListener);
-        /*        addEventLink( MousePressedEvent.class,
-            new Object()
-            {
-                void processEvent()
-                {
-                    try
-                    {
-                        Field field = ValueField.class.getDeclaredField( "clicked" );
-                        field.setAccessible( true );
-                        field.set( this, new Boolean( true ) );
-                    }
-                    catch ( Exception ex )
-                    {
-                        ex.printStackTrace();
-                    }
-                }
-            } );  */
+
     }
 }

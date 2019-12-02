@@ -30,8 +30,10 @@ public abstract class Object3D {
     protected Material theMaterial;
     protected TextureMapping texMapping;
     protected MaterialMapping matMapping;
+    
     protected TextureParameter texParam[];
     protected ParameterValue paramValue[];
+    
     protected boolean parametersChanged;
 
     public static final int CANT_CONVERT = 0;
@@ -307,10 +309,10 @@ public abstract class Object3D {
         if (obj.getTextureMapping() != null) {
             setTexture(obj.getTexture(), obj.getTextureMapping().duplicate(this, obj.getTexture()));
         }
-        if (obj.getMaterialMapping() != null) {
-            setMaterial(obj.getMaterial(), obj.getMaterialMapping().duplicate(this, obj.getMaterial()));
-        } else {
+        if (obj.getMaterialMapping() == null) {
             setMaterial(null, null);
+        } else {
+            setMaterial(obj.getMaterial(), obj.getMaterialMapping().duplicate(this, obj.getMaterial()));
         }
         TextureParameter objParam[] = obj.getParameters();
         if (objParam != null) {

@@ -7,6 +7,7 @@ package artofillusion.polymesh;
 
 import artofillusion.ViewerCanvas;
 import artofillusion.math.RGBColor;
+import artofillusion.math.Vec3;
 import artofillusion.object.Mesh;
 import artofillusion.test.util.StreamUtil;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.io.InvalidObjectException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
+import java.util.Optional;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -73,4 +75,17 @@ public class PolymeshTest {
         wrap.put((byte) 11);
         new PolyMesh(StreamUtil.stream(wrap));
     }
+    
+    @Test
+    public void testGetMeshFaceNormals() {
+        PolyMesh pm = new PolyMesh(MeshType.CUBE.type, 0, 0, 0, 1, 1);        
+        Vec3[] normals = pm.getFaceNormals();
+
+        Assert.assertNotNull(normals);
+        Assert.assertEquals(6, normals.length);
+        
+
+    }
+    
+
 }

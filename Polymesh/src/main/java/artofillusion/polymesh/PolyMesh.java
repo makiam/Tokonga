@@ -63,6 +63,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Vector;
 import java.util.prefs.Preferences;
 
@@ -1280,7 +1281,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         cachedWire = null;
         cachedNormals = null;
         cachedEdgeNormals = null;
-        cachedFaceNormals = null;
+        
         bounds = null;
         controlledSmoothing = mesh.controlledSmoothing;
         minAngle = mesh.minAngle;
@@ -2701,10 +2702,10 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         int pred;
         Vec3 v1;
         Vec3 v2;
-        Vec3 v3;
+
         Vec3 normal;
         boolean added;
-        double area, angle;
+        double angle;
         for (int i = 0; i < vertices.length; i++) {
             norm[i] = new Vec3();
             int[] ve = getVertexEdges(vertices[i]);
@@ -2720,8 +2721,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
                     }
                     // if ( ignoreBoundaries && edges[pred].face == -1 )
                     // continue;
-                    v1 = vertices[edges[ve[pred]].vertex].r
-                            .minus(vertices[i].r);
+                    v1 = vertices[edges[ve[pred]].vertex].r.minus(vertices[i].r);
                     v2 = vertices[edges[ve[j]].vertex].r.minus(vertices[i].r);
                     // v3 = vertices[i].r.cross(
                     // vertices[edges[ve[j]].vertex].r );
@@ -2759,11 +2759,10 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
                 }
                 norm[i].normalize();
             } else {
-                norm[i] = (vertices[edges[ve[0]].vertex].r
-                        .minus(vertices[edges[edges[ve[0]].hedge].vertex].r));
+                norm[i] = (vertices[edges[ve[0]].vertex].r.minus(vertices[edges[edges[ve[0]].hedge].vertex].r));
                 norm[i].normalize();
             }
-            //System.out.println(norm[i]);
+            
         }
         return cachedNormals = norm;
     }
