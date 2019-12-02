@@ -1038,13 +1038,13 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         vertices = new Wvertex[uSize * vSize];
         edges = new Wedge[(euSize * evSize * 2 + euSize + evSize) * 2];
         faces = new Wface[euSize * evSize];
+        
         for (int i = 0; i < uSize; ++i) {
             for (int j = 0; j < vSize; ++j) {
-                vertices[i + uSize * j] = new Wvertex(new Vec3(i * uMax
-                        / ((double) (uSize - 1)), j * vMax
-                        / ((double) (vSize - 1)), 0), -1);
+                vertices[i + uSize * j] = new Wvertex(new Vec3(i * uMax / ((double) (uSize - 1)), j * vMax / ((double) (vSize - 1)), 0), -1);
             }
         }
+        
         int ec;
         int ec1;
         int k;
@@ -1094,14 +1094,12 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
                 faces[f] = new Wface(ec);
             }
         }
-        vertices[uSize * (vSize - 1)].edge = (euSize * evSize) * 2 + euSize
-                + evSize - 1;
+        vertices[uSize * (vSize - 1)].edge = (euSize * evSize) * 2 + euSize + evSize - 1;
         for (int i = 0; i < euSize; i++) {
             k = i + uSize * (vSize - 1);
             ec = euSize * evSize * 2 + i;
             fd = i + euSize * (evSize - 1);
-            edges[ec] = new Wedge(k, ec + el, fd, (i + euSize * (evSize - 1))
-                    * 2 - 1 + el);
+            edges[ec] = new Wedge(k, ec + el, fd, (i + euSize * (evSize - 1)) * 2 - 1 + el);
             if (i == 0) {
                 edges[ec].next = euSize * evSize * 2 + euSize + evSize - 1;
             }
@@ -1188,9 +1186,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
             if (edges[i] != null && edges[i].face == -1 && edges[i].next == -1) {
                 n = edges[i].vertex;
                 for (int j = 0; j < edges.length; j++) {
-                    if (edges[j] != null && edges[edges[j].hedge].vertex == n
-                            && edges[edges[j].hedge].face == -1
-                            && edges[edges[j].hedge].next == -1) {
+                    if (edges[j] != null && edges[edges[j].hedge].vertex == n && edges[edges[j].hedge].face == -1 && edges[edges[j].hedge].next == -1) {
                         edges[i].next = edges[j].hedge;
                         break;
                     }
@@ -1202,10 +1198,10 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         int edgeCount = 0;
         int[] edgeTable = new int[edges.length];
         for (int i = 0; i < edges.length; ++i) {
-            if (edges[i] != null) {
-                edgeTable[i] = edgeCount++;
-            } else {
+            if (edges[i] == null) {
                 edgeTable[i] = -1;
+            } else {
+                edgeTable[i] = edgeCount++;
             }
 
         }
