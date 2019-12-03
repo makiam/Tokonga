@@ -2877,7 +2877,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     public void environmentCommand() {
         SwingUtilities.invokeLater(() -> {
-            new SceneEnvironmentDialog(this.getComponent()).setVisible(true);
+            new SceneEnvironmentDialog(this.getComponent(), theScene).setVisible(true);
         });
         
         final RGBColor ambColor = theScene.getAmbientColor(), envColor = theScene.getEnvironmentColor(), fogColor = theScene.getFogColor();

@@ -40,7 +40,7 @@ public class SceneEnvironmentDialog extends javax.swing.JDialog {
     /**
      * Creates new form SceneEnvironmentDialog
      */
-    public SceneEnvironmentDialog(java.awt.Frame parent) {
+    public SceneEnvironmentDialog(java.awt.Frame parent, Scene scene) {
         super(parent, true);
         initComponents();
 
