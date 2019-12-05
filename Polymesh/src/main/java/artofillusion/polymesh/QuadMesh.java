@@ -42,8 +42,8 @@ import java.util.Vector;
 
 /**
  * A QuadMesh is a mesh exclusively made up of quads. This mesh is not meant to be edited by users
- * but it backs up PolyMeshes when doing Catmull-Calrk smoothing. It may however be extended in the
- * future to provide a standalone, new kind of mesh for AoI. Its structure is heavily dervived from
+ * but it backs up PolyMeshes when doing Catmull-Clark smoothing. It may however be extended in the
+ * future to provide a standalone, new kind of mesh for AoI. Its structure is heavily derived from
  * AoI trimesh.
  *
  * Smoothness and smoothing algorithm is identical to PolyMesh smoothing algorithm since a smoothed
