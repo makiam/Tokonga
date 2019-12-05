@@ -63,7 +63,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Vector;
 import java.util.prefs.Preferences;
 
@@ -179,7 +178,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
     private int handleSize;
 
     //preferences
-    private static Preferences preferences = Preferences.userRoot().node("artofillusion.polymesh");
+    private static final Preferences preferences = Preferences.userRoot().node("artofillusion.polymesh");
 
     // direction constants
     /**
@@ -246,7 +245,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
     public final static short MIRROR_ON_XZ = 4;
 
     /* Properties */
-    private static final Property PROPERTIES[] = new Property[]{
+    private static final Property[] PROPERTIES = new Property[]{
         new Property(Translate.text("polymesh:intersubdiv"), 1, 6, 1)};
 
     private PolyMesh() {
@@ -1160,10 +1159,8 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
                     }
                     prevEdge = edges[ed].hedge;
                 } else {
-                    edges[count] = new Wedge(f[i][next], count + edges.length
-                            / 2, i, prevEdge);
-                    edges[count + edges.length / 2] = new Wedge(f[i][j], count,
-                            -1, -1);
+                    edges[count] = new Wedge(f[i][next], count + edges.length / 2, i, prevEdge);
+                    edges[count + edges.length / 2] = new Wedge(f[i][j], count, -1, -1);
                     if (prevEdge != -1) {
                         edges[prevEdge].next = count;
                     }
@@ -1286,19 +1283,17 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         maxSmoothness = mesh.maxSmoothness;
         interactiveSmoothLevel = mesh.interactiveSmoothLevel;
         projectedEdges = null;
-        if (mesh.mappingData != null) {
+        if (mesh.mappingData == null) {
+            mappingData = null;
+        } else {
             mappingData = mesh.mappingData.duplicate();
             mappingVerts = mesh.mappingVerts;
             mappingEdges = mesh.mappingEdges;
             mappingFaces = mesh.mappingFaces;
-        } else {
-            mappingData = null;
         }
         if (mesh.seams != null) {
             seams = new boolean[mesh.seams.length];
-            for (int i = 0; i < seams.length; i++) {
-                seams[i] = mesh.seams[i];
-            }
+            System.arraycopy(mesh.seams, 0, seams, 0, seams.length);
         }
         useCustomColors = mesh.useCustomColors;
         vertColor = mesh.vertColor;
@@ -2548,8 +2543,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
      */
     private int getEdge(int[] fe, int v1, int v2) {
         for (int j = 0; j < fe.length; ++j) {
-            if ((v1 == edges[fe[j]].vertex && v2 == edges[edges[fe[j]].hedge].vertex)
-                    || (v2 == edges[fe[j]].vertex && v1 == edges[edges[fe[j]].hedge].vertex)) {
+            if ((v1 == edges[fe[j]].vertex && v2 == edges[edges[fe[j]].hedge].vertex) || (v2 == edges[fe[j]].vertex && v1 == edges[edges[fe[j]].hedge].vertex)) {
                 return fe[j];
             }
         }
@@ -3053,11 +3047,13 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         } else {
             zscale = zsize / size.z;
         }
-        for (int i = 0; i < vertices.length; i++) {
-            vertices[i].r.x *= xscale;
-            vertices[i].r.y *= yscale;
-            vertices[i].r.z *= zscale;
+        
+        for(Wvertex vertice: vertices) {
+            vertice.r.x *= xscale;
+            vertice.r.y *= yscale;
+            vertice.r.z *= zscale;
         }
+        
         // if ( xscale * yscale * zscale < 0.0 )
         // reverseNormals();
         skeleton.scale(xscale, yscale, zscale);
@@ -13484,8 +13480,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
          * @param weight the weights for the different Gestures
          */
         @Override
-        public void blendSurface(MeshGesture average, MeshGesture p[],
-                double weight[]) {
+        public void blendSurface(MeshGesture average, MeshGesture p[], double weight[]) {
             super.blendSurface(average, p, weight);
             PolyMeshKeyframe avg = (PolyMeshKeyframe) average;
             for (int i = 0; i < weight.length; i++) {
@@ -13494,8 +13489,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
                 // avg.vertSmoothness[j] += (float) ( weight[i] * (
                 // key.vertSmoothness[j] - vertSmoothness[j] ) );
                 for (int j = 0; j < edgeSmoothness.length; j++) {
-                    avg.edgeSmoothness[j] += weight[i]
-                            * (key.edgeSmoothness[j] - edgeSmoothness[j]);
+                    avg.edgeSmoothness[j] += weight[i] * (key.edgeSmoothness[j] - edgeSmoothness[j]);
                 }
             }
 
