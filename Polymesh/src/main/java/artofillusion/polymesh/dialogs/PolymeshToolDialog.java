@@ -8,11 +8,17 @@ package artofillusion.polymesh.dialogs;
 import artofillusion.ui.Translate;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.InputMap;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
@@ -25,6 +31,10 @@ public class PolymeshToolDialog extends javax.swing.JDialog {
     private final String[] defaultTypes = new String[]{ Translate.text("polymesh:cube"), Translate.text("polymesh:face"), Translate.text("polymesh:octahedron"), Translate.text("polymesh:cylinder"), Translate.text("polymesh:flatMesh")};
     
     public ComboBoxModel<String> getTypesModel() {
+        List<String> types = new ArrayList<>(Arrays.asList(defaultTypes));
+        
+        ComboBoxModel<String> cbm = new DefaultComboBoxModel<>();
+        
         return new DefaultComboBoxModel<>(defaultTypes);
     }
 
@@ -75,7 +85,7 @@ public class PolymeshToolDialog extends javax.swing.JDialog {
 
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        meshTypeSelect = new javax.swing.JComboBox<>();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("polymesh"); // NOI18N
         setTitle(bundle.getString("polyMeshToolDialogTitle")); // NOI18N
@@ -100,7 +110,7 @@ public class PolymeshToolDialog extends javax.swing.JDialog {
             }
         });
 
-        jComboBox1.setModel(getTypesModel());
+        meshTypeSelect.setModel(getTypesModel());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -114,7 +124,7 @@ public class PolymeshToolDialog extends javax.swing.JDialog {
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton))
-                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(meshTypeSelect, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -124,7 +134,7 @@ public class PolymeshToolDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(meshTypeSelect, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 233, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
@@ -162,9 +172,15 @@ public class PolymeshToolDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> meshTypeSelect;
     private javax.swing.JButton okButton;
     // End of variables declaration//GEN-END:variables
 
     private int returnStatus = RET_CANCEL;
+
+    public JComboBox<String> getMeshTypeSelect() {
+        return meshTypeSelect;
+    }
+    
+    
 }

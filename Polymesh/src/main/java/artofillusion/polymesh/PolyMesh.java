@@ -12113,16 +12113,12 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         do {
             for (int i = 0; i < edges.length / 2; i++) {
                 if (seamsCopy[i]) {
-                    if (newEdges[i].face == -1
-                            || newEdges[newEdges[i].hedge].face == -1) {
+                    if (newEdges[i].face == -1 || newEdges[newEdges[i].hedge].face == -1) {
                         seamsCopy[i] = false;
                         continue;
                     }
-                    bv1 = getBoundaryEdgeOnVertex(
-                            newEdges[newEdges[i].hedge].vertex, newVertices,
-                            newEdges);
-                    bv2 = getBoundaryEdgeOnVertex(newEdges[i].vertex,
-                            newVertices, newEdges);
+                    bv1 = getBoundaryEdgeOnVertex(newEdges[newEdges[i].hedge].vertex, newVertices, newEdges);
+                    bv2 = getBoundaryEdgeOnVertex(newEdges[i].vertex, newVertices, newEdges);
                     if (bv1 == -1 && bv2 == -1) {
                         // each side of the edge is a boundary vertex
                         // let's see if the next vertex is also selected so we
@@ -12131,12 +12127,9 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
                         nextSeam = -1;
                         index = newEdges[i].next;
                         while (index != newEdges[i].hedge && nextSeam == -1) {
-                            int boundary = getBoundaryEdgeOnVertex(
-                                    newEdges[index].vertex, newVertices,
-                                    newEdges);
+                            int boundary = getBoundaryEdgeOnVertex( newEdges[index].vertex, newVertices, newEdges);
                             if (boundary == -1) {
-                                if (index < edges.length / 2
-                                        && seamsCopy[index]) {
+                                if (index < edges.length / 2 && seamsCopy[index]) {
                                     nextSeam = index;
                                     seamsCopy[index] = false;
                                     seamsCopy[i] = false;
@@ -12145,8 +12138,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
                                     // System.out.println("ouverture #0a " +
                                     // i + ":" + index);
                                 } else if (index >= newEdges.length / 2) {
-                                    if (newEdges[index].hedge < edges.length / 2
-                                            && seamsCopy[newEdges[index].hedge]) {
+                                    if (newEdges[index].hedge < edges.length / 2 && seamsCopy[newEdges[index].hedge]) {
                                         nextSeam = index;
                                         seamsCopy[newEdges[index].hedge] = false;
                                         seamsCopy[i] = false;
@@ -12411,8 +12403,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
      * @param newEdges    The current edges array
      * @return
      */
-    private int getBoundaryEdgeOnVertex(int index, Wvertex[] newVertices,
-                                        Wedge[] newEdges) {
+    private int getBoundaryEdgeOnVertex(int index, Wvertex[] newVertices, Wedge[] newEdges) {
         int start = newEdges[newVertices[index].edge].hedge;
         if (newEdges[start].face == -1) {
             return start;
@@ -12462,13 +12453,10 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
             if (i != 0) {
                 prevEdge = edges.length / 2 + i - 1 + newEdges.length / 2;
             } else {
-                prevEdge = edges.length / 2 + newPoints.length - 1
-                        + newEdges.length / 2;
+                prevEdge = edges.length / 2 + newPoints.length - 1 + newEdges.length / 2;
             }
-            newEdges[edges.length / 2 + i] = new Wedge(t, edges.length / 2 + i
-                    + newEdges.length / 2, faces.length, nextEdge);
-            newEdges[edges.length / 2 + i + newEdges.length / 2] = new Wedge(f,
-                    edges.length / 2 + i, -1, prevEdge);
+            newEdges[edges.length / 2 + i] = new Wedge(t, edges.length / 2 + i + newEdges.length / 2, faces.length, nextEdge);
+            newEdges[edges.length / 2 + i + newEdges.length / 2] = new Wedge(f, edges.length / 2 + i, -1, prevEdge);
         }
         for (int i = 0; i < newPoints.length; ++i) {
             f = edges.length / 2 + i + 1;
@@ -12488,8 +12476,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
             ParameterValue newParamVal[] = new ParameterValue[oldParamVal.length];
             for (int k = 0; k < oldParamVal.length; k++) {
                 if (oldParamVal[k] instanceof VertexParameterValue) {
-                    double oldval[] = ((VertexParameterValue) oldParamVal[k])
-                            .getValue();
+                    double oldval[] = ((VertexParameterValue) oldParamVal[k]).getValue();
                     double newval[] = new double[newVertices.length];
                     for (int j = 0; j < oldval.length; j++) {
                         newval[j] = oldval[j];
@@ -12499,8 +12486,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
                     }
                     newParamVal[k] = new VertexParameterValue(newval);
                 } else if (oldParamVal[k] instanceof FaceParameterValue) {
-                    double oldval[] = ((FaceParameterValue) oldParamVal[k])
-                            .getValue();
+                    double oldval[] = ((FaceParameterValue) oldParamVal[k]).getValue();
                     double newval[] = new double[faces.length];
                     for (int j = 0; j < faces.length - 1; ++j) {
                         newval[j] = oldval[faceInfo.get(j)];

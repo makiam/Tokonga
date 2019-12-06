@@ -5,9 +5,12 @@
  */
 package artofillusion.polymesh.dialogs;
 
-import java.time.LocalDateTime;
+import artofillusion.ViewerCanvas;
+import artofillusion.math.RGBColor;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import javax.swing.SwingUtilities;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.netbeans.jemmy.operators.JDialogOperator;
 
@@ -17,10 +20,17 @@ import org.netbeans.jemmy.operators.JDialogOperator;
  */
 public class TestPolyMeshToolDialog {
     
+    @BeforeClass
+    public static void setUpClass() {
+        Locale.setDefault(Locale.US);
+    }
+    
     @Test
     public void testDialog() throws InterruptedException {
         SwingUtilities.invokeLater(() -> {
-            new PolymeshToolDialog(null).setVisible(true);
+            PolymeshToolDialog dialog = new PolymeshToolDialog(null);
+            
+            dialog.setVisible(true);
         });
         
         JDialogOperator op = new JDialogOperator();
