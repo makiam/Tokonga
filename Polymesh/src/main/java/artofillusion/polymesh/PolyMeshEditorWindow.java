@@ -2819,11 +2819,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
     void setSmoothnessCommand() {
         final PolyMesh theMesh = (PolyMesh) objInfo.object;
         PolyMesh prevMesh = theMesh.duplicate();
-        final Wvertex vt[] = (Wvertex[]) theMesh.getVertices();
+
         final Wedge ed[] = theMesh.getEdges();
         final boolean pointmode = (selectMode == POINT_MODE);
         final ActionProcessor processor = new ActionProcessor();
-        float value;
+
         final ValueSlider smoothness;
         int i;
 
@@ -2832,11 +2832,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         if (i == selected.length) {
             return;
         }
-        /*
-		 * if ( pointmode ) valueWidget.getValue() = vt[i].smoothness; else
-         */
-        value = ed[i].smoothness;
-        value = 0.001f * (Math.round(valueWidget.getValue() * 1000.0f));
+
         smoothness = new ValueSlider(0.0, 1.0, 1000, valueWidget.getValue());
         smoothness.addEventLink(ValueChangedEvent.class, new Object() {
             void processEvent() {
@@ -2852,17 +2848,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
                         }
                         for (int i = 0; i < selected.length; i++) {
                             if (selected[i]) {
-                                /*
-								 * if ( pointmode ) vt[i].smoothness = s; else {
-                                 */
                                 ed[i].smoothness = s;
                                 ed[ed[i].hedge].smoothness = s;
-                                // }
                             }
                         }
-                        theMesh
-                                .setSmoothingMethod(theMesh
-                                        .getSmoothingMethod());
+                        theMesh.setSmoothingMethod(theMesh.getSmoothingMethod());
                         objectChanged();
                         updateImage();
 
@@ -3303,15 +3293,12 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
     @Override
     public void setSelection(boolean sel[]) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
-        Wvertex[] verts = (Wvertex[]) mesh.getVertices();
-        Wedge[] edges = mesh.getEdges();
-        if (selectMode == POINT_MODE && sel.length == verts.length) {
+
+        if (selectMode == POINT_MODE && sel.length == mesh.getVertices().length) {
             selected = sel;
-        } else if (selectMode == EDGE_MODE
-                && sel.length == mesh.getEdges().length / 2) {
+        } else if (selectMode == EDGE_MODE && sel.length == mesh.getEdges().length / 2) {
             selected = sel;
-        } else if (selectMode == FACE_MODE
-                && sel.length == mesh.getFaces().length) {
+        } else if (selectMode == FACE_MODE && sel.length == mesh.getFaces().length) {
             selected = sel;
         }
         findSelectionDistance();
