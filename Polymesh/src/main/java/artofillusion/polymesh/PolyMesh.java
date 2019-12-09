@@ -3834,8 +3834,6 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         int[] fromVert;
         double[] fract;
 
-        long t = System.currentTimeMillis();
-        int size = vertices.length;
         int count = 0;
         for (int i = 0; i < sel.length; ++i) {
             if (sel[i]) {
@@ -3909,18 +3907,14 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
             ParameterValue newParamVal[] = new ParameterValue[oldParamVal.length];
             for (int k = 0; k < oldParamVal.length; k++) {
                 if (oldParamVal[k] instanceof VertexParameterValue) {
-                    double oldval[] = ((VertexParameterValue) oldParamVal[k])
-                            .getValue();
+                    double oldval[] = ((VertexParameterValue) oldParamVal[k]).getValue();
                     double newval[] = new double[newVertices.length];
                     for (int j = 0; j < oldval.length; j++) {
                         newval[j] = oldval[j];
                     }
                     for (int j = oldval.length; j < newVertices.length; ++j) {
                         fraction = fract[j - oldval.length];
-                        newval[j] = fraction
-                                * oldval[toVert[j - oldval.length]]
-                                + (1 - fraction)
-                                * (newval[fromVert[j - oldval.length]]);
+                        newval[j] = fraction * oldval[toVert[j - oldval.length]] + (1 - fraction) * (newval[fromVert[j - oldval.length]]);
                     }
                     newParamVal[k] = new VertexParameterValue(newval);
                 } else if (oldParamVal[k] instanceof FaceVertexParameterValue) {
@@ -4015,15 +4009,13 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
             ParameterValue newParamVal[] = new ParameterValue[oldParamVal.length];
             for (int k = 0; k < oldParamVal.length; k++) {
                 if (oldParamVal[k] instanceof VertexParameterValue) {
-                    double oldval[] = ((VertexParameterValue) oldParamVal[k])
-                            .getValue();
+                    double oldval[] = ((VertexParameterValue) oldParamVal[k]).getValue();
                     double newval[] = new double[newVertices.length];
                     for (int j = 0; j < oldval.length; j++) {
                         newval[j] = oldval[j];
                     }
                     for (int j = oldval.length; j < newVertices.length; ++j) {
-                        newval[j] = 0.5 * oldval[toVert[j - oldval.length]]
-                                + 0.5 * oldval[fromVert[j - oldval.length]];
+                        newval[j] = 0.5 * oldval[toVert[j - oldval.length]] + 0.5 * oldval[fromVert[j - oldval.length]];
                     }
                     newParamVal[k] = new VertexParameterValue(newval);
                 } else if (oldParamVal[k] instanceof FaceVertexParameterValue) {
