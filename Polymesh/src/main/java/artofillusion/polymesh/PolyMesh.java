@@ -4193,8 +4193,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
             hre2 = edges[re2].hedge;
         }
         for (int j = 0; j < edges.length; ++j) {
-            if (j != e2 && j != edges[e2].hedge && j != re1 && j != re2
-                    && j != hre1 && j != hre2) {
+            if (j != e2 && j != edges[e2].hedge && j != re1 && j != re2 && j != hre1 && j != hre2) {
                 edgeTable[j] = count;
                 newEdges[count] = new Wedge(edges[j]);
                 ++count;
@@ -4229,8 +4228,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
             ParameterValue newParamVal[] = new ParameterValue[oldParamVal.length];
             for (int k = 0; k < oldParamVal.length; k++) {
                 if (oldParamVal[k] instanceof VertexParameterValue) {
-                    double oldval[] = ((VertexParameterValue) oldParamVal[k])
-                            .getValue();
+                    double oldval[] = ((VertexParameterValue) oldParamVal[k]).getValue();
                     double newval[] = new double[newVert.length];
                     for (int j = 0; j < oldval.length; j++) {
                         if (vertexTable[j] >= 0) {
@@ -4283,9 +4281,9 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
     /**
      * Merges two boundary edges selections.
      *
-     * @param e1  First edge to merge whithin selection
+     * @param e1  First edge to merge within selection
      * @param e2  Second edge to merge within selection
-     * @param sel Boundary edges seelction (may be null)
+     * @param sel Boundary edges selection (may be null)
      * @return Selection corresponding to merged edges.
      */
     public boolean[] mergeEdges(int e1, int e2, boolean[] sel, boolean center) {
@@ -4491,8 +4489,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
             for (int i = 0; i < edges2.length; ++i) {
                 v = verts[i] = edges[edges2[edges2.length - 1 - i]].vertex;
                 if (center) {
-                    vertices[edges[edges[edges1[i]].hedge].vertex].r
-                            .add(vertices[v].r);
+                    vertices[edges[edges[edges1[i]].hedge].vertex].r.add(vertices[v].r);
                     vertices[edges[edges[edges1[i]].hedge].vertex].r.scale(0.5);
                 }
                 int[] ve = getVertexEdges(vertices[v]);
@@ -4502,8 +4499,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
             }
             v = verts[edges1.length] = edges[edges[edges2[0]].hedge].vertex;
             if (center) {
-                vertices[edges[edges1[edges1.length - 1]].vertex].r
-                        .add(vertices[v].r);
+                vertices[edges[edges1[edges1.length - 1]].vertex].r.add(vertices[v].r);
                 vertices[edges[edges1[edges1.length - 1]].vertex].r.scale(0.5);
             }
             int[] ve = getVertexEdges(vertices[v]);
@@ -4570,8 +4566,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
             for (int i = 0; i < edges.length; i++) {
                 deleted = false;
                 for (int j = 0; j < edges2.length; j++) {
-                    if (i == edges2[j] || i == edges[edges2[j]].hedge
-                            || i == re1 || i == re2 || i == hre1 || i == hre2) {
+                    if (i == edges2[j] || i == edges[edges2[j]].hedge || i == re1 || i == re2 || i == hre1 || i == hre2) {
                         deleted = true;
                     }
                 }
@@ -6064,17 +6059,12 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
                 face2 = edges[edges[ve[j]].hedge].face;
                 if (face1 != -1) {
                     pos.add(facePos[face1]);
-                    pos
-                            .subtract(vertices[edges[edges[ve[j]].next].vertex].r
-                                    .times(1.0 / 4.0));
-                    pos
-                            .subtract(vertices[edges[edges[edges[getPreviousEdge(ve[j])].hedge].next].vertex].r
-                                    .times(1.0 / 4.0));
+                    pos.subtract(vertices[edges[edges[ve[j]].next].vertex].r.times(1.0 / 4.0));
+                    pos.subtract(vertices[edges[edges[edges[getPreviousEdge(ve[j])].hedge].next].vertex].r.times(1.0 / 4.0));
                     pos.subtract(vertices[i].r.times(1.0 / 4.0));
                     ++count;
                 }
-                pos.add(vertices[edges[edges[ve[j]].next].vertex].r
-                        .times(3.0 / 2.0));
+                pos.add(vertices[edges[edges[ve[j]].next].vertex].r.times(3.0 / 2.0));
                 if (mirrorState == NO_MIRROR) {
                     smoothness = edges[ve[j]].smoothness;
                 } else {
@@ -6104,8 +6094,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 
             }
             pos.scale(1.0 / ((double) count * count));
-            pos.add(vertices[i].r.times(1.0 - 3.0 / (2.0 * count) - 1.0
-                    / (4.0 * count)));
+            pos.add(vertices[i].r.times(1.0 - 3.0 / (2.0 * count) - 1.0 / (4.0 * count)));
             if (vertices[i].type != Wvertex.CORNER) {
                 switch (sharp) {
                     case 0:
@@ -6114,46 +6103,35 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
                         } else if (hardnum == 2) {
                             weight /= 2;
                             sharpPt = new Vec3(newVert[i].r.times(0.75));
-                            sharpPt
-                                    .add(vertices[edges[edges[hardEdge[0]].next].vertex].r
-                                            .times(0.125));
-                            sharpPt
-                                    .add(vertices[edges[edges[hardEdge[1]].next].vertex].r
-                                            .times(0.125));
-                            newVert[i].r = pos.times(1 - weight).plus(
-                                    sharpPt.times(weight));
+                            sharpPt.add(vertices[edges[edges[hardEdge[0]].next].vertex].r.times(0.125));
+                            sharpPt.add(vertices[edges[edges[hardEdge[1]].next].vertex].r.times(0.125));
+                            newVert[i].r = pos.times(1 - weight).plus(sharpPt.times(weight));
                         } else {
                             weight /= hardnum;
-                            newVert[i].r = pos.times(1 - weight).plus(
-                                    newVert[i].r.times(weight));
+                            newVert[i].r = pos.times(1 - weight).plus(newVert[i].r.times(weight));
                         }
                         break;
                     case 1:
                         if (hardnum == 0) {
                             newVert[i].r = pos;
                         } else if (hardnum == 1) {
-                            newVert[i].r = pos.times(1 - maxHard).plus(
-                                    newVert[i].r.times(maxHard));
+                            newVert[i].r = pos.times(1 - maxHard).plus(newVert[i].r.times(maxHard));
                         } else {
                             weight /= hardnum;
-                            newVert[i].r = pos.times(1 - weight).plus(
-                                    newVert[i].r.times(weight));
+                            newVert[i].r = pos.times(1 - weight).plus(newVert[i].r.times(weight));
                         }
                         break;
                     case 2:
                         sharpPt = new Vec3(newVert[i].r.times(0.75));
-                        sharpPt.add(vertices[edges[edges[sharpEdge[0]].next].vertex].r
-                                .times(0.125));
-                        sharpPt.add(vertices[edges[edges[sharpEdge[1]].next].vertex].r
-                                .times(0.125));
+                        sharpPt.add(vertices[edges[edges[sharpEdge[0]].next].vertex].r.times(0.125));
+                        sharpPt.add(vertices[edges[edges[sharpEdge[1]].next].vertex].r.times(0.125));
                         //System.out.println(newVert[i].r + " " + edges[edges[sharpEdge[0]].next].vertex);
                         //System.out.println(sharpPt + " " + edges[edges[sharpEdge[1]].next].vertex);
                         if (hardnum == 0) {
                             newVert[i].r = sharpPt;
                         } else {
                             weight /= hardnum;
-                            newVert[i].r = sharpPt.times(1 - weight).plus(
-                                    newVert[i].r.times(weight));
+                            newVert[i].r = sharpPt.times(1 - weight).plus(newVert[i].r.times(weight));
                         }
                         break;
                     default:
