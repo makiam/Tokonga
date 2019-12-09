@@ -40,17 +40,16 @@ import java.awt.event.ActionEvent;
  * This is the manipulator responsible for moving, resizing and rotating
  * selections (2D). SSMR = Select Scale Move Rotate
  */
-public class SSMR3DManipulator
-        extends SSMRManipulator {
+public class SSMR3DManipulator extends SSMRManipulator {
 
-    private Rectangle[] boxes;
+    private final Rectangle[] boxes;
     private Rectangle extraUVBox;
     private final static int HANDLE_SIZE = 12;
     private int handle;
     private boolean dragging = false;
     private Point baseClick;
-    private Runnable valueWidgetCallback, validateWidgetValue, abortWidgetValue;
-    private boolean isCtrlDown, isShiftDown;
+
+    private boolean isShiftDown;
     private Vec3 rotateCenter;
     private Vec3 xaxis, yaxis, zaxis;
     private Vec2 x2Daxis, y2Daxis, z2Daxis;
@@ -143,27 +142,7 @@ public class SSMR3DManipulator
         specificRotHandles[0] = new RotationHandle(64, XAXIS, Color.blue);
         specificRotHandles[1] = new RotationHandle(64, YAXIS, Color.green);
         specificRotHandles[2] = new RotationHandle(64, ZAXIS, Color.red);
-        valueWidgetCallback = new Runnable() {
-
-            @Override
-            public void run() {
-                doValueWidgetCallback();
-            }
-        };
-        validateWidgetValue = new Runnable() {
-
-            @Override
-            public void run() {
-                doValueWidgetValidate();
-            }
-        };
-        abortWidgetValue = new Runnable() {
-
-            @Override
-            public void run() {
-                doValueWidgetAbort();
-            }
-        };
+        
         axisLength = 80;
         view.addEventLink(ToolTipEvent.class, this, "doTooltip");
         if (view.isPerspective()) {
@@ -547,7 +526,7 @@ public class SSMR3DManipulator
         if (bounds == null) {
             return false;
         }
-        Camera camera = view.getCamera();
+        
         Point p = e.getPoint();
         for (int i = 6; i >= 0; i--) {
             if (viewMode == UV_MODE && (i == Z_MOVE || i == Z_SCALE)) {
@@ -787,7 +766,6 @@ public class SSMR3DManipulator
 
     public void moveDragged(WidgetMouseEvent e) {
         boolean isShiftDown = e.isShiftDown();
-        boolean isCtrlDown = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
         double gridSize = view.getGridSpacing() / view.getSnapToSubdivisions();
         Vec2 disp = new Vec2(e.getPoint().x - baseClick.x, e.getPoint().y - baseClick.y);
         Vec3 drag = null;
@@ -907,7 +885,6 @@ public class SSMR3DManipulator
     public boolean rotateDragged(WidgetMouseEvent e) {
         Point p = e.getPoint();
         boolean isShiftDown = e.isShiftDown();
-        boolean isCtrlDown = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
 
         Vec2 disp = new Vec2(e.getPoint().x - baseClick.x, e.getPoint().y - baseClick.y);
         Vec2 vector = currentRotationHandle.points2d[rotSegment + 1].minus(currentRotationHandle.points2d[rotSegment]);
@@ -971,22 +948,21 @@ public class SSMR3DManipulator
             if (mouseButtonTwo(e) && handle != CENTER && e.isControlDown()) {
                 if (valueWidget != null) {
                     dispatchEvent(new ManipulatorPrepareChangingEvent(this, view));
-                    isCtrlDown = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+                    
                     isShiftDown = e.isShiftDown();
                     if (handle == ROTATE) {
                         valueWidget.setTempValueRange(-180, 180);
-                        valueWidget.activate(valueWidgetCallback);
+                        valueWidget.activate(this::doValueWidgetCallback);
                     } else if (handle == X_MOVE || handle == Y_MOVE || handle == Z_MOVE) {
                         valueWidget.setTempValueRange(-valueWidget.getValueMax(), valueWidget.getValueMax());
-                        valueWidget.activate(0.0, valueWidgetCallback);
+                        valueWidget.activate(0.0, this::doValueWidgetCallback);
                     } else {
                         valueWidget.setTempValueRange(-valueWidget.getValueMax(), valueWidget.getValueMax());
-                        valueWidget.activate(1.0, valueWidgetCallback);
+                        valueWidget.activate(1.0, this::doValueWidgetCallback);
                     }
                     return true;
                 }
-            } else if (mouseButtonOne(e) && (handle == X_MOVE || handle == Y_MOVE || handle == Z_MOVE
-                    || handle == X_SCALE || handle == Y_SCALE || handle == Z_SCALE)) {
+            } else if (mouseButtonOne(e) && (handle == X_MOVE || handle == Y_MOVE || handle == Z_MOVE || handle == X_SCALE || handle == Y_SCALE || handle == Z_SCALE)) {
                 if ((e.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
                     if (e.isShiftDown()) {
                         if (viewMode == XYZ_MODE) {
@@ -1117,24 +1093,6 @@ public class SSMR3DManipulator
         handle = -1;
         rotateCenter = null;
         return true;
-    }
-
-    public void doValueWidgetValidate() {
-        dragging = false;
-        if (handle == X_SCALE || handle == Y_SCALE || handle == Z_SCALE) {
-            dispatchEvent(new ManipulatorCompletedEvent(this, view));
-        } else if (handle == X_MOVE || handle == Y_MOVE || handle == Z_MOVE) {
-            dispatchEvent(new ManipulatorCompletedEvent(this, view));
-        } else if (handle == ROTATE) {
-            dispatchEvent(new ManipulatorCompletedEvent(this, view));
-        }
-        handle = -1;
-    }
-
-    public void doValueWidgetAbort() {
-        dragging = false;
-        handle = -1;
-        dispatchEvent(new ManipulatorAbortChangingEvent(this, view));
     }
 
     @Override
