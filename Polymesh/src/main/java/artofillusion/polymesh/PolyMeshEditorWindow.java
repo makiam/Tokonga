@@ -1603,7 +1603,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
         if (mesh.getSmoothingMethod() != Mesh.APPROXIMATING) {
             return;
         }
-        mesh = (PolyMesh) objInfo.object;
+        
         level = mesh.getInteractiveSmoothLevel();
         if (level + amount > 0) {
             mesh.setInteractiveSmoothLevel(level + amount);
@@ -2010,84 +2010,84 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
      * Move vertices menu command (normal)
      */
     private void doMoveVerticesNormal() {
-        move(selectMode, PolyMesh.NORMAL);
+        move(PolyMesh.NORMAL);
     }
 
     /**
      * Move vertices menu command (x)
      */
     private void doMoveVerticesX() {
-        move(selectMode, PolyMesh.X);
+        move(PolyMesh.X);
     }
 
     /**
      * Move vertices menu command (y)
      */
     private void doMoveVerticesY() {
-        move(selectMode, PolyMesh.Y);
+        move(PolyMesh.Y);
     }
 
     /**
      * Move vertices menu command (z)
      */
     private void doMoveVerticesZ() {
-        move(selectMode, PolyMesh.Z);
+        move(PolyMesh.Z);
     }
 
     /**
      * Move edges menu command (normal)
      */
     private void doMoveEdgesNormal() {
-        move(selectMode, PolyMesh.NORMAL);
+        move(PolyMesh.NORMAL);
     }
 
     /**
      * Move edges menu command (x)
      */
     private void doMoveEdgesX() {
-        move(selectMode, PolyMesh.X);
+        move(PolyMesh.X);
     }
 
     /**
      * Move edges menu command (y)
      */
     private void doMoveEdgesY() {
-        move(selectMode, PolyMesh.Y);
+        move(PolyMesh.Y);
     }
 
     /**
      * Move edges menu command (z)
      */
     private void doMoveEdgesZ() {
-        move(selectMode, PolyMesh.Z);
+        move(PolyMesh.Z);
     }
 
     /**
      * Move faces menu command (normal)
      */
     private void doMoveFacesNormal() {
-        move(selectMode, PolyMesh.NORMAL);
+        move(PolyMesh.NORMAL);
     }
 
     /**
      * Move faces menu command (x)
      */
     private void doMoveFacesX() {
-        move(selectMode, PolyMesh.X);
+        move(PolyMesh.X);
     }
 
     /**
      * Move faces menu command (y)
      */
     private void doMoveFacesY() {
-        move(selectMode, PolyMesh.Y);
+        move(PolyMesh.Y);
     }
 
     /**
      * Move faces menu command (z)
      */
     private void doMoveFacesZ() {
-        move(selectMode, PolyMesh.Z);
+        move(PolyMesh.Z);
     }
 
     /**
@@ -2096,7 +2096,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements PopupMenuM
      * @param kind Description of the Parameter
      * @param direction Description of the Parameter
      */
-    private void move(int kind, short direction) {
+    private void move(short direction) {
         if (valueWidget.isActivated()) {
             return;
         }
