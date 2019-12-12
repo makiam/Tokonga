@@ -98,7 +98,8 @@ public class SceneEnvironmentDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel1.setText("jLabel1");
+        jLabel1.setLabelFor(jComboBox1);
+        jLabel1.setText(Translate.text("environment"));
 
         jComboBox1.setModel(getEnvironmentType());
 
