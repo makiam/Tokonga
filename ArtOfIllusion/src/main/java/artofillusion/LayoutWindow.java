@@ -2817,6 +2817,10 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     public void setGridCommand() {
+        SwingUtilities.invokeLater(() -> {
+            new SetGridDialog(this.getComponent()).setVisible(true);
+        });
+        
         ValueField spaceField = new ValueField(theScene.getGridSpacing(), ValueField.POSITIVE);
         ValueField divField = new ValueField(theScene.getGridSubdivisions(), ValueField.POSITIVE + ValueField.INTEGER);
         BCheckBox showBox = new BCheckBox(Translate.text("showGrid"), theScene.getShowGrid());
@@ -2831,8 +2835,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         theScene.setGridSubdivisions((int) divField.getValue());
         theScene.setShowGrid(showBox.getState());
         theScene.setSnapToGrid(snapBox.getState());
-        for (int i = 0; i < theView.length; i++) {
-            theView[i].setGrid(theScene.getGridSpacing(), theScene.getGridSubdivisions(), theScene.getShowGrid(), theScene.getSnapToGrid());
+        for(SceneViewer view: theView) {
+            view.setGrid(theScene.getGridSpacing(), theScene.getGridSubdivisions(), theScene.getShowGrid(), theScene.getSnapToGrid());
         }
         updateImage();
     }
