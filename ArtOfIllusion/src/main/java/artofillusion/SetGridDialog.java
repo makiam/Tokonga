@@ -10,13 +10,12 @@ import artofillusion.ui.Translate;
 import com.google.common.flogger.FluentLogger;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.logging.Level;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
+import javax.swing.InputVerifier;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
-import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  *
@@ -77,8 +76,8 @@ public class SetGridDialog extends javax.swing.JDialog {
         gridSpacingInput = new javax.swing.JTextField();
         gridSubdivisionsLabel = new javax.swing.JLabel();
         gridSubdivisionsInput = new javax.swing.JTextField();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
+        showGridCheckBox = new javax.swing.JCheckBox();
+        snapToGridCheckBox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(Translate.text("gridTitle"));
@@ -106,14 +105,16 @@ public class SetGridDialog extends javax.swing.JDialog {
 
         gridSpacingInput.setText("jTextField1");
         gridSpacingInput.setDoubleBuffered(true);
+        gridSpacingInput.setInputVerifier(new PositiveIntegerFieldValidator());
 
         gridSubdivisionsLabel.setText(Translate.text("snapToSubdivisions"));
 
         gridSubdivisionsInput.setText("jTextField2");
+        gridSubdivisionsInput.setInputVerifier(new PositiveIntegerFieldValidator());
 
-        jCheckBox1.setText(Translate.text("showGrid"));
+        showGridCheckBox.setText(Translate.text("showGrid"));
 
-        jCheckBox2.setText(Translate.text("snapToGrid"));
+        snapToGridCheckBox.setText(Translate.text("snapToGrid"));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -137,8 +138,8 @@ public class SetGridDialog extends javax.swing.JDialog {
                             .addComponent(gridSubdivisionsInput)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jCheckBox2)
-                            .addComponent(jCheckBox1))
+                            .addComponent(showGridCheckBox)
+                            .addComponent(snapToGridCheckBox))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -157,9 +158,9 @@ public class SetGridDialog extends javax.swing.JDialog {
                     .addComponent(gridSubdivisionsLabel)
                     .addComponent(gridSubdivisionsInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jCheckBox1)
+                .addComponent(showGridCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jCheckBox2)
+                .addComponent(snapToGridCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
@@ -194,44 +195,6 @@ public class SetGridDialog extends javax.swing.JDialog {
         dispose();
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for(javax.swing.UIManager.LookAndFeelInfo info: javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException|ClassNotFoundException ex) {
-            logger.at(Level.SEVERE).withCause(ex).log("Exception at main");            
-        }
-        //</editor-fold>
-        
-        //</editor-fold>
-
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                SetGridDialog dialog = new SetGridDialog(new javax.swing.JFrame());
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
@@ -239,10 +202,28 @@ public class SetGridDialog extends javax.swing.JDialog {
     private javax.swing.JLabel gridSpacingLabel;
     private javax.swing.JTextField gridSubdivisionsInput;
     private javax.swing.JLabel gridSubdivisionsLabel;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JButton okButton;
+    private javax.swing.JCheckBox showGridCheckBox;
+    private javax.swing.JCheckBox snapToGridCheckBox;
     // End of variables declaration//GEN-END:variables
 
     private int returnStatus = RET_CANCEL;
+
+    public Boolean getShowGrid() {
+        return showGridCheckBox.isSelected();
+    }
+    
+    public Boolean getSnapToGrid() {
+        return snapToGridCheckBox.isSelected();
+    }
+    
+    
+    private class PositiveIntegerFieldValidator extends InputVerifier {
+
+        @Override
+        public boolean verify(JComponent input) {
+            return true;
+        }
+        
+    }
 }
