@@ -2818,7 +2818,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     public void setGridCommand() {
         SwingUtilities.invokeLater(() -> {
-            new SetGridDialog(this.getComponent()).setVisible(true);
+            new SetGridDialog(this.getComponent(), this.getScene()).setVisible(true);
         });
         
         ValueField spaceField = new ValueField(theScene.getGridSpacing(), ValueField.POSITIVE);

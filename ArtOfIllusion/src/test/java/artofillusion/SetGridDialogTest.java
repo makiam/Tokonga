@@ -36,7 +36,7 @@ public class SetGridDialogTest {
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void test() {
         SwingUtilities.invokeLater(() -> {
-            new SetGridDialog(null).setVisible(true);
+            new SetGridDialog(null, null).setVisible(true);
         });
         
         JDialogOperator op = new JDialogOperator();

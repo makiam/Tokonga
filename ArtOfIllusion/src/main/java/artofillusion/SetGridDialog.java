@@ -37,7 +37,7 @@ public class SetGridDialog extends javax.swing.JDialog {
     /**
      * Creates new form SetGridDialog
      */
-    public SetGridDialog(java.awt.Frame parent) {
+    public SetGridDialog(final java.awt.Frame parent, final Scene scene) {
         super(parent, true);
         initComponents();
 
@@ -75,9 +75,9 @@ public class SetGridDialog extends javax.swing.JDialog {
         gridSpacingLabel = new javax.swing.JLabel();
         gridSpacingInput = new javax.swing.JTextField();
         gridSubdivisionsLabel = new javax.swing.JLabel();
-        gridSubdivisionsInput = new javax.swing.JTextField();
         showGridCheckBox = new javax.swing.JCheckBox();
         snapToGridCheckBox = new javax.swing.JCheckBox();
+        gridSubdivisionsSpinner = new javax.swing.JSpinner();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(Translate.text("gridTitle"));
@@ -103,18 +103,16 @@ public class SetGridDialog extends javax.swing.JDialog {
 
         gridSpacingLabel.setText(Translate.text("gridSpacing"));
 
-        gridSpacingInput.setText("jTextField1");
         gridSpacingInput.setDoubleBuffered(true);
-        gridSpacingInput.setInputVerifier(new PositiveIntegerFieldValidator());
+        gridSpacingInput.setInputVerifier(new PositiveNumberFieldValidator());
 
         gridSubdivisionsLabel.setText(Translate.text("snapToSubdivisions"));
-
-        gridSubdivisionsInput.setText("jTextField2");
-        gridSubdivisionsInput.setInputVerifier(new PositiveIntegerFieldValidator());
 
         showGridCheckBox.setText(Translate.text("showGrid"));
 
         snapToGridCheckBox.setText(Translate.text("snapToGrid"));
+
+        gridSubdivisionsSpinner.setModel(new javax.swing.SpinnerNumberModel(10, 1, null, 1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -135,7 +133,7 @@ public class SetGridDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(gridSpacingInput)
-                            .addComponent(gridSubdivisionsInput)))
+                            .addComponent(gridSubdivisionsSpinner)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(showGridCheckBox)
@@ -156,7 +154,7 @@ public class SetGridDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(gridSubdivisionsLabel)
-                    .addComponent(gridSubdivisionsInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(gridSubdivisionsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(showGridCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -200,8 +198,8 @@ public class SetGridDialog extends javax.swing.JDialog {
     private javax.swing.JButton cancelButton;
     private javax.swing.JTextField gridSpacingInput;
     private javax.swing.JLabel gridSpacingLabel;
-    private javax.swing.JTextField gridSubdivisionsInput;
     private javax.swing.JLabel gridSubdivisionsLabel;
+    private javax.swing.JSpinner gridSubdivisionsSpinner;
     private javax.swing.JButton okButton;
     private javax.swing.JCheckBox showGridCheckBox;
     private javax.swing.JCheckBox snapToGridCheckBox;
@@ -218,7 +216,7 @@ public class SetGridDialog extends javax.swing.JDialog {
     }
     
     
-    private class PositiveIntegerFieldValidator extends InputVerifier {
+    private class PositiveNumberFieldValidator extends InputVerifier {
 
         @Override
         public boolean verify(JComponent input) {
