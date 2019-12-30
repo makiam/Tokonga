@@ -511,7 +511,7 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
     }
 
     private void doEditTextures() {
-        window.showTexturesDialog(scene);
+        window.texturesCommand();
     }
 
     private void doAddLayer() {
