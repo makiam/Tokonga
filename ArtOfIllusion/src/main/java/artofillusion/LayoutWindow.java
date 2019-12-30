@@ -56,7 +56,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     BScrollPane itemTreeScroller;
     Score theScore;
     ToolPalette tools;
-    private TexturesAndMaterialsDialog assetsDialog;
+    
     private BLabel helpText;
     TreeList itemTree;
     Scene theScene;
@@ -2879,21 +2879,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     public void texturesCommand() {
-        showTexturesDialog(theScene);
-    }
-
-    /**
-     * Show the dialog for editing textures and materials.
-     */
-    public void showTexturesDialog(Scene target) {
-        if (null == assetsDialog) {
-            assetsDialog = new TexturesAndMaterialsDialog(this, target);
-        }
-        Rectangle r = assetsDialog.getBounds();
-        assetsDialog.dispose();
-        assetsDialog = new TexturesAndMaterialsDialog(this, target);
-        assetsDialog.setBounds(r);
-        assetsDialog.setVisible(true);
+        SwingUtilities.invokeLater(() -> {
+            new TexturesAndMaterialsDialog(this, theScene).setVisible(true);
+        });
     }
 
     public void environmentCommand() {

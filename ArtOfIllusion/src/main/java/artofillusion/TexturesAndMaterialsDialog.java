@@ -18,12 +18,15 @@ import buoy.event.*;
 import buoy.widget.*;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.datatransfer.*;
 import java.io.*;
 import java.lang.ref.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
@@ -31,8 +34,11 @@ import javax.swing.tree.*;
 public class TexturesAndMaterialsDialog extends BDialog {
 
     private static final File assetsFolder = new File(ArtOfIllusion.APP_DIRECTORY, "Textures and Materials");
+
+    private static final Map<EditingWindow, Rectangle> mapViewToPosition = new HashMap<>();
     Scene theScene;
-    EditingWindow parentFrame;
+    private EditingWindow parentFrame;
+    
     BTree libraryList;
     File libraryFile;
     Scene selectedScene;
@@ -75,7 +81,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
     public TexturesAndMaterialsDialog(EditingWindow frame, Scene aScene) {
 
         super(frame.getFrame(), Translate.text("texturesTitle"), false);
-
+        
         parentFrame = frame;
         theScene = aScene;
 
@@ -140,12 +146,12 @@ public class TexturesAndMaterialsDialog extends BDialog {
         typeChoice = new BComboBox();
         typeChoice.add(Translate.text("button.new") + "...");
 
-        for (Texture texture : textureTypes) {
+        textureTypes.forEach((texture) -> {
             typeChoice.add(texture.getTypeName() + " texture");
-        }
-        for (Material material : materialTypes) {
+        });
+        materialTypes.forEach((material) -> {
             typeChoice.add(material.getTypeName() + " material");
-        }
+        });
 
         typeChoice.addEventLink(ValueChangedEvent.class, this, "doNew");
 
@@ -185,8 +191,14 @@ public class TexturesAndMaterialsDialog extends BDialog {
         libraryList.setModel(new SceneTreeModel());
         setSelection(libraryList.getRootNode(), theScene, theScene.getDefaultTexture());
         pack();
+        
         UIUtilities.centerDialog(this, parentFrame.getFrame());
-
+        if(mapViewToPosition.containsKey(frame)) {
+            this.setBounds(mapViewToPosition.get(frame));
+            return;
+        }
+        mapViewToPosition.put(frame, this.getBounds());
+        
     }
 
     public void doSelectionChanged() {
@@ -559,6 +571,8 @@ public class TexturesAndMaterialsDialog extends BDialog {
 
     @Override
     public void dispose() {
+        mapViewToPosition.get(parentFrame).setBounds(this.getBounds());
+        
         theScene.removeMaterialListener(listListener);
         theScene.removeTextureListener(listListener);
         super.dispose();
