@@ -1,4 +1,5 @@
 /* Copyright (C) 2005-2017 by Peter Eastman
+   Modifications copyright (C) 2019 Petri Ihalainen
 
 This program is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
@@ -894,6 +895,10 @@ public class GLCanvasDrawer implements CanvasDrawer {
                     useTextureRectangle = false;
                 }
             }
+            // Tackling Nvidia bug 2019
+            FloatBuffer fb = Buffers.newDirectFloatBuffer(1);
+            gl.glVertexPointer(2, GL.GL_FLOAT, 0, fb);
+            gl.glNormalPointer(GL.GL_FLOAT, 0, fb);
         }
 
         @Override
@@ -922,10 +927,11 @@ public class GLCanvasDrawer implements CanvasDrawer {
             if (view.isPerspective()) {
                 minDepth = view.getCamera().getDistToScreen() / 20.0;
             } else {
-                minDepth = Math.min(-0.01, depthRange[0]);
+                minDepth = Math.min(0.0, depthRange[0]);
             }
+            maxDepth = Math.max(minDepth, depthRange[1]) + 0.01;
             minDepth -= 0.01;
-            maxDepth = depthRange[1] + 0.01;
+            
             if (view.getTemplateShown()) {
                 drawImage(template, 0, 0);
             }
