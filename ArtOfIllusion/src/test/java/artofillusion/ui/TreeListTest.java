@@ -55,4 +55,24 @@ public class TreeListTest {
         Object[] empty = list.getSelectedObjects();
         Assert.assertEquals(1, empty.length);
     }
+    
+    @Test
+    public void testGetShowingObjectsFromEmptyTree() {
+        TreeList list = new TreeList(layout);
+        Object[] empty = list.getVisibleObjects();
+        Assert.assertEquals(0, empty.length);
+    }
+    
+    @Test
+    public void testGetShowingObjectsFromNonEmptyTree() {
+        TreeList list = new TreeList(layout);
+        TreeElement item = new GenericTreeElement("Label", "String Here", null, list, null);
+        
+        list.addElement(item);
+        list.setSelected(item, true);
+        
+        Object[] empty = list.getVisibleObjects();
+        Assert.assertEquals(1, empty.length);
+    }
+    
 }
