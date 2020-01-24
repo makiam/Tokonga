@@ -27,7 +27,10 @@ import java.util.Vector;
 public class TreeList extends CustomWidget {
 
     private EditingWindow window;
-    private Vector<TreeElement> elements, showing, selected;
+    private Vector<TreeElement> elements, showing;
+    
+    private final List<TreeElement> selected;
+    
     private Vector<Integer> indent;
     private int yoffset, rowHeight, dragStart, lastDrag, lastClickRow, lastIndent, maxRowWidth;
     private boolean updateDisabled, moving, origSelected[], insertAbove, okToInsert, allowMultiple;
@@ -217,16 +220,17 @@ public class TreeList extends CustomWidget {
     }
 
     /**
-     * Get an array of the objects corresponding to selected TreeElements.
+     * @return an array of the objects corresponding to selected TreeElements.
      */
     public Object[] getSelectedObjects() {
+        //return selected.stream().map(te -> te.getObject()).toArray();
         Object sel[] = new Object[selected.size()];
         for (int i = 0; i < sel.length; i++) {
             sel[i] = selected.get(i).getObject();
-        }
+    }
         return sel;
     }
-
+    
     /**
      * Deselect all elements in the tree.
      */
