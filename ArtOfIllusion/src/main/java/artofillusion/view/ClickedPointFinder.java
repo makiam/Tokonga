@@ -27,16 +27,14 @@ public class ClickedPointFinder {
     public ClickedPointFinder() {
     }
 
-    ;
-
-	/** 
-	 *  Return the closest point on a surface of an object that is found under 
-	 *  a given point on the view. If no object surface is found, then a point at  
-	 *  ViewerCanvas.distToPlane is returned. 
-	 *
-	 *  This works only for objects, that can produce a RenderingMesh.
-	 */
-	public Vec3 newPoint(ViewerCanvas view, Point point) {
+    /**
+     * Return the closest point on a surface of an object that is found under a
+     * given point on the view. If no object surface is found, then a point at
+     * ViewerCanvas.distToPlane is returned.
+     *
+     * This works only for objects, that can produce a RenderingMesh.
+     */
+    public Vec3 newPoint(ViewerCanvas view, Point point) {
         Vec3 clickedPoint = view.getCamera().convertScreenToWorld(point, view.getDistToPlane()); // defaultpoint if nothing is there
         Vec3 pointOnTriangle;
         boolean inSpace = true;
@@ -54,7 +52,7 @@ public class ClickedPointFinder {
         } else {
             modelToScreen = view.getCamera().getWorldToScreen();
         }
-        
+
         RenderingMesh surface;
         boolean hideTriangle[];
         Vec3[] corner3D = new Vec3[3];
@@ -62,7 +60,7 @@ public class ClickedPointFinder {
         Mat4 toContext;
 
         for (ObjectInfo info: renderableObjects(view)) {
-            
+
             surface = info.getPreviewMesh();
             if (view instanceof ObjectViewer && (!((ObjectViewer) view).getSceneVisible() || info == ((ObjectViewer) view).thisObjectInScene)) {
                 hideTriangle = view.getHiddenRenderingTriangles();
@@ -142,30 +140,12 @@ public class ClickedPointFinder {
         return (p2D.x > 0 && p2D.x < w && p2D.y > 0 && p2D.y < h);
     }
 
-    /*
-	// These two were supposed to be a pre-check for each mesh, 
-	// whether to check the individual triangles or not
-	private boolean boxInView(ViewerCanvas view, ObjectInfo oi)
-	{
-		return true;
-	}
-	
-	private boolean clickOnBox(ViewerCanvas view, ObjectInfo oi)
-	{
-		return true;
-	}
-     */
-    private List<ObjectInfo> renderableObjects(ViewerCanvas view) {
+    private static List<ObjectInfo> renderableObjects(ViewerCanvas view) {
         List<ObjectInfo> renderable = new ArrayList<>();
-        ObjectInfo oi;
 
         if (view instanceof SceneViewer || (view instanceof ObjectViewer && ((ObjectViewer) view).getSceneVisible())) {
-            Scene scene = view.getScene();
-            for (int i = 0; i < scene.getNumObjects(); i++) {
-                oi = scene.getObject(i);
-                if (oi.isVisible() && oi.getObject().canSetTexture()) {
-                    renderable.add(oi);
-                }
+            for(ObjectInfo oi: view.getScene().getObjects()) {
+                if(oi.isVisible() && oi.getObject().canSetTexture()) renderable.add(oi);
             }
         } else if (view instanceof ObjectViewer) {
             renderable.add(((ObjectViewer) view).getController().getObject());
