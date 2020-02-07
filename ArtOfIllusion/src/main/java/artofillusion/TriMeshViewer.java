@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
-   Modifications copyright (C) 2017 Petri Ihalainen
+   Modifications copyright (C) 2017-2020 Petri Ihalainen
    Changes copyright (C) 2019 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -37,7 +37,7 @@ public class TriMeshViewer extends MeshViewer {
     private Point screenVert[];
     private double screenZ[];
     private Vec2 screenVec2[];
-    boolean visible[];
+    boolean visible[], hideRenderingTriangle[];
 
     public TriMeshViewer(MeshEditController window, RowContainer p) {
         super(window, p);
@@ -113,7 +113,7 @@ public class TriMeshViewer extends MeshViewer {
         if (!showSurface) {
             return;
         }
-        boolean hide[] = null;
+        hideRenderingTriangle = null;
         int faceIndex[] = null;
         ObjectInfo objInfo = controller.getObject();
         if (controller instanceof TriMeshEditorWindow && ((TriMeshEditorWindow) controller).getFaceIndexParameter() != null) {
@@ -131,9 +131,9 @@ public class TriMeshViewer extends MeshViewer {
             }
             boolean hideFace[] = ((TriMeshEditorWindow) controller).hideFace;
             if (hideFace != null) {
-                hide = new boolean[param.length];
-                for (int i = 0; i < hide.length; i++) {
-                    hide[i] = hideFace[faceIndex[i]];
+                hideRenderingTriangle  = new boolean[param.length];
+                for (int i = 0; i < hideRenderingTriangle .length; i++) {
+                    hideRenderingTriangle [i] = hideFace[faceIndex[i]];
                 }
             }
         }
@@ -145,7 +145,7 @@ public class TriMeshViewer extends MeshViewer {
             if (faceIndex != null && controller.getSelectionMode() == MeshEditController.FACE_MODE) {
                 shader = new SelectionVertexShader(new RGBColor(1.0, 0.4, 1.0), shader, faceIndex, controller.getSelection());
             }
-            renderMeshTransparent(objInfo.getPreviewMesh(), shader, theCamera, viewDir, hide);
+            renderMeshTransparent(objInfo.getPreviewMesh(), shader, theCamera, viewDir, hideRenderingTriangle );
         } else {
             RenderingMesh mesh = objInfo.getPreviewMesh();
             VertexShader shader;
@@ -168,7 +168,7 @@ public class TriMeshViewer extends MeshViewer {
             if (faceIndex != null && controller.getSelectionMode() == MeshEditController.FACE_MODE) {
                 shader = new SelectionVertexShader(new RGBColor(1.0, 0.4, 1.0), shader, faceIndex, controller.getSelection());
             }
-            renderMesh(mesh, shader, theCamera, objInfo.getObject().isClosed(), hide);
+            renderMesh(mesh, shader, theCamera, objInfo.getObject().isClosed(), hideRenderingTriangle );
         }
     }
 
@@ -710,5 +710,14 @@ public class TriMeshViewer extends MeshViewer {
             }
         }
         return which;
+    }
+    
+    /**
+     * The TriMeshEditorWindow may hide parts of the control mesh. Get how it
+     * affects the preview mesh.
+     */
+    @Override
+    public boolean[] getHiddenRenderingTriangles() {
+        return hideRenderingTriangle;
     }
 }
