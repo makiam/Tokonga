@@ -81,7 +81,7 @@ public class MoveScaleRotateObjectTool extends EditingTool {
     @Override
     public void drawOverlay(ViewerCanvas view) {
         BoundingBox selectionBounds = findSelectionBounds(view.getCamera());
-        if (!dragInProgress && manipulator.getViewMode() == Compound3DManipulator.NPQ_MODE && selectionBounds != null) {
+        if (!dragInProgress && manipulator.getViewMode() == Compound3DManipulator.PQN_MODE && selectionBounds != null) {
             // Calculate the axis directions.
 
             ObjectInfo firstObj = getWindow().getSelectedObjects().iterator().next();
@@ -331,7 +331,7 @@ public class MoveScaleRotateObjectTool extends EditingTool {
             if (mode == Compound3DManipulator.XYZ_MODE) {
                 manipulator.setViewMode(Compound3DManipulator.UV_MODE);
             } else if (mode == Compound3DManipulator.UV_MODE) {
-                manipulator.setViewMode(Compound3DManipulator.NPQ_MODE);
+                manipulator.setViewMode(Compound3DManipulator.PQN_MODE);
             } else {
                 manipulator.setViewMode(Compound3DManipulator.XYZ_MODE);
             }

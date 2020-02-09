@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2009 by Francois Guillet and Peter Eastman
-   Changes copyright (C) 2019 by Maksim Khramov
+   Changes copyright (C) 2019-2020 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -46,7 +46,7 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
     private Vec3 center;
     private double axisLength, orAxisLength;
     private RotationHandle[] xyzRotHandles;
-    private RotationHandle[] npqRotHandles;
+    private RotationHandle[] pqnRotHandles;
     private RotationHandle[] uvRotationHandle;
     private RotationHandle[] activeRotationHandleSet;
     private RotationHandle currentRotationHandle;
@@ -55,7 +55,11 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
 
     public final static ViewMode XYZ_MODE = new ViewMode();
     public final static ViewMode UV_MODE = new ViewMode();
-    public final static ViewMode NPQ_MODE = new ViewMode();
+    public final static ViewMode PQN_MODE = new ViewMode();
+
+    /** @deprecated Redirects to PQN_MODE */
+    @Deprecated
+    public final static ViewMode NPQ_MODE = PQN_MODE;
 
     private static final int HANDLE_SIZE = 12;
 
@@ -75,11 +79,11 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
     public static final Axis Z = new Axis("z");
     public static final Axis U = new Axis("u");
     public static final Axis V = new Axis("v");
-    public static final Axis W = new Axis("v");
+    public static final Axis W = new Axis("w");
     public static final Axis UV = new Axis("uv");
-    public static final Axis N = new Axis("n");
     public static final Axis P = new Axis("p");
     public static final Axis Q = new Axis("q");
+    public static final Axis N = new Axis("n");
     public static final Axis ALL = new Axis("all");
 
     public static final HandleType MOVE = new HandleType();
@@ -89,7 +93,12 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
     private static final Image centerhandle;
     private static final Image xyzHandleImages[] = new Image[6];
     private static final Image uvHandleImages[] = new Image[4];
-    private static final Image npqHandleImages[] = new Image[6];
+    private static final Image pqnHandleImages[] = new Image[6];
+
+    private static Color handleRed   = new Color(255-16,0,0);
+    private static Color handleGreen = new Color(0,255-16,0);
+    private static Color handleBlue  = new Color(15,127-16,255);
+
 
     static {
         xyzHandleImages[X_MOVE_INDEX] = loadImage("xhandle.gif");
@@ -103,12 +112,12 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
         uvHandleImages[Y_MOVE_INDEX] = loadImage("vhandle.gif");
         uvHandleImages[Y_SCALE_INDEX] = loadImage("uvscale.gif");
         centerhandle = loadImage("centerhandle.gif");
-        npqHandleImages[X_MOVE_INDEX] = loadImage("phandle.gif");
-        npqHandleImages[X_SCALE_INDEX] = loadImage("xscale.gif");
-        npqHandleImages[Y_MOVE_INDEX] = loadImage("qhandle.gif");
-        npqHandleImages[Y_SCALE_INDEX] = loadImage("yscale.gif");
-        npqHandleImages[Z_MOVE_INDEX] = loadImage("nhandle.gif");
-        npqHandleImages[Z_SCALE_INDEX] = loadImage("zscale.gif");
+        pqnHandleImages[X_MOVE_INDEX] = loadImage("phandle.gif");
+        pqnHandleImages[X_SCALE_INDEX] = loadImage("xscale.gif");
+        pqnHandleImages[Y_MOVE_INDEX] = loadImage("qhandle.gif");
+        pqnHandleImages[Y_SCALE_INDEX] = loadImage("yscale.gif");
+        pqnHandleImages[Z_MOVE_INDEX] = loadImage("nhandle.gif");
+        pqnHandleImages[Z_SCALE_INDEX] = loadImage("zscale.gif");
     }
 
     private static Image loadImage(String name) {
@@ -140,10 +149,10 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
         xyzRotHandles[2] = new RotationHandle(64, Z, Color.red);
         uvRotationHandle = new RotationHandle[1];
         uvRotationHandle[0] = new RotationHandle(64, U, Color.orange);
-        npqRotHandles = new RotationHandle[3];
-        npqRotHandles[0] = new RotationHandle(64, N, Color.blue);
-        npqRotHandles[1] = new RotationHandle(64, P, Color.green);
-        npqRotHandles[2] = new RotationHandle(64, Q, Color.red);
+        pqnRotHandles = new RotationHandle[3];
+        pqnRotHandles[0] = new RotationHandle(64, N, Color.blue);
+        pqnRotHandles[1] = new RotationHandle(64, P, Color.green);
+        pqnRotHandles[2] = new RotationHandle(64, Q, Color.red);
         axisLength = 80;
         setViewMode(XYZ_MODE);
     }
@@ -188,9 +197,9 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
      */
     public void setNPQAxes(Vec3 nDir, Vec3 pDir, Vec3 qDir) {
         npqModeAxes = new Vec3[]{new Vec3(pDir), new Vec3(qDir), new Vec3(nDir)};
-        npqRotHandles[0].setAxis(nDir, pDir);
-        npqRotHandles[1].setAxis(pDir, qDir);
-        npqRotHandles[2].setAxis(qDir, nDir);
+        pqnRotHandles[0].setAxis(nDir, pDir);
+        pqnRotHandles[1].setAxis(pDir, qDir);
+        pqnRotHandles[2].setAxis(qDir, nDir);
     }
 
     /**
@@ -248,8 +257,8 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
             rotHandles = xyzRotHandles;
         } else if (viewMode == UV_MODE) {
             rotHandles = uvRotationHandle;
-        } else if (viewMode == NPQ_MODE) {
-            rotHandles = npqRotHandles;
+        } else if (viewMode == PQN_MODE) {
+            rotHandles = pqnRotHandles;
         }
         //and detect if click happened in one of them
         for(RotationHandle handle :rotHandles) {
@@ -343,8 +352,8 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
         } else if (viewMode == UV_MODE) {
             activeRotationHandleSet = uvRotationHandle;
             activeRotationHandleSet[0].setAxis(zaxis, xaxis);
-        } else if (viewMode == NPQ_MODE) {
-            activeRotationHandleSet = npqRotHandles;
+        } else if (viewMode == PQN_MODE) {
+            activeRotationHandleSet = pqnRotHandles;
         }
         for (int i = 0; i < activeRotationHandleSet.length; ++i) {
             RotationHandle rotHandle = activeRotationHandleSet[i];
@@ -428,7 +437,7 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
             xColor = Color.blue;
             yColor = Color.green;
             zColor = Color.red;
-            handles = npqHandleImages;
+            handles = pqnHandleImages;
         }
         view.drawLine(centerPoint, new Point((int) screenX.x, (int) screenX.y), xColor);
         view.drawLine(centerPoint, new Point((int) screenY.x, (int) screenY.y), yColor);
@@ -509,8 +518,8 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
             rotHandles = xyzRotHandles;
         } else if (viewMode == UV_MODE) {
             rotHandles = uvRotationHandle;
-        } else if (viewMode == NPQ_MODE) {
-            rotHandles = npqRotHandles;
+        } else if (viewMode == PQN_MODE) {
+            rotHandles = pqnRotHandles;
         }
         
         //and detect if click happened in one of them
