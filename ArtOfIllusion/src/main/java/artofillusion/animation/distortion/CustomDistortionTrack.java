@@ -381,26 +381,10 @@ public class CustomDistortionTrack extends Track implements ProcedureOwner {
     }
 
     /**
-     * Determine whether the procedure may contain Parameter modules.
-     */
-    @Override
-    public boolean allowParameters() {
-        return true;
-    }
-
-    /**
      * Determine whether the procedure may contain View Angle modules.
      */
     @Override
     public boolean allowViewAngle() {
-        return true;
-    }
-
-    /**
-     * Determine whether the procedure may be renamed.
-     */
-    @Override
-    public boolean canEditName() {
         return true;
     }
 

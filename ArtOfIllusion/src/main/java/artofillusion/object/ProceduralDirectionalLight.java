@@ -18,6 +18,7 @@ import artofillusion.math.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+import com.google.common.annotations.VisibleForTesting;
 import java.io.*;
 import java.awt.*;
 import java.util.*;
@@ -420,7 +421,8 @@ public class ProceduralDirectionalLight extends DirectionalLight {
         }
     }
 
-    private class LightProcedureOwner implements ProcedureOwner {
+    @VisibleForTesting
+    public class LightProcedureOwner implements ProcedureOwner {
 
         private ObjectInfo info;
         private Runnable callback;
@@ -487,16 +489,6 @@ public class ProceduralDirectionalLight extends DirectionalLight {
         @Override
         public void disposePreview(Object preview) {
             UIUtilities.findWindow((MaterialPreviewer) preview).dispose();
-        }
-
-        @Override
-        public boolean allowParameters() {
-            return true;
-        }
-
-        @Override
-        public boolean allowViewAngle() {
-            return false;
         }
 
         @Override

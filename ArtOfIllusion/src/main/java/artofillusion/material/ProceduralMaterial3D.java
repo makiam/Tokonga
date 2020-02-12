@@ -288,27 +288,11 @@ public class ProceduralMaterial3D extends Material3D implements ProcedureOwner {
     }
 
     /**
-     * Determine whether the procedure may contain View Angle modules.
-     */
-    @Override
-    public boolean allowViewAngle() {
-        return false;
-    }
-
-    /**
      * Determine whether the procedure may contain Parameter modules.
      */
     @Override
     public boolean allowParameters() {
         return false;
-    }
-
-    /**
-     * Determine whether the procedure may be renamed.
-     */
-    @Override
-    public boolean canEditName() {
-        return true;
     }
 
     /**

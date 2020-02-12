@@ -39,17 +39,23 @@ public interface ProcedureOwner {
     /**
      * Determine whether the procedure may contain Parameter modules.
      */
-    public boolean allowParameters();
+    default boolean allowParameters() {
+        return true;
+    }
 
     /**
      * Determine whether the procedure may contain View Angle modules.
      */
-    public boolean allowViewAngle();
+    default boolean allowViewAngle() {
+        return false;
+    }
 
     /**
      * Determine whether the procedure may be renamed.
      */
-    public boolean canEditName();
+    default boolean canEditName() {
+        return true;
+    }
 
     /**
      * Get the name of the procedure.

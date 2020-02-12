@@ -522,30 +522,6 @@ public class ProceduralRotationTrack extends Track implements ProcedureOwner {
     }
 
     /**
-     * Determine whether the procedure may contain View Angle modules.
-     */
-    @Override
-    public boolean allowViewAngle() {
-        return false;
-    }
-
-    /**
-     * Determine whether the procedure may contain Parameter modules.
-     */
-    @Override
-    public boolean allowParameters() {
-        return true;
-    }
-
-    /**
-     * Determine whether the procedure may be renamed.
-     */
-    @Override
-    public boolean canEditName() {
-        return true;
-    }
-
-    /**
      * This is called when the user clicks OK in the procedure editor.
      */
     @Override
