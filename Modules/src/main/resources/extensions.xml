@@ -1,0 +1,27 @@
+<?xml version="1.0" standalone="yes"?>
+<extension name="Modules" version="3.0">
+    <author>Maksim Khramov</author>
+    <date>2013</date>
+    <description>
+        This plugin contains the standard Procedural modules which are included with Art of Illusion.
+    </description>
+    <category class="artofillusion.procedural.ProceduralModule"/>
+    
+    <plugin class="artofillusion.procedural.AbsModule"/>
+    <plugin class="artofillusion.procedural.BiasModule"/>
+    <plugin class="artofillusion.procedural.BlurModule"/>
+    <plugin class="artofillusion.procedural.ClipModule"/>
+    <plugin class="artofillusion.procedural.CosineModule"/>
+    <plugin class="artofillusion.procedural.ExpModule"/>
+    <plugin class="artofillusion.procedural.ExprModule"/>
+    <plugin class="artofillusion.procedural.FunctionModule"/>
+    <plugin class="artofillusion.procedural.GainModule"/>
+    <plugin class="artofillusion.procedural.InterpModule"/>
+    <plugin class="artofillusion.procedural.LogModule"/>
+    <plugin class="artofillusion.procedural.RandomModule"/>
+    <plugin class="artofillusion.procedural.ScaleShiftModule"/>
+    <plugin class="artofillusion.procedural.SineModule"/>
+    <plugin class="artofillusion.procedural.SqrtModule"/>
+    
+</extension>
+
