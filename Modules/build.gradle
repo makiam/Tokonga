@@ -1,0 +1,10 @@
+description = 'Modules'
+
+dependencies {
+    compile project(':ArtOfIllusion')
+    testCompile project(':ArtOfIllusion').sourceSets.test.output
+}
+
+tasks.withType(Jar) {
+    destinationDir = file("${rootProject.projectDir}/Plugins")
+}
