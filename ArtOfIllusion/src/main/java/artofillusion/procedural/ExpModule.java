@@ -1,7 +1,7 @@
 /* This is a Module which outputs the exponential of a number. */
 
  /* Copyright (C) 2000 by Peter Eastman
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2020 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -15,6 +15,7 @@ package artofillusion.procedural;
 import artofillusion.math.*;
 import java.awt.*;
 
+@ProceduralModule.Category("menu.functions")
 public class ExpModule extends ProceduralModule {
 
     boolean valueOk, errorOk, gradOk;

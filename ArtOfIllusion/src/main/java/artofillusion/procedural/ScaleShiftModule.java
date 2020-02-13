@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2011 by Peter Eastman
-   Changes copyright (C) 2019 by Maksim Khramov
+   Changes copyright (C) 2019-2020 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -21,6 +21,7 @@ import java.io.*;
 /**
  * This is a Module which scales and shifts its input value.
  */
+@ProceduralModule.Category("menu.functions")
 public class ScaleShiftModule extends ProceduralModule {
 
     private double scale, shift;

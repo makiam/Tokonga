@@ -1,4 +1,5 @@
 /* Copyright (C) 2000 by Peter Eastman
+   Changes copyright (C) 2020 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -15,6 +16,7 @@ import java.awt.*;
 /**
  * This is a Module which outputs the sine of a number.
  */
+@ProceduralModule.Category("menu.functions")
 public class SineModule extends ProceduralModule {
 
     boolean valueOk, errorOk, gradOk;

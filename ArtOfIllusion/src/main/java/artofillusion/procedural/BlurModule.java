@@ -1,6 +1,7 @@
 /* This is a Module which blurs the signal coming into it. */
 
- /* Copyright (C) 2000 by Peter Eastman
+/* Copyright (C) 2000 by Peter Eastman
+   Changes copyright (C) 2020 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -15,6 +16,7 @@ import artofillusion.ui.*;
 import artofillusion.math.*;
 import java.awt.*;
 
+@ProceduralModule.Category("menu.functions")
 public class BlurModule extends ProceduralModule {
 
     boolean valueOk;

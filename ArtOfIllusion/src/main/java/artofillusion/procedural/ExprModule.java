@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2011 by David M. Turner <novalis@novalis.org>
-   Changes copyright (C) 2018-2019 by Maksim Khramov
+   Changes copyright (C) 2018-2020 by Maksim Khramov
 
    Various bug fixes and enhancements added by Peter Eastman, Aug. 25, 2001.
 
@@ -22,7 +22,11 @@ import buoy.widget.*;
 import java.awt.*;
 import java.io.*;
 import java.lang.reflect.*;
-import java.util.*;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 class debug {
 
@@ -52,10 +56,10 @@ class OPort {
     public int oport = 0;
     public Arg[] args = {new Arg("Arg1", 0)};
 
-    OPort(Module m, int p, Arg[] i) {
+    OPort(Module m, int p, Arg... args) {
         module = m;
         oport = p;
-        args = i;
+        this.args = args;
     }
 
     OPort(Module m, int p) {
@@ -110,43 +114,24 @@ class Token {
     public double numValue;
     public char ty;
 
-    static Hashtable<String, OPort> funMap = createFunMap();
-    //    static Hashtable portMap = createPortMap ();
+    static Map<String, OPort> funMap = createFunMap();
+    
 
-    static Hashtable<String, OPort> createFunMap() {
-        Hashtable<String, OPort> fm = new Hashtable<>();
+    static Map<String, OPort> createFunMap() {
+        Map<String, OPort> fm = new Hashtable<>();
         //For version two, pull these out of a config file
         fm.put("sin", new OPort(new SineModule(new Point()), 0));
         fm.put("cos", new OPort(new CosineModule(new Point()), 0));
         fm.put("sqrt", new OPort(new SqrtModule(new Point()), 0));
-        fm.put("pow", new OPort(new PowerModule(new Point()), 0, new Arg[]{
-            new Arg("Base", 1),
-            new Arg("Exponent", 0)
-        }));
+        fm.put("pow", new OPort(new PowerModule(new Point()), 0, new Arg("Base", 1), new Arg("Exponent", 0)));
         fm.put("log", new OPort(new LogModule(new Point()), 0));
-        fm.put("angle", new OPort(new PolarModule(new Point()), 1,
-                new Arg[]{
-                    new Arg("X", 0),
-                    new Arg("Y", 1)
-                }));
-        fm.put("min", new OPort(new MinModule(new Point()), 0, new Arg[]{
-            new Arg("Value 1", 1),
-            new Arg("Value 2", 0)
-        }));
-        fm.put("max", new OPort(new MaxModule(new Point()), 0, new Arg[]{
-            new Arg("Value 1", 1),
-            new Arg("Value 2", 0)
-        }));
+        fm.put("angle", new OPort(new PolarModule(new Point()), 1, new Arg("X", 0), new Arg("Y", 1)));
+        fm.put("min", new OPort(new MinModule(new Point()), 0, new Arg("Value 1", 1), new Arg("Value 2", 0)));
+        fm.put("max", new OPort(new MaxModule(new Point()), 0, new Arg("Value 1", 1), new Arg("Value 2", 0)));
         fm.put("abs", new OPort(new AbsModule(new Point()), 0));
         fm.put("exp", new OPort(new ExpModule(new Point()), 0));
-        fm.put("bias", new OPort(new BiasModule(new Point()), 0, new Arg[]{
-            new Arg("Input", 1),
-            new Arg("Bias", 0)
-        }));
-        fm.put("gain", new OPort(new GainModule(new Point()), 0, new Arg[]{
-            new Arg("Input", 1),
-            new Arg("Gain", 0)
-        }));
+        fm.put("bias", new OPort(new BiasModule(new Point()), 0, new Arg("Input", 1), new Arg("Bias", 0)));
+        fm.put("gain", new OPort(new GainModule(new Point()), 0, new Arg("Input", 1), new Arg("Gain", 0)));
 
         return fm;
     }
@@ -212,20 +197,17 @@ class ModuleLoader {
             parameterTypes[0] = Point.class;
             cons = moduleClass.getConstructor(parameterTypes);
         } catch (Exception e) {
-            System.err.println("Couldn't get constructor for "
-                    + moduleClass.getName() + ": " + e);
+            System.err.println("Couldn't get constructor for " + moduleClass.getName() + ": " + e);
             return dummy();
         }
         try {
             Object[] wrappedPoint = {new Point()};
             mod = (Module) cons.newInstance(wrappedPoint);
         } catch (InvocationTargetException e) {
-            System.err.println("Couldn't create a "
-                    + moduleClass.getName() + ": (InvocationTargetException)" + e.getTargetException());
+            System.err.println("Couldn't create a " + moduleClass.getName() + ": (InvocationTargetException)" + e.getTargetException());
             return dummy();
         } catch (Exception e) {
-            System.err.println("Couldn't create a "
-                    + moduleClass.getName() + ": " + e);
+            System.err.println("Couldn't create a " + moduleClass.getName() + ": " + e);
             return dummy();
         }
 
@@ -236,12 +218,13 @@ class ModuleLoader {
 /**
  * This is a Module which outputs an expression applied to three numbers.
  */
+@ProceduralModule.Category("menu.functions")
 public class ExprModule extends ProceduralModule {
 
-    private Hashtable<String, OPort> varTable;
+    private Map<String, OPort> varTable;
     Module[] inputs;
     Module[] myModules;
-    private Vector<Module> moduleVec;
+    private List<Module> moduleVec;
     OPort compiled;
     Token[] tokens;
     Token currTok;
@@ -255,7 +238,7 @@ public class ExprModule extends ProceduralModule {
         super("expr", new IOPort[]{
             new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT,
             new String[]{"Value 1", "(0)"}
-            ),
+),
             new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT,
             new String[]{"Value 2", "(0)"}
             ),

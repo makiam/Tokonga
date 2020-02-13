@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2011 by Peter Eastman
-   Changes copyright (C) 2019 by Maksim Khramov
+   Changes copyright (C) 2019-2020 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -22,6 +22,7 @@ import java.util.*;
 /**
  * This is a Module which outputs a random function of its input.
  */
+@ProceduralModule.Category("menu.functions")
 public class RandomModule extends ProceduralModule {
 
     boolean repeat, valueOk, errorOk, gradOk;
