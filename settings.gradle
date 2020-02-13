@@ -1,4 +1,4 @@
 rootProject.name = 'Tokonga'
 
-include 'ArtOfIllusion','Filters', 'OSSpecific', 'Polymesh', 'PostInstall', 'Renderers', 'SPManager', 'Tools', 'Translators'
+include 'ArtOfIllusion','Filters', 'OSSpecific', 'Polymesh', 'PostInstall', 'Renderers', 'SPManager', 'Tools', 'Translators', "Modules"
 

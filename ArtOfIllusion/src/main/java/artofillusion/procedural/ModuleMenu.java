@@ -28,7 +28,7 @@ import java.util.List;
 public class ModuleMenu extends CustomWidget {
 
     private final ProcedureEditor editor;
-    private final ArrayList<Category> categories;
+    private final List<Category> categories;
     private final double expandedFraction[];
     private int expandedCategory;
     private Module newModule;
@@ -69,6 +69,7 @@ public class ModuleMenu extends CustomWidget {
         category.add(new Entry(Translate.text("menu.maxModule"), MaxModule.class));
 
         categories.add(category = new Category(Translate.text("menu.functions")));
+        /*
         category.add(new Entry(Translate.text("menu.expressionModule"), ExprModule.class));
         category.add(new Entry(Translate.text("menu.customFunctionModule"), FunctionModule.class));
         category.add(new Entry(Translate.text("menu.scaleShiftModule"), ScaleShiftModule.class));
@@ -84,7 +85,8 @@ public class ModuleMenu extends CustomWidget {
         category.add(new Entry(Translate.text("menu.biasModule"), BiasModule.class));
         category.add(new Entry(Translate.text("menu.gainModule"), GainModule.class));
         category.add(new Entry(Translate.text("menu.randomModule"), RandomModule.class));
-
+        */
+        
         categories.add(category = new Category(Translate.text("menu.colorFunctions")));
         category.add(new Entry(Translate.text("menu.customColorFunctionModule"), SpectrumModule.class));
         category.add(new Entry(Translate.text("menu.blendModule"), BlendModule.class));
@@ -121,6 +123,7 @@ public class ModuleMenu extends CustomWidget {
             for (int i = 0; i < plugins.size(); i++) {
                 try {
                     Class<? extends Module> moduleClass = plugins.get(i).getClass();
+                    System.out.println("Category: " + moduleClass.getAnnotation(ProceduralModule.Category.class));
                     category.add(new Entry((moduleClass.newInstance()).getName(), moduleClass, new Object[0]));
                 } catch (Exception ex) {
                     ex.printStackTrace();
