@@ -44,7 +44,7 @@ public class Module {
         //Do not use, this is just so that the replacement class can temporarily extend this one
     }
 
-    public Module(String name, IOPort input[], IOPort output[], Point position) {
+    public Module(String name, IOPort[] input, IOPort[] output, Point position) {
         this.name = name;
         this.input = input;
         this.output = output;

@@ -1,4 +1,4 @@
-/* This is a Module which outputs the absolute value of a number. */
+ /* This is a Module which outputs the absolute value of a number. */
 
 /* Copyright (C) 2000 by Peter Eastman
    Changes copyright (C) 2020 by Maksim Khramov
@@ -23,6 +23,10 @@ public class AbsModule extends ProceduralModule {
     private boolean signOk, positive;
     private double lastBlur;
 
+    public AbsModule() {
+        super("", new IOPort[0], new IOPort[0]);
+    }
+    
     public AbsModule(Point position) {
         super(Translate.text("menu.absModule"), new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, new String[]{"Input", "(0"})},
                 new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, new String[]{"Output"})},

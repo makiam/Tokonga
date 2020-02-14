@@ -7,6 +7,9 @@
     </description>
     <category class="artofillusion.procedural.ProceduralModule"/>
     
+    <plugin class="artofillusion.procedural.ColorLightenModule"/>
+    <plugin class="artofillusion.procedural.HSVModule"/>
+    
     <plugin class="artofillusion.procedural.AbsModule"/>
     <plugin class="artofillusion.procedural.BiasModule"/>
     <plugin class="artofillusion.procedural.BlurModule"/>

@@ -23,6 +23,8 @@ import java.lang.annotation.Target;
  */
 public class ProceduralModule extends artofillusion.procedural.Module {
 
+    private static final Point defaultPos = new Point(0,0);
+    
     private final Category category;
     {
         category = this.getClass().getAnnotation(Category.class);
@@ -32,7 +34,11 @@ public class ProceduralModule extends artofillusion.procedural.Module {
         return category == null ? "" : Translate.text(category.value());
     }
     
-    public ProceduralModule(String name, IOPort input[], IOPort output[], Point position) {
+    public ProceduralModule(String name, IOPort[] input, IOPort[] output) {
+        this(name, input, output, defaultPos);
+    }
+    
+    public ProceduralModule(String name, IOPort[] input, IOPort[] output, Point position) {
         super(name, input, output, position);
     }
     

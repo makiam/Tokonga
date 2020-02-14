@@ -1,6 +1,7 @@
 /* This is a Module which outputs the lighter of two colors. */
 
- /* Copyright (C) 2001 by David M. Turner <novalis@novalis.org> and Peter Eastman
+/* Copyright (C) 2001 by David M. Turner <novalis@novalis.org> and Peter Eastman
+   Changes copyright (C) 2020 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -15,6 +16,7 @@ import artofillusion.math.*;
 import artofillusion.ui.*;
 import java.awt.*;
 
+@ProceduralModule.Category("menu.colorFunctions")
 public class ColorLightenModule extends ProceduralModule {
 
     RGBColor color;
@@ -22,9 +24,9 @@ public class ColorLightenModule extends ProceduralModule {
     double lastBlur;
 
     public ColorLightenModule(Point position) {
-        super(Translate.text("menu.lighterModule"), new IOPort[]{new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.TOP, new String[]{"Color 1", '(' + Translate.text("white") + ')'}),
-            new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.BOTTOM, new String[]{"Color 2", '(' + Translate.text("white") + ')'})},
-                new IOPort[]{new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, new String[]{"Lighter"})},
+        super(Translate.text("menu.lighterModule"), new IOPort[]{new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.TOP, "Color 1", '(' + Translate.text("white") + ')'),
+            new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.BOTTOM, "Color 2", '(' + Translate.text("white") + ')')},
+                new IOPort[]{new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, "Lighter")},
                 position);
         color = new RGBColor(0.0f, 0.0f, 0.0f);
     }

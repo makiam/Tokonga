@@ -94,11 +94,11 @@ public class ModuleMenu extends CustomWidget {
         category.add(new Entry(Translate.text("menu.addColorModule"), ColorSumModule.class));
         category.add(new Entry(Translate.text("menu.subtractColorModule"), ColorDifferenceModule.class));
         category.add(new Entry(Translate.text("menu.multiplyColorModule"), ColorProductModule.class));
-        category.add(new Entry(Translate.text("menu.lighterModule"), ColorLightenModule.class));
+        //category.add(new Entry(Translate.text("menu.lighterModule"), ColorLightenModule.class));
         category.add(new Entry(Translate.text("menu.darkerModule"), ColorDarkenModule.class));
         category.add(new Entry(Translate.text("menu.scaleColorModule"), ColorScaleModule.class));
         category.add(new Entry(Translate.text("menu.RGBModule"), RGBModule.class));
-        category.add(new Entry(Translate.text("menu.HSVModule"), HSVModule.class));
+        //category.add(new Entry(Translate.text("menu.HSVModule"), HSVModule.class));
         category.add(new Entry(Translate.text("menu.HLSModule"), HLSModule.class));
 
         categories.add(category = new Category(Translate.text("menu.transforms")));
