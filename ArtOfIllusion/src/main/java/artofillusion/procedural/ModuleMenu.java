@@ -58,6 +58,7 @@ public class ModuleMenu extends CustomWidget {
         category.add(new Entry(Translate.text("menu.commentModule"), CommentModule.class));
 
         categories.add(category = new Category(Translate.text("menu.operators")));
+        /*
         category.add(new Entry(Translate.text("menu.addModule"), SumModule.class));
         category.add(new Entry(Translate.text("menu.subtractModule"), DifferenceModule.class));
         category.add(new Entry(Translate.text("menu.multiplyModule"), ProductModule.class));
@@ -67,7 +68,7 @@ public class ModuleMenu extends CustomWidget {
         category.add(new Entry(Translate.text("menu.greaterThanModule"), CompareModule.class));
         category.add(new Entry(Translate.text("menu.minModule"), MinModule.class));
         category.add(new Entry(Translate.text("menu.maxModule"), MaxModule.class));
-
+        */
         categories.add(category = new Category(Translate.text("menu.functions")));
         /*
         category.add(new Entry(Translate.text("menu.expressionModule"), ExprModule.class));
