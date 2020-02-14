@@ -23,5 +23,14 @@
     <plugin class="artofillusion.procedural.SineModule"/>
     <plugin class="artofillusion.procedural.SqrtModule"/>
     
+    <plugin class="artofillusion.procedural.CompareModule"/>
+    <plugin class="artofillusion.procedural.DifferenceModule"/>
+    <plugin class="artofillusion.procedural.MaxModule"/>
+    <plugin class="artofillusion.procedural.MinModule"/>
+    <plugin class="artofillusion.procedural.ModModule"/>
+    <plugin class="artofillusion.procedural.PowerModule"/>
+    <plugin class="artofillusion.procedural.ProductModule"/>
+    <plugin class="artofillusion.procedural.RatioModule"/>
+    <plugin class="artofillusion.procedural.SumModule"/>
 </extension>
 
