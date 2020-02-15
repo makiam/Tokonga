@@ -1,4 +1,4 @@
-/* Copyright (C) 1999-2012 by Peter Eastman
+/* Copyright (C) 1999-2020 by Peter Eastman
    Modifications copyright (C) 2016-2017 Petri Ihalainen
    Changes copyright (C) 2018-2019 by Maksim Khramov
 
@@ -445,8 +445,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
     }
 
     /**
-     * Add extra texture parameters to the mesh which will be used for keeping track of face and
-     * vertex indices.
+     * Add extra texture parameters to the mesh which will be used for keeping
+     * track of face and vertex indices.
      */
     private void addExtraParameters() {
         if (faceIndexParam != null) {
@@ -479,8 +479,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
     }
 
     /**
-     * Remove the extra texture parameters from the mesh which were used for keeping track of face
-     * and vertex indices.
+     * Remove the extra texture parameters from the mesh which were used for
+     * keeping track of face and vertex indices.
      */
     public void removeExtraParameters() {
         if (faceIndexParam == null) {
@@ -503,7 +503,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
     }
 
     /**
-     * Update the parameter which records weights for the currently selected joint.
+     * Update the parameter which records weights for the currently selected
+     * joint.
      */
     private void updateJointWeightParam() {
         MeshVertex vert[] = mesh.getVertices();
@@ -530,8 +531,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
     }
 
     /**
-     * Get the extra texture parameter which was added to the mesh to keep track of face indices in
-     * the editor.
+     * Get the extra texture parameter which was added to the mesh to keep track
+     * of face indices in the editor.
      */
     @Override
     public TextureParameter getFaceIndexParameter() {
@@ -539,7 +540,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
     }
 
     /**
-     * Get the extra texture parameter which was added to the mesh to keep track of joint weighting.
+     * Get the extra texture parameter which was added to the mesh to keep track
+     * of joint weighting.
      */
     @Override
     public TextureParameter getJointWeightParam() {
@@ -562,8 +564,9 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
     }
 
     /**
-     * Determine which edge of the control mesh corresponds to each edge of the subdivided mesh. If
-     * the control mesh is not being projected onto the surface, this returns null.
+     * Determine which edge of the control mesh corresponds to each edge of the
+     * subdivided mesh. If the control mesh is not being projected onto the
+     * surface, this returns null.
      */
     int[] findProjectedEdges() {
         // See if we actually want to project the control mesh.
@@ -697,8 +700,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
     }
 
     /**
-     * Get the subdivided mesh which represents the surface. If the control mesh is not being
-     * projected onto the surface, this returns null.
+     * Get the subdivided mesh which represents the surface. If the control mesh
+     * is not being projected onto the surface, this returns null.
      */
     TriangleMesh getSubdividedMesh() {
         return divMesh;
@@ -770,7 +773,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
     }
 
     /**
-     * Find edges which should be hidden to make the object seem to be made of quads.
+     * Find edges which should be hidden to make the object seem to be made of
+     * quads.
      */
     private void findQuads() {
         TriangleMesh mesh = (TriangleMesh) getObject().getObject();
@@ -904,7 +908,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
     }
 
     /**
-     * When the selection mode changes, do our best to convert the old selection to the new mode.
+     * When the selection mode changes, do our best to convert the old selection
+     * to the new mode.
      */
     @Override
     public void setSelectionMode(int mode) {
@@ -993,8 +998,9 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
     }
 
     /**
-     * Get an array of flags telling which parts of the mesh are currently selected. Depending on
-     * the current selection mode, these flags may correspond to vertices, edges, or faces.
+     * Get an array of flags telling which parts of the mesh are currently
+     * selected. Depending on the current selection mode, these flags may
+     * correspond to vertices, edges, or faces.
      */
     @Override
     public boolean[] getSelection() {
@@ -1010,7 +1016,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
     }
 
     /**
-     * Calculate the distance (in edges) between each vertex and the nearest selected vertex.
+     * Calculate the distance (in edges) between each vertex and the nearest
+     * selected vertex.
      */
     void findSelectionDistance() {
         int i, j;
@@ -1349,6 +1356,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         }
 
         // Make sure this will still be a valid object.
+        boolean multipleBreaks = false;
         for (int i = 0; i < vert.length; i++) {
             int e[] = vert[i].getEdges();
             int f, fprev = edge[e[0]].f1, breaks = 0;
@@ -1365,24 +1373,27 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
             if (!deleteFace[fprev] && (edge[e[0]].f2 == -1 || deleteFace[edge[e[0]].f1])) {
                 breaks++;
             }
-            int vertFaceCount[] = new int[vert.length];
-            for (int j = 0; j < face.length; j++) {
-                if (!deleteFace[j]) {
-                    vertFaceCount[face[j].v1]++;
-                    vertFaceCount[face[j].v2]++;
-                    vertFaceCount[face[j].v3]++;
-                }
+            if (breaks > 1) {
+                multipleBreaks = true;
             }
-            boolean strayVert = false;
-            for (int j = 0; j < vertFaceCount.length; j++) {
-                if (!deleteVert[j] && vertFaceCount[j] == 0) {
-                    strayVert = true;
-                }
+        }
+        int vertFaceCount[] = new int[vert.length];
+        for (int j = 0; j < face.length; j++) {
+            if (!deleteFace[j]) {
+                vertFaceCount[face[j].v1]++;
+                vertFaceCount[face[j].v2]++;
+                vertFaceCount[face[j].v3]++;
             }
-            if (breaks > 1 || strayVert) {
-                Messages.error(UIUtilities.breakString(Translate.text("illegalDelete")), this.getComponent());
-                return;
+        }
+        boolean strayVert = false;
+        for (int j = 0; j < vertFaceCount.length; j++) {
+            if (!deleteVert[j] && vertFaceCount[j] == 0) {
+                strayVert = true;
             }
+        }
+        if (multipleBreaks || strayVert) {
+            Messages.error(UIUtilities.breakString(Translate.text("illegalDelete")), this.getComponent());
+            return;
         }
 
         // Find the new lists of vertices and faces.
@@ -1466,9 +1477,11 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         for (int i = 0; i < edge.length; i++) {
             int r1 = newVertIndex[edge[i].v1];
             int r2 = newVertIndex[edge[i].v2];
-            for (int j = 0; j < newedge.length; j++) {
-                if ((r1 == newedge[j].v1 && r2 == newedge[j].v2) || (r1 == newedge[j].v2 && r2 == newedge[j].v1)) {
-                    newedge[j].smoothness = edge[i].smoothness;
+            if (r1 > -1) {
+                for (int j : newmesh.getVertex(r1).getEdges()) {
+                    if ((r1 == newedge[j].v1 && r2 == newedge[j].v2) || (r1 == newedge[j].v2 && r2 == newedge[j].v1)) {
+                        newedge[j].smoothness = edge[i].smoothness;
+                    }
                 }
             }
         }
@@ -1665,8 +1678,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
     }
 
     /**
-     * Given the ordered list of edges for a selected boundary segment, determine whether they form
-     * a closed boundary.
+     * Given the ordered list of edges for a selected boundary segment,
+     * determine whether they form a closed boundary.
      */
     private boolean isBoundaryClosed(int edges[]) {
         if (edges.length < 3) {
@@ -1680,7 +1693,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
     }
 
     /**
-     * Get arrays of the indices of all edges which form boundaries that have been selected.
+     * Get arrays of the indices of all edges which form boundaries that have
+     * been selected.
      */
     private int[][] findSelectedBoundaries() {
         if (getSelectionMode() != EDGE_MODE) {
@@ -2436,8 +2450,9 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
     }
 
     /**
-     * Given a list of deltas which will be added to the selected vertices, calculate the
-     * corresponding deltas for the unselected vertices according to the mesh tension.
+     * Given a list of deltas which will be added to the selected vertices,
+     * calculate the corresponding deltas for the unselected vertices according
+     * to the mesh tension.
      */
     @Override
     public void adjustDeltas(Vec3 delta[]) {
