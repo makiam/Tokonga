@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2020 by Peter Eastman
    Modifications copyright (C) 2016-2017 Petri Ihalainen
-   Changes copyright (C) 2018-2019 by Maksim Khramov
+   Changes copyright (C) 2018-2020 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -1315,53 +1315,47 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
             return;
         }
         TriangleMesh theMesh = (TriangleMesh) objInfo.getObject();
-        Vertex vert[] = (Vertex[]) theMesh.getVertices();
-        Edge edge[] = theMesh.getEdges();
-        Face face[] = theMesh.getFaces();
-        boolean deleteVert[] = new boolean[vert.length];
-        boolean deleteFace[] = new boolean[face.length];
+        Vertex[] vertices = (Vertex[]) theMesh.getVertices();
+        Edge[] edges = theMesh.getEdges();
+        Face[] faces = theMesh.getFaces();
+        boolean[] deleteVert = new boolean[vertices.length];
+        boolean[] deleteFace = new boolean[faces.length];
 
         // Determine which parts of the mesh to delete.
         if (selectMode == POINT_MODE) {
-            for (int i = 0; i < deleteVert.length; i++) {
-                deleteVert[i] = selected[i];
-            }
+            System.arraycopy(selected, 0, deleteVert, 0, deleteVert.length);
             for (int i = 0; i < deleteFace.length; i++) {
-                deleteFace[i] = (deleteVert[face[i].v1] || deleteVert[face[i].v2] || deleteVert[face[i].v3]);
+                deleteFace[i] = (deleteVert[faces[i].v1] || deleteVert[faces[i].v2] || deleteVert[faces[i].v3]);
             }
         } else if (selectMode == EDGE_MODE) {
             for (int i = 0; i < deleteFace.length; i++) {
-                deleteFace[i] = (selected[face[i].e1] || selected[face[i].e2] || selected[face[i].e3]);
+                deleteFace[i] = (selected[faces[i].e1] || selected[faces[i].e2] || selected[faces[i].e3]);
             }
             for (int i = 0; i < deleteVert.length; i++) {
                 deleteVert[i] = true;
             }
             for (int i = 0; i < deleteFace.length; i++) {
-                if (!deleteFace[i]) {
-                    deleteVert[face[i].v1] = deleteVert[face[i].v2] = deleteVert[face[i].v3] = false;
-                }
+                if(deleteFace[i]) continue;
+                deleteVert[faces[i].v1] = deleteVert[faces[i].v2] = deleteVert[faces[i].v3] = false;
             }
         } else {
-            for (int i = 0; i < deleteFace.length; i++) {
-                deleteFace[i] = selected[i];
-            }
+            System.arraycopy(selected, 0, deleteFace, 0, deleteFace.length);
             for (int i = 0; i < deleteVert.length; i++) {
                 deleteVert[i] = true;
             }
             for (int i = 0; i < deleteFace.length; i++) {
-                if (!deleteFace[i]) {
-                    deleteVert[face[i].v1] = deleteVert[face[i].v2] = deleteVert[face[i].v3] = false;
-                }
+                if(deleteFace[i]) continue;
+                deleteVert[faces[i].v1] = deleteVert[faces[i].v2] = deleteVert[faces[i].v3] = false;
             }
         }
 
         // Make sure this will still be a valid object.
         boolean multipleBreaks = false;
-        for (int i = 0; i < vert.length; i++) {
-            int e[] = vert[i].getEdges();
-            int f, fprev = edge[e[0]].f1, breaks = 0;
+        for (Vertex vertice : vertices) {
+            int[] e = vertice.getEdges();
+            int f, fprev = edges[e[0]].f1, breaks = 0;
             for (int j = 1; j < e.length; j++) {
-                f = (edge[e[j]].f1 == fprev ? edge[e[j]].f2 : edge[e[j]].f1);
+                f = (edges[e[j]].f1 == fprev ? edges[e[j]].f2 : edges[e[j]].f1);
                 if (f == -1) {
                     break;
                 }
@@ -1370,21 +1364,22 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                 }
                 fprev = f;
             }
-            if (!deleteFace[fprev] && (edge[e[0]].f2 == -1 || deleteFace[edge[e[0]].f1])) {
+            if (!deleteFace[fprev] && (edges[e[0]].f2 == -1 || deleteFace[edges[e[0]].f1])) {
                 breaks++;
             }
             if (breaks > 1) {
                 multipleBreaks = true;
             }
         }
-        int vertFaceCount[] = new int[vert.length];
-        for (int j = 0; j < face.length; j++) {
-            if (!deleteFace[j]) {
-                vertFaceCount[face[j].v1]++;
-                vertFaceCount[face[j].v2]++;
-                vertFaceCount[face[j].v3]++;
-            }
+        
+        int vertFaceCount[] = new int[vertices.length];
+        for (int j = 0; j < faces.length; j++) {
+            if(deleteFace[j]) continue;
+            vertFaceCount[faces[j].v1]++;
+            vertFaceCount[faces[j].v2]++;
+            vertFaceCount[faces[j].v3]++;
         }
+        
         boolean strayVert = false;
         for (int j = 0; j < vertFaceCount.length; j++) {
             if (!deleteVert[j] && vertFaceCount[j] == 0) {
@@ -1398,7 +1393,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
 
         // Find the new lists of vertices and faces.
         int newVertCount = 0, newFaceCount = 0;
-        int newVertIndex[] = new int[vert.length];
+        int newVertIndex[] = new int[vertices.length];
         for (int i = 0; i < deleteVert.length; i++) {
             newVertIndex[i] = -1;
             if (!deleteVert[i]) {
@@ -1406,29 +1401,28 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
             }
         }
         for (int i = 0; i < deleteFace.length; i++) {
-            if (!deleteFace[i]) {
-                newFaceCount++;
-            }
+            if(deleteFace[i]) continue;
+            newFaceCount++;
         }
+        
         Vertex v[] = new Vertex[newVertCount];
         int f[][] = new int[newFaceCount][];
         newVertCount = 0;
-        for (int i = 0; i < vert.length; i++) {
-            if (!deleteVert[i]) {
-                newVertIndex[i] = newVertCount;
-                v[newVertCount++] = vert[i];
-            }
+        for (int i = 0; i < vertices.length; i++) {
+            if(deleteVert[i]) continue;
+            newVertIndex[i] = newVertCount;
+            v[newVertCount++] = vertices[i];
         }
+        
         newFaceCount = 0;
-        for (int i = 0; i < face.length; i++) {
-            if (!deleteFace[i]) {
-                f[newFaceCount++] = new int[]{newVertIndex[face[i].v1], newVertIndex[face[i].v2], newVertIndex[face[i].v3]};
-            }
+        for (int i = 0; i < faces.length; i++) {
+            if(deleteFace[i]) continue;
+            f[newFaceCount++] = new int[]{newVertIndex[faces[i].v1], newVertIndex[faces[i].v2], newVertIndex[faces[i].v3]};
         }
 
         // Update the texture parameters.
-        ParameterValue oldParamVal[] = theMesh.getParameterValues();
-        ParameterValue newParamVal[] = new ParameterValue[oldParamVal.length];
+        ParameterValue[] oldParamVal = theMesh.getParameterValues();
+        ParameterValue[] newParamVal = new ParameterValue[oldParamVal.length];
         for (int i = 0; i < oldParamVal.length; i++) {
             if (oldParamVal[i] instanceof VertexParameterValue) {
                 double oldval[] = ((VertexParameterValue) oldParamVal[i]).getValue();
@@ -1467,20 +1461,20 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
 
         // Construct the new mesh.
         TriangleMesh newmesh = new TriangleMesh(v, f);
-        Edge newedge[] = newmesh.getEdges();
+        Edge[] newedge = newmesh.getEdges();
         newmesh.getSkeleton().copy(theMesh.getSkeleton());
         newmesh.copyTextureAndMaterial(theMesh);
         newmesh.setSmoothingMethod(theMesh.getSmoothingMethod());
         newmesh.setParameterValues(newParamVal);
 
         // Copy over the smoothness values for edges.
-        for (int i = 0; i < edge.length; i++) {
-            int r1 = newVertIndex[edge[i].v1];
-            int r2 = newVertIndex[edge[i].v2];
+        for (Edge edge : edges) {
+            int r1 = newVertIndex[edge.v1];
+            int r2 = newVertIndex[edge.v2];
             if (r1 > -1) {
                 for (int j : newmesh.getVertex(r1).getEdges()) {
                     if ((r1 == newedge[j].v1 && r2 == newedge[j].v2) || (r1 == newedge[j].v2 && r2 == newedge[j].v1)) {
-                        newedge[j].smoothness = edge[i].smoothness;
+                        newedge[j].smoothness = edge.smoothness;
                     }
                 }
             }
