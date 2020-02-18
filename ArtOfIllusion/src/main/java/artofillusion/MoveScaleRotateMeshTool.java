@@ -1,5 +1,6 @@
 /* Copyright (C) 2006-2007 by Peter Eastman
-   Changes copyright (C) 2017-2019 by Maksim Khramov
+   Changes copyright (C) 2020 by Petri Ihalainen
+   Changes copyright (C) 2017-2020 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -60,7 +61,7 @@ public class MoveScaleRotateMeshTool extends MeshEditingTool {
     @Override
     public void drawOverlay(ViewerCanvas view) {
         BoundingBox selectionBounds = findSelectionBounds(view.getCamera());
-        if (!dragInProgress && manipulator.getViewMode() == Compound3DManipulator.NPQ_MODE && selectionBounds != null) {
+        if (!dragInProgress && manipulator.getViewMode() == Compound3DManipulator.PQN_MODE && selectionBounds != null) {
             // Calculate the axis directions.
 
             Vec3 avgNorm = new Vec3();
@@ -83,14 +84,14 @@ public class MoveScaleRotateMeshTool extends MeshEditingTool {
                 updir = avgNorm.cross(Vec3.vy());
             }
             updir.normalize();
-            manipulator.setNPQAxes(avgNorm, updir, avgNorm.cross(updir));
+            manipulator.setPQNAxes(updir.cross(avgNorm), updir, avgNorm);
         }
         manipulator.draw(view, selectionBounds);
         if (!dragInProgress) {
-            if (selectionBounds != null) {
-                theWindow.setHelpText(Translate.text("moveScaleRotateMeshTool.helpText"));
-            } else {
+            if (null == selectionBounds) {
                 theWindow.setHelpText(Translate.text("moveScaleRotateMeshTool.errorText"));
+            } else {
+                theWindow.setHelpText(Translate.text("moveScaleRotateMeshTool.helpText"));
             }
         }
     }
@@ -194,7 +195,7 @@ public class MoveScaleRotateMeshTool extends MeshEditingTool {
             if (mode == Compound3DManipulator.XYZ_MODE) {
                 manipulator.setViewMode(Compound3DManipulator.UV_MODE);
             } else if (mode == Compound3DManipulator.UV_MODE) {
-                manipulator.setViewMode(Compound3DManipulator.NPQ_MODE);
+                manipulator.setViewMode(Compound3DManipulator.PQN_MODE);
             } else {
                 manipulator.setViewMode(Compound3DManipulator.XYZ_MODE);
             }
