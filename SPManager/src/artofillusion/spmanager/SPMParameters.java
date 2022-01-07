@@ -68,9 +68,6 @@ public class SPMParameters
         repositories = new Vector();
 
         repositories.add( "http://aoisp.sourceforge.net/AoIRepository/" );
-        //hack
-        //repositories.add( "http://localhost/AoIRepository/" );
-        // NTJ: testing
 
 	filters = new HashMap();
 	filters.put("beta", "mark");
@@ -87,7 +84,6 @@ public class SPMParameters
         se = null;
         loadPropertiesFile();
         initHttp();
-        //getRepositoriesList( false );
     }
 
 
@@ -180,20 +176,7 @@ public class SPMParameters
 	    }).start();
 
         boolean updated = false;
-        //hack
-        /*if (true)
-        {
-            SwingUtilities.invokeLater(
-                    new Thread()
-                    {
-                        public void run()
-                        {
-                            SPManagerFrame.getInstance().updatePanes();
-                        }
-                    } );
-            return;
-        } */
-
+        
         repListURL = null;
         //try to get a new repositories definition file
         try
@@ -218,11 +201,8 @@ public class SPMParameters
 				    }, BStandardDialog.ERROR)
 		    .showMessageDialog(SPManagerFrame.getInstance());
 
-		//conn.disconnect();
 		return;
 	    }
-
-            //LineNumberReader rd = new LineNumberReader(new InputStreamReader(repListURL.openStream()));
 
 	    LineNumberReader rd = new LineNumberReader(new InputStreamReader(conn.getInputStream()));
 
@@ -262,7 +242,6 @@ public class SPMParameters
 		    System.out.println("new current=" + current);
 		    modified = false;
 		}
-		//System.out.println( i + " " + (String) newRepositories.elementAt( i ) );
 	    }
 
 	    repositories = newRepositories;
@@ -271,7 +250,6 @@ public class SPMParameters
             if ( modified )
             {
                 SwingUtilities.invokeLater(
-					   //new Thread()
 					   new Runnable()
                     {
                         public void run()
@@ -287,8 +265,6 @@ public class SPMParameters
             if ( !( ( e instanceof UnknownHostException ) || ( e instanceof SocketException ) ) )
                 e.printStackTrace();
             SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "unknownRepositoriesHost", new String[]{repListURL.toString()} ), -1 );
-            //live on saved repositories.
-            //System.out.println( "Remote repository list : Not connected. Try later" );
         }
         finally
         {
@@ -309,7 +285,6 @@ public class SPMParameters
             if ( ( !updated ) && forceUpdate )
             {
                 SwingUtilities.invokeLater(
-					   //new Thread()
 					   new Runnable()
                     {
                         public void run()
@@ -389,11 +364,6 @@ public class SPMParameters
             current = 0;
             System.out.println( "SPManager : Wrong default URL index in properties file." );
         }
-
-        //hack
-        //repositories.clear();
-        //current = 0;
-        //repositories.add( "http://localhost/AoIRepository/" );
 
 	Iterator iter = p.entrySet().iterator();
 	Map.Entry entry;
@@ -522,9 +492,6 @@ public class SPMParameters
         URL url = null;
         try
         {
-	    // NTJ: DEBUG!!
-	    //if (true) return new URL("http://localhost/AoIRepository/");
-
             url = new URL( (String) repositories.elementAt( current ) );
         }
         catch ( MalformedURLException e )
@@ -727,12 +694,8 @@ public class SPMParameters
     {
         if ( !useProxy )
         {
-            //System.getProperties().remove("proxySet");
-            //System.getProperties().remove("proxyHost");
-            //System.getProperties().remove("proxyPort");
             System.getProperties().remove( "http.proxyHost" );
             System.getProperties().remove( "http.proxyPort" );
-            //System.getProperties().remove("http.nonProxyHosts");
             Authenticator.setDefault( null );
         }
         else

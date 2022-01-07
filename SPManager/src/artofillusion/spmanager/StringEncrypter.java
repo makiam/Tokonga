@@ -109,8 +109,6 @@ public class StringEncrypter
             SecretKey key = SecretKeyFactory.getInstance( "PBEWithMD5AndDES" ).generateSecret( keySpec );
 
             ecipher = Cipher.getInstance( "PBEWithMD5AndDES" );
-            // changed only this line of code, which went :
-            // ecipher = Cipher.getInstance( key.getAlgorithm() ); and raised an exception
             dcipher = Cipher.getInstance( "PBEWithMD5AndDES" );
 
             // Prepare the parameters to the ciphers
@@ -301,12 +299,5 @@ public class StringEncrypter
 
     }
 
-    /*
-     *  public static void main( String[] args )
-     *  {
-     *  testUsingSecretKey();
-     *  testUsingPassPhrase();
-     *  }
-     */
 }
 

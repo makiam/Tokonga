@@ -16,7 +16,6 @@ import javax.swing.*;
 import javax.swing.tree.*;
 import buoy.widget.*;
 import buoy.event.*;
-//import artofillusion.ModellingApp;
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;

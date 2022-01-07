@@ -96,22 +96,6 @@ public class SPManagerPlugin implements Plugin
 		    loaders.put(urlList[0], obj);
 	    }
 
-	    /*
-	    try {
-		Field ldrfield =
-		    PluginRegistry.class.getDeclaredField("pluginLoaders");
-
-		ldrfield.setAccessible(true);
-
-		aoiloaders = (ArrayList) ldrfield.get(null);
-
-	    } catch (Exception e) {
-		System.out.println("SPManager: cannot get pluginsLoaders: " +
-				   e);
-		aoiloaders = new ArrayList();
-	    }
-	     */
-
 	    URL[] urlarg = new URL[1];
 	    Class[] sig = new Class[] { URL.class };
 	    Method addUrl = null;
@@ -153,8 +137,6 @@ public class SPManagerPlugin implements Plugin
 			    continue;
 			}
 
-			//System.out.println("SPM: url=" + url);
-
 			// get the classloader for the current plugin
 			obj = loaders.get(url);
 
@@ -168,22 +150,11 @@ public class SPManagerPlugin implements Plugin
 			// cast or convert it to a SearchlistClassLoader
 			if (obj instanceof SearchlistClassLoader) {
 			    searchldr = (SearchlistClassLoader) obj;
-			    //System.out.println("loader is a srchloader");
 			}
 			else {
 			    urlldr = (URLClassLoader) obj;
 
-			    /*
-			    searchldr =
-				new SearchlistClassLoader((ClassLoader) obj);
-
-			    idx = aoiloaders.indexOf(obj);
-			    if (idx >= 0) aoiloaders.set(idx, searchldr);
-			    else System.out.println("SPM: loader not in list");
-
-			    loaders.put(url, searchldr);
-			     */
-			}
+			     }
 
 			// ok, now perform the actions
 			for (Iterator iter = info.actions.entrySet().iterator();
@@ -191,9 +162,6 @@ public class SPManagerPlugin implements Plugin
 
 			    entry = (Map.Entry) iter.next();
 			    key = entry.getKey().toString().split(":");
-
-			    //System.out.println("SPM: action=" +
-			    //	       entry.getValue().toString());
 
 			    try {
 				if (key[0].startsWith("/"))
@@ -211,32 +179,14 @@ public class SPManagerPlugin implements Plugin
 
 			    value = entry.getValue().toString();
 
-			    /*
-			    if ("merge".equalsIgnoreCase(value)) {
-				if (searchldr != null)
-				    searchldr.merge(url);
-				else if (addUrl != null) {
-				    try {
-					urlarg[0] = url;
-					addUrl.invoke(urlldr, urlarg);
-				    } catch (Exception e) {
-					System.out.println("Error invoking: "
-							   + e);
-				    }
-				}
-				else System.out.println("Could not merge path"
-							+ url);				    
-			    }
-			     */
+			    
 			    if ("classpath".equalsIgnoreCase(value)) {
 				if (searchldr != null)
 				    searchldr.add(url);
 				else if (addUrl != null) {
 				    try {
-					//urlarg[0] = url;
-					//addUrl.invoke(urlldr, urlarg);        // non-varargs call (1.4)
-					addUrl.invoke(urlldr, url);		// varargs call (1.5)
-				    } catch (Exception e) {
+					addUrl.invoke(urlldr, url);
+                                    } catch (Exception e) {
 					System.out.println("Error invoking: "
 						+ e);
 				    }
@@ -252,24 +202,7 @@ public class SPManagerPlugin implements Plugin
 				    else System.out.println("SPM: could not find"
 					    + " loader for: " + url);
 				}
-				/*
-				 * NTJ - disabled. No longer needed, and requires a new method in SearchlistClassLoader
-				 * 
-				else {
-				    System.out.println("SPM: importing: " + key[1]);
-				    if (searchldr != null) {
-					try {
-					    searchldr.add(ldr.loadClass(key[1]));
-					} catch (Exception e) {
-					    System.out.println("SPM: Error importing class: " + key[1] + " into " + url);
-					}
-				    }
-				    else {
-					System.out.println("SPM: Error: Class cannot be imported without a SearchListClassLoader: " + url
-						+ "(" + key[1] + ")");
-				    }
-				}
-				*/
+				
 			    }
 			}
 		    }
@@ -303,8 +236,6 @@ public class SPManagerPlugin implements Plugin
 	case Plugin.SCENE_WINDOW_CREATED:
 	{
 	    LayoutWindow layout = (LayoutWindow) args[0];
-	    //BMenuBar menuBar = layout.getMenuBar();
-	    //BMenu toolsMenu = menuBar.getChild( 3 );
 	    BMenu toolsMenu = layout.getToolsMenu();
 	    toolsMenu.addSeparator();
 	    BMenuItem menuItem =
@@ -331,7 +262,7 @@ public class SPManagerPlugin implements Plugin
 	break;
 
 	default:
-	    //System.out.println("SPManagerPlugin: ignoringmessage: " + message);
+	    //Just ignore the message
 	}
     }
 
@@ -599,15 +530,6 @@ public class SPManagerPlugin implements Plugin
 				info.length = info.getRemoteFileSize(url.toString());
 			    }
 
-			    /* NTJ: don't give up yet...
-			     *
-				    if (info.length < 0) {
-					new BStandardDialog("SPManager", SPMTranslate.text("httpError"), BStandardDialog.ERROR).showMessageDialog(null);
-
-					doClose();
-				    }
-			     */
-
 			    // get destination if needed
 			    if (info.name == null
 				    || info.name.length() == 0) {
@@ -767,16 +689,11 @@ public class SPManagerPlugin implements Plugin
      */
     public void doMenu()
     {
-	// NTJ: don't implement yet... (Nov 2006)
-	//if (!Translate.getLocale().equals(Locale.getDefault())) {
-	//}
 
 	if ( spmFrame == null )
 	    spmFrame = new SPManagerFrame();
 	( (Window) spmFrame.getComponent() ).toFront();
-	//spmFrame.layoutChildren();
 	( (Window) spmFrame.getComponent() ).show();
-	//spmFrame.printBounds( spmFrame );
     }
 
 

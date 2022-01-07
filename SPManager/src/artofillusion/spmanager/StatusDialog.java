@@ -59,7 +59,6 @@ public class StatusDialog extends BDialog
     {
         label.setText( text );
         pack();
-        //layoutChildren();
     }
 
 
@@ -111,25 +110,6 @@ public class StatusDialog extends BDialog
     {
 	UIUtilities.centerDialog(this, (WindowWidget) getParent());
 
-	/*
-        Dimension d1 = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension d2 = getComponent().getSize();
-        int x;
-        int y;
-
-        d2.width = d2.width * 2;
-        x = ( d1.width - d2.width ) / 2;
-        y = ( d1.height - d2.height ) / 2;
-        if ( x < 0 )
-        {
-            x = 0;
-        }
-        if ( y < 0 )
-        {
-            y = 0;
-        }
-        setBounds( new Rectangle( x, y, d2.width, d2.height + 2 ) );
-	*/
     }
 
 

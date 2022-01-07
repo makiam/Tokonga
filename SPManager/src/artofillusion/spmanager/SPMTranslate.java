@@ -19,7 +19,6 @@ import java.util.*;
 import java.util.zip.*;
 import buoy.event.*;
 import buoy.widget.*;
-//import artofillusion.ui.*;
 import artofillusion.*;
 import java.io.*;
 
@@ -46,35 +45,6 @@ public class SPMTranslate
     public static void setLocale( Locale l )
     {
         locale = l;
-/*
-        File dir = new File( ModellingApp.PLUGIN_DIRECTORY );
-        if ( dir.exists() )
-        {
-            String[] files = dir.list();
-            for ( int i = 0; i < files.length; i++ )
-                if ( files[i].startsWith( "SPManager" ) )
-                {
-                    ZipFile zf = null;
-                    try
-                    {
-                        zf = new ZipFile( new File( ModellingApp.PLUGIN_DIRECTORY, files[i] ) );
-                    }
-                    catch ( IOException ex )
-                    {
-                        continue;
-                        // Not a zip file.
-                    }
-                    if ( zf != null )
-                    {
-                        JarClassLoader jcl = new JarClassLoader( zf );
-                        resources = ResourceBundle.getBundle( "spmanager", locale, jcl );
-                    }
-                }
-        }
-        else
-        {
-            System.out.println( "Dir does not exist" );
-        }*/
         resources = ResourceBundle.getBundle("spmanager", locale);
     }
 
@@ -287,8 +257,6 @@ public class SPMTranslate
         {
         }
         BRadioButton radio = new BRadioButton( command, state, group );
-        //radio.setText(command);
-        //radio.setState(state);
         if ( target != null )
             group.addEventLink( SelectionChangedEvent.class, target, method );
         return radio;

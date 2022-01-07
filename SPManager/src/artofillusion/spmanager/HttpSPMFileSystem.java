@@ -89,7 +89,6 @@ public class HttpSPMFileSystem extends SPMFileSystem
         objectsDoc = null;
         startupDoc = null;
         toolsDoc = null;
-        //SPManagerPlugin.getFrame().getParameters().initHttp();
     }
 
 
@@ -166,7 +165,6 @@ public class HttpSPMFileSystem extends SPMFileSystem
             SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningPluginsFrom", new String[]{repository.toString()} ), 5000 );
         else
         {
-            //String s = repository.toString().replaceAll("/AoIRepository/", "");
             String s = repository.toString();
 	    s = s.substring(0, s.lastIndexOf('/'));
             s = s + "/cgi-bin/scripts.cgi?Plugins%20" + SPManagerPlugin.AOI_VERSION;
@@ -204,7 +202,6 @@ public class HttpSPMFileSystem extends SPMFileSystem
             SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningToolScriptsFrom", new String[]{repository.toString()} ), 5000 );
         else
         {
-            //String s = repository.toString().replaceAll("/AoIRepository/", "");
             String s = repository.toString();
 	    s = s.substring(0, s.lastIndexOf('/'));
             s = s + "/cgi-bin/scripts.cgi?Scripts/Tools%20" + SPManagerPlugin.AOI_VERSION;
@@ -242,7 +239,6 @@ public class HttpSPMFileSystem extends SPMFileSystem
                     SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningObjectScriptsFrom", new String[]{repository.toString()} ), 5000 );
         else
         {
-            //String s = repository.toString().replaceAll("/AoIRepository/", "");
             String s = repository.toString();
 	    s = s.substring(0, s.lastIndexOf('/'));
             s = s + "/cgi-bin/scripts.cgi?Scripts/Objects%20" + SPManagerPlugin.AOI_VERSION;
@@ -280,7 +276,6 @@ public class HttpSPMFileSystem extends SPMFileSystem
                     SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningStartupScriptsFrom", new String[]{repository.toString()} ), 5000 );
         else
         {
-            //String s = repository.toString().replaceAll("/AoIRepository/", "");
             String s = repository.toString();
 	    s = s.substring(0, s.lastIndexOf('/'));
             s = s + "/cgi-bin/scripts.cgi?Scripts/Startup%20" + SPManagerPlugin.AOI_VERSION;
@@ -353,7 +348,6 @@ public class HttpSPMFileSystem extends SPMFileSystem
             Arrays.sort(sarray);
             for ( int i = 0; i < sarray.length; i++ )
             {
-                //String s = (String) v.elementAt( i );
         	String s = sarray[i];
                 System.out.println(s);
                 if ( s.endsWith( suffix ) )
@@ -456,15 +450,10 @@ public class HttpSPMFileSystem extends SPMFileSystem
         URL cgiUrl = null;
         try
         {
-            //String s = repository.toString().replaceAll("/AoIRepository/", "");
             String s = repository.toString();
 	    String err = "";
 	    s = s.substring(0, s.lastIndexOf('/'));
             cgiUrl = new URL( s + "/cgi-bin/scripts.cgi?" + dir + "%20" + SPManagerPlugin.AOI_VERSION );
-            //cgiUrl = new URL( s + "/cgi-bin/scripts.cgi?-z%20" + dir + "%20" + SPManagerPlugin.AOI_VERSION );
-            //cgiUrl = new URL( s + "/cgi-bin/RepoServer");
-            //cgiUrl = new URL( s + "/cgi-bin/RepoServer?HTTP_X_AOI_Dir=" + dir + "&HTTP_X_AOI_Version="
-    	    //	+ SPManagerPlugin.AOI_VERSION);
             
             String content = null;
             boolean received = false;
@@ -485,10 +474,8 @@ public class HttpSPMFileSystem extends SPMFileSystem
 		    continue;
 		}
 
-                //InputStream is= cgiUrl.openStream();
 		InputStream is= conn.getInputStream();
                 is = new BufferedInputStream( is );
-                //Document doc = SPManagerUtils.builder.parse( bis );
 
                 System.out.println("Content-Encoding: " + conn.getHeaderField("Content-Encoding"));
                 
@@ -498,12 +485,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
                 else if (conn.getHeaderField("Content-Encoding").equalsIgnoreCase("gzip"))
                 	is = new GZIPInputStream(is);
 
-                /*
-                byte[] prolog = new byte[40];
-                int chunk = is.read(prolog, 0, 40);
-                System.out.println("first " + chunk + " bytes >>" + new String(prolog, "UTF-8") + "<<");
-                */
-                
+                               
                 InputSource input = null;
                 try { input = new InputSource(new InputStreamReader(is, "UTF-8")); }
                 catch (Exception e) { e.printStackTrace(); }
@@ -530,19 +512,16 @@ public class HttpSPMFileSystem extends SPMFileSystem
                             if ( "scriptlocation".equals( nnl.item(j).getNodeName() ) )
                             {
                                 location = repository.toString() + "/" + dir +"/" + nnl.item(j).getChildNodes().item(0).getNodeValue();
-                                //System.out.println( "location found" );
                             }
                             else if ( "scriptlength".equals( nnl.item(j).getNodeName() ) )
                             {
                                 length = Long.parseLong( nnl.item(j).getChildNodes().item(0).getNodeValue() );
-                                //System.out.println( "length found" );
                             }
 			    else if ("extension".equals(nnl.item(j).getNodeName()))
 				script = nnl.item(j);
                             else if ("script".equals( nnl.item(j).getNodeName() ))
                                 script = nnl.item(j);
                         }
-                        //System.out.println( location + " / " + script + " / " + length);
                         if ( script != null && location != null )
                         {
                             addTo.add( new SPMObjectInfo( script, new URL(location) , length) );
@@ -613,12 +592,10 @@ public class HttpSPMFileSystem extends SPMFileSystem
      */
     public static long downloadRemoteTextFile( URL from, String fileName, long size, StatusDialog status, long totalDownload, long downloadedLength, ArrayList errors )
     {
-	//if (fileName.endsWith(".upd")) return 0;
-
         BufferedReader in = null;
         BufferedWriter file = null;
         long initialValue = downloadedLength;
-        //System.out.println( from + ": downloadedLength :" + downloadedLength + " " + lengthToDownload );
+        
         try
         {
 	    HttpURLConnection conn = (HttpURLConnection) from.openConnection();
@@ -647,7 +624,6 @@ public class HttpSPMFileSystem extends SPMFileSystem
 	    if (conn.getHeaderField("Content-Encoding").equalsIgnoreCase("gzip"))
 	    	is = new GZIPInputStream(is);
 
-            //in = new BufferedReader( new InputStreamReader( from.openStream() ) );
 	    in = new BufferedReader( new InputStreamReader( is ) );
                 
 	    file = new BufferedWriter( new FileWriter(fileName) );
@@ -680,7 +656,6 @@ public class HttpSPMFileSystem extends SPMFileSystem
 	    file.flush();
 	    file.close();
 
-            //System.out.println( "downloadedLength :" + downloadedLength + " " + ( downloadedLength - initialValue ) );
 
 	    // check we got the expected data
 	    long received = downloadedLength - initialValue;
@@ -692,19 +667,9 @@ public class HttpSPMFileSystem extends SPMFileSystem
         }
         catch ( Exception e)
         {
-	    /*
-            e.printStackTrace();
-            JOptionPane.showMessageDialog( null, from.toString() + ": " + SPMTranslate.text( "fileNotFound" ), SPMTranslate.text( "error" ), JOptionPane.ERROR_MESSAGE );
-	    */
 	    errors.add(SPMTranslate.text("error") + "(" + fileName + ")" + e);
         }
-	/*
-        catch ( IOException e )
-        {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog( null, from.toString() + ": " + SPMTranslate.text( "ioError" ), SPMTranslate.text( "error" ), JOptionPane.ERROR_MESSAGE );
-        }
-	*/
+	
         finally
         {
             try
@@ -716,13 +681,9 @@ public class HttpSPMFileSystem extends SPMFileSystem
             }
             catch ( IOException e )
             {
-                //e.printStackTrace();
 		System.out.println("SPManager: error closing " + fileName +
 				   ": " + e);
-		//errors.add("error closing " + fileName);
             }
-
-	    //if (update.exists()) update.delete();
         }
         return downloadedLength - initialValue;
     }
@@ -743,8 +704,6 @@ public class HttpSPMFileSystem extends SPMFileSystem
 	System.out.println("download: size=" + size +
 			   "; total=" + totalDownload +
 			   "; downloaded=" + downloadedLength);
-
-	//if (fileName.endsWith(".upd")) return 0;
 
 	File update = new File(fileName);
 
@@ -770,7 +729,6 @@ public class HttpSPMFileSystem extends SPMFileSystem
 		return 0;
 	    }
 
-            //in = new BufferedInputStream( from.openStream() );
 	    in = new BufferedInputStream( conn.getInputStream() );
 
             file = new BufferedOutputStream(new FileOutputStream(update));
@@ -848,20 +806,9 @@ public class HttpSPMFileSystem extends SPMFileSystem
         {
 	    errors.add(SPMTranslate.text("error") + "(" + fileName + ")" + e);
 
-	    /*	    
-            e.printStackTrace();
-
-	    JOptionPane.showMessageDialog( null, from.toString() + ": " + SPMTranslate.text( "errMsg" ), SPMTranslate.text( "error" ), JOptionPane.ERROR_MESSAGE );
-	    */
+	    
         }
-	/*
-        catch ( IOException e )
-        {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog( null, from.toString() + ": " + SPMTranslate.text( "ioError" ), SPMTranslate.text( "error" ), JOptionPane.ERROR_MESSAGE );
-        }
-	*/
-        finally
+	finally
         {
             try
             {
@@ -874,12 +821,8 @@ public class HttpSPMFileSystem extends SPMFileSystem
             {
 		System.out.println("SPManager: error closing " + fileName +
 				   ": " + e);
-
-                //e.printStackTrace();
-		//errors.add("Error closing " + fileName);
             }
 
-	    //if (update.exists()) update.delete();
         }
         return downloadedLength - initialValue;
     }
@@ -895,8 +838,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
         Vector v = new Vector();
 
         HtmlParserCallback callback = new HtmlParserCallback( v );
-//        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader( is ) );
-		BufferedReader bufferedReader = null;
+	BufferedReader bufferedReader = null;
         try {bufferedReader = new BufferedReader( new InputStreamReader( is, "UTF-8" ) ); }
         catch (Exception e) { e.printStackTrace(); return v; }
         try
@@ -924,7 +866,6 @@ public class HttpSPMFileSystem extends SPMFileSystem
         Vector v = new Vector();
 
         HtmlVersioningParserCallback callback = new HtmlVersioningParserCallback( v, from );
-        //BufferedReader bufferedReader = new BufferedReader( new InputStreamReader( is ) );
         BufferedReader bufferedReader = null;
         try { bufferedReader = new BufferedReader( new InputStreamReader( is, "UTF-8" ) ); }
         catch (Exception e) { e.printStackTrace(); return v; }
@@ -1056,9 +997,6 @@ public class HttpSPMFileSystem extends SPMFileSystem
         {
             int maj;
             int min;
-            //System.out.println( "AoI " + AoIversion );
-            //for ( int i = 0; i < versions.length; ++i )
-            //    System.out.println( versions[i] );
             String[] tmps = AoIversion.split( "[^0-9]" );
             maj = Integer.parseInt( tmps[0] );
             min = Integer.parseInt( tmps[1] );
@@ -1084,15 +1022,12 @@ public class HttpSPMFileSystem extends SPMFileSystem
             }
             if ( result == null )
             {
-                //System.out.println( "no script for version" );
                 return "";
             }
             if ( result.equals( "-" ) )
             {
-                //System.out.println( "-" );
                 return "";
             }
-            //System.out.println( "result : " + result );
             return result;
         }
 
@@ -1195,7 +1130,6 @@ public class HttpSPMFileSystem extends SPMFileSystem
             LayoutInfo layout = new LayoutInfo( LayoutInfo.CENTER, LayoutInfo.NONE, new Insets( 10, 10, 10, 10 ), new Dimension( 0, 0 ) );
             cc.add( label = SPMTranslate.bLabel( "status" ), layout );
             label.setText( SPMTranslate.text( "scanningPlugins" ) );
-            //cc.add( SPMTranslate.bLabel( "connectedTo", new String[]{repository.toString()} ) );
             layout = new LayoutInfo( LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets( 10, 10, 10, 10 ), new Dimension( 0, 0 ) );
             cc.add( progressBar = new BProgressBar(), layout );
             progressBar.setIndeterminate( true );
@@ -1227,24 +1161,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
         private void centerAndSizeWindow()
         {
 	    UIUtilities.centerDialog(this, (WindowWidget) getParent());
-
-	    /*
-            Dimension d1 = Toolkit.getDefaultToolkit().getScreenSize();
-            Dimension d2 = getComponent().getSize();
-            int x;
-            int y;
-
-            d2.width = new Long( Math.round( d2.width * 1.3 ) ).intValue();
-            //System.out.println( d1 );
-            x = ( d1.width - d2.width ) / 2;
-            y = ( d1.height - d2.height ) / 2;
-            if ( x < 0 )
-                x = 0;
-            if ( y < 0 )
-                y = 0;
-            setBounds( new Rectangle( x, y, d2.width, d2.height + 2 ) );
-	    */
-        }
+	}
 
 
         /**

@@ -14,7 +14,6 @@ import javax.swing.*;
 import javax.swing.tree.*;
 import buoy.widget.*;
 import buoy.event.*;
-//import artofillusion.ModellingApp;
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;
@@ -40,8 +39,6 @@ public class ManageSplitPane extends SPMSplitPane
         acceptsFileSelection = false;
         //initialise button
         LayoutInfo layout = new LayoutInfo( LayoutInfo.CENTER, LayoutInfo.NONE, new Insets( 0, 0, 0, 0 ), new Dimension( 0, 0 ) );
-        //buttonRow.add( deleteAllButton = SPMTranslate.bButton( "deleteAllSelected", this, "doDeleteAll" ), layout );
-        //deleteAllButton.setIcon( new ImageIcon( getClass().getResource( "/artofillusion/spmanager/icons/Delete16.gif" ) ) );
         buttonRow.add( deleteButton = SPMTranslate.bButton( "deleteFile", this, "doDelete" ), layout );
         deleteButton.setIcon( new ImageIcon( getClass().getResource( "/artofillusion/spmanager/icons/Delete16.gif" ) ) );
         deleteButton.setText( SPMTranslate.text( "deleteScript" ) );
@@ -56,12 +53,6 @@ public class ManageSplitPane extends SPMSplitPane
      */
     protected void updateTree()
     {
-        /*
-         *  {
-         *  updateTree(true);
-         *  }
-         *  protected void updateTree(boolean force)
-         */
         //update the file system
         fs.initialize();
 
@@ -127,21 +118,17 @@ public class ManageSplitPane extends SPMSplitPane
             tn.setAllowsChildren( false );
             tn.setUserObject( info );
             tree.addNode( addTo, tn );
-            //System.out.println( "added " + info.getName() + " to " + addTo );
         }
 
 	// NTJ: set reference counts
 	for (int i = 0; i < infos.size(); i++) {
             info = (SPMObjectInfo) infos.elementAt( i );
-	    //System.out.println("SPManager: file=" + info.getName());
 
 	    Collection externals = info.getExternals();
 	    String extName, extType;
 	    SPMObjectInfo ext;
 	    if (externals != null) {
-		//for (int j = 0; j < externals.size(); j++) {
 		for (Iterator iter = externals.iterator(); iter.hasNext(); ) {
-		    //extName = (String) externals.get(j);
 		    extName = (String) iter.next();
 
 		    if (extName.endsWith("= required")) {
@@ -149,7 +136,6 @@ public class ManageSplitPane extends SPMSplitPane
 						    extName.indexOf('=')).trim();
 			extName = extName.substring(0, extName.indexOf(':'));
 
-			//System.out.println("getFiles: extName=" + extName + "<<");
 			ext = getInfo(extName, (TreePath)pathMap.get(extType));
 			if (ext != null) ext.refcount++;
 		    }
@@ -226,9 +212,7 @@ public class ManageSplitPane extends SPMSplitPane
 	    String extName, extType;
 	    SPMObjectInfo ext;
 	    if (externals != null) {
-		//for (int j = 0; j < externals.size(); j++) {
 		for (Iterator iter = externals.iterator(); iter.hasNext(); ) {
-		    //extName = (String) externals.get(j);
 		    extName = (String) iter.next();
 
 		    if (extName.endsWith("= required")) {
@@ -237,7 +221,6 @@ public class ManageSplitPane extends SPMSplitPane
 
 			extName = extName.substring(0, extName.indexOf(':'));
 
-			//System.out.println("deleteFile: extName=" + extName + "<<");
 			ext = getInfo(extName, (TreePath)pathMap.get(extType));
 			if (ext != null) ext.refcount--;
 		    }

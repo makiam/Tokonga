@@ -52,9 +52,6 @@ public class SPMSetupFrame extends BDialog
         super( fr, true );
         frame = fr;
         setTitle( SPMTranslate.text( "SPManagerSetup" ) );
-        //JDialog dialog = (JDialog) getComponent();
-        //dialog.setUndecorated( true );
-        //dialog.getRootPane().setWindowDecorationStyle( JRootPane.FRAME );
         parameters = frame.getParameters();
         addEventLink( WindowClosingEvent.class, this, "doCancel" );
 
@@ -78,7 +75,6 @@ public class SPMSetupFrame extends BDialog
 	    String filtName, filtVal, filtType;
 	    int i, j;
 	    RowContainer line=null;
-	    //RadioButtonGroup group;
 	    BComboBox sel=null;
 	    LayoutInfo right = new LayoutInfo(LayoutInfo.EAST,LayoutInfo.NONE);
 	    LayoutInfo left = new LayoutInfo(LayoutInfo.WEST,LayoutInfo.NONE);
@@ -90,7 +86,6 @@ public class SPMSetupFrame extends BDialog
 
 		line = new RowContainer();
 		sel = new BComboBox();
-		//group = new RadioButtonGroup();
 
 		line.add(new BLabel(filtName));
 		line.add(sel);
@@ -101,12 +96,6 @@ public class SPMSetupFrame extends BDialog
 		    sel.add(filtType);
 		    if (filtVal.equals(filtType))
 			sel.setSelectedValue(filtType);
-		    /*
-		    line.add(new BRadioButton(filtType,
-					      filtVal.equals(filtType),
-					      group)
-			     );
-		    */
 		}
 
 		filterContainer.add(line, right);
@@ -176,13 +165,6 @@ public class SPMSetupFrame extends BDialog
         addEventLink( WindowClosingEvent.class, this, "doCancel" );
         pack();
         ( (JDialog) getComponent() ).setLocationRelativeTo( frame.getComponent() );
-        /*
-         *  addButton.setEnabled( false );
-         *  if ( rep.length <= 1 )
-         *  {
-         *  removeButton.setEnabled( false );
-         *  }
-         */
         parameters.setChanged( false );
         setVisible( true );
     }
@@ -290,20 +272,13 @@ public class SPMSetupFrame extends BDialog
 	HashMap filters = parameters.getFilters();
 	filters.clear();
 	RowContainer line;
-	//RadioButtonGroup group;
 	BComboBox sel;
 	String filtName, filtVal;
 	for (int i = 0; i < filterContainer.getChildCount(); i++) {
 	    line = (RowContainer) filterContainer.getChild(i);
 
 	    filtName = ((BLabel) line.getChild(0)).getText();
-	    /*
-	    group = ((BRadioButton) line.getChild(1)).getGroup();
-
-	    if (group.getSelection() != null)
-		filtVal = ((BRadioButton) group.getSelection()).getText();
-	    else filtVal = SPMParameters.FILTER_NAMES[SPMParameters.DEFAULT];
-	    */
+	    
 	    sel = (BComboBox) line.getChild(1);
 	    if (sel.getSelectedIndex() >= 0)
 		filtVal = sel.getSelectedValue().toString();
@@ -340,7 +315,6 @@ public class SPMSetupFrame extends BDialog
      */
     private void doRepositoriesCBChanged()
     {
-        //repEntry.setText( (String) repositoriesCB.getSelectedValue() );
 	parameters.setCurrentRepository( repositoriesCB.getSelectedIndex() );
     }
 

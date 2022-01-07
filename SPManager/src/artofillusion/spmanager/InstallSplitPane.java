@@ -19,7 +19,6 @@ import javax.swing.event.*;
 import javax.swing.tree.*;
 import buoy.widget.*;
 import buoy.event.*;
-//import artofillusion.ModellingApp;
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;
@@ -88,20 +87,13 @@ public class InstallSplitPane extends SPMSplitPane
 	{
 	    buttonRow.add( installAllButton = SPMTranslate.bButton( "updateAllSelected", this, "doInstallAll" ), layout );
 	    installAllButton.setIcon( new ImageIcon( getClass().getResource( "/artofillusion/spmanager/icons/Refresh16.gif" ) ) );
-	    //buttonRow.add( installSingleButton = SPMTranslate.bButton( "updateSingle", this, "doInstallSingle" ), layout );
-	    //installSingleButton.setIcon( new ImageIcon( getClass().getResource( "/artofillusion/spmanager/icons/Refresh16.gif" ) ) );
-    //selectAllButton.setIcon( new ImageIcon( getClass().getResource( "/artofillusion/spmanager/icons/Refresh16.gif" ) ) );
 	}
 	else
 	{
 	    buttonRow.add( installAllButton = SPMTranslate.bButton( "installAllSelected", this, "doInstallAll" ), layout );
 	    installAllButton.setIcon( new ImageIcon( getClass().getResource( "/artofillusion/spmanager/icons/Import16.gif" ) ) );
-	    //buttonRow.add( installSingleButton = SPMTranslate.bButton( "installSingle", this, "doInstallSingle" ), layout );
-	    //installSingleButton.setIcon( new ImageIcon( getClass().getResource( "/artofillusion/spmanager/icons/Import16.gif" ) ) );
-	    //selectAllButton.setIcon( new ImageIcon( getClass().getResource( "/artofillusion/spmanager/icons/Import16.gif" ) ) );
 	}
 	buttonRow.add( selectCB = SPMTranslate.bCheckBox( "selected", false, this, "doSelectCB" ) );
-	//installSingleButton.setEnabled( false );
 	selectCB.setEnabled( false );
 	updateTree();
 	modified = false;
@@ -504,8 +496,6 @@ public class InstallSplitPane extends SPMSplitPane
 
 				if (errors.size() > 0) showErrors(errors);
 
-				//status.dispose();
-				//SPManagerPlugin.restart();
 				try {
 				    SwingUtilities.invokeAndWait(new Runnable() {
 					public void run()
@@ -634,31 +624,6 @@ public class InstallSplitPane extends SPMSplitPane
 		    }
 		}
 
-		// now add the actual file name
-		//file = new File(file, nodeInfo.files[j]);  NTJ: now added in SPMObjectInfo when XML is parsed
-
-		folder = new File(SPManagerPlugin.TEMP_DIR,
-			file.getParentFile().getName());
-
-		if (!folder.exists() && !folder.mkdirs()) {
-		    errors.add(SPMTranslate.text("error") +
-			    "cannot open/create " +
-			    folder.getAbsolutePath());
-
-		    System.out.println("cannot open/create " +
-			    folder.getAbsolutePath());
-		}
-
-		update = new File(folder, file.getName() + ".upd");
-
-		System.out.println("downloading to " +
-			update.getAbsolutePath());
-
-		if ( status != null )
-		{
-		    status.setText( SPMTranslate.text( "downloading", nodeInfo.files[j] ) );
-		}
-		//value = status.getBarValue();
 		URL addFileURL = nodeInfo.getAddFileURL( j );
 		System.out.println("downloading from " + addFileURL.toString());
 		downloadedLength += HttpSPMFileSystem.downloadRemoteBinaryFile( addFileURL, update.getAbsolutePath(), nodeInfo.fileSizes[j], status, lengthToDownload, downloadedLength, errors );
@@ -685,11 +650,6 @@ public class InstallSplitPane extends SPMSplitPane
 			System.out.println("SPManager: tx abort: " +
 				" update file not deleted: " +
 				update.getAbsolutePath());
-
-			// NTJ Happens normally on some Wincrap boxes, so don't
-			// display an error
-			//errors.add("couldn't delete " +
-			//   update.getAbsolutePath());
 
 			// make file zero-length
 			RandomAccessFile raf =
@@ -724,11 +684,6 @@ public class InstallSplitPane extends SPMSplitPane
 				    " update file not deleted: " +
 				    update.getAbsolutePath());
 
-			    // NTJ Happens normally on some Wincrap boxes, so don't
-			    // display an error
-			    //errors.add("couldn't delete " +
-			    //   update.getAbsolutePath());
-
 			    // make file zero-length
 			    RandomAccessFile raf =
 				new RandomAccessFile(update, "rw");
@@ -748,8 +703,6 @@ public class InstallSplitPane extends SPMSplitPane
 			"(" + file.getName() + ")" + e);
 	    }
 	}
-
-	//fs.deleteInfo(nodeInfo);
     }
 
 
@@ -843,7 +796,6 @@ public class InstallSplitPane extends SPMSplitPane
      */
     public void scriptSelection( boolean deletable )
     {
-	//Button.setEnabled( true );
 	selectCB.setEnabled( true );
 	SPMObjectInfo nodeInfo = getSelectedNodeInfo();
 	if ( nodeInfo != null )
@@ -853,7 +805,6 @@ public class InstallSplitPane extends SPMSplitPane
 	    // disable select and install controls if item is restricted
 	    if (nodeInfo.restriction >= SPMParameters.DISABLE) {
 		selectCB.setEnabled(false);
-		//installSingleButton.setEnabled(false);
 	    }
 
 	    // disable select control if item has references
@@ -861,8 +812,6 @@ public class InstallSplitPane extends SPMSplitPane
 
 	    // disable install single if script has dependents
 	    Collection externals = nodeInfo.getExternals();
-	    //if (externals != null && externals.size() > 0)
-	    //installSingleButton.setEnabled(false);
 	}
 	super.scriptSelection( deletable );
     }
@@ -875,22 +824,15 @@ public class InstallSplitPane extends SPMSplitPane
      */
     public void pluginSelection( boolean deletable )
     {
-	//installSingleButton.setEnabled( true );
 	selectCB.setEnabled( true );
 	SPMObjectInfo nodeInfo = getSelectedNodeInfo();
 	if ( nodeInfo != null )
 	{
 	    selectCB.setState( nodeInfo.isSelected() );
 
-	    //System.out.println("externals =" +
-	    //	       (nodeInfo.getExternals() != null
-	    //		? nodeInfo.getExternals().size()
-	    //		: 0));
-
 	    // disable select and install controls if item is restricted
 	    if (nodeInfo.restriction >= SPMParameters.DISABLE) {
 		selectCB.setEnabled(false);
-		//installSingleButton.setEnabled(false);
 	    }
 
 	    // disable select control if item has references
@@ -898,8 +840,6 @@ public class InstallSplitPane extends SPMSplitPane
 
 	    // disable install single if plugin has dependents
 	    Collection externals = nodeInfo.getExternals();
-	    //if (externals != null && externals.size() > 0)
-	    //installSingleButton.setEnabled(false);
 	}
 	super.pluginSelection( deletable );
     }
@@ -910,7 +850,6 @@ public class InstallSplitPane extends SPMSplitPane
      */
     public void voidSelection()
     {
-	//installSingleButton.setEnabled( false );
 	selectCB.setEnabled( false );
 	super.voidSelection();
     }

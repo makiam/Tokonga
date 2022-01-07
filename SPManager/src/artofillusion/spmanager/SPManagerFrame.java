@@ -36,7 +36,7 @@ public class SPManagerFrame extends BFrame
     private static SPManagerFrame spmFrame;
     private static SPMParameters parameters;
     private BTabbedPane tabbedPane;
-    private SPMSplitPane manageSplitPane /*,updateSplitPane, installSplitPane */;
+    private SPMSplitPane manageSplitPane;
     private InstallSplitPane updateSplitPane, installSplitPane;
     private BLabel statusLabel;
     private String statusText;
@@ -96,7 +96,6 @@ public class SPManagerFrame extends BFrame
             };
         manageSplitPane = new ManageSplitPane();
         updateSplitPane = new InstallSplitPane( SPMSplitPane.UPDATE, (java.net.URL) null );
-        //parameters.getCurrentRepository() );
         installSplitPane = new InstallSplitPane( SPMSplitPane.INSTALL, updateSplitPane.getFileSystem() );
         ( (HttpSPMFileSystem) updateSplitPane.getFileSystem() ).setRepository( parameters.getCurrentRepository() );
         RowContainer rc = new RowContainer();
@@ -190,9 +189,6 @@ public class SPManagerFrame extends BFrame
                 break;
         }
         
-        // if we have checked for remote extensions, check for an update to SPManager
-        //if (tabbedPane.getSelectedTab() != 0)
-            //checkForUpdatedMe();
     }
 
     /**
@@ -263,7 +259,6 @@ public class SPManagerFrame extends BFrame
 			    }
 			});
 
-			//ArtOfIllusion.quit();
 		    }
 		}).start();
 
@@ -382,7 +377,6 @@ public class SPManagerFrame extends BFrame
         setRemoteStatusTextDuration( time );
 
         SwingUtilities.invokeLater(
-				   //new Thread()
 				   new Runnable()
             {
                 public void run()

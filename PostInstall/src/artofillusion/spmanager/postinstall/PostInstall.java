@@ -133,9 +133,6 @@ public class PostInstall implements Plugin
 				for (k = 0; k < sub.length; k++) {
 				    list.add(i, tmp.getAbsolutePath() +
 					    File.separator + sub[k]);
-				    
-				    //System.out.println("PI: added: "
-					//    	+ tmp.getAbsolutePath() + " : " + sub[k]);
 				}
 				
 				// continue processing from this element
@@ -188,7 +185,6 @@ public class PostInstall implements Plugin
 
 		    BTextArea txt = new BTextArea(5, 45);
 		    txt.setEditable(false);
-		    //txt.setText("PostInstall:\n");
 
 		    for (i = 0; i < ok.size(); i++)
 			txt.append(ok.get(i).toString() + "\n");
@@ -245,7 +241,6 @@ public class PostInstall implements Plugin
 	String[] files = from.list();
 	if (files == null || files.length == 0) return;
 
-	//System.out.println("PostInstall: cleaning up " + path);
 
 	// iterate all filenames in the directory
 	for (int i = 0; i < files.length; i++) {
@@ -279,8 +274,6 @@ public class PostInstall implements Plugin
 					   files[i].length()-".upd".length());
 
 		plugin = new File(to, fname);
-
-		//System.out.println("Checking: " + files[i] + " -> " + fname);
 
 		// if the corresponding plugin also exists then fix it
 		if (plugin.exists()) plugin.delete();

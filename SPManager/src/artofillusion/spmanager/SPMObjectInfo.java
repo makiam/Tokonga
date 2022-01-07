@@ -138,7 +138,6 @@ public class SPMObjectInfo
 		}
 		File f = new File( fn );
 		length = f.length();
-		//length = 0;
 
 	}
 
@@ -245,7 +244,6 @@ public class SPMObjectInfo
 				}
 			}
 		}
-		//return getName()+" by "+author+", v"+version+betaString+" "+date+" , Size: "+length+"b";
 		kbsize = Math.round( length / 1000 );
 		if ( kbsize < 1 )
 		{
@@ -276,10 +274,8 @@ public class SPMObjectInfo
 	 */
 	private String getXmlHeaderAsString( BufferedReader reader )
 	{
-		//Vector c = new Vector();
 		char c1 = ' ';
 		char c2 = ' ';
-		//String s = "";
 		StringBuffer sb = new StringBuffer(1024);
 		int status = 0;
 		try
@@ -320,7 +316,6 @@ public class SPMObjectInfo
 				e.printStackTrace();
 			}
 		}
-		//s = s + c1;
 		sb.append(c1);
 
 		while ( ( ( c1 != '*' ) || ( c2 != '/' ) ) && ( status != -1 ) )
@@ -331,8 +326,6 @@ public class SPMObjectInfo
 				status = reader.read();
 				c2 = (char) status;
 				sb.append(c2);
-				//s = s + c2;
-				//c.add( new Byte( (byte) c2 ) );
 			}
 			catch ( IOException e )
 			{
@@ -341,8 +334,6 @@ public class SPMObjectInfo
 		}
 		if ( sb.length() > 2 )
 		{
-			//s = s.substring( 0, s.length() - 3 );
-			//return s;
 			return sb.substring(0, sb.length() - 3);
 		}
 		else
@@ -407,34 +398,6 @@ public class SPMObjectInfo
 		 * NTJ: AOI 2.5. Default XML file name changed to 'extensions.xml'
 		 * For compatibility we try the new name first, then the old...
 		 */
-		//String fn = getName() + ".xml";
-
-		/*
-		 *  byte[] xmlByteArray = SPManagerUtils.getJarFileContent( fileName, fn );
-		 *  if ( xmlByteArray != null )
-		 *  {
-		 *  try
-		 *  {
-		 *  ByteArrayInputStream xmlStream = new ByteArrayInputStream( xmlByteArray );
-		 *  BufferedReader xmlReader = new BufferedReader( new InputStreamReader( xmlStream ) );
-		 *  XmlParser parser = new XmlParser( xmlReader );
-		 *  try
-		 *  {
-		 *  traverse( parser, "" );
-		 *  }
-		 *  catch ( Exception exc )
-		 *  {
-		 *  System.out.println( "File " + fileName + " does not have a valid XML optional header." );
-		 *  }
-		 *  xmlReader.close();
-		 *  xmlStream.close();
-		 *  }
-		 *  catch ( Exception e )
-		 *  {
-		 *  e.printStackTrace();
-		 *  }
-		 *  }
-		 */
 
 		String fn = "extensions.xml";
 
@@ -442,10 +405,6 @@ public class SPMObjectInfo
 		{
 			InputStream is;
 			URL url = new URL( "jar:file:" + fileName + "!/" + fn );
-			//JarURLConnection jarConnection = (JarURLConnection) url.openConnection();
-			//Object obj = jarConnection.getContent();
-			//if ( obj instanceof InputStream )
-			//{
 
 			// try new name first
 			try {
@@ -462,21 +421,15 @@ public class SPMObjectInfo
 			}
 
 			try {
-				//InputStreamReader r;
-				//BufferedReader xmlReader = new BufferedReader( new InputStreamReader( (InputStream) obj ) );
-				//BufferedInputStream xmlStream = new BufferedInputStream( (InputStream) obj );
 				BufferedInputStream xmlStream = new BufferedInputStream(is);
 				xmlDescription = SPManagerUtils.builder.parse( xmlStream );
 				readInfoFromXmlHeader( xmlDescription );
 				xmlStream.close();
-				//r.close();
-				//( (InputStream) obj ).close();
 			}
 			catch ( Throwable t ) {
 				System.out.println("Reading: " + url);
 				t.printStackTrace();
 			}
-			//}
 		}
 		catch ( Exception e )
 		{
@@ -498,8 +451,6 @@ public class SPMObjectInfo
 			HttpURLConnection.setFollowRedirects( false );
 			HttpURLConnection connection = (HttpURLConnection) httpFile.openConnection();
 			String header = connection.getHeaderField( 0 );
-			//System.out.println( header );
-			//System.out.println( "---Start of headers---" );
 			int i = 1;
 			while ( ( header = connection.getHeaderField( i ) ) != null )
 			{
@@ -511,10 +462,8 @@ public class SPMObjectInfo
 						length = Long.parseLong( header );
 					}
 				}
-				//System.out.println( ( ( key == null ) ? "" : key + ": " ) + header );
 				i++;
 			}
-			//System.out.println( "---End of headers---" );
 			in = new BufferedReader( new InputStreamReader( connection.getInputStream() ) );
 			s = getXmlHeaderAsString( in );
 			in.close();
@@ -535,16 +484,6 @@ public class SPMObjectInfo
 			byte[] xmlByteArray = s.getBytes();
 			BufferedInputStream xmlStream = new BufferedInputStream( new ByteArrayInputStream( xmlByteArray ) );
 
-			/*BufferedReader xmlReader = new BufferedReader( new InputStreamReader( xmlStream ) );
-            XmlParser parser = new XmlParser( xmlReader );
-            try
-            {
-                traverse( parser, "" );
-            }
-            catch ( Exception exc )
-            {
-                System.out.println( "File " + fileName + " does not have a valid XML optional header." );
-            }*/
 			xmlDescription = SPManagerUtils.builder.parse( xmlStream );
 			readInfoFromXmlHeader( xmlDescription );
 
@@ -561,15 +500,12 @@ public class SPMObjectInfo
 	 */
 	private void loadXmlInfoFromRemoteJarFile()
 	{
-		//BufferedReader in = null;
 		String s = null;
 		try
 		{
 			HttpURLConnection.setFollowRedirects( false );
 			HttpURLConnection connection = (HttpURLConnection) httpFile.openConnection();
 			String header = connection.getHeaderField( 0 );
-			//System.out.println( header );
-			//System.out.println( "---Start of headers---" );
 			int i = 1;
 			while ( ( header = connection.getHeaderField( i ) ) != null )
 			{
@@ -581,11 +517,8 @@ public class SPMObjectInfo
 						length = Long.parseLong( header );
 					}
 				}
-				//System.out.println( ( ( key == null ) ? "" : key + ": " ) + header );
 				i++;
 			}
-			//System.out.println( "---End of headers---" );
-			//connection.disconnect();
 
 			/*
 			 *  NTJ: for AOI 2.5: XML filename is changed to 'extensions.xml'.
@@ -604,21 +537,15 @@ public class SPMObjectInfo
 
 			if (is == null) {
 				s = httpFile.toString();
-				//s = s.substring( 0, s.length() - 4 ) + ".xml";
 				s = s.substring( 0, s.lastIndexOf('.') ) + ".xml";
-				//System.out.println("SPMObjectInfo getting " + s);
 				is = new URL( s ).openStream();
 			}
 
-			//XmlParser parser = new XmlParser( in );
-			//traverse( parser, "" );
-			//byte[] xmlByteArray = s.getBytes();
 
 			BufferedInputStream xmlStream = new BufferedInputStream(is);
 
 			xmlDescription = SPManagerUtils.builder.parse( xmlStream );
 			readInfoFromXmlHeader( xmlDescription );
-			//if (in != null) in.close();
 			if (is != null) is.close();
 		}
 		catch ( Exception e )
@@ -678,7 +605,6 @@ public class SPMObjectInfo
 		URL url = null;
 		try
 		{
-			//System.out.println( "addURL " + name );
 			url = new URL( name );
 		}
 		catch ( Exception e )
@@ -693,7 +619,6 @@ public class SPMObjectInfo
 	 */
 	public long getRemoteFileSize(String url)
 	{
-		//System.out.println("fileSize: " + url.toString());
 
 		try
 		{
@@ -704,23 +629,14 @@ public class SPMObjectInfo
 
 			String key = connection.getHeaderField(0);
 			int i=1;
-			//System.out.println( header );
-			//System.out.println( "---Start of headers---" );
 
 			while ((key = connection.getHeaderFieldKey(i)) != null )
 			{
-				//System.out.println("Header=" + key);
 				if (key.equals( "Content-Length")) {
-					//System.out.println("Content-Length=" +
-					//	       connection.getHeaderField(i));
 					return Long.parseLong(connection.getHeaderField(i));
 				}
-				//System.out.println( ( ( key == null ) ? "" : key + ": " ) + header );
 				i++;
 			}
-			//System.out.println("headers parsed: " + i);
-			//System.out.println( "---End of headers---" );
-			//connection.disconnect();
 
 		}
 		catch ( Exception e )
@@ -865,20 +781,14 @@ public class SPMObjectInfo
 
 			extName = SPManagerUtils.getAttribute(node, "name");
 
-			// NTJ: explicit <external> can override implicit <import>
-			//if (!externals.containsKey(extName)) {
-			//System.out.println("SPManager: ext=" + extName);
-
 			extType = SPManagerUtils.getAttribute(node, "type");
 			extAssoc = SPManagerUtils.getAttribute(node, "association");
 			externals.put(extName, extName + ":"+extType+"= " + extAssoc);
 
 			extAction = SPManagerUtils.getAttribute(node, "action");
-			//System.out.println("SPManager: action=" + extAction);
 			if (extAction != null && extAction.length() > 0) {
 				actions.put(extName, extAction);
 			}
-			//}
 		}
 
 
@@ -892,7 +802,6 @@ public class SPMObjectInfo
 
 			plugClass = SPManagerUtils.getAttribute(node, "class");
 
-			//System.out.println("plugin: " + plugClass);
 
 			sl = node.getChildNodes();
 			for (j = 0;
@@ -914,8 +823,6 @@ public class SPMObjectInfo
 					exportList += methId + "\n" + methHelp + "\n";
 				}
 
-				//System.out.println("export: " + methName + ": " + methId +
-				//	   "\n" + methHelp);
 			}
 		}
 
@@ -968,7 +875,6 @@ public class SPMObjectInfo
 		}
 
 		// NTJ: process filters
-		//nl = script.getChildNodes();
 		node = SPManagerUtils.getNodeFromNodeList(nl, "filter", 0);
 
 		if (params != null && node != null) {
@@ -992,7 +898,6 @@ public class SPMObjectInfo
 				}
 
 				if (flags.length() > 0) flags += "\n";
-				//flags += filtName + '=' + node.getNodeValue();
 				flags += filtName;
 			}
 		}
@@ -1001,7 +906,6 @@ public class SPMObjectInfo
 
 		// NTJ: set changeLog from the history nodes
 		String history = "";
-		//nl = script.getChildNodes();
 		node = SPManagerUtils.getNodeFromNodeList( nl, "history", 0 );
 		if (node != null) {
 
@@ -1024,13 +928,6 @@ public class SPMObjectInfo
 
 				str = node.getChildNodes().item(0).getNodeValue();
 
-				/*
-		if (str != null)
-		    setLog(name, str, i+5);
-		else 
-		    setLog(name, SPMTranslate.text("noDetail"), i+5);
-				 */
-
 				history += (history.length() > 0 ? "\n" : "") + name + str;
 			}
 
@@ -1039,7 +936,6 @@ public class SPMObjectInfo
 				setLog( SPMTranslate.text("history"), history, 4);
 		}
 
-		//nl = script.getChildNodes();
 		Node fileSet = SPManagerUtils.getNodeFromNodeList( nl, "fileset", 0 );
 		String todir;
 		String src;
@@ -1098,8 +994,6 @@ public class SPMObjectInfo
 		if (refcount <= 0 && restriction < SPMParameters.DISABLE)
 			selected = sel;
 
-		//System.out.println("SPMObjectInfo: restr=" + restriction + "; sel=" +
-		//	   selected);
 	}
 
 
@@ -1122,12 +1016,8 @@ public class SPMObjectInfo
 	public int getMajor()
 	{
 		int index = version.indexOf( '.' );
-		//System.out.println(version+" "+index);
 		if ( index > 0 ) {
 			try {
-				//return Integer.parseInt( version.substring( 0, index ) );
-				//System.out.println("major(" + version + ")= " +
-				// SPManagerUtils.parseInt(version, 0, index));
 
 				return SPManagerUtils.parseInt(version, 0, index);
 			} catch (Exception e) {
@@ -1147,25 +1037,13 @@ public class SPMObjectInfo
 	 */
 	public int getMinor()
 	{
-		//int index = version.indexOf( '.' );
 		int index = version.indexOf( '.' ) + 1;
 
-		//System.out.println(version+" "+index);
 		if ( index < version.length() ) {
 			try {
-				//String substring = version.substring( index + 1, version.length() );
-				//if ( substring.length() < 2 )
 				if (version.length() - index < 2) {
-					// System.out.println("minor(" + version + ")= " +
-					// SPManagerUtils.parseInt(version+"0", index, -1));
-
-					//substring = substring + "0";
 					return SPManagerUtils.parseInt(version, index, -1)*10;
 				}
-				//return Integer.parseInt( substring );
-				//  System.out.println("minor(" + version + ")= " +
-				//       SPManagerUtils.parseInt(version, index, -1));
-
 				return SPManagerUtils.parseInt(version, index, -1);
 			} catch (Exception e) {
 				return 0;

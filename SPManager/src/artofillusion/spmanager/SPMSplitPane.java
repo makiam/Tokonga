@@ -277,7 +277,6 @@ public class SPMSplitPane extends BSplitPane
 			}
 		};
 		( (JTree) tree.getComponent() ).addMouseListener( ml );
-		//setResizeWeight( 0.3 );
 
 		pathMap = new Hashtable(8);
 		pathMap.put("plugin", pluginsPath);
@@ -294,11 +293,6 @@ public class SPMSplitPane extends BSplitPane
 	}
 
 
-	/*
-	 *  protected void updateTree(boolean force)
-	 *  {
-	 *  }
-	 */
 	/**
 	 *  Description of the Method
 	 */
@@ -386,9 +380,7 @@ public class SPMSplitPane extends BSplitPane
 			boolean missing = false;
 			Collection externals = info.getExternals();
 			if (externals != null) {
-				//for (int i = 0; i < externals.size(); i++) {
 				for (Iterator iter = externals.iterator(); iter.hasNext(); ) {
-					//ext = (String) externals.get(i);
 					ext = (String) iter.next();
 
 					if (ext.endsWith("= required")) {
@@ -396,24 +388,10 @@ public class SPMSplitPane extends BSplitPane
 						extType = ext.substring(ext.indexOf(':')+1,
 								ext.indexOf('=')).trim();
 
-						//System.out.println("extName=" + extName + "<<");
 						if (getInfo(extName, (TreePath) pathMap.get(extType)) == null) {
 
 						    //TODO check for externals with pathnames
-						    /*
-						     * switch (extName.charAt(0)) {
-						     *	case '/':
-						     *		missing = (!new File(SPManagerPlugin.APP_DIRECTORY, extName.substring(1)).exists()));
-						     *		break; 
-						     *
-						     *case '$':
-						     *		Field field = SPManagerPlugin.getDeclaredField(extName.substring(1, extName.indexOf('/')));
-						     *		String dir = field.get(null);
-						     *		if (dir != null) missing = (!new File(dir, extName.substring(extname.indexOf('/')+1)).exists());
-						     *		break;
-						     * default:
-						     * 
-						     */
+						    
 							ManageSplitPane man = null;
 							for (int j = splitPaneList.size()-1; j >= 0; j--) {
 								if (splitPaneList.get(j) instanceof ManageSplitPane) {
@@ -426,7 +404,6 @@ public class SPMSplitPane extends BSplitPane
 								missing = true;
 								ext += " **Not Available**";
 							}
-							//}
 						}
 					}
 
@@ -450,7 +427,6 @@ public class SPMSplitPane extends BSplitPane
 				}
 
 				info.setLog(SPMTranslate.text("otherFiles"), extList, 2);
-				//name += extList;
 			}
 
 			objectName.setText( name );
@@ -476,7 +452,6 @@ public class SPMSplitPane extends BSplitPane
 			descSelect.add( SPMTranslate.text( "description" ));
 		}
 
-		//SPManagerFrame.getBFrame()
 		descriptionSP.layoutChildren();
 
 		SwingUtilities.invokeLater(
@@ -516,7 +491,6 @@ public class SPMSplitPane extends BSplitPane
 			info = ((DefaultMutableTreeNode) tree.getChildNode( path, j)
 					.getLastPathComponent()).getUserObject();
 
-			//System.out.println("info=" + info.toString() + "<<");
 			if (name.equals(info.toString())) return (SPMObjectInfo) info;
 		}
 
@@ -629,7 +603,6 @@ public class SPMSplitPane extends BSplitPane
 		{
 			for ( int j = count - 1; j >= 0; --j )
 			{
-				//DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getChildNode(path, j).getLastPathComponent();
 				tree.removeNode( tree.getChildNode( path, j ) );
 			}
 		}
@@ -700,9 +673,7 @@ public class SPMSplitPane extends BSplitPane
 
 		String extName, extType;
 		SPMObjectInfo ext;
-		//for (int i = externals.size() - 1; i >= 0; i--) {
 		for (Iterator iter = externals.iterator(); iter.hasNext(); ) {
-			//extName = (String) externals.get(i);
 			extName = (String) iter.next();
 
 			if (extName.endsWith("= required")) {
