@@ -1,6 +1,12 @@
-// -----------------------------------------------------------------------------
-// StringEncrypter.java
-// -----------------------------------------------------------------------------
+/*
+ *  Changes copyright 2022 by Maksim Khramov
+ *  This program is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later version.
+ *  This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ *  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ */
 
 package artofillusion.spmanager;
 
@@ -22,10 +28,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.InvalidKeyException;
 import java.security.spec.InvalidKeySpecException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import java.io.UnsupportedEncodingException;
-import java.io.IOException;
 
 
 /**
@@ -164,7 +166,7 @@ public class StringEncrypter
             byte[] enc = ecipher.doFinal( utf8 );
 
             // Encode bytes to base64 to get a string
-            return new sun.misc.BASE64Encoder().encode( enc );
+            return java.util.Base64.getEncoder().encodeToString(enc);
         }
         catch (Exception e) {}
         return null;
@@ -185,7 +187,7 @@ public class StringEncrypter
         {
 
             // Decode base64 to get bytes
-            byte[] dec = new sun.misc.BASE64Decoder().decodeBuffer( str );
+            byte[] dec = java.util.Base64.getDecoder().decode(str);
 
             // Decrypt
             byte[] utf8 = dcipher.doFinal( dec );
