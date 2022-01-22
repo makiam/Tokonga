@@ -11,9 +11,9 @@
 package artofillusion.spmanager;
 
 // CIPHER / GENERATORS
+import java.security.GeneralSecurityException;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
-import javax.crypto.KeyGenerator;
 
 // KEY SPECIFICATIONS
 import java.security.spec.KeySpec;
@@ -21,14 +21,6 @@ import java.security.spec.AlgorithmParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEParameterSpec;
-
-// EXCEPTIONS
-import java.security.InvalidAlgorithmParameterException;
-import java.security.NoSuchAlgorithmException;
-import java.security.InvalidKeyException;
-import java.security.spec.InvalidKeySpecException;
-import javax.crypto.NoSuchPaddingException;
-
 
 /**
  *  -----------------------------------------------------------------------------
@@ -43,46 +35,11 @@ import javax.crypto.NoSuchPaddingException;
  *@created    23 mars 2004
  */
 
-public class StringEncrypter
+public final class StringEncrypter
 {
 
-    Cipher ecipher;
-    Cipher dcipher;
-
-
-    /**
-     *  Constructor used to create this object. Responsible for setting and
-     *  initializing this object's encrypter and decrypter Chipher instances
-     *  given a Secret Key and algorithm.
-     *
-     *@param  key        Secret Key used to initialize both the encrypter and
-     *      decrypter instances.
-     *@param  algorithm  Which algorithm to use for creating the encrypter and
-     *      decrypter instances.
-     */
-    StringEncrypter( SecretKey key, String algorithm )
-    {
-        try
-        {
-            ecipher = Cipher.getInstance( algorithm );
-            dcipher = Cipher.getInstance( algorithm );
-            ecipher.init( Cipher.ENCRYPT_MODE, key );
-            dcipher.init( Cipher.DECRYPT_MODE, key );
-        }
-        catch ( NoSuchPaddingException e )
-        {
-            System.out.println( "EXCEPTION: NoSuchPaddingException" );
-        }
-        catch ( NoSuchAlgorithmException e )
-        {
-            System.out.println( "EXCEPTION: NoSuchAlgorithmException" );
-        }
-        catch ( InvalidKeyException e )
-        {
-            System.out.println( "EXCEPTION: InvalidKeyException" );
-        }
-    }
-
+    private Cipher ecipher;
+    private Cipher dcipher;
 
     /**
      *  Constructor used to create this object. Responsible for setting and
@@ -120,30 +77,9 @@ public class StringEncrypter
             dcipher.init( Cipher.DECRYPT_MODE, key, paramSpec );
 
         }
-        catch ( InvalidAlgorithmParameterException e )
+        catch ( GeneralSecurityException gse )
         {
-            System.out.println( "EXCEPTION: InvalidAlgorithmParameterException" );
-            e.printStackTrace();
-        }
-        catch ( InvalidKeySpecException e )
-        {
-            System.out.println( "EXCEPTION: InvalidKeySpecException" );
-            e.printStackTrace();
-        }
-        catch ( NoSuchPaddingException e )
-        {
-            System.out.println( "EXCEPTION: NoSuchPaddingException" );
-            e.printStackTrace();
-        }
-        catch ( NoSuchAlgorithmException e )
-        {
-            System.out.println( "EXCEPTION: NoSuchAlgorithmException" );
-            e.printStackTrace();
-        }
-        catch ( InvalidKeyException e )
-        {
-            System.out.println( "EXCEPTION: InvalidKeyException" );
-            e.printStackTrace();
+            System.out.println("Security exception: " + gse.getMessage());
         }
     }
 
@@ -197,108 +133,6 @@ public class StringEncrypter
         }
         catch (Exception e) {}
         return null;
-    }
-
-
-    /**
-     *  The following method is used for testing the String Encrypter class.
-     *  This method is responsible for encrypting and decrypting a sample String
-     *  using several symmetric temporary Secret Keys.
-     */
-    public static void testUsingSecretKey()
-    {
-        try
-        {
-
-            System.out.println();
-            System.out.println( "+----------------------------------------+" );
-            System.out.println( "|  -- Test Using Secret Key Method --    |" );
-            System.out.println( "+----------------------------------------+" );
-            System.out.println();
-
-            String secretString = "Attack at dawn!";
-
-            // Generate a temporary key for this example. In practice, you would
-            // save this key somewhere. Keep in mind that you can also use a
-            // Pass Phrase.
-            SecretKey desKey = KeyGenerator.getInstance( "DES" ).generateKey();
-            SecretKey blowfishKey = KeyGenerator.getInstance( "Blowfish" ).generateKey();
-            SecretKey desedeKey = KeyGenerator.getInstance( "DESede" ).generateKey();
-
-            // Create encrypter/decrypter class
-            StringEncrypter desEncrypter = new StringEncrypter( desKey, desKey.getAlgorithm() );
-            StringEncrypter blowfishEncrypter = new StringEncrypter( blowfishKey, blowfishKey.getAlgorithm() );
-            StringEncrypter desedeEncrypter = new StringEncrypter( desedeKey, desedeKey.getAlgorithm() );
-
-            // Encrypt the string
-            String desEncrypted = desEncrypter.encrypt( secretString );
-            String blowfishEncrypted = blowfishEncrypter.encrypt( secretString );
-            String desedeEncrypted = desedeEncrypter.encrypt( secretString );
-
-            // Decrypt the string
-            String desDecrypted = desEncrypter.decrypt( desEncrypted );
-            String blowfishDecrypted = blowfishEncrypter.decrypt( blowfishEncrypted );
-            String desedeDecrypted = desedeEncrypter.decrypt( desedeEncrypted );
-
-            // Print out values
-            System.out.println( desKey.getAlgorithm() + " Encryption algorithm" );
-            System.out.println( "    Original String  : " + secretString );
-            System.out.println( "    Encrypted String : " + desEncrypted );
-            System.out.println( "    Decrypted String : " + desDecrypted );
-            System.out.println();
-
-            System.out.println( blowfishKey.getAlgorithm() + " Encryption algorithm" );
-            System.out.println( "    Original String  : " + secretString );
-            System.out.println( "    Encrypted String : " + blowfishEncrypted );
-            System.out.println( "    Decrypted String : " + blowfishDecrypted );
-            System.out.println();
-
-            System.out.println( desedeKey.getAlgorithm() + " Encryption algorithm" );
-            System.out.println( "    Original String  : " + secretString );
-            System.out.println( "    Encrypted String : " + desedeEncrypted );
-            System.out.println( "    Decrypted String : " + desedeDecrypted );
-            System.out.println();
-
-        }
-        catch ( NoSuchAlgorithmException e )
-        {
-        }
-    }
-
-
-    /**
-     *  The following method is used for testing the String Encrypter class.
-     *  This method is responsible for encrypting and decrypting a sample String
-     *  using using a Pass Phrase.
-     */
-    public static void testUsingPassPhrase()
-    {
-
-        System.out.println();
-        System.out.println( "+----------------------------------------+" );
-        System.out.println( "|  -- Test Using Pass Phrase Method --   |" );
-        System.out.println( "+----------------------------------------+" );
-        System.out.println();
-
-        String secretString = "Attack at dawn!";
-        String passPhrase = "My Pass Phrase";
-
-        // Create encrypter/decrypter class
-        StringEncrypter desEncrypter = new StringEncrypter( passPhrase );
-
-        // Encrypt the string
-        String desEncrypted = desEncrypter.encrypt( secretString );
-
-        // Decrypt the string
-        String desDecrypted = desEncrypter.decrypt( desEncrypted );
-
-        // Print out values
-        System.out.println( "PBEWithMD5AndDES Encryption algorithm" );
-        System.out.println( "    Original String  : " + secretString );
-        System.out.println( "    Encrypted String : " + desEncrypted );
-        System.out.println( "    Decrypted String : " + desDecrypted );
-        System.out.println();
-
     }
 
 }
