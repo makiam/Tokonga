@@ -1,6 +1,6 @@
-
 /*
  *  Copyright 2004 Francois Guillet
+ *  Changes copyright 2022 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -13,11 +13,8 @@ package artofillusion.spmanager;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.regex.*;
-import java.awt.*;
 import javax.swing.*;
 import buoy.widget.*;
-import buoy.event.*;
 
 import artofillusion.ui.*;
 
@@ -29,17 +26,16 @@ import artofillusion.ui.*;
  */
 public class SPMParameters
 {
-    private static Vector repositories;
+    private static Vector<String> repositories;
     private static int current;
-    private static String repoList;
-    private static HashMap filters;
+    private static Map<String, String> filters;
     private static boolean useProxy;
     private static String proxyHost;
     private static String proxyPort;
     private static String username;
     private static String password;
     private static boolean changed;
-    private StringEncrypter se;
+    private static final StringEncrypter se = new StringEncrypter( "SPMan8ger" );
     private URL repListURL;
     private boolean useCache;
 
@@ -65,11 +61,11 @@ public class SPMParameters
      */
     public SPMParameters()
     {
-        repositories = new Vector();
+        repositories = new Vector<>();
 
         repositories.add( "http://aoisp.sourceforge.net/AoIRepository/" );
 
-	filters = new HashMap();
+	filters = new HashMap<>();
 	filters.put("beta", "mark");
 	filters.put("earlyAccess", "confirm");
 	filters.put("experimental", "hide");
@@ -81,7 +77,7 @@ public class SPMParameters
         current = 0;
         useProxy = false;
         useCache = true;
-        se = null;
+        
         loadPropertiesFile();
         initHttp();
     }
@@ -121,28 +117,7 @@ public class SPMParameters
      */
     public void getRepositoriesList( boolean forceUpdate )
     {
-        if ( forceUpdate )
-        {
-            (
-                new Thread()
-                {
-                    public void run()
-                    {
-                        getThreadedRepositoriesList( true );
-                    }
-                } ).start();
-        }
-        else
-        {
-            (
-                new Thread()
-                {
-                    public void run()
-                    {
-                        getThreadedRepositoriesList( false );
-                    }
-                } ).start();
-        }
+      new Thread(() -> getThreadedRepositoriesList(forceUpdate)).start();
     }
 
 
@@ -160,6 +135,7 @@ public class SPMParameters
 	dlg.setEnabled(true);
 
 	(new Thread() {
+                @Override
 		public void run()
 		{
 		    try {
@@ -208,14 +184,14 @@ public class SPMParameters
 
             String repoName;
 	    boolean modified = true;
-	    String currentString = (String) repositories.elementAt( current );
+	    String currentString = repositories.get( current );
 
 	    System.out.println("current repo (" + current + "): " +
 			       currentString);
 
 	    int previous = current;
 	    current = 0;
-	    Vector newRepositories = new Vector();
+	    Vector<String> newRepositories = new Vector<>();
 	    while (true) {
 		repoName = rd.readLine();
 		if (repoName == null || repoName.length() == 0) break;
@@ -249,14 +225,7 @@ public class SPMParameters
 
             if ( modified )
             {
-                SwingUtilities.invokeLater(
-					   new Runnable()
-                    {
-                        public void run()
-                        {
-                            SPManagerFrame.getInstance().updatePanes();
-                        }
-                    } );
+                SwingUtilities.invokeLater(SPManagerFrame.getInstance()::updatePanes);
                 updated = true;
             }
         }
@@ -284,14 +253,7 @@ public class SPMParameters
             }
             if ( ( !updated ) && forceUpdate )
             {
-                SwingUtilities.invokeLater(
-					   new Runnable()
-                    {
-                        public void run()
-                        {
-                            SPManagerFrame.getInstance().updatePanes();
-                        }
-                    } );
+                SwingUtilities.invokeLater(SPManagerFrame.getInstance()::updatePanes);
             }
 
         }
@@ -365,19 +327,15 @@ public class SPMParameters
             System.out.println( "SPManager : Wrong default URL index in properties file." );
         }
 
-	Iterator iter = p.entrySet().iterator();
-	Map.Entry entry;
-	while (iter.hasNext()) {
-	    entry = (Map.Entry) iter.next();
-	    s = (String) entry.getKey();
-	    if (s.startsWith("FILTER_")) {
-		filters.put(s.substring("FILTER_".length()),
-			   (String) entry.getValue());
-	    }
-	}
+
+        p.forEach((Object pKey, Object value) -> {
+          String key = (String)pKey;
+          if(key.startsWith("FILTER_"))
+            filters.put(key.substring("FILTER_".length()), (String)value);
+        });
 
 	// initialise an empty filter set
-	if (filters.size() == 0) {
+	if (filters.isEmpty()) {
 	    filters.put("beta", "mark");
 	    filters.put("earlyAccess", "confirm");
 	    filters.put("experimental", "hide");
@@ -386,13 +344,8 @@ public class SPMParameters
         proxyHost = p.getProperty( "proxyHost", "" );
         proxyPort = p.getProperty( "proxyPort", "" );
         username = p.getProperty( "username", "" );
-        password = p.getProperty( "password", "" );
-        if ( !password.equals( "" ) )
-        {
-            if ( se == null )
-                se = new StringEncrypter( "SPMan8ger" );
-            password = se.decrypt( password );
-        }
+        password = se.decrypt(p.getProperty( "password", "" ));
+
         s = p.getProperty( "useProxy", "false" );
         try
         {
@@ -419,29 +372,18 @@ public class SPMParameters
 
         for ( int i = 0; i < repositories.size(); ++i )
         {
-            p.setProperty( "URL_" + i, (String) repositories.elementAt( i ) );
+            p.setProperty( "URL_" + i,  repositories.get( i ) );
         }
         p.setProperty( "default", String.valueOf( current ) );
 
-	Iterator iter = filters.entrySet().iterator();
-	Map.Entry entry;
-	while (iter.hasNext()) {
-	    entry = (Map.Entry) iter.next();
-	    p.setProperty("FILTER_" + entry.getKey(),
-			  (String) entry.getValue());
-	}
+        filters.forEach((String key, String value) -> {
+          p.setProperty("FILTER_" + key, value);
+        });
 
         p.setProperty( "proxyHost", proxyHost );
         p.setProperty( "proxyPort", proxyPort );
         p.setProperty( "username", username );
-        String pwd = "";
-        if ( !password.equals( "" ) )
-        {
-            if ( se == null )
-                se = new StringEncrypter( "SPMan8ger" );
-            pwd = se.encrypt( password );
-        }
-        p.setProperty( "password", pwd );
+        p.setProperty( "password", se.encrypt( password ));
         p.setProperty( "useProxy", String.valueOf( useProxy ) );
         p.setProperty( "usecache", String.valueOf( useCache ));
         return p;
@@ -473,12 +415,7 @@ public class SPMParameters
      */
     public String[] getRepositories()
     {
-        String[] s = new String[repositories.size()];
-        for ( int i = 0; i < repositories.size(); ++i )
-        {
-            s[i] = new String( (String) repositories.elementAt( i ) );
-        }
-        return s;
+      return repositories.toArray(new String[0]);
     }
 
 
@@ -492,7 +429,7 @@ public class SPMParameters
         URL url = null;
         try
         {
-            url = new URL( (String) repositories.elementAt( current ) );
+            url = new URL(repositories.get( current ));
         }
         catch ( MalformedURLException e )
         {
@@ -527,7 +464,7 @@ public class SPMParameters
     /**
      *  return the current filter map
      */
-    public HashMap getFilters()
+    public Map<String, String> getFilters()
     { return filters; }
 
     /**
@@ -749,6 +686,7 @@ public class SPMParameters
          *
          *@return    The passwordAuthentication value
          */
+        @Override
         protected PasswordAuthentication getPasswordAuthentication()
         {
             // if we have no stored credentials, prompt the user now
