@@ -722,6 +722,7 @@ public class SPMSplitPane extends BSplitPane
 		 *@param  hasFocus  Description of the Parameter
 		 *@return           The treeCellRendererComponent value
 		 */
+                @Override
 		public Component getTreeCellRendererComponent(
 				JTree tree,
 				Object value,

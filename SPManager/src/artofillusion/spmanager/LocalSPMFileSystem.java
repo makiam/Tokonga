@@ -21,6 +21,7 @@ public class LocalSPMFileSystem extends SPMFileSystem
         super();
     }
     
+    @Override
     public void initialize()
     {
         super.initialize();

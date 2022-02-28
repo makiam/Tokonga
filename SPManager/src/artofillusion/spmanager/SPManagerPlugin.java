@@ -52,6 +52,7 @@ public class SPManagerPlugin implements Plugin
      *@param  message  Description of the Parameter
      *@param  args     Description of the Parameter
      */
+    @Override
     public void processMessage( int message, Object args[] )
     {
 	// NTJ: get the AOI run-time (*not* compile-time) version
@@ -100,8 +101,7 @@ public class SPManagerPlugin implements Plugin
 	    Method addUrl = null;
 
 	    try {
-		addUrl =
-		    URLClassLoader.class.getDeclaredMethod("addURL", sig);
+		addUrl = URLClassLoader.class.getDeclaredMethod("addURL", sig);
 		addUrl.setAccessible(true);
 	    } catch (Exception e) {
 		System.out.println("Error getting addURL method: " + e);
@@ -113,8 +113,7 @@ public class SPManagerPlugin implements Plugin
 	    Class plugType;
 	    File files[], urlfile;
 	    URL url;
-	    Map.Entry entry;
-	    String key[], value;
+
 	    File plugdir = new File(PLUGIN_DIRECTORY);
 	    if (plugdir.exists()) {
 		files = plugdir.listFiles();
@@ -174,9 +173,6 @@ public class SPManagerPlugin implements Plugin
 
 			    System.out.println("SPM: adding path: " + url);
 
-			    value = entry.getValue().toString();
-
-			    
 			    if ("classpath".equalsIgnoreCase(value)) {
 				if (searchldr != null)
 				    searchldr.add(url);
@@ -184,20 +180,17 @@ public class SPManagerPlugin implements Plugin
 				    try {
 					addUrl.invoke(urlldr, url);
                                     } catch (Exception e) {
-					System.out.println("Error invoking: "
-						+ e);
+					System.out.println("Error invoking: " + e);
 				    }
 				}
-				else System.out.println("Could not add path" +
-					url);				    
+				else System.out.println("Could not add path" + url);
 			    }
 			    else if ("import".equalsIgnoreCase(value)) {
 				ldr = (ClassLoader) loaders.get(url);
 				
 				if (key.length == 1) {
 				    if (obj != null) searchldr.add(ldr);
-				    else System.out.println("SPM: could not find"
-					    + " loader for: " + url);
+				    else System.out.println("SPM: could not find" + " loader for: " + url);
 				}
 				
 			    }

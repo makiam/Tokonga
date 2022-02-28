@@ -784,7 +784,7 @@ public class SPMObjectInfo
 
 			extType = SPManagerUtils.getAttribute(node, "type");
 			extAssoc = SPManagerUtils.getAttribute(node, "association");
-			externals.put(extName, extName + ":"+extType+"= " + extAssoc);
+                        externals.put(extName, extName + ":" + extType + "= " + extAssoc);
 
 			extAction = SPManagerUtils.getAttribute(node, "action");
 			if (extAction != null && extAction.length() > 0) {

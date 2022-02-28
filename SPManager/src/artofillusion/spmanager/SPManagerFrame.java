@@ -189,7 +189,6 @@ public class SPManagerFrame extends BFrame
      */
     protected void checkForUpdatedMe()
     {
-
         Predicate<SPMObjectInfo> self = (SPMObjectInfo t) -> t.getName().equals("SPManager");
         SPMObjectInfo localinfo = manageSplitPane.getFileSystem().getPlugins().stream().filter(self).findFirst().orElse(null);
         SPMObjectInfo remoteinfo = updateSplitPane.getFileSystem().getPlugins().stream().filter(self).findFirst().orElse(null);
@@ -230,18 +229,17 @@ public class SPManagerFrame extends BFrame
 		final SPMObjectInfo info = remoteinfo;
 
 		(new Thread() {
+                    @Override
 		    public void run()
 		    {
 			updateSplitPane.installFile(info);
 			updateSplitPane.showErrors();
 
-			SwingUtilities.invokeLater(new Runnable() {
-			    public void run()
-			    {
-				status.dispose();
-				hideSPManager();
-			    }
-			});
+			SwingUtilities.invokeLater(() ->
+                        {
+                          status.dispose();
+                          hideSPManager();
+                        });
 
 		    }
 		}).start();

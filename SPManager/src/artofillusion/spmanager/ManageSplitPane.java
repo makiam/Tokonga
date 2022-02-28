@@ -51,6 +51,7 @@ public class ManageSplitPane extends SPMSplitPane
     /**
      *  Description of the Method
      */
+    @Override
     protected void updateTree()
     {
         //update the file system
