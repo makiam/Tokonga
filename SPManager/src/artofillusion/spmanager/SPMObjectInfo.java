@@ -1,5 +1,6 @@
 /*
  *  Copyright 2004 Francois Guillet
+ *  Changes copyright 2022 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -13,7 +14,7 @@ import java.io.*;
 import java.util.*;
 import org.w3c.dom.*;
 import java.net.*;
-
+import java.util.List;
 
 /**
  *  Description of the Class
@@ -63,12 +64,12 @@ public class SPMObjectInfo
 	private String description = null;
 	private String comments = null;
 
-	private HashMap externals;
-	private Vector changeLog;
-	private Vector details;
+	private Map<String, String> externals;
+	private List<String> changeLog;
+	private List<String> details;
 
-	protected HashMap exports;
-	public HashMap actions;
+	protected Map<String, String> exports;
+	public Map<String, String> actions;
 
 	/**
 	 *  Script file name
@@ -699,12 +700,12 @@ public class SPMObjectInfo
 		SPMParameters params = SPManagerFrame.getParameters();
 
 		if (changeLog == null) {
-			changeLog = new Vector(16);
-			details = new Vector(16);
-			externals = new HashMap(16);
+			changeLog = new Vector<>(16);
+			details = new Vector<>(16);
+			externals = new HashMap<>(16);
 			destination = new ArrayList(16);
-			actions = new HashMap(16);
-			exports = new HashMap(32);
+			actions = new HashMap<>(16);
+			exports = new HashMap<>(32);
 		}
 		else {
 			changeLog.clear();
@@ -1097,18 +1098,18 @@ public class SPMObjectInfo
 		return comments;
 	}
 
-	/**
-	 *  get the list of external dependencies.
+	/**.
+         *  @return the list of external dependencies
 	 */
-	public Collection getExternals()
-	{ return (externals != null ? externals.values() : null); }
+	public Collection<String> getExternals()
+	{ return externals == null ? null: externals.values(); }
 
 	/**
 	 *  get the change log
 	 */
-	public Vector getChangeLog()
+	public List<String> getChangeLog()
 	{
-		return changeLog;
+          return changeLog;
 	}
 
 	/**
@@ -1116,9 +1117,9 @@ public class SPMObjectInfo
 	 *
 	 *@return    The details vector
 	 */
-	public Vector getDetails()
+	public List<String> getDetails()
 	{
-		return details;
+            return details;
 	}
 
 	/**

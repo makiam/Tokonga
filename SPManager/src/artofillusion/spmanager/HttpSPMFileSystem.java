@@ -17,6 +17,7 @@ import buoy.widget.*;
 import buoy.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.util.zip.*;
 import java.net.*;
 import javax.swing.text.*;
@@ -164,7 +165,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
         }
         if ( statusDialog != null )
             statusDialog.setText( SPMTranslate.text( "scanningPlugins" ) );
-        pluginsInfo = new Vector();
+        pluginsInfo = new Vector<>();
         if ( SPManagerFrame.getParameters().getUseCache() )
         {
                 scanFiles( "Plugins", pluginsInfo );
@@ -300,10 +301,10 @@ public class HttpSPMFileSystem extends SPMFileSystem
      *  Scans file on a general basis
      *
      *@param  from    URL to scan files from
-     *@param  addTo   Which vector to add info to
+     *@param  addTo   Which list to add info to
      *@param  suffix  Scanned files suffix
      */
-    private void scanFiles( URL from, Vector addTo, String suffix )
+    private void scanFiles( URL from, List<SPMObjectInfo> addTo, String suffix )
     {
         SPMObjectInfo info;
         boolean eligible;
@@ -434,9 +435,9 @@ public class HttpSPMFileSystem extends SPMFileSystem
      *  Scans file using server cgi
      *
      *@param  dir     directory to fetch scripts from
-     *@param  addTo   Which vector to add info to
+     *@param  addTo   Which list to add info to
      */
-    private void scanFiles( String dir, Vector addTo )
+    private void scanFiles( String dir, List<SPMObjectInfo> addTo )
     {
 
         URL cgiUrl = null;
@@ -949,8 +950,8 @@ public class HttpSPMFileSystem extends SPMFileSystem
      */
     private class HtmlVersioningParserCallback extends HTMLEditorKit.ParserCallback
     {
-        private Vector v;
-        private URL from;
+        private final List<String> v;
+        private final URL from;
 
 
         /**
@@ -959,7 +960,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
          *@param  v     Description of the Parameter
          *@param  from  Description of the Parameter
          */
-        public HtmlVersioningParserCallback( Vector v, URL from )
+        public HtmlVersioningParserCallback( List<String> v, URL from )
         {
             this.v = v;
             this.from = from;

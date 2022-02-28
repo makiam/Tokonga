@@ -18,6 +18,7 @@ import buoy.widget.*;
 import buoy.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.net.*;
 
 
@@ -192,15 +193,15 @@ public class InstallSplitPane extends SPMSplitPane
      *
      *@param  addTo              Description of the Parameter
      *@param  infos              Description of the Parameter
-     *@param  managerInfoVector  Description of the Parameter
+     *@param  managerInfoList  Description of the Parameter
      */
-    private void getFiles( TreePath addTo, Vector infos, Vector managerInfoVector )
+    private void getFiles( TreePath addTo, List<SPMObjectInfo> infos, List<SPMObjectInfo> managerInfoList )
     {
 	DefaultMutableTreeNode tn;
 	SPMObjectInfo info;
 	SPMObjectInfo managerInfo;
 	boolean eligible;
-	TreeMap map = new TreeMap();
+	TreeMap<String, SPMObjectInfo> map = new TreeMap<>();
 
 	for ( int i = 0; i < infos.size(); i++ )
 	{
@@ -213,16 +214,16 @@ public class InstallSplitPane extends SPMSplitPane
 		eligible = ( workMode == INSTALL );
 		managerInfo = null;
 		String name = info.getName();
-		for ( int j = 0; j < managerInfoVector.size(); ++j )
+		for ( int j = 0; j < managerInfoList.size(); ++j )
 		{
-		    if ( ( (SPMObjectInfo) managerInfoVector.elementAt( j ) ).getName().equals( name ) )
+		    if ( (managerInfoList.get( j ) ).getName().equals( name ) )
 		    {
 			eligible = ( workMode == UPDATE );
 			if ( eligible )
 			{
 			    //check if valid update
 
-			    managerInfo = (SPMObjectInfo) managerInfoVector.elementAt( j );
+			    managerInfo = managerInfoList.get( j );
 			    System.out.println( info.getName() );
 			    System.out.println( "major distant local :" + info.getMajor() + " " + managerInfo.getMajor() );
 			    System.out.println( "minor distant local :" + info.getMinor() + " " + managerInfo.getMinor() );

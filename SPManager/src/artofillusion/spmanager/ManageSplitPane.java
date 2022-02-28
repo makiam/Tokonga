@@ -16,6 +16,7 @@ import javax.swing.tree.*;
 import buoy.widget.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 
 /**
  *  Description of the Class
@@ -105,7 +106,7 @@ public class ManageSplitPane extends SPMSplitPane
      *@param  addTo  Description of the Parameter
      *@param  infos  Description of the Parameter
      */
-    private void getFiles( TreePath addTo, Vector infos )
+    private void getFiles( TreePath addTo, List<SPMObjectInfo> infos )
     {
         DefaultMutableTreeNode tn;
         SPMObjectInfo info;

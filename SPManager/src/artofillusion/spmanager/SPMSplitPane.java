@@ -11,6 +11,7 @@
 package artofillusion.spmanager;
 
 import java.util.*;
+import java.util.List;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.tree.*;
@@ -94,7 +95,7 @@ public class SPMSplitPane extends BSplitPane
 	private BScrollPane nameSP, descriptionSP;
 	private BComboBox descSelect;
 
-	private Vector descText;
+	private List<String> descText;
 
 	/**
 	 *  Description of the Field
@@ -434,7 +435,7 @@ public class SPMSplitPane extends BSplitPane
 				objectDescription.setText( (String) descText.get(0) );
 			else objectDescription.setText("");
 
-			Vector changeLog = info.getChangeLog();
+			List<String> changeLog = info.getChangeLog();
 			if (changeLog != null) descSelect.setContents(changeLog);
 			else {
 				descSelect.removeAll();
