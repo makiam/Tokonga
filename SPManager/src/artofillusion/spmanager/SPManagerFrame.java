@@ -19,6 +19,7 @@ import javax.swing.border.*;
 import java.awt.event.ActionEvent;
 import buoy.widget.*;
 import buoy.event.*;
+import java.util.function.Predicate;
 
 /**
  *  Main frame of the scripts and plugins manager.
@@ -141,17 +142,13 @@ public class SPManagerFrame extends BFrame
      */
     public void printBounds( WidgetContainer wc )
     {
-        java.util.Iterator childEnum = wc.getChildren().iterator();
-        while ( childEnum.hasNext() )
-        {
-            Widget w = (Widget) childEnum.next();
-            System.out.println( "Widget: " + w );
-            System.out.println( "Bounds: " + w.getBounds() );
-            System.out.println( "Min size: " + w.getMinimumSize() );
-            System.out.println( "Pref size: " + w.getPreferredSize() );
-            if ( w instanceof WidgetContainer )
-                printBounds( (WidgetContainer) w );
-        }
+      wc.getChildren().forEach(w ->{
+        System.out.println("Widget: " + w);
+        System.out.println("Bounds: " + w.getBounds());
+        System.out.println("Min size: " + w.getMinimumSize());
+        System.out.println("Pref size: " + w.getPreferredSize());
+        if(w instanceof WidgetContainer) printBounds((WidgetContainer)w);
+      });
     }
 
 
@@ -192,19 +189,10 @@ public class SPManagerFrame extends BFrame
      */
     protected void checkForUpdatedMe()
     {
-	Vector localList = manageSplitPane.getFileSystem().getPlugins();
-	Vector remoteList = updateSplitPane.getFileSystem().getPlugins();
-	SPMObjectInfo localinfo=null, remoteinfo=null;
 
-	for (int i = 0; i < localList.size(); i++) {
-	    localinfo= (SPMObjectInfo) localList.get(i);
-	    if ("SPManager".equals(localinfo.getName())) break;
-	}
-
-	for (int i = 0; i < remoteList.size(); i++) {
-	    remoteinfo = (SPMObjectInfo) remoteList.get(i);
-	    if ("SPManager".equals(remoteinfo.getName())) break;
-	}
+        Predicate<SPMObjectInfo> self = (SPMObjectInfo t) -> t.getName().equals("SPManager");
+        SPMObjectInfo localinfo = manageSplitPane.getFileSystem().getPlugins().stream().filter(self).findFirst().orElse(null);
+        SPMObjectInfo remoteinfo = updateSplitPane.getFileSystem().getPlugins().stream().filter(self).findFirst().orElse(null);
 
 	boolean update = true;
 

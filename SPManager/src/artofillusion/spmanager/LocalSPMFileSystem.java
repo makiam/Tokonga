@@ -52,20 +52,21 @@ public class LocalSPMFileSystem extends SPMFileSystem
         scanFiles(SPManagerPlugin.STARTUP_SCRIPT_DIRECTORY, startupInfo, ".bsh");
     }
     
-    private void scanFiles(String directory, Vector infoVector, String suffix)
+    private void scanFiles(String directory, List<SPMObjectInfo> infoVector, String suffix)
     {
-        SPMObjectInfo info;
         
         File dir = new File(directory);
         if (dir.exists())
         {
             String[] files = dir.list();
             if (files.length > 0) Arrays.sort(files);
-            for (int i = 0; i < files.length; i++)
-                if (files[i].endsWith(suffix))
-                {   info = new SPMObjectInfo(directory+File.separatorChar+files[i]);
-                    infoVector.add(info);
-                }
+            for (String file : files)
+            {
+              if (file.endsWith(suffix))
+              {
+                infoVector.add(new SPMObjectInfo(directory + File.separatorChar + file));
+              }
+            }
         }
     }
 

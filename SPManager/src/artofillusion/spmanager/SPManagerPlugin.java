@@ -156,11 +156,9 @@ public class SPManagerPlugin implements Plugin
 			     }
 
 			// ok, now perform the actions
-			for (Iterator iter = info.actions.entrySet().iterator();
-			iter.hasNext(); ) {
-
-			    entry = (Map.Entry) iter.next();
-			    key = entry.getKey().toString().split(":");
+			for (Map.Entry<String, String> entry: info.actions.entrySet()) {
+                            String value = entry.getValue();
+			    String key[] = entry.getKey().split(":");
 
 			    try {
 				if (key[0].startsWith("/"))

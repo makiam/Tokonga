@@ -108,39 +108,25 @@ public class ManageSplitPane extends SPMSplitPane
      */
     private void getFiles( TreePath addTo, List<SPMObjectInfo> infos )
     {
-        DefaultMutableTreeNode tn;
-        SPMObjectInfo info;
-
-        for ( int i = 0; i < infos.size(); i++ )
-        {
-            info = (SPMObjectInfo) infos.elementAt( i );
-            tn = new DefaultMutableTreeNode( info.getName() );
-            tn.setAllowsChildren( false );
-            tn.setUserObject( info );
-            tree.addNode( addTo, tn );
-        }
+        infos.forEach(info -> {
+          tree.addNode(addTo, new DefaultMutableTreeNode(info, false));
+        });
 
 	// NTJ: set reference counts
-	for (int i = 0; i < infos.size(); i++) {
-            info = (SPMObjectInfo) infos.elementAt( i );
+	for (SPMObjectInfo info: infos) {
+	    Collection<String> externals = info.getExternals();
+            if(externals == null) continue;
 
-	    Collection externals = info.getExternals();
-	    String extName, extType;
-	    SPMObjectInfo ext;
-	    if (externals != null) {
-		for (Iterator iter = externals.iterator(); iter.hasNext(); ) {
-		    extName = (String) iter.next();
-
-		    if (extName.endsWith("= required")) {
-			extType = extName.substring(extName.indexOf(':')+1,
-						    extName.indexOf('=')).trim();
-			extName = extName.substring(0, extName.indexOf(':'));
-
-			ext = getInfo(extName, (TreePath)pathMap.get(extType));
-			if (ext != null) ext.refcount++;
-		    }
-		}
-	    }
+            externals.forEach((String item) -> {
+              String extName = item;
+              if (extName.endsWith("= required"))
+              {
+                String extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
+                extName = extName.substring(0, extName.indexOf(':'));
+                SPMObjectInfo ext = getInfo(extName, (TreePath) pathMap.get(extType));
+                if (ext != null) ext.refcount++;
+              }
+            });
 	}
     }
 
