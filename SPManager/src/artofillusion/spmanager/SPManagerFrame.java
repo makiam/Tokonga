@@ -1,6 +1,6 @@
-
 /*
  *  Copyright 2004 Francois Guillet
+ *  Changes copyright 2022 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -15,12 +15,8 @@ import artofillusion.ui.UIUtilities;
 
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.Timer.*;
 import javax.swing.border.*;
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.util.Vector;
-
 import buoy.widget.*;
 import buoy.event.*;
 
