@@ -1,6 +1,6 @@
 <?xml version='1.0' standalone='yes' ?>
 
-<extension name="SPManager" version="1.102">
+<extension name="SPManager" version="1.103">
    <author>Nik TJ et Francois Guillet (fpgui@users.sourceforge.net)</author>
    <date>March 2013</date>
 
@@ -47,6 +47,13 @@ See http://aoisp.sourceforge.net/spmanagement.html for usage.
     </comments>
 
     <history>
+    <log version="1.103" date="January 13 2023" author="Lucas Stanek">
+    - Hot-patch to work with https connections on the server (hosting provider made a mandatory migration)
+    </log>
+    <log version="1.102" date="March 24 2019" author="Lucas Stanek">
+    - Rebuild and compatibility updates for Java 8+
+    - Remove "Select all" functionality, as one of the most common causes of plugin issues was new users downloading everything without considering needs or compatibility.
+    </log>
     <log version="1.101" date="March 2013" author="Nik TJ">
     - fully implemented support for deflate Content-Encoding, as SF server is suddenly performing the coding
     </log>log>
