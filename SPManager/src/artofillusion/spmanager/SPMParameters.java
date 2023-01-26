@@ -63,7 +63,7 @@ public class SPMParameters
     {
         repositories = new Vector<>();
 
-        repositories.add( "http://aoisp.sourceforge.net/AoIRepository/" );
+        repositories.add( "https://aoisp.sourceforge.net/AoIRepository" );
 
 	filters = new HashMap<>();
 	filters.put("beta", "mark");
@@ -157,7 +157,7 @@ public class SPMParameters
         //try to get a new repositories definition file
         try
         {
-            repListURL = new URL( "http://aoisp.sourceforge.net/SPRepositories.txt" );
+            repListURL = new URL( "https://aoisp.sourceforge.net/SPRepositories.txt" );
         }
         catch ( Exception e )
         {
