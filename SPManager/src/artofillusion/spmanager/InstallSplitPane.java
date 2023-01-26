@@ -1,6 +1,6 @@
 /*
  *  Copyright 2004 Francois Guillet
- *  Changes copyright 2022 by Maksim Khramov
+ *  Changes copyright 2022-2023 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -42,7 +42,7 @@ public class InstallSplitPane extends SPMSplitPane
     private boolean isDownloading;
     private SPMObjectInfo installNodeInfo;
 
-    protected ArrayList errors=null;
+    protected List<String> errors=null;
 
     /**
      *  Constructor for the InstallSplitPane object
@@ -99,19 +99,13 @@ public class InstallSplitPane extends SPMSplitPane
     /**
      *  Description of the Method
      */
+    @Override
     protected void updateTree()
     {
 	if ( setup )
 	{
 	    //get the scripts
-	    fs.getRemoteInfo(
-		    new Runnable()
-		    {
-			public void run()
-			{
-			    doCallbackUpdate();
-			}
-		    } );
+	    fs.getRemoteInfo(this::doCallbackUpdate);
 
 	}
     }
@@ -135,19 +129,13 @@ public class InstallSplitPane extends SPMSplitPane
     /**
      *  Pane setup
      */
+    @Override
     public void doSetup()
     {
 	if ( !setup )
 	{
 	    //get the scripts
-	    fs.getRemoteInfo(
-		    new Runnable()
-		    {
-			public void run()
-			{
-			    doCallbackUpdate();
-			}
-		    } );
+	    fs.getRemoteInfo(this::doCallbackUpdate);
 	}
     }
 
@@ -287,6 +275,7 @@ public class InstallSplitPane extends SPMSplitPane
 		(
 			new Thread()
 			{
+                            @Override
 			    public void run()
 			    {
 				installAllSelected( pluginsPath );
@@ -296,6 +285,7 @@ public class InstallSplitPane extends SPMSplitPane
 
 				try {
 				    SwingUtilities.invokeAndWait(new Runnable() {
+                                        @Override
 					public void run()
 					{
 					    voidSelection();
@@ -352,7 +342,7 @@ public class InstallSplitPane extends SPMSplitPane
 	int count = tree.getChildNodeCount( path );
 	if ( count > 0 )
 	{
-	    if (errors == null) errors = new ArrayList(128);
+	    if (errors == null) errors = new ArrayList<>(128);
 	    else errors.clear();
 
 	    boolean ignoreErrs = false;
@@ -425,7 +415,7 @@ public class InstallSplitPane extends SPMSplitPane
      */
     public void doInstallSingle()
     {
-	if (errors == null) errors = new ArrayList(128);
+	if (errors == null) errors = new ArrayList<>(128);
 	else errors.clear();
 
 	installNodeInfo = getSelectedNodeInfo();
@@ -469,13 +459,14 @@ public class InstallSplitPane extends SPMSplitPane
 	    downloadedLength = 0;
 	    if ( lengthToDownload > 0 )
 	    {
-		if (errors == null) errors = new ArrayList(128);
+		if (errors == null) errors = new ArrayList<>(128);
 		else errors.clear();
 
 		status = new StatusDialog(SPManagerPlugin.getFrame());
 		(
 			new Thread()
 			{
+                            @Override
 			    public void run()
 			    {
 				installFile( installNodeInfo );
@@ -484,6 +475,7 @@ public class InstallSplitPane extends SPMSplitPane
 
 				try {
 				    SwingUtilities.invokeAndWait(new Runnable() {
+                                        @Override
 					public void run()
 					{
 					    /*  NTJ - replaced by restart()  */
@@ -515,9 +507,9 @@ public class InstallSplitPane extends SPMSplitPane
      */
     public void installFile( SPMObjectInfo nodeInfo )
     {
-	HashMap transaction = new HashMap(32);
+	Map<File, File> transaction = new HashMap<>(32);
 
-	if (errors == null) errors = new ArrayList(16);
+	if (errors == null) errors = new ArrayList<>(16);
 	int errCount = errors.size();
 
 	File file = null;
@@ -577,7 +569,7 @@ public class InstallSplitPane extends SPMSplitPane
 	    int sep;
 	    for ( int j = 0; j < nodeInfo.files.length; ++j )
 	    {
-		dest = (String) nodeInfo.destination.get(j);
+		dest = nodeInfo.destination.get(j);
 		sep = dest.indexOf('/');
 
 		// build the destination path
@@ -618,16 +610,11 @@ public class InstallSplitPane extends SPMSplitPane
 	    }
 	}
 
-	File orig;
-	Map.Entry entry;
-	Iterator iter = transaction.entrySet().iterator();
-	while (iter.hasNext()) {
+	for(Map.Entry<File, File> entry: transaction.entrySet()) {
 	    try {
 
-		entry = (Map.Entry) iter.next();
-
-		orig = (File) entry.getKey();
-		update = (File) entry.getValue();
+		File orig = entry.getKey();
+		update = entry.getValue();
 
 		// if there are errors, just clean up...
 		if (errors.size() > errCount) {
@@ -797,7 +784,7 @@ public class InstallSplitPane extends SPMSplitPane
 	    if (nodeInfo.refcount > 0) selectCB.setEnabled(false);
 
 	    // disable install single if script has dependents
-	    Collection externals = nodeInfo.getExternals();
+	    Collection<String> externals = nodeInfo.getExternals();
 	}
 	super.scriptSelection( deletable );
     }
@@ -825,7 +812,7 @@ public class InstallSplitPane extends SPMSplitPane
 	    if (nodeInfo.refcount > 0) selectCB.setEnabled(false);
 
 	    // disable install single if plugin has dependents
-	    Collection externals = nodeInfo.getExternals();
+	    Collection<String> externals = nodeInfo.getExternals();
 	}
 	super.pluginSelection( deletable );
     }
@@ -859,14 +846,13 @@ public class InstallSplitPane extends SPMSplitPane
     /**
      *  show errors in a panel
      */
-    public static void showErrors(ArrayList errs)
+    public static void showErrors(List<String> errs)
     {
 	BTextArea txt = new BTextArea(5, 45);
 	txt.setEditable(false);
 	txt.setWrapStyle(BTextArea.WRAP_WORD);
 
-	for (int i = 0; i < errs.size(); i++)
-	    txt.append(errs.get(i) + "\n");
+        errs.forEach(err -> txt.append(err + "\n"));
 
 	BScrollPane detail =
 	    new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER,

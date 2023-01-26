@@ -1,6 +1,6 @@
 /*
  *  Copyright 2004 Francois Guillet
- *  Changes copyright 2022 by Maksim Khramov
+ *  Changes copyright 2022-2023 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -92,7 +92,7 @@ public class SPMObjectInfo
 	/**
 	 *  local destination to copy to
 	 */
-	public ArrayList destination;
+	public List<String> destination;
 	/**
 	 *  sizes of the fileset files
 	 */
@@ -695,15 +695,14 @@ public class SPMObjectInfo
 	{
 		int i, j, filtType;
 		String val, filtName, filtVal;
-		Iterator iter;
-		Map.Entry entry;
+
 		SPMParameters params = SPManagerFrame.getParameters();
 
 		if (changeLog == null) {
 			changeLog = new Vector<>(16);
 			details = new Vector<>(16);
 			externals = new HashMap<>(16);
-			destination = new ArrayList(16);
+			destination = new ArrayList<>(16);
 			actions = new HashMap<>(16);
 			exports = new HashMap<>(32);
 		}
@@ -834,12 +833,7 @@ public class SPMObjectInfo
 		if (val != null) setComments(val);
 
 		// create the display lists
-		String extList = "";
-		iter = externals.entrySet().iterator();
-		while (iter.hasNext()) {
-			extList += (extList.length() > 0 ? "\n" : "") +
-			((Map.Entry) iter.next()).getValue().toString();
-		}
+		String extList = String.join("\n", externals.values());
 
 		setLog(SPMTranslate.text("flags"), flags, 1);
 		setLog(SPMTranslate.text("otherFiles"), extList, 2);
@@ -943,7 +937,7 @@ public class SPMObjectInfo
 		if (fileSet != null)
 		{
 			NodeList filesList = fileSet.getChildNodes();
-			Vector fileNames = new Vector();
+			Vector<String> fileNames = new Vector<>();
 			for (i = 0; i < filesList.getLength(); ++i )
 			{
 				if( ! "file".equals( filesList.item(i).getNodeName() ) )
@@ -965,7 +959,7 @@ public class SPMObjectInfo
 			{
 				files = new String[ fileNames.size() ];
 				for (i = 0; i < files.length; ++i )
-					files[i] = (String) fileNames.elementAt(i);
+					files[i] = fileNames.elementAt(i);
 				httpFiles = new String[files.length];
 				fileSizes = new long[files.length];
 				for (i = 0; i < files.length; ++i )

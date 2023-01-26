@@ -1,6 +1,6 @@
 /*
  *  Copyright 2004 Francois Guillet
- *  Changes copyright 2022 by Maksim Khramov
+ *  Changes copyright 2022-2023 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -22,6 +22,7 @@ import java.util.*;
 import java.io.*;
 import java.net.*;
 import java.lang.reflect.*;
+import java.util.List;
 
 /**
  *  The Plugin corresponding to the SPManager
@@ -43,8 +44,6 @@ public class SPManagerPlugin implements Plugin
     public static final int DOWNLOAD = -1;
 
     private static SPManagerFrame spmFrame;
-
-    protected static HashMap plugins;
     
     /**
      *  Description of the Method
@@ -75,33 +74,32 @@ public class SPManagerPlugin implements Plugin
 	    System.out.println("SPManager starting...");
 
 	    // get details of plugin classloaders
-	    int i, j, idx;
+	    int i, j;
 	    URL urlList[];
-	    ArrayList aoiloaders;
+
 	    ClassLoader ldr = null;
 	    URLClassLoader urlldr = null;
 	    SearchlistClassLoader searchldr = null;
 	    Object obj;
 
-	    java.util.List list = PluginRegistry.getPluginClassLoaders();
-	    HashMap loaders = new HashMap(list.size());
-	    for (i = 0; i < list.size(); i++) {
-		obj = list.get(i);
+
+	    Map<URL, ClassLoader> loaders = new HashMap<>();
+	    for (ClassLoader loader:  PluginRegistry.getPluginClassLoaders()) {
+                obj = loader;
 		if (obj instanceof URLClassLoader)
 		    urlList = ((URLClassLoader) obj).getURLs();
 		else
 		    urlList = ((SearchlistClassLoader) obj).getURLs();
 
 		if (urlList.length > 0)
-		    loaders.put(urlList[0], obj);
+		    loaders.put(urlList[0], (ClassLoader)obj);
 	    }
 
-	    URL[] urlarg = new URL[1];
-	    Class[] sig = new Class[] { URL.class };
+
 	    Method addUrl = null;
 
 	    try {
-		addUrl = URLClassLoader.class.getDeclaredMethod("addURL", sig);
+		addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
 		addUrl.setAccessible(true);
 	    } catch (Exception e) {
 		System.out.println("Error getting addURL method: " + e);
@@ -110,7 +108,7 @@ public class SPManagerPlugin implements Plugin
 	    // get details of all local plugins
 	    SPMObjectInfo info;
 	    StringBuffer errs = null;
-	    Class plugType;
+	    
 	    File files[], urlfile;
 	    URL url;
 
@@ -186,7 +184,7 @@ public class SPManagerPlugin implements Plugin
 				else System.out.println("Could not add path" + url);
 			    }
 			    else if ("import".equalsIgnoreCase(value)) {
-				ldr = (ClassLoader) loaders.get(url);
+				ldr = loaders.get(url);
 				
 				if (key.length == 1) {
 				    if (obj != null) searchldr.add(ldr);
@@ -262,7 +260,7 @@ public class SPManagerPlugin implements Plugin
     public void init()
     {
 
-	ArrayList err = new ArrayList(8);
+	List<String> err = new ArrayList<>(8);
 
 	System.out.println("SPManager: java temp dir is " +
 		System.getProperty("java.io.tmpdir"));
@@ -613,8 +611,9 @@ public class SPManagerPlugin implements Plugin
 		    setText(SPMTranslate.text("downloading", info.getName()));
 		    pack();
 
-		    final ArrayList errs = new ArrayList();
+		    final List<String> errs = new ArrayList<>();
 		    worker = new Thread() {
+                        @Override
 			public void run()
 			{
 			    long total = info.getTotalLength();
