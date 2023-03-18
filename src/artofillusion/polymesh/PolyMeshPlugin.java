@@ -1,7 +1,6 @@
 /*
  *  Copyright 2004-2007 Francois Guillet
-    Changes copyright (C) 2017 by Maksim Khramov
-
+ *  Changes copyright 2023 Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -37,8 +36,7 @@ import buoy.widget.MenuWidget;
  *@author     Francois Guillet
  */
 public class PolyMeshPlugin implements Plugin
-{   
-    public static ResourceBundle resources;
+{
 	
 	/**
      *  Process messages sent to plugin by AoI (see AoI API description)
@@ -51,7 +49,6 @@ public class PolyMeshPlugin implements Plugin
     {
         if ( message == Plugin.APPLICATION_STARTING )
         {
-            resources = ResourceBundle.getBundle( "polymesh", ArtOfIllusion.getPreferences().getLocale() );
             boolean keysImplemented = false;
             for (KeystrokeRecord key : KeystrokeManager.getAllRecords()) {
                 if (key.getName().endsWith("(PolyMesh)")) {

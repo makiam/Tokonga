@@ -28,7 +28,6 @@ import java.util.ArrayList;
 
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.JSpinner.NumberEditor;
 
 import artofillusion.ArtOfIllusion;
@@ -39,7 +38,6 @@ import artofillusion.MeshViewer;
 import artofillusion.MoveViewTool;
 import artofillusion.RenderingMesh;
 import artofillusion.RotateViewTool;
-import artofillusion.Scene;
 import artofillusion.SkewMeshTool;
 import artofillusion.TaperMeshTool;
 import artofillusion.TextureParameter;
@@ -115,7 +113,7 @@ import buoy.widget.RowContainer;
 import buoy.widget.Shortcut;
 import buoy.widget.Widget;
 import buoy.xml.WidgetDecoder;
-import java.util.List;
+import javax.swing.UIManager;
 
 /**
  * The PolyMeshEditorWindow class represents the window for editing PolyMesh
@@ -124,9 +122,7 @@ import java.util.List;
  * @author Francois Guillet
  */
 
-public class PolyMeshEditorWindow extends MeshEditorWindow implements
-		EditingWindow, PopupMenuManager, ValueWidgetOwner {
-	private Scene scene;
+public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWindow, PopupMenuManager, ValueWidgetOwner {
 
 	private ToolPalette modes;
 
@@ -353,10 +349,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 	 * @param onClose
 	 *                a callback which will be executed when editing is over
 	 */
-	public PolyMeshEditorWindow(EditingWindow parent, String title,
-			ObjectInfo obj, Runnable onClose) {
+	public PolyMeshEditorWindow(EditingWindow parent, String title, ObjectInfo obj, Runnable onClose) {
 		super(parent, title, obj);
-		scene = ((LayoutWindow) parent).getScene();
 		PolyMesh mesh = (PolyMesh) objInfo.object;
 		if (eventSource == null)
 			eventSource = new EventSource();
@@ -1139,7 +1133,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 	
 	@SuppressWarnings("unused")
 	private void doSelectEdgeSmoothnessRange() {
-		EdgeSmoothnessRangeDialog dlg = new EdgeSmoothnessRangeDialog();
+          new EdgeSmoothnessRangeDialog().setVisible(true);
 	}
 
 	@SuppressWarnings("unused")
@@ -3225,7 +3219,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 	 * Bevel properties settings
 	 */
 	private void doBevelProperties() {
-		BevelPropertiesDialog dlg = new BevelPropertiesDialog();
+          new BevelPropertiesDialog().setVisible(true);
 	}
 
 	/**
@@ -4499,7 +4493,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 				System.out.println(name + i + " selected.");
 			}
 		}
-		new CheckMeshDialog();
+		new CheckMeshDialog().setVisible(true);
 	}
 
 	private void tolerantModeChanged() {
@@ -4510,7 +4504,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 	}
 
 	private void doControlledSmoothing() {
-		new ControlledSmoothingDialog(this);
+          new ControlledSmoothingDialog(this).setVisible(true);
 	}
 
 	/**
@@ -4622,24 +4616,13 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 
 	@SuppressWarnings("unused")
 	private void doFindSimilarFaces() {
-		new FindSimilarFacesDialog(selected);
+          new FindSimilarFacesDialog(selected).setVisible(true);
 	}
 
 	@SuppressWarnings("unused")
 	private void doFindSimilarEdges() {
-		new FindSimilarEdgesDialog(selected);
+          new FindSimilarEdgesDialog(selected).setVisible(true);
 	}
-
-	@SuppressWarnings("unused")
-	private void setSubdivionLevels() {
-		new SubdivisionDialog(this);
-	}
-
-//	@SuppressWarnings("unused")
-//	private void doRenderingLevel(ValueChangedEvent ev) {
-//		((PolyMesh) objInfo.object).setRenderingSmoothLevel(((Integer) rspin
-//				.getValue()).intValue());
-//	}
 
 	private void doInteractiveLevel(ValueChangedEvent ev) {
 		((PolyMesh) objInfo.object).setInteractiveSmoothLevel(((Integer) ispin
@@ -4826,78 +4809,49 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 		private boolean ok;
 
 		public FindSimilarFacesDialog(boolean selected[]) {
-			super(PolyMeshEditorWindow.this, Translate
-					.text("polymesh:similarFacesTitle"), true);
-			this.orSelection = selected;
-			InputStream is = null;
-			try {
-				is = getClass().getResource("interfaces/similar.xml")
-						.openStream();
+			super(PolyMeshEditorWindow.this, Translate.text("polymesh:similarFacesTitle"), true);
+			this.orSelection = selected;			 
+			try(InputStream is = getClass().getResource("interfaces/similar.xml").openStream()) {
 				WidgetDecoder decoder = new WidgetDecoder(is);
 				borderContainer1 = (BorderContainer) decoder.getRootObject();
-				BLabel titleTextLabel = ((BLabel) decoder
-						.getObject("titleTextLabel"));
-				titleTextLabel.setText(Translate.text("polymesh:"+titleTextLabel
-						.getText()));
+				BLabel titleTextLabel = ((BLabel) decoder.getObject("titleTextLabel"));
+				titleTextLabel.setText(Translate.text("polymesh:"+titleTextLabel.getText()));
 				normalCB = ((BCheckBox) decoder.getObject("normalCB"));
 				normalCB.setText(Translate.text("polymesh:"+normalCB.getText()));
 				looseShapeCB = ((BCheckBox) decoder.getObject("looseShapeCB"));
 				looseShapeCB.setText(Translate.text("polymesh:"+looseShapeCB.getText()));
 				strictShapeCB = ((BCheckBox) decoder.getObject("strictShapeCB"));
-				strictShapeCB
-						.setText(Translate.text("polymesh:"+strictShapeCB.getText()));
+				strictShapeCB.setText(Translate.text("polymesh:"+strictShapeCB.getText()));
 				tolerance1 = ((BLabel) decoder.getObject("tolerance1"));
 				tolerance2 = ((BLabel) decoder.getObject("tolerance2"));
 				tolerance3 = ((BLabel) decoder.getObject("tolerance3"));
 				tolerance1.setText(Translate.text("polymesh:"+tolerance1.getText()));
 				tolerance2.setText(Translate.text("polymesh:"+tolerance2.getText()));
 				tolerance3.setText(Translate.text("polymesh:"+tolerance3.getText()));
-				BTextField normalCBTF = ((BTextField) decoder
-						.getObject("normalCBTF"));
-				BTextField looseShapeCBTF = ((BTextField) decoder
-						.getObject("looseShapeCBTF"));
-				BTextField strictShapeCBTF = ((BTextField) decoder
-						.getObject("strictShapeCBTF"));
+				BTextField normalCBTF = ((BTextField) decoder.getObject("normalCBTF"));
+				BTextField looseShapeCBTF = ((BTextField) decoder.getObject("looseShapeCBTF"));
+				BTextField strictShapeCBTF = ((BTextField) decoder.getObject("strictShapeCBTF"));
 				normalCBVF = new PMValueField(normalTol, ValueField.NONE);
-				normalCBVF.setTextField((BTextField) decoder
-						.getObject("normalCBTF"));
-				looseShapeCBVF = new PMValueField(looseShapeTol,
-						ValueField.NONE);
-				looseShapeCBVF.setTextField((BTextField) decoder
-						.getObject("looseShapeCBTF"));
-				strictShapeCBVF = new PMValueField(strictShapeTol,
-						ValueField.NONE);
-				strictShapeCBVF.setTextField((BTextField) decoder
-						.getObject("strictShapeCBTF"));
-				GridContainer okCancelGrid = ((GridContainer) decoder
-						.getObject("OkCancelGrid"));
+				normalCBVF.setTextField((BTextField) decoder.getObject("normalCBTF"));
+				looseShapeCBVF = new PMValueField(looseShapeTol,ValueField.NONE);
+				looseShapeCBVF.setTextField((BTextField) decoder.getObject("looseShapeCBTF"));
+				strictShapeCBVF = new PMValueField(strictShapeTol,ValueField.NONE);
+				strictShapeCBVF.setTextField((BTextField) decoder.getObject("strictShapeCBTF"));
+				GridContainer okCancelGrid = ((GridContainer) decoder.getObject("OkCancelGrid"));
 				okButton = ((BButton) decoder.getObject("okButton"));
 				cancelButton = ((BButton) decoder.getObject("cancelButton"));
 				okButton.setText(Translate.text("polymesh:ok"));
 				cancelButton.setText(Translate.text("polymesh:cancel"));
 			} catch (IOException ex) {
-				ex.printStackTrace();
-			} finally {
-				if (is != null)
-					try {
-						is.close();
-					} catch (IOException ex) {
-						ex.printStackTrace();
-					}
+                          System.out.println("Error creating FindSimilarFacesDialog due " + ex.getLocalizedMessage());
 			}
 			setContent(borderContainer1);
-			normalCBVF.addEventLink(ValueChangedEvent.class, this,
-					"doTolValueChanged");
-			strictShapeCBVF.addEventLink(ValueChangedEvent.class, this,
-					"doTolValueChanged");
-			looseShapeCBVF.addEventLink(ValueChangedEvent.class, this,
-					"doTolValueChanged");
-			normalCB.addEventLink(ValueChangedEvent.class, this,
-					"doCBValueChanged");
-			strictShapeCB.addEventLink(ValueChangedEvent.class, this,
-					"doCBValueChanged");
-			looseShapeCB.addEventLink(ValueChangedEvent.class, this,
-					"doCBValueChanged");
+			normalCBVF.addEventLink(ValueChangedEvent.class, this, "doTolValueChanged");
+			strictShapeCBVF.addEventLink(ValueChangedEvent.class, this, "doTolValueChanged");
+			looseShapeCBVF.addEventLink(ValueChangedEvent.class, this, "doTolValueChanged");
+			normalCB.addEventLink(ValueChangedEvent.class, this, "doCBValueChanged");
+			strictShapeCB.addEventLink(ValueChangedEvent.class, this, "doCBValueChanged");
+			looseShapeCB.addEventLink(ValueChangedEvent.class, this, "doCBValueChanged");
 			okButton.addEventLink(CommandEvent.class, this, "doOK");
 			cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
 			addEventLink(WindowClosingEvent.class, this, "doCancel");
@@ -4905,7 +4859,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 			pack();
 			UIUtilities.centerWindow(this);
 			ok = false;
-			setVisible(true);
+
 		}
 
 		private void doTolValueChanged() {
@@ -4976,7 +4930,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 	private class FindSimilarEdgesDialog extends BDialog {
 		private boolean[] orSelection;
 
-		private BorderContainer borderContainer1;
+		private BorderContainer borderContainer;
 
 		private BButton okButton;
 
@@ -4985,48 +4939,34 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 		private PMValueField toleranceVF;
 
 		public FindSimilarEdgesDialog(boolean selected[]) {
-			super(PolyMeshEditorWindow.this, Translate
-					.text("polymesh:similarEdgesTitle"), true);
+			super(PolyMeshEditorWindow.this, Translate.text("polymesh:similarEdgesTitle"), true);
 			this.orSelection = selected;
-			InputStream inputStream = null;
-			try {
-				inputStream = getClass().getResource(
-						"interfaces/similaredges.xml").openStream();
-				WidgetDecoder decoder = new WidgetDecoder(inputStream);
-				borderContainer1 = (BorderContainer) decoder.getRootObject();
+			
+			try(InputStream is = getClass().getResource("interfaces/similaredges.xml").openStream()) {
+				WidgetDecoder decoder = new WidgetDecoder(is);
+				borderContainer = (BorderContainer) decoder.getRootObject();
 				BLabel tolerance1 = ((BLabel) decoder.getObject("tolerance1"));
 				tolerance1.setText(Translate.text("polymesh:"+tolerance1.getText()));
 				okButton = ((BButton) decoder.getObject("okButton"));
 				cancelButton = ((BButton) decoder.getObject("cancelButton"));
-				BTextField toleranceTF = ((BTextField) decoder
-						.getObject("toleranceTF"));
+				BTextField toleranceTF = ((BTextField) decoder.getObject("toleranceTF"));
 				toleranceVF = new PMValueField(edgeTol, ValueField.NONE);
-				toleranceVF.setTextField((BTextField) decoder
-						.getObject("toleranceTF"));
+				toleranceVF.setTextField((BTextField) decoder.getObject("toleranceTF"));
 				okButton = ((BButton) decoder.getObject("okButton"));
 				cancelButton = ((BButton) decoder.getObject("cancelButton"));
 				okButton.setText(Translate.text("polymesh:ok"));
 				cancelButton.setText(Translate.text("polymesh:cancel"));
 			} catch (IOException ex) {
-				ex.printStackTrace();
-			} finally {
-				try {
-					if (inputStream != null)
-						inputStream.close();
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				}
+                          System.out.println("Error creating FindSimilarEdgesDialog due " + ex.getLocalizedMessage());
 			}
-			setContent(borderContainer1);
-			toleranceVF.addEventLink(ValueChangedEvent.class, this,
-					"doTolValueChanged");
+			setContent(borderContainer);
+			toleranceVF.addEventLink(ValueChangedEvent.class, this, "doTolValueChanged");
 			okButton.addEventLink(CommandEvent.class, this, "doOK");
 			cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
 			addEventLink(WindowClosingEvent.class, this, "doCancel");
 			pack();
 			UIUtilities.centerWindow(this);
 			doTolValueChanged();
-			setVisible(true);
 		}
 
 		private void doTolValueChanged() {
@@ -5072,12 +5012,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 		 * Constructor for the DivideDialog object
 		 */
 		public DivideDialog() {
-			super(PolyMeshEditorWindow.this, Translate
-					.text("polymesh:subdivideEdgesTitle"), true);
-			InputStream is = null;
-			try {
-				WidgetDecoder decoder = new WidgetDecoder(is = getClass()
-						.getResource("interfaces/divide.xml").openStream());
+			super(PolyMeshEditorWindow.this, Translate.text("polymesh:subdivideEdgesTitle"), true);
+			
+			try(InputStream is = getClass().getResource("interfaces/divide.xml").openStream()) {
+				WidgetDecoder decoder = new WidgetDecoder(is);
 				setContent((BorderContainer) decoder.getRootObject());
 				divideSpinner = ((BSpinner) decoder.getObject("divideSpinner"));
 				BLabel divideLabel = ((BLabel) decoder.getObject("divideLabel"));
@@ -5087,20 +5025,14 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 				cancelButton = ((BButton) decoder.getObject("cancelButton"));
 				cancelButton.setText(Translate.text("polymesh:cancel"));
 			} catch (IOException ex) {
-				ex.printStackTrace();
-			} finally {
-				if (is != null)
-					try {
-						is.close();
-					} catch (IOException ex) {
-						ex.printStackTrace();
-					}
+                          System.out.println("Error creating DivideDialog due " + ex.getLocalizedMessage());
 			}
+                        
 			okButton.addEventLink(CommandEvent.class, this, "doOK");
 			cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
 			pack();
 			UIUtilities.centerWindow(this);
-			setVisible(true);
+                        setVisible(true);
 		}
 
 		/**
@@ -5138,13 +5070,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 	private class BevelPropertiesDialog extends BDialog {
 		private BorderContainer borderContainer1;
 
-		private FormContainer formContainer1;
-
 		private PMValueField areaLimitFieldVF;
 
 		private BCheckBox applyCB;
-
-		private GridContainer gridContainer1;
 
 		private BButton okButton;
 
@@ -5155,45 +5083,34 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 		 */
 		public BevelPropertiesDialog() {
 			super(PolyMeshEditorWindow.this, Translate.text("polymesh:bevelPropertiesTitle"), true);
-			InputStream is = null;
-			try {
-				WidgetDecoder decoder = new WidgetDecoder(getClass()
-						.getResource("interfaces/bevelArea.xml").openStream());
+			
+			try(InputStream is = getClass().getResource("interfaces/bevelArea.xml").openStream()) {
+				WidgetDecoder decoder = new WidgetDecoder(is);
 				borderContainer1 = (BorderContainer) decoder.getRootObject();
 				BLabel areaLimit = ((BLabel) decoder.getObject("areaLimit"));
 				areaLimit.setText(Translate.text("polymesh:"+areaLimit.getText()));
-				areaLimitFieldVF = new PMValueField(PolyMesh.edgeLengthLimit,
-						ValueField.NONE);
-				areaLimitFieldVF.setTextField((BTextField) decoder
-						.getObject("areaLimitField"));
+				areaLimitFieldVF = new PMValueField(PolyMesh.edgeLengthLimit,ValueField.NONE);
+				areaLimitFieldVF.setTextField((BTextField) decoder.getObject("areaLimitField"));
 				applyCB = ((BCheckBox) decoder.getObject("applyCB"));
 				applyCB.setText(Translate.text("polymesh:"+applyCB.getText()));
 				applyCB.setState(PolyMesh.applyEdgeLengthLimit);
-				BLabel bevelAreaLabel = ((BLabel) decoder
-						.getObject("bevelAreaLabel"));
-				bevelAreaLabel.setText(Translate.text("polymesh:"+bevelAreaLabel
-						.getText()));
+				BLabel bevelAreaLabel = ((BLabel) decoder.getObject("bevelAreaLabel"));
+				bevelAreaLabel.setText(Translate.text("polymesh:"+bevelAreaLabel.getText()));
 				okButton = ((BButton) decoder.getObject("okButton"));
 				okButton.setText(Translate.text("polymesh:ok"));
 				cancelButton = ((BButton) decoder.getObject("cancelButton"));
 				cancelButton.setText(Translate.text("polymesh:cancel"));
 			} catch (IOException ex) {
-				ex.printStackTrace();
-			} finally {
-				if (is != null)
-					try {
-						is.close();
-					} catch (IOException ex) {
-						ex.printStackTrace();
-					}
+                          System.out.println("Error creating BevelPropertiesDialog due " + ex.getLocalizedMessage());
 			}
+                        
 			setContent(borderContainer1);
 			okButton.addEventLink(CommandEvent.class, this, "doOK");
 			cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
 			addEventLink(WindowClosingEvent.class, this, "doCancel");
 			pack();
 			UIUtilities.centerWindow(this);
-			setVisible(true);
+			
 		}
 
 		/**
@@ -5220,43 +5137,33 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 	 * @author Francois Guillet
 	 */
 	public class CheckMeshDialog extends BDialog {
-		private BButton dismiss;
-
-		private BTextArea textArea;
 
 		/**
 		 * Constructor for the CheckMeshDialog object
 		 */
 		public CheckMeshDialog() {
-			super(PolyMeshEditorWindow.this, Translate.text("polymesh:checkRepair"),
-					true);
+			super(PolyMeshEditorWindow.this, Translate.text("polymesh:checkRepair"),true);
 
-			BorderContainer borderContainer1 = null;
-			InputStream is = null;
-			try {
-				WidgetDecoder decoder = new WidgetDecoder(is = getClass()
-						.getResource("interfaces/check.xml").openStream());
-				borderContainer1 = (BorderContainer) decoder.getRootObject();
+			BorderContainer borderContainer = null;
+                        BButton dismiss = null;
+                        BTextArea textArea = null;
+                        
+			try(InputStream is =  getClass().getResource("interfaces/check.xml").openStream()) {
+				WidgetDecoder decoder = new WidgetDecoder(is);
+				borderContainer = (BorderContainer) decoder.getRootObject();
 				textArea = ((BTextArea) decoder.getObject("TextArea"));
 				dismiss = ((BButton) decoder.getObject("dismiss"));
 				dismiss.setText(Translate.text("polymesh:dismiss"));
 			} catch (IOException ex) {
-				ex.printStackTrace();
-			} finally {
-				if (is != null)
-					try {
-						is.close();
-					} catch (IOException ex) {
-						ex.printStackTrace();
-					}
+                          System.out.println("Error creating CheckMeshDialog due " + ex.getLocalizedMessage());
 			}
-			setContent(borderContainer1);
+			setContent(borderContainer);
 			dismiss.addEventLink(CommandEvent.class, this, "doDismiss");
 			pack();
 			UIUtilities.centerWindow(this);
 			PolyMesh mesh = (PolyMesh) objInfo.object;
 			textArea.append(mesh.checkMesh());
-			setVisible(true);
+			
 		}
 
 		/**
@@ -5312,7 +5219,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 
 		private BSlider maxSmoothnessSlider;
 
-		public ControlledSmoothingDialog(BFrame parent) {
+		 public ControlledSmoothingDialog(BFrame parent) {
 			super(parent, Translate.text("polymesh:controlledSmoothness"), true);
 			setTitle(Translate.text("polymesh:controlledSmoothnessDialogTitle"));
 			mesh = (PolyMesh) objInfo.object;
@@ -5322,54 +5229,36 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 			backMaxAngle = mesh.getMaxAngle();
 			backMinSmoothness = mesh.getMinSmoothness();
 			backMaxSmoothness = mesh.getMaxSmoothness();
-			InputStream inputStream = null;
-			try {
-				WidgetDecoder decoder = new WidgetDecoder(getClass()
-						.getResource("interfaces/controlledSmoothing.xml")
-						.openStream());
-				ColumnContainer columnContainer1 = (ColumnContainer) decoder
-						.getRootObject();
-				BLabel controlledSmoothing = ((BLabel) decoder
-						.getObject("controlledSmoothing"));
-				controlledSmoothing.setText(Translate
-						.text("polymesh:"+controlledSmoothing.getText()));
-				applyCB = ((BCheckBox) decoder.getObject("applyCB"));
+			
+			try(InputStream is = getClass().getResource("interfaces/controlledSmoothing.xml").openStream()) {
+				WidgetDecoder decoder = new WidgetDecoder(is);
+				ColumnContainer columnContainer = (ColumnContainer) decoder.getRootObject();
+				BLabel controlledSmoothing = (BLabel) decoder.getObject("controlledSmoothing");
+				controlledSmoothing.setText(Translate.text("polymesh:"+controlledSmoothing.getText()));
+				applyCB = (BCheckBox) decoder.getObject("applyCB");
 				applyCB.setText(Translate.text("polymesh:"+applyCB.getText()));
-				applyCB
-						.addEventLink(ValueChangedEvent.class, this,
-								"doApplyCB");
+				applyCB.addEventLink(ValueChangedEvent.class, this,"doApplyCB");
 				maxAngle = ((BLabel) decoder.getObject("maxAngle"));
 				maxAngle.setText(Translate.text("polymesh:"+maxAngle.getText()));
-				BTextField maxAngleValue = ((BTextField) decoder
-						.getObject("maxAngleValue"));
-				BTextField minAngleValue = ((BTextField) decoder
-						.getObject("minAngleValue"));
-				minAngle = ((BLabel) decoder.getObject("minAngle"));
+				BTextField maxAngleValue = ((BTextField) decoder.getObject("maxAngleValue"));
+				BTextField minAngleValue = ((BTextField) decoder.getObject("minAngleValue"));
+				minAngle = (BLabel) decoder.getObject("minAngle");
 				minAngle.setText(Translate.text("polymesh:"+ minAngle.getText()));
-				angleRange = ((BLabel) decoder.getObject("angleRange"));
+				angleRange = (BLabel) decoder.getObject("angleRange");
 				angleRange.setText(Translate.text("polymesh:"+angleRange.getText()));
-				smoothnessRange = ((BLabel) decoder
-						.getObject("smoothnessRange"));
-				smoothnessRange.setText(Translate.text("polymesh:"+smoothnessRange
-						.getText()));
-				minSmoothness = ((BLabel) decoder.getObject("minSmoothness"));
-				minSmoothness
-						.setText(Translate.text("polymesh:"+minSmoothness.getText()));
-				BTextField minSmoothnessValue = ((BTextField) decoder
-						.getObject("minSmoothnessValue"));
-				maxSmoothness = ((BLabel) decoder.getObject("maxSmoothness"));
-				maxSmoothness
-						.setText(Translate.text("polymesh:"+maxSmoothness.getText()));
-				BTextField maxSmoothnessValue = ((BTextField) decoder
-						.getObject("maxSmoothnessValue"));
-				BButton okButton = ((BButton) decoder.getObject("okButton"));
+				smoothnessRange = (BLabel) decoder.getObject("smoothnessRange");
+				smoothnessRange.setText(Translate.text("polymesh:"+smoothnessRange.getText()));
+				minSmoothness = (BLabel) decoder.getObject("minSmoothness");
+				minSmoothness.setText(Translate.text("polymesh:"+minSmoothness.getText()));
+				BTextField minSmoothnessValue = ((BTextField) decoder.getObject("minSmoothnessValue"));
+				maxSmoothness = (BLabel) decoder.getObject("maxSmoothness");
+				maxSmoothness.setText(Translate.text("polymesh:"+maxSmoothness.getText()));
+				BTextField maxSmoothnessValue = ((BTextField) decoder.getObject("maxSmoothnessValue"));
+				BButton okButton = (BButton) decoder.getObject("okButton");
 				okButton.addEventLink(CommandEvent.class, this, "doOK");
 				okButton.setText(Translate.text("polymesh:ok"));
-				// applyButton = ((BButton) decoder.getObject("applyButton"));
-				// applyButton.addEventLink( CommandEvent.class, this, "doApply"
-				// );
-				BButton cancelButton = ((BButton) decoder
-						.getObject("cancelButton"));
+				
+				BButton cancelButton = (BButton) decoder.getObject("cancelButton");
 				cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
 				cancelButton.setText(Translate.text("polymesh:cancel"));
 				minAngleVF = new PMValueField(0.0, ValueField.NONNEGATIVE);
@@ -5385,44 +5274,26 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 				maxAngleVF.setValue(mesh.getMaxAngle());
 				minSmoothnessVF.setValue(mesh.getMinSmoothness());
 				maxSmoothnessVF.setValue(mesh.getMaxSmoothness());
-				minAngleVF.addEventLink(ValueChangedEvent.class, this,
-						"doApplyVF");
-				maxAngleVF.addEventLink(ValueChangedEvent.class, this,
-						"doApplyVF");
-				minSmoothnessVF.addEventLink(ValueChangedEvent.class, this,
-						"doApplyVF");
-				maxSmoothnessVF.addEventLink(ValueChangedEvent.class, this,
-						"doApplyVF");
-				minAngleSlider = ((BSlider) decoder.getObject("minAngleSlider"));
-				maxAngleSlider = ((BSlider) decoder.getObject("maxAngleSlider"));
-				minSmoothnessSlider = ((BSlider) decoder
-						.getObject("minSmoothnessSlider"));
-				maxSmoothnessSlider = ((BSlider) decoder
-						.getObject("maxSmoothnessSlider"));
-				minAngleSlider.addEventLink(ValueChangedEvent.class, this,
-						"doApplySL");
-				maxAngleSlider.addEventLink(ValueChangedEvent.class, this,
-						"doApplySL");
-				minSmoothnessSlider.addEventLink(ValueChangedEvent.class, this,
-						"doApplySL");
-				maxSmoothnessSlider.addEventLink(ValueChangedEvent.class, this,
-						"doApplySL");
+				minAngleVF.addEventLink(ValueChangedEvent.class, this,"doApplyVF");
+				maxAngleVF.addEventLink(ValueChangedEvent.class, this,"doApplyVF");
+				minSmoothnessVF.addEventLink(ValueChangedEvent.class, this,"doApplyVF");
+				maxSmoothnessVF.addEventLink(ValueChangedEvent.class, this,"doApplyVF");
+				minAngleSlider = (BSlider) decoder.getObject("minAngleSlider");
+				maxAngleSlider = (BSlider) decoder.getObject("maxAngleSlider");
+				minSmoothnessSlider = (BSlider) decoder.getObject("minSmoothnessSlider");
+				maxSmoothnessSlider = (BSlider) decoder.getObject("maxSmoothnessSlider");
+				minAngleSlider.addEventLink(ValueChangedEvent.class, this,"doApplySL");
+				maxAngleSlider.addEventLink(ValueChangedEvent.class, this,"doApplySL");
+				minSmoothnessSlider.addEventLink(ValueChangedEvent.class, this,"doApplySL");
+				maxSmoothnessSlider.addEventLink(ValueChangedEvent.class, this,"doApplySL");
 				doApplyCB();
-				setContent(columnContainer1);
+				setContent(columnContainer);
 			} catch (IOException ex) {
-				ex.printStackTrace();
-			} finally {
-				try {
-					if (inputStream != null)
-						inputStream.close();
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				}
+                          System.out.println("Error creating ControlledSmoothingDialog due " + ex.getLocalizedMessage());
 			}
 			pack();
 			addEventLink(WindowClosingEvent.class, this, "doCancel");
-			UIUtilities.centerWindow(PolyMeshEditorWindow.this);
-			setVisible(true);
+			UIUtilities.centerWindow(this);
 
 		}
 
@@ -5510,101 +5381,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 		}
 	}
 
-	private class SubdivisionDialog extends BDialog {
-		private FormContainer formContainer1;
-
-		private BSpinner interactiveSpinner;
-
-		private int backInteractiveSmoothness;
-
-		private PolyMesh prevMesh;
-
-		public SubdivisionDialog(BFrame parent) {
-			super(parent, Translate.text("polymesh:subdivisionLevelDialogTitle"),
-					false);
-			PolyMesh mesh = (PolyMesh) objInfo.object;
-			backInteractiveSmoothness = mesh.getInteractiveSmoothLevel();
-			prevMesh = (PolyMesh) mesh.duplicate();
-			InputStream inputStream = null;
-			try {
-				WidgetDecoder decoder = new WidgetDecoder(getClass()
-						.getResource("interfaces/subdivision.xml").openStream());
-				BorderContainer borderContainer1 = (BorderContainer) decoder
-						.getRootObject();
-				BLabel interactiveLabel = ((BLabel) decoder
-						.getObject("interactiveLabel"));
-				interactiveLabel.setText(Translate.text("polymesh:"+interactiveLabel
-						.getText()));
-				BLabel renderingLabel = ((BLabel) decoder
-						.getObject("renderingLabel"));
-				renderingLabel.setText(Translate.text("polymesh:"+renderingLabel
-						.getText()));
-				interactiveSpinner = ((BSpinner) decoder
-						.getObject("interactiveSpinner"));
-				interactiveSpinner.setValue(new Integer(
-						backInteractiveSmoothness));
-				interactiveSpinner.addEventLink(ValueChangedEvent.class, this,
-						"doInteractiveSpinnerChanged");
-				SpinnerNumberModel model = (SpinnerNumberModel) interactiveSpinner
-						.getModel();
-				model.setMaximum(new Integer(6));
-				BLabel chooseLevelsLabel = ((BLabel) decoder
-						.getObject("chooseLevelsLabel"));
-				chooseLevelsLabel.setText(Translate.text("polymesh:"+chooseLevelsLabel
-						.getText()));
-				GridContainer okCancelGrid = ((GridContainer) decoder
-						.getObject("OkCancelGrid"));
-				BButton okButton = ((BButton) decoder.getObject("okButton"));
-				okButton.addEventLink(CommandEvent.class, this, "doOK");
-				okButton.setText(Translate.text("polymesh:ok"));
-				BButton cancelButton = ((BButton) decoder
-						.getObject("cancelButton"));
-				cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
-				cancelButton.setText(Translate.text("polymesh:cancel"));
-				setContent(borderContainer1);
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			} finally {
-				try {
-					if (inputStream != null)
-						inputStream.close();
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				}
-			}
-			pack();
-			addEventLink(WindowClosingEvent.class, this, "doCancel");
-			UIUtilities.centerDialog(this,PolyMeshEditorWindow.this);
-			setVisible(true);
-
-		}
-
-		private void doCancel() {
-			PolyMesh mesh = (PolyMesh) objInfo.object;
-			mesh.setInteractiveSmoothLevel(backInteractiveSmoothness);
-			objectChanged();
-			updateImage();
-			dispose();
-		}
-
-		private void doInteractiveSpinnerChanged() {
-			PolyMesh mesh = (PolyMesh) objInfo.object;
-			mesh.setInteractiveSmoothLevel(((Integer) interactiveSpinner
-					.getValue()).intValue());
-			objectChanged();
-			updateImage();
-		}
-
-		private void doOK() {
-			PolyMesh mesh = (PolyMesh) objInfo.object;
-			setUndoRecord(new UndoRecord(PolyMeshEditorWindow.this, false,
-					UndoRecord.COPY_OBJECT, new Object[] { mesh, prevMesh }));
-			dispose();
-		}
-	}
-
 	private class UnfoldStatusDialog extends BDialog {
-		private BorderContainer borderContainer1;
 
 		private BProgressBar progressBar;
 
@@ -5631,56 +5408,47 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 		private Thread unfoldThread;
 
 		public UnfoldStatusDialog() {
-			super(PolyMeshEditorWindow.this, Translate.text("polymesh:meshUnfolding"),
-					true);
+			super(PolyMeshEditorWindow.this, Translate.text("polymesh:meshUnfolding"),true);
 			int nverts = ((PolyMesh) objInfo.object).getVertices().length;
 			if (nverts < 1000) {
 				residual = 0.001;
 			} else {
 				residual = 1;
 			}
-			InputStream inputStream = null;
-			try {
-				WidgetDecoder decoder = new WidgetDecoder(
-						inputStream = getClass().getResource(
-								"interfaces/unfoldStatus.xml").openStream(),
-						PolyMeshPlugin.resources);
-				borderContainer1 = (BorderContainer) decoder.getRootObject();
-				progressBar = ((BProgressBar) decoder.getObject("progressBar"));
-				textArea = ((BTextArea) decoder.getObject("TextArea"));
-				rowContainer1 = ((RowContainer) decoder
-						.getObject("RowContainer1"));
-				proceedButton = ((BButton) decoder.getObject("proceedButton"));
-				advancedButton = ((BButton) decoder.getObject("advancedButton"));
-				advancedButton.addEventLink(CommandEvent.class, this,
-						"doAdvancedButton");
-				residualLabel = ((BLabel) decoder.getObject("residualLabel"));
-				residualTF = ((BTextField) decoder.getObject("residualTF"));
-				setContent(borderContainer1);
-				proceedButton.addEventLink(CommandEvent.class, this,
-						"doProceedButton");
-				residualVF = new PMValueField(residual, ValueField.POSITIVE);
-				residualVF.setTextField(residualTF);
-				residualVF.setValue(residual);
-				residualVF.addEventLink(ValueChangedEvent.class, this,
-						"doResidualChanged");
-				residualLabel.setVisible(false);
-				residualVF.setVisible(false);
+			
+			try(InputStream is = getClass().getResource("interfaces/unfoldStatus.xml").openStream()) {
+                            WidgetDecoder decoder = new WidgetDecoder(is);
+                            BorderContainer borderContainer = (BorderContainer) decoder.getRootObject();
+                            BLabel unfoldStatusLabel = (BLabel) decoder.getObject("unfoldStatusLabel");
+                            unfoldStatusLabel.setText(Translate.text("polymesh:unfoldStatus"));
+                            progressBar = (BProgressBar) decoder.getObject("progressBar");
+                            textArea = (BTextArea) decoder.getObject("TextArea");
+                            rowContainer1 = (RowContainer) decoder.getObject("RowContainer1");
+                            proceedButton = (BButton) decoder.getObject("proceedButton");
+                            proceedButton.setText(Translate.text("polymesh:proceed"));
+                            advancedButton = (BButton) decoder.getObject("advancedButton");
+                            advancedButton.setText(Translate.text("polymesh:advanced"));
+                            advancedButton.addEventLink(CommandEvent.class, this, "doAdvancedButton");
+                            residualLabel = (BLabel) decoder.getObject("residualLabel");
+                            residualLabel.setText(Translate.text("polymesh:residualLabel"));
+
+                            setContent(borderContainer);
+                            proceedButton.addEventLink(CommandEvent.class, this, "doProceedButton");
+                            residualVF = new PMValueField(residual, ValueField.POSITIVE);
+                            residualVF.setTextField((BTextField) decoder.getObject("residualTF"));
+                            residualVF.setValue(residual);
+                            residualVF.addEventLink(ValueChangedEvent.class, this, "doResidualChanged");
+                            residualLabel.setVisible(false);  //Invisible and never shown
+                            residualVF.setVisible(false);     //Invisible and never shown
 			} catch (IOException ex) {
-				ex.printStackTrace();
-			} finally {
-				try {
-					if (inputStream != null)
-						inputStream.close();
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				}
+                          System.out.println("Error creating UnfoldStatusDialog due " + ex.getLocalizedMessage());
 			}
+                        textArea.getComponent().setFont(UIManager.getFont("TextField.font"));
 			status = 0;
 			cancelled = false;
 			pack();
 			addEventLink(WindowClosingEvent.class, this, "doCancel");
-			UIUtilities.centerDialog(this,PolyMeshEditorWindow.this);
+			UIUtilities.centerWindow(this);
 			advancedButton.setVisible(false);
 			progressBar.setProgressText("");
 			progressBar.setEnabled(false);
@@ -5758,7 +5526,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 	}
 
 	private class EdgeSmoothnessRangeDialog extends BDialog {
-		private BorderContainer borderContainer1;
 
 		private BTextField minSmoothnessTF;
 		
@@ -5772,70 +5539,58 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements
 
 		private BSlider maxSmoothnessSlider;
 
-		private BButton addButton;
-
-		private BButton setButton;
-
-		private BButton cancelButton;
 		
 		private boolean[] orSel, newSel;
 
 		public EdgeSmoothnessRangeDialog() {
-			super(PolyMeshEditorWindow.this, Translate
-					.text("polymesh:smoothnessRange"), true);
+			super(PolyMeshEditorWindow.this, Translate.text("polymesh:smoothnessRange"), true);
 			orSel = new boolean[selected.length];
 			newSel = new boolean[selected.length];
 			for (int i = 0; i < selected.length; i++) {
 				orSel[i] = selected[i];
 			}
 			setSelection(newSel);
-			InputStream inputStream = null;
-			try {
-				WidgetDecoder decoder = new WidgetDecoder(
-						inputStream = getClass().getResource(
-								"interfaces/smoothnessRange.xml").openStream(),
-								PolyMeshPlugin.resources);
-				borderContainer1 = (BorderContainer) decoder.getRootObject();
-				minSmoothnessTF = ((BTextField) decoder
-						.getObject("minSmoothnessTF"));
-				minSmoothnessSlider = ((BSlider) decoder
-						.getObject("minSmoothnessSlider"));
-				maxSmoothnessTF = ((BTextField) decoder
-						.getObject("maxSmoothnessTF"));
-				maxSmoothnessSlider = ((BSlider) decoder
-						.getObject("maxSmoothnessSlider"));
-				minSmoothnessSlider.addEventLink(ValueChangedEvent.class, this, "doMinSliderChanged");
-				maxSmoothnessSlider.addEventLink(ValueChangedEvent.class, this, "doMaxSliderChanged");
-				addButton = ((BButton) decoder.getObject("addButton"));
-				addButton.addEventLink(CommandEvent.class, this, "doAdd");
-				setButton = ((BButton) decoder.getObject("setButton"));
-				setButton.addEventLink(CommandEvent.class, this, "doSet");
-				cancelButton = ((BButton) decoder.getObject("cancelButton"));
-				cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
-				minSmoothnessVF = new PMValueField(0.0, ValueField.NONNEGATIVE);
-				minSmoothnessVF.setTextField(minSmoothnessTF);
-				minSmoothnessVF.setValue(0.0);
-				maxSmoothnessVF = new PMValueField(1.0, ValueField.POSITIVE);
-				maxSmoothnessVF.setTextField(maxSmoothnessTF);
-				maxSmoothnessVF.setValue(1.0);
-				maxSmoothnessSlider.setValue(100);
-				minSmoothnessVF.addEventLink(ValueChangedEvent.class, this, "doValuesChanged");
-				maxSmoothnessVF.addEventLink(ValueChangedEvent.class, this, "doValuesChanged");
-				setContent(borderContainer1);
+			try(InputStream inputStream = getClass().getResource("interfaces/smoothnessRange.xml").openStream()) {
+				WidgetDecoder decoder = new WidgetDecoder(inputStream);
+				BorderContainer borderContainer = (BorderContainer) decoder.getRootObject();
+                                BLabel label = (BLabel)decoder.getObject("Label1");
+                                label.setText(Translate.text("polymesh:specifySmoothnessRange"));
+                                label = (BLabel)decoder.getObject("Label2");
+                                label.setText(Translate.text("polymesh:minSmoothness"));
+                                label = (BLabel)decoder.getObject("Label3");
+                                label.setText(Translate.text("polymesh:maxSmoothness"));
+
+                                minSmoothnessTF = ((BTextField) decoder.getObject("minSmoothnessTF"));
+                                minSmoothnessSlider = ((BSlider) decoder.getObject("minSmoothnessSlider"));
+                                maxSmoothnessTF = ((BTextField) decoder.getObject("maxSmoothnessTF"));
+                                maxSmoothnessSlider = ((BSlider) decoder.getObject("maxSmoothnessSlider"));
+                                minSmoothnessSlider.addEventLink(ValueChangedEvent.class, this, "doMinSliderChanged");
+                                maxSmoothnessSlider.addEventLink(ValueChangedEvent.class, this, "doMaxSliderChanged");
+                                BButton addButton = (BButton) decoder.getObject("addButton");
+                                addButton.setText(Translate.text("polymesh:addToSelection"));
+                                addButton.addEventLink(CommandEvent.class, this, "doAdd");
+                                BButton setButton = (BButton) decoder.getObject("setButton");
+                                setButton.addEventLink(CommandEvent.class, this, "doSet");
+                                setButton.setText(Translate.text("polymesh:setSelection"));
+                                BButton cancelButton = (BButton) decoder.getObject("cancelButton");
+                                cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
+                                cancelButton.setText(Translate.text("polymesh:cancel"));
+                                minSmoothnessVF = new PMValueField(0.0, ValueField.NONNEGATIVE);
+                                minSmoothnessVF.setTextField(minSmoothnessTF);
+                                minSmoothnessVF.setValue(0.0);
+                                maxSmoothnessVF = new PMValueField(1.0, ValueField.POSITIVE);
+                                maxSmoothnessVF.setTextField(maxSmoothnessTF);
+                                maxSmoothnessVF.setValue(1.0);
+                                maxSmoothnessSlider.setValue(100);
+                                minSmoothnessVF.addEventLink(ValueChangedEvent.class, this, "doValuesChanged");
+                                maxSmoothnessVF.addEventLink(ValueChangedEvent.class, this, "doValuesChanged");
+                                setContent(borderContainer);
 				addEventLink(WindowClosingEvent.class, this, "doCancel");
 			} catch (IOException ex) {
-				ex.printStackTrace();
-			} finally {
-				try {
-					if (inputStream != null)
-						inputStream.close();
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				}
+                          System.out.println("Error creating EdgeSmoothnessRangeDialog due " + ex.getLocalizedMessage());
 			}
 			updateSelection();
 			pack();
-			setVisible(true);
 		}
 		
 		private void doMinSliderChanged() {

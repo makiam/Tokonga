@@ -192,9 +192,9 @@ public class UVMappingEditorDialog extends BDialog {
                                    LayoutInfo.NONE, 
                                    new Insets(2, 2, 2, 2), 
                                    new Dimension(0, 0)));
-        
-        try(InputStream is = getClass().getResource("interfaces/unfoldEditor.xml").openStream()) {
-            WidgetDecoder decoder = new WidgetDecoder(is, PolyMeshPlugin.resources);
+
+        try(InputStream inputStream = getClass().getResource("interfaces/unfoldEditor.xml").openStream()) {
+            WidgetDecoder decoder = new WidgetDecoder(inputStream);
             BorderContainer borderContainer = (BorderContainer) decoder.getRootObject();
             uMinValue = ((BLabel) decoder.getObject("uMinValue"));
             uMaxValue = ((BLabel) decoder.getObject("uMaxValue"));
@@ -203,12 +203,20 @@ public class UVMappingEditorDialog extends BDialog {
             //autoButton = ((BButton) decoder.getObject("autoButton"));
             //autoButton.addEventLink(CommandEvent.class, this, "doAutoScale");
             resLabel = ((BLabel) decoder.getObject("resLabel"));
+            resLabel.setText(Translate.text("polymesh:sampling"));
+            
+            BLabel mappingLabel = (BLabel)decoder.getObject("mappingLabel");
+            mappingLabel.setText(Translate.text("polymesh:mapping"));
+            
             mappingCB = ((BComboBox) decoder.getObject("mappingCB"));
             mappingCB.addEventLink(ValueChangedEvent.class, this, "doMappingChanged");
             textureLabel = ((BLabel) decoder.getObject("textureLabel"));
+            textureLabel.setText(Translate.text("polymesh:texture"));
+            
             textureCB = ((BComboBox) decoder.getObject("textureCB"));
             textureCB.addEventLink(ValueChangedEvent.class, this, "doTextureChanged");
             componentLabel = ((BLabel) decoder.getObject("componentLabel"));
+            componentLabel.setText(Translate.text("polymesh:component"));
             componentCB = ((BComboBox) decoder.getObject("componentCB"));
             content.add(borderContainer, 
                         BorderContainer.WEST, 
@@ -231,8 +239,16 @@ public class UVMappingEditorDialog extends BDialog {
             resSpinner = ((BSpinner) decoder.getObject("resSpinner"));
             resSpinner.setValue(mappingData.sampling);
             resSpinner.addEventLink(ValueChangedEvent.class, this, "doSamplingChanged");
+            BLabel tensionLabel = (BLabel)decoder.getObject("tensionLabel");
+            tensionLabel.setText(Translate.text("polymesh:tension"));
+            
             meshTensionCB = ((BCheckBox) decoder.getObject("meshTensionCB"));
+            meshTensionCB.setText(Translate.text("polymesh:meshTension"));
             meshTensionCB.addEventLink(ValueChangedEvent.class, this, "doTensionChanged");
+            
+            BLabel distanceLabel = (BLabel)decoder.getObject("distanceLabel");
+            distanceLabel.setText(Translate.text("polymesh:distance"));
+            
             distanceSpinner = ((BSpinner) decoder.getObject("distanceSpinner"));
             distanceSpinner.setValue(tensionDistance);
             distanceSpinner.addEventLink(ValueChangedEvent.class, this, "doMaxDistanceValueChanged");
@@ -1031,20 +1047,18 @@ public class UVMappingEditorDialog extends BDialog {
         int oldTexture, newTexture;
 
         public ChangeTextureCommand(int oldTexture, int newTexture) {
-            super();
             this.oldTexture = oldTexture;
             this.newTexture = newTexture;
         }
 
-        public void execute() {
-            redo();
-        }
 
+        @Override
         public void redo() {
             textureCB.setSelectedIndex(newTexture);
             doTextureChanged();
         }
 
+        @Override
         public void undo() {
             textureCB.setSelectedIndex(oldTexture);
             doTextureChanged();
@@ -1065,14 +1079,12 @@ public class UVMappingEditorDialog extends BDialog {
             this.newMapping = newMapping;
         }
 
-        public void execute() {
-            redo();
-        }
-
+        @Override
         public void redo() {
             sendToMapping(oldMapping, newMapping);
         }
 
+        @Override
         public void undo() {
             sendToMapping(newMapping, oldMapping);
         }
@@ -1108,14 +1120,13 @@ public class UVMappingEditorDialog extends BDialog {
             this.newMapping = newMapping;
         }
 
-        public void execute() {
-            redo();
-        }
 
+        @Override
         public void redo() {
             changeMapping(newMapping);
         }
 
+        @Override
         public void undo() {
             changeMapping(oldMapping);
         }
@@ -1130,15 +1141,11 @@ public class UVMappingEditorDialog extends BDialog {
         int index;
 
         public RemoveMappingCommand(UVMeshMapping mapping, int index) {
-            super();
             this.mapping = mapping.duplicate();
             this.index = index;
         }
 
-        public void execute() {
-            redo();
-        }
-
+        @Override
         public void redo() 
         {
             ArrayList<UVMeshMapping> mappings = mappingData.getMappings();
@@ -1164,6 +1171,7 @@ public class UVMappingEditorDialog extends BDialog {
             mappingCanvas.repaint();
         }
 
+        @Override
         public void undo() {
             ArrayList<UVMeshMapping> mappings = mappingData.getMappings();
             UVMeshMapping newMapping = mapping.duplicate();
@@ -1199,15 +1207,11 @@ public class UVMappingEditorDialog extends BDialog {
         int selected;
 
         public AddMappingCommand(UVMeshMapping mapping, int selected){
-            super();
             this.mapping = mapping.duplicate();
             this.selected = selected;
         }
 
-        public void execute() {
-            redo();
-        }
-
+        @Override
         public void redo() {
             UVMeshMapping newMapping = mapping.duplicate();
             mappingData.mappings.add(newMapping);
@@ -1221,6 +1225,7 @@ public class UVMappingEditorDialog extends BDialog {
             updateState();
         }
 
+        @Override
         public void undo() {
             ArrayList<UVMeshMapping> mappings = mappingData.getMappings();
             int index = mappings.size() - 1;
@@ -1243,21 +1248,18 @@ public class UVMappingEditorDialog extends BDialog {
         private final int newPiece;
 
         public SelectPieceCommand(int oldPiece, int newPiece) {
-            super();
             this.oldPiece = oldPiece;
             this.newPiece = newPiece;
         }
 
-        public void execute() {
-            redo();
-        }
-
+        @Override
         public void redo() {
             mappingCanvas.setSelectedPiece(newPiece);
             pieceList.setSelected(newPiece, true);
             repaint();
         }
 
+        @Override
         public void undo() {
             mappingCanvas.setSelectedPiece(oldPiece);
             pieceList.setSelected(oldPiece, true);
@@ -1275,21 +1277,19 @@ public class UVMappingEditorDialog extends BDialog {
         private final String newName;
 
         public RenamePieceCommand(int piece, String oldName, String newName) {
-            super();
             this.piece = piece;
             this.oldName = oldName;
             this.newName = newName;
         }
 
-        public void execute() {
-            redo();
-        }
 
+        @Override
         public void redo() {
             setPieceName(piece, newName);
             repaint();
         }
 
+        @Override
         public void undo() {
             setPieceName(piece, oldName);
         }
