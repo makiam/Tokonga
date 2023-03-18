@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2013 by Peter Eastman
-   Changes copyright (C) 2016-2020 by Maksim Khramov
+   Changes copyright (C) 2016-2023 by Maksim Khramov
    Changes copyright (C) 2016 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -49,8 +49,8 @@ public class ArtOfIllusion
   private static Texture clipboardTexture[];
   private static Material clipboardMaterial[];
   private static ImageMap clipboardImage[];
-  private static ArrayList<EditingWindow> windows = new ArrayList<EditingWindow>();
-  private static final HashMap<String, String> classTranslations = new HashMap<String, String>();
+  private static ArrayList<EditingWindow> windows = new ArrayList<>();
+  private static final HashMap<String, String> classTranslations = new HashMap<>();
   private static int numNewWindows = 0;
 
   static
@@ -254,7 +254,7 @@ public class ArtOfIllusion
          * when interacting with macOS and GLJPanels.
          */
 
-        SwingWorker autoCloseUnmodified = new SwingWorker<Boolean, Void>()
+        SwingWorker<Boolean, Void> autoCloseUnmodified = new SwingWorker<Boolean, Void>()
         {
           @Override
           public Boolean doInBackground()
@@ -378,7 +378,7 @@ public class ArtOfIllusion
     String files[] = new File(STARTUP_SCRIPT_DIRECTORY).list();
     if(null == files)
       return;
-    HashMap<String, Object> variables = new HashMap<String, Object>();
+    HashMap<String, Object> variables = new HashMap<>();
     
     for (String file : files)
     {
@@ -405,7 +405,7 @@ public class ArtOfIllusion
   /** Get a class specified by name.  This checks both the system classes, and all plugins.
       It also accounts for classes which changed packages in version 1.3. */
 
-  public static Class getClass(String name) throws ClassNotFoundException
+  public static Class<?> getClass(String name) throws ClassNotFoundException
   {
     try
     {
@@ -428,7 +428,7 @@ public class ArtOfIllusion
     }
   }
 
-  private static Class lookupClass(String name) throws ClassNotFoundException
+  private static Class<?> lookupClass(String name) throws ClassNotFoundException
   {
     try
     {
@@ -437,12 +437,12 @@ public class ArtOfIllusion
     catch (ClassNotFoundException ex)
     {
     }
-    List pluginLoaders = PluginRegistry.getPluginClassLoaders();
+    List<ClassLoader> pluginLoaders = PluginRegistry.getPluginClassLoaders();
     for (int i = 0; i < pluginLoaders.size(); i++)
     {
       try
       {
-        return ((ClassLoader) pluginLoaders.get(i)).loadClass(name);
+        return pluginLoaders.get(i).loadClass(name);
       }
       catch (ClassNotFoundException ex)
       {
@@ -558,7 +558,7 @@ public class ArtOfIllusion
   {
     // First make a list of all textures used by the objects.
 
-    ArrayList<Texture> textures = new ArrayList<Texture>();
+    ArrayList<Texture> textures = new ArrayList<>();
     for (int i = 0; i < obj.length; i++)
       {
         Texture tex = obj[i].getObject().getTexture();
@@ -586,7 +586,7 @@ public class ArtOfIllusion
 
     // Next make a list of all materials used by the objects.
 
-    ArrayList<Material> materials = new ArrayList<Material>();
+    ArrayList<Material> materials = new ArrayList<>();
     for (int i = 0; i < obj.length; i++)
       {
         Material mat = obj[i].getObject().getMaterial();
@@ -601,7 +601,7 @@ public class ArtOfIllusion
 
     // Now make a list of all ImageMaps used by any of them.
 
-    ArrayList<ImageMap> images = new ArrayList<ImageMap>();
+    ArrayList<ImageMap> images = new ArrayList<>();
     for (int i = 0; i < scene.getNumImages(); i++)
       {
         ImageMap map = scene.getImage(i);

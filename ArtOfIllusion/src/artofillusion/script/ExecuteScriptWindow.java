@@ -44,7 +44,7 @@ public class ExecuteScriptWindow extends BFrame
   private final BButton executeSelected;
   private final BButton executeToCursor;
   private static final int EDITORS_OFFSET = 32;
-  private static ArrayList <String> openedScripts = new ArrayList<String> ();
+  private static ArrayList<String> openedScripts = new ArrayList<> ();
 
     private javax.swing.filechooser.FileFilter scriptFileFilter;
     
@@ -59,7 +59,7 @@ public class ExecuteScriptWindow extends BFrame
     {
       final Preferences pref = Preferences.userNodeForPackage(ExecuteScriptWindow.class);
       final String recentFiles[] = pref.get("recentFiles", "").split(File.pathSeparator);
-      java.util.List<String> newRecentFiles = new ArrayList<String>();
+      java.util.List<String> newRecentFiles = new ArrayList<>();
       newRecentFiles.add (filePath);
       for (String recentFile : recentFiles) 
         if (!recentFile.equals(filePath)) // If the current file already has a timestamp it will be updated below
@@ -92,13 +92,13 @@ public class ExecuteScriptWindow extends BFrame
     language = scriptLanguage;
     scriptPath = scriptAbsolutePath;
     // Get the extensions dynamically
-    final java.util.List <String> extensions = new ArrayList <String>();
+    final java.util.List <String> extensions = new ArrayList<>();
     for (String language : ScriptRunner.getLanguageNames ())
     {
       extensions.add (ScriptRunner.getFilenameExtension(language));
     }
     scriptFileFilter = new javax.swing.filechooser.FileNameExtensionFilter(
-      "Script files", (String[]) extensions.toArray(new String [0]));
+      "Script files", extensions.toArray(new String [0]));
 
     BorderContainer content = new BorderContainer();
     setContent(content);
