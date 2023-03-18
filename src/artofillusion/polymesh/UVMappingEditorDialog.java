@@ -1066,20 +1066,18 @@ public class UVMappingEditorDialog extends BDialog {
         int oldTexture, newTexture;
 
         public ChangeTextureCommand(int oldTexture, int newTexture) {
-            super();
             this.oldTexture = oldTexture;
             this.newTexture = newTexture;
         }
 
-        public void execute() {
-            redo();
-        }
 
+        @Override
         public void redo() {
             textureCB.setSelectedIndex(newTexture);
             doTextureChanged();
         }
 
+        @Override
         public void undo() {
             textureCB.setSelectedIndex(oldTexture);
             doTextureChanged();
@@ -1100,14 +1098,12 @@ public class UVMappingEditorDialog extends BDialog {
             this.newMapping = newMapping;
         }
 
-        public void execute() {
-            redo();
-        }
-
+        @Override
         public void redo() {
             sendToMapping(oldMapping, newMapping);
         }
 
+        @Override
         public void undo() {
             sendToMapping(newMapping, oldMapping);
         }
@@ -1143,14 +1139,13 @@ public class UVMappingEditorDialog extends BDialog {
             this.newMapping = newMapping;
         }
 
-        public void execute() {
-            redo();
-        }
 
+        @Override
         public void redo() {
             changeMapping(newMapping);
         }
 
+        @Override
         public void undo() {
             changeMapping(oldMapping);
         }
@@ -1165,15 +1160,11 @@ public class UVMappingEditorDialog extends BDialog {
         int index;
 
         public RemoveMappingCommand(UVMeshMapping mapping, int index) {
-            super();
             this.mapping = mapping.duplicate();
             this.index = index;
         }
 
-        public void execute() {
-            redo();
-        }
-
+        @Override
         public void redo() 
         {
             ArrayList<UVMeshMapping> mappings = mappingData.getMappings();
@@ -1199,6 +1190,7 @@ public class UVMappingEditorDialog extends BDialog {
             mappingCanvas.repaint();
         }
 
+        @Override
         public void undo() {
             ArrayList<UVMeshMapping> mappings = mappingData.getMappings();
             UVMeshMapping newMapping = mapping.duplicate();
@@ -1234,15 +1226,11 @@ public class UVMappingEditorDialog extends BDialog {
         int selected;
 
         public AddMappingCommand(UVMeshMapping mapping, int selected){
-            super();
             this.mapping = mapping.duplicate();
             this.selected = selected;
         }
 
-        public void execute() {
-            redo();
-        }
-
+        @Override
         public void redo() {
             UVMeshMapping newMapping = mapping.duplicate();
             mappingData.mappings.add(newMapping);
@@ -1256,6 +1244,7 @@ public class UVMappingEditorDialog extends BDialog {
             updateState();
         }
 
+        @Override
         public void undo() {
             ArrayList<UVMeshMapping> mappings = mappingData.getMappings();
             int index = mappings.size() - 1;
@@ -1278,21 +1267,18 @@ public class UVMappingEditorDialog extends BDialog {
         private int newPiece;
 
         public SelectPieceCommand(int oldPiece, int newPiece) {
-            super();
             this.oldPiece = oldPiece;
             this.newPiece = newPiece;
         }
 
-        public void execute() {
-            redo();
-        }
-
+        @Override
         public void redo() {
             mappingCanvas.setSelectedPiece(newPiece);
             pieceList.setSelected(newPiece, true);
             repaint();
         }
 
+        @Override
         public void undo() {
             mappingCanvas.setSelectedPiece(oldPiece);
             pieceList.setSelected(oldPiece, true);
@@ -1310,21 +1296,19 @@ public class UVMappingEditorDialog extends BDialog {
         private String newName;
 
         public RenamePieceCommand(int piece, String oldName, String newName) {
-            super();
             this.piece = piece;
             this.oldName = oldName;
             this.newName = newName;
         }
 
-        public void execute() {
-            redo();
-        }
 
+        @Override
         public void redo() {
             setPieceName(piece, newName);
             repaint();
         }
 
+        @Override
         public void undo() {
             setPieceName(piece, oldName);
         }
