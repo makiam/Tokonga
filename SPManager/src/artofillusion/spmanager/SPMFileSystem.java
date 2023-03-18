@@ -1,5 +1,5 @@
 /* Copyright 2004 Francois Guillet
-
+ *  Changes copyright 2022 by Maksim Khramov
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
@@ -11,12 +11,12 @@
 
 package artofillusion.spmanager;
 
+import java.util.List;
 import java.util.Vector;
-import artofillusion.*;
 
 public class SPMFileSystem
 {   
-    protected Vector pluginsInfo, toolInfo, objectInfo, startupInfo;
+    protected List<SPMObjectInfo> pluginsInfo, toolInfo, objectInfo, startupInfo;
     protected boolean initialized;
     
     public final static short PLUGIN_TYPE = 0;
@@ -26,23 +26,23 @@ public class SPMFileSystem
     
     public SPMFileSystem()
     {
-        pluginsInfo = new Vector();
-        toolInfo = new Vector();
-        objectInfo = new Vector();
-        startupInfo = new Vector();
+        pluginsInfo = new Vector<>();
+        toolInfo = new Vector<>();
+        objectInfo = new Vector<>();
+        startupInfo = new Vector<>();
         initialized = false;
     }
     
     public short getInfoType(SPMObjectInfo info)
     {
         for (int i = 0; i < pluginsInfo.size(); ++i)
-            if (info == pluginsInfo.elementAt(i)) return PLUGIN_TYPE;
+            if (info == pluginsInfo.get(i)) return PLUGIN_TYPE;
         for (int i = 0; i < toolInfo.size(); ++i)
-            if (info == toolInfo.elementAt(i)) return TOOL_SCRIPT_TYPE;
+            if (info == toolInfo.get(i)) return TOOL_SCRIPT_TYPE;
         for (int i = 0; i < objectInfo.size(); ++i)
-            if (info == objectInfo.elementAt(i)) return OBJECT_SCRIPT_TYPE;
+            if (info == objectInfo.get(i)) return OBJECT_SCRIPT_TYPE;
         for (int i = 0; i < startupInfo.size(); ++i)
-            if (info == startupInfo.elementAt(i)) return STARTUP_SCRIPT_TYPE;
+            if (info == startupInfo.get(i)) return STARTUP_SCRIPT_TYPE;
         return PLUGIN_TYPE;
     }
     
@@ -67,25 +67,25 @@ public class SPMFileSystem
         startupInfo.clear();
     }
     
-    public Vector getPlugins()
+    public List<SPMObjectInfo> getPlugins()
     {
         if (!initialized) initialize();
         return pluginsInfo;
     }
     
-    public Vector getToolScripts()
+    public List<SPMObjectInfo> getToolScripts()
     {
         if (!initialized) initialize();
         return toolInfo;
     }
     
-    public Vector getObjectScripts()
+    public List<SPMObjectInfo> getObjectScripts()
     {
         if (!initialized) initialize();
         return objectInfo;
     }
     
-    public Vector getStartupScripts()
+    public List<SPMObjectInfo> getStartupScripts()
     {
         if (!initialized) initialize();
         return startupInfo;

@@ -1,6 +1,7 @@
 /*
  *  Copyright (C) 2003 by Francois Guillet
  *  Copyright (C) 2003 by Peter Eastman for original Translate.java code
+ *  2023 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -12,15 +13,10 @@ package artofillusion.spmanager;
 
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.*;
 import java.text.*;
 import java.util.*;
-import java.util.zip.*;
 import buoy.event.*;
 import buoy.widget.*;
-import artofillusion.*;
-import java.io.*;
 
 /**
  *  This class extends AoI Translate Class so that i) the spmanager properties
@@ -119,7 +115,7 @@ public class SPMTranslate
      *@param  method     Description of the Parameter
      *@return            Description of the Return Value
      */
-    public static BMenuItem bMenuItem( String name, java.lang.Class eventType, java.lang.Object target, String method )
+    public static BMenuItem bMenuItem( String name, Class<?> eventType, java.lang.Object target, String method )
     {
         String command = name;
         BMenuItem item = null;
@@ -202,7 +198,7 @@ public class SPMTranslate
      *@param  method     Description of the Parameter
      *@return            Description of the Return Value
      */
-    public static BButton bButton( String name, java.lang.Class eventType, Object target, String method )
+    public static BButton bButton( String name, Class<?> eventType, Object target, String method )
     {
         String command = name;
         try

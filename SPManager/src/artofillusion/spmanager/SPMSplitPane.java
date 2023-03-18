@@ -1,5 +1,6 @@
 /*
  *  Copyright 2004 Francois Guillet
+ *  Changes copyright 2022-2023 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -10,12 +11,11 @@
 package artofillusion.spmanager;
 
 import java.util.*;
+import java.util.List;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 import java.awt.event.*;
-import javax.swing.event.*;
-import javax.swing.plaf.*;
 import buoy.widget.*;
 import buoy.event.*;
 
@@ -77,7 +77,7 @@ public class SPMSplitPane extends BSplitPane
 	/**
 	 *  Description of the Field
 	 */
-	protected static Vector splitPaneList;
+	protected static Vector<SPMSplitPane> splitPaneList;
 
 	/**
 	 *  Description of the Field
@@ -90,12 +90,13 @@ public class SPMSplitPane extends BSplitPane
 	protected boolean acceptsFileSelection = true;
 
 	/**  map of externals being processed - for loop detection */
-	protected Hashtable extMap, pathMap;
+	protected Hashtable<SPMObjectInfo, SPMObjectInfo> extMap;
+        protected Hashtable<String, TreePath> pathMap;
 
 	private BScrollPane nameSP, descriptionSP;
 	private BComboBox descSelect;
 
-	private Vector descText;
+	private List<String> descText;
 
 	/**
 	 *  Description of the Field
@@ -173,7 +174,7 @@ public class SPMSplitPane extends BSplitPane
 
 		if ( splitPaneList == null )
 		{
-			splitPaneList = new Vector();
+			splitPaneList = new Vector<>();
 		}
 		splitPaneList.add( this );
 
@@ -200,15 +201,12 @@ public class SPMSplitPane extends BSplitPane
 			void processEvent() {
 				int index = descSelect.getSelectedIndex();
 				if (descText != null && index < descText.size()) {
-					objectDescription.setText((String)descText.get(index));
+					objectDescription.setText(descText.get(index));
 
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							BScrollBar bar =
-								descriptionSP.getVerticalScrollBar();
-							bar.setValue( bar.getMinimum() );
-						}
-					} );
+					SwingUtilities.invokeLater(() -> {
+                                            BScrollBar bar = descriptionSP.getVerticalScrollBar();
+                                            bar.setValue( bar.getMinimum() );
+                                        });
 				}
 			}
 		});
@@ -247,7 +245,7 @@ public class SPMSplitPane extends BSplitPane
 		objectName.setEditable( false );
 		objectDescription.setEditable( false );
 
-		( (JTree) tree.getComponent() ).putClientProperty( "JTree.lineStyle", "Angled" );
+		tree.getComponent().putClientProperty( "JTree.lineStyle", "Angled" );
 		tree.setCellRenderer( new SPMTreeRenderer() );
 		tree.addEventLink( SelectionChangedEvent.class, this, "doTreeNodeSelection" );
 		tree.setMultipleSelectionEnabled( false );
@@ -265,8 +263,8 @@ public class SPMSplitPane extends BSplitPane
 		{
 			public void mousePressed( MouseEvent e )
 			{
-				int selRow = ( (JTree) tree.getComponent() ).getRowForLocation( e.getX(), e.getY() );
-				TreePath selPath = ( (JTree) tree.getComponent() ).getPathForLocation( e.getX(), e.getY() );
+				int selRow = tree.getComponent() .getRowForLocation( e.getX(), e.getY() );
+				TreePath selPath = tree.getComponent().getPathForLocation( e.getX(), e.getY() );
 				if ( selRow != -1 )
 				{
 					if ( e.getClickCount() == 2 )
@@ -276,9 +274,9 @@ public class SPMSplitPane extends BSplitPane
 				}
 			}
 		};
-		( (JTree) tree.getComponent() ).addMouseListener( ml );
+		tree.getComponent().addMouseListener( ml );
 
-		pathMap = new Hashtable(8);
+		pathMap = new Hashtable<>(8);
 		pathMap.put("plugin", pluginsPath);
 		pathMap.put("library", pluginsPath);
 		pathMap.put("script", scriptsPath);
@@ -298,8 +296,8 @@ public class SPMSplitPane extends BSplitPane
 	 */
 	public void doTreeNodeSelection()
 	{
-		TreePath[] tp = tree.getSelectedNodes();
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) ( (JTree) tree.getComponent() ).getLastSelectedPathComponent();
+
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getComponent().getLastSelectedPathComponent();
 		if ( node != null )
 		{
 			if ( node.isLeaf() && ( !node.getAllowsChildren() ) )
@@ -334,8 +332,7 @@ public class SPMSplitPane extends BSplitPane
 	 */
 	public SPMObjectInfo getSelectedNodeInfo()
 	{
-	    TreePath[] tp = tree.getSelectedNodes();
-	    DefaultMutableTreeNode node = (DefaultMutableTreeNode) ( (JTree) tree.getComponent() ).getLastSelectedPathComponent();
+	    DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getComponent().getLastSelectedPathComponent();
 	    if ( node != null )
 	    {
 		if ( node.isLeaf() && ( !node.getAllowsChildren() ) )
@@ -378,17 +375,17 @@ public class SPMSplitPane extends BSplitPane
 			String extName, extType;
 			String extList = "\n";
 			boolean missing = false;
-			Collection externals = info.getExternals();
+			Collection<String> externals = info.getExternals();
 			if (externals != null) {
-				for (Iterator iter = externals.iterator(); iter.hasNext(); ) {
-					ext = (String) iter.next();
+				for (Iterator<String> iter = externals.iterator(); iter.hasNext(); ) {
+					ext = iter.next();
 
 					if (ext.endsWith("= required")) {
 						extName = ext.substring(0, ext.indexOf(':'));
 						extType = ext.substring(ext.indexOf(':')+1,
 								ext.indexOf('=')).trim();
 
-						if (getInfo(extName, (TreePath) pathMap.get(extType)) == null) {
+						if (getInfo(extName, pathMap.get(extType)) == null) {
 
 						    //TODO check for externals with pathnames
 						    
@@ -432,10 +429,10 @@ public class SPMSplitPane extends BSplitPane
 			objectName.setText( name );
 
 			if (descText != null && descText.size() > 0)
-				objectDescription.setText( (String) descText.get(0) );
+				objectDescription.setText( descText.get(0) );
 			else objectDescription.setText("");
 
-			Vector changeLog = info.getChangeLog();
+			List<String> changeLog = info.getChangeLog();
 			if (changeLog != null) descSelect.setContents(changeLog);
 			else {
 				descSelect.removeAll();
@@ -454,15 +451,10 @@ public class SPMSplitPane extends BSplitPane
 
 		descriptionSP.layoutChildren();
 
-		SwingUtilities.invokeLater(
-				new Runnable()
-				{
-					public void run()
-					{
-						BScrollBar bar = descriptionSP.getVerticalScrollBar();
-						bar.setValue( bar.getMinimum() );
-					}
-				} );
+		SwingUtilities.invokeLater(() -> {
+                    BScrollBar bar = descriptionSP.getVerticalScrollBar();
+                    bar.setValue( bar.getMinimum() );
+                });
 	}
 
 	/**
@@ -470,8 +462,7 @@ public class SPMSplitPane extends BSplitPane
 	 */
 	public SPMObjectInfo getInfo(String name, String type)
 	{
-	    TreePath path = (TreePath) pathMap.get(type);
-	    return getInfo(name, path);
+	    return getInfo(name, pathMap.get(type));
 	}
 	
 	/**
@@ -557,14 +548,7 @@ public class SPMSplitPane extends BSplitPane
 	 */
 	public SPMSplitPane getManager()
 	{
-		for ( int i = 0; i < splitPaneList.size(); ++i )
-		{
-			if ( ( (SPMSplitPane) splitPaneList.elementAt( i ) ).workMode == BROWSE )
-			{
-				return (SPMSplitPane) splitPaneList.elementAt( i );
-			}
-		}
-		return null;
+            return splitPaneList.stream().filter(pane -> pane.workMode == BROWSE).findFirst().orElse(null);
 	}
 
 
@@ -658,7 +642,7 @@ public class SPMSplitPane extends BSplitPane
 	 */
 	protected void selectExternals( SPMObjectInfo info)
 	{
-		if (extMap == null) extMap = new Hashtable(32);
+		if (extMap == null) extMap = new Hashtable<>(32);
 
 		if (extMap.containsKey(info)) {
 			System.out.println("SPMSplitPane: dependency loop detected: " +
@@ -668,20 +652,20 @@ public class SPMSplitPane extends BSplitPane
 
 		extMap.put(info, info);
 
-		Collection externals = info.getExternals();
+		Collection<String> externals = info.getExternals();
 		if (externals == null || externals.size() == 0) return;
 
 		String extName, extType;
 		SPMObjectInfo ext;
-		for (Iterator iter = externals.iterator(); iter.hasNext(); ) {
-			extName = (String) iter.next();
+		for (Iterator<String> iter = externals.iterator(); iter.hasNext(); ) {
+			extName = iter.next();
 
 			if (extName.endsWith("= required")) {
 				extType = extName.substring(extName.indexOf(':')+1,
 						extName.indexOf('=')).trim();
 				extName = extName.substring(0, extName.indexOf(':'));
 
-				ext = getInfo(extName, (TreePath) pathMap.get(extType));
+				ext = getInfo(extName, pathMap.get(extType));
 
 				if (ext != null) {
 					if (info.isSelected()) ext.refcount++;
@@ -722,6 +706,7 @@ public class SPMSplitPane extends BSplitPane
 		 *@param  hasFocus  Description of the Parameter
 		 *@return           The treeCellRendererComponent value
 		 */
+                @Override
 		public Component getTreeCellRendererComponent(
 				JTree tree,
 				Object value,

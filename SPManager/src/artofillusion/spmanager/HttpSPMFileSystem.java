@@ -1,5 +1,6 @@
 /*
  *  Copyright 2004 Francois Guillet
+ *  Changes copyright 2022-2023 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -9,27 +10,19 @@
  */
 package artofillusion.spmanager;
 
-import artofillusion.*;
 import artofillusion.ui.*;
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.tree.*;
 import buoy.widget.*;
 import buoy.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.util.zip.*;
 import java.net.*;
 import javax.swing.text.*;
 import javax.swing.text.html.*;
 import javax.swing.text.html.parser.*;
-import java.util.regex.*;
-import javax.xml.parsers.*;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.xml.sax.*;
 import org.w3c.dom.*;
@@ -47,7 +40,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
     private URL repository;
     private HttpStatusDialog statusDialog;
     private boolean isDownloading;
-    private Vector callbacks;
+    private Vector<Runnable> callbacks;
     private Document pluginsDoc, objectsDoc, startupDoc, toolsDoc;
     private File file;
     
@@ -78,10 +71,10 @@ public class HttpSPMFileSystem extends SPMFileSystem
      */
     public void setRepository( URL rep )
     {
-        pluginsInfo = new Vector();
-        toolInfo = new Vector();
-        objectInfo = new Vector();
-        startupInfo = new Vector();
+        pluginsInfo = new Vector<>();
+        toolInfo = new Vector<>();
+        objectInfo = new Vector<>();
+        startupInfo = new Vector<>();
         initialized = false;
         unknownHost = false;
         repository = rep;
@@ -97,6 +90,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
      *
      *@param  cb  Callback to call when done
      */
+    @Override
     public void getRemoteInfo( Runnable cb )
     {
         if ( !initialized )
@@ -105,13 +99,14 @@ public class HttpSPMFileSystem extends SPMFileSystem
             unknownHost = false;
             if ( !isDownloading )
             {
-                callbacks = new Vector();
+                callbacks = new Vector<>();
                 callbacks.add( cb );
                 isDownloading = true;
                 statusDialog = new HttpStatusDialog();
                 (
                     new Thread()
                     {
+                        @Override
                         public void run()
                         {
                             scanPlugins();
@@ -123,8 +118,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
                                 scanStartupScripts();
                             isDownloading = false;
                             initialized = true;
-                            for ( int i = 0; i < callbacks.size(); ++i )
-                                ( (Runnable) callbacks.elementAt( i ) ).run();
+                            callbacks.forEach(cb -> cb.run());
                             statusDialog.dispose();
                             statusDialog = null;
                         }
@@ -162,17 +156,17 @@ public class HttpSPMFileSystem extends SPMFileSystem
     private void scanPlugins()
     {
         if (! SPManagerFrame.getParameters().getUseCache() )
-            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningPluginsFrom", new String[]{repository.toString()} ), 5000 );
+            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningPluginsFrom", repository ), 5000 );
         else
         {
             String s = repository.toString();
 	    s = s.substring(0, s.lastIndexOf('/'));
             s = s + "/cgi-bin/scripts.cgi?Plugins%20" + SPManagerPlugin.AOI_VERSION;
-            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningPluginsFrom", new String[]{s} ), 5000 );
+            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningPluginsFrom", s), 5000 );
         }
         if ( statusDialog != null )
             statusDialog.setText( SPMTranslate.text( "scanningPlugins" ) );
-        pluginsInfo = new Vector();
+        pluginsInfo = new Vector<>();
         if ( SPManagerFrame.getParameters().getUseCache() )
         {
                 scanFiles( "Plugins", pluginsInfo );
@@ -199,17 +193,17 @@ public class HttpSPMFileSystem extends SPMFileSystem
     private void scanToolScripts()
     {
         if ( ! SPManagerFrame.getParameters().getUseCache() )
-            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningToolScriptsFrom", new String[]{repository.toString()} ), 5000 );
+            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningToolScriptsFrom", repository), 5000 );
         else
         {
             String s = repository.toString();
 	    s = s.substring(0, s.lastIndexOf('/'));
             s = s + "/cgi-bin/scripts.cgi?Scripts/Tools%20" + SPManagerPlugin.AOI_VERSION;
-            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningToolScriptsFrom", new String[]{s} ), 5000 );
+            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningToolScriptsFrom", s ), 5000 );
         }
         if ( statusDialog != null )
             statusDialog.setText( SPMTranslate.text( "scanningToolScripts" ) );
-        toolInfo = new Vector();
+        toolInfo = new Vector<>();
         if ( SPManagerFrame.getParameters().getUseCache() )
         {
            scanFiles( "Scripts/Tools", toolInfo );
@@ -236,17 +230,17 @@ public class HttpSPMFileSystem extends SPMFileSystem
     private void scanObjectScripts()
     {
         if ( ! SPManagerFrame.getParameters().getUseCache() )
-                    SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningObjectScriptsFrom", new String[]{repository.toString()} ), 5000 );
+                    SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningObjectScriptsFrom", repository ), 5000 );
         else
         {
             String s = repository.toString();
 	    s = s.substring(0, s.lastIndexOf('/'));
             s = s + "/cgi-bin/scripts.cgi?Scripts/Objects%20" + SPManagerPlugin.AOI_VERSION;
-            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningObjectScriptsFrom", new String[]{s} ), 5000 );
+            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningObjectScriptsFrom", s ), 5000 );
         }
         if ( statusDialog != null )
             statusDialog.setText( SPMTranslate.text( "scanningObjectScripts" ) );
-        objectInfo = new Vector();
+        objectInfo = new Vector<>();
         if ( SPManagerFrame.getParameters().getUseCache() )
         {
            scanFiles( "Scripts/Objects", objectInfo );
@@ -273,17 +267,17 @@ public class HttpSPMFileSystem extends SPMFileSystem
     private void scanStartupScripts()
     {
         if ( ! SPManagerFrame.getParameters().getUseCache() )
-                    SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningStartupScriptsFrom", new String[]{repository.toString()} ), 5000 );
+                    SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningStartupScriptsFrom", repository ), 5000 );
         else
         {
             String s = repository.toString();
 	    s = s.substring(0, s.lastIndexOf('/'));
             s = s + "/cgi-bin/scripts.cgi?Scripts/Startup%20" + SPManagerPlugin.AOI_VERSION;
-            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningStartupScriptsFrom", new String[]{s} ), 5000 );
+            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningStartupScriptsFrom", s ), 5000 );
         }
         if ( statusDialog != null )
             statusDialog.setText( SPMTranslate.text( "scanningStartupScripts" ) );
-        startupInfo = new Vector();
+        startupInfo = new Vector<>();
         if ( SPManagerFrame.getParameters().getUseCache() )
         {
            scanFiles( "Scripts/Startup", startupInfo );
@@ -308,15 +302,15 @@ public class HttpSPMFileSystem extends SPMFileSystem
      *  Scans file on a general basis
      *
      *@param  from    URL to scan files from
-     *@param  addTo   Which vector to add info to
+     *@param  addTo   Which list to add info to
      *@param  suffix  Scanned files suffix
      */
-    private void scanFiles( URL from, Vector addTo, String suffix )
+    private void scanFiles( URL from, List<SPMObjectInfo> addTo, String suffix )
     {
         SPMObjectInfo info;
         boolean eligible;
 
-        Vector v = null;
+        Vector<String> v = null;
 
         try
         {
@@ -344,7 +338,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
         }
         if ( v != null ) {
             // sort the list
-            String[] sarray = (String[]) v.toArray(EMPTY_STRING_ARRAY);
+            String[] sarray = v.toArray(EMPTY_STRING_ARRAY);
             Arrays.sort(sarray);
             for ( int i = 0; i < sarray.length; i++ )
             {
@@ -442,9 +436,9 @@ public class HttpSPMFileSystem extends SPMFileSystem
      *  Scans file using server cgi
      *
      *@param  dir     directory to fetch scripts from
-     *@param  addTo   Which vector to add info to
+     *@param  addTo   Which list to add info to
      */
-    private void scanFiles( String dir, Vector addTo )
+    private void scanFiles( String dir, List<SPMObjectInfo> addTo )
     {
 
         URL cgiUrl = null;
@@ -564,10 +558,10 @@ public class HttpSPMFileSystem extends SPMFileSystem
         int i, j;
         for (i = addTo.size()-1; i > 0; i--) {
             j = i;
-            right = (SPMObjectInfo) addTo.get(i);
+            right = addTo.get(i);
 
             while (j > 0) {
-        	left = (SPMObjectInfo) addTo.get(j-1);
+        	left = addTo.get(j-1);
         	if (right.getName().compareTo(left.getName()) >= 0) break;
         	j--;
             }
@@ -590,7 +584,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
      *@param  lengthToDownload  Description of the Parameter
      *@return                   Description of the Return Value
      */
-    public static long downloadRemoteTextFile( URL from, String fileName, long size, StatusDialog status, long totalDownload, long downloadedLength, ArrayList errors )
+    public static long downloadRemoteTextFile( URL from, String fileName, long size, StatusDialog status, long totalDownload, long downloadedLength, List<String> errors )
     {
         BufferedReader in = null;
         BufferedWriter file = null;
@@ -699,7 +693,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
      *@param  downloadedLength  Description of the Parameter
      *@return                   Description of the Return Value
      */
-    public static long downloadRemoteBinaryFile( URL from, String fileName, long size, StatusDialog status, long totalDownload, long downloadedLength, ArrayList errors )
+    public static long downloadRemoteBinaryFile( URL from, String fileName, long size, StatusDialog status, long totalDownload, long downloadedLength, List<String> errors )
     {
 	System.out.println("download: size=" + size +
 			   "; total=" + totalDownload +
@@ -833,9 +827,9 @@ public class HttpSPMFileSystem extends SPMFileSystem
      *@param  is  Description of the Parameter
      *@return     Description of the Return Value
      */
-    private Vector htmlFindFiles( InputStream is )
+    private Vector<String> htmlFindFiles( InputStream is )
     {
-        Vector v = new Vector();
+        Vector<String> v = new Vector<>();
 
         HtmlParserCallback callback = new HtmlParserCallback( v );
 	BufferedReader bufferedReader = null;
@@ -861,9 +855,9 @@ public class HttpSPMFileSystem extends SPMFileSystem
      *@param  from  Description of the Parameter
      *@return       Description of the Return Value
      */
-    private Vector htmlFindFilesVersioning( InputStream is, URL from )
+    private Vector<String> htmlFindFilesVersioning( InputStream is, URL from )
     {
-        Vector v = new Vector();
+        Vector<String> v = new Vector<>();
 
         HtmlVersioningParserCallback callback = new HtmlVersioningParserCallback( v, from );
         BufferedReader bufferedReader = null;
@@ -889,7 +883,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
      */
     private class HtmlParserCallback extends HTMLEditorKit.ParserCallback
     {
-        private Vector v;
+        private Vector<String> v;
 
 
         /**
@@ -897,7 +891,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
          *
          *@param  v  Description of the Parameter
          */
-        public HtmlParserCallback( Vector v )
+        public HtmlParserCallback( Vector<String> v )
         {
             this.v = v;
         }
@@ -957,8 +951,8 @@ public class HttpSPMFileSystem extends SPMFileSystem
      */
     private class HtmlVersioningParserCallback extends HTMLEditorKit.ParserCallback
     {
-        private Vector v;
-        private URL from;
+        private final List<String> v;
+        private final URL from;
 
 
         /**
@@ -967,7 +961,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
          *@param  v     Description of the Parameter
          *@param  from  Description of the Parameter
          */
-        public HtmlVersioningParserCallback( Vector v, URL from )
+        public HtmlVersioningParserCallback( List<String> v, URL from )
         {
             this.v = v;
             this.from = from;
@@ -980,6 +974,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
          *@param  data  Description of the Parameter
          *@param  pos   Description of the Parameter
          */
+        @Override
         public void handleText( char[] data, int pos )
         {
             System.out.println( "handleText " + new String( data ) + " " + pos );
@@ -1039,6 +1034,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
          *@param  a    Description of the Parameter
          *@param  pos  Description of the Parameter
          */
+        @Override
         public void handleStartTag( HTML.Tag t, MutableAttributeSet a, int pos )
         {
             System.out.println( "StartTag :" + t + ":" + a + ":" + pos );

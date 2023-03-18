@@ -1,5 +1,6 @@
 /*
  *  Copyright 2004 Francois Guillet
+ *  Changes copyright 2022-2023 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -13,10 +14,9 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 import buoy.widget.*;
-import buoy.event.*;
 import java.io.*;
 import java.util.*;
-import java.util.zip.*;
+import java.util.List;
 
 /**
  *  Description of the Class
@@ -51,6 +51,7 @@ public class ManageSplitPane extends SPMSplitPane
     /**
      *  Description of the Method
      */
+    @Override
     protected void updateTree()
     {
         //update the file system
@@ -106,41 +107,27 @@ public class ManageSplitPane extends SPMSplitPane
      *@param  addTo  Description of the Parameter
      *@param  infos  Description of the Parameter
      */
-    private void getFiles( TreePath addTo, Vector infos )
+    private void getFiles( TreePath addTo, List<SPMObjectInfo> infos )
     {
-        DefaultMutableTreeNode tn;
-        SPMObjectInfo info;
-
-        for ( int i = 0; i < infos.size(); i++ )
-        {
-            info = (SPMObjectInfo) infos.elementAt( i );
-            tn = new DefaultMutableTreeNode( info.getName() );
-            tn.setAllowsChildren( false );
-            tn.setUserObject( info );
-            tree.addNode( addTo, tn );
-        }
+        infos.forEach(info -> {
+          tree.addNode(addTo, new DefaultMutableTreeNode(info, false));
+        });
 
 	// NTJ: set reference counts
-	for (int i = 0; i < infos.size(); i++) {
-            info = (SPMObjectInfo) infos.elementAt( i );
+	for (SPMObjectInfo info: infos) {
+	    Collection<String> externals = info.getExternals();
+            if(externals == null) continue;
 
-	    Collection externals = info.getExternals();
-	    String extName, extType;
-	    SPMObjectInfo ext;
-	    if (externals != null) {
-		for (Iterator iter = externals.iterator(); iter.hasNext(); ) {
-		    extName = (String) iter.next();
-
-		    if (extName.endsWith("= required")) {
-			extType = extName.substring(extName.indexOf(':')+1,
-						    extName.indexOf('=')).trim();
-			extName = extName.substring(0, extName.indexOf(':'));
-
-			ext = getInfo(extName, (TreePath)pathMap.get(extType));
-			if (ext != null) ext.refcount++;
-		    }
-		}
-	    }
+            externals.forEach((String item) -> {
+              String extName = item;
+              if (extName.endsWith("= required"))
+              {
+                String extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
+                extName = extName.substring(0, extName.indexOf(':'));
+                SPMObjectInfo ext = getInfo(extName, pathMap.get(extType));
+                if (ext != null) ext.refcount++;
+              }
+            });
 	}
     }
 
@@ -153,12 +140,12 @@ public class ManageSplitPane extends SPMSplitPane
         SPMObjectInfo info = getSelectedNodeInfo();
 
 	if (info.refcount > 0) {
-	    JOptionPane.showMessageDialog( (JFrame) SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("cannotDeleteRequired"), SPMTranslate.text("Delete", info.fileName), JOptionPane.ERROR_MESSAGE);
+	    JOptionPane.showMessageDialog(SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("cannotDeleteRequired"), SPMTranslate.text("Delete", info.fileName), JOptionPane.ERROR_MESSAGE);
 
 	    return;
 	}
 
-        int r = JOptionPane.showConfirmDialog( (JFrame) SPManagerFrame.getInstance().getComponent(), SPMTranslate.text( "permanentlyDelete", info.fileName ),
+        int r = JOptionPane.showConfirmDialog(SPManagerFrame.getInstance().getComponent(), SPMTranslate.text( "permanentlyDelete", info.fileName ),
                 SPMTranslate.text( "warning" ), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION );
         if ( r == JOptionPane.YES_OPTION )
             deleteFile( info );
@@ -208,12 +195,12 @@ public class ManageSplitPane extends SPMSplitPane
                 }
             }
 
-	    Collection externals = info.getExternals();
+	    Collection<String> externals = info.getExternals();
 	    String extName, extType;
 	    SPMObjectInfo ext;
 	    if (externals != null) {
-		for (Iterator iter = externals.iterator(); iter.hasNext(); ) {
-		    extName = (String) iter.next();
+		for (Iterator<String> iter = externals.iterator(); iter.hasNext(); ) {
+		    extName = iter.next();
 
 		    if (extName.endsWith("= required")) {
 			extType = extName.substring(extName.indexOf(':')+1,
@@ -221,7 +208,7 @@ public class ManageSplitPane extends SPMSplitPane
 
 			extName = extName.substring(0, extName.indexOf(':'));
 
-			ext = getInfo(extName, (TreePath)pathMap.get(extType));
+			ext = getInfo(extName, pathMap.get(extType));
 			if (ext != null) ext.refcount--;
 		    }
 		}
@@ -232,11 +219,9 @@ public class ManageSplitPane extends SPMSplitPane
             voidSelection();
 
         }
-        for ( int i = 0; i < splitPaneList.size(); ++i )
-        {
-            if ( splitPaneList.elementAt( i ) != this )
-            {
-                ( (SPMSplitPane) splitPaneList.elementAt( i ) ).doUpdate();
+        for (SPMSplitPane pane : splitPaneList) {
+            if (pane != this) {
+                pane.doUpdate();
             }
         }
 
@@ -248,7 +233,7 @@ public class ManageSplitPane extends SPMSplitPane
      */
     public void doDeleteAll()
     {
-        int r = JOptionPane.showConfirmDialog( (JFrame) SPManagerFrame.getInstance().getComponent(), SPMTranslate.text( "permanentlyDeleteAll" ),
+        int r = JOptionPane.showConfirmDialog(SPManagerFrame.getInstance().getComponent(), SPMTranslate.text( "permanentlyDeleteAll" ),
                 SPMTranslate.text( "warning" ), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION );
         if ( r == JOptionPane.YES_OPTION )
         {

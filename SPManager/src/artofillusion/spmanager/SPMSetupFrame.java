@@ -1,6 +1,6 @@
 /*
  *  Copyright 2004 Francois Guillet
- *  Changes copyright 2022 by Maksim Khramov
+ *  Changes copyright 2022-2023 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -69,7 +69,7 @@ public class SPMSetupFrame extends BDialog
 	Map<String, String> filters = parameters.getFilters();
 
 	if (filters.size() > 0) {
-	    String[] keys = (String[]) filters.keySet().toArray(EMPTY_STRING_ARRAY);
+	    String[] keys = filters.keySet().toArray(EMPTY_STRING_ARRAY);
 	    Arrays.sort(keys);
 	    
 	    String filtName, filtVal, filtType;
@@ -80,7 +80,7 @@ public class SPMSetupFrame extends BDialog
 	    LayoutInfo left = new LayoutInfo(LayoutInfo.WEST,LayoutInfo.NONE);
 	    for (i = 0; i < keys.length; i++) {
 		filtName = keys[i];
-		filtVal = (String) filters.get(filtName);
+		filtVal = filters.get(filtName);
 
 		System.out.println("filter: " + filtName + "=" + filtVal);
 
@@ -164,7 +164,7 @@ public class SPMSetupFrame extends BDialog
         setContent( cc );
         addEventLink( WindowClosingEvent.class, this, "doCancel" );
         pack();
-        ( (JDialog) getComponent() ).setLocationRelativeTo( frame.getComponent() );
+        getComponent().setLocationRelativeTo( frame.getComponent() );
         parameters.setChanged( false );
         setVisible( true );
     }
@@ -328,7 +328,7 @@ public class SPMSetupFrame extends BDialog
         {
             String text = repEntry.getText();
             new URL( text );
-            ( (JTextField) repEntry.getComponent() ).setForeground( Color.black );
+            repEntry.getComponent().setForeground( Color.black );
             String s[] = parameters.getRepositories();
             addButton.setEnabled( true );
             removeButton.setEnabled( false );
@@ -343,7 +343,7 @@ public class SPMSetupFrame extends BDialog
         }
         catch ( MalformedURLException e )
         {
-            ( (JTextField) repEntry.getComponent() ).setForeground( Color.red );
+            repEntry.getComponent().setForeground( Color.red );
             addButton.setEnabled( false );
             removeButton.setEnabled( false );
         }

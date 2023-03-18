@@ -6,7 +6,8 @@ package artofillusion.spmanager.postinstall;
  * PostInstall: perform post-install cleanup
  *
  * Copyright (C) 2006 Nik Trevallyn-Jones, Sydney Australia
- *
+ * Changes copyright 2023 by Maksim Khramov
+ * 
  * Author: Nik Trevallyn-Jones, nik777@users.sourceforge.net
  * $Id: Exp $
  *
@@ -39,9 +40,10 @@ import java.util.*;
 
 public class PostInstall implements Plugin
 {
-    protected ArrayList ok, err;
+    protected List<String> ok, err;
     protected static File tempDir = null;
 
+    @Override
     public void processMessage(int msg, Object[] args)
     {
 	int i, k;
@@ -95,8 +97,8 @@ public class PostInstall implements Plugin
 		System.out.println("PostInstall: tempDir is " +
 			tempDir.getAbsolutePath());
 		
-		ok = new ArrayList(128);
-		err = new ArrayList(128);
+		ok = new ArrayList<>(128);
+		err = new ArrayList<>(128);
 
 		cleanup(ArtOfIllusion.PLUGIN_DIRECTORY, ok, err);
 		cleanup(ArtOfIllusion.TOOL_SCRIPT_DIRECTORY, ok, err);
@@ -116,12 +118,12 @@ public class PostInstall implements Plugin
 		try {
 		    File tmp;
 		    String[] sub = tempDir.list();
-		    ArrayList list = new ArrayList(sub.length);
+		    List<String> list = new ArrayList<>(sub.length);
 		    for (i = 0; i < sub.length; i++)
 			list.add(tempDir + File.separator + sub[i]);
 
 		    for (i = 0; i < list.size(); i++) {
-			tmp = new File((String) list.get(i));
+			tmp = new File(list.get(i));
 
 			// make sure we empty all sub-directories first
 			if (tmp.isDirectory()) {
@@ -216,7 +218,7 @@ public class PostInstall implements Plugin
      *
      *  @param path - the String representation of the pathname
      */
-    public static void cleanup(String path, ArrayList ok, ArrayList err)
+    public static void cleanup(String path, List<String> ok, List<String> err)
     {
 	File from, to;
 	File plugin, update;
