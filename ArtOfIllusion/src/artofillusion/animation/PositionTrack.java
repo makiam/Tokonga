@@ -131,7 +131,7 @@ public class PositionTrack extends Track
   /** Create a duplicate of this track. */
 
   @Override
-  public Track duplicate(Object obj)
+  public PositionTrack duplicate(Object obj)
   {
     PositionTrack t = new PositionTrack((ObjectInfo) obj);
 
@@ -313,14 +313,6 @@ public class PositionTrack extends Track
   public Track [] getSubtracks()
   {
     return new Track [] {theWeight};
-  }
-
-  /** Determine whether this track can be added as a child of an object. */
-
-  @Override
-  public boolean canAcceptAsParent(Object obj)
-  {
-    return (obj instanceof ObjectInfo);
   }
 
   /** Get the parent object of this track. */

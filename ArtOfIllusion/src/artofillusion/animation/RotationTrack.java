@@ -110,7 +110,7 @@ public class RotationTrack extends Track
   /** Create a duplicate of this track. */
 
   @Override
-  public Track duplicate(Object obj)
+  public RotationTrack duplicate(Object obj)
   {
     RotationTrack t = new RotationTrack((ObjectInfo) obj);
 
@@ -310,14 +310,6 @@ public class RotationTrack extends Track
   public Track [] getSubtracks()
   {
     return new Track [] {theWeight};
-  }
-
-  /** Determine whether this track can be added as a child of an object. */
-
-  @Override
-  public boolean canAcceptAsParent(Object obj)
-  {
-    return (obj instanceof ObjectInfo);
   }
 
   /** Get the parent object of this track. */

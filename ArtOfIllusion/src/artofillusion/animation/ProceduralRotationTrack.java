@@ -121,7 +121,7 @@ public class ProceduralRotationTrack extends Track implements ProcedureOwner
   /* Create a duplicate of this track. */
 
   @Override
-  public Track duplicate(Object obj)
+  public ProceduralRotationTrack duplicate(Object obj)
   {
     ProceduralRotationTrack t = new ProceduralRotationTrack((ObjectInfo) obj);
 
@@ -234,14 +234,6 @@ public class ProceduralRotationTrack extends Track implements ProcedureOwner
   public Track [] getSubtracks()
   {
     return new Track [] {theWeight};
-  }
-
-  /* Determine whether this track can be added as a child of an object. */
-
-  @Override
-  public boolean canAcceptAsParent(Object obj)
-  {
-    return (obj instanceof ObjectInfo);
   }
 
   /* Get the parent object of this track. */
