@@ -15,7 +15,7 @@ import artofillusion.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
-import ch.randelshofer.media.quicktime.*;
+
 
 import java.awt.*;
 import java.awt.image.*;
@@ -23,6 +23,7 @@ import java.io.*;
 import java.text.*;
 import javax.imageio.*;
 import javax.imageio.stream.*;
+import ch.randelshofer.media.quicktime.QuickTimeWriter;
 
 /** This class is used to save rendered images to disk. */
 

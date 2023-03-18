@@ -25,7 +25,8 @@ import artofillusion.view.*;
 import buoy.widget.*;
 
 import java.io.*;
-import java.net.*;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 
@@ -76,14 +77,16 @@ public class ArtOfIllusion
       {
       }
 
+
     // Set up the standard directories.
 
-    APP_DIRECTORY = dir;
-    PLUGIN_DIRECTORY = new File(APP_DIRECTORY, "Plugins").getAbsolutePath();
-    File scripts = new File(APP_DIRECTORY, "Scripts");
-    TOOL_SCRIPT_DIRECTORY = new File(scripts, "Tools").getAbsolutePath();
-    OBJECT_SCRIPT_DIRECTORY = new File(scripts, "Objects").getAbsolutePath();
-    STARTUP_SCRIPT_DIRECTORY = new File(scripts, "Startup").getAbsolutePath();
+    APP_DIRECTORY = Paths.get(dir).getParent().toString();
+    PLUGIN_DIRECTORY = Paths.get(APP_DIRECTORY, "Plugins").toString();
+
+    TOOL_SCRIPT_DIRECTORY = Paths.get(APP_DIRECTORY, "Scripts", "Tools").toString();
+    OBJECT_SCRIPT_DIRECTORY = Paths.get(APP_DIRECTORY, "Scripts", "Objects").toString();
+    STARTUP_SCRIPT_DIRECTORY = Paths.get(APP_DIRECTORY, "Scripts", "Startup").toString();
+
 
     // Load the application's icon.
 
