@@ -23,7 +23,6 @@ import artofillusion.ui.*;
 import artofillusion.keystroke.*;
 import artofillusion.view.*;
 import buoy.widget.*;
-import buoy.xml.*;
 
 import java.io.*;
 import java.net.*;
@@ -88,7 +87,8 @@ public class ArtOfIllusion
 
     // Load the application's icon.
 
-    ImageIcon icon = new IconResource("artofillusion/Icons/appIcon.png");
+    ImageIcon icon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("artofillusion/Icons/appIcon.png"));
+    
     APP_ICON = (icon.getIconWidth() == -1 ? null : icon);
 
     // Build a table of classes which have moved.    
