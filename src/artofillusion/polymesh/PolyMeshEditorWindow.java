@@ -22,7 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DecimalFormat;
+
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
@@ -114,6 +114,9 @@ import buoy.widget.Shortcut;
 import buoy.widget.Widget;
 import buoy.xml.WidgetDecoder;
 import javax.swing.UIManager;
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * The PolyMeshEditorWindow class represents the window for editing PolyMesh
@@ -138,39 +141,35 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 	private BMenuItem[] mirrorItem;
 
-	private BMenu vertexMenu;
+	private final BMenu vertexMenu = Translate.menu("polymesh:vertex");
 
-	private BPopupMenu vertexPopupMenu;
+	private final BPopupMenu vertexPopupMenu = new BPopupMenu();
 
 	private MenuWidget[] vertexMenuItem;
 
 	private MenuWidget[] vertexPopupMenuItem;
 
-	private BMenu edgeMenu;
+	private final BMenu edgeMenu = Translate.menu("polymesh:edge");
 
-	private BPopupMenu edgePopupMenu;
+	private final BPopupMenu edgePopupMenu = new BPopupMenu();
 
 	private MenuWidget[] edgeMenuItem;
 
 	private MenuWidget[] edgePopupMenuItem;
 
-	private BMenuItem[] divideMenuItem, popupDivideMenuItem;
+	private BMenu faceMenu = Translate.menu("polymesh:face");
 
-	private BMenu faceMenu;
+	private final BPopupMenu facePopupMenu = new BPopupMenu();
 
-	private BPopupMenu facePopupMenu;
+	private BMenuItem faceFindSimilarMenuItem;
 
-	private MenuWidget[] faceMenuItem;
-
-	private MenuWidget[] facePopupMenuItem;
+	private BMenuItem faceFindSimilarPopupMenuItem;
 
 	private BMenu skeletonMenu;
 
 	private MenuWidget[] skeletonMenuItem;
 
 	private BMenuItem pasteItem;
-
-	private MenuWidget[] textureMenuItem;
 
 	private RowContainer levelContainer;
 
@@ -188,49 +187,49 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 	private BCheckBox cornerCB;
 
-	private EditingTool reshapeMeshTool;
+	private EditingTool reshapeMeshTool = new MeshStandardTool(this, this);
 
 	public final static int RESHAPE_TOOL = 0;
 
 	private EditingTool altTool;
 
-	private EditingTool skewMeshTool;
+	private EditingTool skewMeshTool = new SkewMeshTool(this, this);
 
 	public final static int SKEW_TOOL = 1;
 
-	private EditingTool taperMeshTool;
+	private EditingTool taperMeshTool = new TaperMeshTool(this, this);
 
 	public final static int TAPER_TOOL = 2;
 
-	private EditingTool bevelTool;
+	private EditingTool bevelTool = new AdvancedBevelExtrudeTool(this, this);
 
 	public final static int BEVEL_TOOL = 3;
 
-	private EditingTool thickenMeshTool;
+	private EditingTool thickenMeshTool = new ThickenMeshTool(this, this);
 
 	public final static int THICKEN_TOOL = 4;
 
-	private EditingTool extrudeTool;
+	private EditingTool extrudeTool = new AdvancedExtrudeTool(this, this);
 
 	public final static int EXTRUDE_TOOL = 5;
 
-	private EditingTool knifeTool;
+	private EditingTool knifeTool = new PMKnifeTool(this, this);
 
 	public final static int KNIFE_TOOL = 6;
 
-	private EditingTool createFaceTool;
+	private EditingTool createFaceTool = new PMCreateFaceTool(this, this);
 
 	public final static int CREATE_FACE_TOOL = 7;
 
-	private EditingTool extrudeCurveTool;
+	private EditingTool extrudeCurveTool = new PMExtrudeCurveTool(this, this);
 
 	public final static int EXTRUDE_CURVE_TOOL = 8;
 
-	private EditingTool sewTool;
+	private EditingTool sewTool = new PMSewTool(this, this);
 
 	public final static int SEW_TOOL = 9;
 
-	private EditingTool skeletonTool;
+	private EditingTool skeletonTool = new SkeletonTool(this, true);
 
 	public final static int SKELETON_TOOL = 10;
 
@@ -246,21 +245,16 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 	private short moveDirection;
 
-	private BButton okButton;
 
 	private PolyMeshValueWidget valueWidget;
 	
 	private BDialog valueWidgetDialog;
 
-	private Runnable validateWidgetValue, abortWidgetValue;
-
-	private BMenuItem[] extrudeItem, extrudeEdgeItem;
-
-	private BMenuItem[] extrudeRegionItem, extrudeEdgeRegionItem;
-
-	private BMenuItem[] popupExtrudeItem, popupExtrudeEdgeItem;
-
-	private BMenuItem[] popupExtrudeRegionItem, popupExtrudeEdgeRegionItem;
+	private final BMenuItem extrudeItem = Translate.menuItem("polymesh:extrudeNormal", this, "doExtrudeNormal");
+        private final BMenuItem extrudeEdgeItem = Translate.menuItem("polymesh:extrudeNormal", this, "doExtrudeEdgeNormal");
+        
+	private BMenuItem extrudeRegionItem = Translate.menuItem("polymesh:extrudeRegionNormal", this, "doExtrudeRegionNormal");
+        private BMenuItem extrudeEdgeRegionItem = Translate.menuItem("polymesh:extrudeRegionNormal", this, "doExtrudeEdgeRegionNormal");
 
 	private Vec3 direction;
 
@@ -278,7 +272,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 	protected boolean tolerant;
 	
-	private int lastSelectedJoint;
 
 	private TextureParameter faceIndexParam, jointWeightParam;
 
@@ -333,10 +326,20 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 	private boolean unseenValueWidgetDialog;
 
-	private BMenuItem[] ringMenuItem;
-
-	private BMenuItem[] popupRingMenuItem;
-
+        private final Map<Integer, EditingTool> toolsMap = new HashMap<>(); {
+            toolsMap.put(RESHAPE_TOOL, reshapeMeshTool);
+            toolsMap.put(SKEW_TOOL, skewMeshTool);
+            toolsMap.put(TAPER_TOOL, taperMeshTool);
+            toolsMap.put(BEVEL_TOOL, bevelTool);
+            toolsMap.put(EXTRUDE_TOOL, extrudeTool);
+            toolsMap.put(EXTRUDE_CURVE_TOOL, extrudeCurveTool);
+            toolsMap.put(THICKEN_TOOL, thickenMeshTool);
+            toolsMap.put(CREATE_FACE_TOOL, createFaceTool);
+            toolsMap.put(KNIFE_TOOL, knifeTool);
+            toolsMap.put(SEW_TOOL, sewTool);
+            toolsMap.put(SKELETON_TOOL, skeletonTool);
+        }
+        
 	/**
 	 * Constructor for the PolyMeshEditorWindow object
 	 * 
@@ -352,8 +355,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	public PolyMeshEditorWindow(EditingWindow parent, String title, ObjectInfo obj, Runnable onClose) {
 		super(parent, title, obj);
 		PolyMesh mesh = (PolyMesh) objInfo.object;
-		if (eventSource == null)
-			eventSource = new EventSource();
+		if (eventSource == null) eventSource = new EventSource();
 		eventSource.addEventLink(CopyEvent.class, this, "doCopyEvent");
 		hideVert = new boolean[mesh.getVertices().length];
 		this.onClose = onClose;
@@ -376,12 +378,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		vertexContainer = new RowContainer();
 		edgeContainer = new RowContainer();
 		faceContainer = new RowContainer();
-		meshContainer.add(looseSelectCB = new BCheckBox(Translate
-				.text("polymesh:looseSelect"), looseSelect));
-		looseSelectCB.addEventLink(ValueChangedEvent.class, this,
-				"doLooseSelectionChanged");
-		meshContainer.add(looseSelectSpinner = new BSpinner(looseSelectValue,
-				1, 100, 1));
+		meshContainer.add(looseSelectCB = new BCheckBox(Translate.text("polymesh:looseSelect"), looseSelect));
+		looseSelectCB.addEventLink(ValueChangedEvent.class, this, "doLooseSelectionChanged");
+		meshContainer.add(looseSelectSpinner = new BSpinner(looseSelectValue,1, 100, 1));
 		looseSelectSpinner.addEventLink(ValueChangedEvent.class, this,
 				"doLooseSelectionValueChanged");
 		meshContainer.add(frontSelectCB = new BCheckBox(Translate
@@ -391,15 +390,14 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		meshContainer.add(new BLabel(Translate.text("polymesh:meshTension") + ": "));
 		tensionSpin = new BSpinner(tensionDistance, 0, 999, 1);
 		setSpinnerColumns(tensionSpin, 3);
-		tensionSpin.addEventLink(ValueChangedEvent.class, this,
-				"doTensionChanged");
+		tensionSpin.addEventLink(ValueChangedEvent.class, this, "doTensionChanged");
 		meshContainer.add(tensionSpin);
 //		levelContainer.add(new BLabel(Translate.text("polymesh:subdivisionLevels")
 //				+ ": "));
 		levelContainer.add(new BLabel(Translate.text("polymesh:interactiveSubdiv")));
 		ispin = new BSpinner(1, 1, 6, 1);
 		levelContainer.add(ispin);
-		ispin.setValue(new Integer(mesh.getInteractiveSmoothLevel()));
+		ispin.setValue(mesh.getInteractiveSmoothLevel());
 		ispin.addEventLink(ValueChangedEvent.class, this, "doInteractiveLevel");
 		//levelContainer.add(new BLabel(Translate.text("polymesh:render")));
 		//rspin = new BSpinner(1, 1, 6, 1);
@@ -411,8 +409,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		cornerCB.addEventLink(ValueChangedEvent.class, this, "doCornerChanged");
 		vertexContainer.add(cornerCB);
 		edgeSlider = new ValueSlider(0.0, 1.0, 1000, 0.0);
-		edgeSlider.addEventLink(ValueChangedEvent.class, this,
-				"doEdgeSliderChanged");
+		edgeSlider.addEventLink(ValueChangedEvent.class, this, "doEdgeSliderChanged");
 		edgeContainer.add(new BLabel(Translate.text("polymesh:smoothness")));
 		edgeContainer.add(edgeSlider);
 		overlayVertexEdgeFace = new OverlayContainer();
@@ -425,7 +422,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		content.add(helpText = new BLabel(), 0, 2, 3, 1);
 		content.add(viewsContainer, 1, 0);
 		RowContainer buttons = new RowContainer();
-		buttons.add(okButton = Translate.button("ok", this, "doOk"));
+		buttons.add(Translate.button("ok", this, "doOk"));
 		buttons.add(Translate.button("cancel", this, "doCancel"));
 		content.add(buttons, 0, 3, 2, 1, new LayoutInfo());
 		FormContainer toolsContainer = new FormContainer(new double[] { 1 },
@@ -434,18 +431,17 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 				LayoutInfo.BOTH));
 		content.add(toolsContainer, 0, 0);
 		toolsContainer.add(tools = new ToolPalette(1, 12), 0, 0);
-		tools.addTool(defaultTool = reshapeMeshTool = new MeshStandardTool(
-				this, this));
-		tools.addTool(skewMeshTool = new SkewMeshTool(this, this));
-		tools.addTool(taperMeshTool = new TaperMeshTool(this, this));
-		tools.addTool(bevelTool = new AdvancedBevelExtrudeTool(this, this));
-		tools.addTool(extrudeTool = new AdvancedExtrudeTool(this, this));
-		tools.addTool(thickenMeshTool = new ThickenMeshTool(this, this));
-		tools.addTool(knifeTool = new PMKnifeTool(this, this));
-		tools.addTool(createFaceTool = new PMCreateFaceTool(this, this));
-		tools.addTool(extrudeCurveTool = new PMExtrudeCurveTool(this, this));
-		tools.addTool(sewTool = new PMSewTool(this, this));
-		tools.addTool(skeletonTool = new SkeletonTool(this, true));
+		tools.addTool(defaultTool = reshapeMeshTool);
+		tools.addTool(skewMeshTool);
+		tools.addTool(taperMeshTool);
+		tools.addTool(bevelTool);
+		tools.addTool(extrudeTool);
+		tools.addTool(thickenMeshTool);
+		tools.addTool(knifeTool);
+		tools.addTool(createFaceTool);
+		tools.addTool(extrudeCurveTool);
+		tools.addTool(sewTool);
+		tools.addTool(skeletonTool);
 		EditingTool metaTool;
 		tools.addTool(metaTool = new MoveViewTool(this));
 		tools.addTool(altTool = new RotateViewTool(this));
@@ -494,18 +490,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		doLevelContainerEnable();
 		selected = new boolean[((Mesh) objInfo.object).getVertices().length];
 		// addEventLink( WindowClosingEvent.class, this, "doCancel" );
-		validateWidgetValue = new Runnable() {
 
-			public void run() {
-				doValueWidgetValidate();
-			}
-		};
-		abortWidgetValue = new Runnable() {
-
-			public void run() {
-				doValueWidgetAbort();
-			}
-		};
 		overlayVertexEdgeFace.setVisibleChild(vertexContainer);
 	}
 
@@ -517,50 +502,29 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		editMenu = Translate.menu("edit");
 		menubar.add(editMenu);
 		editMenuItem = new BMenuItem[12];
-		editMenu
-				.add(undoItem = Translate.menuItem("undo", this, "undoCommand"));
-		editMenu
-				.add(redoItem = Translate.menuItem("redo", this, "redoCommand"));
+		editMenu.add(undoItem = Translate.menuItem("undo", this, "undoCommand"));
+		editMenu.add(redoItem = Translate.menuItem("redo", this, "redoCommand"));
 		editMenu.addSeparator();
 		editMenu.add(Translate.menuItem("polymesh:copy", this, "doCopy"));
-		editMenu
-				.add(pasteItem = Translate.menuItem("polymesh:paste", this, "doPaste"));
+		editMenu.add(pasteItem = Translate.menuItem("polymesh:paste", this, "doPaste"));
 		if (clipboardMesh == null)
 			pasteItem.setEnabled(false);
 		editMenu.addSeparator();
-		editMenu.add(editMenuItem[0] = Translate.menuItem("clear", this,
-				"deleteCommand"));
-		editMenu.add(editMenuItem[1] = Translate.menuItem("selectAll", this,
-				"selectAllCommand"));
-		editMenu.add(editMenuItem[2] = Translate.menuItem("polymesh:showNormal", this,
-				"bringNormal"));
-		editMenu.add(editMenuItem[3] = Translate.menuItem("extendSelection",
-				this, "extendSelectionCommand"));
-		editMenu.add(Translate.menuItem("invertSelection", this,
-				"invertSelectionCommand"));
-		editMenu.add(editMenuItem[4] = Translate.menuItem("polymesh:scaleSelection",
-				this, "scaleSelectionCommand"));
-		editMenu.add(editMenuItem[5] = Translate.menuItem("polymesh:scaleNormal",
-				this, "scaleNormalSelectionCommand"));
-		editMenu
-				.add(editMenuItem[6] = Translate.checkboxMenuItem(
-						"tolerantSelection", this, "tolerantModeChanged",
-						lastTolerant));
-		editMenu
-				.add(editMenuItem[7] = Translate.checkboxMenuItem(
-						"freehandSelection", this, "freehandModeChanged",
-						lastFreehand));
-		editMenu.add(editMenuItem[8] = Translate.checkboxMenuItem(
-				"projectOntoSurface", this, "projectModeChanged",
-				lastProjectOntoSurface));
+                editMenu.add(editMenuItem[0] = Translate.menuItem("clear", this, "deleteCommand"));
+                editMenu.add(editMenuItem[1] = Translate.menuItem("selectAll", this, "selectAllCommand"));
+                editMenu.add(editMenuItem[2] = Translate.menuItem("polymesh:showNormal", this, "bringNormal"));
+                editMenu.add(editMenuItem[3] = Translate.menuItem("extendSelection", this, "extendSelectionCommand"));
+                editMenu.add(Translate.menuItem("invertSelection", this, "invertSelectionCommand"));
+                editMenu.add(editMenuItem[4] = Translate.menuItem("polymesh:scaleSelection", this, "scaleSelectionCommand"));
+                editMenu.add(editMenuItem[5] = Translate.menuItem("polymesh:scaleNormal", this, "scaleNormalSelectionCommand"));
+                editMenu.add(editMenuItem[6] = Translate.checkboxMenuItem("tolerantSelection", this, "tolerantModeChanged", lastTolerant));
+                editMenu.add(editMenuItem[7] = Translate.checkboxMenuItem("freehandSelection", this, "freehandModeChanged", lastFreehand));
+                editMenu.add(editMenuItem[8] = Translate.checkboxMenuItem("projectOntoSurface", this, "projectModeChanged", lastProjectOntoSurface));
 		editMenu.addSeparator();
-		editMenu.add(editMenuItem[9] = Translate.menuItem("hideSelection",
-				this, "doHideSelection"));
-		editMenu.add(editMenuItem[10] = Translate.menuItem("showAll", this,
-				"doShowAll"));
+		editMenu.add(editMenuItem[9] = Translate.menuItem("hideSelection", this, "doHideSelection"));
+		editMenu.add(editMenuItem[10] = Translate.menuItem("showAll", this, "doShowAll"));
 		editMenu.addSeparator();
-		editMenu.add(Translate.menuItem("polymesh:editDisplayProperties", this,
-				"doEditProperties"));
+		editMenu.add(Translate.menuItem("polymesh:editDisplayProperties", this, "doEditProperties"));
 	}
 
 	/**
@@ -579,37 +543,21 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		meshMenu.add(Translate.menuItem("polymesh:centerMesh", this, "doCenterMesh"));
 		meshMenu.add(smoothMenu = Translate.menu("smoothingMethod"));
 		smoothItem = new BCheckBoxMenuItem[2];
-		smoothMenu.add(smoothItem[0] = Translate.checkboxMenuItem("none", this,
-				"smoothingChanged",
-				obj.getSmoothingMethod() == Mesh.NO_SMOOTHING));
-//		smoothMenu.add(smoothItem[1] = Translate.checkboxMenuItem("shading",
-//				this, "smoothingChanged",
-//				obj.getSmoothingMethod() == Mesh.SMOOTH_SHADING));
-		smoothMenu.add(smoothItem[1] = Translate.checkboxMenuItem(
-				"approximating", this, "smoothingChanged", obj
-						.getSmoothingMethod() == Mesh.APPROXIMATING));
+                smoothMenu.add(smoothItem[0] = Translate.checkboxMenuItem("none", this, "smoothingChanged", obj.getSmoothingMethod() == Mesh.NO_SMOOTHING));
+                smoothMenu.add(smoothItem[1] = Translate.checkboxMenuItem("approximating", this, "smoothingChanged", obj.getSmoothingMethod() == Mesh.APPROXIMATING));
 
-		meshMenu.add(meshMenuItem[0] = Translate.menuItem(
-				"polymesh:controlledSmoothing", this, "doControlledSmoothing"));
-		meshMenu.add(meshMenuItem[1] = Translate.menuItem("polymesh:smoothMesh", this,
-				"doSmoothMesh"));
-		meshMenu.add(meshMenuItem[2] = Translate.menuItem("polymesh:subdivideMesh",
-				this, "doSubdivideMesh"));
-		meshMenu.add(meshMenuItem[3] = Translate.menuItem(
-				"polymesh:thickenMeshFaceNormal", this, "doThickenMesh"));
-		meshMenu.add(meshMenuItem[4] = Translate.menuItem(
-				"polymesh:thickenMeshVertexNormal", this, "doThickenMesh"));
+                meshMenu.add(meshMenuItem[0] = Translate.menuItem("polymesh:controlledSmoothing", this, "doControlledSmoothing"));
+                meshMenu.add(meshMenuItem[1] = Translate.menuItem("polymesh:smoothMesh", this, "doSmoothMesh"));
+                meshMenu.add(meshMenuItem[2] = Translate.menuItem("polymesh:subdivideMesh", this, "doSubdivideMesh"));
+                meshMenu.add(meshMenuItem[3] = Translate.menuItem("polymesh:thickenMeshFaceNormal", this, "doThickenMesh"));
+                meshMenu.add(meshMenuItem[4] = Translate.menuItem("polymesh:thickenMeshVertexNormal", this, "doThickenMesh"));
 		BMenu mirrorMenu;
 		meshMenu.add(mirrorMenu = Translate.menu("polymesh:mirrorMesh"));
 		mirrorItem = new BMenuItem[4];
-		mirrorMenu.add(mirrorItem[0] = Translate.menuItem("polymesh:mirrorOff", this,
-				"doMirrorOff"));
-		mirrorMenu.add(mirrorItem[1] = Translate.checkboxMenuItem(
-				"polymesh:mirrorOnXY", this, "doMirrorOn", false));
-		mirrorMenu.add(mirrorItem[2] = Translate.checkboxMenuItem(
-				"polymesh:mirrorOnXZ", this, "doMirrorOn", false));
-		mirrorMenu.add(mirrorItem[3] = Translate.checkboxMenuItem(
-				"polymesh:mirrorOnYZ", this, "doMirrorOn", false));
+		mirrorMenu.add(mirrorItem[0] = Translate.menuItem("polymesh:mirrorOff", this, "doMirrorOff"));
+		mirrorMenu.add(mirrorItem[1] = Translate.checkboxMenuItem( "polymesh:mirrorOnXY", this, "doMirrorOn", false));
+		mirrorMenu.add(mirrorItem[2] = Translate.checkboxMenuItem("polymesh:mirrorOnXZ", this, "doMirrorOn", false));
+		mirrorMenu.add(mirrorItem[3] = Translate.checkboxMenuItem("polymesh:mirrorOnYZ", this, "doMirrorOn", false));
 		if ((mesh.getMirrorState() & PolyMesh.MIRROR_ON_XY) != 0)
 			((BCheckBoxMenuItem) mirrorItem[1]).setState(true);
 		if ((mesh.getMirrorState() & PolyMesh.MIRROR_ON_XZ) != 0)
@@ -618,120 +566,79 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 			((BCheckBoxMenuItem) mirrorItem[3]).setState(true);
 		BMenu mirrorWholeMesh;
 		meshMenu.add(mirrorWholeMesh = Translate.menu("polymesh:mirrorWholeMesh"));
-		mirrorWholeMesh.add(Translate.menuItem("polymesh:mirrorOnXY", this,
-				"doMirrorWholeXY"));
-		mirrorWholeMesh.add(Translate.menuItem("polymesh:mirrorOnYZ", this,
-				"doMirrorWholeYZ"));
-		mirrorWholeMesh.add(Translate.menuItem("polymesh:mirrorOnXZ", this,
-				"doMirrorWholeXZ"));
-		meshMenu.add(Translate.menuItem("invertNormals", this,
-				"doInvertNormals"));
-		meshMenu.add(Translate.menuItem("meshTension", this,
-				"setTensionCommand"));
+		mirrorWholeMesh.add(Translate.menuItem("polymesh:mirrorOnXY", this, "doMirrorWholeXY"));
+		mirrorWholeMesh.add(Translate.menuItem("polymesh:mirrorOnYZ", this, "doMirrorWholeYZ"));
+		mirrorWholeMesh.add(Translate.menuItem("polymesh:mirrorOnXZ", this, "doMirrorWholeXZ"));
+		meshMenu.add(Translate.menuItem("invertNormals", this, "doInvertNormals"));
+		meshMenu.add(Translate.menuItem("meshTension", this, "setTensionCommand"));
 		meshMenu.add(Translate.menuItem("polymesh:checkMesh", this, "doCheckMesh"));
 		meshMenu.addSeparator();
-		meshMenu.add(Translate.menuItem("polymesh:saveAsTemplate", this,
-				"doSaveAsTemplate"));
+                meshMenu.add(Translate.menuItem("polymesh:saveAsTemplate", this, "doSaveAsTemplate"));
 	}
 
 	/**
 	 * Builds the vertex menu
 	 */
 	void createVertexMenu() {
-		vertexMenu = Translate.menu("polymesh:vertex");
-		menubar.add(vertexMenu);
-		vertexMenuItem = new MenuWidget[16];
-		vertexMenu.add(vertexMenuItem[0] = Translate.menuItem("polymesh:connect",
-				this, "doConnectVertices"));
-		vertexMenu.add(vertexMenuItem[1] = Translate.menu("polymesh:moveAlong"));
-		((BMenu) vertexMenuItem[1]).add(Translate.menuItem("polymesh:normal", this,
-				"doMoveVerticesNormal"));
-		((BMenu) vertexMenuItem[1]).add(Translate.menuItem("polymesh:x", this,
-				"doMoveVerticesX"));
-		((BMenu) vertexMenuItem[1]).add(Translate.menuItem("polymesh:y", this,
-				"doMoveVerticesY"));
-		((BMenu) vertexMenuItem[1]).add(Translate.menuItem("polymesh:z", this,
-				"doMoveVerticesZ"));
-		vertexMenu.add(vertexMenuItem[2] = Translate.menuItem("polymesh:collapse",
-				this, "doCollapseVertices"));
-		vertexMenu.add(vertexMenuItem[3] = Translate.menuItem("polymesh:facet", this,
-				"doFacetVertices"));
-		vertexMenu.add(vertexMenuItem[4] = Translate.menuItem("polymesh:bevel", this,
-				"doBevelVertices"));
-		vertexMenu.addSeparator();
-		vertexMenu.add(vertexMenuItem[5] = Translate.menuItem("polymesh:meanSphere",
-				this, "doMeanSphere"));
-		vertexMenu.add(vertexMenuItem[6] = Translate.menuItem(
-				"polymesh:closestSphere", this, "doClosestSphere"));
-		vertexMenu.add(vertexMenuItem[7] = Translate.menuItem("polymesh:plane", this,
-				"doPlane"));
-		vertexMenu.addSeparator();
-		vertexMenu.add(vertexMenuItem[8] = Translate.menuItem(
-				"polymesh:selectBoundary", this, "doSelectBoundary"));
-		vertexMenu.add(vertexMenuItem[9] = Translate.menuItem(
-				"polymesh:closeBoundary", this, "doCloseBoundary"));
-		vertexMenu.add(vertexMenuItem[10] = Translate.menuItem(
-				"polymesh:joinBoundaries", this, "doJoinBoundaries"));
-		vertexMenu.addSeparator();
-		vertexMenu.add(vertexMenuItem[11] = Translate.menuItem("editPoints",
-				this, "setPointsCommand"));
-		vertexMenu.add(vertexMenuItem[12] = Translate.menuItem(
-				"transformPoints", this, "transformPointsCommand"));
-		vertexMenu.add(vertexMenuItem[13] = Translate.menuItem("randomize",
-				this, "randomizeCommand"));
-		vertexMenu.addSeparator();
-		vertexMenu.add(vertexMenuItem[14] = Translate.menuItem("parameters",
-				this, "setParametersCommand"));
-		vertexMenu.addSeparator();
-		vertexMenu.add(vertexMenuItem[15] = Translate.menuItem(
-				"polymesh:selectCorners", this, "doSelectCorners"));
-		vertexPopupMenu = new BPopupMenu();
-		vertexPopupMenuItem = new MenuWidget[16];
-		vertexPopupMenu.add(vertexPopupMenuItem[0] = Translate.menuItem(
-				"polymesh:connect", this, "doConnectVertices"));
-		vertexPopupMenu.add(vertexPopupMenuItem[1] = Translate
-				.menu("polymesh:moveAlong"));
-		((BMenu) vertexPopupMenuItem[1]).add(Translate.menuItem("polymesh:normal",
-				this, "doMoveVerticesNormal"));
-		((BMenu) vertexPopupMenuItem[1]).add(Translate.menuItem("polymesh:x", this,
-				"doMoveVerticesX"));
-		((BMenu) vertexPopupMenuItem[1]).add(Translate.menuItem("polymesh:y", this,
-				"doMoveVerticesY"));
-		((BMenu) vertexPopupMenuItem[1]).add(Translate.menuItem("polymesh:z", this,
-				"doMoveVerticesZ"));
-		vertexPopupMenu.add(vertexPopupMenuItem[2] = Translate.menuItem(
-				"polymesh:collapse", this, "doCollapseVertices"));
-		vertexPopupMenu.add(vertexPopupMenuItem[3] = Translate.menuItem(
-				"polymesh:facet", this, "doFacetVertices"));
-		vertexPopupMenu.add(vertexPopupMenuItem[4] = Translate.menuItem(
-				"polymesh:bevel", this, "doBevelVertices"));
-		vertexPopupMenu.addSeparator();
-		vertexPopupMenu.add(vertexPopupMenuItem[5] = Translate.menuItem(
-				"polymesh:meanSphere", this, "doMeanSphere"));
-		vertexPopupMenu.add(vertexPopupMenuItem[6] = Translate.menuItem(
-				"polymesh:closestSphere", this, "doClosestSphere"));
-		vertexPopupMenu.add(vertexPopupMenuItem[7] = Translate.menuItem(
-				"polymesh:plane", this, "doPlane"));
-		vertexPopupMenu.addSeparator();
-		vertexPopupMenu.add(vertexPopupMenuItem[8] = Translate.menuItem(
-				"polymesh:selectBoundary", this, "doSelectBoundary"));
-		vertexPopupMenu.add(vertexPopupMenuItem[9] = Translate.menuItem(
-				"polymesh:closeBoundary", this, "doCloseBoundary"));
-		vertexPopupMenu.add(vertexPopupMenuItem[10] = Translate.menuItem(
-				"polymesh:joinBoundaries", this, "doJoinBoundaries"));
-		vertexPopupMenu.addSeparator();
-		vertexPopupMenu.add(vertexPopupMenuItem[11] = Translate.menuItem(
-				"editPoints", this, "setPointsCommand"));
-		vertexPopupMenu.add(vertexPopupMenuItem[12] = Translate.menuItem(
-				"transformPoints", this, "transformPointsCommand"));
-		vertexPopupMenu.add(vertexPopupMenuItem[13] = Translate.menuItem(
-				"randomize", this, "randomizeCommand"));
-		vertexPopupMenu.addSeparator();
-		vertexPopupMenu.add(vertexPopupMenuItem[14] = Translate.menuItem(
-				"parameters", this, "setParametersCommand"));
-		vertexPopupMenu.addSeparator();
-		vertexPopupMenu.add(vertexPopupMenuItem[15] = Translate.menuItem(
-				"polymesh:selectCorners", this, "doSelectCorners"));
+                
+                menubar.add(vertexMenu);
+                vertexMenuItem = new MenuWidget[16];
+                vertexMenu.add(vertexMenuItem[0] = Translate.menuItem("polymesh:connect", this, "doConnectVertices"));
+                BMenu local = Translate.menu("polymesh:moveAlong");
+                local.add(Translate.menuItem("polymesh:normal", this, "doMoveVerticesNormal"));
+                local.add(Translate.menuItem("polymesh:x", this, "doMoveVerticesX"));
+                local.add(Translate.menuItem("polymesh:y", this, "doMoveVerticesY"));
+                local.add(Translate.menuItem("polymesh:z", this, "doMoveVerticesZ"));
+                vertexMenu.add(vertexMenuItem[1] = local);
+
+                vertexMenu.add(vertexMenuItem[2] = Translate.menuItem("polymesh:collapse", this, "doCollapseVertices"));
+                vertexMenu.add(vertexMenuItem[3] = Translate.menuItem("polymesh:facet", this, "doFacetVertices"));
+                vertexMenu.add(vertexMenuItem[4] = Translate.menuItem("polymesh:bevel", this, "doBevelVertices"));
+                vertexMenu.addSeparator();
+                vertexMenu.add(vertexMenuItem[5] = Translate.menuItem("polymesh:meanSphere", this, "doMeanSphere"));
+                vertexMenu.add(vertexMenuItem[6] = Translate.menuItem("polymesh:closestSphere", this, "doClosestSphere"));
+                vertexMenu.add(vertexMenuItem[7] = Translate.menuItem("polymesh:plane", this, "doPlane"));
+                vertexMenu.addSeparator();
+                vertexMenu.add(vertexMenuItem[8] = Translate.menuItem("polymesh:selectBoundary", this, "doSelectBoundary"));
+                vertexMenu.add(vertexMenuItem[9] = Translate.menuItem("polymesh:closeBoundary", this, "doCloseBoundary"));
+                vertexMenu.add(vertexMenuItem[10] = Translate.menuItem("polymesh:joinBoundaries", this, "doJoinBoundaries"));
+                vertexMenu.addSeparator();
+                vertexMenu.add(vertexMenuItem[11] = Translate.menuItem("editPoints", this, "setPointsCommand"));
+                vertexMenu.add(vertexMenuItem[12] = Translate.menuItem("transformPoints", this, "transformPointsCommand"));
+                vertexMenu.add(vertexMenuItem[13] = Translate.menuItem("randomize", this, "randomizeCommand"));
+                vertexMenu.addSeparator();
+                vertexMenu.add(vertexMenuItem[14] = Translate.menuItem("parameters", this, "setParametersCommand"));
+                vertexMenu.addSeparator();
+                vertexMenu.add(vertexMenuItem[15] = Translate.menuItem("polymesh:selectCorners", this, "doSelectCorners"));
+
+                vertexPopupMenuItem = new MenuWidget[16];
+                vertexPopupMenu.add(vertexPopupMenuItem[0] = Translate.menuItem("polymesh:connect", this, "doConnectVertices"));
+                local = Translate.menu("polymesh:moveAlong");
+                local.add(Translate.menuItem("polymesh:normal", this, "doMoveVerticesNormal"));
+                local.add(Translate.menuItem("polymesh:x", this, "doMoveVerticesX"));
+                local.add(Translate.menuItem("polymesh:y", this, "doMoveVerticesY"));
+                local.add(Translate.menuItem("polymesh:z", this, "doMoveVerticesZ"));
+                vertexPopupMenu.add(vertexPopupMenuItem[1] = local);
+                
+                vertexPopupMenu.add(vertexPopupMenuItem[2] = Translate.menuItem("polymesh:collapse", this, "doCollapseVertices"));
+                vertexPopupMenu.add(vertexPopupMenuItem[3] = Translate.menuItem("polymesh:facet", this, "doFacetVertices"));
+                vertexPopupMenu.add(vertexPopupMenuItem[4] = Translate.menuItem("polymesh:bevel", this, "doBevelVertices"));
+                vertexPopupMenu.addSeparator();
+                vertexPopupMenu.add(vertexPopupMenuItem[5] = Translate.menuItem("polymesh:meanSphere", this, "doMeanSphere"));
+                vertexPopupMenu.add(vertexPopupMenuItem[6] = Translate.menuItem("polymesh:closestSphere", this, "doClosestSphere"));
+                vertexPopupMenu.add(vertexPopupMenuItem[7] = Translate.menuItem("polymesh:plane", this, "doPlane"));
+                vertexPopupMenu.addSeparator();
+                vertexPopupMenu.add(vertexPopupMenuItem[8] = Translate.menuItem("polymesh:selectBoundary", this, "doSelectBoundary"));
+                vertexPopupMenu.add(vertexPopupMenuItem[9] = Translate.menuItem("polymesh:closeBoundary", this, "doCloseBoundary"));
+                vertexPopupMenu.add(vertexPopupMenuItem[10] = Translate.menuItem("polymesh:joinBoundaries", this, "doJoinBoundaries"));
+                vertexPopupMenu.addSeparator();
+                vertexPopupMenu.add(vertexPopupMenuItem[11] = Translate.menuItem("editPoints", this, "setPointsCommand"));
+                vertexPopupMenu.add(vertexPopupMenuItem[12] = Translate.menuItem("transformPoints", this, "transformPointsCommand"));
+                vertexPopupMenu.add(vertexPopupMenuItem[13] = Translate.menuItem("randomize", this, "randomizeCommand"));
+                vertexPopupMenu.addSeparator();
+                vertexPopupMenu.add(vertexPopupMenuItem[14] = Translate.menuItem("parameters", this, "setParametersCommand"));
+                vertexPopupMenu.addSeparator();
+                vertexPopupMenu.add(vertexPopupMenuItem[15] = Translate.menuItem("polymesh:selectCorners", this, "doSelectCorners"));
 
 	}
 
@@ -740,214 +647,145 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * 
 	 */
 	void createEdgeMenu() {
-		edgeMenu = Translate.menu("polymesh:edge");
+		
 		menubar.add(edgeMenu);
 		edgeMenuItem = new MenuWidget[22];
-		edgeMenu.add(edgeMenuItem[0] = Translate.menu("polymesh:divide"));
-		divideMenuItem = new BMenuItem[5];
-		((BMenu) edgeMenuItem[0]).add(divideMenuItem[0] = Translate.menuItem(
-				"polymesh:two", this, "doDivideEdges"));
-		((BMenu) edgeMenuItem[0]).add(divideMenuItem[1] = Translate.menuItem(
-				"polymesh:three", this, "doDivideEdges"));
-		((BMenu) edgeMenuItem[0]).add(divideMenuItem[2] = Translate.menuItem(
-				"polymesh:four", this, "doDivideEdges"));
-		((BMenu) edgeMenuItem[0]).add(divideMenuItem[3] = Translate.menuItem(
-				"polymesh:five", this, "doDivideEdges"));
-		((BMenu) edgeMenuItem[0]).add(divideMenuItem[4] = Translate.menuItem(
-				"polymesh:specify", this, "doDivideEdges"));
-		edgeMenu.add(edgeMenuItem[1] = Translate.menu("polymesh:moveAlong"));
-		((BMenu) edgeMenuItem[1]).add(Translate.menuItem("polymesh:normal", this,
-				"doMoveEdgesNormal"));
-		((BMenu) edgeMenuItem[1]).add(Translate.menuItem("polymesh:x", this,
-				"doMoveEdgesX"));
-		((BMenu) edgeMenuItem[1]).add(Translate.menuItem("polymesh:y", this,
-				"doMoveEdgesY"));
-		((BMenu) edgeMenuItem[1]).add(Translate.menuItem("polymesh:z", this,
-				"doMoveEdgesZ"));
+                
+                BMenu local = Translate.menu("polymesh:divide");
+                local.add(Translate.menuItem("polymesh:two", this, "doDivideEdgesTwo"));
+		local.add(Translate.menuItem("polymesh:three", this, "doDivideEdgesThree"));
+		local.add(Translate.menuItem("polymesh:four", this, "doDivideEdgesFour"));
+		local.add(Translate.menuItem("polymesh:five", this, "doDivideEdgesFive"));
+		local.add(Translate.menuItem("polymesh:specify", this, "doDivideEdgesInteractive"));
+		edgeMenu.add(edgeMenuItem[0] = local);
+		
+                local = Translate.menu("polymesh:moveAlong");
+                local.add(Translate.menuItem("polymesh:normal", this,"doMoveEdgesNormal"));
+		local.add(Translate.menuItem("polymesh:x", this,"doMoveEdgesX"));
+		local.add(Translate.menuItem("polymesh:y", this,"doMoveEdgesY"));
+		local.add(Translate.menuItem("polymesh:z", this,"doMoveEdgesZ"));
+                
+		edgeMenu.add(edgeMenuItem[1] = local);		
 		edgeMenu.addSeparator();
-		edgeMenu.add(edgeMenuItem[2] = Translate.menu("polymesh:extrude"));
-		extrudeEdgeItem = new BMenuItem[4];
-		extrudeEdgeRegionItem = new BMenuItem[4];
-		((BMenu) edgeMenuItem[2]).add(extrudeEdgeItem[0] = Translate
-				.menuItem("polymesh:extrudeNormal", this, "doExtrudeEdge"));
-		((BMenu) edgeMenuItem[2]).add(extrudeEdgeItem[1] = Translate
-				.menuItem("polymesh:xExtrude", this, "doExtrudeEdge"));
-		((BMenu) edgeMenuItem[2]).add(extrudeEdgeItem[2] = Translate
-				.menuItem("polymesh:yExtrude", this, "doExtrudeEdge"));
-		((BMenu) edgeMenuItem[2]).add(extrudeEdgeItem[3] = Translate
-				.menuItem("polymesh:zExtrude", this, "doExtrudeEdge"));
-		singleNormalShortcut = extrudeEdgeItem[0].getShortcut();
-		edgeMenu.add(edgeMenuItem[3] = Translate.menu("polymesh:extrudeRegion"));
-		((BMenu) edgeMenuItem[3]).add(extrudeEdgeRegionItem[0] = Translate
-				.menuItem("polymesh:extrudeRegionNormal", this, "doExtrudeEdgeRegion"));
-		((BMenu) edgeMenuItem[3]).add(extrudeEdgeRegionItem[1] = Translate
-				.menuItem("polymesh:xExtrude", this, "doExtrudeEdgeRegion"));
-		((BMenu) edgeMenuItem[3]).add(extrudeEdgeRegionItem[2] = Translate
-				.menuItem("polymesh:yExtrude", this, "doExtrudeEdgeRegion"));
-		((BMenu) edgeMenuItem[3]).add(extrudeEdgeRegionItem[3] = Translate
-				.menuItem("polymesh:zExtrude", this, "doExtrudeEdgeRegion"));
-		groupNormalShortcut = extrudeEdgeRegionItem[0].getShortcut();
-		edgeMenu.addSeparator();
-		edgeMenu.add(edgeMenuItem[4] = Translate.menuItem("polymesh:collapse", this,
-				"doCollapseEdges"));
-		edgeMenu.add(edgeMenuItem[5] = Translate.menuItem("polymesh:merge", this,
-				"doMergeEdges"));
-		edgeMenu.add(edgeMenuItem[6] = Translate.menuItem("polymesh:bevel", this,
-				"doBevelEdges"));
-		edgeMenu.addSeparator();
-		edgeMenu.add(edgeMenuItem[7] = Translate.menuItem("polymesh:selectLoop", this,
-				"doSelectLoop"));
-		edgeMenu.add(edgeMenuItem[8] = Translate.menu("polymesh:selectRing"));
-		ringMenuItem = new BMenuItem[6];
-		((BMenu) edgeMenuItem[8]).add(ringMenuItem[0] = Translate.menuItem(
-				"polymesh:all", this, "doSelectRing"));
-		((BMenu) edgeMenuItem[8]).add(ringMenuItem[1] = Translate.menuItem(
-				"polymesh:two", this, "doSelectRing"));
-		((BMenu) edgeMenuItem[8]).add(ringMenuItem[2] = Translate.menuItem(
-				"polymesh:three", this, "doSelectRing"));
-		((BMenu) edgeMenuItem[8]).add(ringMenuItem[3] = Translate.menuItem(
-				"polymesh:four", this, "doSelectRing"));
-		((BMenu) edgeMenuItem[8]).add(ringMenuItem[4] = Translate.menuItem(
-				"polymesh:five", this, "doSelectRing"));
-		((BMenu) edgeMenuItem[8]).add(ringMenuItem[5] = Translate.menuItem(
-				"polymesh:specify", this, "doSelectRing"));
-		edgeMenu.add(edgeMenuItem[9] = Translate.menuItem("polymesh:insertLoops",
-				this, "doInsertLoops"));
-		edgeMenu.add(edgeMenuItem[10] = Translate.menuItem("polymesh:selectBoundary",
-				this, "doSelectBoundary"));
-		edgeMenu.add(edgeMenuItem[11] = Translate.menuItem("polymesh:closeBoundary",
-				this, "doCloseBoundary"));
-		edgeMenu.add(edgeMenuItem[12] = Translate.menuItem("polymesh:findSimilar",
-				this, "doFindSimilarEdges"));
-		edgeMenu.add(edgeMenuItem[13] = Translate.menuItem("polymesh:extractToCurve",
-				this, "doExtractToCurve"));
-		edgeMenu.addSeparator();
-		edgeMenu.add(edgeMenuItem[14] = Translate.menuItem("polymesh:markSelAsSeams",
-				this, "doMarkSelAsSeams"));
-		edgeMenu.add(edgeMenuItem[15] = Translate.menuItem("polymesh:seamsToSel",
-				this, "doSeamsToSel"));
-		edgeMenu.add(edgeMenuItem[16] = Translate.menuItem("polymesh:addSelToSeams",
-				this, "doAddSelToSeams"));
-		edgeMenu.add(edgeMenuItem[17] = Translate.menuItem(
-				"polymesh:removeSelFromSeams", this, "doRemoveSelFromSeams"));
-		edgeMenu.add(edgeMenuItem[18] = Translate.menuItem("polymesh:openSeams", this,
-				"doOpenSeams"));
-		edgeMenu.add(edgeMenuItem[19] = Translate.menuItem("polymesh:clearSeams",
-				this, "doClearSeams"));
-		edgeMenu.addSeparator();
-		edgeMenu.add(edgeMenuItem[20] = Translate.menuItem(
-				"polymesh:selectSmoothnessRange", this, "doSelectEdgeSmoothnessRange"));
-		edgeMenu.addSeparator();
-		edgeMenu.add(edgeMenuItem[21] = Translate.menuItem("polymesh:bevelProperties",
-				this, "doBevelProperties"));
+                
+                local = Translate.menu("polymesh:extrude");
+		local.add(extrudeEdgeItem);
+		local.add(Translate.menuItem("polymesh:xExtrude", this, "doExtrudeEdgeX"));
+		local.add(Translate.menuItem("polymesh:yExtrude", this, "doExtrudeEdgeY"));
+		local.add(Translate.menuItem("polymesh:zExtrude", this, "doExtrudeEdgeZ"));
+		edgeMenu.add(edgeMenuItem[2] = local);
 
-		edgePopupMenu = new BPopupMenu();
+		singleNormalShortcut = extrudeEdgeItem.getShortcut();
+                
+                local = Translate.menu("polymesh:extrudeRegion");
+		local.add(extrudeEdgeRegionItem);
+		local.add(Translate.menuItem("polymesh:xExtrude", this, "doExtrudeEdgeRegionX"));
+		local.add(Translate.menuItem("polymesh:yExtrude", this, "doExtrudeEdgeRegionY"));
+		local.add(Translate.menuItem("polymesh:zExtrude", this, "doExtrudeEdgeRegionZ"));
+		edgeMenu.add(edgeMenuItem[3] = local);
+                
+
+		groupNormalShortcut = extrudeEdgeRegionItem.getShortcut();
+		edgeMenu.addSeparator();
+                
+		edgeMenu.add(edgeMenuItem[4] = Translate.menuItem("polymesh:collapse", this,"doCollapseEdges"));
+		edgeMenu.add(edgeMenuItem[5] = Translate.menuItem("polymesh:merge", this,"doMergeEdges"));
+		edgeMenu.add(edgeMenuItem[6] = Translate.menuItem("polymesh:bevel", this,"doBevelEdges"));
+		edgeMenu.addSeparator();
+		edgeMenu.add(edgeMenuItem[7] = Translate.menuItem("polymesh:selectLoop", this,"doSelectLoop"));
+                
+                local = Translate.menu("polymesh:selectRing");
+		local.add(Translate.menuItem("polymesh:all", this, "doSelectRingAll"));
+		local.add(Translate.menuItem("polymesh:two", this, "doSelectRingTwo"));
+		local.add(Translate.menuItem("polymesh:three", this, "doSelectRingThree"));
+		local.add(Translate.menuItem("polymesh:four", this, "doSelectRingFour"));
+		local.add(Translate.menuItem("polymesh:five", this, "doSelectRingFive"));
+		local.add(Translate.menuItem("polymesh:specify", this, "doSelectRingInteractive"));
+		edgeMenu.add(edgeMenuItem[8] = local);
+		
+		edgeMenu.add(edgeMenuItem[9] = Translate.menuItem("polymesh:insertLoops",this, "doInsertLoops"));
+		edgeMenu.add(edgeMenuItem[10] = Translate.menuItem("polymesh:selectBoundary",this, "doSelectBoundary"));
+		edgeMenu.add(edgeMenuItem[11] = Translate.menuItem("polymesh:closeBoundary",this, "doCloseBoundary"));
+		edgeMenu.add(edgeMenuItem[12] = Translate.menuItem("polymesh:findSimilar",this, "doFindSimilarEdges"));
+		edgeMenu.add(edgeMenuItem[13] = Translate.menuItem("polymesh:extractToCurve",this, "doExtractToCurve"));
+		edgeMenu.addSeparator();
+		edgeMenu.add(edgeMenuItem[14] = Translate.menuItem("polymesh:markSelAsSeams",this, "doMarkSelAsSeams"));
+		edgeMenu.add(edgeMenuItem[15] = Translate.menuItem("polymesh:seamsToSel",this, "doSeamsToSel"));
+		edgeMenu.add(edgeMenuItem[16] = Translate.menuItem("polymesh:addSelToSeams",this, "doAddSelToSeams"));
+		edgeMenu.add(edgeMenuItem[17] = Translate.menuItem("polymesh:removeSelFromSeams", this, "doRemoveSelFromSeams"));
+		edgeMenu.add(edgeMenuItem[18] = Translate.menuItem("polymesh:openSeams", this,"doOpenSeams"));
+		edgeMenu.add(edgeMenuItem[19] = Translate.menuItem("polymesh:clearSeams",this, "doClearSeams"));
+		edgeMenu.addSeparator();
+		edgeMenu.add(edgeMenuItem[20] = Translate.menuItem("polymesh:selectSmoothnessRange", this, "doSelectEdgeSmoothnessRange"));
+		edgeMenu.addSeparator();
+		edgeMenu.add(edgeMenuItem[21] = Translate.menuItem("polymesh:bevelProperties",this, "doBevelProperties"));
+
+		
 		edgePopupMenuItem = new MenuWidget[22];
-		edgePopupMenu.add(edgePopupMenuItem[0] = Translate.menu("polymesh:divide"));
-		popupDivideMenuItem = new BMenuItem[5];
-		((BMenu) edgePopupMenuItem[0]).add(popupDivideMenuItem[0] = Translate
-				.menuItem("polymesh:two", this, "doDivideEdges"));
-		((BMenu) edgePopupMenuItem[0]).add(popupDivideMenuItem[1] = Translate
-				.menuItem("polymesh:three", this, "doDivideEdges"));
-		((BMenu) edgePopupMenuItem[0]).add(popupDivideMenuItem[2] = Translate
-				.menuItem("polymesh:four", this, "doDivideEdges"));
-		((BMenu) edgePopupMenuItem[0]).add(popupDivideMenuItem[3] = Translate
-				.menuItem("polymesh:five", this, "doDivideEdges"));
-		((BMenu) edgePopupMenuItem[0]).add(popupDivideMenuItem[4] = Translate
-				.menuItem("polymesh:specify", this, "doDivideEdges"));
-		edgePopupMenu.add(edgePopupMenuItem[1] = Translate.menu("polymesh:moveAlong"));
-		((BMenu) edgePopupMenuItem[1]).add(Translate.menuItem("polymesh:normal", this,
-				"doMoveEdgesNormal"));
-		((BMenu) edgePopupMenuItem[1]).add(Translate.menuItem("polymesh:x", this,
-				"doMoveEdgesX"));
-		((BMenu) edgePopupMenuItem[1]).add(Translate.menuItem("polymesh:y", this,
-				"doMoveEdgesY"));
-		((BMenu) edgePopupMenuItem[1]).add(Translate.menuItem("polymesh:z", this,
-				"doMoveEdgesZ"));
+                local = Translate.menu("polymesh:divide");
+                local.add(Translate.menuItem("polymesh:two", this, "doDivideEdgesTwo"));
+		local.add(Translate.menuItem("polymesh:three", this, "doDivideEdgesThree"));
+		local.add(Translate.menuItem("polymesh:four", this, "doDivideEdgesFour"));
+		local.add(Translate.menuItem("polymesh:five", this, "doDivideEdgesFive"));
+		local.add(Translate.menuItem("polymesh:specify", this, "doDivideEdgesInteractive"));                
+		edgePopupMenu.add(edgePopupMenuItem[0] = local);
+		
+                local = Translate.menu("polymesh:moveAlong");
+                local.add(Translate.menuItem("polymesh:normal", this,"doMoveEdgesNormal"));
+		local.add(Translate.menuItem("polymesh:x", this,"doMoveEdgesX"));
+		local.add(Translate.menuItem("polymesh:y", this,"doMoveEdgesY"));
+		local.add(Translate.menuItem("polymesh:z", this,"doMoveEdgesZ"));
+		edgePopupMenu.add(edgePopupMenuItem[1] = local);
+
 		edgePopupMenu.addSeparator();
-		edgePopupMenu.add(edgePopupMenuItem[2] = Translate.menu("polymesh:extrude"));
-		popupExtrudeEdgeItem = new BMenuItem[4];
-		popupExtrudeEdgeRegionItem = new BMenuItem[4];
-		((BMenu) edgePopupMenuItem[2])
-				.add(popupExtrudeEdgeItem[0] = Translate.menuItem(
-						"polymesh:extrudeNormal", this, "doExtrudeEdge"));
-		((BMenu) edgePopupMenuItem[2])
-				.add(popupExtrudeEdgeItem[1] = Translate.menuItem("polymesh:xExtrude",
-						this, "doExtrudeEdge"));
-		((BMenu) edgePopupMenuItem[2])
-				.add(popupExtrudeEdgeItem[2] = Translate.menuItem("polymesh:yExtrude",
-						this, "doExtrudeEdge"));
-		((BMenu) edgePopupMenuItem[2])
-				.add(popupExtrudeEdgeItem[3] = Translate.menuItem("polymesh:zExtrude",
-						this, "doExtrudeEdge"));
-		edgePopupMenu.add(edgePopupMenuItem[3] = Translate
-				.menu("polymesh:extrudeRegion"));
-		((BMenu) edgePopupMenuItem[3])
-				.add(popupExtrudeEdgeRegionItem[0] = Translate.menuItem(
-						"polymesh:extrudeRegionNormal", this, "doExtrudeEdgeRegion"));
-		((BMenu) edgePopupMenuItem[3])
-				.add(popupExtrudeEdgeRegionItem[1] = Translate.menuItem(
-						"polymesh:xExtrude", this, "doExtrudeEdgeRegion"));
-		((BMenu) edgePopupMenuItem[3])
-				.add(popupExtrudeEdgeRegionItem[2] = Translate.menuItem(
-						"polymesh:yExtrude", this, "doExtrudeEdgeRegion"));
-		((BMenu) edgePopupMenuItem[3])
-				.add(popupExtrudeEdgeRegionItem[3] = Translate.menuItem(
-						"polymesh:zExtrude", this, "doExtrudeEdgeRegion"));
+                local = Translate.menu("polymesh:extrude");
+		local.add(Translate.menuItem("polymesh:extrudeNormal", this, "doExtrudeEdgeNormal"));
+		local.add(Translate.menuItem("polymesh:xExtrude", this, "doExtrudeEdgeX"));
+		local.add(Translate.menuItem("polymesh:yExtrude", this, "doExtrudeEdgeY"));
+		local.add(Translate.menuItem("polymesh:zExtrude", this, "doExtrudeEdgeZ"));
+		edgePopupMenu.add(edgePopupMenuItem[2] = local);
+                
+                local = Translate.menu("polymesh:extrudeRegion");
+		local.add(Translate.menuItem("polymesh:extrudeRegionNormal", this, "doExtrudeEdgeRegionNormal"));
+		local.add(Translate.menuItem("polymesh:xExtrude", this, "doExtrudeEdgeRegionX"));
+		local.add(Translate.menuItem("polymesh:yExtrude", this, "doExtrudeEdgeRegionY"));
+		local.add(Translate.menuItem("polymesh:zExtrude", this, "doExtrudeEdgeRegionZ"));
+		edgePopupMenu.add(edgePopupMenuItem[3] = local);
+
 		edgePopupMenu.addSeparator();
-		edgePopupMenu.add(edgePopupMenuItem[4] = Translate.menuItem(
-				"polymesh:collapse", this, "doCollapseEdges"));
-		edgePopupMenu.add(edgePopupMenuItem[5] = Translate.menuItem("polymesh:merge",
-				this, "doMergeEdges"));
-		edgePopupMenu.add(edgePopupMenuItem[6] = Translate.menuItem("polymesh:bevel",
-				this, "doBevelEdges"));
+		edgePopupMenu.add(edgePopupMenuItem[4] = Translate.menuItem("polymesh:collapse", this, "doCollapseEdges"));
+		edgePopupMenu.add(edgePopupMenuItem[5] = Translate.menuItem("polymesh:merge",this, "doMergeEdges"));
+		edgePopupMenu.add(edgePopupMenuItem[6] = Translate.menuItem("polymesh:bevel",this, "doBevelEdges"));
 		
 		edgePopupMenu.addSeparator();
-		edgePopupMenu.add(edgePopupMenuItem[7] = Translate.menuItem(
-				"polymesh:selectLoop", this, "doSelectLoop"));
-		edgePopupMenu.add(edgePopupMenuItem[8] = Translate.menu("polymesh:selectRing"));
-		popupRingMenuItem = new BMenuItem[6];
-		((BMenu) edgePopupMenuItem[8]).add(popupRingMenuItem[0] = Translate.menuItem(
-				"polymesh:all", this, "doSelectRing"));
-		((BMenu) edgePopupMenuItem[8]).add(popupRingMenuItem[1] = Translate.menuItem(
-				"polymesh:two", this, "doSelectRing"));
-		((BMenu) edgePopupMenuItem[8]).add(popupRingMenuItem[2] = Translate.menuItem(
-				"polymesh:three", this, "doSelectRing"));
-		((BMenu) edgePopupMenuItem[8]).add(popupRingMenuItem[3] = Translate.menuItem(
-				"polymesh:four", this, "doSelectRing"));
-		((BMenu) edgePopupMenuItem[8]).add(popupRingMenuItem[4] = Translate.menuItem(
-				"polymesh:five", this, "doSelectRing"));
-		((BMenu) edgePopupMenuItem[8]).add(popupRingMenuItem[5] = Translate.menuItem(
-				"polymesh:specify", this, "doSelectRing"));
-		edgePopupMenu.add(edgePopupMenuItem[9] = Translate.menuItem(
-				"polymesh:insertLoops", this, "doInsertLoops"));
-		edgePopupMenu.add(edgePopupMenuItem[10] = Translate.menuItem(
-				"polymesh:selectBoundary", this, "doSelectBoundary"));
-		edgePopupMenu.add(edgePopupMenuItem[11] = Translate.menuItem(
-				"polymesh:closeBoundary", this, "doCloseBoundary"));
-		edgePopupMenu.add(edgePopupMenuItem[12] = Translate.menuItem(
-				"polymesh:findSimilar", this, "doFindSimilarEdges"));
-		edgePopupMenu.add(edgePopupMenuItem[13] = Translate.menuItem(
-				"polymesh:extractToCurve", this, "doExtractToCurve"));
+		edgePopupMenu.add(edgePopupMenuItem[7] = Translate.menuItem("polymesh:selectLoop", this, "doSelectLoop"));
+                
+                local = Translate.menu("polymesh:selectRing");
+		local.add(Translate.menuItem("polymesh:all", this, "doSelectRingAll"));
+		local.add(Translate.menuItem("polymesh:two", this, "doSelectRingTwo"));
+		local.add(Translate.menuItem("polymesh:three", this, "doSelectRingThree"));
+		local.add(Translate.menuItem("polymesh:four", this, "doSelectRingFour"));
+		local.add(Translate.menuItem("polymesh:five", this, "doSelectRingFive"));
+		local.add(Translate.menuItem("polymesh:specify", this, "doSelectRingInteractive"));
+                
+		edgePopupMenu.add(edgePopupMenuItem[8] = local);
+                
+		edgePopupMenu.add(edgePopupMenuItem[9] = Translate.menuItem("polymesh:insertLoops", this, "doInsertLoops"));
+		edgePopupMenu.add(edgePopupMenuItem[10] = Translate.menuItem("polymesh:selectBoundary", this, "doSelectBoundary"));
+		edgePopupMenu.add(edgePopupMenuItem[11] = Translate.menuItem("polymesh:closeBoundary", this, "doCloseBoundary"));
+		edgePopupMenu.add(edgePopupMenuItem[12] = Translate.menuItem("polymesh:findSimilar", this, "doFindSimilarEdges"));
+		edgePopupMenu.add(edgePopupMenuItem[13] = Translate.menuItem("polymesh:extractToCurve", this, "doExtractToCurve"));
 		edgePopupMenu.addSeparator();
-		edgePopupMenu.add(edgePopupMenuItem[14] = Translate.menuItem(
-				"polymesh:markSelAsSeams", this, "doMarkSelAsSeams"));
-		edgePopupMenu.add(edgePopupMenuItem[15] = Translate.menuItem(
-				"polymesh:seamsToSel", this, "doSeamsToSel"));
-		edgePopupMenu.add(edgePopupMenuItem[16] = Translate.menuItem(
-				"polymesh:addSelToSeams", this, "doAddSelToSeams"));
-		edgePopupMenu.add(edgePopupMenuItem[17] = Translate.menuItem(
-				"polymesh:removeSelFromSeams", this, "doRemoveSelFromSeams"));
-		edgePopupMenu.add(edgePopupMenuItem[18] = Translate.menuItem(
-				"polymesh:openSeams", this, "doOpenSeams"));
-		edgePopupMenu.add(edgePopupMenuItem[19] = Translate.menuItem(
-				"polymesh:clearSeams", this, "doClearSeams"));
+		edgePopupMenu.add(edgePopupMenuItem[14] = Translate.menuItem("polymesh:markSelAsSeams", this, "doMarkSelAsSeams"));
+		edgePopupMenu.add(edgePopupMenuItem[15] = Translate.menuItem("polymesh:seamsToSel", this, "doSeamsToSel"));
+		edgePopupMenu.add(edgePopupMenuItem[16] = Translate.menuItem("polymesh:addSelToSeams", this, "doAddSelToSeams"));
+		edgePopupMenu.add(edgePopupMenuItem[17] = Translate.menuItem("polymesh:removeSelFromSeams", this, "doRemoveSelFromSeams"));
+		edgePopupMenu.add(edgePopupMenuItem[18] = Translate.menuItem("polymesh:openSeams", this, "doOpenSeams"));
+		edgePopupMenu.add(edgePopupMenuItem[19] = Translate.menuItem("polymesh:clearSeams", this, "doClearSeams"));
 		edgePopupMenu.addSeparator();
-		edgePopupMenu.add(edgePopupMenuItem[20] = Translate.menuItem(
-				"polymesh:selectSmoothnessRange", this, "doSelectEdgeSmoothnessRange"));
+		edgePopupMenu.add(edgePopupMenuItem[20] = Translate.menuItem("polymesh:selectSmoothnessRange", this, "doSelectEdgeSmoothnessRange"));
 		edgePopupMenu.addSeparator();
-		edgePopupMenu.add(edgePopupMenuItem[21] = Translate.menuItem(
-				"polymesh:bevelProperties", this, "doBevelProperties"));
+		edgePopupMenu.add(edgePopupMenuItem[21] = Translate.menuItem("polymesh:bevelProperties", this, "doBevelProperties"));
 	}
 
 	/**
@@ -955,110 +793,73 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * 
 	 */
 	void createFaceMenu() {
-		faceMenu = Translate.menu("polymesh:face");
-		faceMenuItem = new MenuWidget[11];
-		faceMenu.add(faceMenuItem[0] = Translate.menu("polymesh:moveAlong"));
-		((BMenu) faceMenuItem[0]).add(Translate.menuItem("polymesh:normal", this,
-				"doMoveFacesNormal"));
-		((BMenu) faceMenuItem[0]).add(Translate.menuItem("polymesh:x", this,
-				"doMoveFacesX"));
-		((BMenu) faceMenuItem[0]).add(Translate.menuItem("polymesh:y", this,
-				"doMoveFacesY"));
-		((BMenu) faceMenuItem[0]).add(Translate.menuItem("polymesh:z", this,
-				"doMoveFacesZ"));
-		faceMenu.add(faceMenuItem[1] = Translate.menu("polymesh:extrude"));
-		extrudeItem = new BMenuItem[4];
-		extrudeRegionItem = new BMenuItem[4];
-		((BMenu) faceMenuItem[1]).add(extrudeItem[0] = Translate.menuItem(
-				"polymesh:extrudeNormal", this, "doExtrude"));
-		((BMenu) faceMenuItem[1]).add(extrudeItem[1] = Translate.menuItem(
-				"polymesh:xExtrude", this, "doExtrude"));
-		((BMenu) faceMenuItem[1]).add(extrudeItem[2] = Translate.menuItem(
-				"polymesh:yExtrude", this, "doExtrude"));
-		((BMenu) faceMenuItem[1]).add(extrudeItem[3] = Translate.menuItem(
-				"polymesh:zExtrude", this, "doExtrude"));
-		faceMenu.add(faceMenuItem[2] = Translate.menu("polymesh:extrudeRegion"));
-		((BMenu) faceMenuItem[2]).add(extrudeRegionItem[0] = Translate
-				.menuItem("polymesh:extrudeRegionNormal", this, "doExtrudeRegion"));
-		((BMenu) faceMenuItem[2]).add(extrudeRegionItem[1] = Translate
-				.menuItem("polymesh:xExtrude", this, "doExtrudeRegion"));
-		((BMenu) faceMenuItem[2]).add(extrudeRegionItem[2] = Translate
-				.menuItem("polymesh:yExtrude", this, "doExtrudeRegion"));
-		((BMenu) faceMenuItem[2]).add(extrudeRegionItem[3] = Translate
-				.menuItem("polymesh:zExtrude", this, "doExtrudeRegion"));
-		faceMenu.addSeparator();
-		faceMenu.add(faceMenuItem[3] = Translate.menuItem("polymesh:smoothFaces",
-				this, "doSmoothFaces"));
-		faceMenu.add(faceMenuItem[4] = Translate.menuItem("polymesh:subdivideFaces",
-				this, "doSubdivideFaces"));
-		faceMenu.add(faceMenuItem[5] = Translate.menuItem("polymesh:collapse", this,
-				"doCollapseFaces"));
-		faceMenu.add(faceMenuItem[6] = Translate.menuItem("polymesh:merge", this,
-				"doMergeFaces"));
-		faceMenu.add(faceMenuItem[7] = Translate.menuItem("polymesh:triangulate",
-				this, "doTriangulateFaces"));
-		faceMenu.add(faceMenuItem[8] = Translate.menuItem(
-				"polymesh:outlineFaces", this, "doOutlineFaces"));
-		faceMenu.addSeparator();
-		faceMenu.add(faceMenuItem[9] = Translate.menuItem("parameters", this,
-				"setParametersCommand"));
-		faceMenu.add(faceMenuItem[10] = Translate.menuItem("polymesh:findSimilar",
-				this, "doFindSimilarFaces"));
-		menubar.add(faceMenu);
-		facePopupMenu = new BPopupMenu();
-		facePopupMenuItem = new MenuWidget[11];
-		facePopupMenu.add(facePopupMenuItem[0] = Translate.menu("polymesh:moveAlong"));
-		((BMenu) facePopupMenuItem[0]).add(Translate.menuItem("polymesh:normal", this,
-				"doMoveFacesNormal"));
-		((BMenu) facePopupMenuItem[0]).add(Translate.menuItem("polymesh:x", this,
-				"doMoveFacesX"));
-		((BMenu) facePopupMenuItem[0]).add(Translate.menuItem("polymesh:y", this,
-				"doMoveFacesY"));
-		((BMenu) facePopupMenuItem[0]).add(Translate.menuItem("polymesh:z", this,
-				"doMoveFacesZ"));
-		facePopupMenu.add(facePopupMenuItem[1] = Translate.menu("polymesh:extrude"));
-		popupExtrudeItem = new BMenuItem[4];
-		popupExtrudeRegionItem = new BMenuItem[4];
-		((BMenu) facePopupMenuItem[1]).add(popupExtrudeItem[0] = Translate
-				.menuItem("polymesh:extrudeNormal", this, "doExtrude"));
-		((BMenu) facePopupMenuItem[1]).add(popupExtrudeItem[1] = Translate
-				.menuItem("polymesh:xExtrude", this, "doExtrude"));
-		((BMenu) facePopupMenuItem[1]).add(popupExtrudeItem[2] = Translate
-				.menuItem("polymesh:yExtrude", this, "doExtrude"));
-		((BMenu) facePopupMenuItem[1]).add(popupExtrudeItem[3] = Translate
-				.menuItem("polymesh:zExtrude", this, "doExtrude"));
-		facePopupMenu.add(facePopupMenuItem[2] = Translate
-				.menu("polymesh:extrudeRegion"));
-		((BMenu) facePopupMenuItem[2])
-				.add(popupExtrudeRegionItem[0] = Translate.menuItem(
-						"polymesh:extrudeRegionNormal", this, "doExtrudeRegion"));
-		((BMenu) facePopupMenuItem[2])
-				.add(popupExtrudeRegionItem[1] = Translate.menuItem(
-						"polymesh:xExtrude", this, "doExtrudeRegion"));
-		((BMenu) facePopupMenuItem[2])
-				.add(popupExtrudeRegionItem[2] = Translate.menuItem(
-						"polymesh:yExtrude", this, "doExtrudeRegion"));
-		((BMenu) facePopupMenuItem[2])
-				.add(popupExtrudeRegionItem[3] = Translate.menuItem(
-						"polymesh:zExtrude", this, "doExtrudeRegion"));
-		facePopupMenu.addSeparator();
-		facePopupMenu.add(facePopupMenuItem[3] = Translate.menuItem(
-				"polymesh:smoothFaces", this, "doSmoothFaces"));
-		facePopupMenu.add(facePopupMenuItem[4] = Translate.menuItem(
-				"polymesh:subdivideFaces", this, "doSubdivideFaces"));
-		facePopupMenu.add(facePopupMenuItem[5] = Translate.menuItem(
-				"polymesh:collapse", this, "doCollapseFaces"));
-		facePopupMenu.add(facePopupMenuItem[6] = Translate.menuItem("polymesh:merge",
-				this, "doMergeFaces"));
-		facePopupMenu.add(facePopupMenuItem[7] = Translate.menuItem(
-				"polymesh:triangulate", this, "doTriangulateFaces"));
-		facePopupMenu.add(facePopupMenuItem[8] = Translate.menuItem(
-				"polymesh:outlineFaces", this, "doOutlineFaces"));
-		facePopupMenu.addSeparator();
-		facePopupMenu.add(facePopupMenuItem[9] = Translate.menuItem(
-				"polymesh:parameters", this, "setParametersCommand"));
-		facePopupMenu.add(facePopupMenuItem[10] = Translate.menuItem(
-				"polymesh:findSimilar", this, "doFindSimilarFaces"));
+
+                BMenu moveAlong = Translate.menu("polymesh:moveAlong");
+                moveAlong.add(Translate.menuItem("polymesh:normal", this, "doMoveFacesNormal"));
+                moveAlong.add(Translate.menuItem("polymesh:x", this, "doMoveFacesX"));
+                moveAlong.add(Translate.menuItem("polymesh:y", this, "doMoveFacesY"));
+                moveAlong.add(Translate.menuItem("polymesh:z", this, "doMoveFacesZ"));
+                faceMenu.add(moveAlong);
+                
+                BMenu extrude = Translate.menu("polymesh:extrude");
+                extrude.add(extrudeItem);
+                extrude.add(Translate.menuItem("polymesh:xExtrude", this, "doExtrudeX"));
+                extrude.add(Translate.menuItem("polymesh:yExtrude", this, "doExtrudeY"));
+                extrude.add(Translate.menuItem("polymesh:zExtrude", this, "doExtrudeZ"));
+                faceMenu.add(extrude);
+                
+                BMenu extrudeRegion = Translate.menu("polymesh:extrudeRegion");
+                extrudeRegion.add(extrudeRegionItem);
+                extrudeRegion.add(Translate.menuItem("polymesh:xExtrude", this, "doExtrudeRegionX"));
+                extrudeRegion.add(Translate.menuItem("polymesh:yExtrude", this, "doExtrudeRegionY"));
+                extrudeRegion.add(Translate.menuItem("polymesh:zExtrude", this, "doExtrudeRegionZ"));
+                
+                faceMenu.add(extrudeRegion);
+                faceMenu.addSeparator();
+                
+                faceMenu.add(Translate.menuItem("polymesh:smoothFaces", this, "doSmoothFaces"));
+                faceMenu.add(Translate.menuItem("polymesh:subdivideFaces", this, "doSubdivideFaces"));
+                faceMenu.add(Translate.menuItem("polymesh:collapse", this, "doCollapseFaces"));
+                faceMenu.add(Translate.menuItem("polymesh:merge", this, "doMergeFaces"));
+                faceMenu.add(Translate.menuItem("polymesh:triangulate", this, "doTriangulateFaces"));
+                faceMenu.add(Translate.menuItem("polymesh:outlineFaces", this, "doOutlineFaces"));
+                faceMenu.addSeparator();
+                faceMenu.add(Translate.menuItem("parameters", this, "setParametersCommand"));
+                faceMenu.add(faceFindSimilarMenuItem = Translate.menuItem("polymesh:findSimilar", this, "doFindSimilarFaces"));
+                menubar.add(faceMenu);
+                
+                moveAlong = Translate.menu("polymesh:moveAlong");
+                moveAlong.add(Translate.menuItem("polymesh:normal", this, "doMoveFacesNormal"));
+                moveAlong.add(Translate.menuItem("polymesh:x", this, "doMoveFacesX"));
+                moveAlong.add(Translate.menuItem("polymesh:y", this, "doMoveFacesY"));
+                moveAlong.add(Translate.menuItem("polymesh:z", this, "doMoveFacesZ"));
+                facePopupMenu.add(moveAlong);
+                
+                extrude = Translate.menu("polymesh:extrude");                
+                extrude.add(extrudeItem);
+                extrude.add(Translate.menuItem("polymesh:xExtrude", this, "doExtrudeX"));
+                extrude.add(Translate.menuItem("polymesh:yExtrude", this, "doExtrudeY"));
+                extrude.add(Translate.menuItem("polymesh:zExtrude", this, "doExtrudeZ"));
+                facePopupMenu.add(extrude);
+                
+                extrudeRegion = Translate.menu("polymesh:extrudeRegion");
+                extrudeRegion.add(extrudeRegionItem);
+                extrudeRegion.add(Translate.menuItem("polymesh:xExtrude", this, "doExtrudeRegionX"));
+                extrudeRegion.add(Translate.menuItem("polymesh:yExtrude", this, "doExtrudeRegionY"));
+                extrudeRegion.add(Translate.menuItem("polymesh:zExtrude", this, "doExtrudeRegionZ"));
+                
+                facePopupMenu.add(extrudeRegion);
+                
+                facePopupMenu.addSeparator();
+                facePopupMenu.add(Translate.menuItem("polymesh:smoothFaces", this, "doSmoothFaces"));
+                facePopupMenu.add(Translate.menuItem("polymesh:subdivideFaces", this, "doSubdivideFaces"));
+                facePopupMenu.add(Translate.menuItem("polymesh:collapse", this, "doCollapseFaces"));
+                facePopupMenu.add(Translate.menuItem("polymesh:merge", this, "doMergeFaces"));
+                facePopupMenu.add(Translate.menuItem("polymesh:triangulate", this, "doTriangulateFaces"));
+                facePopupMenu.add(Translate.menuItem("polymesh:outlineFaces", this, "doOutlineFaces"));
+                facePopupMenu.addSeparator();
+                facePopupMenu.add(Translate.menuItem("parameters", this, "setParametersCommand"));
+                facePopupMenu.add(faceFindSimilarPopupMenuItem = Translate.menuItem("polymesh:findSimilar", this, "doFindSimilarFaces"));
 	}
 
 	/**
@@ -1068,54 +869,42 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 *                The poly mesh being edited
 	 */
 	void createSkeletonMenu(PolyMesh obj) {
-		BMenuItem item;
 
-		skeletonMenu = Translate.menu("skeleton");
-		menubar.add(skeletonMenu);
-		skeletonMenuItem = new BMenuItem[6];
-		skeletonMenu.add(skeletonMenuItem[0] = Translate.menuItem("editBone",
-				this, "editJointCommand"));
-		skeletonMenu.add(skeletonMenuItem[1] = Translate.menuItem("deleteBone",
-				this, "deleteJointCommand"));
-		skeletonMenu.add(skeletonMenuItem[2] = Translate.menuItem(
-				"setParentBone", this, "setJointParentCommand"));
-		skeletonMenu.add(skeletonMenuItem[3] = Translate.menuItem(
-				"importSkeleton", this, "importSkeletonCommand"));
-		skeletonMenu.addSeparator();
-		skeletonMenu.add(skeletonMenuItem[4] = Translate.menuItem(
-				"bindSkeleton", this, "bindSkeletonCommand"));
-		skeletonMenu.add(skeletonMenuItem[5] = Translate.checkboxMenuItem(
-				"detachSkeleton", this, "skeletonDetachedChanged", false));
+                skeletonMenu = Translate.menu("skeleton");
+                menubar.add(skeletonMenu);
+                skeletonMenuItem = new BMenuItem[6];
+                skeletonMenu.add(skeletonMenuItem[0] = Translate.menuItem("editBone", this, "editJointCommand"));
+                skeletonMenu.add(skeletonMenuItem[1] = Translate.menuItem("deleteBone", this, "deleteJointCommand"));
+                skeletonMenu.add(skeletonMenuItem[2] = Translate.menuItem("setParentBone", this, "setJointParentCommand"));
+                skeletonMenu.add(skeletonMenuItem[3] = Translate.menuItem("importSkeleton", this, "importSkeletonCommand"));
+                skeletonMenu.addSeparator();
+                skeletonMenu.add(skeletonMenuItem[4] = Translate.menuItem("bindSkeleton", this, "bindSkeletonCommand"));
+                skeletonMenu.add(skeletonMenuItem[5] = Translate.checkboxMenuItem("detachSkeleton", this, "skeletonDetachedChanged", false));
 	}
 
-	/**
+        private final BMenuItem unfoldMeshAction = Translate.menuItem("polymesh:unfoldMesh", this, "doUnfoldMesh");
+        private final BMenuItem editMappingAction = Translate.menuItem("polymesh:editMapping", this, "doEditMapping");
+	
+        /**
 	 * Builds the texture menu
 	 */
 	void createTextureMenu() {
-		BMenu textureMenu = Translate.menu("polymesh:texture");
-		menubar.add(textureMenu);
-		textureMenuItem = new BMenuItem[6];
-		textureMenu.add(textureMenuItem[0] = Translate.menuItem("polymesh:unfoldMesh",
-				this, "doUnfoldMesh"));
-		textureMenu.add(textureMenuItem[1] = Translate.menuItem(
-				"polymesh:editMapping", this, "doEditMapping"));
+          BMenu textureMenu = Translate.menu("polymesh:texture");
+          textureMenu.add(unfoldMeshAction);
+          textureMenu.add(editMappingAction);
+          menubar.add(textureMenu);
 	}
 
 	private void createPrefsMenu() {
-		BMenu prefsMenu = Translate.menu("polymesh:prefs");
-		menubar.add(prefsMenu);
-		prefsMenu.add(Translate.menuItem("polymesh:reloadKeystrokes", this,
-				"reloadKeystrokes"));
-		// prefsMenu.addSeparator();
-		prefsMenu.add(Translate.menuItem("polymesh:editKeystrokes", this,
-				"editKeystrokes"));
-		prefsMenu.addSeparator();
-		prefsMenu.add(Translate.menuItem("polymesh:loadDefaults", this,
-				"doLoadDefaultProperties"));
-		prefsMenu.add(Translate.menuItem("polymesh:storeDefaults", this,
-				"doStoreDefaultProperties"));
-		prefsMenu.add(Translate.menuItem("polymesh:resetDefaults", this,
-				"doResetDefaultProperties"));
+                BMenu prefsMenu = Translate.menu("polymesh:prefs");
+                menubar.add(prefsMenu);
+                prefsMenu.add(Translate.menuItem("polymesh:reloadKeystrokes", this, "reloadKeystrokes"));
+                // prefsMenu.addSeparator();
+                prefsMenu.add(Translate.menuItem("polymesh:editKeystrokes", this, "editKeystrokes"));
+                prefsMenu.addSeparator();
+                prefsMenu.add(Translate.menuItem("polymesh:loadDefaults", this, "doLoadDefaultProperties"));
+                prefsMenu.add(Translate.menuItem("polymesh:storeDefaults", this, "doStoreDefaultProperties"));
+                prefsMenu.add(Translate.menuItem("polymesh:resetDefaults", this, "doResetDefaultProperties"));
 	}
 	
 	@SuppressWarnings("unused")
@@ -1227,7 +1016,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 				mesh.setSelectedSeamColor(selectedSeamColorButton.getColor());
 				mesh.setMeshColor(meshColorButton.getColor());
 				mesh.setSelectedFaceColor(selectedFaceColorButton.getColor());
-				mesh.setHandleSize(((Integer) handleSpinner.getValue()).intValue());
+				mesh.setHandleSize(((Integer) handleSpinner.getValue()));
 			}
 			updateImage();
 		}
@@ -1251,6 +1040,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	/**
 	 * Delete the selected points, edges, or faces from the mesh.
 	 */
+        @Override
 	public void deleteCommand() {
 		PolyMesh mesh = (PolyMesh) objInfo.object;
 
@@ -1307,8 +1097,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 			}
 			mesh.deleteFaces(indices);
 		}
-		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-				new Object[] { mesh, prevMesh }));
+		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
 		objectChanged();
 		updateImage();
 
@@ -1318,9 +1107,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * Select the entire mesh.
 	 */
 	void selectAllCommand() {
-		setUndoRecord(new UndoRecord(this, false,
-				UndoRecord.SET_MESH_SELECTION, new Object[] { this,
-						new Integer(selectMode), selected.clone() }));
+		setUndoRecord(new UndoRecord(this, false,UndoRecord.SET_MESH_SELECTION, this, selectMode, selected.clone()));
 		for (int i = 0; i < selected.length; i++)
 			selected[i] = true;
 		setSelection(selected);
@@ -1350,9 +1137,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		boolean selectedVert[] = new boolean[dist.length];
 		Wedge edges[] = theMesh.getEdges();
 
-		setUndoRecord(new UndoRecord(this, false,
-				UndoRecord.SET_MESH_SELECTION, new Object[] { this,
-						new Integer(selectMode), selected.clone() }));
+		setUndoRecord(new UndoRecord(this, false,UndoRecord.SET_MESH_SELECTION, this, selectMode, selected.clone()));
 		for (int i = 0; i < edges.length; i++)
 			if ((dist[edges[i].vertex] == 0 || dist[edges[edges[i].hedge].vertex] == 0))
 				selectedVert[edges[i].vertex] = selectedVert[edges[edges[i].hedge].vertex] = true;
@@ -1384,39 +1169,59 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 			setSelection(loop);
 	}
 
-	/**
+        /**
 	 * Selects edge rings from current selection
 	 */
-	public void doSelectRing(CommandEvent ev) {
-		
-		PolyMesh mesh = (PolyMesh) objInfo.object;
-		boolean[] ring = null;
-		if (ev.getWidget() == ringMenuItem[0]
-				|| ev.getWidget() == popupRingMenuItem[0]) {
-			ring = mesh.findEdgeStrips(selected, 1);
-		} else if (ev.getWidget() == ringMenuItem[1]
-				|| ev.getWidget() == popupRingMenuItem[1]) {
-			ring = mesh.findEdgeStrips(selected, 2);
-		} else if (ev.getWidget() == ringMenuItem[2]
-				|| ev.getWidget() == popupRingMenuItem[2]) {
-			ring = mesh.findEdgeStrips(selected, 3);
-		} else if (ev.getWidget() == ringMenuItem[3]
-				|| ev.getWidget() == popupRingMenuItem[3]) {
-			ring = mesh.findEdgeStrips(selected, 4);
-		} else if (ev.getWidget() == ringMenuItem[4]
-				|| ev.getWidget() == popupRingMenuItem[4]) {
-			ring = mesh.findEdgeStrips(selected, 5);
-		} else if (ev.getWidget() == ringMenuItem[5]
-				|| ev.getWidget() == popupRingMenuItem[5]) {
-			DivideDialog dlg = new DivideDialog();
-			int num = dlg.getNumber();
-			if (num > 0)
-				ring = mesh.findEdgeStrips(selected, num);
-		}
-		if (ring != null)
-			setSelection(ring);
-	}
-
+        public void doSelectRingAll() {
+          PolyMesh mesh = (PolyMesh) objInfo.object;
+          boolean[] ring = mesh.findEdgeStrips(selected, 1);
+          if(ring != null) setSelection(ring);
+        }
+        /**
+	 * Selects edge rings from current selection
+	 */
+        public void doSelectRingTwo() {
+          PolyMesh mesh = (PolyMesh) objInfo.object;
+          boolean[] ring = mesh.findEdgeStrips(selected, 2);
+          if(ring != null) setSelection(ring);
+        }
+        /**
+	 * Selects edge rings from current selection
+	 */
+        public void doSelectRingThree() {
+          PolyMesh mesh = (PolyMesh) objInfo.object;
+          boolean[] ring = mesh.findEdgeStrips(selected, 3);
+          if(ring != null) setSelection(ring);
+        }
+        /**
+	 * Selects edge rings from current selection
+	 */
+        public void doSelectRingFour() {
+          PolyMesh mesh = (PolyMesh) objInfo.object;
+          boolean[] ring = mesh.findEdgeStrips(selected, 4);
+          if(ring != null) setSelection(ring);
+        }
+        /**
+	 * Selects edge rings from current selection
+	 */
+        public void doSelectRingFive() {
+          PolyMesh mesh = (PolyMesh) objInfo.object;
+          boolean[] ring = mesh.findEdgeStrips(selected, 5);
+          if(ring != null) setSelection(ring);
+        }
+        /**
+	 * Selects edge rings from current selection 
+	 */
+        public void doSelectRingInteractive() {
+          PolyMesh mesh = (PolyMesh) objInfo.object;
+          DivideDialog dlg = new DivideDialog();
+          int counter = dlg.getNumber();
+          if(counter < 0) return;
+          boolean[] ring = mesh.findEdgeStrips(selected, counter);
+          if(ring != null) setSelection(ring);
+          
+        }
+        
 	/**
 	 * Description of the Method
 	 */
@@ -1437,13 +1242,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	/** Get whether the control mesh is displayed projected onto the surface. */
 
 	public boolean getProjectOntoSurface() {
-		PolyMesh mesh = (PolyMesh) objInfo.object;
-		if (!projectOntoSurface
-				|| (mesh.getSmoothingMethod() != Mesh.APPROXIMATING && mesh
-						.getSmoothingMethod() != Mesh.INTERPOLATING))
-			return false;
-		else
-			return true;
+          PolyMesh mesh = (PolyMesh) objInfo.object;
+          return projectOntoSurface && (mesh.getSmoothingMethod() == Mesh.APPROXIMATING || mesh .getSmoothingMethod() == Mesh.INTERPOLATING);
 	}
 
 	/** Set whether the control mesh is displayed projected onto the surface. */
@@ -1483,8 +1283,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	/** Add an extra texture parameter to a triangle mesh. */
 
 	private void addTriangleMeshExtraParameter(TriangleMesh mesh) {
-		TextureParameter hideFaceParam = new TextureParameter(this,
-				"Hide Face", 0.0, 1.0, 0.0);
+		TextureParameter hideFaceParam = new TextureParameter(this, "Hide Face", 0.0, 1.0, 0.0);
 		TextureParameter params[] = mesh.getParameters();
 		TextureParameter newparams[] = new TextureParameter[params.length + 1];
 		ParameterValue values[] = mesh.getParameterValues();
@@ -1515,6 +1314,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	/**
 	 * Cancel button selected
 	 */
+        @Override
 	protected void doCancel() {
 		oldMesh = null;
 		eventSource.removeEventLink(CopyEvent.class, this);
@@ -1524,6 +1324,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	/**
 	 * OK button selection
 	 */
+        @Override
 	protected void doOk() {
 		PolyMesh theMesh = (PolyMesh) objInfo.object;
 		if (realView)
@@ -1566,14 +1367,13 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * @param tool
 	 *                The new tool
 	 */
+        @Override
 	public void setTool(EditingTool tool) {
 		if (tool instanceof GenericTool) {
 			if (selectMode == modes.getSelection())
 				return;
 			if (undoItem != null)
-				setUndoRecord(new UndoRecord(this, false,
-						UndoRecord.SET_MESH_SELECTION, new Object[] { this,
-								new Integer(selectMode), selected }));
+				setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, this, selectMode, selected));
 			setSelectionMode(modes.getSelection());
 			theView[currentView].getCurrentTool().activate();
 		} else {
@@ -1593,6 +1393,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 *                Description of the Parameter
 	 */
 
+        @Override
 	public void adjustDeltas(Vec3 delta[]) {
 		int dist[] = getSelectionDistance();
 		int count[] = new int[delta.length];
@@ -1636,6 +1437,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	/**
 	 * Updates window menus
 	 */
+        @Override
 	public void updateMenus() {
 		super.updateMenus();
 		switch (selectMode) {
@@ -1648,20 +1450,20 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		case EDGE_MODE:
 			vertexMenu.setEnabled(false);
 			edgeMenu.setEnabled(true);
-			extrudeEdgeItem[0].setShortcut(singleNormalShortcut);
-			extrudeEdgeRegionItem[0].setShortcut(groupNormalShortcut);
-			extrudeItem[0].setShortcut(null);
-			extrudeRegionItem[0].setShortcut(null);
+			extrudeEdgeItem.setShortcut(singleNormalShortcut);
+			extrudeEdgeRegionItem.setShortcut(groupNormalShortcut);
+			extrudeItem.setShortcut(null);
+			extrudeRegionItem.setShortcut(null);
 			faceMenu.setEnabled(false);
 			break;
 		case FACE_MODE:
 			vertexMenu.setEnabled(false);
 			edgeMenu.setEnabled(false);
 			faceMenu.setEnabled(true);
-			extrudeItem[0].setShortcut(singleNormalShortcut);
-			extrudeRegionItem[0].setShortcut(groupNormalShortcut);
-			extrudeEdgeItem[0].setShortcut(null);
-			extrudeEdgeRegionItem[0].setShortcut(null);
+			extrudeItem.setShortcut(singleNormalShortcut);
+			extrudeRegionItem.setShortcut(groupNormalShortcut);
+			extrudeEdgeItem.setShortcut(null);
+			extrudeEdgeRegionItem.setShortcut(null);
 			break;
 		}
 		PolyMesh mesh = (PolyMesh) objInfo.object;
@@ -1677,18 +1479,13 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		if (selCount > 0) {
 			//((RotateViewTool) altTool).setUseSelectionCenter(true);
 			any = true;
-			for (int j = 0; j < vertexMenuItem.length; ++j) {
-				((Widget) vertexMenuItem[j]).setEnabled(true);
-				((Widget) vertexPopupMenuItem[j]).setEnabled(true);
-			}
-			for (int j = 0; j < edgeMenuItem.length; ++j) {
-				((Widget) edgeMenuItem[j]).setEnabled(true);
-				((Widget) edgePopupMenuItem[j]).setEnabled(true);
-			}
-			for (int j = 0; j < faceMenuItem.length; ++j) {
-				((Widget) faceMenuItem[j]).setEnabled(true);
-				((Widget) facePopupMenuItem[j]).setEnabled(true);
-			}
+                        vertexMenu.getChildren().forEach(widget -> widget.setEnabled(true));
+                        vertexPopupMenu.getChildren().forEach(widget -> widget.setEnabled(true));
+                        edgeMenu.getChildren().forEach(widget -> widget.setEnabled(true));
+                        edgePopupMenu.getChildren().forEach(widget -> widget.setEnabled(true));
+                        faceMenu.getChildren().forEach(widget -> widget.setEnabled(true));
+                        facePopupMenu.getChildren().forEach(widget -> widget.setEnabled(true));
+                        
 			editMenuItem[0].setEnabled(true);
 			editMenuItem[2].setEnabled(true);
 			editMenuItem[3].setEnabled(true);
@@ -1741,19 +1538,14 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 				break;
 			}
 		} else {
-			//((RotateViewTool) altTool).setUseSelectionCenter(false);
-			for (int j = 0; j < vertexMenuItem.length; ++j) {
-				((Widget) vertexMenuItem[j]).setEnabled(false);
-				((Widget) vertexPopupMenuItem[j]).setEnabled(false);
-			}
-			for (int j = 0; j < edgeMenuItem.length; ++j) {
-				((Widget) edgeMenuItem[j]).setEnabled(false);
-				((Widget) edgePopupMenuItem[j]).setEnabled(false);
-			}
-			for (int j = 0; j < faceMenuItem.length; ++j) {
-				((Widget) faceMenuItem[j]).setEnabled(false);
-				((Widget) facePopupMenuItem[j]).setEnabled(false);
-			}
+			
+                        vertexMenu.getChildren().forEach(widget -> widget.setEnabled(false));
+                        vertexPopupMenu.getChildren().forEach(widget -> widget.setEnabled(false));
+                        edgeMenu.getChildren().forEach(widget -> widget.setEnabled(false));
+                        edgePopupMenu.getChildren().forEach(widget -> widget.setEnabled(false));
+                        faceMenu.getChildren().forEach(widget -> widget.setEnabled(false));
+                        facePopupMenu.getChildren().forEach(widget -> widget.setEnabled(false));
+                        
 			editMenuItem[0].setEnabled(false);
 			editMenuItem[2].setEnabled(false);
 			editMenuItem[3].setEnabled(false);
@@ -1782,18 +1574,16 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 			if (selCount == selected.length) {
 				editMenuItem[1].setEnabled(false);
 				editMenuItem[2].setEnabled(false);
-				((BMenuItem) faceMenuItem[10]).setEnabled(false);
+				faceFindSimilarMenuItem.setEnabled(false);
 				((BMenuItem) edgeMenuItem[12]).setEnabled(false);
-				((BMenuItem) facePopupMenuItem[10]).setEnabled(false);
+				faceFindSimilarPopupMenuItem.setEnabled(false);
 				((BMenuItem) edgePopupMenuItem[12]).setEnabled(false);
 			} else {
 				editMenuItem[1].setEnabled(true);
 			}
-		if (mesh.getMappingData() != null) {
-			((BMenuItem) textureMenuItem[1]).setEnabled(true);
-		} else {
-			((BMenuItem) textureMenuItem[1]).setEnabled(false);
-		}
+		
+                editMappingAction.setEnabled(mesh.getMappingData() != null);                
+                
 		if (mesh.isClosed()) {
 			((BMenuItem) vertexMenuItem[8]).setEnabled(false);
 			((BMenuItem) vertexMenuItem[9]).setEnabled(false);
@@ -1805,44 +1595,34 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 			((BMenuItem) edgePopupMenuItem[11]).setEnabled(false);
 			((BMenuItem) meshMenuItem[3]).setEnabled(false);
 			((BMenuItem) meshMenuItem[4]).setEnabled(false);
-			if (mesh.getSeams() == null) {
-				((BMenuItem) textureMenuItem[0]).setEnabled(false);
-			} else {
-				((BMenuItem) textureMenuItem[0]).setEnabled(true);
-			}
+			
+                        unfoldMeshAction.setEnabled(mesh.getSeams() != null);
+                        
 		} else {
 			((BMenuItem) vertexMenuItem[8]).setEnabled(true);
+                        ((BMenuItem) vertexMenuItem[9]).setEnabled(true);
 			((BMenuItem) vertexPopupMenuItem[8]).setEnabled(true);
-			((BMenuItem) edgeMenuItem[10]).setEnabled(true);
-			((BMenuItem) edgePopupMenuItem[10]).setEnabled(true);
-			((BMenuItem) vertexMenuItem[9]).setEnabled(true);
 			((BMenuItem) vertexPopupMenuItem[9]).setEnabled(true);
+			((BMenuItem) edgeMenuItem[10]).setEnabled(true);
+			((BMenuItem) edgePopupMenuItem[10]).setEnabled(true);			
 			((BMenuItem) edgeMenuItem[11]).setEnabled(true);
 			((BMenuItem) edgePopupMenuItem[11]).setEnabled(true);
 			((BMenuItem) meshMenuItem[3]).setEnabled(true);
 			((BMenuItem) meshMenuItem[4]).setEnabled(true);
-			((BMenuItem) textureMenuItem[0]).setEnabled(true);
+			unfoldMeshAction.setEnabled(true);
 		}
-		if (mesh.getSeams() != null) {
-			for (int j = 15; j <= 19; j++) {
-				((BMenuItem) edgeMenuItem[j]).setEnabled(true);
-				((BMenuItem) edgePopupMenuItem[j]).setEnabled(true);
-			}
-
-		} else {
-			for (int j = 15; j <= 19; j++) {
-				((BMenuItem) edgeMenuItem[j]).setEnabled(false);
-				((BMenuItem) edgePopupMenuItem[j]).setEnabled(false);
-			}
-		}
+                
+                for (int j = 15; j <= 19; j++) {
+                  ((BMenuItem) edgeMenuItem[j]).setEnabled(mesh.getSeams() != null);
+                  ((BMenuItem) edgePopupMenuItem[j]).setEnabled(mesh.getSeams() != null);
+                }
+                
 		// ( (BMenuItem) edgeMenuItem[4] ).setEnabled( false );
-		templateItem
-				.setEnabled(theView[currentView].getTemplateImage() != null);
+		templateItem.setEnabled(theView[currentView].getTemplateImage() != null);
 		Skeleton s = mesh.getSkeleton();
 		Joint selJoint = s.getJoint(view.getSelectedJoint());
 		((BMenuItem) skeletonMenuItem[0]).setEnabled(selJoint != null);
-		((BMenuItem) skeletonMenuItem[1]).setEnabled(selJoint != null
-				&& selJoint.children.length == 0);
+		((BMenuItem) skeletonMenuItem[1]).setEnabled(selJoint != null && selJoint.children.length == 0);
 		((BMenuItem) skeletonMenuItem[2]).setEnabled(selJoint != null);
 		((BMenuItem) skeletonMenuItem[4]).setEnabled(any);
 		((BMenuItem) edgeMenuItem[14]).setEnabled(true);
@@ -1873,7 +1653,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		level = mesh.getInteractiveSmoothLevel();
 		if (level + amount > 0) {
 			mesh.setInteractiveSmoothLevel(level + amount);
-			ispin.setValue(new Integer(level + amount));
+			ispin.setValue(level + amount);
 			objectChanged();
 			updateImage();
 		}
@@ -1915,42 +1695,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 	}
 
+        /*
+         * Method runs from Polymesh keystrokes script
+        */
 	public void selectTool(int tool) {
-		switch (tool) {
-		case RESHAPE_TOOL:
-			tools.selectTool(reshapeMeshTool);
-			break;
-		case SKEW_TOOL:
-			tools.selectTool(skewMeshTool);
-			break;
-		case TAPER_TOOL:
-			tools.selectTool(taperMeshTool);
-			break;
-		case BEVEL_TOOL:
-			tools.selectTool(bevelTool);
-			break;
-		case EXTRUDE_TOOL:
-			tools.selectTool(extrudeTool);
-			break;
-		case EXTRUDE_CURVE_TOOL:
-			tools.selectTool(extrudeCurveTool);
-			break;
-		case THICKEN_TOOL:
-			tools.selectTool(thickenMeshTool);
-			break;
-		case CREATE_FACE_TOOL:
-			tools.selectTool(createFaceTool);
-			break;
-		case KNIFE_TOOL:
-			tools.selectTool(knifeTool);
-			break;
-		case SEW_TOOL:
-			tools.selectTool(sewTool);
-			break;
-		case SKELETON_TOOL:
-			tools.selectTool(skeletonTool);
-			break;
-		}
+          tools.selectTool(toolsMap.get(tool));
 	}
 
 	/**
@@ -2007,16 +1756,13 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * Reloads keystroke scripts shipped with the PolyMesh plugin
 	 */
 	public void reloadKeystrokes() {
-		cleanKeystrokes();
-		try {
-			InputStream in = getClass()
-					.getResourceAsStream("/PMkeystrokes.xml");
-			KeystrokeManager.addRecordsFromXML(in);
-			in.close();
-			KeystrokeManager.saveRecords();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+          cleanKeystrokes();
+          try(InputStream in = getClass().getResourceAsStream("/PMkeystrokes.xml")) {
+            KeystrokeManager.addRecordsFromXML(in);
+            KeystrokeManager.saveRecords();
+          } catch (Exception ex) {
+            System.out.println("Error reload Keystrokes due " + ex.getLocalizedMessage());
+          }
 	}
 
 	/**
@@ -2032,6 +1778,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * @param e
 	 *                The KeyPressedEvent
 	 */
+        @Override
 	protected void keyPressed(KeyPressedEvent e) {
 		((PolyMeshViewer) getView()).keyPressed(e);
 		valueWidget.keyPressed(e);
@@ -2060,8 +1807,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		if (selectMode == POINT_MODE) {
 			int[] indices = getIndicesFromSelection(selected);
 			theMesh.connectVertices(indices);
-			setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-					new Object[] { theMesh, prevMesh }));
+			setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, prevMesh));
 			objectChanged();
 			updateImage();
 
@@ -2088,49 +1834,42 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 				indices[count++] = i;
 		return indices;
 	}
-
-	/**
-	 * Divides selected edges into n segements
+	
+        /**
+	 * Divides selected edges into segements
 	 * 
-	 * @param ev
-	 *                The command event
 	 */
-	private void doDivideEdges(CommandEvent ev) {
-		PolyMesh mesh = (PolyMesh) objInfo.object;
-		PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
-		boolean[] sel = null;
-
-		if (ev.getWidget() == divideMenuItem[0]
-				|| ev.getWidget() == popupDivideMenuItem[0]) {
-			sel = mesh.divideEdges(selected, 2);
-		} else if (ev.getWidget() == divideMenuItem[1]
-				|| ev.getWidget() == popupDivideMenuItem[1]) {
-			sel = mesh.divideEdges(selected, 3);
-		} else if (ev.getWidget() == divideMenuItem[2]
-				|| ev.getWidget() == popupDivideMenuItem[2]) {
-			sel = mesh.divideEdges(selected, 4);
-		} else if (ev.getWidget() == divideMenuItem[3]
-				|| ev.getWidget() == popupDivideMenuItem[3]) {
-			sel = mesh.divideEdges(selected, 5);
-		} else if (ev.getWidget() == divideMenuItem[4]
-				|| ev.getWidget() == popupDivideMenuItem[4]) {
-			DivideDialog dlg = new DivideDialog();
-			int num = dlg.getNumber();
-			if (num > 0)
-				sel = mesh.divideEdges(selected, num);
-		}
-		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-				new Object[] { mesh, prevMesh }));
-		objectChanged();
-		if (sel != null) {
-			modes.selectTool(pointTool);
-			setSelectionMode(POINT_MODE);
-			setSelection(sel);
-			updateMenus();
-		}
-		updateImage();
-
-	}
+        private void doDivideEdges(int counter) {
+          PolyMesh mesh = (PolyMesh) objInfo.object;
+          PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
+          boolean[] sel = mesh.divideEdges(selected, counter);
+          setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
+          objectChanged();
+          if (sel != null) {
+            modes.selectTool(pointTool);
+            setSelectionMode(POINT_MODE);
+            setSelection(sel);
+            updateMenus();
+          }
+          updateImage();
+        }
+        
+        private void doDivideEdgesTwo() {
+          doDivideEdges(2);
+        }
+        private void doDivideEdgesThree() {
+          doDivideEdges(3);
+        }
+        private void doDivideEdgesFour() {
+          doDivideEdges(4);
+        }
+        private void doDivideEdgesFive() {
+          doDivideEdges(5);
+        }
+        private void doDivideEdgesInteractive() {
+          int num = new DivideDialog().getNumber();
+          if (num > 0) doDivideEdges(num);
+        }
 
 	/**
 	 * Called when a smoothing method command is selected
@@ -2140,8 +1879,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 */
 	private void smoothingChanged(CommandEvent ev) {
 		PolyMesh mesh = (PolyMesh) objInfo.object;
-		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-				new Object[] { mesh, mesh.duplicate() }));
+		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, mesh.duplicate()));
 		Object source = ev.getWidget();
 		for (int i = 0; i < smoothItem.length; i++)
 			smoothItem[i].setState(false);
@@ -2168,24 +1906,21 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	}
 
 	private void doLevelContainerEnable() {
-            boolean enable = false;
-            PolyMesh mesh = (PolyMesh) objInfo.object;
-            if (mesh.getSmoothingMethod() == Mesh.APPROXIMATING)
-                    enable = true;
-            for(Widget widget: levelContainer.getChildren()) widget.setEnabled(enable);
+          PolyMesh mesh = (PolyMesh) objInfo.object;		
+          boolean enable = mesh.getSmoothingMethod() == Mesh.APPROXIMATING;
+          levelContainer.getChildren().forEach(widget -> widget.setEnabled(enable));
 	}
 
 	/**
 	 * Smoothes the mesh
 	 */
 	private void doSmoothMesh() {
-		PolyMesh mesh = (PolyMesh) objInfo.object;
-		PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
-		mesh.smoothWholeMesh(-1, false, 1, true);
-		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-				new Object[] { mesh, prevMesh }));
-		objectChanged();
-		updateImage();
+          PolyMesh mesh = (PolyMesh) objInfo.object;
+          PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
+          mesh.smoothWholeMesh(-1, false, 1, true);
+          setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
+          objectChanged();
+          updateImage();
 
 	}
 
@@ -2199,8 +1934,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		for (int i = 0; i < selected.length; ++i)
 			selected[i] = true;
 		mesh.smooth(selected, true);
-		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-				new Object[] { mesh, prevMesh }));
+		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
 		objectChanged();
 		updateImage();
 
@@ -2213,8 +1947,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		PolyMesh mesh = (PolyMesh) objInfo.object;
 		PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
 		mesh.smooth(selected, false);
-		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-				new Object[] { mesh, prevMesh }));
+		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
 		objectChanged();
 		updateImage();
 
@@ -2227,8 +1960,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		PolyMesh mesh = (PolyMesh) objInfo.object;
 		PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
 		mesh.smooth(selected, true);
-		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-				new Object[] { mesh, prevMesh }));
+		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
 		objectChanged();
 		updateImage();
 
@@ -2363,16 +2095,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 *                Description of the Parameter
 	 */
 	private void move(int kind, short direction) {
-		if (valueWidget.isActivated())
-			return;
-		moveDirection = direction;
-		Runnable callback = new Runnable() {
-
-			public void run() {
-				doMoveCallback();
-			}
-		};
-		valueWidget.activate(callback);
+          if (valueWidget.isActivated()) return;
+          moveDirection = direction;
+          valueWidget.activate(this::doMoveCallback);
 	}
 
 	/**
@@ -2384,16 +2109,13 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		switch (selectMode) {
 		default:
 		case POINT_MODE:
-			mesh.moveVertices(valueSelection, valueWidget.getValue(),
-					moveDirection);
+			mesh.moveVertices(valueSelection, valueWidget.getValue(), moveDirection);
 			break;
 		case EDGE_MODE:
-			mesh.moveEdges(valueSelection, valueWidget.getValue(),
-					moveDirection);
+			mesh.moveEdges(valueSelection, valueWidget.getValue(), moveDirection);
 			break;
 		case FACE_MODE:
-			mesh.moveFaces(valueSelection, valueWidget.getValue(),
-					moveDirection);
+			mesh.moveFaces(valueSelection, valueWidget.getValue(), moveDirection);
 			break;
 		}
 		objectChanged();
@@ -2404,14 +2126,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * Bevel edges command
 	 */
 	private void doBevelEdges() {
-		if (valueWidget.isActivated())
-			return;
-		Runnable callback = new Runnable() {
-			public void run() {
-				doBevelEdgesCallback();
-			}
-		};
-		valueWidget.activate(callback);
+          if (valueWidget.isActivated()) return;
+          valueWidget.activate(this::doBevelEdgesCallback);
 	}
 
 	/**
@@ -2419,27 +2135,19 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * valueWidget.getValue() dialog
 	 */
 	private void doBevelEdgesCallback() {
-		PolyMesh mesh = (PolyMesh) objInfo.object;
-		mesh.copyObject(priorValueMesh);
-		boolean[] sel = mesh.bevelEdges(valueSelection, valueWidget
-				.getValue());
-		objectChanged();
-		setSelection(sel);
+          PolyMesh mesh = (PolyMesh) objInfo.object;
+          mesh.copyObject(priorValueMesh);
+          boolean[] sel = mesh.bevelEdges(valueSelection, valueWidget.getValue());
+          objectChanged();
+          setSelection(sel);
 	}
 
 	/**
 	 * Bevel edges command
 	 */
 	private void doBevelVertices() {
-		if (valueWidget.isActivated())
-			return;
-		Runnable callback = new Runnable() {
-
-			public void run() {
-				doBevelVerticesCallback();
-			}
-		};
-		valueWidget.activate(callback);
+          if (valueWidget.isActivated()) return;
+          valueWidget.activate(this::doBevelVerticesCallback);
 	}
 
 	/**
@@ -2447,27 +2155,27 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * valueWidget.getValue() dialog
 	 */
 	private void doBevelVerticesCallback() {
-		PolyMesh mesh = (PolyMesh) objInfo.object;
-		mesh.copyObject(priorValueMesh);
-		boolean[] sel = mesh.bevelVertices(valueSelection, valueWidget
-				.getValue());
-		objectChanged();
-		setSelection(sel);
+          PolyMesh mesh = (PolyMesh) objInfo.object;
+          mesh.copyObject(priorValueMesh);
+          boolean[] sel = mesh.bevelVertices(valueSelection, valueWidget.getValue());
+          objectChanged();
+          setSelection(sel);
 	}
 
 	/**
 	 * Validate button selected
 	 */
+        @Override
 	public void doValueWidgetValidate() {
 		valueWidgetDialog.setVisible(false);
 		PolyMesh mesh = (PolyMesh) objInfo.object;
-		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-				new Object[] { mesh, priorValueMesh }));
+		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, priorValueMesh));
 	}
 
 	/**
 	 * Cancel button selected
 	 */
+        @Override
 	public void doValueWidgetAbort() {
 		valueWidgetDialog.setVisible(false);
 		PolyMesh mesh = (PolyMesh) objInfo.object;
@@ -2479,11 +2187,13 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		updateImage();
 	}
 
+        @Override
 	public void prepareToShowValueWidget() {
 		priorValueMesh = (PolyMesh)((PolyMesh) objInfo.object).duplicate();
 		valueSelection = selected;
 	}
 	
+        @Override
 	public void showValueWidget() {
 		if (unseenValueWidgetDialog) {
 			Window main = (Window) this.getComponent();
@@ -2508,120 +2218,137 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	}
 
 	/**
-	 * Face extrusion
-	 * 
-	 * @param ev
-	 *                The command event
+	 * Face extrusion along normal
 	 */
-	private void doExtrude(CommandEvent ev) {
-
-		if (valueWidget.isActivated())
-			return;
-		Widget w = ev.getWidget();
-		if (w == extrudeItem[0] || w == popupExtrudeItem[0])
-			direction = null;
-		else if (w == extrudeItem[1] || w == popupExtrudeItem[1])
-			direction = Vec3.vx();
-		else if (w == extrudeItem[2] || w == popupExtrudeItem[2])
-			direction = Vec3.vy();
-		else if (w == extrudeItem[3] || w == popupExtrudeItem[3])
-			direction = Vec3.vz();
-		Runnable callback = new Runnable() {
-
-			public void run() {
-				doExtrudeCallback();
-			}
-		};
-		valueWidget.activate(callback);
+	private void doExtrudeNormal() {
+          if (valueWidget.isActivated()) return;
+          direction = null;
+          valueWidget.activate(this::doExtrudeCallback);
+	}
+	/**
+	 * Face extrusion along X axis
+	 */
+	private void doExtrudeX() {
+          if (valueWidget.isActivated()) return;
+          direction = Vec3.vx();
+          valueWidget.activate(this::doExtrudeCallback);
+        }
+	/**
+	 * Face extrusion along Y axis
+	 */
+	private void doExtrudeY() {
+          if (valueWidget.isActivated()) return;
+          direction = Vec3.vy();
+          valueWidget.activate(this::doExtrudeCallback);
+        }
+	/**
+	 * Face extrusion along Z axis
+	 */
+	private void doExtrudeZ() {
+          if (valueWidget.isActivated()) return;
+          direction = Vec3.vz();
+          valueWidget.activate(this::doExtrudeCallback);
+        }
+        
+	/**
+	 * Edge extrusion along normal
+	 */
+	private void doExtrudeEdgeNormal() {
+          if (valueWidget.isActivated()) return;
+          direction = null;
+          valueWidget.activate(this::doExtrudeEdgeCallback);
+	}
+	/**
+	 * Edge extrusion along X axis
+	 */
+	private void doExtrudeEdgeX() {
+          if (valueWidget.isActivated()) return;
+          direction = Vec3.vx();
+          valueWidget.activate(this::doExtrudeEdgeCallback);
+	}
+	/**
+	 * Edge extrusion along Y axis
+	 */
+	private void doExtrudeEdgeY() {
+          if (valueWidget.isActivated()) return;
+          direction = Vec3.vy();
+          valueWidget.activate(this::doExtrudeEdgeCallback);
+	}
+	/**
+	 * Edge extrusion along Z axis
+	 */
+	private void doExtrudeEdgeZ() {
+          if (valueWidget.isActivated()) return;
+          direction = Vec3.vz();
+          valueWidget.activate(this::doExtrudeEdgeCallback);
+	}
+        
+	/**
+	 * Region extrusion along normal
+	 */
+	private void doExtrudeRegionNormal() {
+          if (valueWidget.isActivated()) return;
+          direction = null;
+          valueWidget.activate(this::doExtrudeRegionCallback);	
+	}
+	/**
+	 * Region extrusion along X axis
+	 */
+	private void doExtrudeRegionX() {
+          if (valueWidget.isActivated()) return;
+          direction = Vec3.vx();
+          valueWidget.activate(this::doExtrudeRegionCallback);	
+	}
+	/**
+	 * Region extrusion along Y axis
+	 */
+	private void doExtrudeRegionY() {
+          if (valueWidget.isActivated()) return;
+          direction = Vec3.vy();
+          valueWidget.activate(this::doExtrudeRegionCallback);	
+	}
+	/**
+	 * Region extrusion along Z axis
+	 */
+	private void doExtrudeRegionZ() {
+          if (valueWidget.isActivated()) return;
+          direction = Vec3.vz();
+          valueWidget.activate(this::doExtrudeRegionCallback);	
 	}
 
 	/**
-	 * Edge extrusion
-	 * 
-	 * @param ev
-	 *                The command event
+	 * Edge Region extrusion along normal
 	 */
-	private void doExtrudeEdge(CommandEvent ev) {
-
-		if (valueWidget.isActivated())
-			return;
-		Widget w = ev.getWidget();
-		if (w == extrudeEdgeItem[0] || w == popupExtrudeEdgeItem[0])
-			direction = null;
-		else if (w == extrudeEdgeItem[1] || w == popupExtrudeEdgeItem[1])
-			direction = Vec3.vx();
-		else if (w == extrudeEdgeItem[2] || w == popupExtrudeEdgeItem[2])
-			direction = Vec3.vy();
-		else if (w == extrudeEdgeItem[3] || w == popupExtrudeEdgeItem[3])
-			direction = Vec3.vz();
-		Runnable callback = new Runnable() {
-
-			public void run() {
-				doExtrudeEdgeCallback();
-			}
-		};
-		valueWidget.activate(callback);
+	private void doExtrudeEdgeRegionNormal() {
+          if (valueWidget.isActivated()) return;
+          direction = null;
+          valueWidget.activate(this::doExtrudeEdgeRegionCallback);
 	}
-
 	/**
-	 * Region extrusion
-	 * 
-	 * @param ev
-	 *                Command event
+	 * Edge Region extrusion along X axis
 	 */
-	private void doExtrudeRegion(CommandEvent ev) {
-
-		if (valueWidget.isActivated())
-			return;
-		Widget w = ev.getWidget();
-		if (w == extrudeRegionItem[0] || w == popupExtrudeRegionItem[0])
-			direction = null;
-		else if (w == extrudeRegionItem[1] || w == popupExtrudeRegionItem[1])
-			direction = Vec3.vx();
-		else if (w == extrudeRegionItem[2] || w == popupExtrudeRegionItem[2])
-			direction = Vec3.vy();
-		else if (w == extrudeRegionItem[3] || w == popupExtrudeRegionItem[3])
-			direction = Vec3.vz();
-		Runnable callback = new Runnable() {
-
-			public void run() {
-				doExtrudeRegionCallback();
-			}
-		};
-		valueWidget.activate(callback);
+	private void doExtrudeEdgeRegionX() {
+          if (valueWidget.isActivated()) return;
+          direction = Vec3.vx();
+          valueWidget.activate(this::doExtrudeEdgeRegionCallback);
 	}
-
 	/**
-	 * Edge Region extrusion
-	 * 
-	 * @param ev
-	 *                Command event
+	 * Edge Region extrusion along Y axis
 	 */
-	private void doExtrudeEdgeRegion(CommandEvent ev) {
-
-		if (valueWidget.isActivated())
-			return;
-		Widget w = ev.getWidget();
-		if (w == extrudeEdgeRegionItem[0] || w == popupExtrudeEdgeRegionItem[0])
-			direction = null;
-		else if (w == extrudeEdgeRegionItem[1]
-				|| w == popupExtrudeEdgeRegionItem[1])
-			direction = Vec3.vx();
-		else if (w == extrudeEdgeRegionItem[2]
-				|| w == popupExtrudeEdgeRegionItem[2])
-			direction = Vec3.vy();
-		else if (w == extrudeEdgeRegionItem[3]
-				|| w == popupExtrudeEdgeRegionItem[3])
-			direction = Vec3.vz();
-		Runnable callback = new Runnable() {
-
-			public void run() {
-				doExtrudeEdgeRegionCallback();
-			}
-		};
-		valueWidget.activate(callback);
+	private void doExtrudeEdgeRegionY() {
+          if (valueWidget.isActivated()) return;
+          direction = Vec3.vy();
+          valueWidget.activate(this::doExtrudeEdgeRegionCallback);
 	}
-
+	/**
+	 * Edge Region extrusion along Z axis
+	 */
+	private void doExtrudeEdgeRegionZ() {
+          if (valueWidget.isActivated()) return;
+          direction = Vec3.vz();
+          valueWidget.activate(this::doExtrudeEdgeRegionCallback);
+	}
+        
 	/**
 	 * Callback called when the valueWidget.getValue() has changed in the
 	 * valueWidget.getValue() dialog
@@ -2629,8 +2356,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	private void doExtrudeCallback() {
 		PolyMesh valueMesh = (PolyMesh) objInfo.object;
 		valueMesh.copyObject(priorValueMesh);
-		valueMesh.extrudeFaces(valueSelection, valueWidget.getValue(),
-				direction);
+		valueMesh.extrudeFaces(valueSelection, valueWidget.getValue(), direction);
 		boolean[] sel = new boolean[valueMesh.getFaces().length];
 		for (int i = 0; i < valueSelection.length; ++i)
 			sel[i] = valueSelection[i];
@@ -2658,20 +2384,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * Mesh thickening
 	 */
 	private void doThickenMesh(CommandEvent ev) {
-
-		if (valueWidget.isActivated())
-			return;
-		if (ev.getWidget() == meshMenuItem[3])
-			thickenFaces = true;
-		else
-			thickenFaces = false;
-		Runnable callback = new Runnable() {
-
-			public void run() {
-				doThickenMeshCallback();
-			}
-		};
-		valueWidget.activate(callback);
+          if (valueWidget.isActivated()) return;
+          thickenFaces = ev.getWidget() == meshMenuItem[3];
+          valueWidget.activate(this::doThickenMeshCallback);
 	}
 
 	/**
@@ -2727,14 +2442,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 		if (valueWidget.isActivated())
 			return;
-		Runnable callback = new Runnable() {
-
-			public void run() {
-				doInsertLoopsCallback();
-			}
-		};
+		
 		valueWidget.setTempValueRange(0, 1.0);
-		valueWidget.activate(0.5, callback);
+		valueWidget.activate(0.5, this::doInsertLoopsCallback);
 	}
 
 	/**
@@ -2795,13 +2505,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 			}
 		if (checkForNullMovement(vertDisplacements))
 			return;
-		Runnable callback = new Runnable() {
-
-			public void run() {
-				doBringCallback();
-			}
-		};
-		valueWidget.activate(callback);
+		
+		valueWidget.activate(this::doBringCallback);
 	}
 
 	/**
@@ -2933,13 +2638,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 			}
 		if (checkForNullMovement(vertDisplacements))
 			return;
-		Runnable callback = new Runnable() {
-
-			public void run() {
-				doBringCallback();
-			}
-		};
-		valueWidget.activate(callback);
+		
+		valueWidget.activate(this::doBringCallback);
 	}
 
 	/**
@@ -3004,44 +2704,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 						.minus(origin)));
 		if (checkForNullMovement(vertDisplacements))
 			return;
-		Runnable callback = new Runnable() {
-
-			public void run() {
-				doBringCallback();
-			}
-		};
-		valueWidget.activate(callback);
+		
+		valueWidget.activate(this::doBringCallback);
 	}
-
-//	/**
-//	 * Description of the Method
-//	 */
-//	private void enableNormalFunction() {
-////		editMenu.setEnabled(true);
-////		vertexMenu.setEnabled(true);
-////		vertexPopupMenu.setEnabled(true);
-////		edgeMenu.setEnabled(true);
-////		faceMenu.setEnabled(true);
-////		skeletonMenu.setEnabled(true);
-////		okButton.setEnabled(true);
-////		tools.selectTool(defaultTool);
-////		activateTools();
-//	}
-//
-//	/**
-//	 * Description of the Method
-//	 */
-//	private void disableNormalFunction() {
-////		editMenu.setEnabled(false);
-////		vertexMenu.setEnabled(false);
-////		vertexPopupMenu.setEnabled(false);
-////		edgeMenu.setEnabled(false);
-////		faceMenu.setEnabled(false);
-////		skeletonMenu.setEnabled(false);
-////		okButton.setEnabled(false);
-////		tools.selectTool(altTool);
-////		deactivateTools();
-//	}
 
 	/**
 	 * Brings normal to current selection
@@ -3092,23 +2757,16 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		updateImage();
 
 	}
-
-	public void triggerPopupEvent(WidgetMouseEvent e) {
-		if (selectMode == POINT_MODE)
-			vertexPopupMenu.show(e);
-		else if (selectMode == EDGE_MODE)
-			edgePopupMenu.show(e);
-		else
-			facePopupMenu.show(e);
+        
+        private final Map<Integer, BPopupMenu> modeToMenu = Map.of(POINT_MODE, vertexPopupMenu, EDGE_MODE, edgePopupMenu, FACE_MODE, facePopupMenu);
+        
+	public void triggerPopupEvent(WidgetMouseEvent event) {
+          modeToMenu.get(selectMode).show(event);
 	}
 
-	public void showPopupMenu(Widget w, int x, int y) {
-		if (selectMode == POINT_MODE)
-			vertexPopupMenu.show(w, x, y);
-		else if (selectMode == EDGE_MODE)
-			edgePopupMenu.show(w, x, y);
-		else
-			facePopupMenu.show(w, x, y);
+        @Override
+	public void showPopupMenu(Widget widget, int x, int y) {
+          modeToMenu.get(selectMode).show(widget, x, y);
 	}
 
 	/**
@@ -3155,6 +2813,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		smoothness.addEventLink(ValueChangedEvent.class, new Object() {
 			void processEvent() {
 				processor.addEvent(new Runnable() {
+                                        @Override
 					public void run() {
 						float s = (float) smoothness.getValue();
 						if (s < 0)
@@ -3186,8 +2845,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 						.text("Smoothness") });
 		processor.stopProcessing();
 		if (dlg.clickedOk())
-			setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-					new Object[] { theMesh, prevMesh }));
+			setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, prevMesh));
 		else {
 			theMesh.copyObject(prevMesh);
 			objectChanged();
@@ -3228,6 +2886,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * 
 	 * @return The selectionDistance valueWidget.getValue()
 	 */
+        @Override
 	public int[] getSelectionDistance() {
 		if (maxDistance != getTensionDistance() || selectionDistance == null)
 			findSelectionDistance();
@@ -3334,6 +2993,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * 
 	 * @return The selectionMode valueWidget.getValue()
 	 */
+        @Override
 	public int getSelectionMode() {
 		return selectMode;
 	}
@@ -3346,6 +3006,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * @return The selection valueWidget.getValue()
 	 */
 
+        @Override
 	public boolean[] getSelection() {
 		return selected;
 	}
@@ -3449,6 +3110,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 *                The new selectionMode valueWidget.getValue()
 	 */
 
+        @Override
 	public void setSelectionMode(int mode) {
 		PolyMesh mesh = (PolyMesh) objInfo.object;
 		MeshVertex v[] = mesh.getVertices();
@@ -3601,6 +3263,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * @param sel
 	 *                The new selection array
 	 */
+        @Override
 	public void setSelection(boolean sel[]) {
 		PolyMesh mesh = (PolyMesh) objInfo.object;
 		Wvertex[] verts = (Wvertex[]) mesh.getVertices();
@@ -3639,6 +3302,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * @param mesh
 	 *                The new mesh valueWidget.getValue()
 	 */
+        @Override
 	public void setMesh(Mesh mesh) {
 		PolyMesh obj = (PolyMesh) mesh;
 		setObject(obj);
@@ -3691,6 +3355,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * When the object changes, we need to rebuild the display.
 	 */
 
+        @Override
 	public void objectChanged() {
             PolyMesh mesh = (PolyMesh) objInfo.object;
             mesh.resetMesh();
@@ -3722,13 +3387,14 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		VertexParameterValue value = (VertexParameterValue) getObject().object.getParameterValue(jointWeightParam);
 		value.setValue(jointWeight);
 		getObject().object.setParameterValues(getObject().object.getParameterValues());
-		lastSelectedJoint = selJointId;
+		
 		objInfo.clearCachedMeshes();    
 	}
 	
 	/** Get the extra texture parameter which was added to the mesh to keep track of
     face indices in the editor. */
 
+        @Override
 	public TextureParameter getFaceIndexParameter()
 	{
 		return faceIndexParam;
@@ -3737,6 +3403,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	/** Get the extra texture parameter which was added to the mesh to keep track of
     joint weighting. */
 
+        @Override
 	public TextureParameter getJointWeightParam()
 	{
 		return jointWeightParam;
@@ -3886,8 +3553,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		setSelectionMode(FACE_MODE);
 		updateMenus();
 		setSelection(newFaceSel);
-		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-				new Object[] { mesh, prevMesh }));
+		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
 	}
 
 	/**
@@ -3916,8 +3582,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		for (int i = prevMesh.getFaces().length; i < newFaceSel.length; ++i)
 			newFaceSel[i] = true;
 		setSelection(newFaceSel);
-		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-				new Object[] { mesh, prevMesh }));
+		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
 	}
 
 	/**
@@ -3982,8 +3647,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		}
 		PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
 		mesh.collapseFaces(selected);
-		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-				new Object[] { mesh, prevMesh }));
+		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
 		objectChanged();
 		updateImage();
 	}
@@ -4001,8 +3665,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		}
 		PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
 		mesh.collapseEdges(selected);
-		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-				new Object[] { mesh, prevMesh }));
+		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
 		objectChanged();
 		updateImage();
 	}
@@ -4027,8 +3690,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		}
 		PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
 		mesh.collapseVertices(selected);
-		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-				new Object[] { mesh, prevMesh }));
+		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
 		objectChanged();
 		updateImage();
 	}
@@ -4053,8 +3715,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		}
 		PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
 		mesh.facetVertices(selected);
-		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-				new Object[] { mesh, prevMesh }));
+		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
 		objectChanged();
 		updateImage();
 	}
@@ -4066,8 +3727,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		PolyMesh mesh = (PolyMesh) objInfo.object;
 		PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
 		boolean[] sel = mesh.mergeEdges(selected);
-		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-				new Object[] { mesh, prevMesh }));
+		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
 		objectChanged();
 		setSelection(sel);
 		updateImage();
@@ -4080,8 +3740,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		PolyMesh mesh = (PolyMesh) objInfo.object;
 		PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
 		boolean[] sel = mesh.mergeFaces(selected);
-		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-				new Object[] { mesh, prevMesh }));
+		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
 		objectChanged();
 		setSelection(sel);
 		updateImage();
@@ -4094,8 +3753,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		PolyMesh mesh = (PolyMesh) objInfo.object;
 		PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
 		boolean[] sel = mesh.triangulateFaces(selected);
-		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-				new Object[] { mesh, prevMesh }));
+		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
 		objectChanged();
 		setSelection(sel);
 		updateImage();
@@ -4109,9 +3767,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		boolean newSel[] = new boolean[selected.length];
 		for (int i = 0; i < newSel.length; i++)
 			newSel[i] = !selected[i];
-		setUndoRecord(new UndoRecord(this, false,
-				UndoRecord.SET_MESH_SELECTION, new Object[] { this,
-						new Integer(selectMode), selected }));
+		setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, this, selectMode, selected));
 		setSelection(newSel);
 	}
 
@@ -4122,13 +3778,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		if (valueWidget.isActivated())
 			return;
 		initSelPoints();
-		Runnable callback = new Runnable() {
-
-			public void run() {
-				doScaleSelectionCallback();
-			}
-		};
-		valueWidget.activate(1.0, callback);
+		valueWidget.activate(1.0, this::doScaleSelectionCallback);
 	}
 
 	/**
@@ -4138,13 +3788,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		if (valueWidget.isActivated())
 			return;
 		initSelPoints();
-		Runnable callback = new Runnable() {
-
-			public void run() {
-				doScaleNormalSelectionCallback();
-			}
-		};
-		valueWidget.activate(callback);
+		
+		valueWidget.activate(this::doScaleNormalSelectionCallback);
 	}
 
 	private void initSelPoints() {
@@ -4258,8 +3903,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		mesh.mirrorWholeMesh(mirrorOrientation);
 		objectChanged();
 		updateMenus();
-		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-				new Object[] { mesh, prevMesh }));
+		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
 	}
 
 	/**
@@ -4272,8 +3916,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		objectChanged();
 		updateMenus();
 		updateImage();
-		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT,
-				new Object[] { mesh, prevMesh }));
+		setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
 	}
 
 	/**
@@ -4428,6 +4071,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * @return The object valueWidget.getValue()
 	 */
 
+        @Override
 	public ObjectInfo getObject() {
 		return objInfo;
 	}
@@ -4444,7 +4088,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	}
 
 	private void doLooseSelectionValueChanged() {
-		looseSelectValue = ((Integer) looseSelectSpinner.getValue()).intValue();
+		looseSelectValue = ((Integer) looseSelectSpinner.getValue());
 	}
 
 	@SuppressWarnings("unused")
@@ -4459,11 +4103,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	}
 
 	public int getLooseSelectionRange() {
-		if (!looseSelectCB.getState()) {
-			return 0;
-		} else {
-			return ((Integer) looseSelectSpinner.getValue()).intValue();
-		}
+          if (looseSelectCB.getState()) {
+            return ((Integer) looseSelectSpinner.getValue());
+          } else {
+            return 0;
+          }
 	}
 
 
@@ -4626,7 +4270,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 	private void doInteractiveLevel(ValueChangedEvent ev) {
 		((PolyMesh) objInfo.object).setInteractiveSmoothLevel(((Integer) ispin
-				.getValue()).intValue());
+                        .getValue()));
 		objectChanged();
 		updateImage();
 	}
@@ -4679,6 +4323,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 	/** Load all the preferences into memory. */
 
+        @Override
 	protected void loadPreferences() {
 		super.loadPreferences();
 		lastFreehand = preferences
@@ -4691,6 +4336,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 	/** Save user settings that should be persistent between sessions. */
 
+        @Override
 	protected void savePreferences() {
 		super.savePreferences();
 		preferences.putBoolean("freehandSelection", lastFreehand);
@@ -4698,6 +4344,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		preferences.putBoolean("projectOntoSurface", lastProjectOntoSurface);
 	}
 
+        @Override
 	public void setTensionCommand() {
 		super.setTensionCommand();
 		tensionSpin.setValue(new Integer(tensionDistance));
@@ -4705,7 +4352,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 	public void doTensionChanged() {
 		lastTensionDistance = tensionDistance = ((Integer) tensionSpin
-				.getValue()).intValue();
+                        .getValue());
 		savePreferences();
 	}
 
@@ -4724,7 +4371,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 				v[j] = (Vec3) curve.get(j);
 				s[j] = 1.0f;
 			}
-			boolean b = ((Boolean) closed.get(i)).booleanValue();
+			boolean b = ((Boolean) closed.get(i));
 			Curve c = new Curve(v, s, mesh.getSmoothingMethod(), b);
 			((LayoutWindow) parentWindow).addObject(c, objInfo.coords,
 					("PMCurve " + i), null);
@@ -5039,7 +4686,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		 * OK button selected
 		 */
 		private void doOK() {
-			num = ((Integer) divideSpinner.getValue()).intValue();
+			num = ((Integer) divideSpinner.getValue());
 			dispose();
 		}
 
@@ -5181,6 +4828,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 			widget = w;
 		}
 
+                @Override
 		public Widget getWidget() {
 			return widget;
 		}
@@ -5375,8 +5023,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 		private void doOK() {
 			doApplyVF();
-			setUndoRecord(new UndoRecord(PolyMeshEditorWindow.this, false,
-					UndoRecord.COPY_OBJECT, new Object[] { mesh, prevMesh }));
+			setUndoRecord(new UndoRecord(PolyMeshEditorWindow.this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
 			dispose();
 		}
 	}
@@ -5477,6 +5124,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 				progressBar.setVisible(true);
 				pack();
 				unfoldThread = (new Thread() {
+                                        @Override
 					public void run() {
 						doUnfold(UnfoldStatusDialog.this);
 					}
@@ -5594,12 +5242,12 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		}
 		
 		private void doMinSliderChanged() {
-			minSmoothnessVF.setValue( ((Integer)minSmoothnessSlider.getValue()).intValue() /100.0);
+			minSmoothnessVF.setValue( ((Integer)minSmoothnessSlider.getValue()) /100.0);
 			updateSelection();
 		}
 		
 		private void doMaxSliderChanged() {
-			maxSmoothnessVF.setValue( ((Integer)maxSmoothnessSlider.getValue()).intValue() /100.0);
+			maxSmoothnessVF.setValue( ((Integer)maxSmoothnessSlider.getValue()) /100.0);
 			updateSelection();
 		}
 		
