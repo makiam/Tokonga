@@ -31,4 +31,8 @@ jobs:
     - name: Build with Gradle
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
-        arguments: assemble
+        arguments: assemble createMacVolume
+    - uses: actions/upload-artifact@v3
+      with:
+        name: ArtOfIllusion
+        path: ArtOfIllusion/build/install/ArtOfIllusion-mac/*.dmg
