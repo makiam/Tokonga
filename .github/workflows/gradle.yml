@@ -34,4 +34,5 @@ jobs:
         arguments: assemble createMacVolume
     - uses: actions/upload-artifact@v3
       with:
-        path: ArtOfIllusion/build/install/ArtOfIllusion-mac
+        name: ArtOfIllusion
+        path: ArtOfIllusion/build/install/ArtOfIllusion-mac/*.dmg
