@@ -1,6 +1,6 @@
 /* Copyright (C) 2002-2009 by Peter Eastman
    Changes Copyright (C) 2016 by Petri Ihalainen
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -35,7 +35,8 @@ public class ApplicationPreferences
   private boolean keepBackupFiles, useOpenGL, useCompoundMeshTool, reverseZooming, useViewAnimations;
   private Renderer objectPreviewRenderer, texturePreviewRenderer, defaultRenderer;
 
-  private final ArrayList<PropertyChangeListener> subscribers = new ArrayList<PropertyChangeListener>();
+  @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+  private final List<PropertyChangeListener> subscribers = new ArrayList<>();
   
   /**
    * Create a new ApplicationPreferences object, loading the preferences from a
@@ -60,11 +61,9 @@ public class ApplicationPreferences
         Translate.setLocale(Locale.getDefault());
         return;
       }
-    try
+    try(InputStream in = new BufferedInputStream(new FileInputStream(f)))
       {
-        InputStream in = new BufferedInputStream(new FileInputStream(f));
         loadPreferences(in);
-        in.close();
       }
     catch (IOException ex)
       {
@@ -114,11 +113,9 @@ public class ApplicationPreferences
     // Write the preferences to a file.
 
     File f = new File(getPreferencesDirectory(), "aoiprefs");
-    try
+    try(OutputStream out = new BufferedOutputStream(new FileOutputStream(f)))
       {
-        OutputStream out = new BufferedOutputStream(new FileOutputStream(f));
         properties.store(out, "Art of Illusion Preferences File");
-        out.close();
       }
     catch (IOException ex)
       {
@@ -299,10 +296,8 @@ public class ApplicationPreferences
     PropertyChangeEvent event = new PropertyChangeEvent(this, "objectPreviewRenderer", objectPreviewRenderer, renderer);
     objectPreviewRenderer = renderer;
     properties.put("objectPreviewRenderer", renderer.getName());
-    for(PropertyChangeListener subscriber: subscribers)
-    {
-      subscriber.propertyChange(event);
-    }
+
+    subscribers.forEach(subscriber -> subscriber.propertyChange(event));
   }
 
   /** Get the texture preview renderer. */
@@ -352,10 +347,7 @@ public class ApplicationPreferences
     this.interactiveSurfaceError = tolerance;
     properties.put("interactiveSurfaceError", Double.toString(interactiveSurfaceError));
 
-    for(PropertyChangeListener subscriber: subscribers)
-    {
-      subscriber.propertyChange(event);
-    }
+    subscribers.forEach(subscriber -> subscriber.propertyChange(event));
 
   }
 
@@ -375,12 +367,9 @@ public class ApplicationPreferences
     
     PropertyChangeEvent event = new PropertyChangeEvent(this, "language", current, locale);
     Translate.setLocale(locale);
-    properties.put("language", locale.getLanguage()+'_'+locale.getCountry());      
-    
-    for(PropertyChangeListener subscriber: subscribers)
-    {
-      subscriber.propertyChange(event);
-    }    
+    properties.put("language", locale.getLanguage()+'_'+locale.getCountry());
+
+    subscribers.forEach(subscriber -> subscriber.propertyChange(event));
 
   }
 
@@ -511,6 +500,6 @@ public class ApplicationPreferences
   
   public final void removePropertyChangeListener(PropertyChangeListener subscriber)
   {
-    subscribers.remove(subscriber);;
+    subscribers.remove(subscriber);
   }
 }

@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2015 by Peter Eastman
-   Changes copyright (C) 2016 by Maksim Khramov
+   Changes copyright (C) 2016-2023 by Maksim Khramov
    Changes copyright (C) 2017 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -3018,7 +3018,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
       updateImage();
     } else if(propertyName.equals("objectPreviewRenderer"))
     {
-      System.out.println("On Preview renderer changed event fired: " + event);
       ((Renderer)event.getOldValue()).cancelRendering(theScene);
       for (ViewerCanvas view : theView)
       {
