@@ -25,6 +25,7 @@ import artofillusion.view.*;
 import buoy.widget.*;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.*;
