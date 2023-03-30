@@ -35,13 +35,15 @@ import java.util.*;
 import java.util.List;
 
 import buoyx.docking.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.text.*;
 import javax.swing.*;
 
 /** The LayoutWindow class represents the main window for creating and laying out scenes. */
 
-public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuManager
+public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuManager, PropertyChangeListener
 {
   SceneViewer theView[];
   BorderContainer viewPanel[];
@@ -231,6 +233,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     createViewMenu();
     createPopupMenu();
     preferences = Preferences.userNodeForPackage(getClass()).node("LayoutWindow");
+    ArtOfIllusion.getPreferences().addPropertyChangeListener(this);
     loadPreferences();
     numViewsShown = (numViewsShown == 1 ? 4 : 1);
     toggleViewsCommand();
@@ -994,7 +997,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         return false;
     }
     dispose();
-    KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventPostProcessor(keyEventHandler);
     return true;
   }
 
@@ -1974,17 +1976,10 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     updateImage();
   }
 
+  @SuppressWarnings("ResultOfObjectAllocationIgnored")
   public void preferencesCommand()
   {
-    Renderer previewRenderer = ArtOfIllusion.getPreferences().getObjectPreviewRenderer();
     new PreferencesWindow(this);
-    if (previewRenderer != ArtOfIllusion.getPreferences().getObjectPreviewRenderer())
-    {
-      previewRenderer.cancelRendering(theScene);
-      for (ViewerCanvas view : theView)
-        view.viewChanged(false);
-      updateImage();
-    }
   }
 
   public void duplicateCommand()
@@ -3111,5 +3106,33 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
     updateImage();
     dispatchSceneChangedEvent(); // To be safe, since we can't rely on scripts to set undo records or call setModified().
+  }
+  
+  @Override
+  public void propertyChange(PropertyChangeEvent event)
+  {
+    String propertyName = event.getPropertyName();
+    if(propertyName.equals("interactiveSurfaceError"))
+    {
+      theScene.getObjects().forEach(info -> info.clearCachedMeshes());
+      updateImage();
+    } else if(propertyName.equals("objectPreviewRenderer"))
+    {
+      ((Renderer)event.getOldValue()).cancelRendering(theScene);
+      for (ViewerCanvas view : theView)
+      {
+        view.viewChanged(false);
+      }
+      updateImage();
+    }
+  }
+
+
+  @Override
+  public void dispose()
+  {
+    super.dispose();
+    KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventPostProcessor(keyEventHandler);
+    ArtOfIllusion.getPreferences().removePropertyChangeListener(this);
   }
 }
