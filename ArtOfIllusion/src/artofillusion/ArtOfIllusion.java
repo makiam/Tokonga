@@ -49,8 +49,8 @@ public class ArtOfIllusion
   private static Texture clipboardTexture[];
   private static Material clipboardMaterial[];
   private static ImageMap clipboardImage[];
-  private static ArrayList<EditingWindow> windows = new ArrayList<>();
-  private static final HashMap<String, String> classTranslations = new HashMap<>();
+  private static List<EditingWindow> windows = new ArrayList<>();
+  private static final Map<String, String> classTranslations = new HashMap<>();
   private static int numNewWindows = 0;
 
   static
@@ -73,7 +73,7 @@ public class ArtOfIllusion
               dir = System.getProperty("user.dir");
           }
       }
-      catch (Exception ex)
+      catch (MalformedURLException ex)
       {
       }
 
@@ -119,6 +119,7 @@ public class ArtOfIllusion
     ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
 
     TitleWindow title = new TitleWindow();
+    
     PluginRegistry.addCategory(Plugin.class);
     PluginRegistry.addCategory(Renderer.class);
     PluginRegistry.addCategory(Translator.class);
@@ -135,13 +136,13 @@ public class ArtOfIllusion
     PluginRegistry.registerPlugin(new ProceduralTexture3D());
     PluginRegistry.registerPlugin(new UniformMaterial());
     PluginRegistry.registerPlugin(new ProceduralMaterial3D());
-    PluginRegistry.registerPlugin(new UniformMapping(null, null));
-    PluginRegistry.registerPlugin(new ProjectionMapping(null, null));
-    PluginRegistry.registerPlugin(new CylindricalMapping(null, null));
-    PluginRegistry.registerPlugin(new SphericalMapping(null, null));
-    PluginRegistry.registerPlugin(new UVMapping(null, null));
-    PluginRegistry.registerPlugin(new LinearMapping3D(null, null));
-    PluginRegistry.registerPlugin(new LinearMaterialMapping(null, null));
+    PluginRegistry.registerPlugin(new UniformMapping());
+    PluginRegistry.registerPlugin(new ProjectionMapping());
+    PluginRegistry.registerPlugin(new CylindricalMapping());
+    PluginRegistry.registerPlugin(new SphericalMapping());
+    PluginRegistry.registerPlugin(new UVMapping());
+    PluginRegistry.registerPlugin(new LinearMapping3D());
+    PluginRegistry.registerPlugin(new LinearMaterialMapping());
     PluginRegistry.registerResource("TranslateBundle", "artofillusion", ArtOfIllusion.class.getClassLoader(), "artofillusion", null);
     PluginRegistry.registerResource("UITheme", "default", ArtOfIllusion.class.getClassLoader(), "artofillusion/Icons/defaultTheme.xml", null);
     PluginRegistry.scanPlugins();
@@ -166,13 +167,10 @@ public class ArtOfIllusion
       }
     }
     
-    for (int i = 0; i < args.length; i++)
-    {
-      try
-      {
-        newWindow(new Scene(new File(args[i]), true));
-      }
-      catch (Exception ex)
+    for (String arg : args) {
+      try {
+        newWindow(new Scene(new File(arg), true));
+      }catch (IOException ex)
       {
         ex.printStackTrace();
       }
