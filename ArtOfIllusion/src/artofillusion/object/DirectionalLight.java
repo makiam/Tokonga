@@ -133,7 +133,7 @@ public class DirectionalLight extends Light
    * Set the angular radius (in degrees) over which light is emitted.
    */
 
-  public void setRadius(double r)
+  public final void setRadius(double r)
   {
     radius = r;
   }

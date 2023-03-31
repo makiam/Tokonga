@@ -454,55 +454,56 @@ public abstract class Object3D
   public Object3D(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException
   {
     short version = in.readShort();
-    int i;
 
     if (version < 0 || version > 1)
       throw new InvalidObjectException("");
     if (!canSetTexture())
       return;
-    i = in.readInt();
-    if (i > -1)
-      {
-        try
-          {
-            Class<?> mapClass = ArtOfIllusion.getClass(in.readUTF());
-            Constructor<?> con = mapClass.getConstructor(DataInputStream.class, Object3D.class, Material.class);
-            theMaterial = theScene.getMaterial(i);
-            setMaterial(theMaterial, (MaterialMapping) con.newInstance(in, this, theMaterial));
-          }
-        catch (Exception ex)
-          {
-            throw new IOException(ex.getMessage());
-          }
-      }
-    i = in.readInt();
-    if (i > -1)
-      {
-        try
-          {
-            Class<?> mapClass = ArtOfIllusion.getClass(in.readUTF());
-            Constructor<?> con = mapClass.getConstructor(DataInputStream.class, Object3D.class, Texture.class);
-            theTexture = theScene.getTexture(i);
-            setTexture(theTexture, (TextureMapping) con.newInstance(in, this, theTexture));
-          }
-        catch (Exception ex)
-          {
-            ex.printStackTrace();
-            throw new IOException(ex.getMessage());
-          }
-      }
+    
+    int materialIndex = in.readInt();
+    if (materialIndex > -1)
+    {
+      try
+        {
+          Class<?> mapClass = ArtOfIllusion.getClass(in.readUTF());
+          Constructor<?> con = mapClass.getConstructor(DataInputStream.class, Object3D.class, Material.class);
+          theMaterial = theScene.getMaterial(materialIndex);
+          setMaterial(theMaterial, (MaterialMapping) con.newInstance(in, this, theMaterial));
+        }
+      catch (Exception ex)
+        {
+          throw new IOException(ex.getMessage());
+        }
+    }
+    
+    int textureIndex = in.readInt();
+    if (textureIndex > -1)
+    {
+      try
+        {
+          Class<?> mapClass = ArtOfIllusion.getClass(in.readUTF());
+          Constructor<?> con = mapClass.getConstructor(DataInputStream.class, Object3D.class, Texture.class);
+          theTexture = theScene.getTexture(textureIndex);
+          setTexture(theTexture, (TextureMapping) con.newInstance(in, this, theTexture));
+        }
+      catch (Exception ex)
+        {
+          ex.printStackTrace();
+          throw new IOException(ex.getMessage());
+        }
+    }
     else
-      {
-        // This is a layered texture.
-        
-        LayeredTexture tex = new LayeredTexture(this);
-        LayeredMapping map = (LayeredMapping) tex.getDefaultMapping(this);
-        map.readFromFile(in, theScene);
-        setTexture(tex, map);
-      }
+    {
+      // This is a layered texture.
+
+      LayeredTexture tex = new LayeredTexture(this);
+      LayeredMapping map = (LayeredMapping) tex.getDefaultMapping(this);
+      map.readFromFile(in, theScene);
+      setTexture(tex, map);
+    }
     paramValue = new ParameterValue [texParam.length];
     if (version > 0)
-      for (i = 0; i < paramValue.length; i++)
+      for (int i = 0; i < paramValue.length; i++)
         paramValue[i] = readParameterValue(in);
     setParameterValues(paramValue);
   }
@@ -515,7 +516,7 @@ public abstract class Object3D
     {
       Class<?> valueClass = ArtOfIllusion.getClass(in.readUTF());
       Constructor<?> con = valueClass.getConstructor(DataInputStream.class);
-      return ((ParameterValue) con.newInstance(in));
+      return (ParameterValue) con.newInstance(in);
     }
     catch (Exception ex)
     {
