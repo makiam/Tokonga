@@ -146,7 +146,7 @@ public class ArtOfIllusion
     PluginRegistry.registerPlugin(new LinearMaterialMapping());
     PluginRegistry.registerResource("TranslateBundle", "artofillusion", ArtOfIllusion.class.getClassLoader(), "artofillusion", null);
     PluginRegistry.registerResource("UITheme", "default", ArtOfIllusion.class.getClassLoader(), "artofillusion/Icons/defaultTheme.xml", null);
-    PluginRegistry.scanPlugins();
+    List<String> pluginsLoadResults = PluginRegistry.scanPlugins();
     ThemeManager.initThemes();
     preferences = new ApplicationPreferences();
     KeystrokeManager.loadRecords();
@@ -164,7 +164,7 @@ public class ArtOfIllusion
       catch (Throwable tx)
       {
         tx.printStackTrace();
-        new BStandardDialog("", UIUtilities.breakString(Translate.text("pluginInitError", plugin.getClass().getSimpleName())), BStandardDialog.ERROR).showMessageDialog(null);
+        pluginsLoadResults.add(Translate.text("pluginInitError", plugin.getClass().getSimpleName()));
       }
     }
     
@@ -178,7 +178,17 @@ public class ArtOfIllusion
     }
     runStartupScripts();
     if (numNewWindows == 0)
-      newWindow();
+      newWindow(); 
+    if(!pluginsLoadResults.isEmpty()) {
+      BTextArea report = new BTextArea(String.join("\n\n", pluginsLoadResults));
+      JTextArea area = report.getComponent();
+      area.setPreferredSize(new java.awt.Dimension(500, 200));
+      area.setFont(area.getFont().deriveFont(12f));
+      area.setLineWrap(true);
+      area.setEditable(false);
+      area.setWrapStyleWord(true);      
+      SwingUtilities.invokeLater(() -> new BStandardDialog("Art Of Illusion", new Object[] { new BScrollPane(report) }, BStandardDialog.ERROR).showMessageDialog(null));
+    }
     title.dispose();
   }
 
