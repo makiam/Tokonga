@@ -179,16 +179,7 @@ public class ArtOfIllusion
     runStartupScripts();
     if (numNewWindows == 0)
       newWindow(); 
-    if(!pluginsLoadResults.isEmpty()) {
-      BTextArea report = new BTextArea(String.join("\n\n", pluginsLoadResults));
-      JTextArea area = report.getComponent();
-      area.setPreferredSize(new java.awt.Dimension(500, 200));
-      area.setFont(area.getFont().deriveFont(12f));
-      area.setLineWrap(true);
-      area.setEditable(false);
-      area.setWrapStyleWord(true);      
-      SwingUtilities.invokeLater(() -> new BStandardDialog("Art Of Illusion", new Object[] { new BScrollPane(report) }, BStandardDialog.ERROR).showMessageDialog(null));
-    }
+    if(!pluginsLoadResults.isEmpty()) showErrors(pluginsLoadResults);
     title.dispose();
   }
 
@@ -546,9 +537,10 @@ public class ArtOfIllusion
       List<String> errors = scene.getErrors();
       if (!errors.isEmpty())
       {
-        String allErrors = String.join("\n", errors);
-        new BStandardDialog("", new Object[] {UIUtilities.breakString(Translate.text("errorLoadingScenePart")), new BScrollPane(new BTextArea(allErrors))}, BStandardDialog.ERROR).showMessageDialog(frame);
-    }
+        List<String> allErrors = Arrays.asList(Translate.text("errorLoadingScenePart"));
+        allErrors.addAll(errors);
+        showErrors(allErrors);
+      }
 
       newWindow(scene);
       RecentFiles.addRecentFile(file);
@@ -561,6 +553,17 @@ public class ArtOfIllusion
     {
       new BStandardDialog("", new String [] {Translate.text("errorLoadingFile"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(frame);
     }
+  }
+
+  private static void showErrors(List<String> errors) {
+    BTextArea report = new BTextArea(String.join("\n\n", errors));
+    JTextArea area = report.getComponent();
+    area.setPreferredSize(new java.awt.Dimension(500, 200));
+    area.setFont(area.getFont().deriveFont(12f));
+    area.setLineWrap(true);
+    area.setEditable(false);
+    area.setWrapStyleWord(true);
+    SwingUtilities.invokeLater(() -> new BStandardDialog("Art Of Illusion", new Object[] { new BScrollPane(report) }, BStandardDialog.ERROR).showMessageDialog(null));
   }
 
   /** Copy a list of objects to the clipboard, so they can be pasted into either the same scene or a
