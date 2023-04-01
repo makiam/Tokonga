@@ -47,7 +47,7 @@ public class PluginRegistry
   public static List<String> scanPlugins()
   {
     Path pluginsPath = Paths.get(ArtOfIllusion.PLUGIN_DIRECTORY);
-    if(Files.notExists(pluginsPath)) return List.of(Translate.text("cannotLocatePlugins"));
+    if(Files.notExists(pluginsPath)) return Arrays.asList(Translate.text("cannotLocatePlugins"));
 
     
     File dir = pluginsPath.toFile();
