@@ -87,7 +87,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
   }
  
   /** Create a new LayoutWindow for editing a Scene.  Usually, you will not use this constructor directly.
-      Instead, call ModellingApp.newWindow(Scene s). */
+      Instead, call ArtOfIllusion.newWindow(Scene s). */
 
   public LayoutWindow(Scene s)
   {

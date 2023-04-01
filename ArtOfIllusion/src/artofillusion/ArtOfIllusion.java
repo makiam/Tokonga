@@ -742,18 +742,18 @@ public class ArtOfIllusion
     return clipboardObject.length;
   }
 
+  private static String currentDirectory;
   /** Get the directory in which the user most recently accessed a file. */
-
   public static String getCurrentDirectory()
   {
-    return ModellingApp.currentDirectory;
+    return ArtOfIllusion.currentDirectory;
   }
 
   /** Set the directory in which the user most recently accessed a file. */
 
   public static void setCurrentDirectory(String currentDirectory)
   {
-    ModellingApp.currentDirectory = currentDirectory;
+    ArtOfIllusion.currentDirectory = currentDirectory;
   }
 
 }
