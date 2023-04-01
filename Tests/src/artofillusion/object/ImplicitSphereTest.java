@@ -12,7 +12,7 @@
 
 package artofillusion.object;
 import artofillusion.math.*;
-import org.junit.*;
+import org.junit.Assert;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -171,4 +171,52 @@ public class ImplicitSphereTest
            "\nRadius:" + pair.sphere.getRadius() +
            "\nInfluence:" + pair.sphere.getInfluenceRadius();
   }
+  
+  @Test(expected = ClassCastException.class)
+  public void testCopyImplicitSphereFromBadObject()
+  {
+    ImplicitSphere me = new ImplicitSphere(1, 1);
+    Sphere bad = new Sphere(1,1,1);
+    me.copyObject(bad);
+  }
+  
+  
+  @Test
+  public void testCopyImplicitSphere()
+  {
+    ImplicitSphere me = new ImplicitSphere(1, 1);
+    ImplicitSphere other = new ImplicitSphere(2,3);
+    
+    me.copyObject(other);
+  }
+  
+  
+  @Test
+  public void testImplicitSphereBounds1()
+  {
+    ImplicitSphere sphere = new ImplicitSphere(1, 1);
+    BoundingBox bb = sphere.getBounds();
+
+    Assert.assertEquals(-1.0f, bb.minx, 0);
+    Assert.assertEquals(-1.0f, bb.miny, 0);
+    Assert.assertEquals(-1.0f, bb.minz, 0);
+    Assert.assertEquals(1.0f, bb.maxx, 0);
+    Assert.assertEquals(1.0f, bb.maxy, 0);
+    Assert.assertEquals(1.0f, bb.maxz, 0);
+  }
+  
+  @Test
+  public void testImplicitSphereBounds2()
+  {
+    ImplicitSphere sphere = new ImplicitSphere(1, 2);
+    BoundingBox bb = sphere.getBounds();
+
+    Assert.assertEquals(-2.0f, bb.minx, 0);
+    Assert.assertEquals(-2.0f, bb.miny, 0);
+    Assert.assertEquals(-2.0f, bb.minz, 0);
+    Assert.assertEquals(2.0f, bb.maxx, 0);
+    Assert.assertEquals(2.0f, bb.maxy, 0);
+    Assert.assertEquals(2.0f, bb.maxz, 0);
+  }
+  
 }
