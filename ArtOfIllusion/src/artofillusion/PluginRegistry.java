@@ -39,6 +39,40 @@ public class PluginRegistry
   private static final HashMap<String, ExportInfo> exports = new HashMap<>();
   private static final HashMap<String, Object> classMap = new HashMap<>();
 
+  static {
+    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+        Map<String, Throwable> errors = PluginRegistry.notifyPlugins(Plugin.APPLICATION_STOPPING);        
+        errors.forEach((plugin, ex) -> {
+            //NB! At least JUL logger will not outputs log from inside shutdown thread. So I leave System.ouput.println here
+            String out = "Plugin: " + plugin + " throw: " + ex.getMessage() + " with" + Arrays.toString(ex.getStackTrace()) + " at shutdown";
+            System.out.println(out);
+            
+        });
+    }, "Plugin shutdown thread"));
+  }
+  
+  
+  @SuppressWarnings("ThrowableResultIgnored")
+  public static Map<String, Throwable> notifyPlugins(int message, Object... args)
+  {
+    System.out.println("Notify plugins called... " + message);
+    Map<String, Throwable> errors = new HashMap<>();
+    categoryClasses.getOrDefault(Plugin.class, Collections.emptyList()).forEach(plugin -> {
+      try 
+      {
+        ((Plugin)plugin).processMessage(message, args);
+      } 
+      catch(Throwable tx)
+      {
+        String out = "Plugin: " + plugin.getClass().getSimpleName() + " throw: " + tx.getMessage() + " with" + Arrays.toString(tx.getStackTrace());
+        //TODO: Replace with logger...
+        System.out.println(out);
+        errors.put(plugin.getClass().getSimpleName(), tx);
+      }
+    });
+    return errors;
+  }
+  
   /**
    * Scan all files in the Plugins directory, read in their indices, and record all plugins
    * contained in them.

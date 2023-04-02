@@ -37,7 +37,7 @@ import java.util.List;
 import buoyx.docking.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
+import java.util.stream.Collectors;
 import javax.swing.text.*;
 import javax.swing.*;
 
@@ -74,6 +74,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
   private SceneChangedEvent sceneChangedEvent;
   private List<ModellingTool> modellingTools;
   protected Preferences preferences;
+  private boolean hasNotifiedPlugins;
   private BMenu editScriptMenu;   
   private BMenu recentScriptMenu;
   public static final ImageIcon [] LANGUAGE_ICONS;
@@ -884,6 +885,22 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     popupMenu.show(w, x, y);
   }
 
+
+  @Override
+  public void setVisible(boolean visible)
+  {
+    Map<String, Throwable> errors = null;
+    if (visible && !hasNotifiedPlugins)
+    {
+      hasNotifiedPlugins = true;
+      errors = PluginRegistry.notifyPlugins(Plugin.SCENE_WINDOW_CREATED, this);
+    }
+    super.setVisible(visible);
+    if(errors != null && !errors.isEmpty())
+    {
+        ArtOfIllusion.showErrors(errors);
+    }
+  }
   /** Get the File menu. */
 
   public BMenu getFileMenu()
@@ -996,6 +1013,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
       if (choice == 2)
         return false;
     }
+    PluginRegistry.notifyPlugins(Plugin.SCENE_WINDOW_CLOSING, this);    
     dispose();
     return true;
   }
