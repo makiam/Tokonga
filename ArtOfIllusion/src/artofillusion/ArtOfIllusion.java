@@ -236,19 +236,6 @@ public class ArtOfIllusion
       {
         LayoutWindow fr = new LayoutWindow(scene);        
         windows.add(fr);
-        
-        for (Plugin plugin: PluginRegistry.getPlugins(Plugin.class))
-        {
-          try
-          {
-            plugin.processMessage(Plugin.SCENE_WINDOW_CREATED, new Object [] {fr});
-          }
-          catch (Throwable tx)
-          {
-            tx.printStackTrace();
-            new BStandardDialog("", UIUtilities.breakString(Translate.text("pluginNotifyError", plugin.getClass().getSimpleName())), BStandardDialog.ERROR).showMessageDialog(null);
-          }
-        }
         fr.setVisible(true);
         fr.arrangeDockableWidgets();
 
@@ -320,26 +307,9 @@ public class ArtOfIllusion
   public static void closeWindow(EditingWindow win)
   {
     if (win.confirmClose())
-      {
-        windows.remove(win);
-        if (win instanceof LayoutWindow)
-        {
-          for (Plugin plugin: PluginRegistry.getPlugins(Plugin.class))
-          {
-            try
-            {
-              plugin.processMessage(Plugin.SCENE_WINDOW_CLOSING, new Object [] {win});
-            }
-            catch (Throwable tx)
-            {
-              tx.printStackTrace();
-              new BStandardDialog("", UIUtilities.breakString(Translate.text("pluginNotifyError", plugin.getClass().getSimpleName())), BStandardDialog.ERROR).showMessageDialog(null);
-            }
-          }
-        }
-      }
-    if (windows.isEmpty())
-      quit();
+    {
+      windows.remove(win);
+    }
   }
 
   /** Get a list of all open windows. */
@@ -359,20 +329,6 @@ public class ArtOfIllusion
       if (windows.contains(win))
         return;
     }
-    
-    for (Plugin plugin: PluginRegistry.getPlugins(Plugin.class))
-    {
-      try
-      {
-        plugin.processMessage(Plugin.APPLICATION_STOPPING, new Object [0]);
-      }
-      catch (Throwable tx)
-      {
-        tx.printStackTrace();
-        new BStandardDialog("", UIUtilities.breakString(Translate.text("pluginNotifyError", plugin.getClass().getSimpleName())), BStandardDialog.ERROR).showMessageDialog(null);
-      }
-    }
-    System.exit(0);
   }
 
   /** Execute all startup scripts. */
@@ -555,7 +511,15 @@ public class ArtOfIllusion
     }
   }
 
-  private static void showErrors(List<String> errors) {
+  public static void showErrors(Map<String, Throwable> errors) {
+    java.util.function.Function<Map.Entry<String, Throwable>, String> tmss = (Map.Entry<String, Throwable> t) -> "Plugin: "
+            + t + " throw: " + t.getValue().getMessage()
+            + " with" + Arrays.toString(t.getValue().getStackTrace());
+    List<String> err = errors.entrySet().stream().map(tmss).collect(java.util.stream.Collectors.toList());
+    showErrors(err);
+  }
+  
+  public static void showErrors(List<String> errors) {
     BTextArea report = new BTextArea(String.join("\n\n", errors));
     JTextArea area = report.getComponent();
     area.setPreferredSize(new java.awt.Dimension(500, 200));
