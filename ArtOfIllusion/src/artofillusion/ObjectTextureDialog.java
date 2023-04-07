@@ -19,7 +19,6 @@ import buoy.event.*;
 import buoy.widget.*;
 
 import java.awt.*;
-import java.lang.reflect.*;
 import java.util.List;
 
 /** This class implements the dialog box which is used to choose textures for objects.
@@ -143,18 +142,8 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener
     texButtonRow.add(newTextureChoice = new BComboBox());
     newTextureChoice.add(Translate.text("button.newTexture"));
 
-    for (Texture texture : PluginRegistry.getPlugins(Texture.class))
-    {
-      try
-      {
-        Method mtd = texture.getClass().getMethod("getTypeName");
-        newTextureChoice.add(mtd.invoke(null));
-      }
-      catch (Exception ex)
-      {
-        ex.printStackTrace();
-      }
-    }
+    PluginRegistry.getPlugins(Texture.class).forEach(texture -> newTextureChoice.add(texture.getTypeName()));
+
     newTextureChoice.addEventLink(ValueChangedEvent.class, this, "doNewTexture");
     texListPanel.add(texButtonRow, 0, 1);
 
