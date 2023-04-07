@@ -176,18 +176,10 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener
     matButtonRow.add(newMaterialChoice = new BComboBox());
     newMaterialChoice.add(Translate.text("button.newMaterial"));
     
-    for (Material material : PluginRegistry.getPlugins(Material.class))
-    {
-      try
-      {
-        Method mtd = material.getClass().getMethod("getTypeName");
-        newMaterialChoice.add(mtd.invoke(null));
-      }
-      catch (Exception ex)
-      {
-        ex.printStackTrace();
-      }
-    }
+    PluginRegistry.getPlugins(Material.class).forEach(material -> {
+      newMaterialChoice.add(material.getTypeName());
+    });
+
     newMaterialChoice.addEventLink(ValueChangedEvent.class, this, "doNewMaterial");
     matListPanel.add(matButtonRow, 0, 2);
     materialsTab.add(matListPanel, BorderContainer.CENTER);

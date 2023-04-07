@@ -246,19 +246,11 @@ public class ObjectPropertiesPanel extends ColumnContainer
       else if (mat == null)
         selected = names.size();
       names.add(Translate.text("none"));
-      List<Material> materialTypes = PluginRegistry.getPlugins(Material.class);
-      for (Material material : materialTypes)
-      {
-        try
-        {
-          Method mtd = material.getClass().getMethod("getTypeName");
-          names.add(Translate.text("newMaterialOfType", mtd.invoke(null)));
-        }
-        catch (Exception ex)
-        {
-          ex.printStackTrace();
-        }
-      }
+
+      PluginRegistry.getPlugins(Material.class).forEach(material -> {
+        names.add(Translate.text("newMaterialOfType", material.getTypeName()));
+      });
+
       materialChoice.setModel(new DefaultComboBoxModel<>(names));
       materialChoice.setSelectedIndex(selected);
     }

@@ -165,17 +165,8 @@ public class TexturesAndMaterialsDialog extends BDialog
       {
       }
     }
-    for (Material mat : materialTypes)
-    {
-      try
-      {
-        mtd = mat.getClass().getMethod("getTypeName", (Class<?>[])null);
-        typeChoice.add((String) mtd.invoke(null, (Object[])null) + " material");
-      }
-      catch (Exception ex)
-      {
-      }
-    }
+    materialTypes.forEach(material -> typeChoice.add(material.getTypeName() + " material"));
+
     typeChoice.addEventLink(ValueChangedEvent.class, this, "doNew");
 
     buttons.add(typeChoice);
@@ -258,7 +249,7 @@ public class TexturesAndMaterialsDialog extends BDialog
             matPre.setTexture(selectedTexture, selectedTexture.getDefaultMapping(matPre.getObject().getObject()));
             matPre.setMaterial(null, null);
             matPre.render();
-            setInfoText(Translate.text("textureName")+" "+selectedTexture.getName(), Translate.text("textureType")+" "+getTypeName(selectedTexture));
+            setInfoText(Translate.text("textureName") + " " + selectedTexture.getName(), Translate.text("textureType") + " " + getTypeName(selectedTexture));
           }
         }
         else
@@ -270,7 +261,7 @@ public class TexturesAndMaterialsDialog extends BDialog
             matPre.setTexture(tex, tex.getDefaultMapping(matPre.getObject().getObject()));
             matPre.setMaterial(selectedMaterial, selectedMaterial.getDefaultMapping(matPre.getObject().getObject()));
             matPre.render();
-            setInfoText(Translate.text("materialName")+" "+selectedMaterial.getName(), Translate.text("materialType")+" "+getTypeName(selectedMaterial));
+            setInfoText(Translate.text("materialName") + " " + selectedMaterial.getName(), Translate.text("materialType") + " " + getTypeName(selectedMaterial));
           }
         }
       }
