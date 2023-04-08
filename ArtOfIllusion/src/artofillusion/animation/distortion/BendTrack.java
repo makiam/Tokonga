@@ -123,10 +123,12 @@ public class BendTrack extends Track
     tc.addTimepoint(k, time, s);
   }
 
-  /* Set a keyframe at the specified time, based on the current state of the Scene. */
+  /**
+   * {@inheritDoc}
+   */
 
   @Override
-  public Keyframe setKeyframe(double time, Scene sc)
+  public Keyframe setKeyframe(double time)
   {
     Keyframe k = tc.evaluate(time, smoothingMethod);
     if (k == null)

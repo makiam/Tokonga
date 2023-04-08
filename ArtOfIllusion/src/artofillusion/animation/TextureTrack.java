@@ -128,10 +128,12 @@ public class TextureTrack extends Track
     tc.addTimepoint(k, time, s);
   }
 
-  /* Set a keyframe at the specified time, based on the current state of the Scene. */
+  /**
+   * {@inheritDoc}
+   */
 
   @Override
-  public Keyframe setKeyframe(double time, Scene sc)
+  public Keyframe setKeyframe(double time)
   {
     TextureParameter texParam[] = info.getObject().getParameters();
     ParameterValue paramValue[] = info.getObject().getParameterValues();
@@ -151,7 +153,7 @@ public class TextureTrack extends Track
       the new Keyframe, or null if none was set. */
 
   @Override
-  public Keyframe setKeyframeIfModified(double time, Scene sc)
+  public Keyframe setKeyframeIfModified(double time)
   {
     TextureParameter texParam[] = info.getObject().getParameters();
     ParameterValue paramValue[] = info.getObject().getParameterValues();

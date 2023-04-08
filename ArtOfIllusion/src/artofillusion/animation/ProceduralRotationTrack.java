@@ -183,10 +183,12 @@ public class ProceduralRotationTrack extends Track implements ProcedureOwner
     tc.addTimepoint(k, time, s);
   }
 
-  /* Set a keyframe at the specified time, based on the current state of the Scene. */
+  /**
+   * {@inheritDoc}
+   */
 
   @Override
-  public Keyframe setKeyframe(double time, Scene sc)
+  public Keyframe setKeyframe(double time)
   {
     if (parameter.length == 0)
       return null; // There are no parameters to keyframe.

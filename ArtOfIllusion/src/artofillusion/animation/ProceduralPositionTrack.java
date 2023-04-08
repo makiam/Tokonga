@@ -26,7 +26,7 @@ import java.util.*;
 public class ProceduralPositionTrack extends Track implements ProcedureOwner
 {
   ObjectInfo info;
-  Procedure proc;
+  private final Procedure proc;
   Timecourse tc;
   TextureParameter parameter[];
   int smoothingMethod, mode, relCoords, joint;
@@ -198,10 +198,12 @@ public class ProceduralPositionTrack extends Track implements ProcedureOwner
     tc.addTimepoint(k, time, s);
   }
 
-  /* Set a keyframe at the specified time, based on the current state of the Scene. */
+  /**
+   * {@inheritDoc}
+   */
 
   @Override
-  public Keyframe setKeyframe(double time, Scene sc)
+  public Keyframe setKeyframe(double time)
   {
     if (parameter.length == 0)
       return null; // There are no parameters to keyframe.

@@ -2834,11 +2834,11 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
       PositionTrack pt = new PositionTrack(info);
       pt.setCoordsObject(relObj);
       info.addTrack(pt, 0);
-      pt.setKeyframe(theScene.getTime(), theScene);
+      pt.setKeyframe(theScene.getTime());
       RotationTrack rt = new RotationTrack(info);
       rt.setCoordsObject(relObj);
       info.addTrack(rt, 1);
-      rt.setKeyframe(theScene.getTime(), theScene);
+      rt.setKeyframe(theScene.getTime());
     }
     setUndoRecord(undo);
     theScore.rebuildList();
