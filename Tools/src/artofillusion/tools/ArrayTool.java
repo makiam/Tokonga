@@ -1,5 +1,5 @@
 /* Copyright 2001-2004 by Rick van der Meiden and Peter Eastman
-   Changes copyright (C) 2022 by Maksim Khramov
+   Changes copyright (C) 2022-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -23,11 +23,6 @@ The array tool creates an array of copies of an object.
 
 public class ArrayTool implements ModellingTool
 {
-  /** instance this tool,load it in memory */
-
-  public ArrayTool()
-  {
-  }
 
   /** Get the text that appear as the menu item.*/
   @Override

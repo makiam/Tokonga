@@ -1,6 +1,6 @@
 /* Copyright (C) 2001-2008 by Peter Eastman
    Modifications Copyright (C) 2019 by Petri Ihalainen
-   Changes copyright (C) 2020-2022 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -28,10 +28,6 @@ import java.util.*;
 public class CSGTool implements ModellingTool
 {
   private static int counter = 1;
-
-  public CSGTool()
-  {
-  }
 
   /* Get the text that appear as the menu item.*/
 
