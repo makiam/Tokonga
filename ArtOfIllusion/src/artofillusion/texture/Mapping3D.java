@@ -38,8 +38,8 @@ public abstract class Mapping3D extends TextureMapping
     return object;
   }
 
-  public static boolean legalMapping(Object3D obj, Texture tex)
+  public boolean legalMapping(Object3D obj, Texture tex)
   {
-    return (tex instanceof Texture3D);
+    return tex instanceof Texture3D;
   }
 }

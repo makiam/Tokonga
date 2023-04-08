@@ -20,7 +20,6 @@ import artofillusion.texture.*;
 import artofillusion.material.*;
 
 import javax.swing.*;
-import java.lang.reflect.*;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -199,19 +198,9 @@ public class ObjectPropertiesPanel extends ColumnContainer
         selected = names.size();
         names.add(Translate.text("layeredTexture"));
       }
-      
-      for (Texture texture : PluginRegistry.getPlugins(Texture.class))
-      {
-        try
-        {
-          Method mtd = texture.getClass().getMethod("getTypeName");
-          names.add(Translate.text("newTextureOfType", mtd.invoke(null)));
-        }
-        catch (Exception ex)
-        {
-          ex.printStackTrace();
-        }
-      }
+
+      PluginRegistry.getPlugins(Texture.class).forEach(texture ->  names.add(Translate.text("newTextureOfType", texture.getTypeName())));
+
       textureChoice.setModel(new DefaultComboBoxModel<>(names));
       textureChoice.setSelectedIndex(selected);
     }
@@ -246,19 +235,11 @@ public class ObjectPropertiesPanel extends ColumnContainer
       else if (mat == null)
         selected = names.size();
       names.add(Translate.text("none"));
-      List<Material> materialTypes = PluginRegistry.getPlugins(Material.class);
-      for (Material material : materialTypes)
-      {
-        try
-        {
-          Method mtd = material.getClass().getMethod("getTypeName");
-          names.add(Translate.text("newMaterialOfType", mtd.invoke(null)));
-        }
-        catch (Exception ex)
-        {
-          ex.printStackTrace();
-        }
-      }
+
+      PluginRegistry.getPlugins(Material.class).forEach(material -> {
+        names.add(Translate.text("newMaterialOfType", material.getTypeName()));
+      });
+
       materialChoice.setModel(new DefaultComboBoxModel<>(names));
       materialChoice.setSelectedIndex(selected);
     }

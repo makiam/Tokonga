@@ -1,4 +1,5 @@
 /* Copyright (C) 2000-2007 by Peter Eastman
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -13,6 +14,7 @@ package artofillusion.material;
 import artofillusion.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
+import artofillusion.texture.Texture;
 import buoy.widget.*;
 import java.io.*;
 
@@ -50,11 +52,14 @@ public abstract class MaterialMapping
   /** Get the name of this type of mapping.  Subclasses should override this method to return
       an appropriate name. */
   
-  public static String getName()
+  public String getName()
   {
     return "";
   }
 
+  public boolean legalMapping(Object3D obj, Material texture) {
+    return false;
+  }
   /** Get the index of refraction for this mapping's Material. */  
 
   public double indexOfRefraction()

@@ -40,9 +40,9 @@ public abstract class Mapping2D extends TextureMapping
     return object;
   }
 
-  public static boolean legalMapping(Object3D obj, Texture tex)
+  public boolean legalMapping(Object3D obj, Texture tex)
   {
-    return (tex instanceof Texture2D);
+    return tex instanceof Texture2D;
   }
 
   /** Given a Mesh to which this mapping has been applied, return the texture coordinates at
