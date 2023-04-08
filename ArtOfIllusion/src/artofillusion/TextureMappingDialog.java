@@ -20,6 +20,7 @@ import buoy.widget.*;
 import java.awt.*;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.List;
 
 /** This class implements the dialog box which is used to choose texture mappings for objects.
     It presents a list of all mappings which can be used with the current object and material,
@@ -29,10 +30,10 @@ public class TextureMappingDialog extends BDialog
 {
   private FormContainer content;
   private Object3D origObj, editObj;
-  private Vector<Class<?>> mappings;
+  private List<TextureMapping> mappings;
   private BComboBox mapChoice;
   private MaterialPreviewer preview;
-  private TextureMapping map, oldMapping;
+  private TextureMapping map;
   private Widget editingPanel;
   private boolean layered;
   private int layer;
@@ -52,26 +53,14 @@ public class TextureMappingDialog extends BDialog
     layered = (map instanceof LayeredMapping);
     if (layered)
       map = ((LayeredMapping) map).getLayerMapping(layer);
-    oldMapping = map.duplicate();
 
     // Make a list of all texture mappings which can be used for this object and texture.
 
     mappings = new Vector<>();
-    for (TextureMapping mapping: PluginRegistry.getPlugins(TextureMapping.class))
-    {
-      try
-      {
-        Method mtd = mapping.getClass().getMethod("legalMapping", Object3D.class, Texture.class);
-        Texture tex = layered ? ((LayeredMapping) editObj.getTextureMapping()).getLayer(layer)
-            : editObj.getTexture();
-        Boolean result = (Boolean) mtd.invoke(null, editObj, tex);
-        if (result)
-          mappings.add(mapping.getClass());
-      }
-      catch (Exception ex)
-      {
-      }
-    }
+    PluginRegistry.getPlugins(TextureMapping.class).forEach(mapping -> {
+      Texture tex = layered ? ((LayeredMapping) editObj.getTextureMapping()).getLayer(layer) : editObj.getTexture();
+      if(mapping.legalMapping(editObj, tex)) mappings.add(mapping);
+    });
 
     // Add the various components to the dialog.
 
@@ -88,20 +77,14 @@ public class TextureMappingDialog extends BDialog
     content.add(choiceRow, 0, 1);
     choiceRow.add(new BLabel(Translate.text("Mapping")+":"));
     choiceRow.add(mapChoice = new BComboBox());
+
     for (int i = 0; i < mappings.size(); i++)
     {
-      try
-      {
-        Method mtd = mappings.get(i).getMethod("getName");
-        mapChoice.add((String) mtd.invoke(null));
-        if (mappings.get(i) == map.getClass())
-          mapChoice.setSelectedIndex(i);
-      }
-      catch (Exception ex)
-      {
-        ex.printStackTrace();
-      }
+      TextureMapping cmap = mappings.get(i);
+      mapChoice.add(cmap.getName());
+      if (cmap.getClass() == map.getClass()) mapChoice.setSelectedIndex(i);
     }
+    
     mapChoice.addEventLink(ValueChangedEvent.class, this, "mappingChanged");
     content.add(editingPanel = map.getEditingPanel(editObj, preview), 0, 2);
 
@@ -130,10 +113,10 @@ public class TextureMappingDialog extends BDialog
   {
     try
     {
-      Class<?> cls = mappings.get(mapChoice.getSelectedIndex());
-      if (cls == map.getClass())
+      TextureMapping mapping = mappings.get(mapChoice.getSelectedIndex());
+      if (mapping.getClass() == map.getClass())
         return;
-      Constructor<?> con = cls.getConstructor(Object3D.class, Texture.class);
+      Constructor<?> con = mapping.getClass().getConstructor(Object3D.class, Texture.class);
       Texture tex = layered ? ((LayeredMapping) editObj.getTextureMapping()).getLayer(layer)
           : editObj.getTexture();
       setMapping((TextureMapping) con.newInstance(editObj, tex));
@@ -142,7 +125,7 @@ public class TextureMappingDialog extends BDialog
       pack();
       preview.render();
     }
-    catch (Exception ex)
+    catch (ReflectiveOperationException | IllegalArgumentException | SecurityException ex)
     {
       ex.printStackTrace();
     }
