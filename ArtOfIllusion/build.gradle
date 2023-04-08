@@ -33,7 +33,7 @@ dependencies {
     implementation group: 'org.apache.groovy', name: 'groovy', version: '4.0.0'
     
     implementation fileTree(dir: '../lib', include: '*.jar')
-    implementation group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '3.3.1'
+    implementation group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '3.3.3'
     
     testImplementation 'org.mockito:mockito-core:3.+'
     
