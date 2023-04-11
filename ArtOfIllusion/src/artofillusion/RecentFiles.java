@@ -30,11 +30,9 @@ public class RecentFiles
   public static void createMenu(BMenu menu)
   {
     menu.removeAll();
-    Preferences pref = Preferences.userNodeForPackage(RecentFiles.class);
-    String recent[] = pref.get(RECENT_FILES, "").split(File.pathSeparator);
-    for (int i = 0; i < recent.length; i++)
+    for (String recentFile : Preferences.userNodeForPackage(RecentFiles.class).get(RECENT_FILES, "").split(File.pathSeparator))
     {
-      final File file = new File(recent[i]);
+      final File file = new File(recentFile);
       BMenuItem item = new BMenuItem(file.getName());
       menu.add(item);
       item.addEventLink(CommandEvent.class, new Object() {
@@ -76,7 +74,7 @@ public class RecentFiles
     {
       if (window instanceof LayoutWindow)
       {
-        createMenu(((LayoutWindow) window).recentFilesMenu);
+        createMenu(((LayoutWindow) window).getRecentFilesMenu());
       }
     }
   }

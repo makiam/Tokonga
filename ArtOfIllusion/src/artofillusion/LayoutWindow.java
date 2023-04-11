@@ -3153,4 +3153,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventPostProcessor(keyEventHandler);
     ArtOfIllusion.getPreferences().removePropertyChangeListener(this);
   }
+
+  public BMenu getRecentFilesMenu()
+  {
+    return recentFilesMenu;
+  }
 }
