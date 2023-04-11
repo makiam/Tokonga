@@ -54,7 +54,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
   Score theScore;
   ToolPalette tools;
   private TexturesAndMaterialsDialog assetsDialog;
-  BLabel helpText;
+  private final BLabel helpText = new BLabel();
   TreeList itemTree;
   Scene theScene;
 
@@ -94,7 +94,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
   {
     super(s.getName() == null ? "Untitled" : s.getName());
     theScene = s;
-    helpText = new BLabel();
+    
     theScore = new Score(this);
 
     sceneChangedEvent = new SceneChangedEvent(this);
