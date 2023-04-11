@@ -67,6 +67,7 @@ dependencies {
         exclude group: 'org.hamcrest'
     }
     testImplementation 'org.hamcrest:hamcrest-library:1.3'
+    testImplementation group: 'org.netbeans', name: 'jemmy', version: '2.2.7.5'
 
 }
 
