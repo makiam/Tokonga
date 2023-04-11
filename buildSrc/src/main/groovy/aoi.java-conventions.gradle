@@ -18,6 +18,7 @@ java {
   options.compilerArgs.add '-Xlint:-unchecked'
   options.compilerArgs.add '-Xlint:-serial'
   options.compilerArgs.add '-Xlint:-rawtypes'
+  options.compilerArgs.add '-Xlint:-processing'
 }
 
 repositories {
@@ -49,8 +50,17 @@ sourceSets {
     }
 
 }
+ext {
+    lombokVersion = "1.+"
+}
 
 dependencies {
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    
     implementation 'com.github.makiam:Buoy:1.0.0'
 
     testImplementation('junit:junit:4.12') {
