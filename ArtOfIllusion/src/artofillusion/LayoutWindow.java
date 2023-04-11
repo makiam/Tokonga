@@ -37,7 +37,7 @@ import java.util.List;
 import buoyx.docking.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.stream.Collectors;
+
 import javax.swing.text.*;
 import javax.swing.*;
 
@@ -48,7 +48,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
   SceneViewer theView[];
   BorderContainer viewPanel[];
   FormContainer viewsContainer;
-  FormContainer centerContainer;
+  
   private DockingContainer dock[];
   BScrollPane itemTreeScroller;
   Score theScore;
@@ -66,13 +66,13 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
   BMenuItem animationMenuItem[], popupMenuItem[];
   BCheckBoxMenuItem displayItem[];
   BPopupMenu popupMenu;
-  UndoStack undoStack;
+  private final UndoStack undoStack = new UndoStack();
   int numViewsShown, currentView;
   private ActionProcessor uiEventProcessor;
   private boolean modified, sceneChangePending, objectListShown;
   private KeyEventPostProcessor keyEventHandler;
   private SceneChangedEvent sceneChangedEvent;
-  private List<ModellingTool> modellingTools;
+  
   protected Preferences preferences;
   private boolean hasNotifiedPlugins;
   private BMenu editScriptMenu;   
@@ -96,7 +96,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     theScene = s;
     helpText = new BLabel();
     theScore = new Score(this);
-    undoStack = new UndoStack();
+
     sceneChangedEvent = new SceneChangedEvent(this);
     uiEventProcessor = new ActionProcessor();
     createItemList();
@@ -154,7 +154,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     viewsContainer.add(viewPanel[1], 1, 0);
     viewsContainer.add(viewPanel[2], 0, 1);
     viewsContainer.add(viewPanel[3], 1, 1);
-    centerContainer = new FormContainer(new double [] {0.0, 1.0}, new double [] {0.0, 1.0, 0.0, 0.0});
+    FormContainer centerContainer = new FormContainer(new double [] {0.0, 1.0}, new double [] {0.0, 1.0, 0.0, 0.0});
     centerContainer.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
     centerContainer.add(viewsContainer, 1, 0, 1, 3);
     centerContainer.add(helpText, 0, 3, 2, 1);
@@ -457,7 +457,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
   {
     BMenuItem item;
     BMenu importMenu, exportMenu;
-    List<Translator> trans = PluginRegistry.getPlugins(Translator.class);
+    List<Translator> translators = PluginRegistry.getPlugins(Translator.class);
 
     fileMenu = Translate.menu("file");
     getMenuBar().add(fileMenu);
@@ -470,24 +470,18 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     RecentFiles.createMenu(recentFilesMenu);
     fileMenu.add(Translate.menuItem("close", this, "actionPerformed"));
     fileMenu.addSeparator();
-    Collections.sort(trans, new Comparator<Translator>() {
-      @Override
-      public int compare(Translator o1, Translator o2)
+    Collections.sort(translators, Comparator.comparing(Translator::getName));
+    for (Translator translator: translators)
       {
-        return o1.getName().compareTo(o2.getName());
-      }
-    });
-    for (int i = 0; i < trans.size(); i++)
-      {
-        if (trans.get(i).canImport())
+        if (translator.canImport())
           {
-            importMenu.add(item = new BMenuItem(trans.get(i).getName()));
+            importMenu.add(item = new BMenuItem(translator.getName()));
             item.setActionCommand("import");
             item.addEventLink(CommandEvent.class, this, "actionPerformed");
           }
-        if (trans.get(i).canExport())
+        if (translator.canExport())
           {
-            exportMenu.add(item = new BMenuItem(trans.get(i).getName()));
+            exportMenu.add(item = new BMenuItem(translator.getName()));
             item.setActionCommand("export");
             item.addEventLink(CommandEvent.class, this, "actionPerformed");
           }
@@ -568,14 +562,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
   private void createToolsMenu()
   {
-    modellingTools = PluginRegistry.getPlugins(ModellingTool.class);
-    Collections.sort(modellingTools, new Comparator<ModellingTool>() {
-      @Override
-      public int compare(ModellingTool o1, ModellingTool o2)
-      {
-        return (o1.getName().compareTo(o2.getName()));
-      }
-    });
+    List<ModellingTool> modellingTools = PluginRegistry.getPlugins(ModellingTool.class);
+    Collections.sort(modellingTools, Comparator.comparing(ModellingTool::getName));
     
     toolsMenu = Translate.menu("tools");
     getMenuBar().add(toolsMenu);
