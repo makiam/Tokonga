@@ -57,7 +57,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
   BLabel helpText;
   TreeList itemTree;
   Scene theScene;
-  BMenuBar menubar;
+
   BMenu newScriptMenu;
   BMenu fileMenu, recentFilesMenu, editMenu, objectMenu, createMenu, toolsMenu, viewMenu, scriptMenu;
   BMenu animationMenu, editKeyframeMenu, sceneMenu;
@@ -223,8 +223,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     // Build the menubar.
 
-    menubar = new BMenuBar();
-    setMenuBar(menubar);
+    setMenuBar(new BMenuBar());
     createFileMenu();
     createEditMenu();
     createSceneMenu();
@@ -461,7 +460,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     List<Translator> trans = PluginRegistry.getPlugins(Translator.class);
 
     fileMenu = Translate.menu("file");
-    menubar.add(fileMenu);
+    getMenuBar().add(fileMenu);
     importMenu = Translate.menu("import");
     exportMenu = Translate.menu("export");
     fileMenuItem = new BMenuItem [1];
@@ -508,7 +507,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
   private void createEditMenu()
   {
     editMenu = Translate.menu("edit");
-    menubar.add(editMenu);
+    getMenuBar().add(editMenu);
     editMenuItem = new BMenuItem [11];
     editMenu.add(editMenuItem[0] = Translate.menuItem("undo", this, "undoCommand"));
     editMenu.add(editMenuItem[1] = Translate.menuItem("redo", this, "redoCommand"));
@@ -531,7 +530,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
   private void createObjectMenu()
   {
     objectMenu = Translate.menu("object");
-    menubar.add(objectMenu);
+    getMenuBar().add(objectMenu);
     objectMenuItem = new BMenuItem [12];
     objectMenu.add(objectMenuItem[0] = Translate.menuItem("editObject", this, "editObjectCommand"));
     objectMenu.add(objectMenuItem[1] = Translate.menuItem("objectLayout", this, "objectLayoutCommand"));
@@ -579,7 +578,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     });
     
     toolsMenu = Translate.menu("tools");
-    menubar.add(toolsMenu);
+    getMenuBar().add(toolsMenu);
 
     for (ModellingTool tool: modellingTools)
     {
@@ -651,7 +650,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     BMenu displayMenu, navigationMenu;
 
     viewMenu = Translate.menu("view");    
-    menubar.add(viewMenu);
+    getMenuBar().add(viewMenu);
     viewMenuItem = new BMenuItem [8];    
 
     viewMenu.add(displayMenu = Translate.menu("displayMode"));
@@ -733,7 +732,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
   private void createAnimationMenu()
   {
     animationMenu = Translate.menu("animation");
-    menubar.add(animationMenu);
+    getMenuBar().add(animationMenu);
     animationMenuItem = new BMenuItem [13];
     animationMenu.add(addTrackMenu = Translate.menu("addTrack"));
     addTrackMenu.add(positionTrackMenu = Translate.menu("positionTrack"));
@@ -789,7 +788,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
   private void createSceneMenu()
   {
     sceneMenu = Translate.menu("scene");
-    menubar.add(sceneMenu);
+    getMenuBar().add(sceneMenu);
 
     sceneMenu.add(Translate.menuItem("renderScene", this, "renderCommand"));
     sceneMenu.add(Translate.menuItem("renderImmediately", this, "actionPerformed"));
