@@ -51,7 +51,7 @@ sourceSets {
 
 }
 ext {
-    lombokVersion = "1.+"
+    lombokVersion = "1.18.+"
 }
 
 dependencies {
