@@ -1010,9 +1010,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
   @Override
   public void setTool(EditingTool tool)
   {
-    for (int i = 0; i < theView.length; i++)
+    for (SceneViewer view : theView)
     {
-      theView[i].setTool(tool);
+      view.setTool(tool);
     }
   }
 
