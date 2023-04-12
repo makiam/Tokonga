@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2015 by Peter Eastman
-   Changes copyright (C) 2016-2021 by Maksim Khramov
+   Changes copyright (C) 2016-2023 by Maksim Khramov
    Changes copyright (C) 2017-2020 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -73,7 +73,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
   BMenuItem animationMenuItem[], popupMenuItem[];
   BCheckBoxMenuItem displayItem[];
   BPopupMenu popupMenu;
-  private UndoStack undoStack = new UndoStack();
+  private final UndoStack undoStack = new UndoStack();
   int numViewsShown, currentView;
   private ActionProcessor uiEventProcessor;
   private boolean modified, sceneChangePending, objectListShown;

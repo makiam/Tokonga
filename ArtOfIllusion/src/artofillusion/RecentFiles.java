@@ -1,5 +1,5 @@
 /* Copyright (C) 2004 by Peter Eastman
-   Changes copyright (C) 2017-2021 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -30,11 +30,9 @@ public class RecentFiles
   public static void createMenu(BMenu menu)
   {
     menu.removeAll();
-    Preferences pref = Preferences.userNodeForPackage(RecentFiles.class);
-    String recentFiles[] = pref.get("recentFiles", "").split(File.pathSeparator);
-    for (String recent: recentFiles)
+    for (String recentFile: Preferences.userNodeForPackage(RecentFiles.class).get("recentFiles", "").split(File.pathSeparator))
     {
-      final File file = new File(recent);
+      final File file = new File(recentFile);
       BMenuItem item = new BMenuItem(file.getName());
       menu.add(item);
       item.addEventLink(CommandEvent.class, new Object() {
@@ -55,7 +53,7 @@ public class RecentFiles
     String newPath = file.getAbsolutePath();
     Preferences pref = Preferences.userNodeForPackage(RecentFiles.class);
     String recent[] = pref.get("recentFiles", "").split(File.pathSeparator);
-    ArrayList<String> newFiles = new ArrayList<String>();
+    ArrayList<String> newFiles = new ArrayList<>();
     newFiles.add(newPath);
     for (int i = 0; i < recent.length && newFiles.size() < MAX_RECENT; i++)
       if (!newPath.equals(recent[i]))
