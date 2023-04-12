@@ -193,57 +193,62 @@ public class LayoutWindowTest
 
 //<editor-fold defaultstate="collapsed" desc="Test bulk keyframe commands">
   @Test
+  @SuppressWarnings("ResultOfObjectAllocationIgnored")
   public void testInvokeMoveKeyFramesCommand()
   {
     appMainMenu.pushMenuNoBlock("Animation|Bulk Edit Keyframes|Move...");
     JDialogOperator dialog = new JDialogOperator(appFrame);
 
-    JLabelOperator label = new JLabelOperator(dialog, "Move Keyframes");
+    new JLabelOperator(dialog, "Move Keyframes");
 
     JButtonOperator cancel = new JButtonOperator(dialog, "Cancel");
     cancel.clickMouse();
   }
 
   @Test
+  @SuppressWarnings("ResultOfObjectAllocationIgnored")
   public void testInvokeCopyKeyFramesCommand()
   {
     appMainMenu.pushMenuNoBlock("Animation|Bulk Edit Keyframes|Copy...");
     JDialogOperator dialog = new JDialogOperator(appFrame);
 
-    JLabelOperator label = new JLabelOperator(dialog, "Copy Keyframes");
+    new JLabelOperator(dialog, "Copy Keyframes");
     JButtonOperator cancel = new JButtonOperator(dialog, "Cancel");
     cancel.clickMouse();
   }
 
   @Test
+  @SuppressWarnings("ResultOfObjectAllocationIgnored")
   public void testInvokeRescaleKeyFramesCommand()
   {
     appMainMenu.pushMenuNoBlock("Animation|Bulk Edit Keyframes|Rescale...");
     JDialogOperator dialog = new JDialogOperator(appFrame);
 
-    JLabelOperator label = new JLabelOperator(dialog, "Rescale Keyframes");
+    new JLabelOperator(dialog, "Rescale Keyframes");
     JButtonOperator cancel = new JButtonOperator(dialog, "Cancel");
     cancel.clickMouse();
   }
 
   @Test
+  @SuppressWarnings("ResultOfObjectAllocationIgnored")
   public void testInvokeDeleteKeyFramesCommand()
   {
     appMainMenu.pushMenuNoBlock("Animation|Bulk Edit Keyframes|Delete...");
     JDialogOperator dialog = new JDialogOperator(appFrame);
 
-    JLabelOperator label = new JLabelOperator(dialog, "Delete Keyframes");
+    new JLabelOperator(dialog, "Delete Keyframes");
     JButtonOperator cancel = new JButtonOperator(dialog, "Cancel");
     cancel.clickMouse();
   }
 
   @Test
+  @SuppressWarnings("ResultOfObjectAllocationIgnored")
   public void testInvokeLoopKeyFramesCommand()
   {
     appMainMenu.pushMenuNoBlock("Animation|Bulk Edit Keyframes|Loop...");
     JDialogOperator dialog = new JDialogOperator(appFrame);
 
-    JLabelOperator label = new JLabelOperator(dialog, "Loop Keyframes");
+    new JLabelOperator(dialog, "Loop Keyframes");
     JButtonOperator cancel = new JButtonOperator(dialog, "Cancel");
     cancel.clickMouse();
   }
@@ -461,6 +466,21 @@ public class LayoutWindowTest
     JFrameOperator scw = new JFrameOperator(1);
     scw.close();
   }
+
+  @Test
+  public void invokeNewScriptAsGroovy() {
+    appMainMenu.pushMenuNoBlock("Tools|Edit Tool Script...|New Script|Groovy");
+    JFrameOperator scw = new JFrameOperator(1);
+    scw.close();
+  }
+
+  @Test
+  public void invokeNewScriptAsBeanshell() {
+    appMainMenu.pushMenuNoBlock("Tools|Edit Tool Script...|New Script|BeanShell");
+    JFrameOperator scw = new JFrameOperator(1);
+    scw.close();
+  }
+
 
   @Test
   public void testInvokeShowTexturesDialogCommand()
