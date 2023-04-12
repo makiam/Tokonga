@@ -30,7 +30,7 @@ public class RecentFiles
   public static void createMenu(BMenu menu)
   {
     menu.removeAll();
-    for (String recentFile: Preferences.userNodeForPackage(RecentFiles.class).get("recentFiles", "").split(File.pathSeparator))
+    for (String recentFile: Preferences.userNodeForPackage(RecentFiles.class).get(RECENT_FILES, "").split(File.pathSeparator))
     {
       final File file = new File(recentFile);
       BMenuItem item = new BMenuItem(file.getName());
@@ -43,7 +43,7 @@ public class RecentFiles
       });
     }
   }
-
+    private static final String RECENT_FILES = "recentFiles";
   /** Add a File to the list of recent files. */
 
   public static void addRecentFile(File file)
@@ -52,7 +52,7 @@ public class RecentFiles
 
     String newPath = file.getAbsolutePath();
     Preferences pref = Preferences.userNodeForPackage(RecentFiles.class);
-    String recent[] = pref.get("recentFiles", "").split(File.pathSeparator);
+    String recent[] = pref.get(RECENT_FILES, "").split(File.pathSeparator);
     List<String> newFiles = new ArrayList<>();
     newFiles.add(newPath);
     for (int i = 0; i < recent.length && newFiles.size() < MAX_RECENT; i++)
