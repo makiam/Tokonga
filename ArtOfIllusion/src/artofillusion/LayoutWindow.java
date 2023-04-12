@@ -58,9 +58,18 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
   TreeList itemTree;
   Scene theScene;
 
+  private final BMenu fileMenu = Translate.menu("file");
+  private final BMenu editMenu = Translate.menu("edit");
+  private final BMenu sceneMenu = Translate.menu("scene");
+  private final BMenu objectMenu = Translate.menu("object");
+  private final BMenu animationMenu = Translate.menu("animation");
+  private final BMenu toolsMenu = Translate.menu("tools");
+  private final BMenu viewMenu = Translate.menu("view");
+  
+  
   BMenu newScriptMenu;
-  BMenu fileMenu, recentFilesMenu, editMenu, objectMenu, createMenu, toolsMenu, viewMenu, scriptMenu;
-  BMenu animationMenu, editKeyframeMenu, sceneMenu;
+  BMenu recentFilesMenu, createMenu, scriptMenu;
+  BMenu editKeyframeMenu;
   BMenu addTrackMenu, positionTrackMenu, rotationTrackMenu, distortionMenu;
   private BMenuItem fileMenuItem[], editMenuItem[], objectMenuItem[], viewMenuItem[];
   BMenuItem animationMenuItem[], popupMenuItem[];
@@ -70,7 +79,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
   int numViewsShown, currentView;
   private ActionProcessor uiEventProcessor;
   private boolean modified, sceneChangePending, objectListShown;
-  private KeyEventPostProcessor keyEventHandler;
+  private final KeyEventPostProcessor keyEventHandler;
   private SceneChangedEvent sceneChangedEvent;
   
   protected Preferences preferences;
@@ -459,7 +468,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     BMenu importMenu, exportMenu;
     List<Translator> translators = PluginRegistry.getPlugins(Translator.class);
 
-    fileMenu = Translate.menu("file");
+
     getMenuBar().add(fileMenu);
     importMenu = Translate.menu("import");
     exportMenu = Translate.menu("export");
@@ -500,7 +509,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
   private void createEditMenu()
   {
-    editMenu = Translate.menu("edit");
+
     getMenuBar().add(editMenu);
     editMenuItem = new BMenuItem [11];
     editMenu.add(editMenuItem[0] = Translate.menuItem("undo", this, "undoCommand"));
@@ -523,7 +532,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
   private void createObjectMenu()
   {
-    objectMenu = Translate.menu("object");
+
     getMenuBar().add(objectMenu);
     objectMenuItem = new BMenuItem [12];
     objectMenu.add(objectMenuItem[0] = Translate.menuItem("editObject", this, "editObjectCommand"));
@@ -565,7 +574,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     List<ModellingTool> modellingTools = PluginRegistry.getPlugins(ModellingTool.class);
     Collections.sort(modellingTools, Comparator.comparing(ModellingTool::getName));
     
-    toolsMenu = Translate.menu("tools");
+
     getMenuBar().add(toolsMenu);
 
     for (ModellingTool tool: modellingTools)
@@ -635,9 +644,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
   */
   private void createViewMenu()
   {
-    BMenu displayMenu, navigationMenu;
+    BMenu displayMenu;
 
-    viewMenu = Translate.menu("view");    
+       
     getMenuBar().add(viewMenu);
     viewMenuItem = new BMenuItem [8];    
 
@@ -719,7 +728,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
   private void createAnimationMenu()
   {
-    animationMenu = Translate.menu("animation");
+
     getMenuBar().add(animationMenu);
     animationMenuItem = new BMenuItem [13];
     animationMenu.add(addTrackMenu = Translate.menu("addTrack"));
@@ -775,7 +784,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
   private void createSceneMenu()
   {
-    sceneMenu = Translate.menu("scene");
+
     getMenuBar().add(sceneMenu);
 
     sceneMenu.add(Translate.menuItem("renderScene", this, "renderCommand"));
