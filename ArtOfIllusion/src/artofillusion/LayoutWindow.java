@@ -580,7 +580,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     for (ModellingTool tool: modellingTools)
     {
       BMenuItem item = new BMenuItem(tool.getName());
-      item.setActionCommand("modellingTool");
+
       item.addEventLink(CommandEvent.class, this, "modellingToolCommand");
       item.getComponent().putClientProperty("tool", tool);
       toolsMenu.add(item);
@@ -2841,6 +2841,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     theScore.repaint();
   }
 
+  @SuppressWarnings("ResultOfObjectAllocationIgnored")
   public void renderCommand()
   {
     new RenderSetupDialog(this, theScene);
