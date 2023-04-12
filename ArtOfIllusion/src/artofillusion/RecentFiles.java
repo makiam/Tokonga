@@ -1,5 +1,5 @@
 /* Copyright (C) 2004 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -30,7 +30,7 @@ public class RecentFiles
   public static void createMenu(BMenu menu)
   {
     menu.removeAll();
-    for (String recentFile : Preferences.userNodeForPackage(RecentFiles.class).get(RECENT_FILES, "").split(File.pathSeparator))
+    for (String recentFile: Preferences.userNodeForPackage(RecentFiles.class).get(RECENT_FILES, "").split(File.pathSeparator))
     {
       final File file = new File(recentFile);
       BMenuItem item = new BMenuItem(file.getName());
@@ -44,7 +44,6 @@ public class RecentFiles
     }
   }
     private static final String RECENT_FILES = "recentFiles";
-
   /** Add a File to the list of recent files. */
 
   public static void addRecentFile(File file)
@@ -54,7 +53,7 @@ public class RecentFiles
     String newPath = file.getAbsolutePath();
     Preferences pref = Preferences.userNodeForPackage(RecentFiles.class);
     String recent[] = pref.get(RECENT_FILES, "").split(File.pathSeparator);
-    ArrayList<String> newFiles = new ArrayList<String>();
+    List<String> newFiles = new ArrayList<>();
     newFiles.add(newPath);
     for (int i = 0; i < recent.length && newFiles.size() < MAX_RECENT; i++)
       if (!newPath.equals(recent[i]))
@@ -70,12 +69,10 @@ public class RecentFiles
 
     // Rebuild the menus in all open windows.
 
-    for (EditingWindow window : ArtOfIllusion.getWindows())
-    {
-      if (window instanceof LayoutWindow)
-      {
-        createMenu(((LayoutWindow) window).getRecentFilesMenu());
-      }
+    for (EditingWindow window : ArtOfIllusion.getWindows()) {
+        if (window instanceof LayoutWindow) {
+            createMenu(((LayoutWindow) window).getRecentFilesMenu());
+        }
     }
   }
 }
