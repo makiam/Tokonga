@@ -26,7 +26,7 @@ public class RecentFiles
   static final int MAX_RECENT = 10;
 
   /** Given a BMenu, fill it in with a list of items for recent files. */
-
+  
   public static void createMenu(BMenu menu)
   {
     menu.removeAll();
