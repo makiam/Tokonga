@@ -68,8 +68,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
   
   
   BMenu newScriptMenu;
-  BMenu recentFilesMenu, createMenu, scriptMenu;
-  BMenu editKeyframeMenu;
+  BMenu recentFilesMenu, scriptMenu;
+  
   BMenu addTrackMenu, positionTrackMenu, rotationTrackMenu, distortionMenu;
   
   private final BMenuItem fileMenuItem = Translate.menuItem("save", this, "saveCommand");
@@ -487,15 +487,17 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
       {
         if (translator.canImport())
           {
-            importMenu.add(item = new BMenuItem(translator.getName()));
-            item.setActionCommand("import");
-            item.addEventLink(CommandEvent.class, this, "actionPerformed");
+            BMenuItem item = new BMenuItem(translator.getName());
+            item.getComponent().putClientProperty("translator", translator);
+            item.addEventLink(CommandEvent.class, this, "importAction");
+            importMenu.add(item);
           }
         if (translator.canExport())
           {
-            exportMenu.add(item = new BMenuItem(translator.getName()));
-            item.setActionCommand("export");
-            item.addEventLink(CommandEvent.class, this, "actionPerformed");
+            BMenuItem item = new BMenuItem(translator.getName());
+            item.getComponent().putClientProperty("translator", translator);
+            item.addEventLink(CommandEvent.class, this, "exportAction");
+            exportMenu.add(item);
           }
       }
     if (importMenu.getChildCount() > 0)
@@ -1786,9 +1788,15 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     setTime(theScene.getTime() - 1.0/theScene.getFramesPerSecond());    
   }
   
-  private static final Map<String, Integer> bmap = Map.of("moveKeyframes", EditKeyframesDialog.MOVE,
-          "copyKeyframes", EditKeyframesDialog.COPY, "rescaleKeyframes", EditKeyframesDialog.RESCALE,
-          "loopKeyframes", EditKeyframesDialog.LOOP, "deleteKeyframes", EditKeyframesDialog.DELETE);
+  private static final Map<String, Integer> bmap;
+  static {
+    bmap = new HashMap<>();
+    bmap.put("moveKeyframes", EditKeyframesDialog.MOVE);
+    bmap.put("copyKeyframes", EditKeyframesDialog.COPY);
+    bmap.put("rescaleKeyframes", EditKeyframesDialog.RESCALE);
+    bmap.put("loopKeyframes", EditKeyframesDialog.LOOP);
+    bmap.put("deleteKeyframes", EditKeyframesDialog.DELETE);
+  }
   
   @SuppressWarnings("ResultOfObjectAllocationIgnored")
   private void bulkEditKeyframeAction(CommandEvent event) {
@@ -3136,8 +3144,4 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     ArtOfIllusion.getPreferences().removePropertyChangeListener(this);
   }
 
-  public BMenu getRecentFilesMenu()
-  {
-    return recentFilesMenu;
-  }
 }
