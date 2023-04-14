@@ -55,7 +55,6 @@ public class PluginRegistry
   @SuppressWarnings("ThrowableResultIgnored")
   public static Map<String, Throwable> notifyPlugins(int message, Object... args)
   {
-    System.out.println("Notify plugins called... " + message);
     Map<String, Throwable> errors = new HashMap<>();
     categoryClasses.getOrDefault(Plugin.class, Collections.emptyList()).forEach(plugin -> {
       try 
