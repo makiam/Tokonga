@@ -44,16 +44,6 @@ public class SPMTranslate
     }
 
 
-    /**
-     *  Get the locale currently used for generating text.
-     *
-     *@return    The locale value
-     */
-
-    public static Locale getLocale()
-    {
-        return locale;
-    }
 
     /**
      *  Description of the Method
