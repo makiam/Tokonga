@@ -226,8 +226,7 @@ public class SPManagerPlugin implements Plugin
 	    LayoutWindow layout = (LayoutWindow) args[0];
 	    BMenu toolsMenu = layout.getToolsMenu();
 	    toolsMenu.addSeparator();
-	    BMenuItem menuItem =
-		SPMTranslate.bMenuItem( "SPManager", this, "doMenu" );
+	    BMenuItem menuItem = SPMTranslate.bMenuItem( "SPManager", this, "doMenu" );
 
 	    toolsMenu.add( menuItem );
 	}

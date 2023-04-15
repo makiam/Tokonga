@@ -19,6 +19,8 @@ import javax.swing.border.*;
 import java.awt.event.ActionEvent;
 import buoy.widget.*;
 import buoy.event.*;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
 /**
@@ -47,7 +49,7 @@ public class SPManagerFrame extends BFrame
         SPMTranslate.text("Continue"), SPMTranslate.text("Stop"),
         SPMTranslate.text("Ignore")
     };
-    protected static final String version = "1.10";
+    protected static final String version = ResourceBundle.getBundle("Bundle", Locale.ROOT).getString("version");
 
     /**
      *  Gets the single instance of SPManagerFrame currently running
