@@ -74,7 +74,7 @@ public class SPManagerPlugin implements Plugin
 	    System.out.println("SPManager starting...");
 
 	    // get details of plugin classloaders
-	    int i, j;
+	    int i;
 	    URL urlList[];
 
 	    ClassLoader ldr = null;
@@ -448,6 +448,7 @@ public class SPManagerPlugin implements Plugin
 	    BTextField savePath;
 	    Thread worker;
 
+            @Override
 	    public void setVisible(boolean vis)
 	    {
 		if (!vis) {
@@ -509,6 +510,7 @@ public class SPManagerPlugin implements Plugin
 		    System.out.println("DOWNLOAD: creating ObjectInfo..."+
 			    url.toString());
 		    worker = new Thread() {
+                        @Override
 			public void run()
 			{
 			    info = new SPMObjectInfo(url);
@@ -740,77 +742,5 @@ public class SPManagerPlugin implements Plugin
 
     }
 
-    /**
-     *  main routine so SPManager can be run standalone
-     */
-    public static void main(String[] argv)
-    {
-	char slash = File.separatorChar;
-
-	APP_DIRECTORY = System.getProperty("user.dir");
-	try {
-	    URL url = SPManagerPlugin.class
-	    .getResource("/artofillusion/spmanager/SPManagerPlugin.class");
-
-	    System.out.println("SPManager.main: url=" + url);
-
-	    System.out.println("SPManager.main: path=" + url.getPath());
-
-	    String furl = url.getPath();
-	    if (furl.indexOf('!') < 0) furl = url.toString();
-
-	    int cut = furl.indexOf('!');
-
-	    if (cut > 0) {
-
-		furl = furl.substring(0, cut);
-
-		cut = furl.indexOf("jar:");
-		if (cut >= 0)
-		    furl = furl.substring(cut+"jar:".length());
-
-		if (!furl.startsWith("file:")) furl = "file:" + furl;
-
-		System.out.println("SPManager.main: furl=" + furl);
-
-		File dir = new File(new URL(furl).getPath()).getParentFile()
-		.getParentFile();
-
-		System.out.println("SPManager.main: dir=" +
-			dir.getAbsolutePath());
-
-		if (dir.exists())
-		    APP_DIRECTORY = dir.getAbsolutePath();
-		else
-		    APP_DIRECTORY = System.getProperty("user.dir");
-
-		System.out.println("SPManager.main: app_dir=" + APP_DIRECTORY);
-	    }
-	}
-	catch (Exception ex) {
-	    System.out.println("Error looking up app_dir: " + ex);
-	}
-
-	SPMTranslate.setLocale(Locale.getDefault());
-
-	PLUGIN_DIRECTORY = APP_DIRECTORY + slash + "Plugins";
-	TOOL_SCRIPT_DIRECTORY = APP_DIRECTORY + slash + "Scripts" + slash + "Tools";
-	OBJECT_SCRIPT_DIRECTORY = APP_DIRECTORY + slash + "Scripts" + slash + "Objects";
-	STARTUP_SCRIPT_DIRECTORY = APP_DIRECTORY + slash + "Scripts" + slash + "Startup";
-
-	SPManagerPlugin spm = new SPManagerPlugin();
-	spm.init();
-
-	// create Frame with overridden 'close' method
-	spmFrame = new SPManagerFrame() {
-	    protected void hideSPManager()
-	    {
-		setVisible(false);
-		dispose();
-	    }
-	};
-
-	spm.doMenu();
-    }
 }
 
