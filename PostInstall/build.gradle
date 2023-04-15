@@ -1,15 +1,16 @@
-
 plugins {
-    id "de.undercouch.download" version "5.0.2"
-    id 'aoi.java-conventions' 
+	id 'aoi.plugin-conventions'
 }
 
-description = "PostInstall"
+description = 'PostInstall'
 
-task downloadExternal(type: Download) {
-  src 'https://github.com/ArtOfIllusion/SPManager/releases/download/v1.102/PostInstall.jar'
-  dest "${rootProject.projectDir}/Plugins"
-  overwrite false
+sourceSets {
+    main {
+        java {
+            srcDirs = ["src/main/java"]
+        }
+        resources {
+            srcDirs = ["src/main/resources"]
+        }
+    }
 }
-
-jar.dependsOn downloadExternal
