@@ -117,7 +117,7 @@ public abstract class Material
   
   public abstract Material duplicate();
 
-  /** Allow the user to interactively edit the naterial.  parent is a WindowWidget which can be used as a
+  /** Allow the user to interactively edit the material.  parent is a WindowWidget which can be used as a
    parent for Dialogs, and sc is the Scene which this Material is part of.  Subclasses should override
    this to implement editing. */
 
