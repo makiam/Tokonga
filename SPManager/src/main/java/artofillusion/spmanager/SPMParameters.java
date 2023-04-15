@@ -233,7 +233,7 @@ public class SPMParameters
         {
             if ( !( ( e instanceof UnknownHostException ) || ( e instanceof SocketException ) ) )
                 e.printStackTrace();
-            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "unknownRepositoriesHost", new String[]{repListURL.toString()} ), -1 );
+            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text("unknownRepositoriesHost", repListURL), -1 );
         }
         finally
         {

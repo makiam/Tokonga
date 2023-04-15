@@ -1,6 +1,7 @@
 /*
  *  Copyright 2004 Francois Guillet
- *  Changes copyright 2022 by Maksim Khramov
+ *  Changes copyright 2022-2023 by Maksim Khramov
+ *
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -19,8 +20,6 @@ import javax.swing.border.*;
 import java.awt.event.ActionEvent;
 import buoy.widget.*;
 import buoy.event.*;
-import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
 /**
@@ -49,7 +48,6 @@ public class SPManagerFrame extends BFrame
         SPMTranslate.text("Continue"), SPMTranslate.text("Stop"),
         SPMTranslate.text("Ignore")
     };
-    protected static final String version = ResourceBundle.getBundle("Bundle", Locale.ROOT).getString("version");
 
     /**
      *  Gets the single instance of SPManagerFrame currently running
@@ -103,7 +101,7 @@ public class SPManagerFrame extends BFrame
         LayoutInfo headLayout = new LayoutInfo( LayoutInfo.WEST, LayoutInfo.NONE, new Insets( 3, 5, 5, 3 ), new Dimension( 0, 0 ) );
         rc.add( new BLabel( new ImageIcon( getClass().getResource( "/artofillusion/spmanager/icons/gear.png" ) ) ), headLayout );
         //Icon gear.png taken from the KDE desktop environment !!!
-        rc.add( SPMTranslate.bLabel( "Version", new Object[]{version} ), headLayout );
+        rc.add( SPMTranslate.bLabel( "Version"), headLayout );
         LayoutInfo cclayout = new LayoutInfo( LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets( 3, 3, 5, 3 ), new Dimension( 0, 0 ) );
         cc.add( rc, cclayout );
 

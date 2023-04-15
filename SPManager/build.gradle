@@ -13,7 +13,7 @@ processResources {
     filesMatching("**/extensions.xml") {
         expand props
     }
-    filesMatching("**/Bundle.properties") {
+    filesMatching("**/*.properties") {
         expand props
     }
 }

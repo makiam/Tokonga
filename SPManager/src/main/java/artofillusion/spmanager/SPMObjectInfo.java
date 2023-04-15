@@ -10,6 +10,7 @@
  */
 package artofillusion.spmanager;
 
+import artofillusion.ui.Translate;
 import java.io.*;
 import java.util.*;
 import org.w3c.dom.*;
@@ -250,9 +251,7 @@ public class SPMObjectInfo
 		{
 			kbsize = 1;
 		}
-		return ( SPMTranslate.text( "fullname", new Object[]{
-				getName(), author, version + betaString, date,
-				String.valueOf( kbsize )} ) + addFiles );
+		return Translate.text( "spmanager:fullname", getName(), author, version + betaString, date, kbsize ) + addFiles;
 	}
 
 
@@ -261,6 +260,7 @@ public class SPMObjectInfo
 	 *
 	 *@return    Description of the Return Value
 	 */
+        @Override
 	public String toString()
 	{
 		return getName();
