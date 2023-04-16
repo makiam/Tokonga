@@ -329,6 +329,7 @@ public class ArtOfIllusion
       if (windows.contains(win))
         return;
     }
+    System.exit(0);
   }
 
   /** Execute all startup scripts. */
