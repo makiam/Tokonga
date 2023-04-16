@@ -26,7 +26,7 @@ import artofillusion.ui.*;
  */
 public class SPMParameters
 {
-    private static Vector<String> repositories;
+    private static List<String> repositories;
     private static int current;
     private static Map<String, String> filters;
     private static boolean useProxy;
