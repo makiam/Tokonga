@@ -233,7 +233,7 @@ public class SPManagerPlugin implements Plugin
 	break;
 
 	case APPLICATION_STOPPING:
-	    
+
 	    break;
 	    
 	case DOWNLOAD:
@@ -683,7 +683,7 @@ public class SPManagerPlugin implements Plugin
 	if ( spmFrame == null )
 	    spmFrame = new SPManagerFrame();
 	( (Window) spmFrame.getComponent() ).toFront();
-	( (Window) spmFrame.getComponent() ).show();
+	( (Window) spmFrame.getComponent() ).setVisible(true);
     }
 
 
@@ -696,7 +696,7 @@ public class SPManagerPlugin implements Plugin
 
 	spmFrame = new SPManagerFrame();
 	((Window) spmFrame.getComponent()).toFront();
-	((Window) spmFrame.getComponent()).show();
+	((Window) spmFrame.getComponent()).setVisible(true);
 
 	old.dispose();
     }
