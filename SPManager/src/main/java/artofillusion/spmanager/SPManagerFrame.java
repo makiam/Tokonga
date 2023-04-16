@@ -134,24 +134,6 @@ public class SPManagerFrame extends BFrame
         installSplitPane.setDividerLocation( installSplitPane.getChild( 0 ).getPreferredSize().width );
     }
 
-
-    /**
-     *  Dumps the sizes of a widget container children Used for debug purposes
-     *
-     *@param  wc  WidgetContainer
-     */
-    public void printBounds( WidgetContainer wc )
-    {
-      wc.getChildren().forEach(w ->{
-        System.out.println("Widget: " + w);
-        System.out.println("Bounds: " + w.getBounds());
-        System.out.println("Min size: " + w.getMinimumSize());
-        System.out.println("Pref size: " + w.getPreferredSize());
-        if(w instanceof WidgetContainer) printBounds((WidgetContainer)w);
-      });
-    }
-
-
     /**
      *  Hides the SPManager main window
      */
@@ -281,6 +263,7 @@ public class SPManagerFrame extends BFrame
     /**
      *  Called when the Setup button is clicked
      */
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
     private void doSetup()
     {
         new SPMSetupFrame( this );
