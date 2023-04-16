@@ -23,6 +23,8 @@ import java.io.*;
 import java.net.*;
 import java.lang.reflect.*;
 import java.util.List;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *  The Plugin corresponding to the SPManager
@@ -30,11 +32,10 @@ import java.util.List;
  *@author     Francois Guillet
  *@created    20 march 2004
  */
-
+@Slf4j
 public class SPManagerPlugin implements Plugin
 {
-    public static String AOI_VERSION;
-    public static String UNIQUE_PATH;
+    public static String AOI_VERSION = ArtOfIllusion.getMajorVersion();
     public static String TEMP_DIR;
     public static String APP_DIRECTORY;
     public static String PLUGIN_DIRECTORY;
@@ -42,10 +43,35 @@ public class SPManagerPlugin implements Plugin
     public static String OBJECT_SCRIPT_DIRECTORY;
     public static String STARTUP_SCRIPT_DIRECTORY;
 
-    public static final int DOWNLOAD = -1;
-
+    /**
+     * Gets the frame attribute of the SPManagerPlugin class
+     *
+     * @return The frame value
+     */
+    @Getter
     private static SPManagerFrame spmFrame;
-    
+
+    @Override
+    public void onSceneWindowCreated(LayoutWindow view) {
+        BMenu toolsMenu = view.getToolsMenu();
+        toolsMenu.addSeparator();
+        BMenuItem menuItem = Translate.menuItem("spmanager:SPManager", this, "doMenu");
+
+        toolsMenu.add( menuItem );
+    }
+
+    @Override
+    public void onApplicationStarting() {
+        SPMTranslate.setLocale(ArtOfIllusion.getPreferences().getLocale());
+
+        APP_DIRECTORY = ArtOfIllusion.APP_DIRECTORY;
+        PLUGIN_DIRECTORY = ArtOfIllusion.PLUGIN_DIRECTORY;
+        TOOL_SCRIPT_DIRECTORY = ArtOfIllusion.TOOL_SCRIPT_DIRECTORY;
+        OBJECT_SCRIPT_DIRECTORY = ArtOfIllusion.OBJECT_SCRIPT_DIRECTORY;
+        STARTUP_SCRIPT_DIRECTORY = ArtOfIllusion.STARTUP_SCRIPT_DIRECTORY;
+    }
+
+
     /**
      *  Description of the Method
      *
@@ -55,28 +81,15 @@ public class SPManagerPlugin implements Plugin
     @Override
     public void processMessage( int message, Object... args )
     {
-	// NTJ: get the AOI run-time (*not* compile-time) version
-	if (AOI_VERSION == null) {
-	    AOI_VERSION = ArtOfIllusion.getMajorVersion();
-	    System.setProperty("artofillusion.version", ArtOfIllusion.getVersion());
-	    System.setProperty("artofillusion.version.major", ArtOfIllusion.getMajorVersion());
-	}
 
 	switch (message) {
 	case Plugin.APPLICATION_STARTING:
-	    SPMTranslate.setLocale(ArtOfIllusion.getPreferences().getLocale());
+            log.atInfo().log("SPManager starting...");
+            onApplicationStarting();
 
-	    APP_DIRECTORY = ArtOfIllusion.APP_DIRECTORY;
-	    PLUGIN_DIRECTORY = ArtOfIllusion.PLUGIN_DIRECTORY;
-	    TOOL_SCRIPT_DIRECTORY = ArtOfIllusion.TOOL_SCRIPT_DIRECTORY;
-	    OBJECT_SCRIPT_DIRECTORY = ArtOfIllusion.OBJECT_SCRIPT_DIRECTORY;
-	    STARTUP_SCRIPT_DIRECTORY = ArtOfIllusion.STARTUP_SCRIPT_DIRECTORY;
-
-	    System.out.println("SPManager starting...");
 
 	    // get details of plugin classloaders
-	    int i;
-	    URL urlList[];
+		URL[] urlList;
 
 	    ClassLoader ldr = null;
 	    URLClassLoader urlldr = null;
@@ -102,35 +115,34 @@ public class SPManagerPlugin implements Plugin
 	    try {
 		addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
 		addUrl.setAccessible(true);
-	    } catch (Exception e) {
+	    } catch (NoSuchMethodException | SecurityException e) {
 		System.out.println("Error getting addURL method: " + e);
 	    }
 
 	    // get details of all local plugins
-	    SPMObjectInfo info;
+
 	    StringBuffer errs = null;
 	    
-	    File files[], urlfile;
+	    File urlfile;
 	    URL url;
 
 	    File plugdir = new File(PLUGIN_DIRECTORY);
 	    if (plugdir.exists()) {
-		files = plugdir.listFiles();
-		for (i = 0; i < files.length; i++) {
-		    info = new SPMObjectInfo(files[i].getAbsolutePath());
+		File[] files = plugdir.listFiles();
+		for (int i = 0; i < files.length; i++) {
+		    SPMObjectInfo info = new SPMObjectInfo(files[i].getAbsolutePath());
 
 		    if (info.invalid) {
 			if (errs == null) errs = new StringBuffer(1024);
 			if (errs.length() > 0) errs.append('\n');
-			errs.append(SPMTranslate.text("pluginFailure",
-				info.getName()));
+			errs.append(SPMTranslate.text("pluginFailure", info.getName()));
 		    }
 
 		    if (info.actions != null && info.actions.size() > 0) {
 
 			try {
 			    url = files[i].toURI().toURL();
-			} catch (Exception e) {
+			} catch (MalformedURLException e) {
 			    continue;
 			}
 
@@ -138,9 +150,7 @@ public class SPManagerPlugin implements Plugin
 			obj = loaders.get(url);
 
 			if (obj == null) {
-			    System.out.println("SPManager: could not find"
-				    + " classloader: "
-				    + files[i].getPath());
+			    System.out.println("SPManager: could not find classloader: "+ files[i].getPath());
 			    continue;
 			}
 
@@ -156,7 +166,7 @@ public class SPManagerPlugin implements Plugin
 			// ok, now perform the actions
 			for (Map.Entry<String, String> entry: info.actions.entrySet()) {
                             String value = entry.getValue();
-			    String key[] = entry.getKey().split(":");
+			    String[] key = entry.getKey().split(":");
 
 			    try {
 				if (key[0].startsWith("/"))
@@ -165,7 +175,7 @@ public class SPManagerPlugin implements Plugin
 				    urlfile = new File(plugdir, key[0]);
 				
 				url = urlfile.toURI().toURL();
-			    } catch (Exception e) {
+			    } catch (MalformedURLException e) {
 				System.out.println("Error making url: " + e);
 				continue;
 			    }
@@ -178,7 +188,7 @@ public class SPManagerPlugin implements Plugin
 				else if (addUrl != null) {
 				    try {
 					addUrl.invoke(urlldr, url);
-                                    } catch (Exception e) {
+                                    } catch (IllegalAccessException | InvocationTargetException e) {
 					System.out.println("Error invoking: " + e);
 				    }
 				}
@@ -189,7 +199,7 @@ public class SPManagerPlugin implements Plugin
 				
 				if (key.length == 1) {
 				    if (obj != null) searchldr.add(ldr);
-				    else System.out.println("SPM: could not find" + " loader for: " + url);
+				    else System.out.println("SPM: could not find loader for: " + url);
 				}
 				
 			    }
@@ -215,8 +225,7 @@ public class SPManagerPlugin implements Plugin
 		    .showMessageDialog(null);
 		}
 	    }
-	    else System.out.println("SPManager: could not find plugin dir: " +
-		    PLUGIN_DIRECTORY);
+	    else System.out.println("SPManager: could not find plugin dir: " + PLUGIN_DIRECTORY);
 
 
 	    init();
@@ -224,12 +233,7 @@ public class SPManagerPlugin implements Plugin
 
 	case Plugin.SCENE_WINDOW_CREATED:
 	{
-	    LayoutWindow layout = (LayoutWindow) args[0];
-	    BMenu toolsMenu = layout.getToolsMenu();
-	    toolsMenu.addSeparator();
-            BMenuItem menuItem = Translate.menuItem("spmanager:SPManager", this, "doMenu");
-
-	    toolsMenu.add( menuItem );
+            onSceneWindowCreated((LayoutWindow) args[0]);
 	}
 	break;
 
@@ -244,7 +248,7 @@ public class SPManagerPlugin implements Plugin
     public void init()
     {
 
-	List<String> err = new ArrayList<>(8);
+	List<String> errors = new ArrayList<>();
 
 	System.out.println("SPManager: java temp dir is " + System.getProperty("java.io.tmpdir"));
 
@@ -253,132 +257,104 @@ public class SPManagerPlugin implements Plugin
 
 	// try 'temp' in AOI installation directory
 	if (! ((temp.exists() && temp.isDirectory()) || temp.mkdir())) {
-	    System.out.println("SPManager: could not open/create temp dir: " +
-		    temp.getAbsolutePath());
+	    System.out.println("SPManager: could not open/create temp dir: " + temp.getAbsolutePath());
 
 	    temp = new File(APP_DIRECTORY, "temp");
 	}
 
 	// try 'SPtemp' in user's home directory
 	if (! ((temp.exists() && temp.isDirectory()) || temp.mkdir())) {
-	    System.out.println("Cannot create temp folder: " +
-		    temp.getAbsolutePath());
+	    System.out.println("Cannot create temp folder: " + temp.getAbsolutePath());
 
 	    temp = new File(System.getProperty("user.dir"), "SPMtemp");
 	}
 
 	if (! ((temp.exists() && temp.isDirectory()) || temp.mkdir())) {
-	    err.add("Cannot create temp folder: " +
-		    temp.getAbsolutePath());
+	    errors.add("Cannot create temp folder: " + temp.getAbsolutePath());
 	}
 
 	if (!temp.canWrite())
-	    err.add("Write permission denied to temp folder: " +
-		    temp.getAbsolutePath());
+	    errors.add("Write permission denied to temp folder: " + temp.getAbsolutePath());
 
 	// create temporary private sub-tree
 	String path;
 	File t = null;
 	try {
-	    t = File.createTempFile("spmanager-temp-"
-		    + System.getProperty("user.name") + "-", ".lck", temp);
+	    t = File.createTempFile("spmanager-temp-" + System.getProperty("user.name") + "-", ".lck", temp);
 	    t.deleteOnExit();
 	    path= t.getName();
 	    path = path.substring(0, path.length()- ".lck".length());
-	} catch (Exception e) {
+	} catch (IOException e) {
 	    // failed to create temp file, use fallback naming algorithm
-	    System.out.println("SPManager: could not create temp file: " +
-		    t.getAbsolutePath() + e);
+	    System.out.println("SPManager: could not create temp file: " + t.getAbsolutePath() + e);
 
-	    path = System.getProperty("user.name") + "-"
-	    	+ String.valueOf(System.currentTimeMillis());
+	    path = System.getProperty("user.name") + "-" + String.valueOf(System.currentTimeMillis());
 	}
 	
 	temp = new File(temp, path);
 
 	if (! ((temp.exists() && temp.isDirectory()) || temp.mkdir())) {
-	    err.add("Cannot create temp folder: " +
-		    temp.getAbsolutePath());
+	    errors.add("Cannot create temp folder: " + temp.getAbsolutePath());
 	}
 
 	if (!temp.canWrite())
-	    err.add("Write permission denied to temp folder: " +
-		    temp.getAbsolutePath());
+	    errors.add("Write permission denied to temp folder: " + temp.getAbsolutePath());
 
 	TEMP_DIR = temp.getAbsolutePath();
 
-	System.out.println("SPManager: temp dir set to: " +
-		temp.getAbsolutePath());
+	System.out.println("SPManager: temp dir set to: " + temp.getAbsolutePath());
 
 	// make sure all temp directories are created
 	File subfolder = new File(PLUGIN_DIRECTORY);
 	temp = new File(TEMP_DIR, subfolder.getName());
 	if (!temp.exists() && !temp.mkdirs())
-	    err.add("Cannot create temp plugin folder: " +
-		    temp.getAbsolutePath());
+	    errors.add("Cannot create temp plugin folder: " + temp.getAbsolutePath());
 
 	subfolder = new File(TOOL_SCRIPT_DIRECTORY);
 	temp = new File(TEMP_DIR, subfolder.getName());
 	if (!temp.exists() && !temp.mkdirs())
-	    err.add("Cannot create temp script folder: " +
-		    temp.getAbsolutePath());
+	    errors.add("Cannot create temp script folder: " + temp.getAbsolutePath());
 
 	subfolder = new File(OBJECT_SCRIPT_DIRECTORY);
 	temp = new File(TEMP_DIR, subfolder.getName());
 	if (!temp.exists() && !temp.mkdirs())
-	    err.add("Cannot create temp script folder: " +
-		    temp.getAbsolutePath());
+	    errors.add("Cannot create temp script folder: " + temp.getAbsolutePath());
 
 	subfolder = new File(STARTUP_SCRIPT_DIRECTORY);
 	temp = new File(TEMP_DIR, subfolder.getName());
 	if (!temp.exists() && !temp.mkdirs ())
-	    err.add("Cannot create temp script folder: " +
-		    temp.getAbsolutePath());
+	    errors.add("Cannot create temp script folder: " + temp.getAbsolutePath());
 
 	// make sure all live directories exist
 	temp = new File(PLUGIN_DIRECTORY);
 	if (!temp.exists() && !temp.mkdir())
-	    err.add("Cannot create missing plugin folder: " +
-		    temp.getAbsolutePath());
+	    errors.add("Cannot create missing plugin folder: " + temp.getAbsolutePath());
 
 	temp = new File(TOOL_SCRIPT_DIRECTORY);
 	if (!temp.exists() && !temp.mkdirs())
-	    err.add("Cannot create missing script folder: " +
-		    temp.getAbsolutePath());
+	    errors.add("Cannot create missing script folder: " + temp.getAbsolutePath());
 
 	temp = new File(OBJECT_SCRIPT_DIRECTORY);
 	if (!temp.exists() && !temp.mkdirs())
-	    err.add("Cannot create missing script folder: " +
-		    temp.getAbsolutePath());
+	    errors.add("Cannot create missing script folder: " + temp.getAbsolutePath());
 
 	temp = new File(STARTUP_SCRIPT_DIRECTORY);
 	if (!temp.exists() && !temp.mkdirs ())
-	    err.add("Cannot create missing script folder: " +
-		    temp.getAbsolutePath());
+	    errors.add("Cannot create missing script folder: " + temp.getAbsolutePath());
 
+        if(errors.isEmpty()) return;
 
-	if (err.size() > 0) {
-	    BTextArea txt = new BTextArea(5, 45);
-	    txt.setEditable(false);
+        BTextArea txt = new BTextArea(5, 45);
+        txt.setEditable(false);
+        txt.setText(String.join("\n", errors));
 
-	    for (int i = 0; i < err.size(); i++)
-		txt.append(err.get(i) + "\n");
+        BScrollPane detail = new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_AS_NEEDED);
+        BLabel messg = SPMTranslate.bLabel("errMsg");
+        new BStandardDialog("SPManager initialise", new Widget[] { messg, detail }, BStandardDialog.WARNING).showMessageDialog(null);
 
-	    BScrollPane detail =
-		new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER,
-			BScrollPane.SCROLLBAR_AS_NEEDED);
-
-	    BLabel messg = SPMTranslate.bLabel("errMsg");
-
-	    new BStandardDialog("SPManager initialise",
-		    new Widget[] { messg, detail },
-		    BStandardDialog.WARNING)
-	    .showMessageDialog(null);
-	}
     }
 
-    public void registerResource(String type, String id, ClassLoader loader,
-	    String baseName, Locale locale)
+    public void registerResource(String type, String id, ClassLoader loader, String baseName, Locale locale)
     {
 	String suffix = "";
 
@@ -397,11 +373,10 @@ public class SPManagerPlugin implements Plugin
 		url = loader.getResource(baseName + suffix + ".properties");
 
 		if (url != null) {
-		    PluginRegistry.registerResource(type, id, loader,
-			    url.getPath(), locale);
+		    PluginRegistry.registerResource(type, id, loader, url.getPath(), locale);
 		    break;
 		}
-	    } catch (Exception e) {}
+	    } catch (IllegalArgumentException e) {}
 
 	    // can we remove part of the suffix?
 	    cut = suffix.lastIndexOf('_');
@@ -491,8 +466,7 @@ public class SPManagerPlugin implements Plugin
 		    setProgressText(SPMTranslate.text("contacting"));
 		    setIdle(true);
 
-		    System.out.println("DOWNLOAD: creating ObjectInfo..."+
-			    url.toString());
+		    System.out.println("DOWNLOAD: creating ObjectInfo..." + url.toString());
 		    worker = new Thread() {
                         @Override
 			public void run()
@@ -504,8 +478,7 @@ public class SPManagerPlugin implements Plugin
 			    }
 
 			    // get destination if needed
-			    if (info.name == null
-				    || info.name.length() == 0) {
+			    if (info.name == null || info.name.length() == 0) {
 
 				System.out.println("need path...");
 
@@ -514,9 +487,7 @@ public class SPManagerPlugin implements Plugin
 				savePath = new BTextField("", 25);
 				savePath.addEventLink(ValueChangedEvent.class, this, "savePath");
 				row.add(savePath);
-				row.add(SPMTranslate.bButton("browse",
-					this,
-				"browse"));
+				row.add(SPMTranslate.bButton("browse", this, "browse"));
 				col.remove(buttons);
 				col.add(row);
 				col.add(buttons);
@@ -556,8 +527,7 @@ public class SPManagerPlugin implements Plugin
 			public void browse()
 			{
 			    BFileChooser fc = new
-			    BFileChooser(BFileChooser.SAVE_FILE,
-				    Translate.text("savePath"));
+			    BFileChooser(BFileChooser.SAVE_FILE, Translate.text("savePath"));
 
 			    File file = null;
 			    String path = null;
@@ -590,8 +560,7 @@ public class SPManagerPlugin implements Plugin
 
 		}
 		else if (cmd.equals("install")) {
-		    System.out.println("DOWNLOAD: downloading " +
-			    url.toString());
+		    System.out.println("DOWNLOAD: downloading " + url.toString());
 
 		    setText(SPMTranslate.text("downloading", info.getName()));
 		    pack();
@@ -627,7 +596,7 @@ public class SPManagerPlugin implements Plugin
 			    .downloadRemoteBinaryFile(url, path, info.length, stat, total, 0, errs);
 
 			    for (int i = 0; info.files != null && i < info.files.length; i++) {
-				if (worker.interrupted()) {
+				if (Thread.interrupted()) {
 				    doClose();
 				    return;
 				}
@@ -672,46 +641,9 @@ public class SPManagerPlugin implements Plugin
 
 
     /**
-     *  restart the plugin
-     */
-    public static void restart()
-    {
-	SPManagerFrame old = spmFrame;
-
-	spmFrame = new SPManagerFrame();
-	((Window) spmFrame.getComponent()).toFront();
-	((Window) spmFrame.getComponent()).setVisible(true);
-
-	old.dispose();
-    }
-
-    /**
-     *  close the frame
-     */
-    public void close()
-    {
-	if (spmFrame != null) {
-	    spmFrame.setVisible(false);
-	    spmFrame.dispose();
-	}
-    }
-
-
-    /**
-     *  Gets the name attribute of the SPManagerPlugin object
+     * Gets the frame attribute of the SPManagerPlugin class
      *
-     *@return    The name value
-     */
-    public String getName()
-    {
-	return "Script and Plugin Manager";
-    }
-
-
-    /**
-     *  Gets the frame attribute of the SPManagerPlugin class
-     *
-     *@return    The frame value
+     * @return The frame value
      */
     public static SPManagerFrame getFrame()
     {
@@ -720,4 +652,3 @@ public class SPManagerPlugin implements Plugin
 
 
 }
-
