@@ -1,5 +1,6 @@
 # Art of Illusion
 
+[![Build workflow](https://github.com/makiam/Tokonga/actions/workflows/gradle.yml/badge.svg?branch=master)](https://github.com/makiam/Tokonga/actions/workflows/gradle.yml)
 Art of Illusion is a free, multiplatform Modeling, Animation and
 Rendering suite written in the java language. It features a simple,
 streamlined interface to a broad array of powerful features, including
