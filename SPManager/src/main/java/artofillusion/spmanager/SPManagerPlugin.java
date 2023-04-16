@@ -30,6 +30,7 @@ import java.util.List;
  *@author     Francois Guillet
  *@created    20 march 2004
  */
+
 public class SPManagerPlugin implements Plugin
 {
     public static String AOI_VERSION;
@@ -52,7 +53,7 @@ public class SPManagerPlugin implements Plugin
      *@param  args     Description of the Parameter
      */
     @Override
-    public void processMessage( int message, Object args[] )
+    public void processMessage( int message, Object... args )
     {
 	// NTJ: get the AOI run-time (*not* compile-time) version
 	if (AOI_VERSION == null) {
@@ -232,22 +233,6 @@ public class SPManagerPlugin implements Plugin
 	}
 	break;
 
-	case APPLICATION_STOPPING:
-
-	    break;
-	    
-	case DOWNLOAD:
-	{
-	    System.out.println("DOWNLOAD...");
-
-	    BFrame frame = (BFrame) args[0];
-	    URL from = (URL) args[1];
-	    URL to = (URL) (args.length > 2 ? args[2] : null);
-
-	    download(frame, from, to);
-	}
-	break;
-
 	default:
 	    //Just ignore the message
 	}
@@ -261,8 +246,7 @@ public class SPManagerPlugin implements Plugin
 
 	List<String> err = new ArrayList<>(8);
 
-	System.out.println("SPManager: java temp dir is " +
-		System.getProperty("java.io.tmpdir"));
+	System.out.println("SPManager: java temp dir is " + System.getProperty("java.io.tmpdir"));
 
 	// try system TEMP directory
 	File temp = new File(System.getProperty("java.io.tmpdir"));
@@ -734,13 +718,6 @@ public class SPManagerPlugin implements Plugin
 	return spmFrame;
     }
 
-    /**
-     *  update an already-loaded plugin
-     */
-    public static void updatePlugin(String name, String action, String target)
-    {
-
-    }
 
 }
 
