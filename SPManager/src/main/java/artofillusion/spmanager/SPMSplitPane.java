@@ -90,8 +90,8 @@ public class SPMSplitPane extends BSplitPane
 	protected boolean acceptsFileSelection = true;
 
 	/**  map of externals being processed - for loop detection */
-	protected Hashtable<SPMObjectInfo, SPMObjectInfo> extMap;
-        protected Hashtable<String, TreePath> pathMap;
+	protected Map<SPMObjectInfo, SPMObjectInfo> extMap;
+        protected Map<String, TreePath> pathMap;
 
 	private BScrollPane nameSP, descriptionSP;
 	private BComboBox descSelect;
@@ -217,20 +217,11 @@ public class SPMSplitPane extends BSplitPane
 
 		rc.add(new BLabel(SPMTranslate.text("flags") + ":"));
 
-		rc.add(new BLabel("=" + SPMTranslate.text("alertFlag"), alertIcon,
-				BLabel.CENTER, BLabel.EAST));
-
-		rc.add(new BLabel("=" + SPMTranslate.text("filtMark"), flagIcon,
-				BLabel.CENTER, BLabel.EAST));
-
-		rc.add(new BLabel("=" + SPMTranslate.text("filtDisable"),
-				disableIcon, BLabel.CENTER, BLabel.EAST));
-
-		rc.add(new BLabel("=" + SPMTranslate.text("filtConfirm"),
-				confirmIcon, BLabel.CENTER, BLabel.EAST));
-
-		rc.add(new BLabel("=" + SPMTranslate.text("required"),
-				referedIcon, BLabel.CENTER, BLabel.EAST));
+                rc.add(new BLabel("=" + SPMTranslate.text("alertFlag"), alertIcon, BLabel.CENTER, BLabel.EAST));
+                rc.add(new BLabel("=" + SPMTranslate.text("filtMark"), flagIcon, BLabel.CENTER, BLabel.EAST));
+                rc.add(new BLabel("=" + SPMTranslate.text("filtDisable"), disableIcon, BLabel.CENTER, BLabel.EAST));
+                rc.add(new BLabel("=" + SPMTranslate.text("filtConfirm"), confirmIcon, BLabel.CENTER, BLabel.EAST));
+                rc.add(new BLabel("=" + SPMTranslate.text("required"), referedIcon, BLabel.CENTER, BLabel.EAST));
 
 		objectDescription = new BTextArea( "", 8, 50 );
 		objectDescription.setWrapStyle( BTextArea.WRAP_WORD );

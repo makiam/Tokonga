@@ -52,7 +52,7 @@ public class SPMSetupFrame extends BDialog
         super( fr, true );
         frame = fr;
         setTitle( SPMTranslate.text( "SPManagerSetup" ) );
-        parameters = frame.getParameters();
+        parameters = SPManagerFrame.getParameters();
         addEventLink( WindowClosingEvent.class, this, "doCancel" );
 
         ColumnContainer cc = new ColumnContainer();

@@ -847,8 +847,7 @@ public class SPMObjectInfo
 
 				val = System.getProperty(filtName);
 				if (val == null || val.length() == 0) {
-					System.out.println("SPMObjectInfo: could not resolve " +
-							"<assert> value: " + fileName);
+					System.out.println("SPMObjectInfo: could not resolve <assert> value: " + fileName);
 					continue;
 				}
 
@@ -874,7 +873,7 @@ public class SPMObjectInfo
 				filtType = SPMParameters.getFilterType(filtVal);
 
 				if (filtType == SPMParameters.DEFAULT) {
-					filtType = params.getFilterType(node.getNodeValue());
+					filtType = SPMParameters.getFilterType(node.getNodeValue());
 				}
 
 				if (filtType > restriction) restriction = filtType;
