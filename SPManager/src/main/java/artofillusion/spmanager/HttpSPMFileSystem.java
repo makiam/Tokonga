@@ -40,9 +40,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
     private URL repository;
     private HttpStatusDialog statusDialog;
     private boolean isDownloading;
-    private Vector<Runnable> callbacks;
-    private Document pluginsDoc, objectsDoc, startupDoc, toolsDoc;
-    private File file;
+    private List<Runnable> callbacks;
     
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
     
@@ -57,10 +55,6 @@ public class HttpSPMFileSystem extends SPMFileSystem
         super();
         unknownHost = false;
         repository = rep;
-        pluginsDoc = null;
-        objectsDoc = null;
-        startupDoc = null;
-        toolsDoc = null;
     }
 
 
@@ -78,10 +72,6 @@ public class HttpSPMFileSystem extends SPMFileSystem
         initialized = false;
         unknownHost = false;
         repository = rep;
-        pluginsDoc = null;
-        objectsDoc = null;
-        startupDoc = null;
-        toolsDoc = null;
     }
 
 
@@ -156,15 +146,14 @@ public class HttpSPMFileSystem extends SPMFileSystem
      */
     private void scanPlugins()
     {
-        if (! SPManagerFrame.getParameters().getUseCache() )
-            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningPluginsFrom", repository ), 5000 );
-        else
-        {
+        if (SPManagerFrame.getParameters().getUseCache() ) {
             String s = repository.toString();
-	    s = s.substring(0, s.lastIndexOf('/'));
+            s = s.substring(0, s.lastIndexOf('/'));
             s = s + "/cgi-bin/scripts.cgi?Plugins%20" + SPManagerPlugin.AOI_VERSION;
             SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningPluginsFrom", s), 5000 );
-        }
+        } else
+            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningPluginsFrom", repository ), 5000 );
+        
         if ( statusDialog != null )
             statusDialog.setText( SPMTranslate.text( "scanningPlugins" ) );
         pluginsInfo = new Vector<>();
@@ -193,15 +182,14 @@ public class HttpSPMFileSystem extends SPMFileSystem
      */
     private void scanToolScripts()
     {
-        if ( ! SPManagerFrame.getParameters().getUseCache() )
-            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningToolScriptsFrom", repository), 5000 );
-        else
-        {
+        if ( SPManagerFrame.getParameters().getUseCache() ) {
             String s = repository.toString();
-	    s = s.substring(0, s.lastIndexOf('/'));
+            s = s.substring(0, s.lastIndexOf('/'));
             s = s + "/cgi-bin/scripts.cgi?Scripts/Tools%20" + SPManagerPlugin.AOI_VERSION;
             SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningToolScriptsFrom", s ), 5000 );
-        }
+        } else
+            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningToolScriptsFrom", repository), 5000 );
+
         if ( statusDialog != null )
             statusDialog.setText( SPMTranslate.text( "scanningToolScripts" ) );
         toolInfo = new Vector<>();
@@ -230,15 +218,14 @@ public class HttpSPMFileSystem extends SPMFileSystem
      */
     private void scanObjectScripts()
     {
-        if ( ! SPManagerFrame.getParameters().getUseCache() )
-                    SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningObjectScriptsFrom", repository ), 5000 );
-        else
-        {
+        if ( SPManagerFrame.getParameters().getUseCache() ) {
             String s = repository.toString();
-	    s = s.substring(0, s.lastIndexOf('/'));
+            s = s.substring(0, s.lastIndexOf('/'));
             s = s + "/cgi-bin/scripts.cgi?Scripts/Objects%20" + SPManagerPlugin.AOI_VERSION;
             SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningObjectScriptsFrom", s ), 5000 );
-        }
+        } else
+            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningObjectScriptsFrom", repository ), 5000 );
+
         if ( statusDialog != null )
             statusDialog.setText( SPMTranslate.text( "scanningObjectScripts" ) );
         objectInfo = new Vector<>();
@@ -267,15 +254,14 @@ public class HttpSPMFileSystem extends SPMFileSystem
      */
     private void scanStartupScripts()
     {
-        if ( ! SPManagerFrame.getParameters().getUseCache() )
-                    SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningStartupScriptsFrom", repository ), 5000 );
-        else
-        {
+        if ( SPManagerFrame.getParameters().getUseCache() ) {
             String s = repository.toString();
-	    s = s.substring(0, s.lastIndexOf('/'));
+            s = s.substring(0, s.lastIndexOf('/'));
             s = s + "/cgi-bin/scripts.cgi?Scripts/Startup%20" + SPManagerPlugin.AOI_VERSION;
             SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningStartupScriptsFrom", s ), 5000 );
-        }
+        } else
+            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "scanningStartupScriptsFrom", repository ), 5000 );
+        
         if ( statusDialog != null )
             statusDialog.setText( SPMTranslate.text( "scanningStartupScripts" ) );
         startupInfo = new Vector<>();
@@ -376,8 +362,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
                         try
                         {
                             HttpURLConnection.setFollowRedirects( false );
-                            HttpURLConnection conn =
-				(HttpURLConnection) xmlURL.openConnection();
+                            HttpURLConnection conn = (HttpURLConnection) xmlURL.openConnection();
 
 			    if (conn.getResponseCode()
 				!= HttpURLConnection.HTTP_OK) {
@@ -386,24 +371,19 @@ public class HttpSPMFileSystem extends SPMFileSystem
 			    }
 
 			    else {
-				sxml = s.substring(0, s.lastIndexOf('.')) +
-				    ".xml";
+				sxml = s.substring(0, s.lastIndexOf('.')) + ".xml";
 				xmlURL = new URL(from, sxml);
 
-				conn =
-				    (HttpURLConnection)xmlURL.openConnection();
+				conn = (HttpURLConnection)xmlURL.openConnection();
 
-				if (conn.getResponseCode()
-				    != HttpURLConnection.HTTP_OK) {
+				if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
 
 				    eligible = false;
 				}
 			    }
 
 			    if (eligible) {
-				InputStreamReader in = new
-				    InputStreamReader(conn.getInputStream());
-
+				InputStreamReader in = new InputStreamReader(conn.getInputStream());
 				in.close();
 			    }
 			}
@@ -540,16 +520,16 @@ public class HttpSPMFileSystem extends SPMFileSystem
         {
             if ( e instanceof UnknownHostException )
             {
-                JOptionPane.showMessageDialog( null, cgiUrl.toString() + ": " + SPMTranslate.text( "unknownHost" ), SPMTranslate.text( "error" ), JOptionPane.ERROR_MESSAGE );
+                JOptionPane.showMessageDialog(null, cgiUrl.toString() + ": " + SPMTranslate.text("unknownHost"), SPMTranslate.text("error"), JOptionPane.ERROR_MESSAGE);
                 unknownHost = true;
             }
             else if ( e instanceof FileNotFoundException )
             {
-                JOptionPane.showMessageDialog( null, cgiUrl.toString() + ": " + SPMTranslate.text( "fileNotFound" ), SPMTranslate.text( "error" ), JOptionPane.ERROR_MESSAGE );
+                JOptionPane.showMessageDialog(null, cgiUrl.toString() + ": " + SPMTranslate.text("fileNotFound"), SPMTranslate.text("error"), JOptionPane.ERROR_MESSAGE);
                 unknownHost = true;
             }
             else {
-                JOptionPane.showMessageDialog( null, cgiUrl.toString() + ": " + SPMTranslate.text( "httpError" ), SPMTranslate.text( "error" ) + ": " + e.getMessage(), JOptionPane.ERROR_MESSAGE );
+                JOptionPane.showMessageDialog(null, cgiUrl.toString() + ": " + SPMTranslate.text("httpError"), SPMTranslate.text("error") + ": " + e.getMessage(), JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
 	    }
         }
@@ -696,9 +676,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
      */
     public static long downloadRemoteBinaryFile( URL from, String fileName, long size, StatusDialog status, long totalDownload, long downloadedLength, List<String> errors )
     {
-	System.out.println("download: size=" + size +
-			   "; total=" + totalDownload +
-			   "; downloaded=" + downloadedLength);
+	System.out.println("download: size=" + size + "; total=" + totalDownload + "; downloaded=" + downloadedLength);
 
 	File update = new File(fileName);
 
@@ -740,19 +718,17 @@ public class HttpSPMFileSystem extends SPMFileSystem
             int result = 0;
             while ( ( result = in.read() ) != -1 )
             {
-		if (thread.interrupted()) {
+		if (Thread.interrupted()) {
 		    thread.interrupt();
 
 		    if (!update.delete()) {
-			RandomAccessFile raf =
-			    new RandomAccessFile(update, "rw");
+			RandomAccessFile raf = new RandomAccessFile(update, "rw");
 
 			raf.setLength(0);
 			raf.close();
 		    }
 
-		    throw new InterruptedException("download cancelled: " +
-						   fileName);
+		    throw new InterruptedException("download cancelled: " + fileName);
 		}
 
                 file.write( (byte) result );
@@ -785,9 +761,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
 	    if (size > 0) {
 		long received = downloadedLength - initialValue;
 		if (received != size)
-		    throw new IOException("SPManager: file incomplete." +
-					  " Only received " + received +
-					  " bytes of " + size);
+		    throw new IOException("SPManager: file incomplete. Only received " + received + " bytes of " + size);
 	    }
 
 	    // test validity of zipfiles	    
@@ -797,7 +771,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
 	    }
 
         }
-        catch ( Exception e)
+        catch ( IOException | InterruptedException e)
         {
 	    errors.add(SPMTranslate.text("error") + "(" + fileName + ")" + e);
 
@@ -814,8 +788,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
             }
             catch ( IOException e )
             {
-		System.out.println("SPManager: error closing " + fileName +
-				   ": " + e);
+		System.out.println("SPManager: error closing " + fileName + ": " + e);
             }
 
         }
