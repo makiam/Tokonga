@@ -395,11 +395,9 @@ public class SPManagerPlugin implements Plugin
     {
 	final BFrame context = frame;
 	final URL url = from;
-	final URL toUrl = to;
 
 	final StatusDialog status = new StatusDialog(context) {
 	    SPMObjectInfo info;
-	    BLabel size;
 	    BButton okbtn;
 	    String filename, name;
 	    ColumnContainer col;

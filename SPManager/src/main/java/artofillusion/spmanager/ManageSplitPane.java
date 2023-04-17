@@ -204,9 +204,7 @@ public class ManageSplitPane extends SPMSplitPane
 		    extName = iter.next();
 
 		    if (extName.endsWith("= required")) {
-			extType = extName.substring(extName.indexOf(':')+1,
-						    extName.indexOf('=')).trim();
-
+                        extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
 			extName = extName.substring(0, extName.indexOf(':'));
 
 			ext = getInfo(extName, pathMap.get(extType));

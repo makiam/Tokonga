@@ -399,16 +399,14 @@ public class SPMSplitPane extends BSplitPane
 
 				if (missing) {
 					name += "\n" +
-					SPMTranslate.text("missingFile",
-							SPMTranslate.text("otherFiles"));
+					SPMTranslate.text("missingFile", SPMTranslate.text("otherFiles"));
 
 					objectName.setBackground(Color.PINK);
 				}
 
 				if (info.invalid) {
 					name += "\n" +
-					SPMTranslate.text("failedRequirement",
-							SPMTranslate.text("flags"));
+					SPMTranslate.text("failedRequirement",SPMTranslate.text("flags"));
 
 					objectName.setBackground(Color.PINK);
 				}
