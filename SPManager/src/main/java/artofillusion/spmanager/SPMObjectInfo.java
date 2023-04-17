@@ -76,7 +76,6 @@ public class SPMObjectInfo
 	 *  Script file name
 	 */
 	public String fileName = "**Uninitialised**";
-	static String textBoxString = "";
 	/**
 	 *  URL of the script
 	 */
@@ -110,13 +109,6 @@ public class SPMObjectInfo
 	boolean selected = false;
 	boolean deletable = true;
 	private boolean remote;
-	private boolean filesetRecord;
-
-	/**
-	 *  Constructor for the SPMObjectInfo object
-	 */
-	public SPMObjectInfo()
-	{}
 
 
 	/**
@@ -640,7 +632,7 @@ public class SPMObjectInfo
 			}
 
 		}
-		catch ( Exception e )
+		catch ( IOException | NumberFormatException e )
 		{
 			e.printStackTrace();
 		}

@@ -86,6 +86,7 @@ public class SPManagerFrame extends BFrame
         statusTextClearAction =
             new AbstractAction()
             {
+                @Override
                 public void actionPerformed( ActionEvent e )
                 {
                     statusLabel.setText( " " );
@@ -344,6 +345,7 @@ public class SPManagerFrame extends BFrame
         SwingUtilities.invokeLater(
 				   new Runnable()
             {
+                @Override
                 public void run()
                 {
                     statusLabel.setText( statusText );

@@ -752,6 +752,7 @@ public class InstallSplitPane extends SPMSplitPane
      *
      *@param  info  Description of the Parameter
      */
+    @Override
     protected void notifyObjectInfoSelection( SPMObjectInfo info )
     {
 	selectCB.removeEventLink( ValueChangedEvent.class, this );
@@ -767,6 +768,7 @@ public class InstallSplitPane extends SPMSplitPane
      *
      *@param  deletable  Description of the Parameter
      */
+    @Override
     public void scriptSelection( boolean deletable )
     {
 	selectCB.setEnabled( true );
@@ -795,6 +797,7 @@ public class InstallSplitPane extends SPMSplitPane
      *
      *@param  deletable  Description of the Parameter
      */
+    @Override
     public void pluginSelection( boolean deletable )
     {
 	selectCB.setEnabled( true );
@@ -821,6 +824,7 @@ public class InstallSplitPane extends SPMSplitPane
     /**
      *  Description of the Method
      */
+    @Override
     public void voidSelection()
     {
 	selectCB.setEnabled( false );

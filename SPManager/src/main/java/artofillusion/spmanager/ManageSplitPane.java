@@ -17,6 +17,7 @@ import buoy.widget.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *  Description of the Class
@@ -24,10 +25,10 @@ import java.util.List;
  *@author     pims
  *@created    20 mars 2004
  */
+@Slf4j
 public class ManageSplitPane extends SPMSplitPane
 {
-    private BButton deleteButton;
-    private BButton deleteAllButton;
+    private final BButton deleteButton;
 
 
     /**
@@ -39,10 +40,10 @@ public class ManageSplitPane extends SPMSplitPane
         acceptsFileSelection = false;
         //initialise button
         LayoutInfo layout = new LayoutInfo( LayoutInfo.CENTER, LayoutInfo.NONE, new Insets( 0, 0, 0, 0 ), new Dimension( 0, 0 ) );
-        buttonRow.add( deleteButton = SPMTranslate.bButton( "deleteFile", this, "doDelete" ), layout );
-        deleteButton.setIcon( new ImageIcon( getClass().getResource( "/artofillusion/spmanager/icons/Delete16.gif" ) ) );
-        deleteButton.setText( SPMTranslate.text( "deleteScript" ) );
-        deleteButton.setEnabled( false );
+        buttonRow.add(deleteButton = SPMTranslate.bButton("deleteFile", this, "doDelete"), layout);
+        deleteButton.setIcon(new ImageIcon(getClass().getResource("/artofillusion/spmanager/icons/Delete16.gif")));
+        deleteButton.setText(SPMTranslate.text("deleteScript"));
+        deleteButton.setEnabled(false);
         fs = new LocalSPMFileSystem();
         updateTree();
     }
@@ -274,6 +275,7 @@ public class ManageSplitPane extends SPMSplitPane
      *
      *@param  deletable  Description of the Parameter
      */
+    @Override
     public void scriptSelection( boolean deletable )
     {
         deleteButton.setText( SPMTranslate.text( "deleteScript" ) );
@@ -287,6 +289,7 @@ public class ManageSplitPane extends SPMSplitPane
      *
      *@param  deletable  Description of the Parameter
      */
+    @Override
     public void pluginSelection( boolean deletable )
     {
         deleteButton.setText( SPMTranslate.text( "deletePlugin" ) );
@@ -298,6 +301,7 @@ public class ManageSplitPane extends SPMSplitPane
     /**
      *  Description of the Method
      */
+    @Override
     public void voidSelection()
     {
         deleteButton.setEnabled( false );

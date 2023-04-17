@@ -77,7 +77,7 @@ public class SPMSplitPane extends BSplitPane
 	/**
 	 *  Description of the Field
 	 */
-	protected static Vector<SPMSplitPane> splitPaneList;
+	protected static List<SPMSplitPane> splitPaneList;
 
 	/**
 	 *  Description of the Field
@@ -180,8 +180,7 @@ public class SPMSplitPane extends BSplitPane
 
 		ColumnContainer cc = new ColumnContainer();
 
-		BScrollPane sc;
-		add( sc = new BScrollPane( tree = new BTree( new DefaultMutableTreeNode( SPMTranslate.text( s ) ) ) ), 0 );
+		add(new BScrollPane( tree = new BTree( new DefaultMutableTreeNode( SPMTranslate.text( s ) ) ) ), 0 );
 
 		add( cc, 1 );
 
@@ -235,8 +234,7 @@ public class SPMSplitPane extends BSplitPane
 
 		objectDescription = new BTextArea( "", 8, 50 );
 		objectDescription.setWrapStyle( BTextArea.WRAP_WORD );
-		cc.add( BOutline.createEtchedBorder( descriptionSP = new BScrollPane( objectDescription, BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_ALWAYS ),
-				true ), textAreaLayout );
+                cc.add(BOutline.createEtchedBorder(descriptionSP = new BScrollPane(objectDescription, BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_ALWAYS), true), textAreaLayout);
 		descriptionSP.setForceWidth( true );
 
 		buttonRow = new RowContainer();
@@ -261,6 +259,7 @@ public class SPMSplitPane extends BSplitPane
 		MouseListener ml =
 			new MouseAdapter()
 		{
+                        @Override
 			public void mousePressed( MouseEvent e )
 			{
 				int selRow = tree.getComponent() .getRowForLocation( e.getX(), e.getY() );
@@ -471,8 +470,7 @@ public class SPMSplitPane extends BSplitPane
 	public SPMObjectInfo getInfo(String name, TreePath path)
 	{
 		if (path == null) {
-			System.out.println("SPManager: poor XML content: " +
-					"invalid external type (" + name + ")");
+			System.out.println("SPManager: poor XML content: invalid external type (" + name + ")");
 			return null;
 		}
 
@@ -686,13 +684,6 @@ public class SPMSplitPane extends BSplitPane
 	private class SPMTreeRenderer extends DefaultTreeCellRenderer
 	{
 
-		/**
-		 *  Constructor for the SPMTreeRenderer object
-		 */
-		public SPMTreeRenderer()
-		{
-		}
-
 
 		/**
 		 *  Gets a treeCellRendererComponent
@@ -722,8 +713,7 @@ public class SPMSplitPane extends BSplitPane
 					expanded, leaf, row,
 					hasFocus );
 
-			DefaultMutableTreeNode node =
-				(DefaultMutableTreeNode) value;
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 
 			if ( node.getUserObject() instanceof SPMObjectInfo )
 			{
@@ -788,6 +778,7 @@ public class SPMSplitPane extends BSplitPane
 		 *
 		 *@return    The iconHeight value
 		 */
+                @Override
 		public int getIconHeight()
 		{
 			return originalIcon.getIconHeight();
@@ -799,6 +790,7 @@ public class SPMSplitPane extends BSplitPane
 		 *
 		 *@return    The iconWidth value
 		 */
+                @Override
 		public int getIconWidth()
 		{
 			return originalIcon.getIconWidth();
@@ -813,6 +805,7 @@ public class SPMSplitPane extends BSplitPane
 		 *@param  x  Description of the Parameter
 		 *@param  y  Description of the Parameter
 		 */
+                @Override
 		public void paintIcon( Component c, Graphics g, int x, int y )
 		{
 			originalIcon.paintIcon( c, g, x, y );

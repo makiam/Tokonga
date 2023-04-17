@@ -174,28 +174,16 @@ public class SPMSetupFrame extends BDialog
      */
     private void doUseProxyCB()
     {
-        if ( !useProxyCB.getState() )
-        {
-            proxyHostEntry.setEnabled( false );
-            proxyPortEntry.setEnabled( false );
-            usernameEntry.setEnabled( false );
-            passwordEntry.setEnabled( false );
-            proxyHostLabel.setEnabled( false );
-            proxyPortLabel.setEnabled( false );
-            usernameLabel.setEnabled( false );
-            passwordLabel.setEnabled( false );
-        }
-        else
-        {
-            proxyHostEntry.setEnabled( true );
-            proxyPortEntry.setEnabled( true );
-            usernameEntry.setEnabled( true );
-            passwordEntry.setEnabled( true );
-            proxyHostLabel.setEnabled( true );
-            proxyPortLabel.setEnabled( true );
-            usernameLabel.setEnabled( true );
-            passwordLabel.setEnabled( true );
-        }
+        boolean state = useProxyCB.getState();
+        proxyHostEntry.setEnabled(state);
+        proxyPortEntry.setEnabled(state);
+        usernameEntry.setEnabled(state);
+        passwordEntry.setEnabled(state);
+        proxyHostLabel.setEnabled(state);
+        proxyPortLabel.setEnabled(state);
+        usernameLabel.setEnabled(state);
+        passwordLabel.setEnabled(state);
+
     }
 
 
