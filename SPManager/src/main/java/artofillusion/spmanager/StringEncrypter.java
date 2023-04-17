@@ -1,5 +1,5 @@
 /*
- *  Changes copyright 2022 by Maksim Khramov
+ *  Changes copyright 2022-2023 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -11,6 +11,7 @@
 package artofillusion.spmanager;
 
 // CIPHER / GENERATORS
+import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -18,9 +19,12 @@ import javax.crypto.SecretKey;
 // KEY SPECIFICATIONS
 import java.security.spec.KeySpec;
 import java.security.spec.AlgorithmParameterSpec;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEParameterSpec;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *  -----------------------------------------------------------------------------
@@ -34,7 +38,7 @@ import javax.crypto.spec.PBEParameterSpec;
  *      java code examples
  *@created    23 mars 2004
  */
-
+@Slf4j
 public final class StringEncrypter
 {
 
@@ -79,7 +83,7 @@ public final class StringEncrypter
         }
         catch ( GeneralSecurityException gse )
         {
-            System.out.println("Security exception: " + gse.getMessage());
+            log.atError().setCause(gse).log("Security exception: {}", gse.getMessage());
         }
     }
 
@@ -104,7 +108,7 @@ public final class StringEncrypter
             // Encode bytes to base64 to get a string
             return java.util.Base64.getEncoder().encodeToString(enc);
         }
-        catch (Exception e) {}
+        catch (UnsupportedEncodingException | BadPaddingException | IllegalBlockSizeException e) {}
         return null;
     }
 
@@ -131,7 +135,7 @@ public final class StringEncrypter
             // Decode using utf-8
             return new String( utf8, "UTF8" );
         }
-        catch (Exception e) {}
+        catch (UnsupportedEncodingException | BadPaddingException | IllegalBlockSizeException e) {}
         return null;
     }
 

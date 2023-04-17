@@ -20,6 +20,7 @@ import javax.swing.border.*;
 import java.awt.event.ActionEvent;
 import buoy.widget.*;
 import buoy.event.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.function.Predicate;
 
 /**
@@ -325,7 +326,7 @@ public class SPManagerFrame extends BFrame
 
 	    setBounds( new Rectangle( x, y, d2.width, d2.height + 2 ) );
 	}
-	catch (Exception e) {
+	catch (NoSuchMethodException | InvocationTargetException e) {
 	    UIUtilities.centerWindow(this);
 	}
     }

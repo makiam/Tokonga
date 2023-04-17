@@ -16,6 +16,7 @@ import java.util.*;
 import org.w3c.dom.*;
 import java.net.*;
 import java.util.List;
+import org.xml.sax.SAXException;
 
 /**
  *  Description of the Class
@@ -375,7 +376,7 @@ public class SPMObjectInfo
 			readInfoFromXmlHeader( xmlDescription );
 			xmlStream.close();
 		}
-		catch ( Exception e )
+		catch ( IOException | SAXException e )
 		{
 			e.printStackTrace();
 		}
@@ -402,7 +403,7 @@ public class SPMObjectInfo
 			// try new name first
 			try {
 				is = url.openStream();
-			} catch (Exception e) {
+			} catch (IOException e) {
 				is = null;
 			}
 
@@ -419,12 +420,12 @@ public class SPMObjectInfo
 				readInfoFromXmlHeader( xmlDescription );
 				xmlStream.close();
 			}
-			catch ( Throwable t ) {
+			catch ( IOException | SAXException t ) {
 				System.out.println("Reading: " + url);
 				t.printStackTrace();
 			}
 		}
-		catch ( Exception e )
+		catch ( IOException e )
 		{
 			if ( !( e instanceof IOException ) )
 				e.printStackTrace();
@@ -481,7 +482,7 @@ public class SPMObjectInfo
 			readInfoFromXmlHeader( xmlDescription );
 
 		}
-		catch ( Exception e )
+		catch ( IOException | SAXException e )
 		{
 			e.printStackTrace();
 		}
@@ -524,7 +525,7 @@ public class SPMObjectInfo
 
 			try {
 				is = new URL( s ).openStream();
-			} catch (Exception e) {
+			} catch (IOException e) {
 				is = null;
 			}
 
@@ -541,7 +542,7 @@ public class SPMObjectInfo
 			readInfoFromXmlHeader( xmlDescription );
 			if (is != null) is.close();
 		}
-		catch ( Exception e )
+		catch ( IOException | NumberFormatException | SAXException e )
 		{
 			e.printStackTrace();
 		}
@@ -579,9 +580,8 @@ public class SPMObjectInfo
 	 */
 	public String getAddFileName( int index )
 	{
-		int i = fileName.lastIndexOf( separatorChar );
-		String name = fileName.substring( 0, i + 1 ) + files[index];
-		return name;
+            int i = fileName.lastIndexOf( separatorChar );
+            return fileName.substring( 0, i + 1 ) + files[index];
 	}
 
 
@@ -600,7 +600,7 @@ public class SPMObjectInfo
 		{
 			url = new URL( name );
 		}
-		catch ( Exception e )
+		catch ( MalformedURLException e )
 		{
 			e.printStackTrace();
 		}
@@ -617,8 +617,7 @@ public class SPMObjectInfo
 		{
 			URL addFile = new URL( url );
 			HttpURLConnection.setFollowRedirects( false );
-			HttpURLConnection connection =
-				(HttpURLConnection) addFile.openConnection();
+			HttpURLConnection connection = (HttpURLConnection) addFile.openConnection();
 
 			String key = connection.getHeaderField(0);
 			int i=1;
@@ -648,11 +647,8 @@ public class SPMObjectInfo
 	 */
 	private long getRemoteAddFileSize( String addFileName )
 	{
-		int i = fileName.lastIndexOf( separatorChar );
-		long fileSize = 0;
-		String name = fileName.substring( 0, i + 1 );
-
-		return getRemoteFileSize( name + addFileName );
+            int i = fileName.lastIndexOf(separatorChar);
+            return getRemoteFileSize(fileName.substring(0, i + 1) + addFileName);
 	}
 
 
@@ -732,7 +728,7 @@ public class SPMObjectInfo
 				//beta = Integer.parseInt( b );
 				beta = SPManagerUtils.parseInt(b, 0, -1);
 			}
-			catch ( Exception e )
+			catch ( NumberFormatException e )
 			{
 				beta = -1;
 			}
@@ -754,9 +750,7 @@ public class SPMObjectInfo
 		String extName, extType, extAssoc, extAction;
 
 		// NTJ: infer depedencies from other tags
-		for (i = 0;
-		(node = SPManagerUtils.getNodeFromNodeList(nl, "import", i)) != null;
-		i++) {
+		for (i = 0; (node = SPManagerUtils.getNodeFromNodeList(nl, "import", i)) != null; i++) {
 
 			extName = SPManagerUtils.getAttribute(node, "name");
 
@@ -766,10 +760,7 @@ public class SPMObjectInfo
 		}
 
 		// NTJ: get explicit dependencies
-		for (i = 0;
-		(node = SPManagerUtils.getNodeFromNodeList(nl, "external", i))
-		!= null;
-		i++) {
+		for (i = 0; (node = SPManagerUtils.getNodeFromNodeList(nl, "external", i)) != null; i++) {
 
 			extName = SPManagerUtils.getAttribute(node, "name");
 
@@ -787,19 +778,13 @@ public class SPMObjectInfo
 		String plugClass, methName, methId, methHelp, exportList="";
 
 		// get details of plugin classes
-		for (i = 0;
-		(node = SPManagerUtils.getNodeFromNodeList(nl, "plugin", i))
-		!= null;
-		i++) {
+		for (i = 0; (node = SPManagerUtils.getNodeFromNodeList(nl, "plugin", i)) != null; i++) {
 
 			plugClass = SPManagerUtils.getAttribute(node, "class");
 
 
 			sl = node.getChildNodes();
-			for (j = 0;
-			(subnode =SPManagerUtils.getNodeFromNodeList(sl, "export", j))
-			!= null;
-			j++) {
+			for (j = 0; (subnode =SPManagerUtils.getNodeFromNodeList(sl, "export", j)) != null; j++) {
 
 				methName = SPManagerUtils.getAttribute(subnode, "method");
 				if (methName == null || methName.length() == 0) continue;
@@ -807,8 +792,7 @@ public class SPMObjectInfo
 				methId = SPManagerUtils.getAttribute(subnode, "id");
 				exports.put(methId, plugClass + "." + methName);
 
-				if (subnode.getChildNodes() != null
-						&& subnode.getChildNodes().item(0) != null) {
+				if (subnode.getChildNodes() != null && subnode.getChildNodes().item(0) != null) {
 					methHelp = subnode.getChildNodes().item(0).getNodeValue();
 					if (exportList.length() > 0)
 						exportList += "========================\n";
@@ -1006,7 +990,7 @@ public class SPMObjectInfo
 			try {
 
 				return SPManagerUtils.parseInt(version, 0, index);
-			} catch (Exception e) {
+			} catch (NumberFormatException e) {
 				return 0;
 			}
 		}
@@ -1031,7 +1015,7 @@ public class SPMObjectInfo
 					return SPManagerUtils.parseInt(version, index, -1)*10;
 				}
 				return SPManagerUtils.parseInt(version, index, -1);
-			} catch (Exception e) {
+			} catch (NumberFormatException e) {
 				return 0;
 			}
 		}
@@ -1047,7 +1031,7 @@ public class SPMObjectInfo
 	 */
 	public boolean isBeta()
 	{
-		return ( ( beta == -1 ) ? false : true );
+            return beta != -1;
 	}
 
 
@@ -1058,7 +1042,7 @@ public class SPMObjectInfo
 	 */
 	public int getBeta()
 	{
-		return beta;
+            return beta;
 	}
 
 
@@ -1240,8 +1224,7 @@ public class SPMObjectInfo
 			int pos=0;
 
 			// compare multi-component numbers (eg, version numbers)
-			if (lhs.lastIndexOf('.') > lhs.indexOf('.')
-					|| rhs.lastIndexOf('.') > rhs.indexOf('.')) {
+			if (lhs.lastIndexOf('.') > lhs.indexOf('.') || rhs.lastIndexOf('.') > rhs.indexOf('.')) {
 
 				lval = SPManagerUtils.parseVersion(lhs);
 				rval = SPManagerUtils.parseVersion(rhs);
@@ -1262,7 +1245,7 @@ public class SPMObjectInfo
 
 			comp = (lval < rval ? -1 : lval > rval ? 1 : 0);
 
-		} catch (Exception e) {
+		} catch (NumberFormatException e) {
 			// not numeric, compare strings (ignoring case)
 			comp = lhs.compareToIgnoreCase(rhs);
 		}

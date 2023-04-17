@@ -401,7 +401,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
                         {
                             info = new SPMObjectInfo( new URL( from, s ) );
                         }
-                        catch ( Exception e )
+                        catch ( MalformedURLException e )
                         {
                             e.printStackTrace();
                         }
@@ -463,7 +463,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
                                
                 InputSource input = null;
                 try { input = new InputSource(new InputStreamReader(is, "UTF-8")); }
-                catch (Exception e) { e.printStackTrace(); }
+                catch (UnsupportedEncodingException e) { e.printStackTrace(); }
                 
                 System.out.println("Encoding: " + input.getEncoding());
                 
@@ -516,7 +516,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
 
 
         }
-        catch ( Exception e )
+        catch ( HeadlessException | IOException | InterruptedException | NumberFormatException | DOMException | SAXException e )
         {
             if ( e instanceof UnknownHostException )
             {
@@ -640,7 +640,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
 				      " bytes of " + size);
 
         }
-        catch ( Exception e)
+        catch ( IOException e)
         {
 	    errors.add(SPMTranslate.text("error") + "(" + fileName + ")" + e);
         }
@@ -808,7 +808,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
         HtmlParserCallback callback = new HtmlParserCallback( v );
 	BufferedReader bufferedReader = null;
         try {bufferedReader = new BufferedReader( new InputStreamReader( is, "UTF-8" ) ); }
-        catch (Exception e) { e.printStackTrace(); return v; }
+        catch (UnsupportedEncodingException e) { e.printStackTrace(); return v; }
         try
         {
             new ParserDelegator().parse( bufferedReader, callback, false );
@@ -836,7 +836,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
         HtmlVersioningParserCallback callback = new HtmlVersioningParserCallback( v, from );
         BufferedReader bufferedReader = null;
         try { bufferedReader = new BufferedReader( new InputStreamReader( is, "UTF-8" ) ); }
-        catch (Exception e) { e.printStackTrace(); return v; }
+        catch (UnsupportedEncodingException e) { e.printStackTrace(); return v; }
         try
         {
             new ParserDelegator().parse( bufferedReader, callback, false );

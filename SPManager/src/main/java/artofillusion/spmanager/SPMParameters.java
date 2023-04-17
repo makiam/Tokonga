@@ -147,7 +147,7 @@ public class SPMParameters
 			    UIUtilities.centerWindow(dlg);
 			    if (dlg.isEnabled()) dlg.setVisible(true);
 			}
-		    } catch (Exception e) {}
+		    } catch (InterruptedException e) {}
 		}
 	    }).start();
 
@@ -159,7 +159,7 @@ public class SPMParameters
         {
             repListURL = new URL( "https://aoisp.sourceforge.net/SPRepositories.txt" );
         }
-        catch ( Exception e )
+        catch ( MalformedURLException e )
         {
             e.printStackTrace();
         }
@@ -229,7 +229,7 @@ public class SPMParameters
                 updated = true;
             }
         }
-        catch ( Exception e )
+        catch ( IOException e )
         {
             if ( !( ( e instanceof UnknownHostException ) || ( e instanceof SocketException ) ) )
                 e.printStackTrace();
@@ -321,7 +321,7 @@ public class SPMParameters
                 current = 0;
             }
         }
-        catch ( Exception e )
+        catch ( NumberFormatException e )
         {
             current = 0;
             System.out.println( "SPManager : Wrong default URL index in properties file." );

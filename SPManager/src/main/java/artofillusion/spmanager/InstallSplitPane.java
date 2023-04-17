@@ -17,6 +17,7 @@ import javax.swing.tree.*;
 import buoy.widget.*;
 import buoy.event.*;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
 import java.net.*;
@@ -296,7 +297,7 @@ public class InstallSplitPane extends SPMSplitPane
 					    SPManagerUtils.updateAllAoIWindows();
 					}
 				    });
-				} catch (Exception e) {
+				} catch (InterruptedException | InvocationTargetException e) {
 				    System.out.println("install error: " + e);
 				}
 			    }
@@ -488,7 +489,7 @@ public class InstallSplitPane extends SPMSplitPane
 					    SPManagerUtils.updateAllAoIWindows();
 					}
 				    });
-				} catch (Exception e) {
+				} catch (InterruptedException | InvocationTargetException e) {
 				    System.out.println("install error: " + e);
 				}
 			    }
@@ -579,7 +580,7 @@ public class InstallSplitPane extends SPMSplitPane
 		else if (dest.startsWith("$")) {
 		    try {
 			file = new File(SPManagerPlugin.class.getField(dest.substring(1, sep)).get(null).toString(), dest.substring(sep+1));
-		    } catch (Exception e) {
+		    } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {
 			System.out.println("SPManager: cannot resolve: " + dest);
 			errors.add("Cannot resolve: " + dest);
 		    }
@@ -671,7 +672,7 @@ public class InstallSplitPane extends SPMSplitPane
 			errors.add("couldn't copy " + file.getName());
 		    }
 		}
-	    } catch (Exception e) {
+	    } catch (IOException | RuntimeException e) {
 		errors.add(SPMTranslate.text("error") +
 			"(" + file.getName() + ")" + e);
 	    }
@@ -693,7 +694,7 @@ public class InstallSplitPane extends SPMSplitPane
 	    int b;
 	    while ((b = is.read()) >= 0) os.write((byte) b);
 	}
-	catch (Exception e) {
+	catch (IOException e) {
 	    return false;
 	}
 	finally {
@@ -701,7 +702,7 @@ public class InstallSplitPane extends SPMSplitPane
 		os.flush();
 		os.close();
 		is.close();
-	    } catch (Exception e) {}
+	    } catch (IOException e) {}
 	}
 
 	return true;
