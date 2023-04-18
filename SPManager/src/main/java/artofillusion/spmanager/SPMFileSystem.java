@@ -13,7 +13,9 @@ package artofillusion.spmanager;
 
 import java.util.List;
 import java.util.Vector;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class SPMFileSystem
 {   
     protected List<SPMObjectInfo> pluginsInfo, toolInfo, objectInfo, startupInfo;
@@ -56,7 +58,7 @@ public class SPMFileSystem
     
     public void downloadRemoteFile(SPMObjectInfo nodeInfo, String fileName)
     {
-        System.out.println("Download request for a non able SPMFileSystem");
+        log.atWarn().log("Download request for a non able SPMFileSystem");
     }
     
     public void initialize()

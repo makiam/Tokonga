@@ -18,6 +18,7 @@ import buoy.widget.*;
 import buoy.event.*;
 
 import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *  Description of the Class
@@ -25,6 +26,7 @@ import java.util.*;
  *@author     François Guillet
  *@created    March, 13 2004
  */
+@Slf4j
 public class SPMSetupFrame extends BDialog
 {
     private SPManagerFrame frame;
@@ -68,7 +70,7 @@ public class SPMSetupFrame extends BDialog
 
 	Map<String, String> filters = parameters.getFilters();
 
-	if (filters.size() > 0) {
+	if (!filters.isEmpty()) {
 	    String[] keys = filters.keySet().toArray(EMPTY_STRING_ARRAY);
 	    Arrays.sort(keys);
 	    
@@ -77,12 +79,11 @@ public class SPMSetupFrame extends BDialog
 	    RowContainer line=null;
 	    BComboBox sel=null;
 	    LayoutInfo right = new LayoutInfo(LayoutInfo.EAST,LayoutInfo.NONE);
-	    LayoutInfo left = new LayoutInfo(LayoutInfo.WEST,LayoutInfo.NONE);
 	    for (i = 0; i < keys.length; i++) {
 		filtName = keys[i];
 		filtVal = filters.get(filtName);
 
-		System.out.println("filter: " + filtName + "=" + filtVal);
+                log.atInfo().log("Filter: {}={}", filtName, filtVal);
 
 		line = new RowContainer();
 		sel = new BComboBox();
@@ -118,7 +119,6 @@ public class SPMSetupFrame extends BDialog
         useCacheCB =  SPMTranslate.bCheckBox( "useCache", parameters.getUseCache(), this, "doUseCacheCB" );
         cc.add( useCacheCB, new LayoutInfo( LayoutInfo.CENTER, LayoutInfo.NONE, new Insets( 2, 3, 2, 3 ), new Dimension( 0, 0 ) ));
 
-        LayoutInfo buttonLayout = new LayoutInfo( LayoutInfo.WEST, LayoutInfo.BOTH, new Insets( 2, 0, 2, 0 ), new Dimension( 0, 0 ) );
         LayoutInfo rcLayout = new LayoutInfo( LayoutInfo.CENTER, LayoutInfo.NONE, new Insets( 4, 3, 4, 3 ), new Dimension( 0, 0 ) );
 
         FormContainer fm = new FormContainer( 2, 5 );

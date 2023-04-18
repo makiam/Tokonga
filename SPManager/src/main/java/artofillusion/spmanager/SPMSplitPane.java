@@ -18,6 +18,7 @@ import javax.swing.tree.*;
 import java.awt.event.*;
 import buoy.widget.*;
 import buoy.event.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *  Description of the Class
@@ -25,6 +26,7 @@ import buoy.event.*;
  *@author     pims
  *@created    13 mars 2004
  */
+@Slf4j
 public class SPMSplitPane extends BSplitPane
 {
 	/**
@@ -459,8 +461,8 @@ public class SPMSplitPane extends BSplitPane
 	public SPMObjectInfo getInfo(String name, TreePath path)
 	{
 		if (path == null) {
-			System.out.println("SPManager: poor XML content: invalid external type (" + name + ")");
-			return null;
+                    log.atInfo().log("SPManager: poor XML content: invalid external type ({})", name);
+                    return null;
 		}
 
 		Object info;
@@ -631,15 +633,14 @@ public class SPMSplitPane extends BSplitPane
 		if (extMap == null) extMap = new Hashtable<>(32);
 
 		if (extMap.containsKey(info)) {
-			System.out.println("SPMSplitPane: dependency loop detected: " +
-					info.getName());
-			return;
+                    log.atInfo().log("SPMSplitPane: dependency loop detected: {}", info.getName());
+                    return;
 		}
 
 		extMap.put(info, info);
 
 		Collection<String> externals = info.getExternals();
-		if (externals == null || externals.size() == 0) return;
+		if (externals == null || externals.isEmpty()) return;
 
 		String extName, extType;
 		SPMObjectInfo ext;
@@ -647,8 +648,7 @@ public class SPMSplitPane extends BSplitPane
 			extName = iter.next();
 
 			if (extName.endsWith("= required")) {
-				extType = extName.substring(extName.indexOf(':')+1,
-						extName.indexOf('=')).trim();
+                                extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
 				extName = extName.substring(0, extName.indexOf(':'));
 
 				ext = getInfo(extName, pathMap.get(extType));

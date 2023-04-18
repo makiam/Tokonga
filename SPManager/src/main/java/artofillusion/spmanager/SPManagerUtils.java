@@ -16,6 +16,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.*;
 import artofillusion.*;
 import artofillusion.ui.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *  Description of the Class
@@ -23,6 +24,7 @@ import artofillusion.ui.*;
  *@author     pims
  *@created    6 juillet 2004
  */
+@Slf4j
 public class SPManagerUtils
 {
     public static DocumentBuilderFactory factory;
@@ -192,7 +194,7 @@ public class SPManagerUtils
 		    result = (result*10) + Character.digit(c, 10);
 
 		    if (frac > 0) frac *= 10;
-		    System.out.println("test: c=" + c + "; frac=" + frac);
+                    log.atDebug().log("Test; c={}; frac={}", c, frac);
 		}
 		else {
 		    if (exp == 0 && (c == '-' || c == '+'))
@@ -206,8 +208,7 @@ public class SPManagerUtils
 	}
 
 	if (frac == 0) frac = 1;
-
-	System.out.println("parseDouble: esign:" + esign + "; exp:" + exp  + "; sign:" + sign + "; result:" + result + "; frac:" + frac);
+        log.atDebug().log("Parse double: esign: {}; exp: {}; sign: {}; result: {}; frac: {}", esign, exp, sign, result, frac);
 
 	return (Math.pow(10.0, esign * exp) * sign * result)/frac;
     }
