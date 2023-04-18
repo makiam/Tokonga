@@ -41,7 +41,7 @@ public class SPManagerFrame extends BFrame
     private String statusText;
     private javax.swing.Timer timer;
     private Action statusTextClearAction;
-    BButton setupButton, quitButton, scanButton;
+
     public static final String YES_NO[] = {
         SPMTranslate.text("Yes"), SPMTranslate.text("No")
     };
@@ -119,9 +119,9 @@ public class SPManagerFrame extends BFrame
 
         //buttons setup
         RowContainer buttons = new RowContainer();
-        buttons.add( setupButton = SPMTranslate.bButton( "setup", this, "doSetup" ) );
-        buttons.add( scanButton = SPMTranslate.bButton( "rescan", this, "doRescan" ) );
-        buttons.add( quitButton = SPMTranslate.bButton( "close", this, "hideSPManager" ) );
+        buttons.add(SPMTranslate.bButton( "setup", this, "doSetup" ) );
+        buttons.add(SPMTranslate.bButton( "rescan", this, "doRescan" ) );
+        buttons.add(SPMTranslate.bButton( "close", this, "hideSPManager" ) );
         cc.add( buttons, new LayoutInfo( LayoutInfo.CENTER, LayoutInfo.NONE, new Insets( 3, 0, 0, 0 ), null ) );
 
         cc.add( new BOutline( statusLabel, BorderFactory.createTitledBorder( BorderFactory.createBevelBorder( BevelBorder.LOWERED ), SPMTranslate.text( "remoteStatus" ) ) ), new LayoutInfo( LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets( 1, 1, 1, 1 ), new Dimension( 0, 0 ) ) );

@@ -33,10 +33,9 @@ public class InstallSplitPane extends SPMSplitPane
 {
     private URL repository;
 
-    private BButton installAllButton, installSingleButton, selectAllButton;
+    private BButton installAllButton, selectAllButton;
     private BCheckBox selectCB;
     private boolean setup = false;
-    private boolean unknownHost = false;
     private StatusDialog status;
     private long downloadedLength = 0;
     private long lengthToDownload;

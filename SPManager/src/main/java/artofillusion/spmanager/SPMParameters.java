@@ -17,6 +17,7 @@ import javax.swing.*;
 import buoy.widget.*;
 
 import artofillusion.ui.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *  Description of the Class
@@ -24,6 +25,7 @@ import artofillusion.ui.*;
  *@author     François Guillet
  *@created    20 mars 2004
  */
+@Slf4j
 public class SPMParameters
 {
     private static List<String> repositories;
@@ -35,7 +37,7 @@ public class SPMParameters
     private static String username;
     private static String password;
     private static boolean changed;
-    private static final StringEncrypter se = new StringEncrypter( "SPMan8ger" );
+    private static final StringEncrypter se = new StringEncrypter("SPMan8ger");
     private URL repListURL;
     private boolean useCache;
 
@@ -186,8 +188,7 @@ public class SPMParameters
 	    boolean modified = true;
 	    String currentString = repositories.get( current );
 
-	    System.out.println("current repo (" + current + "): " +
-			       currentString);
+	    System.out.println("current repo (" + current + "): " + currentString);
 
 	    int previous = current;
 	    current = 0;
@@ -629,13 +630,7 @@ public class SPMParameters
      */
     public void initHttp()
     {
-        if ( !useProxy )
-        {
-            System.getProperties().remove( "http.proxyHost" );
-            System.getProperties().remove( "http.proxyPort" );
-            Authenticator.setDefault( null );
-        }
-        else
+        if ( useProxy )
         {
             // set proxy host
             System.setProperty( "http.proxyHost", proxyHost );
@@ -649,11 +644,15 @@ public class SPMParameters
             }
             else
             {
-                PasswordAuthentication pw = new PasswordAuthentication(
-                        username, password.toCharArray()
-                         );
+                PasswordAuthentication pw = new PasswordAuthentication(username, password.toCharArray());
                 Authenticator.setDefault( new FirewallAuthenticator( pw ) );
             }
+        }
+        else
+        {
+            System.getProperties().remove( "http.proxyHost" );
+            System.getProperties().remove( "http.proxyPort" );
+            Authenticator.setDefault( null );
         }
     }
 

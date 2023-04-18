@@ -129,8 +129,7 @@ public class SPManagerUtils
     /**
      *  method to parse digits into an int
      */
-    public static int parseInt(String val, int start, int max)
-	throws NumberFormatException
+    public static int parseInt(String val, int start, int max) throws NumberFormatException
     {
 	if (val == null || val.length() <= start) return 0;
 
@@ -161,8 +160,7 @@ public class SPManagerUtils
      *  char which is not valid in a double representation
      *  (ie digit, '.', 'e', 'E', '+', or '-').
      */
-    public static double parseDouble(String val)
-	throws NumberFormatException
+    public static double parseDouble(String val) throws NumberFormatException
     {
 	if (val == null || val.length() == 0) return 0;
 
@@ -209,9 +207,7 @@ public class SPManagerUtils
 
 	if (frac == 0) frac = 1;
 
-	System.out.println("parseDouble: esign:" + esign + "; exp:" + exp
-			   + "; sign:" + sign + "; result:" + result
-			   + "; frac:" + frac);
+	System.out.println("parseDouble: esign:" + esign + "; exp:" + exp  + "; sign:" + sign + "; result:" + result + "; frac:" + frac);
 
 	return (Math.pow(10.0, esign * exp) * sign * result)/frac;
     }
@@ -225,8 +221,7 @@ public class SPManagerUtils
      *  is parsed into 1020003
      *
      */
-    public static long parseVersion(String val)
-	throws NumberFormatException
+    public static long parseVersion(String val) throws NumberFormatException
     {
 	long result = parseInt(val, 0, -1);
 

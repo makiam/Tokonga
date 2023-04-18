@@ -466,8 +466,7 @@ public class SPMSplitPane extends BSplitPane
 		Object info;
 		int max = tree.getChildNodeCount(path);
 		for (int j = 0; j < max; j++) {
-			info = ((DefaultMutableTreeNode) tree.getChildNode( path, j)
-					.getLastPathComponent()).getUserObject();
+			info = ((DefaultMutableTreeNode) tree.getChildNode( path, j).getLastPathComponent()).getUserObject();
 
 			if (name.equals(info.toString())) return (SPMObjectInfo) info;
 		}
@@ -711,8 +710,7 @@ public class SPMSplitPane extends BSplitPane
 				// if other items refer to this, disable it
 				if (nodeInfo.refcount > 0)
 					setIcon(referedIcon);
-				else if (workMode != BROWSE
-						&& nodeInfo.restriction == SPMParameters.DISABLE)
+				else if (workMode != BROWSE && nodeInfo.restriction == SPMParameters.DISABLE)
 					setIcon(disableIcon);
 				else if (nodeInfo.invalid)
 					setIcon(alertIcon);

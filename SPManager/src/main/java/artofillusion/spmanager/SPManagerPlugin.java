@@ -89,7 +89,7 @@ public class SPManagerPlugin implements Plugin
 
 
 	    // get details of plugin classloaders
-		URL[] urlList;
+            URL[] urlList;
 
 	    ClassLoader ldr = null;
 	    URLClassLoader urlldr = null;

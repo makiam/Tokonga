@@ -23,6 +23,7 @@ import java.net.*;
 import javax.swing.text.*;
 import javax.swing.text.html.*;
 import javax.swing.text.html.parser.*;
+import lombok.extern.slf4j.Slf4j;
 
 import org.xml.sax.*;
 import org.w3c.dom.*;
@@ -34,6 +35,7 @@ import org.w3c.dom.Document;
  *@author     Francois Guillet
  *@created    July, 01 2004
  */
+@Slf4j
 public class HttpSPMFileSystem extends SPMFileSystem
 {
     boolean unknownHost;
@@ -349,8 +351,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
 
                         eligible = true;
                         String sxml;
-			sxml = s.substring(0, s.lastIndexOf('/')) +
-			    "extensions.xml";
+			sxml = s.substring(0, s.lastIndexOf('/')) + "extensions.xml";
 
                         URL xmlURL = null;
 			try {
