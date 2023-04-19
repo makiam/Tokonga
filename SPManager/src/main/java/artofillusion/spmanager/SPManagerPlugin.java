@@ -128,9 +128,9 @@ public class SPManagerPlugin implements Plugin
 
 	    File plugdir = new File(PLUGIN_DIRECTORY);
 	    if (plugdir.exists()) {
-		File[] files = plugdir.listFiles();
-		for (int i = 0; i < files.length; i++) {
-		    SPMObjectInfo info = new SPMObjectInfo(files[i].getAbsolutePath());
+
+		for (File file: plugdir.listFiles()) {
+		    SPMObjectInfo info = new SPMObjectInfo(file.getAbsolutePath());
 
 		    if (info.invalid) {
 			if (errs == null) errs = new StringBuffer(1024);
@@ -141,7 +141,7 @@ public class SPManagerPlugin implements Plugin
 		    if (info.actions != null && info.actions.size() > 0) {
 
 			try {
-			    url = files[i].toURI().toURL();
+			    url = file.toURI().toURL();
 			} catch (MalformedURLException e) {
 			    continue;
 			}
@@ -150,7 +150,7 @@ public class SPManagerPlugin implements Plugin
 			obj = loaders.get(url);
 
 			if (obj == null) {
-			    System.out.println("SPManager: could not find classloader: "+ files[i].getPath());
+                            log.atInfo().log("SPManager: could not find classloader: {}", file.getPath());
 			    continue;
 			}
 
@@ -176,11 +176,11 @@ public class SPManagerPlugin implements Plugin
 				
 				url = urlfile.toURI().toURL();
 			    } catch (MalformedURLException e) {
-				System.out.println("Error making url: " + e);
+                                log.atError().setCause(e).log("Error making url: {}", e.getMessage());
 				continue;
 			    }
 
-			    System.out.println("SPM: adding path: " + url);
+                            log.atInfo().log("SPM: adding path: {}", url);
 
 			    if ("classpath".equalsIgnoreCase(value)) {
 				if (searchldr != null)
@@ -189,7 +189,7 @@ public class SPManagerPlugin implements Plugin
 				    try {
 					addUrl.invoke(urlldr, url);
                                     } catch (IllegalAccessException | InvocationTargetException e) {
-					System.out.println("Error invoking: " + e);
+                                        log.atError().setCause(e).log("Error invoking: {}", e.getMessage());
 				    }
 				}
 				else System.out.println("Could not add path" + url);
