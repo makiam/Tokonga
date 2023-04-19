@@ -166,20 +166,17 @@ public class ManageSplitPane extends SPMSplitPane
             File file = new File( info.fileName );
             if ( !file.exists() )
             {
-                System.out.println( "SPManager :" );
-                System.out.println( "Delete: no such file or directory: " + file.getAbsolutePath() );
+                log.atInfo().log("SPManager: Delete: no such file or directory: {}",  file.getAbsolutePath());
             }
             if ( !file.canWrite() )
             {
-                System.out.println( "SPManager :" );
-                System.out.println( "Delete: write protected: " + file.getAbsolutePath() );
+                log.atInfo().log("SPManager: Delete: write protected: {}",  file.getAbsolutePath());
             }
             if ( !file.delete() )
             {
 
                 new BStandardDialog( SPMTranslate.text( "error" ), SPMTranslate.text( "cannotDeleteFile", info.fileName ), BStandardDialog.ERROR ).showMessageDialog( SPManagerFrame.getInstance() );
-                System.out.println( "SPManager :" );
-                System.out.println( "File cannot be deleted: " + file.getAbsolutePath() );
+                log.atInfo().log("SPManager: File cannot be deleted: {}",  file.getAbsolutePath());
                 return;
             }
             if ( info.fileName.lastIndexOf( "Plugins" ) != -1 )

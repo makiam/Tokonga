@@ -257,15 +257,13 @@ public class SPManagerPlugin implements Plugin
 
 	// try 'temp' in AOI installation directory
 	if (! ((temp.exists() && temp.isDirectory()) || temp.mkdir())) {
-	    System.out.println("SPManager: could not open/create temp dir: " + temp.getAbsolutePath());
-
+            log.atError().log("SPManager: could not open/create temp dir: {}", temp.getAbsolutePath());
 	    temp = new File(APP_DIRECTORY, "temp");
 	}
 
 	// try 'SPtemp' in user's home directory
 	if (! ((temp.exists() && temp.isDirectory()) || temp.mkdir())) {
-	    System.out.println("Cannot create temp folder: " + temp.getAbsolutePath());
-
+            log.atError().log("SPManager: Cannot create temp folder: {}", temp.getAbsolutePath());
 	    temp = new File(System.getProperty("user.dir"), "SPMtemp");
 	}
 
@@ -302,6 +300,7 @@ public class SPManagerPlugin implements Plugin
 
 	TEMP_DIR = temp.getAbsolutePath();
 
+        
 	System.out.println("SPManager: temp dir set to: " + temp.getAbsolutePath());
 
 	// make sure all temp directories are created
