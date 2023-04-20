@@ -33,13 +33,14 @@ public class SPManagerFrame extends BFrame
 
     private static SPManagerFrame spmFrame;
     private static SPMParameters parameters;
-    private BTabbedPane tabbedPane;
-    private SPMSplitPane manageSplitPane;
-    private InstallSplitPane updateSplitPane, installSplitPane;
+    private final BTabbedPane tabbedPane;
+    private final SPMSplitPane manageSplitPane;
+    private final InstallSplitPane updateSplitPane;
+    private final InstallSplitPane installSplitPane;
     private BLabel statusLabel;
     private String statusText;
     private javax.swing.Timer timer;
-    private Action statusTextClearAction;
+    private final Action statusTextClearAction;
 
     public static final String[] YES_NO = {
         SPMTranslate.text("Yes"), SPMTranslate.text("No")
@@ -76,12 +77,12 @@ public class SPManagerFrame extends BFrame
      */
     public SPManagerFrame()
     {
-        super( SPMTranslate.text( "SPManager" ) );
+        super(SPMTranslate.text("SPManager"));
         spmFrame = this;
 
         parameters = new SPMParameters();
 
-        statusLabel = new BLabel( " " );
+        statusLabel = new BLabel(" ");
 
         statusTextClearAction =
             new AbstractAction()
@@ -97,10 +98,9 @@ public class SPManagerFrame extends BFrame
         installSplitPane = new InstallSplitPane( SPMSplitPane.INSTALL, updateSplitPane.getFileSystem() );
         ( (HttpSPMFileSystem) updateSplitPane.getFileSystem() ).setRepository( parameters.getCurrentRepository() );
         RowContainer rc = new RowContainer();
-        LayoutInfo layout = new LayoutInfo( LayoutInfo.CENTER, LayoutInfo.NONE, new Insets( 5, 3, 3, 3 ), new Dimension( 0, 0 ) );
         ColumnContainer cc = new ColumnContainer();
         LayoutInfo headLayout = new LayoutInfo( LayoutInfo.WEST, LayoutInfo.NONE, new Insets( 3, 5, 5, 3 ), new Dimension( 0, 0 ) );
-        rc.add( new BLabel( new ImageIcon( getClass().getResource( "/artofillusion/spmanager/icons/gear.png" ) ) ), headLayout );
+        rc.add(new BLabel(new ImageIcon(getClass().getResource("/artofillusion/spmanager/icons/gear.png"))), headLayout);
         //Icon gear.png taken from the KDE desktop environment !!!
         rc.add( SPMTranslate.bLabel( "Version"), headLayout );
         LayoutInfo cclayout = new LayoutInfo( LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets( 3, 3, 5, 3 ), new Dimension( 0, 0 ) );
@@ -130,9 +130,9 @@ public class SPManagerFrame extends BFrame
         centerAndSizeWindow();
         setVisible( true );
         addEventLink( WindowClosingEvent.class, this, "hideSPManager" );
-        manageSplitPane.setDividerLocation( manageSplitPane.getChild( 0 ).getPreferredSize().width );
-        updateSplitPane.setDividerLocation( updateSplitPane.getChild( 0 ).getPreferredSize().width );
-        installSplitPane.setDividerLocation( installSplitPane.getChild( 0 ).getPreferredSize().width );
+        manageSplitPane.setDividerLocation(manageSplitPane.getChild(0).getPreferredSize().width);
+        updateSplitPane.setDividerLocation(updateSplitPane.getChild(0).getPreferredSize().width);
+        installSplitPane.setDividerLocation(installSplitPane.getChild(0).getPreferredSize().width);
     }
 
     /**
