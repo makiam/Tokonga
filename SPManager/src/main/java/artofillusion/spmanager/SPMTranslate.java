@@ -133,14 +133,14 @@ public class SPMTranslate
     /**
      *  Get the text given by the property "name". If the property is not found,
      *  this simply uses name. Any occurrance of the pattern "{0}" in the text
-     *  string will be replaced with the string representation of arg1.
+     *  string will be replaced with the string representation of arg.
      *
      *@param  name  Description of the Parameter
-     *@param  arg1  Description of the Parameter
+     *@param  arg  Description of the Parameter
      *@return       Description of the Return Value
      */
 
-    public static String text( String name, Object arg1 )
+    public static String text( String name, Object arg )
     {
         String pattern = name;
         try
@@ -150,11 +150,10 @@ public class SPMTranslate
         catch ( MissingResourceException ex )
         {
         }
-        return MessageFormat.format( pattern, new Object[]{arg1} );
+        return MessageFormat.format( pattern, arg);
     }
 
 
 
 
 }
-

@@ -13,15 +13,14 @@ package artofillusion.spmanager;
 
 import artofillusion.*;
 import artofillusion.ui.UIUtilities;
-
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import java.awt.event.ActionEvent;
-import buoy.widget.*;
 import buoy.event.*;
+import buoy.widget.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.function.Predicate;
+import javax.swing.*;
+import javax.swing.border.*;
 
 /**
  *  Main frame of the scripts and plugins manager.
@@ -341,17 +340,8 @@ public class SPManagerFrame extends BFrame
     public void setRemoteStatusText( String text, int time )
     {
         statusText = text;
-        setRemoteStatusTextDuration( time );
-
-        SwingUtilities.invokeLater(
-				   new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    statusLabel.setText( statusText );
-                }
-            } );
+        setRemoteStatusTextDuration(time);
+        SwingUtilities.invokeLater(() -> statusLabel.setText(statusText));
     }
 
 

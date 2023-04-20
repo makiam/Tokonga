@@ -15,7 +15,7 @@ import java.io.*;
 import java.util.*;
 import org.w3c.dom.*;
 import java.net.*;
-import java.util.List;
+
 import org.xml.sax.SAXException;
 
 /**

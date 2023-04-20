@@ -350,7 +350,7 @@ public class SPMParameters
         s = p.getProperty( "useProxy", "false" );
         try
         {
-            useProxy = Boolean.valueOf( s ).booleanValue();
+            useProxy = Boolean.valueOf(s);
         }
         catch ( Exception e )
         {
@@ -400,10 +400,7 @@ public class SPMParameters
     public void setURLs( String[] urls, int selectedIndex )
     {
         repositories.clear();
-        for ( int i = 0; i < urls.length; ++i )
-        {
-            repositories.add( urls[i] );
-        }
+        repositories.addAll(Arrays.asList(urls));
         current = selectedIndex;
         savePropertiesFile();
     }
