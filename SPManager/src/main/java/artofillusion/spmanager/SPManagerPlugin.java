@@ -286,7 +286,7 @@ public class SPManagerPlugin implements Plugin
 	    // failed to create temp file, use fallback naming algorithm
 	    System.out.println("SPManager: could not create temp file: " + t.getAbsolutePath() + e);
 
-	    path = System.getProperty("user.name") + "-" + String.valueOf(System.currentTimeMillis());
+	    path = System.getProperty("user.name") + "-" + System.currentTimeMillis();
 	}
 	
 	temp = new File(temp, path);

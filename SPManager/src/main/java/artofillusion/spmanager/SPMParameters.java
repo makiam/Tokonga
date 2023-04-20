@@ -51,7 +51,7 @@ public class SPMParameters
     public static final int LAST_FILTER = 6;
     public static final int FILTER_MODULO = LAST_FILTER;
 
-    public static final String FILTER_NAMES[] = {
+    public static final String[] FILTER_NAMES = {
 	SPMTranslate.text("filtDefault"), SPMTranslate.text("filtEnable"),
 	SPMTranslate.text("filtMark"), SPMTranslate.text("filtConfirm"),
 	SPMTranslate.text("filtDisable"), SPMTranslate.text("filtHide"),
@@ -705,4 +705,3 @@ public class SPMParameters
         }
     }
 }
-

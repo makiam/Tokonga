@@ -317,7 +317,7 @@ public class SPMSetupFrame extends BDialog
             String text = repEntry.getText();
             new URL( text );
             repEntry.getComponent().setForeground( Color.black );
-            String s[] = parameters.getRepositories();
+            String[] s = parameters.getRepositories();
             addButton.setEnabled( true );
             removeButton.setEnabled( false );
             for ( int i = 0; i < s.length; ++i )
@@ -337,4 +337,3 @@ public class SPMSetupFrame extends BDialog
         }
     }
 }
-

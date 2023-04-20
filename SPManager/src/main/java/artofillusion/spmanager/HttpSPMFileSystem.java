@@ -11,23 +11,22 @@
 package artofillusion.spmanager;
 
 import artofillusion.ui.*;
-import java.awt.*;
-import javax.swing.*;
-import buoy.widget.*;
 import buoy.event.*;
+import buoy.widget.*;
+import java.awt.*;
 import java.io.*;
+import java.net.*;
 import java.util.*;
 import java.util.List;
 import java.util.zip.*;
-import java.net.*;
+import javax.swing.*;
 import javax.swing.text.*;
 import javax.swing.text.html.*;
 import javax.swing.text.html.parser.*;
 import lombok.extern.slf4j.Slf4j;
-
-import org.xml.sax.*;
 import org.w3c.dom.*;
 import org.w3c.dom.Document;
+import org.xml.sax.*;
 
 /**
  *  Description of the Class
@@ -314,12 +313,12 @@ public class HttpSPMFileSystem extends SPMFileSystem
         {
             if ( e instanceof UnknownHostException )
             {
-                JOptionPane.showMessageDialog( null, from.toString() + ": " + SPMTranslate.text( "unknownHost" ), SPMTranslate.text( "error" ), JOptionPane.ERROR_MESSAGE );
+                JOptionPane.showMessageDialog( null, from + ": " + SPMTranslate.text( "unknownHost" ), SPMTranslate.text( "error" ), JOptionPane.ERROR_MESSAGE );
                 unknownHost = true;
             }
             else if ( e instanceof FileNotFoundException )
             {
-                JOptionPane.showMessageDialog( null, from.toString() + ": " + SPMTranslate.text( "fileNotFound" ), SPMTranslate.text( "error" ), JOptionPane.ERROR_MESSAGE );
+                JOptionPane.showMessageDialog( null, from + ": " + SPMTranslate.text( "fileNotFound" ), SPMTranslate.text( "error" ), JOptionPane.ERROR_MESSAGE );
                 unknownHost = true;
             }
             else
@@ -509,7 +508,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
             }
             if (!received)
             {
-                JOptionPane.showMessageDialog( null, cgiUrl.toString() + ": " + SPMTranslate.text( "scriptServerFailed" ), SPMTranslate.text( "error" ) + " " +
+                JOptionPane.showMessageDialog( null, cgiUrl + ": " + SPMTranslate.text( "scriptServerFailed" ), SPMTranslate.text( "error" ) + " " +
 					       err,
 					       JOptionPane.ERROR_MESSAGE );
                 return;
@@ -657,8 +656,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
             }
             catch ( IOException e )
             {
-		System.out.println("SPManager: error closing " + fileName +
-				   ": " + e);
+                log.atError().setCause(e).log("SPManager: Error closing: {} due {}", fileName, e.getMessage());
             }
         }
         return downloadedLength - initialValue;
@@ -1146,4 +1144,3 @@ public class HttpSPMFileSystem extends SPMFileSystem
         }
     }
 }
-

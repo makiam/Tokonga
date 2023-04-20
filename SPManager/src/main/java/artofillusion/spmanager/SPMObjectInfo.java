@@ -974,7 +974,7 @@ public class SPMObjectInfo
 	 */
 	public boolean isSelected()
 	{
-		return (selected == true || refcount > 0);
+		return selected || refcount > 0;
 	}
 
 
@@ -1272,4 +1272,3 @@ public class SPMObjectInfo
 		}
 	}
 }
-

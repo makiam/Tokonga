@@ -42,10 +42,10 @@ public class SPManagerFrame extends BFrame
     private javax.swing.Timer timer;
     private Action statusTextClearAction;
 
-    public static final String YES_NO[] = {
+    public static final String[] YES_NO = {
         SPMTranslate.text("Yes"), SPMTranslate.text("No")
     };
-    public static final String CONTINUE_IGNORE[] = {
+    public static final String[] CONTINUE_IGNORE = {
         SPMTranslate.text("Continue"), SPMTranslate.text("Stop"),
         SPMTranslate.text("Ignore")
     };
@@ -381,4 +381,3 @@ public class SPManagerFrame extends BFrame
     }
 
 }
-

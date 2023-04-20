@@ -80,9 +80,7 @@ public class StatusDialog extends BDialog
      */
     public void setBarValue( int i )
     {
-	if (i < 0) setIdle(true);
-	else setIdle(false);
-
+        setIdle(i < 0);
         progressBar.setValue( i );
     }
 
@@ -122,4 +120,3 @@ public class StatusDialog extends BDialog
 	dispose();
     }
 }
-

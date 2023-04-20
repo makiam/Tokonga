@@ -7,8 +7,6 @@
  *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  *  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  */
-
-
 package artofillusion.spmanager;
 
 /*
@@ -29,7 +27,6 @@ public class TestPassPhraseEncrypter {
     private static final String secretString2 = "The quick brown fox jumps over the lazy dog.";
     private static final String passPhrase = "My Pass Phrase";
 
-
     @Test
     public void testEmpty() {
         StringEncrypter encrypter = new StringEncrypter(passPhrase);
@@ -38,7 +35,6 @@ public class TestPassPhraseEncrypter {
 
         Assert.assertEquals("", desDecrypted);
     }
-
 
     @Test
     public void testPassPhrase() {
@@ -58,17 +54,14 @@ public class TestPassPhraseEncrypter {
         Assert.assertEquals(secretString2, desDecrypted);
     }
 
-
-
     @Test
     public void testExtraChars() {
-      String test1 = " ~!@#$%^& *()_+=`| }{[]\\;: \"?><,./ ";
-      StringEncrypter encrypter = new StringEncrypter(passPhrase);
-      String desEncrypted = encrypter.encrypt(test1);
-      String desDecrypted = encrypter.decrypt(desEncrypted);
+        String test1 = " ~!@#$%^& *()_+=`| }{[]\\;: \"?><,./ ";
+        StringEncrypter encrypter = new StringEncrypter(passPhrase);
+        String desEncrypted = encrypter.encrypt(test1);
+        String desDecrypted = encrypter.decrypt(desEncrypted);
 
-      Assert.assertEquals(test1, desDecrypted);
-
+        Assert.assertEquals(test1, desDecrypted);
 
     }
 }
