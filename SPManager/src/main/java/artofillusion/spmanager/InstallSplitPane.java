@@ -11,16 +11,17 @@
 package artofillusion.spmanager;
 
 import artofillusion.ui.UIUtilities;
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.tree.*;
-import buoy.widget.*;
 import buoy.event.*;
+import buoy.widget.*;
+import java.awt.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.net.*;
 import java.util.*;
 import java.util.List;
-import java.net.*;
+import javax.swing.*;
+import javax.swing.tree.*;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -29,11 +30,11 @@ import java.net.*;
  *@author     pims
  *@created    20 mars 2004
  */
+@Slf4j
 public class InstallSplitPane extends SPMSplitPane
 {
-    private URL repository;
 
-    private BButton installAllButton, selectAllButton;
+    private BButton installAllButton;
     private BCheckBox selectCB;
     private boolean setup = false;
     private StatusDialog status;
@@ -42,7 +43,7 @@ public class InstallSplitPane extends SPMSplitPane
     private boolean isDownloading;
     private SPMObjectInfo installNodeInfo;
 
-    protected List<String> errors=null;
+    private List<String> errors = null;
 
     /**
      *  Constructor for the InstallSplitPane object
@@ -260,6 +261,7 @@ public class InstallSplitPane extends SPMSplitPane
      */
     public void doInstallAll()
     {
+        log.atInfo().log("Install all");
 	if ( !isDownloading )
 	{
 	    isDownloading = true;
@@ -839,7 +841,6 @@ public class InstallSplitPane extends SPMSplitPane
      */
     public void setRepository( URL newRep )
     {
-	repository = newRep;
 	fs = new HttpSPMFileSystem( newRep );
 	doSetup();
     }
