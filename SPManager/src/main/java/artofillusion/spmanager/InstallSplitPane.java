@@ -43,7 +43,7 @@ public class InstallSplitPane extends SPMSplitPane
     private boolean isDownloading;
     private SPMObjectInfo installNodeInfo;
 
-    private List<String> errors = null;
+    private List<String> errors = new ArrayList<>();
 
     /**
      *  Constructor for the InstallSplitPane object
@@ -344,8 +344,7 @@ public class InstallSplitPane extends SPMSplitPane
 	int count = tree.getChildNodeCount( path );
 	if ( count > 0 )
 	{
-	    if (errors == null) errors = new ArrayList<>(128);
-	    else errors.clear();
+            errors.clear();
 
 	    boolean ignoreErrs = false;
 	    int err = 0, cut1, cut2;
@@ -375,8 +374,7 @@ public class InstallSplitPane extends SPMSplitPane
 					    BStandardDialog.QUESTION)
 				    .showOptionDialog(null, SPManagerFrame.YES_NO, SPManagerFrame.YES_NO[1]) == 1)
 				    {
-					errors.add(SPMTranslate.text("Cancelled",
-						nodeInfo.getName()));
+                                        errors.add(SPMTranslate.text("Cancelled", nodeInfo.getName()));
 
 					continue;
 				    }
@@ -388,12 +386,9 @@ public class InstallSplitPane extends SPMSplitPane
 				if (errors.size() > err && ignoreErrs == false) {
 				    BLabel messg = SPMTranslate.bLabel("errMsg");
 
-				    BStandardDialog dlg = new
-				    BStandardDialog("SPManager", messg,
-					    BStandardDialog.WARNING);
+                                    BStandardDialog dlg = new BStandardDialog("SPManager", messg, BStandardDialog.WARNING);
 
-				    switch (dlg.showOptionDialog(null, SPManagerFrame.CONTINUE_IGNORE,
-					    SPMTranslate.text("Continue"))) {
+                                    switch (dlg.showOptionDialog(null, SPManagerFrame.CONTINUE_IGNORE, SPMTranslate.text("Continue"))) {
 
 					    case 1:
 						break download;
@@ -819,7 +814,7 @@ public class InstallSplitPane extends SPMSplitPane
 	    // disable install single if plugin has dependents
 	    Collection<String> externals = nodeInfo.getExternals();
 	}
-	super.pluginSelection( deletable );
+        super.pluginSelection(deletable);
     }
 
 
@@ -845,8 +840,12 @@ public class InstallSplitPane extends SPMSplitPane
 	doSetup();
     }
 
-    public void showErrors()
-    { if (errors != null && errors.size() > 0) showErrors(errors); }
+    public void showErrors() {
+        if (errors.isEmpty()) {
+            return;
+        }
+        showErrors(errors);
+    }
     
     /**
      *  show errors in a panel

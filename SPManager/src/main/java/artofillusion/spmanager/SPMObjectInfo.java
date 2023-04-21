@@ -12,10 +12,9 @@ package artofillusion.spmanager;
 
 import artofillusion.ui.Translate;
 import java.io.*;
+import java.net.*;
 import java.util.*;
 import org.w3c.dom.*;
-import java.net.*;
-
 import org.xml.sax.SAXException;
 
 /**
@@ -63,7 +62,8 @@ public class SPMObjectInfo
 	/** invalid flag */
 	public boolean invalid = false;
 	
-	private String description = null;
+    private String description = null;
+
 	private String comments = null;
 
 	private Map<String, String> externals;
