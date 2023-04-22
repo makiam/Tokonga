@@ -10,14 +10,13 @@
  */
 package artofillusion.spmanager;
 
+import buoy.event.*;
+import buoy.widget.*;
 import java.awt.*;
+import java.net.*;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
-import java.net.*;
-import buoy.widget.*;
-import buoy.event.*;
-
-import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 
 /**

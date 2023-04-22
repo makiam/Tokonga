@@ -14,6 +14,8 @@ import artofillusion.ui.Translate;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -23,6 +25,7 @@ import org.xml.sax.SAXException;
  *@author     François Guillet
  *@created    15 mars 2004
  */
+@Slf4j
 public class SPMObjectInfo
 {
 	/**
@@ -61,13 +64,35 @@ public class SPMObjectInfo
 
 	/** invalid flag */
 	public boolean invalid = false;
-	
+
+    /**
+     * Gets the description attribute of the SPMObjectInfo object
+     *
+     */
+    @Getter
     private String description = null;
+    /**
+     * Gets the comments attribute of the SPMObjectInfo object
+     *
+     * @return The comments value
+     */
+    @Getter
+    private String comments = null;
 
-	private String comments = null;
+    private Map<String, String> externals;
 
-	private Map<String, String> externals;
-	private List<String> changeLog;
+    /**
+     * get the change log
+     */
+    @Getter
+    private List<String> changeLog;
+
+    /**
+     * Gets the details vector
+     *
+     * @return The details vector
+     */
+    @Getter
 	private List<String> details;
 
 	protected Map<String, String> exports;
@@ -278,7 +303,8 @@ public class SPMObjectInfo
 			c2 = (char) reader.read();
 		}
 		catch ( IOException e )
-		{
+                {
+
 			e.printStackTrace();
 		}
 		while ( ( ( c1 != '/' ) || ( c2 != '*' ) ) && ( status != -1 ) )
@@ -912,9 +938,8 @@ public class SPMObjectInfo
 		if (fileSet != null)
 		{
 			NodeList filesList = fileSet.getChildNodes();
-			Vector<String> fileNames = new Vector<>();
-			for (i = 0; i < filesList.getLength(); ++i )
-			{
+                    Vector<String> fileNames = new Vector<>();
+                    for (i = 0; i < filesList.getLength(); ++i)			{
 				if( ! "file".equals( filesList.item(i).getNodeName() ) )
 					continue;
 
@@ -934,8 +959,8 @@ public class SPMObjectInfo
 			{
 				files = new String[ fileNames.size() ];
 				for (i = 0; i < files.length; ++i )
-					files[i] = fileNames.elementAt(i);
-				httpFiles = new String[files.length];
+                                files[i] = fileNames.get(i);
+                            httpFiles = new String[files.length];
 				fileSizes = new long[files.length];
 				for (i = 0; i < files.length; ++i )
 				{
@@ -1043,53 +1068,15 @@ public class SPMObjectInfo
 	public int getBeta()
 	{
             return beta;
-	}
-
-
-	/**
-	 *  Gets the description attribute of the SPMObjectInfo object
-	 *
-	 *@return    The description value
-	 */
-	public String getDescription()
-	{
-		return description;
-	}
-
-
-	/**
-	 *  Gets the comments attribute of the SPMObjectInfo object
-	 *
-	 *@return    The comments value
-	 */
-	public String getComments()
-	{
-		return comments;
-	}
+    }
 
 	/**.
          *  @return the list of external dependencies
 	 */
 	public Collection<String> getExternals()
-	{ return externals == null ? null: externals.values(); }
-
-	/**
-	 *  get the change log
-	 */
-	public List<String> getChangeLog()
-	{
-          return changeLog;
-	}
-
-	/**
-	 *  Gets the details vector
-	 *
-	 *@return    The details vector
-	 */
-	public List<String> getDetails()
-	{
-            return details;
-	}
+    {
+        return externals == null ? null : externals.values();
+    }
 
 	/**
 	 *  Sets the description attribute of the SPMObjectInfo object
@@ -1169,8 +1156,7 @@ public class SPMObjectInfo
 		String oper = "=";
 		int cut;
 
-		System.out.println("test: lhs:" + lhs + "; rhs:" + rhs
-				+ "; rhs[0]:" + rhs.charAt(0));
+            System.out.println("test: lhs:" + lhs + "; rhs:" + rhs + "; rhs[0]:" + rhs.charAt(0));
 
 		// does lhs have an operator?
 		cut = lhs.indexOf('<');
@@ -1213,8 +1199,7 @@ public class SPMObjectInfo
 
 		int comp = 0;
 
-		System.out.println("test: lhs:" + lhs + "; rhs:" + rhs
-				+ "; oper:" + oper);
+            System.out.println("test: lhs:" + lhs + "; rhs:" + rhs + "; oper:" + oper);
 
 		if (oper == null || oper.length() == 0) oper = "=";
 		

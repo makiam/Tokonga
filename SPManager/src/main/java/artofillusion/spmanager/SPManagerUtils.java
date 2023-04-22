@@ -10,13 +10,13 @@
  */
 package artofillusion.spmanager;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.*;
 import artofillusion.*;
 import artofillusion.ui.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import lombok.extern.slf4j.Slf4j;
+import org.w3c.dom.*;
 
 /**
  *  Description of the Class
@@ -38,15 +38,9 @@ public class SPManagerUtils
         }
         catch (ParserConfigurationException ex)
         {
-            ex.printStackTrace();
+            log.atError().setCause(ex).log("Bad parser configuration");
         }
     }
-
-
-
-
-
-
 
     /**
      *  Description of the Method
