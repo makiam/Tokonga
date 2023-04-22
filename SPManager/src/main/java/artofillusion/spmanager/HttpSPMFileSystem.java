@@ -298,7 +298,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
         SPMObjectInfo info;
         boolean eligible;
 
-        Vector<String> v = null;
+        List<String> v = null;
 
         try
         {
@@ -508,9 +508,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
             }
             if (!received)
             {
-                JOptionPane.showMessageDialog( null, cgiUrl + ": " + SPMTranslate.text( "scriptServerFailed" ), SPMTranslate.text( "error" ) + " " +
-					       err,
-					       JOptionPane.ERROR_MESSAGE );
+                JOptionPane.showMessageDialog(null, cgiUrl + ": " + SPMTranslate.text("scriptServerFailed"), SPMTranslate.text("error") + " " + err, JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -635,9 +633,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
 	    // check we got the expected data
 	    long received = downloadedLength - initialValue;
 	    if (received != size)
-		throw new IOException("SPManager: file incomplete." +
-				      " Only received " + received +
-				      " bytes of " + size);
+                throw new IOException("SPManager: file incomplete. Only received " + received + " bytes of " + size);
 
         }
         catch ( IOException e)
@@ -794,32 +790,6 @@ public class HttpSPMFileSystem extends SPMFileSystem
         return downloadedLength - initialValue;
     }
 
-    /**
-     *  Description of the Method
-     *
-     *@param  is  Description of the Parameter
-     *@return     Description of the Return Value
-     */
-    private Vector<String> htmlFindFiles( InputStream is )
-    {
-        Vector<String> v = new Vector<>();
-
-        HtmlParserCallback callback = new HtmlParserCallback( v );
-	BufferedReader bufferedReader = null;
-        try {bufferedReader = new BufferedReader( new InputStreamReader( is, "UTF-8" ) ); }
-        catch (UnsupportedEncodingException e) { e.printStackTrace(); return v; }
-        try
-        {
-            new ParserDelegator().parse( bufferedReader, callback, false );
-            is.close();
-        }
-        catch ( IOException e )
-        {
-            log.atError().setCause(e).log("IO Exception {}", e.getMessage());
-        }
-        return v;
-    }
-
 
     /**
      *  Description of the Method
@@ -828,9 +798,8 @@ public class HttpSPMFileSystem extends SPMFileSystem
      *@param  from  Description of the Parameter
      *@return       Description of the Return Value
      */
-    private Vector<String> htmlFindFilesVersioning( InputStream is, URL from )
-    {
-        Vector<String> v = new Vector<>();
+    private List<String> htmlFindFilesVersioning(InputStream is, URL from)    {
+        List<String> v = new Vector<>();
 
         HtmlVersioningParserCallback callback = new HtmlVersioningParserCallback( v, from );
         BufferedReader bufferedReader = null;
@@ -847,74 +816,6 @@ public class HttpSPMFileSystem extends SPMFileSystem
         return v;
     }
 
-
-    /**
-     *  Description of the Class
-     *
-     *@author     pims
-     *@created    1 juillet 2004
-     */
-    private class HtmlParserCallback extends HTMLEditorKit.ParserCallback
-    {
-        private Vector<String> v;
-
-
-        /**
-         *  Constructor for the HtmlParserCallback object
-         *
-         *@param  v  Description of the Parameter
-         */
-        public HtmlParserCallback( Vector<String> v )
-        {
-            this.v = v;
-        }
-
-
-        /**
-         *  Description of the Method
-         *
-         *@param  data  Description of the Parameter
-         *@param  pos   Description of the Parameter
-         */
-        @Override
-        public void handleText( char[] data, int pos )
-        {
-            System.out.println( "handleText " + new String( data ) + " " + pos );
-        }
-
-
-        /**
-         *  Description of the Method
-         *
-         *@param  t    Description of the Parameter
-         *@param  a    Description of the Parameter
-         *@param  pos  Description of the Parameter
-         */
-        @Override
-        public void handleStartTag( HTML.Tag t, MutableAttributeSet a, int pos )
-        {
-            log.atDebug().log("Start tag: {}:{} @ {}", t, a, pos);
-            if ( t == HTML.Tag.A )
-            {
-                String s = (String) a.getAttribute( HTML.Attribute.HREF );
-                v.add( s );
-            }
-
-        }
-
-
-        /**
-         *  Description of the Method
-         *
-         *@param  t    Description of the Parameter
-         *@param  a    Description of the Parameter
-         *@param  pos  Description of the Parameter
-         */
-        public void handleEndTag( HTML.Tag t, MutableAttributeSet a, int pos )
-        {
-            log.atDebug().log("End tag: {}:{} @ {}", t, a, pos);
-        }
-    }
 
 
 
