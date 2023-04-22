@@ -286,20 +286,16 @@ public class InstallSplitPane extends SPMSplitPane
 				installAllSelected( startupScriptsPath );
 
 				try {
-				    SwingUtilities.invokeAndWait(new Runnable() {
-                                        @Override
-					public void run()
-					{
-					    voidSelection();
-					    getManager().doUpdate();
-					    isDownloading = false;
-					    status.dispose();
-					    status = null;
-					    SPManagerUtils.updateAllAoIWindows();
-					}
-				    });
-				} catch (InterruptedException | InvocationTargetException e) {
-				    System.out.println("install error: " + e);
+                                    SwingUtilities.invokeAndWait(() -> {
+                                        voidSelection();
+                                        getManager().doUpdate();
+                                        isDownloading = false;
+                                        status.dispose();
+                                        status = null;
+                                        SPManagerUtils.updateAllAoIWindows();
+                                    });
+                                } catch (InterruptedException | InvocationTargetException e) {
+                                    log.atError().setCause(e).log("Install error: {}", e.getMessage());
 				}
 			    }
 			}).start();

@@ -440,15 +440,11 @@ public class SPMObjectInfo
 				is = url.openStream();
 			}
 
-			try {
-				BufferedInputStream xmlStream = new BufferedInputStream(is);
+                    try (BufferedInputStream xmlStream = new BufferedInputStream(is)) {
 				xmlDescription = SPManagerUtils.builder.parse( xmlStream );
-				readInfoFromXmlHeader( xmlDescription );
-				xmlStream.close();
-			}
-			catch ( IOException | SAXException t ) {
-				System.out.println("Reading: " + url);
-				t.printStackTrace();
+                            readInfoFromXmlHeader(xmlDescription);
+                    } catch (IOException | SAXException t) {
+                            log.atError().setCause(t).log("Error reding XML header: {}", t.getMessage());
 			}
 		}
 		catch ( IOException e )

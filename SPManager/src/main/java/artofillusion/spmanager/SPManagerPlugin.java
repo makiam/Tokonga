@@ -11,17 +11,15 @@
 package artofillusion.spmanager;
 
 import artofillusion.*;
-import artofillusion.util.SearchlistClassLoader;
 import artofillusion.ui.*;
-
-import java.awt.*;
+import artofillusion.util.SearchlistClassLoader;
 import buoy.event.*;
 import buoy.widget.*;
-
-import java.util.*;
+import java.awt.*;
 import java.io.*;
-import java.net.*;
 import java.lang.reflect.*;
+import java.net.*;
+import java.util.*;
 import java.util.List;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -556,8 +554,8 @@ public class SPManagerPlugin implements Plugin
 		    worker.start();
 
 		}
-		else if (cmd.equals("install")) {
-		    System.out.println("DOWNLOAD: downloading " + url.toString());
+                else if (cmd.equals("install")) {
+                    log.atInfo().log("DOWNLOAD: downloading: {}", url);
 
 		    setText(SPMTranslate.text("downloading", info.getName()));
 		    pack();
@@ -578,19 +576,18 @@ public class SPManagerPlugin implements Plugin
 				path = ArtOfIllusion.PLUGIN_DIRECTORY + File.separatorChar + info.name + ".jar";
 
 
-			    if (path == null || path.length() == 0) {
-				System.out.println("DOWNLOAD: no save location");
+                            if (path == null || path.length() == 0) {
+                                log.atInfo().log("DOWNLOAD: no save location");
 				new BStandardDialog("SPManager", SPMTranslate.text("noSaveLocation"), BStandardDialog.ERROR).showMessageDialog(null);
 
 				doClose();
 			    }
 
-			    System.out.println("DOWNLOAD: downloading file...");
+                            log.atInfo().log("DOWNLOAD: downloading file..");
 			    if (total > 0)
 				setBarValue(total > 0 ? 0 : -1);
 
-			    long dl = HttpSPMFileSystem
-			    .downloadRemoteBinaryFile(url, path, info.length, stat, total, 0, errs);
+                            long dl = HttpSPMFileSystem.downloadRemoteBinaryFile(url, path, info.length, stat, total, 0, errs);
 
 			    for (int i = 0; info.files != null && i < info.files.length; i++) {
 				if (Thread.interrupted()) {
@@ -603,16 +600,15 @@ public class SPManagerPlugin implements Plugin
 				setText(SPMTranslate.text("downloading", info.files[i]));
 				pack();
 
-				dl += HttpSPMFileSystem
-				.downloadRemoteBinaryFile(info.getAddFileURL(i), name, info.fileSizes[i], stat, total, dl, errs);
+                                dl += HttpSPMFileSystem.downloadRemoteBinaryFile(info.getAddFileURL(i), name, info.fileSizes[i], stat, total, dl, errs);
 			    }
 
-			    if (errs != null && errs.size() > 0)
-				InstallSplitPane.showErrors(errs);
+                            if (errs == null || errs.isEmpty())
+                                new BStandardDialog("SPManager", SPMTranslate.text("modified"), BStandardDialog.ERROR).showMessageDialog(null);
 			    else
-				new BStandardDialog("SPManager", SPMTranslate.text("modified"), BStandardDialog.ERROR).showMessageDialog(null);
+                                InstallSplitPane.showErrors(errs);
 
-			    System.out.println("DOWNLOAD: done");
+                            log.atInfo().log("DOWNLOAD: done");
 			    doClose();
 			}
 		    };
