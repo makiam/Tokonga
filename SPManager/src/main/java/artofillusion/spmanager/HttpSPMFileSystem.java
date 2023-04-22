@@ -330,8 +330,8 @@ public class HttpSPMFileSystem extends SPMFileSystem
             Arrays.sort(sarray);
             for ( int i = 0; i < sarray.length; i++ )
             {
-        	String s = sarray[i];
-                System.out.println(s);
+                String s = sarray[i];
+                log.info(s);
                 if ( s.endsWith( suffix ) )
                 {
                     //check if file candidate for update or install
@@ -396,7 +396,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
                     info = null;
                     if ( eligible )
                     {
-			System.out.println("adding: " + s);
+                        log.info("Adding: {}", s);
                         try
                         {
                             info = new SPMObjectInfo( new URL( from, s ) );
@@ -430,7 +430,6 @@ public class HttpSPMFileSystem extends SPMFileSystem
 	    s = s.substring(0, s.lastIndexOf('/'));
             cgiUrl = new URL( s + "/cgi-bin/scripts.cgi?" + dir + "%20" + SPManagerPlugin.AOI_VERSION );
             
-            String content = null;
             boolean received = false;
             int attempts = 0;
             System.out.println( cgiUrl );
@@ -761,8 +760,8 @@ public class HttpSPMFileSystem extends SPMFileSystem
 
 	    // test validity of zipfiles	    
 	    if (fileName.endsWith(".jar") || fileName.endsWith(".zip")) {
-		new ZipFile(update);
-		System.out.println("SPManager: ZipFile ok");
+                new ZipFile(update);
+                log.info("SPManager: zip file ok");
 	    }
 
         }
@@ -853,7 +852,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
         @Override
         public void handleText( char[] data, int pos )
         {
-            System.out.println( "handleText " + new String( data ) + " " + pos );
+            log.debug("Handle text: {} @ {}", new String(data), pos);
         }
 
 

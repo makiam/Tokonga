@@ -481,8 +481,8 @@ public class InstallSplitPane extends SPMSplitPane
 					    SPManagerUtils.updateAllAoIWindows();
 					}
 				    });
-				} catch (InterruptedException | InvocationTargetException e) {
-				    System.out.println("install error: " + e);
+                                } catch (InterruptedException | InvocationTargetException e) {
+                                    log.atError().setCause(e).log("Install error: {}", e.getMessage());
 				}
 			    }
 			}).start();
@@ -529,11 +529,9 @@ public class InstallSplitPane extends SPMSplitPane
 	System.out.println("folder=" + folder.getAbsolutePath());
 
 	if (!folder.exists() && !folder.mkdirs()) {
-	    errors.add(SPMTranslate.text("error") + "cannot open/create " +
-		    folder.getAbsolutePath());
+            errors.add(SPMTranslate.text("error") + "cannot open/create " + folder.getAbsolutePath());
 
-	    System.out.println("cannot open/create " +
-		    folder.getAbsolutePath());
+            System.out.println("cannot open/create " + folder.getAbsolutePath());
 	}
 
 	File update = new File(folder, file.getName() + ".upd");
@@ -636,8 +634,7 @@ public class InstallSplitPane extends SPMSplitPane
 		// now delete the original, and rename the new file
 		if (orig.exists()) orig.delete();
 
-		System.out.println("copying file to " +
-			orig.getAbsolutePath());
+                System.out.println("copying file to " + orig.getAbsolutePath());
 
 		if (!update.renameTo(orig)) {
 
@@ -646,27 +643,22 @@ public class InstallSplitPane extends SPMSplitPane
 
 			// make sure update file really was deleted
 			if (!update.delete()) {
-			    System.out.println("SPManager:" +
-				    " update file not deleted: " +
-				    update.getAbsolutePath());
+                            System.out.println("SPManager: update file not deleted: " + update.getAbsolutePath());
 
 			    // make file zero-length
-			    RandomAccessFile raf =
-				new RandomAccessFile(update, "rw");
+			    RandomAccessFile raf = new RandomAccessFile(update, "rw");
 			    raf.setLength(0);
 			    raf.close();
 			}
 		    }
 		    else {
-			System.out.println("SPManager.cleanup: " +
-				"could not copy " + file.getPath());
+                        System.out.println("SPManager.cleanup: could not copy " + file.getPath());
 
 			errors.add("couldn't copy " + file.getName());
 		    }
 		}
 	    } catch (IOException | RuntimeException e) {
-		errors.add(SPMTranslate.text("error") +
-			"(" + file.getName() + ")" + e);
+                errors.add(SPMTranslate.text("error") + "(" + file.getName() + ")" + e);
 	    }
 	}
     }
