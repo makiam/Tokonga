@@ -172,7 +172,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
             }
             catch ( MalformedURLException e )
             {
-                e.printStackTrace();
+                log.atError().setCause(e).log("Bad URL: {}", e.getMessage());
             }
         }
     }
@@ -208,7 +208,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
              }
              catch ( MalformedURLException e )
              {
-                 e.printStackTrace();
+                 log.atError().setCause(e).log("Bad URL: {}", e.getMessage());
              }
          }
     }
@@ -244,7 +244,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
             }
             catch ( MalformedURLException e )
             {
-                e.printStackTrace();
+                log.atError().setCause(e).log("Bad URL: {}", e.getMessage());
             }
         }
     }
@@ -280,7 +280,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
             }
             catch ( MalformedURLException e )
             {
-                e.printStackTrace();
+                log.atError().setCause(e).log("Bad URL: {}", e.getMessage());
             }
         }
     }
@@ -322,7 +322,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
                 unknownHost = true;
             }
             else
-                e.printStackTrace();
+                log.atError().setCause(e).log("IO Exception {}", e.getMessage());
         }
         if ( v != null ) {
             // sort the list
@@ -356,7 +356,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
 			try {
 			    xmlURL = new URL(from, sxml);
 			} catch (MalformedURLException e) {
-			    e.printStackTrace();
+                            log.atError().setCause(e).log("Bad URL: {}", e.getMessage());
 			}
 
                         try
@@ -403,7 +403,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
                         }
                         catch ( MalformedURLException e )
                         {
-                            e.printStackTrace();
+                            log.atError().setCause(e).log("Bad URL: {}", e.getMessage());
                         }
                     }
                     if ( info != null )
@@ -530,7 +530,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
             }
             else {
                 JOptionPane.showMessageDialog(null, cgiUrl.toString() + ": " + SPMTranslate.text("httpError"), SPMTranslate.text("error") + ": " + e.getMessage(), JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
+                log.atError().setCause(e).log("IO Exception {}", e.getMessage());
 	    }
         }
         
@@ -815,7 +815,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
         }
         catch ( IOException e )
         {
-            e.printStackTrace();
+            log.atError().setCause(e).log("IO Exception {}", e.getMessage());
         }
         return v;
     }
@@ -842,7 +842,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
         }
         catch ( IOException e )
         {
-            e.printStackTrace();
+            log.atError().setCause(e).log("IO Exception {}", e.getMessage());
         }
         return v;
     }
@@ -893,7 +893,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
         @Override
         public void handleStartTag( HTML.Tag t, MutableAttributeSet a, int pos )
         {
-            System.out.println( "StartTag :" + t + ":" + a + ":" + pos );
+            log.atDebug().log("Start tag: {}:{} @ {}", t, a, pos);
             if ( t == HTML.Tag.A )
             {
                 String s = (String) a.getAttribute( HTML.Attribute.HREF );
@@ -912,7 +912,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
          */
         public void handleEndTag( HTML.Tag t, MutableAttributeSet a, int pos )
         {
-            System.out.println( "EndTag :" + t + ":" + a + ":" + pos );
+            log.atDebug().log("End tag: {}:{} @ {}", t, a, pos);
         }
     }
 
@@ -1012,7 +1012,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
         @Override
         public void handleStartTag( HTML.Tag t, MutableAttributeSet a, int pos )
         {
-            System.out.println( "StartTag :" + t + ":" + a + ":" + pos );
+            log.atDebug().log("Start tag: {}:{} @ {}", t, a, pos);
             if ( t == HTML.Tag.A )
             {
                 String s = (String) a.getAttribute( HTML.Attribute.HREF );
@@ -1043,7 +1043,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
                             }
                             catch ( IOException e )
                             {
-                                e.printStackTrace();
+                                log.atError().setCause(e).log("IO Exception {}", e.getMessage());
                             }
                         }
                         in.close();
@@ -1074,7 +1074,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
          */
         public void handleEndTag( HTML.Tag t, MutableAttributeSet a, int pos )
         {
-            System.out.println( "EndTag :" + t + ":" + a + ":" + pos );
+            log.atDebug().log("End tag: {}:{} @ {}", t, a, pos);
         }
     }
 
