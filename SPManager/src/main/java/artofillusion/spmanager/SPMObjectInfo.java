@@ -397,7 +397,7 @@ public class SPMObjectInfo
 			byte[] xmlByteArray = s.getBytes();
 			BufferedInputStream xmlStream = new BufferedInputStream( new ByteArrayInputStream( xmlByteArray ) );
 
-                    readInfoFromXmlHeader(SPManagerUtils.builder.parse(xmlStream));
+                    readInfoFromDocumentNode(SPManagerUtils.builder.parse(xmlStream).getDocumentElement());
 			xmlStream.close();
 		}
 		catch ( IOException | SAXException e )
@@ -440,7 +440,7 @@ public class SPMObjectInfo
 
                     try (BufferedInputStream xmlStream = new BufferedInputStream(is)) {
 
-                        readInfoFromXmlHeader(SPManagerUtils.builder.parse(xmlStream));
+                        readInfoFromDocumentNode(SPManagerUtils.builder.parse(xmlStream).getDocumentElement());
                     } catch (IOException | SAXException t) {
                         log.atError().setCause(t).log("Error reading XML header: {}", t.getMessage());
 			}
@@ -498,7 +498,7 @@ public class SPMObjectInfo
 			byte[] xmlByteArray = s.getBytes();
 			BufferedInputStream xmlStream = new BufferedInputStream( new ByteArrayInputStream( xmlByteArray ) );
 
-                    readInfoFromXmlHeader(SPManagerUtils.builder.parse(xmlStream));
+                    readInfoFromDocumentNode(SPManagerUtils.builder.parse(xmlStream).getDocumentElement());
 
 		}
 		catch ( IOException | SAXException e )
@@ -557,7 +557,7 @@ public class SPMObjectInfo
 
 			BufferedInputStream xmlStream = new BufferedInputStream(is);
 
-                    readInfoFromXmlHeader(SPManagerUtils.builder.parse(xmlStream));
+                    readInfoFromDocumentNode(SPManagerUtils.builder.parse(xmlStream).getDocumentElement());
                     if (is != null) {
                         is.close();
                     }
@@ -690,13 +690,6 @@ public class SPMObjectInfo
 			fileSize = 1;
 		}
 		return fileSize;
-	}
-
-
-	private void readInfoFromXmlHeader(Document doc)
-	{
-		readInfoFromDocumentNode( doc.getDocumentElement() );
-
 	}
 
 	private void readInfoFromDocumentNode(Node script)
