@@ -302,8 +302,7 @@ public class SPMObjectInfo
 		}
 		catch ( IOException e )
                 {
-
-			e.printStackTrace();
+                    log.atError().setCause(e).log("IO Exception {}", e.getMessage());
 		}
 		while ( ( ( c1 != '/' ) || ( c2 != '*' ) ) && ( status != -1 ) )
 		{
@@ -315,7 +314,7 @@ public class SPMObjectInfo
 			}
 			catch ( IOException e )
 			{
-				e.printStackTrace();
+                            log.atError().setCause(e).log("IO Exception {}", e.getMessage());
 			}
 		}
 		while ( c1 != '<'  )
@@ -331,7 +330,7 @@ public class SPMObjectInfo
 			}
 			catch ( IOException e )
 			{
-				e.printStackTrace();
+                            log.atError().setCause(e).log("IO Exception {}", e.getMessage());
 			}
 		}
 		sb.append(c1);
@@ -347,7 +346,7 @@ public class SPMObjectInfo
 			}
 			catch ( IOException e )
 			{
-				e.printStackTrace();
+                            log.atError().setCause(e).log("IO Exception {}", e.getMessage());
 			}
 		}
 		if ( sb.length() > 2 )
@@ -375,7 +374,7 @@ public class SPMObjectInfo
 		}
 		catch ( FileNotFoundException e )
 		{
-			e.printStackTrace();
+                    log.atError().setCause(e).log("IO Exception {}", e.getMessage());
 			return;
 		}
 		try
@@ -384,7 +383,7 @@ public class SPMObjectInfo
 		}
 		catch ( IOException e )
 		{
-			e.printStackTrace();
+                    log.atError().setCause(e).log("IO Exception {}", e.getMessage());
 			return;
 		}
 
@@ -402,7 +401,7 @@ public class SPMObjectInfo
 		}
 		catch ( IOException | SAXException e )
 		{
-			e.printStackTrace();
+                    log.atError().setCause(e).log("Exception {}", e.getMessage());
 		}
 	}
 
@@ -446,9 +445,8 @@ public class SPMObjectInfo
 			}
 		}
 		catch ( IOException e )
-		{
-			if ( !( e instanceof IOException ) )
-				e.printStackTrace();
+                {
+                    log.atError().setCause(e).log("IO Exception {}", e.getMessage());
 		}
 	}
 
@@ -485,7 +483,7 @@ public class SPMObjectInfo
 		}
 		catch ( IOException e )
 		{
-			e.printStackTrace();
+                    log.atError().setCause(e).log("IO Exception {}", e.getMessage());
 			return;
 		}
 
@@ -503,7 +501,7 @@ public class SPMObjectInfo
 		}
 		catch ( IOException | SAXException e )
 		{
-			e.printStackTrace();
+                    log.atError().setCause(e).log("Exception {}", e.getMessage());
 		}
 	}
 
@@ -564,7 +562,7 @@ public class SPMObjectInfo
 		}
 		catch ( IOException | NumberFormatException | SAXException e )
 		{
-			e.printStackTrace();
+                    log.atError().setCause(e).log("Exception {}", e.getMessage());
 		}
 	}
 
@@ -622,9 +620,9 @@ public class SPMObjectInfo
 		}
 		catch ( MalformedURLException e )
 		{
-			e.printStackTrace();
-		}
-		return url;
+                log.atError().setCause(e).log("Bad URL: {}", e.getMessage());
+            }
+            return url;
 	}
 
 
@@ -653,7 +651,7 @@ public class SPMObjectInfo
 		}
 		catch ( IOException | NumberFormatException e )
 		{
-			e.printStackTrace();
+                    log.atError().setCause(e).log("Exception {}", e.getMessage());
 		}
 
 		return 0;
@@ -843,10 +841,10 @@ public class SPMObjectInfo
 				flags += filtName + ':' + filtVal;
 
 				val = System.getProperty(filtName);
-				if (val == null || val.length() == 0) {
-					System.out.println("SPMObjectInfo: could not resolve <assert> value: " + fileName);
-					continue;
-				}
+                            if (val == null || val.length() == 0) {
+                                log.atInfo().log("SPMObjectInfo: could not resolve <assert> value: {}", fileName);
+                                continue;
+                            }
 
 				if (!test(val, filtVal) && restriction<SPMParameters.DISABLE) {
 					restriction = SPMParameters.DISABLE;
