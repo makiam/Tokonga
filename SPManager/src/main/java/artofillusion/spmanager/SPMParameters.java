@@ -10,13 +10,13 @@
  */
 package artofillusion.spmanager;
 
+import artofillusion.ui.*;
+import buoy.widget.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
-import buoy.widget.*;
-
-import artofillusion.ui.*;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -30,16 +30,53 @@ public class SPMParameters
 {
     private static List<String> repositories;
     private static int current;
+    /**
+     * return the current filter map
+     */
+    @Getter
     private static Map<String, String> filters;
+
+    /**
+     * Description of the Method
+     *
+     * @return Description of the Return Value
+     */
+    @Getter
     private static boolean useProxy;
-    private static String proxyHost;
+
+    /**
+     * Gets the proxyHost attribute of the SPMParameters object
+     *
+     * @return The proxyHost value
+     */
+    @Getter
+    private static String proxyHost = "";
+
+    /**
+     * Gets the proxyPort attribute of the SPMParameters object
+     *
+     * @return The proxyPort value
+     */
+    @Getter
     private static String proxyPort;
+    /**
+     * Gets the username attribute of the SPMParameters object
+     *
+     * @return The username value
+     */
+    @Getter
     private static String username;
+    /**
+     * Gets the password attribute of the SPMParameters object
+     *
+     * @return The password value
+     */
+    @Getter
     private static String password;
     private static boolean changed;
     private static final StringEncrypter se = new StringEncrypter("SPMan8ger");
     private URL repListURL;
-    private boolean useCache;
+    private boolean useCache = true;
 
     /**  enum for filter values - in order of increasing restriction  */
     public static final int DEFAULT	= 0;
@@ -72,13 +109,11 @@ public class SPMParameters
 	filters.put("earlyAccess", "confirm");
 	filters.put("experimental", "hide");
 
-        proxyHost = "";
         proxyPort = "";
         username = "";
         password = "";
         current = 0;
-        useProxy = false;
-        useCache = true;
+
         
         loadPropertiesFile();
         initHttp();
@@ -96,17 +131,12 @@ public class SPMParameters
 	    savePropertiesFile();
             return;
         }
-        try
-        {
-            InputStream in = new BufferedInputStream( new FileInputStream( f ) );
+        try (InputStream in = new BufferedInputStream(new FileInputStream(f))) {
             Properties props = new Properties();
-            props.load( in );
-            parseProperties( props );
-            in.close();
-        }
-        catch ( IOException ex )
-        {
-            ex.printStackTrace();
+            props.load(in);
+            parseProperties(props);
+        } catch (IOException ioe) {
+            log.atError().setCause(ioe).log("Unable to read properties: {}", ioe.getMessage());
         }
 
     }
@@ -160,10 +190,8 @@ public class SPMParameters
         try
         {
             repListURL = new URL( "https://aoisp.sourceforge.net/SPRepositories.txt" );
-        }
-        catch ( MalformedURLException e )
-        {
-            e.printStackTrace();
+        } catch (MalformedURLException me) {
+            log.atError().setCause(me).log("Bad URL: {}", me.getMessage());
         }
         SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "fetchingRepositoriesList" ) + " " + repListURL, -1 );
         try
@@ -188,17 +216,17 @@ public class SPMParameters
 	    boolean modified = true;
 	    String currentString = repositories.get( current );
 
-	    System.out.println("current repo (" + current + "): " + currentString);
+            log.atInfo().log("Current repo: ({}): {}", current, currentString);
 
 	    int previous = current;
 	    current = 0;
-	    Vector<String> newRepositories = new Vector<>();
+            List<String> newRepositories = new Vector<>();
 	    while (true) {
 		repoName = rd.readLine();
 		if (repoName == null || repoName.length() == 0) break;
 		
-		if (repoName.startsWith("<DOC")) {
-		    System.out.println("Error retrieving repositories list: ");
+                if (repoName.startsWith("<DOC")) {
+                    log.atDebug().log("Error retrieving repositories list.");
 		    SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "noRepoList" ), -1 );
 		    
 
@@ -210,13 +238,12 @@ public class SPMParameters
 		if (repoName.endsWith("/"))
 		    repoName = repoName.substring(0, repoName.length()-1);
 
-		System.out.println("repoName: " + repoName + "<<");
+                log.atInfo().log("Repository name: {}<<", repoName);
 
-		newRepositories.addElement( repoName );
+                newRepositories.add(repoName);
 		if ( repoName.equals( currentString ) ) {
 		    current = rd.getLineNumber() - 1;
-
-		    System.out.println("new current=" + current);
+                    log.atInfo().log("New current: {}", current);
 		    modified = false;
 		}
 	    }
@@ -233,7 +260,7 @@ public class SPMParameters
         catch ( IOException e )
         {
             if ( !( ( e instanceof UnknownHostException ) || ( e instanceof SocketException ) ) )
-                e.printStackTrace();
+                log.atError().setCause(e).log("IO Error: {}", e.getMessage());
             SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text("unknownRepositoriesHost", repListURL), -1 );
         }
         finally
@@ -248,9 +275,8 @@ public class SPMParameters
             {
                 Thread.sleep( 1000 );
             }
-            catch ( InterruptedException e )
-            {
-                e.printStackTrace();
+ catch (InterruptedException e) {
+                log.atError().setCause(e).log("Thread interrupted: {}", e.getMessage());
             }
             if ( ( !updated ) && forceUpdate )
             {
@@ -268,16 +294,13 @@ public class SPMParameters
     {
 
         File f = new File( System.getProperty( "user.home" ), ".spmanagerprefs" );
-        try
-        {
-            OutputStream out = new BufferedOutputStream( new FileOutputStream( f ) );
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream(f))) {
             Properties props = newProperties();
-            props.store( out, "Scripts & Plugins Manager Preferences File" );
-            out.close();
+            props.store(out, "Scripts & Plugins Manager Preferences File");
         }
         catch ( IOException ex )
         {
-            ex.printStackTrace();
+            log.atError().setCause(ex).log("IO Error: {}", ex.getMessage());
         }
 
     }
@@ -325,7 +348,7 @@ public class SPMParameters
         catch ( NumberFormatException e )
         {
             current = 0;
-            System.out.println( "SPManager : Wrong default URL index in properties file." );
+            log.atError().log("SPManager : Wrong default URL index in properties file.");
         }
 
 
@@ -350,14 +373,14 @@ public class SPMParameters
         s = p.getProperty( "useProxy", "false" );
         try
         {
-            useProxy = Boolean.valueOf(s);
+            useProxy = Boolean.parseBoolean(s);
         }
         catch ( Exception e )
         {
             useProxy = false;
-            System.out.println( "SPManager : Invalid use of proxy setting in properties file: useProxy=" + s);
+            log.atError().log("SPManager : Invalid use of proxy setting in properties file: useProxy={}", useProxy);
         }
-        useCache = Boolean.valueOf( p.getProperty( "usecache", "true" )).booleanValue();
+        useCache = Boolean.parseBoolean(p.getProperty("usecache", "true"));
 
     }
 
@@ -428,10 +451,8 @@ public class SPMParameters
         try
         {
             url = new URL(repositories.get( current ));
-        }
-        catch ( MalformedURLException e )
-        {
-            e.printStackTrace();
+        } catch (MalformedURLException me) {
+            log.atError().setCause(me).log("Bad URL: {}", me.getMessage());
         }
         return url;
     }
@@ -458,12 +479,6 @@ public class SPMParameters
 	if (current < 0) getRepositoriesList( false );
         return current;
     }
-
-    /**
-     *  return the current filter map
-     */
-    public Map<String, String> getFilters()
-    { return filters; }
 
     /**
      *  get a filter value
@@ -511,50 +526,6 @@ public class SPMParameters
     public boolean useProxy()
     {
         return useProxy;
-    }
-
-
-    /**
-     *  Gets the proxyHost attribute of the SPMParameters object
-     *
-     *@return    The proxyHost value
-     */
-    public String getProxyHost()
-    {
-        return proxyHost;
-    }
-
-
-    /**
-     *  Gets the proxyPort attribute of the SPMParameters object
-     *
-     *@return    The proxyPort value
-     */
-    public String getProxyPort()
-    {
-        return proxyPort;
-    }
-
-
-    /**
-     *  Gets the username attribute of the SPMParameters object
-     *
-     *@return    The username value
-     */
-    public String getUsername()
-    {
-        return username;
-    }
-
-
-    /**
-     *  Gets the password attribute of the SPMParameters object
-     *
-     *@return    The password value
-     */
-    public String getPassword()
-    {
-        return password;
     }
 
     /**
