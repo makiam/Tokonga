@@ -451,7 +451,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
 		InputStream is= conn.getInputStream();
                 is = new BufferedInputStream( is );
 
-                System.out.println("Content-Encoding: " + conn.getHeaderField("Content-Encoding"));
+                log.info("Content-Encoding: {}", conn.getHeaderField("Content-Encoding"));
                 
                 if (conn.getHeaderField("Content-Encoding").equalsIgnoreCase("deflate"))
                 	is = new InflaterInputStream(is, new Inflater(true));
@@ -464,7 +464,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
                 try { input = new InputSource(new InputStreamReader(is, "UTF-8")); }
                 catch (UnsupportedEncodingException e) { e.printStackTrace(); }
                 
-                System.out.println("Encoding: " + input.getEncoding());
+                log.info("Encoding: {}", input.getEncoding());
                 
                 Document doc = SPManagerUtils.builder.parse( input );
                 NodeList tst = doc.getElementsByTagName( "scriptcollection" );
@@ -552,111 +552,6 @@ public class HttpSPMFileSystem extends SPMFileSystem
         }
     }
 
-    /**
-     *  Description of the Method
-     *
-     *@param  fileName          Description of the Parameter
-     *@param  from              Description of the Parameter
-     *@param  status            Description of the Parameter
-     *@param  downloadedLength  Description of the Parameter
-     *@param  lengthToDownload  Description of the Parameter
-     *@return                   Description of the Return Value
-     */
-    public static long downloadRemoteTextFile( URL from, String fileName, long size, StatusDialog status, long totalDownload, long downloadedLength, List<String> errors )
-    {
-        BufferedReader in = null;
-        BufferedWriter file = null;
-        long initialValue = downloadedLength;
-        
-        try
-        {
-	    HttpURLConnection conn = (HttpURLConnection) from.openConnection();
-	    
-	    conn.setRequestProperty("Cache-Control", "no-cache");
-	    conn.setRequestProperty("Accept-Encoding", "deflate, gzip");
-
-	    if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-		new BStandardDialog("SPManager", new String[] {
-					SPMTranslate.text("httpError"),
-					conn.getResponseMessage() +
-					" (" + conn.getResponseCode() + ")",
-				    }, BStandardDialog.ERROR)
-		    .showMessageDialog(SPManagerFrame.getInstance());
-
-		return 0;
-	    }
-
-	    InputStream is = conn.getInputStream();
-	    
-	    System.out.println("Content-Encoding: " + conn.getHeaderField("Content-Encoding"));
-	    
-	    if (conn.getHeaderField("Content-Encoding").equalsIgnoreCase("deflate"))
-	    	is = new InflaterInputStream(is, new Inflater(true));
-
-	    if (conn.getHeaderField("Content-Encoding").equalsIgnoreCase("gzip"))
-	    	is = new GZIPInputStream(is);
-
-	    in = new BufferedReader( new InputStreamReader( is ) );
-                
-	    file = new BufferedWriter( new FileWriter(fileName) );
-
-            double a;
-            double b = totalDownload;
-            int value;
-            int newValue;
-            value = status.getBarValue();
-
-            int i = in.read();
-            while ( i != -1 )
-            {
-                file.write( i );
-                i = in.read();
-                if ( status != null )
-                {
-                    ++downloadedLength;
-                    a = downloadedLength;
-                    newValue = (int) Math.round( ( a * 100.0 ) / b );
-                    if ( newValue > value )
-                    {
-                        status.setBarValue( newValue );
-                        status.setProgressText( newValue + "%" );
-                        value = newValue;
-                    }
-                }
-            }
-
-	    file.flush();
-	    file.close();
-
-
-	    // check we got the expected data
-	    long received = downloadedLength - initialValue;
-	    if (received != size)
-                throw new IOException("SPManager: file incomplete. Only received " + received + " bytes of " + size);
-
-        }
-        catch ( IOException e)
-        {
-	    errors.add(SPMTranslate.text("error") + "(" + fileName + ")" + e);
-        }
-	
-        finally
-        {
-            try
-            {
-                if ( in != null )
-                    in.close();
-                if ( file != null )
-                    file.close();
-            }
-            catch ( IOException e )
-            {
-                log.atError().setCause(e).log("SPManager: Error closing: {} due {}", fileName, e.getMessage());
-            }
-        }
-        return downloadedLength - initialValue;
-    }
-
 
     /**
      *  Description of the Method
@@ -670,7 +565,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
      */
     public static long downloadRemoteBinaryFile( URL from, String fileName, long size, StatusDialog status, long totalDownload, long downloadedLength, List<String> errors )
     {
-	System.out.println("download: size=" + size + "; total=" + totalDownload + "; downloaded=" + downloadedLength);
+        log.info("Download: size={}; total={}; downloaded={}", size, totalDownload, downloadedLength);
 
 	File update = new File(fileName);
 
@@ -782,7 +677,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
             }
             catch ( IOException e )
             {
-		System.out.println("SPManager: error closing " + fileName + ": " + e);
+                log.atError().setCause(e).log("SPManager: error closiing {}: {}", fileName, e.getMessage());
             }
 
         }
@@ -924,8 +819,8 @@ public class HttpSPMFileSystem extends SPMFileSystem
                     String txt = s + "/" + s + ".txt";
                     try
                     {
-                        URL fileURL = new URL( from, txt );
-                        System.out.println( "fileURL " + fileURL );
+                        URL fileURL = new URL(from, txt);
+                        log.info("File URL: {}", fileURL);
                         HttpURLConnection.setFollowRedirects( false );
                         HttpURLConnection connection = (HttpURLConnection) fileURL.openConnection();
                         String header = connection.getHeaderField( 0 );
