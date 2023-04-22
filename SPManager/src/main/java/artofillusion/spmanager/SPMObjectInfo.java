@@ -123,12 +123,10 @@ public class SPMObjectInfo
 	 *  sizes of the fileset files
 	 */
 	public long[] fileSizes;
-	/**
-	 *  xml description of the script, root node being <script>
-	 */
-	public Document xmlDescription;
 
-	/**  flag to indicate that this plugin/script has been loaded */
+    /**
+     * flag to indicate that this plugin/script has been loaded
+     */
 	public boolean loaded = false;
 
 	char separatorChar;
@@ -398,8 +396,8 @@ public class SPMObjectInfo
 		{
 			byte[] xmlByteArray = s.getBytes();
 			BufferedInputStream xmlStream = new BufferedInputStream( new ByteArrayInputStream( xmlByteArray ) );
-			xmlDescription = SPManagerUtils.builder.parse( xmlStream );
-			readInfoFromXmlHeader( xmlDescription );
+
+                    readInfoFromXmlHeader(SPManagerUtils.builder.parse(xmlStream));
 			xmlStream.close();
 		}
 		catch ( IOException | SAXException e )
@@ -441,10 +439,10 @@ public class SPMObjectInfo
 			}
 
                     try (BufferedInputStream xmlStream = new BufferedInputStream(is)) {
-				xmlDescription = SPManagerUtils.builder.parse( xmlStream );
-                            readInfoFromXmlHeader(xmlDescription);
+
+                        readInfoFromXmlHeader(SPManagerUtils.builder.parse(xmlStream));
                     } catch (IOException | SAXException t) {
-                            log.atError().setCause(t).log("Error reding XML header: {}", t.getMessage());
+                        log.atError().setCause(t).log("Error reading XML header: {}", t.getMessage());
 			}
 		}
 		catch ( IOException e )
@@ -500,8 +498,7 @@ public class SPMObjectInfo
 			byte[] xmlByteArray = s.getBytes();
 			BufferedInputStream xmlStream = new BufferedInputStream( new ByteArrayInputStream( xmlByteArray ) );
 
-			xmlDescription = SPManagerUtils.builder.parse( xmlStream );
-			readInfoFromXmlHeader( xmlDescription );
+                    readInfoFromXmlHeader(SPManagerUtils.builder.parse(xmlStream));
 
 		}
 		catch ( IOException | SAXException e )
@@ -560,9 +557,10 @@ public class SPMObjectInfo
 
 			BufferedInputStream xmlStream = new BufferedInputStream(is);
 
-			xmlDescription = SPManagerUtils.builder.parse( xmlStream );
-			readInfoFromXmlHeader( xmlDescription );
-			if (is != null) is.close();
+                    readInfoFromXmlHeader(SPManagerUtils.builder.parse(xmlStream));
+                    if (is != null) {
+                        is.close();
+                    }
 		}
 		catch ( IOException | NumberFormatException | SAXException e )
 		{
@@ -901,12 +899,9 @@ public class SPMObjectInfo
 		node = SPManagerUtils.getNodeFromNodeList( nl, "history", 0 );
 		if (node != null) {
 
-			// iterate the child log nodes
-			NodeList hl = node.getChildNodes();
-			for (i = 0;
-			(node = SPManagerUtils.getNodeFromNodeList(hl, "log", i)) != null;
-			i++
-			) {
+                    // iterate the child log nodes
+                    NodeList hl = node.getChildNodes();
+                    for (i = 0; (node = SPManagerUtils.getNodeFromNodeList(hl, "log", i)) != null; i++) {
 
 				String name = "v ";
 				String str = SPManagerUtils.getAttribute(node, "version");
