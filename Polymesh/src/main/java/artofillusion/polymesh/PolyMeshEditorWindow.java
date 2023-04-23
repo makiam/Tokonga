@@ -11,25 +11,6 @@
  */
 package artofillusion.polymesh;
 
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.Window;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import java.text.NumberFormat;
-import java.util.ArrayList;
-
-import javax.swing.JFormattedTextField;
-import javax.swing.JSpinner;
-import javax.swing.JSpinner.NumberEditor;
-
 import artofillusion.ArtOfIllusion;
 import artofillusion.Camera;
 import artofillusion.LayoutWindow;
@@ -64,9 +45,8 @@ import artofillusion.polymesh.PolyMesh.Wvertex;
 import artofillusion.polymesh.PolyMeshValueWidget.ValueWidgetOwner;
 import artofillusion.polymesh.ui.ColorButton;
 import artofillusion.texture.FaceParameterValue;
-import artofillusion.texture.VertexParameterValue;
-
 import artofillusion.texture.ParameterValue;
+import artofillusion.texture.VertexParameterValue;
 import artofillusion.ui.ActionProcessor;
 import artofillusion.ui.ComponentsDialog;
 import artofillusion.ui.EditingTool;
@@ -113,9 +93,24 @@ import buoy.widget.RowContainer;
 import buoy.widget.Shortcut;
 import buoy.widget.Widget;
 import buoy.xml.WidgetDecoder;
-import javax.swing.UIManager;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JFormattedTextField;
+import javax.swing.JSpinner.NumberEditor;
+import javax.swing.UIManager;
 
 
 /**
@@ -2758,7 +2753,14 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 	}
         
-        private final Map<Integer, BPopupMenu> modeToMenu = Map.of(POINT_MODE, vertexPopupMenu, EDGE_MODE, edgePopupMenu, FACE_MODE, facePopupMenu);
+    private final Map<Integer, BPopupMenu> modeToMenu = new HashMap<>();
+
+    {
+        modeToMenu.put(POINT_MODE, vertexPopupMenu);
+        modeToMenu.put(EDGE_MODE, edgePopupMenu);
+        modeToMenu.put(FACE_MODE, facePopupMenu);
+    }
+
         
 	public void triggerPopupEvent(WidgetMouseEvent event) {
           modeToMenu.get(selectMode).show(event);

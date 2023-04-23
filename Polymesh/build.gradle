@@ -1,0 +1,35 @@
+plugins {
+	id 'aoi.plugin-conventions'
+        id 'java'
+}
+
+description = 'Polymesh'
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ["src/main/java"]
+        }
+        resources {
+            srcDirs = ["src/main/resources"]
+        }
+    }
+
+    test {
+        java {
+            srcDirs = ["src/test/java"]
+        }
+    }
+}
+configurations {
+  fatjar
+}
+
+dependencies {
+    implementation group: 'com.googlecode.matrix-toolkits-java', name: 'mtj', version: '0.9.14'
+    fatjar group: 'com.googlecode.matrix-toolkits-java', name: 'mtj', version: '0.9.14'
+}
+
+jar {
+    from { configurations.fatjar.collect { it.isDirectory() ? it : zipTree(it) } }
+}
