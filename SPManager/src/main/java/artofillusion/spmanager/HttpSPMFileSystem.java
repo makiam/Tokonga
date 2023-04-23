@@ -432,7 +432,7 @@ public class HttpSPMFileSystem extends SPMFileSystem
             
             boolean received = false;
             int attempts = 0;
-            System.out.println( cgiUrl );
+            log.info("cgi Url: {}", cgiUrl);
             while (!received && attempts++ < 5 )
             {
 		HttpURLConnection conn =
@@ -462,7 +462,9 @@ public class HttpSPMFileSystem extends SPMFileSystem
                                
                 InputSource input = null;
                 try { input = new InputSource(new InputStreamReader(is, "UTF-8")); }
-                catch (UnsupportedEncodingException e) { e.printStackTrace(); }
+ catch (UnsupportedEncodingException e) {
+                    log.atError().setCause(e).log("Unsupported encoding: {}", e.getMessage());
+                }
                 
                 log.info("Encoding: {}", input.getEncoding());
                 
@@ -698,7 +700,10 @@ public class HttpSPMFileSystem extends SPMFileSystem
         HtmlVersioningParserCallback callback = new HtmlVersioningParserCallback( v, from );
         BufferedReader bufferedReader = null;
         try { bufferedReader = new BufferedReader( new InputStreamReader( is, "UTF-8" ) ); }
-        catch (UnsupportedEncodingException e) { e.printStackTrace(); return v; }
+ catch (UnsupportedEncodingException e) {
+            log.atError().setCause(e).log("Unsupported encoding: {}", e.getMessage());
+            return v;
+        }
         try
         {
             new ParserDelegator().parse( bufferedReader, callback, false );

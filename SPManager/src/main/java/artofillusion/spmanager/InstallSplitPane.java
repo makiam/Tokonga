@@ -210,12 +210,13 @@ public class InstallSplitPane extends SPMSplitPane
 			{
 			    //check if valid update
 
-			    managerInfo = managerInfoList.get( j );
-			    System.out.println( info.getName() );
-			    System.out.println( "major distant local :" + info.getMajor() + " " + managerInfo.getMajor() );
-			    System.out.println( "minor distant local :" + info.getMinor() + " " + managerInfo.getMinor() );
-			    System.out.println( "beta distant local :" + info.isBeta() + " " + managerInfo.isBeta() );
-			    System.out.println( "beta distant local :" + info.getBeta() + " " + managerInfo.getBeta() );
+                            managerInfo = managerInfoList.get(j);
+                            log.info(info.getName());
+
+                            log.info("major distant local:{} {}", info.getMajor(), managerInfo.getMajor());
+                            log.info("minor distant local:{} {}", info.getMinor(), managerInfo.getMinor());
+                            log.info("beta distant local:{} {}", info.isBeta(), managerInfo.isBeta());
+                            log.info("beta distant local:{} {}", info.getBeta(), managerInfo.getBeta());
 			    if ( info.getMajor() < managerInfo.getMajor() )
 			    {
 				eligible = false;
@@ -523,20 +524,19 @@ public class InstallSplitPane extends SPMSplitPane
 	    break;
 	}
 
-	File folder = new File(SPManagerPlugin.TEMP_DIR,
-		file.getParentFile().getName());
+        File folder = new File(SPManagerPlugin.TEMP_DIR, file.getParentFile().getName());
 
-	System.out.println("folder=" + folder.getAbsolutePath());
+        log.info("Folder={}", folder.getAbsolutePath());
 
 	if (!folder.exists() && !folder.mkdirs()) {
             errors.add(SPMTranslate.text("error") + "cannot open/create " + folder.getAbsolutePath());
 
-            System.out.println("cannot open/create " + folder.getAbsolutePath());
+            log.info("cannot open/create {}", folder.getAbsolutePath());
 	}
 
 	File update = new File(folder, file.getName() + ".upd");
 
-	System.out.println("downloading to " + update.getAbsolutePath());
+        log.info("downloading to {}", update.getAbsolutePath());
 
 	if (status == null)
 	    status = new StatusDialog(SPManagerPlugin.getFrame());
@@ -571,7 +571,7 @@ public class InstallSplitPane extends SPMSplitPane
 		    try {
 			file = new File(SPManagerPlugin.class.getField(dest.substring(1, sep)).get(null).toString(), dest.substring(sep+1));
 		    } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {
-			System.out.println("SPManager: cannot resolve: " + dest);
+                        log.atError().setCause(e).log("SPManager: cannot resolve: {} {}", dest, e.getMessage());
 			errors.add("Cannot resolve: " + dest);
 		    }
 		}
@@ -594,7 +594,7 @@ public class InstallSplitPane extends SPMSplitPane
 		}
 
 		URL addFileURL = nodeInfo.getAddFileURL( j );
-		System.out.println("downloading from " + addFileURL.toString());
+                log.info("downloading from {}", addFileURL.toString());
 		downloadedLength += HttpSPMFileSystem.downloadRemoteBinaryFile( addFileURL, update.getAbsolutePath(), nodeInfo.fileSizes[j], status, lengthToDownload, downloadedLength, errors );
 
 		transaction.put(file, update);
@@ -611,13 +611,10 @@ public class InstallSplitPane extends SPMSplitPane
 		if (errors.size() > errCount) {
 
 		    if (!update.delete()) {
-			System.out.println("SPManager: tx abort: " +
-				" update file not deleted: " +
-				update.getAbsolutePath());
+                        log.error("SPManager: tx abort: update file not deleted: {}", update.getAbsolutePath());
 
 			// make file zero-length
-			RandomAccessFile raf =
-			    new RandomAccessFile(update, "rw");
+			RandomAccessFile raf = new RandomAccessFile(update, "rw");
 			raf.setLength(0);
 			raf.close();
 		    }
@@ -627,23 +624,22 @@ public class InstallSplitPane extends SPMSplitPane
 
 		folder = file.getParentFile();
 		if (!folder.exists() && !folder.mkdirs()) {
-		    throw new RuntimeException("cannot open/create " +
-			    folder.getAbsolutePath());
+                    throw new RuntimeException("cannot open/create " + folder.getAbsolutePath());
 		}
 
 		// now delete the original, and rename the new file
 		if (orig.exists()) orig.delete();
 
-                System.out.println("copying file to " + orig.getAbsolutePath());
+                log.info("copying file to {}", orig.getAbsolutePath());
 
 		if (!update.renameTo(orig)) {
 
-		    System.out.println("SPManager: old-style copy...");
+                    log.info("SPManager: old-style copy...");
 		    if (copyFile(update, orig)) {
 
 			// make sure update file really was deleted
 			if (!update.delete()) {
-                            System.out.println("SPManager: update file not deleted: " + update.getAbsolutePath());
+                            log.info("SPManager: update file not deleted: {}", update.getAbsolutePath());
 
 			    // make file zero-length
 			    RandomAccessFile raf = new RandomAccessFile(update, "rw");
@@ -652,7 +648,7 @@ public class InstallSplitPane extends SPMSplitPane
 			}
 		    }
 		    else {
-                        System.out.println("SPManager.cleanup: could not copy " + file.getPath());
+                        log.error("SPManager.cleanup: could not copy {}", file.getPath());
 
 			errors.add("couldn't copy " + file.getName());
 		    }

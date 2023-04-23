@@ -113,8 +113,8 @@ public class SPManagerPlugin implements Plugin
 	    try {
 		addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
 		addUrl.setAccessible(true);
-	    } catch (NoSuchMethodException | SecurityException e) {
-		System.out.println("Error getting addURL method: " + e);
+            } catch (NoSuchMethodException | SecurityException e) {
+                log.atError().setCause(e).log("Error getting addURL method: {}" + e.getMessage());
 	    }
 
 	    // get details of all local plugins
@@ -190,14 +190,16 @@ public class SPManagerPlugin implements Plugin
                                         log.atError().setCause(e).log("Error invoking: {}", e.getMessage());
 				    }
 				}
-				else System.out.println("Could not add path" + url);
+                                else
+                                    log.error("Could not add path {}", url);
 			    }
 			    else if ("import".equalsIgnoreCase(value)) {
 				ldr = loaders.get(url);
 				
 				if (key.length == 1) {
 				    if (obj != null) searchldr.add(ldr);
-				    else System.out.println("SPM: could not find loader for: " + url);
+                                    else
+                                        log.error("SPM: could not find loader for: {}", url);
 				}
 				
 			    }
@@ -223,7 +225,8 @@ public class SPManagerPlugin implements Plugin
 		    .showMessageDialog(null);
 		}
 	    }
-	    else System.out.println("SPManager: could not find plugin dir: " + PLUGIN_DIRECTORY);
+            else
+                log.error("SPManager: could not find plugin dir: {}", PLUGIN_DIRECTORY);
 
 
 	    init();
@@ -248,7 +251,7 @@ public class SPManagerPlugin implements Plugin
 
 	List<String> errors = new ArrayList<>();
 
-	System.out.println("SPManager: java temp dir is " + System.getProperty("java.io.tmpdir"));
+        log.info("SPManager: java temp dir is {}", System.getProperty("java.io.tmpdir"));
 
 	// try system TEMP directory
 	File temp = new File(System.getProperty("java.io.tmpdir"));
@@ -282,7 +285,7 @@ public class SPManagerPlugin implements Plugin
 	    path = path.substring(0, path.length()- ".lck".length());
 	} catch (IOException e) {
 	    // failed to create temp file, use fallback naming algorithm
-	    System.out.println("SPManager: could not create temp file: " + t.getAbsolutePath() + e);
+	    log.atError().setCause(e).log("SPManager: could not create temp file: {} {}", t.getAbsolutePath(), e.getMessage());
 
 	    path = System.getProperty("user.name") + "-" + System.currentTimeMillis();
 	}
@@ -299,7 +302,7 @@ public class SPManagerPlugin implements Plugin
 	TEMP_DIR = temp.getAbsolutePath();
 
         
-	System.out.println("SPManager: temp dir set to: " + temp.getAbsolutePath());
+        log.info("SPManager: temp dir set to: {}", temp.getAbsolutePath());
 
 	// make sure all temp directories are created
 	File subfolder = new File(PLUGIN_DIRECTORY);
@@ -461,21 +464,21 @@ public class SPManagerPlugin implements Plugin
 		    setProgressText(SPMTranslate.text("contacting"));
 		    setIdle(true);
 
-		    System.out.println("DOWNLOAD: creating ObjectInfo..." + url.toString());
+                    log.info("DOWNLOAD: creating ObjectInfo... {}", url.toString());
 		    worker = new Thread() {
                         @Override
 			public void run()
 			{
 			    info = new SPMObjectInfo(url);
 			    if (info.length == 0) {
-				System.out.println("DOWNLOAD: no info");
+                                log.info("DOWNLOAD: no info");
 				info.length = info.getRemoteFileSize(url.toString());
 			    }
 
 			    // get destination if needed
 			    if (info.name == null || info.name.length() == 0) {
 
-				System.out.println("need path...");
+                                log.info("need path...");
 
 				RowContainer row = new RowContainer();
 				row.add(SPMTranslate.bLabel("savePath"));
@@ -615,7 +618,8 @@ public class SPManagerPlugin implements Plugin
 
 		    worker.start();
 		}
-		else System.out.println("?? cmd=" + cmd);
+                else
+                    log.info("?? cmd={}", cmd);
 	    }
 	};
     }

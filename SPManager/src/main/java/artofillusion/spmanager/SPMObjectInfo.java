@@ -934,7 +934,7 @@ public class SPMObjectInfo
 
 					destination.add( (todir != null ? todir+separatorChar : "") + tmp.item(0).getNodeValue());
 
-					System.out.println("file: " + tmp.item(0).getNodeValue());
+                                    log.info("File: {}", tmp.item(0).getNodeValue());
 				}
 			}
 			if (fileNames.size() > 0)
@@ -1137,8 +1137,7 @@ public class SPMObjectInfo
 	{
 		String oper = "=";
 		int cut;
-
-            System.out.println("test: lhs:" + lhs + "; rhs:" + rhs + "; rhs[0]:" + rhs.charAt(0));
+            log.atDebug().log("Test: lhs:{}; rhs{}; rhs[0]:{}", lhs, rhs, rhs.charAt(0));
 
 		// does lhs have an operator?
 		cut = lhs.indexOf('<');
@@ -1165,15 +1164,15 @@ public class SPMObjectInfo
 		if (cut < 0) cut = rhs.indexOf('+');
 		if (cut < 0) cut = rhs.indexOf('-');
 		
-		if (cut >= 0) {
-		    System.out.println("cut=" + cut + "; length=" + rhs.length());
+            if (cut >= 0) {
+                log.debug("cut={}; length={}", cut, rhs.length());
 		    
 			if (cut < rhs.length()-1 && rhs.charAt(cut+1) == '=')
 				oper = rhs.substring(cut, cut+2);
 			else
 				oper = rhs.substring(cut, cut+1);
-			
-			System.out.println("oper=" + oper);
+
+                    log.debug("oper={}", oper);
 			
 			// RHS operator may be leading or trailing
 			rhs = (cut >= rhs.length()-2 ? rhs.substring(0, cut) : rhs.substring(cut+oper.length()));
@@ -1181,7 +1180,7 @@ public class SPMObjectInfo
 
 		int comp = 0;
 
-            System.out.println("test: lhs:" + lhs + "; rhs:" + rhs + "; oper:" + oper);
+            log.atDebug().log("Test: lhs:{}; rhs{}; oper:{}", lhs, rhs, oper);
 
 		if (oper == null || oper.length() == 0) oper = "=";
 		
@@ -1208,7 +1207,7 @@ public class SPMObjectInfo
 				rval = SPManagerUtils.parseDouble(rhs);
 			}
 
-			System.out.println("test: lval:" + lval + "; rval:" + rval);
+                    log.debug("test: lval:{}; rval:{}", lval, rval);
 
 			comp = (lval < rval ? -1 : lval > rval ? 1 : 0);
 
