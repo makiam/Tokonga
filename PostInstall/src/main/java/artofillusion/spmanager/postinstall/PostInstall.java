@@ -1,13 +1,9 @@
-/*  PostInstall.java  */
-
-package artofillusion.spmanager.postinstall;
-
 /*
  * PostInstall: perform post-install cleanup
  *
  * Copyright (C) 2006 Nik Trevallyn-Jones, Sydney Australia
  * Changes copyright 2023 by Maksim Khramov
- * 
+ *
  * Author: Nik Trevallyn-Jones, nik777@users.sourceforge.net
  * $Id: Exp $
  *
@@ -17,7 +13,7 @@ package artofillusion.spmanager.postinstall;
  * any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -26,26 +22,27 @@ package artofillusion.spmanager.postinstall;
  * GNU project, at http://www.gnu.org.
  */
 
+package artofillusion.spmanager.postinstall;
+
+
 import artofillusion.*;
 import artofillusion.ui.*;
-
 import buoy.widget.*;
-
 import java.io.*;
 import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *  AOI plugin to clean up after plugin installation/upgrade
  */
-
+@Slf4j
 public class PostInstall implements Plugin
 {
     protected List<String> ok, err;
     protected static File tempDir = null;
 
     @Override
-    public void processMessage(int msg, Object[] args)
-    {
+    public void processMessage(int msg, Object... args)    {
 	int i, k;
 
 	switch (msg) {
@@ -62,25 +59,23 @@ public class PostInstall implements Plugin
 		if (!tempDir.exists())
 		    tempDir = new File(System.getProperty("user.dir"), "SPMtemp");
 
-		if (!tempDir.exists()) {
-		    System.out.println("PostInstall: No TEMP dir found");
+                if (!tempDir.exists()) {
+                    log.info("PostInstall: No TEMP dir found");
 				       		    
 		    tempDir = null;
 		    return;
 		}
 
 		// get the correct sub-tree
-		String prefix = "spmanager-temp-"
-		    + System.getProperty("user.name") + "-";
-		File lockfile;
-		String[] sub = tempDir.list();
-		for (i = 0; i < sub.length; i++) {
-		    if (sub[i].startsWith(prefix) && (!sub[i].endsWith(".lck"))) {
-			lockfile = new File(tempDir, sub[i] + ".lck");
+		String prefix = "spmanager-temp-" + System.getProperty("user.name") + "-";
+
+                for (String sub : tempDir.list()) {
+                    if (sub.startsWith(prefix) && (!sub.endsWith(".lck"))) {
+                        File lockfile = new File(tempDir, sub + ".lck");
 			
 			// no lock-file means not active
 			if (!lockfile.exists()) {
-			    tempDir = new File(tempDir, sub[i]);
+                            tempDir = new File(tempDir, sub);
 			    break;
 			}
 		    }
@@ -88,14 +83,13 @@ public class PostInstall implements Plugin
 
 		// if no sub-tree found, exit now
 		if (!tempDir.getName().startsWith("spmanager-temp-")) {
-		    System.out.println("PostInstall: no TEMP sub-tree found");
+                    log.info("PostInstall: no TEMP sub-tree found");
 		    
 		    tempDir = null;
 		    return;
 		}
-		
-		System.out.println("PostInstall: tempDir is " +
-			tempDir.getAbsolutePath());
+
+                log.info("PostInstall: tempDir is {}", tempDir.getAbsolutePath());
 		
 		ok = new ArrayList<>(128);
 		err = new ArrayList<>(128);
@@ -104,10 +98,8 @@ public class PostInstall implements Plugin
 		cleanup(ArtOfIllusion.TOOL_SCRIPT_DIRECTORY, ok, err);
 		cleanup(ArtOfIllusion.OBJECT_SCRIPT_DIRECTORY, ok, err);
 		cleanup(ArtOfIllusion.STARTUP_SCRIPT_DIRECTORY, ok, err);
-	    } catch (Exception e) {
-		System.out.println("PostInstall: exception raised - aborting: "
-				   + e.toString());
-
+            } catch (Exception e) {
+                log.atError().setCause(e).log("PostInstall: exception raised - aborting: {}", e.getMessage());
 		err.add("Exception raised - aborting: " + e.toString());
 	    }
 	    finally {
@@ -128,13 +120,11 @@ public class PostInstall implements Plugin
 			// make sure we empty all sub-directories first
 			if (tmp.isDirectory()) {
 			    sub = tmp.list();
-			    if (sub.length > 0) {
-				System.out.println("PostInstall: descending into "
-					+ tmp.getAbsolutePath());
+                            if (sub.length > 0) {
+                                log.info("PostInstall: descending into {}", tmp.getAbsolutePath());
 
 				for (k = 0; k < sub.length; k++) {
-				    list.add(i, tmp.getAbsolutePath() +
-					    File.separator + sub[k]);
+                                    list.add(i, tmp.getAbsolutePath() + File.separator + sub[k]);
 				}
 				
 				// continue processing from this element
@@ -142,20 +132,15 @@ public class PostInstall implements Plugin
 				continue;
 			    }
 			}
-
-			System.out.println("PostInstall: deleting " + 
-				tmp.getAbsolutePath());
+                        log.info("PostInstall: deleting {}", tmp.getAbsolutePath());
 
 			tmp.delete();
 		    }
+                } catch (Exception e) {
+                    log.atError().setCause(e).log("PostInstall error: {}", e.getMessage());
 		}
-		catch (Exception e) {
-		    System.out.println("PostInstall: error: " + e);
-		    e.printStackTrace();
-		}
-		
-		System.out.println("PostInstall: deleting "
-			+ tempDir.getAbsolutePath());
+
+                log.info("PostInstall: deleting {}", tempDir.getAbsolutePath());
 		
 		tempDir.delete();
 	    }
@@ -221,22 +206,19 @@ public class PostInstall implements Plugin
     public static void cleanup(String path, List<String> ok, List<String> err)
     {
 	File from, to;
-	File plugin, update;
+        File update;
 	String fname;
-	int count = 0;
 
 	to = new File(path);
 	from = new File(tempDir, to.getName());
 
-	if (!from.exists()) {
-	    System.out.println("PostInstall: FROM path does not exist: " +
-			       from.getAbsolutePath());
+        if (!from.exists()) {
+            log.atError().log("PostInstall: FROM path does not exist: {}", from.getAbsolutePath());
 	    return;
 	}
 
-	if (!to.exists()) {
-	    System.out.println("PostInstall: TO path does not exist: " +
-			       to.getAbsolutePath());
+        if (!to.exists()) {
+            log.atError().log("PostInstall: TO path does not exist: {}", to.getAbsolutePath());
 	    return;
 	}
 
@@ -254,36 +236,27 @@ public class PostInstall implements Plugin
 				
 		// if the file is zero-length, jut try to delete it
 		if (update.length() == 0) {
-		    if (update.delete()) {
-			System.out.println("PostInstall: " +
-					   "deleted zero-length file: " +
-					   update.getAbsolutePath());
-		    }
-		    else {
-			System.out.println("PostInstall.cleanup: " +
-					   "Could not delete: " +
-					   update.getAbsolutePath());
+                    if (update.delete()) {
+                        log.info("PostInstall: deleted zero-length file: {}", update.getAbsolutePath());
+                    } else {
+                        log.error("PostInstall.cleanup: Could not delete: {}", update.getAbsolutePath());
 
-			err.add("could not delete " +
-				update.getAbsolutePath());
+                        err.add("could not delete " + update.getAbsolutePath());
 		    }
 
 		    continue;	// skip to next file
 		}
 
 
-		fname = files[i].substring(0,
-					   files[i].length()-".upd".length());
+                fname = files[i].substring(0, files[i].length() - ".upd".length());
 
-		plugin = new File(to, fname);
+                File plugin = new File(to, fname);
 
 		// if the corresponding plugin also exists then fix it
 		if (plugin.exists()) plugin.delete();
 
-		if (update.renameTo(plugin)) {
-		    System.out.println("PostInstall.cleanup: "+
-				       "Updated " + fname);
-
+                if (update.renameTo(plugin)) {
+                    log.info("PostInstall.cleanup: Updated {}", fname);
 		    ok.add("Updated " + fname);
 		}
 		else {
@@ -296,15 +269,11 @@ public class PostInstall implements Plugin
 			int b;
 			while ((b = is.read()) >= 0) os.write((byte) b);
 
-			System.out.println("PostInstall.cleanup: "+
-					   "Updated " + fname);
+                        log.info("PostInstall.cleanup: Updated {}", fname);
 
 			ok.add("Updated (copied) " + fname);
-		    }
-		    catch (Exception e) {
-			System.out.println("PostInstall.cleanup: "+
-					   "**Error updating " + fname);
-
+                    } catch (IOException e) {
+                        log.atError().setCause(e).log("PostInstall.cleanup: **Error updating ", fname);
 			err.add("couldn't rename or copy " + fname);
 		    }
 		    finally {
@@ -312,27 +281,19 @@ public class PostInstall implements Plugin
 			    os.flush();
 			    os.close();
 			    is.close();
-			} catch (Exception e) {}
+                        } catch (IOException e) {
+                        }
 
-			if (!update.delete()) {
-			    System.out.println("PostInstall.cleanup: " +
-					       "**Error: Could not delete: " +
-					       update.getAbsolutePath());
+                        if (!update.delete()) {
+                            log.atError().log("PostInstall.cleanup: **Error: Could not delete: {}" + update.getAbsolutePath());
 
-			    err.add("couldn't delete " +
-				    update.getAbsolutePath());
+                            err.add("couldn't delete " + update.getAbsolutePath());
 			    
 			    // set file to zero-length
-			    try {
-				RandomAccessFile raf =
-				    new RandomAccessFile(update, "rw");
-
-				raf.setLength(0);
-				raf.close();				
-			    } catch (Exception e) {
-				System.out.println("PostInstall: "
-					+ Translate.text("postinstall:truncateMsg",
-						update.getAbsolutePath()));
+			    try (RandomAccessFile raf = new RandomAccessFile(update, "rw")) {
+                                raf.setLength(0);
+                            } catch (IOException e) {
+                                log.atError().setCause(e).log("PostInstall: {}", Translate.text("postinstall:truncateMsg", update.getAbsolutePath()));
 			    }
 			}
 		    }
