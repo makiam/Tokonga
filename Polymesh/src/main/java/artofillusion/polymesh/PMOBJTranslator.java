@@ -29,30 +29,35 @@ public class PMOBJTranslator implements Translator
      *
      *@return    The name value
      */
+    @Override
     public String getName()
     {
         return Translate.text("polymesh:importWavefront");
     }
 
 
+    @Override
     public boolean canImport()
     {
         return true;
     }
 
 
+    @Override
     public boolean canExport()
     {
         return true;
     }
 
 
+    @Override
      public void importFile( BFrame parent )
     {
         PMOBJImporter.importFile( parent );
     }
 
 
+    @Override
      public void exportFile( BFrame parent, Scene theScene )
     {
     	 PMOBJExporter.exportFile( parent, theScene );

@@ -72,6 +72,7 @@ public class CreatePolyMeshTool extends EditingTool
         initButton("polymesh:polymesh");
     }
     
+    @Override
     public void activate()
     {
         super.activate();
@@ -120,11 +121,13 @@ public class CreatePolyMeshTool extends EditingTool
                                 Integer.toString(usize), Integer.toString(vsize), smoothingDesc}));
     }
     
+    @Override
     public String getToolTipText()
     {
         return Translate.text("polymesh:createPolyMeshTool.tipText");
     }
     
+    @Override
     public void mousePressed(WidgetMouseEvent e, ViewerCanvas view)
     {
         clickPoint = e.getPoint();
@@ -132,6 +135,7 @@ public class CreatePolyMeshTool extends EditingTool
         ((SceneViewer) view).beginDraggingBox(clickPoint, shiftDown);
     }
     
+    @Override
     public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view)
     {
         Scene theScene = ((LayoutWindow) theWindow).getScene();
@@ -206,6 +210,7 @@ public class CreatePolyMeshTool extends EditingTool
     
     
     
+    @Override
    public void iconDoubleClicked()
   {
     new PolyMeshToolDialog( edw.getFrame() );

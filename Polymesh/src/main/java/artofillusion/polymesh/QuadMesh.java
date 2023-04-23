@@ -101,6 +101,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 			ikWeight = v.ikWeight;
 		}
 		
+                @Override
 		public String toString() {
 			return r.toString() + " first: " + firstEdge + " type: " + type;
 		}
@@ -153,6 +154,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 			smoothness = e.smoothness;			
 		}
 		
+                @Override
 		public String toString() {
 			return "verts: " + v1 + " " + v2 + " faces: " + f1 + " " + f2 + " smooth: " + smoothness;
 		}
@@ -245,6 +247,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 			return -1;
 		}
 		
+                @Override
 		public String toString() {
 			String markString="";
 			if (mark == SUBDIVIDE) {
@@ -445,14 +448,17 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 		cachedWire = null;
 	}
 
+        @Override
 	public int getFaceCount() {
 		return faces.length;
 	}
 
+        @Override
 	public int getFaceVertexCount(int face) {
 		return 4;
 	}
 
+        @Override
 	public int getFaceVertexIndex(int face, int vertex) {
 		QuadFace f = faces[face];
 		if (vertex == 0) {
@@ -467,6 +473,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 		return f.v4;
 	}
 
+        @Override
 	public MeshViewer createMeshViewer(MeshEditController controller,
 			RowContainer rowContainer) {
 		// TODO Auto-generated method stub
@@ -476,6 +483,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 	/** Get an array of normal vectors.  This calculates a single normal for each vertex,
 	 ignoring smoothness values. */
 
+        @Override
 	public Vec3[] getNormals() {
 		Vec3 faceNorm, norm[] = new Vec3[vertices.length];
 		double length, dot;
@@ -546,6 +554,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 		return norm;
 	}
 
+        @Override
 	public Vec3[] getVertexPositions() {
 		Vec3 v[] = new Vec3[vertices.length];
 		for (int i = 0; i < v.length; i++)
@@ -553,12 +562,14 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 		return v;
 	}
 
+        @Override
 	public void setVertexPositions(Vec3 v[]) {
 		for (int i = 0; i < v.length; i++)
 			vertices[i].r = v[i];
 		resetMesh();
 	}
 
+        @Override
 	public MeshVertex[] getVertices() {
 		return vertices;
 	}
@@ -571,6 +582,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 		return faces;
 	}
 	
+        @Override
 	public TriangleMesh convertToTriangleMesh(double tol) {
 		Vec3[] vertArray = new Vec3[vertices.length];
 		for (int i = 0; i < vertArray.length; ++i)
@@ -2039,6 +2051,7 @@ groups:     do {
 		return renderingMesh;
 	}
 
+        @Override
 	public void setSkeleton(Skeleton skeleton) {
 		// TODO Auto-generated method stub
 	}

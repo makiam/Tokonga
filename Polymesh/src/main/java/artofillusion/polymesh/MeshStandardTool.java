@@ -11,11 +11,6 @@
 
 package artofillusion.polymesh;
 
-import java.awt.Image;
-import java.util.HashMap;
-import java.util.Iterator;
-
-
 import artofillusion.MeshViewer;
 import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
@@ -24,6 +19,8 @@ import artofillusion.object.Mesh;
 import artofillusion.ui.EditingWindow;
 import artofillusion.ui.MeshEditController;
 import artofillusion.ui.Translate;
+import java.awt.Image;
+import java.util.HashMap;
 import java.util.Map;
 
 /** MeshStandardTool is the standard, default, editing tool. It can be used to move, scale and rotate selections.*/
@@ -43,6 +40,7 @@ public class MeshStandardTool extends AdvancedEditingTool
         initButton("polymesh:movePoints");
     }
 
+    @Override
     public void activateManipulators(ViewerCanvas view)
     {
         if (! manip2dMap.containsKey(view))
@@ -78,6 +76,7 @@ public class MeshStandardTool extends AdvancedEditingTool
         }
     }
 
+    @Override
     public void activate()
     {
         super.activate();
@@ -85,6 +84,7 @@ public class MeshStandardTool extends AdvancedEditingTool
         ViewerCanvas view = theWindow.getView();
     }
 
+    @Override
     public void deactivate()
     {
     	super.deactivate();
@@ -105,6 +105,7 @@ public class MeshStandardTool extends AdvancedEditingTool
         return selectedIcon;
     }
 
+    @Override
     public String getToolTipText()
     {
         return Translate.text("polymesh:meshStandardTool.tipText");

@@ -59,6 +59,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool
        mouseDragManipHashMap = new HashMap<>();
     }
 
+    @Override
     public void activateManipulators(ViewerCanvas view)
     {
         if (! mouseDragManipHashMap.containsKey(view))
@@ -80,6 +81,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool
         }
     }
 
+    @Override
     public void activate()
     {
         super.activate();
@@ -94,6 +96,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool
     	mouseDragManipHashMap.forEach((ViewerCanvas view, Manipulator manipulator) -> {((PolyMeshViewer) view).removeManipulator(manipulator); });
     }
 
+    @Override
     public String getToolTipText()
     {
         return Translate.text("polymesh:advancedBevelExtrudeTool.tipText");
@@ -203,6 +206,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool
         theWindow.updateImage();
     }
 
+    @Override
     public void selectionModeChanged(int selectionMode)
     {
         ImageIcon image = null;
@@ -224,6 +228,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool
         });
     }
 
+    @Override
     public void iconDoubleClicked()
     {
         BComboBox c = new BComboBox( new String[]{

@@ -58,14 +58,17 @@ public class ColorButton extends RowContainer{
 			return color;
 		}
 		
+                @Override
 		public Dimension getPreferredSize() {
 			return size;
 		}
 		
+                @Override
 		public Dimension getMinimumSize() {
 			return size;
 		}
 
+                @Override
 		public Dimension getMaximumSize() {
 			return size;
 		}
@@ -99,6 +102,7 @@ public class ColorButton extends RowContainer{
 		return colorWidget.color;
 	}
 	
+        @Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
 		button.setEnabled(enabled);

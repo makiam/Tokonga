@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003-2005 by Peter Eastman, (C) 2005 by Francois Guillet for PolyMesh adaptation
+ *  Changes copyright (C) 2023 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -8,10 +8,6 @@
  *  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  */
 package artofillusion.polymesh;
-
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
 
 import artofillusion.Camera;
 import artofillusion.UndoRecord;
@@ -25,6 +21,8 @@ import artofillusion.ui.Translate;
 import buoy.event.WidgetMouseEvent;
 import buoy.widget.BComboBox;
 import buoy.widget.Widget;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
 
 /**
  *  PMBevelExtrudeTool is an EditingTool used for beveling and extruding
@@ -75,6 +73,7 @@ public class PMBevelExtrudeTool extends EditingTool
     /**
      *  Description of the Method
      */
+    @Override
     public void activate()
     {
         super.activate();
@@ -91,6 +90,7 @@ public class PMBevelExtrudeTool extends EditingTool
      *
      *@return    Description of the Return Value
      */
+    @Override
     public int whichClicks()
     {
         return ALL_CLICKS;
@@ -102,6 +102,7 @@ public class PMBevelExtrudeTool extends EditingTool
      *
      *@return    The toolTipText value
      */
+    @Override
     public String getToolTipText()
     {
         return Translate.text( "bevelExtrudeTool.tipText" );
@@ -114,6 +115,7 @@ public class PMBevelExtrudeTool extends EditingTool
      *@param  e     Description of the Parameter
      *@param  view  Description of the Parameter
      */
+    @Override
     public void mousePressed( WidgetMouseEvent e, ViewerCanvas view )
     {
         recordSelection();
@@ -133,6 +135,7 @@ public class PMBevelExtrudeTool extends EditingTool
      *@param  e     Description of the Parameter
      *@param  view  Description of the Parameter
      */
+    @Override
     public void mouseDragged( WidgetMouseEvent e, ViewerCanvas view )
     {
         if ( noSelection )
@@ -213,6 +216,7 @@ public class PMBevelExtrudeTool extends EditingTool
      *@param  e     Description of the Parameter
      *@param  view  Description of the Parameter
      */
+    @Override
     public void mouseReleased( WidgetMouseEvent e, ViewerCanvas view )
     {
         if ( noSelection || ( width == 0.0 && height == 0.0 ) )
@@ -229,6 +233,7 @@ public class PMBevelExtrudeTool extends EditingTool
     /**
      *  Description of the Method
      */
+    @Override
     public void iconDoubleClicked()
     {
         BComboBox c = new BComboBox( new String[]{

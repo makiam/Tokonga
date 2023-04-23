@@ -57,6 +57,7 @@ public class PMCreateFaceTool extends EditingTool
         initButton("polymesh:createface");
     }
     
+    @Override
     public void activate()
     {
         super.activate();
@@ -66,11 +67,13 @@ public class PMCreateFaceTool extends EditingTool
         fromPoint = null;
     }
     
+    @Override
     public String getToolTipText()
     {
         return Translate.text("polymesh:createFaceTool.tipText");
     }
     
+    @Override
     public void mouseReleased(WidgetMouseEvent ev, ViewerCanvas view)
     {    
         Point e = ev.getPoint();
@@ -163,6 +166,7 @@ public class PMCreateFaceTool extends EditingTool
         }
     }
 
+    @Override
     public void keyPressed(KeyPressedEvent e, ViewerCanvas view)
     {
         if (! (canvas == view) )
@@ -223,6 +227,7 @@ public class PMCreateFaceTool extends EditingTool
     
     /** Draw any graphics that this tool overlays on top of the view. */
     
+    @Override
     public void drawOverlay(ViewerCanvas view)
     {
         if ( canvas == view && from != -1)
