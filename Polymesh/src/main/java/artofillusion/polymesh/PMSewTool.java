@@ -28,7 +28,9 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 
 /** PMKnifeTool is an EditingTool used fto divide edges of PolyMesh objects. */
-
+@EditingTool.ButtonImage("polymesh:sew")
+@EditingTool.Tooltip("polymesh:sewTool.tipText")
+@EditingTool.ActivatedToolText("polymesh:sewTool.helpText")
 public class PMSewTool extends EditingTool
 {
     private Point clickPoint;
@@ -45,26 +47,6 @@ public class PMSewTool extends EditingTool
     {
         super(fr);
         this.controller = controller;
-        initButton("polymesh:sew");
-    }
-    
-    @Override
-    public void activate()
-    {
-        super.activate();
-        theWindow.setHelpText(Translate.text("polymesh:sewTool.helpText"));
-    }
-    
-    @Override
-    public int whichClicks()
-    {
-        return ALL_CLICKS;
-    }
-    
-    @Override
-    public String getToolTipText()
-    {
-        return Translate.text("polymesh:sewTool.tipText");
     }
     
     @Override

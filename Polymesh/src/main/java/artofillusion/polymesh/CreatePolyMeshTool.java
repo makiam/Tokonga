@@ -10,16 +10,6 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.polymesh;
 
-import java.awt.Point;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.swing.JFormattedTextField;
-import javax.swing.JSpinner;
-
 import artofillusion.ArtOfIllusion;
 import artofillusion.Camera;
 import artofillusion.LayoutWindow;
@@ -49,9 +39,20 @@ import buoy.widget.BLabel;
 import buoy.widget.BSpinner;
 import buoy.widget.BorderContainer;
 import buoy.xml.WidgetDecoder;
+import java.awt.Point;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import javax.swing.JFormattedTextField;
+import javax.swing.JSpinner;
+import lombok.extern.slf4j.Slf4j;
 
 /** CreatePolyMeshTool is an EditingTool used for creating PolyMesh objects. */
-
+@Slf4j
+@EditingTool.ButtonImage("polymesh:polymesh")
+@EditingTool.Tooltip("polymesh:createPolyMeshTool.tipText")
 public class CreatePolyMeshTool extends EditingTool
 {
     private EditingWindow edw;
@@ -69,7 +70,6 @@ public class CreatePolyMeshTool extends EditingTool
     {
         super(fr);
         edw = fr;
-        initButton("polymesh:polymesh");
     }
     
     @Override
@@ -119,12 +119,6 @@ public class CreatePolyMeshTool extends EditingTool
             theWindow.setHelpText(Translate.text("polymesh:createPolyMeshTool.helpText2",
                 new Object [] { Translate.text("polymesh:createPolyMeshTool."+shapeDesc),
                                 Integer.toString(usize), Integer.toString(vsize), smoothingDesc}));
-    }
-    
-    @Override
-    public String getToolTipText()
-    {
-        return Translate.text("polymesh:createPolyMeshTool.tipText");
     }
     
     @Override
@@ -211,6 +205,7 @@ public class CreatePolyMeshTool extends EditingTool
     
     
     @Override
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
    public void iconDoubleClicked()
   {
     new PolyMeshToolDialog( edw.getFrame() );

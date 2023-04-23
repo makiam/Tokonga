@@ -11,25 +11,28 @@
 
 package artofillusion.polymesh;
 
-import java.util.HashMap;
-
-
 import artofillusion.MeshViewer;
 import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
 import artofillusion.math.Vec3;
 import artofillusion.object.Mesh;
 import artofillusion.ui.ComponentsDialog;
+import artofillusion.ui.EditingTool;
 import artofillusion.ui.EditingWindow;
 import artofillusion.ui.MeshEditController;
 import artofillusion.ui.Translate;
 import buoy.widget.BComboBox;
 import buoy.widget.Widget;
+import java.util.HashMap;
 import java.util.Map;
 
 /** AdvancedExtrudeTool is the stool used to extrude selection.
- * In addition, it can scale/rotate the selection (e.g. extruded faces.*/
-
+ * In addition, it
+ * can scale/rotate the selection (e.g. extruded faces.
+ */
+@EditingTool.ButtonImage("polymesh:extrude")
+@EditingTool.Tooltip("polymesh:advancedExtrudeTool.tipText")
+@EditingTool.ActivatedToolText("polymesh:advancedExtrudeTool.helpText")
 public class AdvancedExtrudeTool extends AdvancedEditingTool
 {
     private Vec3 baseVertPos[];
@@ -47,7 +50,6 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool
     public AdvancedExtrudeTool(EditingWindow fr, MeshEditController controller)
     {
         super(fr, controller);
-        initButton("polymesh:extrude");
         manip3dHashMap = new HashMap<>();
     }
 
@@ -81,7 +83,6 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool
     public void activate()
     {
         super.activate();
-        theWindow.setHelpText(Translate.text("polymesh:advancedExtrudeTool.helpText"));
         ViewerCanvas view = theWindow.getView();
     }
 
@@ -92,13 +93,6 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool
     	manip3dHashMap.forEach((ViewerCanvas view, Manipulator manipulator) -> {
             ((PolyMeshViewer) view).removeManipulator(manipulator); 
         });
-    }
-
-
-    @Override
-    public String getToolTipText()
-    {
-        return Translate.text("polymesh:advancedExtrudeTool.tipText");
     }
 
     private void doManipulatorPrepareShapingMesh(Manipulator.ManipulatorEvent e)

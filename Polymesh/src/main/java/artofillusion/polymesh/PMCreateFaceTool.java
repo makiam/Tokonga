@@ -10,12 +10,6 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.polymesh;
 
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.util.Vector;
-
-
 import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
 import artofillusion.math.Vec2;
@@ -24,15 +18,21 @@ import artofillusion.object.MeshVertex;
 import artofillusion.ui.EditingTool;
 import artofillusion.ui.EditingWindow;
 import artofillusion.ui.MeshEditController;
-import artofillusion.ui.Translate;
 import buoy.event.KeyPressedEvent;
 import buoy.event.WidgetMouseEvent;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.util.List;
+import java.util.Vector;
 
 /** PMKnifeTool is an EditingTool used fto divide edges of PolyMesh objects. */
-
+@EditingTool.ButtonImage("polymesh:createface")
+@EditingTool.Tooltip("polymesh:createFaceTool.tipText")
+@EditingTool.ActivatedToolText("polymesh:createFaceTool.helpText")
 public class PMCreateFaceTool extends EditingTool
 {
-    private Vector<Vec3> clickPoints;
+    private List<Vec3> clickPoints;
     private UndoRecord undo;
     private MeshEditController controller;
     private PolyMesh originalMesh;
@@ -54,23 +54,15 @@ public class PMCreateFaceTool extends EditingTool
         from = to = -1;
         fromPoint = null;
         this.controller = controller;
-        initButton("polymesh:createface");
     }
     
     @Override
     public void activate()
     {
         super.activate();
-        theWindow.setHelpText(Translate.text("polymesh:createFaceTool.helpText"));
         clickPoints.clear();
         from = to = -1;
         fromPoint = null;
-    }
-    
-    @Override
-    public String getToolTipText()
-    {
-        return Translate.text("polymesh:createFaceTool.tipText");
     }
     
     @Override
@@ -237,24 +229,24 @@ public class PMCreateFaceTool extends EditingTool
             view.drawBox( pf.x - PolyMeshViewer.HANDLE_SIZE/2, pf.y - PolyMeshViewer.HANDLE_SIZE/2, PolyMeshViewer.HANDLE_SIZE, PolyMeshViewer.HANDLE_SIZE, Color.red);
             if ( clickPoints.size() > 0)
             {
-                Vec3 v =clickPoints.elementAt(0);
+                Vec3 v = clickPoints.get(0);
                 Vec2 vp = canvas.getCamera().getObjectToScreen().timesXY( v );
                 Point vpp = new Point( (int)Math.round(vp.x), (int)Math.round(vp.y) );
                 Point vppt;
                 view.drawLine( pf, vpp, Color.black );
                 for (int k = 0; k < clickPoints.size() - 1 ; ++k)
                 {
-                    v = clickPoints.elementAt(k);
+                    v = clickPoints.get(k);
                     vp = canvas.getCamera().getObjectToScreen().timesXY( v );
                     vpp = new Point( (int)Math.round(vp.x), (int)Math.round(vp.y) );
-                    v = clickPoints.elementAt(k+1);
+                    v = clickPoints.get(k + 1);
                     vp = canvas.getCamera().getObjectToScreen().timesXY( v );
                     vppt = new Point( (int)Math.round(vp.x), (int)Math.round(vp.y) );
                     view.drawLine( vpp, vppt, Color.black );
                 }
                 for (int k = 0; k < clickPoints.size() ; ++k)
                 {
-                    v = clickPoints.elementAt(k);
+                    v = clickPoints.get(k);
                     vp = canvas.getCamera().getObjectToScreen().timesXY( v );
                     vpp = new Point( (int)Math.round(vp.x), (int)Math.round(vp.y) );
                     view.drawBox( vpp.x - PolyMeshViewer.HANDLE_SIZE/2, vpp.y - PolyMeshViewer.HANDLE_SIZE/2, PolyMeshViewer.HANDLE_SIZE, PolyMeshViewer.HANDLE_SIZE, Color.red);

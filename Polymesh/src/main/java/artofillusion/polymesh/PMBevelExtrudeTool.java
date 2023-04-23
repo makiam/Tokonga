@@ -31,7 +31,8 @@ import java.awt.event.ActionEvent;
  *@author     Peter Eastman, modifications by Francois Guillet
  *@created    april, 26 2005
  */
-
+@EditingTool.ButtonImage("polymesh:bevel")
+@EditingTool.Tooltip("bevelExtrudeTool.tipText")
 public class PMBevelExtrudeTool extends EditingTool
 {
     private boolean selected[], noSelection, separateFaces;
@@ -51,7 +52,6 @@ public class PMBevelExtrudeTool extends EditingTool
     {
         super( fr );
         this.controller = controller;
-        initButton( "polymesh:bevel" );
     }
 
 

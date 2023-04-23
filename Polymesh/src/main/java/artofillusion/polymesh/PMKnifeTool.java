@@ -11,12 +11,6 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.polymesh;
 
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.util.Vector;
-
-
 import artofillusion.Camera;
 import artofillusion.MeshViewer;
 import artofillusion.UndoRecord;
@@ -30,9 +24,15 @@ import artofillusion.ui.EditingWindow;
 import artofillusion.ui.MeshEditController;
 import artofillusion.ui.Translate;
 import buoy.event.WidgetMouseEvent;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.util.Vector;
 
 /** PMKnifeTool is an EditingTool used fto divide edges of PolyMesh objects. */
-
+@EditingTool.ButtonImage("polymesh:knife")
+@EditingTool.Tooltip("polymesh:knifeTool.tipText")
+@EditingTool.ActivatedToolText("polymesh:knifeTool.helpText")
 public class PMKnifeTool extends EditingTool
 {
     private Vector<Point> clickPoints;
@@ -50,20 +50,6 @@ public class PMKnifeTool extends EditingTool
         super(fr);
         clickPoints= new Vector<>();
         this.controller = controller;
-        initButton("polymesh:knife");
-    }
-    
-    @Override
-    public void activate()
-    {
-        super.activate();
-        theWindow.setHelpText(Translate.text("polymesh:knifeTool.helpText"));
-    }
-    
-    @Override
-    public String getToolTipText()
-    {
-        return Translate.text("polymesh:knifeTool.tipText");
     }
     
     @Override

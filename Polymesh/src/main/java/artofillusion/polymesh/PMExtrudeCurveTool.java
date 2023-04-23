@@ -10,12 +10,6 @@
 
 package artofillusion.polymesh;
 
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.util.Vector;
-
-
 import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
 import artofillusion.math.Mat4;
@@ -25,12 +19,19 @@ import artofillusion.object.MeshVertex;
 import artofillusion.ui.EditingTool;
 import artofillusion.ui.EditingWindow;
 import artofillusion.ui.MeshEditController;
-import artofillusion.ui.Translate;
 import buoy.event.KeyPressedEvent;
 import buoy.event.WidgetMouseEvent;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.util.Vector;
 
-/** PMExtrudeCurveTool lets the user extrude faces along a curve. */
-
+/**
+ * PMExtrudeCurveTool lets the user extrude faces along a curve.
+ */
+@EditingTool.ButtonImage("polymesh:extrudecurve")
+@EditingTool.Tooltip("polymesh:extrudeCurveTool.tipText")
+@EditingTool.ActivatedToolText("polymesh:extrudeCurveTool.helpText")
 public class PMExtrudeCurveTool extends EditingTool
 {
     private Vector<CurvePoint> clickPoints;
@@ -51,22 +52,14 @@ public class PMExtrudeCurveTool extends EditingTool
         clickPoints= new Vector<>();
         fromPoint = null;
         this.controller = controller;
-        initButton("polymesh:extrudecurve");
     }
 
     @Override
     public void activate()
     {
         super.activate();
-        theWindow.setHelpText(Translate.text("polymesh:extrudeCurveTool.helpText"));
         clickPoints.clear();
         fromPoint = null;
-    }
-
-    @Override
-    public String getToolTipText()
-    {
-        return Translate.text("polymesh:extrudeCurveTool.tipText");
     }
 
     @Override
