@@ -10,9 +10,6 @@
  */
 package artofillusion.polymesh;
 
-import java.io.InputStream;
-import java.util.ResourceBundle;
-import artofillusion.ArtOfIllusion;
 import artofillusion.LayoutWindow;
 import artofillusion.Plugin;
 import artofillusion.UndoRecord;
@@ -28,6 +25,8 @@ import buoy.widget.BMenu;
 import buoy.widget.BMenuItem;
 import buoy.widget.BStandardDialog;
 import buoy.widget.MenuWidget;
+import java.io.InputStream;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -35,6 +34,7 @@ import buoy.widget.MenuWidget;
  *
  *@author     Francois Guillet
  */
+@Slf4j
 public class PolyMeshPlugin implements Plugin
 {
 	
@@ -45,8 +45,7 @@ public class PolyMeshPlugin implements Plugin
      *@param  args     Arguments depending on the message
      */
     @Override
-    public void processMessage( int message, Object args[] )
-    {
+    public void processMessage(int message, Object... args)    {
         if ( message == Plugin.APPLICATION_STARTING )
         {
             boolean keysImplemented = false;
@@ -58,16 +57,13 @@ public class PolyMeshPlugin implements Plugin
             }
             if (keysImplemented) return;
 
-            try
-            {
-                InputStream in = getClass().getResourceAsStream("/PMkeystrokes.xml");
+            try (InputStream in = getClass().getResourceAsStream("/PMkeystrokes.xml")) {
                 KeystrokeManager.addRecordsFromXML(in);
-                in.close();
                 KeystrokeManager.saveRecords();
             }
             catch (Exception ex)
             {
-                ex.printStackTrace();
+                log.atError().setCause(ex).log("Unable to read configuration: {}", ex.getMessage());
             }
 
         }
