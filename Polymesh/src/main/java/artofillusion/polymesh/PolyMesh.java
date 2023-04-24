@@ -11,16 +11,6 @@
  */
 package artofillusion.polymesh;
 
-import java.awt.Color;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InvalidObjectException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Vector;
-import java.util.prefs.Preferences;
-
 import artofillusion.MeshViewer;
 import artofillusion.ObjectViewer;
 import artofillusion.Property;
@@ -50,8 +40,8 @@ import artofillusion.object.TriangleMesh.Edge;
 import artofillusion.object.TriangleMesh.Face;
 import artofillusion.object.TriangleMesh.Vertex;
 import artofillusion.polymesh.QuadMesh.QuadEdge;
-import artofillusion.polymesh.QuadMesh.QuadVertex;
 import artofillusion.polymesh.QuadMesh.QuadFace;
+import artofillusion.polymesh.QuadMesh.QuadVertex;
 import artofillusion.texture.FaceParameterValue;
 import artofillusion.texture.FaceVertexParameterValue;
 import artofillusion.texture.ParameterValue;
@@ -64,15 +54,25 @@ import artofillusion.ui.Translate;
 import artofillusion.ui.UIUtilities;
 import buoy.widget.BStandardDialog;
 import buoy.widget.RowContainer;
+import java.awt.Color;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
+import java.util.prefs.Preferences;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Winged edge mesh implementation for Art of Illusion.
  * 
  * @author Francois Guillet
  */
-
+@Slf4j
 public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 
 	private BoundingBox bounds; //the bounds enclosing the mesh
@@ -1806,11 +1806,9 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 		int count = 1;
 		while (nEdges[e.hedge].next != start) {
 			++count;
-			if (count > nEdges.length) {
-				System.out
-						.println("Error : too many edges around a vertex (tmp edges)");
-				System.out.println("edge : " + start);
-				return -1;
+                    if (count > nEdges.length) {
+                        log.atError().log("Error : too many edges around a vertex (tmp edges). Edge {}", start);
+                        return -1;
 			}
 			e = nEdges[nEdges[e.hedge].next];
 		}
@@ -1829,9 +1827,8 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 		int count = 1;
 		while (edges[e.hedge].next != index) {
 			++count;
-			if (count > edges.length) {
-				System.out.println("Error : too many edges around a vertex");
-				System.out.println("edge : " + index);
+                    if (count > edges.length) {
+                        log.atError().log("Error : too many edges around a vertex. Edge {}", index);
 				return -1;
 			}
 			e = edges[edges[e.hedge].next];
@@ -2154,14 +2151,12 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 		v.scale(1.0 / (vf.length * 1.0));
 		for (int i = 0; i < vf.length; ++i) {
 			next = getNext(i, deleted);
-			norm.add(vertices[vf[i]].r.minus(v).cross(
-					vertices[vf[next]].r.minus(v)));
+                    norm.add(vertices[vf[i]].r.minus(v).cross(vertices[vf[next]].r.minus(v)));
 		}
 		for (int i = 0; i < vf.length; ++i) {
 			prev = getPrev(i, deleted);
 			next = getNext(i, deleted);
-			Vec3 crossVec = vertices[vf[i]].r.minus(vertices[vf[prev]].r)
-					.cross(vertices[vf[next]].r.minus(vertices[vf[i]].r));
+                    Vec3 crossVec = vertices[vf[i]].r.minus(vertices[vf[prev]].r).cross(vertices[vf[next]].r.minus(vertices[vf[i]].r));
 			double product = crossVec.dot(norm);
 			if (product >= 0) {
 				start = i;
@@ -2179,8 +2174,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 				i -= vf.length;
 			prev = getPrev(i, deleted);
 			next = getNext(i, deleted);
-			Vec3 crossVec = vertices[vf[next]].r.minus(vertices[vf[i]].r)
-					.cross(vertices[vf[prev]].r.minus(vertices[vf[i]].r));
+                    Vec3 crossVec = vertices[vf[next]].r.minus(vertices[vf[i]].r).cross(vertices[vf[prev]].r.minus(vertices[vf[i]].r));
 			double product = crossVec.dot(norm);
 			if (product >= 0) {
 				++count;
@@ -2730,8 +2724,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 
 	public Vec3 getEdgePosition(int edge) {
 		Vec3 middle;
-		middle = vertices[edges[edge].vertex].r
-				.plus(vertices[edges[edges[edge].hedge].vertex].r);
+            middle = vertices[edges[edge].vertex].r.plus(vertices[edges[edges[edge].hedge].vertex].r);
 		middle.scale(0.5);
 		return middle;
 	}

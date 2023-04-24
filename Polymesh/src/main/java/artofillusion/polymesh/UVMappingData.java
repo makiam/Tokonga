@@ -10,18 +10,19 @@
  */
 package artofillusion.polymesh;
 
+import artofillusion.Scene;
+import artofillusion.math.Vec2;
+import artofillusion.polymesh.UnfoldedMesh.UnfoldedVertex;
+import artofillusion.texture.Texture;
+import artofillusion.ui.Translate;
 import java.awt.Color;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
-
-import artofillusion.Scene;
-import artofillusion.math.Vec2;
-import artofillusion.polymesh.UnfoldedMesh.UnfoldedVertex;
-import artofillusion.texture.Texture;
-import artofillusion.ui.Translate;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class holds unfolded meshes and UV mapping editor information
@@ -30,6 +31,7 @@ import artofillusion.ui.Translate;
  * @author Francois Guillet
  *
  */
+@Slf4j
 public class UVMappingData {
 
 	/**
@@ -40,7 +42,8 @@ public class UVMappingData {
 	public class UVMeshMapping {
 		public Vec2[][] v; //mesh pieces vertices positions
 
-		public String name; //mapping name
+            @Getter
+            public String name; //mapping name
 
 		public ArrayList<Integer> textures; //textures associated
 
@@ -128,11 +131,12 @@ public class UVMappingData {
 					continue;
 				}
 				if (index < numTex) {
-					tex = scene.getTexture(index);
-					System.out.println("texture loaded ok");
+                                    tex = scene.getTexture(index);
+
+                                    log.info("texture loaded ok");
 					textures.add(tex.getID());
 				} else {
-					System.out.println("texture loading workaround");
+                                    log.info("texture loading workaround");
 					textures.add(index);
 				}
 			}

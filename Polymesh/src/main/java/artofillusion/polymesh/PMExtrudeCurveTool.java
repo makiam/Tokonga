@@ -25,10 +25,12 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.util.Vector;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * PMExtrudeCurveTool lets the user extrude faces along a curve.
  */
+@Slf4j
 @EditingTool.ButtonImage("polymesh:extrudecurve")
 @EditingTool.Tooltip("polymesh:extrudeCurveTool.tipText")
 @EditingTool.ActivatedToolText("polymesh:extrudeCurveTool.helpText")
@@ -230,8 +232,8 @@ public class PMExtrudeCurveTool extends EditingTool
         {
             switch (key)
             {
-                case KeyPressedEvent.VK_ESCAPE :
-                    System.out.println("escape");
+                case KeyPressedEvent.VK_ESCAPE:
+                    log.debug("Escape...");
                     doCancel();
                     break;
                 case KeyPressedEvent.VK_W :

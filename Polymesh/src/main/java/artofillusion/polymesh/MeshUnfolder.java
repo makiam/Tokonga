@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2007 by Francois Guillet
  *  Modifications Copyright (C) 2020 Py Petri Ihalainen
- *  Changes copyright (C) 2022 by Maksim Khramov
+ *  Changes copyright (C) 2022-2023 by Maksim Khramov
  *
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
@@ -13,9 +13,6 @@
 
 package artofillusion.polymesh;
 
-import java.util.*;
-
-import buoy.widget.BTextArea;
 import artofillusion.math.Vec2;
 import artofillusion.math.Vec3;
 import artofillusion.object.FacetedMesh;
@@ -25,11 +22,13 @@ import artofillusion.polymesh.UnfoldedMesh.UnfoldedEdge;
 import artofillusion.polymesh.UnfoldedMesh.UnfoldedFace;
 import artofillusion.polymesh.UnfoldedMesh.UnfoldedVertex;
 import artofillusion.ui.Translate;
+import buoy.widget.BTextArea;
+import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 import no.uib.cipr.matrix.DenseVector;
-import no.uib.cipr.matrix.sparse.CG;
 import no.uib.cipr.matrix.sparse.*;
 
-
+@Slf4j
 public class MeshUnfolder {
 	private final FacetedMesh mesh; // the mesh to unfold
 

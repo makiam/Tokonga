@@ -13,26 +13,7 @@
 
 package artofillusion.polymesh;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.Color;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Line2D;
-import java.awt.BasicStroke;
-import java.awt.Rectangle;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import javax.imageio.ImageIO;
-
+import artofillusion.TextureParameter;
 import artofillusion.math.Vec2;
 import artofillusion.object.FacetedMesh;
 import artofillusion.object.ObjectInfo;
@@ -41,12 +22,29 @@ import artofillusion.polymesh.UVMappingCanvas.Range;
 import artofillusion.polymesh.UVMappingData.UVMeshMapping;
 import artofillusion.polymesh.UnfoldedMesh.UnfoldedEdge;
 import artofillusion.texture.*;
-import artofillusion.TextureParameter;
 import artofillusion.ui.*;
-
 import buoy.event.*;
 import buoy.widget.*;
 import buoy.xml.WidgetDecoder;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import javax.imageio.ImageIO;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -55,6 +53,7 @@ import buoy.xml.WidgetDecoder;
  * 
  * @author François Guillet
  */
+@Slf4j
 public class UVMappingEditorDialog extends BDialog {
 
     private final UVMappingCanvas mappingCanvas; // the mapping canvas displayed at window center
@@ -831,8 +830,8 @@ public class UVMappingEditorDialog extends BDialog {
     //for debugging purposes
     private void dumpTextureIDs() {
         mappingData.getMappings().forEach(mapping -> {
-          mapping.textures.forEach(tex -> {
-            System.out.println("Mapping " + mapping.name + " Texture Id: " + tex);
+            mapping.textures.forEach(tex -> {
+                log.atDebug().log("Mapping {} Texture Id: {}", mapping.getName(), tex);
           });
         });
     }
