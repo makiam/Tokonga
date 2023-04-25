@@ -11,13 +11,6 @@
 
 package artofillusion.polymesh;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InvalidObjectException;
-import java.util.Stack;
-import java.util.Vector;
-
-import buoy.widget.RowContainer;
 import artofillusion.MeshViewer;
 import artofillusion.RenderingMesh;
 import artofillusion.RenderingTriangle;
@@ -41,6 +34,13 @@ import artofillusion.texture.ParameterValue;
 import artofillusion.texture.TextureMapping;
 import artofillusion.texture.VertexParameterValue;
 import artofillusion.ui.MeshEditController;
+import buoy.widget.RowContainer;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.util.Stack;
+import java.util.Vector;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * A QuadMesh is a mesh exclusively made up of quads. This mesh is not meant to be edited by users but
@@ -53,6 +53,7 @@ import artofillusion.ui.MeshEditController;
  * @author Francois Guillet
  *
  */
+@Slf4j
 public class QuadMesh extends Object3D implements FacetedMesh {
 
 	/** A vertex specifies a position vector, the number of edges which share the vertex, and
@@ -685,7 +686,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 			}
 		}
 		if (!stack.empty()) {
-			System.out.println("stack not empty after solving crits");
+                    log.info("stack not empty after solving crits");
 		}
 		//final check
 		if (stack.empty()) {
@@ -697,7 +698,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 				checkEdge(i, faces[i].e4, stack);
 			}
 			if (!stack.empty()) {
-				System.out.println("stack not empty after check");
+                            log.info("stack not empty after check");
 			}
 		}
 //		long time2 = System.currentTimeMillis();
@@ -1726,14 +1727,14 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 			return;
 		}
 		if (f1.mark == QuadFace.FINAL && f2.mark == QuadFace.FINAL) {
-			System.out.println("solve edge for final and final, now there's a problem.");
+			log.error("solve edge for final and final, now there's a problem.");
 			return;
 		}
 	}
 
 	private void checkEdge(int f, int e, Stack<QuadEdge> stack) {
 		if (f == -1) {
-			System.out.println("check edge terror f == -1");
+			log.error("check edge terror f == -1");
 			return;
 		}
 		int fp;
@@ -1742,7 +1743,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 		} else if (edges[e].f2 == f) {
 			fp = edges[e].f1;
 		} else {
-			System.out.println("check edge terror egde doesn't share face");
+			log.error("check edge terror egde doesn't share face");
 			return;
 		}
 		if (fp == -1) {
@@ -2178,7 +2179,7 @@ groups:     do {
 								vert = i;
 							}
 						}
-						System.out.println("problem with find edges around a vertex: boundary not met. " + vert);
+						log.error("problem with find edges around a vertex: boundary not met. {}", vert);
 						notDone = false;
 					}
 				} else {
@@ -2204,25 +2205,22 @@ groups:     do {
 	 *
 	 */
 	public void dumpMesh() {
-		System.out.println("vertices:");
-		for (int i = 0; i < vertices.length; i++) {
-			System.out.println(i + ": " + vertices[i]);
-		}
-		System.out.println("edges:");
-		for (int i = 0; i < edges.length; i++) {
-			System.out.println(i + ": " + edges[i]);
-		}
-		System.out.println("faces:");
-		for (int i = 0; i < faces.length; i++) {
-			System.out.println(i + ": " + faces[i]);
-		}
+            log.debug("vertices:");
+            for (int i = 0; i < vertices.length; i++) {
+                log.debug(i + "{}: {}", i, vertices[i]);
+            }
+            log.debug("edges:");
+            for (int i = 0; i < edges.length; i++) {
+                    log.debug(i + "{}: {}", i, edges[i]);
+            }
+            log.debug("faces:");
+            for (int i = 0; i < faces.length; i++) {
+                    log.debug(i + "{}: {}", i, faces[i]);
+            }
 	}
 	
 	public void printSize() {
-		System.out.println(vertices.length + " verts (" + 
-				vertices.length * 50 + "), " + edges.length + " edges (" +
-				edges.length * 28 + "), " + faces.length + " faces (" +
-				faces.length * 24 + "), for a total of: " + (vertices.length * 54 + edges.length * 28 + faces.length * 24 )  + " bytes");
+            log.info(vertices.length + " verts (" +  vertices.length * 50 + "), " + edges.length + " edges (" + edges.length * 28 + "), " + faces.length + " faces (" + faces.length * 24 + "), for a total of: " + (vertices.length * 54 + edges.length * 28 + faces.length * 24 )  + " bytes");
 	}
 
 	public void setProjectedEdges(int[] projectedEdges) {

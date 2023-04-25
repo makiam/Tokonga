@@ -1272,7 +1272,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		QuadMesh subdividedMesh = mesh.getSubdividedMesh();
 		projectedEdge = subdividedMesh.getProjectedEdges();
 		if (projectedEdge == null)
-			System.out.println("null projected Edge");
+			log.info("null projected Edge");
 		return projectedEdge;
 	}
 
@@ -2618,7 +2618,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		origin = new Vec3(a, b, c);
 		// System.out.println( dummy );
 		if (dummy >= 10000)
-			System.out.println("Warning: Too many iterations");
+			log.info("Warning: Too many iterations");
 		vertDisplacements = new Vec3[count];
 		count = 0;
 		// System.out.println( a + " " + b + " " + c + " " + radius );
@@ -4118,29 +4118,28 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		String name = "";
 		switch (selectMode) {
 		case POINT_MODE:
-			System.out.println("Selected Vertices:");
+			log.debug("Selected Vertices:");
 			name = "vertex ";
 			break;
 		case EDGE_MODE:
-			System.out.println("Selected Edges:");
+			log.debug("Selected Edges:");
 			name = "edge ";
 			break;
 		case FACE_MODE:
-			System.out.println("Selected Faces:");
+			log.debug("Selected Faces:");
 			name = "face ";
 			break;
 		}
 		for (int i = 0; i < selected.length; i++) {
 			if (selected[i]) {
-				System.out.println(name + i + " selected.");
+                            log.debug("{}{} selected.", name, i);
 			}
 		}
 		new CheckMeshDialog().setVisible(true);
 	}
 
 	private void tolerantModeChanged() {
-		tolerant = lastTolerant = ((BCheckBoxMenuItem) editMenuItem[6])
-				.getState();
+		tolerant = lastTolerant = ((BCheckBoxMenuItem) editMenuItem[6]).getState();
 		setTolerant(((BCheckBoxMenuItem) editMenuItem[6]).getState());
 		savePreferences();
 	}

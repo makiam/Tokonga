@@ -194,7 +194,7 @@ public class MeshUnfolder {
 				} else if (v == faces[tri].v3) {
 					angleTable[i][j] = 3 * tri + 2;
 				} else {
-					System.out.println("pb setting angle tables: vertex not in face");
+                                    log.info("pb setting angle tables: vertex not in face");
 				}
 			}
 		}
@@ -547,45 +547,45 @@ public class MeshUnfolder {
 		for (int i = 0; i < vertices.length; i++) {
 			vertices[i] = uverts[vertList.get(i)].duplicate();
 			if (edgeTrans[vertices[i].edge] == -1)
-				System.out.println("Pb edge translation");
+				log.info("Pb edge translation");
 			vertices[i].edge = edgeTrans[vertices[i].edge];
 		}
 		for (int i = 0; i < edges.length; i++) {
 			edges[i] = uedges[edgeList.get(i)].duplicate();
 			if (vertTrans[edges[i].v1] == -1)
-				System.out.println("Pb edge vert v1");
+				log.info("Pb edge vert v1");
 			if (vertTrans[edges[i].v2] == -1)
-				System.out.println("Pb edge vert v2");
+				log.info("Pb edge vert v2");
 			edges[i].v1 = vertTrans[edges[i].v1];
 			edges[i].v2 = vertTrans[edges[i].v2];
 			if (edges[i].f1 != -1) {
 				if (faceTrans[edges[i].f1] == -1)
-					System.out.println("Pb edge face f1");
+					log.info("Pb edge face f1");
 				edges[i].f1 = faceTrans[edges[i].f1];
 			}
 			if (edges[i].f2 != -1) {
 				if (faceTrans[edges[i].f2] == -1)
-					System.out.println("Pb edge face f2");
+					log.info("Pb edge face f2");
 				edges[i].f2 = faceTrans[edges[i].f2];
 			}
 		}
 		for (int i = 0; i < faces.length; i++) {
 			faces[i] = ufaces[faceList.get(i)].duplicate();
 			if (vertTrans[faces[i].v1] == -1)
-				System.out.println("Pb face vert v1");
+				log.info("Pb face vert v1");
 			if (vertTrans[faces[i].v2] == -1)
-				System.out.println("Pb face vert v2");
+				log.info("Pb face vert v2");
 			if (vertTrans[faces[i].v3] == -1)
-				System.out.println("Pb face vert v3");
+				log.info("Pb face vert v3");
 			faces[i].v1 = vertTrans[faces[i].v1];
 			faces[i].v2 = vertTrans[faces[i].v2];
 			faces[i].v3 = vertTrans[faces[i].v3];
 			if (edgeTrans[faces[i].e1] == -1)
-				System.out.println("Pb face edge e1");
+				log.info("Pb face edge e1");
 			if (edgeTrans[faces[i].e2] == -1)
-				System.out.println("Pb face edge e2");
+				log.info("Pb face edge e2");
 			if (edgeTrans[faces[i].e3] == -1)
-				System.out.println("Pb face edge e3");
+				log.info("Pb face edge e3");
 			faces[i].e1 = edgeTrans[faces[i].e1];
 			faces[i].e2 = edgeTrans[faces[i].e2];
 			faces[i].e3 = edgeTrans[faces[i].e3];
