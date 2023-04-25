@@ -1736,16 +1736,17 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * Deletes any keystroke script associated to the PolyMesh plugin
 	 */
 	public void cleanKeystrokes() {
-		KeystrokeRecord[] keys = KeystrokeManager.getAllRecords();
-		for (int i = 0; i < keys.length; i++) {
-			if (keys[i].getName().endsWith("(PolyMesh)"))
-				KeystrokeManager.removeRecord(keys[i]);
-		}
-		try {
-			KeystrokeManager.saveRecords();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+            KeystrokeRecord[] keys = KeystrokeManager.getAllRecords();
+            for (KeystrokeRecord key : keys) {
+                if (key.getName().endsWith("(PolyMesh)")) {
+                    KeystrokeManager.removeRecord(key);
+                }
+            }
+            try {
+                KeystrokeManager.saveRecords();
+            } catch (Exception ex) {
+                log.atError().setCause(ex).log("Error saving keystrokes: {}", ex.getMessage());
+            }
 	}
 
 	/**
@@ -4038,11 +4039,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		setSelection(sel);
 	}
 
-	private void doSaveAsTemplate() {
-		BFileChooser chooser;
+    private void doSaveAsTemplate() {
 
-		File templateDir = new File(ArtOfIllusion.PLUGIN_DIRECTORY
-				+ File.separator + "PolyMeshTemplates");
+            File templateDir = new File(ArtOfIllusion.PLUGIN_DIRECTORY + File.separator + "PolyMeshTemplates");
 		if (!templateDir.exists()) {
 			if (!templateDir.mkdir()) {
 				new BStandardDialog(Translate.text("polymesh:errorTemplateDir"),
@@ -4052,19 +4051,15 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 				return;
 			}
 		}
-		chooser = new BFileChooser(BFileChooser.SAVE_FILE, Translate
-				.text("polymesh:saveTemplate"), templateDir);
-		if (chooser.showDialog(null)) {
-			try {
-				File file = chooser.getSelectedFile();
-				DataOutputStream dos = new DataOutputStream(
-						new FileOutputStream(file));
-				((PolyMesh) objInfo.object).writeToFile(dos, null);
-				dos.close();
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
+            BFileChooser chooser = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("polymesh:saveTemplate"), templateDir);
+        if (chooser.showDialog(null)) {
+            File file = chooser.getSelectedFile();
+            try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(file))) {
+                ((PolyMesh) objInfo.object).writeToFile(dos, null);
+            } catch (IOException ex) {
+                log.atError().setCause(ex).log("Error writing template: {}", ex.getMessage());
+            }
+        }
 
 	}
 
@@ -4232,19 +4227,17 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 				vertTable = nVertTable;
 			}
 			int[] faceTable = mesh.getTriangleFaceIndex();
-			MeshUnfolder unfolder = new MeshUnfolder(mesh, triMesh, vertTable,
-					faceTable);
+                    MeshUnfolder unfolder = new MeshUnfolder(mesh, triMesh, vertTable, faceTable);
 			if (unfolder.unfold(dlg.textArea, dlg.residual)) {
-				UVMappingData data = new UVMappingData(unfolder
-						.getUnfoldedMeshes());
+                            UVMappingData data = new UVMappingData(unfolder.getUnfoldedMeshes());
 				theMesh.setMappingData(data);
 				dlg.unfoldFinished(true);
 			} else {
 				dlg.unfoldFinished(false);
 			}
-		} catch (Exception e) {
-			dlg.unfoldFinished(false);
-			e.printStackTrace();
+                } catch (Exception ex) {
+                    dlg.unfoldFinished(false);
+                    log.atError().setCause(ex).log("Error unfolding: {}", ex.getMessage());
 		}
 		updateMenus();
 	}
@@ -4272,8 +4265,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	}
 
 	private void doInteractiveLevel(ValueChangedEvent ev) {
-		((PolyMesh) objInfo.object).setInteractiveSmoothLevel(((Integer) ispin
-                        .getValue()));
+            ((PolyMesh) objInfo.object).setInteractiveSmoothLevel(((Integer) ispin.getValue()));
 		objectChanged();
 		updateImage();
 	}

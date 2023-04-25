@@ -11,13 +11,6 @@
 
 package artofillusion.polymesh;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.Hashtable;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
 import artofillusion.ArtOfIllusion;
 import artofillusion.Camera;
 import artofillusion.Scene;
@@ -42,9 +35,16 @@ import artofillusion.ui.Translate;
 import buoy.widget.BFileChooser;
 import buoy.widget.BFrame;
 import buoy.widget.BStandardDialog;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *  PMOBJImporter imports .OBJ files to Polymeshes.
@@ -52,7 +52,7 @@ import java.util.Map;
  *@author     François Guillet
  *@created    13 juin 2005
  */
-
+@Slf4j
 public class PMOBJImporter
 {
     /**
@@ -106,10 +106,8 @@ public class PMOBJImporter
         double min[] = new double[]{Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE};
         double max[] = new double[]{-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE};
         String s;
-        BufferedReader in = null;
-        try
-        {
-            in = new BufferedReader( new FileReader( f ) );
+
+        try (BufferedReader in = new BufferedReader(new FileReader(f))) {
             while ( ( s = in.readLine() ) != null )
             {
                 lineno++;
@@ -179,8 +177,7 @@ public class PMOBJImporter
                         }
                         catch ( NumberFormatException ex )
                         {
-                            throw new Exception( "Illegal value '" + fields[i + 1] +
-                                    "' found in line " + lineno + "." );
+                            throw new Exception("Illegal value '" + fields[i + 1] + "' found in line " + lineno + ".");
                         }
                     }
                     texture.addElement( new Vec3( val[0], val[1], val[2] ) );
@@ -211,8 +208,7 @@ public class PMOBJImporter
                     }
                     catch ( NumberFormatException ex )
                     {
-                        throw new Exception( "Illegal value '" + fields[1] +
-                                "' found in line " + lineno + "." );
+                        throw new Exception("Illegal value '" + fields[1] + "' found in line " + lineno + ".");
                     }
                 }
                 else if ( "g".equals( fields[0] ) )
@@ -378,20 +374,11 @@ public class PMOBJImporter
         }
         catch ( Exception ex )
         {
-            try
-            {
-                in.close();
-            }
-            catch ( Exception ex2 )
-            {
-                ex2.printStackTrace();
-            }
-            ex.printStackTrace();
+            log.atError().setCause(ex).log(Translate.text("errorLoadingFile"));
             new BStandardDialog( "Error", new String[]{Translate.text( "errorLoadingFile" ), ex.getMessage()}, BStandardDialog.ERROR ).showMessageDialog( parent );
             return;
         }
-        ArtOfIllusion.newWindow( theScene );
-        return;
+        ArtOfIllusion.newWindow(theScene);
     }
 
 

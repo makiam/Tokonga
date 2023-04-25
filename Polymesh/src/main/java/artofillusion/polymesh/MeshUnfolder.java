@@ -250,7 +250,7 @@ public class MeshUnfolder {
                     cg.solve(newMatTMat, newcons, sol);
 		} catch (IterativeSolverNotConvergedException e) {
                     textArea.append("Failure : unfolding did not converge");
-                    e.printStackTrace();
+                    log.atInfo().setCause(e).log("Failure: unfolding did not converge {}", e);
                     return false;
 		}
 		double[] soldata = sol.getData();
@@ -441,7 +441,7 @@ public class MeshUnfolder {
 					unfoldedMeshesList.add(computeUnfoldedMesh(vertList, edgeList, faceList, uverts, uedges, ufaces));
 				} catch (IterativeSolverNotConvergedException e) {
 					textArea.append("Failure : unfolding did not converge");
-					e.printStackTrace();
+                                    log.atInfo().setCause(e).log("Failure: unfolding did not converge {}", e);
 					return false;
 				}
 				totaltime = new Date().getTime() - totaltime;

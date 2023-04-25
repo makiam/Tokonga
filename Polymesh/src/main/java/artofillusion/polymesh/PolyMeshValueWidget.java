@@ -10,16 +10,6 @@
 
 package artofillusion.polymesh;
 
-import java.awt.event.InputEvent;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-
-import javax.swing.JFormattedTextField;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-
 import artofillusion.ui.Translate;
 import artofillusion.ui.ValueField;
 import buoy.event.CommandEvent;
@@ -34,11 +24,22 @@ import buoy.widget.BTextField;
 import buoy.widget.BorderContainer;
 import buoy.widget.Widget;
 import buoy.xml.WidgetDecoder;
+import java.awt.event.InputEvent;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import javax.swing.JFormattedTextField;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class displays a composite widget that allows to enter a value either using a slider or
  * a text field.
  */
+@Slf4j
 public class PolyMeshValueWidget extends BorderContainer
 {
     public interface ValueWidgetOwner {
@@ -66,10 +67,9 @@ public class PolyMeshValueWidget extends BorderContainer
         this.owner = owner;
     	format = NumberFormat.getInstance();
         format.setMaximumFractionDigits( 3 );
-        InputStream is = null;
-        try
-        {
-            WidgetDecoder decoder = new WidgetDecoder( is = getClass().getResource( "interfaces/value.xml" ).openStream() );
+
+        try (InputStream is = getClass().getResource("interfaces/value.xml").openStream())        {
+            WidgetDecoder decoder = new WidgetDecoder(is);
             this.add( (Widget) decoder.getRootObject(), BorderContainer.CENTER );
             valueSlider = ( (BSlider) decoder.getObject( "valueSlider" ) );
             BLabel maxLabel = ( (BLabel) decoder.getObject( "maxLabel" ) );
@@ -103,20 +103,9 @@ public class PolyMeshValueWidget extends BorderContainer
         }
         catch ( IOException ex )
         {
-            ex.printStackTrace();
+            log.atError().setCause(ex).log("Error creating widget: {}", ex.getMessage());
         }
-        finally
-        {
-            if (is != null)
-                try
-                {
-                    is.close();
-                }
-                catch ( IOException ex )
-                {
-                    ex.printStackTrace();
-                }
-        }
+
         temporaryRange = false;
         deactivate();
     }
@@ -209,12 +198,12 @@ public class PolyMeshValueWidget extends BorderContainer
        {
            value = val;
            valueField.setValue( val );
-           double min = ( (Double) minSpinner.getValue() ).doubleValue();
+           double min = (Double) minSpinner.getValue();
            if ( min > 0.0 )
-               minSpinner.setValue( new Double( 0.0 ) );
-           double max = ( (Double) maxSpinner.getValue() ).doubleValue();
+               minSpinner.setValue(0.0);
+           double max = (Double) maxSpinner.getValue();
            if ( max < 0.0 )
-               maxSpinner.setValue( new Double( 0.0 ) );
+               maxSpinner.setValue(0.0);
            valueSlider.setValue( (int) Math.round( ( val - min ) * 1000 / ( max - min ) ) );
        }
        retainValueCB.setEnabled( true );
@@ -258,16 +247,15 @@ public class PolyMeshValueWidget extends BorderContainer
      */
     private void doValueChanged()
     {
-        double min = ( (Double) minSpinner.getValue() ).doubleValue();
-        double max = ( (Double) maxSpinner.getValue() ).doubleValue();
+        double min = (Double) minSpinner.getValue();
+        double max = (Double) maxSpinner.getValue();
         value = ( (double) valueSlider.getValue() ) * ( max - min ) / 1000.0 + min;
         try
         {
             valueField.setValue( format.parse( format.format( value ) ).doubleValue() );
 
         }
-        catch ( Exception e )
-        {
+ catch (ParseException e)        {
 
         }
 
@@ -320,16 +308,16 @@ public class PolyMeshValueWidget extends BorderContainer
     private void doValueFieldChanged()
     {
         value = valueField.getValue();
-        double min = ( (Double) minSpinner.getValue() ).doubleValue();
-        double max = ( (Double) maxSpinner.getValue() ).doubleValue();
+        double min = (Double) minSpinner.getValue();
+        double max = (Double) maxSpinner.getValue();
         if ( value < min )
         {
-            minSpinner.setValue( new Double( value ) );
+            minSpinner.setValue(value);
             valueSlider.setValue( 0 );
         }
         if ( value > max )
         {
-            maxSpinner.setValue( new Double( value ) );
+            maxSpinner.setValue(value);
             valueSlider.setValue( 1000 );
         }
         else

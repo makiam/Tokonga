@@ -239,11 +239,9 @@ public class CreatePolyMeshTool extends EditingTool
          */
         public PolyMeshToolDialog( BFrame parent )
         {
-            super( parent, Translate.text("polymesh:polyMeshToolDialogTitle" ), true );
-            InputStream is = null;
-            try
-            {
-                WidgetDecoder decoder = new WidgetDecoder( is = getClass().getResource( "interfaces/createTool.xml" ).openStream() );
+            super(parent, Translate.text("polymesh:polyMeshToolDialogTitle"), true);
+            try (InputStream is = getClass().getResource("interfaces/createTool.xml").openStream())            {
+                WidgetDecoder decoder = new WidgetDecoder(is);
                 setContent( (BorderContainer) decoder.getRootObject() );
                 typeCombo = ( (BComboBox) decoder.getObject( "typeCombo" ) );
                 typeCombo.add( Translate.text("polymesh:cube" ) );
@@ -305,19 +303,7 @@ public class CreatePolyMeshTool extends EditingTool
             }
             catch ( IOException ex )
             {
-                ex.printStackTrace();
-            }
-            finally
-            {
-                if (is != null)
-                try
-                {
-                    is.close();
-                }
-                catch ( IOException ex )
-                {
-                    ex.printStackTrace();
-                }
+                log.atError().setCause(ex).log("Error creating PolyMeshToolDialog due {}", ex.getLocalizedMessage());
             }
             pack();
             UIUtilities.centerWindow( this );
@@ -432,9 +418,8 @@ public class CreatePolyMeshTool extends EditingTool
                     templateMesh = new PolyMesh( dis );
                     templateMesh.setSmoothingMethod( smoothingMethod );
                 }
-                catch (Exception ex)
-                {
-                    ex.printStackTrace();
+ catch (IOException ex) {
+     log.atError().setCause(ex).log("Error loading template due {}", ex.getLocalizedMessage());
                 }
             }
             dispose();

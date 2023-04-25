@@ -260,7 +260,7 @@ public class UVMappingEditorDialog extends BDialog {
                                                 Translate.text("VeryHigh")});
             tensionCB.setSelectedIndex(tensionValue);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            log.atError().setCause(ex).log("Error loading UVMappingEditorDialog due {}", ex.getMessage());
         } 
 
         BSplitPane meshViewPanel = new BSplitPane(BSplitPane.VERTICAL, 
@@ -948,12 +948,12 @@ public class UVMappingEditorDialog extends BDialog {
         }
         catch (FileNotFoundException e) 
         {
-            e.printStackTrace();
+            log.atError().setCause(e).log("Save failed: Not found '{}'", e.getMessage());
             new BStandardDialog("Save failed", e.getMessage(), BStandardDialog.ERROR).showMessageDialog(this);
         }
         catch (IOException e) 
         {
-            e.printStackTrace();
+            log.atError().setCause(e).log("Save failed: {}", e.getMessage());
             new BStandardDialog("Save failed", e.getMessage(), BStandardDialog.ERROR).showMessageDialog(this);
         }
     }
@@ -1434,7 +1434,7 @@ public class UVMappingEditorDialog extends BDialog {
                 }
                 catch(Exception e)
                 {
-                    e.printStackTrace();
+                    log.atError().setCause(e).log("Export mapImage error {}", e.getMessage());
                 }
             }
         }
