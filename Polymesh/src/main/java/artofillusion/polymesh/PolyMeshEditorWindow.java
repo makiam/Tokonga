@@ -4139,7 +4139,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                             log.debug("{}{} selected.", name, i);
 			}
 		}
-		new CheckMeshDialog().setVisible(true);
+		new CheckMeshDialog(this).setVisible(true);
 	}
 
 	private void tolerantModeChanged() {
@@ -4640,48 +4640,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 
 
-	/**
-	 * A dialog which show the result of check/repair operation
-	 * 
-	 * @author Francois Guillet
-	 */
-	public class CheckMeshDialog extends BDialog {
-
-		/**
-		 * Constructor for the CheckMeshDialog object
-		 */
-		public CheckMeshDialog() {
-			super(PolyMeshEditorWindow.this, Translate.text("polymesh:checkRepair"),true);
-
-			BorderContainer borderContainer = null;
-                        BButton dismiss = null;
-                        BTextArea textArea = null;
-                        
-			try(InputStream is =  getClass().getResource("interfaces/check.xml").openStream()) {
-				WidgetDecoder decoder = new WidgetDecoder(is);
-				borderContainer = (BorderContainer) decoder.getRootObject();
-				textArea = ((BTextArea) decoder.getObject("TextArea"));
-				dismiss = ((BButton) decoder.getObject("dismiss"));
-				dismiss.setText(Translate.text("polymesh:dismiss"));
-			} catch (IOException ex) {
-                            log.atError().setCause(ex).log("Error creating CheckMeshDialog due {}", ex.getLocalizedMessage());
-			}
-			setContent(borderContainer);
-			dismiss.addEventLink(CommandEvent.class, this, "doDismiss");
-			pack();
-			UIUtilities.centerWindow(this);
-			PolyMesh mesh = (PolyMesh) objInfo.object;
-			textArea.append(mesh.checkMesh());
-			
-		}
-
-		/**
-		 * Description of the Method
-		 */
-		private void doDismiss() {
-			dispose();
-		}
-	}
 
 	private class CopyEvent implements WidgetEvent {
 		Widget widget;
