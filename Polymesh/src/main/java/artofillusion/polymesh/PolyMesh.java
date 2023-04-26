@@ -9046,7 +9046,6 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 				i = -1;
 			}
 		}
-		System.out.println();
 		return selected;
 	}
 
