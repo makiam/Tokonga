@@ -111,6 +111,9 @@ import java.util.Map;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner.NumberEditor;
 import javax.swing.UIManager;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -291,6 +294,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 	private static double strictShapeTol = 0.01;
 
+        @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
 	private static double edgeTol = 0.01;
 
 	protected static boolean lastFreehand, lastProjectOntoSurface,
@@ -4591,7 +4595,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 				okButton = ((BButton) decoder.getObject("okButton"));
 				cancelButton = ((BButton) decoder.getObject("cancelButton"));
 				BTextField toleranceTF = ((BTextField) decoder.getObject("toleranceTF"));
-				toleranceVF = new PMValueField(edgeTol, ValueField.NONE);
+				toleranceVF = new PMValueField(PolyMeshEditorWindow.getEdgeTol(), ValueField.NONE);
 				toleranceVF.setTextField((BTextField) decoder.getObject("toleranceTF"));
 				okButton = ((BButton) decoder.getObject("okButton"));
 				cancelButton = ((BButton) decoder.getObject("cancelButton"));
@@ -4612,8 +4616,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 		private void doTolValueChanged() {
 			fetchTolValues();
-			selected = ((PolyMesh) objInfo.object).findSimilarEdges(
-					orSelection, edgeTol);
+			selected = ((PolyMesh) objInfo.object).findSimilarEdges(orSelection, PolyMeshEditorWindow.getEdgeTol());
 			objectChanged();
 			updateImage();
 		}
@@ -4631,7 +4634,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		}
 
 		private void fetchTolValues() {
-			edgeTol = toleranceVF.getValue();
+                    PolyMeshEditorWindow.setEdgeTol(toleranceVF.getValue());
 		}
 	}
 
