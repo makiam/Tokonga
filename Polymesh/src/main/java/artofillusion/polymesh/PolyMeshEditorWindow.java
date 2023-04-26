@@ -2885,7 +2885,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * Bevel properties settings
 	 */
 	private void doBevelProperties() {
-          new BevelPropertiesDialog().setVisible(true);
+          new BevelPropertiesDialog(this).setVisible(true);
 	}
 
 	/**
@@ -4639,74 +4639,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	}
 
 
-	/**
-	 * A dialog for bevel properties selection
-	 * 
-	 * @author Francois Guillet
-	 */
-	private class BevelPropertiesDialog extends BDialog {
-		private BorderContainer borderContainer1;
-
-		private PMValueField areaLimitFieldVF;
-
-		private BCheckBox applyCB;
-
-		private BButton okButton;
-
-		private BButton cancelButton;
-
-		/**
-		 * Constructor for the Bevel Properties dialog
-		 */
-		public BevelPropertiesDialog() {
-			super(PolyMeshEditorWindow.this, Translate.text("polymesh:bevelPropertiesTitle"), true);
-			
-			try(InputStream is = getClass().getResource("interfaces/bevelArea.xml").openStream()) {
-				WidgetDecoder decoder = new WidgetDecoder(is);
-				borderContainer1 = (BorderContainer) decoder.getRootObject();
-				BLabel areaLimit = ((BLabel) decoder.getObject("areaLimit"));
-				areaLimit.setText(Translate.text("polymesh:"+areaLimit.getText()));
-				areaLimitFieldVF = new PMValueField(PolyMesh.edgeLengthLimit,ValueField.NONE);
-				areaLimitFieldVF.setTextField((BTextField) decoder.getObject("areaLimitField"));
-				applyCB = ((BCheckBox) decoder.getObject("applyCB"));
-				applyCB.setText(Translate.text("polymesh:"+applyCB.getText()));
-				applyCB.setState(PolyMesh.applyEdgeLengthLimit);
-				BLabel bevelAreaLabel = ((BLabel) decoder.getObject("bevelAreaLabel"));
-				bevelAreaLabel.setText(Translate.text("polymesh:"+bevelAreaLabel.getText()));
-				okButton = ((BButton) decoder.getObject("okButton"));
-				okButton.setText(Translate.text("polymesh:ok"));
-				cancelButton = ((BButton) decoder.getObject("cancelButton"));
-				cancelButton.setText(Translate.text("polymesh:cancel"));
-			} catch (IOException ex) {
-                            log.atError().setCause(ex).log("Error creating BevelPropertiesDialog due {}", ex.getLocalizedMessage());
-			}
-                        
-			setContent(borderContainer1);
-			okButton.addEventLink(CommandEvent.class, this, "doOK");
-			cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
-			addEventLink(WindowClosingEvent.class, this, "doCancel");
-			pack();
-			UIUtilities.centerWindow(this);
-			
-		}
-
-		/**
-		 * OK button selected
-		 */
-		private void doOK() {
-			PolyMesh.applyEdgeLengthLimit = applyCB.getState();
-			if (PolyMesh.applyEdgeLengthLimit)
-				PolyMesh.edgeLengthLimit = areaLimitFieldVF.getValue();
-			dispose();
-		}
-
-		/**
-		 * Cancel button selected
-		 */
-		private void doCancel() {
-			dispose();
-		}
-	}
 
 	/**
 	 * A dialog which show the result of check/repair operation
