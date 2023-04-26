@@ -1214,7 +1214,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 */
         public void doSelectRingInteractive() {
           PolyMesh mesh = (PolyMesh) objInfo.object;
-          DivideDialog dlg = new DivideDialog();
+          DivideDialog dlg = new DivideDialog(this);
           int counter = dlg.getNumber();
           if(counter < 0) return;
           boolean[] ring = mesh.findEdgeStrips(selected, counter);
@@ -1868,7 +1868,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
           doDivideEdges(5);
         }
         private void doDivideEdgesInteractive() {
-          int num = new DivideDialog().getNumber();
+          int num = new DivideDialog(this).getNumber();
           if (num > 0) doDivideEdges(num);
         }
 
@@ -4638,73 +4638,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		}
 	}
 
-	/**
-	 * A dialog to enter the number of segments when subdividing edges
-	 * 
-	 * @author Francois Guillet
-	 */
-	public class DivideDialog extends BDialog {
-		private BSpinner divideSpinner;
-
-		private BButton okButton;
-
-		private BButton cancelButton;
-
-		private int num = -1;
-
-		/**
-		 * Constructor for the DivideDialog object
-		 */
-		public DivideDialog() {
-			super(PolyMeshEditorWindow.this, Translate.text("polymesh:subdivideEdgesTitle"), true);
-			
-			try(InputStream is = getClass().getResource("interfaces/divide.xml").openStream()) {
-				WidgetDecoder decoder = new WidgetDecoder(is);
-				setContent((BorderContainer) decoder.getRootObject());
-				divideSpinner = ((BSpinner) decoder.getObject("divideSpinner"));
-				BLabel divideLabel = ((BLabel) decoder.getObject("divideLabel"));
-				divideLabel.setText(Translate.text("polymesh:"+divideLabel.getText()));
-				okButton = ((BButton) decoder.getObject("okButton"));
-				okButton.setText(Translate.text("polymesh:ok"));
-				cancelButton = ((BButton) decoder.getObject("cancelButton"));
-				cancelButton.setText(Translate.text("polymesh:cancel"));
-			} catch (IOException ex) {
-                            log.atError().setCause(ex).log("Error creating DivideDialog due {}", ex.getLocalizedMessage());
-			}
-                        
-			okButton.addEventLink(CommandEvent.class, this, "doOK");
-			cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
-			pack();
-			UIUtilities.centerWindow(this);
-                        setVisible(true);
-		}
-
-		/**
-		 * OK button selected
-		 */
-		private void doOK() {
-			num = ((Integer) divideSpinner.getValue());
-			dispose();
-		}
-
-		/**
-		 * Cancel button selected
-		 */
-		private void doCancel() {
-			dispose();
-			num = -1;
-		}
-
-		/**
-		 * Returns spinner valueWidget.getValue() if the user clicked on the OK
-		 * button else return -1.
-		 * 
-		 * @return number of segments
-		 */
-		public int getNumber() {
-			return num;
-		}
-	}
 
 	/**
 	 * A dialog for bevel properties selection
