@@ -256,8 +256,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	private int selectionDistance[], maxDistance, selectMode;
 
 	private int projectedEdge[];
-
-	private boolean selected[];
+        
+	private boolean[] selected;
 
 	private Vec3 vertDisplacements[];
 
@@ -4345,8 +4345,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	}
 
 	public void doTensionChanged() {
-		lastTensionDistance = tensionDistance = ((Integer) tensionSpin
-                        .getValue());
+		lastTensionDistance = tensionDistance = ((Integer) tensionSpin.getValue());
 		savePreferences();
 	}
 
@@ -4579,7 +4578,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 		private PMValueField toleranceVF;
 
-		public FindSimilarEdgesDialog(boolean selected[]) {
+		public FindSimilarEdgesDialog(boolean[] selected) {
 			super(PolyMeshEditorWindow.this, Translate.text("polymesh:similarEdgesTitle"), true);
 			this.orSelection = selected;
 			
