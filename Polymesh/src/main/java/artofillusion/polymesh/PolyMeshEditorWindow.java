@@ -4260,7 +4260,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 	@SuppressWarnings("unused")
 	private void doFindSimilarEdges() {
-          new FindSimilarEdgesDialog(selected).setVisible(true);
+          new FindSimilarEdgesDialog(this).setVisible(true);
 	}
 
 	private void doInteractiveLevel(ValueChangedEvent ev) {
@@ -4568,7 +4568,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * A dialog presenting options to find similar edges
 	 */
 	private class FindSimilarEdgesDialog extends BDialog {
-		private boolean[] orSelection;
+		private final boolean[] orSelection;
 
 		private BorderContainer borderContainer;
 
@@ -4577,11 +4577,16 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		private BButton cancelButton;
 
 		private PMValueField toleranceVF;
+                private final PolyMeshEditorWindow owner;
+                private PolyMesh mesh;
 
-		public FindSimilarEdgesDialog(boolean[] selected) {
-			super(PolyMeshEditorWindow.this, Translate.text("polymesh:similarEdgesTitle"), true);
-			this.orSelection = selected;
-			
+		public FindSimilarEdgesDialog(PolyMeshEditorWindow owner) {
+			super(owner, Translate.text("polymesh:similarEdgesTitle"), true);
+
+                        this.owner = owner;
+			this.orSelection = owner.getSelection();
+			this.mesh = (PolyMesh)owner.getObject().getObject();
+
 			try(InputStream is = getClass().getResource("interfaces/similaredges.xml").openStream()) {
 				WidgetDecoder decoder = new WidgetDecoder(is);
 				borderContainer = (BorderContainer) decoder.getRootObject();
@@ -4610,27 +4615,23 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		}
 
 		private void doTolValueChanged() {
-			fetchTolValues();
-			selected = ((PolyMesh) objInfo.object).findSimilarEdges(orSelection, PolyMeshEditorWindow.getEdgeTol());
-			objectChanged();
-			updateImage();
+                    owner.setSelection(mesh.findSimilarEdges(orSelection, toleranceVF.getValue()));
+                    owner.objectChanged();
+                    owner.updateImage();
 		}
 
 		private void doCancel() {
-			selected = orSelection;
-			objectChanged();
-			updateImage();
-			dispose();
+                    owner.setSelection(orSelection);
+                    owner.objectChanged();
+                    owner.updateImage();
+                    dispose();
 		}
 
 		private void doOK() {
-			fetchTolValues();
-			dispose();
+                    PolyMeshEditorWindow.setEdgeTol(toleranceVF.getValue());
+                    dispose();
 		}
 
-		private void fetchTolValues() {
-                    PolyMeshEditorWindow.setEdgeTol(toleranceVF.getValue());
-		}
 	}
 
 
