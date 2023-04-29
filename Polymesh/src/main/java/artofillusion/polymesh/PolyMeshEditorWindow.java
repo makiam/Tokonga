@@ -4254,7 +4254,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 	@SuppressWarnings("unused")
 	private void doFindSimilarFaces() {
-          new FindSimilarFacesDialog(selected).setVisible(true);
+          new FindSimilarFacesDialog(this).setVisible(true);
 	}
 
 	@SuppressWarnings("unused")
@@ -4444,10 +4444,15 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		private PMValueField looseShapeCBVF;
 
 		private PMValueField strictShapeCBVF;
+                private PolyMeshEditorWindow owner;
+                private PolyMesh mesh;
 
-		public FindSimilarFacesDialog(boolean selected[]) {
+		public FindSimilarFacesDialog(PolyMeshEditorWindow owner) {
 			super(PolyMeshEditorWindow.this, Translate.text("polymesh:similarFacesTitle"), true);
-			this.orSelection = selected;			 
+                        this.owner = owner;
+                        this.mesh = (PolyMesh) owner.getObject().getObject();
+			this.orSelection = owner.getSelection();
+
 			try(InputStream is = getClass().getResource("interfaces/similar.xml").openStream()) {
 				WidgetDecoder decoder = new WidgetDecoder(is);
 				borderContainer1 = (BorderContainer) decoder.getRootObject();
@@ -4500,9 +4505,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 		private void doTolValueChanged() {
                     fetchTolValues();
-                    selected = ((PolyMesh) objInfo.object).findSimilarFaces(orSelection, isNormal(), normalTol, isLoose(), looseShapeTol, isStrict(), strictShapeTol);
-                    objectChanged();
-                    updateImage();
+                    owner.setSelection(mesh.findSimilarFaces(orSelection, isNormal(), normalTol, isLoose(), looseShapeTol, isStrict(), strictShapeTol));
+                    owner.objectChanged();
+                    owner.updateImage();
 		}
 
 		private void doCBValueChanged() {
@@ -4520,10 +4525,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		}
 
 		private void doCancel() {
-			selected = orSelection;
-			objectChanged();
-			updateImage();
-			dispose();
+                    owner.setSelection(orSelection);
+                    owner.objectChanged();
+                    owner.updateImage();
+                    dispose();
 		}
 
 		private void doOK() {
