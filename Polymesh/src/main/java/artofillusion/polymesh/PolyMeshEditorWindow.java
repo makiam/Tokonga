@@ -43,7 +43,6 @@ import artofillusion.polymesh.PolyMesh.Wedge;
 import artofillusion.polymesh.PolyMesh.Wface;
 import artofillusion.polymesh.PolyMesh.Wvertex;
 import artofillusion.polymesh.PolyMeshValueWidget.ValueWidgetOwner;
-import artofillusion.polymesh.ui.ColorButton;
 import artofillusion.texture.FaceParameterValue;
 import artofillusion.texture.ParameterValue;
 import artofillusion.texture.VertexParameterValue;
@@ -83,7 +82,6 @@ import buoy.widget.RowContainer;
 import buoy.widget.Shortcut;
 import buoy.widget.Widget;
 import java.awt.Dimension;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -313,8 +311,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	private BCheckBox looseSelectCB;
 
 	private BSpinner looseSelectSpinner;
-	
-	private FormContainer propertiesPanel;
 
 	private boolean unseenValueWidgetDialog;
 
@@ -353,8 +349,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		this.onClose = onClose;
 		NumberFormat format = NumberFormat.getInstance();
 		format.setMaximumFractionDigits(3);
-		FormContainer content = new FormContainer(new double[] { 0, 1, 0 },
-				new double[] { 1, 0, 0, 0 });
+		FormContainer content = new FormContainer(new double[] { 0, 1, 0 }, new double[] { 1, 0, 0, 0 });
 		setContent(content);
 		valueWidget = new PolyMeshValueWidget(this);
 		valueWidgetDialog = new BDialog(this,  "choose value", true);
@@ -941,73 +936,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	 * Edits the mesh display properties like colors and handle size
 	 *
 	 */
+        @SuppressWarnings("ResultOfObjectAllocationIgnored")
 	public void doEditProperties() {
-		PolyMesh mesh = (PolyMesh) objInfo.object;
-		ColorButton vertColorButton = new ColorButton(mesh.getVertColor());
-		ColorButton selectedVertColorButton = new ColorButton(mesh.getSelectedVertColor());
-		ColorButton edgeColorButton = new ColorButton(mesh.getEdgeColor());
-		ColorButton selectedEdgeColorButton = new ColorButton(mesh.getSelectedEdgeColor());
-		ColorButton seamColorButton = new ColorButton(mesh.getSeamColor());
-		ColorButton selectedSeamColorButton = new ColorButton(mesh.getSelectedSeamColor());
-		ColorButton meshColorButton = new ColorButton(mesh.getMeshColor());
-		ColorButton selectedFaceColorButton = new ColorButton(mesh.getSelectedFaceColor());
-		BSpinner handleSpinner = new BSpinner(mesh.getHandleSize(), 2, 100, 1);
-		BCheckBox useCustomColors = new BCheckBox(Translate.text("polymesh:useCustomColors"), mesh.useCustomColors());
-		propertiesPanel = new FormContainer(2, 12);
-	    propertiesPanel.setColumnWeight(1, 1.0);
-	    LayoutInfo labelLayout = new LayoutInfo(LayoutInfo.EAST, LayoutInfo.NONE, new Insets(2, 0, 2, 5), null);
-	    LayoutInfo widgetLayout = new LayoutInfo(LayoutInfo.WEST, LayoutInfo.BOTH, new Insets(2, 0, 2, 0), null);
-	    LayoutInfo centerLayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(2, 0, 2, 0), null);
-	    propertiesPanel.add(useCustomColors, 0, 0, 2, 1, centerLayout);
-	    propertiesPanel.add(Translate.label("polymesh:vertColor"), 0, 1, labelLayout);
-	    propertiesPanel.add(Translate.label("polymesh:selectedVertColor"), 0, 2, labelLayout);
-	    propertiesPanel.add(Translate.label("polymesh:edgeColor"), 0, 3, labelLayout);
-	    propertiesPanel.add(Translate.label("polymesh:selectedEdgeColor"), 0, 4, labelLayout);
-	    propertiesPanel.add(Translate.label("polymesh:seamColor"), 0, 5, labelLayout);
-	    propertiesPanel.add(Translate.label("polymesh:selectedSeamColor"), 0, 6, labelLayout);
-	    propertiesPanel.add(Translate.label("polymesh:meshColor"), 0, 7, labelLayout);
-	    propertiesPanel.add(Translate.label("polymesh:selectedFaceColor"), 0, 8, labelLayout);
-	    propertiesPanel.add(Translate.label("polymesh:handleSize"), 0, 9, labelLayout);
-	    propertiesPanel.add(vertColorButton, 1, 1, labelLayout);
-	    propertiesPanel.add(selectedVertColorButton, 1, 2, widgetLayout);
-	    propertiesPanel.add(edgeColorButton, 1, 3, widgetLayout);
-	    propertiesPanel.add(selectedEdgeColorButton, 1, 4, widgetLayout);
-	    propertiesPanel.add(seamColorButton, 1, 5, widgetLayout);
-	    propertiesPanel.add(selectedSeamColorButton, 1, 6, widgetLayout);
-	    propertiesPanel.add(meshColorButton, 1, 7, widgetLayout);
-	    propertiesPanel.add(selectedFaceColorButton, 1, 8, widgetLayout);
-	    propertiesPanel.add(handleSpinner, 1, 9, widgetLayout);
-	    int n = propertiesPanel.getChildCount();
-	    for (int i = 1; i < n; i++) {
-	    	propertiesPanel.getChild(i).setEnabled(useCustomColors.getState());
-	    }
-	    useCustomColors.addEventLink(ValueChangedEvent.class, new Object() {
-	        void processEvent(ValueChangedEvent ev)
-	        {
-	        	Widget w  = ev.getWidget();
-	        	int n = propertiesPanel.getChildCount();
-	    	    for (int i = 1; i < n; i++) {
-	    	    	propertiesPanel.getChild(i).setEnabled(((BCheckBox)w).getState());
-	    	    }
-	        }
-	      });
-	    PanelDialog dlg = new PanelDialog(this, Translate.text("polymesh:setMeshProperties"), propertiesPanel);
-		if (dlg.clickedOk()) {
-			mesh.setUseCustomColors(useCustomColors.getState());
-			if (mesh.useCustomColors()) {
-				mesh.setVertColor(vertColorButton.getColor());
-				mesh.setSelectedVertColor(selectedVertColorButton.getColor());
-				mesh.setEdgeColor(edgeColorButton.getColor());
-				mesh.setSelectedEdgeColor(selectedEdgeColorButton.getColor());
-				mesh.setSeamColor(seamColorButton.getColor());
-				mesh.setSelectedSeamColor(selectedSeamColorButton.getColor());
-				mesh.setMeshColor(meshColorButton.getColor());
-				mesh.setSelectedFaceColor(selectedFaceColorButton.getColor());
-				mesh.setHandleSize(((Integer) handleSpinner.getValue()));
-			}
-			updateImage();
-		}
+            new MeshPropertiesDialogAction(this);
 	}
+        
 	public void doCenterMesh() {
 		PolyMesh mesh = (PolyMesh) objInfo.object;
 		MeshVertex[] v = mesh.getVertices();
@@ -4310,13 +4243,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
         @Override
 	protected void loadPreferences() {
-		super.loadPreferences();
-		lastFreehand = preferences
-				.getBoolean("freehandSelection", lastFreehand);
-		lastTolerant = preferences
-				.getBoolean("tolerantSelection", lastTolerant);
-		lastProjectOntoSurface = preferences.getBoolean("projectOntoSurface",
-				lastProjectOntoSurface);
+            super.loadPreferences();
+            lastFreehand = preferences.getBoolean("freehandSelection", lastFreehand);
+            lastTolerant = preferences.getBoolean("tolerantSelection", lastTolerant);
+            lastProjectOntoSurface = preferences.getBoolean("projectOntoSurface",lastProjectOntoSurface);
 	}
 
 	/** Save user settings that should be persistent between sessions. */
