@@ -283,10 +283,13 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 	private boolean projectOntoSurface;
 
+        @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
 	private static double normalTol = 0.01;
 
+        @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
 	private static double looseShapeTol = 0.01;
 
+        @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
 	private static double strictShapeTol = 0.01;
 
         @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
@@ -4448,7 +4451,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 private PolyMesh mesh;
 
 		public FindSimilarFacesDialog(PolyMeshEditorWindow owner) {
-			super(PolyMeshEditorWindow.this, Translate.text("polymesh:similarFacesTitle"), true);
+			super(owner, Translate.text("polymesh:similarFacesTitle"), true);
                         this.owner = owner;
                         this.mesh = (PolyMesh) owner.getObject().getObject();
 			this.orSelection = owner.getSelection();
@@ -4473,11 +4476,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 				BTextField normalCBTF = ((BTextField) decoder.getObject("normalCBTF"));
 				BTextField looseShapeCBTF = ((BTextField) decoder.getObject("looseShapeCBTF"));
 				BTextField strictShapeCBTF = ((BTextField) decoder.getObject("strictShapeCBTF"));
-				normalCBVF = new PMValueField(normalTol, ValueField.NONE);
+				normalCBVF = new PMValueField(PolyMeshEditorWindow.getNormalTol(), ValueField.NONE);
 				normalCBVF.setTextField((BTextField) decoder.getObject("normalCBTF"));
-				looseShapeCBVF = new PMValueField(looseShapeTol,ValueField.NONE);
+				looseShapeCBVF = new PMValueField(PolyMeshEditorWindow.getLooseShapeTol(),ValueField.NONE);
 				looseShapeCBVF.setTextField((BTextField) decoder.getObject("looseShapeCBTF"));
-				strictShapeCBVF = new PMValueField(strictShapeTol,ValueField.NONE);
+				strictShapeCBVF = new PMValueField(PolyMeshEditorWindow.getStrictShapeTol(),ValueField.NONE);
 				strictShapeCBVF.setTextField((BTextField) decoder.getObject("strictShapeCBTF"));
 				GridContainer okCancelGrid = ((GridContainer) decoder.getObject("OkCancelGrid"));
 				okButton = ((BButton) decoder.getObject("okButton"));
@@ -4505,6 +4508,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 		private void doTolValueChanged() {
                     fetchTolValues();
+                    double normalTol = PolyMeshEditorWindow.getNormalTol();
+                    double looseShapeTol = PolyMeshEditorWindow.getLooseShapeTol();
+                    double strictShapeTol = PolyMeshEditorWindow.getStrictShapeTol();
+
                     owner.setSelection(mesh.findSimilarFaces(orSelection, isNormal(), normalTol, isLoose(), looseShapeTol, isStrict(), strictShapeTol));
                     owner.objectChanged();
                     owner.updateImage();
@@ -4537,12 +4544,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		}
 
 		private void fetchTolValues() {
-			if (normalCB.getState())
-				normalTol = normalCBVF.getValue();
-			if (looseShapeCB.getState())
-				looseShapeTol = looseShapeCBVF.getValue();
-			if (strictShapeCB.getState())
-				strictShapeTol = strictShapeCBVF.getValue();
+                    if (normalCB.getState()) PolyMeshEditorWindow.setNormalTol(normalCBVF.getValue());
+                    if (looseShapeCB.getState()) PolyMeshEditorWindow.setLooseShapeTol(looseShapeCBVF.getValue());
+                    if (strictShapeCB.getState()) PolyMeshEditorWindow.setStrictShapeTol( strictShapeCBVF.getValue());
 		}
 
 		public boolean isNormal() {
