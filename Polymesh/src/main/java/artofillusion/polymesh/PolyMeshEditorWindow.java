@@ -4445,8 +4445,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 		private PMValueField strictShapeCBVF;
 
-		private boolean ok;
-
 		public FindSimilarFacesDialog(boolean selected[]) {
 			super(PolyMeshEditorWindow.this, Translate.text("polymesh:similarFacesTitle"), true);
 			this.orSelection = selected;			 
@@ -4497,7 +4495,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 			okButton.setEnabled(false);
 			pack();
 			UIUtilities.centerWindow(this);
-			ok = false;
 
 		}
 
@@ -4516,10 +4513,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 			tolerance3.setEnabled(strictShapeCB.getState());
 			strictShapeCBVF.setEnabled(strictShapeCB.getState());
 			doTolValueChanged();
-			if (!(normalCB.getState() || looseShapeCB.getState() || strictShapeCB.getState()))
-				okButton.setEnabled(false);
+			if (normalCB.getState() || looseShapeCB.getState() || strictShapeCB.getState())
+                            okButton.setEnabled(true);
 			else
-				okButton.setEnabled(true);
+                            okButton.setEnabled(false);
 		}
 
 		private void doCancel() {
@@ -4553,10 +4550,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 		public boolean isStrict() {
                     return strictShapeCB.getState();
-		}
-
-		public boolean isOK() {
-			return ok;
 		}
 	}
 
