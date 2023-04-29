@@ -57,7 +57,6 @@ import artofillusion.ui.PopupMenuManager;
 import artofillusion.ui.ToolPalette;
 import artofillusion.ui.Translate;
 import artofillusion.ui.UIUtilities;
-import artofillusion.ui.ValueField;
 import artofillusion.ui.ValueSlider;
 import buoy.event.CommandEvent;
 import buoy.event.EventSource;
@@ -65,8 +64,6 @@ import buoy.event.KeyPressedEvent;
 import buoy.event.ValueChangedEvent;
 import buoy.event.WidgetEvent;
 import buoy.event.WidgetMouseEvent;
-import buoy.event.WindowClosingEvent;
-import buoy.widget.BButton;
 import buoy.widget.BCheckBox;
 import buoy.widget.BCheckBoxMenuItem;
 import buoy.widget.BDialog;
@@ -77,17 +74,14 @@ import buoy.widget.BMenuItem;
 import buoy.widget.BPopupMenu;
 import buoy.widget.BSpinner;
 import buoy.widget.BStandardDialog;
-import buoy.widget.BTextField;
 import buoy.widget.BorderContainer;
 import buoy.widget.FormContainer;
-import buoy.widget.GridContainer;
 import buoy.widget.LayoutInfo;
 import buoy.widget.MenuWidget;
 import buoy.widget.OverlayContainer;
 import buoy.widget.RowContainer;
 import buoy.widget.Shortcut;
 import buoy.widget.Widget;
-import buoy.xml.WidgetDecoder;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
@@ -950,17 +944,13 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	public void doEditProperties() {
 		PolyMesh mesh = (PolyMesh) objInfo.object;
 		ColorButton vertColorButton = new ColorButton(mesh.getVertColor());
-		ColorButton selectedVertColorButton = new ColorButton(mesh
-				.getSelectedVertColor());
+		ColorButton selectedVertColorButton = new ColorButton(mesh.getSelectedVertColor());
 		ColorButton edgeColorButton = new ColorButton(mesh.getEdgeColor());
-		ColorButton selectedEdgeColorButton = new ColorButton(mesh
-				.getSelectedEdgeColor());
+		ColorButton selectedEdgeColorButton = new ColorButton(mesh.getSelectedEdgeColor());
 		ColorButton seamColorButton = new ColorButton(mesh.getSeamColor());
-		ColorButton selectedSeamColorButton = new ColorButton(mesh
-				.getSelectedSeamColor());
+		ColorButton selectedSeamColorButton = new ColorButton(mesh.getSelectedSeamColor());
 		ColorButton meshColorButton = new ColorButton(mesh.getMeshColor());
-		ColorButton selectedFaceColorButton = new ColorButton(mesh
-				.getSelectedFaceColor());
+		ColorButton selectedFaceColorButton = new ColorButton(mesh.getSelectedFaceColor());
 		BSpinner handleSpinner = new BSpinner(mesh.getHandleSize(), 2, 100, 1);
 		BCheckBox useCustomColors = new BCheckBox(Translate.text("polymesh:useCustomColors"), mesh.useCustomColors());
 		propertiesPanel = new FormContainer(2, 12);
@@ -1001,8 +991,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	    	    }
 	        }
 	      });
-	    PanelDialog dlg = new PanelDialog(this, Translate
-				.text("polymesh:setMeshProperties"), propertiesPanel);
+	    PanelDialog dlg = new PanelDialog(this, Translate.text("polymesh:setMeshProperties"), propertiesPanel);
 		if (dlg.clickedOk()) {
 			mesh.setUseCustomColors(useCustomColors.getState());
 			if (mesh.useCustomColors()) {
