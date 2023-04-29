@@ -75,7 +75,6 @@ import buoy.widget.BLabel;
 import buoy.widget.BMenu;
 import buoy.widget.BMenuItem;
 import buoy.widget.BPopupMenu;
-import buoy.widget.BSlider;
 import buoy.widget.BSpinner;
 import buoy.widget.BStandardDialog;
 import buoy.widget.BTextField;
@@ -918,7 +917,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 	
 	@SuppressWarnings("unused")
 	private void doSelectEdgeSmoothnessRange() {
-          new EdgeSmoothnessRangeDialog().setVisible(true);
+          new EdgeSmoothnessRangeDialog(this).setVisible(true);
 	}
 
 	@SuppressWarnings("unused")
@@ -4503,12 +4502,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		}
 
 		private void doTolValueChanged() {
-			fetchTolValues();
-			selected = ((PolyMesh) objInfo.object).findSimilarFaces(
-					orSelection, isNormal(), normalTol, isLoose(),
-					looseShapeTol, isStrict(), strictShapeTol);
-			objectChanged();
-			updateImage();
+                    fetchTolValues();
+                    selected = ((PolyMesh) objInfo.object).findSimilarFaces(orSelection, isNormal(), normalTol, isLoose(), looseShapeTol, isStrict(), strictShapeTol);
+                    objectChanged();
+                    updateImage();
 		}
 
 		private void doCBValueChanged() {
@@ -4519,8 +4516,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 			tolerance3.setEnabled(strictShapeCB.getState());
 			strictShapeCBVF.setEnabled(strictShapeCB.getState());
 			doTolValueChanged();
-			if (!(normalCB.getState() || looseShapeCB.getState() || strictShapeCB
-					.getState()))
+			if (!(normalCB.getState() || looseShapeCB.getState() || strictShapeCB.getState()))
 				okButton.setEnabled(false);
 			else
 				okButton.setEnabled(true);
@@ -4534,8 +4530,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		}
 
 		private void doOK() {
-			fetchTolValues();
-			dispose();
+                    fetchTolValues();
+                    dispose();
 		}
 
 		private void fetchTolValues() {
@@ -4548,15 +4544,15 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 		}
 
 		public boolean isNormal() {
-			return normalCB.getState();
+                    return normalCB.getState();
 		}
 
 		public boolean isLoose() {
-			return looseShapeCB.getState();
+                    return looseShapeCB.getState();
 		}
 
 		public boolean isStrict() {
-			return strictShapeCB.getState();
+                    return strictShapeCB.getState();
 		}
 
 		public boolean isOK() {
@@ -4576,115 +4572,4 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
 
 
-	private class EdgeSmoothnessRangeDialog extends BDialog {
-
-		private BTextField minSmoothnessTF;
-		
-		private PMValueField minSmoothnessVF;
-
-		private BSlider minSmoothnessSlider;
-
-		private BTextField maxSmoothnessTF;
-		
-		private PMValueField maxSmoothnessVF;
-
-		private BSlider maxSmoothnessSlider;
-
-		
-		private boolean[] orSel, newSel;
-
-		public EdgeSmoothnessRangeDialog() {
-			super(PolyMeshEditorWindow.this, Translate.text("polymesh:smoothnessRange"), true);
-			orSel = new boolean[selected.length];
-			newSel = new boolean[selected.length];
-			for (int i = 0; i < selected.length; i++) {
-				orSel[i] = selected[i];
-			}
-			setSelection(newSel);
-			try(InputStream inputStream = getClass().getResource("interfaces/smoothnessRange.xml").openStream()) {
-				WidgetDecoder decoder = new WidgetDecoder(inputStream);
-				BorderContainer borderContainer = (BorderContainer) decoder.getRootObject();
-                                BLabel label = (BLabel)decoder.getObject("Label1");
-                                label.setText(Translate.text("polymesh:specifySmoothnessRange"));
-                                label = (BLabel)decoder.getObject("Label2");
-                                label.setText(Translate.text("polymesh:minSmoothness"));
-                                label = (BLabel)decoder.getObject("Label3");
-                                label.setText(Translate.text("polymesh:maxSmoothness"));
-
-                                minSmoothnessTF = ((BTextField) decoder.getObject("minSmoothnessTF"));
-                                minSmoothnessSlider = ((BSlider) decoder.getObject("minSmoothnessSlider"));
-                                maxSmoothnessTF = ((BTextField) decoder.getObject("maxSmoothnessTF"));
-                                maxSmoothnessSlider = ((BSlider) decoder.getObject("maxSmoothnessSlider"));
-                                minSmoothnessSlider.addEventLink(ValueChangedEvent.class, this, "doMinSliderChanged");
-                                maxSmoothnessSlider.addEventLink(ValueChangedEvent.class, this, "doMaxSliderChanged");
-                                BButton addButton = (BButton) decoder.getObject("addButton");
-                                addButton.setText(Translate.text("polymesh:addToSelection"));
-                                addButton.addEventLink(CommandEvent.class, this, "doAdd");
-                                BButton setButton = (BButton) decoder.getObject("setButton");
-                                setButton.addEventLink(CommandEvent.class, this, "doSet");
-                                setButton.setText(Translate.text("polymesh:setSelection"));
-                                BButton cancelButton = (BButton) decoder.getObject("cancelButton");
-                                cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
-                                cancelButton.setText(Translate.text("polymesh:cancel"));
-                                minSmoothnessVF = new PMValueField(0.0, ValueField.NONNEGATIVE);
-                                minSmoothnessVF.setTextField(minSmoothnessTF);
-                                minSmoothnessVF.setValue(0.0);
-                                maxSmoothnessVF = new PMValueField(1.0, ValueField.POSITIVE);
-                                maxSmoothnessVF.setTextField(maxSmoothnessTF);
-                                maxSmoothnessVF.setValue(1.0);
-                                maxSmoothnessSlider.setValue(100);
-                                minSmoothnessVF.addEventLink(ValueChangedEvent.class, this, "doValuesChanged");
-                                maxSmoothnessVF.addEventLink(ValueChangedEvent.class, this, "doValuesChanged");
-                                setContent(borderContainer);
-				addEventLink(WindowClosingEvent.class, this, "doCancel");
-			} catch (IOException ex) {
-                            log.atError().setCause(ex).log("Error creating EdgeSmoothnessRangeDialog due {}", ex.getLocalizedMessage());
-			}
-			updateSelection();
-			pack();
-		}
-		
-		private void doMinSliderChanged() {
-			minSmoothnessVF.setValue( ((Integer)minSmoothnessSlider.getValue()) /100.0);
-			updateSelection();
-		}
-		
-		private void doMaxSliderChanged() {
-			maxSmoothnessVF.setValue( ((Integer)maxSmoothnessSlider.getValue()) /100.0);
-			updateSelection();
-		}
-		
-		private void doValuesChanged() {
-			updateSelection();
-		}
-		
-		private void updateSelection() {
-			PolyMesh mesh = (PolyMesh) objInfo.object;
-			Wedge[] edges = mesh.getEdges();
-			double min = minSmoothnessVF.getValue();
-			double max = maxSmoothnessVF.getValue();
-			for (int i = 0; i < newSel.length; i++) {
-				newSel[i] = (edges[i].smoothness >= min) & (edges[i].smoothness <= max );
-			}
-			setSelection(newSel);
-		}
-
-		private void doAdd() {
-			for (int i = 0; i < orSel.length; i++) {
-				orSel[i] |= newSel[i];
-			}
-			setSelection(orSel);
-			dispose();
-		}
-		
-		private void doSet() {
-			setSelection(newSel);
-			dispose();
-		}
-		
-		private void doCancel() {
-			setSelection(orSel);
-			dispose();
-		}
-	}
 }
