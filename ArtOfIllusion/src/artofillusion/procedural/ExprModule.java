@@ -15,15 +15,18 @@
 
 package artofillusion.procedural;
 
+import artofillusion.*;
+import artofillusion.math.*;
+import artofillusion.procedural.Module;
+import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
-import java.util.*;
-import java.lang.reflect.*;
 import java.io.*;
-import artofillusion.*;
-import artofillusion.math.*;
-import artofillusion.ui.*;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 
 class debug {
@@ -35,22 +38,13 @@ class debug {
     }
 }
 
-class Portref {
-    public String module;
-    public int port;
-
-    Portref (String m, int o, int p) {
-        module = m;
-        port = p;
-    }
-}
 
 class OPort {
     public Module module;
     public int oport = 0;
     public Arg [] args = {new Arg ("Arg1", 0)};
 
-    OPort (Module m, int p, Arg [] i) {
+    OPort (Module m, int p, Arg... i) {
         module = m;
         oport = p;
         args = i;
@@ -168,53 +162,27 @@ class Token {
 }
 
 class ModuleLoader {
-   public static Module createModule (String name) {
-        Class<?> moduleClass;
 
-        try {
-            moduleClass = ArtOfIllusion.getClass (name);
-        } catch (ClassNotFoundException e) {
-            debug.print ("Couldn't get class for " + name + ": " + e);
-            return dummy ();
-
-        }
-        return createModule (moduleClass);
-
-    }
-    public static boolean moduleExists (String name) {
-        try {
-            ArtOfIllusion.getClass (name);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
-
-    //to prevent crashes on bad modules
-    public static Module dummy () {
-        return new NumberModule (new Point (), 0.1234567);
-    }
 
     public static Module createModule (Class<?> moduleClass) {
         Constructor<?> cons = null;
         Module mod;
 
         try {
-            Class<?>[] parameterTypes = new Class<?> [1];
-            parameterTypes [0] = Point.class;
-            cons = moduleClass.getConstructor (parameterTypes);
-        } catch (Exception e) {
+
+            cons = moduleClass.getConstructor ( Point.class);
+        } catch (NoSuchMethodException | SecurityException e) {
             System.err.println ("Couldn't get constructor for " + moduleClass.getName() + ": " + e);
-            return dummy();
+            return new NumberModule(new Point (), 0.1234567);
         }
         try {
             mod = (Module) cons.newInstance (new Point ());
         } catch (InvocationTargetException e) {
             System.err.println ("Couldn't create a " + moduleClass.getName() + ": (InvocationTargetException)" + e.getTargetException ());
-            return dummy();
-        } catch (Exception e) {
+            return new NumberModule(new Point (), 0.1234567);
+        } catch (IllegalAccessException | IllegalArgumentException | InstantiationException e) {
             System.err.println ("Couldn't create a " + moduleClass.getName() + ": " + e);
-            return dummy();
+            return new NumberModule(new Point (), 0.1234567);
         }
 
         return mod;
@@ -223,22 +191,21 @@ class ModuleLoader {
 
 
 /** This is a Module which outputs an expression applied to three numbers. */
-
+@Slf4j
 public class ExprModule extends ProceduralModule
 {
 
     private Hashtable<String, OPort> varTable;
     Module [] inputs;
-    Module [] myModules;
+    private Module [] myModules;
     private Vector<Module> moduleVec;
     OPort compiled;
     Token [] tokens;
     Token currTok;
     int tokIdx;
     PointInfo point;
-    Point zero = new Point (0,0);
-    String expr;
-    private Vector<String> errors;
+    private String expr;
+    private List<String> errors;
 
     public ExprModule(Point position)
     {
@@ -262,7 +229,7 @@ public class ExprModule extends ProceduralModule
             myModules[i].init (p);
         }
     }
-    int a;
+
     @Override
     public final double getAverageValue (int which, double blur) {
         return compiled.module.getAverageValue (compiled.oport, blur);
@@ -370,9 +337,7 @@ public class ExprModule extends ProceduralModule
         if (tokIdx >= tokens.length) {
             Token [] oldtokens = tokens;
             tokens = new Token [tokens.length * 2];
-            for (int i = 0; i < tokens.length; i++) {
-                tokens [i] = oldtokens [i];
-            }
+            System.arraycopy(oldtokens, 0, tokens, 0, tokens.length);
         }
         tokens [tokIdx++] = tok;
         currTok = tok;
@@ -402,7 +367,7 @@ public class ExprModule extends ProceduralModule
                 case '0': case '1': case '2': case '3': case '4':
                 case '5': case '6': case '7': case '8': case '9':
                     addToken (new Token (Token.NUMBER));
-                    currTok.numValue = Double.valueOf(tok);
+                    currTok.numValue = Double.parseDouble(tok);
                     break;
                 default:
                     addToken (new Token (Token.VARIABLE));
@@ -472,7 +437,7 @@ public class ExprModule extends ProceduralModule
         initVarTable ();
         getToken ();
         compiled = expr (false);
-        myModules = moduleVec.toArray(new Module[moduleVec.size()]);
+        myModules = moduleVec.toArray(new Module[0]);
         if (compiled == null)
           compiled = new OPort(new NumberModule(new Point (), 0.0), 0);
         debug.print ("Compiled form: " + compiled);
@@ -652,8 +617,7 @@ public class ExprModule extends ProceduralModule
     //no need to add NumberModules to module list - they don't depend
     //on the point
     OPort createNumberPort (double v) {
-        Module m = new NumberModule (zero, v);
-        return new OPort (m);
+        return new OPort(new NumberModule(new Point(), v));
     }
 
     OPort binOp (Class<?> parentClass, OPort left, OPort right) {
@@ -694,6 +658,7 @@ public class ExprModule extends ProceduralModule
 
     /* Display the error messages in a dialog. */
 
+    //TODO Use generic errors displayer
     private void displayErrors(BFrame fr)
     {
       String msg[] = new String [errors.size()+1];
