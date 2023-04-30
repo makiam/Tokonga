@@ -119,6 +119,7 @@ extends SSMRManipulator
             new Runnable()
             {
 
+                @Override
                 public void run()
                 {
                     doValueWidgetCallback();
@@ -128,6 +129,7 @@ extends SSMRManipulator
             new Runnable()
             {
 
+                @Override
                 public void run()
                 {
                     doValueWidgetValidate();
@@ -137,6 +139,7 @@ extends SSMRManipulator
             new Runnable()
             {
 
+                @Override
                 public void run()
                 {
                     doValueWidgetAbort();
@@ -149,6 +152,7 @@ extends SSMRManipulator
             active = true;
     }
 
+    @Override
     public void setPerspective(boolean perspective)
     {
         //this manipulator is not active in perspective views
@@ -156,6 +160,7 @@ extends SSMRManipulator
             active = false;
     }
 
+    @Override
     public void draw()
     {
         if (! active)
@@ -237,6 +242,7 @@ extends SSMRManipulator
 
     }
 
+    @Override
     public boolean mousePressedOnHandle(WidgetMouseEvent e, int handle, Vec3 pos)
     {
         if (! active)
@@ -249,6 +255,7 @@ extends SSMRManipulator
         return true;
     }
 
+    @Override
     public boolean mousePressed(WidgetMouseEvent e)
     {
         if (! active)
@@ -487,6 +494,7 @@ extends SSMRManipulator
     }
 
 
+    @Override
     public boolean mouseDragged(WidgetMouseEvent e)
     {
         if (! active)
@@ -844,6 +852,7 @@ extends SSMRManipulator
         return true;
     }
 
+    @Override
     public boolean mouseReleased(WidgetMouseEvent e)
     {
         if (! active)
@@ -965,6 +974,7 @@ extends SSMRManipulator
         return false;
     }
 
+    @Override
     public boolean keyPressed(KeyPressedEvent e)
     {
         if (! active)

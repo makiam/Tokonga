@@ -1,10 +1,14 @@
+/*
+ *  Copyright (C) 2003-2005 by Peter Eastman, (C) 2005 by Francois Guillet for PolyMesh adaptation
+ *  Changes copyright (C) 2023 by Maksim Khramov
+ *  This program is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later version.
+ *  This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ *  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ */
 package artofillusion.polymesh;
-
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-
-import javax.swing.ImageIcon;
 
 import artofillusion.Camera;
 import artofillusion.MeshEditorWindow;
@@ -19,6 +23,9 @@ import artofillusion.object.MeshVertex;
 import artofillusion.ui.MeshEditController;
 import static artofillusion.ui.UIUtilities.*;
 import buoy.event.WidgetMouseEvent;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import javax.swing.ImageIcon;
 
 /**
  * This manipulator simply sends two float values along x and y direction
@@ -52,6 +59,7 @@ public class MouseDragManipulator extends Manipulator
         helpText = "";
     }
 
+    @Override
     public void draw()
     {
         if (! active)
@@ -73,6 +81,7 @@ public class MouseDragManipulator extends Manipulator
 
     }
 
+    @Override
     public boolean mousePressed(WidgetMouseEvent e)
     {
         if (! active)
@@ -111,6 +120,7 @@ public class MouseDragManipulator extends Manipulator
         return false;
     }
 
+    @Override
     public boolean mousePressedOnHandle(WidgetMouseEvent e, int handle, Vec3 pos)
     {
         if (! active)
@@ -121,6 +131,7 @@ public class MouseDragManipulator extends Manipulator
         return false;
     }
 
+    @Override
     public boolean mouseDragged(WidgetMouseEvent e)
     {
         if (! active)
@@ -205,6 +216,7 @@ public class MouseDragManipulator extends Manipulator
         }
     }
 
+    @Override
     public boolean mouseReleased(WidgetMouseEvent e)
     {
         if (!active)

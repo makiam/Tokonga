@@ -150,6 +150,7 @@ extends SSMRManipulator
             new Runnable()
             {
 
+                @Override
                 public void run()
                 {
                     doValueWidgetCallback();
@@ -159,6 +160,7 @@ extends SSMRManipulator
             new Runnable()
             {
 
+                @Override
                 public void run()
                 {
                     doValueWidgetValidate();
@@ -168,6 +170,7 @@ extends SSMRManipulator
             new Runnable()
             {
 
+                @Override
                 public void run()
                 {
                     doValueWidgetAbort();
@@ -181,6 +184,7 @@ extends SSMRManipulator
             active = false;
     }
 
+    @Override
     public void setPerspective(boolean perspective)
     {
         //this manipulator is active in perspective views
@@ -188,6 +192,7 @@ extends SSMRManipulator
             active = true;
     }
 
+    @Override
     public void draw()
     {
         if (! active)
@@ -456,6 +461,7 @@ extends SSMRManipulator
         }
     }
 
+    @Override
     public boolean mousePressedOnHandle(WidgetMouseEvent e, int handle, Vec3 pos)
     {
         if (! active)
@@ -469,6 +475,7 @@ extends SSMRManipulator
         return false;
     }
 
+    @Override
     public boolean mousePressed(WidgetMouseEvent e)
     {
         if (! active)
@@ -710,6 +717,7 @@ extends SSMRManipulator
     }
 
 
+    @Override
     public boolean mouseDragged(WidgetMouseEvent e)
     {
         if (! active)
@@ -983,6 +991,7 @@ extends SSMRManipulator
         return true;
     }
 
+    @Override
     public boolean mouseReleased(WidgetMouseEvent e)
     {
         if (! active)
@@ -1222,6 +1231,7 @@ extends SSMRManipulator
         dispatchEvent(new ManipulatorAbortChangingEvent(this, view ));
     }
 
+    @Override
     public boolean keyPressed(KeyPressedEvent e)
     {
         if (! active)
@@ -1271,6 +1281,7 @@ extends SSMRManipulator
     /**
      * toggles the view mode, selecting the next view mode available
      */
+    @Override
     public void toggleViewMode()
     {
         viewMode++;

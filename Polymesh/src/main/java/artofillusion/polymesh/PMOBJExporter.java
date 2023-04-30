@@ -10,15 +10,6 @@
  */
 package artofillusion.polymesh;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.text.NumberFormat;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.Locale;
-
 import artofillusion.ArtOfIllusion;
 import artofillusion.Scene;
 import artofillusion.object.ObjectInfo;
@@ -36,7 +27,17 @@ import buoy.widget.BFileChooser;
 import buoy.widget.BFrame;
 import buoy.widget.BStandardDialog;
 import buoy.widget.Widget;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.NumberFormat;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.Locale;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *  PMOBJExporter contains the actual routines for exporting OBJ files for
@@ -45,7 +46,7 @@ import java.util.Map;
  *@author     pims
  *@created    13 juin 2005
  */
-
+@Slf4j
 public class PMOBJExporter
 {
     /**
@@ -128,10 +129,9 @@ public class PMOBJExporter
             writePolyMesh( theScene, out, textureExporter, mtlFilename );
             out.close();
         }
-        catch ( Exception ex )
-        {
-            ex.printStackTrace();
-            new BStandardDialog( "", new String[]{Translate.text( "errorExportingScene" ), ex.getMessage()}, BStandardDialog.ERROR ).showMessageDialog( parent );
+ catch (IOException | InterruptedException ex)        {
+            log.atError().setCause(ex).log(Translate.text("errorExportingScene"));
+            new BStandardDialog("", new String[]{Translate.text("errorExportingScene"), ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(parent);
         }
     }
 

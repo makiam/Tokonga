@@ -11,23 +11,26 @@
 
 package artofillusion.polymesh;
 
-import java.awt.Image;
-import java.util.HashMap;
-import java.util.Iterator;
-
-
 import artofillusion.MeshViewer;
 import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
 import artofillusion.math.Vec3;
 import artofillusion.object.Mesh;
+import artofillusion.ui.EditingTool;
 import artofillusion.ui.EditingWindow;
 import artofillusion.ui.MeshEditController;
 import artofillusion.ui.Translate;
+import java.awt.Image;
+import java.util.HashMap;
 import java.util.Map;
 
-/** MeshStandardTool is the standard, default, editing tool. It can be used to move, scale and rotate selections.*/
-
+/**
+ * MeshStandardTool is the standard, default, editing tool. It can be used to
+ * move, scale and rotate selections.
+ */
+@EditingTool.ButtonImage("polymesh:movePoints")
+@EditingTool.Tooltip("polymesh:meshStandardTool.tipText")
+@EditingTool.ActivatedToolText("polymesh:meshStandardTool.helpText")
 public class MeshStandardTool extends AdvancedEditingTool
 {
     private Vec3 baseVertPos[];
@@ -40,9 +43,9 @@ public class MeshStandardTool extends AdvancedEditingTool
     public MeshStandardTool(EditingWindow fr, MeshEditController controller)
     {
         super(fr, controller);
-        initButton("polymesh:movePoints");
     }
 
+    @Override
     public void activateManipulators(ViewerCanvas view)
     {
         if (! manip2dMap.containsKey(view))
@@ -78,13 +81,14 @@ public class MeshStandardTool extends AdvancedEditingTool
         }
     }
 
+    @Override
     public void activate()
     {
         super.activate();
-        theWindow.setHelpText(Translate.text("polymesh:meshStandardTool.helpText"));
         ViewerCanvas view = theWindow.getView();
     }
 
+    @Override
     public void deactivate()
     {
     	super.deactivate();
@@ -103,11 +107,6 @@ public class MeshStandardTool extends AdvancedEditingTool
     public Image getSelectedIcon()
     {
         return selectedIcon;
-    }
-
-    public String getToolTipText()
-    {
-        return Translate.text("polymesh:meshStandardTool.tipText");
     }
 
     private void doManipulatorPrepareShapingMesh(Manipulator.ManipulatorEvent e)

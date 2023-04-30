@@ -523,13 +523,6 @@ public class UVMappingCanvas extends CustomWidget {
         parent.displayUVMinMax(this.umin, this.umax, this.vmin, this.vmax);
     }
 
-    // for debugging purposes
-    private void dumpParams() {
-        System.out.println("setRange size : " + size);
-        System.out.println("scale : " + scale);
-        System.out.println(umin + " " + umax + " " + vmin + " " + vmax);
-        System.out.println(origin.x + " " + origin.y);
-    }
 
     public Range getRange() {
         Range range = new Range();

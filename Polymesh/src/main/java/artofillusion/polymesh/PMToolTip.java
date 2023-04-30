@@ -1,16 +1,23 @@
+/* Changes copyright (C) 2023 by Maksim Khramov
+
+This program is free software; you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation; either version 2 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.polymesh;
-
-import java.awt.Color;
-import java.awt.Component;
-
-import javax.swing.JTextArea;
-import javax.swing.JToolTip;
-import javax.swing.UIManager;
-import javax.swing.border.Border;
 
 import artofillusion.ui.Translate;
 import buoy.widget.BToolTip;
 import buoy.widget.Widget;
+import java.awt.Color;
+import java.awt.Component;
+import javax.swing.JTextArea;
+import javax.swing.JToolTip;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
 
 /**
  * A custom BToolTip able to display any component
@@ -50,6 +57,7 @@ public class PMToolTip extends BToolTip
      *@return    The text value
      */
 
+    @Override
     public String getText()
     {
 
@@ -66,6 +74,7 @@ public class PMToolTip extends BToolTip
      *@param  text  The new text value
      */
 
+    @Override
     public void setText( String text )
     {
         if ( component instanceof JToolTip )

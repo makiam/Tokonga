@@ -26,10 +26,12 @@ import artofillusion.ui.EditingTool;
 import artofillusion.ui.EditingWindow;
 import artofillusion.ui.MeshEditController;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class provides an advanced behavior over standard editing tools.
  */
+@Slf4j
 public abstract class AdvancedEditingTool extends EditingTool
 {
     protected MeshEditController controller;
@@ -224,10 +226,10 @@ public abstract class AdvancedEditingTool extends EditingTool
             drag[0] = view.getCamera().findDragVector(pos, dx, dy);
         for (int i = 1; i <= maxDistance; i++)
             drag[i] = drag[0].times(Math.pow((maxDistance-i+1.0)/(maxDistance+1.0), tension));
-        System.out.println("dragging");
+        log.debug("dragging");
         if (view.getUseWorldCoords())
         {
-            System.out.println("use world coords");
+            log.debug("use world coords");
             Mat4 trans = view.getDisplayCoordinates().toLocal();
             for (int i = 0; i < drag.length; i++)
                 trans.transformDirection(drag[i]);

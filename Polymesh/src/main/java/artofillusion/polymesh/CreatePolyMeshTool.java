@@ -10,16 +10,6 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.polymesh;
 
-import java.awt.Point;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.swing.JFormattedTextField;
-import javax.swing.JSpinner;
-
 import artofillusion.ArtOfIllusion;
 import artofillusion.Camera;
 import artofillusion.LayoutWindow;
@@ -49,9 +39,20 @@ import buoy.widget.BLabel;
 import buoy.widget.BSpinner;
 import buoy.widget.BorderContainer;
 import buoy.xml.WidgetDecoder;
+import java.awt.Point;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import javax.swing.JFormattedTextField;
+import javax.swing.JSpinner;
+import lombok.extern.slf4j.Slf4j;
 
 /** CreatePolyMeshTool is an EditingTool used for creating PolyMesh objects. */
-
+@Slf4j
+@EditingTool.ButtonImage("polymesh:polymesh")
+@EditingTool.Tooltip("polymesh:createPolyMeshTool.tipText")
 public class CreatePolyMeshTool extends EditingTool
 {
     private EditingWindow edw;
@@ -69,9 +70,9 @@ public class CreatePolyMeshTool extends EditingTool
     {
         super(fr);
         edw = fr;
-        initButton("polymesh:polymesh");
     }
     
+    @Override
     public void activate()
     {
         super.activate();
@@ -120,11 +121,7 @@ public class CreatePolyMeshTool extends EditingTool
                                 Integer.toString(usize), Integer.toString(vsize), smoothingDesc}));
     }
     
-    public String getToolTipText()
-    {
-        return Translate.text("polymesh:createPolyMeshTool.tipText");
-    }
-    
+    @Override
     public void mousePressed(WidgetMouseEvent e, ViewerCanvas view)
     {
         clickPoint = e.getPoint();
@@ -132,6 +129,7 @@ public class CreatePolyMeshTool extends EditingTool
         ((SceneViewer) view).beginDraggingBox(clickPoint, shiftDown);
     }
     
+    @Override
     public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view)
     {
         Scene theScene = ((LayoutWindow) theWindow).getScene();
@@ -206,6 +204,8 @@ public class CreatePolyMeshTool extends EditingTool
     
     
     
+    @Override
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
    public void iconDoubleClicked()
   {
     new PolyMeshToolDialog( edw.getFrame() );
@@ -239,11 +239,9 @@ public class CreatePolyMeshTool extends EditingTool
          */
         public PolyMeshToolDialog( BFrame parent )
         {
-            super( parent, Translate.text("polymesh:polyMeshToolDialogTitle" ), true );
-            InputStream is = null;
-            try
-            {
-                WidgetDecoder decoder = new WidgetDecoder( is = getClass().getResource( "interfaces/createTool.xml" ).openStream() );
+            super(parent, Translate.text("polymesh:polyMeshToolDialogTitle"), true);
+            try (InputStream is = getClass().getResource("interfaces/createTool.xml").openStream())            {
+                WidgetDecoder decoder = new WidgetDecoder(is);
                 setContent( (BorderContainer) decoder.getRootObject() );
                 typeCombo = ( (BComboBox) decoder.getObject( "typeCombo" ) );
                 typeCombo.add( Translate.text("polymesh:cube" ) );
@@ -305,19 +303,7 @@ public class CreatePolyMeshTool extends EditingTool
             }
             catch ( IOException ex )
             {
-                ex.printStackTrace();
-            }
-            finally
-            {
-                if (is != null)
-                try
-                {
-                    is.close();
-                }
-                catch ( IOException ex )
-                {
-                    ex.printStackTrace();
-                }
+                log.atError().setCause(ex).log("Error creating PolyMeshToolDialog due {}", ex.getLocalizedMessage());
             }
             pack();
             UIUtilities.centerWindow( this );
@@ -432,9 +418,8 @@ public class CreatePolyMeshTool extends EditingTool
                     templateMesh = new PolyMesh( dis );
                     templateMesh.setSmoothingMethod( smoothingMethod );
                 }
-                catch (Exception ex)
-                {
-                    ex.printStackTrace();
+ catch (IOException ex) {
+     log.atError().setCause(ex).log("Error loading template due {}", ex.getLocalizedMessage());
                 }
             }
             dispose();
