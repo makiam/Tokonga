@@ -42,7 +42,7 @@ public class ProcedureEditor extends CustomWidget
   private InfoBox inputInfo, outputInfo;
   private IOPort dragFromPort, dragToPort;
   private BScrollPane scroll;
-  private Object preview;
+  private Optional<MaterialPreviewer> preview = Optional.empty();
   private ByteArrayOutputStream cancelBuffer;
   private ArrayList<ByteArrayOutputStream> undoStack, redoStack;
 
@@ -72,9 +72,10 @@ public class ProcedureEditor extends CustomWidget
     inputInfo = new InfoBox();
     outputInfo = new InfoBox();
     cancelBuffer = new ByteArrayOutputStream();
-    undoStack = new ArrayList<ByteArrayOutputStream>();
-    redoStack = new ArrayList<ByteArrayOutputStream>();
+    undoStack = new ArrayList<>();
+    redoStack = new ArrayList<>();
     parent = new BFrame(owner.getWindowTitle());
+    parent.setIcon(ArtOfIllusion.APP_ICON);
     BorderContainer content = new BorderContainer();
     parent.setContent(content);
     content.add(scroll = new BScrollPane(this), BorderContainer.CENTER);
@@ -159,9 +160,59 @@ public class ProcedureEditor extends CustomWidget
     scroll.getVerticalScrollBar().setUnitIncrement(10);
     parent.setVisible(true);
     scroll.getHorizontalScrollBar().setValue(getBounds().width-scroll.getViewSize().width);
-    preview = owner.getPreview(this);
+    preview = Optional.ofNullable(owner.getPreview());
+    preview.ifPresent(view -> createPreview(getParentFrame(), view));
   }
 
+  private static void createPreview(BFrame frame, MaterialPreviewer view) {
+    
+    BDialog previewDialog = new BDialog(frame, "Preview", false);
+    BorderContainer content = new BorderContainer();
+
+    content.add(view, BorderContainer.CENTER);
+    RowContainer row = new RowContainer();
+    content.add(row, BorderContainer.SOUTH, new LayoutInfo());
+    row.add(Translate.label("Time", ":"));
+    final ValueSelector value = new ValueSelector(0.0, -Double.MAX_VALUE, Double.MAX_VALUE, 0.01);
+    final ActionProcessor processor = new ActionProcessor();
+    row.add(value);
+    value.addEventLink(ValueChangedEvent.class, new Object() {
+      void processEvent()
+      {
+        processor.addEvent(() ->
+        {
+          view.getScene().setTime(value.getValue());
+          view.render();
+        });
+      }
+    });
+    previewDialog.setContent(content);
+    previewDialog.pack();
+    frame.getComponent().addComponentListener(new java.awt.event.ComponentAdapter()
+    {
+      @Override
+      public void componentMoved(java.awt.event.ComponentEvent event) { onParentMoved(); }
+
+      @Override
+      public void componentResized(java.awt.event.ComponentEvent event) { onParentMoved(); }
+      
+      private void onParentMoved() {
+        Rectangle parentBounds = frame.getBounds();
+        Rectangle location = previewDialog.getBounds();
+        location.y = parentBounds.y;
+        location.x = parentBounds.x+parentBounds.width;
+        previewDialog.setBounds(location);        
+      }
+    });
+    
+    Rectangle parentBounds = frame.getBounds();
+    Rectangle location = previewDialog.getBounds();
+    location.y = parentBounds.y;
+    location.x = parentBounds.x+parentBounds.width;
+    previewDialog.setBounds(location);
+    previewDialog.setVisible(true);
+  }
+  
   /** Create the Edit menu. */
   
   private BMenu getEditMenu()
@@ -437,16 +488,11 @@ public class ProcedureEditor extends CustomWidget
   private void actionPerformed(CommandEvent e)
   {
     String command = e.getActionCommand();
-    Point p = new Point(scroll.getHorizontalScrollBar().getValue(), scroll.getVerticalScrollBar().getValue());
-    Rectangle bounds = scroll.getBounds();
 
-    p.x += (int) (0.5*bounds.width*Math.random());
-    p.y += (int) (0.5*bounds.height*Math.random());
     if (command.equals("cancel"))
       {
         undoStack.add(cancelBuffer);
         undo();
-        owner.disposePreview(preview);
         parent.dispose();
       }
     else if (command.equals("cut"))
@@ -484,7 +530,6 @@ public class ProcedureEditor extends CustomWidget
     if (owner.canEditName())
       owner.setName(nameField.getText());
     owner.acceptEdits(this);
-    owner.disposePreview(preview);
     parent.dispose();
   }
   
@@ -618,7 +663,7 @@ public class ProcedureEditor extends CustomWidget
   
   public void updatePreview()
   {
-    owner.updatePreview(preview);
+    preview.ifPresent(action -> owner.updatePreview(action));
   }
 
   /** Respond to mouse clicks. */

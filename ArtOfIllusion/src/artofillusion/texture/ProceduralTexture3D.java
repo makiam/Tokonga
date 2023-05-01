@@ -17,9 +17,6 @@ import artofillusion.math.*;
 import artofillusion.procedural.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
-import buoy.event.*;
-
-import java.awt.*;
 import java.io.*;
 
 /** This is a Texture3D which uses a Procedure to calculate its properties. */
@@ -334,58 +331,18 @@ public class ProceduralTexture3D extends Texture3D implements ProcedureOwner
   /** Create an object which displays a preview of the procedure. */
 
   @Override
-  public Object getPreview(ProcedureEditor editor)
+  public MaterialPreviewer getPreview()
   {
-    final BDialog dlg = new BDialog(editor.getParentFrame(), "Preview", false);
-    BorderContainer content = new BorderContainer();
-    final MaterialPreviewer preview = new MaterialPreviewer(this, null, 200, 160);
-    content.add(preview, BorderContainer.CENTER);
-    RowContainer row = new RowContainer();
-    content.add(row, BorderContainer.SOUTH, new LayoutInfo());
-    row.add(Translate.label("Time", ":"));
-    final ValueSelector value = new ValueSelector(0.0, -Double.MAX_VALUE, Double.MAX_VALUE, 0.01);
-    final ActionProcessor processor = new ActionProcessor();
-    row.add(value);
-    value.addEventLink(ValueChangedEvent.class, new Object() {
-      void processEvent()
-      {
-        processor.addEvent(new Runnable()
-        {
-                  @Override
-          public void run()
-          {
-            preview.getScene().setTime(value.getValue());
-            preview.render();
-          }
-        });
-      }
-    });
-    dlg.setContent(content);
-    dlg.pack();
-    Rectangle parentBounds = editor.getParentFrame().getBounds();
-    Rectangle location = dlg.getBounds();
-    location.y = parentBounds.y;
-    location.x = parentBounds.x+parentBounds.width;
-    dlg.setBounds(location);
-    dlg.setVisible(true);
-    return preview;
+    return new MaterialPreviewer(this, null, 200, 160);
   }
 
   /** Update the display of the preview. */
 
   @Override
-  public void updatePreview(Object preview)
+  public void updatePreview(MaterialPreviewer preview)
   {
     initThreadLocal();
-    ((MaterialPreviewer) preview).render();
-  }
-
-  /** Dispose of the preview object when the editor is closed. */
-
-  @Override
-  public void disposePreview(Object preview)
-  {
-    UIUtilities.findWindow((MaterialPreviewer) preview).dispose();
+    preview.render();
   }
 
   /** Determine whether the procedure may contain View Angle modules. */
