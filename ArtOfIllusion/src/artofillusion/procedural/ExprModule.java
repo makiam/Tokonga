@@ -15,42 +15,27 @@
 
 package artofillusion.procedural;
 
+import artofillusion.*;
+import artofillusion.math.*;
+import artofillusion.procedural.Module;
+import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
-import java.util.*;
-import java.lang.reflect.*;
 import java.io.*;
-import artofillusion.*;
-import artofillusion.math.*;
-import artofillusion.ui.*;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 
-class debug {
-    static final boolean debugging = false;
-    public static void print (String str) {
-        if (debugging) {
-            System.err.println (str);
-        }
-    }
-}
-
-class Portref {
-    public String module;
-    public int port;
-
-    Portref (String m, int o, int p) {
-        module = m;
-        port = p;
-    }
-}
-
+@Slf4j
 class OPort {
     public Module module;
     public int oport = 0;
     public Arg [] args = {new Arg ("Arg1", 0)};
 
-    OPort (Module m, int p, Arg [] i) {
+    OPort (Module m, int p, Arg... i) {
         module = m;
         oport = p;
         args = i;
@@ -67,7 +52,7 @@ class OPort {
     }
     IOPort getOPort () {
         if (module == null) {
-            debug.print ("Can't get an IOPort when there's no module.");
+            log.atDebug().log("Can't get an IOPort when there's no module.");
             return null;
         }
         return module.getOutputPorts () [oport];
@@ -107,22 +92,22 @@ class Token {
     public double numValue;
     public char ty;
 
-    static Hashtable<String, OPort> funMap = createFunMap ();
+    static Map<String, OPort> funMap = createFunMap();
     //    static Hashtable portMap = createPortMap ();
 
 
-    static Hashtable<String, OPort> createFunMap () {
-        Hashtable<String, OPort> fm = new Hashtable<> ();
+    static Map<String, OPort> createFunMap () {
+        Map<String, OPort> fm = new Hashtable<> ();
         //For version two, pull these out of a config file
-        fm.put ("sin",  new OPort (new SineModule (new Point ()), 0));
-        fm.put ("cos",  new OPort (new CosineModule (new Point ()), 0));
-        fm.put ("sqrt", new OPort (new SqrtModule (new Point ()), 0));
+        fm.put("sin", new OPort(new SineModule(new Point()), 0));
+        fm.put("cos", new OPort(new CosineModule(new Point()), 0));
+        fm.put("sqrt", new OPort(new SqrtModule(new Point()), 0));
         fm.put ("pow",  new OPort (new PowerModule (new Point ()), 0, new Arg [] {
             new Arg ("Base", 1),
             new Arg ("Exponent", 0)
                 }));
-        fm.put ("log",  new OPort (new LogModule (new Point ()), 0));
-        fm.put ("angle", new OPort (new PolarModule (new Point ()), 1,
+        fm.put("log", new OPort(new LogModule(new Point()), 0));
+        fm.put("angle", new OPort(new PolarModule(new Point()), 1,
                 new Arg [] {
             new Arg ("X", 0),
             new Arg ("Y", 1)
@@ -135,8 +120,8 @@ class Token {
             new Arg ("Value 1", 1),
             new Arg ("Value 2", 0)
                 }));
-        fm.put ("abs",  new OPort (new AbsModule (new Point ()), 0));
-        fm.put ("exp",  new OPort (new ExpModule (new Point ()), 0));
+        fm.put("abs", new OPort(new AbsModule(new Point()), 0));
+        fm.put("exp", new OPort(new ExpModule(new Point()), 0));
         fm.put ("bias",  new OPort (new BiasModule (new Point ()), 0, new Arg [] {
             new Arg ("Input", 1),
             new Arg ("Bias", 0)
@@ -167,78 +152,22 @@ class Token {
     }
 }
 
-class ModuleLoader {
-   public static Module createModule (String name) {
-        Class<?> moduleClass;
-
-        try {
-            moduleClass = ArtOfIllusion.getClass (name);
-        } catch (ClassNotFoundException e) {
-            debug.print ("Couldn't get class for " + name + ": " + e);
-            return dummy ();
-
-        }
-        return createModule (moduleClass);
-
-    }
-    public static boolean moduleExists (String name) {
-        try {
-            ArtOfIllusion.getClass (name);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
-
-    //to prevent crashes on bad modules
-    public static Module dummy () {
-        return new NumberModule (new Point (), 0.1234567);
-    }
-
-    public static Module createModule (Class<?> moduleClass) {
-        Constructor<?> cons = null;
-        Module mod;
-
-        try {
-            Class<?>[] parameterTypes = new Class<?> [1];
-            parameterTypes [0] = Point.class;
-            cons = moduleClass.getConstructor (parameterTypes);
-        } catch (Exception e) {
-            System.err.println ("Couldn't get constructor for " + moduleClass.getName() + ": " + e);
-            return dummy();
-        }
-        try {
-            mod = (Module) cons.newInstance (new Point ());
-        } catch (InvocationTargetException e) {
-            System.err.println ("Couldn't create a " + moduleClass.getName() + ": (InvocationTargetException)" + e.getTargetException ());
-            return dummy();
-        } catch (Exception e) {
-            System.err.println ("Couldn't create a " + moduleClass.getName() + ": " + e);
-            return dummy();
-        }
-
-        return mod;
-    }
-}
-
-
 /** This is a Module which outputs an expression applied to three numbers. */
-
+@Slf4j
 public class ExprModule extends ProceduralModule
 {
 
-    private Hashtable<String, OPort> varTable;
+    private Map<String, OPort> varTable;
     Module [] inputs;
-    Module [] myModules;
-    private Vector<Module> moduleVec;
+    private Module [] myModules;
+    private List<Module> moduleVec;
     OPort compiled;
     Token [] tokens;
     Token currTok;
     int tokIdx;
-    PointInfo point;
-    Point zero = new Point (0,0);
-    String expr;
-    private Vector<String> errors;
+
+    private String expr;
+    private List<String> errors;
 
     public ExprModule(Point position)
     {
@@ -254,15 +183,15 @@ public class ExprModule extends ProceduralModule
 
     @Override
     public final void init(PointInfo p) {
-        point = p;
+
         for (int i = myModules.length-1; i >= 0; i--) {
             if (myModules[i] == null) {
-                debug.print ("There's a null module in the module list at " + i + " of " + myModules.length + ", skipping.");
+                log.atDebug().log("There's a null module in the module list at {} of {}, skipping", i, myModules.length);
             }
             myModules[i].init (p);
         }
     }
-    int a;
+
     @Override
     public final double getAverageValue (int which, double blur) {
         return compiled.module.getAverageValue (compiled.oport, blur);
@@ -345,7 +274,7 @@ public class ExprModule extends ProceduralModule
         out.writeUTF(expr);
     }
 
-    public void setExpr (String e) {
+    public final void setExpr (String e) {
         expr = e;
         name = "["+expr+"]";
         lex (expr);
@@ -365,17 +294,16 @@ public class ExprModule extends ProceduralModule
         return !(compiled == null);
     }
 
-    void addToken (Token tok) {
-        debug.print ("Adding token " + tok);
+    void addToken (Token token) {
+        log.atDebug().log("Adding token {}", token);
+
         if (tokIdx >= tokens.length) {
-            Token [] oldtokens = tokens;
+            Token[] oldtokens = tokens;
             tokens = new Token [tokens.length * 2];
-            for (int i = 0; i < tokens.length; i++) {
-                tokens [i] = oldtokens [i];
-            }
+            System.arraycopy(oldtokens, 0, tokens, 0, tokens.length);
         }
-        tokens [tokIdx++] = tok;
-        currTok = tok;
+        tokens [tokIdx++] = token;
+        currTok = token;
     }
 
     void lex (String str) {
@@ -402,7 +330,7 @@ public class ExprModule extends ProceduralModule
                 case '0': case '1': case '2': case '3': case '4':
                 case '5': case '6': case '7': case '8': case '9':
                     addToken (new Token (Token.NUMBER));
-                    currTok.numValue = Double.valueOf(tok);
+                    currTok.numValue = Double.parseDouble(tok);
                     break;
                 default:
                     addToken (new Token (Token.VARIABLE));
@@ -436,17 +364,10 @@ public class ExprModule extends ProceduralModule
         moduleVec = new Vector<>();
 
         CoordinateModule x, y, z, t;
-        x = (CoordinateModule) ModuleLoader.createModule (CoordinateModule.class);
-        x.setCoordinate (CoordinateModule.X);
-
-        y = (CoordinateModule) ModuleLoader.createModule (CoordinateModule.class);
-        y.setCoordinate (CoordinateModule.Y);
-
-        z = (CoordinateModule) ModuleLoader.createModule (CoordinateModule.class);
-        z.setCoordinate (CoordinateModule.Z);
-
-        t = (CoordinateModule) ModuleLoader.createModule (CoordinateModule.class);
-        t.setCoordinate (CoordinateModule.T);
+        x = new CoordinateModule(new Point(), CoordinateModule.X);
+        y = new CoordinateModule(new Point(), CoordinateModule.Y);
+        z = new CoordinateModule(new Point(), CoordinateModule.Z);
+        t = new CoordinateModule(new Point(), CoordinateModule.T);
 
         varTable.put ("x", new OPort (x));
         varTable.put ("y", new OPort (y));
@@ -472,10 +393,10 @@ public class ExprModule extends ProceduralModule
         initVarTable ();
         getToken ();
         compiled = expr (false);
-        myModules = moduleVec.toArray(new Module[moduleVec.size()]);
+        myModules = moduleVec.toArray(new Module[0]);
         if (compiled == null)
           compiled = new OPort(new NumberModule(new Point (), 0.0), 0);
-        debug.print ("Compiled form: " + compiled);
+        log.atDebug().log("Compiled: {}", compiled);
     }
 
     OPort expr (boolean get) {
@@ -495,15 +416,15 @@ public class ExprModule extends ProceduralModule
 
     void addModule (Module m) {
         if (m == null) {
-            debug.print ("I don't want to add a null module to the module list at position " + moduleVec.size());
+            log.atDebug().log("I don't want to add a null module to the module list at position {}", moduleVec.size());
             try {
                 m.init (null); //error!
             } catch (Exception e) {
-                e.printStackTrace ();
+                log.atError().setCause(e).log("Init error: {}", e.getMessage());
             }
 
         } else if (!moduleVec.contains(m)) {
-            debug.print ("Adding module " + m + " to the module list at position " + moduleVec.size());
+            log.atDebug().log("Adding module {} to the module list at position {}", m, moduleVec.size());
             moduleVec.add(m);
         }
     }
@@ -569,7 +490,7 @@ public class ExprModule extends ProceduralModule
 
         case Token.VARIABLE:
             if (currTok.strValue == null) {
-                debug.print ("No variable " + currTok.strValue);
+                log.debug("No variable: {}", currTok.strValue);
                 return null;
             }
             port = varTable.get (currTok.strValue);
@@ -607,7 +528,7 @@ public class ExprModule extends ProceduralModule
 
         OPort func = getOPort (name);
 
-        Vector<OPort> s = new Vector<> ();
+        List<OPort> s = new Vector<>();
         //get args
         while (currTok.ty != Token.RP && currTok.ty != Token.END) {
             s.add (expr (false));
@@ -618,7 +539,7 @@ public class ExprModule extends ProceduralModule
         }
         getToken (); // eat RP
 
-        if (s.size () != func.args.length) {
+        if (s.size() != func.args.length) {
             addError (name + " expects " + func.args.length + " arguments, but you called it with " + s.size () + ".");
 
 /*            for (int i = 0; i < func.args.length; i ++) {
@@ -638,26 +559,25 @@ public class ExprModule extends ProceduralModule
         return func;
 
     }
+    
     OPort getOPort (String name) {
-        OPort op;
         //name = "artofillusion.procedural." +name;
-        if (!Token.funMap.containsKey (name)) {
-            debug.print ("No such function: " + name);
+        if (!Token.funMap.containsKey(name)) {
+            log.atDebug().log("No such function: {}", name);
             return null;
         }
-        op = Token.funMap.get (name);
+        OPort op = Token.funMap.get (name);
         return new OPort(op.module.duplicate(), op.oport, op.args);
     }
 
     //no need to add NumberModules to module list - they don't depend
     //on the point
     OPort createNumberPort (double v) {
-        Module m = new NumberModule (zero, v);
-        return new OPort (m);
+        return new OPort(new NumberModule(new Point(), v));
     }
 
     OPort binOp (Class<?> parentClass, OPort left, OPort right) {
-        Module parentM = ModuleLoader.createModule (parentClass);
+        Module parentM = ExprModule.createModule (parentClass);
         Arg [] args = {new Arg ("Arg1", 0), new Arg ("Arg1", 1)};
         OPort parent = new OPort (parentM);
         parent.args = args;
@@ -671,7 +591,7 @@ public class ExprModule extends ProceduralModule
         /*
         link (parent, left, 0);
         link (parent, right, 1);*/
-        debug.print ("Creating binOp: " + parentClass.getName () + " (" + left + ", " + right + ")");
+        log.atDebug().log("Creating binOp: {} ({}, {})", parentClass.getName(), left, right);
         addModule (parentM);
         return parent;//new OPort (parent);
     }
@@ -694,6 +614,7 @@ public class ExprModule extends ProceduralModule
 
     /* Display the error messages in a dialog. */
 
+    //TODO Use generic errors displayer
     private void displayErrors(BFrame fr)
     {
       String msg[] = new String [errors.size()+1];
@@ -702,6 +623,17 @@ public class ExprModule extends ProceduralModule
       for (int i = 0; i < errors.size(); i++)
         msg[i+1] = errors.get(i);
       new BStandardDialog("", msg, BStandardDialog.INFORMATION).showMessageDialog(fr);
+    }
+
+    private static Module createModule (Class<?> moduleClass) {
+
+        try {
+            Constructor<?> cons = moduleClass.getConstructor ( Point.class);
+            return (Module) cons.newInstance(new Point());
+        } catch (ReflectiveOperationException | SecurityException e) {
+            log.atError().setCause(e).log("Unable to create module: {}: {}", moduleClass.getName(), e.getMessage());
+            return new NumberModule(new Point (), 0.1234567);
+        }
     }
 }
 

@@ -1,4 +1,5 @@
 /* Copyright (C) 2000-2012 by Peter Eastman
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,6 +12,7 @@
 package artofillusion.procedural;
 
 import artofillusion.*;
+import static artofillusion.procedural.IOPort.SIZE;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
@@ -18,6 +20,7 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.io.*;
 import java.util.*;
+import java.util.stream.IntStream;
 
 /** This is the editor for editing procedures.  It subclasses CustomWidget, but you should never
     add it to any Container.  Instead, it will automatically create a BFrame and add itself
@@ -31,7 +34,7 @@ public class ProcedureEditor extends CustomWidget
   private Scene theScene;
   private EditingWindow win;
   private Dimension size;
-  private ModuleMenu moduleMenu;
+  private final ModuleMenu moduleMenu;
   private BMenuItem undoItem, redoItem, cutItem, copyItem, pasteItem, clearItem;
   private BTextField nameField;
   private boolean selectedModule[], selectedLink[], draggingLink, draggingModule, draggingBox, draggingMultiple;
@@ -39,7 +42,7 @@ public class ProcedureEditor extends CustomWidget
   private InfoBox inputInfo, outputInfo;
   private IOPort dragFromPort, dragToPort;
   private BScrollPane scroll;
-  private Object preview;
+  private Optional<MaterialPreviewer> preview = Optional.empty();
   private ByteArrayOutputStream cancelBuffer;
   private ArrayList<ByteArrayOutputStream> undoStack, redoStack;
 
@@ -47,6 +50,11 @@ public class ProcedureEditor extends CustomWidget
   private final Color blueLinkColor = new Color(40, 40, 255);
   private final Color selectedLinkColor = new Color(255, 50, 50);
   private final Color outputBackgroundColor = new Color(210, 210, 240);
+  
+  private static final Color outlineColor = new Color(110, 110, 160);
+  private static final Color selectedColor = new Color(255, 60, 60);  
+  protected static final Stroke contourStroke = new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+  
   private final static float BEZIER_HARDNESS = 0.5f; //increase hardness to a have a more pronouced shape
   private final static Stroke normal = new BasicStroke();
   private final static Stroke bold = new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
@@ -64,9 +72,10 @@ public class ProcedureEditor extends CustomWidget
     inputInfo = new InfoBox();
     outputInfo = new InfoBox();
     cancelBuffer = new ByteArrayOutputStream();
-    undoStack = new ArrayList<ByteArrayOutputStream>();
-    redoStack = new ArrayList<ByteArrayOutputStream>();
+    undoStack = new ArrayList<>();
+    redoStack = new ArrayList<>();
     parent = new BFrame(owner.getWindowTitle());
+    parent.setIcon(ArtOfIllusion.APP_ICON);
     BorderContainer content = new BorderContainer();
     parent.setContent(content);
     content.add(scroll = new BScrollPane(this), BorderContainer.CENTER);
@@ -117,21 +126,23 @@ public class ProcedureEditor extends CustomWidget
     // Let each output module calculate its preferred width, then set all of them to be
     // as wide as the widest one.
     
-    OutputModule output[] = proc.getOutputModules();
-    int i, widest = 0;
-    for (i = 0; i < output.length; i++)
+    
+    int widest = 0;
+    for (OutputModule om : proc.getOutputModules())
+    {
+      om.calcSize();
+      if (om.getBounds().width > widest)
       {
-        output[i].calcSize();
-        if (output[i].getBounds().width > widest)
-          widest = output[i].getBounds().width;
+        widest = om.getBounds().width;
       }
+    }
     int x = size.width-widest, y = 15;
-    for (i = 0; i < output.length; i++)
-      {
-        output[i].setWidth(widest);
-        output[i].setPosition(x - 15, y);
-        y += output[i].getBounds().height+15;
-      }
+    for (OutputModule om : proc.getOutputModules())
+    {
+      om.setWidth(widest);
+      om.setPosition(x - 15, y);
+      y += om.getBounds().height + 15;
+    }
     
     // Add the menu bar.
     
@@ -149,9 +160,59 @@ public class ProcedureEditor extends CustomWidget
     scroll.getVerticalScrollBar().setUnitIncrement(10);
     parent.setVisible(true);
     scroll.getHorizontalScrollBar().setValue(getBounds().width-scroll.getViewSize().width);
-    preview = owner.getPreview(this);
+    preview = Optional.ofNullable(owner.getPreview());
+    preview.ifPresent(view -> createPreview(getParentFrame(), view));
   }
 
+  private static void createPreview(BFrame frame, MaterialPreviewer view) {
+    
+    BDialog previewDialog = new BDialog(frame, "Preview", false);
+    BorderContainer content = new BorderContainer();
+
+    content.add(view, BorderContainer.CENTER);
+    RowContainer row = new RowContainer();
+    content.add(row, BorderContainer.SOUTH, new LayoutInfo());
+    row.add(Translate.label("Time", ":"));
+    final ValueSelector value = new ValueSelector(0.0, -Double.MAX_VALUE, Double.MAX_VALUE, 0.01);
+    final ActionProcessor processor = new ActionProcessor();
+    row.add(value);
+    value.addEventLink(ValueChangedEvent.class, new Object() {
+      void processEvent()
+      {
+        processor.addEvent(() ->
+        {
+          view.getScene().setTime(value.getValue());
+          view.render();
+        });
+      }
+    });
+    previewDialog.setContent(content);
+    previewDialog.pack();
+    frame.getComponent().addComponentListener(new java.awt.event.ComponentAdapter()
+    {
+      @Override
+      public void componentMoved(java.awt.event.ComponentEvent event) { onParentMoved(); }
+
+      @Override
+      public void componentResized(java.awt.event.ComponentEvent event) { onParentMoved(); }
+      
+      private void onParentMoved() {
+        Rectangle parentBounds = frame.getBounds();
+        Rectangle location = previewDialog.getBounds();
+        location.y = parentBounds.y;
+        location.x = parentBounds.x+parentBounds.width;
+        previewDialog.setBounds(location);        
+      }
+    });
+    
+    Rectangle parentBounds = frame.getBounds();
+    Rectangle location = previewDialog.getBounds();
+    location.y = parentBounds.y;
+    location.x = parentBounds.x+parentBounds.width;
+    previewDialog.setBounds(location);
+    previewDialog.setVisible(true);
+  }
+  
   /** Create the Edit menu. */
   
   private BMenu getEditMenu()
@@ -220,8 +281,8 @@ public class ProcedureEditor extends CustomWidget
   private void paint(Graphics2D g)
   {
     OutputModule output[] = proc.getOutputModules();
-    Module module[] = proc.getModules();
-    Link link[] = proc.getLinks();
+    
+    
     int divider = output[0].getBounds().x-5;
 
     // Draw the line marking off the output modules.
@@ -232,14 +293,25 @@ public class ProcedureEditor extends CustomWidget
     
     // Draw the output modules.
 
-    for (OutputModule mod : output)
-      mod.draw(g, false);
+    Arrays.stream(output).forEach(mod -> {
+      drawModule(mod, g, false);
+      Arrays.stream(mod.input).forEach(port -> drawPort(port,g));
+      mod.drawContents(g);
+    });
+
     
     // Draw the modules.
+    Module[] module = proc.getModules();
+    IntStream.range(0, module.length).forEach(index -> {
+      Module mod = module[index];      
+      drawModule(mod, g, selectedModule[index]);
+      Arrays.stream(mod.input).forEach(port ->  drawPort(port,g));
+      Arrays.stream(mod.output).forEach(port ->  drawPort(port,g));
+      mod.drawContents(g);
+    });
+
     
-    for (int i = 0; i < module.length; i++)
-      module[i].draw(g, selectedModule[i]);
-    
+    Link[] link = proc.getLinks();
     // Draw the unselected links.
     
     g.setStroke(bold);
@@ -325,7 +397,46 @@ public class ProcedureEditor extends CustomWidget
     }
   }
 
-  private Shape createBezierCurve(Link link)
+  private static void drawPort(IOPort port, Graphics2D g) {
+    g.setColor(Color.BLUE);
+    if(port.getValueType() == IOPort.NUMBER) g.setColor(Color.BLACK);
+    int x = port.x;
+    int y = port.y;
+    
+    switch (port.getLocation()) {
+      case IOPort.TOP:
+        g.fillPolygon(new int[] {x+SIZE, x-SIZE, x}, new int[] {y, y, y+SIZE}, 3);
+        break;
+      case IOPort.BOTTOM:
+        g.fillPolygon(new int[] {x+SIZE, x-SIZE, x}, new int[] {y, y, y-SIZE}, 3);
+        break;
+      case IOPort.LEFT:
+        g.fillPolygon(new int[] {x, x, x+SIZE}, new int[] {y+SIZE, y-SIZE, y}, 3);
+        break;
+     case IOPort.RIGHT:
+        g.fillPolygon(new int[] {x-SIZE, x-SIZE, x}, new int[] {y+SIZE, y-SIZE, y}, 3);
+        break;
+     default:
+        break;
+      }
+  }
+  
+  private static void drawModule(Module module, Graphics2D g, boolean selected)
+  {
+    Rectangle bounds = module.getBounds();
+    
+    Stroke currentStroke = g.getStroke();
+    g.setColor(Color.lightGray);
+    g.fillRoundRect(bounds.x+1, bounds.y+1, bounds.width-2, bounds.height-2, 3, 3);
+    g.setColor(selected ? selectedColor : outlineColor);
+    g.setStroke(contourStroke);
+    g.drawRoundRect(bounds.x-1, bounds.y-1, bounds.width+2, bounds.height+2, 4, 4);
+    g.setStroke(currentStroke);
+    
+
+  }
+  
+  private static Shape createBezierCurve(Link link)
   {
     int x1 = link.from.getPosition().x;
     int y1 = link.from.getPosition().y;
@@ -377,16 +488,11 @@ public class ProcedureEditor extends CustomWidget
   private void actionPerformed(CommandEvent e)
   {
     String command = e.getActionCommand();
-    Point p = new Point(scroll.getHorizontalScrollBar().getValue(), scroll.getVerticalScrollBar().getValue());
-    Rectangle bounds = scroll.getBounds();
 
-    p.x += (int) (0.5*bounds.width*Math.random());
-    p.y += (int) (0.5*bounds.height*Math.random());
     if (command.equals("cancel"))
       {
         undoStack.add(cancelBuffer);
         undo();
-        owner.disposePreview(preview);
         parent.dispose();
       }
     else if (command.equals("cut"))
@@ -424,7 +530,6 @@ public class ProcedureEditor extends CustomWidget
     if (owner.canEditName())
       owner.setName(nameField.getText());
     owner.acceptEdits(this);
-    owner.disposePreview(preview);
     parent.dispose();
   }
   
@@ -558,7 +663,7 @@ public class ProcedureEditor extends CustomWidget
   
   public void updatePreview()
   {
-    owner.updatePreview(preview);
+    preview.ifPresent(action -> owner.updatePreview(action));
   }
 
   /** Respond to mouse clicks. */
