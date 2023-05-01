@@ -393,17 +393,10 @@ public class ExprModule extends ProceduralModule
         moduleVec = new Vector<>();
 
         CoordinateModule x, y, z, t;
-        x = (CoordinateModule) ModuleLoader.createModule (CoordinateModule.class);
-        x.setCoordinate (CoordinateModule.X);
-
-        y = (CoordinateModule) ModuleLoader.createModule (CoordinateModule.class);
-        y.setCoordinate (CoordinateModule.Y);
-
-        z = (CoordinateModule) ModuleLoader.createModule (CoordinateModule.class);
-        z.setCoordinate (CoordinateModule.Z);
-
-        t = (CoordinateModule) ModuleLoader.createModule (CoordinateModule.class);
-        t.setCoordinate (CoordinateModule.T);
+        x = new CoordinateModule(new Point(), CoordinateModule.X);
+        y = new CoordinateModule(new Point(), CoordinateModule.Y);
+        z = new CoordinateModule(new Point(), CoordinateModule.Z);
+        t = new CoordinateModule(new Point(), CoordinateModule.T);
 
         varTable.put ("x", new OPort (x));
         varTable.put ("y", new OPort (y));
