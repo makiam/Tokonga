@@ -92,22 +92,22 @@ class Token {
     public double numValue;
     public char ty;
 
-    static Hashtable<String, OPort> funMap = createFunMap ();
+    static Map<String, OPort> funMap = createFunMap();
     //    static Hashtable portMap = createPortMap ();
 
 
-    static Hashtable<String, OPort> createFunMap () {
-        Hashtable<String, OPort> fm = new Hashtable<> ();
+    static Map<String, OPort> createFunMap () {
+        Map<String, OPort> fm = new Hashtable<> ();
         //For version two, pull these out of a config file
-        fm.put ("sin",  new OPort (new SineModule (new Point ()), 0));
-        fm.put ("cos",  new OPort (new CosineModule (new Point ()), 0));
-        fm.put ("sqrt", new OPort (new SqrtModule (new Point ()), 0));
+        fm.put("sin", new OPort(new SineModule(new Point()), 0));
+        fm.put("cos", new OPort(new CosineModule(new Point()), 0));
+        fm.put("sqrt", new OPort(new SqrtModule(new Point()), 0));
         fm.put ("pow",  new OPort (new PowerModule (new Point ()), 0, new Arg [] {
             new Arg ("Base", 1),
             new Arg ("Exponent", 0)
                 }));
-        fm.put ("log",  new OPort (new LogModule (new Point ()), 0));
-        fm.put ("angle", new OPort (new PolarModule (new Point ()), 1,
+        fm.put("log", new OPort(new LogModule(new Point()), 0));
+        fm.put("angle", new OPort(new PolarModule(new Point()), 1,
                 new Arg [] {
             new Arg ("X", 0),
             new Arg ("Y", 1)
@@ -120,8 +120,8 @@ class Token {
             new Arg ("Value 1", 1),
             new Arg ("Value 2", 0)
                 }));
-        fm.put ("abs",  new OPort (new AbsModule (new Point ()), 0));
-        fm.put ("exp",  new OPort (new ExpModule (new Point ()), 0));
+        fm.put("abs", new OPort(new AbsModule(new Point()), 0));
+        fm.put("exp", new OPort(new ExpModule(new Point()), 0));
         fm.put ("bias",  new OPort (new BiasModule (new Point ()), 0, new Arg [] {
             new Arg ("Input", 1),
             new Arg ("Bias", 0)
@@ -157,15 +157,15 @@ class Token {
 public class ExprModule extends ProceduralModule
 {
 
-    private Hashtable<String, OPort> varTable;
+    private Map<String, OPort> varTable;
     Module [] inputs;
     private Module [] myModules;
-    private Vector<Module> moduleVec;
+    private List<Module> moduleVec;
     OPort compiled;
     Token [] tokens;
     Token currTok;
     int tokIdx;
-    PointInfo point;
+
     private String expr;
     private List<String> errors;
 
@@ -183,7 +183,7 @@ public class ExprModule extends ProceduralModule
 
     @Override
     public final void init(PointInfo p) {
-        point = p;
+
         for (int i = myModules.length-1; i >= 0; i--) {
             if (myModules[i] == null) {
                 log.atDebug().log("There's a null module in the module list at {} of {}, skipping", i, myModules.length);
