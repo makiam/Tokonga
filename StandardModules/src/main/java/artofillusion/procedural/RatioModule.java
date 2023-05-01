@@ -1,5 +1,5 @@
 /* Copyright (C) 2000 by Peter Eastman
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -21,6 +21,10 @@ public class RatioModule extends ProceduralModule
   boolean valueOk, errorOk;
   double value, error, valueIn1, valueIn2, errorIn1, errorIn2, lastBlur;
   Vec3 tempVec;
+
+  public RatioModule() {
+      this(new Point());
+  }
 
   public RatioModule(Point position)
   {

@@ -1,5 +1,5 @@
 /* Copyright (C) 2004 by Peter Eastman
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -24,6 +24,10 @@ import java.io.*;
 
 public class CommentModule extends ProceduralModule
 {
+  public CommentModule() {
+    this(new Point());
+  }
+
   public CommentModule(Point position)
   {
     this(position, "Double-click to set comment");

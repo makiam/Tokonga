@@ -1,5 +1,5 @@
 /* Copyright (C) 2000 by Peter Eastman
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,8 +11,8 @@
 
 package artofillusion.procedural;
 
-import artofillusion.ui.*;
 import artofillusion.math.*;
+import artofillusion.ui.*;
 import java.awt.*;
 
 /** This is a Module which interpolates between two numbers. */
@@ -23,6 +23,10 @@ public class InterpModule extends ProceduralModule
   boolean valueOk, errorOk, gradOk;
   Vec3 gradient, tempVec;
 
+  public InterpModule() {
+      this(new Point());
+  }
+  
   public InterpModule(Point position)
   {
     super(Translate.text("menu.interpolateModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.TOP, "Value 1", "(0)"),

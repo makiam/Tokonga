@@ -1,5 +1,5 @@
 /* Copyright (C) 2000 by Peter Eastman
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -22,6 +22,10 @@ public class ProductModule extends ProceduralModule
   double value, error, valueIn1, valueIn2, errorIn1, errorIn2, lastBlur;
   Vec3 tempVec;
 
+  public ProductModule() {
+      this(new Point());
+  }
+  
   public ProductModule(Point position)
   {
     super("\u00D7", new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.TOP, "Value 1", "(0)"),

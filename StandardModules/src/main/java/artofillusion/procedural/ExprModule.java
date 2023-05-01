@@ -169,6 +169,10 @@ public class ExprModule extends ProceduralModule
     private String expr;
     private List<String> errors;
 
+    public ExprModule() {
+        this(new Point());
+    }
+
     public ExprModule(Point position)
     {
         super("expr", new IOPort[] {new IOPort (IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT,"Value 1", "(0)"),

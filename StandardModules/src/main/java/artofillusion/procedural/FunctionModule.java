@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2011 by Peter Eastman
-   Changes copyright (C) 2017-2020 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -36,6 +36,10 @@ public class FunctionModule extends ProceduralModule
 
   public static final short LINEAR = 0;
   public static final short SMOOTH_INTERPOLATE = 1;
+
+  public FunctionModule() {
+    this(new Point());
+  }
 
   public FunctionModule(Point position)
   {

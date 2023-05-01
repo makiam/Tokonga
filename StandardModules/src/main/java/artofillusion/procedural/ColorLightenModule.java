@@ -1,5 +1,5 @@
 /* Copyright (C) 2001 by David M. Turner <novalis@novalis.org> and Peter Eastman
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -22,6 +22,10 @@ public class ColorLightenModule extends ProceduralModule
   RGBColor color;
   boolean colorOk;
   double lastBlur;
+
+  public ColorLightenModule() {
+    this(new Point());
+  }
 
   public ColorLightenModule(Point position)
   {
