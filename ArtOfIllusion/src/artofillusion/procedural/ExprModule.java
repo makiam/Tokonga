@@ -29,16 +29,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
 
-class debug {
-    static final boolean debugging = false;
-    public static void print (String str) {
-        if (debugging) {
-            System.err.println (str);
-        }
-    }
-}
-
-
+@Slf4j
 class OPort {
     public Module module;
     public int oport = 0;
@@ -61,7 +52,7 @@ class OPort {
     }
     IOPort getOPort () {
         if (module == null) {
-            debug.print ("Can't get an IOPort when there's no module.");
+            log.atDebug().log("Can't get an IOPort when there's no module.");
             return null;
         }
         return module.getOutputPorts () [oport];
@@ -176,7 +167,7 @@ class ModuleLoader {
             return new NumberModule(new Point (), 0.1234567);
         }
         try {
-            mod = (Module) cons.newInstance (new Point ());
+            mod = (Module) cons.newInstance(new Point());
         } catch (InvocationTargetException e) {
             System.err.println ("Couldn't create a " + moduleClass.getName() + ": (InvocationTargetException)" + e.getTargetException ());
             return new NumberModule(new Point (), 0.1234567);
@@ -224,7 +215,7 @@ public class ExprModule extends ProceduralModule
         point = p;
         for (int i = myModules.length-1; i >= 0; i--) {
             if (myModules[i] == null) {
-                debug.print ("There's a null module in the module list at " + i + " of " + myModules.length + ", skipping.");
+                log.atDebug().log("There's a null module in the module list at {} of {}, skipping", i, myModules.length);
             }
             myModules[i].init (p);
         }
@@ -312,7 +303,7 @@ public class ExprModule extends ProceduralModule
         out.writeUTF(expr);
     }
 
-    public void setExpr (String e) {
+    public final void setExpr (String e) {
         expr = e;
         name = "["+expr+"]";
         lex (expr);
@@ -332,15 +323,16 @@ public class ExprModule extends ProceduralModule
         return !(compiled == null);
     }
 
-    void addToken (Token tok) {
-        debug.print ("Adding token " + tok);
+    void addToken (Token token) {
+        log.atDebug().log("Adding token {}", token);
+
         if (tokIdx >= tokens.length) {
-            Token [] oldtokens = tokens;
+            Token[] oldtokens = tokens;
             tokens = new Token [tokens.length * 2];
             System.arraycopy(oldtokens, 0, tokens, 0, tokens.length);
         }
-        tokens [tokIdx++] = tok;
-        currTok = tok;
+        tokens [tokIdx++] = token;
+        currTok = token;
     }
 
     void lex (String str) {
@@ -440,7 +432,7 @@ public class ExprModule extends ProceduralModule
         myModules = moduleVec.toArray(new Module[0]);
         if (compiled == null)
           compiled = new OPort(new NumberModule(new Point (), 0.0), 0);
-        debug.print ("Compiled form: " + compiled);
+        log.atDebug().log("Compiled: {}", compiled);
     }
 
     OPort expr (boolean get) {
@@ -460,15 +452,15 @@ public class ExprModule extends ProceduralModule
 
     void addModule (Module m) {
         if (m == null) {
-            debug.print ("I don't want to add a null module to the module list at position " + moduleVec.size());
+            log.atDebug().log("I don't want to add a null module to the module list at position {}", moduleVec.size());
             try {
                 m.init (null); //error!
             } catch (Exception e) {
-                e.printStackTrace ();
+                log.atError().setCause(e).log("Init error: {}", e.getMessage());
             }
 
         } else if (!moduleVec.contains(m)) {
-            debug.print ("Adding module " + m + " to the module list at position " + moduleVec.size());
+            log.atDebug().log("Adding module {} to the module list at position {}", m, moduleVec.size());
             moduleVec.add(m);
         }
     }
@@ -534,7 +526,7 @@ public class ExprModule extends ProceduralModule
 
         case Token.VARIABLE:
             if (currTok.strValue == null) {
-                debug.print ("No variable " + currTok.strValue);
+                log.debug("No variable: {}", currTok.strValue);
                 return null;
             }
             port = varTable.get (currTok.strValue);
@@ -572,7 +564,7 @@ public class ExprModule extends ProceduralModule
 
         OPort func = getOPort (name);
 
-        Vector<OPort> s = new Vector<> ();
+        List<OPort> s = new Vector<>();
         //get args
         while (currTok.ty != Token.RP && currTok.ty != Token.END) {
             s.add (expr (false));
@@ -583,7 +575,7 @@ public class ExprModule extends ProceduralModule
         }
         getToken (); // eat RP
 
-        if (s.size () != func.args.length) {
+        if (s.size() != func.args.length) {
             addError (name + " expects " + func.args.length + " arguments, but you called it with " + s.size () + ".");
 
 /*            for (int i = 0; i < func.args.length; i ++) {
@@ -603,14 +595,14 @@ public class ExprModule extends ProceduralModule
         return func;
 
     }
+    
     OPort getOPort (String name) {
-        OPort op;
         //name = "artofillusion.procedural." +name;
-        if (!Token.funMap.containsKey (name)) {
-            debug.print ("No such function: " + name);
+        if (!Token.funMap.containsKey(name)) {
+            log.atDebug().log("No such function: {}", name);
             return null;
         }
-        op = Token.funMap.get (name);
+        OPort op = Token.funMap.get (name);
         return new OPort(op.module.duplicate(), op.oport, op.args);
     }
 
@@ -635,7 +627,7 @@ public class ExprModule extends ProceduralModule
         /*
         link (parent, left, 0);
         link (parent, right, 1);*/
-        debug.print ("Creating binOp: " + parentClass.getName () + " (" + left + ", " + right + ")");
+        log.atDebug().log("Creating binOp: {} ({}, {})", parentClass.getName(), left, right);
         addModule (parentM);
         return parent;//new OPort (parent);
     }
