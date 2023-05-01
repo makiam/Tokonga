@@ -152,35 +152,6 @@ class Token {
     }
 }
 
-class ModuleLoader {
-
-
-    public static Module createModule (Class<?> moduleClass) {
-        Constructor<?> cons = null;
-        Module mod;
-
-        try {
-
-            cons = moduleClass.getConstructor ( Point.class);
-        } catch (NoSuchMethodException | SecurityException e) {
-            System.err.println ("Couldn't get constructor for " + moduleClass.getName() + ": " + e);
-            return new NumberModule(new Point (), 0.1234567);
-        }
-        try {
-            mod = (Module) cons.newInstance(new Point());
-        } catch (InvocationTargetException e) {
-            System.err.println ("Couldn't create a " + moduleClass.getName() + ": (InvocationTargetException)" + e.getTargetException ());
-            return new NumberModule(new Point (), 0.1234567);
-        } catch (IllegalAccessException | IllegalArgumentException | InstantiationException e) {
-            System.err.println ("Couldn't create a " + moduleClass.getName() + ": " + e);
-            return new NumberModule(new Point (), 0.1234567);
-        }
-
-        return mod;
-    }
-}
-
-
 /** This is a Module which outputs an expression applied to three numbers. */
 @Slf4j
 public class ExprModule extends ProceduralModule
@@ -606,7 +577,7 @@ public class ExprModule extends ProceduralModule
     }
 
     OPort binOp (Class<?> parentClass, OPort left, OPort right) {
-        Module parentM = ModuleLoader.createModule (parentClass);
+        Module parentM = ExprModule.createModule (parentClass);
         Arg [] args = {new Arg ("Arg1", 0), new Arg ("Arg1", 1)};
         OPort parent = new OPort (parentM);
         parent.args = args;
@@ -652,6 +623,17 @@ public class ExprModule extends ProceduralModule
       for (int i = 0; i < errors.size(); i++)
         msg[i+1] = errors.get(i);
       new BStandardDialog("", msg, BStandardDialog.INFORMATION).showMessageDialog(fr);
+    }
+
+    private static Module createModule (Class<?> moduleClass) {
+
+        try {
+            Constructor<?> cons = moduleClass.getConstructor ( Point.class);
+            return (Module) cons.newInstance(new Point());
+        } catch (ReflectiveOperationException | SecurityException e) {
+            log.atError().setCause(e).log("Unable to create module: {}: {}", moduleClass.getName(), e.getMessage());
+            return new NumberModule(new Point (), 0.1234567);
+        }
     }
 }
 
