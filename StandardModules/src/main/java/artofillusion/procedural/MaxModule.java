@@ -15,7 +15,7 @@ import artofillusion.math.*;
 import java.awt.*;
 
 /** This is a Module which returns the maximum of two numbers. */
-
+@ProceduralModule.Category(value = "Modules:menu.operators")
 public class MaxModule extends ProceduralModule
 {
   double lastBlur, value, error;

@@ -19,7 +19,7 @@ import java.awt.*;
 import java.io.*;
 
 /** This is a Module which performs a linear 3D coordinate transform. */
-
+@ProceduralModule.Category(value = "Modules:menu.transforms")
 public class TransformModule extends ProceduralModule
 {
   boolean valueOk, errorOk, gradOk;

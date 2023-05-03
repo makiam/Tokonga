@@ -20,7 +20,7 @@ import java.awt.*;
 import java.io.*;
 
 /** This is a Module which generates a marble pattern. */
-
+@ProceduralModule.Category(value = "Modules:menu.patterns")
 public class MarbleModule extends ProceduralModule
 {
   boolean valueOk, gradOk;

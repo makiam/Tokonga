@@ -15,7 +15,7 @@ import artofillusion.math.*;
 import java.awt.*;
 
 /** This is a Module which raises a number to a power. */
-
+@ProceduralModule.Category(value = "Modules:menu.operators")
 public class PowerModule extends ProceduralModule
 {
   boolean valueOk, errorOk, gradOk, powerIsInteger;

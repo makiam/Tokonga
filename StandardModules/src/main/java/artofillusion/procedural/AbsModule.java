@@ -16,7 +16,7 @@ import artofillusion.ui.*;
 import java.awt.*;
 
 /* This is a Module which outputs the absolute value of a number. */
-
+@ProceduralModule.Category(value = "Modules:menu.functions")
 public class AbsModule extends ProceduralModule
 {
   private boolean signOk, positive;

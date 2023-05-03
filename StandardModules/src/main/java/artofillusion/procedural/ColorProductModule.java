@@ -16,7 +16,7 @@ import artofillusion.ui.*;
 import java.awt.*;
 
 /* This is a Module which outputs the product of two colors. */
-
+@ProceduralModule.Category(value = "Modules:menu.colorFunctions")
 public class ColorProductModule extends ProceduralModule
 {
   RGBColor color;

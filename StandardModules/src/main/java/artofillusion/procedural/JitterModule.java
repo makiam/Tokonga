@@ -20,7 +20,7 @@ import java.awt.*;
 import java.io.*;
 
 /** This is a Module which randomly displaces the coordinate system. */
-
+@ProceduralModule.Category(value = "Modules:menu.transforms")
 public class JitterModule extends ProceduralModule
 {
   boolean valueOk;

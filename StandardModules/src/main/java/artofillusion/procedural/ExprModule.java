@@ -154,6 +154,7 @@ class Token {
 
 /** This is a Module which outputs an expression applied to three numbers. */
 @Slf4j
+@ProceduralModule.Category(value = "Modules:menu.functions")
 public class ExprModule extends ProceduralModule
 {
 

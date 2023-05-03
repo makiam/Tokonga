@@ -20,7 +20,7 @@ import java.awt.*;
 import java.io.*;
 
 /** This is a Module which generates a grid of dots. */
-
+@ProceduralModule.Category(value = "Modules:menu.patterns")
 public class GridModule extends ProceduralModule
 {
   boolean valueOk, errorOk, gradOk;

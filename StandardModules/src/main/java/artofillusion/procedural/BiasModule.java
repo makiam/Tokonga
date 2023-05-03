@@ -16,7 +16,7 @@ import artofillusion.ui.*;
 import java.awt.*;
 
 /** This is a Module which calculates Perlin's bias function. */
-
+@ProceduralModule.Category(value = "Modules:menu.functions")
 public class BiasModule extends ProceduralModule
 {
   boolean valueOk, errorOk, gradOk;

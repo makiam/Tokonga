@@ -15,7 +15,7 @@ import artofillusion.math.*;
 import java.awt.*;
 
 /** This is a Module which outputs the product of two numbers. */
-
+@ProceduralModule.Category(value = "Modules:menu.operators")
 public class ProductModule extends ProceduralModule
 {
   boolean valueOk, errorOk;

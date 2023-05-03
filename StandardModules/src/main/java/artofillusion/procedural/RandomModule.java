@@ -21,7 +21,7 @@ import java.io.*;
 import java.util.*;
 
 /** This is a Module which outputs a random function of its input. */
-
+@ProceduralModule.Category(value = "Modules:menu.functions")
 public class RandomModule extends ProceduralModule
 {
   boolean repeat, valueOk, errorOk, gradOk;

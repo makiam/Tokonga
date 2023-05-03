@@ -21,7 +21,7 @@ import java.io.*;
  * This is a Module which displays a comment, but otherwise has no effect on the
  * procedure.
  */
-
+@ProceduralModule.Category(value = "Modules:menu.values")
 public class CommentModule extends ProceduralModule
 {
   public CommentModule() {

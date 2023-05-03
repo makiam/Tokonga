@@ -25,7 +25,7 @@ import java.text.*;
  * f(x). It is defined by a set of points (x,y). For other values of x, the
  * output is determined by interpolation.
  */
-
+@ProceduralModule.Category(value = "Modules:menu.functions")
 public class FunctionModule extends ProceduralModule
 {
   private boolean repeat, valueOk, errorOk, gradOk;

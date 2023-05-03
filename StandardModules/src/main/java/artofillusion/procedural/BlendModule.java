@@ -16,7 +16,7 @@ import artofillusion.ui.*;
 import java.awt.*;
 
 /* This is a Module which outputs a weighted average of two colors. */
-
+@ProceduralModule.Category(value = "Modules:menu.colorFunctions")
 public class BlendModule extends ProceduralModule
 {
   RGBColor blendColor;

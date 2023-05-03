@@ -16,7 +16,7 @@ import artofillusion.ui.*;
 import java.awt.*;
 
 /* This is a Module which generates a checkerboard pattern. */
-
+@ProceduralModule.Category(value = "Modules:menu.patterns")
 public class CheckerModule extends ProceduralModule
 {
   boolean valueOk, gradOk;

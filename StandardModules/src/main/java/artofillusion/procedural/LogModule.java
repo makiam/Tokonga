@@ -15,7 +15,7 @@ import artofillusion.math.*;
 import java.awt.*;
 
 /* This is a Module which outputs the natural log of a number. */
-
+@ProceduralModule.Category(value = "Modules:menu.functions")
 public class LogModule extends ProceduralModule
 {
   boolean valueOk, errorOk, gradOk;

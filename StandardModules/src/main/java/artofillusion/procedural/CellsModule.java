@@ -24,7 +24,7 @@ import java.util.*;
  * This is a Module which generates a pattern based on Steven Worley's cellular
  * texture basis function.
  */
-
+@ProceduralModule.Category(value = "Modules:menu.patterns")
 public class CellsModule extends ProceduralModule
 {
   private boolean valueOk[], gradOk[], used2ThisTime, used2LastTime;

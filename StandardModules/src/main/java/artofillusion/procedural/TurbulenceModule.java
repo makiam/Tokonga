@@ -23,7 +23,7 @@ import java.io.*;
  * This is a Module which generates fractal turbulence based on Perlin's noise
  * function.
  */
-
+@ProceduralModule.Category(value = "Modules:menu.patterns")
 public class TurbulenceModule extends ProceduralModule
 {
   boolean valueOk, errorOk, gradOk;

@@ -15,7 +15,7 @@ import artofillusion.math.*;
 import java.awt.*;
 
 /* This is a Module which outputs the difference of two numbers. */
-
+@ProceduralModule.Category(value = "Modules:menu.operators")
 public class DifferenceModule extends ProceduralModule
 {
   Vec3 tempVec;
