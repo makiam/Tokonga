@@ -63,37 +63,30 @@ public class ModuleMenu extends CustomWidget
     if (editor.getOwner().allowParameters())
       category.add(new Entry("Modules:menu.parameterModule", ParameterModule.class));
 
-    
-        List<Module> plugins = PluginRegistry.getPlugins(Module.class);
-        if (!plugins.isEmpty()) {
-            final String uncategorized = Translate.text("Modules:menu.plugins");
-
-
-            plugins.forEach(module -> {
-
-                ProceduralModule.Category modCategory = module.getClass().getAnnotation(ProceduralModule.Category.class);
-                String cv = modCategory == null ? uncategorized : Translate.text(modCategory.value());
-                log.info("Module category evaluated: {}", cv);
-                Optional<Category> target = categories.stream().filter(cat -> cat.getName().equals(cv)).findFirst();
-                log.info("Target is Present: {}", target.isPresent());
-                //Replace this
-                if(target.isPresent()) {
-                    target.get().add(new Entry(module.getName(), module.getClass()));
-                } else {
-                    Category newCategory = new Category(cv);
-                    newCategory.add(new Entry(module.getName(), module.getClass()));
-                    categories.add(newCategory);
-                }
-                //With ifPresentOrElse once java updated to 9+
-                /*
-                target.ifPresentOrElse(cat -> cat.add(new Entry(module.getName(), module.getClass())), () -> {
-                    Category newCategory = new Category(cv);
-                    newCategory.add(new Entry(module.getName(), module.getClass()));
-                    categories.add(newCategory);
-                });
-                */
-            });
+    final String uncategorized = Translate.text("Modules:menu.plugins");
+    PluginRegistry.getPlugins(Module.class).forEach(module -> {
+        ProceduralModule.Category modCategory = module.getClass().getAnnotation(ProceduralModule.Category.class);
+        String cv = modCategory == null ? uncategorized : Translate.text(modCategory.value());
+        log.info("Module category evaluated: {}", cv);
+        Optional<Category> target = categories.stream().filter(cat -> cat.getName().equals(cv)).findFirst();
+        log.info("Target is Present: {}", target.isPresent());
+        //Replace this
+        if(target.isPresent()) {
+            target.get().add(new Entry(module.getName(), module.getClass()));
+        } else {
+            Category newCategory = new Category(cv);
+            newCategory.add(new Entry(module.getName(), module.getClass()));
+            categories.add(newCategory);
         }
+        //With ifPresentOrElse once java updated to 9+
+        /*
+        target.ifPresentOrElse(cat -> cat.add(new Entry(module.getName(), module.getClass())), () -> {
+            Category newCategory = new Category(cv);
+            newCategory.add(new Entry(module.getName(), module.getClass()));
+            categories.add(newCategory);
+        });
+        */
+    });
     
     expandedFraction = new double[categories.size()];
     expandedFraction[expandedCategory] = 1.0;
