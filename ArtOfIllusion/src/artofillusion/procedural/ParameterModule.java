@@ -19,12 +19,16 @@ import java.awt.*;
 import java.io.*;
 
 /** This is a Module which outputs a per-vertex texture parameter. */
-
+@ProceduralModule.Category(value = "Modules:menu.values")
 public class ParameterModule extends ProceduralModule
 {
   double minVal, maxVal, defaultVal;
   int index, id;
   PointInfo point;
+
+  public ParameterModule() {
+    this(new Point());
+  }
 
   public ParameterModule(Point position)
   {

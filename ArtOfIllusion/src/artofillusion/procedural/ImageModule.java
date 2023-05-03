@@ -22,7 +22,7 @@ import java.io.*;
 import javax.swing.*;
 
 /** This is a Module which outputs an image. */
-
+@ProceduralModule.Category(value = "Modules:menu.patterns")
 public class ImageModule extends ProceduralModule
 {
   private ImageMap map;
@@ -39,6 +39,10 @@ public class ImageModule extends ProceduralModule
   public static final int RGB_MODEL = 0;
   public static final int HSV_MODEL = 1;
   public static final int HLS_MODEL = 2;
+
+  public ImageModule() {
+      this(new Point());
+  }
 
   public ImageModule(Point position)
   {

@@ -8,20 +8,27 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.procedural;
 
 import java.awt.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * This represents a module in a procedure. This is an abstract class, whose
  * subclasses represent specific kinds of modules.
  */
+public class ProceduralModule extends artofillusion.procedural.Module {
 
-public class ProceduralModule extends artofillusion.procedural.Module
-{
-  public ProceduralModule(String name, IOPort input[], IOPort output[], Point position)
-  {
-    super(name, input, output, position);
-  }
+    public ProceduralModule(String name, IOPort input[], IOPort output[], Point position) {
+        super(name, input, output, position);
+    }
+
+    @Target(value = ElementType.TYPE)
+    @Retention(value = RetentionPolicy.RUNTIME)
+    public static @interface Category {
+        String value();
+    }
 }
