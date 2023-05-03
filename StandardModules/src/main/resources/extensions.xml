@@ -6,7 +6,7 @@
         This plugin contains the standard Procedural Modules which are included with Art of Illusion.
 
     </description>
-    <!--<resource type="TranslateBundle" id="Modules" name="Bundle"/>-->
+    <resource type="TranslateBundle" id="Modules" name="Bundle"/>
     <plugin class="artofillusion.procedural.AbsModule"/>
     <plugin class="artofillusion.procedural.BiasModule"/>
     <plugin class="artofillusion.procedural.BlendModule"/>
