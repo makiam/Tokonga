@@ -1,0 +1,59 @@
+<?xml version="1.0" standalone="yes"?>
+<extension name="Standard Procedural Modules" version="1.0">
+    <author>Maksim Khramov</author>
+    <date>2023</date>
+    <description>
+        This plugin contains the standard Procedural Modules which are included with Art of Illusion.
+
+    </description>
+    <resource type="TranslateBundle" id="Modules" name="Bundle"/>
+    <plugin class="artofillusion.procedural.AbsModule"/>
+    <plugin class="artofillusion.procedural.BiasModule"/>
+    <plugin class="artofillusion.procedural.BlendModule"/>
+    <plugin class="artofillusion.procedural.BlurModule"/>
+    <plugin class="artofillusion.procedural.BrickModule"/>
+    <plugin class="artofillusion.procedural.CellsModule"/>
+    <plugin class="artofillusion.procedural.CheckerModule"/>
+    <plugin class="artofillusion.procedural.ClipModule"/>
+    <plugin class="artofillusion.procedural.ColorDarkenModule"/>
+    <plugin class="artofillusion.procedural.ColorDifferenceModule"/>
+    <plugin class="artofillusion.procedural.ColorLightenModule"/>
+    <plugin class="artofillusion.procedural.ColorProductModule"/>
+    <plugin class="artofillusion.procedural.ColorScaleModule"/>
+    <plugin class="artofillusion.procedural.ColorSumModule"/>
+    <plugin class="artofillusion.procedural.CommentModule"/>
+    <plugin class="artofillusion.procedural.CompareModule"/>
+    <plugin class="artofillusion.procedural.CosineModule"/>
+    <plugin class="artofillusion.procedural.DifferenceModule"/>
+    <plugin class="artofillusion.procedural.ExpModule"/>
+    <plugin class="artofillusion.procedural.ExprModule"/>
+    <plugin class="artofillusion.procedural.FunctionModule"/>
+    <plugin class="artofillusion.procedural.GainModule"/>
+    <plugin class="artofillusion.procedural.GridModule"/>
+    <plugin class="artofillusion.procedural.HLSModule"/>
+    <plugin class="artofillusion.procedural.HSVModule"/>
+    <plugin class="artofillusion.procedural.InterpModule"/>
+    <plugin class="artofillusion.procedural.JitterModule"/>
+    <plugin class="artofillusion.procedural.LogModule"/>
+    <plugin class="artofillusion.procedural.MarbleModule"/>
+    <plugin class="artofillusion.procedural.MaxModule"/>
+    <plugin class="artofillusion.procedural.MinModule"/>
+    <plugin class="artofillusion.procedural.ModModule"/>
+    <plugin class="artofillusion.procedural.NoiseModule"/>
+    <plugin class="artofillusion.procedural.PolarModule"/>
+    <plugin class="artofillusion.procedural.PowerModule"/>
+    <plugin class="artofillusion.procedural.ProductModule"/>
+    <plugin class="artofillusion.procedural.RGBModule"/>
+    <plugin class="artofillusion.procedural.RandomModule"/>
+    <plugin class="artofillusion.procedural.RatioModule"/>
+    <plugin class="artofillusion.procedural.ScaleShiftModule"/>
+    <plugin class="artofillusion.procedural.SineModule"/>
+    <plugin class="artofillusion.procedural.SpectrumModule"/>
+    <plugin class="artofillusion.procedural.SphericalModule"/>
+    <plugin class="artofillusion.procedural.SqrtModule"/>
+    <plugin class="artofillusion.procedural.SumModule"/>
+    <plugin class="artofillusion.procedural.TransformModule"/>
+    <plugin class="artofillusion.procedural.TurbulenceModule"/>
+    <plugin class="artofillusion.procedural.WoodModule"/>
+</extension>
+

@@ -12,22 +12,24 @@
 package artofillusion.procedural;
 
 import artofillusion.*;
+import artofillusion.procedural.Module;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
-
-import javax.swing.*;
-import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.Timer;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is the menu that appears in the procedure editor window.  It displays modules organized into categories,
  * and allows the user to add them to their procedure.
  */
-
+@Slf4j
 public class ModuleMenu extends CustomWidget
 {
   private final ProcedureEditor editor;
@@ -49,86 +51,42 @@ public class ModuleMenu extends CustomWidget
     addEventLink(MouseReleasedEvent.class, this, "mouseReleased");
     
     Category category;
-    categories.add(category = new Category("menu.values"));
-    category.add(new Entry("menu.numberModule", NumberModule.class));
-    category.add(new Entry("menu.colorModule", ColorModule.class));
-    category.add(new Entry("menu.xModule", CoordinateModule.class, null, CoordinateModule.X));
-    category.add(new Entry("menu.yModule", CoordinateModule.class, null, CoordinateModule.Y));
-    category.add(new Entry("menu.zModule", CoordinateModule.class, null, CoordinateModule.Z));
-    category.add(new Entry("menu.timeModule", CoordinateModule.class, null, CoordinateModule.T));
+    categories.add(category = new Category("Modules:menu.values"));
+    category.add(new Entry("Modules:menu.numberModule", NumberModule.class));
+    category.add(new Entry("Modules:menu.colorModule", ColorModule.class));
+    category.add(new Entry("Modules:menu.xModule", CoordinateModule.class, null, CoordinateModule.X));
+    category.add(new Entry("Modules:menu.yModule", CoordinateModule.class, null, CoordinateModule.Y));
+    category.add(new Entry("Modules:menu.zModule", CoordinateModule.class, null, CoordinateModule.Z));
+    category.add(new Entry("Modules:menu.timeModule", CoordinateModule.class, null, CoordinateModule.T));
     if (editor.getOwner().allowViewAngle())
-      category.add(new Entry("menu.viewAngleModule", ViewAngleModule.class));
+      category.add(new Entry("Modules:menu.viewAngleModule", ViewAngleModule.class));
     if (editor.getOwner().allowParameters())
-      category.add(new Entry("menu.parameterModule", ParameterModule.class));
-    category.add(new Entry("menu.commentModule", CommentModule.class));
+      category.add(new Entry("Modules:menu.parameterModule", ParameterModule.class));
 
-    categories.add(category = new Category("menu.operators"));
-    category.add(new Entry("menu.addModule", SumModule.class));
-    category.add(new Entry("menu.subtractModule", DifferenceModule.class));
-    category.add(new Entry("menu.multiplyModule", ProductModule.class));
-    category.add(new Entry("menu.divideModule", RatioModule.class));
-    category.add(new Entry("menu.powModule", PowerModule.class));
-    category.add(new Entry("menu.modModule", ModModule.class));
-    category.add(new Entry("menu.greaterThanModule", CompareModule.class));
-    category.add(new Entry("menu.minModule", MinModule.class));
-    category.add(new Entry("menu.maxModule", MaxModule.class));
-
-    categories.add(category = new Category("menu.functions"));
-    category.add(new Entry("menu.expressionModule", ExprModule.class));
-    category.add(new Entry("menu.customFunctionModule", FunctionModule.class));
-    category.add(new Entry("menu.scaleShiftModule", ScaleShiftModule.class));
-    category.add(new Entry("menu.absModule", AbsModule.class));
-    category.add(new Entry("menu.blurModule", BlurModule.class));
-    category.add(new Entry("menu.clipModule", ClipModule.class));
-    category.add(new Entry("menu.interpolateModule", InterpModule.class));
-    category.add(new Entry("menu.sineModule", SineModule.class));
-    category.add(new Entry("menu.cosineModule", CosineModule.class));
-    category.add(new Entry("menu.sqrtModule", SqrtModule.class));
-    category.add(new Entry("menu.expModule", ExpModule.class));
-    category.add(new Entry("menu.logModule", LogModule.class));
-    category.add(new Entry("menu.biasModule", BiasModule.class));
-    category.add(new Entry("menu.gainModule", GainModule.class));
-    category.add(new Entry("menu.randomModule", RandomModule.class));
-
-    categories.add(category = new Category("menu.colorFunctions"));
-    category.add(new Entry("menu.customColorFunctionModule", SpectrumModule.class));
-    category.add(new Entry("menu.blendModule", BlendModule.class));
-    category.add(new Entry("menu.addColorModule", ColorSumModule.class));
-    category.add(new Entry("menu.subtractColorModule", ColorDifferenceModule.class));
-    category.add(new Entry("menu.multiplyColorModule", ColorProductModule.class));
-    category.add(new Entry("menu.lighterModule", ColorLightenModule.class));
-    category.add(new Entry("menu.darkerModule", ColorDarkenModule.class));
-    category.add(new Entry("menu.scaleColorModule", ColorScaleModule.class));
-    category.add(new Entry("menu.RGBModule", RGBModule.class));
-    category.add(new Entry("menu.HSVModule", HSVModule.class));
-    category.add(new Entry("menu.HLSModule", HLSModule.class));
-
-    categories.add(category = new Category("menu.transforms"));
-    category.add(new Entry("menu.linearModule", TransformModule.class));
-    category.add(new Entry("menu.polarModule", PolarModule.class));
-    category.add(new Entry("menu.sphericalModule", SphericalModule.class));
-    category.add(new Entry("menu.jitterModule", JitterModule.class));
-
-    categories.add(category = new Category("menu.patterns"));
-    category.add(new Entry("menu.noiseModule", NoiseModule.class));
-    category.add(new Entry("menu.turbulenceModule", TurbulenceModule.class));
-    category.add(new Entry("menu.gridModule", GridModule.class));
-    category.add(new Entry("menu.cellsModule", CellsModule.class));
-    category.add(new Entry("menu.marbleModule", MarbleModule.class));
-    category.add(new Entry("menu.woodModule", WoodModule.class));
-    category.add(new Entry("menu.checkerModule", CheckerModule.class));
-    category.add(new Entry("menu.bricksModule", BrickModule.class));
-    category.add(new Entry("menu.imageModule", ImageModule.class));
-    
-    List<Module> plugins = PluginRegistry.getPlugins(Module.class);
-    if (!plugins.isEmpty())
-    {
-      final Category uncategorized = new Category("menu.plugins");
-      categories.add(uncategorized);
-      plugins.forEach(module -> {
-          uncategorized.add(new Entry(module.getName(), module.getClass()));
-      });
-    }
+    final String uncategorized = Translate.text("Modules:menu.plugins");
+    PluginRegistry.getPlugins(Module.class).forEach(module -> {
+        ProceduralModule.Category modCategory = module.getClass().getAnnotation(ProceduralModule.Category.class);
+        String cv = modCategory == null ? uncategorized : Translate.text(modCategory.value());
+        log.info("Module category evaluated: {}", cv);
+        Optional<Category> target = categories.stream().filter(cat -> cat.getName().equals(cv)).findFirst();
+        log.info("Target is Present: {}", target.isPresent());
+        //Replace this
+        if(target.isPresent()) {
+            target.get().add(new Entry(module.getName(), module.getClass()));
+        } else {
+            Category newCategory = new Category(cv);
+            newCategory.add(new Entry(module.getName(), module.getClass()));
+            categories.add(newCategory);
+        }
+        //With ifPresentOrElse once java updated to 9+
+        /*
+        target.ifPresentOrElse(cat -> cat.add(new Entry(module.getName(), module.getClass())), () -> {
+            Category newCategory = new Category(cv);
+            newCategory.add(new Entry(module.getName(), module.getClass()));
+            categories.add(newCategory);
+        });
+        */
+    });
     
     expandedFraction = new double[categories.size()];
     expandedFraction[expandedCategory] = 1.0;
@@ -308,6 +266,7 @@ public class ModuleMenu extends CustomWidget
 
   private static class Category
   {
+    @Getter
     public String name;
     public ArrayList<Entry> entries = new ArrayList<>();
     public Rectangle bounds;

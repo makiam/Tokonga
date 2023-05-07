@@ -20,11 +20,15 @@ import java.awt.*;
 import java.io.*;
 
 /** This is a Module which outputs the viewing angle. */
-
+@ProceduralModule.Category(value = "Modules:menu.values")
 public class ViewAngleModule extends ProceduralModule
 {
   private boolean abs;
   private PointInfo point;
+
+  public ViewAngleModule() {
+    this(new Point());
+  }
 
   public ViewAngleModule(Point position)
   {
