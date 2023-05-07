@@ -13,6 +13,7 @@ package artofillusion.procedural;
 
 import artofillusion.*;
 import artofillusion.math.*;
+import artofillusion.procedural.Module;
 import buoy.widget.*;
 import java.awt.*;
 import java.io.*;
@@ -328,14 +329,14 @@ public class Module
    * Create a duplicate of this module. Subclasses with adjustable parameters
    * should override this.
    */  
-  public Module duplicate()
+  public <M extends Module> M duplicate()
   {
     try
     {
       Constructor<?> con = getClass().getConstructor(Point.class);
-      return (Module) con.newInstance(new Point(bounds.x, bounds.y));
+      return (M) con.newInstance(new Point(bounds.x, bounds.y));
     }
-    catch (Exception ex)
+    catch (ReflectiveOperationException | IllegalArgumentException | SecurityException ex)
     {
       return null;
     }
