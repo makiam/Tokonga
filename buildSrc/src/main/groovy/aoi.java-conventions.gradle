@@ -34,22 +34,7 @@ repositories {
     }
 }
 
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src']
-        }
-        resources {
-            srcDirs = ['src']   
-        }
-    }
-    test {
-        java {
-            srcDirs = ['test']
-        }
-    }
 
-}
 ext {
     lombokVersion = "1.18.+"
 }
