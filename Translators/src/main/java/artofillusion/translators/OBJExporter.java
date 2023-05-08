@@ -21,9 +21,11 @@ import buoy.widget.*;
 import java.io.*;
 import java.text.*;
 import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /** OBJExporter contains the actual routines for exporting OBJ files. */
 
+@Slf4j
 public class OBJExporter
 {
   /** Display a dialog which allows the user to export a scene to an OBJ file. */
@@ -99,9 +101,9 @@ public class OBJExporter
       writeScene(theScene, out, exportChoice.getSelectedIndex() == 0, errorField.getValue(), smoothBox.getState(), normalsBox.getState(), textureExporter, mtlFilename);
       out.close();
     }
-    catch (Exception ex)
+    catch (IOException | InterruptedException ex)
       {
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Error exporting scene: {}", ex.getMessage());
         new BStandardDialog("", new String [] {Translate.text("errorExportingScene"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(parent);
       }
   }
@@ -120,7 +122,7 @@ public class OBJExporter
     // Write the objects in the scene.
 
     int numVert = 0, numNorm = 0, numTexVert = 0;
-    Hashtable<String, String> groupNames = new Hashtable<String, String>();
+    Map<String, String> groupNames = new Hashtable<>();
     NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
     nf.setMaximumFractionDigits(5);
     nf.setGroupingUsed(false);
@@ -347,7 +349,7 @@ public class OBJExporter
     
     out.println("#Produced by Art of Illusion "+ArtOfIllusion.getVersion()+", "+(new Date()).toString());
     Enumeration<TextureImageInfo> textures = textureExporter.getTextures();
-    Hashtable<String, TextureImageInfo> names = new Hashtable<>();
+    Map<String, TextureImageInfo> names = new Hashtable<>();
     TextureSpec spec = new TextureSpec();
     NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
     nf.setMaximumFractionDigits(5);
