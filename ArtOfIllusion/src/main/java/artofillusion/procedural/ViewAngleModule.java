@@ -32,7 +32,7 @@ public class ViewAngleModule extends ProceduralModule
 
   public ViewAngleModule(Point position)
   {
-    super(Translate.text("menu.viewAngleModule"), new IOPort[] {},
+    super(Translate.text("Modules:menu.viewAngleModule"), new IOPort[] {},
       new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, Translate.text("menu.viewAngleModule"))},
       position);
   }

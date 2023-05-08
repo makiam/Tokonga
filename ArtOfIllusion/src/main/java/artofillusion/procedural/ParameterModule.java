@@ -32,7 +32,7 @@ public class ParameterModule extends ProceduralModule
 
   public ParameterModule(Point position)
   {
-    super(Translate.text("menu.parameterModule"), new IOPort[] {},
+    super(Translate.text("Modules:menu.parameterModule"), new IOPort[] {},
       new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Value")},
       position);
     minVal = 0.0f;
