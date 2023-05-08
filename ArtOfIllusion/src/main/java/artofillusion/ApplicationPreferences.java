@@ -17,10 +17,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.util.*;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /** This class keeps track of program-wide user preferences. */
 
+@Slf4j
 public class ApplicationPreferences
 {
   private static final String userHome = System.getProperty("user.home");
@@ -68,7 +69,7 @@ public class ApplicationPreferences
     }
     catch (IOException ex)
     {
-      ex.printStackTrace();
+        log.atError().setCause(ex).log("Error loading preferences: {}", ex.getLocalizedMessage());
     }
   }
 
@@ -86,7 +87,7 @@ public class ApplicationPreferences
     }
     catch (IOException ex)
     {
-      ex.printStackTrace();
+      log.atError().setCause(ex).log("Error loading preferences: {}", ex.getLocalizedMessage());
     }
   }
 
@@ -120,7 +121,7 @@ public class ApplicationPreferences
     }
     catch (IOException ex)
     {
-      ex.printStackTrace();
+      log.atError().setCause(ex).log("Error writing preferences: {}", ex.getLocalizedMessage());
     }
   }
 
