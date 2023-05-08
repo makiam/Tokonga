@@ -3,20 +3,3 @@ plugins {
 }
 
 description = 'Translators'
-
-sourceSets {
-    main {
-        java {
-            srcDirs = ["src/main/java"]
-        }
-        resources {
-            srcDirs = ["src/main/resources"]
-        }
-    }
-
-    test {
-        java {
-            srcDirs = ["src/test/java"]
-        }
-    }
-}

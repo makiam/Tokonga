@@ -2,7 +2,7 @@ plugins {
     id 'aoi.java-conventions'
     id 'application'
     id "com.palantir.git-version" version "1.0.0"
-    //id 'edu.sc.seis.launch4j' version '2.5.4'
+    id 'edu.sc.seis.launch4j' version '2.5.4'
     id "kr.motd.sphinx" version "2.10.1"
 }
 
@@ -63,7 +63,7 @@ task createAssetsFolder() {
 tasks.assembleDist.configure {
   dependsOn('createAssetsFolder')
 }
-/*
+
 launch4j {
   bundledJrePath = '%JAVA_HOME%;%PATH%'
   mainClassName = "$mainClass"
@@ -77,7 +77,7 @@ assemble.dependsOn subprojects.jar, createExe
 installDist.dependsOn subprojects.jar, createExe
 distZip.dependsOn subprojects.jar, createExe
 
-*/
+
 tasks.withType(Zip){
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
@@ -85,7 +85,7 @@ tasks.withType(Zip){
 distributions {
     main.contents {
             it.exclude("*macosx*").exclude("*android*")
-            //from("$buildDir/${launch4j.outputDir}/${launch4j.outfile}") { into("bin") }
+            from("$buildDir/${launch4j.outputDir}/${launch4j.outfile}") { into("bin") }
             from("${rootDir}/Plugins") { into("Plugins") }
             from("../Scripts") { into("Scripts") }
             from tasks.createAssetsFolder {
