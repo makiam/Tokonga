@@ -38,7 +38,7 @@ public class RandomModule extends ProceduralModule
 
   public RandomModule(Point position)
   {
-    super(Translate.text("menu.randomModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(time)"),
+    super(Translate.text("Modules:menu.randomModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(time)"),
       new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Noise", "(0.5)")},
       new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output")},
       position);

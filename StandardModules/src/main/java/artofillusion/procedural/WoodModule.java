@@ -35,7 +35,7 @@ public class WoodModule extends ProceduralModule
 
   public WoodModule(Point position)
   {
-    super(Translate.text("menu.woodModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "X", "(X)"),
+    super(Translate.text("Modules:menu.woodModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "X", "(X)"),
       new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Y", "(Y)"),
       new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Z", "(Z)"),
       new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Noise", "(0.5)")},

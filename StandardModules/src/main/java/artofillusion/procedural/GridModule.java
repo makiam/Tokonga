@@ -35,7 +35,7 @@ public class GridModule extends ProceduralModule
 
   public GridModule(Point position)
   {
-    super(Translate.text("menu.gridModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "X", "(X)"),
+    super(Translate.text("Modules:menu.gridModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "X", "(X)"),
       new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Y", "(Y)"),
       new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Z", "(Z)")},
       new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Value")},

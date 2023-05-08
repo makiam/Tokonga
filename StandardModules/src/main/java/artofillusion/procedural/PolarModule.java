@@ -30,7 +30,7 @@ public class PolarModule extends ProceduralModule
 
   public PolarModule(Point position)
   {
-    super(Translate.text("menu.polarModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "X", "(X)"),
+    super(Translate.text("Modules:menu.polarModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "X", "(X)"),
       new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Y", "(Y)")},
       new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "R"),
       new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Theta")},

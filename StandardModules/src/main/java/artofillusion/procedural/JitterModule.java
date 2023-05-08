@@ -34,7 +34,7 @@ public class JitterModule extends ProceduralModule
   
   public JitterModule(Point position)
   {
-    super(Translate.text("menu.jitterModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "X", "(X)"),
+    super(Translate.text("Modules:menu.jitterModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "X", "(X)"),
       new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Y", "(Y)"),
       new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Z", "(Z)")},
       new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "X"),

@@ -38,7 +38,7 @@ public class NoiseModule extends ProceduralModule
 
   public NoiseModule(Point position)
   {
-    super(Translate.text("menu.noiseModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "X", "(X)"),
+    super(Translate.text("Modules:menu.noiseModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "X", "(X)"),
       new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Y", "(Y)"),
       new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Z", "(Z)"),
       new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Noise", "(0.5)")},

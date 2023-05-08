@@ -31,7 +31,7 @@ public class ClipModule extends ProceduralModule
   
   public ClipModule(Point position)
   {
-    super(Translate.text("menu.clipModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(0)")},
+    super(Translate.text("Modules:menu.clipModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(0)")},
       new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output")},
       position);
     min = 0.0;

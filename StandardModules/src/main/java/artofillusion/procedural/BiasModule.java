@@ -31,7 +31,7 @@ public class BiasModule extends ProceduralModule
 
   public BiasModule(Point position)
   {
-    super(Translate.text("menu.biasModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, "Bias", "(0.5)"),
+    super(Translate.text("Modules:menu.biasModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, "Bias", "(0.5)"),
       new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(0)")},
       new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output")},
       position);

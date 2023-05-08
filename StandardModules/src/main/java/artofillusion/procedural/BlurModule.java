@@ -27,7 +27,7 @@ public class BlurModule extends ProceduralModule
   
   public BlurModule(Point position)
   {
-    super(Translate.text("menu.blurModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, "Blur", "(0.05)"),
+    super(Translate.text("Modules:menu.blurModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, "Blur", "(0.05)"),
       new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(0)")},
       new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output")},
       position);

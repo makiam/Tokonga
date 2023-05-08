@@ -29,7 +29,7 @@ public class ColorDarkenModule extends ProceduralModule
 
   public ColorDarkenModule(Point position)
   {
-    super(Translate.text("menu.darkerModule"), new IOPort[] {new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.TOP, "Color 1", '('+Translate.text("white")+')'),
+    super(Translate.text("Modules:menu.darkerModule"), new IOPort[] {new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.TOP, "Color 1", '('+Translate.text("white")+')'),
       new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.BOTTOM, "Color 2", '('+Translate.text("white")+')')},
       new IOPort[] {new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, "Darker")},
       position);

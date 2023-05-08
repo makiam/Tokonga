@@ -29,7 +29,7 @@ public class BlendModule extends ProceduralModule
 
   public BlendModule(Point position)
   {
-    super(Translate.text("menu.blendModule"), new IOPort[] {new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.TOP, "Color 1", '('+Translate.text("black")+')'),
+    super(Translate.text("Modules:menu.blendModule"), new IOPort[] {new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.TOP, "Color 1", '('+Translate.text("black")+')'),
       new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.BOTTOM, "Color 2", '('+Translate.text("white")+')'),
       new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Fraction", "(0.5)")},
       new IOPort[] {new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, "Blend")},

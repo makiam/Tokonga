@@ -28,7 +28,7 @@ public class AbsModule extends ProceduralModule
   
   public AbsModule(Point position)
   {
-    super(Translate.text("menu.absModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(0")},
+    super(Translate.text("Modules:menu.absModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(0")},
       new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output")},
       position);
   }

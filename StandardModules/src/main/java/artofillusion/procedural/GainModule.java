@@ -31,7 +31,7 @@ public class GainModule extends ProceduralModule
 
   public GainModule(Point position)
   {
-    super(Translate.text("menu.gainModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, "Gain", "(0.5)"),
+    super(Translate.text("Modules:menu.gainModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, "Gain", "(0.5)"),
       new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(0)")},
       new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output")},
       position);

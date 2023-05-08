@@ -29,7 +29,7 @@ public class InterpModule extends ProceduralModule
   
   public InterpModule(Point position)
   {
-    super(Translate.text("menu.interpolateModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.TOP, "Value 1", "(0)"),
+    super(Translate.text("Modules:menu.interpolateModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.TOP, "Value 1", "(0)"),
       new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, "Value 2", "(1)"),
       new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Fraction", "(0)")},
       new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Interpolate")},
