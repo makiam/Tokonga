@@ -22,9 +22,10 @@ import buoy.widget.*;
 import java.io.*;
 import java.util.*;
 import java.util.zip.GZIPOutputStream;
+import lombok.extern.slf4j.Slf4j;
 
 /** VRMLExporter contains the actual routines for exporting VRML files. */
-
+@Slf4j
 public class VRMLExporter
 {
     public static final String matchId = " \"'#,.\\[]{}" +
@@ -111,10 +112,9 @@ public class VRMLExporter
       writeScene(theScene, out, exportChoice.getSelectedIndex() == 0, errorField.getValue(), smoothBox.getState(), textureExporter);
       out.close();
     }
-    catch (Exception ex)
+    catch (IOException | InterruptedException ex)
       {
-        System.out.println("VRMLExporter.exportFile: " + ex);
-        ex.printStackTrace(System.out);
+        log.atError().setCause(ex).log("Unable to export VRML {}", ex.getMessage());
         new BStandardDialog("", new String [] {Translate.text("errorExportingScene"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(parent);
       }
   }
