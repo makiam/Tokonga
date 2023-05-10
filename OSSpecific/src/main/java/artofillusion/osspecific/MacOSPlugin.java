@@ -19,16 +19,17 @@ import java.awt.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.util.prefs.*;
+import lombok.extern.slf4j.Slf4j;
 
 /** This is a plugin to make Art of Illusion behave more like a standard Macintosh
     application when running under Mac OS X. */
-
+@Slf4j
 public class MacOSPlugin implements Plugin, InvocationHandler
 {
   private boolean usingAppMenu, appleApi;
 
   @Override
-  public void processMessage(int message, Object args[])
+  public void processMessage(int message, Object... args)
   {
     if (message == APPLICATION_STARTING)
     {
@@ -70,12 +71,11 @@ public class MacOSPlugin implements Plugin, InvocationHandler
           Desktop.class.getMethod("setQuitHandler", quiteHandlerClass).invoke(desktop, proxy);
         }
       }
-      catch (Exception ex)
+      catch (ReflectiveOperationException | SecurityException ex)
       {
         // An error occured trying to set up the application menu, so just stick with the standard
         // Quit and Preferences menu items in the File and Edit menus.
-
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Unable to start plugin: {}",ex.getMessage());
       }
       usingAppMenu = true;
     }
@@ -191,11 +191,11 @@ public class MacOSPlugin implements Plugin, InvocationHandler
         Method cancelQuit = args[1].getClass().getMethod("cancelQuit");
         cancelQuit.invoke(args[1]);
       }
-      catch (Exception ex)
+      catch (ReflectiveOperationException | SecurityException ex)
       {
         // Nothing we can really do about it...
 
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Unable to handle Quit command: {}",ex.getMessage());
       }
     }
     else if ("handleOpenFile".equals(method.getName()))
@@ -206,11 +206,11 @@ public class MacOSPlugin implements Plugin, InvocationHandler
         String path = (String) getFilename.invoke(args[0]);
         ArtOfIllusion.newWindow(new Scene(new File(path), true));
       }
-      catch (Exception ex)
+      catch (IOException | ReflectiveOperationException | SecurityException ex)
       {
         // Nothing we can really do about it...
 
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Unable to load scene: {}",ex.getMessage());
       }
     }
     else if ("openFiles".equals(method.getName()))
@@ -222,11 +222,11 @@ public class MacOSPlugin implements Plugin, InvocationHandler
         for (File file : files)
           ArtOfIllusion.newWindow(new Scene(file, true));
       }
-      catch (Exception ex)
+      catch (IOException | ReflectiveOperationException | SecurityException ex)
       {
         // Nothing we can really do about it...
 
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Unable to load scenes: {}",ex.getMessage());
       }
     }
     else
@@ -241,11 +241,11 @@ public class MacOSPlugin implements Plugin, InvocationHandler
         Method setHandled = args[0].getClass().getMethod("setHandled", Boolean.TYPE);
         setHandled.invoke(args[0], handled);
       }
-      catch (Exception ex)
+      catch (ReflectiveOperationException | SecurityException ex)
       {
         // Nothing we can really do about it...
 
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Unable to set handled: {}",ex.getMessage());
       }
     }
     return null;
