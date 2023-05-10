@@ -17,15 +17,16 @@ import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.texture.*;
 import artofillusion.ui.*;
-
 import java.awt.*;
 import java.awt.font.*;
 import java.awt.geom.*;
 import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * TextTool creates meshes or curves that represent text.
  */
+@Slf4j
 public class TextTool implements ModellingTool
 {
   public static enum TextType {Outline, Tube, Surface, Solid}
@@ -61,7 +62,7 @@ public class TextTool implements ModellingTool
    */
   public static ArrayList<ObjectInfo> createText(String text, String fontName, TextType type, boolean bold, boolean italic, double thickness, Texture texture)
   {
-    ArrayList<ObjectInfo> objects = new ArrayList<ObjectInfo>();
+    ArrayList<ObjectInfo> objects = new ArrayList<>();
     int style = Font.PLAIN;
     if (bold)
       style |= Font.BOLD;
@@ -76,8 +77,8 @@ public class TextTool implements ModellingTool
       for (int glyphIndex = 0; glyphIndex < glyphVector.getNumGlyphs(); glyphIndex++)
       {
         float segmentCoords[] = new float[6];
-        ArrayList<Vec3> points = new ArrayList<Vec3>();
-        ArrayList<Float> smoothnesses = new ArrayList<Float>();
+        ArrayList<Vec3> points = new ArrayList<>();
+        ArrayList<Float> smoothnesses = new ArrayList<>();
         boolean firstCurveOfGlyph = true;
         String glyphName = Character.toString(text.charAt(glyphVector.getGlyphCharIndex(glyphIndex)));
         ObjectInfo fullLetterOI = null;
@@ -212,9 +213,9 @@ public class TextTool implements ModellingTool
                     fullLetterOI.object = TriangleMesh.optimizeMesh((TriangleMesh) fullLetterOI.object);
                     fullLetterOI.clearCachedMeshes();
                   }
-                  catch (Exception e)
+                  catch (Exception ex)
                   {
-                    e.printStackTrace();
+                      log.atError().setCause(ex).log("Error: {}", ex.getMessage());
                   }
                 }
                 firstCurveOfGlyph = false;
@@ -232,8 +233,8 @@ public class TextTool implements ModellingTool
                 // User wants only the curves
                 objects.add(currentGlyphOI);
               }
-              points = new ArrayList<Vec3>();
-              smoothnesses = new ArrayList<Float>();
+              points = new ArrayList<>();
+              smoothnesses = new ArrayList<>();
           } // Segments loop
           pathIterator.next();
         } // Curves loop
@@ -256,9 +257,9 @@ public class TextTool implements ModellingTool
               fullLetterOI.object = TriangleMesh.optimizeMesh(mesh);
               fullLetterOI.clearCachedMeshes();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-              e.printStackTrace();
+              log.atError().setCause(ex).log("Error: {}", ex.getMessage());
             }
           }
           if (type == TextType.Surface)
@@ -287,7 +288,7 @@ public class TextTool implements ModellingTool
     }
     catch (Exception ex)
     {
-      ex.printStackTrace();
+      log.atError().setCause(ex).log("Error: {}", ex.getMessage());
     }
     return objects;
   }
