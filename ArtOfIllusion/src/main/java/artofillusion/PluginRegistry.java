@@ -14,22 +14,22 @@ package artofillusion;
 
 
 
-import java.io.*;
-import java.util.zip.*;
-import java.util.*;
-import java.net.*;
-import java.lang.reflect.*;
-
 import artofillusion.ui.*;
 import artofillusion.util.*;
+import java.io.*;
+import java.lang.reflect.*;
+import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+import java.util.*;
+import java.util.zip.*;
 import javax.xml.parsers.*;
-
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.*;
 
+@Slf4j
 public class PluginRegistry
 {
   private static final ArrayList<ClassLoader> pluginLoaders = new ArrayList<>();
@@ -63,9 +63,7 @@ public class PluginRegistry
       } 
       catch(Throwable tx)
       {
-        String out = "Plugin: " + plugin.getClass().getSimpleName() + " throw: " + tx.getMessage() + " with" + Arrays.toString(tx.getStackTrace());
-        //TODO: Replace with logger...
-        System.out.println(out);
+        log.atInfo().setCause(tx).log("Plugin: {} error due: {}", plugin.getClass().getSimpleName(), tx.getMessage());
         errors.put(plugin.getClass().getSimpleName(), tx);
       }
     });
@@ -102,8 +100,7 @@ public class PluginRegistry
       catch (Exception ex)
       {
         results.add("Error loading plugin file: " + file);
-        System.err.println("*** "+file);
-        ex.printStackTrace(System.err);
+        log.atError().setCause(ex).log("Error loading file: {} due {}", file, ex.getMessage());
       }
     }
     processPlugins(jars,results);
@@ -218,9 +215,7 @@ public class PluginRegistry
     catch(Error | Exception ex)
     {
       results.add(Translate.text("pluginLoadError", jar.file.getName()));
-      
-      System.err.println("*** Exception while initializing plugin " + jar.file.getName() + ":");
-      ex.printStackTrace();
+      log.atError().setCause(ex).log("Plugin from {} initialization error: {}", jar.getFile().getName(), ex.getMessage());
     }
   }
 
@@ -458,6 +453,7 @@ public class PluginRegistry
 
   private static class JarInfo
   {
+    @Getter
     File file;
     String name, version;
     ArrayList<String> imports, plugins, categories, searchpath;
@@ -575,8 +571,7 @@ public class PluginRegistry
       }
       catch (Exception ex)
       {
-        System.err.println("*** Exception while parsing extensions.xml for plugin "+file.getName()+":");
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Error parsing plugin descriptor for {} due {}", file.getName(), ex.getMessage());
         throw new IOException();
       }
     }
