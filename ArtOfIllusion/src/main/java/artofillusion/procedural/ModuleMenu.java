@@ -190,9 +190,9 @@ public class ModuleMenu extends CustomWidget
           {
             newModule = entry.moduleClass.getDeclaredConstructor(argTypes).newInstance(args);
           }
-          catch (Exception ex)
+          catch (ReflectiveOperationException | SecurityException ex)
           {
-            ex.printStackTrace();
+              log.atError().setCause(ex).log("Unable to create module from entry {} {}", entry,  ex.getMessage());
           }
           return;
         }

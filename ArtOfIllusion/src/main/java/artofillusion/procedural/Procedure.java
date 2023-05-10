@@ -13,13 +13,16 @@ package artofillusion.procedural;
 
 import artofillusion.*;
 import artofillusion.math.*;
+import artofillusion.procedural.Module;
 import java.awt.*;
 import java.io.*;
 import java.lang.reflect.*;
+import lombok.extern.slf4j.Slf4j;
 
 /** This represents a procedure for calculating a set of values (typically, the parameters
     for a texture or material). */
 
+@Slf4j
 public class Procedure
 {
   OutputModule output[];
@@ -254,12 +257,12 @@ public class Procedure
       }
     catch (InvocationTargetException ex)
       {
-        ex.getTargetException().printStackTrace();
+        log.atError().setCause(ex.getTargetException()).log("Invocation error: {}", ex.getTargetException().getMessage());
         throw new IOException();
       }
-    catch (Exception ex)
+    catch (IOException | ReflectiveOperationException | SecurityException ex)
       {
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Error creating module: {}", ex.getMessage());
         throw new IOException();
       }
     link = new Link [in.readInt()];
