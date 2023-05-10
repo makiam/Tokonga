@@ -14,17 +14,19 @@ package artofillusion.image;
 
 import artofillusion.*;
 import artofillusion.ui.*;
-import java.awt.*;
-import java.awt.image.*;
-import java.util.*;
-import javax.swing.*;
-import javax.imageio.*;
-import java.io.*;
 import buoy.event.*;
 import buoy.widget.*;
-import java.util.stream.Collectors;
+import java.awt.*;
+import java.awt.image.*;
+import java.io.*;
+import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
+import javax.imageio.*;
+import javax.swing.*;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ImageDetailsDialog extends BDialog
 {
     private WindowWidget parent;
@@ -290,12 +292,11 @@ public class ImageDetailsDialog extends BDialog
                 return;
             }
         }
-        catch (Exception ex)
+        catch (IOException ex)
         {
             setCursor(Cursor.getDefaultCursor());
             new BStandardDialog("", Translate.text("errorExportingImage", im.getName()), BStandardDialog.ERROR).showMessageDialog(this);
-            ex.printStackTrace();
-            return;
+            log.atError().setCause(ex).log("Unable to export image: {} due {}", im.getName(), ex.getMessage());
         }
     }
 
