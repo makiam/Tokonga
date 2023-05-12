@@ -15,11 +15,12 @@ import artofillusion.*;
 import artofillusion.animation.*;
 import artofillusion.math.*;
 import artofillusion.ui.*;
-
 import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class CompoundImplicitObject extends ImplicitObject
 {
   private ArrayList<ImplicitObject> objects;
@@ -514,9 +515,9 @@ public class CompoundImplicitObject extends ImplicitObject
           coords.add(new CoordinateSystem(in));
         }
       }
-      catch (Exception ex)
+      catch (IOException | ReflectiveOperationException  | SecurityException ex)
       {
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Error instantiating keyframe: {}", ex.getMessage());
         throw new InvalidObjectException(ex.getMessage());
       }
     }
