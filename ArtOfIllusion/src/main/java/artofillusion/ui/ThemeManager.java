@@ -475,8 +475,8 @@ public class ThemeManager {
             m.invoke(buttonClass, selectedTheme.buttonProperties);
         } catch (NoSuchMethodException e) {
             // missing method is quite normal - silently ignore
-        } catch (Throwable t) {
-            System.out.println("Error applying Button proterties: " + t);
+        } catch (ReflectiveOperationException | SecurityException ex) {
+            log.atError().setCause(ex).log("Error applying Button properties: {}", ex.getMessage());
         }
     }
 

@@ -11,15 +11,13 @@
 
 package artofillusion.ui;
 
+import artofillusion.*;
+import artofillusion.math.*;
 import buoy.event.*;
-
 import java.awt.*;
 import java.io.*;
-
-import artofillusion.math.*;
-import artofillusion.*;
-
 import javax.imageio.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class displays a set of handles around a selection in a ViewerCanvas.  It processes
@@ -27,7 +25,7 @@ import javax.imageio.*;
  * further processing, most often by an EditingTool.  As the name suggests, this manipulator can
  * display up to nine handles, corresponding to the eight compass points plus center.
  */
-
+@Slf4j
 public class NinePointManipulator extends EventSource implements Manipulator
 {
   private final Image images[];
@@ -76,7 +74,7 @@ public class NinePointManipulator extends EventSource implements Manipulator
     }
     catch (IOException ex)
     {
-      ex.printStackTrace();
+      log.atError().setCause(ex).log("Unable to load icon: {}", ex.getMessage());
     }
     return null;
   }
