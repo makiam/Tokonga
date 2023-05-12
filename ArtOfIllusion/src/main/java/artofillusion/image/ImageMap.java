@@ -1,6 +1,6 @@
 /* Copyright (C) 2001-2002 by Peter Eastman
    Modifications copyright (C) 2017 by Petri Ihalainen
-   Changes copyright (C) 2020-2022 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,13 +17,14 @@ import artofillusion.math.*;
 import java.awt.*;
 import java.io.*;
 import java.util.Date;
+import lombok.extern.slf4j.Slf4j;
 
 /** ImageMap represents an image which can be used for texturing an object.  The number of
 components can range from one (monochrome) to four (ARGB).  It also provides a scaled down
 Image object which can be used to preview the image.
 <p>
 This is an abstract class.  Subclasses implement specific ways of storing images. */
-
+@Slf4j
 public abstract class ImageMap
 {
   protected String imageName   = new String();
@@ -70,9 +71,9 @@ public abstract class ImageMap
         im.setDataCreated(file);
         return im;
       }
-      catch (Exception ex)
+      catch (IOException ex)
       {
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Image load interrupted", ex.getMessage());  
       }
     }
     if (name.endsWith(".svg"))

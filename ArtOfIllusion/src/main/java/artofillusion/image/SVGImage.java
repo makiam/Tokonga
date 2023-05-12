@@ -15,7 +15,6 @@ package artofillusion.image;
 import artofillusion.*;
 import artofillusion.math.*;
 import com.kitfox.svg.*;
-
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
@@ -23,7 +22,9 @@ import java.io.*;
 import java.lang.ref.*;
 import java.net.*;
 import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class SVGImage extends ImageMap
 {
   private final byte xml[];
@@ -131,7 +132,7 @@ public class SVGImage extends ImageMap
         }
         catch (SVGException ex)
         {
-          ex.printStackTrace();
+            log.atError().setCause(ex).log("Errror creating SVG image: {}", ex.getMessage());
           tile = new int[TILE_SIZE*TILE_SIZE];
         }
         tiles.put(key.clone(), new SoftReference<>(tile));
@@ -423,9 +424,9 @@ public class SVGImage extends ImageMap
       preview = new SoftReference<>((BufferedImage)pim);
       return pim;
     }
-    catch(SVGException se)
+    catch(SVGException ex)
     {
-      System.out.println(se);
+      log.atError().setCause(ex).log("Errror creating preview: {}", ex.getMessage());
       return pim; // I wonder....
     }
   }

@@ -12,11 +12,12 @@ package artofillusion.image;
 
 import java.awt.*;
 import java.awt.image.*;
+import lombok.extern.slf4j.Slf4j;
 
 /** This class stores an image, with optional additional floating point values for each pixel.
     It is intended to be extensible, so that as features are added to the renderers, the amount
     of information available for each pixel can grow. */
-
+@Slf4j
 public class ComplexImage
 {
   private Image img;
@@ -95,7 +96,7 @@ public class ComplexImage
       }
       catch (InterruptedException ex)
       {
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Interrupted grabPixels: {}", ex.getMessage());
       }
     }
     return ((intImage[x+y*width]>>(index*8))&0xFF)*(1.0f/255.0f);
