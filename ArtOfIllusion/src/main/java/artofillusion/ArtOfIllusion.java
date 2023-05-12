@@ -239,7 +239,7 @@ public class ArtOfIllusion {
                         try {
                             Thread.sleep(1000); //500 worked ; 250 failed
                         } catch (InterruptedException ex) {
-                            System.out.println(ex);
+                            log.atError().setCause(ex).log("Swing background process interrupted: {}", ex.getMessage());
                         }
 
                         for (EditingWindow window : windows) {
@@ -256,17 +256,17 @@ public class ArtOfIllusion {
                     @Override
                     public void done() {
                         try {
-                            Boolean result = get();
+                            get();
                         } catch (InterruptedException ignore) {
-                        } catch (java.util.concurrent.ExecutionException e) {
-                            String why = null;
-                            Throwable cause = e.getCause();
-                            if (cause != null) {
-                                why = cause.getMessage();
+                        } catch (java.util.concurrent.ExecutionException ex) {
+                            String why;
+                            Throwable cause = ex.getCause();
+                            if (cause == null) {
+                                why = ex.getMessage();
                             } else {
-                                why = e.getMessage();
+                                why = cause.getMessage();
                             }
-                            System.err.println("Error: " + why);
+                            log.atError().setCause(ex).log("Swing background process interrupted: {}", why);
                         }
                     }
                 };

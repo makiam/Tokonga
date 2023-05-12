@@ -20,18 +20,18 @@ import artofillusion.object.*;
 import artofillusion.texture.*;
 import artofillusion.ui.*;
 import artofillusion.util.*;
+import java.beans.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.List;
-import java.util.zip.*;
-import java.beans.*;
 import java.util.stream.Collectors;
+import java.util.zip.*;
+import lombok.extern.slf4j.Slf4j;
 
 
 /** The Scene class describes a collection of objects, arranged relative to each other to
     form a scene, as well as the available textures and materials, environment options, etc. */
-
+@Slf4j
 public class Scene
 {
   private Vector<ObjectInfo> objects;
@@ -1226,7 +1226,7 @@ public class Scene
             con = cls.getConstructor(DataInputStream.class);
             images.addElement((ImageMap) con.newInstance(in));
         }
-        catch (Exception ex)
+        catch (IOException | ReflectiveOperationException | SecurityException ex)
         {
             throw new IOException("Error loading image: "+ex.getMessage());
         }
@@ -1252,9 +1252,9 @@ public class Scene
                 con = cls.getConstructor(DataInputStream.class, Scene.class);
                 materials.addElement((Material) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this));
               }
-            catch (Exception ex)
+            catch (IOException | ReflectiveOperationException | SecurityException ex)
               {
-                ex.printStackTrace();
+                  log.atError().setCause(ex).log("Error loading material: {}", ex.getMessage());
                 if (ex instanceof ClassNotFoundException)
                   errors.add(Translate.text("errorFindingClass", classname));
                 else
@@ -1264,9 +1264,9 @@ public class Scene
                 materials.addElement(m);
               }
           }
-        catch (Exception ex)
+        catch (IOException | ClassNotFoundException ex)
           {
-            ex.printStackTrace();
+            log.atError().setCause(ex).log("Error reading: {}", ex.getMessage());
             throw new IOException();
           }
       }
@@ -1291,9 +1291,9 @@ public class Scene
                 con = cls.getConstructor(DataInputStream.class, Scene.class);
                 textures.addElement((Texture) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this));
               }
-            catch (Exception ex)
+            catch (IOException | SecurityException | ReflectiveOperationException ex)
               {
-                ex.printStackTrace();
+                log.atError().setCause(ex).log("Error loading texture: {}", ex.getMessage());
                 if (ex instanceof ClassNotFoundException)
                   errors.add(Translate.text("errorFindingClass", classname));
                 else
@@ -1303,9 +1303,9 @@ public class Scene
                 textures.addElement(t);
               }
           }
-        catch (Exception ex)
+        catch (IOException | ClassNotFoundException | IllegalArgumentException ex)
           {
-            ex.printStackTrace();
+            log.atError().setCause(ex).log("Error reading: {}", ex.getMessage());
             throw new IOException();
           }
       }
@@ -1367,7 +1367,7 @@ public class Scene
                 con = mapClass.getConstructor(DataInputStream.class, Object3D.class, Texture.class);
                 environMapping = (TextureMapping) con.newInstance(in, new Sphere(1.0, 1.0, 1.0), environTexture);
               }
-            catch (Exception ex)
+            catch (IOException | SecurityException | ReflectiveOperationException ex)
               {
                 throw new IOException();
               }
@@ -1398,9 +1398,9 @@ public class Scene
           XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(data), null, null, loader);
           metadataMap.put(name, decoder.readObject());
         }
-        catch (Exception ex)
+        catch (IOException ex)
         {
-          ex.printStackTrace();
+        log.atError().setCause(ex).log("Metadata reading error: {}", ex.getMessage());
           // Nothing more we can do about it.
         }
       }
@@ -1439,12 +1439,12 @@ public class Scene
                 con = cls.getConstructor(DataInputStream.class, Scene.class);
                 obj = (Object3D) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this);
               }
-            catch (Exception ex)
+            catch (SecurityException | ReflectiveOperationException ex)
               {
-                if (ex instanceof InvocationTargetException)
-                  ((InvocationTargetException) ex).getTargetException().printStackTrace();
-                else
-                  ex.printStackTrace();
+                if (ex instanceof InvocationTargetException) {
+                    log.atError().setCause(ex.getCause()).log("Object reading error: {}", ex.getCause().getMessage());
+                } else
+                  log.atError().setCause(ex).log("Object reading error: {}", ex.getMessage());
                 if (ex instanceof ClassNotFoundException)
                   errors.add(info.getName() + ": " + Translate.text("errorFindingClass", classname));
                 else
@@ -1455,9 +1455,9 @@ public class Scene
               }
             table.put(key, obj);
           }
-        catch (Exception ex)
+        catch (IOException | IllegalArgumentException ex)
           {
-            ex.printStackTrace();
+            log.atError().setCause(ex).log("Object reading error: {}", ex.getMessage());
             throw new IOException();
           }
       }
@@ -1502,9 +1502,9 @@ public class Scene
         if (info.getTracks() == null)
           info.tracks = new Track [0];
       }
-    catch (Exception ex)
+    catch (IOException | ReflectiveOperationException | SecurityException ex)
       {
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Tracks reading error: {}", ex.getMessage());
         throw new IOException();
       }
     return info;
@@ -1518,9 +1518,9 @@ public class Scene
     SafeFileOutputStream safeOut = new SafeFileOutputStream(f, mode);
     BufferedOutputStream bout = new BufferedOutputStream(safeOut);
     bout.write(FILE_PREFIX);
-    DataOutputStream out = new DataOutputStream(new GZIPOutputStream(bout));
-    writeToStream(out);
-    out.close();
+    try (DataOutputStream out = new DataOutputStream(new GZIPOutputStream(bout))) {
+        writeToStream(out);
+    }
   }
 
   /** Write the Scene's representation to an output stream. */
@@ -1625,19 +1625,11 @@ public class Scene
     for (ClassLoader cl : PluginRegistry.getPluginClassLoaders())
       loader.add(cl);
     Thread.currentThread().setContextClassLoader(loader); // So that plugin classes can be saved correctly.
-    ExceptionListener exceptionListener = new ExceptionListener()
-      {
-        @Override
-        public void exceptionThrown(Exception e)
-        {
-          e.printStackTrace();
-        }
-      };
     for (Map.Entry<String, Object> entry : metadataMap.entrySet())
     {
       ByteArrayOutputStream value = new ByteArrayOutputStream();
       XMLEncoder encoder = new XMLEncoder(value);
-      encoder.setExceptionListener(exceptionListener);
+      encoder.setExceptionListener((Exception ex) -> log.atError().setCause(ex).log("Metadata save error: {}", ex.getMessage()));
       encoder.writeObject(entry.getValue());
       encoder.close();
       out.writeUTF(entry.getKey());

@@ -15,17 +15,17 @@ import artofillusion.animation.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
-
 import java.awt.*;
 import java.io.*;
 import java.lang.ref.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /** The UndoRecord class records a series of commands, allowing the user to undo a previous
     action. */
-
+@Slf4j
 public class UndoRecord
 {
   private ArrayList<Integer> command;
@@ -140,7 +140,7 @@ public class UndoRecord
     }
     catch (Exception ex)
     {
-      ex.printStackTrace();
+      log.atError().setCause(ex).log("Unable to load data from cache {}", ex.getMessage());
       return redoRecord;
     }
     for (int i = 0; i < command.size(); i++)
@@ -380,7 +380,7 @@ public class UndoRecord
       }
       out.close();
     }
-    catch (Exception ex)
+    catch (IOException ex)
     {
       // Ignore errors, and just keep the data in memory.
     }

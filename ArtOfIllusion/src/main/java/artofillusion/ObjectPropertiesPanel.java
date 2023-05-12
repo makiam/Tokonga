@@ -11,25 +11,26 @@
 
 package artofillusion;
 
-import buoy.widget.*;
-import buoy.event.*;
-import artofillusion.ui.*;
-import artofillusion.object.*;
-import artofillusion.math.*;
-import artofillusion.texture.*;
 import artofillusion.material.*;
-
-import javax.swing.*;
-import java.util.*;
+import artofillusion.math.*;
+import artofillusion.object.*;
+import artofillusion.texture.*;
+import artofillusion.ui.*;
+import buoy.event.*;
+import buoy.widget.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 import java.util.List;
+import javax.swing.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is a panel which displays information about the currently selected objects, and allows them
  * to be edited.
  */
 
+@Slf4j
 public class ObjectPropertiesPanel extends ColumnContainer
 {
   private LayoutWindow window;
@@ -464,9 +465,9 @@ public class ObjectPropertiesPanel extends ColumnContainer
           scene.addTexture(tex);
           tex.edit(window, scene);
         }
-        catch (Exception ex)
+        catch (ReflectiveOperationException | SecurityException ex)
         {
-          ex.printStackTrace();
+          log.atError().setCause(ex).log("Error changing texture: {}", ex.getMessage());
         }
       }
     }
@@ -516,9 +517,9 @@ public class ObjectPropertiesPanel extends ColumnContainer
         scene.addMaterial(mat);
         mat.edit(window, scene);
       }
-      catch (Exception ex)
+      catch (ReflectiveOperationException | SecurityException ex)
       {
-        ex.printStackTrace();
+          log.atError().setCause(ex).log("Error changing material: {}", ex.getMessage());
       }
     }
     if (noMaterial || mat != null)
