@@ -24,10 +24,11 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.ListCellRenderer;
+import lombok.extern.slf4j.Slf4j;
 
 /** This class presents a user interface for entering scripts to be executed. */
 
+@Slf4j
 public class ExecuteScriptWindow extends BFrame
 {
   private LayoutWindow window;
@@ -267,9 +268,9 @@ public class ExecuteScriptWindow extends BFrame
             Translate.text("unsupportedFileExtension") + " : " + filename}, BStandardDialog.ERROR).showMessageDialog(this);
         }
       }
-      catch (Exception ex)
+      catch (IOException ex)
       {
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Error reading script: {}", ex.getMessage());
         new BStandardDialog(null, new String [] {Translate.text("errorReadingScript"),
           ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(this);
       }
@@ -304,8 +305,9 @@ public class ExecuteScriptWindow extends BFrame
         out.write(scriptWidget.getContent().getText().toCharArray());
         out.close();
       }
-      catch (Exception ex)
+      catch (IOException ex)
       {
+          log.atError().setCause(ex).log("Error writing script: {}", ex.getMessage());
         new BStandardDialog(null, new String [] {Translate.text("errorWritingScript"),
           ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(this);
       }
@@ -344,7 +346,7 @@ public class ExecuteScriptWindow extends BFrame
       out.write(scriptWidget.getContent().getText().toCharArray());
       out.close();
     }
-    catch (Exception ex)
+    catch (IOException ex)
     {
       new BStandardDialog(null, new String [] {Translate.text("errorWritingScript"),
         scriptPath + (ex.getMessage() == null ? "" : ex.getMessage())}, BStandardDialog.ERROR).showMessageDialog(this);

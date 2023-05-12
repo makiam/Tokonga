@@ -17,9 +17,11 @@ import buoy.widget.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /** This class is used for executing scripts. */
 
+@Slf4j
 public class ScriptRunner
 {
   private static SearchlistClassLoader parentLoader;
@@ -84,7 +86,7 @@ public class ScriptRunner
         {
           engine = languageEngine.getConstructor (ClassLoader.class).newInstance(parentLoader);
         }
-        catch (Exception ex)
+        catch (ReflectiveOperationException | SecurityException ex)
         {
           throw new ScriptException ("Could not create a script engine of class " + languageEngine, -1, ex);
         } 
@@ -112,9 +114,9 @@ public class ScriptRunner
     {
       getScriptEngine(language).executeScript(script, variables);
     }
-    catch (ScriptException e)
+    catch (ScriptException ex)
     {
-      System.out.println("Error in line "+e.getLineNumber()+": "+e.getMessage());
+        log.atError().setCause(ex).log("Error in line {}: {}", ex.getLineNumber(), ex.getMessage());
     }
   }
   
@@ -162,7 +164,7 @@ public class ScriptRunner
     }
     catch (Exception ex2)
     {
-      ex2.printStackTrace();
+      log.atError().setCause(ex2).log("Error: {}", ex2.getMessage());
     }
     ArrayList<String> v = new ArrayList<>();
     v.add(head);
