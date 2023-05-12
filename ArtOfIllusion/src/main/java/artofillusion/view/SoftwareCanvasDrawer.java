@@ -13,17 +13,18 @@
 package artofillusion.view;
 
 import artofillusion.*;
-import artofillusion.texture.*;
 import artofillusion.math.*;
+import artofillusion.texture.*;
 import buoy.event.*;
-
 import java.awt.*;
 import java.awt.image.*;
-import java.util.*;
 import java.lang.ref.*;
+import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /** This is a CanvasDrawer which implements a software renderer for generating the contents of a ViewerCanvas. */
 
+@Slf4j
 public class SoftwareCanvasDrawer implements CanvasDrawer
 {
   protected ViewerCanvas view;
@@ -68,7 +69,7 @@ public class SoftwareCanvasDrawer implements CanvasDrawer
     }
     catch (InterruptedException ex)
     {
-      ex.printStackTrace();
+        log.atError().setCause(ex).log("Interrupted: {}", ex.getMessage());
     }
   }
 
@@ -1720,7 +1721,7 @@ public class SoftwareCanvasDrawer implements CanvasDrawer
           tri[index+1] = new UniformTriangle(i+j*width, i+1+(j+1)*width, i+(j+1)*width, 0, 0, 0);
         }
       mesh = new RenderingMesh(vert, norm, tri, null, null);
-      imageMeshMap.put(image, new SoftReference<RenderingMesh>(mesh));
+      imageMeshMap.put(image, new SoftReference<>(mesh));
     }
     else
     {
@@ -1783,7 +1784,7 @@ public class SoftwareCanvasDrawer implements CanvasDrawer
       }
       catch (InterruptedException ex)
       {
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Interrupted: {}", ex.getMessage());
         return null;
       }
     }
@@ -1808,7 +1809,7 @@ public class SoftwareCanvasDrawer implements CanvasDrawer
       }
       catch (InterruptedException ex)
       {
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Interrupted: {}", ex.getMessage());
       }
     }
   }

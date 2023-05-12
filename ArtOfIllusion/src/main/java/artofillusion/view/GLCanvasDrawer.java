@@ -16,22 +16,20 @@ package artofillusion.view;
 import artofillusion.*;
 import artofillusion.math.*;
 import artofillusion.texture.TextureSpec;
-
-import java.awt.*;
-import java.awt.geom.*;
-import java.awt.image.*;
-import java.nio.*;
-import java.util.*;
-import java.lang.ref.*;
-
+import buoy.event.*;
 import com.jogamp.common.nio.*;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.*;
-
-import buoy.event.*;
+import java.awt.*;
+import java.awt.geom.*;
+import java.awt.image.*;
+import java.lang.ref.*;
+import java.nio.*;
+import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /** This is a CanvasDrawer which uses OpenGL to render the contents of a ViewerCanvas. */
-
+@Slf4j
 public class GLCanvasDrawer implements CanvasDrawer
 {
   private ViewerCanvas view;
@@ -87,7 +85,7 @@ public class GLCanvasDrawer implements CanvasDrawer
     }
     catch (InterruptedException ex)
     {
-      ex.printStackTrace();
+      log.atDebug().setCause(ex).log("GLImage Interrupted");
     }
   }
 
@@ -727,7 +725,7 @@ public class GLCanvasDrawer implements CanvasDrawer
       }
       catch (InterruptedException ex)
       {
-        ex.printStackTrace();
+        log.atDebug().setCause(ex).log("GLImage Interrupted");
         return;
       }
       textImageMap.put(text, new SoftReference<>(image));
@@ -746,7 +744,7 @@ public class GLCanvasDrawer implements CanvasDrawer
     }
     catch (InterruptedException ex)
     {
-      ex.printStackTrace();
+      log.atDebug().setCause(ex).log("Draw Cached Image Interrupted");
     }
   }
 
@@ -771,7 +769,7 @@ public class GLCanvasDrawer implements CanvasDrawer
     }
     catch (InterruptedException ex)
     {
-      ex.printStackTrace();
+      log.atDebug().setCause(ex).log("Retrieve cached texture Interrupted");
       return;
     }
     prepareView3D(camera);
