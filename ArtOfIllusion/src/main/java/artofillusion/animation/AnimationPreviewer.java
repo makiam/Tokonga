@@ -22,12 +22,15 @@ import java.awt.image.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.*;
 import java.util.List;
 import javax.imageio.ImageIO;
+import lombok.extern.slf4j.Slf4j;
 
 /** This class generates a wireframe preview of an animation. */
 
+@Slf4j
 public class AnimationPreviewer implements Runnable
 {
   private LayoutWindow window;
@@ -173,7 +176,7 @@ public class AnimationPreviewer implements Runnable
             }
           });
         }
-        catch (Exception ex)
+        catch (InterruptedException | InvocationTargetException ex)
         {
           return;
         }
@@ -206,7 +209,7 @@ public class AnimationPreviewer implements Runnable
           try
           {
             EventQueue.invokeAndWait(new Runnable() {
-                          @Override
+              @Override
               public void run()
               {
                 setLabels(time, frame);
@@ -216,7 +219,7 @@ public class AnimationPreviewer implements Runnable
               }
             });
           }
-          catch (Exception ex)
+          catch (InterruptedException | InvocationTargetException ex)
           {
             return;
           }
@@ -238,7 +241,7 @@ public class AnimationPreviewer implements Runnable
     }
     catch (IOException ex)
     {
-      ex.printStackTrace();
+        log.atError().setCause(ex).log("IO Error: {}", ex.getMessage());
     }
   }
 

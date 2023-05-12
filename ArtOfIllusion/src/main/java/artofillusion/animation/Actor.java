@@ -20,10 +20,12 @@ import artofillusion.ui.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /** An Actor is an object with a set of predefined gestures.  Gestures can be blended in arbitrary
     combinations to form poses. */
 
+@Slf4j
 public class Actor extends ObjectWrapper
 {
   Gesture gesture[];
@@ -437,12 +439,12 @@ public class Actor extends ObjectWrapper
       }
     catch (InvocationTargetException ex)
       {
-        ex.getTargetException().printStackTrace();
+        log.atError().setCause(ex.getCause()).log("Error creating Actor: {}", ex.getCause().getMessage());
         throw new IOException();
       }
-    catch (Exception ex)
+    catch (IOException | ReflectiveOperationException | SecurityException ex)
       {
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Error creating Actor: {}", ex.getMessage());
         throw new IOException();
       }
   }

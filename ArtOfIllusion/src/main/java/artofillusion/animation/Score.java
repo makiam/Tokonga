@@ -16,8 +16,6 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
-
-import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.*;
 import java.text.*;
@@ -26,10 +24,12 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
+import javax.swing.*;
+import lombok.extern.slf4j.Slf4j;
 
 /** This is a Widget which displays all the tracks for objects in a scene, and shows
     where their keyframes are. */
-
+@Slf4j
 public class Score extends BorderContainer implements EditingWindow, PopupMenuManager
 {
   LayoutWindow window;
@@ -1031,9 +1031,9 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
               added.add(newtrack);
             }
       }
-    catch (Exception ex)
+    catch (ReflectiveOperationException ex)
       {
-        ex.printStackTrace();
+          log.atError().setCause(ex).log("Unable to create track: {}", ex.getMessage());
       }
     window.setUndoRecord(undo);
     if (deselectOthers)
