@@ -45,13 +45,13 @@
 
 package artofillusion.util;
 
-import java.util.ArrayList;
-import java.util.Vector;
-import java.util.Hashtable;
+import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
-
-import java.io.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Vector;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *  A class loader which loads classes using a searchlist of
@@ -115,6 +115,7 @@ import java.io.*;
  *  instructions in {@link java.lang.ClassLoader}. While I don't think this is
  *  necessary any longer, it was quite easy to comply with the instructions.
  */
+@Slf4j
 public class SearchlistClassLoader extends ClassLoader
 {
     protected Vector<Loader> list;
@@ -165,14 +166,10 @@ public class SearchlistClassLoader extends ClassLoader
      */
     public void setSearchMode(byte mode)
     {
-	byte prev = searchMode;
 	searchMode = mode;
 
 	if (searchMode <= 0 || searchMode > ORDERED) {
-	    System.out.println("SearchlistClassLoader.setSearchMode: " +
-			       "Invalid search mode: " + mode +
-			       "; defaulting to SHARED.");
-
+            log.atInfo().log("Invalid search mode: {}; defaulting to SHARED", mode);
 	    searchMode = SHARED;
 	}
     }
@@ -226,10 +223,7 @@ public class SearchlistClassLoader extends ClassLoader
      */
     public URL[] getURLs()
     {
-	return (content != null
-		? ((URLClassLoader)  content.loader).getURLs()
-		: EMPTY_URL
-		);
+	return content == null ? EMPTY_URL :  ((URLClassLoader)  content.loader).getURLs();
     }
 
     /**
