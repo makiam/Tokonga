@@ -195,7 +195,7 @@ public class ThemeManager {
               Method m = cls.getMethod("readPropertiesFromXMLNode", Node.class);
                 properties = m.invoke(className, node);
             } catch (ReflectiveOperationException | SecurityException  ex) {
-          log.atError().setCause(ex).log("Unable to invoke method: {}", ex.getMessage());
+                log.atError().setCause(ex).log("Unable to invoke method: {}", ex.getMessage());
             }
 
             // parse the button styles for this theme
@@ -353,7 +353,7 @@ public class ThemeManager {
         try {
             url = Class.forName("artofillusion.ArtOfIllusion").getResource("artofillusion/Icons/iconNotFound.png");
             icon = new ImageIcon(url);
-        } catch (ClassNotFoundException e) {
+        } catch (NullPointerException | ClassNotFoundException e) {
             BufferedImage image = new BufferedImage(16, 16, BufferedImage.TYPE_BYTE_INDEXED);
             Graphics2D graphics = (Graphics2D) image.getGraphics();
             graphics.setColor(new Color(128,128,128));
