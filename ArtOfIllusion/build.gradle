@@ -109,6 +109,9 @@ distributions {
         into("${description}.app/Contents/Resources/Java") { from(configurations.runtimeClasspath).exclude("*windows*").exclude("*linux*").exclude("*android*") }
         into("${description}.app/Contents/Resources/Plugins") { from("${rootDir}/Plugins") }
         into("${description}.app/Contents/Resources/Scripts") { from("../Scripts") }
+        from tasks.createAssetsFolder {
+                includeEmptyDirs = true
+        }
         into("${description}.app/Contents/Resources/Textures And Materials") { from("../Textures And Materials") }
         
     }
