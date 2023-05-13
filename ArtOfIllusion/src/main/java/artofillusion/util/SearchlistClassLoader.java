@@ -6,7 +6,7 @@
  *
  * Author: Nik Trevallyn-Jones, nik777@users.sourceforge.net
  * $Id: Exp $
- * Changes copyright (C) 2017-2018 by Maksim Khramov
+ * Changes copyright (C) 2017-2023 by Maksim Khramov
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
@@ -46,11 +46,13 @@
 package artofillusion.util;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Vector;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -432,8 +434,7 @@ public class SearchlistClassLoader extends ClassLoader
     @Override
     public URL findResource(String path)
     {
-	System.out.println("findResource: looking in " + this + " for " +
-			   path);
+        log.atInfo().log("Looking in {} for {}", this, path);
 
 	URL url = null;
 	Loader ldr;
@@ -442,8 +443,7 @@ public class SearchlistClassLoader extends ClassLoader
 	    url = ldr.loader.getResource(path);
 
 	    if (url != null) {
-		System.out.println("found " + path + " in loader: " +
-				   ldr.loader);
+                log.info("Found {} in loader {}", path, ldr.getLoader());
 
 		break;
 	    }
@@ -466,8 +466,7 @@ public class SearchlistClassLoader extends ClassLoader
     public String findLibrary(String libname)
     {
 	String fileName = System.mapLibraryName(libname);
-	System.out.println("findLibrary: looking in " + this + " for " +
-			   libname + " as " + fileName);
+        log.info("Looking in {} for {} as {}", this, libname, fileName);
 
 	int i, j;
 	URL[] url;
@@ -491,14 +490,12 @@ public class SearchlistClassLoader extends ClassLoader
 			file = new File(dir, fileName);
 
 			if (file.exists()) {
-			    System.out.println("found: " +
-					       file.getAbsolutePath());
+                            log.info("Found: {}", file.getAbsolutePath());
 
 			    return file.getAbsolutePath();
 			}
-		    } catch (Exception e) {
-			System.out.println("Ignoring url: " + url[j] + ": "
-					   + e);
+		    } catch (URISyntaxException e) {
+                        log.atError().setCause(e).log("Ignoring url {} {}", url[j], e.getMessage());
 		    }
 		}
 	    }
@@ -647,6 +644,7 @@ public class SearchlistClassLoader extends ClassLoader
      */
     protected static class Loader
     {
+        @Getter
 	ClassLoader loader = null;		// the actual classloader
 	boolean shared = false;			// shared flag
 

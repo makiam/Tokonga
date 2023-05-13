@@ -556,30 +556,19 @@ public class ThemeManager {
     @Deprecated
     public static ToolButton getToolButton(Object owner, String iconName, String selectedIconName)
     {
-        System.out.println("**Deprecated method called: ThemeManager.getToolButton(Object, String, String)");
-
-        Exception e = new Exception();
-        StackTraceElement[] trace = e.getStackTrace();
+        log.warn("Deprecated method called");
+        StackTraceElement[] trace = Thread.currentThread().getStackTrace();
 
         if (trace.length > 1) {
             StackTraceElement frame = trace[1];
             String name = frame.getClassName();
             int cut = name.lastIndexOf('.');
 
-            System.out.print("\tcalled from ");
-            if (frame.getFileName() != null) {
-                System.out.print(frame.getFileName());
-                System.out.print(':');
-                System.out.print(String.valueOf(frame.getLineNumber()));
+            if (frame.getFileName() == null) {
+                log.atInfo().log("Called from {}.{}() (unknown source)", (cut > 0 ? name.substring(cut + 1) : name), frame.getMethodName());
+            } else {
+                log.atInfo().log("Called from {}:{}", frame.getFileName(), frame.getLineNumber());
             }
-            else {
-                System.out.print(cut > 0 ? name.substring(cut+1) : name);
-                System.out.print('.');
-                System.out.print(frame.getMethodName());
-                System.out.print("() (unknown source)");
-            }
-
-            System.out.println();
         }
 
         return getToolButton(owner, iconName);
@@ -624,8 +613,7 @@ public class ThemeManager {
                 ctor = buttonClass.getConstructor(Object.class, ImageIcon.class, ImageIcon.class);
                 return (ToolButton) ctor.newInstance(owner, new ImageIcon(url), selected);
             } catch (Throwable t) {
-                System.out.println("Could not find a usable Ctor for ToolButton: "
-                                   + buttonClass.getName() + ": " + iconName + "\n\t" + t);
+                log.atError().setCause(t).log("Could not find a usable constructor for ToolButton: {}: {} due {}", buttonClass.getName(), iconName, t.getLocalizedMessage());
             }
         }
 
@@ -637,8 +625,7 @@ public class ThemeManager {
                 ctor = buttonClass.getConstructor(Object.class, ImageIcon.class);
                 return (ToolButton) ctor.newInstance(owner, new ImageIcon(url));
             } catch (Throwable t) {
-                System.out.println("Could not find a usable Ctor for ToolButton: "
-                                   + buttonClass.getName() + ": " + iconName + "\n\t" + t);
+                log.atError().setCause(t).log("Could not find a usable constructor for ToolButton: {}: {} due {}", buttonClass.getName(), iconName, t.getLocalizedMessage());
             }
         }
 
