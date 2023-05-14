@@ -1,4 +1,5 @@
 /* Copyright (C) 2005-2013 by Peter Eastman
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -10,8 +11,9 @@
 
 package artofillusion.util;
 
-import java.util.concurrent.atomic.*;
 import java.util.*;
+import java.util.concurrent.atomic.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class coordinates threads for multi-threaded operations.  The execution model
@@ -26,7 +28,7 @@ import java.util.*;
  * over the desired range.  You may invoke run() any number of times (e.g. once
  * for each row of the image).  Finally, call finish() to clean up the worker threads.
  */
-
+@Slf4j
 public class ThreadManager
 {
   private int numIndices;
@@ -62,7 +64,7 @@ public class ThreadManager
     nextIndex = new AtomicInteger(numIndices);
     controller = new Object();
     controllerWaiting = false;
-    waitingThreads = new HashSet<Thread>();
+    waitingThreads = new HashSet<>();
     maxThreads = -1;
   }
 
@@ -101,7 +103,8 @@ public class ThreadManager
             catch (Exception ex)
             {
               cancel();
-              ex.printStackTrace();
+
+              log.atError().setCause(ex).log("Thrad manager error: {}", ex.getMessage());
             }
           }
         }

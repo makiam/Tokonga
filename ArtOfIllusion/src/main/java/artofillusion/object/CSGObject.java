@@ -20,10 +20,11 @@ import artofillusion.ui.*;
 import java.io.*;
 import java.lang.ref.*;
 import java.lang.reflect.*;
+import lombok.extern.slf4j.Slf4j;
 
 /** A CSGObject is an Object3D that represents the union, intersection, or difference of
     two component objects. */
-
+@Slf4j
 public class CSGObject extends Object3D
 {
   ObjectInfo obj1, obj2;
@@ -259,6 +260,7 @@ public class CSGObject extends Object3D
   }
 
   @Override
+  @SuppressWarnings("ResultOfObjectAllocationIgnored")
   public void edit(EditingWindow parent, ObjectInfo info, Runnable cb)
   {
     new CSGEditorWindow(parent, info.getName(), this, cb);
@@ -377,12 +379,12 @@ public class CSGObject extends Object3D
       }
     catch (InvocationTargetException ex)
       {
-        ex.getTargetException().printStackTrace();
+        log.atError().setCause(ex.getCause()).log("Unable to instantiate CSG Object: {}", ex.getCause().getMessage());
         throw new IOException();
       }
-    catch (Exception ex)
+    catch (IOException | ReflectiveOperationException | SecurityException ex)
       {
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Unable to instantiate CSG Object: {}", ex.getMessage());
         throw new IOException();
       }
     obj1.getObject().setTexture(getTexture(), getTextureMapping());
@@ -688,9 +690,9 @@ public class CSGObject extends Object3D
         con = cl.getConstructor(DataInputStream.class, Object.class);
         key2 = (Keyframe) con.newInstance(in, obj.getObject2().getObject());
       }
-      catch (Exception ex)
+      catch (IOException | ReflectiveOperationException | SecurityException ex)
       {
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Unable to instantiate keyframe: {}", ex.getMessage());
         throw new InvalidObjectException("");
       }
     }

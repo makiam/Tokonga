@@ -18,9 +18,11 @@ import artofillusion.ui.*;
 import buoy.widget.*;
 import java.io.*;
 import java.lang.reflect.*;
+import lombok.extern.slf4j.Slf4j;
 
 /** This is a Track which controls the pose of an object. */
 
+@Slf4j
 public class PoseTrack extends Track
 {
   private ObjectInfo info;
@@ -359,9 +361,9 @@ public class PoseTrack extends Track
                 s[i] = new Smoothness(in);
               }
           }
-        catch (Exception ex)
+        catch (IOException | ReflectiveOperationException | SecurityException ex)
           {
-            ex.printStackTrace();
+            log.atError().setCause(ex).log("Unable to create Pose Track: {}", ex.getMessage());
             throw new InvalidObjectException("");
           }
       }

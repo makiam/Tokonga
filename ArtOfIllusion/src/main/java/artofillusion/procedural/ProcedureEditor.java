@@ -13,6 +13,7 @@ package artofillusion.procedural;
 
 import artofillusion.*;
 import static artofillusion.procedural.IOPort.SIZE;
+import artofillusion.procedural.Module;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
@@ -21,11 +22,12 @@ import java.awt.geom.*;
 import java.io.*;
 import java.util.*;
 import java.util.stream.IntStream;
+import lombok.extern.slf4j.Slf4j;
 
 /** This is the editor for editing procedures.  It subclasses CustomWidget, but you should never
     add it to any Container.  Instead, it will automatically create a BFrame and add itself
     to that. */
-
+@Slf4j
 public class ProcedureEditor extends CustomWidget
 {
   private BFrame parent;
@@ -100,7 +102,7 @@ public class ProcedureEditor extends CustomWidget
     }
     catch (IOException ex)
     {
-      ex.printStackTrace();
+        log.atError().setCause(ex).log("Error save procedure state: {}", ex.getMessage());
     }
 
     // Create the buttons at the top of the window.
@@ -597,7 +599,7 @@ public class ProcedureEditor extends CustomWidget
       }
     catch (IOException ex)
       {
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Error save procedure state: {}", ex.getMessage());
       }
   }
   
@@ -618,7 +620,7 @@ public class ProcedureEditor extends CustomWidget
       }
     catch (IOException ex)
       {
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Error read procedure state: {}", ex.getMessage());
       }
     if (redoStack.size() == ArtOfIllusion.getPreferences().getUndoLevels())
       redoStack.remove(0);
@@ -647,7 +649,7 @@ public class ProcedureEditor extends CustomWidget
       }
     catch (IOException ex)
       {
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Error read procedure state: {}", ex.getMessage());
       }
     if (undoStack.size() == ArtOfIllusion.getPreferences().getUndoLevels())
       undoStack.remove(0);

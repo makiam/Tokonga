@@ -21,9 +21,11 @@ import buoy.widget.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /** This is dialog in which the user can edit the list of filters attached to a camera. */
 
+@Slf4j
 public class CameraFilterDialog extends BDialog implements RenderListener
 {
   private SceneCamera theCamera;
@@ -315,9 +317,9 @@ public class CameraFilterDialog extends BDialog implements RenderListener
         {
           allFiltersList.add(((ImageFilter) filterClasses[i].getDeclaredConstructor().newInstance()).getName());
         }
-        catch (Exception ex)
+        catch (ReflectiveOperationException | SecurityException ex)
         {
-          ex.printStackTrace();
+            log.atError().setCause(ex).log("Error adding filter {}", ex.getMessage());
         }
       }
       rebuildFilterList();
@@ -371,9 +373,9 @@ public class CameraFilterDialog extends BDialog implements RenderListener
         rebuildFilterList();
         cameraFiltersList.setSelected(filters.size()-1, true);
       }
-      catch (Exception ex)
+      catch (ReflectiveOperationException | SecurityException ex)
       {
-        ex.printStackTrace();
+          log.atError().setCause(ex).log("Error adding filter {}", ex.getMessage());
       }
       updateComponents();
       filterChangedCallback.run();

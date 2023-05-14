@@ -18,7 +18,9 @@ import java.awt.image.*;
 import java.io.*;
 import java.util.Date;
 import javax.imageio.*;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ExternalImage extends ImageMap
 {
   private String imageType;
@@ -75,9 +77,9 @@ public class ExternalImage extends ImageMap
     {
       return ImageIO.read(ExternalImage.class.getResource("/artofillusion/image/icons/" + iconName));
     }
-    catch(IOException e)
+    catch(IOException ex)
     {
-      System.out.println(e);
+        log.atError().setCause(ex).log("Icon load error: {}", ex.getMessage());
     }
     return null;
   }

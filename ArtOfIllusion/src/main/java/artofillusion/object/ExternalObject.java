@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2007 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,15 +17,25 @@ import artofillusion.math.*;
 import artofillusion.ui.*;
 import java.io.*;
 import java.util.*;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /** ExternalObject is an Object3D that is stored in a separate file. */
 
+@Slf4j
 public class ExternalObject extends ObjectWrapper
 {
   private File externalFile;
   private int objectId;
   private String objectName;
-  private String loadingError;
+  
+    /**
+     * Get an error message which describes why the object could not be loaded,
+     * or null if it was loaded successfully.
+     */
+    @Getter
+    private String loadingError;
+
   private boolean includeChildren;
 
   /** Create an ExternalObject from a file.
@@ -104,14 +114,6 @@ public class ExternalObject extends ObjectWrapper
     externalFile = file;
   }
 
-  /** Get an error message which describes why the object could not be loaded, or null
-      if it was loaded successfully. */
-
-  public String getLoadingError()
-  {
-    return loadingError;
-  }
-
   /** Reload the external object from its file. */
 
   public void reloadObject()
@@ -147,7 +149,7 @@ public class ExternalObject extends ObjectWrapper
         {
           // Create an ObjectCollection containing the object and all its children.
 
-          ArrayList<ObjectInfo> allObjects = new ArrayList<ObjectInfo>();
+          ArrayList<ObjectInfo> allObjects = new ArrayList<>();
           addObjectsToList(foundObject, allObjects, foundObject.getCoords().toLocal());
           theObject = new ExternalObjectCollection(allObjects);
         }
@@ -155,12 +157,13 @@ public class ExternalObject extends ObjectWrapper
           theObject = foundObject.getObject();
       }
     }
-    catch (Exception ex)
+    catch (IOException ex)
     {
       // If anything goes wrong, use a null object and return an error message.
-
-      ex.printStackTrace();
       loadingError = ex.getMessage();
+      log.atError().setCause(ex).log("Error loading external object: {}", loadingError);
+      
+
     }
   }
 

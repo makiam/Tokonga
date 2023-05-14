@@ -19,9 +19,11 @@ import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import lombok.extern.slf4j.Slf4j;
 
 /** This class implements the dialog box in which the user can watch a scene being rendered. */
-
+@Slf4j
 public class RenderingDialog extends BDialog implements RenderListener
 {
   private CustomWidget canvas;
@@ -349,11 +351,10 @@ public class RenderingDialog extends BDialog implements RenderListener
         }
       });
     }
-    catch (Exception ex)
+    catch (InterruptedException | InvocationTargetException ex)
     {
       // This generally means the thread has been interrupted, which we can just ignore.
-
-      ex.printStackTrace();
+      log.atDebug().setCause(ex).log("Rendering interrupted");
     }
   }
 

@@ -12,6 +12,8 @@
 
 package artofillusion.ui;
 
+import artofillusion.*;
+import artofillusion.math.RGBColor;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -22,20 +24,16 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
-
 import javax.swing.ImageIcon;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
+import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import artofillusion.*;
-import artofillusion.math.RGBColor;
 
 /**
  * This class holds GUI customization information. Customization consists of
@@ -45,6 +43,7 @@ import artofillusion.math.RGBColor;
  * @author François Guillet
  *
  */
+@Slf4j
 public class ThemeManager {
 
 
@@ -195,9 +194,8 @@ public class ThemeManager {
               cls = resource.getClassLoader().loadClass(className);
               Method m = cls.getMethod("readPropertiesFromXMLNode", Node.class);
                 properties = m.invoke(className, node);
-            } catch (NoSuchMethodException ex) {
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (ReflectiveOperationException | SecurityException  ex) {
+                log.atError().setCause(ex).log("Unable to invoke method: {}", ex.getMessage());
             }
 
             // parse the button styles for this theme
@@ -294,9 +292,8 @@ public class ThemeManager {
                 if (name.equalsIgnoreCase("owner")) {
                     try {
                         ownerType = ArtOfIllusion.getClass(value);
-                    } catch (Exception e) {
-                        String msg = e.getMessage();
-                        System.out.println("Unable to identify ButtonStyle.owner: " + (msg != null ? msg : e.toString()));
+                    } catch (ClassNotFoundException ex) {
+                        log.atDebug().setCause(ex).log("Unable to identify ButtonStyle.owner: {}", ex.getMessage());
                     }
                 }
 
@@ -349,14 +346,14 @@ public class ThemeManager {
     /** icon to use if no other icon can be found  */
     private static final ImageIcon notFoundIcon;
 
-    // initialise the ...NotFoundIcon objects
+    // initialize the ...NotFoundIcon objects
     static {
         URL url = null;
         ImageIcon icon = null;
         try {
             url = Class.forName("artofillusion.ArtOfIllusion").getResource("artofillusion/Icons/iconNotFound.png");
             icon = new ImageIcon(url);
-        } catch (Exception e) {
+        } catch (NullPointerException | ClassNotFoundException e) {
             BufferedImage image = new BufferedImage(16, 16, BufferedImage.TYPE_BYTE_INDEXED);
             Graphics2D graphics = (Graphics2D) image.getGraphics();
             graphics.setColor(new Color(128,128,128));
@@ -478,8 +475,8 @@ public class ThemeManager {
             m.invoke(buttonClass, selectedTheme.buttonProperties);
         } catch (NoSuchMethodException e) {
             // missing method is quite normal - silently ignore
-        } catch (Throwable t) {
-            System.out.println("Error applying Button proterties: " + t);
+        } catch (ReflectiveOperationException | SecurityException ex) {
+            log.atError().setCause(ex).log("Error applying Button properties: {}", ex.getMessage());
         }
     }
 
@@ -559,30 +556,19 @@ public class ThemeManager {
     @Deprecated
     public static ToolButton getToolButton(Object owner, String iconName, String selectedIconName)
     {
-        System.out.println("**Deprecated method called: ThemeManager.getToolButton(Object, String, String)");
-
-        Exception e = new Exception();
-        StackTraceElement[] trace = e.getStackTrace();
+        log.warn("Deprecated method called");
+        StackTraceElement[] trace = Thread.currentThread().getStackTrace();
 
         if (trace.length > 1) {
             StackTraceElement frame = trace[1];
             String name = frame.getClassName();
             int cut = name.lastIndexOf('.');
 
-            System.out.print("\tcalled from ");
-            if (frame.getFileName() != null) {
-                System.out.print(frame.getFileName());
-                System.out.print(':');
-                System.out.print(String.valueOf(frame.getLineNumber()));
+            if (frame.getFileName() == null) {
+                log.atInfo().log("Called from {}.{}() (unknown source)", (cut > 0 ? name.substring(cut + 1) : name), frame.getMethodName());
+            } else {
+                log.atInfo().log("Called from {}:{}", frame.getFileName(), frame.getLineNumber());
             }
-            else {
-                System.out.print(cut > 0 ? name.substring(cut+1) : name);
-                System.out.print('.');
-                System.out.print(frame.getMethodName());
-                System.out.print("() (unknown source)");
-            }
-
-            System.out.println();
         }
 
         return getToolButton(owner, iconName);
@@ -627,8 +613,7 @@ public class ThemeManager {
                 ctor = buttonClass.getConstructor(Object.class, ImageIcon.class, ImageIcon.class);
                 return (ToolButton) ctor.newInstance(owner, new ImageIcon(url), selected);
             } catch (Throwable t) {
-                System.out.println("Could not find a usable Ctor for ToolButton: "
-                                   + buttonClass.getName() + ": " + iconName + "\n\t" + t);
+                log.atError().setCause(t).log("Could not find a usable constructor for ToolButton: {}: {} due {}", buttonClass.getName(), iconName, t.getLocalizedMessage());
             }
         }
 
@@ -640,8 +625,7 @@ public class ThemeManager {
                 ctor = buttonClass.getConstructor(Object.class, ImageIcon.class);
                 return (ToolButton) ctor.newInstance(owner, new ImageIcon(url));
             } catch (Throwable t) {
-                System.out.println("Could not find a usable Ctor for ToolButton: "
-                                   + buttonClass.getName() + ": " + iconName + "\n\t" + t);
+                log.atError().setCause(t).log("Could not find a usable constructor for ToolButton: {}: {} due {}", buttonClass.getName(), iconName, t.getLocalizedMessage());
             }
         }
 
@@ -730,9 +714,9 @@ public class ThemeManager {
           ThemeInfo themeInfo = new ThemeInfo(resources.get(i));
           list.add(themeInfo);
         }
-        catch (Exception ex)
+        catch (IOException | ParserConfigurationException | SAXException ex)
         {
-          ex.printStackTrace();
+          log.atError().setCause(ex).log("Unable to init themes: {}", ex.getMessage());
         }
       }
       themeList = list.toArray(new ThemeInfo[list.size()]);

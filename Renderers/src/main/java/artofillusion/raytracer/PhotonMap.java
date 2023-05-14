@@ -10,11 +10,10 @@
 
 package artofillusion.raytracer;
 
-import artofillusion.math.*;
 import artofillusion.material.*;
+import artofillusion.math.*;
 import artofillusion.texture.*;
 import artofillusion.util.*;
-
 import java.util.*;
 
 /** This class is a three dimensional data structure containing the photons in a scene.  The map can
@@ -1038,6 +1037,7 @@ public class PhotonMap
       pmc.nearbyPhotons.addPhoton(p, dist2);
   }
 
+  //TODO Delete unused method
   private void validateTree(int pos)
   {
     int child1 = 2*pos+1, child2 = 2*pos+2;

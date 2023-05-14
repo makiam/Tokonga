@@ -12,18 +12,20 @@
 package artofillusion.object;
 
 import artofillusion.*;
-import artofillusion.view.*;
 import artofillusion.animation.*;
 import artofillusion.material.*;
 import artofillusion.math.*;
 import artofillusion.texture.*;
 import artofillusion.ui.*;
+import artofillusion.view.*;
 import buoy.widget.*;
 import java.io.*;
 import java.lang.reflect.*;
+import lombok.extern.slf4j.Slf4j;
 
 /** Object3D is the abstract superclass of any object which can be placed into a Scene. */
 
+@Slf4j
 public abstract class Object3D
 {
   protected Texture theTexture;
@@ -470,7 +472,7 @@ public abstract class Object3D
           theMaterial = theScene.getMaterial(materialIndex);
           setMaterial(theMaterial, (MaterialMapping) con.newInstance(in, this, theMaterial));
         }
-      catch (Exception ex)
+      catch (IOException | ReflectiveOperationException | SecurityException ex)
         {
           throw new IOException(ex.getMessage());
         }
@@ -486,9 +488,9 @@ public abstract class Object3D
           theTexture = theScene.getTexture(textureIndex);
           setTexture(theTexture, (TextureMapping) con.newInstance(in, this, theTexture));
         }
-      catch (Exception ex)
+      catch (IOException | ReflectiveOperationException | SecurityException ex)
         {
-          ex.printStackTrace();
+            log.atError().setCause(ex).log("Error creating Object3D instance: {}", ex.getMessage());
           throw new IOException(ex.getMessage());
         }
     }
@@ -518,9 +520,9 @@ public abstract class Object3D
       Constructor<?> con = valueClass.getConstructor(DataInputStream.class);
       return (ParameterValue) con.newInstance(in);
     }
-    catch (Exception ex)
+    catch (IOException | ReflectiveOperationException | SecurityException ex)
     {
-      ex.printStackTrace();
+      log.atError().setCause(ex).log("Error creating parameter value: {}", ex.getMessage());
       throw new IOException(ex.getMessage());
     }
   }

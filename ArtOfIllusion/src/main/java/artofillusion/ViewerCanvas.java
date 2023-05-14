@@ -18,7 +18,6 @@ import artofillusion.ui.*;
 import artofillusion.view.*;
 import buoy.event.*;
 import buoy.widget.*;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
@@ -26,12 +25,13 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 import java.util.List;
-
 import javax.swing.Timer;
+import lombok.extern.slf4j.Slf4j;
 
 /** ViewerCanvas is the abstract superclass of all components which display objects, and allow
     the user to manipulate them with EditingTools. */
 
+@Slf4j
 public abstract class ViewerCanvas extends CustomWidget
 {
   protected Camera theCamera;
@@ -73,10 +73,9 @@ public abstract class ViewerCanvas extends CustomWidget
       Class.forName("com.jogamp.opengl.awt.GLCanvas");
       openGLAvailable = true;
     }
-    catch (Throwable t)
+    catch (ClassNotFoundException t)
     {
-      System.out.println("Error loading GLCanvas class: "+t);
-      System.out.println("java.library.path: "+System.getProperty("java.library.path"));
+      log.atError().setCause(t).log("Error loading GLCanvas class: {} from java.library.path: {}", t.getMessage(), System.getProperty("java.library.path"));
     }
   }
 
@@ -145,7 +144,7 @@ public abstract class ViewerCanvas extends CustomWidget
       }
       catch (Throwable t)
       {
-        System.out.println("Error creating GLCanvasDrawer: "+t);
+        log.atError().setCause(t).log("Error creating GLCanvasDrawer: {}", t);
         openGLAvailable = false;
       }
     }

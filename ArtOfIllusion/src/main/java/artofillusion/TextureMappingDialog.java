@@ -21,11 +21,12 @@ import java.awt.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /** This class implements the dialog box which is used to choose texture mappings for objects.
     It presents a list of all mappings which can be used with the current object and material,
     and allows the user to select one. */
-
+@Slf4j
 public class TextureMappingDialog extends BDialog
 {
   private FormContainer content;
@@ -127,7 +128,7 @@ public class TextureMappingDialog extends BDialog
     }
     catch (ReflectiveOperationException | IllegalArgumentException | SecurityException ex)
     {
-      ex.printStackTrace();
+        log.atError().setCause(ex).log("Unable to change mapping: {}", ex.getMessage());
     }
   }
 

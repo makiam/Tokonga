@@ -1,5 +1,5 @@
 /* Copyright (C) 2007 by François Guillet
-   Changes copyright (C) 2017-2018 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -14,9 +14,9 @@ package artofillusion.ui;
 import artofillusion.util.IconGenerator;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import javax.swing.ImageIcon;
-
 import java.util.HashMap;
+import javax.swing.ImageIcon;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This ToolButton is the classic button with one icon for standard representation
@@ -25,6 +25,7 @@ import java.util.HashMap;
  * @author Francois Guillet
  *
  */
+@Slf4j
 public class DefaultToolButton extends ToolButton
 {
     protected Image icon;
@@ -59,8 +60,8 @@ public class DefaultToolButton extends ToolButton
             try {
                 icon = applyStyle(bstyle, "normal", owner, image);
                 selectedIcon = applyStyle(bstyle, "selected", owner, image);
-            } catch (Exception e) {
-                System.out.println("Applying style: " + e);
+            } catch (Exception ex) {
+                log.atError().setCause(ex).log("Applyingg style failed: {}", ex.getMessage());
             }
         }
 
@@ -140,8 +141,7 @@ public class DefaultToolButton extends ToolButton
    *
    *  @return the generated icon.
    */
-  public Image applyStyle(ThemeManager.ButtonStyle style, String type, Object owner, ImageIcon image)
-          throws Exception
+  public Image applyStyle(ThemeManager.ButtonStyle style, String type, Object owner, ImageIcon image) throws Exception
   {
       // can default the macro from other attributes
       String macro = style.attributes.get(type + ".icon");
@@ -169,7 +169,7 @@ public class DefaultToolButton extends ToolButton
       // we're still here, so apply the style...
 
       // initialise the namespace
-      HashMap<String, Object> namespace = new HashMap<String, Object>(style.attributes);
+      HashMap<String, Object> namespace = new HashMap<>(style.attributes);
 
       if (image != null) {
           Image img = image.getImage();

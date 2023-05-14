@@ -19,11 +19,12 @@ import buoy.widget.*;
 import java.awt.Insets;
 import java.lang.reflect.*;
 import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /** This class implements the dialog box which is used to choose material mappings for objects.
     It presents a list of all mappings which can be used with the current object and material,
     and allows the user to select one. */
-
+@Slf4j
 public class MaterialMappingDialog extends BDialog
 {
   private Object3D obj;
@@ -108,9 +109,9 @@ public class MaterialMappingDialog extends BDialog
       pack();
       preview.render();
     }
-    catch (ReflectiveOperationException | IllegalArgumentException | SecurityException ex)
+    catch (ReflectiveOperationException | SecurityException ex)
     {
-      ex.printStackTrace();
+        log.atError().setCause(ex).log("Unable to change material mapping: {}", ex.getMessage());
     }
   }
 

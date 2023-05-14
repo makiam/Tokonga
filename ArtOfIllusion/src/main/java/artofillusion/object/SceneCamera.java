@@ -20,10 +20,11 @@ import artofillusion.math.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
 import java.io.*;
+import lombok.extern.slf4j.Slf4j;
 
 /** SceneCamera is a type of Object3D.  It represents a camera which the user can position
     within a scene.  It should not be confused with the Camera class. */
-
+@Slf4j
 public class SceneCamera extends Object3D
 {
   private double fov, depthOfField, focalDist;
@@ -538,9 +539,9 @@ public class SceneCamera extends Object3D
           filter[i].initFromStream(in, theScene);
         }
       }
-      catch (Exception ex)
+      catch (IOException | ReflectiveOperationException | SecurityException ex)
       {
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Unable to instantiate SceneCamera {}", ex.getMessage());
         throw new IOException();
       }
     }

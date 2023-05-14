@@ -17,15 +17,15 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
-
 import java.awt.*;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /** This class implements the dialog box which is used to choose textures for objects.
     It presents a list of all available textures from which the user can select one.
     If only one object is being editing, it also allows the user to edit the texture mapping
     for that object. */
-
+@Slf4j
 public class ObjectTextureDialog extends BDialog implements ListChangeListener
 {
   private LayoutWindow window;
@@ -498,9 +498,9 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener
         textureSelectionChanged(new SelectionChangedEvent(texList));
       }
     }
-    catch (Exception ex)
+    catch (ReflectiveOperationException | SecurityException ex)
     {
-      ex.printStackTrace();
+        log.atError().setCause(ex).log("Unable to create texture: {}", ex.getMessage());
     }
   }
 
@@ -527,9 +527,9 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener
       matList.setSelected(scene.indexOf(mat), true);
       materialSelectionChanged();
     }
-    catch (Exception ex)
+    catch (ReflectiveOperationException | SecurityException ex)
     {
-      ex.printStackTrace();
+        log.atError().setCause(ex).log("Unable to create material: {}", ex.getMessage());
     }
   }
 

@@ -1,4 +1,5 @@
 /* Copyright (C) 2023 by Lucas Stanek
+ * Changes copyright 2023 by Maksim Khramov
  *
  *This program is free software; you can redistribute it and/or
  *modify it under the terms of the GNU General Public License
@@ -18,7 +19,8 @@
 package artofillusion.script;
 
 import buoy.widget.*;
-
+import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.Gutter;
 
@@ -31,27 +33,26 @@ import org.fife.ui.rtextarea.Gutter;
  * size. Saving, loading, and evaluation of the scripts should be
  * handled by the calling code.
  */
-
+@Slf4j
 public class ScriptEditingWidget extends BScrollPane
 {
   public ScriptEditingWidget(String script)
   {
     super(new RSTextArea(script, 25, 100), SCROLLBAR_AS_NEEDED, SCROLLBAR_ALWAYS);
-
-    setRowHeader(new AWTWidget(new Gutter(getContent().getComponent())));
+    RSyntaxTextArea rsta = getContent().getComponent();
+    setRowHeader(new AWTWidget(new Gutter(rsta)));
 
     try{
-      Theme theme = Theme.load(ScriptEditingWidget.class
-          .getResourceAsStream("/scriptEditorTheme.xml"));
-      theme.apply(getContent().getComponent());
-    } catch (Exception e)
+      Theme theme = Theme.load(ScriptEditingWidget.class.getResourceAsStream("/scriptEditorTheme.xml"));
+      theme.apply(rsta);
+    } catch (IOException ex)
     {
       //shouldn't happen unless we are pointing at a non-existant file
-      e.printStackTrace();
+      log.atError().setCause(ex).log("Unable to load Editor theme: {}", ex.getMessage());
     }
 
-    getContent().getComponent().setAnimateBracketMatching(false);
-    getContent().getComponent().setTabSize(2);
+    rsta.setAnimateBracketMatching(false);
+    rsta.setTabSize(2);
   }
 
   //TODO: migrate to constant, rather than string
@@ -62,6 +63,7 @@ public class ScriptEditingWidget extends BScrollPane
                                    : SyntaxConstants.SYNTAX_STYLE_JAVA);
   }
 
+  @Override
   public RSTextArea getContent()
   {
     return (RSTextArea) super.getContent();
@@ -74,16 +76,19 @@ public class ScriptEditingWidget extends BScrollPane
       super(contents, rows, columns);
     }
 
+    @Override
     protected RSyntaxTextArea createComponent()
     {
       return new RSyntaxTextArea();
     }
 
+    @Override
     public RSyntaxTextArea getComponent()
     {
       return (RSyntaxTextArea) component;
     }
 
+    @Override
     public void setBackground(java.awt.Color color)
     {
       getComponent().setBackground(color);

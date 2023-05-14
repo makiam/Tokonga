@@ -6,7 +6,7 @@
  *
  * Author: Nik Trevallyn-Jones, nik777@users.sourceforge.net
  * $Id: Exp $
- * Changes copyright (C) 2017-2018 by Maksim Khramov
+ * Changes copyright (C) 2017-2023 by Maksim Khramov
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
@@ -45,13 +45,15 @@
 
 package artofillusion.util;
 
-import java.util.ArrayList;
-import java.util.Vector;
-import java.util.Hashtable;
+import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-
-import java.io.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Vector;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *  A class loader which loads classes using a searchlist of
@@ -115,6 +117,7 @@ import java.io.*;
  *  instructions in {@link java.lang.ClassLoader}. While I don't think this is
  *  necessary any longer, it was quite easy to comply with the instructions.
  */
+@Slf4j
 public class SearchlistClassLoader extends ClassLoader
 {
     protected Vector<Loader> list;
@@ -165,14 +168,10 @@ public class SearchlistClassLoader extends ClassLoader
      */
     public void setSearchMode(byte mode)
     {
-	byte prev = searchMode;
 	searchMode = mode;
 
 	if (searchMode <= 0 || searchMode > ORDERED) {
-	    System.out.println("SearchlistClassLoader.setSearchMode: " +
-			       "Invalid search mode: " + mode +
-			       "; defaulting to SHARED.");
-
+            log.atInfo().log("Invalid search mode: {}; defaulting to SHARED", mode);
 	    searchMode = SHARED;
 	}
     }
@@ -226,10 +225,7 @@ public class SearchlistClassLoader extends ClassLoader
      */
     public URL[] getURLs()
     {
-	return (content != null
-		? ((URLClassLoader)  content.loader).getURLs()
-		: EMPTY_URL
-		);
+	return content == null ? EMPTY_URL :  ((URLClassLoader)  content.loader).getURLs();
     }
 
     /**
@@ -438,8 +434,7 @@ public class SearchlistClassLoader extends ClassLoader
     @Override
     public URL findResource(String path)
     {
-	System.out.println("findResource: looking in " + this + " for " +
-			   path);
+        log.atInfo().log("Looking in {} for {}", this, path);
 
 	URL url = null;
 	Loader ldr;
@@ -448,8 +443,7 @@ public class SearchlistClassLoader extends ClassLoader
 	    url = ldr.loader.getResource(path);
 
 	    if (url != null) {
-		System.out.println("found " + path + " in loader: " +
-				   ldr.loader);
+                log.info("Found {} in loader {}", path, ldr.getLoader());
 
 		break;
 	    }
@@ -472,8 +466,7 @@ public class SearchlistClassLoader extends ClassLoader
     public String findLibrary(String libname)
     {
 	String fileName = System.mapLibraryName(libname);
-	System.out.println("findLibrary: looking in " + this + " for " +
-			   libname + " as " + fileName);
+        log.info("Looking in {} for {} as {}", this, libname, fileName);
 
 	int i, j;
 	URL[] url;
@@ -497,14 +490,12 @@ public class SearchlistClassLoader extends ClassLoader
 			file = new File(dir, fileName);
 
 			if (file.exists()) {
-			    System.out.println("found: " +
-					       file.getAbsolutePath());
+                            log.info("Found: {}", file.getAbsolutePath());
 
 			    return file.getAbsolutePath();
 			}
-		    } catch (Exception e) {
-			System.out.println("Ignoring url: " + url[j] + ": "
-					   + e);
+		    } catch (URISyntaxException e) {
+                        log.atError().setCause(e).log("Ignoring url {} {}", url[j], e.getMessage());
 		    }
 		}
 	    }
@@ -653,6 +644,7 @@ public class SearchlistClassLoader extends ClassLoader
      */
     protected static class Loader
     {
+        @Getter
 	ClassLoader loader = null;		// the actual classloader
 	boolean shared = false;			// shared flag
 

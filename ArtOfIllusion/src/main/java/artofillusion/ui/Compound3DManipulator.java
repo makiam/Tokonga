@@ -12,15 +12,15 @@
 
 package artofillusion.ui;
 
-import buoy.event.*;
 import artofillusion.*;
 import artofillusion.math.*;
 import artofillusion.object.SceneCamera;
-
-import javax.imageio.*;
+import buoy.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import javax.imageio.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class displays a set of curves and handles around a selection in a ViewerCanvas.  It processes
@@ -28,7 +28,7 @@ import java.io.*;
  * further processing, most often by an EditingTool.  It presents a composite user interface
  * for performing moving, scaling, and rotating operations.
  */
-
+@Slf4j
 public class Compound3DManipulator extends EventSource implements Manipulator
 {
   private Rectangle bounds;
@@ -138,7 +138,7 @@ public class Compound3DManipulator extends EventSource implements Manipulator
     }
     catch (IOException ex)
     {
-      ex.printStackTrace();
+      log.atError().setCause(ex).log("Unable to load icon: {}", ex.getMessage());
     }
     return null;
   }

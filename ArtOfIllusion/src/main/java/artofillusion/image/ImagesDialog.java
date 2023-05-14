@@ -17,17 +17,19 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
-import java.awt.image.*;
 import java.awt.event.*;
+import java.awt.image.*;
 import java.io.*;
+import static java.lang.Math.*;
 import java.util.*;
 import javax.imageio.*;
 import javax.swing.*;
 import javax.swing.Timer;
-import static java.lang.Math.*;
+import lombok.extern.slf4j.Slf4j;
 
 /** ImagesDialog is a dialog box for editing the list of ImageMaps used in a scene. */
 
+@Slf4j
 public class ImagesDialog extends BDialog
 {
   private Scene theScene;
@@ -173,11 +175,11 @@ public class ImagesDialog extends BDialog
       {
         theScene.addImage(new ExternalImage(file, theScene));
       }
-      catch (Exception ex)
+      catch (InterruptedException ex)
       {
         setCursor(Cursor.getDefaultCursor());
         new BStandardDialog("", Translate.text("errorLoadingImage", file.getName()), BStandardDialog.ERROR).showMessageDialog(this);
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Image load interrupted", ex.getMessage());
         return;
       }
     }
@@ -205,7 +207,7 @@ public class ImagesDialog extends BDialog
       catch (Exception ex)
       {
         new BStandardDialog("", Translate.text("errorLoadingImage", file.getName()), BStandardDialog.ERROR).showMessageDialog(this);
-        ex.printStackTrace();
+        log.atError().setCause(ex).log("Image load interrupted", ex.getMessage());
         setCursor(Cursor.getDefaultCursor());
         
         // Return if any of the files can not be loaded. 
@@ -270,6 +272,7 @@ public class ImagesDialog extends BDialog
     ic.resized();
   }
 
+  @SuppressWarnings("ResultOfObjectAllocationIgnored")
   private void openDetailsDialog()
   {
     File oldFile = getSelection().getFile();
@@ -286,9 +289,9 @@ public class ImagesDialog extends BDialog
     {
       return ImageIO.read(ExternalImage.class.getResource("/artofillusion/image/icons/" + iconName));
     }
-    catch(IOException e)
+    catch(IOException ex)
     {
-        System.out.println(e);
+        log.atError().setCause(ex).log("Icon load error: {}", ex.getMessage());
     }
     return null;
   }

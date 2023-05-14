@@ -15,18 +15,17 @@ import artofillusion.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
-
-
+import ch.randelshofer.media.quicktime.QuickTimeWriter;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import java.text.*;
 import javax.imageio.*;
 import javax.imageio.stream.*;
-import ch.randelshofer.media.quicktime.QuickTimeWriter;
+import lombok.extern.slf4j.Slf4j;
 
 /** This class is used to save rendered images to disk. */
-
+@Slf4j
 public class ImageSaver
 {
   private int format, index;
@@ -219,9 +218,9 @@ public class ImageSaver
         img = new ComplexImage(premultiplyTransparency(img.getImage()));
       return saveImage(img, new File(directory, filename), format, (int) quality);
     }
-    catch (Exception ex)
+    catch (IOException | InterruptedException ex)
     {
-      ex.printStackTrace();
+      log.atError().setCause(ex).log("Errror saving image: {}", ex.getMessage());
       new BStandardDialog("", Translate.text("errorSavingFile", ex.getMessage() == null ? "" : ex.getMessage()), BStandardDialog.ERROR).showMessageDialog(parent);
     }
     return false;

@@ -23,19 +23,19 @@
 
 package artofillusion.util;
 
-import java.util.*;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
-
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.Color;
-import java.awt.AlphaComposite;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
+import java.util.*;
 import javax.swing.ImageIcon;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -146,7 +146,7 @@ import javax.swing.ImageIcon;
  *
  *</pre>
  */
-
+@Slf4j
 public class IconGenerator
 {
     public static final byte FEATHER_OUT_DIR	= 0x1;
@@ -723,7 +723,7 @@ public class IconGenerator
      */
     public static void overlay(BufferedImage image, int alpha, int red, int green, int blue, Rectangle clip)
     {
-        System.out.println("overlay: a=" + alpha + "; r=" + red + "; g=" + green + "; b=" + blue);
+        log.info("Overlay: a= {}; r={}; g={}; b={}", alpha, red, green, blue);
 
         int x = (clip != null ? clip.x : 0);
         int y = (clip != null ? clip.y : 0);
