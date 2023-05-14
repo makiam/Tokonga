@@ -1,4 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -10,9 +11,11 @@
 
 package artofillusion.ui;
 
+import artofillusion.ArtOfIllusion;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
+import java.util.Optional;
 
 /** A ComponentsDialog is a modal dialog containing a line of text, and one or more Widgets
     for the user to edit.  Each Widget has a label next to it.  At the bottom are two
@@ -20,9 +23,10 @@ import java.awt.*;
    
 public class ComponentsDialog extends BDialog
 {
-  private Widget comp[];
+  private Widget[] comp;
   private boolean ok;
-  private Runnable okCallback, cancelCallback;
+  private Optional<Runnable> okCallback = Optional.empty();
+  private Optional<Runnable> cancelCallback = Optional.empty();
   private BButton okButton, cancelButton;
 
   /** Create a modal dialog containing a set of labeled components.
@@ -33,7 +37,7 @@ public class ComponentsDialog extends BDialog
       @param labels       the list of labels for each component
   */
 
-  public ComponentsDialog(WindowWidget parent, String prompt, Widget components[], String labels[])
+  public ComponentsDialog(WindowWidget parent, String prompt, Widget[] components, String[] labels)
   {
     this(parent, prompt, components, labels, null, null);
   }
@@ -48,12 +52,13 @@ public class ComponentsDialog extends BDialog
       @param onCancel     a callback to execute when the user clicks Cancel
   */
 
-  public ComponentsDialog(WindowWidget parent, String prompt, Widget components[], String labels[], Runnable onOK, Runnable onCancel)
+  public ComponentsDialog(WindowWidget parent, String prompt, Widget[] components, String[] labels, Runnable onOK, Runnable onCancel)
   {
     super(parent, (onOK == null && onCancel == null));
+    this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
     comp = components;
-    okCallback = onOK;
-    cancelCallback = onCancel;
+    okCallback = Optional.ofNullable(onOK);
+    cancelCallback = Optional.ofNullable(onCancel);
     BorderContainer content = new BorderContainer();
     setContent(content);
     content.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(10, 10, 10, 10), null));
@@ -114,24 +119,19 @@ public class ComponentsDialog extends BDialog
 
   private void buttonPressed(CommandEvent e)
   {
-    String command = e.getActionCommand();
 
-    if (command.equals("cancel"))
-      ok = false;
-    else
-      ok = true;
+    ok = !e.getActionCommand().equals("cancel");
     closeWindow();
   }
   
   private void closeWindow()
   {
-    if (ok && okCallback != null)
-      okCallback.run();
-    if (!ok && cancelCallback != null)
-      cancelCallback.run();
+    if (ok) okCallback.ifPresent(action -> action.run());
+    if (!ok) cancelCallback.ifPresent(action -> action.run());
     dispose();
-    for (int i = 0; i < comp.length; i++)
-      comp[i].removeEventLink(KeyPressedEvent.class, this);
+    for (Widget cc : comp) {
+        cc.removeEventLink(KeyPressedEvent.class, this);
+    }
   }
     
   /** Pressing Return and Escape are equivalent to clicking OK and Cancel. */
