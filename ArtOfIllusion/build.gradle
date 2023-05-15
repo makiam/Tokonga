@@ -110,7 +110,8 @@ distributions {
         into("${description}.app/Contents/Resources/Plugins") { from("${rootDir}/Plugins") }
         into("${description}.app/Contents/Resources/Scripts") { from("../Scripts") }
         from tasks.createAssetsFolder {
-                includeEmptyDirs = true
+            into("${description}.app/Contents/Resources")
+            includeEmptyDirs = true
         }
         into("${description}.app/Contents/Resources/Textures And Materials") { from("../Textures And Materials") }
         
