@@ -16,6 +16,7 @@ import artofillusion.ui.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,7 +40,8 @@ public class ApplicationPreferences
 
   @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
   private final List<PropertyChangeListener> subscribers = new ArrayList<>();
-    /** Load the preferences from an InputStream. */
+
+
   /**
    * Create a new ApplicationPreferences object, loading the preferences from a
    * file in the default location.
@@ -63,7 +65,7 @@ public class ApplicationPreferences
       Translate.setLocale(Locale.getDefault());
       return;
     }
-    try (InputStream in = new BufferedInputStream(new FileInputStream(f))) {
+    try (InputStream in = new BufferedInputStream(Files.newInputStream(f.toPath()))) {
         properties = new Properties();
         properties.load(in);
         parsePreferences();
@@ -89,7 +91,7 @@ public class ApplicationPreferences
     // Write the preferences to a file.
 
     File f = new File(getPreferencesDirectory(), "aoiprefs");
-    try(OutputStream out = new BufferedOutputStream(new FileOutputStream(f)))
+    try(OutputStream out = new BufferedOutputStream(Files.newOutputStream(f.toPath())))
     {
       properties.store(out, "Art of Illusion Preferences File");
     }
@@ -204,7 +206,7 @@ public class ApplicationPreferences
   {
     try
     {
-      return Double.valueOf(properties.getProperty(name));
+      return Double.parseDouble(properties.getProperty(name));
     }
     catch (Exception ex)
     {
@@ -219,7 +221,7 @@ public class ApplicationPreferences
     String prop = properties.getProperty(name);
     if (prop == null)
       return defaultVal;
-    return Boolean.valueOf(prop);
+    return Boolean.parseBoolean(prop);
   }
 
   /** Parse a property specifying a locale. */
