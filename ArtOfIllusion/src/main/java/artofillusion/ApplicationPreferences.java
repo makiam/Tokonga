@@ -25,21 +25,21 @@ import lombok.extern.slf4j.Slf4j;
 public class ApplicationPreferences
 {
   private static final String userHome = System.getProperty("user.home");
-  
+
   private Properties properties;
   private int defaultDisplayMode, undoLevels;
-  
+
   private double interactiveSurfaceError;
   private double maxAnimationDuration;
   private double animationFrameRate;
-  
+
   private boolean keepBackupFiles, useOpenGL, useCompoundMeshTool, reverseZooming, useViewAnimations;
   private boolean drawActiveFrustum, drawCameraFrustum, showTravelCuesOnIdle, showTravelCuesScrolling, showTiltDial;
   private Renderer objectPreviewRenderer, texturePreviewRenderer, defaultRenderer;
 
   @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
   private final List<PropertyChangeListener> subscribers = new ArrayList<>();
-  
+
   /**
    * Create a new ApplicationPreferences object, loading the preferences from a
    * file in the default location.
@@ -107,7 +107,7 @@ public class ApplicationPreferences
     // Copy over preferences that are stored in other classes.
 
     properties.put("theme", ThemeManager.getSelectedTheme().resource.getId());
-    ThemeManager.ColorSet colorSets[] = ThemeManager.getSelectedTheme().getColorSets();
+    ThemeManager.ColorSet[] colorSets = ThemeManager.getSelectedTheme().getColorSets();
     for (int i = 0; i < colorSets.length; i++)
       if (colorSets[i] == ThemeManager.getSelectedColorSet())
         properties.put("themeColorSet", Integer.toString(i));
@@ -199,7 +199,7 @@ public class ApplicationPreferences
         {
           ThemeManager.setSelectedTheme(theme);
           int colorSetIndex = parseIntProperty("themeColorSet", 0);
-          ThemeManager.ColorSet colorSets[] = theme.getColorSets();
+          ThemeManager.ColorSet[] colorSets = theme.getColorSets();
           if (colorSetIndex > -1 && colorSetIndex < colorSets.length)
           {
             ThemeManager.setSelectedColorSet(colorSets[colorSetIndex]);
@@ -376,7 +376,7 @@ public class ApplicationPreferences
   {
     Locale current = Translate.getLocale();
     if(current.equals(locale)) return;
-    
+
     PropertyChangeEvent event = new PropertyChangeEvent(this, "language", current, locale);
     Translate.setLocale(locale);
     properties.put("language", locale.getLanguage()+'_'+locale.getCountry());
