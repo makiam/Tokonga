@@ -267,7 +267,7 @@ public class SPMObjectInfo
 		{
 			kbsize = 1;
 		}
-		return Translate.text( "spmanager:fullname", getName(), author, version + betaString, date, kbsize ) + addFiles;
+                return Translate.text("spmanager:text.fullname", getName(), author, version + betaString, date, kbsize) + addFiles;
 	}
 
 

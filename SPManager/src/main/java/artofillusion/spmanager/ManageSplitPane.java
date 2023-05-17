@@ -10,13 +10,14 @@
  */
 package artofillusion.spmanager;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.tree.*;
+import artofillusion.ui.Translate;
 import buoy.widget.*;
+import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.tree.*;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -229,7 +230,7 @@ public class ManageSplitPane extends SPMSplitPane
      */
     public void doDeleteAll()
     {
-        int r = JOptionPane.showConfirmDialog(SPManagerFrame.getInstance().getComponent(), SPMTranslate.text( "permanentlyDeleteAll" ),
+        int r = JOptionPane.showConfirmDialog(SPManagerFrame.getInstance().getComponent(), Translate.text("spmanager:text.permanentlyDeleteAll"),
                 SPMTranslate.text( "warning" ), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION );
         if ( r == JOptionPane.YES_OPTION )
         {
@@ -266,30 +267,28 @@ public class ManageSplitPane extends SPMSplitPane
 
 
     /**
-     *  Description of the Method
+     * Description of the Method
      *
-     *@param  deletable  Description of the Parameter
+     * @param deletable Description of the Parameter
      */
     @Override
-    public void scriptSelection( boolean deletable )
-    {
-        deleteButton.setText( SPMTranslate.text( "deleteScript" ) );
-        deleteButton.setEnabled( deletable );
-        super.scriptSelection( deletable );
+    public void scriptSelection(boolean deletable) {
+        deleteButton.setText(Translate.text("spmanager:text.deleteScript"));
+        deleteButton.setEnabled(deletable);
+        super.scriptSelection(deletable);
     }
 
 
     /**
-     *  Description of the Method
+     * Description of the Method
      *
-     *@param  deletable  Description of the Parameter
+     * @param deletable Description of the Parameter
      */
     @Override
-    public void pluginSelection( boolean deletable )
-    {
-        deleteButton.setText( SPMTranslate.text( "deletePlugin" ) );
-        deleteButton.setEnabled( deletable );
-        super.pluginSelection( deletable );
+    public void pluginSelection(boolean deletable) {
+        deleteButton.setText(SPMTranslate.text("spmanager:text.deletePlugin"));
+        deleteButton.setEnabled(deletable);
+        super.pluginSelection(deletable);
     }
 
 
