@@ -39,7 +39,7 @@ public class ApplicationPreferences
 
   @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
   private final List<PropertyChangeListener> subscribers = new ArrayList<>();
-
+    /** Load the preferences from an InputStream. */
   /**
    * Create a new ApplicationPreferences object, loading the preferences from a
    * file in the default location.
@@ -63,42 +63,16 @@ public class ApplicationPreferences
       Translate.setLocale(Locale.getDefault());
       return;
     }
-    try(InputStream in = new BufferedInputStream(new FileInputStream(f)))
-    {
-      loadPreferences(in);
-    }
-    catch (IOException ex)
-    {
+    try (InputStream in = new BufferedInputStream(new FileInputStream(f))) {
+        properties = new Properties();
+        properties.load(in);
+        parsePreferences();
+    } catch (IOException ex) {
         log.atError().setCause(ex).log("Error loading preferences: {}", ex.getLocalizedMessage());
     }
   }
 
-  /**
-   * Create a new ApplicationPreferences object, loading the preferences from an InputStream.
-   */
 
-  public ApplicationPreferences(InputStream in)
-  {
-    initDefaultPreferences();
-    try
-    {
-      loadPreferences(in);
-      in.close();
-    }
-    catch (IOException ex)
-    {
-      log.atError().setCause(ex).log("Error loading preferences: {}", ex.getLocalizedMessage());
-    }
-  }
-
-  /** Load the preferences from an InputStream. */
-
-  private void loadPreferences(InputStream in) throws IOException
-  {
-    properties = new Properties();
-    properties.load(in);
-    parsePreferences();
-  }
 
   /** Save any changed preferences to disk. */
 
