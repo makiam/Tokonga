@@ -28,14 +28,23 @@ public class ApplicationPreferences
   private static final String userHome = System.getProperty("user.home");
 
   private Properties properties;
-  private int defaultDisplayMode, undoLevels;
+  private int defaultDisplayMode = ViewerCanvas.RENDER_SMOOTH;
+  private int undoLevels = 6;
+  
+  private double interactiveSurfaceError = 0.05;
+  private double maxAnimationDuration = 1.0;
+  private double animationFrameRate = 60.0;
 
-  private double interactiveSurfaceError;
-  private double maxAnimationDuration;
-  private double animationFrameRate;
+  private boolean keepBackupFiles;
+  private boolean useOpenGL = true;
+  private boolean useCompoundMeshTool, reverseZooming;
+  private boolean useViewAnimations = true;
+  private boolean drawActiveFrustum;
+  private boolean drawCameraFrustum = true;
+  private boolean showTravelCuesOnIdle;
+  private boolean showTravelCuesScrolling = true;
+  private boolean showTiltDial;
 
-  private boolean keepBackupFiles, useOpenGL, useCompoundMeshTool, reverseZooming, useViewAnimations;
-  private boolean drawActiveFrustum, drawCameraFrustum, showTravelCuesOnIdle, showTravelCuesScrolling, showTiltDial;
   private Renderer objectPreviewRenderer, texturePreviewRenderer, defaultRenderer;
 
   @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
@@ -58,7 +67,7 @@ public class ApplicationPreferences
       if (f2.exists())
         f2.renameTo(f);
     }
-    initDefaultPreferences();
+    initDefaults();
     if (!f.exists())
     {
       properties = new Properties();
@@ -113,27 +122,12 @@ public class ApplicationPreferences
 
   /** Initialize internal variables to reasonable defaults. */
 
-  private void initDefaultPreferences()
-  {
-    List<Renderer> renderers = PluginRegistry.getPlugins(Renderer.class);
-    if (renderers.size() > 0)
-      objectPreviewRenderer = texturePreviewRenderer = defaultRenderer = getNamedRenderer("Raytracer");
-    defaultDisplayMode = ViewerCanvas.RENDER_SMOOTH;
-    interactiveSurfaceError = 0.05;
-    undoLevels = 6;
-    useOpenGL = true;
-    keepBackupFiles = false;
-    useCompoundMeshTool = false;
-    reverseZooming = false;
-    useViewAnimations = true;
-    maxAnimationDuration = 1.0;
-    animationFrameRate = 60.0;
-    drawActiveFrustum = false;
-    drawCameraFrustum = true;
-    showTravelCuesOnIdle = false;
-    showTravelCuesScrolling = true;
-    showTiltDial = false;
-  }
+    private void initDefaults() {
+        List<Renderer> renderers = PluginRegistry.getPlugins(Renderer.class);
+        if (!renderers.isEmpty()) {
+            objectPreviewRenderer = texturePreviewRenderer = defaultRenderer = getNamedRenderer("Raytracer");
+        }
+    }
 
   /** Parse the properties loaded from the preferences file. */
 
