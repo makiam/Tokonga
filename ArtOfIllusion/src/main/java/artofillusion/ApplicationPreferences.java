@@ -17,6 +17,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -56,25 +58,15 @@ public class ApplicationPreferences
    * file in the default location.
    */
 
-  public ApplicationPreferences()
-  {
-    File f = new File(getPreferencesDirectory(), "aoiprefs");
-    if (!f.exists())
-    {
-      // See if it exists in the old location.
-
-      File f2 = new File(userHome, ".aoiprefs");
-      if (f2.exists())
-        f2.renameTo(f);
-    }
+  public ApplicationPreferences() {
     initDefaults();
-    if (!f.exists())
-    {
+    Path pp = ApplicationPreferences.getPreferencesFolderPath().resolve("aoiprefs");
+    if(Files.notExists(pp)) {
       properties = new Properties();
       Translate.setLocale(Locale.getDefault());
       return;
     }
-    try (InputStream in = new BufferedInputStream(Files.newInputStream(f.toPath()))) {
+    try (InputStream in = new BufferedInputStream(Files.newInputStream(pp))) {
         properties = new Properties();
         properties.load(in);
         parsePreferences();
@@ -99,8 +91,8 @@ public class ApplicationPreferences
 
     // Write the preferences to a file.
 
-    File f = new File(getPreferencesDirectory(), "aoiprefs");
-    try(OutputStream out = new BufferedOutputStream(Files.newOutputStream(f.toPath())))
+    Path pp = ApplicationPreferences.getPreferencesFolderPath().resolve("aoiprefs");
+    try(OutputStream out = new BufferedOutputStream(Files.newOutputStream(pp)))
     {
       properties.store(out, "Art of Illusion Preferences File");
     }
@@ -110,15 +102,22 @@ public class ApplicationPreferences
     }
   }
 
-  /** Get the directory in which preferences files are saved. */
-
-  public static File getPreferencesDirectory()
-  {
-    File dir = new File(userHome, ".artofillusion");
-    if (!dir.exists())
-      dir.mkdirs();
-    return dir;
+  public static Path getPreferencesFolderPath() {
+      try {
+          return Files.createDirectories(Paths.get(userHome, ".artofillusion"));
+      } catch (IOException ex) {
+          log.atError().setCause(ex).log("Unable to get Preferences folder path due {}", ex.getMessage());
+      }
+      return null;
   }
+
+    /**
+     * Get the directory in which preferences files are saved.
+     */
+    @Deprecated
+    public static File getPreferencesDirectory() {
+        return getPreferencesFolderPath().toFile();
+    }
 
   /** Initialize internal variables to reasonable defaults. */
 
