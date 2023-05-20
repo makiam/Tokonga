@@ -289,6 +289,7 @@ public class ArtOfIllusion {
         if (win.confirmClose()) {
             windows.remove(win);
         }
+        if(windows.isEmpty()) quit();
     }
 
     /**
@@ -304,7 +305,9 @@ public class ArtOfIllusion {
     public static void quit() {
         for (int i = windows.size() - 1; i >= 0; i--) {
             EditingWindow win = windows.get(i);
-            closeWindow(win);
+            if (win.confirmClose()) {
+                windows.remove(win);
+            }
             if (windows.contains(win)) {
                 return;
             }
