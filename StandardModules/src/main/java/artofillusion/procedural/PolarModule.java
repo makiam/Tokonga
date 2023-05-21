@@ -21,9 +21,13 @@ import java.awt.*;
 @ProceduralModule.Category(value = "Modules:menu.transforms")
 public class PolarModule extends ProceduralModule {
 
-    double value[], error[], lastBlur;
-    boolean valueOk[];
-    Vec3 gradient[], tempVec1, tempVec2;
+    double[] value;
+    double[] error;
+    double lastBlur;
+    boolean[] valueOk;
+    Vec3[] gradient;
+    Vec3 tempVec1;
+    Vec3 tempVec2;
     PointInfo point;
 
     public PolarModule() {

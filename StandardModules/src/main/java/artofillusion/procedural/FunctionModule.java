@@ -29,8 +29,13 @@ import java.text.*;
 public class FunctionModule extends ProceduralModule {
 
     private boolean repeat, valueOk, errorOk, gradOk;
-    private double x[], y[], value, error, deriv, lastBlur;
-    private double a0[], a1[], a2[], a3[], b[];
+    private double[] x;
+    private double[] y;
+    private double value;
+    private double error;
+    private double deriv;
+    private double lastBlur;
+    private double[] a0, a1, a2, a3, b;
     private short shape;
     private Vec3 gradient;
 
@@ -72,7 +77,7 @@ public class FunctionModule extends ProceduralModule {
      * @param x the list of x values
      * @param y the list of y values. These must be in the range [0,1], and be in increasing order
      */
-    public void setFunction(double x[], double y[]) {
+    public void setFunction(double[] x, double[] y) {
         this.x = x;
         this.y = y;
         calcCoefficients();
@@ -190,7 +195,9 @@ public class FunctionModule extends ProceduralModule {
             }
             return;
         }
-        double m[][] = new double[4][4], a[] = new double[4], deriv[] = new double[x.length];
+        double[][] m = new double[4][4];
+        double[] a = new double[4];
+        double[] deriv = new double[x.length];
         for (int i = 1; i < x.length - 1; i++) {
             if (x[i - 1] != x[i + 1]) {
                 deriv[i] = (y[i + 1] - y[i - 1]) / (x[i + 1] - x[i]);
@@ -428,7 +435,8 @@ public class FunctionModule extends ProceduralModule {
         ValueField xField, yField;
         BCheckBox repeatBox, smoothBox;
         BButton deleteButton;
-        Point clickPoint, handlePos[];
+        Point clickPoint;
+        Point[] handlePos;
         Rectangle graphBounds;
         FontMetrics fm;
         NumberFormat hFormat, vFormat;
@@ -619,7 +627,7 @@ public class FunctionModule extends ProceduralModule {
 
         /* Add a new handle at the specified position. */
         private void addHandle(double where, double val) {
-            double newx[] = new double[x.length + 1], newy[] = new double[y.length + 1];
+            double[] newx = new double[x.length + 1], newy = new double[y.length + 1];
             int i;
 
             for (i = 0; i < x.length && x[i] < where; i++) {
@@ -652,7 +660,7 @@ public class FunctionModule extends ProceduralModule {
             if (selected == 0 || selected == x.length - 1) {
                 return;
             }
-            double newx[] = new double[x.length - 1], newy[] = new double[y.length - 1];
+            double[] newx = new double[x.length - 1], newy = new double[y.length - 1];
             int i;
 
             for (i = 0; i < x.length - 1; i++) {

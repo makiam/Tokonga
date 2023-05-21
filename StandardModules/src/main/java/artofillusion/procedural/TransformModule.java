@@ -237,13 +237,13 @@ public class TransformModule extends ProceduralModule {
     @Override
     public boolean edit(final ProcedureEditor editor, Scene theScene) {
         final Vec3 orig = coords.getOrigin();
-        final double angles[] = coords.getRotationAngles();
+        final double[] angles = coords.getRotationAngles();
         final TransformDialog dlg = new TransformDialog(editor.getParentFrame(), Translate.text("selectTransformProperties"),
                 new double[]{orig.x, orig.y, orig.z, angles[0], angles[1], angles[2],
                     xscale, yscale, zscale}, true, false, false);
         dlg.addEventLink(ValueChangedEvent.class, new Object() {
             void processEvent() {
-                double values[] = dlg.getValues();
+                double[] values = dlg.getValues();
                 if (!Double.isNaN(values[0])) {
                     orig.x = values[0];
                 }

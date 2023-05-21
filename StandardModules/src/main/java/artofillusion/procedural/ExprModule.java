@@ -639,7 +639,7 @@ public class ExprModule extends ProceduralModule {
     /* Display the error messages in a dialog. */
     //TODO Use generic errors displayer
     private void displayErrors(BFrame fr) {
-        String msg[] = new String[errors.size() + 1];
+        String[] msg = new String[errors.size() + 1];
 
         msg[0] = "Your expression contains the following errors:";
         for (int i = 0; i < errors.size(); i++) {

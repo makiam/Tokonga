@@ -27,10 +27,19 @@ import java.util.*;
 @ProceduralModule.Category(value = "Modules:menu.patterns")
 public class CellsModule extends ProceduralModule {
 
-    private boolean valueOk[], gradOk[], used2ThisTime, used2LastTime;
-    private double value[], value1[], error, cell, lastBlur;
-    private Vec3 gradient[], gradient1[], tempVec;
-    private int id[], id1[];
+    private boolean[] valueOk;
+    private boolean[] gradOk;
+    private boolean used2ThisTime;
+    private boolean used2LastTime;
+    private double[] value;
+    private double[] value1;
+    private double error;
+    private double cell;
+    private double lastBlur;
+    private Vec3[] gradient;
+    private Vec3[] gradient1;
+    private Vec3 tempVec;
+    private int[] id, id1;
     private PointInfo point;
     private Cells cells;
     private Random random;

@@ -21,9 +21,17 @@ import java.awt.*;
 @ProceduralModule.Category(value = "Modules:menu.transforms")
 public class SphericalModule extends ProceduralModule {
 
-    double value[], error[], r1, r2, r2inv, lastBlur;
-    boolean valueOk[], rOk;
-    Vec3 gradient[], tempVec1, tempVec2, tempVec3;
+    double[] value;
+    double[] error;
+    double r1;
+    double r2;
+    double lastBlur;
+    boolean[] valueOk;
+    boolean rOk;
+    Vec3[] gradient;
+    Vec3 tempVec1;
+    Vec3 tempVec2;
+    Vec3 tempVec3;
     PointInfo point;
 
     public SphericalModule() {
@@ -109,7 +117,6 @@ public class SphericalModule extends ProceduralModule {
         if (which != 0 && !rOk) {
             // Calculate intermediate values.
 
-            r2inv = 1.0 / r2;
             r1 = x * x + y * y;
         }
         if (which == 1) {

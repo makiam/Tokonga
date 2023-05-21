@@ -76,7 +76,7 @@ public class CommentModule extends ProceduralModule {
      */
     @Override
     public void calcSize() {
-        String lines[] = name.split("\n");
+        String[] lines = name.split("\n");
         bounds.width = 0;
         for (int i = 0; i < lines.length; i++) {
             int len = defaultMetrics.stringWidth(lines[i]);
@@ -97,7 +97,7 @@ public class CommentModule extends ProceduralModule {
         g.setFont(defaultFont);
         int lineHeight = defaultMetrics.getMaxAscent() + defaultMetrics.getMaxDescent();
         int offset = defaultMetrics.getAscent();
-        String lines[] = name.split("\n");
+        String[] lines = name.split("\n");
         for (int i = 0; i < lines.length; i++) {
             g.drawString(lines[i], bounds.x + IOPort.SIZE * 2, bounds.y + IOPort.SIZE * 2 + offset + i * lineHeight);
         }

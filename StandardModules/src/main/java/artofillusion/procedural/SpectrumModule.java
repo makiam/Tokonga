@@ -25,9 +25,11 @@ import java.io.*;
 @ProceduralModule.Category(value = "Modules:menu.colorFunctions")
 public class SpectrumModule extends ProceduralModule {
 
-    RGBColor color[], outputColor;
-    float a1[][], b1[][], c1[][];
-    double index[], lastBlur;
+    RGBColor[] color;
+    RGBColor outputColor;
+    float[][] a1, b1, c1;
+    double[] index;
+    double lastBlur;
     boolean repeat, colorOk;
 
     public SpectrumModule() {
@@ -65,7 +67,7 @@ public class SpectrumModule extends ProceduralModule {
      * @param position the list of input values corresponding to the colors. These must be between
      * 0 and 1, and be in increasing order
      */
-    public void setColors(RGBColor color[], double position[]) {
+    public void setColors(RGBColor[] color, double[] position) {
         this.color = color;
         index = position;
         calcCoefficients();
@@ -283,7 +285,8 @@ public class SpectrumModule extends ProceduralModule {
         Widget preview;
         BCheckBox repeatBox;
         BButton deleteButton;
-        Point clickPoint, handlePos[];
+        Point clickPoint;
+        Point[] handlePos;
         int selected, rows = 1;
         boolean clickedOk;
 
@@ -411,8 +414,8 @@ public class SpectrumModule extends ProceduralModule {
 
         /* Add a new handle at the specified position. */
         private void addHandle(double where) {
-            double newindex[] = new double[index.length + 1];
-            RGBColor newcolor[] = new RGBColor[color.length + 1];
+            double[] newindex = new double[index.length + 1];
+            RGBColor[] newcolor = new RGBColor[color.length + 1];
             int i;
 
             for (i = 0; i < index.length && index[i] < where; i++) {
@@ -444,8 +447,8 @@ public class SpectrumModule extends ProceduralModule {
             if (selected == 0 || selected == index.length - 1) {
                 return;
             }
-            double newindex[] = new double[index.length - 1];
-            RGBColor newcolor[] = new RGBColor[color.length - 1];
+            double[] newindex = new double[index.length - 1];
+            RGBColor[] newcolor = new RGBColor[color.length - 1];
             int i;
 
             for (i = 0; i < index.length - 1; i++) {

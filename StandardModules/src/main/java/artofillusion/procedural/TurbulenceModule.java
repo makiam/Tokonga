@@ -28,7 +28,11 @@ public class TurbulenceModule extends ProceduralModule {
 
     boolean valueOk, errorOk, gradOk;
     int octaves;
-    double value, error, sign[], amplitude, lastBlur;
+    double value;
+    double error;
+    double[] sign;
+    double amplitude;
+    double lastBlur;
     Vec3 gradient, tempVec;
     PointInfo point;
 
