@@ -13,37 +13,33 @@ package artofillusion.translators;
 import artofillusion.*;
 import buoy.widget.*;
 
-/** OBJTranslator is a Translator which imports and exports OBJ files. */
+/**
+ * OBJTranslator is a Translator which imports and exports OBJ files.
+ */
+public class OBJTranslator implements Translator {
 
-public class OBJTranslator implements Translator
-{
-  @Override
-  public String getName()
-  {
-    return "Wavefront (.obj)";
-  }
+    @Override
+    public String getName() {
+        return "Wavefront (.obj)";
+    }
 
-  @Override
-  public boolean canImport()
-  {
-    return true;
-  }
+    @Override
+    public boolean canImport() {
+        return true;
+    }
 
-  @Override
-  public boolean canExport()
-  {
-    return true;
-  }
+    @Override
+    public boolean canExport() {
+        return true;
+    }
 
-  @Override
-  public void importFile(BFrame parent)
-  {
-    OBJImporter.importFile(parent);
-  }
+    @Override
+    public void importFile(BFrame parent) {
+        OBJImporter.importFile(parent);
+    }
 
-  @Override
-  public void exportFile(BFrame parent, Scene theScene)
-  {
-    OBJExporter.exportFile(parent, theScene);
-  }
+    @Override
+    public void exportFile(BFrame parent, Scene theScene) {
+        OBJExporter.exportFile(parent, theScene);
+    }
 }

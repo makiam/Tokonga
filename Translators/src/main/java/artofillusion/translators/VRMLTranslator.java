@@ -13,36 +13,32 @@ package artofillusion.translators;
 import artofillusion.*;
 import buoy.widget.*;
 
-/** VRMLTranslator is a Translator which exports (and will eventually import) VRML files. */
+/**
+ * VRMLTranslator is a Translator which exports (and will eventually import) VRML files.
+ */
+public class VRMLTranslator implements Translator {
 
-public class VRMLTranslator implements Translator
-{
-  @Override
-  public String getName()
-  {
-    return "VRML";
-  }
+    @Override
+    public String getName() {
+        return "VRML";
+    }
 
-  @Override
-  public boolean canImport()
-  {
-    return false;
-  }
-  
-  @Override
-  public boolean canExport()
-  {
-    return true;
-  }
-  
-  @Override
-  public void importFile(BFrame parent)
-  {
-  }
-  
-  @Override
-  public void exportFile(BFrame parent, Scene theScene)
-  {
-    VRMLExporter.exportFile(parent, theScene);
-  }
+    @Override
+    public boolean canImport() {
+        return false;
+    }
+
+    @Override
+    public boolean canExport() {
+        return true;
+    }
+
+    @Override
+    public void importFile(BFrame parent) {
+    }
+
+    @Override
+    public void exportFile(BFrame parent, Scene theScene) {
+        VRMLExporter.exportFile(parent, theScene);
+    }
 }

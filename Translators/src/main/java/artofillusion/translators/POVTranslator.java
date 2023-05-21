@@ -13,36 +13,32 @@ package artofillusion.translators;
 import artofillusion.*;
 import buoy.widget.*;
 
-/** POVTranslator is a Translator which (imports and) exports Povray files. */
+/**
+ * POVTranslator is a Translator which (imports and) exports Povray files.
+ */
+public class POVTranslator implements Translator {
 
-public class POVTranslator implements Translator
-{
-  @Override
-  public String getName()
-  {
-    return "Povray V3.5 (.pov)";
-  }
+    @Override
+    public String getName() {
+        return "Povray V3.5 (.pov)";
+    }
 
-  @Override
-  public boolean canImport()
-  {
-    return false;
-  }
+    @Override
+    public boolean canImport() {
+        return false;
+    }
 
-  @Override
-  public boolean canExport()
-  {
-    return true;
-  }
+    @Override
+    public boolean canExport() {
+        return true;
+    }
 
-  @Override
-  public void importFile(BFrame parent)
-  {
-  }
+    @Override
+    public void importFile(BFrame parent) {
+    }
 
-  @Override
-  public void exportFile(BFrame parent, Scene theScene)
-  {
-      POVExporter.exportFile(parent,theScene);
-  }
+    @Override
+    public void exportFile(BFrame parent, Scene theScene) {
+        POVExporter.exportFile(parent, theScene);
+    }
 }
