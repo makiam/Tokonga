@@ -593,7 +593,26 @@ public class InstallSplitPane extends SPMSplitPane
 		    }
 		}
 
-		URL addFileURL = nodeInfo.getAddFileURL( j );
+		// now add the actual file name
+		//file = new File(file, nodeInfo.files[j]);  NTJ: now added in SPMObjectInfo when XML is parsed
+
+		folder = new File(SPManagerPlugin.TEMP_DIR, file.getParentFile().getName());
+
+		if (!folder.exists() && !folder.mkdirs()) {
+		    errors.add(SPMTranslate.text("error") + "cannot open/create " + folder.getAbsolutePath());
+		    log.error("cannot open/create {}", folder.getAbsolutePath());
+		}
+
+		update = new File(folder, file.getName() + ".upd");
+
+		log.info("downloading to {}", update.getAbsolutePath());
+
+		if ( status != null )
+		{
+		    status.setText( SPMTranslate.text( "downloading", nodeInfo.files[j] ) );
+		}
+		
+                URL addFileURL = nodeInfo.getAddFileURL(j);
                 log.info("downloading from {}", addFileURL.toString());
 		downloadedLength += HttpSPMFileSystem.downloadRemoteBinaryFile( addFileURL, update.getAbsolutePath(), nodeInfo.fileSizes[j], status, lengthToDownload, downloadedLength, errors );
 
