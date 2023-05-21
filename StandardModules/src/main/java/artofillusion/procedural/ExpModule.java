@@ -16,89 +16,79 @@ import java.awt.*;
 
 /* This is a Module which outputs the exponential of a number. */
 @ProceduralModule.Category(value = "Modules:menu.functions")
-public class ExpModule extends ProceduralModule
-{
-  boolean valueOk, errorOk, gradOk;
-  double value, error, valueIn, errorIn, lastBlur;
-  Vec3 gradient;
+public class ExpModule extends ProceduralModule {
 
-  public ExpModule() {
-    this(new Point());
-  }
+    boolean valueOk, errorOk, gradOk;
+    double value, error, valueIn, errorIn, lastBlur;
+    Vec3 gradient;
 
-  public ExpModule(Point position)
-  {
-    super("Exp", new IOPort [] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, new String [] {"Value", "(1)"})},
-      new IOPort [] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, new String [] {"Exponential"})},
-      position);
-    gradient = new Vec3();
-  }
+    public ExpModule() {
+        this(new Point());
+    }
 
-  /* New point, so the value will need to be recalculated. */
+    public ExpModule(Point position) {
+        super("Exp", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, new String[]{"Value", "(1)"})},
+                new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, new String[]{"Exponential"})},
+                position);
+        gradient = new Vec3();
+    }
 
-  @Override
-  public void init(PointInfo p)
-  {
-    valueOk = errorOk = gradOk = false;
-  }
+    /* New point, so the value will need to be recalculated. */
+    @Override
+    public void init(PointInfo p) {
+        valueOk = errorOk = gradOk = false;
+    }
 
-  /* This module outputs the exponential of the input value. */
+    /* This module outputs the exponential of the input value. */
+    @Override
+    public double getAverageValue(int which, double blur) {
+        if (valueOk && blur == lastBlur) {
+            return value;
+        }
+        valueOk = true;
+        lastBlur = blur;
+        if (linkFrom[0] == null) {
+            value = error = 0.0;
+            return 0.0;
+        }
+        valueIn = linkFrom[0].getAverageValue(linkFromIndex[0], blur);
+        errorIn = linkFrom[0].getValueError(linkFromIndex[0], blur);
+        if (errorIn == 0.0) {
+            value = Math.exp(valueIn);
+            error = 0.0;
+            return value;
+        }
+        value = (Math.exp(valueIn + errorIn) - Math.exp(valueIn - errorIn)) / (2.0 * errorIn);
+        error = errorIn * value;
+        return value;
+    }
 
-  @Override
-  public double getAverageValue(int which, double blur)
-  {
-    if (valueOk && blur == lastBlur)
-      return value;
-    valueOk = true;
-    lastBlur = blur;
-    if (linkFrom[0] == null)
-      {
-	value = error = 0.0;
-	return 0.0;
-      }
-    valueIn = linkFrom[0].getAverageValue(linkFromIndex[0], blur);
-    errorIn = linkFrom[0].getValueError(linkFromIndex[0], blur);
-    if (errorIn == 0.0)
-      {
-	value = Math.exp(valueIn);
-	error = 0.0;
-	return value;
-      }
-    value = (Math.exp(valueIn+errorIn)-Math.exp(valueIn-errorIn))/(2.0*errorIn);
-    error = errorIn*value;
-    return value;
-  }
+    /* The error is calculated at the same time as the value. */
+    @Override
+    public double getValueError(int which, double blur) {
+        if (!valueOk || blur != lastBlur) {
+            getAverageValue(which, blur);
+        }
+        return error;
+    }
 
-  /* The error is calculated at the same time as the value. */
-
-  @Override
-  public double getValueError(int which, double blur)
-  {
-    if (!valueOk || blur != lastBlur)
-      getAverageValue(which, blur);
-    return error;
-  }
-
-  /* Calculate the gradient. */
-
-  @Override
-  public void getValueGradient(int which, Vec3 grad, double blur)
-  {
-    if (gradOk && blur == lastBlur)
-      {
-	grad.set(gradient);
-	return;
-      }
-    if (linkFrom[0] == null)
-      {
-	grad.set(0.0, 0.0, 0.0);
-	return;
-      }
-    if (!valueOk || blur != lastBlur)
-      getAverageValue(which, blur);
-    gradOk = true;
-    linkFrom[0].getValueGradient(linkFromIndex[0], gradient, blur);
-    gradient.scale(valueIn);
-    grad.set(gradient);
-  }
+    /* Calculate the gradient. */
+    @Override
+    public void getValueGradient(int which, Vec3 grad, double blur) {
+        if (gradOk && blur == lastBlur) {
+            grad.set(gradient);
+            return;
+        }
+        if (linkFrom[0] == null) {
+            grad.set(0.0, 0.0, 0.0);
+            return;
+        }
+        if (!valueOk || blur != lastBlur) {
+            getAverageValue(which, blur);
+        }
+        gradOk = true;
+        linkFrom[0].getValueGradient(linkFromIndex[0], gradient, blur);
+        gradient.scale(valueIn);
+        grad.set(gradient);
+    }
 }

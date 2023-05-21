@@ -17,58 +17,53 @@ import java.awt.*;
 
 /* This is a Module which outputs the absolute value of a number. */
 @ProceduralModule.Category(value = "Modules:menu.functions")
-public class AbsModule extends ProceduralModule
-{
-  private boolean signOk, positive;
-  private double lastBlur;
+public class AbsModule extends ProceduralModule {
 
-  public AbsModule() {
-      this(new Point());
-  }
-  
-  public AbsModule(Point position)
-  {
-    super(Translate.text("Modules:menu.absModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(0")},
-      new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output")},
-      position);
-  }
+    private boolean signOk, positive;
+    private double lastBlur;
 
-  /* New point, so the value will need to be recalculated. */
+    public AbsModule() {
+        this(new Point());
+    }
 
-  @Override
-  public void init(PointInfo p)
-  {
-    signOk = false;
-  }
+    public AbsModule(Point position) {
+        super(Translate.text("Modules:menu.absModule"), new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(0")},
+                new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output")},
+                position);
+    }
 
-  /* Calculate the output value. */
+    /* New point, so the value will need to be recalculated. */
+    @Override
+    public void init(PointInfo p) {
+        signOk = false;
+    }
 
-  @Override
-  public double getAverageValue(int which, double blur)
-  {
-    double value = (linkFrom[0] == null) ? 0.0 : linkFrom[0].getAverageValue(linkFromIndex[0], blur);
-    positive = value > 0.0;
-    signOk = true;
-    lastBlur = blur;
-    return positive ? value : -value;
-  }
-  /* The error is unchanged by this module. */
+    /* Calculate the output value. */
+    @Override
+    public double getAverageValue(int which, double blur) {
+        double value = (linkFrom[0] == null) ? 0.0 : linkFrom[0].getAverageValue(linkFromIndex[0], blur);
+        positive = value > 0.0;
+        signOk = true;
+        lastBlur = blur;
+        return positive ? value : -value;
+    }
 
-  @Override
-  public double getValueError(int which, double blur)
-  {
-    return (linkFrom[0] == null) ? 0.0 : linkFrom[0].getValueError(linkFromIndex[0], blur);
-  }
+    /* The error is unchanged by this module. */
 
-  /* Calculate the gradient. */
+    @Override
+    public double getValueError(int which, double blur) {
+        return (linkFrom[0] == null) ? 0.0 : linkFrom[0].getValueError(linkFromIndex[0], blur);
+    }
 
-  @Override
-  public void getValueGradient(int which, Vec3 grad, double blur)
-  {
-    if (!signOk || blur != lastBlur)
-      getAverageValue(which, blur);
-    linkFrom[0].getValueGradient(linkFromIndex[0], grad, blur);
-    if (!positive)
-      grad.scale(-1.0);
-  }
+    /* Calculate the gradient. */
+    @Override
+    public void getValueGradient(int which, Vec3 grad, double blur) {
+        if (!signOk || blur != lastBlur) {
+            getAverageValue(which, blur);
+        }
+        linkFrom[0].getValueGradient(linkFromIndex[0], grad, blur);
+        if (!positive) {
+            grad.scale(-1.0);
+        }
+    }
 }

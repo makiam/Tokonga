@@ -17,51 +17,47 @@ import java.awt.*;
 
 /* This is a Module which outputs the product of a color and a number. */
 @ProceduralModule.Category(value = "Modules:menu.colorFunctions")
-public class ColorScaleModule extends ProceduralModule
-{
-  RGBColor color;
-  boolean colorOk;
-  double lastBlur;
+public class ColorScaleModule extends ProceduralModule {
 
-  public ColorScaleModule() {
-    this(new Point());
-  }
+    RGBColor color;
+    boolean colorOk;
+    double lastBlur;
 
-  public ColorScaleModule(Point position)
-  {
-    super("\u00D7", new IOPort[] {new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.TOP, "Color", '('+Translate.text("white")+')'),
-      new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, "Scale", "(1.0)")},
-      new IOPort[] {new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, "Product")},
-      position);
-    color = new RGBColor(0.0f, 0.0f, 0.0f);
-  }
+    public ColorScaleModule() {
+        this(new Point());
+    }
 
-  /* New point, so the color will need to be recalculated. */
+    public ColorScaleModule(Point position) {
+        super("\u00D7", new IOPort[]{new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.TOP, "Color", '(' + Translate.text("white") + ')'),
+            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, "Scale", "(1.0)")},
+                new IOPort[]{new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, "Product")},
+                position);
+        color = new RGBColor(0.0f, 0.0f, 0.0f);
+    }
 
-  @Override
-  public void init(PointInfo p)
-  {
-    colorOk = false;
-  }
+    /* New point, so the color will need to be recalculated. */
+    @Override
+    public void init(PointInfo p) {
+        colorOk = false;
+    }
 
-  /* Calculate the product color. */
-
-  @Override
-  public void getColor(int which, RGBColor c, double blur)
-  {
-    if (colorOk && blur == lastBlur)
-      {
+    /* Calculate the product color. */
+    @Override
+    public void getColor(int which, RGBColor c, double blur) {
+        if (colorOk && blur == lastBlur) {
+            c.copy(color);
+            return;
+        }
+        colorOk = true;
+        lastBlur = blur;
+        if (linkFrom[0] == null) {
+            color.setRGB(1.0f, 1.0f, 1.0f);
+        } else {
+            linkFrom[0].getColor(linkFromIndex[0], color, blur);
+        }
+        if (linkFrom[1] != null) {
+            color.scale(linkFrom[1].getAverageValue(linkFromIndex[1], blur));
+        }
         c.copy(color);
-        return;
-      }
-    colorOk = true;
-    lastBlur = blur;
-    if (linkFrom[0] == null)
-      color.setRGB(1.0f, 1.0f, 1.0f);
-    else
-      linkFrom[0].getColor(linkFromIndex[0], color, blur);
-    if (linkFrom[1] != null)
-      color.scale(linkFrom[1].getAverageValue(linkFromIndex[1], blur));
-    c.copy(color);
-  }
+    }
 }

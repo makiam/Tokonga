@@ -19,150 +19,138 @@ import buoy.widget.*;
 import java.awt.*;
 import java.io.*;
 
-/** This is a Module which scales and shifts its input value. */
+/**
+ * This is a Module which scales and shifts its input value.
+ */
 @ProceduralModule.Category(value = "Modules:menu.functions")
-public class ScaleShiftModule extends ProceduralModule
-{
-  private double scale, shift;
+public class ScaleShiftModule extends ProceduralModule {
 
-  public ScaleShiftModule() {
-      this(new Point());
-  }
+    private double scale, shift;
 
-  public ScaleShiftModule(Point position)
-  {
-    super("\u00D7 1.0 + 0.0", new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(0)")},
-      new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output")},
-      position);
-    scale = 1.0;
-    shift = 0.0;
-  }
+    public ScaleShiftModule() {
+        this(new Point());
+    }
 
-  /** Get the scale value. */
+    public ScaleShiftModule(Point position) {
+        super("\u00D7 1.0 + 0.0", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(0)")},
+                new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output")},
+                position);
+        scale = 1.0;
+        shift = 0.0;
+    }
 
-  public double getScale()
-  {
-    return scale;
-  }
+    /**
+     * Get the scale value.
+     */
+    public double getScale() {
+        return scale;
+    }
 
-  /** Set the scale value. */
+    /**
+     * Set the scale value.
+     */
+    public void setScale(double val) {
+        scale = val;
+    }
 
-  public void setScale(double val)
-  {
-    scale = val;
-  }
+    /**
+     * Get the shift value.
+     */
+    public double getShift() {
+        return shift;
+    }
 
-  /** Get the shift value. */
+    /**
+     * Set the shift value.
+     */
+    public void setShift(double val) {
+        shift = val;
+    }
 
-  public double getShift()
-  {
-    return shift;
-  }
+    /* Calculate the output value. */
+    @Override
+    public double getAverageValue(int which, double blur) {
+        if (linkFrom[0] == null) {
+            return shift;
+        }
+        return linkFrom[0].getAverageValue(linkFromIndex[0], blur) * scale + shift;
+    }
 
-  /** Set the shift value. */
+    /* Calculate the output error. */
+    @Override
+    public double getValueError(int which, double blur) {
+        if (linkFrom[0] == null) {
+            return 0.0;
+        }
+        return linkFrom[0].getValueError(linkFromIndex[0], blur) * Math.abs(scale);
+    }
 
-  public void setShift(double val)
-  {
-    shift = val;
-  }
+    /* The gradient is the sum of the two gradients. */
+    @Override
+    public void getValueGradient(int which, Vec3 grad, double blur) {
+        if (linkFrom[0] == null) {
+            grad.set(0.0, 0.0, 0.0);
+            return;
+        } else {
+            linkFrom[0].getValueGradient(linkFromIndex[0], grad, blur);
+        }
+        grad.set(grad.x * scale + shift, grad.y * scale + shift, grad.z * scale + shift);
+    }
 
-  /* Calculate the output value. */
-
-  @Override
-  public double getAverageValue(int which, double blur)
-  {
-    if (linkFrom[0] == null)
-      return shift;
-    return linkFrom[0].getAverageValue(linkFromIndex[0], blur)*scale + shift;
-  }
-
-  /* Calculate the output error. */
-
-  @Override
-  public double getValueError(int which, double blur)
-  {
-    if (linkFrom[0] == null)
-      return 0.0;
-    return linkFrom[0].getValueError(linkFromIndex[0], blur)*Math.abs(scale);
-  }
-
-  /* The gradient is the sum of the two gradients. */
-
-  @Override
-  public void getValueGradient(int which, Vec3 grad, double blur)
-  {
-    if (linkFrom[0] == null)
-      {
-        grad.set(0.0, 0.0, 0.0);
-        return;
-      }
-    else
-      linkFrom[0].getValueGradient(linkFromIndex[0], grad, blur);
-    grad.set(grad.x*scale+shift, grad.y*scale+shift, grad.z*scale+shift);
-  }
-
-  /* Allow the user to set the parameters. */
-
-  @Override
-  public boolean edit(final ProcedureEditor editor, Scene theScene)
-  {
-    final ValueField scaleField = new ValueField(scale, ValueField.NONE, 5);
-    final ValueField shiftField = new ValueField(shift, ValueField.NONE, 5);
-    Object listener = new Object() {
-      void processEvent()
-      {
+    /* Allow the user to set the parameters. */
+    @Override
+    public boolean edit(final ProcedureEditor editor, Scene theScene) {
+        final ValueField scaleField = new ValueField(scale, ValueField.NONE, 5);
+        final ValueField shiftField = new ValueField(shift, ValueField.NONE, 5);
+        Object listener = new Object() {
+            void processEvent() {
+                scale = scaleField.getValue();
+                shift = shiftField.getValue();
+                editor.updatePreview();
+            }
+        };
+        scaleField.addEventLink(ValueChangedEvent.class, listener);
+        shiftField.addEventLink(ValueChangedEvent.class, listener);
+        RowContainer row = new RowContainer();
+        row.add(new BLabel(Translate.text("scaleShiftEquation")));
+        row.add(scaleField);
+        row.add(new BLabel(" + "));
+        row.add(shiftField);
+        PanelDialog dlg = new PanelDialog(editor.getParentFrame(), Translate.text("selectScaleShiftProperties"), row);
+        if (!dlg.clickedOk()) {
+            return false;
+        }
         scale = scaleField.getValue();
         shift = shiftField.getValue();
-        editor.updatePreview();
-      }
-    };
-    scaleField.addEventLink(ValueChangedEvent.class, listener);
-    shiftField.addEventLink(ValueChangedEvent.class, listener);
-    RowContainer row = new RowContainer();
-    row.add(new BLabel(Translate.text("scaleShiftEquation")));
-    row.add(scaleField);
-    row.add(new BLabel(" + "));
-    row.add(shiftField);
-    PanelDialog dlg = new PanelDialog(editor.getParentFrame(), Translate.text("selectScaleShiftProperties"), row);
-    if (!dlg.clickedOk())
-      return false;
-    scale = scaleField.getValue();
-    shift = shiftField.getValue();
-    name = "\u00D7 "+scale+" + "+shift;
-    layout();
-    return true;
-  }
+        name = "\u00D7 " + scale + " + " + shift;
+        layout();
+        return true;
+    }
 
-  /* Create a duplicate of this module. */
+    /* Create a duplicate of this module. */
+    @Override
+    public ScaleShiftModule duplicate() {
+        ScaleShiftModule mod = new ScaleShiftModule(new Point(bounds.x, bounds.y));
 
-  @Override
-  public ScaleShiftModule duplicate()
-  {
-    ScaleShiftModule mod = new ScaleShiftModule(new Point(bounds.x, bounds.y));
+        mod.scale = scale;
+        mod.shift = shift;
+        mod.name = name;
+        return mod;
+    }
 
-    mod.scale = scale;
-    mod.shift = shift;
-    mod.name = name;
-    return mod;
-  }
+    /* Write out the parameters. */
+    @Override
+    public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
+        out.writeDouble(scale);
+        out.writeDouble(shift);
+    }
 
-  /* Write out the parameters. */
-
-  @Override
-  public void writeToStream(DataOutputStream out, Scene theScene) throws IOException
-  {
-    out.writeDouble(scale);
-    out.writeDouble(shift);
-  }
-
-  /* Read in the parameters. */
-
-  @Override
-  public void readFromStream(DataInputStream in, Scene theScene) throws IOException
-  {
-    scale = in.readDouble();
-    shift = in.readDouble();
-    name = "\u00D7 "+scale+" + "+shift;
-    layout();
-  }
+    /* Read in the parameters. */
+    @Override
+    public void readFromStream(DataInputStream in, Scene theScene) throws IOException {
+        scale = in.readDouble();
+        shift = in.readDouble();
+        name = "\u00D7 " + scale + " + " + shift;
+        layout();
+    }
 }
