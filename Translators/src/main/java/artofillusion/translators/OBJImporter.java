@@ -49,13 +49,13 @@ public class OBJImporter {
         theScene.addObject(info, (UndoRecord) null);
 
         // Open the file and read the contents.
-        Hashtable<String, Vector<FaceInfo>> groupTable = new Hashtable<String, Vector<FaceInfo>>();
-        Hashtable<String, TextureInfo> textureTable = new Hashtable<String, TextureInfo>();
-        Vector<Vec3> vertex = new Vector<Vec3>();
-        Vector<Vec3> normal = new Vector<Vec3>();
-        Vector<Vec3> texture = new Vector<Vec3>();
-        Vector<Vector<FaceInfo>> face = new Vector<Vector<FaceInfo>>();
-        face.add(new Vector<FaceInfo>());
+        Hashtable<String, Vector<FaceInfo>> groupTable = new Hashtable<>();
+        Hashtable<String, TextureInfo> textureTable = new Hashtable<>();
+        Vector<Vec3> vertex = new Vector<>();
+        Vector<Vec3> normal = new Vector<>();
+        Vector<Vec3> texture = new Vector<>();
+        Vector<Vector<FaceInfo>> face = new Vector<>();
+        face.add(new Vector<>());
         groupTable.put("default", face.get(0));
         int lineno = 0, smoothingGroup = -1;
         String currentTexture = null;
@@ -190,7 +190,7 @@ public class OBJImporter {
                     for (int i = 0; i < face.size(); i++) {
                         face.set(i, groupTable.get(fields[i + 1]));
                         if (face.get(i) == null) {
-                            face.set(i, new Vector<FaceInfo>());
+                            face.set(i, new Vector<>());
                             groupTable.put(fields[i + 1], face.get(i));
                         }
                     }
@@ -225,8 +225,8 @@ public class OBJImporter {
 
             // Create a triangle mesh for each group.
             Enumeration<String> keys = groupTable.keys();
-            Hashtable<String, Texture> realizedTextures = new Hashtable<String, Texture>();
-            Hashtable<String, ImageMap> imageMaps = new Hashtable<String, ImageMap>();
+            Hashtable<String, Texture> realizedTextures = new Hashtable<>();
+            Hashtable<String, ImageMap> imageMaps = new Hashtable<>();
             while (keys.hasMoreElements()) {
                 String group = keys.nextElement();
                 Vector<FaceInfo> groupFaces = groupTable.get(group);
@@ -300,7 +300,7 @@ public class OBJImporter {
                 }
 
                 // Set the texture.  Begin by finding all textures used by the group.
-                HashSet<String> texNames = new HashSet<String>();
+                HashSet<String> texNames = new HashSet<>();
                 for (FaceInfo faceInfo : groupFaces) {
                     if (faceInfo.texture != null) {
                         texNames.add(faceInfo.texture);
@@ -428,7 +428,7 @@ public class OBJImporter {
      */
     private static String[] breakLine(String line) {
         StringTokenizer st = new StringTokenizer(line);
-        Vector<String> v = new Vector<String>();
+        Vector<String> v = new Vector<>();
 
         while (st.hasMoreTokens()) {
             v.addElement(st.nextToken());
