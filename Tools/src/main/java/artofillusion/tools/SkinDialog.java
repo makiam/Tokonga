@@ -31,8 +31,8 @@ public class SkinDialog extends BDialog {
     private BCheckBox reverseBox;
     private BButton upButton, downButton;
     private ObjectPreviewCanvas preview;
-    private ObjectInfo curve[];
-    private boolean reverse[];
+    private ObjectInfo[] curve;
+    private boolean[] reverse;
     private Vec3 centerOffset;
 
     private static int counter = 1;
@@ -136,16 +136,17 @@ public class SkinDialog extends BDialog {
 
     // Create the skinned object.
     private void makeObject() {
-        Vec3 v[][] = new Vec3[curve.length][], center = new Vec3();
-        float us[] = new float[curve.length], vs[] = new float[((Curve) curve[0].getObject()).getVertices().length];
+        Vec3[][] v = new Vec3[curve.length][];
+        Vec3 center = new Vec3();
+        float[] us = new float[curve.length], vs = new float[((Curve) curve[0].getObject()).getVertices().length];
         int smoothMethod = Mesh.INTERPOLATING;
         boolean closed = false;
 
         for (int i = 0; i < curve.length; i++) {
             Curve cv = (Curve) curve[i].getObject();
-            MeshVertex vert[] = cv.getVertices();
+            MeshVertex[] vert = cv.getVertices();
             v[i] = new Vec3[vert.length];
-            float smooth[] = cv.getSmoothness();
+            float[] smooth = cv.getSmoothness();
             if (cv.getSmoothingMethod() > smoothMethod) {
                 smoothMethod = cv.getSmoothingMethod();
             }

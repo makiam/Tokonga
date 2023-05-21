@@ -49,7 +49,7 @@ public class TextDialog extends BDialog {
         text = new BTextField("Text");
         typeChoice = new BComboBox(new Object[]{Translate.text("Outline"), Translate.text("Tubes"), Translate.text("Surface"), Translate.text("Solid")});
         typeChoice.setSelectedIndex(2);
-        String fonts[] = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+        String[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
         fontsList = new BList(fonts);
         fontsList.setPreferredVisibleRows(10);
         fontsList.setMultipleSelectionEnabled(false);
@@ -70,12 +70,7 @@ public class TextDialog extends BDialog {
         final ActionProcessor actionProcessor = new ActionProcessor();
         Object listener = new Object() {
             void processEvent() {
-                actionProcessor.addEvent(new Runnable() {
-                    @Override
-                    public void run() {
-                        createObjects();
-                    }
-                });
+                actionProcessor.addEvent(() -> createObjects());
             }
         };
         boldBox.addEventLink(ValueChangedEvent.class, listener);
@@ -130,7 +125,7 @@ public class TextDialog extends BDialog {
      * Create the text.
      */
     private void createObjects() {
-        TextTool.TextType types[] = new TextTool.TextType[]{TextTool.TextType.Outline, TextTool.TextType.Tube, TextTool.TextType.Surface, TextTool.TextType.Solid};
+        TextTool.TextType[] types = new TextTool.TextType[]{TextTool.TextType.Outline, TextTool.TextType.Tube, TextTool.TextType.Surface, TextTool.TextType.Solid};
         TextTool.TextType type = types[typeChoice.getSelectedIndex()];
         objects = TextTool.createText(text.getText(), fontsList.getSelectedValue().toString(), type, boldBox.getState(), italicBox.getState(), thicknessValue.getValue(), window.getScene().getDefaultTexture());
         if (preview != null) {
@@ -152,7 +147,7 @@ public class TextDialog extends BDialog {
     }
 
     private void doOk() {
-        if (objects.size() > 0) {
+        if (!objects.isEmpty()) {
             UndoRecord undo = new UndoRecord(window, false);
             if (objects.get(0).getObject() instanceof TriangleMesh) {
                 // Convert the whole string to a single mesh.

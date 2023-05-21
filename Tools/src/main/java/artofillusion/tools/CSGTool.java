@@ -39,7 +39,8 @@ public class CSGTool implements ModellingTool {
     @Override
     public void commandSelected(LayoutWindow window) {
         Scene scene = window.getScene();
-        int selection[] = window.getSelectedIndices(), closedCount = 0;
+        int[] selection = window.getSelectedIndices();
+        int closedCount = 0;
         Vector<ObjectInfo> inputObj = new Vector<ObjectInfo>();
 
         for (int i = 0; i < selection.length; i++) {

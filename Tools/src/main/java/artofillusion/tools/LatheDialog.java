@@ -93,7 +93,7 @@ public class LatheDialog extends BDialog {
 
     // Select default values for the various options.
     private void selectDefaults() {
-        MeshVertex vert[] = theCurve.getVertices();
+        MeshVertex[] vert = theCurve.getVertices();
 
         if (!theCurve.isClosed() && vert[0].r.distance(vert[vert.length - 1].r) > 0.0) {
             axisGroup.setSelection(endsBox);
@@ -132,7 +132,7 @@ public class LatheDialog extends BDialog {
     }
 
     protected static Mesh latheCurve(Curve theCurve, int latheAxis, int segments, double angle, double latheRadius) {
-        MeshVertex vert[] = theCurve.getVertices();
+        MeshVertex[] vert = theCurve.getVertices();
         Vec3 axis, radius, center = new Vec3();
         double angleStep = angle * Math.PI / (segments * 180.0);
         boolean closed = false;
@@ -171,7 +171,8 @@ public class LatheDialog extends BDialog {
         center.add(radius.times(-latheRadius));
 
         // Calculate the vertices of the lathed surface.
-        Vec3 v[][] = new Vec3[segments][vert.length], cm = new Vec3();
+        Vec3[][] v = new Vec3[segments][vert.length];
+        Vec3 cm = new Vec3();
         CoordinateSystem coords = new CoordinateSystem(center, axis, radius);
         for (int i = 0; i < segments; i++) {
             Mat4 m = coords.fromLocal().times(Mat4.zrotation(i * angleStep)).times(coords.toLocal());
@@ -182,8 +183,8 @@ public class LatheDialog extends BDialog {
         }
 
         // Create the arrays of smoothness values.
-        float usmooth[] = new float[segments], vsmooth[] = new float[vert.length];
-        float s[] = theCurve.getSmoothness();
+        float[] usmooth = new float[segments], vsmooth = new float[vert.length];
+        float[] s = theCurve.getSmoothness();
         for (int i = 0; i < segments; i++) {
             usmooth[i] = 1.0f;
         }

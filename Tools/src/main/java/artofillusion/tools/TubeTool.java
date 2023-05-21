@@ -33,7 +33,7 @@ public class TubeTool implements ModellingTool {
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void commandSelected(LayoutWindow window) {
         Scene scene = window.getScene();
-        int selection[] = window.getSelectedIndices();
+        int[] selection = window.getSelectedIndices();
 
         if (selection.length == 1) {
             ObjectInfo info = scene.getObject(selection[0]);

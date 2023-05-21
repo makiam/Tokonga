@@ -2,7 +2,7 @@
    This also sets the default values in the dialog.*/
 
  /* Copyright 2001 Rick van der Meiden
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -167,7 +167,7 @@ public class ArraySpec {
 
         // set list of object to copy (all selected objects)
         Scene scene = window.getScene();
-        int selection[] = window.getSelectedIndices();
+        int[] selection = window.getSelectedIndices();
         objectList = new Vector<ObjectInfo>();         // list of objectInfo's
         for (int sel = 0; sel < selection.length; sel++) {
             ObjectInfo info = scene.getObject(selection[sel]);
@@ -299,15 +299,15 @@ public class ArraySpec {
         Curve cv = (Curve) curve.getObject();
 
         // map curve to global coordinate space
-        MeshVertex vert[] = cv.getVertices();
-        Vec3 v[] = new Vec3[vert.length];
+        MeshVertex[] vert = cv.getVertices();
+        Vec3[] v = new Vec3[vert.length];
         Mat4 trans = curve.getCoords().fromLocal();
         for (int i = 0; i < v.length; i++) {
             v[i] = trans.times(vert[i].r);
         }
 
         // subdive curve
-        Vec3 subdiv[] = new Curve(v, cv.getSmoothness(), cv.getSmoothingMethod(), cv.isClosed()).subdivideCurve(SD_LEVEL).getVertexPositions();
+        Vec3[] subdiv = new Curve(v, cv.getSmoothness(), cv.getSmoothingMethod(), cv.isClosed()).subdivideCurve(SD_LEVEL).getVertexPositions();
         // Vec3 startPoint = findPointOnCurve(subdiv, cv.isClosed(), 0);
         // Vec3 startPoint = v[0];
         int startCount = (dupFirst == true ? 0 : 1);
@@ -324,8 +324,8 @@ public class ArraySpec {
             curveCopies = (int) (curveLength / curveStep);
         }
         // find orientation for all subdivision vertices
-        Vec3 zdir[] = new Vec3[subdiv.length];
-        Vec3 updir[] = new Vec3[subdiv.length];
+        Vec3[] zdir = new Vec3[subdiv.length];
+        Vec3[] updir = new Vec3[subdiv.length];
         constructMinRotFrame(subdiv, cv.isClosed(), zdir, updir);
         // coordinate system at first point on curve
         CoordinateSystem startCS = new CoordinateSystem(subdiv[0], zdir[0], updir[0]);
@@ -431,7 +431,7 @@ public class ArraySpec {
      * calculate the length of a curve given some error determined by SD_LEVEL
      */
     private double calcCurveLength(Curve c) {
-        Vec3 subdiv[] = c.subdivideCurve(SD_LEVEL).getVertexPositions();
+        Vec3[] subdiv = c.subdivideCurve(SD_LEVEL).getVertexPositions();
         double sum = 0;
 
         for (int i = 1; i < subdiv.length; i++) {
@@ -449,7 +449,7 @@ public class ArraySpec {
      * determines a point on the curve for which the distance to
      * the first point is given by relativePosition
      */
-    private Vec3 findPointOnCurve(Vec3 subdiv[], boolean isClosed, double relativePosition) {
+    private Vec3 findPointOnCurve(Vec3[] subdiv, boolean isClosed, double relativePosition) {
         // find interval around relativePosition
         int i;
         double sum = 0, prevsum = 0;
@@ -484,8 +484,8 @@ public class ArraySpec {
      * sets values in zdir[] and updir[]
      * reused code from Peter Eastman's Extrude Tool
      */
-    private void constructMinRotFrame(Vec3 subdiv[], boolean isClosed, Vec3 zdir[], Vec3 updir[]) {
-        Vec3 t[];
+    private void constructMinRotFrame(Vec3[] subdiv, boolean isClosed, Vec3[] zdir, Vec3[] updir) {
+        Vec3[] t;
         int i, j;
 
         // subdivide the path and determine its direction at the starting point.
@@ -537,7 +537,7 @@ public class ArraySpec {
      * orienation vectors at the point on the curve for which the distance to
      * the first point is given by relativePosition
      */
-    private CoordinateSystem findCoordinateSystem(Vec3 subdiv[], boolean isClosed, double relativePosition, Vec3 zdirs[], Vec3 updirs[]) {
+    private CoordinateSystem findCoordinateSystem(Vec3[] subdiv, boolean isClosed, double relativePosition, Vec3[] zdirs, Vec3[] updirs) {
         // find interval around relativePosition
         int i, prev_i;
         double sum = 0, prevsum = 0;

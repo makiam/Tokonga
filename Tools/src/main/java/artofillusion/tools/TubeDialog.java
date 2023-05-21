@@ -76,8 +76,8 @@ public class TubeDialog extends BDialog {
 
     // Create the Tube.
     private void makeObject() {
-        MeshVertex vert[] = theCurve.getVertices();
-        double thickness[] = new double[vert.length];
+        MeshVertex[] vert = theCurve.getVertices();
+        double[] thickness = new double[vert.length];
         for (int i = 0; i < thickness.length; i++) {
             thickness[i] = thicknessField.getValue();
         }

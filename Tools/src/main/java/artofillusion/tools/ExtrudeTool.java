@@ -34,7 +34,7 @@ public class ExtrudeTool implements ModellingTool {
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void commandSelected(LayoutWindow window) {
         Scene scene = window.getScene();
-        int selection[] = window.getSelectedIndices();
+        int[] selection = window.getSelectedIndices();
 
         for (int i = 0; i < selection.length; i++) {
             Object3D obj = scene.getObject(selection[i]).getObject();

@@ -34,7 +34,7 @@ public class SkinTool implements ModellingTool {
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void commandSelected(LayoutWindow window) {
         Scene scene = window.getScene();
-        int selection[] = window.getSelectedIndices();
+        int[] selection = window.getSelectedIndices();
         Vector<ObjectInfo> curves = new Vector<ObjectInfo>();
 
         for (int i = 0; i < selection.length; i++) {

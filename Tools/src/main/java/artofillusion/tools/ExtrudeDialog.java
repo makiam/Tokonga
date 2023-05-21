@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2005 by Peter Eastman
-   Changes copyright (C) 2017-2022 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -14,7 +14,6 @@ package artofillusion.tools;
 import artofillusion.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
-import artofillusion.object.TriangleMesh.*;
 import artofillusion.object.TriangleMesh.Edge;
 import artofillusion.object.TriangleMesh.Face;
 import artofillusion.object.TriangleMesh.Vertex;
@@ -47,7 +46,7 @@ public class ExtrudeDialog extends BDialog {
         super(window, Translate.text("Tools:extrude.dialog.name"), true);
         this.window = window;
         Scene scene = window.getScene();
-        int selection[] = window.getSelectedIndices();
+        int[] selection = window.getSelectedIndices();
 
         // Identify the objects that can be extruded, and the paths along which they can be
         // extruded.
@@ -204,8 +203,8 @@ public class ExtrudeDialog extends BDialog {
             } else {
                 dir.set(xField.getValue(), yField.getValue(), zField.getValue());
             }
-            Vec3 v[] = new Vec3[(int) segField.getValue() + 1];
-            float smooth[] = new float[v.length];
+            Vec3[] v = new Vec3[(int) segField.getValue() + 1];
+            float[] smooth = new float[v.length];
             for (int i = 0; i < v.length; i++) {
                 v[i] = new Vec3(dir);
                 v[i].scale(i / segField.getValue());
@@ -244,8 +243,8 @@ public class ExtrudeDialog extends BDialog {
      * @return the extruded object
      */
     public static Object3D extrudeCurve(Curve profile, CoordinateSystem profCoords, Vec3 dir, int segments, double angle, boolean orient) {
-        Vec3 v[] = new Vec3[segments + 1];
-        float smooth[] = new float[v.length];
+        Vec3[] v = new Vec3[segments + 1];
+        float[] smooth = new float[v.length];
         for (int i = 0; i < v.length; i++) {
             v[i] = new Vec3(dir);
             v[i].scale(i * segments);
@@ -267,11 +266,16 @@ public class ExtrudeDialog extends BDialog {
      * @return the extruded object
      */
     public static Object3D extrudeCurve(Curve profile, Curve path, CoordinateSystem profCoords, CoordinateSystem pathCoords, double angle, boolean orient) {
-        MeshVertex profVert[] = profile.getVertices(), pathVert[] = path.getVertices();
-        Vec3 profv[] = new Vec3[profVert.length], pathv[] = new Vec3[pathVert.length];
-        Vec3 subdiv[], center = new Vec3(), zdir[], updir[], t[], v[][];
-        float usmooth[] = new float[pathVert.length], vsmooth[] = new float[profVert.length];
-        float profSmooth[] = profile.getSmoothness(), pathSmooth[] = path.getSmoothness();
+        MeshVertex[] profVert = profile.getVertices(), pathVert = path.getVertices();
+        Vec3[] profv = new Vec3[profVert.length], pathv = new Vec3[pathVert.length];
+        Vec3[] subdiv;
+        Vec3 center = new Vec3();
+        Vec3[] zdir;
+        Vec3[] updir;
+        Vec3[] t;
+        Vec3[][] v;
+        float[] usmooth = new float[pathVert.length], vsmooth = new float[profVert.length];
+        float[] profSmooth = profile.getSmoothness(), pathSmooth = path.getSmoothness();
         CoordinateSystem localCoords = new CoordinateSystem(new Vec3(), Vec3.vz(), Vec3.vy());
         Mat4 rotate;
         int i, j;
@@ -411,8 +415,8 @@ public class ExtrudeDialog extends BDialog {
      * @return the extruded object
      */
     public static Object3D extrudeMesh(TriangleMesh profile, CoordinateSystem profCoords, Vec3 dir, int segments, double angle, boolean orient) {
-        Vec3 v[] = new Vec3[segments + 1];
-        float smooth[] = new float[v.length];
+        Vec3[] v = new Vec3[segments + 1];
+        float[] smooth = new float[v.length];
         for (int i = 0; i < v.length; i++) {
             v[i] = new Vec3(dir);
             v[i].scale(i * segments);
@@ -434,17 +438,22 @@ public class ExtrudeDialog extends BDialog {
      * @return the extruded object
      */
     public static Object3D extrudeMesh(TriangleMesh profile, Curve path, CoordinateSystem profCoords, CoordinateSystem pathCoords, double angle, boolean orient) {
-        Vertex profVert[] = (Vertex[]) profile.getVertices();
-        MeshVertex pathVert[] = path.getVertices();
-        Edge profEdge[] = profile.getEdges();
-        Face profFace[] = profile.getFaces();
-        Vec3 profv[] = new Vec3[profVert.length], pathv[] = new Vec3[pathVert.length];
-        Vec3 subdiv[], center, zdir[], updir[], t[], v[];
-        float pathSmooth[] = path.getSmoothness();
+        Vertex[] profVert = (Vertex[]) profile.getVertices();
+        MeshVertex[] pathVert = path.getVertices();
+        Edge[] profEdge = profile.getEdges();
+        Face[] profFace = profile.getFaces();
+        Vec3[] profv = new Vec3[profVert.length], pathv = new Vec3[pathVert.length];
+        Vec3[] subdiv;
+        Vec3 center;
+        Vec3[] zdir;
+        Vec3[] updir;
+        Vec3[] t;
+        Vec3[] v;
+        float[] pathSmooth = path.getSmoothness();
         CoordinateSystem localCoords = new CoordinateSystem(new Vec3(), Vec3.vz(), Vec3.vy());
         Mat4 rotate;
         int numBoundaryEdges = 0, numBoundaryPoints = 0, i, j, k;
-        int boundaryEdge[], boundaryPoint[];
+        int[] boundaryEdge, boundaryPoint;
 
         for (i = 0; i < profVert.length; i++) {
             profv[i] = profCoords.fromLocal().timesDirection(profVert[i].r);
@@ -459,7 +468,7 @@ public class ExtrudeDialog extends BDialog {
         }
 
         // Make a list of the edges and vertices which are on the boundary of the mesh.
-        boolean onBound[] = new boolean[profv.length];
+        boolean[] onBound = new boolean[profv.length];
         for (i = 0; i < profEdge.length; i++) {
             if (profEdge[i].f2 == -1) {
                 numBoundaryEdges++;
@@ -485,8 +494,8 @@ public class ExtrudeDialog extends BDialog {
         }
 
         // Find which direction each boundary edge points in.
-        boolean forward[] = new boolean[boundaryEdge.length];
-        int edgeVertIndex[][] = new int[boundaryEdge.length][2];
+        boolean[] forward = new boolean[boundaryEdge.length];
+        int[][] edgeVertIndex = new int[boundaryEdge.length][2];
         for (i = 0; i < boundaryEdge.length; i++) {
             Edge ed = profEdge[boundaryEdge[i]];
             Face fc = profFace[ed.f1];
@@ -502,7 +511,7 @@ public class ExtrudeDialog extends BDialog {
         }
 
         // Make up a list of the indices for every point on the side of the extruded object.
-        int index[][];
+        int[][] index;
         if (path.isClosed()) {
             index = new int[pathv.length + 1][boundaryPoint.length];
             for (i = 0; i < boundaryPoint.length; i++) {
@@ -667,12 +676,12 @@ public class ExtrudeDialog extends BDialog {
         }
 
         // Build the final object.
-        int faces[][] = new int[newFace.size()][];
+        int[][] faces = new int[newFace.size()][];
         for (i = 0; i < faces.length; i++) {
             faces[i] = newFace.get(i);
         }
         TriangleMesh mesh = new TriangleMesh(v, faces);
-        Edge meshEdge[] = mesh.getEdges();
+        Edge[] meshEdge = mesh.getEdges();
         for (i = 0; i < newEdge.size(); i++) {
             EdgeInfo info = newEdge.get(i);
             if (info.smoothness == 1.0f) {
