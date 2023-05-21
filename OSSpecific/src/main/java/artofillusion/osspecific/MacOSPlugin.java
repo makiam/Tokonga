@@ -137,7 +137,7 @@ public class MacOSPlugin implements Plugin, InvocationHandler {
      * Handle ApplicationListener methods.
      */
     @Override
-    public Object invoke(Object proxy, Method method, Object args[]) {
+    public Object invoke(Object proxy, Method method, Object[] args) {
         boolean handled = true;
         if ("handleAbout".equals(method.getName())) {
             TitleWindow win = new TitleWindow();
