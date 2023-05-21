@@ -14,43 +14,39 @@ import artofillusion.math.*;
 import artofillusion.object.*;
 
 /**
- * This subclass of RTLight is used for PointLights and SpotLights.  It distributes ray
+ * This subclass of RTLight is used for PointLights and SpotLights. It distributes ray
  * targets uniformly over the volume of a sphere.
  */
+public class RTSphericalLight extends RTLight {
 
-public class RTSphericalLight extends RTLight
-{
-  private final double radius;
+    private final double radius;
 
-  public RTSphericalLight(PointLight light, CoordinateSystem coords, boolean softShadows)
-  {
-    super(light, coords);
-    radius = (softShadows ? light.getRadius() : 0.0);
-  }
+    public RTSphericalLight(PointLight light, CoordinateSystem coords, boolean softShadows) {
+        super(light, coords);
+        radius = (softShadows ? light.getRadius() : 0.0);
+    }
 
-  public RTSphericalLight(SpotLight light, CoordinateSystem coords, boolean softShadows)
-  {
-    super(light, coords);
-    radius = (softShadows ? light.getRadius() : 0.0);
-  }
+    public RTSphericalLight(SpotLight light, CoordinateSystem coords, boolean softShadows) {
+        super(light, coords);
+        radius = (softShadows ? light.getRadius() : 0.0);
+    }
 
-  @Override
-  public double findRayToLight(Vec3 origin, Ray ray, RaytracerRenderer renderer, int rayNumber)
-  {
-    ray.getOrigin().set(origin);
-    Vec3 dir = ray.getDirection();
-    dir.set(getCoords().getOrigin());
-    if (rayNumber != -1)
-      renderer.randomizePoint(dir, ray.rt.random, radius, rayNumber);
-    dir.subtract(origin);
-    double distToLight = dir.length();
-    dir.normalize();
-    return distToLight;
-  }
+    @Override
+    public double findRayToLight(Vec3 origin, Ray ray, RaytracerRenderer renderer, int rayNumber) {
+        ray.getOrigin().set(origin);
+        Vec3 dir = ray.getDirection();
+        dir.set(getCoords().getOrigin());
+        if (rayNumber != -1) {
+            renderer.randomizePoint(dir, ray.rt.random, radius, rayNumber);
+        }
+        dir.subtract(origin);
+        double distToLight = dir.length();
+        dir.normalize();
+        return distToLight;
+    }
 
-  @Override
-  public boolean getSoftShadows()
-  {
-    return radius != 0.0 && getLight().getType() == Light.TYPE_NORMAL;
-  }
+    @Override
+    public boolean getSoftShadows() {
+        return radius != 0.0 && getLight().getType() == Light.TYPE_NORMAL;
+    }
 }

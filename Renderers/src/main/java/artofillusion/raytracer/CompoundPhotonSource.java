@@ -17,51 +17,45 @@ import artofillusion.util.*;
  * It is used to parallelize the generation of photons from sources that are not themselves
  * parallelized.
  */
+public class CompoundPhotonSource implements PhotonSource {
 
-public class CompoundPhotonSource implements PhotonSource
-{
-  private PhotonSource source[];
-  private double sourceIntensity[];
-  private double totalSourceIntensity;
+    private PhotonSource source[];
+    private double sourceIntensity[];
+    private double totalSourceIntensity;
 
-  public CompoundPhotonSource(PhotonSource source[])
-  {
-    this.source = source;
-    sourceIntensity = new double[source.length];
-    totalSourceIntensity = 0.0;
-    for (int i = 0; i < source.length; i++)
-    {
-      sourceIntensity[i] = source[i].getTotalIntensity();
-      totalSourceIntensity += sourceIntensity[i];
+    public CompoundPhotonSource(PhotonSource source[]) {
+        this.source = source;
+        sourceIntensity = new double[source.length];
+        totalSourceIntensity = 0.0;
+        for (int i = 0; i < source.length; i++) {
+            sourceIntensity[i] = source[i].getTotalIntensity();
+            totalSourceIntensity += sourceIntensity[i];
+        }
     }
-  }
 
-  @Override
-  public double getTotalIntensity()
-  {
-    return totalSourceIntensity;
-  }
+    @Override
+    public double getTotalIntensity() {
+        return totalSourceIntensity;
+    }
 
-  @Override
-  public void generatePhotons(final PhotonMap map, final double intensity, ThreadManager threads)
-  {
-    final Thread currentThread = Thread.currentThread();
-    threads.setNumIndices(source.length);
-    threads.setTask(new ThreadManager.Task()
-    {
-          @Override
-      public void execute(int index)
-      {
-        if (map.getRenderer().renderThread != currentThread)
-          return;
-        source[index].generatePhotons(map, intensity*sourceIntensity[index]/totalSourceIntensity, null);
-      }
-          @Override
-      public void cleanup()
-      {
-        map.getWorkspace().cleanup();
-      }
-    });
-    threads.run();
-  }
+    @Override
+    public void generatePhotons(final PhotonMap map, final double intensity, ThreadManager threads) {
+        final Thread currentThread = Thread.currentThread();
+        threads.setNumIndices(source.length);
+        threads.setTask(new ThreadManager.Task() {
+            @Override
+            public void execute(int index) {
+                if (map.getRenderer().renderThread != currentThread) {
+                    return;
+                }
+                source[index].generatePhotons(map, intensity * sourceIntensity[index] / totalSourceIntensity, null);
+            }
+
+            @Override
+            public void cleanup() {
+                map.getWorkspace().cleanup();
+            }
+        });
+        threads.run();
+    }
 }

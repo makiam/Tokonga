@@ -16,25 +16,21 @@ import artofillusion.math.*;
 /**
  * This class stores information about the material for an object.
  */
+public class ObjectMaterialInfo {
 
-public class ObjectMaterialInfo
-{
-  private MaterialMapping mapping;
-  private Mat4 toLocal;
+    private MaterialMapping mapping;
+    private Mat4 toLocal;
 
-  public ObjectMaterialInfo(MaterialMapping mapping, Mat4 toLocal)
-  {
-    this.mapping = mapping;
-    this.toLocal = toLocal;
-  }
+    public ObjectMaterialInfo(MaterialMapping mapping, Mat4 toLocal) {
+        this.mapping = mapping;
+        this.toLocal = toLocal;
+    }
 
-  public MaterialMapping getMapping()
-  {
-    return mapping;
-  }
+    public MaterialMapping getMapping() {
+        return mapping;
+    }
 
-  public Mat4 getToLocal()
-  {
-    return toLocal;
-  }
+    public Mat4 getToLocal() {
+        return toLocal;
+    }
 }
