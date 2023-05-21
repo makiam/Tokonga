@@ -35,7 +35,7 @@ public class SkinTool implements ModellingTool {
     public void commandSelected(LayoutWindow window) {
         Scene scene = window.getScene();
         int[] selection = window.getSelectedIndices();
-        Vector<ObjectInfo> curves = new Vector<ObjectInfo>();
+        Vector<ObjectInfo> curves = new Vector<>();
 
         for (int i = 0; i < selection.length; i++) {
             ObjectInfo obj = scene.getObject(selection[i]);

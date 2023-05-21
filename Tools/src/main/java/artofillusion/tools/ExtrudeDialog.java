@@ -50,8 +50,8 @@ public class ExtrudeDialog extends BDialog {
 
         // Identify the objects that can be extruded, and the paths along which they can be
         // extruded.
-        objects = new Vector<ObjectInfo>();
-        paths = new Vector<ObjectInfo>();
+        objects = new Vector<>();
+        paths = new Vector<>();
         for (int i = 0; i < selection.length; i++) {
             ObjectInfo obj = scene.getObject(selection[i]);
             if (obj.getObject() instanceof Curve) {
@@ -586,8 +586,8 @@ public class ExtrudeDialog extends BDialog {
         } else {
             v = new Vec3[2 * profv.length + numBoundaryPoints * (pathv.length - 2)];
         }
-        Vector<EdgeInfo> newEdge = new Vector<EdgeInfo>();
-        Vector<int[]> newFace = new Vector<int[]>();
+        Vector<EdgeInfo> newEdge = new Vector<>();
+        Vector<int[]> newFace = new Vector<>();
         boolean angled = (profile.getSmoothingMethod() == Mesh.NO_SMOOTHING && path.getSmoothingMethod() != Mesh.NO_SMOOTHING);
         if (!path.isClosed()) {
             // Add two copies of the profile mesh, to serve as the ends.
