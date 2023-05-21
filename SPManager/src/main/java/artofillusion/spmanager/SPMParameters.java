@@ -23,14 +23,14 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- *  Description of the Class
+ * Description of the Class
  *
- *@author     François Guillet
- *@created    20 mars 2004
+ * @author François Guillet
+ * @created 20 mars 2004
  */
 @Slf4j
-public class SPMParameters
-{
+public class SPMParameters {
+
     private static List<String> repositories;
     private static int current;
     /**
@@ -81,62 +81,59 @@ public class SPMParameters
     private URL repListURL;
     private boolean useCache = true;
 
-    /**  enum for filter values - in order of increasing restriction  */
-    public static final int DEFAULT	= 0;
-    public static final int ENABLE	= 1;
-    public static final int MARK	= 2;
-    public static final int CONFIRM	= 3;
-    public static final int DISABLE	= 4;
-    public static final int HIDE	= 5;
+    /**
+     * enum for filter values - in order of increasing restriction
+     */
+    public static final int DEFAULT = 0;
+    public static final int ENABLE = 1;
+    public static final int MARK = 2;
+    public static final int CONFIRM = 3;
+    public static final int DISABLE = 4;
+    public static final int HIDE = 5;
     public static final int LAST_FILTER = 6;
     public static final int FILTER_MODULO = LAST_FILTER;
 
     public static final String[] FILTER_NAMES = {
-	SPMTranslate.text("filtDefault"), SPMTranslate.text("filtEnable"),
-	SPMTranslate.text("filtMark"), SPMTranslate.text("filtConfirm"),
-	SPMTranslate.text("filtDisable"), SPMTranslate.text("filtHide"),
-	"default", "enable", "mark", "confirm", "disable", "hide"
+        SPMTranslate.text("filtDefault"), SPMTranslate.text("filtEnable"),
+        SPMTranslate.text("filtMark"), SPMTranslate.text("filtConfirm"),
+        SPMTranslate.text("filtDisable"), SPMTranslate.text("filtHide"),
+        "default", "enable", "mark", "confirm", "disable", "hide"
     };
 
     /**
-     *  Constructor for the SPMParameters object
+     * Constructor for the SPMParameters object
      */
-    public SPMParameters()
-    {
+    public SPMParameters() {
         repositories = new Vector<>();
 
-        repositories.add( "https://aoisp.sourceforge.net/AoIRepository" );
+        repositories.add("https://aoisp.sourceforge.net/AoIRepository");
 
-	filters = new HashMap<>();
-	filters.put("beta", "mark");
-	filters.put("earlyAccess", "confirm");
-	filters.put("experimental", "hide");
+        filters = new HashMap<>();
+        filters.put("beta", "mark");
+        filters.put("earlyAccess", "confirm");
+        filters.put("experimental", "hide");
 
         proxyPort = "";
         username = "";
         password = "";
         current = 0;
 
-        
         loadPropertiesFile();
         initHttp();
     }
 
-
     /**
-     *  Description of the Method
+     * Description of the Method
      */
-    private void loadPropertiesFile()
-    {
+    private void loadPropertiesFile() {
         File oldFile = new File(System.getProperty("user.home"), ".spmanagerprefs");
-        if(Files.exists(oldFile.toPath())) {
+        if (Files.exists(oldFile.toPath())) {
             log.info("Deleting the old .spmanagerprefs file");
             oldFile.delete();
         }
         Path pp = ApplicationPreferences.getPreferencesFolderPath().resolve("spmanagerprefs");
-        if (Files.notExists(pp))
-        {
-	    savePropertiesFile();
+        if (Files.notExists(pp)) {
+            savePropertiesFile();
             return;
         }
         try (InputStream in = new BufferedInputStream(Files.newInputStream(pp))) {
@@ -149,241 +146,216 @@ public class SPMParameters
 
     }
 
-
     /**
-     *  Gets the repositories list
+     * Gets the repositories list
      *
-     *@param  forceUpdate  Description of the Parameter
+     * @param forceUpdate Description of the Parameter
      */
-    public void getRepositoriesList( boolean forceUpdate )
-    {
-      new Thread(() -> getThreadedRepositoriesList(forceUpdate)).start();
+    public void getRepositoriesList(boolean forceUpdate) {
+        new Thread(() -> getThreadedRepositoriesList(forceUpdate)).start();
     }
 
-
     /**
-     *  Gets the threadedRepositoriesList attribute of the SPMParameters object
+     * Gets the threadedRepositoriesList attribute of the SPMParameters object
      *
-     *@param  forceUpdate  Description of the Parameter
+     * @param forceUpdate Description of the Parameter
      */
-    private void getThreadedRepositoriesList( boolean forceUpdate )
-    {
-	final BDialog dlg = new BDialog(SPManagerFrame.getInstance(),
-					SPMTranslate.text("remoteStatus"),
-					true);
+    private void getThreadedRepositoriesList(boolean forceUpdate) {
+        final BDialog dlg = new BDialog(SPManagerFrame.getInstance(),
+                SPMTranslate.text("remoteStatus"),
+                true);
 
-	dlg.setEnabled(true);
+        dlg.setEnabled(true);
 
-	(new Thread() {
-                @Override
-		public void run()
-		{
-		    try {
-			Thread.sleep(500);
-			if (dlg.isEnabled()) {
-			    dlg.setContent(new BLabel(SPMTranslate.text("waiting")));
+        (new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(500);
+                    if (dlg.isEnabled()) {
+                        dlg.setContent(new BLabel(SPMTranslate.text("waiting")));
 
-			    dlg.pack();
-			    UIUtilities.centerWindow(dlg);
-			    if (dlg.isEnabled()) dlg.setVisible(true);
-			}
-		    } catch (InterruptedException e) {}
-		}
-	    }).start();
+                        dlg.pack();
+                        UIUtilities.centerWindow(dlg);
+                        if (dlg.isEnabled()) {
+                            dlg.setVisible(true);
+                        }
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        }).start();
 
         boolean updated = false;
-        
+
         repListURL = null;
         //try to get a new repositories definition file
-        try
-        {
-            repListURL = new URL( "https://aoisp.sourceforge.net/SPRepositories.txt" );
+        try {
+            repListURL = new URL("https://aoisp.sourceforge.net/SPRepositories.txt");
         } catch (MalformedURLException me) {
             log.atError().setCause(me).log("Bad URL: {}", me.getMessage());
         }
-        SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "fetchingRepositoriesList" ) + " " + repListURL, -1 );
-        try
-        {
-	    HttpURLConnection conn =
-		(HttpURLConnection) repListURL.openConnection();
+        SPManagerFrame.getInstance().setRemoteStatusText(SPMTranslate.text("fetchingRepositoriesList") + " " + repListURL, -1);
+        try {
+            HttpURLConnection conn
+                    = (HttpURLConnection) repListURL.openConnection();
 
-	    if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-		new BStandardDialog("SPManager", new String[] {
-					SPMTranslate.text("noRepoList"),
-					conn.getResponseMessage() +
-					" (" + conn.getResponseCode() + ")",
-				    }, BStandardDialog.ERROR)
-		    .showMessageDialog(SPManagerFrame.getInstance());
+            if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                new BStandardDialog("SPManager", new String[]{
+                    SPMTranslate.text("noRepoList"),
+                    conn.getResponseMessage()
+                    + " (" + conn.getResponseCode() + ")",}, BStandardDialog.ERROR)
+                        .showMessageDialog(SPManagerFrame.getInstance());
 
-		return;
-	    }
+                return;
+            }
 
-	    LineNumberReader rd = new LineNumberReader(new InputStreamReader(conn.getInputStream()));
+            LineNumberReader rd = new LineNumberReader(new InputStreamReader(conn.getInputStream()));
 
             String repoName;
-	    boolean modified = true;
-	    String currentString = repositories.get( current );
+            boolean modified = true;
+            String currentString = repositories.get(current);
 
             log.atInfo().log("Current repo: ({}): {}", current, currentString);
 
-	    int previous = current;
-	    current = 0;
+            int previous = current;
+            current = 0;
             List<String> newRepositories = new Vector<>();
-	    while (true) {
-		repoName = rd.readLine();
-		if (repoName == null || repoName.length() == 0) break;
-		
+            while (true) {
+                repoName = rd.readLine();
+                if (repoName == null || repoName.length() == 0) {
+                    break;
+                }
+
                 if (repoName.startsWith("<DOC")) {
                     log.atDebug().log("Error retrieving repositories list.");
-		    SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text( "noRepoList" ), -1 );
-		    
+                    SPManagerFrame.getInstance().setRemoteStatusText(SPMTranslate.text("noRepoList"), -1);
 
-		    current = previous;
-		    return;
-		}
+                    current = previous;
+                    return;
+                }
 
-		repoName = repoName.trim();
-		if (repoName.endsWith("/"))
-		    repoName = repoName.substring(0, repoName.length()-1);
+                repoName = repoName.trim();
+                if (repoName.endsWith("/")) {
+                    repoName = repoName.substring(0, repoName.length() - 1);
+                }
 
                 log.atInfo().log("Repository name: {}<<", repoName);
 
                 newRepositories.add(repoName);
-		if ( repoName.equals( currentString ) ) {
-		    current = rd.getLineNumber() - 1;
+                if (repoName.equals(currentString)) {
+                    current = rd.getLineNumber() - 1;
                     log.atInfo().log("New current: {}", current);
-		    modified = false;
-		}
-	    }
+                    modified = false;
+                }
+            }
 
-	    repositories = newRepositories;
+            repositories = newRepositories;
             rd.close();
 
-            if ( modified )
-            {
+            if (modified) {
                 SwingUtilities.invokeLater(SPManagerFrame.getInstance()::updatePanes);
                 updated = true;
             }
-        }
-        catch ( IOException e )
-        {
-            if ( !( ( e instanceof UnknownHostException ) || ( e instanceof SocketException ) ) )
+        } catch (IOException e) {
+            if (!((e instanceof UnknownHostException) || (e instanceof SocketException))) {
                 log.atError().setCause(e).log("IO Error: {}", e.getMessage());
-            SPManagerFrame.getInstance().setRemoteStatusText( SPMTranslate.text("unknownRepositoriesHost", repListURL), -1 );
-        }
-        finally
-        {
-	    // close and displose of the dialog
-	    dlg.setEnabled(false);
-	    dlg.setVisible(false);
-	    dlg.dispose();
-
-            SPManagerFrame.getInstance().setRemoteStatusTextDuration( 3000 );
-            try
-            {
-                Thread.sleep( 1000 );
             }
- catch (InterruptedException e) {
+            SPManagerFrame.getInstance().setRemoteStatusText(SPMTranslate.text("unknownRepositoriesHost", repListURL), -1);
+        } finally {
+            // close and displose of the dialog
+            dlg.setEnabled(false);
+            dlg.setVisible(false);
+            dlg.dispose();
+
+            SPManagerFrame.getInstance().setRemoteStatusTextDuration(3000);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
                 log.atError().setCause(e).log("Thread interrupted: {}", e.getMessage());
             }
-            if ( ( !updated ) && forceUpdate )
-            {
+            if ((!updated) && forceUpdate) {
                 SwingUtilities.invokeLater(SPManagerFrame.getInstance()::updatePanes);
             }
 
         }
     }
 
-
     /**
-     *  Description of the Method
+     * Description of the Method
      */
-    private void savePropertiesFile()
-    {
+    private void savePropertiesFile() {
         Path pp = ApplicationPreferences.getPreferencesFolderPath().resolve("spmanagerprefs");
         try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(pp))) {
             Properties props = newProperties();
             props.store(out, "Scripts & Plugins Manager Preferences File");
-        }
-        catch ( IOException ex )
-        {
+        } catch (IOException ex) {
             log.atError().setCause(ex).log("IO Error: {}", ex.getMessage());
         }
 
     }
 
-
     /**
-     *  Description of the Method
+     * Description of the Method
      *
-     *@param  p  Description of the Parameter
+     * @param p Description of the Parameter
      */
-    private void parseProperties( Properties p )
-    {
+    private void parseProperties(Properties p) {
         int i = 0;
         String s = null;
 
         repositories.clear();
         current = 0;
 
-        while ( i != -1 )
-        {
-            s = p.getProperty( "URL_" + i );
-            if ( s == null )
-            {
+        while (i != -1) {
+            s = p.getProperty("URL_" + i);
+            if (s == null) {
                 i = -1;
-            }
-            else
-            {
-		s.trim();
-		if (s.endsWith("/")) s = s.substring(0, s.length()-1);
+            } else {
+                s.trim();
+                if (s.endsWith("/")) {
+                    s = s.substring(0, s.length() - 1);
+                }
 
-                repositories.add( s );
+                repositories.add(s);
                 ++i;
             }
         }
 
-        s = p.getProperty( "default", "0" );
-        try
-        {
-            current = Integer.parseInt( s );
-            if ( current > repositories.size() )
-            {
+        s = p.getProperty("default", "0");
+        try {
+            current = Integer.parseInt(s);
+            if (current > repositories.size()) {
                 current = 0;
             }
-        }
-        catch ( NumberFormatException e )
-        {
+        } catch (NumberFormatException e) {
             current = 0;
             log.atError().log("SPManager : Wrong default URL index in properties file.");
         }
 
-
         p.forEach((Object pKey, Object value) -> {
-          String key = (String)pKey;
-          if(key.startsWith("FILTER_"))
-            filters.put(key.substring("FILTER_".length()), (String)value);
+            String key = (String) pKey;
+            if (key.startsWith("FILTER_")) {
+                filters.put(key.substring("FILTER_".length()), (String) value);
+            }
         });
 
-	// initialise an empty filter set
-	if (filters.isEmpty()) {
-	    filters.put("beta", "mark");
-	    filters.put("earlyAccess", "confirm");
-	    filters.put("experimental", "hide");
-	}
-
-        proxyHost = p.getProperty( "proxyHost", "" );
-        proxyPort = p.getProperty( "proxyPort", "" );
-        username = p.getProperty( "username", "" );
-        password = se.decrypt(p.getProperty( "password", "" ));
-
-        s = p.getProperty( "useProxy", "false" );
-        try
-        {
-            useProxy = Boolean.parseBoolean(s);
+        // initialise an empty filter set
+        if (filters.isEmpty()) {
+            filters.put("beta", "mark");
+            filters.put("earlyAccess", "confirm");
+            filters.put("experimental", "hide");
         }
-        catch ( Exception e )
-        {
+
+        proxyHost = p.getProperty("proxyHost", "");
+        proxyPort = p.getProperty("proxyPort", "");
+        username = p.getProperty("username", "");
+        password = se.decrypt(p.getProperty("password", ""));
+
+        s = p.getProperty("useProxy", "false");
+        try {
+            useProxy = Boolean.parseBoolean(s);
+        } catch (Exception e) {
             useProxy = false;
             log.atError().log("SPManager : Invalid use of proxy setting in properties file: useProxy={}", useProxy);
         }
@@ -391,182 +363,173 @@ public class SPMParameters
 
     }
 
-
     /**
-     *  Description of the Method
+     * Description of the Method
      *
-     *@return    Description of the Return Value
+     * @return Description of the Return Value
      */
-    private Properties newProperties()
-    {
+    private Properties newProperties() {
         Properties p = new Properties();
 
-        for ( int i = 0; i < repositories.size(); ++i )
-        {
-            p.setProperty( "URL_" + i,  repositories.get( i ) );
+        for (int i = 0; i < repositories.size(); ++i) {
+            p.setProperty("URL_" + i, repositories.get(i));
         }
-        p.setProperty( "default", String.valueOf( current ) );
+        p.setProperty("default", String.valueOf(current));
 
         filters.forEach((String key, String value) -> {
-          p.setProperty("FILTER_" + key, value);
+            p.setProperty("FILTER_" + key, value);
         });
 
-        p.setProperty( "proxyHost", proxyHost );
-        p.setProperty( "proxyPort", proxyPort );
-        p.setProperty( "username", username );
-        p.setProperty( "password", se.encrypt( password ));
-        p.setProperty( "useProxy", String.valueOf( useProxy ) );
-        p.setProperty( "usecache", String.valueOf( useCache ));
+        p.setProperty("proxyHost", proxyHost);
+        p.setProperty("proxyPort", proxyPort);
+        p.setProperty("username", username);
+        p.setProperty("password", se.encrypt(password));
+        p.setProperty("useProxy", String.valueOf(useProxy));
+        p.setProperty("usecache", String.valueOf(useCache));
         return p;
     }
 
-
     /**
-     *  Sets the uRLs attribute of the SPMParameters object
+     * Sets the uRLs attribute of the SPMParameters object
      *
-     *@param  urls           The new uRLs value
-     *@param  selectedIndex  The new uRLs value
+     * @param urls The new uRLs value
+     * @param selectedIndex The new uRLs value
      */
-    public void setURLs( String[] urls, int selectedIndex )
-    {
+    public void setURLs(String[] urls, int selectedIndex) {
         repositories.clear();
         repositories.addAll(Arrays.asList(urls));
         current = selectedIndex;
         savePropertiesFile();
     }
 
-
     /**
-     *  Gets the repositories attribute of the SPMParameters object
+     * Gets the repositories attribute of the SPMParameters object
      *
-     *@return    The repositories value
+     * @return The repositories value
      */
-    public String[] getRepositories()
-    {
-      return repositories.toArray(new String[0]);
+    public String[] getRepositories() {
+        return repositories.toArray(new String[0]);
     }
 
-
     /**
-     *  Gets the currentRepository attribute of the SPMParameters object
+     * Gets the currentRepository attribute of the SPMParameters object
      *
-     *@return    The currentRepository value
+     * @return The currentRepository value
      */
-    public URL getCurrentRepository()
-    {
+    public URL getCurrentRepository() {
         URL url = null;
-        try
-        {
-            url = new URL(repositories.get( current ));
+        try {
+            url = new URL(repositories.get(current));
         } catch (MalformedURLException me) {
             log.atError().setCause(me).log("Bad URL: {}", me.getMessage());
         }
         return url;
     }
 
-
     /**
-     *  Sets the currentRepository attribute of the SPMParameters object
+     * Sets the currentRepository attribute of the SPMParameters object
      *
-     *@param  c  The new currentRepository value
+     * @param c The new currentRepository value
      */
-    public void setCurrentRepository( int c )
-    {
+    public void setCurrentRepository(int c) {
         current = c;
     }
 
-
     /**
-     *  Gets the currentRepositoryIndex attribute of the SPMParameters object
+     * Gets the currentRepositoryIndex attribute of the SPMParameters object
      *
-     *@return    The currentRepositoryIndex value
+     * @return The currentRepositoryIndex value
      */
-    public int getCurrentRepositoryIndex()
-    {
-	if (current < 0) getRepositoriesList( false );
+    public int getCurrentRepositoryIndex() {
+        if (current < 0) {
+            getRepositoriesList(false);
+        }
         return current;
     }
 
     /**
-     *  get a filter value
+     * get a filter value
      */
-    public int getFilter(String name)
-    { return getFilterType(filters.get(name)); }
-
-    public String getFilterString(String name)
-    { return filters.get(name); }
-
-    /**
-     *  return the filter type corresponding to this filter value
-     */
-    public static int getFilterType(String val)
-    {
-	if (val == null || val.length() == 0) return DEFAULT;
-
-	for (int i = 0; i < FILTER_NAMES.length; i++)
-	    if (val.equals(FILTER_NAMES[i])) return i % FILTER_MODULO;
-
-	return DEFAULT;
+    public int getFilter(String name) {
+        return getFilterType(filters.get(name));
     }
 
-    public static String getFilterType(int type)
-    {
-	if (type < 0) return FILTER_NAMES[0];
-	return FILTER_NAMES[type % FILTER_MODULO];
+    public String getFilterString(String name) {
+        return filters.get(name);
     }
 
-
     /**
-     *  add a filter to the list
+     * return the filter type corresponding to this filter value
      */
-    public void addFilter(String name, String value)
-    { filters.put(name, value); }
+    public static int getFilterType(String val) {
+        if (val == null || val.length() == 0) {
+            return DEFAULT;
+        }
 
-    public void addFilter(String name, int type)
-    { filters.put(name, getFilterType(type)); }
-    
+        for (int i = 0; i < FILTER_NAMES.length; i++) {
+            if (val.equals(FILTER_NAMES[i])) {
+                return i % FILTER_MODULO;
+            }
+        }
+
+        return DEFAULT;
+    }
+
+    public static String getFilterType(int type) {
+        if (type < 0) {
+            return FILTER_NAMES[0];
+        }
+        return FILTER_NAMES[type % FILTER_MODULO];
+    }
+
     /**
-     *  Description of the Method
+     * add a filter to the list
+     */
+    public void addFilter(String name, String value) {
+        filters.put(name, value);
+    }
+
+    public void addFilter(String name, int type) {
+        filters.put(name, getFilterType(type));
+    }
+
+    /**
+     * Description of the Method
      *
-     *@return    Description of the Return Value
+     * @return Description of the Return Value
      */
-    public boolean useProxy()
-    {
+    public boolean useProxy() {
         return useProxy;
     }
 
     /**
-     *  Returns true if cached headers file is to be used
+     * Returns true if cached headers file is to be used
      *
-     *@return    The password value
+     * @return The password value
      */
-    public boolean getUseCache()
-    {
+    public boolean getUseCache() {
         return useCache;
     }
 
     /**
-     *  Sets if cached headers files are to be used
+     * Sets if cached headers files are to be used
      *
-     *@param useCache True if cached info is to be used
+     * @param useCache True if cached info is to be used
      */
-    public void setUseCache( boolean useCache )
-    {
+    public void setUseCache(boolean useCache) {
         this.useCache = useCache;
     }
 
-
     /**
-     *  Sets the proxyParameters attribute of the SPMParameters object
+     * Sets the proxyParameters attribute of the SPMParameters object
      *
-     *@param  up   The new proxyParameters value
-     *@param  ph   The new proxyParameters value
-     *@param  pp   The new proxyParameters value
-     *@param  usr  The new proxyParameters value
-     *@param  pwd  The new proxyParameters value
+     * @param up The new proxyParameters value
+     * @param ph The new proxyParameters value
+     * @param pp The new proxyParameters value
+     * @param usr The new proxyParameters value
+     * @param pwd The new proxyParameters value
      */
-    public void setProxyParameters( boolean up, String ph, String pp, String usr, String pwd )
-    {
+    public void setProxyParameters(boolean up, String ph, String pp, String usr, String pwd) {
         useProxy = up;
         proxyHost = ph;
         proxyPort = pp;
@@ -576,106 +539,92 @@ public class SPMParameters
         savePropertiesFile();
     }
 
-
     /**
-     *  Sets the changed attribute of the SPMParameters object
+     * Sets the changed attribute of the SPMParameters object
      *
-     *@param  ch  The new changed value
+     * @param ch The new changed value
      */
-    public void setChanged( boolean ch )
-    {
+    public void setChanged(boolean ch) {
         changed = ch;
-	if (changed) savePropertiesFile();
+        if (changed) {
+            savePropertiesFile();
+        }
     }
 
-
     /**
-     *  Description of the Method
+     * Description of the Method
      *
-     *@return    Description of the Return Value
+     * @return Description of the Return Value
      */
-    public boolean hasChanged()
-    {
+    public boolean hasChanged() {
         return changed;
     }
 
-
     /**
-     *  Description of the Method
+     * Description of the Method
      */
-    public void initHttp()
-    {
-        if ( useProxy )
-        {
+    public void initHttp() {
+        if (useProxy) {
             // set proxy host
-            System.setProperty( "http.proxyHost", proxyHost );
+            System.setProperty("http.proxyHost", proxyHost);
             // set proxy port
-            System.setProperty( "http.proxyPort", proxyPort );
+            System.setProperty("http.proxyPort", proxyPort);
 
             // set proxy authentication
-            if ( username == null || username.length() == 0 )
-            {
-                Authenticator.setDefault( new FirewallAuthenticator( null ) );
-            }
-            else
-            {
+            if (username == null || username.length() == 0) {
+                Authenticator.setDefault(new FirewallAuthenticator(null));
+            } else {
                 PasswordAuthentication pw = new PasswordAuthentication(username, password.toCharArray());
-                Authenticator.setDefault( new FirewallAuthenticator( pw ) );
+                Authenticator.setDefault(new FirewallAuthenticator(pw));
             }
-        }
-        else
-        {
-            System.getProperties().remove( "http.proxyHost" );
-            System.getProperties().remove( "http.proxyPort" );
-            Authenticator.setDefault( null );
+        } else {
+            System.getProperties().remove("http.proxyHost");
+            System.getProperties().remove("http.proxyPort");
+            Authenticator.setDefault(null);
         }
     }
 
-
     //copied from jEdit
     /**
-     *  Description of the Class
+     * Description of the Class
      *
-     *@author     Francois Guillet
-     *@created    March, 20 2004
+     * @author Francois Guillet
+     * @created March, 20 2004
      */
-    static class FirewallAuthenticator extends Authenticator
-    {
+    static class FirewallAuthenticator extends Authenticator {
+
         PasswordAuthentication pw;
 
         /**
-         *  Constructor for the FirewallAuthenticator object
+         * Constructor for the FirewallAuthenticator object
          *
-         *@param  pw  Description of the Parameter
+         * @param pw Description of the Parameter
          */
-        public FirewallAuthenticator( PasswordAuthentication pw )
-        {
+        public FirewallAuthenticator(PasswordAuthentication pw) {
             this.pw = pw;
         }
 
-
         /**
-         *  Gets the passwordAuthentication attribute of the
-         *  FirewallAuthenticator object
+         * Gets the passwordAuthentication attribute of the
+         * FirewallAuthenticator object
          *
-         *@return    The passwordAuthentication value
+         * @return The passwordAuthentication value
          */
         @Override
-        protected PasswordAuthentication getPasswordAuthentication()
-        {
+        protected PasswordAuthentication getPasswordAuthentication() {
             // if we have no stored credentials, prompt the user now
             if (pw == null) {
-        	BTextField nameField = new BTextField();
-        	BPasswordField pwField = new BPasswordField();
-        	ComponentsDialog dlg = new ComponentsDialog(SPManagerFrame.getInstance(), "SPManager:Authentication",
-        		new Widget[] { nameField, pwField },
-        		new String[] { Translate.text("SPManager:name"), Translate.text("SPManager.password") });
-        	
-        	if (dlg.clickedOk()) {
-        	    pw = new PasswordAuthentication(nameField.getText(), pwField.getText().toCharArray());
-        	}
+                BTextField nameField = new BTextField();
+                BPasswordField pwField = new BPasswordField();
+                ComponentsDialog dlg = new ComponentsDialog(SPManagerFrame.getInstance(), "SPManager:Authentication",
+                        new Widget[]{nameField, pwField},
+                        new String[]{Translate.text("SPManager:name"), Translate.text("SPManager.password")});
+
+                if (dlg.clickedOk()) {
+                    pw = new PasswordAuthentication(nameField.getText(), pwField.getText().toCharArray());
+                }
             }
-            
+
             return pw;
         }
     }

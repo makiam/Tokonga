@@ -6,24 +6,22 @@
 
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
-   PARTICULAR PURPOSE.  See the GNU General Public License for more details. 
-*/
+   PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ */
 
 package artofillusion.spmanager;
 
 import java.io.*;
 import java.util.*;
 
-public class LocalSPMFileSystem extends SPMFileSystem
-{   
-    public LocalSPMFileSystem()
-    {
+public class LocalSPMFileSystem extends SPMFileSystem {
+
+    public LocalSPMFileSystem() {
         super();
     }
-    
+
     @Override
-    public void initialize()
-    {
+    public void initialize() {
         super.initialize();
         scanPlugins();
         scanToolScripts();
@@ -31,42 +29,35 @@ public class LocalSPMFileSystem extends SPMFileSystem
         scanStartupScripts();
         initialized = true;
     }
-    
-    
-    private void scanPlugins()
-    {
+
+    private void scanPlugins() {
         scanFiles(SPManagerPlugin.PLUGIN_DIRECTORY, pluginsInfo, ".jar");
     }
-    
-    private void scanToolScripts()
-    {
+
+    private void scanToolScripts() {
         scanFiles(SPManagerPlugin.TOOL_SCRIPT_DIRECTORY, toolInfo, ".bsh");
     }
-    
-    private void scanObjectScripts()
-    {
+
+    private void scanObjectScripts() {
         scanFiles(SPManagerPlugin.OBJECT_SCRIPT_DIRECTORY, objectInfo, ".bsh");
     }
-    
-    private void scanStartupScripts()
-    {
+
+    private void scanStartupScripts() {
         scanFiles(SPManagerPlugin.STARTUP_SCRIPT_DIRECTORY, startupInfo, ".bsh");
     }
-    
-    private void scanFiles(String directory, List<SPMObjectInfo> infoVector, String suffix)
-    {
-        
+
+    private void scanFiles(String directory, List<SPMObjectInfo> infoVector, String suffix) {
+
         File dir = new File(directory);
-        if (dir.exists())
-        {
+        if (dir.exists()) {
             String[] files = dir.list();
-            if (files.length > 0) Arrays.sort(files);
-            for (String file : files)
-            {
-              if (file.endsWith(suffix))
-              {
-                infoVector.add(new SPMObjectInfo(directory + File.separatorChar + file));
-              }
+            if (files.length > 0) {
+                Arrays.sort(files);
+            }
+            for (String file : files) {
+                if (file.endsWith(suffix)) {
+                    infoVector.add(new SPMObjectInfo(directory + File.separatorChar + file));
+                }
             }
         }
     }

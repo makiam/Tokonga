@@ -21,26 +21,24 @@ import javax.swing.tree.*;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- *  Description of the Class
+ * Description of the Class
  *
- *@author     pims
- *@created    20 mars 2004
+ * @author pims
+ * @created 20 mars 2004
  */
 @Slf4j
-public class ManageSplitPane extends SPMSplitPane
-{
+public class ManageSplitPane extends SPMSplitPane {
+
     private final BButton deleteButton;
 
-
     /**
-     *  Constructor for the ManageSplitPane object
+     * Constructor for the ManageSplitPane object
      */
-    public ManageSplitPane()
-    {
-        super( "installedScriptsPlugins" );
+    public ManageSplitPane() {
+        super("installedScriptsPlugins");
         acceptsFileSelection = false;
         //initialise button
-        LayoutInfo layout = new LayoutInfo( LayoutInfo.CENTER, LayoutInfo.NONE, new Insets( 0, 0, 0, 0 ), new Dimension( 0, 0 ) );
+        LayoutInfo layout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(0, 0, 0, 0), new Dimension(0, 0));
         buttonRow.add(deleteButton = SPMTranslate.bButton("deleteFile", this, "doDelete"), layout);
         deleteButton.setIcon(new ImageIcon(getClass().getResource("/artofillusion/spmanager/icons/Delete16.gif")));
         deleteButton.setText(SPMTranslate.text("deleteScript"));
@@ -49,13 +47,11 @@ public class ManageSplitPane extends SPMSplitPane
         updateTree();
     }
 
-
     /**
-     *  Description of the Method
+     * Description of the Method
      */
     @Override
-    protected void updateTree()
-    {
+    protected void updateTree() {
         //update the file system
         fs.initialize();
 
@@ -66,153 +62,140 @@ public class ManageSplitPane extends SPMSplitPane
         getStartupScripts();
     }
 
-
     /**
-     *  Gets the plugins attribute of the ManageSplitPane object
+     * Gets the plugins attribute of the ManageSplitPane object
      */
-    private void getPlugins()
-    {
-        getFiles( pluginsPath, fs.getPlugins() );
+    private void getPlugins() {
+        getFiles(pluginsPath, fs.getPlugins());
     }
 
-
     /**
-     *  Gets the toolScripts attribute of the ManageSplitPane object
+     * Gets the toolScripts attribute of the ManageSplitPane object
      */
-    private void getToolScripts()
-    {
-        getFiles( toolScriptsPath, fs.getToolScripts() );
+    private void getToolScripts() {
+        getFiles(toolScriptsPath, fs.getToolScripts());
     }
 
-
     /**
-     *  Gets the objectScripts attribute of the ManageSplitPane object
+     * Gets the objectScripts attribute of the ManageSplitPane object
      */
-    private void getObjectScripts()
-    {
-        getFiles( objectScriptsPath, fs.getObjectScripts() );
+    private void getObjectScripts() {
+        getFiles(objectScriptsPath, fs.getObjectScripts());
     }
 
-
     /**
-     *  Gets the startupScripts attribute of the ManageSplitPane object
+     * Gets the startupScripts attribute of the ManageSplitPane object
      */
-    private void getStartupScripts()
-    {
-        getFiles( startupScriptsPath, fs.getStartupScripts() );
+    private void getStartupScripts() {
+        getFiles(startupScriptsPath, fs.getStartupScripts());
     }
 
-
     /**
-     *  Gets the files attribute of the ManageSplitPane object
+     * Gets the files attribute of the ManageSplitPane object
      *
-     *@param  addTo  Description of the Parameter
-     *@param  infos  Description of the Parameter
+     * @param addTo Description of the Parameter
+     * @param infos Description of the Parameter
      */
-    private void getFiles( TreePath addTo, List<SPMObjectInfo> infos )
-    {
+    private void getFiles(TreePath addTo, List<SPMObjectInfo> infos) {
         infos.forEach(info -> {
-          tree.addNode(addTo, new DefaultMutableTreeNode(info, false));
+            tree.addNode(addTo, new DefaultMutableTreeNode(info, false));
         });
 
-	// NTJ: set reference counts
-	for (SPMObjectInfo info: infos) {
-	    Collection<String> externals = info.getExternals();
-            if(externals == null) continue;
+        // NTJ: set reference counts
+        for (SPMObjectInfo info : infos) {
+            Collection<String> externals = info.getExternals();
+            if (externals == null) {
+                continue;
+            }
 
             externals.forEach((String item) -> {
-              String extName = item;
-              if (extName.endsWith("= required"))
-              {
-                String extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
-                extName = extName.substring(0, extName.indexOf(':'));
-                SPMObjectInfo ext = getInfo(extName, pathMap.get(extType));
-                if (ext != null) ext.refcount++;
-              }
+                String extName = item;
+                if (extName.endsWith("= required")) {
+                    String extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
+                    extName = extName.substring(0, extName.indexOf(':'));
+                    SPMObjectInfo ext = getInfo(extName, pathMap.get(extType));
+                    if (ext != null) {
+                        ext.refcount++;
+                    }
+                }
             });
-	}
+        }
     }
 
-
     /**
-     *  Description of the Method
+     * Description of the Method
      */
-    private void doDelete()
-    {
+    private void doDelete() {
         SPMObjectInfo info = getSelectedNodeInfo();
 
-	if (info.refcount > 0) {
-	    JOptionPane.showMessageDialog(SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("cannotDeleteRequired"), SPMTranslate.text("Delete", info.fileName), JOptionPane.ERROR_MESSAGE);
+        if (info.refcount > 0) {
+            JOptionPane.showMessageDialog(SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("cannotDeleteRequired"), SPMTranslate.text("Delete", info.fileName), JOptionPane.ERROR_MESSAGE);
 
-	    return;
-	}
+            return;
+        }
 
-        int r = JOptionPane.showConfirmDialog(SPManagerFrame.getInstance().getComponent(), SPMTranslate.text( "permanentlyDelete", info.fileName ),
-                SPMTranslate.text( "warning" ), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION );
-        if ( r == JOptionPane.YES_OPTION )
-            deleteFile( info );
+        int r = JOptionPane.showConfirmDialog(SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("permanentlyDelete", info.fileName),
+                SPMTranslate.text("warning"), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+        if (r == JOptionPane.YES_OPTION) {
+            deleteFile(info);
+        }
     }
 
-
     /**
-     *  Constructor for the deleteFile object
+     * Constructor for the deleteFile object
      *
-     *@param  info  Description of the Parameter
+     * @param info Description of the Parameter
      */
-    private void deleteFile( SPMObjectInfo info )
-    {
-        if ( info != null )
-        {
+    private void deleteFile(SPMObjectInfo info) {
+        if (info != null) {
 
-            File file = new File( info.fileName );
-            if ( !file.exists() )
-            {
-                log.atInfo().log("SPManager: Delete: no such file or directory: {}",  file.getAbsolutePath());
+            File file = new File(info.fileName);
+            if (!file.exists()) {
+                log.atInfo().log("SPManager: Delete: no such file or directory: {}", file.getAbsolutePath());
             }
-            if ( !file.canWrite() )
-            {
-                log.atInfo().log("SPManager: Delete: write protected: {}",  file.getAbsolutePath());
+            if (!file.canWrite()) {
+                log.atInfo().log("SPManager: Delete: write protected: {}", file.getAbsolutePath());
             }
-            if ( !file.delete() )
-            {
+            if (!file.delete()) {
 
-                new BStandardDialog( SPMTranslate.text( "error" ), SPMTranslate.text( "cannotDeleteFile", info.fileName ), BStandardDialog.ERROR ).showMessageDialog( SPManagerFrame.getInstance() );
-                log.atInfo().log("SPManager: File cannot be deleted: {}",  file.getAbsolutePath());
+                new BStandardDialog(SPMTranslate.text("error"), SPMTranslate.text("cannotDeleteFile", info.fileName), BStandardDialog.ERROR).showMessageDialog(SPManagerFrame.getInstance());
+                log.atInfo().log("SPManager: File cannot be deleted: {}", file.getAbsolutePath());
                 return;
             }
-            if ( info.fileName.lastIndexOf( "Plugins" ) != -1 )
+            if (info.fileName.lastIndexOf("Plugins") != -1) {
                 modified = true;
-            else
+            } else {
                 SPManagerUtils.updateAllAoIWindows();
-            info.setSelected( false );
-            if ( info.files != null )
-            {
-                for ( int i = 0; i < info.files.length; ++i )
-                {
-                    file = new File( info.getAddFileName( i ) );
+            }
+            info.setSelected(false);
+            if (info.files != null) {
+                for (int i = 0; i < info.files.length; ++i) {
+                    file = new File(info.getAddFileName(i));
                     file.delete();
                 }
             }
 
-	    Collection<String> externals = info.getExternals();
-	    String extName, extType;
-	    SPMObjectInfo ext;
-	    if (externals != null) {
-		for (Iterator<String> iter = externals.iterator(); iter.hasNext(); ) {
-		    extName = iter.next();
+            Collection<String> externals = info.getExternals();
+            String extName, extType;
+            SPMObjectInfo ext;
+            if (externals != null) {
+                for (Iterator<String> iter = externals.iterator(); iter.hasNext();) {
+                    extName = iter.next();
 
-		    if (extName.endsWith("= required")) {
+                    if (extName.endsWith("= required")) {
                         extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
-			extName = extName.substring(0, extName.indexOf(':'));
+                        extName = extName.substring(0, extName.indexOf(':'));
 
-			ext = getInfo(extName, pathMap.get(extType));
-			if (ext != null) ext.refcount--;
-		    }
-		}
-	    }
-	    
+                        ext = getInfo(extName, pathMap.get(extType));
+                        if (ext != null) {
+                            ext.refcount--;
+                        }
+                    }
+                }
+            }
+
             fs.initialize();
-            tree.removeNode( tree.getSelectedNode() );
+            tree.removeNode(tree.getSelectedNode());
             voidSelection();
 
         }
@@ -224,47 +207,38 @@ public class ManageSplitPane extends SPMSplitPane
 
     }
 
-
     /**
-     *  Description of the Method
+     * Description of the Method
      */
-    public void doDeleteAll()
-    {
+    public void doDeleteAll() {
         int r = JOptionPane.showConfirmDialog(SPManagerFrame.getInstance().getComponent(), Translate.text("spmanager:text.permanentlyDeleteAll"),
-                SPMTranslate.text( "warning" ), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION );
-        if ( r == JOptionPane.YES_OPTION )
-        {
-            deleteAllSelected( toolScriptsPath );
-            deleteAllSelected( objectScriptsPath );
-            deleteAllSelected( startupScriptsPath );
+                SPMTranslate.text("warning"), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+        if (r == JOptionPane.YES_OPTION) {
+            deleteAllSelected(toolScriptsPath);
+            deleteAllSelected(objectScriptsPath);
+            deleteAllSelected(startupScriptsPath);
             voidSelection();
         }
     }
 
-
     /**
-     *  Description of the Method
+     * Description of the Method
      *
-     *@param  path  Description of the Parameter
+     * @param path Description of the Parameter
      */
-    private void deleteAllSelected( TreePath path )
-    {
-        int count = tree.getChildNodeCount( path );
-        if ( count > 0 )
-        {
-            for ( int j = count - 1; j >= 0; --j )
-            {
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getChildNode( path, j ).getLastPathComponent();
+    private void deleteAllSelected(TreePath path) {
+        int count = tree.getChildNodeCount(path);
+        if (count > 0) {
+            for (int j = count - 1; j >= 0; --j) {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getChildNode(path, j).getLastPathComponent();
                 SPMObjectInfo nodeInfo = (SPMObjectInfo) node.getUserObject();
-                if ( nodeInfo.isSelected() )
-                {
-                    deleteFile( nodeInfo );
-                    tree.removeNode( tree.getChildNode( path, j ) );
+                if (nodeInfo.isSelected()) {
+                    deleteFile(nodeInfo);
+                    tree.removeNode(tree.getChildNode(path, j));
                 }
             }
         }
     }
-
 
     /**
      * Description of the Method
@@ -278,7 +252,6 @@ public class ManageSplitPane extends SPMSplitPane
         super.scriptSelection(deletable);
     }
 
-
     /**
      * Description of the Method
      *
@@ -291,15 +264,12 @@ public class ManageSplitPane extends SPMSplitPane
         super.pluginSelection(deletable);
     }
 
-
     /**
-     *  Description of the Method
+     * Description of the Method
      */
     @Override
-    public void voidSelection()
-    {
-        deleteButton.setEnabled( false );
+    public void voidSelection() {
+        deleteButton.setEnabled(false);
         super.voidSelection();
     }
 }
-
