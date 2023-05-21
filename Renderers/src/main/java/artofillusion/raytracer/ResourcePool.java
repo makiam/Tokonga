@@ -21,7 +21,7 @@ package artofillusion.raytracer;
 public class ResourcePool {
 
     private Class<?> objectClass;
-    private Object pool[];
+    private Object[] pool;
     private int next;
 
     /**
@@ -51,7 +51,7 @@ public class ResourcePool {
      */
     public Object getObject() {
         if (next == pool.length) {
-            Object newPool[] = new Object[pool.length * 2 + 1];
+            Object[] newPool = new Object[pool.length * 2 + 1];
             for (int i = 0; i < pool.length; i++) {
                 newPool[i] = pool[i];
             }

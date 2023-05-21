@@ -25,7 +25,19 @@ public class RTCylinder extends RTObject {
 
     Cylinder theCylinder;
     Vec3 topNormal, bottomNormal;
-    double rx, rz, height, halfh, rx2, rz2, toprx2, cx, cy, cz, sy, sz, param[];
+    double rx;
+    double rz;
+    double height;
+    double halfh;
+    double rx2;
+    double rz2;
+    double toprx2;
+    double cx;
+    double cy;
+    double cz;
+    double sy;
+    double sz;
+    double[] param;
     boolean bumpMapped, cone, transform, uniform;
     Mat4 toLocal, fromLocal;
 
@@ -36,7 +48,7 @@ public class RTCylinder extends RTObject {
 
     private double linearTol, radialTol;
 
-    public RTCylinder(Cylinder cylinder, Mat4 fromLocal, Mat4 toLocal, double param[]) {
+    public RTCylinder(Cylinder cylinder, Mat4 fromLocal, Mat4 toLocal, double[] param) {
         double ratio = cylinder.getRatio();
         Vec3 vx = toLocal.timesDirection(Vec3.vx()), vy = toLocal.timesDirection(Vec3.vy());
         Vec3 size;

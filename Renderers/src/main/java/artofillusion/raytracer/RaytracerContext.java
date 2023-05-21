@@ -24,8 +24,8 @@ public class RaytracerContext {
     public Raytracer rt;
     public Vec3 tempVec;
     public RayIntersection intersect;
-    public int lastRayID[];
-    public SurfaceIntersection lastRayResult[];
+    public int[] lastRayID;
+    public SurfaceIntersection[] lastRayResult;
     public ResourcePool rtTriPool, rtDispTriPool, rtImplicitPool;
     public Random random;
 

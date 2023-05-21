@@ -24,7 +24,12 @@ import artofillusion.texture.*;
 public class RTSphere extends RTObject {
 
     Sphere theSphere;
-    double r, r2, cx, cy, cz, param[];
+    double r;
+    double r2;
+    double cx;
+    double cy;
+    double cz;
+    double[] param;
     boolean bumpMapped;
     Mat4 toLocal, fromLocal;
 
@@ -32,7 +37,7 @@ public class RTSphere extends RTObject {
 
     private double sphereTol;
 
-    public RTSphere(Sphere sphere, Mat4 fromLocal, Mat4 toLocal, double param[]) {
+    public RTSphere(Sphere sphere, Mat4 fromLocal, Mat4 toLocal, double[] param) {
         theSphere = sphere;
         this.param = param;
         cx = fromLocal.m14 / fromLocal.m44;

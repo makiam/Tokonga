@@ -23,7 +23,18 @@ import artofillusion.texture.*;
 public class RTEllipsoid extends RTObject {
 
     Sphere theSphere;
-    double rx, ry, rz, rx2, ry2, rz2, cx, cy, cz, sy, sz, param[];
+    double rx;
+    double ry;
+    double rz;
+    double rx2;
+    double ry2;
+    double rz2;
+    double cx;
+    double cy;
+    double cz;
+    double sy;
+    double sz;
+    double[] param;
     boolean bumpMapped, transform, uniform;
     Mat4 toLocal, fromLocal;
 
@@ -31,7 +42,7 @@ public class RTEllipsoid extends RTObject {
 
     double ellipsoidTol;
 
-    public RTEllipsoid(Sphere sphere, Mat4 fromLocal, Mat4 toLocal, double param[]) {
+    public RTEllipsoid(Sphere sphere, Mat4 fromLocal, Mat4 toLocal, double[] param) {
         Vec3 radii = sphere.getRadii();
         Vec3 vx = toLocal.timesDirection(Vec3.vx()), vy = toLocal.timesDirection(Vec3.vy());
         theSphere = sphere;

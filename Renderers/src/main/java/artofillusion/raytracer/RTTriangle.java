@@ -444,7 +444,7 @@ public class RTTriangle extends RTObject {
             if ((rtTri.flags & INTERP_NORMALS) == 0) {
                 n.set(rtTri.trueNorm);
             } else {
-                Vec3 normals[] = rtTri.tri.theMesh.norm;
+                Vec3[] normals = rtTri.tri.theMesh.norm;
                 Vec3 norm1 = normals[rtTri.tri.n1];
                 Vec3 norm2 = normals[rtTri.tri.n2];
                 Vec3 norm3 = normals[rtTri.tri.n3];

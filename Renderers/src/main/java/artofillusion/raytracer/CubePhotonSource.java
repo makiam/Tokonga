@@ -21,7 +21,7 @@ public class CubePhotonSource implements PhotonSource {
 
     private RTCube cube;
     private double bottomP, topP, leftP, rightP, backP;
-    private double param[];
+    private double[] param;
     private Mat4 fromLocal;
     private TextureMapping texMap;
     private RGBColor color;

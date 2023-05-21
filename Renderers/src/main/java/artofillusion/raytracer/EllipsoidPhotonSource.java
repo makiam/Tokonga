@@ -21,7 +21,10 @@ import artofillusion.util.*;
  */
 public class EllipsoidPhotonSource implements PhotonSource {
 
-    private double rx, ry, rz, param[];
+    private double rx;
+    private double ry;
+    private double rz;
+    private double[] param;
     private Mat4 fromLocal;
     private TextureMapping texMap;
     private RGBColor color;

@@ -24,29 +24,30 @@ import java.util.*;
  */
 public class OctreeNode {
 
-    public OctreeNode parent, child[];
-    public RTObject obj[];
+    public OctreeNode parent;
+    public OctreeNode[] child;
+    public RTObject[] obj;
     public float minx, maxx, miny, maxy, minz, maxz;
     public float midx, midy, midz;
 
     private static final int CELLS = 64;
-    private static final RTObject EMPTY_OBJECT_LIST[] = new RTObject[0];
-    private static int leftCount[] = new int[CELLS + 2];
-    private static int rightCount[] = new int[CELLS + 2];
+    private static final RTObject[] EMPTY_OBJECT_LIST = new RTObject[0];
+    private static int[] leftCount = new int[CELLS + 2];
+    private static int[] rightCount = new int[CELLS + 2];
 
     /**
      * The constructor takes a bounding box, an array of objects, an array of bounding boxes
      * of the objects, and a reference to its parent node. treeDepth is the depth of this node
      * in the octree, and maxDepth is the maximum allowed depth.
      */
-    public OctreeNode(float minx, float maxx, float miny, float maxy, float minz, float maxz, RTObject tri[], BoundingBox bb[], OctreeNode parentNode) {
+    public OctreeNode(float minx, float maxx, float miny, float maxy, float minz, float maxz, RTObject[] tri, BoundingBox[] bb, OctreeNode parentNode) {
         this.minx = minx;
         this.maxx = maxx;
         this.miny = miny;
         this.maxy = maxy;
         this.minz = minz;
         this.maxz = maxz;
-        boolean inside[] = new boolean[tri.length];
+        boolean[] inside = new boolean[tri.length];
         int count, i;
 
         parent = parentNode;
@@ -67,7 +68,7 @@ public class OctreeNode {
 
         // Build lists of the objects which are inside this node, and their bounding boxes.
         obj = new RTObject[count];
-        BoundingBox objBounds[] = new BoundingBox[count];
+        BoundingBox[] objBounds = new BoundingBox[count];
         count = 0;
         for (i = 0; i < tri.length; i++) {
             if (inside[i]) {
@@ -82,7 +83,7 @@ public class OctreeNode {
      * Determine whether this node should be subdivided. If so, create the child nodes. Otherwise, mark it
      * as a terminal node.
      */
-    private void subdivide(BoundingBox objBounds[]) {
+    private void subdivide(BoundingBox[] objBounds) {
         boolean splitx, splity, splitz;
 
         if (obj.length > 9) {
@@ -390,7 +391,7 @@ public class OctreeNode {
      * Analyze the distribution of objects inside this node, and determine the best place at which
      * to subdivide it along each axis.
      */
-    private void findMidpoints(BoundingBox objBounds[]) {
+    private void findMidpoints(BoundingBox[] objBounds) {
 
         // If the box is much shorter along one axis than the other two, we don't want to subdivide
         // along that axis, since it would slow down many more rays than it would speed up.
@@ -422,7 +423,7 @@ public class OctreeNode {
         }
     }
 
-    private float findAxisMidpoint(BoundingBox objBounds[], int axis) {
+    private float findAxisMidpoint(BoundingBox[] objBounds, int axis) {
         for (int i = 0; i < CELLS + 2; i++) {
             leftCount[i] = rightCount[i] = 0;
         }

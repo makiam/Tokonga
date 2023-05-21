@@ -20,11 +20,11 @@ import artofillusion.texture.*;
  */
 public class RasterContext {
 
-    public Vec3 tempVec[], lightPosition[], lightDirection[];
-    public RGBColor tempColor[];
+    public Vec3[] tempVec, lightPosition, lightDirection;
+    public RGBColor[] tempColor;
     public TextureSpec surfSpec, surfSpec2;
     public Camera camera;
-    public Fragment fragment[];
+    public Fragment[] fragment;
 
     public RasterContext(Camera camera, int width) {
         this.camera = (camera == null ? null : camera.duplicate());

@@ -30,14 +30,19 @@ import java.util.*;
  */
 public class Raster implements Renderer, Runnable {
 
-    private ObjectInfo light[];
+    private ObjectInfo[] light;
     private BTabbedPane configPanel;
     private BCheckBox transparentBox, adaptiveBox, hideBackfaceBox, hdrBox;
     private BComboBox shadeChoice, aliasChoice, sampleChoice;
     private ValueField errorField, smoothField;
-    private int imagePixel[], width, height, envMode, imageWidth, imageHeight;
+    private int[] imagePixel;
+    private int width;
+    private int height;
+    private int envMode;
+    private int imageWidth;
+    private int imageHeight;
     private int shadingMode = PHONG, samplesPerPixel = 1, subsample = 1;
-    private Fragment fragment[];
+    private Fragment[] fragment;
     private long updateTime;
     private MemoryImageSource imageSource;
     private Scene theScene;
@@ -49,8 +54,8 @@ public class Raster implements Renderer, Runnable {
     private TextureMapping envMapping;
     private ThreadLocal<RasterContext> threadRasterContext;
     private ThreadLocal<CompositingContext> threadCompositingContext;
-    private RowLock lock[];
-    private double envParamValue[];
+    private RowLock[] lock;
+    private double[] envParamValue;
     private double time, smoothing = 1.0, smoothScale, focalDist, surfaceError = 0.02, fogDist;
     private boolean fog, transparentBackground = false, adaptive = true, hideBackfaces = true, generateHDR = false, positionNeeded, depthNeeded, needCopyToUI = true;
     private boolean isPreview;
@@ -378,7 +383,7 @@ public class Raster implements Renderer, Runnable {
         fogColor = theScene.getFogColor();
         fog = theScene.getFogState();
         fogDist = theScene.getFogDistance();
-        ParameterValue envParam[] = theScene.getEnvironmentParameterValues();
+        ParameterValue[] envParam = theScene.getEnvironmentParameterValues();
         envParamValue = new double[envParam.length];
         for (int i = 0; i < envParamValue.length; i++) {
             envParamValue[i] = envParam[i].getAverageValue();
@@ -398,7 +403,7 @@ public class Raster implements Renderer, Runnable {
         smoothScale = smoothing * hvec.length() / focalDist;
 
         // Render the objects.
-        final ObjectInfo sortedObjects[] = sortObjects();
+        final ObjectInfo[] sortedObjects = sortObjects();
         ThreadManager threads = new ThreadManager(sortedObjects.length, new ThreadManager.Task() {
             @Override
             public void execute(int index) {
@@ -470,7 +475,7 @@ public class Raster implements Renderer, Runnable {
             objects.add(new SortRecord(obj));
         }
         Collections.sort(objects);
-        ObjectInfo result[] = new ObjectInfo[objects.size()];
+        ObjectInfo[] result = new ObjectInfo[objects.size()];
         for (int i = 0; i < result.length; i++) {
             result[i] = objects.get(i).object;
         }
@@ -517,7 +522,7 @@ public class Raster implements Renderer, Runnable {
             return null;
         }
         final int n = samplesPerPixel * samplesPerPixel;
-        final float hdrImage[][] = (generateHDR ? new float[3][imageWidth * imageHeight] : null);
+        final float[][] hdrImage = (generateHDR ? new float[3][imageWidth * imageHeight] : null);
         ThreadManager threads = new ThreadManager(imageHeight, new ThreadManager.Task() {
             @Override
             public void execute(int i1) {
@@ -645,7 +650,7 @@ public class Raster implements Renderer, Runnable {
             image.setComponentValues(ComplexImage.BLUE, hdrImage[2]);
         }
         if (depthNeeded) {
-            float imageZbuffer[] = new float[imageWidth * imageHeight];
+            float[] imageZbuffer = new float[imageWidth * imageHeight];
             for (int i1 = 0, i2 = 0; i1 < imageHeight; i1++, i2 += samplesPerPixel) {
                 for (int j1 = 0, j2 = 0; j1 < imageWidth; j1++, j2 += samplesPerPixel) {
                     float minDepth = Float.MAX_VALUE;
@@ -1000,7 +1005,7 @@ public class Raster implements Renderer, Runnable {
      * @param context the RasterContext from which to copy the Fragments
      */
     private void recordRow(int row, int xstart, int xend, RasterContext context) {
-        Fragment source[] = context.fragment;
+        Fragment[] source = context.fragment;
         int indexBase = row * width;
 
         synchronized (lock[row]) {
@@ -1023,7 +1028,7 @@ public class Raster implements Renderer, Runnable {
     /**
      * Clip a triangle to the region in front of the z clipping plane.
      */
-    private Vec3[] clipTriangle(Vec3 v1, Vec3 v2, Vec3 v3, float z1, float z2, float z3, float newz[], double newu[], double newv[], RasterContext context) {
+    private Vec3[] clipTriangle(Vec3 v1, Vec3 v2, Vec3 v3, float z1, float z2, float z3, float[] newz, double[] newu, double[] newv, RasterContext context) {
         double clip = context.camera.getClipDistance();
         boolean c1 = z1 < clip, c2 = z2 < clip, c3 = z3 < clip;
         Vec3 u1, u2, u3, u4;
@@ -1162,12 +1167,14 @@ public class Raster implements Renderer, Runnable {
      * Render a triangle mesh with Gouraud shading.
      */
     private void renderMeshGouraud(RenderingMesh mesh, Vec3 viewdir, boolean cullBackfaces, ObjectMaterialInfo material, RasterContext context) {
-        Vec3 vert[] = mesh.vert, norm[] = mesh.norm;
-        Vec2 pos[] = new Vec2[vert.length];
-        float z[] = new float[vert.length], clip = (float) context.camera.getClipDistance(), clipz[] = new float[4];
-        double clipu[] = new double[4], clipv[] = new double[4];
+        Vec3[] vert = mesh.vert, norm = mesh.norm;
+        Vec2[] pos = new Vec2[vert.length];
+        float[] z = new float[vert.length];
+        float clip = (float) context.camera.getClipDistance();
+        float[] clipz = new float[4];
+        double[] clipu = new double[4], clipv = new double[4];
         double distToScreen = context.camera.getDistToScreen(), tol = smoothScale;
-        RGBColor diffuse[] = new RGBColor[4], specular[] = new RGBColor[4], highlight[] = new RGBColor[4];
+        RGBColor[] diffuse = new RGBColor[4], specular = new RGBColor[4], highlight = new RGBColor[4];
         Mat4 toView = context.camera.getObjectToView(), toScreen = context.camera.getObjectToScreen();
         RenderingTriangle tri;
         int i, v1, v2, v3, n1, n2, n3;
@@ -1196,8 +1203,8 @@ public class Raster implements Renderer, Runnable {
             backface = ((pos[v2].x - pos[v1].x) * (pos[v3].y - pos[v1].y) - (pos[v2].y - pos[v1].y) * (pos[v3].x - pos[v1].x) > 0.0);
             double viewdot = viewdir.dot(mesh.faceNorm[i]);
             if (z[v1] < clip || z[v2] < clip || z[v3] < clip) {
-                Vec3 clipPos[] = clipTriangle(vert[v1], vert[v2], vert[v3], z[v1], z[v2], z[v3], clipz, clipu, clipv, context);
-                Vec2 clipPos2D[] = new Vec2[clipPos.length];
+                Vec3[] clipPos = clipTriangle(vert[v1], vert[v2], vert[v3], z[v1], z[v2], z[v3], clipz, clipu, clipv, context);
+                Vec2[] clipPos2D = new Vec2[clipPos.length];
                 for (int j = clipPos.length - 1; j >= 0; j--) {
                     clipPos2D[j] = toScreen.timesXY(clipPos[j]);
                     double u = clipu[j], v = clipv[j], w = 1.0 - u - v;
@@ -1857,12 +1864,14 @@ public class Raster implements Renderer, Runnable {
      * Render a triangle mesh with hybrid Gouraud/Phong shading.
      */
     private void renderMeshHybrid(RenderingMesh mesh, Vec3 viewdir, boolean cullBackfaces, ObjectMaterialInfo material, RasterContext context) {
-        Vec3 vert[] = mesh.vert, norm[] = mesh.norm, clipNorm[] = new Vec3[4];
-        Vec2 pos[] = new Vec2[vert.length];
-        float z[] = new float[vert.length], clip = (float) context.camera.getClipDistance(), clipz[] = new float[4];
-        double clipu[] = new double[4], clipv[] = new double[4];
+        Vec3[] vert = mesh.vert, norm = mesh.norm, clipNorm = new Vec3[4];
+        Vec2[] pos = new Vec2[vert.length];
+        float[] z = new float[vert.length];
+        float clip = (float) context.camera.getClipDistance();
+        float[] clipz = new float[4];
+        double[] clipu = new double[4], clipv = new double[4];
         double distToScreen = context.camera.getDistToScreen(), tol = smoothScale;
-        RGBColor diffuse[] = new RGBColor[4];
+        RGBColor[] diffuse = new RGBColor[4];
         Mat4 toView = context.camera.getObjectToView(), toScreen = context.camera.getObjectToScreen();
         RenderingTriangle tri;
         int i, v1, v2, v3, n1, n2, n3;
@@ -1890,8 +1899,8 @@ public class Raster implements Renderer, Runnable {
             backface = ((pos[v2].x - pos[v1].x) * (pos[v3].y - pos[v1].y) - (pos[v2].y - pos[v1].y) * (pos[v3].x - pos[v1].x) > 0.0);
             double viewdot = viewdir.dot(mesh.faceNorm[i]);
             if (z[v1] < clip || z[v2] < clip || z[v3] < clip) {
-                Vec3 clipPos[] = clipTriangle(vert[v1], vert[v2], vert[v3], z[v1], z[v2], z[v3], clipz, clipu, clipv, context);
-                Vec2 clipPos2D[] = new Vec2[clipPos.length];
+                Vec3[] clipPos = clipTriangle(vert[v1], vert[v2], vert[v3], z[v1], z[v2], z[v3], clipz, clipu, clipv, context);
+                Vec2[] clipPos2D = new Vec2[clipPos.length];
                 for (int j = clipPos.length - 1; j >= 0; j--) {
                     clipPos2D[j] = toScreen.timesXY(clipPos[j]);
                     double u = clipu[j], v = clipv[j], w = 1.0 - u - v;
@@ -2574,10 +2583,12 @@ public class Raster implements Renderer, Runnable {
      * Render a triangle mesh with Phong shading.
      */
     private void renderMeshPhong(RenderingMesh mesh, Vec3 viewdir, boolean cullBackfaces, boolean bumpMap, ObjectMaterialInfo material, RasterContext context) {
-        Vec3 vert[] = mesh.vert, norm[] = mesh.norm, clipNorm[] = new Vec3[4];
-        Vec2 pos[] = new Vec2[vert.length];
-        float z[] = new float[vert.length], clip = (float) context.camera.getClipDistance(), clipz[] = new float[4];
-        double clipu[] = new double[4], clipv[] = new double[4];
+        Vec3[] vert = mesh.vert, norm = mesh.norm, clipNorm = new Vec3[4];
+        Vec2[] pos = new Vec2[vert.length];
+        float[] z = new float[vert.length];
+        float clip = (float) context.camera.getClipDistance();
+        float[] clipz = new float[4];
+        double[] clipu = new double[4], clipv = new double[4];
         Mat4 toView = context.camera.getObjectToView(), toScreen = context.camera.getObjectToScreen();
         RenderingTriangle tri;
         int i, v1, v2, v3, n1, n2, n3;
@@ -2603,8 +2614,8 @@ public class Raster implements Renderer, Runnable {
             }
             backface = ((pos[v2].x - pos[v1].x) * (pos[v3].y - pos[v1].y) - (pos[v2].y - pos[v1].y) * (pos[v3].x - pos[v1].x) > 0.0);
             if (z[v1] < clip || z[v2] < clip || z[v3] < clip) {
-                Vec3 clipPos[] = clipTriangle(vert[v1], vert[v2], vert[v3], z[v1], z[v2], z[v3], clipz, clipu, clipv, context);
-                Vec2 clipPos2D[] = new Vec2[clipPos.length];
+                Vec3[] clipPos = clipTriangle(vert[v1], vert[v2], vert[v3], z[v1], z[v2], z[v3], clipz, clipu, clipv, context);
+                Vec2[] clipPos2D = new Vec2[clipPos.length];
                 for (int j = clipPos.length - 1; j >= 0; j--) {
                     clipPos2D[j] = toScreen.timesXY(clipPos[j]);
                     double u = clipu[j], v = clipv[j], w = 1.0 - u - v;
@@ -3168,7 +3179,7 @@ public class Raster implements Renderer, Runnable {
      * until they are sufficiently small.
      */
     private void renderMeshDisplaced(RenderingMesh mesh, Vec3 viewdir, double tol, boolean cullBackfaces, boolean bumpMap, ObjectMaterialInfo material, RasterContext context) {
-        Vec3 vert[] = mesh.vert, norm[] = mesh.norm;
+        Vec3[] vert = mesh.vert, norm = mesh.norm;
         Mat4 toView = context.camera.getObjectToView(), toScreen = context.camera.getObjectToScreen();
         int v1, v2, v3, n1, n2, n3;
         double dist1, dist2, dist3;

@@ -34,7 +34,7 @@ public class EnvironmentPhotonSource implements PhotonSource {
         // Find the center and radius of the scene.
 
         center = map.getBounds().getCenter();
-        Vec3 corner[] = map.getBounds().getCorners();
+        Vec3[] corner = map.getBounds().getCorners();
         double maxDist2 = 0.0;
         for (int i = 0; i < corner.length; i++) {
             double dist2 = center.distance2(corner[i]);
@@ -86,7 +86,7 @@ public class EnvironmentPhotonSource implements PhotonSource {
     public void generatePhotons(final PhotonMap map, final double intensity, final ThreadManager threads) {
         final Thread currentThread = Thread.currentThread();
         final RaytracerRenderer renderer = map.getRenderer();
-        final double emittedIntensity[] = new double[]{0.0};
+        final double[] emittedIntensity = new double[]{0.0};
 
         // Send out the photons.
         threads.setNumIndices(1024);

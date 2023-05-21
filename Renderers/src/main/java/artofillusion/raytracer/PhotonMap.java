@@ -30,10 +30,10 @@ public class PhotonMap {
     private Raytracer rt;
     private RaytracerRenderer renderer;
     private ArrayList<Photon> photonList;
-    private Photon photon[], workspace[];
+    private Photon[] photon, workspace;
     private int numWanted, filter, numEstimate;
     private BoundingBox bounds;
-    private Vec3 direction[];
+    private Vec3[] direction;
     private boolean includeCaustics, includeDirect, includeIndirect, includeVolume;
     private double lightScale;
     private float cutoffDist2;
@@ -111,10 +111,11 @@ public class PhotonMap {
     /**
      * Generate photons from all sources until the desired number has been collected.
      */
-    public void generatePhotons(PhotonSource source[]) {
+    public void generatePhotons(PhotonSource[] source) {
         Thread currentThread = Thread.currentThread();
         double totalIntensity = 0.0, currentIntensity, totalRequested = 0.0;
-        double sourceIntensity[] = new double[source.length], totalSourceIntensity = 0.0;
+        double[] sourceIntensity = new double[source.length];
+        double totalSourceIntensity = 0.0;
 
         // Determine the total intensity of all sources.
         for (int i = 0; i < source.length; i++) {

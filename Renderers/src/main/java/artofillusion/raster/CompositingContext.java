@@ -1,4 +1,5 @@
 /* Copyright (C) 2007-2008 by Peter Eastman
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -22,7 +23,7 @@ import java.util.*;
  */
 public class CompositingContext {
 
-    public Vec3 tempVec[];
+    public Vec3[] tempVec;
     public TextureSpec surfSpec;
     public MaterialSpec matSpec;
     public Camera camera;
@@ -44,7 +45,7 @@ public class CompositingContext {
         subpixelColor = new RGBColor();
         totalColor = new RGBColor();
         totalTransparency = new RGBColor();
-        materialStack = new ArrayList<ObjectMaterialInfo>();
+        materialStack = new ArrayList<>();
     }
 
     /**

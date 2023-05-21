@@ -24,7 +24,7 @@ public class RTCube extends RTObject {
 
     private Cube theCube;
     protected double minx, miny, minz, maxx, maxy, maxz;
-    protected double param[];
+    protected double[] param;
     private boolean bumpMapped, transform;
     protected Mat4 toLocal, fromLocal;
 
@@ -32,7 +32,7 @@ public class RTCube extends RTObject {
 
     private double cubeTol;
 
-    public RTCube(Cube cube, Mat4 fromLocal, Mat4 toLocal, double param[]) {
+    public RTCube(Cube cube, Mat4 fromLocal, Mat4 toLocal, double[] param) {
         Vec3 size = cube.getBounds().getSize();
         Vec3 vx = toLocal.timesDirection(Vec3.vx()), vy = toLocal.timesDirection(Vec3.vy());
         theCube = cube;

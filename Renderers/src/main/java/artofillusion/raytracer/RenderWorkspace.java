@@ -26,12 +26,15 @@ public class RenderWorkspace {
     public RaytracerContext context;
     public RTObject firstObjectHit, materialAtCamera;
     public boolean materialAtCameraIsFixed;
-    public Ray ray[];
-    public RGBColor color[], rayIntensity[], tempColor, tempColor2;
-    public Vec3 pos[], normal[], trueNormal[];
-    public double transparency[];
-    public MaterialIntersection matChange[];
-    public TextureSpec surfSpec[];
+    public Ray[] ray;
+    public RGBColor[] color;
+    public RGBColor[] rayIntensity;
+    public RGBColor tempColor;
+    public RGBColor tempColor2;
+    public Vec3[] pos, normal, trueNormal;
+    public double[] transparency;
+    public MaterialIntersection[] matChange;
+    public TextureSpec[] surfSpec;
     public MaterialSpec matSpec;
     public PixelInfo tempPixel;
     public PhotonMapContext globalMap, causticsMap, volumeMap;
@@ -87,7 +90,7 @@ public class RenderWorkspace {
      * Increase the length of the matChange array.
      */
     public void increaseMaterialChangeLength() {
-        MaterialIntersection newMatChange[] = new MaterialIntersection[matChange.length * 2];
+        MaterialIntersection[] newMatChange = new MaterialIntersection[matChange.length * 2];
         System.arraycopy(matChange, 0, newMatChange, 0, matChange.length);
         for (int i = matChange.length; i < newMatChange.length; i++) {
             newMatChange[i] = new MaterialIntersection();

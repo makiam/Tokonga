@@ -38,7 +38,18 @@ public class RaytracerRenderer implements Renderer, Runnable {
     protected ValueField errorField, rayDepthField, rayCutoffField, smoothField, stepSizeField;
     protected ValueField extraGIField, extraGIEnvField;
     protected ValueField globalPhotonsField, globalNeighborPhotonsField, causticsPhotonsField, causticsNeighborPhotonsField, volumePhotonsField, volumeNeighborPhotonsField;
-    protected int pixel[], width, height, rtWidth, rtHeight, maxRayDepth = 8, minRays = 4, maxRays = 16, diffuseRays, glossRays, shadowRays, antialiasLevel;
+    protected int[] pixel;
+    protected int width;
+    protected int height;
+    protected int rtWidth;
+    protected int rtHeight;
+    protected int maxRayDepth = 8;
+    protected int minRays = 4;
+    protected int maxRays = 16;
+    protected int diffuseRays;
+    protected int glossRays;
+    protected int shadowRays;
+    protected int antialiasLevel;
     protected MemoryImageSource imageSource;
     protected Scene theScene;
     protected Camera theCamera;
@@ -47,13 +58,17 @@ public class RaytracerRenderer implements Renderer, Runnable {
     protected Image img;
     protected volatile Thread renderThread;
     protected RGBColor ambColor, envColor, fogColor;
-    protected double envParamValue[];
+    protected double[] envParamValue;
     protected TextureMapping envMapping;
     protected int envMode;
     protected double time, fogDist, surfaceError = 0.02, stepSize = 1.0;
     protected double smoothing = 1.0, smoothScale, extraGISmoothing = 10.0, extraGIEnvSmoothing = 100.0;
     protected int giMode = GI_NONE, scatterMode = SCATTER_SINGLE, globalPhotons = 10000, globalNeighborPhotons = 200, causticsPhotons = 10000, causticsNeighborPhotons = 100, volumePhotons = 10000, volumeNeighborPhotons = 100;
-    protected float minRayIntensity = 0.01f, floatImage[][], depthImage[], errorImage[], objectImage[];
+    protected float minRayIntensity = 0.01f;
+    protected float[][] floatImage;
+    protected float[] depthImage;
+    protected float[] errorImage;
+    protected float[] objectImage;
     protected boolean fog, depth = false, gloss = false, softShadows = false, caustics = false, transparentBackground = false, adaptive = true, roulette = false, reducedMemory = false;
     protected boolean useGloss, useSoftShadows;
     protected boolean needCopyToUI = true, isPreview;
@@ -74,8 +89,8 @@ public class RaytracerRenderer implements Renderer, Runnable {
     public static final float COLOR_THRESH_ABS = 1.0f / 128.0f;
     public static final float COLOR_THRESH_REL = 1.0f / 32.0f;
 
-    public static final int distrib1[] = {0, 3, 1, 2, 1, 2, 0, 3, 2, 0, 3, 1, 3, 1, 2, 0};
-    public static final int distrib2[] = {0, 1, 2, 3, 3, 0, 1, 2, 1, 2, 3, 0, 0, 1, 2, 3};
+    public static final int[] distrib1 = {0, 3, 1, 2, 1, 2, 0, 3, 2, 0, 3, 1, 3, 1, 2, 0};
+    public static final int[] distrib2 = {0, 1, 2, 3, 3, 0, 1, 2, 1, 2, 3, 0, 0, 1, 2, 3};
 
     /**
      * When a shadow ray is traced to determine whether a light is blocked, MaterialIntersection
@@ -627,7 +642,7 @@ public class RaytracerRenderer implements Renderer, Runnable {
         fogColor = theScene.getFogColor();
         fog = theScene.getFogState();
         fogDist = theScene.getFogDistance();
-        ParameterValue envParam[] = theScene.getEnvironmentParameterValues();
+        ParameterValue[] envParam = theScene.getEnvironmentParameterValues();
         envParamValue = new double[envParam.length];
         for (int i = 0; i < envParamValue.length; i++) {
             envParamValue[i] = envParam[i].getAverageValue();
@@ -771,7 +786,7 @@ public class RaytracerRenderer implements Renderer, Runnable {
             sources.add(new CompoundPhotonSource(objectSources.toArray(new PhotonSource[objectSources.size()])));
         }
         sources.add(new EnvironmentPhotonSource(theScene, map));
-        PhotonSource src[] = sources.toArray(new PhotonSource[sources.size()]);
+        PhotonSource[] src = sources.toArray(new PhotonSource[sources.size()]);
         map.generatePhotons(src);
     }
 
@@ -836,9 +851,9 @@ public class RaytracerRenderer implements Renderer, Runnable {
         }
 
         final int finalMinRays = minRaysInUse;
-        final int currentScale[] = new int[1];
-        final int currentWidth[] = new int[1];
-        final boolean isFirstPass[] = new boolean[]{true};
+        final int[] currentScale = new int[1];
+        final int[] currentWidth = new int[1];
+        final boolean[] isFirstPass = new boolean[]{true};
         ThreadManager threads = new ThreadManager(width, new ThreadManager.Task() {
             @Override
             public void execute(int index) {
@@ -900,7 +915,7 @@ public class RaytracerRenderer implements Renderer, Runnable {
         // or we reach maxRays.
         PixelInfo tempPixel = new PixelInfo();
         RGBColor tempColor = new RGBColor();
-        final PixelInfo pix[][] = new PixelInfo[6][rtWidth];
+        final PixelInfo[][] pix = new PixelInfo[6][rtWidth];
         for (int i = 0; i < pix.length; i++) {
             for (int j = 0; j < pix[i].length; j++) {
                 pix[i][j] = new PixelInfo();
@@ -910,8 +925,8 @@ public class RaytracerRenderer implements Renderer, Runnable {
         loadRow(pix[2], 1, tempColor);
         loadRow(pix[4], 2, tempColor);
         int minPerSubpixel = minRaysInUse / 4, maxPerSubpixel = maxRaysInUse / 4;
-        final int currentRow[] = new int[1];
-        final int currentCount[] = new int[1];
+        final int[] currentRow = new int[1];
+        final int[] currentCount = new int[1];
         threads = new ThreadManager(rtWidth, new ThreadManager.Task() {
             @Override
             public void execute(int index) {
@@ -1023,7 +1038,7 @@ public class RaytracerRenderer implements Renderer, Runnable {
             }
 
             // Rotate the temporary pixel buffer by two rows.
-            PixelInfo temp1[] = pix[0], temp2[] = pix[1];
+            PixelInfo[] temp1 = pix[0], temp2 = pix[1];
             for (int j = 0; j < 4; j++) {
                 pix[j] = pix[j + 2];
             }
@@ -1047,7 +1062,7 @@ public class RaytracerRenderer implements Renderer, Runnable {
     /**
      * Load a row of pixels from the image.
      */
-    protected void loadRow(PixelInfo pix[], int y, RGBColor temp) {
+    protected void loadRow(PixelInfo[] pix, int y, RGBColor temp) {
         for (PixelInfo p : pix) {
             p.clear();
         }
@@ -1071,7 +1086,7 @@ public class RaytracerRenderer implements Renderer, Runnable {
     /**
      * Record a row of pixels into the image.
      */
-    protected void recordRow(PixelInfo pix[][], PixelInfo tempPixel, int row) {
+    protected void recordRow(PixelInfo[][] pix, PixelInfo tempPixel, int row) {
         for (int i = 0; i < width; i++) {
             int x = i * 2 + 1;
             tempPixel.copy(pix[1][x]);
@@ -1294,7 +1309,7 @@ public class RaytracerRenderer implements Renderer, Runnable {
 
         // Trace the ray and watch for it to exit a material.
         int matCount = 0;
-        MaterialIntersection matChange[] = workspace.matChange;
+        MaterialIntersection[] matChange = workspace.matChange;
         Vec3 trueNorm = workspace.trueNormal[0];
         SurfaceIntersection first, next = SurfaceIntersection.NO_INTERSECTION;
         Raytracer.RayIntersection intersect = workspace.context.intersect;
@@ -1796,11 +1811,11 @@ public class RaytracerRenderer implements Renderer, Runnable {
     protected boolean traceLightRay(RenderWorkspace workspace, Ray r, int treeDepth, OctreeNode node, OctreeNode endNode, double distToLight, double totalDist, MaterialMapping currentMaterial, MaterialMapping prevMaterial, Mat4 currentMatTrans, Mat4 prevMatTrans) {
         RGBColor lightColor = workspace.color[treeDepth], transColor = workspace.surfSpec[treeDepth].transparent;
         Vec3 intersectionPoint = workspace.pos[maxRayDepth], trueNorm = workspace.trueNormal[maxRayDepth];
-        MaterialIntersection matChange[] = workspace.matChange;
+        MaterialIntersection[] matChange = workspace.matChange;
         int i, j, matCount = 0;
 
         do {
-            RTObject obj[] = node.getObjects();
+            RTObject[] obj = node.getObjects();
             for (i = obj.length - 1; i >= 0; i--) {
                 SurfaceIntersection intersection = r.findIntersection(obj[i]);
                 if (intersection != SurfaceIntersection.NO_INTERSECTION) {
@@ -2306,7 +2321,7 @@ public class RaytracerRenderer implements Renderer, Runnable {
      * short, and is in close to the correct order to begin with, this will generally
      * be very fast.
      */
-    protected void sortMaterialList(MaterialIntersection matChange[], int count) {
+    protected void sortMaterialList(MaterialIntersection[] matChange, int count) {
         for (int i = 1; i < count; i++) {
             for (int j = i; j > 0 && matChange[j].dist < matChange[j - 1].dist; j--) {
                 MaterialIntersection temp = matChange[j - 1];

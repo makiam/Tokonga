@@ -20,7 +20,11 @@ import artofillusion.util.*;
 public class CylinderPhotonSource implements PhotonSource {
 
     private RTCylinder cylinder;
-    private double rx, rz, height, ratio, param[];
+    private double rx;
+    private double rz;
+    private double height;
+    private double ratio;
+    private double[] param;
     private double bottomArea, topArea, sideArea;
     private Mat4 fromLocal;
     private TextureMapping texMap;

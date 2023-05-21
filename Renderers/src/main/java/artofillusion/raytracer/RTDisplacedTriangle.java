@@ -163,7 +163,7 @@ public class RTDisplacedTriangle extends RTObject {
 
         // Determine a coordinate transformation which places the triangle in the xy plane, with
         // vertex 3 at the origin and vertex 2 on the y axis.
-        Vec3 vert[] = tri.theMesh.vert;
+        Vec3[] vert = tri.theMesh.vert;
         Vec3 vert1 = vert[tri.v1];
         Vec3 vert2 = vert[tri.v2];
         Vec3 vert3 = vert[tri.v3];
@@ -175,7 +175,7 @@ public class RTDisplacedTriangle extends RTObject {
         ex.v1x = v1.x;
         ex.v1y = v1.y;
         ex.v2y = v2.y;
-        Vec3 norm[] = tri.theMesh.norm;
+        Vec3[] norm = tri.theMesh.norm;
         Vec3 n1 = ex.trans.timesDirection(norm[tri.n1]);
         Vec3 n2 = ex.trans.timesDirection(norm[tri.n2]);
         Vec3 n3 = ex.trans.timesDirection(norm[tri.n3]);
@@ -191,7 +191,7 @@ public class RTDisplacedTriangle extends RTObject {
 
         // Find the bounding box of the volume swept out by the triangle, in the coordinate
         // system described above.
-        Vec3 pos[] = new Vec3[6];
+        Vec3[] pos = new Vec3[6];
         double scale1 = 1.0 / norm[tri.n1].dot(trueNorm);
         if (Double.isInfinite(scale1)) {
             scale1 = 0.0;
@@ -412,14 +412,14 @@ public class RTDisplacedTriangle extends RTObject {
         double dhdv = (tri.getDisplacement(u, v + (1e-5), w - (1e-5), tol, time) - disp) * 1e5;
 
         // Use them to find the local normal vector.
-        Vec3 norm[] = tri.theMesh.norm;
+        Vec3[] norm = tri.theMesh.norm;
         Vec3 norm1 = norm[tri.n1];
         Vec3 norm2 = norm[tri.n2];
         Vec3 norm3 = norm[tri.n3];
         Vec3 interp = dti.interp;
         interp.set(u * norm1.x + v * norm2.x + w * norm3.x, u * norm1.y + v * norm2.y + w * norm3.y, u * norm1.z + v * norm2.z + w * norm3.z);
         interp.normalize();
-        Vec3 vert[] = tri.theMesh.vert;
+        Vec3[] vert = tri.theMesh.vert;
         Vec3 vert1 = vert[tri.v1];
         Vec3 vert2 = vert[tri.v2];
         Vec3 vert3 = vert[tri.v3];
@@ -724,8 +724,11 @@ public class RTDisplacedTriangle extends RTObject {
 
         public RTDisplacedTriangle rtTri;
         public double t, u, v, w, mint, maxt;
-        public double tint[], uint[], vint[];
-        public Vec3 orig, dir, interp, rint[];
+        public double[] tint, uint, vint;
+        public Vec3 orig;
+        public Vec3 dir;
+        public Vec3 interp;
+        public Vec3[] rint;
         public short numIntersections;
         public Ray ray;
 
@@ -843,10 +846,10 @@ public class RTDisplacedTriangle extends RTObject {
                     // The ray intersects the surface.
 
                     if (numIntersections == tint.length) {
-                        double newt[] = new double[numIntersections * 2];
-                        double newu[] = new double[numIntersections * 2];
-                        double newv[] = new double[numIntersections * 2];
-                        Vec3 newr[] = new Vec3[numIntersections * 2];
+                        double[] newt = new double[numIntersections * 2];
+                        double[] newu = new double[numIntersections * 2];
+                        double[] newv = new double[numIntersections * 2];
+                        Vec3[] newr = new Vec3[numIntersections * 2];
                         for (int j = 0; j < tint.length; j++) {
                             newt[j] = tint[j];
                             newu[j] = uint[j];

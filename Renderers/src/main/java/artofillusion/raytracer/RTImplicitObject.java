@@ -23,14 +23,14 @@ public class RTImplicitObject extends RTObject {
 
     private ImplicitObject theObject;
     private double minx, miny, minz, maxx, maxy, maxz;
-    private double param[];
+    private double[] param;
     private double tol;
     private boolean bumpMapped;
     private Mat4 toLocal, fromLocal;
 
     public static final double TOL = 1e-12;
 
-    public RTImplicitObject(ImplicitObject implicit, Mat4 fromLocal, Mat4 toLocal, double param[], double tol) {
+    public RTImplicitObject(ImplicitObject implicit, Mat4 fromLocal, Mat4 toLocal, double[] param, double tol) {
         BoundingBox bounds = implicit.getBounds();
         minx = bounds.minx;
         miny = bounds.miny;
@@ -361,8 +361,13 @@ public class RTImplicitObject extends RTObject {
     public static class ImplicitIntersection implements SurfaceIntersection {
 
         private RTImplicitObject obj;
-        private double tint[], maxt;
-        private Vec3 rint[], pos, orig, dir, norm;
+        private double[] tint;
+        private double maxt;
+        private Vec3[] rint;
+        private Vec3 pos;
+        private Vec3 orig;
+        private Vec3 dir;
+        private Vec3 norm;
         private int numIntersections;
         private Ray ray;
 
@@ -477,8 +482,8 @@ public class RTImplicitObject extends RTObject {
                     // We found an intersection.
 
                     if (numIntersections == tint.length) {
-                        double newt[] = new double[numIntersections * 2];
-                        Vec3 newr[] = new Vec3[numIntersections * 2];
+                        double[] newt = new double[numIntersections * 2];
+                        Vec3[] newr = new Vec3[numIntersections * 2];
                         for (int j = 0; j < tint.length; j++) {
                             newt[j] = tint[j];
                             newr[j] = rint[j];

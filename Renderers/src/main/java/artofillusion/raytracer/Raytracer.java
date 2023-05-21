@@ -44,9 +44,11 @@ import java.util.*;
  */
 public class Raytracer {
 
-    private RTObject sceneObject[];
-    private RTLight light[];
-    private OctreeNode rootNode, cameraNode, lightNode[];
+    private RTObject[] sceneObject;
+    private RTLight[] light;
+    private OctreeNode rootNode;
+    private OctreeNode cameraNode;
+    private OctreeNode[] lightNode;
     private Scene scene;
     private Camera camera;
     private double time, surfaceError = 0.02;
@@ -364,11 +366,11 @@ public class Raytracer {
             return;
         }
         mesh.transformMesh(fromLocal);
-        Vec3 vert[] = mesh.vert;
-        RenderingTriangle t[] = mesh.triangle;
+        Vec3[] vert = mesh.vert;
+        RenderingTriangle[] t = mesh.triangle;
         if (displaced) {
             Vec3 cameraZDir = camera.getCameraCoordinates().getZDirection();
-            double vertTol[] = new double[vert.length];
+            double[] vertTol = new double[vert.length];
             if (adaptive) {
                 for (int i = 0; i < vert.length; i++) {
                     Vec3 offset = vert[i].minus(cameraOrig);
@@ -465,7 +467,7 @@ public class Raytracer {
         light = lightList.toArray(new RTLight[lightList.size()]);
         objectList = null;
         lightList = null;
-        BoundingBox objBounds[] = new BoundingBox[sceneObject.length];
+        BoundingBox[] objBounds = new BoundingBox[sceneObject.length];
         double minx, maxx, miny, maxy, minz, maxz;
         int i;
 
@@ -573,7 +575,9 @@ public class Raytracer {
      * @return the octree node containing the intersection point, or null if nothing was hit
      */
     public OctreeNode traceRay(Ray r, OctreeNode node, RayIntersection intersect) {
-        RTObject first = null, second = null, obj[];
+        RTObject first = null;
+        RTObject second = null;
+        RTObject[] obj;
         double dist, firstDist = Double.MAX_VALUE, secondDist = Double.MAX_VALUE;
         Vec3 intersectionPoint = r.rt.tempVec;
         int i;
