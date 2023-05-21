@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2009 by Peter Eastman
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -43,9 +43,9 @@ public class SaturationFilter extends ImageFilter {
     public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {
         int width = image.getWidth(), height = image.getHeight();
         float saturation = (float) paramValue[0];
-        float red[] = new float[width * height];
-        float green[] = new float[width * height];
-        float blue[] = new float[width * height];
+        float[] red = new float[width * height];
+        float[] green = new float[width * height];
+        float[] blue = new float[width * height];
         RGBColor color = new RGBColor();
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {

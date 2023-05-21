@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2009 by Peter Eastman
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -45,8 +45,8 @@ public class NoiseReductionFilter extends ImageFilter {
     public void filterImage(final ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {
         final int width = image.getWidth();
         final int height = image.getHeight();
-        float cu[][] = new float[width - 1][height];
-        float cv[][] = new float[width][height - 1];
+        float[][] cu = new float[width - 1][height];
+        float[][] cv = new float[width][height - 1];
         int iterations = (Integer) getPropertyValue(0);
 
         for (int i = 0; i < iterations; i++) {
@@ -113,7 +113,7 @@ public class NoiseReductionFilter extends ImageFilter {
     /**
      * Recalculate the conductivity between every pair of pixels.
      */
-    private static void calcConductivity(int width, int height, float cu[][], float cv[][], ConductivityFunction fn) {
+    private static void calcConductivity(int width, int height, float[][] cu, float[][] cv, ConductivityFunction fn) {
         for (int i = 0; i < width - 1; i++) {
             for (int j = 0; j < height; j++) {
                 cu[i][j] = fn.evaluate(i, j, i + 1, j);
@@ -129,7 +129,7 @@ public class NoiseReductionFilter extends ImageFilter {
     /**
      * Apply the filter to one component of an image.
      */
-    private static void filterImageComponent(ComplexImage image, float cu[][], float cv[][], int component) {
+    private static void filterImageComponent(ComplexImage image, float[][] cu, float[][] cv, int component) {
         int width = image.getWidth();
         int height = image.getHeight();
         float[] filtered = new float[width * height];

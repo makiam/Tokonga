@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2009 by Peter Eastman
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -63,10 +63,10 @@ public class OutlineFilter extends ImageFilter {
         if (thickness <= 0.0) {
             return;
         }
-        float masks[][] = new float[][]{null, createMask(thickness, 0.0, 0.0),
+        float[][] masks = new float[][]{null, createMask(thickness, 0.0, 0.0),
             createMask(thickness, 0.0, -0.5), createMask(thickness, 0.0, 0.5),
             createMask(thickness, -0.5, 0.0), createMask(thickness, 0.5, 0.0)};
-        float outline[] = findOutline(image, masks);
+        float[] outline = findOutline(image, masks);
         RGBColor color = (RGBColor) getPropertyValue(3);
         applyOutline(image, ComplexImage.RED, outline, color.getRed());
         applyOutline(image, ComplexImage.GREEN, outline, color.getGreen());
@@ -76,9 +76,9 @@ public class OutlineFilter extends ImageFilter {
     /**
      * Create a map of the outlines.
      */
-    private float[] findOutline(ComplexImage image, float masks[][]) {
+    private float[] findOutline(ComplexImage image, float[][] masks) {
         int width = image.getWidth(), height = image.getHeight();
-        byte edgeType[] = new byte[width * height];
+        byte[] edgeType = new byte[width * height];
 
         // First find the points that lie on edges.
         for (int i = 0; i < width; i++) {
@@ -140,8 +140,8 @@ public class OutlineFilter extends ImageFilter {
 
         // Now build the image of the outline.
         Thread currentThread = Thread.currentThread();
-        float outline[] = new float[width * height];
-        int maskWidth[] = new int[masks.length];
+        float[] outline = new float[width * height];
+        int[] maskWidth = new int[masks.length];
         for (int i = 1; i < masks.length; i++) {
             maskWidth[i] = (int) Math.sqrt(masks[i].length);
         }
@@ -186,7 +186,7 @@ public class OutlineFilter extends ImageFilter {
     /**
      * Draw a single dot into the image of the outline.
      */
-    private void drawOutlineSpot(int i, int j, float outline[], int width, int height, float mask[], int maskWidth, float fraction) {
+    private void drawOutlineSpot(int i, int j, float[] outline, int width, int height, float[] mask, int maskWidth, float fraction) {
         int radius = (maskWidth - 1) / 2;
         int basex = i - radius, basey = j - radius;
         int xstart = (basex < 0 ? -basex : 0);
@@ -208,9 +208,9 @@ public class OutlineFilter extends ImageFilter {
     /**
      * Add the outline to one component of the image.
      */
-    private void applyOutline(ComplexImage image, int component, float outline[], float color) {
+    private void applyOutline(ComplexImage image, int component, float[] outline, float color) {
         int width = image.getWidth(), height = image.getHeight();
-        float pixel[] = new float[width * height];
+        float[] pixel = new float[width * height];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 float fract = outline[j * width + i];
@@ -231,7 +231,7 @@ public class OutlineFilter extends ImageFilter {
         double radius = 0.5 * thickness - 0.25;
         double radius2 = radius + 0.5;
         int last = size - 1, center = last / 2;
-        float mask[] = new float[size * size];
+        float[] mask = new float[size * size];
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {

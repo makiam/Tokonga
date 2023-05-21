@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2009 by Peter Eastman
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -28,7 +28,7 @@ public class GlowFilter extends ImageFilter {
     public static final String STAR = Translate.text("Star");
     public static final String CIRCLE = Translate.text("Circle");
 
-    private static final String SHAPES[] = new String[]{CROSSHAIR, DIAGONAL, STAR, CIRCLE};
+    private static final String[] SHAPES = new String[]{CROSSHAIR, DIAGONAL, STAR, CIRCLE};
 
     /**
      * Get the name of this filter.
@@ -54,7 +54,7 @@ public class GlowFilter extends ImageFilter {
             if (radius < 1) {
                 return;
             }
-            float mask[] = createCircularMask(radius);
+            float[] mask = createCircularMask(radius);
             filterComponentCircular(image, ComplexImage.RED, radius, mask);
             filterComponentCircular(image, ComplexImage.GREEN, radius, mask);
             filterComponentCircular(image, ComplexImage.BLUE, radius, mask);
@@ -74,7 +74,7 @@ public class GlowFilter extends ImageFilter {
         int radius = (int) ((Double) getPropertyValue(1) * height);
         int diagonalRadius = (int) ((Double) getPropertyValue(1) * height * Math.sqrt(0.5));
         float intensity = ((Number) getPropertyValue(2)).floatValue();
-        float glow[] = new float[width * height];
+        float[] glow = new float[width * height];
         String shape = (String) getPropertyValue(0);
         for (int i = 0; i < width; i++) {
             if (currentThread.isInterrupted()) {
@@ -107,7 +107,7 @@ public class GlowFilter extends ImageFilter {
     /**
      * Add one "arm" to the glow.
      */
-    private void addGlowArm(float glow[], int x, int y, int xstep, int ystep, int width, int height, int radius, float intensity) {
+    private void addGlowArm(float[] glow, int x, int y, int xstep, int ystep, int width, int height, int radius, float intensity) {
         float intensityStep = intensity / radius;
         for (int i = 0; i < radius; i++) {
             x += xstep;
@@ -126,7 +126,7 @@ public class GlowFilter extends ImageFilter {
     private float[] createCircularMask(int radius) {
         int size = 2 * radius + 1, radius2 = radius * radius;
         float intensity = ((Number) getPropertyValue(2)).floatValue();
-        float mask[] = new float[size * size];
+        float[] mask = new float[size * size];
         for (int i = 0; i < radius; i++) {
             for (int j = 0; j < radius; j++) {
                 int dist2 = i * i + j * j;
@@ -148,11 +148,11 @@ public class GlowFilter extends ImageFilter {
     /**
      * Apply a circular glow filter to one component of an image.
      */
-    private void filterComponentCircular(ComplexImage image, int component, int radius, float mask[]) {
+    private void filterComponentCircular(ComplexImage image, int component, int radius, float[] mask) {
         Thread currentThread = Thread.currentThread();
         int maskWidth = 2 * radius + 1;
         int width = image.getWidth(), height = image.getHeight();
-        float glow[] = new float[width * height];
+        float[] glow = new float[width * height];
         for (int i = 0; i < width; i++) {
             if (currentThread.isInterrupted()) {
                 return;
@@ -183,7 +183,7 @@ public class GlowFilter extends ImageFilter {
 
     @Override
     public Property[] getProperties() {
-        Object shapes[] = new Object[]{CROSSHAIR, DIAGONAL, STAR, CIRCLE};
+        Object[] shapes = new Object[]{CROSSHAIR, DIAGONAL, STAR, CIRCLE};
         return new Property[]{
             new Property(Translate.text("Shape"), shapes, CROSSHAIR),
             new Property(Translate.text("Radius"), 0.0, 1.0, 0.05),

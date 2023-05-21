@@ -1,5 +1,5 @@
 /* Copyright (C) 2005-2009 by Peter Eastman
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -45,9 +45,9 @@ public class ExposureFilter extends ImageFilter {
         int width = image.getWidth(), height = image.getHeight();
         double exposure = (Double) getPropertyValue(0);
         double gamma = (exposure < 0.0 ? 1.0 / (1.0 - exposure) : exposure + 1.0);
-        float red[] = new float[width * height];
-        float green[] = new float[width * height];
-        float blue[] = new float[width * height];
+        float[] red = new float[width * height];
+        float[] green = new float[width * height];
+        float[] blue = new float[width * height];
         RGBColor color = new RGBColor();
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
@@ -55,7 +55,7 @@ public class ExposureFilter extends ImageFilter {
                 float g = image.getPixelComponent(i, j, ComplexImage.GREEN);
                 float b = image.getPixelComponent(i, j, ComplexImage.BLUE);
                 color.setRGB(r, g, b);
-                float hsv[] = color.getHSV();
+                float[] hsv = color.getHSV();
                 hsv[2] = (float) Math.pow(hsv[2], 1.0 / gamma);
                 color.setHSV(hsv[0], hsv[1], hsv[2]);
                 red[i + j * width] = color.getRed();

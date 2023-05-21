@@ -52,7 +52,7 @@ public class BrightnessFilter extends ImageFilter {
     private void filterComponent(ComplexImage image, int component) {
         int width = image.getWidth(), height = image.getHeight();
         float brightness = ((Number) getPropertyValue(0)).floatValue();
-        float filtered[] = new float[width * height];
+        float[] filtered = new float[width * height];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 filtered[i + j * width] = image.getPixelComponent(i, j, component) * brightness;

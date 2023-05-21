@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2009 by Peter Eastman
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -45,7 +45,7 @@ public class BlurFilter extends ImageFilter {
         if (radius < 1) {
             return;
         }
-        float mask[] = createMask(radius);
+        float[] mask = createMask(radius);
         filterComponent(image, ComplexImage.RED, radius, mask);
         filterComponent(image, ComplexImage.GREEN, radius, mask);
         filterComponent(image, ComplexImage.BLUE, radius, mask);
@@ -54,11 +54,11 @@ public class BlurFilter extends ImageFilter {
     /**
      * Apply the filter to one component of an image.
      */
-    private void filterComponent(ComplexImage image, int component, int radius, float mask[]) {
+    private void filterComponent(ComplexImage image, int component, int radius, float[] mask) {
         Thread currentThread = Thread.currentThread();
         int maskWidth = 2 * radius + 1;
         int width = image.getWidth(), height = image.getHeight();
-        float blur[] = new float[width * height];
+        float[] blur = new float[width * height];
         for (int i = 0; i < width; i++) {
             if (currentThread.isInterrupted()) {
                 return;
@@ -90,7 +90,7 @@ public class BlurFilter extends ImageFilter {
      */
     private float[] createMask(int radius) {
         int size = 2 * radius + 1, radius2 = radius * radius;
-        float mask[] = new float[size * size];
+        float[] mask = new float[size * size];
         for (int i = 0; i < radius; i++) {
             for (int j = 0; j < radius; j++) {
                 int dist2 = i * i + j * j;

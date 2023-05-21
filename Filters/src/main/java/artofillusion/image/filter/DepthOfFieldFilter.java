@@ -1,5 +1,5 @@
 /* Copyright (C) 2009-2010 by Peter Eastman
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -52,13 +52,13 @@ public class DepthOfFieldFilter extends ImageFilter {
         if (!image.hasFloatData(ComplexImage.DEPTH) || camera.getDepthOfField() == 0.0) {
             return;
         }
-        int radius[] = findBlurRadius(image, camera);
+        int[] radius = findBlurRadius(image, camera);
         Thread currentThread = Thread.currentThread();
         int width = image.getWidth(), height = image.getHeight();
-        float red[] = new float[width * height];
-        float green[] = new float[width * height];
-        float blue[] = new float[width * height];
-        float weight[] = new float[width * height];
+        float[] red = new float[width * height];
+        float[] green = new float[width * height];
+        float[] blue = new float[width * height];
+        float[] weight = new float[width * height];
         for (int i = 0; i < width; i++) {
             if (currentThread.isInterrupted()) {
                 return;
@@ -113,7 +113,7 @@ public class DepthOfFieldFilter extends ImageFilter {
         double dof = (useCameraParams ? camera.getDepthOfField() : (Double) getPropertyValue(1));
         double focalDist = (useCameraParams ? camera.getFocalDistance() : (Double) getPropertyValue(2));
         double dofScale = 0.25 * height * focalDist / (dof * camera.getFieldOfView());
-        int radius[] = new int[width * height];
+        int[] radius = new int[width * height];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 float depth = image.getPixelComponent(i, j, ComplexImage.DEPTH);
