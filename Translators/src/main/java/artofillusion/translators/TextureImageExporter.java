@@ -83,7 +83,7 @@ public class TextureImageExporter {
                 info.transparentFilename = (imt.transparentColor.getImage() != null || imt.transparency.getImage() != null ? newName() : null);
                 info.emissiveFilename = (imt.emissiveColor.getImage() != null ? newName() : null);
             } else if (tex instanceof ProceduralTexture2D) {
-                artofillusion.procedural.Module output[] = ((ProceduralTexture2D) tex).getProcedure().getOutputModules();
+                artofillusion.procedural.Module[] output = ((ProceduralTexture2D) tex).getProcedure().getOutputModules();
                 info.diffuseFilename = (output[0].inputConnected(0) ? newName() : null);
                 info.specularFilename = (output[1].inputConnected(0) || output[5].inputConnected(0) ? newName() : null);
                 info.hilightFilename = (output[1].inputConnected(0) || output[6].inputConnected(0) ? newName() : null);
@@ -100,7 +100,7 @@ public class TextureImageExporter {
             Mesh mesh = (obj.getObject() instanceof Mesh ? (Mesh) obj.getObject() : obj.getObject().convertToTriangleMesh(0.1));
             Mapping2D map = (Mapping2D) obj.getObject().getTextureMapping();
             if (map instanceof UVMapping && mesh instanceof FacetedMesh && ((UVMapping) map).isPerFaceVertex((FacetedMesh) mesh)) {
-                Vec2 coords[][] = ((UVMapping) map).findFaceTextureCoordinates((FacetedMesh) mesh);
+                Vec2[][] coords = ((UVMapping) map).findFaceTextureCoordinates((FacetedMesh) mesh);
                 for (int i = 0; i < coords.length; i++) {
                     for (int j = 0; j < coords[i].length; j++) {
                         if (coords[i][j].x < info.minu) {
@@ -118,7 +118,7 @@ public class TextureImageExporter {
                     }
                 }
             } else {
-                Vec2 coords[] = map.findTextureCoordinates(mesh);
+                Vec2[] coords = map.findTextureCoordinates(mesh);
                 for (int i = 0; i < coords.length; i++) {
                     if (coords[i].x < info.minu) {
                         info.minu = coords[i].x;

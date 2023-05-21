@@ -59,10 +59,10 @@ public class OBJImporter {
         groupTable.put("default", face.get(0));
         int lineno = 0, smoothingGroup = -1;
         String currentTexture = null;
-        VertexInfo vertIndex[] = new VertexInfo[3];
-        double val[] = new double[3];
-        double min[] = new double[]{Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE};
-        double max[] = new double[]{-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE};
+        VertexInfo[] vertIndex = new VertexInfo[3];
+        double[] val = new double[3];
+        double[] min = new double[]{Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE};
+        double[] max = new double[]{-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE};
         String s;
         BufferedReader in = new BufferedReader(new FileReader(f));
         try {
@@ -77,7 +77,7 @@ public class OBJImporter {
                         s = s.substring(0, s.length() - 1) + s2;
                     }
                 }
-                String fields[] = breakLine(s);
+                String[] fields = breakLine(s);
                 if (fields.length == 0) {
                     continue;
                 }
@@ -142,7 +142,7 @@ public class OBJImporter {
                         } else {
                             // Triangulate the outline.
 
-                            Vec3 v[] = new Vec3[fields.length - 1];
+                            Vec3[] v = new Vec3[fields.length - 1];
                             for (int j = 0; j < v.length; j++) {
                                 v[j] = vertex.get(vertIndex[j].vert);
                             }
@@ -235,11 +235,12 @@ public class OBJImporter {
                 }
 
                 // Find which vertices are used by faces in this group.
-                int realIndex[] = new int[vertex.size()];
+                int[] realIndex = new int[vertex.size()];
                 for (int i = 0; i < realIndex.length; i++) {
                     realIndex[i] = -1;
                 }
-                int fc[][] = new int[groupFaces.size()][], numVert = 0;
+                int[][] fc = new int[groupFaces.size()][];
+                int numVert = 0;
                 for (int i = 0; i < fc.length; i++) {
                     FaceInfo fi = groupFaces.elementAt(i);
                     for (int j = 0; j < 3; j++) {
@@ -251,7 +252,8 @@ public class OBJImporter {
                 }
 
                 // Build the list of vertices and center them.
-                Vec3 vert[] = new Vec3[numVert], center = new Vec3();
+                Vec3[] vert = new Vec3[numVert];
+                Vec3 center = new Vec3();
                 for (int i = 0; i < realIndex.length; i++) {
                     if (realIndex[i] > -1) {
                         vert[realIndex[i]] = vertex.elementAt(i);
@@ -268,7 +270,7 @@ public class OBJImporter {
                 info.addTrack(new RotationTrack(info), 1);
 
                 // Find the smoothness values for the edges.
-                TriangleMesh.Edge edge[] = ((TriangleMesh) info.getObject()).getEdges();
+                TriangleMesh.Edge[] edge = ((TriangleMesh) info.getObject()).getEdges();
                 for (int i = 0; i < edge.length; i++) {
                     if (edge[i].f2 == -1) {
                         continue;
@@ -330,7 +332,7 @@ public class OBJImporter {
                             layered.addLayer(0, tex, map, LayeredMapping.BLEND);
                             info.setTexture(layered.getTexture(), layered);
                         }
-                        Vec2 uv[] = new Vec2[numVert];
+                        Vec2[] uv = new Vec2[numVert];
                         boolean needPerFace = false;
                         for (int j = 0; j < groupFaces.size() && !needPerFace; j++) {
                             FaceInfo fi = groupFaces.elementAt(j);
@@ -354,7 +356,7 @@ public class OBJImporter {
                             // Different faces have different texture coordinates for the same vertex,
                             // so we need to use per-face-vertex coordinates.
 
-                            Vec2 uvf[][] = new Vec2[groupFaces.size()][3];
+                            Vec2[][] uvf = new Vec2[groupFaces.size()][3];
                             for (int j = 0; j < groupFaces.size(); j++) {
                                 FaceInfo fi = groupFaces.elementAt(j);
                                 for (int k = 0; k < 3; k++) {
@@ -379,7 +381,7 @@ public class OBJImporter {
                     // If we are using a layered texture, set a parameter defining what layer to use
                     // for each face.
                     if (layered != null) {
-                        double paramValue[] = new double[groupFaces.size()];
+                        double[] paramValue = new double[groupFaces.size()];
                         for (int i = 0; i < paramValue.length; i++) {
                             paramValue[i] = (texName.equals(groupFaces.get(i).texture) ? 1.0 : 0.0);
                         }
@@ -431,7 +433,7 @@ public class OBJImporter {
         while (st.hasMoreTokens()) {
             v.addElement(st.nextToken());
         }
-        String result[] = new String[v.size()];
+        String[] result = new String[v.size()];
         v.copyInto(result);
         return result;
     }
@@ -506,7 +508,7 @@ public class OBJImporter {
                 if (line.startsWith("#")) {
                     continue;
                 }
-                String fields[] = breakLine(line);
+                String[] fields = breakLine(line);
                 if (fields.length == 0) {
                     continue;
                 }
@@ -643,7 +645,7 @@ public class OBJImporter {
     /**
      * Parse the specification for a color.
      */
-    private static RGBColor parseColor(String fields[]) throws NumberFormatException {
+    private static RGBColor parseColor(String[] fields) throws NumberFormatException {
         if (fields.length < 4) {
             return null;
         }

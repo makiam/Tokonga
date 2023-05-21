@@ -146,8 +146,8 @@ public class OBJExporter {
             }
 
             // Find the normals.
-            Vec3 norm[];
-            int normIndex[][] = new int[mesh.getFaceCount()][];
+            Vec3[] norm;
+            int[][] normIndex = new int[mesh.getFaceCount()][];
             if (mesh instanceof TriangleMesh) {
                 RenderingMesh rm = ((TriangleMesh) mesh).getRenderingMesh(Double.MAX_VALUE, false, info);
                 norm = rm.norm;
@@ -165,7 +165,7 @@ public class OBJExporter {
             }
 
             // Determine whether normals are actually required.
-            MeshVertex vert[] = mesh.getVertices();
+            MeshVertex[] vert = mesh.getVertices();
             boolean needNormals = false;
             if (alwaysStoreNormals) {
                 needNormals = true;
@@ -181,7 +181,7 @@ public class OBJExporter {
                     out.println("s 0"); // The mesh is faceted, so we can simply disable smoothing
                 } else {
                     needNormals = false;
-                    Vec3 vertNormal[] = new Vec3[vert.length];
+                    Vec3[] vertNormal = new Vec3[vert.length];
                     for (int j = 0; j < mesh.getFaceCount() && !needNormals; j++) {
                         for (int k = 0; k < mesh.getFaceVertexCount(j); k++) {
                             Vec3 n = norm[normIndex[j][k]];
@@ -235,7 +235,7 @@ public class OBJExporter {
             if (ti != null && ((Object3D) mesh).getTextureMapping() instanceof UVMapping && ((UVMapping) ((Object3D) mesh).getTextureMapping()).isPerFaceVertex(mesh)) {
                 // A per-face-vertex texture mapping.
 
-                Vec2 coords[][] = ((UVMapping) ((Object3D) mesh).getTextureMapping()).findFaceTextureCoordinates(mesh);
+                Vec2[][] coords = ((UVMapping) ((Object3D) mesh).getTextureMapping()).findFaceTextureCoordinates(mesh);
                 double uscale = (ti.maxu == ti.minu ? 1.0 : 1.0 / (ti.maxu - ti.minu));
                 double vscale = (ti.maxv == ti.minv ? 1.0 : 1.0 / (ti.maxv - ti.minv));
                 for (int j = 0; j < coords.length; j++) {
@@ -266,7 +266,7 @@ public class OBJExporter {
             } else if (ti != null && ((Object3D) mesh).getTextureMapping() instanceof Mapping2D) {
                 // A per-vertex texture mapping.
 
-                Vec2 coords[] = ((Mapping2D) ((Object3D) mesh).getTextureMapping()).findTextureCoordinates(mesh);
+                Vec2[] coords = ((Mapping2D) ((Object3D) mesh).getTextureMapping()).findTextureCoordinates(mesh);
                 double uscale = (ti.maxu == ti.minu ? 1.0 : 1.0 / (ti.maxu - ti.minu));
                 double vscale = (ti.maxv == ti.minv ? 1.0 : 1.0 / (ti.maxv - ti.minv));
                 for (int j = 0; j < coords.length; j++) {

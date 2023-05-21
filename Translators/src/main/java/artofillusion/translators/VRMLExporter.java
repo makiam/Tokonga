@@ -125,7 +125,8 @@ public class VRMLExporter {
      */
     private static void writeScene(Scene theScene, OutputStream os, boolean wholeScene, double tol, boolean smooth, TextureImageExporter textureExporter) {
         PrintWriter out = new PrintWriter(os);
-        int i, selected[] = theScene.getSelection();
+        int i;
+        int[] selected = theScene.getSelection();
         RGBColor color;
 
         // Write the header information.
@@ -211,8 +212,9 @@ public class VRMLExporter {
         CoordinateSystem coords = info.getCoords();
         Object3D obj = info.getObject();
         Vec3 orig = coords.getOrigin(), size = info.getBounds().getSize(), axis = new Vec3(0.0, 0.0, 0.0);
-        double rot[] = new double[4], ratio = 0.0;
-        double pos[] = new double[3], scale[] = new double[3];
+        double[] rot = new double[4];
+        double ratio = 0.0;
+        double[] pos = new double[3], scale = new double[3];
         String name = translate(info.getName(), 0, 1, matchId, replace)
                 + translate(info.getName(), 1, -1, matchId, replace);
         if (name.length() > 0 && illegalFirst.indexOf(name.charAt(0)) > 0) {
@@ -356,7 +358,7 @@ public class VRMLExporter {
         } else if (obj instanceof Curve && !obj.canSetTexture()) {
             WireframeMesh mesh = obj.getWireframeMesh();
             if (mesh != null) {
-                Vec3 vert[] = mesh.vert;
+                Vec3[] vert = mesh.vert;
 
                 write("Shape {", out, indent + 2);
                 write("geometry DEF " + name + " IndexedLineSet {", out, indent + 3);
@@ -417,8 +419,8 @@ public class VRMLExporter {
      * Write out an IndexedFaceSet node describing a mesh.
      */
     private static void writeMesh(FacetedMesh mesh, ObjectInfo info, PrintWriter out, int indent, Scene theScene, TextureImageExporter textureExporter, boolean includeNormals) {
-        MeshVertex vert[] = mesh.getVertices();
-        double pos[] = new double[3];
+        MeshVertex[] vert = mesh.getVertices();
+        double[] pos = new double[3];
         String name = translate(info.getName(), 0, 1, matchId, replace)
                 + translate(info.getName(), 1, -1, matchId, replace);
         if (name.length() > 0 && illegalFirst.indexOf(name.charAt(0)) > 0) {
@@ -455,7 +457,7 @@ public class VRMLExporter {
         }
         write("]", out, indent + 2);
         if (includeNormals) {
-            Vec3 norm[] = mesh.getNormals();
+            Vec3[] norm = mesh.getNormals();
             write("normal Normal { vector [", out, indent + 2);
             for (int i = 0; i < norm.length; i++) {
                 if (norm[i] == null) {
@@ -486,7 +488,7 @@ public class VRMLExporter {
         if (ti != null && ((Object3D) mesh).getTextureMapping() instanceof UVMapping && ((UVMapping) ((Object3D) mesh).getTextureMapping()).isPerFaceVertex(mesh)) {
             // A per-face-vertex texture mapping.
 
-            Vec2 coords[][] = ((UVMapping) ((Object3D) mesh).getTextureMapping()).findFaceTextureCoordinates(mesh);
+            Vec2[][] coords = ((UVMapping) ((Object3D) mesh).getTextureMapping()).findFaceTextureCoordinates(mesh);
             double uscale = (ti.maxu == ti.minu ? 1.0 : 1.0 / (ti.maxu - ti.minu));
             double vscale = (ti.maxv == ti.minv ? 1.0 : 1.0 / (ti.maxv - ti.minv));
             write("texCoord TextureCoordinate { point [", out, indent + 2);
@@ -517,7 +519,7 @@ public class VRMLExporter {
         } else if (ti != null && ((Object3D) mesh).getTextureMapping() instanceof Mapping2D) {
             // A per-vertex texture mapping.
 
-            Vec2 coords[] = ((Mapping2D) ((Object3D) mesh).getTextureMapping()).findTextureCoordinates(mesh);
+            Vec2[] coords = ((Mapping2D) ((Object3D) mesh).getTextureMapping()).findTextureCoordinates(mesh);
             double uscale = (ti.maxu == ti.minu ? 1.0 : 1.0 / (ti.maxu - ti.minu));
             double vscale = (ti.maxv == ti.minv ? 1.0 : 1.0 / (ti.maxv - ti.minv));
             write("texCoord TextureCoordinate { point [", out, indent + 2);

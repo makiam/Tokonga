@@ -84,7 +84,7 @@ public class POVExporter {
         f = new File(path, exportFileName + suffix);
         if (f.exists()) {
             //overwrite dialog
-            String options[] = new String[]{Translate.text("Yes"), Translate.text("No")};
+            String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
             int choice = new BStandardDialog("", Translate.text("overwriteFile", exportFileName + suffix), BStandardDialog.QUESTION).showOptionDialog(parent, options, options[1]);
             if (choice == 1) {
                 return;
@@ -96,7 +96,7 @@ public class POVExporter {
             f = new File(path, exportFileName + suffix2);
             if (f.exists()) {
                 // overwrite dialog, if not then write a single pov file and inform the user
-                String options[] = new String[]{Translate.text("Yes"), Translate.text("No")};
+                String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
                 int choice = new BStandardDialog("", Translate.text("overwriteFile", exportFileName + suffix2), BStandardDialog.QUESTION).showOptionDialog(parent, options, options[1]);
                 if (choice == 1) {
                     bIncludeFile = false; // Write to the povray file
@@ -187,7 +187,7 @@ public class POVExporter {
         write("", out, 0);
 
         // Write declarations, camera, lights and objects into file
-        int selected[] = theScene.getSelection();
+        int[] selected = theScene.getSelection();
         int maxIndex = 0;
         List<ObjectInfo> items = theScene.getObjects();
         // writing the declarations
@@ -523,7 +523,7 @@ public class POVExporter {
             write("}", out, 0);
             write("", out, 0);
             if (DEBUG) {
-                double rot[] = coords.getRotationAngles();
+                double[] rot = coords.getRotationAngles();
                 System.err.println("Sphere:");
                 System.err.println("// Mittelpunkt:\t" + orig.toString());
                 System.err.println("// Größe:\t" + size.times(2.0).toString());
@@ -558,7 +558,7 @@ public class POVExporter {
             write("}", out, 0);
             write("", out, 0);
             if (DEBUG) {
-                double rot[] = coords.getRotationAngles();
+                double[] rot = coords.getRotationAngles();
                 System.err.println("Cone:");
                 System.err.println("// Mittelpunkt:\t" + orig.toString());
                 System.err.println("// Größe:\t" + size.times(2.0).toString());
@@ -580,8 +580,8 @@ public class POVExporter {
                 texName = cleanName(info.getName());
             }
 
-            MeshVertex vert[] = trimesh.getVertices();
-            TriangleMesh.Face face[] = (trimesh.getFaces());
+            MeshVertex[] vert = trimesh.getVertices();
+            TriangleMesh.Face[] face = (trimesh.getFaces());
 
             write("// " + info.getName(), out, 0);
             write("mesh2 {", out, 0);
@@ -630,8 +630,8 @@ public class POVExporter {
             RenderingMesh mesh = info.getRenderingMesh(tolerance);
             write("// " + info.getName(), out, 0);
             if (mesh != null) {  // only if you can render the mesh
-                Vec3 vert[] = mesh.vert, norm[] = mesh.norm;
-                RenderingTriangle face[] = mesh.triangle;
+                Vec3[] vert = mesh.vert, norm = mesh.norm;
+                RenderingTriangle[] face = mesh.triangle;
 
                 CoordinateSystem coords = info.getCoords();
                 Vec3 orig = coords.getOrigin();
