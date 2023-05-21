@@ -19,279 +19,266 @@ import buoy.widget.*;
 import java.awt.*;
 import java.io.*;
 
-/** This is a Module which randomly displaces the coordinate system. */
+/**
+ * This is a Module which randomly displaces the coordinate system.
+ */
 @ProceduralModule.Category(value = "Modules:menu.transforms")
-public class JitterModule extends ProceduralModule
-{
-  boolean valueOk;
-  Vec3 v, tempVec;
-  double xamp, yamp, zamp, xscale, yscale, zscale, invxscale, invyscale, invzscale, lastBlur;
-  PointInfo point;
+public class JitterModule extends ProceduralModule {
 
-  public JitterModule() {
-      this(new Point());
-  }
-  
-  public JitterModule(Point position)
-  {
-    super(Translate.text("Modules:menu.jitterModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "X", "(X)"),
-      new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Y", "(Y)"),
-      new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Z", "(Z)")},
-      new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "X"),
-      new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Y"),
-      new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Z")},
-      position);
-    xamp = yamp = zamp = 0.1;
-    xscale = yscale = zscale = invxscale = invyscale = invzscale = 1.0;
-    v = new Vec3();
-    tempVec = new Vec3();
-  }
+    boolean valueOk;
+    Vec3 v, tempVec;
+    double xamp, yamp, zamp, xscale, yscale, zscale, invxscale, invyscale, invzscale, lastBlur;
+    PointInfo point;
 
-  /** Get the X scale. */
+    public JitterModule() {
+        this(new Point());
+    }
 
-  public double getXScale()
-  {
-    return xscale;
-  }
+    public JitterModule(Point position) {
+        super(Translate.text("Modules:menu.jitterModule"), new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "X", "(X)"),
+            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Y", "(Y)"),
+            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Z", "(Z)")},
+                new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "X"),
+                    new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Y"),
+                    new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Z")},
+                position);
+        xamp = yamp = zamp = 0.1;
+        xscale = yscale = zscale = invxscale = invyscale = invzscale = 1.0;
+        v = new Vec3();
+        tempVec = new Vec3();
+    }
 
-  /** Set the X scale. */
+    /**
+     * Get the X scale.
+     */
+    public double getXScale() {
+        return xscale;
+    }
 
-  public void setXScale(double scale)
-  {
-    xscale = scale;
-    invxscale = 1.0/scale;
-  }
+    /**
+     * Set the X scale.
+     */
+    public void setXScale(double scale) {
+        xscale = scale;
+        invxscale = 1.0 / scale;
+    }
 
-  /** Get the Y scale. */
+    /**
+     * Get the Y scale.
+     */
+    public double getYScale() {
+        return yscale;
+    }
 
-  public double getYScale()
-  {
-    return yscale;
-  }
+    /**
+     * Set the Y scale.
+     */
+    public void setYScale(double scale) {
+        yscale = scale;
+        invyscale = 1.0 / scale;
+    }
 
-  /** Set the Y scale. */
+    /**
+     * Get the Z scale.
+     */
+    public double getZScale() {
+        return zscale;
+    }
 
-  public void setYScale(double scale)
-  {
-    yscale = scale;
-    invyscale = 1.0/scale;
-  }
+    /**
+     * Set the Z scale.
+     */
+    public void setZScale(double scale) {
+        zscale = scale;
+        invzscale = 1.0 / scale;
+    }
 
-  /** Get the Z scale. */
+    /**
+     * Get the X amplitude.
+     */
+    public double getXAmplitude() {
+        return xamp;
+    }
 
-  public double getZScale()
-  {
-    return zscale;
-  }
+    /**
+     * Set the X amplitude.
+     */
+    public void setXAmplitude(double amp) {
+        xamp = amp;
+    }
 
-  /** Set the Z scale. */
+    /**
+     * Get the Y amplitude.
+     */
+    public double getYAmplitude() {
+        return yamp;
+    }
 
-  public void setZScale(double scale)
-  {
-    zscale = scale;
-    invzscale = 1.0/scale;
-  }
+    /**
+     * Set the Y amplitude.
+     */
+    public void setYAmplitude(double amp) {
+        yamp = amp;
+    }
 
-  /** Get the X amplitude. */
+    /**
+     * Get the Z amplitude.
+     */
+    public double getZAmplitude() {
+        return zamp;
+    }
 
-  public double getXAmplitude()
-  {
-    return xamp;
-  }
+    /**
+     * Set the Z amplitude.
+     */
+    public void setZAmplitude(double amp) {
+        zamp = amp;
+    }
 
-  /** Set the X amplitude. */
+    /* New point, so the value will need to be recalculated. */
+    @Override
+    public void init(PointInfo p) {
+        point = p;
+        valueOk = false;
+    }
 
-  public void setXAmplitude(double amp)
-  {
-    xamp = amp;
-  }
+    /* Calculate the average value of an output. */
+    @Override
+    public double getAverageValue(int which, double blur) {
+        if (!valueOk || blur != lastBlur) {
+            v.x = (linkFrom[0] == null) ? point.x : linkFrom[0].getAverageValue(linkFromIndex[0], blur);
+            v.y = (linkFrom[1] == null) ? point.y : linkFrom[1].getAverageValue(linkFromIndex[1], blur);
+            v.z = (linkFrom[2] == null) ? point.z : linkFrom[2].getAverageValue(linkFromIndex[2], blur);
+            Noise.calcVector(tempVec, invxscale * v.x, invyscale * v.y, invzscale * v.z);
+            v.x += xamp * tempVec.x;
+            v.y += yamp * tempVec.y;
+            v.z += zamp * tempVec.z;
+            valueOk = true;
+            lastBlur = blur;
+        }
+        if (which == 0) {
+            return v.x;
+        } else if (which == 1) {
+            return v.y;
+        } else {
+            return v.z;
+        }
+    }
 
-  /** Get the Y amplitude. */
+    /* The error is unaffected by this module. */
+    @Override
+    public double getValueError(int which, double blur) {
+        if (linkFrom[which] != null) {
+            return linkFrom[which].getValueError(linkFromIndex[which], blur);
+        }
+        if (which == 0) {
+            return point.xsize * 0.5 + blur;
+        } else if (which == 1) {
+            return point.ysize * 0.5 + blur;
+        } else {
+            return point.zsize * 0.5 + blur;
+        }
+    }
 
-  public double getYAmplitude()
-  {
-    return yamp;
-  }
+    /* The gradient is unaffected by this module. */
+    @Override
+    public void getValueGradient(int which, Vec3 grad, double blur) {
+        if (linkFrom[which] != null) {
+            linkFrom[which].getValueGradient(linkFromIndex[which], grad, blur);
+        } else if (which == 0) {
+            grad.set(1.0, 0.0, 0.0);
+        } else if (which == 1) {
+            grad.set(0.0, 1.0, 0.0);
+        } else {
+            grad.set(0.0, 0.0, 1.0);
+        }
+    }
 
-  /** Set the Y amplitude. */
+    /* Allow the user to set the parameters. */
+    @Override
+    public boolean edit(final ProcedureEditor editor, Scene theScene) {
+        final ValueField amp1 = new ValueField(xamp, ValueField.NONE, 4);
+        final ValueField amp2 = new ValueField(yamp, ValueField.NONE, 4);
+        final ValueField amp3 = new ValueField(zamp, ValueField.NONE, 4);
+        final ValueField scale1 = new ValueField(xscale, ValueField.POSITIVE, 4);
+        final ValueField scale2 = new ValueField(yscale, ValueField.POSITIVE, 4);
+        final ValueField scale3 = new ValueField(zscale, ValueField.POSITIVE, 4);
+        Object listener = new Object() {
+            void processEvent() {
+                xamp = amp1.getValue();
+                yamp = amp2.getValue();
+                zamp = amp3.getValue();
+                xscale = scale1.getValue();
+                yscale = scale2.getValue();
+                zscale = scale3.getValue();
+                invxscale = 1.0 / xscale;
+                invyscale = 1.0 / yscale;
+                invzscale = 1.0 / zscale;
+                editor.updatePreview();
+            }
+        };
+        amp1.addEventLink(ValueChangedEvent.class, listener);
+        amp2.addEventLink(ValueChangedEvent.class, listener);
+        amp3.addEventLink(ValueChangedEvent.class, listener);
+        scale1.addEventLink(ValueChangedEvent.class, listener);
+        scale2.addEventLink(ValueChangedEvent.class, listener);
+        scale3.addEventLink(ValueChangedEvent.class, listener);
+        FormContainer p = new FormContainer(4, 3);
+        p.add(new BLabel(), 0, 0);
+        p.add(new BLabel("X"), 1, 0);
+        p.add(new BLabel("Y"), 2, 0);
+        p.add(new BLabel("Z"), 3, 0);
+        p.add(Translate.label("Amplitude"), 0, 1);
+        p.add(amp1, 1, 1);
+        p.add(amp2, 2, 1);
+        p.add(amp3, 3, 1);
+        p.add(Translate.label("Scale"), 0, 2);
+        p.add(scale1, 1, 2);
+        p.add(scale2, 2, 2);
+        p.add(scale3, 3, 2);
+        PanelDialog dlg = new PanelDialog(editor.getParentFrame(), Translate.text("selectJitterParameters"), p);
+        return dlg.clickedOk();
+    }
 
-  public void setYAmplitude(double amp)
-  {
-    yamp = amp;
-  }
+    /* Create a duplicate of this module. */
+    @Override
+    public JitterModule duplicate() {
+        JitterModule mod = new JitterModule(new Point(bounds.x, bounds.y));
 
-  /** Get the Z amplitude. */
+        mod.xamp = xamp;
+        mod.yamp = yamp;
+        mod.zamp = zamp;
+        mod.xscale = xscale;
+        mod.yscale = yscale;
+        mod.zscale = zscale;
+        mod.invxscale = invxscale;
+        mod.invyscale = invyscale;
+        mod.invzscale = invzscale;
+        return mod;
+    }
 
-  public double getZAmplitude()
-  {
-    return zamp;
-  }
+    /* Write out the parameters. */
+    @Override
+    public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
+        out.writeDouble(xamp);
+        out.writeDouble(yamp);
+        out.writeDouble(zamp);
+        out.writeDouble(xscale);
+        out.writeDouble(yscale);
+        out.writeDouble(zscale);
+    }
 
-  /** Set the Z amplitude. */
-
-  public void setZAmplitude(double amp)
-  {
-    zamp = amp;
-  }
-
-  /* New point, so the value will need to be recalculated. */
-
-  @Override
-  public void init(PointInfo p)
-  {
-    point = p;
-    valueOk = false;
-  }
-
-  /* Calculate the average value of an output. */
-
-  @Override
-  public double getAverageValue(int which, double blur)
-  {
-    if (!valueOk || blur != lastBlur)
-      {
-        v.x = (linkFrom[0] == null) ? point.x : linkFrom[0].getAverageValue(linkFromIndex[0], blur);
-        v.y = (linkFrom[1] == null) ? point.y : linkFrom[1].getAverageValue(linkFromIndex[1], blur);
-        v.z = (linkFrom[2] == null) ? point.z : linkFrom[2].getAverageValue(linkFromIndex[2], blur);
-        Noise.calcVector(tempVec, invxscale*v.x, invyscale*v.y, invzscale*v.z);
-        v.x += xamp*tempVec.x;
-        v.y += yamp*tempVec.y;
-        v.z += zamp*tempVec.z;
-        valueOk = true;
-        lastBlur = blur;
-      }
-    if (which == 0)
-      return v.x;
-    else if (which == 1)
-      return v.y;
-    else
-      return v.z;
-  }
-
-  /* The error is unaffected by this module. */
-
-  @Override
-  public double getValueError(int which, double blur)
-  {
-    if (linkFrom[which] != null)
-      return linkFrom[which].getValueError(linkFromIndex[which], blur);
-    if (which == 0)
-      return point.xsize*0.5+blur;
-    else if (which == 1)
-      return point.ysize*0.5+blur;
-    else
-      return point.zsize*0.5+blur;
-  }
-
-  /* The gradient is unaffected by this module. */
-
-  @Override
-  public void getValueGradient(int which, Vec3 grad, double blur)
-  {
-    if (linkFrom[which] != null)
-      linkFrom[which].getValueGradient(linkFromIndex[which], grad, blur);
-    else if (which == 0)
-      grad.set(1.0, 0.0, 0.0);
-    else if (which == 1)
-      grad.set(0.0, 1.0, 0.0);
-    else
-      grad.set(0.0, 0.0, 1.0);
-  }
-
-  /* Allow the user to set the parameters. */
-
-  @Override
-  public boolean edit(final ProcedureEditor editor, Scene theScene)
-  {
-    final ValueField amp1 = new ValueField(xamp, ValueField.NONE, 4);
-    final ValueField amp2 = new ValueField(yamp, ValueField.NONE, 4);
-    final ValueField amp3 = new ValueField(zamp, ValueField.NONE, 4);
-    final ValueField scale1 = new ValueField(xscale, ValueField.POSITIVE, 4);
-    final ValueField scale2 = new ValueField(yscale, ValueField.POSITIVE, 4);
-    final ValueField scale3 = new ValueField(zscale, ValueField.POSITIVE, 4);
-    Object listener = new Object() {
-      void processEvent()
-      {
-        xamp = amp1.getValue();
-        yamp = amp2.getValue();
-        zamp = amp3.getValue();
-        xscale = scale1.getValue();
-        yscale = scale2.getValue();
-        zscale = scale3.getValue();
-        invxscale = 1.0/xscale;
-        invyscale = 1.0/yscale;
-        invzscale = 1.0/zscale;
-        editor.updatePreview();
-      }
-    };
-    amp1.addEventLink(ValueChangedEvent.class, listener);
-    amp2.addEventLink(ValueChangedEvent.class, listener);
-    amp3.addEventLink(ValueChangedEvent.class, listener);
-    scale1.addEventLink(ValueChangedEvent.class, listener);
-    scale2.addEventLink(ValueChangedEvent.class, listener);
-    scale3.addEventLink(ValueChangedEvent.class, listener);
-    FormContainer p = new FormContainer(4, 3);
-    p.add(new BLabel(), 0, 0);
-    p.add(new BLabel("X"), 1, 0);
-    p.add(new BLabel("Y"), 2, 0);
-    p.add(new BLabel("Z"), 3, 0);
-    p.add(Translate.label("Amplitude"), 0, 1);
-    p.add(amp1, 1, 1);
-    p.add(amp2, 2, 1);
-    p.add(amp3, 3, 1);
-    p.add(Translate.label("Scale"), 0, 2);
-    p.add(scale1, 1, 2);
-    p.add(scale2, 2, 2);
-    p.add(scale3, 3, 2);
-    PanelDialog dlg = new PanelDialog(editor.getParentFrame(), Translate.text("selectJitterParameters"), p);
-    return dlg.clickedOk();
-  }
-
-  /* Create a duplicate of this module. */
-
-  @Override
-  public JitterModule duplicate()
-  {
-    JitterModule mod = new JitterModule(new Point(bounds.x, bounds.y));
-
-    mod.xamp = xamp;
-    mod.yamp = yamp;
-    mod.zamp = zamp;
-    mod.xscale = xscale;
-    mod.yscale = yscale;
-    mod.zscale = zscale;
-    mod.invxscale = invxscale;
-    mod.invyscale = invyscale;
-    mod.invzscale = invzscale;
-    return mod;
-  }
-
-  /* Write out the parameters. */
-
-  @Override
-  public void writeToStream(DataOutputStream out, Scene theScene) throws IOException
-  {
-    out.writeDouble(xamp);
-    out.writeDouble(yamp);
-    out.writeDouble(zamp);
-    out.writeDouble(xscale);
-    out.writeDouble(yscale);
-    out.writeDouble(zscale);
-  }
-
-  /* Read in the parameters. */
-
-  @Override
-  public void readFromStream(DataInputStream in, Scene theScene) throws IOException
-  {
-    xamp = in.readDouble();
-    yamp = in.readDouble();
-    zamp = in.readDouble();
-    xscale = in.readDouble();
-    yscale = in.readDouble();
-    zscale = in.readDouble();
-    invxscale = 1.0/xscale;
-    invyscale = 1.0/yscale;
-    invzscale = 1.0/zscale;
-  }
+    /* Read in the parameters. */
+    @Override
+    public void readFromStream(DataInputStream in, Scene theScene) throws IOException {
+        xamp = in.readDouble();
+        yamp = in.readDouble();
+        zamp = in.readDouble();
+        xscale = in.readDouble();
+        yscale = in.readDouble();
+        zscale = in.readDouble();
+        invxscale = 1.0 / xscale;
+        invyscale = 1.0 / yscale;
+        invzscale = 1.0 / zscale;
+    }
 }

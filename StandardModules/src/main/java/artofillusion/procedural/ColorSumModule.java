@@ -17,54 +17,50 @@ import java.awt.*;
 
 /* This is a Module which outputs the sum of two colors. */
 @ProceduralModule.Category(value = "Modules:menu.colorFunctions")
-public class ColorSumModule extends ProceduralModule
-{
-  RGBColor color;
-  boolean colorOk;
-  double lastBlur;
+public class ColorSumModule extends ProceduralModule {
 
-  public ColorSumModule() {
-    this(new Point());
-  }
+    RGBColor color;
+    boolean colorOk;
+    double lastBlur;
 
-  public ColorSumModule(Point position)
-  {
-    super("+", new IOPort[] {new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.TOP, "Color 1", '('+Translate.text("black")+')'),
-      new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.BOTTOM, "Color 2", '('+Translate.text("black")+')')},
-      new IOPort[] {new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, "Sum")},
-      position);
-    color = new RGBColor(0.0f, 0.0f, 0.0f);
-  }
+    public ColorSumModule() {
+        this(new Point());
+    }
 
-  /* New point, so the color will need to be recalculated. */
+    public ColorSumModule(Point position) {
+        super("+", new IOPort[]{new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.TOP, "Color 1", '(' + Translate.text("black") + ')'),
+            new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.BOTTOM, "Color 2", '(' + Translate.text("black") + ')')},
+                new IOPort[]{new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, "Sum")},
+                position);
+        color = new RGBColor(0.0f, 0.0f, 0.0f);
+    }
 
-  @Override
-  public void init(PointInfo p)
-  {
-    colorOk = false;
-  }
+    /* New point, so the color will need to be recalculated. */
+    @Override
+    public void init(PointInfo p) {
+        colorOk = false;
+    }
 
-  /* Calculate the summed color. */
-
-  @Override
-  public void getColor(int which, RGBColor c, double blur)
-  {
-    if (colorOk && blur == lastBlur)
-      {
+    /* Calculate the summed color. */
+    @Override
+    public void getColor(int which, RGBColor c, double blur) {
+        if (colorOk && blur == lastBlur) {
+            c.copy(color);
+            return;
+        }
+        colorOk = true;
+        lastBlur = blur;
+        if (linkFrom[0] == null) {
+            color.setRGB(0.0f, 0.0f, 0.0f);
+        } else {
+            linkFrom[0].getColor(linkFromIndex[0], color, blur);
+        }
+        if (linkFrom[1] == null) {
+            c.setRGB(0.0f, 0.0f, 0.0f);
+        } else {
+            linkFrom[1].getColor(linkFromIndex[1], c, blur);
+        }
+        color.add(c);
         c.copy(color);
-        return;
-      }
-    colorOk = true;
-    lastBlur = blur;
-    if (linkFrom[0] == null)
-      color.setRGB(0.0f, 0.0f, 0.0f);
-    else
-      linkFrom[0].getColor(linkFromIndex[0], color, blur);
-    if (linkFrom[1] == null)
-      c.setRGB(0.0f, 0.0f, 0.0f);
-    else
-      linkFrom[1].getColor(linkFromIndex[1], c, blur);
-    color.add(c);
-    c.copy(color);
-  }
+    }
 }

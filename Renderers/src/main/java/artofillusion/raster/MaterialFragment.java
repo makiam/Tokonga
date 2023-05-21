@@ -10,54 +10,48 @@
 
 package artofillusion.raster;
 
-public class MaterialFragment extends TransparentFragment
-{
-  private ObjectMaterialInfo material;
-  private boolean isEntering;
+public class MaterialFragment extends TransparentFragment {
 
-  /**
-   * Create a MaterialFragment.
-   *
-   * @param additiveColor        the additive color, in ERGB format
-   * @param multiplicativeColor  the multiplicative color, in ERGB format
-   * @param depth                the depth of this fragment
-   * @param next                 the next fragment behind this one
-   * @param material             a description of the material for the object being entered
-   * @param isEntering           true if the material is being entered, false if it is being exited
-   */
+    private ObjectMaterialInfo material;
+    private boolean isEntering;
 
-  public MaterialFragment(int additiveColor, int multiplicativeColor, float depth, Fragment next, ObjectMaterialInfo material, boolean isEntering)
-  {
-    super(additiveColor, multiplicativeColor, depth, next);
-    this.material = material;
-    this.isEntering = isEntering;
-  }
+    /**
+     * Create a MaterialFragment.
+     *
+     * @param additiveColor the additive color, in ERGB format
+     * @param multiplicativeColor the multiplicative color, in ERGB format
+     * @param depth the depth of this fragment
+     * @param next the next fragment behind this one
+     * @param material a description of the material for the object being entered
+     * @param isEntering true if the material is being entered, false if it is being exited
+     */
+    public MaterialFragment(int additiveColor, int multiplicativeColor, float depth, Fragment next, ObjectMaterialInfo material, boolean isEntering) {
+        super(additiveColor, multiplicativeColor, depth, next);
+        this.material = material;
+        this.isEntering = isEntering;
+    }
 
-  /**
-   * Get the material.
-   */
+    /**
+     * Get the material.
+     */
+    @Override
+    public ObjectMaterialInfo getMaterialMapping() {
+        return material;
+    }
 
-  @Override
-  public ObjectMaterialInfo getMaterialMapping()
-  {
-    return material;
-  }
+    /**
+     * Get whether the object is being entered or exited.
+     */
+    @Override
+    public boolean isEntering() {
+        return isEntering;
+    }
 
-  /**
-   * Get whether the object is being entered or exited.
-   */
-
-  @Override
-  public boolean isEntering()
-  {
-    return isEntering;
-  }
-
-  @Override
-  public Fragment insertNextFragment(Fragment fragment)
-  {
-    if (fragment.getDepth() == getDepth() && fragment.getMaterialMapping() == material && !isEntering && fragment.isEntering())
-      return fragment.insertNextFragment(this); // Enter the material before exiting it
-    return super.insertNextFragment(fragment);
-  }
+    @Override
+    public Fragment insertNextFragment(Fragment fragment) {
+        if (fragment.getDepth() == getDepth() && fragment.getMaterialMapping() == material && !isEntering && fragment.isEntering()) {
+            return fragment.insertNextFragment(this); // Enter the material before exiting it
+        }
+        return super.insertNextFragment(fragment);
+    }
 }

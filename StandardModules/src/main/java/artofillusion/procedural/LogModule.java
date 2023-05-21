@@ -16,115 +16,106 @@ import java.awt.*;
 
 /* This is a Module which outputs the natural log of a number. */
 @ProceduralModule.Category(value = "Modules:menu.functions")
-public class LogModule extends ProceduralModule
-{
-  boolean valueOk, errorOk, gradOk;
-  double value, error, valueIn, errorIn, lastBlur;
-  Vec3 gradient;
+public class LogModule extends ProceduralModule {
 
-  public LogModule() {
-      this(new Point());
-  }
-  
-  public LogModule(Point position)
-  {
-    super("Log", new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Value", "(1)")},
-      new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Log")},
-      position);
-    gradient = new Vec3();
-  }
+    boolean valueOk, errorOk, gradOk;
+    double value, error, valueIn, errorIn, lastBlur;
+    Vec3 gradient;
 
-  /* New point, so the value will need to be recalculated. */
+    public LogModule() {
+        this(new Point());
+    }
 
-  @Override
-  public void init(PointInfo p)
-  {
-    valueOk = errorOk = gradOk = false;
-  }
+    public LogModule(Point position) {
+        super("Log", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Value", "(1)")},
+                new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Log")},
+                position);
+        gradient = new Vec3();
+    }
 
-  /* This module outputs the log of the input value. */
+    /* New point, so the value will need to be recalculated. */
+    @Override
+    public void init(PointInfo p) {
+        valueOk = errorOk = gradOk = false;
+    }
 
-  @Override
-  public double getAverageValue(int which, double blur)
-  {
-    if (valueOk && blur == lastBlur)
-      return value;
-    valueOk = true;
-    lastBlur = blur;
-    if (linkFrom[0] == null)
-      {
-        value = error = 0.0;
-        errorOk = true;
-        return 0.0;
-      }
-    valueIn = linkFrom[0].getAverageValue(linkFromIndex[0], blur);
-    errorIn = linkFrom[0].getValueError(linkFromIndex[0], blur);
-    if (errorIn == 0.0)
-      {
-        if (valueIn < 0.0)
-          value = -Math.log(-valueIn);
-        else
-          value = Math.log(valueIn);
-        error = 0.0;
-        errorOk = true;
+    /* This module outputs the log of the input value. */
+    @Override
+    public double getAverageValue(int which, double blur) {
+        if (valueOk && blur == lastBlur) {
+            return value;
+        }
+        valueOk = true;
+        lastBlur = blur;
+        if (linkFrom[0] == null) {
+            value = error = 0.0;
+            errorOk = true;
+            return 0.0;
+        }
+        valueIn = linkFrom[0].getAverageValue(linkFromIndex[0], blur);
+        errorIn = linkFrom[0].getValueError(linkFromIndex[0], blur);
+        if (errorIn == 0.0) {
+            if (valueIn < 0.0) {
+                value = -Math.log(-valueIn);
+            } else {
+                value = Math.log(valueIn);
+            }
+            error = 0.0;
+            errorOk = true;
+            return value;
+        }
+        value = (integral(valueIn + errorIn) - integral(valueIn - errorIn)) / (2.0 * errorIn);
         return value;
-      }
-    value = (integral(valueIn+errorIn)-integral(valueIn-errorIn))/(2.0*errorIn);
-    return value;
-  }
+    }
 
-  /* This calculates the integral of the logarithm. */
+    /* This calculates the integral of the logarithm. */
+    private double integral(double x) {
+        if (x > 0.0) {
+            return x * Math.log(x) - x;
+        } else {
+            return -x * Math.log(-x) + x;
+        }
+    }
 
-  private double integral(double x)
-  {
-    if (x > 0.0)
-      return x*Math.log(x)-x;
-    else
-      return -x*Math.log(-x)+x;
-  }
+    /* Estimate the error from the derivative of the function. */
+    @Override
+    public double getValueError(int which, double blur) {
+        if (!valueOk || blur != lastBlur) {
+            getAverageValue(which, blur);
+        }
+        if (errorOk) {
+            return error;
+        }
+        errorOk = true;
+        if (errorIn == 0.0) {
+            error = 0.0;
+            return 0.0;
+        }
+        error = errorIn / Math.abs(valueIn);
+        return error;
+    }
 
-  /* Estimate the error from the derivative of the function. */
-
-  @Override
-  public double getValueError(int which, double blur)
-  {
-    if (!valueOk || blur != lastBlur)
-      getAverageValue(which, blur);
-    if (errorOk)
-      return error;
-    errorOk = true;
-    if (errorIn == 0.0)
-      {
-        error = 0.0;
-        return 0.0;
-      }
-    error = errorIn/Math.abs(valueIn);
-    return error;
-  }
-
-  /* Calculate the gradient. */
-
-  @Override
-  public void getValueGradient(int which, Vec3 grad, double blur)
-  {
-    if (gradOk && blur == lastBlur)
-      {
+    /* Calculate the gradient. */
+    @Override
+    public void getValueGradient(int which, Vec3 grad, double blur) {
+        if (gradOk && blur == lastBlur) {
+            grad.set(gradient);
+            return;
+        }
+        if (linkFrom[0] == null) {
+            grad.set(0.0, 0.0, 0.0);
+            return;
+        }
+        if (!valueOk || blur != lastBlur) {
+            getAverageValue(which, blur);
+        }
+        gradOk = true;
+        linkFrom[0].getValueGradient(linkFromIndex[0], gradient, blur);
+        if (valueIn > 0.0) {
+            gradient.scale(1.0 / valueIn);
+        } else {
+            gradient.scale(-1.0 / valueIn);
+        }
         grad.set(gradient);
-        return;
-      }
-    if (linkFrom[0] == null)
-      {
-        grad.set(0.0, 0.0, 0.0);
-        return;
-      }
-    if (!valueOk || blur != lastBlur)
-      getAverageValue(which, blur);
-    gradOk = true;
-    linkFrom[0].getValueGradient(linkFromIndex[0], gradient, blur);
-    if (valueIn > 0.0)
-      gradient.scale(1.0/valueIn);
-    else
-      gradient.scale(-1.0/valueIn);
-    grad.set(gradient);
-  }
+    }
 }

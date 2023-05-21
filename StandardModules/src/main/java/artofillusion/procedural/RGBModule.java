@@ -19,50 +19,44 @@ import java.awt.*;
  * and blue components of a color.
  */
 @ProceduralModule.Category(value = "Modules:menu.colorFunctions")
-public class RGBModule extends ProceduralModule
-{
-  RGBColor color;
-  boolean colorOk;
-  double lastBlur;
+public class RGBModule extends ProceduralModule {
 
-  public RGBModule() {
-      this(new Point());
-  }
+    RGBColor color;
+    boolean colorOk;
+    double lastBlur;
 
-  public RGBModule(Point position)
-  {
-    super("RGB", new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Red", "(0)"),
-      new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Green", "(0)"),
-      new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Blue", "(0)")},
-      new IOPort[] {new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, "Color")},
-      position);
-    color = new RGBColor(0.0f, 0.0f, 0.0f);
-  }
+    public RGBModule() {
+        this(new Point());
+    }
 
-  /* New point, so the color will need to be recalculated. */
+    public RGBModule(Point position) {
+        super("RGB", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Red", "(0)"),
+            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Green", "(0)"),
+            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Blue", "(0)")},
+                new IOPort[]{new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, "Color")},
+                position);
+        color = new RGBColor(0.0f, 0.0f, 0.0f);
+    }
 
-  @Override
-  public void init(PointInfo p)
-  {
-    colorOk = false;
-  }
+    /* New point, so the color will need to be recalculated. */
+    @Override
+    public void init(PointInfo p) {
+        colorOk = false;
+    }
 
-  /* Calculate the color. */
-
-  @Override
-  public void getColor(int which, RGBColor c, double blur)
-  {
-    if (colorOk && blur == lastBlur)
-      {
+    /* Calculate the color. */
+    @Override
+    public void getColor(int which, RGBColor c, double blur) {
+        if (colorOk && blur == lastBlur) {
+            c.copy(color);
+            return;
+        }
+        colorOk = true;
+        lastBlur = blur;
+        float red = (linkFrom[0] == null) ? 0.0f : (float) linkFrom[0].getAverageValue(linkFromIndex[0], blur);
+        float green = (linkFrom[1] == null) ? 0.0f : (float) linkFrom[1].getAverageValue(linkFromIndex[1], blur);
+        float blue = (linkFrom[2] == null) ? 0.0f : (float) linkFrom[2].getAverageValue(linkFromIndex[2], blur);
+        color.setRGB(red, green, blue);
         c.copy(color);
-        return;
-      }
-    colorOk = true;
-    lastBlur = blur;
-    float red = (linkFrom[0] == null) ? 0.0f : (float) linkFrom[0].getAverageValue(linkFromIndex[0], blur);
-    float green = (linkFrom[1] == null) ? 0.0f : (float) linkFrom[1].getAverageValue(linkFromIndex[1], blur);
-    float blue = (linkFrom[2] == null) ? 0.0f : (float) linkFrom[2].getAverageValue(linkFromIndex[2], blur);
-    color.setRGB(red, green, blue);
-    c.copy(color);
-  }
+    }
 }

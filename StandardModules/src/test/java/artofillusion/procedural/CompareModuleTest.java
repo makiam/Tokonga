@@ -10,48 +10,45 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.procedural;
-import org.junit.Test;
-import static org.junit.Assert.*;
+
+import artofillusion.procedural.Module;
 import java.awt.*;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class CompareModuleTest
-{
-  @Test
-  public void testCompare()
-  {
-    CompareModule module = new CompareModule(new Point());
-    module.linkFrom[0] = new CoordinateModule(new Point(), CoordinateModule.X);
-    module.linkFrom[1] = new CoordinateModule(new Point(), CoordinateModule.Y);
+public class CompareModuleTest {
 
-    // Test exact comparisons.
-    
-    checkValue(module, 0.0, 0.0, 0.0, 0.0, 0.0);
-    checkValue(module, 0.0, 1.0, 0.0, 0.0, 0.0);
-    checkValue(module, 1.0, 0.0, 0.0, 0.0, 1.0);
-    checkValue(module, 1.0, 1.0, 0.0, 0.0, 0.0);
+    @Test
+    public void testCompare() {
+        CompareModule module = new CompareModule(new Point());
+        module.linkFrom[0] = new CoordinateModule(new Point(), CoordinateModule.X);
+        module.linkFrom[1] = new CoordinateModule(new Point(), CoordinateModule.Y);
 
-    // Test comparisons where the difference is greater than the error.
+        // Test exact comparisons.
+        checkValue(module, 0.0, 0.0, 0.0, 0.0, 0.0);
+        checkValue(module, 0.0, 1.0, 0.0, 0.0, 0.0);
+        checkValue(module, 1.0, 0.0, 0.0, 0.0, 1.0);
+        checkValue(module, 1.0, 1.0, 0.0, 0.0, 0.0);
 
-    checkValue(module, 0.0, 1.0, 0.1, 0.1, 0.0);
-    checkValue(module, 1.0, 0.0, 0.1, 0.1, 1.0);
+        // Test comparisons where the difference is greater than the error.
+        checkValue(module, 0.0, 1.0, 0.1, 0.1, 0.0);
+        checkValue(module, 1.0, 0.0, 0.1, 0.1, 1.0);
 
-    // Test having the difference in the error range.
+        // Test having the difference in the error range.
+        checkValue(module, 0.0, 1.0, 1.5, 1.5, 0.1);
+        checkValue(module, 1.0, 0.0, 1.5, 1.5, 0.9);
+        checkValue(module, 0.0, 0.0, 1.5, 1.5, 0.5);
+    }
 
-    checkValue(module, 0.0, 1.0, 1.5, 1.5, 0.1);
-    checkValue(module, 1.0, 0.0, 1.5, 1.5, 0.9);
-    checkValue(module, 0.0, 0.0, 1.5, 1.5, 0.5);
-  }
-
-  private void checkValue(Module module, double x, double y, double xsize, double ysize, double expected)
-  {
-    PointInfo info = new PointInfo();
-    info.x = x;
-    info.xsize = xsize;
-    info.y = y;
-    info.ysize = ysize;
-    module.init(info);
-    module.linkFrom[0].init(info);
-    module.linkFrom[1].init(info);
-    assertEquals(expected, module.getAverageValue(0, 0.0), 1e-8);
-  }
+    private void checkValue(Module module, double x, double y, double xsize, double ysize, double expected) {
+        PointInfo info = new PointInfo();
+        info.x = x;
+        info.xsize = xsize;
+        info.y = y;
+        info.ysize = ysize;
+        module.init(info);
+        module.linkFrom[0].init(info);
+        module.linkFrom[1].init(info);
+        assertEquals(expected, module.getAverageValue(0, 0.0), 1e-8);
+    }
 }

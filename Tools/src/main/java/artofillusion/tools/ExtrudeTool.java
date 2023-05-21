@@ -17,103 +17,93 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
 
-/** The extrude tool creates new objects by extruding a curve or surface along a path. */
+/**
+ * The extrude tool creates new objects by extruding a curve or surface along a path.
+ */
+public class ExtrudeTool implements ModellingTool {
 
-public class ExtrudeTool implements ModellingTool
-{
+    /* Get the text that appear as the menu item.*/
+    @Override
+    public String getName() {
+        return Translate.text("menu.extrude");
+    }
 
-  /* Get the text that appear as the menu item.*/
-
-  @Override
-  public String getName()
-  {
-    return Translate.text("menu.extrude");
-  }
-
-  /* See whether an appropriate set of objects is selected and either display an error
+    /* See whether an appropriate set of objects is selected and either display an error
      message, or bring up the extrude window. */
+    @Override
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
+    public void commandSelected(LayoutWindow window) {
+        Scene scene = window.getScene();
+        int[] selection = window.getSelectedIndices();
 
-  @Override
-  @SuppressWarnings("ResultOfObjectAllocationIgnored")
-  public void commandSelected(LayoutWindow window)
-  {
-    Scene scene = window.getScene();
-    int selection[] = window.getSelectedIndices();
+        for (int i = 0; i < selection.length; i++) {
+            Object3D obj = scene.getObject(selection[i]).getObject();
+            if (obj instanceof Curve || ((obj instanceof TriangleMesh
+                    || obj.canConvertToTriangleMesh() != Object3D.CANT_CONVERT) && !obj.isClosed())) {
+                new ExtrudeDialog(window);
+                return;
+            }
+        }
+        new BStandardDialog("", UIUtilities.breakString(Translate.text("Tools:extrude.tool.messsage")), BStandardDialog.INFORMATION).showMessageDialog(window.getFrame());
+    }
 
-    for (int i = 0; i < selection.length; i++)
-      {
-        Object3D obj = scene.getObject(selection[i]).getObject();
-        if (obj instanceof Curve || ((obj instanceof TriangleMesh ||
-            obj.canConvertToTriangleMesh() != Object3D.CANT_CONVERT) && !obj.isClosed()))
-          {
-            new ExtrudeDialog(window);
-            return;
-          }
-      }
-    new BStandardDialog("", UIUtilities.breakString(Translate.text("Tools:extrude.tool.messsage")), BStandardDialog.INFORMATION).showMessageDialog(window.getFrame());
-  }
+    /**
+     * Extrude a curve into a spline mesh.
+     *
+     * @param profile the curve to extrude
+     * @param profCoords the coordinate system of the profile
+     * @param dir the direction and distance along which to extrude it
+     * @param segments the number of segments to create
+     * @param angle the twist angle (in radians)
+     * @param orient if true, the orientation of the profile will follow the curve
+     * @return the extruded object
+     */
+    public static Object3D extrudeCurve(Curve profile, CoordinateSystem profCoords, Vec3 dir, int segments, double angle, boolean orient) {
+        return ExtrudeDialog.extrudeCurve(profile, profCoords, dir, segments, angle, orient);
+    }
 
-  /** Extrude a curve into a spline mesh.
+    /**
+     * Extrude a curve into a spline mesh.
+     *
+     * @param profile the curve to extrude
+     * @param path the path along which to extrude it
+     * @param profCoords the coordinate system of the profile
+     * @param pathCoords the coordinate system of the path
+     * @param angle the twist angle (in radians)
+     * @param orient if true, the orientation of the profile will follow the curve
+     * @return the extruded object
+     */
+    public static Object3D extrudeCurve(Curve profile, Curve path, CoordinateSystem profCoords, CoordinateSystem pathCoords, double angle, boolean orient) {
+        return ExtrudeDialog.extrudeCurve(profile, path, profCoords, pathCoords, angle, orient);
+    }
 
-      @param profile     the curve to extrude
-      @param profCoords  the coordinate system of the profile
-      @param dir         the direction and distance along which to extrude it
-      @param segments    the number of segments to create
-      @param angle       the twist angle (in radians)
-      @param orient      if true, the orientation of the profile will follow the curve
-      @return the extruded object
-  */
+    /**
+     * Extrude a triangle mesh into a solid object.
+     *
+     * @param profile the TriangleMesh to extrude
+     * @param profCoords the coordinate system of the profile
+     * @param dir the direction and distance along which to extrude it
+     * @param segments the number of segments to create
+     * @param angle the twist angle (in radians)
+     * @param orient if true, the orientation of the profile will follow the curve
+     * @return the extruded object
+     */
+    public static Object3D extrudeMesh(TriangleMesh profile, CoordinateSystem profCoords, Vec3 dir, int segments, double angle, boolean orient) {
+        return ExtrudeDialog.extrudeMesh(profile, profCoords, dir, segments, angle, orient);
+    }
 
-  public static Object3D extrudeCurve(Curve profile, CoordinateSystem profCoords, Vec3 dir, int segments, double angle, boolean orient)
-  {
-    return ExtrudeDialog.extrudeCurve(profile, profCoords, dir, segments, angle, orient);
-  }
-
-  /** Extrude a curve into a spline mesh.
-
-      @param profile     the curve to extrude
-      @param path        the path along which to extrude it
-      @param profCoords  the coordinate system of the profile
-      @param pathCoords  the coordinate system of the path
-      @param angle       the twist angle (in radians)
-      @param orient      if true, the orientation of the profile will follow the curve
-      @return the extruded object
-  */
-
-  public static Object3D extrudeCurve(Curve profile, Curve path, CoordinateSystem profCoords, CoordinateSystem pathCoords, double angle, boolean orient)
-  {
-    return ExtrudeDialog.extrudeCurve(profile, path, profCoords, pathCoords, angle, orient);
-  }
-
-  /** Extrude a triangle mesh into a solid object.
-
-      @param profile     the TriangleMesh to extrude
-      @param profCoords  the coordinate system of the profile
-      @param dir         the direction and distance along which to extrude it
-      @param segments    the number of segments to create
-      @param angle       the twist angle (in radians)
-      @param orient      if true, the orientation of the profile will follow the curve
-      @return the extruded object
-  */
-
-  public static Object3D extrudeMesh(TriangleMesh profile, CoordinateSystem profCoords, Vec3 dir, int segments, double angle, boolean orient)
-  {
-    return ExtrudeDialog.extrudeMesh(profile, profCoords, dir, segments, angle, orient);
-  }
-
-  /** Extrude a triangle mesh into a solid object.
-
-      @param profile     the TriangleMesh to extrude
-      @param path        the path along which to extrude it
-      @param profCoords  the coordinate system of the profile
-      @param pathCoords  the coordinate system of the path
-      @param angle       the twist angle (in radians)
-      @param orient      if true, the orientation of the profile will follow the curve
-      @return the extruded object
-  */
-
-  public static Object3D extrudeMesh(TriangleMesh profile, Curve path, CoordinateSystem profCoords, CoordinateSystem pathCoords, double angle, boolean orient)
-  {
-    return ExtrudeDialog.extrudeMesh(profile, path, profCoords, pathCoords, angle, orient);
-  }
+    /**
+     * Extrude a triangle mesh into a solid object.
+     *
+     * @param profile the TriangleMesh to extrude
+     * @param path the path along which to extrude it
+     * @param profCoords the coordinate system of the profile
+     * @param pathCoords the coordinate system of the path
+     * @param angle the twist angle (in radians)
+     * @param orient if true, the orientation of the profile will follow the curve
+     * @return the extruded object
+     */
+    public static Object3D extrudeMesh(TriangleMesh profile, Curve path, CoordinateSystem profCoords, CoordinateSystem pathCoords, double angle, boolean orient) {
+        return ExtrudeDialog.extrudeMesh(profile, path, profCoords, pathCoords, angle, orient);
+    }
 }

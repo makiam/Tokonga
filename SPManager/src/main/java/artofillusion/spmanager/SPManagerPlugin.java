@@ -25,14 +25,14 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- *  The Plugin corresponding to the SPManager
+ * The Plugin corresponding to the SPManager
  *
- *@author     Francois Guillet
- *@created    20 march 2004
+ * @author Francois Guillet
+ * @created 20 march 2004
  */
 @Slf4j
-public class SPManagerPlugin implements Plugin
-{
+public class SPManagerPlugin implements Plugin {
+
     public static String AOI_VERSION = ArtOfIllusion.getMajorVersion();
     public static String TEMP_DIR;
     public static String APP_DIRECTORY;
@@ -55,7 +55,7 @@ public class SPManagerPlugin implements Plugin
         toolsMenu.addSeparator();
         BMenuItem menuItem = Translate.menuItem("spmanager:SPManager", this, "doMenu");
 
-        toolsMenu.add( menuItem );
+        toolsMenu.add(menuItem);
     }
 
     @Override
@@ -69,280 +69,289 @@ public class SPManagerPlugin implements Plugin
         STARTUP_SCRIPT_DIRECTORY = ArtOfIllusion.STARTUP_SCRIPT_DIRECTORY;
     }
 
-
     /**
-     *  Description of the Method
+     * Description of the Method
      *
-     *@param  message  Description of the Parameter
-     *@param  args     Description of the Parameter
+     * @param message Description of the Parameter
+     * @param args Description of the Parameter
      */
     @Override
-    public void processMessage( int message, Object... args )
-    {
+    public void processMessage(int message, Object... args) {
 
-	switch (message) {
-	case Plugin.APPLICATION_STARTING:
-            log.atInfo().log("SPManager starting...");
-            onApplicationStarting();
+        switch (message) {
+            case Plugin.APPLICATION_STARTING:
+                log.atInfo().log("SPManager starting...");
+                onApplicationStarting();
 
+                // get details of plugin classloaders
+                URL[] urlList;
 
-	    // get details of plugin classloaders
-            URL[] urlList;
+                ClassLoader ldr = null;
+                URLClassLoader urlldr = null;
+                SearchlistClassLoader searchldr = null;
+                Object obj;
 
-	    ClassLoader ldr = null;
-	    URLClassLoader urlldr = null;
-	    SearchlistClassLoader searchldr = null;
-	    Object obj;
+                Map<URL, ClassLoader> loaders = new HashMap<>();
+                for (ClassLoader loader : PluginRegistry.getPluginClassLoaders()) {
+                    obj = loader;
+                    if (obj instanceof URLClassLoader) {
+                        urlList = ((URLClassLoader) obj).getURLs();
+                    } else {
+                        urlList = ((SearchlistClassLoader) obj).getURLs();
+                    }
 
+                    if (urlList.length > 0) {
+                        loaders.put(urlList[0], (ClassLoader) obj);
+                    }
+                }
 
-	    Map<URL, ClassLoader> loaders = new HashMap<>();
-	    for (ClassLoader loader:  PluginRegistry.getPluginClassLoaders()) {
-                obj = loader;
-		if (obj instanceof URLClassLoader)
-		    urlList = ((URLClassLoader) obj).getURLs();
-		else
-		    urlList = ((SearchlistClassLoader) obj).getURLs();
+                Method addUrl = null;
 
-		if (urlList.length > 0)
-		    loaders.put(urlList[0], (ClassLoader)obj);
-	    }
+                try {
+                    addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+                    addUrl.setAccessible(true);
+                } catch (NoSuchMethodException | SecurityException e) {
+                    log.atError().setCause(e).log("Error getting addURL method: {}" + e.getMessage());
+                }
 
+                // get details of all local plugins
+                StringBuffer errs = null;
 
-	    Method addUrl = null;
+                File urlfile;
+                URL url;
 
-	    try {
-		addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-		addUrl.setAccessible(true);
-            } catch (NoSuchMethodException | SecurityException e) {
-                log.atError().setCause(e).log("Error getting addURL method: {}" + e.getMessage());
-	    }
+                File plugdir = new File(PLUGIN_DIRECTORY);
+                if (plugdir.exists()) {
 
-	    // get details of all local plugins
+                    for (File file : plugdir.listFiles()) {
+                        SPMObjectInfo info = new SPMObjectInfo(file.getAbsolutePath());
 
-	    StringBuffer errs = null;
-	    
-	    File urlfile;
-	    URL url;
+                        if (info.invalid) {
+                            if (errs == null) {
+                                errs = new StringBuffer(1024);
+                            }
+                            if (errs.length() > 0) {
+                                errs.append('\n');
+                            }
+                            errs.append(SPMTranslate.text("pluginFailure", info.getName()));
+                        }
 
-	    File plugdir = new File(PLUGIN_DIRECTORY);
-	    if (plugdir.exists()) {
+                        if (info.actions != null && info.actions.size() > 0) {
 
-		for (File file: plugdir.listFiles()) {
-		    SPMObjectInfo info = new SPMObjectInfo(file.getAbsolutePath());
+                            try {
+                                url = file.toURI().toURL();
+                            } catch (MalformedURLException e) {
+                                continue;
+                            }
 
-		    if (info.invalid) {
-			if (errs == null) errs = new StringBuffer(1024);
-			if (errs.length() > 0) errs.append('\n');
-			errs.append(SPMTranslate.text("pluginFailure", info.getName()));
-		    }
+                            // get the classloader for the current plugin
+                            obj = loaders.get(url);
 
-		    if (info.actions != null && info.actions.size() > 0) {
+                            if (obj == null) {
+                                log.atInfo().log("SPManager: could not find classloader: {}", file.getPath());
+                                continue;
+                            }
 
-			try {
-			    url = file.toURI().toURL();
-			} catch (MalformedURLException e) {
-			    continue;
-			}
+                            // cast or convert it to a SearchlistClassLoader
+                            if (obj instanceof SearchlistClassLoader) {
+                                searchldr = (SearchlistClassLoader) obj;
+                            } else {
+                                urlldr = (URLClassLoader) obj;
 
-			// get the classloader for the current plugin
-			obj = loaders.get(url);
+                            }
 
-			if (obj == null) {
-                            log.atInfo().log("SPManager: could not find classloader: {}", file.getPath());
-			    continue;
-			}
+                            // ok, now perform the actions
+                            for (Map.Entry<String, String> entry : info.actions.entrySet()) {
+                                String value = entry.getValue();
+                                String[] key = entry.getKey().split(":");
 
-			// cast or convert it to a SearchlistClassLoader
-			if (obj instanceof SearchlistClassLoader) {
-			    searchldr = (SearchlistClassLoader) obj;
-			}
-			else {
-			    urlldr = (URLClassLoader) obj;
+                                try {
+                                    if (key[0].startsWith("/")) {
+                                        urlfile = new File(APP_DIRECTORY, key[0].substring(1));
+                                    } else {
+                                        urlfile = new File(plugdir, key[0]);
+                                    }
 
-			     }
+                                    url = urlfile.toURI().toURL();
+                                } catch (MalformedURLException e) {
+                                    log.atError().setCause(e).log("Error making url: {}", e.getMessage());
+                                    continue;
+                                }
 
-			// ok, now perform the actions
-			for (Map.Entry<String, String> entry: info.actions.entrySet()) {
-                            String value = entry.getValue();
-			    String[] key = entry.getKey().split(":");
+                                log.atInfo().log("SPM: adding path: {}", url);
 
-			    try {
-				if (key[0].startsWith("/"))
-				    urlfile = new File(APP_DIRECTORY, key[0].substring(1));
-				else
-				    urlfile = new File(plugdir, key[0]);
-				
-				url = urlfile.toURI().toURL();
-			    } catch (MalformedURLException e) {
-                                log.atError().setCause(e).log("Error making url: {}", e.getMessage());
-				continue;
-			    }
+                                if ("classpath".equalsIgnoreCase(value)) {
+                                    if (searchldr != null) {
+                                        searchldr.add(url);
+                                    } else if (addUrl != null) {
+                                        try {
+                                            addUrl.invoke(urlldr, url);
+                                        } catch (IllegalAccessException | InvocationTargetException e) {
+                                            log.atError().setCause(e).log("Error invoking: {}", e.getMessage());
+                                        }
+                                    } else {
+                                        log.error("Could not add path {}", url);
+                                    }
+                                } else if ("import".equalsIgnoreCase(value)) {
+                                    ldr = loaders.get(url);
 
-                            log.atInfo().log("SPM: adding path: {}", url);
+                                    if (key.length == 1) {
+                                        if (obj != null) {
+                                            searchldr.add(ldr);
+                                        } else {
+                                            log.error("SPM: could not find loader for: {}", url);
+                                        }
+                                    }
 
-			    if ("classpath".equalsIgnoreCase(value)) {
-				if (searchldr != null)
-				    searchldr.add(url);
-				else if (addUrl != null) {
-				    try {
-					addUrl.invoke(urlldr, url);
-                                    } catch (IllegalAccessException | InvocationTargetException e) {
-                                        log.atError().setCause(e).log("Error invoking: {}", e.getMessage());
-				    }
-				}
-                                else
-                                    log.error("Could not add path {}", url);
-			    }
-			    else if ("import".equalsIgnoreCase(value)) {
-				ldr = loaders.get(url);
-				
-				if (key.length == 1) {
-				    if (obj != null) searchldr.add(ldr);
-                                    else
-                                        log.error("SPM: could not find loader for: {}", url);
-				}
-				
-			    }
-			}
-		    }
-		}
+                                }
+                            }
+                        }
+                    }
 
-		if (errs != null) {
-		    BTextArea txt = new BTextArea(5, 45);
-		    txt.setEditable(false);
+                    if (errs != null) {
+                        BTextArea txt = new BTextArea(5, 45);
+                        txt.setEditable(false);
 
-		    txt.append(errs.toString());
+                        txt.append(errs.toString());
 
-		    BScrollPane detail =
-			new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER,
-				BScrollPane.SCROLLBAR_AS_NEEDED);
+                        BScrollPane detail
+                                = new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER,
+                                        BScrollPane.SCROLLBAR_AS_NEEDED);
 
-		    BLabel messg = SPMTranslate.bLabel("loadError");
+                        BLabel messg = SPMTranslate.bLabel("loadError");
 
-		    new BStandardDialog("SPManager initialise",
-			    new Widget[] { messg, detail },
-			    BStandardDialog.ERROR)
-		    .showMessageDialog(null);
-		}
-	    }
-            else
-                log.error("SPManager: could not find plugin dir: {}", PLUGIN_DIRECTORY);
+                        new BStandardDialog("SPManager initialise",
+                                new Widget[]{messg, detail},
+                                BStandardDialog.ERROR)
+                                .showMessageDialog(null);
+                    }
+                } else {
+                    log.error("SPManager: could not find plugin dir: {}", PLUGIN_DIRECTORY);
+                }
 
+                init();
+                break;
 
-	    init();
-	    break;
+            case Plugin.SCENE_WINDOW_CREATED: {
+                onSceneWindowCreated((LayoutWindow) args[0]);
+            }
+            break;
 
-	case Plugin.SCENE_WINDOW_CREATED:
-	{
-            onSceneWindowCreated((LayoutWindow) args[0]);
-	}
-	break;
-
-	default:
-	    //Just ignore the message
-	}
+            default:
+            //Just ignore the message
+        }
     }
 
     /**
-     *  initialise the plugin
+     * initialise the plugin
      */
-    public void init()
-    {
+    public void init() {
 
-	List<String> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         log.info("SPManager: java temp dir is {}", System.getProperty("java.io.tmpdir"));
 
-	// try system TEMP directory
-	File temp = new File(System.getProperty("java.io.tmpdir"));
+        // try system TEMP directory
+        File temp = new File(System.getProperty("java.io.tmpdir"));
 
-	// try 'temp' in AOI installation directory
-	if (! ((temp.exists() && temp.isDirectory()) || temp.mkdir())) {
+        // try 'temp' in AOI installation directory
+        if (!((temp.exists() && temp.isDirectory()) || temp.mkdir())) {
             log.atError().log("SPManager: could not open/create temp dir: {}", temp.getAbsolutePath());
-	    temp = new File(APP_DIRECTORY, "temp");
-	}
+            temp = new File(APP_DIRECTORY, "temp");
+        }
 
-	// try 'SPtemp' in user's home directory
-	if (! ((temp.exists() && temp.isDirectory()) || temp.mkdir())) {
+        // try 'SPtemp' in user's home directory
+        if (!((temp.exists() && temp.isDirectory()) || temp.mkdir())) {
             log.atError().log("SPManager: Cannot create temp folder: {}", temp.getAbsolutePath());
-	    temp = new File(System.getProperty("user.dir"), "SPMtemp");
-	}
+            temp = new File(System.getProperty("user.dir"), "SPMtemp");
+        }
 
-	if (! ((temp.exists() && temp.isDirectory()) || temp.mkdir())) {
-	    errors.add("Cannot create temp folder: " + temp.getAbsolutePath());
-	}
+        if (!((temp.exists() && temp.isDirectory()) || temp.mkdir())) {
+            errors.add("Cannot create temp folder: " + temp.getAbsolutePath());
+        }
 
-	if (!temp.canWrite())
-	    errors.add("Write permission denied to temp folder: " + temp.getAbsolutePath());
+        if (!temp.canWrite()) {
+            errors.add("Write permission denied to temp folder: " + temp.getAbsolutePath());
+        }
 
-	// create temporary private sub-tree
-	String path;
-	File t = null;
-	try {
-	    t = File.createTempFile("spmanager-temp-" + System.getProperty("user.name") + "-", ".lck", temp);
-	    t.deleteOnExit();
-	    path= t.getName();
-	    path = path.substring(0, path.length()- ".lck".length());
-	} catch (IOException e) {
-	    // failed to create temp file, use fallback naming algorithm
-	    log.atError().setCause(e).log("SPManager: could not create temp file: {} {}", t.getAbsolutePath(), e.getMessage());
+        // create temporary private sub-tree
+        String path;
+        File t = null;
+        try {
+            t = File.createTempFile("spmanager-temp-" + System.getProperty("user.name") + "-", ".lck", temp);
+            t.deleteOnExit();
+            path = t.getName();
+            path = path.substring(0, path.length() - ".lck".length());
+        } catch (IOException e) {
+            // failed to create temp file, use fallback naming algorithm
+            log.atError().setCause(e).log("SPManager: could not create temp file: {} {}", t.getAbsolutePath(), e.getMessage());
 
-	    path = System.getProperty("user.name") + "-" + System.currentTimeMillis();
-	}
-	
-	temp = new File(temp, path);
+            path = System.getProperty("user.name") + "-" + System.currentTimeMillis();
+        }
 
-	if (! ((temp.exists() && temp.isDirectory()) || temp.mkdir())) {
-	    errors.add("Cannot create temp folder: " + temp.getAbsolutePath());
-	}
+        temp = new File(temp, path);
 
-	if (!temp.canWrite())
-	    errors.add("Write permission denied to temp folder: " + temp.getAbsolutePath());
+        if (!((temp.exists() && temp.isDirectory()) || temp.mkdir())) {
+            errors.add("Cannot create temp folder: " + temp.getAbsolutePath());
+        }
 
-	TEMP_DIR = temp.getAbsolutePath();
+        if (!temp.canWrite()) {
+            errors.add("Write permission denied to temp folder: " + temp.getAbsolutePath());
+        }
 
-        
+        TEMP_DIR = temp.getAbsolutePath();
+
         log.info("SPManager: temp dir set to: {}", temp.getAbsolutePath());
 
-	// make sure all temp directories are created
-	File subfolder = new File(PLUGIN_DIRECTORY);
-	temp = new File(TEMP_DIR, subfolder.getName());
-	if (!temp.exists() && !temp.mkdirs())
-	    errors.add("Cannot create temp plugin folder: " + temp.getAbsolutePath());
+        // make sure all temp directories are created
+        File subfolder = new File(PLUGIN_DIRECTORY);
+        temp = new File(TEMP_DIR, subfolder.getName());
+        if (!temp.exists() && !temp.mkdirs()) {
+            errors.add("Cannot create temp plugin folder: " + temp.getAbsolutePath());
+        }
 
-	subfolder = new File(TOOL_SCRIPT_DIRECTORY);
-	temp = new File(TEMP_DIR, subfolder.getName());
-	if (!temp.exists() && !temp.mkdirs())
-	    errors.add("Cannot create temp script folder: " + temp.getAbsolutePath());
+        subfolder = new File(TOOL_SCRIPT_DIRECTORY);
+        temp = new File(TEMP_DIR, subfolder.getName());
+        if (!temp.exists() && !temp.mkdirs()) {
+            errors.add("Cannot create temp script folder: " + temp.getAbsolutePath());
+        }
 
-	subfolder = new File(OBJECT_SCRIPT_DIRECTORY);
-	temp = new File(TEMP_DIR, subfolder.getName());
-	if (!temp.exists() && !temp.mkdirs())
-	    errors.add("Cannot create temp script folder: " + temp.getAbsolutePath());
+        subfolder = new File(OBJECT_SCRIPT_DIRECTORY);
+        temp = new File(TEMP_DIR, subfolder.getName());
+        if (!temp.exists() && !temp.mkdirs()) {
+            errors.add("Cannot create temp script folder: " + temp.getAbsolutePath());
+        }
 
-	subfolder = new File(STARTUP_SCRIPT_DIRECTORY);
-	temp = new File(TEMP_DIR, subfolder.getName());
-	if (!temp.exists() && !temp.mkdirs ())
-	    errors.add("Cannot create temp script folder: " + temp.getAbsolutePath());
+        subfolder = new File(STARTUP_SCRIPT_DIRECTORY);
+        temp = new File(TEMP_DIR, subfolder.getName());
+        if (!temp.exists() && !temp.mkdirs()) {
+            errors.add("Cannot create temp script folder: " + temp.getAbsolutePath());
+        }
 
-	// make sure all live directories exist
-	temp = new File(PLUGIN_DIRECTORY);
-	if (!temp.exists() && !temp.mkdir())
-	    errors.add("Cannot create missing plugin folder: " + temp.getAbsolutePath());
+        // make sure all live directories exist
+        temp = new File(PLUGIN_DIRECTORY);
+        if (!temp.exists() && !temp.mkdir()) {
+            errors.add("Cannot create missing plugin folder: " + temp.getAbsolutePath());
+        }
 
-	temp = new File(TOOL_SCRIPT_DIRECTORY);
-	if (!temp.exists() && !temp.mkdirs())
-	    errors.add("Cannot create missing script folder: " + temp.getAbsolutePath());
+        temp = new File(TOOL_SCRIPT_DIRECTORY);
+        if (!temp.exists() && !temp.mkdirs()) {
+            errors.add("Cannot create missing script folder: " + temp.getAbsolutePath());
+        }
 
-	temp = new File(OBJECT_SCRIPT_DIRECTORY);
-	if (!temp.exists() && !temp.mkdirs())
-	    errors.add("Cannot create missing script folder: " + temp.getAbsolutePath());
+        temp = new File(OBJECT_SCRIPT_DIRECTORY);
+        if (!temp.exists() && !temp.mkdirs()) {
+            errors.add("Cannot create missing script folder: " + temp.getAbsolutePath());
+        }
 
-	temp = new File(STARTUP_SCRIPT_DIRECTORY);
-	if (!temp.exists() && !temp.mkdirs ())
-	    errors.add("Cannot create missing script folder: " + temp.getAbsolutePath());
+        temp = new File(STARTUP_SCRIPT_DIRECTORY);
+        if (!temp.exists() && !temp.mkdirs()) {
+            errors.add("Cannot create missing script folder: " + temp.getAbsolutePath());
+        }
 
-        if(errors.isEmpty()) return;
+        if (errors.isEmpty()) {
+            return;
+        }
 
         BTextArea txt = new BTextArea(5, 45);
         txt.setEditable(false);
@@ -350,302 +359,305 @@ public class SPManagerPlugin implements Plugin
 
         BScrollPane detail = new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_AS_NEEDED);
         BLabel messg = SPMTranslate.bLabel("errMsg");
-        new BStandardDialog("SPManager initialise", new Widget[] { messg, detail }, BStandardDialog.WARNING).showMessageDialog(null);
+        new BStandardDialog("SPManager initialise", new Widget[]{messg, detail}, BStandardDialog.WARNING).showMessageDialog(null);
 
     }
 
-    public void registerResource(String type, String id, ClassLoader loader, String baseName, Locale locale)
-    {
-	String suffix = "";
+    public void registerResource(String type, String id, ClassLoader loader, String baseName, Locale locale) {
+        String suffix = "";
 
-	if (locale.getLanguage().length() > 0)
-	    suffix += "_" + locale.getLanguage();
-	if (locale.getCountry().length() > 0)
-	    suffix += "_" + locale.getCountry();
-	if (locale.getVariant().length() > 0)
-	    suffix += "_" + locale.getVariant();
+        if (locale.getLanguage().length() > 0) {
+            suffix += "_" + locale.getLanguage();
+        }
+        if (locale.getCountry().length() > 0) {
+            suffix += "_" + locale.getCountry();
+        }
+        if (locale.getVariant().length() > 0) {
+            suffix += "_" + locale.getVariant();
+        }
 
-	URL url;
-	int cut;
+        URL url;
+        int cut;
 
-	for (int i = 0; i < 3; i++) {
-	    try {
-		url = loader.getResource(baseName + suffix + ".properties");
+        for (int i = 0; i < 3; i++) {
+            try {
+                url = loader.getResource(baseName + suffix + ".properties");
 
-		if (url != null) {
-		    PluginRegistry.registerResource(type, id, loader, url.getPath(), locale);
-		    break;
-		}
-	    } catch (IllegalArgumentException e) {}
+                if (url != null) {
+                    PluginRegistry.registerResource(type, id, loader, url.getPath(), locale);
+                    break;
+                }
+            } catch (IllegalArgumentException e) {
+            }
 
-	    // can we remove part of the suffix?
-	    cut = suffix.lastIndexOf('_');
-	    if (cut > 0) suffix = suffix.substring(0, cut);
-	    else break;
-	}
+            // can we remove part of the suffix?
+            cut = suffix.lastIndexOf('_');
+            if (cut > 0) {
+                suffix = suffix.substring(0, cut);
+            } else {
+                break;
+            }
+        }
     }
 
-    public void download(BFrame frame, URL from)
-    { download(frame, from, null); }
+    public void download(BFrame frame, URL from) {
+        download(frame, from, null);
+    }
 
     /**
-     *  download (and install if possible) the specified file(set).
+     * download (and install if possible) the specified file(set).
      */
-    public void download(BFrame frame, URL from, URL to)
-    {
-	final BFrame context = frame;
-	final URL url = from;
+    public void download(BFrame frame, URL from, URL to) {
+        final BFrame context = frame;
+        final URL url = from;
 
-	final StatusDialog status = new StatusDialog(context) {
-	    SPMObjectInfo info;
-	    BButton okbtn;
-	    String filename, name;
-	    ColumnContainer col;
-	    RowContainer buttons;
-	    BTextField savePath;
-	    Thread worker;
+        final StatusDialog status = new StatusDialog(context) {
+            SPMObjectInfo info;
+            BButton okbtn;
+            String filename, name;
+            ColumnContainer col;
+            RowContainer buttons;
+            BTextField savePath;
+            Thread worker;
 
             @Override
-	    public void setVisible(boolean vis)
-	    {
-		if (!vis) {
-		    super.setVisible(vis);
-		    return;
-		}
+            public void setVisible(boolean vis) {
+                if (!vis) {
+                    super.setVisible(vis);
+                    return;
+                }
 
-		col = (ColumnContainer) getContent();
+                col = (ColumnContainer) getContent();
 
-		filename = url.getFile();
-		int cut = filename.lastIndexOf('/');
-		if (cut > 0 && cut < filename.length())
-		    filename = filename.substring(cut+1);
+                filename = url.getFile();
+                int cut = filename.lastIndexOf('/');
+                if (cut > 0 && cut < filename.length()) {
+                    filename = filename.substring(cut + 1);
+                }
 
-		cut = filename.lastIndexOf('?');
-		if (cut > 0)
-		    filename = filename.substring(0, cut);
+                cut = filename.lastIndexOf('?');
+                if (cut > 0) {
+                    filename = filename.substring(0, cut);
+                }
 
-		name = new String(filename);
-		cut = name.lastIndexOf('.');
-		if (cut > 0) name = name.substring(0, cut);
+                name = new String(filename);
+                cut = name.lastIndexOf('.');
+                if (cut > 0) {
+                    name = name.substring(0, cut);
+                }
 
-		setText(name);
-		setProgressText(SPMTranslate.text("clickStart"));
+                setText(name);
+                setProgressText(SPMTranslate.text("clickStart"));
 
-		okbtn = SPMTranslate.bButton("start", this, "ok");
+                okbtn = SPMTranslate.bButton("start", this, "ok");
 
-		buttons = new RowContainer();
-		buttons.add(okbtn);
-		buttons.add(SPMTranslate.bButton("cancel", this, "close"));
+                buttons = new RowContainer();
+                buttons.add(okbtn);
+                buttons.add(SPMTranslate.bButton("cancel", this, "close"));
 
-		okbtn.setActionCommand("ok");
+                okbtn.setActionCommand("ok");
 
-		col.add(buttons);
-		pack();
-		super.setVisible(true);
-	    }
+                col.add(buttons);
+                pack();
+                super.setVisible(true);
+            }
 
-	    public void close()
-	    {
-		if (worker != null) worker.interrupt();
-		doClose();
-	    }
+            public void close() {
+                if (worker != null) {
+                    worker.interrupt();
+                }
+                doClose();
+            }
 
-	    public void ok(CommandEvent ev)
-	    {
-		String cmd = ev.getActionCommand();
-		okbtn.setEnabled(false);
+            public void ok(CommandEvent ev) {
+                String cmd = ev.getActionCommand();
+                okbtn.setEnabled(false);
 
-		final BButton okbut = okbtn;
+                final BButton okbut = okbtn;
 
-		final StatusDialog stat = this;
+                final StatusDialog stat = this;
 
-		if (cmd.equals("ok")) {
+                if (cmd.equals("ok")) {
 
-		    setProgressText(SPMTranslate.text("contacting"));
-		    setIdle(true);
+                    setProgressText(SPMTranslate.text("contacting"));
+                    setIdle(true);
 
                     log.info("DOWNLOAD: creating ObjectInfo... {}", url.toString());
-		    worker = new Thread() {
+                    worker = new Thread() {
                         @Override
-			public void run()
-			{
-			    info = new SPMObjectInfo(url);
-			    if (info.length == 0) {
+                        public void run() {
+                            info = new SPMObjectInfo(url);
+                            if (info.length == 0) {
                                 log.info("DOWNLOAD: no info");
-				info.length = info.getRemoteFileSize(url.toString());
-			    }
+                                info.length = info.getRemoteFileSize(url.toString());
+                            }
 
-			    // get destination if needed
-			    if (info.name == null || info.name.length() == 0) {
+                            // get destination if needed
+                            if (info.name == null || info.name.length() == 0) {
 
                                 log.info("need path...");
 
-				RowContainer row = new RowContainer();
-				row.add(SPMTranslate.bLabel("savePath"));
-				savePath = new BTextField("", 25);
-				savePath.addEventLink(ValueChangedEvent.class, this, "savePath");
-				row.add(savePath);
-				row.add(SPMTranslate.bButton("browse", this, "browse"));
-				col.remove(buttons);
-				col.add(row);
-				col.add(buttons);
-				pack();
-			    }
+                                RowContainer row = new RowContainer();
+                                row.add(SPMTranslate.bLabel("savePath"));
+                                savePath = new BTextField("", 25);
+                                savePath.addEventLink(ValueChangedEvent.class, this, "savePath");
+                                row.add(savePath);
+                                row.add(SPMTranslate.bButton("browse", this, "browse"));
+                                col.remove(buttons);
+                                col.add(row);
+                                col.add(buttons);
+                                pack();
+                            }
 
-			    long total = info.getTotalLength();
+                            long total = info.getTotalLength();
 
-			    String sz = (total > 1000000
-				    ? " " +
-					    (total/1000000)
-					    + " MB"
-					    : total > 1000
-					    ? " " + (total/1000)
-						    + " kB"
-						    : (total > 0)
-						    ? " " + total
-							    + " bytes"
-							    : "");
+                            String sz = (total > 1000000
+                                    ? " "
+                                    + (total / 1000000)
+                                    + " MB"
+                                    : total > 1000
+                                            ? " " + (total / 1000)
+                                            + " kB"
+                                            : (total > 0)
+                                                    ? " " + total
+                                                    + " bytes"
+                                                    : "");
 
-			    setText(info.getName() + " " + sz);
-			    setIdle(false);
-			    setProgressText(SPMTranslate.text("ready"));
+                            setText(info.getName() + " " + sz);
+                            setIdle(false);
+                            setProgressText(SPMTranslate.text("ready"));
 
-			    okbut.setActionCommand("install");
-			    okbut.setText(SPMTranslate.text("install"));
-			    okbut.setEnabled(true);
-			    pack();
-			}
+                            okbut.setActionCommand("install");
+                            okbut.setText(SPMTranslate.text("install"));
+                            okbut.setEnabled(true);
+                            pack();
+                        }
 
-			public void savePath()
-			{
-			    String val = savePath.getText();
-			    okbtn.setEnabled(val != null && val.length() > 0);
-			}
+                        public void savePath() {
+                            String val = savePath.getText();
+                            okbtn.setEnabled(val != null && val.length() > 0);
+                        }
 
-			public void browse()
-			{
-			    BFileChooser fc = new
-			    BFileChooser(BFileChooser.SAVE_FILE, Translate.text("savePath"));
+                        public void browse() {
+                            BFileChooser fc = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("savePath"));
 
-			    File file = null;
-			    String path = null;
-			    String fname = savePath.getText();
+                            File file = null;
+                            String path = null;
+                            String fname = savePath.getText();
 
-			    if (fname == null || fname.length() == 0) {
-				path = System.getProperty("user.home");
-				fname = filename;
-			    }
+                            if (fname == null || fname.length() == 0) {
+                                path = System.getProperty("user.home");
+                                fname = filename;
+                            }
 
-			    if (fname != null) {
-				if (path != null)
-				    file = new File(path, fname);
-				else
-				    file = new File(fname);
+                            if (fname != null) {
+                                if (path != null) {
+                                    file = new File(path, fname);
+                                } else {
+                                    file = new File(fname);
+                                }
 
-				fc.setDirectory(file.getParentFile());
-				fc.setSelectedFile(file);
-			    }
-			    else fc.setDirectory(new File(path));
+                                fc.setDirectory(file.getParentFile());
+                                fc.setSelectedFile(file);
+                            } else {
+                                fc.setDirectory(new File(path));
+                            }
 
-			    if (fc.showDialog(context)) {
-				savePath.setText(fc.getSelectedFile().getAbsolutePath());
-			    }
-			}
+                            if (fc.showDialog(context)) {
+                                savePath.setText(fc.getSelectedFile().getAbsolutePath());
+                            }
+                        }
 
-		    };
+                    };
 
-		    worker.start();
+                    worker.start();
 
-		}
-                else if (cmd.equals("install")) {
+                } else if (cmd.equals("install")) {
                     log.atInfo().log("DOWNLOAD: downloading: {}", url);
 
-		    setText(SPMTranslate.text("downloading", info.getName()));
-		    pack();
+                    setText(SPMTranslate.text("downloading", info.getName()));
+                    pack();
 
-		    final List<String> errs = new ArrayList<>();
-		    worker = new Thread() {
+                    final List<String> errs = new ArrayList<>();
+                    worker = new Thread() {
                         @Override
-			public void run()
-			{
-			    long total = info.getTotalLength();
+                        public void run() {
+                            long total = info.getTotalLength();
 
-			    // full save path
-			    String path = null;
-			    if (savePath != null)
-				path = savePath.getText();
-
-			    else if (info.name != null)
-				path = ArtOfIllusion.PLUGIN_DIRECTORY + File.separatorChar + info.name + ".jar";
-
+                            // full save path
+                            String path = null;
+                            if (savePath != null) {
+                                path = savePath.getText();
+                            } else if (info.name != null) {
+                                path = ArtOfIllusion.PLUGIN_DIRECTORY + File.separatorChar + info.name + ".jar";
+                            }
 
                             if (path == null || path.length() == 0) {
                                 log.atInfo().log("DOWNLOAD: no save location");
-				new BStandardDialog("SPManager", SPMTranslate.text("noSaveLocation"), BStandardDialog.ERROR).showMessageDialog(null);
+                                new BStandardDialog("SPManager", SPMTranslate.text("noSaveLocation"), BStandardDialog.ERROR).showMessageDialog(null);
 
-				doClose();
-			    }
+                                doClose();
+                            }
 
                             log.atInfo().log("DOWNLOAD: downloading file..");
-			    if (total > 0)
-				setBarValue(total > 0 ? 0 : -1);
+                            if (total > 0) {
+                                setBarValue(total > 0 ? 0 : -1);
+                            }
 
                             long dl = HttpSPMFileSystem.downloadRemoteBinaryFile(url, path, info.length, stat, total, 0, errs);
 
-			    for (int i = 0; info.files != null && i < info.files.length; i++) {
-				if (Thread.interrupted()) {
-				    doClose();
-				    return;
-				}
+                            for (int i = 0; info.files != null && i < info.files.length; i++) {
+                                if (Thread.interrupted()) {
+                                    doClose();
+                                    return;
+                                }
 
-				name = PLUGIN_DIRECTORY + File.separatorChar + info.destination.get(i) + info.files[i];
+                                name = PLUGIN_DIRECTORY + File.separatorChar + info.destination.get(i) + info.files[i];
 
-				setText(SPMTranslate.text("downloading", info.files[i]));
-				pack();
+                                setText(SPMTranslate.text("downloading", info.files[i]));
+                                pack();
 
                                 dl += HttpSPMFileSystem.downloadRemoteBinaryFile(info.getAddFileURL(i), name, info.fileSizes[i], stat, total, dl, errs);
-			    }
+                            }
 
-                            if (errs == null || errs.isEmpty())
+                            if (errs == null || errs.isEmpty()) {
                                 new BStandardDialog("SPManager", SPMTranslate.text("modified"), BStandardDialog.ERROR).showMessageDialog(null);
-			    else
+                            } else {
                                 InstallSplitPane.showErrors(errs);
+                            }
 
                             log.atInfo().log("DOWNLOAD: done");
-			    doClose();
-			}
-		    };
+                            doClose();
+                        }
+                    };
 
-		    worker.start();
-		}
-                else
+                    worker.start();
+                } else {
                     log.info("?? cmd={}", cmd);
-	    }
-	};
+                }
+            }
+        };
     }
 
     /**
-     *  Description of the Method
+     * Description of the Method
      */
-    public void doMenu()
-    {
+    public void doMenu() {
 
-	if ( spmFrame == null )
-	    spmFrame = new SPManagerFrame();
-	( (Window) spmFrame.getComponent() ).toFront();
-	( (Window) spmFrame.getComponent() ).setVisible(true);
+        if (spmFrame == null) {
+            spmFrame = new SPManagerFrame();
+        }
+        ((Window) spmFrame.getComponent()).toFront();
+        ((Window) spmFrame.getComponent()).setVisible(true);
     }
-
 
     /**
      * Gets the frame attribute of the SPManagerPlugin class
      *
      * @return The frame value
      */
-    public static SPManagerFrame getFrame()
-    {
-	return spmFrame;
+    public static SPManagerFrame getFrame() {
+        return spmFrame;
     }
-
 
 }

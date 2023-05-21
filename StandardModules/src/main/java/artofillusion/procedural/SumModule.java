@@ -14,75 +14,70 @@ package artofillusion.procedural;
 import artofillusion.math.*;
 import java.awt.*;
 
-/** This is a Module which outputs the sum of two numbers. */
+/**
+ * This is a Module which outputs the sum of two numbers.
+ */
 @ProceduralModule.Category(value = "Modules:menu.operators")
-public class SumModule extends ProceduralModule
-{
-  Vec3 tempVec;
+public class SumModule extends ProceduralModule {
 
-  public SumModule() {
-      this(new Point());
-  }
+    Vec3 tempVec;
 
-  public SumModule(Point position)
-  {
-    super("+", new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.TOP, "Value 1", "(0)"),
-      new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, "Value 2", "(0)")},
-      new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Sum")},
-      position);
-    tempVec = new Vec3();
-  }
+    public SumModule() {
+        this(new Point());
+    }
 
-  /* This module outputs the sum of the two values. */
+    public SumModule(Point position) {
+        super("+", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.TOP, "Value 1", "(0)"),
+            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, "Value 2", "(0)")},
+                new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Sum")},
+                position);
+        tempVec = new Vec3();
+    }
 
-  @Override
-  public double getAverageValue(int which, double blur)
-  {
-    double value1 = (linkFrom[0] == null) ? 0.0 : linkFrom[0].getAverageValue(linkFromIndex[0], blur);
-    double value2 = (linkFrom[1] == null) ? 0.0 : linkFrom[1].getAverageValue(linkFromIndex[1], blur);
+    /* This module outputs the sum of the two values. */
+    @Override
+    public double getAverageValue(int which, double blur) {
+        double value1 = (linkFrom[0] == null) ? 0.0 : linkFrom[0].getAverageValue(linkFromIndex[0], blur);
+        double value2 = (linkFrom[1] == null) ? 0.0 : linkFrom[1].getAverageValue(linkFromIndex[1], blur);
 
-    return value1+value2;
-  }
+        return value1 + value2;
+    }
 
-  /* The errors add in quadrature, which involves a square root.  This is a faster
+    /* The errors add in quadrature, which involves a square root.  This is a faster
      approximation to it. */
+    @Override
+    public double getValueError(int which, double blur) {
+        double value1 = (linkFrom[0] == null) ? 0.0 : linkFrom[0].getValueError(linkFromIndex[0], blur);
+        double value2 = (linkFrom[1] == null) ? 0.0 : linkFrom[1].getValueError(linkFromIndex[1], blur);
+        double min, max, ratio;
 
-  @Override
-  public double getValueError(int which, double blur)
-  {
-    double value1 = (linkFrom[0] == null) ? 0.0 : linkFrom[0].getValueError(linkFromIndex[0], blur);
-    double value2 = (linkFrom[1] == null) ? 0.0 : linkFrom[1].getValueError(linkFromIndex[1], blur);
-    double min, max, ratio;
+        if (value1 < value2) {
+            min = value1;
+            max = value2;
+        } else {
+            min = value2;
+            max = value1;
+        }
+        if (min == 0.0) {
+            return max;
+        }
+        ratio = min / max;
+        return max * (1.0 + 0.5 * ratio * ratio);
+    }
 
-    if (value1 < value2)
-      {
-	min = value1;
-	max = value2;
-      }
-    else
-      {
-	min = value2;
-	max = value1;
-      }
-    if (min == 0.0)
-      return max;
-    ratio = min/max;
-    return max*(1.0+0.5*ratio*ratio);
-  }
-
-  /* The gradient is the sum of the two gradients. */
-
-  @Override
-  public void getValueGradient(int which, Vec3 grad, double blur)
-  {
-    if (linkFrom[0] == null)
-      grad.set(0.0, 0.0, 0.0);
-    else
-      linkFrom[0].getValueGradient(linkFromIndex[0], grad, blur);
-    if (linkFrom[1] == null)
-      tempVec.set(0.0, 0.0, 0.0);
-    else
-      linkFrom[1].getValueGradient(linkFromIndex[1], tempVec, blur);
-    grad.add(tempVec);
-  }
+    /* The gradient is the sum of the two gradients. */
+    @Override
+    public void getValueGradient(int which, Vec3 grad, double blur) {
+        if (linkFrom[0] == null) {
+            grad.set(0.0, 0.0, 0.0);
+        } else {
+            linkFrom[0].getValueGradient(linkFromIndex[0], grad, blur);
+        }
+        if (linkFrom[1] == null) {
+            tempVec.set(0.0, 0.0, 0.0);
+        } else {
+            linkFrom[1].getValueGradient(linkFromIndex[1], tempVec, blur);
+        }
+        grad.add(tempVec);
+    }
 }

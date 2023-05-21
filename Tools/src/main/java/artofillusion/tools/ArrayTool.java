@@ -8,7 +8,7 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-*/
+ */
 
 package artofillusion.tools;
 
@@ -17,30 +17,32 @@ import artofillusion.ui.*;
 import buoy.widget.*;
 
 /**
-The array tool creates an array of copies of an object.
-@author Rick van der Meiden
-*/
+ * The array tool creates an array of copies of an object.
+ *
+ * @author Rick van der Meiden
+ */
+public class ArrayTool implements ModellingTool {
 
-public class ArrayTool implements ModellingTool
-{
-
-  /** Get the text that appear as the menu item.*/
-  @Override
-  public String getName()
-  {
+    /**
+     * Get the text that appear as the menu item.
+     */
+    @Override
+    public String getName() {
         return Translate.text("menu.array");
-  }
+    }
 
-  /** See whether an appropriate object is selected and either display an error
-     message, or bring up the array tool window. */
-  @Override
-  @SuppressWarnings("ResultOfObjectAllocationIgnored")
-  public void commandSelected(LayoutWindow window)
-  {
-        if (window.getSelectedIndices().length < 1)
+    /**
+     * See whether an appropriate object is selected and either display an error
+     * message, or bring up the array tool window.
+     */
+    @Override
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
+    public void commandSelected(LayoutWindow window) {
+        if (window.getSelectedIndices().length < 1) {
             new BStandardDialog("", Translate.text("Tools:array.tool.message"), BStandardDialog.INFORMATION).showMessageDialog(window.getFrame());
-        else
+        } else {
             new ArrayDialog(window);
-  }
+        }
+    }
 
 }

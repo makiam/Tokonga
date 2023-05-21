@@ -17,70 +17,59 @@ import java.awt.*;
 
 /* This is a Module which outputs the lighter of two colors. */
 @ProceduralModule.Category(value = "Modules:menu.colorFunctions")
-public class ColorLightenModule extends ProceduralModule
-{
-  RGBColor color;
-  boolean colorOk;
-  double lastBlur;
+public class ColorLightenModule extends ProceduralModule {
 
-  public ColorLightenModule() {
-    this(new Point());
-  }
+    RGBColor color;
+    boolean colorOk;
+    double lastBlur;
 
-  public ColorLightenModule(Point position)
-  {
-    super(Translate.text("Modules:menu.lighterModule"), new IOPort[] {new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.TOP, "Color 1", '(' + Translate.text("white") + ')'),
-      new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.BOTTOM, "Color 2", '(' + Translate.text("white") + ')')},
-      new IOPort[] {new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, "Lighter")},
-      position);
-    color = new RGBColor(0.0f, 0.0f, 0.0f);
-  }
+    public ColorLightenModule() {
+        this(new Point());
+    }
 
-  /* New point, so the color will need to be recalculated. */
+    public ColorLightenModule(Point position) {
+        super(Translate.text("Modules:menu.lighterModule"), new IOPort[]{new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.TOP, "Color 1", '(' + Translate.text("white") + ')'),
+            new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.BOTTOM, "Color 2", '(' + Translate.text("white") + ')')},
+                new IOPort[]{new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, "Lighter")},
+                position);
+        color = new RGBColor(0.0f, 0.0f, 0.0f);
+    }
 
-  @Override
-  public void init(PointInfo p)
-  {
-    colorOk = false;
-  }
+    /* New point, so the color will need to be recalculated. */
+    @Override
+    public void init(PointInfo p) {
+        colorOk = false;
+    }
 
-  /* Calculate the lighter color. */
+    /* Calculate the lighter color. */
+    @Override
+    public void getColor(int which, RGBColor c, double blur) {
+        if (colorOk && blur == lastBlur) {
+            c.copy(color);
+            return;
+        }
+        float brightness1, brightness2;
+        colorOk = true;
+        lastBlur = blur;
+        if (linkFrom[0] == null) {
+            color.setRGB(1.0f, 1.0f, 1.0f);
+            brightness1 = 1.0f;
+        } else {
+            linkFrom[0].getColor(linkFromIndex[0], color, blur);
+            brightness1 = color.getBrightness();
+        }
 
-  @Override
-  public void getColor(int which, RGBColor c, double blur)
-  {
-    if (colorOk && blur == lastBlur)
-      {
-        c.copy(color);
-        return;
-      }
-    float brightness1, brightness2;
-    colorOk = true;
-    lastBlur = blur;
-    if (linkFrom[0] == null)
-      {
-        color.setRGB(1.0f, 1.0f, 1.0f);
-        brightness1 = 1.0f;
-      }
-    else
-      {
-        linkFrom[0].getColor(linkFromIndex[0], color, blur);
-        brightness1 = color.getBrightness();
-      }
-
-    if (linkFrom[1] == null)
-      {
-        c.setRGB(1.0f, 1.0f, 1.0f);
-        brightness2 = 1.0f;
-      }
-    else
-      {
-        linkFrom[1].getColor(linkFromIndex[1], c, blur);
-        brightness2 = c.getBrightness();
-      }
-    if (brightness1 > brightness2)
-      c.copy(color);
-    else
-      color.copy(c);
-  }
+        if (linkFrom[1] == null) {
+            c.setRGB(1.0f, 1.0f, 1.0f);
+            brightness2 = 1.0f;
+        } else {
+            linkFrom[1].getColor(linkFromIndex[1], c, blur);
+            brightness2 = c.getBrightness();
+        }
+        if (brightness1 > brightness2) {
+            c.copy(color);
+        } else {
+            color.copy(c);
+        }
+    }
 }

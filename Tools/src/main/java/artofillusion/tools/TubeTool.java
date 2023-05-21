@@ -16,38 +16,32 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
 
-/** The tube tool creates Tube objects from Curves. */
+/**
+ * The tube tool creates Tube objects from Curves.
+ */
+public class TubeTool implements ModellingTool {
 
-public class TubeTool implements ModellingTool
-{
+    /* Get the text that appear as the menu item.*/
+    @Override
+    public String getName() {
+        return Translate.text("menu.tubeTool");
+    }
 
-  /* Get the text that appear as the menu item.*/
-
-  @Override
-  public String getName()
-  {
-    return Translate.text("menu.tubeTool");
-  }
-
-  /* See whether an appropriate set of objects is selected and either display an error
+    /* See whether an appropriate set of objects is selected and either display an error
      message, or bring up the extrude window. */
+    @Override
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
+    public void commandSelected(LayoutWindow window) {
+        Scene scene = window.getScene();
+        int[] selection = window.getSelectedIndices();
 
-  @Override
-  @SuppressWarnings("ResultOfObjectAllocationIgnored")
-  public void commandSelected(LayoutWindow window)
-  {
-    Scene scene = window.getScene();
-    int selection[] = window.getSelectedIndices();
-
-    if (selection.length == 1)
-      {
-        ObjectInfo info = scene.getObject(selection[0]);
-        if (info.getObject() instanceof Curve)
-          {
-            new TubeDialog(window, info);
-            return;
-          }
-      }
-    new BStandardDialog("", UIUtilities.breakString(Translate.text("Tools:tube.tool.message")), BStandardDialog.INFORMATION).showMessageDialog(window.getFrame());
-  }
+        if (selection.length == 1) {
+            ObjectInfo info = scene.getObject(selection[0]);
+            if (info.getObject() instanceof Curve) {
+                new TubeDialog(window, info);
+                return;
+            }
+        }
+        new BStandardDialog("", UIUtilities.breakString(Translate.text("Tools:tube.tool.message")), BStandardDialog.INFORMATION).showMessageDialog(window.getFrame());
+    }
 }

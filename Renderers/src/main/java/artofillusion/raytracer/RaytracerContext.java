@@ -12,51 +12,48 @@ package artofillusion.raytracer;
 
 import artofillusion.math.*;
 import artofillusion.raytracer.Raytracer.*;
-
+import artofillusion.raytracer.Raytracer.RayIntersection;
 import java.util.*;
 
 /**
- * This class holds temporary information used during raytracing.  One instance of it is
+ * This class holds temporary information used during raytracing. One instance of it is
  * created for every worker thread.
  */
+public class RaytracerContext {
 
-public class RaytracerContext
-{
-  public Raytracer rt;
-  public Vec3 tempVec;
-  public RayIntersection intersect;
-  public int lastRayID[];
-  public SurfaceIntersection lastRayResult[];
-  public ResourcePool rtTriPool, rtDispTriPool, rtImplicitPool;
-  public Random random;
+    public Raytracer rt;
+    public Vec3 tempVec;
+    public RayIntersection intersect;
+    public int[] lastRayID;
+    public SurfaceIntersection[] lastRayResult;
+    public ResourcePool rtTriPool, rtDispTriPool, rtImplicitPool;
+    public Random random;
 
-  public RaytracerContext(Raytracer rt)
-  {
-    this.rt = rt;
-    tempVec = new Vec3();
-    intersect = new Raytracer.RayIntersection();
-    random = new FastRandom(0);
-    if (rt.getUseReducedMemory())
-      rtTriPool = new ResourcePool(RTTriangleLowMemory.TriangleIntersection.class);
-    else
-      rtTriPool = new ResourcePool(RTTriangle.TriangleIntersection.class);
-    rtDispTriPool = new ResourcePool(RTDisplacedTriangle.DisplacedTriangleIntersection.class);
-    rtImplicitPool = new ResourcePool(RTImplicitObject.ImplicitIntersection.class);
-    lastRayID = new int [rt.getObjects().length];
-    lastRayResult = new SurfaceIntersection [rt.getObjects().length];
-  }
+    public RaytracerContext(Raytracer rt) {
+        this.rt = rt;
+        tempVec = new Vec3();
+        intersect = new Raytracer.RayIntersection();
+        random = new FastRandom(0);
+        if (rt.getUseReducedMemory()) {
+            rtTriPool = new ResourcePool(RTTriangleLowMemory.TriangleIntersection.class);
+        } else {
+            rtTriPool = new ResourcePool(RTTriangle.TriangleIntersection.class);
+        }
+        rtDispTriPool = new ResourcePool(RTDisplacedTriangle.DisplacedTriangleIntersection.class);
+        rtImplicitPool = new ResourcePool(RTImplicitObject.ImplicitIntersection.class);
+        lastRayID = new int[rt.getObjects().length];
+        lastRayResult = new SurfaceIntersection[rt.getObjects().length];
+    }
 
-  /**
-   * This is called when rendering is finished.  It nulls out fields to help garbage collection.
-   */
-
-  public void cleanup()
-  {
-    intersect = null;
-    lastRayID = null;
-    lastRayResult = null;
-    rtTriPool = null;
-    rtDispTriPool = null;
-    rtImplicitPool = null;
-  }
+    /**
+     * This is called when rendering is finished. It nulls out fields to help garbage collection.
+     */
+    public void cleanup() {
+        intersect = null;
+        lastRayID = null;
+        lastRayResult = null;
+        rtTriPool = null;
+        rtDispTriPool = null;
+        rtImplicitPool = null;
+    }
 }

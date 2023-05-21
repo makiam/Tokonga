@@ -17,72 +17,68 @@ import java.awt.*;
 
 /* This is a Module which blurs the signal coming into it. */
 @ProceduralModule.Category(value = "Modules:menu.functions")
-public class BlurModule extends ProceduralModule
-{
-  boolean valueOk;
-  double extraBlur, lastBlur;
-  public BlurModule() {
-    this(new Point());
-  }
-  
-  public BlurModule(Point position)
-  {
-    super(Translate.text("Modules:menu.blurModule"), new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, "Blur", "(0.05)"),
-      new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(0)")},
-      new IOPort[] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output")},
-      position);
-  }
+public class BlurModule extends ProceduralModule {
 
-  /* New point, so the value will need to be recalculated. */
+    boolean valueOk;
+    double extraBlur, lastBlur;
 
-  @Override
-  public void init(PointInfo p)
-  {
-    valueOk = false;
-  }
+    public BlurModule() {
+        this(new Point());
+    }
 
-  /* Get the output value. */
+    public BlurModule(Point position) {
+        super(Translate.text("Modules:menu.blurModule"), new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, "Blur", "(0.05)"),
+            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(0)")},
+                new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output")},
+                position);
+    }
 
-  @Override
-  public double getAverageValue(int which, double blur)
-  {
-    if (linkFrom[1] == null)
-      return 0.0;
-    if (!valueOk || blur != lastBlur)
-      extraBlur = (linkFrom[0] == null) ? 0.05 : linkFrom[0].getAverageValue(linkFromIndex[0], blur);
-    valueOk = true;
-    lastBlur = blur;
-    return linkFrom[1].getAverageValue(linkFromIndex[1], blur+extraBlur);
-  }
+    /* New point, so the value will need to be recalculated. */
+    @Override
+    public void init(PointInfo p) {
+        valueOk = false;
+    }
 
-  /* Get the output error. */
+    /* Get the output value. */
+    @Override
+    public double getAverageValue(int which, double blur) {
+        if (linkFrom[1] == null) {
+            return 0.0;
+        }
+        if (!valueOk || blur != lastBlur) {
+            extraBlur = (linkFrom[0] == null) ? 0.05 : linkFrom[0].getAverageValue(linkFromIndex[0], blur);
+        }
+        valueOk = true;
+        lastBlur = blur;
+        return linkFrom[1].getAverageValue(linkFromIndex[1], blur + extraBlur);
+    }
 
-  @Override
-  public double getValueError(int which, double blur)
-  {
-    if (linkFrom[1] == null)
-      return 0.0;
-    if (!valueOk || blur != lastBlur)
-      extraBlur = (linkFrom[0] == null) ? 0.05 : linkFrom[0].getAverageValue(linkFromIndex[0], blur);
-    valueOk = true;
-    lastBlur = blur;
-    return linkFrom[1].getValueError(linkFromIndex[1], blur+extraBlur);
-  }
+    /* Get the output error. */
+    @Override
+    public double getValueError(int which, double blur) {
+        if (linkFrom[1] == null) {
+            return 0.0;
+        }
+        if (!valueOk || blur != lastBlur) {
+            extraBlur = (linkFrom[0] == null) ? 0.05 : linkFrom[0].getAverageValue(linkFromIndex[0], blur);
+        }
+        valueOk = true;
+        lastBlur = blur;
+        return linkFrom[1].getValueError(linkFromIndex[1], blur + extraBlur);
+    }
 
-  /* Calculate the gradient. */
-
-  @Override
-  public void getValueGradient(int which, Vec3 grad, double blur)
-  {
-    if (linkFrom[1] == null)
-      {
-	grad.set(0.0, 0.0, 0.0);
-	return;
-      }
-    if (!valueOk || blur != lastBlur)
-      extraBlur = (linkFrom[0] == null) ? 0.05 : linkFrom[0].getAverageValue(linkFromIndex[0], blur);
-    valueOk = true;
-    lastBlur = blur;
-    linkFrom[1].getValueGradient(linkFromIndex[1], grad, blur+extraBlur);
-  }
+    /* Calculate the gradient. */
+    @Override
+    public void getValueGradient(int which, Vec3 grad, double blur) {
+        if (linkFrom[1] == null) {
+            grad.set(0.0, 0.0, 0.0);
+            return;
+        }
+        if (!valueOk || blur != lastBlur) {
+            extraBlur = (linkFrom[0] == null) ? 0.05 : linkFrom[0].getAverageValue(linkFromIndex[0], blur);
+        }
+        valueOk = true;
+        lastBlur = blur;
+        linkFrom[1].getValueGradient(linkFromIndex[1], grad, blur + extraBlur);
+    }
 }

@@ -16,35 +16,30 @@ import artofillusion.object.*;
 /**
  * This subclass of RTLight is used for DirectionalLights.
  */
+public class RTDirectionalLight extends RTLight {
 
-public class RTDirectionalLight extends RTLight
-{
-  private final double radius;
+    private final double radius;
 
-  public RTDirectionalLight(DirectionalLight light, CoordinateSystem coords, boolean softShadows)
-  {
-    super(light, coords);
-    radius = (softShadows ? Math.tan(light.getRadius()*Math.PI/180.0) : 0.0);
-  }
-
-  @Override
-  public double findRayToLight(Vec3 origin, Ray ray, RaytracerRenderer renderer, int rayNumber)
-  {
-    ray.getOrigin().set(origin);
-    Vec3 dir = ray.getDirection();
-    dir.set(getCoords().getZDirection());
-    dir.scale(-1.0);
-    if (rayNumber != -1)
-    {
-      renderer.randomizePoint(dir, ray.rt.random, radius, rayNumber);
-      dir.normalize();
+    public RTDirectionalLight(DirectionalLight light, CoordinateSystem coords, boolean softShadows) {
+        super(light, coords);
+        radius = (softShadows ? Math.tan(light.getRadius() * Math.PI / 180.0) : 0.0);
     }
-    return Double.MAX_VALUE;
-  }
 
-  @Override
-  public boolean getSoftShadows()
-  {
-    return radius != 0.0 && getLight().getType() == Light.TYPE_NORMAL;
-  }
+    @Override
+    public double findRayToLight(Vec3 origin, Ray ray, RaytracerRenderer renderer, int rayNumber) {
+        ray.getOrigin().set(origin);
+        Vec3 dir = ray.getDirection();
+        dir.set(getCoords().getZDirection());
+        dir.scale(-1.0);
+        if (rayNumber != -1) {
+            renderer.randomizePoint(dir, ray.rt.random, radius, rayNumber);
+            dir.normalize();
+        }
+        return Double.MAX_VALUE;
+    }
+
+    @Override
+    public boolean getSoftShadows() {
+        return radius != 0.0 && getLight().getType() == Light.TYPE_NORMAL;
+    }
 }

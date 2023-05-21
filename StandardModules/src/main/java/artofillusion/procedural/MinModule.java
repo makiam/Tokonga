@@ -14,99 +14,89 @@ package artofillusion.procedural;
 import artofillusion.math.*;
 import java.awt.*;
 
-/** This is a Module which returns the minimum of two numbers. */
+/**
+ * This is a Module which returns the minimum of two numbers.
+ */
 @ProceduralModule.Category(value = "Modules:menu.operators")
-public class MinModule extends ProceduralModule
-{
-  double lastBlur, value, error;
-  int which;
-  boolean valueOk;
+public class MinModule extends ProceduralModule {
 
-  public MinModule() {
-      this(new Point());
-  }
+    double lastBlur, value, error;
+    int which;
+    boolean valueOk;
 
-  public MinModule(Point position)
-  {
-    super("Min", new IOPort [] {new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.TOP, new String [] {"Value 1", "(0)"}),
-      new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, new String [] {"Value 2", "(0)"})},
-      new IOPort [] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, new String [] {"Minimum"})},
-      position);
-  }
-
-  /* New point, so the inputs will need to be compared again. */
-
-  @Override
-  public void init(PointInfo p)
-  {
-    valueOk = false;
-  }
-
-  /* Compare the two inputs. */
-
-  @Override
-  public double getAverageValue(int which, double blur)
-  {
-    if (valueOk && blur == lastBlur)
-      return value;
-    valueOk = true;
-    double value1 = (linkFrom[0] == null) ? 0.0 : linkFrom[0].getAverageValue(linkFromIndex[0], blur);
-    double value2 = (linkFrom[1] == null) ? 0.0 : linkFrom[1].getAverageValue(linkFromIndex[1], blur);
-    double error1 = (linkFrom[0] == null) ? 0.0 : linkFrom[0].getValueError(linkFromIndex[0], blur);
-    double error2 = (linkFrom[1] == null) ? 0.0 : linkFrom[1].getValueError(linkFromIndex[1], blur);
-    double min1 = value1-error1;
-    double max1 = value1+error1;
-    double min2 = value2-error2;
-    double max2 = value2+error2;
-    if (max1 < min2)
-    {
-      value = value1;
-      error = error1;
-      which = 0;
+    public MinModule() {
+        this(new Point());
     }
-    else if (max2 < min1)
-    {
-      value = value2;
-      error = error2;
-      which = 1;
+
+    public MinModule(Point position) {
+        super("Min", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.TOP, new String[]{"Value 1", "(0)"}),
+            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, new String[]{"Value 2", "(0)"})},
+                new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, new String[]{"Minimum"})},
+                position);
     }
-    else if (value1 < value2)
-    {
-      value = value1;
-      double minmax = (max1 < max2 ? max1 : max2);
-      error = Math.abs(minmax-value);
-      which = 0;
+
+    /* New point, so the inputs will need to be compared again. */
+    @Override
+    public void init(PointInfo p) {
+        valueOk = false;
     }
-    else
-    {
-      value = value2;
-      double minmax = (max1 < max2 ? max1 : max2);
-      error = Math.abs(minmax-value);
-      which = 1;
+
+    /* Compare the two inputs. */
+    @Override
+    public double getAverageValue(int which, double blur) {
+        if (valueOk && blur == lastBlur) {
+            return value;
+        }
+        valueOk = true;
+        double value1 = (linkFrom[0] == null) ? 0.0 : linkFrom[0].getAverageValue(linkFromIndex[0], blur);
+        double value2 = (linkFrom[1] == null) ? 0.0 : linkFrom[1].getAverageValue(linkFromIndex[1], blur);
+        double error1 = (linkFrom[0] == null) ? 0.0 : linkFrom[0].getValueError(linkFromIndex[0], blur);
+        double error2 = (linkFrom[1] == null) ? 0.0 : linkFrom[1].getValueError(linkFromIndex[1], blur);
+        double min1 = value1 - error1;
+        double max1 = value1 + error1;
+        double min2 = value2 - error2;
+        double max2 = value2 + error2;
+        if (max1 < min2) {
+            value = value1;
+            error = error1;
+            which = 0;
+        } else if (max2 < min1) {
+            value = value2;
+            error = error2;
+            which = 1;
+        } else if (value1 < value2) {
+            value = value1;
+            double minmax = (max1 < max2 ? max1 : max2);
+            error = Math.abs(minmax - value);
+            which = 0;
+        } else {
+            value = value2;
+            double minmax = (max1 < max2 ? max1 : max2);
+            error = Math.abs(minmax - value);
+            which = 1;
+        }
+        return value;
     }
-    return value;
-  }
 
-  /* Determine which input to use, and get its error. */
+    /* Determine which input to use, and get its error. */
+    @Override
+    public double getValueError(int which, double blur) {
+        if (!valueOk || blur != lastBlur) {
+            getAverageValue(which, blur);
+        }
+        return error;
+    }
 
-  @Override
-  public double getValueError(int which, double blur)
-  {
-    if (!valueOk || blur != lastBlur)
-      getAverageValue(which, blur);
-    return error;
-  }
-
-  /* Determine which input to use, and get its gradient. */
-
-  @Override
-  public void getValueGradient(int which, Vec3 grad, double blur)
-  {
-    if (!valueOk || blur != lastBlur)
-      getAverageValue(which, blur);
-    if (linkFrom[which] == null)
-      grad.set(0.0, 0.0, 0.0);
-    else
-      linkFrom[which].getValueGradient(linkFromIndex[which], grad, blur);
-  }
+    /* Determine which input to use, and get its gradient. */
+    @Override
+    public void getValueGradient(int which, Vec3 grad, double blur) {
+        if (!valueOk || blur != lastBlur) {
+            getAverageValue(which, blur);
+        }
+        if (linkFrom[which] == null) {
+            grad.set(0.0, 0.0, 0.0);
+        } else {
+            linkFrom[which].getValueGradient(linkFromIndex[which], grad, blur);
+        }
+    }
 }

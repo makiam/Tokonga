@@ -18,17 +18,17 @@ import org.junit.Test;
  *
  * @author MaksK
  */
-public class ModuleTest
-{
-  @Test
-  public void testModuleDuplicate() {
-    ProceduralModule source = new ColorScaleModule(new Point(128, 64));
-    ProceduralModule target = source.duplicate();
-    
-    Assert.assertTrue(target instanceof ColorScaleModule);
-    Assert.assertNotNull(target);
-    Assert.assertEquals(128, target.getBounds().x);
-    Assert.assertEquals(64, target.getBounds().y);
-    
-  }
+public class ModuleTest {
+
+    @Test
+    public void testModuleDuplicate() {
+        ProceduralModule source = new ColorScaleModule(new Point(128, 64));
+        ProceduralModule target = source.duplicate();
+
+        Assert.assertTrue(target instanceof ColorScaleModule);
+        Assert.assertNotNull(target);
+        Assert.assertEquals(128, target.getBounds().x);
+        Assert.assertEquals(64, target.getBounds().y);
+
+    }
 }
