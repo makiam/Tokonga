@@ -10,10 +10,13 @@
  */
 package artofillusion.spmanager;
 
+import artofillusion.ApplicationPreferences;
 import artofillusion.ui.*;
 import buoy.widget.*;
 import java.io.*;
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import javax.swing.*;
 import lombok.Getter;
@@ -125,13 +128,18 @@ public class SPMParameters
      */
     private void loadPropertiesFile()
     {
-        File f = new File( System.getProperty( "user.home" ), ".spmanagerprefs" );
-        if ( !f.exists() )
+        File oldFile = new File(System.getProperty("user.home"), ".spmanagerprefs");
+        if(Files.exists(oldFile.toPath())) {
+            log.info("Deleting the old .spmanagerprefs file");
+            oldFile.delete();
+        }
+        Path pp = ApplicationPreferences.getPreferencesFolderPath().resolve("spmanagerprefs");
+        if (Files.notExists(pp))
         {
 	    savePropertiesFile();
             return;
         }
-        try (InputStream in = new BufferedInputStream(new FileInputStream(f))) {
+        try (InputStream in = new BufferedInputStream(Files.newInputStream(pp))) {
             Properties props = new Properties();
             props.load(in);
             parseProperties(props);
@@ -292,9 +300,8 @@ public class SPMParameters
      */
     private void savePropertiesFile()
     {
-
-        File f = new File( System.getProperty( "user.home" ), ".spmanagerprefs" );
-        try (OutputStream out = new BufferedOutputStream(new FileOutputStream(f))) {
+        Path pp = ApplicationPreferences.getPreferencesFolderPath().resolve("spmanagerprefs");
+        try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(pp))) {
             Properties props = newProperties();
             props.store(out, "Scripts & Plugins Manager Preferences File");
         }

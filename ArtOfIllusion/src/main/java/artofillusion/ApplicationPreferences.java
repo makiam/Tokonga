@@ -16,6 +16,9 @@ import artofillusion.ui.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,80 +28,54 @@ import lombok.extern.slf4j.Slf4j;
 public class ApplicationPreferences
 {
   private static final String userHome = System.getProperty("user.home");
-  
+
   private Properties properties;
-  private int defaultDisplayMode, undoLevels;
+  private int defaultDisplayMode = ViewerCanvas.RENDER_SMOOTH;
+  private int undoLevels = 6;
   
-  private double interactiveSurfaceError;
-  private double maxAnimationDuration;
-  private double animationFrameRate;
-  
-  private boolean keepBackupFiles, useOpenGL, useCompoundMeshTool, reverseZooming, useViewAnimations;
-  private boolean drawActiveFrustum, drawCameraFrustum, showTravelCuesOnIdle, showTravelCuesScrolling, showTiltDial;
+  private double interactiveSurfaceError = 0.05;
+  private double maxAnimationDuration = 1.0;
+  private double animationFrameRate = 60.0;
+
+  private boolean keepBackupFiles;
+  private boolean useOpenGL = true;
+  private boolean useCompoundMeshTool, reverseZooming;
+  private boolean useViewAnimations = true;
+  private boolean drawActiveFrustum;
+  private boolean drawCameraFrustum = true;
+  private boolean showTravelCuesOnIdle;
+  private boolean showTravelCuesScrolling = true;
+  private boolean showTiltDial;
+
   private Renderer objectPreviewRenderer, texturePreviewRenderer, defaultRenderer;
 
   @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
   private final List<PropertyChangeListener> subscribers = new ArrayList<>();
-  
+
+
   /**
    * Create a new ApplicationPreferences object, loading the preferences from a
    * file in the default location.
    */
 
-  public ApplicationPreferences()
-  {
-    File f = new File(getPreferencesDirectory(), "aoiprefs");
-    if (!f.exists())
-    {
-      // See if it exists in the old location.
-
-      File f2 = new File(userHome, ".aoiprefs");
-      if (f2.exists())
-        f2.renameTo(f);
-    }
-    initDefaultPreferences();
-    if (!f.exists())
-    {
+  public ApplicationPreferences() {
+    initDefaults();
+    Path pp = ApplicationPreferences.getPreferencesFolderPath().resolve("aoiprefs");
+    if(Files.notExists(pp)) {
       properties = new Properties();
       Translate.setLocale(Locale.getDefault());
       return;
     }
-    try(InputStream in = new BufferedInputStream(new FileInputStream(f)))
-    {
-      loadPreferences(in);
-    }
-    catch (IOException ex)
-    {
+    try (InputStream in = new BufferedInputStream(Files.newInputStream(pp))) {
+        properties = new Properties();
+        properties.load(in);
+        parsePreferences();
+    } catch (IOException ex) {
         log.atError().setCause(ex).log("Error loading preferences: {}", ex.getLocalizedMessage());
     }
   }
 
-  /**
-   * Create a new ApplicationPreferences object, loading the preferences from an InputStream.
-   */
 
-  public ApplicationPreferences(InputStream in)
-  {
-    initDefaultPreferences();
-    try
-    {
-      loadPreferences(in);
-      in.close();
-    }
-    catch (IOException ex)
-    {
-      log.atError().setCause(ex).log("Error loading preferences: {}", ex.getLocalizedMessage());
-    }
-  }
-
-  /** Load the preferences from an InputStream. */
-
-  private void loadPreferences(InputStream in) throws IOException
-  {
-    properties = new Properties();
-    properties.load(in);
-    parsePreferences();
-  }
 
   /** Save any changed preferences to disk. */
 
@@ -107,15 +84,15 @@ public class ApplicationPreferences
     // Copy over preferences that are stored in other classes.
 
     properties.put("theme", ThemeManager.getSelectedTheme().resource.getId());
-    ThemeManager.ColorSet colorSets[] = ThemeManager.getSelectedTheme().getColorSets();
+    ThemeManager.ColorSet[] colorSets = ThemeManager.getSelectedTheme().getColorSets();
     for (int i = 0; i < colorSets.length; i++)
       if (colorSets[i] == ThemeManager.getSelectedColorSet())
         properties.put("themeColorSet", Integer.toString(i));
 
     // Write the preferences to a file.
 
-    File f = new File(getPreferencesDirectory(), "aoiprefs");
-    try(OutputStream out = new BufferedOutputStream(new FileOutputStream(f)))
+    Path pp = ApplicationPreferences.getPreferencesFolderPath().resolve("aoiprefs");
+    try(OutputStream out = new BufferedOutputStream(Files.newOutputStream(pp)))
     {
       properties.store(out, "Art of Illusion Preferences File");
     }
@@ -125,39 +102,31 @@ public class ApplicationPreferences
     }
   }
 
-  /** Get the directory in which preferences files are saved. */
-
-  public static File getPreferencesDirectory()
-  {
-    File dir = new File(userHome, ".artofillusion");
-    if (!dir.exists())
-      dir.mkdirs();
-    return dir;
+  public static Path getPreferencesFolderPath() {
+      try {
+          return Files.createDirectories(Paths.get(userHome, ".artofillusion"));
+      } catch (IOException ex) {
+          log.atError().setCause(ex).log("Unable to get Preferences folder path due {}", ex.getMessage());
+      }
+      return null;
   }
+
+    /**
+     * Get the directory in which preferences files are saved.
+     */
+    @Deprecated
+    public static File getPreferencesDirectory() {
+        return getPreferencesFolderPath().toFile();
+    }
 
   /** Initialize internal variables to reasonable defaults. */
 
-  private void initDefaultPreferences()
-  {
-    List<Renderer> renderers = PluginRegistry.getPlugins(Renderer.class);
-    if (renderers.size() > 0)
-      objectPreviewRenderer = texturePreviewRenderer = defaultRenderer = getNamedRenderer("Raytracer");
-    defaultDisplayMode = ViewerCanvas.RENDER_SMOOTH;
-    interactiveSurfaceError = 0.05;
-    undoLevels = 6;
-    useOpenGL = true;
-    keepBackupFiles = false;
-    useCompoundMeshTool = false;
-    reverseZooming = false;
-    useViewAnimations = true;
-    maxAnimationDuration = 1.0;
-    animationFrameRate = 60.0;
-    drawActiveFrustum = false;
-    drawCameraFrustum = true;
-    showTravelCuesOnIdle = false;
-    showTravelCuesScrolling = true;
-    showTiltDial = false;
-  }
+    private void initDefaults() {
+        List<Renderer> renderers = PluginRegistry.getPlugins(Renderer.class);
+        if (!renderers.isEmpty()) {
+            objectPreviewRenderer = texturePreviewRenderer = defaultRenderer = getNamedRenderer("Raytracer");
+        }
+    }
 
   /** Parse the properties loaded from the preferences file. */
 
@@ -199,7 +168,7 @@ public class ApplicationPreferences
         {
           ThemeManager.setSelectedTheme(theme);
           int colorSetIndex = parseIntProperty("themeColorSet", 0);
-          ThemeManager.ColorSet colorSets[] = theme.getColorSets();
+          ThemeManager.ColorSet[] colorSets = theme.getColorSets();
           if (colorSetIndex > -1 && colorSetIndex < colorSets.length)
           {
             ThemeManager.setSelectedColorSet(colorSets[colorSetIndex]);
@@ -230,7 +199,7 @@ public class ApplicationPreferences
   {
     try
     {
-      return Double.valueOf(properties.getProperty(name));
+      return Double.parseDouble(properties.getProperty(name));
     }
     catch (Exception ex)
     {
@@ -245,7 +214,7 @@ public class ApplicationPreferences
     String prop = properties.getProperty(name);
     if (prop == null)
       return defaultVal;
-    return Boolean.valueOf(prop);
+    return Boolean.parseBoolean(prop);
   }
 
   /** Parse a property specifying a locale. */
@@ -376,7 +345,7 @@ public class ApplicationPreferences
   {
     Locale current = Translate.getLocale();
     if(current.equals(locale)) return;
-    
+
     PropertyChangeEvent event = new PropertyChangeEvent(this, "language", current, locale);
     Translate.setLocale(locale);
     properties.put("language", locale.getLanguage()+'_'+locale.getCountry());
