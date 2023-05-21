@@ -258,7 +258,7 @@ public class Raster implements Renderer, Runnable {
 
     @Override
     public Map<String, Object> getConfiguration() {
-        HashMap<String, Object> map = new HashMap<String, Object>();
+        HashMap<String, Object> map = new HashMap<>();
         map.put("textureSmoothing", smoothing);
         map.put("reduceAccuracyForDistant", adaptive);
         map.put("hideBackfaces", hideBackfaces);
@@ -339,7 +339,7 @@ public class Raster implements Renderer, Runnable {
      * Find all the light sources in the scene.
      */
     void findLights() {
-        Vector<ObjectInfo> lt = new Vector<ObjectInfo>();
+        Vector<ObjectInfo> lt = new Vector<>();
         int i;
 
         positionNeeded = false;

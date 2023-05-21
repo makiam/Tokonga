@@ -125,7 +125,7 @@ public class OctreeNode {
      * Build a list of all child nodes.
      */
     public OctreeNode[] findChildNodes() {
-        ArrayList<OctreeNode> nodes = new ArrayList<OctreeNode>();
+        ArrayList<OctreeNode> nodes = new ArrayList<>();
         if (child != null) {
             for (int i = 0; i < child.length; i++) {
                 if (child[i] != null) {

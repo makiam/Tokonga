@@ -125,7 +125,7 @@ public class PhotonMap {
         currentIntensity = 0.1 * numWanted;
 
         // Generate photons.
-        photonList = new ArrayList<Photon>((int) (1.1 * numWanted));
+        photonList = new ArrayList<>((int) (1.1 * numWanted));
         int iteration = 0;
         ThreadManager threads = new ThreadManager();
         try {
