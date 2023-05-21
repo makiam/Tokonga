@@ -20,82 +20,80 @@ import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
 
-/** This dialog box allows the user to specify options for creating a tube. */
+/**
+ * This dialog box allows the user to specify options for creating a tube.
+ */
+public class TubeDialog extends BDialog {
 
-public class TubeDialog extends BDialog
-{
-  LayoutWindow window;
-  Curve theCurve;
-  ObjectInfo curveInfo;
-  Tube theTube;
+    LayoutWindow window;
+    Curve theCurve;
+    ObjectInfo curveInfo;
+    Tube theTube;
 
-  ValueField thicknessField;
-  BComboBox endsChoice;
-  ObjectPreviewCanvas preview;
+    ValueField thicknessField;
+    BComboBox endsChoice;
+    ObjectPreviewCanvas preview;
 
-  private static int counter = 1;
+    private static int counter = 1;
 
-  public TubeDialog(LayoutWindow window, ObjectInfo curve)
-  {
-    super(window, Translate.text("Tools:tube.dialog.name"), true);
-    this.window = window;
-    curveInfo = curve;
-    theCurve = (Curve) curve.getObject();
-    Scene scene = window.getScene();
+    public TubeDialog(LayoutWindow window, ObjectInfo curve) {
+        super(window, Translate.text("Tools:tube.dialog.name"), true);
+        this.window = window;
+        curveInfo = curve;
+        theCurve = (Curve) curve.getObject();
+        Scene scene = window.getScene();
 
-    // Layout the window.
+        // Layout the window.
+        FormContainer content = new FormContainer(4, 10);
+        setContent(BOutline.createEmptyBorder(content, UIUtilities.getStandardDialogInsets()));
+        content.setDefaultLayout(new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE, null, null));
+        content.add(Translate.label("Tools:tube.width.label"), 0, 0);
+        content.add(Translate.label("Tools:tube.cap.ends.label"), 0, 1);
+        content.add(thicknessField = new ValueField(0.1, ValueField.POSITIVE, 5), 1, 0);
+        thicknessField.addEventLink(ValueChangedEvent.class, this, "makeObject");
+        content.add(endsChoice = new BComboBox(new String[]{Translate.text("Tools:tube.cap.end.open"), Translate.text("Tools:tube.cap.end.flat")}), 1, 1);
+        endsChoice.setEnabled(!theCurve.isClosed());
+        endsChoice.addEventLink(ValueChangedEvent.class, this, "makeObject");
+        content.add(preview = new ObjectPreviewCanvas(null), 0, 2, 2, 1, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
+        preview.setPreferredSize(new Dimension(150, 150));
+        RowContainer buttons = new RowContainer();
+        content.add(buttons, 0, 3, 2, 1, new LayoutInfo());
+        buttons.add(Translate.button("ok", this, "doOk"));
+        buttons.add(Translate.button("cancel", this, "dispose"));
+        makeObject();
+        pack();
+        UIUtilities.centerDialog(this, window);
+        setVisible(true);
+    }
 
-    FormContainer content = new FormContainer(4, 10);
-    setContent(BOutline.createEmptyBorder(content, UIUtilities.getStandardDialogInsets()));
-    content.setDefaultLayout(new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE, null, null));
-    content.add(Translate.label("Tools:tube.width.label"), 0, 0);
-    content.add(Translate.label("Tools:tube.cap.ends.label"), 0, 1);
-    content.add(thicknessField = new ValueField(0.1, ValueField.POSITIVE, 5), 1, 0);
-    thicknessField.addEventLink(ValueChangedEvent.class, this, "makeObject");
-    content.add(endsChoice = new BComboBox(new String [] {Translate.text("Tools:tube.cap.end.open"), Translate.text("Tools:tube.cap.end.flat")}), 1, 1);
-    endsChoice.setEnabled(!theCurve.isClosed());
-    endsChoice.addEventLink(ValueChangedEvent.class, this, "makeObject");
-    content.add(preview = new ObjectPreviewCanvas(null), 0, 2, 2, 1, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
-    preview.setPreferredSize(new Dimension(150, 150));
-    RowContainer buttons = new RowContainer();
-    content.add(buttons, 0, 3, 2, 1, new LayoutInfo());
-    buttons.add(Translate.button("ok", this, "doOk"));
-    buttons.add(Translate.button("cancel", this, "dispose"));
-    makeObject();
-    pack();
-    UIUtilities.centerDialog(this, window);
-    setVisible(true);
-  }
+    private void doOk() {
+        window.addObject(theTube, curveInfo.getCoords().duplicate(), "Tube " + (counter++), null);
+        window.setSelection(window.getScene().getNumObjects() - 1);
+        window.setUndoRecord(new UndoRecord(window, false, UndoRecord.DELETE_OBJECT, window.getScene().getNumObjects() - 1));
+        window.updateImage();
+        dispose();
+    }
 
-  private void doOk()
-  {
-    window.addObject(theTube, curveInfo.getCoords().duplicate(), "Tube "+(counter++), null);
-    window.setSelection(window.getScene().getNumObjects()-1);
-    window.setUndoRecord(new UndoRecord(window, false, UndoRecord.DELETE_OBJECT, window.getScene().getNumObjects()-1));
-    window.updateImage();
-    dispose();
-  }
-
-  // Create the Tube.
-
-  private void makeObject()
-  {
-    MeshVertex vert[] = theCurve.getVertices();
-    double thickness[] = new double [vert.length];
-    for (int i = 0; i < thickness.length; i++)
-      thickness[i] = thicknessField.getValue();
-    int endsStyle;
-    if (theCurve.isClosed())
-      endsStyle = Tube.CLOSED_ENDS;
-    else if (endsChoice.getSelectedIndex() == 0)
-      endsStyle = Tube.OPEN_ENDS;
-    else
-      endsStyle = Tube.FLAT_ENDS;
-    theTube = new Tube(theCurve, thickness, endsStyle);
-    ObjectInfo tubeInfo = new ObjectInfo(theTube, new CoordinateSystem(), "");
-    Texture tex = window.getScene().getDefaultTexture();
-    tubeInfo.setTexture(tex, tex.getDefaultMapping(theTube));
-    preview.setObject(theTube);
-    preview.repaint();
-  }
+    // Create the Tube.
+    private void makeObject() {
+        MeshVertex vert[] = theCurve.getVertices();
+        double thickness[] = new double[vert.length];
+        for (int i = 0; i < thickness.length; i++) {
+            thickness[i] = thicknessField.getValue();
+        }
+        int endsStyle;
+        if (theCurve.isClosed()) {
+            endsStyle = Tube.CLOSED_ENDS;
+        } else if (endsChoice.getSelectedIndex() == 0) {
+            endsStyle = Tube.OPEN_ENDS;
+        } else {
+            endsStyle = Tube.FLAT_ENDS;
+        }
+        theTube = new Tube(theCurve, thickness, endsStyle);
+        ObjectInfo tubeInfo = new ObjectInfo(theTube, new CoordinateSystem(), "");
+        Texture tex = window.getScene().getDefaultTexture();
+        tubeInfo.setTexture(tex, tex.getDefaultMapping(theTube));
+        preview.setObject(theTube);
+        preview.repaint();
+    }
 }

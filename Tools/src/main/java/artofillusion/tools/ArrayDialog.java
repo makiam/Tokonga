@@ -8,8 +8,7 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-*/
-
+ */
 
 package artofillusion.tools;
 
@@ -22,185 +21,185 @@ import java.awt.*;
 import java.util.*;
 
 /**
-This dialog box allows the user to specify options for creating array objects.
-@author Rick van der Meiden
-*/
+ * This dialog box allows the user to specify options for creating array objects.
+ *
+ * @author Rick van der Meiden
+ */
+public class ArrayDialog extends BDialog {
 
-public class ArrayDialog extends BDialog
-{
-  private LayoutWindow window;
-  private ArraySpec spec;
+    private LayoutWindow window;
+    private ArraySpec spec;
 
-  private Vector<ObjectInfo> curvesVector;
+    private Vector<ObjectInfo> curvesVector;
 
-  private BLabel linearCopiesLabel, stepXLabel, stepYLabel, stepZLabel;
-  private BRadioButton curveCopiesBox, curveStepBox, linearBox, curveBox;
-  private BCheckBox intervalXBox, intervalYBox, intervalZBox;
-  private BCheckBox orientationBox, useOrientationBox, useOriginBox;
-  private BCheckBox duplicateBox, groupBox, liveBox, deepBox;
-  private BComboBox curveChoice;
-  private ValueField linearCopiesField, stepXField, stepYField, stepZField;
-  private ValueField curveCopiesField, curveStepField;
-  private RadioButtonGroup methodGroup;
-  private RadioButtonGroup modeGroup;
+    private BLabel linearCopiesLabel, stepXLabel, stepYLabel, stepZLabel;
+    private BRadioButton curveCopiesBox, curveStepBox, linearBox, curveBox;
+    private BCheckBox intervalXBox, intervalYBox, intervalZBox;
+    private BCheckBox orientationBox, useOrientationBox, useOriginBox;
+    private BCheckBox duplicateBox, groupBox, liveBox, deepBox;
+    private BComboBox curveChoice;
+    private ValueField linearCopiesField, stepXField, stepYField, stepZField;
+    private ValueField curveCopiesField, curveStepField;
+    private RadioButtonGroup methodGroup;
+    private RadioButtonGroup modeGroup;
 
-  public ArrayDialog(LayoutWindow window)
-  {
-    super(window, Translate.text("Tools:array.dialog.name"), true);
-    this.window = window;
+    public ArrayDialog(LayoutWindow window) {
+        super(window, Translate.text("Tools:array.dialog.name"), true);
+        this.window = window;
 
-    // set defaults from scene
-    spec = new ArraySpec(window);
+        // set defaults from scene
+        spec = new ArraySpec(window);
 
-    // get available curves
-    curvesVector = new Vector<ObjectInfo>(10,10);
-    for (ObjectInfo obj: window.getScene().getObjects())
-    {
-      if (obj.getObject() instanceof Curve) curvesVector.add(obj);
-    }
-    
-    // layout dialog
-    methodGroup = new RadioButtonGroup();
-    modeGroup = new RadioButtonGroup();
-    ColumnContainer content = new ColumnContainer();
-    setContent(BOutline.createEmptyBorder(content, UIUtilities.getStandardDialogInsets()));
-    content.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(0, 0, 15, 0), null));
-    content.add(new BLabel(Translate.text("Tools:array.dialog.title")), new LayoutInfo());
-    content.add(createLinearPanel());
-    content.add(createCurvePanel());
-    content.add(createOptionsPanel());
-    content.add(createFinishPanel());
+        // get available curves
+        curvesVector = new Vector<ObjectInfo>(10, 10);
+        for (ObjectInfo obj : window.getScene().getObjects()) {
+            if (obj.getObject() instanceof Curve) {
+                curvesVector.add(obj);
+            }
+        }
 
-   // don't allow user to use nil curve
-   if (curvesVector.size() <= 0)
-        curveBox.setEnabled(false);
+        // layout dialog
+        methodGroup = new RadioButtonGroup();
+        modeGroup = new RadioButtonGroup();
+        ColumnContainer content = new ColumnContainer();
+        setContent(BOutline.createEmptyBorder(content, UIUtilities.getStandardDialogInsets()));
+        content.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(0, 0, 15, 0), null));
+        content.add(new BLabel(Translate.text("Tools:array.dialog.title")), new LayoutInfo());
+        content.add(createLinearPanel());
+        content.add(createCurvePanel());
+        content.add(createOptionsPanel());
+        content.add(createFinishPanel());
 
-    // update spec
-    updateSpec();
+        // don't allow user to use nil curve
+        if (curvesVector.size() <= 0) {
+            curveBox.setEnabled(false);
+        }
 
-    pack();
-    UIUtilities.centerDialog(this, window);
-    setVisible(true);
-  }
+        // update spec
+        updateSpec();
 
-  private Widget createLinearPanel()
-  {
-    FormContainer panel = new FormContainer(4, 4);
-    panel.setDefaultLayout(new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE, new Insets(0, 0, 0, 5), null));
-    panel.add(linearBox = new BRadioButton(Translate.text("Tools:array.type.linear"), (spec.method==ArraySpec.METHOD_LINEAR), methodGroup), 0, 0);
-    linearBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    panel.add(linearCopiesLabel = Translate.label("Tools:array.copies.number"), 1, 0);
-    panel.add(linearCopiesField = new ValueField(spec.linearCopies, ValueField.POSITIVE+ValueField.INTEGER, 4), 2, 0);
-    linearCopiesField.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    panel.add(stepXLabel = Translate.label("Tools:array.xstep.label"), 1, 1);
-    panel.add(stepXField = new ValueField(spec.stepX, ValueField.NONE, 4), 2, 1);
-    stepXField.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    panel.add(intervalXBox = new BCheckBox(Translate.text("Tools:array.xstep.size"), spec.intervalX), 3, 1);
-    intervalXBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    panel.add(stepYLabel = Translate.label("Tools:array.ystep.label"), 1, 2);
-    panel.add(stepYField = new ValueField(spec.stepY, ValueField.NONE,4), 2, 2);
-    stepYField.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    panel.add(intervalYBox = new BCheckBox(Translate.text("Tools:array.ystep.size"), spec.intervalY), 3, 2);
-    intervalYBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    panel.add(stepZLabel = Translate.label("Tools:array.zstep.label"), 1, 3);
-    panel.add(stepZField = new ValueField(spec.stepZ, ValueField.NONE,4), 2, 3);
-    stepZField.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    panel.add(intervalZBox = new BCheckBox(Translate.text("Tools:array.zstep.size"), spec.intervalZ), 3, 3);
-    intervalZBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    return panel;
-  }
-
-  private Widget createCurvePanel()
-  {
-    FormContainer panel = new FormContainer(3, 6);
-    panel.setDefaultLayout(new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE, new Insets(0, 0, 0, 5), null));
-    panel.add(curveBox = new BRadioButton(Translate.text("Tools:array.type.curve"), (spec.method==ArraySpec.METHOD_CURVE), methodGroup), 0, 0);
-    curveBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    panel.add(curveChoice = new BComboBox(), 1, 0);
-    
-    // put names of possible curves in choice
-    for (ObjectInfo info: curvesVector)
-    {
-      curveChoice.add(info.getName());
+        pack();
+        UIUtilities.centerDialog(this, window);
+        setVisible(true);
     }
 
-    if (spec.curve != null)
-        curveChoice.setSelectedValue(spec.curve.getName());
-    curveChoice.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    panel.add(curveCopiesBox = new BRadioButton(Translate.text("Tools:array.copies.number"), spec.curveMode == ArraySpec.MODE_COPIES, modeGroup), 1, 1);
-    curveCopiesBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    panel.add(curveCopiesField = new ValueField(spec.curveCopies, ValueField.POSITIVE+ValueField.INTEGER,4), 2, 1);
-    curveCopiesField.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    panel.add(curveStepBox = new BRadioButton(Translate.text("Tools:array.step.size"), spec.curveMode == ArraySpec.MODE_STEP, modeGroup), 1, 2);
-    curveStepBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    panel.add(curveStepField = new ValueField(spec.curveStep, ValueField.POSITIVE,4), 2, 2);
-    curveStepField.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    panel.add(orientationBox = new BCheckBox(Translate.text("Tools:array.follow.curve"), spec.orientation), 1, 3);
-    orientationBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    panel.add(useOriginBox = new BCheckBox(Translate.text("Tools:array.use.original.position"), !spec.ignoreOrigin), 1, 4);
-    useOriginBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    panel.add(useOrientationBox = new BCheckBox(Translate.text("Tools:array.use.original.orientation"), !spec.ignoreOrientation), 1, 5);
-    useOrientationBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    return panel;
-  }
+    private Widget createLinearPanel() {
+        FormContainer panel = new FormContainer(4, 4);
+        panel.setDefaultLayout(new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE, new Insets(0, 0, 0, 5), null));
+        panel.add(linearBox = new BRadioButton(Translate.text("Tools:array.type.linear"), (spec.method == ArraySpec.METHOD_LINEAR), methodGroup), 0, 0);
+        linearBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        panel.add(linearCopiesLabel = Translate.label("Tools:array.copies.number"), 1, 0);
+        panel.add(linearCopiesField = new ValueField(spec.linearCopies, ValueField.POSITIVE + ValueField.INTEGER, 4), 2, 0);
+        linearCopiesField.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        panel.add(stepXLabel = Translate.label("Tools:array.xstep.label"), 1, 1);
+        panel.add(stepXField = new ValueField(spec.stepX, ValueField.NONE, 4), 2, 1);
+        stepXField.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        panel.add(intervalXBox = new BCheckBox(Translate.text("Tools:array.xstep.size"), spec.intervalX), 3, 1);
+        intervalXBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        panel.add(stepYLabel = Translate.label("Tools:array.ystep.label"), 1, 2);
+        panel.add(stepYField = new ValueField(spec.stepY, ValueField.NONE, 4), 2, 2);
+        stepYField.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        panel.add(intervalYBox = new BCheckBox(Translate.text("Tools:array.ystep.size"), spec.intervalY), 3, 2);
+        intervalYBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        panel.add(stepZLabel = Translate.label("Tools:array.zstep.label"), 1, 3);
+        panel.add(stepZField = new ValueField(spec.stepZ, ValueField.NONE, 4), 2, 3);
+        stepZField.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        panel.add(intervalZBox = new BCheckBox(Translate.text("Tools:array.zstep.size"), spec.intervalZ), 3, 3);
+        intervalZBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        return panel;
+    }
 
-  private Widget createOptionsPanel()
-  {
-    FormContainer panel = new FormContainer(2, 2);
-    panel.setDefaultLayout(new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE, new Insets(0, 0, 0, 5), null));
-    panel.add(deepBox = new BCheckBox(Translate.text("Tools:array.include.children"), spec.deep), 0, 0);
-    deepBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    panel.add(groupBox = new BCheckBox(Translate.text("Tools:array.group"), spec.group), 0, 1);
-    groupBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    panel.add(duplicateBox = new BCheckBox(Translate.text("Tools:array.skip.first"), !spec.dupFirst), 1, 0);
-    duplicateBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    panel.add(liveBox = new BCheckBox(Translate.text("Tools:array.copies.live"), spec.live), 1, 1);
-    liveBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
-    return panel;
-  }
+    private Widget createCurvePanel() {
+        FormContainer panel = new FormContainer(3, 6);
+        panel.setDefaultLayout(new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE, new Insets(0, 0, 0, 5), null));
+        panel.add(curveBox = new BRadioButton(Translate.text("Tools:array.type.curve"), (spec.method == ArraySpec.METHOD_CURVE), methodGroup), 0, 0);
+        curveBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        panel.add(curveChoice = new BComboBox(), 1, 0);
 
-  private Widget createFinishPanel()
-  {
-    RowContainer panel = new RowContainer();
-    panel.add(Translate.button("ok", this, "doOk"));
-    panel.add(Translate.button("cancel", this, "dispose"));
-    return panel;
-  }
+        // put names of possible curves in choice
+        for (ObjectInfo info : curvesVector) {
+            curveChoice.add(info.getName());
+        }
 
-  private void doOk()
-  {
-    updateSpec();
-    spec.createArray();
-    window.rebuildItemList();
-    window.updateImage();
-    dispose();
-  }
+        if (spec.curve != null) {
+            curveChoice.setSelectedValue(spec.curve.getName());
+        }
+        curveChoice.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        panel.add(curveCopiesBox = new BRadioButton(Translate.text("Tools:array.copies.number"), spec.curveMode == ArraySpec.MODE_COPIES, modeGroup), 1, 1);
+        curveCopiesBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        panel.add(curveCopiesField = new ValueField(spec.curveCopies, ValueField.POSITIVE + ValueField.INTEGER, 4), 2, 1);
+        curveCopiesField.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        panel.add(curveStepBox = new BRadioButton(Translate.text("Tools:array.step.size"), spec.curveMode == ArraySpec.MODE_STEP, modeGroup), 1, 2);
+        curveStepBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        panel.add(curveStepField = new ValueField(spec.curveStep, ValueField.POSITIVE, 4), 2, 2);
+        curveStepField.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        panel.add(orientationBox = new BCheckBox(Translate.text("Tools:array.follow.curve"), spec.orientation), 1, 3);
+        orientationBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        panel.add(useOriginBox = new BCheckBox(Translate.text("Tools:array.use.original.position"), !spec.ignoreOrigin), 1, 4);
+        useOriginBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        panel.add(useOrientationBox = new BCheckBox(Translate.text("Tools:array.use.original.orientation"), !spec.ignoreOrientation), 1, 5);
+        useOrientationBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        return panel;
+    }
 
-  // Update ArraySpec data
-  private void updateSpec()
-  {
+    private Widget createOptionsPanel() {
+        FormContainer panel = new FormContainer(2, 2);
+        panel.setDefaultLayout(new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE, new Insets(0, 0, 0, 5), null));
+        panel.add(deepBox = new BCheckBox(Translate.text("Tools:array.include.children"), spec.deep), 0, 0);
+        deepBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        panel.add(groupBox = new BCheckBox(Translate.text("Tools:array.group"), spec.group), 0, 1);
+        groupBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        panel.add(duplicateBox = new BCheckBox(Translate.text("Tools:array.skip.first"), !spec.dupFirst), 1, 0);
+        duplicateBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        panel.add(liveBox = new BCheckBox(Translate.text("Tools:array.copies.live"), spec.live), 1, 1);
+        liveBox.addEventLink(ValueChangedEvent.class, this, "updateSpec");
+        return panel;
+    }
+
+    private Widget createFinishPanel() {
+        RowContainer panel = new RowContainer();
+        panel.add(Translate.button("ok", this, "doOk"));
+        panel.add(Translate.button("cancel", this, "dispose"));
+        return panel;
+    }
+
+    private void doOk() {
+        updateSpec();
+        spec.createArray();
+        window.rebuildItemList();
+        window.updateImage();
+        dispose();
+    }
+
+    // Update ArraySpec data
+    private void updateSpec() {
         // get values
 
-        if (linearBox.getState() == true)
-                spec.method = ArraySpec.METHOD_LINEAR;
-        if (curveBox.getState() == true)
-                spec.method = ArraySpec.METHOD_CURVE;
-        spec.linearCopies = (int)linearCopiesField.getValue();
+        if (linearBox.getState() == true) {
+            spec.method = ArraySpec.METHOD_LINEAR;
+        }
+        if (curveBox.getState() == true) {
+            spec.method = ArraySpec.METHOD_CURVE;
+        }
+        spec.linearCopies = (int) linearCopiesField.getValue();
         spec.stepX = stepXField.getValue();
         spec.stepY = stepYField.getValue();
         spec.stepZ = stepZField.getValue();
         spec.intervalX = intervalXBox.getState();
         spec.intervalY = intervalYBox.getState();
         spec.intervalZ = intervalZBox.getState();
-        if (curvesVector.size() > 0)
-                spec.curve = curvesVector.get(curveChoice.getSelectedIndex());
+        if (curvesVector.size() > 0) {
+            spec.curve = curvesVector.get(curveChoice.getSelectedIndex());
+        }
 
-        if (curveCopiesBox.getState() == true)
-                spec.curveMode = ArraySpec.MODE_COPIES;
-        if (curveStepBox.getState() == true)
-                spec.curveMode = ArraySpec.MODE_STEP;
+        if (curveCopiesBox.getState() == true) {
+            spec.curveMode = ArraySpec.MODE_COPIES;
+        }
+        if (curveStepBox.getState() == true) {
+            spec.curveMode = ArraySpec.MODE_STEP;
+        }
         spec.curveStep = curveStepField.getValue();
-        spec.curveCopies = (int)curveCopiesField.getValue();
+        spec.curveCopies = (int) curveCopiesField.getValue();
         spec.orientation = orientationBox.getState();
         spec.ignoreOrientation = !useOrientationBox.getState();
         spec.ignoreOrigin = !useOriginBox.getState();
@@ -208,7 +207,6 @@ public class ArrayDialog extends BDialog
         spec.group = groupBox.getState();
         spec.live = liveBox.getState();
         spec.deep = deepBox.getState();
-
 
         // update enabled/disabled status
         linearCopiesField.setEnabled(spec.method == ArraySpec.METHOD_LINEAR);
@@ -235,8 +233,6 @@ public class ArrayDialog extends BDialog
         // duplicateBox.setEnabled(true);
         // groupBox.setEnabled(true);
         // liveBox.setEnabled(true);
-
-  }
-
+    }
 
 }
