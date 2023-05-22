@@ -25,102 +25,95 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 
 /**
- *  PMBevelExtrudeTool is an EditingTool used for beveling and extruding
- *  PolyMesh objects.
+ * PMBevelExtrudeTool is an EditingTool used for beveling and extruding
+ * PolyMesh objects.
  *
- *@author     Peter Eastman, modifications by Francois Guillet
- *@created    april, 26 2005
+ * @author Peter Eastman, modifications by Francois Guillet
+ * @created april, 26 2005
  */
 @EditingTool.ButtonImage("polymesh:bevel")
 @EditingTool.Tooltip("bevelExtrudeTool.tipText")
-public class PMBevelExtrudeTool extends EditingTool
-{
-    private boolean selected[], noSelection, separateFaces;
+public class PMBevelExtrudeTool extends EditingTool {
+
+    private boolean[] selected;
+    private boolean noSelection;
+    private boolean separateFaces;
     private PolyMesh origMesh;
     private Point clickPoint;
     private double width, height;
     private MeshEditController controller;
 
-
     /**
-     *  Constructor for the BevelExtrudeTool object
+     * Constructor for the BevelExtrudeTool object
      *
-     *@param  fr          Description of the Parameter
-     *@param  controller  Description of the Parameter
+     * @param fr Description of the Parameter
+     * @param controller Description of the Parameter
      */
-    public PMBevelExtrudeTool( EditingWindow fr, MeshEditController controller )
-    {
-        super( fr );
+    public PMBevelExtrudeTool(EditingWindow fr, MeshEditController controller) {
+        super(fr);
         this.controller = controller;
     }
 
-
     /**
-     *  Record the current selection.
+     * Record the current selection.
      */
-
-    private void recordSelection()
-    {
+    private void recordSelection() {
         selected = controller.getSelection();
         noSelection = false;
-        for ( int i = 0; i < selected.length; i++ )
-            if ( selected[i] )
+        for (int i = 0; i < selected.length; i++) {
+            if (selected[i]) {
                 return;
+            }
+        }
         noSelection = true;
     }
 
-
     /**
-     *  Description of the Method
+     * Description of the Method
      */
     @Override
-    public void activate()
-    {
+    public void activate() {
         super.activate();
         recordSelection();
-        if ( noSelection )
-            theWindow.setHelpText( Translate.text( "bevelExtrudeTool.errorText" ) );
-        else
-            theWindow.setHelpText( Translate.text( "bevelExtrudeTool.helpText" ) );
+        if (noSelection) {
+            theWindow.setHelpText(Translate.text("bevelExtrudeTool.errorText"));
+        } else {
+            theWindow.setHelpText(Translate.text("bevelExtrudeTool.helpText"));
+        }
     }
 
-
     /**
-     *  Description of the Method
+     * Description of the Method
      *
-     *@return    Description of the Return Value
+     * @return Description of the Return Value
      */
     @Override
-    public int whichClicks()
-    {
+    public int whichClicks() {
         return ALL_CLICKS;
     }
 
-
     /**
-     *  Gets the toolTipText attribute of the BevelExtrudeTool object
+     * Gets the toolTipText attribute of the BevelExtrudeTool object
      *
-     *@return    The toolTipText value
+     * @return The toolTipText value
      */
     @Override
-    public String getToolTipText()
-    {
-        return Translate.text( "bevelExtrudeTool.tipText" );
+    public String getToolTipText() {
+        return Translate.text("bevelExtrudeTool.tipText");
     }
 
-
     /**
-     *  Description of the Method
+     * Description of the Method
      *
-     *@param  e     Description of the Parameter
-     *@param  view  Description of the Parameter
+     * @param e Description of the Parameter
+     * @param view Description of the Parameter
      */
     @Override
-    public void mousePressed( WidgetMouseEvent e, ViewerCanvas view )
-    {
+    public void mousePressed(WidgetMouseEvent e, ViewerCanvas view) {
         recordSelection();
-        if ( noSelection )
+        if (noSelection) {
             return;
+        }
         PolyMeshViewer mv = (PolyMeshViewer) view;
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
         origMesh = (PolyMesh) mesh.duplicate();
@@ -128,18 +121,17 @@ public class PMBevelExtrudeTool extends EditingTool
         clickPoint = e.getPoint();
     }
 
-
     /**
-     *  Description of the Method
+     * Description of the Method
      *
-     *@param  e     Description of the Parameter
-     *@param  view  Description of the Parameter
+     * @param e Description of the Parameter
+     * @param view Description of the Parameter
      */
     @Override
-    public void mouseDragged( WidgetMouseEvent e, ViewerCanvas view )
-    {
-        if ( noSelection )
+    public void mouseDragged(WidgetMouseEvent e, ViewerCanvas view) {
+        if (noSelection) {
             return;
+        }
         PolyMeshViewer mv = (PolyMeshViewer) view;
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
         Camera cam = view.getCamera();
@@ -150,101 +142,95 @@ public class PMBevelExtrudeTool extends EditingTool
         Vec3 camZ = view.getCamera().getCameraCoordinates().getZDirection();
         //width = 0.5 * dragVec.x;
         //height = dragVec.y;
-        width = ( dragPoint.x - clickPoint.x ) / view.getScale();
-        height = ( clickPoint.y - dragPoint.y ) / view.getScale();
-        boolean shiftMod =  ( ( e.getModifiers() & ActionEvent.SHIFT_MASK ) != 0 ) &&  ( ( e.getModifiers() & ActionEvent.CTRL_MASK ) != 0);
-        boolean ctrlMod = ( ( e.getModifiers() & ActionEvent.SHIFT_MASK ) == 0 ) &&  ( ( e.getModifiers() & ActionEvent.CTRL_MASK ) != 0);
+        width = (dragPoint.x - clickPoint.x) / view.getScale();
+        height = (clickPoint.y - dragPoint.y) / view.getScale();
+        boolean shiftMod = ((e.getModifiers() & ActionEvent.SHIFT_MASK) != 0) && ((e.getModifiers() & ActionEvent.CTRL_MASK) != 0);
+        boolean ctrlMod = ((e.getModifiers() & ActionEvent.SHIFT_MASK) == 0) && ((e.getModifiers() & ActionEvent.CTRL_MASK) != 0);
         /*if ( controller.getSelectionMode() == PolyMeshEditorWindow.FACE_MODE && ctrlMod )
         {
             width = height;
             height = 0;
         }*/
-        if ( controller.getSelectionMode() == PolyMeshEditorWindow.FACE_MODE )
-        {
-            if ( ( ( e.getModifiers() & ActionEvent.SHIFT_MASK ) != 0 ) &&  ( ( e.getModifiers() & ActionEvent.CTRL_MASK ) == 0) )
-            {
-                if ( Math.abs( width ) > Math.abs( height ) )
+        if (controller.getSelectionMode() == PolyMeshEditorWindow.FACE_MODE) {
+            if (((e.getModifiers() & ActionEvent.SHIFT_MASK) != 0) && ((e.getModifiers() & ActionEvent.CTRL_MASK) == 0)) {
+                if (Math.abs(width) > Math.abs(height)) {
                     height = 0.0;
-                else
+                } else {
                     width = 0.0;
+                }
             }
-        }
-        else
-        {
-            if ( ( ( e.getModifiers() & ActionEvent.SHIFT_MASK ) != 0 ) &&  ( ( e.getModifiers() & ActionEvent.CTRL_MASK ) == 0) )
+        } else {
+            if (((e.getModifiers() & ActionEvent.SHIFT_MASK) != 0) && ((e.getModifiers() & ActionEvent.CTRL_MASK) == 0)) {
                 height = 0.0;
-            if ( width < 0.0 )
+            }
+            if (width < 0.0) {
                 width = 0.0;
+            }
         }
 
         // Update the mesh and redisplay.
         int selectMode = controller.getSelectionMode();
         boolean[] sel = null;
-        mesh.copyObject( origMesh );
-        if ( selectMode == PolyMeshEditorWindow.POINT_MODE )
-        {
-            sel = mesh.bevelVertices( selected, height );
-            theWindow.setHelpText( Translate.text( "bevelExtrudeTool.dragText", new Double( 1.0 - width ), new Double( height ) ) );
-        }
-        else if ( selectMode == PolyMeshEditorWindow.EDGE_MODE )
-        {
-            sel = mesh.bevelEdges( selected, height );
-            theWindow.setHelpText( Translate.text( "bevelExtrudeTool.dragText", new Double( 1.0 - width ), new Double( height ) ) );
-        }
-        else
-        {
-            if ( separateFaces )
-                mesh.extrudeFaces( selected, height, (Vec3) null, Math.abs( 1.0 - width ), camZ, ctrlMod, shiftMod );
-            else
-                mesh.extrudeRegion( selected, height, (Vec3) null, Math.abs( 1.0 - width ), camZ, ctrlMod, shiftMod  );
+        mesh.copyObject(origMesh);
+        if (selectMode == PolyMeshEditorWindow.POINT_MODE) {
+            sel = mesh.bevelVertices(selected, height);
+            theWindow.setHelpText(Translate.text("bevelExtrudeTool.dragText", new Double(1.0 - width), new Double(height)));
+        } else if (selectMode == PolyMeshEditorWindow.EDGE_MODE) {
+            sel = mesh.bevelEdges(selected, height);
+            theWindow.setHelpText(Translate.text("bevelExtrudeTool.dragText", new Double(1.0 - width), new Double(height)));
+        } else {
+            if (separateFaces) {
+                mesh.extrudeFaces(selected, height, (Vec3) null, Math.abs(1.0 - width), camZ, ctrlMod, shiftMod);
+            } else {
+                mesh.extrudeRegion(selected, height, (Vec3) null, Math.abs(1.0 - width), camZ, ctrlMod, shiftMod);
+            }
             sel = new boolean[mesh.getFaces().length];
-            if ( Math.abs( 1.0 - width ) > 0.05 )
-                for ( int i = 0; i < selected.length; ++i )
+            if (Math.abs(1.0 - width) > 0.05) {
+                for (int i = 0; i < selected.length; ++i) {
                     sel[i] = selected[i];
-            theWindow.setHelpText( Translate.text( "bevelExtrudeTool.dragText", new Double( 1.0 - width ), new Double( height ) ) );
+                }
+            }
+            theWindow.setHelpText(Translate.text("bevelExtrudeTool.dragText", new Double(1.0 - width), new Double(height)));
         }
         //mesh.copyObject( beveler.bevelMesh( height, width ) );
-        controller.setMesh( mesh );
-        controller.setSelection( sel );
+        controller.setMesh(mesh);
+        controller.setSelection(sel);
         //theWindow.setHelpText( Translate.text( "bevelExtrudeTool.dragText", new Double( width ), new Double( height ) ) );
     }
 
-
     /**
-     *  Description of the Method
+     * Description of the Method
      *
-     *@param  e     Description of the Parameter
-     *@param  view  Description of the Parameter
+     * @param e Description of the Parameter
+     * @param view Description of the Parameter
      */
     @Override
-    public void mouseReleased( WidgetMouseEvent e, ViewerCanvas view )
-    {
-        if ( noSelection || ( width == 0.0 && height == 0.0 ) )
+    public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view) {
+        if (noSelection || (width == 0.0 && height == 0.0)) {
             return;
+        }
         PolyMeshViewer mv = (PolyMeshViewer) view;
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
-        theWindow.setUndoRecord( new UndoRecord( theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, origMesh} ) );
+        theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, origMesh}));
         controller.objectChanged();
         theWindow.updateImage();
-        theWindow.setHelpText( Translate.text( "bevelExtrudeTool.helpText" ) );
+        theWindow.setHelpText(Translate.text("bevelExtrudeTool.helpText"));
     }
-
 
     /**
-     *  Description of the Method
+     * Description of the Method
      */
     @Override
-    public void iconDoubleClicked()
-    {
-        BComboBox c = new BComboBox( new String[]{
-                Translate.text( "selectionAsWhole" ),
-                Translate.text( "individualFaces" )
-                } );
-        c.setSelectedIndex( separateFaces ? 1 : 0 );
-        ComponentsDialog dlg = new ComponentsDialog( theFrame, Translate.text( "applyExtrudeTo" ),
-                new Widget[]{c}, new String[]{null} );
-        if ( dlg.clickedOk() )
-            separateFaces = ( c.getSelectedIndex() == 1 );
+    public void iconDoubleClicked() {
+        BComboBox c = new BComboBox(new String[]{
+            Translate.text("selectionAsWhole"),
+            Translate.text("individualFaces")
+        });
+        c.setSelectedIndex(separateFaces ? 1 : 0);
+        ComponentsDialog dlg = new ComponentsDialog(theFrame, Translate.text("applyExtrudeTo"),
+                new Widget[]{c}, new String[]{null});
+        if (dlg.clickedOk()) {
+            separateFaces = (c.getSelectedIndex() == 1);
+        }
     }
 }
-

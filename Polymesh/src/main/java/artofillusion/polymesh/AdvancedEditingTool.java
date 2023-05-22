@@ -11,7 +11,6 @@
 
 package artofillusion.polymesh;
 
-
 import artofillusion.Camera;
 import artofillusion.MeshEditorWindow;
 import artofillusion.MeshViewer;
@@ -32,12 +31,11 @@ import lombok.extern.slf4j.Slf4j;
  * This class provides an advanced behavior over standard editing tools.
  */
 @Slf4j
-public abstract class AdvancedEditingTool extends EditingTool
-{
+public abstract class AdvancedEditingTool extends EditingTool {
+
     protected MeshEditController controller;
 
-    public AdvancedEditingTool(EditingWindow fr, MeshEditController controller)
-    {
+    public AdvancedEditingTool(EditingWindow fr, MeshEditController controller) {
         super(fr);
         this.controller = controller;
     }
@@ -45,8 +43,7 @@ public abstract class AdvancedEditingTool extends EditingTool
     /**
      * Override this method if you want to be notified of every selection update.
      */
-    public void selectionUpdate(MeshViewer meshViewer)
-    {
+    public void selectionUpdate(MeshViewer meshViewer) {
 
     }
 
@@ -55,33 +52,29 @@ public abstract class AdvancedEditingTool extends EditingTool
      *
      * @param view The view to toggle active manipulator for
      */
-    public void toggleManipulator(ViewerCanvas view)
-    {
-        List<Manipulator> manipulators = ((PolyMeshViewer)view).getManipulators();
-        if ( manipulators.size() == 1 )
+    public void toggleManipulator(ViewerCanvas view) {
+        List<Manipulator> manipulators = ((PolyMeshViewer) view).getManipulators();
+        if (manipulators.size() == 1) {
             return;
+        }
 
         Manipulator newActive = null;
-        for(Manipulator manipulator: manipulators)
-        {
-            if (!manipulator.isActive() && newActive == null)
-            {
+        for (Manipulator manipulator : manipulators) {
+            if (!manipulator.isActive() && newActive == null) {
                 manipulator.setActive(true);
                 newActive = manipulator;
-            }
-            else
+            } else {
                 manipulator.setActive(false);
+            }
         }
     }
 
     public abstract void activateManipulators(ViewerCanvas view);
 
     /* This method returns a bounding box for the selected vertices in view coordinates. */
-
-    public SelectionProperties findSelectionProperties(Camera cam)
-    {
-        int selected[] = controller.getSelectionDistance();
-        MeshVertex[] vert  = ((Mesh)controller.getObject().object).getVertices();
+    public SelectionProperties findSelectionProperties(Camera cam) {
+        int[] selected = controller.getSelectionDistance();
+        MeshVertex[] vert = ((Mesh) controller.getObject().object).getVertices();
         double minx, miny, minz, maxx, maxy, maxz;
         Vec3 v;
         Vec3[] features = new Vec3[1];
@@ -92,32 +85,40 @@ public abstract class AdvancedEditingTool extends EditingTool
         maxx = maxy = maxz = -Double.MAX_VALUE;
         boolean nullSel = true;
         int count = 0;
-        for (i = 0; i < vert.length; i++)
-        {
-            if (selected[i] == 0)
-            {
+        for (i = 0; i < vert.length; i++) {
+            if (selected[i] == 0) {
                 count++;
                 nullSel = false;
                 center.add(vert[i].r);
                 v = cam.getObjectToView().times(vert[i].r);
-                if (v.x < minx) minx = v.x;
-                if (v.x > maxx) maxx = v.x;
-                if (v.y < miny) miny = v.y;
-                if (v.y > maxy) maxy = v.y;
-                if (v.z < minz) minz = v.z;
-                if (v.z > maxz) maxz = v.z;
+                if (v.x < minx) {
+                    minx = v.x;
+                }
+                if (v.x > maxx) {
+                    maxx = v.x;
+                }
+                if (v.y < miny) {
+                    miny = v.y;
+                }
+                if (v.y > maxy) {
+                    maxy = v.y;
+                }
+                if (v.z < minz) {
+                    minz = v.z;
+                }
+                if (v.z > maxz) {
+                    maxz = v.z;
+                }
             }
         }
-        if (nullSel)
+        if (nullSel) {
             return new SelectionProperties();
-        else
-        {
+        } else {
             SelectionProperties props;
-            if (controller instanceof PolyMeshEditorWindow)
-                props = ((PolyMeshEditorWindow)controller).getSelectionProperties();
-            else
-            {
-                center.scale(1.0/(double)count);
+            if (controller instanceof PolyMeshEditorWindow) {
+                props = ((PolyMeshEditorWindow) controller).getSelectionProperties();
+            } else {
+                center.scale(1.0 / (double) count);
                 features = new Vec3[2];
                 features[0] = center;
                 features[1] = new Vec3();
@@ -129,123 +130,124 @@ public abstract class AdvancedEditingTool extends EditingTool
     }
 
     /**
-     *  Call this method when the selection mode has changed
-     *  Depending on the tool specialization, display can be updated
-     *  depending on the selection mode (whatever the mode really, e.g.
-     *  face, edge, vertex mode for meshes, etc.
+     * Call this method when the selection mode has changed
+     * Depending on the tool specialization, display can be updated
+     * depending on the selection mode (whatever the mode really, e.g.
+     * face, edge, vertex mode for meshes, etc.
      */
-    public void selectionModeChanged(int selectionMode)
-    {
+    public void selectionModeChanged(int selectionMode) {
     }
-    
-    /* Utility methods */
 
-    protected Vec3 [] findDraggedPositions(Vec3 dragVec, Vec3 vert[], MeshViewer view, int selectDist[])
-    {
+    /* Utility methods */
+    protected Vec3[] findDraggedPositions(Vec3 dragVec, Vec3[] vert, MeshViewer view, int[] selectDist) {
         int maxDistance = view.getController().getTensionDistance();
         double tension = view.getController().getMeshTension();
-        Vec3 drag[] = new Vec3 [maxDistance+1];
-        Vec3 v[] = new Vec3 [vert.length];
+        Vec3[] drag = new Vec3[maxDistance + 1];
+        Vec3[] v = new Vec3[vert.length];
 
         drag[0] = dragVec;
-        for (int i = 1; i <= maxDistance; i++)
-            drag[i] = drag[0].times(Math.pow((maxDistance-i+1.0)/(maxDistance+1.0), tension));
+        for (int i = 1; i <= maxDistance; i++) {
+            drag[i] = drag[0].times(Math.pow((maxDistance - i + 1.0) / (maxDistance + 1.0), tension));
+        }
         /*if (view.getUseWorldCoords())
         {
             Mat4 trans = view.getDisplayCoordinates().toLocal();
             for (int i = 0; i < drag.length; i++)
                 trans.transformDirection(drag[i]);
         }*/
-        for (int i = 0; i < vert.length; i++)
-        {
-            if (selectDist[i] > -1)
+        for (int i = 0; i < vert.length; i++) {
+            if (selectDist[i] > -1) {
                 v[i] = vert[i].plus(drag[selectDist[i]]);
-            else
+            } else {
                 v[i] = new Vec3(vert[i]);
+            }
         }
         return v;
     }
 
     /* Find the new positions of the vertices after scaling. */
-     protected Vec3 [] findScaledPositions(Vec3 vert[], Mat4 m, MeshViewer view)
-    {
-        Vec3 v[] = new Vec3 [vert.length];
-        int selected[] = controller.getSelectionDistance();
+    protected Vec3[] findScaledPositions(Vec3[] vert, Mat4 m, MeshViewer view) {
+        Vec3[] v = new Vec3[vert.length];
+        int[] selected = controller.getSelectionDistance();
         int i;
 
         // Determine the deltas.
-
-        for (i = 0; i < vert.length; i++)
-        {
-            if (selected[i] == 0)
+        for (i = 0; i < vert.length; i++) {
+            if (selected[i] == 0) {
                 v[i] = m.times(vert[i]).minus(vert[i]);
-            else
+            } else {
                 v[i] = new Vec3();
+            }
         }
-        if (theFrame instanceof MeshEditorWindow)
+        if (theFrame instanceof MeshEditorWindow) {
             ((MeshEditorWindow) theFrame).adjustDeltas(v);
-        for (i = 0; i < vert.length; i++)
+        }
+        for (i = 0; i < vert.length; i++) {
             v[i].add(vert[i]);
+        }
         return v;
     }
 
     /* Find the new positions of the vertices after scaling. */
-    protected Vec3 [] findRotatedPositions(Vec3 vert[], Mat4 mat, MeshViewer view)
-    {
-        Vec3 v[] = new Vec3 [vert.length], axis;
-        int selected[] = controller.getSelectionDistance();
+    protected Vec3[] findRotatedPositions(Vec3[] vert, Mat4 mat, MeshViewer view) {
+        Vec3[] v = new Vec3[vert.length];
+        Vec3 axis;
+        int[] selected = controller.getSelectionDistance();
         Camera cam = view.getCamera();
         CoordinateSystem coords = view.getDisplayCoordinates();
         Mat4 m;
         int i;
 
         // Determine the deltas.
-        for (i = 0; i < vert.length; i++)
-        {
-            if (selected[i] == 0)
+        for (i = 0; i < vert.length; i++) {
+            if (selected[i] == 0) {
                 v[i] = mat.times(vert[i]).minus(vert[i]);
-            else
+            } else {
                 v[i] = new Vec3();
+            }
         }
-        if (theFrame instanceof MeshEditorWindow)
+        if (theFrame instanceof MeshEditorWindow) {
             ((MeshEditorWindow) theFrame).adjustDeltas(v);
-        for (i = 0; i < vert.length; i++)
+        }
+        for (i = 0; i < vert.length; i++) {
             v[i].add(vert[i]);
+        }
         return v;
     }
 
-    protected Vec3 [] findDraggedPositions(Vec3 pos, Vec3 vert[], double dx, double dy, MeshViewer view, boolean controlDown, int selectDist[])
-    {
+    protected Vec3[] findDraggedPositions(Vec3 pos, Vec3[] vert, double dx, double dy, MeshViewer view, boolean controlDown, int[] selectDist) {
         int maxDistance = view.getController().getTensionDistance();
         double tension = view.getController().getMeshTension();
-        Vec3 drag[] = new Vec3 [maxDistance+1], v[] = new Vec3 [vert.length];
+        Vec3[] drag = new Vec3[maxDistance + 1], v = new Vec3[vert.length];
 
-        if (controlDown)
-            drag[0] = view.getCamera().getCameraCoordinates().getZDirection().times(-dy*0.01);
-        else
+        if (controlDown) {
+            drag[0] = view.getCamera().getCameraCoordinates().getZDirection().times(-dy * 0.01);
+        } else {
             drag[0] = view.getCamera().findDragVector(pos, dx, dy);
-        for (int i = 1; i <= maxDistance; i++)
-            drag[i] = drag[0].times(Math.pow((maxDistance-i+1.0)/(maxDistance+1.0), tension));
+        }
+        for (int i = 1; i <= maxDistance; i++) {
+            drag[i] = drag[0].times(Math.pow((maxDistance - i + 1.0) / (maxDistance + 1.0), tension));
+        }
         log.debug("dragging");
-        if (view.getUseWorldCoords())
-        {
+        if (view.getUseWorldCoords()) {
             log.debug("use world coords");
             Mat4 trans = view.getDisplayCoordinates().toLocal();
-            for (int i = 0; i < drag.length; i++)
+            for (int i = 0; i < drag.length; i++) {
                 trans.transformDirection(drag[i]);
+            }
         }
-        for (int i = 0; i < vert.length; i++)
-        {
-            if (selectDist[i] > -1)
+        for (int i = 0; i < vert.length; i++) {
+            if (selectDist[i] > -1) {
                 v[i] = vert[i].plus(drag[selectDist[i]]);
-            else
+            } else {
                 v[i] = new Vec3(vert[i]);
+            }
         }
         return v;
     }
 
-    public static class SelectionProperties
-    {
+    public static class SelectionProperties {
+
         public BoundingBox bounds;
         public Vec3[] featurePoints;
         public CoordinateSystem specificCoordinateSystem;

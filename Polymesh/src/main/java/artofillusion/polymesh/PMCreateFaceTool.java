@@ -26,12 +26,14 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.Vector;
 
-/** PMKnifeTool is an EditingTool used fto divide edges of PolyMesh objects. */
+/**
+ * PMKnifeTool is an EditingTool used fto divide edges of PolyMesh objects.
+ */
 @EditingTool.ButtonImage("polymesh:createface")
 @EditingTool.Tooltip("polymesh:createFaceTool.tipText")
 @EditingTool.ActivatedToolText("polymesh:createFaceTool.helpText")
-public class PMCreateFaceTool extends EditingTool
-{
+public class PMCreateFaceTool extends EditingTool {
+
     private List<Vec3> clickPoints;
     private UndoRecord undo;
     private MeshEditController controller;
@@ -39,43 +41,39 @@ public class PMCreateFaceTool extends EditingTool
     private boolean dragging;
     private Point dragPoint;
     private ViewerCanvas canvas;
-    private Point screenVert[];
+    private Point[] screenVert;
     private boolean[] selection, vertSelection;
     private boolean eligible;
     private int boundaryEdge;
     private int from, to;
     private Vec3 fromPoint;
     Vec3[] pr;
-    
-    public PMCreateFaceTool(EditingWindow fr, MeshEditController controller)
-    {
+
+    public PMCreateFaceTool(EditingWindow fr, MeshEditController controller) {
         super(fr);
-        clickPoints= new Vector<>();
+        clickPoints = new Vector<>();
         from = to = -1;
         fromPoint = null;
         this.controller = controller;
     }
-    
+
     @Override
-    public void activate()
-    {
+    public void activate() {
         super.activate();
         clickPoints.clear();
         from = to = -1;
         fromPoint = null;
     }
-    
+
     @Override
-    public void mouseReleased(WidgetMouseEvent ev, ViewerCanvas view)
-    {    
+    public void mouseReleased(WidgetMouseEvent ev, ViewerCanvas view) {
         Point e = ev.getPoint();
         PolyMesh mesh, viewMesh;
-        viewMesh = mesh = (PolyMesh)controller.getObject().object;
+        viewMesh = mesh = (PolyMesh) controller.getObject().object;
         boolean mirror;
         int[] invVertTable = null;
         int length = mesh.getVertices().length;
-        if ( mesh.getMirrorState() != PolyMesh.NO_MIRROR )
-        {
+        if (mesh.getMirrorState() != PolyMesh.NO_MIRROR) {
             mirror = true;
             viewMesh = mesh.getMirroredMesh();
             invVertTable = mesh.getInvMirroredVerts();
@@ -85,73 +83,65 @@ public class PMCreateFaceTool extends EditingTool
         MeshVertex[] v = null;
         boolean project = (controller instanceof PolyMeshEditorWindow ? ((PolyMeshEditorWindow) controller).getProjectOntoSurface() : false);
         if (project && mesh.getSmoothingMethod() != PolyMesh.NO_SMOOTHING && viewMesh.getSubdividedMesh() != null) {
-        	subMesh = viewMesh.getSubdividedMesh();
-        	v = subMesh.getVertices();
-    	} else {
-    		v = mesh.getVertices();
-    	}
+            subMesh = viewMesh.getSubdividedMesh();
+            v = subMesh.getVertices();
+        } else {
+            v = mesh.getVertices();
+        }
         pr = new Vec3[length];
-        for (int i = 0; i < length; ++i)
+        for (int i = 0; i < length; ++i) {
             pr[i] = v[i].r;
+        }
         Vec2 p;
         canvas = view;
         double closestz = Double.MAX_VALUE;
         int which = -1;
-        for ( int i = 0; i < pr.length; i++ )
-        {
-            p = canvas.getCamera().getObjectToScreen().timesXY( pr[i] );
-            Point ps = new Point( (int) p.x, (int) p.y );
-            if ( e.x < ps.x - PolyMeshViewer.HANDLE_SIZE / 2 || e.x > ps.x + PolyMeshViewer.HANDLE_SIZE / 2 ||
-                    e.y < ps.y - PolyMeshViewer.HANDLE_SIZE / 2 || e.y > ps.y + PolyMeshViewer.HANDLE_SIZE / 2 )
+        for (int i = 0; i < pr.length; i++) {
+            p = canvas.getCamera().getObjectToScreen().timesXY(pr[i]);
+            Point ps = new Point((int) p.x, (int) p.y);
+            if (e.x < ps.x - PolyMeshViewer.HANDLE_SIZE / 2 || e.x > ps.x + PolyMeshViewer.HANDLE_SIZE / 2
+                    || e.y < ps.y - PolyMeshViewer.HANDLE_SIZE / 2 || e.y > ps.y + PolyMeshViewer.HANDLE_SIZE / 2) {
                 continue;
-            double z = canvas.getCamera().getObjectToView().timesZ( pr[i] );
-            if ( z < closestz )
-            {
-                if (invVertTable != null)
+            }
+            double z = canvas.getCamera().getObjectToView().timesZ(pr[i]);
+            if (z < closestz) {
+                if (invVertTable != null) {
                     which = invVertTable[i];
-                else
+                } else {
                     which = i;
+                }
                 closestz = z;
             }
         }
-        if ( clickPoints.size() == 0 && from == -1 && which != -1)
-        {
+        if (clickPoints.size() == 0 && from == -1 && which != -1) {
             from = which;
             fromPoint = pr[from];
             return;
         }
-        if ( canvas == view && from != -1 )
-        {
-            if ( which == -1 )
-            {
-                if (clickPoints.size() == 0)
-                {
-                    clickPoints.add( fromPoint = get3DPoint(fromPoint, e) );
+        if (canvas == view && from != -1) {
+            if (which == -1) {
+                if (clickPoints.size() == 0) {
+                    clickPoints.add(fromPoint = get3DPoint(fromPoint, e));
                     return;
                 }
-                for (int i = 0; i < clickPoints.size(); i++ )
-                {
+                for (int i = 0; i < clickPoints.size(); i++) {
                     Vec3 cpv = clickPoints.get(i);
-                    Vec2 ps =  canvas.getCamera().getObjectToScreen().timesXY( cpv );
-                    if ( e.x < ps.x - PolyMeshViewer.HANDLE_SIZE / 2 || e.x > ps.x + PolyMeshViewer.HANDLE_SIZE / 2 ||
-                            e.y < ps.y - PolyMeshViewer.HANDLE_SIZE / 2 || e.y > ps.y + PolyMeshViewer.HANDLE_SIZE / 2 )
+                    Vec2 ps = canvas.getCamera().getObjectToScreen().timesXY(cpv);
+                    if (e.x < ps.x - PolyMeshViewer.HANDLE_SIZE / 2 || e.x > ps.x + PolyMeshViewer.HANDLE_SIZE / 2
+                            || e.y < ps.y - PolyMeshViewer.HANDLE_SIZE / 2 || e.y > ps.y + PolyMeshViewer.HANDLE_SIZE / 2) {
                         continue;
-                    if ( ( ev.getModifiers() & ActionEvent.CTRL_MASK ) != 0 )
-                    {
+                    }
+                    if ((ev.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
                         clickPoints.remove(i);
                         theWindow.updateImage();
                         return;
-                    }
-                    else if ( i == 0)
-                    {
+                    } else if (i == 0) {
                         addFace();
                         return;
                     }
                 }
-                clickPoints.add(  fromPoint = get3DPoint(fromPoint, e) );
-            }
-            else
-            {
+                clickPoints.add(fromPoint = get3DPoint(fromPoint, e));
+            } else {
                 to = which;
                 addFace();
             }
@@ -159,97 +149,86 @@ public class PMCreateFaceTool extends EditingTool
     }
 
     @Override
-    public void keyPressed(KeyPressedEvent e, ViewerCanvas view)
-    {
-        if (! (canvas == view) )
+    public void keyPressed(KeyPressedEvent e, ViewerCanvas view) {
+        if (!(canvas == view)) {
             return;
+        }
         int key = e.getKeyCode();
-        if (from != -1)
-        {
-            switch (key)
-            {
-                case KeyPressedEvent.VK_ESCAPE :
+        if (from != -1) {
+            switch (key) {
+                case KeyPressedEvent.VK_ESCAPE:
                     from = -1;
                     clickPoints.clear();
                     theWindow.updateImage();
                     break;
-                case KeyPressedEvent.VK_W :
-                    if (clickPoints.size() > 0)
-                        clickPoints.remove(clickPoints.size()-1);
+                case KeyPressedEvent.VK_W:
+                    if (clickPoints.size() > 0) {
+                        clickPoints.remove(clickPoints.size() - 1);
+                    }
                     theWindow.updateImage();
                     break;
             }
         }
     }
 
-    private void addFace()
-    {
-        if (clickPoints.isEmpty())
+    private void addFace() {
+        if (clickPoints.isEmpty()) {
             return;
+        }
         Vec3[] newPoints = clickPoints.toArray(new Vec3[0]);
 
-        PolyMesh mesh = (PolyMesh)controller.getObject().object;
+        PolyMesh mesh = (PolyMesh) controller.getObject().object;
         PolyMesh origMesh = (PolyMesh) mesh.duplicate();
-        if (to != -1)
-        {
-            if (!mesh.addFaceFromPoints(from, to, newPoints))
-            {
+        if (to != -1) {
+            if (!mesh.addFaceFromPoints(from, to, newPoints)) {
                 to = -1;
                 return;
             }
 
-        }
-        else
-        {
+        } else {
             mesh.addStandaloneFace(newPoints);
         }
         controller.setMesh(mesh);
-        theWindow.setUndoRecord( new UndoRecord( theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, origMesh} ) );
+        theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, origMesh}));
         clickPoints.clear();
         fromPoint = null;
         from = to = -1;
     }
 
-    Vec3 get3DPoint(Vec3 ref, Point clickPoint)
-    {
-        Vec2 pf = canvas.getCamera().getObjectToScreen().timesXY( ref );
-        return ref.plus(canvas.getCamera().findDragVector(ref, (int) Math.round(clickPoint.x - pf.x) , (int)Math.round(clickPoint.y - pf.y) ));
+    Vec3 get3DPoint(Vec3 ref, Point clickPoint) {
+        Vec2 pf = canvas.getCamera().getObjectToScreen().timesXY(ref);
+        return ref.plus(canvas.getCamera().findDragVector(ref, (int) Math.round(clickPoint.x - pf.x), (int) Math.round(clickPoint.y - pf.y)));
     }
 
-    
-    /** Draw any graphics that this tool overlays on top of the view. */
-    
+    /**
+     * Draw any graphics that this tool overlays on top of the view.
+     */
     @Override
-    public void drawOverlay(ViewerCanvas view)
-    {
-        if ( canvas == view && from != -1)
-        {
-            Vec2 p = view.getCamera().getObjectToScreen().timesXY( pr[from]  );
-            Point pf = new Point( (int) p.x, (int) p.y );
-            view.drawBox( pf.x - PolyMeshViewer.HANDLE_SIZE/2, pf.y - PolyMeshViewer.HANDLE_SIZE/2, PolyMeshViewer.HANDLE_SIZE, PolyMeshViewer.HANDLE_SIZE, Color.red);
-            if ( clickPoints.size() > 0)
-            {
+    public void drawOverlay(ViewerCanvas view) {
+        if (canvas == view && from != -1) {
+            Vec2 p = view.getCamera().getObjectToScreen().timesXY(pr[from]);
+            Point pf = new Point((int) p.x, (int) p.y);
+            view.drawBox(pf.x - PolyMeshViewer.HANDLE_SIZE / 2, pf.y - PolyMeshViewer.HANDLE_SIZE / 2, PolyMeshViewer.HANDLE_SIZE, PolyMeshViewer.HANDLE_SIZE, Color.red);
+            if (clickPoints.size() > 0) {
                 Vec3 v = clickPoints.get(0);
-                Vec2 vp = canvas.getCamera().getObjectToScreen().timesXY( v );
-                Point vpp = new Point( (int)Math.round(vp.x), (int)Math.round(vp.y) );
+                Vec2 vp = canvas.getCamera().getObjectToScreen().timesXY(v);
+                Point vpp = new Point((int) Math.round(vp.x), (int) Math.round(vp.y));
                 Point vppt;
-                view.drawLine( pf, vpp, Color.black );
-                for (int k = 0; k < clickPoints.size() - 1 ; ++k)
-                {
+                view.drawLine(pf, vpp, Color.black);
+                for (int k = 0; k < clickPoints.size() - 1; ++k) {
                     v = clickPoints.get(k);
-                    vp = canvas.getCamera().getObjectToScreen().timesXY( v );
-                    vpp = new Point( (int)Math.round(vp.x), (int)Math.round(vp.y) );
+                    vp = canvas.getCamera().getObjectToScreen().timesXY(v);
+                    vpp = new Point((int) Math.round(vp.x), (int) Math.round(vp.y));
                     v = clickPoints.get(k + 1);
-                    vp = canvas.getCamera().getObjectToScreen().timesXY( v );
-                    vppt = new Point( (int)Math.round(vp.x), (int)Math.round(vp.y) );
-                    view.drawLine( vpp, vppt, Color.black );
+                    vp = canvas.getCamera().getObjectToScreen().timesXY(v);
+                    vppt = new Point((int) Math.round(vp.x), (int) Math.round(vp.y));
+                    view.drawLine(vpp, vppt, Color.black);
                 }
-                for (int k = 0; k < clickPoints.size() ; ++k)
-                {
+                for (int k = 0; k < clickPoints.size(); ++k) {
                     v = clickPoints.get(k);
-                    vp = canvas.getCamera().getObjectToScreen().timesXY( v );
-                    vpp = new Point( (int)Math.round(vp.x), (int)Math.round(vp.y) );
-                    view.drawBox( vpp.x - PolyMeshViewer.HANDLE_SIZE/2, vpp.y - PolyMeshViewer.HANDLE_SIZE/2, PolyMeshViewer.HANDLE_SIZE, PolyMeshViewer.HANDLE_SIZE, Color.red);
+                    vp = canvas.getCamera().getObjectToScreen().timesXY(v);
+                    vpp = new Point((int) Math.round(vp.x), (int) Math.round(vp.y));
+                    view.drawBox(vpp.x - PolyMeshViewer.HANDLE_SIZE / 2, vpp.y - PolyMeshViewer.HANDLE_SIZE / 2, PolyMeshViewer.HANDLE_SIZE, PolyMeshViewer.HANDLE_SIZE, Color.red);
                 }
             }
         }

@@ -34,8 +34,8 @@ import lombok.extern.slf4j.Slf4j;
 @EditingTool.ButtonImage("polymesh:extrudecurve")
 @EditingTool.Tooltip("polymesh:extrudeCurveTool.tipText")
 @EditingTool.ActivatedToolText("polymesh:extrudeCurveTool.helpText")
-public class PMExtrudeCurveTool extends EditingTool
-{
+public class PMExtrudeCurveTool extends EditingTool {
+
     private Vector<CurvePoint> clickPoints;
     private PolyMesh orMesh;
     private boolean[] orSel;
@@ -48,43 +48,40 @@ public class PMExtrudeCurveTool extends EditingTool
     boolean previewMode = true;
     private static final int HANDLE_SIZE = 7;
 
-    public PMExtrudeCurveTool(EditingWindow fr, MeshEditController controller)
-    {
+    public PMExtrudeCurveTool(EditingWindow fr, MeshEditController controller) {
         super(fr);
-        clickPoints= new Vector<>();
+        clickPoints = new Vector<>();
         fromPoint = null;
         this.controller = controller;
     }
 
     @Override
-    public void activate()
-    {
+    public void activate() {
         super.activate();
         clickPoints.clear();
         fromPoint = null;
     }
 
     @Override
-    public void mousePressed(WidgetMouseEvent ev, ViewerCanvas view)
-    {
+    public void mousePressed(WidgetMouseEvent ev, ViewerCanvas view) {
         dragging = -1;
-        if (clickPoints.size() == 0)
+        if (clickPoints.size() == 0) {
             return;
-        if (canvas == view)
-        {
+        }
+        if (canvas == view) {
             Point e = ev.getPoint();
-            for (int i = 0; i < clickPoints.size(); i++ )
-            {
-                if (!(clickPoints.elementAt(i)).clickedOnto(ev, view))
+            for (int i = 0; i < clickPoints.size(); i++) {
+                if (!(clickPoints.elementAt(i)).clickedOnto(ev, view)) {
                     continue;
-                dragging  = i + 1;
-                if ( ( ev.getModifiers() & ActionEvent.CTRL_MASK ) != 0 )
-                {
+                }
+                dragging = i + 1;
+                if ((ev.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
                     clickPoints.remove(i);
-                    if (previewMode)
+                    if (previewMode) {
                         extrudeFaces(false);
+                    }
                     theWindow.updateImage();
-                    dragging =0;
+                    dragging = 0;
                 }
                 return;
             }
@@ -93,128 +90,125 @@ public class PMExtrudeCurveTool extends EditingTool
     }
 
     @Override
-    public void mouseDragged(WidgetMouseEvent ev, ViewerCanvas view)
-    {
-         if (dragging < 1)
+    public void mouseDragged(WidgetMouseEvent ev, ViewerCanvas view) {
+        if (dragging < 1) {
             return;
-        CurvePoint cp = clickPoints.elementAt(dragging-1);
-        if (dragging == 1)
+        }
+        CurvePoint cp = clickPoints.elementAt(dragging - 1);
+        if (dragging == 1) {
             cp.mouseDragged(fromPoint, ev.getPoint());
-        else
-        {
-            Vec3 p =  clickPoints.elementAt(dragging-2).position;
+        } else {
+            Vec3 p = clickPoints.elementAt(dragging - 2).position;
             cp.mouseDragged(p, ev.getPoint());
         }
-        if (previewMode)
+        if (previewMode) {
             extrudeFaces(false);
+        }
         theWindow.updateImage();
     }
 
-
     @Override
-    public void mouseReleased(WidgetMouseEvent ev, ViewerCanvas view)
-    {
+    public void mouseReleased(WidgetMouseEvent ev, ViewerCanvas view) {
         Point e = ev.getPoint();
         canvas = view;
-        if ( clickPoints.isEmpty() && fromPoint == null)
-        {
+        if (clickPoints.isEmpty() && fromPoint == null) {
             fromPoint = getInitialPoint();
-            if (fromPoint == null)
+            if (fromPoint == null) {
                 return;
+            }
             clickPoints.add(new CurvePoint(currentPoint = get3DPoint(fromPoint, e), 1.0));
-            if ( ( ev.getModifiers() & ActionEvent.SHIFT_MASK ) != 0 )
+            if ((ev.getModifiers() & ActionEvent.SHIFT_MASK) != 0) {
                 constantSize = true;
-            else
+            } else {
                 constantSize = false;
-            PolyMesh mesh = (PolyMesh)controller.getObject().object;
+            }
+            PolyMesh mesh = (PolyMesh) controller.getObject().object;
             orMesh = (PolyMesh) mesh.duplicate();
             orSel = controller.getSelection();
-            if (!constantSize)
+            if (!constantSize) {
                 computeScales();
-            if (previewMode)
+            }
+            if (previewMode) {
                 extrudeFaces(false);
+            }
             return;
         }
-        if ( canvas == view  )
-        {
-            if (dragging > -1)
-            {
+        if (canvas == view) {
+            if (dragging > -1) {
                 dragging = -1;
                 return;
             }
-            if ( ( ev.getModifiers() & ActionEvent.CTRL_MASK ) != 0 )
-            {
+            if ((ev.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
                 doCancel();
                 return;
             }
-            clickPoints.add(  new CurvePoint(currentPoint = get3DPoint(currentPoint, e), 1.0 ) );
-            if (!constantSize)
+            clickPoints.add(new CurvePoint(currentPoint = get3DPoint(currentPoint, e), 1.0));
+            if (!constantSize) {
                 computeScales();
-            if (previewMode)
+            }
+            if (previewMode) {
                 extrudeFaces(false);
+            }
             theWindow.updateImage();
         }
     }
 
-    private Vec3 getInitialPoint()
-    {
-        if (clickPoints.isEmpty())
-        {
+    private Vec3 getInitialPoint() {
+        if (clickPoints.isEmpty()) {
             orSel = controller.getSelection();
-            orMesh = (PolyMesh)controller.getObject().object;
+            orMesh = (PolyMesh) controller.getObject().object;
         }
         return getInitialPoint(orSel, orMesh);
     }
 
-    private Vec3 getInitialPoint(boolean[] sel, PolyMesh mesh)
-    {
+    private Vec3 getInitialPoint(boolean[] sel, PolyMesh mesh) {
         Vec3 fromPoint;
-        if (controller.getSelectionMode() != PolyMeshEditorWindow.FACE_MODE)
+        if (controller.getSelectionMode() != PolyMeshEditorWindow.FACE_MODE) {
             return null;
-        boolean nonZeroSel = false;
-        for (int i = 0; i < sel.length; i++)
-        {
-            nonZeroSel |= sel[i];
-            if (nonZeroSel)
-                break;
         }
-        if (!nonZeroSel)
+        boolean nonZeroSel = false;
+        for (int i = 0; i < sel.length; i++) {
+            nonZeroSel |= sel[i];
+            if (nonZeroSel) {
+                break;
+            }
+        }
+        if (!nonZeroSel) {
             return null;
+        }
         PolyMesh.Wface[] faces = mesh.getFaces();
         MeshVertex[] verts = mesh.getVertices();
         fromPoint = new Vec3();
         int count = 0;
-        for (int i = 0; i < faces.length; i++)
-        {
-            if (!sel[i])
+        for (int i = 0; i < faces.length; i++) {
+            if (!sel[i]) {
                 continue;
+            }
             ++count;
             Vec3 p = new Vec3();
             int[] fe = mesh.getFaceVertices(faces[i]);
-            for (int j = 0; j < fe.length; j++)
+            for (int j = 0; j < fe.length; j++) {
                 p.add(verts[fe[j]].r);
-            p.scale(1.0/(float)fe.length);
+            }
+            p.scale(1.0 / (float) fe.length);
             fromPoint.add(p);
         }
-        fromPoint.scale(1.0/(float)count);
+        fromPoint.scale(1.0 / (float) count);
         return fromPoint;
     }
 
-    private void applyRotationMatrix(boolean[] sel, Mat4 m, PolyMesh mesh)
-    {
+    private void applyRotationMatrix(boolean[] sel, Mat4 m, PolyMesh mesh) {
         PolyMesh.Wface[] faces = mesh.getFaces();
         MeshVertex[] verts = mesh.getVertices();
         boolean[] rotated = new boolean[verts.length];
-        for (int i = 0; i < faces.length; i++)
-        {
-            if (!sel[i])
+        for (int i = 0; i < faces.length; i++) {
+            if (!sel[i]) {
                 continue;
+            }
             Vec3 p = new Vec3();
             int[] fe = mesh.getFaceVertices(faces[i]);
-            for (int j = 0; j < fe.length; j++)
-            {
-                if (!rotated[fe[j]])
-                {
+            for (int j = 0; j < fe.length; j++) {
+                if (!rotated[fe[j]]) {
                     verts[fe[j]].r = m.times(verts[fe[j]].r);
                     rotated[fe[j]] = true;
                 }
@@ -223,34 +217,32 @@ public class PMExtrudeCurveTool extends EditingTool
     }
 
     @Override
-    public void keyPressed(KeyPressedEvent e, ViewerCanvas view)
-    {
-        if (! (canvas == view) )
+    public void keyPressed(KeyPressedEvent e, ViewerCanvas view) {
+        if (!(canvas == view)) {
             return;
+        }
         int key = e.getKeyCode();
-        if (fromPoint != null)
-        {
-            switch (key)
-            {
+        if (fromPoint != null) {
+            switch (key) {
                 case KeyPressedEvent.VK_ESCAPE:
                     log.debug("Escape...");
                     doCancel();
                     break;
-                case KeyPressedEvent.VK_W :
-                    if (clickPoints.size() > 0)
-                        clickPoints.remove(clickPoints.size()-1);
+                case KeyPressedEvent.VK_W:
+                    if (clickPoints.size() > 0) {
+                        clickPoints.remove(clickPoints.size() - 1);
+                    }
                     theWindow.updateImage();
                     break;
-                case KeyPressedEvent.VK_ENTER :
+                case KeyPressedEvent.VK_ENTER:
                     extrudeFaces(true);
                     break;
-                case KeyPressedEvent.VK_J :
+                case KeyPressedEvent.VK_J:
                     previewMode = !previewMode;
-                    if (previewMode && clickPoints.size()!=0)
-                            extrudeFaces(false);
-                    else if (clickPoints.size()!=0)
-                    {
-                        controller.setMesh((PolyMesh)orMesh.duplicate());
+                    if (previewMode && clickPoints.size() != 0) {
+                        extrudeFaces(false);
+                    } else if (clickPoints.size() != 0) {
+                        controller.setMesh((PolyMesh) orMesh.duplicate());
                         controller.setSelection(orSel);
                     }
                     theWindow.updateImage();
@@ -259,11 +251,9 @@ public class PMExtrudeCurveTool extends EditingTool
         }
     }
 
-    private void doCancel()
-    {
-        if (previewMode && clickPoints.size()!=0)
-        {
-            controller.setMesh((PolyMesh)orMesh.duplicate());
+    private void doCancel() {
+        if (previewMode && clickPoints.size() != 0) {
+            controller.setMesh((PolyMesh) orMesh.duplicate());
             controller.setSelection(orSel);
         }
         fromPoint = null;
@@ -271,90 +261,85 @@ public class PMExtrudeCurveTool extends EditingTool
         theWindow.updateImage();
     }
 
-    private void computeScales()
-    {
+    private void computeScales() {
         double[] sizes = null;
         sizes = new double[clickPoints.size()];
         double length = 0;
         double cumul = 0;
         Vec3 previous = fromPoint;
-        for (int i = 0; i < clickPoints.size(); i++)
-        {
+        for (int i = 0; i < clickPoints.size(); i++) {
             length += clickPoints.get(i).position.minus(previous).length();
             previous = clickPoints.get(i).position;
         }
-        if (length < 0.005)
+        if (length < 0.005) {
             clickPoints.forEach(cp -> cp.amplitude = 1.0);
-        else
-        {
+        } else {
             previous = fromPoint;
-            for (int i = 0; i < clickPoints.size(); i++)
-            {
+            for (int i = 0; i < clickPoints.size(); i++) {
                 cumul += clickPoints.get(i).position.minus(previous).length();
-                clickPoints.elementAt(i).amplitude = 1.0 - cumul/length;
+                clickPoints.elementAt(i).amplitude = 1.0 - cumul / length;
                 previous = clickPoints.get(i).position;
             }
         }
     }
 
-    private void extrudeFaces(boolean done)
-    {
-        boolean sel[] = orSel;
-        if (clickPoints.size() < 1)
+    private void extrudeFaces(boolean done) {
+        boolean[] sel = orSel;
+        if (clickPoints.size() < 1) {
             return;
+        }
         Vec3 previous;
         PolyMesh mesh = (PolyMesh) orMesh.duplicate();
         Vec3 extdir, nextdir, normal;
         double scale, angle;
         previous = fromPoint;
         double size;
-        for (int i = 0; i < clickPoints.size(); i++)
-        {
+        for (int i = 0; i < clickPoints.size(); i++) {
             Vec3[] normals = mesh.getFaceNormals();
             normal = new Vec3();
-            for (int j = 0; j < normals.length; j++)
-            {
-                if (sel[j])
+            for (int j = 0; j < normals.length; j++) {
+                if (sel[j]) {
                     normal.add(normals[j]);
+                }
             }
             normal.normalize();
             extdir = clickPoints.get(i).position.minus(previous);
             scale = extdir.length();
             extdir.normalize();
             angle = 0;
-            if (i < clickPoints.size() - 1)
-            {
-                nextdir = clickPoints.get(i+1).position.minus(clickPoints.get(i).position);
+            if (i < clickPoints.size() - 1) {
+                nextdir = clickPoints.get(i + 1).position.minus(clickPoints.get(i).position);
                 nextdir.normalize();
                 nextdir.add(extdir);
                 nextdir.normalize();
-            }
-            else
+            } else {
                 nextdir = extdir;
+            }
             angle = Math.acos(extdir.dot(normal));
             nextdir = normal.cross(nextdir);
-            if (nextdir.length() < 0.005)
+            if (nextdir.length() < 0.005) {
                 nextdir = null;
-            else
+            } else {
                 nextdir.normalize();
+            }
             mesh.extrudeRegion(sel, scale, extdir);
             boolean[] newSel = new boolean[mesh.getFaces().length];
-            for (int j = 0; j < sel.length; j++)
+            for (int j = 0; j < sel.length; j++) {
                 newSel[j] = sel[j];
+            }
             sel = newSel;
             previous = clickPoints.get(i).position;
             size = clickPoints.get(i).amplitude;
-            if (nextdir != null)
-            {
+            if (nextdir != null) {
                 Vec3 trans = getInitialPoint(sel, mesh);
                 Mat4 m = Mat4.translation(-trans.x, -trans.y, -trans.z);
-                if (size > 1e-6 )
-                    m = Mat4.scale(size,size,size).times(m);
+                if (size > 1e-6) {
+                    m = Mat4.scale(size, size, size).times(m);
+                }
                 m = Mat4.axisRotation(nextdir, angle).times(m);
                 m = Mat4.translation(trans.x, trans.y, trans.z).times(m);
                 applyRotationMatrix(sel, m, mesh);
-                if (size < 1e-6 && i == clickPoints.size() -1)
-                {
+                if (size < 1e-6 && i == clickPoints.size() - 1) {
                     mesh.collapseFaces(sel);
                     sel = new boolean[mesh.getFaces().length];
                 }
@@ -362,53 +347,47 @@ public class PMExtrudeCurveTool extends EditingTool
         }
         controller.setMesh(mesh);
         controller.setSelection(sel);
-        if (done)
-        {
+        if (done) {
             fromPoint = null;
             clickPoints.clear();
-            theWindow.setUndoRecord( new UndoRecord( theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, orMesh} ) );
+            theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, orMesh}));
         }
     }
 
-    Vec3 get3DPoint(Vec3 ref, Point clickPoint)
-    {
-        Vec2 pf = canvas.getCamera().getObjectToScreen().timesXY( ref );
-        return ref.plus(canvas.getCamera().findDragVector(ref, (int) Math.round(clickPoint.x - pf.x) , (int)Math.round(clickPoint.y - pf.y) ));
+    Vec3 get3DPoint(Vec3 ref, Point clickPoint) {
+        Vec2 pf = canvas.getCamera().getObjectToScreen().timesXY(ref);
+        return ref.plus(canvas.getCamera().findDragVector(ref, (int) Math.round(clickPoint.x - pf.x), (int) Math.round(clickPoint.y - pf.y)));
     }
 
-
-    /** Draw any graphics that this tool overlays on top of the view. */
-
+    /**
+     * Draw any graphics that this tool overlays on top of the view.
+     */
     @Override
-    public void drawOverlay(ViewerCanvas view)
-    {
+    public void drawOverlay(ViewerCanvas view) {
         Vec3 aPoint = getInitialPoint();
-        if (aPoint == null)
+        if (aPoint == null) {
             return;
-        Vec2 p = view.getCamera().getObjectToScreen().timesXY( aPoint  );
-        Point pf = new Point( (int) p.x, (int) p.y );
-        view.drawBox( pf.x - HANDLE_SIZE/2, pf.y - HANDLE_SIZE/2, HANDLE_SIZE, HANDLE_SIZE, Color.red);
-        if ( canvas == view )
-        {
-           if ( clickPoints.size() > 0)
-            {
+        }
+        Vec2 p = view.getCamera().getObjectToScreen().timesXY(aPoint);
+        Point pf = new Point((int) p.x, (int) p.y);
+        view.drawBox(pf.x - HANDLE_SIZE / 2, pf.y - HANDLE_SIZE / 2, HANDLE_SIZE, HANDLE_SIZE, Color.red);
+        if (canvas == view) {
+            if (clickPoints.size() > 0) {
                 Vec3 v = clickPoints.get(0).position;
-                Vec2 vp = canvas.getCamera().getObjectToScreen().timesXY( v );
-                Point vpp = new Point( (int)Math.round(vp.x), (int)Math.round(vp.y) );
+                Vec2 vp = canvas.getCamera().getObjectToScreen().timesXY(v);
+                Point vpp = new Point((int) Math.round(vp.x), (int) Math.round(vp.y));
                 Point vppt;
-                view.drawLine( pf, vpp, Color.black );
-                for (int k = 0; k < clickPoints.size() - 1 ; ++k)
-                {
+                view.drawLine(pf, vpp, Color.black);
+                for (int k = 0; k < clickPoints.size() - 1; ++k) {
                     v = clickPoints.get(k).position;
-                    vp = canvas.getCamera().getObjectToScreen().timesXY( v );
-                    vpp = new Point( (int)Math.round(vp.x), (int)Math.round(vp.y) );
-                    v = clickPoints.get(k+1).position;
-                    vp = canvas.getCamera().getObjectToScreen().timesXY( v );
-                    vppt = new Point( (int)Math.round(vp.x), (int)Math.round(vp.y) );
-                    view.drawLine( vpp, vppt, Color.black );
+                    vp = canvas.getCamera().getObjectToScreen().timesXY(v);
+                    vpp = new Point((int) Math.round(vp.x), (int) Math.round(vp.y));
+                    v = clickPoints.get(k + 1).position;
+                    vp = canvas.getCamera().getObjectToScreen().timesXY(v);
+                    vppt = new Point((int) Math.round(vp.x), (int) Math.round(vp.y));
+                    view.drawLine(vpp, vppt, Color.black);
                 }
-                for (int k = 0; k < clickPoints.size() ; ++k)
-                {
+                for (int k = 0; k < clickPoints.size(); ++k) {
                     clickPoints.get(k).draw(view);
                     //v = ((CurvePoint)clickPoints.get(k)).position;
                     //vp = canvas.getCamera().getObjectToScreen().timesXY( v );
@@ -419,8 +398,8 @@ public class PMExtrudeCurveTool extends EditingTool
         }
     }
 
-    private class CurvePoint
-    {
+    private class CurvePoint {
+
         Vec3 position;
         double angle;
         double amplitude;
@@ -432,57 +411,50 @@ public class PMExtrudeCurveTool extends EditingTool
         static final int HANDLE_UP = 1;
         static final int HANDLE_DOWN = 2;
 
-        public CurvePoint(Vec3 position ,double amplitude )
-        {
+        public CurvePoint(Vec3 position, double amplitude) {
             this.position = position;
             amplitude = 1;
             //this.angle = angle;
             this.amplitude = amplitude;
         }
 
-        public void draw(ViewerCanvas view)
-        {
-            Vec2 p = view.getCamera().getObjectToScreen().timesXY( position  );
-            Point pf = new Point( (int) p.x, (int) p.y );
-            view.drawBox( pf.x - HANDLE_SIZE/2, pf.y - HANDLE_SIZE/2, HANDLE_SIZE, HANDLE_SIZE, Color.red);
+        public void draw(ViewerCanvas view) {
+            Vec2 p = view.getCamera().getObjectToScreen().timesXY(position);
+            Point pf = new Point((int) p.x, (int) p.y);
+            view.drawBox(pf.x - HANDLE_SIZE / 2, pf.y - HANDLE_SIZE / 2, HANDLE_SIZE, HANDLE_SIZE, Color.red);
             double scaleFactor = view.getScale();
-            Point handleup = new Point(pf.x, (int)Math.round(pf.y + amplitude*SCALE_HEIGHT));
-            Point handledown = new Point(pf.x, (int)Math.round(pf.y - amplitude*SCALE_HEIGHT));
+            Point handleup = new Point(pf.x, (int) Math.round(pf.y + amplitude * SCALE_HEIGHT));
+            Point handledown = new Point(pf.x, (int) Math.round(pf.y - amplitude * SCALE_HEIGHT));
             //Shape dot = new Ellipse2D.Float(handleup.x,handleup.y,8,8);
             //view.fillShape(dot, Color.blue);
-            view.drawBox( handleup.x - HANDLE_SIZE/2, handleup.y - HANDLE_SIZE/2, HANDLE_SIZE, HANDLE_SIZE, Color.blue);
-            view.drawBox( handledown.x - HANDLE_SIZE/2, handledown.y - HANDLE_SIZE/2, HANDLE_SIZE, HANDLE_SIZE, Color.blue);
+            view.drawBox(handleup.x - HANDLE_SIZE / 2, handleup.y - HANDLE_SIZE / 2, HANDLE_SIZE, HANDLE_SIZE, Color.blue);
+            view.drawBox(handledown.x - HANDLE_SIZE / 2, handledown.y - HANDLE_SIZE / 2, HANDLE_SIZE, HANDLE_SIZE, Color.blue);
             view.drawLine(pf, handleup, Color.black);
             view.drawLine(pf, handledown, Color.black);
         }
 
-        public boolean clickedOnto(WidgetMouseEvent ev, ViewerCanvas view)
-        {
+        public boolean clickedOnto(WidgetMouseEvent ev, ViewerCanvas view) {
             Point e = ev.getPoint();
-            Vec2 ps =  canvas.getCamera().getObjectToScreen().timesXY( position );
-            if (!( e.x < ps.x - HANDLE_SIZE / 2 || e.x > ps.x + HANDLE_SIZE / 2 ||
-                 e.y < ps.y - HANDLE_SIZE / 2 || e.y > ps.y + HANDLE_SIZE / 2 ) )
-            {
-                if ( ( ev.getModifiers() & ActionEvent.SHIFT_MASK ) != 0 )
-                {
+            Vec2 ps = canvas.getCamera().getObjectToScreen().timesXY(position);
+            if (!(e.x < ps.x - HANDLE_SIZE / 2 || e.x > ps.x + HANDLE_SIZE / 2
+                    || e.y < ps.y - HANDLE_SIZE / 2 || e.y > ps.y + HANDLE_SIZE / 2)) {
+                if ((ev.getModifiers() & ActionEvent.SHIFT_MASK) != 0) {
                     dragging = NONE;
                     amplitude = 1.0;
-                }
-                else
+                } else {
                     dragging = MOVING;
+                }
                 return true;
             }
-            Point hpt = new Point((int)Math.round(ps.x), (int)Math.round(ps.y + amplitude*SCALE_HEIGHT));
-            if (!( e.x < hpt.x - HANDLE_SIZE / 2 || e.x > hpt.x + HANDLE_SIZE / 2 ||
-                 e.y < hpt.y - HANDLE_SIZE / 2 || e.y > hpt.y + HANDLE_SIZE / 2 ) )
-            {
+            Point hpt = new Point((int) Math.round(ps.x), (int) Math.round(ps.y + amplitude * SCALE_HEIGHT));
+            if (!(e.x < hpt.x - HANDLE_SIZE / 2 || e.x > hpt.x + HANDLE_SIZE / 2
+                    || e.y < hpt.y - HANDLE_SIZE / 2 || e.y > hpt.y + HANDLE_SIZE / 2)) {
                 dragging = HANDLE_UP;
                 return true;
             }
-            hpt = new Point((int)Math.round(ps.x), (int)Math.round(ps.y - amplitude*SCALE_HEIGHT));
-            if (!( e.x < hpt.x - HANDLE_SIZE / 2 || e.x > hpt.x + HANDLE_SIZE / 2 ||
-                 e.y < hpt.y - HANDLE_SIZE / 2 || e.y > hpt.y + HANDLE_SIZE / 2 ) )
-            {
+            hpt = new Point((int) Math.round(ps.x), (int) Math.round(ps.y - amplitude * SCALE_HEIGHT));
+            if (!(e.x < hpt.x - HANDLE_SIZE / 2 || e.x > hpt.x + HANDLE_SIZE / 2
+                    || e.y < hpt.y - HANDLE_SIZE / 2 || e.y > hpt.y + HANDLE_SIZE / 2)) {
                 dragging = HANDLE_DOWN;
                 return true;
             }
@@ -490,25 +462,25 @@ public class PMExtrudeCurveTool extends EditingTool
             return false;
         }
 
-        public void mouseDragged(Vec3 p, Point e)
-        {
+        public void mouseDragged(Vec3 p, Point e) {
             Vec2 pt;
-            switch (dragging)
-            {
-                case MOVING :
+            switch (dragging) {
+                case MOVING:
                     position = get3DPoint(p, e);
                     break;
-                case HANDLE_UP :
-                    pt =  canvas.getCamera().getObjectToScreen().timesXY( position );
-                    amplitude = (e.y - pt.y)/SCALE_HEIGHT;
-                    if (amplitude < 0)
+                case HANDLE_UP:
+                    pt = canvas.getCamera().getObjectToScreen().timesXY(position);
+                    amplitude = (e.y - pt.y) / SCALE_HEIGHT;
+                    if (amplitude < 0) {
                         amplitude = 0;
+                    }
                     break;
-                case HANDLE_DOWN :
-                    pt =  canvas.getCamera().getObjectToScreen().timesXY( position );
-                    amplitude = (-e.y + pt.y)/SCALE_HEIGHT;
-                    if (amplitude < 0)
+                case HANDLE_DOWN:
+                    pt = canvas.getCamera().getObjectToScreen().timesXY(position);
+                    amplitude = (-e.y + pt.y) / SCALE_HEIGHT;
+                    if (amplitude < 0) {
                         amplitude = 0;
+                    }
                     break;
                 default:
                     break;

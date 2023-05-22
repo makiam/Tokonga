@@ -15,51 +15,41 @@ import artofillusion.ui.Translate;
 import buoy.widget.BFrame;
 
 /**
- *  PMOBJTranslator is a Translator which imports and exports OBJ files to/from
- *  Polymeshes.
+ * PMOBJTranslator is a Translator which imports and exports OBJ files to/from
+ * Polymeshes.
  *
- *@author     Francois Guillet
- *@created    13 juin 2005
+ * @author Francois Guillet
+ * @created 13 juin 2005
  */
+public class PMOBJTranslator implements Translator {
 
-public class PMOBJTranslator implements Translator
-{
     /**
-     *  Gets the name attribute of the PMOBJTranslator object
+     * Gets the name attribute of the PMOBJTranslator object
      *
-     *@return    The name value
+     * @return The name value
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return Translate.text("polymesh:importWavefront");
     }
 
-
     @Override
-    public boolean canImport()
-    {
+    public boolean canImport() {
         return true;
     }
 
-
     @Override
-    public boolean canExport()
-    {
+    public boolean canExport() {
         return true;
     }
 
-
     @Override
-     public void importFile( BFrame parent )
-    {
-        PMOBJImporter.importFile( parent );
+    public void importFile(BFrame parent) {
+        PMOBJImporter.importFile(parent);
     }
 
-
     @Override
-     public void exportFile( BFrame parent, Scene theScene )
-    {
-    	 PMOBJExporter.exportFile( parent, theScene );
+    public void exportFile(BFrame parent, Scene theScene) {
+        PMOBJExporter.exportFile(parent, theScene);
     }
 }

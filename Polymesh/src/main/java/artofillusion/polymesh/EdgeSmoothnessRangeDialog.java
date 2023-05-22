@@ -43,7 +43,6 @@ class EdgeSmoothnessRangeDialog extends BDialog {
     private boolean[] newSel;
     private final PolyMeshEditorWindow owner;
 
-
     public EdgeSmoothnessRangeDialog(PolyMeshEditorWindow owner) {
         super(owner, Translate.text("polymesh:smoothnessRange"), true);
 
