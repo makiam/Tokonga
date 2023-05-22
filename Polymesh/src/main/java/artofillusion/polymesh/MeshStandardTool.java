@@ -33,7 +33,7 @@ import java.util.Map;
 @EditingTool.ActivatedToolText("polymesh:meshStandardTool.helpText")
 public class MeshStandardTool extends AdvancedEditingTool {
 
-    private Vec3 baseVertPos[];
+    private Vec3[] baseVertPos;
     private UndoRecord undo;
     private static Image icon, selectedIcon;
     /**
@@ -153,7 +153,8 @@ public class MeshStandardTool extends AdvancedEditingTool {
     private void doManipulatorMovingMesh(SSMR2DManipulator.ManipulatorMovingEvent e) {
         MeshViewer mv = (MeshViewer) e.getView();
         Mesh mesh = (Mesh) controller.getObject().object;
-        Vec3 v[], drag;
+        Vec3[] v;
+        Vec3 drag;
 
         drag = e.getDrag();
         v = findDraggedPositions(drag, baseVertPos, mv, controller.getSelectionDistance());

@@ -36,10 +36,11 @@ import java.util.Map;
 @EditingTool.ActivatedToolText("polymesh:advancedExtrudeTool.helpText")
 public class AdvancedExtrudeTool extends AdvancedEditingTool {
 
-    private Vec3 baseVertPos[];
+    private Vec3[] baseVertPos;
     private UndoRecord undo;
     private final Map<ViewerCanvas, Manipulator> manip3dHashMap;
-    private boolean selected[], separateFaces;
+    private boolean[] selected;
+    private boolean separateFaces;
     private PolyMesh origMesh;
     private short NO_EXTRUDE = 0;
     private short EXTRUDE_FACES = 1;

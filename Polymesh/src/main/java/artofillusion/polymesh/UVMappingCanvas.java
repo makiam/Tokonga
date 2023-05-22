@@ -792,8 +792,8 @@ public class UVMappingCanvas extends CustomWidget {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         double uoffset = 0; // 0.5 * sampling * (umax - umin) / size.width;
         double voffset = 0; // 0.5 * sampling * (vmax - vmin) / size.height;
-        TextureParameter param[] = texMapping.getParameters();
-        double paramVal[] = null;
+        TextureParameter[] param = texMapping.getParameters();
+        double[] paramVal = null;
         if (param != null) {
             paramVal = new double[param.length];
             for (int i = 0; i < param.length; i++) {
@@ -995,7 +995,7 @@ public class UVMappingCanvas extends CustomWidget {
             return;
         }
         FacetedMesh mesh = (FacetedMesh) preview.getObject().object;
-        Vec2 texCoord[][] = new Vec2[mesh.getFaceCount()][];
+        Vec2[][] texCoord = new Vec2[mesh.getFaceCount()][];
         for (int i = 0; i < texCoord.length; i++) {
             texCoord[i] = new Vec2[mesh.getFaceVertexCount(i)];
             for (int j = 0; j < texCoord[i].length; j++) {
@@ -1071,8 +1071,8 @@ public class UVMappingCanvas extends CustomWidget {
     public void findSelectionDistance() {
         int i, j;
         UnfoldedMesh mesh = meshes[currentPiece];
-        int dist[] = new int[mesh.getVertices().length];
-        UnfoldedEdge e[] = mesh.getEdges();
+        int[] dist = new int[mesh.getVertices().length];
+        UnfoldedEdge[] e = mesh.getEdges();
         int maxDistance = parent.getMaxTensionDistance();
 
         // First, set each distance to 0 or -1, depending on whether that vertex
@@ -1106,14 +1106,14 @@ public class UVMappingCanvas extends CustomWidget {
      * calculate the corresponding deltas for the unselected vertices according
      * to the mesh tension.
      */
-    public void adjustDeltas(Vec2 delta[]) {
-        int dist[] = getSelectionDistance();
-        int count[] = new int[delta.length];
+    public void adjustDeltas(Vec2[] delta) {
+        int[] dist = getSelectionDistance();
+        int[] count = new int[delta.length];
         UnfoldedMesh mesh = meshes[currentPiece];
-        UnfoldedEdge edge[] = mesh.getEdges();
+        UnfoldedEdge[] edge = mesh.getEdges();
         int maxDistance = parent.getMaxTensionDistance();
         double tension = parent.getTensionValue();
-        double scale[] = new double[maxDistance + 1];
+        double[] scale = new double[maxDistance + 1];
 
         for (int i = 0; i < delta.length; i++) {
             if (dist[i] != 0) {

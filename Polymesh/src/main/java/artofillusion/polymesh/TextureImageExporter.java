@@ -113,7 +113,7 @@ public class TextureImageExporter {
                 info.emissiveFilename = (imt.emissiveColor.getImage() != null ? newName()
                         : null);
             } else if (tex instanceof ProceduralTexture2D) {
-                Module output[] = ((ProceduralTexture2D) tex).getProcedure()
+                Module[] output = ((ProceduralTexture2D) tex).getProcedure()
                         .getOutputModules();
                 info.diffuseFilename = (output[0].inputConnected(0) ? newName()
                         : null);
@@ -138,7 +138,7 @@ public class TextureImageExporter {
             Mapping2D map = (Mapping2D) obj.object.getTextureMapping();
             if (map instanceof UVMapping && mesh instanceof TriangleMesh
                     && ((UVMapping) map).isPerFaceVertex((TriangleMesh) mesh)) {
-                Vec2 coords[][] = ((UVMapping) map)
+                Vec2[][] coords = ((UVMapping) map)
                         .findFaceTextureCoordinates((TriangleMesh) mesh);
                 for (int i = 0; i < coords.length; i++) {
                     for (int j = 0; j < coords[i].length; j++) {
@@ -157,7 +157,7 @@ public class TextureImageExporter {
                     }
                 }
             } else {
-                Vec2 coords[] = map.findTextureCoordinates(mesh);
+                Vec2[] coords = map.findTextureCoordinates(mesh);
                 for (int i = 0; i < coords.length; i++) {
                     if (coords[i].x < info.minu) {
                         info.minu = coords[i].x;

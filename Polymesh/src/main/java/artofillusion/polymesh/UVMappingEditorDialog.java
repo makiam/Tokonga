@@ -999,8 +999,8 @@ public class UVMappingEditorDialog extends BDialog {
                 g.fillRect(0, 0, resolution, resolution);
                 break;
             case TEXTURED:
-                TextureParameter param[] = mappingList.get(currentTexture).getParameters();
-                double paramVal[] = null;
+                TextureParameter[] param = mappingList.get(currentTexture).getParameters();
+                double[] paramVal = null;
                 if (param != null) {
                     paramVal = new double[param.length];
                     for (int i = 0; i < param.length; i++) {

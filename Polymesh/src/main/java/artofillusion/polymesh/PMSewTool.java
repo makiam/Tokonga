@@ -42,7 +42,7 @@ public class PMSewTool extends EditingTool {
     private boolean dragging;
     private Point dragPoint;
     private ViewerCanvas canvas;
-    private Point screenVert[];
+    private Point[] screenVert;
     private boolean[] selection;
 
     public PMSewTool(EditingWindow fr, MeshEditController controller) {
@@ -67,7 +67,7 @@ public class PMSewTool extends EditingTool {
             } else {
                 selection = controller.getSelection();
             }
-            int projectedEdge[] = null;
+            int[] projectedEdge = null;
             if (controller instanceof PolyMeshEditorWindow) {
                 projectedEdge = ((PolyMeshEditorWindow) controller).findProjectedEdges();
             }

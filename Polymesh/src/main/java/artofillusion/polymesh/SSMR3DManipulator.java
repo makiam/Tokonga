@@ -75,9 +75,9 @@ public class SSMR3DManipulator
     private static BToolTip moveToolTip, scaleToolTip, rotateToolTip, centerToolTip;
     private static Image ghostscale;
     private static Image centerhandle;
-    private static Image xyzHandleImages[] = new Image[6];
-    private static Image uvHandleImages[] = new Image[4];
-    private static Image specificHandleImages[] = new Image[6];
+    private static Image[] xyzHandleImages = new Image[6];
+    private static Image[] uvHandleImages = new Image[4];
+    private static Image[] specificHandleImages = new Image[6];
 
     public final static short X_MOVE = 0;
     public final static short X_SCALE = 1;
@@ -190,7 +190,7 @@ public class SSMR3DManipulator
         }
         MeshEditController controller = ((MeshViewer) view).getController();
         Mesh mesh = (Mesh) controller.getObject().object;
-        MeshVertex v[] = mesh.getVertices();
+        MeshVertex[] v = mesh.getVertices();
         Camera cam = view.getCamera();
         AdvancedEditingTool.SelectionProperties props = tool.findSelectionProperties(view.getCamera());
         bounds = findScreenBounds(props.bounds, cam, (MeshViewer) view, controller);

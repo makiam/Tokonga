@@ -35,7 +35,9 @@ import java.awt.event.ActionEvent;
 @EditingTool.Tooltip("bevelExtrudeTool.tipText")
 public class PMBevelExtrudeTool extends EditingTool {
 
-    private boolean selected[], noSelection, separateFaces;
+    private boolean[] selected;
+    private boolean noSelection;
+    private boolean separateFaces;
     private PolyMesh origMesh;
     private Point clickPoint;
     private double width, height;

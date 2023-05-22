@@ -73,7 +73,7 @@ public abstract class AdvancedEditingTool extends EditingTool {
 
     /* This method returns a bounding box for the selected vertices in view coordinates. */
     public SelectionProperties findSelectionProperties(Camera cam) {
-        int selected[] = controller.getSelectionDistance();
+        int[] selected = controller.getSelectionDistance();
         MeshVertex[] vert = ((Mesh) controller.getObject().object).getVertices();
         double minx, miny, minz, maxx, maxy, maxz;
         Vec3 v;
@@ -139,11 +139,11 @@ public abstract class AdvancedEditingTool extends EditingTool {
     }
 
     /* Utility methods */
-    protected Vec3[] findDraggedPositions(Vec3 dragVec, Vec3 vert[], MeshViewer view, int selectDist[]) {
+    protected Vec3[] findDraggedPositions(Vec3 dragVec, Vec3[] vert, MeshViewer view, int[] selectDist) {
         int maxDistance = view.getController().getTensionDistance();
         double tension = view.getController().getMeshTension();
-        Vec3 drag[] = new Vec3[maxDistance + 1];
-        Vec3 v[] = new Vec3[vert.length];
+        Vec3[] drag = new Vec3[maxDistance + 1];
+        Vec3[] v = new Vec3[vert.length];
 
         drag[0] = dragVec;
         for (int i = 1; i <= maxDistance; i++) {
@@ -166,9 +166,9 @@ public abstract class AdvancedEditingTool extends EditingTool {
     }
 
     /* Find the new positions of the vertices after scaling. */
-    protected Vec3[] findScaledPositions(Vec3 vert[], Mat4 m, MeshViewer view) {
-        Vec3 v[] = new Vec3[vert.length];
-        int selected[] = controller.getSelectionDistance();
+    protected Vec3[] findScaledPositions(Vec3[] vert, Mat4 m, MeshViewer view) {
+        Vec3[] v = new Vec3[vert.length];
+        int[] selected = controller.getSelectionDistance();
         int i;
 
         // Determine the deltas.
@@ -189,9 +189,10 @@ public abstract class AdvancedEditingTool extends EditingTool {
     }
 
     /* Find the new positions of the vertices after scaling. */
-    protected Vec3[] findRotatedPositions(Vec3 vert[], Mat4 mat, MeshViewer view) {
-        Vec3 v[] = new Vec3[vert.length], axis;
-        int selected[] = controller.getSelectionDistance();
+    protected Vec3[] findRotatedPositions(Vec3[] vert, Mat4 mat, MeshViewer view) {
+        Vec3[] v = new Vec3[vert.length];
+        Vec3 axis;
+        int[] selected = controller.getSelectionDistance();
         Camera cam = view.getCamera();
         CoordinateSystem coords = view.getDisplayCoordinates();
         Mat4 m;
@@ -214,10 +215,10 @@ public abstract class AdvancedEditingTool extends EditingTool {
         return v;
     }
 
-    protected Vec3[] findDraggedPositions(Vec3 pos, Vec3 vert[], double dx, double dy, MeshViewer view, boolean controlDown, int selectDist[]) {
+    protected Vec3[] findDraggedPositions(Vec3 pos, Vec3[] vert, double dx, double dy, MeshViewer view, boolean controlDown, int[] selectDist) {
         int maxDistance = view.getController().getTensionDistance();
         double tension = view.getController().getMeshTension();
-        Vec3 drag[] = new Vec3[maxDistance + 1], v[] = new Vec3[vert.length];
+        Vec3[] drag = new Vec3[maxDistance + 1], v = new Vec3[vert.length];
 
         if (controlDown) {
             drag[0] = view.getCamera().getCameraCoordinates().getZDirection().times(-dy * 0.01);

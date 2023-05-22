@@ -46,7 +46,7 @@ public class UVMappingManipulator {
     private Point originalCenter;
     private static Image ghostscale;
     private static Image centerhandle;
-    private static Image uvHandleImages[] = new Image[3];
+    private static Image[] uvHandleImages = new Image[3];
     private Rectangle[] boxes = new Rectangle[6];
     private UVRotationHandle rotationHandle;
     private int handle;

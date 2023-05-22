@@ -242,13 +242,15 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     private Vec3 direction;
 
-    private int selectionDistance[], maxDistance, selectMode;
+    private int[] selectionDistance;
+    private int maxDistance;
+    private int selectMode;
 
-    private int projectedEdge[];
+    private int[] projectedEdge;
 
     private boolean[] selected;
 
-    private Vec3 vertDisplacements[];
+    private Vec3[] vertDisplacements;
 
     private static EventSource eventSource;
 
@@ -258,11 +260,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     private TextureParameter faceIndexParam, jointWeightParam;
 
-    protected boolean hideFace[];
+    protected boolean[] hideFace;
 
-    protected boolean hideVert[];
+    protected boolean[] hideVert;
 
-    protected boolean hideEdge[];
+    protected boolean[] hideEdge;
 
     protected boolean[] selPoints;
 
@@ -1071,9 +1073,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      */
     public void extendSelectionCommand() {
         PolyMesh theMesh = (PolyMesh) objInfo.object;
-        int dist[] = getSelectionDistance();
-        boolean selectedVert[] = new boolean[dist.length];
-        Wedge edges[] = theMesh.getEdges();
+        int[] dist = getSelectionDistance();
+        boolean[] selectedVert = new boolean[dist.length];
+        Wedge[] edges = theMesh.getEdges();
 
         setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, this, selectMode, selected.clone()));
         for (int i = 0; i < edges.length; i++) {
@@ -1089,7 +1091,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             }
             setSelection(selected);
         } else {
-            Wface faces[] = theMesh.getFaces();
+            Wface[] faces = theMesh.getFaces();
             for (int i = 0; i < faces.length; i++) {
                 selected[i] = true;
                 int[] fv = theMesh.getFaceVertices(faces[i]);
@@ -1252,17 +1254,17 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      */
     private void addTriangleMeshExtraParameter(TriangleMesh mesh) {
         TextureParameter hideFaceParam = new TextureParameter(this, "Hide Face", 0.0, 1.0, 0.0);
-        TextureParameter params[] = mesh.getParameters();
-        TextureParameter newparams[] = new TextureParameter[params.length + 1];
-        ParameterValue values[] = mesh.getParameterValues();
-        ParameterValue newvalues[] = new ParameterValue[values.length + 1];
+        TextureParameter[] params = mesh.getParameters();
+        TextureParameter[] newparams = new TextureParameter[params.length + 1];
+        ParameterValue[] values = mesh.getParameterValues();
+        ParameterValue[] newvalues = new ParameterValue[values.length + 1];
         for (int i = 0; i < params.length; i++) {
             newparams[i] = params[i];
             newvalues[i] = values[i];
         }
         newparams[params.length] = hideFaceParam;
         newvalues[values.length] = new FaceParameterValue(mesh, hideFaceParam);
-        double index[] = new double[mesh.getFaces().length];
+        double[] index = new double[mesh.getFaces().length];
         for (int i = 0; i < index.length; i++) {
             index[i] = i;
         }
@@ -1303,7 +1305,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         }
         if (((PolyMesh) oldMesh).getMaterial() != null) {
             if (!theMesh.isClosed()) {
-                String options[] = new String[]{Translate.text("button.ok"),
+                String[] options = new String[]{Translate.text("button.ok"),
                     Translate.text("button.cancel")};
                 BStandardDialog dlg = new BStandardDialog(Translate
                         .text("polymesh:errorTitle"), UIUtilities.breakString(Translate
@@ -1369,14 +1371,14 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Description of the Parameter
      */
     @Override
-    public void adjustDeltas(Vec3 delta[]) {
-        int dist[] = getSelectionDistance();
-        int count[] = new int[delta.length];
+    public void adjustDeltas(Vec3[] delta) {
+        int[] dist = getSelectionDistance();
+        int[] count = new int[delta.length];
         PolyMesh theMesh = (PolyMesh) objInfo.object;
-        PolyMesh.Wedge edge[] = theMesh.getEdges();
+        PolyMesh.Wedge[] edge = theMesh.getEdges();
         int maxDistance = getTensionDistance();
         double tension = getMeshTension();
-        double scale[] = new double[maxDistance + 1];
+        double[] scale = new double[maxDistance + 1];
 
         for (int i = 0; i < delta.length; i++) {
             if (dist[i] != 0) {
@@ -2519,7 +2521,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private void doInsertLoopsCallback() {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         mesh.copyObject(priorValueMesh);
-        boolean sel[] = mesh.divideEdges(valueSelection, valueWidget
+        boolean[] sel = mesh.divideEdges(valueSelection, valueWidget
                 .getValue());
         mesh.connectVertices(sel);
         objectChanged();
@@ -2895,8 +2897,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     void setSmoothnessCommand() {
         final PolyMesh theMesh = (PolyMesh) objInfo.object;
         PolyMesh prevMesh = (PolyMesh) theMesh.duplicate();
-        final Wvertex vt[] = (Wvertex[]) theMesh.getVertices();
-        final Wedge ed[] = theMesh.getEdges();
+        final Wvertex[] vt = (Wvertex[]) theMesh.getVertices();
+        final Wedge[] ed = theMesh.getEdges();
         final boolean pointmode = (selectMode == POINT_MODE);
         final ActionProcessor processor = new ActionProcessor();
         float value;
@@ -2964,7 +2966,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     public void doEdgeSliderChanged() {
         PolyMesh theMesh = (PolyMesh) objInfo.object;
-        final Wedge ed[] = theMesh.getEdges();
+        final Wedge[] ed = theMesh.getEdges();
         float s = (float) edgeSlider.getValue();
         if (s < 0) {
             s = 0;
@@ -3010,8 +3012,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     void findSelectionDistance() {
         int i;
         int j;
-        int dist[] = new int[((PolyMesh) objInfo.object).getVertices().length];
-        Wedge e[] = ((PolyMesh) objInfo.object).getEdges();
+        int[] dist = new int[((PolyMesh) objInfo.object).getVertices().length];
+        Wedge[] e = ((PolyMesh) objInfo.object).getEdges();
         Wface[] f = ((PolyMesh) objInfo.object).getFaces();
 
         maxDistance = getTensionDistance();
@@ -3123,9 +3125,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     public AdvancedEditingTool.SelectionProperties getSelectionProperties() {
         PolyMesh mesh = (PolyMesh) objInfo.object;
-        MeshVertex v[] = mesh.getVertices();
-        Wedge e[] = mesh.getEdges();
-        Wface f[] = mesh.getFaces();
+        MeshVertex[] v = mesh.getVertices();
+        Wedge[] e = mesh.getEdges();
+        Wface[] f = mesh.getFaces();
         Vec3[] normals = null;
         Vec3[] features = null;
         switch (selectMode) {
@@ -3226,10 +3228,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     @Override
     public void setSelectionMode(int mode) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
-        MeshVertex v[] = mesh.getVertices();
-        Wedge e[] = mesh.getEdges();
-        Wface f[] = mesh.getFaces();
-        boolean newSel[];
+        MeshVertex[] v = mesh.getVertices();
+        Wedge[] e = mesh.getEdges();
+        Wface[] f = mesh.getFaces();
+        boolean[] newSel;
         int i;
 
         if (mode == selectMode) {
@@ -3347,7 +3349,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * @param hidden
      * The new hiddenFaces valueWidget.getValue()
      */
-    public void setHiddenFaces(boolean hidden[]) {
+    public void setHiddenFaces(boolean[] hidden) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         hideFace = hidden;
         hideVert = new boolean[mesh.getVertices().length];
@@ -3355,7 +3357,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             for (int i = 0; i < hideVert.length; i++) {
                 hideVert[i] = true;
             }
-            Wface face[] = mesh.getFaces();
+            Wface[] face = mesh.getFaces();
             for (int i = 0; i < face.length; i++) {
                 if (!hideFace[i]) {
                     int[] vf = mesh.getFaceVertices(face[i]);
@@ -3370,7 +3372,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             }
         }
         FaceParameterValue val = (FaceParameterValue) objInfo.object.getParameterValue(faceIndexParam);
-        double param[] = val.getValue();
+        double[] param = val.getValue();
         for (int i = 0; i < param.length; i++) {
             param[i] = i;
         }
@@ -3391,7 +3393,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * The new selection array
      */
     @Override
-    public void setSelection(boolean sel[]) {
+    public void setSelection(boolean[] sel) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         Wvertex[] verts = (Wvertex[]) mesh.getVertices();
         Wedge[] edges = mesh.getEdges();
@@ -3464,9 +3466,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             selected = new boolean[obj.getFaces().length];
         }
         if (hideFace != null) {
-            boolean oldHideFace[] = hideFace;
+            boolean[] oldHideFace = hideFace;
             FaceParameterValue val = (FaceParameterValue) getObject().object.getParameterValue(faceIndexParam);
-            double param[] = val.getValue();
+            double[] param = val.getValue();
             hideFace = new boolean[obj.getFaces().length];
             for (int i = 0; i < param.length; i++) {
                 int index = (int) param[i];
@@ -3499,8 +3501,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      */
     private void updateJointWeightParam() {
         PolyMesh mesh = (PolyMesh) objInfo.object;
-        MeshVertex vert[] = mesh.getVertices();
-        double jointWeight[] = new double[vert.length];
+        MeshVertex[] vert = mesh.getVertices();
+        double[] jointWeight = new double[vert.length];
         int selJointId = ((MeshViewer) theView[currentView]).getSelectedJoint();
         Joint selJoint = getObject().getSkeleton().getJoint(selJointId);
         for (int i = 0; i < jointWeight.length; i++) {
@@ -3551,17 +3553,17 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         faceIndexParam = new TextureParameter(this, "Face Index", 0.0, Double.MAX_VALUE, 0.0);
         jointWeightParam = new TextureParameter(this, "Joint Weight", 0.0, 1.0, 0.0);
         PolyMesh mesh = (PolyMesh) getObject().object;
-        TextureParameter params[] = mesh.getParameters();
-        TextureParameter newparams[] = new TextureParameter[params.length + 2];
-        ParameterValue values[] = mesh.getParameterValues();
-        ParameterValue newvalues[] = new ParameterValue[values.length + 2];
+        TextureParameter[] params = mesh.getParameters();
+        TextureParameter[] newparams = new TextureParameter[params.length + 2];
+        ParameterValue[] values = mesh.getParameterValues();
+        ParameterValue[] newvalues = new ParameterValue[values.length + 2];
         for (int i = 0; i < params.length; i++) {
             newparams[i] = params[i];
             newvalues[i] = values[i];
         }
         newparams[params.length] = faceIndexParam;
         newvalues[values.length] = new FaceParameterValue(mesh, faceIndexParam);
-        double faceIndex[] = new double[mesh.getFaces().length];
+        double[] faceIndex = new double[mesh.getFaces().length];
         for (int i = 0; i < faceIndex.length; i++) {
             faceIndex[i] = i;
         }
@@ -3585,10 +3587,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         faceIndexParam = null;
         jointWeightParam = null;
         PolyMesh mesh = (PolyMesh) getObject().object;
-        TextureParameter params[] = mesh.getParameters();
-        TextureParameter newparams[] = new TextureParameter[params.length - 2];
-        ParameterValue values[] = mesh.getParameterValues();
-        ParameterValue newvalues[] = new ParameterValue[values.length - 2];
+        TextureParameter[] params = mesh.getParameters();
+        TextureParameter[] newparams = new TextureParameter[params.length - 2];
+        ParameterValue[] values = mesh.getParameterValues();
+        ParameterValue[] newvalues = new ParameterValue[values.length - 2];
         for (int i = 0; i < newparams.length; i++) {
             newparams[i] = params[i];
             newvalues[i] = values[i];
@@ -3733,11 +3735,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      */
     private void doHideSelection() {
         PolyMesh mesh = (PolyMesh) objInfo.object;
-        boolean hide[] = new boolean[mesh.getFaces().length];
+        boolean[] hide = new boolean[mesh.getFaces().length];
         if (selectMode == FACE_MODE) {
             System.arraycopy(selected, 0, hide, 0, selected.length);
         } else if (selectMode == EDGE_MODE) {
-            Wedge edges[] = mesh.getEdges();
+            Wedge[] edges = mesh.getEdges();
             for (int i = 0; i < selected.length; i++) {
                 if (selected[i]) {
                     if (edges[i].face >= 0) {
@@ -3749,7 +3751,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 }
             }
         } else {
-            Wface faces[] = mesh.getFaces();
+            Wface[] faces = mesh.getFaces();
             for (int i = 0; i < faces.length; i++) {
                 hide[i] = false;
                 int[] vf = mesh.getFaceVertices(faces[i]);
@@ -3758,7 +3760,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 }
             }
         }
-        boolean wasHidden[] = hideFace;
+        boolean[] wasHidden = hideFace;
         if (wasHidden != null) {
             for (int i = 0; i < wasHidden.length; i++) {
                 if (wasHidden[i]) {
@@ -3909,7 +3911,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Invert the current selection.
      */
     public void invertSelectionCommand() {
-        boolean newSel[] = new boolean[selected.length];
+        boolean[] newSel = new boolean[selected.length];
         for (int i = 0; i < newSel.length; i++) {
             newSel[i] = !selected[i];
         }

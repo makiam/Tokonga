@@ -100,10 +100,10 @@ public class PMOBJImporter {
         int lineno = 0;
         int smoothingGroup = -1;
         String currentTexture = null;
-        VertexInfo vertIndex[] = new VertexInfo[3];
-        double val[] = new double[3];
-        double min[] = new double[]{Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE};
-        double max[] = new double[]{-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE};
+        VertexInfo[] vertIndex = new VertexInfo[3];
+        double[] val = new double[3];
+        double[] min = new double[]{Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE};
+        double[] max = new double[]{-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE};
         String s;
 
         try (BufferedReader in = new BufferedReader(new FileReader(f))) {
@@ -118,7 +118,7 @@ public class PMOBJImporter {
                         s = s.substring(0, s.length() - 1) + s2;
                     }
                 }
-                String fields[] = breakLine(s);
+                String[] fields = breakLine(s);
                 if (fields.length == 0) {
                     continue;
                 }
@@ -229,11 +229,11 @@ public class PMOBJImporter {
                 }
 
                 // Find which vertices are used by faces in this group.
-                int realIndex[] = new int[vertex.size()];
+                int[] realIndex = new int[vertex.size()];
                 for (int i = 0; i < realIndex.length; i++) {
                     realIndex[i] = -1;
                 }
-                int fc[][] = new int[groupFaces.size()][];
+                int[][] fc = new int[groupFaces.size()][];
                 int numVert = 0;
                 for (int i = 0; i < fc.length; i++) {
                     FaceInfo fi = groupFaces.elementAt(i);
@@ -250,7 +250,7 @@ public class PMOBJImporter {
                 }
 
                 // Build the list of vertices and center them.
-                Vec3 vert[] = new Vec3[numVert];
+                Vec3[] vert = new Vec3[numVert];
 
                 // Build the list of vertices and center them.
                 Vec3 center = new Vec3();
@@ -270,7 +270,7 @@ public class PMOBJImporter {
                 info.addTrack(new RotationTrack(info), 1);
 
                 // Find the smoothness values for the edges.
-                PolyMesh.Wedge edges[] = ((PolyMesh) info.object).getEdges();
+                PolyMesh.Wedge[] edges = ((PolyMesh) info.object).getEdges();
                 for (int i = 0; i < edges.length; i++) {
                     if (edges[i].face == -1 || edges[edges[i].hedge].face == -1) {
                         continue;
@@ -313,7 +313,7 @@ public class PMOBJImporter {
 
                         UVMapping map = new UVMapping(info.object, tex);
                         info.setTexture(tex, map);
-                        Vec2 uv[] = new Vec2[numVert];
+                        Vec2[] uv = new Vec2[numVert];
                         boolean needPerFace = false;
                         for (int j = 0; j < groupFaces.size() && !needPerFace; j++) {
                             FaceInfo fi = groupFaces.elementAt(j);
@@ -443,7 +443,7 @@ public class PMOBJImporter {
                 if (line.startsWith("#")) {
                     continue;
                 }
-                String fields[] = breakLine(line);
+                String[] fields = breakLine(line);
                 if (fields.length == 0) {
                     continue;
                 }
@@ -588,7 +588,7 @@ public class PMOBJImporter {
      * @return Description of the Return Value
      * @exception NumberFormatException Description of the Exception
      */
-    private static RGBColor parseColor(String fields[])
+    private static RGBColor parseColor(String[] fields)
             throws NumberFormatException {
         if (fields.length < 4) {
             return null;

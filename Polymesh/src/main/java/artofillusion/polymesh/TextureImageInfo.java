@@ -21,9 +21,9 @@ public class TextureImageInfo {
     String name;
     String diffuseFilename, specularFilename, hilightFilename, transparentFilename, emissiveFilename, bumpFilename;
     double minu, minv, maxu, maxv;
-    double paramValue[];
+    double[] paramValue;
 
-    public TextureImageInfo(Texture tex, double param[]) {
+    public TextureImageInfo(Texture tex, double[] param) {
         texture = tex;
         paramValue = param;
         minu = minv = Double.MAX_VALUE;

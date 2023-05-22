@@ -73,7 +73,7 @@ public class MouseDragManipulator extends Manipulator {
             return;
         }
         Mesh mesh = (Mesh) controller.getObject().object;
-        MeshVertex v[] = mesh.getVertices();
+        MeshVertex[] v = mesh.getVertices();
         if (!dragging) {
             center = new Vec3(props.featurePoints[0]);
         }

@@ -53,8 +53,8 @@ public class SSMR2DManipulator
     private Vec3 rotateCenter;
     private Vec3 toolHandlePos;
     private static Image topleftIcon, topbottomIcon, toprightIcon, leftrightIcon, centerIcon;
-    private static Image scaleHandleImages[] = new Image[9];
-    private static Image rotateHandleImages[] = new Image[9];
+    private static Image[] scaleHandleImages = new Image[9];
+    private static Image[] rotateHandleImages = new Image[9];
     private static BToolTip moveToolTip, scaleToolTip, rotateToolTip, centerToolTip;
 
     public final static short TOP_LEFT = 0;

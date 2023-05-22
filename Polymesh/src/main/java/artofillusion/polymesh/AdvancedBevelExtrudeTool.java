@@ -38,10 +38,11 @@ import javax.swing.ImageIcon;
 @EditingTool.ActivatedToolText("polymesh:advancedBevelExtrudeTool.helpText")
 public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
 
-    private Vec3 baseVertPos[];
+    private Vec3[] baseVertPos;
     private UndoRecord undo;
     private Map<ViewerCanvas, Manipulator> mouseDragManipHashMap;
-    private boolean selected[], separateFaces;
+    private boolean[] selected;
+    private boolean separateFaces;
     private PolyMesh origMesh;
     private short NO_EXTRUDE = 0;
     private short EXTRUDE_FACES = 1;

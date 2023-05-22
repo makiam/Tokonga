@@ -284,7 +284,7 @@ public class PMExtrudeCurveTool extends EditingTool {
     }
 
     private void extrudeFaces(boolean done) {
-        boolean sel[] = orSel;
+        boolean[] sel = orSel;
         if (clickPoints.size() < 1) {
             return;
         }

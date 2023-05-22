@@ -58,10 +58,10 @@ public class PolyMeshViewer extends MeshViewer {
 
     private boolean draggingSelectionBox, dragging;
     private int deselect;
-    private Point screenVert[];
-    private double screenZ[];
-    private Vec2 screenVec2[];
-    boolean visible[];
+    private Point[] screenVert;
+    private double[] screenZ;
+    private Vec2[] screenVec2;
+    boolean[] visible;
     private ArrayList<Manipulator> manipulators;
     private Manipulator[] manipulatorArray;
 
@@ -132,8 +132,8 @@ public class PolyMeshViewer extends MeshViewer {
             mirror = true;
         }
         int[] invVertTable = mesh.getInvMirroredVerts();
-        Wvertex v[] = (Wvertex[]) viewMesh.getVertices();
-        Vec2 p[];
+        Wvertex[] v = (Wvertex[]) viewMesh.getVertices();
+        Vec2[] p;
 
         // Calculate the screen coordinates of every vertex.
         int length = v.length;
@@ -147,10 +147,10 @@ public class PolyMeshViewer extends MeshViewer {
             visible = new boolean[length];
         }
         double clipDist = (theCamera.isPerspective() ? theCamera.getClipDistance() : -Double.MAX_VALUE);
-        boolean hideVert[] = (controller instanceof PolyMeshEditorWindow
+        boolean[] hideVert = (controller instanceof PolyMeshEditorWindow
                 ? ((PolyMeshEditorWindow) controller).hideVert : new boolean[v.length]);
         QuadMesh subMesh = null;
-        MeshVertex sv[] = null;
+        MeshVertex[] sv = null;
         boolean project = (controller instanceof PolyMeshEditorWindow
                 && ((PolyMeshEditorWindow) controller).getProjectOntoSurface());
         if (project && viewMesh.getSubdividedMesh() != null) {
@@ -211,15 +211,15 @@ public class PolyMeshViewer extends MeshViewer {
             return;
         }
 
-        boolean hide[] = null;
-        int faceIndex[] = null;
+        boolean[] hide = null;
+        int[] faceIndex = null;
         PolyMesh polymesh = (PolyMesh) getController().getObject().getObject();
         ObjectInfo objInfo = controller.getObject();
         if (controller instanceof PolyMeshEditorWindow
                 && ((PolyMeshEditorWindow) controller).getFaceIndexParameter() != null) {
             RenderingMesh mesh = objInfo.getPreviewMesh();
             TextureParameter faceIndexParameter = ((PolyMeshEditorWindow) controller).getFaceIndexParameter();
-            double param[] = null;
+            double[] param = null;
             for (int i = 0; i < mesh.param.length; i++) {
                 if (objInfo.getObject().getParameters()[i] == faceIndexParameter) {
                     param = ((FaceParameterValue) mesh.param[i]).getValue();
@@ -229,7 +229,7 @@ public class PolyMeshViewer extends MeshViewer {
             for (int i = 0; i < faceIndex.length; i++) {
                 faceIndex[i] = (int) param[i];
             }
-            boolean hideFace[] = ((PolyMeshEditorWindow) controller).hideFace;
+            boolean[] hideFace = ((PolyMeshEditorWindow) controller).hideFace;
             if (hideFace != null) {
                 hide = new boolean[param.length];
                 for (int i = 0; i < hide.length; i++) {
@@ -257,7 +257,7 @@ public class PolyMeshViewer extends MeshViewer {
                 shader = new FlatVertexShader(mesh, surfaceRGBColor, viewDir);
             } else if (surfaceColoringParameter != null) {
                 shader = null;
-                TextureParameter params[] = objInfo.getObject().getParameters();
+                TextureParameter[] params = objInfo.getObject().getParameters();
                 for (int i = 0; i < params.length; i++) {
                     if (params[i].equals(surfaceColoringParameter)) {
                         shader = new ParameterVertexShader(mesh,
@@ -312,7 +312,7 @@ public class PolyMeshViewer extends MeshViewer {
             vertColor = disableColor(vertColor);
         }
         // First, draw any unselected portions of the object.
-        boolean selected[] = controller.getSelection();
+        boolean[] selected = controller.getSelection();
         int ref = 0;
         boolean mirror = false;
         int[] invVertTable = mesh.getInvMirroredVerts();
@@ -322,7 +322,7 @@ public class PolyMeshViewer extends MeshViewer {
             viewMesh = mesh.getMirroredMesh();
         }
         QuadMesh subMesh = null;
-        MeshVertex sv[];
+        MeshVertex[] sv;
         boolean project = (controller instanceof PolyMeshEditorWindow && ((PolyMeshEditorWindow) controller).getProjectOntoSurface());
         if (project && viewMesh.getSubdividedMesh() != null) {
             subMesh = viewMesh.getSubdividedMesh();
@@ -377,12 +377,12 @@ public class PolyMeshViewer extends MeshViewer {
         }
 
         QuadMesh divMesh = null;
-        MeshVertex divVert[] = null;
-        QuadEdge divEdge[] = null;
-        Point divScreenVert[] = null;
-        double divScreenZ[] = null;
-        Vec2 divPos[] = null;
-        boolean hideFace[] = (controller instanceof PolyMeshEditorWindow
+        MeshVertex[] divVert = null;
+        QuadEdge[] divEdge = null;
+        Point[] divScreenVert = null;
+        double[] divScreenZ = null;
+        Vec2[] divPos = null;
+        boolean[] hideFace = (controller instanceof PolyMeshEditorWindow
                 ? ((PolyMeshEditorWindow) controller).hideFace : null);
         PolyMesh mesh = (PolyMesh) getController().getObject().getObject();
         Color seamColor = mesh.getSeamColor();
@@ -414,7 +414,7 @@ public class PolyMeshViewer extends MeshViewer {
         Wedge[] e = viewMesh.getEdges();
         Wedge[] trueEdges = mesh.getEdges();
         Wface[] trueFaces = mesh.getFaces();
-        int projectedEdge[] = (controller instanceof PolyMeshEditorWindow
+        int[] projectedEdge = (controller instanceof PolyMeshEditorWindow
                 ? ((PolyMeshEditorWindow) controller).findProjectedEdges() : null);
         if (projectedEdge != null) {
             divMesh = viewMesh.getSubdividedMesh();
@@ -436,7 +436,7 @@ public class PolyMeshViewer extends MeshViewer {
         if (selectionMode == MeshEditController.FACE_MODE) {
             edgeSelected = new boolean[trueEdges.length / 2];
             for (int i = 0; i < trueFaces.length; i++) {
-                int fe[] = mesh.getFaceEdges(trueFaces[i]);
+                int[] fe = mesh.getFaceEdges(trueFaces[i]);
                 if (selected[i]) {
                     for (int j = 0; j < fe.length; j++) {
                         int k = fe[j];
@@ -697,9 +697,9 @@ public class PolyMeshViewer extends MeshViewer {
     @Override
     protected void mousePressed(WidgetMouseEvent e) {
         PolyMesh mesh = (PolyMesh) getController().getObject().getObject();
-        MeshVertex v[] = mesh.getVertices();
-        Wedge ed[] = mesh.getEdges();
-        Wface f[] = mesh.getFaces();
+        MeshVertex[] v = mesh.getVertices();
+        Wedge[] ed = mesh.getEdges();
+        Wface[] f = mesh.getFaces();
         int i;
         int j;
         int k;
@@ -799,7 +799,7 @@ public class PolyMeshViewer extends MeshViewer {
         // If the click was on a selected object, forward it to the current
         // tool. If it was a
         // shift-click, the user may want to deselect it, so set a flag.
-        boolean selected[] = controller.getSelection();
+        boolean[] selected = controller.getSelection();
 
         if (selected[i]) {
             Vec3 pos = null;
@@ -831,7 +831,7 @@ public class PolyMeshViewer extends MeshViewer {
 
         // The click was on an unselected object. Select it and send an event to
         // the current tool.
-        boolean oldSelection[] = selected.clone();
+        boolean[] oldSelection = selected.clone();
         if (!e.isShiftDown()) {
             for (k = 0; k < selected.length; k++) {
                 selected[k] = false;
@@ -914,7 +914,7 @@ public class PolyMeshViewer extends MeshViewer {
             return;
         }
         PolyMesh mesh = (PolyMesh) getController().getObject().getObject();
-        boolean selected[] = controller.getSelection();
+        boolean[] selected = controller.getSelection();
         PolyMesh viewMesh = mesh;
         int ref = 0;
         boolean mirror = false;
@@ -926,8 +926,8 @@ public class PolyMeshViewer extends MeshViewer {
             viewMesh = mesh.getMirroredMesh();
         }
         Wface[] trueFaces = mesh.getFaces();
-        Wedge ed[] = viewMesh.getEdges();
-        Wface fc[] = viewMesh.getFaces();
+        Wedge[] ed = viewMesh.getEdges();
+        Wface[] fc = viewMesh.getFaces();
         int i;
         int j;
 
@@ -935,11 +935,11 @@ public class PolyMeshViewer extends MeshViewer {
             moveToGrid(e);
         }
         endDraggingSelection();
-        boolean oldSelection[] = selected.clone();
+        boolean[] oldSelection = selected.clone();
         boolean tolerant = (controller instanceof PolyMeshEditorWindow && ((PolyMeshEditorWindow) controller).tolerant);
-        boolean hideFace[] = (controller instanceof PolyMeshEditorWindow
+        boolean[] hideFace = (controller instanceof PolyMeshEditorWindow
                 ? ((PolyMeshEditorWindow) controller).hideFace : new boolean[fc.length]);
-        boolean hideVert[] = (controller instanceof PolyMeshEditorWindow
+        boolean[] hideVert = (controller instanceof PolyMeshEditorWindow
                 ? ((PolyMeshEditorWindow) controller).hideVert : new boolean[mesh.getVertices().length]);
 
         if (draggingSelectionBox && !e.isShiftDown() && !e.isControlDown()) {
@@ -1115,7 +1115,7 @@ public class PolyMeshViewer extends MeshViewer {
                 ? ((PolyMeshEditorWindow) controller).getLooseSelectionRange() : 0);
         int handleSize = polymesh.getHandleSize();
         QuadEdge[] sed = null;
-        int projectedEdge[] = null;
+        int[] projectedEdge = null;
         PolyMesh viewMesh = polymesh;
 
         // First, draw any unselected portions of the object.
@@ -1131,7 +1131,7 @@ public class PolyMeshViewer extends MeshViewer {
             invVertTable = polymesh.invMirroredVerts;
             invFaceTable = polymesh.invMirroredFaces;
         }
-        MeshVertex pv[] = viewMesh.getVertices();
+        MeshVertex[] pv = viewMesh.getVertices();
         Wedge[] ed = viewMesh.getEdges();
         Wface[] fc = viewMesh.getFaces();
 
@@ -1145,7 +1145,7 @@ public class PolyMeshViewer extends MeshViewer {
         }
         Wedge[] trueEdges = polymesh.getEdges();
         Wface[] trueFaces = polymesh.getFaces();
-        MeshVertex vt[] = pv;
+        MeshVertex[] vt = pv;
         if (submesh != null) {
             vt = submesh.getVertices();
         }
@@ -1162,8 +1162,8 @@ public class PolyMeshViewer extends MeshViewer {
         int which = -1;
         double distance;
         double maxDistance = Double.MAX_VALUE;
-        boolean selected[] = controller.getSelection();
-        boolean hideFace[] = (controller instanceof PolyMeshEditorWindow
+        boolean[] selected = controller.getSelection();
+        boolean[] hideFace = (controller instanceof PolyMeshEditorWindow
                 ? ((PolyMeshEditorWindow) controller).hideFace : new boolean[trueFaces.length]);
         if (controller.getSelectionMode() == MeshEditController.POINT_MODE) {
             for (i = 0; i < screenVert.length; i++) {

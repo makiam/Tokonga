@@ -41,7 +41,7 @@ public class PMCreateFaceTool extends EditingTool {
     private boolean dragging;
     private Point dragPoint;
     private ViewerCanvas canvas;
-    private Point screenVert[];
+    private Point[] screenVert;
     private boolean[] selection, vertSelection;
     private boolean eligible;
     private int boundaryEdge;

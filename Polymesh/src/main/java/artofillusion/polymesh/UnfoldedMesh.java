@@ -210,11 +210,11 @@ public class UnfoldedMesh {
         }
     }
 
-    UnfoldedVertex vertices[]; // mesh vertices
+    UnfoldedVertex[] vertices; // mesh vertices
 
-    UnfoldedEdge edges[]; // mesh edges
+    UnfoldedEdge[] edges; // mesh edges
 
-    UnfoldedFace faces[]; // mesh faces
+    UnfoldedFace[] faces; // mesh faces
 
     private String name;
 

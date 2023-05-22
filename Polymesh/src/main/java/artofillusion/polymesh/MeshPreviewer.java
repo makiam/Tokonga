@@ -99,10 +99,10 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
         boundR = bounds.getSize().length() * 0.5;
         CoordinateSystem coords = new CoordinateSystem(new Vec3(0.0, 0.0, 8.0 * boundR),
                 new Vec3(0.0, 0.0, -1.0), Vec3.vy());
-        Vec3 vert[] = new Vec3[]{new Vec3(100.0 * boundR, -boundR, 100.0 * boundR),
+        Vec3[] vert = new Vec3[]{new Vec3(100.0 * boundR, -boundR, 100.0 * boundR),
             new Vec3(-100.0 * boundR, -boundR, 100.0 * boundR),
             new Vec3(0.0, -boundR, -100.0 * boundR)};
-        int face[][] = {{0, 1, 2}};
+        int[][] face = {{0, 1, 2}};
         TriangleMesh tri;
         theScene = new Scene();
         theCamera = new Camera();
@@ -251,8 +251,10 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
         m = Mat4.translation(origin.x, origin.y, origin.z).times(m);
         theCamera.setObjectTransform(m);
         WireframeMesh mesh = info.object.getWireframeMesh();
-        int from[] = mesh.from, to[] = mesh.to, last = -1;
-        Vec3 vert[] = mesh.vert;
+        int[] from = mesh.from;
+        int[] to = mesh.to;
+        int last = -1;
+        Vec3[] vert = mesh.vert;
         for (int i = 0; i < mesh.from.length; i++) {
             if (from[i] == last) {
                 theCamera.drawClippedLineTo(g, vert[(last = to[i])]);
@@ -266,7 +268,7 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
      * Rotate the object to show a specific side.
      */
     private void changeView(int view) {
-        double angles[][] = new double[][]{{0.0, 0.0, 0.0}, {0.0, 180.0, 0.0},
+        double[][] angles = new double[][]{{0.0, 0.0, 0.0}, {0.0, 180.0, 0.0},
         {0.0, -90.0, 0.0}, {0.0, 90.0, 0.0},
         {-90.0, 0.0, 0.0}, {90.0, 0.0, 0.0}};
         objectCoords.setOrientation(angles[view][0], angles[view][1], angles[view][2]);
