@@ -27,12 +27,14 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 
-/** PMKnifeTool is an EditingTool used fto divide edges of PolyMesh objects. */
+/**
+ * PMKnifeTool is an EditingTool used fto divide edges of PolyMesh objects.
+ */
 @EditingTool.ButtonImage("polymesh:sew")
 @EditingTool.Tooltip("polymesh:sewTool.tipText")
 @EditingTool.ActivatedToolText("polymesh:sewTool.helpText")
-public class PMSewTool extends EditingTool
-{
+public class PMSewTool extends EditingTool {
+
     private Point clickPoint;
     private UndoRecord undo;
     private MeshEditController controller;
@@ -42,76 +44,75 @@ public class PMSewTool extends EditingTool
     private ViewerCanvas canvas;
     private Point screenVert[];
     private boolean[] selection;
-    
-    public PMSewTool(EditingWindow fr, MeshEditController controller)
-    {
+
+    public PMSewTool(EditingWindow fr, MeshEditController controller) {
         super(fr);
         this.controller = controller;
     }
-    
+
     @Override
-    public void mousePressed(WidgetMouseEvent e, ViewerCanvas view)
-    {    
-        if (!dragging)
-        {
+    public void mousePressed(WidgetMouseEvent e, ViewerCanvas view) {
+        if (!dragging) {
             dragging = true;
             selection = null;
-            originalMesh = (PolyMesh) ( (PolyMesh) controller.getObject().object ).duplicate();
+            originalMesh = (PolyMesh) ((PolyMesh) controller.getObject().object).duplicate();
             PolyMesh.Wedge[] edges = originalMesh.getEdges();
             MeshVertex[] v = originalMesh.getVertices();
-            Vec3[] pr =new Vec3[v.length];
-            for (int i = 0; i < pr.length; ++i)
+            Vec3[] pr = new Vec3[v.length];
+            for (int i = 0; i < pr.length; ++i) {
                 pr[i] = v[i].r;
-            if (! (controller.getSelectionMode() == PolyMeshEditorWindow.EDGE_MODE) )
-                controller.setSelectionMode( PolyMeshEditorWindow.EDGE_MODE);
-            else
+            }
+            if (!(controller.getSelectionMode() == PolyMeshEditorWindow.EDGE_MODE)) {
+                controller.setSelectionMode(PolyMeshEditorWindow.EDGE_MODE);
+            } else {
                 selection = controller.getSelection();
+            }
             int projectedEdge[] = null;
-            if (controller instanceof PolyMeshEditorWindow)
+            if (controller instanceof PolyMeshEditorWindow) {
                 projectedEdge = ((PolyMeshEditorWindow) controller).findProjectedEdges();
-            if (projectedEdge != null)
-            {
+            }
+            if (projectedEdge != null) {
                 QuadMesh mesh = ((PolyMeshEditorWindow) controller).getSubdividedPolyMesh();
                 MeshVertex[] vs = mesh.getVertices();
-                for (int i = 0; i < pr.length; ++i)
+                for (int i = 0; i < pr.length; ++i) {
                     pr[i] = vs[i].r;
+                }
             }
             int selNum = 0;
-            if (selection != null)
-                for (int i = 0; i < selection.length; ++i)
-                if (selection[i])
-                {
-                    if (edges[i].face != -1 && edges[edges[i].hedge].face != -1)
-                    {
-                        selNum = -1;
-                        break;
+            if (selection != null) {
+                for (int i = 0; i < selection.length; ++i) {
+                    if (selection[i]) {
+                        if (edges[i].face != -1 && edges[edges[i].hedge].face != -1) {
+                            selNum = -1;
+                            break;
+                        }
+                        ++selNum;
                     }
-                    ++selNum;
                 }
-            if (selNum < 2)
+            }
+            if (selNum < 2) {
                 selection = null;
-            clickPoint = new Point( e.getPoint() );
+            }
+            clickPoint = new Point(e.getPoint());
             dragPoint = e.getPoint();
             //controller.setSelection( new boolean[originalMesh.getVertices().length] );
             screenVert = new Point[v.length];
             Vec2 p;
-            for ( int i = 0; i < v.length; i++ )
-            {
-                p = view.getCamera().getObjectToScreen().timesXY( pr[i] );
-                screenVert[i] = new Point( (int) p.x, (int) p.y );
+            for (int i = 0; i < v.length; i++) {
+                p = view.getCamera().getObjectToScreen().timesXY(pr[i]);
+                screenVert[i] = new Point((int) p.x, (int) p.y);
             }
             canvas = view;
         }
     }
-    
+
     @Override
-    public void mouseDragged(WidgetMouseEvent e, ViewerCanvas view)
-    {
+    public void mouseDragged(WidgetMouseEvent e, ViewerCanvas view) {
         MeshViewer mv = (MeshViewer) view;
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
         Camera cam = view.getCamera();
-        dragPoint = new Point( e.getPoint() );
-        
+        dragPoint = new Point(e.getPoint());
+
         PolyMesh.Wedge[] edges = originalMesh.getEdges();
         PolyMesh.Wvertex[] v = (PolyMesh.Wvertex[]) originalMesh.getVertices();
         Vec3[] normals = originalMesh.getFaceNormals();
@@ -121,7 +122,7 @@ public class PMSewTool extends EditingTool
         Vec3 zdir = theCamera.getCameraCoordinates().getZDirection();
         Mat4 m = theCamera.getObjectToWorld();
         double minDist = Double.MAX_VALUE;
-       /* if ( ( e.getModifiers() & ActionEvent.SHIFT_MASK ) == 0 )
+        /* if ( ( e.getModifiers() & ActionEvent.SHIFT_MASK ) == 0 )
             {
                 if (edges[i].face > -1)
                     s1 = m.times(normals[edges[i].face]).dot(zdir);
@@ -137,15 +138,13 @@ public class PMSewTool extends EditingTool
             if ( selection != null && ! selection[i] )
                 continue;*/
         sewEdges[0] = sewEdges[1] = -1;
-        for (int i = 0; i < edges.length/2; i++)
-        {
-            if (edges[i].face != -1 && edges[edges[i].hedge].face != -1)
+        for (int i = 0; i < edges.length / 2; i++) {
+            if (edges[i].face != -1 && edges[edges[i].hedge].face != -1) {
                 continue;
-            f = findIntersection( screenVert[edges[i].vertex], screenVert[edges[edges[i].hedge].vertex], clickPoint, dragPoint);
-            if ( f > 0 )
-            {
-                if( f < minDist)
-                {
+            }
+            f = findIntersection(screenVert[edges[i].vertex], screenVert[edges[edges[i].hedge].vertex], clickPoint, dragPoint);
+            if (f > 0) {
+                if (f < minDist) {
                     sewEdges[0] = i;
                     minDist = f;
                 }
@@ -153,120 +152,115 @@ public class PMSewTool extends EditingTool
             }
         }
         //System.out.println( sewEdges[0] );
-        if ( ( e.getModifiers() & ActionEvent.CTRL_MASK ) == 0 )
-        {
-            if (sewEdges[0] >= 0)
-            {
+        if ((e.getModifiers() & ActionEvent.CTRL_MASK) == 0) {
+            if (sewEdges[0] >= 0) {
                 minDist = Double.MAX_VALUE;
                 double z;
-                for (int i = 0; i < edges.length/2; i++)
-                {
-                    if (edges[i].face != -1 && edges[edges[i].hedge].face != -1)
+                for (int i = 0; i < edges.length / 2; i++) {
+                    if (edges[i].face != -1 && edges[edges[i].hedge].face != -1) {
                         continue;
-                    if (i == sewEdges[0])
+                    }
+                    if (i == sewEdges[0]) {
                         continue;
-                    f = findIntersection( screenVert[edges[i].vertex], screenVert[edges[edges[i].hedge].vertex], clickPoint, dragPoint);
-                    if ( f > 0 )
-                    {
-                        if( (1 - f) < minDist)
-                        {
+                    }
+                    f = findIntersection(screenVert[edges[i].vertex], screenVert[edges[edges[i].hedge].vertex], clickPoint, dragPoint);
+                    if (f > 0) {
+                        if ((1 - f) < minDist) {
                             sewEdges[1] = i;
-                            minDist = 1-f;
+                            minDist = 1 - f;
                         }
 
                     }
                 }
             }
-            mesh.copyObject( originalMesh );
+            mesh.copyObject(originalMesh);
             boolean[] sel = null;
-            if ( sewEdges[1] >=0  )
-                sel = mesh.mergeEdges( sewEdges[0], sewEdges[1], selection, ( e.getModifiers() & ActionEvent.SHIFT_MASK ) == 1 );
+            if (sewEdges[1] >= 0) {
+                sel = mesh.mergeEdges(sewEdges[0], sewEdges[1], selection, (e.getModifiers() & ActionEvent.SHIFT_MASK) == 1);
+            }
             controller.objectChanged();
-            if ( selection != null && sel != null)
-                controller.setSelection( sel );
+            if (selection != null && sel != null) {
+                controller.setSelection(sel);
+            }
             theWindow.updateImage();
-            theWindow.setHelpText(Translate.text("polymesh:sewTool.dragText") );
-        }
-        else
-        {
-            if (sewEdges[0] >= 0)
-            {
-                mesh.copyObject( originalMesh );
-                boolean[] sel = new boolean[edges.length/2];
+            theWindow.setHelpText(Translate.text("polymesh:sewTool.dragText"));
+        } else {
+            if (sewEdges[0] >= 0) {
+                mesh.copyObject(originalMesh);
+                boolean[] sel = new boolean[edges.length / 2];
                 sel[sewEdges[0]] = true;
                 sel = mesh.closeBoundary(sel);
                 controller.objectChanged();
-                if ( selection != null && sel != null)
-                    controller.setSelection( sel );
+                if (selection != null && sel != null) {
+                    controller.setSelection(sel);
+                }
                 theWindow.updateImage();
-                theWindow.setHelpText(Translate.text("polymesh:sewTool.dragText") );
+                theWindow.setHelpText(Translate.text("polymesh:sewTool.dragText"));
             }
         }
     }
-    
+
     @Override
-    public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view)
-    {
+    public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view) {
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
         dragging = false;
         controller.objectChanged();
         theWindow.updateImage();
         theWindow.setHelpText(Translate.text("polymesh:sewTool.helpText"));
-        theWindow.setUndoRecord( new UndoRecord( theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, originalMesh} ) );
+        theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, originalMesh}));
         undo = null;
 
     }
-    
-    /** Draw any graphics that this tool overlays on top of the view. */
-    
+
+    /**
+     * Draw any graphics that this tool overlays on top of the view.
+     */
     @Override
-    public void drawOverlay(ViewerCanvas view)
-    {
-        if (dragging && canvas == view)
-        {
-            view.drawLine( clickPoint, dragPoint, Color.black );
-            Point p1 = new Point( clickPoint );
-            Point p2 = new Point( p1 );
+    public void drawOverlay(ViewerCanvas view) {
+        if (dragging && canvas == view) {
+            view.drawLine(clickPoint, dragPoint, Color.black);
+            Point p1 = new Point(clickPoint);
+            Point p2 = new Point(p1);
             p1.x += 5;
             p2.x -= 5;
-            view.drawLine( p1, p2, Color.black);
+            view.drawLine(p1, p2, Color.black);
             p1.x -= 5;
             p1.y += 5;
             p2.x += 5;
             p2.y -= 5;
-            view.drawLine( p1, p2, Color.black);
-            p1 = new Point( dragPoint );
-            p2 = new Point( p1 );
+            view.drawLine(p1, p2, Color.black);
+            p1 = new Point(dragPoint);
+            p2 = new Point(p1);
             p1.x += 5;
             p2.x -= 5;
-            view.drawLine( p1, p2, Color.black);
+            view.drawLine(p1, p2, Color.black);
             p1.x -= 5;
             p1.y += 5;
             p2.x += 5;
             p2.y -= 5;
-            view.drawLine( p1, p2, Color.black);
+            view.drawLine(p1, p2, Color.black);
         }
     }
-    
-    private double findIntersection( Point p0, Point d0, Point p1, Point d1 )
-    {
-        Vec2 p0v = new Vec2( p0.x, p0.y );
-        Vec2 d0v = new Vec2( d0.x, d0.y ).minus( p0v);
-        Vec2 p1v = new Vec2( p1.x, p1.y );
-        Vec2 d1v = new Vec2( d1.x, d1.y ).minus( p1v);
+
+    private double findIntersection(Point p0, Point d0, Point p1, Point d1) {
+        Vec2 p0v = new Vec2(p0.x, p0.y);
+        Vec2 d0v = new Vec2(d0.x, d0.y).minus(p0v);
+        Vec2 p1v = new Vec2(p1.x, p1.y);
+        Vec2 d1v = new Vec2(d1.x, d1.y).minus(p1v);
         Vec2 e = p1v.minus(p0v);
         double kross = d0v.cross(d1v);
-        double sqrkross = kross*kross;
+        double sqrkross = kross * kross;
         double len0 = d0v.length2();
         double len1 = d1v.length2();
-        if ( sqrkross > 1.0e-12 * len0 * len1 )
-        {
+        if (sqrkross > 1.0e-12 * len0 * len1) {
             double s = e.cross(d1v) / kross;
-            if ( s < 0 || s > 1)
+            if (s < 0 || s > 1) {
                 return -1;
+            }
             s = e.cross(d0v) / kross;
-            if ( s < 0 || s > 1)
+            if (s < 0 || s > 1) {
                 return -1;
+            }
             return 1 - s;
         }
         return -1;

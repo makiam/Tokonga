@@ -12,21 +12,21 @@ package artofillusion.polymesh;
 
 import artofillusion.texture.Texture;
 
-/** This class is used by TextureImageExporter for storing information about texture images. */
+/**
+ * This class is used by TextureImageExporter for storing information about texture images.
+ */
+public class TextureImageInfo {
 
-public class TextureImageInfo
-{
-  Texture texture;
-  String name;
-  String diffuseFilename, specularFilename, hilightFilename, transparentFilename, emissiveFilename, bumpFilename;
-  double minu, minv, maxu, maxv;
-  double paramValue[];
-  
-  public TextureImageInfo(Texture tex, double param[])
-  {
-    texture = tex;
-    paramValue = param;
-    minu = minv = Double.MAX_VALUE;
-    maxu = maxv = -Double.MAX_VALUE;
-  }
+    Texture texture;
+    String name;
+    String diffuseFilename, specularFilename, hilightFilename, transparentFilename, emissiveFilename, bumpFilename;
+    double minu, minv, maxu, maxv;
+    double paramValue[];
+
+    public TextureImageInfo(Texture tex, double param[]) {
+        texture = tex;
+        paramValue = param;
+        minu = minv = Double.MAX_VALUE;
+        maxu = maxv = -Double.MAX_VALUE;
+    }
 }

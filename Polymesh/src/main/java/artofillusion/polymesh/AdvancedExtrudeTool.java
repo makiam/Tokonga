@@ -26,15 +26,16 @@ import buoy.widget.Widget;
 import java.util.HashMap;
 import java.util.Map;
 
-/** AdvancedExtrudeTool is the stool used to extrude selection.
+/**
+ * AdvancedExtrudeTool is the stool used to extrude selection.
  * In addition, it
  * can scale/rotate the selection (e.g. extruded faces.
  */
 @EditingTool.ButtonImage("polymesh:extrude")
 @EditingTool.Tooltip("polymesh:advancedExtrudeTool.tipText")
 @EditingTool.ActivatedToolText("polymesh:advancedExtrudeTool.helpText")
-public class AdvancedExtrudeTool extends AdvancedEditingTool
-{
+public class AdvancedExtrudeTool extends AdvancedEditingTool {
+
     private Vec3 baseVertPos[];
     private UndoRecord undo;
     private final Map<ViewerCanvas, Manipulator> manip3dHashMap;
@@ -47,20 +48,18 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool
     private short EXTRUDE_EDGE_GROUPS = 4;
     private int mode;
 
-    public AdvancedExtrudeTool(EditingWindow fr, MeshEditController controller)
-    {
+    public AdvancedExtrudeTool(EditingWindow fr, MeshEditController controller) {
         super(fr, controller);
         manip3dHashMap = new HashMap<>();
     }
 
     @Override
-    public void activateManipulators(ViewerCanvas view)
-    {
-        if (! manip3dHashMap.containsKey(view))
-        {
+    public void activateManipulators(ViewerCanvas view) {
+        if (!manip3dHashMap.containsKey(view)) {
             PolyMeshValueWidget valueWidget = null;
-            if (controller instanceof PolyMeshEditorWindow)
-                valueWidget = ((PolyMeshEditorWindow)controller).getValueWidget();
+            if (controller instanceof PolyMeshEditorWindow) {
+                valueWidget = ((PolyMeshEditorWindow) controller).getValueWidget();
+            }
             Manipulator manip3d = new SSMR3DManipulator(this, view, valueWidget);
             manip3d.addEventLink(Manipulator.ManipulatorPrepareChangingEvent.class, this, "doManipulatorPrepareShapingMesh");
             manip3d.addEventLink(SSMRManipulator.ManipulatorScalingEvent.class, this, "doManipulatorScalingMesh");
@@ -69,54 +68,48 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool
             manip3d.addEventLink(SSMRManipulator.ManipulatorMovingEvent.class, this, "doManipulatorMovingMesh");
             manip3d.addEventLink(Manipulator.ManipulatorAbortChangingEvent.class, this, "doAbortChangingMesh");
             manip3d.setActive(true);
-            ((PolyMeshViewer)view).setManipulator(manip3d);
+            ((PolyMeshViewer) view).setManipulator(manip3d);
             manip3dHashMap.put(view, manip3d);
-            selectionModeChanged(((MeshViewer)view).getController().getSelectionMode());
-        }
-        else
-        {
-            ((PolyMeshViewer)view).setManipulator(manip3dHashMap.get(view));
+            selectionModeChanged(((MeshViewer) view).getController().getSelectionMode());
+        } else {
+            ((PolyMeshViewer) view).setManipulator(manip3dHashMap.get(view));
         }
     }
 
     @Override
-    public void activate()
-    {
+    public void activate() {
         super.activate();
         ViewerCanvas view = theWindow.getView();
     }
 
     @Override
-    public void deactivate()
-    {
-    	super.deactivate();
-    	manip3dHashMap.forEach((ViewerCanvas view, Manipulator manipulator) -> {
-            ((PolyMeshViewer) view).removeManipulator(manipulator); 
+    public void deactivate() {
+        super.deactivate();
+        manip3dHashMap.forEach((ViewerCanvas view, Manipulator manipulator) -> {
+            ((PolyMeshViewer) view).removeManipulator(manipulator);
         });
     }
 
-    private void doManipulatorPrepareShapingMesh(Manipulator.ManipulatorEvent e)
-    {
+    private void doManipulatorPrepareShapingMesh(Manipulator.ManipulatorEvent e) {
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
         baseVertPos = mesh.getVertexPositions();
         origMesh = (PolyMesh) mesh.duplicate();
         selected = controller.getSelection();
         int selectMode = controller.getSelectionMode();
-        if ( selectMode == PolyMeshEditorWindow.FACE_MODE )
-            mode = ( separateFaces ? EXTRUDE_FACES : EXTRUDE_FACE_GROUPS );
-        else if  ( selectMode == PolyMeshEditorWindow.EDGE_MODE )
-            mode = ( separateFaces ? EXTRUDE_EDGES : EXTRUDE_EDGE_GROUPS );
-        else
+        if (selectMode == PolyMeshEditorWindow.FACE_MODE) {
+            mode = (separateFaces ? EXTRUDE_FACES : EXTRUDE_FACE_GROUPS);
+        } else if (selectMode == PolyMeshEditorWindow.EDGE_MODE) {
+            mode = (separateFaces ? EXTRUDE_EDGES : EXTRUDE_EDGE_GROUPS);
+        } else {
             mode = NO_EXTRUDE;
+        }
     }
 
-    private void doAbortChangingMesh()
-    {
-        if (origMesh != null)
-        {
-        	PolyMesh mesh = (PolyMesh) controller.getObject().object;
-        	mesh.copyObject(origMesh);
-        	controller.objectChanged();
+    private void doAbortChangingMesh() {
+        if (origMesh != null) {
+            PolyMesh mesh = (PolyMesh) controller.getObject().object;
+            mesh.copyObject(origMesh);
+            controller.objectChanged();
         }
         origMesh = null;
         baseVertPos = null;
@@ -125,8 +118,7 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool
         theWindow.updateImage();
     }
 
-    private void doManipulatorScalingMesh(SSMR2DManipulator.ManipulatorScalingEvent e)
-    {
+    private void doManipulatorScalingMesh(SSMR2DManipulator.ManipulatorScalingEvent e) {
         Mesh mesh = (Mesh) controller.getObject().object;
         Vec3[] v = findScaledPositions(baseVertPos, e.getScaleMatrix(), (MeshViewer) e.getView());
         mesh.setVertexPositions(v);
@@ -134,23 +126,20 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool
         theWindow.updateImage();
     }
 
-    private void doManipulatorRotatingMesh(SSMR2DManipulator.ManipulatorRotatingEvent e)
-    {
+    private void doManipulatorRotatingMesh(SSMR2DManipulator.ManipulatorRotatingEvent e) {
         Mesh mesh = (Mesh) controller.getObject().object;
         Vec3[] v = null;
-        v = findRotatedPositions(baseVertPos, e.getMatrix(), (MeshViewer)e.getView());
-        if (v != null)
-        {
+        v = findRotatedPositions(baseVertPos, e.getMatrix(), (MeshViewer) e.getView());
+        if (v != null) {
             mesh.setVertexPositions(v);
             controller.objectChanged();
             theWindow.updateImage();
         }
     }
 
-    private void doManipulatorShapedMesh(Manipulator.ManipulatorEvent e)
-    {
+    private void doManipulatorShapedMesh(Manipulator.ManipulatorEvent e) {
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
-        undo = new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object [] {mesh, origMesh});
+        undo = new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, origMesh});
         theWindow.setUndoRecord(undo);
         baseVertPos = null;
         origMesh = null;
@@ -158,38 +147,37 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool
         theWindow.updateImage();
     }
 
-    private void doManipulatorMovingMesh(SSMR2DManipulator.ManipulatorMovingEvent e)
-    {
+    private void doManipulatorMovingMesh(SSMR2DManipulator.ManipulatorMovingEvent e) {
         MeshViewer mv = (MeshViewer) e.getView();
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
         Vec3 drag = e.getDrag();
 
-        if (mode != NO_EXTRUDE)
-        {
+        if (mode != NO_EXTRUDE) {
             double value = drag.length();
             drag.normalize();
             mesh.copyObject(origMesh);
-            if ( mode == EXTRUDE_FACES )
-                mesh.extrudeFaces( selected, value, drag );
-            else if (mode == EXTRUDE_FACE_GROUPS)
-                mesh.extrudeRegion( selected, value, drag );
-            else if (mode == EXTRUDE_EDGES)
-                mesh.extrudeEdges( selected, value, drag );
-            else if (mode == EXTRUDE_EDGE_GROUPS)
-                mesh.extrudeEdgeRegion( selected, value, drag );
+            if (mode == EXTRUDE_FACES) {
+                mesh.extrudeFaces(selected, value, drag);
+            } else if (mode == EXTRUDE_FACE_GROUPS) {
+                mesh.extrudeRegion(selected, value, drag);
+            } else if (mode == EXTRUDE_EDGES) {
+                mesh.extrudeEdges(selected, value, drag);
+            } else if (mode == EXTRUDE_EDGE_GROUPS) {
+                mesh.extrudeEdgeRegion(selected, value, drag);
+            }
             //undo = new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object [] {mesh, origMesh});
             boolean[] sel = null;
-            if (mode == EXTRUDE_FACES || mode == EXTRUDE_FACE_GROUPS)
+            if (mode == EXTRUDE_FACES || mode == EXTRUDE_FACE_GROUPS) {
                 sel = new boolean[mesh.getFaces().length];
-            else
-                sel = new boolean[mesh.getEdges().length/2];
-            for ( int i = 0; i < selected.length; ++i )
+            } else {
+                sel = new boolean[mesh.getEdges().length / 2];
+            }
+            for (int i = 0; i < selected.length; ++i) {
                 sel[i] = selected[i];
+            }
             controller.objectChanged();
-            controller.setSelection( sel );
-        }
-        else
-        {
+            controller.setSelection(sel);
+        } else {
             Vec3[] v = findDraggedPositions(drag, baseVertPos, mv, controller.getSelectionDistance());
             mesh.setVertexPositions(v);
         }
@@ -198,17 +186,17 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool
     }
 
     @Override
-    public void iconDoubleClicked()
-    {
-        BComboBox c = new BComboBox( new String[]{
-                Translate.text("polymesh:selectionAsWhole" ),
-                Translate.text("polymesh:individualFaces" )
-                } );
-        c.setSelectedIndex( separateFaces ? 1 : 0 );
-        ComponentsDialog dlg = new ComponentsDialog( theFrame, Translate.text( "applyExtrudeTo" ),
-                new Widget[]{c}, new String[]{null} );
-        if ( dlg.clickedOk() )
-            separateFaces = ( c.getSelectedIndex() == 1 );
+    public void iconDoubleClicked() {
+        BComboBox c = new BComboBox(new String[]{
+            Translate.text("polymesh:selectionAsWhole"),
+            Translate.text("polymesh:individualFaces")
+        });
+        c.setSelectedIndex(separateFaces ? 1 : 0);
+        ComponentsDialog dlg = new ComponentsDialog(theFrame, Translate.text("applyExtrudeTo"),
+                new Widget[]{c}, new String[]{null});
+        if (dlg.clickedOk()) {
+            separateFaces = (c.getSelectedIndex() == 1);
+        }
     }
 
 }

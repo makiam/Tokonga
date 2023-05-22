@@ -7,7 +7,6 @@
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
-
 package artofillusion.polymesh;
 
 import artofillusion.polymesh.ui.ColorButton;
@@ -71,31 +70,30 @@ public class MeshPropertiesDialogAction {
         });
 
         useCustomColors.addEventLink(ValueChangedEvent.class, new Object() {
-            void processEvent(ValueChangedEvent event)
-            {
-                final Boolean state = ((BCheckBox)event.getWidget()).getState();
+            void processEvent(ValueChangedEvent event) {
+                final Boolean state = ((BCheckBox) event.getWidget()).getState();
                 IntStream.range(1, propertiesPanel.getChildCount()).forEach(index -> {
                     propertiesPanel.getChild(index).setEnabled(state);
                 });
             }
-          });
+        });
 
         PanelDialog dlg = new PanelDialog(owner, Translate.text("polymesh:setMeshProperties"), propertiesPanel);
-            if (dlg.clickedOk()) {
-                    mesh.setUseCustomColors(useCustomColors.getState());
-                    if (mesh.useCustomColors()) {
-                            mesh.setVertColor(vertColorButton.getColor());
-                            mesh.setSelectedVertColor(selectedVertColorButton.getColor());
-                            mesh.setEdgeColor(edgeColorButton.getColor());
-                            mesh.setSelectedEdgeColor(selectedEdgeColorButton.getColor());
-                            mesh.setSeamColor(seamColorButton.getColor());
-                            mesh.setSelectedSeamColor(selectedSeamColorButton.getColor());
-                            mesh.setMeshColor(meshColorButton.getColor());
-                            mesh.setSelectedFaceColor(selectedFaceColorButton.getColor());
-                            mesh.setHandleSize(((Integer) handleSpinner.getValue()));
-                    }
-                    owner.updateImage();
+        if (dlg.clickedOk()) {
+            mesh.setUseCustomColors(useCustomColors.getState());
+            if (mesh.useCustomColors()) {
+                mesh.setVertColor(vertColorButton.getColor());
+                mesh.setSelectedVertColor(selectedVertColorButton.getColor());
+                mesh.setEdgeColor(edgeColorButton.getColor());
+                mesh.setSelectedEdgeColor(selectedEdgeColorButton.getColor());
+                mesh.setSeamColor(seamColorButton.getColor());
+                mesh.setSelectedSeamColor(selectedSeamColorButton.getColor());
+                mesh.setMeshColor(meshColorButton.getColor());
+                mesh.setSelectedFaceColor(selectedFaceColorButton.getColor());
+                mesh.setHandleSize(((Integer) handleSpinner.getValue()));
             }
+            owner.updateImage();
+        }
     }
 
 }

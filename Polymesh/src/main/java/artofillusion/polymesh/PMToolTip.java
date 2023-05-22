@@ -11,7 +11,6 @@ package artofillusion.polymesh;
 
 import artofillusion.ui.Translate;
 import buoy.widget.BToolTip;
-import buoy.widget.Widget;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JTextArea;
@@ -22,75 +21,63 @@ import javax.swing.border.Border;
 /**
  * A custom BToolTip able to display any component
  */
-public class PMToolTip extends BToolTip
-{
-    private Widget w;
-
+public class PMToolTip extends BToolTip {
 
     /**
-     *  Constructor for the TapBToolTip object
+     * Constructor for the TapBToolTip object
      *
-     *@param  c  Description of the Parameter
+     * @param c Description of the Parameter
      */
-    public PMToolTip( Component c )
-    {
+    public PMToolTip(Component c) {
         component = c;
     }
 
-
     /**
-     *  Create a new PMToolTip.
+     * Create a new PMToolTip.
      *
-     *@param  text  the text to display in the tool tip
+     * @param text the text to display in the tool tip
      */
-
-    public PMToolTip( String text )
-    {
+    public PMToolTip(String text) {
         component = new JToolTip();
-        ( (JToolTip) component ).setTipText( text );
+        ((JToolTip) component).setTipText(text);
     }
 
-
     /**
-     *  Get the text to display on the tool tip.
+     * Get the text to display on the tool tip.
      *
-     *@return    The text value
+     * @return The text value
      */
-
     @Override
-    public String getText()
-    {
+    public String getText() {
 
-        if ( component instanceof JToolTip )
-            return ( (JToolTip) component ).getTipText();
-        else
+        if (component instanceof JToolTip) {
+            return ((JToolTip) component).getTipText();
+        } else {
             return "";
+        }
     }
 
-
     /**
-     *  Set the text to display on the tool tip.
+     * Set the text to display on the tool tip.
      *
-     *@param  text  The new text value
+     * @param text The new text value
      */
-
     @Override
-    public void setText( String text )
-    {
-        if ( component instanceof JToolTip )
-            ( (JToolTip) component ).setTipText( text );
+    public void setText(String text) {
+        if (component instanceof JToolTip) {
+            ((JToolTip) component).setTipText(text);
+        }
         invalidateSize();
     }
 
-    public static PMToolTip areaToolTip( String property, int columns )
-    {
-        JTextArea area = new JTextArea( Translate.text( "polymesh:" + property ) );
-        area.setColumns( columns );
-        area.setLineWrap( true );
-        area.setWrapStyleWord( true );
-        area.setBackground( (Color) UIManager.get( "ToolTip.background" ) );
-        area.setBorder( (Border) UIManager.get( "ToolTip.border" ) );
-        area.setSize( area.getPreferredSize() );
-        return new PMToolTip( area );
+    public static PMToolTip areaToolTip(String property, int columns) {
+        JTextArea area = new JTextArea(Translate.text("polymesh:" + property));
+        area.setColumns(columns);
+        area.setLineWrap(true);
+        area.setWrapStyleWord(true);
+        area.setBackground((Color) UIManager.get("ToolTip.background"));
+        area.setBorder((Border) UIManager.get("ToolTip.border"));
+        area.setSize(area.getPreferredSize());
+        return new PMToolTip(area);
     }
 }

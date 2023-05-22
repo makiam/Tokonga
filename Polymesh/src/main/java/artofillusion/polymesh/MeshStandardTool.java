@@ -31,28 +31,28 @@ import java.util.Map;
 @EditingTool.ButtonImage("polymesh:movePoints")
 @EditingTool.Tooltip("polymesh:meshStandardTool.tipText")
 @EditingTool.ActivatedToolText("polymesh:meshStandardTool.helpText")
-public class MeshStandardTool extends AdvancedEditingTool
-{
+public class MeshStandardTool extends AdvancedEditingTool {
+
     private Vec3 baseVertPos[];
     private UndoRecord undo;
     private static Image icon, selectedIcon;
-    /** hash maps are used to store manipulators for views */
+    /**
+     * hash maps are used to store manipulators for views
+     */
     private final Map<ViewerCanvas, Manipulator> manip2dMap = new HashMap<>();
     private final Map<ViewerCanvas, Manipulator> manip3dMap = new HashMap<>();
 
-    public MeshStandardTool(EditingWindow fr, MeshEditController controller)
-    {
+    public MeshStandardTool(EditingWindow fr, MeshEditController controller) {
         super(fr, controller);
     }
 
     @Override
-    public void activateManipulators(ViewerCanvas view)
-    {
-        if (! manip2dMap.containsKey(view))
-        {
+    public void activateManipulators(ViewerCanvas view) {
+        if (!manip2dMap.containsKey(view)) {
             PolyMeshValueWidget valueWidget = null;
-            if (controller instanceof PolyMeshEditorWindow)
-                valueWidget = ((PolyMeshEditorWindow)controller).getValueWidget();
+            if (controller instanceof PolyMeshEditorWindow) {
+                valueWidget = ((PolyMeshEditorWindow) controller).getValueWidget();
+            }
             Manipulator manip2d = new SSMR2DManipulator(this, view, valueWidget);
             manip2d.addEventLink(Manipulator.ManipulatorPrepareChangingEvent.class, this, "doManipulatorPrepareShapingMesh");
             manip2d.addEventLink(SSMRManipulator.ManipulatorScalingEvent.class, this, "doManipulatorScalingMesh");
@@ -69,56 +69,49 @@ public class MeshStandardTool extends AdvancedEditingTool
             manip3d.addEventLink(SSMRManipulator.ManipulatorMovingEvent.class, this, "doManipulatorMovingMesh");
             manip3d.addEventLink(Manipulator.ManipulatorAbortChangingEvent.class, this, "doAbortChangingMesh");
             manip3d.setActive(true);
-            ((PolyMeshViewer)view).setManipulator(manip2d);
-            ((PolyMeshViewer)view).addManipulator(manip3d);
+            ((PolyMeshViewer) view).setManipulator(manip2d);
+            ((PolyMeshViewer) view).addManipulator(manip3d);
             manip2dMap.put(view, manip2d);
             manip3dMap.put(view, manip3d);
-        }
-        else
-        {
-            ((PolyMeshViewer)view).setManipulator(manip2dMap.get(view));
-            ((PolyMeshViewer)view).addManipulator(manip3dMap.get(view));
+        } else {
+            ((PolyMeshViewer) view).setManipulator(manip2dMap.get(view));
+            ((PolyMeshViewer) view).addManipulator(manip3dMap.get(view));
         }
     }
 
     @Override
-    public void activate()
-    {
+    public void activate() {
         super.activate();
         ViewerCanvas view = theWindow.getView();
     }
 
     @Override
-    public void deactivate()
-    {
-    	super.deactivate();
+    public void deactivate() {
+        super.deactivate();
         manip2dMap.keySet().forEach((ViewerCanvas canvas) -> {
-            PolyMeshViewer view = (PolyMeshViewer)canvas;
+            PolyMeshViewer view = (PolyMeshViewer) canvas;
             view.removeManipulator(manip2dMap.get(view));
             view.removeManipulator(manip3dMap.get(view));
         });
     }
 
-    public Image getIcon()
-    {
+    public Image getIcon() {
         return icon;
     }
 
-    public Image getSelectedIcon()
-    {
+    public Image getSelectedIcon() {
         return selectedIcon;
     }
 
-    private void doManipulatorPrepareShapingMesh(Manipulator.ManipulatorEvent e)
-    {
+    private void doManipulatorPrepareShapingMesh(Manipulator.ManipulatorEvent e) {
         Mesh mesh = (Mesh) controller.getObject().object;
-        if (undo == null)
-            undo = new UndoRecord(theWindow, false, UndoRecord.COPY_VERTEX_POSITIONS, new Object [] {mesh, mesh.getVertexPositions()});
+        if (undo == null) {
+            undo = new UndoRecord(theWindow, false, UndoRecord.COPY_VERTEX_POSITIONS, new Object[]{mesh, mesh.getVertexPositions()});
+        }
         baseVertPos = mesh.getVertexPositions();
     }
 
-    private void doAbortChangingMesh()
-    {
+    private void doAbortChangingMesh() {
         Mesh mesh = (Mesh) controller.getObject().object;
         mesh.setVertexPositions(baseVertPos);
         baseVertPos = null;
@@ -127,8 +120,7 @@ public class MeshStandardTool extends AdvancedEditingTool
         theWindow.updateImage();
     }
 
-    private void doManipulatorScalingMesh(SSMR2DManipulator.ManipulatorScalingEvent e)
-    {
+    private void doManipulatorScalingMesh(SSMR2DManipulator.ManipulatorScalingEvent e) {
         Mesh mesh = (Mesh) controller.getObject().object;
         Vec3[] v = findScaledPositions(baseVertPos, e.getScaleMatrix(), (MeshViewer) e.getView());
         mesh.setVertexPositions(v);
@@ -136,23 +128,19 @@ public class MeshStandardTool extends AdvancedEditingTool
         theWindow.updateImage();
     }
 
-    private void doManipulatorRotatingMesh(SSMR2DManipulator.ManipulatorRotatingEvent e)
-    {
+    private void doManipulatorRotatingMesh(SSMR2DManipulator.ManipulatorRotatingEvent e) {
         Mesh mesh = (Mesh) controller.getObject().object;
         Vec3[] v = null;
-        v = findRotatedPositions(baseVertPos, e.getMatrix(), (MeshViewer)e.getView());
-        if (v != null)
-        {
+        v = findRotatedPositions(baseVertPos, e.getMatrix(), (MeshViewer) e.getView());
+        if (v != null) {
             mesh.setVertexPositions(v);
             controller.objectChanged();
             theWindow.updateImage();
         }
     }
 
-    private void doManipulatorShapedMesh(Manipulator.ManipulatorEvent e)
-    {
-        if (undo != null)
-        {
+    private void doManipulatorShapedMesh(Manipulator.ManipulatorEvent e) {
+        if (undo != null) {
             theWindow.setUndoRecord(undo);
             undo = null;
         }
@@ -162,8 +150,7 @@ public class MeshStandardTool extends AdvancedEditingTool
         theWindow.updateImage();
     }
 
-    private void doManipulatorMovingMesh(SSMR2DManipulator.ManipulatorMovingEvent e)
-    {
+    private void doManipulatorMovingMesh(SSMR2DManipulator.ManipulatorMovingEvent e) {
         MeshViewer mv = (MeshViewer) e.getView();
         Mesh mesh = (Mesh) controller.getObject().object;
         Vec3 v[], drag;

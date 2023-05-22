@@ -137,7 +137,7 @@ class UnfoldStatusDialog extends BDialog {
         cancelled = true;
         switch (status) {
             case 1:
-        //cancel thread
+            //cancel thread
             case 0:
             case 2:
                 dispose();

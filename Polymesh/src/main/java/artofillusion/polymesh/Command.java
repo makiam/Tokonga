@@ -12,8 +12,9 @@
 package artofillusion.polymesh;
 
 /**
- * The command interface is implemented by all editing operations in 
+ * The command interface is implemented by all editing operations in
  * the UV mapper for undo/redo.
+ *
  * @author pims
  *
  */
@@ -24,15 +25,15 @@ public interface Command {
      *
      */
     public default void execute() {
-      redo();
+        redo();
     }
-    
+
     /**
      * Undo the command
      *
      */
     public void undo();
-    
+
     /**
      * Redo the command
      *

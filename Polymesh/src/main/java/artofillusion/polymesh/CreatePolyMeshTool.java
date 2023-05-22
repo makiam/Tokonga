@@ -49,51 +49,50 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner;
 import lombok.extern.slf4j.Slf4j;
 
-/** CreatePolyMeshTool is an EditingTool used for creating PolyMesh objects. */
+/**
+ * CreatePolyMeshTool is an EditingTool used for creating PolyMesh objects.
+ */
 @Slf4j
 @EditingTool.ButtonImage("polymesh:polymesh")
 @EditingTool.Tooltip("polymesh:createPolyMeshTool.tipText")
-public class CreatePolyMeshTool extends EditingTool
-{
+public class CreatePolyMeshTool extends EditingTool {
+
     private EditingWindow edw;
     private int counter = 1;
     private int shape = 0;
-    private int usize =3;
+    private int usize = 3;
     private int vsize = 3;
     private int smoothingMethod;
     private PolyMesh templateMesh;
-    
+
     boolean shiftDown;
     Point clickPoint;
-    
-    public CreatePolyMeshTool(EditingWindow fr)
-    {
+
+    public CreatePolyMeshTool(EditingWindow fr) {
         super(fr);
         edw = fr;
     }
-    
+
     @Override
-    public void activate()
-    {
+    public void activate() {
         super.activate();
         setHelpText();
     }
-    
-    private void setHelpText()
-    {
+
+    private void setHelpText() {
         String shapeDesc, smoothingDesc;
-        if (shape == 0)
+        if (shape == 0) {
             shapeDesc = "cube";
-        else if (shape == 2)
+        } else if (shape == 2) {
             shapeDesc = "octahedron";
-        else if (shape == 3)
+        } else if (shape == 3) {
             shapeDesc = "cylinder";
-        else if (shape == 1)
+        } else if (shape == 1) {
             shapeDesc = "single face";
-        else
+        } else {
             shapeDesc = "flat";
-        switch(smoothingMethod)
-        {
+        }
+        switch (smoothingMethod) {
             default:
             case 0:
                 smoothingDesc = "none";
@@ -106,58 +105,55 @@ public class CreatePolyMeshTool extends EditingTool
                 break;
             case 3:
                 smoothingDesc = "interpolating";
-                break; 
+                break;
         }
-        if ( "none".equals(smoothingDesc))
-            smoothingDesc = Translate.text("polymesh:none" );
-        else
-            smoothingDesc = Translate.text("menu."+smoothingDesc).toLowerCase();
-        if ( shape <= 2 )
+        if ("none".equals(smoothingDesc)) {
+            smoothingDesc = Translate.text("polymesh:none");
+        } else {
+            smoothingDesc = Translate.text("menu." + smoothingDesc).toLowerCase();
+        }
+        if (shape <= 2) {
             theWindow.setHelpText(Translate.text("polymesh:createPolyMeshTool.helpText1",
-                new Object [] { Translate.text("polymesh:createPolyMeshTool."+shapeDesc), smoothingDesc}));
-        else
+                    new Object[]{Translate.text("polymesh:createPolyMeshTool." + shapeDesc), smoothingDesc}));
+        } else {
             theWindow.setHelpText(Translate.text("polymesh:createPolyMeshTool.helpText2",
-                new Object [] { Translate.text("polymesh:createPolyMeshTool."+shapeDesc),
-                                Integer.toString(usize), Integer.toString(vsize), smoothingDesc}));
+                    new Object[]{Translate.text("polymesh:createPolyMeshTool." + shapeDesc),
+                        Integer.toString(usize), Integer.toString(vsize), smoothingDesc}));
+        }
     }
-    
+
     @Override
-    public void mousePressed(WidgetMouseEvent e, ViewerCanvas view)
-    {
+    public void mousePressed(WidgetMouseEvent e, ViewerCanvas view) {
         clickPoint = e.getPoint();
         shiftDown = e.isShiftDown();
         ((SceneViewer) view).beginDraggingBox(clickPoint, shiftDown);
     }
-    
+
     @Override
-    public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view)
-    {
+    public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view) {
         Scene theScene = ((LayoutWindow) theWindow).getScene();
         Camera cam = view.getCamera();
         Point dragPoint = e.getPoint();
         Vec3 v1, v2, v3, orig, xdir, ydir, zdir;
         double xsize, ysize, zsize;
         int i;
-        
-        if (shiftDown)
-        {
-            if (Math.abs(dragPoint.x-clickPoint.x) > Math.abs(dragPoint.y-clickPoint.y))
-            {
-                if (dragPoint.y < clickPoint.y)
-                    dragPoint.y = clickPoint.y - Math.abs(dragPoint.x-clickPoint.x);
-                else
-                    dragPoint.y = clickPoint.y + Math.abs(dragPoint.x-clickPoint.x);
-            }
-            else
-            {
-                if (dragPoint.x < clickPoint.x)
-                    dragPoint.x = clickPoint.x - Math.abs(dragPoint.y-clickPoint.y);
-                else
-                    dragPoint.x = clickPoint.x + Math.abs(dragPoint.y-clickPoint.y);
+
+        if (shiftDown) {
+            if (Math.abs(dragPoint.x - clickPoint.x) > Math.abs(dragPoint.y - clickPoint.y)) {
+                if (dragPoint.y < clickPoint.y) {
+                    dragPoint.y = clickPoint.y - Math.abs(dragPoint.x - clickPoint.x);
+                } else {
+                    dragPoint.y = clickPoint.y + Math.abs(dragPoint.x - clickPoint.x);
+                }
+            } else {
+                if (dragPoint.x < clickPoint.x) {
+                    dragPoint.x = clickPoint.x - Math.abs(dragPoint.y - clickPoint.y);
+                } else {
+                    dragPoint.x = clickPoint.x + Math.abs(dragPoint.y - clickPoint.y);
+                }
             }
         }
-        if (dragPoint.x == clickPoint.x || dragPoint.y == clickPoint.y)
-        {
+        if (dragPoint.x == clickPoint.x || dragPoint.y == clickPoint.y) {
             ((SceneViewer) view).repaint();
             return;
         }
@@ -165,61 +161,59 @@ public class CreatePolyMeshTool extends EditingTool
         v2 = cam.convertScreenToWorld(new Point(dragPoint.x, clickPoint.y), cam.getDistToScreen());
         v3 = cam.convertScreenToWorld(dragPoint, cam.getDistToScreen());
         orig = v1.plus(v3).times(0.5);
-        if (dragPoint.x < clickPoint.x)
+        if (dragPoint.x < clickPoint.x) {
             xdir = v1.minus(v2);
-        else
+        } else {
             xdir = v2.minus(v1);
-        if (dragPoint.y < clickPoint.y)
+        }
+        if (dragPoint.y < clickPoint.y) {
             ydir = v3.minus(v2);
-        else
+        } else {
             ydir = v2.minus(v3);
+        }
         xsize = xdir.length();
         ysize = ydir.length();
-        xdir = xdir.times(1.0/xsize);
-        ydir = ydir.times(1.0/ysize);
+        xdir = xdir.times(1.0 / xsize);
+        ydir = ydir.times(1.0 / ysize);
         zdir = xdir.cross(ydir);
         zsize = Math.min(xsize, ysize);
-        
+
         //SplineMesh obj = new SplineMesh(v, usmoothness, vsmoothness, smoothing, shape != FLAT, shape == TORUS);
         PolyMesh obj = null;
-        if (templateMesh == null)
-            obj = new PolyMesh( shape, usize, vsize, xsize, ysize, zsize);
-        else
-        {
+        if (templateMesh == null) {
+            obj = new PolyMesh(shape, usize, vsize, xsize, ysize, zsize);
+        } else {
             obj = (PolyMesh) templateMesh.duplicate();
-            obj.setSize( xsize, ysize, zsize);
+            obj.setSize(xsize, ysize, zsize);
         }
         obj.setSmoothingMethod(smoothingMethod);
-        ObjectInfo info = new ObjectInfo(obj, new CoordinateSystem(orig, zdir, ydir), "PolyMesh "+(counter++));
+        ObjectInfo info = new ObjectInfo(obj, new CoordinateSystem(orig, zdir, ydir), "PolyMesh " + (counter++));
         info.addTrack(new PositionTrack(info), 0);
         info.addTrack(new RotationTrack(info), 1);
         UndoRecord undo = new UndoRecord(theWindow, false);
-        undo.addCommandAtBeginning(UndoRecord.SET_SCENE_SELECTION, new Object [] {((LayoutWindow) theWindow).getSelectedIndices()});
+        undo.addCommandAtBeginning(UndoRecord.SET_SCENE_SELECTION, new Object[]{((LayoutWindow) theWindow).getSelectedIndices()});
         ((LayoutWindow) theWindow).addObject(info, undo);
         theWindow.setUndoRecord(undo);
-        ((LayoutWindow) theWindow).setSelection(theScene.getNumObjects()-1);
+        ((LayoutWindow) theWindow).setSelection(theScene.getNumObjects() - 1);
         theWindow.updateImage();
         theWindow.setModified();
     }
-    
-    
-    
+
     @Override
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
-   public void iconDoubleClicked()
-  {
-    new PolyMeshToolDialog( edw.getFrame() );
-    setHelpText();
-  }
-    
+    public void iconDoubleClicked() {
+        new PolyMeshToolDialog(edw.getFrame());
+        setHelpText();
+    }
+
     /**
-     *  Dialog for entering mesh type
+     * Dialog for entering mesh type
      *
-     *@author     francois
-     *@created    24 janvier 2005
+     * @author francois
+     * @created 24 janvier 2005
      */
-    public class PolyMeshToolDialog extends BDialog
-    {
+    public class PolyMeshToolDialog extends BDialog {
+
         private BComboBox typeCombo;
         private BLabel sizeLabel;
         private BSpinner xSpinner;
@@ -231,120 +225,108 @@ public class CreatePolyMeshTool extends EditingTool
         private BComboBox smoothCombo;
         private BLabel smoothLabel;
         private int templateStart;
-        
+
         /**
-         *  Constructor for the PolyMeshToolDialog object
+         * Constructor for the PolyMeshToolDialog object
          *
-         *@param  parent  Description of the Parameter
+         * @param parent Description of the Parameter
          */
-        public PolyMeshToolDialog( BFrame parent )
-        {
+        public PolyMeshToolDialog(BFrame parent) {
             super(parent, Translate.text("polymesh:polyMeshToolDialogTitle"), true);
-            try (InputStream is = getClass().getResource("interfaces/createTool.xml").openStream())            {
+            try (InputStream is = getClass().getResource("interfaces/createTool.xml").openStream()) {
                 WidgetDecoder decoder = new WidgetDecoder(is);
-                setContent( (BorderContainer) decoder.getRootObject() );
-                typeCombo = ( (BComboBox) decoder.getObject( "typeCombo" ) );
-                typeCombo.add( Translate.text("polymesh:cube" ) );
-                typeCombo.add( Translate.text("polymesh:face" ) );
-                typeCombo.add( Translate.text("polymesh:octahedron" ) );
-                typeCombo.add( Translate.text("polymesh:cylinder" ) );
-                typeCombo.add( Translate.text("polymesh:flatMesh" ) );
+                setContent((BorderContainer) decoder.getRootObject());
+                typeCombo = ((BComboBox) decoder.getObject("typeCombo"));
+                typeCombo.add(Translate.text("polymesh:cube"));
+                typeCombo.add(Translate.text("polymesh:face"));
+                typeCombo.add(Translate.text("polymesh:octahedron"));
+                typeCombo.add(Translate.text("polymesh:cylinder"));
+                typeCombo.add(Translate.text("polymesh:flatMesh"));
                 templateStart = 5;
-                File templateDir = new File( ArtOfIllusion.PLUGIN_DIRECTORY + File.separator + "PolyMeshTemplates" + File.separator );
-                if ( templateDir.isDirectory() )
-                {
+                File templateDir = new File(ArtOfIllusion.PLUGIN_DIRECTORY + File.separator + "PolyMeshTemplates" + File.separator);
+                if (templateDir.isDirectory()) {
                     String[] files = templateDir.list();
-                    for (int i = 0; i < files.length; i++)
-                        typeCombo.add( files[i] );
+                    for (int i = 0; i < files.length; i++) {
+                        typeCombo.add(files[i]);
+                    }
                 }
-                sizeLabel = ( (BLabel) decoder.getObject( "sizeLabel" ) );
-                sizeLabel.setText( Translate.text( "polymesh:" + sizeLabel.getText() ) );
-                xSpinner = ( (BSpinner) decoder.getObject( "xSpinner" ) );
+                sizeLabel = ((BLabel) decoder.getObject("sizeLabel"));
+                sizeLabel.setText(Translate.text("polymesh:" + sizeLabel.getText()));
+                xSpinner = ((BSpinner) decoder.getObject("xSpinner"));
                 xSpinner.setValue(usize);
-                byLabel = ( (BLabel) decoder.getObject( "byLabel" ) );
-                byLabel.setText( Translate.text("polymesh:" +  byLabel.getText() ) );
-                ySpinner = ( (BSpinner) decoder.getObject( "ySpinner" ) );
+                byLabel = ((BLabel) decoder.getObject("byLabel"));
+                byLabel.setText(Translate.text("polymesh:" + byLabel.getText()));
+                ySpinner = ((BSpinner) decoder.getObject("ySpinner"));
                 ySpinner.setValue(vsize);
-                meshType = ( (BLabel) decoder.getObject( "meshType" ) );
-                meshType.setText( Translate.text("polymesh:" +  meshType.getText() ) );
-                okButton = ( (BButton) decoder.getObject( "okButton" ) );
-                okButton.setText( Translate.text("polymesh:" +  okButton.getText() ) );
-                cancelButton = ( (BButton) decoder.getObject( "cancelButton" ) );
-                cancelButton.setText( Translate.text("polymesh:" +  cancelButton.getText() ) );
-                okButton.addEventLink( CommandEvent.class, this, "doOK" );
-                typeCombo.setSelectedIndex( shape );
-                typeCombo.addEventLink( ValueChangedEvent.class, this, "doComboChanged" );
-                typeCombo.setPreferredVisibleRows( typeCombo.getItemCount() );
-                smoothCombo = ( (BComboBox) decoder.getObject( "smoothCombo" ) );
-                smoothCombo.add( Translate.text( "menu.none" ) );
-                smoothCombo.add( Translate.text( "menu.shading" ) );
-                smoothCombo.add( Translate.text( "menu.approximating" ) );
-                smoothCombo.add( Translate.text( "menu.interpolating" ) );
-                smoothLabel = ( (BLabel) decoder.getObject( "smoothLabel" ) );
-                smoothLabel.setText( Translate.text( "SmoothingMethod") + ":" );
-                smoothCombo.addEventLink( ValueChangedEvent.class, this, "doSmoothComboChanged" );
-                smoothCombo.setSelectedIndex( getSmoothComboIndex() );
-                setSpinnerColumns( xSpinner, 2 );
-                setSpinnerColumns( ySpinner, 2 );
-                if ( typeCombo.getSelectedIndex() >= 2 )
+                meshType = ((BLabel) decoder.getObject("meshType"));
+                meshType.setText(Translate.text("polymesh:" + meshType.getText()));
+                okButton = ((BButton) decoder.getObject("okButton"));
+                okButton.setText(Translate.text("polymesh:" + okButton.getText()));
+                cancelButton = ((BButton) decoder.getObject("cancelButton"));
+                cancelButton.setText(Translate.text("polymesh:" + cancelButton.getText()));
+                okButton.addEventLink(CommandEvent.class, this, "doOK");
+                typeCombo.setSelectedIndex(shape);
+                typeCombo.addEventLink(ValueChangedEvent.class, this, "doComboChanged");
+                typeCombo.setPreferredVisibleRows(typeCombo.getItemCount());
+                smoothCombo = ((BComboBox) decoder.getObject("smoothCombo"));
+                smoothCombo.add(Translate.text("menu.none"));
+                smoothCombo.add(Translate.text("menu.shading"));
+                smoothCombo.add(Translate.text("menu.approximating"));
+                smoothCombo.add(Translate.text("menu.interpolating"));
+                smoothLabel = ((BLabel) decoder.getObject("smoothLabel"));
+                smoothLabel.setText(Translate.text("SmoothingMethod") + ":");
+                smoothCombo.addEventLink(ValueChangedEvent.class, this, "doSmoothComboChanged");
+                smoothCombo.setSelectedIndex(getSmoothComboIndex());
+                setSpinnerColumns(xSpinner, 2);
+                setSpinnerColumns(ySpinner, 2);
+                if (typeCombo.getSelectedIndex() >= 2) {
                     enableSize();
-                else
+                } else {
                     disableSize();
-                Object closeObj =
-                        new Object()
-                    {
-                            void processEvent()
-                            {
-                                dispose();
-                            }
-                        };
-                cancelButton.addEventLink( CommandEvent.class, closeObj );
-                this.addEventLink( WindowClosingEvent.class, closeObj );
-            }
-            catch ( IOException ex )
-            {
+                }
+                Object closeObj
+                        = new Object() {
+                    void processEvent() {
+                        dispose();
+                    }
+                };
+                cancelButton.addEventLink(CommandEvent.class, closeObj);
+                this.addEventLink(WindowClosingEvent.class, closeObj);
+            } catch (IOException ex) {
                 log.atError().setCause(ex).log("Error creating PolyMeshToolDialog due {}", ex.getLocalizedMessage());
             }
             pack();
-            UIUtilities.centerWindow( this );
-            setVisible( true );
+            UIUtilities.centerWindow(this);
+            setVisible(true);
         }
-        
-        
+
         /**
-         *  Description of the Method
+         * Description of the Method
          */
-        private void disableSize()
-        {
-            sizeLabel.setEnabled( false );
-            byLabel.setEnabled( false );
-            xSpinner.setEnabled( false );
-            ySpinner.setEnabled( false );
+        private void disableSize() {
+            sizeLabel.setEnabled(false);
+            byLabel.setEnabled(false);
+            xSpinner.setEnabled(false);
+            ySpinner.setEnabled(false);
         }
-        
-        
+
         /**
-         *  Description of the Method
+         * Description of the Method
          */
-        private void enableSize()
-        {
-            sizeLabel.setEnabled( true );
-            byLabel.setEnabled( true );
-            xSpinner.setEnabled( true );
-            ySpinner.setEnabled( true );
+        private void enableSize() {
+            sizeLabel.setEnabled(true);
+            byLabel.setEnabled(true);
+            xSpinner.setEnabled(true);
+            ySpinner.setEnabled(true);
         }
-        
-        
+
         /**
-         *  Description of the Method
+         * Description of the Method
          */
-        private void doComboChanged()
-        {
-            if ( typeCombo.getSelectedIndex() >= 3 && typeCombo.getSelectedIndex() < templateStart)
-            {
+        private void doComboChanged() {
+            if (typeCombo.getSelectedIndex() >= 3 && typeCombo.getSelectedIndex() < templateStart) {
                 enableSize();
-                switch ( typeCombo.getSelectedIndex() )
-                {
+                switch (typeCombo.getSelectedIndex()) {
                     case 3:
                         xSpinner.setValue(12);
                         ySpinner.setValue(1);
@@ -354,16 +336,14 @@ public class CreatePolyMeshTool extends EditingTool
                         ySpinner.setValue(3);
                         break;
                 }
-            }
-            else
+            } else {
                 disableSize();
-            
+            }
+
         }
-        
-        private void doSmoothComboChanged()
-        {
-            switch (smoothCombo.getSelectedIndex())
-            {
+
+        private void doSmoothComboChanged() {
+            switch (smoothCombo.getSelectedIndex()) {
                 default:
                 case 0:
                     smoothingMethod = Mesh.NO_SMOOTHING;
@@ -379,11 +359,9 @@ public class CreatePolyMeshTool extends EditingTool
                     break;
             }
         }
-        
-        private int getSmoothComboIndex()
-        {
-            switch (smoothingMethod)
-            {
+
+        private int getSmoothComboIndex() {
+            switch (smoothingMethod) {
                 default:
                 case Mesh.NO_SMOOTHING:
                     return 0;
@@ -395,48 +373,42 @@ public class CreatePolyMeshTool extends EditingTool
                     return 3;
             }
         }
-        
-        
+
         /**
-         *  Description of the Method
+         * Description of the Method
          */
-        private void doOK()
-        {
+        private void doOK() {
             shape = typeCombo.getSelectedIndex();
             usize = (Integer) xSpinner.getValue();
             vsize = (Integer) ySpinner.getValue();
             int type = typeCombo.getSelectedIndex();
-            if (type < templateStart)
+            if (type < templateStart) {
                 templateMesh = null;
-            else
-            {
+            } else {
                 templateMesh = null;
-                try
-                {
-                    File file = new File( ArtOfIllusion.PLUGIN_DIRECTORY + File.separator + "PolyMeshTemplates" + File.separator + (String)typeCombo.getSelectedValue() );
-                    DataInputStream dis = new DataInputStream( new FileInputStream( file ) );
-                    templateMesh = new PolyMesh( dis );
-                    templateMesh.setSmoothingMethod( smoothingMethod );
-                }
- catch (IOException ex) {
-     log.atError().setCause(ex).log("Error loading template due {}", ex.getLocalizedMessage());
+                try {
+                    File file = new File(ArtOfIllusion.PLUGIN_DIRECTORY + File.separator + "PolyMeshTemplates" + File.separator + (String) typeCombo.getSelectedValue());
+                    DataInputStream dis = new DataInputStream(new FileInputStream(file));
+                    templateMesh = new PolyMesh(dis);
+                    templateMesh.setSmoothingMethod(smoothingMethod);
+                } catch (IOException ex) {
+                    log.atError().setCause(ex).log("Error loading template due {}", ex.getLocalizedMessage());
                 }
             }
             dispose();
         }
-        
+
         /**
-         *  Sets the number of columns displayed by a spinner
+         * Sets the number of columns displayed by a spinner
          *
-         *@param  spinner  The concerned BSpinner
-         *@param  numCol   The new number of columns to show
+         * @param spinner The concerned BSpinner
+         * @param numCol The new number of columns to show
          */
-        public void setSpinnerColumns( BSpinner spinner, int numCol )
-        {
+        public void setSpinnerColumns(BSpinner spinner, int numCol) {
             JSpinner.NumberEditor ed = (JSpinner.NumberEditor) spinner.getComponent().getEditor();
             JFormattedTextField field = ed.getTextField();
-            field.setColumns( numCol );
-            spinner.getComponent().setEditor( ed );
+            field.setColumns(numCol);
+            spinner.getComponent().setEditor(ed);
         }
     }
 }
