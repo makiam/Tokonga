@@ -22,6 +22,7 @@ import java.lang.ref.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -31,9 +32,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UndoRecord {
 
-    
-    private final List<Integer> command = new ArrayList<>();
-    private final List<Object[]> data = new ArrayList<>();
+    private final List<Map.Entry<Integer, Object[]>> records = new ArrayList<>();
+
 
     private List<SoftReference<?>[]> dataRef;
 
@@ -108,7 +108,7 @@ public class UndoRecord {
      * Get the list of commands in this record's script.
      */
     public List<Integer> getCommands() {
-        return Collections.unmodifiableList(command);
+        return records.stream().map(entry -> entry.getKey()).collect(Collectors.toList());
     }
 
     /**
@@ -118,8 +118,7 @@ public class UndoRecord {
      * @param commandData data to include as arguments to the command
      */
     public final void addCommand(int theCommand, Object... commandData) {
-        command.add(theCommand);
-        data.add(commandData);
+        records.add(new AbstractMap.SimpleEntry<>(theCommand, commandData));
     }
 
     /**
@@ -129,8 +128,7 @@ public class UndoRecord {
      * @param commandData data to include as arguments to the command
      */
     public void addCommandAtBeginning(int theCommand, Object... commandData) {
-        command.add(0, theCommand);
-        data.add(0, commandData);
+        records.add(0, new AbstractMap.SimpleEntry<>(theCommand, commandData));
     }
 
     /**
@@ -147,10 +145,9 @@ public class UndoRecord {
             log.atError().setCause(ex).log("Unable to load data from cache {}", ex.getMessage());
             return redoRecord;
         }
-        for (int i = 0; i < command.size(); i++) {
-            int c = command.get(i);
-            Object[] d = data.get(i);
-            switch (c) {
+        for (Map.Entry<Integer, Object[]> entry: records) {
+            Object[] d = entry.getValue();
+            switch (entry.getKey()) {
                 case COPY_OBJECT: {
                     Object3D obj1 = (Object3D) d[0], obj2 = (Object3D) d[1];
                     redoRecord.addCommandAtBeginning(COPY_OBJECT, obj1, obj1.duplicate());
@@ -331,8 +328,8 @@ public class UndoRecord {
      */
     private synchronized void writeCache() {
         boolean anyToCache = false;
-        for (Integer c : command) {
-            if (commandsToCache.contains(c)) {
+        for (Map.Entry<Integer, Object[]> entry: records) {
+            if (commandsToCache.contains(entry.getKey())) {
                 anyToCache = true;
             }
         }
@@ -345,11 +342,11 @@ public class UndoRecord {
             cacheFile = File.createTempFile("undoCache", "dat");
             cacheFile.deleteOnExit();
             DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(cacheFile)));
-            for (int i = 0; i < command.size(); i++) {
-                Object[] d = data.get(i);
+            for (Map.Entry<Integer, Object[]> entry: records) {
+                Object[] d = entry.getValue();
                 SoftReference<?>[] ref = new SoftReference<?>[d.length];
                 dataRef.add(ref);
-                int c = command.get(i);
+                int c = entry.getKey();
                 if (c == COPY_OBJECT && theWindow.getScene() != null) {
                     out.writeUTF(d[1].getClass().getName());
                     ((Object3D) d[1]).writeToFile(out, theWindow.getScene());
@@ -382,7 +379,7 @@ public class UndoRecord {
         }
         boolean anyToLoad = false;
         for (int i = 0; i < dataRef.size(); i++) {
-            Object[] d = data.get(i);
+            Object[] d = records.get(i).getValue();
             SoftReference<?>[] ref = dataRef.get(i);
             if (ref != null) {
                 for (int j = 0; j < ref.length; j++) {
@@ -399,9 +396,9 @@ public class UndoRecord {
         // Load the data from disk.
         if (anyToLoad) {
             DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(cacheFile)));
-            for (int i = 0; i < command.size(); i++) {
-                Object[] d = data.get(i);
-                int c = command.get(i);
+            for (Map.Entry<Integer, Object[]> entry: records) {
+                Object[] d = entry.getValue();
+                int c = entry.getKey();
                 if (c == COPY_OBJECT && theWindow.getScene() != null) {
                     Class<?> cls = ArtOfIllusion.getClass(in.readUTF());
                     Constructor<?> con = cls.getDeclaredConstructor(DataInputStream.class, Scene.class);
