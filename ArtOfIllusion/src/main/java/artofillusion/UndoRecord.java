@@ -11,7 +11,8 @@
 
 package artofillusion;
 
-import artofillusion.animation.*;
+import artofillusion.animation.Skeleton;
+import artofillusion.animation.Track;
 import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
@@ -30,9 +31,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UndoRecord {
 
-    private ArrayList<Integer> command;
-    private ArrayList<Object[]> data;
-    private ArrayList<SoftReference<?>[]> dataRef;
+    
+    private final List<Integer> command = new ArrayList<>();
+    private final List<Object[]> data = new ArrayList<>();
+
+    private List<SoftReference<?>[]> dataRef;
+
     private File cacheFile;
     private boolean redo;
     private EditingWindow theWindow;
@@ -62,13 +66,21 @@ public class UndoRecord {
      * {@link #addCommand addCommand()} or {@link #addCommandAtBeginning addCommandAtBeginning()}.
      *
      * @param win the EditingWindow this record belongs to
+     */
+    public UndoRecord(EditingWindow win) {
+        theWindow = win;
+    }
+
+    /**
+     * Create a new UndoRecord. Initially it represents an empty script. Commands can be added by calling
+     * {@link #addCommand addCommand()} or {@link #addCommandAtBeginning addCommandAtBeginning()}.
+     *
+     * @param win the EditingWindow this record belongs to
      * @param isRedo whether this record represents "redoing" a previously undone operation
      */
     public UndoRecord(EditingWindow win, boolean isRedo) {
-        theWindow = win;
-        redo = isRedo;
-        command = new ArrayList<>();
-        data = new ArrayList<>();
+        this(win);
+        redo = isRedo;      
     }
 
     /**
@@ -105,7 +117,7 @@ public class UndoRecord {
      * @param theCommand the command to add to the script
      * @param commandData data to include as arguments to the command
      */
-    public void addCommand(int theCommand, Object... commandData) {
+    public final void addCommand(int theCommand, Object... commandData) {
         command.add(theCommand);
         data.add(commandData);
     }
@@ -126,7 +138,7 @@ public class UndoRecord {
      */
     public UndoRecord execute() {
         UndoRecord redoRecord = new UndoRecord(theWindow, !redo);
-        int selection[] = theWindow.getScene().getSelection();
+        int[] selection = theWindow.getScene().getSelection();
         boolean needRestoreSelection = false;
 
         try {
@@ -137,7 +149,7 @@ public class UndoRecord {
         }
         for (int i = 0; i < command.size(); i++) {
             int c = command.get(i);
-            Object d[] = data.get(i);
+            Object[] d = data.get(i);
             switch (c) {
                 case COPY_OBJECT: {
                     Object3D obj1 = (Object3D) d[0], obj2 = (Object3D) d[1];
@@ -215,8 +227,8 @@ public class UndoRecord {
                 }
                 case SET_GROUP_CONTENTS: {
                     ObjectInfo group = (ObjectInfo) d[0];
-                    ObjectInfo oldobj[] = group.getChildren();
-                    ObjectInfo newobj[] = (ObjectInfo[]) d[1];
+                    ObjectInfo[] oldobj = group.getChildren();
+                    ObjectInfo[] newobj = (ObjectInfo[]) d[1];
                     redoRecord.addCommandAtBeginning(SET_GROUP_CONTENTS, group, oldobj);
                     for (int j = 0; j < oldobj.length; j++) {
                         oldobj[j].setParent(null);
@@ -249,7 +261,7 @@ public class UndoRecord {
                 }
                 case COPY_VERTEX_POSITIONS: {
                     Mesh mesh = (Mesh) d[0];
-                    Vec3 pos[] = (Vec3[]) d[1];
+                    Vec3[] pos = (Vec3[]) d[1];
                     redoRecord.addCommandAtBeginning(COPY_VERTEX_POSITIONS, mesh, mesh.getVertexPositions());
                     mesh.setVertexPositions(pos);
                     if (theWindow.getScene() != null) {
@@ -266,14 +278,14 @@ public class UndoRecord {
                 case SET_MESH_SELECTION: {
                     MeshEditController controller = (MeshEditController) d[0];
                     int mode = (Integer) d[1];
-                    boolean selected[] = (boolean[]) d[2];
+                    boolean[] selected = (boolean[]) d[2];
                     redoRecord.addCommandAtBeginning(SET_MESH_SELECTION, controller, controller.getSelectionMode(), controller.getSelection().clone());
                     controller.setSelectionMode(mode);
                     controller.setSelection(selected);
                     break;
                 }
                 case SET_SCENE_SELECTION: {
-                    int selected[] = (int[]) d[0];
+                    int[] selected = (int[]) d[0];
                     needRestoreSelection = true;
                     if (theWindow instanceof LayoutWindow) {
                         ((LayoutWindow) theWindow).setSelection(selected);
@@ -334,7 +346,7 @@ public class UndoRecord {
             cacheFile.deleteOnExit();
             DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(cacheFile)));
             for (int i = 0; i < command.size(); i++) {
-                Object d[] = data.get(i);
+                Object[] d = data.get(i);
                 SoftReference<?>[] ref = new SoftReference<?>[d.length];
                 dataRef.add(ref);
                 int c = command.get(i);
@@ -344,7 +356,7 @@ public class UndoRecord {
                     ref[1] = new SoftReference<>(d[1]);
                     d[1] = null;
                 } else if (c == COPY_VERTEX_POSITIONS) {
-                    Vec3 positions[] = (Vec3[]) d[1];
+                    Vec3[] positions = (Vec3[]) d[1];
                     out.writeInt(positions.length);
                     for (Vec3 v : positions) {
                         v.writeToFile(out);
@@ -370,7 +382,7 @@ public class UndoRecord {
         }
         boolean anyToLoad = false;
         for (int i = 0; i < dataRef.size(); i++) {
-            Object d[] = data.get(i);
+            Object[] d = data.get(i);
             SoftReference<?>[] ref = dataRef.get(i);
             if (ref != null) {
                 for (int j = 0; j < ref.length; j++) {
@@ -388,14 +400,14 @@ public class UndoRecord {
         if (anyToLoad) {
             DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(cacheFile)));
             for (int i = 0; i < command.size(); i++) {
-                Object d[] = data.get(i);
+                Object[] d = data.get(i);
                 int c = command.get(i);
                 if (c == COPY_OBJECT && theWindow.getScene() != null) {
                     Class<?> cls = ArtOfIllusion.getClass(in.readUTF());
                     Constructor<?> con = cls.getDeclaredConstructor(DataInputStream.class, Scene.class);
                     d[1] = con.newInstance(in, theWindow.getScene());
                 } else if (c == COPY_VERTEX_POSITIONS) {
-                    Vec3 positions[] = new Vec3[in.readInt()];
+                    Vec3[] positions = new Vec3[in.readInt()];
                     for (int j = 0; j < positions.length; j++) {
                         positions[j] = new Vec3(in);
                     }
