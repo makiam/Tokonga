@@ -1747,7 +1747,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         if (obj.getTexture() == null) {
             obj.setTexture(getScene().getDefaultTexture(), getScene().getDefaultTexture().getDefaultMapping(obj));
         }
-        UndoRecord undo = new UndoRecord(this, false);
+        UndoRecord undo = new UndoRecord(this);
         int[] sel = getSelectedIndices();
         addObject(info, undo);
         undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);
@@ -1873,7 +1873,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             return;
         }
         clearSelection();
-        UndoRecord undo = new UndoRecord(this, false);
+        UndoRecord undo = new UndoRecord(this);
 
         // First remove any selected objects.
         for (i = sel.length - 1; i >= 0; i--) {
@@ -1937,7 +1937,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }
 
         // Add the new objects to the scene.
-        UndoRecord undo = new UndoRecord(this, false);
+        UndoRecord undo = new UndoRecord(this);
         int[] selected = getSelectedIndices();
         for (ObjectInfo duplicate : duplicateMap.values()) {
             addObject(duplicate, undo);
@@ -1957,7 +1957,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         ObjectInfo info;
         int i;
 
-        UndoRecord undo = new UndoRecord(this, false);
+        UndoRecord undo = new UndoRecord(this);
         for (i = 0; i < sel.length; i++) {
             info = (ObjectInfo) sel[i];
             undo.addCommand(UndoRecord.COPY_OBJECT_INFO, info, info.duplicate());
@@ -1999,7 +1999,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         if (sel.length == 0) {
             return;
         }
-        UndoRecord undo = new UndoRecord(this, false);
+        UndoRecord undo = new UndoRecord(this);
         for (i = 0; i < sel.length; i++) {
             obj[i] = theScene.getObject(sel[i]);
             undo.addCommand(UndoRecord.COPY_OBJECT, obj[i].getObject(), obj[i].getObject().duplicate());
@@ -2152,7 +2152,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         if (!Double.isNaN(values[5])) {
             m = m.times(Mat4.zrotation(values[5] * Math.PI / 180.0));
         }
-        UndoRecord undo = new UndoRecord(this, false);
+        UndoRecord undo = new UndoRecord(this);
         HashSet<Object3D> scaledObjects = new HashSet<>();
         for (i = 0; i < sel.length; i++) {
             info = theScene.getObject(sel[i]);
@@ -2265,7 +2265,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         if (!dlg.clickedOk()) {
             return;
         }
-        UndoRecord undo = new UndoRecord(this, false);
+        UndoRecord undo = new UndoRecord(this);
 
         // Determine the position to align the objects to.
         alignTo = new Vec3();
@@ -2503,7 +2503,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     private void setObjectVisibility(boolean visible, boolean selectionOnly) {
-        UndoRecord undo = new UndoRecord(this, false);
+        UndoRecord undo = new UndoRecord(this);
         if (selectionOnly) {
             int[] sel = getSelectedIndices();
             for (int i = 0; i < sel.length; i++) {
@@ -2523,7 +2523,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     private void setObjectsLocked(boolean locked, boolean selectionOnly) {
-        UndoRecord undo = new UndoRecord(this, false);
+        UndoRecord undo = new UndoRecord(this);
         if (selectionOnly) {
             int[] sel = getSelectedIndices();
             for (int i = 0; i < sel.length; i++) {
@@ -2645,7 +2645,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         info.clearCachedMeshes();
         info.addTrack(new PositionTrack(info), 0);
         info.addTrack(new RotationTrack(info), 1);
-        UndoRecord undo = new UndoRecord(this, false);
+        UndoRecord undo = new UndoRecord(this);
         int[] sel = getSelectedIndices();
         addObject(info, undo);
         undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);
@@ -2699,7 +2699,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }
         ScriptedObject obj = new ScriptedObject(scriptText, language);
         ObjectInfo info = new ObjectInfo(obj, new CoordinateSystem(), nameField.getText());
-        UndoRecord undo = new UndoRecord(this, false);
+        UndoRecord undo = new UndoRecord(this);
         int[] sel = getSelectedIndices();
         addObject(info, undo);
         undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);
@@ -2731,7 +2731,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }
         int[] sel = getSelectedIndices();
 
-        UndoRecord undo = new UndoRecord(this, false);
+        UndoRecord undo = new UndoRecord(this);
         for (int i = 0; i < sel.length; i++) {
             ObjectInfo info = theScene.getObject(sel[i]);
             if (info.getParent() == null) {
