@@ -251,7 +251,7 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow
 
     if (sel.length == 0)
       return;
-    UndoRecord undo = new UndoRecord(this, false);
+    UndoRecord undo = new UndoRecord(this);
     setUndoRecord(undo);
     for (i = 0; i < sel.length; i++)
     {
@@ -342,7 +342,7 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow
     dlg = new TransformDialog(this, Translate.text("transformObjectTitleMultiple"),
         new double [] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0}, true, true);
     values = dlg.getValues();
-    UndoRecord undo = new UndoRecord(this, false);
+    UndoRecord undo = new UndoRecord(this);
     setUndoRecord(undo);
     for (i = 0; i < sel.length; i++)
     {
@@ -423,7 +423,7 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow
         new Widget [] {px, py, pz}, new String [] {"X", "Y", "Z"});
     if (!dlg.clickedOk())
       return;
-    UndoRecord undo = new UndoRecord(this, false);
+    UndoRecord undo = new UndoRecord(this);
     setUndoRecord(undo);
 
     // Determine the position to align the objects to.
@@ -525,7 +525,7 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow
         bounds = bounds.merge(b);
     }
     Vec3 center = bounds.getCenter();
-    UndoRecord undo = new UndoRecord(this, false);
+    UndoRecord undo = new UndoRecord(this);
     setUndoRecord(undo);
 
     // Center the objects.
