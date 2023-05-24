@@ -385,7 +385,7 @@ public class ObjectPropertiesPanel extends ColumnContainer
     if (ev.getWidget() != lastEventSource)
     {
       ignoreNextChange = true;
-      undo = new UndoRecord(window, false);
+      undo = new UndoRecord(window);
       for (int i = 0; i < objects.length; i++)
         undo.addCommand(UndoRecord.COPY_COORDS, objects[i].getCoords(), objects[i].getCoords().duplicate());
     }
@@ -473,7 +473,7 @@ public class ObjectPropertiesPanel extends ColumnContainer
     }
     if (tex != null)
     {
-      UndoRecord undo = new UndoRecord(window, false);
+      UndoRecord undo = new UndoRecord(window);
       for (int i = 0; i < objects.length; i++)
         if (objects[i].getObject().getTexture() != tex)
         {
@@ -524,7 +524,7 @@ public class ObjectPropertiesPanel extends ColumnContainer
     }
     if (noMaterial || mat != null)
     {
-      UndoRecord undo = new UndoRecord(window, false);
+      UndoRecord undo = new UndoRecord(window);
       for (int i = 0; i < objects.length; i++)
         if (objects[i].getObject().getMaterial() != mat)
         {
@@ -563,7 +563,7 @@ public class ObjectPropertiesPanel extends ColumnContainer
     if (ev.getWidget() != lastEventSource)
     {
       ignoreNextChange = true;
-      undo = new UndoRecord(window, false);
+      undo = new UndoRecord(window);
       for (int i = 0; i < objects.length; i++)
         undo.addCommand(UndoRecord.COPY_OBJECT, objects[i].getObject(), objects[i].getObject().duplicate());
     }

@@ -562,7 +562,7 @@ public class ArtOfIllusion {
             return;
         }
         Scene scene = win.getScene();
-        UndoRecord undo = new UndoRecord(win, false);
+        UndoRecord undo = new UndoRecord(win);
         win.setUndoRecord(undo);
         int sel[] = win.getSelectedIndices();
 

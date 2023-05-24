@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2008 by Peter Eastman
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -350,7 +350,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay
         {
           // Duplicate any tracks with selected keyframes, so we can undo the drag.
 
-          undo = new UndoRecord(window, false);
+          undo = new UndoRecord(window);
           for (i = 0; i < sel.length; i++)
             {
               Track tr = sel[i].track;

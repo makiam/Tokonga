@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2008 by Peter Eastman
-   Changes copyright (C) 2020-2022 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -44,7 +44,7 @@ public class CreateCameraTool extends EditingTool
     ObjectInfo info = new ObjectInfo(new SceneCamera(), new CoordinateSystem(orig, zdir, ydir), "Camera "+(counter++));
     info.addTrack(new PositionTrack(info), 0);
     info.addTrack(new RotationTrack(info), 1);
-    UndoRecord undo = new UndoRecord(theWindow, false);
+    UndoRecord undo = new UndoRecord(theWindow);
     int sel[] = ((LayoutWindow) theWindow).getSelectedIndices();
     ((LayoutWindow) theWindow).addObject(info, undo);
     undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);

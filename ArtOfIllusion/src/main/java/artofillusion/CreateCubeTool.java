@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2008 by Peter Eastman
    Changes Copyright (C) 2016, 2019 by Petri Ihalainen
-   Changes copyright (C) 2020-2022 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,7 +17,6 @@ import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
-
 import java.awt.*;
 
 /** CreateCubeTool is an EditingTool used for creating Cube objects. */
@@ -67,7 +66,7 @@ public class CreateCubeTool extends EditingTool
         objInfo = new ObjectInfo(new Cube(1.0, 1.0, 1.0), new CoordinateSystem(), "Cube "+(counter++));
         objInfo.addTrack(new PositionTrack(objInfo), 0);
         objInfo.addTrack(new RotationTrack(objInfo), 1);
-        UndoRecord undo = new UndoRecord(theWindow, false);
+        UndoRecord undo = new UndoRecord(theWindow);
         int sel[] = ((LayoutWindow) theWindow).getSelectedIndices();
         ((LayoutWindow) theWindow).addObject(objInfo, undo);
         undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);
