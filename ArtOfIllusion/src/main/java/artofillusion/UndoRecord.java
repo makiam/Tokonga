@@ -58,6 +58,7 @@ public class UndoRecord {
     public static final int COPY_SKELETON = 14;
     public static final int SET_MESH_SELECTION = 15;
     public static final int SET_SCENE_SELECTION = 16;
+    public static final int USER_DEFINED_ACTION = 1000;
 
     private static final List<Integer> commandsToCache = Arrays.asList(COPY_OBJECT, COPY_VERTEX_POSITIONS);
 
@@ -107,6 +108,7 @@ public class UndoRecord {
     /**
      * Get the list of commands in this record's script.
      */
+    //TODO: Replace with Immutable Collector once migrated to JDK 11
     public List<Integer> getCommands() {
         return records.stream().map(entry -> entry.getKey()).collect(Collectors.toList());
     }
@@ -291,6 +293,16 @@ public class UndoRecord {
                     }
                     break;
                 }
+                case USER_DEFINED_ACTION: {
+                    UndoableEdit edit = (UndoableEdit) d[0];
+                    if(redo) {
+                        edit.redo();
+                    } else {
+                        edit.undo();
+                    }
+                    redoRecord.addCommand(UndoRecord.USER_DEFINED_ACTION, edit);
+                    break;
+                }
             }
         }
         if (needRestoreSelection) {
@@ -415,5 +427,12 @@ public class UndoRecord {
         }
         cacheFile.delete();
         dataRef = null;
+    }
+
+    public String getName() {
+        if(records.isEmpty()) return "";
+        int command = records.get(0).getKey();
+        if(command != UndoRecord.USER_DEFINED_ACTION) return "";
+        return ((UndoableEdit)records.get(0).getValue()[0]).getName();
     }
 }

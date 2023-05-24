@@ -1035,7 +1035,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
         fileMenuItem.setEnabled(modified);
         editMenuItem[0].setEnabled(undoStack.canUndo()); // Undo
+        editMenuItem[0].setText(undoStack.canUndo() ? Translate.text("menu.undo") + " " + undoStack.getUndoName() : Translate.text("menu.undo"));
         editMenuItem[1].setEnabled(undoStack.canRedo()); // Redo
+        editMenuItem[1].setText(undoStack.canRedo() ? Translate.text("menu.redo") + " " + undoStack.getRedoName() : Translate.text("menu.redo"));
         editMenuItem[2].setEnabled(numSelObjects > 0); // Cut
         editMenuItem[3].setEnabled(numSelObjects > 0); // Copy
         editMenuItem[4].setEnabled(ArtOfIllusion.getClipboardSize() > 0); // Paste
