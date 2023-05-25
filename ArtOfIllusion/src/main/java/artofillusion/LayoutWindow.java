@@ -2391,19 +2391,19 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     public void renameObjectCommand() {
         int[] sel = getSelectedIndices();
-        ObjectInfo info;
 
         if (sel.length != 1) {
             return;
         }
-        info = theScene.getObject(sel[0]);
+        String current = theScene.getObject(sel[0]).getName();
         BStandardDialog dlg = new BStandardDialog("", Translate.text("renameObjectTitle"), BStandardDialog.PLAIN);
-        String val = dlg.showInputDialog(this, null, info.getName());
-        if (val == null) {
+        String newName = dlg.showInputDialog(this, null, current);
+        if (newName == null) {
             return;
         }
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.RENAME_OBJECT, sel[0], info.getName()));
-        setObjectName(sel[0], val);
+        UndoableEdit edit = new ObjectRenameEdit(this, sel[0], newName);
+        edit.execute();
+        setUndoRecord(new UndoRecord(this, false, UndoRecord.USER_DEFINED_ACTION, edit));
     }
 
     public void convertToTriangleCommand() {
