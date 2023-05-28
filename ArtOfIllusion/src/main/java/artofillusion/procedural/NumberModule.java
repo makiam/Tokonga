@@ -69,7 +69,7 @@ public class NumberModule extends ProceduralModule
         editor.updatePreview();
       }
     });
-    ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), Translate.text("selectValue"), new Widget [] {field},
+    ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), Translate.text("Modules:selectValue"), new Widget [] {field},
       new String [] {null});
     if (!dlg.clickedOk())
       return false;

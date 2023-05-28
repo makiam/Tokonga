@@ -236,7 +236,7 @@ public class MarbleModule extends ProceduralModule {
         octavesField.addEventLink(ValueChangedEvent.class, listener);
         ampField.addEventLink(ValueChangedEvent.class, listener);
         spacingField.addEventLink(ValueChangedEvent.class, listener);
-        ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), Translate.text("selectMarbleProperties"),
+        ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), Translate.text("Modules:selectMarbleProperties"),
                 new Widget[]{ampField, spacingField, octavesField},
                 new String[]{Translate.text("Noise Amplitude"), Translate.text("Band Spacing"), Translate.text("Octaves")});
         return dlg.clickedOk();

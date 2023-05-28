@@ -451,7 +451,7 @@ public class FunctionModule extends ProceduralModule {
             this.editor = editor;
             FormContainer content = new FormContainer(1, 5);
             setContent(BOutline.createEmptyBorder(content, UIUtilities.getStandardDialogInsets()));
-            content.add(Translate.label("functionModuleInstructions"), 0, 0);
+            content.add(Translate.label("Modules:functionModuleInstructions"), 0, 0);
             content.add(canvas = new CustomWidget(), 0, 1, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
             canvas.setPreferredSize(new Dimension(200, 150));
             canvas.setBackground(Color.white);
@@ -479,8 +479,8 @@ public class FunctionModule extends ProceduralModule {
             row.add(deleteButton = Translate.button("delete", this, "doDelete"));
             RowContainer checkboxRow = new RowContainer();
             content.add(checkboxRow, 0, 3);
-            checkboxRow.add(repeatBox = new BCheckBox(Translate.text("functionIsPeriodic"), repeat));
-            checkboxRow.add(smoothBox = new BCheckBox(Translate.text("smoothCurve"), shape == SMOOTH_INTERPOLATE));
+            checkboxRow.add(repeatBox = new BCheckBox(Translate.text("Modules:functionIsPeriodic"), repeat));
+            checkboxRow.add(smoothBox = new BCheckBox(Translate.text("Modules:smoothCurve"), shape == SMOOTH_INTERPOLATE));
             repeatBox.addEventLink(ValueChangedEvent.class, this, "functionChanged");
             smoothBox.addEventLink(ValueChangedEvent.class, this, "functionChanged");
             RowContainer buttons = new RowContainer();

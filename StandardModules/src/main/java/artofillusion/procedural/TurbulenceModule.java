@@ -226,7 +226,7 @@ public class TurbulenceModule extends ProceduralModule {
         };
         octavesField.addEventLink(ValueChangedEvent.class, listener);
         ampField.addEventLink(ValueChangedEvent.class, listener);
-        ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), Translate.text("selectTurbulenceProperties"), new Widget[]{ampField, octavesField},
+        ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), Translate.text("Modules:selectTurbulenceProperties"), new Widget[]{ampField, octavesField},
                 new String[]{Translate.text("Amplitude"), Translate.text("Octaves")});
         return dlg.clickedOk();
     }
