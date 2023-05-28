@@ -51,7 +51,7 @@ public class Scene {
     private boolean fog, showGrid, snapToGrid;
     private String name, directory;
 
-    private ParameterValue environParamValue[];
+    private ParameterValue[] environParamValue;
 
     private final List<String> errors = new ArrayList<>();
 
@@ -64,7 +64,7 @@ public class Scene {
     public static final int ENVIRON_DIFFUSE = 1;
     public static final int ENVIRON_EMISSIVE = 2;
 
-    private static final byte FILE_PREFIX[] = {'A', 'o', 'I', 'S', 'c', 'e', 'n', 'e'};
+    private static final byte[] FILE_PREFIX = {'A', 'o', 'I', 'S', 'c', 'e', 'n', 'e'};
 
     public Scene() {
         UniformTexture defTex = new UniformTexture();
@@ -137,7 +137,7 @@ public class Scene {
      */
     public void setTime(double t) {
         time = t;
-        boolean processed[] = new boolean[objects.size()];
+        boolean[] processed = new boolean[objects.size()];
         objects.forEach(item
                 -> applyTracksToObject(item, processed, null, objects.indexOf(item)));
         for (ObjectInfo obj : objects) {
@@ -160,8 +160,8 @@ public class Scene {
      * themselves to reflect their dependencies on other parts of the scene.
      */
     public void applyTracksAfterModification(Collection<ObjectInfo> changedObjects) {
-        boolean changed[] = new boolean[objects.size()];
-        boolean processed[] = new boolean[objects.size()];
+        boolean[] changed = new boolean[objects.size()];
+        boolean[] processed = new boolean[objects.size()];
 
         // First apply a subset of the tracks of the modified objects.
         for (ObjectInfo info : changedObjects) {
@@ -188,7 +188,7 @@ public class Scene {
         objects.forEach(item -> item.getObject().sceneChanged(item, this));
     }
 
-    private void applyTracksToObject(ObjectInfo info, boolean processed[], boolean changed[], int index) {
+    private void applyTracksToObject(ObjectInfo info, boolean[] processed, boolean[] changed, int index) {
         if (processed[index]) {
             // This object has already been updated.
 
@@ -204,7 +204,7 @@ public class Scene {
             if (track.isNullTrack() || !track.isEnabled()) {
                 continue;
             }
-            ObjectInfo depends[] = track.getDependencies();
+            ObjectInfo[] depends = track.getDependencies();
             for (int i = 0; i < depends.length; i++) {
                 int k = indexOf(depends[i]);
                 if (k > -1 && !processed[k]) {
@@ -332,7 +332,7 @@ public class Scene {
     /**
      * Set the parameter values used for the environment map.
      */
-    public void setEnvironmentParameterValues(ParameterValue value[]) {
+    public void setEnvironmentParameterValues(ParameterValue[] value) {
         environParamValue = value;
     }
 
@@ -510,7 +510,7 @@ public class Scene {
             ObjectInfo obj = objects.elementAt(i);
             for (int j = 0; j < obj.getTracks().length; j++) {
                 Track tr = obj.getTracks()[j];
-                ObjectInfo depends[] = tr.getDependencies();
+                ObjectInfo[] depends = tr.getDependencies();
                 for (int k = 0; k < depends.length; k++) {
                     if (depends[k] == info) {
                         if (undo != null) {
@@ -839,7 +839,7 @@ public class Scene {
      * @deprecated Call setSelection() on the LayoutWindow instead.
      */
     @Deprecated
-    public void setSelection(int which[]) {
+    public void setSelection(int[] which) {
         clearSelection();
         for (int index : which) {
             ObjectInfo info = objects.elementAt(index);
@@ -1099,7 +1099,7 @@ public class Scene {
      */
     @Deprecated
     public int[] getSelection() {
-        int sel[] = new int[selection.size()];
+        int[] sel = new int[selection.size()];
 
         for (int i = 0; i < sel.length; i++) {
             sel[i] = selection.elementAt(i);
@@ -1122,7 +1122,7 @@ public class Scene {
                 count++;
             }
         }
-        int sel[] = new int[count];
+        int[] sel = new int[count];
         count = 0;
         for (int i = objects.size() - 1; i >= 0; i--) {
             ObjectInfo info = objects.elementAt(i);
@@ -1226,7 +1226,7 @@ public class Scene {
             try {
                 String classname = in.readUTF();
                 int len = in.readInt();
-                byte bytes[] = new byte[len];
+                byte[] bytes = new byte[len];
                 in.readFully(bytes);
                 cls = ArtOfIllusion.getClass(classname);
                 try {
@@ -1259,7 +1259,7 @@ public class Scene {
             try {
                 String classname = in.readUTF();
                 int len = in.readInt();
-                byte bytes[] = new byte[len];
+                byte[] bytes = new byte[len];
                 in.readFully(bytes);
                 cls = ArtOfIllusion.getClass(classname);
                 try {
@@ -1355,7 +1355,7 @@ public class Scene {
             for (int i = 0; i < count; i++) {
                 try {
                     String name = in.readUTF();
-                    byte data[] = new byte[in.readInt()];
+                    byte[] data = new byte[in.readInt()];
                     in.readFully(data);
                     XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(data), null, null, loader);
                     metadataMap.put(name, decoder.readObject());
@@ -1389,7 +1389,7 @@ public class Scene {
             try {
                 String classname = in.readUTF();
                 int len = in.readInt();
-                byte bytes[] = new byte[len];
+                byte[] bytes = new byte[len];
                 in.readFully(bytes);
                 try {
                     cls = ArtOfIllusion.getClass(classname);
@@ -1421,10 +1421,10 @@ public class Scene {
         if (version < 2 && obj.getTexture() != null) {
             // Initialize the texture parameters.
 
-            TextureParameter texParam[] = obj.getTextureMapping().getParameters();
-            ParameterValue paramValue[] = obj.getParameterValues();
-            double val[] = new double[paramValue.length];
-            boolean perVertex[] = new boolean[paramValue.length];
+            TextureParameter[] texParam = obj.getTextureMapping().getParameters();
+            ParameterValue[] paramValue = obj.getParameterValues();
+            double[] val = new double[paramValue.length];
+            boolean[] perVertex = new boolean[paramValue.length];
             for (int i = 0; i < val.length; i++) {
                 val[i] = in.readDouble();
             }
@@ -1510,7 +1510,7 @@ public class Scene {
             out.writeUTF(mat.getClass().getName());
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             mat.writeToFile(new DataOutputStream(bos), this);
-            byte bytes[] = bos.toByteArray();
+            byte[] bytes = bos.toByteArray();
             out.writeInt(bytes.length);
             out.write(bytes, 0, bytes.length);
         }
@@ -1522,7 +1522,7 @@ public class Scene {
             out.writeUTF(tex.getClass().getName());
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             tex.writeToFile(new DataOutputStream(bos), this);
-            byte bytes[] = bos.toByteArray();
+            byte[] bytes = bos.toByteArray();
             out.writeInt(bytes.length);
             out.write(bytes, 0, bytes.length);
         }
@@ -1599,7 +1599,7 @@ public class Scene {
             out.writeUTF(info.getObject().getClass().getName());
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             info.getObject().writeToFile(new DataOutputStream(bos), this);
-            byte bytes[] = bos.toByteArray();
+            byte[] bytes = bos.toByteArray();
             out.writeInt(bytes.length);
             out.write(bytes, 0, bytes.length);
             key = index++;
