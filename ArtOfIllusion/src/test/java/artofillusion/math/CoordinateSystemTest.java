@@ -33,9 +33,39 @@ public class CoordinateSystemTest {
         Assert.assertEquals(1.0, test.orig.x, 0);
         Assert.assertEquals(2.0, test.orig.y, 0);
         Assert.assertEquals(3.0, test.orig.z, 0);
-        
+
+
     }
-    
+
+    @Test
+    public void testCreateCSWithRotate() {
+        Vec3 vec = new Vec3();
+        vec.set(1, 2.0, 3.0);
+
+        CoordinateSystem test = new CoordinateSystem(vec, 0, 45, 123);
+        Assert.assertEquals(1.0, test.orig.x, 0);
+        Assert.assertEquals(2.0, test.orig.y, 0);
+        Assert.assertEquals(3.0, test.orig.z, 0);
+
+        Assert.assertArrayEquals(new double[] {0.0, 45.0, 123.0}, test.getRotationAngles(), 0.00000000001);
+
+    }
+
+    @Test
+    public void testCreateCSAndAddRatate() {
+        Vec3 vec = new Vec3();
+        vec.set(1, 2.0, 3.0);
+
+        CoordinateSystem test = new CoordinateSystem(vec, 0, 0, 0);
+        Assert.assertEquals(1.0, test.orig.x, 0);
+        Assert.assertEquals(2.0, test.orig.y, 0);
+        Assert.assertEquals(3.0, test.orig.z, 0);
+
+        
+        test.setOrientation(0, 45, 123);
+        Assert.assertArrayEquals(new double[] {0.0, 45.0, 123.0}, test.getRotationAngles(), 0.00000000001);
+    }
+
     
     @Test
     public void testCreateCSFromStream() throws IOException
