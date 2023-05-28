@@ -236,7 +236,7 @@ public class JitterModule extends ProceduralModule {
         p.add(scale1, 1, 2);
         p.add(scale2, 2, 2);
         p.add(scale3, 3, 2);
-        PanelDialog dlg = new PanelDialog(editor.getParentFrame(), Translate.text("selectJitterParameters"), p);
+        PanelDialog dlg = new PanelDialog(editor.getParentFrame(), Translate.text("Modules:selectJitterParameters"), p);
         return dlg.clickedOk();
     }
 

@@ -42,7 +42,7 @@ public class CommentModule extends ProceduralModule {
     @Override
     public boolean edit(ProcedureEditor editor, Scene theScene) {
         BTextArea ta = new BTextArea(name, 10, 40);
-        PanelDialog dlg = new PanelDialog(editor.getParentFrame(), Translate.text("editComment"), BOutline.createBevelBorder(new BScrollPane(ta), false));
+        PanelDialog dlg = new PanelDialog(editor.getParentFrame(), Translate.text("Modules:editComment"), BOutline.createBevelBorder(new BScrollPane(ta), false));
         if (!dlg.clickedOk()) {
             return false;
         }

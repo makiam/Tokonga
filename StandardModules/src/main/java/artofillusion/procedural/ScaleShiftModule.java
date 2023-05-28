@@ -112,11 +112,11 @@ public class ScaleShiftModule extends ProceduralModule {
         scaleField.addEventLink(ValueChangedEvent.class, listener);
         shiftField.addEventLink(ValueChangedEvent.class, listener);
         RowContainer row = new RowContainer();
-        row.add(new BLabel(Translate.text("scaleShiftEquation")));
+        row.add(new BLabel(Translate.text("Modules:scaleShiftEquation")));
         row.add(scaleField);
         row.add(new BLabel(" + "));
         row.add(shiftField);
-        PanelDialog dlg = new PanelDialog(editor.getParentFrame(), Translate.text("selectScaleShiftProperties"), row);
+        PanelDialog dlg = new PanelDialog(editor.getParentFrame(), Translate.text("Modules:selectScaleShiftProperties"), row);
         if (!dlg.clickedOk()) {
             return false;
         }

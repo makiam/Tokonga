@@ -298,7 +298,7 @@ public class SpectrumModule extends ProceduralModule {
             this.editor = editor;
             FormContainer content = new FormContainer(1, 5);
             setContent(BOutline.createEmptyBorder(content, UIUtilities.getStandardDialogInsets()));
-            content.add(Translate.label("functionModuleInstructions"), 0, 0);
+            content.add(Translate.label("Modules:functionModuleInstructions"), 0, 0);
             content.add(canvas = new CustomWidget(), 0, 1, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
             canvas.setPreferredSize(new Dimension(200, 30 + rows * HANDLE_SIZE));
             canvas.addEventLink(RepaintEvent.class, this, "paintCanvas");
@@ -322,7 +322,7 @@ public class SpectrumModule extends ProceduralModule {
             preview.addEventLink(MouseClickedEvent.class, this, "selectColor");
             row.add(Translate.button("add", this, "doAdd"));
             row.add(deleteButton = Translate.button("delete", this, "doDelete"));
-            content.add(repeatBox = new BCheckBox(Translate.text("functionIsPeriodic"), repeat), 0, 3);
+            content.add(repeatBox = new BCheckBox(Translate.text("Modules:functionIsPeriodic"), repeat), 0, 3);
             repeatBox.addEventLink(ValueChangedEvent.class, this, "repeatChanged");
             RowContainer buttons = new RowContainer();
             content.add(buttons, 0, 4);

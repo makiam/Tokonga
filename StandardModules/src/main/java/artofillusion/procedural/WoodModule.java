@@ -217,9 +217,9 @@ public class WoodModule extends ProceduralModule {
         ampField.addEventLink(ValueChangedEvent.class, listener);
         spacingField.addEventLink(ValueChangedEvent.class, listener);
         modBox.addEventLink(ValueChangedEvent.class, listener);
-        ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), Translate.text("selectWoodProperties"),
+        ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), Translate.text("Modules:selectWoodProperties"),
                 new Widget[]{ampField, spacingField, octavesField, modBox},
-                new String[]{Translate.text("noiseAmplitude"), Translate.text("ringSpacing"), Translate.text("noiseOctaves"), null});
+                new String[]{Translate.text("Modules:noiseAmplitude"), Translate.text("Modules:ringSpacing"), Translate.text("Modules:noiseOctaves"), null});
         return dlg.clickedOk();
     }
 

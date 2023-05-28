@@ -127,7 +127,7 @@ public class ClipModule extends ProceduralModule {
         };
         minField.addEventLink(ValueChangedEvent.class, listener);
         maxField.addEventLink(ValueChangedEvent.class, listener);
-        ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), Translate.text("selectClipRange"),
+        ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), Translate.text("Modules:selectClipRange"),
                 new Widget[]{minField, maxField},
                 new String[]{Translate.text("Minimum"), Translate.text("Maximum")});
         if (!dlg.clickedOk()) {
