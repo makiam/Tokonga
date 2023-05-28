@@ -53,7 +53,7 @@ public class SceneLoadTest {
     {
         
         ByteBuffer wrap = ByteBuffer.allocate(2);
-        wrap.putShort((short)5); // Scene Version
+        wrap.putShort((short)6); // Scene Version
         
         new Scene(StreamUtil.stream(wrap), true);
     }
