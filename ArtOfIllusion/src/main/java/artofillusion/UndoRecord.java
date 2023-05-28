@@ -98,6 +98,9 @@ public class UndoRecord {
         addCommand(theCommand, commandData);
     }
 
+    public UndoRecord(EditingWindow win, boolean isRedo, UndoableEdit edit) {
+        this(win, isRedo, USER_DEFINED_ACTION, edit);
+    }
     /**
      * Get whether this record represents "redoing" a previously undone operation.
      */

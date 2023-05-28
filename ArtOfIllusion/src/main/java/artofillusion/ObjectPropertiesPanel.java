@@ -429,8 +429,9 @@ public class ObjectPropertiesPanel extends ColumnContainer
     if (objects.length == 0 || objects[0].getName().equals(nameField.getText()))
       return;
     int which = window.getScene().indexOf(objects[0]);
-    window.setUndoRecord(new UndoRecord(window, false, UndoRecord.RENAME_OBJECT, which, objects[0].getName()));
-    window.setObjectName(which, nameField.getText());
+    UndoableEdit edit = new ObjectRenameEdit(window, which, nameField.getText()).execute();
+    window.setUndoRecord(new UndoRecord(window, false, edit));
+    
     if (ev instanceof KeyPressedEvent)
       window.getView().requestFocus(); // This is where they'll probably expect it to go
   }

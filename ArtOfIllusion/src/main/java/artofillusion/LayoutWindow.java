@@ -2401,9 +2401,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         if (newName == null) {
             return;
         }
-        UndoableEdit edit = new ObjectRenameEdit(this, sel[0], newName);
-        edit.execute();
-        setUndoRecord(new UndoRecord(this, false, UndoRecord.USER_DEFINED_ACTION, edit));
+        UndoableEdit edit = new ObjectRenameEdit(this, sel[0], newName).execute();
+        setUndoRecord(new UndoRecord(this, false, edit));
     }
 
     public void convertToTriangleCommand() {

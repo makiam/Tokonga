@@ -26,8 +26,9 @@ public interface UndoableEdit {
      */
     public void redo();
 
-    default void execute() {
+    default UndoableEdit execute() {
         redo();
+        return this;
     }
 
     default String getName() {
