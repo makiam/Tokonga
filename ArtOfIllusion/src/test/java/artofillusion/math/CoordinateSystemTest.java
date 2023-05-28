@@ -33,9 +33,11 @@ public class CoordinateSystemTest {
         Assert.assertEquals(1.0, test.orig.x, 0);
         Assert.assertEquals(2.0, test.orig.y, 0);
         Assert.assertEquals(3.0, test.orig.z, 0);
-        
+
+
     }
-    
+
+
     
     @Test
     public void testCreateCSFromStream() throws IOException
