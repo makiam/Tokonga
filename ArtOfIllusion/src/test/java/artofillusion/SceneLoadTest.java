@@ -1,4 +1,4 @@
-/* Copyright (C) 2018 by Maksim Khramov
+/* Copyright (C) 2018-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -53,7 +53,7 @@ public class SceneLoadTest {
     {
         
         ByteBuffer wrap = ByteBuffer.allocate(2);
-        wrap.putShort((short)5); // Scene Version
+        wrap.putShort((short)6); // Scene Version
         
         new Scene(StreamUtil.stream(wrap), true);
     }
@@ -159,7 +159,7 @@ public class SceneLoadTest {
         Assert.assertEquals(1, scene.getNumMaterials());
         Assert.assertTrue(scene.getMaterial(0) instanceof UniformMaterial);
         Assert.assertTrue(scene.getMaterial(0).getName().equals("<unreadable>"));
-        Assert.assertFalse(scene.getLoadingErrors().isEmpty());
+        Assert.assertFalse(scene.getErrors().isEmpty());
     }
     
     @Test
@@ -227,7 +227,7 @@ public class SceneLoadTest {
         Assert.assertEquals(1, scene.getNumMaterials());
         Assert.assertTrue(scene.getMaterial(0) instanceof UniformMaterial);
         Assert.assertTrue(scene.getMaterial(0).getName().equals("<unreadable>"));
-        Assert.assertFalse(scene.getLoadingErrors().isEmpty());
+        Assert.assertFalse(scene.getErrors().isEmpty());
     }
 
     @Test
@@ -295,7 +295,7 @@ public class SceneLoadTest {
         Assert.assertEquals(1, scene.getNumMaterials());
         Assert.assertTrue(scene.getMaterial(0) instanceof UniformMaterial);
         Assert.assertTrue(scene.getMaterial(0).getName().equals("<unreadable>"));
-        Assert.assertFalse(scene.getLoadingErrors().isEmpty());
+        Assert.assertFalse(scene.getErrors().isEmpty());
     }
     
     //This test fails as no envirinment texture loaded. in general this is impossible situation
