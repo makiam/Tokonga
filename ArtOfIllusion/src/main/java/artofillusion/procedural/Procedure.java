@@ -11,13 +11,19 @@
 
 package artofillusion.procedural;
 
-import artofillusion.*;
-import artofillusion.math.*;
-import artofillusion.procedural.Module;
-import java.awt.*;
-import java.io.*;
-import java.lang.reflect.*;
+import artofillusion.ArtOfIllusion;
+import artofillusion.Scene;
+import artofillusion.math.RGBColor;
+import artofillusion.math.Vec3;
 import lombok.extern.slf4j.Slf4j;
+
+import java.awt.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * This represents a procedure for calculating a set of values (typically, the parameters
@@ -26,11 +32,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Procedure {
 
-    OutputModule output[];
-    Module module[];
-    Link link[];
+    OutputModule[] output;
+    Module[] module;
+    Link[] link;
 
-    public Procedure(OutputModule output[]) {
+    public Procedure(OutputModule[] output) {
         this.output = output;
         module = new Module[0];
         link = new Link[0];
@@ -78,7 +84,7 @@ public class Procedure {
      * Add a module to the procedure.
      */
     public void addModule(Module mod) {
-        Module newmod[] = new Module[module.length + 1];
+        Module[] newmod = new Module[module.length + 1];
         for (int i = 0; i < module.length; i++) {
             newmod[i] = module[i];
         }
@@ -91,7 +97,7 @@ public class Procedure {
      * before* calling this method.
      */
     public void deleteModule(int which) {
-        Module newmod[] = new Module[module.length - 1];
+        Module[] newmod = new Module[module.length - 1];
         int i, j;
         for (i = 0, j = 0; i < module.length; i++) {
             if (i != which) {
@@ -112,7 +118,7 @@ public class Procedure {
      * Add a link to the procedure.
      */
     public void addLink(Link ln) {
-        Link newlink[] = new Link[link.length + 1];
+        Link[] newlink = new Link[link.length + 1];
         for (int i = 0; i < link.length; i++) {
             newlink[i] = link[i];
         }
@@ -125,7 +131,7 @@ public class Procedure {
      * Delete a link from the procedure.
      */
     public void deleteLink(int which) {
-        Link newlink[] = new Link[link.length - 1];
+        Link[] newlink = new Link[link.length - 1];
         int i, j;
 
         if (link[which].to.getType() == IOPort.INPUT) {
