@@ -34,12 +34,12 @@ public class Procedure {
 
     private OutputModule[] outputs;
     private Module[] modules;
-    Link[] link;
+    private Link[] links;
 
-    public Procedure(OutputModule[] output) {
+    public Procedure(OutputModule... output) {
         this.outputs = output;
         modules = new Module[0];
-        link = new Link[0];
+        links = new Link[0];
     }
 
     /**
@@ -111,19 +111,19 @@ public class Procedure {
      * Get the list of links between modules.
      */
     public Link[] getLinks() {
-        return link;
+        return links;
     }
 
     /**
      * Add a link to the procedure.
      */
     public void addLink(Link ln) {
-        Link[] newlink = new Link[link.length + 1];
-        for (int i = 0; i < link.length; i++) {
-            newlink[i] = link[i];
+        Link[] newlink = new Link[links.length + 1];
+        for (int i = 0; i < links.length; i++) {
+            newlink[i] = links[i];
         }
-        newlink[link.length] = ln;
-        link = newlink;
+        newlink[links.length] = ln;
+        links = newlink;
         ln.to.getModule().setInput(ln.to, ln.from);
     }
 
@@ -131,20 +131,20 @@ public class Procedure {
      * Delete a link from the procedure.
      */
     public void deleteLink(int which) {
-        Link[] newlink = new Link[link.length - 1];
+        Link[] newlink = new Link[links.length - 1];
         int i, j;
 
-        if (link[which].to.getType() == IOPort.INPUT) {
-            link[which].to.getModule().setInput(link[which].to, null);
+        if (links[which].to.getType() == IOPort.INPUT) {
+            links[which].to.getModule().setInput(links[which].to, null);
         } else {
-            link[which].from.getModule().setInput(link[which].from, null);
+            links[which].from.getModule().setInput(links[which].from, null);
         }
-        for (i = 0, j = 0; i < link.length; i++) {
+        for (i = 0, j = 0; i < links.length; i++) {
             if (i != which) {
-                newlink[j++] = link[i];
+                newlink[j++] = links[i];
             }
         }
-        link = newlink;
+        links = newlink;
     }
 
     /**
@@ -208,17 +208,17 @@ public class Procedure {
         for (int i = 0; i < modules.length; i++) {
             modules[i] = proc.modules[i].duplicate();
         }
-        link = new Link[proc.link.length];
-        for (int i = 0; i < link.length; i++) {
-            var fromModule = proc.link[i].from.getModule();
-            var toModule = proc.link[i].to.getModule();
+        links = new Link[proc.links.length];
+        for (int i = 0; i < links.length; i++) {
+            var fromModule = proc.links[i].from.getModule();
+            var toModule = proc.links[i].to.getModule();
             int fromIndex = proc.getModuleIndex(fromModule);
             int toIndex = toModule instanceof OutputModule ? proc.getOutputIndex(toModule) : proc.getModuleIndex(toModule);
-            IOPort from = modules[fromIndex].getOutputPorts()[proc.modules[fromIndex].getOutputIndex(proc.link[i].from)];
+            IOPort from = modules[fromIndex].getOutputPorts()[proc.modules[fromIndex].getOutputIndex(proc.links[i].from)];
             IOPort to = toModule instanceof OutputModule
-                    ? outputs[toIndex].getInputPorts()[proc.outputs[toIndex].getInputIndex(proc.link[i].to)]
-                    : modules[toIndex].getInputPorts()[proc.modules[toIndex].getInputIndex(proc.link[i].to)];
-            link[i] = new Link(from, to);
+                    ? outputs[toIndex].getInputPorts()[proc.outputs[toIndex].getInputIndex(proc.links[i].to)]
+                    : modules[toIndex].getInputPorts()[proc.modules[toIndex].getInputIndex(proc.links[i].to)];
+            links[i] = new Link(from, to);
             to.getModule().setInput(to, from);
         }
     }
@@ -235,15 +235,15 @@ public class Procedure {
             out.writeInt(module.getBounds().y);
             module.writeToStream(out, theScene);
         }
-        out.writeInt(link.length);
-        for (int i = 0; i < link.length; i++) {
-            out.writeInt(getModuleIndex(link[i].from.getModule()));
-            out.writeInt(link[i].from.getModule().getOutputIndex(link[i].from));
-            if (link[i].to.getModule() instanceof OutputModule) {
-                out.writeInt(-getOutputIndex(link[i].to.getModule()) - 1);
+        out.writeInt(links.length);
+        for (Link link : links) {
+            out.writeInt(getModuleIndex(link.from.getModule()));
+            out.writeInt(link.from.getModule().getOutputIndex(link.from));
+            if (link.to.getModule() instanceof OutputModule) {
+                out.writeInt(-getOutputIndex(link.to.getModule()) - 1);
             } else {
-                out.writeInt(getModuleIndex(link[i].to.getModule()));
-                out.writeInt(link[i].to.getModule().getInputIndex(link[i].to));
+                out.writeInt(getModuleIndex(link.to.getModule()));
+                out.writeInt(link.to.getModule().getInputIndex(link.to));
             }
         }
     }
@@ -278,8 +278,8 @@ public class Procedure {
             log.atError().setCause(ex).log("Error creating module: {}", ex.getMessage());
             throw new IOException();
         }
-        link = new Link[in.readInt()];
-        for (int i = 0; i < link.length; i++) {
+        links = new Link[in.readInt()];
+        for (int i = 0; i < links.length; i++) {
             IOPort to, from = modules[in.readInt()].getOutputPorts()[in.readInt()];
             int j = in.readInt();
             if (j < 0) {
@@ -287,7 +287,7 @@ public class Procedure {
             } else {
                 to = modules[j].getInputPorts()[in.readInt()];
             }
-            link[i] = new Link(from, to);
+            links[i] = new Link(from, to);
             to.getModule().setInput(to, from);
         }
     }
