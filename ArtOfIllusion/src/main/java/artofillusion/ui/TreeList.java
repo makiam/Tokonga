@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2009 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,14 +12,14 @@
 package artofillusion.ui;
 
 import artofillusion.*;
+import static artofillusion.ui.UIUtilities.*;
 import buoy.event.*;
 import buoy.widget.*;
-import static artofillusion.ui.UIUtilities.*;
-import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
+import javax.swing.*;
 
 /** This is a Widget which displays a hierarchy of objects.  It provides functionality
     for opening and closing parts of the hierarchy, selecting elements, and moving elements
@@ -55,10 +55,10 @@ public class TreeList extends CustomWidget
   public TreeList(EditingWindow win)
   {
     window = win;
-    elements = new Vector<TreeElement>();
-    showing = new Vector<TreeElement>();
-    indent = new Vector<Integer>();
-    selected = new Vector<TreeElement>();
+    elements = new Vector<>();
+    showing = new Vector<>();
+    indent = new Vector<>();
+    selected = new Vector<>();
     origSelected = new boolean [0];
     allowMultiple = true;
     lastClickRow = -1;
@@ -318,7 +318,7 @@ public class TreeList extends CustomWidget
 
   private void recordUndo()
   {
-    undo = new UndoRecord(window, false);
+    undo = new UndoRecord(window);
   }
 
   /** Finish recording the undo record, and return the completed record. */

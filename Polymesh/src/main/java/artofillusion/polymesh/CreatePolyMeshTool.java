@@ -190,7 +190,7 @@ public class CreatePolyMeshTool extends EditingTool {
         ObjectInfo info = new ObjectInfo(obj, new CoordinateSystem(orig, zdir, ydir), "PolyMesh " + (counter++));
         info.addTrack(new PositionTrack(info), 0);
         info.addTrack(new RotationTrack(info), 1);
-        UndoRecord undo = new UndoRecord(theWindow, false);
+        UndoRecord undo = new UndoRecord(theWindow);
         undo.addCommandAtBeginning(UndoRecord.SET_SCENE_SELECTION, new Object[]{((LayoutWindow) theWindow).getSelectedIndices()});
         ((LayoutWindow) theWindow).addObject(info, undo);
         theWindow.setUndoRecord(undo);

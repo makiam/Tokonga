@@ -14,6 +14,7 @@
 package artofillusion.polymesh;
 
 import artofillusion.TextureParameter;
+import artofillusion.UndoableEdit;
 import artofillusion.math.Vec2;
 import artofillusion.object.FacetedMesh;
 import artofillusion.object.ObjectInfo;
@@ -430,7 +431,7 @@ public class UVMappingEditorDialog extends BDialog {
      *
      * @param cmd The command to add to the stack
      */
-    public void addUndoCommand(Command cmd) {
+    public void addUndoCommand(UndoableEdit cmd) {
         undoRedoStack.addCommand(cmd);
         updateUndoRedoMenus();
     }
@@ -1055,7 +1056,7 @@ public class UVMappingEditorDialog extends BDialog {
     /**
      * Undo/Redo command for sending texture to mapping
      */
-    public class ChangeTextureCommand implements Command {
+    public class ChangeTextureCommand implements UndoableEdit {
 
         int oldTexture, newTexture;
 
@@ -1080,7 +1081,7 @@ public class UVMappingEditorDialog extends BDialog {
     /**
      * Undo/Redo command for sending texture to mapping
      */
-    public class SendTextureToMappingCommand implements Command {
+    public class SendTextureToMappingCommand implements UndoableEdit {
 
         int texture, oldMapping, newMapping;
 
@@ -1123,7 +1124,7 @@ public class UVMappingEditorDialog extends BDialog {
     /**
      * Undo/Redo command for changing selected mapping
      */
-    public class ChangeMappingCommand implements Command {
+    public class ChangeMappingCommand implements UndoableEdit {
 
         int oldMapping, newMapping;
 
@@ -1146,7 +1147,7 @@ public class UVMappingEditorDialog extends BDialog {
     /**
      * Undo/Redo command for adding a mapping
      */
-    public class RemoveMappingCommand implements Command {
+    public class RemoveMappingCommand implements UndoableEdit {
 
         UVMeshMapping mapping;
         int index;
@@ -1215,7 +1216,7 @@ public class UVMappingEditorDialog extends BDialog {
     /**
      * Undo/Redo command for adding a mapping
      */
-    public class AddMappingCommand implements Command {
+    public class AddMappingCommand implements UndoableEdit {
 
         UVMeshMapping mapping;
         int selected;
@@ -1256,7 +1257,7 @@ public class UVMappingEditorDialog extends BDialog {
     /**
      * Undo/Redo command for selecting a piece
      */
-    public class SelectPieceCommand implements Command {
+    public class SelectPieceCommand implements UndoableEdit {
 
         private final int oldPiece;
         private final int newPiece;
@@ -1284,7 +1285,7 @@ public class UVMappingEditorDialog extends BDialog {
     /**
      * Undo/Redo command for renaming a piece
      */
-    public class RenamePieceCommand implements Command {
+    public class RenamePieceCommand implements UndoableEdit {
 
         private final int piece;
         private final String oldName;

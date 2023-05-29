@@ -203,7 +203,7 @@ public class ArraySpec {
      * create an array of objects with current parameter settings
      */
     public void createArray() {
-        undo = new UndoRecord(window, false);
+        undo = new UndoRecord(window);
 
         // create a group object, even when not grouping
         ObjectInfo info = objectList.get(0);
@@ -259,9 +259,7 @@ public class ArraySpec {
             return;
         }
 
-        for (int i = 0; i < objectList.size(); i++) {
-            // get object
-            ObjectInfo info = objectList.get(i);
+        for (ObjectInfo info: objectList) {
 
             // calculate displacement vector
             Vec3 displacement = new Vec3(stepX, stepY, stepZ);
@@ -449,6 +447,7 @@ public class ArraySpec {
      * determines a point on the curve for which the distance to
      * the first point is given by relativePosition
      */
+    //TODO: Delete
     private Vec3 findPointOnCurve(Vec3[] subdiv, boolean isClosed, double relativePosition) {
         // find interval around relativePosition
         int i;

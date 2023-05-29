@@ -147,7 +147,7 @@ public class RotateObjectTool extends EditingTool
 
     if (!dragged)
       {
-        theWindow.setUndoRecord(undo = new UndoRecord(theWindow, false));
+        theWindow.setUndoRecord(undo = new UndoRecord(theWindow));
         for (i = 0; i < toMove.size(); i++)
           {
             ObjectInfo info = toMove.elementAt(i);
@@ -268,7 +268,7 @@ public class RotateObjectTool extends EditingTool
 
     // Rotate every object by 0.5 degrees.
 
-    theWindow.setUndoRecord(undo = new UndoRecord(theWindow, false));
+    theWindow.setUndoRecord(undo = new UndoRecord(theWindow));
     double angle = DRAG_SCALE;
     if (e.isAltDown())
       angle *= 10.0;

@@ -385,7 +385,7 @@ public class ObjectPropertiesPanel extends ColumnContainer
     if (ev.getWidget() != lastEventSource)
     {
       ignoreNextChange = true;
-      undo = new UndoRecord(window, false);
+      undo = new UndoRecord(window);
       for (int i = 0; i < objects.length; i++)
         undo.addCommand(UndoRecord.COPY_COORDS, objects[i].getCoords(), objects[i].getCoords().duplicate());
     }
@@ -429,8 +429,9 @@ public class ObjectPropertiesPanel extends ColumnContainer
     if (objects.length == 0 || objects[0].getName().equals(nameField.getText()))
       return;
     int which = window.getScene().indexOf(objects[0]);
-    window.setUndoRecord(new UndoRecord(window, false, UndoRecord.RENAME_OBJECT, which, objects[0].getName()));
-    window.setObjectName(which, nameField.getText());
+    UndoableEdit edit = new ObjectRenameEdit(window, which, nameField.getText()).execute();
+    window.setUndoRecord(new UndoRecord(window, false, edit));
+    
     if (ev instanceof KeyPressedEvent)
       window.getView().requestFocus(); // This is where they'll probably expect it to go
   }
@@ -473,7 +474,7 @@ public class ObjectPropertiesPanel extends ColumnContainer
     }
     if (tex != null)
     {
-      UndoRecord undo = new UndoRecord(window, false);
+      UndoRecord undo = new UndoRecord(window);
       for (int i = 0; i < objects.length; i++)
         if (objects[i].getObject().getTexture() != tex)
         {
@@ -524,7 +525,7 @@ public class ObjectPropertiesPanel extends ColumnContainer
     }
     if (noMaterial || mat != null)
     {
-      UndoRecord undo = new UndoRecord(window, false);
+      UndoRecord undo = new UndoRecord(window);
       for (int i = 0; i < objects.length; i++)
         if (objects[i].getObject().getMaterial() != mat)
         {
@@ -563,7 +564,7 @@ public class ObjectPropertiesPanel extends ColumnContainer
     if (ev.getWidget() != lastEventSource)
     {
       ignoreNextChange = true;
-      undo = new UndoRecord(window, false);
+      undo = new UndoRecord(window);
       for (int i = 0; i < objects.length; i++)
         undo.addCommand(UndoRecord.COPY_OBJECT, objects[i].getObject(), objects[i].getObject().duplicate());
     }

@@ -14,6 +14,7 @@
 package artofillusion.polymesh;
 
 import artofillusion.TextureParameter;
+import artofillusion.UndoableEdit;
 import artofillusion.math.BoundingBox;
 import artofillusion.math.Vec2;
 import artofillusion.object.FacetedMesh;
@@ -1162,7 +1163,7 @@ public class UVMappingCanvas extends CustomWidget {
     /**
      * Undo/Redo command for whole set of mesh pieces vertices change
      */
-    public class MappingPositionsCommand implements Command {
+    public class MappingPositionsCommand implements UndoableEdit {
 
         private Vec2[][] oldPos;
         private Vec2[][] newPos;
@@ -1261,7 +1262,7 @@ public class UVMappingCanvas extends CustomWidget {
     /**
      * Undo/Redo command for pinning vertices
      */
-    public class PinCommand implements Command {
+    public class PinCommand implements UndoableEdit {
 
         public int[] selection;
 
@@ -1287,7 +1288,7 @@ public class UVMappingCanvas extends CustomWidget {
     /**
      * Undo/Redo command for selected vertices
      */
-    public class SelectionCommand implements Command {
+    public class SelectionCommand implements UndoableEdit {
 
         private int[] selection;
 
@@ -1316,7 +1317,7 @@ public class UVMappingCanvas extends CustomWidget {
      *
      * @author François Guillet
      */
-    public class DragMappingVerticesCommand implements Command {
+    public class DragMappingVerticesCommand implements UndoableEdit {
 
         private int[] vertIndices;
         private Vec2[] undoPositions;

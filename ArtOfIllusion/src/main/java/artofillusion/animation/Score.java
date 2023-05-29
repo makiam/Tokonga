@@ -774,7 +774,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
   public void setTracksEnabled(boolean enable)
   {
     Object sel[] = theList.getSelectedObjects();
-    UndoRecord undo = new UndoRecord(window, false);
+    UndoRecord undo = new UndoRecord(window);
     Vector<ObjectInfo> v = new Vector<>();
 
     for (int i = 0; i < sel.length; i++)
@@ -806,7 +806,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
     Scene theScene = window.getScene();
     Object sel[] = theList.getSelectedObjects();
     double time = theScene.getTime();
-    UndoRecord undo = new UndoRecord(window, false);
+    UndoRecord undo = new UndoRecord(window);
     Vector<SelectionInfo> newkeys = new Vector<>();
 
     for (int i = 0; i < sel.length; i++)
@@ -843,7 +843,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
     Scene theScene = window.getScene();
     int sel[] = window.getSelectedIndices();
     double time = theScene.getTime();
-    UndoRecord undo = new UndoRecord(window, false);
+    UndoRecord undo = new UndoRecord(window);
     Vector<SelectionInfo> newkeys = new Vector<>();
 
     for (int i = 0; i < sel.length; i++)
@@ -899,7 +899,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
   public void duplicateSelectedTracks()
   {
     Object sel[] = theList.getSelectedObjects();
-    UndoRecord undo = new UndoRecord(window, false);
+    UndoRecord undo = new UndoRecord(window);
     Vector<ObjectInfo> modifiedObj = new Vector<>();
     Vector<Track> addedTrack = new Vector<>();
 
@@ -941,7 +941,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
   public void deleteSelectedTracks()
   {
     Object sel[] = theList.getSelectedObjects();
-    UndoRecord undo = new UndoRecord(window, false);
+    UndoRecord undo = new UndoRecord(window);
     Vector<ObjectInfo> modifiedObj = new Vector<>();
 
     for (int i = 0; i < sel.length; i++)
@@ -989,7 +989,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
   public void addTrack(Object obj[], Class<?> trackClass, Object extraArgs[], boolean deselectOthers)
   {
     Scene theScene = window.getScene();
-    UndoRecord undo = new UndoRecord(window, false);
+    UndoRecord undo = new UndoRecord(window);
     Vector<Track> added = new Vector<>();
     Object args[];
     if (extraArgs == null)
@@ -1074,7 +1074,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
             }
       }
     selection = new SelectionInfo [0];
-    UndoRecord undo = new UndoRecord(window, false);
+    UndoRecord undo = new UndoRecord(window);
     Enumeration<Track> tracks = changedTracks.keys();
     while (tracks.hasMoreElements())
       {

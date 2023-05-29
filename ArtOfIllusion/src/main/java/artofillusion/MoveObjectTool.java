@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -84,7 +84,7 @@ public class MoveObjectTool extends EditingTool
     if (!dragged)
       {
         UndoRecord undo;
-        theWindow.setUndoRecord(undo = new UndoRecord(theWindow, false));
+        theWindow.setUndoRecord(undo = new UndoRecord(theWindow));
         for (i = 0; i < toMove.size(); i++)
           {
             ObjectInfo info = toMove.elementAt(i);
@@ -199,7 +199,7 @@ public class MoveObjectTool extends EditingTool
       }
       v = cam.findDragVector(origin, dx, dy);
     }
-    theWindow.setUndoRecord(undo = new UndoRecord(theWindow, false));
+    theWindow.setUndoRecord(undo = new UndoRecord(theWindow));
     toMove = new Vector<ObjectInfo>();
     for (i = 0; i < sel.length; i++)
       toMove.addElement(theScene.getObject(sel[i]));

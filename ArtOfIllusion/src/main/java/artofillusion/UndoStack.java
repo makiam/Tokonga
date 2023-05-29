@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -13,77 +13,77 @@ package artofillusion;
 
 import java.util.*;
 
-/** This class maintains a stack of UndoRecords for a window.  It also automatically
-    records the redo records generated when they are executed. */
+/**
+ * This class maintains a stack of UndoRecords for a window. It also automatically
+ * records the redo records generated when they are executed.
+ */
+public final class UndoStack {
 
-public class UndoStack
-{
-    private final LinkedList<UndoRecord> undoList;
-    private final LinkedList<UndoRecord> redoList;
+    private final LinkedList<UndoRecord> undoList = new LinkedList<>();
+    private final LinkedList<UndoRecord> redoList = new LinkedList<>();
 
-  public UndoStack()
-  {
-    undoList = new LinkedList<UndoRecord>();
-    redoList = new LinkedList<UndoRecord>();
-  }
+    ;
 
   /**
    * Determine whether there are any undo records available, so that an Undo command
    * could be executed.
    */
 
-  public boolean canUndo()
-  {
-    return (undoList.size() > 0);
-  }
+  public boolean canUndo() {
+        return !undoList.isEmpty();
+    }
 
-  /**
-   * Determine whether there are any redo records available, so that a Redo command
-   * could be executed.
-   */
+    /**
+     * Determine whether there are any redo records available, so that a Redo command
+     * could be executed.
+     */
+    public boolean canRedo() {
+        return !redoList.isEmpty();
+    }
 
-  public boolean canRedo()
-  {
-    return (redoList.size() > 0);
-  }
+    /**
+     * Add an UndoRecord to the stack.
+     */
+    public void addRecord(UndoRecord record) {
+        int levels = ArtOfIllusion.getPreferences().getUndoLevels();
+        if (levels < 1) {
+            levels = 1;
+        }
+        while (undoList.size() >= levels) {
+            undoList.removeFirst();
+        }
+        undoList.add(record);
+        redoList.clear();
+        record.cacheToDisk();
+    }
 
-  /**
-   * Add an UndoRecord to the stack.
-   */
+    /**
+     * Execute the undo record at the top of the stack.
+     */
+    public void executeUndo() {
+        if (undoList.isEmpty()) {
+            return;
+        }
+        UndoRecord record = undoList.removeLast();
+        redoList.add(record.execute());
+    }
 
-  public void addRecord(UndoRecord record)
-  {
-    int levels = ArtOfIllusion.getPreferences().getUndoLevels();
-    if (levels < 1)
-      levels = 1;
-    while (undoList.size() >= levels)
-      undoList.removeFirst();
-    undoList.add(record);
-    redoList.clear();
-    record.cacheToDisk();
-  }
+    /**
+     * Execute the redo record at the top of the stack.
+     */
+    public void executeRedo() {
+        if (redoList.isEmpty()) {
+            return;
+        }
+        UndoRecord record = redoList.removeLast();
+        undoList.add(record.execute());
+    }
 
-  /**
-   * Execute the undo record at the top of the stack.
-   */
+    public String getRedoName() {
+        return redoList.isEmpty() ? "" : redoList.getLast().getName();
+    }
 
-  public void executeUndo()
-  {
-    if (undoList.isEmpty())
-      return;
-    UndoRecord record = undoList.removeLast();
-    redoList.add(record.execute());
-  }
-
-  /**
-   * Execute the redo record at the top of the stack.
-   */
-
-  public void executeRedo()
-  {
-    if (redoList.isEmpty())
-      return;
-    UndoRecord record = redoList.removeLast();
-    undoList.add(record.execute());
-  }
+    public String getUndoName() {
+        return undoList.isEmpty() ? "" : undoList.getLast().getName();
+    }
 }

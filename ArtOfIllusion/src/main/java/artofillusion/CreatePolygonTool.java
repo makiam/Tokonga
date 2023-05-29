@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2008 by Peter Eastman
    Modification, Copyright (C) 2020 Petri Ihalainen
-   Changes copyright (C) 2020-2022 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -29,7 +29,12 @@ public class CreatePolygonTool extends EditingTool
   private boolean dragging, equilateral, centered;
   private ViewerCanvas workingView;
   private Point clickPoint;
-  private double sine[], cosine[], minsine, maxsine, mincosine, maxcosine;
+  private double[] sine;
+  private double[] cosine;
+  private double minsine;
+  private double maxsine;
+  private double mincosine;
+  private double maxcosine;
   private BRadioButton openButton, filledButton;
   private ObjectInfo objInfo;
   private Vec3 xdir, ydir, zdir;
@@ -114,8 +119,8 @@ public class CreatePolygonTool extends EditingTool
         objInfo = new ObjectInfo(object, new CoordinateSystem(), "Polygon "+(counter++));
         objInfo.addTrack(new PositionTrack(objInfo), 0);
         objInfo.addTrack(new RotationTrack(objInfo), 1);
-        UndoRecord undo = new UndoRecord(theWindow, false);
-        int sel[] = ((LayoutWindow) theWindow).getSelectedIndices();
+        UndoRecord undo = new UndoRecord(theWindow);
+        int[] sel = ((LayoutWindow) theWindow).getSelectedIndices();
         ((LayoutWindow) theWindow).addObject(objInfo, undo);
         undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);
         theWindow.setUndoRecord(undo);
@@ -154,7 +159,7 @@ public class CreatePolygonTool extends EditingTool
     Object3D object;
     if (drawFilled)
     {
-      int faces[][] = new int [sides][];
+      int[][] faces = new int [sides][];
       faces[0] = new int [] {sides-1, 0, sides};
       for (int i = 1; i < sides; i++)
         faces[i] = new int [] {i-1, i, sides};

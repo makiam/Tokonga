@@ -1,5 +1,5 @@
 /* Copyright (C) 2013 by Peter Eastman
-   Changes copyright (C) 2022 by Maksim Khramov
+   Changes copyright (C) 2022-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -148,7 +148,7 @@ public class TextDialog extends BDialog {
 
     private void doOk() {
         if (!objects.isEmpty()) {
-            UndoRecord undo = new UndoRecord(window, false);
+            UndoRecord undo = new UndoRecord(window);
             if (objects.get(0).getObject() instanceof TriangleMesh) {
                 // Convert the whole string to a single mesh.
 

@@ -22,12 +22,10 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
-
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-
 import java.util.Vector;
 
 /** CreateCurveTool is an EditingTool used for creating Curve objects. */
@@ -213,7 +211,7 @@ public class CreateCurveTool extends EditingTool
       ObjectInfo info = new ObjectInfo(theCurve, coords, "Curve "+(counter++));
       info.addTrack(new PositionTrack(info), 0);
       info.addTrack(new RotationTrack(info), 1);
-      UndoRecord undo = new UndoRecord(theWindow, false);
+      UndoRecord undo = new UndoRecord(theWindow);
       int sel[] = ((LayoutWindow) theWindow).getSelectedIndices();
       ((LayoutWindow) theWindow).addObject(info, undo);
       undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);

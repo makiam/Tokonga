@@ -340,7 +340,7 @@ public class ScaleObjectTool extends EditingTool
     if (!dragged)
       {
         UndoRecord undo;
-        theWindow.setUndoRecord(undo = new UndoRecord(theWindow, false));
+        theWindow.setUndoRecord(undo = new UndoRecord(theWindow));
         for (i = 0; i < toMove.size(); i++)
           {
             ObjectInfo info = toMove.elementAt(i);
@@ -385,7 +385,7 @@ public class ScaleObjectTool extends EditingTool
       oldObj = new Object3D [toMove.size()];
       oldCoords = new CoordinateSystem [toMove.size()];
       UndoRecord undo;
-      theWindow.setUndoRecord(undo = new UndoRecord(theWindow, false));
+      theWindow.setUndoRecord(undo = new UndoRecord(theWindow));
       for (int i = 0; i < toMove.size(); i++)
       {
         ObjectInfo info = toMove.elementAt(i);

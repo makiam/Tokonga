@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2009 by Peter Eastman
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,17 +11,20 @@
 
 package artofillusion;
 
-import artofillusion.ui.*;
-import artofillusion.ui.Compound3DManipulator.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
-
-import java.awt.event.*;
-import java.awt.*;
-import java.util.*;
-
+import artofillusion.ui.*;
+import artofillusion.ui.Compound3DManipulator.HandleDraggedEvent;
+import artofillusion.ui.Compound3DManipulator.HandlePressedEvent;
+import artofillusion.ui.Compound3DManipulator.HandleReleasedEvent;
+import artofillusion.ui.Compound3DManipulator.HandleType;
+import artofillusion.ui.Compound3DManipulator.ViewMode;
 import buoy.event.*;
 import buoy.widget.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+import java.util.List;
 
 /**
  * This editing tool presents a compound interface for moving, scaling, and rotating objects.
@@ -31,7 +34,7 @@ import buoy.widget.*;
 public class MoveScaleRotateObjectTool extends EditingTool
 {
   private boolean dragInProgress, draggingObjects;
-  private ArrayList<ObjectInfo> objects;
+  private List<ObjectInfo> objects;
   private CoordinateSystem originalCoords[];
   private Object3D originalObjects[];
   private ObjectInfo clickedObject;
@@ -213,7 +216,7 @@ public class MoveScaleRotateObjectTool extends EditingTool
   {
     if (undo == null)
     {
-      undo = new UndoRecord(theWindow, false);
+      undo = new UndoRecord(theWindow);
       for (int i = 0; i < originalCoords.length; i++)
       {
         originalCoords[i] = originalCoords[i].duplicate();
@@ -453,8 +456,8 @@ public class MoveScaleRotateObjectTool extends EditingTool
       }
       v = cam.findDragVector(origin, dx, dy);
     }
-    theWindow.setUndoRecord(undo = new UndoRecord(getWindow(), false));
-    ArrayList<ObjectInfo> toMove = new ArrayList<ObjectInfo>();
+    theWindow.setUndoRecord(undo = new UndoRecord(getWindow()));
+    ArrayList<ObjectInfo> toMove = new ArrayList<>();
     for (int i = 0; i < sel.length; i++)
       toMove.add(theScene.getObject(sel[i]));
     for (int i = 0; i < toMove.size(); i++)

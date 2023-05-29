@@ -12,6 +12,8 @@
 
 package artofillusion.polymesh;
 
+import artofillusion.UndoableEdit;
+
 /**
  * This class implements a stack of fixed size accepting Commands which will be
  * executed for undo/redo operations
@@ -21,11 +23,11 @@ package artofillusion.polymesh;
  */
 public class PMUndoRedoStack {
 
-    private Command[] commands;
+    private UndoableEdit[] commands;
     private int pointer;
 
     public PMUndoRedoStack(int size) {
-        commands = new Command[size + 1];
+        commands = new UndoableEdit[size + 1];
         pointer = 0;
     }
 
@@ -34,7 +36,7 @@ public class PMUndoRedoStack {
      *
      * @param cmd The command to add
      */
-    public void addCommand(Command cmd) {
+    public void addCommand(UndoableEdit cmd) {
         if (commands[pointer] != null) {
             pointer = (pointer + 1) % commands.length;
         }
@@ -97,7 +99,7 @@ public class PMUndoRedoStack {
      * @param newSize The new size for undo/redo stacks
      */
     public void setSize(int newSize) {
-        commands = new Command[newSize + 1];
+        commands = new UndoableEdit[newSize + 1];
         pointer = 0;
     }
 }

@@ -589,7 +589,7 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener
   {
     TextureParameter param[] = editObj.getObject().getParameters();
     ParameterValue paramValue[] = editObj.getObject().getParameterValues();
-    UndoRecord undo = new UndoRecord(window, false);
+    UndoRecord undo = new UndoRecord(window);
     for (int i = 0; i < obj.length; i++)
     {
       undo.addCommand(UndoRecord.COPY_OBJECT, obj[i].getObject(), obj[i].getObject().duplicate());
