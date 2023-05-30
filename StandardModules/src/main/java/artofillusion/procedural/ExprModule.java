@@ -602,7 +602,7 @@ public class ExprModule extends ProceduralModule {
     }
 
     OPort binOp(Class<?> parentClass, OPort left, OPort right) {
-        Module parentM = ExprModule.createModule(parentClass);
+        var parentM = ExprModule.createModule(parentClass);
         Arg[] args = {new Arg("Arg1", 0), new Arg("Arg1", 1)};
         OPort parent = new OPort(parentM);
         parent.args = args;
