@@ -140,18 +140,18 @@ public class ProceduralMaterial3D extends Material3D implements ProcedureOwner
     spec.scattering.scale(density*scattering);
   }
 
-  /** Determine whether this Material uses the specified image. */
-
-  @Override
-  public boolean usesImage(ImageMap image)
-  {
-    artofillusion.procedural.Module modules[] = proc.getModules();
-
-    for (int i = 0; i < modules.length; i++)
-      if (modules[i] instanceof ImageModule && ((ImageModule) modules[i]).getMap() == image)
-        return true;
-    return false;
-  }
+    /**
+     * Determine whether this Material uses the specified image.
+     */
+    @Override
+    public boolean usesImage(ImageMap image) {
+        for (var module : proc.getModules()) {
+            if (module instanceof ImageModule && ((ImageModule) module).getMap() == image) {
+                return true;
+            }
+        }
+        return false;
+    }
 
   /** The material scatters light if there is anything connected to the scattering output. */
 
