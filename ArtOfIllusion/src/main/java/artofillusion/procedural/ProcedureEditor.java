@@ -303,9 +303,9 @@ public class ProcedureEditor extends CustomWidget
 
     
     // Draw the modules.
-    Module[] module = proc.getModules();
-    IntStream.range(0, module.length).forEach(index -> {
-      Module mod = module[index];      
+    var modules = proc.getModules();
+    IntStream.range(0, modules.length).forEach(index -> {
+      var mod = modules[index];
       drawModule(mod, g, selectedModule[index]);
       Arrays.stream(mod.input).forEach(port ->  drawPort(port,g));
       Arrays.stream(mod.output).forEach(port ->  drawPort(port,g));
@@ -668,31 +668,28 @@ public class ProcedureEditor extends CustomWidget
     preview.ifPresent(action -> owner.updatePreview(action));
   }
 
-  /** Respond to mouse clicks. */
-  
-  private void mouseClicked(MouseClickedEvent e)
-  {
-    Point pos = e.getPoint();
-    if (e.getClickCount() == 2)
-      {
-        // See if the click was on a module.  If so, call its edit() method.
-        
-        Module module[] = proc.getModules();
-        for (Module mod : module)
-          if (mod.getBounds().contains(pos))
-            {
-              saveState(false);
-              if (mod.edit(this, theScene))
-                {
-                  repaint();
-                  updatePreview();
+    /**
+     * Respond to mouse clicks.
+     */
+    private void mouseClicked(MouseClickedEvent e) {
+        Point pos = e.getPoint();
+        if (e.getClickCount() == 2) {
+            // See if the click was on a module.  If so, call its edit() method.
+
+            for (var mod : proc.getModules()) {
+                if (mod.getBounds().contains(pos)) {
+                    saveState(false);
+                    if (mod.edit(this, theScene)) {
+                        repaint();
+                        updatePreview();
+                    } else {
+                        undo();
+                    }
+                    return;
                 }
-              else
-                undo();
-              return;
             }
-      }
-  }
+        }
+    }
 
   /** Respond to mouse presses. */
 

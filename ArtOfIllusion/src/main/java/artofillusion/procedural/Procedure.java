@@ -16,13 +16,16 @@ import artofillusion.Scene;
 import artofillusion.math.RGBColor;
 import artofillusion.math.Vec3;
 import artofillusion.procedural.Module;
-import java.awt.*;
+import java.awt.Point;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -32,12 +35,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Procedure {
 
-    private OutputModule[] outputs;
+    private final List<OutputModule> outputs;
     private Module[] modules;
     private Link[] links;
 
     public Procedure(OutputModule... output) {
-        this.outputs = output;
+        this.outputs = new ArrayList<>(Arrays.asList(output));
         modules = new Module[0];
         links = new Link[0];
     }
@@ -46,7 +49,7 @@ public class Procedure {
      * Get the list of output modules.
      */
     public OutputModule[] getOutputModules() {
-        return outputs;
+        return outputs.toArray(OutputModule[]::new);
     }
 
     /**
@@ -72,12 +75,7 @@ public class Procedure {
      * Get the index of a particular output module.
      */
     public int getOutputIndex(Module mod) {
-        for (int i = 0; i < outputs.length; i++) {
-            if (outputs[i] == mod) {
-                return i;
-            }
-        }
-        return -1;
+        return outputs.indexOf(mod);
     }
 
     /**
@@ -151,14 +149,14 @@ public class Procedure {
      * Check for feedback loops in this procedure.
      */
     public boolean checkFeedback() {
-        for (int i = 0; i < outputs.length; i++) {
-            for (int j = 0; j < outputs.length; j++) {
-                outputs[j].checked = false;
+        for (OutputModule outer : outputs) {
+            for (OutputModule inner : outputs) {
+                inner.checked = false;
             }
-            for (int j = 0; j < modules.length; j++) {
-                modules[j].checked = false;
+            for (var module : modules) {
+                module.checked = false;
             }
-            if (outputs[i].checkFeedback()) {
+            if (outer.checkFeedback()) {
                 return true;
             }
         }
@@ -180,7 +178,7 @@ public class Procedure {
      * not have value type NUMBER, the results are undefined.
      */
     public double getOutputValue(int which) {
-        return outputs[which].getAverageValue(0, 0.0);
+        return outputs.get(which).getAverageValue(0, 0.0);
     }
 
     /**
@@ -188,7 +186,7 @@ public class Procedure {
      * not have value type NUMBER, the results are undefined.
      */
     public void getOutputGradient(int which, Vec3 grad) {
-        outputs[which].getValueGradient(0, grad, 0.0);
+        outputs.get(which).getValueGradient(0, grad, 0.0);
     }
 
     /**
@@ -196,7 +194,7 @@ public class Procedure {
      * not have value type COLOR, the results are undefined.
      */
     public void getOutputColor(int which, RGBColor color) {
-        outputs[which].getColor(0, color, 0.0);
+        outputs.get(which).getColor(0, color, 0.0);
     }
 
     /**
@@ -216,7 +214,7 @@ public class Procedure {
             int toIndex = toModule instanceof OutputModule ? proc.getOutputIndex(toModule) : proc.getModuleIndex(toModule);
             IOPort from = modules[fromIndex].getOutputPorts()[proc.modules[fromIndex].getOutputIndex(proc.links[i].from)];
             IOPort to = toModule instanceof OutputModule
-                    ? outputs[toIndex].getInputPorts()[proc.outputs[toIndex].getInputIndex(proc.links[i].to)]
+                    ? outputs.get(toIndex).getInputPorts()[proc.outputs.get(toIndex).getInputIndex(proc.links[i].to)]
                     : modules[toIndex].getInputPorts()[proc.modules[toIndex].getInputIndex(proc.links[i].to)];
             links[i] = new Link(from, to);
             to.getModule().setInput(to, from);
@@ -283,7 +281,7 @@ public class Procedure {
             IOPort to, from = modules[in.readInt()].getOutputPorts()[in.readInt()];
             int j = in.readInt();
             if (j < 0) {
-                to = outputs[-j - 1].getInputPorts()[0];
+                to = outputs.get(-j - 1).getInputPorts()[0];
             } else {
                 to = modules[j].getInputPorts()[in.readInt()];
             }
