@@ -170,18 +170,18 @@ public class ProceduralTexture3D extends Texture3D implements ProcedureOwner
     return proc;
   }
 
-  /** Determine whether this Texture uses the specified image. */
-
-  @Override
-  public boolean usesImage(ImageMap image)
-  {
-    artofillusion.procedural.Module modules[] = proc.getModules();
-
-    for (int i = 0; i < modules.length; i++)
-      if (modules[i] instanceof ImageModule && ((ImageModule) modules[i]).getMap() == image)
-        return true;
-    return false;
-  }
+    /**
+     * Determine whether this Texture uses the specified image.
+     */
+    @Override
+    public boolean usesImage(ImageMap image) {
+        for (var module: proc.getModules()) {
+            if (module instanceof ImageModule && ((ImageModule) module).getMap() == image) {
+                return true;
+            }
+        }
+        return false;
+    }
 
   @Override
   public double getDisplacement(double x, double y, double z, double xsize, double ysize, double zsize, double t, double param[])
@@ -202,27 +202,29 @@ public class ProceduralTexture3D extends Texture3D implements ProcedureOwner
     return output[10].getAverageValue(0, 0.0);
   }
 
-  /** Get the list of parameters for this texture. */
+    /**
+     * Get the list of parameters for this texture.
+     */
+    @Override
+    public TextureParameter[] getParameters() {
+        var modules = proc.getModules();
+        int count = 0;
 
-  @Override
-  public TextureParameter[] getParameters()
-  {
-    artofillusion.procedural.Module module[] = proc.getModules();
-    int count = 0;
-
-    for (int i = 0; i < module.length; i++)
-      if (module[i] instanceof ParameterModule)
-        count++;
-    TextureParameter params[] = new TextureParameter [count];
-    count = 0;
-    for (int i = 0; i < module.length; i++)
-      if (module[i] instanceof ParameterModule)
-        {
-          params[count] = ((ParameterModule) module[i]).getParameter(this);
-          ((ParameterModule) module[i]).setIndex(count++);
+        for (var module : modules) {
+            if (module instanceof ParameterModule) {
+                count++;
+            }
         }
-    return params;
-  }
+        TextureParameter[] params = new TextureParameter[count];
+        count = 0;
+        for (var module : modules) {
+            if (module instanceof ParameterModule) {
+                params[count] = ((ParameterModule) module).getParameter(this);
+                ((ParameterModule) module).setIndex(count++);
+            }
+        }
+        return params;
+    }
 
   @Override
   public Texture duplicate()
@@ -242,28 +244,29 @@ public class ProceduralTexture3D extends Texture3D implements ProcedureOwner
   @Override
   public boolean hasComponent(int component)
   {
-    OutputModule output[] = proc.getOutputModules();
+    var outputs = proc.getOutputModules();
     switch (component)
       {
         case DIFFUSE_COLOR_COMPONENT:
           return true;
         case SPECULAR_COLOR_COMPONENT:
-          return output[5].inputConnected(0);
+          return outputs[5].inputConnected(0);
         case TRANSPARENT_COLOR_COMPONENT:
-          return output[4].inputConnected(0);
+          return outputs[4].inputConnected(0);
         case HILIGHT_COLOR_COMPONENT:
-          return output[6].inputConnected(0);
+          return outputs[6].inputConnected(0);
         case EMISSIVE_COLOR_COMPONENT:
-          return output[3].inputConnected(0);
+          return outputs[3].inputConnected(0);
         case BUMP_COMPONENT:
-          return output[9].inputConnected(0);
+          return outputs[9].inputConnected(0);
         case DISPLACEMENT_COMPONENT:
-          return output[10].inputConnected(0);
+          return outputs[10].inputConnected(0);
       }
     return false;
   }
 
   @Override
+  @SuppressWarnings("ResultOfObjectAllocationIgnored")
   public void edit(WindowWidget fr, Scene sc)
   {
     new ProcedureEditor(proc, this, sc);
