@@ -83,7 +83,7 @@ public class TextureImageExporter {
                 info.transparentFilename = (imt.transparentColor.getImage() != null || imt.transparency.getImage() != null ? newName() : null);
                 info.emissiveFilename = (imt.emissiveColor.getImage() != null ? newName() : null);
             } else if (tex instanceof ProceduralTexture2D) {
-                artofillusion.procedural.Module[] output = ((ProceduralTexture2D) tex).getProcedure().getOutputModules();
+                var output = ((ProceduralTexture2D) tex).getProcedure().getOutputModules();
                 info.diffuseFilename = (output[0].inputConnected(0) ? newName() : null);
                 info.specularFilename = (output[1].inputConnected(0) || output[5].inputConnected(0) ? newName() : null);
                 info.hilightFilename = (output[1].inputConnected(0) || output[6].inputConnected(0) ? newName() : null);
