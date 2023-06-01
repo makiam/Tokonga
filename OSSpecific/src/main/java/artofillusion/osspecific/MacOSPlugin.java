@@ -16,8 +16,18 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
+import java.awt.desktop.AboutEvent;
+import java.awt.desktop.AboutHandler;
+import java.awt.desktop.OpenFilesEvent;
+import java.awt.desktop.OpenFilesHandler;
+import java.awt.desktop.PreferencesEvent;
+import java.awt.desktop.PreferencesHandler;
+import java.awt.desktop.QuitEvent;
+import java.awt.desktop.QuitHandler;
+import java.awt.desktop.QuitResponse;
 import java.io.*;
 import java.lang.reflect.*;
+import java.util.Locale;
 import java.util.prefs.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,9 +36,36 @@ import lombok.extern.slf4j.Slf4j;
  * application when running under Mac OS X.
  */
 @Slf4j
-public class MacOSPlugin implements Plugin, InvocationHandler {
+public class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, OpenFilesHandler, PreferencesHandler {
 
     private boolean usingAppMenu, appleApi;
+    private static final String OS = System.getProperty("os.name", "unknown").toLowerCase(Locale.ROOT);
+
+    @Override
+    public void onSceneSaved(File file, LayoutWindow view) {
+        MacOSPlugin.updateWindowProperties(view);
+        view.getComponent().getRootPane().putClientProperty("Window.documentModified", false);
+    }
+
+    @Override
+    public void onSceneWindowCreated(LayoutWindow view) {
+
+    }
+
+    @Override
+    public void onApplicationStarting() {
+        if (!OS.startsWith("mac os x")) return;
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+        ArtOfIllusion.addWindow(new MacMenuBarWindow());
+        UIUtilities.setDefaultFont(new Font("Application", Font.PLAIN, 11));
+        UIUtilities.setStandardDialogInsets(3);
+
+        Desktop desktop = Desktop.getDesktop();
+        desktop.setAboutHandler(this);
+        desktop.setQuitHandler(this);
+        desktop.setOpenFileHandler(this);
+        desktop.setPreferencesHandler(this);
+    }
 
     @Override
     public void processMessage(int message, Object... args) {
@@ -37,9 +74,7 @@ public class MacOSPlugin implements Plugin, InvocationHandler {
             if (!os.startsWith("mac os x")) {
                 return;
             }
-            ArtOfIllusion.addWindow(new MacMenuBarWindow());
-            UIUtilities.setDefaultFont(new Font("Application", Font.PLAIN, 11));
-            UIUtilities.setStandardDialogInsets(3);
+
             try {
                 if (System.getProperty("java.version").startsWith("1.8.")) {
                     // Use the old Apple specific API.
@@ -99,12 +134,13 @@ public class MacOSPlugin implements Plugin, InvocationHandler {
     /**
      * Update the Mac OS X specific client properties.
      */
-    private void updateWindowProperties(LayoutWindow win) {
-        win.getComponent().getRootPane().putClientProperty("Window.documentModified", win.isModified());
+    private static void updateWindowProperties(LayoutWindow win) {
+        javax.swing.JRootPane rp = win.getComponent().getRootPane();
+        rp.putClientProperty("Window.documentModified", win.isModified());
         Scene scene = win.getScene();
         if (scene.getName() != null) {
             File file = new File(scene.getDirectory(), scene.getName());
-            win.getComponent().getRootPane().putClientProperty("Window.documentFile", file);
+            rp.putClientProperty("Window.documentFile", file);
         }
     }
 
@@ -139,10 +175,7 @@ public class MacOSPlugin implements Plugin, InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
         boolean handled = true;
-        if ("handleAbout".equals(method.getName())) {
-            TitleWindow win = new TitleWindow();
-            win.addEventLink(MouseClickedEvent.class, win, "dispose");
-        } else if ("handlePreferences".equals(method.getName())) {
+        if ("handlePreferences".equals(method.getName())) {
             Window frontWindow = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusedWindow();
             boolean frontIsLayoutWindow = false;
             for (EditingWindow window : ArtOfIllusion.getWindows()) {
@@ -160,9 +193,6 @@ public class MacOSPlugin implements Plugin, InvocationHandler {
                 new PreferencesWindow(f);
                 f.dispose();
             }
-        } else if ("handleQuit".equals(method.getName())) {
-            ArtOfIllusion.quit();
-            handled = false;
         } else if ("handleQuitRequestWith".equals(method.getName())) {
             ArtOfIllusion.quit();
             handled = false;
@@ -173,16 +203,6 @@ public class MacOSPlugin implements Plugin, InvocationHandler {
                 // Nothing we can really do about it...
 
                 log.atError().setCause(ex).log("Unable to handle Quit command: {}", ex.getMessage());
-            }
-        } else if ("handleOpenFile".equals(method.getName())) {
-            try {
-                Method getFilename = args[0].getClass().getMethod("getFilename");
-                String path = (String) getFilename.invoke(args[0]);
-                ArtOfIllusion.newWindow(new Scene(new File(path), true));
-            } catch (IOException | ReflectiveOperationException | SecurityException ex) {
-                // Nothing we can really do about it...
-
-                log.atError().setCause(ex).log("Unable to load scene: {}", ex.getMessage());
             }
         } else if ("openFiles".equals(method.getName())) {
             try {
@@ -212,6 +232,34 @@ public class MacOSPlugin implements Plugin, InvocationHandler {
             }
         }
         return null;
+    }
+
+    @Override
+    public void handleAbout(AboutEvent e) {
+        TitleWindow win = new TitleWindow();
+        win.addEventLink(MouseClickedEvent.class, win, "dispose");
+    }
+
+    @Override
+    public void handleQuitRequestWith(QuitEvent e, QuitResponse response) {
+        response.cancelQuit();
+    }
+
+    @Override
+    public void openFiles(OpenFilesEvent event) {
+        for(var file: event.getFiles()) {
+            try {
+                ArtOfIllusion.newWindow(new Scene(file, true));
+            } catch (IOException ex) {
+                log.atError().setCause(ex).log("Error opening scene: {} {}", file, ex.getMessage());
+            }
+        }
+    }
+
+    @Override
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
+    public void handlePreferences(PreferencesEvent e) {
+
     }
 
     /**
