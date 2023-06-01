@@ -26,7 +26,6 @@ import java.awt.desktop.QuitEvent;
 import java.awt.desktop.QuitHandler;
 import java.awt.desktop.QuitResponse;
 import java.io.*;
-import java.lang.reflect.*;
 import java.util.Locale;
 import java.util.prefs.*;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, OpenFilesHandler, PreferencesHandler {
 
-    private boolean usingAppMenu, appleApi;
+    private boolean usingAppMenu;
     private static final String OS = System.getProperty("os.name", "unknown").toLowerCase(Locale.ROOT);
 
     @Override
@@ -78,65 +77,6 @@ public class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, OpenFiles
         usingAppMenu = true;
     }
 
-    @Override
-    public void processMessage(int message, Object... args) {
-        if (message == APPLICATION_STARTING) {
-            String os = ((String) System.getProperties().get("os.name")).toLowerCase();
-            if (!os.startsWith("mac os x")) {
-                return;
-            }
-
-            try {
-                if (System.getProperty("java.version").startsWith("1.8.")) {
-                    // Use the old Apple specific API.
-
-                    appleApi = true;
-                    Class<?> appClass = Class.forName("com.apple.eawt.Application");
-                    Object app = appClass.getMethod("getApplication").invoke(null);
-                    appClass.getMethod("setEnabledAboutMenu", Boolean.TYPE).invoke(app, Boolean.TRUE);
-                    appClass.getMethod("setEnabledPreferencesMenu", Boolean.TYPE).invoke(app, Boolean.TRUE);
-                    Class<?> listenerClass = Class.forName("com.apple.eawt.ApplicationListener");
-                    Object proxy = Proxy.newProxyInstance(appClass.getClassLoader(), new Class<?>[]{listenerClass}, this);
-                    appClass.getMethod("addApplicationListener", listenerClass).invoke(app, proxy);
-                } else {
-                    // Use the Desktop API introduced in Java 9.
-
-                    appleApi = false;
-                    Class<?> aboutHandlerClass = Class.forName("java.awt.desktop.AboutHandler");
-                    Class<?> openHandlerClass = Class.forName("java.awt.desktop.OpenFilesHandler");
-                    Class<?> preferencesHandlerClass = Class.forName("java.awt.desktop.PreferencesHandler");
-                    Class<?> quiteHandlerClass = Class.forName("java.awt.desktop.QuitHandler");
-                    Object proxy = Proxy.newProxyInstance(Desktop.class.getClassLoader(), new Class<?>[]{aboutHandlerClass, openHandlerClass, preferencesHandlerClass, quiteHandlerClass}, this);
-                    Desktop desktop = Desktop.getDesktop();
-                    Desktop.class.getMethod("setAboutHandler", aboutHandlerClass).invoke(desktop, proxy);
-                    Desktop.class.getMethod("setOpenFileHandler", openHandlerClass).invoke(desktop, proxy);
-                    Desktop.class.getMethod("setPreferencesHandler", preferencesHandlerClass).invoke(desktop, proxy);
-                    Desktop.class.getMethod("setQuitHandler", quiteHandlerClass).invoke(desktop, proxy);
-                }
-            } catch (ReflectiveOperationException | SecurityException ex) {
-                // An error occured trying to set up the application menu, so just stick with the standard
-                // Quit and Preferences menu items in the File and Edit menus.
-                log.atError().setCause(ex).log("Unable to start plugin: {}", ex.getMessage());
-            }
-            usingAppMenu = true;
-        } else if (message == SCENE_WINDOW_CREATED) {
-            final LayoutWindow win = (LayoutWindow) args[0];
-
-            if (!usingAppMenu) {
-                return;
-            }
-
-            // Remove the Quit and Preferences menu items, since we are using the ones in the application
-            // menu instead.
-            removeMenuItem(win, Translate.text("menu.file"), Translate.text("menu.quit"));
-            removeMenuItem(win, Translate.text("menu.edit"), Translate.text("menu.preferences"));
-        } else if (message == SCENE_SAVED) {
-            LayoutWindow win = (LayoutWindow) args[1];
-            updateWindowProperties(win);
-            win.getComponent().getRootPane().putClientProperty("Window.documentModified", false);
-        }
-    }
-
     /**
      * Update the Mac OS X specific client properties.
      */
@@ -173,71 +113,6 @@ public class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, OpenFiles
             }
             return;
         }
-    }
-
-    /**
-     * Handle ApplicationListener methods.
-     */
-    @Override
-    public Object invoke(Object proxy, Method method, Object[] args) {
-        boolean handled = true;
-        if ("handlePreferences".equals(method.getName())) {
-            Window frontWindow = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusedWindow();
-            boolean frontIsLayoutWindow = false;
-            for (EditingWindow window : ArtOfIllusion.getWindows()) {
-                if (window instanceof LayoutWindow && window.getFrame().getComponent() == frontWindow) {
-                    ((LayoutWindow) window).preferencesCommand();
-                    frontIsLayoutWindow = true;
-                    break;
-                }
-            }
-            if (!frontIsLayoutWindow) {
-                BFrame f = new BFrame();
-                Rectangle screenBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-                f.setBounds(screenBounds);
-                UIUtilities.centerWindow(f);
-                new PreferencesWindow(f);
-                f.dispose();
-            }
-        } else if ("handleQuitRequestWith".equals(method.getName())) {
-            ArtOfIllusion.quit();
-            handled = false;
-            try {
-                Method cancelQuit = args[1].getClass().getMethod("cancelQuit");
-                cancelQuit.invoke(args[1]);
-            } catch (ReflectiveOperationException | SecurityException ex) {
-                // Nothing we can really do about it...
-
-                log.atError().setCause(ex).log("Unable to handle Quit command: {}", ex.getMessage());
-            }
-        } else if ("openFiles".equals(method.getName())) {
-            try {
-                Method getFiles = args[0].getClass().getMethod("getFiles");
-                java.util.List<File> files = (java.util.List<File>) getFiles.invoke(args[0]);
-                for (File file : files) {
-                    ArtOfIllusion.newWindow(new Scene(file, true));
-                }
-            } catch (IOException | ReflectiveOperationException | SecurityException ex) {
-                // Nothing we can really do about it...
-
-                log.atError().setCause(ex).log("Unable to load scenes: {}", ex.getMessage());
-            }
-        } else {
-            return null;
-        }
-
-        // Call setHandled(true) on the event to show we have handled it.
-        if (appleApi) {
-            try {
-                Method setHandled = args[0].getClass().getMethod("setHandled", Boolean.TYPE);
-                setHandled.invoke(args[0], handled);
-            } catch (ReflectiveOperationException | SecurityException ex) {
-                // Nothing we can really do about it...
-
-                log.atError().setCause(ex).log("Unable to set handled: {}", ex.getMessage());
-            }
-        }
-        return null;
     }
 
     @Override
