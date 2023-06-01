@@ -1,8 +1,8 @@
 plugins {
     id 'aoi.java-conventions'
     id 'application'
-    id "com.palantir.git-version" version "1.0.0"
-    id 'edu.sc.seis.launch4j' version '2.5.4'
+    id "com.palantir.git-version" version "3.0.0"
+    id 'edu.sc.seis.launch4j' version '3.0.0'
     id "kr.motd.sphinx" version "2.10.1"
     id 'jacoco'
 }
