@@ -49,7 +49,16 @@ public class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, OpenFiles
 
     @Override
     public void onSceneWindowCreated(LayoutWindow view) {
-
+        view.addEventLink(SceneChangedEvent.class, new Object() {
+            void processEvent() {
+                updateWindowProperties(view);
+            }
+        });
+        updateWindowProperties(view);
+        if(usingAppMenu) {
+            removeMenuItem(view, Translate.text("menu.file"), Translate.text("menu.quit"));
+            removeMenuItem(view, Translate.text("menu.edit"), Translate.text("menu.preferences"));
+        }
     }
 
     @Override
@@ -65,6 +74,8 @@ public class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, OpenFiles
         desktop.setQuitHandler(this);
         desktop.setOpenFileHandler(this);
         desktop.setPreferencesHandler(this);
+
+        usingAppMenu = true;
     }
 
     @Override
@@ -110,12 +121,7 @@ public class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, OpenFiles
             usingAppMenu = true;
         } else if (message == SCENE_WINDOW_CREATED) {
             final LayoutWindow win = (LayoutWindow) args[0];
-            win.addEventLink(SceneChangedEvent.class, new Object() {
-                void processEvent() {
-                    updateWindowProperties(win);
-                }
-            });
-            updateWindowProperties(win);
+
             if (!usingAppMenu) {
                 return;
             }
@@ -258,8 +264,25 @@ public class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, OpenFiles
 
     @Override
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void handlePreferences(PreferencesEvent e) {
-
+    public void handlePreferences(PreferencesEvent event) {
+        final Window frontWindow = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusedWindow();
+        boolean frontIsLayoutWindow = false;
+        for (EditingWindow window : ArtOfIllusion.getWindows()) {
+            if (window instanceof LayoutWindow && window.getFrame().getComponent() == frontWindow) {
+                ((LayoutWindow) window).preferencesCommand();
+                frontIsLayoutWindow = true;
+                break;
+            }
+        }
+        if (frontIsLayoutWindow) {
+            return;
+        }
+        BFrame f = new BFrame();
+        Rectangle screenBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        f.setBounds(screenBounds);
+        UIUtilities.centerWindow(f);
+        new PreferencesWindow(f);
+        f.dispose();
     }
 
     /**
