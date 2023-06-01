@@ -1,4 +1,5 @@
 /* Copyright (C) 2006-2009 by Peter Eastman
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,28 +12,21 @@
 package artofillusion;
 
 import artofillusion.ui.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * A SceneChangedEvent is dispatched by an EditingWindow to indicate that some element of the
- * scene has changed.  This includes all aspects of the scene, including the list of objects,
+ * scene has changed. This includes all aspects of the scene, including the list of objects,
  * properties of individual objects, textures, the list of currently selected objects, etc.
  */
+@AllArgsConstructor
+public class SceneChangedEvent {
 
-public class SceneChangedEvent
-{
-  private EditingWindow window;
+    /**
+     * Get the LayoutWindow containing the scene which was changed.
+     */
+    @Getter
+    private EditingWindow window;
 
-  public SceneChangedEvent(EditingWindow window)
-  {
-    this.window = window;
-  }
-
-  /**
-   * Get the LayoutWindow containing the scene which was changed.
-   */
-
-  public EditingWindow getWindow()
-  {
-    return window;
-  }
 }
