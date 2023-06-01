@@ -248,6 +248,7 @@ public class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, OpenFiles
 
     @Override
     public void handleQuitRequestWith(QuitEvent e, QuitResponse response) {
+        ArtOfIllusion.quit();
         response.cancelQuit();
     }
 
@@ -304,11 +305,8 @@ public class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, OpenFiles
             final BMenu recentMenu = Translate.menu("openRecent");
             RecentFiles.createMenu(recentMenu);
             file.add(recentMenu);
-            Preferences.userNodeForPackage(RecentFiles.class).addPreferenceChangeListener(new PreferenceChangeListener() {
-                @Override
-                public void preferenceChange(PreferenceChangeEvent ev) {
-                    RecentFiles.createMenu(recentMenu);
-                }
+            Preferences.userNodeForPackage(RecentFiles.class).addPreferenceChangeListener((PreferenceChangeEvent ev) -> {
+                RecentFiles.createMenu(recentMenu);
             });
             pack();
             setBounds(new Rectangle(-1000, -1000, 0, 0));
