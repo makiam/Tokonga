@@ -27,6 +27,6 @@ public class SceneChangedEvent {
      * Get the LayoutWindow containing the scene which was changed.
      */
     @Getter
-    private EditingWindow window;
+    private final EditingWindow window;
 
 }
