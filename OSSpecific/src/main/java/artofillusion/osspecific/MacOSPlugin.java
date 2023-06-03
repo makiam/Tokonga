@@ -11,11 +11,38 @@
 
 package artofillusion.osspecific;
 
-import artofillusion.*;
-import artofillusion.ui.*;
-import buoy.event.*;
-import buoy.widget.*;
-import java.awt.*;
+
+import artofillusion.ArtOfIllusion;
+import artofillusion.LayoutWindow;
+import artofillusion.Plugin;
+import artofillusion.PreferencesWindow;
+import artofillusion.RecentFiles;
+import artofillusion.Scene;
+import artofillusion.SceneChangedEvent;
+import artofillusion.TitleWindow;
+import artofillusion.UndoRecord;
+import artofillusion.ViewerCanvas;
+import artofillusion.ui.EditingTool;
+import artofillusion.ui.EditingWindow;
+import artofillusion.ui.ToolPalette;
+import artofillusion.ui.Translate;
+import artofillusion.ui.UIUtilities;
+import buoy.event.CommandEvent;
+import buoy.event.MouseClickedEvent;
+import buoy.widget.BFrame;
+import buoy.widget.BMenu;
+import buoy.widget.BMenuBar;
+import buoy.widget.BMenuItem;
+import buoy.widget.BSeparator;
+import buoy.widget.MenuWidget;
+import buoy.widget.Widget;
+import java.awt.Color;
+import java.awt.Desktop;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.awt.KeyboardFocusManager;
+import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.desktop.AboutEvent;
 import java.awt.desktop.AboutHandler;
 import java.awt.desktop.OpenFilesEvent;
@@ -35,7 +62,7 @@ import lombok.extern.slf4j.Slf4j;
  * application when running under Mac OS X.
  */
 @Slf4j
-public class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, OpenFilesHandler, PreferencesHandler {
+public final class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, OpenFilesHandler, PreferencesHandler {
 
     private boolean usingAppMenu;
     private static final String OS = System.getProperty("os.name", "unknown").toLowerCase(Locale.ROOT);
@@ -47,7 +74,7 @@ public class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, OpenFiles
     }
 
     @Override
-    public void onSceneWindowCreated(LayoutWindow view) {
+    public void onSceneWindowCreated(final LayoutWindow view) {
         view.addEventLink(SceneChangedEvent.class, new Object() {
             void processEvent() {
                 updateWindowProperties(view);
@@ -80,7 +107,7 @@ public class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, OpenFiles
     /**
      * Update the Mac OS X specific client properties.
      */
-    private static void updateWindowProperties(LayoutWindow win) {
+    private static void updateWindowProperties(final LayoutWindow win) {
         javax.swing.JRootPane rp = win.getComponent().getRootPane();
         rp.putClientProperty("Window.documentModified", win.isModified());
         Scene scene = win.getScene();
@@ -94,7 +121,7 @@ public class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, OpenFiles
      * Remove a menu item from a menu in a window. If it is immediately preceded by a separator,
      * also remove that.
      */
-    private void removeMenuItem(BFrame frame, String menu, String item) {
+    private void removeMenuItem(final BFrame frame, String menu, String item) {
         BMenuBar bar = frame.getMenuBar();
         for (int i = 0; i < bar.getChildCount(); i++) {
             BMenu m = bar.getChild(i);
@@ -116,13 +143,13 @@ public class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, OpenFiles
     }
 
     @Override
-    public void handleAbout(AboutEvent e) {
+    public void handleAbout(AboutEvent event) {
         TitleWindow win = new TitleWindow();
         win.addEventLink(MouseClickedEvent.class, win, "dispose");
     }
 
     @Override
-    public void handleQuitRequestWith(QuitEvent e, QuitResponse response) {
+    public void handleQuitRequestWith(final QuitEvent event, QuitResponse response) {
         ArtOfIllusion.quit();
         response.cancelQuit();
     }
@@ -243,8 +270,8 @@ public class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, OpenFiles
             return true;
         }
 
-        private void actionPerformed(CommandEvent ev) {
-            String command = ev.getActionCommand();
+        private void actionPerformed(CommandEvent event) {
+            String command = event.getActionCommand();
             if (command.equals("new")) {
                 ArtOfIllusion.newWindow();
             } else if (command.equals("open")) {
