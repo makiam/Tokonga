@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Scene {
 
-    private Vector<ObjectInfo> objects;
+    private List<ObjectInfo> objects;
     private Vector<Material> materials;
     private Vector<Texture> textures;
     private Vector<ImageMap> images;
@@ -477,7 +477,7 @@ public class Scene {
         }
 
         info.getObject().sceneChanged(info, this);
-        objects.insertElementAt(info, index);
+        objects.add(index, info);
         objectIndexMap = null;
 
         if (undo != null) {
@@ -492,8 +492,8 @@ public class Scene {
      * added to it to undo this operation.
      */
     public void removeObject(int which, UndoRecord undo) {
-        ObjectInfo info = objects.elementAt(which);
-        objects.removeElementAt(which);
+        ObjectInfo info = objects.get(which);
+        objects.remove(which);
         objectIndexMap = null;
         if (undo != null) {
             undo.addCommandAtBeginning(UndoRecord.ADD_OBJECT, info, which);
@@ -507,7 +507,7 @@ public class Scene {
             info.getParent().removeChild(j);
         }
         for (int i = 0; i < objects.size(); i++) {
-            ObjectInfo obj = objects.elementAt(i);
+            ObjectInfo obj = objects.get(i);
             for (int j = 0; j < obj.getTracks().length; j++) {
                 Track tr = obj.getTracks()[j];
                 ObjectInfo[] depends = tr.getDependencies();
@@ -608,7 +608,7 @@ public class Scene {
         }
         Texture def = textures.elementAt(0);
         for (int i = 0; i < objects.size(); i++) {
-            ObjectInfo obj = objects.elementAt(i);
+            ObjectInfo obj = objects.get(i);
             if (obj.getObject().getTexture() == tex) {
                 obj.setTexture(def, def.getDefaultMapping(obj.getObject()));
             }
@@ -842,7 +842,7 @@ public class Scene {
     public void setSelection(int[] which) {
         clearSelection();
         for (int index : which) {
-            ObjectInfo info = objects.elementAt(index);
+            ObjectInfo info = objects.get(index);
             if (!info.selected) {
                 selection.addElement(index);
             }
@@ -858,7 +858,7 @@ public class Scene {
      */
     @Deprecated
     public void addToSelection(int which) {
-        ObjectInfo info = objects.elementAt(which);
+        ObjectInfo info = objects.get(which);
         if (!info.selected) {
             selection.addElement(which);
         }
@@ -891,7 +891,7 @@ public class Scene {
      */
     @Deprecated
     public void removeFromSelection(int which) {
-        ObjectInfo info = objects.elementAt(which);
+        ObjectInfo info = objects.get(which);
         selection.removeElement(which);
         info.selected = false;
         updateSelectionInfo();
@@ -902,10 +902,10 @@ public class Scene {
      */
     private void updateSelectionInfo() {
         for (int i = objects.size() - 1; i >= 0; i--) {
-            objects.elementAt(i).parentSelected = false;
+            objects.get(i).parentSelected = false;
         }
         for (int i = objects.size() - 1; i >= 0; i--) {
-            ObjectInfo info = objects.elementAt(i);
+            ObjectInfo info = objects.get(i);
             ObjectInfo parent = info.getParent();
             while (parent != null) {
                 if (parent.selected || parent.parentSelected) {
@@ -1117,7 +1117,7 @@ public class Scene {
     public int[] getSelectionWithChildren() {
         int count = 0;
         for (int i = objects.size() - 1; i >= 0; i--) {
-            ObjectInfo info = objects.elementAt(i);
+            ObjectInfo info = objects.get(i);
             if (info.selected || info.parentSelected) {
                 count++;
             }
@@ -1125,7 +1125,7 @@ public class Scene {
         int[] sel = new int[count];
         count = 0;
         for (int i = objects.size() - 1; i >= 0; i--) {
-            ObjectInfo info = objects.elementAt(i);
+            ObjectInfo info = objects.get(i);
             if (info.selected || info.parentSelected) {
                 sel[count++] = i;
             }
@@ -1290,17 +1290,17 @@ public class Scene {
         objects = new Vector<>(count);
         table = new Hashtable<>(count);
         for (int i = 0; i < count; i++) {
-            objects.addElement(readObjectFromFile(in, table, version));
+            objects.add(readObjectFromFile(in, table, version));
         }
         objectIndexMap = null;
         selection = new Vector<>();
 
         // Read the list of children for each object.
         for (int i = 0; i < objects.size(); i++) {
-            ObjectInfo info = objects.elementAt(i);
+            ObjectInfo info = objects.get(i);
             int num = in.readInt();
             for (int j = 0; j < num; j++) {
-                ObjectInfo child = objects.elementAt(in.readInt());
+                ObjectInfo child = objects.get(in.readInt());
                 info.addChild(child, j);
             }
         }
@@ -1530,13 +1530,13 @@ public class Scene {
         // Save the objects.
         out.writeInt(objects.size());
         for (i = 0; i < objects.size(); i++) {
-            index = writeObjectToFile(out, objects.elementAt(i), table, index);
+            index = writeObjectToFile(out, objects.get(i), table, index);
         }
 
         // Record the children of each object.  The format of this will be changed in the
         // next version.
         for (i = 0; i < objects.size(); i++) {
-            ObjectInfo info = objects.elementAt(i);
+            ObjectInfo info = objects.get(i);
             out.writeInt(info.getChildren().length);
             for (j = 0; j < info.getChildren().length; j++) {
                 out.writeInt(indexOf(info.getChildren()[j]));
