@@ -37,7 +37,7 @@ public class Scene {
 
     private List<ObjectInfo> objects;
     private List<Material> materials;
-    private Vector<Texture> textures;
+    private List<Texture> textures;
     private Vector<ImageMap> images;
     private Vector<Integer> selection;
     private Vector<ListChangeListener> textureListeners, materialListeners;
@@ -78,7 +78,7 @@ public class Scene {
         textureListeners = new Vector<>();
         materialListeners = new Vector<>();
         defTex.setName("Default Texture");
-        textures.addElement(defTex);
+        textures.add(defTex);
         ambientColor = new RGBColor(0.3f, 0.3f, 0.3f);
         environColor = new RGBColor(0.0f, 0.0f, 0.0f);
         environTexture = defTex;
@@ -592,21 +592,20 @@ public class Scene {
      * Remove a Texture from the scene.
      */
     public void removeTexture(int which) {
-        Texture tex = textures.elementAt(which);
 
-        textures.removeElementAt(which);
+        Texture tex = textures.remove(which);
         for (int i = 0; i < textureListeners.size(); i++) {
             textureListeners.elementAt(i).itemRemoved(which, tex);
         }
         if (textures.isEmpty()) {
             UniformTexture defTex = new UniformTexture();
             defTex.setName("Default Texture");
-            textures.addElement(defTex);
+            textures.add(defTex);
             for (int i = 0; i < textureListeners.size(); i++) {
                 textureListeners.elementAt(i).itemAdded(0, defTex);
             }
         }
-        Texture def = textures.elementAt(0);
+        Texture def = textures.get(0);
         for (int i = 0; i < objects.size(); i++) {
             ObjectInfo obj = objects.get(i);
             if (obj.getObject().getTexture() == tex) {
@@ -775,7 +774,7 @@ public class Scene {
         ImageMap image = images.elementAt(which);
 
         for (int i = 0; i < textures.size(); i++) {
-            if (textures.elementAt(i).usesImage(image)) {
+            if (textures.get(i).usesImage(image)) {
                 return false;
             }
         }
@@ -1267,7 +1266,7 @@ public class Scene {
                         throw new IOException("Unknown class: " + classname);
                     }
                     con = cls.getConstructor(DataInputStream.class, Scene.class);
-                    textures.addElement((Texture) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this));
+                    textures.add((Texture) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this));
                 } catch (IOException | SecurityException | ReflectiveOperationException ex) {
                     log.atError().setCause(ex).log("Error loading texture: {}", ex.getMessage());
                     if (ex instanceof ClassNotFoundException) {
@@ -1277,7 +1276,7 @@ public class Scene {
                     }
                     UniformTexture t = new UniformTexture();
                     t.setName("<unreadable>");
-                    textures.addElement(t);
+                    textures.add(t);
                 }
             } catch (IOException | ClassNotFoundException | IllegalArgumentException ex) {
                 log.atError().setCause(ex).log("Error reading: {}", ex.getMessage());
@@ -1309,7 +1308,7 @@ public class Scene {
         environMode = (int) in.readShort();
         if (environMode == ENVIRON_SOLID) {
             environColor = new RGBColor(in);
-            environTexture = textures.elementAt(0);
+            environTexture = textures.get(0);
             environMapping = environTexture.getDefaultMapping(new Sphere(1.0, 1.0, 1.0));
             environParamValue = new ParameterValue[0];
         } else {
@@ -1326,7 +1325,7 @@ public class Scene {
                 environMapping = environTexture.getDefaultMapping(sphere);
                 ((LayeredMapping) environMapping).readFromFile(in, this);
             } else {
-                environTexture = textures.elementAt(texIndex);
+                environTexture = textures.get(texIndex);
                 try {
                     Class<?> mapClass = ArtOfIllusion.getClass(in.readUTF());
                     con = mapClass.getConstructor(DataInputStream.class, Object3D.class, Texture.class);
@@ -1517,7 +1516,7 @@ public class Scene {
         // Save the textures.
         out.writeInt(textures.size());
         for (i = 0; i < textures.size(); i++) {
-            tex = textures.elementAt(i);
+            tex = textures.get(i);
             out.writeUTF(tex.getClass().getName());
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             tex.writeToFile(new DataOutputStream(bos), this);
