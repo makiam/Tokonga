@@ -12,10 +12,10 @@
 package artofillusion.object;
 
 import artofillusion.*;
-import artofillusion.texture.*;
-import artofillusion.procedural.*;
 import artofillusion.animation.*;
 import artofillusion.math.*;
+import artofillusion.procedural.*;
+import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
 import java.io.*;
@@ -72,36 +72,37 @@ public class ProceduralDirectionalLight extends DirectionalLight
     };
   }
 
-  /**
-   * Find all parameters defined by the procedure.
-   */
-
-  private void findParameters()
-  {
-    artofillusion.procedural.Module module[] = procedure.getModules();
-    int count = 0;
-    for (int i = 0; i < module.length; i++)
-      if (module[i] instanceof ParameterModule)
-        count++;
-    TextureParameter newParameters[] = new TextureParameter[count];
-    double newValues[] = new double[count];
-    count = 0;
-    for (int i = 0; i < module.length; i++)
-      if (module[i] instanceof ParameterModule)
-        {
-          newParameters[count] = ((ParameterModule) module[i]).getParameter(this);
-          newValues[count] = newParameters[count].defaultVal;
-          if (parameters != null)
-          {
-            for (int j = 0; j < parameters.length; j++)
-              if (newParameters[count].equals(parameters[j]))
-                newValues[count] = parameterValues[j];
-          }
-          ((ParameterModule) module[i]).setIndex(count++);
+    /**
+     * Find all parameters defined by the procedure.
+     */
+    private void findParameters() {
+        var modules = procedure.getModules();
+        int count = 0;
+        for (var module : modules) {
+            if (module instanceof ParameterModule) {
+                count++;
+            }
         }
-    parameters = newParameters;
-    parameterValues = newValues;
-  }
+        TextureParameter newParameters[] = new TextureParameter[count];
+        double newValues[] = new double[count];
+        count = 0;
+        for (var module : modules) {
+            if (module instanceof ParameterModule) {
+                newParameters[count] = ((ParameterModule) module).getParameter(this);
+                newValues[count] = newParameters[count].defaultVal;
+                if (parameters != null) {
+                    for (int j = 0; j < parameters.length; j++) {
+                        if (newParameters[count].equals(parameters[j])) {
+                            newValues[count] = parameterValues[j];
+                        }
+                    }
+                }
+                ((ParameterModule) module).setIndex(count++);
+            }
+        }
+        parameters = newParameters;
+        parameterValues = newValues;
+    }
 
 
   @Override

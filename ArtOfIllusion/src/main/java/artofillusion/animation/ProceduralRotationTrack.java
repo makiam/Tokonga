@@ -408,26 +408,28 @@ public class ProceduralRotationTrack extends Track implements ProcedureOwner
     }
   }
 
-  /** Find all the parameters for the procedure. */
+    /**
+     * Find all the parameters for the procedure.
+     */
+    private TextureParameter[] findParameters() {
+        var modules = proc.getModules();
+        int count = 0;
 
-  private TextureParameter[] findParameters()
-  {
-    artofillusion.procedural.Module module[] = proc.getModules();
-    int count = 0;
-
-    for (int i = 0; i < module.length; i++)
-      if (module[i] instanceof ParameterModule)
-        count++;
-    TextureParameter params[] = new TextureParameter [count];
-    count = 0;
-    for (int i = 0; i < module.length; i++)
-      if (module[i] instanceof ParameterModule)
-        {
-          params[count] = ((ParameterModule) module[i]).getParameter(this);
-          ((ParameterModule) module[i]).setIndex(count++);
+        for (var module : modules) {
+            if (module instanceof ParameterModule) {
+                count++;
+            }
         }
-    return params;
-  }
+        TextureParameter params[] = new TextureParameter[count];
+        count = 0;
+        for (var module : modules) {
+            if (module instanceof ParameterModule) {
+                params[count] = ((ParameterModule) module).getParameter(this);
+                ((ParameterModule) module).setIndex(count++);
+            }
+        }
+        return params;
+    }
 
   /* Write a serialized representation of this track to a stream. */
 

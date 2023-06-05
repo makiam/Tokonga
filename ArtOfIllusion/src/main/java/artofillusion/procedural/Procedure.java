@@ -11,271 +11,282 @@
 
 package artofillusion.procedural;
 
-import artofillusion.*;
-import artofillusion.math.*;
+import artofillusion.ArtOfIllusion;
+import artofillusion.Scene;
+import artofillusion.math.RGBColor;
+import artofillusion.math.Vec3;
 import artofillusion.procedural.Module;
-import java.awt.*;
-import java.io.*;
-import java.lang.reflect.*;
+import java.awt.Point;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
-/** This represents a procedure for calculating a set of values (typically, the parameters
-    for a texture or material). */
-
+/**
+ * This represents a procedure for calculating a set of values (typically, the parameters
+ * for a texture or material).
+ */
 @Slf4j
-public class Procedure
-{
-  OutputModule output[];
-  Module module[];
-  Link link[];
-  
-  public Procedure(OutputModule output[])
-  {
-    this.output = output;
-    module = new Module [0];
-    link = new Link [0];
-  }
-  
-  /** Get the list of output modules. */
-  
-  public OutputModule[] getOutputModules()
-  {
-    return output;
-  }
-  
-  /** Get the list of all other modules. */
-  
-  public Module[] getModules()
-  {
-    return module;
-  }
-  
-  /** Get the index of a particular module. */
-  
-  public int getModuleIndex(Module mod)
-  {
-    for (int i = 0; i < module.length; i++)
-      if (module[i] == mod)
-        return i;
-    return -1;
-  }
-  
-  /** Get the index of a particular output module. */
-  
-  public int getOutputIndex(Module mod)
-  {
-    for (int i = 0; i < output.length; i++)
-      if (output[i] == mod)
-        return i;
-    return -1;
-  }
+public class Procedure {
 
-  /** Add a module to the procedure. */
-  
-  public void addModule(Module mod)
-  {
-    Module newmod[] = new Module [module.length+1];
-    for (int i = 0; i < module.length; i++)
-      newmod[i] = module[i];
-    newmod[module.length] = mod;
-    module = newmod;
-  }
-  
-  /** Delete a module from the procedure.  Any links involving this module should be deleted
-      *before* calling this method. */
+    private final List<OutputModule> outputs;
+    private Module[] modules;
+    private Link[] links;
 
-  public void deleteModule(int which)
-  {
-    Module newmod[] = new Module [module.length-1];
-    int i, j;
-    for (i = 0, j = 0; i < module.length; i++)
-      if (i != which)
-        newmod[j++] = module[i];
-    module = newmod;
-  }
+    public Procedure(OutputModule... output) {
+        this.outputs = new ArrayList<>(Arrays.asList(output));
+        modules = new Module[0];
+        links = new Link[0];
+    }
 
-  /** Get the list of links between modules. */
-  
-  public Link [] getLinks()
-  {
-    return link;
-  }
-  
-  /** Add a link to the procedure. */
-  
-  public void addLink(Link ln)
-  {
-    Link newlink[] = new Link [link.length+1];
-    for (int i = 0; i < link.length; i++)
-      newlink[i] = link[i];
-    newlink[link.length] = ln;
-    link = newlink;
-    ln.to.getModule().setInput(ln.to, ln.from);
-  }
-  
-  /** Delete a link from the procedure. */
-  
-  public void deleteLink(int which)
-  {
-    Link newlink[] = new Link [link.length-1];
-    int i, j;
+    /**
+     * Get the list of output modules.
+     */
+    public OutputModule[] getOutputModules() {
+        return outputs.toArray(OutputModule[]::new);
+    }
 
-    if (link[which].to.getType() == IOPort.INPUT)
-      link[which].to.getModule().setInput(link[which].to, null);
-    else
-      link[which].from.getModule().setInput(link[which].from, null);
-    for (i = 0, j = 0; i < link.length; i++)
-      if (i != which)
-        newlink[j++] = link[i];
-    link = newlink;
-  }
-  
-  /** Check for feedback loops in this procedure. */
-  
-  public boolean checkFeedback()
-  {
-    for (int i = 0; i < output.length; i++)
-      {
-        for (int j = 0; j < output.length ; j++)
-          output[j].checked = false;
-        for (int j = 0; j < module.length ; j++)
-          module[j].checked = false;
-        if (output[i].checkFeedback())
-          return true;
-      }
-    return false;
-  }
-  
-  /** This routine is called before the procedure is evaluated.  The PointInfo object 
-      describes the point for which it is to be evaluated. */
-  
-  public void initForPoint(PointInfo p)
-  {
-    for (int i = 0; i < module.length; i++)
-      module[i].init(p);
-  }
-  
-  /** This routine returns the value of the specified output module.  If that output does
-      not have value type NUMBER, the results are undefined. */
-  
-  public double getOutputValue(int which)
-  {
-    return output[which].getAverageValue(0, 0.0);
-  }
-  
-  /** This routine returns the gradient of the specified output module.  If that output does
-      not have value type NUMBER, the results are undefined. */
-  
-  public void getOutputGradient(int which, Vec3 grad)
-  {
-    output[which].getValueGradient(0, grad, 0.0);
-  }
-  
-  /** This routine returns the color of the specified output module.  If that output does
-      not have value type COLOR, the results are undefined. */
-  
-  public void getOutputColor(int which, RGBColor color)
-  {
-    output[which].getColor(0, color, 0.0);
-  }
-  
-  /** Make this procedure identical to another one.  The output modules must already
-      be set up before calling this method. */
-  
-  public void copy(Procedure proc)
-  {
-    module = new Module [proc.module.length];
-    for (int i = 0; i < module.length; i++)
-      module[i] = proc.module[i].duplicate();
-    link = new Link [proc.link.length];
-    for (int i = 0; i < link.length; i++)
-      {
-        Module fromModule = proc.link[i].from.getModule();
-        Module toModule = proc.link[i].to.getModule();
-        int fromIndex = proc.getModuleIndex(fromModule);
-        int toIndex = toModule instanceof OutputModule ? proc.getOutputIndex(toModule) : proc.getModuleIndex(toModule);
-        IOPort from = module[fromIndex].getOutputPorts()[proc.module[fromIndex].getOutputIndex(proc.link[i].from)];
-        IOPort to = toModule instanceof OutputModule ? 
-                output[toIndex].getInputPorts()[proc.output[toIndex].getInputIndex(proc.link[i].to)] :
-                module[toIndex].getInputPorts()[proc.module[toIndex].getInputIndex(proc.link[i].to)];
-        link[i] = new Link(from, to);
-        to.getModule().setInput(to, from);
-      }
-  }
-  
-  /** Write this procedure to an output stream. */
-  
-  public void writeToStream(DataOutputStream out, Scene theScene) throws IOException
-  {
-    out.writeShort(0);
-    out.writeInt(module.length);
-    for (int i = 0; i < module.length; i++)
-      {
-        out.writeUTF(module[i].getClass().getName());
-        out.writeInt(module[i].getBounds().x);
-        out.writeInt(module[i].getBounds().y);
-        module[i].writeToStream(out, theScene);
-      }
-    out.writeInt(link.length);
-    for (int i = 0; i < link.length; i++)
-      {
-        out.writeInt(getModuleIndex(link[i].from.getModule()));
-        out.writeInt(link[i].from.getModule().getOutputIndex(link[i].from));
-        if (link[i].to.getModule() instanceof OutputModule)
-          out.writeInt(-getOutputIndex(link[i].to.getModule())-1);
-        else
-          {
-            out.writeInt(getModuleIndex(link[i].to.getModule()));
-            out.writeInt(link[i].to.getModule().getInputIndex(link[i].to));
-          }
-      }
-  }
-  
-  /** Reconstruct this procedure from an input stream.  The output modules must already
-      be set up before calling this method. */
+    /**
+     * Get the list of all other modules.
+     */
+    public Module[] getModules() {
+        return modules;
+    }
 
-  public void readFromStream(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException
-  {
-    short version = in.readShort();
-    
-    if (version != 0)
-      throw new InvalidObjectException("");
-    for (int i = 0; i < output.length; i++)
-      output[i].setInput(output[i].getInputPorts()[0], null);
-    module = new Module [in.readInt()];
-    try
-      {
-        for (int i = 0; i < module.length; i++)
-          {
-            String classname = in.readUTF();
-            Point point = new Point(in.readInt(), in.readInt());
-            Class<?> cls = ArtOfIllusion.getClass(classname);
-            Constructor<?> con = cls.getConstructor(Point.class);
-            module[i] = (Module) con.newInstance(point);
-            module[i].readFromStream(in, theScene);
-          }
-      }
-    catch (InvocationTargetException ex)
-      {
-        log.atError().setCause(ex.getTargetException()).log("Invocation error: {}", ex.getTargetException().getMessage());
-        throw new IOException();
-      }
-    catch (IOException | ReflectiveOperationException | SecurityException ex)
-      {
-        log.atError().setCause(ex).log("Error creating module: {}", ex.getMessage());
-        throw new IOException();
-      }
-    link = new Link [in.readInt()];
-    for (int i = 0; i < link.length; i++)
-      {
-        IOPort to, from = module[in.readInt()].getOutputPorts()[in.readInt()];
-        int j = in.readInt();
-        if (j < 0)
-          to = output[-j-1].getInputPorts()[0];
-        else
-          to = module[j].getInputPorts()[in.readInt()];
-        link[i] = new Link(from, to);
-        to.getModule().setInput(to, from);
-      }
-  }
+    /**
+     * Get the index of a particular module.
+     */
+    public int getModuleIndex(Module mod) {
+        for (int i = 0; i < modules.length; i++) {
+            if (modules[i] == mod) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Get the index of a particular output module.
+     */
+    public int getOutputIndex(Module mod) {
+        return outputs.indexOf(mod);
+    }
+
+    /**
+     * Add a module to the procedure.
+     */
+    public void addModule(Module mod) {
+        Module[] newmod = new Module[modules.length + 1];
+        for (int i = 0; i < modules.length; i++) {
+            newmod[i] = modules[i];
+        }
+        newmod[modules.length] = mod;
+        modules = newmod;
+    }
+
+    /**
+     * Delete a module from the procedure. Any links involving this module should be deleted
+     * before* calling this method.
+     */
+    public void deleteModule(int which) {
+        Module[] newmod = new Module[modules.length - 1];
+        int i, j;
+        for (i = 0, j = 0; i < modules.length; i++) {
+            if (i != which) {
+                newmod[j++] = modules[i];
+            }
+        }
+        modules = newmod;
+    }
+
+    /**
+     * Get the list of links between modules.
+     */
+    public Link[] getLinks() {
+        return links;
+    }
+
+    /**
+     * Add a link to the procedure.
+     */
+    public void addLink(Link ln) {
+        Link[] newlink = new Link[links.length + 1];
+        for (int i = 0; i < links.length; i++) {
+            newlink[i] = links[i];
+        }
+        newlink[links.length] = ln;
+        links = newlink;
+        ln.to.getModule().setInput(ln.to, ln.from);
+    }
+
+    /**
+     * Delete a link from the procedure.
+     */
+    public void deleteLink(int which) {
+        Link[] newlink = new Link[links.length - 1];
+        int i, j;
+
+        if (links[which].to.getType() == IOPort.INPUT) {
+            links[which].to.getModule().setInput(links[which].to, null);
+        } else {
+            links[which].from.getModule().setInput(links[which].from, null);
+        }
+        for (i = 0, j = 0; i < links.length; i++) {
+            if (i != which) {
+                newlink[j++] = links[i];
+            }
+        }
+        links = newlink;
+    }
+
+    /**
+     * Check for feedback loops in this procedure.
+     */
+    public boolean checkFeedback() {
+        for (OutputModule outer : outputs) {
+            for (OutputModule inner : outputs) {
+                inner.checked = false;
+            }
+            for (var module : modules) {
+                module.checked = false;
+            }
+            if (outer.checkFeedback()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * This routine is called before the procedure is evaluated. The PointInfo object
+     * describes the point for which it is to be evaluated.
+     */
+    public void initForPoint(PointInfo p) {
+        for (var module : modules) {
+            module.init(p);
+        }
+    }
+
+    /**
+     * This routine returns the value of the specified output module. If that output does
+     * not have value type NUMBER, the results are undefined.
+     */
+    public double getOutputValue(int which) {
+        return outputs.get(which).getAverageValue(0, 0.0);
+    }
+
+    /**
+     * This routine returns the gradient of the specified output module. If that output does
+     * not have value type NUMBER, the results are undefined.
+     */
+    public void getOutputGradient(int which, Vec3 grad) {
+        outputs.get(which).getValueGradient(0, grad, 0.0);
+    }
+
+    /**
+     * This routine returns the color of the specified output module. If that output does
+     * not have value type COLOR, the results are undefined.
+     */
+    public void getOutputColor(int which, RGBColor color) {
+        outputs.get(which).getColor(0, color, 0.0);
+    }
+
+    /**
+     * Make this procedure identical to another one. The output modules must already
+     * be set up before calling this method.
+     */
+    public void copy(Procedure proc) {
+        modules = new Module[proc.modules.length];
+        for (int i = 0; i < modules.length; i++) {
+            modules[i] = proc.modules[i].duplicate();
+        }
+        links = new Link[proc.links.length];
+        for (int i = 0; i < links.length; i++) {
+            var fromModule = proc.links[i].from.getModule();
+            var toModule = proc.links[i].to.getModule();
+            int fromIndex = proc.getModuleIndex(fromModule);
+            int toIndex = toModule instanceof OutputModule ? proc.getOutputIndex(toModule) : proc.getModuleIndex(toModule);
+            IOPort from = modules[fromIndex].getOutputPorts()[proc.modules[fromIndex].getOutputIndex(proc.links[i].from)];
+            IOPort to = toModule instanceof OutputModule
+                    ? outputs.get(toIndex).getInputPorts()[proc.outputs.get(toIndex).getInputIndex(proc.links[i].to)]
+                    : modules[toIndex].getInputPorts()[proc.modules[toIndex].getInputIndex(proc.links[i].to)];
+            links[i] = new Link(from, to);
+            to.getModule().setInput(to, from);
+        }
+    }
+
+    /**
+     * Write this procedure to an output stream.
+     */
+    public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
+        out.writeShort(0);
+        out.writeInt(modules.length);
+        for (var module : modules) {
+            out.writeUTF(module.getClass().getName());
+            out.writeInt(module.getBounds().x);
+            out.writeInt(module.getBounds().y);
+            module.writeToStream(out, theScene);
+        }
+        out.writeInt(links.length);
+        for (Link link : links) {
+            out.writeInt(getModuleIndex(link.from.getModule()));
+            out.writeInt(link.from.getModule().getOutputIndex(link.from));
+            if (link.to.getModule() instanceof OutputModule) {
+                out.writeInt(-getOutputIndex(link.to.getModule()) - 1);
+            } else {
+                out.writeInt(getModuleIndex(link.to.getModule()));
+                out.writeInt(link.to.getModule().getInputIndex(link.to));
+            }
+        }
+    }
+
+    /**
+     * Reconstruct this procedure from an input stream. The output modules must already
+     * be set up before calling this method.
+     */
+    public void readFromStream(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+        short version = in.readShort();
+
+        if (version != 0) {
+            throw new InvalidObjectException("");
+        }
+        for (OutputModule output1 : outputs) {
+            output1.setInput(output1.getInputPorts()[0], null);
+        }
+        modules = new Module[in.readInt()];
+        try {
+            for (int i = 0; i < modules.length; i++) {
+                String classname = in.readUTF();
+                Point point = new Point(in.readInt(), in.readInt());
+                Class<?> cls = ArtOfIllusion.getClass(classname);
+                Constructor<?> con = cls.getConstructor(Point.class);
+                modules[i] = (Module) con.newInstance(point);
+                modules[i].readFromStream(in, theScene);
+            }
+        } catch (InvocationTargetException ex) {
+            log.atError().setCause(ex.getTargetException()).log("Invocation error: {}", ex.getTargetException().getMessage());
+            throw new IOException();
+        } catch (IOException | ReflectiveOperationException | SecurityException ex) {
+            log.atError().setCause(ex).log("Error creating module: {}", ex.getMessage());
+            throw new IOException();
+        }
+        links = new Link[in.readInt()];
+        for (int i = 0; i < links.length; i++) {
+            IOPort to, from = modules[in.readInt()].getOutputPorts()[in.readInt()];
+            int j = in.readInt();
+            if (j < 0) {
+                to = outputs.get(-j - 1).getInputPorts()[0];
+            } else {
+                to = modules[j].getInputPorts()[in.readInt()];
+            }
+            links[i] = new Link(from, to);
+            to.getModule().setInput(to, from);
+        }
+    }
 }
