@@ -1479,8 +1479,7 @@ public class Scene {
      * Write the Scene's representation to an output stream.
      */
     public void writeToStream(DataOutputStream out) throws IOException {
-       
-        Texture tex;
+   
         int i, j, index = 0;
         Hashtable<Object3D, Integer> table = new Hashtable<>(objects.size());
 
@@ -1515,8 +1514,7 @@ public class Scene {
 
         // Save the textures.
         out.writeInt(textures.size());
-        for (i = 0; i < textures.size(); i++) {
-            tex = textures.get(i);
+        for (var tex: textures) {
             out.writeUTF(tex.getClass().getName());
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             tex.writeToFile(new DataOutputStream(bos), this);
