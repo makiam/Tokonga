@@ -36,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 public class Scene {
 
     private List<ObjectInfo> objects;
-    private Vector<Material> materials;
+    private List<Material> materials;
     private Vector<Texture> textures;
     private Vector<ImageMap> images;
     private Vector<Integer> selection;
@@ -780,7 +780,7 @@ public class Scene {
             }
         }
         for (int i = 0; i < materials.size(); i++) {
-            if (materials.elementAt(i).usesImage(image)) {
+            if (materials.get(i).usesImage(image)) {
                 return false;
             }
         }
@@ -1234,7 +1234,7 @@ public class Scene {
                         throw new IOException("Unknown class: " + classname);
                     }
                     con = cls.getConstructor(DataInputStream.class, Scene.class);
-                    materials.addElement((Material) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this));
+                    materials.add((Material) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this));
                 } catch (IOException | ReflectiveOperationException | SecurityException ex) {
                     log.atError().setCause(ex).log("Error loading material: {}", ex.getMessage());
                     if (ex instanceof ClassNotFoundException) {
@@ -1244,7 +1244,7 @@ public class Scene {
                     }
                     UniformMaterial m = new UniformMaterial();
                     m.setName("<unreadable>");
-                    materials.addElement(m);
+                    materials.add(m);
                 }
             } catch (IOException | ClassNotFoundException ex) {
                 log.atError().setCause(ex).log("Error reading: {}", ex.getMessage());
@@ -1506,7 +1506,7 @@ public class Scene {
         // Save the materials.
         out.writeInt(materials.size());
         for (i = 0; i < materials.size(); i++) {
-            mat = materials.elementAt(i);
+            mat = materials.get(i);
             out.writeUTF(mat.getClass().getName());
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             mat.writeToFile(new DataOutputStream(bos), this);
