@@ -40,7 +40,7 @@ public class Scene {
     private List<Texture> textures;
 
     private List<ImageMap> images;
-    private Vector<Integer> selection;
+    private List<Integer> selection;
     private List<ListChangeListener> textureListeners, materialListeners;
     private HashMap<String, Object> metadataMap;
     private HashMap<ObjectInfo, Integer> objectIndexMap;
@@ -831,10 +831,10 @@ public class Scene {
         clearSelection();
         for (int index : which) {
             ObjectInfo info = objects.get(index);
-            if (!info.selected) {
-                selection.addElement(index);
+            if (!info.isSelected()) {
+                selection.add(index);
             }
-            info.selected = true;
+            info.setSelected(true);
         }
         updateSelectionInfo();
     }
@@ -847,10 +847,10 @@ public class Scene {
     @Deprecated
     public void addToSelection(int which) {
         ObjectInfo info = objects.get(which);
-        if (!info.selected) {
-            selection.addElement(which);
+        if (!info.isSelected()) {
+            selection.add(which);
         }
-        info.selected = true;
+        info.setSelected(true);
         updateSelectionInfo();
     }
 
@@ -866,7 +866,7 @@ public class Scene {
         }
         selection.clear();
         objects.forEach(item -> {
-            item.selected = false;
+            item.setSelected(false);
         });
 
         updateSelectionInfo();
@@ -880,8 +880,8 @@ public class Scene {
     @Deprecated
     public void removeFromSelection(int which) {
         ObjectInfo info = objects.get(which);
-        selection.removeElement(which);
-        info.selected = false;
+        selection.remove(which);
+        info.setSelected(false);
         updateSelectionInfo();
     }
 
@@ -896,7 +896,7 @@ public class Scene {
             ObjectInfo info = objects.get(i);
             ObjectInfo parent = info.getParent();
             while (parent != null) {
-                if (parent.selected || parent.parentSelected) {
+                if (parent.isSelected() || parent.parentSelected) {
                     info.parentSelected = true;
                     break;
                 }
@@ -1080,7 +1080,7 @@ public class Scene {
         int[] sel = new int[selection.size()];
 
         for (int i = 0; i < sel.length; i++) {
-            sel[i] = selection.elementAt(i);
+            sel[i] = selection.get(i);
         }
         return sel;
     }
@@ -1096,7 +1096,7 @@ public class Scene {
         int count = 0;
         for (int i = objects.size() - 1; i >= 0; i--) {
             ObjectInfo info = objects.get(i);
-            if (info.selected || info.parentSelected) {
+            if (info.isSelected() || info.parentSelected) {
                 count++;
             }
         }
@@ -1104,7 +1104,7 @@ public class Scene {
         count = 0;
         for (int i = objects.size() - 1; i >= 0; i--) {
             ObjectInfo info = objects.get(i);
-            if (info.selected || info.parentSelected) {
+            if (info.isSelected() || info.parentSelected) {
                 sel[count++] = i;
             }
         }

@@ -19,6 +19,7 @@ import artofillusion.texture.*;
 import java.lang.ref.*;
 import java.util.*;
 import lombok.Getter;
+import lombok.Setter;
 
 /** ObjectInfo represents information about an object within a Scene: its position, 
     orientation, name, visibility, etc.  The internal properties (i.e. geometry) of
@@ -32,8 +33,8 @@ public class ObjectInfo
   public Object3D object;
   public CoordinateSystem coords;
   public String name;
-  //TODO: Access only via getter
-  @Getter
+  //TODO: Access only via getter/setter
+  @Getter @Setter
   public boolean selected;
   public boolean visible, parentSelected;
   public ObjectInfo parent, children[];
