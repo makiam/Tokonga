@@ -1601,14 +1601,14 @@ public class Scene {
             key = index++;
             table.put(info.getObject(), key);
         } else {
-            out.writeInt(key.intValue());
+            out.writeInt(key);
         }
 
         // Write the tracks for this object.
         out.writeInt(info.getTracks().length);
-        for (int i = 0; i < info.getTracks().length; i++) {
-            out.writeUTF(info.getTracks()[i].getClass().getName());
-            info.getTracks()[i].writeToStream(out, this);
+        for (var track : info.getTracks()) {
+            out.writeUTF(track.getClass().getName());
+            track.writeToStream(out, this);
         }
         return index;
     }
