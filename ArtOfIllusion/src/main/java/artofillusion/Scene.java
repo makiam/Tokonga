@@ -39,7 +39,7 @@ public class Scene {
     private List<Material> materials;
     private List<Texture> textures;
 
-    private Vector<ImageMap> images;
+    private List<ImageMap> images;
     private Vector<Integer> selection;
     private List<ListChangeListener> textureListeners, materialListeners;
     private HashMap<String, Object> metadataMap;
@@ -753,14 +753,14 @@ public class Scene {
      * Add an image map to the scene.
      */
     public void addImage(ImageMap im) {
-        images.addElement(im);
+        images.add(im);
     }
 
     /**
      * Remove an image map from the scene.
      */
     public boolean removeImage(int which) {
-        ImageMap image = images.elementAt(which);
+        ImageMap image = images.get(which);
 
         for (var texture: textures) {
             if (texture.usesImage(image)) {
@@ -772,7 +772,7 @@ public class Scene {
                 return false;
             }
         }
-        images.removeElementAt(which);
+        images.remove(which);
         return true;
     }
 
@@ -1181,7 +1181,7 @@ public class Scene {
         images = new Vector<>(count);
         for (int i = 0; i < count; i++) {
             if (version == 0) {
-                images.addElement(new MIPMappedImage(in, (short) 0));
+                images.add(new MIPMappedImage(in, (short) 0));
                 continue;
             }
             String classname = in.readUTF();
@@ -1191,7 +1191,7 @@ public class Scene {
                     throw new IOException("Unknown class: " + classname);
                 }
                 con = cls.getConstructor(DataInputStream.class);
-                images.addElement((ImageMap) con.newInstance(in));
+                images.add((ImageMap) con.newInstance(in));
             } catch (IOException | ReflectiveOperationException | SecurityException ex) {
                 throw new IOException("Error loading image: " + ex.getMessage());
             }
