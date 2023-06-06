@@ -941,16 +941,6 @@ public class Scene {
         return objects.stream().filter(info -> info.getId() == id).findFirst().orElse(null);
     }
 
-    /**
-     * Get all objects in the Scene in the form of a List.
-     *
-     * @deprecated use {@link #getObjects()} instead.
-     *
-     */
-    @Deprecated
-    public List<ObjectInfo> getAllObjects() {
-        return Collections.unmodifiableList(objects);
-    }
 
     /**
      * Get all objects in the Scene in the form of a List.
