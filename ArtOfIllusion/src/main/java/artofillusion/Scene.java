@@ -38,9 +38,10 @@ public class Scene {
     private List<ObjectInfo> objects;
     private List<Material> materials;
     private List<Texture> textures;
+
     private Vector<ImageMap> images;
     private Vector<Integer> selection;
-    private Vector<ListChangeListener> textureListeners, materialListeners;
+    private List<ListChangeListener> textureListeners, materialListeners;
     private HashMap<String, Object> metadataMap;
     private HashMap<ObjectInfo, Integer> objectIndexMap;
     private RGBColor ambientColor, environColor, fogColor;
@@ -583,9 +584,8 @@ public class Scene {
      */
     public void addTexture(Texture tex, int index) {
         textures.add(index, tex);
-        for (int i = 0; i < textureListeners.size(); i++) {
-            textureListeners.elementAt(i).itemAdded(textures.size() - 1, tex);
-        }
+        int pos = textures.size() - 1;
+        textureListeners.forEach(listener ->  listener.itemAdded(pos, tex));
     }
 
     /**
@@ -594,16 +594,12 @@ public class Scene {
     public void removeTexture(int which) {
 
         Texture tex = textures.remove(which);
-        for (int i = 0; i < textureListeners.size(); i++) {
-            textureListeners.elementAt(i).itemRemoved(which, tex);
-        }
+        textureListeners.forEach(listener -> listener.itemRemoved(which, tex));
         if (textures.isEmpty()) {
             UniformTexture defTex = new UniformTexture();
             defTex.setName("Default Texture");
             textures.add(defTex);
-            for (int i = 0; i < textureListeners.size(); i++) {
-                textureListeners.elementAt(i).itemAdded(0, defTex);
-            }
+            textureListeners.forEach(listener -> listener.itemAdded(0, defTex));
         }
         Texture def = textures.get(0);
         for (int i = 0; i < objects.size(); i++) {
@@ -697,28 +693,28 @@ public class Scene {
      * Add an object which wants to be notified when the list of Materials in the Scene changes.
      */
     public void addMaterialListener(ListChangeListener ls) {
-        materialListeners.addElement(ls);
+        materialListeners.add(ls);
     }
 
     /**
      * Remove an object from the set to be notified when the list of Materials changes.
      */
     public void removeMaterialListener(ListChangeListener ls) {
-        materialListeners.removeElement(ls);
+        materialListeners.remove(ls);
     }
 
     /**
      * Add an object which wants to be notified when the list of Textures in the Scene changes.
      */
     public void addTextureListener(ListChangeListener ls) {
-        textureListeners.addElement(ls);
+        textureListeners.add(ls);
     }
 
     /**
      * Remove an object from the set to be notified when the list of Textures changes.
      */
     public void removeTextureListener(ListChangeListener ls) {
-        textureListeners.removeElement(ls);
+        textureListeners.remove(ls);
     }
 
     /**
@@ -1479,8 +1475,6 @@ public class Scene {
      * Write the Scene's representation to an output stream.
      */
     public void writeToStream(DataOutputStream out) throws IOException {
-
-        
 
         out.writeShort(5);
         ambientColor.writeToFile(out);
