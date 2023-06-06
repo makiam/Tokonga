@@ -748,13 +748,6 @@ public class Scene {
         return metadataMap.keySet();
     }
 
-    /**
-     * Show the dialog for editing textures and materials.
-     */
-    @Deprecated
-    public void showTexturesDialog(EditingWindow parent) {
-        ((LayoutWindow) parent).showTexturesDialog(this);
-    }
 
     /**
      * Add an image map to the scene.
