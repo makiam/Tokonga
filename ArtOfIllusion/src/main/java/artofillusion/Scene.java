@@ -1479,9 +1479,8 @@ public class Scene {
      * Write the Scene's representation to an output stream.
      */
     public void writeToStream(DataOutputStream out) throws IOException {
-   
-        int i, j, index = 0;
-        Hashtable<Object3D, Integer> table = new Hashtable<>(objects.size());
+
+        
 
         out.writeShort(5);
         ambientColor.writeToFile(out);
@@ -1496,7 +1495,7 @@ public class Scene {
 
         // Save the image maps.
         out.writeInt(images.size());
-        for (ImageMap image : images) {
+        for (var image : images) {
             out.writeUTF(image.getClass().getName());
             image.writeToStream(out, this);
         }
@@ -1524,18 +1523,19 @@ public class Scene {
         }
 
         // Save the objects.
+        int index = 0;
+        Map<Object3D, Integer> table = new Hashtable<>(objects.size());
         out.writeInt(objects.size());
-        for (i = 0; i < objects.size(); i++) {
-            index = writeObjectToFile(out, objects.get(i), table, index);
+        for (var object: objects) {
+            index = writeObjectToFile(out, object, table, index);
         }
 
         // Record the children of each object.  The format of this will be changed in the
         // next version.
-        for (i = 0; i < objects.size(); i++) {
-            ObjectInfo info = objects.get(i);
-            out.writeInt(info.getChildren().length);
-            for (j = 0; j < info.getChildren().length; j++) {
-                out.writeInt(indexOf(info.getChildren()[j]));
+        for (var object: objects) {
+            out.writeInt(object.getChildren().length);
+            for (ObjectInfo children : object.getChildren()) {
+                out.writeInt(indexOf(children));
             }
         }
 
@@ -1551,9 +1551,9 @@ public class Scene {
             } else {
                 environMapping.writeToFile(out);
             }
-            for (i = 0; i < environParamValue.length; i++) {
-                out.writeUTF(environParamValue[i].getClass().getName());
-                environParamValue[i].writeToStream(out);
+            for (ParameterValue value : environParamValue) {
+                out.writeUTF(value.getClass().getName());
+                value.writeToStream(out);
             }
         }
 
@@ -1581,7 +1581,7 @@ public class Scene {
     /**
      * Write the information about a single object to a file.
      */
-    private int writeObjectToFile(DataOutputStream out, ObjectInfo info, Hashtable<Object3D, Integer> table, int index) throws IOException {
+    private int writeObjectToFile(DataOutputStream out, ObjectInfo info, Map<Object3D, Integer> table, int index) throws IOException {
         Integer key;
 
         info.getCoords().writeToFile(out);
