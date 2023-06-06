@@ -769,13 +769,13 @@ public class Scene {
     public boolean removeImage(int which) {
         ImageMap image = images.elementAt(which);
 
-        for (int i = 0; i < textures.size(); i++) {
-            if (textures.get(i).usesImage(image)) {
+        for (var texture: textures) {
+            if (texture.usesImage(image)) {
                 return false;
             }
         }
-        for (int i = 0; i < materials.size(); i++) {
-            if (materials.get(i).usesImage(image)) {
+        for (var material: materials) {
+            if (material.usesImage(image)) {
                 return false;
             }
         }
