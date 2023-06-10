@@ -27,6 +27,7 @@ import buoy.widget.RowContainer;
 import buoy.widget.Widget;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -104,7 +105,7 @@ public class EnvironmentPropertiesDialog {
     }
 
     private void cancel() {
-        //Nothing to do on cancel
+        log.info("Reverting environment settings");
     }
 
     private boolean isUnchanged() {
@@ -125,7 +126,8 @@ public class EnvironmentPropertiesDialog {
             return;
         }
         log.info("Applying environment parameters");
-        commit();
+        UndoableEdit action = new UndoableEnvironmentEdit(this::commit, this::cancel).execute();
+        owner.setUndoRecord(new UndoRecord(owner, false, UndoRecord.USER_DEFINED_ACTION, action));
     }
 
     private void commit() {
@@ -159,4 +161,31 @@ public class EnvironmentPropertiesDialog {
         otd.setCallback(this::textureSelectCallback);
     }
 
+    static class UndoableEnvironmentEdit implements UndoableEdit {
+
+        private Runnable redo;
+        private Runnable undo;
+
+        public UndoableEnvironmentEdit(Runnable redo, Runnable undo) {
+            this.redo = redo;
+            this.undo = undo;
+        }
+
+        @Override
+        public void undo() {
+            Optional.ofNullable(undo).ifPresent(action -> action.run());
+        }
+
+        @Override
+        public void redo() {
+            Optional.ofNullable(redo).ifPresent(action -> action.run());
+        }
+
+        @Override
+        public String getName() {
+            return Translate.text("Change Environment Properties");
+        }
+
+
+    }
 }
