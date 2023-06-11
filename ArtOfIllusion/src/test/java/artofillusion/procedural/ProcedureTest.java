@@ -12,7 +12,6 @@ package artofillusion.procedural;
 
 import artofillusion.math.RGBColor;
 import artofillusion.math.Vec3;
-import artofillusion.procedural.Module;
 import java.awt.Point;
 import static org.junit.Assert.*;
 import org.junit.Test;
