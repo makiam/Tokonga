@@ -653,7 +653,7 @@ public class ProcedureEditor extends CustomWidget {
      */
     protected void mousePressed(MousePressedEvent e) {
         OutputModule output[] = proc.getOutputModules();
-        Module module[] = proc.getModules();
+        var modules = proc.getModules();
         Link link[] = proc.getLinks();
         IOPort port;
         int i;
@@ -664,8 +664,8 @@ public class ProcedureEditor extends CustomWidget {
         draggingMultiple = false;
 
         // First see if the mouse was pressed on a port.
-        for (i = 0; i < module.length; i++) {
-            port = module[i].getClickedPort(clickPos);
+        for (i = 0; i < modules.length; i++) {
+            port = modules[i].getClickedPort(clickPos);
             if (port != null) {
                 startDragLink(port);
                 draggingMultiple = e.isShiftDown();
@@ -682,8 +682,8 @@ public class ProcedureEditor extends CustomWidget {
         }
 
         // See if the mouse was pressed on a selected module.
-        for (i = module.length - 1; i >= 0; i--) {
-            if (selectedModule[i] && module[i].getBounds().contains(clickPos)) {
+        for (i = modules.length - 1; i >= 0; i--) {
+            if (selectedModule[i] && modules[i].getBounds().contains(clickPos)) {
                 draggingModule = true;
                 if (e.getWidget() == this) // Otherwise, it's a synthetic mouse event being sent from the ModuleMenu
                 {
@@ -696,8 +696,8 @@ public class ProcedureEditor extends CustomWidget {
         }
 
         // See if the mouse was pressed on an unselected module.
-        for (i = module.length - 1; i >= 0; i--) {
-            if (!selectedModule[i] && module[i].getBounds().contains(clickPos)) {
+        for (i = modules.length - 1; i >= 0; i--) {
+            if (!selectedModule[i] && modules[i].getBounds().contains(clickPos)) {
                 draggingModule = true;
                 saveState(false);
                 if (!e.isShiftDown()) {
@@ -777,9 +777,9 @@ public class ProcedureEditor extends CustomWidget {
                 return;
             }
             Rectangle rect = getRectangle(clickPos, lastPos);
-            Module module[] = proc.getModules();
+            var modules = proc.getModules();
             for (int i = 0; i < selectedModule.length; i++) {
-                if (module[i].getBounds().intersects(rect)) {
+                if (modules[i].getBounds().intersects(rect)) {
                     selectedModule[i] = true;
                 }
             }
@@ -830,9 +830,8 @@ public class ProcedureEditor extends CustomWidget {
             if (dragToPort != null) {
                 dragToPort = null;
             }
-            OutputModule output[] = proc.getOutputModules();
-            Module module[] = proc.getModules();
-            for (Module mod : module) {
+            
+            for (var mod :  proc.getModules()) {
                 IOPort port[] = isInput ? mod.getOutputPorts() : mod.getInputPorts();
                 for (int j = 0; j < port.length; j++) {
                     if (isInput || !mod.inputConnected(j)) {
@@ -846,7 +845,7 @@ public class ProcedureEditor extends CustomWidget {
                 }
             }
             if (!isInput) {
-                for (OutputModule mod : output) {
+                for (var mod : proc.getOutputModules()) {
                     IOPort port[] = mod.getInputPorts();
                     for (int j = 0; j < port.length; j++) {
                         if (!mod.inputConnected(j)) {
@@ -883,15 +882,15 @@ public class ProcedureEditor extends CustomWidget {
             return;
         }
         int dx = 0, dy = 0;
-        Module module[] = proc.getModules();
+        var modules = proc.getModules();
         if (lastPos != null) {
             dx = pos.x - lastPos.x;
             dy = pos.y - lastPos.y;
         }
         for (int i = 0; i < selectedModule.length; i++) {
             if (selectedModule[i]) {
-                Rectangle rect = module[i].getBounds();
-                module[i].setPosition(rect.x + dx, rect.y + dy);
+                Rectangle rect = modules[i].getBounds();
+                modules[i].setPosition(rect.x + dx, rect.y + dy);
             }
         }
         repaint();
@@ -954,12 +953,12 @@ public class ProcedureEditor extends CustomWidget {
         saveState(false);
 
         // First select any links which are connected to selected modules, since they will also need to be deleted.
-        Module module[] = proc.getModules();
+        var modules = proc.getModules();
         Link link[] = proc.getLinks();
         for (int i = 0; i < selectedLink.length; i++) {
             for (int j = 0; j < selectedModule.length; j++) {
-                if ((module[j] == link[i].from.getModule() && selectedModule[j])
-                        || (module[j] == link[i].to.getModule() && selectedModule[j])) {
+                if ((modules[j] == link[i].from.getModule() && selectedModule[j])
+                        || (modules[j] == link[i].to.getModule() && selectedModule[j])) {
                     selectedLink[i] = true;
                 }
             }
