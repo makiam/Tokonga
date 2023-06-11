@@ -13,7 +13,6 @@ package artofillusion.procedural;
 
 import artofillusion.*;
 import static artofillusion.procedural.IOPort.SIZE;
-import artofillusion.procedural.Module;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
@@ -21,6 +20,7 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.util.stream.IntStream;
 import lombok.extern.slf4j.Slf4j;
 
@@ -924,7 +924,7 @@ public class ProcedureEditor extends CustomWidget {
         // If this is an input port which is already connected to something, don't actually
         // drag a link.
         if (isInput) {
-            Module module = port.getModule();
+            var module = port.getModule();
             IOPort inputs[] = module.getInputPorts();
             for (int i = 0; i < inputs.length; i++) {
                 if (inputs[i] == port && module.inputConnected(i)) {
@@ -1002,8 +1002,8 @@ public class ProcedureEditor extends CustomWidget {
      */
     private static class ClipboardSelection {
 
-        Module module[];
-        Link link[];
+        Module[] module;
+        Link[] link;
 
         /**
          * Create a new ClipboardSelection representing the current selection.
@@ -1011,10 +1011,11 @@ public class ProcedureEditor extends CustomWidget {
         public ClipboardSelection(Procedure proc, boolean selectedModule[], boolean selectedLink[]) {
             // Determine which modules and links to copy.
 
-            ArrayList<Module> mod = new ArrayList<Module>();
-            ArrayList<Link> ln = new ArrayList<Link>();
-            Module allModules[] = proc.getModules();
+            List<Module> mod = new ArrayList<>();
+            List<Link> ln = new ArrayList<>();
+            var allModules = proc.getModules();
             Link allLinks[] = proc.getLinks();
+
             for (int i = 0; i < selectedModule.length; i++) {
                 if (selectedModule[i]) {
                     mod.add(allModules[i]);
@@ -1047,7 +1048,7 @@ public class ProcedureEditor extends CustomWidget {
          */
         public void paste(ProcedureEditor editor) {
             int numModules = editor.selectedModule.length, numLinks = editor.selectedLink.length;
-            Module realMod[] = new Module[module.length];
+            var realMod = new Module[module.length];
 
             // Add the modules.
             for (int i = 0; i < module.length; i++) {
