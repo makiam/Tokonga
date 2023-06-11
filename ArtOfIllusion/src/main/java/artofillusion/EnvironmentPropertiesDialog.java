@@ -14,6 +14,9 @@ import artofillusion.math.CoordinateSystem;
 import artofillusion.math.RGBColor;
 import artofillusion.object.ObjectInfo;
 import artofillusion.object.Sphere;
+import artofillusion.texture.ParameterValue;
+import artofillusion.texture.Texture;
+import artofillusion.texture.TextureMapping;
 import artofillusion.ui.ColorSampleWidget;
 import artofillusion.ui.ComponentsDialog;
 import artofillusion.ui.Translate;
@@ -40,9 +43,9 @@ public class EnvironmentPropertiesDialog {
     private final LayoutWindow owner;
     private final Scene scene;
 
-    private final RGBColor ambColor;
-    private final RGBColor envColor;
-    private final RGBColor fogColor;
+    private final RGBColor ambColor, oldAmbColor;
+    private final RGBColor envColor, oldEnvColor;
+    private final RGBColor fogColor, oldFogColor;
 
     private final ColorSampleWidget ambPatch, envPatch, fogPatch;
 
@@ -58,12 +61,24 @@ public class EnvironmentPropertiesDialog {
     private final ObjectInfo envInfo = new ObjectInfo(envSphere, new CoordinateSystem(), "Environment");
 
     private final BCheckBox fogBox;
+    private final Boolean fog;
+    private final double fogDistance;
+    private final int environmentMode;
+
+    private final Texture texture;
+    private final TextureMapping mapping;
+    private final ParameterValue[] values;
+
     private final ValueField fogField;
 
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public EnvironmentPropertiesDialog(LayoutWindow owner) {
         this.owner = owner;
         this.scene = owner.getScene();
+
+        this.oldAmbColor = scene.getAmbientColor().duplicate();
+        this.oldEnvColor = scene.getEnvironmentColor().duplicate();
+        this.oldFogColor = scene.getFogColor().duplicate();
 
         this.ambColor = scene.getAmbientColor().duplicate();
         this.envColor = scene.getEnvironmentColor().duplicate();
@@ -74,11 +89,13 @@ public class EnvironmentPropertiesDialog {
         fogPatch = new ColorSampleWidget(fogColor, Translate.text("fogColor"));
 
 
-
+        fog = scene.getFogState();
         fogBox = new BCheckBox("Environment Fog", scene.getFogState());
         fogField = new ValueField(scene.getFogDistance(), ValueField.POSITIVE);
+        fogDistance = scene.getFogDistance();
 
         envChoice.setSelectedIndex(scene.getEnvironmentMode());
+        environmentMode = scene.getEnvironmentMode();
         envChoice.getComponent().addActionListener(this::onChoiceAction);
 
         final BButton envButton = new BButton(Translate.text("Choose") + ":");
@@ -96,16 +113,27 @@ public class EnvironmentPropertiesDialog {
         envSphere.setParameterValues(scene.getEnvironmentParameterValues());
         envLabel.setText(envSphere.getTexture().getName());
 
+        texture = scene.getEnvironmentTexture();
+        mapping = scene.getEnvironmentMapping();
+        values = scene.getEnvironmentParameterValues();
 
-
-    new ComponentsDialog(owner, Translate.text("environmentTitle"),
-        new Widget [] {ambPatch, envChoice, envPanel, fogBox, fogPatch, fogField},
-        new String [] {Translate.text("ambientColor"), Translate.text("environment"), "", "", Translate.text("fogColor"), Translate.text("fogDistance")},
-            this::apply, this::cancel);
+        new ComponentsDialog(owner, Translate.text("environmentTitle"),
+            new Widget [] {ambPatch, envChoice, envPanel, fogBox, fogPatch, fogField},
+            new String [] {Translate.text("ambientColor"), Translate.text("environment"), "", "", Translate.text("fogColor"), Translate.text("fogDistance")},
+                this::apply, this::cancel);
     }
 
     private void cancel() {
         log.info("Reverting environment settings");
+        scene.setAmbientColor(oldAmbColor);
+        scene.setFogColor(oldFogColor);
+        scene.setEnvironmentColor(oldEnvColor);
+        scene.setFog(fog, fogDistance);
+        scene.setEnvironmentMode(environmentMode);
+
+        scene.setEnvironmentTexture(texture);
+        scene.setEnvironmentMapping(mapping);
+        scene.setEnvironmentParameterValues(values);
     }
 
     private boolean isUnchanged() {
