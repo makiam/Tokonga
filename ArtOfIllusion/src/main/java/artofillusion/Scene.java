@@ -205,11 +205,11 @@ public class Scene {
             if (track.isNullTrack() || !track.isEnabled()) {
                 continue;
             }
-            ObjectInfo[] depends = track.getDependencies();
-            for (int i = 0; i < depends.length; i++) {
-                int k = indexOf(depends[i]);
+
+            for (var depend : track.getDependencies()) {
+                int k = indexOf(depend);
                 if (k > -1 && !processed[k]) {
-                    applyTracksToObject(depends[i], processed, changed, k);
+                    applyTracksToObject(depend, processed, changed, k);
                 }
                 if (k > -1 && changed != null && changed[k]) {
                     changed[index] = true;
@@ -507,13 +507,12 @@ public class Scene {
             }
             info.getParent().removeChild(j);
         }
-        for (int i = 0; i < objects.size(); i++) {
-            ObjectInfo obj = objects.get(i);
+        for (var obj : objects) {
             for (int j = 0; j < obj.getTracks().length; j++) {
                 Track tr = obj.getTracks()[j];
-                ObjectInfo[] depends = tr.getDependencies();
-                for (int k = 0; k < depends.length; k++) {
-                    if (depends[k] == info) {
+
+                for (var depend : tr.getDependencies()) {
+                    if (depend == info) {
                         if (undo != null) {
                             undo.addCommandAtBeginning(UndoRecord.COPY_TRACK, tr, tr.duplicate(tr.getParent()));
                         }
@@ -602,8 +601,7 @@ public class Scene {
             textureListeners.forEach(listener -> listener.itemAdded(0, defTex));
         }
         Texture def = textures.get(0);
-        for (int i = 0; i < objects.size(); i++) {
-            ObjectInfo obj = objects.get(i);
+        for (var obj : objects) {
             if (obj.getObject().getTexture() == tex) {
                 obj.setTexture(def, def.getDefaultMapping(obj.getObject()));
             }
@@ -865,9 +863,7 @@ public class Scene {
             return;
         }
         selection.clear();
-        objects.forEach(item -> {
-            item.setSelected(false);
-        });
+        objects.forEach(item -> item.setSelected(false));
 
         updateSelectionInfo();
     }
@@ -1274,8 +1270,7 @@ public class Scene {
         selection = new Vector<>();
 
         // Read the list of children for each object.
-        for (int i = 0; i < objects.size(); i++) {
-            ObjectInfo info = objects.get(i);
+        for (var info : objects) {
             int num = in.readInt();
             for (int j = 0; j < num; j++) {
                 ObjectInfo child = objects.get(in.readInt());
