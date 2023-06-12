@@ -36,11 +36,12 @@ import lombok.extern.slf4j.Slf4j;
 public class Scene {
 
     private List<ObjectInfo> objects;
-    private Vector<Material> materials;
-    private Vector<Texture> textures;
-    private Vector<ImageMap> images;
-    private Vector<Integer> selection;
-    private Vector<ListChangeListener> textureListeners, materialListeners;
+    private List<Material> materials;
+    private List<Texture> textures;
+
+    private List<ImageMap> images;
+    private List<Integer> selection;
+    private List<ListChangeListener> textureListeners, materialListeners;
     private HashMap<String, Object> metadataMap;
     private HashMap<ObjectInfo, Integer> objectIndexMap;
     private RGBColor ambientColor, environColor, fogColor;
@@ -78,7 +79,7 @@ public class Scene {
         textureListeners = new Vector<>();
         materialListeners = new Vector<>();
         defTex.setName("Default Texture");
-        textures.addElement(defTex);
+        textures.add(defTex);
         ambientColor = new RGBColor(0.3f, 0.3f, 0.3f);
         environColor = new RGBColor(0.0f, 0.0f, 0.0f);
         environTexture = defTex;
@@ -204,11 +205,11 @@ public class Scene {
             if (track.isNullTrack() || !track.isEnabled()) {
                 continue;
             }
-            ObjectInfo[] depends = track.getDependencies();
-            for (int i = 0; i < depends.length; i++) {
-                int k = indexOf(depends[i]);
+
+            for (var depend : track.getDependencies()) {
+                int k = indexOf(depend);
                 if (k > -1 && !processed[k]) {
-                    applyTracksToObject(depends[i], processed, changed, k);
+                    applyTracksToObject(depend, processed, changed, k);
                 }
                 if (k > -1 && changed != null && changed[k]) {
                     changed[index] = true;
@@ -506,13 +507,12 @@ public class Scene {
             }
             info.getParent().removeChild(j);
         }
-        for (int i = 0; i < objects.size(); i++) {
-            ObjectInfo obj = objects.get(i);
+        for (var obj : objects) {
             for (int j = 0; j < obj.getTracks().length; j++) {
                 Track tr = obj.getTracks()[j];
-                ObjectInfo[] depends = tr.getDependencies();
-                for (int k = 0; k < depends.length; k++) {
-                    if (depends[k] == info) {
+
+                for (var depend : tr.getDependencies()) {
+                    if (depend == info) {
                         if (undo != null) {
                             undo.addCommandAtBeginning(UndoRecord.COPY_TRACK, tr, tr.duplicate(tr.getParent()));
                         }
@@ -583,32 +583,25 @@ public class Scene {
      */
     public void addTexture(Texture tex, int index) {
         textures.add(index, tex);
-        for (int i = 0; i < textureListeners.size(); i++) {
-            textureListeners.elementAt(i).itemAdded(textures.size() - 1, tex);
-        }
+        int pos = textures.size() - 1;
+        textureListeners.forEach(listener ->  listener.itemAdded(pos, tex));
     }
 
     /**
      * Remove a Texture from the scene.
      */
     public void removeTexture(int which) {
-        Texture tex = textures.elementAt(which);
 
-        textures.removeElementAt(which);
-        for (int i = 0; i < textureListeners.size(); i++) {
-            textureListeners.elementAt(i).itemRemoved(which, tex);
-        }
+        Texture tex = textures.remove(which);
+        textureListeners.forEach(listener -> listener.itemRemoved(which, tex));
         if (textures.isEmpty()) {
             UniformTexture defTex = new UniformTexture();
             defTex.setName("Default Texture");
-            textures.addElement(defTex);
-            for (int i = 0; i < textureListeners.size(); i++) {
-                textureListeners.elementAt(i).itemAdded(0, defTex);
-            }
+            textures.add(defTex);
+            textureListeners.forEach(listener -> listener.itemAdded(0, defTex));
         }
-        Texture def = textures.elementAt(0);
-        for (int i = 0; i < objects.size(); i++) {
-            ObjectInfo obj = objects.get(i);
+        Texture def = textures.get(0);
+        for (var obj : objects) {
             if (obj.getObject().getTexture() == tex) {
                 obj.setTexture(def, def.getDefaultMapping(obj.getObject()));
             }
@@ -698,28 +691,28 @@ public class Scene {
      * Add an object which wants to be notified when the list of Materials in the Scene changes.
      */
     public void addMaterialListener(ListChangeListener ls) {
-        materialListeners.addElement(ls);
+        materialListeners.add(ls);
     }
 
     /**
      * Remove an object from the set to be notified when the list of Materials changes.
      */
     public void removeMaterialListener(ListChangeListener ls) {
-        materialListeners.removeElement(ls);
+        materialListeners.remove(ls);
     }
 
     /**
      * Add an object which wants to be notified when the list of Textures in the Scene changes.
      */
     public void addTextureListener(ListChangeListener ls) {
-        textureListeners.addElement(ls);
+        textureListeners.add(ls);
     }
 
     /**
      * Remove an object from the set to be notified when the list of Textures changes.
      */
     public void removeTextureListener(ListChangeListener ls) {
-        textureListeners.removeElement(ls);
+        textureListeners.remove(ls);
     }
 
     /**
@@ -753,38 +746,31 @@ public class Scene {
         return metadataMap.keySet();
     }
 
-    /**
-     * Show the dialog for editing textures and materials.
-     */
-    @Deprecated
-    public void showTexturesDialog(EditingWindow parent) {
-        ((LayoutWindow) parent).showTexturesDialog(this);
-    }
 
     /**
      * Add an image map to the scene.
      */
     public void addImage(ImageMap im) {
-        images.addElement(im);
+        images.add(im);
     }
 
     /**
      * Remove an image map from the scene.
      */
     public boolean removeImage(int which) {
-        ImageMap image = images.elementAt(which);
+        ImageMap image = images.get(which);
 
-        for (int i = 0; i < textures.size(); i++) {
-            if (textures.elementAt(i).usesImage(image)) {
+        for (var texture: textures) {
+            if (texture.usesImage(image)) {
                 return false;
             }
         }
-        for (int i = 0; i < materials.size(); i++) {
-            if (materials.elementAt(i).usesImage(image)) {
+        for (var material: materials) {
+            if (material.usesImage(image)) {
                 return false;
             }
         }
-        images.removeElementAt(which);
+        images.remove(which);
         return true;
     }
 
@@ -843,10 +829,10 @@ public class Scene {
         clearSelection();
         for (int index : which) {
             ObjectInfo info = objects.get(index);
-            if (!info.selected) {
-                selection.addElement(index);
+            if (!info.isSelected()) {
+                selection.add(index);
             }
-            info.selected = true;
+            info.setSelected(true);
         }
         updateSelectionInfo();
     }
@@ -859,10 +845,10 @@ public class Scene {
     @Deprecated
     public void addToSelection(int which) {
         ObjectInfo info = objects.get(which);
-        if (!info.selected) {
-            selection.addElement(which);
+        if (!info.isSelected()) {
+            selection.add(which);
         }
-        info.selected = true;
+        info.setSelected(true);
         updateSelectionInfo();
     }
 
@@ -877,9 +863,7 @@ public class Scene {
             return;
         }
         selection.clear();
-        objects.forEach(item -> {
-            item.selected = false;
-        });
+        objects.forEach(item -> item.setSelected(false));
 
         updateSelectionInfo();
     }
@@ -892,8 +876,8 @@ public class Scene {
     @Deprecated
     public void removeFromSelection(int which) {
         ObjectInfo info = objects.get(which);
-        selection.removeElement(which);
-        info.selected = false;
+        selection.remove(which);
+        info.setSelected(false);
         updateSelectionInfo();
     }
 
@@ -908,7 +892,7 @@ public class Scene {
             ObjectInfo info = objects.get(i);
             ObjectInfo parent = info.getParent();
             while (parent != null) {
-                if (parent.selected || parent.parentSelected) {
+                if (parent.isSelected() || parent.parentSelected) {
                     info.parentSelected = true;
                     break;
                 }
@@ -946,16 +930,6 @@ public class Scene {
         return objects.stream().filter(info -> info.getId() == id).findFirst().orElse(null);
     }
 
-    /**
-     * Get all objects in the Scene in the form of a List.
-     *
-     * @deprecated use {@link #getObjects()} instead.
-     *
-     */
-    @Deprecated
-    public List<ObjectInfo> getAllObjects() {
-        return Collections.unmodifiableList(objects);
-    }
 
     /**
      * Get all objects in the Scene in the form of a List.
@@ -1102,7 +1076,7 @@ public class Scene {
         int[] sel = new int[selection.size()];
 
         for (int i = 0; i < sel.length; i++) {
-            sel[i] = selection.elementAt(i);
+            sel[i] = selection.get(i);
         }
         return sel;
     }
@@ -1118,7 +1092,7 @@ public class Scene {
         int count = 0;
         for (int i = objects.size() - 1; i >= 0; i--) {
             ObjectInfo info = objects.get(i);
-            if (info.selected || info.parentSelected) {
+            if (info.isSelected() || info.parentSelected) {
                 count++;
             }
         }
@@ -1126,7 +1100,7 @@ public class Scene {
         count = 0;
         for (int i = objects.size() - 1; i >= 0; i--) {
             ObjectInfo info = objects.get(i);
-            if (info.selected || info.parentSelected) {
+            if (info.isSelected() || info.parentSelected) {
                 sel[count++] = i;
             }
         }
@@ -1203,7 +1177,7 @@ public class Scene {
         images = new Vector<>(count);
         for (int i = 0; i < count; i++) {
             if (version == 0) {
-                images.addElement(new MIPMappedImage(in, (short) 0));
+                images.add(new MIPMappedImage(in, (short) 0));
                 continue;
             }
             String classname = in.readUTF();
@@ -1213,7 +1187,7 @@ public class Scene {
                     throw new IOException("Unknown class: " + classname);
                 }
                 con = cls.getConstructor(DataInputStream.class);
-                images.addElement((ImageMap) con.newInstance(in));
+                images.add((ImageMap) con.newInstance(in));
             } catch (IOException | ReflectiveOperationException | SecurityException ex) {
                 throw new IOException("Error loading image: " + ex.getMessage());
             }
@@ -1234,7 +1208,7 @@ public class Scene {
                         throw new IOException("Unknown class: " + classname);
                     }
                     con = cls.getConstructor(DataInputStream.class, Scene.class);
-                    materials.addElement((Material) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this));
+                    materials.add((Material) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this));
                 } catch (IOException | ReflectiveOperationException | SecurityException ex) {
                     log.atError().setCause(ex).log("Error loading material: {}", ex.getMessage());
                     if (ex instanceof ClassNotFoundException) {
@@ -1244,7 +1218,7 @@ public class Scene {
                     }
                     UniformMaterial m = new UniformMaterial();
                     m.setName("<unreadable>");
-                    materials.addElement(m);
+                    materials.add(m);
                 }
             } catch (IOException | ClassNotFoundException ex) {
                 log.atError().setCause(ex).log("Error reading: {}", ex.getMessage());
@@ -1267,7 +1241,7 @@ public class Scene {
                         throw new IOException("Unknown class: " + classname);
                     }
                     con = cls.getConstructor(DataInputStream.class, Scene.class);
-                    textures.addElement((Texture) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this));
+                    textures.add((Texture) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this));
                 } catch (IOException | SecurityException | ReflectiveOperationException ex) {
                     log.atError().setCause(ex).log("Error loading texture: {}", ex.getMessage());
                     if (ex instanceof ClassNotFoundException) {
@@ -1277,7 +1251,7 @@ public class Scene {
                     }
                     UniformTexture t = new UniformTexture();
                     t.setName("<unreadable>");
-                    textures.addElement(t);
+                    textures.add(t);
                 }
             } catch (IOException | ClassNotFoundException | IllegalArgumentException ex) {
                 log.atError().setCause(ex).log("Error reading: {}", ex.getMessage());
@@ -1296,8 +1270,7 @@ public class Scene {
         selection = new Vector<>();
 
         // Read the list of children for each object.
-        for (int i = 0; i < objects.size(); i++) {
-            ObjectInfo info = objects.get(i);
+        for (var info : objects) {
             int num = in.readInt();
             for (int j = 0; j < num; j++) {
                 ObjectInfo child = objects.get(in.readInt());
@@ -1309,7 +1282,7 @@ public class Scene {
         environMode = (int) in.readShort();
         if (environMode == ENVIRON_SOLID) {
             environColor = new RGBColor(in);
-            environTexture = textures.elementAt(0);
+            environTexture = textures.get(0);
             environMapping = environTexture.getDefaultMapping(new Sphere(1.0, 1.0, 1.0));
             environParamValue = new ParameterValue[0];
         } else {
@@ -1326,7 +1299,7 @@ public class Scene {
                 environMapping = environTexture.getDefaultMapping(sphere);
                 ((LayeredMapping) environMapping).readFromFile(in, this);
             } else {
-                environTexture = textures.elementAt(texIndex);
+                environTexture = textures.get(texIndex);
                 try {
                     Class<?> mapClass = ArtOfIllusion.getClass(in.readUTF());
                     con = mapClass.getConstructor(DataInputStream.class, Object3D.class, Texture.class);
@@ -1480,10 +1453,6 @@ public class Scene {
      * Write the Scene's representation to an output stream.
      */
     public void writeToStream(DataOutputStream out) throws IOException {
-        Material mat;
-        Texture tex;
-        int i, j, index = 0;
-        Hashtable<Object3D, Integer> table = new Hashtable<>(objects.size());
 
         out.writeShort(5);
         ambientColor.writeToFile(out);
@@ -1498,15 +1467,14 @@ public class Scene {
 
         // Save the image maps.
         out.writeInt(images.size());
-        for (ImageMap image : images) {
+        for (var image : images) {
             out.writeUTF(image.getClass().getName());
             image.writeToStream(out, this);
         }
 
         // Save the materials.
         out.writeInt(materials.size());
-        for (i = 0; i < materials.size(); i++) {
-            mat = materials.elementAt(i);
+        for (var mat: materials) {
             out.writeUTF(mat.getClass().getName());
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             mat.writeToFile(new DataOutputStream(bos), this);
@@ -1517,8 +1485,7 @@ public class Scene {
 
         // Save the textures.
         out.writeInt(textures.size());
-        for (i = 0; i < textures.size(); i++) {
-            tex = textures.elementAt(i);
+        for (var tex: textures) {
             out.writeUTF(tex.getClass().getName());
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             tex.writeToFile(new DataOutputStream(bos), this);
@@ -1528,18 +1495,19 @@ public class Scene {
         }
 
         // Save the objects.
+        int index = 0;
+        Map<Object3D, Integer> table = new Hashtable<>(objects.size());
         out.writeInt(objects.size());
-        for (i = 0; i < objects.size(); i++) {
-            index = writeObjectToFile(out, objects.get(i), table, index);
+        for (var object: objects) {
+            index = writeObjectToFile(out, object, table, index);
         }
 
         // Record the children of each object.  The format of this will be changed in the
         // next version.
-        for (i = 0; i < objects.size(); i++) {
-            ObjectInfo info = objects.get(i);
-            out.writeInt(info.getChildren().length);
-            for (j = 0; j < info.getChildren().length; j++) {
-                out.writeInt(indexOf(info.getChildren()[j]));
+        for (var object: objects) {
+            out.writeInt(object.getChildren().length);
+            for (ObjectInfo children : object.getChildren()) {
+                out.writeInt(indexOf(children));
             }
         }
 
@@ -1555,9 +1523,9 @@ public class Scene {
             } else {
                 environMapping.writeToFile(out);
             }
-            for (i = 0; i < environParamValue.length; i++) {
-                out.writeUTF(environParamValue[i].getClass().getName());
-                environParamValue[i].writeToStream(out);
+            for (ParameterValue value : environParamValue) {
+                out.writeUTF(value.getClass().getName());
+                value.writeToStream(out);
             }
         }
 
@@ -1585,7 +1553,7 @@ public class Scene {
     /**
      * Write the information about a single object to a file.
      */
-    private int writeObjectToFile(DataOutputStream out, ObjectInfo info, Hashtable<Object3D, Integer> table, int index) throws IOException {
+    private int writeObjectToFile(DataOutputStream out, ObjectInfo info, Map<Object3D, Integer> table, int index) throws IOException {
         Integer key;
 
         info.getCoords().writeToFile(out);
@@ -1605,14 +1573,14 @@ public class Scene {
             key = index++;
             table.put(info.getObject(), key);
         } else {
-            out.writeInt(key.intValue());
+            out.writeInt(key);
         }
 
         // Write the tracks for this object.
         out.writeInt(info.getTracks().length);
-        for (int i = 0; i < info.getTracks().length; i++) {
-            out.writeUTF(info.getTracks()[i].getClass().getName());
-            info.getTracks()[i].writeToStream(out, this);
+        for (var track : info.getTracks()) {
+            out.writeUTF(track.getClass().getName());
+            track.writeToStream(out, this);
         }
         return index;
     }
