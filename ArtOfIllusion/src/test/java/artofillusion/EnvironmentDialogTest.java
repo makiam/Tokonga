@@ -403,6 +403,9 @@ public class EnvironmentDialogTest {
 
         scene.addTexture(tx);
 
+        var mapping = scene.getEnvironmentMapping();
+        var props = scene.getEnvironmentParameterValues();
+
         LayoutWindow layout = new LayoutWindow(scene);
         layout.setVisible(true);
         
@@ -435,8 +438,9 @@ public class EnvironmentDialogTest {
         dialog.close();
         
         Assert.assertEquals(scene.getDefaultTexture(), scene.getEnvironmentTexture());
-        Assert.assertNull(scene.getEnvironmentMapping());
-        Assert.assertNull(scene.getEnvironmentParameterValues());
+        Assert.assertEquals(mapping, scene.getEnvironmentMapping());
+        Assert.assertEquals(props, scene.getEnvironmentParameterValues());
+        
         Assert.assertTrue(layout.isModified());
     }
 }
