@@ -22,7 +22,6 @@ public interface SurfaceIntersection {
     /**
      * This is a single global object that is always returned to indicate no intersections.
      */
-
     public static final SurfaceIntersection NO_INTERSECTION = new SurfaceIntersection() {
         @Override
         public RTObject getObject() {

@@ -42,17 +42,16 @@ import java.awt.event.ActionEvent;
 public class SSMR3DManipulator
         extends SSMRManipulator {
 
-    private Rectangle[] boxes;
+    private final Rectangle[] boxes;
     private Rectangle extraUVBox;
     private final static int HANDLE_SIZE = 12;
     private int handle;
     private boolean dragging = false;
     private Point baseClick;
-    private Runnable valueWidgetCallback, validateWidgetValue, abortWidgetValue;
-    private boolean isCtrlDown, isShiftDown;
+    private final Runnable valueWidgetCallback;
+    private boolean isShiftDown;
     private Vec3 rotateCenter;
     private Vec3 xaxis, yaxis, zaxis;
-    private Vec2 x2Daxis, y2Daxis, z2Daxis;
     private Vec2 x2DaxisNormed, y2DaxisNormed, z2DaxisNormed;
     private int rotSegment;
     private double rotAngle;
@@ -63,9 +62,9 @@ public class SSMR3DManipulator
     private Vec3 toolHandePos;
     private Vec2[] featurePoints2d;
     private double axisLength, orAxisLength;
-    private RotationHandle[] xyzRotHandles;
-    private RotationHandle[] specificRotHandles;
-    private RotationHandle[] uvRotationHandle;
+    private final RotationHandle[] xyzRotHandles;
+    private final RotationHandle[] specificRotHandles;
+    private final RotationHandle[] uvRotationHandle;
     private RotationHandle currentRotationHandle;
     private short viewMode;
 
@@ -75,9 +74,9 @@ public class SSMR3DManipulator
     private static BToolTip moveToolTip, scaleToolTip, rotateToolTip, centerToolTip;
     private static Image ghostscale;
     private static Image centerhandle;
-    private static Image[] xyzHandleImages = new Image[6];
-    private static Image[] uvHandleImages = new Image[4];
-    private static Image[] specificHandleImages = new Image[6];
+    private static final Image[] xyzHandleImages = new Image[6];
+    private static final Image[] uvHandleImages = new Image[4];
+    private static final Image[] specificHandleImages = new Image[6];
 
     public final static short X_MOVE = 0;
     public final static short X_SCALE = 1;
@@ -150,16 +149,14 @@ public class SSMR3DManipulator
                 doValueWidgetCallback();
             }
         };
-        validateWidgetValue
-                = new Runnable() {
+        Runnable validateWidgetValue = new Runnable() {
 
             @Override
             public void run() {
                 doValueWidgetValidate();
             }
         };
-        abortWidgetValue
-                = new Runnable() {
+        Runnable abortWidgetValue = new Runnable() {
 
             @Override
             public void run() {
@@ -259,9 +256,9 @@ public class SSMR3DManipulator
         x2DHandleOffset.subtract(screenX);
         y2DHandleOffset.subtract(screenY);
         z2DHandleOffset.subtract(screenZ);
-        x2Daxis = screenX.minus(axisCenter);
-        y2Daxis = screenY.minus(axisCenter);
-        z2Daxis = screenZ.minus(axisCenter);
+        Vec2 x2Daxis = screenX.minus(axisCenter);
+        Vec2 y2Daxis = screenY.minus(axisCenter);
+        Vec2 z2Daxis = screenZ.minus(axisCenter);
         x2DaxisNormed = new Vec2(x2Daxis);
         y2DaxisNormed = new Vec2(y2Daxis);
         z2DaxisNormed = new Vec2(z2Daxis);
@@ -973,7 +970,7 @@ public class SSMR3DManipulator
             if (mouseButtonTwo(e) && handle != CENTER && e.isControlDown()) {
                 if (valueWidget != null) {
                     dispatchEvent(new ManipulatorPrepareChangingEvent(this, view));
-                    isCtrlDown = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+                    boolean isCtrlDown = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
                     isShiftDown = e.isShiftDown();
                     if (handle == ROTATE) {
                         valueWidget.setTempValueRange(-180, 180);
@@ -1214,10 +1211,10 @@ public class SSMR3DManipulator
 
     public class RotationHandle {
 
-        private int segments;
-        protected Color color;
-        protected Vec3[] points3d;
-        protected Vec2[] points2d;
+        private final int segments;
+        protected final Color color;
+        protected final Vec3[] points3d;
+        protected final Vec2[] points2d;
         protected Vec3 rotAxis, refAxis;
 
         /**

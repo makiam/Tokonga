@@ -23,7 +23,8 @@ public class InterpModule extends ProceduralModule {
 
     double value, error, fract, lastBlur;
     boolean valueOk, errorOk, gradOk;
-    Vec3 gradient, tempVec;
+    final Vec3 gradient;
+    final Vec3 tempVec;
 
     public InterpModule() {
         this(new Point());

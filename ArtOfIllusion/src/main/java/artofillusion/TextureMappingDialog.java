@@ -23,184 +23,185 @@ import java.util.*;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
-/** This class implements the dialog box which is used to choose texture mappings for objects.
-    It presents a list of all mappings which can be used with the current object and material,
-    and allows the user to select one. */
+/**
+ * This class implements the dialog box which is used to choose texture mappings for objects.
+ * It presents a list of all mappings which can be used with the current object and material,
+ * and allows the user to select one.
+ */
 @Slf4j
-public class TextureMappingDialog extends BDialog
-{
-  private FormContainer content;
-  private Object3D origObj, editObj;
-  private List<TextureMapping> mappings;
-  private BComboBox mapChoice;
-  private MaterialPreviewer preview;
-  private TextureMapping map;
-  private Widget editingPanel;
-  private boolean layered;
-  private int layer;
+public class TextureMappingDialog extends BDialog {
 
-  /** Create a dialog for editing the texture mapping for a particular object.  If the object
-      has a layered texture, then layer is the layer number to edit.  Otherwise, layer is
-      ignored. */
+    private final FormContainer content;
+    private final Object3D origObj;
+    private final Object3D editObj;
+    private final List<TextureMapping> mappings;
+    private final BComboBox mapChoice;
+    private final MaterialPreviewer preview;
+    private TextureMapping map;
+    private Widget editingPanel;
+    private final boolean layered;
+    private final int layer;
 
-  public TextureMappingDialog(BFrame parent, Object3D obj, int layer)
-  {
-    super(parent, "Texture Mapping", true);
+    /**
+     * Create a dialog for editing the texture mapping for a particular object. If the object
+     * has a layered texture, then layer is the layer number to edit. Otherwise, layer is
+     * ignored.
+     */
+    public TextureMappingDialog(BFrame parent, Object3D obj, int layer) {
+        super(parent, "Texture Mapping", true);
 
-    editObj = obj.duplicate();
-    origObj = obj;
-    this.layer = layer;
-    map = editObj.getTextureMapping();
-    layered = (map instanceof LayeredMapping);
-    if (layered)
-      map = ((LayeredMapping) map).getLayerMapping(layer);
+        editObj = obj.duplicate();
+        origObj = obj;
+        this.layer = layer;
+        map = editObj.getTextureMapping();
+        layered = (map instanceof LayeredMapping);
+        if (layered) {
+            map = ((LayeredMapping) map).getLayerMapping(layer);
+        }
 
-    // Make a list of all texture mappings which can be used for this object and texture.
+        // Make a list of all texture mappings which can be used for this object and texture.
+        mappings = new Vector<>();
+        PluginRegistry.getPlugins(TextureMapping.class).forEach(mapping -> {
+            Texture tex = layered ? ((LayeredMapping) editObj.getTextureMapping()).getLayer(layer) : editObj.getTexture();
+            if (mapping.legalMapping(editObj, tex)) {
+                mappings.add(mapping);
+            }
+        });
 
-    mappings = new Vector<>();
-    PluginRegistry.getPlugins(TextureMapping.class).forEach(mapping -> {
-      Texture tex = layered ? ((LayeredMapping) editObj.getTextureMapping()).getLayer(layer) : editObj.getTexture();
-      if(mapping.legalMapping(editObj, tex)) mappings.add(mapping);
-    });
+        // Add the various components to the dialog.
+        content = new FormContainer(new double[]{1}, new double[]{1, 0, 0, 0});
+        setContent(BOutline.createEmptyBorder(content, UIUtilities.getStandardDialogInsets()));
+        Object3D previewObj = editObj;
+        while (previewObj instanceof ObjectWrapper) {
+            previewObj = ((ObjectWrapper) previewObj).getWrappedObject();
+        }
+        previewObj = previewObj.duplicate();
+        Texture tex = (layered ? map.getTexture() : obj.getTexture());
+        content.add(preview = new MaterialPreviewer(tex, obj.getMaterial(), obj.duplicate(), 160, 160), 0, 0, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets(0, 50, 0, 50), null));
+        setPreviewMapping(map);
+        RowContainer choiceRow = new RowContainer();
+        content.add(choiceRow, 0, 1);
+        choiceRow.add(new BLabel(Translate.text("Mapping") + ":"));
+        choiceRow.add(mapChoice = new BComboBox());
 
-    // Add the various components to the dialog.
+        for (int i = 0; i < mappings.size(); i++) {
+            TextureMapping cmap = mappings.get(i);
+            mapChoice.add(cmap.getName());
+            if (cmap.getClass() == map.getClass()) {
+                mapChoice.setSelectedIndex(i);
+            }
+        }
 
-    content = new FormContainer(new double [] {1}, new double [] {1, 0, 0, 0});
-    setContent(BOutline.createEmptyBorder(content, UIUtilities.getStandardDialogInsets()));
-    Object3D previewObj = editObj;
-    while (previewObj instanceof ObjectWrapper)
-      previewObj = ((ObjectWrapper) previewObj).getWrappedObject();
-    previewObj = previewObj.duplicate();
-    Texture tex = (layered ? map.getTexture() : obj.getTexture());
-    content.add(preview = new MaterialPreviewer(tex, obj.getMaterial(), obj.duplicate(), 160, 160), 0, 0, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets(0, 50, 0, 50), null));
-    setPreviewMapping(map);
-    RowContainer choiceRow = new RowContainer();
-    content.add(choiceRow, 0, 1);
-    choiceRow.add(new BLabel(Translate.text("Mapping")+":"));
-    choiceRow.add(mapChoice = new BComboBox());
+        mapChoice.addEventLink(ValueChangedEvent.class, this, "mappingChanged");
+        content.add(editingPanel = map.getEditingPanel(editObj, preview), 0, 2);
 
-    for (int i = 0; i < mappings.size(); i++)
-    {
-      TextureMapping cmap = mappings.get(i);
-      mapChoice.add(cmap.getName());
-      if (cmap.getClass() == map.getClass()) mapChoice.setSelectedIndex(i);
+        // Add the buttons at the bottom.
+        RowContainer row = new RowContainer();
+        content.add(row, 0, 3);
+        row.add(Translate.button("ok", this, "doOk"));
+        row.add(Translate.button("cancel", this, "dispose"));
+
+        // Show the dialog.
+        pack();
+        UIUtilities.centerDialog(this, parent);
+        setVisible(true);
     }
-    
-    mapChoice.addEventLink(ValueChangedEvent.class, this, "mappingChanged");
-    content.add(editingPanel = map.getEditingPanel(editObj, preview), 0, 2);
 
-    // Add the buttons at the bottom.
-
-    RowContainer row = new RowContainer();
-    content.add(row, 0, 3);
-    row.add(Translate.button("ok", this, "doOk"));
-    row.add(Translate.button("cancel", this, "dispose"));
-
-    // Show the dialog.
-
-    pack();
-    UIUtilities.centerDialog(this, parent);
-    setVisible(true);
-  }
-
-  private void doOk()
-  {
-    editObj.setTexture(editObj.getTexture(), editObj.getTextureMapping());
-    origObj.copyTextureAndMaterial(editObj);
-    dispose();
-  }
-
-  private void mappingChanged()
-  {
-    try
-    {
-      TextureMapping mapping = mappings.get(mapChoice.getSelectedIndex());
-      if (mapping.getClass() == map.getClass())
-        return;
-      Constructor<?> con = mapping.getClass().getConstructor(Object3D.class, Texture.class);
-      Texture tex = layered ? ((LayeredMapping) editObj.getTextureMapping()).getLayer(layer)
-          : editObj.getTexture();
-      setMapping((TextureMapping) con.newInstance(editObj, tex));
-      content.remove(editingPanel);
-      content.add(editingPanel = map.getEditingPanel(editObj, preview), 0, 2);
-      pack();
-      preview.render();
+    private void doOk() {
+        editObj.setTexture(editObj.getTexture(), editObj.getTextureMapping());
+        origObj.copyTextureAndMaterial(editObj);
+        dispose();
     }
-    catch (ReflectiveOperationException | IllegalArgumentException | SecurityException ex)
-    {
-        log.atError().setCause(ex).log("Unable to change mapping: {}", ex.getMessage());
+
+    private void mappingChanged() {
+        try {
+            TextureMapping mapping = mappings.get(mapChoice.getSelectedIndex());
+            if (mapping.getClass() == map.getClass()) {
+                return;
+            }
+            Constructor<?> con = mapping.getClass().getConstructor(Object3D.class, Texture.class);
+            Texture tex = layered ? ((LayeredMapping) editObj.getTextureMapping()).getLayer(layer)
+                    : editObj.getTexture();
+            setMapping((TextureMapping) con.newInstance(editObj, tex));
+            content.remove(editingPanel);
+            content.add(editingPanel = map.getEditingPanel(editObj, preview), 0, 2);
+            pack();
+            preview.render();
+        } catch (ReflectiveOperationException | IllegalArgumentException | SecurityException ex) {
+            log.atError().setCause(ex).log("Unable to change mapping: {}", ex.getMessage());
+        }
     }
-  }
 
-  /** Set the mapping for the object being edited. */
+    /**
+     * Set the mapping for the object being edited.
+     */
+    private void setMapping(TextureMapping newmap) {
+        map = newmap;
+        Vec2[] uv = null;
+        Vec2[][] uvf = null;
+        if (newmap instanceof UVMapping) {
+            // Record the current texture coordinates of each vertex.
 
-  private void setMapping(TextureMapping newmap)
-  {
-    map = newmap;
-    Vec2 uv[] = null, uvf[][] = null;
-    if (newmap instanceof UVMapping)
-    {
-      // Record the current texture coordinates of each vertex.
+            Mapping2D oldmap;
+            if (layered) {
+                oldmap = (Mapping2D) ((LayeredMapping) editObj.getTextureMapping()).getLayerMapping(layer);
+            } else {
+                oldmap = (Mapping2D) editObj.getTextureMapping();
+            }
+            Object3D innerObj = editObj;
+            while (innerObj instanceof ObjectWrapper) {
+                innerObj = ((ObjectWrapper) innerObj).getWrappedObject();
+            }
+            Mesh m = (Mesh) innerObj;
+            if (m instanceof FacetedMesh && oldmap instanceof UVMapping && ((UVMapping) oldmap).isPerFaceVertex((FacetedMesh) m)) {
+                uvf = ((UVMapping) oldmap).findFaceTextureCoordinates((FacetedMesh) m);
+            } else {
+                uv = oldmap.findTextureCoordinates(m);
+            }
+        }
+        if (layered) {
+            LayeredMapping lm = (LayeredMapping) editObj.getTextureMapping();
+            lm.setLayerMapping(layer, newmap);
+            editObj.setTexture(lm.getTexture(), lm);
+        } else {
+            editObj.setTexture(editObj.getTexture(), newmap);
+            setPreviewMapping(newmap);
+        }
+        if (uv != null) {
+            // Set the texture coordinates at each vertex.
 
-      Mapping2D oldmap;
-      if (layered)
-        oldmap = (Mapping2D) ((LayeredMapping) editObj.getTextureMapping()).getLayerMapping(layer);
-      else
-        oldmap = (Mapping2D) editObj.getTextureMapping();
-      Object3D innerObj = editObj;
-      while (innerObj instanceof ObjectWrapper)
-        innerObj = ((ObjectWrapper) innerObj).getWrappedObject();
-      Mesh m = (Mesh) innerObj;
-      if (m instanceof FacetedMesh && oldmap instanceof UVMapping && ((UVMapping) oldmap).isPerFaceVertex((FacetedMesh) m))
-        uvf = ((UVMapping) oldmap).findFaceTextureCoordinates((FacetedMesh) m);
-      else
-        uv = oldmap.findTextureCoordinates(m);
+            ((UVMapping) newmap).setTextureCoordinates(editObj, uv);
+            setPreviewMapping(newmap);
+        }
+        if (uvf != null) {
+            // Set the texture coordinates at each face-vertex.
+
+            ((UVMapping) newmap).setFaceTextureCoordinates(editObj, uvf);
+            setPreviewMapping(newmap);
+        }
+        preview.render();
     }
-    if (layered)
-    {
-      LayeredMapping lm = (LayeredMapping) editObj.getTextureMapping();
-      lm.setLayerMapping(layer, newmap);
-      editObj.setTexture(lm.getTexture(), lm);
-    }
-    else
-    {
-      editObj.setTexture(editObj.getTexture(), newmap);
-      setPreviewMapping(newmap);
-    }
-    if (uv != null)
-    {
-      // Set the texture coordinates at each vertex.
 
-      ((UVMapping) newmap).setTextureCoordinates(editObj, uv);
-      setPreviewMapping(newmap);
+    /**
+     * Set the texture mapping for the preview and, if necessary, copy over
+     * texture coordinates.
+     */
+    public void setPreviewMapping(TextureMapping newmap) {
+        Texture tex = (layered ? map.getTexture() : editObj.getTexture());
+        preview.setTexture(tex, newmap);
+        Object3D mesh = editObj;
+        while (mesh instanceof ObjectWrapper) {
+            mesh = ((ObjectWrapper) mesh).getWrappedObject();
+        }
+        if (!(mesh instanceof Mesh)) {
+            return;
+        }
+        TextureParameter[] param = mesh.getParameters();
+        ParameterValue[] val = mesh.getParameterValues();
+        Object3D previewObj = preview.getObject().getObject();
+        for (int i = 0; i < param.length; i++) {
+            previewObj.setParameterValue(param[i], val[i]);
+        }
+        preview.render();
     }
-    if (uvf != null)
-    {
-      // Set the texture coordinates at each face-vertex.
-
-      ((UVMapping) newmap).setFaceTextureCoordinates(editObj, uvf);
-      setPreviewMapping(newmap);
-    }
-    preview.render();
-  }
-
-  /** Set the texture mapping for the preview and, if necessary, copy over
-      texture coordinates. */
-
-  public void setPreviewMapping(TextureMapping newmap)
-  {
-    Texture tex = (layered ? map.getTexture() : editObj.getTexture());
-    preview.setTexture(tex, newmap);
-    Object3D mesh = editObj;
-    while (mesh instanceof ObjectWrapper)
-      mesh = ((ObjectWrapper) mesh).getWrappedObject();
-    if (!(mesh instanceof Mesh))
-      return;
-    TextureParameter param[] = mesh.getParameters();
-    ParameterValue val[] = mesh.getParameterValues();
-    Object3D previewObj = preview.getObject().getObject();
-    for (int i = 0; i < param.length; i++)
-      previewObj.setParameterValue(param[i], val[i]);
-    preview.render();
-  }
 }

@@ -25,17 +25,24 @@ import artofillusion.texture.*;
  */
 public class RTTriangle extends RTObject {
 
-    RenderingTriangle tri;
-    Vec3 vert1, trueNorm;
-    short dropAxis, flags;
-    Mat4 toLocal, fromLocal;
-    double d, edge2d1x, edge2d1y, edge2d2x, edge2d2y;
+    final RenderingTriangle tri;
+    final Vec3 vert1;
+    final Vec3 trueNorm;
+    final short dropAxis;
+    short flags;
+    final Mat4 toLocal;
+    final Mat4 fromLocal;
+    final double d;
+    double edge2d1x;
+    double edge2d1y;
+    double edge2d2x;
+    double edge2d2y;
 
     public static final double TOL = 1e-12;
     private static final short BUMP_MAPPED = 1;
     private static final short INTERP_NORMALS = 2;
 
-    private double triangleTol;
+    private final double triangleTol;
 
     public RTTriangle(RenderingMesh mesh, int which, Mat4 fromLocal, Mat4 toLocal) {
         tri = mesh.triangle[which];

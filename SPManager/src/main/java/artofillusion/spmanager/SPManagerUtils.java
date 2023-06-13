@@ -27,7 +27,7 @@ import org.w3c.dom.*;
 @Slf4j
 public class SPManagerUtils {
 
-    public static DocumentBuilderFactory factory;
+    public static final DocumentBuilderFactory factory;
     public static DocumentBuilder builder;
 
     static {

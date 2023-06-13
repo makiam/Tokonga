@@ -33,14 +33,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class EdgeSmoothnessRangeDialog extends BDialog {
 
-    private BTextField minSmoothnessTF;
     private PMValueField minSmoothnessVF;
     private BSlider minSmoothnessSlider;
-    private BTextField maxSmoothnessTF;
     private PMValueField maxSmoothnessVF;
     private BSlider maxSmoothnessSlider;
-    private boolean[] orSel;
-    private boolean[] newSel;
+    private final boolean[] orSel;
+    private final boolean[] newSel;
     private final PolyMeshEditorWindow owner;
 
     public EdgeSmoothnessRangeDialog(PolyMeshEditorWindow owner) {
@@ -61,9 +59,9 @@ class EdgeSmoothnessRangeDialog extends BDialog {
             label.setText(Translate.text("polymesh:minSmoothness"));
             label = (BLabel) decoder.getObject("Label3");
             label.setText(Translate.text("polymesh:maxSmoothness"));
-            minSmoothnessTF = ((BTextField) decoder.getObject("minSmoothnessTF"));
+            BTextField minSmoothnessTF = ((BTextField) decoder.getObject("minSmoothnessTF"));
             minSmoothnessSlider = ((BSlider) decoder.getObject("minSmoothnessSlider"));
-            maxSmoothnessTF = ((BTextField) decoder.getObject("maxSmoothnessTF"));
+            BTextField maxSmoothnessTF = ((BTextField) decoder.getObject("maxSmoothnessTF"));
             maxSmoothnessSlider = ((BSlider) decoder.getObject("maxSmoothnessSlider"));
             minSmoothnessSlider.addEventLink(ValueChangedEvent.class, this, "doMinSliderChanged");
             maxSmoothnessSlider.addEventLink(ValueChangedEvent.class, this, "doMaxSliderChanged");

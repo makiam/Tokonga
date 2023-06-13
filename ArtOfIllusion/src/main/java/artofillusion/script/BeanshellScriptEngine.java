@@ -1,3 +1,4 @@
+
 package artofillusion.script;
 
 /* Copyright (C) 2013 by Peter Eastman
@@ -9,8 +10,6 @@ package artofillusion.script;
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
-
 import java.io.*;
 import java.util.*;
 
@@ -19,92 +18,73 @@ import bsh.*;
 /**
  * This ScriptEngine implements the BeanShell scripting language.
  */
-public class BeanshellScriptEngine implements ScriptEngine
-{
-  Interpreter interp;
-  
-  public BeanshellScriptEngine(ClassLoader parent)
-  {
-    interp = new Interpreter();
-    interp.setClassLoader(parent);
-  }
+public class BeanshellScriptEngine implements ScriptEngine {
 
-  @Override
-  public String getName()
-  {
-    return ScriptRunner.Language.BEANSHELL.name;
-  }
+    final Interpreter interp;
 
-  @Override
-  public String getFilenameExtension()
-  {
-    return ScriptRunner.Language.BEANSHELL.fileNameExtension;
-  }
-
-  @Override
-  public void setOutput(PrintStream out)
-  {
-    interp.setOut(out);
-    interp.setErr(out);
-  }
-
-  @Override
-  public void addImport(String packageOrClass) throws Exception
-  {
-    interp.eval("import "+packageOrClass);
-  }
-
-  @Override
-  public void executeScript(String script, Map<String, Object> variables) throws ScriptException
-  {
-    try
-    {
-      for (Map.Entry<String, Object> entry : variables.entrySet())
-        interp.set(entry.getKey(), entry.getValue());
-      interp.eval(script);
+    public BeanshellScriptEngine(ClassLoader parent) {
+        interp = new Interpreter();
+        interp.setClassLoader(parent);
     }
-    catch (EvalError e)
-    {
-      throw new ScriptException(e.getErrorText(), e.getErrorLineNumber(), e);
-    }
-  }
 
-  @Override
-  public ToolScript createToolScript(String script) throws ScriptException
-  {
-    String prefix = "return new ToolScript() {void execute(LayoutWindow window) {\n";
-    String suffix = "\n;}}";
-    try
-    {
-      return (ToolScript) interp.eval(prefix+script+suffix);
+    @Override
+    public String getName() {
+        return ScriptRunner.Language.BEANSHELL.name;
     }
-    catch (EvalError e)
-    {
-      int line;
-      try
-      {
-        line = e.getErrorLineNumber () - 1;
-      }
-      catch (NullPointerException npe)
-      {
-        line = -1;
-      }
-      throw new ScriptException(e.getMessage(), line, e);
-    }
-  }
 
-  @Override
-  public ObjectScript createObjectScript(String script) throws ScriptException
-  {
-    String prefix = "return new ObjectScript() {void execute(ScriptedObjectController script) {\n";
-    String suffix = "\n;}}";
-    try
-    {
-      return (ObjectScript) interp.eval(prefix+script+suffix);
+    @Override
+    public String getFilenameExtension() {
+        return ScriptRunner.Language.BEANSHELL.fileNameExtension;
     }
-    catch (EvalError e)
-    {
-      throw new ScriptException(e.getMessage(), e.getErrorLineNumber()-1, e);
+
+    @Override
+    public void setOutput(PrintStream out) {
+        interp.setOut(out);
+        interp.setErr(out);
     }
-  }
+
+    @Override
+    public void addImport(String packageOrClass) throws Exception {
+        interp.eval("import " + packageOrClass);
+    }
+
+    @Override
+    public void executeScript(String script, Map<String, Object> variables) throws ScriptException {
+        try {
+            for (Map.Entry<String, Object> entry : variables.entrySet()) {
+                interp.set(entry.getKey(), entry.getValue());
+            }
+            interp.eval(script);
+        } catch (EvalError e) {
+            throw new ScriptException(e.getErrorText(), e.getErrorLineNumber(), e);
+        }
+    }
+
+    @Override
+    public ToolScript createToolScript(String script) throws ScriptException {
+        String prefix = "return new ToolScript() {void execute(LayoutWindow window) {\n";
+        String suffix = "\n;}}";
+        try {
+            return (ToolScript) interp.eval(prefix + script + suffix);
+        } catch (EvalError e) {
+            int line;
+            try {
+                line = e.getErrorLineNumber() - 1;
+            } catch (NullPointerException npe) {
+                line = -1;
+            }
+            throw new ScriptException(e.getMessage(), line, e);
+        }
+    }
+
+    @Override
+    public ObjectScript createObjectScript(String script) throws ScriptException {
+        String prefix = "return new ObjectScript() {void execute(ScriptedObjectController script) {\n";
+        String suffix = "\n;}}";
+        try {
+            return (ObjectScript) interp.eval(prefix + script + suffix);
+        } catch (EvalError e) {
+            throw new ScriptException(e.getMessage(), e.getErrorLineNumber() - 1, e);
+        }
+    }
 }

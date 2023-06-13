@@ -23,15 +23,16 @@ import artofillusion.texture.*;
  */
 public class RTSphere extends RTObject {
 
-    Sphere theSphere;
-    double r;
-    double r2;
-    double cx;
-    double cy;
-    double cz;
-    double[] param;
-    boolean bumpMapped;
-    Mat4 toLocal, fromLocal;
+    final Sphere theSphere;
+    final double r;
+    final double r2;
+    final double cx;
+    final double cy;
+    final double cz;
+    final double[] param;
+    final boolean bumpMapped;
+    final Mat4 toLocal;
+    Mat4 fromLocal;
 
     public static final double TOL = 1e-12;
 
@@ -223,11 +224,19 @@ public class RTSphere extends RTObject {
      */
     private static class SphereIntersection implements SurfaceIntersection {
 
-        private RTSphere sphere;
-        private int numIntersections;
-        private double dist1, dist2, r1x, r1y, r1z, r2x, r2y, r2z;
+        private final RTSphere sphere;
+        private final int numIntersections;
+        private final double dist1;
+        private final double dist2;
+        private final double r1x;
+        private final double r1y;
+        private final double r1z;
+        private final double r2x;
+        private final double r2y;
+        private final double r2z;
         private boolean trueNormValid;
-        private Vec3 trueNorm, pos;
+        private final Vec3 trueNorm;
+        private final Vec3 pos;
 
         public SphereIntersection(RTSphere sphere, int numIntersections, Vec3 point1, Vec3 point2, double dist1, double dist2) {
             this.sphere = sphere;

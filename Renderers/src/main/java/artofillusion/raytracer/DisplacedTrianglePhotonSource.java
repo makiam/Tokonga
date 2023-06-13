@@ -19,9 +19,9 @@ import artofillusion.util.*;
  */
 public class DisplacedTrianglePhotonSource implements PhotonSource {
 
-    private RTDisplacedTriangle tri;
-    private RGBColor color;
-    private float lightIntensity;
+    private final RTDisplacedTriangle tri;
+    private final RGBColor color;
+    private final float lightIntensity;
 
     /**
      * Create an DisplacedTrianglePhotonSource.

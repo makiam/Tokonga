@@ -22,9 +22,12 @@ import artofillusion.math.*;
  */
 public class Photon {
 
-    public float x, y, z;
-    public int ergb;
-    public short direction, axis;
+    public final float x;
+    public final float y;
+    public final float z;
+    public final int ergb;
+    public final short direction;
+    public short axis;
 
     /**
      * Create a new Photon.

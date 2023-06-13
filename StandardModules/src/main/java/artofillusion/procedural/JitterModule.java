@@ -26,7 +26,8 @@ import java.io.*;
 public class JitterModule extends ProceduralModule {
 
     boolean valueOk;
-    Vec3 v, tempVec;
+    final Vec3 v;
+    final Vec3 tempVec;
     double xamp, yamp, zamp, xscale, yscale, zscale, invxscale, invyscale, invzscale, lastBlur;
     PointInfo point;
 

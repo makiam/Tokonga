@@ -21,143 +21,123 @@ import java.util.*;
 /**
  * This ScriptEngine implements the Groovy scripting language.
  */
-public class GroovyScriptEngine implements ScriptEngine
-{
-  private CompilerConfiguration config = new CompilerConfiguration();
-  private GroovyShell shell;
-  private StringBuilder imports;
-  private int numImports = 0;
+public class GroovyScriptEngine implements ScriptEngine {
 
-  private Map<String, Script> cache = new HashMap<>();
-  
-  public GroovyScriptEngine(ClassLoader parent)
-  {
-    shell = new GroovyShell(parent, new Binding(), config);
-    imports = new StringBuilder();
-  }
+    private final CompilerConfiguration config = new CompilerConfiguration();
+    private final GroovyShell shell;
+    private final StringBuilder imports;
+    private int numImports = 0;
 
-  @Override
-  public String getName()
-  {
-    return ScriptRunner.Language.GROOVY.name;
-  }
+    private final Map<String, Script> cache = new HashMap<>();
 
-  @Override
-  public String getFilenameExtension()
-  {
-    return ScriptRunner.Language.GROOVY.fileNameExtension;
-  }
-
-  @Override
-  public void setOutput(PrintStream out)
-  {
-    config.setOutput(new PrintWriter(out, true));
-  }
-
-  @Override
-  public void addImport(String packageOrClass) throws Exception
-  {
-    imports.append("import ").append(packageOrClass).append(";\n");
-    numImports++;
-  }
-  
-  @Override
-  public void executeScript(String scriptBody, Map<String, Object> variables) throws ScriptException
-  {
-    variables.forEach((key, value) -> shell.setVariable(key, value));
-    String hash = imports.toString() + scriptBody;
-
-    try
-    {
-        Script script = cache.computeIfAbsent(hash, (String text) -> { return shell.parse(text); });
-        script.run();
-        
-    }
-    catch(GroovyRuntimeException gre) {
-      Throwable tt = StackTraceUtils.sanitize(gre);
-      int ln = tt.getStackTrace()[0].getLineNumber() - numImports;
-      throw new ScriptException(tt.getMessage(), ln);
-    }
-  }
-
-  @Override
-  public ToolScript createToolScript(String script) throws ScriptException
-  {
-    try
-    {
-      return new CompiledToolScript(shell.parse(imports.toString()+script));
-    }
-    catch (CompilationFailedException e)
-    {
-      throw new ScriptException(e.getMessage(), -1);
-    }
-  }
-
-  @Override
-  public ObjectScript createObjectScript(String script) throws ScriptException
-  {
-    try
-    {
-      return new CompiledObjectScript(shell.parse(imports.toString()+script));
-    }
-    catch (CompilationFailedException e)
-    {
-      throw new ScriptException(e.getMessage(), -1, e);
-    }
-  }
-
-  /** Inner class used to represent a compiled ToolScript. */
-
-  private class CompiledToolScript implements ToolScript
-  {
-    private Script script;
-
-    public CompiledToolScript(Script script)
-    {
-      this.script = script;
-      script.setProperty("out", config.getOutput());
+    public GroovyScriptEngine(ClassLoader parent) {
+        shell = new GroovyShell(parent, new Binding(), config);
+        imports = new StringBuilder();
     }
 
     @Override
-    public void execute(LayoutWindow window) throws ScriptException
-    {
-      script.setProperty("window", window);
-      try
-      {
-        script.run();
-      }
-      catch (Exception ex)
-      {
-        int line = -1;
-        for (StackTraceElement element : ex.getStackTrace())
-        {
-          if (element.getClassName().equals(script.getClass().getName())) {
-            line = element.getLineNumber()-numImports;
-            break;
-          }
+    public String getName() {
+        return ScriptRunner.Language.GROOVY.name;
+    }
+
+    @Override
+    public String getFilenameExtension() {
+        return ScriptRunner.Language.GROOVY.fileNameExtension;
+    }
+
+    @Override
+    public void setOutput(PrintStream out) {
+        config.setOutput(new PrintWriter(out, true));
+    }
+
+    @Override
+    public void addImport(String packageOrClass) throws Exception {
+        imports.append("import ").append(packageOrClass).append(";\n");
+        numImports++;
+    }
+
+    @Override
+    public void executeScript(String scriptBody, Map<String, Object> variables) throws ScriptException {
+        variables.forEach((key, value) -> shell.setVariable(key, value));
+        String hash = imports.toString() + scriptBody;
+
+        try {
+            Script script = cache.computeIfAbsent(hash, (String text) -> {
+                return shell.parse(text);
+            });
+            script.run();
+
+        } catch (GroovyRuntimeException gre) {
+            Throwable tt = StackTraceUtils.sanitize(gre);
+            int ln = tt.getStackTrace()[0].getLineNumber() - numImports;
+            throw new ScriptException(tt.getMessage(), ln);
         }
-        throw new ScriptException(ex.getMessage(), line, ex);
-      }
-    }
-  }
-
-  /** Inner class used to represent a compiled ObjectScript. */
-
-  private class CompiledObjectScript implements ObjectScript
-  {
-    private Script script;
-
-    public CompiledObjectScript(Script script)
-    {
-      this.script = script;
-      script.setProperty("out", config.getOutput());
     }
 
     @Override
-    public void execute(ScriptedObjectController controller) throws ScriptException
-    {
-      script.setProperty("script", controller);
-      script.run();
+    public ToolScript createToolScript(String script) throws ScriptException {
+        try {
+            return new CompiledToolScript(shell.parse(imports.toString() + script));
+        } catch (CompilationFailedException e) {
+            throw new ScriptException(e.getMessage(), -1);
+        }
     }
-  }
+
+    @Override
+    public ObjectScript createObjectScript(String script) throws ScriptException {
+        try {
+            return new CompiledObjectScript(shell.parse(imports.toString() + script));
+        } catch (CompilationFailedException e) {
+            throw new ScriptException(e.getMessage(), -1, e);
+        }
+    }
+
+    /**
+     * Inner class used to represent a compiled ToolScript.
+     */
+    private class CompiledToolScript implements ToolScript {
+
+        private final Script script;
+
+        public CompiledToolScript(Script script) {
+            this.script = script;
+            script.setProperty("out", config.getOutput());
+        }
+
+        @Override
+        public void execute(LayoutWindow window) throws ScriptException {
+            script.setProperty("window", window);
+            try {
+                script.run();
+            } catch (Exception ex) {
+                int line = -1;
+                for (StackTraceElement element : ex.getStackTrace()) {
+                    if (element.getClassName().equals(script.getClass().getName())) {
+                        line = element.getLineNumber() - numImports;
+                        break;
+                    }
+                }
+                throw new ScriptException(ex.getMessage(), line, ex);
+            }
+        }
+    }
+
+    /**
+     * Inner class used to represent a compiled ObjectScript.
+     */
+    private class CompiledObjectScript implements ObjectScript {
+
+        private final Script script;
+
+        public CompiledObjectScript(Script script) {
+            this.script = script;
+            script.setProperty("out", config.getOutput());
+        }
+
+        @Override
+        public void execute(ScriptedObjectController controller) throws ScriptException {
+            script.setProperty("script", controller);
+            script.run();
+        }
+    }
 }

@@ -13,209 +13,210 @@ package artofillusion.math;
 
 import java.io.*;
 
-/** A Vec2 represents a 2 component vector. */
+/**
+ * A Vec2 represents a 2 component vector.
+ */
+public class Vec2 {
 
-public class Vec2
-{
-  public double x, y;
+    public double x, y;
 
-  /** Create a new Vec2 whose x and y components are equal to 0.0. */
-
-  public Vec2()
-  {
-  }
-
-  /** Create a new Vec2 with the specified x and y components. */
-
-  public Vec2(double xval, double yval)
-  {
-    x = xval;
-    y = yval;
-  }
-
-  /** Create a new Vec2 identical to another one. */
-
-  public Vec2(Vec2 v)
-  {
-    x = v.x;
-    y = v.y;
-  }
-
-  /** Set the x and y components of this Vec2. */
-
-  public final void set(double xval, double yval)
-  {
-    x = xval;
-    y = yval;
-  }
-
-  /** Calculate the dot product of this vector with another one. */
-
-  public final double dot(Vec2 v)
-  {
-    return x*v.x + y*v.y;
-  }
-
-  /** Calculate the cross product of this vector with another one.  Because the cross product of a
-      pair of Vec2's always points along the Z axis, this returns only its Z component. */
-
-  public final double cross(Vec2 v)
-  {
-    return x*v.y-y*v.x;
-  }
-
-  /** Calculate the sum of this vector and another one. */
-
-  public final Vec2 plus(Vec2 v)
-  {
-    return new Vec2(x+v.x, y+v.y);
-  }
-
-  /** Calculate the difference between this vector and another one. */
-
-  public final Vec2 minus(Vec2 v)
-  {
-    return new Vec2(x-v.x, y-v.y);
-  }
-
-  /** Create a new Vec2 by multiplying each component of this one by a constant. */
-
-  public final Vec2 times(double d)
-  {
-    return new Vec2(x*d, y*d);
-  }
-
-  /** Determine whether two vectors are identical. */
-
-  @Override
-  public final boolean equals(Object o)
-  {
-    if (o instanceof Vec2) {
-      Vec2 v = (Vec2) o;
-      return (v.x == x && v.y == y);
+    /**
+     * Create a new Vec2 whose x and y components are equal to 0.0.
+     */
+    public Vec2() {
     }
-    return false;
-  }
 
-  @Override
-  public int hashCode()
-  {
-    return Float.floatToIntBits((float) x);
-  }
+    /**
+     * Create a new Vec2 with the specified x and y components.
+     */
+    public Vec2(double xval, double yval) {
+        x = xval;
+        y = yval;
+    }
 
-  /** Calculate the length of this vector. */
+    /**
+     * Create a new Vec2 identical to another one.
+     */
+    public Vec2(Vec2 v) {
+        x = v.x;
+        y = v.y;
+    }
 
-  public final double length()
-  {
-    return Math.sqrt(x*x+y*y);
-  }
+    /**
+     * Set the x and y components of this Vec2.
+     */
+    public final void set(double xval, double yval) {
+        x = xval;
+        y = yval;
+    }
 
-  /** Calculate the square of the length of this vector. */
+    /**
+     * Calculate the dot product of this vector with another one.
+     */
+    public final double dot(Vec2 v) {
+        return x * v.x + y * v.y;
+    }
 
-  public final double length2()
-  {
-    return x*x+y*y;
-  }
+    /**
+     * Calculate the cross product of this vector with another one. Because the cross product of a
+     * pair of Vec2's always points along the Z axis, this returns only its Z component.
+     */
+    public final double cross(Vec2 v) {
+        return x * v.y - y * v.x;
+    }
 
-  /** Add another Vec2 to this one. */
+    /**
+     * Calculate the sum of this vector and another one.
+     */
+    public final Vec2 plus(Vec2 v) {
+        return new Vec2(x + v.x, y + v.y);
+    }
 
-  public final void add(Vec2 v)
-  {
-    x += v.x;
-    y += v.y;
-  }
+    /**
+     * Calculate the difference between this vector and another one.
+     */
+    public final Vec2 minus(Vec2 v) {
+        return new Vec2(x - v.x, y - v.y);
+    }
 
-  /** Subtract another Vec2 from this one. */
+    /**
+     * Create a new Vec2 by multiplying each component of this one by a constant.
+     */
+    public final Vec2 times(double d) {
+        return new Vec2(x * d, y * d);
+    }
 
-  public final void subtract(Vec2 v)
-  {
-    x -= v.x;
-    y -= v.y;
-  }
+    /**
+     * Determine whether two vectors are identical.
+     */
+    @Override
+    public final boolean equals(Object o) {
+        if (o instanceof Vec2) {
+            Vec2 v = (Vec2) o;
+            return (v.x == x && v.y == y);
+        }
+        return false;
+    }
 
-  /** Multiply each component of this vector by a constant. */
+    @Override
+    public int hashCode() {
+        return Float.floatToIntBits((float) x);
+    }
 
-  public final void scale(double d)
-  {
-    x *= d;
-    y *= d;
-  }
+    /**
+     * Calculate the length of this vector.
+     */
+    public final double length() {
+        return Math.sqrt(x * x + y * y);
+    }
 
-  /** Calculate the Euclidean distance between this vector and another one. */
+    /**
+     * Calculate the square of the length of this vector.
+     */
+    public final double length2() {
+        return x * x + y * y;
+    }
 
-  public final double distance(Vec2 v)
-  {
-    return Math.sqrt((v.x-x)*(v.x-x)+(v.y-y)*(v.y-y));
-  }
+    /**
+     * Add another Vec2 to this one.
+     */
+    public final void add(Vec2 v) {
+        x += v.x;
+        y += v.y;
+    }
 
-  /** Calculate the square of the Euclidean distance between this vector and another one. */
+    /**
+     * Subtract another Vec2 from this one.
+     */
+    public final void subtract(Vec2 v) {
+        x -= v.x;
+        y -= v.y;
+    }
 
-  public final double distance2(Vec2 v)
-  {
-    return (v.x-x)*(v.x-x)+(v.y-y)*(v.y-y);
-  }
+    /**
+     * Multiply each component of this vector by a constant.
+     */
+    public final void scale(double d) {
+        x *= d;
+        y *= d;
+    }
 
-  /** Scale each component of this vector so that it has a length of 1.  If this vector has a length
-      of 0, this method has no effect. */
+    /**
+     * Calculate the Euclidean distance between this vector and another one.
+     */
+    public final double distance(Vec2 v) {
+        return Math.sqrt((v.x - x) * (v.x - x) + (v.y - y) * (v.y - y));
+    }
 
-  public final void normalize()
-  {
-    double len = Math.sqrt(x*x+y*y);
+    /**
+     * Calculate the square of the Euclidean distance between this vector and another one.
+     */
+    public final double distance2(Vec2 v) {
+        return (v.x - x) * (v.x - x) + (v.y - y) * (v.y - y);
+    }
 
-    if (len > 0.0)
-      {
-        x /= len;
-        y /= len;
-      }
-  }
+    /**
+     * Scale each component of this vector so that it has a length of 1. If this vector has a length
+     * of 0, this method has no effect.
+     */
+    public final void normalize() {
+        double len = Math.sqrt(x * x + y * y);
 
-  /** Create a new copy of this vector scaled to the the length of 1.  If the length of this vector is 0, 
-      a new vector with length 0 will be returned. <p>
+        if (len > 0.0) {
+            x /= len;
+            y /= len;
+        }
+    }
 
-      This is like <pre>normalize()</pre>, but returns a new vector.*/
+    /**
+     * Create a new copy of this vector scaled to the the length of 1. If the length of this vector is 0,
+     * a new vector with length 0 will be returned.
+     * <p>
+     *
+     * This is like
+     * <pre>normalize()</pre>, but returns a new vector.
+     */
+    public final Vec2 unit() {
+        double len = Math.sqrt(x * x + y * y);
 
-  public final Vec2 unit()
-  {
-    double len = Math.sqrt(x*x+y*y);
+        if (len > 0.0) {
+            return new Vec2(x / len, y / len);
+        }
+        return new Vec2();
+    }
 
-    if (len > 0.0)
-      return new Vec2(x/len, y/len);
-    return new Vec2();
-  }
+    @Override
+    public String toString() {
+        return "Vec2: " + x + ", " + y;
+    }
 
-  @Override
-  public String toString()
-  {
-    return "Vec2: " + x + ", " + y;
-  }
+    /**
+     * Create a unit vector which points in the X direction.
+     */
+    public static Vec2 vx() {
+        return new Vec2(1.0, 0.0);
+    }
 
-  /** Create a unit vector which points in the X direction. */
+    /**
+     * Create a unit vector which points in the Y direction.
+     */
+    public static Vec2 vy() {
+        return new Vec2(0.0, 1.0);
+    }
 
-  public static Vec2 vx()
-  {
-    return new Vec2(1.0, 0.0);
-  }
+    /**
+     * Create a Vec2 by reading in information that was written by writeToFile().
+     */
+    public Vec2(DataInputStream in) throws IOException {
+        x = in.readDouble();
+        y = in.readDouble();
+    }
 
-  /** Create a unit vector which points in the Y direction. */
-
-  public static Vec2 vy()
-  {
-    return new Vec2(0.0, 1.0);
-  }
-
-  /** Create a Vec2 by reading in information that was written by writeToFile(). */
-
-  public Vec2(DataInputStream in) throws IOException
-  {
-    x = in.readDouble();
-    y = in.readDouble();
-  }
-
-  /** Write out a serialized representation of this object. */
-
-  public void writeToFile(DataOutputStream out) throws IOException
-  {
-    out.writeDouble(x);
-    out.writeDouble(y);
-  }
+    /**
+     * Write out a serialized representation of this object.
+     */
+    public void writeToFile(DataOutputStream out) throws IOException {
+        out.writeDouble(x);
+        out.writeDouble(y);
+    }
 }

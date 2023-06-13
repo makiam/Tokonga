@@ -17,39 +17,38 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 
-/** CreateCameraTool is an EditingTool used for creating SceneCamera objects. */
-
+/**
+ * CreateCameraTool is an EditingTool used for creating SceneCamera objects.
+ */
 @EditingTool.ButtonImage("camera")
 @EditingTool.Tooltip("createCameraTool.tipText")
 @EditingTool.ActivatedToolText("createCameraTool.helpText")
-public class CreateCameraTool extends EditingTool
-{
-  static int counter = 2;
+public class CreateCameraTool extends EditingTool {
 
-  public CreateCameraTool(LayoutWindow fr)
-  {
-    super(fr);
-  }
+    static int counter = 2;
 
-  @Override
-  public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view)
-  {
-    Scene theScene = ((LayoutWindow) theWindow).getScene();
-    Camera cam = view.getCamera();
-    Vec3 orig, ydir, zdir;
+    public CreateCameraTool(LayoutWindow fr) {
+        super(fr);
+    }
 
-    orig = cam.convertScreenToWorld(e.getPoint(), view.getDistToPlane());
-    ydir = new Vec3(0.0, 1.0, 0.0);
-    zdir = new Vec3(0.0, 0.0, 1.0);
-    ObjectInfo info = new ObjectInfo(new SceneCamera(), new CoordinateSystem(orig, zdir, ydir), "Camera "+(counter++));
-    info.addTrack(new PositionTrack(info), 0);
-    info.addTrack(new RotationTrack(info), 1);
-    UndoRecord undo = new UndoRecord(theWindow);
-    int sel[] = ((LayoutWindow) theWindow).getSelectedIndices();
-    ((LayoutWindow) theWindow).addObject(info, undo);
-    undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);
-    theWindow.setUndoRecord(undo);
-    ((LayoutWindow) theWindow).setSelection(theScene.getNumObjects()-1);
-    theWindow.updateImage();
-  }
+    @Override
+    public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view) {
+        Scene theScene = ((LayoutWindow) theWindow).getScene();
+        Camera cam = view.getCamera();
+        Vec3 orig, ydir, zdir;
+
+        orig = cam.convertScreenToWorld(e.getPoint(), view.getDistToPlane());
+        ydir = new Vec3(0.0, 1.0, 0.0);
+        zdir = new Vec3(0.0, 0.0, 1.0);
+        ObjectInfo info = new ObjectInfo(new SceneCamera(), new CoordinateSystem(orig, zdir, ydir), "Camera " + (counter++));
+        info.addTrack(new PositionTrack(info), 0);
+        info.addTrack(new RotationTrack(info), 1);
+        UndoRecord undo = new UndoRecord(theWindow);
+        int[] sel = ((LayoutWindow) theWindow).getSelectedIndices();
+        ((LayoutWindow) theWindow).addObject(info, undo);
+        undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);
+        theWindow.setUndoRecord(undo);
+        ((LayoutWindow) theWindow).setSelection(theScene.getNumObjects() - 1);
+        theWindow.updateImage();
+    }
 }

@@ -19,9 +19,9 @@ import artofillusion.util.*;
  */
 public class PointPhotonSource implements PhotonSource {
 
-    private PointLight light;
-    private Vec3 pos;
-    private RGBColor color;
+    private final PointLight light;
+    private final Vec3 pos;
+    private final RGBColor color;
     private float lightIntensity;
 
     /**

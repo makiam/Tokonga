@@ -27,10 +27,10 @@ import java.util.*;
  */
 public class ArrayDialog extends BDialog {
 
-    private LayoutWindow window;
-    private ArraySpec spec;
+    private final LayoutWindow window;
+    private final ArraySpec spec;
 
-    private Vector<ObjectInfo> curvesVector;
+    private final Vector<ObjectInfo> curvesVector;
 
     private BLabel linearCopiesLabel, stepXLabel, stepYLabel, stepZLabel;
     private BRadioButton curveCopiesBox, curveStepBox, linearBox, curveBox;
@@ -40,8 +40,8 @@ public class ArrayDialog extends BDialog {
     private BComboBox curveChoice;
     private ValueField linearCopiesField, stepXField, stepYField, stepZField;
     private ValueField curveCopiesField, curveStepField;
-    private RadioButtonGroup methodGroup;
-    private RadioButtonGroup modeGroup;
+    private final RadioButtonGroup methodGroup;
+    private final RadioButtonGroup modeGroup;
 
     public ArrayDialog(LayoutWindow window) {
         super(window, Translate.text("Tools:array.dialog.name"), true);

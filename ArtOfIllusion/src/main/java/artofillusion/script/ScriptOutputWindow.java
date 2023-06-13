@@ -16,80 +16,75 @@ import buoy.widget.*;
 import java.io.*;
 import java.awt.*;
 
-/** This class creates a window for displaying output from scripts. */
+/**
+ * This class creates a window for displaying output from scripts.
+ */
+public class ScriptOutputWindow extends OutputStream {
 
-public class ScriptOutputWindow extends OutputStream
-{
-  BFrame window;
-  BTextArea text;
+    BFrame window;
+    BTextArea text;
 
-  @Override
-  public void write(final int b)
-  {
-    if (!EventQueue.isDispatchThread())
-    {
-      EventQueue.invokeLater(new Runnable()
-      {
-              @Override
-        public void run()
-        {
-          write(b);
+    @Override
+    public void write(final int b) {
+        if (!EventQueue.isDispatchThread()) {
+            EventQueue.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    write(b);
+                }
+            });
+            return;
         }
-      });
-      return;
-    }
-    if (window == null)
-      createWindow();
-    else if (!window.isVisible())
-      window.setVisible(true);
-    text.append(String.valueOf((char) b));
-  }
-
-  @Override
-  public void write(byte b[], final int off, final int len)
-  {
-    if (!EventQueue.isDispatchThread())
-    {
-      final byte bytes[] = b.clone();
-      EventQueue.invokeLater(new Runnable()
-      {
-              @Override
-        public void run()
-        {
-          write(bytes, off, len);
+        if (window == null) {
+            createWindow();
+        } else if (!window.isVisible()) {
+            window.setVisible(true);
         }
-      });
-      return;
+        text.append(String.valueOf((char) b));
     }
-    if (window == null)
-      createWindow();
-    else if (!window.isVisible())
-      window.setVisible(true);
-    text.append(new String(b, off, len));
-  }
 
-  /** Create the window. */
+    @Override
+    public void write(byte[] b, final int off, final int len) {
+        if (!EventQueue.isDispatchThread()) {
+            final byte[] bytes = b.clone();
+            EventQueue.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    write(bytes, off, len);
+                }
+            });
+            return;
+        }
+        if (window == null) {
+            createWindow();
+        } else if (!window.isVisible()) {
+            window.setVisible(true);
+        }
+        text.append(new String(b, off, len));
+    }
 
-  private void createWindow()
-  {
-    window = new BFrame("Script Output");
-    BorderContainer content = new BorderContainer();
-    window.setContent(content);
-    text = new BTextArea(10, 60);
-    text.setFont(UIUtilities.getDefaultFont());
-    BScrollPane sp = new BScrollPane(text, BScrollPane.SCROLLBAR_ALWAYS, BScrollPane.SCROLLBAR_ALWAYS);
-    content.add(sp, BorderContainer.CENTER);
-    content.add(Translate.button("close", this, "closeWindow"), BorderContainer.SOUTH, new LayoutInfo());
-    window.addEventLink(WindowClosingEvent.class, this, "closeWindow");
-    window.pack();
-    window.setVisible(true);
-  }
+    /**
+     * Create the window.
+     */
+    private void createWindow() {
+        window = new BFrame("Script Output");
+        BorderContainer content = new BorderContainer();
+        window.setContent(content);
+        text = new BTextArea(10, 60);
+        text.setFont(UIUtilities.getDefaultFont());
+        BScrollPane sp = new BScrollPane(text, BScrollPane.SCROLLBAR_ALWAYS, BScrollPane.SCROLLBAR_ALWAYS);
+        content.add(sp, BorderContainer.CENTER);
+        content.add(Translate.button("close", this, "closeWindow"), BorderContainer.SOUTH, new LayoutInfo());
+        window.addEventLink(WindowClosingEvent.class, this, "closeWindow");
+        window.pack();
+        window.setVisible(true);
+    }
 
-  /** Hide the window. */
-
-  private void closeWindow()
-  {
-    window.setVisible(false);
-    text.setText("");
-  }
+    /**
+     * Hide the window.
+     */
+    private void closeWindow() {
+        window.setVisible(false);
+        text.setText("");
+    }
 }

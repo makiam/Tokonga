@@ -36,7 +36,7 @@ public class SPManagerFrame extends BFrame {
     private final SPMSplitPane manageSplitPane;
     private final InstallSplitPane updateSplitPane;
     private final InstallSplitPane installSplitPane;
-    private BLabel statusLabel;
+    private final BLabel statusLabel;
     private String statusText;
     private javax.swing.Timer timer;
     private final Action statusTextClearAction;

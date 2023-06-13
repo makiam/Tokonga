@@ -28,7 +28,7 @@ public class ColorWidgetComponentOperator extends JComponentOperator {
     public ColorWidgetComponentOperator(ContainerOperator cont) {
         this(cont, 0);
     }
-    
+
     private static class ColorWidgetPaneChooser implements ComponentChooser {
 
         @Override
@@ -41,6 +41,6 @@ public class ColorWidgetComponentOperator extends JComponentOperator {
         public String getDescription() {
             return "Chooser for Color Sample Widget";
         }
-        
+
     }
 }

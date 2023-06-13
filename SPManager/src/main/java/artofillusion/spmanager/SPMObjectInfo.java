@@ -137,10 +137,10 @@ public class SPMObjectInfo {
      */
     public boolean loaded = false;
 
-    char separatorChar;
+    final char separatorChar;
     boolean selected = false;
-    boolean deletable = true;
-    private boolean remote;
+    final boolean deletable = true;
+    private final boolean remote;
 
     /**
      * Constructor for the SPMObjectInfo object

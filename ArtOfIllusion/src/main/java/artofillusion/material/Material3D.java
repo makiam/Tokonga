@@ -12,21 +12,23 @@ package artofillusion.material;
 
 import artofillusion.object.*;
 
-/** Material3D represents a Material whose properties are defined in 3D. */
+/**
+ * Material3D represents a Material whose properties are defined in 3D.
+ */
+public abstract class Material3D extends Material {
 
-public abstract class Material3D extends Material
-{
-  /** Get the properties at point (x, y, z) at time t.  More precisely, the properties
-      returned should represent an average over a region of width (xsize, ysize, zsize),
-      which is centered at (x, y, z). */
+    /**
+     * Get the properties at point (x, y, z) at time t. More precisely, the properties
+     * returned should represent an average over a region of width (xsize, ysize, zsize),
+     * which is centered at (x, y, z).
+     */
+    public abstract void getMaterialSpec(MaterialSpec spec, double x, double y, double z, double xsize, double ysize, double zsize, double t);
 
-  public abstract void getMaterialSpec(MaterialSpec spec, double x, double y, double z, double xsize, double ysize, double zsize, double t);
-
-  /** The default mapping is a LinearMaterialMapping. */
-
-  @Override
-  public MaterialMapping getDefaultMapping(Object3D obj)
-  {
-    return new LinearMaterialMapping(obj, this);
-  }
+    /**
+     * The default mapping is a LinearMaterialMapping.
+     */
+    @Override
+    public MaterialMapping getDefaultMapping(Object3D obj) {
+        return new LinearMaterialMapping(obj, this);
+    }
 }

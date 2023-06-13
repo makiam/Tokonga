@@ -78,7 +78,6 @@ public class SPMParameters {
     private static String password;
     private static boolean changed;
     private static final StringEncrypter se = new StringEncrypter("SPMan8ger");
-    private URL repListURL;
     private boolean useCache = true;
 
     /**
@@ -188,7 +187,7 @@ public class SPMParameters {
 
         boolean updated = false;
 
-        repListURL = null;
+        URL repListURL = null;
         //try to get a new repositories definition file
         try {
             repListURL = new URL("https://aoisp.sourceforge.net/SPRepositories.txt");

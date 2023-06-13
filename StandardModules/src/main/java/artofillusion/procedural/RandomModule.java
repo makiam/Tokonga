@@ -30,8 +30,8 @@ public class RandomModule extends ProceduralModule {
     int lastBase, octaves;
     double a1, a2, a3;
     double value, error, deriv, amplitude, lastBlur;
-    Random random;
-    Vec3 gradient;
+    final Random random;
+    final Vec3 gradient;
     PointInfo point;
 
     public RandomModule() {

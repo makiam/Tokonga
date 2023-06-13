@@ -15,47 +15,42 @@ import artofillusion.math.*;
 import buoy.event.*;
 
 /**
- * A Manipulator is a class which presents a user interface in a {@link ViewerCanvas}.  It is
+ * A Manipulator is a class which presents a user interface in a {@link ViewerCanvas}. It is
  * typically used by an {@link EditingTool}.
  */
+public interface Manipulator {
 
-public interface Manipulator
-{
-  /**
-   * Draw the manipulator's user interface into the canvas.
-   *
-   * @param view      the canvas this manipulator is displayed in
-   * @param selectionBounds   a bounding box containing everything that is selected in the canvas
-   */
+    /**
+     * Draw the manipulator's user interface into the canvas.
+     *
+     * @param view the canvas this manipulator is displayed in
+     * @param selectionBounds a bounding box containing everything that is selected in the canvas
+     */
+    void draw(ViewerCanvas view, BoundingBox selectionBounds);
 
-  void draw(ViewerCanvas view, BoundingBox selectionBounds);
+    /**
+     * Respond to mouse presses in the canvas.
+     *
+     * @param ev the event which has occurred
+     * @param view the canvas this manipulator is displayed in
+     * @param selectionBounds a bounding box containing everything that is selected in the canvas
+     * @return true if the manipulator has handled the event, false otherwise
+     */
+    boolean mousePressed(WidgetMouseEvent ev, ViewerCanvas view, BoundingBox selectionBounds);
 
-  /**
-   * Respond to mouse presses in the canvas.
-   *
-   * @param ev        the event which has occurred
-   * @param view      the canvas this manipulator is displayed in
-   * @param selectionBounds   a bounding box containing everything that is selected in the canvas
-   * @return true if the manipulator has handled the event, false otherwise
-   */
+    /**
+     * Respond to mouse drags in the canvas.
+     *
+     * @param ev the event which has occurred
+     * @param view the canvas this manipulator is displayed in
+     */
+    void mouseDragged(WidgetMouseEvent ev, ViewerCanvas view);
 
-  boolean mousePressed(WidgetMouseEvent ev, ViewerCanvas view, BoundingBox selectionBounds);
-
-  /**
-   * Respond to mouse drags in the canvas.
-   *
-   * @param ev         the event which has occurred
-   * @param view      the canvas this manipulator is displayed in
-   */
-
-  void mouseDragged(WidgetMouseEvent ev, ViewerCanvas view);
-
-  /**
-   * Respond to mouse releases in the canvas.
-   *
-   * @param ev        the event which has occurred
-   * @param view      the canvas this manipulator is displayed in
-   */
-
-  void mouseReleased(WidgetMouseEvent ev, ViewerCanvas view);
+    /**
+     * Respond to mouse releases in the canvas.
+     *
+     * @param ev the event which has occurred
+     * @param view the canvas this manipulator is displayed in
+     */
+    void mouseReleased(WidgetMouseEvent ev, ViewerCanvas view);
 }

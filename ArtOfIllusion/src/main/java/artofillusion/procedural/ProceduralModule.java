@@ -22,13 +22,14 @@ import java.lang.annotation.Target;
  */
 public class ProceduralModule extends artofillusion.procedural.Module {
 
-    public ProceduralModule(String name, IOPort input[], IOPort output[], Point position) {
+    public ProceduralModule(String name, IOPort[] input, IOPort[] output, Point position) {
         super(name, input, output, position);
     }
 
     @Target(value = ElementType.TYPE)
     @Retention(value = RetentionPolicy.RUNTIME)
     public static @interface Category {
+
         String value();
     }
 }

@@ -14,8 +14,9 @@ import artofillusion.math.*;
 
 public class TransparentFragment implements Fragment {
 
-    private int additiveColor, multiplicativeColor;
-    private float depth;
+    private final int additiveColor;
+    private final int multiplicativeColor;
+    private final float depth;
     private Fragment next;
 
     /**

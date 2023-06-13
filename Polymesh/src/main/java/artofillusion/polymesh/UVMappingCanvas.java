@@ -51,25 +51,25 @@ import java.awt.geom.Line2D;
  */
 public class UVMappingCanvas extends CustomWidget {
 
-    private Dimension size; // widget size
+    private final Dimension size; // widget size
     private Dimension oldSize; // old widget size used to track size change
-    private UnfoldedMesh[] meshes; // the mesh pieces to display
+    private final UnfoldedMesh[] meshes; // the mesh pieces to display
     private boolean[] selected;
     private int[] selectionDistance;
     private int currentPiece; // only one piece can be selected for edition
-    private UVMappingEditorDialog parent;
+    private final UVMappingEditorDialog parent;
     private Point[] verticesPoints; // vertices locations only vertices with an id != -1 are displayed
     private UVMappingData.UVMeshMapping mapping; // current mapping
     private Rectangle dragBoxRect;
     private UVMappingManipulator manipulator;
-    private UVMappingData mappingData;
-    private Vec2 origin;
+    private final UVMappingData mappingData;
+    private final Vec2 origin;
     private double scale;
     private double umin, umax, vmin, vmax;
     private Image textureImage;
     private int component;
     private boolean disableImageDisplay;
-    private MeshPreviewer preview;
+    private final MeshPreviewer preview;
     private int[][] vertIndexes;
     private int[][] vertMeshes;
     private Texture texture;
@@ -83,10 +83,9 @@ public class UVMappingCanvas extends CustomWidget {
     private final static Color selectedColor = Color.red;
     private final static Color pinnedColor = new Color(182, 0, 185);
     private final static Color pinnedSelectedColor = new Color(255, 142, 255);
-    private Color bgColor1 = new Color(239, 239, 239),
-            bgColor2 = new Color(223, 223, 223),
-            txAreaColor = new Color(255, 255, 255, 159),
-            ink = new Color(63, 127, 191);
+    private final Color bgColor2 = new Color(223, 223, 223);
+    private final Color txAreaColor = new Color(255, 255, 255, 159);
+    private final Color ink = new Color(63, 127, 191);
 
     /**
      * Construct a new UVMappingCanvas
@@ -103,6 +102,7 @@ public class UVMappingCanvas extends CustomWidget {
         this.texture = texture;
         this.texMapping = texMapping;
         this.mapping = mappingData.mappings.get(0);
+        Color bgColor1 = new Color(239, 239, 239);
         setBackground(bgColor1);
         size = new Dimension(640, 640);
         oldSize = new Dimension(0, 0);
@@ -1264,7 +1264,7 @@ public class UVMappingCanvas extends CustomWidget {
      */
     public class PinCommand implements UndoableEdit {
 
-        public int[] selection;
+        public final int[] selection;
 
         public PinCommand(int[] selection) {
             this.selection = selection;
@@ -1290,7 +1290,7 @@ public class UVMappingCanvas extends CustomWidget {
      */
     public class SelectionCommand implements UndoableEdit {
 
-        private int[] selection;
+        private final int[] selection;
 
         public SelectionCommand(int[] selection) {
             super();
@@ -1319,11 +1319,11 @@ public class UVMappingCanvas extends CustomWidget {
      */
     public class DragMappingVerticesCommand implements UndoableEdit {
 
-        private int[] vertIndices;
-        private Vec2[] undoPositions;
-        private Vec2[] redoPositions;
-        private UVMeshMapping mapping;
-        private int piece;
+        private final int[] vertIndices;
+        private final Vec2[] undoPositions;
+        private final Vec2[] redoPositions;
+        private final UVMeshMapping mapping;
+        private final int piece;
 
         /**
          * Creates a DragMappingVerticesCommand

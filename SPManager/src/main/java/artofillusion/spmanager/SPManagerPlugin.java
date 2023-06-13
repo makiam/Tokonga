@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SPManagerPlugin implements Plugin {
 
-    public static String AOI_VERSION = ArtOfIllusion.getMajorVersion();
+    public static final String AOI_VERSION = ArtOfIllusion.getMajorVersion();
     public static String TEMP_DIR;
     public static String APP_DIRECTORY;
     public static String PLUGIN_DIRECTORY;

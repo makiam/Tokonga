@@ -11,7 +11,6 @@
 
 package artofillusion.osspecific;
 
-
 import artofillusion.ArtOfIllusion;
 import artofillusion.LayoutWindow;
 import artofillusion.Plugin;
@@ -81,7 +80,7 @@ public final class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, Ope
             }
         });
         updateWindowProperties(view);
-        if(usingAppMenu) {
+        if (usingAppMenu) {
             removeMenuItem(view, Translate.text("menu.file"), Translate.text("menu.quit"));
             removeMenuItem(view, Translate.text("menu.edit"), Translate.text("menu.preferences"));
         }
@@ -89,7 +88,9 @@ public final class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, Ope
 
     @Override
     public void onApplicationStarting() {
-        if (!OS.startsWith("mac os x")) return;
+        if (!OS.startsWith("mac os x")) {
+            return;
+        }
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         ArtOfIllusion.addWindow(new MacMenuBarWindow());
         UIUtilities.setDefaultFont(new Font("Application", Font.PLAIN, 11));
@@ -156,7 +157,7 @@ public final class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, Ope
 
     @Override
     public void openFiles(OpenFilesEvent event) {
-        for(var file: event.getFiles()) {
+        for (var file : event.getFiles()) {
             try {
                 ArtOfIllusion.newWindow(new Scene(file, true));
             } catch (IOException ex) {

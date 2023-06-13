@@ -34,12 +34,11 @@ public class UndoRecord {
 
     private final List<Map.Entry<Integer, Object[]>> records = new ArrayList<>();
 
-
     private List<SoftReference<?>[]> dataRef;
 
     private File cacheFile;
     private boolean redo;
-    private EditingWindow theWindow;
+    private final EditingWindow theWindow;
 
     public static final int COPY_OBJECT = 0;
     public static final int COPY_COORDS = 1;
@@ -81,7 +80,7 @@ public class UndoRecord {
      */
     public UndoRecord(EditingWindow win, boolean isRedo) {
         this(win);
-        redo = isRedo;      
+        redo = isRedo;
     }
 
     /**
@@ -101,6 +100,7 @@ public class UndoRecord {
     public UndoRecord(EditingWindow win, boolean isRedo, UndoableEdit edit) {
         this(win, isRedo, USER_DEFINED_ACTION, edit);
     }
+
     /**
      * Get whether this record represents "redoing" a previously undone operation.
      */
@@ -150,7 +150,7 @@ public class UndoRecord {
             log.atError().setCause(ex).log("Unable to load data from cache {}", ex.getMessage());
             return redoRecord;
         }
-        for (Map.Entry<Integer, Object[]> entry: records) {
+        for (Map.Entry<Integer, Object[]> entry : records) {
             Object[] d = entry.getValue();
             switch (entry.getKey()) {
                 case COPY_OBJECT: {
@@ -298,7 +298,7 @@ public class UndoRecord {
                 }
                 case USER_DEFINED_ACTION: {
                     UndoableEdit edit = (UndoableEdit) d[0];
-                    if(redo) {
+                    if (redo) {
                         edit.redo();
                     } else {
                         edit.undo();
@@ -343,7 +343,7 @@ public class UndoRecord {
      */
     private synchronized void writeCache() {
         boolean anyToCache = false;
-        for (Map.Entry<Integer, Object[]> entry: records) {
+        for (Map.Entry<Integer, Object[]> entry : records) {
             if (commandsToCache.contains(entry.getKey())) {
                 anyToCache = true;
             }
@@ -357,7 +357,7 @@ public class UndoRecord {
             cacheFile = File.createTempFile("undoCache", "dat");
             cacheFile.deleteOnExit();
             DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(cacheFile)));
-            for (Map.Entry<Integer, Object[]> entry: records) {
+            for (Map.Entry<Integer, Object[]> entry : records) {
                 Object[] d = entry.getValue();
                 SoftReference<?>[] ref = new SoftReference<?>[d.length];
                 dataRef.add(ref);
@@ -411,7 +411,7 @@ public class UndoRecord {
         // Load the data from disk.
         if (anyToLoad) {
             DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(cacheFile)));
-            for (Map.Entry<Integer, Object[]> entry: records) {
+            for (Map.Entry<Integer, Object[]> entry : records) {
                 Object[] d = entry.getValue();
                 int c = entry.getKey();
                 if (c == COPY_OBJECT && theWindow.getScene() != null) {
@@ -433,9 +433,13 @@ public class UndoRecord {
     }
 
     public String getName() {
-        if(records.isEmpty()) return "";
+        if (records.isEmpty()) {
+            return "";
+        }
         int command = records.get(0).getKey();
-        if(command != UndoRecord.USER_DEFINED_ACTION) return "";
-        return ((UndoableEdit)records.get(0).getValue()[0]).getName();
+        if (command != UndoRecord.USER_DEFINED_ACTION) {
+            return "";
+        }
+        return ((UndoableEdit) records.get(0).getValue()[0]).getName();
     }
 }

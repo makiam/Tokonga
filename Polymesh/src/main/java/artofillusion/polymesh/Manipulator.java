@@ -18,12 +18,12 @@ import java.awt.Rectangle;
  */
 public abstract class Manipulator extends EventSource {
 
-    protected AdvancedEditingTool tool;
+    protected final AdvancedEditingTool tool;
     protected Rectangle bounds, originalBounds;
     protected AdvancedEditingTool.SelectionProperties selectionBounds;
     protected int MARGIN = 50;
     protected PolyMeshValueWidget valueWidget;
-    protected ViewerCanvas view;
+    protected final ViewerCanvas view;
     protected boolean active;
     protected static boolean helpModeOn;
 
@@ -258,8 +258,8 @@ public abstract class Manipulator extends EventSource {
      */
     public static class ManipulatorEvent {
 
-        private Manipulator source;
-        private ViewerCanvas view;
+        private final Manipulator source;
+        private final ViewerCanvas view;
 
         public ManipulatorEvent(Manipulator manipulator, short type, ViewerCanvas view) {
             source = manipulator;

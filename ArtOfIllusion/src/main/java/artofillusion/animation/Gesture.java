@@ -13,38 +13,44 @@ package artofillusion.animation;
 import artofillusion.*;
 import artofillusion.texture.*;
 
-/** This interface represents an object which can be used to represent a predefined gesture for
-    an Actor. */
+/**
+ * This interface represents an object which can be used to represent a predefined gesture for
+ * an Actor.
+ */
+public interface Gesture extends Keyframe {
 
-public interface Gesture extends Keyframe
-{
-  /** Return a new gesture which is the weighted average of an arbitrary list of gestures.
-      The gestures are averaged around this gesture.  That is, the returned gesture
-      is represented symbolically as
-      <p>
-      result = this + sum(weight[i]*(p[i]-this))
-      
-      */
-  
-  public Gesture blend(Gesture p[], double weight[]);
+    /**
+     * Return a new gesture which is the weighted average of an arbitrary list of gestures.
+     * The gestures are averaged around this gesture. That is, the returned gesture
+     * is represented symbolically as
+     * <p>
+     * result = this + sum(weight[i]*(p[i]-this))
+     *
+     */
+    public Gesture blend(Gesture[] p, double[] weight);
 
-  /** Get the skeleton for this gesture (or null if it doesn't have one). */
-  
-  public Skeleton getSkeleton();
-  
-  /** Set the skeleton for this gesture. */
-  
-  public void setSkeleton(Skeleton s);
-  
-  /** Update the texture parameter values when the texture is changed. */
+    /**
+     * Get the skeleton for this gesture (or null if it doesn't have one).
+     */
+    public Skeleton getSkeleton();
 
-  public void textureChanged(TextureParameter oldParams[], TextureParameter newParams[]);
-  
-  /** Get the value of a per-vertex texture parameter. */
-  
-  public ParameterValue getTextureParameter(TextureParameter param);
-  
-  /** Set the value of a per-vertex texture parameter. */
-  
-  public void setTextureParameter(TextureParameter param, ParameterValue value);
+    /**
+     * Set the skeleton for this gesture.
+     */
+    public void setSkeleton(Skeleton s);
+
+    /**
+     * Update the texture parameter values when the texture is changed.
+     */
+    public void textureChanged(TextureParameter[] oldParams, TextureParameter[] newParams);
+
+    /**
+     * Get the value of a per-vertex texture parameter.
+     */
+    public ParameterValue getTextureParameter(TextureParameter param);
+
+    /**
+     * Set the value of a per-vertex texture parameter.
+     */
+    public void setTextureParameter(TextureParameter param, ParameterValue value);
 }

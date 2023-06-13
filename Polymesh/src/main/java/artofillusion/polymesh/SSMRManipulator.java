@@ -32,7 +32,7 @@ public abstract class SSMRManipulator extends Manipulator {
 
     public static class ManipulatorScalingEvent extends ManipulatorEvent {
 
-        private Mat4 scaleMatrix;
+        private final Mat4 scaleMatrix;
 
         public ManipulatorScalingEvent(Manipulator manipulator, Mat4 matrix, ViewerCanvas view) {
             super(manipulator, SCALE, view);
@@ -46,7 +46,7 @@ public abstract class SSMRManipulator extends Manipulator {
 
     public static class ManipulatorRotatingEvent extends ManipulatorEvent {
 
-        private Mat4 mat;
+        private final Mat4 mat;
 
         public ManipulatorRotatingEvent(Manipulator manipulator, Mat4 mat, ViewerCanvas view) {
             super(manipulator, view);
@@ -61,7 +61,7 @@ public abstract class SSMRManipulator extends Manipulator {
 
     public static class ManipulatorMovingEvent extends ManipulatorEvent {
 
-        Vec3 drag;
+        final Vec3 drag;
 
         public ManipulatorMovingEvent(Manipulator manipulator, Vec3 dr, ViewerCanvas view) {
             super(manipulator, view);

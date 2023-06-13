@@ -16,70 +16,62 @@ import artofillusion.object.*;
 import buoy.widget.*;
 import java.io.*;
 
-/** UniformMaterialMapping is the MaterialMapping for UniformMaterials. */
+/**
+ * UniformMaterialMapping is the MaterialMapping for UniformMaterials.
+ */
+public class UniformMaterialMapping extends MaterialMapping {
 
-public class UniformMaterialMapping extends MaterialMapping
-{
-  public UniformMaterialMapping(Object3D theObject, Material theMaterial)
-  {
-    super(theObject, theMaterial);
-  }
+    public UniformMaterialMapping(Object3D theObject, Material theMaterial) {
+        super(theObject, theMaterial);
+    }
 
-  @Override
-  public double getStepSize()
-  {
-    return material.getStepSize();
-  }
+    @Override
+    public double getStepSize() {
+        return material.getStepSize();
+    }
 
-  @Override
-  public void getMaterialSpec(Vec3 pos, MaterialSpec spec, double size, double t)
-  {
-    ((UniformMaterial) material).getMaterialSpec(spec);
-  }
+    @Override
+    public void getMaterialSpec(Vec3 pos, MaterialSpec spec, double size, double t) {
+        ((UniformMaterial) material).getMaterialSpec(spec);
+    }
 
-  public boolean legalMapping(Object3D obj, Material mat)
-  {
-    return mat instanceof UniformMaterial;
-  }
+    public boolean legalMapping(Object3D obj, Material mat) {
+        return mat instanceof UniformMaterial;
+    }
 
-  @Override
-  public MaterialMapping duplicate()
-  {
-    return new UniformMaterialMapping(object, material);
-  }
+    @Override
+    public MaterialMapping duplicate() {
+        return new UniformMaterialMapping(object, material);
+    }
 
-  @Override
-  public MaterialMapping duplicate(Object3D obj, Material mat)
-  {
-    return new UniformMaterialMapping(obj, mat);
-  }
+    @Override
+    public MaterialMapping duplicate(Object3D obj, Material mat) {
+        return new UniformMaterialMapping(obj, mat);
+    }
 
-  @Override
-  public void copy(MaterialMapping map)
-  {
-    material = map.material;
-  }
+    @Override
+    public void copy(MaterialMapping map) {
+        material = map.material;
+    }
 
-  @Override
-  public Widget getEditingPanel(Object3D obj, MaterialPreviewer preview)
-  {
-    return new CustomWidget();
-  }
+    @Override
+    public Widget getEditingPanel(Object3D obj, MaterialPreviewer preview) {
+        return new CustomWidget();
+    }
 
-  public UniformMaterialMapping(DataInputStream in, Object3D theObject, Material theMaterial) throws IOException, InvalidObjectException
-  {
-    super(theObject, theMaterial);
+    public UniformMaterialMapping(DataInputStream in, Object3D theObject, Material theMaterial) throws IOException, InvalidObjectException {
+        super(theObject, theMaterial);
 
-    short version = in.readShort();
+        short version = in.readShort();
 
-    if (version != 0)
-      throw new InvalidObjectException("");
-    material = theMaterial;
-  }
+        if (version != 0) {
+            throw new InvalidObjectException("");
+        }
+        material = theMaterial;
+    }
 
-  @Override
-  public void writeToFile(DataOutputStream out) throws IOException
-  {
-    out.writeShort(0);
-  }
+    @Override
+    public void writeToFile(DataOutputStream out) throws IOException {
+        out.writeShort(0);
+    }
 }

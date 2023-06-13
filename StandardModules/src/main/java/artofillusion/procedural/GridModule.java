@@ -29,7 +29,7 @@ public class GridModule extends ProceduralModule {
     double value, error, xspace, yspace, zspace, lastBlur;
     double xinv, yinv, zinv;
     PointInfo point;
-    Vec3 gradient;
+    final Vec3 gradient;
 
     public GridModule() {
         this(new Point());

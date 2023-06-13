@@ -20,10 +20,12 @@ import artofillusion.texture.*;
  */
 public class PhotonMapContext {
 
-    private PhotonMap map;
-    public PhotonList nearbyPhotons;
-    public RGBColor tempColor, tempColor2;
-    public Vec3 tempVec, lastPos;
+    private final PhotonMap map;
+    public final PhotonList nearbyPhotons;
+    public final RGBColor tempColor;
+    public final RGBColor tempColor2;
+    public final Vec3 tempVec;
+    public final Vec3 lastPos;
     public float lastCutoff2;
 
     /**

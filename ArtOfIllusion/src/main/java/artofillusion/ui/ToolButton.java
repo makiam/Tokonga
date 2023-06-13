@@ -14,13 +14,13 @@ import java.awt.*;
 
 /**
  * A ToolButton provides the user interface for an {@link EditingTool} in a {@link ToolPalette}.
- * This is an abstract class.  Subclasses implement {@link #paint(java.awt.Graphics2D) paint()} to
- * determine the appearance of the button.  {@link DefaultToolButton} is the standard implementation
+ * This is an abstract class. Subclasses implement {@link #paint(java.awt.Graphics2D) paint()} to
+ * determine the appearance of the button. {@link DefaultToolButton} is the standard implementation
  * which is used by default, but themes may define their own subclasses to customize the appearance
  * and behavior of buttons.
  * <p>
- * A ToolButton is not a widget.  Most often it is used inside a ToolPalette, which handles events,
- * layout, and so on for the ToolButtons it contains.  If you want to display a ToolButton as an
+ * A ToolButton is not a widget. Most often it is used inside a ToolPalette, which handles events,
+ * layout, and so on for the ToolButtons it contains. If you want to display a ToolButton as an
  * independent widget, you can do that with the {@link ToolButtonWidget} class.
  *
  * @author Francois Guillet
@@ -32,7 +32,7 @@ public abstract class ToolButton {
     protected int width;
     protected int state;
     protected Point position;
-    protected Object owner;
+    protected final Object owner;
     public static final int NORMAL_STATE = 0;
     public static final int SELECTED_STATE = 1;
     public static final int HIGHLIGHTED_STATE = 2;
@@ -83,10 +83,11 @@ public abstract class ToolButton {
      * highlighted, selecting it supersedes the highlighted state.
      */
     public void setSelected(boolean selected) {
-        if (selected)
+        if (selected) {
             state = SELECTED_STATE;
-        else
+        } else {
             state = NORMAL_STATE;
+        }
     }
 
     /**
@@ -95,12 +96,14 @@ public abstract class ToolButton {
      */
     public void setHighlighted(boolean highlighted) {
         //selected buttons can't be highlighted
-        if (state == SELECTED_STATE)
+        if (state == SELECTED_STATE) {
             return;
-        if (highlighted)
+        }
+        if (highlighted) {
             state = HIGHLIGHTED_STATE;
-        else
+        } else {
             state = NORMAL_STATE;
+        }
     }
 
     public boolean isSelected() {

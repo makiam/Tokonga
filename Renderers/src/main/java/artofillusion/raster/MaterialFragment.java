@@ -12,8 +12,8 @@ package artofillusion.raster;
 
 public class MaterialFragment extends TransparentFragment {
 
-    private ObjectMaterialInfo material;
-    private boolean isEntering;
+    private final ObjectMaterialInfo material;
+    private final boolean isEntering;
 
     /**
      * Create a MaterialFragment.

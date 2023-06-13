@@ -206,7 +206,7 @@ public class Scene {
                 continue;
             }
 
-            for (var depend : track.getDependencies()) {
+            for (var     depend : track.getDependencies()) {
                 int k = indexOf(depend);
                 if (k > -1 && !processed[k]) {
                     applyTracksToObject(depend, processed, changed, k);
@@ -507,11 +507,11 @@ public class Scene {
             }
             info.getParent().removeChild(j);
         }
-        for (var obj : objects) {
+        for (var     obj : objects) {
             for (int j = 0; j < obj.getTracks().length; j++) {
                 Track tr = obj.getTracks()[j];
 
-                for (var depend : tr.getDependencies()) {
+                for (var     depend : tr.getDependencies()) {
                     if (depend == info) {
                         if (undo != null) {
                             undo.addCommandAtBeginning(UndoRecord.COPY_TRACK, tr, tr.duplicate(tr.getParent()));
@@ -584,7 +584,7 @@ public class Scene {
     public void addTexture(Texture tex, int index) {
         textures.add(index, tex);
         int pos = textures.size() - 1;
-        textureListeners.forEach(listener ->  listener.itemAdded(pos, tex));
+        textureListeners.forEach(listener -> listener.itemAdded(pos, tex));
     }
 
     /**
@@ -601,7 +601,7 @@ public class Scene {
             textureListeners.forEach(listener -> listener.itemAdded(0, defTex));
         }
         Texture def = textures.get(0);
-        for (var obj : objects) {
+        for (var     obj : objects) {
             if (obj.getObject().getTexture() == tex) {
                 obj.setTexture(def, def.getDefaultMapping(obj.getObject()));
             }
@@ -746,7 +746,6 @@ public class Scene {
         return metadataMap.keySet();
     }
 
-
     /**
      * Add an image map to the scene.
      */
@@ -760,12 +759,12 @@ public class Scene {
     public boolean removeImage(int which) {
         ImageMap image = images.get(which);
 
-        for (var texture: textures) {
+        for (var     texture: textures) {
             if (texture.usesImage(image)) {
                 return false;
             }
         }
-        for (var material: materials) {
+        for (var     material: materials) {
             if (material.usesImage(image)) {
                 return false;
             }
@@ -929,7 +928,6 @@ public class Scene {
     public ObjectInfo getObjectById(int id) {
         return objects.stream().filter(info -> info.getId() == id).findFirst().orElse(null);
     }
-
 
     /**
      * Get all objects in the Scene in the form of a List.
@@ -1270,7 +1268,7 @@ public class Scene {
         selection = new Vector<>();
 
         // Read the list of children for each object.
-        for (var info : objects) {
+        for (var     info : objects) {
             int num = in.readInt();
             for (int j = 0; j < num; j++) {
                 ObjectInfo child = objects.get(in.readInt());
@@ -1467,14 +1465,14 @@ public class Scene {
 
         // Save the image maps.
         out.writeInt(images.size());
-        for (var image : images) {
+        for (var     image : images) {
             out.writeUTF(image.getClass().getName());
             image.writeToStream(out, this);
         }
 
         // Save the materials.
         out.writeInt(materials.size());
-        for (var mat: materials) {
+        for (var     mat: materials) {
             out.writeUTF(mat.getClass().getName());
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             mat.writeToFile(new DataOutputStream(bos), this);
@@ -1485,7 +1483,7 @@ public class Scene {
 
         // Save the textures.
         out.writeInt(textures.size());
-        for (var tex: textures) {
+        for (var     tex: textures) {
             out.writeUTF(tex.getClass().getName());
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             tex.writeToFile(new DataOutputStream(bos), this);
@@ -1498,13 +1496,13 @@ public class Scene {
         int index = 0;
         Map<Object3D, Integer> table = new Hashtable<>(objects.size());
         out.writeInt(objects.size());
-        for (var object: objects) {
+        for (var     object: objects) {
             index = writeObjectToFile(out, object, table, index);
         }
 
         // Record the children of each object.  The format of this will be changed in the
         // next version.
-        for (var object: objects) {
+        for (var     object: objects) {
             out.writeInt(object.getChildren().length);
             for (ObjectInfo children : object.getChildren()) {
                 out.writeInt(indexOf(children));
@@ -1578,7 +1576,7 @@ public class Scene {
 
         // Write the tracks for this object.
         out.writeInt(info.getTracks().length);
-        for (var track : info.getTracks()) {
+        for (var     track : info.getTracks()) {
             out.writeUTF(track.getClass().getName());
             track.writeToStream(out, this);
         }

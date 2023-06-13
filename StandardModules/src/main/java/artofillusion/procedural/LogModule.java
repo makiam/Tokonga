@@ -20,7 +20,7 @@ public class LogModule extends ProceduralModule {
 
     boolean valueOk, errorOk, gradOk;
     double value, error, valueIn, errorIn, lastBlur;
-    Vec3 gradient;
+    final Vec3 gradient;
 
     public LogModule() {
         this(new Point());

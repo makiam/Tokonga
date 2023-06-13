@@ -57,7 +57,7 @@ import lombok.extern.slf4j.Slf4j;
 @EditingTool.Tooltip("polymesh:createPolyMeshTool.tipText")
 public class CreatePolyMeshTool extends EditingTool {
 
-    private EditingWindow edw;
+    private final EditingWindow edw;
     private int counter = 1;
     private int shape = 0;
     private int usize = 3;
@@ -219,11 +219,7 @@ public class CreatePolyMeshTool extends EditingTool {
         private BSpinner xSpinner;
         private BLabel byLabel;
         private BSpinner ySpinner;
-        private BLabel meshType;
-        private BButton okButton;
-        private BButton cancelButton;
         private BComboBox smoothCombo;
-        private BLabel smoothLabel;
         private int templateStart;
 
         /**
@@ -258,11 +254,11 @@ public class CreatePolyMeshTool extends EditingTool {
                 byLabel.setText(Translate.text("polymesh:" + byLabel.getText()));
                 ySpinner = ((BSpinner) decoder.getObject("ySpinner"));
                 ySpinner.setValue(vsize);
-                meshType = ((BLabel) decoder.getObject("meshType"));
+                BLabel meshType = ((BLabel) decoder.getObject("meshType"));
                 meshType.setText(Translate.text("polymesh:" + meshType.getText()));
-                okButton = ((BButton) decoder.getObject("okButton"));
+                BButton okButton = ((BButton) decoder.getObject("okButton"));
                 okButton.setText(Translate.text("polymesh:" + okButton.getText()));
-                cancelButton = ((BButton) decoder.getObject("cancelButton"));
+                BButton cancelButton = ((BButton) decoder.getObject("cancelButton"));
                 cancelButton.setText(Translate.text("polymesh:" + cancelButton.getText()));
                 okButton.addEventLink(CommandEvent.class, this, "doOK");
                 typeCombo.setSelectedIndex(shape);
@@ -273,7 +269,7 @@ public class CreatePolyMeshTool extends EditingTool {
                 smoothCombo.add(Translate.text("menu.shading"));
                 smoothCombo.add(Translate.text("menu.approximating"));
                 smoothCombo.add(Translate.text("menu.interpolating"));
-                smoothLabel = ((BLabel) decoder.getObject("smoothLabel"));
+                BLabel smoothLabel = ((BLabel) decoder.getObject("smoothLabel"));
                 smoothLabel.setText(Translate.text("SmoothingMethod") + ":");
                 smoothCombo.addEventLink(ValueChangedEvent.class, this, "doSmoothComboChanged");
                 smoothCombo.setSelectedIndex(getSmoothComboIndex());

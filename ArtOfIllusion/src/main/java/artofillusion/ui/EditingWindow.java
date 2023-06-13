@@ -13,60 +13,73 @@ package artofillusion.ui;
 import artofillusion.*;
 import buoy.widget.*;
 
-/** EditingWindow represents a window used for editing an object or scene. */
+/**
+ * EditingWindow represents a window used for editing an object or scene.
+ */
+public interface EditingWindow {
 
-public interface EditingWindow
-{
-  /** Get the ToolPalette for this window. */
+    /**
+     * Get the ToolPalette for this window.
+     */
+    public ToolPalette getToolPalette();
 
-  public ToolPalette getToolPalette();
+    /**
+     * Set the currently selected EditingTool.
+     */
+    public void setTool(EditingTool tool);
 
-  /** Set the currently selected EditingTool. */
-  
-  public void setTool(EditingTool tool);
-  
-  /** Set the text to display at the bottom of the window. */
-  
-  public void setHelpText(String text);
-  
-  /** Get the BFrame for this EditingWindow: either the EditingWindow itself if it is a
-      BFrame, or its parent if it is a BDialog. */
-  
-  public BFrame getFrame();
+    /**
+     * Set the text to display at the bottom of the window.
+     */
+    public void setHelpText(String text);
 
-  /** Update the image displayed in this window. */
+    /**
+     * Get the BFrame for this EditingWindow: either the EditingWindow itself if it is a
+     * BFrame, or its parent if it is a BDialog.
+     */
+    public BFrame getFrame();
 
-  public void updateImage();
+    /**
+     * Update the image displayed in this window.
+     */
+    public void updateImage();
 
-  /** Update which menus are enabled. */
+    /**
+     * Update which menus are enabled.
+     */
+    public void updateMenus();
 
-  public void updateMenus();
-  
-  /** Set the current UndoRecord for this EditingWindow. */
-  
-  public void setUndoRecord(UndoRecord command);
+    /**
+     * Set the current UndoRecord for this EditingWindow.
+     */
+    public void setUndoRecord(UndoRecord command);
 
-  /** Register that the scene or object contained in the window has been modified. */
-  
-  public void setModified();
-  
-  /** Get the Scene which is being edited in this window.  If it is not a window for
-      editing a scene, this should return null. */
+    /**
+     * Register that the scene or object contained in the window has been modified.
+     */
+    public void setModified();
 
-  public Scene getScene();
-  
-  /** Get the ViewerCanvas in which editing is taking place.  This may return null
-      if there is no ViewerCanvas. */
-  
-  public ViewerCanvas getView();
+    /**
+     * Get the Scene which is being edited in this window. If it is not a window for
+     * editing a scene, this should return null.
+     */
+    public Scene getScene();
 
-  /** Get all ViewerCanvases contained in this window.  This may return null
-      if there is no ViewerCanvas. */
+    /**
+     * Get the ViewerCanvas in which editing is taking place. This may return null
+     * if there is no ViewerCanvas.
+     */
+    public ViewerCanvas getView();
 
-  public ViewerCanvas[] getAllViews();
+    /**
+     * Get all ViewerCanvases contained in this window. This may return null
+     * if there is no ViewerCanvas.
+     */
+    public ViewerCanvas[] getAllViews();
 
-  /** Confirm whether this window should be closed (possibly by displaying a message to the
-      user), and then close it.  If the closing is canceled, this should return false. */
-
-  public boolean confirmClose();
+    /**
+     * Confirm whether this window should be closed (possibly by displaying a message to the
+     * user), and then close it. If the closing is canceled, this should return false.
+     */
+    public boolean confirmClose();
 }

@@ -19,12 +19,16 @@ import artofillusion.util.*;
  */
 public class CubePhotonSource implements PhotonSource {
 
-    private RTCube cube;
-    private double bottomP, topP, leftP, rightP, backP;
-    private double[] param;
-    private Mat4 fromLocal;
-    private TextureMapping texMap;
-    private RGBColor color;
+    private final RTCube cube;
+    private final double bottomP;
+    private final double topP;
+    private final double leftP;
+    private final double rightP;
+    private final double backP;
+    private final double[] param;
+    private final Mat4 fromLocal;
+    private final TextureMapping texMap;
+    private final RGBColor color;
     private float lightIntensity;
 
     /**

@@ -36,10 +36,12 @@ public class ObjectInfo {
     public CoordinateSystem coords;
     public String name;
     //TODO: Access only via getter/setter
-    @Getter @Setter
+    @Getter
+    @Setter
     public boolean selected;
     public boolean visible, parentSelected;
-    public ObjectInfo parent, children[];
+    public ObjectInfo parent;
+    public ObjectInfo[] children;
     public Track[] tracks;
     public Keyframe pose;
     public int id;
@@ -95,8 +97,8 @@ public class ObjectInfo {
      * Given an array of ObjectInfos, duplicate all of them (including the objects they
      * point to), keeping parent-child relationships intact.
      */
-    public static ObjectInfo[] duplicateAll(ObjectInfo info[]) {
-        ObjectInfo newobj[] = new ObjectInfo[info.length];
+    public static ObjectInfo[] duplicateAll(ObjectInfo[] info) {
+        ObjectInfo[] newobj = new ObjectInfo[info.length];
         HashMap<ObjectInfo, ObjectInfo> objectMap = new HashMap<>();
         for (int i = 0; i < newobj.length; i++) {
             newobj[i] = info[i].duplicate(info[i].getObject().duplicate());
@@ -159,7 +161,7 @@ public class ObjectInfo {
      * Add a child to this object.
      */
     public void addChild(ObjectInfo info, int position) {
-        ObjectInfo newChildren[] = new ObjectInfo[getChildren().length + 1];
+        ObjectInfo[] newChildren = new ObjectInfo[getChildren().length + 1];
         int i;
 
         for (i = 0; i < position; i++) {
@@ -189,7 +191,7 @@ public class ObjectInfo {
      * Remove a child from this object.
      */
     public void removeChild(int which) {
-        ObjectInfo newChildren[] = new ObjectInfo[getChildren().length - 1];
+        ObjectInfo[] newChildren = new ObjectInfo[getChildren().length - 1];
         int i;
 
         getChildren()[which].setParent(null);
@@ -210,7 +212,7 @@ public class ObjectInfo {
             tracks = new Track[]{tr};
             return;
         }
-        Track newTracks[] = new Track[getTracks().length + 1];
+        Track[] newTracks = new Track[getTracks().length + 1];
         int i;
 
         for (i = 0; i < position; i++) {
@@ -239,7 +241,7 @@ public class ObjectInfo {
      * Remove a track from this object.
      */
     public void removeTrack(int which) {
-        Track newTracks[] = new Track[getTracks().length - 1];
+        Track[] newTracks = new Track[getTracks().length - 1];
         int i;
 
         for (i = 0; i < which; i++) {

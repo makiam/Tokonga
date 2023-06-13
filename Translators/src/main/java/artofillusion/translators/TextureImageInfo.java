@@ -17,11 +17,11 @@ import artofillusion.texture.*;
  */
 public class TextureImageInfo {
 
-    Texture texture;
+    final Texture texture;
     String name;
     String diffuseFilename, specularFilename, hilightFilename, transparentFilename, emissiveFilename, bumpFilename;
     double minu, minv, maxu, maxv;
-    double[] paramValue;
+    final double[] paramValue;
 
     public TextureImageInfo(Texture tex, double[] param) {
         texture = tex;

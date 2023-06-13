@@ -61,10 +61,10 @@ public class PolyMeshValueWidget extends BorderContainer {
     private BCheckBox retainValueCB;
     private double valueMin, valueMax, tempValueMin, tempValueMax;
     private double value;
-    private NumberFormat format;
+    private final NumberFormat format;
     private Runnable runCallback;
     private boolean temporaryRange;
-    private ValueWidgetOwner owner;
+    private final ValueWidgetOwner owner;
 
     public PolyMeshValueWidget(ValueWidgetOwner owner) {
         this.owner = owner;

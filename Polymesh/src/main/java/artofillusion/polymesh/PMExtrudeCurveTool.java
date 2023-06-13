@@ -36,10 +36,10 @@ import lombok.extern.slf4j.Slf4j;
 @EditingTool.ActivatedToolText("polymesh:extrudeCurveTool.helpText")
 public class PMExtrudeCurveTool extends EditingTool {
 
-    private Vector<CurvePoint> clickPoints;
+    private final Vector<CurvePoint> clickPoints;
     private PolyMesh orMesh;
     private boolean[] orSel;
-    private MeshEditController controller;
+    private final MeshEditController controller;
     private ViewerCanvas canvas;
     private Vec3 fromPoint, currentPoint;
     Vec3[] pr;

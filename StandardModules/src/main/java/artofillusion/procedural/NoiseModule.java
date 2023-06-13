@@ -29,7 +29,8 @@ public class NoiseModule extends ProceduralModule {
     boolean valueOk, errorOk, gradOk;
     int octaves;
     double value, error, amplitude, lastBlur;
-    Vec3 gradient, tempVec;
+    final Vec3 gradient;
+    final Vec3 tempVec;
     PointInfo point;
 
     public NoiseModule() {

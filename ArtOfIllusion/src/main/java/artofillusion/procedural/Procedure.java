@@ -153,7 +153,7 @@ public class Procedure {
             for (OutputModule inner : outputs) {
                 inner.checked = false;
             }
-            for (var module : modules) {
+            for (var     module : modules) {
                 module.checked = false;
             }
             if (outer.checkFeedback()) {
@@ -168,7 +168,7 @@ public class Procedure {
      * describes the point for which it is to be evaluated.
      */
     public void initForPoint(PointInfo p) {
-        for (var module : modules) {
+        for (var     module : modules) {
             module.init(p);
         }
     }
@@ -208,8 +208,8 @@ public class Procedure {
         }
         links = new Link[proc.links.length];
         for (int i = 0; i < links.length; i++) {
-            var fromModule = proc.links[i].from.getModule();
-            var toModule = proc.links[i].to.getModule();
+            var  fromModule = proc.links[i].from.getModule();
+            var  toModule = proc.links[i].to.getModule();
             int fromIndex = proc.getModuleIndex(fromModule);
             int toIndex = toModule instanceof OutputModule ? proc.getOutputIndex(toModule) : proc.getModuleIndex(toModule);
             IOPort from = modules[fromIndex].getOutputPorts()[proc.modules[fromIndex].getOutputIndex(proc.links[i].from)];
@@ -227,7 +227,7 @@ public class Procedure {
     public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
         out.writeShort(0);
         out.writeInt(modules.length);
-        for (var module : modules) {
+        for (var     module : modules) {
             out.writeUTF(module.getClass().getName());
             out.writeInt(module.getBounds().x);
             out.writeInt(module.getBounds().y);

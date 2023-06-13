@@ -25,15 +25,19 @@ import java.awt.*;
  */
 public class LatheDialog extends BDialog {
 
-    LayoutWindow window;
-    Curve theCurve;
-    ObjectInfo curveInfo;
-    RadioButtonGroup axisGroup;
-    BRadioButton xBox, yBox, zBox, endsBox;
-    ValueField radiusField, segmentsField;
-    ValueSlider angleSlider;
+    final LayoutWindow window;
+    final Curve theCurve;
+    final ObjectInfo curveInfo;
+    final RadioButtonGroup axisGroup;
+    final BRadioButton xBox;
+    final BRadioButton yBox;
+    final BRadioButton zBox;
+    final BRadioButton endsBox;
+    final ValueField radiusField;
+    final ValueField segmentsField;
+    final ValueSlider angleSlider;
 
-    ObjectPreviewCanvas preview;
+    final ObjectPreviewCanvas preview;
 
     private static int counter = 1;
 

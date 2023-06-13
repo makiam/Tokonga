@@ -34,8 +34,8 @@ import java.util.ArrayList;
  */
 public class UVMappingManipulator {
 
-    protected UVMappingCanvas canvas;
-    protected UVMappingEditorDialog window;
+    protected final UVMappingCanvas canvas;
+    protected final UVMappingEditorDialog window;
     protected Point click;
     private boolean dragBox, dragging;
     private boolean[] originalSelection;
@@ -46,16 +46,18 @@ public class UVMappingManipulator {
     private Point originalCenter;
     private static Image ghostscale;
     private static Image centerhandle;
-    private static Image[] uvHandleImages = new Image[3];
-    private Rectangle[] boxes = new Rectangle[6];
-    private UVRotationHandle rotationHandle;
+    private static final Image[] uvHandleImages = new Image[3];
+    private final Rectangle[] boxes = new Rectangle[6];
+    private final UVRotationHandle rotationHandle;
     private int handle;
     private int dx, dy;
     private int rotSegment;
     private double rotAngle, scalex, scaley;
     private int axisLength = 75;
     private int originalAxisLength;
-    private boolean scaling, moving, reverseZoom;
+    private boolean scaling;
+    private boolean moving;
+    private final boolean reverseZoom;
     private double originalScale;
     private Vec2 originalOrigin;
     private int numSel; //number of selected but unpinned vertices. Needs to be >= 1 to draw the manipulator.
@@ -79,7 +81,7 @@ public class UVMappingManipulator {
     private static final int VS_HANDLE = 4;
     private static final int UVS_HANDLE = 5;
     private static final int ROTATE_HANDLE = 6;
-    private Color rotateGhost;
+    private final Color rotateGhost;
 
     public UVMappingManipulator(UVMappingCanvas canvas, UVMappingEditorDialog window) {
         super();
@@ -829,8 +831,8 @@ public class UVMappingManipulator {
 
     public class UVRotationHandle {
 
-        private int segments;
-        protected Color color;
+        private final int segments;
+        protected final Color color;
         protected Polygon handle;
         protected Point center;
 

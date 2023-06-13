@@ -12,61 +12,61 @@ package artofillusion.ui;
 
 import javax.swing.*;
 
-/** This class processes "discardable" events.  This is typically used for
-    mouse-moved or mouse-dragged events, where significant time is needed to process
-    each event, and they might be delivered faster than they can be processed.
-    <p>
-    Callback objects corresponding to particular events are passed to addEvent() as they
-    occur.  They are called one at a time.  If several new events are delivered before
-    the last one has been finished, all but the most recent one are discarded.
-    <p>
-    This class is not thread safe.  addEvent() and stopProcessing() should only ever be
-    invoked from the event dispatch thread.  In turn, all processing of events is
-    guaranteed to be done on the event dispatch thread. */
+/**
+ * This class processes "discardable" events. This is typically used for
+ * mouse-moved or mouse-dragged events, where significant time is needed to process
+ * each event, and they might be delivered faster than they can be processed.
+ * <p>
+ * Callback objects corresponding to particular events are passed to addEvent() as they
+ * occur. They are called one at a time. If several new events are delivered before
+ * the last one has been finished, all but the most recent one are discarded.
+ * <p>
+ * This class is not thread safe. addEvent() and stopProcessing() should only ever be
+ * invoked from the event dispatch thread. In turn, all processing of events is
+ * guaranteed to be done on the event dispatch thread.
+ */
+public class ActionProcessor {
 
-public class ActionProcessor
-{
-  private Runnable nextEvent;
-  private boolean isCanceled;
+    private Runnable nextEvent;
+    private boolean isCanceled;
 
-  public ActionProcessor()
-  {
-  }
+    public ActionProcessor() {
+    }
 
-  /** Add an event to the queue. */
+    /**
+     * Add an event to the queue.
+     */
+    public synchronized void addEvent(Runnable event) {
+        nextEvent = event;
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if (nextEvent != null && !isCanceled) {
+                    nextEvent.run();
+                }
+                nextEvent = null;
+            }
+        });
+    }
 
-  public synchronized void addEvent(Runnable event)
-  {
-    nextEvent = event;
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run()
-      {
-        if (nextEvent != null && !isCanceled)
-          nextEvent.run();
-        nextEvent = null;
-      }
-    });
-  }
+    /**
+     * Halt processing, and discard any further events that are added to the queue.
+     */
+    public void stopProcessing() {
+        isCanceled = true;
+    }
 
-  /** Halt processing, and discard any further events that are added to the queue. */
+    /**
+     * Determine whether this stopProcessing() has been invoked.
+     */
+    public boolean hasBeenStopped() {
+        return isCanceled;
+    }
 
-  public void stopProcessing()
-  {
-    isCanceled = true;
-  }
-
-  /** Determine whether this stopProcessing() has been invoked. */
-
-  public boolean hasBeenStopped()
-  {
-    return isCanceled;
-  }
-
-  /** Determine whether there is an event waiting to be processed. */
-
-  public boolean hasEvent()
-  {
-    return (nextEvent != null);
-  }
+    /**
+     * Determine whether there is an event waiting to be processed.
+     */
+    public boolean hasEvent() {
+        return (nextEvent != null);
+    }
 }

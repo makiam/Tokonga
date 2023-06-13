@@ -37,7 +37,7 @@ public class FunctionModule extends ProceduralModule {
     private double lastBlur;
     private double[] a0, a1, a2, a3, b;
     private short shape;
-    private Vec3 gradient;
+    private final Vec3 gradient;
 
     public static final short LINEAR = 0;
     public static final short SMOOTH_INTERPOLATE = 1;
@@ -430,16 +430,19 @@ public class FunctionModule extends ProceduralModule {
     /* Inner class used for editing the list of colors. */
     private class EditingDialog extends BDialog {
 
-        ProcedureEditor editor;
-        CustomWidget canvas;
-        ValueField xField, yField;
-        BCheckBox repeatBox, smoothBox;
-        BButton deleteButton;
+        final ProcedureEditor editor;
+        final CustomWidget canvas;
+        final ValueField xField;
+        final ValueField yField;
+        final BCheckBox repeatBox;
+        final BCheckBox smoothBox;
+        final BButton deleteButton;
         Point clickPoint;
         Point[] handlePos;
-        Rectangle graphBounds;
-        FontMetrics fm;
-        NumberFormat hFormat, vFormat;
+        final Rectangle graphBounds;
+        final FontMetrics fm;
+        final NumberFormat hFormat;
+        final NumberFormat vFormat;
         int selected;
         boolean clickedOk, fixRange;
         double miny, maxy, labelstep;

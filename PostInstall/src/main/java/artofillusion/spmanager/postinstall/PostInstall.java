@@ -291,7 +291,7 @@ public class PostInstall implements Plugin {
                         }
 
                         if (!update.delete()) {
-                            log.atError().log("PostInstall.cleanup: **Error: Could not delete: {}" + update.getAbsolutePath());
+                            log.atError().log("PostInstall.cleanup: **Error: Could not delete: {}", update.getAbsolutePath());
 
                             err.add("couldn't delete " + update.getAbsolutePath());
 

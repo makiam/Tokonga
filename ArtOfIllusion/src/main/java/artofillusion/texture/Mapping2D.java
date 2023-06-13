@@ -13,40 +13,37 @@ package artofillusion.texture;
 import artofillusion.math.*;
 import artofillusion.object.*;
 
-/** Mapping2D is an abstract class describing a linear mapping between 2D texture coordinates
-    and 3D space. */
+/**
+ * Mapping2D is an abstract class describing a linear mapping between 2D texture coordinates
+ * and 3D space.
+ */
+public abstract class Mapping2D extends TextureMapping {
 
-public abstract class Mapping2D extends TextureMapping
-{
-  Object3D object;
-  Texture2D texture;
+    final Object3D object;
+    final Texture2D texture;
 
-  public Mapping2D(Object3D theObject, Texture theTexture)
-  {
-    object = theObject;
-    texture = (Texture2D) theTexture;
-  }
+    public Mapping2D(Object3D theObject, Texture theTexture) {
+        object = theObject;
+        texture = (Texture2D) theTexture;
+    }
 
-  @Override
-  public Texture getTexture()
-  {
-    return texture;
-  }
+    @Override
+    public Texture getTexture() {
+        return texture;
+    }
 
+    @Override
+    public Object3D getObject() {
+        return object;
+    }
 
-  @Override
-  public Object3D getObject()
-  {
-    return object;
-  }
+    public boolean legalMapping(Object3D obj, Texture tex) {
+        return tex instanceof Texture2D;
+    }
 
-  public boolean legalMapping(Object3D obj, Texture tex)
-  {
-    return tex instanceof Texture2D;
-  }
-
-  /** Given a Mesh to which this mapping has been applied, return the texture coordinates at
-      each vertex. */
-
-  public abstract Vec2 [] findTextureCoordinates(Mesh mesh);
+    /**
+     * Given a Mesh to which this mapping has been applied, return the texture coordinates at
+     * each vertex.
+     */
+    public abstract Vec2[] findTextureCoordinates(Mesh mesh);
 }

@@ -13,7 +13,6 @@ package artofillusion.raytracer;
 import artofillusion.material.*;
 import artofillusion.math.*;
 import artofillusion.raytracer.RaytracerRenderer.*;
-import artofillusion.raytracer.RaytracerRenderer.MaterialIntersection;
 import artofillusion.texture.*;
 
 /**
@@ -22,20 +21,22 @@ import artofillusion.texture.*;
  */
 public class RenderWorkspace {
 
-    public RaytracerRenderer rt;
-    public RaytracerContext context;
+    public final RaytracerRenderer rt;
+    public final RaytracerContext context;
     public RTObject firstObjectHit, materialAtCamera;
     public boolean materialAtCameraIsFixed;
-    public Ray[] ray;
-    public RGBColor[] color;
-    public RGBColor[] rayIntensity;
-    public RGBColor tempColor;
-    public RGBColor tempColor2;
-    public Vec3[] pos, normal, trueNormal;
-    public double[] transparency;
+    public final Ray[] ray;
+    public final RGBColor[] color;
+    public final RGBColor[] rayIntensity;
+    public final RGBColor tempColor;
+    public final RGBColor tempColor2;
+    public final Vec3[] pos;
+    public final Vec3[] normal;
+    public final Vec3[] trueNormal;
+    public final double[] transparency;
     public MaterialIntersection[] matChange;
-    public TextureSpec[] surfSpec;
-    public MaterialSpec matSpec;
+    public final TextureSpec[] surfSpec;
+    public final MaterialSpec matSpec;
     public PixelInfo tempPixel;
     public PhotonMapContext globalMap, causticsMap, volumeMap;
 

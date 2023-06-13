@@ -621,15 +621,15 @@ public class PMOBJImporter {
         /**
          * Description of the Field
          */
-        public VertexInfo[] vi;
+        public final VertexInfo[] vi;
         /**
          * Description of the Field
          */
-        public int smoothingGroup;
+        public final int smoothingGroup;
         /**
          * Description of the Field
          */
-        public String texture;
+        public final String texture;
 
         /**
          * Constructor for the FaceInfo object

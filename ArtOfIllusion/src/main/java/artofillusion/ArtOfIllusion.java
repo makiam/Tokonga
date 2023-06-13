@@ -48,11 +48,11 @@ public class ArtOfIllusion {
     public static final ImageIcon APP_ICON;
 
     private static ApplicationPreferences preferences;
-    private static ObjectInfo clipboardObject[];
-    private static Texture clipboardTexture[];
-    private static Material clipboardMaterial[];
-    private static ImageMap clipboardImage[];
-    private static List<EditingWindow> windows = new ArrayList<>();
+    private static ObjectInfo[] clipboardObject;
+    private static Texture[] clipboardTexture;
+    private static Material[] clipboardMaterial;
+    private static ImageMap[] clipboardImage;
+    private static final List<EditingWindow> windows = new ArrayList<>();
     private static final Map<String, String> classTranslations = new HashMap<>();
     private static int numNewWindows = 0;
 
@@ -99,7 +99,7 @@ public class ArtOfIllusion {
 
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         Translate.setLocale(Locale.getDefault());
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -161,7 +161,7 @@ public class ArtOfIllusion {
                 log.atError().setCause(ex).log("Error loading scene: {}", ex.getMessage());
             }
         }
-        
+
         runStartupScripts();
         if (numNewWindows == 0) {
             newWindow();
@@ -194,7 +194,6 @@ public class ArtOfIllusion {
     /**
      * Get the application preferences object.
      */
-
     public static ApplicationPreferences getPreferences() {
         return preferences;
     }
@@ -289,7 +288,9 @@ public class ArtOfIllusion {
         if (win.confirmClose()) {
             windows.remove(win);
         }
-        if(windows.isEmpty()) quit();
+        if (windows.isEmpty()) {
+            quit();
+        }
     }
 
     /**
@@ -319,7 +320,7 @@ public class ArtOfIllusion {
      * Execute all startup scripts.
      */
     private static void runStartupScripts() {
-        String files[] = new File(STARTUP_SCRIPT_DIRECTORY).list();
+        String[] files = new File(STARTUP_SCRIPT_DIRECTORY).list();
         if (null == files) {
             return;
         }
@@ -383,17 +384,18 @@ public class ArtOfIllusion {
         return null;
     }
 
-  /** This is a utility routine which loads a file from disk. */
-
-  public static String loadFile(File f) throws IOException
-  {
-    BufferedReader in = new BufferedReader(new FileReader(f));
-    StringBuilder buf = new StringBuilder();
-    int c;
-    while ((c = in.read()) != -1)
-      buf.append((char) c);
-    in.close();
-    return buf.toString();
+    /**
+     * This is a utility routine which loads a file from disk.
+     */
+    public static String loadFile(File f) throws IOException {
+        BufferedReader in = new BufferedReader(new FileReader(f));
+        StringBuilder buf = new StringBuilder();
+        int c;
+        while ((c = in.read()) != -1) {
+            buf.append((char) c);
+        }
+        in.close();
+        return buf.toString();
     }
 
     /**
@@ -495,7 +497,7 @@ public class ArtOfIllusion {
      * Copy a list of objects to the clipboard, so they can be pasted into
      * either the same scene or a different one.
      */
-    public static void copyToClipboard(ObjectInfo obj[], Scene scene) {
+    public static void copyToClipboard(ObjectInfo[] obj, Scene scene) {
         // First make a list of all textures used by the objects.
 
         ArrayList<Texture> textures = new ArrayList<>();
@@ -503,7 +505,7 @@ public class ArtOfIllusion {
             Texture tex = obj[i].getObject().getTexture();
             if (tex instanceof LayeredTexture) {
                 LayeredMapping map = (LayeredMapping) obj[i].getObject().getTextureMapping();
-                Texture layer[] = map.getLayers();
+                Texture[] layer = map.getLayers();
                 for (int j = 0; j < layer.length; j++) {
                     Texture dup = layer[j].duplicate();
                     dup.setID(layer[j].getID());
@@ -564,7 +566,7 @@ public class ArtOfIllusion {
         Scene scene = win.getScene();
         UndoRecord undo = new UndoRecord(win);
         win.setUndoRecord(undo);
-        int sel[] = win.getSelectedIndices();
+        int[] sel = win.getSelectedIndices();
 
         // First add any new image maps to the scene.
         for (int i = 0; i < clipboardImage.length; i++) {
@@ -590,8 +592,8 @@ public class ArtOfIllusion {
             for (j = 0; j < clipboardObject.length; j++) {
                 Texture current = clipboardObject[j].getObject().getTexture();
                 if (current != null) {
-                    ParameterValue oldParamValues[] = clipboardObject[j].getObject().getParameterValues();
-                    ParameterValue newParamValues[] = new ParameterValue[oldParamValues.length];
+                    ParameterValue[] oldParamValues = clipboardObject[j].getObject().getParameterValues();
+                    ParameterValue[] newParamValues = new ParameterValue[oldParamValues.length];
                     for (int k = 0; k < newParamValues.length; k++) {
                         newParamValues[k] = oldParamValues[k].duplicate();
                     }
@@ -601,7 +603,7 @@ public class ArtOfIllusion {
                         LayeredMapping map = (LayeredMapping) clipboardObject[j].getObject().getTextureMapping();
                         map = (LayeredMapping) map.duplicate();
                         clipboardObject[j].setTexture(new LayeredTexture(map), map);
-                        Texture layer[] = map.getLayers();
+                        Texture[] layer = map.getLayers();
                         for (int k = 0; k < layer.length; k++) {
                             if (layer[k] == clipboardTexture[i]) {
                                 map.setLayer(k, newtex);
@@ -635,7 +637,7 @@ public class ArtOfIllusion {
         }
 
         // Finally add the objects to the scene.
-        ObjectInfo obj[] = ObjectInfo.duplicateAll(clipboardObject);
+        ObjectInfo[] obj = ObjectInfo.duplicateAll(clipboardObject);
         for (int i = 0; i < obj.length; i++) {
             win.addObject(obj[i], undo);
         }
@@ -656,7 +658,8 @@ public class ArtOfIllusion {
      * Get the directory in which the user most recently accessed a file.
      * Set the directory in which the user most recently accessed a file.
      */
-    @Getter @Setter
+    @Getter
+    @Setter
     private static String currentDirectory;
 
 }

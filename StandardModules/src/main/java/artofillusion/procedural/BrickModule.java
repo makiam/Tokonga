@@ -28,7 +28,7 @@ public class BrickModule extends ProceduralModule {
     boolean valueOk, gradOk;
     double value, error, gap, offset, height, lastBlur;
     PointInfo point;
-    Vec3 gradient;
+    final Vec3 gradient;
 
     public BrickModule() {
         this(new Point());

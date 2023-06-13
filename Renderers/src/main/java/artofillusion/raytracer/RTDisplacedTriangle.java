@@ -25,13 +25,14 @@ import artofillusion.texture.*;
  */
 public class RTDisplacedTriangle extends RTObject {
 
-    RenderingTriangle tri;
-    Vec3 trueNorm;
+    final RenderingTriangle tri;
+    final Vec3 trueNorm;
     double minheight, maxheight;
     private double tol;
-    private boolean bumpMapped;
-    private BoundingBox bounds;
-    private Mat4 toLocal, fromLocal;
+    private final boolean bumpMapped;
+    private final BoundingBox bounds;
+    private final Mat4 toLocal;
+    private final Mat4 fromLocal;
     private volatile ExtraInfo extraInfo;
 
     /**
@@ -725,9 +726,9 @@ public class RTDisplacedTriangle extends RTObject {
         public RTDisplacedTriangle rtTri;
         public double t, u, v, w, mint, maxt;
         public double[] tint, uint, vint;
-        public Vec3 orig;
-        public Vec3 dir;
-        public Vec3 interp;
+        public final Vec3 orig;
+        public final Vec3 dir;
+        public final Vec3 interp;
         public Vec3[] rint;
         public short numIntersections;
         public Ray ray;

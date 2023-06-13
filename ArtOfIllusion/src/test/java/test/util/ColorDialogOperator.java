@@ -25,7 +25,7 @@ public class ColorDialogOperator extends JDialogOperator {
 
     private final JButtonOperator okButton;
     private final JButtonOperator cancelButton;
-    
+
     public ColorDialogOperator(WindowOperator owner, String title) {
         super(owner, title);
         okButton = new JButtonOperator(this, Translate.text("ok"));
@@ -37,19 +37,19 @@ public class ColorDialogOperator extends JDialogOperator {
         okButton = new JButtonOperator(this, Translate.text("ok"));
         cancelButton = new JButtonOperator(this, Translate.text("cancel"));
     }
-    
+
     public void commit() {
         okButton.clickMouse();
     }
-    
+
     public void cancel() {
         cancelButton.clickMouse();
     }
 
-    public void setColor(RGBColor rgbColor) {  
-        
-        new JSliderOperator(this, 0).scrollToValue(Float.valueOf(rgbColor.getRed()*100).intValue());
-        new JSliderOperator(this, 1).scrollToValue(Float.valueOf(rgbColor.getGreen()*100).intValue());
-        new JSliderOperator(this, 2).scrollToValue(Float.valueOf(rgbColor.getBlue()*100).intValue());
+    public void setColor(RGBColor rgbColor) {
+
+        new JSliderOperator(this, 0).scrollToValue(Float.valueOf(rgbColor.getRed() * 100).intValue());
+        new JSliderOperator(this, 1).scrollToValue(Float.valueOf(rgbColor.getGreen() * 100).intValue());
+        new JSliderOperator(this, 2).scrollToValue(Float.valueOf(rgbColor.getBlue() * 100).intValue());
     }
 }

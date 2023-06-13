@@ -12,36 +12,40 @@ package artofillusion.animation.distortion;
 
 import artofillusion.object.*;
 
-/** This interface defines an object that transforms one mesh into another one. */
+/**
+ * This interface defines an object that transforms one mesh into another one.
+ */
+public abstract class Distortion {
 
-public abstract class Distortion
-{
-  protected Distortion previous;
+    protected Distortion previous;
 
-  /** Set another distortion which should be applied before this one.
-      This allows Distortions to be chained. */
-  
-  public void setPreviousDistortion(Distortion previous)
-  {
-    this.previous = previous;
-  }
+    /**
+     * Set another distortion which should be applied before this one.
+     * This allows Distortions to be chained.
+     */
+    public void setPreviousDistortion(Distortion previous) {
+        this.previous = previous;
+    }
 
-  /** Get the previous distortion that should be applied before this one.  This may be null. */
+    /**
+     * Get the previous distortion that should be applied before this one. This may be null.
+     */
+    public Distortion getPreviousDistortion() {
+        return previous;
+    }
 
-  public Distortion getPreviousDistortion()
-  {
-    return previous;
-  }
+    /**
+     * Determine whether this distortion is identical to another one.
+     */
+    public abstract boolean isIdenticalTo(Distortion d);
 
-  /** Determine whether this distortion is identical to another one. */
-  
-  public abstract boolean isIdenticalTo(Distortion d);
-  
-  /** Create a duplicate of this object. */
-  
-  public abstract Distortion duplicate();
-  
-  /** Apply the Distortion, and return a transformed mesh. */
-  
-  public abstract Mesh transform(Mesh obj);
+    /**
+     * Create a duplicate of this object.
+     */
+    public abstract Distortion duplicate();
+
+    /**
+     * Apply the Distortion, and return a transformed mesh.
+     */
+    public abstract Mesh transform(Mesh obj);
 }

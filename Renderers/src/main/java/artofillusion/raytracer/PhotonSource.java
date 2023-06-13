@@ -20,7 +20,6 @@ public interface PhotonSource {
     /**
      * Get the total intensity of light which this object sends into the scene.
      */
-
     public double getTotalIntensity();
 
     /**

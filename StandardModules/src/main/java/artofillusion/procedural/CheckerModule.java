@@ -22,7 +22,7 @@ public class CheckerModule extends ProceduralModule {
     boolean valueOk, gradOk;
     double value, error, lastBlur;
     PointInfo point;
-    Vec3 gradient;
+    final Vec3 gradient;
 
     public CheckerModule() {
         this(new Point());

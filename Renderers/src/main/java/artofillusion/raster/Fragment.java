@@ -25,7 +25,6 @@ public interface Fragment {
      *
      * @param color the color is stored in this
      */
-
     void getAdditiveColor(RGBColor color);
 
     /**

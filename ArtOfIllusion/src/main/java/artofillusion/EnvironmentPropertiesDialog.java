@@ -43,17 +43,17 @@ public class EnvironmentPropertiesDialog {
     private final LayoutWindow owner;
     private final Scene scene;
 
-    private final RGBColor ambColor, oldAmbColor;
-    private final RGBColor envColor, oldEnvColor;
-    private final RGBColor fogColor, oldFogColor;
+    private final RGBColor oldAmbColor;
+    private final RGBColor oldEnvColor;
+    private final RGBColor oldFogColor;
 
     private final ColorSampleWidget ambPatch, envPatch, fogPatch;
 
     private final OverlayContainer envPanel = new OverlayContainer();
-    private final BComboBox envChoice = new BComboBox(new String[] {
-      Translate.text("solidColor"),
-      Translate.text("textureDiffuse"),
-      Translate.text("textureEmissive")
+    private final BComboBox envChoice = new BComboBox(new String[]{
+        Translate.text("solidColor"),
+        Translate.text("textureDiffuse"),
+        Translate.text("textureEmissive")
     });
 
     private final BLabel envLabel = new BLabel();
@@ -80,14 +80,13 @@ public class EnvironmentPropertiesDialog {
         this.oldEnvColor = scene.getEnvironmentColor().duplicate();
         this.oldFogColor = scene.getFogColor().duplicate();
 
-        this.ambColor = scene.getAmbientColor().duplicate();
-        this.envColor = scene.getEnvironmentColor().duplicate();
-        this.fogColor = scene.getFogColor().duplicate();
+        RGBColor ambColor = scene.getAmbientColor().duplicate();
+        RGBColor envColor = scene.getEnvironmentColor().duplicate();
+        RGBColor fogColor = scene.getFogColor().duplicate();
 
         ambPatch = new ColorSampleWidget(ambColor, Translate.text("ambientColor"));
         envPatch = new ColorSampleWidget(envColor, Translate.text("environmentColor"));
         fogPatch = new ColorSampleWidget(fogColor, Translate.text("fogColor"));
-
 
         fog = scene.getFogState();
         fogBox = new BCheckBox("Environment Fog", scene.getFogState());
@@ -100,7 +99,6 @@ public class EnvironmentPropertiesDialog {
 
         final BButton envButton = new BButton(Translate.text("Choose") + ":");
         envButton.getComponent().addActionListener(this::onInvokeTextureDialog);
-
 
         RowContainer row = new RowContainer();
         row.add(envButton);
@@ -118,8 +116,8 @@ public class EnvironmentPropertiesDialog {
         values = scene.getEnvironmentParameterValues();
 
         new ComponentsDialog(owner, Translate.text("environmentTitle"),
-            new Widget [] {ambPatch, envChoice, envPanel, fogBox, fogPatch, fogField},
-            new String [] {Translate.text("ambientColor"), Translate.text("environment"), "", "", Translate.text("fogColor"), Translate.text("fogDistance")},
+                new Widget[]{ambPatch, envChoice, envPanel, fogBox, fogPatch, fogField},
+                new String[]{Translate.text("ambientColor"), Translate.text("environment"), "", "", Translate.text("fogColor"), Translate.text("fogDistance")},
                 this::apply, this::cancel);
     }
 
@@ -137,19 +135,35 @@ public class EnvironmentPropertiesDialog {
     }
 
     private boolean isUnchanged() {
-        if(envChoice.getSelectedIndex() != scene.getEnvironmentMode()) return false;
-        if(!ambPatch.getColor().equals(scene.getAmbientColor())) return false;
-        if(!fogPatch.getColor().equals(scene.getFogColor())) return false;
-        if(!envPatch.getColor().equals(scene.getEnvironmentColor())) return false;
-        if(fogBox.getState() != scene.getFogState()) return false;
-        if(fogField.getValue() != scene.getFogDistance()) return false;
-        if(!envSphere.getTexture().equals(scene.getEnvironmentTexture())) return false;
-        if(!envSphere.getTextureMapping().equals(scene.getEnvironmentMapping())) return false;
+        if (envChoice.getSelectedIndex() != scene.getEnvironmentMode()) {
+            return false;
+        }
+        if (!ambPatch.getColor().equals(scene.getAmbientColor())) {
+            return false;
+        }
+        if (!fogPatch.getColor().equals(scene.getFogColor())) {
+            return false;
+        }
+        if (!envPatch.getColor().equals(scene.getEnvironmentColor())) {
+            return false;
+        }
+        if (fogBox.getState() != scene.getFogState()) {
+            return false;
+        }
+        if (fogField.getValue() != scene.getFogDistance()) {
+            return false;
+        }
+        if (!envSphere.getTexture().equals(scene.getEnvironmentTexture())) {
+            return false;
+        }
+        if (!envSphere.getTextureMapping().equals(scene.getEnvironmentMapping())) {
+            return false;
+        }
         return Arrays.equals(envSphere.getParameterValues(), scene.getEnvironmentParameterValues());
     }
 
     private void apply() {
-        if(isUnchanged()) {
+        if (isUnchanged()) {
             log.info("Settings remains unchanged...");
             return;
         }
@@ -159,7 +173,6 @@ public class EnvironmentPropertiesDialog {
     }
 
     private void commit() {
-
 
         scene.setAmbientColor(ambPatch.getColor());
         scene.setFogColor(fogPatch.getColor());
@@ -185,14 +198,14 @@ public class EnvironmentPropertiesDialog {
     }
 
     private void onInvokeTextureDialog(ActionEvent event) {
-        ObjectTextureDialog otd = new ObjectTextureDialog(owner, new ObjectInfo [] {envInfo}, true, false);
+        ObjectTextureDialog otd = new ObjectTextureDialog(owner, new ObjectInfo[]{envInfo}, true, false);
         otd.setCallback(this::textureSelectCallback);
     }
 
     static class UndoableEnvironmentEdit implements UndoableEdit {
 
-        private Runnable redo;
-        private Runnable undo;
+        private final Runnable redo;
+        private final Runnable undo;
 
         public UndoableEnvironmentEdit(Runnable redo, Runnable undo) {
             this.redo = redo;
@@ -213,7 +226,6 @@ public class EnvironmentPropertiesDialog {
         public String getName() {
             return Translate.text("Change Environment Properties");
         }
-
 
     }
 }

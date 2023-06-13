@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class AdvancedEditingTool extends EditingTool {
 
-    protected MeshEditController controller;
+    protected final MeshEditController controller;
 
     public AdvancedEditingTool(EditingWindow fr, MeshEditController controller) {
         super(fr);

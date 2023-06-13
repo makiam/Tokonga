@@ -34,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class FindSimilarFacesDialog extends BDialog {
 
-    private boolean[] orSelection;
+    private final boolean[] orSelection;
     private BorderContainer borderContainer1;
     private BCheckBox normalCB;
     private BCheckBox looseShapeCB;
@@ -47,8 +47,8 @@ class FindSimilarFacesDialog extends BDialog {
     private PMValueField normalCBVF;
     private PMValueField looseShapeCBVF;
     private PMValueField strictShapeCBVF;
-    private PolyMeshEditorWindow owner;
-    private PolyMesh mesh;
+    private final PolyMeshEditorWindow owner;
+    private final PolyMesh mesh;
     private final PolyMeshEditorWindow outer;
 
     public FindSimilarFacesDialog(PolyMeshEditorWindow owner, final PolyMeshEditorWindow outer) {

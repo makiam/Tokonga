@@ -112,11 +112,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWindow, PopupMenuManager, ValueWidgetOwner {
 
-    private ToolPalette modes;
+    private final ToolPalette modes;
 
-    private Runnable onClose;
-
-    private BMenu editMenu;
+    private final Runnable onClose;
 
     private BMenuItem[] editMenuItem;
 
@@ -142,7 +140,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     private MenuWidget[] edgePopupMenuItem;
 
-    private BMenu faceMenu = Translate.menu("polymesh:face");
+    private final BMenu faceMenu = Translate.menu("polymesh:face");
 
     private final BPopupMenu facePopupMenu = new BPopupMenu();
 
@@ -150,71 +148,68 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     private BMenuItem faceFindSimilarPopupMenuItem;
 
-    private BMenu skeletonMenu;
-
     private MenuWidget[] skeletonMenuItem;
 
     private BMenuItem pasteItem;
 
-    private RowContainer levelContainer;
+    private final RowContainer levelContainer;
 
-    private RowContainer vertexContainer;
+    private final RowContainer vertexContainer;
 
-    private RowContainer edgeContainer;
+    private final RowContainer edgeContainer;
 
-    private RowContainer faceContainer;
+    private final RowContainer faceContainer;
 
-    private OverlayContainer overlayVertexEdgeFace;
+    private final OverlayContainer overlayVertexEdgeFace;
 
-    private BSpinner tensionSpin, ispin;
+    private final BSpinner tensionSpin;
+    private final BSpinner ispin;
 
-    private ValueSlider edgeSlider;
+    private final ValueSlider edgeSlider;
 
-    private BCheckBox cornerCB;
+    private final BCheckBox cornerCB;
 
-    private EditingTool reshapeMeshTool = new MeshStandardTool(this, this);
+    private final EditingTool reshapeMeshTool = new MeshStandardTool(this, this);
 
     public final static int RESHAPE_TOOL = 0;
 
-    private EditingTool altTool;
-
-    private EditingTool skewMeshTool = new SkewMeshTool(this, this);
+    private final EditingTool skewMeshTool = new SkewMeshTool(this, this);
 
     public final static int SKEW_TOOL = 1;
 
-    private EditingTool taperMeshTool = new TaperMeshTool(this, this);
+    private final EditingTool taperMeshTool = new TaperMeshTool(this, this);
 
     public final static int TAPER_TOOL = 2;
 
-    private EditingTool bevelTool = new AdvancedBevelExtrudeTool(this, this);
+    private final EditingTool bevelTool = new AdvancedBevelExtrudeTool(this, this);
 
     public final static int BEVEL_TOOL = 3;
 
-    private EditingTool thickenMeshTool = new ThickenMeshTool(this, this);
+    private final EditingTool thickenMeshTool = new ThickenMeshTool(this, this);
 
     public final static int THICKEN_TOOL = 4;
 
-    private EditingTool extrudeTool = new AdvancedExtrudeTool(this, this);
+    private final EditingTool extrudeTool = new AdvancedExtrudeTool(this, this);
 
     public final static int EXTRUDE_TOOL = 5;
 
-    private EditingTool knifeTool = new PMKnifeTool(this, this);
+    private final EditingTool knifeTool = new PMKnifeTool(this, this);
 
     public final static int KNIFE_TOOL = 6;
 
-    private EditingTool createFaceTool = new PMCreateFaceTool(this, this);
+    private final EditingTool createFaceTool = new PMCreateFaceTool(this, this);
 
     public final static int CREATE_FACE_TOOL = 7;
 
-    private EditingTool extrudeCurveTool = new PMExtrudeCurveTool(this, this);
+    private final EditingTool extrudeCurveTool = new PMExtrudeCurveTool(this, this);
 
     public final static int EXTRUDE_CURVE_TOOL = 8;
 
-    private EditingTool sewTool = new PMSewTool(this, this);
+    private final EditingTool sewTool = new PMSewTool(this, this);
 
     public final static int SEW_TOOL = 9;
 
-    private EditingTool skeletonTool = new SkeletonTool(this, true);
+    private final EditingTool skeletonTool = new SkeletonTool(this, true);
 
     public final static int SKELETON_TOOL = 10;
 
@@ -230,15 +225,15 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     private short moveDirection;
 
-    private PolyMeshValueWidget valueWidget;
+    private final PolyMeshValueWidget valueWidget;
 
-    private BDialog valueWidgetDialog;
+    private final BDialog valueWidgetDialog;
 
     private final BMenuItem extrudeItem = Translate.menuItem("polymesh:extrudeNormal", this, "doExtrudeNormal");
     private final BMenuItem extrudeEdgeItem = Translate.menuItem("polymesh:extrudeNormal", this, "doExtrudeEdgeNormal");
 
-    private BMenuItem extrudeRegionItem = Translate.menuItem("polymesh:extrudeRegionNormal", this, "doExtrudeRegionNormal");
-    private BMenuItem extrudeEdgeRegionItem = Translate.menuItem("polymesh:extrudeRegionNormal", this, "doExtrudeEdgeRegionNormal");
+    private final BMenuItem extrudeRegionItem = Translate.menuItem("polymesh:extrudeRegionNormal", this, "doExtrudeRegionNormal");
+    private final BMenuItem extrudeEdgeRegionItem = Translate.menuItem("polymesh:extrudeRegionNormal", this, "doExtrudeEdgeRegionNormal");
 
     private Vec3 direction;
 
@@ -295,7 +290,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     private RenderingMesh lastPreview;
 
-    private GenericTool pointTool, edgeTool, faceTool;
+    private final GenericTool pointTool;
+    private final GenericTool edgeTool;
+    private final GenericTool faceTool;
 
     private short mirror;
 
@@ -309,11 +306,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     private static int looseSelectValue = 20;
 
-    private BCheckBox frontSelectCB;
+    private final BCheckBox frontSelectCB;
 
-    private BCheckBox looseSelectCB;
+    private final BCheckBox looseSelectCB;
 
-    private BSpinner looseSelectSpinner;
+    private final BSpinner looseSelectSpinner;
 
     private boolean unseenValueWidgetDialog;
 
@@ -438,6 +435,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         tools.addTool(skeletonTool);
         EditingTool metaTool;
         tools.addTool(metaTool = new MoveViewTool(this));
+        EditingTool altTool;
         tools.addTool(altTool = new RotateViewTool(this));
         tools.selectTool(defaultTool);
         loadPreferences();
@@ -493,7 +491,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      *
      */
     private void createEditMenu() {
-        editMenu = Translate.menu("edit");
+        BMenu editMenu = Translate.menu("edit");
         menubar.add(editMenu);
         editMenuItem = new BMenuItem[12];
         editMenu.add(undoItem = Translate.menuItem("undo", this, "undoCommand"));
@@ -866,7 +864,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      */
     void createSkeletonMenu(PolyMesh obj) {
 
-        skeletonMenu = Translate.menu("skeleton");
+        BMenu skeletonMenu = Translate.menu("skeleton");
         menubar.add(skeletonMenu);
         skeletonMenuItem = new BMenuItem[6];
         skeletonMenu.add(skeletonMenuItem[0] = Translate.menuItem("editBone", this, "editJointCommand"));

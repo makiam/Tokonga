@@ -19,8 +19,8 @@ import artofillusion.util.*;
  */
 public class CompoundPhotonSource implements PhotonSource {
 
-    private PhotonSource[] source;
-    private double[] sourceIntensity;
+    private final PhotonSource[] source;
+    private final double[] sourceIntensity;
     private double totalSourceIntensity;
 
     public CompoundPhotonSource(PhotonSource[] source) {

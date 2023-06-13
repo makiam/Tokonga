@@ -21,43 +21,40 @@ import org.junit.Test;
  * @author maksim.khramov
  */
 public class Vec3Test {
+
     @Test
-    public  void testVec3Constructor0()
-    {
+    public void testVec3Constructor0() {
         Vec3 test = new Vec3();
         Assert.assertEquals(0d, test.x, 0);
         Assert.assertEquals(0d, test.y, 0);
         Assert.assertEquals(0d, test.z, 0);
     }
-    
+
     @Test
-    public  void testVec3Constructor1()
-    {
+    public void testVec3Constructor1() {
         Vec3 test = new Vec3(1.0, 2.0, 3.0);
         Assert.assertEquals(1.0, test.x, 0);
         Assert.assertEquals(2.0, test.y, 0);
         Assert.assertEquals(3.0, test.z, 0);
     }
-    
+
     @Test
-    public  void testVec3Constructor2()
-    {
+    public void testVec3Constructor2() {
         Vec3 source = new Vec3(1.0, 2.0, 3.0);
         Vec3 test = new Vec3(source);
         Assert.assertEquals(1.0, test.x, 0);
         Assert.assertEquals(2.0, test.y, 0);
         Assert.assertEquals(3.0, test.z, 0);
     }
-    
+
     @Test
-    public void testVec3Constructor3() throws IOException
-    {
-        
+    public void testVec3Constructor3() throws IOException {
+
         ByteBuffer wrap = ByteBuffer.allocate(24);
         wrap.putDouble(1.0);
         wrap.putDouble(2.0);
         wrap.putDouble(3.0);
-        
+
         Vec3 test = new Vec3(StreamUtil.stream(wrap));
         Assert.assertEquals(1.0, test.x, 0);
         Assert.assertEquals(2.0, test.y, 0);
@@ -65,35 +62,31 @@ public class Vec3Test {
     }
 
     @Test
-    public void testCreateXVect2()
-    {
+    public void testCreateXVect2() {
         Vec3 test = Vec3.vx();
         Assert.assertEquals(1.0, test.x, 0);
         Assert.assertEquals(0.0, test.y, 0);
         Assert.assertEquals(0.0, test.z, 0);
     }
-    
+
     @Test
-    public void testCreateYVect2()
-    {
+    public void testCreateYVect2() {
         Vec3 test = Vec3.vy();
         Assert.assertEquals(0.0, test.x, 0);
         Assert.assertEquals(1.0, test.y, 0);
         Assert.assertEquals(0.0, test.z, 0);
     }
-    
+
     @Test
-    public void testCreateZVect2()
-    {
+    public void testCreateZVect2() {
         Vec3 test = Vec3.vz();
         Assert.assertEquals(0.0, test.x, 0);
         Assert.assertEquals(0.0, test.y, 0);
         Assert.assertEquals(1.0, test.z, 0);
     }
-    
+
     @Test
-    public void testVector3set()
-    {
+    public void testVector3set() {
         Vec3 test = new Vec3();
         test.set(1.0, 2.0, 3.0);
         Assert.assertEquals(1.0, test.x, 0);

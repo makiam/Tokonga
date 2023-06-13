@@ -23,7 +23,7 @@ public class BiasModule extends ProceduralModule {
 
     boolean valueOk, errorOk, gradOk;
     double value, error, valueIn, errorIn, power, lastBlur;
-    Vec3 gradient;
+    final Vec3 gradient;
 
     static final double scale = 1.0 / Math.log(0.5);
 

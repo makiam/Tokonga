@@ -15,22 +15,20 @@ import java.awt.*;
 
 /* This is a Widget which acts as a spacer.  It displays a blank background, and copies
    its width and height from specified other Widgets. */
+public class Spacer extends CustomWidget {
 
-public class Spacer extends CustomWidget
-{
-  private Widget vertical, horizontal;
+    private final Widget vertical;
+    private final Widget horizontal;
 
-  public Spacer(Widget copyHoriz, Widget copyVert)
-  {
-    horizontal = copyHoriz;
-    vertical = copyVert;
-  }
+    public Spacer(Widget copyHoriz, Widget copyVert) {
+        horizontal = copyHoriz;
+        vertical = copyVert;
+    }
 
-  @Override
-  public Dimension getPreferredSize()
-  {
-    Dimension v = vertical.getPreferredSize(), h = horizontal.getPreferredSize();
+    @Override
+    public Dimension getPreferredSize() {
+        Dimension v = vertical.getPreferredSize(), h = horizontal.getPreferredSize();
 
-    return new Dimension(h.width, v.height);
-  }
+        return new Dimension(h.width, v.height);
+    }
 }

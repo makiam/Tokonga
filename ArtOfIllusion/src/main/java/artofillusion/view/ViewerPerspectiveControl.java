@@ -20,50 +20,43 @@ import artofillusion.ui.*;
 /**
  * This is a ViewerControl for setting whether a view uses perspective mode.
  */
+public class ViewerPerspectiveControl implements ViewerControl {
 
-public class ViewerPerspectiveControl implements ViewerControl
-{
-  @Override
-  public Widget createWidget(final ViewerCanvas view)
-  {
-    final BComboBox perspectiveChoice = new BComboBox(new String [] {
-      Translate.text("Perspective"),
-      Translate.text("Parallel")
-    });
-    perspectiveChoice.setSelectedIndex(1);
-    view.addEventLink(ViewChangedEvent.class, new Object() {
-      void processEvent()
-      {
-        if (view.getBoundCamera() != null && view.getBoundCamera().getObject() instanceof SceneCamera)
-        {
-          perspectiveChoice.setEnabled(false);
-          view.setPerspective(((SceneCamera)view.getBoundCamera().getObject()).isPerspective());
-          perspectiveChoice.setSelectedIndex(view.isPerspectiveSwitch() ? 0 : 1);
-        }
-        else if (view.getRenderMode() == ViewerCanvas.RENDER_RENDERED)
-          perspectiveChoice.setEnabled(false);
-        else
-        {
-          perspectiveChoice.setEnabled(view.perspectiveControlEnabled);
-          perspectiveChoice.setSelectedIndex(view.isPerspectiveSwitch() ? 0 : 1);
-        }
-      }
-    });
+    @Override
+    public Widget createWidget(final ViewerCanvas view) {
+        final BComboBox perspectiveChoice = new BComboBox(new String[]{
+            Translate.text("Perspective"),
+            Translate.text("Parallel")
+        });
+        perspectiveChoice.setSelectedIndex(1);
+        view.addEventLink(ViewChangedEvent.class, new Object() {
+            void processEvent() {
+                if (view.getBoundCamera() != null && view.getBoundCamera().getObject() instanceof SceneCamera) {
+                    perspectiveChoice.setEnabled(false);
+                    view.setPerspective(((SceneCamera) view.getBoundCamera().getObject()).isPerspective());
+                    perspectiveChoice.setSelectedIndex(view.isPerspectiveSwitch() ? 0 : 1);
+                } else if (view.getRenderMode() == ViewerCanvas.RENDER_RENDERED) {
+                    perspectiveChoice.setEnabled(false);
+                } else {
+                    perspectiveChoice.setEnabled(view.perspectiveControlEnabled);
+                    perspectiveChoice.setSelectedIndex(view.isPerspectiveSwitch() ? 0 : 1);
+                }
+            }
+        });
 
-    perspectiveChoice.addEventLink(ValueChangedEvent.class, new Object() {
-      void processEvent()
-      {
-        boolean perspective = (perspectiveChoice.getSelectedIndex() == 0);
-        if (view.isPerspective() != perspective)
-          view.setPerspective(perspective);
-      }
-    });
-    return perspectiveChoice;
-  }
+        perspectiveChoice.addEventLink(ValueChangedEvent.class, new Object() {
+            void processEvent() {
+                boolean perspective = (perspectiveChoice.getSelectedIndex() == 0);
+                if (view.isPerspective() != perspective) {
+                    view.setPerspective(perspective);
+                }
+            }
+        });
+        return perspectiveChoice;
+    }
 
-  @Override
-  public String getName()
-  {
-    return Translate.text("Perspective");
-  }
+    @Override
+    public String getName() {
+        return Translate.text("Perspective");
+    }
 }

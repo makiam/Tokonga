@@ -49,7 +49,6 @@ public class AbsModule extends ProceduralModule {
     }
 
     /* The error is unchanged by this module. */
-
     @Override
     public double getValueError(int which, double blur) {
         return (linkFrom[0] == null) ? 0.0 : linkFrom[0].getValueError(linkFromIndex[0], blur);

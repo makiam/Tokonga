@@ -24,16 +24,21 @@ import java.util.*;
  */
 public class OctreeNode {
 
-    public OctreeNode parent;
+    public final OctreeNode parent;
     public OctreeNode[] child;
     public RTObject[] obj;
-    public float minx, maxx, miny, maxy, minz, maxz;
+    public final float minx;
+    public final float maxx;
+    public final float miny;
+    public final float maxy;
+    public final float minz;
+    public final float maxz;
     public float midx, midy, midz;
 
     private static final int CELLS = 64;
     private static final RTObject[] EMPTY_OBJECT_LIST = new RTObject[0];
-    private static int[] leftCount = new int[CELLS + 2];
-    private static int[] rightCount = new int[CELLS + 2];
+    private static final int[] leftCount = new int[CELLS + 2];
+    private static final int[] rightCount = new int[CELLS + 2];
 
     /**
      * The constructor takes a bounding box, an array of objects, an array of bounding boxes

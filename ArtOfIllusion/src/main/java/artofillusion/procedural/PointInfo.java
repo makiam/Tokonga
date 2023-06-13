@@ -1,7 +1,7 @@
 /* This records the information about a point in space for which a texture or material is
    being evaluated. */
 
-/* Copyright (C) 2000 by Peter Eastman
+ /* Copyright (C) 2000 by Peter Eastman
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -10,15 +10,20 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.procedural;
 
-public class PointInfo
-{
-  public double x, y, z, xsize, ysize, zsize, viewangle, t, param[];
-  
-  public PointInfo()
-  {
-  }
-}
+public class PointInfo {
 
+    public double x;
+    public double y;
+    public double z;
+    public double xsize;
+    public double ysize;
+    public double zsize;
+    public double viewangle;
+    public double t;
+    public double[] param;
+
+    public PointInfo() {
+    }
+}

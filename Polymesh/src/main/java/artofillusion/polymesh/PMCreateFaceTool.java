@@ -34,9 +34,9 @@ import java.util.Vector;
 @EditingTool.ActivatedToolText("polymesh:createFaceTool.helpText")
 public class PMCreateFaceTool extends EditingTool {
 
-    private List<Vec3> clickPoints;
+    private final List<Vec3> clickPoints;
     private UndoRecord undo;
-    private MeshEditController controller;
+    private final MeshEditController controller;
     private PolyMesh originalMesh;
     private boolean dragging;
     private Point dragPoint;

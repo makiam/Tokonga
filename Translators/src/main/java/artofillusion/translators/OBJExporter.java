@@ -32,7 +32,6 @@ public class OBJExporter {
     /**
      * Display a dialog which allows the user to export a scene to an OBJ file.
      */
-
     public static void exportFile(BFrame parent, Scene theScene) {
         // Display a dialog box with options on how to export the scene.
 

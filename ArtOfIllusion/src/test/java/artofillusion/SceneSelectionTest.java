@@ -10,7 +10,6 @@
 
 package artofillusion;
 
-
 import artofillusion.math.CoordinateSystem;
 import artofillusion.object.NullObject;
 import artofillusion.object.ObjectInfo;
@@ -22,117 +21,116 @@ import org.junit.Test;
  * @author MaksK
  */
 public class SceneSelectionTest {
-    
-    
+
     @Test
     public void testSceneGetEmptySelection() {
         Scene scene = new Scene();
         int[] selection = scene.getSelection();
         Assert.assertNotNull(selection);
         Assert.assertEquals(0, selection.length);
-        
+
     }
-    
+
     @Test
     public void testSceneGetSingeSelectionOne() {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
-        scene.addObject(one, (UndoRecord)null);
-        scene.addObject(two, (UndoRecord)null);
+        scene.addObject(one, (UndoRecord) null);
+        scene.addObject(two, (UndoRecord) null);
         scene.setSelection(0);
-        
+
         int[] selection = scene.getSelection();
         Assert.assertNotNull(selection);
         Assert.assertEquals(1, selection.length);
-        
+
     }
-    
+
     @Test
     public void testSceneGetSingeSelectionOneWithArray() {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
-        scene.addObject(one, (UndoRecord)null);
-        scene.addObject(two, (UndoRecord)null);
-        scene.setSelection(new int[] {0});
-        
+        scene.addObject(one, (UndoRecord) null);
+        scene.addObject(two, (UndoRecord) null);
+        scene.setSelection(new int[]{0});
+
         int[] selection = scene.getSelection();
         Assert.assertNotNull(selection);
         Assert.assertEquals(1, selection.length);
-        
+
     }
-    
+
     @Test
     public void testSceneGetSingeSelectionTwo() {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
-        scene.addObject(one, (UndoRecord)null);
-        scene.addObject(two, (UndoRecord)null);
+        scene.addObject(one, (UndoRecord) null);
+        scene.addObject(two, (UndoRecord) null);
         scene.setSelection(1);
-        
+
         int[] selection = scene.getSelection();
         Assert.assertNotNull(selection);
         Assert.assertEquals(1, selection.length);
-        
+
     }
-    
+
     @Test
     public void testSceneGetMultipleSelection() {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
-        scene.addObject(one, (UndoRecord)null);
-        scene.addObject(two, (UndoRecord)null);
+        scene.addObject(one, (UndoRecord) null);
+        scene.addObject(two, (UndoRecord) null);
         scene.setSelection(1);
         scene.addToSelection(0);
-        
+
         int[] selection = scene.getSelection();
         Assert.assertNotNull(selection);
         Assert.assertEquals(2, selection.length);
-        
+
     }
-    
+
     @Test
     public void testSceneGetMultipleSelectionWithSet() {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
-        scene.addObject(one, (UndoRecord)null);
-        scene.addObject(two, (UndoRecord)null);
-        scene.setSelection(new int[] {0,1});
-        
+        scene.addObject(one, (UndoRecord) null);
+        scene.addObject(two, (UndoRecord) null);
+        scene.setSelection(new int[]{0, 1});
+
         int[] selection = scene.getSelection();
         Assert.assertNotNull(selection);
         Assert.assertEquals(2, selection.length);
-        
+
     }
-    
+
     @Test
     public void testSceneAddToSelectionAndCheckFlag() {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
-        scene.addObject(one, (UndoRecord)null);
-        scene.addObject(two, (UndoRecord)null);
-        scene.setSelection(new int[] {0,1});
-        
+        scene.addObject(one, (UndoRecord) null);
+        scene.addObject(two, (UndoRecord) null);
+        scene.setSelection(new int[]{0, 1});
+
         scene.getObjects().forEach(item -> {
             Assert.assertTrue(item.isSelected());
         });
-        
+
     }
-    
+
     @Test
     public void testSceneAddToSelectionAndClearAndCheckFlag() {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
-        scene.addObject(one, (UndoRecord)null);
-        scene.addObject(two, (UndoRecord)null);
-        scene.setSelection(new int[] {0,1});
-        
+        scene.addObject(one, (UndoRecord) null);
+        scene.addObject(two, (UndoRecord) null);
+        scene.setSelection(new int[]{0, 1});
+
         scene.getObjects().forEach(item -> {
             Assert.assertTrue(item.isSelected());
         });
@@ -141,36 +139,36 @@ public class SceneSelectionTest {
             Assert.assertFalse(item.isSelected());
         });
     }
-    
+
     @Test
     public void testSceneGetSelectionWithChild() {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
-        
+
         one.addChild(two, 0);
-        scene.addObject(one, (UndoRecord)null);
-        scene.addObject(two, (UndoRecord)null);
-        
+        scene.addObject(one, (UndoRecord) null);
+        scene.addObject(two, (UndoRecord) null);
+
         scene.setSelection(0);
-                
+
         int[] selection = scene.getSelectionWithChildren();
         Assert.assertNotNull(selection);
         Assert.assertEquals(2, selection.length);
     }
-    
+
     @Test
     public void testSceneGetSelectionWithChildOther() {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
-        
+
         one.addChild(two, 0);
-        scene.addObject(one, (UndoRecord)null);
-        scene.addObject(two, (UndoRecord)null);
-        
-        scene.setSelection(new int[] {0});
-                
+        scene.addObject(one, (UndoRecord) null);
+        scene.addObject(two, (UndoRecord) null);
+
+        scene.setSelection(new int[]{0});
+
         int[] selection = scene.getSelectionWithChildren();
         Assert.assertNotNull(selection);
         Assert.assertEquals(2, selection.length);

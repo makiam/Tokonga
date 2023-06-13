@@ -20,12 +20,12 @@ import artofillusion.util.*;
  */
 public class EnvironmentPhotonSource implements PhotonSource {
 
-    private Vec3 center;
-    private RGBColor color;
+    private final Vec3 center;
+    private final RGBColor color;
     private TextureMapping envMapping;
-    private int envMode;
+    private final int envMode;
     private float lightIntensity;
-    private double radius;
+    private final double radius;
 
     /**
      * Create an EnvironmentPhotonSource.

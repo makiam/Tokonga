@@ -13,121 +13,125 @@ package artofillusion.procedural;
 
 import java.awt.*;
 
-/** This is the graphical representation of an input or output port on a module. */
+/**
+ * This is the graphical representation of an input or output port on a module.
+ */
+public class IOPort {
 
-public class IOPort
-{
-  int x, y, valueType, type, location;
-  String description[];
-  Rectangle bounds;
-  Module module;
-  
-  public static final int INPUT = 0;
-  public static final int OUTPUT = 1;
-  
-  public static final int NUMBER = 0;
-  public static final int COLOR = 1;
-  
-  public static final int TOP = 0;
-  public static final int BOTTOM = 1;
-  public static final int LEFT = 2;
-  public static final int RIGHT = 3;
-  public static final int SIZE = 5;
-  
-  public IOPort(int valueType, int type, int location, String... description)
-  {
-    this.valueType = valueType;
-    this.type = type;
-    this.location = location;
-    this.description = description;
-  }
-  
-  /** Get the port's screen position. */
+    int x;
+    int y;
+    final int valueType;
+    final int type;
+    final int location;
+    String[] description;
+    Rectangle bounds;
+    Module module;
 
-  public Point getPosition()
-  {
-    return new Point(x, y);
-  }
+    public static final int INPUT = 0;
+    public static final int OUTPUT = 1;
 
-  /** Set the port's screen position. */
-  
-  public void setPosition(int x, int y)
-  {
-    this.x = x;
-    this.y = y;
-    if (location == TOP)
-      bounds = new Rectangle(x-SIZE, y-1, 2*SIZE, SIZE+2);
-    else if (location == BOTTOM)
-      bounds = new Rectangle(x-SIZE, y-SIZE-1, 2*SIZE, SIZE+2);
-    if (location == LEFT)
-      bounds = new Rectangle(x-1, y-SIZE, SIZE+2, 2*SIZE);
-    else if (location == RIGHT)
-      bounds = new Rectangle(x-SIZE-1, y-SIZE, SIZE+2, 2*SIZE);
-  }
-  
-  /** Get the type of value for this port. */
-  
-  public int getValueType()
-  {
-    return valueType;
-  }
-  
-  /** Get the type of port this is (input or output). */
-  
-  public int getType()
-  {
-    return type;
-  }
-  
-  /** Get the location of this port (top, bottom, left, or right). */
-  
-  public int getLocation()
-  {
-    return location;
-  }
-  
-  /** Get the module this port belongs to. */
-  
-  public Module getModule()
-  {
-    return module;
-  }
-  
-  /** Set the module this port belongs to. */
-  
-  public void setModule(Module mod)
-  {
-    module = mod;
-  }
+    public static final int NUMBER = 0;
+    public static final int COLOR = 1;
 
-  /** Get the index of this port in its Module's list of input or output ports. */
+    public static final int TOP = 0;
+    public static final int BOTTOM = 1;
+    public static final int LEFT = 2;
+    public static final int RIGHT = 3;
+    public static final int SIZE = 5;
 
-  public int getIndex()
-  {
-    return (type == INPUT) ? module.getInputIndex(this) : module.getOutputIndex(this);
-  }
+    public IOPort(int valueType, int type, int location, String... description) {
+        this.valueType = valueType;
+        this.type = type;
+        this.location = location;
+        this.description = description;
+    }
 
-  /** Determine whether a point on the screen is inside this port. */
-  
-  public boolean contains(Point p)
-  {
-    return bounds.contains(p);
-  }
-  
-  /** Get the description of this port. */
-  
-  public String[] getDescription()
-  {
-    return description;
-  }
-  
-  /** Set the description of this port. */
-  
-  public void setDescription(String... desc)
-  {
-    description = desc;
-  }
-  
-  
+    /**
+     * Get the port's screen position.
+     */
+    public Point getPosition() {
+        return new Point(x, y);
+    }
+
+    /**
+     * Set the port's screen position.
+     */
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+        if (location == TOP) {
+            bounds = new Rectangle(x - SIZE, y - 1, 2 * SIZE, SIZE + 2);
+        } else if (location == BOTTOM) {
+            bounds = new Rectangle(x - SIZE, y - SIZE - 1, 2 * SIZE, SIZE + 2);
+        }
+        if (location == LEFT) {
+            bounds = new Rectangle(x - 1, y - SIZE, SIZE + 2, 2 * SIZE);
+        } else if (location == RIGHT) {
+            bounds = new Rectangle(x - SIZE - 1, y - SIZE, SIZE + 2, 2 * SIZE);
+        }
+    }
+
+    /**
+     * Get the type of value for this port.
+     */
+    public int getValueType() {
+        return valueType;
+    }
+
+    /**
+     * Get the type of port this is (input or output).
+     */
+    public int getType() {
+        return type;
+    }
+
+    /**
+     * Get the location of this port (top, bottom, left, or right).
+     */
+    public int getLocation() {
+        return location;
+    }
+
+    /**
+     * Get the module this port belongs to.
+     */
+    public Module getModule() {
+        return module;
+    }
+
+    /**
+     * Set the module this port belongs to.
+     */
+    public void setModule(Module mod) {
+        module = mod;
+    }
+
+    /**
+     * Get the index of this port in its Module's list of input or output ports.
+     */
+    public int getIndex() {
+        return (type == INPUT) ? module.getInputIndex(this) : module.getOutputIndex(this);
+    }
+
+    /**
+     * Determine whether a point on the screen is inside this port.
+     */
+    public boolean contains(Point p) {
+        return bounds.contains(p);
+    }
+
+    /**
+     * Get the description of this port.
+     */
+    public String[] getDescription() {
+        return description;
+    }
+
+    /**
+     * Set the description of this port.
+     */
+    public void setDescription(String... desc) {
+        description = desc;
+    }
+
 }
-

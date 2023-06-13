@@ -41,7 +41,7 @@ public class PMBevelExtrudeTool extends EditingTool {
     private PolyMesh origMesh;
     private Point clickPoint;
     private double width, height;
-    private MeshEditController controller;
+    private final MeshEditController controller;
 
     /**
      * Constructor for the BevelExtrudeTool object

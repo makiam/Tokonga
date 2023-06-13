@@ -25,11 +25,11 @@ import java.util.*;
  */
 public class POVExporter {
 
-    static boolean DEBUG = false;
-    static int DIRECTIONAL_LIGHT_DISTANCE = 10000;   // for directional light simulating
-    static int MAXIMAL_LIGHT_FADE_DISTANCE = 10000;  // = decay rate is set to zero
-    static int TIGHTNESS = 10;  // = decay rate for the spotlight
-    static char CHAR_REPLACE = '_';
+    static final boolean DEBUG = false;
+    static final int DIRECTIONAL_LIGHT_DISTANCE = 10000;   // for directional light simulating
+    static final int MAXIMAL_LIGHT_FADE_DISTANCE = 10000;  // = decay rate is set to zero
+    static final int TIGHTNESS = 10;  // = decay rate for the spotlight
+    static final char CHAR_REPLACE = '_';
     static final String TEXTURE_NAME_PREFIX = "AOI";  //  prefix of the texture declaration for povray files
     static final char REPLACEMENT_CHARACTER = '_';   // replacement for non allowed characters in names
     static final String FIX_SEPARATOR = ".";   // The separator in file names of suffices and prefices

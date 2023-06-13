@@ -19,7 +19,7 @@ import java.awt.*;
 @ProceduralModule.Category(value = "Modules:menu.colorFunctions")
 public class BlendModule extends ProceduralModule {
 
-    RGBColor blendColor;
+    final RGBColor blendColor;
     boolean colorOk;
     double lastBlur;
 

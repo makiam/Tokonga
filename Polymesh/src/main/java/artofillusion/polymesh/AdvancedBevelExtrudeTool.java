@@ -39,14 +39,11 @@ import javax.swing.ImageIcon;
 public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
 
     private Vec3[] baseVertPos;
-    private UndoRecord undo;
-    private Map<ViewerCanvas, Manipulator> mouseDragManipHashMap;
+    private final Map<ViewerCanvas, Manipulator> mouseDragManipHashMap;
     private boolean[] selected;
     private boolean separateFaces;
     private PolyMesh origMesh;
-    private short NO_EXTRUDE = 0;
-    private short EXTRUDE_FACES = 1;
-    private short EXTRUDE_FACE_GROUPS = 2;
+    private final short EXTRUDE_FACES = 1;
     private int mode;
     private static ImageIcon bevelExtrudeFacesIcon, bevelExtrudeEdgesIcon, bevelExtrudeVerticesIcon;
 
@@ -99,8 +96,10 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
         selected = controller.getSelection();
         int selectMode = controller.getSelectionMode();
         if (selectMode == PolyMeshEditorWindow.FACE_MODE) {
+            short EXTRUDE_FACE_GROUPS = 2;
             mode = (separateFaces ? EXTRUDE_FACE_GROUPS : EXTRUDE_FACES);
         } else {
+            short NO_EXTRUDE = 0;
             mode = NO_EXTRUDE;
         }
     }
@@ -120,7 +119,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
 
     private void doManipulatorShapedMesh(Manipulator.ManipulatorEvent e) {
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
-        undo = new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, origMesh});
+        UndoRecord undo = new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, origMesh});
         theWindow.setUndoRecord(undo);
         baseVertPos = null;
         origMesh = null;

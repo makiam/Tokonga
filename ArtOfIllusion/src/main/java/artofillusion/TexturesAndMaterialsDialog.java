@@ -50,18 +50,18 @@ public class TexturesAndMaterialsDialog extends BDialog {
     BButton loadLibButton, saveLibButton, deleteLibButton, newFileButton, includeFileButton, closeButton;
     BComboBox typeChoice;
     BRadioButton showTexturesButton, showMaterialsButton, showBothButton;
-    List<Texture> textureTypes = PluginRegistry.getPlugins(Texture.class);
-    List<Material> materialTypes = PluginRegistry.getPlugins(Material.class);
+    final List<Texture> textureTypes = PluginRegistry.getPlugins(Texture.class);
+    final List<Material> materialTypes = PluginRegistry.getPlugins(Material.class);
     MaterialPreviewer matPre;
     BLabel matInfo;
 
     private boolean showTextures, showMaterials;
     private final ArrayList<Object> rootNodes;
 
-    private static DataFlavor TextureFlavor = new DataFlavor(Texture.class, "Texture");
-    private static DataFlavor MaterialFlavor = new DataFlavor(Material.class, "Material");
+    private static final DataFlavor TextureFlavor = new DataFlavor(Texture.class, "Texture");
+    private static final DataFlavor MaterialFlavor = new DataFlavor(Material.class, "Material");
 
-    ListChangeListener listListener = new ListChangeListener() {
+    final ListChangeListener listListener = new ListChangeListener() {
         @Override
         public void itemAdded(int index, java.lang.Object obj) {
             ((SceneTreeModel) libraryList.getModel()).rebuildScenes(null);
@@ -591,7 +591,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
 
     private class TextureTreeNode {
 
-        int index;
+        final int index;
         String name;
 
         TextureTreeNode(SceneTreeNode scene, int index) throws IOException {
@@ -607,7 +607,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
 
     private class MaterialTreeNode {
 
-        int index;
+        final int index;
         String name;
 
         MaterialTreeNode(SceneTreeNode scene, int index) throws IOException {

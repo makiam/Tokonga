@@ -18,8 +18,8 @@ import artofillusion.math.*;
  */
 public class ObjectMaterialInfo {
 
-    private MaterialMapping mapping;
-    private Mat4 toLocal;
+    private final MaterialMapping mapping;
+    private final Mat4 toLocal;
 
     public ObjectMaterialInfo(MaterialMapping mapping, Mat4 toLocal) {
         this.mapping = mapping;
