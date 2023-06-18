@@ -1528,7 +1528,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     private static final Map<String, Class<? extends Track>> commandToTrack = new HashMap<>();
 
-    {
+    static {
         commandToTrack.put("poseTrack", PoseTrack.class);
         commandToTrack.put("constraintTrack", ConstraintTrack.class);
         commandToTrack.put("visibilityTrack", VisibilityTrack.class);
@@ -1537,7 +1537,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     private static final Map<String, Class<? extends Track>> commandToDistortionTrack = new HashMap<>();
 
-    {
+    static {
         commandToDistortionTrack.put("bendDistortion", BendTrack.class);
         commandToDistortionTrack.put("customDistortion", CustomDistortionTrack.class);
         commandToDistortionTrack.put("scaleDistortion", ScaleTrack.class);
