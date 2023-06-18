@@ -503,12 +503,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
      * This is called when an object parameter is changed.
      */
     private void parameterChanged(final ValueChangedEvent ev) {
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                processParameterChange(ev);
-            }
-        };
+        Runnable r = () -> processParameterChange(ev);
         if (ev.isInProgress()) {
             paramChangeProcessor.addEvent(r);
         } else {
