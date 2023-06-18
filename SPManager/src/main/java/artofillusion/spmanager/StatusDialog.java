@@ -22,8 +22,8 @@ import java.awt.*;
  */
 public class StatusDialog extends BDialog {
 
-    protected BLabel label;
-    protected BProgressBar progressBar;
+    protected final BLabel label;
+    protected final BProgressBar progressBar;
 
     /**
      * Constructor for the StatusDialog object

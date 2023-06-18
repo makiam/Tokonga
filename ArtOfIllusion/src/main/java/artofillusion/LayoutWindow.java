@@ -48,13 +48,13 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     BorderContainer[] viewPanel;
     FormContainer viewsContainer;
 
-    private DockingContainer[] dock;
+    private final DockingContainer[] dock;
 
     Score theScore;
     ToolPalette tools;
     private TexturesAndMaterialsDialog assetsDialog;
     private final BLabel helpText = new BLabel();
-    private SceneExplorer sceneExplorer;
+    private final SceneExplorer sceneExplorer;
     Scene theScene;
 
     private final BMenu fileMenu = Translate.menu("file");
@@ -77,14 +77,13 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     BPopupMenu popupMenu;
     private final UndoStack undoStack = new UndoStack();
     int numViewsShown, currentView;
-    private ActionProcessor uiEventProcessor;
+    private final ActionProcessor uiEventProcessor;
     private boolean modified, sceneChangePending, objectListShown;
     private final KeyEventPostProcessor keyEventHandler;
-    private SceneChangedEvent sceneChangedEvent;
+    private final SceneChangedEvent sceneChangedEvent;
 
     protected Preferences preferences;
     private boolean hasNotifiedPlugins;
-    private BMenu editScriptMenu;
     private BMenu recentScriptMenu;
     public static final ImageIcon[] LANGUAGE_ICONS;
 
@@ -511,8 +510,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         toolsMenu.addSeparator();
         toolsMenu.add(Translate.menuItem("createScriptObject", this, "createScriptObjectCommand"));
 
-        this.editScriptMenu = Translate.menu("editToolScript");
-        this.editScriptMenu.add(newScriptMenu = Translate.menu("newScript"));
+        BMenu editScriptMenu = Translate.menu("editToolScript");
+        editScriptMenu.add(newScriptMenu = Translate.menu("newScript"));
         for (String language : ScriptRunner.getLanguageNames()) {
             BMenuItem item = new BMenuItem(language);
             item.addEventLink(CommandEvent.class, this, "newScriptCommand");
@@ -805,7 +804,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     /**
      * Get the File menu.
      */
-
     public BMenu getFileMenu() {
         return fileMenu;
     }
@@ -1184,7 +1182,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      * will be added to it to undo this operation.
      * <P>
      *
-      NOTE! This method is only used by 'UndoRecord'. Using it in any other
+     * NOTE! This method is only used by 'UndoRecord'. Using it in any other
      * context is not safe.
      */
     public void addObject(ObjectInfo info, int index, UndoRecord undo) {

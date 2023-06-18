@@ -26,13 +26,14 @@ import java.util.Vector;
  */
 public class SkinDialog extends BDialog {
 
-    private LayoutWindow window;
-    private BList curveList;
-    private BCheckBox reverseBox;
-    private BButton upButton, downButton;
-    private ObjectPreviewCanvas preview;
-    private ObjectInfo[] curve;
-    private boolean[] reverse;
+    private final LayoutWindow window;
+    private final BList curveList;
+    private final BCheckBox reverseBox;
+    private final BButton upButton;
+    private final BButton downButton;
+    private final ObjectPreviewCanvas preview;
+    private final ObjectInfo[] curve;
+    private final boolean[] reverse;
     private Vec3 centerOffset;
 
     private static int counter = 1;

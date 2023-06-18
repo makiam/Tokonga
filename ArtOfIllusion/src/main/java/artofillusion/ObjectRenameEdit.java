@@ -15,6 +15,7 @@ package artofillusion;
  * @author MaksK
  */
 public class ObjectRenameEdit implements UndoableEdit {
+
     private final LayoutWindow layout;
     private final String newName;
     private final String oldName;

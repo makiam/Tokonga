@@ -1,3 +1,4 @@
+
 package artofillusion.object;
 
 /* Copyright (C) 2006 by Peter Eastman
@@ -9,36 +10,31 @@ package artofillusion.object;
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 /**
  * A FacetedMesh represents an object which is defined by a set of polygonal faces.
  * Each face is defined by an ordered set of mesh vertices.
  */
+public interface FacetedMesh extends Mesh {
 
-public interface FacetedMesh extends Mesh
-{
-  /**
-   * Get the number of faces in this mesh.
-   */
+    /**
+     * Get the number of faces in this mesh.
+     */
+    int getFaceCount();
 
-  int getFaceCount();
+    /**
+     * Get the number of vertices in a particular face.
+     *
+     * @param face the index of the face
+     */
+    int getFaceVertexCount(int face);
 
-  /**
-   * Get the number of vertices in a particular face.
-   *
-   * @param face    the index of the face
-   */
-
-  int getFaceVertexCount(int face);
-
-  /**
-   * Get the index of a particular vertex in a particular face.
-   *
-   * @param face    the index of the face
-   * @param vertex  the index of the vertex within the face
-   *                (between 0 and getFaceVertexCount(face)-1 inclusive)
-   * @return the index of the corresponding vertex in the list returned by getVertices()
-   */
-
-  int getFaceVertexIndex(int face, int vertex);
+    /**
+     * Get the index of a particular vertex in a particular face.
+     *
+     * @param face the index of the face
+     * @param vertex the index of the vertex within the face
+     * (between 0 and getFaceVertexCount(face)-1 inclusive)
+     * @return the index of the corresponding vertex in the list returned by getVertices()
+     */
+    int getFaceVertexIndex(int face, int vertex);
 }

@@ -22,15 +22,17 @@ import artofillusion.texture.*;
  */
 public class RTTriangleLowMemory extends RTObject {
 
-    RenderingTriangle tri;
-    short dropAxis, flags;
-    Mat4 toLocal, fromLocal;
+    final RenderingTriangle tri;
+    final short dropAxis;
+    short flags;
+    final Mat4 toLocal;
+    final Mat4 fromLocal;
 
     public static final double TOL = 1e-12;
     private static final short BUMP_MAPPED = 1;
     private static final short INTERP_NORMALS = 2;
 
-    private double triangleTol;
+    private final double triangleTol;
 
     public RTTriangleLowMemory(RenderingMesh mesh, int which, Mat4 fromLocal, Mat4 toLocal) {
         tri = mesh.triangle[which];

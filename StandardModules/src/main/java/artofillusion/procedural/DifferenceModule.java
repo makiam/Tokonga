@@ -18,7 +18,7 @@ import java.awt.*;
 @ProceduralModule.Category(value = "Modules:menu.operators")
 public class DifferenceModule extends ProceduralModule {
 
-    Vec3 tempVec;
+    final Vec3 tempVec;
 
     public DifferenceModule() {
         this(new Point());

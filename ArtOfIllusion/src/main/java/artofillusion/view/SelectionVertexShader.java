@@ -13,75 +13,77 @@ package artofillusion.view;
 import artofillusion.math.*;
 import artofillusion.texture.TextureSpec;
 
-/** This is a VertexShader which highlights selected faces.  For unselected faces, it delegates
-    to another shader to select the color. */
+/**
+ * This is a VertexShader which highlights selected faces. For unselected faces, it delegates
+ * to another shader to select the color.
+ */
+public class SelectionVertexShader implements VertexShader {
 
-public class SelectionVertexShader implements VertexShader
-{
-  private RGBColor selectionColor;
-  private VertexShader shader;
-  private int faceIndex[];
-  private boolean selected[];
+    private final RGBColor selectionColor;
+    private final VertexShader shader;
+    private final int[] faceIndex;
+    private final boolean[] selected;
 
-  /** Create a FlatVertexShader for a mesh.
-      @param selectionColor  the color to use for selected faces
-      @param shader          the shader to use for unselected faces
-      @param faceIndex       the index of the control mesh face for each face of the rendering mesh
-      @param selected        specifies which faces of the control mesh are selected
-  */
+    /**
+     * Create a FlatVertexShader for a mesh.
+     *
+     * @param selectionColor the color to use for selected faces
+     * @param shader the shader to use for unselected faces
+     * @param faceIndex the index of the control mesh face for each face of the rendering mesh
+     * @param selected specifies which faces of the control mesh are selected
+     */
+    public SelectionVertexShader(RGBColor selectionColor, VertexShader shader, int[] faceIndex, boolean[] selected) {
+        this.selectionColor = selectionColor;
+        this.shader = shader;
+        this.faceIndex = faceIndex;
+        this.selected = selected;
+    }
 
-  public SelectionVertexShader(RGBColor selectionColor, VertexShader shader, int faceIndex[], boolean selected[])
-  {
-    this.selectionColor = selectionColor;
-    this.shader = shader;
-    this.faceIndex = faceIndex;
-    this.selected = selected;
-  }
+    /**
+     * Select the color for a vertex.
+     *
+     * @param face the index of the triangle being rendered
+     * @param vertex the index of the vertex to color
+     * @param color the vertex color will be returned in this object
+     */
+    @Override
+    public void getColor(int face, int vertex, RGBColor color) {
+        if (selected[faceIndex[face]]) {
+            color.copy(selectionColor);
+        } else {
+            shader.getColor(face, vertex, color);
+        }
+    }
 
-  /** Select the color for a vertex.
-      @param face     the index of the triangle being rendered
-      @param vertex   the index of the vertex to color
-      @param color    the vertex color will be returned in this object
-  */
+    /**
+     * Get whether a particular face should be rendered with a single uniform color.
+     *
+     * @param face the index of the triangle being rendered
+     */
+    @Override
+    public boolean isUniformFace(int face) {
+        if (selected[faceIndex[face]]) {
+            return true;
+        }
+        return shader.isUniformFace(face);
+    }
 
-  @Override
-  public void getColor(int face, int vertex, RGBColor color)
-  {
-    if (selected[faceIndex[face]])
-      color.copy(selectionColor);
-    else
-      shader.getColor(face, vertex, color);
-  }
+    /**
+     * Get whether this shader represents a uniform texture. If this returns true, all
+     * texture properties are uniform over the entire surface (although different parts
+     * may still be colored differently due to lighting).
+     */
+    @Override
+    public boolean isUniformTexture() {
+        return false;
+    }
 
-  /** Get whether a particular face should be rendered with a single uniform color.
-     @param face    the index of the triangle being rendered
-  */
-
-  @Override
-  public boolean isUniformFace(int face)
-  {
-    if (selected[faceIndex[face]])
-      return true;
-    return shader.isUniformFace(face);
-  }
-
-  /** Get whether this shader represents a uniform texture.  If this returns true, all
-      texture properties are uniform over the entire surface (although different parts
-      may still be colored differently due to lighting).
-   */
-
-  @Override
-  public boolean isUniformTexture()
-  {
-    return false;
-  }
-
-  /** Get the texture properties of the surface.  This should only be called if isUniformTexture() returns true.
-      @param spec     the surface properties will be returned in this object
-   */
-
-  @Override
-  public void getTextureSpec(TextureSpec spec)
-  {
-  }
+    /**
+     * Get the texture properties of the surface. This should only be called if isUniformTexture() returns true.
+     *
+     * @param spec the surface properties will be returned in this object
+     */
+    @Override
+    public void getTextureSpec(TextureSpec spec) {
+    }
 }

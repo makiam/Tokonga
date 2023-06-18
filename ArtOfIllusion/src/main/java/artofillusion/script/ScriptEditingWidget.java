@@ -34,64 +34,56 @@ import org.fife.ui.rtextarea.Gutter;
  * handled by the calling code.
  */
 @Slf4j
-public class ScriptEditingWidget extends BScrollPane
-{
-  public ScriptEditingWidget(String script)
-  {
-    super(new RSTextArea(script, 25, 100), SCROLLBAR_AS_NEEDED, SCROLLBAR_ALWAYS);
-    RSyntaxTextArea rsta = getContent().getComponent();
-    setRowHeader(new AWTWidget(new Gutter(rsta)));
+public class ScriptEditingWidget extends BScrollPane {
 
-    try{
-      Theme theme = Theme.load(ScriptEditingWidget.class.getResourceAsStream("/scriptEditorTheme.xml"));
-      theme.apply(rsta);
-    } catch (IOException ex)
-    {
-      //shouldn't happen unless we are pointing at a non-existant file
-      log.atError().setCause(ex).log("Unable to load Editor theme: {}", ex.getMessage());
+    public ScriptEditingWidget(String script) {
+        super(new RSTextArea(script, 25, 100), SCROLLBAR_AS_NEEDED, SCROLLBAR_ALWAYS);
+        RSyntaxTextArea rsta = getContent().getComponent();
+        setRowHeader(new AWTWidget(new Gutter(rsta)));
+
+        try {
+            Theme theme = Theme.load(ScriptEditingWidget.class.getResourceAsStream("/scriptEditorTheme.xml"));
+            theme.apply(rsta);
+        } catch (IOException ex) {
+            //shouldn't happen unless we are pointing at a non-existant file
+            log.atError().setCause(ex).log("Unable to load Editor theme: {}", ex.getMessage());
+        }
+
+        rsta.setAnimateBracketMatching(false);
+        rsta.setTabSize(2);
     }
 
-    rsta.setAnimateBracketMatching(false);
-    rsta.setTabSize(2);
-  }
-
-  //TODO: migrate to constant, rather than string
-  public void setLanguage(String lang)
-  {
-    getContent().getComponent().setSyntaxEditingStyle(lang.equalsIgnoreCase("groovy")
-                                   ? SyntaxConstants.SYNTAX_STYLE_GROOVY
-                                   : SyntaxConstants.SYNTAX_STYLE_JAVA);
-  }
-
-  @Override
-  public RSTextArea getContent()
-  {
-    return (RSTextArea) super.getContent();
-  }
-
-  public static class RSTextArea extends BTextArea
-  {
-    public RSTextArea(String contents, int rows, int columns)
-    {
-      super(contents, rows, columns);
+    //TODO: migrate to constant, rather than string
+    public void setLanguage(String lang) {
+        getContent().getComponent().setSyntaxEditingStyle(lang.equalsIgnoreCase("groovy")
+                ? SyntaxConstants.SYNTAX_STYLE_GROOVY
+                : SyntaxConstants.SYNTAX_STYLE_JAVA);
     }
 
     @Override
-    protected RSyntaxTextArea createComponent()
-    {
-      return new RSyntaxTextArea();
+    public RSTextArea getContent() {
+        return (RSTextArea) super.getContent();
     }
 
-    @Override
-    public RSyntaxTextArea getComponent()
-    {
-      return (RSyntaxTextArea) component;
-    }
+    public static class RSTextArea extends BTextArea {
 
-    @Override
-    public void setBackground(java.awt.Color color)
-    {
-      getComponent().setBackground(color);
+        public RSTextArea(String contents, int rows, int columns) {
+            super(contents, rows, columns);
+        }
+
+        @Override
+        protected RSyntaxTextArea createComponent() {
+            return new RSyntaxTextArea();
+        }
+
+        @Override
+        public RSyntaxTextArea getComponent() {
+            return (RSyntaxTextArea) component;
+        }
+
+        @Override
+        public void setBackground(java.awt.Color color) {
+            getComponent().setBackground(color);
+        }
     }
-  }
 }

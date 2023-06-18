@@ -21,7 +21,6 @@ import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 
-
 /**
  *
  * @author mkhramov
@@ -40,7 +39,6 @@ public class ColorSampleWidget extends Widget {
         this.color = color;
         this.component.setForeground(color.getColor());
     }
-
 
     public ColorSampleWidget(RGBColor color, String title, int width, int height, boolean editable) {
         Dimension size = new Dimension(width, height);

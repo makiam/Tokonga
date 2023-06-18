@@ -62,7 +62,7 @@ public class PolyMeshViewer extends MeshViewer {
     private double[] screenZ;
     private Vec2[] screenVec2;
     boolean[] visible;
-    private ArrayList<Manipulator> manipulators;
+    private final ArrayList<Manipulator> manipulators;
     private Manipulator[] manipulatorArray;
 
     /**

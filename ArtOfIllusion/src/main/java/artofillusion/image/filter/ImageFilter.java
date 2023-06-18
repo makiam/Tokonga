@@ -32,8 +32,8 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class ImageFilter {
 
     @Deprecated
-    protected double paramValue[];
-    private Object propertyValue[];
+    protected double[] paramValue;
+    private Object[] propertyValue;
 
     /**
      * Every ImageFilter subclass must provide a constructor which takes no
@@ -48,7 +48,7 @@ public abstract class ImageFilter {
 
         // This is for backward compatibility with ImageFilters that use the deprecated
         // TextureParameter interface.
-        TextureParameter param[] = getParameters();
+        TextureParameter[] param = getParameters();
         paramValue = new double[param.length];
         for (int i = 0; i < param.length; i++) {
             paramValue[i] = param[i].defaultVal;
@@ -129,7 +129,7 @@ public abstract class ImageFilter {
      */
     @Deprecated
     public double[] getParameterValues() {
-        double val[] = new double[paramValue.length];
+        double[] val = new double[paramValue.length];
         System.arraycopy(paramValue, 0, val, 0, val.length);
         return val;
     }
@@ -152,7 +152,7 @@ public abstract class ImageFilter {
         // return the actual list of Properties for the filter.
 
         TextureParameter[] parameters = getParameters();
-        Property properties[] = new Property[parameters.length];
+        Property[] properties = new Property[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
             properties[i] = new Property(parameters[i].name, parameters[i].minVal, parameters[i].maxVal, parameters[i].defaultVal);
         }
@@ -208,14 +208,14 @@ public abstract class ImageFilter {
         // The default implementation simply allows the Properties to be edited.  Subclasses may override
         // this to provide more complex configuration panels.
 
-        final Property properties[] = getProperties();
+        final Property[] properties = getProperties();
         FormContainer form = new FormContainer(2, properties.length);
 
         // Define an inner class to act as a listener on a PropertyEditors.
         class EditorListener {
 
-            private int which;
-            private PropertyEditor editor;
+            private final int which;
+            private final PropertyEditor editor;
 
             public EditorListener(int which, PropertyEditor editor) {
                 this.which = which;

@@ -12,12 +12,14 @@ package artofillusion.ui;
 
 import buoy.widget.*;
 
-/** This interface represents an object which creates and manages a popup menu for
-    some other component. */
+/**
+ * This interface represents an object which creates and manages a popup menu for
+ * some other component.
+ */
+public interface PopupMenuManager {
 
-public interface PopupMenuManager
-{
-  /** Display the PopupMenu. */
-  
-  public void showPopupMenu(Widget w, int x, int y);
+    /**
+     * Display the PopupMenu.
+     */
+    public void showPopupMenu(Widget w, int x, int y);
 }

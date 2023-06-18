@@ -74,7 +74,7 @@ public class RaytracerRenderer implements Renderer, Runnable {
     protected boolean needCopyToUI = true, isPreview;
     protected PhotonMap globalMap, causticsMap, volumeMap;
     protected BoundingBox materialBounds;
-    protected ThreadLocal<RenderWorkspace> threadWorkspace;
+    protected final ThreadLocal<RenderWorkspace> threadWorkspace;
 
     public static final int GI_NONE = 0;
     public static final int GI_AMBIENT_OCCLUSION = 1;

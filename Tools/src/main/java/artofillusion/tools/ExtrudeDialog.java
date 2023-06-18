@@ -29,16 +29,26 @@ import java.util.*;
  */
 public class ExtrudeDialog extends BDialog {
 
-    private LayoutWindow window;
-    private BComboBox objChoice, pathChoice;
-    private RadioButtonGroup pathGroup;
-    private BRadioButton pathBox, xBox, yBox, zBox, vectorBox;
-    private BCheckBox orientBox;
-    private ValueField distField, xField, yField, zField, segField, angleField, tolField;
+    private final LayoutWindow window;
+    private final BComboBox objChoice;
+    private final BComboBox pathChoice;
+    private final BRadioButton pathBox;
+    private final BRadioButton xBox;
+    private final BRadioButton yBox;
+    private final BRadioButton zBox;
+    private final BRadioButton vectorBox;
+    private final BCheckBox orientBox;
+    private final ValueField distField;
+    private final ValueField xField;
+    private final ValueField yField;
+    private final ValueField zField;
+    private final ValueField segField;
+    private final ValueField angleField;
+    private final ValueField tolField;
     private final BButton okButton;
-    private ObjectPreviewCanvas preview;
-    private Vector<ObjectInfo> objects;
-    private Vector<ObjectInfo> paths;
+    private final ObjectPreviewCanvas preview;
+    private final Vector<ObjectInfo> objects;
+    private final Vector<ObjectInfo> paths;
 
     private static int counter = 1;
 
@@ -78,7 +88,7 @@ public class ExtrudeDialog extends BDialog {
         }
         objChoice.addEventLink(ValueChangedEvent.class, this, "stateChanged");
         content.add(Translate.label("Tools:extrude.direction.label"), 0, 2, 2, 1);
-        pathGroup = new RadioButtonGroup();
+        RadioButtonGroup pathGroup = new RadioButtonGroup();
         content.add(xBox = new BRadioButton(Translate.text("Tools:extrude.xaxis"), true, pathGroup), 0, 3);
         content.add(yBox = new BRadioButton(Translate.text("Tools:extrude.yaxis"), true, pathGroup), 0, 4);
         content.add(zBox = new BRadioButton(Translate.text("Tools:extrude.zaxis"), true, pathGroup), 0, 5);
@@ -702,8 +712,9 @@ public class ExtrudeDialog extends BDialog {
     // Inner class used for storing information about new edges being created.
     private static class EdgeInfo {
 
-        int v1, v2;
-        float smoothness;
+        final int v1;
+        final int v2;
+        final float smoothness;
 
         public EdgeInfo(int vert1, int vert2, float smooth) {
             v1 = vert1;

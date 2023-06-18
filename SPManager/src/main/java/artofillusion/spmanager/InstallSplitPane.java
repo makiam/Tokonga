@@ -32,7 +32,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class InstallSplitPane extends SPMSplitPane {
 
-    private BButton installAllButton;
     private BCheckBox selectCB;
     private boolean setup = false;
     private StatusDialog status;
@@ -73,6 +72,7 @@ public class InstallSplitPane extends SPMSplitPane {
     private void initialize() {
         //initialise buttons
         LayoutInfo layout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(0, 5, 0, 5), new Dimension(0, 0));
+        BButton installAllButton;
         if (workMode == UPDATE) {
             buttonRow.add(installAllButton = SPMTranslate.bButton("updateAllSelected", this, "doInstallAll"), layout);
             installAllButton.setIcon(new ImageIcon(getClass().getResource("/artofillusion/spmanager/icons/Refresh16.gif")));

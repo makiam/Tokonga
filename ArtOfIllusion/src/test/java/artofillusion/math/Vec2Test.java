@@ -10,7 +10,6 @@
 
 package artofillusion.math;
 
-
 import artofillusion.test.util.StreamUtil;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -21,67 +20,58 @@ import org.junit.Test;
  *
  * @author maksim.khramov
  */
-public class Vec2Test  {
-    
+public class Vec2Test {
+
     @Test
-    public  void testVec2Constructor0()
-    {
+    public void testVec2Constructor0() {
         Vec2 test = new Vec2();
         Assert.assertEquals(0d, test.x, 0);
         Assert.assertEquals(0d, test.y, 0);
     }
-    
+
     @Test
-    public  void testVec2Constructor1()
-    {
+    public void testVec2Constructor1() {
         Vec2 test = new Vec2(1.0, 1.0);
         Assert.assertEquals(1.0, test.x, 0);
         Assert.assertEquals(1.0, test.y, 0);
     }
-    
+
     @Test
-    public  void testVec2Constructor2()
-    {
+    public void testVec2Constructor2() {
         Vec2 source = new Vec2(1.0, 1.0);
         Vec2 test = new Vec2(source);
         Assert.assertEquals(1.0, test.x, 0);
         Assert.assertEquals(1.0, test.y, 0);
     }
-    
+
     @Test
-    public void testVec2Constructor3() throws IOException
-    {
-        
+    public void testVec2Constructor3() throws IOException {
+
         ByteBuffer wrap = ByteBuffer.allocate(16);
         wrap.putDouble(1.0);
         wrap.putDouble(2.0);
-        
-        
+
         Vec2 test = new Vec2(StreamUtil.stream(wrap));
         Assert.assertEquals(1.0, test.x, 0);
         Assert.assertEquals(2.0, test.y, 0);
     }
-    
-    
+
     @Test
-    public void testCreateXVect2()
-    {
+    public void testCreateXVect2() {
         Vec2 test = Vec2.vx();
         Assert.assertEquals(1.0, test.x, 0);
         Assert.assertEquals(0.0, test.y, 0);
     }
-    
+
     @Test
-    public void testCreateYVect2()
-    {
+    public void testCreateYVect2() {
         Vec2 test = Vec2.vy();
         Assert.assertEquals(0.0, test.x, 0);
         Assert.assertEquals(1.0, test.y, 0);
     }
-    
+
     @Test
-    public void testVector2set()
-    {
+    public void testVector2set() {
         Vec2 test = new Vec2();
         test.set(1.0, 2.0);
         Assert.assertEquals(1.0, test.x, 0);
@@ -89,69 +79,63 @@ public class Vec2Test  {
     }
 
     @Test
-    public void testVector2times0()
-    {
+    public void testVector2times0() {
         Vec2 test = new Vec2();
-        
+
         test = test.times(2.0);
-        
+
         Assert.assertEquals(0.0, test.x, 0);
         Assert.assertEquals(0.0, test.y, 0);
     }
-    
+
     @Test
-    public void testVector2scale0()
-    {
+    public void testVector2scale0() {
         Vec2 test = new Vec2();
-        
+
         test.scale(2.0);
-        
+
         Assert.assertEquals(0.0, test.x, 0);
         Assert.assertEquals(0.0, test.y, 0);
     }
-    
+
     @Test
-    public void testVector2times1()
-    {
+    public void testVector2times1() {
         Vec2 test = new Vec2();
         test.set(1.0, 2.0);
         test = test.times(0);
-        
+
         Assert.assertEquals(0.0, test.x, 0);
         Assert.assertEquals(0.0, test.y, 0);
     }
-    
+
     @Test
-    public void testVector2scale1()
-    {
+    public void testVector2scale1() {
         Vec2 test = new Vec2();
         test.set(1.0, 2.0);
         test.scale(0);
-        
+
         Assert.assertEquals(0.0, test.x, 0);
         Assert.assertEquals(0.0, test.y, 0);
     }
-    
+
     @Test
-    public void testVector2times2()
-    {
+    public void testVector2times2() {
         Vec2 test = new Vec2();
         test.set(1.0, 2.0);
         test = test.times(2);
-        
+
         Assert.assertEquals(2.0, test.x, 0);
         Assert.assertEquals(4.0, test.y, 0);
     }
-    
+
     @Test
-    public void testVector2scale2()
-    {
+    public void testVector2scale2() {
         Vec2 test = new Vec2();
         test.set(1.0, 2.0);
         test.scale(2);
-        
+
         Assert.assertEquals(2.0, test.x, 0);
         Assert.assertEquals(4.0, test.y, 0);
     }
-    
+
 }

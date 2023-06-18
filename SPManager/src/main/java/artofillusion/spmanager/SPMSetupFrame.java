@@ -28,16 +28,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SPMSetupFrame extends BDialog {
 
-    private SPManagerFrame frame;
-    private BComboBox repositoriesCB;
-    private ColumnContainer filterContainer;
-    private BButton okButton, cancelButton, addButton, removeButton;
-    private BTextField repEntry, proxyHostEntry, proxyPortEntry, usernameEntry;
-    private BPasswordField passwordEntry;
-    private BLabel proxyHostLabel, proxyPortLabel, usernameLabel, passwordLabel;
-    private BCheckBox useProxyCB;
-    private BCheckBox useCacheCB;
-    private SPMParameters parameters;
+    private final BComboBox repositoriesCB;
+    private final ColumnContainer filterContainer;
+    private BButton addButton;
+    private BButton removeButton;
+    private BTextField repEntry;
+    private final BTextField proxyHostEntry;
+    private final BTextField proxyPortEntry;
+    private final BTextField usernameEntry;
+    private final BPasswordField passwordEntry;
+    private final BLabel proxyHostLabel;
+    private final BLabel proxyPortLabel;
+    private final BLabel usernameLabel;
+    private final BLabel passwordLabel;
+    private final BCheckBox useProxyCB;
+    private final BCheckBox useCacheCB;
+    private final SPMParameters parameters;
     private String[] rep;
 
     protected static final String[] EMPTY_STRING_ARRAY = new String[0];
@@ -50,7 +56,6 @@ public class SPMSetupFrame extends BDialog {
     public SPMSetupFrame(SPManagerFrame fr) {
 
         super(fr, true);
-        frame = fr;
         setTitle(SPMTranslate.text("SPManagerSetup"));
         parameters = SPManagerFrame.getParameters();
         addEventLink(WindowClosingEvent.class, this, "doCancel");
@@ -156,13 +161,15 @@ public class SPMSetupFrame extends BDialog {
         }
 
         RowContainer buttons = new RowContainer();
+        BButton okButton;
         buttons.add(okButton = SPMTranslate.bButton("ok", this, "doOK"));
+        BButton cancelButton;
         buttons.add(cancelButton = SPMTranslate.bButton("cancel", this, "doCancel"));
         cc.add(buttons, new LayoutInfo());
         setContent(cc);
         addEventLink(WindowClosingEvent.class, this, "doCancel");
         pack();
-        getComponent().setLocationRelativeTo(frame.getComponent());
+        getComponent().setLocationRelativeTo(fr.getComponent());
         parameters.setChanged(false);
         setVisible(true);
     }

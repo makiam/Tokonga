@@ -18,32 +18,27 @@ import java.awt.*;
 /**
  * This is a DockableWidget subclass that paints its border using colors obtained from ThemeManager.
  */
+public class DefaultDockableWidget extends DockableWidget {
 
-public class DefaultDockableWidget extends DockableWidget
-{
-  public DefaultDockableWidget()
-  {
-  }
-
-  public DefaultDockableWidget(Widget content, String label)
-  {
-    super(content, label);
-  }
-
-  @Override
-  protected void paintBorder(Graphics2D g)
-  {
-    Rectangle bounds = getBounds();
-    Insets insets = getBorderInsets();
-    g.setPaint(new GradientPaint(0, 0, ThemeManager.getDockableBarColor1(), 0, insets.top, ThemeManager.getDockableBarColor2()));
-    g.fillRect(0, 0, bounds.width, insets.top);
-    g.setColor(ThemeManager.getDockableBarColor2().darker());
-    g.drawLine(0, insets.top-1, bounds.width, insets.top-1);
-    g.setColor(ThemeManager.getDockableTitleColor());
-    if (getLabel() != null)
-    {
-      FontMetrics fm = getComponent().getFontMetrics(getComponent().getFont());
-      g.drawString(getLabel(), 2, fm.getMaxAscent()+2);
+    public DefaultDockableWidget() {
     }
-  }
+
+    public DefaultDockableWidget(Widget content, String label) {
+        super(content, label);
+    }
+
+    @Override
+    protected void paintBorder(Graphics2D g) {
+        Rectangle bounds = getBounds();
+        Insets insets = getBorderInsets();
+        g.setPaint(new GradientPaint(0, 0, ThemeManager.getDockableBarColor1(), 0, insets.top, ThemeManager.getDockableBarColor2()));
+        g.fillRect(0, 0, bounds.width, insets.top);
+        g.setColor(ThemeManager.getDockableBarColor2().darker());
+        g.drawLine(0, insets.top - 1, bounds.width, insets.top - 1);
+        g.setColor(ThemeManager.getDockableTitleColor());
+        if (getLabel() != null) {
+            FontMetrics fm = getComponent().getFontMetrics(getComponent().getFont());
+            g.drawString(getLabel(), 2, fm.getMaxAscent() + 2);
+        }
+    }
 }

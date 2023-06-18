@@ -38,7 +38,7 @@ class FindSimilarEdgesDialog extends BDialog {
     private BButton cancelButton;
     private PMValueField toleranceVF;
     private final PolyMeshEditorWindow owner;
-    private PolyMesh mesh;
+    private final PolyMesh mesh;
 
     public FindSimilarEdgesDialog(PolyMeshEditorWindow owner) {
         super(owner, Translate.text("polymesh:similarEdgesTitle"), true);

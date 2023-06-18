@@ -19,117 +19,106 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import java.awt.*;
 
-/** CreateCubeTool is an EditingTool used for creating Cube objects. */
+/**
+ * CreateCubeTool is an EditingTool used for creating Cube objects.
+ */
 @EditingTool.ButtonImage("cube")
 @EditingTool.Tooltip("createCubeTool.tipText")
 @EditingTool.ActivatedToolText("createCubeTool.helpText")
-public class CreateCubeTool extends EditingTool
-{
-  static int counter = 1;
-  private boolean equilateral, centered;
-  private Point clickPoint;
-  private ObjectInfo objInfo;
-  private Vec3 ydir, zdir;
+public class CreateCubeTool extends EditingTool {
 
-  public CreateCubeTool(LayoutWindow fr)
-  {
-    super(fr);
-  }
+    static int counter = 1;
+    private boolean equilateral, centered;
+    private Point clickPoint;
+    private ObjectInfo objInfo;
+    private Vec3 ydir, zdir;
 
-  @Override
-  public void mousePressed(WidgetMouseEvent e, ViewerCanvas view)
-  {
-    clickPoint  = e.getPoint();
-    equilateral = e.isShiftDown();
-    centered    = e.isControlDown();
-    ydir = Vec3.vy();
-    zdir = Vec3.vz();
-  }
-
-  @Override
-  public void mouseDragged(WidgetMouseEvent e, ViewerCanvas view)
-  {
-    Camera cam = view.getCamera();
-    Point dragPoint = e.getPoint();
-    ydir.set(cam.getCameraCoordinates().getUpDirection());
-    zdir.set(cam.getCameraCoordinates().getZDirection());
-    zdir.scale(-1.0);
-
-    if (objInfo == null)
-    {
-      // Create the initial cube, if the mouse has moved enough. The limit is there to reduce 
-      // the probability of accidentally creating zero size objects.
-
-      if (Math.abs(dragPoint.x-clickPoint.x) + Math.abs(dragPoint.y-clickPoint.y) > 3)
-      {
-        Scene theScene = ((LayoutWindow) theWindow).getScene();
-        objInfo = new ObjectInfo(new Cube(1.0, 1.0, 1.0), new CoordinateSystem(), "Cube "+(counter++));
-        objInfo.addTrack(new PositionTrack(objInfo), 0);
-        objInfo.addTrack(new RotationTrack(objInfo), 1);
-        UndoRecord undo = new UndoRecord(theWindow);
-        int sel[] = ((LayoutWindow) theWindow).getSelectedIndices();
-        ((LayoutWindow) theWindow).addObject(objInfo, undo);
-        undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);
-        theWindow.setUndoRecord(undo);
-        ((LayoutWindow) theWindow).setSelection(theScene.getNumObjects()-1);;
-      }
-      else
-        return;
+    public CreateCubeTool(LayoutWindow fr) {
+        super(fr);
     }
 
-    // Determine the size and position for the cube.
-
-    Vec3 v1, v2, v3, orig;
-    double xsize, ysize, zsize;
-
-    if (equilateral)
-    {
-      if (Math.abs(dragPoint.x-clickPoint.x) > Math.abs(dragPoint.y-clickPoint.y))
-      {
-        if (dragPoint.y < clickPoint.y)
-          dragPoint.y = clickPoint.y - Math.abs(dragPoint.x-clickPoint.x);
-        else
-          dragPoint.y = clickPoint.y + Math.abs(dragPoint.x-clickPoint.x);
-      }
-      else
-      {
-        if (dragPoint.x < clickPoint.x)
-          dragPoint.x = clickPoint.x - Math.abs(dragPoint.y-clickPoint.y);
-        else
-          dragPoint.x = clickPoint.x + Math.abs(dragPoint.y-clickPoint.y);
-      }
+    @Override
+    public void mousePressed(WidgetMouseEvent e, ViewerCanvas view) {
+        clickPoint = e.getPoint();
+        equilateral = e.isShiftDown();
+        centered = e.isControlDown();
+        ydir = Vec3.vy();
+        zdir = Vec3.vz();
     }
-    v1 = cam.convertScreenToWorld(clickPoint, view.getDistToPlane());
-    v2 = cam.convertScreenToWorld(new Point(dragPoint.x, clickPoint.y), view.getDistToPlane());
-    v3 = cam.convertScreenToWorld(dragPoint, view.getDistToPlane());
 
-    if (centered)
-    {
-      orig  = v1;
-      xsize = v2.minus(v1).length()*2.0; 
-      ysize = v2.minus(v3).length()*2.0;
+    @Override
+    public void mouseDragged(WidgetMouseEvent e, ViewerCanvas view) {
+        Camera cam = view.getCamera();
+        Point dragPoint = e.getPoint();
+        ydir.set(cam.getCameraCoordinates().getUpDirection());
+        zdir.set(cam.getCameraCoordinates().getZDirection());
+        zdir.scale(-1.0);
+
+        if (objInfo == null) {
+            // Create the initial cube, if the mouse has moved enough. The limit is there to reduce
+            // the probability of accidentally creating zero size objects.
+
+            if (Math.abs(dragPoint.x - clickPoint.x) + Math.abs(dragPoint.y - clickPoint.y) > 3) {
+                Scene theScene = ((LayoutWindow) theWindow).getScene();
+                objInfo = new ObjectInfo(new Cube(1.0, 1.0, 1.0), new CoordinateSystem(), "Cube " + (counter++));
+                objInfo.addTrack(new PositionTrack(objInfo), 0);
+                objInfo.addTrack(new RotationTrack(objInfo), 1);
+                UndoRecord undo = new UndoRecord(theWindow);
+                int[] sel = ((LayoutWindow) theWindow).getSelectedIndices();
+                ((LayoutWindow) theWindow).addObject(objInfo, undo);
+                undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);
+                theWindow.setUndoRecord(undo);
+                ((LayoutWindow) theWindow).setSelection(theScene.getNumObjects() - 1);;
+            } else {
+                return;
+            }
+        }
+
+        // Determine the size and position for the cube.
+        Vec3 v1, v2, v3, orig;
+        double xsize, ysize, zsize;
+
+        if (equilateral) {
+            if (Math.abs(dragPoint.x - clickPoint.x) > Math.abs(dragPoint.y - clickPoint.y)) {
+                if (dragPoint.y < clickPoint.y) {
+                    dragPoint.y = clickPoint.y - Math.abs(dragPoint.x - clickPoint.x);
+                } else {
+                    dragPoint.y = clickPoint.y + Math.abs(dragPoint.x - clickPoint.x);
+                }
+            } else {
+                if (dragPoint.x < clickPoint.x) {
+                    dragPoint.x = clickPoint.x - Math.abs(dragPoint.y - clickPoint.y);
+                } else {
+                    dragPoint.x = clickPoint.x + Math.abs(dragPoint.y - clickPoint.y);
+                }
+            }
+        }
+        v1 = cam.convertScreenToWorld(clickPoint, view.getDistToPlane());
+        v2 = cam.convertScreenToWorld(new Point(dragPoint.x, clickPoint.y), view.getDistToPlane());
+        v3 = cam.convertScreenToWorld(dragPoint, view.getDistToPlane());
+
+        if (centered) {
+            orig = v1;
+            xsize = v2.minus(v1).length() * 2.0;
+            ysize = v2.minus(v3).length() * 2.0;
+        } else {
+            orig = v1.plus(v3).times(0.5);
+            xsize = v2.minus(v1).length();
+            ysize = v2.minus(v3).length();
+        }
+        zsize = Math.min(xsize, ysize);
+
+        // Update the size and position, and redraw the display.
+        ((Cube) objInfo.getObject()).setSize(xsize, ysize, zsize);
+        objInfo.getCoords().setOrigin(orig);
+        objInfo.getCoords().setOrientation(zdir, ydir);
+        objInfo.clearCachedMeshes();
+        theWindow.setModified();
+        theWindow.updateImage();
     }
-    else
-    {
-      orig  = v1.plus(v3).times(0.5);
-      xsize = v2.minus(v1).length(); 
-      ysize = v2.minus(v3).length();
+
+    @Override
+    public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view) {
+        objInfo = null;
     }
-    zsize = Math.min(xsize, ysize);
-
-    // Update the size and position, and redraw the display.
-
-    ((Cube) objInfo.getObject()).setSize(xsize, ysize, zsize);
-    objInfo.getCoords().setOrigin(orig);
-    objInfo.getCoords().setOrientation(zdir, ydir);
-    objInfo.clearCachedMeshes();
-    theWindow.setModified();
-    theWindow.updateImage();
-  }
-
-  @Override
-  public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view)
-  {
-    objInfo = null;
-  }
 }

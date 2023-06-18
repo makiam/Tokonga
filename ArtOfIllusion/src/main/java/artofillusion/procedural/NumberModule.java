@@ -19,106 +19,99 @@ import buoy.widget.*;
 import java.awt.*;
 import java.io.*;
 
-/** This is a Module which outputs a number. */
+/**
+ * This is a Module which outputs a number.
+ */
 @ProceduralModule.Category(value = "Modules:menu.values")
-public class NumberModule extends ProceduralModule
-{
-  private double value;
+public class NumberModule extends ProceduralModule {
 
-  public NumberModule() {
-    this(new Point());
-  }
+    private double value;
 
-  public NumberModule(Point position)
-  {
-    this(position, 0);
-  }
+    public NumberModule() {
+        this(new Point());
+    }
 
-  public NumberModule(Point position, double v)
-  {
-    super(Double.toString(v), new IOPort[] {}, new IOPort[] {
-      new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Value")},
-      position);
-    value = v;
-  }
+    public NumberModule(Point position) {
+        this(position, 0);
+    }
 
-  /** Get the value. */
+    public NumberModule(Point position, double v) {
+        super(Double.toString(v), new IOPort[]{}, new IOPort[]{
+            new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Value")},
+                position);
+        value = v;
+    }
 
-  public double getValue()
-  {
-    return value;
-  }
+    /**
+     * Get the value.
+     */
+    public double getValue() {
+        return value;
+    }
 
-  /** Set the value. */
+    /**
+     * Set the value.
+     */
+    public void setValue(double v) {
+        value = v;
+    }
 
-  public void setValue(double v)
-  {
-    value = v;
-  }
-
-  /** Allow the user to set a new value. */
-
-  @Override
-  public boolean edit(final ProcedureEditor editor, Scene theScene)
-  {
-    final ValueField field = new ValueField(value, ValueField.NONE);
-    field.addEventLink(ValueChangedEvent.class, new Object() {
-      void processEvent()
-      {
+    /**
+     * Allow the user to set a new value.
+     */
+    @Override
+    public boolean edit(final ProcedureEditor editor, Scene theScene) {
+        final ValueField field = new ValueField(value, ValueField.NONE);
+        field.addEventLink(ValueChangedEvent.class, new Object() {
+            void processEvent() {
+                value = field.getValue();
+                editor.updatePreview();
+            }
+        });
+        ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), Translate.text("Modules:selectValue"), new Widget[]{field},
+                new String[]{null});
+        if (!dlg.clickedOk()) {
+            return false;
+        }
         value = field.getValue();
-        editor.updatePreview();
-      }
-    });
-    ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), Translate.text("Modules:selectValue"), new Widget [] {field},
-      new String [] {null});
-    if (!dlg.clickedOk())
-      return false;
-    value = field.getValue();
-    name = Double.toString(value);
-    layout();
-    return true;
-  }
+        name = Double.toString(value);
+        layout();
+        return true;
+    }
 
-  /** This module simply outputs the value. */
+    /**
+     * This module simply outputs the value.
+     */
+    @Override
+    public double getAverageValue(int which, double blur) {
+        return value;
+    }
 
-  @Override
-  public double getAverageValue(int which, double blur)
-  {
-    return value;
-  }
+    public void getValueGradient(Vec3 grad, double blur) {
+        grad.set(0.0, 0.0, 0.0);
+    }
 
-  public void getValueGradient(Vec3 grad, double blur)
-  {
-    grad.set(0.0, 0.0, 0.0);
-  }
+    /* Create a duplicate of this module. */
+    @Override
+    public NumberModule duplicate() {
+        NumberModule mod = new NumberModule(new Point(bounds.x, bounds.y));
 
-  /* Create a duplicate of this module. */
+        mod.value = value;
+        mod.name = "" + value;
+        return mod;
+    }
 
-  @Override
-  public NumberModule duplicate()
-  {
-    NumberModule mod = new NumberModule(new Point(bounds.x, bounds.y));
+    /* Write out the parameters. */
+    @Override
+    public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
+        out.writeDouble(value);
+    }
 
-    mod.value = value;
-    mod.name = "" + value;
-    return mod;
-  }
-
-  /* Write out the parameters. */
-
-  @Override
-  public void writeToStream(DataOutputStream out, Scene theScene) throws IOException
-  {
-    out.writeDouble(value);
-  }
-
-  /* Read in the parameters. */
-
-  @Override
-  public void readFromStream(DataInputStream in, Scene theScene) throws IOException
-  {
-    value = in.readDouble();
-    name = "" + value;
-    layout();
-  }
+    /* Read in the parameters. */
+    @Override
+    public void readFromStream(DataInputStream in, Scene theScene) throws IOException {
+        value = in.readDouble();
+        name = "" + value;
+        layout();
+    }
 }

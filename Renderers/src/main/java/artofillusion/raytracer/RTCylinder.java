@@ -23,30 +23,36 @@ import artofillusion.texture.*;
  */
 public class RTCylinder extends RTObject {
 
-    Cylinder theCylinder;
-    Vec3 topNormal, bottomNormal;
+    final Cylinder theCylinder;
+    Vec3 topNormal;
+    final Vec3 bottomNormal;
     double rx;
     double rz;
-    double height;
-    double halfh;
-    double rx2;
-    double rz2;
-    double toprx2;
-    double cx;
-    double cy;
-    double cz;
-    double sy;
-    double sz;
-    double[] param;
-    boolean bumpMapped, cone, transform, uniform;
-    Mat4 toLocal, fromLocal;
+    final double height;
+    final double halfh;
+    final double rx2;
+    final double rz2;
+    final double toprx2;
+    final double cx;
+    final double cy;
+    final double cz;
+    final double sy;
+    final double sz;
+    final double[] param;
+    final boolean bumpMapped;
+    boolean cone;
+    boolean transform;
+    final boolean uniform;
+    final Mat4 toLocal;
+    Mat4 fromLocal;
 
     public static final double TOL = 1e-12;
     public static final int TOP = 0;
     public static final int BOTTOM = 1;
     public static final int SIDE = 2;
 
-    private double linearTol, radialTol;
+    private double linearTol;
+    private final double radialTol;
 
     public RTCylinder(Cylinder cylinder, Mat4 fromLocal, Mat4 toLocal, double[] param) {
         double ratio = cylinder.getRatio();
@@ -381,11 +387,20 @@ public class RTCylinder extends RTObject {
      */
     private static class CylinderIntersection implements SurfaceIntersection {
 
-        private RTCylinder cylinder;
-        private int numIntersections, hit;
-        private double dist1, dist2, r1x, r1y, r1z, r2x, r2y, r2z;
+        private final RTCylinder cylinder;
+        private final int numIntersections;
+        private final int hit;
+        private final double dist1;
+        private final double dist2;
+        private final double r1x;
+        private final double r1y;
+        private final double r1z;
+        private final double r2x;
+        private final double r2y;
+        private final double r2z;
         private boolean trueNormValid;
-        private Vec3 trueNorm, pos;
+        private final Vec3 trueNorm;
+        private final Vec3 pos;
 
         public CylinderIntersection(RTCylinder cylinder, int numIntersections, int hit, Vec3 point1, Vec3 point2, double dist1, double dist2) {
             this.cylinder = cylinder;

@@ -25,10 +25,13 @@ import java.util.*;
  */
 public class TextureImageExporter {
 
-    private Hashtable<Texture, TextureImageInfo> textureTable;
-    private File dir;
-    private String baseFilename;
-    private int quality, components, width, height;
+    private final Hashtable<Texture, TextureImageInfo> textureTable;
+    private final File dir;
+    private final String baseFilename;
+    private final int quality;
+    private final int components;
+    private final int width;
+    private final int height;
     private int nextID;
 
     public static final int DIFFUSE = 1;

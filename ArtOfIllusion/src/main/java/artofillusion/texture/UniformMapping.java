@@ -19,141 +19,126 @@ import buoy.event.*;
 import buoy.widget.*;
 import java.io.*;
 
-/** UniformMapping is the TextureMapping for UniformTextures. */
+/**
+ * UniformMapping is the TextureMapping for UniformTextures.
+ */
+public class UniformMapping extends TextureMapping {
 
-public class UniformMapping extends TextureMapping
-{
-  private Object3D object;
-  private UniformTexture texture;
+    private final Object3D object;
+    private final UniformTexture texture;
 
-  public UniformMapping()
-  {
-    this(null,null);
-  }
-  
-  public UniformMapping(Object3D theObject, Texture theTexture)
-  {
-    object = theObject;
-    texture = (UniformTexture) theTexture;
-  }
+    public UniformMapping() {
+        this(null, null);
+    }
 
-  @Override
-  public Texture getTexture()
-  {
-    return texture;
-  }
+    public UniformMapping(Object3D theObject, Texture theTexture) {
+        object = theObject;
+        texture = (UniformTexture) theTexture;
+    }
 
-  @Override
-  public Object3D getObject()
-  {
-    return object;
-  }
+    @Override
+    public Texture getTexture() {
+        return texture;
+    }
 
-  @Override
-  public RenderingTriangle mapTriangle(int v1, int v2, int v3, int n1, int n2, int n3, Vec3 vert[])
-  {
-    return new UniformTriangle(v1, v2, v3, n1, n2, n3);
-  }
+    @Override
+    public Object3D getObject() {
+        return object;
+    }
 
-  @Override
-  public void getTextureSpec(Vec3 pos, TextureSpec spec, double angle, double size, double t, double param[])
-  {
-    if (!appliesToFace(angle > 0.0))
-      {
-        spec.diffuse.setRGB(0.0f, 0.0f, 0.0f);
-        spec.specular.setRGB(0.0f, 0.0f, 0.0f);
-        spec.transparent.setRGB(1.0f, 1.0f, 1.0f);
-        spec.emissive.setRGB(0.0f, 0.0f, 0.0f);
-        spec.roughness = spec.cloudiness = 0.0;
-        spec.bumpGrad.set(0.0, 0.0, 0.0);
-        return;
-      }
-    texture.getTextureSpec(spec);
-  }
+    @Override
+    public RenderingTriangle mapTriangle(int v1, int v2, int v3, int n1, int n2, int n3, Vec3[] vert) {
+        return new UniformTriangle(v1, v2, v3, n1, n2, n3);
+    }
 
-  @Override
-  public void getTransparency(Vec3 pos, RGBColor trans, double angle, double size, double t, double param[])
-  {
-    if (!appliesToFace(angle > 0.0))
-      {
-        trans.setRGB(1.0f, 1.0f, 1.0f);
-        return;
-      }
-    texture.getTransparency(trans);
-  }
+    @Override
+    public void getTextureSpec(Vec3 pos, TextureSpec spec, double angle, double size, double t, double[] param) {
+        if (!appliesToFace(angle > 0.0)) {
+            spec.diffuse.setRGB(0.0f, 0.0f, 0.0f);
+            spec.specular.setRGB(0.0f, 0.0f, 0.0f);
+            spec.transparent.setRGB(1.0f, 1.0f, 1.0f);
+            spec.emissive.setRGB(0.0f, 0.0f, 0.0f);
+            spec.roughness = spec.cloudiness = 0.0;
+            spec.bumpGrad.set(0.0, 0.0, 0.0);
+            return;
+        }
+        texture.getTextureSpec(spec);
+    }
 
-  @Override
-  public double getDisplacement(Vec3 pos, double size, double t, double param[])
-  {
-    return 0.0;
-  }
+    @Override
+    public void getTransparency(Vec3 pos, RGBColor trans, double angle, double size, double t, double[] param) {
+        if (!appliesToFace(angle > 0.0)) {
+            trans.setRGB(1.0f, 1.0f, 1.0f);
+            return;
+        }
+        texture.getTransparency(trans);
+    }
 
-  public boolean legalMapping(Object3D obj, Texture tex)
-  {
-    return tex instanceof UniformTexture;
-  }
+    @Override
+    public double getDisplacement(Vec3 pos, double size, double t, double[] param) {
+        return 0.0;
+    }
 
-  @Override
-  public TextureMapping duplicate()
-  {
-    UniformMapping map = new UniformMapping(object, texture);
-    map.setAppliesTo(appliesTo());
-    return map;
-  }
+    public boolean legalMapping(Object3D obj, Texture tex) {
+        return tex instanceof UniformTexture;
+    }
 
-  @Override
-  public TextureMapping duplicate(Object3D obj, Texture tex)
-  {
-    UniformMapping map = new UniformMapping(obj, tex);
-    map.setAppliesTo(appliesTo());
-    return map;
-  }
+    @Override
+    public TextureMapping duplicate() {
+        UniformMapping map = new UniformMapping(object, texture);
+        map.setAppliesTo(appliesTo());
+        return map;
+    }
 
-  @Override
-  public void copy(TextureMapping map)
-  {
-    setAppliesTo(map.appliesTo());
-  }
+    @Override
+    public TextureMapping duplicate(Object3D obj, Texture tex) {
+        UniformMapping map = new UniformMapping(obj, tex);
+        map.setAppliesTo(appliesTo());
+        return map;
+    }
 
-  @Override
-  public Widget getEditingPanel(Object3D obj, final MaterialPreviewer preview)
-  {
-    RowContainer row = new RowContainer();
-    final BComboBox c = new BComboBox(new String [] {
-      Translate.text("frontAndBackFaces"),
-      Translate.text("frontFacesOnly"),
-      Translate.text("backFacesOnly")
-    });
-    row.add(new BLabel(Translate.text("applyTo")+":"));
-    row.add(c);
-    c.setSelectedIndex(appliesTo());
-    c.addEventLink(ValueChangedEvent.class, new Object() {
-      void processEvent()
-      {
-        setAppliesTo((short) c.getSelectedIndex());
-        preview.setTexture(getTexture(), UniformMapping.this);
-        preview.render();
-      }
-    });
-    return row;
-  }
+    @Override
+    public void copy(TextureMapping map) {
+        setAppliesTo(map.appliesTo());
+    }
 
-  public UniformMapping(DataInputStream in, Object3D theObject, Texture theTexture) throws IOException, InvalidObjectException
-  {
-    short version = in.readShort();
+    @Override
+    public Widget getEditingPanel(Object3D obj, final MaterialPreviewer preview) {
+        RowContainer row = new RowContainer();
+        final BComboBox c = new BComboBox(new String[]{
+            Translate.text("frontAndBackFaces"),
+            Translate.text("frontFacesOnly"),
+            Translate.text("backFacesOnly")
+        });
+        row.add(new BLabel(Translate.text("applyTo") + ":"));
+        row.add(c);
+        c.setSelectedIndex(appliesTo());
+        c.addEventLink(ValueChangedEvent.class, new Object() {
+            void processEvent() {
+                setAppliesTo((short) c.getSelectedIndex());
+                preview.setTexture(getTexture(), UniformMapping.this);
+                preview.render();
+            }
+        });
+        return row;
+    }
 
-    if (version < 0 || version > 1)
-      throw new InvalidObjectException("");
-    if (version == 1)
-      setAppliesTo(in.readShort());
-    object = theObject;
-    texture = (UniformTexture) theTexture;
-  }
+    public UniformMapping(DataInputStream in, Object3D theObject, Texture theTexture) throws IOException, InvalidObjectException {
+        short version = in.readShort();
 
-  @Override
-  public void writeToFile(DataOutputStream out) throws IOException
-  {
-    out.writeShort(1);
-    out.writeShort(appliesTo());
-  }
+        if (version < 0 || version > 1) {
+            throw new InvalidObjectException("");
+        }
+        if (version == 1) {
+            setAppliesTo(in.readShort());
+        }
+        object = theObject;
+        texture = (UniformTexture) theTexture;
+    }
+
+    @Override
+    public void writeToFile(DataOutputStream out) throws IOException {
+        out.writeShort(1);
+        out.writeShort(appliesTo());
+    }
 }

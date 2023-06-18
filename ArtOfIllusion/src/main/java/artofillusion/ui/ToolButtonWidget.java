@@ -23,55 +23,55 @@ import buoy.widget.CustomWidget;
  */
 public class ToolButtonWidget extends CustomWidget {
 
-	private ToolButton button;
+    private final ToolButton button;
 
-	/**
+    /**
      * Create a new ToolButtonWidget whose appearance is determined by a ToolButton.
-	 */
-	public ToolButtonWidget(ToolButton button) {
+     */
+    public ToolButtonWidget(ToolButton button) {
         this.button = button;
-		addEventLink(MousePressedEvent.class, this, "doButtonPressed");
-		addEventLink(MouseEnteredEvent.class, this, "doMouseEntered");
-		addEventLink(MouseExitedEvent.class, this, "doMouseExited");
-		addEventLink(RepaintEvent.class, this, "paint");
-	}
+        addEventLink(MousePressedEvent.class, this, "doButtonPressed");
+        addEventLink(MouseEnteredEvent.class, this, "doMouseEntered");
+        addEventLink(MouseExitedEvent.class, this, "doMouseExited");
+        addEventLink(RepaintEvent.class, this, "paint");
+    }
 
-        @Override
-	public Dimension getMinimumSize() {
-		return button.getSize();
-	}
+    @Override
+    public Dimension getMinimumSize() {
+        return button.getSize();
+    }
 
-        @Override
-	public Dimension getPreferredSize() {
-		return button.getSize();
-	}
+    @Override
+    public Dimension getPreferredSize() {
+        return button.getSize();
+    }
 
-	public void setSelected(boolean selected) {
-		button.setSelected(selected);
-		repaint();
-	}
+    public void setSelected(boolean selected) {
+        button.setSelected(selected);
+        repaint();
+    }
 
-	public boolean isSelected() {
-		return button.isSelected();
-	}
+    public boolean isSelected() {
+        return button.isSelected();
+    }
 
-	private void doButtonPressed() {
-		button.setSelected(!button.isSelected());
-		dispatchEvent(new ValueChangedEvent(this));
-		repaint();
-	}
+    private void doButtonPressed() {
+        button.setSelected(!button.isSelected());
+        dispatchEvent(new ValueChangedEvent(this));
+        repaint();
+    }
 
-	private void doMouseEntered() {
-		button.setHighlighted(true);
-		repaint();
-	}
+    private void doMouseEntered() {
+        button.setHighlighted(true);
+        repaint();
+    }
 
-	private void doMouseExited() {
-		button.setHighlighted(false);
-		repaint();
-	}
+    private void doMouseExited() {
+        button.setHighlighted(false);
+        repaint();
+    }
 
-	public void paint(RepaintEvent ev) {
-		button.paint(ev.getGraphics());
-	}
+    public void paint(RepaintEvent ev) {
+        button.paint(ev.getGraphics());
+    }
 }

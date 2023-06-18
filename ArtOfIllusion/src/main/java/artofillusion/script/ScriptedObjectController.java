@@ -15,107 +15,109 @@ import artofillusion.animation.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
 
-/** This class mediates interactions between an ObjectScript and the rest of
-    the program. */
+/**
+ * This class mediates interactions between an ObjectScript and the rest of
+ * the program.
+ */
+public class ScriptedObjectController {
 
-public class ScriptedObjectController
-{
-  private ObjectInfo info;
-  private ScriptedObject object;
-  private ScriptedObjectEnumeration enumeration;
-  private Scene scene;
-  private boolean preview;
+    private final ObjectInfo info;
+    private final ScriptedObject object;
+    private final ScriptedObjectEnumeration enumeration;
+    private final Scene scene;
+    private final boolean preview;
 
-  /** Create a new ScriptedObjectController and execute its script. */
+    /**
+     * Create a new ScriptedObjectController and execute its script.
+     */
+    ScriptedObjectController(ObjectInfo obj, ScriptedObjectEnumeration objectEnum, boolean interactive, Scene sc) {
+        info = obj;
+        Object3D innerObject = obj.getObject();
+        while (innerObject instanceof ObjectWrapper) {
+            innerObject = ((ObjectWrapper) innerObject).getWrappedObject();
+        }
+        object = (ScriptedObject) innerObject;
+        enumeration = objectEnum;
+        preview = interactive;
+        scene = sc;
+        object.setUsesTime(false);
+        object.setUsesCoords(false);
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    ObjectScript script = object.getObjectScript();
+                    script.execute(ScriptedObjectController.this);
+                    enumeration.executionComplete();
+                } catch (Exception ex) {
+                    enumeration.executionComplete();
+                    ScriptRunner.displayError(object.getLanguage(), ex);
+                }
+            }
+        }.start();
+    }
 
-  ScriptedObjectController(ObjectInfo obj, ScriptedObjectEnumeration objectEnum, boolean interactive, Scene sc)
-  {
-    info = obj;
-    Object3D innerObject = obj.getObject();
-    while (innerObject instanceof ObjectWrapper)
-      innerObject = ((ObjectWrapper) innerObject).getWrappedObject();
-    object = (ScriptedObject) innerObject;
-    enumeration = objectEnum;
-    preview = interactive;
-    scene = sc;
-    object.setUsesTime(false);
-    object.setUsesCoords(false);
-    new Thread() {
-      @Override
-      public void run()
-      {
-        try
-          {
-            ObjectScript script = object.getObjectScript();
-            script.execute(ScriptedObjectController.this);
-            enumeration.executionComplete();
-          }
-        catch (Exception ex)
-          {
-            enumeration.executionComplete();
-            ScriptRunner.displayError(object.getLanguage(), ex);
-          }
-      }
-    }.start();
-  }
+    /**
+     * Get the coordinate system which defines the scripted object's position in the scene.
+     */
+    public final CoordinateSystem getCoordinates() {
+        object.setUsesCoords(true);
+        return info.getCoords();
+    }
 
-  /** Get the coordinate system which defines the scripted object's position in the scene. */
+    /**
+     * Get the current time.
+     */
+    public final double getTime() {
+        object.setUsesTime(true);
+        return scene.getTime();
+    }
 
-  public final CoordinateSystem getCoordinates()
-  {
-    object.setUsesCoords(true);
-    return info.getCoords();
-  }
+    /**
+     * Get the scene this object is part of.
+     */
+    public final Scene getScene() {
+        object.setUsesTime(true);
+        return scene;
+    }
 
-  /** Get the current time. */
+    /**
+     * Determine whether the script is currently being executed to create an interactive preview.
+     */
+    public final boolean isPreview() {
+        return preview;
+    }
 
-  public final double getTime()
-  {
-    object.setUsesTime(true);
-    return scene.getTime();
-  }
+    /**
+     * Get the value of a parameter.
+     */
+    public final double getParameter(String name) throws IllegalArgumentException {
+        for (int i = object.getNumParameters() - 1; i >= 0; i--) {
+            if (object.getParameterName(i).equals(name)) {
+                return object.getParameterValue(i);
+            }
+        }
+        throw new IllegalArgumentException("Unknown parameter '" + name + "'");
+    }
 
-  /** Get the scene this object is part of. */
+    /**
+     * Add an object to the scripted object.
+     */
+    public final void addObject(ObjectInfo info) {
+        info.tracks = new Track[0];
+        if (info.getObject().canSetTexture() && info.getObject().getTextureMapping() == null) {
+            info.setTexture(object.getTexture(), object.getTextureMapping());
+        }
+        if (info.getObject().canSetMaterial() && info.getObject().getMaterialMapping() == null) {
+            info.setMaterial(object.getMaterial(), object.getMaterialMapping());
+        }
+        enumeration.addObject(info);
+    }
 
-  public final Scene getScene()
-  {
-    object.setUsesTime(true);
-    return scene;
-  }
-
-  /** Determine whether the script is currently being executed to create an interactive preview. */
-
-  public final boolean isPreview()
-  {
-    return preview;
-  }
-
-  /** Get the value of a parameter. */
-
-  public final double getParameter(String name) throws IllegalArgumentException
-  {
-    for (int i = object.getNumParameters()-1; i >= 0; i--)
-      if (object.getParameterName(i).equals(name))
-        return object.getParameterValue(i);
-    throw new IllegalArgumentException("Unknown parameter '"+name+"'");
-  }
-
-  /** Add an object to the scripted object. */
-
-  public final void addObject(ObjectInfo info)
-  {
-    info.tracks = new Track [0];
-    if (info.getObject().canSetTexture() && info.getObject().getTextureMapping() == null)
-      info.setTexture(object.getTexture(), object.getTextureMapping());
-    if (info.getObject().canSetMaterial() && info.getObject().getMaterialMapping() == null)
-      info.setMaterial(object.getMaterial(), object.getMaterialMapping());
-    enumeration.addObject(info);
-  }
-
-  /** Add an object to the scripted object. */
-
-  public final void addObject(Object3D obj, CoordinateSystem coords)
-  {
-    addObject(new ObjectInfo(obj, coords, ""));
-  }
+    /**
+     * Add an object to the scripted object.
+     */
+    public final void addObject(Object3D obj, CoordinateSystem coords) {
+        addObject(new ObjectInfo(obj, coords, ""));
+    }
 }

@@ -22,7 +22,7 @@ public class PowerModule extends ProceduralModule {
 
     boolean valueOk, errorOk, gradOk, powerIsInteger;
     double value, error, valueIn, errorIn, power, lastBlur;
-    Vec3 gradient;
+    final Vec3 gradient;
 
     public PowerModule() {
         this(new Point());

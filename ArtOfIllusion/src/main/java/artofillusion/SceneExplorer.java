@@ -28,87 +28,85 @@ class SceneExplorer extends DefaultDockableWidget {
 
     private final TreeList itemTree;
     private final Scene scene;
-    
+
     public SceneExplorer(LayoutWindow layout) {
         this.setLabel(Translate.text("Objects"));
         this.scene = layout.getScene();
-        
+
         itemTree = new TreeList(layout);
         itemTree.setPopupMenuManager(layout);
         itemTree.setPreferredSize(new Dimension(130, 300));
         itemTree.addEventLink(TreeList.ElementMovedEvent.class, layout, "rebuildList");
         itemTree.addEventLink(TreeList.ElementDoubleClickedEvent.class, layout, "editObjectCommand");
         itemTree.addEventLink(SelectionChangedEvent.class, layout, "treeSelectionChanged");
-        
+
         rebuildList();
-        
+
         BScrollPane itemTreeScroller = new ExplorerTreeScroller(itemTree);
         this.setContent(itemTreeScroller);
     }
-    
-    
+
     public final void rebuildList() {
 
         int count = scene.getNumObjects();
-        
-        boolean expanded[] = new boolean [count], selected[] = new boolean [count];
+
+        boolean[] expanded = new boolean[count], selected = new boolean[count];
         boolean captureState = itemTree.getElements().length != 0;
-        
-        if(captureState) {
+
+        if (captureState) {
             IntStream.range(0, count).forEach(index -> {
                 TreeElement item = itemTree.findElement(scene.getObject(index));
                 expanded[index] = item.isExpanded();
                 selected[index] = item.isSelected();
-            });            
+            });
         }
 
-        
-        itemTree.setUpdateEnabled(false); 
+        itemTree.setUpdateEnabled(false);
         itemTree.removeAllElements();
         scene.getObjects().stream().filter(info -> info.getParent() == null).forEach(item -> {
             itemTree.addElement(new ObjectTreeElement(item, itemTree));
         });
-        
-        if(captureState) {
+
+        if (captureState) {
             IntStream.range(0, count).forEach(index -> {
                 TreeElement item = itemTree.findElement(scene.getObject(index));
                 item.setExpanded(expanded[index]);
                 item.setSelected(selected[index]);
-            });   
+            });
         }
-        
-        itemTree.setUpdateEnabled(true);        
+
+        itemTree.setUpdateEnabled(true);
     }
-    
+
     public void add(ObjectInfo info) {
         itemTree.addElement(new ObjectTreeElement(info, itemTree));
     }
-    
+
     public void add(ObjectInfo info, int index) {
         itemTree.addElement(new ObjectTreeElement(info, itemTree), index);
     }
-    
+
     public void remove(ObjectInfo info) {
         itemTree.removeObject(info);
     }
-    
+
     public Object[] getSelectedObjects() {
         return itemTree.getSelectedObjects();
     }
-    
+
     public void setSelected(ObjectInfo info, boolean selected) {
         itemTree.setSelected(info, selected);
     }
+
     public void deselectAll() {
         itemTree.deselectAll();
     }
-    
+
     public void setUpdateEnabled(boolean state) {
         itemTree.setUpdateEnabled(state);
     }
-    
-    private static class ExplorerTreeScroller extends BScrollPane
-    {
+
+    private static class ExplorerTreeScroller extends BScrollPane {
 
         @SuppressWarnings("ResultOfObjectAllocationIgnored")
         public ExplorerTreeScroller(Widget contentWidget) {
@@ -124,6 +122,6 @@ class SceneExplorer extends DefaultDockableWidget {
         public Dimension getMinimumSize() {
             return new Dimension(0, 0);
         }
-        
+
     }
 }

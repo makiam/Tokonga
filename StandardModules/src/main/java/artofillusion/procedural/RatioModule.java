@@ -22,7 +22,7 @@ public class RatioModule extends ProceduralModule {
 
     boolean valueOk, errorOk;
     double value, error, valueIn1, valueIn2, errorIn1, errorIn2, lastBlur;
-    Vec3 tempVec;
+    final Vec3 tempVec;
 
     public RatioModule() {
         this(new Point());

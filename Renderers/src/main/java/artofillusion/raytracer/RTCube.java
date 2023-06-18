@@ -22,15 +22,22 @@ import artofillusion.texture.*;
  */
 public class RTCube extends RTObject {
 
-    private Cube theCube;
-    protected double minx, miny, minz, maxx, maxy, maxz;
-    protected double[] param;
-    private boolean bumpMapped, transform;
-    protected Mat4 toLocal, fromLocal;
+    private final Cube theCube;
+    protected final double minx;
+    protected final double miny;
+    protected final double minz;
+    protected final double maxx;
+    protected final double maxy;
+    protected final double maxz;
+    protected final double[] param;
+    private final boolean bumpMapped;
+    private boolean transform;
+    protected final Mat4 toLocal;
+    protected Mat4 fromLocal;
 
     public static final double TOL = 1e-12;
 
-    private double cubeTol;
+    private final double cubeTol;
 
     public RTCube(Cube cube, Mat4 fromLocal, Mat4 toLocal, double[] param) {
         Vec3 size = cube.getBounds().getSize();
@@ -352,10 +359,20 @@ public class RTCube extends RTObject {
      */
     private static class CubeIntersection implements SurfaceIntersection {
 
-        private RTCube cube;
-        private int numIntersections;
-        private double dist1, dist2, r1x, r1y, r1z, r2x, r2y, r2z, normx, normy, normz;
-        private Vec3 pos;
+        private final RTCube cube;
+        private final int numIntersections;
+        private final double dist1;
+        private final double dist2;
+        private final double r1x;
+        private final double r1y;
+        private final double r1z;
+        private final double r2x;
+        private final double r2y;
+        private final double r2z;
+        private final double normx;
+        private final double normy;
+        private final double normz;
+        private final Vec3 pos;
 
         public CubeIntersection(RTCube cube, int numIntersections, Vec3 point1, Vec3 point2, double dist1, double dist2, Vec3 trueNorm) {
             this.cube = cube;

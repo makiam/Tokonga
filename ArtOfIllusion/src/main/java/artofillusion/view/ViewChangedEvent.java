@@ -14,29 +14,24 @@ import artofillusion.*;
 
 /**
  * A ViewChangedEvent is dispatched by a ViewerCanvas to indicate that some element of the
- * view settings has changed.  This includes the camera position or orientation, the zoom
+ * view settings has changed. This includes the camera position or orientation, the zoom
  * level, the projection mode, etc.
  */
+public class ViewChangedEvent {
 
-public class ViewChangedEvent
-{
-  private ViewerCanvas source;
+    private final ViewerCanvas source;
 
-  /**
-   * Create a ViewChangedEvent.
-   */
+    /**
+     * Create a ViewChangedEvent.
+     */
+    public ViewChangedEvent(ViewerCanvas source) {
+        this.source = source;
+    }
 
-  public ViewChangedEvent(ViewerCanvas source)
-  {
-    this.source = source;
-  }
-
-  /**
-   * Get the ViewerCanvas which generated this event.
-   */
-
-  public ViewerCanvas getSource()
-  {
-    return source;
-  }
+    /**
+     * Get the ViewerCanvas which generated this event.
+     */
+    public ViewerCanvas getSource() {
+        return source;
+    }
 }

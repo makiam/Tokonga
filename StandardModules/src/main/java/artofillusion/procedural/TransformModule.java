@@ -26,7 +26,11 @@ public class TransformModule extends ProceduralModule {
 
     boolean valueOk, errorOk, gradOk;
     CoordinateSystem coords;
-    Vec3 grad1, grad2, grad3, v, tempVec;
+    final Vec3 grad1;
+    final Vec3 grad2;
+    final Vec3 grad3;
+    final Vec3 v;
+    final Vec3 tempVec;
     Mat4 trans, gradTrans;
     double xscale, yscale, zscale, lastBlur;
     PointInfo point;

@@ -20,7 +20,7 @@ package artofillusion.raytracer;
  */
 public class ResourcePool {
 
-    private Class<?> objectClass;
+    private final Class<?> objectClass;
     private Object[] pool;
     private int next;
 

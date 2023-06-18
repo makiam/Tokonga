@@ -53,7 +53,7 @@ public class Raytracer {
     private Camera camera;
     private double time, surfaceError = 0.02;
     private boolean preview, softShadows, adaptive = true, reducedMemory;
-    private ThreadLocal<RaytracerContext> threadContext;
+    private final ThreadLocal<RaytracerContext> threadContext;
     private List<RTObjectFactory> factories;
     private List<RTObject> objectList;
     private List<RTLight> lightList;

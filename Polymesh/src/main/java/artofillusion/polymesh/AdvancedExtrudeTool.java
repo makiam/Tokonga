@@ -37,16 +37,15 @@ import java.util.Map;
 public class AdvancedExtrudeTool extends AdvancedEditingTool {
 
     private Vec3[] baseVertPos;
-    private UndoRecord undo;
     private final Map<ViewerCanvas, Manipulator> manip3dHashMap;
     private boolean[] selected;
     private boolean separateFaces;
     private PolyMesh origMesh;
-    private short NO_EXTRUDE = 0;
-    private short EXTRUDE_FACES = 1;
-    private short EXTRUDE_FACE_GROUPS = 2;
-    private short EXTRUDE_EDGES = 3;
-    private short EXTRUDE_EDGE_GROUPS = 4;
+    private final short NO_EXTRUDE = 0;
+    private final short EXTRUDE_FACES = 1;
+    private final short EXTRUDE_FACE_GROUPS = 2;
+    private final short EXTRUDE_EDGES = 3;
+    private final short EXTRUDE_EDGE_GROUPS = 4;
     private int mode;
 
     public AdvancedExtrudeTool(EditingWindow fr, MeshEditController controller) {
@@ -140,7 +139,7 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool {
 
     private void doManipulatorShapedMesh(Manipulator.ManipulatorEvent e) {
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
-        undo = new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, origMesh});
+        UndoRecord undo = new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, origMesh});
         theWindow.setUndoRecord(undo);
         baseVertPos = null;
         origMesh = null;

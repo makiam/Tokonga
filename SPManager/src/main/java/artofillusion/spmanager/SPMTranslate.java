@@ -26,7 +26,6 @@ import java.util.*;
  */
 public class SPMTranslate {
 
-    private static Locale locale = Locale.getDefault();
     private static ResourceBundle resources;
 
     /**
@@ -35,8 +34,7 @@ public class SPMTranslate {
      * @param l The new locale value
      */
     public static void setLocale(Locale l) {
-        locale = l;
-        resources = ResourceBundle.getBundle("spmanager", locale);
+        resources = ResourceBundle.getBundle("spmanager", l);
     }
 
     /**

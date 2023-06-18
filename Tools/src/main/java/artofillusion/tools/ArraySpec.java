@@ -49,7 +49,7 @@ public class ArraySpec {
 
     // --- private data
     // where to create this array
-    private LayoutWindow window;
+    private final LayoutWindow window;
     // undo record
     private UndoRecord undo;
     // froot object for grouping
@@ -65,7 +65,7 @@ public class ArraySpec {
     /**
      * the objects that should be copied to create an array
      */
-    public Vector<ObjectInfo> objectList;         // list of objectInfo's
+    public final Vector<ObjectInfo> objectList;         // list of objectInfo's
 
     // linear paramters
     /**
@@ -259,7 +259,7 @@ public class ArraySpec {
             return;
         }
 
-        for (ObjectInfo info: objectList) {
+        for (ObjectInfo info : objectList) {
 
             // calculate displacement vector
             Vec3 displacement = new Vec3(stepX, stepY, stepZ);

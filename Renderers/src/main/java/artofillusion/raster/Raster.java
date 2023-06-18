@@ -52,8 +52,8 @@ public class Raster implements Renderer, Runnable {
     private Thread renderThread;
     private RGBColor ambColor, envColor, fogColor;
     private TextureMapping envMapping;
-    private ThreadLocal<RasterContext> threadRasterContext;
-    private ThreadLocal<CompositingContext> threadCompositingContext;
+    private final ThreadLocal<RasterContext> threadRasterContext;
+    private final ThreadLocal<CompositingContext> threadCompositingContext;
     private RowLock[] lock;
     private double[] envParamValue;
     private double time, smoothing = 1.0, smoothScale, focalDist, surfaceError = 0.02, fogDist;
@@ -435,8 +435,8 @@ public class Raster implements Renderer, Runnable {
     private ObjectInfo[] sortObjects() {
         class SortRecord implements Comparable<SortRecord> {
 
-            public ObjectInfo object;
-            public double depth;
+            public final ObjectInfo object;
+            public final double depth;
             public boolean isTransparent;
 
             SortRecord(ObjectInfo object) {
@@ -3369,10 +3369,17 @@ public class Raster implements Renderer, Runnable {
      */
     private class DisplacedVertex {
 
-        public Vec3 vert, norm, dispvert, dispnorm;
-        public Vec2 pos;
-        public double u, v, disp, tol;
-        public float z, basez;
+        public final Vec3 vert;
+        public final Vec3 norm;
+        public final Vec3 dispvert;
+        public Vec3 dispnorm;
+        public final Vec2 pos;
+        public final double u;
+        public final double v;
+        public final double disp;
+        public double tol;
+        public final float z;
+        public final float basez;
         public RGBColor diffuse, specular, highlight;
 
         public DisplacedVertex(RenderingTriangle tri, Vec3 vert, Vec3 norm, double u, double v,

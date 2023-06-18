@@ -24,12 +24,10 @@ package artofillusion;
  * with this program. If not, the license is available from the
  * GNU project, at http://www.gnu.org.
  */
-
 /**
- *  A SafeFileOutputStream modifies a file safely, in a way that permits
- *  rollback of the changes.
+ * A SafeFileOutputStream modifies a file safely, in a way that permits
+ * rollback of the changes.
  */
-
 import java.io.File;
 import java.io.FilterOutputStream;
 import java.io.FileInputStream;
@@ -37,69 +35,69 @@ import java.io.FileOutputStream;
 
 import java.io.IOException;
 
-public class SafeFileOutputStream extends FilterOutputStream
-{
+public class SafeFileOutputStream extends FilterOutputStream {
+
     /**
-     *  Stream creation modes
+     * Stream creation modes
      */
     public static final int OVERWRITE = 0;
     public static final int CREATE = 1;
     public static final int APPEND = 2;
 
     /**
-     *  optional modes
+     * optional modes
      */
     public static final int KEEP_BACKUP = 128;
 
     /**
-     *  Ctor
-     *  Create a safe output stream on the named path
+     * Ctor
+     * Create a safe output stream on the named path
      *
-     *  @param path string pathname
-     *  @param mode the logical OR of the desired mode values
+     * @param path string pathname
+     * @param mode the logical OR of the desired mode values
      */
     public SafeFileOutputStream(String path, int mode)
-        throws IOException
-    {
+            throws IOException {
         super(null);
         open(path, mode);
     }
 
     /**
-     *  Ctor
-     *  Create a safe output stream on the specified file
+     * Ctor
+     * Create a safe output stream on the specified file
      *
-     *  @param file - File to write
-     *  @param mode - logical OR of the desired mode values
+     * @param file - File to write
+     * @param mode - logical OR of the desired mode values
      */
     public SafeFileOutputStream(File file, int mode)
-        throws IOException
-    {
+            throws IOException {
         super(null);
         open(file, mode);
     }
 
     /**
-     *  open the specified path
+     * open the specified path
      *
-     *  @param path String pathname of the output file
-     *  @param mode logical OR of the desired mode values
+     * @param path String pathname of the output file
+     * @param mode logical OR of the desired mode values
      */
     public void open(String path, int mode)
-        throws IOException
-    { open(new File(path), mode); }
+            throws IOException {
+        open(new File(path), mode);
+    }
 
     /**
-     *  open the specified file
+     * open the specified file
      *
-     *  @param file File to write
-     *  @param mode logical OR of the desired mode values
+     * @param file File to write
+     * @param mode logical OR of the desired mode values
      */
     public void open(File file, int mode)
-        throws IOException
-    {
+            throws IOException {
         // abort any current output
-        if (out != null) abort();
+        if (out != null) {
+            abort();
+        }
 
         this.file = file;
         this.path = file.getPath();
@@ -126,19 +124,18 @@ public class SafeFileOutputStream extends FilterOutputStream
                 if (count > 0) {
                     out.write(array, 0, count);
                 }
-            } while ( count >= 0);
+            } while (count >= 0);
         }
     }
 
     /**
-     *  abort the stream
+     * abort the stream
      *
-     *  closes the underlying stream, frees all resources, and removes any
-     *  temporary files.
+     * closes the underlying stream, frees all resources, and removes any
+     * temporary files.
      */
     public void abort()
-        throws IOException
-    {
+            throws IOException {
         if (out != null) {
             out.close();
             out = null;
@@ -152,12 +149,11 @@ public class SafeFileOutputStream extends FilterOutputStream
     }
 
     /**
-     *  close the underlying stream, and complete the commit
+     * close the underlying stream, and complete the commit
      */
     @Override
     public void close()
-        throws IOException
-    {
+            throws IOException {
         // close the output first.
         out.flush();
         out.close();
@@ -171,70 +167,77 @@ public class SafeFileOutputStream extends FilterOutputStream
             // remove any existing backup
             bak = new File(path + ".bak");
             if (bak.exists()) {
-                if (!bak.delete())
-                    throw new IOException("SafeFileOutputStream.close: " +
-                                          "could not delete backup file");
+                if (!bak.delete()) {
+                    throw new IOException("SafeFileOutputStream.close: "
+                            + "could not delete backup file");
+                }
             }
 
             // backup file
             if (file.exists()) {
-                if (!file.renameTo(bak))
-                    throw new IOException("SafeFileOutputStream.close: " +
-                                          "could not create backup file");
+                if (!file.renameTo(bak)) {
+                    throw new IOException("SafeFileOutputStream.close: "
+                            + "could not create backup file");
+                }
             }
 
             // rename temp file
             File temp = new File(path + ".tmp");
-            if (!temp.renameTo(file))
-                throw new IOException("SafeFileOutputStream.close: " +
-                                      "could not make file live");
-        }
-        finally {
+            if (!temp.renameTo(file)) {
+                throw new IOException("SafeFileOutputStream.close: "
+                        + "could not make file live");
+            }
+        } finally {
             if (bak != null && bak.exists() == true) {
 
                 // recover from backup
                 if (file.exists() == false) {
-                    if (!bak.renameTo(file))
-                        throw new IOException("SafeFileOutputStream.close: " +
-                                              "Error recovering from backup." +
-                                              "\nFailed to rename " +
-                                              bak.getAbsolutePath() + " to " +
-                                              file.getAbsolutePath());
+                    if (!bak.renameTo(file)) {
+                        throw new IOException("SafeFileOutputStream.close: "
+                                + "Error recovering from backup."
+                                + "\nFailed to rename "
+                                + bak.getAbsolutePath() + " to "
+                                + file.getAbsolutePath());
+                    }
                 }
 
                 // tidy up
                 if ((mode & KEEP_BACKUP) == 0) {
-                    if (!bak.delete())
-                        throw new IOException("SafeFileOutputStream.close: " +
-                                              "could not delete backup file");
+                    if (!bak.delete()) {
+                        throw new IOException("SafeFileOutputStream.close: "
+                                + "could not delete backup file");
+                    }
                 }
             }
         }
     }
 
     /**
-     *  write to the underlying stream
+     * write to the underlying stream
      */
     @Override
     public void write(byte[] array)
-        throws IOException
-    { out.write(array, 0, array.length); }
+            throws IOException {
+        out.write(array, 0, array.length);
+    }
 
     /**
-     *  write to the underlying stream
+     * write to the underlying stream
      */
     @Override
     public void write(byte[] array, int start, int length)
-        throws IOException
-    { out.write(array, start, length); }
+            throws IOException {
+        out.write(array, start, length);
+    }
 
     /**
-     *  write to the underlying stream
+     * write to the underlying stream
      */
     @Override
     public void write(int value)
-        throws IOException
-    { out.write(value); }
+            throws IOException {
+        out.write(value);
+    }
 
     /*
      *  private state

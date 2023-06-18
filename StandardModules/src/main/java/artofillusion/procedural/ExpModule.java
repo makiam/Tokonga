@@ -20,7 +20,7 @@ public class ExpModule extends ProceduralModule {
 
     boolean valueOk, errorOk, gradOk;
     double value, error, valueIn, errorIn, lastBlur;
-    Vec3 gradient;
+    final Vec3 gradient;
 
     public ExpModule() {
         this(new Point());

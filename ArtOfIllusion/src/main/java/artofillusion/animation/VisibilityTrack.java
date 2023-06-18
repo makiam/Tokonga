@@ -17,248 +17,214 @@ import artofillusion.ui.*;
 import buoy.widget.*;
 import java.io.*;
 
-/** This is a Track which controls whether an object is visible. */
+/**
+ * This is a Track which controls whether an object is visible.
+ */
+public class VisibilityTrack extends Track {
 
-public class VisibilityTrack extends Track
-{
-  ObjectInfo info;
-  Timecourse tc;
+    ObjectInfo info;
+    Timecourse tc;
 
-  public VisibilityTrack(ObjectInfo info)
-  {
-    super("Visibility");
-    this.info = info;
-    tc = new Timecourse(new Keyframe [0], new double [0], new Smoothness [0]);
-  }
+    public VisibilityTrack(ObjectInfo info) {
+        super("Visibility");
+        this.info = info;
+        tc = new Timecourse(new Keyframe[0], new double[0], new Smoothness[0]);
+    }
 
-  /* Modify the position of the object. */
+    /* Modify the position of the object. */
+    @Override
+    public void apply(double time) {
+        BooleanKeyframe v = (BooleanKeyframe) tc.evaluate(time, Timecourse.LINEAR);
 
-  @Override
-  public void apply(double time)
-  {
-    BooleanKeyframe v = (BooleanKeyframe) tc.evaluate(time, Timecourse.LINEAR);
+        if (v == null) {
+            return;
+        }
+        info.setVisible(v.val);
+    }
 
-    if (v == null)
-      return;
-    info.setVisible(v.val);
-  }
+    /* Create a duplicate of this track. */
+    @Override
+    public VisibilityTrack duplicate(Object obj) {
+        VisibilityTrack t = new VisibilityTrack((ObjectInfo) obj);
 
-  /* Create a duplicate of this track. */
+        t.name = name;
+        t.enabled = enabled;
+        t.quantized = quantized;
+        t.tc = tc.duplicate((ObjectInfo) obj);
+        return t;
+    }
 
-  @Override
-  public VisibilityTrack duplicate(Object obj)
-  {
-    VisibilityTrack t = new VisibilityTrack((ObjectInfo) obj);
+    /* Make this track identical to another one. */
+    @Override
+    public void copy(Track tr) {
+        VisibilityTrack t = (VisibilityTrack) tr;
 
-    t.name = name;
-    t.enabled = enabled;
-    t.quantized = quantized;
-    t.tc = tc.duplicate((ObjectInfo) obj);
-    return t;
-  }
+        name = t.name;
+        enabled = t.enabled;
+        quantized = t.quantized;
+        tc = t.tc.duplicate(info);
+    }
 
-  /* Make this track identical to another one. */
+    /* Get a list of all keyframe times for this track. */
+    @Override
+    public double[] getKeyTimes() {
+        return tc.getTimes();
+    }
 
-  @Override
-  public void copy(Track tr)
-  {
-    VisibilityTrack t = (VisibilityTrack) tr;
+    /* Get the timecourse describing this track. */
+    @Override
+    public Timecourse getTimecourse() {
+        return tc;
+    }
 
-    name = t.name;
-    enabled = t.enabled;
-    quantized = t.quantized;
-    tc = t.tc.duplicate(info);
-  }
+    /* Set a keyframe at the specified time. */
+    @Override
+    public void setKeyframe(double time, Keyframe k, Smoothness s) {
+        tc.addTimepoint(k, time, s);
+    }
 
-  /* Get a list of all keyframe times for this track. */
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Keyframe setKeyframe(double time) {
+        Keyframe k = new BooleanKeyframe(info.isVisible());
+        tc.addTimepoint(k, time, new Smoothness());
+        return k;
+    }
 
-  @Override
-  public double [] getKeyTimes()
-  {
-    return tc.getTimes();
-  }
+    /**
+     * Set a keyframe at the specified time, based on the current state of the Scene,
+     * if and only if the Scene does not match the current state of the track. Return
+     * the new Keyframe, or null if none was set.
+     */
+    @Override
+    public Keyframe setKeyframeIfModified(double time) {
+        if (tc.getTimes().length == 0) {
+            return setKeyframe(time);
+        }
+        BooleanKeyframe v = (BooleanKeyframe) tc.evaluate(time, Timecourse.LINEAR);
+        if (v.val == info.isVisible()) {
+            return null;
+        }
+        return setKeyframe(time);
+    }
 
-  /* Get the timecourse describing this track. */
+    /* Move a keyframe to a new time, and return its new position in the list. */
+    @Override
+    public int moveKeyframe(int which, double time) {
+        return tc.moveTimepoint(which, time);
+    }
 
-  @Override
-  public Timecourse getTimecourse()
-  {
-    return tc;
-  }
+    /* Delete the specified keyframe. */
+    @Override
+    public void deleteKeyframe(int which) {
+        tc.removeTimepoint(which);
+    }
 
-  /* Set a keyframe at the specified time. */
+    /* This track is null if it has no keyframes. */
+    @Override
+    public boolean isNullTrack() {
+        return (tc.getTimes().length == 0);
+    }
 
-  @Override
-  public void setKeyframe(double time, Keyframe k, Smoothness s)
-  {
-    tc.addTimepoint(k, time, s);
-  }
+    /* Get the parent object of this track. */
+    @Override
+    public Object getParent() {
+        return info;
+    }
 
-  /**
-   * {@inheritDoc}
-   */
+    /* Set the parent object of this track. */
+    @Override
+    public void setParent(Object obj) {
+        info = (ObjectInfo) obj;
+    }
 
-  @Override
-  public Keyframe setKeyframe(double time)
-  {
-    Keyframe k = new BooleanKeyframe(info.isVisible());
-    tc.addTimepoint(k, time, new Smoothness());
-    return k;
-  }
+    /* Get the names of all graphable values for this track. */
+    @Override
+    public String[] getValueNames() {
+        return new String[]{"Visible"};
+    }
 
-  /** Set a keyframe at the specified time, based on the current state of the Scene,
-      if and only if the Scene does not match the current state of the track.  Return
-      the new Keyframe, or null if none was set. */
+    /* Get the default list of graphable values (for a track which has no keyframes). */
+    @Override
+    public double[] getDefaultGraphValues() {
+        return new double[]{1.0};
+    }
 
-  @Override
-  public Keyframe setKeyframeIfModified(double time)
-  {
-    if (tc.getTimes().length == 0)
-      return setKeyframe(time);
-    BooleanKeyframe v = (BooleanKeyframe) tc.evaluate(time, Timecourse.LINEAR);
-    if (v.val == info.isVisible())
-      return null;
-    return setKeyframe(time);
-  }
-
-  /* Move a keyframe to a new time, and return its new position in the list. */
-
-  @Override
-  public int moveKeyframe(int which, double time)
-  {
-    return tc.moveTimepoint(which, time);
-  }
-
-  /* Delete the specified keyframe. */
-
-  @Override
-  public void deleteKeyframe(int which)
-  {
-    tc.removeTimepoint(which);
-  }
-
-  /* This track is null if it has no keyframes. */
-
-  @Override
-  public boolean isNullTrack()
-  {
-    return (tc.getTimes().length == 0);
-  }
-
-  /* Get the parent object of this track. */
-
-  @Override
-  public Object getParent()
-  {
-    return info;
-  }
-
-  /* Set the parent object of this track. */
-
-  @Override
-  public void setParent(Object obj)
-  {
-    info = (ObjectInfo) obj;
-  }
-
-  /* Get the names of all graphable values for this track. */
-
-  @Override
-  public String [] getValueNames()
-  {
-    return new String [] {"Visible"};
-  }
-
-  /* Get the default list of graphable values (for a track which has no keyframes). */
-
-  @Override
-  public double [] getDefaultGraphValues()
-  {
-    return new double [] {1.0};
-  }
-
-  /* Get the allowed range for graphable values.  This returns a 2D array, where elements
+    /* Get the allowed range for graphable values.  This returns a 2D array, where elements
      [n][0] and [n][1] are the minimum and maximum allowed values, respectively, for
      the nth graphable value. */
+    @Override
+    public double[][] getValueRange() {
+        return new double[][]{{0.0, 1.0}};
+    }
 
-  @Override
-  public double[][] getValueRange()
-  {
-    return new double [][] {{0.0, 1.0}};
-  }
+    /* Write a serialized representation of this track to a stream. */
+    @Override
+    public void writeToStream(DataOutputStream out, Scene scene) throws IOException {
+        double[] t = tc.getTimes();
+        Keyframe[] v = tc.getValues();
 
-  /* Write a serialized representation of this track to a stream. */
+        out.writeShort(0); // Version number
+        out.writeUTF(name);
+        out.writeBoolean(enabled);
+        out.writeInt(t.length);
+        for (int i = 0; i < t.length; i++) {
+            out.writeDouble(t[i]);
+            v[i].writeToStream(out);
+        }
+    }
 
-  @Override
-  public void writeToStream(DataOutputStream out, Scene scene) throws IOException
-  {
-    double t[] = tc.getTimes();
-    Keyframe v[] = tc.getValues();
+    /**
+     * Initialize this tracked based on its serialized representation as written by writeToStream().
+     */
+    @Override
+    public void initFromStream(DataInputStream in, Scene scene) throws IOException, InvalidObjectException {
+        short version = in.readShort();
+        if (version != 0) {
+            throw new InvalidObjectException("");
+        }
+        name = in.readUTF();
+        enabled = in.readBoolean();
+        int keys = in.readInt();
+        double[] t = new double[keys];
+        Smoothness[] s = new Smoothness[keys];
+        Keyframe[] v = new Keyframe[keys];
+        for (int i = 0; i < keys; i++) {
+            t[i] = in.readDouble();
+            v[i] = new BooleanKeyframe(in, info);
+            s[i] = new Smoothness();
+        }
+        tc = new Timecourse(v, t, s);
+    }
 
-    out.writeShort(0); // Version number
-    out.writeUTF(name);
-    out.writeBoolean(enabled);
-    out.writeInt(t.length);
-    for (int i = 0; i < t.length; i++)
-      {
-        out.writeDouble(t[i]);
-        v[i].writeToStream(out);
-      }
-  }
+    /* Present a window in which the user can edit the specified keyframe. */
+    @Override
+    public void editKeyframe(LayoutWindow win, int which) {
+        BooleanKeyframe key = (BooleanKeyframe) tc.getValues()[which];
+        double time = tc.getTimes()[which];
+        BCheckBox visibleBox = new BCheckBox(Translate.text("Visible"), key.val);
+        ValueField timeField = new ValueField(time, ValueField.NONE, 5);
+        ComponentsDialog dlg = new ComponentsDialog(win, Translate.text("editKeyframe"), new Widget[]{visibleBox, timeField}, new String[]{null, Translate.text("Time")});
 
-  /** Initialize this tracked based on its serialized representation as written by writeToStream(). */
+        if (!dlg.clickedOk()) {
+            return;
+        }
+        win.setUndoRecord(new UndoRecord(win, false, UndoRecord.COPY_TRACK, this, duplicate(info)));
+        key.val = visibleBox.getState();
+        moveKeyframe(which, timeField.getValue());
+    }
 
-  @Override
-  public void initFromStream(DataInputStream in, Scene scene) throws IOException, InvalidObjectException
-  {
-    short version = in.readShort();
-    if (version != 0)
-      throw new InvalidObjectException("");
-    name = in.readUTF();
-    enabled = in.readBoolean();
-    int keys = in.readInt();
-    double t[] = new double [keys];
-    Smoothness s[] = new Smoothness [keys];
-    Keyframe v[] = new Keyframe [keys];
-    for (int i = 0; i < keys; i++)
-      {
-        t[i] = in.readDouble();
-        v[i] = new BooleanKeyframe(in, info);
-        s[i] = new Smoothness();
-      }
-    tc = new Timecourse(v, t, s);
-  }
-
-  /* Present a window in which the user can edit the specified keyframe. */
-
-  @Override
-  public void editKeyframe(LayoutWindow win, int which)
-  {
-    BooleanKeyframe key = (BooleanKeyframe) tc.getValues()[which];
-    double time = tc.getTimes()[which];
-    BCheckBox visibleBox = new BCheckBox(Translate.text("Visible"), key.val);
-    ValueField timeField = new ValueField(time, ValueField.NONE, 5);
-    ComponentsDialog dlg = new ComponentsDialog(win, Translate.text("editKeyframe"), new Widget []
-      {visibleBox, timeField}, new String [] {null, Translate.text("Time")});
-
-    if (!dlg.clickedOk())
-      return;
-    win.setUndoRecord(new UndoRecord(win, false, UndoRecord.COPY_TRACK, this, duplicate(info)));
-    key.val = visibleBox.getState();
-    moveKeyframe(which, timeField.getValue());
-  }
-
-  /* This method presents a window in which the user can edit the track. */
-
-  @Override
-  public void edit(LayoutWindow win)
-  {
-    BTextField nameField = new BTextField(VisibilityTrack.this.getName());
-    ComponentsDialog dlg = new ComponentsDialog(win, Translate.text("visibilityTrackTitle"), new Widget []
-        {nameField}, new String [] {Translate.text("trackName")});
-    if (!dlg.clickedOk())
-      return;
-    win.setUndoRecord(new UndoRecord(win, false, UndoRecord.COPY_TRACK, this, duplicate(info)));
-    this.setName(nameField.getText());
-  }
+    /* This method presents a window in which the user can edit the track. */
+    @Override
+    public void edit(LayoutWindow win) {
+        BTextField nameField = new BTextField(VisibilityTrack.this.getName());
+        ComponentsDialog dlg = new ComponentsDialog(win, Translate.text("visibilityTrackTitle"), new Widget[]{nameField}, new String[]{Translate.text("trackName")});
+        if (!dlg.clickedOk()) {
+            return;
+        }
+        win.setUndoRecord(new UndoRecord(win, false, UndoRecord.COPY_TRACK, this, duplicate(info)));
+        this.setName(nameField.getText());
+    }
 }

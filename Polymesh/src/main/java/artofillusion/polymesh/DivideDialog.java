@@ -35,14 +35,12 @@ public class DivideDialog extends BDialog {
     private BButton okButton;
     private BButton cancelButton;
     private int num = -1;
-    private final PolyMeshEditorWindow owner;
 
     /**
      * Constructor for the DivideDialog object
      */
     public DivideDialog(final PolyMeshEditorWindow owner) {
         super(owner, Translate.text("polymesh:subdivideEdgesTitle"), true);
-        this.owner = owner;
         try (InputStream is = getClass().getResource("interfaces/divide.xml").openStream()) {
             WidgetDecoder decoder = new WidgetDecoder(is);
             setContent((BorderContainer) decoder.getRootObject());

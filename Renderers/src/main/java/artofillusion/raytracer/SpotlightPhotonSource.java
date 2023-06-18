@@ -19,11 +19,11 @@ import artofillusion.util.*;
  */
 public class SpotlightPhotonSource implements PhotonSource {
 
-    private SpotLight light;
-    private CoordinateSystem coords;
-    private RGBColor color;
+    private final SpotLight light;
+    private final CoordinateSystem coords;
+    private final RGBColor color;
     private float lightIntensity;
-    private double minu;
+    private final double minu;
 
     /**
      * Create a SpotlightPhotonSource.

@@ -12,92 +12,89 @@ package artofillusion.animation;
 
 import java.io.*;
 
-/** This class is a scalar valued keyframe. */
+/**
+ * This class is a scalar valued keyframe.
+ */
+public class ScalarKeyframe implements Keyframe {
 
-public class ScalarKeyframe implements Keyframe
-{
-  public double val;
+    public double val;
 
-  public ScalarKeyframe(double d)
-  {
-    val = d;
-  }
+    public ScalarKeyframe(double d) {
+        val = d;
+    }
 
-  @Override
-  public Keyframe duplicate()
-  {
-    return new ScalarKeyframe(val);
-  }
+    @Override
+    public Keyframe duplicate() {
+        return new ScalarKeyframe(val);
+    }
 
-  @Override
-  public Keyframe duplicate(Object owner)
-  {
-    return new ScalarKeyframe(val);
-  }
+    @Override
+    public Keyframe duplicate(Object owner) {
+        return new ScalarKeyframe(val);
+    }
 
-  /** Get the list of graphable values for this keyframe. */
+    /**
+     * Get the list of graphable values for this keyframe.
+     */
+    @Override
+    public double[] getGraphValues() {
+        return new double[]{val};
+    }
 
-  @Override
-  public double [] getGraphValues()
-  {
-    return new double [] {val};
-  }
+    /**
+     * Set the list of graphable values for this keyframe.
+     */
+    @Override
+    public void setGraphValues(double[] values) {
+        if (values.length == 1) {
+            val = values[0];
+        }
+    }
 
-  /** Set the list of graphable values for this keyframe. */
+    @Override
+    public Keyframe blend(Keyframe o2, double weight1, double weight2) {
+        return new ScalarKeyframe(weight1 * val + weight2 * ((ScalarKeyframe) o2).val);
+    }
 
-  @Override
-  public void setGraphValues(double values[])
-  {
-    if (values.length == 1)
-      val = values[0];
-  }
+    @Override
+    public Keyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3) {
+        return new ScalarKeyframe(weight1 * val
+                + weight2 * ((ScalarKeyframe) o2).val
+                + weight3 * ((ScalarKeyframe) o3).val);
+    }
 
-  @Override
-  public Keyframe blend(Keyframe o2, double weight1, double weight2)
-  {
-    return new ScalarKeyframe(weight1*val + weight2*((ScalarKeyframe) o2).val);
-  }
+    @Override
+    public Keyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4) {
+        return new ScalarKeyframe(weight1 * val
+                + weight2 * ((ScalarKeyframe) o2).val
+                + weight3 * ((ScalarKeyframe) o3).val
+                + weight4 * ((ScalarKeyframe) o4).val);
+    }
 
-  @Override
-  public Keyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3)
-  {
-    return new ScalarKeyframe(weight1*val +
-	weight2*((ScalarKeyframe) o2).val +
-	weight3*((ScalarKeyframe) o3).val);
-  }
+    /**
+     * Determine whether this keyframe is identical to another one.
+     */
+    @Override
+    public boolean equals(Keyframe k) {
+        if (!(k instanceof ScalarKeyframe)) {
+            return false;
+        }
+        ScalarKeyframe key = (ScalarKeyframe) k;
+        return (key.val == val);
+    }
 
-  @Override
-  public Keyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4)
-  {
-    return new ScalarKeyframe(weight1*val +
-	weight2*((ScalarKeyframe) o2).val +
-	weight3*((ScalarKeyframe) o3).val +
-	weight4*((ScalarKeyframe) o4).val);
-  }
+    /**
+     * Write out a representation of this keyframe to a stream.
+     */
+    @Override
+    public void writeToStream(DataOutputStream out) throws IOException {
+        out.writeDouble(val);
+    }
 
-  /** Determine whether this keyframe is identical to another one. */
-
-  @Override
-  public boolean equals(Keyframe k)
-  {
-    if (!(k instanceof ScalarKeyframe))
-      return false;
-    ScalarKeyframe key = (ScalarKeyframe) k;
-    return (key.val == val);
-  }
-
-  /** Write out a representation of this keyframe to a stream. */
-
-  @Override
-  public void writeToStream(DataOutputStream out) throws IOException
-  {
-    out.writeDouble(val);
-  }
-
-  /** Reconstructs the keyframe from its serialized representation. */
-
-   public ScalarKeyframe(DataInputStream in, Object parent) throws IOException
-   {
-     val = in.readDouble();
-   }
+    /**
+     * Reconstructs the keyframe from its serialized representation.
+     */
+    public ScalarKeyframe(DataInputStream in, Object parent) throws IOException {
+        val = in.readDouble();
+    }
 }

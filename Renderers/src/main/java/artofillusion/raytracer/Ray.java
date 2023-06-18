@@ -27,7 +27,7 @@ public class Ray {
     public final Vec3 tempVec1, tempVec2, tempVec3, tempVec4;
     public final RaytracerContext rt;
     private int id;
-    private static AtomicInteger nextid = new AtomicInteger();
+    private static final AtomicInteger nextid = new AtomicInteger();
 
     public Ray(RaytracerContext rt) {
         this.rt = rt;

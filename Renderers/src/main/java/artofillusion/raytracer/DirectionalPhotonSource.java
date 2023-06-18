@@ -19,11 +19,14 @@ import artofillusion.util.*;
  */
 public class DirectionalPhotonSource implements PhotonSource {
 
-    private CoordinateSystem coords;
-    private RGBColor color;
+    private final CoordinateSystem coords;
+    private final RGBColor color;
     private float lightIntensity;
-    private double minx, maxx, miny, maxy;
-    private Vec3 center;
+    private final double minx;
+    private final double maxx;
+    private final double miny;
+    private final double maxy;
+    private final Vec3 center;
 
     /**
      * Create a DirectionalPhotonSource.

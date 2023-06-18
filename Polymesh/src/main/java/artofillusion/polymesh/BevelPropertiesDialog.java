@@ -39,14 +39,12 @@ class BevelPropertiesDialog extends BDialog {
     private BCheckBox applyCB;
     private BButton okButton;
     private BButton cancelButton;
-    private final PolyMeshEditorWindow owner;
 
     /**
      * Constructor for the Bevel Properties dialog
      */
     public BevelPropertiesDialog(final PolyMeshEditorWindow owner) {
         super(owner, Translate.text("polymesh:bevelPropertiesTitle"), true);
-        this.owner = owner;
         try (InputStream is = getClass().getResource("interfaces/bevelArea.xml").openStream()) {
             WidgetDecoder decoder = new WidgetDecoder(is);
             borderContainer1 = (BorderContainer) decoder.getRootObject();

@@ -14,32 +14,34 @@ package artofillusion;
 import artofillusion.image.ComplexImage;
 import java.awt.Image;
 
-/** A RenderListener is an object which asks a Render to generate an image, and is notified when it is completed. */
+/**
+ * A RenderListener is an object which asks a Render to generate an image, and is notified when it is completed.
+ */
+public interface RenderListener {
 
-public interface RenderListener
-{
-  /** The renderer may call this method periodically during rendering, to notify the listener that more of the
-      image is complete. */
-  
-  default void imageUpdated(Image image)
-  {     
-  }
-  
-  /** The renderer may call this method periodically during rendering, to give the listener text descriptions
-      of the current status of rendering. */
-  
-  default void statusChanged(String status)
-  {
-  }
-  
-  /** This method will be called when rendering is complete. */
-  
-  public void imageComplete(ComplexImage image);
-  
-  /** This method will be called if rendering is canceled. */
-  
-  default void renderingCanceled()
-  {      
-  }
-  
+    /**
+     * The renderer may call this method periodically during rendering, to notify the listener that more of the
+     * image is complete.
+     */
+    default void imageUpdated(Image image) {
+    }
+
+    /**
+     * The renderer may call this method periodically during rendering, to give the listener text descriptions
+     * of the current status of rendering.
+     */
+    default void statusChanged(String status) {
+    }
+
+    /**
+     * This method will be called when rendering is complete.
+     */
+    public void imageComplete(ComplexImage image);
+
+    /**
+     * This method will be called if rendering is canceled.
+     */
+    default void renderingCanceled() {
+    }
+
 }

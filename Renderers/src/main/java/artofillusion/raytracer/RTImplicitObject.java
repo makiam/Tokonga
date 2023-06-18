@@ -21,12 +21,18 @@ import artofillusion.texture.*;
  */
 public class RTImplicitObject extends RTObject {
 
-    private ImplicitObject theObject;
-    private double minx, miny, minz, maxx, maxy, maxz;
-    private double[] param;
-    private double tol;
-    private boolean bumpMapped;
-    private Mat4 toLocal, fromLocal;
+    private final ImplicitObject theObject;
+    private final double minx;
+    private final double miny;
+    private final double minz;
+    private final double maxx;
+    private final double maxy;
+    private final double maxz;
+    private final double[] param;
+    private final double tol;
+    private final boolean bumpMapped;
+    private final Mat4 toLocal;
+    private final Mat4 fromLocal;
 
     public static final double TOL = 1e-12;
 
@@ -364,10 +370,10 @@ public class RTImplicitObject extends RTObject {
         private double[] tint;
         private double maxt;
         private Vec3[] rint;
-        private Vec3 pos;
-        private Vec3 orig;
-        private Vec3 dir;
-        private Vec3 norm;
+        private final Vec3 pos;
+        private final Vec3 orig;
+        private final Vec3 dir;
+        private final Vec3 norm;
         private int numIntersections;
         private Ray ray;
 

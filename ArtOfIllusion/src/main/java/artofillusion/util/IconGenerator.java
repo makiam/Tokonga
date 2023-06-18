@@ -37,60 +37,59 @@ import java.util.*;
 import javax.swing.ImageIcon;
 import lombok.extern.slf4j.Slf4j;
 
-
 /**
- *  Apply editing functions to icon image(s).
+ * Apply editing functions to icon image(s).
  *
- *  IconGenerator supports a number of basic image operations such as overlay,
- *  blend, add, multiply, etc, and can apply these to the pixels of one or more
- *  images.
+ * IconGenerator supports a number of basic image operations such as overlay,
+ * blend, add, multiply, etc, and can apply these to the pixels of one or more
+ * images.
  *
- *  IconGenerator implements a basic macro processor, and the ability to execute
- *  a macro in source (string) form, or to compile source and to execute the
- *  compiled version.
+ * IconGenerator implements a basic macro processor, and the ability to execute
+ * a macro in source (string) form, or to compile source and to execute the
+ * compiled version.
  *
- *  IconGenerator supports a default syntax for macros, but the symbols
- *  mapped to each operation can be overridden by the caller.
+ * IconGenerator supports a default syntax for macros, but the symbols
+ * mapped to each operation can be overridden by the caller.
  *
- *<br>
- *  The editing macro consists of one of more <i>instructions</i>, each separated by a delimiter.
- *  Each instruction can perform a single <i>operation</i> which can be modified in various ways.
- *  Each operation and each of the modifiers are specified by an <i>operator</i>
- *  each of which is specified by some token in the macro "language".
+ * <br>
+ * The editing macro consists of one of more <i>instructions</i>, each separated by a delimiter.
+ * Each instruction can perform a single <i>operation</i> which can be modified in various ways.
+ * Each operation and each of the modifiers are specified by an <i>operator</i>
+ * each of which is specified by some token in the macro "language".
  *
- *  All other words are either the pathname of an image or an object in the execution namespace.
+ * All other words are either the pathname of an image or an object in the execution namespace.
  *
- *  The operators and the tokens that specify them in the default language binding are:
- *<ul>
- *<li>COMPOSIT semicolon (;) - at the end of each <i>instruction</i>, the result of the instruction is
- *	composited over the current image.
- *<br><li>OVERLAY pipe (|) - the lhs is overlaid over an equal-sized rectangle of colour specified by rhs
- *<br><li>ADD plus (+) - the rhs (an RGB colour) is added, component by component, to each pixel of lhs
- *<br><li>SUBTRACT minus (-) - the rhs (an RGB colour) is subtracted, component by component, from each pixel of lhs
- *<br><li>MULTIPLY asterisk (*) - each pixel of lhs is multiplied, component by component, by rhs
- *	(an ARGB colour, or a list of scalar (floating point) values). If a component in RHS is not speified,
- *	then the corresponding component in LHS is left unmodified.
- *<br><li>ASSIGN equals (=) - rhs (an ARGB colour) is assigned, component by component, to each pixel of lhs.
- *	If any component of RHS is not specified, then the corresponding component in LHS is left unmodified.
- *<br><li>FEATHER tilde (~) - lhs has feathering applied to selected pixels using the value(s) in rhs to
- *	determine the type of feathering applied:
- *<br>A number or set of numbers causes the image to be feathered against itself - ie antialiased.
- *<br>A set of BOUNDS causes the image to be feathered at its edges.
- *<br><li>BOUNDS square brackets ([]) - sets or modifies the current instruction by altering the bounds (size)
- *	of the image (larger or smaller)
- *<br><li>POSITION at (@) - modifies the current instruction by altering the image position when it is composited.
- *<br><li>RESOLVE parens ({}) - specifies a name as being a logical name in the namespace.
- *	A name is resolved by searching the namespace for a matching string. Resolution is recursive,
- *	meaning that if the result of the namespace lookup is a resolvable string, then that string is itself
- *	looked up.
- *<br><li>CALL dot (.) - call a method on the specified object (lhs).
- *<br><li>COLOR hash (#) - specifies a color as a list of component values
- *<br>eg: #(1.5, 1, 1, 1)  or #(a=1.5,g=1,b=1)
- *<br><li>HEX (0x) or (0X) - specifies an RGB or ARGB 8-bit colour value as a single hex value
- *<br>egs: 0xff =&gt; alpha=1; 0x112233 =&gt; red=11, green=22, blue=33; 0xff112233 =&gt; alpha=ff, red=11, green=22, blue=33
- *</ul>
- *<br>
- *<pre>
+ * The operators and the tokens that specify them in the default language binding are:
+ * <ul>
+ * <li>COMPOSIT semicolon (;) - at the end of each <i>instruction</i>, the result of the instruction is
+ * composited over the current image.
+ * <br><li>OVERLAY pipe (|) - the lhs is overlaid over an equal-sized rectangle of colour specified by rhs
+ * <br><li>ADD plus (+) - the rhs (an RGB colour) is added, component by component, to each pixel of lhs
+ * <br><li>SUBTRACT minus (-) - the rhs (an RGB colour) is subtracted, component by component, from each pixel of lhs
+ * <br><li>MULTIPLY asterisk (*) - each pixel of lhs is multiplied, component by component, by rhs
+ * (an ARGB colour, or a list of scalar (floating point) values). If a component in RHS is not speified,
+ * then the corresponding component in LHS is left unmodified.
+ * <br><li>ASSIGN equals (=) - rhs (an ARGB colour) is assigned, component by component, to each pixel of lhs.
+ * If any component of RHS is not specified, then the corresponding component in LHS is left unmodified.
+ * <br><li>FEATHER tilde (~) - lhs has feathering applied to selected pixels using the value(s) in rhs to
+ * determine the type of feathering applied:
+ * <br>A number or set of numbers causes the image to be feathered against itself - ie antialiased.
+ * <br>A set of BOUNDS causes the image to be feathered at its edges.
+ * <br><li>BOUNDS square brackets ([]) - sets or modifies the current instruction by altering the bounds (size)
+ * of the image (larger or smaller)
+ * <br><li>POSITION at (@) - modifies the current instruction by altering the image position when it is composited.
+ * <br><li>RESOLVE parens ({}) - specifies a name as being a logical name in the namespace.
+ * A name is resolved by searching the namespace for a matching string. Resolution is recursive,
+ * meaning that if the result of the namespace lookup is a resolvable string, then that string is itself
+ * looked up.
+ * <br><li>CALL dot (.) - call a method on the specified object (lhs).
+ * <br><li>COLOR hash (#) - specifies a color as a list of component values
+ * <br>eg: #(1.5, 1, 1, 1) or #(a=1.5,g=1,b=1)
+ * <br><li>HEX (0x) or (0X) - specifies an RGB or ARGB 8-bit colour value as a single hex value
+ * <br>egs: 0xff =&gt; alpha=1; 0x112233 =&gt; red=11, green=22, blue=33; 0xff112233 =&gt; alpha=ff, red=11, green=22, blue=33
+ * </ul>
+ * <br>
+ * <pre>
  *Examples (using default language):
  *  "BackgroundIcon; {icon}"
  *  an image file called BackgroundIcon, overlaid with an image resolved from the namespace
@@ -144,68 +143,68 @@ import lombok.extern.slf4j.Slf4j;
  *  (translucent red) which is 4 pixels smaller than the current image in both
  *  X and Y axes, and which has had the outer 3 pixels feathered to trasnparent.
  *
- *</pre>
+ * </pre>
  */
 @Slf4j
-public class IconGenerator
-{
-    public static final byte FEATHER_OUT_DIR	= 0x1;
-    public static final byte FEATHER_IN_DIR	= 0x2;
+public class IconGenerator {
+
+    public static final byte FEATHER_OUT_DIR = 0x1;
+    public static final byte FEATHER_IN_DIR = 0x2;
 
     protected Instruction program = null;
     protected int imageWidth, imageHeight;
-    protected String[] delims;
+    protected final String[] delims;
 
     // the meaning of the chars in delims[ARG_DELIMS]
-    protected static final byte ARG_LIST	= 0x0;
-    protected static final byte ARG_RESOLVE	= 0x1;
-    protected static final byte ARG_NUMBER	= 0x2;
+    protected static final byte ARG_LIST = 0x0;
+    protected static final byte ARG_RESOLVE = 0x1;
+    protected static final byte ARG_NUMBER = 0x2;
 
     // the meaning of the chars in delims[OPS]
-    protected static final byte OP_NONE		= 0x0;
-    protected static final byte OP_COMPOSIT	= 0x1;
-    protected static final byte OP_OVERLAY	= 0x2;
-    protected static final byte OP_ADD		= 0x3;
-    protected static final byte OP_SUBTRACT	= 0x4;
-    protected static final byte OP_MULTIPLY	= 0x5;
-    protected static final byte OP_ASSIGN	= 0x6;
-    protected static final byte OP_SCALE	= 0x7;
-    protected static final byte OP_FEATHER	= 0x8;
-    protected static final byte OP_POSITION	= 0x9;
-    protected static final byte OP_RESIZE	= 0xa;
-    protected static final byte OP_CALL		= 0xb;
-    protected static final byte OP_COLOR	= 0xc;
+    protected static final byte OP_NONE = 0x0;
+    protected static final byte OP_COMPOSIT = 0x1;
+    protected static final byte OP_OVERLAY = 0x2;
+    protected static final byte OP_ADD = 0x3;
+    protected static final byte OP_SUBTRACT = 0x4;
+    protected static final byte OP_MULTIPLY = 0x5;
+    protected static final byte OP_ASSIGN = 0x6;
+    protected static final byte OP_SCALE = 0x7;
+    protected static final byte OP_FEATHER = 0x8;
+    protected static final byte OP_POSITION = 0x9;
+    protected static final byte OP_RESIZE = 0xa;
+    protected static final byte OP_CALL = 0xb;
+    protected static final byte OP_COLOR = 0xc;
 
     // must be last assigned OP_ code
-    protected static final byte OP_ARG		= 0xd;
+    protected static final byte OP_ARG = 0xd;
 
     /*
      *  now the "arg" opcodes.
      *  These *cannot* be included in DELIMS because they represent chars that
      *  are *included* in an arg, rather than delimiting an arg.
      */
-    protected static final byte OP_LIST		= OP_ARG+ARG_LIST;
-    protected static final byte OP_RESOLVE	= OP_ARG+ARG_RESOLVE;
-    protected static final byte OP_NUMBER	= OP_ARG+ARG_NUMBER;
+    protected static final byte OP_LIST = OP_ARG + ARG_LIST;
+    protected static final byte OP_RESOLVE = OP_ARG + ARG_RESOLVE;
+    protected static final byte OP_NUMBER = OP_ARG + ARG_NUMBER;
 
     // the three separate strings of delims
     protected static final int OPS = 0;
     protected static final int ARG_DELIMS = 1;
     protected static final int OPEN_CLOSE = 2;
 
-    protected static final String[] DEFAULT_DELIMS = { ";|+-*=%~@[.#", ",{0", "()[]{}" };
+    protected static final String[] DEFAULT_DELIMS = {";|+-*=%~@[.#", ",{0", "()[]{}"};
 
     protected static final String QUOTES = "\"'";
     protected static final String WHITESPACE = " \t\r\n";
     protected static final String DEFAULT_TARGET = "{}";
 
-    protected static final float SCALE_DOWN = 1.0f/0xff;
+    protected static final float SCALE_DOWN = 1.0f / 0xff;
 
     protected static final Class<?>[] NULL_SIG = new Class<?>[0];
     protected static final Object[] NULL_ARGS = new Object[0];
 
-    private static final String dots =
-	"................................................................................";
+    private static final String dots
+            = "................................................................................";
 
     /**
      * create a new IconGenerator for the specified macro using the <i>default</i> delims.
@@ -214,10 +213,9 @@ public class IconGenerator
      * @throws Exception
      */
     public IconGenerator(String macro)
-	throws Exception
-    {
-	delims = DEFAULT_DELIMS;
-	compile(macro);
+            throws Exception {
+        delims = DEFAULT_DELIMS;
+        compile(macro);
     }
 
     /**
@@ -228,10 +226,9 @@ public class IconGenerator
      * @throws Exception
      */
     public IconGenerator(String macro, String[] delims)
-	throws Exception
-    {
-	this.delims = delims;
-	compile(macro);
+            throws Exception {
+        this.delims = delims;
+        compile(macro);
     }
 
     /**
@@ -241,16 +238,15 @@ public class IconGenerator
      * @throws Exception
      */
     public void compile(String macro)
-	throws Exception
-    {
-	int len = macro.length();
-	program = new Instruction(imageWidth, imageHeight);
-	program.compile(macro, 0, delims);
+            throws Exception {
+        int len = macro.length();
+        program = new Instruction(imageWidth, imageHeight);
+        program.compile(macro, 0, delims);
 
-	Instruction instr = program;
-	for (int pos = program.end+1; pos < len; pos = instr.end+1) {
-	    instr = instr.compileNext(delims);
-	}
+        Instruction instr = program;
+        for (int pos = program.end + 1; pos < len; pos = instr.end + 1) {
+            instr = instr.compileNext(delims);
+        }
     }
 
     /**
@@ -259,12 +255,13 @@ public class IconGenerator
      * @param width
      * @param height
      */
-    public void setSize(int width, int height)
-    {
-	imageWidth = width;
-	imageHeight = height;
+    public void setSize(int width, int height) {
+        imageWidth = width;
+        imageHeight = height;
 
-	if (program != null) program.setSize(width, height);
+        if (program != null) {
+            program.setSize(width, height);
+        }
     }
 
     /**
@@ -274,13 +271,14 @@ public class IconGenerator
      * @param loader
      * @return
      * @throws Exception if this IconGenerator is <i>not</i> compiled, or the compiled instructions
-     * 		throw and exception.
+     * throw and exception.
      */
     public Image execute(Map<String, Object> namespace, ClassLoader loader)
-	throws Exception
-    {
-	if (program == null) throw new Exception("IconGenerator has no compiled program");
-	return program.execute(null, namespace, loader);
+            throws Exception {
+        if (program == null) {
+            throw new Exception("IconGenerator has no compiled program");
+        }
+        return program.execute(null, namespace, loader);
     }
 
     /**
@@ -297,86 +295,98 @@ public class IconGenerator
      * @throws Exception
      */
     public static Image apply(String macro, String[] delims, Map<String, Object> namespace, ClassLoader loader, int width, int height)
-	throws Exception
-    {
-	int len = macro.length();
-	Instruction instr = new Instruction(width, height);
-	BufferedImage result = null;
+            throws Exception {
+        int len = macro.length();
+        Instruction instr = new Instruction(width, height);
+        BufferedImage result = null;
 
-	for (int pos = 0; pos < len; pos = instr.end+1) {
-	    instr.compile(macro, pos, delims);
-	    result = instr.execute(result, namespace, loader);
-	}
+        for (int pos = 0; pos < len; pos = instr.end + 1) {
+            instr.compile(macro, pos, delims);
+            result = instr.execute(result, namespace, loader);
+        }
 
-	return result;
+        return result;
     }
 
     /**
      * apply (compile and execute) the specified macro
+     *
      * @see #apply(String, String[], Map, ClassLoader, int, int)
      */
     public static Image apply(String macro, String[] delims, Map<String, Object> namespace, ClassLoader loader)
-	throws Exception
-    { return apply(macro, delims, namespace, loader, -1, -1); }
+            throws Exception {
+        return apply(macro, delims, namespace, loader, -1, -1);
+    }
 
     /**
      * apply (compile and execute) the specified macro.
+     *
      * @see #apply(String, String[], Map, ClassLoader, int, int)
      */
     public static Image apply(String macro, Map<String, Object> namespace, ClassLoader loader)
-            throws Exception
-    { return apply(macro, DEFAULT_DELIMS, namespace, loader, -1, -1); }
+            throws Exception {
+        return apply(macro, DEFAULT_DELIMS, namespace, loader, -1, -1);
+    }
 
     /**
      * copy an image.
      *
-     *  The result will be the same as the original, in both content and size.
+     * The result will be the same as the original, in both content and size.
      *
-     *  @see #copy(Image, int, int, float)
+     * @see #copy(Image, int, int, float)
      */
-    public static BufferedImage copy(Image orig)
-    { return copy(orig, -1, -1, 0); }
+    public static BufferedImage copy(Image orig) {
+        return copy(orig, -1, -1, 0);
+    }
 
     /**
-     *  copy the original image to a new image of the specified size
-     *  (may be larger or smaller). The content of the <i>orig</i> image is
-     *  centered within the new image.
+     * copy the original image to a new image of the specified size
+     * (may be larger or smaller). The content of the <i>orig</i> image is
+     * centered within the new image.
      *
-     *  @param orig the image to copy <i>from</i>
-     *  @param width the width of the new image
-     *  @param height the height of the new image.
-     *  @param scale the way to scale original when copying.
-     *                scale == 0 means no scaling;
-     *                scale &gt; 0 means scale original to new dims * scale
-     *                scale &lt; 0 means scale original abs(scale) piselx smaller than new sims
+     * @param orig the image to copy <i>from</i>
+     * @param width the width of the new image
+     * @param height the height of the new image.
+     * @param scale the way to scale original when copying.
+     * scale == 0 means no scaling;
+     * scale &gt; 0 means scale original to new dims * scale
+     * scale &lt; 0 means scale original abs(scale) piselx smaller than new sims
      *
-     *  @return a newly allocated image of the specified ize containing the
-     *                content of <i>orig</i> centered within it.
+     * @return a newly allocated image of the specified ize containing the
+     * content of <i>orig</i> centered within it.
      */
-    public static BufferedImage copy(Image orig, int width, int height, float scale)
-    {
+    public static BufferedImage copy(Image orig, int width, int height, float scale) {
         int w = orig.getWidth(null);
         int h = orig.getHeight(null);
 
-        if (width <= 0) width = w;
-        else if (scale > 0) w = (int) (width * scale);
-        else if (scale < 0) w = (int) (width + scale);
+        if (width <= 0) {
+            width = w;
+        } else if (scale > 0) {
+            w = (int) (width * scale);
+        } else if (scale < 0) {
+            w = (int) (width + scale);
+        }
 
-        if (height <= 0) height = h;
-        else if (scale > 0) h = (int) (height * scale);
-        else if (scale < 0) h = (int) (height + scale);
+        if (height <= 0) {
+            height = h;
+        } else if (scale > 0) {
+            h = (int) (height * scale);
+        } else if (scale < 0) {
+            h = (int) (height + scale);
+        }
 
-        int x = (width-w)/2;
-        int y = (height-h)/2;
+        int x = (width - w) / 2;
+        int y = (height - h) / 2;
 
         BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR_PRE);
         Graphics2D graphics = (Graphics2D) result.getGraphics();
 
         //graphics.setClip(x, y, width, height);
-        if (scale != 0)
+        if (scale != 0) {
             graphics.drawImage(orig, x, y, w, h, null);
-        else
+        } else {
             graphics.drawImage(orig, x, y, null);
+        }
 
         graphics.dispose();
 
@@ -388,29 +398,29 @@ public class IconGenerator
      *
      * @param image the image to modify
      * @param depth the "size" and "direction" of the bevel, which results in
-     *                the specified apparent "depth" or "height".
+     * the specified apparent "depth" or "height".
      *
-     *  @see #bevel3D(BufferedImage, int, Rectangle)
+     * @see #bevel3D(BufferedImage, int, Rectangle)
      */
-    public static void bevel3D(BufferedImage image, int depth)
-    { bevel3D(image, depth, null); }
+    public static void bevel3D(BufferedImage image, int depth) {
+        bevel3D(image, depth, null);
+    }
 
     /**
-     *  draw a 3d bevelled edge on or in the image, with the edges being those
-     *  of the specified clip rectangle.
+     * draw a 3d bevelled edge on or in the image, with the edges being those
+     * of the specified clip rectangle.
      *
-     *  @param image the image to modify
-     *  @param depth the size and "direction" of the bevelled edge.
-     *                a positive value creates a "popped-out" effect by making the
-     *                top and left edges lighter and the bottom and right edges
-     *                darker. A negative value creates a "pressed-in" effect by
-     *                doing the opposite. The absolute value determines the apparent
-     *                depth or height of the 3d effect by determining the width in
-     *                pixels of the bevelled edge. So 1 creates an edge 1 pixel wide,
-     *                and 3 creates an edge 3 pixels wide.
+     * @param image the image to modify
+     * @param depth the size and "direction" of the bevelled edge.
+     * a positive value creates a "popped-out" effect by making the
+     * top and left edges lighter and the bottom and right edges
+     * darker. A negative value creates a "pressed-in" effect by
+     * doing the opposite. The absolute value determines the apparent
+     * depth or height of the 3d effect by determining the width in
+     * pixels of the bevelled edge. So 1 creates an edge 1 pixel wide,
+     * and 3 creates an edge 3 pixels wide.
      */
-    public static void bevel3D(BufferedImage image, int depth, Rectangle clip)
-    {
+    public static void bevel3D(BufferedImage image, int depth, Rectangle clip) {
         Graphics2D graphics = (Graphics2D) image.getGraphics();
 
         int x = (clip != null ? clip.x : 0);
@@ -418,11 +428,19 @@ public class IconGenerator
         int width = (clip != null ? clip.width : -1);
         int height = (clip != null ? clip.height : -1);
 
-        if (x < 0) x = 0;
-        if (y < 0) y = 0;
+        if (x < 0) {
+            x = 0;
+        }
+        if (y < 0) {
+            y = 0;
+        }
 
-        if (width <= 0) width = image.getWidth();
-        if (height <= 0) height = image.getHeight();
+        if (width <= 0) {
+            width = image.getWidth();
+        }
+        if (height <= 0) {
+            height = image.getHeight();
+        }
 
         float alpha = 0.65f;
         float feather = 0.85f;
@@ -433,8 +451,8 @@ public class IconGenerator
         Color light = Color.WHITE;
         Color dark = Color.BLACK;
 
-        int w = width-1;
-        int h = height-1;
+        int w = width - 1;
+        int h = height - 1;
 
         // loop for each strip of the bevel
         for (int i = 0; i < max; i++) {
@@ -453,25 +471,22 @@ public class IconGenerator
              *  In addition, the dark lines are feathered more aggressively
              *  (twice per cycle compared to the light lines' once).
              */
-
             // set the alpha value for the dark lines (smaller than for light)
-            graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SrcOver.getRule(), alpha*feather));
+            graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SrcOver.getRule(), alpha * feather));
 
             //darkComp = 1.0f - comp*feather;
-
             // draw the dark sides first
             //graphics.setColor(new Color(darkComp, darkComp, darkComp));
             graphics.setColor(dark);
 
             if (depth > 0) {
                 // draw right and bottom lines
-                graphics.drawLine(x+i+w, y+i, x+i+w, y+i+h);
-                graphics.drawLine(x+i, y+i+h, x+i+w-1, y+i+h);
-            }
-            else {
+                graphics.drawLine(x + i + w, y + i, x + i + w, y + i + h);
+                graphics.drawLine(x + i, y + i + h, x + i + w - 1, y + i + h);
+            } else {
                 // draw top and left lines
-                graphics.drawLine(x+i, y+i, x+i+w, y+i);
-                graphics.drawLine(x+i, y+i+1, x+i, y+i+h);
+                graphics.drawLine(x + i, y + i, x + i + w, y + i);
+                graphics.drawLine(x + i, y + i + 1, x + i, y + i + h);
             }
 
             // set the alpha value for the light lines
@@ -483,13 +498,12 @@ public class IconGenerator
 
             if (depth > 0) {
                 // draw top and left lines
-                graphics.drawLine(x+i, y+i, x+i+w, y+i);
-                graphics.drawLine(x+i, y+i+1, x+i, y+i+h);
-            }
-            else {
+                graphics.drawLine(x + i, y + i, x + i + w, y + i);
+                graphics.drawLine(x + i, y + i + 1, x + i, y + i + h);
+            } else {
                 // draw right and bottom lines
-                graphics.drawLine(x+i+w, y+i, x+i+w, y+i+h);
-                graphics.drawLine(x+i, y+i+h, x+i+w-1, y+i+h);
+                graphics.drawLine(x + i + w, y + i, x + i + w, y + i + h);
+                graphics.drawLine(x + i, y + i + h, x + i + w - 1, y + i + h);
             }
 
             // adjust for next strip of bevel
@@ -510,33 +524,37 @@ public class IconGenerator
      *
      * @see #add(BufferedImage, int, int, int, Rectangle)
      */
-    public static void add(BufferedImage image, int red, int green, int blue)
-    { add(image, red, green, blue, null); }
+    public static void add(BufferedImage image, int red, int green, int blue) {
+        add(image, red, green, blue, null);
+    }
 
     /**
      * add the colour components to each pixel in a rectangle within the image.
      *
-     *  @param image the image to modify
+     * @param image the image to modify
      *
-     *  @param red the red component to add. 0 &lt;= red &lt;= 255
-     *  @param green the green component to add. 0 &lt;= green м= 255
-     *  @param blue the blue component to add. 0 &lt;= blue &lt;= 255
+     * @param red the red component to add. 0 &lt;= red &lt;= 255
+     * @param green the green component to add. 0 &lt;= green м= 255
+     * @param blue the blue component to add. 0 &lt;= blue &lt;= 255
      *
-     *  @param clip the area within which the modification is applied.
+     * @param clip the area within which the modification is applied.
      */
-    public static void add(BufferedImage image, int red, int green, int blue, Rectangle clip)
-    {
+    public static void add(BufferedImage image, int red, int green, int blue, Rectangle clip) {
         int x = (clip != null ? clip.x : 0);
         int y = (clip != null ? clip.y : 0);
         int width = (clip != null ? clip.width : -1);
         int height = (clip != null ? clip.height : -1);
 
-        if (width <= 0) width = image.getWidth();
-        if (height <= 0) height = image.getHeight();
+        if (width <= 0) {
+            width = image.getWidth();
+        }
+        if (height <= 0) {
+            height = image.getHeight();
+        }
 
         int[] pix = new int[width];
         int p, a, r, g, b;
-        int max = height+y;
+        int max = height + y;
         // add to pixels
         for (int i = y; i < max; i++) {
             pix = image.getRGB(x, i, width, 1, pix, 0, width);
@@ -554,38 +572,42 @@ public class IconGenerator
     }
 
     /**
-     *  subtract the colour components from each pixel in image.
+     * subtract the colour components from each pixel in image.
      *
-     *  @see #subtract(BufferedImage, int, int, int, Rectangle)
+     * @see #subtract(BufferedImage, int, int, int, Rectangle)
      */
-    public static void subtract(BufferedImage image, int red, int green, int blue)
-    { subtract(image, red, green, blue, null); }
+    public static void subtract(BufferedImage image, int red, int green, int blue) {
+        subtract(image, red, green, blue, null);
+    }
 
     /**
-     *  subtract the colour components from each pixel in a rectangle within
-     *  the image.
+     * subtract the colour components from each pixel in a rectangle within
+     * the image.
      *
-     *  @param image the image to modify
+     * @param image the image to modify
      *
-     *  @param red the red component to subtract. 0 &lt;= red &lt;= 255
-     *  @param green the green component to subtract. 0 &lt;= green &lt;= 255
-     *  @param blue the blue component to subtract. 0 &lt;= blue &lt;= 255
+     * @param red the red component to subtract. 0 &lt;= red &lt;= 255
+     * @param green the green component to subtract. 0 &lt;= green &lt;= 255
+     * @param blue the blue component to subtract. 0 &lt;= blue &lt;= 255
      *
-     *  @param clip the area within which the modification is applied.
+     * @param clip the area within which the modification is applied.
      */
-    public static void subtract(BufferedImage image, int red, int green, int blue, Rectangle clip)
-    {
+    public static void subtract(BufferedImage image, int red, int green, int blue, Rectangle clip) {
         int x = (clip != null ? clip.x : 0);
         int y = (clip != null ? clip.y : 0);
         int width = (clip != null ? clip.width : -1);
         int height = (clip != null ? clip.height : -1);
 
-        if (width <= 0) width = image.getWidth();
-        if (height <= 0) height = image.getHeight();
+        if (width <= 0) {
+            width = image.getWidth();
+        }
+        if (height <= 0) {
+            height = image.getHeight();
+        }
 
         int[] pix = new int[width];
         int p, a, r, g, b;
-        int max = height+y;
+        int max = height + y;
         for (int i = y; i < max; i++) {
             pix = image.getRGB(x, i, width, 1, pix, 0, width);
             for (int j = 0; j < width; j++) {
@@ -606,42 +628,46 @@ public class IconGenerator
      *
      * @see #multiply(BufferedImage, float, float, float, float, Rectangle)
      */
-    public static void multiply(BufferedImage image, float alpha, float red, float green, float blue)
-    { multiply(image, alpha, red, green, blue, null); }
+    public static void multiply(BufferedImage image, float alpha, float red, float green, float blue) {
+        multiply(image, alpha, red, green, blue, null);
+    }
 
     /**
      * multiply the components of each pixel in a rectangle within the image.
      *
-     *  @param image the image to modify
+     * @param image the image to modify
      *
-     *  @param alpha the alpha component to multiply by. 0.0f &lt;= alpha &lt;= 1.0f
-     *  @param red the red component to multiply by. 0.0f &lt;= red &lt;= 1.0f
-     *  @param green the green component to multiply by. 0.0f &lt;= green &lt;= 1.0f
-     *  @param blue the blue component to multiply by. 0.0f &lt;= blue &lt;= 1.0f
+     * @param alpha the alpha component to multiply by. 0.0f &lt;= alpha &lt;= 1.0f
+     * @param red the red component to multiply by. 0.0f &lt;= red &lt;= 1.0f
+     * @param green the green component to multiply by. 0.0f &lt;= green &lt;= 1.0f
+     * @param blue the blue component to multiply by. 0.0f &lt;= blue &lt;= 1.0f
      *
-     *  @param clip the area within which the modification is applied.
+     * @param clip the area within which the modification is applied.
      */
-    public static void multiply(BufferedImage image, float alpha, float red, float green, float blue, Rectangle clip)
-    {
+    public static void multiply(BufferedImage image, float alpha, float red, float green, float blue, Rectangle clip) {
         int x = (clip != null ? clip.x : 0);
         int y = (clip != null ? clip.y : 0);
         int width = (clip != null ? clip.width : -1);
         int height = (clip != null ? clip.height : -1);
 
-        if (width <= 0) width = image.getWidth();
-        if (height <= 0) height = image.getHeight();
+        if (width <= 0) {
+            width = image.getWidth();
+        }
+        if (height <= 0) {
+            height = image.getHeight();
+        }
 
         int[] pix = new int[width];
         int p, a, r, g, b;
-        int max = height+y;
+        int max = height + y;
         for (int i = y; i < max; i++) {
             pix = image.getRGB(x, i, width, 1, pix, 0, width);
             for (int j = 0; j < width; j++) {
                 p = pix[j];
-                a = (int) Math.min(0xff, alpha*((p >> 24) & 0xff));
-                r = (int) Math.min(0xff, red*((p >> 16) & 0xff));
-                g = (int) Math.min(0xff, green*((p >> 8) & 0xff));
-                b = (int) Math.min(0xff, blue*(p & 0xff));
+                a = (int) Math.min(0xff, alpha * ((p >> 24) & 0xff));
+                r = (int) Math.min(0xff, red * ((p >> 16) & 0xff));
+                g = (int) Math.min(0xff, green * ((p >> 8) & 0xff));
+                b = (int) Math.min(0xff, blue * (p & 0xff));
 
                 pix[j] = (a << 24) + (r << 16) + (g << 8) + b;
             }
@@ -651,40 +677,44 @@ public class IconGenerator
     }
 
     /**
-     *  assign the colour components to each pixel in the image.
+     * assign the colour components to each pixel in the image.
      *
-     *  @see #assign(BufferedImage, int, int, int, int, Rectangle)
+     * @see #assign(BufferedImage, int, int, int, int, Rectangle)
      */
-    public static void assign(BufferedImage image, int alpha, int red, int green, int blue)
-    { assign(image, alpha, red, green, blue, null); }
+    public static void assign(BufferedImage image, int alpha, int red, int green, int blue) {
+        assign(image, alpha, red, green, blue, null);
+    }
 
     /**
-     *  assign the colour components to each pixel in a rectangle within the
-     *  image.
-     *  If any component value is negative, then that component is not modified.
+     * assign the colour components to each pixel in a rectangle within the
+     * image.
+     * If any component value is negative, then that component is not modified.
      *
-     *  @param image the image to modify
+     * @param image the image to modify
      *
-     *  @param alpha the alpha component to assign. 0 &lt;= alpha &lt;= 255
-     *  @param red the red component to assign. 0 &lt;= red &lt;= 255
-     *  @param green the green component to assign. 0 &lt;= green &lt;= 255
-     *  @param blue the blue component to assign. 0 &lt;= blue &lt;= 255
+     * @param alpha the alpha component to assign. 0 &lt;= alpha &lt;= 255
+     * @param red the red component to assign. 0 &lt;= red &lt;= 255
+     * @param green the green component to assign. 0 &lt;= green &lt;= 255
+     * @param blue the blue component to assign. 0 &lt;= blue &lt;= 255
      *
-     *  @param clip the area within which the modification is applied.
+     * @param clip the area within which the modification is applied.
      */
-    public static void assign(BufferedImage image, int alpha, int red, int green, int blue, Rectangle clip)
-    {
+    public static void assign(BufferedImage image, int alpha, int red, int green, int blue, Rectangle clip) {
         int x = (clip != null ? clip.x : 0);
         int y = (clip != null ? clip.y : 0);
         int width = (clip != null ? clip.width : -1);
         int height = (clip != null ? clip.height : -1);
 
-        if (width <= 0) width = image.getWidth();
-        if (height <= 0) height = image.getHeight();
+        if (width <= 0) {
+            width = image.getWidth();
+        }
+        if (height <= 0) {
+            height = image.getHeight();
+        }
 
         int[] pix = new int[width];
         int p, a, r, g, b;
-        int max = height+y;
+        int max = height + y;
         for (int i = y; i < max; i++) {
             pix = image.getRGB(x, i, width, 1, pix, 0, width);
             for (int j = 0; j < width; j++) {
@@ -702,27 +732,27 @@ public class IconGenerator
     }
 
     /**
-     *  overlay the specified image over a background of the specified colour.
+     * overlay the specified image over a background of the specified colour.
      *
-     *  @see #overlay(BufferedImage, int, int, int, int, Rectangle)
+     * @see #overlay(BufferedImage, int, int, int, int, Rectangle)
      */
-    public static void overlay(BufferedImage image, int alpha, int red, int green, int blue)
-    { overlay(image, alpha, red, green, blue, null); }
+    public static void overlay(BufferedImage image, int alpha, int red, int green, int blue) {
+        overlay(image, alpha, red, green, blue, null);
+    }
 
     /**
-     *  overlay the specified image over a rectangle of the specified colour.
+     * overlay the specified image over a rectangle of the specified colour.
      *
-     *  @param image the image to modify
+     * @param image the image to modify
      *
-     *  @param alpha the alpha component of the colour. 0 &lt;= alpha &lt;= 255
-     *  @param red the red component of the colour. 0 &lt;= red &lt;= 255
-     *  @param green the green component of the colour. 0 &lt;= green &lt;= 255
-     *  @param blue the blue component of the colour. 0 &lt;= blue &lt;= 255
+     * @param alpha the alpha component of the colour. 0 &lt;= alpha &lt;= 255
+     * @param red the red component of the colour. 0 &lt;= red &lt;= 255
+     * @param green the green component of the colour. 0 &lt;= green &lt;= 255
+     * @param blue the blue component of the colour. 0 &lt;= blue &lt;= 255
      *
-     *  @param clip the area within which the modification is applied.
+     * @param clip the area within which the modification is applied.
      */
-    public static void overlay(BufferedImage image, int alpha, int red, int green, int blue, Rectangle clip)
-    {
+    public static void overlay(BufferedImage image, int alpha, int red, int green, int blue, Rectangle clip) {
         log.info("Overlay: a= {}; r={}; g={}; b={}", alpha, red, green, blue);
 
         int x = (clip != null ? clip.x : 0);
@@ -730,8 +760,12 @@ public class IconGenerator
         int width = (clip != null ? clip.width : -1);
         int height = (clip != null ? clip.height : -1);
 
-        if (width <= 0) width = image.getWidth();
-        if (height <= 0) height = image.getHeight();
+        if (width <= 0) {
+            width = image.getWidth();
+        }
+        if (height <= 0) {
+            height = image.getHeight();
+        }
 
         Graphics2D overlay = (Graphics2D) image.getGraphics();
         overlay.setComposite(AlphaComposite.DstOver);
@@ -743,8 +777,9 @@ public class IconGenerator
 
     /**
      */
-    public static void overlay(BufferedImage image, Image overlay)
-    { overlay(image, overlay, null); }
+    public static void overlay(BufferedImage image, Image overlay) {
+        overlay(image, overlay, null);
+    }
 
     /**
      * overlay one image over another.
@@ -752,11 +787,10 @@ public class IconGenerator
      * @param image the image to modify
      * @param overlay the image to overlay onto <i>image</i>
      * @param clip the region of <i>image</i> to modify. If this is <i>null</i>,
-     *                then <i>overlay</i> is centered on <i>image</i>.
+     * then <i>overlay</i> is centered on <i>image</i>.
      */
-    public static void overlay(BufferedImage image, Image overlay, Rectangle clip)
-    {
-        int x=0, y=0;
+    public static void overlay(BufferedImage image, Image overlay, Rectangle clip) {
+        int x = 0, y = 0;
 
         if (clip == null) {
             int width = image.getWidth();
@@ -766,19 +800,20 @@ public class IconGenerator
             int h = overlay.getHeight(null);
 
             if (w != width || h != height) {
-                x = (width-w)/2;
-                y = (height-h)/2;
+                x = (width - w) / 2;
+                y = (height - h) / 2;
 
-                clip = new Rectangle(x, y, Math.min(width, width-(2*x)), Math.min(height, height-(2*y)));
+                clip = new Rectangle(x, y, Math.min(width, width - (2 * x)), Math.min(height, height - (2 * y)));
             }
-        }
-        else {
+        } else {
             x = clip.x;
             y = clip.y;
         }
 
         Graphics2D graphics = (Graphics2D) image.getGraphics();
-        if (clip != null) graphics.setClip(clip);
+        if (clip != null) {
+            graphics.setClip(clip);
+        }
         graphics.setComposite(AlphaComposite.SrcOver);
         graphics.drawImage(overlay, x, y, null);
 
@@ -786,44 +821,52 @@ public class IconGenerator
     }
 
     /**
-     *  antialias the diagonal lines in image
+     * antialias the diagonal lines in image
      *
-     *  @see #antialias(BufferedImage, float, float, Rectangle)
+     * @see #antialias(BufferedImage, float, float, Rectangle)
      */
-    public static void antialias(BufferedImage image, float dark)
-    { antialias(image, dark, -1, null); }
+    public static void antialias(BufferedImage image, float dark) {
+        antialias(image, dark, -1, null);
+    }
 
     /**
-     *  antialias the diagonal lines a rectangular area of image.
+     * antialias the diagonal lines a rectangular area of image.
      *
-     *  @param image the image to antialias
-     *  @param alpha the alpha value to use for the antialias strongest AA (antialias)
-     *                pixels. 0.0 &lt; alpha &lt; 1.0
-     *                The Strongest AA pixels are those with the most adjoining
-     *                 opaque pixels (currently 4 is the maximum).
-     *  @param attenuate the scaling factor to apply for increasingly weaker
-     *                AA pixels. 0.0 &lt; attenuate. Lighter AA pixels are those that
-     *                have fewer adjoining opaque pixels (currently 3 is the minimum).
+     * @param image the image to antialias
+     * @param alpha the alpha value to use for the antialias strongest AA (antialias)
+     * pixels. 0.0 &lt; alpha &lt; 1.0
+     * The Strongest AA pixels are those with the most adjoining
+     * opaque pixels (currently 4 is the maximum).
+     * @param attenuate the scaling factor to apply for increasingly weaker
+     * AA pixels. 0.0 &lt; attenuate. Lighter AA pixels are those that
+     * have fewer adjoining opaque pixels (currently 3 is the minimum).
      *
-     *  @param clip the rectangular area to modify
+     * @param clip the rectangular area to modify
      */
-    public static void antialias(BufferedImage image, float alpha, float attenuate, Rectangle clip)
-    {
+    public static void antialias(BufferedImage image, float alpha, float attenuate, Rectangle clip) {
         int x = (clip != null ? clip.x : 0);
         int y = (clip != null ? clip.y : 0);
         int width = (clip != null ? clip.width : -1);
         int height = (clip != null ? clip.height : -1);
 
-        if (width <= 0) width = image.getWidth();
-        if (height <= 0) height = image.getHeight();
+        if (width <= 0) {
+            width = image.getWidth();
+        }
+        if (height <= 0) {
+            height = image.getHeight();
+        }
 
         int[][] pix = new int[3][width];
         int[] tmp;
 
         int tl, tp, tr, lt, rt, bl, bm, br;
 
-        if (alpha <= 0 || alpha >= 1) alpha = 0.5f;
-        if (attenuate <= 0) attenuate = 0.66f;
+        if (alpha <= 0 || alpha >= 1) {
+            alpha = 0.5f;
+        }
+        if (attenuate <= 0) {
+            attenuate = 0.66f;
+        }
 
         int dark = Math.max(0, Math.min(0xff, (int) (alpha * 255.0f))) << 24;
         int light = Math.max(0, Math.min(0xff, (int) (alpha * attenuate * 255.0f))) << 24;
@@ -834,33 +877,47 @@ public class IconGenerator
         // get the first row
         pix[1] = image.getRGB(x, y, width, 1, pix[1], 0, width);
 
-        int max = y+height;
+        int max = y + height;
         for (i = y; i < max; i++) {
-            if (i < max-1)
-                pix[2] = image.getRGB(x, i+1, width, 1, pix[2], 0, width);
-            else
+            if (i < max - 1) {
+                pix[2] = image.getRGB(x, i + 1, width, 1, pix[2], 0, width);
+            } else {
                 pix[2] = null;
+            }
 
             for (j = x; j < width; j++) {
                 tl = tp = tr = lt = rt = bl = bm = br = -1;
 
                 p = pix[1][j];
-                if (((p >> 24) & 0xff) > 0) continue;        // ignore non-transparent pixels
-
+                if (((p >> 24) & 0xff) > 0) {
+                    continue;        // ignore non-transparent pixels
+                }
                 // fill in details of all surrounding pixels
                 if (pix[0] != null) {
-                    if (j > 0) tl = (pix[0][j-1] >> 24) & 0xff;
+                    if (j > 0) {
+                        tl = (pix[0][j - 1] >> 24) & 0xff;
+                    }
                     tp = (pix[0][j] >> 24) & 0xff;
-                    if (j < width-1) tr = (pix[0][j+1] >> 24) & 0xff;
+                    if (j < width - 1) {
+                        tr = (pix[0][j + 1] >> 24) & 0xff;
+                    }
                 }
 
-                if (j > 0) lt = (pix[1][j-1] >> 24) & 0xff;
-                if (j < width-1) rt = (pix[1][j+1] >> 24) & 0xff;
+                if (j > 0) {
+                    lt = (pix[1][j - 1] >> 24) & 0xff;
+                }
+                if (j < width - 1) {
+                    rt = (pix[1][j + 1] >> 24) & 0xff;
+                }
 
                 if (pix[2] != null) {
-                    if (j > 0) bl = (pix[2][j-1] >> 24) & 0xff;
+                    if (j > 0) {
+                        bl = (pix[2][j - 1] >> 24) & 0xff;
+                    }
                     bm = (pix[2][j] >> 24) & 0xff;
-                    if (j < width-1) br = (pix[2][j+1] >> 24) & 0xff;
+                    if (j < width - 1) {
+                        br = (pix[2][j + 1] >> 24) & 0xff;
+                    }
                 }
 
                 // now look for antialiasing opportunities
@@ -868,81 +925,78 @@ public class IconGenerator
                     if (lt == 0xff && tl == 0xff && rt <= 0 && br <= 0) {
                         a = (tr == 0xff || bl == 0xff ? dark : light);
 
-                        r = ((pix[0][j-1] >> 16) & 0xff);
+                        r = ((pix[0][j - 1] >> 16) & 0xff);
                         r += ((pix[0][j] >> 16) & 0xff);
-                        r += ((pix[1][j-1] >> 16) & 0xff);
+                        r += ((pix[1][j - 1] >> 16) & 0xff);
                         r /= 3;
 
-                        g = ((pix[0][j-1] >> 8) & 0xff);
+                        g = ((pix[0][j - 1] >> 8) & 0xff);
                         g += ((pix[0][j] >> 8) & 0xff);
-                        g += ((pix[1][j-1] >> 8) & 0xff);
+                        g += ((pix[1][j - 1] >> 8) & 0xff);
                         g /= 3;
 
-                        b = (pix[0][j-1] & 0xff);
+                        b = (pix[0][j - 1] & 0xff);
                         b += (pix[0][j] & 0xff);
-                        b += (pix[1][j-1] & 0xff);
+                        b += (pix[1][j - 1] & 0xff);
                         b /= 3;
 
                         pix[1][j] = a + (r << 16) + (g << 8) + b;
-                    }
-                    else if (rt == 0xff && tr == 0xff && lt <= 0 && bl <= 0) {
+                    } else if (rt == 0xff && tr == 0xff && lt <= 0 && bl <= 0) {
                         a = (tl == 0xff || br == 0xff ? dark : light);
 
                         r = ((pix[0][j] >> 16) & 0xff);
-                        r += ((pix[0][j+1] >> 16) & 0xff);
-                        r += ((pix[1][j+1] >> 16) & 0xff);
+                        r += ((pix[0][j + 1] >> 16) & 0xff);
+                        r += ((pix[1][j + 1] >> 16) & 0xff);
                         r /= 3;
 
                         g = ((pix[0][j] >> 8) & 0xff);
-                        g += ((pix[0][j+1] >> 8) & 0xff);
-                        g += ((pix[1][j+1] >> 8) & 0xff);
+                        g += ((pix[0][j + 1] >> 8) & 0xff);
+                        g += ((pix[1][j + 1] >> 8) & 0xff);
                         g /= 3;
 
                         b = (pix[0][j] & 0xff);
-                        b += (pix[0][j+1] & 0xff);
-                        b += (pix[1][j+1] & 0xff);
+                        b += (pix[0][j + 1] & 0xff);
+                        b += (pix[1][j + 1] & 0xff);
                         b /= 3;
 
                         pix[1][j] = a + (r << 16) + (g << 8) + b;
                     }
-                }
-                else if (tp <= 0 && bm == 0xff) {
+                } else if (tp <= 0 && bm == 0xff) {
                     if (lt == 0xff && bl == 0xff && rt <= 0 && tr <= 0) {
                         a = (tl == 0xff || br == 0xff ? dark : light);
 
-                        r = ((pix[1][j-1] >> 16) & 0xff);
+                        r = ((pix[1][j - 1] >> 16) & 0xff);
                         r += ((pix[2][j] >> 16) & 0xff);
-                        r += ((pix[2][j-1] >> 16) & 0xff);
+                        r += ((pix[2][j - 1] >> 16) & 0xff);
                         r /= 3;
 
-                        g = ((pix[1][j-1] >> 8) & 0xff);
+                        g = ((pix[1][j - 1] >> 8) & 0xff);
                         g += ((pix[2][j] >> 8) & 0xff);
-                        g += ((pix[2][j-1] >> 8) & 0xff);
+                        g += ((pix[2][j - 1] >> 8) & 0xff);
                         g /= 3;
 
-                        b = (pix[1][j-1] & 0xff);
+                        b = (pix[1][j - 1] & 0xff);
                         b += (pix[2][j] & 0xff);
-                        b += (pix[2][j-1] & 0xff);
+                        b += (pix[2][j - 1] & 0xff);
                         b /= 3;
 
                         pix[1][j] = a + (r << 16) + (g << 8) + b;
-                    }
-                    else if (rt == 0xff && br == 0xff && lt <= 0 && tl <= 0) {
+                    } else if (rt == 0xff && br == 0xff && lt <= 0 && tl <= 0) {
                         a = (tr == 0xff || bl == 0xff ? dark : light);
 
-                        r = ((pix[1][j+1] >> 16) & 0xff);
+                        r = ((pix[1][j + 1] >> 16) & 0xff);
                         r += ((pix[2][j] >> 16) & 0xff);
-                        r += ((pix[2][j+1] >> 16) & 0xff);
+                        r += ((pix[2][j + 1] >> 16) & 0xff);
                         r /= 3;
 
-                        g = ((pix[1][j+1] >> 8) & 0xff);
+                        g = ((pix[1][j + 1] >> 8) & 0xff);
                         g += ((pix[2][j] >> 8) & 0xff);
-                        g += ((pix[2][j+1] >> 8) & 0xff);
+                        g += ((pix[2][j + 1] >> 8) & 0xff);
                         g /= 3;
 
-                        b = (pix[1][j+1] & 0xff);
+                        b = (pix[1][j + 1] & 0xff);
                         b += (pix[2][j] & 0xff);
-                        b += (pix[2][j+1] & 0xff);
+                        b += (pix[2][j + 1] & 0xff);
                         b /= 3;
 
                         pix[1][j] = a + (r << 16) + (g << 8) + b;
@@ -960,45 +1014,51 @@ public class IconGenerator
     }
 
     /**
-     *  feather (fade to transparent) the image.
+     * feather (fade to transparent) the image.
      *
-     *  @see #feather(BufferedImage, int, int, byte, Rectangle)
+     * @see #feather(BufferedImage, int, int, byte, Rectangle)
      */
-    public static void feather(BufferedImage image, int xsize, int ysize, byte dir)
-    { feather(image, xsize, ysize, dir, null); }
+    public static void feather(BufferedImage image, int xsize, int ysize, byte dir) {
+        feather(image, xsize, ysize, dir, null);
+    }
 
     /**
-     *  The XSIZE and YSIZE parameters determine how far from the edge
-     *  of the image to start feathering, and the DIRection specifies whether
-     *  to feather OUT (FEATHER_OUT_DIR) towards the edges, or
-     *  IN (FEATHER_IN_DIR) towards the centre.
+     * The XSIZE and YSIZE parameters determine how far from the edge
+     * of the image to start feathering, and the DIRection specifies whether
+     * to feather OUT (FEATHER_OUT_DIR) towards the edges, or
+     * IN (FEATHER_IN_DIR) towards the centre.
      *
-     *  @param image the image to modify
-     *  @param xsize start feathering at the nth pixel from the left and right edges.
-     *  @param ysize start feathering at the nth pixel from the top and bottom edges.
-     *  @param dir specifies whether to feather OUT towards the edges, or IN
-     *                towards the centre.
-     *                see {@link #FEATHER_OUT_DIR} and {@link #FEATHER_IN_DIR}
+     * @param image the image to modify
+     * @param xsize start feathering at the nth pixel from the left and right edges.
+     * @param ysize start feathering at the nth pixel from the top and bottom edges.
+     * @param dir specifies whether to feather OUT towards the edges, or IN
+     * towards the centre.
+     * see {@link #FEATHER_OUT_DIR} and {@link #FEATHER_IN_DIR}
      *
-     *  @param clip defines the edges for feathering. If this is non-null,
-     *                and specifies values other than
-     *                (0, 0, image.width, image.height), then the feathering is
-     *                performed relative to the edges of this rectangle.
+     * @param clip defines the edges for feathering. If this is non-null,
+     * and specifies values other than
+     * (0, 0, image.width, image.height), then the feathering is
+     * performed relative to the edges of this rectangle.
      *
-     *                This is useful if the feathered image is going to be overlaid
-     *                on some other image using an identical clip region.
+     * This is useful if the feathered image is going to be overlaid
+     * on some other image using an identical clip region.
      */
-    public static void feather(BufferedImage image, int xsize, int ysize, byte dir, Rectangle clip)
-    {
+    public static void feather(BufferedImage image, int xsize, int ysize, byte dir, Rectangle clip) {
         int x = (clip != null ? clip.x : 0);
         int y = (clip != null ? clip.y : 0);
         int width = (clip != null ? clip.width : -1);
         int height = (clip != null ? clip.height : -1);
 
-        if (width <= 0) width = image.getWidth();
-        if (height <= 0) height = image.getHeight();
+        if (width <= 0) {
+            width = image.getWidth();
+        }
+        if (height <= 0) {
+            height = image.getHeight();
+        }
 
-        if (xsize >= width && ysize >= height) return;
+        if (xsize >= width && ysize >= height) {
+            return;
+        }
 
         int[] pix1 = new int[width];
         int[] pix2 = new int[width];
@@ -1012,8 +1072,8 @@ public class IconGenerator
 
         int opaque = 0xff << 24;
 
-        int cy = height/2;
-        int cx = width/2;
+        int cy = height / 2;
+        int cx = width / 2;
 
         int firstx = xsize;
         int mitre = Math.min(xsize, (ysize > 0 ? ysize : xsize));
@@ -1023,12 +1083,11 @@ public class IconGenerator
          * we only feather pixels *less* trasnparent. Pixels already *more* transparent
          * are left unchanged.
          */
-
-        for (i = y; i <= cy; i++ ) {
+        for (i = y; i <= cy; i++) {
             if (dir == FEATHER_OUT_DIR) {
 
                 pix1 = image.getRGB(0, i, width, 1, pix1, 0, width);
-                pix2 = image.getRGB(0, height-i-1, width, 1, pix2, 0, width);
+                pix2 = image.getRGB(0, height - i - 1, width, 1, pix2, 0, width);
 
                 transx = atten;
                 pa = ((int) ((1.0f - transx) * 0xff));
@@ -1041,17 +1100,21 @@ public class IconGenerator
                     pa = ((int) ((1.0f - transx) * 0xff));
                     a = pa << 24;
 
-                    if (pa < ((pix1[j] >> 24) & 0xff))
+                    if (pa < ((pix1[j] >> 24) & 0xff)) {
                         pix1[j] = a + (pix1[j] & 0xffffff);
+                    }
 
-                    if (pa < ((pix1[width-j-1] >> 24) & 0xff))
-                        pix1[width-j-1] = a + (pix1[width-j-1] & 0xffffff);
+                    if (pa < ((pix1[width - j - 1] >> 24) & 0xff)) {
+                        pix1[width - j - 1] = a + (pix1[width - j - 1] & 0xffffff);
+                    }
 
-                    if (pa < ((pix2[j] >> 24) & 0xff))
+                    if (pa < ((pix2[j] >> 24) & 0xff)) {
                         pix2[j] = a + (pix2[j] & 0xffffff);
+                    }
 
-                    if (pa < ((pix2[width-j-1] >> 24) & 0xff))
-                        pix2[width-j-1] = a + (pix2[width-j-1] & 0xffffff);
+                    if (pa < ((pix2[width - j - 1] >> 24) & 0xff)) {
+                        pix2[width - j - 1] = a + (pix2[width - j - 1] & 0xffffff);
+                    }
 
                     transx *= atten;
                 }
@@ -1061,26 +1124,29 @@ public class IconGenerator
                     //pa = (int) ((1.0f - transy) * 0xff);
                     //a = pa << 24;
 
-                    for (j = firstx+1; j < width-firstx-1; j++) {
-                        if (pa < ((pix1[j] >> 24) & 0xff))
+                    for (j = firstx + 1; j < width - firstx - 1; j++) {
+                        if (pa < ((pix1[j] >> 24) & 0xff)) {
                             pix1[j] = a + (pix1[j] & 0xffffff);
+                        }
 
-                        if (pa < ((pix2[j] >> 24) & 0xff))
+                        if (pa < ((pix2[j] >> 24) & 0xff)) {
                             pix2[j] = a + (pix2[j] & 0xffffff);
+                        }
                     }
                 }
 
                 image.setRGB(0, i, width, 1, pix1, 0, width);
-                image.setRGB(0, height-i-1, width, 1, pix2, 0, width);
+                image.setRGB(0, height - i - 1, width, 1, pix2, 0, width);
 
                 transy *= atten;
-            }
-            else if (dir == FEATHER_IN_DIR) {
+            } else if (dir == FEATHER_IN_DIR) {
 
                 pix1 = image.getRGB(0, i, width, 1, pix1, 0, width);
-                pix2 = image.getRGB(0, height-i-1, width, 1, pix2, 0, width);
+                pix2 = image.getRGB(0, height - i - 1, width, 1, pix2, 0, width);
 
-                if (i < ysize) continue;
+                if (i < ysize) {
+                    continue;
+                }
 
                 /*
                 // outside feather zone, no change
@@ -1095,9 +1161,9 @@ public class IconGenerator
 
                     continue;
                 }
-                */
+                 */
 
-                /*
+ /*
                 // first, the opaque side pixels
                 for (j = 0; j < x; j++) {
                     pix1[j] = opaque + (pix1[j] & 0xffffff);
@@ -1106,8 +1172,7 @@ public class IconGenerator
                     pix2[j] = opaque + (pix2[j] & 0xffffff);
                     pix2[width-j-1] = opaque + (pix2[width-j-1] & 0xffffff);
                 }
-                */
-
+                 */
                 // then the feathered pixels
                 alpha = 0.6f;
                 pa = ((int) (alpha * 0xff));
@@ -1123,22 +1188,26 @@ public class IconGenerator
                         a = pa << 24;
                     }
 
-                    if (pa < ((pix1[j] >> 24) & 0xff))
+                    if (pa < ((pix1[j] >> 24) & 0xff)) {
                         pix1[j] = a + (pix1[j] & 0xffffff);
+                    }
 
-                    if (pa < ((pix1[width-j-1] >> 24) & 0xff))
-                        pix1[width-j-1] = a + (pix1[width-j-1] & 0xffffff);
+                    if (pa < ((pix1[width - j - 1] >> 24) & 0xff)) {
+                        pix1[width - j - 1] = a + (pix1[width - j - 1] & 0xffffff);
+                    }
 
-                    if (pa < ((pix2[j] >> 24) & 0xff))
+                    if (pa < ((pix2[j] >> 24) & 0xff)) {
                         pix2[j] = a + (pix2[j] & 0xffffff);
+                    }
 
-                    if (pa < ((pix2[width-j-1] >> 24) & 0xff))
-                        pix2[width-j-1] = a + (pix2[width-j-1] & 0xffffff);
+                    if (pa < ((pix2[width - j - 1] >> 24) & 0xff)) {
+                        pix2[width - j - 1] = a + (pix2[width - j - 1] & 0xffffff);
+                    }
 
                 }
 
                 image.setRGB(0, i, width, 1, pix1, 0, width);
-                image.setRGB(0, height-i-1, width, 1, pix2, 0, width);
+                image.setRGB(0, height - i - 1, width, 1, pix2, 0, width);
             }
         }
     }
@@ -1149,58 +1218,87 @@ public class IconGenerator
      * @author nik
      *
      */
-    protected static class Instruction
-    {
-        /** reference to the macro source  */
+    protected static class Instruction {
+
+        /**
+         * reference to the macro source
+         */
         String source;
 
-        /** starting char in source of this instruction */
+        /**
+         * starting char in source of this instruction
+         */
         int start = -1;
 
-        /** ending char in source of this instruction */
+        /**
+         * ending char in source of this instruction
+         */
         int end = 0;
 
-        /**  definition of the "language" for this instruction  */
+        /**
+         * definition of the "language" for this instruction
+         */
         String[] delims;
 
-        /** opcode for this instruction */
+        /**
+         * opcode for this instruction
+         */
         byte opcode;
 
-        /** externally set size */
+        /**
+         * externally set size
+         */
         int imageWidth, imageHeight;
 
-        /** components of the colour argument */
+        /**
+         * components of the colour argument
+         */
         float alpha, red, green, blue;
 
-        /** scale this result */
+        /**
+         * scale this result
+         */
         float scale;
 
-        /** name of target image/object of this instruction  */
+        /**
+         * name of target image/object of this instruction
+         */
         String target;
 
-        /** name of method to call for this instruction  */
+        /**
+         * name of method to call for this instruction
+         */
         ArrayList<String> method;
 
-        /** antia-alias blend factors  */
+        /**
+         * antia-alias blend factors
+         */
         ArgList antialias = null;
 
-        /** offset arglist  */
+        /**
+         * offset arglist
+         */
         ArgList offset = null;
 
-        /** resize arglist  */
+        /**
+         * resize arglist
+         */
         ArgList resize = null;
 
-        /** background colour  */
+        /**
+         * background colour
+         */
         Color background;
 
-        /** next instruction in this program  */
+        /**
+         * next instruction in this program
+         */
         Instruction next;
 
         /**
          * create an instruction for an image of undefined size
          */
-        public Instruction()
-        {
+        public Instruction() {
             imageWidth = -1;
             imageHeight = -1;
         }
@@ -1208,8 +1306,7 @@ public class IconGenerator
         /**
          * create a new empty Instruction
          */
-        public Instruction(int width, int height)
-        {
+        public Instruction(int width, int height) {
             imageWidth = width;
             imageHeight = height;
         }
@@ -1217,20 +1314,22 @@ public class IconGenerator
         /**
          * set the image size on this ad all subsequent Instructions
          */
-        public void setSize(int width, int height)
-        {
+        public void setSize(int width, int height) {
             imageWidth = width;
             imageHeight = height;
-            if (next != null) next.setSize(width, height);
+            if (next != null) {
+                next.setSize(width, height);
+            }
         }
 
         /**
          * compile the next Instruction
          */
         public Instruction compileNext(String[] delims)
-           throws Exception
-        {
-            if (next == null) next = new Instruction(imageWidth, imageHeight);
+                throws Exception {
+            if (next == null) {
+                next = new Instruction(imageWidth, imageHeight);
+            }
             next.compile(source, end, delims);
 
             return next;
@@ -1240,13 +1339,14 @@ public class IconGenerator
          * compile one instruction from the macro into this Instruction object.
          */
         public void compile(String macro, int pos, String[] delims)
-           throws Exception
-        {
+                throws Exception {
             source = macro;
             this.delims = delims;
 
             start = pos;
-            while (WHITESPACE.indexOf(macro.charAt(pos)) >= 0) pos++;
+            while (WHITESPACE.indexOf(macro.charAt(pos)) >= 0) {
+                pos++;
+            }
 
             alpha = 1.0f;
             red = green = blue = -1.0f;
@@ -1254,9 +1354,15 @@ public class IconGenerator
             opcode = OP_NONE;
             target = null;
             method = null;
-            if (antialias != null) antialias.length = 0;
-            if (resize != null) resize.length = 0;
-            if (offset != null) offset.length = 0;
+            if (antialias != null) {
+                antialias.length = 0;
+            }
+            if (resize != null) {
+                resize.length = 0;
+            }
+            if (offset != null) {
+                offset.length = 0;
+            }
             background = null;
 
             next = null;
@@ -1274,24 +1380,27 @@ public class IconGenerator
             /*
              *  get the various lookup strings that define the language
              */
-
             this.delims = (delims == null ? DEFAULT_DELIMS : delims.clone());
 
-            if (this.delims[OPS] == null)
+            if (this.delims[OPS] == null) {
                 this.delims[OPS] = DEFAULT_DELIMS[OPS];
-            if (this.delims[ARG_DELIMS] == null)
+            }
+            if (this.delims[ARG_DELIMS] == null) {
                 this.delims[ARG_DELIMS] = DEFAULT_DELIMS[ARG_DELIMS];
-            if (this.delims[OPEN_CLOSE] == null)
+            }
+            if (this.delims[OPEN_CLOSE] == null) {
                 this.delims[OPEN_CLOSE] = DEFAULT_DELIMS[OPEN_CLOSE];
+            }
 
             String ops = this.delims[OPS];
             String tokens = this.delims[ARG_DELIMS];
             String openclose = this.delims[OPEN_CLOSE];
 
             // collect all the close chars into a single string
-            String close = ops.substring(OP_COMPOSIT-1, OP_COMPOSIT);
-            for (i = 1; i < openclose.length(); i += 2)
+            String close = ops.substring(OP_COMPOSIT - 1, OP_COMPOSIT);
+            for (i = 1; i < openclose.length(); i += 2) {
                 close += openclose.charAt(i);
+            }
 
             // the opcode-and-token lookup which is ops + tokens
             String optok = ops + tokens;
@@ -1301,221 +1410,270 @@ public class IconGenerator
             while (pos >= 0 && (end = parseToken(macro, pos)) >= pos) {
 
                 c = macro.charAt(pos);
-                opval = (byte) (optok.indexOf(c)+1);
+                opval = (byte) (optok.indexOf(c) + 1);
 
                 // test for valid
                 if (valid != 0) {
-                    if (opval > 0) validop = 1 << opval;
-                    else validop = 0;
+                    if (opval > 0) {
+                        validop = 1 << opval;
+                    } else {
+                        validop = 0;
+                    }
 
-                    if ((valid & validop) == 0)
+                    if ((valid & validop) == 0) {
                         error("Syntax error: invalid operand: " + c, pos);
+                    }
                 }
 
                 // reset valid
                 valid = 0;
 
                 //System.out.println("compile: pos=" + pos + "; end= " + end + "; c=" + c + "; opval=" + opval);
-
                 if (opval == OP_COMPOSIT) {
-                    if (opcode == OP_NONE) opcode = opval;
+                    if (opcode == OP_NONE) {
+                        opcode = opval;
+                    }
                     end++;
                     break;
                 }
 
                 switch (opval) {
 
-                case OP_ADD:
-                case OP_SUBTRACT:
-                case OP_MULTIPLY:
-                case OP_OVERLAY:
-                case OP_ASSIGN:
-                    // set the valid operands
-                    valid = (1 << OP_COLOR) + (1 << OP_NUMBER);
+                    case OP_ADD:
+                    case OP_SUBTRACT:
+                    case OP_MULTIPLY:
+                    case OP_OVERLAY:
+                    case OP_ASSIGN:
+                        // set the valid operands
+                        valid = (1 << OP_COLOR) + (1 << OP_NUMBER);
 
-                    // default target is the current image
-                    if (target == null || target.length() == 0) target = DEFAULT_TARGET;
-
-                    // overwrite the opcode
-                    opcode = opval;
-                    break;
-
-                case OP_SCALE:
-                    valid = (1 << OP_NUMBER);
-
-                    // default target is the current image
-                    if (target == null || target.length() == 0) target = DEFAULT_TARGET;
-
-                    // overwrite the opcode
-                    opcode = opval;
-
-                    if (pos < end) scale = Float.parseFloat(macro.substring(pos, end).trim())/100;
-                    break;
-
-                case OP_FEATHER:
-                    //if (target == null || target.length() == 0) target = DEFAULT_TARGET;
-
-                    // a list of values in parens
-                    if (pos < len && macro.charAt(pos+1) == '(') {
-                        end = find(macro, pos+1, len, close);
-                        antialias = parseArgs(antialias, 2, pos+2, end);
-                    }
-                    else {
-                        if (opcode == OP_COLOR) opcode = OP_FEATHER;
-
-                        // valid args are: a number or a color or resize
-                        valid = (1 << OP_NUMBER) + (1 << OP_COLOR) + (1 << OP_RESIZE);
-                    }
-                    break;
-
-                case OP_RESIZE:
-                    if (pos == end) end = find(macro, end, len, close);
-                    resize = parseArgs(resize, 4, pos+1, end);
-                    break;
-
-                case OP_POSITION:
-                    if (pos == end) end = find(macro, end+1, len, close);
-                    offset = parseArgs(offset, 3, pos+2, end);
-                    break;
-
-                case OP_COLOR:
-                    // parse a colour by components
-                    if (pos == end) end = find(macro, end+1, len, close);
-                    ArgList comps = parseArgs(null, 4, pos+2, end);
-                    if (comps.length > 0 && comps.value[0] != null)
-                        alpha = Float.parseFloat(comps.value[0]);
-
-                    if (comps.length > 1 && comps.value[1] != null)
-                        red = Float.parseFloat(comps.value[1]);
-
-                    if (comps.length > 2 && comps.value[2] != null)
-                        green = Float.parseFloat(comps.value[2]);
-
-                    if (comps.length > 3 && comps.value[3] != null)
-                        blue = Float.parseFloat(comps.value[3]);
-
-                    break;
-
-                case OP_CALL:
-                    // method call
-                    if (pos == end) end = find(macro, end+1, len, ")");
-                    if (end > pos) {
-                        if (method == null) method = new ArrayList<>(4);
-
-                        method.add(macro.substring(pos+1, end+1).trim());
-                    }
-                    else
-                        error("Invalid method syntax: closing paren ')' missing", pos);
-
-                    //end = find(macro, end, len, close);
-                    break;
-
-                case OP_NUMBER:
-                    // parse a number
-
-                    arglen = macro.indexOf(ops.charAt(OP_COMPOSIT-1), pos);
-                    if (arglen > 0 && arglen < end) end = arglen-1;
-                    arg = macro.substring(pos, end).trim();
-
-                    if (arg.startsWith("0x") || arg.startsWith("0X")) {
-                        // parse HEX numbers as a form of RGB color
-                        color = null;
-                        arglen = arg.length();
-                        if (arglen == 4)
-                            alpha = SCALE_DOWN * Integer.decode(arg);
-                        else if (arg.length() == 8)
-                            color = Color.decode(arg);
-                        else if (arglen == 10) {
-                            alpha = SCALE_DOWN * Integer.decode(arg.substring(0, 4));
-                            color = Color.decode("0x" + arg.substring(4));
+                        // default target is the current image
+                        if (target == null || target.length() == 0) {
+                            target = DEFAULT_TARGET;
                         }
 
-                        if (color != null) {
-                            opval = OP_COLOR;
-                            red = SCALE_DOWN * color.getRed();
-                            green = SCALE_DOWN * color.getGreen();
-                            blue = SCALE_DOWN * color.getBlue();
+                        // overwrite the opcode
+                        opcode = opval;
+                        break;
+
+                    case OP_SCALE:
+                        valid = (1 << OP_NUMBER);
+
+                        // default target is the current image
+                        if (target == null || target.length() == 0) {
+                            target = DEFAULT_TARGET;
                         }
-                    }
-                    else {
-                        // parse a floating point value
-                        switch (opcode) {
-                        case OP_SCALE:
-                            scale = Float.parseFloat(arg)/100;
-                            break;
 
-                        case OP_FEATHER:
-                            antialias = parseArgs(antialias, 1, pos, end);
-                            break;
+                        // overwrite the opcode
+                        opcode = opval;
 
-                        case OP_ADD:
-                        case OP_SUBTRACT:
-                            red = green = blue = Float.parseFloat(arg);
-                            break;
-
-                        case OP_MULTIPLY:
-                            alpha = Float.parseFloat(arg);
-                            break;
-
-                        default:
-                            error("Unexpected numeric value: " + arg, pos);
-                            break;
+                        if (pos < end) {
+                            scale = Float.parseFloat(macro.substring(pos, end).trim()) / 100;
                         }
-                    }
-                    break;
+                        break;
 
-                case OP_RESOLVE:
-                    target = macro.substring(pos, end+1).trim();
-                    break;
+                    case OP_FEATHER:
+                        //if (target == null || target.length() == 0) target = DEFAULT_TARGET;
 
-                default:
-                    if (end < len && macro.charAt(end) == '(') {
-                        if (method == null) method = new ArrayList<>(4);
-                        method.add(macro.substring(pos, end-1).trim());
-                    }
-                    else
-                        target = macro.substring(pos, end).trim();
+                        // a list of values in parens
+                        if (pos < len && macro.charAt(pos + 1) == '(') {
+                            end = find(macro, pos + 1, len, close);
+                            antialias = parseArgs(antialias, 2, pos + 2, end);
+                        } else {
+                            if (opcode == OP_COLOR) {
+                                opcode = OP_FEATHER;
+                            }
+
+                            // valid args are: a number or a color or resize
+                            valid = (1 << OP_NUMBER) + (1 << OP_COLOR) + (1 << OP_RESIZE);
+                        }
+                        break;
+
+                    case OP_RESIZE:
+                        if (pos == end) {
+                            end = find(macro, end, len, close);
+                        }
+                        resize = parseArgs(resize, 4, pos + 1, end);
+                        break;
+
+                    case OP_POSITION:
+                        if (pos == end) {
+                            end = find(macro, end + 1, len, close);
+                        }
+                        offset = parseArgs(offset, 3, pos + 2, end);
+                        break;
+
+                    case OP_COLOR:
+                        // parse a colour by components
+                        if (pos == end) {
+                            end = find(macro, end + 1, len, close);
+                        }
+                        ArgList comps = parseArgs(null, 4, pos + 2, end);
+                        if (comps.length > 0 && comps.value[0] != null) {
+                            alpha = Float.parseFloat(comps.value[0]);
+                        }
+
+                        if (comps.length > 1 && comps.value[1] != null) {
+                            red = Float.parseFloat(comps.value[1]);
+                        }
+
+                        if (comps.length > 2 && comps.value[2] != null) {
+                            green = Float.parseFloat(comps.value[2]);
+                        }
+
+                        if (comps.length > 3 && comps.value[3] != null) {
+                            blue = Float.parseFloat(comps.value[3]);
+                        }
+
+                        break;
+
+                    case OP_CALL:
+                        // method call
+                        if (pos == end) {
+                            end = find(macro, end + 1, len, ")");
+                        }
+                        if (end > pos) {
+                            if (method == null) {
+                                method = new ArrayList<>(4);
+                            }
+
+                            method.add(macro.substring(pos + 1, end + 1).trim());
+                        } else {
+                            error("Invalid method syntax: closing paren ')' missing", pos);
+                        }
+
+                        //end = find(macro, end, len, close);
+                        break;
+
+                    case OP_NUMBER:
+                        // parse a number
+
+                        arglen = macro.indexOf(ops.charAt(OP_COMPOSIT - 1), pos);
+                        if (arglen > 0 && arglen < end) {
+                            end = arglen - 1;
+                        }
+                        arg = macro.substring(pos, end).trim();
+
+                        if (arg.startsWith("0x") || arg.startsWith("0X")) {
+                            // parse HEX numbers as a form of RGB color
+                            color = null;
+                            arglen = arg.length();
+                            if (arglen == 4) {
+                                alpha = SCALE_DOWN * Integer.decode(arg);
+                            } else if (arg.length() == 8) {
+                                color = Color.decode(arg);
+                            } else if (arglen == 10) {
+                                alpha = SCALE_DOWN * Integer.decode(arg.substring(0, 4));
+                                color = Color.decode("0x" + arg.substring(4));
+                            }
+
+                            if (color != null) {
+                                opval = OP_COLOR;
+                                red = SCALE_DOWN * color.getRed();
+                                green = SCALE_DOWN * color.getGreen();
+                                blue = SCALE_DOWN * color.getBlue();
+                            }
+                        } else {
+                            // parse a floating point value
+                            switch (opcode) {
+                                case OP_SCALE:
+                                    scale = Float.parseFloat(arg) / 100;
+                                    break;
+
+                                case OP_FEATHER:
+                                    antialias = parseArgs(antialias, 1, pos, end);
+                                    break;
+
+                                case OP_ADD:
+                                case OP_SUBTRACT:
+                                    red = green = blue = Float.parseFloat(arg);
+                                    break;
+
+                                case OP_MULTIPLY:
+                                    alpha = Float.parseFloat(arg);
+                                    break;
+
+                                default:
+                                    error("Unexpected numeric value: " + arg, pos);
+                                    break;
+                            }
+                        }
+                        break;
+
+                    case OP_RESOLVE:
+                        target = macro.substring(pos, end + 1).trim();
+                        break;
+
+                    default:
+                        if (end < len && macro.charAt(end) == '(') {
+                            if (method == null) {
+                                method = new ArrayList<>(4);
+                            }
+                            method.add(macro.substring(pos, end - 1).trim());
+                        } else {
+                            target = macro.substring(pos, end).trim();
+                        }
                 }
 
                 // advance
-                if (pos == end) end++;        // consume single-char token
+                if (pos == end) {
+                    end++;        // consume single-char token
+                }
                 pos = parseToken(macro, end);
 
                 // remember the first opcode
-                if (opcode == OP_NONE && opval < OP_ARG) opcode = opval;
+                if (opcode == OP_NONE && opval < OP_ARG) {
+                    opcode = opval;
+                }
 
                 // scale set values and default unset ones
                 if (opval == OP_COLOR) {
                     switch (opcode) {
-                    case OP_ADD:
-                    case OP_SUBTRACT:
-                        red = (red >= 0 ? red * 0xff : 0.0f);
-                        green = (green >= 0 ? green * 0xff : 0.0f);
-                        blue = (blue >= 0 ? blue * 0xff : 0.0f);
-                        break;
+                        case OP_ADD:
+                        case OP_SUBTRACT:
+                            red = (red >= 0 ? red * 0xff : 0.0f);
+                            green = (green >= 0 ? green * 0xff : 0.0f);
+                            blue = (blue >= 0 ? blue * 0xff : 0.0f);
+                            break;
 
-                    case OP_MULTIPLY:
-                        if (alpha < 0) alpha = 1.0f;
-                        if (red < 0) red = 1.0f;
-                        if (green < 0) green = 1.0f;
-                        if (blue < 0) blue = 1.0f;
-                        break;
+                        case OP_MULTIPLY:
+                            if (alpha < 0) {
+                                alpha = 1.0f;
+                            }
+                            if (red < 0) {
+                                red = 1.0f;
+                            }
+                            if (green < 0) {
+                                green = 1.0f;
+                            }
+                            if (blue < 0) {
+                                blue = 1.0f;
+                            }
+                            break;
 
-                    case OP_ASSIGN:
-                        if (alpha >= 0) alpha *= 0xff;
-                        if (red >= 0) red *= 0xff;
-                        if (green >= 0) green *= 0xff;
-                        if (blue >= 0) blue *= 0xff;
-                        break;
+                        case OP_ASSIGN:
+                            if (alpha >= 0) {
+                                alpha *= 0xff;
+                            }
+                            if (red >= 0) {
+                                red *= 0xff;
+                            }
+                            if (green >= 0) {
+                                green *= 0xff;
+                            }
+                            if (blue >= 0) {
+                                blue *= 0xff;
+                            }
+                            break;
 
-                    case OP_OVERLAY:
-                        alpha = (alpha >= 0 ? alpha * 0xff : 1.0f);
-                        red = (red >= 0 ? red * 0xff : 0.0f);
-                        green = (green >= 0 ? green * 0xff : 0.0f);
-                        blue = (blue >= 0 ? blue * 0xff : 0.0f);
-                        //System.out.println("OP_OVERLAY: a=" + alpha + "; r=" + red + "; g=" + green + "; b=" + blue);
+                        case OP_OVERLAY:
+                            alpha = (alpha >= 0 ? alpha * 0xff : 1.0f);
+                            red = (red >= 0 ? red * 0xff : 0.0f);
+                            green = (green >= 0 ? green * 0xff : 0.0f);
+                            blue = (blue >= 0 ? blue * 0xff : 0.0f);
+                            //System.out.println("OP_OVERLAY: a=" + alpha + "; r=" + red + "; g=" + green + "; b=" + blue);
 
-                        break;
+                            break;
                     }
                 }
             }
@@ -1525,8 +1683,7 @@ public class IconGenerator
          * execute this instruction
          */
         public BufferedImage execute(BufferedImage lhs, Map<String, Object> namespace, ClassLoader loader)
-           throws Exception
-        {
+                throws Exception {
             int x, y, z, w, h;
             int width, height;
 
@@ -1541,24 +1698,24 @@ public class IconGenerator
             if (lhs != null) {
                 width = lhs.getWidth();
                 height = lhs.getHeight();
-            }
-            else if (resize != null && opcode != OP_FEATHER) {
+            } else if (resize != null && opcode != OP_FEATHER) {
                 width = resize.getInt(0);
                 height = resize.getInt(1);
-            }
-            else if (imageWidth > 0 && imageHeight > 0) {
+            } else if (imageWidth > 0 && imageHeight > 0) {
                 width = imageWidth;
                 height = imageHeight;
-            }
-            else {
+            } else {
                 width = -1;
                 height = -1;
             }
 
             // does target resolve to an image?
             if (target != null) {
-                if (target.equals(DEFAULT_TARGET)) rhs = lhs;
-                else rhs = getImage(target, width, height, namespace, loader);
+                if (target.equals(DEFAULT_TARGET)) {
+                    rhs = lhs;
+                } else {
+                    rhs = getImage(target, width, height, namespace, loader);
+                }
             }
 
             // if LHS dimensions are still unknown, try defaulting to RHS
@@ -1566,24 +1723,30 @@ public class IconGenerator
                 if (rhs != null) {
                     width = rhs.getWidth();
                     height = rhs.getHeight();
+                } else {
+                    throw new Exception("IconGenerator: cannot determine initial image size. Source: " + source.substring(start, end));
                 }
-                else throw new Exception("IconGenerator: cannot determine initial image size. Source: " + source.substring(start, end));
             }
 
             // invoke any method calls
             if (opcode == OP_CALL) {
                 //System.out.println("resolving: " + method);
                 Object obj;
-                if (target.equals(DEFAULT_TARGET))
+                if (target.equals(DEFAULT_TARGET)) {
                     obj = lhs;
-                else
+                } else {
                     obj = resolve(target, method, namespace);
+                }
 
                 //System.out.println("...to " + obj);
                 if (obj != null) {
-                    if (obj instanceof Color) background = (Color) obj;
-                    else if (rhs == null && obj instanceof BufferedImage) rhs = (BufferedImage) obj;
-                    else throw new Exception("Unusable result of call (" + obj.getClass().getName() + "): " + obj.toString());
+                    if (obj instanceof Color) {
+                        background = (Color) obj;
+                    } else if (rhs == null && obj instanceof BufferedImage) {
+                        rhs = (BufferedImage) obj;
+                    } else {
+                        throw new Exception("Unusable result of call (" + obj.getClass().getName() + "): " + obj.toString());
+                    }
                 }
             }
 
@@ -1591,13 +1754,22 @@ public class IconGenerator
             if (rhs == null) {
 
                 Color color = null;
-                if (background != null) color = background;
-                else if (red >= 0 || green >= 0 || blue >=0) {
+                if (background != null) {
+                    color = background;
+                } else if (red >= 0 || green >= 0 || blue >= 0) {
 
-                    if (alpha < 0) alpha = 1.0f;
-                    if (red < 0) red = 0.0f;
-                    if (green < 0) green = 0.0f;
-                    if (blue < 0) blue = 0.0f;
+                    if (alpha < 0) {
+                        alpha = 1.0f;
+                    }
+                    if (red < 0) {
+                        red = 0.0f;
+                    }
+                    if (green < 0) {
+                        green = 0.0f;
+                    }
+                    if (blue < 0) {
+                        blue = 0.0f;
+                    }
 
                     color = new Color(red, blue, green, alpha);
                 }
@@ -1615,14 +1787,13 @@ public class IconGenerator
             Graphics2D graphics = (Graphics2D) (lhs != null ? lhs.getGraphics() : null);
 
             // centre on lhs to start with
-            x = width/2;
-            y = height/2;
+            x = width / 2;
+            y = height / 2;
 
             if (rhs != null) {
                 w = rhs.getWidth();
                 h = rhs.getHeight();
-            }
-            else {
+            } else {
                 w = width;
                 h = height;
             }
@@ -1631,12 +1802,16 @@ public class IconGenerator
             if (offset != null) {
                 if (offset.length > 0) {
                     x = offset.calc(x, 0);
-                    if (offset.opcode[0] == OP_ASSIGN) centreX = false;
+                    if (offset.opcode[0] == OP_ASSIGN) {
+                        centreX = false;
+                    }
                 }
 
                 if (offset.length > 1) {
                     y = offset.calc(y, 1);
-                    if (offset.opcode[1] == OP_ASSIGN) centreY = false;
+                    if (offset.opcode[1] == OP_ASSIGN) {
+                        centreY = false;
+                    }
                 }
             }
 
@@ -1664,17 +1839,25 @@ public class IconGenerator
                 }
 
                 // calculate x and y coordinates
-                if (centreX) x -= w/2;
-                if (centreY) y -= h/2;
+                if (centreX) {
+                    x -= w / 2;
+                }
+                if (centreY) {
+                    y -= h / 2;
+                }
 
                 // if we are overlaying, set the clipping area
-                if (rhs != null && graphics != null)
+                if (rhs != null && graphics != null) {
                     graphics.setClip(x, y, w, h);
-            }
-            else {
+                }
+            } else {
                 // calculate x and y coordinates
-                if (centreX) x -= w/2;
-                if (centreY) y -= h/2;
+                if (centreX) {
+                    x -= w / 2;
+                }
+                if (centreY) {
+                    y -= h / 2;
+                }
             }
 
             // apply a colour
@@ -1687,37 +1870,37 @@ public class IconGenerator
                 int iblue = (int) blue;
 
                 int p, a, r, g, b;
-                int pix[] = new int[w];
+                int[] pix = new int[w];
                 int i, j;
 
                 // if we are editing in place, create a clipping rectangle
                 Rectangle clip = (rhs == lhs ? new Rectangle(x, y, w, h) : null);
 
                 switch (opcode) {
-                case OP_ADD:
-                    // add
-                    add(rhs, ired, igreen, iblue, clip);
-                    break;
+                    case OP_ADD:
+                        // add
+                        add(rhs, ired, igreen, iblue, clip);
+                        break;
 
-                case OP_SUBTRACT:
-                    // subtract
-                    subtract(rhs, ired, igreen, iblue, clip);
-                    break;
+                    case OP_SUBTRACT:
+                        // subtract
+                        subtract(rhs, ired, igreen, iblue, clip);
+                        break;
 
-                case OP_MULTIPLY:
-                    // multiply
-                    multiply(rhs, alpha, red, green, blue, clip);
-                    break;
+                    case OP_MULTIPLY:
+                        // multiply
+                        multiply(rhs, alpha, red, green, blue, clip);
+                        break;
 
-                case OP_ASSIGN:
-                    // assign (set values)
-                    assign(rhs, (int) alpha, ired, igreen, iblue, clip);
-                    break;
+                    case OP_ASSIGN:
+                        // assign (set values)
+                        assign(rhs, (int) alpha, ired, igreen, iblue, clip);
+                        break;
 
-                case OP_OVERLAY:
-                    // overlay RHS onto colour
-                    overlay(rhs, (int) alpha, ired, igreen, iblue, clip);
-                    break;
+                    case OP_OVERLAY:
+                        // overlay RHS onto colour
+                        overlay(rhs, (int) alpha, ired, igreen, iblue, clip);
+                        break;
                 }
             }
 
@@ -1729,29 +1912,32 @@ public class IconGenerator
                     float a = antialias.getFloat(0);
                     float atten;
 
-                    if (antialias.length > 1) atten = antialias.getFloat(1);
-                    else atten = -1;
+                    if (antialias.length > 1) {
+                        atten = antialias.getFloat(1);
+                    } else {
+                        atten = -1;
+                    }
                     antialias(rhs, a, atten, null);
-                }
-
-
-                /*
+                } /*
                 // overlay
                 else if (red >= 0 || green >= 0 || blue >= 0) {
                     overlay(rhs, (int) alpha, (int) red, (int) green, (int) blue);
                 }
-                */
-                else if (resize != null && resize.length > 0) {
+                 */ else if (resize != null && resize.length > 0) {
                     int lr = 0;
                     lr = resize.calc(lr, 0);
                     int tb = 0;
                     tb = resize.calc(tb, 1);
 
                     byte dir = (lr < 0 || tb < 0
-                                ? FEATHER_IN_DIR : FEATHER_OUT_DIR);
+                            ? FEATHER_IN_DIR : FEATHER_OUT_DIR);
 
-                    if (lr < 0) lr = -lr;
-                    if (tb < 0) tb = -tb;
+                    if (lr < 0) {
+                        lr = -lr;
+                    }
+                    if (tb < 0) {
+                        tb = -tb;
+                    }
 
                     feather(rhs, lr, tb, dir, null);
                 }
@@ -1768,19 +1954,21 @@ public class IconGenerator
             // apply z-value to rhs
             if (offset != null && opcode != OP_POSITION && rhs != null) {
                 z = offset.getInt(2);
-                if (z != 0) bevel3D(rhs, z, new Rectangle(0, 0, w, h));
+                if (z != 0) {
+                    bevel3D(rhs, z, new Rectangle(0, 0, w, h));
+                }
             }
 
             // apply rhs to lhs
-            if (lhs == null) lhs = copy(rhs, width, height, 0); // assign
-
-            else if (rhs != null && rhs != lhs) {
+            if (lhs == null) {
+                lhs = copy(rhs, width, height, 0); // assign
+            } else if (rhs != null && rhs != lhs) {
                 graphics.setComposite(AlphaComposite.SrcOver);
 
                 //if (scale == 0)
-                    graphics.drawImage(rhs, x, y, null);
+                graphics.drawImage(rhs, x, y, null);
 
-                    /*
+                /*
                 else {
                     if (scale > 0) {
                         w = (int) (width * scale);
@@ -1796,7 +1984,7 @@ public class IconGenerator
 
                     graphics.drawImage(rhs, x, y, w, h, null);
                 }
-                    */
+                 */
             }
 
             // resize the result
@@ -1811,49 +1999,54 @@ public class IconGenerator
             // apply z-value (3D effect) to result
             if (opcode == OP_POSITION && lhs != null && offset != null && offset.length > 2) {
                 z = offset.getInt(2);
-                if (z != 0) bevel3D(lhs, z);
+                if (z != 0) {
+                    bevel3D(lhs, z);
+                }
             }
 
-            if (graphics != null) graphics.dispose();
+            if (graphics != null) {
+                graphics.dispose();
+            }
 
             // execute next instruction, or return result
             return (next != null ? next.execute(lhs, namespace, loader) : lhs);
         }
 
         protected void error(String message, int pos)
-            throws Exception
-        {
-            int first = Math.max(0, pos-10);
-            int last = Math.min(source.length(), pos+10);
-            int max = dots.length()-1;
+                throws Exception {
+            int first = Math.max(0, pos - 10);
+            int last = Math.min(source.length(), pos + 10);
+            int max = dots.length() - 1;
             String intro = "\nsource: ";
-            message += intro + source.substring(first, last) + "\n" + dots.substring(0, Math.min(max, intro.length()+first)) + "^";
+            message += intro + source.substring(first, last) + "\n" + dots.substring(0, Math.min(max, intro.length() + first)) + "^";
 
             throw new Exception(message);
         }
 
-        protected ArgList parseArgs(ArgList vec, int maxArgs, int first, int last)
-        {
-            if (vec == null) vec = new ArgList();
+        protected ArgList parseArgs(ArgList vec, int maxArgs, int first, int last) {
+            if (vec == null) {
+                vec = new ArgList();
+            }
             vec.parse(maxArgs, source, first, last);
 
             return vec;
         }
 
         protected BufferedImage getImage(String name, int width, int height, Map<String, Object> namespace, ClassLoader loader)
-           throws IOException
-        {
+                throws IOException {
             Object obj = namespace.get(name);
 
             // resolve reference
             if (obj != null && obj.getClass() == String.class
-                && delims[ARG_DELIMS].indexOf(name.charAt(0)) == ARG_RESOLVE) {
+                    && delims[ARG_DELIMS].indexOf(name.charAt(0)) == ARG_RESOLVE) {
                 name = obj.toString();
                 obj = namespace.get(name);
             }
 
             // something there, but it's not an image
-            if (obj != null && !(obj instanceof Image)) return null;
+            if (obj != null && !(obj instanceof Image)) {
+                return null;
+            }
 
             int w = 0;
             int h = 0;
@@ -1862,8 +2055,12 @@ public class IconGenerator
             if (obj == null) {
                 if (Character.isLetter(name.charAt(0))) {
                     URL url = loader.getResource(name);
-                    if (url == null) url = loader.getResource(name + ".png");
-                    if (url == null) url = loader.getResource(name + ".gif");
+                    if (url == null) {
+                        url = loader.getResource(name + ".png");
+                    }
+                    if (url == null) {
+                        url = loader.getResource(name + ".gif");
+                    }
 
                     if (url != null) {
                         ImageIcon icon = new ImageIcon(url);
@@ -1875,9 +2072,10 @@ public class IconGenerator
                 }
 
                 //if (obj == null) return null;
-                if (obj == null) throw new FileNotFoundException(name);
-            }
-            else {
+                if (obj == null) {
+                    throw new FileNotFoundException(name);
+                }
+            } else {
                 Image img = (Image) obj;
                 w = img.getWidth(null);
                 h = img.getHeight(null);
@@ -1894,24 +2092,24 @@ public class IconGenerator
             obj = tmp;
 
             return (BufferedImage) obj;
-            */
-
+             */
             return copy((Image) obj, width, height, scale);
         }
 
         protected Object resolve(String target, List<String> method, Map<String, Object> namespace)
-           throws Exception
-        {
+                throws Exception {
             Object obj = namespace.get(target);
 
             // resolve reference
             if (obj != null && obj.getClass() == String.class
-                && delims[ARG_DELIMS].indexOf(target.charAt(0)) == ARG_RESOLVE) {
+                    && delims[ARG_DELIMS].indexOf(target.charAt(0)) == ARG_RESOLVE) {
                 target = obj.toString();
                 obj = namespace.get(target);
             }
 
-            if (obj == null) return obj;
+            if (obj == null) {
+                return obj;
+            }
 
             try {
                 Method meth;
@@ -1920,7 +2118,9 @@ public class IconGenerator
                 for (int i = 0; i < method.size(); i++) {
                     methName = method.get(i);
                     cut = methName.indexOf('(');
-                    if (cut > 0) methName = methName.substring(0, cut);
+                    if (cut > 0) {
+                        methName = methName.substring(0, cut);
+                    }
                     meth = obj.getClass().getMethod(methName, NULL_SIG);
                     obj = meth.invoke(obj, NULL_ARGS);
                 }
@@ -1930,15 +2130,20 @@ public class IconGenerator
             }
         }
 
-        protected int parseToken(String macro, int pos)
-        {
+        protected int parseToken(String macro, int pos) {
             int len = macro.length();
-            if (pos < 0 || pos >= len) return -1;
+            if (pos < 0 || pos >= len) {
+                return -1;
+            }
 
             // skip trailing quotes
-            if (QUOTES.indexOf(macro.charAt(pos)) >= 0) pos++;
+            if (QUOTES.indexOf(macro.charAt(pos)) >= 0) {
+                pos++;
+            }
 
-            if (pos >= len) return -1;
+            if (pos >= len) {
+                return -1;
+            }
 
             String ops = delims[OPS];
             String openclose = delims[OPEN_CLOSE];
@@ -1948,70 +2153,71 @@ public class IconGenerator
             //if (ops.indexOf(c) >= 0) return pos;
             switch (c) {
 
-            //case '(':
-            case ' ':
-            case '\t':
-            case '\r':
-            case '\n':
-                // skip whitespace and nested parens
-                //while (macro.charAt(++pos) == ' ');
-                while (++pos < len && " \t\r\n".indexOf(macro.charAt(pos)) >= 0);
+                //case '(':
+                case ' ':
+                case '\t':
+                case '\r':
+                case '\n':
+                    // skip whitespace and nested parens
+                    //while (macro.charAt(++pos) == ' ');
+                    while (++pos < len && " \t\r\n".indexOf(macro.charAt(pos)) >= 0);
 
-                // and dequote
-                return (QUOTES.indexOf(macro.charAt(pos)) >= 0 ? pos + 1 : pos);
+                    // and dequote
+                    return (QUOTES.indexOf(macro.charAt(pos)) >= 0 ? pos + 1 : pos);
 
-            case ')':
-            case ']':
-            case '}':
-                // skip nested parens
-                while (++pos < len && " )]}\t\r\n".indexOf(macro.charAt(pos)) >= 0);
-                return (pos < len ? pos : -1);
+                case ')':
+                case ']':
+                case '}':
+                    // skip nested parens
+                    while (++pos < len && " )]}\t\r\n".indexOf(macro.charAt(pos)) >= 0);
+                    return (pos < len ? pos : -1);
 
-            default:
-                // quoted string?
-                if (pos > 0 && QUOTES.indexOf(macro.charAt(pos - 1)) >= 0) {
-                    return macro.indexOf(c, pos);                        // close quote
-                }
-
-                    // word token
-                else {
-                    while (pos < len && ops.indexOf(macro.charAt(pos)) < 0 && (openclose.indexOf(macro.charAt(pos)) % 2) != 1) pos++;
-                    return (pos < len ? pos : len);
-                }
+                default:
+                    // quoted string?
+                    if (pos > 0 && QUOTES.indexOf(macro.charAt(pos - 1)) >= 0) {
+                        return macro.indexOf(c, pos);                        // close quote
+                    } // word token
+                    else {
+                        while (pos < len && ops.indexOf(macro.charAt(pos)) < 0 && (openclose.indexOf(macro.charAt(pos)) % 2) != 1) {
+                            pos++;
+                        }
+                        return (pos < len ? pos : len);
+                    }
             }
         }
 
-        protected int skip(String macro, int start, int end, String skipchars)
-        {
-            while (start < end && skipchars.indexOf(macro.charAt(start)) >= 0) start++;
+        protected int skip(String macro, int start, int end, String skipchars) {
+            while (start < end && skipchars.indexOf(macro.charAt(start)) >= 0) {
+                start++;
+            }
             return start;
         }
 
-        protected int find(String macro, int start, int end, String findchars)
-        {
-            while (start < end && findchars.indexOf(macro.charAt(start)) < 0) start++;
+        protected int find(String macro, int start, int end, String findchars) {
+            while (start < end && findchars.indexOf(macro.charAt(start)) < 0) {
+                start++;
+            }
             return start;
         }
 
-        protected class ArgList
-        {
+        protected class ArgList {
+
             int length = 0;
             byte[] opcode = null;
             String[] ref = null;
             String[] value = null;
 
             /**
-             *  parse arguments for an operator into this ArgList
+             * parse arguments for an operator into this ArgList
              *
-             *  @param maxArgs maximum args to be stored in this list
-             *  @param macro the String to parse from
-             *  @param start the position in macro to start parsing
-             *  @param end the position in macro to end parsing
+             * @param maxArgs maximum args to be stored in this list
+             * @param macro the String to parse from
+             * @param start the position in macro to start parsing
+             * @param end the position in macro to end parsing
              *
              * TODO: parse ref values.
              */
-            protected void parse(int maxArgs, String macro, int start, int end)
-            {
+            protected void parse(int maxArgs, String macro, int start, int end) {
                 if (opcode == null || opcode.length < maxArgs) {
                     opcode = new byte[maxArgs];
                     ref = new String[maxArgs];
@@ -2021,130 +2227,135 @@ public class IconGenerator
                 byte opval;
                 char listDelim = delims[ARG_DELIMS].charAt(ARG_LIST);
                 int pos1 = start, pos2, len;
-                int index = 0, max=0;
+                int index = 0, max = 0;
 
                 for (int i = 0; pos1 < end; i++) {
 
                     index = i;
 
                     pos2 = macro.indexOf(listDelim, pos1);
-                    if (pos2 < 0 || pos2 > end) pos2 = end;
+                    if (pos2 < 0 || pos2 > end) {
+                        pos2 = end;
+                    }
 
-                    if (pos2-pos1 > 1 && "+-=".indexOf(macro.charAt(pos1+1)) >= 0) {
+                    if (pos2 - pos1 > 1 && "+-=".indexOf(macro.charAt(pos1 + 1)) >= 0) {
 
                         switch (macro.charAt(pos1)) {
-                        case 'x':
-                        case 'X':
-                        case 'a':
-                        case 'A':
-                            index = 0;
-                            pos1++;
-                            break;
+                            case 'x':
+                            case 'X':
+                            case 'a':
+                            case 'A':
+                                index = 0;
+                                pos1++;
+                                break;
 
-                        case 'y':
-                        case 'Y':
-                        case 'r':
-                        case 'R':
-                            index = 1;
-                            pos1++;
-                            break;
+                            case 'y':
+                            case 'Y':
+                            case 'r':
+                            case 'R':
+                                index = 1;
+                                pos1++;
+                                break;
 
-                        case 'z':
-                        case 'Z':
-                        case 'g':
-                        case 'G':
-                            index = 2;
-                            pos1++;
-                            break;
+                            case 'z':
+                            case 'Z':
+                            case 'g':
+                            case 'G':
+                                index = 2;
+                                pos1++;
+                                break;
 
-                        case 'b':
-                        case 'B':
-                            index = 3;
-                            pos1++;
-                            break;
+                            case 'b':
+                            case 'B':
+                                index = 3;
+                                pos1++;
+                                break;
                         }
                     }
 
                     if (pos2 > pos1) {
-                        opval = (byte) (delims[OPS].indexOf(macro.charAt(pos1))+1);
+                        opval = (byte) (delims[OPS].indexOf(macro.charAt(pos1)) + 1);
                         switch (opval) {
-                        case OP_SUBTRACT:
-                        case OP_ADD:
-                        case OP_ASSIGN:
-                        case OP_FEATHER:
-                        case OP_SCALE:
-                            pos1++;
-                            opcode[index] = opval;
-                            break;
+                            case OP_SUBTRACT:
+                            case OP_ADD:
+                            case OP_ASSIGN:
+                            case OP_FEATHER:
+                            case OP_SCALE:
+                                pos1++;
+                                opcode[index] = opval;
+                                break;
 
-                        default:
-                            opcode[index] = OP_ASSIGN;
+                            default:
+                                opcode[index] = OP_ASSIGN;
                         }
                     }
 
-                    if (pos2 > pos1) value[index] = macro.substring(pos1, pos2).trim();
-                    else value[index] = macro.substring(pos1).trim();
+                    if (pos2 > pos1) {
+                        value[index] = macro.substring(pos1, pos2).trim();
+                    } else {
+                        value[index] = macro.substring(pos1).trim();
+                    }
 
-                    length = Math.max(index+1, length);
+                    length = Math.max(index + 1, length);
 
                     // advance past delimiter
-                    pos1 = pos2+1;
+                    pos1 = pos2 + 1;
                 }
             }
 
-            protected int getInt(int index)
-            { return calc(0, index); }
+            protected int getInt(int index) {
+                return calc(0, index);
+            }
 
-            protected int getFloat(int index)
-            { return calc(0, index); }
+            protected int getFloat(int index) {
+                return calc(0, index);
+            }
 
-            protected int calc(int lhs, int index)
-            {
+            protected int calc(int lhs, int index) {
                 byte op = opcode[(index < length ? index : 0)];
                 String val = (index < length ? value[index] : null);
                 float rhs = (val != null ? Float.parseFloat(val) : 0.0f);
 
                 switch (op) {
-                case OP_ADD:
-                    return (int) (lhs + rhs);
+                    case OP_ADD:
+                        return (int) (lhs + rhs);
 
-                case OP_SUBTRACT:
-                    return (int) (lhs - rhs);
+                    case OP_SUBTRACT:
+                        return (int) (lhs - rhs);
 
-                case OP_MULTIPLY:
-                    return (int) (lhs * rhs);
+                    case OP_MULTIPLY:
+                        return (int) (lhs * rhs);
 
-                case OP_ASSIGN:
-                case OP_FEATHER:
-                    return (int) rhs;
+                    case OP_ASSIGN:
+                    case OP_FEATHER:
+                        return (int) rhs;
 
-                default:
-                    return lhs;
+                    default:
+                        return lhs;
                 }
             }
 
-            protected float calc(float lhs, int index)
-            {
+            protected float calc(float lhs, int index) {
                 byte op = opcode[(index < length ? index : 0)];
                 String val = (index < length ? value[index] : null);
                 float rhs = (val != null ? Float.parseFloat(val) : 0.0f);
 
                 switch (op) {
-                case OP_ADD:
-                    return lhs + rhs;
+                    case OP_ADD:
+                        return lhs + rhs;
 
-                case OP_SUBTRACT:
-                    return lhs - rhs;
+                    case OP_SUBTRACT:
+                        return lhs - rhs;
 
-                case OP_MULTIPLY:
-                    return lhs * rhs;
+                    case OP_MULTIPLY:
+                        return lhs * rhs;
 
-                case OP_ASSIGN:
-                case OP_FEATHER:
-                    return rhs;
+                    case OP_ASSIGN:
+                    case OP_FEATHER:
+                        return rhs;
 
-                default:
-                    return lhs;
+                    default:
+                        return lhs;
                 }
             }
         }

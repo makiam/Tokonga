@@ -33,7 +33,8 @@ public class TurbulenceModule extends ProceduralModule {
     double[] sign;
     double amplitude;
     double lastBlur;
-    Vec3 gradient, tempVec;
+    final Vec3 gradient;
+    final Vec3 tempVec;
     PointInfo point;
 
     public TurbulenceModule() {

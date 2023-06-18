@@ -38,11 +38,14 @@ public class TextureImageExporter {
 
     private final Map<Texture, TextureImageInfo> textureTable;
 
-    private File dir;
+    private final File dir;
 
-    private String baseFilename;
+    private final String baseFilename;
 
-    private int quality, components, width, height;
+    private final int quality;
+    private final int components;
+    private final int width;
+    private final int height;
 
     private int nextID;
 

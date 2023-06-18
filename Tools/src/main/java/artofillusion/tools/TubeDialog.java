@@ -25,14 +25,14 @@ import java.awt.*;
  */
 public class TubeDialog extends BDialog {
 
-    LayoutWindow window;
-    Curve theCurve;
-    ObjectInfo curveInfo;
+    final LayoutWindow window;
+    final Curve theCurve;
+    final ObjectInfo curveInfo;
     Tube theTube;
 
-    ValueField thicknessField;
-    BComboBox endsChoice;
-    ObjectPreviewCanvas preview;
+    final ValueField thicknessField;
+    final BComboBox endsChoice;
+    final ObjectPreviewCanvas preview;
 
     private static int counter = 1;
 

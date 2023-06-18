@@ -36,8 +36,7 @@ import java.awt.event.ActionEvent;
 public class PMSewTool extends EditingTool {
 
     private Point clickPoint;
-    private UndoRecord undo;
-    private MeshEditController controller;
+    private final MeshEditController controller;
     private PolyMesh originalMesh;
     private boolean dragging;
     private Point dragPoint;
@@ -208,7 +207,7 @@ public class PMSewTool extends EditingTool {
         theWindow.updateImage();
         theWindow.setHelpText(Translate.text("polymesh:sewTool.helpText"));
         theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, originalMesh}));
-        undo = null;
+        UndoRecord undo = null;
 
     }
 

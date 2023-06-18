@@ -783,8 +783,7 @@ public class HttpSPMFileSystem extends SPMFileSystem {
      */
     private class HttpStatusDialog extends BDialog {
 
-        private BLabel label;
-        private BProgressBar progressBar;
+        private final BLabel label;
 
         /**
          * Constructor for the StatusDialog object
@@ -796,6 +795,7 @@ public class HttpSPMFileSystem extends SPMFileSystem {
             cc.add(label = SPMTranslate.bLabel("status"), layout);
             label.setText(SPMTranslate.text("scanningPlugins"));
             layout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(10, 10, 10, 10), new Dimension(0, 0));
+            BProgressBar progressBar;
             cc.add(progressBar = new BProgressBar(), layout);
             progressBar.setIndeterminate(true);
             setContent(cc);

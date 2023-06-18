@@ -70,7 +70,7 @@ public class SPMSplitPane extends BSplitPane {
     /**
      * Description of the Field
      */
-    protected short workMode;
+    protected final short workMode;
     /**
      * Description of the Field
      */
@@ -97,7 +97,7 @@ public class SPMSplitPane extends BSplitPane {
     protected Map<SPMObjectInfo, SPMObjectInfo> extMap;
     protected Map<String, TreePath> pathMap;
 
-    private BScrollPane nameSP, descriptionSP;
+    private BScrollPane descriptionSP;
     private BComboBox descSelect;
 
     private List<String> descText;
@@ -188,6 +188,7 @@ public class SPMSplitPane extends BSplitPane {
         cc.add(SPMTranslate.bLabel("name"), labelLayout);
         objectName = new BTextArea("", 3, 50);
         objectName.setWrapStyle(BTextArea.WRAP_WORD);
+        BScrollPane nameSP;
         cc.add(BOutline.createEtchedBorder(nameSP = new BScrollPane(objectName, BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_ALWAYS), true),
                 textAreaLayout);
         nameSP.setForceWidth(true);
@@ -691,8 +692,8 @@ public class SPMSplitPane extends BSplitPane {
      */
     public class OverlayIcon implements Icon {
 
-        private Icon originalIcon;
-        private Icon overlayIcon;
+        private final Icon originalIcon;
+        private final Icon overlayIcon;
 
         /**
          * Constructor for the OverlayIcon object

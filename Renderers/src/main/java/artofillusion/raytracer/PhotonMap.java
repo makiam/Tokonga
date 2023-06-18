@@ -27,17 +27,22 @@ import java.util.*;
  */
 public class PhotonMap {
 
-    private Raytracer rt;
-    private RaytracerRenderer renderer;
+    private final Raytracer rt;
+    private final RaytracerRenderer renderer;
     private ArrayList<Photon> photonList;
     private Photon[] photon, workspace;
-    private int numWanted, filter, numEstimate;
-    private BoundingBox bounds;
-    private Vec3[] direction;
-    private boolean includeCaustics, includeDirect, includeIndirect, includeVolume;
+    private final int numWanted;
+    private final int filter;
+    private final int numEstimate;
+    private final BoundingBox bounds;
+    private final Vec3[] direction;
+    private final boolean includeCaustics;
+    private final boolean includeDirect;
+    private final boolean includeIndirect;
+    private final boolean includeVolume;
     private double lightScale;
     private float cutoffDist2;
-    public Random random;
+    public final Random random;
 
     /**
      * Create a new PhotonMap

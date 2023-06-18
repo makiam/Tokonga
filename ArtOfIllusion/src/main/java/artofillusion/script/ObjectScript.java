@@ -10,9 +10,10 @@
 
 package artofillusion.script;
 
-/** This interface represents a parsed Object script. */
+/**
+ * This interface represents a parsed Object script.
+ */
+public interface ObjectScript {
 
-public interface ObjectScript
-{
-  public void execute(ScriptedObjectController script) throws ScriptException;
+    public void execute(ScriptedObjectController script) throws ScriptException;
 }

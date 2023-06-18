@@ -39,7 +39,7 @@ import java.awt.event.ActionEvent;
 public class SSMR2DManipulator
         extends SSMRManipulator {
 
-    private Rectangle[] boxes;
+    private final Rectangle[] boxes;
     private final static int HANDLE_SIZE = 12;
     private int handle;
     private boolean dragging = false;
@@ -48,13 +48,13 @@ public class SSMR2DManipulator
     private Point baseClick;
     private int dragX, dragY;
     private int rotateX, rotateY;
-    private Runnable valueWidgetCallback, validateWidgetValue, abortWidgetValue;
+    private final Runnable valueWidgetCallback;
     private boolean isCtrlDown, isShiftDown;
     private Vec3 rotateCenter;
     private Vec3 toolHandlePos;
-    private static Image topleftIcon, topbottomIcon, toprightIcon, leftrightIcon, centerIcon;
-    private static Image[] scaleHandleImages = new Image[9];
-    private static Image[] rotateHandleImages = new Image[9];
+    private static Image topleftIcon;
+    private static final Image[] scaleHandleImages = new Image[9];
+    private static final Image[] rotateHandleImages = new Image[9];
     private static BToolTip moveToolTip, scaleToolTip, rotateToolTip, centerToolTip;
 
     public final static short TOP_LEFT = 0;
@@ -77,10 +77,10 @@ public class SSMR2DManipulator
         MARGIN = HANDLE_SIZE;
         if (topleftIcon == null) {
             topleftIcon = ThemeManager.getIcon("polymesh:scaletopleft").getImage();
-            toprightIcon = ThemeManager.getIcon("polymesh:scaletopright").getImage();
-            topbottomIcon = ThemeManager.getIcon("polymesh:scaletopbottom").getImage();
-            leftrightIcon = ThemeManager.getIcon("polymesh:scaleleftright").getImage();
-            centerIcon = ThemeManager.getIcon("polymesh:scalecenter").getImage();
+            Image toprightIcon = ThemeManager.getIcon("polymesh:scaletopright").getImage();
+            Image topbottomIcon = ThemeManager.getIcon("polymesh:scaletopbottom").getImage();
+            Image leftrightIcon = ThemeManager.getIcon("polymesh:scaleleftright").getImage();
+            Image centerIcon = ThemeManager.getIcon("polymesh:scalecenter").getImage();
             scaleHandleImages[TOP_LEFT] = topleftIcon;
             scaleHandleImages[BOTTOM_RIGHT] = topleftIcon;
             scaleHandleImages[TOP_RIGHT] = toprightIcon;
@@ -119,16 +119,14 @@ public class SSMR2DManipulator
                 doValueWidgetCallback();
             }
         };
-        validateWidgetValue
-                = new Runnable() {
+        Runnable validateWidgetValue = new Runnable() {
 
             @Override
             public void run() {
                 doValueWidgetValidate();
             }
         };
-        abortWidgetValue
-                = new Runnable() {
+        Runnable abortWidgetValue = new Runnable() {
 
             @Override
             public void run() {

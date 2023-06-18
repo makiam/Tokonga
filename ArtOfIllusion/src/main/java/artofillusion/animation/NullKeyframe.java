@@ -12,85 +12,67 @@ package artofillusion.animation;
 
 import java.io.*;
 
-/** This is a keyframes which contains no information.  It is occasionally useful as a
-    placeholder. */
+/**
+ * This is a keyframes which contains no information. It is occasionally useful as a
+ * placeholder.
+ */
+public class NullKeyframe implements Keyframe {
 
-public class NullKeyframe implements Keyframe
-{
-  public NullKeyframe()
-  {
-  }
+    public NullKeyframe() {
+    }
 
-  /* Create a duplicate of this keyframe. */
+    /* Create a duplicate of this keyframe. */
+    @Override
+    public Keyframe duplicate() {
+        return new NullKeyframe();
+    }
 
-  @Override
-  public Keyframe duplicate()
-  {
-    return new NullKeyframe();
-  }
+    /* Create a duplicate of this keyframe for a (possibly different) object. */
+    @Override
+    public Keyframe duplicate(Object owner) {
+        return new NullKeyframe();
+    }
 
-  /* Create a duplicate of this keyframe for a (possibly different) object. */
+    /* Get the list of graphable values for this keyframe. */
+    @Override
+    public double[] getGraphValues() {
+        return new double[0];
+    }
 
-  @Override
-  public Keyframe duplicate(Object owner)
-  {
-    return new NullKeyframe();
-  }
+    /* Set the list of graphable values for this keyframe. */
+    @Override
+    public void setGraphValues(double[] values) {
+    }
 
-  /* Get the list of graphable values for this keyframe. */
-
-  @Override
-  public double [] getGraphValues()
-  {
-    return new double [0];
-  }
-
-  /* Set the list of graphable values for this keyframe. */
-
-  @Override
-  public void setGraphValues(double values[])
-  {
-  }
-
-  /* These methods return a new Keyframe which is a weighted average of this one and one,
+    /* These methods return a new Keyframe which is a weighted average of this one and one,
      two, or three others. */
+    @Override
+    public Keyframe blend(Keyframe o2, double weight1, double weight2) {
+        return new NullKeyframe();
+    }
 
-  @Override
-  public Keyframe blend(Keyframe o2, double weight1, double weight2)
-  {
-    return new NullKeyframe();
-  }
+    @Override
+    public Keyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3) {
+        return new NullKeyframe();
+    }
 
-  @Override
-  public Keyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3)
-  {
-    return new NullKeyframe();
-  }
+    @Override
+    public Keyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4) {
+        return new NullKeyframe();
+    }
 
-  @Override
-  public Keyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4)
-  {
-    return new NullKeyframe();
-  }
+    /* Determine whether this keyframe is identical to another one. */
+    @Override
+    public boolean equals(Keyframe k) {
+        return (k instanceof NullKeyframe);
+    }
 
-  /* Determine whether this keyframe is identical to another one. */
+    /* Write out a representation of this keyframe to a stream. */
+    @Override
+    public void writeToStream(DataOutputStream out) throws IOException {
+    }
 
-  @Override
-  public boolean equals(Keyframe k)
-  {
-    return (k instanceof NullKeyframe);
-  }
-
-  /* Write out a representation of this keyframe to a stream. */
-
-  @Override
-  public void writeToStream(DataOutputStream out) throws IOException
-  {
-  }
-
-  /* Reconstructs the keyframe from its serialized representation. */
-
-   public NullKeyframe(DataInputStream in, Object parent) throws IOException
-   {
-   }
+    /* Reconstructs the keyframe from its serialized representation. */
+    public NullKeyframe(DataInputStream in, Object parent) throws IOException {
+    }
 }

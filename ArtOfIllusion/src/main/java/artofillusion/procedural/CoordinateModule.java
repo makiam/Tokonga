@@ -17,134 +17,115 @@ import artofillusion.ui.*;
 import java.awt.*;
 import java.io.*;
 
-/** This is a Module which outputs a coordinate (x, y, z, or t). */
+/**
+ * This is a Module which outputs a coordinate (x, y, z, or t).
+ */
 @ProceduralModule.Category(value = "Modules:menu.values")
-public class CoordinateModule extends ProceduralModule
-{
-  int coordinate;
-  PointInfo point;
+public class CoordinateModule extends ProceduralModule {
 
-  public static final int X = 0;
-  public static final int Y = 1;
-  public static final int Z = 2;
-  public static final int T = 3;
-  public static final String COORD_NAME[] = new String [] {"X", "Y", "Z", Translate.text("Time")};
+    int coordinate;
+    PointInfo point;
 
-  public CoordinateModule(Point position)
-  {
-    this(position, X);
-  }
+    public static final int X = 0;
+    public static final int Y = 1;
+    public static final int Z = 2;
+    public static final int T = 3;
+    public static final String[] COORD_NAME = new String[]{"X", "Y", "Z", Translate.text("Time")};
 
-  public CoordinateModule(Point position, int coordinate)
-  {
-    super(COORD_NAME[coordinate], new IOPort [] {},
-      new IOPort [] {new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, COORD_NAME[coordinate])},
-      position);
-    this.coordinate = coordinate;
-  }
-
-  /* Set the coordinate which this module outputs. */
-
-  public void setCoordinate(int coordinate)
-  {
-    this.coordinate = coordinate;
-    name = COORD_NAME[coordinate];
-    output[0].setDescription(COORD_NAME[coordinate]);
-    layout();
-  }
-
-  /* Cache the PointInfo object to have access to the coordinates later on. */
-
-  @Override
-  public void init(PointInfo p)
-  {
-    point = p;
-  }
-
-  /* This module outputs the value of the specified coordinate. */
-
-  @Override
-  public double getAverageValue(int which, double blur)
-  {
-    switch (coordinate)
-    {
-      case X:
-	return point.x;
-      case Y:
-	return point.y;
-      case Z:
-	return point.z;
-      default:
-        return point.t;
+    public CoordinateModule(Point position) {
+        this(position, X);
     }
-  }
 
-  /* Return the error in the specified coordinate. */
-
-  @Override
-  public double getValueError(int which, double blur)
-  {
-    switch (coordinate)
-    {
-      case X:
-	return 0.5*point.xsize+blur;
-      case Y:
-	return 0.5*point.ysize+blur;
-      case Z:
-	return 0.5*point.zsize+blur;
-      default:
-        return 0.0;
+    public CoordinateModule(Point position, int coordinate) {
+        super(COORD_NAME[coordinate], new IOPort[]{},
+                new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, COORD_NAME[coordinate])},
+                position);
+        this.coordinate = coordinate;
     }
-  }
 
-  /* The gradient is simply linear in the appropriate coordinate. */
-
-  @Override
-  public void getValueGradient(int which, Vec3 grad, double blur)
-  {
-    switch (coordinate)
-    {
-      case X:
-	grad.set(1.0, 0.0, 0.0);
-	break;
-      case Y:
-	grad.set(0.0, 1.0, 0.0);
-	break;
-      case Z:
-	grad.set(0.0, 0.0, 1.0);
-	break;
-      default:
-	grad.set(0.0, 0.0, 0.0);
+    /* Set the coordinate which this module outputs. */
+    public void setCoordinate(int coordinate) {
+        this.coordinate = coordinate;
+        name = COORD_NAME[coordinate];
+        output[0].setDescription(COORD_NAME[coordinate]);
+        layout();
     }
-  }
 
-  /* Create a duplicate of this module. */
+    /* Cache the PointInfo object to have access to the coordinates later on. */
+    @Override
+    public void init(PointInfo p) {
+        point = p;
+    }
 
-  @Override
-  public CoordinateModule duplicate()
-  {
-    CoordinateModule mod = new CoordinateModule(new Point(bounds.x, bounds.y), coordinate);
+    /* This module outputs the value of the specified coordinate. */
+    @Override
+    public double getAverageValue(int which, double blur) {
+        switch (coordinate) {
+            case X:
+                return point.x;
+            case Y:
+                return point.y;
+            case Z:
+                return point.z;
+            default:
+                return point.t;
+        }
+    }
 
-    mod.layout();
-    return mod;
-  }
+    /* Return the error in the specified coordinate. */
+    @Override
+    public double getValueError(int which, double blur) {
+        switch (coordinate) {
+            case X:
+                return 0.5 * point.xsize + blur;
+            case Y:
+                return 0.5 * point.ysize + blur;
+            case Z:
+                return 0.5 * point.zsize + blur;
+            default:
+                return 0.0;
+        }
+    }
 
-  /* Write out the parameters. */
+    /* The gradient is simply linear in the appropriate coordinate. */
+    @Override
+    public void getValueGradient(int which, Vec3 grad, double blur) {
+        switch (coordinate) {
+            case X:
+                grad.set(1.0, 0.0, 0.0);
+                break;
+            case Y:
+                grad.set(0.0, 1.0, 0.0);
+                break;
+            case Z:
+                grad.set(0.0, 0.0, 1.0);
+                break;
+            default:
+                grad.set(0.0, 0.0, 0.0);
+        }
+    }
 
-  @Override
-  public void writeToStream(DataOutputStream out, Scene theScene) throws IOException
-  {
-    out.writeInt(coordinate);
-  }
+    /* Create a duplicate of this module. */
+    @Override
+    public CoordinateModule duplicate() {
+        CoordinateModule mod = new CoordinateModule(new Point(bounds.x, bounds.y), coordinate);
 
-  /* Read in the parameters. */
+        mod.layout();
+        return mod;
+    }
 
-  @Override
-  public void readFromStream(DataInputStream in, Scene theScene) throws IOException
-  {
-    coordinate = in.readInt();
-    name = COORD_NAME[coordinate];
-    output[0].setDescription(COORD_NAME[coordinate]);
-    layout();
-  }
+    /* Write out the parameters. */
+    @Override
+    public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
+        out.writeInt(coordinate);
+    }
+
+    /* Read in the parameters. */
+    @Override
+    public void readFromStream(DataInputStream in, Scene theScene) throws IOException {
+        coordinate = in.readInt();
+        name = COORD_NAME[coordinate];
+        output[0].setDescription(COORD_NAME[coordinate]);
+        layout();
+    }
 }

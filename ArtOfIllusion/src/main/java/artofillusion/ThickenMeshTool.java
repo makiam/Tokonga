@@ -19,141 +19,131 @@ import buoy.event.*;
 import java.awt.*;
 import java.text.*;
 
-/** ThickenMeshTool is an EditingTool used for making pieces of TriangleMeshes thicker
-    or thinner. */
+/**
+ * ThickenMeshTool is an EditingTool used for making pieces of TriangleMeshes thicker
+ * or thinner.
+ */
+public class ThickenMeshTool extends MeshEditingTool {
 
-public class ThickenMeshTool extends MeshEditingTool
-{
-  private boolean dragInProgress;
-  private Point clickPoint;
-  private Vec3 norm[], baseVertPos[];
-  private UndoRecord undo;
-  private final NinePointManipulator manipulator;
+    private boolean dragInProgress;
+    private Point clickPoint;
+    private Vec3[] norm, baseVertPos;
+    private UndoRecord undo;
+    private final NinePointManipulator manipulator;
 
-  public ThickenMeshTool(EditingWindow fr, MeshEditController controller)
-  {
-    super(fr, controller);
-    initButton("outsetPoints");
-    manipulator = new NinePointManipulator(new Image[] {null, null, null, null, NinePointManipulator.ARROWS_N_S, null, null, null, null});
-    manipulator.addEventLink(HandlePressedEvent.class, this, "handlePressed");
-    manipulator.addEventLink(HandleDraggedEvent.class, this, "handleDragged");
-    manipulator.addEventLink(HandleReleasedEvent.class, this, "handleReleased");
-  }
-
-  @Override
-  public boolean allowSelectionChanges()
-  {
-    return !dragInProgress;
-  }
-
-  @Override
-  public String getToolTipText()
-  {
-    return Translate.text("thickenMeshTool.tipText");
-  }
-
-  @Override
-  public void drawOverlay(ViewerCanvas view)
-  {
-    BoundingBox selectionBounds = findSelectionBounds(view.getCamera());
-    if (!dragInProgress)
-    {
-      if (selectionBounds != null)
-      {
-        manipulator.draw(view, selectionBounds);
-        theWindow.setHelpText(Translate.text("thickenMeshTool.helpText"));
-      }
-      else
-        theWindow.setHelpText(Translate.text("thickenMeshTool.errorText"));
+    public ThickenMeshTool(EditingWindow fr, MeshEditController controller) {
+        super(fr, controller);
+        initButton("outsetPoints");
+        manipulator = new NinePointManipulator(new Image[]{null, null, null, null, NinePointManipulator.ARROWS_N_S, null, null, null, null});
+        manipulator.addEventLink(HandlePressedEvent.class, this, "handlePressed");
+        manipulator.addEventLink(HandleDraggedEvent.class, this, "handleDragged");
+        manipulator.addEventLink(HandleReleasedEvent.class, this, "handleReleased");
     }
-  }
 
-  @Override
-  public void mousePressed(WidgetMouseEvent e, ViewerCanvas view)
-  {
-    BoundingBox selectionBounds = findSelectionBounds(view.getCamera());
-    dragInProgress = false;
-    if (selectionBounds != null)
-      dragInProgress = manipulator.mousePressed(e, view, selectionBounds);
-  }
+    @Override
+    public boolean allowSelectionChanges() {
+        return !dragInProgress;
+    }
 
-  @Override
-  public void mouseDragged(WidgetMouseEvent e, ViewerCanvas view)
-  {
-    manipulator.mouseDragged(e, view);
-  }
+    @Override
+    public String getToolTipText() {
+        return Translate.text("thickenMeshTool.tipText");
+    }
 
-  @Override
-  public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view)
-  {
-    manipulator.mouseReleased(e, view);
-  }
+    @Override
+    public void drawOverlay(ViewerCanvas view) {
+        BoundingBox selectionBounds = findSelectionBounds(view.getCamera());
+        if (!dragInProgress) {
+            if (selectionBounds != null) {
+                manipulator.draw(view, selectionBounds);
+                theWindow.setHelpText(Translate.text("thickenMeshTool.helpText"));
+            } else {
+                theWindow.setHelpText(Translate.text("thickenMeshTool.errorText"));
+            }
+        }
+    }
 
-  protected void handlePressed(HandlePressedEvent ev)
-  {
-    Mesh mesh = (Mesh) controller.getObject().getObject();
-    clickPoint = ev.getMouseEvent().getPoint();
-    norm = mesh.getNormals();
-    baseVertPos = mesh.getVertexPositions();
-  }
+    @Override
+    public void mousePressed(WidgetMouseEvent e, ViewerCanvas view) {
+        BoundingBox selectionBounds = findSelectionBounds(view.getCamera());
+        dragInProgress = false;
+        if (selectionBounds != null) {
+            dragInProgress = manipulator.mousePressed(e, view, selectionBounds);
+        }
+    }
 
-  protected void handleDragged(HandleDraggedEvent ev)
-  {
-    Mesh mesh = (Mesh) controller.getObject().getObject();
-    Point dragPoint = ev.getMouseEvent().getPoint();
+    @Override
+    public void mouseDragged(WidgetMouseEvent e, ViewerCanvas view) {
+        manipulator.mouseDragged(e, view);
+    }
 
-    if (undo == null)
-      undo = new UndoRecord(theWindow, false, UndoRecord.COPY_VERTEX_POSITIONS, mesh, mesh.getVertexPositions());
-    double distance = 0.01*(clickPoint.y - dragPoint.y);
-    Vec3 v[] = findNewPositions(baseVertPos, distance);
-    mesh.setVertexPositions(v);
-    controller.objectChanged();
-    theWindow.updateImage();
-    NumberFormat format = NumberFormat.getNumberInstance();
-    format.setMaximumFractionDigits(2);
-    if (distance < 0.0)
-      theWindow.setHelpText(Translate.text("thickenMeshTool.dragText.inward", format.format(-distance)));
-    else
-      theWindow.setHelpText(Translate.text("thickenMeshTool.dragText.outward", format.format(distance)));
-  }
+    @Override
+    public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view) {
+        manipulator.mouseReleased(e, view);
+    }
 
-  protected void handleReleased(HandleReleasedEvent ev)
-  {
-    Mesh mesh = (Mesh) controller.getObject().getObject();
-    Point dragPoint = ev.getMouseEvent().getPoint();
+    protected void handlePressed(HandlePressedEvent ev) {
+        Mesh mesh = (Mesh) controller.getObject().getObject();
+        clickPoint = ev.getMouseEvent().getPoint();
+        norm = mesh.getNormals();
+        baseVertPos = mesh.getVertexPositions();
+    }
 
-    if (undo != null)
-      {
-        theWindow.setUndoRecord(undo);
-        double distance = 0.01*(clickPoint.y - dragPoint.y);
-        Vec3 v[] = findNewPositions(baseVertPos, distance);
+    protected void handleDragged(HandleDraggedEvent ev) {
+        Mesh mesh = (Mesh) controller.getObject().getObject();
+        Point dragPoint = ev.getMouseEvent().getPoint();
+
+        if (undo == null) {
+            undo = new UndoRecord(theWindow, false, UndoRecord.COPY_VERTEX_POSITIONS, mesh, mesh.getVertexPositions());
+        }
+        double distance = 0.01 * (clickPoint.y - dragPoint.y);
+        Vec3[] v = findNewPositions(baseVertPos, distance);
         mesh.setVertexPositions(v);
-      }
-    controller.objectChanged();
-    theWindow.updateImage();
-    norm = null;
-    undo = null;
-    baseVertPos = null;
-    dragInProgress = false;
-  }
+        controller.objectChanged();
+        theWindow.updateImage();
+        NumberFormat format = NumberFormat.getNumberInstance();
+        format.setMaximumFractionDigits(2);
+        if (distance < 0.0) {
+            theWindow.setHelpText(Translate.text("thickenMeshTool.dragText.inward", format.format(-distance)));
+        } else {
+            theWindow.setHelpText(Translate.text("thickenMeshTool.dragText.outward", format.format(distance)));
+        }
+    }
 
-  /* Find the new positions of the vertices . */
+    protected void handleReleased(HandleReleasedEvent ev) {
+        Mesh mesh = (Mesh) controller.getObject().getObject();
+        Point dragPoint = ev.getMouseEvent().getPoint();
 
-  private Vec3 [] findNewPositions(Vec3 vert[], double distance)
-  {
-    Vec3 v[] = new Vec3 [vert.length];
-    int selected[] = controller.getSelectionDistance();
+        if (undo != null) {
+            theWindow.setUndoRecord(undo);
+            double distance = 0.01 * (clickPoint.y - dragPoint.y);
+            Vec3[] v = findNewPositions(baseVertPos, distance);
+            mesh.setVertexPositions(v);
+        }
+        controller.objectChanged();
+        theWindow.updateImage();
+        norm = null;
+        undo = null;
+        baseVertPos = null;
+        dragInProgress = false;
+    }
 
-    for (int i = 0; i < v.length; i++)
-      {
-        if (selected[i] == 0)
-          v[i] = norm[i].times(distance);
-        else
-          v[i] = new Vec3();
-      }
-    ((MeshEditorWindow) theFrame).adjustDeltas(v);
-    for (int i = 0; i < vert.length; i++)
-      v[i].add(vert[i]);
-    return v;
-  }
+    /* Find the new positions of the vertices . */
+    private Vec3[] findNewPositions(Vec3[] vert, double distance) {
+        Vec3[] v = new Vec3[vert.length];
+        int[] selected = controller.getSelectionDistance();
+
+        for (int i = 0; i < v.length; i++) {
+            if (selected[i] == 0) {
+                v[i] = norm[i].times(distance);
+            } else {
+                v[i] = new Vec3();
+            }
+        }
+        ((MeshEditorWindow) theFrame).adjustDeltas(v);
+        for (int i = 0; i < vert.length; i++) {
+            v[i].add(vert[i]);
+        }
+        return v;
+    }
 }

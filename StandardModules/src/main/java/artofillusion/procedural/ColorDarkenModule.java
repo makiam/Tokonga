@@ -19,7 +19,7 @@ import java.awt.*;
 @ProceduralModule.Category(value = "Modules:menu.colorFunctions")
 public class ColorDarkenModule extends ProceduralModule {
 
-    RGBColor color;
+    final RGBColor color;
     boolean colorOk;
     double lastBlur;
 

@@ -26,7 +26,7 @@ import java.io.*;
 public class SpectrumModule extends ProceduralModule {
 
     RGBColor[] color;
-    RGBColor outputColor;
+    final RGBColor outputColor;
     float[][] a1, b1, c1;
     double[] index;
     double lastBlur;
@@ -279,12 +279,12 @@ public class SpectrumModule extends ProceduralModule {
      */
     private class EditingDialog extends BDialog {
 
-        ProcedureEditor editor;
-        CustomWidget canvas;
-        ValueField indexField;
-        Widget preview;
-        BCheckBox repeatBox;
-        BButton deleteButton;
+        final ProcedureEditor editor;
+        final CustomWidget canvas;
+        final ValueField indexField;
+        final Widget preview;
+        final BCheckBox repeatBox;
+        final BButton deleteButton;
         Point clickPoint;
         Point[] handlePos;
         int selected, rows = 1;

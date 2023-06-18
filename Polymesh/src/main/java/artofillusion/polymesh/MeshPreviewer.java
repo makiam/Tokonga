@@ -50,13 +50,12 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
     static final double DRAG_SCALE = Math.PI / 360.0; // Half a degree
     ArrayList<ObjectInfo> selection;
     ArrayList<Vec3> selPos;
-    private UniformTexture selTexture;
     private Sphere sphere;
     private int spheresIndex;
     private boolean showSelection;
     private double boundR; // Bound radius is used as reference size of the object.
     private boolean reverseWheel;
-    private int amount, scrollAmount;
+    private int scrollAmount;
     private Timer scrollTimer;
 
     /**
@@ -147,6 +146,7 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
         });
         selection = new ArrayList<>();
         selPos = new ArrayList<>();
+        UniformTexture selTexture;
         theScene.addTexture(selTexture = new UniformTexture());
         selTexture.diffuseColor = new RGBColor(255, 0, 0);
         sphere = new Sphere(0.03, 0.03, 0.03);
@@ -392,7 +392,7 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
 
     private void mouseScrolled(MouseScrolledEvent e) {
         scrollTimer.restart();
-        amount = e.getWheelRotation();
+        int amount = e.getWheelRotation();
         if (!e.isAltDown()) {
             amount *= 5;
         }

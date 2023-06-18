@@ -20,8 +20,8 @@ package artofillusion.raytracer;
  */
 public class PhotonList {
 
-    public Photon[] photon;
-    public float[] dist2;
+    public final Photon[] photon;
+    public final float[] dist2;
     public float cutoff2;
     public int numFound;
 

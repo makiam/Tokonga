@@ -22,25 +22,28 @@ import artofillusion.texture.*;
  */
 public class RTEllipsoid extends RTObject {
 
-    Sphere theSphere;
+    final Sphere theSphere;
     double rx;
     double ry;
     double rz;
-    double rx2;
-    double ry2;
-    double rz2;
-    double cx;
-    double cy;
-    double cz;
-    double sy;
-    double sz;
-    double[] param;
-    boolean bumpMapped, transform, uniform;
-    Mat4 toLocal, fromLocal;
+    final double rx2;
+    final double ry2;
+    final double rz2;
+    final double cx;
+    final double cy;
+    final double cz;
+    final double sy;
+    final double sz;
+    final double[] param;
+    final boolean bumpMapped;
+    boolean transform;
+    final boolean uniform;
+    final Mat4 toLocal;
+    Mat4 fromLocal;
 
     public static final double TOL = 1e-12;
 
-    double ellipsoidTol;
+    final double ellipsoidTol;
 
     public RTEllipsoid(Sphere sphere, Mat4 fromLocal, Mat4 toLocal, double[] param) {
         Vec3 radii = sphere.getRadii();
@@ -318,11 +321,19 @@ public class RTEllipsoid extends RTObject {
      */
     private static class EllipsoidIntersection implements SurfaceIntersection {
 
-        private RTEllipsoid ellipse;
-        private int numIntersections;
-        private double dist1, dist2, r1x, r1y, r1z, r2x, r2y, r2z;
+        private final RTEllipsoid ellipse;
+        private final int numIntersections;
+        private final double dist1;
+        private final double dist2;
+        private final double r1x;
+        private final double r1y;
+        private final double r1z;
+        private final double r2x;
+        private final double r2y;
+        private final double r2z;
         private boolean trueNormValid;
-        private Vec3 trueNorm, pos;
+        private final Vec3 trueNorm;
+        private final Vec3 pos;
 
         public EllipsoidIntersection(RTEllipsoid ellipse, int numIntersections, Vec3 point1, Vec3 point2, double dist1, double dist2) {
             this.ellipse = ellipse;

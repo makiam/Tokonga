@@ -20,9 +20,9 @@ import artofillusion.util.*;
  */
 public class TrianglePhotonSource implements PhotonSource {
 
-    private RenderingTriangle tri;
-    private RGBColor color;
-    private float lightIntensity;
+    private final RenderingTriangle tri;
+    private final RGBColor color;
+    private final float lightIntensity;
 
     /**
      * Create an TrianglePhotonSource.

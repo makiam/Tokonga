@@ -667,9 +667,11 @@ public class OBJImporter {
      */
     private static class FaceInfo {
 
-        public VertexInfo v1, v2, v3;
-        public int smoothingGroup;
-        public String texture;
+        public final VertexInfo v1;
+        public final VertexInfo v2;
+        public final VertexInfo v3;
+        public final int smoothingGroup;
+        public final String texture;
 
         public FaceInfo(VertexInfo v1, VertexInfo v2, VertexInfo v3, int smoothingGroup, String texture) {
             this.v1 = v1;

@@ -20,7 +20,7 @@ import java.awt.*;
 @ProceduralModule.Category(value = "Modules:menu.operators")
 public class SumModule extends ProceduralModule {
 
-    Vec3 tempVec;
+    final Vec3 tempVec;
 
     public SumModule() {
         this(new Point());

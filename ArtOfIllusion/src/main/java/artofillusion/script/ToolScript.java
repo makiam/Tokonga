@@ -12,9 +12,10 @@ package artofillusion.script;
 
 import artofillusion.*;
 
-/** This interface represents a parsed Tool script. */
+/**
+ * This interface represents a parsed Tool script.
+ */
+public interface ToolScript {
 
-public interface ToolScript
-{
-  public void execute(LayoutWindow window) throws ScriptException;
+    public void execute(LayoutWindow window) throws ScriptException;
 }

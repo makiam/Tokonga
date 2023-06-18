@@ -41,7 +41,7 @@ public class MouseDragManipulator extends Manipulator {
     private Point baseClick;
     private CoordinateSystem oldCoords;
     private Mat4 viewToWorld;
-    private Vec3 clickPos = new Vec3(0, 0, 0);
+    private final Vec3 clickPos = new Vec3(0, 0, 0);
     private static final double DRAG_SCALE = 0.01;
     private Vec3 center;
     private Vec2 axisCenter;
@@ -238,8 +238,9 @@ public class MouseDragManipulator extends Manipulator {
 
     public static class ManipulatorMouseDragEvent extends ManipulatorEvent {
 
-        Vec2 drag;
-        boolean ctrl, shift;
+        final Vec2 drag;
+        final boolean ctrl;
+        final boolean shift;
 
         public ManipulatorMouseDragEvent(Manipulator manipulator, Vec2 dr, ViewerCanvas view, boolean ctrl, boolean shift) {
             super(manipulator, view);

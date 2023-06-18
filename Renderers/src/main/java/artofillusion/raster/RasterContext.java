@@ -24,7 +24,7 @@ public class RasterContext {
     public RGBColor[] tempColor;
     public TextureSpec surfSpec, surfSpec2;
     public Camera camera;
-    public Fragment[] fragment;
+    public final Fragment[] fragment;
 
     public RasterContext(Camera camera, int width) {
         this.camera = (camera == null ? null : camera.duplicate());

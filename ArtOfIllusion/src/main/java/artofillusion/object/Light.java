@@ -15,129 +15,109 @@ import artofillusion.*;
 import artofillusion.math.*;
 import java.io.*;
 
-/** Light is an abstract class which represents a light source in a scene. */
+/**
+ * Light is an abstract class which represents a light source in a scene.
+ */
+public abstract class Light extends Object3D {
 
-public abstract class Light extends Object3D
-{
-  protected RGBColor color;
-  protected float intensity, decayRate;
-  protected int type = TYPE_NORMAL;
+    protected RGBColor color;
+    protected float intensity, decayRate;
+    protected int type = TYPE_NORMAL;
 
-  /**
-   * This value for the light type represents a normal light, one which only illuminates faces
-   * pointed toward it and which casts shadows.
-   */
-  public static final int TYPE_NORMAL = 0;
-  /**
-   * This value for the light type represents a light which does not cast shadows.
-   */
-  public static final int TYPE_SHADOWLESS = 1;
-  /**
-   * This value for the light type represents a light which adds to the ambient light in the
-   * region it affects.  This means that it does not cast shadows, and illuminates all surfaces
-   * equally regardless of whether or not they face toward the light.
-   */
-  public static final int TYPE_AMBIENT = 2;
+    /**
+     * This value for the light type represents a normal light, one which only illuminates faces
+     * pointed toward it and which casts shadows.
+     */
+    public static final int TYPE_NORMAL = 0;
+    /**
+     * This value for the light type represents a light which does not cast shadows.
+     */
+    public static final int TYPE_SHADOWLESS = 1;
+    /**
+     * This value for the light type represents a light which adds to the ambient light in the
+     * region it affects. This means that it does not cast shadows, and illuminates all surfaces
+     * equally regardless of whether or not they face toward the light.
+     */
+    public static final int TYPE_AMBIENT = 2;
 
-  public Light()
-  {
-    super();
-  }
+    public Light() {
+        super();
+    }
 
-  public Light(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException
-  {
-    super(in, theScene);
-  }
-  
-  /**
-   * Set the parameters for this light.
-   */
+    public Light(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+        super(in, theScene);
+    }
 
-  public final void setParameters(RGBColor color, float intensity, int type, float decayRate)
-  {
-    this.color = color;
-    this.intensity = intensity;
-    this.type = type;
-    this.decayRate = decayRate;
-  }
+    /**
+     * Set the parameters for this light.
+     */
+    public final void setParameters(RGBColor color, float intensity, int type, float decayRate) {
+        this.color = color;
+        this.intensity = intensity;
+        this.type = type;
+        this.decayRate = decayRate;
+    }
 
-  /**
-   * Get the color of the light.
-   */
-  
-  public RGBColor getColor()
-  {
-    return color.duplicate();
-  }
+    /**
+     * Get the color of the light.
+     */
+    public RGBColor getColor() {
+        return color.duplicate();
+    }
 
-  /**
-   * Set the color of the light.
-   */
+    /**
+     * Set the color of the light.
+     */
+    public void setColor(RGBColor color) {
+        this.color = color.duplicate();
+    }
 
-  public void setColor(RGBColor color)
-  {
-    this.color = color.duplicate();
-  }
+    /**
+     * Get the intensity of the light.
+     */
+    public float getIntensity() {
+        return intensity;
+    }
 
-  /**
-   * Get the intensity of the light.
-   */
+    /**
+     * Set the intensity of the light.
+     */
+    public void setIntensity(float intensity) {
+        this.intensity = intensity;
+    }
 
-  public float getIntensity()
-  {
-    return intensity;
-  }
+    /**
+     * Get the attenuated light at a given position relative to the light source.
+     */
+    public abstract void getLight(RGBColor light, Vec3 position);
 
-  /**
-   * Set the intensity of the light.
-   */
+    /**
+     * Get the decay rate of the light.
+     */
+    public float getDecayRate() {
+        return decayRate;
+    }
 
-  public void setIntensity(float intensity)
-  {
-    this.intensity = intensity;
-  }
+    /**
+     * Set the decay rate of the light.
+     */
+    public void setDecayRate(float rate) {
+        decayRate = rate;
+    }
 
-  /**
-   * Get the attenuated light at a given position relative to the light source.
-   */
+    /**
+     * Get the type of light this object represents. This is one of the constants TYPE_NORMAL,
+     * TYPE_SHADOWLESS, or TYPE_AMBIENT.
+     */
+    public int getType() {
+        return type;
+    }
 
-  public abstract void getLight(RGBColor light, Vec3 position);
-  
-  /**
-   * Get the decay rate of the light.
-   */
-
-  public float getDecayRate()
-  {
-    return decayRate;
-  }
-
-  /**
-   * Set the decay rate of the light.
-   */
-
-  public void setDecayRate(float rate)
-  {
-    decayRate = rate;
-  }
-
-  /**
-   * Get the type of light this object represents.  This is one of the constants TYPE_NORMAL,
-   * TYPE_SHADOWLESS, or TYPE_AMBIENT.
-   */
-
-  public int getType()
-  {
-    return type;
-  }
-
-  /**
-   * Set the type of light this object represents.  This is one of the constants TYPE_NORMAL,
-   * TYPE_SHADOWLESS, or TYPE_AMBIENT.
-   */
-
-  public void setType(int type)
-  {
-    this.type = type;
-  }
+    /**
+     * Set the type of light this object represents. This is one of the constants TYPE_NORMAL,
+     * TYPE_SHADOWLESS, or TYPE_AMBIENT.
+     */
+    public void setType(int type) {
+        this.type = type;
+    }
 }

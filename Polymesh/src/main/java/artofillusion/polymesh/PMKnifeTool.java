@@ -37,9 +37,8 @@ import java.util.Vector;
 @EditingTool.ActivatedToolText("polymesh:knifeTool.helpText")
 public class PMKnifeTool extends EditingTool {
 
-    private Vector<Point> clickPoints;
-    private UndoRecord undo;
-    private MeshEditController controller;
+    private final Vector<Point> clickPoints;
+    private final MeshEditController controller;
     private PolyMesh originalMesh;
     private boolean dragging;
     private Point dragPoint;
@@ -164,7 +163,7 @@ public class PMKnifeTool extends EditingTool {
             controller.setSelection(sel);
             theWindow.updateImage();
             theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, originalMesh}));
-            undo = null;
+            UndoRecord undo = null;
         } else {
             clickPoints.add(dragPoint);
         }

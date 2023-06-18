@@ -20,129 +20,118 @@ import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
 
-/** CreateCylinderTool is an EditingTool used for creating Cylinder objects. */
+/**
+ * CreateCylinderTool is an EditingTool used for creating Cylinder objects.
+ */
 @EditingTool.ButtonImage("cylinder")
 @EditingTool.Tooltip("createCylinderTool.tipText")
 @EditingTool.ActivatedToolText("createCylinderTool.helpText")
-public class CreateCylinderTool extends EditingTool
-{
-  static int counter = 1;
-  private boolean equilateral, centered;
-  private Point clickPoint;
-  private double ratio = 1.0;
-  private ObjectInfo objInfo;
-  private Vec3 ydir, zdir;
-  
-  public CreateCylinderTool(LayoutWindow fr)
-  {
-    super(fr);
-  }
+public class CreateCylinderTool extends EditingTool {
 
-  @Override
-  public void mousePressed(WidgetMouseEvent e, ViewerCanvas view)
-  {
-    clickPoint  = e.getPoint();
-    equilateral = e.isShiftDown();
-    centered    = e.isControlDown();
-    ydir = Vec3.vy();
-    zdir = Vec3.vz();
-  }
+    static int counter = 1;
+    private boolean equilateral, centered;
+    private Point clickPoint;
+    private double ratio = 1.0;
+    private ObjectInfo objInfo;
+    private Vec3 ydir, zdir;
 
-  @Override
-  public void mouseDragged(WidgetMouseEvent e, ViewerCanvas view)
-  {
-    Camera cam = view.getCamera();
-    Point dragPoint = e.getPoint();
-    ydir.set(cam.getCameraCoordinates().getUpDirection());
-    zdir.set(cam.getCameraCoordinates().getZDirection());
-    zdir.scale(-1.0);
-
-    if (objInfo == null)
-    {
-      // Create the initial cube, if the mouse has moved enough. The limit is there to reduce 
-      // the probability of accidentally creating zero size objects.
-
-      if (Math.abs(dragPoint.x-clickPoint.x) + Math.abs(dragPoint.y-clickPoint.y) > 3)
-      {
-        Scene theScene = ((LayoutWindow) theWindow).getScene();
-        objInfo = new ObjectInfo(new Cylinder(1.0, 1.0, 1.0, ratio), new CoordinateSystem(), "Cylinder "+(counter++));
-        objInfo.addTrack(new PositionTrack(objInfo), 0);
-        objInfo.addTrack(new RotationTrack(objInfo), 1);
-        UndoRecord undo = new UndoRecord(theWindow);
-        int sel[] = ((LayoutWindow) theWindow).getSelectedIndices();
-        ((LayoutWindow) theWindow).addObject(objInfo, undo);
-        undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);
-        theWindow.setUndoRecord(undo);
-        ((LayoutWindow) theWindow).setSelection(theScene.getNumObjects()-1);
-      }
-      else
-        return;
+    public CreateCylinderTool(LayoutWindow fr) {
+        super(fr);
     }
 
-    // Determine the size and position for the cylinder.
-
-    Vec3 v1, v2, v3, orig;
-    double xsize, ysize, zsize;
-
-    if (equilateral)
-    {
-      if (Math.abs(dragPoint.x-clickPoint.x) > Math.abs(dragPoint.y-clickPoint.y))
-      {
-        if (dragPoint.y < clickPoint.y)
-          dragPoint.y = clickPoint.y - Math.abs(dragPoint.x-clickPoint.x);
-        else
-          dragPoint.y = clickPoint.y + Math.abs(dragPoint.x-clickPoint.x);
-      }
-      else
-      {
-        if (dragPoint.x < clickPoint.x)
-          dragPoint.x = clickPoint.x - Math.abs(dragPoint.y-clickPoint.y);
-        else
-          dragPoint.x = clickPoint.x + Math.abs(dragPoint.y-clickPoint.y);
-      }
+    @Override
+    public void mousePressed(WidgetMouseEvent e, ViewerCanvas view) {
+        clickPoint = e.getPoint();
+        equilateral = e.isShiftDown();
+        centered = e.isControlDown();
+        ydir = Vec3.vy();
+        zdir = Vec3.vz();
     }
-    v1 = cam.convertScreenToWorld(clickPoint, view.getDistToPlane());
-    v2 = cam.convertScreenToWorld(new Point(dragPoint.x, clickPoint.y), view.getDistToPlane());
-    v3 = cam.convertScreenToWorld(dragPoint, view.getDistToPlane());
- 
-    if (centered)
-    {
-      orig  = v1;
-      xsize = v2.minus(v1).length()*2.0; 
-      ysize = v2.minus(v3).length()*2.0;
+
+    @Override
+    public void mouseDragged(WidgetMouseEvent e, ViewerCanvas view) {
+        Camera cam = view.getCamera();
+        Point dragPoint = e.getPoint();
+        ydir.set(cam.getCameraCoordinates().getUpDirection());
+        zdir.set(cam.getCameraCoordinates().getZDirection());
+        zdir.scale(-1.0);
+
+        if (objInfo == null) {
+            // Create the initial cube, if the mouse has moved enough. The limit is there to reduce
+            // the probability of accidentally creating zero size objects.
+
+            if (Math.abs(dragPoint.x - clickPoint.x) + Math.abs(dragPoint.y - clickPoint.y) > 3) {
+                Scene theScene = ((LayoutWindow) theWindow).getScene();
+                objInfo = new ObjectInfo(new Cylinder(1.0, 1.0, 1.0, ratio), new CoordinateSystem(), "Cylinder " + (counter++));
+                objInfo.addTrack(new PositionTrack(objInfo), 0);
+                objInfo.addTrack(new RotationTrack(objInfo), 1);
+                UndoRecord undo = new UndoRecord(theWindow);
+                int[] sel = ((LayoutWindow) theWindow).getSelectedIndices();
+                ((LayoutWindow) theWindow).addObject(objInfo, undo);
+                undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);
+                theWindow.setUndoRecord(undo);
+                ((LayoutWindow) theWindow).setSelection(theScene.getNumObjects() - 1);
+            } else {
+                return;
+            }
+        }
+
+        // Determine the size and position for the cylinder.
+        Vec3 v1, v2, v3, orig;
+        double xsize, ysize, zsize;
+
+        if (equilateral) {
+            if (Math.abs(dragPoint.x - clickPoint.x) > Math.abs(dragPoint.y - clickPoint.y)) {
+                if (dragPoint.y < clickPoint.y) {
+                    dragPoint.y = clickPoint.y - Math.abs(dragPoint.x - clickPoint.x);
+                } else {
+                    dragPoint.y = clickPoint.y + Math.abs(dragPoint.x - clickPoint.x);
+                }
+            } else {
+                if (dragPoint.x < clickPoint.x) {
+                    dragPoint.x = clickPoint.x - Math.abs(dragPoint.y - clickPoint.y);
+                } else {
+                    dragPoint.x = clickPoint.x + Math.abs(dragPoint.y - clickPoint.y);
+                }
+            }
+        }
+        v1 = cam.convertScreenToWorld(clickPoint, view.getDistToPlane());
+        v2 = cam.convertScreenToWorld(new Point(dragPoint.x, clickPoint.y), view.getDistToPlane());
+        v3 = cam.convertScreenToWorld(dragPoint, view.getDistToPlane());
+
+        if (centered) {
+            orig = v1;
+            xsize = v2.minus(v1).length() * 2.0;
+            ysize = v2.minus(v3).length() * 2.0;
+        } else {
+            orig = v1.plus(v3).times(0.5);
+            xsize = v2.minus(v1).length();
+            ysize = v2.minus(v3).length();
+        }
+        zsize = Math.min(xsize, ysize);
+
+        // Update the size and position, and redraw the display.
+        ((Cylinder) objInfo.getObject()).setSize(xsize, ysize, zsize);
+        objInfo.getCoords().setOrigin(orig);
+        objInfo.getCoords().setOrientation(zdir, ydir);
+        objInfo.clearCachedMeshes();
+        theWindow.setModified();
+        theWindow.updateImage();
     }
-    else
-    {
-      orig  = v1.plus(v3).times(0.5);
-      xsize = v2.minus(v1).length(); 
-      ysize = v2.minus(v3).length();
+
+    @Override
+    public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view) {
+        objInfo = null;
     }
-    zsize = Math.min(xsize, ysize);
 
-    // Update the size and position, and redraw the display.
-
-    ((Cylinder) objInfo.getObject()).setSize(xsize, ysize, zsize);
-    objInfo.getCoords().setOrigin(orig);
-    objInfo.getCoords().setOrientation(zdir, ydir);
-    objInfo.clearCachedMeshes();
-    theWindow.setModified();
-    theWindow.updateImage();
-  }
-
-  @Override
-  public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view)
-  {
-    objInfo = null;
-  }
-
-  @Override
-  public void iconDoubleClicked()
-  {
-    ValueSlider ratioSlider = new ValueSlider(0.0, 1.0, 100, ratio);
-    ComponentsDialog dlg = new ComponentsDialog(theFrame, Translate.text("editCylinderTitle"),
-                           new Widget [] {ratioSlider},
-                           new String [] {Translate.text("radiusRatio")});
-    if (dlg.clickedOk())
-      ratio = ratioSlider.getValue();
-  }
+    @Override
+    public void iconDoubleClicked() {
+        ValueSlider ratioSlider = new ValueSlider(0.0, 1.0, 100, ratio);
+        ComponentsDialog dlg = new ComponentsDialog(theFrame, Translate.text("editCylinderTitle"),
+                new Widget[]{ratioSlider},
+                new String[]{Translate.text("radiusRatio")});
+        if (dlg.clickedOk()) {
+            ratio = ratioSlider.getValue();
+        }
+    }
 }

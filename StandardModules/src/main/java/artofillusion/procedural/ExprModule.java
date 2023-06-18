@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class OPort {
 
-    public Module module;
+    public final Module module;
     public int oport = 0;
     public Arg[] args = {new Arg("Arg1", 0)};
 
@@ -62,8 +62,8 @@ class OPort {
 
 class Arg {
 
-    public String name;
-    public int iport;
+    public final String name;
+    public final int iport;
 
     Arg(String s, int i) {
         name = s;
@@ -93,7 +93,7 @@ class Token {
     public double numValue;
     public char ty;
 
-    static Map<String, OPort> funMap = createFunMap();
+    static final Map<String, OPort> funMap = createFunMap();
     //    static Hashtable portMap = createPortMap ();
 
     static Map<String, OPort> createFunMap() {

@@ -12,7 +12,7 @@ package artofillusion.raytracer;
 
 import artofillusion.math.*;
 import artofillusion.raytracer.Raytracer.*;
-import artofillusion.raytracer.Raytracer.RayIntersection;
+
 import java.util.*;
 
 /**
@@ -21,13 +21,13 @@ import java.util.*;
  */
 public class RaytracerContext {
 
-    public Raytracer rt;
-    public Vec3 tempVec;
+    public final Raytracer rt;
+    public final Vec3 tempVec;
     public RayIntersection intersect;
     public int[] lastRayID;
     public SurfaceIntersection[] lastRayResult;
     public ResourcePool rtTriPool, rtDispTriPool, rtImplicitPool;
-    public Random random;
+    public final Random random;
 
     public RaytracerContext(Raytracer rt) {
         this.rt = rt;

@@ -30,14 +30,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CheckMeshDialog extends BDialog {
 
-    private final PolyMeshEditorWindow owner;
-
     /**
      * Constructor for the CheckMeshDialog object
      */
     public CheckMeshDialog(final PolyMeshEditorWindow owner) {
         super(owner, Translate.text("polymesh:checkRepair"), true);
-        this.owner = owner;
         BorderContainer borderContainer = null;
         BButton dismiss = null;
         BTextArea textArea = null;

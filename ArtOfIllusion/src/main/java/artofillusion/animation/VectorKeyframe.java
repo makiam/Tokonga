@@ -13,105 +13,90 @@ package artofillusion.animation;
 import artofillusion.math.*;
 import java.io.*;
 
-/** This class is a vector valued keyframe. */
+/**
+ * This class is a vector valued keyframe.
+ */
+public class VectorKeyframe extends Vec3 implements Keyframe {
 
-public class VectorKeyframe extends Vec3 implements Keyframe
-{
-  public VectorKeyframe()
-  {
-    super();
-  }
+    public VectorKeyframe() {
+        super();
+    }
 
-  public VectorKeyframe(double xval, double yval, double zval)
-  {
-    super(xval, yval, zval);
-  }
+    public VectorKeyframe(double xval, double yval, double zval) {
+        super(xval, yval, zval);
+    }
 
-  public VectorKeyframe(Vec3 v)
-  {
-    super(v);
-  }
+    public VectorKeyframe(Vec3 v) {
+        super(v);
+    }
 
-  @Override
-  public Keyframe duplicate(Object owner)
-  {
-    return new VectorKeyframe(this);
-  }
+    @Override
+    public Keyframe duplicate(Object owner) {
+        return new VectorKeyframe(this);
+    }
 
-  @Override
-  public Keyframe duplicate()
-  {
-    return new VectorKeyframe(this);
-  }
+    @Override
+    public Keyframe duplicate() {
+        return new VectorKeyframe(this);
+    }
 
-  /* Get the list of graphable values for this keyframe. */
+    /* Get the list of graphable values for this keyframe. */
+    @Override
+    public double[] getGraphValues() {
+        return new double[]{x, y, z};
+    }
 
-  @Override
-  public double [] getGraphValues()
-  {
-    return new double [] {x, y, z};
-  }
+    /* Set the list of graphable values for this keyframe. */
+    @Override
+    public void setGraphValues(double[] values) {
+        if (values.length == 3) {
+            set(values[0], values[1], values[2]);
+        }
+    }
 
-  /* Set the list of graphable values for this keyframe. */
+    @Override
+    public Keyframe blend(Keyframe o2, double weight1, double weight2) {
+        VectorKeyframe v2 = (VectorKeyframe) o2;
 
-  @Override
-  public void setGraphValues(double values[])
-  {
-    if (values.length == 3)
-      set(values[0], values[1], values[2]);
-  }
+        return new VectorKeyframe(weight1 * x + weight2 * v2.x, weight1 * y + weight2 * v2.y, weight1 * z + weight2 * v2.z);
+    }
 
-  @Override
-  public Keyframe blend(Keyframe o2, double weight1, double weight2)
-  {
-    VectorKeyframe v2 = (VectorKeyframe) o2;
+    @Override
+    public Keyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3) {
+        VectorKeyframe v2 = (VectorKeyframe) o2, v3 = (VectorKeyframe) o3;
 
-    return new VectorKeyframe(weight1*x+weight2*v2.x, weight1*y+weight2*v2.y, weight1*z+weight2*v2.z);
-  }
+        return new VectorKeyframe(weight1 * x + weight2 * v2.x + weight3 * v3.x,
+                weight1 * y + weight2 * v2.y + weight3 * v3.y,
+                weight1 * z + weight2 * v2.z + weight3 * v3.z);
+    }
 
-  @Override
-  public Keyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3)
-  {
-    VectorKeyframe v2 = (VectorKeyframe) o2, v3 = (VectorKeyframe) o3;
+    @Override
+    public Keyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4) {
+        VectorKeyframe v2 = (VectorKeyframe) o2, v3 = (VectorKeyframe) o3, v4 = (VectorKeyframe) o4;
 
-    return new VectorKeyframe(weight1*x+weight2*v2.x+weight3*v3.x,
-	weight1*y+weight2*v2.y+weight3*v3.y,
-	weight1*z+weight2*v2.z+weight3*v3.z);
-  }
+        return new VectorKeyframe(weight1 * x + weight2 * v2.x + weight3 * v3.x + weight4 * v4.x,
+                weight1 * y + weight2 * v2.y + weight3 * v3.y + weight4 * v4.y,
+                weight1 * z + weight2 * v2.z + weight3 * v3.z + weight4 * v4.z);
+    }
 
-  @Override
-  public Keyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4)
-  {
-    VectorKeyframe v2 = (VectorKeyframe) o2, v3 = (VectorKeyframe) o3, v4 = (VectorKeyframe) o4;
+    /* Determine whether this keyframe is identical to another one. */
+    @Override
+    public boolean equals(Keyframe k) {
+        if (!(k instanceof VectorKeyframe)) {
+            return false;
+        }
+        VectorKeyframe key = (VectorKeyframe) k;
+        return equals((Vec3) k);
+    }
 
-    return new VectorKeyframe(weight1*x+weight2*v2.x+weight3*v3.x+weight4*v4.x,
-	weight1*y+weight2*v2.y+weight3*v3.y+weight4*v4.y,
-	weight1*z+weight2*v2.z+weight3*v3.z+weight4*v4.z);
-  }
+    /* Write out a representation of this keyframe to a stream. */
+    @Override
+    public void writeToStream(DataOutputStream out) throws IOException {
+        super.writeToFile(out);
+    }
 
-  /* Determine whether this keyframe is identical to another one. */
-
-  @Override
-  public boolean equals(Keyframe k)
-  {
-    if (!(k instanceof VectorKeyframe))
-      return false;
-    VectorKeyframe key = (VectorKeyframe) k;
-    return equals((Vec3) k);
-  }
-
-  /* Write out a representation of this keyframe to a stream. */
-
-  @Override
-  public void writeToStream(DataOutputStream out) throws IOException
-  {
-    super.writeToFile(out);
-  }
-
-  /* Reconstructs the keyframe from its serialized representation. */
-
-   public VectorKeyframe(DataInputStream in, Object parent) throws IOException
-   {
-     super(in);
-   }
+    /* Reconstructs the keyframe from its serialized representation. */
+    public VectorKeyframe(DataInputStream in, Object parent) throws IOException {
+        super(in);
+    }
 }

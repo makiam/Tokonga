@@ -23,7 +23,7 @@ public class CompareModule extends ProceduralModule {
 
     double value, error, deriv, lastBlur;
     boolean valueOk, gradOk;
-    Vec3 gradient;
+    final Vec3 gradient;
 
     public CompareModule() {
         this(new Point());

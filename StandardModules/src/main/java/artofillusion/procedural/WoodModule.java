@@ -28,7 +28,8 @@ public class WoodModule extends ProceduralModule {
     boolean valueOk, mod;
     int octaves;
     double value, error, amplitude, spacing, lastBlur;
-    Vec3 gradient, tempVec;
+    final Vec3 gradient;
+    final Vec3 tempVec;
     PointInfo point;
 
     public WoodModule() {

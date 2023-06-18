@@ -58,17 +58,17 @@ public class UVMappingEditorDialog extends BDialog {
 
     private final UVMappingCanvas mappingCanvas; // the mapping canvas displayed at window center
     private final BList pieceList; // the list of mesh pieces
-    private UVMappingData mappingData; // mapping data associated to the unfolded mesh
+    private final UVMappingData mappingData; // mapping data associated to the unfolded mesh
     private final MeshPreviewer preview; // 3D texturing preview
     protected ActionProcessor mouseProcessor;
-    protected UVMappingManipulator manipulator;
-    private ObjectInfo objInfo;
+    protected final UVMappingManipulator manipulator;
+    private final ObjectInfo objInfo;
     private UVMeshMapping currentMapping; // the mapping currently edited
     private int currentTexture; // the texture currently edited
     private ArrayList<Texture> texList; // the texture list of edited mesh
     private ArrayList<UVMapping> mappingList; // the corresponding mapping  list
     private ArrayList<Vec2[][]> oldCoordList; // the old texture coordinates for undoing changes
-    private UVMappingData oldMappingData; // the original mapping data for undoing changes
+    private final UVMappingData oldMappingData; // the original mapping data for undoing changes
 
     private boolean clickedOk; // true if the user clicked the ok button
 
@@ -80,7 +80,7 @@ public class UVMappingEditorDialog extends BDialog {
     protected static final double[] tensionArray = {5.0, 3.0, 2.0, 1.0, 0.5};
 
     private int undoLevels = 20;
-    private PMUndoRedoStack undoRedoStack = new PMUndoRedoStack(undoLevels); // the Undo/Redo stack
+    private final PMUndoRedoStack undoRedoStack = new PMUndoRedoStack(undoLevels); // the Undo/Redo stack
 
     /* Interface variables */
     private BLabel componentLabel;
@@ -98,12 +98,11 @@ public class UVMappingEditorDialog extends BDialog {
     private BSpinner distanceSpinner;
     private BComboBox tensionCB;
 
-    private BMenuItem undoMenuItem;
-    private BMenuItem redoMenuItem;
-    private BMenu sendTexToMappingMenu;
-    private BMenuItem removeMappingMenuItem;
+    private final BMenuItem undoMenuItem;
+    private final BMenuItem redoMenuItem;
+    private final BMenu sendTexToMappingMenu;
     private BCheckBoxMenuItem[] mappingMenuItems;
-    private BCheckBoxMenuItem gridMenuItem;
+    private final BCheckBoxMenuItem gridMenuItem;
 
     public static final int TRANSPARENT = 0, WHITE = 1, TEXTURED = 2;
 
@@ -317,7 +316,7 @@ public class UVMappingEditorDialog extends BDialog {
         menu.add(Translate.menuItem("polymesh:fitMappingToImage", this, "doFitMappingToImage"));
         menu.add(Translate.menuItem("polymesh:addMapping", this, "doAddMapping"));
         menu.add(Translate.menuItem("polymesh:duplicateMapping", this, "doDuplicateMapping"));
-        removeMappingMenuItem = Translate.menuItem("polymesh:removeMapping", this, "doRemoveMapping");
+        BMenuItem removeMappingMenuItem = Translate.menuItem("polymesh:removeMapping", this, "doRemoveMapping");
         menu.add(removeMappingMenuItem);
         menu.add(Translate.menuItem("polymesh:editMappingColor", this, "doEditMappingColor"));
         menu.add(new BSeparator());
@@ -1058,7 +1057,8 @@ public class UVMappingEditorDialog extends BDialog {
      */
     public class ChangeTextureCommand implements UndoableEdit {
 
-        int oldTexture, newTexture;
+        final int oldTexture;
+        final int newTexture;
 
         public ChangeTextureCommand(int oldTexture, int newTexture) {
             this.oldTexture = oldTexture;
@@ -1083,7 +1083,9 @@ public class UVMappingEditorDialog extends BDialog {
      */
     public class SendTextureToMappingCommand implements UndoableEdit {
 
-        int texture, oldMapping, newMapping;
+        final int texture;
+        final int oldMapping;
+        final int newMapping;
 
         public SendTextureToMappingCommand(int texture, int oldMapping, int newMapping) {
             this.texture = texture;
@@ -1126,7 +1128,8 @@ public class UVMappingEditorDialog extends BDialog {
      */
     public class ChangeMappingCommand implements UndoableEdit {
 
-        int oldMapping, newMapping;
+        final int oldMapping;
+        final int newMapping;
 
         public ChangeMappingCommand(int oldMapping, int newMapping) {
             this.oldMapping = oldMapping;
@@ -1149,8 +1152,8 @@ public class UVMappingEditorDialog extends BDialog {
      */
     public class RemoveMappingCommand implements UndoableEdit {
 
-        UVMeshMapping mapping;
-        int index;
+        final UVMeshMapping mapping;
+        final int index;
 
         public RemoveMappingCommand(UVMeshMapping mapping, int index) {
             this.mapping = mapping.duplicate();
@@ -1218,8 +1221,8 @@ public class UVMappingEditorDialog extends BDialog {
      */
     public class AddMappingCommand implements UndoableEdit {
 
-        UVMeshMapping mapping;
-        int selected;
+        final UVMeshMapping mapping;
+        final int selected;
 
         public AddMappingCommand(UVMeshMapping mapping, int selected) {
             this.mapping = mapping.duplicate();
@@ -1314,13 +1317,22 @@ public class UVMappingEditorDialog extends BDialog {
      */
     class ExportImageDialog extends BDialog {
 
-        BSpinner resolutionSpinner;
-        BButton exportButton;
+        final BSpinner resolutionSpinner;
+        final BButton exportButton;
 
-        BRadioButton transparentButton, whiteButton, texturedButton, useMappingButton, blackButton;
-        BCheckBox antialiasBox, textureOnlyBox;
-        ColumnContainer content, leftBox, rightBox;
-        RowContainer resoContainer, optsContainer, actionContainer;
+        final BRadioButton transparentButton;
+        final BRadioButton whiteButton;
+        final BRadioButton texturedButton;
+        final BRadioButton useMappingButton;
+        final BRadioButton blackButton;
+        final BCheckBox antialiasBox;
+        final BCheckBox textureOnlyBox;
+        final ColumnContainer content;
+        final ColumnContainer leftBox;
+        final ColumnContainer rightBox;
+        final RowContainer resoContainer;
+        final RowContainer optsContainer;
+        final RowContainer actionContainer;
 
         // Things to consider:
         // - Selection for line width? More choices for antialiased image?

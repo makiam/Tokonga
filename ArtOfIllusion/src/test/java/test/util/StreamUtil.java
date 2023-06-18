@@ -19,6 +19,7 @@ import java.nio.ByteBuffer;
  * @author maksim.khramov
  */
 public class StreamUtil {
+
     public static DataInputStream stream(ByteBuffer wrap) {
         return new DataInputStream(new ByteArrayInputStream(wrap.array()));
     }
