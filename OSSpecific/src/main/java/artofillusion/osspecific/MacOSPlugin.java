@@ -145,8 +145,7 @@ public final class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, Ope
 
     @Override
     public void handleAbout(AboutEvent event) {
-        TitleWindow win = new TitleWindow();
-        win.addEventLink(MouseClickedEvent.class, win, "dispose");
+        new TitleWindow().setDisposable().show();
     }
 
     @Override

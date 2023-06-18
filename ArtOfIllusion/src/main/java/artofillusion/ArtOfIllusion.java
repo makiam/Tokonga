@@ -109,7 +109,7 @@ public class ArtOfIllusion {
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
         ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
 
-        TitleWindow title = new TitleWindow();
+        TitleWindow title = new TitleWindow().show();
 
         PluginRegistry.addCategory(Plugin.class);
         PluginRegistry.addCategory(Renderer.class);
