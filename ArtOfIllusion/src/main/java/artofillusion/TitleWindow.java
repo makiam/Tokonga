@@ -1,4 +1,5 @@
 /* Copyright (C) 2004-2007 by Peter Eastman
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -10,66 +11,28 @@
 
 package artofillusion;
 
-import artofillusion.ui.*;
-import buoy.widget.*;
-
-import java.awt.*;
-import java.util.*;
-import java.beans.*;
-import javax.swing.*;
+import javax.swing.SwingUtilities;
 
 /**
  * TitleWindow displays a window containing the title and credits.
  */
-public class TitleWindow extends BWindow {
-
-    private final PropertyChangeListener activeWindowListener;
+public class TitleWindow {
+    private final SplashScreen splash;
 
     public TitleWindow() {
-        int imageNumber = new Random(System.currentTimeMillis()).nextInt(8);
-        ImageIcon image = new ImageIcon(getClass().getResource("/artofillusion/titleImages/titleImage" + imageNumber + ".jpg"));
-        String text = "<html><div align=\"center\">"
-                + "Art of Illusion v" + ArtOfIllusion.getVersion()
-                + "<br>Build: " + ArtOfIllusion.getBuildInfo()
-                + "<br>Copyright 1999-2020 by Peter Eastman and others"
-                + "<br>(See the README file for details.)"
-                + "<br>This program may be freely distributed under"
-                + "<br>the terms of the accompanying license.</div></html>";
-        BLabel label = new BLabel(text, image, BLabel.NORTH, BLabel.SOUTH);
-        label.setFont(new Font("Serif", Font.PLAIN, 12));
-        BOutline content = BOutline.createLineBorder(new BOutline(label, BorderFactory.createEmptyBorder(0, 0, 5, 0)), Color.BLACK, 1);
-        Color background = Color.white;
-        if (imageNumber == 4) {
-            background = new Color(204, 204, 255);
-        } else if (imageNumber == 6) {
-            background = new Color(232, 255, 232);
-        }
-        UIUtilities.applyBackground(content, background);
-        setContent(content);
-        pack();
-        Rectangle bounds = getBounds();
-        bounds.height++;
-        setBounds(bounds); // Workaround for Windows bug
-        UIUtilities.centerWindow(this);
-        setVisible(true);
-        activeWindowListener = new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                // Hide this window if a dialog is shown in front of it.
-
-                if (evt.getNewValue() instanceof Dialog) {
-                    setVisible(false);
-                } else if (!isVisible()) {
-                    setVisible(true);
-                }
-            }
-        };
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener("activeWindow", activeWindowListener);
+        splash = new SplashScreen();
     }
 
-    @Override
+    public TitleWindow setDisposable() {
+        splash.setDisposable();
+        return this;
+    }
+
+    public TitleWindow show() {
+        SwingUtilities.invokeLater(() -> splash.setVisible(true));
+        return this;
+    }
     public void dispose() {
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().removePropertyChangeListener("activeWindow", activeWindowListener);
-        super.dispose();
+        splash.dispose();
     }
 }
