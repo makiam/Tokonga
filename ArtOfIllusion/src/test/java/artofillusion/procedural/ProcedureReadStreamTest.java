@@ -102,7 +102,7 @@ public class ProcedureReadStreamTest {
         proc.readFromStream(new DataInputStream(new ByteArrayInputStream(wrap.array())), (Scene) null);
 
         Assert.assertEquals(1, proc.getModules().length);
-        var  module = proc.getModules()[0];
+        var module = proc.getModules()[0];
         Assert.assertEquals("DummyModule", module.getName());
 
     }
