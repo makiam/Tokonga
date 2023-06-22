@@ -106,14 +106,14 @@ public class ProcedureReadStreamTest {
 
     }
 
-    public static class DummyModuleNoPointConstructor extends Module {
+    public static class DummyModuleNoPointConstructor extends ProceduralModule {
 
         public DummyModuleNoPointConstructor() {
             super("NPC", new IOPort[0], new IOPort[0], new Point(0, 0));
         }
     }
 
-    public static class DummyModule extends Module {
+    public static class DummyModule extends ProceduralModule {
 
         public DummyModule(Point modulePoint) {
             super("DummyModule", new IOPort[0], new IOPort[0], modulePoint);
