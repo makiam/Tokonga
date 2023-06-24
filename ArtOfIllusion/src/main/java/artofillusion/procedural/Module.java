@@ -17,6 +17,7 @@ import buoy.widget.*;
 import java.awt.*;
 import java.io.*;
 import java.lang.reflect.*;
+import lombok.Getter;
 
 /**
  * This represents a module in a procedure. This is an abstract class, whose subclasses
@@ -31,6 +32,10 @@ public class Module<M extends Module> {
     public Module[] linkFrom;
     public int[] linkFromIndex;
     protected String name;
+    /**
+     * Get the boundary rectangle for this module.
+     */
+    @Getter
     protected Rectangle bounds;
     protected boolean checked;
 
@@ -60,13 +65,6 @@ public class Module<M extends Module> {
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * Get the boundary rectangle for this module.
-     */
-    public Rectangle getBounds() {
-        return bounds;
     }
 
     /**

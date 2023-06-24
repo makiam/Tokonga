@@ -26,6 +26,11 @@ public class ProceduralModule<P extends Module> extends artofillusion.procedural
         super(name, input, output, position);
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
+
     @Target(value = ElementType.TYPE)
     @Retention(value = RetentionPolicy.RUNTIME)
     public @interface Category {

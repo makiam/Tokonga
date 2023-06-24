@@ -12,7 +12,6 @@
 package artofillusion.procedural;
 
 import artofillusion.*;
-import artofillusion.procedural.Module;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;

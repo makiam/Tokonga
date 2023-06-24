@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2012 by Peter Eastman
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,6 +12,8 @@
 package artofillusion.procedural;
 
 import java.awt.*;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is the graphical representation of an input or output port on a module.
@@ -20,12 +22,29 @@ public class IOPort {
 
     int x;
     int y;
+    /**
+     * Get the type of value for this port.
+     */
+    @Getter
     final int valueType;
+    /**
+     * Get the type of port this is (input or output).
+     */
+    @Getter
     final int type;
+    /**
+     * Get the location of this port (top, bottom, left, or right).
+     */
+    @Getter
     final int location;
     String[] description;
     Rectangle bounds;
-    Module module;
+    /**
+     * Get the module this port belongs to.
+     * Set the module this port belongs to.
+     */
+    @Getter @Setter
+    private Module module;
 
     public static final int INPUT = 0;
     public static final int OUTPUT = 1;
@@ -69,41 +88,6 @@ public class IOPort {
         } else if (location == RIGHT) {
             bounds = new Rectangle(x - SIZE - 1, y - SIZE, SIZE + 2, 2 * SIZE);
         }
-    }
-
-    /**
-     * Get the type of value for this port.
-     */
-    public int getValueType() {
-        return valueType;
-    }
-
-    /**
-     * Get the type of port this is (input or output).
-     */
-    public int getType() {
-        return type;
-    }
-
-    /**
-     * Get the location of this port (top, bottom, left, or right).
-     */
-    public int getLocation() {
-        return location;
-    }
-
-    /**
-     * Get the module this port belongs to.
-     */
-    public Module getModule() {
-        return module;
-    }
-
-    /**
-     * Set the module this port belongs to.
-     */
-    public void setModule(Module mod) {
-        module = mod;
     }
 
     /**
