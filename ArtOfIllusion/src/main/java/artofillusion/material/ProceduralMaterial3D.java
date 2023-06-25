@@ -203,7 +203,7 @@ public class ProceduralMaterial3D extends Material3D implements ProcedureOwner {
             // fix everything up to maintain backward compatibility.  First, record what each output port is attached to.
 
             OutputModule[] output = proc.getOutputModules();
-            artofillusion.procedural.Module[] fromModule = new artofillusion.procedural.Module[output.length];
+            var fromModule = new artofillusion.procedural.Module[output.length];
             int[] fromIndex = new int[output.length];
             for (int i = 0; i < output.length; i++) {
                 fromModule[i] = output[i].linkFrom[0];

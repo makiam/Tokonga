@@ -103,31 +103,18 @@ public class TextureImageExporter {
                 // Go through the image maps, and see which ones are being used.
 
                 ImageMapTexture imt = (ImageMapTexture) tex;
-                info.diffuseFilename = (imt.diffuseColor.getImage() != null ? newName()
-                        : null);
-                info.specularFilename = (imt.specularColor.getImage() != null
-                        || imt.specularity.getImage() != null ? newName()
-                        : null);
-                info.hilightFilename = (imt.specularColor.getImage() != null
-                        || imt.shininess.getImage() != null ? newName() : null);
-                info.transparentFilename = (imt.transparentColor.getImage() != null
-                        || imt.transparency.getImage() != null ? newName()
-                        : null);
-                info.emissiveFilename = (imt.emissiveColor.getImage() != null ? newName()
-                        : null);
+                info.diffuseFilename = (imt.diffuseColor.getImage() != null ? newName() : null);
+                info.specularFilename = (imt.specularColor.getImage() != null || imt.specularity.getImage() != null ? newName() : null);
+                info.hilightFilename = (imt.specularColor.getImage() != null || imt.shininess.getImage() != null ? newName() : null);
+                info.transparentFilename = (imt.transparentColor.getImage() != null || imt.transparency.getImage() != null ? newName() : null);
+                info.emissiveFilename = (imt.emissiveColor.getImage() != null ? newName() : null);
             } else if (tex instanceof ProceduralTexture2D) {
-                Module[] output = ((ProceduralTexture2D) tex).getProcedure()
-                        .getOutputModules();
-                info.diffuseFilename = (output[0].inputConnected(0) ? newName()
-                        : null);
-                info.specularFilename = (output[1].inputConnected(0)
-                        || output[5].inputConnected(0) ? newName() : null);
-                info.hilightFilename = (output[1].inputConnected(0)
-                        || output[6].inputConnected(0) ? newName() : null);
-                info.transparentFilename = (output[2].inputConnected(0)
-                        || output[4].inputConnected(0) ? newName() : null);
-                info.emissiveFilename = (output[3].inputConnected(0) ? newName()
-                        : null);
+                var output = ((ProceduralTexture2D) tex).getProcedure().getOutputModules();
+                info.diffuseFilename = (output[0].inputConnected(0) ? newName() : null);
+                info.specularFilename = (output[1].inputConnected(0) || output[5].inputConnected(0) ? newName() : null);
+                info.hilightFilename = (output[1].inputConnected(0) || output[6].inputConnected(0) ? newName() : null);
+                info.transparentFilename = (output[2].inputConnected(0) || output[4].inputConnected(0) ? newName() : null);
+                info.emissiveFilename = (output[3].inputConnected(0) ? newName() : null);
             }
         }
 
