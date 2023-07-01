@@ -259,7 +259,7 @@ public class ManageSplitPane extends SPMSplitPane {
      */
     @Override
     public void pluginSelection(boolean deletable) {
-        deleteButton.setText(SPMTranslate.text("spmanager:text.deletePlugin"));
+        deleteButton.setText(Translate.text("spmanager:text.deletePlugin"));
         deleteButton.setEnabled(deletable);
         super.pluginSelection(deletable);
     }
