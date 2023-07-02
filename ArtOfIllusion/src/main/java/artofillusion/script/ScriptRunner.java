@@ -12,8 +12,8 @@
 package artofillusion.script;
 
 import artofillusion.*;
+import artofillusion.ui.MessageDialog;
 import artofillusion.util.*;
-import buoy.widget.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
@@ -178,8 +178,7 @@ public class ScriptRunner {
                 v.add("Encountered \"" + errorText + "\" at line " + line + column);
             }
         }
-        String[] msg = v.toArray(new String[v.size()]);
-        new BStandardDialog("Error", msg, BStandardDialog.ERROR).showMessageDialog(null);
+        MessageDialog.error(String.join("\n", v));
         return line;
     }
 
