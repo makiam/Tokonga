@@ -14,6 +14,7 @@ package artofillusion;
 
 import artofillusion.ui.*;
 import artofillusion.keystroke.*;
+import artofillusion.preferences.ExtraPluginsPane;
 import buoy.widget.*;
 import buoy.event.*;
 
@@ -40,6 +41,8 @@ public class PreferencesWindow {
         tabs.add(createGeneralPanel(), Translate.text("general"));
         KeystrokePreferencesPanel keystrokePanel = new KeystrokePreferencesPanel();
         tabs.add(keystrokePanel, Translate.text("shortcuts"));
+        ExtraPluginsPane extras = new ExtraPluginsPane();
+        tabs.add(extras, "Plugins");
         tabs.setSelectedTab(lastTab);
         boolean done = false;
 
@@ -96,6 +99,7 @@ public class PreferencesWindow {
         ThemeManager.setSelectedColorSet(ThemeManager.getSelectedTheme().getColorSets()[colorChoice.getSelectedIndex()]);
         prefs.savePreferences();
         keystrokePanel.saveChanges();
+        extras.saveChanges();
     }
 
     /**
