@@ -22,7 +22,6 @@ public final class UndoStack {
     private final LinkedList<UndoRecord> undoList = new LinkedList<>();
     private final LinkedList<UndoRecord> redoList = new LinkedList<>();
 
-    ;
 
   /**
    * Determine whether there are any undo records available, so that an Undo command

@@ -28,7 +28,6 @@ public class ClickedPointFinder {
     public ClickedPointFinder() {
     }
 
-    ;
 
   /** 
      Return the closest point on a surface of an object that is found under 

@@ -71,7 +71,7 @@ public class SPMSetupFrame extends BDialog {
         // NTJ: populate filters
         filterContainer = new ColumnContainer();
 
-        Map<String, String> filters = parameters.getFilters();
+        Map<String, String> filters = SPMParameters.getFilters();
 
         if (!filters.isEmpty()) {
             String[] keys = filters.keySet().toArray(EMPTY_STRING_ARRAY);

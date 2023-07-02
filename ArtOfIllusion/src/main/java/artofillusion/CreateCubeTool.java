@@ -68,7 +68,7 @@ public class CreateCubeTool extends EditingTool {
                 ((LayoutWindow) theWindow).addObject(objInfo, undo);
                 undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);
                 theWindow.setUndoRecord(undo);
-                ((LayoutWindow) theWindow).setSelection(theScene.getNumObjects() - 1);;
+                ((LayoutWindow) theWindow).setSelection(theScene.getNumObjects() - 1);
             } else {
                 return;
             }

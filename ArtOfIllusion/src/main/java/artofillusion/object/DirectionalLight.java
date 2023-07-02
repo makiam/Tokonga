@@ -224,7 +224,7 @@ public class DirectionalLight extends Light {
             case 0:
                 return color.duplicate();
             case 1:
-                return Double.valueOf(intensity);
+                return (double) intensity;
             case 2:
                 return radius;
             case 3:

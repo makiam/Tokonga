@@ -16,6 +16,7 @@ import artofillusion.script.*;
 import artofillusion.ui.*;
 import java.awt.event.*;
 import java.io.*;
+import java.nio.file.Path;
 import java.util.*;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
@@ -111,8 +112,8 @@ public class KeystrokeManager {
      */
     public static void loadRecords() {
         try {
-            File dir = ApplicationPreferences.getPreferencesDirectory();
-            File inputFile = new File(dir, KEYSTROKE_FILENAME);
+            Path path = ApplicationPreferences.getPreferencesFolderPath();
+            File inputFile = new File(path.toFile(), KEYSTROKE_FILENAME);
             InputStream in;
             if (inputFile.exists()) {
                 in = new BufferedInputStream(new FileInputStream(inputFile));
@@ -179,8 +180,8 @@ public class KeystrokeManager {
         }
 
         // Save it to disk.
-        File dir = ApplicationPreferences.getPreferencesDirectory();
-        File outFile = new File(dir, KEYSTROKE_FILENAME);
+        Path path = ApplicationPreferences.getPreferencesFolderPath();
+        File outFile = new File(path.toFile(), KEYSTROKE_FILENAME);
         try (OutputStream out = new BufferedOutputStream(new SafeFileOutputStream(outFile, SafeFileOutputStream.OVERWRITE))) {
             DOMSource source = new DOMSource(doc);
             StreamResult result = new StreamResult(out);

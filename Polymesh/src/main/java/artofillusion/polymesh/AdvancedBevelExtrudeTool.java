@@ -165,7 +165,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
         } else if (selectMode == PolyMeshEditorWindow.EDGE_MODE) {
             mesh.copyObject(origMesh);
             boolean[] sel = mesh.bevelEdges(selected, drag.y);
-            theWindow.setHelpText(Translate.text("polymesh:advancedBevelExtrudeTool.pointEdgeDragText", new Double(drag.y)));
+            theWindow.setHelpText(Translate.text("polymesh:advancedBevelExtrudeTool.pointEdgeDragText", drag.y));
             for (int i = 0; i < selected.length; ++i) {
                 sel[i] = selected[i];
             }
@@ -182,7 +182,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
             for (int i = 0; i < selected.length; ++i) {
                 sel[i] = selected[i];
             }
-            theWindow.setHelpText(Translate.text("polymesh:advancedBevelExtrudeTool.faceDragText", new Double(1.0 - drag.x), new Double(drag.y)));
+            theWindow.setHelpText(Translate.text("polymesh:advancedBevelExtrudeTool.faceDragText", 1.0 - drag.x, drag.y));
             controller.objectChanged();
             controller.setSelection(sel);
         }
