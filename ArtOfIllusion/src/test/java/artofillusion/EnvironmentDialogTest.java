@@ -380,8 +380,8 @@ public class EnvironmentDialogTest {
 
         scene.addTexture(tx);
 
-        var  mapping = scene.getEnvironmentMapping();
-        var  props = scene.getEnvironmentParameterValues();
+        var mapping = scene.getEnvironmentMapping();
+        var props = scene.getEnvironmentParameterValues();
 
         LayoutWindow layout = new LayoutWindow(scene);
         layout.setVisible(true);
