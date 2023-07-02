@@ -286,7 +286,7 @@ public class ProceduralTexture3D extends Texture3D implements ProcedureOwner {
             // in version 1.
 
             OutputModule[] output = proc.getOutputModules();
-            artofillusion.procedural.Module[] input = new artofillusion.procedural.Module[output.length];
+            var input = new artofillusion.procedural.Module[output.length];
             int[] index = new int[output.length];
             for (int i = 0; i < output.length; i++) {
                 int j = (i < 6 ? i : i - 1);

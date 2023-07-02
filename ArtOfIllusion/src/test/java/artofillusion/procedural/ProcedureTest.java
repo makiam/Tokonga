@@ -123,7 +123,7 @@ public class ProcedureTest {
         procedure.deleteModule(0);
     }
 
-    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    @Test(expected = IndexOutOfBoundsException.class)
     public void testDeleteMissedModule() {
         var mod = new Module("Test", new IOPort[]{}, new IOPort[]{}, new Point());
         Procedure procedure = new Procedure(new OutputModule[]{});
@@ -215,7 +215,7 @@ public class ProcedureTest {
     public void testProcedureCopyWithSingleModuleNoLinks() {
         OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
         Procedure origin = new Procedure(new OutputModule[]{exist});
-        Module mod = new Module("Test", new IOPort[]{}, new IOPort[]{}, new Point());
+        var mod = new Module("Test", new IOPort[]{}, new IOPort[]{}, new Point());
         origin.addModule(mod);
 
         Procedure target = new Procedure(new OutputModule[]{exist});
@@ -236,8 +236,8 @@ public class ProcedureTest {
         Procedure origin = new Procedure(new OutputModule[]{exist});
 
         //Create module with singe output Port
-        Module sine = new SineModule(new java.awt.Point());
-        Module coor = new CoordinateModule(new java.awt.Point(), 3); //Time module
+        var sine = new SineModule(new java.awt.Point());
+        var coor = new CoordinateModule(new java.awt.Point(), 3); //Time module
         origin.addModule(coor);
         origin.addModule(sine);
 
@@ -269,8 +269,8 @@ public class ProcedureTest {
         Procedure origin = new Procedure(new OutputModule[]{exist});
 
         //Create module with singe output Port
-        Module sine = new SineModule(new java.awt.Point());
-        Module coor = new CoordinateModule(new java.awt.Point(), 3); //Time module
+        var sine = new SineModule(new java.awt.Point());
+        var coor = new CoordinateModule(new java.awt.Point(), 3); //Time module
         origin.addModule(coor);
         origin.addModule(sine);
 
@@ -283,7 +283,7 @@ public class ProcedureTest {
 
         //Made one more connection
         IOPort sineout = sine.getOutputPorts()[0];
-        Module procTm = origin.getOutputModules()[0];
+        var procTm = origin.getOutputModules()[0];
         IOPort procTmIn = procTm.getInputPorts()[0];
 
         Link link2 = new Link(sineout, procTmIn);
@@ -362,8 +362,8 @@ public class ProcedureTest {
         Procedure origin = new Procedure(new OutputModule[]{exist});
 
         //Create module with singe output Port
-        Module sine = new SineModule(new java.awt.Point());
-        Module coor = new CoordinateModule(new java.awt.Point(), 3); //Time module
+        var sine = new SineModule(new java.awt.Point());
+        var coor = new CoordinateModule(new java.awt.Point(), 3); //Time module
         origin.addModule(coor);
         origin.addModule(sine);
 
@@ -390,8 +390,8 @@ public class ProcedureTest {
         Procedure origin = new Procedure(new OutputModule[]{exist});
 
         //Create module with singe output Port
-        Module sine = new SineModule(new java.awt.Point());
-        Module coor = new CoordinateModule(new java.awt.Point(), 3); //Time module
+        var sine = new SineModule(new java.awt.Point());
+        var coor = new CoordinateModule(new java.awt.Point(), 3); //Time module
         origin.addModule(coor);
         origin.addModule(sine);
 
@@ -404,7 +404,7 @@ public class ProcedureTest {
 
         //Made one more connection
         IOPort sineout = sine.getOutputPorts()[0];
-        Module procTm = origin.getOutputModules()[0];
+        var procTm = origin.getOutputModules()[0];
         IOPort procTmIn = procTm.getInputPorts()[0];
 
         Link link2 = new Link(sineout, procTmIn);
@@ -426,8 +426,8 @@ public class ProcedureTest {
         Procedure origin = new Procedure(new OutputModule[]{exist});
 
         //Create module with singe output Port
-        Module sine = new SineModule(new java.awt.Point());
-        Module coor = new CoordinateModule(new java.awt.Point(), 3); //Time module
+        var sine = new SineModule(new java.awt.Point());
+        var coor = new CoordinateModule(new java.awt.Point(), 3); //Time module
         origin.addModule(coor);
         origin.addModule(sine);
 
@@ -440,7 +440,7 @@ public class ProcedureTest {
 
         //Made one more connection
         IOPort sineout = sine.getOutputPorts()[0];
-        Module procTm = origin.getOutputModules()[0];
+        var procTm = origin.getOutputModules()[0];
         IOPort procTmIn = procTm.getInputPorts()[0];
 
         Link link2 = new Link(sineout, procTmIn);
@@ -462,8 +462,8 @@ public class ProcedureTest {
         Procedure origin = new Procedure(new OutputModule[]{exist});
 
         //Create module with singe output Port
-        Module sine = new SineModule(new java.awt.Point());
-        Module coor = new CoordinateModule(new java.awt.Point(), 3); //Time module
+        var sine = new SineModule(new java.awt.Point());
+        var coor = new CoordinateModule(new java.awt.Point(), 3); //Time module
         origin.addModule(coor);
         origin.addModule(sine);
 

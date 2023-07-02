@@ -15,7 +15,6 @@ import artofillusion.ArtOfIllusion;
 import artofillusion.Scene;
 import artofillusion.math.RGBColor;
 import artofillusion.math.Vec3;
-import artofillusion.procedural.Module;
 import java.awt.Point;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -36,12 +35,11 @@ import lombok.extern.slf4j.Slf4j;
 public class Procedure {
 
     private final List<OutputModule> outputs;
-    private Module[] modules;
+    private List<Module> modules = new ArrayList<>();
     private Link[] links;
 
     public Procedure(OutputModule... output) {
         this.outputs = new ArrayList<>(Arrays.asList(output));
-        modules = new Module[0];
         links = new Link[0];
     }
 
@@ -56,19 +54,14 @@ public class Procedure {
      * Get the list of all other modules.
      */
     public Module[] getModules() {
-        return modules;
+        return modules.toArray(Module[]::new);
     }
 
     /**
      * Get the index of a particular module.
      */
     public int getModuleIndex(Module mod) {
-        for (int i = 0; i < modules.length; i++) {
-            if (modules[i] == mod) {
-                return i;
-            }
-        }
-        return -1;
+        return modules.indexOf(mod);
     }
 
     /**
@@ -82,12 +75,7 @@ public class Procedure {
      * Add a module to the procedure.
      */
     public void addModule(Module mod) {
-        Module[] newmod = new Module[modules.length + 1];
-        for (int i = 0; i < modules.length; i++) {
-            newmod[i] = modules[i];
-        }
-        newmod[modules.length] = mod;
-        modules = newmod;
+        modules.add(mod);
     }
 
     /**
@@ -95,14 +83,7 @@ public class Procedure {
      * before* calling this method.
      */
     public void deleteModule(int which) {
-        Module[] newmod = new Module[modules.length - 1];
-        int i, j;
-        for (i = 0, j = 0; i < modules.length; i++) {
-            if (i != which) {
-                newmod[j++] = modules[i];
-            }
-        }
-        modules = newmod;
+        modules.remove(which);
     }
 
     /**
@@ -202,20 +183,21 @@ public class Procedure {
      * be set up before calling this method.
      */
     public void copy(Procedure proc) {
-        modules = new Module[proc.modules.length];
-        for (int i = 0; i < modules.length; i++) {
-            modules[i] = proc.modules[i].duplicate();
-        }
+        modules = new ArrayList<>();
+        proc.modules.forEach(module -> {
+            modules.add(module.duplicate());
+        });
+
         links = new Link[proc.links.length];
         for (int i = 0; i < links.length; i++) {
             var  fromModule = proc.links[i].from.getModule();
             var  toModule = proc.links[i].to.getModule();
             int fromIndex = proc.getModuleIndex(fromModule);
             int toIndex = toModule instanceof OutputModule ? proc.getOutputIndex(toModule) : proc.getModuleIndex(toModule);
-            IOPort from = modules[fromIndex].getOutputPorts()[proc.modules[fromIndex].getOutputIndex(proc.links[i].from)];
+            IOPort from = modules.get(fromIndex).getOutputPorts()[proc.modules.get(fromIndex).getOutputIndex(proc.links[i].from)];
             IOPort to = toModule instanceof OutputModule
                     ? outputs.get(toIndex).getInputPorts()[proc.outputs.get(toIndex).getInputIndex(proc.links[i].to)]
-                    : modules[toIndex].getInputPorts()[proc.modules[toIndex].getInputIndex(proc.links[i].to)];
+                    : modules.get(toIndex).getInputPorts()[proc.modules.get(toIndex).getInputIndex(proc.links[i].to)];
             links[i] = new Link(from, to);
             to.getModule().setInput(to, from);
         }
@@ -226,8 +208,8 @@ public class Procedure {
      */
     public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
         out.writeShort(0);
-        out.writeInt(modules.length);
-        for (var     module : modules) {
+        out.writeInt(modules.size());
+        for (var module : modules) {
             out.writeUTF(module.getClass().getName());
             out.writeInt(module.getBounds().x);
             out.writeInt(module.getBounds().y);
@@ -256,18 +238,20 @@ public class Procedure {
         if (version != 0) {
             throw new InvalidObjectException("");
         }
-        for (OutputModule output1 : outputs) {
-            output1.setInput(output1.getInputPorts()[0], null);
+        for (OutputModule output : outputs) {
+            output.setInput(output.getInputPorts()[0], null);
         }
-        modules = new Module[in.readInt()];
+        modules.clear();
+        int ms = in.readInt();
         try {
-            for (int i = 0; i < modules.length; i++) {
+            for (int i = 0; i < ms; i++) {
                 String classname = in.readUTF();
                 Point point = new Point(in.readInt(), in.readInt());
                 Class<?> cls = ArtOfIllusion.getClass(classname);
                 Constructor<?> con = cls.getConstructor(Point.class);
-                modules[i] = (Module) con.newInstance(point);
-                modules[i].readFromStream(in, theScene);
+                var mod = (Module) con.newInstance(point);
+                mod.readFromStream(in, theScene);
+                modules.add(mod);
             }
         } catch (InvocationTargetException ex) {
             log.atError().setCause(ex.getTargetException()).log("Invocation error: {}", ex.getTargetException().getMessage());
@@ -278,12 +262,12 @@ public class Procedure {
         }
         links = new Link[in.readInt()];
         for (int i = 0; i < links.length; i++) {
-            IOPort to, from = modules[in.readInt()].getOutputPorts()[in.readInt()];
+            IOPort to, from = modules.get(in.readInt()).getOutputPorts()[in.readInt()];
             int j = in.readInt();
             if (j < 0) {
                 to = outputs.get(-j - 1).getInputPorts()[0];
             } else {
-                to = modules[j].getInputPorts()[in.readInt()];
+                to = modules.get(j).getInputPorts()[in.readInt()];
             }
             links[i] = new Link(from, to);
             to.getModule().setInput(to, from);

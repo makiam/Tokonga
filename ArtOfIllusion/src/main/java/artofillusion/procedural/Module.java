@@ -13,7 +13,6 @@ package artofillusion.procedural;
 
 import artofillusion.*;
 import artofillusion.math.*;
-import artofillusion.procedural.Module;
 import buoy.widget.*;
 import java.awt.*;
 import java.io.*;
