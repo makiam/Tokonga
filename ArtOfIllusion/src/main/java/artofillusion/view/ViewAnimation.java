@@ -58,7 +58,7 @@ public class ViewAnimation {
     final double scaleSlope = .1;
     final double distSlope = .1;
     final double perspSlope = 3.0;
-    ;
+
   int endOrientation, endNavigation;
     long msStart, msEnd, ms1st = 0, msLast, msLatest;
     boolean endPerspective, changingPerspective, animatingMove, endShowGrid;

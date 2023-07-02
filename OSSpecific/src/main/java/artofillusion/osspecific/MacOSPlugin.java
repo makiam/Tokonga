@@ -27,7 +27,7 @@ import artofillusion.ui.ToolPalette;
 import artofillusion.ui.Translate;
 import artofillusion.ui.UIUtilities;
 import buoy.event.CommandEvent;
-import buoy.event.MouseClickedEvent;
+
 import buoy.widget.BFrame;
 import buoy.widget.BMenu;
 import buoy.widget.BMenuBar;

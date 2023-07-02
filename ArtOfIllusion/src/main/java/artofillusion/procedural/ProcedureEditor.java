@@ -1028,7 +1028,7 @@ public class ProcedureEditor extends CustomWidget {
                 }
             }
             for (int i = 0; i < selectedLink.length; i++) {
-                if (mod.indexOf(allLinks[i].from.getModule()) > -1 && mod.indexOf(allLinks[i].to.getModule()) > -1) {
+                if (mod.contains(allLinks[i].from.getModule()) && mod.contains(allLinks[i].to.getModule())) {
                     ln.add(allLinks[i]);
                 }
             }

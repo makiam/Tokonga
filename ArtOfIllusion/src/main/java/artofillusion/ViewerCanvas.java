@@ -1828,7 +1828,7 @@ public abstract class ViewerCanvas extends CustomWidget {
     public class FrustumShape {
 
         private final Vec3[] corners = new Vec3[4];
-        ;
+
     private Vec3 viewingPoint3D;
         private Color CUEBACK, cueBack, eyeBright, eyeDim;
 

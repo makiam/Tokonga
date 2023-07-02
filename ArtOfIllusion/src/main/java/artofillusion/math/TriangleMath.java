@@ -23,7 +23,6 @@ public class TriangleMath {
     private TriangleMath() {
     }
 
-    ;
 
   //********************************//
   //*   METHODS FOR 3D TRIANGLES   *//

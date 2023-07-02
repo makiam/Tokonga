@@ -16,7 +16,7 @@ import artofillusion.math.Vec2;
 import artofillusion.object.Mesh;
 import artofillusion.object.ObjectInfo;
 import artofillusion.object.TriangleMesh;
-import artofillusion.procedural.Module;
+
 import artofillusion.texture.ImageMapTexture;
 import artofillusion.texture.Mapping2D;
 import artofillusion.texture.ProceduralTexture2D;

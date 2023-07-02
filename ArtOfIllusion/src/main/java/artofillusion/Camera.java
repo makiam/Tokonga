@@ -137,7 +137,7 @@ public class Camera implements Cloneable {
         setScreenTransform(screenTransform, newHres, newVres);
 
         // From user's point of view 0.0 would be perfect. On SWC that works for objects
-        // but not for grid. GLCanvasDrawer ignores ignores this setting entirely.
+        // but not for grid. GLCanvasDrawer ignores this setting entirely.
         // I'd like to be able to go 1E-5 or smaller.
         frontClipPlane = distToScreen / 20.0;
         //frontClipPlane = 0.05;
