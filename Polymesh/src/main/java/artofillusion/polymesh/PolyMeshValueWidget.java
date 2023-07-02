@@ -367,8 +367,8 @@ public class PolyMeshValueWidget extends BorderContainer {
             temporaryRange = true;
             valueMin = ((Double) minSpinner.getValue()).doubleValue();
             valueMax = ((Double) maxSpinner.getValue()).doubleValue();
-            minSpinner.setValue(new Double(tmpValueMin));
-            maxSpinner.setValue(new Double(tmpValueMax));
+            minSpinner.setValue(tmpValueMin);
+            maxSpinner.setValue(tmpValueMax);
             if (value < tmpValueMin) {
                 value = tmpValueMin;
             }
@@ -394,8 +394,8 @@ public class PolyMeshValueWidget extends BorderContainer {
     public void setRangeValues(double valueMin, double valueMax) {
         this.valueMin = valueMin;
         this.valueMax = valueMax;
-        minSpinner.setValue(new Double(valueMin));
-        maxSpinner.setValue(new Double(valueMax));
+        minSpinner.setValue(valueMin);
+        maxSpinner.setValue(valueMax);
         if (value < valueMin) {
             value = valueMin;
         }
