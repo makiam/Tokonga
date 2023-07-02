@@ -11,7 +11,6 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion;
 
-import artofillusion.Renderer;
 import artofillusion.image.*;
 import artofillusion.image.filter.ImageFilter;
 import artofillusion.keystroke.*;
@@ -26,6 +25,7 @@ import buoy.widget.*;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.prefs.Preferences;
@@ -389,14 +389,7 @@ public class ArtOfIllusion {
      * This is a utility routine which loads a file from disk.
      */
     public static String loadFile(File f) throws IOException {
-        BufferedReader in = new BufferedReader(new FileReader(f));
-        StringBuilder buf = new StringBuilder();
-        int c;
-        while ((c = in.read()) != -1) {
-            buf.append((char) c);
-        }
-        in.close();
-        return buf.toString();
+        return Files.readString(f.toPath());
     }
 
     /**
@@ -484,14 +477,13 @@ public class ArtOfIllusion {
     }
 
     public static void showErrors(List<String> errors) {
-        BTextArea report = new BTextArea(String.join("\n\n", errors));
-        JTextArea area = report.getComponent();
+        JTextArea area = new JTextArea(String.join("\n\n", errors));
         area.setPreferredSize(new java.awt.Dimension(500, 200));
         area.setFont(area.getFont().deriveFont(12f));
         area.setLineWrap(true);
         area.setEditable(false);
         area.setWrapStyleWord(true);
-        SwingUtilities.invokeLater(() -> new BStandardDialog("Art Of Illusion", new Object[]{new BScrollPane(report)}, BStandardDialog.ERROR).showMessageDialog(null));
+        MessageDialog.error(area);
     }
 
     /**
