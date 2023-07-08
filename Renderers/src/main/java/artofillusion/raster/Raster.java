@@ -21,7 +21,12 @@ import artofillusion.ui.*;
 import artofillusion.util.*;
 import buoy.event.*;
 import buoy.widget.*;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Toolkit;
+
 import java.awt.image.*;
 import java.util.*;
 
@@ -339,13 +344,13 @@ public class Raster implements Renderer, Runnable {
      * Find all the light sources in the scene.
      */
     void findLights() {
-        Vector<ObjectInfo> lt = new Vector<>();
+        List<ObjectInfo> lt = new Vector<>();
         int i;
 
         positionNeeded = false;
         for (ObjectInfo info : theScene.getObjects()) {
             if (info.getObject() instanceof Light && info.isVisible()) {
-                lt.addElement(info);
+                lt.add(info);
             }
         }
         light = new ObjectInfo[lt.size()];

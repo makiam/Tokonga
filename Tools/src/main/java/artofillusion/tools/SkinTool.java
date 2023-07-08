@@ -35,21 +35,21 @@ public class SkinTool implements ModellingTool {
     public void commandSelected(LayoutWindow window) {
         Scene scene = window.getScene();
         int[] selection = window.getSelectedIndices();
-        Vector<ObjectInfo> curves = new Vector<>();
+        List<ObjectInfo> curves = new Vector<>();
 
         for (int i = 0; i < selection.length; i++) {
             ObjectInfo obj = scene.getObject(selection[i]);
             if (obj.getObject() instanceof Curve) {
-                curves.addElement(obj);
+                curves.add(obj);
             }
         }
         if (curves.size() < 2) {
             new BStandardDialog("", UIUtilities.breakString(Translate.text("Tools:skin.tool.message.curves")), BStandardDialog.INFORMATION).showMessageDialog(window.getFrame());
             return;
         }
-        Curve c = (Curve) curves.elementAt(0).getObject();
+        Curve c = (Curve) curves.get(0).getObject();
         for (int i = 1; i < curves.size(); i++) {
-            Curve c2 = (Curve) curves.elementAt(i).getObject();
+            Curve c2 = (Curve) curves.get(i).getObject();
             if (c2.getVertices().length != c.getVertices().length) {
                 new BStandardDialog("", UIUtilities.breakString(Translate.text("Tools:skin.tool.curves.same.points")), BStandardDialog.INFORMATION).showMessageDialog(window.getFrame());
                 return;

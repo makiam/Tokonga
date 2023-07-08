@@ -23,6 +23,7 @@ import buoy.widget.*;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * The TriMeshEditorWindow class represents the window for editing TriangleMesh objects.
@@ -845,7 +846,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                 return 0;
             }
         }
-        Vector<EdgeScore> scoreVec = new Vector<>(e.length);
+        List<EdgeScore> scoreVec = new Vector<>(e.length);
         Vec3 temp0 = new Vec3(), temp1 = new Vec3(), temp2 = new Vec3();
         for (int i = 0; i < e.length; i++) {
             if (!candidate[i]) {
@@ -893,15 +894,15 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
             }
             dot = temp1.dot(temp2);
             score += (dot > 0.0 ? dot : -dot);
-            scoreVec.addElement(new EdgeScore(i, score));
+            scoreVec.add(new EdgeScore(i, score));
         }
         if (scoreVec.isEmpty()) {
             return;
         }
 
         // Sort them.
-        EdgeScore[] score = new EdgeScore[scoreVec.size()];
-        scoreVec.copyInto(score);
+        
+        EdgeScore[] score = scoreVec.toArray(EdgeScore[]::new);
         Arrays.sort(score);
 
         // Mark which edges to hide.
@@ -1710,13 +1711,13 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         if (boundary == null) {
             boundary = ((TriangleMesh) getObject().getObject()).findBoundaryEdges();
         }
-        Vector<int[]> all = new Vector<>();
+        List<int[]> all = new Vector<>();
         for (int i = 0; i < boundary.length; i++) {
             // Add one "selected boundary" for every continuous run of selected edges.
 
             int start;
             for (start = boundary[i].length - 1; start > 0 && selected[boundary[i][start]]; start--);
-            Vector<Integer> current = null;
+            List<Integer> current = null;
             int j = start;
             do {
                 boolean isSelected = selected[boundary[i][j]];
@@ -1724,7 +1725,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                     if (current == null) {
                         current = new Vector<>();
                     }
-                    current.addElement(boundary[i][j]);
+                    current.add(boundary[i][j]);
                 }
                 if (++j == boundary[i].length) {
                     j = 0;
@@ -1732,16 +1733,15 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                 if ((!isSelected || j == start) && current != null) {
                     int[] edgeList = new int[current.size()];
                     for (int k = 0; k < edgeList.length; k++) {
-                        edgeList[k] = current.elementAt(k);
+                        edgeList[k] = current.get(k);
                     }
-                    all.addElement(edgeList);
+                    all.add(edgeList);
                     current = null;
                 }
             } while (j != start);
         }
-        int[][] index = new int[all.size()][];
-        all.copyInto(index);
-        return index;
+
+        return all.toArray(new int[0][0]);
     }
 
     public void closeBoundaryCommand() {
@@ -2298,7 +2298,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         TriangleMesh theMesh = (TriangleMesh) objInfo.getObject();
         Vertex[] vt = (Vertex[]) theMesh.getVertices();
         Edge[] ed = theMesh.getEdges();
-        Vector<Edge> edges = new Vector<>();
+        List<Edge> edges = new Vector<>();
         int i;
 
         if (selectMode != EDGE_MODE) {
@@ -2308,26 +2308,26 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         // Find the select edges, and try to chain them together.
         for (i = 0; i < selected.length; i++) {
             if (selected[i]) {
-                edges.addElement(ed[i]);
+                edges.add(ed[i]);
             }
         }
         if (edges.isEmpty()) {
             return;
         }
-        Edge first = edges.elementAt(0), last = first;
-        Vector<Edge> ordered = new Vector<>();
-        ordered.addElement(first);
-        edges.removeElementAt(0);
+        Edge first = edges.get(0), last = first;
+        List<Edge> ordered = new Vector<>();
+        ordered.add(first);
+        edges.remove(0);
         while (edges.size() > 0) {
             for (i = 0; i < edges.size(); i++) {
-                Edge e = edges.elementAt(i);
+                Edge e = edges.get(i);
                 if (e.v1 == first.v1 || e.v2 == first.v1 || e.v1 == first.v2 || e.v2 == first.v2) {
-                    ordered.insertElementAt(e, 0);
+                    ordered.add(0, e);
                     first = e;
                     break;
                 }
                 if (e.v1 == last.v1 || e.v2 == last.v1 || e.v1 == last.v2 || e.v2 == last.v2) {
-                    ordered.addElement(e);
+                    ordered.add(e);
                     last = e;
                     break;
                 }
@@ -2336,14 +2336,14 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                 new BStandardDialog("", Translate.text("edgesNotContinuous"), BStandardDialog.ERROR).showMessageDialog(this);
                 return;
             }
-            edges.removeElementAt(i);
+            edges.remove(i);
         }
 
         // Now find the sequence of vertices.
         boolean closed = (ordered.size() > 2 && (last.v1 == first.v1 || last.v2 == first.v1 || last.v1 == first.v2 || last.v2 == first.v2));
         Vec3[] v = new Vec3[closed ? ordered.size() : ordered.size() + 1];
         float[] smoothness = new float[v.length];
-        Edge second = (ordered.size() == 1 ? first : ordered.elementAt(1));
+        Edge second = (ordered.size() == 1 ? first : ordered.get(1));
         int prev;
         if (first.v1 == second.v1 || first.v1 == second.v2) {
             prev = first.v2;
@@ -2351,7 +2351,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
             prev = first.v1;
         }
         for (i = 0; i < ordered.size(); i++) {
-            Edge e = ordered.elementAt(i);
+            Edge e = ordered.get(i);
             v[i] = new Vec3(vt[prev].r);
             smoothness[i] = vt[prev].smoothness;
             prev = (e.v1 == prev ? e.v2 : e.v1);

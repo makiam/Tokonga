@@ -18,8 +18,10 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
-import java.awt.*;
-import java.util.Vector;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.util.List;
+
 
 /**
  * This dialog box allows the user to specify options for creating skinned objects.
@@ -38,7 +40,7 @@ public class SkinDialog extends BDialog {
 
     private static int counter = 1;
 
-    public SkinDialog(LayoutWindow window, Vector<ObjectInfo> curves) {
+    public SkinDialog(LayoutWindow window, List<ObjectInfo> curves) {
         super(window, Translate.text("Tools:skin.dialog.title"), true);
         this.window = window;
         curve = new ObjectInfo[curves.size()];
@@ -50,7 +52,7 @@ public class SkinDialog extends BDialog {
         content.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
         content.add(UIUtilities.createScrollingList(curveList = new BList()), 0, 0);
         for (int i = 0; i < curves.size(); i++) {
-            curve[i] = curves.elementAt(i);
+            curve[i] = curves.get(i);
             curveList.add(curve[i].getName());
         }
         curveList.setMultipleSelectionEnabled(false);
