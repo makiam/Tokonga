@@ -127,13 +127,13 @@ public class LayeredMapping extends TextureMapping {
             fractParamIndex[i] = param.size();
             TextureParameter fractParam = new TextureParameter(this, texture[i].getName() + " fraction", 0.0f, 1.0f, 1.0f);
             fractParam.setID(fractParamID[i]);
-            param.addElement(fractParam);
+            param.add(fractParam);
             p = mapping[i].getParameters();
             if (p != null) {
                 numParams[i] = p.length;
                 paramStartIndex[i] = param.size();
                 for (j = 0; j < p.length; j++) {
-                    param.addElement(p[j].duplicate());
+                    param.add(p[j].duplicate());
                     if (p[j].identifier != -1) {
                         param.lastElement().setID(System.identityHashCode(mapping[i]) + p[j].identifier * 1025);
                     }
@@ -145,7 +145,7 @@ public class LayeredMapping extends TextureMapping {
         }
         p = new TextureParameter[param.size()];
         for (i = 0; i < p.length; i++) {
-            p[i] = param.elementAt(i);
+            p[i] = param.get(i);
         }
         return p;
     }

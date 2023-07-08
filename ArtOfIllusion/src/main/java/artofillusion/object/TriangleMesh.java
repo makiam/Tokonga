@@ -24,6 +24,7 @@ import java.io.*;
 import java.lang.ref.*;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -384,7 +385,7 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
         /* We now have two lists of edges: one for each direction of traversal.
      * Determine which ones are duplicates, and add any unique edges from
      * edges2 into edges1.*/
-        Hashtable<Point, Integer> edgeTable = new Hashtable<Point, Integer>();
+        Map<Point, Integer> edgeTable = new Hashtable<>();
         for (i = 0; i < numEdges1; i++) {
             edgeTable.put(new Point(edges1[i].v1, edges1[i].v2), i);
         }
@@ -647,46 +648,46 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
     public int[][] findBoundaryEdges() {
         // First, find every edge which is on a boundary.
 
-        Vector<Integer> allEdges = new Vector<Integer>();
+        List<Integer> allEdges = new Vector<>();
         for (int i = 0; i < edge.length; i++) {
             if (edge[i].f2 == -1) {
-                allEdges.addElement(i);
+                allEdges.add(i);
             }
         }
 
         // Form boundaries one at a time.
-        Vector<Vector<Integer>> boundary = new Vector<Vector<Integer>>();
+        List<List<Integer>> boundary = new Vector<>();
         while (allEdges.size() > 0) {
             // Take one edge as a starting point, and follow around.
 
-            Vector<Integer> current = new Vector<Integer>();
-            Integer start = allEdges.elementAt(0);
-            allEdges.removeElementAt(0);
-            current.addElement(start);
+            List<Integer> current = new Vector<>();
+            Integer start = allEdges.get(0);
+            allEdges.remove(0);
+            current.add(start);
             int i = start, j = 0;
             while (j < (allEdges.size())) {
                 for (j = 0; j < allEdges.size(); j++) {
-                    int k = allEdges.elementAt(j);
+                    int k = allEdges.get(j);
                     if (edge[i].v1 == edge[k].v1 || edge[i].v1 == edge[k].v2
                             || edge[i].v2 == edge[k].v1 || edge[i].v2 == edge[k].v2) {
-                        current.addElement(allEdges.elementAt(j));
-                        allEdges.removeElementAt(j);
+                        current.add(allEdges.get(j));
+                        allEdges.remove(j);
                         i = k;
                         j--;
                         break;
                     }
                 }
             }
-            boundary.addElement(current);
+            boundary.add(current);
         }
 
         // Build the final arrays.
         int[][] index = new int[boundary.size()][];
         for (int i = 0; i < index.length; i++) {
-            Vector<Integer> current = boundary.elementAt(i);
+            List<Integer> current = boundary.get(i);
             index[i] = new int[current.size()];
             for (int j = 0; j < index[i].length; j++) {
-                index[i][j] = current.elementAt(j);
+                index[i][j] = current.get(j);
             }
         }
         return index;
