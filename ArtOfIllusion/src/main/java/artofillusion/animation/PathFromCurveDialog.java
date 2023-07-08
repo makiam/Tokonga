@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2011 by Peter Eastman
-   Changes copyright (C) 2017-2020 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,8 +17,9 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
-import java.awt.*;
+import java.awt.Insets;
 import java.text.*;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -31,8 +32,8 @@ public class PathFromCurveDialog extends BDialog {
     private final Scene theScene;
     private final BList objList;
     private final BList curveList;
-    private final Vector<ObjectInfo> objects;
-    private final Vector<ObjectInfo> curves;
+    private final List<ObjectInfo> objects;
+    private final List<ObjectInfo> curves;
     private final BCheckBox orientBox;
     private final BComboBox spacingChoice;
     private final ValueField startTimeField;
@@ -52,8 +53,8 @@ public class PathFromCurveDialog extends BDialog {
         theScene = window.getScene();
 
         // Find the object and curves.
-        objects = new Vector<ObjectInfo>();
-        curves = new Vector<ObjectInfo>();
+        objects = new Vector<>();
+        curves = new Vector<>();
         objList = new BList();
         curveList = new BList();
         for (int i = 0; i < sel.length; i++) {
@@ -118,8 +119,8 @@ public class PathFromCurveDialog extends BDialog {
         RowContainer buttons = new RowContainer();
         content.add(buttons, 0, 4, 4, 1);
         buttons.add(okButton = Translate.button("ok", this, "doOk"));
-        BButton cancelButton;
-        buttons.add(cancelButton = Translate.button("cancel", this, "dispose"));
+        
+        buttons.add(Translate.button("cancel", this, "dispose"));
 
         // Show the dialog.
         pack();

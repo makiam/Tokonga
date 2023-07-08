@@ -162,7 +162,7 @@ public class IKSolver {
     private void findDownstreamJoints() {
         downstream = new int[joint.length][];
         for (int i = 0; i < joint.length; i++) {
-            Vector<Joint> v = new Vector<Joint>();
+            List<Joint> v = new Vector<>();
             addDownstreamJoints(v, joint[i]);
             downstream[i] = new int[v.size()];
             for (int k = 0; k < downstream[i].length; k++) {
@@ -174,7 +174,7 @@ public class IKSolver {
     /**
      * Recursively find every joint which is downstream from another one.
      */
-    private void addDownstreamJoints(Vector<Joint> v, Joint j) {
+    private void addDownstreamJoints(List<Joint> v, Joint j) {
         v.add(j);
         for (Joint child : j.children) {
             addDownstreamJoints(v, child);

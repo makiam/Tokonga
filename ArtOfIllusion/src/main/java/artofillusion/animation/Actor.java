@@ -360,8 +360,8 @@ public class Actor extends ObjectWrapper {
         }
 
         // Construct the output pose.
-        Vector<Gesture> gestureList = new Vector<>();
-        Vector<Double> weightList = new Vector<>();
+        List<Gesture> gestureList = new Vector<>();
+        List<Double> weightList = new Vector<>();
 
         for (int i = 0; i < weight.length; i++) {
             if (weight[i] > 0.0) {

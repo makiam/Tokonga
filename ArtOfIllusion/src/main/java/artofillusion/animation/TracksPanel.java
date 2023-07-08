@@ -18,6 +18,7 @@ import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * This is the Widget which displays all of the tracks in the score.
@@ -34,7 +35,7 @@ public class TracksPanel extends CustomWidget implements TrackDisplay {
     Point lastPos, dragPos;
     boolean draggingBox;
     int yoffset;
-    Vector<Marker> markers;
+    List<Marker> markers;
     UndoRecord undo;
 
     private static final Polygon handle;
@@ -94,7 +95,7 @@ public class TracksPanel extends CustomWidget implements TrackDisplay {
     /*8 Add a marker to the display. */
     @Override
     public void addMarker(Marker m) {
-        markers.addElement(m);
+        markers.add(m);
     }
 
     /*8 Set the mode (select-and-move or scroll-and-scale) for this display. */
@@ -146,7 +147,7 @@ public class TracksPanel extends CustomWidget implements TrackDisplay {
 
         // Draw the markers.
         for (i = 0; i < markers.size(); i++) {
-            Marker m = markers.elementAt(i);
+            Marker m = markers.get(i);
             g.setColor(m.color);
             x = (int) Math.round(scale * (m.position - start));
             g.drawLine(x, 0, x, dim.height);
@@ -325,7 +326,7 @@ public class TracksPanel extends CustomWidget implements TrackDisplay {
             if (row2 > obj.length) {
                 row2 = obj.length;
             }
-            Vector<SelectionInfo> v = new Vector<SelectionInfo>();
+            List<SelectionInfo> v = new Vector<>();
             for (int row = row1; row < row2; row++) {
                 if (!(obj[row] instanceof Track)) {
                     continue;
@@ -340,12 +341,12 @@ public class TracksPanel extends CustomWidget implements TrackDisplay {
                         continue;
                     }
                     Keyframe key = tr.getTimecourse().getValues()[i];
-                    v.addElement(new SelectionInfo(tr, key));
+                    v.add(new SelectionInfo(tr, key));
                 }
             }
             SelectionInfo[] sel = new SelectionInfo[v.size()];
             for (int i = 0; i < sel.length; i++) {
-                sel[i] = v.elementAt(i);
+                sel[i] = v.get(i);
             }
             theScore.addSelectedKeyframes(sel);
             theScore.repaintGraphs();

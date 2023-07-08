@@ -109,7 +109,7 @@ public class EditKeyframesDialog {
 
         // Find which tracks to apply the operation to.
         if (whichTracks == 0) {
-            Vector<Track> tracks = new Vector<Track>();
+            List<Track> tracks = new Vector<>();
             for (ObjectInfo info : theScene.getObjects()) {
                 for (int j = 0; j < info.getTracks().length; j++) {
                     addToVector(info.getTracks()[j], tracks);
@@ -121,7 +121,7 @@ public class EditKeyframesDialog {
             }
         } else if (whichTracks == 1) {
             int[] sel = theScene.getSelection();
-            Vector<Track> tracks = new Vector<Track>();
+            List<Track> tracks = new Vector<>();
             for (int i = 0; i < sel.length; i++) {
                 ObjectInfo info = theScene.getObject(sel[i]);
                 for (int j = 0; j < info.getTracks().length; j++) {
