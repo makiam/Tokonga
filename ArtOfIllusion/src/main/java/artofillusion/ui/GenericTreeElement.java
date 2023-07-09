@@ -2,7 +2,7 @@
    any special behavior. */
 
  /* Copyright (C) 2001 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -20,18 +20,14 @@ public class GenericTreeElement extends TreeElement {
     final Object obj;
     final String label;
 
-    public GenericTreeElement(String label,
-            Object obj,
-            TreeElement parent,
-            TreeList tree,
-            Vector<TreeElement> children) {
+    public GenericTreeElement(String label, Object obj, TreeElement parent, TreeList tree, List<TreeElement> children) {
         this.label = label;
         this.obj = obj;
         this.parent = parent;
         this.tree = tree;
         this.children = children;
         if (null == children) {
-            this.children = new Vector<TreeElement>();
+            this.children = new Vector<>();
         } else {
             for (TreeElement item : children) {
                 item.parent = this;

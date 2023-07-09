@@ -841,7 +841,7 @@ public class SPMObjectInfo {
         String src;
         if (fileSet != null) {
             NodeList filesList = fileSet.getChildNodes();
-            Vector<String> fileNames = new Vector<>();
+            List<String> fileNames = new Vector<>();
             for (i = 0; i < filesList.getLength(); ++i) {
                 if (!"file".equals(filesList.item(i).getNodeName())) {
                     continue;

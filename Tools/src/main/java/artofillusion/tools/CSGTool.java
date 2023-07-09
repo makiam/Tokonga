@@ -41,13 +41,13 @@ public class CSGTool implements ModellingTool {
         Scene scene = window.getScene();
         int[] selection = window.getSelectedIndices();
         int closedCount = 0;
-        Vector<ObjectInfo> inputObj = new Vector<>();
+        List<ObjectInfo> inputObj = new Vector<>();
 
         for (int i = 0; i < selection.length; i++) {
             ObjectInfo obj = scene.getObject(selection[i]);
             if (obj.getObject().canSetTexture()) {
                 if (obj.getObject() instanceof TriangleMesh || obj.getObject().canConvertToTriangleMesh() != Object3D.CANT_CONVERT) {
-                    inputObj.addElement(obj);
+                    inputObj.add(obj);
                     if (obj.getObject().isClosed()) {
                         closedCount++;
                     }
@@ -58,7 +58,7 @@ public class CSGTool implements ModellingTool {
             new BStandardDialog("", UIUtilities.breakString(Translate.text("Tools:csg.tool.message")), BStandardDialog.INFORMATION).showMessageDialog(window.getFrame());
             return;
         }
-        CSGObject newobj = new CSGObject(inputObj.elementAt(0), inputObj.elementAt(1), CSGObject.UNION);
+        CSGObject newobj = new CSGObject(inputObj.get(0), inputObj.get(1), CSGObject.UNION);
         Vec3 center = newobj.centerObjects();
         CSGDialog dial = new CSGDialog(window, newobj);
         if (!dial.clickedOk()) {
@@ -67,8 +67,8 @@ public class CSGTool implements ModellingTool {
 
         // Either hide or leave unchanged
         if (dial.hideOriginals.getState()) {
-            inputObj.elementAt(0).setVisible(false);
-            inputObj.elementAt(1).setVisible(false);
+            inputObj.get(0).setVisible(false);
+            inputObj.get(1).setVisible(false);
         }
         ObjectInfo info = new ObjectInfo(newobj, new CoordinateSystem(center, Vec3.vz(), Vec3.vy()), "Boolean " + (counter++));
         info.addTrack(new PositionTrack(info), 0);

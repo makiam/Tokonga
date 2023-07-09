@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -37,8 +38,8 @@ import java.util.Vector;
 public class CreateCurveTool extends EditingTool {
 
     static int counter = 1;
-    private Vector<Vec3> clickPoint;
-    private Vector<Float> smoothness;
+    private List<Vec3> clickPoint;
+    private List<Float> smoothness;
     private int smoothing = Mesh.APPROXIMATING;
     private Curve theCurve;
     private CoordinateSystem coords;
@@ -101,7 +102,7 @@ public class CreateCurveTool extends EditingTool {
             smoothness = new Vector<>();
             view.repaint();
         } else {
-            Vec3 pos = clickPoint.lastElement();
+            Vec3 pos = clickPoint.get(clickPoint.size()-1);
             Vec2 screenPos = view.getCamera().getWorldToScreen().timesXY(pos);
             view.drawDraggedShape(new Line2D.Float(new Point2D.Double(screenPos.x, screenPos.y), e.getPoint()));
         }
@@ -113,7 +114,7 @@ public class CreateCurveTool extends EditingTool {
             return;
         }
         Point dragPoint = e.getPoint();
-        Vec3 pos = clickPoint.lastElement();
+        Vec3 pos = clickPoint.get(clickPoint.size()-1);
         Vec2 screenPos = view.getCamera().getWorldToScreen().timesXY(pos);
         view.drawDraggedShape(new Line2D.Float(new Point2D.Double(screenPos.x, screenPos.y), dragPoint));
     }
@@ -129,8 +130,8 @@ public class CreateCurveTool extends EditingTool {
         float[] s;
 
         if (e.getClickCount() != 2) {
-            clickPoint.addElement(cam.convertScreenToWorld(dragPoint, view.getDistToPlane()));
-            smoothness.addElement(e.isShiftDown() ? 0.0f : 1.0f);
+            clickPoint.add(cam.convertScreenToWorld(dragPoint, view.getDistToPlane()));
+            smoothness.add(e.isShiftDown() ? 0.0f : 1.0f);
         }
         if (clickPoint.size() > 1) {
             // Create a new line object.  First, find all the points in world coordinates.
@@ -139,8 +140,8 @@ public class CreateCurveTool extends EditingTool {
             s = new float[clickPoint.size()];
             orig = new Vec3();
             for (int i = 0; i < vertex.length; i++) {
-                vertex[i] = clickPoint.elementAt(i);
-                s[i] = smoothness.elementAt(i);
+                vertex[i] = clickPoint.get(i);
+                s[i] = smoothness.get(i);
                 orig = orig.plus(vertex[i]);
             }
             orig = orig.times(1.0 / vertex.length);

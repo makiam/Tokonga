@@ -23,6 +23,7 @@ import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * This dialog box allows the user to specify options for creating extruded objects.
@@ -47,8 +48,8 @@ public class ExtrudeDialog extends BDialog {
     private final ValueField tolField;
     private final BButton okButton;
     private final ObjectPreviewCanvas preview;
-    private final Vector<ObjectInfo> objects;
-    private final Vector<ObjectInfo> paths;
+    private final List<ObjectInfo> objects;
+    private final List<ObjectInfo> paths;
 
     private static int counter = 1;
 
@@ -596,8 +597,8 @@ public class ExtrudeDialog extends BDialog {
         } else {
             v = new Vec3[2 * profv.length + numBoundaryPoints * (pathv.length - 2)];
         }
-        Vector<EdgeInfo> newEdge = new Vector<>();
-        Vector<int[]> newFace = new Vector<>();
+        List<EdgeInfo> newEdge = new Vector<>();
+        List<int[]> newFace = new Vector<>();
         boolean angled = (profile.getSmoothingMethod() == Mesh.NO_SMOOTHING && path.getSmoothingMethod() != Mesh.NO_SMOOTHING);
         if (!path.isClosed()) {
             // Add two copies of the profile mesh, to serve as the ends.

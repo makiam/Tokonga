@@ -483,11 +483,11 @@ public class Tube extends Curve {
             return cachedMesh;
         }
 
-        Vector<MeshVertex> vert = new Vector<>();
-        Vector<Vec3> norm = new Vector<>();
-        Vector<int[]> face = new Vector<>();
+        List<MeshVertex> vert = new Vector<>();
+        List<Vec3> norm = new Vector<>();
+        List<int[]> face = new Vector<>();
 
-        Vector<double[]> param = new Vector<>();
+        List<double[]> param = new Vector<>();
 
         subdivideSurface(tol, vert, norm, face, param);
         Vec3[] v = new Vec3[vert.size()];
@@ -514,7 +514,7 @@ public class Tube extends Curve {
                 if (paramValue[i] instanceof VertexParameterValue) {
                     double[] val = new double[v.length];
                     for (int j = 0; j < val.length; j++) {
-                        val[j] = param.elementAt(j)[i];
+                        val[j] = param.get(j)[i];
                     }
                     tubeParamValue[i] = new VertexParameterValue(val);
                 } else {
@@ -624,7 +624,7 @@ public class Tube extends Curve {
      * It subdivides the surface and fills in the vectors with lists of vertices, normals,
      * faces, and parameter values.
      */
-    private void subdivideSurface(double tol, Vector<MeshVertex> vert, Vector<Vec3> norm, Vector<int[]> face, Vector<double[]> param) {
+    private void subdivideSurface(double tol, List<MeshVertex> vert, List<Vec3> norm, List<int[]> face, List<double[]> param) {
         // Subdivide the central curve to the desired tolerance.
 
         Tube t = subdivideTube(tol);

@@ -27,6 +27,7 @@ import buoy.event.WidgetMouseEvent;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -37,7 +38,7 @@ import java.util.Vector;
 @EditingTool.ActivatedToolText("polymesh:knifeTool.helpText")
 public class PMKnifeTool extends EditingTool {
 
-    private final Vector<Point> clickPoints;
+    private final List<Point> clickPoints;
     private final MeshEditController controller;
     private PolyMesh originalMesh;
     private boolean dragging;
@@ -125,12 +126,12 @@ public class PMKnifeTool extends EditingTool {
                 continue;
             }
             for (int k = 0; k < clickPoints.size() - 1; ++k) {
-                f = findIntersection(clickPoints.elementAt(k), clickPoints.elementAt(k + 1), screenVert[edges[i].vertex], screenVert[edges[edges[i].hedge].vertex]);
+                f = findIntersection(clickPoints.get(k), clickPoints.get(k + 1), screenVert[edges[i].vertex], screenVert[edges[edges[i].hedge].vertex]);
                 if (f > 0) {
                     fraction[i] = f;
                 }
             }
-            f = findIntersection(clickPoints.elementAt(clickPoints.size() - 1), dragPoint, screenVert[edges[i].vertex], screenVert[edges[edges[i].hedge].vertex]);
+            f = findIntersection(clickPoints.get(clickPoints.size() - 1), dragPoint, screenVert[edges[i].vertex], screenVert[edges[edges[i].hedge].vertex]);
             if (f > 0) {
                 fraction[i] = f;
             }
@@ -177,11 +178,11 @@ public class PMKnifeTool extends EditingTool {
     public void drawOverlay(ViewerCanvas view) {
         if (dragging && canvas == view) {
             for (int k = 0; k < clickPoints.size() - 1; ++k) {
-                view.drawLine(clickPoints.elementAt(k), clickPoints.elementAt(k + 1), Color.black);
+                view.drawLine(clickPoints.get(k), clickPoints.get(k + 1), Color.black);
             }
-            view.drawLine(clickPoints.elementAt(clickPoints.size() - 1), dragPoint, Color.black);
+            view.drawLine(clickPoints.get(clickPoints.size() - 1), dragPoint, Color.black);
             for (int k = 0; k < clickPoints.size(); ++k) {
-                Point p1 = new Point(clickPoints.elementAt(k));
+                Point p1 = new Point(clickPoints.get(k));
                 Point p2 = new Point(p1);
                 p1.x += 5;
                 p2.x -= 5;

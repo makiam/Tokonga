@@ -24,6 +24,7 @@ import buoy.event.WidgetMouseEvent;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.util.List;
 import java.util.Vector;
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @EditingTool.ActivatedToolText("polymesh:extrudeCurveTool.helpText")
 public class PMExtrudeCurveTool extends EditingTool {
 
-    private final Vector<CurvePoint> clickPoints;
+    private final List<CurvePoint> clickPoints;
     private PolyMesh orMesh;
     private boolean[] orSel;
     private final MeshEditController controller;
@@ -65,13 +66,13 @@ public class PMExtrudeCurveTool extends EditingTool {
     @Override
     public void mousePressed(WidgetMouseEvent ev, ViewerCanvas view) {
         dragging = -1;
-        if (clickPoints.size() == 0) {
+        if (clickPoints.isEmpty()) {
             return;
         }
         if (canvas == view) {
             Point e = ev.getPoint();
             for (int i = 0; i < clickPoints.size(); i++) {
-                if (!(clickPoints.elementAt(i)).clickedOnto(ev, view)) {
+                if (!(clickPoints.get(i)).clickedOnto(ev, view)) {
                     continue;
                 }
                 dragging = i + 1;
@@ -94,11 +95,11 @@ public class PMExtrudeCurveTool extends EditingTool {
         if (dragging < 1) {
             return;
         }
-        CurvePoint cp = clickPoints.elementAt(dragging - 1);
+        CurvePoint cp = clickPoints.get(dragging - 1);
         if (dragging == 1) {
             cp.mouseDragged(fromPoint, ev.getPoint());
         } else {
-            Vec3 p = clickPoints.elementAt(dragging - 2).position;
+            Vec3 p = clickPoints.get(dragging - 2).position;
             cp.mouseDragged(p, ev.getPoint());
         }
         if (previewMode) {
@@ -277,7 +278,7 @@ public class PMExtrudeCurveTool extends EditingTool {
             previous = fromPoint;
             for (int i = 0; i < clickPoints.size(); i++) {
                 cumul += clickPoints.get(i).position.minus(previous).length();
-                clickPoints.elementAt(i).amplitude = 1.0 - cumul / length;
+                clickPoints.get(i).amplitude = 1.0 - cumul / length;
                 previous = clickPoints.get(i).position;
             }
         }

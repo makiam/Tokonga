@@ -65,7 +65,7 @@ public class ArraySpec {
     /**
      * the objects that should be copied to create an array
      */
-    public final Vector<ObjectInfo> objectList;         // list of objectInfo's
+    public final List<ObjectInfo> objectList;         // list of objectInfo's
 
     // linear paramters
     /**

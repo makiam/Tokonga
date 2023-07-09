@@ -92,9 +92,9 @@ public class PMOBJImporter {
 
         // Open the file and read the contents.
         Map<String, TextureInfo> textureTable = new Hashtable<>();
-        Vector<Vec3> vertex = new Vector<>();
-        Vector<Vec3> normal = new Vector<>();
-        Vector<Vec3> texture = new Vector<>();
+        List<Vec3> vertex = new Vector<>();
+        List<Vec3> normal = new Vector<>();
+        List<Vec3> texture = new Vector<>();
         Vector<FaceInfo>[] face = new Vector[]{new Vector<>()};  // The array of Vector<FaceInfo>
         groupTable.put("default", face[0]);
         int lineno = 0;
@@ -139,7 +139,7 @@ public class PMOBJImporter {
                                     + "' found in line " + lineno + ".");
                         }
                     }
-                    vertex.addElement(new Vec3(val[0], val[1], val[2]));
+                    vertex.add(new Vec3(val[0], val[1], val[2]));
                 } else if ("vn".equals(fields[0]) && fields.length == 4) {
                     // Read in a vertex normal.
 
@@ -151,7 +151,7 @@ public class PMOBJImporter {
                                     + "' found in line " + lineno + ".");
                         }
                     }
-                    normal.addElement(new Vec3(val[0], val[1], val[2]));
+                    normal.add(new Vec3(val[0], val[1], val[2]));
                 } else if ("vt".equals(fields[0]) && fields.length > 1) {
                     // Read in a texture vertex.
 
@@ -166,7 +166,7 @@ public class PMOBJImporter {
                             throw new Exception("Illegal value '" + fields[i + 1] + "' found in line " + lineno + ".");
                         }
                     }
-                    texture.addElement(new Vec3(val[0], val[1], val[2]));
+                    texture.add(new Vec3(val[0], val[1], val[2]));
                 } else if ("f".equals(fields[0])) {
                     vertIndex = new VertexInfo[fields.length - 1];
                     for (int i = 0; i < vertIndex.length; i++) {
@@ -256,7 +256,7 @@ public class PMOBJImporter {
                 Vec3 center = new Vec3();
                 for (int i = 0; i < realIndex.length; i++) {
                     if (realIndex[i] > -1) {
-                        vert[realIndex[i]] = vertex.elementAt(i);
+                        vert[realIndex[i]] = vertex.get(i);
                         center.add(vert[realIndex[i]]);
                     }
                 }
@@ -290,7 +290,7 @@ public class PMOBJImporter {
                             if (f1.getVertex(j).vert == f2.getVertex(k).vert) {
                                 int n1 = f1.getVertex(j).norm;
                                 int n2 = f2.getVertex(k).norm;
-                                if (n1 != n2 && (normal.elementAt(n1)).distance(normal.elementAt(n2)) > 1e-10) {
+                                if (n1 != n2 && (normal.get(n1)).distance(normal.get(n2)) > 1e-10) {
                                     edges[i].smoothness = 0.0f;
                                 }
                                 break;
@@ -319,7 +319,7 @@ public class PMOBJImporter {
                             FaceInfo fi = groupFaces.elementAt(j);
                             for (int k = 0; k < fi.vi.length; k++) {
                                 VertexInfo vi = fi.getVertex(k);
-                                Vec3 texCoords = (vi.tex < texture.size() ? texture.elementAt(vi.tex) : vertex.elementAt(vi.vert));
+                                Vec3 texCoords = (vi.tex < texture.size() ? texture.get(vi.tex) : vertex.get(vi.vert));
                                 Vec2 tc = new Vec2(texCoords.x, texCoords.y);
                                 //per face per vertex texture is not handled in PolyMeshes
                                 //if (uv[realIndex[vi.vert]] != null && !uv[realIndex[vi.vert]].equals(tc))

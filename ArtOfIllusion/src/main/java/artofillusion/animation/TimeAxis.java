@@ -1,5 +1,5 @@
 /* Copyright (C) 2001,2003,2004 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,6 +17,7 @@ import buoy.widget.*;
 import java.awt.*;
 import java.text.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * This is a Widget which displays a time axis.
@@ -25,7 +26,7 @@ public class TimeAxis extends CustomWidget {
 
     double start, scale, origMarkerPos;
     final Score theScore;
-    private final Vector<Marker> markers;
+    private final List<Marker> markers;
     int subdivisions;
     Marker draggingMarker;
     Point clickPos;
@@ -43,7 +44,7 @@ public class TimeAxis extends CustomWidget {
         theScore = sc;
         nf.setMinimumFractionDigits(1);
         nf.setMaximumFractionDigits(2);
-        markers = new Vector<Marker>();
+        markers = new Vector<>();
         addEventLink(MousePressedEvent.class, this, "mousePressed");
         addEventLink(MouseReleasedEvent.class, this, "mouseReleased");
         addEventLink(MouseDraggedEvent.class, this, "mouseDragged");

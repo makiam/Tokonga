@@ -21,7 +21,12 @@ import artofillusion.ui.*;
 import artofillusion.util.*;
 import buoy.event.*;
 import buoy.widget.*;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Toolkit;
+
 import java.awt.image.*;
 import java.util.*;
 
@@ -336,28 +341,6 @@ public class Raster implements Renderer, Runnable {
     }
 
     /**
-     * Find all the light sources in the scene.
-     */
-    void findLights() {
-        Vector<ObjectInfo> lt = new Vector<>();
-        int i;
-
-        positionNeeded = false;
-        for (ObjectInfo info : theScene.getObjects()) {
-            if (info.getObject() instanceof Light && info.isVisible()) {
-                lt.addElement(info);
-            }
-        }
-        light = new ObjectInfo[lt.size()];
-        for (i = 0; i < light.length; i++) {
-            light[i] = lt.elementAt(i);
-            if (!(light[i].getObject() instanceof DirectionalLight)) {
-                positionNeeded = true;
-            }
-        }
-    }
-
-    /**
      * Main method in which the image is rendered.
      */
     @Override
@@ -375,7 +358,12 @@ public class Raster implements Renderer, Runnable {
         updateTime = System.currentTimeMillis();
 
         // Record information about the scene.
-        findLights();
+        light = theScene.getObjects().stream().filter(info -> info.isVisible() && info.getObject() instanceof Light).toArray(ObjectInfo[]::new);
+        positionNeeded = false;
+        for (ObjectInfo li : light) {
+            if(li.getObject() instanceof DirectionalLight) continue;
+            positionNeeded = true;
+        }
         ambColor = theScene.getAmbientColor();
         envColor = theScene.getEnvironmentColor();
         envMapping = theScene.getEnvironmentMapping();

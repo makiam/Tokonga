@@ -213,22 +213,20 @@ public class UIUtilities {
             return new String[]{s};
         }
         int lineLength = s.length() / lines;
-        Vector<String> line = new Vector<>();
+        List<String> line = new Vector<>();
         int index = 0;
         while (index + lineLength < s.length()) {
             int next = s.indexOf(' ', index + lineLength);
             if (next == -1) {
                 next = s.length();
             }
-            line.addElement(s.substring(index, next).trim());
+            line.add(s.substring(index, next).trim());
             index = next;
         }
         if (index < s.length()) {
-            line.addElement(s.substring(index).trim());
+            line.add(s.substring(index).trim());
         }
-        String[] result = new String[line.size()];
-        line.copyInto(result);
-        return result;
+        return line.toArray(String[]::new);
     }
 
     /**

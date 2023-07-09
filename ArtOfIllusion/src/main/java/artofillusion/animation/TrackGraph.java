@@ -18,6 +18,7 @@ import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * This is a graph used for displaying and editing one or more Track's keyframe values.
@@ -37,7 +38,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
     private Point lastPos, dragPos;
     private Rectangle lastBounds;
     private boolean draggingBox, lineAtBottom;
-    private final Vector<Marker> markers;
+    private final List<Marker> markers;
     private TrackInfo[] tracks;
     private UndoRecord undo;
 
@@ -76,7 +77,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
         addEventLink(MouseClickedEvent.class, this, "mouseClicked");
         addEventLink(RepaintEvent.class, this, "paint");
         tracks = new TrackInfo[0];
-        markers = new Vector<Marker>();
+        markers = new Vector<>();
     }
 
     /**
@@ -131,7 +132,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
      */
     @Override
     public void addMarker(Marker m) {
-        markers.addElement(m);
+        markers.add(m);
     }
 
     /**
@@ -465,7 +466,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
         int x1 = Math.min(lastPos.x, dragPos.x), x2 = Math.max(lastPos.x, dragPos.x);
         int y1 = Math.min(lastPos.y, dragPos.y), y2 = Math.max(lastPos.y, dragPos.y);
         dragPos = null;
-        Vector<SelectionInfo> v = new Vector<SelectionInfo>();
+        List<SelectionInfo> v = new Vector<>();
         Rectangle dim = getBounds();
         for (int i = 0; i < tracks.length; i++) {
             for (int j = 0; j < tracks[i].keyValue.length; j++) {
@@ -491,13 +492,13 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
                     newsel.selected[k] = true;
                 }
                 if (any) {
-                    v.addElement(newsel);
+                    v.add(newsel);
                 }
             }
         }
         SelectionInfo[] sel = new SelectionInfo[v.size()];
         for (int i = 0; i < sel.length; i++) {
-            sel[i] = v.elementAt(i);
+            sel[i] = v.get(i);
         }
         theScore.addSelectedKeyframes(sel);
         selectionChanged();
@@ -580,7 +581,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
 
         // Draw the markers.
         for (int i = 0; i < markers.size(); i++) {
-            Marker m = markers.elementAt(i);
+            Marker m = markers.get(i);
             g.setColor(m.color);
             x = (int) Math.round(hscale * (m.position - hstart));
             g.drawLine(x, 0, x, dim.height);

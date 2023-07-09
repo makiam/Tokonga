@@ -29,10 +29,10 @@ import javax.swing.*;
 public class TreeList extends CustomWidget {
 
     private final EditingWindow window;
-    private final Vector<TreeElement> elements;
-    private final Vector<TreeElement> showing;
-    private final Vector<TreeElement> selected;
-    private final Vector<Integer> indent;
+    private final List<TreeElement> elements;
+    private final List<TreeElement> showing;
+    private final List<TreeElement> selected;
+    private final List<Integer> indent;
     private int yoffset, rowHeight, dragStart, lastDrag, lastClickRow, lastIndent, maxRowWidth;
     private boolean updateDisabled;
     private boolean moving;
@@ -202,13 +202,13 @@ public class TreeList extends CustomWidget {
      * Get an array of all the TreeElements in the tree.
      */
     public TreeElement[] getElements() {
-        Vector<TreeElement> v = new Vector<TreeElement>();
+        List<TreeElement> v = new Vector<>();
         TreeElement el;
 
         for (int i = 0; i < elements.size(); i++) {
             el = elements.get(i);
             v.add(el);
-            addChildrenToVector(el, v);
+            addChildrenToList(el, v);
         }
         TreeElement[] allEl = new TreeElement[v.size()];
         for (int i = 0; i < allEl.length; i++) {
@@ -217,11 +217,11 @@ public class TreeList extends CustomWidget {
         return allEl;
     }
 
-    private void addChildrenToVector(TreeElement el, List<TreeElement> v) {
+    private void addChildrenToList(TreeElement el, List<TreeElement> v) {
         for (int i = 0; i < el.getNumChildren(); i++) {
             TreeElement child = el.getChild(i);
             v.add(child);
-            addChildrenToVector(child, v);
+            addChildrenToList(child, v);
         }
     }
 

@@ -22,6 +22,7 @@ import buoy.widget.*;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * The MeshEditorWindow class represents the window for editing Mesh objects. This is an
@@ -1228,10 +1229,10 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         Joint[] joint = s.getJoints();
         boolean[] isChild = new boolean[joint.length];
         markChildJoints(s, j, isChild);
-        Vector<Joint> options = new Vector<Joint>();
+        List<Joint> options = new Vector<>();
         for (int i = 0; i < isChild.length; i++) {
             if (!isChild[i]) {
-                options.addElement(joint[i]);
+                options.add(joint[i]);
             }
         }
 
@@ -1241,8 +1242,8 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         ls.add("(" + Translate.text("None") + ")");
         ls.setSelected(0, true);
         for (int i = 0; i < options.size(); i++) {
-            ls.add(options.elementAt(i).name);
-            if (options.elementAt(i) == j.parent) {
+            ls.add(options.get(i).name);
+            if (options.get(i) == j.parent) {
                 ls.setSelected(i + 1, true);
             }
         }
@@ -1257,7 +1258,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         if (ls.getSelectedIndex() == 0) {
             s.setJointParent(j, null);
         } else {
-            s.setJointParent(j, options.elementAt(ls.getSelectedIndex() - 1));
+            s.setJointParent(j, options.get(ls.getSelectedIndex() - 1));
         }
 
         // Adjust the coordinate system.

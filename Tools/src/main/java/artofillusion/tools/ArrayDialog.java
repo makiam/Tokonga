@@ -17,7 +17,7 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
-import java.awt.*;
+import java.awt.Insets;
 import java.util.*;
 
 /**
@@ -30,7 +30,7 @@ public class ArrayDialog extends BDialog {
     private final LayoutWindow window;
     private final ArraySpec spec;
 
-    private final Vector<ObjectInfo> curvesVector;
+    private final List<ObjectInfo> curvesVector;
 
     private BLabel linearCopiesLabel, stepXLabel, stepYLabel, stepZLabel;
     private BRadioButton curveCopiesBox, curveStepBox, linearBox, curveBox;

@@ -18,7 +18,11 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
-import java.awt.*;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.*;
 import java.util.*;
 
@@ -31,7 +35,7 @@ public abstract class ObjectViewer extends ViewerCanvas {
     protected final MeshEditController controller;
     protected boolean showScene, useWorldCoords, freehandSelection, draggingBox, squareBox, sentClick;
     protected Point clickPoint, dragPoint;
-    protected Vector<Point> selectBoundsPoints;
+    protected List<Point> selectBoundsPoints;
     protected Shape selectBounds;
     public ObjectInfo thisObjectInScene;
     protected Scene theScene;
@@ -349,7 +353,7 @@ public abstract class ObjectViewer extends ViewerCanvas {
         int[] x = new int[n];
         int[] y = new int[n];
         for (int i = 0; i < n; i++) {
-            Point p = selectBoundsPoints.elementAt(i);
+            Point p = selectBoundsPoints.get(i);
             x[i] = p.x;
             y[i] = p.y;
         }
@@ -421,7 +425,7 @@ public abstract class ObjectViewer extends ViewerCanvas {
             // Add this point to the region boundary and draw a line.
 
             dragPoint = e.getPoint();
-            selectBoundsPoints.addElement(dragPoint);
+            selectBoundsPoints.add(dragPoint);
             drawDraggedShape(createPolygonFromSelection());
         } else if (draggingBox) {
             // We are dragging a box, so erase and redraw it.
