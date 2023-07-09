@@ -543,8 +543,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
                 }
                 ((SceneTreeModel) libraryList.getModel()).rebuildLibrary();
             } else {
-                BStandardDialog d = new BStandardDialog("", Translate.text("fileAlreadyExists"), BStandardDialog.ERROR);
-                d.showMessageDialog(this);
+                MessageDialog.error(Translate.text("fileAlreadyExists"));
             }
         }
     }

@@ -387,11 +387,11 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
             return;
         }
         if (!theCurve.isClosed() && selected.length - num < 2) {
-            new BStandardDialog("", Translate.text("curveNeeds2Points"), BStandardDialog.INFORMATION).showMessageDialog(this);
+            MessageDialog.info(Translate.text("curveNeeds2Points"));
             return;
         }
         if (theCurve.isClosed() && selected.length - num < 3) {
-            new BStandardDialog("", Translate.text("curveNeeds3Points"), BStandardDialog.INFORMATION).showMessageDialog(this);
+            MessageDialog.info(Translate.text("curveNeeds3Points"));
             return;
         }
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theCurve, theCurve.duplicate()));

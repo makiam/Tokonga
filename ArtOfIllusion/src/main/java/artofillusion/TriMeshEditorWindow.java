@@ -1399,7 +1399,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
             }
         }
         if (multipleBreaks || strayVert) {
-            new BStandardDialog("", UIUtilities.breakString(Translate.text("illegalDelete")), BStandardDialog.ERROR).showMessageDialog(this);
+            MessageDialog.error(UIUtilities.breakString(Translate.text("illegalDelete")));
             return;
         }
 
@@ -1908,7 +1908,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         Edge[] ed = theMesh.getEdges();
         boolean closed = isBoundaryClosed(boundaryList[0]);
         if (closed != isBoundaryClosed(boundaryList[1])) {
-            new BStandardDialog("", Translate.text("cannotJoinOpenAndClosed"), BStandardDialog.ERROR).showMessageDialog(this);
+            MessageDialog.error(Translate.text("cannotJoinOpenAndClosed"));
             return;
         }
 
@@ -2333,7 +2333,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                 }
             }
             if (i == edges.size()) {
-                new BStandardDialog("", Translate.text("edgesNotContinuous"), BStandardDialog.ERROR).showMessageDialog(this);
+                MessageDialog.error(Translate.text("edgesNotContinuous"));
                 return;
             }
             edges.removeElementAt(i);

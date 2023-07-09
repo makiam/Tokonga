@@ -712,11 +712,11 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
             return;
         }
         if (usize - unum < 2 || vsize - vnum < 2) {
-            new BStandardDialog("", Translate.text("curveNeeds2Points"), BStandardDialog.INFORMATION).showMessageDialog(this);
+            MessageDialog.info(Translate.text("curveNeeds2Points"));
             return;
         }
         if ((theMesh.isUClosed() && usize - unum < 3) || (theMesh.isVClosed() && vsize - vnum < 3)) {
-            new BStandardDialog("", Translate.text("curveNeeds3Points"), BStandardDialog.INFORMATION).showMessageDialog(this);
+            MessageDialog.info(Translate.text("curveNeeds3Points"));
             return;
         }
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, theMesh.duplicate()));

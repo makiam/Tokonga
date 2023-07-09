@@ -18,10 +18,11 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 public final class MessageDialog {
+    /*
     static {
         artofillusion.ArtOfIllusion.getPreferences().addPropertyChangeListener(MessageDialog::onPropertyChange);
     }
-
+*/
     private static final Icon icon;
     static {
         icon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("artofillusion/Icons/appIcon.png"));
@@ -46,9 +47,9 @@ public final class MessageDialog {
     private static final String TITLE = "Art Of Illusion";
 
     public static void error(Object message) {
-        SwingUtilities.invokeLater(() -> {
+        //SwingUtilities.invokeLater(() -> {
             JOptionPane.showMessageDialog(null, message, TITLE, JOptionPane.ERROR_MESSAGE, icon);
-        });
+       // });
     }
 
     private static void onPropertyChange(PropertyChangeEvent event) {

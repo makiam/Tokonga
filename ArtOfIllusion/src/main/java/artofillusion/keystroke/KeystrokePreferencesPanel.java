@@ -22,13 +22,14 @@ import java.util.*;
 import java.text.*;
 
 import artofillusion.ui.*;
+import java.util.List;
 
 /**
  * This class presents a user interface for editing the list of KeystrokeRecords.
  */
 public class KeystrokePreferencesPanel extends FormContainer {
 
-    private final ArrayList<KeystrokeRecord> records;
+    private final List<KeystrokeRecord> records;
     private final BTable table;
     private final BButton editButton;
     private final BButton deleteButton;
@@ -63,8 +64,8 @@ public class KeystrokePreferencesPanel extends FormContainer {
         RowContainer buttons = new RowContainer();
         add(buttons, 0, 1, new LayoutInfo());
         buttons.add(editButton = Translate.button("edit", "...", this, "editRecord"));
-        BButton addButton;
-        buttons.add(addButton = Translate.button("add", "...", this, "addRecord"));
+
+        buttons.add(Translate.button("add", "...", this, "addRecord"));
         buttons.add(deleteButton = Translate.button("delete", this, "deleteRecords"));
         selectionChanged();
     }
@@ -76,11 +77,11 @@ public class KeystrokePreferencesPanel extends FormContainer {
         if (!changed) {
             return;
         }
-        KeystrokeManager.setAllRecords(records.toArray(new KeystrokeRecord[records.size()]));
+        KeystrokeManager.setAllRecords(records.toArray(KeystrokeRecord[]::new));
         try {
             KeystrokeManager.saveRecords();
         } catch (Exception ex) {
-            new BStandardDialog("", Translate.text("errorSavingPrefs", ex.getMessage() == null ? "" : ex.getMessage()), BStandardDialog.ERROR).showMessageDialog(this);
+            MessageDialog.error(Translate.text("errorSavingPrefs", ex.getMessage() == null ? "" : ex.getMessage()));
         }
     }
 
