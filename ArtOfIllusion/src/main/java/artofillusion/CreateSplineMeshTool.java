@@ -272,11 +272,11 @@ public class CreateSplineMeshTool extends EditingTool {
         minu = shapeChoice.getSelectedIndex() == 0 ? 2 : 3;
         minv = shapeChoice.getSelectedIndex() == 2 ? 3 : 2;
         if (usizeField.getValue() < minu) {
-            MessageDialog.error(Translate.text("uSizeTooSmall", minu));
+            MessageDialog.create().withOwner(theFrame.getComponent()).error(Translate.text("uSizeTooSmall", minu));
             return;
         }
         if (vsizeField.getValue() < minv) {
-            MessageDialog.error(Translate.text("vSizeTooSmall", minv));
+            MessageDialog.create().withOwner(theFrame.getComponent()).error(Translate.text("vSizeTooSmall", minv));
             return;
         }
         usize = (int) usizeField.getValue();

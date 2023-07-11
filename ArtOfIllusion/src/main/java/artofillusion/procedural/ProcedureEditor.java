@@ -538,7 +538,7 @@ public class ProcedureEditor extends CustomWidget {
         if (proc.checkFeedback()) {
             proc.deleteLink(proc.getLinks().length - 1);
             selectedLink = new boolean[proc.getLinks().length];
-            MessageDialog.error(new String[]{"The link you have selected cannot be created,", "as it would result in a feedback loop."});
+            MessageDialog.create().error("The link you have selected cannot be created, as it would result in a feedback loop.");
         }
         updateMenus();
     }

@@ -225,7 +225,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
                     }
                 }
             } catch (IOException ex) {
-                new BStandardDialog("", Translate.text("errorLoadingFile") + ": " + ex.getLocalizedMessage(), BStandardDialog.ERROR).showMessageDialog(this);
+                MessageDialog.create().withOwner(this.getComponent()).error( Translate.text("errorLoadingFile") + ": " + ex.getLocalizedMessage());
             }
         }
         if (selectedTexture == null && selectedMaterial == null) {
@@ -543,7 +543,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
                 }
                 ((SceneTreeModel) libraryList.getModel()).rebuildLibrary();
             } else {
-                MessageDialog.error(Translate.text("fileAlreadyExists"));
+                MessageDialog.create().withOwner(this.getComponent()).error(Translate.text("fileAlreadyExists"));
             }
         }
     }

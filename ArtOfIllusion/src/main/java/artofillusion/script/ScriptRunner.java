@@ -156,12 +156,10 @@ public class ScriptRunner {
         } catch (Exception ex2) {
             log.atError().setCause(ex2).log("Error: {}", ex2.getMessage());
         }
-        ArrayList<String> v = new ArrayList<>();
+        List<String> v = new ArrayList<>();
         v.add(head);
         if (message != null) {
-            if (!message.contains("Inline eval of")) {
-                v.add(message);
-            } else {
+            if (message.contains("Inline eval of")) {
                 int i = message.lastIndexOf("> Encountered");
                 if (i > -1) {
                     int j = message.lastIndexOf(", column");
@@ -169,6 +167,8 @@ public class ScriptRunner {
                         column = (message.substring(j));
                     }
                 }
+            } else {
+                v.add(message);
             }
         }
         if (line > -1 && errorText != null) {
@@ -178,7 +178,7 @@ public class ScriptRunner {
                 v.add("Encountered \"" + errorText + "\" at line " + line + column);
             }
         }
-        MessageDialog.error(String.join("\n", v));
+        MessageDialog.create().error(String.join("\n", v));
         return line;
     }
 

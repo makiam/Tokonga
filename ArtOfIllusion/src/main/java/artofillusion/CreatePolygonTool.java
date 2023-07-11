@@ -273,7 +273,7 @@ public class CreatePolygonTool extends EditingTool {
         }
         i = (int) sidesField.getValue();
         if (i < 3) {
-            MessageDialog.error(Translate.text("threeSidesRequired"));
+            MessageDialog.create().withOwner(theFrame.getComponent()).error(Translate.text("threeSidesRequired"));
             return;
         }
         sides = i;

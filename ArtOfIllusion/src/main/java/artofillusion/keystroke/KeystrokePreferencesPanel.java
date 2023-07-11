@@ -81,7 +81,7 @@ public class KeystrokePreferencesPanel extends FormContainer {
         try {
             KeystrokeManager.saveRecords();
         } catch (Exception ex) {
-            MessageDialog.error(Translate.text("errorSavingPrefs", ex.getMessage() == null ? "" : ex.getMessage()));
+            MessageDialog.create().withOwner(this.getComponent()).error(Translate.text("errorSavingPrefs", ex.getMessage() == null ? "" : ex.getMessage()));
         }
     }
 
