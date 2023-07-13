@@ -14,6 +14,7 @@ package artofillusion.keystroke;
 import artofillusion.*;
 import artofillusion.script.*;
 import artofillusion.ui.*;
+import groovy.lang.Script;
 import java.awt.event.*;
 import java.io.*;
 import java.nio.file.Path;
@@ -40,7 +41,7 @@ public class KeystrokeManager {
      * Get a list of all defined KeystrokeRecords.
      */
     public static KeystrokeRecord[] getAllRecords() {
-        return records.toArray(new KeystrokeRecord[0]);
+        return records.toArray(KeystrokeRecord[]::new);
     }
 
     /**
@@ -97,11 +98,11 @@ public class KeystrokeManager {
             return;
         }
 
-        HashMap<String, Object> variables = new HashMap<>();
-        variables.put("window", window);
         for (KeystrokeRecord record : list) {
             if (record.getModifiers() == event.getModifiers()) {
-                ScriptRunner.executeScript(record.getLanguage(), record.getScript(), variables);
+                Script script = ArtOfIllusion.getShell().parse(record.getScript());
+                script.setProperty("window", window);
+                script.run();
                 event.consume();
             }
         }

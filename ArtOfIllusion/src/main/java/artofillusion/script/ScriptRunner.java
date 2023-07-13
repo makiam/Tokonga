@@ -55,7 +55,7 @@ public class ScriptRunner {
         for (Language l : Language.values()) {
             names.add(l.name);
         }
-        languageNames = names.toArray(new String[0]);
+        languageNames = names.toArray(String[]::new);
     }
 
     public static String[] getLanguageNames() {
