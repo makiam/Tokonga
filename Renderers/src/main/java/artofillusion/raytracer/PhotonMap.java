@@ -1,4 +1,5 @@
 /* Copyright (C) 2003-2013 by Peter Eastman
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -1015,55 +1016,7 @@ public class PhotonMap {
         }
     }
 
-    //TODO Delete unused method
-    private void validateTree(int pos) {
-        int child1 = 2 * pos + 1, child2 = 2 * pos + 2;
-        if (child1 < photon.length) {
-            validateLowerBranch(child1, photon[pos].axis, median(pos, photon[pos].axis));
-            validateTree(child1);
-        }
-        if (child2 < photon.length) {
-            validateUpperBranch(child2, photon[pos].axis, median(pos, photon[pos].axis));
-            validateTree(child2);
-        }
-    }
 
-    private void validateLowerBranch(int pos, int axis, float median) {
-        float value = median(pos, axis);
-        if (value > median) {
-            System.out.println("error!");
-        }
-        int child1 = 2 * pos + 1, child2 = 2 * pos + 2;
-        if (child1 < photon.length) {
-            validateLowerBranch(child1, axis, median);
-        }
-        if (child2 < photon.length) {
-            validateLowerBranch(child2, axis, median);
-        }
-    }
 
-    private void validateUpperBranch(int pos, int axis, float median) {
-        float value = median(pos, axis);
-        if (value < median) {
-            System.out.println("error!");
-        }
-        int child1 = 2 * pos + 1, child2 = 2 * pos + 2;
-        if (child1 < photon.length) {
-            validateUpperBranch(child1, axis, median);
-        }
-        if (child2 < photon.length) {
-            validateUpperBranch(child2, axis, median);
-        }
-    }
 
-    private float median(int index, int axis) {
-        switch (axis) {
-            case 0:
-                return photon[index].x;
-            case 1:
-                return photon[index].y;
-            default:
-                return photon[index].z;
-        }
-    }
 }
