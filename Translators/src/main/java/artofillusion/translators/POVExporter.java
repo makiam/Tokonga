@@ -19,19 +19,19 @@ import artofillusion.ui.*;
 import buoy.widget.*;
 import java.io.*;
 import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * POVExporter contains the actual routines for exporting POV files.
  */
+@Slf4j
 public class POVExporter {
 
-    static final boolean DEBUG = false;
     static final int DIRECTIONAL_LIGHT_DISTANCE = 10000;   // for directional light simulating
     static final int MAXIMAL_LIGHT_FADE_DISTANCE = 10000;  // = decay rate is set to zero
     static final int TIGHTNESS = 10;  // = decay rate for the spotlight
     static final char CHAR_REPLACE = '_';
     static final String TEXTURE_NAME_PREFIX = "AOI";  //  prefix of the texture declaration for povray files
-    static final char REPLACEMENT_CHARACTER = '_';   // replacement for non allowed characters in names
     static final String FIX_SEPARATOR = ".";   // The separator in file names of suffices and prefices
 
     static String exportFileName = "Untitled";
@@ -80,8 +80,7 @@ public class POVExporter {
         ArtOfIllusion.setCurrentDirectory(fc.getDirectory().getAbsolutePath());
 
         // Check whether file/s exist/s
-        File f = null;
-        f = new File(path, exportFileName + suffix);
+        File f = new File(path, exportFileName + suffix);
         if (f.exists()) {
             //overwrite dialog
             String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
@@ -280,9 +279,7 @@ public class POVExporter {
         if (tex.getID() == 1) {
             texName = cleanName(obj.getName());
         }
-        if (DEBUG) {
-            System.err.println("Texture " + tex.getName() + ":\t" + tex.getID());
-        }
+        log.atDebug().log("Texture: {}: {}", tex.getName(), tex.getID());
 
         write("#declare " + TEXTURE_NAME_PREFIX + texName + " = ", out, 0);
         write("texture {", out, indent);
@@ -336,13 +333,10 @@ public class POVExporter {
             write(right, out, 1);
             write(angle, out, 1);
             write("}", out, 0);
-            if (DEBUG) {
-                System.err.println("Camera:");
-                System.err.println("// Standort:\t" + orig.toString());
-                System.err.println("// Blickrichtung:\t" + coords.getZDirection().toString());
-                System.err.println("// Up-Richtung:\t" + coords.getUpDirection().toString());
-                System.err.println("// Right (for aspect ratio):\t" + coords.getUpDirection().cross(coords.getZDirection()).times(1.33).toString());
-            }
+
+            log.debug("Camera: Standort: {} Blickrichtung: {} Up-Richtung: {} Right (for aspect ratio): {}", orig.toString(), coords.getZDirection(), coords.getUpDirection(),
+                    coords.getUpDirection().cross(coords.getZDirection()).times(1.33).toString());
+
             write("", out, 0);
         } // Light setting
         // in extra loop for having it at the beginning of the povray file
@@ -368,12 +362,9 @@ public class POVExporter {
             write("point_at " + getVec3String(new Vec3(0, 0, 0)), out, 1);
             write("}", out, 0);
             write("", out, 0);
-            if (DEBUG) {
-                System.err.println("// Directional Light source");
-                System.err.println("// --> point light:");
-                System.err.println("// Position:\t" + zdir.toString());
-                System.err.println("// Color:\t" + color.toString());
-            }
+
+            log.debug("Directional Light source --> point light: Position: {}  Color: {}",  zdir, color);
+
         } else if (obj.getObject() instanceof PointLight) {
             write("// Point light", out, 0);
             write("// decay is different than in Art Of Illusion", out, 0);
@@ -406,13 +397,9 @@ public class POVExporter {
             write("fade_power " + fadePower, out, 1);
             write("}", out, 0);
             write("", out, 0);
-            if (DEBUG) {
-                System.err.println("// Point Light source");
-                System.err.println("// --> point light:");
-                System.err.println("// Position:\t" + orig.toString());
-                System.err.println("// FadeDistance:\t" + fadeDistance);
-                System.err.println("// FadePower:\t" + fadePower);
-            }
+
+            log.debug("Point Light source --> point light: Position: {} FadeDistance: {} FadePower:", orig, fadeDistance, fadePower);
+
         } else if (obj.getObject() instanceof SpotLight) {
             write("// Spot light", out, 0);
             write("// the spot light source has actually no \"radius\"", out, 0);
@@ -457,21 +444,10 @@ public class POVExporter {
             write("fade_power " + fadePower, out, 1);
             write("}", out, 0);
             write("", out, 0);
-            if (DEBUG) {
-                System.err.println("// Spotlight source");
-                System.err.println("// --> spot light:");
-                System.err.println("// Position:\t" + orig.toString());
-                System.err.println("// Point at:\t" + pointat.toString());
-                System.err.println("// Color:\t" + color.toString());
-                System.err.println("// Radius:\t" + radius);
-                System.err.println("// Falloff:\t" + falloff);
-                System.err.println("// Tightness:\t" + TIGHTNESS);
-                if (light.getType() != Light.TYPE_NORMAL) {
-                    System.err.println("shadowless");
-                }
-                System.err.println("// FadeDistance:\t" + fadeDistance);
-                System.err.println("// FadePower:\t" + fadePower);
-            }
+
+            log.debug("Spotlight source --> spot light: Position: {} Point at: {} Color {} Radius {} Falloff {} Tightness {} {} Fade Distance {} Fade Power"
+                    , orig,  pointat, color, radius, falloff, TIGHTNESS, (light.getType() != Light.TYPE_NORMAL ? "shadowless" : ""), fadeDistance, fadePower);
+            
         } // Cube setting
         else if (obj.getObject() instanceof Cube) {
             write("// Cube settings", out, 0);
@@ -492,14 +468,9 @@ public class POVExporter {
             write("texture { " + TEXTURE_NAME_PREFIX + texName + " }", out, 1);
             write("}", out, 0);
             write("", out, 0);
-            if (DEBUG) {
-                System.err.println("Box:");
-                System.err.println("Mittelpunkt:" + orig.toString());
-                System.err.println("Größe:" + size.times(2.0).toString());
-                System.err.println("Eckpunkte:\t(lu): " + getVec3String(orig.minus(size)));
-                System.err.println("          \t(ro): " + getVec3String(orig.plus(size)));
-                System.err.println();
-            }
+
+            log.debug("Box: Mittelpunkt: {} Größe: {}  Eckpunkte: {}(lu) {}(ro)", orig, size.times(2.0), getVec3String(orig.minus(size)), getVec3String(orig.plus(size)));
+
         } //  sphere and ellipse setting
         // (only for testing purposes in an extra loop)
         else if (obj.getObject() instanceof Sphere) {
@@ -522,16 +493,10 @@ public class POVExporter {
             write("texture { " + TEXTURE_NAME_PREFIX + texName + " }", out, 1);
             write("}", out, 0);
             write("", out, 0);
-            if (DEBUG) {
-                double[] rot = coords.getRotationAngles();
-                System.err.println("Sphere:");
-                System.err.println("// Mittelpunkt:\t" + orig.toString());
-                System.err.println("// Größe:\t" + size.times(2.0).toString());
-                System.err.println("// Rotation (x-axis):\t" + rot[0]);
-                System.err.println("//          (y-axis):\t" + rot[1]);
-                System.err.println("//          (z-axis):\t" + rot[2]);
-                System.err.println();
-            }
+
+            double[] rot = coords.getRotationAngles();
+            log.debug("Sphere: Mittelpunkt: {} Größe: {}. Rotation: {} {} {}", orig, size.times(2.0), rot[0], rot[1], rot[2]);
+
         } // cylinder setting
         // will be transkripted to a cone object
         // (only for testing purposes in an extra loop)
@@ -557,16 +522,10 @@ public class POVExporter {
             write("texture { " + TEXTURE_NAME_PREFIX + texName + " }", out, 1);
             write("}", out, 0);
             write("", out, 0);
-            if (DEBUG) {
-                double[] rot = coords.getRotationAngles();
-                System.err.println("Cone:");
-                System.err.println("// Mittelpunkt:\t" + orig.toString());
-                System.err.println("// Größe:\t" + size.times(2.0).toString());
-                System.err.println("// Rotation (x-axis):\t" + rot[0]);
-                System.err.println("//          (y-axis):\t" + rot[1]);
-                System.err.println("//          (z-axis):\t" + rot[2]);
-                System.err.println();
-            }
+
+            double[] rot = coords.getRotationAngles();
+            log.debug("Cone: Mittelpunkt: {} Größe: {}. Rotation: {} {} {}", orig, size.times(2.0), rot[0], rot[1], rot[2]);
+
         } // Mesh for not smoothed triangle meshes
         // (only for testing purposes in an extra loop)
         else if ((obj.getObject() instanceof TriangleMesh) && (!smooth)) {
@@ -610,12 +569,9 @@ public class POVExporter {
             write("translate " + getVec3String(orig), out, 1);
             write("}", out, 0);
             write("", out, 0);
-            if (DEBUG) {
-                System.err.println("Mesh");
-                System.err.println("Name:\t" + info.getName());
-                System.err.println("Mittelpunkt:\t" + orig.toString());
-                System.err.println();
-            }
+
+            log.debug("Mesh name: {} Mittelpunkt {}",  info.getName(), orig);
+
         } // if it is a grouping object
         else if ((obj.getObject()) instanceof ObjectCollection) {
             Enumeration<ObjectInfo> objects = ((ObjectCollection) obj.getObject()).getObjects(obj, false, theScene);
@@ -687,12 +643,8 @@ public class POVExporter {
                 write("translate " + getVec3String(orig), out, 1);
                 write("}", out, 0);
                 write("", out, 0);
-                if (DEBUG) {
-                    System.err.println("Mesh");
-                    System.err.println("Name:\t" + info.getName());
-                    System.err.println("Mittelpunkt:\t" + orig.toString());
-                    System.err.println();
-                }
+
+                log.debug("Mesh name: {} Mittelpunkt {}",  info.getName(), orig);
             }
             write("", out, 0);
         }
