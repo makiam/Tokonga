@@ -147,14 +147,14 @@ public class KeystrokeManager {
         for (int i = 0; i < keystrokes.getLength(); i++) {
             Node keystroke = keystrokes.item(i);
             String name = keystroke.getAttributes().getNamedItem("name").getNodeValue();
-            String language = (keystroke.getAttributes().getNamedItem("language") == null ? ScriptRunner.Language.BEANSHELL.name : keystroke.getAttributes().getNamedItem("language").getNodeValue());
+            
             int code = Integer.parseInt(keystroke.getAttributes().getNamedItem("code").getNodeValue());
             int modifiers = Integer.parseInt(keystroke.getAttributes().getNamedItem("modifiers").getNodeValue());
             String script = keystroke.getFirstChild().getNodeValue();
             if (existing.containsKey(name)) {
                 records.remove(existing.get(name));
             }
-            addRecord(new KeystrokeRecord(code, modifiers, name, script, language));
+            addRecord(new KeystrokeRecord(code, modifiers, name, script));
         }
     }
 
@@ -172,7 +172,7 @@ public class KeystrokeManager {
         for (KeystrokeRecord record : records) {
             Element recordElement = doc.createElement("keystroke");
             recordElement.setAttribute("name", record.getName());
-            recordElement.setAttribute("language", record.getLanguage());
+            
             recordElement.setAttribute("code", Integer.toString(record.getKeyCode()));
             recordElement.setAttribute("modifiers", Integer.toString(record.getModifiers()));
             Text scriptElement = doc.createTextNode(record.getScript());
