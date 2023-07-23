@@ -12,7 +12,6 @@
 package artofillusion.keystroke;
 
 import artofillusion.*;
-import artofillusion.script.*;
 import artofillusion.ui.*;
 import groovy.lang.Script;
 import java.awt.event.*;
@@ -24,6 +23,7 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
 import lombok.extern.slf4j.Slf4j;
+import org.codehaus.groovy.control.CompilationFailedException;
 import org.w3c.dom.*;
 
 /**
@@ -100,9 +100,13 @@ public class KeystrokeManager {
 
         for (KeystrokeRecord record : list) {
             if (record.getModifiers() == event.getModifiers()) {
-                Script script = ArtOfIllusion.getShell().parse(record.getScript());
-                script.setProperty("window", window);
-                script.run();
+                try {
+                    Script script = ArtOfIllusion.getShell().parse(record.getScript());
+                    script.setProperty("window", window);
+                    script.run();
+                } catch (CompilationFailedException ee) {
+                    log.atError().setCause(ee).log("Keystroke exception: {}", ee.getMessage());
+                }
                 event.consume();
             }
         }

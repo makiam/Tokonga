@@ -107,7 +107,7 @@ public class KeystrokePreferencesPanel extends FormContainer {
     private void editRecord() {
         int row = table.getSelectedRows()[0];
         KeystrokeRecord record = records.get(row);
-        KeystrokeRecord edited = KeystrokeEditor.showEditorDialog(record, UIUtilities.findWindow(this));
+        KeystrokeRecord edited = KeystrokeEditor.showEditor(record, UIUtilities.findWindow(this));
         if (edited == null) {
             return;
         }
@@ -122,7 +122,7 @@ public class KeystrokePreferencesPanel extends FormContainer {
     private void addRecord() {
         // Beanshell is the only supported language here
         KeystrokeRecord record = new KeystrokeRecord(0, 0, "", "");
-        KeystrokeRecord edited = KeystrokeEditor.showEditorDialog(record, UIUtilities.findWindow(this));
+        KeystrokeRecord edited = KeystrokeEditor.showEditor(record, UIUtilities.findWindow(this));
         if (edited == null) {
             return;
         }
