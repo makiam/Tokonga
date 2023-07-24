@@ -14,7 +14,7 @@
         window.selectTool( window.SEW_TOOL );</keystroke>
     <keystroke code="77" modifiers="0" name="Select Shape Tool (PolyMesh)">if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.selectTool( window.RESHAPE_TOOL );</keystroke>
-    <keystroke code="75" modifiers="1" name="Select Skeleton Tool (PolyMesh)">if (window instanceof PolyMeshEditorWindow)
+    <keystroke code="75" modifiers="1" name="Select Skeleton Tool (PolyMesh)">if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.selectTool( window.SKELETON_TOOL );</keystroke>
     <keystroke code="81" modifiers="0" name="Select Skew Tool (PolyMesh)">if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.selectTool( window.SKEW_TOOL );</keystroke>
