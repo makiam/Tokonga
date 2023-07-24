@@ -162,6 +162,8 @@ class KeystrokeEditor extends javax.swing.JDialog {
         scriptNameLabel.setLabelFor(scriptNameText);
         scriptNameLabel.setText(Translate.text("Name"));
 
+        textScroll.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+
         javax.swing.GroupLayout scriptPanelLayout = new javax.swing.GroupLayout(scriptPanel);
         scriptPanel.setLayout(scriptPanelLayout);
         scriptPanelLayout.setHorizontalGroup(
@@ -176,7 +178,7 @@ class KeystrokeEditor extends javax.swing.JDialog {
                             .addComponent(scriptNameLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(scriptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(scriptNameText, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
+                            .addComponent(scriptNameText, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
                             .addComponent(scriptCode))))
                 .addContainerGap())
         );
@@ -201,7 +203,7 @@ class KeystrokeEditor extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(325, Short.MAX_VALUE)
+                .addContainerGap(347, Short.MAX_VALUE)
                 .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cancelButton)
@@ -246,7 +248,6 @@ class KeystrokeEditor extends javax.swing.JDialog {
     private void scriptCodeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_scriptCodeKeyPressed
         int code = evt.getKeyCode();
         if(reserved.contains(code)) {
-            log.info("Reserved key pressed: " + code);
             return;
         }
         int modifiers = evt.getModifiers() & (KeyEvent.ALT_MASK + KeyEvent.SHIFT_MASK);

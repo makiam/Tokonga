@@ -27,7 +27,7 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
-              <EmptySpace pref="325" max="32767" attributes="0"/>
+              <EmptySpace pref="347" max="32767" attributes="0"/>
               <Component id="okButton" linkSize="1" min="-2" pref="67" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="cancelButton" linkSize="1" min="-2" max="-2" attributes="0"/>
@@ -97,7 +97,7 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="scriptNameText" pref="449" max="32767" attributes="0"/>
+                              <Component id="scriptNameText" pref="471" max="32767" attributes="0"/>
                               <Component id="scriptCode" max="32767" attributes="0"/>
                           </Group>
                       </Group>
@@ -174,6 +174,9 @@
           </AuxValues>
         </Component>
         <Container class="org.fife.ui.rtextarea.RTextScrollPane" name="textScroll">
+          <Properties>
+            <Property name="verticalScrollBarPolicy" type="int" value="20"/>
+          </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.fife.ui.rtextarea.RTextScrollPane(scriptTextArea);"/>
           </AuxValues>
