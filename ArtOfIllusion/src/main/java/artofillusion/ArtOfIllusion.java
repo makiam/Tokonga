@@ -116,7 +116,7 @@ public class ArtOfIllusion {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException ex) {
         }
-
+        
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
         ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
 
@@ -309,7 +309,7 @@ public class ArtOfIllusion {
      * Get a list of all open windows.
      */
     public static EditingWindow[] getWindows() {
-        return windows.toArray(new EditingWindow[0]);
+        return windows.toArray(EditingWindow[]::new);
     }
 
     /**
