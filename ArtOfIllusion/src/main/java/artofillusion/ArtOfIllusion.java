@@ -29,6 +29,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Function;
 import java.util.prefs.Preferences;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -480,7 +481,7 @@ public class ArtOfIllusion {
     }
 
     public static void showErrors(Map<String, Throwable> errors) {
-        java.util.function.Function<Map.Entry<String, Throwable>, String> tmss = (Map.Entry<String, Throwable> t) -> "Plugin: "
+        Function<Map.Entry<String, Throwable>, String> tmss = (Map.Entry<String, Throwable> t) -> "Plugin: "
                 + t + " throw: " + t.getValue().getMessage()
                 + " with" + Arrays.toString(t.getValue().getStackTrace());
         List<String> err = errors.entrySet().stream().map(tmss).collect(java.util.stream.Collectors.toList());
@@ -494,7 +495,7 @@ public class ArtOfIllusion {
         area.setLineWrap(true);
         area.setEditable(false);
         area.setWrapStyleWord(true);
-        MessageDialog.error(area);
+        MessageDialog.create().error(area);
     }
 
     /**

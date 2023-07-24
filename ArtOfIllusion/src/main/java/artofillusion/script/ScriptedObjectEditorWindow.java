@@ -113,7 +113,7 @@ public class ScriptedObjectEditorWindow extends BFrame {
                     }
                     in.close();
                     scriptWidget.getContent().setText(buf.toString());
-                } catch (Exception ex) {
+                } catch (IOException ex) {
                     new BStandardDialog(null, new String[]{Translate.text("errorReadingScript"),
                         ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(this);
                 }

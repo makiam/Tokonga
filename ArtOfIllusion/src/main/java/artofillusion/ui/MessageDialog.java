@@ -11,27 +11,51 @@
 
 package artofillusion.ui;
 
-import java.beans.PropertyChangeEvent;
+import java.awt.Component;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 public final class MessageDialog {
-    static {
-        artofillusion.ArtOfIllusion.getPreferences().addPropertyChangeListener(MessageDialog::onPropertyChange);
+
+    private Component owner;
+    private String title = null;
+
+    public static MessageDialog create() {
+        return new MessageDialog().withTitle("Art Of Illusion");
     }
+
+    public MessageDialog withTitle(String title) {
+        this.title = title;
+        return this;
+    }
+    public MessageDialog withOwner(Component owner) {
+        this.owner = owner;
+        return this;
+    }
+
+    private static final Icon icon;
+    static {
+        icon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("artofillusion/Icons/appIcon.png"));
+    }
+
     public static void message(String message) {
 
     }
-    public static void error(String message) {
-        error((Object)message);
+
+    public void error(String message) {
+        error((Object)Translate.text(message));
     }
 
-    public static void error(Object message) {
-        SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, message, "Art Of Illusion", JOptionPane.ERROR_MESSAGE));
+    public static void info(String message) {
+
     }
-    private static void onPropertyChange(PropertyChangeEvent event) {
-        if(event.getPropertyName().equals("language")) {
-            
-        }
+
+    public void info(Object message) {
+        JOptionPane.showMessageDialog(owner, message, title, JOptionPane.INFORMATION_MESSAGE, icon);
+    }
+
+    public void error(Object message) {
+        JOptionPane.showMessageDialog(owner, message, title, JOptionPane.ERROR_MESSAGE, icon);
     }
 }

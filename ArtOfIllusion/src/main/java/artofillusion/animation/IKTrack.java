@@ -57,9 +57,10 @@ public class IKTrack extends Track {
      * This method presents a window in which the user can edit the track.
      */
     @Override
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void edit(LayoutWindow win) {
         if (info.getSkeleton() == null) {
-            new BStandardDialog("", Translate.text("ikNotApplyWarning"), BStandardDialog.INFORMATION).showMessageDialog(win);
+            MessageDialog.info(Translate.text("ikNotApplyWarning"));
         } else {
             new Editor(win);
         }

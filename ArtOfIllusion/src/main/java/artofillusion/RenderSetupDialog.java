@@ -57,7 +57,7 @@ public class RenderSetupDialog {
         // Find all the cameras in the scene.
         cameras = theScene.getCameras();
         if (cameras.isEmpty()) {
-            new BStandardDialog("", Translate.text("noCameraError"), BStandardDialog.ERROR).showMessageDialog(parent);
+            MessageDialog.create().withOwner(parent.getComponent()).error(Translate.text("noCameraError"));
             return;
         }
         if (cameras.size() <= currentCamera) {
@@ -156,6 +156,7 @@ public class RenderSetupDialog {
     /**
      * Render a still image based on the current settings.
      */
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public static void renderImmediately(BFrame parent, Scene theScene) {
         // Load the last used settings if available
 
@@ -170,7 +171,7 @@ public class RenderSetupDialog {
         // Find the camera to render from or return if none are present.
         List<ObjectInfo> cameras = theScene.getCameras();
         if (cameras.isEmpty()) {
-            new BStandardDialog("", Translate.text("noCameraError"), BStandardDialog.ERROR).showMessageDialog(parent);
+            MessageDialog.create().withOwner(parent.getComponent()).error(Translate.text("noCameraError"));
             return;
         }
         if (cameras.size() <= currentCamera) {

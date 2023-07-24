@@ -78,7 +78,7 @@ public class KeystrokePreferencesPanel extends FormContainer {
         try {
             KeystrokeManager.saveRecords();
         } catch (Exception ex) {
-            new BStandardDialog("", Translate.text("errorSavingPrefs", ex.getMessage() == null ? "" : ex.getMessage()), BStandardDialog.ERROR).showMessageDialog(this);
+            MessageDialog.create().withOwner(this.getComponent()).error(Translate.text("errorSavingPrefs", ex.getMessage() == null ? "" : ex.getMessage()));
         }
     }
 

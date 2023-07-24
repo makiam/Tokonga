@@ -149,11 +149,11 @@ public class ParameterModule extends ProceduralModule {
         maxVal = maxField.getValue();
         defaultVal = defaultField.getValue();
         if (minVal > maxVal) {
-            new BStandardDialog("", Translate.text("minimumAboveMaxError"), BStandardDialog.ERROR).showMessageDialog(editor.getParentFrame());
+            MessageDialog.create().withOwner(editor.getParentFrame().getComponent()).error("minimumAboveMaxError");
             return edit(editor, theScene);
         }
         if (minVal > defaultVal || maxVal < defaultVal) {
-            new BStandardDialog("", Translate.text("defaultOutOfRangeError"), BStandardDialog.ERROR).showMessageDialog(editor.getParentFrame());
+            MessageDialog.create().withOwner(editor.getParentFrame().getComponent()).error("defaultOutOfRangeError");
             return edit(editor, theScene);
         }
         layout();
