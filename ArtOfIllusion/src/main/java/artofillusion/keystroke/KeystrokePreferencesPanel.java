@@ -11,24 +11,24 @@
 
 package artofillusion.keystroke;
 
-import artofillusion.script.*;
 import buoy.widget.*;
 import buoy.event.*;
 
 import javax.swing.table.*;
 import java.awt.event.*;
-import java.awt.*;
+
 import java.util.*;
 import java.text.*;
 
 import artofillusion.ui.*;
+import java.awt.Dimension;
 
 /**
  * This class presents a user interface for editing the list of KeystrokeRecords.
  */
 public class KeystrokePreferencesPanel extends FormContainer {
 
-    private final ArrayList<KeystrokeRecord> records;
+    private final List<KeystrokeRecord> records;
     private final BTable table;
     private final BButton editButton;
     private final BButton deleteButton;
@@ -39,9 +39,7 @@ public class KeystrokePreferencesPanel extends FormContainer {
         super(new double[]{1}, new double[]{1, 0});
         KeystrokeRecord[] allRecords = KeystrokeManager.getAllRecords();
         records = new ArrayList<>(allRecords.length);
-        for (int i = 0; i < allRecords.length; i++) {
-            records.add(allRecords[i]);
-        }
+        records.addAll(Arrays.asList(allRecords));
         table = new BTable(new KeystrokeTableModel());
         table.setColumnWidth(0, 100);
         table.setColumnWidth(1, 250);
@@ -63,8 +61,8 @@ public class KeystrokePreferencesPanel extends FormContainer {
         RowContainer buttons = new RowContainer();
         add(buttons, 0, 1, new LayoutInfo());
         buttons.add(editButton = Translate.button("edit", "...", this, "editRecord"));
-        BButton addButton;
-        buttons.add(addButton = Translate.button("add", "...", this, "addRecord"));
+
+        buttons.add(Translate.button("add", "...", this, "addRecord"));
         buttons.add(deleteButton = Translate.button("delete", this, "deleteRecords"));
         selectionChanged();
     }
@@ -76,7 +74,7 @@ public class KeystrokePreferencesPanel extends FormContainer {
         if (!changed) {
             return;
         }
-        KeystrokeManager.setAllRecords(records.toArray(new KeystrokeRecord[records.size()]));
+        KeystrokeManager.setAllRecords(records.toArray(KeystrokeRecord[]::new));
         try {
             KeystrokeManager.saveRecords();
         } catch (Exception ex) {
@@ -109,7 +107,7 @@ public class KeystrokePreferencesPanel extends FormContainer {
     private void editRecord() {
         int row = table.getSelectedRows()[0];
         KeystrokeRecord record = records.get(row);
-        KeystrokeRecord edited = KeystrokeEditor.showEditorDialog(record, UIUtilities.findWindow(this));
+        KeystrokeRecord edited = KeystrokeEditor.showEditor(record, UIUtilities.findWindow(this));
         if (edited == null) {
             return;
         }
@@ -123,8 +121,8 @@ public class KeystrokePreferencesPanel extends FormContainer {
      */
     private void addRecord() {
         // Beanshell is the only supported language here
-        KeystrokeRecord record = new KeystrokeRecord(0, 0, "", "", ScriptRunner.Language.BEANSHELL.name);
-        KeystrokeRecord edited = KeystrokeEditor.showEditorDialog(record, UIUtilities.findWindow(this));
+        KeystrokeRecord record = new KeystrokeRecord(0, 0, "", "");
+        KeystrokeRecord edited = KeystrokeEditor.showEditor(record, UIUtilities.findWindow(this));
         if (edited == null) {
             return;
         }

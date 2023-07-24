@@ -12,8 +12,8 @@
 package artofillusion.keystroke;
 
 import artofillusion.*;
-import artofillusion.script.*;
 import artofillusion.ui.*;
+import groovy.lang.Script;
 import java.awt.event.*;
 import java.io.*;
 import java.nio.file.Path;
@@ -23,6 +23,7 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
 import lombok.extern.slf4j.Slf4j;
+import org.codehaus.groovy.control.CompilationFailedException;
 import org.w3c.dom.*;
 
 /**
@@ -40,7 +41,7 @@ public class KeystrokeManager {
      * Get a list of all defined KeystrokeRecords.
      */
     public static KeystrokeRecord[] getAllRecords() {
-        return records.toArray(new KeystrokeRecord[0]);
+        return records.toArray(KeystrokeRecord[]::new);
     }
 
     /**
@@ -97,11 +98,15 @@ public class KeystrokeManager {
             return;
         }
 
-        HashMap<String, Object> variables = new HashMap<>();
-        variables.put("window", window);
         for (KeystrokeRecord record : list) {
             if (record.getModifiers() == event.getModifiers()) {
-                ScriptRunner.executeScript(record.getLanguage(), record.getScript(), variables);
+                try {
+                    Script script = ArtOfIllusion.getShell().parse(record.getScript());
+                    script.setProperty("window", window);
+                    script.run();
+                } catch (CompilationFailedException ee) {
+                    log.atError().setCause(ee).log("Keystroke exception: {}", ee.getMessage());
+                }
                 event.consume();
             }
         }
@@ -146,14 +151,14 @@ public class KeystrokeManager {
         for (int i = 0; i < keystrokes.getLength(); i++) {
             Node keystroke = keystrokes.item(i);
             String name = keystroke.getAttributes().getNamedItem("name").getNodeValue();
-            String language = (keystroke.getAttributes().getNamedItem("language") == null ? ScriptRunner.Language.BEANSHELL.name : keystroke.getAttributes().getNamedItem("language").getNodeValue());
+            
             int code = Integer.parseInt(keystroke.getAttributes().getNamedItem("code").getNodeValue());
             int modifiers = Integer.parseInt(keystroke.getAttributes().getNamedItem("modifiers").getNodeValue());
             String script = keystroke.getFirstChild().getNodeValue();
             if (existing.containsKey(name)) {
                 records.remove(existing.get(name));
             }
-            addRecord(new KeystrokeRecord(code, modifiers, name, script, language));
+            addRecord(new KeystrokeRecord(code, modifiers, name, script));
         }
     }
 
@@ -171,7 +176,7 @@ public class KeystrokeManager {
         for (KeystrokeRecord record : records) {
             Element recordElement = doc.createElement("keystroke");
             recordElement.setAttribute("name", record.getName());
-            recordElement.setAttribute("language", record.getLanguage());
+            
             recordElement.setAttribute("code", Integer.toString(record.getKeyCode()));
             recordElement.setAttribute("modifiers", Integer.toString(record.getModifiers()));
             Text scriptElement = doc.createTextNode(record.getScript());

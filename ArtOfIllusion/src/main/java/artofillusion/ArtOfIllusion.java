@@ -22,6 +22,7 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import artofillusion.view.*;
 import buoy.widget.*;
+import groovy.lang.GroovyShell;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -34,6 +35,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.control.customizers.ImportCustomizer;
 
 /**
  * This is the main class for Art of Illusion. All of its methods and variables
@@ -42,6 +45,14 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class ArtOfIllusion {
+    private static final CompilerConfiguration config = new CompilerConfiguration();
+    static {
+        ImportCustomizer ic = new ImportCustomizer();
+        ic.addStarImports("artofillusion");
+        config.addCompilationCustomizers(ic);
+    }
+    @Getter
+    private static final GroovyShell shell = new GroovyShell(config);
 
     public static final String APP_DIRECTORY, PLUGIN_DIRECTORY;
     public static final String TOOL_SCRIPT_DIRECTORY, OBJECT_SCRIPT_DIRECTORY, STARTUP_SCRIPT_DIRECTORY;
@@ -105,7 +116,7 @@ public class ArtOfIllusion {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException ex) {
         }
-
+        
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
         ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
 
@@ -298,7 +309,7 @@ public class ArtOfIllusion {
      * Get a list of all open windows.
      */
     public static EditingWindow[] getWindows() {
-        return windows.toArray(new EditingWindow[0]);
+        return windows.toArray(EditingWindow[]::new);
     }
 
     /**

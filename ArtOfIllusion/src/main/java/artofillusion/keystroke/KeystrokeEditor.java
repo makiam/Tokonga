@@ -1,120 +1,274 @@
 /* Copyright (C) 2006-2013 by Peter Eastman
-   Changes copyright (C) 2020 by Maksim Khramov
-   Changes copyright (C) 2023 by Lucas Stanek
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful, but WITHOUT ANY 
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.keystroke;
 
-import buoy.widget.*;
-import buoy.event.*;
-import artofillusion.ui.*;
-import artofillusion.script.*;
-
-import java.awt.*;
-import java.awt.event.*;
+import artofillusion.script.ScriptEditingWidget;
+import artofillusion.ui.Translate;
+import buoy.widget.WindowWidget;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.util.Set;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
+import lombok.extern.slf4j.Slf4j;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rsyntaxtextarea.Theme;
 
 /**
- * This class presents a user interface for editing a single KeystrokeRecord. To use it, invoke
- * the static editKeystroke() method.
+ *
+ * @author MaksK
  */
-public class KeystrokeEditor extends BDialog {
+@Slf4j
+class KeystrokeEditor extends javax.swing.JDialog {
 
-    private final BTextField keyField;
-    private final BTextField nameField;
-    private final BComboBox languageChoice;
+    private static final Set<Integer> reserved = Set.of(KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP,
+                                                        KeyEvent.VK_DOWN, KeyEvent.VK_ESCAPE, KeyEvent.VK_TAB,
+                                                        KeyEvent.VK_SHIFT, KeyEvent.VK_ALT, KeyEvent.VK_CONTROL, KeyEvent.VK_META);
 
-    private final ScriptEditingWidget scriptWidget;
-    private final BButton okButton;
-    private KeystrokeRecord record;
 
-    private static final int[] RESERVED_CODES = new int[]{
-        KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_DOWN,
-        KeyEvent.VK_ENTER, KeyEvent.VK_ESCAPE, KeyEvent.VK_TAB, KeyEvent.VK_SHIFT,
-        KeyEvent.VK_ALT, KeyEvent.VK_CONTROL, KeyEvent.VK_META
-    };
+    static KeystrokeRecord showEditor(final KeystrokeRecord record, WindowWidget owner) {
+        var dialog = new KeystrokeEditor(record);
+        dialog.setVisible(true);        
+        if(dialog.getReturnStatus() == RET_CANCEL) return null;
+        return new KeystrokeRecord(dialog.recordCode, dialog.recordCodeModifiers, dialog.scriptNameText.getText(), dialog.scriptTextArea.getText());
+    }
+
+    private final RSyntaxTextArea scriptTextArea;
+    /**
+     * A return status code - returned if Cancel button has been pressed
+     */
+    public static final int RET_CANCEL = 0;
+    /**
+     * A return status code - returned if OK button has been pressed
+     */
+    public static final int RET_OK = 1;
+
+
+    private int recordCode;
+    private int recordCodeModifiers;
+    private String scriptName;
+
+    private KeystrokeEditor(KeystrokeRecord record) {
+        super((Frame)null, true);
+        this.recordCode = record.getKeyCode();
+        this.recordCodeModifiers = record.getModifiers();
+        this.scriptName = record.getName();
+        scriptTextArea = new RSyntaxTextArea(20, 60);
+
+        try {
+            Theme theme = Theme.load(ScriptEditingWidget.class.getResourceAsStream("/scriptEditorTheme.xml"));
+            theme.apply(scriptTextArea);
+        } catch (IOException ex) {
+            //shouldn't happen unless we are pointing at a non-existant file
+            log.atError().setCause(ex).log("Unable to load Editor theme: {}", ex.getMessage());
+        }
+
+        scriptTextArea.setCodeFoldingEnabled(true);
+        scriptTextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_GROOVY);
+        scriptTextArea.setText(record.getScript());
+        initComponents();
+
+        // Close the dialog when Esc is pressed
+        String cancelName = "cancel";
+        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+        ActionMap actionMap = getRootPane().getActionMap();
+        actionMap.put(cancelName, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                doClose(RET_CANCEL);
+            }
+        });
+    }
 
     /**
-     * Display a dialog for editing a KeystrokeRecord.
-     *
-     * @param record the record to be edited
-     * @param parent the parent window
-     * @return a new KeystrokeRecord representing the edited keystroke, or null if the user
-     * clicked Cancel.
+     * @return the return status of this dialog - one of RET_OK or RET_CANCEL
      */
-    public static KeystrokeRecord showEditorDialog(KeystrokeRecord record, WindowWidget parent) {
-        KeystrokeEditor editor = new KeystrokeEditor(record, parent);
-        editor.setVisible(true);
-        return editor.record;
+    public int getReturnStatus() {
+        return returnStatus;
     }
 
-    private KeystrokeEditor(KeystrokeRecord record, WindowWidget parent) {
-        super(parent, true);
-        FormContainer content = new FormContainer(new double[]{0, 1}, new double[]{0, 0, 0, 0, 1, 0});
-        setContent(content);
-        this.record = record.duplicate();
-        keyField = new BTextField(KeystrokePreferencesPanel.getKeyDescription(record.getKeyCode(), record.getModifiers()));
-        keyField.setEditable(false);
-        keyField.addEventLink(KeyPressedEvent.class, this, "setKey");
-        nameField = new BTextField(record.getName());
-        languageChoice = new BComboBox(ScriptRunner.getLanguageNames());
-        languageChoice.setSelectedValue(record.getLanguage());
+    /**
+     * This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
 
-        scriptWidget = new ScriptEditingWidget(record.getScript());
-        scriptWidget.setLanguage(record.getLanguage());
+        okButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
+        javax.swing.JPanel scriptPanel = new javax.swing.JPanel();
+        javax.swing.JLabel scriptCodeLabel = new javax.swing.JLabel();
+        scriptCode = new javax.swing.JTextField();
+        scriptNameText = new javax.swing.JTextField();
+        javax.swing.JLabel scriptNameLabel = new javax.swing.JLabel();
+        textScroll = new org.fife.ui.rtextarea.RTextScrollPane(scriptTextArea);
 
-        LayoutInfo rightLayout = new LayoutInfo(LayoutInfo.EAST, LayoutInfo.NONE);
-        LayoutInfo fillLayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(2, 2, 2, 2), null);
-        content.add(Translate.label("Key"), 0, 0, rightLayout);
-        content.add(Translate.label("Name"), 0, 1, rightLayout);
-        content.add(Translate.label("language"), 0, 2, rightLayout);
-        content.add(keyField, 1, 0, fillLayout);
-        content.add(nameField, 1, 1, fillLayout);
-        content.add(languageChoice, 1, 2, new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE));
-        content.add(Translate.label("Script"), 0, 3, 2, 1, new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE, null, null));
-        content.add(scriptWidget, 0, 4, 2, 1, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH));
-        RowContainer buttons = new RowContainer();
-        content.add(buttons, 0, 5, 2, 1);
-        okButton = Translate.button("ok", this, "clickedOk");
-        buttons.add(okButton);
-        buttons.add(Translate.button("cancel", this, "clickedCancel"));
-        enableOkButton();
-        pack();
-    }
-
-    private void clickedOk() {
-        record.setName(nameField.getText());
-        record.setLanguage(languageChoice.getSelectedValue().toString());
-        record.setScript(scriptWidget.getContent().getText());
-        dispose();
-    }
-
-    private void clickedCancel() {
-        record = null;
-        dispose();
-    }
-
-    private void enableOkButton() {
-        okButton.setEnabled(record.getKeyCode() != 0);
-    }
-
-    private void setKey(KeyPressedEvent ev) {
-        int code = ev.getKeyCode();
-        for (int i = 0; i < RESERVED_CODES.length; i++) {
-            if (code == RESERVED_CODES[i]) {
-                return;
+        setTitle("Edit Keyboard Script");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                closeDialog(evt);
             }
+        });
+
+        okButton.setText(Translate.text("OK")
+        );
+        okButton.setActionCommand(Translate.text("button.ok")
+        );
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
+
+        cancelButton.setText(Translate.text("button.cancel"));
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
+
+        scriptCodeLabel.setLabelFor(scriptCode);
+        scriptCodeLabel.setText(Translate.text("Key"));
+
+        scriptCode.setEditable(false);
+        scriptCode.setText(KeystrokePreferencesPanel.getKeyDescription(recordCode, recordCodeModifiers));
+        scriptCode.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                scriptCodeKeyPressed(evt);
+            }
+        });
+
+        scriptNameText.setText(scriptName);
+
+        scriptNameLabel.setLabelFor(scriptNameText);
+        scriptNameLabel.setText(Translate.text("Name"));
+
+        textScroll.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+        javax.swing.GroupLayout scriptPanelLayout = new javax.swing.GroupLayout(scriptPanel);
+        scriptPanel.setLayout(scriptPanelLayout);
+        scriptPanelLayout.setHorizontalGroup(
+            scriptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, scriptPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(scriptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(textScroll, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, scriptPanelLayout.createSequentialGroup()
+                        .addGroup(scriptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(scriptCodeLabel)
+                            .addComponent(scriptNameLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(scriptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(scriptNameText, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
+                            .addComponent(scriptCode))))
+                .addContainerGap())
+        );
+        scriptPanelLayout.setVerticalGroup(
+            scriptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(scriptPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(scriptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(scriptCodeLabel)
+                    .addComponent(scriptCode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(scriptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(scriptNameText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(scriptNameLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(textScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(347, Short.MAX_VALUE)
+                .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cancelButton)
+                .addContainerGap())
+            .addComponent(scriptPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
+
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(scriptPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cancelButton)
+                    .addComponent(okButton))
+                .addContainerGap())
+        );
+
+        getRootPane().setDefaultButton(okButton);
+
+        pack();
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        doClose(RET_OK);
+    }//GEN-LAST:event_okButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        doClose(RET_CANCEL);
+    }//GEN-LAST:event_cancelButtonActionPerformed
+
+    /**
+     * Closes the dialog
+     */
+    private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
+        doClose(RET_CANCEL);
+    }//GEN-LAST:event_closeDialog
+
+    private void scriptCodeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_scriptCodeKeyPressed
+        int code = evt.getKeyCode();
+        if(reserved.contains(code)) {
+            return;
         }
-        int modifiers = ev.getModifiers() & (KeyEvent.ALT_MASK + KeyEvent.SHIFT_MASK);
-        record.setKeyCode(code);
-        record.setModifiers(modifiers);
-        keyField.setText(KeystrokePreferencesPanel.getKeyDescription(code, modifiers));
-        enableOkButton();
+        int modifiers = evt.getModifiers() & (KeyEvent.ALT_MASK + KeyEvent.SHIFT_MASK);
+        this.scriptCode.setText(KeystrokePreferencesPanel.getKeyDescription(code, modifiers));
+        this.recordCode = code;
+        this.recordCodeModifiers = modifiers;
+    }//GEN-LAST:event_scriptCodeKeyPressed
+
+    private void doClose(int retStatus) {
+        returnStatus = retStatus;
+        setVisible(false);
+        dispose();
     }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cancelButton;
+    private javax.swing.JButton okButton;
+    private javax.swing.JTextField scriptCode;
+    private javax.swing.JTextField scriptNameText;
+    private org.fife.ui.rtextarea.RTextScrollPane textScroll;
+    // End of variables declaration//GEN-END:variables
+
+    private int returnStatus = RET_CANCEL;
 }
