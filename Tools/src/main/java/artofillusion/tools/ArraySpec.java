@@ -167,10 +167,10 @@ public class ArraySpec {
 
         // set list of object to copy (all selected objects)
         Scene scene = window.getScene();
-        int[] selection = window.getSelectedIndices();
+
         objectList = new Vector<>();         // list of objectInfo's
-        for (int sel = 0; sel < selection.length; sel++) {
-            ObjectInfo info = scene.getObject(selection[sel]);
+        for (int sel: window.getSelectedIndices()) {
+            ObjectInfo info = scene.getObject(sel);
             objectList.add(info);
         }
 
