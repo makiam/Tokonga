@@ -87,17 +87,8 @@ public class ScriptedObject extends ObjectCollection {
             try {
                 parsedScript = ScriptRunner.parseObjectScript(language, script);
             } catch (final Exception ex) {
-                EventQueue.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        ScriptRunner.displayError(language, ex);
-                    }
-                });
-                parsedScript = new ObjectScript() {
-                    @Override
-                    public void execute(ScriptedObjectController script) {
-                    }
-                };
+                EventQueue.invokeLater(() -> ScriptRunner.displayError(language, ex));
+                parsedScript = (ScriptedObjectController script1) -> {};
             }
         }
         return parsedScript;
@@ -324,6 +315,7 @@ public class ScriptedObject extends ObjectCollection {
      * Allow the user to edit the script.
      */
     @Override
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void edit(EditingWindow parent, ObjectInfo info, Runnable cb) {
         new ScriptedObjectEditorWindow(parent, info, cb);
     }
@@ -342,6 +334,7 @@ public class ScriptedObject extends ObjectCollection {
         if (version > 0) {
             language = in.readUTF();
         }
+        if(null == language || language.isEmpty()) language = "Groovy";
         short numParams = in.readShort();
         paramName = new String[numParams];
         paramValue = new double[numParams];
