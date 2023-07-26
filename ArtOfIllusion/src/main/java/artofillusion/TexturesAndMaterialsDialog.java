@@ -47,16 +47,16 @@ public class TexturesAndMaterialsDialog extends BDialog {
     SceneTreeNode selectedSceneNode;
     int insertLocation;
     BButton duplicateButton, deleteButton, editButton;
-    BButton loadLibButton, saveLibButton, deleteLibButton, newFileButton, includeFileButton, closeButton;
+    BButton loadLibButton, saveLibButton, deleteLibButton;
     BComboBox typeChoice;
-    BRadioButton showTexturesButton, showMaterialsButton, showBothButton;
+    BRadioButton showTexturesButton, showMaterialsButton;
     final List<Texture> textureTypes = PluginRegistry.getPlugins(Texture.class);
     final List<Material> materialTypes = PluginRegistry.getPlugins(Material.class);
-    MaterialPreviewer matPre;
+    MaterialPreviewer preview;
     BLabel matInfo;
 
     private boolean showTextures, showMaterials;
-    private final ArrayList<Object> rootNodes;
+    private final List<Object> rootNodes;
 
     private static final DataFlavor TextureFlavor = new DataFlavor(Texture.class, "Texture");
     private static final DataFlavor MaterialFlavor = new DataFlavor(Material.class, "Material");
@@ -114,7 +114,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
         RadioButtonGroup group = new RadioButtonGroup();
         leftPanel.add(showTexturesButton = new BRadioButton(Translate.text("showTextures"), false, group), 0, 1);
         leftPanel.add(showMaterialsButton = new BRadioButton(Translate.text("showMaterials"), false, group), 0, 2);
-        leftPanel.add(showBothButton = new BRadioButton(Translate.text("showBoth"), true, group), 0, 3);
+        leftPanel.add(new BRadioButton(Translate.text("showBoth"), true, group), 0, 3);
         group.addEventLink(SelectionChangedEvent.class, this, "filterChanged");
         content.add(leftPanel, BorderContainer.WEST);
 
@@ -122,8 +122,8 @@ public class TexturesAndMaterialsDialog extends BDialog {
         BorderContainer matBox = new BorderContainer();
 
         Texture tx0 = theScene.getTexture(0); // initial texture
-        matPre = new MaterialPreviewer(tx0, null, 300, 300); // size to be determined
-        matBox.add(matPre, BorderContainer.CENTER); // preview must be in the center part to be resizeable
+        preview = new MaterialPreviewer(tx0, null, 300, 300); // size to be determined
+        matBox.add(preview, BorderContainer.CENTER); // preview must be in the center part to be resizeable
 
         ColumnContainer infoBox = new ColumnContainer();
 
@@ -163,17 +163,17 @@ public class TexturesAndMaterialsDialog extends BDialog {
         buttons.add(loadLibButton = Translate.button("loadFromLibrary", this, "doLoadFromLibrary"));
         buttons.add(saveLibButton = Translate.button("saveToLibrary", this, "doSaveToLibrary"));
         buttons.add(deleteLibButton = Translate.button("deleteFromLibrary", this, "doDeleteFromLibrary"));
-        buttons.add(newFileButton = Translate.button("newLibraryFile", this, "doNewLib"));
-        buttons.add(includeFileButton = Translate.button("showExternalFile", this, "doIncludeLib"));
+        buttons.add(Translate.button("newLibraryFile", this, "doNewLib"));
+        buttons.add(Translate.button("showExternalFile", this, "doIncludeLib"));
 
         buttons.add(new BSeparator());
 
-        buttons.add(closeButton = Translate.button("close", this, "dispose"));
+        buttons.add(Translate.button("close", this, "dispose"));
 
         hilightButtons();
 
         addEventLink(WindowClosingEvent.class, this, "dispose");
-        rootNodes = new ArrayList<Object>();
+        rootNodes = new ArrayList<>();
         showTextures = true;
         showMaterials = true;
         rootNodes.add(new SceneTreeNode(null, theScene));
@@ -209,18 +209,18 @@ public class TexturesAndMaterialsDialog extends BDialog {
                 if (node instanceof TextureTreeNode) {
                     selectedTexture = selectedScene.getTexture(((TextureTreeNode) node).index);
                     if (selectedTexture != oldTexture) {
-                        matPre.setTexture(selectedTexture, selectedTexture.getDefaultMapping(matPre.getObject().getObject()));
-                        matPre.setMaterial(null, null);
-                        matPre.render();
+                        preview.setTexture(selectedTexture, selectedTexture.getDefaultMapping(preview.getObject().getObject()));
+                        preview.setMaterial(null, null);
+                        preview.render();
                         setInfoText(Translate.text("textureName") + " " + selectedTexture.getName(), Translate.text("textureType") + " " + selectedTexture.getTypeName());
                     }
                 } else {
                     selectedMaterial = selectedScene.getMaterial(((MaterialTreeNode) node).index);
                     if (selectedMaterial != oldMaterial) {
                         Texture tex = UniformTexture.invisibleTexture();
-                        matPre.setTexture(tex, tex.getDefaultMapping(matPre.getObject().getObject()));
-                        matPre.setMaterial(selectedMaterial, selectedMaterial.getDefaultMapping(matPre.getObject().getObject()));
-                        matPre.render();
+                        preview.setTexture(tex, tex.getDefaultMapping(preview.getObject().getObject()));
+                        preview.setMaterial(selectedMaterial, selectedMaterial.getDefaultMapping(preview.getObject().getObject()));
+                        preview.render();
                         setInfoText(Translate.text("materialName") + " " + selectedMaterial.getName(), Translate.text("materialType") + " " + selectedMaterial.getTypeName());
                     }
                 }
@@ -230,9 +230,9 @@ public class TexturesAndMaterialsDialog extends BDialog {
         }
         if (selectedTexture == null && selectedMaterial == null) {
             Texture tex = UniformTexture.invisibleTexture();
-            matPre.setTexture(tex, tex.getDefaultMapping(matPre.getObject().getObject()));
-            matPre.setMaterial(null, null);
-            matPre.render();
+            preview.setTexture(tex, tex.getDefaultMapping(preview.getObject().getObject()));
+            preview.setMaterial(null, null);
+            preview.render();
             setInfoText(Translate.text("noSelection"), "&nbsp;");
         }
 
@@ -535,15 +535,15 @@ public class TexturesAndMaterialsDialog extends BDialog {
         BFileChooser fcNew = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("selectNewLibraryName"), assetsFolder);
         if (fcNew.showDialog(this)) {
             File saveFile = fcNew.getSelectedFile();
-            if (!saveFile.exists()) {
+            if (saveFile.exists()) {
+                MessageDialog.create().withOwner(this.getComponent()).error(Translate.text("fileAlreadyExists"));
+            } else {
                 try {
                     new Scene().writeToFile(saveFile);
                 } catch (IOException ex) {
                     log.atError().setCause(ex).log("Error create scene: {}", ex.getMessage());
                 }
                 ((SceneTreeModel) libraryList.getModel()).rebuildLibrary();
-            } else {
-                MessageDialog.create().withOwner(this.getComponent()).error(Translate.text("fileAlreadyExists"));
             }
         }
     }
@@ -622,8 +622,8 @@ public class TexturesAndMaterialsDialog extends BDialog {
 
     private class SceneTreeNode {
 
-        ArrayList<TextureTreeNode> textures;
-        ArrayList<MaterialTreeNode> materials;
+        List<TextureTreeNode> textures;
+        List<MaterialTreeNode> materials;
         SoftReference<Scene> scene;
         final File file;
 
@@ -706,7 +706,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
 
     private class SceneTreeModel implements TreeModel {
 
-        private final ArrayList<TreeModelListener> listeners = new ArrayList<>();
+        private final List<TreeModelListener> listeners = new ArrayList<>();
         private final DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
         @Override
