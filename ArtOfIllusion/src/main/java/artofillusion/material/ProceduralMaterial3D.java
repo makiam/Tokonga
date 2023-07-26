@@ -182,7 +182,7 @@ public class ProceduralMaterial3D extends Material3D implements ProcedureOwner {
     @Override
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void edit(WindowWidget fr, Scene sc) {
-        new ProcedureEditor(proc, this, sc);
+        new NewProcedureEditor(proc, this, sc);
     }
 
     public ProceduralMaterial3D(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
