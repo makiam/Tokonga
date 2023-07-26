@@ -91,7 +91,7 @@ public class ThreadManager {
                         } catch (Exception ex) {
                             cancel();
 
-                            log.atError().setCause(ex).log("Thrad manager error: {}", ex.getMessage());
+                            log.atError().setCause(ex).log("Thread manager error: {}", ex.getMessage());
                         }
                     }
                 }
