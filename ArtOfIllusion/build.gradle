@@ -5,6 +5,7 @@ plugins {
     id 'edu.sc.seis.launch4j' version '3.0.0'
     id "kr.motd.sphinx" version "2.10.1"
     id 'jacoco'
+    id 'maven-publish'
 }
 
 description = 'Art Of Illusion'
@@ -151,4 +152,16 @@ tasks.register("createMacVolume", Exec) {
         } else {
             println "Bypass Mac DMG... This requred to run macos hdiutil application"
         }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'org.artofillusion'
+            artifactId = 'artofillusion'
+            version = '3.2.0'
+
+            from components.java
+        }
+    }
 }
