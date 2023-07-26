@@ -29,6 +29,7 @@ public final class NewProcedureEditor extends JFrame {
         this.setVisible(true);
         var split = new JSplitPane();
         this.getContentPane().add(split);
+        split.setLeftComponent(new ModulesMenu());
         split.setRightComponent(new ProcedureView());
     }
 }
