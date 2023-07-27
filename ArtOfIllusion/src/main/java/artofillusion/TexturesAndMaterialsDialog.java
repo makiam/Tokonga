@@ -385,16 +385,14 @@ public class TexturesAndMaterialsDialog extends BDialog {
     @SuppressWarnings("unused")
     public void doDelete() {
         if (selectedTexture != null) {
-            String[] options = new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
-            int choice = new BStandardDialog("", Translate.text("deleteTexture", selectedTexture.getName()), BStandardDialog.PLAIN).showOptionDialog(this, options, options[1]);
+            int choice = MessageDialog.create().withOwner(this.getComponent()).option(Translate.text("deleteTexture", selectedTexture.getName()));
             if (choice == 0) {
                 theScene.removeTexture(theScene.indexOf(selectedTexture));
                 parentFrame.setModified();
                 setSelection(libraryList.getRootNode(), theScene, theScene.getDefaultTexture());
             }
         } else if (selectedMaterial != null) {
-            String[] options = new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
-            int choice = new BStandardDialog("", Translate.text("deleteMaterial", selectedMaterial.getName()), BStandardDialog.PLAIN).showOptionDialog(this, options, options[1]);
+            int choice = MessageDialog.create().withOwner(this.getComponent()).option(Translate.text("deleteMaterial", selectedMaterial.getName()));
             if (choice == 0) {
                 theScene.removeMaterial(theScene.indexOf(selectedMaterial));
                 parentFrame.setModified();
@@ -509,8 +507,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
         }
         try {
             if (selectedTexture != null) {
-                String[] options = new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
-                int choice = new BStandardDialog("", Translate.text("deleteTexture", selectedTexture.getName()), BStandardDialog.PLAIN).showOptionDialog(this, options, options[1]);
+                int choice = MessageDialog.create().withOwner(this.getComponent()).option(Translate.text("deleteTexture", selectedTexture.getName()));
                 if (choice == 0) {
                     int texIndex = selectedScene.indexOf(selectedTexture);
                     selectedScene.removeTexture(texIndex);
@@ -520,7 +517,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
                 }
             } else if (selectedMaterial != null) {
                 String[] options = new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
-                int choice = new BStandardDialog("", Translate.text("deleteMaterial", selectedMaterial.getName()), BStandardDialog.PLAIN).showOptionDialog(this, options, options[1]);
+                int choice = MessageDialog.create().withOwner(this.getComponent()).option(Translate.text("deleteMaterial", selectedMaterial.getName()));
                 if (choice == 0) {
                     int matIndex = selectedScene.indexOf(selectedMaterial);
                     selectedScene.removeMaterial(matIndex);
