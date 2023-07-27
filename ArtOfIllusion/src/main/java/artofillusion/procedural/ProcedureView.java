@@ -8,8 +8,8 @@ import java.awt.event.*;
 
 public class ProcedureView extends JComponent  {
 
-    private static final Color NETWORK_BACKGROUND_COLOR = new Color(69, 69, 69);
-    private static final Color NETWORK_GRID_COLOR = new Color(85, 85, 85);
+    private static final Color NETWORK_GRID_COLOR = new Color(69, 69, 69);
+    private static final Color NETWORK_BACKGROUND_COLOR = new Color(85, 85, 85);
     private static final int GRID_CELL_SIZE = 48;
     private static final int GRID_OFFSET = 6;
 
@@ -30,6 +30,9 @@ public class ProcedureView extends JComponent  {
         // Draw background
         g2.setColor(ProcedureView.NETWORK_BACKGROUND_COLOR);
         g2.fill(graphics.getClipBounds());
+
+        // Draw grid
+        paintGrid(g2);
     }
 
     private void paintGrid(Graphics2D g) {
