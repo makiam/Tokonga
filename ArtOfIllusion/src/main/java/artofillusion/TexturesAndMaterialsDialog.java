@@ -37,23 +37,23 @@ public class TexturesAndMaterialsDialog extends BDialog {
             assetsFolder.mkdir();
         }
     }
-    Scene theScene;
-    EditingWindow parentFrame;
-    BTree libraryList;
-    File libraryFile;
-    Scene selectedScene;
-    Texture selectedTexture;
-    Material selectedMaterial;
-    SceneTreeNode selectedSceneNode;
-    int insertLocation;
-    BButton duplicateButton, deleteButton, editButton;
-    BButton loadLibButton, saveLibButton, deleteLibButton;
-    BComboBox typeChoice;
-    BRadioButton showTexturesButton, showMaterialsButton;
-    final List<Texture> textureTypes = PluginRegistry.getPlugins(Texture.class);
-    final List<Material> materialTypes = PluginRegistry.getPlugins(Material.class);
-    MaterialPreviewer preview;
-    BLabel matInfo;
+    private Scene theScene;
+    private EditingWindow parentFrame;
+    private BTree libraryList;
+    private File libraryFile;
+    private Scene selectedScene;
+    private Texture selectedTexture;
+    private Material selectedMaterial;
+    private SceneTreeNode selectedSceneNode;
+    private int insertLocation;
+    private BButton duplicateButton, deleteButton, editButton;
+    private BButton loadLibButton, saveLibButton, deleteLibButton;
+    private BComboBox typeChoice;
+    private BRadioButton showTexturesButton, showMaterialsButton;
+    private final List<Texture> textureTypes = PluginRegistry.getPlugins(Texture.class);
+    private final List<Material> materialTypes = PluginRegistry.getPlugins(Material.class);
+    private MaterialPreviewer preview;
+    private BLabel matInfo;
 
     private boolean showTextures, showMaterials;
     private final List<Object> rootNodes;
@@ -61,7 +61,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
     private static final DataFlavor TextureFlavor = new DataFlavor(Texture.class, "Texture");
     private static final DataFlavor MaterialFlavor = new DataFlavor(Material.class, "Material");
 
-    final ListChangeListener listListener = new ListChangeListener() {
+    private final ListChangeListener listListener = new ListChangeListener() {
         @Override
         public void itemAdded(int index, java.lang.Object obj) {
             ((SceneTreeModel) libraryList.getModel()).rebuildScenes(null);
@@ -78,7 +78,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
         }
     };
 
-    public TexturesAndMaterialsDialog(EditingWindow frame, Scene aScene) {
+    TexturesAndMaterialsDialog(EditingWindow frame, Scene aScene) {
 
         super(frame.getFrame(), Translate.text("texturesTitle"), false);
 
@@ -191,7 +191,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
 
     }
 
-    public void doSelectionChanged() {
+    private void doSelectionChanged() {
         TreePath selection = libraryList.getSelectedNode();
         Texture oldTexture = selectedTexture;
         Material oldMaterial = selectedMaterial;
@@ -270,7 +270,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
         return false;
     }
 
-    public void hilightButtons() {
+    private void hilightButtons() {
         if (selectedTexture == null && selectedMaterial == null) {
             duplicateButton.setEnabled(false);
             deleteButton.setEnabled(false);
@@ -385,7 +385,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
 
 
 
-    public void doEdit() {
+    private void doEdit() {
         if (selectedScene != theScene) {
             return;
         }
@@ -407,7 +407,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
     }
 
     // --
-    public void doLoadFromLibrary() {
+    private void doLoadFromLibrary() {
         if (selectedTexture != null) {
             Texture newTexture = selectedTexture.duplicate();
             theScene.addTexture(newTexture, insertLocation == -1 ? theScene.getNumTextures() : insertLocation);
@@ -957,7 +957,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
         private final Object data;
         private final DataFlavor[] flavors;
 
-        public DragTransferable(Object data) {
+        DragTransferable(Object data) {
             this.data = data;
             flavors = new DataFlavor[]{DataFlavor.stringFlavor, data instanceof Texture ? TextureFlavor : MaterialFlavor};
         }
