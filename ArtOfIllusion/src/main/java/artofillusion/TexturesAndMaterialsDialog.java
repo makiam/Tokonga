@@ -357,6 +357,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
         }
     }
 
+    @SuppressWarnings("unused")
     public void doCopy() {
         if (selectedTexture != null) {
             String name = new BStandardDialog("", Translate.text("newTexName"), BStandardDialog.PLAIN).showInputDialog(this, null, "");
@@ -380,7 +381,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
             selectLastCurrentMaterial();
         }
     }
-
+    @SuppressWarnings("unused")
     public void doDelete() {
         if (selectedTexture != null) {
             String[] options = new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
@@ -452,12 +453,13 @@ public class TexturesAndMaterialsDialog extends BDialog {
         hilightButtons();
     }
 
+    @SuppressWarnings("unused")
     public void doSaveToLibrary() {
         String itemText;
-        if (selectedTexture != null) {
-            itemText = "selectSceneToSaveTexture";
-        } else {
+        if (selectedTexture == null) {
             itemText = "selectSceneToSaveMaterial";
+        } else {
+            itemText = "selectSceneToSaveTexture";
         }
         if (selectedTexture != null || selectedMaterial != null) {
             BFileChooser fcOut = new BFileChooser(BFileChooser.OPEN_FILE, Translate.text(itemText), assetsFolder);
@@ -499,6 +501,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
         ((SceneTreeModel) libraryList.getModel()).rebuildScenes(saveFile);
     }
 
+    @SuppressWarnings("unused")
     public void doDeleteFromLibrary() {
         if (selectedScene == null || selectedScene == theScene) {
             return;
@@ -530,6 +533,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
         }
     }
 
+    @SuppressWarnings("unused")
     public void doNewLib() {
         BFileChooser fcNew = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("selectNewLibraryName"), assetsFolder);
         if (fcNew.showDialog(this)) {
@@ -547,6 +551,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
         }
     }
 
+    @SuppressWarnings("unused")
     public void doIncludeLib() {
         BFileChooser fcInc = new BFileChooser(BFileChooser.OPEN_FILE, Translate.text("selectExternalFile"));
         if (fcInc.showDialog(this)) {
