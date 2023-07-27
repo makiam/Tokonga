@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
  * form a scene, as well as the available textures and materials, environment options, etc.
  */
 @Slf4j
-public class Scene {
+public class Scene implements ObjectsContainer, MaterialsContainer {
 
     private List<ObjectInfo> objects;
     private List<Material> materials;
@@ -932,6 +932,7 @@ public class Scene {
     /**
      * Get all objects in the Scene in the form of a List.
      */
+    @Override
     public List<ObjectInfo> getObjects() {
         return Collections.unmodifiableList(objects);
     }
@@ -939,6 +940,7 @@ public class Scene {
     /*
     Get all materials from scene as List
      */
+    @Override
     public List<Material> getMaterials() {
         return Collections.unmodifiableList(materials);
     }
