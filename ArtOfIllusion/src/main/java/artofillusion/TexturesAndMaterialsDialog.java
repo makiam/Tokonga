@@ -382,24 +382,8 @@ public class TexturesAndMaterialsDialog extends BDialog {
             selectLastCurrentMaterial();
         }
     }
-    @SuppressWarnings("unused")
-    public void doDelete() {
-        if (selectedTexture != null) {
-            int choice = MessageDialog.create().withOwner(this.getComponent()).option(Translate.text("deleteTexture", selectedTexture.getName()));
-            if (choice == 0) {
-                theScene.removeTexture(theScene.indexOf(selectedTexture));
-                parentFrame.setModified();
-                setSelection(libraryList.getRootNode(), theScene, theScene.getDefaultTexture());
-            }
-        } else if (selectedMaterial != null) {
-            int choice = MessageDialog.create().withOwner(this.getComponent()).option(Translate.text("deleteMaterial", selectedMaterial.getName()));
-            if (choice == 0) {
-                theScene.removeMaterial(theScene.indexOf(selectedMaterial));
-                parentFrame.setModified();
-                setSelection(libraryList.getRootNode(), theScene, theScene.getDefaultTexture());
-            }
-        }
-    }
+
+
 
     public void doEdit() {
         if (selectedScene != theScene) {
@@ -498,6 +482,25 @@ public class TexturesAndMaterialsDialog extends BDialog {
             }
         }
         ((SceneTreeModel) libraryList.getModel()).rebuildScenes(saveFile);
+    }
+
+    @SuppressWarnings("unused")
+    public void doDelete() {
+        if (selectedTexture != null) {
+            int choice = MessageDialog.create().withOwner(this.getComponent()).option(Translate.text("deleteTexture", selectedTexture.getName()));
+            if (choice == 0) {
+                theScene.removeTexture(theScene.indexOf(selectedTexture));
+                parentFrame.setModified();
+                setSelection(libraryList.getRootNode(), theScene, theScene.getDefaultTexture());
+            }
+        } else if (selectedMaterial != null) {
+            int choice = MessageDialog.create().withOwner(this.getComponent()).option(Translate.text("deleteMaterial", selectedMaterial.getName()));
+            if (choice == 0) {
+                theScene.removeMaterial(theScene.indexOf(selectedMaterial));
+                parentFrame.setModified();
+                setSelection(libraryList.getRootNode(), theScene, theScene.getDefaultTexture());
+            }
+        }
     }
 
     @SuppressWarnings("unused")
