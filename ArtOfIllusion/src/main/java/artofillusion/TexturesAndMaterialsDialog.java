@@ -300,6 +300,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
         }
     }
 
+    @SuppressWarnings("unused")
     private void filterChanged(SelectionChangedEvent ev) {
         if (ev.getWidget() == showTexturesButton) {
             showTextures = true;
