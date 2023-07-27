@@ -314,14 +314,15 @@ public class TexturesAndMaterialsDialog extends BDialog {
         ((SceneTreeModel) libraryList.getModel()).resetFilter();
     }
 
+    @SuppressWarnings("unused")
     public void doNew() {
         int newType = typeChoice.getSelectedIndex() - 1;
         if (newType >= 0) {
+            int j = 0;
+            String name;
             if (newType >= textureTypes.size()) {
                 // A new material
 
-                int j = 0;
-                String name = "";
                 do {
                     j++;
                     name = "Untitled " + j;
@@ -330,7 +331,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
                     Material mat = materialTypes.get(newType - textureTypes.size()).getClass().getDeclaredConstructor().newInstance();
                     mat.setName(name);
                     theScene.addMaterial(mat);
-                    mat.edit(parentFrame.getFrame(), theScene);
+                    mat.edit((WindowWidget)parentFrame.getFrame(), theScene);
                 } catch (Exception ex) {
                 }
                 parentFrame.setModified();
@@ -338,8 +339,6 @@ public class TexturesAndMaterialsDialog extends BDialog {
             } else {
                 // A new texture
 
-                int j = 0;
-                String name = "";
                 do {
                     j++;
                     name = "Untitled " + j;
@@ -415,7 +414,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
             parentFrame.setModified();
         } else if (selectedMaterial != null) {
             Material mat = selectedMaterial;
-            mat.edit(parentFrame.getFrame(), theScene);
+            mat.edit((WindowWidget)parentFrame.getFrame(), theScene);
             mat.assignNewID();
             theScene.changeMaterial(theScene.indexOf(mat));
             parentFrame.setModified();
