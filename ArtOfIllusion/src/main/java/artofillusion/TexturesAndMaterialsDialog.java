@@ -37,7 +37,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
             assetsFolder.mkdir();
         }
     }
-    private Scene theScene;
+    private final Scene theScene;
     private EditingWindow parentFrame;
     private BTree libraryList;
     private File libraryFile;
@@ -173,6 +173,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
         hilightButtons();
 
         addEventLink(WindowClosingEvent.class, this, "dispose");
+
         rootNodes = new ArrayList<>();
         showTextures = true;
         showMaterials = true;
@@ -412,24 +413,22 @@ public class TexturesAndMaterialsDialog extends BDialog {
             Texture newTexture = selectedTexture.duplicate();
             theScene.addTexture(newTexture, insertLocation == -1 ? theScene.getNumTextures() : insertLocation);
             parentFrame.setModified();
-            for (int i = 0; i < selectedScene.getNumImages(); i++) {
-                ImageMap image = selectedScene.getImage(i);
-                if (selectedTexture.usesImage(image)) {
-                    theScene.addImage(image);
-                }
-            }
+
+            selectedScene.getImages().forEach(image -> {
+                if(selectedTexture.usesImage(image)) theScene.addImage(image);
+            });
+
             parentFrame.updateImage();
             setSelection(libraryList.getRootNode(), theScene, newTexture);
         } else if (selectedMaterial != null) {
             Material newMaterial = selectedMaterial.duplicate();
             theScene.addMaterial(newMaterial, insertLocation == -1 ? theScene.getNumMaterials() : insertLocation);
             parentFrame.setModified();
-            for (int i = 0; i < selectedScene.getNumImages(); i++) {
-                ImageMap image = selectedScene.getImage(i);
-                if (selectedMaterial.usesImage(image)) {
-                    theScene.addImage(image);
-                }
-            }
+
+            selectedScene.getImages().forEach(image -> {
+                if(selectedMaterial.usesImage(image)) theScene.addImage(image);
+            });
+
             parentFrame.updateImage();
             setSelection(libraryList.getRootNode(), theScene, newMaterial);
         }
