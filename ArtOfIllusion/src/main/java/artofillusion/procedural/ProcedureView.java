@@ -1,76 +1,52 @@
 package artofillusion.procedural;
 
-import javax.swing.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import lombok.Getter;
 
-public class ProcedureView extends JComponent implements MouseListener, MouseWheelListener {
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class ProcedureView extends JComponent  {
+
+    private static final Color NETWORK_BACKGROUND_COLOR = new Color(69, 69, 69);
+    private static final Color NETWORK_GRID_COLOR = new Color(85, 85, 85);
+    private static final int GRID_CELL_SIZE = 48;
+    private static final int GRID_OFFSET = 6;
+
+    @Getter
+    private double viewX, viewY, viewScale = 1;
+
     public ProcedureView() {
         super();
-        this.addMouseListener(this);
-    }
-
-    /**
-     * Invoked when the mouse button has been clicked (pressed
-     * and released) on a component.
-     *
-     * @param e the event to be processed
-     */
-    @Override
-    public void mouseClicked(MouseEvent e) {
 
     }
 
-    /**
-     * Invoked when a mouse button has been pressed on a component.
-     *
-     * @param e the event to be processed
-     */
     @Override
-    public void mousePressed(MouseEvent e) {
+    protected void paintComponent(Graphics graphics) {
+        Graphics2D g2 = (Graphics2D) graphics;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 
+        // Draw background
+        g2.setColor(ProcedureView.NETWORK_BACKGROUND_COLOR);
+        g2.fill(graphics.getClipBounds());
     }
 
-    /**
-     * Invoked when a mouse button has been released on a component.
-     *
-     * @param e the event to be processed
-     */
-    @Override
-    public void mouseReleased(MouseEvent e) {
+    private void paintGrid(Graphics2D g) {
+        g.setColor(ProcedureView.NETWORK_GRID_COLOR);
 
-    }
+        int gridCellSize = (int) Math.round(GRID_CELL_SIZE * getViewScale());
+        int gridOffset = (int) Math.round(GRID_OFFSET * getViewScale());
+        if (gridCellSize < 10) return;
 
-    /**
-     * Invoked when the mouse enters a component.
-     *
-     * @param e the event to be processed
-     */
-    @Override
-    public void mouseEntered(MouseEvent e) {
+        int transformOffsetX = (int) (getViewX() % gridCellSize);
+        int transformOffsetY = (int) (getViewY() % gridCellSize);
 
-    }
-
-    /**
-     * Invoked when the mouse exits a component.
-     *
-     * @param e the event to be processed
-     */
-    @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
-
-    /**
-     * Invoked when the mouse wheel is rotated.
-     *
-     * @param e the event to be processed
-     * @see MouseWheelEvent
-     */
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent e) {
-
+        for (int y = -gridCellSize; y < getHeight() + gridCellSize; y += gridCellSize) {
+            g.drawLine(0, y - gridOffset + transformOffsetY, getWidth(), y - gridOffset + transformOffsetY);
+        }
+        for (int x = -gridCellSize; x < getWidth() + gridCellSize; x += gridCellSize) {
+            g.drawLine(x - gridOffset + transformOffsetX, 0, x - gridOffset + transformOffsetX, getHeight());
+        }
     }
 }
