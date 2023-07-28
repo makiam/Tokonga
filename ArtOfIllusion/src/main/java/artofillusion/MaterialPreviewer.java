@@ -23,7 +23,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * MaterialPreviewer is a component used for renderering previews of Materials. It displays
+ * MaterialPreviewer is a component used for rendering previews of Materials. It displays
  * a scene consisting of a Sphere with the desired Material applied to it, a ground plane,
  * and a single light. Optionally, an Object3D may be specified which will then be used
  * instead of a Sphere.

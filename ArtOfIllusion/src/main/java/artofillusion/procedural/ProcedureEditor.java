@@ -159,7 +159,7 @@ public class ProcedureEditor extends CustomWidget {
         preview.ifPresent(view -> createPreview(getParentFrame(), view));
     }
 
-    private static void createPreview(BFrame frame, MaterialPreviewer view) {
+    public static void createPreview(BFrame frame, MaterialPreviewer view) {
 
         BDialog previewDialog = new BDialog(frame, "Preview", false);
         BorderContainer content = new BorderContainer();
