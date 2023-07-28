@@ -458,22 +458,17 @@ public class TexturesAndMaterialsDialog extends BDialog {
                 if (selectedTexture != null) {
                     Texture newTexture = selectedTexture.duplicate();
                     saveScene.addTexture(newTexture, insertLocation == -1 ? saveScene.getNumTextures() : insertLocation);
-                    for (int i = 0; i < selectedScene.getNumImages(); i++) {
-                        ImageMap image = selectedScene.getImage(i);
-                        if (selectedTexture.usesImage(image)) {
-                            saveScene.addImage(image);
-                        }
-                    }
+                    selectedScene.getImages().forEach(image -> {
+                        if(selectedTexture.usesImage(image)) saveScene.addImage(image);
+                    });
+
                     saveScene.writeToFile(saveFile);
                 } else if (selectedMaterial != null) {
                     Material newMaterial = selectedMaterial.duplicate();
                     saveScene.addMaterial(newMaterial, insertLocation == -1 ? saveScene.getNumMaterials() : insertLocation);
-                    for (int i = 0; i < selectedScene.getNumImages(); i++) {
-                        ImageMap image = selectedScene.getImage(i);
-                        if (selectedMaterial.usesImage(image)) {
-                            saveScene.addImage(image);
-                        }
-                    }
+                    selectedScene.getImages().forEach(image -> {
+                        if(selectedMaterial.usesImage(image)) saveScene.addImage(image);
+                    });
                     saveScene.writeToFile(saveFile);
                 }
             } catch (IOException ex) {
