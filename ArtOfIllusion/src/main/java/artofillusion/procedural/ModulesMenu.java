@@ -20,7 +20,6 @@ public class ModulesMenu extends JPanel {
         public ModuleLabel(Module module) {
             super(Translate.text(module.getName()));
             this.module = module;
-            t
             this.setTransferHandler(new ModuleTransferHandler());
         }
 

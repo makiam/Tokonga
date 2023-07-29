@@ -7,20 +7,28 @@ import artofillusion.Scene;
 import artofillusion.ui.Translate;
 import lombok.extern.slf4j.Slf4j;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.Optional;
 
-import static artofillusion.procedural.ProcedureEditor.createPreview;
 
 @Slf4j
 public final class NewProcedureEditor extends JFrame {
 
     private MaterialPreviewer preview;
+
     public NewProcedureEditor(Procedure proc, ProcedureOwner owner, Scene sc) {
         super();
         this.setTitle(owner.getWindowTitle());
         preview = owner.getPreview();
-        
+
+        Optional.ofNullable(preview).ifPresent(materialPreviewer -> createPreview(this, materialPreviewer));
+    }
+
+    private void createPreview(final Frame owner, final MaterialPreviewer preview) {
+        SwingUtilities.invokeLater(() -> new PreviewDialog(owner, preview));
     }
 
     @Override
@@ -45,5 +53,36 @@ public final class NewProcedureEditor extends JFrame {
     }
 
     private void undoAction(ActionEvent actionEvent) {
+    }
+
+    private static class PreviewDialog extends JDialog {
+
+
+        public PreviewDialog(final Frame owner, final MaterialPreviewer preview) {
+            super(owner, "Preview");
+            this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+            this.getContentPane().add(preview.getComponent());
+            owner.addComponentListener(new ComponentAdapter() {
+                @Override
+                public void componentResized(ComponentEvent event) {onParentMoved(); }
+                @Override
+                public void componentMoved(ComponentEvent e) { onParentMoved();}
+            });
+
+            this.onParentMoved();
+            setVisible(true);
+        }
+        private void onParentMoved() {
+            Rectangle parentBounds = this.getParent().getBounds();
+            Rectangle location = this.getBounds();
+            location.y = parentBounds.y;
+            location.x = parentBounds.x + parentBounds.width;
+            this.setBounds(location);
+        }
+
+        @Override
+        protected void dialogInit() {
+            super.dialogInit();
+        }
     }
 }
