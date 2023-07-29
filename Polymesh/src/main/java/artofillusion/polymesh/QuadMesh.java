@@ -44,7 +44,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * A QuadMesh is a mesh exclusively made up of quads. This mesh is not meant to be edited by users but
- * it backs up PolyMeshes when doing Catmull-Calrk smoothing. It may however be extended in the future
+ * it backs up PolyMeshes when doing Catmull-Clark smoothing. It may however be extended in the future
  * to provide a standalone, new kind of mesh for AoI. Its structure is heavily dervived from AoI trimesh.
  *
  * Smoothness and smoothing algorithm is identical to PolyMesh smoothing algorithm since a smoothed
@@ -1227,13 +1227,16 @@ public class QuadMesh extends Object3D implements FacetedMesh {
                     nextVert = edges[ve[j]].v1;
                 }
                 if (face1 != -1) {
+                    int pv = getPreviousVertex(i, face1);
+                    if (pv == -1)
+                        continue;
                     r = vertices[faces[face1].v1].r.plus(vertices[faces[face1].v2].r);
                     r.add(vertices[faces[face1].v3].r);
                     r.add(vertices[faces[face1].v4].r);
                     r.scale(0.25);
                     pos.add(r);
                     pos.subtract(vertices[nextVert].r.times(1.0 / 4.0));
-                    pos.subtract(vertices[getPreviousVertex(i, face1)].r.times(1.0 / 4.0));
+                    pos.subtract(vertices[pv].r.times(1.0 / 4.0));
                     pos.subtract(vertices[i].r.times(1.0 / 4.0));
                     ++count;
                 }
@@ -1336,6 +1339,11 @@ public class QuadMesh extends Object3D implements FacetedMesh {
             moveVerts[vertices.length + index] = false;
             v1 = edges[i].v1;
             v2 = edges[i].v2;
+            if (v1 == -1 || v2 == -1)
+                // I don't know if this is even theoretically possible, but
+                // strange things have happened with old PolyMesh models.
+                continue;
+
             face1 = edges[i].f1;
             face2 = edges[i].f2;
             if (face1 == -1 || face2 == -1) {
@@ -1345,6 +1353,8 @@ public class QuadMesh extends Object3D implements FacetedMesh {
             v3 = getPreviousVertex(v1, face1);
             v4 = getNextVertex(v1, face2);
             v6 = getPreviousVertex(v2, face2);
+            if (v3 == -1 || v4 == -1 || v5 == -1 || v6 == -1 )
+                continue;
             v1r = vertices[v1].r;
             v2r = vertices[v2].r;
             v3r = vertices[v3].r;
