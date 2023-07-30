@@ -1,5 +1,7 @@
-/* Copyright (C) 2007 by François Guillet
+/*
+   Copyright (C) 2007 by François Guillet
    Changes copyright (C) 2023 by Maksim Khramov
+   Editions copyright © 2023 Petri Ihalainen
 
  This program is free software; you can redistribute it and/or modify it under the
  terms of the GNU General Public License as published by the Free Software
@@ -1266,8 +1268,18 @@ public class QuadMesh extends Object3D implements FacetedMesh {
                     ++hardnum;
                 }
             }
-            pos.scale(1.0 / ((double) count * count));
-            pos.add(vertices[i].r.times(1.0 - 3.0 / (2.0 * count) - 1.0 / (4.0 * count)));
+
+            // In some rare cases 'count' may be 0 and 'pos' may be Vec3[0.0, 0.0, 0.0].
+            // This would result Vec3 values [Nan, Nan, Nan] or [Infinity, Infinity, Infinity]
+
+            if (count != 0) pos.scale(1.0 / ((double) count * count));
+            if (count == 0) {
+                pos.add(vertices[i].r);
+            } else {
+                pos.add(vertices[i].r.times(1.0 - 3.0 / (2.0 * count) - 1.0 / (4.0 * count)));
+
+            }
+
             if (vertices[i].type != Wvertex.CORNER) {
                 switch (sharp) {
                     case 0:
