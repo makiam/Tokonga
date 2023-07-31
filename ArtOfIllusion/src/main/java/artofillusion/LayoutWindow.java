@@ -11,7 +11,6 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion;
 
-import artofillusion.Renderer;
 import artofillusion.animation.*;
 import artofillusion.animation.distortion.*;
 import artofillusion.image.*;
@@ -26,6 +25,8 @@ import buoy.event.*;
 import buoy.widget.*;
 import buoy.xml.IconResource;
 import buoyx.docking.*;
+import lombok.Getter;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
@@ -57,12 +58,53 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     private final SceneExplorer sceneExplorer;
     Scene theScene;
 
+    /**
+     * -- GETTER --
+     *  Determine whether the scene has been modified since it was last saved.
+     */
+    @Getter
+    private boolean modified;
+    /**
+     * -- GETTER --
+     *  Get the File menu.
+     */
+    @Getter
     private final BMenu fileMenu = Translate.menu("file");
+    /**
+     * -- GETTER --
+     *  Get the Edit menu.
+     */
+    @Getter
     private final BMenu editMenu = Translate.menu("edit");
+    /**
+     * -- GETTER --
+     *  Get the Scene menu.
+     */
+    @Getter
     private final BMenu sceneMenu = Translate.menu("scene");
+    /**
+     * -- GETTER --
+     *  Get the Object menu.
+     */
+    @Getter
     private final BMenu objectMenu = Translate.menu("object");
+    /**
+     * -- GETTER --
+     *  Get the Animation menu.
+     */
+    @Getter
     private final BMenu animationMenu = Translate.menu("animation");
+    /**
+     * -- GETTER --
+     *  Get the Tools menu.
+     */
+    @Getter
     private final BMenu toolsMenu = Translate.menu("tools");
+    /**
+     * -- GETTER --
+     *  Get the View menu.
+     */
+    @Getter
     private final BMenu viewMenu = Translate.menu("view");
 
     BMenu newScriptMenu;
@@ -78,7 +120,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     private final UndoStack undoStack = new UndoStack();
     int numViewsShown, currentView;
     private final ActionProcessor uiEventProcessor;
-    private boolean modified, sceneChangePending, objectListShown;
+
+    private boolean sceneChangePending, objectListShown;
     private final KeyEventPostProcessor keyEventHandler;
     private final SceneChangedEvent sceneChangedEvent;
 
@@ -205,7 +248,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         tools.addTool(metaTool = new MoveViewTool(this));
         tools.addTool(altTool = new RotateViewTool(this));
 
-        // Scroll tool does not go to the pallette.
+        // Scroll tool does not go to the palette.
         scrollTool = new ScrollViewTool(this);
 
         if (ArtOfIllusion.getPreferences().getUseCompoundMeshTool()) {
@@ -803,55 +846,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }
     }
 
-    /**
-     * Get the File menu.
-     */
-    public BMenu getFileMenu() {
-        return fileMenu;
-    }
-
-    /**
-     * Get the Edit menu.
-     */
-    public BMenu getEditMenu() {
-        return editMenu;
-    }
-
-    /**
-     * Get the Scene menu.
-     */
-    public BMenu getSceneMenu() {
-        return sceneMenu;
-    }
-
-    /**
-     * Get the Object menu.
-     */
-    public BMenu getObjectMenu() {
-        return objectMenu;
-    }
-
-    /**
-     * Get the Animation menu.
-     */
-    public BMenu getAnimationMenu() {
-        return animationMenu;
-    }
-
-    /**
-     * Get the Tools menu.
-     */
-    public BMenu getToolsMenu() {
-        return toolsMenu;
-    }
-
-    /**
-     * Get the View menu.
-     */
-    public BMenu getViewMenu() {
-        return viewMenu;
-    }
-
     public BMenu getRecentFilesMenu() {
         return recentFilesMenu;
     }
@@ -1126,13 +1120,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             view.viewChanged(false);
         }
         dispatchSceneChangedEvent();
-    }
-
-    /**
-     * Determine whether the scene has been modified since it was last saved.
-     */
-    public boolean isModified() {
-        return modified;
     }
 
     /**
