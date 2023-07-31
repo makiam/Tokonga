@@ -482,6 +482,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         createMenu.add(Translate.menuItem("cylinder", this, "createObjectCommand"));
         createMenu.add(Translate.menuItem("cone", this, "createObjectCommand"));
         createMenu.addSeparator();
+        createMenu.add(Translate.menuItem("createScriptObject", this, "createScriptObjectCommand"));
+        createMenu.addSeparator();
         createMenu.add(Translate.menuItem("pointLight", this, "createObjectCommand"));
         createMenu.add(Translate.menuItem("directionalLight", this, "createObjectCommand"));
         createMenu.add(Translate.menuItem("spotLight", this, "createObjectCommand"));
@@ -508,7 +510,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }
 
         toolsMenu.addSeparator();
-        toolsMenu.add(Translate.menuItem("createScriptObject", this, "createScriptObjectCommand"));
+
 
         BMenu editScriptMenu = Translate.menu("editToolScript");
         editScriptMenu.add(newScriptMenu = Translate.menu("newScript"));
