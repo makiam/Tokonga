@@ -10,6 +10,7 @@
  */
 package artofillusion.spmanager;
 
+import artofillusion.ui.MessageDialog;
 import artofillusion.ui.Translate;
 import buoy.widget.*;
 import java.awt.*;
@@ -157,8 +158,7 @@ public class ManageSplitPane extends SPMSplitPane {
                 log.atInfo().log("SPManager: Delete: write protected: {}", file.getAbsolutePath());
             }
             if (!file.delete()) {
-
-                new BStandardDialog(SPMTranslate.text("error"), SPMTranslate.text("cannotDeleteFile", info.fileName), BStandardDialog.ERROR).showMessageDialog(SPManagerFrame.getInstance());
+                MessageDialog.create().withOwner(SPManagerFrame.getInstance().getComponent()).error(SPMTranslate.text("cannotDeleteFile", info.fileName));
                 log.atInfo().log("SPManager: File cannot be deleted: {}", file.getAbsolutePath());
                 return;
             }

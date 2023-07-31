@@ -221,8 +221,8 @@ public class ImageSaver {
             }
             return saveImage(img, new File(directory, filename), format, (int) quality);
         } catch (IOException | InterruptedException ex) {
-            log.atError().setCause(ex).log("Errror saving image: {}", ex.getMessage());
-            new BStandardDialog("", Translate.text("errorSavingFile", ex.getMessage() == null ? "" : ex.getMessage()), BStandardDialog.ERROR).showMessageDialog(parent);
+            log.atError().setCause(ex).log("Error saving image: {}", ex.getMessage());
+            MessageDialog.create().withOwner(parent.getComponent()).error(Translate.text("errorSavingFile", ex.getMessage() == null ? "" : ex.getMessage()));
         }
         return false;
     }

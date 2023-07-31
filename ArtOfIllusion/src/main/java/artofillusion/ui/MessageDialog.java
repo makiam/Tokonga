@@ -43,10 +43,6 @@ public final class MessageDialog {
 
     }
 
-    public void error(String message) {
-        error((Object)Translate.text(message));
-    }
-
     public static void info(String message) {
 
     }
@@ -55,7 +51,24 @@ public final class MessageDialog {
         JOptionPane.showMessageDialog(owner, message, title, JOptionPane.INFORMATION_MESSAGE, icon);
     }
 
+    public void error(String message) {
+        error((Object)Translate.text(message));
+    }
+
+    public void warning(Object message) {
+        JOptionPane.showMessageDialog(owner, message, title, JOptionPane.WARNING_MESSAGE, icon);
+    }
+
     public void error(Object message) {
         JOptionPane.showMessageDialog(owner, message, title, JOptionPane.ERROR_MESSAGE, icon);
+    }
+
+    public int option(String message) {
+        String[] options = getOptions();
+        return JOptionPane.showOptionDialog(owner, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, icon, options, options[1]);
+    }
+
+    public static String[] getOptions() {
+        return new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
     }
 }

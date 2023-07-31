@@ -26,10 +26,11 @@ package artofillusion.spmanager.postinstall;
 
 import artofillusion.*;
 import artofillusion.ui.*;
-import buoy.widget.*;
+
 import java.io.*;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
+import javax.swing.*;
 
 /**
  * AOI plugin to clean up after plugin installation/upgrade
@@ -68,7 +69,7 @@ public class PostInstall implements Plugin {
                     return;
                 }
 
-                // get the correct sub-tree
+                // get the correct subtree
                 String prefix = "spmanager-temp-" + System.getProperty("user.name") + "-";
 
                 for (String sub : tempDir.list()) {
@@ -83,7 +84,7 @@ public class PostInstall implements Plugin {
                     }
                 }
 
-                // if no sub-tree found, exit now
+                // if no subtree found, exit now
                 if (!tempDir.getName().startsWith("spmanager-temp-")) {
                     log.info("PostInstall: no TEMP sub-tree found");
 
@@ -102,7 +103,7 @@ public class PostInstall implements Plugin {
                 cleanup(ArtOfIllusion.STARTUP_SCRIPT_DIRECTORY, ok, err);
             } catch (Exception e) {
                 log.atError().setCause(e).log("PostInstall: exception raised - aborting: {}", e.getMessage());
-                err.add("Exception raised - aborting: " + e.toString());
+                err.add("Exception raised - aborting: " + e);
             } finally {
 
                 if (tempDir == null) {
@@ -153,48 +154,34 @@ public class PostInstall implements Plugin {
             case Plugin.SCENE_WINDOW_CREATED:
 	    try {
                 if (err != null && err.size() > 0) {
-                    BTextArea txt = new BTextArea(5, 45);
+                    JTextArea txt = new JTextArea();
+                    txt.setColumns(45);
                     txt.setEditable(false);
+                    txt.setRows(5);
+                    txt.setText(String.join("\n", err));
 
-                    for (i = 0; i < err.size(); i++) {
-                        txt.append(err.get(i) + "\n");
-                    }
+                    JScrollPane detail = new JScrollPane(txt, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-                    BScrollPane detail
-                            = new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER,
-                                    BScrollPane.SCROLLBAR_AS_NEEDED);
+                    JLabel message = new JLabel(Translate.text("postinstall:errMsg"));
 
-                    BLabel messg = Translate.label("postinstall.errMsg");
-
-                    new BStandardDialog("PostInstall",
-                            new Widget[]{messg, detail},
-                            BStandardDialog.WARNING)
-                            .showMessageDialog(null);
+                    MessageDialog.create().withTitle("PostInstall").info(new JComponent[]{ message, detail });
 
                 }
 
                 if (ok != null && ok.size() > 0) {
 
-                    BTextArea txt = new BTextArea(5, 45);
+                    JTextArea txt = new JTextArea();
+                    txt.setColumns(45);
                     txt.setEditable(false);
+                    txt.setRows(5);
+                    txt.setText(String.join("\n", ok));
 
-                    for (i = 0; i < ok.size(); i++) {
-                        txt.append(ok.get(i).toString() + "\n");
-                    }
+                    JScrollPane detail = new JScrollPane(txt, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-                    BScrollPane detail
-                            = new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER,
-                                    BScrollPane.SCROLLBAR_AS_NEEDED);
+                    JLabel message = new JLabel(Translate.text("postinstall:okMsg"));
+                    JLabel restart = new JLabel(Translate.text("postinstall:restartMsg"));
 
-                    BLabel messg = Translate.label("postinstall:okMsg");
-
-                    BLabel restart = Translate.label("postinstall:restartMsg");
-
-                    new BStandardDialog("PostInstall: ", new Widget[]{
-                        messg, restart, detail
-                    },
-                            BStandardDialog.INFORMATION)
-                            .showMessageDialog(null);
+                    MessageDialog.create().withTitle("PostInstall").info(new JComponent[]{ message, restart, detail });
                 }
             } finally {
                 ok = null;

@@ -214,16 +214,11 @@ public class SPManagerPlugin implements Plugin {
 
                         txt.append(errs.toString());
 
-                        BScrollPane detail
-                                = new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER,
-                                        BScrollPane.SCROLLBAR_AS_NEEDED);
+                        BScrollPane detail  = new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_AS_NEEDED);
 
                         BLabel messg = SPMTranslate.bLabel("loadError");
 
-                        new BStandardDialog("SPManager initialise",
-                                new Widget[]{messg, detail},
-                                BStandardDialog.ERROR)
-                                .showMessageDialog(null);
+                        new BStandardDialog("SPManager initialise", new Widget[]{messg, detail}, BStandardDialog.ERROR).showMessageDialog(null);
                     }
                 } else {
                     log.error("SPManager: could not find plugin dir: {}", PLUGIN_DIRECTORY);
