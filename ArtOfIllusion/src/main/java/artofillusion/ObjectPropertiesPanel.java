@@ -226,9 +226,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
             }
             names.add(Translate.text("none"));
 
-            PluginRegistry.getPlugins(Material.class).forEach(material -> {
-                names.add(Translate.text("newMaterialOfType", material.getTypeName()));
-            });
+            PluginRegistry.getPlugins(Material.class).forEach(material -> names.add(Translate.text("newMaterialOfType", material.getTypeName())));
 
             materialChoice.setModel(new DefaultComboBoxModel<>(names));
             materialChoice.setSelectedIndex(selected);
@@ -358,15 +356,16 @@ public class ObjectPropertiesPanel extends ColumnContainer {
     }
 
     /**
-     * This is called when the value in any of the position or orientiation fields is changed.
+     * This is called when the value in any of the position or orientation fields is changed.
      */
+    @SuppressWarnings("unused")
     private void coordinatesChanged(ValueChangedEvent ev) {
         UndoRecord undo = null;
         if (ev.getWidget() != lastEventSource) {
             ignoreNextChange = true;
             undo = new UndoRecord(window);
-            for (int i = 0; i < objects.length; i++) {
-                undo.addCommand(UndoRecord.COPY_COORDS, objects[i].getCoords(), objects[i].getCoords().duplicate());
+            for (ObjectInfo object : objects) {
+                undo.addCommand(UndoRecord.COPY_COORDS, object.getCoords(), object.getCoords().duplicate());
             }
         }
         for (int i = 0; i < objects.length; i++) {
@@ -392,8 +391,8 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         window.updateImage();
     }
 
-    private double getNewValue(double oldval, double newval) {
-        return (Double.isNaN(newval) ? oldval : newval);
+    private double getNewValue(double oldValue, double newValue) {
+        return Double.isNaN(newValue) ? oldValue : newValue;
     }
 
     /**
@@ -419,6 +418,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
     /**
      * This is called when the texture is changed.
      */
+    @SuppressWarnings("unused")
     private void textureChanged() {
         int index = textureChoice.getSelectedIndex();
         Scene scene = window.getScene();
@@ -431,14 +431,14 @@ public class ObjectPropertiesPanel extends ColumnContainer {
                 try {
                     tex = textureTypes.get(index - scene.getNumTextures()).getClass().getDeclaredConstructor().newInstance();
                     int j = 0;
-                    String name = "";
+                    String name;
                     do {
                         j++;
                         name = "Untitled " + j;
                     } while (scene.getTexture(name) != null);
                     tex.setName(name);
                     scene.addTexture(tex);
-                    tex.edit(window, scene);
+                    tex.edit((WindowWidget)window, scene);
                 } catch (ReflectiveOperationException | SecurityException ex) {
                     log.atError().setCause(ex).log("Error changing texture: {}", ex.getMessage());
                 }
@@ -446,10 +446,10 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         }
         if (tex != null) {
             UndoRecord undo = new UndoRecord(window);
-            for (int i = 0; i < objects.length; i++) {
-                if (objects[i].getObject().getTexture() != tex) {
-                    undo.addCommand(UndoRecord.COPY_OBJECT, objects[i].getObject(), objects[i].getObject().duplicate());
-                    objects[i].setTexture(tex, tex.getDefaultMapping(objects[i].getObject()));
+            for (ObjectInfo object : objects) {
+                if (object.getObject().getTexture() != tex) {
+                    undo.addCommand(UndoRecord.COPY_OBJECT, object.getObject(), object.getObject().duplicate());
+                    object.setTexture(tex, tex.getDefaultMapping(object.getObject()));
                 }
             }
             window.setUndoRecord(undo);
@@ -461,6 +461,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
     /**
      * This is called when the material is changed.
      */
+    @SuppressWarnings("unused")
     private void materialChanged() {
         int index = materialChoice.getSelectedIndex();
         Scene scene = window.getScene();
@@ -480,17 +481,17 @@ public class ObjectPropertiesPanel extends ColumnContainer {
                 } while (scene.getMaterial(name) != null);
                 mat.setName(name);
                 scene.addMaterial(mat);
-                mat.edit(window, scene);
+                mat.edit((WindowWidget)window, scene);
             } catch (ReflectiveOperationException | SecurityException ex) {
                 log.atError().setCause(ex).log("Error changing material: {}", ex.getMessage());
             }
         }
         if (noMaterial || mat != null) {
             UndoRecord undo = new UndoRecord(window);
-            for (int i = 0; i < objects.length; i++) {
-                if (objects[i].getObject().getMaterial() != mat) {
-                    undo.addCommand(UndoRecord.COPY_OBJECT, objects[i].getObject(), objects[i].getObject().duplicate());
-                    objects[i].setMaterial(mat, noMaterial ? null : mat.getDefaultMapping(objects[i].getObject()));
+            for (ObjectInfo object : objects) {
+                if (object.getObject().getMaterial() != mat) {
+                    undo.addCommand(UndoRecord.COPY_OBJECT, object.getObject(), object.getObject().duplicate());
+                    object.setMaterial(mat, noMaterial ? null : mat.getDefaultMapping(object.getObject()));
                 }
             }
             window.setUndoRecord(undo);
@@ -502,6 +503,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
     /**
      * This is called when an object parameter is changed.
      */
+    @SuppressWarnings("unused")
     private void parameterChanged(final ValueChangedEvent ev) {
         Runnable r = () -> processParameterChange(ev);
         if (ev.isInProgress()) {
@@ -516,8 +518,8 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         if (ev.getWidget() != lastEventSource) {
             ignoreNextChange = true;
             undo = new UndoRecord(window);
-            for (int i = 0; i < objects.length; i++) {
-                undo.addCommand(UndoRecord.COPY_OBJECT, objects[i].getObject(), objects[i].getObject().duplicate());
+            for (ObjectInfo object : objects) {
+                undo.addCommand(UndoRecord.COPY_OBJECT, object.getObject(), object.getObject().duplicate());
             }
         }
         boolean changed = false;

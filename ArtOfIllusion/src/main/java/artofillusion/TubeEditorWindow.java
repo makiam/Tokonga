@@ -142,8 +142,8 @@ public class TubeEditorWindow extends CurveEditorWindow {
         Widget source = ev.getWidget();
         for (int i = 0; i < endsItem.length; i++) {
             if (source == endsItem[i]) {
-                for (int j = 0; j < endsItem.length; j++) {
-                    endsItem[j].setState(false);
+                for (BCheckBoxMenuItem bCheckBoxMenuItem : endsItem) {
+                    bCheckBoxMenuItem.setState(false);
                 }
                 endsItem[i].setState(true);
                 ((Tube) objInfo.getObject()).setEndsStyle(i);
@@ -157,7 +157,9 @@ public class TubeEditorWindow extends CurveEditorWindow {
     protected void doOk() {
         Tube theMesh = (Tube) objInfo.getObject();
         if (((Tube) oldMesh).getMaterial() != null) {
-            if (!theMesh.isClosed()) {
+            if (theMesh.isClosed()) {
+                theMesh.setMaterial(((Tube) oldMesh).getMaterial(), ((Tube) oldMesh).getMaterialMapping());
+            } else {
                 String[] options = new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
                 BStandardDialog dlg = new BStandardDialog("", UIUtilities.breakString(Translate.text("surfaceNoLongerClosed")), BStandardDialog.WARNING);
                 int choice = dlg.showOptionDialog(this, options, options[0]);
@@ -165,8 +167,6 @@ public class TubeEditorWindow extends CurveEditorWindow {
                     return;
                 }
                 theMesh.setMaterial(null, null);
-            } else {
-                theMesh.setMaterial(((Tube) oldMesh).getMaterial(), ((Tube) oldMesh).getMaterialMapping());
             }
         }
         oldMesh.copyObject(theMesh);

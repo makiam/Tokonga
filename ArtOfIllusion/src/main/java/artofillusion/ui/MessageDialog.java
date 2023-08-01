@@ -58,4 +58,13 @@ public final class MessageDialog {
     public void error(Object message) {
         JOptionPane.showMessageDialog(owner, message, title, JOptionPane.ERROR_MESSAGE, icon);
     }
+
+    public int option(String message) {
+        String[] options = getOptions();
+        return JOptionPane.showOptionDialog(owner, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, icon, options, options[1]);
+    }
+
+    public static String[] getOptions() {
+        return new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
+    }
 }
