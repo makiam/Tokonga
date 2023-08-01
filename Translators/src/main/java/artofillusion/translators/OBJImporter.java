@@ -592,7 +592,7 @@ public class OBJImporter {
             tex.specularColor = (specularMap == null ? new ImageOrColor(info.specular) : new ImageOrColor(info.specular, specularMap));
             tex.transparentColor = (transparentMap == null ? new ImageOrColor(transparentColor) : new ImageOrColor(transparentColor, transparentMap));
             if (transparentMap == null && info.transparency == 0.0 && diffuseMap != null && diffuseMap.getComponentCount() == 4) {
-                // Use the diffuse map's alpha channel channel for transparency.
+                // Use the diffuse map's alpha channel for transparency.
 
                 tex.transparentColor = new ImageOrColor(new RGBColor(1.0, 1.0, 1.0));
                 tex.transparency = new ImageOrValue(1.0f, diffuseMap, 3);

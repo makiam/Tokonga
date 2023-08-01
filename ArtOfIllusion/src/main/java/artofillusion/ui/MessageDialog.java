@@ -43,16 +43,20 @@ public final class MessageDialog {
 
     }
 
-    public void error(String message) {
-        error((Object)Translate.text(message));
-    }
-
     public static void info(String message) {
 
     }
 
     public void info(Object message) {
         JOptionPane.showMessageDialog(owner, message, title, JOptionPane.INFORMATION_MESSAGE, icon);
+    }
+
+    public void error(String message) {
+        error((Object)Translate.text(message));
+    }
+
+    public void warning(Object message) {
+        JOptionPane.showMessageDialog(owner, message, title, JOptionPane.WARNING_MESSAGE, icon);
     }
 
     public void error(Object message) {

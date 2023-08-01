@@ -24,6 +24,8 @@ import java.util.List;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.swing.*;
+
 /**
  * The Plugin corresponding to the SPManager
  *
@@ -209,21 +211,18 @@ public class SPManagerPlugin implements Plugin {
                     }
 
                     if (errs != null) {
-                        BTextArea txt = new BTextArea(5, 45);
+                        JTextArea txt = new JTextArea();
+                        txt.setColumns(45);
                         txt.setEditable(false);
+                        txt.setRows(5);
 
-                        txt.append(errs.toString());
+                        txt.setText(errs.toString());
 
-                        BScrollPane detail
-                                = new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER,
-                                        BScrollPane.SCROLLBAR_AS_NEEDED);
+                        JScrollPane detail = new JScrollPane(txt, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-                        BLabel messg = SPMTranslate.bLabel("loadError");
+                        JLabel messg = new JLabel(Translate.text("loadError"));
 
-                        new BStandardDialog("SPManager initialise",
-                                new Widget[]{messg, detail},
-                                BStandardDialog.ERROR)
-                                .showMessageDialog(null);
+                        MessageDialog.create().withTitle("SPManager initialise").error(new JComponent[]{messg, detail});
                     }
                 } else {
                     log.error("SPManager: could not find plugin dir: {}", PLUGIN_DIRECTORY);

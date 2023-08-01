@@ -474,7 +474,7 @@ public class ArtOfIllusion {
             newWindow(scene);
             RecentFiles.addRecentFile(file);
         } catch (InvalidObjectException ex) {
-            new BStandardDialog("", UIUtilities.breakString(Translate.text("errorLoadingWholeScene")), BStandardDialog.ERROR).showMessageDialog(frame);
+            MessageDialog.create().withOwner(frame.getComponent()).error(UIUtilities.breakString(Translate.text("errorLoadingWholeScene")));
         } catch (IOException ex) {
             new BStandardDialog("", new String[]{Translate.text("errorLoadingFile"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(frame);
         }
