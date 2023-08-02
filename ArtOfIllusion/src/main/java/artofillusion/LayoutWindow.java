@@ -2870,6 +2870,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      * Show the dialog for editing textures and materials.
      */
     public void showTexturesDialog(Scene target) {
+        SwingUtilities.invokeLater(() -> new AssetManager(this, this.theScene).setVisible(true));
+
         if (null == assetsDialog) {
             assetsDialog = new TexturesAndMaterialsDialog(this, target);
         }
