@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+
+<extension name="PreferencesPlugin" version="1.22">
+    <author>Francois Guillet et Nik TJ</author>
+    <date>Jan 2009</date>
+
+
+
+    <category class="artofillusion.preferences.PreferencesEditor" />
+
+    <resource type="TranslateBundle" id="PreferencesPlugin" name="PreferencesPlugin"/>
+
+    <description>
+
+    </description>
+    <comments>
+    </comments>
+    <history>
+        <log version="1.21" date="Jan 2009" author="Nik TJ">
+            - added getPreferences(owner, parent) call
+        </log>
+        <log version="1.21" date="Jan 2009" author="Nik TJ">
+            - added exception handling when retrieving editing panels
+        </log>
+        <log version="1.2" date="Jan 2009" author="Nik TJ">
+            - Added the getDefaultPreferences() method
+            - changes to mark a DataMap as modified when the inherited put() and putAll()
+            methods are called.
+        </log>
+        <log version="1.1" date="April 2008" author="Nik TJ">
+            - changes to accomodate AOI 2.6 API changes
+        </log>
+        <log version="1.0b8" date="14 December 2007" author="Nik TJ">
+            - changed PreferenceProperties to DataMap, and changed its inheritance to HashMap        
+        </log>   
+        <log version="1.0b7" date="2 December 2007" author="Nik TJ">
+            - added support for array values
+            - changed GUI to presize for largest plugin panel
+        </log>
+        <log version="1.0b5" date="24 November 2007" author="Nik TJ">
+            - fixed minor bug in parsing doubles
+        </log>
+        <log version="1.0b4" date="22 November 2007" author="Nik TJ">
+            - fixed typo bug introduced in beta 3
+        </log>
+        <log version="1.0b3" date="03 october 2007" author="Nik TJ">
+            - Minor change to better handle no registered editor panels.
+        </log>
+        <log version="1.0b2" date="03 october 2007" author="Nik TJ">
+            - Second release
+            -- Closer integration with AOI PluginRegistry
+            -- Include an Object interface in addition to the method API.
+        </log>
+        <log version="1.0" date="03 october 2007" author="Francois Guillet">
+            - First release.
+        </log>
+    </history>
+</extension>

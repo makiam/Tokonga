@@ -133,7 +133,7 @@ public class ArtOfIllusion {
         PluginRegistry.addCategory(MaterialMapping.class);
         PluginRegistry.addCategory(ImageFilter.class);
         PluginRegistry.addCategory(artofillusion.procedural.Module.class);
-        PluginRegistry.addCategory(artofillusion.preferences.PreferencesEditor.class);
+
         PluginRegistry.registerPlugin(new UniformTexture());
         PluginRegistry.registerPlugin(new ImageMapTexture());
         PluginRegistry.registerPlugin(new ProceduralTexture2D());
