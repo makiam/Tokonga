@@ -64,7 +64,7 @@ public class ProcedureEditor extends CustomWidget {
     private static final Color selectedColor = new Color(255, 60, 60);
     protected static final Stroke contourStroke = new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
-    private final static float BEZIER_HARDNESS = 0.5f; //increase hardness to a have a more pronouced shape
+    private final static float BEZIER_HARDNESS = 0.5f; //increase hardness to a have a more pronounced shape
     private final static Stroke normal = new BasicStroke();
     private final static Stroke bold = new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 

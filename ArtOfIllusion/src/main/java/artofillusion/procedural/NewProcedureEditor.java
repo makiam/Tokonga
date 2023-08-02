@@ -68,7 +68,7 @@ public final class NewProcedureEditor extends JFrame {
                 @Override
                 public void componentMoved(ComponentEvent e) { onParentMoved();}
             });
-
+            pack();
             this.onParentMoved();
             setVisible(true);
         }
