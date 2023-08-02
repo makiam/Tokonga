@@ -17,6 +17,7 @@ import artofillusion.keystroke.*;
 import artofillusion.material.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
+import artofillusion.procedural.ProcedureEditorSelector;
 import artofillusion.script.*;
 import artofillusion.texture.*;
 import artofillusion.ui.*;
@@ -134,7 +135,7 @@ public class ArtOfIllusion {
         PluginRegistry.addCategory(ImageFilter.class);
         PluginRegistry.addCategory(artofillusion.procedural.Module.class);
         PluginRegistry.addCategory(artofillusion.preferences.PreferencesEditor.class);
-
+        PluginRegistry.registerPlugin(new ProcedureEditorSelector());
         PluginRegistry.registerPlugin(new UniformTexture());
         PluginRegistry.registerPlugin(new ImageMapTexture());
         PluginRegistry.registerPlugin(new ProceduralTexture2D());
@@ -161,7 +162,7 @@ public class ArtOfIllusion {
 
         for (Plugin plugin : PluginRegistry.getPlugins(Plugin.class)) {
             try {
-                plugin.processMessage(Plugin.APPLICATION_STARTING);
+                plugin.processMessage(Plugin.APPLICATION_STARTING, new Object[0]);
             } catch (Throwable tx) {
                 log.atError().setCause(tx).log("Plugin starting error: {}", tx.getMessage());
                 pluginsLoadResults.add(Translate.text("pluginInitError", plugin.getClass().getSimpleName()));
@@ -246,7 +247,7 @@ public class ArtOfIllusion {
          * close the empty scene window. Delayed to work around timing bugs
          * when interacting with macOS and GLJPanels.
                  */
-                SwingWorker<Boolean, Void> autoCloseUnmodified = new SwingWorker<>() {
+                SwingWorker<Boolean, Void> autoCloseUnmodified = new SwingWorker<Boolean, Void>() {
                     @Override
                     public Boolean doInBackground() {
                         try {
@@ -418,7 +419,7 @@ public class ArtOfIllusion {
 
             for (Plugin plugin : PluginRegistry.getPlugins(Plugin.class)) {
                 try {
-                    plugin.processMessage(Plugin.SCENE_SAVED, f, fr);
+                    plugin.processMessage(Plugin.SCENE_SAVED, new Object[]{f, fr});
                 } catch (Throwable tx) {
                     log.atError().setCause(tx).log("Error saving scene: {}", tx.getMessage());
                     new BStandardDialog("", UIUtilities.breakString(Translate.text("pluginNotifyError", plugin.getClass().getSimpleName())), BStandardDialog.ERROR).showMessageDialog(null);
