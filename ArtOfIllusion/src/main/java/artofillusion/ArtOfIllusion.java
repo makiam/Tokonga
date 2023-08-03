@@ -133,6 +133,7 @@ public class ArtOfIllusion {
         PluginRegistry.addCategory(MaterialMapping.class);
         PluginRegistry.addCategory(ImageFilter.class);
         PluginRegistry.addCategory(artofillusion.procedural.Module.class);
+        PluginRegistry.addCategory(artofillusion.preferences.PreferencesEditor.class);
 
         PluginRegistry.registerPlugin(new UniformTexture());
         PluginRegistry.registerPlugin(new ImageMapTexture());
@@ -160,7 +161,7 @@ public class ArtOfIllusion {
 
         for (Plugin plugin : PluginRegistry.getPlugins(Plugin.class)) {
             try {
-                plugin.processMessage(Plugin.APPLICATION_STARTING, new Object[0]);
+                plugin.processMessage(Plugin.APPLICATION_STARTING);
             } catch (Throwable tx) {
                 log.atError().setCause(tx).log("Plugin starting error: {}", tx.getMessage());
                 pluginsLoadResults.add(Translate.text("pluginInitError", plugin.getClass().getSimpleName()));
@@ -245,7 +246,7 @@ public class ArtOfIllusion {
          * close the empty scene window. Delayed to work around timing bugs
          * when interacting with macOS and GLJPanels.
                  */
-                SwingWorker<Boolean, Void> autoCloseUnmodified = new SwingWorker<Boolean, Void>() {
+                SwingWorker<Boolean, Void> autoCloseUnmodified = new SwingWorker<>() {
                     @Override
                     public Boolean doInBackground() {
                         try {
@@ -417,7 +418,7 @@ public class ArtOfIllusion {
 
             for (Plugin plugin : PluginRegistry.getPlugins(Plugin.class)) {
                 try {
-                    plugin.processMessage(Plugin.SCENE_SAVED, new Object[]{f, fr});
+                    plugin.processMessage(Plugin.SCENE_SAVED, f, fr);
                 } catch (Throwable tx) {
                     log.atError().setCause(tx).log("Error saving scene: {}", tx.getMessage());
                     new BStandardDialog("", UIUtilities.breakString(Translate.text("pluginNotifyError", plugin.getClass().getSimpleName())), BStandardDialog.ERROR).showMessageDialog(null);
