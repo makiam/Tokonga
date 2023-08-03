@@ -4,7 +4,8 @@
     <author>Francois Guillet et Nik TJ</author>
     <author>Maksim Khramov</author>
     <date>Jun 2023</date>
-
+    <plugin class="artofillusion.preferences.PreferencesPlugin">
+    </plugin>
     <resource type="TranslateBundle" id="PreferencesPlugin" name="PreferencesPlugin"/>
 
     <description>
