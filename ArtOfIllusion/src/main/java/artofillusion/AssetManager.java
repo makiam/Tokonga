@@ -30,7 +30,7 @@ public class AssetManager extends JFrame {
         assetsTree.setModel(model);
     }
 
-    private class SceneTreeNode extends DefaultMutableTreeNode {
+    private static class SceneTreeNode extends DefaultMutableTreeNode {
         public SceneTreeNode(Scene scene) {
             super(scene);
         }

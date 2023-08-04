@@ -527,6 +527,7 @@ public class Scene implements ObjectsContainer, MaterialsContainer, ImagesContai
     /**
      * Add a new Material to the scene.
      */
+    @Override
     public void addMaterial(Material mat) {
         addMaterial(mat, materials.size());
     }
@@ -954,8 +955,9 @@ public class Scene implements ObjectsContainer, MaterialsContainer, ImagesContai
 
 
     /*
-    Get all textures from scene as List
+    Get all images from scene as unmodifiable List
      */
+    @Override
     public List<ImageMap> getImages() {
         return Collections.unmodifiableList(images);
     }
