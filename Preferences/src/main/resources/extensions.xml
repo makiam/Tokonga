@@ -5,6 +5,163 @@
     <author>Maksim Khramov</author>
     <date>Jun 2023</date>
     <plugin class="artofillusion.preferences.PreferencesPlugin">
+        <export method="getPreferences" id="preferences.getPreferences" >
+            Retrieve the stored preferences values for the named owner (plugin).
+
+            @param owner the String name of the preferences owner
+            @param init (optional) a Map object containing initial values or a String naming
+            the preferences to use as the initial values.
+            If this param is *not* specified, then a resource of the name [owner] will
+            be searched for, and if found, used as the initial values.
+
+            @return the DataMap object containing the requested preferences.
+        </export>
+
+        <export method="getDefaultPreferences" id="preferences.getDefaultPreferences" >
+            Retrieves the current default values for the specified preferences and loads them
+            into the specified DataMap.
+
+            If the supplied DataMap is the DataMap previously retrieved for the named preferences,
+            then this has the effect of resetting those preference values to their current default
+            value.
+
+            @param owner the name of the owner of the preferences to load
+            @param map the DataMap to load the default preferences into
+        </export>
+
+        <export method="commit" id="preferences.commit" >
+            Commit (save) all changes to all preferences objects
+        </export>
+
+        <export method="putString" id="preferences.putString" >
+            Set a String value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+            @param value String value of the preference
+        </export>
+        <export method="getString" id="preferences.getString" >
+            Get a String value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+
+            @return the preference value as a String
+        </export>
+
+        <export method="putBoolean" id="preferences.putBoolean" >
+            Set a Boolean value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+            @param value Boolean value of the preference
+        </export>
+        <export method="getString" id="preferences.getBoolean" >
+            Get a Boolean value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+
+            @return the preference value as a Boolean
+        </export>
+
+        <export method="putInt" id="preferences.putInt" >
+            Set a Integer value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+            @param value Integer value of the preference
+        </export>
+        <export method="getString" id="preferences.getInt" >
+            Get an Integer value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+
+            @return the preference value as an Integer
+        </export>
+
+        <export method="putLong" id="preferences.putLong" >
+            Set a Long value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+            @param value Long value of the preference
+        </export>
+        <export method="getLong" id="preferences.getLong" >
+            Get a Long value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+
+            @return the preference value as a Long
+        </export>
+
+        <export method="putFloat" id="preferences.putFloat" >
+            Set a Float value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+            @param value Float value of the preference
+        </export>
+        <export method="getFloat" id="preferences.getFloat" >
+            Get a Float value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+
+            @return the preference value as a Float
+        </export>
+
+        <export method="putDouble" id="preferences.putDouble" >
+            Set a Double value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+            @param value Double value of the preference
+        </export>
+        <export method="getDouble" id="preferences.getDouble" >
+            Get a Double value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+
+            @return the preference value as a Double
+        </export>
+
+        <export method="putArray" id="preferences.putArray" >
+            Set an array of values
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+            @param value array of values
+        </export>
+        <export method="getArray" id="preferences.getArray" >
+            Get a array of values
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+            @param result (optional) an array to store the result in. If this param is null or
+            shorter than the number of values found, then a new array of the correct length, and
+            same type (if non-null) shall be allocated and assigned.
+            @return the preference values as an array
+        </export>
+
+        <export method="putColor" id="preferences.putColor" >
+            Set a Color value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+            @param value Color value of the preference
+        </export>
+        <export method="getColor" id="preferences.getColor" >
+            Get a Color value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+
+            @return the preference value as a Color
+        </export>
     </plugin>
     <resource type="TranslateBundle" id="PreferencesPlugin" name="PreferencesPlugin"/>
 
