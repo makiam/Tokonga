@@ -1,5 +1,7 @@
 package artofillusion.preferences;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,17 +15,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public class DataMap extends HashMap<String, Object> {
+@Slf4j
+public final class DataMap extends HashMap<String, Object> {
 
-    protected File file = null;
+    private File file;
 
-    protected Object semaphore = null;
+    private Object semaphore = null;
 
-    protected volatile boolean modified = false;
+    private volatile boolean modified = false;
 
-    public static final Object[] EMPTY_ARRAY = new Object[0];
+    private static final Object[] EMPTY_ARRAY = new Object[0];
 
-    public static final float[] EMPTY_FLOAT_ARRAY = new float[0];
+    private static final float[] EMPTY_FLOAT_ARRAY = new float[0];
 
     public DataMap(Map<String, Object> defaults) {
         super(defaults);
@@ -36,13 +39,13 @@ public class DataMap extends HashMap<String, Object> {
     }
 
     @SuppressWarnings("unchecked")
-    public void load() throws IOException {
-        if (this.file == null || !this.file.exists()) {
+    public final void load() throws IOException {
+        if (file == null || !file.exists()) {
             return;
         }
         Exception err = null;
 
-        try(InputStream is = new FileInputStream(this.file)) {
+        try(InputStream is = new FileInputStream(file)) {
             Properties props = new Properties();
             props.load(is);
             super.putAll((Map)props);
@@ -55,12 +58,12 @@ public class DataMap extends HashMap<String, Object> {
     }
 
     public void reload() throws IOException {
-        this.modified = false;
+        modified = false;
         load();
     }
 
     public void commit() throws IOException {
-        if (this.file == null || !this.modified) {
+        if (file == null || !modified) {
             return;
         }
         Exception err = null;
@@ -155,12 +158,12 @@ public class DataMap extends HashMap<String, Object> {
     public void putArray(String name, Object array) {
         if (array == null) {
             putString(name, "[]");
-            System.out.println("DatProperties.putArray: array is null");
+            log.debug("Array is null");
             return;
         }
         Class<?> type = array.getClass().getComponentType();
         if (type == null) {
-            System.out.println("DataProperties.putArray: value is not an array: " + array);
+            log.debug("Value is not an array: {}", array);
             return;
         }
         if (type == int.class) {
@@ -201,7 +204,7 @@ public class DataMap extends HashMap<String, Object> {
         int len = Array.getLength(array);
         Class<?> type = array.getClass().getComponentType();
         if (type == null) {
-            System.out.println("DataMap.getArray: value is not an array: " + array);
+            log.error("Value is not an array: {}", array);
             return vals;
         }
         if (type == String.class || type == Object.class) {
@@ -266,7 +269,7 @@ public class DataMap extends HashMap<String, Object> {
             }
             return barray;
         }
-        System.out.println("DataMap.getArray: could not parse array type: " + type.getName());
+        log.error("could not parse array type: {}", type.getName());
         return array;
     }
 
@@ -287,7 +290,7 @@ public class DataMap extends HashMap<String, Object> {
         }
         float[] comps = (float[]) getArray(name, EMPTY_FLOAT_ARRAY);
         if (comps.length < 3) {
-            System.out.println("DataArray.getColor: too few components: " + comps.length);
+            log.error("Too few color components: {}", comps.length);
             return Color.BLACK;
         }
         return new Color(comps[0], comps[1], comps[2], (comps.length > 3) ? comps[3] : 1.0F);
@@ -355,4 +358,3 @@ public class DataMap extends HashMap<String, Object> {
     public DataMap() {
     }
 }
-
