@@ -21,7 +21,7 @@ import javax.swing.JList;
  * @author MaksK
  */
 public class ExtraPluginsPaneImpl extends javax.swing.JPanel {
-    private final Map<String, PreferencesEditor> em = populatePluginsMap();
+    private final transient Map<String, PreferencesEditor> em = populatePluginsMap();
     /**
      * Creates new form ExtraPluginsPaneImpl
      */
@@ -96,9 +96,9 @@ public class ExtraPluginsPaneImpl extends javax.swing.JPanel {
 
     private static Map<String, PreferencesEditor>  populatePluginsMap() {
         Map<String, PreferencesEditor> em = new HashMap<>();
-        PluginRegistry.getPlugins(artofillusion.preferences.PreferencesEditor.class).forEach(editor -> {
-            em.put(editor.getName(), editor);
-        });
+        PluginRegistry.getPlugins(artofillusion.preferences.PreferencesEditor.class).forEach(editor ->
+            em.put(editor.getName(), editor)
+        );
         return em;
     }
 
