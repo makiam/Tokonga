@@ -3,3 +3,7 @@ plugins {
 }
 
 description = 'Preferences Plugin'
+
+jar {
+ archiveBaseName = "Preferences"
+}
