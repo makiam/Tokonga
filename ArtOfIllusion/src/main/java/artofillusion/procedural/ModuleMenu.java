@@ -50,6 +50,8 @@ public class ModuleMenu extends CustomWidget {
         addEventLink(MouseReleasedEvent.class, this, "mouseReleased");
 
         Category category;
+        categories.add(category = new Category(Translate.text("Modules:menu.patterns")));
+        category.add(new Entry(Translate.text("menu.imageModule"), ImageModule.class));
         categories.add(category = new Category("Modules:menu.values"));
         category.add(new Entry("Modules:menu.numberModule", NumberModule.class));
         category.add(new Entry("Modules:menu.colorModule", ColorModule.class));
