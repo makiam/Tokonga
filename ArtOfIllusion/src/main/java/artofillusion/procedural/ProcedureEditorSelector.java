@@ -5,6 +5,8 @@ import buoy.widget.Widget;
 
 public class ProcedureEditorSelector implements PreferencesEditor {
 
+    private Widget widget = null;
+
     @Override
     public String getName() {
         return "Procedure Editor Selector";
@@ -12,7 +14,7 @@ public class ProcedureEditorSelector implements PreferencesEditor {
 
     @Override
     public Widget getPreferencesPanel() {
-        return new buoy.widget.ColumnContainer();
+        return widget = new buoy.widget.AWTWidget(new EditorSelectorPanel());
     }
 
     @Override
