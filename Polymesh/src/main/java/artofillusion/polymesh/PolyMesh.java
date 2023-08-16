@@ -122,7 +122,7 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 
     private boolean[] seams; //true if an edge is a seam
 
-    private int[] polyedge; //see getPolyEdge()
+    private int[] polyedge;
 
     private TriangleMesh triangleMesh; //the triangulated mesh
 
@@ -1584,114 +1584,6 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         return invMirroredVerts;
     }
 
-    protected int[] getInvMirroredEdges() {
-        if (mirrorState != NO_MIRROR) {
-            if (invMirroredEdges == null) {
-                getMirroredMesh();
-            }
-        }
-        return invMirroredEdges;
-    }
-
-    protected int[] getInvMirroredFaces() {
-        if (mirrorState != NO_MIRROR) {
-            if (invMirroredFaces == null) {
-                getMirroredMesh();
-            }
-        }
-        return invMirroredFaces;
-    }
-
-    /**
-     * Returns a rendering mesh for the PolyMesh object smoothed as quads
-     *
-     * @return The rendering mesh
-     */
-    public RenderingMesh getRenderingMeshQuadCase() {
-        RenderingMesh rend = null;
-        TextureMapping texMapping = getTextureMapping();
-        int[] tableInfoVec = new int[2 * faces.length];
-        int[] v1vec = new int[2 * faces.length];
-        int[] v2vec = new int[2 * faces.length];
-        int[] v3vec = new int[2 * faces.length];
-        int[][] pfpvTable = new int[2 * faces.length][3];
-        int index = 0;
-        closed = true;
-        for (int i = 0; i < edges.length / 2; ++i) {
-            if ((edges[i].face == -1) || (edges[edges[i].hedge].face == -1)) {
-                closed = false;
-                break;
-            }
-        }
-        for (int i = 0; i < faces.length; ++i) {
-            int[] vf = getFaceVertices(faces[i]);
-            if (vf.length == 3) {
-                v1vec[index] = vf[0];
-                v2vec[index] = vf[1];
-                v3vec[index] = vf[2];
-                pfpvTable[index][0] = 0;
-                pfpvTable[index][1] = 1;
-                pfpvTable[index][2] = 2;
-                tableInfoVec[index++] = i;
-            } else if (vf.length == 4) {
-                v1vec[index] = vf[0];
-                v2vec[index] = vf[1];
-                v3vec[index] = vf[2];
-                pfpvTable[index][0] = 0;
-                pfpvTable[index][1] = 1;
-                pfpvTable[index][2] = 2;
-                tableInfoVec[index++] = i;
-                v1vec[index] = vf[2];
-                v2vec[index] = vf[3];
-                v3vec[index] = vf[0];
-                pfpvTable[index][0] = 2;
-                pfpvTable[index][1] = 3;
-                pfpvTable[index][2] = 0;
-                tableInfoVec[index++] = i;
-            }
-        }
-        Vec3[] vertArray = new Vec3[vertices.length];
-        for (int i = 0; i < vertArray.length; i++) {
-            vertArray[i] = vertices[i].r;
-        }
-        RenderingTriangle[] tri = new RenderingTriangle[index];
-        for (int i = 0; i < index; ++i) {
-            tri[i] = texMapping.mapTriangle(v1vec[i], v2vec[i], v3vec[i], 0, 0,
-                    0, vertArray);
-        }
-        rend = new RenderingMesh(vertArray, new Vec3[]{null}, tri,
-                texMapping, getMaterialMapping());
-        ParameterValue[] oldParamVal = getParameterValues();
-        if (oldParamVal != null) {
-            ParameterValue[] newParamVal = new ParameterValue[oldParamVal.length];
-            for (int i = 0; i < oldParamVal.length; i++) {
-                if (oldParamVal[i] instanceof FaceParameterValue) {
-                    double[] oldval = ((FaceParameterValue) oldParamVal[i])
-                            .getValue();
-                    double[] newval = new double[index];
-                    for (int j = 0; j < newval.length; ++j) {
-                        newval[j] = oldval[tableInfoVec[j]];
-                    }
-                    newParamVal[i] = new FaceParameterValue(newval);
-                } else if (oldParamVal[i] instanceof FaceVertexParameterValue) {
-                    FaceVertexParameterValue fvpv = (FaceVertexParameterValue) oldParamVal[i];
-                    double[][] newval = new double[index][3];
-                    for (int j = 0; j < index; ++j) {
-                        for (int k = 0; k < 3; k++) {
-                            newval[j][k] = fvpv.getValue(tableInfoVec[j],
-                                    pfpvTable[j][k]);
-                        }
-                    }
-                    newParamVal[i] = new FaceVertexParameterValue(newval);
-                } else {
-                    newParamVal[i] = oldParamVal[i].duplicate();
-                }
-            }
-            rend.setParameters(newParamVal);
-        }
-        return rend;
-    }
-
     /**
      * Finds the vertices around a given face
      *
@@ -2891,21 +2783,6 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
     }
 
     /**
-     * Sets the mesh vertices, edges and faces array. Use this method after
-     * you've changed any mesh feature.
-     *
-     * @param v
-     * @param e
-     * @param f
-     */
-    public void setMeshTopology(Wvertex[] v, Wedge[] e, Wface[] f) {
-        vertices = v;
-        edges = e;
-        faces = f;
-        resetMesh();
-    }
-
-    /**
      * Get the skeleton for the object. If it does not have one, this should return null.
      *
      * @return The skeleton value
@@ -3259,52 +3136,6 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
             fi[i] = faceInfo.get(i);
         }
         return fi;
-    }
-
-    /**
-     * Call this method after a call to convertToTriangleMesh() to know how the
-     * new vertices are defined relative to the orignal polymesh vertices.
-     *
-     * @return The vertex parameter information that defines each vertex
-     * relative to original vertices. For each vertex, a value is
-     * defined in terms of original vertices and coefficient to apply to
-     * parameter values at the original vertices. The n first entries (n
-     * being the number of vertices in the polymesh) are defined as
-     * relative to themselves with a coefficient of 1.0.
-     */
-    public VertexParamInfo[] getTriangleVertexParamInfo() {
-        if (vertInfo == null || vertInfo.size() == 0) {
-            return null;
-        }
-        VertexParamInfo[] vpi = new VertexParamInfo[vertInfo.size()];
-        for (int i = 0; i < vpi.length; i++) {
-            vpi[i] = vertInfo.get(i);
-        }
-        return vpi;
-    }
-
-    /**
-     * Call this method to get the underlying representation of the polymesh as
-     * a trimesh.
-     *
-     * @return Indices array describing convertion between triangle mesh edges
-     * and polymesh edges.
-     */
-    public TriangleMesh getTriangleMesh() {
-        return triangleMesh;
-    }
-
-    /**
-     * Call this method to access translation between edges of the original mesh
-     * and edges of the trimesh that is used to represent the polymesh. An index
-     * of -1 means that the edge of the trimesh is not an original edge of the
-     * polymesh.
-     *
-     * @return Indices array describing convertion between triangle mesh edges
-     * and polymesh edges.
-     */
-    public int[] getPolyEdge() {
-        return polyedge;
     }
 
     /**
@@ -6399,17 +6230,6 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
             qmesh.setParameterValues(newParamVal);
         }
         return qmesh;
-    }
-
-    /**
-     * When a mesh has been subdivided using smoothWholeMesh, the array returned
-     * describes which edges belong to the original mesh
-     *
-     * @return a boolean array which has the same length as the subdivided mesh
-     * edges array
-     */
-    int[] getProjectedEdges() {
-        return projectedEdges;
     }
 
     /**
@@ -12513,52 +12333,6 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
     }
 
     /**
-     * dumps the mesh to console (debugging purposes)
-     */
-    protected void dumpMesh() {
-        dumpNewMesh(vertices, edges, faces);
-    }
-
-    /**
-     * dumps the mesh to console (debugging purposes)
-     */
-    protected void dumpNewMesh(Wvertex[] vertices, Wedge[] edges, Wface[] faces) {
-        for (int i = 0; i < vertices.length; ++i) {
-            if (vertices[i] != null) {
-                log.debug("vertex {} {} {}", i, vertices[i].edge, vertices[i].r);
-            }
-        }
-        for (int i = 0; i < faces.length; ++i) {
-
-            if (faces[i] != null) {
-                log.debug("face {} {}", i, faces[i].edge);
-            }
-        }
-        for (int i = 0; i < edges.length; ++i) {
-            if (edges[i] != null) {
-                log.debug("edge {} {}", i, edges[i]);
-            }
-        }
-
-    }
-
-    /**
-     * dumps currently built mesh to console (debugging purposes)
-     */
-    protected void dumpMesh(Wvertex[] nv, Wedge[] ne, Wface[] nf) {
-        Wvertex[] v = vertices;
-        vertices = nv;
-        Wedge[] e = edges;
-        edges = ne;
-        Wface[] f = faces;
-        faces = nf;
-        dumpMesh();
-        vertices = v;
-        edges = e;
-        faces = f;
-    }
-
-    /**
      * Gets the mirror state attribute of the PolyMesh object
      *
      * @return The mirrorState value
@@ -12731,10 +12505,6 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
         if (theScene != null) {
             skeleton.writeToStream(out);
         }
-    }
-
-    public void printSize() {
-        log.info(vertices.length + " verts (" + vertices.length * 54 + "), " + edges.length + " edges (" + edges.length * 28 + "), " + faces.length + " faces (" + faces.length * 8 + "), for a total of: " + (vertices.length * 54 + edges.length * 28 + faces.length * 8) + " bytes");
     }
 
     /**
@@ -13592,18 +13362,6 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
 
     public void setSeamColor(Color seamColor) {
         this.seamColor = seamColor;
-    }
-
-    public RGBColor getMeshRGBColor() {
-        if (useCustomColors) {
-            return meshRGBColor;
-        } else {
-            return ViewerCanvas.surfaceRGBColor;
-        }
-    }
-
-    public RGBColor getSelectedFaceRGBColor() {
-        return selectedFaceRGBColor;
     }
 
     public boolean useCustomColors() {
