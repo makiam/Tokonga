@@ -5703,24 +5703,21 @@ public class PolyMesh extends Object3D implements Mesh, FacetedMesh {
                 edgeSmoothness[edges[i].hedge] = edges[edges[i].hedge].smoothness;
                 if ((mirrorState & MIRROR_ON_XY) != 0) {
                     if (Math.abs(vertices[edges[i].vertex].r.z) < 1e-6
-                            && Math
-                                    .abs(vertices[edges[edges[i].hedge].vertex].r.z) < 1e-6) {
+                            && Math.abs(vertices[edges[edges[i].hedge].vertex].r.z) < 1e-6) {
                         edgeSmoothness[i] = 0.0f;
                         edgeSmoothness[edges[i].hedge] = 0.0f;
                     }
                 }
                 if ((mirrorState & MIRROR_ON_YZ) != 0) {
                     if (Math.abs(vertices[edges[i].vertex].r.x) < 1e-6
-                            && Math
-                                    .abs(vertices[edges[edges[i].hedge].vertex].r.x) < 1e-6) {
+                            && Math.abs(vertices[edges[edges[i].hedge].vertex].r.x) < 1e-6) {
                         edgeSmoothness[i] = 0.0f;
                         edgeSmoothness[edges[i].hedge] = 0.0f;
                     }
                 }
                 if ((mirrorState & MIRROR_ON_XZ) != 0) {
                     if (Math.abs(vertices[edges[i].vertex].r.y) < 1e-6
-                            && Math
-                                    .abs(vertices[edges[edges[i].hedge].vertex].r.y) < 1e-6) {
+                            && Math.abs(vertices[edges[edges[i].hedge].vertex].r.y) < 1e-6) {
                         edgeSmoothness[i] = 0.0f;
                         edgeSmoothness[edges[i].hedge] = 0.0f;
                     }
