@@ -131,19 +131,19 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
     private QuadMesh subdividedMesh; //the subdivided mesh when smoothed
 
-    protected int[] mirroredVerts; //vert
+    int[] mirroredVerts; //vert
 
-    protected int[] mirroredFaces; //tables that relate mirrored mesh to original mesh
+    int[] mirroredFaces; //tables that relate mirrored mesh to original mesh
 
-    protected int[] mirroredEdges;
+    int[] mirroredEdges;
 
-    protected int[] invMirroredVerts;
+    int[] invMirroredVerts;
 
-    protected int[] invMirroredFaces;
+    int[] invMirroredFaces;
 
-    protected int[] invMirroredEdges;
+    int[] invMirroredEdges;
 
-    protected UVMappingData mappingData; //UV Mapping
+    private UVMappingData mappingData; //UV Mapping
 
     private int mappingVerts, mappingEdges, mappingFaces; //markers to check if UVMapping data
     //is still valid
@@ -363,13 +363,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 edges = new Wedge[6 * u];
                 faces = new Wface[u + 2];
                 for (int i = 0; i < u; ++i) {
-                    vertices[i] = new Wvertex(new Vec3(0.5 * Math.cos(2 * i
-                            * Math.PI / u), 0.5, -0.5
-                            * Math.sin(2 * i * Math.PI / u)), i);
-                    vertices[u + i] = new Wvertex(new Vec3(0.5 * Math.cos(2 * i
-                            * Math.PI / u), -0.5, -0.5
-                            * Math.sin(2 * i * Math.PI / u)), i + u + edges.length
-                            / 2);
+                    vertices[i] = new Wvertex(new Vec3(0.5 * Math.cos(2 * i * Math.PI / u), 0.5, -0.5 * Math.sin(2 * i * Math.PI / u)), i);
+                    vertices[u + i] = new Wvertex(new Vec3(0.5 * Math.cos(2 * i * Math.PI / u), -0.5, -0.5 * Math.sin(2 * i * Math.PI / u)), i + u + edges.length / 2);
                 }
                 for (int i = 0; i < u; ++i) {
                     edges[i] = new Wedge(i + 1, i + edges.length / 2, 0, i + 1);
@@ -378,26 +373,20 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                         edges[i].next = 0;
                     }
                     edges[i + edges.length / 2] = new Wedge(i, i, i + 2, i + 2 * u);
-                    edges[i + u] = new Wedge(i + u, i + u + edges.length / 2, 1, i
-                            - 1 + u);
+                    edges[i + u] = new Wedge(i + u, i + u + edges.length / 2, 1, i - 1 + u);
                     if (i == 0) {
                         edges[i + u].next = 2 * u - 1;
                     }
-                    edges[i + u + edges.length / 2] = new Wedge(i + 1 + u, i + u,
-                            i + 2, i + 1 + 2 * u + edges.length / 2);
+                    edges[i + u + edges.length / 2] = new Wedge(i + 1 + u, i + u, i + 2, i + 1 + 2 * u + edges.length / 2);
                     if (i == u - 1) {
                         edges[i + u + edges.length / 2].vertex = u;
-                        edges[i + u + edges.length / 2].next = 2 * u + edges.length
-                                / 2;
+                        edges[i + u + edges.length / 2].next = 2 * u + edges.length / 2;
                     }
-                    edges[i + 2 * u] = new Wedge(i + u, i + 2 * u + edges.length
-                            / 2, i + 2, i + u + edges.length / 2);
-                    edges[i + 2 * u + edges.length / 2] = new Wedge(i, i + 2 * u,
-                            i + 2 - 1, i - 1 + edges.length / 2);
+                    edges[i + 2 * u] = new Wedge(i + u, i + 2 * u + edges.length / 2, i + 2, i + u + edges.length / 2);
+                    edges[i + 2 * u + edges.length / 2] = new Wedge(i, i + 2 * u, i + 2 - 1, i - 1 + edges.length / 2);
                     if (i == 0) {
                         edges[i + 2 * u + edges.length / 2].face = u + 1;
-                        edges[i + 2 * u + edges.length / 2].next = u - 1
-                                + edges.length / 2;
+                        edges[i + 2 * u + edges.length / 2].next = u - 1 + edges.length / 2;
                     }
                 }
                 faces[0] = new Wface(0);
@@ -1617,7 +1606,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * Face to find the number of vertices for
      * @return The number of vertices
      */
-    public int getFaceVertCount(Wface f) {
+    private int getFaceVertCount(Wface f) {
         Wedge e = edges[f.edge];
         int start = e.vertex;
         int count = 1;
@@ -5437,8 +5426,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * @exception InvalidObjectException
      * Signals that the PolyMesh structure is invalid
      */
-    public PolyMesh(DataInputStream in, Scene theScene) throws IOException,
-            InvalidObjectException {
+    public PolyMesh(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
         super(in, theScene);
         initialize();
         readData(in, theScene);
@@ -12343,8 +12331,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * I/O exception
      */
     @Override
-    public void writeToFile(DataOutputStream out, Scene theScene)
-            throws IOException {
+    public void writeToFile(DataOutputStream out, Scene theScene) throws IOException {
         if (theScene != null) {
             super.writeToFile(out, theScene);
         }
@@ -12591,7 +12578,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
          * @return Description of the Return Value
          */
         @Override
-        public Keyframe duplicate() {
+        public PolyMeshKeyframe duplicate() {
             return duplicate(mesh);
         }
 
@@ -12603,7 +12590,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
          * @return Description of the Return Value
          */
         @Override
-        public Keyframe duplicate(Object owner) {
+        public PolyMeshKeyframe duplicate(Object owner) {
             PolyMeshKeyframe k = new PolyMeshKeyframe();
             k.mesh = (PolyMesh) owner;
             k.skeleton = skeleton.duplicate();
@@ -13082,8 +13069,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
          */
         @Override
         public String toString() {
-            return ("vertex:" + vertex + " hedge:" + hedge + " face:" + face
-                    + " next:" + next + " smoothness:" + smoothness);
+            return ("vertex:" + vertex + " hedge:" + hedge + " face:" + face + " next:" + next + " smoothness:" + smoothness);
         }
     }
 
