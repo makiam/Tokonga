@@ -51,21 +51,6 @@ public class SkeletonShapeKeyframe implements Keyframe {
         return new SkeletonShapeKeyframe((Object3D) owner, skeleton.duplicate());
     }
 
-    /**
-     * Get the list of graphable values for this keyframe.
-     */
-    @Override
-    public double[] getGraphValues() {
-        return new double[0];
-    }
-
-    /**
-     * Set the list of graphable values for this keyframe.
-     */
-    @Override
-    public void setGraphValues(double[] values) {
-    }
-
     @Override
     public Keyframe blend(Keyframe o2, double weight1, double weight2) {
         return blend(new Keyframe[]{this, o2}, new double[]{weight1, weight2});

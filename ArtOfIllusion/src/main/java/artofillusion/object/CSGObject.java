@@ -484,21 +484,6 @@ public class CSGObject extends Object3D {
             return new CSGKeyframe(key1.duplicate(csg.obj1), key2.duplicate(csg.obj2), coords1.duplicate(), coords2.duplicate());
         }
 
-        /**
-         * Get the list of graphable values for this keyframe.
-         */
-        @Override
-        public double[] getGraphValues() {
-            return new double[0];
-        }
-
-        /**
-         * Set the list of graphable values for this keyframe.
-         */
-        @Override
-        public void setGraphValues(double[] values) {
-        }
-
         /* These methods return a new Keyframe which is a weighted average of this one and one,
        two, or three others. */
         @Override

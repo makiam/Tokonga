@@ -634,21 +634,6 @@ public class Actor extends ObjectWrapper {
         }
 
         /**
-         * Get the list of graphable values for this keyframe.
-         */
-        @Override
-        public double[] getGraphValues() {
-            return new double[0];
-        }
-
-        /**
-         * Set the list of graphable values for this keyframe.
-         */
-        @Override
-        public void setGraphValues(double[] values) {
-        }
-
-        /**
          * Add the weights from a keyframe into a hashtable.
          */
         private void addWeightsToTable(ActorKeyframe k, Map<Integer, Double> table, double scale) {

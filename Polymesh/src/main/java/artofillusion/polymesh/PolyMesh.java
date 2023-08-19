@@ -2376,7 +2376,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             return false;
         }
         double u, v, tmp;
-        Vec3 p, s, q;
+        Vec3 p;
         vv1 = v2.minus(v1);
         vv2 = v3.minus(v1);
         p = norm.cross(vv2);
@@ -2386,13 +2386,13 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             return false;
         }
         tmp = 1.0 / tmp;
-        s = pt.minus(v1);
+        Vec3 s = pt.minus(v1);
         u = tmp * s.dot(p);
         if (u < -0.00001 || u > 1.00001) {
             return false;
         }
 
-        q = s.cross(vv1);
+        Vec3 q = s.cross(vv1);
         v = tmp * norm.dot(q);
         if (v < -0.00001 || v > 1.00001) {
             return false;
@@ -2412,7 +2412,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * Second vertex
      * @return The edge value (-1 if no satisfying edge is found)
      */
-    public int getEdge(int v1, int v2) {
+    private int getEdge(int v1, int v2) {
         if (v1 >= vertices.length || v2 >= vertices.length) {
             return -1;
         }
@@ -2426,8 +2426,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             if (edges[i] == null) {
                 continue;
             }
-            if ((v1 == edges[i].vertex && v2 == edges[edges[i].hedge].vertex)
-                    || (v2 == edges[i].vertex && v1 == edges[edges[i].hedge].vertex)) {
+            if ((v1 == edges[i].vertex && v2 == edges[edges[i].hedge].vertex) || (v2 == edges[i].vertex && v1 == edges[edges[i].hedge].vertex)) {
                 return i;
             }
         }
@@ -5402,14 +5401,14 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             getMirroredMesh();
             return mirroredMesh.isClosed();
         }
-        if (cachedMesh != null) {
-            return closed;
-        } else {
+        if (cachedMesh == null) {
             for (int i = 0; i < edges.length; ++i) {
                 if (edges[i].face == -1) {
                     return false;
                 }
             }
+        } else {
+            return closed;
         }
         return true;
     }
@@ -12608,26 +12607,6 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         }
 
         /**
-         * Get the list of graphable values for this keyframe.
-         *
-         * @return The graphValues value
-         */
-        @Override
-        public double[] getGraphValues() {
-            return new double[0];
-        }
-
-        /**
-         * Set the list of graphable values for this keyframe.
-         *
-         * @param values
-         * The new graphValues value
-         */
-        @Override
-        public void setGraphValues(double[] values) {
-        }
-
-        /**
          * These methods return a new Keyframe which is a weighted average of
          * this one and one, two, or three others. These methods should never be
          * called, since PolyMeshes can only be keyframed by converting them to
@@ -13170,11 +13149,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
     }
 
     public Color getMeshColor() {
-        if (useCustomColors) {
-            return meshColor;
-        } else {
-            return ViewerCanvas.surfaceColor;
-        }
+        return useCustomColors ? meshColor : ViewerCanvas.surfaceColor;
     }
 
     public void setMeshColor(Color meshColor) {

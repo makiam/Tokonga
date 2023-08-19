@@ -1532,14 +1532,6 @@ public class SplineMesh extends Object3D implements Mesh {
         }
 
         /**
-         * Get the list of graphable values for this keyframe.
-         */
-        @Override
-        public double[] getGraphValues() {
-            return new double[0];
-        }
-
-        /**
          * Set the list of graphable values for this keyframe.
          */
         @Override
