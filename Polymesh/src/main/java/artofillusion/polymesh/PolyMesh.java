@@ -97,6 +97,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
     private boolean closed;
 
+    @lombok.Getter
     private Skeleton skeleton;
 
     //lists used to store triangulation information persistent data, must de declared as fields
@@ -2759,16 +2760,6 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      */
     public Wface[] getFaces() {
         return faces;
-    }
-
-    /**
-     * Get the skeleton for the object. If it does not have one, this should return null.
-     *
-     * @return The skeleton value
-     */
-    @Override
-    public Skeleton getSkeleton() {
-        return skeleton;
     }
 
     /**

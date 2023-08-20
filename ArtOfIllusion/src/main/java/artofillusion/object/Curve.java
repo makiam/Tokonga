@@ -601,20 +601,7 @@ public class Curve extends Object3D implements Mesh {
         return true;
     }
 
-    /**
-     * Get the skeleton. This returns null, since Curves cannot have skeletons.
-     */
-    @Override
-    public Skeleton getSkeleton() {
-        return null;
-    }
 
-    /**
-     * Set the skeleton. This does nothing, since Curves cannot have skeletons.
-     */
-    @Override
-    public void setSkeleton(Skeleton s) {
-    }
 
     @Override
     public void edit(EditingWindow parent, ObjectInfo info, Runnable cb) {

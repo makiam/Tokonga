@@ -586,21 +586,6 @@ public class UVMappingViewer extends MeshViewer {
          * Unused method from Mesh.
          */
         @Override
-        public Skeleton getSkeleton() {
-            return null;
-        }
-
-        /**
-         * Unused method from Mesh.
-         */
-        @Override
-        public void setSkeleton(Skeleton s) {
-        }
-
-        /**
-         * Unused method from Mesh.
-         */
-        @Override
         public MeshViewer createMeshViewer(MeshEditController controller, RowContainer options) {
             return null;
         }

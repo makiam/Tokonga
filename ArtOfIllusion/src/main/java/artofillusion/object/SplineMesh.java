@@ -76,7 +76,7 @@ public class SplineMesh extends Object3D implements Mesh {
     }
 
     @Override
-    public Object3D duplicate() {
+    public SplineMesh duplicate() {
         SplineMesh mesh = new SplineMesh();
         mesh.copyObject(this);
         return mesh;
