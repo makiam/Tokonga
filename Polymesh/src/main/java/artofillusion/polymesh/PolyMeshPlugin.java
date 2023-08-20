@@ -13,6 +13,7 @@ package artofillusion.polymesh;
 import artofillusion.LayoutWindow;
 import artofillusion.Plugin;
 import artofillusion.UndoRecord;
+import artofillusion.UndoableEdit;
 import artofillusion.keystroke.KeystrokeManager;
 import artofillusion.keystroke.KeystrokeRecord;
 import artofillusion.math.CoordinateSystem;
@@ -64,7 +65,7 @@ public class PolyMeshPlugin implements Plugin {
         ToolPalette palette = view.getToolPalette();
         palette.addTool(8, new CreatePolyMeshTool(view));
         palette.toggleDefaultTool();
-        palette.toggleDefaultTool();
+
         BMenuItem menuItem = Translate.menuItem("polymesh:convertToPolyMesh", new ConvertObject(view), "doConvert");
         BMenu toolsMenu = view.getObjectMenu();
         int count = toolsMenu.getChildCount();
@@ -95,8 +96,12 @@ public class PolyMeshPlugin implements Plugin {
 
             //NB!!! optionDefault is not match to any option button defined above... 
             String optionDefault = Translate.text("polymesh:convertToQuads");
+            var objects = window.getSelectedObjects();
+            if(objects.isEmpty()) return;
 
-            for (ObjectInfo item : window.getSelectedObjects()) {
+            UndoableEdit convert = new ConvertToPolymeshEdit();
+
+            for (ObjectInfo item : objects) {
                 CoordinateSystem coords = new CoordinateSystem();
                 String name = "Polymesh" + item.getName();
 
@@ -115,6 +120,7 @@ public class PolyMeshPlugin implements Plugin {
                 }
             }
 
+            //window.setUndoRecord(new UndoRecord(window, false, convert));
             window.updateImage();
         }
     }
