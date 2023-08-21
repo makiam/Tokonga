@@ -176,8 +176,7 @@ public class OBJImporter {
                     try {
                         smoothingGroup = Integer.parseInt(fields[1]);
                     } catch (NumberFormatException ex) {
-                        throw new Exception("Illegal value '" + fields[1]
-                                + "' found in line " + lineno + ".");
+                        throw new Exception("Illegal value '" + fields[1]  + "' found in line " + lineno + ".");
                     }
                 } else if ("g".equals(fields[0])) {
                     // Set the current group or groups.
