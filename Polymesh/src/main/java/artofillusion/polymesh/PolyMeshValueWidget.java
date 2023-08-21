@@ -33,6 +33,8 @@ import java.text.ParseException;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -44,13 +46,13 @@ public class PolyMeshValueWidget extends BorderContainer {
 
     public interface ValueWidgetOwner {
 
-        public void showValueWidget();
+        void showValueWidget();
 
-        public void doValueWidgetValidate();
+        void doValueWidgetValidate();
 
-        public void doValueWidgetAbort();
+        void doValueWidgetAbort();
 
-        public void prepareToShowValueWidget();
+        void prepareToShowValueWidget();
     }
 
     private BButton validateButton, abortButton;
@@ -59,7 +61,8 @@ public class PolyMeshValueWidget extends BorderContainer {
     private BSpinner maxSpinner;
     private PMValueField valueField;
     private BCheckBox retainValueCB;
-    private double valueMin, valueMax, tempValueMin, tempValueMax;
+    private double valueMin, valueMax;
+    @Getter
     private double value;
     private final NumberFormat format;
     private Runnable runCallback;
@@ -264,12 +267,8 @@ public class PolyMeshValueWidget extends BorderContainer {
         if ((modifiers & InputEvent.CTRL_MASK) != 0) {
             return;
         }
-        switch (code) {
-            case KeyPressedEvent.VK_ENTER:
-                if (runCallback != null) {
-                    doValidate();
-                }
-                break;
+        if (code == KeyPressedEvent.VK_ENTER && runCallback != null) {
+            doValidate();
         }
     }
 
@@ -365,8 +364,8 @@ public class PolyMeshValueWidget extends BorderContainer {
     public void setTempValueRange(double tmpValueMin, double tmpValueMax) {
         if (!temporaryRange) {
             temporaryRange = true;
-            valueMin = ((Double) minSpinner.getValue()).doubleValue();
-            valueMax = ((Double) maxSpinner.getValue()).doubleValue();
+            valueMin = (Double) minSpinner.getValue();
+            valueMax = (Double) maxSpinner.getValue();
             minSpinner.setValue(tmpValueMin);
             maxSpinner.setValue(tmpValueMax);
             if (value < tmpValueMin) {
@@ -409,10 +408,6 @@ public class PolyMeshValueWidget extends BorderContainer {
         } catch (Exception e) {
 
         }
-    }
-
-    public double getValue() {
-        return value;
     }
 
     public void setValue(double value) {

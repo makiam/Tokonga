@@ -96,8 +96,7 @@ public class TextureImageExporter {
         if (info == null) {
             // We haven't encountered this texture before, so create a new TextureImageInfo for it.
 
-            info = new TextureImageInfo(tex, obj.object
-                    .getAverageParameterValues());
+            info = new TextureImageInfo(tex, obj.getObject().getAverageParameterValues());
             textureTable.put(tex, info);
             if (tex instanceof ImageMapTexture) {
                 // Go through the image maps, and see which ones are being used.
@@ -128,8 +127,7 @@ public class TextureImageExporter {
             Mapping2D map = (Mapping2D) obj.object.getTextureMapping();
             if (map instanceof UVMapping && mesh instanceof TriangleMesh
                     && ((UVMapping) map).isPerFaceVertex((TriangleMesh) mesh)) {
-                Vec2[][] coords = ((UVMapping) map)
-                        .findFaceTextureCoordinates((TriangleMesh) mesh);
+                Vec2[][] coords = ((UVMapping) map).findFaceTextureCoordinates((TriangleMesh) mesh);
                 for (int i = 0; i < coords.length; i++) {
                     for (int j = 0; j < coords[i].length; j++) {
                         if (coords[i][j].x < info.minu) {
@@ -213,15 +211,13 @@ public class TextureImageExporter {
     /**
      * Write an image file to disk representating a component of a texture.
      */
-    private void writeComponentImage(TextureImageInfo info, int component,
-            String filename) throws IOException, InterruptedException {
+    private void writeComponentImage(TextureImageInfo info, int component, String filename) throws IOException, InterruptedException {
         if (filename == null || !(info.texture instanceof Texture2D)) {
             return;
         }
         Image img = ((Texture2D) info.texture).createComponentImage(info.minu,
                 info.maxu, info.minv, info.maxv, width, height, component, 0.0,
                 info.paramValue);
-        ImageSaver.saveImage(img, new File(dir, filename),
-                ImageSaver.FORMAT_JPEG, quality);
+        ImageSaver.saveImage(img, new File(dir, filename), ImageSaver.FORMAT_JPEG, quality);
     }
 }
