@@ -176,9 +176,7 @@ public class OBJExporter {
                         }
                     }
                 }
-                if (!needNormals) {
-                    out.println("s 0"); // The mesh is faceted, so we can simply disable smoothing
-                } else {
+                if (needNormals) {
                     needNormals = false;
                     Vec3[] vertNormal = new Vec3[vert.length];
                     for (int j = 0; j < mesh.getFaceCount() && !needNormals; j++) {
@@ -195,6 +193,8 @@ public class OBJExporter {
                     if (!needNormals) {
                         out.println("s 1"); // The mesh is fully smoothed, so we can simply use a smoothing group
                     }
+                } else {
+                    out.println("s 0"); // The mesh is faceted, so we can simply disable smoothing
                 }
             }
 

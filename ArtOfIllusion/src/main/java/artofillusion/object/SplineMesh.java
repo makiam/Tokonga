@@ -76,7 +76,7 @@ public class SplineMesh extends Object3D implements Mesh {
     }
 
     @Override
-    public Object3D duplicate() {
+    public SplineMesh duplicate() {
         SplineMesh mesh = new SplineMesh();
         mesh.copyObject(this);
         return mesh;
@@ -1529,14 +1529,6 @@ public class SplineMesh extends Object3D implements Mesh {
                 k.paramValue[i] = paramValue[i].duplicate();
             }
             return k;
-        }
-
-        /**
-         * Get the list of graphable values for this keyframe.
-         */
-        @Override
-        public double[] getGraphValues() {
-            return new double[0];
         }
 
         /**

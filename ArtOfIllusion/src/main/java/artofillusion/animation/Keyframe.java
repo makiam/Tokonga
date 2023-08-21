@@ -36,12 +36,15 @@ public interface Keyframe {
     /**
      * Get the list of graphable values for this keyframe.
      */
-    public double[] getGraphValues();
+    default double[] getGraphValues() {
+        return new double[0];
+    }
 
     /**
      * Set the list of graphable values for this keyframe.
      */
-    public void setGraphValues(double[] values);
+    default void setGraphValues(double[] values) {
+    }
 
     /**
      * Return a new Keyframe which is a weighted average of this one and one other.

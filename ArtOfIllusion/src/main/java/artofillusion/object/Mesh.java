@@ -65,23 +65,26 @@ public interface Mesh {
     /**
      * Create a new object which is an exact duplicate of this one.
      */
-    public abstract Object3D duplicate();
+    public Object3D duplicate();
 
     /**
      * Copy all the properties of another object, to make this one identical to it. If the
      * two objects are of different classes, this will throw a ClassCastException.
      */
-    public abstract void copyObject(Object3D obj);
+    public void copyObject(Object3D obj);
 
     /**
      * Get the skeleton for the object. If it does not have one, this should return null.
      */
-    public Skeleton getSkeleton();
+    default Skeleton getSkeleton() {
+        return null;
+    }
 
     /**
      * Set the skeleton for the object. If it cannot have a skeleton, this should do nothing.
      */
-    public void setSkeleton(Skeleton s);
+    default void setSkeleton(Skeleton s) {
+    }
 
     /**
      * Get a MeshViewer which can be used for viewing this mesh.

@@ -245,26 +245,6 @@ public class QuadMesh extends Object3D implements FacetedMesh {
             mark = SUBDIVIDE;
         }
 
-        /**
-         * Given another face, return the index of the edge it shares with this one, or -1 if
-         * they do not share an edge.
-         */
-        public int getSharedFace(QuadFace f) {
-            if (f.e1 == e1 || f.e2 == e1 || f.e3 == e1 || f.e4 == e1) {
-                return e1;
-            }
-            if (f.e1 == e2 || f.e2 == e2 || f.e3 == e2 || f.e4 == e2) {
-                return e2;
-            }
-            if (f.e1 == e3 || f.e2 == e3 || f.e3 == e3 || f.e4 == e3) {
-                return e3;
-            }
-            if (f.e1 == e4 || f.e2 == e4 || f.e3 == e4 || f.e4 == e4) {
-                return e4;
-            }
-            return -1;
-        }
-
         @Override
         public String toString() {
             String markString = "";
@@ -298,30 +278,6 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 
     long t1, t2, t3, t4, t5, t6, t7;
 
-//	static {
-//		//debug stuff
-//		QuadVertex[] v = new QuadVertex[4];
-//		v[0] = new QuadVertex(new Vec3(0,0,1));
-//		v[0].firstEdge = 0;
-//		v[1] = new QuadVertex(new Vec3(1,0,1));
-//		v[1].firstEdge = 1;
-//		v[2] = new QuadVertex(new Vec3(1,1,1));
-//		v[2].firstEdge = 2;
-//		v[3] = new QuadVertex(new Vec3(0,1,1));
-//		v[3].firstEdge = 3;
-//		QuadEdge[] e = new QuadEdge[4];
-//		e[0] = new QuadEdge(1, 0, -1);
-//		e[0].f2 = 0;
-//		e[1] = new QuadEdge(2, 1, -1);
-//		e[1].f2 = 0;
-//		e[2] = new QuadEdge(2, 3, 0);
-//		e[3] = new QuadEdge(3, 0, 0);
-//		QuadFace[] f = new QuadFace[1];
-//		f[0] = new QuadFace(0, 1, 2, 3, 0, 1, 2, 3);
-//		QuadMesh m = new QuadMesh(v, e, f);
-//		m.smoothMesh(1.0, false);
-//		System.out.println("********");
-//	}
     private QuadMesh() {
     }
 
@@ -332,8 +288,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
         this.faces = faces;
     }
 
-    public QuadMesh(DataInputStream in, Scene scene) throws IOException,
-            InvalidObjectException {
+    public QuadMesh(DataInputStream in, Scene scene) throws IOException, InvalidObjectException {
         super(in, scene);
         // TODO Auto-generated constructor stub
     }
@@ -362,7 +317,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
     }
 
     @Override
-    public Object3D duplicate() {
+    public QuadMesh duplicate() {
         QuadMesh mesh = new QuadMesh();
         mesh.copyObject(this);
         return mesh;
@@ -389,7 +344,6 @@ public class QuadMesh extends Object3D implements FacetedMesh {
      */
     private void findBounds() {
         double minx, miny, minz, maxx, maxy, maxz;
-        Vec3[] vert;
         int i;
 
 //		if (cachedMesh != null)
@@ -473,7 +427,6 @@ public class QuadMesh extends Object3D implements FacetedMesh {
     private void resetMesh() {
         bounds = null;
         cachedMesh = null;
-        WireframeMesh cachedWire = null;
     }
 
     @Override
@@ -502,8 +455,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
     }
 
     @Override
-    public MeshViewer createMeshViewer(MeshEditController controller,
-            RowContainer rowContainer) {
+    public MeshViewer createMeshViewer(MeshEditController controller, RowContainer rowContainer) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -673,7 +625,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
     }
 
     public void smoothMesh(double tol, boolean calcProjectedEdges, int maxNs) {
-        //printSize();
+
         t1 = t2 = t3 = t4 = t5 = t6 = t7 = 0;
         smoothMesh(tol, calcProjectedEdges, 0, null, maxNs);
     }
@@ -2114,11 +2066,6 @@ public class QuadMesh extends Object3D implements FacetedMesh {
         return renderingMesh;
     }
 
-    @Override
-    public void setSkeleton(Skeleton skeleton) {
-        // TODO Auto-generated method stub
-    }
-
     /**
      * Returns the edges aroun a given vertex, unordered
      *
@@ -2281,10 +2228,6 @@ public class QuadMesh extends Object3D implements FacetedMesh {
         for (int i = 0; i < faces.length; i++) {
             log.debug(i + "{}: {}", i, faces[i]);
         }
-    }
-
-    public void printSize() {
-        log.info(vertices.length + " verts (" + vertices.length * 50 + "), " + edges.length + " edges (" + edges.length * 28 + "), " + faces.length + " faces (" + faces.length * 24 + "), for a total of: " + (vertices.length * 54 + edges.length * 28 + faces.length * 24) + " bytes");
     }
 
     public void setProjectedEdges(int[] projectedEdges) {

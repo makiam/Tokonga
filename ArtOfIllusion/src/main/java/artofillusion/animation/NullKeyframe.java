@@ -33,17 +33,6 @@ public class NullKeyframe implements Keyframe {
         return new NullKeyframe();
     }
 
-    /* Get the list of graphable values for this keyframe. */
-    @Override
-    public double[] getGraphValues() {
-        return new double[0];
-    }
-
-    /* Set the list of graphable values for this keyframe. */
-    @Override
-    public void setGraphValues(double[] values) {
-    }
-
     /* These methods return a new Keyframe which is a weighted average of this one and one,
      two, or three others. */
     @Override

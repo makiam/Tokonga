@@ -73,7 +73,7 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
         }
 
         /**
-         * Multiple the fields of this vertex by a constant.
+         * Multiply the fields of this vertex by a constant.
          */
         public void scale(double d) {
             r.scale(d);
@@ -307,7 +307,7 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
      * Create a duplicate of this object.
      */
     @Override
-    public Object3D duplicate() {
+    public TriangleMesh duplicate() {
         TriangleMesh mesh = new TriangleMesh();
         mesh.copyObject(this);
         return mesh;
@@ -3573,21 +3573,6 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
                 k.paramValue[i] = paramValue[i].duplicate();
             }
             return k;
-        }
-
-        /**
-         * Get the list of graphable values for this keyframe.
-         */
-        @Override
-        public double[] getGraphValues() {
-            return new double[0];
-        }
-
-        /**
-         * Set the list of graphable values for this keyframe.
-         */
-        @Override
-        public void setGraphValues(double[] values) {
         }
 
         /**
