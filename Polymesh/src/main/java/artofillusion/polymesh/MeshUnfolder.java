@@ -24,6 +24,8 @@ import artofillusion.polymesh.UnfoldedMesh.UnfoldedVertex;
 import artofillusion.ui.Translate;
 import buoy.widget.BTextArea;
 import java.util.*;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import no.uib.cipr.matrix.DenseVector;
 import no.uib.cipr.matrix.sparse.*;
@@ -44,8 +46,14 @@ public class MeshUnfolder {
     // vertex, minus one (see ABF++)
     private int[] invInteriorTable; // inverse table : given an interior
 
+    /**
+     * -- GETTER --
+     *
+     * @return the unfolded meshes in an array of UnfoldedMesh
+     */
     // vertex, yields the index to vertex in
     // the mesh
+    @Getter
     private UnfoldedMesh[] unfoldedMeshes; // the unfolded meshes resulting
 
     // from unfolding process
@@ -65,7 +73,7 @@ public class MeshUnfolder {
      * @param vertexTable
      * Table to vertex indices prior to opening seams.
      * Correct vertex index will be placed in UnfoldedVertex
-     * data. If a the vertexTable length is smaller than the
+     * data. If the vertexTable length is smaller than the
      * number of vertices, then these vertices are supposed
      * to be created for triangulation purposes and will be
      * assigned a vertex index of -1. They won't be displayed
@@ -198,15 +206,15 @@ public class MeshUnfolder {
         var = new double[nangles];
         // start from current angle values
         System.arraycopy(angles, 0, var, 0, nangles);
-        double anglesum;
+        double anglesSum;
         for (int i = 0; i < nint; i++) {
-            anglesum = 0;
+            anglesSum = 0;
             for (int j = 0; j < angleTable[i].length; j++) {
-                anglesum += angles[angleTable[i][j]];
+                anglesSum += angles[angleTable[i][j]];
             }
-            if (anglesum > 0) {
+            if (anglesSum > 0) {
                 for (int j = 0; j < angleTable[i].length; j++) {
-                    var[angleTable[i][j]] *= 2 * Math.PI / anglesum;
+                    var[angleTable[i][j]] *= 2 * Math.PI / anglesSum;
                 }
             }
         }
@@ -248,7 +256,7 @@ public class MeshUnfolder {
             cg.solve(newMatTMat, newcons, sol);
         } catch (IterativeSolverNotConvergedException e) {
             textArea.append("Failure : unfolding did not converge");
-            log.atInfo().setCause(e).log("Failure: unfolding did not converge {}", e);
+            log.atInfo().setCause(e).log("Failure: unfolding did not converge {}", e.getMessage());
             return false;
         }
         double[] soldata = sol.getData();
@@ -368,9 +376,9 @@ public class MeshUnfolder {
         boolean[] unfoldedVerts = new boolean[uverts.length];
         boolean done = false;
         Stack<Integer> edgeStack = new Stack<>();
-        ArrayList<Integer> vertList = new ArrayList<>();
-        ArrayList<Integer> edgeList = new ArrayList<>();
-        ArrayList<Integer> faceList = new ArrayList<>();
+        List<Integer> vertList = new ArrayList<>();
+        List<Integer> edgeList = new ArrayList<>();
+        List<Integer> faceList = new ArrayList<>();
         int index;
         int pieceCount = 0;
         while (!done) {
@@ -439,7 +447,7 @@ public class MeshUnfolder {
                     unfoldedMeshesList.add(computeUnfoldedMesh(vertList, edgeList, faceList, uverts, uedges, ufaces));
                 } catch (IterativeSolverNotConvergedException e) {
                     textArea.append("Failure : unfolding did not converge");
-                    log.atInfo().setCause(e).log("Failure: unfolding did not converge {}", e);
+                    log.atInfo().setCause(e).log("Failure: unfolding did not converge {}", e.getMessage());
                     return false;
                 }
                 totaltime = new Date().getTime() - totaltime;
@@ -518,8 +526,8 @@ public class MeshUnfolder {
      * unfolded mesh. Ids are kept, they will make it possible to find back
      * which face/vertex is concerned during UVMapping edition.
      */
-    private UnfoldedMesh computeUnfoldedMesh(ArrayList<Integer> vertList,
-            ArrayList<Integer> edgeList, ArrayList<Integer> faceList,
+    private UnfoldedMesh computeUnfoldedMesh(List<Integer> vertList,
+            List<Integer> edgeList, List<Integer> faceList,
             UnfoldedVertex[] uverts, UnfoldedEdge[] uedges,
             UnfoldedFace[] ufaces) throws IterativeSolverNotConvergedException {
         UnfoldedVertex[] vertices = new UnfoldedVertex[vertList.size()];
@@ -798,11 +806,8 @@ public class MeshUnfolder {
      * Given an edge and a face, this method checks the 3rd vertex as being
      * unfolded if's not already checked
      */
-    private void computeFace(int e, int f,
-            UnfoldedEdge[] uedges, UnfoldedFace[] ufaces,
-            boolean[] unfoldedFace, boolean[] unfoldedVerts,
-            ArrayList<Integer> vertList,
-            ArrayList<Integer> faceList) {
+    private void computeFace(int e, int f, UnfoldedEdge[] uedges, UnfoldedFace[] ufaces, boolean[] unfoldedFace, boolean[] unfoldedVerts,
+            List<Integer> vertList, List<Integer> faceList) {
         int v1, v2, v3;
         v1 = ufaces[f].v1;
         v2 = ufaces[f].v2;
@@ -828,13 +833,6 @@ public class MeshUnfolder {
         }
         unfoldedFace[f] = true;
         faceList.add(f);
-    }
-
-    /**
-     * @return the unfolded meshes in an array of UnfoldedMesh
-     */
-    public UnfoldedMesh[] getUnfoldedMeshes() {
-        return unfoldedMeshes;
     }
 
 }
