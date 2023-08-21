@@ -338,6 +338,13 @@ public abstract class Object3D {
     }
 
     /**
+     * Get the skeleton for this object, or null if it does not have one.
+     */
+    public Skeleton getSkeleton() {
+        return null;
+    }
+
+    /**
      * Objects which can be rendered as part of a scene should override this method to return
      * a RenderingMesh which describes the appearance of the object. All points on the
      * RenderingMesh should be within a distance tol of the true surface. The interactive flag
