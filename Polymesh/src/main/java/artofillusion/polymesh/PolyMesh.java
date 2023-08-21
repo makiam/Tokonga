@@ -2943,8 +2943,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             Edge ted;
             int[][] verticesEdges = new int[vertices.length][];
             for (int i = 0; i < edge.length; ++i) {
-                if (edge[i].v1 < vertices.length
-                        && verticesEdges[edge[i].v1] == null) {
+                if (edge[i].v1 < vertices.length && verticesEdges[edge[i].v1] == null) {
                     verticesEdges[edge[i].v1] = getVertexEdges(vertices[edge[i].v1]);
                 }
             }
