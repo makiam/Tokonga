@@ -12330,25 +12330,28 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         out.writeShort(mirrorState);
         out.writeInt(smoothingMethod);
         out.writeInt(vertices.length);
-        for (int i = 0; i < vertices.length; i++) {
-            vertices[i].r.writeToFile(out);
-            out.writeInt(vertices[i].edge);
-            out.writeInt(vertices[i].ikJoint);
-            out.writeDouble(vertices[i].ikWeight);
-            out.writeShort(vertices[i].type);
+
+        for (var vertex : vertices) {
+            vertex.r.writeToFile(out);
+            out.writeInt(vertex.edge);
+            out.writeInt(vertex.ikJoint);
+            out.writeDouble(vertex.ikWeight);
+            out.writeShort(vertex.type);
         }
         out.writeInt(edges.length);
-        for (int i = 0; i < edges.length; i++) {
-            out.writeInt(edges[i].vertex);
-            out.writeInt(edges[i].hedge);
-            out.writeInt(edges[i].face);
-            out.writeInt(edges[i].next);
-            out.writeFloat(edges[i].smoothness);
+        for (var edge : edges) {
+            out.writeInt(edge.vertex);
+            out.writeInt(edge.hedge);
+            out.writeInt(edge.face);
+            out.writeInt(edge.next);
+            out.writeFloat(edge.smoothness);
         }
+
         out.writeInt(faces.length);
-        for (int i = 0; i < faces.length; i++) {
-            out.writeInt(faces[i].edge);
+        for (var face : faces) {
+            out.writeInt(face.edge);
         }
+
         out.writeBoolean(controlledSmoothing);
         out.writeDouble(minAngle);
         out.writeDouble(maxAngle);
@@ -12356,20 +12359,23 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         out.writeFloat(maxSmoothness);
         out.writeInt(interactiveSmoothLevel);
         out.writeInt(0);
+
         if (seams == null) {
             out.writeBoolean(false);
         } else {
             out.writeBoolean(true);
-            for (int i = 0; i < seams.length; i++) {
-                out.writeBoolean(seams[i]);
+            for(var b: seams) {
+                out.writeBoolean(b);
             }
         }
-        if (mappingData != null) {
+
+        if (mappingData == null) {
+            out.writeBoolean(false);
+        } else {
             out.writeBoolean(true);
             mappingData.writeToFile(out, theScene);
-        } else {
-            out.writeBoolean(false);
         }
+
         out.writeBoolean(useCustomColors);
         out.writeInt(vertColor.getRed());
         out.writeInt(vertColor.getGreen());
