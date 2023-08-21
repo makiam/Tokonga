@@ -3594,7 +3594,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         int[] fromVert;
         double[] fract;
 
-        int size = vertices.length;
+
         int count = 0;
         for (int i = 0; i < sel.length; ++i) {
             if (sel[i]) {
@@ -4550,7 +4550,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         int[] fromVert;
         double[] fract;
 
-        int size = vertices.length;
+
         int count = 0;
         for (int i = 0; i < fractions.length; ++i) {
             if (fractions[i] > 0 && fractions[i] < 1) {
@@ -4662,7 +4662,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         double maxLength = 0;
         double val;
 
-        int size = vertices.length;
+
         int count = 0;
         for (int i = 0; i < sel.length; ++i) {
             if (sel[i]) {
@@ -4713,12 +4713,12 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 newEdges[el + index + newEdges.length / 2].smoothness = edges[i].smoothness;
                 newVertices[to].edge = el + index + newEdges.length / 2;
 
-                if (val != fraction) {
-                    toVert[index] = from;
-                    fromVert[index] = to;
-                } else {
+                if (val == fraction) {
                     toVert[index] = to;
                     fromVert[index] = from;
+                } else {
+                    toVert[index] = from;
+                    fromVert[index] = to;
                 }
                 newEdges[newEdges[ed].hedge].next = newEdges[el + index].hedge;
                 ++index;
@@ -5700,7 +5700,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
         int face1;
         int face2;
-        Vec3 pt1;
+
         Vec3 pt2;
         double smoothness, dist;
         // location of old vertices
@@ -6274,7 +6274,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         }
         int face1;
         int face2;
-        Vec3 pt1;
+
         Vec3 pt2;
         // location of the new midpoints
         if (!subdivideOnly) {
@@ -12894,13 +12894,13 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             }
 
             skeleton = mesh.getSkeleton().duplicate();
-            Joint[] joint = skeleton.getJoints();
-            for (int i = 0; i < joint.length; i++) {
-                joint[i].coords = new CoordinateSystem(in);
-                joint[i].angle1.pos = in.readDouble();
-                joint[i].angle2.pos = in.readDouble();
-                joint[i].twist.pos = in.readDouble();
-                joint[i].length.pos = in.readDouble();
+
+            for (var joint : skeleton.getJoints()) {
+                joint.coords = new CoordinateSystem(in);
+                joint.angle1.pos = in.readDouble();
+                joint.angle2.pos = in.readDouble();
+                joint.twist.pos = in.readDouble();
+                joint.length.pos = in.readDouble();
             }
         }
     }
