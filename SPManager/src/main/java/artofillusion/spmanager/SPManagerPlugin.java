@@ -198,10 +198,10 @@ public class SPManagerPlugin implements Plugin {
                                     ldr = loaders.get(url);
 
                                     if (key.length == 1) {
-                                        if (obj != null) {
-                                            searchldr.add(ldr);
-                                        } else {
+                                        if (obj == null) {
                                             log.error("SPM: could not find loader for: {}", url);
+                                        } else {
+                                            searchldr.add(ldr);
                                         }
                                     }
 
