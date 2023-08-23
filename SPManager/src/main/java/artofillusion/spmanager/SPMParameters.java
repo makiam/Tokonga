@@ -160,9 +160,7 @@ public class SPMParameters {
      * @param forceUpdate Description of the Parameter
      */
     private void getThreadedRepositoriesList(boolean forceUpdate) {
-        final BDialog dlg = new BDialog(SPManagerFrame.getInstance(),
-                SPMTranslate.text("remoteStatus"),
-                true);
+        final BDialog dlg = new BDialog(SPManagerFrame.getInstance(), SPMTranslate.text("remoteStatus"),true);
 
         dlg.setEnabled(true);
 
