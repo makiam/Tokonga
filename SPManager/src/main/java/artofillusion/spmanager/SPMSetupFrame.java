@@ -140,7 +140,7 @@ public class SPMSetupFrame extends BDialog {
         fm.add(proxyPortEntry, 1, 2, formLayout);
 
         fm.add(usernameLabel = SPMTranslate.bLabel("username"), 0, 3, formLayout);
-        usernameEntry = new BTextField(parameters.getUsername(), 15);
+        usernameEntry = new BTextField(parameters.getUserName(), 15);
         fm.add(usernameEntry, 1, 3, formLayout);
 
         fm.add(passwordLabel = SPMTranslate.bLabel("password"), 0, 4, formLayout);
@@ -241,11 +241,11 @@ public class SPMSetupFrame extends BDialog {
      */
     private void doOK() {
         parameters.setURLs(rep, repositoriesCB.getSelectedIndex());
-        parameters.setProxyParameters(useProxyCB.getState(),
-                proxyHostEntry.getText(),
-                proxyPortEntry.getText(),
-                usernameEntry.getText(),
-                passwordEntry.getText());
+        SPMParameters.setUseProxy(useProxyCB.getState());
+        SPMParameters.setProxyHost(proxyHostEntry.getText());
+        SPMParameters.setProxyPort(proxyPortEntry.getText());
+        SPMParameters.setUserName(usernameEntry.getText());
+        parameters.setProxyParameters(useProxyCB.getState(), proxyHostEntry.getText(), proxyPortEntry.getText(), usernameEntry.getText(), passwordEntry.getText());
 
         Map<String, String> filters = parameters.getFilters();
         filters.clear();
@@ -292,27 +292,5 @@ public class SPMSetupFrame extends BDialog {
         parameters.setCurrentRepository(repositoriesCB.getSelectedIndex());
     }
 
-    /**
-     * Description of the Method
-     */
-    private void doRepEntryChanged() {
-        try {
-            String text = repEntry.getText();
-            new URL(text);
-            repEntry.getComponent().setForeground(Color.black);
-            String[] s = parameters.getRepositories();
-            addButton.setEnabled(true);
-            removeButton.setEnabled(false);
-            for (int i = 0; i < s.length; ++i) {
-                if (s[i].equals(text)) {
-                    addButton.setEnabled(false);
-                    removeButton.setEnabled(true);
-                }
-            }
-        } catch (MalformedURLException e) {
-            repEntry.getComponent().setForeground(Color.red);
-            addButton.setEnabled(false);
-            removeButton.setEnabled(false);
-        }
-    }
+
 }

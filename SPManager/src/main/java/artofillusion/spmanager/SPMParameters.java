@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.util.*;
 import javax.swing.*;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -32,19 +33,15 @@ import lombok.extern.slf4j.Slf4j;
 public class SPMParameters {
 
     private static List<String> repositories;
-    private static int current;
+    private static int currentRepository;
+
     /**
      * return the current filter map
      */
     @Getter
     private static Map<String, String> filters;
 
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    @Getter
+    @Getter @Setter
     private static boolean useProxy;
 
     /**
@@ -52,7 +49,7 @@ public class SPMParameters {
      *
      * @return The proxyHost value
      */
-    @Getter
+    @Getter @Setter
     private static String proxyHost = "";
 
     /**
@@ -60,15 +57,15 @@ public class SPMParameters {
      *
      * @return The proxyPort value
      */
-    @Getter
+    @Getter @Setter
     private static String proxyPort;
     /**
      * Gets the username attribute of the SPMParameters object
      *
      * @return The username value
      */
-    @Getter
-    private static String username;
+    @Getter @Setter
+    private static String userName;
     /**
      * Gets the password attribute of the SPMParameters object
      *
@@ -113,9 +110,9 @@ public class SPMParameters {
         filters.put("experimental", "hide");
 
         proxyPort = "";
-        username = "";
+        userName = "";
         password = "";
-        current = 0;
+        currentRepository = 0;
 
         loadPropertiesFile();
         initHttp();
@@ -194,15 +191,13 @@ public class SPMParameters {
         }
         SPManagerFrame.getInstance().setRemoteStatusText(SPMTranslate.text("fetchingRepositoriesList") + " " + repListURL, -1);
         try {
-            HttpURLConnection conn
-                    = (HttpURLConnection) repListURL.openConnection();
+            HttpURLConnection conn = (HttpURLConnection) repListURL.openConnection();
 
             if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
                 new BStandardDialog("SPManager", new String[]{
                     SPMTranslate.text("noRepoList"),
                     conn.getResponseMessage()
-                    + " (" + conn.getResponseCode() + ")",}, BStandardDialog.ERROR)
-                        .showMessageDialog(SPManagerFrame.getInstance());
+                    + " (" + conn.getResponseCode() + ")",}, BStandardDialog.ERROR).showMessageDialog(SPManagerFrame.getInstance());
 
                 return;
             }
@@ -211,16 +206,16 @@ public class SPMParameters {
 
             String repoName;
             boolean modified = true;
-            String currentString = repositories.get(current);
+            String currentString = repositories.get(currentRepository);
 
-            log.atInfo().log("Current repo: ({}): {}", current, currentString);
+            log.atInfo().log("Current repo: ({}): {}", currentRepository, currentString);
 
-            int previous = current;
-            current = 0;
+            int previous = currentRepository;
+            currentRepository = 0;
             List<String> newRepositories = new Vector<>();
             while (true) {
                 repoName = rd.readLine();
-                if (repoName == null || repoName.length() == 0) {
+                if (repoName == null || repoName.isEmpty()) {
                     break;
                 }
 
@@ -228,7 +223,7 @@ public class SPMParameters {
                     log.atDebug().log("Error retrieving repositories list.");
                     SPManagerFrame.getInstance().setRemoteStatusText(SPMTranslate.text("noRepoList"), -1);
 
-                    current = previous;
+                    currentRepository = previous;
                     return;
                 }
 
@@ -241,8 +236,8 @@ public class SPMParameters {
 
                 newRepositories.add(repoName);
                 if (repoName.equals(currentString)) {
-                    current = rd.getLineNumber() - 1;
-                    log.atInfo().log("New current: {}", current);
+                    currentRepository = rd.getLineNumber() - 1;
+                    log.atInfo().log("New current: {}", currentRepository);
                     modified = false;
                 }
             }
@@ -260,7 +255,7 @@ public class SPMParameters {
             }
             SPManagerFrame.getInstance().setRemoteStatusText(SPMTranslate.text("unknownRepositoriesHost", repListURL), -1);
         } finally {
-            // close and displose of the dialog
+            // close and dispose of the dialog
             dlg.setEnabled(false);
             dlg.setVisible(false);
             dlg.dispose();
@@ -302,7 +297,7 @@ public class SPMParameters {
         String s = null;
 
         repositories.clear();
-        current = 0;
+        currentRepository = 0;
 
         while (i != -1) {
             s = p.getProperty("URL_" + i);
@@ -321,12 +316,12 @@ public class SPMParameters {
 
         s = p.getProperty("default", "0");
         try {
-            current = Integer.parseInt(s);
-            if (current > repositories.size()) {
-                current = 0;
+            currentRepository = Integer.parseInt(s);
+            if (currentRepository > repositories.size()) {
+                currentRepository = 0;
             }
         } catch (NumberFormatException e) {
-            current = 0;
+            currentRepository = 0;
             log.atError().log("SPManager : Wrong default URL index in properties file.");
         }
 
@@ -346,7 +341,7 @@ public class SPMParameters {
 
         proxyHost = p.getProperty("proxyHost", "");
         proxyPort = p.getProperty("proxyPort", "");
-        username = p.getProperty("username", "");
+        userName = p.getProperty("username", "");
         password = se.decrypt(p.getProperty("password", ""));
 
         s = p.getProperty("useProxy", "false");
@@ -371,7 +366,7 @@ public class SPMParameters {
         for (int i = 0; i < repositories.size(); ++i) {
             p.setProperty("URL_" + i, repositories.get(i));
         }
-        p.setProperty("default", String.valueOf(current));
+        p.setProperty("default", String.valueOf(currentRepository));
 
         filters.forEach((String key, String value) -> {
             p.setProperty("FILTER_" + key, value);
@@ -379,7 +374,7 @@ public class SPMParameters {
 
         p.setProperty("proxyHost", proxyHost);
         p.setProperty("proxyPort", proxyPort);
-        p.setProperty("username", username);
+        p.setProperty("username", userName);
         p.setProperty("password", se.encrypt(password));
         p.setProperty("useProxy", String.valueOf(useProxy));
         p.setProperty("usecache", String.valueOf(useCache));
@@ -395,7 +390,7 @@ public class SPMParameters {
     public void setURLs(String[] urls, int selectedIndex) {
         repositories.clear();
         repositories.addAll(Arrays.asList(urls));
-        current = selectedIndex;
+        currentRepository = selectedIndex;
         savePropertiesFile();
     }
 
@@ -416,7 +411,7 @@ public class SPMParameters {
     public URL getCurrentRepository() {
         URL url = null;
         try {
-            url = new URL(repositories.get(current));
+            url = new URL(repositories.get(currentRepository));
         } catch (MalformedURLException me) {
             log.atError().setCause(me).log("Bad URL: {}", me.getMessage());
         }
@@ -429,7 +424,7 @@ public class SPMParameters {
      * @param c The new currentRepository value
      */
     public void setCurrentRepository(int c) {
-        current = c;
+        currentRepository = c;
     }
 
     /**
@@ -438,10 +433,10 @@ public class SPMParameters {
      * @return The currentRepositoryIndex value
      */
     public int getCurrentRepositoryIndex() {
-        if (current < 0) {
+        if (currentRepository < 0) {
             getRepositoriesList(false);
         }
-        return current;
+        return currentRepository;
     }
 
     /**
@@ -459,7 +454,7 @@ public class SPMParameters {
      * return the filter type corresponding to this filter value
      */
     public static int getFilterType(String val) {
-        if (val == null || val.length() == 0) {
+        if (val == null || val.isEmpty()) {
             return DEFAULT;
         }
 
@@ -477,13 +472,6 @@ public class SPMParameters {
             return FILTER_NAMES[0];
         }
         return FILTER_NAMES[type % FILTER_MODULO];
-    }
-
-    /**
-     * add a filter to the list
-     */
-    public void addFilter(String name, String value) {
-        filters.put(name, value);
     }
 
     public void addFilter(String name, int type) {
@@ -520,18 +508,18 @@ public class SPMParameters {
     /**
      * Sets the proxyParameters attribute of the SPMParameters object
      *
-     * @param up The new proxyParameters value
-     * @param ph The new proxyParameters value
-     * @param pp The new proxyParameters value
-     * @param usr The new proxyParameters value
-     * @param pwd The new proxyParameters value
+     * @param useProxy The new proxyParameters value
+     * @param proxyHost The new proxyParameters value
+     * @param proxyPort The new proxyParameters value
+     * @param userName The new proxyParameters value
+     * @param password The new proxyParameters value
      */
-    public void setProxyParameters(boolean up, String ph, String pp, String usr, String pwd) {
-        useProxy = up;
-        proxyHost = ph;
-        proxyPort = pp;
-        username = usr;
-        password = pwd;
+    public void setProxyParameters(boolean useProxy, String proxyHost, String proxyPort, String userName, String password) {
+        SPMParameters.useProxy = useProxy;
+        SPMParameters.proxyHost = proxyHost;
+        SPMParameters.proxyPort = proxyPort;
+        SPMParameters.userName = userName;
+        SPMParameters.password = password;
         initHttp();
         savePropertiesFile();
     }
@@ -568,10 +556,10 @@ public class SPMParameters {
             System.setProperty("http.proxyPort", proxyPort);
 
             // set proxy authentication
-            if (username == null || username.length() == 0) {
+            if (userName == null || userName.isEmpty()) {
                 Authenticator.setDefault(new FirewallAuthenticator(null));
             } else {
-                PasswordAuthentication pw = new PasswordAuthentication(username, password.toCharArray());
+                PasswordAuthentication pw = new PasswordAuthentication(userName, password.toCharArray());
                 Authenticator.setDefault(new FirewallAuthenticator(pw));
             }
         } else {

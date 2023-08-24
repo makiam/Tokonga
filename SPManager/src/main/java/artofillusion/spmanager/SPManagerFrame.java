@@ -78,8 +78,7 @@ public class SPManagerFrame extends BFrame {
 
         statusLabel = new BLabel(" ");
 
-        statusTextClearAction
-                = new AbstractAction() {
+        statusTextClearAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 statusLabel.setText(" ");
@@ -95,8 +94,7 @@ public class SPManagerFrame extends BFrame {
         rc.add(new BLabel(new ImageIcon(getClass().getResource("/artofillusion/spmanager/icons/gear.png"))), headLayout);
         //Icon gear.png taken from the KDE desktop environment !!!
         rc.add(SPMTranslate.bLabel("Version"), headLayout);
-        LayoutInfo cclayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets(3, 3, 5, 3), new Dimension(0, 0));
-        cc.add(rc, cclayout);
+        cc.add(rc, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets(3, 3, 5, 3), new Dimension(0, 0)));
 
         //Tabbed Pane setup
         tabbedPane = new BTabbedPane();
