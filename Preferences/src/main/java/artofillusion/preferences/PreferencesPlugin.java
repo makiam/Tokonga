@@ -269,7 +269,7 @@ public class PreferencesPlugin implements Plugin {
                     try {
                         this.semaphore.wait(300000L);
                     } catch (InterruptedException e) {
-                        log.atError().setCause(e).log("Wait Interrupted");
+                        log.atInfo().setCause(e).log("Wait Interrupted");
                         break;
                     } catch (Exception e) {
                     }
