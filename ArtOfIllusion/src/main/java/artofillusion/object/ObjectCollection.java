@@ -194,9 +194,9 @@ public abstract class ObjectCollection extends Object3D {
      */
     @Override
     public TriangleMesh convertToTriangleMesh(double tol) {
-        ArrayList<Vec3> allVert = new ArrayList<>();
-        ArrayList<Float> vertSmoothness = new ArrayList<>();
-        ArrayList<int[]> allFace = new ArrayList<>();
+        List<Vec3> allVert = new ArrayList<>();
+        List<Float> vertSmoothness = new ArrayList<>();
+        List<int[]> allFace = new ArrayList<>();
         class Edge {
 
             public final int v1;
@@ -276,17 +276,14 @@ public abstract class ObjectCollection extends Object3D {
      */
     @Override
     public void sceneChanged(ObjectInfo info, Scene scene) {
-        if (cachedBounds == null || (usesTime && lastTime != scene.getTime())
-                || (usesCoords && !lastCoords.equals(info.getCoords()))) {
+        if (cachedBounds == null || (usesTime && lastTime != scene.getTime())  || (usesCoords && !lastCoords.equals(info.getCoords()))) {
             lastScene = scene;
             lastTime = scene.getTime();
             lastCoords = info.getCoords().duplicate();
             lastInfo = info;
             cachedObjects = null;
             Enumeration<ObjectInfo> objects = getObjects(info, true, scene);
-            if (!objects.hasMoreElements()) {
-                cachedBounds = new BoundingBox(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-            } else {
+            if (objects.hasMoreElements()) {
                 while (objects.hasMoreElements()) {
                     ObjectInfo obj = objects.nextElement();
                     BoundingBox bounds = obj.getBounds();
@@ -297,6 +294,8 @@ public abstract class ObjectCollection extends Object3D {
                         cachedBounds = cachedBounds.merge(bounds);
                     }
                 }
+            } else {
+                cachedBounds = new BoundingBox(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
             }
             info.clearCachedMeshes();
         }

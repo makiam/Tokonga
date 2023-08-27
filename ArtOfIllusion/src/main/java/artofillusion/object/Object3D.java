@@ -311,10 +311,10 @@ public abstract class Object3D {
         if (obj.getTextureMapping() != null) {
             setTexture(obj.getTexture(), obj.getTextureMapping().duplicate(this, obj.getTexture()));
         }
-        if (obj.getMaterialMapping() != null) {
-            setMaterial(obj.getMaterial(), obj.getMaterialMapping().duplicate(this, obj.getMaterial()));
-        } else {
+        if (obj.getMaterialMapping() == null) {
             setMaterial(null, null);
+        } else {
+            setMaterial(obj.getMaterial(), obj.getMaterialMapping().duplicate(this, obj.getMaterial()));
         }
         TextureParameter[] objParam = obj.getParameters();
         if (objParam != null) {

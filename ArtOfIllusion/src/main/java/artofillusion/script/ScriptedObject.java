@@ -14,6 +14,8 @@ import artofillusion.*;
 import artofillusion.animation.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
+import lombok.Getter;
+
 import java.io.*;
 import java.util.*;
 import java.awt.*;
@@ -23,7 +25,18 @@ import java.awt.*;
  */
 public class ScriptedObject extends ObjectCollection {
 
+    /**
+     * -- GETTER --
+     *  Get the script which defines this object.
+     */
+    @Getter
     private String script;
+
+    /**
+     * -- GETTER --
+     *  Get the language the script is written in.
+     */
+    @Getter
     private String language;
     private ObjectScript parsedScript;
     private String[] paramName;
@@ -46,13 +59,6 @@ public class ScriptedObject extends ObjectCollection {
     }
 
     /**
-     * Get the script which defines this object.
-     */
-    public String getScript() {
-        return script;
-    }
-
-    /**
      * Set the script which defines this object.
      */
     public void setScript(String scriptText) {
@@ -60,13 +66,6 @@ public class ScriptedObject extends ObjectCollection {
         parsedScript = null;
         cachedObjects = null;
         cachedBounds = null;
-    }
-
-    /**
-     * Get the language the script is written in.
-     */
-    public String getLanguage() {
-        return language;
     }
 
     /**
@@ -296,8 +295,7 @@ public class ScriptedObject extends ObjectCollection {
                 valField[i] = new ValueField(d, ValueField.NONE, 5);
             }
         }
-        ComponentsDialog dlg = new ComponentsDialog(parent.getFrame(), Translate.text("editScriptedObjTitle"),
-                valField, paramName);
+        ComponentsDialog dlg = new ComponentsDialog(parent.getFrame(), Translate.text("editScriptedObjTitle"), valField, paramName);
         if (!dlg.clickedOk()) {
             return;
         }
@@ -371,7 +369,7 @@ public class ScriptedObject extends ObjectCollection {
 
         public ScriptedObjectKeyframe(ScriptedObject object, String[] names, double[] values) {
             script = object;
-            valueTable = new Hashtable<String, Double>();
+            valueTable = new Hashtable<>();
             for (int i = 0; i < names.length; i++) {
                 valueTable.put(names[i], values[i]);
             }
