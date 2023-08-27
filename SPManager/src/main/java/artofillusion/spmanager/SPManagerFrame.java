@@ -72,6 +72,8 @@ public class SPManagerFrame extends BFrame {
      */
     public SPManagerFrame() {
         super(SPMTranslate.text("SPManager"));
+        setIcon(ArtOfIllusion.APP_ICON);
+
         spmFrame = this;
 
         parameters = new SPMParameters();
