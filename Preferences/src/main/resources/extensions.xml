@@ -163,7 +163,7 @@
             @return the preference value as a Color
         </export>
     </plugin>
-    <resource type="TranslateBundle" id="PreferencesPlugin" name="PreferencesPlugin"/>
+    <resource type="TranslateBundle" id="PreferencesPlugin" name="Bundle"/>
 
     <description>
 
