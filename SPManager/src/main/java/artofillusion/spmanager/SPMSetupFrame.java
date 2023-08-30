@@ -10,6 +10,7 @@
  */
 package artofillusion.spmanager;
 
+import artofillusion.ui.Translate;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
@@ -157,9 +158,9 @@ public class SPMSetupFrame extends BDialog {
 
         RowContainer buttons = new RowContainer();
 
-        buttons.add(SPMTranslate.bButton("ok", this, "doOK"));
+        buttons.add(Translate.button("ok", this, "doOK"));
 
-        buttons.add(SPMTranslate.bButton("cancel", this, "doCancel"));
+        buttons.add(Translate.button("cancel", this, "doCancel"));
         cc.add(buttons, new LayoutInfo());
         setContent(cc);
         addEventLink(WindowClosingEvent.class, this, "doCancel");
