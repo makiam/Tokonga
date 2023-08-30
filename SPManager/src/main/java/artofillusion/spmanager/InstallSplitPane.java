@@ -194,8 +194,7 @@ public class InstallSplitPane extends SPMSplitPane {
                                     eligible = false;
                                 } else if (info.getMinor() == managerInfo.getMinor()) {
                                     if (managerInfo.isBeta()) {
-                                        if (info.isBeta() && info.getBeta()
-                                                <= managerInfo.getBeta()) {
+                                        if (info.isBeta() && info.getBeta() <= managerInfo.getBeta()) {
                                             eligible = false;
                                         }
                                     } else {
@@ -311,8 +310,7 @@ public class InstallSplitPane extends SPMSplitPane {
                             reason = "\n";
                         }
 
-                        reason = SPMTranslate.text("markedConfirm", nodeInfo.getName())
-                                + reason + SPMTranslate.text("Confirm");
+                        reason = SPMTranslate.text("markedConfirm", nodeInfo.getName()) + reason + SPMTranslate.text("Confirm");
                         if (new BStandardDialog("SPManager", UIUtilities.breakString(reason),
                                 BStandardDialog.QUESTION)
                                 .showOptionDialog(null, SPManagerFrame.YES_NO, SPManagerFrame.YES_NO[1]) == 1) {
@@ -347,98 +345,6 @@ public class InstallSplitPane extends SPMSplitPane {
             if (errors.size() > 0) {
                 showErrors(errors);
             }
-        }
-    }
-
-    /**
-     * Description of the Method
-     */
-    public void doInstallSingle() {
-        if (errors == null) {
-            errors = new ArrayList<>(128);
-        } else {
-            errors.clear();
-        }
-
-        installNodeInfo = getSelectedNodeInfo();
-        if (installNodeInfo == null) {
-            return;
-        }
-
-        // confirm before proceeding?
-        if (installNodeInfo.restriction == SPMParameters.CONFIRM) {
-            String reason = installNodeInfo.getComments();
-            int cut1 = reason.indexOf("**");
-            int cut2 = reason.indexOf("**", cut1 + 2);
-            if (cut1 >= 0) {
-                if (cut2 <= cut1 + 2) {
-                    cut2 = reason.length();
-                }
-                reason = reason.substring(cut1 + 2, cut2) + "\n";
-            } else {
-                reason = "\n";
-            }
-
-            reason = SPMTranslate.text("markedConfirm", installNodeInfo.getName())
-                    + reason + SPMTranslate.text("Confirm");
-            if (new BStandardDialog("SPManager", UIUtilities.breakString(reason),
-                    BStandardDialog.QUESTION)
-                    .showOptionDialog(null, SPManagerFrame.YES_NO, SPManagerFrame.YES_NO[1]) == 1) {
-                errors.add(SPMTranslate.text("Cancelled",
-                        installNodeInfo.getName()));
-
-                showErrors(errors);
-                return;
-            }
-
-        }
-
-        if (!isDownloading) {
-            isDownloading = true;
-            lengthToDownload = installNodeInfo.getTotalLength();
-
-            downloadedLength = 0;
-            if (lengthToDownload > 0) {
-                if (errors == null) {
-                    errors = new ArrayList<>(128);
-                } else {
-                    errors.clear();
-                }
-
-                status = new StatusDialog(SPManagerPlugin.getFrame());
-                (new Thread() {
-                    @Override
-                    public void run() {
-                        installFile(installNodeInfo);
-
-                        if (errors.size() > 0) {
-                            showErrors(errors);
-                        }
-
-                        try {
-                            SwingUtilities.invokeAndWait(new Runnable() {
-                                @Override
-                                public void run() {
-                                    /*  NTJ - replaced by restart()  */
-                                    tree.removeNode(tree.getSelectedNode());
-                                    voidSelection();
-                                    getManager().doUpdate();
-                                    isDownloading = false;
-                                    status.dispose();
-                                    status = null;
-                                    SPManagerUtils.updateAllAoIWindows();
-                                }
-                            });
-                        } catch (InterruptedException | InvocationTargetException e) {
-                            log.atError().setCause(e).log("Install error: {}", e.getMessage());
-                        }
-                    }
-                }).start();
-            }
-        }
-
-        if (errors.size() > 0) {
-            showErrors(errors);
         }
     }
 
