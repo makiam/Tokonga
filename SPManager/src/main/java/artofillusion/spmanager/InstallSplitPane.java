@@ -17,6 +17,7 @@ import java.awt.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.*;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -38,7 +39,6 @@ public class InstallSplitPane extends SPMSplitPane {
     private long downloadedLength = 0;
     private long lengthToDownload;
     private boolean isDownloading;
-    private SPMObjectInfo installNodeInfo;
 
     private List<String> errors = new ArrayList<>();
 
@@ -312,8 +312,7 @@ public class InstallSplitPane extends SPMSplitPane {
 
                         reason = SPMTranslate.text("markedConfirm", nodeInfo.getName()) + reason + SPMTranslate.text("Confirm");
                         if (new BStandardDialog("SPManager", UIUtilities.breakString(reason),
-                                BStandardDialog.QUESTION)
-                                .showOptionDialog(null, SPManagerFrame.YES_NO, SPManagerFrame.YES_NO[1]) == 1) {
+                                BStandardDialog.QUESTION).showOptionDialog(null, SPManagerFrame.YES_NO, SPManagerFrame.YES_NO[1]) == 1) {
                             errors.add(SPMTranslate.text("Cancelled", nodeInfo.getName()));
 
                             continue;
@@ -528,48 +527,15 @@ public class InstallSplitPane extends SPMSplitPane {
      * copy one file to another
      */
     protected static boolean copyFile(File in, File out) {
-        InputStream is = null;
-        OutputStream os = null;
-        try {
-            is = new BufferedInputStream(new FileInputStream(in));
-            os = new BufferedOutputStream(new FileOutputStream(out));
 
-            int b;
-            while ((b = is.read()) >= 0) {
-                os.write((byte) b);
-            }
+        try {
+            Files.copy(in.toPath(), out.toPath());
         } catch (IOException e) {
+            log.atInfo().setCause(e).log("copy File failed");
             return false;
-        } finally {
-            try {
-                os.flush();
-                os.close();
-                is.close();
-            } catch (IOException e) {
-            }
         }
 
         return true;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @param path Description of the Parameter
-     */
-    private void selectAllInfos(TreePath path) {
-        SPMObjectInfo info;
-        int count = tree.getChildNodeCount(path);
-        for (int j = 0; j < count; ++j) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getChildNode(path, j).getLastPathComponent();
-            SPMObjectInfo nodeInfo = (SPMObjectInfo) node.getUserObject();
-            nodeInfo.setSelected(true);
-
-            if (extMap != null) {
-                extMap.clear();
-            }
-            selectExternals(nodeInfo);
-        }
     }
 
     /**
