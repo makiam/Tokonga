@@ -58,21 +58,24 @@ public class SPMParameters {
      * @return The proxyPort value
      */
     @Getter @Setter
-    private static String proxyPort;
+    private static String proxyPort = "";
+
     /**
      * Gets the username attribute of the SPMParameters object
      *
      * @return The username value
      */
     @Getter @Setter
-    private static String userName;
+    private static String userName = "";
+
     /**
      * Gets the password attribute of the SPMParameters object
      *
      * @return The password value
      */
     @Getter
-    private static String password;
+    private static String password = "";
+
     private static boolean changed;
     private static final StringEncrypter se = new StringEncrypter("SPMan8ger");
     private boolean useCache = true;
@@ -109,9 +112,6 @@ public class SPMParameters {
         filters.put("earlyAccess", "confirm");
         filters.put("experimental", "hide");
 
-        proxyPort = "";
-        userName = "";
-        password = "";
         currentRepository = 0;
 
         loadPropertiesFile();
