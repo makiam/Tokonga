@@ -1130,8 +1130,7 @@ public class SPMObjectInfo {
                 rval = SPManagerUtils.parseVersion(rhs);
 
                 // scale both to the same number of digits
-                int delta = String.valueOf(lval).length()
-                        - String.valueOf(rval).length();
+                int delta = String.valueOf(lval).length()  - String.valueOf(rval).length();
 
                 if (delta > 0) {
                     rval *= Math.pow(10, delta);
