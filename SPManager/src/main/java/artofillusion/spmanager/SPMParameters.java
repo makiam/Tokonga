@@ -118,7 +118,6 @@ public class SPMParameters {
         Object ir = null;
         try {
             ir = PluginRegistry.invokeExportedMethod("preferences.getString", "spmanager", "userName");
-            System.out.println("Ir: " + ir);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
