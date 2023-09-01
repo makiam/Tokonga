@@ -11,9 +11,11 @@
 package artofillusion.spmanager;
 
 import artofillusion.ApplicationPreferences;
+import artofillusion.PluginRegistry;
 import artofillusion.ui.*;
 import buoy.widget.*;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -113,6 +115,15 @@ public class SPMParameters {
         filters.put("experimental", "hide");
 
         currentRepository = 0;
+        Object ir = null;
+        try {
+            ir = PluginRegistry.invokeExportedMethod("preferences.getString", "spmanager", "userName");
+            System.out.println("Ir: " + ir);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
 
         loadPropertiesFile();
         initHttp();

@@ -108,7 +108,7 @@ public class PreferencesPlugin implements Plugin {
 
     @SuppressWarnings("unchecked")
     public static DataMap getPreferences(String owner, Map init) {
-        log.debug("PreferencesPlugin: Getting persitent preferences: {}", owner);
+        log.debug("PreferencesPlugin: Getting persistent preferences: {}", owner);
         DataMap result = prefs.get(owner);
         if (result != null) {
             return result;
