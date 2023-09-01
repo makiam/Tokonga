@@ -177,6 +177,8 @@ public class PreferencesPlugin implements Plugin {
 
     }
 
+    @PluginRegistry.UsedViaReflection
+    @SuppressWarnings("unused")
     public static void commit(String owner) throws IOException {
         if (prefs == null || prefs.isEmpty()) {
             log.info("No preferences set");
@@ -190,66 +192,68 @@ public class PreferencesPlugin implements Plugin {
         map.commit();
     }
 
+    @PluginRegistry.UsedViaReflection
     public static void putString(String owner, String name, String value) {
         getPreferences(owner).putString(name, value);
     }
-
+    @PluginRegistry.UsedViaReflection
     public static String getString(String owner, String name) {
         return getPreferences(owner).getString(name);
     }
-
+    @PluginRegistry.UsedViaReflection
     public static void putBoolean(String owner, String name, boolean value) {
         getPreferences(owner).putBoolean(name, value);
     }
-
+    @PluginRegistry.UsedViaReflection
     public static boolean getBoolean(String owner, String name) {
         return getPreferences(owner).getBoolean(name);
     }
-
+    @PluginRegistry.UsedViaReflection
     public static void putInt(String owner, String name, int value) {
         getPreferences(owner).putInt(name, value);
     }
-
+    @PluginRegistry.UsedViaReflection
     public static int getInt(String owner, String name) {
         return getPreferences(owner).getInt(name);
     }
-
+    @PluginRegistry.UsedViaReflection
     public static void putLong(String owner, String name, long value) {
         getPreferences(owner).putLong(name, value);
     }
-
+    @PluginRegistry.UsedViaReflection
     public static long getLong(String owner, String name) {
         return getPreferences(owner).getLong(name);
     }
-
+    @PluginRegistry.UsedViaReflection
     public static void putFloat(String owner, String name, float value) {
         getPreferences(owner).putFloat(name, value);
     }
-
+    @PluginRegistry.UsedViaReflection
     public static float getFloat(String owner, String name) {
         return getPreferences(owner).getFloat(name);
     }
-
+    @PluginRegistry.UsedViaReflection
     public static void putDouble(String owner, String name, double value) {
         getPreferences(owner).putDouble(name, value);
     }
-
+    @PluginRegistry.UsedViaReflection
     public static double getDouble(String owner, String name) {
         return getPreferences(owner).getDouble(name);
     }
-
+    @PluginRegistry.UsedViaReflection
     public static void putArray(String owner, String name, Object value) {
         getPreferences(owner).putArray(name, value);
     }
 
+    @PluginRegistry.UsedViaReflection
     public static Object getArray(String owner, String name, Object result) {
         return getPreferences(owner).getArray(name, result);
     }
-
+    @PluginRegistry.UsedViaReflection
     public static void putColor(String owner, String name, Color value) {
         getPreferences(owner).putColor(name, value);
     }
-
+    @PluginRegistry.UsedViaReflection
     public static Color getColor(String owner, String name) {
         return getPreferences(owner).getColor(name);
     }
