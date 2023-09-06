@@ -18,7 +18,10 @@
 
 package artofillusion.script;
 
+import artofillusion.ArtOfIllusion;
 import buoy.widget.*;
+
+import java.awt.*;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.fife.ui.rsyntaxtextarea.*;
@@ -35,6 +38,15 @@ import org.fife.ui.rtextarea.Gutter;
  */
 @Slf4j
 public class ScriptEditingWidget extends BScrollPane {
+    private static Font jbmf;
+
+    static {
+        try {
+            jbmf = Font.createFont(Font.TRUETYPE_FONT, ArtOfIllusion.class.getResourceAsStream("/JetBrainsMono-Regular.ttf"));
+        } catch (IOException | FontFormatException e) {
+            log.atError().setCause(e).log("Unable to load font: {}", e.getMessage());
+        }
+    }
 
     public ScriptEditingWidget(String script) {
         super(new RSTextArea(script, 25, 100), SCROLLBAR_AS_NEEDED, SCROLLBAR_ALWAYS);
@@ -43,7 +55,10 @@ public class ScriptEditingWidget extends BScrollPane {
 
         try {
             Theme theme = Theme.load(ScriptEditingWidget.class.getResourceAsStream("/scriptEditorTheme.xml"));
+            theme.baseFont = jbmf.deriveFont(13f);
+
             theme.apply(rsta);
+
         } catch (IOException ex) {
             //shouldn't happen unless we are pointing at a non-existant file
             log.atError().setCause(ex).log("Unable to load Editor theme: {}", ex.getMessage());
@@ -51,6 +66,7 @@ public class ScriptEditingWidget extends BScrollPane {
 
         rsta.setAnimateBracketMatching(false);
         rsta.setTabSize(2);
+
     }
 
     //TODO: migrate to constant, rather than string

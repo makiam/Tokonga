@@ -9,6 +9,17 @@ public class ManagersUtilsParserTest {
         String val = "0";
         testAndCompare(val);
     }
+    @Test
+    public void testManyZero0() {
+        String val = "0000";
+        testAndCompare(val);
+    }
+
+    @Test
+    public void testManyZero1() {
+        String val = "0000.000";
+        testAndCompare(val);
+    }
 
     @Test
     public void testOne() {
@@ -32,8 +43,8 @@ public class ManagersUtilsParserTest {
         var d1 = SPManagerUtils.parseDouble(val);
         var d2 = Double.parseDouble(val);
 
-        System.out.println(d1);
-        System.out.println(d2);
+        Assert.assertEquals(d1, d2, 0.0000001);
+
     }
 
     @Test
@@ -43,6 +54,6 @@ public class ManagersUtilsParserTest {
         Assert.assertEquals(1020, SPManagerUtils.parseVersion("1.20"));
         Assert.assertEquals(1020003, SPManagerUtils.parseVersion("1.20.3"));
 
-        com.github.zafarkhaja.semver.Version version = new
+
     }
 }
