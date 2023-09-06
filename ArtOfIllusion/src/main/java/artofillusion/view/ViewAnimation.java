@@ -406,11 +406,11 @@ public class ViewAnimation {
         view.setDistToPlane(endCoords.getOrigin().minus(endRotationCenter).length()); // It seemed to work without this too... But not with SceneCamera
         view.setShowGrid(endShowGrid);
         view.finishAnimation(endOrientation, endPerspective, endNavigation); // using set-methods for these would loop back to animation
-        if (boundCamera != null) {
-            updateBoundCamera();
-        } else {
+        if (boundCamera == null) {
             view.viewChanged(false);
             view.repaint();
+        } else {
+            updateBoundCamera();
         }
         changingPerspective = false;
         animatingMove = false;
