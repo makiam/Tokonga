@@ -50,7 +50,13 @@ public class SPMObjectInfo {
     public long length;
     /**
      * Beta version, -1 means it's not a beta
+     * -- GETTER --
+     *  Gets the beta attribute of the SPMObjectInfo object
+     *
+     * @return The beta value
+
      */
+    @Getter
     public int beta = -1;
 
     /**
@@ -131,11 +137,6 @@ public class SPMObjectInfo {
      * sizes of the fileset files
      */
     public long[] fileSizes;
-
-    /**
-     * flag to indicate that this plugin/script has been loaded
-     */
-    public boolean loaded = false;
 
     final char separatorChar;
     boolean selected = false;
@@ -594,8 +595,8 @@ public class SPMObjectInfo {
     }
 
     private void readInfoFromDocumentNode(Node script) {
-        int i, j, filtType;
-        String val, filtName, filtVal;
+        int filtType;
+        String filtName, filtVal;
 
         SPMParameters params = SPManagerFrame.getParameters();
 
@@ -665,7 +666,7 @@ public class SPMObjectInfo {
         String extName, extType, extAssoc, extAction;
 
         // NTJ: infer depedencies from other tags
-        for (i = 0; (node = SPManagerUtils.getNodeFromNodeList(nl, "import", i)) != null; i++) {
+        for (int i = 0; (node = SPManagerUtils.getNodeFromNodeList(nl, "import", i)) != null; i++) {
 
             extName = SPManagerUtils.getAttribute(node, "name");
 
@@ -675,7 +676,7 @@ public class SPMObjectInfo {
         }
 
         // NTJ: get explicit dependencies
-        for (i = 0; (node = SPManagerUtils.getNodeFromNodeList(nl, "external", i)) != null; i++) {
+        for (int i = 0; (node = SPManagerUtils.getNodeFromNodeList(nl, "external", i)) != null; i++) {
 
             extName = SPManagerUtils.getAttribute(node, "name");
 
@@ -689,17 +690,17 @@ public class SPMObjectInfo {
             }
         }
 
-        String plugClass, methName, methId, methHelp, exportList = "";
+        String methId, methHelp, exportList = "";
 
         // get details of plugin classes
-        for (i = 0; (node = SPManagerUtils.getNodeFromNodeList(nl, "plugin", i)) != null; i++) {
+        for (int i = 0; (node = SPManagerUtils.getNodeFromNodeList(nl, "plugin", i)) != null; i++) {
 
-            plugClass = SPManagerUtils.getAttribute(node, "class");
+            String plugClass = SPManagerUtils.getAttribute(node, "class");
 
             sl = node.getChildNodes();
-            for (j = 0; (subnode = SPManagerUtils.getNodeFromNodeList(sl, "export", j)) != null; j++) {
+            for (int j = 0; (subnode = SPManagerUtils.getNodeFromNodeList(sl, "export", j)) != null; j++) {
 
-                methName = SPManagerUtils.getAttribute(subnode, "method");
+                String methName = SPManagerUtils.getAttribute(subnode, "method");
                 if (methName == null || methName.length() == 0) {
                     continue;
                 }
@@ -718,7 +719,7 @@ public class SPMObjectInfo {
             }
         }
 
-        val = SPManagerUtils.getNodeValue(script, "description", "none", 0);
+        String val = SPManagerUtils.getNodeValue(script, "description", "none", 0);
         if (val != null) {
             setDescription(val);
         }
@@ -740,7 +741,7 @@ public class SPMObjectInfo {
         node = SPManagerUtils.getNodeFromNodeList(nl, "assert", 0);
         if (node != null) {
             NamedNodeMap nm = node.getAttributes();
-            for (i = 0; i < nm.getLength(); i++) {
+            for (int i = 0; i < nm.getLength(); i++) {
                 node = nm.item(i);
 
                 filtName = node.getNodeName();
@@ -771,7 +772,7 @@ public class SPMObjectInfo {
 
         if (params != null && node != null) {
             NamedNodeMap nm = node.getAttributes();
-            for (i = 0; i < nm.getLength(); i++) {
+            for (int i = 0; i < nm.getLength(); i++) {
                 node = nm.item(i);
                 filtName = node.getNodeName();
 
@@ -809,7 +810,7 @@ public class SPMObjectInfo {
 
             // iterate the child log nodes
             NodeList hl = node.getChildNodes();
-            for (i = 0; (node = SPManagerUtils.getNodeFromNodeList(hl, "log", i)) != null; i++) {
+            for (int i = 0; (node = SPManagerUtils.getNodeFromNodeList(hl, "log", i)) != null; i++) {
 
                 String name = "v ";
                 String str = SPManagerUtils.getAttribute(node, "version");
@@ -842,7 +843,7 @@ public class SPMObjectInfo {
         if (fileSet != null) {
             NodeList filesList = fileSet.getChildNodes();
             List<String> fileNames = new Vector<>();
-            for (i = 0; i < filesList.getLength(); ++i) {
+            for (int i = 0; i < filesList.getLength(); ++i) {
                 if (!"file".equals(filesList.item(i).getNodeName())) {
                     continue;
                 }
@@ -861,12 +862,12 @@ public class SPMObjectInfo {
             }
             if (fileNames.size() > 0) {
                 files = new String[fileNames.size()];
-                for (i = 0; i < files.length; ++i) {
+                for (int i = 0; i < files.length; ++i) {
                     files[i] = fileNames.get(i);
                 }
                 httpFiles = new String[files.length];
                 fileSizes = new long[files.length];
-                for (i = 0; i < files.length; ++i) {
+                for (int i = 0; i < files.length; ++i) {
                     files[i] = files[i].trim();
                     httpFiles[i] = files[i].replaceAll(" ", "%20");
                     if (remote) {
@@ -948,15 +949,6 @@ public class SPMObjectInfo {
      */
     public boolean isBeta() {
         return beta != -1;
-    }
-
-    /**
-     * Gets the beta attribute of the SPMObjectInfo object
-     *
-     * @return The beta value
-     */
-    public int getBeta() {
-        return beta;
     }
 
     /**

@@ -47,6 +47,16 @@ public class ManagersUtilsParserTest {
 
     }
 
+
+    @Test(expected = NumberFormatException.class)
+    public void testEmpty() {
+        String val = "";
+        var d1 = SPManagerUtils.parseDouble(val);
+        System.out.println(d1);
+        var d2 = Double.parseDouble(val);
+        System.out.println(d2);
+    }
+
     @Test
     public void testParseVersion() {
 
