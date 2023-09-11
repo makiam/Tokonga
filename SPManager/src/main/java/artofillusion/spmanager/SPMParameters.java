@@ -237,7 +237,7 @@ public class SPMParameters {
                     return;
                 }
 
-                repoName = repoName.trim();
+                                                repoName = repoName.trim();
                 if (repoName.endsWith("/")) {
                     repoName = repoName.substring(0, repoName.length() - 1);
                 }
