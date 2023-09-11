@@ -838,8 +838,6 @@ public class SPMObjectInfo {
         }
 
         Node fileSet = SPManagerUtils.getNodeFromNodeList(nl, "fileset", 0);
-        String todir;
-        String src;
         if (fileSet != null) {
             NodeList filesList = fileSet.getChildNodes();
             List<String> fileNames = new Vector<>();
@@ -849,8 +847,8 @@ public class SPMObjectInfo {
                 }
 
                 // NTJ: get attributes
-                todir = SPManagerUtils.getAttribute(filesList.item(i), "todir");
-                src = SPManagerUtils.getAttribute(filesList.item(i), "src");
+                String todir = SPManagerUtils.getAttribute(filesList.item(i), "todir");
+                String src = SPManagerUtils.getAttribute(filesList.item(i), "src");
                 NodeList tmp = filesList.item(i).getChildNodes();
                 if (tmp.getLength() > 0) {
                     fileNames.add((src != null && src.length() > 0 ? src : tmp.item(0).getNodeValue()));

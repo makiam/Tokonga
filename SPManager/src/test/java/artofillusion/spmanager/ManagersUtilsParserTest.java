@@ -39,23 +39,66 @@ public class ManagersUtilsParserTest {
         testAndCompare(val);
     }
 
-    private void testAndCompare(String val) {
-        var d1 = SPManagerUtils.parseDouble(val);
-        var d2 = Double.parseDouble(val);
+    @Test
+    public void testExponential1() {
+        String val = "1234.56E2";
+        testAndCompare(val);
+    }
 
-        Assert.assertEquals(d1, d2, 0.0000001);
+    @Test
+    public void testExponential2() {
+        String val = "1234.56e2";
+        testAndCompare(val);
+    }
+
+
+    @Test
+    public void testExponential3() {
+        String val = "-1234.56E2";
+        testAndCompare(val);
+    }
+
+    @Test
+    public void testExponential4() {
+        String val = "-1234.56e2";
+        testAndCompare(val);
+    }
+
+    @Test
+    public void testExponential5() {
+        String val = "005.0000E-02";
+        testAndCompare(val);
+    }
+
+    @Test
+    public void testExponential6() {
+        String val = "-005.0000e-02";
+        testAndCompare(val);
+    }
+
+
+
+    private void testAndCompare(String val) {
+        var produced = SPManagerUtils.parseDouble(val);
+        var expected = Double.parseDouble(val);
+
+        Assert.assertEquals(expected, produced, 0.000000001);
 
     }
 
 
     @Test(expected = NumberFormatException.class)
-    public void testEmpty() {
+    public void testEmptyNative() {
+        String val = "";
+        var d2 = Double.parseDouble(val);
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void testEmptyCustom() {
         String val = "";
         var d1 = SPManagerUtils.parseDouble(val);
-        System.out.println(d1);
-        var d2 = Double.parseDouble(val);
-        System.out.println(d2);
     }
+
 
     @Test
     public void testParseVersion() {
