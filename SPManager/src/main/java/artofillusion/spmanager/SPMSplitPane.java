@@ -336,19 +336,17 @@ public class SPMSplitPane extends BSplitPane {
             if (info.refcount > 0) {
                 name += "\n\nRequired by " + info.refcount + " other(s).";
             }
-            String ext;
             String extName, extType;
             String extList = "\n";
             boolean missing = false;
             Collection<String> externals = info.getExternals();
             if (externals != null) {
                 for (Iterator<String> iter = externals.iterator(); iter.hasNext();) {
-                    ext = iter.next();
+                    String ext = iter.next();
 
                     if (ext.endsWith("= required")) {
                         extName = ext.substring(0, ext.indexOf(':'));
-                        extType = ext.substring(ext.indexOf(':') + 1,
-                                ext.indexOf('=')).trim();
+                        extType = ext.substring(ext.indexOf(':') + 1, ext.indexOf('=')).trim();
 
                         if (getInfo(extName, pathMap.get(extType)) == null) {
 
@@ -372,15 +370,13 @@ public class SPMSplitPane extends BSplitPane {
                 }
 
                 if (missing) {
-                    name += "\n"
-                            + SPMTranslate.text("missingFile", SPMTranslate.text("otherFiles"));
+                    name += "\n" + SPMTranslate.text("missingFile", SPMTranslate.text("otherFiles"));
 
                     objectName.setBackground(Color.PINK);
                 }
 
                 if (info.invalid) {
-                    name += "\n"
-                            + SPMTranslate.text("failedRequirement", SPMTranslate.text("flags"));
+                    name += "\n" + SPMTranslate.text("failedRequirement", SPMTranslate.text("flags"));
 
                     objectName.setBackground(Color.PINK);
                 }
@@ -397,12 +393,12 @@ public class SPMSplitPane extends BSplitPane {
             }
 
             List<String> changeLog = info.getChangeLog();
-            if (changeLog != null) {
-                descSelect.setContents(changeLog);
-            } else {
+            if (changeLog == null) {
                 descSelect.removeAll();
                 descSelect.add(SPMTranslate.text("description"));
                 descSelect.add(SPMTranslate.text("history"));
+            } else {
+                descSelect.setContents(changeLog);
             }
         } else {
             objectName.setText("");
