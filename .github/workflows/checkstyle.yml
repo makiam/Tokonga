@@ -1,4 +1,4 @@
-name: CheckStyle
+name: reviewdog
 on: [workflow_dispatch]
 jobs:
   checkstyle:
