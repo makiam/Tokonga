@@ -1,5 +1,5 @@
 name: CheckStyle
-on: []
+on: [workflow_dispatch]
 jobs:
   checkstyle:
     name: runner / checkstyle
