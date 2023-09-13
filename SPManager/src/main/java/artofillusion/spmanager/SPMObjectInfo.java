@@ -93,7 +93,7 @@ public class SPMObjectInfo {
     @Getter
     private String comments = null;
 
-    private Map<String, String> externals;
+    private Map<String, String> externals = new HashMap<>();
 
     /**
      * get the change log
@@ -102,7 +102,7 @@ public class SPMObjectInfo {
     private List<String> changeLog;
 
     /**
-     * Gets the details vector
+     * Gets the details list
      *
      * @return The details vector
      */
@@ -595,15 +595,13 @@ public class SPMObjectInfo {
     }
 
     private void readInfoFromDocumentNode(Node script) {
-        int filtType;
-        String filtName, filtVal;
 
         SPMParameters params = SPManagerFrame.getParameters();
 
         if (changeLog == null) {
             changeLog = new Vector<>(16);
             details = new Vector<>(16);
-            externals = new HashMap<>(16);
+
             destination = new ArrayList<>(16);
             actions = new HashMap<>(16);
             exports = new HashMap<>(32);
@@ -708,13 +706,14 @@ public class SPMObjectInfo {
                 methId = SPManagerUtils.getAttribute(subnode, "id");
                 exports.put(methId, plugClass + "." + methName);
 
-                if (subnode.getChildNodes() != null && subnode.getChildNodes().item(0) != null) {
-                    methHelp = subnode.getChildNodes().item(0).getNodeValue();
-                    if (exportList.length() > 0) {
-                        exportList += "========================\n";
-                    }
-                    exportList += methId + "\n" + methHelp + "\n";
+                if (subnode.getChildNodes() == null || subnode.getChildNodes().item(0) == null) {
+                    continue;
                 }
+                methHelp = subnode.getChildNodes().item(0).getNodeValue();
+                if (exportList.length() > 0) {
+                    exportList += "========================\n";
+                }
+                exportList += methId + "\n" + methHelp + "\n";
 
             }
         }
@@ -739,6 +738,8 @@ public class SPMObjectInfo {
 
         // check assertions and set restriction accordlingly
         node = SPManagerUtils.getNodeFromNodeList(nl, "assert", 0);
+        String filtVal;
+        String filtName;
         if (node != null) {
             NamedNodeMap nm = node.getAttributes();
             for (int i = 0; i < nm.getLength(); i++) {
@@ -777,7 +778,7 @@ public class SPMObjectInfo {
                 filtName = node.getNodeName();
 
                 filtVal = params.getFilterString(filtName);
-                filtType = SPMParameters.getFilterType(filtVal);
+                int filtType = SPMParameters.getFilterType(filtVal);
 
                 if (filtType == SPMParameters.DEFAULT) {
                     filtType = SPMParameters.getFilterType(node.getNodeValue());
@@ -954,7 +955,7 @@ public class SPMObjectInfo {
      * @return the list of external dependencies
      */
     public Collection<String> getExternals() {
-        return externals == null ? null : externals.values();
+        return externals.values();
     }
 
     /**

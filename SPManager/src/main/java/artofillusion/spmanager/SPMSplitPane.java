@@ -188,6 +188,7 @@ public class SPMSplitPane extends BSplitPane {
         cc.add(SPMTranslate.bLabel("name"), labelLayout);
         objectName = new BTextArea("", 3, 50);
         objectName.setWrapStyle(BTextArea.WRAP_WORD);
+        objectName.setFont(objectName.getFont().deriveFont(12f));
         BScrollPane nameSP;
         cc.add(BOutline.createEtchedBorder(nameSP = new BScrollPane(objectName, BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_ALWAYS), true),
                 textAreaLayout);
@@ -225,6 +226,7 @@ public class SPMSplitPane extends BSplitPane {
 
         objectDescription = new BTextArea("", 8, 50);
         objectDescription.setWrapStyle(BTextArea.WRAP_WORD);
+        objectDescription.setFont(objectDescription.getFont().deriveFont(12f));
         cc.add(BOutline.createEtchedBorder(descriptionSP = new BScrollPane(objectDescription, BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_ALWAYS), true), textAreaLayout);
         descriptionSP.setForceWidth(true);
 
