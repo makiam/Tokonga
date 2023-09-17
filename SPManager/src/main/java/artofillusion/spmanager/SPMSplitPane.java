@@ -10,6 +10,7 @@
  */
 package artofillusion.spmanager;
 
+import artofillusion.ui.Translate;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
@@ -145,6 +146,41 @@ public class SPMSplitPane extends BSplitPane {
         super(BSplitPane.HORIZONTAL);
         workMode = wm;
         initialize(s);
+    }
+
+    /**
+     * Gets the localized fullName attribute of the SPMObjectInfo object with name, author, version and size data
+     *
+     * @return The fullName value
+     */
+    protected static String getFullName(SPMObjectInfo info) {
+        String betaString = "";
+        if (info.getBeta() > -1) {
+            betaString = "b" + info.getBeta();
+        }
+        String addFiles = "";
+        long kbsize;
+        String[] files = info.getFiles();
+        if (info.files != null) {
+            addFiles = " (" + SPMTranslate.text("additionalFiles") + " ";
+            for (int i = 0; i < files.length; ++i) {
+                kbsize = Math.round(info.getFileSizes()[i] / 1000);
+                if (kbsize < 1) {
+                    kbsize = 1;
+                }
+                addFiles = addFiles + files[i] + " " + kbsize + "kb";
+                if (i != files.length - 1) {
+                    addFiles = addFiles + ",";
+                } else {
+                    addFiles = addFiles + ")";
+                }
+            }
+        }
+        kbsize = Math.round(info.getLength() / 1000);
+        if (kbsize < 1) {
+            kbsize = 1;
+        }
+        return Translate.text("spmanager:text.fullname", info.getName(), info.getAuthor(), info.getVersion() + betaString, info.getDate(), kbsize) + addFiles;
     }
 
     /**
@@ -333,7 +369,7 @@ public class SPMSplitPane extends BSplitPane {
 
             descText = info.getDetails();
 
-            String name = SPMObjectInfo.getFullName(info);
+            String name = getFullName(info);
 
             if (info.refcount > 0) {
                 name += "\n\nRequired by " + info.refcount + " other(s).";

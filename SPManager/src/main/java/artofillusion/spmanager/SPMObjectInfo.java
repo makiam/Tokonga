@@ -10,7 +10,6 @@
  */
 package artofillusion.spmanager;
 
-import artofillusion.ui.Translate;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -82,7 +81,7 @@ public class SPMObjectInfo {
     public String flags;
 
     /**
-     * invalid flag
+     *  @return Invalid flag
      */
     public boolean invalid = false;
 
@@ -231,41 +230,6 @@ public class SPMObjectInfo {
         }
 
         return name;
-    }
-
-    /**
-     * Gets the fullName attribute of the SPMObjectInfo object
-     *
-     * @return The fullName value
-     */
-    public static String getFullName(SPMObjectInfo info) {
-        String betaString = "";
-        if (info.getBeta() > -1) {
-            betaString = "b" + info.getBeta();
-        }
-        String addFiles = "";
-        long kbsize;
-        String[] files = info.getFiles();
-        if (info.files != null) {
-            addFiles = " (" + SPMTranslate.text("additionalFiles") + " ";
-            for (int i = 0; i < files.length; ++i) {
-                kbsize = Math.round(info.getFileSizes()[i] / 1000);
-                if (kbsize < 1) {
-                    kbsize = 1;
-                }
-                addFiles = addFiles + files[i] + " " + kbsize + "kb";
-                if (i != files.length - 1) {
-                    addFiles = addFiles + ",";
-                } else {
-                    addFiles = addFiles + ")";
-                }
-            }
-        }
-        kbsize = Math.round(info.getLength() / 1000);
-        if (kbsize < 1) {
-            kbsize = 1;
-        }
-        return Translate.text("spmanager:text.fullname", info.getName(), info.getAuthor(), info.getVersion() + betaString, info.getDate(), kbsize) + addFiles;
     }
 
     /**
