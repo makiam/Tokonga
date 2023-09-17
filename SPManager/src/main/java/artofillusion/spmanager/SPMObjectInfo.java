@@ -215,7 +215,7 @@ public class SPMObjectInfo {
      * @return The name value
      */
     public String getName() {
-        if (name.equals("")) {
+        if (name.isEmpty()) {
             int cut = fileName.lastIndexOf(separatorChar);
             if (cut >= 0 && cut < fileName.length() - 1) {
                 name = fileName.substring(cut + 1);
@@ -302,31 +302,21 @@ public class SPMObjectInfo {
      * Description of the Method
      */
     private void loadXmlInfoFromScript() {
-        BufferedReader fileReader = null;
+
         String s = null;
-        try {
-            fileReader = new BufferedReader(new FileReader(fileName));
+
+        try (BufferedReader fileReader = new BufferedReader(new FileReader(fileName))) {
             s = getXmlHeaderAsString(fileReader);
-        } catch (FileNotFoundException e) {
-            log.atError().setCause(e).log("IO Exception {}", e.getMessage());
-            return;
-        }
-        try {
-            fileReader.close();
-        } catch (IOException e) {
-            log.atError().setCause(e).log("IO Exception {}", e.getMessage());
+        } catch(IOException ioe) {
+            log.atError().setCause(ioe).log("IO Exception {}", ioe.getMessage());
             return;
         }
 
         if (s == null) {
             return;
         }
-        try {
-            byte[] xmlByteArray = s.getBytes();
-            BufferedInputStream xmlStream = new BufferedInputStream(new ByteArrayInputStream(xmlByteArray));
-
+        try (BufferedInputStream xmlStream = new BufferedInputStream(new ByteArrayInputStream(s.getBytes()))) {
             readInfoFromDocumentNode(SPManagerUtils.builder.parse(xmlStream).getDocumentElement());
-            xmlStream.close();
         } catch (IOException | SAXException e) {
             log.atError().setCause(e).log("Exception {}", e.getMessage());
         }
@@ -376,7 +366,6 @@ public class SPMObjectInfo {
      * Description of the Method
      */
     private void loadXmlInfoFromRemoteScript() {
-        BufferedReader in = null;
         String s = null;
         try {
             HttpURLConnection.setFollowRedirects(false);
@@ -392,7 +381,7 @@ public class SPMObjectInfo {
                 }
                 i++;
             }
-            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             s = getXmlHeaderAsString(in);
             in.close();
 
