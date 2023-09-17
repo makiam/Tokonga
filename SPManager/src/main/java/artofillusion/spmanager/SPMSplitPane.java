@@ -17,6 +17,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
+import java.util.function.Predicate;
 import javax.swing.*;
 import javax.swing.tree.*;
 
@@ -460,6 +461,8 @@ public class SPMSplitPane extends BSplitPane {
         });
     }
 
+    protected final Predicate<String> requred = (String name) -> name.endsWith("= requred");
+
     /**
      * get the infor for the named item of the named type
      */
@@ -620,33 +623,19 @@ public class SPMSplitPane extends BSplitPane {
 
         extMap.put(info, info);
 
-        Collection<String> externals = info.getExternals();
-        if (externals == null || externals.isEmpty()) {
-            return;
-        }
-
-        String extName, extType;
-        SPMObjectInfo ext;
-        for (Iterator<String> iter = externals.iterator(); iter.hasNext();) {
-            extName = iter.next();
-
-            if (extName.endsWith("= required")) {
-                extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
-                extName = extName.substring(0, extName.indexOf(':'));
-
-                ext = getInfo(extName, pathMap.get(extType));
-
-                if (ext != null) {
-                    if (info.isSelected()) {
-                        ext.refcount++;
-                    } else {
-                        ext.refcount--;
-                    }
-
-                    selectExternals(ext);
-                }
+        info.getExternals().stream().filter(requred).forEach(extName -> {
+            String extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
+            extName = extName.substring(0, extName.indexOf(':'));
+            SPMObjectInfo ext = getInfo(extName, pathMap.get(extType));
+            if (ext == null) return;
+            if (info.isSelected()) {
+                ext.refcount++;
+            } else {
+                ext.refcount--;
             }
-        }
+
+            selectExternals(ext);
+        });
     }
 
     /**
