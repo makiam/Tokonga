@@ -985,7 +985,6 @@ public class SPMObjectInfo {
 
     /**
      * compare two string and return the boolean result.
-     *
      * Either <i>lhs</i> or <i>rhs</i> may include a boolean operator,
      * otherwise <i>equals</i> is assumed. If <i>both</i> lhs and rhs
      * contain a boolean operator, then the one on rhs is used.
@@ -1075,7 +1074,6 @@ public class SPMObjectInfo {
         // try numeric comparison first
         try {
             double lval, rval;
-            int pos = 0;
 
             // compare multi-component numbers (eg, version numbers)
             if (lhs.lastIndexOf('.') > lhs.indexOf('.') || rhs.lastIndexOf('.') > rhs.indexOf('.')) {
@@ -1098,7 +1096,7 @@ public class SPMObjectInfo {
 
             log.debug("test: lval:{}; rval:{}", lval, rval);
 
-            comp = (lval < rval ? -1 : lval > rval ? 1 : 0);
+            comp = Double.compare(lval, rval);
 
         } catch (NumberFormatException e) {
             // not numeric, compare strings (ignoring case)
