@@ -374,38 +374,37 @@ public class SPMSplitPane extends BSplitPane {
             if (info.refcount > 0) {
                 name += "\n\nRequired by " + info.refcount + " other(s).";
             }
-            String extName, extType;
+
+            String extType;
             String extList = "\n";
             boolean missing = false;
             Collection<String> externals = info.getExternals();
             if (externals != null) {
-            for (Iterator<String> iter = externals.iterator(); iter.hasNext();) {
-                String ext = iter.next();
+                for (String ext : externals) {
+                    if (ext.endsWith("= required")) {
+                        String extName = ext.substring(0, ext.indexOf(':'));
+                        extType = ext.substring(ext.indexOf(':') + 1, ext.indexOf('=')).trim();
 
-                if (ext.endsWith("= required")) {
-                    extName = ext.substring(0, ext.indexOf(':'));
-                    extType = ext.substring(ext.indexOf(':') + 1, ext.indexOf('=')).trim();
+                        if (getInfo(extName, pathMap.get(extType)) == null) {
 
-                    if (getInfo(extName, pathMap.get(extType)) == null) {
+                            //TODO check for externals with pathnames
+                            ManageSplitPane man = null;
+                            for (int j = splitPaneList.size() - 1; j >= 0; j--) {
+                                if (splitPaneList.get(j) instanceof ManageSplitPane) {
+                                    man = (ManageSplitPane) splitPaneList.get(j);
+                                    break;
+                                }
+                            }
 
-                        //TODO check for externals with pathnames
-                        ManageSplitPane man = null;
-                        for (int j = splitPaneList.size() - 1; j >= 0; j--) {
-                            if (splitPaneList.get(j) instanceof ManageSplitPane) {
-                                man = (ManageSplitPane) splitPaneList.get(j);
-                                break;
+                            if (man.getInfo(extName, man.pluginsPath) == null) {
+                                missing = true;
+                                ext += " **Not Available**";
                             }
                         }
-
-                        if (man.getInfo(extName, man.pluginsPath) == null) {
-                            missing = true;
-                            ext += " **Not Available**";
-                        }
                     }
-                }
 
-                extList += "\n-External " + ext;
-            }
+                    extList += "\n-External " + ext;
+                }
 
             if (missing) {
                 name += "\n" + SPMTranslate.text("missingFile", SPMTranslate.text("otherFiles"));
