@@ -31,7 +31,9 @@ public class SPMObjectInfo {
     /**
      * Author name
      */
-    public String author = "?";
+    @Getter
+    private String author = "?";
+
     /**
      * Script name
      */
@@ -39,14 +41,19 @@ public class SPMObjectInfo {
     /**
      * Release date
      */
-    public String date = "00/00/0000";
+    @Getter
+    private String date = "00/00/0000";
+
     /**
      * Version
      */
-    public String version = "0.0";
+    @Getter
+    private String version = "0.0";
+
     /**
      * Length of the script file
      */
+    @Getter
     public long length;
     /**
      * Beta version, -1 means it's not a beta
@@ -124,6 +131,7 @@ public class SPMObjectInfo {
     /**
      * Associated files, if any (fileset)
      */
+    @Getter
     public String[] files;
     /**
      * Same with URLs
@@ -136,6 +144,7 @@ public class SPMObjectInfo {
     /**
      * sizes of the fileset files
      */
+    @Getter
     public long[] fileSizes;
 
     final char separatorChar;
@@ -229,17 +238,18 @@ public class SPMObjectInfo {
      *
      * @return The fullName value
      */
-    public String getFullName() {
+    public static String getFullName(SPMObjectInfo info) {
         String betaString = "";
-        if (beta > -1) {
-            betaString = "b" + beta;
+        if (info.getBeta() > -1) {
+            betaString = "b" + info.getBeta();
         }
         String addFiles = "";
         long kbsize;
-        if (files != null) {
+        String[] files = info.getFiles();
+        if (info.files != null) {
             addFiles = " (" + SPMTranslate.text("additionalFiles") + " ";
             for (int i = 0; i < files.length; ++i) {
-                kbsize = Math.round(fileSizes[i] / 1000);
+                kbsize = Math.round(info.getFileSizes()[i] / 1000);
                 if (kbsize < 1) {
                     kbsize = 1;
                 }
@@ -251,11 +261,11 @@ public class SPMObjectInfo {
                 }
             }
         }
-        kbsize = Math.round(length / 1000);
+        kbsize = Math.round(info.getLength() / 1000);
         if (kbsize < 1) {
             kbsize = 1;
         }
-        return Translate.text("spmanager:text.fullname", getName(), author, version + betaString, date, kbsize) + addFiles;
+        return Translate.text("spmanager:text.fullname", info.getName(), info.getAuthor(), info.getVersion() + betaString, info.getDate(), kbsize) + addFiles;
     }
 
     /**
@@ -388,8 +398,8 @@ public class SPMObjectInfo {
             }
 
             try (BufferedInputStream xmlStream = new BufferedInputStream(is)) {
-
-                readInfoFromDocumentNode(SPManagerUtils.builder.parse(xmlStream).getDocumentElement());
+                Element element = SPManagerUtils.builder.parse(xmlStream).getDocumentElement();
+                readInfoFromDocumentNode(element);
             } catch (IOException | SAXException t) {
                 log.atError().setCause(t).log("Error reading XML header: {}", t.getMessage());
             }
