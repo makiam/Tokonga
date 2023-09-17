@@ -19,6 +19,8 @@ import java.util.*;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.tree.*;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -84,7 +86,13 @@ public class SPMSplitPane extends BSplitPane {
 
     /**
      * Description of the Field
+     * -- GETTER --
+     *  Gets the modified attribute of the InstallSplitPane object
+     *
+     * @return The modified value
+
      */
+    @Getter
     protected boolean modified;
 
     /**
@@ -364,7 +372,13 @@ public class SPMSplitPane extends BSplitPane {
     private void displayObjectInfo(SPMObjectInfo info) {
         objectName.setBackground(Color.WHITE);
 
-        if (info != null) {
+        if (info == null) {
+            objectName.setText("");
+            objectDescription.setText("");
+
+            descSelect.removeAll();
+            descSelect.add(SPMTranslate.text("description"));
+        } else {
             objectName.setBackground(Color.WHITE);
 
             descText = info.getDetails();
@@ -375,7 +389,6 @@ public class SPMSplitPane extends BSplitPane {
                 name += "\n\nRequired by " + info.refcount + " other(s).";
             }
 
-            String extType;
             String extList = "\n";
             boolean missing = false;
             Collection<String> externals = info.getExternals();
@@ -383,7 +396,7 @@ public class SPMSplitPane extends BSplitPane {
                 for (String ext : externals) {
                     if (ext.endsWith("= required")) {
                         String extName = ext.substring(0, ext.indexOf(':'));
-                        extType = ext.substring(ext.indexOf(':') + 1, ext.indexOf('=')).trim();
+                        String extType = ext.substring(ext.indexOf(':') + 1, ext.indexOf('=')).trim();
 
                         if (getInfo(extName, pathMap.get(extType)) == null) {
 
@@ -437,12 +450,6 @@ public class SPMSplitPane extends BSplitPane {
             } else {
                 descSelect.setContents(changeLog);
             }
-        } else {
-            objectName.setText("");
-            objectDescription.setText("");
-
-            descSelect.removeAll();
-            descSelect.add(SPMTranslate.text("description"));
         }
 
         descriptionSP.layoutChildren();
@@ -566,15 +573,6 @@ public class SPMSplitPane extends BSplitPane {
         }
         ((DefaultTreeModel) tree.getModel()).reload();
 
-    }
-
-    /**
-     * Gets the modified attribute of the InstallSplitPane object
-     *
-     * @return The modified value
-     */
-    public boolean isModified() {
-        return modified;
     }
 
     /**
