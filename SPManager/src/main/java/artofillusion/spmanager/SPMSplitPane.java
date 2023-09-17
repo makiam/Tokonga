@@ -294,8 +294,7 @@ public class SPMSplitPane extends BSplitPane {
         startupScriptsPath = tree.addNode(scriptsPath, new DefaultMutableTreeNode(SPMTranslate.text("startup")));
         ((DefaultTreeModel) tree.getModel()).reload();
         setOneTouchExpandable(true);
-        MouseListener ml
-                = new MouseAdapter() {
+        MouseListener ml = new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 int selRow = tree.getComponent().getRowForLocation(e.getX(), e.getY());
@@ -352,15 +351,13 @@ public class SPMSplitPane extends BSplitPane {
      */
     public SPMObjectInfo getSelectedNodeInfo() {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getComponent().getLastSelectedPathComponent();
-        if (node != null) {
-            if (node.isLeaf() && (!node.getAllowsChildren())) {
-                if (node.getUserObject() != null) {
-                    SPMObjectInfo nodeInfo = (SPMObjectInfo) node.getUserObject();
-                    return nodeInfo;
-                }
-            } else {
-                return null;
+        if (node == null) return null;
+        if (node.isLeaf() && (!node.getAllowsChildren())) {
+            if (node.getUserObject() != null) {
+                return (SPMObjectInfo) node.getUserObject();
             }
+        } else {
+            return null;
         }
         return null;
     }
@@ -479,10 +476,9 @@ public class SPMSplitPane extends BSplitPane {
             return null;
         }
 
-        Object info;
         int max = tree.getChildNodeCount(path);
         for (int j = 0; j < max; j++) {
-            info = ((DefaultMutableTreeNode) tree.getChildNode(path, j).getLastPathComponent()).getUserObject();
+            Object info = ((DefaultMutableTreeNode) tree.getChildNode(path, j).getLastPathComponent()).getUserObject();
 
             if (name.equals(info.toString())) {
                 return (SPMObjectInfo) info;

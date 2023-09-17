@@ -159,11 +159,10 @@ public class InstallSplitPane extends SPMSplitPane {
      */
     private void getFiles(TreePath addTo, List<SPMObjectInfo> infos, List<SPMObjectInfo> managerInfoList) {
 
-        SPMObjectInfo managerInfo;
         boolean eligible;
         TreeMap<String, SPMObjectInfo> map = new TreeMap<>();
 
-        for (SPMObjectInfo info : infos) {
+        for (SPMObjectInfo info: infos) {
 
             if (info.restriction >= SPMParameters.HIDE) {
                 continue;
@@ -172,7 +171,7 @@ public class InstallSplitPane extends SPMSplitPane {
             {
                 //check if file candidate for update or install
                 eligible = (workMode == INSTALL);
-                managerInfo = null;
+
                 String name = info.getName();
                 for (int j = 0; j < managerInfoList.size(); ++j) {
                     if ((managerInfoList.get(j)).getName().equals(name)) {
@@ -180,7 +179,7 @@ public class InstallSplitPane extends SPMSplitPane {
                         if (eligible) {
                             //check if valid update
 
-                            managerInfo = managerInfoList.get(j);
+                            var managerInfo = managerInfoList.get(j);
                             log.info(info.getName());
 
                             log.info("major distant local:{} {}", info.getMajor(), managerInfo.getMajor());
@@ -210,9 +209,8 @@ public class InstallSplitPane extends SPMSplitPane {
                 }
             }
         }
-        map.values().forEach(info -> {
-            tree.addNode(addTo, new DefaultMutableTreeNode(info, false));
-        });
+
+        map.values().forEach(info -> tree.addNode(addTo, new DefaultMutableTreeNode(info, false)));
 
     }
 
@@ -590,8 +588,6 @@ public class InstallSplitPane extends SPMSplitPane {
                 selectCB.setEnabled(false);
             }
 
-            // disable install single if script has dependents
-            Collection<String> externals = nodeInfo.getExternals();
         }
         super.scriptSelection(deletable);
     }
@@ -618,7 +614,6 @@ public class InstallSplitPane extends SPMSplitPane {
                 selectCB.setEnabled(false);
             }
 
-            // disable install single if plugin has dependents
             Collection<String> externals = nodeInfo.getExternals();
         }
         super.pluginSelection(deletable);
