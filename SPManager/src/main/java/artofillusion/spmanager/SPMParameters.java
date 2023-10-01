@@ -105,9 +105,16 @@ public class SPMParameters {
      * Constructor for the SPMParameters object
      */
     public SPMParameters() {
-        repositories = new Vector<>();
 
-        repositories.add("https://aoisp.sourceforge.net/AoIRepository");
+        String[] ra = new String[0];
+        try {
+            ra = (String[])PluginRegistry.invokeExportedMethod("preferences.getArray", "spmanager", "repositories", ra);
+            log.atInfo().log("Recieved: {}", Arrays.toString(ra));
+        } catch (InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+        repositories = new Vector<>();
+        repositories.add(ra[0]);
 
         filters = new HashMap<>();
         filters.put("beta", "mark");
@@ -118,9 +125,7 @@ public class SPMParameters {
         Object ir = null;
         try {
             ir = PluginRegistry.invokeExportedMethod("preferences.getString", "spmanager", "userName");
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
+        } catch (NoSuchMethodException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
 
@@ -237,7 +242,7 @@ public class SPMParameters {
                     return;
                 }
 
-                                                repoName = repoName.trim();
+                repoName = repoName.trim();
                 if (repoName.endsWith("/")) {
                     repoName = repoName.substring(0, repoName.length() - 1);
                 }

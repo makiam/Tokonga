@@ -3,7 +3,13 @@ package artofillusion.spmanager;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ManagersUtilsParserTest {
+public class ManagersUtilsDoubleParserTest {
+
+    @Test
+    public void testSpacesOnly() {
+        String val = "          ";
+        Assert.assertEquals(0, SPManagerUtils.parseDouble(val), 0);
+    }
     @Test
     public void testZero() {
         String val = "0";
@@ -93,10 +99,11 @@ public class ManagersUtilsParserTest {
         var d2 = Double.parseDouble(val);
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void testEmptyCustom() {
         String val = "";
         var d1 = SPManagerUtils.parseDouble(val);
+        Assert.assertEquals(0, d1, 0);
     }
 
 

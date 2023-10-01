@@ -277,9 +277,7 @@ public class SPManagerFrame extends BFrame {
                 root = (WindowWidget) root.getParent();
             }
 
-            Rectangle bounds = (Rectangle) PluginRegistry
-                    .invokeExportedMethod("nik777.OneFixSizesAll.getChildBounds",
-                            new Object[]{root});
+            Rectangle bounds = (Rectangle) PluginRegistry.invokeExportedMethod("nik777.OneFixSizesAll.getChildBounds",new Object[]{root});
 
             Dimension d2 = getComponent().getSize();
             int x;
