@@ -437,23 +437,28 @@ public class ArtOfIllusion {
      * it. The BFrame is used for displaying dialogs.
      */
     public static void openScene(BFrame fr) {
+        JFileChooser chooser =  new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setDialogTitle(Translate.text("openScene"));
+        Optional.ofNullable(currentDirectory).ifPresent(dir -> chooser.setCurrentDirectory(new File(dir)));
+
         BFileChooser fc = new BFileChooser(BFileChooser.OPEN_FILE, Translate.text("openScene"));
-        if (getCurrentDirectory() != null) {
-            fc.setDirectory(new File(getCurrentDirectory()));
-        }
+
         //fully qualified path, as otherwise conflicts with an AWT class.
         javax.swing.filechooser.FileFilter sceneFilter = new FileNameExtensionFilter(Translate.text("fileFilter.aoi"), "aoi");
-        fc.getComponent().setAcceptAllFileFilterUsed(true);
-        fc.getComponent().addChoosableFileFilter(sceneFilter);
+        chooser.setAcceptAllFileFilterUsed(true);
+        chooser.addChoosableFileFilter(sceneFilter);
+
         Preferences pref = Preferences.userNodeForPackage(ArtOfIllusion.class);
         javax.swing.filechooser.FileFilter filter = pref.getBoolean("FilterSceneFiles", true) ? sceneFilter : fc.getComponent().getAcceptAllFileFilter();
-        fc.getComponent().setFileFilter(filter);
-        if (!fc.showDialog(fr)) {
+        chooser.setFileFilter(filter);
+        if(chooser.showOpenDialog(fr.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        pref.putBoolean("FilterSceneFiles", fc.getFileFilter() == sceneFilter);
-        setCurrentDirectory(fc.getDirectory().getAbsolutePath());
-        openScene(fc.getSelectedFile(), fr);
+
+        pref.putBoolean("FilterSceneFiles", chooser.getFileFilter() == sceneFilter);
+        setCurrentDirectory(chooser.getCurrentDirectory().getAbsolutePath());
+        openScene(chooser.getSelectedFile(), fr);
     }
 
     /**
