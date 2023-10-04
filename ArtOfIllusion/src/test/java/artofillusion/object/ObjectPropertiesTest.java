@@ -1,5 +1,6 @@
 package artofillusion.object;
 
+import artofillusion.script.ScriptedObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Answers;
@@ -8,7 +9,7 @@ import org.mockito.Mockito;
 public class ObjectPropertiesTest {
 
     @Test
-    public void testObject3DPropertiesTest() {
+    public void testGetObject3DProperties() {
         var ph = Mockito.mock(Object3D.class, Answers.CALLS_REAL_METHODS);
         var props = ph.getProperties();
         Assert.assertNotNull(props);
@@ -23,10 +24,18 @@ public class ObjectPropertiesTest {
     }
 
     @Test
-    public void testGetCurvePropertiesTest() {
+    public void testGetCurveProperties() {
         var ph = Mockito.mock(Curve.class, Answers.CALLS_REAL_METHODS);
         var props = ph.getProperties();
         Assert.assertNotNull(props);
         Assert.assertEquals(2, props.length);
+    }
+
+    @Test
+    public void testGetScriptedObjectObjectProperties() {
+        ScriptedObject ph = new ScriptedObject("");
+        var props = ph.getProperties();
+        Assert.assertNotNull(props);
+        Assert.assertEquals(ph.getNumParameters(), props.length);
     }
 }
