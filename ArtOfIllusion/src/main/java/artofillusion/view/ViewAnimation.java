@@ -61,7 +61,7 @@ public class ViewAnimation {
 
   int endOrientation, endNavigation;
     long msStart, msEnd, ms1st = 0, msLast, msLatest;
-    boolean endPerspective, changingPerspective, animatingMove, endShowGrid;
+    boolean endPerspective, changingPerspective, animatingMove;
     final int viewH;
     final int viewW;
 
@@ -135,8 +135,6 @@ public class ViewAnimation {
             return;
         }
 
-        endShowGrid = view.getShowGrid();
-        view.setShowGrid(false);
 
         this.refDistToPlane = refDistToPlane;
         startCoords = camera.getCameraCoordinates().duplicate();
@@ -209,7 +207,6 @@ public class ViewAnimation {
             this.endPerspective = view.isPerspectiveSwitch();
         }
         this.endNavigation = nextNavigation;
-        this.endShowGrid = view.getShowGrid();
         camera = view.getCamera();
         endDistToScreen = camera.getDistToScreen();
 
@@ -404,13 +401,12 @@ public class ViewAnimation {
         view.setScale(endScale);
         view.setRotationCenter(endRotationCenter);
         view.setDistToPlane(endCoords.getOrigin().minus(endRotationCenter).length()); // It seemed to work without this too... But not with SceneCamera
-        view.setShowGrid(endShowGrid);
         view.finishAnimation(endOrientation, endPerspective, endNavigation); // using set-methods for these would loop back to animation
-        if (boundCamera != null) {
-            updateBoundCamera();
-        } else {
+        if (boundCamera == null) {
             view.viewChanged(false);
             view.repaint();
+        } else {
+            updateBoundCamera();
         }
         changingPerspective = false;
         animatingMove = false;
