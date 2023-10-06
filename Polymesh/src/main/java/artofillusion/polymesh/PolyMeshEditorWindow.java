@@ -63,24 +63,8 @@ import buoy.event.KeyPressedEvent;
 import buoy.event.ValueChangedEvent;
 import buoy.event.WidgetEvent;
 import buoy.event.WidgetMouseEvent;
-import buoy.widget.BCheckBox;
-import buoy.widget.BCheckBoxMenuItem;
-import buoy.widget.BDialog;
-import buoy.widget.BFileChooser;
-import buoy.widget.BLabel;
-import buoy.widget.BMenu;
-import buoy.widget.BMenuItem;
-import buoy.widget.BPopupMenu;
-import buoy.widget.BSpinner;
-import buoy.widget.BStandardDialog;
-import buoy.widget.BorderContainer;
-import buoy.widget.FormContainer;
-import buoy.widget.LayoutInfo;
-import buoy.widget.MenuWidget;
-import buoy.widget.OverlayContainer;
-import buoy.widget.RowContainer;
-import buoy.widget.Shortcut;
-import buoy.widget.Widget;
+import buoy.widget.*;
+
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -95,7 +79,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.JFormattedTextField;
+import javax.swing.*;
 import javax.swing.JSpinner.NumberEditor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -4205,17 +4189,16 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private void doSaveAsTemplate() {
 
         File templateDir = new File(ArtOfIllusion.PLUGIN_DIRECTORY + File.separator + "PolyMeshTemplates");
-        if (!templateDir.exists()) {
-            if (!templateDir.mkdir()) {
-                new BStandardDialog(Translate.text("polymesh:errorTemplateDir"),
-                        UIUtilities
-                                .breakString(Translate.text("illegalDelete")),
-                        BStandardDialog.ERROR).showMessageDialog(null);
-                return;
-            }
+        if (!templateDir.exists() && !templateDir.mkdir()) {
+            new BStandardDialog(Translate.text("polymesh:errorTemplateDir"), UIUtilities.breakString(Translate.text("illegalDelete")),
+                    BStandardDialog.ERROR).showMessageDialog(null);
+            return;
         }
-        BFileChooser chooser = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("polymesh:saveTemplate"), templateDir);
-        if (chooser.showDialog(null)) {
+        var chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setDialogTitle(Translate.text("polymesh:saveTemplate"));
+        chooser.setCurrentDirectory(templateDir);
+        if(chooser.showSaveDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
             File file = chooser.getSelectedFile();
             try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(file))) {
                 ((PolyMesh) objInfo.object).writeToFile(dos, null);
@@ -4223,7 +4206,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 log.atError().setCause(ex).log("Error writing template: {}", ex.getMessage());
             }
         }
-
     }
 
     /**
