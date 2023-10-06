@@ -442,7 +442,6 @@ public class ArtOfIllusion {
         chooser.setDialogTitle(Translate.text("openScene"));
         Optional.ofNullable(currentDirectory).ifPresent(dir -> chooser.setCurrentDirectory(new File(dir)));
 
-        BFileChooser fc = new BFileChooser(BFileChooser.OPEN_FILE, Translate.text("openScene"));
 
         //fully qualified path, as otherwise conflicts with an AWT class.
         javax.swing.filechooser.FileFilter sceneFilter = new FileNameExtensionFilter(Translate.text("fileFilter.aoi"), "aoi");
@@ -450,7 +449,7 @@ public class ArtOfIllusion {
         chooser.addChoosableFileFilter(sceneFilter);
 
         Preferences pref = Preferences.userNodeForPackage(ArtOfIllusion.class);
-        javax.swing.filechooser.FileFilter filter = pref.getBoolean("FilterSceneFiles", true) ? sceneFilter : fc.getComponent().getAcceptAllFileFilter();
+        javax.swing.filechooser.FileFilter filter = pref.getBoolean("FilterSceneFiles", true) ? sceneFilter : chooser.getAcceptAllFileFilter();
         chooser.setFileFilter(filter);
         if(chooser.showOpenDialog(fr.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
