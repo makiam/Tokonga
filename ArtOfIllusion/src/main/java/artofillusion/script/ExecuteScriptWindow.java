@@ -223,7 +223,6 @@ public class ExecuteScriptWindow extends BFrame {
         var chooser = new JFileChooser();
         chooser.setName(Translate.text("selectScriptToLoad"));
         
-        BFileChooser fc = new BFileChooser(BFileChooser.OPEN_FILE, Translate.text("selectScriptToLoad"));
         // Save the current program working directory
         File workingDir = chooser.getCurrentDirectory();
         chooser.setCurrentDirectory(scriptDir);
