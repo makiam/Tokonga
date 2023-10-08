@@ -444,9 +444,12 @@ public class TexturesAndMaterialsDialog extends BDialog {
             itemText = "selectSceneToSaveTexture";
         }
         if (selectedTexture != null || selectedMaterial != null) {
-            BFileChooser fcOut = new BFileChooser(BFileChooser.OPEN_FILE, Translate.text(itemText), assetsFolder);
-            if (fcOut.showDialog(this)) {
-                saveToFile(fcOut.getSelectedFile());
+            var chooser = new JFileChooser();
+            chooser.setName(Translate.text(itemText));
+            chooser.setCurrentDirectory(assetsFolder);
+            
+            if (chooser.showOpenDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
+                saveToFile(chooser.getSelectedFile());
             }
         }
     }
@@ -530,9 +533,12 @@ public class TexturesAndMaterialsDialog extends BDialog {
 
     @SuppressWarnings("unused")
     public void doNewLib() {
-        BFileChooser fcNew = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("selectNewLibraryName"), assetsFolder);
-        if (fcNew.showDialog(this)) {
-            File saveFile = fcNew.getSelectedFile();
+        var chooser = new JFileChooser();
+        chooser.setName(Translate.text("selectNewLibraryName"));
+        chooser.setCurrentDirectory(assetsFolder);
+        
+        if (chooser.showSaveDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
+            File saveFile = chooser.getSelectedFile();
             if (saveFile.exists()) {
                 MessageDialog.create().withOwner(this.getComponent()).error(Translate.text("fileAlreadyExists"));
             } else {
@@ -548,9 +554,10 @@ public class TexturesAndMaterialsDialog extends BDialog {
 
     @SuppressWarnings("unused")
     public void doIncludeLib() {
-        BFileChooser fcInc = new BFileChooser(BFileChooser.OPEN_FILE, Translate.text("selectExternalFile"));
-        if (fcInc.showDialog(this)) {
-            File inputFile = fcInc.getSelectedFile();
+        var chooser = new JFileChooser();
+        chooser.setName(Translate.text("selectExternalFile"));
+        if (chooser.showOpenDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
+            File inputFile = chooser.getSelectedFile();
             if (inputFile.exists()) {
                 ((SceneTreeModel) libraryList.getModel()).addScene(inputFile);
             }
