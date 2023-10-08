@@ -22,6 +22,7 @@ import java.io.*;
 import java.text.*;
 import javax.imageio.*;
 import javax.imageio.stream.*;
+import javax.swing.JFileChooser;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -155,13 +156,15 @@ public class ImageSaver {
                 lastImageFormat = format;
             }
             index = (int) numberFromField.getValue();
-            BFileChooser fc = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("saveImage"));
+            var chooser = new JFileChooser();
+            chooser.setName(Translate.text("saveImage"));
+            
             String filename = "Untitled." + FORMAT_EXTENSION[format];
             File file = (ArtOfIllusion.getCurrentDirectory() == null ? new File(filename) : new File(ArtOfIllusion.getCurrentDirectory(), filename));
-            fc.setSelectedFile(file);
-            ok = fc.showDialog(parent);
+            chooser.setSelectedFile(file);
+            ok = chooser.showSaveDialog(parent.getComponent()) == JFileChooser.APPROVE_OPTION;
             if (ok) {
-                file = fc.getSelectedFile();
+                file = chooser.getSelectedFile();
                 name = file.getName();
                 directory = file.getParentFile().getAbsolutePath();
                 if (file.isFile()) {
