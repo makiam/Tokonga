@@ -1766,25 +1766,26 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     public void saveAsCommand() {
-        BFileChooser fc = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("saveScene"));
+        var chooser = new JFileChooser();
+        chooser.setName(Translate.text("saveScene"));
         if (theScene.getName() == null) {
-            fc.setSelectedFile(new File("Untitled.aoi"));
+            chooser.setSelectedFile(new File("Untitled.aoi"));
         } else {
-            fc.setSelectedFile(new File(theScene.getName()));
+            chooser.setSelectedFile(new File(theScene.getName()));
         }
         if (theScene.getDirectory() != null) {
-            fc.setDirectory(new File(theScene.getDirectory()));
+            chooser.setCurrentDirectory(new File(theScene.getDirectory()));
         } else if (ArtOfIllusion.getCurrentDirectory() != null) {
-            fc.setDirectory(new File(ArtOfIllusion.getCurrentDirectory()));
+            chooser.setCurrentDirectory(new File(ArtOfIllusion.getCurrentDirectory()));
         }
-        if (!fc.showDialog(this)) {
+        if (chooser.showSaveDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
             return;
         }
-        String name = fc.getSelectedFile().getName();
+        String name = chooser.getSelectedFile().getName();
         if (!name.toLowerCase().endsWith(".aoi")) {
             name = name + ".aoi";
         }
-        File file = new File(fc.getDirectory(), name);
+        File file = new File(chooser.getCurrentDirectory(), name);
         if (file.isFile()) {
             String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
             int choice = new BStandardDialog("", Translate.text("overwriteFile", name), BStandardDialog.QUESTION).showOptionDialog(this, options, options[1]);
@@ -1793,7 +1794,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             }
         }
         theScene.setName(name);
-        theScene.setDirectory(fc.getDirectory().getAbsolutePath());
+        theScene.setDirectory(chooser.getCurrentDirectory().getAbsolutePath());
         setTitle(name);
         modified = !ArtOfIllusion.saveScene(theScene, this);
 
