@@ -126,4 +126,13 @@ public class ImageFileChooser extends BFileChooser {
             }
         }
     }
+
+    public void setCurrentDirectory(File directory) {
+        setDirectory(directory);
+    }
+    
+    public File getCurrentDirectory() {
+        return getDirectory();
+    }
+
 }
