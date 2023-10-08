@@ -271,23 +271,13 @@ public class ImageDetailsDialog extends BDialog {
         }
 
         // Write the file
-        try {
+        try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(imageFile))) {
             if (im instanceof HDRImage) {
-                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(imageFile));
                 HDREncoder.writeImage((HDRImage) im, out);
-                out.close();
-                return;
             } else if (im instanceof SVGImage) {
-                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(imageFile));
                 out.write(((SVGImage) im).getXML());
-                out.close();
-                return;
-            } else // MIPMappedImage
-            {
-                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(imageFile));
+            } else { // MIPMappedImage
                 ImageIO.write(((MIPMappedImage) im).getImage(), "png", out); // getImage returns BufferedImage
-                out.close();
-                return;
             }
         } catch (IOException ex) {
             setCursor(Cursor.getDefaultCursor());
@@ -323,10 +313,9 @@ public class ImageDetailsDialog extends BDialog {
     }
 
     private boolean confirmConvert(String name) {
-        String title = Translate.text("confirmTitle");
         String question = Translate.text("convertQuestion", name);
 
-        BStandardDialog confirm = new BStandardDialog(title, question, BStandardDialog.QUESTION);
+        BStandardDialog confirm = new BStandardDialog(Translate.text("confirmTitle"), question, BStandardDialog.QUESTION);
         String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
         return (confirm.showOptionDialog(this, options, options[1]) == 0);
     }
