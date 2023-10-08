@@ -2568,7 +2568,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             obj = new SceneCamera();
             name = "Camera " + (CreateCameraTool.counter++);
         } else if ("referenceImage".equals(type)) {
-            BFileChooser fc = new ImageFileChooser(Translate.text("selectReferenceImage"));
+            var fc = new ImageFileChooser(Translate.text("selectReferenceImage"));
             if (!fc.showDialog(this)) {
                 return;
             }
@@ -2785,7 +2785,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     public void setTemplateCommand() {
-        BFileChooser fc = new ImageFileChooser(Translate.text("selectTemplateImage"));
+        var fc = new ImageFileChooser(Translate.text("selectTemplateImage"));
         if (!fc.showDialog(this)) {
             return;
         }
