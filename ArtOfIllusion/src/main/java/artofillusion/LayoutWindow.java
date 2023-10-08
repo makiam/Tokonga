@@ -1727,11 +1727,12 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     public void linkExternalCommand() {
-        BFileChooser fc = new BFileChooser(BFileChooser.OPEN_FILE, Translate.text("externalObject.selectScene"));
-        if (!fc.showDialog(this)) {
+        var chooser = new JFileChooser();
+        chooser.setName(Translate.text("externalObject.selectScene"));
+        if (chooser.showOpenDialog(this.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        ExternalObject obj = new ExternalObject(fc.getSelectedFile(), "");
+        ExternalObject obj = new ExternalObject(chooser.getSelectedFile(), "");
         ObjectInfo info = new ObjectInfo(obj, new CoordinateSystem(), "External Object");
         if (obj.getTexture() == null) {
             obj.setTexture(getScene().getDefaultTexture(), getScene().getDefaultTexture().getDefaultMapping(obj));
