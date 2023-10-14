@@ -57,6 +57,7 @@ public class PreferencesPlugin implements Plugin {
 
     private final AbstractAction actionShowPluginPreferences = new AbstractAction() {
         @Override
+        @SuppressWarnings("ResultOfObjectAllocationIgnored")
         public void actionPerformed(ActionEvent event) {
             final LayoutWindow owner = (LayoutWindow)((JMenuItem)event.getSource()).getClientProperty("view");
             new PreferencesWindow(owner);
