@@ -11,12 +11,14 @@
 package artofillusion.preferences;
 
 
+import artofillusion.ui.Translate;
+import buoy.widget.Widget;
 
 /**
  *
  * @author MaksK
  */
-public class ExtraPluginsPane extends buoy.widget.AWTWidget {
+public class ExtraPluginsPane extends buoy.widget.AWTWidget implements PreferencesEditor {
     private final ExtraPluginsPaneImpl impl;
     
     public ExtraPluginsPane() {
@@ -26,6 +28,21 @@ public class ExtraPluginsPane extends buoy.widget.AWTWidget {
 
     public void saveChanges() {
         impl.saveChanges();
+    }
+
+    @Override
+    public Widget getPreferencesPanel() {
+        return this;
+    }
+
+    @Override
+    public void savePreferences() {
+        this.saveChanges();
+    }
+    
+    @Override
+    public String getName() {
+        return Translate.text("Plugins");
     }
 
 }

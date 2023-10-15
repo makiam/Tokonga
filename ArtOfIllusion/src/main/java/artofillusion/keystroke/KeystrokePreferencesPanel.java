@@ -11,6 +11,7 @@
 
 package artofillusion.keystroke;
 
+import artofillusion.preferences.PreferencesEditor;
 import buoy.widget.*;
 import buoy.event.*;
 
@@ -26,9 +27,9 @@ import java.awt.Dimension;
 /**
  * This class presents a user interface for editing the list of KeystrokeRecords.
  */
-public class KeystrokePreferencesPanel extends FormContainer {
+public class KeystrokePreferencesPanel extends FormContainer implements PreferencesEditor {
 
-    private final List<KeystrokeRecord> records;
+    private final List<KeystrokeRecord> records = new ArrayList<>(Arrays.asList(KeystrokeManager.getAllRecords()));
     private final BTable table;
     private final BButton editButton;
     private final BButton deleteButton;
@@ -37,9 +38,7 @@ public class KeystrokePreferencesPanel extends FormContainer {
 
     public KeystrokePreferencesPanel() {
         super(new double[]{1}, new double[]{1, 0});
-        KeystrokeRecord[] allRecords = KeystrokeManager.getAllRecords();
-        records = new ArrayList<>(allRecords.length);
-        records.addAll(Arrays.asList(allRecords));
+
         table = new BTable(new KeystrokeTableModel());
         table.setColumnWidth(0, 100);
         table.setColumnWidth(1, 250);
@@ -177,6 +176,16 @@ public class KeystrokePreferencesPanel extends FormContainer {
             keyDesc = KeyEvent.getKeyModifiersText(modifiers) + "+" + keyDesc;
         }
         return keyDesc;
+    }
+
+    @Override
+    public Widget getPreferencesPanel() {
+        return this;
+    }
+
+    @Override
+    public void savePreferences() {
+        this.saveChanges();
     }
 
     /**

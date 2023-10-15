@@ -14,7 +14,9 @@ package artofillusion;
 
 import artofillusion.ui.*;
 import artofillusion.keystroke.*;
+import artofillusion.preferences.AppearancePreferencesPanel;
 import artofillusion.preferences.ExtraPluginsPane;
+import artofillusion.preferences.PreferencesEditor;
 import buoy.widget.*;
 import buoy.event.*;
 
@@ -27,7 +29,10 @@ import java.awt.*;
  */
 public class PreferencesWindow {
 
-    private BComboBox defaultRendChoice, objectRendChoice, texRendChoice, localeChoice, themeChoice, colorChoice, toolChoice;
+    private PreferencesEditor appearance = new AppearancePreferencesPanel();
+    private PreferencesEditor extras = new ExtraPluginsPane();
+    
+    private BComboBox defaultRendChoice, objectRendChoice, texRendChoice, toolChoice, localeChoice, themeChoice, colorChoice;
     private ValueField interactiveTolField, undoField, animationDurationField, animationFrameRateField;
     private BCheckBox drawActiveFrustumBox, drawCameraFrustumBox, showTravelCuesOnIdleBox, showTravelCuesScrollingBox;
     private BCheckBox showTiltDialBox;
@@ -39,10 +44,12 @@ public class PreferencesWindow {
     public PreferencesWindow(BFrame parent) {
         BTabbedPane tabs = new BTabbedPane();
         tabs.add(createGeneralPanel(), Translate.text("general"));
+        tabs.add(appearance.getPreferencesPanel(), appearance.getName());
         KeystrokePreferencesPanel keystrokePanel = new KeystrokePreferencesPanel();
         tabs.add(keystrokePanel, Translate.text("shortcuts"));
-        ExtraPluginsPane extras = new ExtraPluginsPane();
-        tabs.add(extras, "Plugins");
+        
+        tabs.add(extras.getPreferencesPanel(), extras.getName());
+        
         tabs.setSelectedTab(lastTab);
         boolean done = false;
 
@@ -99,7 +106,9 @@ public class PreferencesWindow {
         ThemeManager.setSelectedColorSet(ThemeManager.getSelectedTheme().getColorSets()[colorChoice.getSelectedIndex()]);
         prefs.savePreferences();
         keystrokePanel.saveChanges();
-        extras.saveChanges();
+        
+        appearance.savePreferences();
+        extras.savePreferences();
     }
 
     /**
@@ -257,7 +266,6 @@ public class PreferencesWindow {
         FormContainer panel = new FormContainer(3, 20);
         LayoutInfo labelLayout = new LayoutInfo(LayoutInfo.EAST, LayoutInfo.NONE, new Insets(2, 5, 2, 5), null);
         LayoutInfo widgetLayout = new LayoutInfo(LayoutInfo.WEST, LayoutInfo.BOTH, new Insets(2, 0, 2, 0), null);
-        LayoutInfo centerLayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(2, 0, 2, 0), null);
 
         panel.setColumnWeight(0, 0.0);
         panel.setColumnWeight(1, 0.0);
