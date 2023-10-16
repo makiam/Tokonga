@@ -32,7 +32,7 @@ public class PreferencesWindow {
     private PreferencesEditor appearance = new AppearancePreferencesPanel();
     private PreferencesEditor extras = new ExtraPluginsPane();
     
-    private BComboBox defaultRendChoice, objectRendChoice, texRendChoice, toolChoice, localeChoice, themeChoice, colorChoice;
+    private BComboBox defaultRendChoice, objectRendChoice, texRendChoice, toolChoice, themeChoice, colorChoice;
     private ValueField interactiveTolField, undoField, animationDurationField, animationFrameRateField;
     private BCheckBox drawActiveFrustumBox, drawCameraFrustumBox, showTravelCuesOnIdleBox, showTravelCuesScrollingBox;
     private BCheckBox showTiltDialBox;
@@ -78,16 +78,14 @@ public class PreferencesWindow {
         }
         prefs.setInteractiveSurfaceError(interactiveTolField.getValue());
         prefs.setUndoLevels((int) undoField.getValue());
-        if (!prefs.getLocale().equals(languages[localeChoice.getSelectedIndex()])) {
-            new BStandardDialog("", UIUtilities.breakString(Translate.text("languageChangedWarning")), BStandardDialog.INFORMATION).showMessageDialog(parent);
-        }
+
         if (prefs.getUseOpenGL() != glBox.getState()) {
             new BStandardDialog("", UIUtilities.breakString(Translate.text("glChangedWarning")), BStandardDialog.INFORMATION).showMessageDialog(parent);
         }
         if (!ThemeManager.getSelectedTheme().getName().equals(themeChoice.getSelectedValue())) {
             new BStandardDialog("", UIUtilities.breakString(Translate.text("themeChangedWarning")), BStandardDialog.INFORMATION).showMessageDialog(parent);
         }
-        prefs.setLocale(languages[localeChoice.getSelectedIndex()]);
+
         prefs.setUseOpenGL(glBox.getState());
         prefs.setKeepBackupFiles(backupBox.getState());
         prefs.setReverseZooming(reverseZoomBox.getState());
@@ -252,15 +250,7 @@ public class PreferencesWindow {
             Translate.text("compoundMoveScaleRotate")
         });
         toolChoice.setSelectedIndex(prefs.getUseCompoundMeshTool() ? 1 : 0);
-        localeChoice = new BComboBox();
-        Locale[] languages = Translate.getAvailableLocales();
-        localeChoice.setPreferredVisibleRows(languages.length > 20 ? 16 : languages.length);
-        for (int i = 0; i < languages.length; i++) {
-            localeChoice.add(languages[i].getDisplayName(languages[i]));
-            if (prefs.getLocale().equals(languages[i])) {
-                localeChoice.setSelectedIndex(i);
-            }
-        }
+
 
         // Layout the panel.
         FormContainer panel = new FormContainer(3, 20);
@@ -271,7 +261,7 @@ public class PreferencesWindow {
         panel.setColumnWeight(1, 0.0);
         panel.setColumnWeight(2, 3.0);
 
-        panel.add(Translate.label("language"), 0, 0, labelLayout);
+
         panel.add(Translate.label("defaultRenderer"), 0, 1, labelLayout);
         panel.add(Translate.label("objPreviewRenderer"), 0, 2, labelLayout);
         panel.add(Translate.label("texPreviewRenderer"), 0, 3, labelLayout);
@@ -281,7 +271,7 @@ public class PreferencesWindow {
         panel.add(Translate.label("maxUndoLevels"), 0, 7, labelLayout);
         panel.add(Translate.label("interactiveSurfError"), 0, 11, labelLayout);
 
-        panel.add(localeChoice, 1, 0, widgetLayout);
+
         panel.add(defaultRendChoice, 1, 1, widgetLayout);
         panel.add(objectRendChoice, 1, 2, widgetLayout);
         panel.add(texRendChoice, 1, 3, widgetLayout);

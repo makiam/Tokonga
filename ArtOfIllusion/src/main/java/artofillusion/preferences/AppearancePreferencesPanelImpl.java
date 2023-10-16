@@ -7,13 +7,14 @@ package artofillusion.preferences;
 import artofillusion.ArtOfIllusion;
 import artofillusion.ui.Translate;
 import java.util.Locale;
-import java.util.stream.IntStream;
 import javax.swing.DefaultComboBoxModel;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
  * @author MaksK
  */
+@Slf4j
 public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
     private final Locale[] languages = Translate.getAvailableLocales();
     /**
@@ -26,13 +27,16 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
     private DefaultComboBoxModel getLocalesModel() {
         var dcm = new DefaultComboBoxModel();
         var cloc =  ArtOfIllusion.getPreferences().getLocale();
-        IntStream.range(0, languages.length).forEach(index -> {
-            var loc = languages[index];
-            dcm.addElement(loc.getDisplayName(loc));
-            if(cloc.equals(loc)) dcm.setSelectedItem(loc.getDisplayName(loc));
-        });
-        
+        for(Locale loc: languages) {
+            var localeDisplayName = loc.getDisplayName(loc);
+            dcm.addElement(localeDisplayName);
+            if(cloc.equals(loc)) dcm.setSelectedItem(localeDisplayName);
+        }
         return  dcm;
+    } 
+    
+    public Locale getSelectedLocale() {
+        return languages[languageSelector.getSelectedIndex()];
     } 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -51,7 +55,7 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
 
         languageLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         languageLabel.setLabelFor(languageSelector);
-        languageLabel.setText("Language:");
+        languageLabel.setText(Translate.text("language"));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
