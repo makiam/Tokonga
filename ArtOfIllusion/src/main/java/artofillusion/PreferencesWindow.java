@@ -31,6 +31,7 @@ public class PreferencesWindow {
 
     private PreferencesEditor appearance = new AppearancePreferencesPanel();
     private PreferencesEditor extras = new ExtraPluginsPane();
+    private PreferencesEditor keystrokePanel = new KeystrokePreferencesPanel();
     
     private BComboBox defaultRendChoice, objectRendChoice, texRendChoice, toolChoice, themeChoice, colorChoice;
     private ValueField interactiveTolField, undoField, animationDurationField, animationFrameRateField;
@@ -44,10 +45,9 @@ public class PreferencesWindow {
     public PreferencesWindow(BFrame parent) {
         BTabbedPane tabs = new BTabbedPane();
         tabs.add(createGeneralPanel(), Translate.text("general"));
-        tabs.add(appearance.getPreferencesPanel(), appearance.getName());
-        KeystrokePreferencesPanel keystrokePanel = new KeystrokePreferencesPanel();
-        tabs.add(keystrokePanel, Translate.text("shortcuts"));
         
+        tabs.add(appearance.getPreferencesPanel(), appearance.getName());        
+        tabs.add(keystrokePanel.getPreferencesPanel(), keystrokePanel.getName());        
         tabs.add(extras.getPreferencesPanel(), extras.getName());
         
         tabs.setSelectedTab(lastTab);
@@ -69,9 +69,9 @@ public class PreferencesWindow {
             }
         }
         ApplicationPreferences prefs = ArtOfIllusion.getPreferences();
-        Locale[] languages = Translate.getAvailableLocales();
+        
         List<Renderer> renderers = PluginRegistry.getPlugins(Renderer.class);
-        if (renderers.size() > 0) {
+        if (!renderers.isEmpty()) {
             prefs.setDefaultRenderer(renderers.get(defaultRendChoice.getSelectedIndex()));
             prefs.setObjectPreviewRenderer(renderers.get(objectRendChoice.getSelectedIndex()));
             prefs.setTexturePreviewRenderer(renderers.get(texRendChoice.getSelectedIndex()));
@@ -103,8 +103,8 @@ public class PreferencesWindow {
         ThemeManager.setSelectedTheme(themes.get(themeChoice.getSelectedIndex()));
         ThemeManager.setSelectedColorSet(ThemeManager.getSelectedTheme().getColorSets()[colorChoice.getSelectedIndex()]);
         prefs.savePreferences();
-        keystrokePanel.saveChanges();
         
+        keystrokePanel.savePreferences();        
         appearance.savePreferences();
         extras.savePreferences();
     }
@@ -211,24 +211,12 @@ public class PreferencesWindow {
             showTravelCuesScrollingBox.setEnabled(!showTravelCuesOnIdleBox.getState());
             showTravelCuesScrollingBox.setState(showTravelCuesOnIdleBox.getState());
         }
-
-        themes = new ArrayList<ThemeManager.ThemeInfo>();
-        for (ThemeManager.ThemeInfo theme : ThemeManager.getThemes()) {
-            if (theme.selectable) {
-                themes.add(theme);
-            }
-        }
-        Collections.sort(themes, new Comparator<ThemeManager.ThemeInfo>() {
-            @Override
-            public int compare(ThemeManager.ThemeInfo o1, ThemeManager.ThemeInfo o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
-
+        final Comparator<ThemeManager.ThemeInfo> tc  = (ThemeManager.ThemeInfo ti1, ThemeManager.ThemeInfo ti2) -> ti1.getName().compareTo(ti2.getName());
         themeChoice = new BComboBox();
-        for (ThemeManager.ThemeInfo theme : themes) {
+        
+        ThemeManager.getThemes().stream().filter(info -> info.selectable).sorted(tc).forEach(theme -> {
             themeChoice.add(theme.getName());
-        }
+        });
 
         ThemeManager.ThemeInfo selectedTheme = ThemeManager.getSelectedTheme();
         themeChoice.setSelectedValue(selectedTheme.getName());

@@ -188,6 +188,10 @@ public class KeystrokePreferencesPanel extends FormContainer implements Preferen
         this.saveChanges();
     }
 
+    @Override
+    public String getName() {
+        return Translate.text("shortcuts");
+    }    
     /**
      * This is the model for the table of keystrokes.
      */
