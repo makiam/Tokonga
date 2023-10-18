@@ -28,7 +28,7 @@ import java.awt.*;
  * This is the window for editing application-wide preferences.
  */
 public class PreferencesWindow {
-
+    private static final Comparator<ThemeManager.ThemeInfo> tc  = Comparator.comparing(ThemeManager.ThemeInfo::getName);
     private PreferencesEditor appearance = new AppearancePreferencesPanel();
     private PreferencesEditor extras = new ExtraPluginsPane();
     private PreferencesEditor keystrokePanel = new KeystrokePreferencesPanel();
@@ -211,12 +211,9 @@ public class PreferencesWindow {
             showTravelCuesScrollingBox.setEnabled(!showTravelCuesOnIdleBox.getState());
             showTravelCuesScrollingBox.setState(showTravelCuesOnIdleBox.getState());
         }
-        final Comparator<ThemeManager.ThemeInfo> tc  = (ThemeManager.ThemeInfo ti1, ThemeManager.ThemeInfo ti2) -> ti1.getName().compareTo(ti2.getName());
+
         themeChoice = new BComboBox();
-        
-        ThemeManager.getThemes().stream().filter(info -> info.selectable).sorted(tc).forEach(theme -> {
-            themeChoice.add(theme.getName());
-        });
+        ThemeManager.getThemes().stream().filter(info -> info.selectable).sorted(tc).forEach(theme -> themeChoice.add(theme.getName()));
 
         ThemeManager.ThemeInfo selectedTheme = ThemeManager.getSelectedTheme();
         themeChoice.setSelectedValue(selectedTheme.getName());
