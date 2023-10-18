@@ -5,7 +5,9 @@
 package artofillusion.preferences;
 
 import artofillusion.ArtOfIllusion;
+import artofillusion.ui.ThemeManager;
 import artofillusion.ui.Translate;
+import java.util.Comparator;
 import java.util.Locale;
 import javax.swing.DefaultComboBoxModel;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
+    
+    private static final Comparator<ThemeManager.ThemeInfo> tc  = Comparator.comparing(ThemeManager.ThemeInfo::getName);
     private final Locale[] languages = Translate.getAvailableLocales();
     /**
      * Creates new form AppearancePreferencesPanelImpl
@@ -35,6 +39,16 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
         return  dcm;
     } 
     
+    private DefaultComboBoxModel getThemesModel() {
+        var dcm = new DefaultComboBoxModel();
+        var selectedThemeName = ThemeManager.getSelectedTheme().getName();
+        ThemeManager.getThemes().stream().filter(info -> info.selectable).sorted(tc).forEach(theme -> {
+            dcm.addElement(theme.getName());
+            if(theme.getName().equals(selectedThemeName)) dcm.setSelectedItem(theme.getName());
+        });
+        return dcm;
+    } 
+            
     public Locale getSelectedLocale() {
         return languages[languageSelector.getSelectedIndex()];
     } 
@@ -59,9 +73,10 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
         languageLabel.setLabelFor(languageSelector);
         languageLabel.setText(Translate.text("language"));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.setModel(getThemesModel());
 
-        jLabel1.setText("jLabel1");
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel1.setText(Translate.text("selectedTheme"));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

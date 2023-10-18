@@ -23,7 +23,7 @@ public class ExtraPluginsPane extends buoy.widget.AWTWidget implements Preferenc
     
     public ExtraPluginsPane() {
         super(new ExtraPluginsPaneImpl());
-        impl = (ExtraPluginsPaneImpl)this.getComponent();
+        impl = (ExtraPluginsPaneImpl)this.component;
     }
 
     public void saveChanges() {

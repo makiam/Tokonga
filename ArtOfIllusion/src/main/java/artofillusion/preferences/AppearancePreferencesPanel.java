@@ -14,8 +14,9 @@ public class AppearancePreferencesPanel extends buoy.widget.AWTWidget implements
     
     public AppearancePreferencesPanel() {
         super(new AppearancePreferencesPanelImpl());
-        impl = (AppearancePreferencesPanelImpl)this.getComponent();
+        impl = (AppearancePreferencesPanelImpl)this.component;
     }
+    
     @Override
     public Widget getPreferencesPanel() {
         return this;
