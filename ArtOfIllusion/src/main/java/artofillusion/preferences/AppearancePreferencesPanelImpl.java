@@ -51,7 +51,12 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
             
     public Locale getSelectedLocale() {
         return languages[languageSelector.getSelectedIndex()];
-    } 
+    }
+
+    public String getSelectedThemeName() {
+        return jComboBox1.getSelectedItem().toString();
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -115,4 +120,5 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
     private javax.swing.JLabel languageLabel;
     private javax.swing.JComboBox<String> languageSelector;
     // End of variables declaration//GEN-END:variables
+
 }

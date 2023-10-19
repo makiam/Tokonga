@@ -68,41 +68,38 @@ public class PreferencesWindow {
                 }
             }
         }
-        ApplicationPreferences prefs = ArtOfIllusion.getPreferences();
+        ApplicationPreferences preferences = ArtOfIllusion.getPreferences();
         
         List<Renderer> renderers = PluginRegistry.getPlugins(Renderer.class);
         if (!renderers.isEmpty()) {
-            prefs.setDefaultRenderer(renderers.get(defaultRendChoice.getSelectedIndex()));
-            prefs.setObjectPreviewRenderer(renderers.get(objectRendChoice.getSelectedIndex()));
-            prefs.setTexturePreviewRenderer(renderers.get(texRendChoice.getSelectedIndex()));
+            preferences.setDefaultRenderer(renderers.get(defaultRendChoice.getSelectedIndex()));
+            preferences.setObjectPreviewRenderer(renderers.get(objectRendChoice.getSelectedIndex()));
+            preferences.setTexturePreviewRenderer(renderers.get(texRendChoice.getSelectedIndex()));
         }
-        prefs.setInteractiveSurfaceError(interactiveTolField.getValue());
-        prefs.setUndoLevels((int) undoField.getValue());
+        preferences.setInteractiveSurfaceError(interactiveTolField.getValue());
+        preferences.setUndoLevels((int) undoField.getValue());
 
-        if (prefs.getUseOpenGL() != glBox.getState()) {
+        if (preferences.getUseOpenGL() != glBox.getState()) {
             new BStandardDialog("", UIUtilities.breakString(Translate.text("glChangedWarning")), BStandardDialog.INFORMATION).showMessageDialog(parent);
         }
-        if (!ThemeManager.getSelectedTheme().getName().equals(themeChoice.getSelectedValue())) {
-            new BStandardDialog("", UIUtilities.breakString(Translate.text("themeChangedWarning")), BStandardDialog.INFORMATION).showMessageDialog(parent);
-        }
 
-        prefs.setUseOpenGL(glBox.getState());
-        prefs.setKeepBackupFiles(backupBox.getState());
-        prefs.setReverseZooming(reverseZoomBox.getState());
-        prefs.setUseViewAnimations(useViewAnimationsBox.getState());
-        prefs.setMaxAnimationDuration(animationDurationField.getValue());
-        prefs.setAnimationFrameRate(animationFrameRateField.getValue());
-        prefs.setDrawActiveFrustum(drawActiveFrustumBox.getState());
-        prefs.setDrawCameraFrustum(cameraFrustumState);
-        prefs.setShowTravelCuesOnIdle(showTravelCuesOnIdleBox.getState());
-        prefs.setShowTravelCuesScrolling(travelCuesState);
-        prefs.setShowTiltDial(showTiltDialBox.getState());
+        preferences.setUseOpenGL(glBox.getState());
+        preferences.setKeepBackupFiles(backupBox.getState());
+        preferences.setReverseZooming(reverseZoomBox.getState());
+        preferences.setUseViewAnimations(useViewAnimationsBox.getState());
+        preferences.setMaxAnimationDuration(animationDurationField.getValue());
+        preferences.setAnimationFrameRate(animationFrameRateField.getValue());
+        preferences.setDrawActiveFrustum(drawActiveFrustumBox.getState());
+        preferences.setDrawCameraFrustum(cameraFrustumState);
+        preferences.setShowTravelCuesOnIdle(showTravelCuesOnIdleBox.getState());
+        preferences.setShowTravelCuesScrolling(travelCuesState);
+        preferences.setShowTiltDial(showTiltDialBox.getState());
 
-        prefs.setUseCompoundMeshTool(toolChoice.getSelectedIndex() == 1);
+        preferences.setUseCompoundMeshTool(toolChoice.getSelectedIndex() == 1);
 
         ThemeManager.setSelectedTheme(themes.get(themeChoice.getSelectedIndex()));
         ThemeManager.setSelectedColorSet(ThemeManager.getSelectedTheme().getColorSets()[colorChoice.getSelectedIndex()]);
-        prefs.savePreferences();
+        preferences.savePreferences();
         
         keystrokePanel.savePreferences();        
         appearance.savePreferences();
