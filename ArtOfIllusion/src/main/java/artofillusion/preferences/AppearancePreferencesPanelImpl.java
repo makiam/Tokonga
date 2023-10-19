@@ -54,7 +54,7 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
     }
 
     public String getSelectedThemeName() {
-        return jComboBox1.getSelectedItem().toString();
+        return themeSelector.getSelectedItem().toString();
     }
 
     /**
@@ -67,9 +67,9 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
     private void initComponents() {
 
         languageSelector = new javax.swing.JComboBox<>();
-        languageLabel = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jLabel1 = new javax.swing.JLabel();
+        javax.swing.JLabel languageLabel = new javax.swing.JLabel();
+        themeSelector = new javax.swing.JComboBox<>();
+        javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
 
         languageSelector.setMaximumRowCount(languages.length > 20 ? 16 : languages.length);
         languageSelector.setModel(getLocalesModel());
@@ -78,7 +78,7 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
         languageLabel.setLabelFor(languageSelector);
         languageLabel.setText(Translate.text("language"));
 
-        jComboBox1.setModel(getThemesModel());
+        themeSelector.setModel(getThemesModel());
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel1.setText(Translate.text("selectedTheme"));
@@ -94,7 +94,7 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(themeSelector, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(languageSelector, 0, 267, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -107,7 +107,7 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
                     .addComponent(languageLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(themeSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addContainerGap(238, Short.MAX_VALUE))
         );
@@ -115,10 +115,8 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel languageLabel;
     private javax.swing.JComboBox<String> languageSelector;
+    private javax.swing.JComboBox<String> themeSelector;
     // End of variables declaration//GEN-END:variables
 
 }

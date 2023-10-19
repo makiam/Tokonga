@@ -5,7 +5,6 @@ import artofillusion.ui.MessageDialog;
 import artofillusion.ui.ThemeManager;
 import artofillusion.ui.Translate;
 import artofillusion.ui.UIUtilities;
-import buoy.widget.BStandardDialog;
 import buoy.widget.Widget;
 import lombok.extern.slf4j.Slf4j;
 
