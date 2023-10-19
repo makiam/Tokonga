@@ -210,7 +210,8 @@ public class PreferencesWindow {
         }
 
         themeChoice = new BComboBox();
-        ThemeManager.getThemes().stream().filter(info -> info.selectable).sorted(tc).forEach(theme -> themeChoice.add(theme.getName()));
+        themes = ThemeManager.getThemes();
+        themes.stream().filter(info -> info.selectable).sorted(tc).forEach(theme -> themeChoice.add(theme.getName()));
 
         ThemeManager.ThemeInfo selectedTheme = ThemeManager.getSelectedTheme();
         themeChoice.setSelectedValue(selectedTheme.getName());
