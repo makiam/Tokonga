@@ -12,22 +12,10 @@
 
 package artofillusion.ui;
 
-import artofillusion.*;
+import artofillusion.ArtOfIllusion;
+import artofillusion.PluginRegistry;
+import artofillusion.ViewerCanvas;
 import artofillusion.math.RGBColor;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.*;
-import javax.swing.ImageIcon;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -35,10 +23,25 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.swing.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.List;
+import java.util.*;
+
 /**
  * This class holds GUI customization information. Customization consists of
  * various colors used in AoI GUI as well as the look and feel of some GUI
- * elements (eg buttons). In this respect, the theme manager is thus a factory of GUI elements.
+ * elements (e.g. buttons). In this respect, the theme manager is thus a factory of GUI elements.
  *
  * @author François Guillet
  *
@@ -129,7 +132,7 @@ public class ThemeManager {
         public final String description;
         public final Class<?> buttonClass;
         //this is the button style parameters for this theme.
-        //Relevant XML node is passed onto the button class so it can parse
+        //Relevant XML node is passed onto the button class, so it can parse
         //it and deliver button style parameters the theme will give the buttons
         //whenever it is selected.
         public final Object buttonProperties;
@@ -177,15 +180,19 @@ public class ThemeManager {
              */
             String s;
             Node node = getNodeFromNodeList(themeNodeList, "name");
-            name = (node != null ? node.getFirstChild().getNodeValue() : "");
+            name = (node == null ? "" : node.getFirstChild().getNodeValue());
             node = getNodeFromNodeList(themeNodeList, "author");
-            author = (node != null ? node.getFirstChild().getNodeValue() : "");
+            author = (node == null ? "" : node.getFirstChild().getNodeValue());
             node = getNodeFromNodeList(themeNodeList, "description");
-            description = (node != null ? node.getFirstChild().getNodeValue() : "");
+            description = (node == null ? "" : node.getFirstChild().getNodeValue());
             node = getNodeFromNodeList(themeNodeList, "selectable");
-            selectable = (node != null ? Boolean.valueOf(node.getFirstChild().getNodeValue()) : true);
+            selectable = (node == null ? true : Boolean.parseBoolean(node.getFirstChild().getNodeValue()));
             node = getNodeFromNodeList(themeNodeList, "button");
-            if (node != null) {
+            if (node == null) {
+                buttonClass = DefaultToolButton.class;
+                buttonProperties = null;
+                classicToolBarButtons = false;
+            } else {
                 String className = getAttribute(node, "class");
                 Object properties = null;
                 Class<?> cls = DefaultToolButton.class;
@@ -216,11 +223,7 @@ public class ThemeManager {
                 buttonProperties = properties;
                 buttonStyles = bstyle;
                 s = getAttribute(node, "useintoolbars");
-                classicToolBarButtons = (s != null ? !Boolean.valueOf(s) : false);
-            } else {
-                buttonClass = DefaultToolButton.class;
-                buttonProperties = null;
-                classicToolBarButtons = false;
+                classicToolBarButtons = (s == null ? false : !Boolean.parseBoolean(s));
             }
             node = getNodeFromNodeList(themeNodeList, "palettemargin");
             paletteMargin = getIntegerValueFromNode(node);
@@ -329,7 +332,7 @@ public class ThemeManager {
             if (ownerType != null && ownerType.isInstance(owner)) {
                 return this;
             }
-            return (next != null ? next.getStyle(owner) : null);
+            return (next == null ? null : next.getStyle(owner));
         }
 
         /**
@@ -375,26 +378,12 @@ public class ThemeManager {
     }
 
     /**
-     * Get the currently selected theme.
-     */
-    public static ThemeInfo getSelectedTheme() {
-        return selectedTheme;
-    }
-
-    /**
      * Set the currently selected theme.
      */
     public static void setSelectedTheme(ThemeInfo theme) {
         selectedTheme = theme;
         setSelectedColorSet(theme.colorSets[0]);
         applyButtonProperties();
-    }
-
-    /**
-     * Get the currently selected color set.
-     */
-    public static ColorSet getSelectedColorSet() {
-        return selectedColorSet;
     }
 
     /**
@@ -410,13 +399,6 @@ public class ThemeManager {
      */
     public static List<ThemeManager.ThemeInfo> getThemes() {
         return Collections.unmodifiableList(Arrays.asList(themeList));
-    }
-
-    /**
-     * Get the default theme.
-     */
-    public static ThemeInfo getDefaultTheme() {
-        return defaultTheme;
     }
 
     private static void applyThemeColors() {
@@ -706,17 +688,17 @@ public class ThemeManager {
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
         List<PluginRegistry.PluginResource> resources = PluginRegistry.getResources("UITheme");
         ArrayList<ThemeInfo> list = new ArrayList<>();
-        for (int i = 0; i < resources.size(); i++) {
+        for (PluginRegistry.PluginResource resource : resources) {
             try {
-                ThemeInfo themeInfo = new ThemeInfo(resources.get(i));
+                ThemeInfo themeInfo = new ThemeInfo(resource);
                 list.add(themeInfo);
             } catch (IOException | ParserConfigurationException | SAXException ex) {
                 log.atError().setCause(ex).log("Unable to init themes: {}", ex.getMessage());
             }
         }
-        themeList = list.toArray(new ThemeInfo[list.size()]);
-        for (int i = 0; i < themeList.length; i++) {
-            themeIdMap.put(themeList[i].resource.getId(), themeList[i]);
+        themeList = list.toArray(new ThemeInfo[0]);
+        for (ThemeInfo themeInfo : themeList) {
+            themeIdMap.put(themeInfo.resource.getId(), themeInfo);
         }
         defaultTheme = themeIdMap.get("default");
         setSelectedTheme(defaultTheme);
@@ -739,17 +721,17 @@ public class ThemeManager {
         String s = getAttribute(node, "R");
         int r = 0;
         if (s != null) {
-            r = Integer.valueOf(s);
+            r = Integer.parseInt(s);
         }
         int g = 0;
         s = getAttribute(node, "G");
         if (s != null) {
-            g = Integer.valueOf(s);
+            g = Integer.parseInt(s);
         }
         int b = 0;
         s = getAttribute(node, "B");
         if (s != null) {
-            b = Integer.valueOf(s);
+            b = Integer.parseInt(s);
         }
         return new Color(r, g, b);
     }
