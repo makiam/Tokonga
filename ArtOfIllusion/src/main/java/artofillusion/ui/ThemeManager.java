@@ -16,6 +16,7 @@ import artofillusion.ArtOfIllusion;
 import artofillusion.PluginRegistry;
 import artofillusion.ViewerCanvas;
 import artofillusion.math.RGBColor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -170,15 +171,6 @@ public class ThemeManager {
             url = new URL(url.getProtocol(), url.getHost(), path);
             loader = new URLClassLoader(new URL[]{url});
 
-            /*
-        String root = resource.getName();
-        if (root.lastIndexOf('/') > -1)
-          root = root.substring(0, root.lastIndexOf('/')+1);
-        else
-          root = "";
-        pathRoot = root;
-             */
-            String s;
             Node node = getNodeFromNodeList(themeNodeList, "name");
             name = (node == null ? "" : node.getFirstChild().getNodeValue());
             node = getNodeFromNodeList(themeNodeList, "author");
@@ -222,8 +214,8 @@ public class ThemeManager {
                 buttonClass = cls;
                 buttonProperties = properties;
                 buttonStyles = bstyle;
-                s = getAttribute(node, "useintoolbars");
-                classicToolBarButtons = (s == null ? false : !Boolean.parseBoolean(s));
+                String s = getAttribute(node, "useintoolbars");
+                classicToolBarButtons = s != null && !Boolean.parseBoolean(s);
             }
             node = getNodeFromNodeList(themeNodeList, "palettemargin");
             paletteMargin = getIntegerValueFromNode(node);
@@ -343,7 +335,11 @@ public class ThemeManager {
         }
     }
 
-    private static ThemeInfo selectedTheme, defaultTheme;
+    @Getter
+    private static ThemeInfo selectedTheme;
+    @Getter
+    private static ThemeInfo defaultTheme;
+    @Getter
     private static ColorSet selectedColorSet;
     private static ThemeInfo[] themeList;
     private static Map<String, ThemeInfo> themeIdMap;
