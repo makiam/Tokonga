@@ -54,7 +54,16 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
         });
         return dcm;
     } 
-            
+      
+    private DefaultComboBoxModel<String> getColorSetModel(ThemeManager.ThemeInfo theme) {
+        var dcm = new DefaultComboBoxModel<String>();
+        for(ThemeManager.ColorSet cSet:  theme.getColorSets()) {
+            dcm.addElement(cSet.getName());
+        } 
+        return dcm;
+    } 
+    
+    
     public Locale getSelectedLocale() {
         return languages[languageSelector.getSelectedIndex()];
     }
@@ -75,7 +84,10 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
         languageSelector = new javax.swing.JComboBox<>();
         javax.swing.JLabel languageLabel = new javax.swing.JLabel();
         themeSelector = new javax.swing.JComboBox<>();
-        javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
+        themeSelectorActionPerformed(null);
+        javax.swing.JLabel themeLabel = new javax.swing.JLabel();
+        colorSetSelector = new javax.swing.JComboBox<>();
+        javax.swing.JLabel colorSetLabel = new javax.swing.JLabel();
 
         languageSelector.setMaximumRowCount(languages.length > 20 ? 16 : languages.length);
         languageSelector.setModel(getLocalesModel());
@@ -85,9 +97,20 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
         languageLabel.setText(Translate.text("language"));
 
         themeSelector.setModel(getThemesModel());
+        themeSelector.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                themeSelectorActionPerformed(evt);
+            }
+        });
 
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel1.setText(Translate.text("selectedTheme"));
+        themeLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        themeLabel.setText(Translate.text("selectedTheme"));
+
+        colorSetSelector.setModel(getColorSetModel(ThemeManager.getSelectedTheme()));
+
+        colorSetLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        colorSetLabel.setLabelFor(colorSetSelector);
+        colorSetLabel.setText(Translate.text("themeColorSet"));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -97,11 +120,13 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(languageLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(themeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(colorSetLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(themeSelector, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(languageSelector, 0, 267, Short.MAX_VALUE))
+                    .addComponent(languageSelector, 0, 267, Short.MAX_VALUE)
+                    .addComponent(colorSetSelector, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -114,13 +139,26 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(themeSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addContainerGap(238, Short.MAX_VALUE))
+                    .addComponent(themeLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(colorSetSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(colorSetLabel))
+                .addContainerGap(204, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void themeSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themeSelectorActionPerformed
+        // TODO add your handling code here:
+        String selectedThemeName = themeSelector.getSelectedItem().toString();
+        ThemeManager.getThemes().stream().filter(info -> info.selectable).sorted(tc).filter(theme -> theme.getName().equals(selectedThemeName)).findFirst().ifPresent(ft -> {
+            colorSetSelector.setModel(getColorSetModel(ft));
+        });
+    }//GEN-LAST:event_themeSelectorActionPerformed
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> colorSetSelector;
     private javax.swing.JComboBox<String> languageSelector;
     private javax.swing.JComboBox<String> themeSelector;
     // End of variables declaration//GEN-END:variables

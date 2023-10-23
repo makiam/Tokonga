@@ -221,6 +221,7 @@ public class PreferencesWindow {
         themeChoice.addEventLink(ValueChangedEvent.class, new Object() {
             void processEvent() {
                 buildColorSetMenu(themes.get(themeChoice.getSelectedIndex()));
+
             }
         });
         ThemeManager.ColorSet[] colorSets = selectedTheme.getColorSets();
