@@ -1,7 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
+/* Copyright (C) 2023 by Maksim Khramov
+
+ This program is free software; you can redistribute it and/or modify it under the
+ terms of the GNU General Public License as published by the Free Software
+ Foundation; either version 2 of the License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion.preferences;
 
 import artofillusion.ArtOfIllusion;
@@ -28,8 +34,8 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
         initComponents();
     }
 
-    private DefaultComboBoxModel getLocalesModel() {
-        var dcm = new DefaultComboBoxModel();
+    private DefaultComboBoxModel<String> getLocalesModel() {
+        var dcm = new DefaultComboBoxModel<String>();
         var cloc =  ArtOfIllusion.getPreferences().getLocale();
         for(Locale loc: languages) {
             var localeDisplayName = loc.getDisplayName(loc);
@@ -39,8 +45,8 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
         return  dcm;
     } 
     
-    private DefaultComboBoxModel getThemesModel() {
-        var dcm = new DefaultComboBoxModel();
+    private DefaultComboBoxModel<String> getThemesModel() {
+        var dcm = new DefaultComboBoxModel<String>();
         var selectedThemeName = ThemeManager.getSelectedTheme().getName();
         ThemeManager.getThemes().stream().filter(info -> info.selectable).sorted(tc).forEach(theme -> {
             dcm.addElement(theme.getName());
