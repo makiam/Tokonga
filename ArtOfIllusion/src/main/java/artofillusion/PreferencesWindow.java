@@ -29,17 +29,17 @@ import java.util.stream.Collectors;
  * This is the window for editing application-wide preferences.
  */
 public class PreferencesWindow {
-    private static final Comparator<ThemeManager.ThemeInfo> tc  = Comparator.comparing(ThemeManager.ThemeInfo::getName);
+
     private PreferencesEditor appearance = new AppearancePreferencesPanel();
     private PreferencesEditor extras = new ExtraPluginsPane();
     private PreferencesEditor keystrokePanel = new KeystrokePreferencesPanel();
     
-    private BComboBox defaultRendChoice, objectRendChoice, texRendChoice, toolChoice, themeChoice, colorChoice;
+    private BComboBox defaultRendChoice, objectRendChoice, texRendChoice, toolChoice;
     private ValueField interactiveTolField, undoField, animationDurationField, animationFrameRateField;
     private BCheckBox drawActiveFrustumBox, drawCameraFrustumBox, showTravelCuesOnIdleBox, showTravelCuesScrollingBox;
     private BCheckBox showTiltDialBox;
     private BCheckBox glBox, backupBox, reverseZoomBox, useViewAnimationsBox;
-    private List<ThemeManager.ThemeInfo> themes;
+
     private static int lastTab;
     private boolean cameraFrustumState, travelCuesState;
 
@@ -98,8 +98,6 @@ public class PreferencesWindow {
 
         preferences.setUseCompoundMeshTool(toolChoice.getSelectedIndex() == 1);
 
-        ThemeManager.setSelectedTheme(themes.get(themeChoice.getSelectedIndex()));
-        ThemeManager.setSelectedColorSet(ThemeManager.getSelectedTheme().getColorSets()[colorChoice.getSelectedIndex()]);
         preferences.savePreferences();
         
         keystrokePanel.savePreferences();        
@@ -209,27 +207,7 @@ public class PreferencesWindow {
             showTravelCuesScrollingBox.setEnabled(!showTravelCuesOnIdleBox.getState());
             showTravelCuesScrollingBox.setState(showTravelCuesOnIdleBox.getState());
         }
-
-        themeChoice = new BComboBox();
-        themes = ThemeManager.getThemes().stream().filter(info -> info.selectable).sorted(tc).collect(Collectors.toList());
-        themes.forEach(theme -> themeChoice.add(theme.getName()));
-
-        ThemeManager.ThemeInfo selectedTheme = ThemeManager.getSelectedTheme();
-        themeChoice.setSelectedValue(selectedTheme.getName());
-        colorChoice = new BComboBox();
-        buildColorSetMenu(selectedTheme);
-        themeChoice.addEventLink(ValueChangedEvent.class, new Object() {
-            void processEvent() {
-                buildColorSetMenu(themes.get(themeChoice.getSelectedIndex()));
-
-            }
-        });
-        ThemeManager.ColorSet[] colorSets = selectedTheme.getColorSets();
-        for (int i = 0; i < colorSets.length; i++) {
-            if (colorSets[i] == ThemeManager.getSelectedColorSet()) {
-                colorChoice.setSelectedIndex(i);
-            }
-        }
+        
         toolChoice = new BComboBox(new String[]{
             Translate.text("Move"),
             Translate.text("compoundMoveScaleRotate")
@@ -250,8 +228,7 @@ public class PreferencesWindow {
         panel.add(Translate.label("defaultRenderer"), 0, 1, labelLayout);
         panel.add(Translate.label("objPreviewRenderer"), 0, 2, labelLayout);
         panel.add(Translate.label("texPreviewRenderer"), 0, 3, labelLayout);
-        panel.add(Translate.label("selectedTheme"), 0, 4, labelLayout);
-        panel.add(Translate.label("themeColorSet"), 0, 5, labelLayout);
+
         panel.add(Translate.label("defaultMeshEditingTool"), 0, 6, labelLayout);
         panel.add(Translate.label("maxUndoLevels"), 0, 7, labelLayout);
         panel.add(Translate.label("interactiveSurfError"), 0, 11, labelLayout);
@@ -260,8 +237,7 @@ public class PreferencesWindow {
         panel.add(defaultRendChoice, 1, 1, widgetLayout);
         panel.add(objectRendChoice, 1, 2, widgetLayout);
         panel.add(texRendChoice, 1, 3, widgetLayout);
-        panel.add(themeChoice, 1, 4, widgetLayout);
-        panel.add(colorChoice, 1, 5, widgetLayout);
+
         panel.add(toolChoice, 1, 6, widgetLayout);
         panel.add(undoField, 1, 7, widgetLayout);
         panel.add(backupBox, 1, 8, 2, 1, widgetLayout);
@@ -287,12 +263,4 @@ public class PreferencesWindow {
         return panel;
     }
 
-    private void buildColorSetMenu(ThemeManager.ThemeInfo theme) {
-        ThemeManager.ColorSet[] colorSets = theme.getColorSets();
-        String[] names = new String[colorSets.length];
-        for (int i = 0; i < names.length; i++) {
-            names[i] = colorSets[i].getName();
-        }
-        colorChoice.setContents(names);
-    }
 }

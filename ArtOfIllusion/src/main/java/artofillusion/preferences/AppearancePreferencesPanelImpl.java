@@ -12,9 +12,12 @@ package artofillusion.preferences;
 
 import artofillusion.ArtOfIllusion;
 import artofillusion.ui.ThemeManager;
+import artofillusion.ui.ThemeManager.ThemeInfo;
 import artofillusion.ui.Translate;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 import javax.swing.DefaultComboBoxModel;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,6 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
     
     private static final Comparator<ThemeManager.ThemeInfo> tc  = Comparator.comparing(ThemeManager.ThemeInfo::getName);
+    private List<ThemeManager.ThemeInfo> themes = ThemeManager.getThemes().stream().filter(info -> info.selectable).sorted(tc).collect(Collectors.toList());
+
     private final Locale[] languages = Translate.getAvailableLocales();
     /**
      * Creates new form AppearancePreferencesPanelImpl
@@ -48,7 +53,7 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
     private DefaultComboBoxModel<String> getThemesModel() {
         var dcm = new DefaultComboBoxModel<String>();
         var selectedThemeName = ThemeManager.getSelectedTheme().getName();
-        ThemeManager.getThemes().stream().filter(info -> info.selectable).sorted(tc).forEach(theme -> {
+        themes.forEach(theme -> {
             dcm.addElement(theme.getName());
             if(theme.getName().equals(selectedThemeName)) dcm.setSelectedItem(theme.getName());
         });
@@ -72,6 +77,13 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
         return themeSelector.getSelectedItem().toString();
     }
 
+    public int getSelectedColorSetIndex() {
+        return colorSetSelector.getSelectedIndex();
+    } 
+    
+    public ThemeInfo getSelectedTheme() {
+        return themes.get(themeSelector.getSelectedIndex());
+    } 
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -84,7 +96,6 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
         languageSelector = new javax.swing.JComboBox<>();
         javax.swing.JLabel languageLabel = new javax.swing.JLabel();
         themeSelector = new javax.swing.JComboBox<>();
-        themeSelectorActionPerformed(null);
         javax.swing.JLabel themeLabel = new javax.swing.JLabel();
         colorSetSelector = new javax.swing.JComboBox<>();
         javax.swing.JLabel colorSetLabel = new javax.swing.JLabel();
@@ -97,6 +108,8 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
         languageLabel.setText(Translate.text("language"));
 
         themeSelector.setModel(getThemesModel());
+        themeSelector.setSelectedItem(ThemeManager.getSelectedTheme().getName());
+        themeSelectorActionPerformed(null);
         themeSelector.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 themeSelectorActionPerformed(evt);
@@ -107,6 +120,7 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
         themeLabel.setText(Translate.text("selectedTheme"));
 
         colorSetSelector.setModel(getColorSetModel(ThemeManager.getSelectedTheme()));
+        setSelectedColorSet();
 
         colorSetLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         colorSetLabel.setLabelFor(colorSetSelector);
@@ -149,13 +163,22 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void themeSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themeSelectorActionPerformed
-        // TODO add your handling code here:
         String selectedThemeName = themeSelector.getSelectedItem().toString();
-        ThemeManager.getThemes().stream().filter(info -> info.selectable).sorted(tc).filter(theme -> theme.getName().equals(selectedThemeName)).findFirst().ifPresent(ft -> {
+        themes.stream().filter(theme -> theme.getName().equals(selectedThemeName)).findFirst().ifPresent(ft -> {
             colorSetSelector.setModel(getColorSetModel(ft));
         });
     }//GEN-LAST:event_themeSelectorActionPerformed
 
+    private void setSelectedColorSet() {
+        ThemeManager.ColorSet[] colorSets = ThemeManager.getSelectedTheme().getColorSets();
+        var selectedSet = ThemeManager.getSelectedColorSet();
+        for (int i = 0; i < colorSets.length; i++) {
+            if (colorSets[i] == selectedSet) {
+                colorSetSelector.setSelectedIndex(i);
+                break;
+            }
+        }
+    } 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> colorSetSelector;

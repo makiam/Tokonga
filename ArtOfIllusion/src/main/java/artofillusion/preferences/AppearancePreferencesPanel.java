@@ -35,6 +35,8 @@ public class AppearancePreferencesPanel extends buoy.widget.AWTWidget implements
             MessageDialog.create().info(UIUtilities.breakString(Translate.text("themeChangedWarning")));
         }
 
+        ThemeManager.setSelectedTheme(impl.getSelectedTheme());
+        ThemeManager.setSelectedColorSet(ThemeManager.getSelectedTheme().getColorSets()[impl.getSelectedColorSetIndex()]);
         preferences.setLocale(sl);
         preferences.savePreferences();
     }

@@ -84,7 +84,7 @@ public class ApplicationPreferences {
         ThemeManager.ColorSet[] colorSets = st.getColorSets();
         for (int i = 0; i < colorSets.length; i++) {
             if (colorSets[i] == ThemeManager.getSelectedColorSet()) {
-                properties.put("themeColorSet", i);
+                properties.put("themeColorSet", Integer.toString(i));
             }
         }
 
