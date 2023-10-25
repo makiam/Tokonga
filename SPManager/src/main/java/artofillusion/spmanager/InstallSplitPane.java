@@ -17,6 +17,7 @@ import java.awt.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.*;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -38,7 +39,6 @@ public class InstallSplitPane extends SPMSplitPane {
     private long downloadedLength = 0;
     private long lengthToDownload;
     private boolean isDownloading;
-    private SPMObjectInfo installNodeInfo;
 
     private List<String> errors = new ArrayList<>();
 
@@ -159,11 +159,10 @@ public class InstallSplitPane extends SPMSplitPane {
      */
     private void getFiles(TreePath addTo, List<SPMObjectInfo> infos, List<SPMObjectInfo> managerInfoList) {
 
-        SPMObjectInfo managerInfo;
         boolean eligible;
         TreeMap<String, SPMObjectInfo> map = new TreeMap<>();
 
-        for (SPMObjectInfo info : infos) {
+        for (SPMObjectInfo info: infos) {
 
             if (info.restriction >= SPMParameters.HIDE) {
                 continue;
@@ -172,7 +171,7 @@ public class InstallSplitPane extends SPMSplitPane {
             {
                 //check if file candidate for update or install
                 eligible = (workMode == INSTALL);
-                managerInfo = null;
+
                 String name = info.getName();
                 for (int j = 0; j < managerInfoList.size(); ++j) {
                     if ((managerInfoList.get(j)).getName().equals(name)) {
@@ -180,7 +179,7 @@ public class InstallSplitPane extends SPMSplitPane {
                         if (eligible) {
                             //check if valid update
 
-                            managerInfo = managerInfoList.get(j);
+                            var managerInfo = managerInfoList.get(j);
                             log.info(info.getName());
 
                             log.info("major distant local:{} {}", info.getMajor(), managerInfo.getMajor());
@@ -194,8 +193,7 @@ public class InstallSplitPane extends SPMSplitPane {
                                     eligible = false;
                                 } else if (info.getMinor() == managerInfo.getMinor()) {
                                     if (managerInfo.isBeta()) {
-                                        if (info.isBeta() && info.getBeta()
-                                                <= managerInfo.getBeta()) {
+                                        if (info.isBeta() && info.getBeta() <= managerInfo.getBeta()) {
                                             eligible = false;
                                         }
                                     } else {
@@ -211,9 +209,8 @@ public class InstallSplitPane extends SPMSplitPane {
                 }
             }
         }
-        map.values().forEach(info -> {
-            tree.addNode(addTo, new DefaultMutableTreeNode(info, false));
-        });
+
+        map.values().forEach(info -> tree.addNode(addTo, new DefaultMutableTreeNode(info, false)));
 
     }
 
@@ -311,11 +308,9 @@ public class InstallSplitPane extends SPMSplitPane {
                             reason = "\n";
                         }
 
-                        reason = SPMTranslate.text("markedConfirm", nodeInfo.getName())
-                                + reason + SPMTranslate.text("Confirm");
+                        reason = SPMTranslate.text("markedConfirm", nodeInfo.getName()) + reason + SPMTranslate.text("Confirm");
                         if (new BStandardDialog("SPManager", UIUtilities.breakString(reason),
-                                BStandardDialog.QUESTION)
-                                .showOptionDialog(null, SPManagerFrame.YES_NO, SPManagerFrame.YES_NO[1]) == 1) {
+                                BStandardDialog.QUESTION).showOptionDialog(null, SPManagerFrame.YES_NO, SPManagerFrame.YES_NO[1]) == 1) {
                             errors.add(SPMTranslate.text("Cancelled", nodeInfo.getName()));
 
                             continue;
@@ -347,98 +342,6 @@ public class InstallSplitPane extends SPMSplitPane {
             if (errors.size() > 0) {
                 showErrors(errors);
             }
-        }
-    }
-
-    /**
-     * Description of the Method
-     */
-    public void doInstallSingle() {
-        if (errors == null) {
-            errors = new ArrayList<>(128);
-        } else {
-            errors.clear();
-        }
-
-        installNodeInfo = getSelectedNodeInfo();
-        if (installNodeInfo == null) {
-            return;
-        }
-
-        // confirm before proceeding?
-        if (installNodeInfo.restriction == SPMParameters.CONFIRM) {
-            String reason = installNodeInfo.getComments();
-            int cut1 = reason.indexOf("**");
-            int cut2 = reason.indexOf("**", cut1 + 2);
-            if (cut1 >= 0) {
-                if (cut2 <= cut1 + 2) {
-                    cut2 = reason.length();
-                }
-                reason = reason.substring(cut1 + 2, cut2) + "\n";
-            } else {
-                reason = "\n";
-            }
-
-            reason = SPMTranslate.text("markedConfirm", installNodeInfo.getName())
-                    + reason + SPMTranslate.text("Confirm");
-            if (new BStandardDialog("SPManager", UIUtilities.breakString(reason),
-                    BStandardDialog.QUESTION)
-                    .showOptionDialog(null, SPManagerFrame.YES_NO, SPManagerFrame.YES_NO[1]) == 1) {
-                errors.add(SPMTranslate.text("Cancelled",
-                        installNodeInfo.getName()));
-
-                showErrors(errors);
-                return;
-            }
-
-        }
-
-        if (!isDownloading) {
-            isDownloading = true;
-            lengthToDownload = installNodeInfo.getTotalLength();
-
-            downloadedLength = 0;
-            if (lengthToDownload > 0) {
-                if (errors == null) {
-                    errors = new ArrayList<>(128);
-                } else {
-                    errors.clear();
-                }
-
-                status = new StatusDialog(SPManagerPlugin.getFrame());
-                (new Thread() {
-                    @Override
-                    public void run() {
-                        installFile(installNodeInfo);
-
-                        if (errors.size() > 0) {
-                            showErrors(errors);
-                        }
-
-                        try {
-                            SwingUtilities.invokeAndWait(new Runnable() {
-                                @Override
-                                public void run() {
-                                    /*  NTJ - replaced by restart()  */
-                                    tree.removeNode(tree.getSelectedNode());
-                                    voidSelection();
-                                    getManager().doUpdate();
-                                    isDownloading = false;
-                                    status.dispose();
-                                    status = null;
-                                    SPManagerUtils.updateAllAoIWindows();
-                                }
-                            });
-                        } catch (InterruptedException | InvocationTargetException e) {
-                            log.atError().setCause(e).log("Install error: {}", e.getMessage());
-                        }
-                    }
-                }).start();
-            }
-        }
-
-        if (errors.size() > 0) {
-            showErrors(errors);
         }
     }
 
@@ -622,48 +525,15 @@ public class InstallSplitPane extends SPMSplitPane {
      * copy one file to another
      */
     protected static boolean copyFile(File in, File out) {
-        InputStream is = null;
-        OutputStream os = null;
-        try {
-            is = new BufferedInputStream(new FileInputStream(in));
-            os = new BufferedOutputStream(new FileOutputStream(out));
 
-            int b;
-            while ((b = is.read()) >= 0) {
-                os.write((byte) b);
-            }
+        try {
+            Files.copy(in.toPath(), out.toPath());
         } catch (IOException e) {
+            log.atInfo().setCause(e).log("copy File failed");
             return false;
-        } finally {
-            try {
-                os.flush();
-                os.close();
-                is.close();
-            } catch (IOException e) {
-            }
         }
 
         return true;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @param path Description of the Parameter
-     */
-    private void selectAllInfos(TreePath path) {
-        SPMObjectInfo info;
-        int count = tree.getChildNodeCount(path);
-        for (int j = 0; j < count; ++j) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getChildNode(path, j).getLastPathComponent();
-            SPMObjectInfo nodeInfo = (SPMObjectInfo) node.getUserObject();
-            nodeInfo.setSelected(true);
-
-            if (extMap != null) {
-                extMap.clear();
-            }
-            selectExternals(nodeInfo);
-        }
     }
 
     /**
@@ -718,8 +588,6 @@ public class InstallSplitPane extends SPMSplitPane {
                 selectCB.setEnabled(false);
             }
 
-            // disable install single if script has dependents
-            Collection<String> externals = nodeInfo.getExternals();
         }
         super.scriptSelection(deletable);
     }
@@ -746,7 +614,6 @@ public class InstallSplitPane extends SPMSplitPane {
                 selectCB.setEnabled(false);
             }
 
-            // disable install single if plugin has dependents
             Collection<String> externals = nodeInfo.getExternals();
         }
         super.pluginSelection(deletable);

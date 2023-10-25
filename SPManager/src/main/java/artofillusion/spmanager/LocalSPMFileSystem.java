@@ -23,27 +23,11 @@ public class LocalSPMFileSystem extends SPMFileSystem {
     @Override
     public void initialize() {
         super.initialize();
-        scanPlugins();
-        scanToolScripts();
-        scanObjectScripts();
-        scanStartupScripts();
-        initialized = true;
-    }
-
-    private void scanPlugins() {
         scanFiles(SPManagerPlugin.PLUGIN_DIRECTORY, pluginsInfo, ".jar");
-    }
-
-    private void scanToolScripts() {
         scanFiles(SPManagerPlugin.TOOL_SCRIPT_DIRECTORY, toolInfo, ".bsh");
-    }
-
-    private void scanObjectScripts() {
         scanFiles(SPManagerPlugin.OBJECT_SCRIPT_DIRECTORY, objectInfo, ".bsh");
-    }
-
-    private void scanStartupScripts() {
         scanFiles(SPManagerPlugin.STARTUP_SCRIPT_DIRECTORY, startupInfo, ".bsh");
+        initialized = true;
     }
 
     private void scanFiles(String directory, List<SPMObjectInfo> infoVector, String suffix) {

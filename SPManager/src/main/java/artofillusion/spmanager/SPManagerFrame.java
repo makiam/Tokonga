@@ -15,6 +15,8 @@ import artofillusion.*;
 import artofillusion.ui.UIUtilities;
 import buoy.event.*;
 import buoy.widget.*;
+import lombok.Getter;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationTargetException;
@@ -31,6 +33,13 @@ import javax.swing.border.*;
 public class SPManagerFrame extends BFrame {
 
     private static SPManagerFrame spmFrame;
+    /**
+     * -- GETTER --
+     *  Gets the parameters attribute of the manager
+     *
+     * @return The parameters value
+     */
+    @Getter
     private static SPMParameters parameters;
     private final BTabbedPane tabbedPane;
     private final SPMSplitPane manageSplitPane;
@@ -59,27 +68,19 @@ public class SPManagerFrame extends BFrame {
     }
 
     /**
-     * Gets the parameters attribute of the manager
-     *
-     * @return The parameters value
-     */
-    public static SPMParameters getParameters() {
-        return parameters;
-    }
-
-    /**
      * Constructor for the SPManagerFrame object
      */
     public SPManagerFrame() {
         super(SPMTranslate.text("SPManager"));
+        setIcon(ArtOfIllusion.APP_ICON);
+
         spmFrame = this;
 
         parameters = new SPMParameters();
 
         statusLabel = new BLabel(" ");
 
-        statusTextClearAction
-                = new AbstractAction() {
+        statusTextClearAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 statusLabel.setText(" ");
@@ -95,8 +96,7 @@ public class SPManagerFrame extends BFrame {
         rc.add(new BLabel(new ImageIcon(getClass().getResource("/artofillusion/spmanager/icons/gear.png"))), headLayout);
         //Icon gear.png taken from the KDE desktop environment !!!
         rc.add(SPMTranslate.bLabel("Version"), headLayout);
-        LayoutInfo cclayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets(3, 3, 5, 3), new Dimension(0, 0));
-        cc.add(rc, cclayout);
+        cc.add(rc, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets(3, 3, 5, 3), new Dimension(0, 0)));
 
         //Tabbed Pane setup
         tabbedPane = new BTabbedPane();
@@ -166,7 +166,9 @@ public class SPManagerFrame extends BFrame {
 
         boolean update = true;
 
-        if (localinfo != null && remoteinfo != null) {
+        if (localinfo == null || remoteinfo == null) {
+            update = (remoteinfo != null);
+        } else {
             if (remoteinfo.getMajor() < localinfo.getMajor()) {
                 update = false;
             } else if (remoteinfo.getMajor() == localinfo.getMajor()) {
@@ -182,8 +184,6 @@ public class SPManagerFrame extends BFrame {
                     }
                 }
             }
-        } else {
-            update = (remoteinfo != null);
         }
 
         // we found an update for SPManager, so offer to install it now
@@ -200,8 +200,7 @@ public class SPManagerFrame extends BFrame {
                         updateSplitPane.installFile(info);
                         updateSplitPane.showErrors();
 
-                        SwingUtilities.invokeLater(()
-                                -> {
+                        SwingUtilities.invokeLater(() -> {
                             status.dispose();
                             hideSPManager();
                         });
@@ -278,9 +277,7 @@ public class SPManagerFrame extends BFrame {
                 root = (WindowWidget) root.getParent();
             }
 
-            Rectangle bounds = (Rectangle) PluginRegistry
-                    .invokeExportedMethod("nik777.OneFixSizesAll.getChildBounds",
-                            new Object[]{root});
+            Rectangle bounds = (Rectangle) PluginRegistry.invokeExportedMethod("nik777.OneFixSizesAll.getChildBounds",new Object[]{root});
 
             Dimension d2 = getComponent().getSize();
             int x;
@@ -316,7 +313,7 @@ public class SPManagerFrame extends BFrame {
 
     /**
      * Sets the duration for displaying text in the status bar A null or
-     * negative duration means that the text remains forvever
+     * negative duration means that the text remains forever
      *
      * @param time The duration
      */

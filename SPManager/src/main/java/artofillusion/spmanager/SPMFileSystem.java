@@ -35,23 +35,23 @@ public class SPMFileSystem {
     }
 
     public short getInfoType(SPMObjectInfo info) {
-        for (int i = 0; i < pluginsInfo.size(); ++i) {
-            if (info == pluginsInfo.get(i)) {
+        for (SPMObjectInfo spmObjectInfo : pluginsInfo) {
+            if (info == spmObjectInfo) {
                 return PLUGIN_TYPE;
             }
         }
-        for (int i = 0; i < toolInfo.size(); ++i) {
-            if (info == toolInfo.get(i)) {
+        for (SPMObjectInfo spmObjectInfo : toolInfo) {
+            if (info == spmObjectInfo) {
                 return TOOL_SCRIPT_TYPE;
             }
         }
-        for (int i = 0; i < objectInfo.size(); ++i) {
-            if (info == objectInfo.get(i)) {
+        for (SPMObjectInfo spmObjectInfo : objectInfo) {
+            if (info == spmObjectInfo) {
                 return OBJECT_SCRIPT_TYPE;
             }
         }
-        for (int i = 0; i < startupInfo.size(); ++i) {
-            if (info == startupInfo.get(i)) {
+        for (SPMObjectInfo spmObjectInfo : startupInfo) {
+            if (info == spmObjectInfo) {
                 return STARTUP_SCRIPT_TYPE;
             }
         }

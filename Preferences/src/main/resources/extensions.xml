@@ -66,7 +66,7 @@
         </export>
 
         <export method="putInt" id="preferences.putInt" >
-            Set a Integer value
+            Set an Integer value
 
             @param owner String name of the preferences owner
             @param name  String name of the preference value
@@ -163,7 +163,7 @@
             @return the preference value as a Color
         </export>
     </plugin>
-    <resource type="TranslateBundle" id="PreferencesPlugin" name="PreferencesPlugin"/>
+    <resource type="TranslateBundle" id="PreferencesPlugin" name="Bundle"/>
 
     <description>
 

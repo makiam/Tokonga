@@ -8,6 +8,11 @@ ext {
     spmversion = "1.104"
 }
 
+dependencies {
+    implementation group: 'com.github.zafarkhaja', name: 'java-semver', version: '0.9.0'
+    testImplementation group: 'com.github.zafarkhaja', name: 'java-semver', version: '0.9.0'
+}
+
 processResources {
     def props = [APP_DIRECTORY: "", VERSION:"${spmversion}"]
     filesMatching("**/extensions.xml") {

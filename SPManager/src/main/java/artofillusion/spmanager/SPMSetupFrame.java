@@ -10,10 +10,10 @@
  */
 package artofillusion.spmanager;
 
+import artofillusion.ui.Translate;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
-import java.net.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -30,7 +30,7 @@ public class SPMSetupFrame extends BDialog {
 
     private final BComboBox repositoriesCB;
     private final ColumnContainer filterContainer;
-    private BButton addButton;
+
     private BButton removeButton;
     private BTextField repEntry;
     private final BTextField proxyHostEntry;
@@ -45,8 +45,6 @@ public class SPMSetupFrame extends BDialog {
     private final BCheckBox useCacheCB;
     private final SPMParameters parameters;
     private String[] rep;
-
-    protected static final String[] EMPTY_STRING_ARRAY = new String[0];
 
     /**
      * Constructor for the SPMSetupFrame object
@@ -64,7 +62,7 @@ public class SPMSetupFrame extends BDialog {
         LayoutInfo topLayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(5, 3, 3, 3), new Dimension(0, 0));
         cc.add(SPMTranslate.bLabel("chooseRepository"), topLayout);
         LayoutInfo layout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(3, 3, 5, 3), new Dimension(0, 0));
-        cc.add(repositoriesCB = new BComboBox((Object[]) (rep = parameters.getRepositories())), layout);
+        cc.add(repositoriesCB = new BComboBox(rep = parameters.getRepositories()), layout);
         repositoriesCB.addEventLink(ValueChangedEvent.class, this, "doRepositoriesCBChanged");
         repositoriesCB.setSelectedIndex(parameters.getCurrentRepositoryIndex());
 
@@ -74,32 +72,32 @@ public class SPMSetupFrame extends BDialog {
         Map<String, String> filters = SPMParameters.getFilters();
 
         if (!filters.isEmpty()) {
-            String[] keys = filters.keySet().toArray(EMPTY_STRING_ARRAY);
+            String[] keys = filters.keySet().toArray(new String[0]);
             Arrays.sort(keys);
 
-            String filtName, filtVal, filtType;
-            int i, j;
+            String filterName, filterValue;
+
             RowContainer line = null;
             BComboBox sel = null;
             LayoutInfo right = new LayoutInfo(LayoutInfo.EAST, LayoutInfo.NONE);
-            for (i = 0; i < keys.length; i++) {
-                filtName = keys[i];
-                filtVal = filters.get(filtName);
+            for (String key : keys) {
+                filterName = key;
+                filterValue = filters.get(filterName);
 
-                log.atInfo().log("Filter: {}={}", filtName, filtVal);
+                log.atInfo().log("Filter: {}={}", filterName, filterValue);
 
                 line = new RowContainer();
                 sel = new BComboBox();
 
-                line.add(new BLabel(filtName));
+                line.add(new BLabel(filterName));
                 line.add(sel);
 
-                for (j = 0; j < SPMParameters.LAST_FILTER; j++) {
-                    filtType = SPMParameters.FILTER_NAMES[j];
+                for (int j = 0; j < SPMParameters.LAST_FILTER; j++) {
+                    String filterType = SPMParameters.FILTER_NAMES[j];
 
-                    sel.add(filtType);
-                    if (filtVal.equals(filtType)) {
-                        sel.setSelectedValue(filtType);
+                    sel.add(filterType);
+                    if (filterValue.equals(filterType)) {
+                        sel.setSelectedValue(filterType);
                     }
                 }
 
@@ -109,9 +107,7 @@ public class SPMSetupFrame extends BDialog {
             BScrollPane sp = new BScrollPane(filterContainer);
             sp.setVerticalScrollbarPolicy(BScrollPane.SCROLLBAR_AS_NEEDED);
             Dimension dim = new Dimension();
-            dim.setSize(filterContainer.getPreferredSize().getWidth(),
-                    line.getPreferredSize().getHeight()
-                    * Math.min(filters.size(), 5));
+            dim.setSize(filterContainer.getPreferredSize().getWidth(),line.getPreferredSize().getHeight() * Math.min(filters.size(), 5));
 
             sp.setPreferredViewSize(dim);
 
@@ -140,13 +136,13 @@ public class SPMSetupFrame extends BDialog {
         fm.add(proxyPortEntry, 1, 2, formLayout);
 
         fm.add(usernameLabel = SPMTranslate.bLabel("username"), 0, 3, formLayout);
-        usernameEntry = new BTextField(parameters.getUsername(), 15);
+        usernameEntry = new BTextField(parameters.getUserName(), 15);
         fm.add(usernameEntry, 1, 3, formLayout);
 
         fm.add(passwordLabel = SPMTranslate.bLabel("password"), 0, 4, formLayout);
         passwordEntry = new BPasswordField(parameters.getPassword(), 15);
         fm.add(passwordEntry, 1, 4, formLayout);
-        formLayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(0, 0, 0, 0), new Dimension(0, 0));
+
         cc.add(fm, rcLayout);
 
         if (!useProxyCB.getState()) {
@@ -161,10 +157,10 @@ public class SPMSetupFrame extends BDialog {
         }
 
         RowContainer buttons = new RowContainer();
-        BButton okButton;
-        buttons.add(okButton = SPMTranslate.bButton("ok", this, "doOK"));
-        BButton cancelButton;
-        buttons.add(cancelButton = SPMTranslate.bButton("cancel", this, "doCancel"));
+
+        buttons.add(Translate.button("ok", this, "doOK"));
+
+        buttons.add(Translate.button("cancel", this, "doCancel"));
         cc.add(buttons, new LayoutInfo());
         setContent(cc);
         addEventLink(WindowClosingEvent.class, this, "doCancel");
@@ -202,7 +198,7 @@ public class SPMSetupFrame extends BDialog {
         }
         newRep[i] = repEntry.getText();
         rep = newRep;
-        repositoriesCB.setContents((Object[]) newRep);
+        repositoriesCB.setContents(newRep);
         repositoriesCB.setSelectedIndex(i);
         if (rep.length > 1) {
             removeButton.setEnabled(true);
@@ -229,7 +225,7 @@ public class SPMSetupFrame extends BDialog {
         if (removed >= rep.length) {
             --removed;
         }
-        repositoriesCB.setContents((Object[]) rep);
+        repositoriesCB.setContents(rep);
         repositoriesCB.setSelectedIndex(removed);
         if (rep.length <= 1) {
             removeButton.setEnabled(false);
@@ -241,30 +237,30 @@ public class SPMSetupFrame extends BDialog {
      */
     private void doOK() {
         parameters.setURLs(rep, repositoriesCB.getSelectedIndex());
-        parameters.setProxyParameters(useProxyCB.getState(),
-                proxyHostEntry.getText(),
-                proxyPortEntry.getText(),
-                usernameEntry.getText(),
-                passwordEntry.getText());
+        SPMParameters.setUseProxy(useProxyCB.getState());
+        SPMParameters.setProxyHost(proxyHostEntry.getText());
+        SPMParameters.setProxyPort(proxyPortEntry.getText());
+        SPMParameters.setUserName(usernameEntry.getText());
+        parameters.setProxyParameters(useProxyCB.getState(), proxyHostEntry.getText(), proxyPortEntry.getText(), usernameEntry.getText(), passwordEntry.getText());
 
         Map<String, String> filters = parameters.getFilters();
         filters.clear();
         RowContainer line;
         BComboBox sel;
-        String filtName, filtVal;
+        String filterName, filterValue;
         for (int i = 0; i < filterContainer.getChildCount(); i++) {
             line = (RowContainer) filterContainer.getChild(i);
 
-            filtName = ((BLabel) line.getChild(0)).getText();
+            filterName = ((BLabel) line.getChild(0)).getText();
 
             sel = (BComboBox) line.getChild(1);
             if (sel.getSelectedIndex() >= 0) {
-                filtVal = sel.getSelectedValue().toString();
+                filterValue = sel.getSelectedValue().toString();
             } else {
-                filtVal = SPMParameters.FILTER_NAMES[SPMParameters.DEFAULT];
+                filterValue = SPMParameters.FILTER_NAMES[SPMParameters.DEFAULT];
             }
 
-            filters.put(filtName, filtVal);
+            filters.put(filterName, filterValue);
         }
 
         parameters.setChanged(true);
@@ -292,27 +288,5 @@ public class SPMSetupFrame extends BDialog {
         parameters.setCurrentRepository(repositoriesCB.getSelectedIndex());
     }
 
-    /**
-     * Description of the Method
-     */
-    private void doRepEntryChanged() {
-        try {
-            String text = repEntry.getText();
-            new URL(text);
-            repEntry.getComponent().setForeground(Color.black);
-            String[] s = parameters.getRepositories();
-            addButton.setEnabled(true);
-            removeButton.setEnabled(false);
-            for (int i = 0; i < s.length; ++i) {
-                if (s[i].equals(text)) {
-                    addButton.setEnabled(false);
-                    removeButton.setEnabled(true);
-                }
-            }
-        } catch (MalformedURLException e) {
-            repEntry.getComponent().setForeground(Color.red);
-            addButton.setEnabled(false);
-            removeButton.setEnabled(false);
-        }
-    }
+
 }

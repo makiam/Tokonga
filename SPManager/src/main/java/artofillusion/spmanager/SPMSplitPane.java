@@ -10,14 +10,18 @@
  */
 package artofillusion.spmanager;
 
+import artofillusion.ui.Translate;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
+import java.util.function.Predicate;
 import javax.swing.*;
 import javax.swing.tree.*;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -83,7 +87,13 @@ public class SPMSplitPane extends BSplitPane {
 
     /**
      * Description of the Field
+     * -- GETTER --
+     *  Gets the modified attribute of the InstallSplitPane object
+     *
+     * @return The modified value
+
      */
+    @Getter
     protected boolean modified;
 
     /**
@@ -148,6 +158,41 @@ public class SPMSplitPane extends BSplitPane {
     }
 
     /**
+     * Gets the localized fullName attribute of the SPMObjectInfo object with name, author, version and size data
+     *
+     * @return The fullName value
+     */
+    protected static String getFullName(SPMObjectInfo info) {
+        String betaString = "";
+        if (info.getBeta() > -1) {
+            betaString = "b" + info.getBeta();
+        }
+        String addFiles = "";
+        long kbsize;
+        String[] files = info.getFiles();
+        if (info.files != null) {
+            addFiles = " (" + SPMTranslate.text("additionalFiles") + " ";
+            for (int i = 0; i < files.length; ++i) {
+                kbsize = Math.round(info.getFileSizes()[i] / 1000);
+                if (kbsize < 1) {
+                    kbsize = 1;
+                }
+                addFiles = addFiles + files[i] + " " + kbsize + "kb";
+                if (i != files.length - 1) {
+                    addFiles = addFiles + ",";
+                } else {
+                    addFiles = addFiles + ")";
+                }
+            }
+        }
+        kbsize = Math.round(info.getLength() / 1000);
+        if (kbsize < 1) {
+            kbsize = 1;
+        }
+        return Translate.text("spmanager:text.fullname", info.getName(), info.getAuthor(), info.getVersion() + betaString, info.getDate(), kbsize) + addFiles;
+    }
+
+    /**
      * Description of the Method
      *
      * @param s Description of the Parameter
@@ -188,6 +233,7 @@ public class SPMSplitPane extends BSplitPane {
         cc.add(SPMTranslate.bLabel("name"), labelLayout);
         objectName = new BTextArea("", 3, 50);
         objectName.setWrapStyle(BTextArea.WRAP_WORD);
+        objectName.setFont(objectName.getFont().deriveFont(12f));
         BScrollPane nameSP;
         cc.add(BOutline.createEtchedBorder(nameSP = new BScrollPane(objectName, BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_ALWAYS), true),
                 textAreaLayout);
@@ -225,6 +271,7 @@ public class SPMSplitPane extends BSplitPane {
 
         objectDescription = new BTextArea("", 8, 50);
         objectDescription.setWrapStyle(BTextArea.WRAP_WORD);
+        objectDescription.setFont(objectDescription.getFont().deriveFont(12f));
         cc.add(BOutline.createEtchedBorder(descriptionSP = new BScrollPane(objectDescription, BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_ALWAYS), true), textAreaLayout);
         descriptionSP.setForceWidth(true);
 
@@ -247,8 +294,7 @@ public class SPMSplitPane extends BSplitPane {
         startupScriptsPath = tree.addNode(scriptsPath, new DefaultMutableTreeNode(SPMTranslate.text("startup")));
         ((DefaultTreeModel) tree.getModel()).reload();
         setOneTouchExpandable(true);
-        MouseListener ml
-                = new MouseAdapter() {
+        MouseListener ml = new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 int selRow = tree.getComponent().getRowForLocation(e.getX(), e.getY());
@@ -305,15 +351,13 @@ public class SPMSplitPane extends BSplitPane {
      */
     public SPMObjectInfo getSelectedNodeInfo() {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getComponent().getLastSelectedPathComponent();
-        if (node != null) {
-            if (node.isLeaf() && (!node.getAllowsChildren())) {
-                if (node.getUserObject() != null) {
-                    SPMObjectInfo nodeInfo = (SPMObjectInfo) node.getUserObject();
-                    return nodeInfo;
-                }
-            } else {
-                return null;
+        if (node == null) return null;
+        if (node.isLeaf() && (!node.getAllowsChildren())) {
+            if (node.getUserObject() != null) {
+                return (SPMObjectInfo) node.getUserObject();
             }
+        } else {
+            return null;
         }
         return null;
     }
@@ -326,29 +370,31 @@ public class SPMSplitPane extends BSplitPane {
     private void displayObjectInfo(SPMObjectInfo info) {
         objectName.setBackground(Color.WHITE);
 
-        if (info != null) {
+        if (info == null) {
+            objectName.setText("");
+            objectDescription.setText("");
+
+            descSelect.removeAll();
+            descSelect.add(SPMTranslate.text("description"));
+        } else {
             objectName.setBackground(Color.WHITE);
 
             descText = info.getDetails();
 
-            String name = info.getFullName();
+            String name = getFullName(info);
 
             if (info.refcount > 0) {
                 name += "\n\nRequired by " + info.refcount + " other(s).";
             }
-            String ext;
-            String extName, extType;
+
             String extList = "\n";
             boolean missing = false;
             Collection<String> externals = info.getExternals();
             if (externals != null) {
-                for (Iterator<String> iter = externals.iterator(); iter.hasNext();) {
-                    ext = iter.next();
-
+                for (String ext : externals) {
                     if (ext.endsWith("= required")) {
-                        extName = ext.substring(0, ext.indexOf(':'));
-                        extType = ext.substring(ext.indexOf(':') + 1,
-                                ext.indexOf('=')).trim();
+                        String extName = ext.substring(0, ext.indexOf(':'));
+                        String extType = ext.substring(ext.indexOf(':') + 1, ext.indexOf('=')).trim();
 
                         if (getInfo(extName, pathMap.get(extType)) == null) {
 
@@ -371,21 +417,19 @@ public class SPMSplitPane extends BSplitPane {
                     extList += "\n-External " + ext;
                 }
 
-                if (missing) {
-                    name += "\n"
-                            + SPMTranslate.text("missingFile", SPMTranslate.text("otherFiles"));
+            if (missing) {
+                name += "\n" + SPMTranslate.text("missingFile", SPMTranslate.text("otherFiles"));
 
-                    objectName.setBackground(Color.PINK);
-                }
+                objectName.setBackground(Color.PINK);
+            }
 
-                if (info.invalid) {
-                    name += "\n"
-                            + SPMTranslate.text("failedRequirement", SPMTranslate.text("flags"));
+            if (info.invalid) {
+                name += "\n" + SPMTranslate.text("failedRequirement", SPMTranslate.text("flags"));
 
-                    objectName.setBackground(Color.PINK);
-                }
+                objectName.setBackground(Color.PINK);
+            }
 
-                info.setLog(SPMTranslate.text("otherFiles"), extList, 2);
+            info.setLog(SPMTranslate.text("otherFiles"), extList, 2);
             }
 
             objectName.setText(name);
@@ -397,19 +441,13 @@ public class SPMSplitPane extends BSplitPane {
             }
 
             List<String> changeLog = info.getChangeLog();
-            if (changeLog != null) {
-                descSelect.setContents(changeLog);
-            } else {
+            if (changeLog == null) {
                 descSelect.removeAll();
                 descSelect.add(SPMTranslate.text("description"));
                 descSelect.add(SPMTranslate.text("history"));
+            } else {
+                descSelect.setContents(changeLog);
             }
-        } else {
-            objectName.setText("");
-            objectDescription.setText("");
-
-            descSelect.removeAll();
-            descSelect.add(SPMTranslate.text("description"));
         }
 
         descriptionSP.layoutChildren();
@@ -419,6 +457,8 @@ public class SPMSplitPane extends BSplitPane {
             bar.setValue(bar.getMinimum());
         });
     }
+
+    protected final Predicate<String> requred = (String name) -> name.endsWith("= requred");
 
     /**
      * get the infor for the named item of the named type
@@ -436,10 +476,9 @@ public class SPMSplitPane extends BSplitPane {
             return null;
         }
 
-        Object info;
         int max = tree.getChildNodeCount(path);
         for (int j = 0; j < max; j++) {
-            info = ((DefaultMutableTreeNode) tree.getChildNode(path, j).getLastPathComponent()).getUserObject();
+            Object info = ((DefaultMutableTreeNode) tree.getChildNode(path, j).getLastPathComponent()).getUserObject();
 
             if (name.equals(info.toString())) {
                 return (SPMObjectInfo) info;
@@ -536,15 +575,6 @@ public class SPMSplitPane extends BSplitPane {
     }
 
     /**
-     * Gets the modified attribute of the InstallSplitPane object
-     *
-     * @return The modified value
-     */
-    public boolean isModified() {
-        return modified;
-    }
-
-    /**
      * Description of the Method
      *
      * @param selRow Description of the Parameter
@@ -589,33 +619,19 @@ public class SPMSplitPane extends BSplitPane {
 
         extMap.put(info, info);
 
-        Collection<String> externals = info.getExternals();
-        if (externals == null || externals.isEmpty()) {
-            return;
-        }
-
-        String extName, extType;
-        SPMObjectInfo ext;
-        for (Iterator<String> iter = externals.iterator(); iter.hasNext();) {
-            extName = iter.next();
-
-            if (extName.endsWith("= required")) {
-                extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
-                extName = extName.substring(0, extName.indexOf(':'));
-
-                ext = getInfo(extName, pathMap.get(extType));
-
-                if (ext != null) {
-                    if (info.isSelected()) {
-                        ext.refcount++;
-                    } else {
-                        ext.refcount--;
-                    }
-
-                    selectExternals(ext);
-                }
+        info.getExternals().stream().filter(requred).forEach(extName -> {
+            String extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
+            extName = extName.substring(0, extName.indexOf(':'));
+            SPMObjectInfo ext = getInfo(extName, pathMap.get(extType));
+            if (ext == null) return;
+            if (info.isSelected()) {
+                ext.refcount++;
+            } else {
+                ext.refcount--;
             }
-        }
+
+            selectExternals(ext);
+        });
     }
 
     /**

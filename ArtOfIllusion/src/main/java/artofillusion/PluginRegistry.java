@@ -15,6 +15,8 @@ package artofillusion;
 import artofillusion.ui.*;
 import artofillusion.util.*;
 import java.io.*;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.*;
 import java.net.*;
 import java.nio.file.Files;
@@ -624,5 +626,9 @@ public class PluginRegistry {
 
         String type, id, name;
         Locale locale;
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface UsedViaReflection {
     }
 }

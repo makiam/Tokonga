@@ -103,14 +103,8 @@ public class ManageSplitPane extends SPMSplitPane {
         });
 
         // NTJ: set reference counts
-        for (SPMObjectInfo info : infos) {
-            Collection<String> externals = info.getExternals();
-            if (externals == null) {
-                continue;
-            }
-
-            externals.forEach((String item) -> {
-                String extName = item;
+        infos.forEach(info -> {
+            info.getExternals().stream().filter(requred).forEach((String extName) -> {
                 if (extName.endsWith("= required")) {
                     String extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
                     extName = extName.substring(0, extName.indexOf(':'));
@@ -120,7 +114,8 @@ public class ManageSplitPane extends SPMSplitPane {
                     }
                 }
             });
-        }
+        });
+
     }
 
     /**
@@ -162,11 +157,13 @@ public class ManageSplitPane extends SPMSplitPane {
                 log.atInfo().log("SPManager: File cannot be deleted: {}", file.getAbsolutePath());
                 return;
             }
-            if (info.fileName.lastIndexOf("Plugins") != -1) {
-                modified = true;
-            } else {
+
+            if (info.fileName.lastIndexOf("Plugins") == -1) {
                 SPManagerUtils.updateAllAoIWindows();
+            } else {
+                modified = true;
             }
+
             info.setSelected(false);
             if (info.files != null) {
                 for (int i = 0; i < info.files.length; ++i) {
@@ -175,24 +172,14 @@ public class ManageSplitPane extends SPMSplitPane {
                 }
             }
 
-            Collection<String> externals = info.getExternals();
-            String extName, extType;
-            SPMObjectInfo ext;
-            if (externals != null) {
-                for (Iterator<String> iter = externals.iterator(); iter.hasNext();) {
-                    extName = iter.next();
+            info.getExternals().stream().filter(requred).forEach(extName -> {
+                String extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
+                extName = extName.substring(0, extName.indexOf(':'));
 
-                    if (extName.endsWith("= required")) {
-                        extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
-                        extName = extName.substring(0, extName.indexOf(':'));
-
-                        ext = getInfo(extName, pathMap.get(extType));
-                        if (ext != null) {
-                            ext.refcount--;
-                        }
-                    }
-                }
-            }
+                SPMObjectInfo ext = getInfo(extName, pathMap.get(extType));
+                if (ext == null) return;
+                ext.refcount--;
+            });
 
             fs.initialize();
             tree.removeNode(tree.getSelectedNode());

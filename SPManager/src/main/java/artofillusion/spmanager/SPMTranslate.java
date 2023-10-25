@@ -45,9 +45,11 @@ public class SPMTranslate {
      * @param method Description of the Parameter
      * @return Description of the Return Value
      */
-    public static BButton bButton(String name, java.lang.Object target, String method) {
-        return Translate.button("spmanager:" + name, target, method);
+    public static BButton bButton(String name, Object target, String method) {
+        return Translate.button(RESOURCE + name, target, method);
     }
+
+    private static final String RESOURCE = "spmanager:";
 
     /**
      * Description of the Method
@@ -91,21 +93,6 @@ public class SPMTranslate {
 
     /**
      * Get the text given by the property "name". If the property is not found,
-     * this simply returns name.
-     *
-     * @param name Description of the Parameter
-     * @return Description of the Return Value
-     */
-    public static String text(String name) {
-        try {
-            return resources.getString("text." + name);
-        } catch (MissingResourceException ex) {
-            return name;
-        }
-    }
-
-    /**
-     * Get the text given by the property "name". If the property is not found,
      * this simply uses name. Any occurrance of the pattern "{0}" in the text
      * string will be replaced with the string representation of arg.
      *
@@ -113,7 +100,7 @@ public class SPMTranslate {
      * @param arg Description of the Parameter
      * @return Description of the Return Value
      */
-    public static String text(String name, Object arg) {
+    public static String text(String name, Object... arg) {
         String pattern = name;
         try {
             pattern = resources.getString("text." + name);
