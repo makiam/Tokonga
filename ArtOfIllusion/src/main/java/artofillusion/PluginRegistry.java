@@ -390,22 +390,17 @@ public class PluginRegistry {
         @Getter
         File file;
         String name, version;
-        final List<String> imports;
-        final List<String> plugins;
-        final List<String> categories;
-        final List<String> searchPath;
-        final List<ResourceInfo> resources;
-        final List<ExportInfo> exports;
+        final List<String> imports = new ArrayList<>();
+        final List<String> plugins = new ArrayList<>();
+        final List<String> categories = new ArrayList<>();
+        final List<String> searchPath = new ArrayList<>();
+        final List<ResourceInfo> resources = new ArrayList<>();
+        final List<ExportInfo> exports = new ArrayList<>();
         ClassLoader loader;
 
         JarInfo(File file) throws IOException {
             this.file = file;
-            imports = new ArrayList<>();
-            plugins = new ArrayList<>();
-            categories = new ArrayList<>();
-            searchPath = new ArrayList<>();
-            resources = new ArrayList<>();
-            exports = new ArrayList<>();
+
             ZipFile zf = new ZipFile(file);
             try {
                 ZipEntry ze = zf.getEntry("extensions.xml");
@@ -533,16 +528,13 @@ public class PluginRegistry {
          */
         @Getter
         private final String id;
-        private final List<String> names;
-        private final List<ClassLoader> loaders;
-        private final List<Locale> locales;
+        private final List<String> names = new ArrayList<>();
+        private final List<ClassLoader> loaders = new ArrayList<>();
+        private final List<Locale> locales = new ArrayList<>();
 
         private PluginResource(String type, String id) {
             this.type = type;
             this.id = id;
-            names = new ArrayList<>();
-            loaders = new ArrayList<>();
-            locales = new ArrayList<>();
         }
 
         private void addResource(String name, ClassLoader loader, Locale locale) throws IllegalArgumentException {
@@ -594,7 +586,7 @@ public class PluginRegistry {
          */
         public URL getURL() {
             int index = findLocalizedVersion(Translate.getLocale());
-            return (loaders.get(index)).getResource(names.get(index));
+            return loaders.get(index).getResource(names.get(index));
         }
 
         /**
