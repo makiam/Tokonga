@@ -31,17 +31,17 @@ import org.w3c.dom.*;
 public class PluginRegistry {
 
     private static final ArrayList<ClassLoader> pluginLoaders = new ArrayList<>();
-    private static final HashSet<Class> categories = new HashSet<>();
-    private static final HashMap<Class, List<Object>> categoryClasses = new HashMap<>();
-    private static final HashMap<String, Map<String, PluginResource>> resources = new HashMap<>();
-    private static final HashMap<String, ExportInfo> exports = new HashMap<>();
-    private static final HashMap<String, Object> classMap = new HashMap<>();
+    private static final Set<Class<?>> categories = new HashSet<>();
+    private static final Map<Class<?>, List<Object>> categoryClasses = new HashMap<>();
+    private static final Map<String, Map<String, PluginResource>> resources = new HashMap<>();
+    private static final Map<String, ExportInfo> exports = new HashMap<>();
+    private static final Map<String, Object> classMap = new HashMap<>();
 
     static {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             Map<String, Throwable> errors = PluginRegistry.notifyPlugins(Plugin.APPLICATION_STOPPING);
             errors.forEach((plugin, ex) -> {
-                //NB! At least JUL logger will not outputs log from inside shutdown thread. So I leave System.ouput.println here
+                //NB! At least JUL logger will not outputs log from inside shutdown thread. So I leave System.out.println here
                 String out = "Plugin: " + plugin + " throw: " + ex.getMessage() + " with" + Arrays.toString(ex.getStackTrace()) + " at shutdown";
                 System.out.println(out);
 
@@ -139,7 +139,7 @@ public class PluginRegistry {
      */
     private static void processJar(JarInfo jar, Map<String, JarInfo> nameMap, List<String> results) {
         try {
-            if (jar.imports.isEmpty() && jar.searchpath.isEmpty()) {
+            if (jar.imports.isEmpty() && jar.searchPath.isEmpty()) {
                 if (jar.loader == null) {
                     jar.loader = new URLClassLoader(new URL[]{jar.file.toURI().toURL()});
                 }
@@ -156,7 +156,7 @@ public class PluginRegistry {
                 }
 
                 // NTJ - add URL of searchpath to class loader
-                for (String uri : jar.searchpath) {
+                for (String uri : jar.searchPath) {
 
                     URL url = new URL(uri);
                     // resolve any registry-based authority
@@ -170,7 +170,7 @@ public class PluginRegistry {
             }
             pluginLoaders.add(jar.loader);
             HashMap<String, Object> classNameMap = new HashMap<>();
-            if (jar.name != null && jar.name.length() > 0) {
+            if (jar.name != null && !jar.name.isEmpty()) {
                 nameMap.put(jar.name, jar);
             }
             for (String category : jar.categories) {
@@ -208,14 +208,14 @@ public class PluginRegistry {
      * to see if it is an instance of the specified class. If so, it is added to the list of plugins
      * in that category.
      */
-    public static void addCategory(Class category) {
+    public static void addCategory(Class<?> category) {
         categories.add(category);
     }
 
     /**
      * Get all categories of plugins that have been defined.
      */
-    public static List<Class> getCategories() {
+    public static List<Class<?>> getCategories() {
         return new ArrayList<>(categories);
     }
 
@@ -228,11 +228,7 @@ public class PluginRegistry {
         classMap.put(plugin.getClass().getName(), plugin);
         for (Class<?> category : categories) {
             if (category.isInstance(plugin)) {
-                List<Object> instances = categoryClasses.get(category);
-                if (instances == null) {
-                    instances = new ArrayList<>();
-                    categoryClasses.put(category, instances);
-                }
+                List<Object> instances = categoryClasses.computeIfAbsent(category, k -> new ArrayList<>());
                 instances.add(plugin);
             }
         }
@@ -259,11 +255,11 @@ public class PluginRegistry {
      * If multiple plugins of the same class have been registered, this returns the most recently
      * registered one.
      *
-     * @param classname the fully qualified name of the class of the plugin object to return
+     * @param className the fully qualified name of the class of the plugin object to return
      * @return the plugin object of the specified class, or null if no matching plugin has been registered
      */
-    public static Object getPluginObject(String classname) {
-        return classMap.get(classname);
+    public static Object getPluginObject(String className) {
+        return classMap.get(className);
     }
 
     /**
@@ -280,11 +276,7 @@ public class PluginRegistry {
      * @throws IllegalArgumentException if there is already a registered resource with the same type, id, and locale
      */
     public static void registerResource(String type, String id, ClassLoader loader, String name, Locale locale) throws IllegalArgumentException {
-        Map<String, PluginResource> resourcesForType = resources.get(type);
-        if (resourcesForType == null) {
-            resourcesForType = new HashMap<>();
-            resources.put(type, resourcesForType);
-        }
+        Map<String, PluginResource> resourcesForType = resources.computeIfAbsent(type, k -> new HashMap<>());
         PluginResource resource = resourcesForType.get(id);
         if (resource == null) {
             resource = new PluginResource(type, id);
@@ -398,22 +390,17 @@ public class PluginRegistry {
         @Getter
         File file;
         String name, version;
-        final ArrayList<String> imports;
-        final ArrayList<String> plugins;
-        final ArrayList<String> categories;
-        final ArrayList<String> searchpath;
-        final ArrayList<ResourceInfo> resources;
-        final ArrayList<ExportInfo> exports;
+        final List<String> imports = new ArrayList<>();
+        final List<String> plugins = new ArrayList<>();
+        final List<String> categories = new ArrayList<>();
+        final List<String> searchPath = new ArrayList<>();
+        final List<ResourceInfo> resources = new ArrayList<>();
+        final List<ExportInfo> exports = new ArrayList<>();
         ClassLoader loader;
 
         JarInfo(File file) throws IOException {
             this.file = file;
-            imports = new ArrayList<>();
-            plugins = new ArrayList<>();
-            categories = new ArrayList<>();
-            searchpath = new ArrayList<>();
-            resources = new ArrayList<>();
-            exports = new ArrayList<>();
+
             ZipFile zf = new ZipFile(file);
             try {
                 ZipEntry ze = zf.getEntry("extensions.xml");
@@ -478,7 +465,7 @@ public class PluginRegistry {
                     if (importMap.getNamedItem("name") != null) {
                         imports.add(importMap.getNamedItem("name").getNodeValue());
                     } else if (importMap.getNamedItem("url") != null) {
-                        searchpath.add(importMap.getNamedItem("url").getNodeValue());
+                        searchPath.add(importMap.getNamedItem("url").getNodeValue());
                     }
                 }
                 NodeList resourceList = doc.getElementsByTagName("resource");
@@ -518,7 +505,7 @@ public class PluginRegistry {
 
     /**
      * A PluginResource represents a resource that was loaded from a plugin. Each PluginResource
-     * is identified by a type and an id. Typically the type indicates the purpose for which a
+     * is identified by a type and an id. Typically, the type indicates the purpose for which a
      * resource is to be used, and the id designates a specific resource of that type.
      * <p>
      * It is also possible for several different localized versions of a resource to be available,
@@ -529,18 +516,25 @@ public class PluginRegistry {
      */
     public static class PluginResource {
 
+        /**
+         * -- GETTER --
+         *  Get the type of this PluginResource.
+         */
+        @Getter
         private final String type;
+        /**
+         * -- GETTER --
+         *  Get the id of this PluginResource.
+         */
+        @Getter
         private final String id;
-        private final ArrayList<String> names;
-        private final ArrayList<ClassLoader> loaders;
-        private final ArrayList<Locale> locales;
+        private final List<String> names = new ArrayList<>();
+        private final List<ClassLoader> loaders = new ArrayList<>();
+        private final List<Locale> locales = new ArrayList<>();
 
         private PluginResource(String type, String id) {
             this.type = type;
             this.id = id;
-            names = new ArrayList<>();
-            loaders = new ArrayList<>();
-            locales = new ArrayList<>();
         }
 
         private void addResource(String name, ClassLoader loader, Locale locale) throws IllegalArgumentException {
@@ -553,20 +547,6 @@ public class PluginRegistry {
         }
 
         /**
-         * Get the type of this PluginResource.
-         */
-        public String getType() {
-            return type;
-        }
-
-        /**
-         * Get the id of this PluginResource.
-         */
-        public String getId() {
-            return id;
-        }
-
-        /**
          * Find which localized version of the resource best matches a locale.
          */
         private int findLocalizedVersion(Locale locale) {
@@ -574,7 +554,7 @@ public class PluginRegistry {
             for (int i = 0; i < locales.size(); i++) {
                 Locale loc = locales.get(i);
                 int matchedLevels = 0;
-                if (loc != null && loc.getLanguage() == locale.getLanguage()) {
+                if (loc != null && loc.getLanguage().equals(locale.getLanguage())) {
                     matchedLevels++;
                     if (loc.getCountry() == locale.getCountry()) {
                         matchedLevels++;
@@ -606,7 +586,7 @@ public class PluginRegistry {
          */
         public URL getURL() {
             int index = findLocalizedVersion(Translate.getLocale());
-            return (loaders.get(index)).getResource(names.get(index));
+            return loaders.get(index).getResource(names.get(index));
         }
 
         /**

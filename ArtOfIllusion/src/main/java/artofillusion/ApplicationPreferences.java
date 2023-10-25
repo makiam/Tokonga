@@ -79,9 +79,9 @@ public class ApplicationPreferences {
      */
     public void savePreferences() {
         // Copy over preferences that are stored in other classes.
-
-        properties.put("theme", ThemeManager.getSelectedTheme().resource.getId());
-        ThemeManager.ColorSet[] colorSets = ThemeManager.getSelectedTheme().getColorSets();
+        ThemeManager.ThemeInfo st = ThemeManager.getSelectedTheme();
+        properties.put("theme", st.resource.getId());
+        ThemeManager.ColorSet[] colorSets = st.getColorSets();
         for (int i = 0; i < colorSets.length; i++) {
             if (colorSets[i] == ThemeManager.getSelectedColorSet()) {
                 properties.put("themeColorSet", Integer.toString(i));

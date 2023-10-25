@@ -1,6 +1,6 @@
 /* Copyright (C) 2002-2009 by Peter Eastman
    Changes Copyright (C) 2016-2019 by Petri Ihalainen
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -14,35 +14,43 @@ package artofillusion;
 
 import artofillusion.ui.*;
 import artofillusion.keystroke.*;
+import artofillusion.preferences.AppearancePreferencesPanel;
 import artofillusion.preferences.ExtraPluginsPane;
+import artofillusion.preferences.PreferencesEditor;
 import buoy.widget.*;
 import buoy.event.*;
 
 import java.util.*;
 import java.util.List;
 import java.awt.*;
+import java.util.stream.Collectors;
 
 /**
  * This is the window for editing application-wide preferences.
  */
 public class PreferencesWindow {
 
-    private BComboBox defaultRendChoice, objectRendChoice, texRendChoice, localeChoice, themeChoice, colorChoice, toolChoice;
+    private PreferencesEditor appearance = new AppearancePreferencesPanel();
+    private PreferencesEditor extras = new ExtraPluginsPane();
+    private PreferencesEditor keystrokePanel = new KeystrokePreferencesPanel();
+    
+    private BComboBox defaultRendChoice, objectRendChoice, texRendChoice, toolChoice;
     private ValueField interactiveTolField, undoField, animationDurationField, animationFrameRateField;
     private BCheckBox drawActiveFrustumBox, drawCameraFrustumBox, showTravelCuesOnIdleBox, showTravelCuesScrollingBox;
     private BCheckBox showTiltDialBox;
     private BCheckBox glBox, backupBox, reverseZoomBox, useViewAnimationsBox;
-    private List<ThemeManager.ThemeInfo> themes;
+
     private static int lastTab;
     private boolean cameraFrustumState, travelCuesState;
 
     public PreferencesWindow(BFrame parent) {
         BTabbedPane tabs = new BTabbedPane();
         tabs.add(createGeneralPanel(), Translate.text("general"));
-        KeystrokePreferencesPanel keystrokePanel = new KeystrokePreferencesPanel();
-        tabs.add(keystrokePanel, Translate.text("shortcuts"));
-        ExtraPluginsPane extras = new ExtraPluginsPane();
-        tabs.add(extras, "Plugins");
+        
+        tabs.add(appearance.getPreferencesPanel(), appearance.getName());        
+        tabs.add(keystrokePanel.getPreferencesPanel(), keystrokePanel.getName());        
+        tabs.add(extras.getPreferencesPanel(), extras.getName());
+        
         tabs.setSelectedTab(lastTab);
         boolean done = false;
 
@@ -61,45 +69,40 @@ public class PreferencesWindow {
                 }
             }
         }
-        ApplicationPreferences prefs = ArtOfIllusion.getPreferences();
-        Locale[] languages = Translate.getAvailableLocales();
+        ApplicationPreferences preferences = ArtOfIllusion.getPreferences();
+        
         List<Renderer> renderers = PluginRegistry.getPlugins(Renderer.class);
-        if (renderers.size() > 0) {
-            prefs.setDefaultRenderer(renderers.get(defaultRendChoice.getSelectedIndex()));
-            prefs.setObjectPreviewRenderer(renderers.get(objectRendChoice.getSelectedIndex()));
-            prefs.setTexturePreviewRenderer(renderers.get(texRendChoice.getSelectedIndex()));
+        if (!renderers.isEmpty()) {
+            preferences.setDefaultRenderer(renderers.get(defaultRendChoice.getSelectedIndex()));
+            preferences.setObjectPreviewRenderer(renderers.get(objectRendChoice.getSelectedIndex()));
+            preferences.setTexturePreviewRenderer(renderers.get(texRendChoice.getSelectedIndex()));
         }
-        prefs.setInteractiveSurfaceError(interactiveTolField.getValue());
-        prefs.setUndoLevels((int) undoField.getValue());
-        if (!prefs.getLocale().equals(languages[localeChoice.getSelectedIndex()])) {
-            new BStandardDialog("", UIUtilities.breakString(Translate.text("languageChangedWarning")), BStandardDialog.INFORMATION).showMessageDialog(parent);
-        }
-        if (prefs.getUseOpenGL() != glBox.getState()) {
+        preferences.setInteractiveSurfaceError(interactiveTolField.getValue());
+        preferences.setUndoLevels((int) undoField.getValue());
+
+        if (preferences.getUseOpenGL() != glBox.getState()) {
             new BStandardDialog("", UIUtilities.breakString(Translate.text("glChangedWarning")), BStandardDialog.INFORMATION).showMessageDialog(parent);
         }
-        if (!ThemeManager.getSelectedTheme().getName().equals(themeChoice.getSelectedValue())) {
-            new BStandardDialog("", UIUtilities.breakString(Translate.text("themeChangedWarning")), BStandardDialog.INFORMATION).showMessageDialog(parent);
-        }
-        prefs.setLocale(languages[localeChoice.getSelectedIndex()]);
-        prefs.setUseOpenGL(glBox.getState());
-        prefs.setKeepBackupFiles(backupBox.getState());
-        prefs.setReverseZooming(reverseZoomBox.getState());
-        prefs.setUseViewAnimations(useViewAnimationsBox.getState());
-        prefs.setMaxAnimationDuration(animationDurationField.getValue());
-        prefs.setAnimationFrameRate(animationFrameRateField.getValue());
-        prefs.setDrawActiveFrustum(drawActiveFrustumBox.getState());
-        prefs.setDrawCameraFrustum(cameraFrustumState);
-        prefs.setShowTravelCuesOnIdle(showTravelCuesOnIdleBox.getState());
-        prefs.setShowTravelCuesScrolling(travelCuesState);
-        prefs.setShowTiltDial(showTiltDialBox.getState());
 
-        prefs.setUseCompoundMeshTool(toolChoice.getSelectedIndex() == 1);
+        preferences.setUseOpenGL(glBox.getState());
+        preferences.setKeepBackupFiles(backupBox.getState());
+        preferences.setReverseZooming(reverseZoomBox.getState());
+        preferences.setUseViewAnimations(useViewAnimationsBox.getState());
+        preferences.setMaxAnimationDuration(animationDurationField.getValue());
+        preferences.setAnimationFrameRate(animationFrameRateField.getValue());
+        preferences.setDrawActiveFrustum(drawActiveFrustumBox.getState());
+        preferences.setDrawCameraFrustum(cameraFrustumState);
+        preferences.setShowTravelCuesOnIdle(showTravelCuesOnIdleBox.getState());
+        preferences.setShowTravelCuesScrolling(travelCuesState);
+        preferences.setShowTiltDial(showTiltDialBox.getState());
 
-        ThemeManager.setSelectedTheme(themes.get(themeChoice.getSelectedIndex()));
-        ThemeManager.setSelectedColorSet(ThemeManager.getSelectedTheme().getColorSets()[colorChoice.getSelectedIndex()]);
-        prefs.savePreferences();
-        keystrokePanel.saveChanges();
-        extras.saveChanges();
+        preferences.setUseCompoundMeshTool(toolChoice.getSelectedIndex() == 1);
+
+        preferences.savePreferences();
+        
+        keystrokePanel.savePreferences();        
+        appearance.savePreferences();
+        extras.savePreferences();
     }
 
     /**
@@ -204,81 +207,37 @@ public class PreferencesWindow {
             showTravelCuesScrollingBox.setEnabled(!showTravelCuesOnIdleBox.getState());
             showTravelCuesScrollingBox.setState(showTravelCuesOnIdleBox.getState());
         }
-
-        themes = new ArrayList<ThemeManager.ThemeInfo>();
-        for (ThemeManager.ThemeInfo theme : ThemeManager.getThemes()) {
-            if (theme.selectable) {
-                themes.add(theme);
-            }
-        }
-        Collections.sort(themes, new Comparator<ThemeManager.ThemeInfo>() {
-            @Override
-            public int compare(ThemeManager.ThemeInfo o1, ThemeManager.ThemeInfo o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
-
-        themeChoice = new BComboBox();
-        for (ThemeManager.ThemeInfo theme : themes) {
-            themeChoice.add(theme.getName());
-        }
-
-        ThemeManager.ThemeInfo selectedTheme = ThemeManager.getSelectedTheme();
-        themeChoice.setSelectedValue(selectedTheme.getName());
-        colorChoice = new BComboBox();
-        buildColorSetMenu(selectedTheme);
-        themeChoice.addEventLink(ValueChangedEvent.class, new Object() {
-            void processEvent() {
-                buildColorSetMenu(themes.get(themeChoice.getSelectedIndex()));
-            }
-        });
-        ThemeManager.ColorSet[] colorSets = selectedTheme.getColorSets();
-        for (int i = 0; i < colorSets.length; i++) {
-            if (colorSets[i] == ThemeManager.getSelectedColorSet()) {
-                colorChoice.setSelectedIndex(i);
-            }
-        }
+        
         toolChoice = new BComboBox(new String[]{
             Translate.text("Move"),
             Translate.text("compoundMoveScaleRotate")
         });
         toolChoice.setSelectedIndex(prefs.getUseCompoundMeshTool() ? 1 : 0);
-        localeChoice = new BComboBox();
-        Locale[] languages = Translate.getAvailableLocales();
-        localeChoice.setPreferredVisibleRows(languages.length > 20 ? 16 : languages.length);
-        for (int i = 0; i < languages.length; i++) {
-            localeChoice.add(languages[i].getDisplayName(languages[i]));
-            if (prefs.getLocale().equals(languages[i])) {
-                localeChoice.setSelectedIndex(i);
-            }
-        }
+
 
         // Layout the panel.
         FormContainer panel = new FormContainer(3, 20);
         LayoutInfo labelLayout = new LayoutInfo(LayoutInfo.EAST, LayoutInfo.NONE, new Insets(2, 5, 2, 5), null);
         LayoutInfo widgetLayout = new LayoutInfo(LayoutInfo.WEST, LayoutInfo.BOTH, new Insets(2, 0, 2, 0), null);
-        LayoutInfo centerLayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(2, 0, 2, 0), null);
 
         panel.setColumnWeight(0, 0.0);
         panel.setColumnWeight(1, 0.0);
         panel.setColumnWeight(2, 3.0);
 
-        panel.add(Translate.label("language"), 0, 0, labelLayout);
+
         panel.add(Translate.label("defaultRenderer"), 0, 1, labelLayout);
         panel.add(Translate.label("objPreviewRenderer"), 0, 2, labelLayout);
         panel.add(Translate.label("texPreviewRenderer"), 0, 3, labelLayout);
-        panel.add(Translate.label("selectedTheme"), 0, 4, labelLayout);
-        panel.add(Translate.label("themeColorSet"), 0, 5, labelLayout);
+
         panel.add(Translate.label("defaultMeshEditingTool"), 0, 6, labelLayout);
         panel.add(Translate.label("maxUndoLevels"), 0, 7, labelLayout);
         panel.add(Translate.label("interactiveSurfError"), 0, 11, labelLayout);
 
-        panel.add(localeChoice, 1, 0, widgetLayout);
+
         panel.add(defaultRendChoice, 1, 1, widgetLayout);
         panel.add(objectRendChoice, 1, 2, widgetLayout);
         panel.add(texRendChoice, 1, 3, widgetLayout);
-        panel.add(themeChoice, 1, 4, widgetLayout);
-        panel.add(colorChoice, 1, 5, widgetLayout);
+
         panel.add(toolChoice, 1, 6, widgetLayout);
         panel.add(undoField, 1, 7, widgetLayout);
         panel.add(backupBox, 1, 8, 2, 1, widgetLayout);
@@ -304,12 +263,4 @@ public class PreferencesWindow {
         return panel;
     }
 
-    private void buildColorSetMenu(ThemeManager.ThemeInfo theme) {
-        ThemeManager.ColorSet[] colorSets = theme.getColorSets();
-        String[] names = new String[colorSets.length];
-        for (int i = 0; i < names.length; i++) {
-            names[i] = colorSets[i].getName();
-        }
-        colorChoice.setContents(names);
-    }
 }
