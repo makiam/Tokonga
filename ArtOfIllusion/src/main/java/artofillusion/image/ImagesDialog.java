@@ -161,7 +161,7 @@ public class ImagesDialog extends BDialog {
     }
 
     private void doLink() {
-        BFileChooser fc = new ImageFileChooser(Translate.text("selectImageToLink"));
+        var fc = new ImageFileChooser(Translate.text("selectImageToLink"));
         fc.setMultipleSelectionEnabled(true);
         if (!fc.showDialog(this)) {
             return;
@@ -186,7 +186,7 @@ public class ImagesDialog extends BDialog {
     }
 
     private void doLoad() {
-        BFileChooser fc = new ImageFileChooser(Translate.text("selectImagesToLoad"));
+        var fc = new ImageFileChooser(Translate.text("selectImagesToLoad"));
         fc.setMultipleSelectionEnabled(true);
         if (!fc.showDialog(this)) {
             return;

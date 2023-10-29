@@ -206,7 +206,7 @@ public class ImageDetailsDialog extends BDialog {
             return;
         }
 
-        BFileChooser fc = new ImageFileChooser(Translate.text("selectImageToLink"));
+        var fc = new ImageFileChooser(Translate.text("selectImageToLink"));
         fc.setMultipleSelectionEnabled(false);
         if (!fc.showDialog(this)) {
             return;
@@ -243,14 +243,15 @@ public class ImageDetailsDialog extends BDialog {
             ext = ".hdr";
         }
 
-        BFileChooser chooser = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("exportImage"));
-
+        var chooser = new JFileChooser();
+        chooser.setName(Translate.text("exportImage"));
+        
         String imageName = im.getName();
         if (imageName.isEmpty()) {
             imageName = Translate.text("unTitled");
         }
         chooser.setSelectedFile(new File(imageName + ext));
-        if (!chooser.showDialog(this)) {
+        if (chooser.showSaveDialog(this.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
 
@@ -259,7 +260,7 @@ public class ImageDetailsDialog extends BDialog {
         if (!fileName.toLowerCase().endsWith(ext)) {
             fileName = fileName + ext;
         }
-        File imageFile = new File(chooser.getDirectory(), fileName);
+        File imageFile = new File(chooser.getCurrentDirectory(), fileName);
 
         // Check if the file already exist and the user wants to overwrite it.
         if (imageFile.isFile()) {
@@ -271,23 +272,13 @@ public class ImageDetailsDialog extends BDialog {
         }
 
         // Write the file
-        try {
+        try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(imageFile))) {
             if (im instanceof HDRImage) {
-                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(imageFile));
                 HDREncoder.writeImage((HDRImage) im, out);
-                out.close();
-                return;
             } else if (im instanceof SVGImage) {
-                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(imageFile));
                 out.write(((SVGImage) im).getXML());
-                out.close();
-                return;
-            } else // MIPMappedImage
-            {
-                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(imageFile));
+            } else { // MIPMappedImage
                 ImageIO.write(((MIPMappedImage) im).getImage(), "png", out); // getImage returns BufferedImage
-                out.close();
-                return;
             }
         } catch (IOException ex) {
             setCursor(Cursor.getDefaultCursor());
@@ -323,10 +314,9 @@ public class ImageDetailsDialog extends BDialog {
     }
 
     private boolean confirmConvert(String name) {
-        String title = Translate.text("confirmTitle");
         String question = Translate.text("convertQuestion", name);
 
-        BStandardDialog confirm = new BStandardDialog(title, question, BStandardDialog.QUESTION);
+        BStandardDialog confirm = new BStandardDialog(Translate.text("confirmTitle"), question, BStandardDialog.QUESTION);
         String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
         return (confirm.showOptionDialog(this, options, options[1]) == 0);
     }

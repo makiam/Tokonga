@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2007 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,6 +18,7 @@ import buoy.event.*;
 
 import java.awt.*;
 import java.io.*;
+import javax.swing.JFileChooser;
 
 /**
  * This is a window for editing ExternalObjects.
@@ -87,13 +88,15 @@ public class ExternalObjectEditingWindow extends BDialog {
      * Allow the user to select a file.
      */
     private void doBrowseFile() {
-        BFileChooser fc = new BFileChooser(BFileChooser.OPEN_FILE, Translate.text("externalObject.selectScene"));
+        var chooser = new JFileChooser();
+        chooser.setName(Translate.text("externalObject.selectScene"));
+
         File f = theObject.getExternalSceneFile();
         if (f.isFile()) {
-            fc.setSelectedFile(f);
+            chooser.setSelectedFile(f);
         }
-        if (fc.showDialog(this)) {
-            fileField.setText(fc.getSelectedFile().getAbsolutePath());
+        if (chooser.showOpenDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
+            fileField.setText(chooser.getSelectedFile().getAbsolutePath());
             loadExternalScene();
             buildObjectTree();
             selectionChanged();

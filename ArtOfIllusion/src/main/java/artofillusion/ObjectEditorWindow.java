@@ -398,7 +398,7 @@ public abstract class ObjectEditorWindow extends BFrame implements EditingWindow
      * Allow the user to set the template image.
      */
     public void setTemplateCommand() {
-        BFileChooser fc = new ImageFileChooser(Translate.text("selectTemplateImage"));
+        var fc = new ImageFileChooser(Translate.text("selectTemplateImage"));
         if (!fc.showDialog(this)) {
             return;
         }

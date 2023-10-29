@@ -18,10 +18,12 @@ import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.prefs.Preferences;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import lombok.extern.slf4j.Slf4j;
@@ -218,27 +220,30 @@ public class ExecuteScriptWindow extends BFrame {
      * Prompt the user to load a script.
      */
     private void loadScript() {
-        BFileChooser fc = new BFileChooser(BFileChooser.OPEN_FILE, Translate.text("selectScriptToLoad"));
+        var chooser = new JFileChooser();
+        chooser.setName(Translate.text("selectScriptToLoad"));
+        
         // Save the current program working directory
-        File workingDir = fc.getDirectory();
-        fc.setDirectory(scriptDir);
-        fc.getComponent().setFileFilter(scriptFileFilter);
-        if (fc.showDialog(this)) {
-            scriptDir = fc.getDirectory();
+        File workingDir = chooser.getCurrentDirectory();
+        chooser.setCurrentDirectory(scriptDir);
+        
+        chooser.setFileFilter(scriptFileFilter);
+        if (chooser.showOpenDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
+            scriptDir = chooser.getCurrentDirectory();
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            File f = fc.getSelectedFile();
+            File scriptFile = chooser.getSelectedFile();
             try {
-                scriptWidget.getContent().setText(ArtOfIllusion.loadFile(f));
-                updateEditableStatus(scriptPath, fc.getSelectedFile().getAbsolutePath());
-                scriptPath = fc.getSelectedFile().getAbsolutePath();
+                scriptWidget.getContent().setText(ArtOfIllusion.loadFile(scriptFile));
+                updateEditableStatus(scriptPath, scriptFile.getAbsolutePath());
+                scriptPath = scriptFile.getAbsolutePath();
                 scriptWidget.getContent().setCaretPosition(0);
-                String filename = fc.getSelectedFile().getName();
+                String filename = scriptFile.getName();
                 String fileLanguage = ScriptRunner.getLanguageForFilename(filename);
-                if (fileLanguage != ScriptRunner.UNKNOWN_LANGUAGE) {
+                if (!fileLanguage.equals(ScriptRunner.UNKNOWN_LANGUAGE)) {
                     language = fileLanguage;
                     languageChoice.setSelectedValue(fileLanguage);
                     languageChoice.setEnabled(false);
-                    setScriptNameFromFile(fc.getSelectedFile().getAbsolutePath());
+                    setScriptNameFromFile(scriptFile.getAbsolutePath());
                     for (EditingWindow edWindow : ArtOfIllusion.getWindows()) {
                         if (edWindow instanceof LayoutWindow) {
                             ((LayoutWindow) edWindow).rebuildRecentScriptsMenu();
@@ -261,32 +266,35 @@ public class ExecuteScriptWindow extends BFrame {
         }
         setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         // Restore program working directory for other filechoosers
-        fc.setDirectory(workingDir);
+        chooser.setCurrentDirectory(workingDir);
     }
 
     /**
      * Prompt the user to save a script.
      */
     private void saveScriptAs() {
-        BFileChooser fc = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("saveScriptToFile"));
+        var chooser = new JFileChooser();
+        chooser.setName(Translate.text("saveScriptToFile"));
+        
+
         // Save current program working directory
-        File workingDir = fc.getDirectory();
-        fc.setDirectory(scriptDir);
-        if (language == ScriptRunner.UNKNOWN_LANGUAGE) {
+        File workingDir = chooser.getCurrentDirectory();
+        chooser.setCurrentDirectory(scriptDir);
+        if (language.equals(ScriptRunner.UNKNOWN_LANGUAGE)) {
             language = (String) languageChoice.getSelectedValue();
         }
-        fc.setSelectedFile(new File(scriptPath));
-        fc.getComponent().setFileFilter(scriptFileFilter);
-        if (fc.showDialog(this)) {
-            scriptDir = fc.getDirectory();
+        chooser.setSelectedFile(new File(scriptPath));
+        chooser.setFileFilter(scriptFileFilter);
+        if (chooser.showSaveDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
+            scriptDir = chooser.getCurrentDirectory();
 
             // Write the script to disk.
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            File f = fc.getSelectedFile();
-            try {
-                BufferedWriter out = new BufferedWriter(new FileWriter(f));
+            File f = chooser.getSelectedFile();
+            try( BufferedWriter out = new BufferedWriter(new FileWriter(f))) {
+
                 out.write(scriptWidget.getContent().getText().toCharArray());
-                out.close();
+
             } catch (IOException ex) {
                 log.atError().setCause(ex).log("Error writing script: {}", ex.getMessage());
                 new BStandardDialog(null, new String[]{Translate.text("errorWritingScript"),
@@ -294,10 +302,10 @@ public class ExecuteScriptWindow extends BFrame {
             }
             // Now we have saved, we can't change the language
             languageChoice.setEnabled(false);
-            updateEditableStatus(scriptPath, fc.getSelectedFile().getAbsolutePath());
-            scriptPath = fc.getSelectedFile().getAbsolutePath();
+            updateEditableStatus(scriptPath, f.getAbsolutePath());
+            scriptPath = f.getAbsolutePath();
 
-            setScriptNameFromFile(fc.getSelectedFile().getAbsolutePath());
+            setScriptNameFromFile(f.getAbsolutePath());
             // Update the Scripts menus in all windows.
             for (EditingWindow edWin : ArtOfIllusion.getWindows()) {
                 if (edWin instanceof LayoutWindow) {
@@ -308,24 +316,22 @@ public class ExecuteScriptWindow extends BFrame {
         }
         save.setEnabled(false);
         // Restore program working directory
-        fc.setDirectory(workingDir);
+        chooser.setCurrentDirectory(workingDir);
     }
 
     /**
      * Save the current script to its current file path, without user input.
      */
     private void saveScript() {
-        if (language == ScriptRunner.UNKNOWN_LANGUAGE) {
+        if (language.equals(ScriptRunner.UNKNOWN_LANGUAGE)) {
             language = (String) languageChoice.getSelectedValue();
         }
 
         // Write the script to disk.
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        File f = new File(scriptPath);
-        try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(f));
+
+        try(BufferedWriter out = new BufferedWriter(new FileWriter(Paths.get(scriptPath).toFile()))) {            
             out.write(scriptWidget.getContent().getText().toCharArray());
-            out.close();
         } catch (IOException ex) {
             new BStandardDialog(null, new String[]{Translate.text("errorWritingScript"),
                 scriptPath + (ex.getMessage() == null ? "" : ex.getMessage())}, BStandardDialog.ERROR).showMessageDialog(this);
@@ -342,7 +348,7 @@ public class ExecuteScriptWindow extends BFrame {
      * @param filePath NEW_SCRIPT_NAME or an absolute file path
      */
     private void setScriptNameFromFile(String filePath) {
-        if (filePath != NEW_SCRIPT_NAME) {
+        if (!filePath.equals(NEW_SCRIPT_NAME)) {
             addRecentScript(filePath);
         }
         setTitle(filePath);

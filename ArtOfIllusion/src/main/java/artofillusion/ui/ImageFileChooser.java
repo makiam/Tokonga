@@ -21,7 +21,7 @@ import java.io.*;
 import java.util.prefs.Preferences;
 
 /**
- * This is a BFileChooser for selecting image files to load. It displays a preview
+ * This is a chooser dialog for selecting image files to load. It displays a preview
  * of the currently selected image.
  */
 public class ImageFileChooser extends BFileChooser {
@@ -126,4 +126,13 @@ public class ImageFileChooser extends BFileChooser {
             }
         }
     }
+
+    public void setCurrentDirectory(File directory) {
+        setDirectory(directory);
+    }
+    
+    public File getCurrentDirectory() {
+        return getDirectory();
+    }
+
 }

@@ -18,6 +18,8 @@ import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
 import java.io.*;
+import java.nio.file.Files;
+import javax.swing.JFileChooser;
 
 /**
  * This class presents a user interface for entering object scripts.
@@ -83,6 +85,7 @@ public class ScriptedObjectEditorWindow extends BFrame {
     /**
      * Display a dialog for editing the parameters.
      */
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
     private void editParameters() {
         new ParametersDialog();
     }
@@ -91,28 +94,27 @@ public class ScriptedObjectEditorWindow extends BFrame {
      * Prompt the user to load a script.
      */
     private void loadScript() {
-        BFileChooser fc = new BFileChooser(BFileChooser.OPEN_FILE, Translate.text("selectScriptToLoad"));
+        var chooser = new JFileChooser();
+        chooser.setName(Translate.text("selectScriptToLoad"));
+
         // Save program working directory
-        File workingDir = fc.getDirectory();
-        fc.setDirectory(scriptDir);
-        fc.showDialog(this);
-        if (fc.getSelectedFile() != null) {
-            scriptDir = fc.getDirectory();
+        File workingDir = chooser.getCurrentDirectory();
+        chooser.setCurrentDirectory(scriptDir);
+
+        if(chooser.showOpenDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
+            scriptDir = chooser.getCurrentDirectory();
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            File f = fc.getSelectedFile();
-            String filename = fc.getSelectedFile().getName();
+            File f = chooser.getSelectedFile();
+            String filename = f.getName();
             String language = ScriptRunner.getLanguageForFilename(filename);
-            if (language != ScriptRunner.UNKNOWN_LANGUAGE) {
+            if (language.equals(ScriptRunner.UNKNOWN_LANGUAGE)) {
+                new BStandardDialog(null, new String[]{Translate.text("errorReadingScript"),
+                    "Unrecognized file language : " + filename}, BStandardDialog.ERROR).showMessageDialog(this);
+            } else {
                 languageChoice.setSelectedValue(language);
+                
                 try {
-                    BufferedReader in = new BufferedReader(new FileReader(f));
-                    StringBuilder buf = new StringBuilder();
-                    int c;
-                    while ((c = in.read()) != -1) {
-                        buf.append((char) c);
-                    }
-                    in.close();
-                    scriptWidget.getContent().setText(buf.toString());
+                    scriptWidget.getContent().setText(Files.readString(f.toPath()));
                 } catch (IOException ex) {
                     new BStandardDialog(null, new String[]{Translate.text("errorReadingScript"),
                         ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(this);
@@ -120,44 +122,43 @@ public class ScriptedObjectEditorWindow extends BFrame {
                 setScriptNameFromFile(filename);
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 updateLanguage();
-            } else {
-                new BStandardDialog(null, new String[]{Translate.text("errorReadingScript"),
-                    "Unrecognized file language : " + filename}, BStandardDialog.ERROR).showMessageDialog(this);
-            }
+            }            
         }
+
         // Restore working directory
-        fc.setDirectory(workingDir);
+        chooser.setCurrentDirectory(workingDir);
     }
 
     /**
      * Prompt the user to save a script.
      */
     private void saveScript() {
-        BFileChooser fc = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("saveScriptToFile"));
+        var chooser = new JFileChooser();
+        chooser.setName(Translate.text("saveScriptToFile"));
+        
         // Save program working directory
-        File workingDir = fc.getDirectory();
-        fc.setDirectory(scriptDir);
-        fc.setSelectedFile(new File(scriptDir, scriptName + '.' + ScriptRunner.getFilenameExtension((String) languageChoice.getSelectedValue())));
-        fc.showDialog(this);
-        if (fc.getSelectedFile() != null) {
-            scriptDir = fc.getDirectory();
+        File workingDir = chooser.getCurrentDirectory();
+        chooser.setCurrentDirectory(scriptDir);
+        chooser.setSelectedFile(new File(scriptDir, scriptName + '.' + ScriptRunner.getFilenameExtension((String) languageChoice.getSelectedValue())));
+
+        if(chooser.showSaveDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
+            scriptDir = chooser.getCurrentDirectory();
 
             // Write the script to disk.
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            File f = fc.getSelectedFile();
-            try {
-                BufferedWriter out = new BufferedWriter(new FileWriter(f));
+            File f = chooser.getSelectedFile();
+            try(BufferedWriter out = new BufferedWriter(new FileWriter(f))) {
                 out.write(scriptWidget.getContent().getText().toCharArray());
-                out.close();
             } catch (Exception ex) {
                 new BStandardDialog(null, new String[]{Translate.text("errorWritingScript"),
                     ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(this);
             }
-            setScriptNameFromFile(fc.getSelectedFile().getName());
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            setScriptNameFromFile(f.getName());
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));            
         }
+
         // Restore working directory
-        fc.setDirectory(workingDir);
+        chooser.setCurrentDirectory(workingDir);
     }
 
     /**
@@ -241,8 +242,8 @@ public class ScriptedObjectEditorWindow extends BFrame {
          */
         private void buildParameterList() {
             paramList.removeAll();
-            for (int i = 0; i < name.length; i++) {
-                paramList.add(name[i]);
+            for (String item : name) {
+                paramList.add(item);
             }
             if (name.length == 0) {
                 paramList.add("(no parameters)");
