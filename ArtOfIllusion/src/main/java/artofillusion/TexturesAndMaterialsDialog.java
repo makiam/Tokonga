@@ -10,7 +10,6 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion;
 
-import artofillusion.image.*;
 import artofillusion.material.*;
 import artofillusion.texture.*;
 import artofillusion.ui.*;
@@ -334,7 +333,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
                     mat.setName(name);
                     theScene.addMaterial(mat);
                     mat.edit((WindowWidget)parentFrame.getFrame(), theScene);
-                } catch (Exception ex) {
+                } catch (ReflectiveOperationException | IllegalArgumentException | SecurityException ex) {
                 }
                 parentFrame.setModified();
                 selectLastCurrentMaterial();
@@ -350,7 +349,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
                     tex.setName(name);
                     theScene.addTexture(tex);
                     tex.edit(this, theScene);
-                } catch (Exception ex) {
+                } catch (ReflectiveOperationException | IllegalArgumentException | SecurityException ex) {
                 }
                 parentFrame.setModified();
                 selectLastCurrentTexture();
@@ -547,6 +546,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
                 } catch (IOException ex) {
                     log.atError().setCause(ex).log("Error create scene: {}", ex.getMessage());
                 }
+                assert(libraryList != null);
                 ((SceneTreeModel) libraryList.getModel()).rebuildLibrary();
             }
         }
@@ -684,13 +684,13 @@ public class TexturesAndMaterialsDialog extends BDialog {
     private class FolderTreeNode {
 
         final File file;
-        ArrayList<Object> children;
+        List<Object> children;
 
         FolderTreeNode(File file) {
             this.file = file;
         }
 
-        ArrayList<Object> getChildren() {
+        List<Object> getChildren() {
             if (children == null) {
                 children = new ArrayList<>();
                 for (File f : file.listFiles()) {
@@ -828,6 +828,8 @@ public class TexturesAndMaterialsDialog extends BDialog {
         }
 
         void rebuildLibrary() {
+            rootNodes.forEach(System.out::println);
+            
             updateTree(() -> ((FolderTreeNode) rootNodes.get(1)).children = null);
         }
 
