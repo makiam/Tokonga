@@ -28,14 +28,9 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TexturesAndMaterialsDialog extends BDialog {
-
+    
     private static final File assetsFolder = new File(ArtOfIllusion.APP_DIRECTORY, "Textures and Materials");
 
-    static {
-        if (!assetsFolder.exists()) {
-            assetsFolder.mkdir();
-        }
-    }
     private final Scene theScene;
     private EditingWindow parentFrame;
     private BTree libraryList;
@@ -164,10 +159,6 @@ public class TexturesAndMaterialsDialog extends BDialog {
         buttons.add(deleteLibButton = Translate.button("deleteFromLibrary", this, "doDeleteFromLibrary"));
         buttons.add(Translate.button("newLibraryFile", this, "doNewLib"));
         buttons.add(Translate.button("showExternalFile", this, "doIncludeLib"));
-
-        buttons.add(new BSeparator());
-
-        buttons.add(Translate.button("close", this, "dispose"));
 
         hilightButtons();
 
