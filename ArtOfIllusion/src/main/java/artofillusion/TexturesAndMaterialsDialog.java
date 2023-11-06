@@ -24,6 +24,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -183,6 +184,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
     }
 
     private void doSelectionChanged() {
+        System.out.println("Selection changed...");
         TreePath selection = libraryList.getSelectedNode();
         Texture oldTexture = selectedTexture;
         Material oldMaterial = selectedMaterial;
@@ -206,7 +208,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
                         setInfoText(Translate.text("textureName") + " " + selectedTexture.getName(), Translate.text("textureType") + " " + selectedTexture.getTypeName());
                     }
                 } else {
-                    selectedMaterial = selectedScene.getMaterial(((MaterialTreeNode) node).index);
+                    selectedMaterial = ((MaterialTreeNode) node).getMaterial();
                     if (selectedMaterial != oldMaterial) {
                         Texture tex = UniformTexture.invisibleTexture();
                         preview.setTexture(tex, tex.getDefaultMapping(preview.getObject().getObject()));
@@ -588,32 +590,31 @@ public class TexturesAndMaterialsDialog extends BDialog {
     private class TextureTreeNode {
 
         final int index;
-        String name;
+        @Getter private Texture texture;
 
         TextureTreeNode(SceneTreeNode scene, int index) throws IOException {
             this.index = index;
-            name = scene.getScene().getTexture(index).getName();
+            texture = scene.getScene().getTexture(index);
         }
 
         @Override
         public String toString() {
-            return name;
+            return texture.getName();
         }
     }
 
     private class MaterialTreeNode {
-
         final int index;
-        String name;
-
+        @Getter private Material material;
+        
         MaterialTreeNode(SceneTreeNode scene, int index) throws IOException {
             this.index = index;
-            name = scene.getScene().getMaterial(index).getName();
+            material = scene.getScene().getMaterial(index);
         }
-
+        
         @Override
         public String toString() {
-            return name;
+            return material.getName();
         }
     }
 
