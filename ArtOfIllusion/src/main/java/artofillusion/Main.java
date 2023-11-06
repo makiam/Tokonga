@@ -5,6 +5,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 /*  w ww  .j a v  a2  s . c o  m*/
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
@@ -82,8 +83,7 @@ class MyTreeNode extends DefaultMutableTreeNode {
     return false;
   }
 
-  public void loadChildren(final DefaultTreeModel model,
-      final PropertyChangeListener progressListener) {
+  public void loadChildren(final DefaultTreeModel model,final PropertyChangeListener progressListener) {
     if (loaded) {
       return;
     }
@@ -91,7 +91,7 @@ class MyTreeNode extends DefaultMutableTreeNode {
       @Override
       protected List<MyTreeNode> doInBackground() throws Exception {
         setProgress(0);
-        List<MyTreeNode> children = new ArrayList<MyTreeNode>();
+        List<MyTreeNode> children = new ArrayList<>();
         if (depth < 5) {
           for (int i = 0; i < 5; i++) {
             Thread.sleep(300);
@@ -110,15 +110,14 @@ class MyTreeNode extends DefaultMutableTreeNode {
         try {
           setChildren(get());
           model.nodeStructureChanged(MyTreeNode.this);
-        } catch (Exception e) {
+        } catch (InterruptedException | ExecutionException e) {
           e.printStackTrace();
         }
         super.done();
       }
     };
     if (progressListener != null) {
-      worker.getPropertyChangeSupport().addPropertyChangeListener("progress",
-          progressListener);
+      worker.getPropertyChangeSupport().addPropertyChangeListener("progress",progressListener);
     }
     worker.execute();
   }

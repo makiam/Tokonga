@@ -11,14 +11,13 @@ import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.nio.file.Path;
 import javax.swing.event.TreeExpansionEvent;
-import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeWillExpandListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.ExpandVetoException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class AssetManager extends JFrame implements TreeExpansionListener, TreeWillExpandListener {
+public class AssetManager extends JFrame implements TreeWillExpandListener {
     //<a target="_blank" href="https://icons8.com/icon/80332/object">Object</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
     private final Scene scene;
     private JTree assetsTree;
@@ -50,7 +49,7 @@ public class AssetManager extends JFrame implements TreeExpansionListener, TreeW
         assetsTree.setShowsRootHandles(true);
         assetsTree.setCellRenderer(new AssetsTreeCellRenderer());
         assetsTree.addTreeWillExpandListener(this);
-        assetsTree.addTreeExpansionListener(this);
+
         this.getContentPane().add(assetsTree);
         this.setSize(640,480);
 
@@ -58,38 +57,51 @@ public class AssetManager extends JFrame implements TreeExpansionListener, TreeW
     }
 
     @Override
-    public void treeExpanded(TreeExpansionEvent event) {
-        
-        log.atInfo().log("Expanded: " + (event.getPath().getLastPathComponent() instanceof SceneTreeNode));
-    }
-
-    @Override
-    public void treeCollapsed(TreeExpansionEvent event) {
-        
-    }
-
-    @Override
     public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
-        log.atInfo().log("Will expand" + event.getPath());
+        var expando = event.getPath().getLastPathComponent();
+        log.atInfo().log("Will expand {}", expando);
+        if(expando instanceof Lazy) {
+            Lazy loading = (Lazy)expando;
+            if(!loading.loaded()) loading.load();
+        } 
     }
 
     @Override
-    public void treeWillCollapse(TreeExpansionEvent event) throws ExpandVetoException {
-        
+    public void treeWillCollapse(TreeExpansionEvent event) throws ExpandVetoException {        
     }
-
-    private static class SceneTreeNode extends DefaultMutableTreeNode {
+    
+    private interface Lazy {
+        boolean loaded();
+        void load();
+    } 
+    
+    private static class SceneTreeNode extends DefaultMutableTreeNode implements Lazy {
         private final Scene scene;
+        private boolean loaded;
+        
         public SceneTreeNode(Scene scene) {
             super(scene);
             this.scene = scene;
-            this.add(new TextureTreeNode(scene.getDefaultTexture()));
+            this.add(new DefaultMutableTreeNode("Loading...", false));
         }
         
         @Override
         public String toString() {
-            return "Scene" + (scene.getName() == null ? "" : ": " + scene.getName()); 
-            
+            return "Scene" + (scene.getName() == null ? "" : ": " + scene.getName());             
+        }
+
+        @Override
+        public boolean loaded() {
+            return loaded;
+        }
+
+        @Override
+        public void load() {
+            if(loaded) return;
+            this.removeAllChildren();
+            scene.getTextures().forEach(tex -> add(new TextureTreeNode(tex)));
+            scene.getMaterials().forEach(mat -> add(new MaterialTreeNode(mat)));
+            loaded = true;
         }
         
     }
@@ -107,7 +119,7 @@ public class AssetManager extends JFrame implements TreeExpansionListener, TreeW
 
         @Override
         public String toString() {
-            return "Texture" + ((Texture)getUserObject()).getName();
+            return ((Texture)getUserObject()).getName();
         }
         
     } 
@@ -115,7 +127,13 @@ public class AssetManager extends JFrame implements TreeExpansionListener, TreeW
     private static class MaterialTreeNode extends DefaultMutableTreeNode {
         public MaterialTreeNode(Material material) {
             super(material);
-        }        
+        }
+
+        @Override
+        public String toString() {
+            return ((Material)getUserObject()).getName();
+        }
+        
     }
     
     private static class AssetsTreeCellRenderer extends DefaultTreeCellRenderer {
@@ -126,7 +144,7 @@ public class AssetManager extends JFrame implements TreeExpansionListener, TreeW
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
             Component cc = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
-            ((JLabel)cc).setIcon(AssetManager.sceneIcon);
+            //((JLabel)cc).setIcon(AssetManager.sceneIcon);
             return cc;
         }
     }
