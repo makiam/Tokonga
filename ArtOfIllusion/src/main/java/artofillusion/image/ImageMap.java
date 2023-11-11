@@ -74,7 +74,7 @@ public abstract class ImageMap {
                 im.setDataCreated(file);
                 return im;
             } catch (IOException ex) {
-                log.atError().setCause(ex).log("Image load interrupted", ex.getMessage());
+                log.atError().setCause(ex).log("Image load interrupted: {}", ex.getMessage());
             }
         }
         if (name.endsWith(".svg")) {

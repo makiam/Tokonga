@@ -398,7 +398,7 @@ public class POVExporter {
             write("}", out, 0);
             write("", out, 0);
 
-            log.debug("Point Light source --> point light: Position: {} FadeDistance: {} FadePower:", orig, fadeDistance, fadePower);
+            log.debug("Point Light source --> point light: Position: {} FadeDistance: {} FadePower: {}", orig, fadeDistance, fadePower);
 
         } else if (obj.getObject() instanceof SpotLight) {
             write("// Spot light", out, 0);
@@ -445,7 +445,7 @@ public class POVExporter {
             write("}", out, 0);
             write("", out, 0);
 
-            log.debug("Spotlight source --> spot light: Position: {} Point at: {} Color {} Radius {} Falloff {} Tightness {} {} Fade Distance {} Fade Power"
+            log.debug("Spotlight source --> spot light: Position: {} Point at: {} Color {} Radius {} Falloff {} Tightness {} {} Fade Distance {} Fade Powe {}r"
                     , orig,  pointat, color, radius, falloff, TIGHTNESS, (light.getType() != Light.TYPE_NORMAL ? "shadowless" : ""), fadeDistance, fadePower);
             
         } // Cube setting

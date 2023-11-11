@@ -139,7 +139,7 @@ public abstract class ViewerCanvas extends CustomWidget {
                 drawer = new GLCanvasDrawer(this);
                 component = ((GLCanvasDrawer) drawer).getGLCanvas();
             } catch (Throwable t) {
-                log.atError().setCause(t).log("Error creating GLCanvasDrawer: {}", t);
+                log.atError().setCause(t).log("Error creating GLCanvasDrawer: {}", t.getMessage());
                 openGLAvailable = false;
             }
         }
