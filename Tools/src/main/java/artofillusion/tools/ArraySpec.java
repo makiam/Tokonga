@@ -118,11 +118,7 @@ public class ArraySpec {
      */
     public double curveStep;
     /**
-     * When set, curveStep is multiplied by the size of the object. Not Used.
-     */
-    public boolean curveInterval;
-    /**
-     * When set, the orientation of the object(s) follow the curve.
+     * When set, the orientation of the object(s) follows the curve.
      */
     public boolean orientation;
     /**
@@ -485,7 +481,6 @@ public class ArraySpec {
      */
     private void constructMinRotFrame(Vec3[] subdiv, boolean isClosed, Vec3[] zdir, Vec3[] updir) {
         Vec3[] t;
-        int i, j;
 
         // subdivide the path and determine its direction at the starting point.
         t = new Vec3[subdiv.length];
@@ -508,7 +503,7 @@ public class ArraySpec {
         dir2.normalize();
 
         // Propagate the vectors along the path.
-        for (i = 1; i < subdiv.length; i++) {
+        for (int i = 1; i < subdiv.length; i++) {
             if (i == subdiv.length - 1) {
                 if (isClosed) {
                     t[i] = subdiv[0].minus(subdiv[subdiv.length - 2]);

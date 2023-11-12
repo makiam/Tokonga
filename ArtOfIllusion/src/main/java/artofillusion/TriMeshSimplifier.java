@@ -1,4 +1,5 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -50,7 +51,7 @@ import buoy.widget.*;
  */
 public class TriMeshSimplifier implements Runnable {
 
-    private class Constraint {
+    private static class Constraint {
 
         double a, b, c, d;
     }
@@ -200,12 +201,12 @@ public class TriMeshSimplifier implements Runnable {
         mesh.setShape(vert, f);
 
         // Set the smoothness values for edges.
-        ed = mesh.getEdges();
-        for (int i = 0; i < ed.length; i++) {
-            for (int j = 0; j < edge.length; j++) {
-                if (edge[j] != null && (index[edge[j].v1] == ed[i].v1 && index[edge[j].v2] == ed[i].v2
-                        || index[edge[j].v2] == ed[i].v1 && index[edge[j].v1] == ed[i].v2)) {
-                    ed[i].smoothness = edge[j].smoothness;
+
+        for (Edge item : mesh.getEdges()) {
+            for (MeshEdge meshEdge : edge) {
+                if (meshEdge != null && (index[meshEdge.v1] == item.v1 && index[meshEdge.v2] == item.v2
+                        || index[meshEdge.v2] == item.v1 && index[meshEdge.v1] == item.v2)) {
+                    item.smoothness = meshEdge.smoothness;
                     break;
                 }
             }

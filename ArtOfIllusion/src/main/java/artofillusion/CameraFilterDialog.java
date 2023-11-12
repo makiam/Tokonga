@@ -21,6 +21,8 @@ import buoy.widget.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -103,7 +105,7 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
         if (config == null) {
             return;
         }
-        config.forEach((key, value) -> renderer.setConfiguration(key, value));
+        config.forEach(renderer::setConfiguration);
     }
 
     /**
@@ -273,6 +275,11 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
         private final BButton upButton;
         private final BButton downButton;
         private final Class<?>[] filterClasses;
+        /**
+         * -- GETTER --
+         *  Get the filters to apply.
+         */
+        @Getter
         private final ArrayList<ImageFilter> filters;
         final Runnable filterChangedCallback;
 
@@ -325,13 +332,6 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
             }
             ((BScrollPane) cameraFiltersList.getParent()).setPreferredViewSize(allFiltersList.getPreferredSize());
             updateComponents();
-        }
-
-        /**
-         * Get the filters to apply.
-         */
-        public ArrayList<ImageFilter> getFilters() {
-            return filters;
         }
 
         /**

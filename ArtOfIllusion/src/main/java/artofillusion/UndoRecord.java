@@ -232,11 +232,11 @@ public class UndoRecord {
                     var oldObj = group.getChildren();
                     var newObj = (ObjectInfo[]) d[1];
                     redoRecord.addCommandAtBeginning(SET_GROUP_CONTENTS, group, oldObj);
-                    for (int j = 0; j < oldObj.length; j++) {
-                        oldObj[j].setParent(null);
+                    for (ObjectInfo objectInfo : oldObj) {
+                        objectInfo.setParent(null);
                     }
-                    for (int j = 0; j < newObj.length; j++) {
-                        newObj[j].setParent(group);
+                    for (ObjectInfo objectInfo : newObj) {
+                        objectInfo.setParent(group);
                     }
                     group.children = newObj;
                     break;

@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
    Changes copyright (C) 2016 by Petri Ihalainen
-   Changes copyright (C) 2018-2022 by Maksim Khramov
+   Changes copyright (C) 2018-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -13,6 +13,8 @@
 package artofillusion;
 
 import artofillusion.math.*;
+import lombok.Getter;
+
 import java.awt.*;
 
 /**
@@ -41,7 +43,17 @@ public class Camera implements Cloneable {
 
     private Mat4 objectToWorld, objectToView, objectToScreen, worldToView, worldToScreen;
     private Mat4 viewToScreen, viewToWorld;
-    private double viewDist, distToScreen, scale, frontClipPlane, gridSpacing;
+    @Getter
+    private double viewDist, /**
+     * -- GETTER --
+     *  Get the perspective strength parameter
+     */
+            distToScreen, scale, frontClipPlane, gridSpacing;
+    /**
+     * -- GETTER --
+     *  Determine whether the camera is in perspective or parallel projection mode.
+     */
+    @Getter
     private boolean perspective;
     private int hres, vres;
     private int lastX, lastY;
@@ -58,12 +70,12 @@ public class Camera implements Cloneable {
 
     /**
      * Set the distance from the 'camera lens' to the 'camera screen'.
-     *
+
      * The distToScreen parameter controls the perspective strength. 'Screen' should be understood
      * to represent the screen of a camera obscura, when the view is in perspective mode.
      * A smaller value means stronger perspective and vice versa. In parallel mode this
      * parameter has no meaning.
-     *
+
      * It is also used to track mouse moves from computer screen to scene. Hence, the moves need to
      * be corrected to match the desired distance to drawing plane:
      * <pre>
@@ -76,26 +88,12 @@ public class Camera implements Cloneable {
         distToScreen = dist;
     }
 
-    /**
-     * Get the perspective strength parameter
-     */
-    public double getDistToScreen() {
-        return distToScreen;
-    }
-
     public double getClipDistance() {
         return frontClipPlane;
     }
 
     public void setClipDistance(double distance) {
         frontClipPlane = distance;
-    }
-
-    /**
-     * Determine whether the camera is in perspective or parallel projection mode.
-     */
-    public boolean isPerspective() {
-        return perspective;
     }
 
     /**

@@ -26,6 +26,8 @@ import java.text.*;
 import java.util.*;
 import java.util.List;
 import javax.swing.Timer;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -40,7 +42,13 @@ public abstract class ViewerCanvas extends CustomWidget {
     protected EditingTool currentTool, activeTool, metaTool, altTool;
     protected ScrollViewTool scrollTool;
     protected PopupMenuManager popupManager;
+    @Getter
     protected int renderMode, gridSubdivisions, orientation, navigation, scrollBuffer;
+    /**
+     * -- GETTER --
+     *  Get the grid spacing.
+     */
+    @Getter
     protected double gridSpacing, scale, distToPlane, scrollRadius, scrollX, scrollY, scrollBlend, scrollBlendX, scrollBlendY;
     protected boolean perspective, perspectiveSwitch, hideBackfaces, showGrid, snapToGrid, drawFocus, showTemplate, showAxes;
     protected boolean lastModelPerspective;
@@ -828,13 +836,6 @@ public abstract class ViewerCanvas extends CustomWidget {
     }
 
     /**
-     * Get the grid spacing.
-     */
-    public double getGridSpacing() {
-        return gridSpacing;
-    }
-
-    /**
      * Get the number of "snap to" subdivisions between grid lines.
      */
     public int getSnapToSubdivisions() {
@@ -1332,10 +1333,6 @@ public abstract class ViewerCanvas extends CustomWidget {
         coordinateAxes.draw();
     }
 
-    public int getRenderMode() {
-        return renderMode;
-    }
-
     public void setRenderMode(int mode) {
         if (mode == RENDER_RENDERED && currentTool != null) {
             for (ViewerCanvas view : currentTool.getWindow().getAllViews()) {
@@ -1378,7 +1375,6 @@ public abstract class ViewerCanvas extends CustomWidget {
     /**
      * Launch an orientation change procedure to turn the orientation into any of the
      * presets shown in the drop-down menu.
-     *
      * This method calls the ViewAnimation to perform the turn, if needed.
      */
     public void setOrientation(int which) {
@@ -1827,6 +1823,11 @@ public abstract class ViewerCanvas extends CustomWidget {
      */
     public class FrustumShape {
 
+        /**
+         * -- GETTER --
+         *  Corners of this drawing plane in scene coordinates.
+         */
+        @Getter
         private final Vec3[] corners = new Vec3[4];
 
     private Vec3 viewingPoint3D;
@@ -1863,13 +1864,6 @@ public abstract class ViewerCanvas extends CustomWidget {
          */
         public Vec3 getViewingDirection() {
             return new Vec3(theCamera.getCameraCoordinates().getZDirection());
-        }
-
-        /**
-         * Corners of this drawing plane in scene coordinates.
-         */
-        public Vec3[] getCorners() {
-            return corners;
         }
 
         public double size() {

@@ -226,8 +226,8 @@ public class Actor extends ObjectWrapper {
         TextureParameter[] oldParam = getParameters();
         theObject.setTexture(tex, map);
         TextureParameter[] newParam = map.getParameters();
-        for (int i = 0; i < gesture.length; i++) {
-            gesture[i].textureChanged(oldParam, newParam);
+        for (Gesture value : gesture) {
+            value.textureChanged(oldParam, newParam);
         }
     }
 
@@ -402,7 +402,7 @@ public class Actor extends ObjectWrapper {
     /**
      * Reconstruct this object from its serialized representation.
      */
-    public Actor(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+    public Actor(DataInputStream in, Scene theScene) throws IOException {
         short version = in.readShort();
         if (version != 0) {
             throw new InvalidObjectException("");
