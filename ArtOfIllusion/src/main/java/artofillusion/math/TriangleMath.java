@@ -12,7 +12,7 @@
 package artofillusion.math;
 
 import artofillusion.*;
-import artofillusion.math.*;
+
 import java.awt.*;
 
 /**
@@ -126,9 +126,7 @@ public class TriangleMath {
      * Projection of a point on a triangle plane in 3D. The point can be anywhere in the space.
      */
     public static Vec3 project(Vec3 A, Vec3 B, Vec3 C, Vec3 p) {
-        double[] bary = new double[3];
-        bary = baryCoordinates(A, B, C, p);
-        return interpolate(A, B, C, bary);
+        return interpolate(A, B, C, baryCoordinates(A, B, C, p));
     }
 
     //********************************//

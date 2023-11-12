@@ -1,5 +1,7 @@
 /*
  *  Copyright (C) 2007 by Francois Guillet
+ *  Changes copyright 2023 by Maksim Khramov
+ *
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -48,10 +50,10 @@ public class UnfoldedMesh {
 
         public UnfoldedVertex duplicate() {
             UnfoldedVertex v = null;
-            if (r != null) {
-                v = new UnfoldedVertex(new Vec2(r));
-            } else {
+            if (r == null) {
                 v = new UnfoldedVertex((Vec2) null);
+            } else {
+                v = new UnfoldedVertex(new Vec2(r));
             }
             v.edge = edge;
             v.id = id;
@@ -68,8 +70,7 @@ public class UnfoldedMesh {
             r.writeToFile(out);
         }
 
-        public UnfoldedVertex(DataInputStream in) throws IOException,
-                InvalidObjectException {
+        public UnfoldedVertex(DataInputStream in) throws IOException {
             short version = in.readShort();
             if (version < 0 || version > 0) {
                 throw new InvalidObjectException("");
@@ -250,21 +251,20 @@ public class UnfoldedMesh {
         out.writeShort(0);
         out.writeUTF(name);
         out.writeInt(vertices.length);
-        for (int i = 0; i < vertices.length; i++) {
-            vertices[i].writeToFile(out);
+        for (UnfoldedVertex vertex : vertices) {
+            vertex.writeToFile(out);
         }
         out.writeInt(edges.length);
-        for (int i = 0; i < edges.length; i++) {
-            edges[i].writeToFile(out);
+        for (UnfoldedEdge edge : edges) {
+            edge.writeToFile(out);
         }
         out.writeInt(faces.length);
-        for (int i = 0; i < faces.length; i++) {
-            faces[i].writeToFile(out);
+        for (UnfoldedFace face : faces) {
+            face.writeToFile(out);
         }
     }
 
-    public UnfoldedMesh(DataInputStream in) throws IOException,
-            InvalidObjectException {
+    public UnfoldedMesh(DataInputStream in) throws IOException {
         short version = in.readShort();
         if (version < 0 || version > 0) {
             throw new InvalidObjectException("");

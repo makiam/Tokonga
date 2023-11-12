@@ -1,7 +1,7 @@
 /* This class represents a Track in the TreeList which appears in the Score. */
 
  /* Copyright (C) 2001 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -25,8 +25,8 @@ public class TrackTreeElement extends TreeElement {
         this.tree = tree;
         children = new Vector<>();
         var subTracks = tr.getSubtracks();
-        for (int i = 0; i < subTracks.length; i++) {
-            children.add(new TrackTreeElement(subTracks[i], this, tree));
+        for (Track subTrack : subTracks) {
+            children.add(new TrackTreeElement(subTrack, this, tree));
         }
     }
 

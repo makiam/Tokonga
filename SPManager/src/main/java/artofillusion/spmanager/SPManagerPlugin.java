@@ -15,7 +15,7 @@ import artofillusion.ui.*;
 import artofillusion.util.SearchlistClassLoader;
 import buoy.event.*;
 import buoy.widget.*;
-import java.awt.*;
+
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
@@ -30,7 +30,6 @@ import javax.swing.*;
  * The Plugin corresponding to the SPManager
  *
  * @author Francois Guillet
- * @created 20 march 2004
  */
 @Slf4j
 public class SPManagerPlugin implements Plugin {
