@@ -646,8 +646,8 @@ public class SPManagerPlugin implements Plugin {
         if (spmFrame == null) {
             spmFrame = new SPManagerFrame();
         }
-        ((Window) spmFrame.getComponent()).toFront();
-        ((Window) spmFrame.getComponent()).setVisible(true);
+        spmFrame.getComponent().toFront();
+        spmFrame.getComponent().setVisible(true);
     }
 
     /**

@@ -160,7 +160,7 @@ public class InstallSplitPane extends SPMSplitPane {
     private void getFiles(TreePath addTo, List<SPMObjectInfo> infos, List<SPMObjectInfo> managerInfoList) {
 
         boolean eligible;
-        TreeMap<String, SPMObjectInfo> map = new TreeMap<>();
+        var map = new TreeMap<>();
 
         for (SPMObjectInfo info: infos) {
 
@@ -173,13 +173,12 @@ public class InstallSplitPane extends SPMSplitPane {
                 eligible = (workMode == INSTALL);
 
                 String name = info.getName();
-                for (int j = 0; j < managerInfoList.size(); ++j) {
-                    if ((managerInfoList.get(j)).getName().equals(name)) {
+                for (SPMObjectInfo managerInfo: managerInfoList) {
+                    if (managerInfo.getName().equals(name)) {
                         eligible = (workMode == UPDATE);
                         if (eligible) {
                             //check if valid update
 
-                            var managerInfo = managerInfoList.get(j);
                             log.info(info.getName());
 
                             log.info("major distant local:{} {}", info.getMajor(), managerInfo.getMajor());

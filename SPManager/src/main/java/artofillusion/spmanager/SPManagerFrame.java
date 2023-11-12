@@ -19,6 +19,7 @@ import lombok.Getter;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.function.Predicate;
 import javax.swing.*;
@@ -45,14 +46,15 @@ public class SPManagerFrame extends BFrame {
     private final SPMSplitPane manageSplitPane;
     private final InstallSplitPane updateSplitPane;
     private final InstallSplitPane installSplitPane;
-    private final BLabel statusLabel;
+    private final BLabel statusLabel = new BLabel(" ");
     private String statusText;
     private javax.swing.Timer timer;
-    private final Action statusTextClearAction;
+    private final ActionListener statusTextClearAction = (ActionEvent ae) -> statusLabel.setText(" ");
 
     public static final String[] YES_NO = {
         SPMTranslate.text("Yes"), SPMTranslate.text("No")
     };
+
     public static final String[] CONTINUE_IGNORE = {
         SPMTranslate.text("Continue"), SPMTranslate.text("Stop"),
         SPMTranslate.text("Ignore")
@@ -78,14 +80,7 @@ public class SPManagerFrame extends BFrame {
 
         parameters = new SPMParameters();
 
-        statusLabel = new BLabel(" ");
 
-        statusTextClearAction = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                statusLabel.setText(" ");
-            }
-        };
         manageSplitPane = new ManageSplitPane();
         updateSplitPane = new InstallSplitPane(SPMSplitPane.UPDATE, (java.net.URL) null);
         installSplitPane = new InstallSplitPane(SPMSplitPane.INSTALL, updateSplitPane.getFileSystem());
@@ -319,12 +314,12 @@ public class SPManagerFrame extends BFrame {
      */
     public void setRemoteStatusTextDuration(int time) {
         if (time > 0) {
-            if (timer != null) {
-                timer.setDelay(time);
-                timer.restart();
-            } else {
+            if (timer == null) {
                 timer = new Timer(time, statusTextClearAction);
                 timer.start();
+            } else {
+                timer.setDelay(time);
+                timer.restart();
             }
         } else if (timer != null) {
             timer.stop();

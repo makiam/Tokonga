@@ -128,19 +128,19 @@ public class SPMSetupFrame extends BDialog {
         fm.add(useProxyCB, 0, 0, formLayout);
 
         fm.add(proxyHostLabel = SPMTranslate.bLabel("proxyHost"), 0, 1, formLayout);
-        proxyHostEntry = new BTextField(parameters.getProxyHost(), 25);
+        proxyHostEntry = new BTextField(SPMParameters.getProxyHost(), 25);
         fm.add(proxyHostEntry, 1, 1, formLayout);
 
         fm.add(proxyPortLabel = SPMTranslate.bLabel("proxyPort"), 0, 2, formLayout);
-        proxyPortEntry = new BTextField(parameters.getProxyPort(), 25);
+        proxyPortEntry = new BTextField(SPMParameters.getProxyPort(), 25);
         fm.add(proxyPortEntry, 1, 2, formLayout);
 
         fm.add(usernameLabel = SPMTranslate.bLabel("username"), 0, 3, formLayout);
-        usernameEntry = new BTextField(parameters.getUserName(), 15);
+        usernameEntry = new BTextField(SPMParameters.getUserName(), 15);
         fm.add(usernameEntry, 1, 3, formLayout);
 
         fm.add(passwordLabel = SPMTranslate.bLabel("password"), 0, 4, formLayout);
-        passwordEntry = new BPasswordField(parameters.getPassword(), 15);
+        passwordEntry = new BPasswordField(SPMParameters.getPassword(), 15);
         fm.add(passwordEntry, 1, 4, formLayout);
 
         cc.add(fm, rcLayout);
@@ -243,7 +243,7 @@ public class SPMSetupFrame extends BDialog {
         SPMParameters.setUserName(usernameEntry.getText());
         parameters.setProxyParameters(useProxyCB.getState(), proxyHostEntry.getText(), proxyPortEntry.getText(), usernameEntry.getText(), passwordEntry.getText());
 
-        Map<String, String> filters = parameters.getFilters();
+        Map<String, String> filters = SPMParameters.getFilters();
         filters.clear();
         RowContainer line;
         BComboBox sel;
