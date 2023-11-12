@@ -385,10 +385,7 @@ public class JointEditorDialog extends BDialog {
         @Override
         public void setEnabled(boolean enabled) {
             super.setEnabled(enabled);
-            Iterator<Widget> child = getChildren().iterator();
-            while (child.hasNext()) {
-                child.next().setEnabled(enabled);
-            }
+            getChildren().forEach(widget -> widget.setEnabled(enabled));
         }
 
         /**

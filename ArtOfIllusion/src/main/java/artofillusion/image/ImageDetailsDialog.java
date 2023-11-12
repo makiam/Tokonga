@@ -342,10 +342,7 @@ public class ImageDetailsDialog extends BDialog {
     private void addAsListener(Widget w) {
         w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
         if (w instanceof WidgetContainer) {
-            Iterator<Widget> iter = ((WidgetContainer) w).getChildren().iterator();
-            while (iter.hasNext()) {
-                addAsListener(iter.next());
-            }
+            ((WidgetContainer) w).getChildren().forEach(widget -> addAsListener(widget));
         }
     }
 
@@ -355,10 +352,7 @@ public class ImageDetailsDialog extends BDialog {
     private void removeAsListener(Widget w) {
         w.removeEventLink(KeyPressedEvent.class, this);
         if (w instanceof WidgetContainer) {
-            Iterator<Widget> iter = ((WidgetContainer) w).getChildren().iterator();
-            while (iter.hasNext()) {
-                removeAsListener(iter.next());
-            }
+            ((WidgetContainer) w).getChildren().forEach(widget -> removeAsListener(widget));
         }
     }
 
@@ -482,10 +476,7 @@ public class ImageDetailsDialog extends BDialog {
         private void addAsListener(Widget w) {
             w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
             if (w instanceof WidgetContainer) {
-                Iterator<Widget> iter = ((WidgetContainer) w).getChildren().iterator();
-                while (iter.hasNext()) {
-                    addAsListener(iter.next());
-                }
+                ((WidgetContainer) w).getChildren().forEach(widget -> addAsListener(widget));
             }
         }
 
@@ -495,10 +486,7 @@ public class ImageDetailsDialog extends BDialog {
         private void removeAsListener(Widget w) {
             w.removeEventLink(KeyPressedEvent.class, this);
             if (w instanceof WidgetContainer) {
-                Iterator<Widget> iter = ((WidgetContainer) w).getChildren().iterator();
-                while (iter.hasNext()) {
-                    removeAsListener(iter.next());
-                }
+                ((WidgetContainer) w).getChildren().forEach(widget -> removeAsListener(widget));
             }
         }
     }
