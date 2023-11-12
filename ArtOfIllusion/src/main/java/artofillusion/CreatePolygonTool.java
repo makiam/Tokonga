@@ -106,7 +106,7 @@ public class CreatePolygonTool extends EditingTool {
             Point dragPoint = e.getPoint();
             if (Math.abs(dragPoint.x - clickPoint.x) + Math.abs(dragPoint.y - clickPoint.y) > 3) {
                 dragging = true;
-                Scene theScene = ((LayoutWindow) theWindow).getScene();
+                Scene theScene =  theWindow.getScene();
                 Object3D object = createObject();
                 objInfo = new ObjectInfo(object, new CoordinateSystem(), "Polygon " + (counter++));
                 objInfo.addTrack(new PositionTrack(objInfo), 0);

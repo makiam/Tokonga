@@ -37,23 +37,16 @@ public class RotateViewTool extends EditingTool {
     private Vec3 rotationCenter;
     private double angle;
     private double distToRot;
-    private double xAngle;
-    private double yAngle;
     private double fwMax;
     private double fwMin;
     private Camera camera;
     private int selectedNavigation;
 
-    private Point viewCenter, p0, p1;
+    private Point viewCenter;
 
     public RotateViewTool(EditingWindow fr) {
         super(fr);
         initButton("rotateView");
-    }
-
-    @Override
-    public boolean hilightSelection() {
-        return true;
     }
 
     @Override
@@ -395,9 +388,10 @@ public class RotateViewTool extends EditingTool {
     }
 
     private void tilt(WidgetMouseEvent e, ViewerCanvas view, Point clickPoint) {
-        int d = Math.min(view.getBounds().width, view.getBounds().height);
-        int cx = view.getBounds().width / 2;
-        int cy = view.getBounds().height / 2;
+        var vb = view.getBounds();
+
+        int cx = vb.width / 2;
+        int cy = vb.height / 2;
         viewCenter = new Point(cx, cy);
 
         double aClick = Math.atan2(clickPoint.y - cy, clickPoint.x - cx);
