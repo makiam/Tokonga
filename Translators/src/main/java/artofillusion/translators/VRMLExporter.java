@@ -616,13 +616,10 @@ public class VRMLExporter {
      * @param replace - the list of chars to replace matched chars with.
      *
      * @return the translated String
-     *
      * Examples:
      * match = "({[+=-"
      * replace = ")}]"
-     *
      * will convert ( to ); { to }; [ to ]; delete all +=- and copy all else
-     *
      * match = 'A'
      * replace = ''
      * copy all but A

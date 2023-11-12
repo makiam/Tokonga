@@ -39,11 +39,21 @@ public abstract class ViewerCanvas extends CustomWidget {
 
     protected Camera theCamera;
     protected ObjectInfo boundCamera;
+    /**
+     * -- GETTER --
+     *  Get the currently selected tool.
+     */
+    @Getter
     protected EditingTool currentTool, activeTool, metaTool, altTool;
     protected ScrollViewTool scrollTool;
     protected PopupMenuManager popupManager;
     @Getter
-    protected int renderMode, gridSubdivisions, orientation, navigation, scrollBuffer;
+    @Getter
+    protected int renderMode, gridSubdivisions, /**
+     * -- GETTER --
+     *  Get the current orientation mode.
+     */
+            orientation, navigation, scrollBuffer;
     /**
      * -- GETTER --
      *  Get the grid spacing.
@@ -221,12 +231,7 @@ public abstract class ViewerCanvas extends CustomWidget {
 
     private void processMouseDragged(final WidgetMouseEvent ev) {
         if (mouseProcessor != null) {
-            mouseProcessor.addEvent(new Runnable() {
-                @Override
-                public void run() {
-                    mouseDragged(ev);
-                }
-            });
+            mouseProcessor.addEvent(() -> mouseDragged(ev));
         }
     }
 
@@ -235,12 +240,7 @@ public abstract class ViewerCanvas extends CustomWidget {
             mouseProcessor.stopProcessing();
         }
         mouseProcessor = new ActionProcessor();
-        mouseProcessor.addEvent(new Runnable() {
-            @Override
-            public void run() {
-                mouseMoved(ev);
-            }
-        });
+        mouseProcessor.addEvent(() -> mouseMoved(ev));
     }
 
     private void processMouseReleased(WidgetMouseEvent ev) {
@@ -271,12 +271,7 @@ public abstract class ViewerCanvas extends CustomWidget {
         }
         final ViewerCanvas viewToProcess = this;
         final MouseScrolledEvent scrollEvent = e;
-        mouseProcessor.addEvent(new Runnable() {
-            @Override
-            public void run() {
-                scrollTool.mouseScrolled(scrollEvent, viewToProcess);
-            }
-        });
+        mouseProcessor.addEvent(() -> scrollTool.mouseScrolled(scrollEvent, viewToProcess));
     }
 
     /**
@@ -357,13 +352,6 @@ public abstract class ViewerCanvas extends CustomWidget {
     public void setTool(EditingTool tool) {
         currentTool = tool;
         repaint();
-    }
-
-    /**
-     * Get the currently selected tool.
-     */
-    public EditingTool getCurrentTool() {
-        return currentTool;
     }
 
     /**
@@ -594,7 +582,6 @@ public abstract class ViewerCanvas extends CustomWidget {
 
     /**
      * This method will be called if {@link #getRotationCenter()} returns null.
-     *
      * It should be made sure that the rotation center is always known and never null, but if
      * null is returned this recreates it and returns the new value
      */
@@ -1363,13 +1350,6 @@ public abstract class ViewerCanvas extends CustomWidget {
         v = theCamera.convertScreenToWorld(pos, theCamera.getDistToScreen());
         v2 = theCamera.getWorldToScreen().timesXY(v);
         e.translatePoint((int) v2.x - pos.x, (int) v2.y - pos.y);
-    }
-
-    /**
-     * Get the current orientation mode.
-     */
-    public int getOrientation() {
-        return orientation;
     }
 
     /**

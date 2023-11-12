@@ -330,9 +330,7 @@ public class IconGenerator {
 
     /**
      * copy an image.
-     *
      * The result will be the same as the original, in both content and size.
-     *
      * @see #copy(Image, int, int, float)
      */
     public static BufferedImage copy(Image orig) {
@@ -1063,9 +1061,8 @@ public class IconGenerator {
         int[] pix1 = new int[width];
         int[] pix2 = new int[width];
 
-        int i, j, p, pa, a, r, g, b;
+        int i, j, pa, a;
 
-        float transy = 1.0f;
         float transx;
         float atten = 0.8f;
         float alpha;
@@ -1369,8 +1366,8 @@ public class IconGenerator {
 
             Color color;
 
-            int i, count, arglen, cut;
-            int x, y, w, h;
+            int i, arglen;
+
             int valid = 0, validop;
 
             char c;
@@ -1869,9 +1866,6 @@ public class IconGenerator {
                 int igreen = (int) green;
                 int iblue = (int) blue;
 
-                int p, a, r, g, b;
-                int[] pix = new int[w];
-                int i, j;
 
                 // if we are editing in place, create a clipping rectangle
                 Rectangle clip = (rhs == lhs ? new Rectangle(x, y, w, h) : null);
@@ -2226,8 +2220,8 @@ public class IconGenerator {
 
                 byte opval;
                 char listDelim = delims[ARG_DELIMS].charAt(ARG_LIST);
-                int pos1 = start, pos2, len;
-                int index = 0, max = 0;
+                int pos1 = start, pos2;
+                int index = 0;
 
                 for (int i = 0; pos1 < end; i++) {
 

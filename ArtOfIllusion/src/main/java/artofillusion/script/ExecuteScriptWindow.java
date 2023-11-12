@@ -124,13 +124,13 @@ public class ExecuteScriptWindow extends BFrame {
 
         tools.add(buttons, BorderContainer.WEST, new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE));
 
-        // another center row for the "execute selected" and verious debugging items
+        // another center row for the "execute selected" and various debugging items
         RowContainer debugTools = new RowContainer();
         debugTools.add(Translate.button("executeScript", this, "executeScript"));
         BButton executeToCursor;
         debugTools.add(executeToCursor = Translate.button("executeToCursor", this, "executeToCursor"));
-        BButton executeSelected;
-        debugTools.add(executeSelected = Translate.button("executeSelected", this, "executeSelected"));
+
+        debugTools.add(Translate.button("executeSelected", this, "executeSelected"));
 
         tools.add(debugTools, BorderContainer.CENTER, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE));
 

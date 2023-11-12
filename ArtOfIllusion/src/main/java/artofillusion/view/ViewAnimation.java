@@ -22,12 +22,9 @@ import java.awt.event.*;
  * ViewAnimation is the animation engine, that is used to produce eg. smooth switching between
  * view orientations. It sets the animation to happen within a maximum duration so that shorter
  * transitions happen at slower speed than larger ones, but still take less time to perform.
- *
  * ViewAnimation checks from user preferences if the user wants to use animations or not.
- *
  * The coalesce setting should take care, that even with heavier scenes on slower hardware the
  * animation does not consume more time than the setting allows. It just uses fewer frames.
- *
  * ViewAnimation also takes care of sending a ViewChanged event and repainting the
  * view after the animation is done, so the calling method won't have to.
  */
@@ -435,10 +432,7 @@ public class ViewAnimation {
         if (startScale != endScale) {
             return false;
         }
-        if (view.getOrientation() != endOrientation) {
-            return false;
-        }
-        return true;
+        return view.getOrientation() == endOrientation;
     }
 
     /* Check how the user has configured the animation engine  */

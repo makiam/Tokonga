@@ -41,12 +41,9 @@ public class DefaultToolButton extends ToolButton {
      * specified by the <i>image</i>, by applying the correct style to the
      * image to generate theme-consistent <i>normal</i> and <i>selected</i>
      * icons.
-     *
      * This constructor is the preferred, as it ensures the greatest consistency
      * of all icons with the theme.
-     *
      * @param owner the owning object for this button
-     *
      * @param image the image to use with the style to generate the normal and
      * selected icons for this button.
      */

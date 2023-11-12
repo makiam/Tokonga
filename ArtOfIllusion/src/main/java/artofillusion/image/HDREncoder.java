@@ -68,7 +68,7 @@ public class HDREncoder {
     public static void writeImage(HDRImage img, OutputStream out) throws IOException {
         int rows = img.getHeight(), cols = img.getWidth();
         byte[][] bytes = img.getBytes();
-        RGBColor color = new RGBColor();
+
         PrintWriter pw = new PrintWriter(new OutputStreamWriter(out));
 
         pw.print("#?RADIANCE\n");

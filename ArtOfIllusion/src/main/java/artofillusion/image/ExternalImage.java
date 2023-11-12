@@ -18,18 +18,28 @@ import java.awt.image.*;
 import java.io.*;
 import java.util.Date;
 import javax.imageio.*;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ExternalImage extends ImageMap {
 
     private String imageType;
+    @Getter
     private ImageMap imageMap;
     private int w, h;
     private String type, lastAbsolutePath, lastRelativePath;
     private File imageFile;
     private Image brokenImage;
-    private boolean connected, nameAutomatic = true;
+    // Connected is true if the last load from file was succesful
+    @Getter
+    @Getter
+    private boolean connected, /**
+     * -- GETTER --
+     *  Check if the image name is updated automatically.
+     */
+            nameAutomatic = true;
 
     /**
      * Create an external image out of a image file
@@ -152,13 +162,6 @@ public class ExternalImage extends ImageMap {
     }
 
     /**
-     * Check if the image name is updated automatically.
-     */
-    public boolean isNameAutomatic() {
-        return nameAutomatic;
-    }
-
-    /**
      * Set if the image name is updated automatically.
      */
     public void setNameAutomatic(boolean automatic) {
@@ -169,11 +172,7 @@ public class ExternalImage extends ImageMap {
      * Load an image file to create, refresh or reconnect an external image
      */
     private void loadExternalImage(File file) throws Exception {
-        try {
-            imageMap = loadImage(file);
-        } catch (Exception e) {
-            throw e;
-        }
+        imageMap = loadImage(file);
     }
 
     private void setTemporaryImage() {
@@ -299,15 +298,6 @@ public class ExternalImage extends ImageMap {
             setTemporaryImage();
             throw e;
         }
-    }
-
-    public boolean isConnected() {
-        // Connected is true if the last load from file was succesful
-        return connected;
-    }
-
-    public ImageMap getImageMap() {
-        return imageMap;
     }
 
     /**
