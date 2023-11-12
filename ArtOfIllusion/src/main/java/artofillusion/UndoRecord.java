@@ -229,16 +229,16 @@ public class UndoRecord {
                 }
                 case SET_GROUP_CONTENTS: {
                     ObjectInfo group = (ObjectInfo) d[0];
-                    ObjectInfo[] oldobj = group.getChildren();
-                    ObjectInfo[] newobj = (ObjectInfo[]) d[1];
-                    redoRecord.addCommandAtBeginning(SET_GROUP_CONTENTS, group, oldobj);
-                    for (int j = 0; j < oldobj.length; j++) {
-                        oldobj[j].setParent(null);
+                    var oldObj = group.getChildren();
+                    var newObj = (ObjectInfo[]) d[1];
+                    redoRecord.addCommandAtBeginning(SET_GROUP_CONTENTS, group, oldObj);
+                    for (int j = 0; j < oldObj.length; j++) {
+                        oldObj[j].setParent(null);
                     }
-                    for (int j = 0; j < newobj.length; j++) {
-                        newobj[j].setParent(group);
+                    for (int j = 0; j < newObj.length; j++) {
+                        newObj[j].setParent(group);
                     }
-                    group.children = newobj;
+                    group.children = newObj;
                     break;
                 }
                 case SET_TRACK: {

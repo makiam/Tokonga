@@ -21,10 +21,10 @@ import Jama.*;
 public class SVD {
 
     /**
-     * Solve a set of M linear equations in N unknows. The parameters are:
+     * Solve a set of M linear equations in N unknowns. The parameters are:
      *
      * a: an array of size [M][N] containing the matrix of coefficients.
-     * b: an array of length max(M,N) containing the right hand side vector in its first M
+     * b: an array of length max(M,N) containing the right-hand side vector in its first M
      * elements. On exit, the first N elements are overwritten with the solution vector.
      * tol: any singular values smaller than tol*(largest singular value) are set to 0.
      * If tol is omitted, it defaults to 1.0e-8.

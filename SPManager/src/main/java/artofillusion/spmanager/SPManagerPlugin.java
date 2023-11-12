@@ -220,9 +220,9 @@ public class SPManagerPlugin implements Plugin {
 
                         JScrollPane detail = new JScrollPane(txt, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-                        JLabel messg = new JLabel(Translate.text("loadError"));
+                        var messageLabel = new JLabel(Translate.text("loadError"));
 
-                        MessageDialog.create().withTitle("SPManager initialise").error(new JComponent[]{messg, detail});
+                        MessageDialog.create().withTitle("SPManager initialise").error(new JComponent[]{messageLabel, detail});
                     }
                 } else {
                     log.error("SPManager: could not find plugin dir: {}", PLUGIN_DIRECTORY);

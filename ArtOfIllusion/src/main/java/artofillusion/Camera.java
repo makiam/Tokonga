@@ -59,13 +59,13 @@ public class Camera implements Cloneable {
     /**
      * Set the distance from the 'camera lens' to the 'camera screen'.
      *
-     * The distToScreen parameter controls the perpective strength. 'Screen' should be understood
-     * to repserent the screen of a camera obscura, when the view is in perspective mode.
+     * The distToScreen parameter controls the perspective strength. 'Screen' should be understood
+     * to represent the screen of a camera obscura, when the view is in perspective mode.
      * A smaller value means stronger perspective and vice versa. In parallel mode this
      * parameter has no meaning.
      *
-     * It is also used to track mouse moves from computer screen to scene. Hence the moves need to
-     * be corrected to match the desired distance to draving plane:
+     * It is also used to track mouse moves from computer screen to scene. Hence, the moves need to
+     * be corrected to match the desired distance to drawing plane:
      * <pre>
      *   Vec2 mouseMove;
      *   Vec3 sceneMove;

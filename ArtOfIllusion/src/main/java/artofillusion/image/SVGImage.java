@@ -124,7 +124,7 @@ public class SVGImage extends ImageMap {
                     BufferedImage image = createImage(x, y, scale);
                     tile = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
                 } catch (SVGException ex) {
-                    log.atError().setCause(ex).log("Errror creating SVG image: {}", ex.getMessage());
+                    log.atError().setCause(ex).log("Error creating SVG image: {}", ex.getMessage());
                     tile = new int[TILE_SIZE * TILE_SIZE];
                 }
                 tiles.put(key.clone(), new SoftReference<>(tile));

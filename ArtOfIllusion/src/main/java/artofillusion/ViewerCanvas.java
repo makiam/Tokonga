@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
-   Changes Copyrignt (C) 2016-2020 Petri Ihalainen
+   Changes copyright (C) 2016-2020 Petri Ihalainen
    Changes copyright (C) 2016-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -441,7 +441,7 @@ public abstract class ViewerCanvas extends CustomWidget {
     /**
      * This is needed when animated perspective change parallel to perspective begins.
      * The scale and perspective parameters can not be accessed directly form the
-     * animation engine and they take immediade effect on the camera.
+     * animation engine, and they take immediate effect on the camera.
      */
     public void preparePerspectiveAnimation() {
         scale = 100.0;

@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 
 /**
- * An unfolded mesh is a 2D triangle mesh that represents a piece of a facetted
+ * An unfolded mesh is a 2D triangle mesh that represents a piece of a faceted
  * mesh which has been unfolded. Heavily derived from triangle mesh class.
  *
  * @author Francois Guillet

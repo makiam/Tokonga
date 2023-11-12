@@ -56,7 +56,7 @@ public class ArraySpec {
     private ObjectInfo arrayRoot;
 
     // --- public data
-    // general paramters
+    // general parameters
     /**
      * Set to METHOD_LINEAR to create a liniar array.
      * Set to METHOD_CURVE to create an array along a curve.
@@ -85,15 +85,15 @@ public class ArraySpec {
      */
     public double stepZ;
     /**
-     * when set, stepX is multiplied by the objects boundingbox x size
+     * when set, stepX is multiplied by the objects bounding box x size
      */
     public boolean intervalX;
     /**
-     * when set, stepY is multiplied by the objects boundingbox y size
+     * when set, stepY is multiplied by the objects bounding box y size
      */
     public boolean intervalY;
     /**
-     * when set, stepZ is multiplied by the objects boundingbox z size
+     * when set, stepZ is multiplied by the objects bounding box z size
      */
     public boolean intervalZ;
 
@@ -284,7 +284,7 @@ public class ArraySpec {
     }
 
     /**
-     * create an array of objects tranlated along a curve
+     * create an array of objects translated along a curve
      */
     private void createCurveArray() {
         if (method != METHOD_CURVE) {
@@ -532,8 +532,8 @@ public class ArraySpec {
     }
 
     /**
-     * determines the coordinatesystem that specifies position and
-     * orienation vectors at the point on the curve for which the distance to
+     * determines the coordinate system that specifies position and
+     * orientation vectors at the point on the curve for which the distance to
      * the first point is given by relativePosition
      */
     private CoordinateSystem findCoordinateSystem(Vec3[] subdiv, boolean isClosed, double relativePosition, Vec3[] zdirs, Vec3[] updirs) {

@@ -37,7 +37,7 @@ import buoy.widget.*;
  * <p>
  * 3. They define the local tesselation error for a face as being proportional to its angle
  * of rotation. I replace the angle by 1-cos(angle). This has the same effect, and saves
- * the need to evalate an acos.
+ * the need to evaluate an acos.
  * <p>
  * 4. Rather than always simplifying the entire mesh, I allow the user to select only a
  * subset of the mesh to be simplified.

@@ -158,7 +158,7 @@ public class SPManagerUtils {
      *
      * The string is parsed from the first (zeroeth) char up to the first
      * char which is not valid in a double representation
-     * (ie digit, '.', 'e', 'E', '+', or '-').
+     * (i.e., digit, '.', 'e', 'E', '+', or '-').
      */
     public static double parseDouble(String val) throws NumberFormatException {
         if (val == null || val.length() == 0) {

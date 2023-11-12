@@ -24,9 +24,9 @@ public class TrackTreeElement extends TreeElement {
         this.parent = parent;
         this.tree = tree;
         children = new Vector<>();
-        Track[] subtracks = tr.getSubtracks();
-        for (int i = 0; i < subtracks.length; i++) {
-            children.add(new TrackTreeElement(subtracks[i], this, tree));
+        var subTracks = tr.getSubtracks();
+        for (int i = 0; i < subTracks.length; i++) {
+            children.add(new TrackTreeElement(subTracks[i], this, tree));
         }
     }
 

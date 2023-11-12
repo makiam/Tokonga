@@ -301,27 +301,27 @@ public class ToolPalette extends CustomWidget {
      */
     public void keyPressed(KeyPressedEvent ev) {
         int code = ev.getKeyCode();
-        int newtool;
+        int newTool;
 
         if (code == KeyPressedEvent.VK_LEFT) {
-            newtool = selected - 1;
+            newTool = selected - 1;
         } else if (code == KeyPressedEvent.VK_RIGHT) {
-            newtool = selected + 1;
+            newTool = selected + 1;
         } else if (code == KeyPressedEvent.VK_UP) {
-            newtool = selected - width;
+            newTool = selected - width;
         } else if (code == KeyPressedEvent.VK_DOWN) {
-            newtool = selected + width;
+            newTool = selected + width;
         } else {
             return;
         }
-        if (newtool < 0) {
-            newtool += numTools;
+        if (newTool < 0) {
+            newTool += numTools;
         }
-        if (newtool >= numTools) {
-            newtool -= numTools;
+        if (newTool >= numTools) {
+            newTool -= numTools;
         }
         tool[selected].deactivate();
-        selected = lastSelected = newtool;
+        selected = lastSelected = newTool;
         repaint();
         tool[selected].activate();
     }

@@ -1,4 +1,5 @@
 /* Copyright (C) 2016 - 2017 by Petri Ihalainen
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -93,9 +94,9 @@ public class TriangleMath {
         double[] bary = new double[3];
         Vec3 triCross = triangleCross(A, B, C);
         double tcl = triCross.length();
-        bary[0] = triangleCross(p, B, C).dot(triCross) / tcl / 6.0; // w -- weigth for A
-        bary[1] = triangleCross(p, C, A).dot(triCross) / tcl / 6.0; // v -- weigth for B
-        bary[2] = triangleCross(p, A, B).dot(triCross) / tcl / 6.0; // u -- weigth for C
+        bary[0] = triangleCross(p, B, C).dot(triCross) / tcl / 6.0; // w -- weight for A
+        bary[1] = triangleCross(p, C, A).dot(triCross) / tcl / 6.0; // v -- weight for B
+        bary[2] = triangleCross(p, A, B).dot(triCross) / tcl / 6.0; // u -- weight for C
         return bary;
     }
 
