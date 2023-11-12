@@ -198,8 +198,8 @@ public class ImageDetailsDialog extends BDialog {
         createBackground();
         paintImage();
         setDataTexts();
-        // The path to the referenced image does not change, so the parent is not set modefied
-        // whether referesh fails or not.
+        // The path to the referenced image does not change, so the parent is not set modified
+        // whether refresh fails or not.
     }
 
     private void reconnectImage() {

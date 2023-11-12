@@ -1,5 +1,5 @@
 /* Copyright (C) 2017 by Petri Ihalainen
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -67,7 +67,7 @@ public class ExternalImage extends ImageMap {
         }
     }
 
-    // To be developed to a Thememanager thing
+    // To be developed to a Theme manager thing
     private Image loadIcon(String iconName) {
         try {
             return ImageIO.read(ExternalImage.class.getResource("/artofillusion/image/icons/" + iconName));
@@ -177,15 +177,15 @@ public class ExternalImage extends ImageMap {
     }
 
     private void setTemporaryImage() {
-        // This indicates, that also the temporary image has been created and set.
-        // The 'brokenImage' must be set null, when an image is succesfully loaded.
+        // This indicates that also the temporary image has been created and set.
+        // The 'brokenImage' must be set null, when an image is successfully loaded.
 
         if (brokenImage != null) {
             return;
         }
 
         try {
-            // This shoud not be possible
+            // This should not be possible
             if (w <= 0 || h <= 0) {
                 w = h = 256;
             }

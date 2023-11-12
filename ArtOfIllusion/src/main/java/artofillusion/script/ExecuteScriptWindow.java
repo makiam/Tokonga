@@ -168,8 +168,8 @@ public class ExecuteScriptWindow extends BFrame {
         }
     }
 
-    private void updateEditableStatus(String previousScriptAbsoluePath, String scriptAbsolutePath) {
-        if (!previousScriptAbsoluePath.equals(scriptAbsolutePath)) {
+    private void updateEditableStatus(String previousScriptAbsolutePath, String scriptAbsolutePath) {
+        if (!previousScriptAbsolutePath.equals(scriptAbsolutePath)) {
             boolean isOpen = openedScripts.contains(scriptAbsolutePath);
             scriptWidget.getContent().setEditable(!isOpen);
             scriptWidget.getContent().setEnabled(!isOpen);
@@ -180,7 +180,7 @@ public class ExecuteScriptWindow extends BFrame {
                             "This window is read-only : this script is open in other window(s) " + scriptAbsolutePath},
                         BStandardDialog.ERROR).showMessageDialog(this);
             }
-            openedScripts.remove(previousScriptAbsoluePath);
+            openedScripts.remove(previousScriptAbsolutePath);
             openedScripts.add(scriptAbsolutePath);
         }
     }
@@ -265,7 +265,7 @@ public class ExecuteScriptWindow extends BFrame {
             }
         }
         setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        // Restore program working directory for other filechoosers
+        // Restore program working directory for other file-choosers
         chooser.setCurrentDirectory(workingDir);
     }
 

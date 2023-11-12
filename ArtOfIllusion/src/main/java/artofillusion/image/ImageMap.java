@@ -17,6 +17,8 @@ import artofillusion.math.*;
 import java.awt.*;
 import java.io.*;
 import java.util.Date;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -30,11 +32,41 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class ImageMap {
 
     protected String imageName = new String();
+    /**
+     * -- GETTER --
+     *  Get the username who created this image.
+     */
+    @Getter
     protected String userCreated = new String();
+    /**
+     * -- GETTER --
+     *  Get the creation date of this image.
+     */
+    @Getter
     protected Date dateCreated;
+    /**
+     * -- GETTER --
+     *  Get the timezone where this image was created.
+     */
+    @Getter
     protected String zoneCreated = new String();
+    /**
+     * -- GETTER --
+     *  Get the username who last edited this image.
+     */
+    @Getter
     protected String userEdited = new String();
+    /**
+     * -- GETTER --
+     *  Get the last editing date of this image.
+     */
+    @Getter
     protected Date dateEdited;
+    /**
+     * -- GETTER --
+     *  Get the timezone where this image was last edited.
+     */
+    @Getter
     protected String zoneEdited = new String();
 
     /**
@@ -142,17 +174,17 @@ public abstract class ImageMap {
     public abstract void getGradient(Vec2 grad, int component, boolean wrapx, boolean wrapy, double x, double y, double xsize, double ysize);
 
     /**
-     * Get a scaled down copy of the image, to use for previews.
+     * Get a scaled-down copy of the image, to use for previews.
      * <p>
      *
-     * If a preview image has been created already thst image will be returned<br>.
-     * If there is no existing perview image a default size preview image will b returned.
+     * If a preview image has been created already that image will be returned<br>.
+     * If there is no existing preview image a default size preview image will be returned.
      * This Image will be no larger (but may be smaller) than PREVIEW_WIDTH by PREVIEW_HEIGHT.
      */
     public abstract Image getPreview();
 
     /**
-     * Get a scaled down copy of the image, to use for previews. This Image will be no larger
+     * Get a scaled-down copy of the image, to use for previews. This Image will be no larger
      * (but may be smaller) than 'size' by 'size'.
      */
     public abstract Image getPreview(int size);
@@ -187,48 +219,6 @@ public abstract class ImageMap {
         userEdited = System.getProperty("user.name");
         zoneEdited = System.getProperty("user.timezone");
         dateEdited = new Date();
-    }
-
-    /**
-     * Get the creation date of this image.
-     */
-    public Date getDateCreated() {
-        return dateCreated;
-    }
-
-    /**
-     * Get the timezone whre this image was created.
-     */
-    public String getZoneCreated() {
-        return zoneCreated;
-    }
-
-    /**
-     * Get the username who created this image.
-     */
-    public String getUserCreated() {
-        return userCreated;
-    }
-
-    /**
-     * Get the last editing date of this image.
-     */
-    public Date getDateEdited() {
-        return dateEdited;
-    }
-
-    /**
-     * Get the timezone where this image was last edited.
-     */
-    public String getZoneEdited() {
-        return zoneEdited;
-    }
-
-    /**
-     * Get the username who last edited this image.
-     */
-    public String getUserEdited() {
-        return userEdited;
     }
 
     /**

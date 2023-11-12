@@ -42,7 +42,7 @@ public class DefaultToolButton extends ToolButton {
      * image to generate theme-consistent <i>normal</i> and <i>selected</i>
      * icons.
      *
-     * This ctor is the preferred ctor, as it ensures the greatest consistency
+     * This constructor is the preferred, as it ensures the greatest consistency
      * of all icons with the theme.
      *
      * @param owner the owning object for this button
@@ -53,13 +53,13 @@ public class DefaultToolButton extends ToolButton {
     public DefaultToolButton(Object owner, ImageIcon image) {
         super(owner);
 
-        ThemeManager.ButtonStyle bstyle = ThemeManager.getButtonStyle(owner);
-        if (bstyle != null) {
+        ThemeManager.ButtonStyle style = ThemeManager.getButtonStyle(owner);
+        if (style != null) {
             try {
-                icon = applyStyle(bstyle, "normal", owner, image);
-                selectedIcon = applyStyle(bstyle, "selected", owner, image);
+                icon = applyStyle(style, "normal", owner, image);
+                selectedIcon = applyStyle(style, "selected", owner, image);
             } catch (Exception ex) {
-                log.atError().setCause(ex).log("Applyingg style failed: {}", ex.getMessage());
+                log.atError().setCause(ex).log("Applying style failed: {}", ex.getMessage());
             }
         }
 
@@ -89,7 +89,7 @@ public class DefaultToolButton extends ToolButton {
      *
      * <b><em>No</em></b> style is applied - the icons are used as-is.
      *
-     * This is the least-preferred ctor, since it applies no consistency
+     * This is the least-preferred constructor, since it applies no consistency
      * at all, and relies on the icon creator to have made the icons
      * consistent. This normally works well for icons that are part of the
      * theme, but usually works very poorly for icons associated with plugins.

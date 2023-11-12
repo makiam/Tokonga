@@ -413,7 +413,7 @@ public abstract class ViewerCanvas extends CustomWidget {
      *
      * For animated perspective changes the view has to be in perspective during the animation and
      * the perspective-parameter is turned false at finishAnimation() if needed. The perspectiveSwitch-
-     * parameter tells the users last perspehtive selection during animation.
+     * parameter tells the users last perspective selection during animation.
      */
     public void setPerspective(boolean nextPerspective) {
         // Can't not go parallel in travel modes

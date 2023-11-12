@@ -44,7 +44,7 @@ public class ExtrudeTool implements ModellingTool {
                 return;
             }
         }
-        new BStandardDialog("", UIUtilities.breakString(Translate.text("Tools:extrude.tool.messsage")), BStandardDialog.INFORMATION).showMessageDialog(window.getFrame());
+        new BStandardDialog("", UIUtilities.breakString(Translate.text("Tools:extrude.tool.message")), BStandardDialog.INFORMATION).showMessageDialog(window.getFrame());
     }
 
     /**

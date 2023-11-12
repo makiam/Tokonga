@@ -661,7 +661,7 @@ public class VRMLExporter {
      * So if 'match' is empty, and 'replace' is non-empty, then 'replace'
      * specifies chars to be copied, and everything else is deleted.
      *
-     * If 'match' and 'replace' are idenical non-null strings, then the effect
+     * If 'match' and 'replace' are identical non-null strings, then the effect
      * is to copy everything, without change.
      * (each char in 'match' is translated to itself, and all others are
      * copied).

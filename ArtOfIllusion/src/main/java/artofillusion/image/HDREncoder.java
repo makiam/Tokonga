@@ -1,5 +1,6 @@
 /* Copyright (C) 2003 by Peter Eastman
    Modifications copyright (C) 2017 by Petri Ihalainen
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -23,7 +24,7 @@ public class HDREncoder {
     /**
      * Write out the data for an image to a stream.
      * <p>
-     * This can be used to save a rendered image in HDR fromat.
+     * This can be used to save a rendered image in HDR format.
      */
     public static void writeImage(ComplexImage img, OutputStream out) throws IOException {
         int rows = img.getHeight(), cols = img.getWidth();

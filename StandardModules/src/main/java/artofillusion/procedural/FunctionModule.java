@@ -699,7 +699,7 @@ public class FunctionModule extends ProceduralModule {
             dispose();
         }
 
-        /* Respond to keypresses. */
+        /* Respond to key presses. */
         private void keyPressed(KeyPressedEvent ev) {
             if (ev.getKeyCode() == KeyPressedEvent.VK_ENTER) {
                 doOk();

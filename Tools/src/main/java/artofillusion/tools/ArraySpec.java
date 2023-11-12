@@ -67,7 +67,7 @@ public class ArraySpec {
      */
     public final List<ObjectInfo> objectList;         // list of objectInfo's
 
-    // linear paramters
+    // linear parameters
     /**
      * Number of copies to make for a linear array.
      */

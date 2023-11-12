@@ -1,5 +1,5 @@
 /* Copyright (C) 2016-2019 by Petri Ihalainen
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -19,7 +19,7 @@ import javax.swing.Timer;
 import java.awt.event.*;
 
 /**
- * ViewAnimation is the animation engine, that is used to produce eg. smooth swithcing between
+ * ViewAnimation is the animation engine, that is used to produce eg. smooth switching between
  * view orientations. It sets the animation to happen within a maximum duration so that shorter
  * transitions happen at slower speed than larger ones, but still take less time to perform.
  *

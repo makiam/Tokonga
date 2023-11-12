@@ -58,9 +58,9 @@ public class CSGTool implements ModellingTool {
             new BStandardDialog("", UIUtilities.breakString(Translate.text("Tools:csg.tool.message")), BStandardDialog.INFORMATION).showMessageDialog(window.getFrame());
             return;
         }
-        CSGObject newobj = new CSGObject(inputObj.get(0), inputObj.get(1), CSGObject.UNION);
-        Vec3 center = newobj.centerObjects();
-        CSGDialog dial = new CSGDialog(window, newobj);
+        var newObj = new CSGObject(inputObj.get(0), inputObj.get(1), CSGObject.UNION);
+        Vec3 center = newObj.centerObjects();
+        CSGDialog dial = new CSGDialog(window, newObj);
         if (!dial.clickedOk()) {
             return;
         }
@@ -70,7 +70,7 @@ public class CSGTool implements ModellingTool {
             inputObj.get(0).setVisible(false);
             inputObj.get(1).setVisible(false);
         }
-        ObjectInfo info = new ObjectInfo(newobj, new CoordinateSystem(center, Vec3.vz(), Vec3.vy()), "Boolean " + (counter++));
+        ObjectInfo info = new ObjectInfo(newObj, new CoordinateSystem(center, Vec3.vz(), Vec3.vy()), "Boolean " + (counter++));
         info.addTrack(new PositionTrack(info), 0);
         info.addTrack(new RotationTrack(info), 1);
         window.addObject(info, null);

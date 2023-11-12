@@ -1080,7 +1080,7 @@ public class IconGenerator {
 
         /*
          * to avoid problems with images that already contain transparent pixels,
-         * we only feather pixels *less* trasnparent. Pixels already *more* transparent
+         * we only feather pixels *less* transparent. Pixels already *more* transparent
          * are left unchanged.
          */
         for (i = y; i <= cy; i++) {

@@ -790,17 +790,17 @@ public class CSGModeller {
             if (startType == VERTEX) {
                 // Vertex-Edge-Edge.
 
-                int newindex = vert.size();
+                int newIndex = vert.size();
                 vert.add(new VertexInfo(endPos, 1.0f, endParams, BOUNDARY));
                 if (splitEdge == 1) {
-                    face.set(which, new FaceInfo(f.v1, newindex, f.v3, vert, startVert == v1 ? 0.0f : f.smoothness1, 1.0f, f.smoothness3, norm, distRoot));
-                    face.add(new FaceInfo(newindex, f.v2, f.v3, vert, startVert == v2 ? 0.0f : f.smoothness1, f.smoothness2, 1.0f, norm, distRoot));
+                    face.set(which, new FaceInfo(f.v1, newIndex, f.v3, vert, startVert == v1 ? 0.0f : f.smoothness1, 1.0f, f.smoothness3, norm, distRoot));
+                    face.add(new FaceInfo(newIndex, f.v2, f.v3, vert, startVert == v2 ? 0.0f : f.smoothness1, f.smoothness2, 1.0f, norm, distRoot));
                 } else if (splitEdge == 2) {
-                    face.set(which, new FaceInfo(f.v2, newindex, f.v1, vert, startVert == v2 ? 0.0f : f.smoothness2, 1.0f, f.smoothness1, norm, distRoot));
-                    face.add(new FaceInfo(newindex, f.v3, f.v1, vert, startVert == v3 ? 0.0f : f.smoothness2, f.smoothness3, 1.0f, norm, distRoot));
+                    face.set(which, new FaceInfo(f.v2, newIndex, f.v1, vert, startVert == v2 ? 0.0f : f.smoothness2, 1.0f, f.smoothness1, norm, distRoot));
+                    face.add(new FaceInfo(newIndex, f.v3, f.v1, vert, startVert == v3 ? 0.0f : f.smoothness2, f.smoothness3, 1.0f, norm, distRoot));
                 } else {
-                    face.set(which, new FaceInfo(f.v3, newindex, f.v2, vert, startVert == v3 ? 0.0f : f.smoothness3, 1.0f, f.smoothness2, norm, distRoot));
-                    face.add(new FaceInfo(newindex, f.v1, f.v2, vert, startVert == v1 ? 0.0f : f.smoothness3, f.smoothness1, 1.0f, norm, distRoot));
+                    face.set(which, new FaceInfo(f.v3, newIndex, f.v2, vert, startVert == v3 ? 0.0f : f.smoothness3, 1.0f, f.smoothness2, norm, distRoot));
+                    face.add(new FaceInfo(newIndex, f.v1, f.v2, vert, startVert == v1 ? 0.0f : f.smoothness3, f.smoothness1, 1.0f, norm, distRoot));
                 }
                 return;
             }
@@ -1426,7 +1426,7 @@ public class CSGModeller {
         }
     }
 
-    /* Given the three vertices of a face and a point incide that face, calculate
+    /* Given the three vertices of a face and a point inside that face, calculate
      the texture parameters for that point. */
     private double[] interpTextureParams(Vec3 pos, VertexInfo v1, VertexInfo v2, VertexInfo v3, FaceInfo f) {
         if (v1.param == null) {
