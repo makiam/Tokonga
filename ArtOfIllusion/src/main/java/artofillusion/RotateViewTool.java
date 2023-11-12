@@ -534,16 +534,16 @@ public class RotateViewTool extends EditingTool {
         if (theWindow != null && view.tilting && ArtOfIllusion.getPreferences().getShowTiltDial()) {
             double r = 0.45 * Math.min(view.getBounds().width, view.getBounds().height);
             for (int i = 0; i < 4; i++) {
-                view.drawLine(viewCenter, Math.PI / 2.0 * i + angle, 0.0, r, view.cueIdle);
+                view.drawLine(viewCenter, Math.PI / 2.0 * i + angle, 0.0, r, ViewerCanvas.cueIdle);
             }
-            view.drawLine(viewCenter, -Math.PI / 2.0, r, r * 1.1, view.red);
-            view.drawLine(viewCenter, Math.PI / 2.0, r, r * 1.1, view.red);
-            view.drawLine(viewCenter, Math.PI, r, r * 1.1, view.blue);
-            view.drawLine(viewCenter, 0.0, r, r * 1.1, view.blue);
+            view.drawLine(viewCenter, -Math.PI / 2.0, r, r * 1.1, ViewerCanvas.red);
+            view.drawLine(viewCenter, Math.PI / 2.0, r, r * 1.1, ViewerCanvas.red);
+            view.drawLine(viewCenter, Math.PI, r, r * 1.1, ViewerCanvas.blue);
+            view.drawLine(viewCenter, 0.0, r, r * 1.1, ViewerCanvas.blue);
             for (int i = 0; i < 24; i++) {
-                view.drawLine(viewCenter, Math.PI / 12.0 * i + angle, r * .95, r, view.cueActive);
+                view.drawLine(viewCenter, Math.PI / 12.0 * i + angle, r * .95, r, ViewerCanvas.cueActive);
             }
-            view.drawCircle(viewCenter, r, 48, view.cueActive);
+            view.drawCircle(viewCenter, r, 48, ViewerCanvas.cueActive);
         }
     }
 }

@@ -243,7 +243,7 @@ public class CreatePolygonTool extends EditingTool {
         if (view != workingView || !dragging) {
             return;
         }
-        view.drawShape(getDraggedShape(view), view.disabledColor);
+        view.drawShape(getDraggedShape(view), ViewerCanvas.disabledColor);
     }
 
     @Override
