@@ -32,14 +32,16 @@ public class ExternalImage extends ImageMap {
     private String type, lastAbsolutePath, lastRelativePath;
     private File imageFile;
     private Image brokenImage;
+    
     // Connected is true if the last load from file was succesful
     @Getter
-    @Getter
-    private boolean connected, /**
+    private boolean connected;
+    /**
      * -- GETTER --
      *  Check if the image name is updated automatically.
      */
-            nameAutomatic = true;
+    @Getter
+    private boolean nameAutomatic = true;
 
     /**
      * Create an external image out of a image file
