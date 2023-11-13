@@ -49,39 +49,63 @@ public abstract class ViewerCanvas extends CustomWidget {
      *  Get the currently selected tool.
      */
     @Getter
-    protected EditingTool currentTool, activeTool, metaTool, altTool;
+    protected EditingTool currentTool;
+    protected EditingTool activeTool, altTool;
+
+    protected EditingTool metaTool;
     protected ScrollViewTool scrollTool;
     protected PopupMenuManager popupManager;
-
     @Getter
-    protected int renderMode, gridSubdivisions, /**
+    protected int renderMode;
+    /**
      * -- GETTER --
      *  Get the current orientation mode.
      */
-            orientation, navigation, scrollBuffer;
+    @Getter
+    protected int orientation;
+    protected int gridSubdivisions, navigation, scrollBuffer;
     /**
      * -- GETTER --
      *  Get the grid spacing.
      */
     @Getter
-    protected double gridSpacing, /**
+    protected double gridSpacing;
+    protected double distToPlane;
+    /**
      * -- GETTER --
      *  Get the current scale factor for the view.
      */
-            scale, distToPlane, scrollRadius, scrollX, scrollY, scrollBlend, scrollBlendX, scrollBlendY;
     @Getter
-    protected boolean perspective, /**
+    protected double scale;
+    /**
      * -- GETTER --
      *  Check what the perspective was set to last
      */
-            perspectiveSwitch, hideBackfaces, showGrid, snapToGrid, drawFocus, showTemplate, showAxes;
+    @Getter
+    protected boolean perspectiveSwitch;
+    protected boolean perspective, hideBackfaces, showGrid, snapToGrid, drawFocus, showTemplate, showAxes;
     protected boolean lastModelPerspective;
     protected ActionProcessor mouseProcessor;
-    protected Image templateImage, renderedImage;
+    /**
+     * -- GETTER --
+     *  Get the template image.
+     */
+    @Getter
+    protected Image templateImage;
+    protected Image renderedImage;
     protected CanvasDrawer drawer;
     protected Dimension prefSize;
     protected Map<ViewerControl, Widget> controlMap;
+
+    /**
+     * -- GETTER --
+     *  Get the location around which the view should be rotated. This may be null, in which case the value
+     *  returned by
+     *  will be used instead.
+     */
+    @Getter
     protected Vec3 rotationCenter;
+
     protected ViewAnimation animation;
     protected ClickedPointFinder finder;
 
@@ -95,7 +119,13 @@ public abstract class ViewerCanvas extends CustomWidget {
     public int lastSetNavigation = 0; // To get the mode right during animation preview
     public boolean showViewCone = true;
 
+    /**
+     * -- GETTER --
+     *  Determine whether OpenGL rendering is available.
+     */
+    @Getter
     private static boolean openGLAvailable;
+
     private static final List<ViewerControl> controls = new ArrayList<>();
     private final CoordinateAxes coordinateAxes;
 
@@ -246,8 +276,8 @@ public abstract class ViewerCanvas extends CustomWidget {
     private void processMouseDragged(final WidgetMouseEvent ev) {
         if (mouseProcessor != null) {
             mouseProcessor.addEvent(() -> mouseDragged(ev));
+                }
         }
-    }
 
     private void processMouseMoved(final MouseMovedEvent ev) {
         if (mouseProcessor != null) {
@@ -255,7 +285,7 @@ public abstract class ViewerCanvas extends CustomWidget {
         }
         mouseProcessor = new ActionProcessor();
         mouseProcessor.addEvent(() -> mouseMoved(ev));
-    }
+            }
 
     private void processMouseReleased(WidgetMouseEvent ev) {
         if (mouseProcessor != null) {
@@ -286,7 +316,7 @@ public abstract class ViewerCanvas extends CustomWidget {
         final ViewerCanvas viewToProcess = this;
         final MouseScrolledEvent scrollEvent = e;
         mouseProcessor.addEvent(() -> scrollTool.mouseScrolled(scrollEvent, viewToProcess));
-    }
+            }
 
     /**
      * Subclasses should override this to handle events.
@@ -535,13 +565,6 @@ public abstract class ViewerCanvas extends CustomWidget {
     }
 
     /**
-     * Get the template image.
-     */
-    public Image getTemplateImage() {
-        return templateImage;
-    }
-
-    /**
      * Set the template image.
      */
     public void setTemplateImage(Image im) {
@@ -562,14 +585,6 @@ public abstract class ViewerCanvas extends CustomWidget {
             throw (new InterruptedException());
         }
         setTemplateImage(im);
-    }
-
-    /**
-     * Get the location around which the view should be rotated. This may be null, in which case the value
-     * returned by {@link #getDefaultRotationCenter()} will be used instead.
-     */
-    public Vec3 getRotationCenter() {
-        return rotationCenter;
     }
 
     /**
@@ -977,10 +992,10 @@ public abstract class ViewerCanvas extends CustomWidget {
 
     /**
      * Fit view to the given set of objects.<p>
-     * Each object is given the space of a sphere, that would just fits tt's bounding box.
+     * Each object is given the space of a sphere, that would just fits it's bounding box.
      */
     public void fitToObjects(Collection<ObjectInfo> objects) {
-        if (objects.size() == 0) {
+        if (objects.isEmpty()) {
             return;
         }
 
@@ -1574,13 +1589,6 @@ public abstract class ViewerCanvas extends CustomWidget {
     }
 
     /**
-     * Determine whether OpenGL rendering is available.
-     */
-    public static boolean isOpenGLAvailable() {
-        return openGLAvailable;
-    }
-
-    /**
      * Get the list of ViewerControls which will be added to each new ViewerCanvas.
      */
     public static List<ViewerControl> getViewerControls() {
@@ -1764,8 +1772,8 @@ public abstract class ViewerCanvas extends CustomWidget {
     }
 
     /*
-  * Blend between two colors.
-  * The 'blend' is the balance of the color in range 0.0 - 1.0 from color0 to color1
+     * Blend between two colors.
+     * The 'blend' is the balance of the color in range 0.0 - 1.0 from color0 to color1
      */
     private Color blendColor(Color color0, Color color1, double blend) {
         int R = (int) (color0.getRed() * (1.0 - blend) + color1.getRed() * blend);
@@ -1801,7 +1809,7 @@ public abstract class ViewerCanvas extends CustomWidget {
         @Getter
         private final Vec3[] corners = new Vec3[4];
 
-    private Vec3 viewingPoint3D;
+        private Vec3 viewingPoint3D;
         private Color CUEBACK, cueBack, eyeBright, eyeDim;
 
         private FrustumShape() {
