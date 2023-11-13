@@ -39,26 +39,20 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Apply editing functions to icon image(s).
- *
  * IconGenerator supports a number of basic image operations such as overlay,
  * blend, add, multiply, etc, and can apply these to the pixels of one or more
  * images.
- *
  * IconGenerator implements a basic macro processor, and the ability to execute
  * a macro in source (string) form, or to compile source and to execute the
  * compiled version.
- *
  * IconGenerator supports a default syntax for macros, but the symbols
  * mapped to each operation can be overridden by the caller.
- *
  * <br>
  * The editing macro consists of one of more <i>instructions</i>, each separated by a delimiter.
  * Each instruction can perform a single <i>operation</i> which can be modified in various ways.
  * Each operation and each of the modifiers are specified by an <i>operator</i>
  * each of which is specified by some token in the macro "language".
- *
  * All other words are either the pathname of an image or an object in the execution namespace.
- *
  * The operators and the tokens that specify them in the default language binding are:
  * <ul>
  * <li>COMPOSIT semicolon (;) - at the end of each <i>instruction</i>, the result of the instruction is
@@ -138,10 +132,10 @@ import lombok.extern.slf4j.Slf4j;
  *  from the 6th pixel from the edge into the centre.
  *
  *  "BackgroundIcon; {icon}; 0xa0804040 [-4, -4, ~3]"
- *  The image named BackgroundIcom overlaid with the {icon} image in the
+ *  The image named BackgroundIcon overlaid with the {icon} image in the
  *  namespace, overlaid with a a region of the specified colour
  *  (translucent red) which is 4 pixels smaller than the current image in both
- *  X and Y axes, and which has had the outer 3 pixels feathered to trasnparent.
+ *  X and Y axes, and which has had the outer 3 pixels feathered to tranparent.
  *
  * </pre>
  */
@@ -330,9 +324,7 @@ public class IconGenerator {
 
     /**
      * copy an image.
-     *
      * The result will be the same as the original, in both content and size.
-     *
      * @see #copy(Image, int, int, float)
      */
     public static BufferedImage copy(Image orig) {
@@ -553,7 +545,7 @@ public class IconGenerator {
         }
 
         int[] pix = new int[width];
-        int p, a, r, g, b;
+        int p, r, g, b;
         int max = height + y;
         // add to pixels
         for (int i = y; i < max; i++) {
@@ -606,7 +598,7 @@ public class IconGenerator {
         }
 
         int[] pix = new int[width];
-        int p, a, r, g, b;
+        int p, r, g, b;
         int max = height + y;
         for (int i = y; i < max; i++) {
             pix = image.getRGB(x, i, width, 1, pix, 0, width);
@@ -1039,7 +1031,6 @@ public class IconGenerator {
      * and specifies values other than
      * (0, 0, image.width, image.height), then the feathering is
      * performed relative to the edges of this rectangle.
-     *
      * This is useful if the feathered image is going to be overlaid
      * on some other image using an identical clip region.
      */
@@ -1063,9 +1054,8 @@ public class IconGenerator {
         int[] pix1 = new int[width];
         int[] pix2 = new int[width];
 
-        int i, j, p, pa, a, r, g, b;
+        int i, j, pa, a;
 
-        float transy = 1.0f;
         float transx;
         float atten = 0.8f;
         float alpha;
@@ -1080,9 +1070,10 @@ public class IconGenerator {
 
         /*
          * to avoid problems with images that already contain transparent pixels,
-         * we only feather pixels *less* trasnparent. Pixels already *more* transparent
+         * we only feather pixels *less* transparent. Pixels already *more* transparent
          * are left unchanged.
          */
+        float transy = 1.0f;
         for (i = y; i <= cy; i++) {
             if (dir == FEATHER_OUT_DIR) {
 
@@ -1369,8 +1360,8 @@ public class IconGenerator {
 
             Color color;
 
-            int i, count, arglen, cut;
-            int x, y, w, h;
+            int i, arglen;
+
             int valid = 0, validop;
 
             char c;
@@ -1863,15 +1854,10 @@ public class IconGenerator {
             // apply a colour
             if (rhs != null && (alpha >= 0 || red >= 0 || green >= 0 || blue >= 0)) {
 
-                Graphics2D overlay;
-
                 int ired = (int) red;
                 int igreen = (int) green;
                 int iblue = (int) blue;
 
-                int p, a, r, g, b;
-                int[] pix = new int[w];
-                int i, j;
 
                 // if we are editing in place, create a clipping rectangle
                 Rectangle clip = (rhs == lhs ? new Rectangle(x, y, w, h) : null);
@@ -2226,8 +2212,8 @@ public class IconGenerator {
 
                 byte opval;
                 char listDelim = delims[ARG_DELIMS].charAt(ARG_LIST);
-                int pos1 = start, pos2, len;
-                int index = 0, max = 0;
+                int pos1 = start, pos2;
+                int index = 0;
 
                 for (int i = 0; pos1 < end; i++) {
 

@@ -1,5 +1,5 @@
 /* Copyright (C) 2016-2019 by Petri Ihalainen
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -19,15 +19,12 @@ import javax.swing.Timer;
 import java.awt.event.*;
 
 /**
- * ViewAnimation is the animation engine, that is used to produce eg. smooth swithcing between
+ * ViewAnimation is the animation engine, that is used to produce eg. smooth switching between
  * view orientations. It sets the animation to happen within a maximum duration so that shorter
  * transitions happen at slower speed than larger ones, but still take less time to perform.
- *
  * ViewAnimation checks from user preferences if the user wants to use animations or not.
- *
  * The coalesce setting should take care, that even with heavier scenes on slower hardware the
  * animation does not consume more time than the setting allows. It just uses fewer frames.
- *
  * ViewAnimation also takes care of sending a ViewChanged event and repainting the
  * view after the animation is done, so the calling method won't have to.
  */
@@ -77,7 +74,7 @@ public class ViewAnimation {
     }
 
     /**
-     * Check if the engine is working on an animation, that includes perspetive change
+     * Check if the engine is working on an animation, that includes perspective change
      */
     public boolean changingPerspective() {
         return changingPerspective;
@@ -107,8 +104,8 @@ public class ViewAnimation {
 
     /**
      * Start animation of perspective change.
-     * Camera position will not eventually chnage but the camera will travel
-     * from/to infinity to produce the perspectve change effect.
+     * Camera position will not eventually change, but the camera will travel
+     * from/to infinity to produce the perspective change effect.
      */
     public void start(boolean nextPerspective) {
         if (changingPerspective) {
@@ -216,7 +213,7 @@ public class ViewAnimation {
             return;
         }
 
-        // If an animationis redireceted, let's use the original starting point
+        // If an animations redirected, let's use the original starting point
         if (!animatingMove) {
             startCoords = camera.getCameraCoordinates().duplicate();
         }
@@ -435,10 +432,7 @@ public class ViewAnimation {
         if (startScale != endScale) {
             return false;
         }
-        if (view.getOrientation() != endOrientation) {
-            return false;
-        }
-        return true;
+        return view.getOrientation() == endOrientation;
     }
 
     /* Check how the user has configured the animation engine  */

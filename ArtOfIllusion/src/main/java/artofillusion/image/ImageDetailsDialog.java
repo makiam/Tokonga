@@ -13,13 +13,14 @@
 package artofillusion.image;
 
 import artofillusion.*;
+import artofillusion.texture.Texture;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
-import java.util.*;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.imageio.*;
@@ -54,7 +55,7 @@ public class ImageDetailsDialog extends BDialog {
 
         List<String> texturesUsing = scene.getTextures().stream().
                 filter(texture -> texture.usesImage(im)).
-                map(texture -> texture.getName()).
+                map(Texture::getName).
                 collect(Collectors.toList());
 
         ColumnContainer fields;
@@ -197,8 +198,8 @@ public class ImageDetailsDialog extends BDialog {
         createBackground();
         paintImage();
         setDataTexts();
-        // The path to the referenced image does not change, so the parent is not set modefied
-        // whether referesh fails or not.
+        // The path to the referenced image does not change, so the parent is not set modified
+        // whether refresh fails or not.
     }
 
     private void reconnectImage() {
@@ -342,10 +343,7 @@ public class ImageDetailsDialog extends BDialog {
     private void addAsListener(Widget w) {
         w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
         if (w instanceof WidgetContainer) {
-            Iterator<Widget> iter = ((WidgetContainer) w).getChildren().iterator();
-            while (iter.hasNext()) {
-                addAsListener(iter.next());
-            }
+            ((WidgetContainer) w).getChildren().forEach(this::addAsListener);
         }
     }
 
@@ -355,10 +353,7 @@ public class ImageDetailsDialog extends BDialog {
     private void removeAsListener(Widget w) {
         w.removeEventLink(KeyPressedEvent.class, this);
         if (w instanceof WidgetContainer) {
-            Iterator<Widget> iter = ((WidgetContainer) w).getChildren().iterator();
-            while (iter.hasNext()) {
-                removeAsListener(iter.next());
-            }
+            ((WidgetContainer) w).getChildren().forEach(this::removeAsListener);
         }
     }
 
@@ -409,16 +404,16 @@ public class ImageDetailsDialog extends BDialog {
             nameField.setColumns(50);
             nameField.addEventLink(ValueChangedEvent.class, this, "textChanged");
             content.add(buttons);
-            BButton okButton;
-            buttons.add(okButton = Translate.button("ok", this, "okNameEditor"));
-            BButton cancelButton;
-            buttons.add(cancelButton = Translate.button("cancel", this, "cancelNameEditor"));
+
+            buttons.add(Translate.button("ok", this, "okNameEditor"));
+
+            buttons.add(Translate.button("cancel", this, "cancelNameEditor"));
             addEventLink(WindowClosingEvent.class, this, "cancelNameEditor");
             addAsListener(this);
             layoutChildren();
             pack();
             setResizable(false);
-            setModal(true); // I wonder, why this dialog requres setModal() and the other don't.
+            setModal(true); // I wonder, why this dialog requires setModal() and the other don't.
 
             Rectangle pb = parent.getBounds();
             Rectangle tb = getBounds();
@@ -482,10 +477,7 @@ public class ImageDetailsDialog extends BDialog {
         private void addAsListener(Widget w) {
             w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
             if (w instanceof WidgetContainer) {
-                Iterator<Widget> iter = ((WidgetContainer) w).getChildren().iterator();
-                while (iter.hasNext()) {
-                    addAsListener(iter.next());
-                }
+                ((WidgetContainer) w).getChildren().forEach(this::addAsListener);
             }
         }
 
@@ -495,10 +487,7 @@ public class ImageDetailsDialog extends BDialog {
         private void removeAsListener(Widget w) {
             w.removeEventLink(KeyPressedEvent.class, this);
             if (w instanceof WidgetContainer) {
-                Iterator<Widget> iter = ((WidgetContainer) w).getChildren().iterator();
-                while (iter.hasNext()) {
-                    removeAsListener(iter.next());
-                }
+                ((WidgetContainer) w).getChildren().forEach(this::removeAsListener);
             }
         }
     }

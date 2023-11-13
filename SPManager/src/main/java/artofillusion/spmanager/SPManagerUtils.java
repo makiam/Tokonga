@@ -155,10 +155,9 @@ public class SPManagerUtils {
 
     /**
      * parse a double value from a String.
-     *
      * The string is parsed from the first (zeroeth) char up to the first
      * char which is not valid in a double representation
-     * (ie digit, '.', 'e', 'E', '+', or '-').
+     * (i.e., digit, '.', 'e', 'E', '+', or '-').
      */
     public static double parseDouble(String val) throws NumberFormatException {
         if (val == null || val.length() == 0) {
@@ -219,7 +218,6 @@ public class SPManagerUtils {
 
     /**
      * parse a version string into a numeric value.
-     *
      * Each component is parsed as an int and scaled into a 3-digit
      * column.
      * <br>Eg 1.2 is parsed into 1002; 1.20 is parsed into 1020; and 1.20.3

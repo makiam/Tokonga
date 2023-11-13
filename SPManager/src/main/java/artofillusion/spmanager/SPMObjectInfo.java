@@ -626,7 +626,7 @@ public class SPMObjectInfo {
         NodeList sl;
         String extName, extType, extAssoc, extAction;
 
-        // NTJ: infer depedencies from other tags
+        // NTJ: infer dependencies from other tags
         for (int i = 0; (node = SPManagerUtils.getNodeFromNodeList(nl, "import", i)) != null; i++) {
 
             extName = SPManagerUtils.getAttribute(node, "name");
@@ -699,7 +699,7 @@ public class SPMObjectInfo {
         setLog(SPMTranslate.text("exports"), exportList, 3);
         setLog(SPMTranslate.text("history"), "none", 4);
 
-        // check assertions and set restriction accordlingly
+        // check assertions and set restriction accordingly
         node = SPManagerUtils.getNodeFromNodeList(nl, "assert", 0);
         String filtVal;
         String filtName;

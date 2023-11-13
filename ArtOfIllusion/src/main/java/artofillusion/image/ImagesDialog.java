@@ -174,7 +174,7 @@ public class ImagesDialog extends BDialog {
             } catch (InterruptedException ex) {
                 setCursor(Cursor.getDefaultCursor());
                 new BStandardDialog("", Translate.text("errorLoadingImage", file.getName()), BStandardDialog.ERROR).showMessageDialog(this);
-                log.atError().setCause(ex).log("Image load interrupted", ex.getMessage());
+                log.atError().setCause(ex).log("Image load interrupted: {}", ex.getMessage());
                 return;
             }
         }
@@ -198,7 +198,7 @@ public class ImagesDialog extends BDialog {
                 theScene.addImage(ImageMap.loadImage(file));
             } catch (Exception ex) {
                 new BStandardDialog("", Translate.text("errorLoadingImage", file.getName()), BStandardDialog.ERROR).showMessageDialog(this);
-                log.atError().setCause(ex).log("Image load interrupted", ex.getMessage());
+                log.atError().setCause(ex).log("Image load interrupted: {}", ex.getMessage());
                 setCursor(Cursor.getDefaultCursor());
 
                 // Return if any of the files can not be loaded.
@@ -349,10 +349,7 @@ public class ImagesDialog extends BDialog {
     private void addAsListener(Widget w) {
         w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
         if (w instanceof WidgetContainer) {
-            Iterator<Widget> iter = ((WidgetContainer) w).getChildren().iterator();
-            while (iter.hasNext()) {
-                addAsListener(iter.next());
-            }
+            ((WidgetContainer) w).getChildren().forEach(widget -> addAsListener(widget));
         }
     }
 
@@ -362,10 +359,7 @@ public class ImagesDialog extends BDialog {
     private void removeAsListener(Widget w) {
         w.removeEventLink(KeyPressedEvent.class, this);
         if (w instanceof WidgetContainer) {
-            Iterator<Widget> iter = ((WidgetContainer) w).getChildren().iterator();
-            while (iter.hasNext()) {
-                removeAsListener(iter.next());
-            }
+            ((WidgetContainer) w).getChildren().forEach(widget -> removeAsListener(widget));
         }
     }
 
@@ -815,10 +809,7 @@ public class ImagesDialog extends BDialog {
         private void addAsListener(Widget w) {
             w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
             if (w instanceof WidgetContainer) {
-                Iterator<Widget> iter = ((WidgetContainer) w).getChildren().iterator();
-                while (iter.hasNext()) {
-                    addAsListener(iter.next());
-                }
+                ((WidgetContainer) w).getChildren().forEach(widget -> addAsListener(widget));
             }
         }
 
@@ -828,10 +819,7 @@ public class ImagesDialog extends BDialog {
         private void removeAsListener(Widget w) {
             w.removeEventLink(KeyPressedEvent.class, this);
             if (w instanceof WidgetContainer) {
-                Iterator<Widget> iter = ((WidgetContainer) w).getChildren().iterator();
-                while (iter.hasNext()) {
-                    removeAsListener(iter.next());
-                }
+                ((WidgetContainer) w).getChildren().forEach(widget -> removeAsListener(widget));
             }
         }
     }

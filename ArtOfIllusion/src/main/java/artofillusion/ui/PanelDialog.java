@@ -14,7 +14,7 @@ package artofillusion.ui;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
-import java.util.*;
+
 
 /**
  * A PanelDialog is a modal dialog containing a line of text at the top, and a single
@@ -72,11 +72,7 @@ public class PanelDialog extends BDialog {
     private void buttonPressed(CommandEvent e) {
         String command = e.getActionCommand();
 
-        if (command.equals("cancel")) {
-            ok = false;
-        } else {
-            ok = true;
-        }
+        ok = !command.equals("cancel");
         closeWindow();
     }
 
@@ -101,10 +97,7 @@ public class PanelDialog extends BDialog {
     private void addAsListener(Widget w) {
         w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
         if (w instanceof WidgetContainer) {
-            Iterator<Widget> iter = ((WidgetContainer) w).getChildren().iterator();
-            while (iter.hasNext()) {
-                addAsListener(iter.next());
-            }
+            ((WidgetContainer) w).getChildren().forEach(this::addAsListener);
         }
     }
 
@@ -114,10 +107,7 @@ public class PanelDialog extends BDialog {
     private void removeAsListener(Widget w) {
         w.removeEventLink(KeyPressedEvent.class, this);
         if (w instanceof WidgetContainer) {
-            Iterator<Widget> iter = ((WidgetContainer) w).getChildren().iterator();
-            while (iter.hasNext()) {
-                removeAsListener(iter.next());
-            }
+            ((WidgetContainer) w).getChildren().forEach(this::removeAsListener);
         }
     }
 }

@@ -73,8 +73,8 @@ public class JointEditorDialog extends BDialog {
         }
         RowContainer buttons = new RowContainer();
         buttons.add(okButton = Translate.button("ok", this, "doOk"));
-        BButton cancelButton;
-        buttons.add(cancelButton = Translate.button("cancel", this, "doCancel"));
+
+        buttons.add(Translate.button("cancel", this, "doCancel"));
         content.add(buttons, BorderContainer.SOUTH, new LayoutInfo());
         setResizable(false);
         addEventLink(WindowClosingEvent.class, this, "doCancel");
@@ -259,7 +259,7 @@ public class JointEditorDialog extends BDialog {
             LayoutInfo rowfirst = new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE, new Insets(0, 0, 0, 4), null);
             LayoutInfo rowfirstontop = new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE, new Insets(0, 4, 4, 4), null);
             LayoutInfo boxgap = new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE, new Insets(0, 0, 0, 0), null);
-            LayoutInfo underboxgap = new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE, new Insets(-2, 0, 0, 0), null);
+
             LayoutInfo blockgap = new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE, new Insets(4, 0, 4, 0), null);
 
             rangeRow.add(minField, rowfirst);
@@ -385,10 +385,7 @@ public class JointEditorDialog extends BDialog {
         @Override
         public void setEnabled(boolean enabled) {
             super.setEnabled(enabled);
-            Iterator<Widget> child = getChildren().iterator();
-            while (child.hasNext()) {
-                child.next().setEnabled(enabled);
-            }
+            getChildren().forEach(widget -> widget.setEnabled(enabled));
         }
 
         /**
@@ -490,7 +487,7 @@ public class JointEditorDialog extends BDialog {
                 return;
             }
 
-            // restriceted range
+            // restricted range
             double minLimit = panel.minField.getValue();
             double maxLimit = panel.maxField.getValue();
             double mouseAngle = getMouseAngleDeg(ev.getPoint());
@@ -563,7 +560,7 @@ public class JointEditorDialog extends BDialog {
             if (dragging3 || dragging4) {
                 disableUpdating = true;
             }
-            return;
+
         }
 
         private void mouseReleased(MouseReleasedEvent ev) {
@@ -576,12 +573,7 @@ public class JointEditorDialog extends BDialog {
         }
 
         private void mouseDragged(final MouseDraggedEvent ev) {
-            process.addEvent(new Runnable() {
-                @Override
-                public void run() {
-                    dealWithDrag(ev);
-                }
-            });
+            process.addEvent(() -> dealWithDrag(ev));
         }
 
         /* Deal with a mouse dragged event. */
@@ -589,7 +581,6 @@ public class JointEditorDialog extends BDialog {
             if (!(dragging0 || dragging1 || dragging2 || dragging3 || dragging4)) {
                 return;
             }
-            Point pos = ev.getPoint();
 
             double mouseAngle = getMouseAngleDeg(ev.getPoint());
             double angle = Math.rint(mouseAngle);

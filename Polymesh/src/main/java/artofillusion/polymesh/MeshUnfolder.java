@@ -57,7 +57,7 @@ public class MeshUnfolder {
     private UnfoldedMesh[] unfoldedMeshes; // the unfolded meshes resulting
 
     // from unfolding process
-    private final int[] vertexTable; // vertex table correspondance between
+    private final int[] vertexTable; // vertex table correspondence between
 
     // original mesh vertices and opened mesh vertices
     private final int[] faceTable; // same for faces
@@ -66,7 +66,7 @@ public class MeshUnfolder {
      * Creates a new unfolder instance. This class unfolds triangle meshes.
      *
      * @param mesh
-     * The mesh to unfold (any kind of facetted mesh)
+     * The mesh to unfold (any kind of faceted mesh)
      * @param trimesh
      * The triangle mesh version of original mesh (maybe
      * equal to mesh if mesh is a triangle mesh).
@@ -359,7 +359,7 @@ public class MeshUnfolder {
             }
         }
         // if there is a non null faceTable,
-        // use it to keep track of orignal, non triangulated
+        // use it to keep track of original, non triangulated
         // faces
         for (int i = 0; i < ufaces.length; i++) {
             ufaces[i] = new UnfoldedFace(faces[i]);

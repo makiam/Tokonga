@@ -291,8 +291,8 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
      * is an error to call the constructor with a faces[][] array which
      * does not meet this condition, and the results are undefined.
      *
-     * @param v[]: An array containing the vertices.
-     * @param faces[][] An N by 3 array containing the indices of the
+     * @param v: An array containing the vertices.
+     * @param faces An N by 3 array containing the indices of the
      * vertices which define each face.
      */
     public TriangleMesh(Vertex[] v, int[][] faces) {
@@ -957,7 +957,7 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
                             dot = edge2.dot(edge3);
                         }
                         if (dot < -1.0) {
-                            dot = -1.0; // This can occassionally happen due to roundoff error
+                            dot = -1.0; // This can occasionally happen due to roundoff error
                         }
                         if (dot > 1.0) {
                             dot = 1.0;
@@ -1020,7 +1020,7 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
                             dot = edge2.dot(edge3);
                         }
                         if (dot < -1.0) {
-                            dot = -1.0; // This can occassionally happen due to roundoff error
+                            dot = -1.0; // This can occasionally happen due to roundoff error
                         }
                         if (dot > 1.0) {
                             dot = 1.0;
@@ -2970,7 +2970,7 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
             double dot2 = -edge1.dot(edge3);
             double dot3 = edge2.dot(edge3);
             if (dot1 < -1.0) {
-                dot1 = -1.0; // This can occassionally happen due to roundoff error
+                dot1 = -1.0; // This can occasionally happen due to roundoff error
             }
             if (dot1 > 1.0) {
                 dot1 = 1.0;

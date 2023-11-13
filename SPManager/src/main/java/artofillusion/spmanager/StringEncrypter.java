@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
  * of the more popular algorithms are: Blowfish DES DESede PBEWithMD5AndDES
  * PBEWithMD5AndTripleDES TripleDES -----------------------------------------------------------------------------
  *
- * @author not me ! See http://www.idevelopment.info/, which hase several
+ * @author not me ! See <a href="http://www.idevelopment.info/">...</a>, which has several
  * java code examples
  * @created 23 mars 2004
  */
@@ -44,7 +44,7 @@ public final class StringEncrypter {
 
     /**
      * Constructor used to create this object. Responsible for setting and
-     * initializing this object's encrypter and decrypter Chipher instances
+     * initializing this object's encrypter and decrypter Cipher instances
      * given a Pass Phrase and algorithm.
      *
      * @param passPhrase Pass Phrase used to initialize both the encrypter and

@@ -4,7 +4,7 @@ package artofillusion;
 
 /*
  * Copyright (C) 2004, Nik Trevallyn-Jones.
- *
+ * Changes copyright (C) 2023 by Maksim Khramov
  * SafeFileOutputStream: writes to a file safely
  *
  * Author: Nik Trevallyn-Jones, nik777@users.sourceforge.net
@@ -50,14 +50,13 @@ public class SafeFileOutputStream extends FilterOutputStream {
     public static final int KEEP_BACKUP = 128;
 
     /**
-     * Ctor
+     * Constructor
      * Create a safe output stream on the named path
      *
      * @param path string pathname
      * @param mode the logical OR of the desired mode values
      */
-    public SafeFileOutputStream(String path, int mode)
-            throws IOException {
+    public SafeFileOutputStream(String path, int mode) throws IOException {
         super(null);
         open(path, mode);
     }
@@ -130,7 +129,6 @@ public class SafeFileOutputStream extends FilterOutputStream {
 
     /**
      * abort the stream
-     *
      * closes the underlying stream, frees all resources, and removes any
      * temporary files.
      */
@@ -188,10 +186,10 @@ public class SafeFileOutputStream extends FilterOutputStream {
                         + "could not make file live");
             }
         } finally {
-            if (bak != null && bak.exists() == true) {
+            if (bak != null && bak.exists()) {
 
                 // recover from backup
-                if (file.exists() == false) {
+                if (!file.exists()) {
                     if (!bak.renameTo(file)) {
                         throw new IOException("SafeFileOutputStream.close: "
                                 + "Error recovering from backup."

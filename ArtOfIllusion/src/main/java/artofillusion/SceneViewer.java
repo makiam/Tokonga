@@ -511,7 +511,7 @@ public class SceneViewer extends ViewerCanvas {
 
     /**
      * Check if an object can be selected in perspective mode. An object, whose origin is on the "camera plane"
-     * or behid it, should not be selected, when the view is set to perspective.
+     * or behind it, should not be selected, when the view is set to perspective.
      */
     private boolean inFront(ObjectInfo info, Vec3 cameraPosition, Vec3 cameraAxis) {
         if (isPerspective()) {

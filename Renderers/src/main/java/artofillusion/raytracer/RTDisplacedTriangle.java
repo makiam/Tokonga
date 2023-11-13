@@ -1,4 +1,5 @@
 /* Copyright (C) 2000-2013 by Peter Eastman
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -445,7 +446,7 @@ public class RTDisplacedTriangle extends RTObject {
 
     /**
      * Given the coordinates of a point along the ray, calculate the barycentric coordinates
-     * (u, v, w) cooresponding to it. Also calculate the displacement h of that point on the
+     * (u, v, w) corresponding to it. Also calculate the displacement h of that point on the
      * triangle, and return the height (the distance along the non-interpolated normal). If
      * u, v, or w is outside the range [0, 1], the return value is meaningless.
      */

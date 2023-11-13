@@ -1681,7 +1681,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     /**
-     * Toggles manipulators betwwen 2D and 3D (to be removed presumably
+     * Toggles manipulators between 2D and 3D (to be removed presumably)
      */
     public void toggleManipulator() {
         if (currentTool instanceof AdvancedEditingTool) {
@@ -1820,7 +1820,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     /**
-     * Divides selected edges into segements
+     * Divides selected edges into segments
      *
      */
     private void doDivideEdges(int counter) {
@@ -3972,7 +3972,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     /**
      * Callback called when the valueWidget.getValue() has changed in the
-     * valueWidget.getValue() dialog (scaelSelection)
+     * valueWidget.getValue() dialog (scaleSelection)
      */
     private void doScaleSelectionCallback() {
         PolyMesh mesh = (PolyMesh) objInfo.object;
@@ -4498,7 +4498,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     /**
-     * This methods extracts the current selection to AoI curves
+     * This method extracts the current selection to AoI curves
      */
     private void doExtractToCurve() {
         PolyMesh mesh = (PolyMesh) objInfo.object;

@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2009 by Peter Eastman
-   Changes copyright (C) 2018-2019 by Maksim Khramov
+   Changes copyright (C) 2018-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,6 +17,7 @@ import java.text.*;
 import java.util.*;
 
 import artofillusion.*;
+import lombok.Getter;
 
 /**
  * This class provides utilities for localizing text so that it can be translated into
@@ -47,7 +48,7 @@ import artofillusion.*;
  */
 public class Translate {
 
-    private static final Set<Locale> availableLocales = new LinkedHashSet<Locale>();
+    private static final Set<Locale> availableLocales = new LinkedHashSet<>();
 
     static {
         availableLocales.add(new Locale("af", "ZA"));
@@ -68,6 +69,11 @@ public class Translate {
         availableLocales.add(new Locale("ru", "RU"));
     }
 
+    /**
+     * -- GETTER --
+     *  Get the locale currently used for generating text.
+     */
+    @Getter
     private static Locale locale = availableLocales.contains(Locale.getDefault()) ? Locale.getDefault() : Locale.US;
 
     private static final Map<String, ResourceBundle> bundles = new HashMap<String, ResourceBundle>();
@@ -78,13 +84,6 @@ public class Translate {
     public static void setLocale(Locale l) {
         locale = availableLocales.contains(l) ? l : Locale.US;
         bundles.clear();
-    }
-
-    /**
-     * Get the locale currently used for generating text.
-     */
-    public static Locale getLocale() {
-        return locale;
     }
 
     /**
@@ -296,7 +295,7 @@ public class Translate {
 
     /**
      * Get the text given by the property "name". If the property is not
-     * found, this simply uses name. Any occurrance of the pattern "{0}"
+     * found, this simply uses name. Any occurrence of the pattern "{0}"
      * in the text string will be replaced with the string representation
      * of arg1.
      */
@@ -311,7 +310,7 @@ public class Translate {
 
     /**
      * Get the text given by the property "name". If the property is not
-     * found, this simply uses name. Any occurrances of the patterns
+     * found, this simply uses name. Any occurrences of the patterns
      * "{0}" and "{1}" in the text string will be replaced with the
      * strings representations of arg1 and arg2, respectively.
      */

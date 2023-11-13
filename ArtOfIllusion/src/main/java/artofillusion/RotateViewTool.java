@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
    Changes copyright (C) 2016-2019 by Petri Ihalainen
-   Changes copyright (C) 2020-2022 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -37,23 +37,16 @@ public class RotateViewTool extends EditingTool {
     private Vec3 rotationCenter;
     private double angle;
     private double distToRot;
-    private double xAngle;
-    private double yAngle;
     private double fwMax;
     private double fwMin;
     private Camera camera;
     private int selectedNavigation;
 
-    private Point viewCenter, p0, p1;
+    private Point viewCenter;
 
     public RotateViewTool(EditingWindow fr) {
         super(fr);
         initButton("rotateView");
-    }
-
-    @Override
-    public boolean hilightSelection() {
-        return true;
     }
 
     @Override
@@ -91,8 +84,8 @@ public class RotateViewTool extends EditingTool {
             view.setOrientation(VIEW_OTHER);
         }
 
-        // If the tool was selected in th etool palette and the user is usin MB1
-        // Only rotate modes avatlable for the palette tool.
+        // If the tool was selected in the tool palette and the user is using MB1
+        // Only rotate modes available for the palette tool.
         if (theWindow != null && theWindow.getToolPalette().getSelectedTool() == this && mouseButtonOne(e)) {
             if (view.getNavigationMode() == NAVIGATE_MODEL_SPACE) {
                 dragRotateSpace(e, view);
@@ -102,7 +95,7 @@ public class RotateViewTool extends EditingTool {
                 fwMin = -Math.PI * 0.5 + Math.asin(zD.y);
                 dragRotateLandscape(e, view);
             }
-        } // Else go by the navigationmode choise
+        } // Else go by the navigationmode choice
         else {
             switch (view.getNavigationMode()) {
                 case NAVIGATE_MODEL_SPACE:
@@ -149,7 +142,7 @@ public class RotateViewTool extends EditingTool {
         dx = dragPoint.x - clickPoint.x;
         dy = dragPoint.y - clickPoint.y;
 
-        // Action selection by modifer keys
+        // Action selection by modifier keys
         if (controlDown) {
             if (e.isShiftDown()) {
                 rotateSpace(e, view, clickPoint);
@@ -198,7 +191,7 @@ public class RotateViewTool extends EditingTool {
         dx = dragPoint.x - clickPoint.x;
         dy = dragPoint.y - clickPoint.y;
 
-        // Action selection by modifer keys
+        // Action selection by modifier keys
         if (controlDown) {
             if (e.isShiftDown()) {
                 panSpace(e, view, clickPoint);
@@ -217,7 +210,7 @@ public class RotateViewTool extends EditingTool {
                 angle = -dy * DRAG_SCALE;
             }
         } else {
-            // This is the deault action
+            // This is the default action
 
             axis = new Vec3(-dy * DRAG_SCALE, dx * DRAG_SCALE, 0.0);
             angle = axis.length();
@@ -374,7 +367,7 @@ public class RotateViewTool extends EditingTool {
         }
 
         // If the mouse was not dragged then center to the given point
-        // This shouls be directly in the ViewerCanvas but it had a side-effect.
+        // This should be directly in the ViewerCanvas but it had a side-effect.
         if (dragPoint.x == clickPoint.x && dragPoint.y == clickPoint.y) {
             view.centerToPoint(dragPoint);
         }
@@ -395,9 +388,10 @@ public class RotateViewTool extends EditingTool {
     }
 
     private void tilt(WidgetMouseEvent e, ViewerCanvas view, Point clickPoint) {
-        int d = Math.min(view.getBounds().width, view.getBounds().height);
-        int cx = view.getBounds().width / 2;
-        int cy = view.getBounds().height / 2;
+        var vb = view.getBounds();
+
+        int cx = vb.width / 2;
+        int cy = vb.height / 2;
         viewCenter = new Point(cx, cy);
 
         double aClick = Math.atan2(clickPoint.y - cy, clickPoint.x - cx);
@@ -534,16 +528,16 @@ public class RotateViewTool extends EditingTool {
         if (theWindow != null && view.tilting && ArtOfIllusion.getPreferences().getShowTiltDial()) {
             double r = 0.45 * Math.min(view.getBounds().width, view.getBounds().height);
             for (int i = 0; i < 4; i++) {
-                view.drawLine(viewCenter, Math.PI / 2.0 * i + angle, 0.0, r, view.cueIdle);
+                view.drawLine(viewCenter, Math.PI / 2.0 * i + angle, 0.0, r, ViewerCanvas.cueIdle);
             }
-            view.drawLine(viewCenter, -Math.PI / 2.0, r, r * 1.1, view.red);
-            view.drawLine(viewCenter, Math.PI / 2.0, r, r * 1.1, view.red);
-            view.drawLine(viewCenter, Math.PI, r, r * 1.1, view.blue);
-            view.drawLine(viewCenter, 0.0, r, r * 1.1, view.blue);
+            view.drawLine(viewCenter, -Math.PI / 2.0, r, r * 1.1, ViewerCanvas.red);
+            view.drawLine(viewCenter, Math.PI / 2.0, r, r * 1.1, ViewerCanvas.red);
+            view.drawLine(viewCenter, Math.PI, r, r * 1.1, ViewerCanvas.blue);
+            view.drawLine(viewCenter, 0.0, r, r * 1.1, ViewerCanvas.blue);
             for (int i = 0; i < 24; i++) {
-                view.drawLine(viewCenter, Math.PI / 12.0 * i + angle, r * .95, r, view.cueActive);
+                view.drawLine(viewCenter, Math.PI / 12.0 * i + angle, r * .95, r, ViewerCanvas.cueActive);
             }
-            view.drawCircle(viewCenter, r, 48, view.cueActive);
+            view.drawCircle(viewCenter, r, 48, ViewerCanvas.cueActive);
         }
     }
 }

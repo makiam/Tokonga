@@ -15,16 +15,12 @@ package artofillusion.polymesh;
 import artofillusion.ArtOfIllusion;
 import artofillusion.math.Vec2;
 import artofillusion.polymesh.UVMappingCanvas.Range;
-import artofillusion.polymesh.UVMappingCanvas.SelectionCommand;
 import artofillusion.ui.ThemeManager;
 import buoy.event.MouseScrolledEvent;
 import buoy.event.WidgetMouseEvent;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Polygon;
-import java.awt.Rectangle;
+import lombok.Getter;
+
+import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -61,6 +57,7 @@ public class UVMappingManipulator {
     private double originalScale;
     private Vec2 originalOrigin;
     private int numSel; //number of selected but unpinned vertices. Needs to be >= 1 to draw the manipulator.
+    @Getter
     private boolean liveUpdate = true;
     private boolean draggingHandle;
     private int anchor; //index of the anchor vertex, when set using ctrl drag center handle
@@ -738,7 +735,7 @@ public class UVMappingManipulator {
             canvas.scale(Math.pow(0.99, -amount));
         }
 
-        //'computeCenter()' at 'paint()' takes cere of the position
+        //'computeCenter()' at 'paint()' takes care of the position
     }
 
     public void paint(Graphics2D g) {
@@ -753,7 +750,7 @@ public class UVMappingManipulator {
         }
 
         // This repositions the manipulator during zoom and window resize
-        // Without the 'if' the manipulator starts to wandrer whem rotated
+        // Without the 'if' the manipulator starts to wanderer when rotated
         if (!dragging) {
             computeCenter();
         }
@@ -834,6 +831,12 @@ public class UVMappingManipulator {
         private final int segments;
         protected final Color color;
         protected Polygon handle;
+        /**
+         * -- GETTER --
+         *
+         * @return the center
+         */
+        @Getter
         protected Point center;
 
         /**
@@ -845,13 +848,6 @@ public class UVMappingManipulator {
             this.segments = segments;
             this.color = color;
             setCenter(center);
-        }
-
-        /**
-         * @return the center
-         */
-        public Point getCenter() {
-            return center;
         }
 
         /**
@@ -966,10 +962,6 @@ public class UVMappingManipulator {
             }
             return which;
         }
-    }
-
-    public boolean isLiveUpdate() {
-        return liveUpdate;
     }
 
     public void setLiveUpdate(boolean liveUpdate) {

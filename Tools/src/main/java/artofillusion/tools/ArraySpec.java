@@ -56,9 +56,9 @@ public class ArraySpec {
     private ObjectInfo arrayRoot;
 
     // --- public data
-    // general paramters
+    // general parameters
     /**
-     * Set to METHOD_LINEAR to create a liniar array.
+     * Set to METHOD_LINEAR to create a linear array.
      * Set to METHOD_CURVE to create an array along a curve.
      */
     public int method;
@@ -67,7 +67,7 @@ public class ArraySpec {
      */
     public final List<ObjectInfo> objectList;         // list of objectInfo's
 
-    // linear paramters
+    // linear parameters
     /**
      * Number of copies to make for a linear array.
      */
@@ -85,15 +85,15 @@ public class ArraySpec {
      */
     public double stepZ;
     /**
-     * when set, stepX is multiplied by the objects boundingbox x size
+     * when set, stepX is multiplied by the objects bounding box x size
      */
     public boolean intervalX;
     /**
-     * when set, stepY is multiplied by the objects boundingbox y size
+     * when set, stepY is multiplied by the objects bounding box y size
      */
     public boolean intervalY;
     /**
-     * when set, stepZ is multiplied by the objects boundingbox z size
+     * when set, stepZ is multiplied by the objects bounding box z size
      */
     public boolean intervalZ;
 
@@ -118,11 +118,7 @@ public class ArraySpec {
      */
     public double curveStep;
     /**
-     * When set, curveStep is multiplied by the size of the object. Not Used.
-     */
-    public boolean curveInterval;
-    /**
-     * When set, the orientation of the object(s) follow the curve.
+     * When set, the orientation of the object(s) follows the curve.
      */
     public boolean orientation;
     /**
@@ -174,7 +170,7 @@ public class ArraySpec {
             objectList.add(info);
         }
 
-        // set paramters
+        // set parameters
         method = METHOD_LINEAR;
         linearCopies = 10;
         stepX = 1;
@@ -274,7 +270,7 @@ public class ArraySpec {
                 displacement.z *= bounds.getSize().z;
             }
 
-            int start = (dupFirst == true ? 0 : 1);
+            int start = dupFirst ? 0 : 1;
             for (int n = start; n < linearCopies; n++) {
                 createCopy(info, displacement.times(n));
             }
@@ -284,7 +280,7 @@ public class ArraySpec {
     }
 
     /**
-     * create an array of objects tranlated along a curve
+     * create an array of objects translated along a curve
      */
     private void createCurveArray() {
         if (method != METHOD_CURVE) {
@@ -308,7 +304,7 @@ public class ArraySpec {
         Vec3[] subdiv = new Curve(v, cv.getSmoothness(), cv.getSmoothingMethod(), cv.isClosed()).subdivideCurve(SD_LEVEL).getVertexPositions();
         // Vec3 startPoint = findPointOnCurve(subdiv, cv.isClosed(), 0);
         // Vec3 startPoint = v[0];
-        int startCount = (dupFirst == true ? 0 : 1);
+        int startCount = dupFirst ? 0 : 1;
         double curveLength = calcCurveLength(cv);
         if (curveMode == MODE_COPIES) {
             if (curveCopies < 1) {
@@ -485,7 +481,6 @@ public class ArraySpec {
      */
     private void constructMinRotFrame(Vec3[] subdiv, boolean isClosed, Vec3[] zdir, Vec3[] updir) {
         Vec3[] t;
-        int i, j;
 
         // subdivide the path and determine its direction at the starting point.
         t = new Vec3[subdiv.length];
@@ -508,7 +503,7 @@ public class ArraySpec {
         dir2.normalize();
 
         // Propagate the vectors along the path.
-        for (i = 1; i < subdiv.length; i++) {
+        for (int i = 1; i < subdiv.length; i++) {
             if (i == subdiv.length - 1) {
                 if (isClosed) {
                     t[i] = subdiv[0].minus(subdiv[subdiv.length - 2]);
@@ -532,8 +527,8 @@ public class ArraySpec {
     }
 
     /**
-     * determines the coordinatesystem that specifies position and
-     * orienation vectors at the point on the curve for which the distance to
+     * determines the coordinate system that specifies position and
+     * orientation vectors at the point on the curve for which the distance to
      * the first point is given by relativePosition
      */
     private CoordinateSystem findCoordinateSystem(Vec3[] subdiv, boolean isClosed, double relativePosition, Vec3[] zdirs, Vec3[] updirs) {

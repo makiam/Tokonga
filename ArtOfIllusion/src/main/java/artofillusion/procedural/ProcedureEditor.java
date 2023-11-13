@@ -22,6 +22,8 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.util.stream.IntStream;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -34,6 +36,11 @@ public class ProcedureEditor extends CustomWidget {
 
     private final BFrame parent;
     private final Procedure proc;
+    /**
+     * -- GETTER --
+     *  Get the editor's owner.
+     */
+    @Getter
     private final ProcedureOwner owner;
     private final Scene theScene;
     private EditingWindow win;
@@ -64,7 +71,7 @@ public class ProcedureEditor extends CustomWidget {
     private static final Color selectedColor = new Color(255, 60, 60);
     protected static final Stroke contourStroke = new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
-    private final static float BEZIER_HARDNESS = 0.5f; //increase hardness to a have a more pronouced shape
+    private final static float BEZIER_HARDNESS = 0.5f; //increase hardness to a have a more pronounced shape
     private final static Stroke normal = new BasicStroke();
     private final static Stroke bold = new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
@@ -234,13 +241,6 @@ public class ProcedureEditor extends CustomWidget {
      */
     public BFrame getParentFrame() {
         return parent;
-    }
-
-    /**
-     * Get the editor's owner.
-     */
-    public ProcedureOwner getOwner() {
-        return owner;
     }
 
     /**
@@ -627,7 +627,7 @@ public class ProcedureEditor extends CustomWidget {
      * Update the preview.
      */
     public void updatePreview() {
-        preview.ifPresent(action -> owner.updatePreview(action));
+        preview.ifPresent(owner::updatePreview);
     }
 
     /**

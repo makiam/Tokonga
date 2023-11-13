@@ -1,7 +1,7 @@
 /*
  * SearchlistClassLoader: class loader which loads classes using a searchlist
  *
- * Copyright (C) 2007-2009 Nik Trevallyn-Jones, Sydney Austraila.
+ * Copyright (C) 2007-2009 Nik Trevallyn-Jones, Sydney Australia.
  * Changes copyright (C) 2023 by Maksim Khramov
  *
  * Author: Nik Trevallyn-Jones, nik777@users.sourceforge.net
@@ -180,9 +180,7 @@ public class SearchlistClassLoader extends ClassLoader {
 
     /**
      * add a (shared) classloader to the searchlist.
-     *
      * The loader is added to the list as a shared loader.
-     *
      * @param loader the ClassLoader to add to the searchlist.
      */
     public void add(ClassLoader loader) {
@@ -359,15 +357,11 @@ public class SearchlistClassLoader extends ClassLoader {
 
     /**
      * Return a Class object for the specified class name.
-     *
      * overloads java.lang.ClassLoader#findClass(String)
-     *
      * Traverses the searchlist looking for a classloader which can return
      * the specified class.
-     *
      * <br>This method is called by inherited loadClass() methods whenever
      * a class cannot be found in the parent classloader.
-     *
      * <br>If the class is found using a <i>shared</i> loader, then it is
      * returned directly. If the class is found using a <i>non-shared</i>
      * loader, then the actual class object is defined by the containing
@@ -659,15 +653,14 @@ public class SearchlistClassLoader extends ClassLoader {
 
     /**
      * internal class to store the state of each searchable ClassLoader.
-     *
      * The containing SearchlistClassLoader needs to know information about
      * each loader in the list.
      */
     protected static class Loader {
 
         @Getter
-        ClassLoader loader = null;		// the actual classloader
-        boolean shared = false;			// shared flag
+        ClassLoader loader;		// the actual classloader
+        boolean shared;			// shared flag
 
         Loader(ClassLoader loader, boolean shared) {
             this.loader = loader;

@@ -1,4 +1,5 @@
 /* Copyright (C) 2016 - 2017 by Petri Ihalainen
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,7 +12,7 @@
 package artofillusion.math;
 
 import artofillusion.*;
-import artofillusion.math.*;
+
 import java.awt.*;
 
 /**
@@ -93,9 +94,9 @@ public class TriangleMath {
         double[] bary = new double[3];
         Vec3 triCross = triangleCross(A, B, C);
         double tcl = triCross.length();
-        bary[0] = triangleCross(p, B, C).dot(triCross) / tcl / 6.0; // w -- weigth for A
-        bary[1] = triangleCross(p, C, A).dot(triCross) / tcl / 6.0; // v -- weigth for B
-        bary[2] = triangleCross(p, A, B).dot(triCross) / tcl / 6.0; // u -- weigth for C
+        bary[0] = triangleCross(p, B, C).dot(triCross) / tcl / 6.0; // w -- weight for A
+        bary[1] = triangleCross(p, C, A).dot(triCross) / tcl / 6.0; // v -- weight for B
+        bary[2] = triangleCross(p, A, B).dot(triCross) / tcl / 6.0; // u -- weight for C
         return bary;
     }
 
@@ -108,14 +109,14 @@ public class TriangleMath {
     }
 
     /**
-     * Interpolated point on triangle plane in 3D by given barycentic coordinates.
+     * Interpolated point on triangle plane in 3D by given barycentric coordinates.
      */
     public static Vec3 interpolate(Vec3 A, Vec3 B, Vec3 C, double[] bary) {
         return A.times(bary[0]).plus(B.times(bary[1])).plus(C.times(bary[3]));
     }
 
     /**
-     * Interpolated point on a RenderingTriangle plane by given barycentic coordinates.
+     * Interpolated point on a RenderingTriangle plane by given barycentric coordinates.
      */
     public static Vec3 interpolate(RenderingTriangle t, double[] bary) {
         return interpolate(t.theMesh.vert[t.v1], t.theMesh.vert[t.v2], t.theMesh.vert[t.v3], bary);
@@ -125,9 +126,7 @@ public class TriangleMath {
      * Projection of a point on a triangle plane in 3D. The point can be anywhere in the space.
      */
     public static Vec3 project(Vec3 A, Vec3 B, Vec3 C, Vec3 p) {
-        double[] bary = new double[3];
-        bary = baryCoordinates(A, B, C, p);
-        return interpolate(A, B, C, bary);
+        return interpolate(A, B, C, baryCoordinates(A, B, C, p));
     }
 
     //********************************//
@@ -153,9 +152,9 @@ public class TriangleMath {
     public static double[] baryCoordinates(Vec2 A, Vec2 B, Vec2 C, Vec2 p) {
         double[] bary = new double[3];
         double wholeArea = triangleArea(A, B, C);
-        bary[0] = triangleArea(p, B, C) / wholeArea; // w -- weigth for A
-        bary[1] = triangleArea(p, C, A) / wholeArea; // v -- weigth for B
-        bary[2] = triangleArea(p, A, B) / wholeArea; // u -- weigth for C
+        bary[0] = triangleArea(p, B, C) / wholeArea; // w -- weight for A
+        bary[1] = triangleArea(p, C, A) / wholeArea; // v -- weight for B
+        bary[2] = triangleArea(p, A, B) / wholeArea; // u -- weight for C
         return bary;
     }
 

@@ -49,17 +49,17 @@ public class Actor extends ObjectWrapper {
      */
     public void addGesture(Gesture p, String name) {
         int num = gesture.length;
-        Gesture[] newpose = new Gesture[num + 1];
-        String[] newname = new String[num + 1];
-        int[] newID = new int[num + 1];
-        System.arraycopy(gesture, 0, newpose, 0, num);
-        System.arraycopy(gestureName, 0, newname, 0, num);
+        var newPose = new Gesture[num + 1];
+        var newName = new String[num + 1];
+        var newID = new int[num + 1];
+        System.arraycopy(gesture, 0, newPose, 0, num);
+        System.arraycopy(gestureName, 0, newName, 0, num);
         System.arraycopy(gestureID, 0, newID, 0, num);
-        newpose[num] = p;
-        newname[num] = name;
+        newPose[num] = p;
+        newName[num] = name;
         newID[num] = nextPoseID++;
-        gesture = newpose;
-        gestureName = newname;
+        gesture = newPose;
+        gestureName = newName;
         gestureID = newID;
     }
 
@@ -72,21 +72,21 @@ public class Actor extends ObjectWrapper {
             return;
         }
         int num = gesture.length;
-        Gesture[] newpose = new Gesture[num - 1];
-        String[] newname = new String[num - 1];
+        var newPose = new Gesture[num - 1];
+        var newName = new String[num - 1];
         int[] newID = new int[num - 1];
         int j = 0;
         for (int i = 0; i < num; i++) {
             if (i == which) {
                 continue;
             }
-            newpose[j] = gesture[i];
-            newname[j] = gestureName[i];
+            newPose[j] = gesture[i];
+            newName[j] = gestureName[i];
             newID[j] = gestureID[i];
             j++;
         }
-        gesture = newpose;
-        gestureName = newname;
+        gesture = newPose;
+        gestureName = newName;
         gestureID = newID;
     }
 
@@ -226,8 +226,8 @@ public class Actor extends ObjectWrapper {
         TextureParameter[] oldParam = getParameters();
         theObject.setTexture(tex, map);
         TextureParameter[] newParam = map.getParameters();
-        for (int i = 0; i < gesture.length; i++) {
-            gesture[i].textureChanged(oldParam, newParam);
+        for (Gesture value : gesture) {
+            value.textureChanged(oldParam, newParam);
         }
     }
 
@@ -306,10 +306,10 @@ public class Actor extends ObjectWrapper {
 
         // Solve the equations.  We only want to use gestures with positive weights, since many
         // gestures are not designed to look right when applied with negative weights.  Eventually,
-        // I should rewrite this to use a proper nonnegative least squares algorithm.  For the
+        // I should rewrite this to use a proper non-negative least squares algorithm.  For the
         // moment, it uses a simpler approximate method: solve the equations using SVD, then check
         // the weights.  If any are negative, remove those gestures and repeat until all weights
-        // are nonnegative.
+        // are non-negative.
         boolean converged = false;
         boolean[] negative = new boolean[gesture.length - 1];
         double[] weight = new double[gesture.length - 1];
@@ -402,7 +402,7 @@ public class Actor extends ObjectWrapper {
     /**
      * Reconstruct this object from its serialized representation.
      */
-    public Actor(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+    public Actor(DataInputStream in, Scene theScene) throws IOException {
         short version = in.readShort();
         if (version != 0) {
             throw new InvalidObjectException("");
@@ -578,31 +578,31 @@ public class Actor extends ObjectWrapper {
          * Add a gesture to an ActorKeyframe.
          */
         public void addGesture(int addID, double addWeight) {
-            int[] newid = new int[id.length + 1];
-            double[] newweight = new double[weight.length + 1];
-            System.arraycopy(id, 0, newid, 0, id.length);
-            System.arraycopy(weight, 0, newweight, 0, weight.length);
-            newid[id.length] = addID;
-            newweight[weight.length] = addWeight;
-            id = newid;
-            weight = newweight;
+            var newId = new int[id.length + 1];
+            var newWeight = new double[weight.length + 1];
+            System.arraycopy(id, 0, newId, 0, id.length);
+            System.arraycopy(weight, 0, newWeight, 0, weight.length);
+            newId[id.length] = addID;
+            newWeight[weight.length] = addWeight;
+            id = newId;
+            weight = newWeight;
         }
 
         /**
          * Delete a gesture from an ActorKeyframe.
          */
         public void deleteGesture(int which) {
-            int[] newid = new int[id.length - 1];
-            double[] newweight = new double[weight.length - 1];
+            var newId = new int[id.length - 1];
+            var newWeight = new double[weight.length - 1];
             for (int i = 0, j = 0; i < id.length; i++) {
                 if (i == which) {
                     continue;
                 }
-                newid[j] = id[i];
-                newweight[j++] = weight[i];
+                newId[j] = id[i];
+                newWeight[j++] = weight[i];
             }
-            id = newid;
-            weight = newweight;
+            id = newId;
+            weight = newWeight;
         }
 
         /**

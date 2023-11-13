@@ -1,4 +1,6 @@
 /* Copyright (C) 2001-2006 by Peter Eastman
+   Changes copyright (C) 2023 by Maksim Khramov
+
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -58,7 +60,7 @@ public class Skeleton {
     }
 
     /**
-     * Make this skeleton idenical to another one.
+     * Make this skeleton identical to another one.
      */
     public void copy(Skeleton s) {
         nextID = s.nextID;
@@ -390,10 +392,9 @@ public class Skeleton {
         Point p1 = new Point();
         Point p2 = new Point();
         double[] screenZ = new double[joint.length];
-        Color color = (enabled ? ViewerCanvas.lineColor : ViewerCanvas.disabledColor), col;
-        int colInt;
+        Color color = enabled ? ViewerCanvas.lineColor : ViewerCanvas.disabledColor;
 
-        // First calculate the positions of all the joints.
+        // First, calculate the positions of all the joints.
         for (int i = 0; i < joint.length; i++) {
             Joint j = joint[i];
             Vec3 pos = j.coords.getOrigin();
@@ -403,7 +404,7 @@ public class Skeleton {
         }
 
         // Now draw the bones.
-        col = color;
+        Color col = color;
         Mat4 objToScreen = cam.getObjectToScreen();
         for (int i = 0; i < joint.length; i++) {
             Joint j = joint[i], parent = j.parent;
@@ -448,7 +449,7 @@ public class Skeleton {
             }
         }
 
-        // Finally draw the markers for all the joints.
+        // Finally, draw the markers for all the joints.
         int selectedID = view.getSelectedJoint();
         boolean[] locked = view.getLockedJoints();
         for (int i = 0; i < joint.length; i++) {

@@ -205,8 +205,8 @@ public class RenderSetupDialog {
     }
 
     /**
-     * Check if any of the valaues on the UI differ from the last recorded ones.
-     * If so set LayutWindow know.
+     * Check if any of the values on the UI differ from the last recorded ones.
+     * If so set LayoutWindow know.
      */
     private void checkModified() {
         if (width != (int) widthField.getValue()

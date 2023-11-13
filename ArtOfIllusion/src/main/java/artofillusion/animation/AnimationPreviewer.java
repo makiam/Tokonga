@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2012 by Peter Eastman
-   Changes copyright (C) 2016 by Maksim Khramov
+   Changes copyright (C) 2016-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -242,10 +242,9 @@ public class AnimationPreviewer implements Runnable {
      * Record the bitmap for an image.
      */
     private byte[] recordImage(BufferedImage image) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", baos);
-            return baos.toByteArray();
+        try(ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
+            ImageIO.write(image, "png", stream);
+            return stream.toByteArray();
         } catch (IOException ex) {
             return null;
         }

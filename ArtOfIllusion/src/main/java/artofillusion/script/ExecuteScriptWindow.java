@@ -124,13 +124,13 @@ public class ExecuteScriptWindow extends BFrame {
 
         tools.add(buttons, BorderContainer.WEST, new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE));
 
-        // another center row for the "execute selected" and verious debugging items
+        // another center row for the "execute selected" and various debugging items
         RowContainer debugTools = new RowContainer();
         debugTools.add(Translate.button("executeScript", this, "executeScript"));
         BButton executeToCursor;
         debugTools.add(executeToCursor = Translate.button("executeToCursor", this, "executeToCursor"));
-        BButton executeSelected;
-        debugTools.add(executeSelected = Translate.button("executeSelected", this, "executeSelected"));
+
+        debugTools.add(Translate.button("executeSelected", this, "executeSelected"));
 
         tools.add(debugTools, BorderContainer.CENTER, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE));
 
@@ -168,8 +168,8 @@ public class ExecuteScriptWindow extends BFrame {
         }
     }
 
-    private void updateEditableStatus(String previousScriptAbsoluePath, String scriptAbsolutePath) {
-        if (!previousScriptAbsoluePath.equals(scriptAbsolutePath)) {
+    private void updateEditableStatus(String previousScriptAbsolutePath, String scriptAbsolutePath) {
+        if (!previousScriptAbsolutePath.equals(scriptAbsolutePath)) {
             boolean isOpen = openedScripts.contains(scriptAbsolutePath);
             scriptWidget.getContent().setEditable(!isOpen);
             scriptWidget.getContent().setEnabled(!isOpen);
@@ -180,7 +180,7 @@ public class ExecuteScriptWindow extends BFrame {
                             "This window is read-only : this script is open in other window(s) " + scriptAbsolutePath},
                         BStandardDialog.ERROR).showMessageDialog(this);
             }
-            openedScripts.remove(previousScriptAbsoluePath);
+            openedScripts.remove(previousScriptAbsolutePath);
             openedScripts.add(scriptAbsolutePath);
         }
     }
@@ -265,7 +265,7 @@ public class ExecuteScriptWindow extends BFrame {
             }
         }
         setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        // Restore program working directory for other filechoosers
+        // Restore program working directory for other file-choosers
         chooser.setCurrentDirectory(workingDir);
     }
 

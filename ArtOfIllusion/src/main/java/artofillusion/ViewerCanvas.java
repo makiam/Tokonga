@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
-   Changes Copyrignt (C) 2016-2020 Petri Ihalainen
+   Changes copyright (C) 2016-2020 Petri Ihalainen
    Changes copyright (C) 2016-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -26,6 +26,8 @@ import java.text.*;
 import java.util.*;
 import java.util.List;
 import javax.swing.Timer;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -36,13 +38,43 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class ViewerCanvas extends CustomWidget {
 
     protected Camera theCamera;
+    /**
+     * -- GETTER --
+     *  Get the SceneCamera (if any) which is bound to this view.
+     */
+    @Getter
     protected ObjectInfo boundCamera;
+    /**
+     * -- GETTER --
+     *  Get the currently selected tool.
+     */
+    @Getter
     protected EditingTool currentTool, activeTool, metaTool, altTool;
     protected ScrollViewTool scrollTool;
     protected PopupMenuManager popupManager;
-    protected int renderMode, gridSubdivisions, orientation, navigation, scrollBuffer;
-    protected double gridSpacing, scale, distToPlane, scrollRadius, scrollX, scrollY, scrollBlend, scrollBlendX, scrollBlendY;
-    protected boolean perspective, perspectiveSwitch, hideBackfaces, showGrid, snapToGrid, drawFocus, showTemplate, showAxes;
+
+    @Getter
+    protected int renderMode, gridSubdivisions, /**
+     * -- GETTER --
+     *  Get the current orientation mode.
+     */
+            orientation, navigation, scrollBuffer;
+    /**
+     * -- GETTER --
+     *  Get the grid spacing.
+     */
+    @Getter
+    protected double gridSpacing, /**
+     * -- GETTER --
+     *  Get the current scale factor for the view.
+     */
+            scale, distToPlane, scrollRadius, scrollX, scrollY, scrollBlend, scrollBlendX, scrollBlendY;
+    @Getter
+    protected boolean perspective, /**
+     * -- GETTER --
+     *  Check what the perspective was set to last
+     */
+            perspectiveSwitch, hideBackfaces, showGrid, snapToGrid, drawFocus, showTemplate, showAxes;
     protected boolean lastModelPerspective;
     protected ActionProcessor mouseProcessor;
     protected Image templateImage, renderedImage;
@@ -139,7 +171,7 @@ public abstract class ViewerCanvas extends CustomWidget {
                 drawer = new GLCanvasDrawer(this);
                 component = ((GLCanvasDrawer) drawer).getGLCanvas();
             } catch (Throwable t) {
-                log.atError().setCause(t).log("Error creating GLCanvasDrawer: {}", t);
+                log.atError().setCause(t).log("Error creating GLCanvasDrawer: {}", t.getMessage());
                 openGLAvailable = false;
             }
         }
@@ -213,12 +245,7 @@ public abstract class ViewerCanvas extends CustomWidget {
 
     private void processMouseDragged(final WidgetMouseEvent ev) {
         if (mouseProcessor != null) {
-            mouseProcessor.addEvent(new Runnable() {
-                @Override
-                public void run() {
-                    mouseDragged(ev);
-                }
-            });
+            mouseProcessor.addEvent(() -> mouseDragged(ev));
         }
     }
 
@@ -227,12 +254,7 @@ public abstract class ViewerCanvas extends CustomWidget {
             mouseProcessor.stopProcessing();
         }
         mouseProcessor = new ActionProcessor();
-        mouseProcessor.addEvent(new Runnable() {
-            @Override
-            public void run() {
-                mouseMoved(ev);
-            }
-        });
+        mouseProcessor.addEvent(() -> mouseMoved(ev));
     }
 
     private void processMouseReleased(WidgetMouseEvent ev) {
@@ -263,12 +285,7 @@ public abstract class ViewerCanvas extends CustomWidget {
         }
         final ViewerCanvas viewToProcess = this;
         final MouseScrolledEvent scrollEvent = e;
-        mouseProcessor.addEvent(new Runnable() {
-            @Override
-            public void run() {
-                scrollTool.mouseScrolled(scrollEvent, viewToProcess);
-            }
-        });
+        mouseProcessor.addEvent(() -> scrollTool.mouseScrolled(scrollEvent, viewToProcess));
     }
 
     /**
@@ -352,13 +369,6 @@ public abstract class ViewerCanvas extends CustomWidget {
     }
 
     /**
-     * Get the currently selected tool.
-     */
-    public EditingTool getCurrentTool() {
-        return currentTool;
-    }
-
-    /**
      * Set the tool which should be active when the meta key is pressed.
      */
     public void setMetaTool(EditingTool tool) {
@@ -405,7 +415,7 @@ public abstract class ViewerCanvas extends CustomWidget {
      *
      * For animated perspective changes the view has to be in perspective during the animation and
      * the perspective-parameter is turned false at finishAnimation() if needed. The perspectiveSwitch-
-     * parameter tells the users last perspehtive selection during animation.
+     * parameter tells the users last perspective selection during animation.
      */
     public void setPerspective(boolean nextPerspective) {
         // Can't not go parallel in travel modes
@@ -441,7 +451,7 @@ public abstract class ViewerCanvas extends CustomWidget {
     /**
      * This is needed when animated perspective change parallel to perspective begins.
      * The scale and perspective parameters can not be accessed directly form the
-     * animation engine and they take immediade effect on the camera.
+     * animation engine, and they take immediate effect on the camera.
      */
     public void preparePerspectiveAnimation() {
         scale = 100.0;
@@ -469,20 +479,6 @@ public abstract class ViewerCanvas extends CustomWidget {
             return ((SceneCamera) boundCamera.getObject()).isPerspective();
         }
         return perspective;
-    }
-
-    /**
-     * Check what the perespective was set to last
-     */
-    public boolean isPerspectiveSwitch() {
-        return perspectiveSwitch;
-    }
-
-    /**
-     * Get the current scale factor for the view.
-     */
-    public double getScale() {
-        return scale;
     }
 
     /**
@@ -586,7 +582,6 @@ public abstract class ViewerCanvas extends CustomWidget {
 
     /**
      * This method will be called if {@link #getRotationCenter()} returns null.
-     *
      * It should be made sure that the rotation center is always known and never null, but if
      * null is returned this recreates it and returns the new value
      */
@@ -650,10 +645,8 @@ public abstract class ViewerCanvas extends CustomWidget {
      * NAVIGATE_MODEL_LANDSCAPE = 1;
      * NAVIGATE_TRAVEL_SPACE = 2;
      * NAVIGATE_TRAVEL_LANDSCAPE = 3;
-     *
      * Setting the value higher than 3 will have MoveViewTool and RotateViewTool ignore mouse commands.
      * This may be helpful for plug-in added navigation modes.
-     *
      * If the view is in tilted orientation and then set to 'landscape' the tilt angle will be reset
      * and the view set to y = up.
      */
@@ -727,7 +720,7 @@ public abstract class ViewerCanvas extends CustomWidget {
                 viewChanged(false);
                 repaint();
             } else {
-                // Start with up = vertical direction and turn it prpendicular to z
+                // Start with up = vertical direction and turn it perpendicular to z
 
                 up.x = up.z = 0.0;
                 up.y = 1.0;
@@ -761,7 +754,7 @@ public abstract class ViewerCanvas extends CustomWidget {
     }
 
     /**
-     * Matching the camera with the cirrent state of the view
+     * Matching the camera with the current state of the view
      */ // I guess?
     public void adjustCamera(boolean perspective) {
         Rectangle bounds = getBounds();
@@ -774,13 +767,6 @@ public abstract class ViewerCanvas extends CustomWidget {
         } else {
             theCamera.setScreenParamsParallel(scale, bounds.width, bounds.height);
         }
-    }
-
-    /**
-     * Get the SceneCamera (if any) which is bound to this view.
-     */
-    public ObjectInfo getBoundCamera() {
-        return boundCamera;
     }
 
     /**
@@ -825,13 +811,6 @@ public abstract class ViewerCanvas extends CustomWidget {
      */
     public boolean getSnapToGrid() {
         return snapToGrid;
-    }
-
-    /**
-     * Get the grid spacing.
-     */
-    public double getGridSpacing() {
-        return gridSpacing;
     }
 
     /**
@@ -974,7 +953,7 @@ public abstract class ViewerCanvas extends CustomWidget {
         }
         if (anything) {
             // This is in case you have selected only on vertex.
-            // The size of it would be zero --> ViewerCavas would go  blank
+            // The size of it would be zero --> ViewerCanvas would go  blank
             // The zero size should be handled in the calling method
 
             if (maxx - minx < 0.001) {
@@ -1203,7 +1182,7 @@ public abstract class ViewerCanvas extends CustomWidget {
     public void viewChanged(boolean selectionOnly) {
         // Animation tracks may tilt the camera and the y-up navigation modes may not be
         // appropriate. This check tries to use the user's last selection if possible -- Otherwise selects the
-        // correcponding 3D-mode
+        // corresponding 3D-mode
 
         if (boundCamera != null && (lastSetNavigation == 1 || lastSetNavigation == 3)) {
             if (theCamera.getCameraCoordinates().getRotationAngles()[2] == 0.0) // The rotation angles of the boundCamera are checked elsewhere
@@ -1332,10 +1311,6 @@ public abstract class ViewerCanvas extends CustomWidget {
         coordinateAxes.draw();
     }
 
-    public int getRenderMode() {
-        return renderMode;
-    }
-
     public void setRenderMode(int mode) {
         if (mode == RENDER_RENDERED && currentTool != null) {
             for (ViewerCanvas view : currentTool.getWindow().getAllViews()) {
@@ -1369,16 +1344,8 @@ public abstract class ViewerCanvas extends CustomWidget {
     }
 
     /**
-     * Get the current orientation mode.
-     */
-    public int getOrientation() {
-        return orientation;
-    }
-
-    /**
      * Launch an orientation change procedure to turn the orientation into any of the
      * presets shown in the drop-down menu.
-     *
      * This method calls the ViewAnimation to perform the turn, if needed.
      */
     public void setOrientation(int which) {
@@ -1747,7 +1714,7 @@ public abstract class ViewerCanvas extends CustomWidget {
     }
 
     /**
-     * draw a suare on the screen
+     * draw a square on the screen
      */
     public void drawSquare(Point center, double distance, Color color) {
         Point p0, p1;
@@ -1821,12 +1788,17 @@ public abstract class ViewerCanvas extends CustomWidget {
     }
 
     /**
-     * FrustumShape is the visulization of the 'drawingplane' and the position
+     * FrustumShape is the visualization of the 'drawingplane' and the position
      * of view camera. The ViewerCanvas parameter 'distToPlane' defines the
      * distance between the drawing plane and the theCamera.
      */
     public class FrustumShape {
 
+        /**
+         * -- GETTER --
+         *  Corners of this drawing plane in scene coordinates.
+         */
+        @Getter
         private final Vec3[] corners = new Vec3[4];
 
     private Vec3 viewingPoint3D;
@@ -1865,13 +1837,6 @@ public abstract class ViewerCanvas extends CustomWidget {
             return new Vec3(theCamera.getCameraCoordinates().getZDirection());
         }
 
-        /**
-         * Corners of this drawing plane in scene coordinates.
-         */
-        public Vec3[] getCorners() {
-            return corners;
-        }
-
         public double size() {
             return corners[2].minus(corners[0]).length();
         }
@@ -1881,7 +1846,7 @@ public abstract class ViewerCanvas extends CustomWidget {
         }
 
         /**
-         * Draw a 2D projection of this plane on the given ViewerCancvas
+         * Draw a 2D projection of this plane on the given ViewerCanvas
          */
         public void draw(ViewerCanvas viewToDrawOn) {
             if (!ArtOfIllusion.getPreferences().getDrawActiveFrustum()
@@ -1945,7 +1910,7 @@ public abstract class ViewerCanvas extends CustomWidget {
             vector2D = worldToScreen.timesXY(viewingPoint3D);
             viewPoint = new Point((int) Math.round(vector2D.x), (int) Math.round(vector2D.y));
 
-            // Darw a flat shape when the view is in orthographic mode
+            // Draw a flat shape when the view is in orthographic mode
             if (isPerspective()) {
                 tipPoint = viewPoint;
             } else {
@@ -1958,7 +1923,7 @@ public abstract class ViewerCanvas extends CustomWidget {
 
             for (int c = 0; c < 4; c++) {
                 // Could add 3D-feel by first drawing a faint shape as overlay and then
-                // redrawing by rendeLine() with a thicker color. Unfortunately the depth map of
+                // redrawing by renderLine() with a thicker color. Unfortunately, the depth map of
                 // SWDrawer is inaccurate and the GL-drawer has a shift of one or two pixels in the
                 // interpretation of drawing coordinates
 
@@ -2059,7 +2024,7 @@ public abstract class ViewerCanvas extends CustomWidget {
             imageCenter = new Point(imageSize / 2, imageSize / 2);
             imagePos = new Point(bounds.width - imageSize, bounds.height - imageSize);
 
-            // The instrucuions to draw x, y and z
+            // The instructions to draw x, y and z
             labelPoint = new int[3][][];
             labelPoint[0] = new int[][]{{0, 0, labelD, labelD}, {0, labelD, labelD, 0}};
             labelPoint[1] = new int[][]{{0, 0, labelD / 2, labelD / 2}, {labelD / 2, labelD / 2, labelD, 0}, {labelD / 2, labelD / 2, labelD / 2, labelD}};

@@ -15,7 +15,7 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
-import java.util.*;
+
 
 /**
  * This class implements the dialog box which is used for the "Object Layout" and
@@ -175,10 +175,7 @@ public class TransformDialog extends BDialog {
     private void addAsListener(Widget w) {
         w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
         if (w instanceof WidgetContainer) {
-            Iterator<Widget> iter = ((WidgetContainer) w).getChildren().iterator();
-            while (iter.hasNext()) {
-                addAsListener(iter.next());
-            }
+            ((WidgetContainer) w).getChildren().forEach(this::addAsListener);
         }
     }
 }

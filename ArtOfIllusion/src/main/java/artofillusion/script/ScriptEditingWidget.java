@@ -29,7 +29,6 @@ import org.fife.ui.rtextarea.Gutter;
 
 /**
  * Shared code for setting up an editing widget for aoi scripts.
- *
  * This is a widget that can display and edit script text, in either
  * Groovy or Beanshell. It exists primarily to provide a unified
  * styling across the various script editors. It has a fixed preferred
@@ -60,7 +59,7 @@ public class ScriptEditingWidget extends BScrollPane {
             theme.apply(rsta);
 
         } catch (IOException ex) {
-            //shouldn't happen unless we are pointing at a non-existant file
+            //shouldn't happen unless we are pointing at a non-existent file
             log.atError().setCause(ex).log("Unable to load Editor theme: {}", ex.getMessage());
         }
 

@@ -331,8 +331,8 @@ public class UVMappingEditorDialog extends BDialog {
         menu.add(Translate.checkboxMenuItem("polymesh:boldEdges", this, "doBoldEdges", true));
         menuBar.add(menu);
 
-        // Would prefer to use transpations of AoI but unfortunately those come with keyboard shortcuts
-        // that are't implemented.
+        // Would prefer to use translations of AoI, but unfortunately, those come with keyboard shortcuts
+        // that aren't implemented.
         menu = Translate.menu("view");
         menu.add(Translate.menuItem("polymesh:fitToSelection", mappingCanvas, "fitToSelection"));
         menu.add(Translate.menuItem("polymesh:fitToAll", mappingCanvas, "fitToAll"));

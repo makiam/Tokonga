@@ -124,7 +124,7 @@ public class SVGImage extends ImageMap {
                     BufferedImage image = createImage(x, y, scale);
                     tile = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
                 } catch (SVGException ex) {
-                    log.atError().setCause(ex).log("Errror creating SVG image: {}", ex.getMessage());
+                    log.atError().setCause(ex).log("Error creating SVG image: {}", ex.getMessage());
                     tile = new int[TILE_SIZE * TILE_SIZE];
                 }
                 tiles.put(key.clone(), new SoftReference<>(tile));
@@ -218,12 +218,10 @@ public class SVGImage extends ImageMap {
     /**
      * Get the value of a single component at a particular location in the image. The value
      * is represented as a float between 0.0 and 1.0. The components are:
-     *
      * 0: Red
      * 1: Green
      * 2: Blue
      * 3: Alpha
-     *
      * The location is specified by x and y, which must lie between 0 and 1. The value is
      * averaged over a region of width (xsize, ysize). wrapx and wrapy specify whether, for
      * purposes of interpolation, the image should be treated as wrapping around so that

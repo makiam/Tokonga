@@ -1,5 +1,6 @@
 /* Copyright (C) 2008 by Peter Eastman
    Updates copyright (C) 2020 by Petri Ihalainen
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,6 +13,7 @@
 package artofillusion;
 
 import artofillusion.object.*;
+import lombok.Getter;
 
 import java.util.*;
 import java.beans.*;
@@ -22,6 +24,11 @@ import java.beans.*;
  */
 public class ObjectSet {
 
+    /**
+     * -- GETTER --
+     *  Get the name of this ObjectSet.
+     */
+    @Getter
     private String name;
     private int[] objectIDs;
 
@@ -31,7 +38,7 @@ public class ObjectSet {
     }
 
     /**
-     * No-args costructor for saving/loading metadata
+     * No-args constructor for saving/loading metadata
      */
     public ObjectSet() {
         name = "";
@@ -64,13 +71,6 @@ public class ObjectSet {
     }
 
     /**
-     * Get the name of this ObjectSet.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
      * Set the name of this ObjectSet.
      */
     public void setName(String name) {
@@ -95,12 +95,13 @@ public class ObjectSet {
      * Get the objects in the set.
      */
     public List<ObjectInfo> getObjects(Scene scene) {
-        ArrayList<ObjectInfo> list = new ArrayList<ObjectInfo>();
+        List<ObjectInfo> list = new ArrayList<>();
         for (int id : objectIDs) {
             ObjectInfo info = scene.getObjectById(id);
-            if (info != null) {
-                list.add(info);
+            if (info == null) {
+                continue;
             }
+            list.add(info);
         }
         return list;
     }

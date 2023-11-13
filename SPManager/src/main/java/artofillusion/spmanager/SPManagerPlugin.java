@@ -15,7 +15,7 @@ import artofillusion.ui.*;
 import artofillusion.util.SearchlistClassLoader;
 import buoy.event.*;
 import buoy.widget.*;
-import java.awt.*;
+
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
@@ -30,7 +30,6 @@ import javax.swing.*;
  * The Plugin corresponding to the SPManager
  *
  * @author Francois Guillet
- * @created 20 march 2004
  */
 @Slf4j
 public class SPManagerPlugin implements Plugin {
@@ -113,7 +112,7 @@ public class SPManagerPlugin implements Plugin {
                     addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
                     addUrl.setAccessible(true);
                 } catch (NoSuchMethodException | SecurityException e) {
-                    log.atError().setCause(e).log("Error getting addURL method: {}" + e.getMessage());
+                    log.atError().setCause(e).log("Error getting addURL method: {}", e.getMessage());
                 }
 
                 // get details of all local plugins
@@ -220,9 +219,9 @@ public class SPManagerPlugin implements Plugin {
 
                         JScrollPane detail = new JScrollPane(txt, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-                        JLabel messg = new JLabel(Translate.text("loadError"));
+                        var messageLabel = new JLabel(Translate.text("loadError"));
 
-                        MessageDialog.create().withTitle("SPManager initialise").error(new JComponent[]{messg, detail});
+                        MessageDialog.create().withTitle("SPManager initialise").error(new JComponent[]{messageLabel, detail});
                     }
                 } else {
                     log.error("SPManager: could not find plugin dir: {}", PLUGIN_DIRECTORY);
@@ -646,8 +645,8 @@ public class SPManagerPlugin implements Plugin {
         if (spmFrame == null) {
             spmFrame = new SPManagerFrame();
         }
-        ((Window) spmFrame.getComponent()).toFront();
-        ((Window) spmFrame.getComponent()).setVisible(true);
+        spmFrame.getComponent().toFront();
+        spmFrame.getComponent().setVisible(true);
     }
 
     /**

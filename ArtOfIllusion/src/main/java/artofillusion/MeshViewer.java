@@ -1,5 +1,6 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
    Modifications Copyright (C) Petri Ihalainen 2016
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -16,6 +17,8 @@ import artofillusion.object.*;
 import artofillusion.ui.MeshEditController;
 import artofillusion.math.*;
 import buoy.widget.*;
+import lombok.Getter;
+
 import java.util.*;
 
 /**
@@ -26,6 +29,11 @@ public abstract class MeshViewer extends ObjectViewer {
     public static final int HANDLE_SIZE = 5;
     protected boolean showMesh, showSurface, showSkeleton;
     protected TextureParameter surfaceColoringParameter;
+    /**
+     * -- GETTER --
+     *  Get the ID of the selected joint. If no joint is selected return 0.
+     */
+    @Getter
     private int selectedJoint;
     private boolean detachSkeleton;
     private final List<Integer> lockedJoints;
@@ -36,13 +44,6 @@ public abstract class MeshViewer extends ObjectViewer {
     }
 
     /**
-     * Get the ID of the selected joint. If no joint is selected return 0.
-     */
-    public int getSelectedJoint() {
-        return selectedJoint;
-    }
-
-    /**
      * Set the selected joint.
      */
     public void setSelectedJoint(int id) {
@@ -50,7 +51,7 @@ public abstract class MeshViewer extends ObjectViewer {
     }
 
     /**
-     * Get an array of size [# joints in skeleton] specifyiing which ones are locked.
+     * Get an array of size [# joints in skeleton] specifying which ones are locked.
      */
     public boolean[] getLockedJoints() {
         Skeleton s = ((Mesh) getController().getObject().getObject()).getSkeleton();

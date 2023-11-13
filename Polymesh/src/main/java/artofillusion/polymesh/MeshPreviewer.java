@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import javax.swing.Timer;
 
 /**
- * MeshPreviewer is a component used for renderering previews of Mesh.
+ * MeshPreviewer is a component used for rendering previews of Mesh.
  */
 public class MeshPreviewer extends CustomWidget implements RenderListener {
 
@@ -442,7 +442,7 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
     }
 
     public void clearVertexSelection() {
-        if (selection.size() == 0) {
+        if (selection.isEmpty()) {
             return;
         }
 

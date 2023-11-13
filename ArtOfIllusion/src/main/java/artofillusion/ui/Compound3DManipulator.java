@@ -20,6 +20,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import javax.imageio.*;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -60,6 +62,11 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
     private final RotationHandle[] uvRotationHandle;
     private RotationHandle[] activeRotationHandleSet;
     private RotationHandle currentRotationHandle;
+    /**
+     * -- GETTER --
+     *  Get the current view mode.
+     */
+    @Getter
     private ViewMode viewMode;
     private boolean rotateAroundSelectionCenter = true;
 
@@ -167,13 +174,6 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
         axisLength = 80;
         setViewMode(XYZ_MODE);
         handlePos = new Vec3[7];
-    }
-
-    /**
-     * Get the current view mode.
-     */
-    public ViewMode getViewMode() {
-        return viewMode;
     }
 
     /**
@@ -309,7 +309,7 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
             yDir3D = Vec3.vy();
             zDir3D = Vec3.vz();
         } else if (viewMode == UV_MODE) {
-            // Let's have this in screen coordinates, y up and x ponting right
+            // Let's have this in screen coordinates, y up and x pointing right
             CoordinateSystem coords = view.getCamera().getCameraCoordinates();
             xDir3D = coords.getZDirection().cross(coords.getUpDirection());
             yDir3D = coords.getUpDirection();
@@ -572,7 +572,7 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
         Vec3 camAim = view.getCamera().getCameraCoordinates().getZDirection();
 
         // Reference depths of main elements.
-        // The centerpoint repsesents the entire "inner sphere", which
+        // The centerpoint represents the entire "inner sphere", which
         // contains the rotation handles and the axis lines too.
         fromCamera = new Vec3[7];
         refDepth = new double[7];
@@ -929,7 +929,7 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
     }
 
     /*
-    This is a value that really should be provoded by the view camera object.
+    This is a value that really should be provided by the view camera object.
 
     The method should be used, when the view is in perspective mode.
     In parallel mode it just return the distToScreen of Camera.
@@ -975,7 +975,7 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
         /**
          * Creates a Rotation Handle with a given number of segments
          *
-         * @param segments The number of segmetns that describe the rotation circle
+         * @param segments The number of segments that describe the rotation circle
          * @param axis The rotation axis
          */
         public RotationHandle(int segments, Axis axis, Color color) {
@@ -1015,7 +1015,7 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
          * tell the user the rotation amount when drawn on the canvas
          *
          * @param angle
-         * @return The 2d points deinfing the polygon
+         * @return The 2d points defining the polygon
          */
         public Vec3[] getRotationFeedback(double angle) {
             Vec3[] points = new Vec3[segments + 1];
@@ -1091,20 +1091,19 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
     /**
      * Instances of this class represent coordinate axes.
      */
+    @Getter
     public static class Axis {
 
+        /**
+         * -- GETTER --
+         *  Get the name of this axis.
+         */
         private final String name;
 
         private Axis(String name) {
             this.name = name;
         }
 
-        /**
-         * Get the name of this axis.
-         */
-        public String getName() {
-            return name;
-        }
     }
 
     /**
@@ -1202,6 +1201,12 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
      */
     public class HandleDraggedEvent extends HandleEvent {
 
+        /**
+         * -- GETTER --
+         *  Get a matrix which can be used to transform objects or vertices from their original positions
+         *  to their moved, scaled, or rotated positions.
+         */
+        @Getter
         private final Mat4 transform;
         private double angle, scale1, scale2;
 
@@ -1228,14 +1233,6 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
             this(view, handleType, axis, screenBounds, selectionBounds, event, transform);
             this.scale1 = scale1;
             this.scale2 = scale2;
-        }
-
-        /**
-         * Get a matrix which can be used to transform objects or vertices from their original positions
-         * to their moved, scaled, or rotated positions.
-         */
-        public Mat4 getTransform() {
-            return transform;
         }
 
         /**

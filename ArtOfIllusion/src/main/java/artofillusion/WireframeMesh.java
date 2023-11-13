@@ -1,5 +1,5 @@
 /* A WireframeMesh represents an object to be rendered to the screen as a wireframe.  It is
-   described by an array of vertices and a list of lines to be drawn betwee them. */
+   described by an array of vertices and a list of lines to be drawn between them. */
 
  /* Copyright (C) 2000 by Peter Eastman
 

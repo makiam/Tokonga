@@ -21,6 +21,8 @@ import buoy.widget.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -103,7 +105,7 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
         if (config == null) {
             return;
         }
-        config.forEach((key, value) -> renderer.setConfiguration(key, value));
+        config.forEach(renderer::setConfiguration);
     }
 
     /**
@@ -121,8 +123,8 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
      * Save changes and close the window.
      */
     private void doOk() {
-        ImageFilter[] filt = filtersPanel.filters.toArray(new ImageFilter[filtersPanel.filters.size()]);
-        theCamera.setImageFilters(filt);
+        var filters = filtersPanel.filters.toArray(new ImageFilter[filtersPanel.filters.size()]);
+        theCamera.setImageFilters(filters);
         configureRenderer(savedConfiguration, previewRenderer);
         dispose();
     }
@@ -131,9 +133,9 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
      * Cancel changes and close the window.
      */
     private void doCancel() {
-        ImageFilter[] filt = theCamera.getImageFilters();
-        for (int i = 0; i < filt.length; i++) {
-            filt[i].copy(oldFilters[i]);
+        var filters = theCamera.getImageFilters();
+        for (int i = 0; i < filters.length; i++) {
+            filters[i].copy(oldFilters[i]);
         }
         configureRenderer(savedConfiguration, previewRenderer);
         dispose();
@@ -273,6 +275,11 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
         private final BButton upButton;
         private final BButton downButton;
         private final Class<?>[] filterClasses;
+        /**
+         * -- GETTER --
+         *  Get the filters to apply.
+         */
+        @Getter
         private final ArrayList<ImageFilter> filters;
         final Runnable filterChangedCallback;
 
@@ -325,13 +332,6 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
             }
             ((BScrollPane) cameraFiltersList.getParent()).setPreferredViewSize(allFiltersList.getPreferredSize());
             updateComponents();
-        }
-
-        /**
-         * Get the filters to apply.
-         */
-        public ArrayList<ImageFilter> getFilters() {
-            return filters;
         }
 
         /**

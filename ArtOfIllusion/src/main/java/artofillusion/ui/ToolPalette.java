@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2006 by Peter Eastman
    Modification copyright (C) 2016 by Petri Ihalainen
-   Changes copyright (C) 2021 by Maksim Khramov
+   Changes copyright (C) 2021-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -16,6 +16,7 @@ import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
 import artofillusion.*;
+import lombok.Getter;
 
 /**
  * A ToolPalette is drawn as a grid of images, one for each EditingTool that is added to
@@ -25,6 +26,11 @@ public class ToolPalette extends CustomWidget {
 
     private final int width;
     private int height;
+    /**
+     * -- GETTER --
+     *  Get the number of tools in palette.
+     */
+    @Getter
     private int numTools;
     private int selected;
     private int lastSelected;
@@ -105,13 +111,6 @@ public class ToolPalette extends CustomWidget {
         if (numTools == 1) {
             t.activate();
         }
-    }
-
-    /**
-     * Get the number of tools in palette.
-     */
-    public int getNumTools() {
-        return numTools;
     }
 
     /**
@@ -301,27 +300,27 @@ public class ToolPalette extends CustomWidget {
      */
     public void keyPressed(KeyPressedEvent ev) {
         int code = ev.getKeyCode();
-        int newtool;
+        int newTool;
 
         if (code == KeyPressedEvent.VK_LEFT) {
-            newtool = selected - 1;
+            newTool = selected - 1;
         } else if (code == KeyPressedEvent.VK_RIGHT) {
-            newtool = selected + 1;
+            newTool = selected + 1;
         } else if (code == KeyPressedEvent.VK_UP) {
-            newtool = selected - width;
+            newTool = selected - width;
         } else if (code == KeyPressedEvent.VK_DOWN) {
-            newtool = selected + width;
+            newTool = selected + width;
         } else {
             return;
         }
-        if (newtool < 0) {
-            newtool += numTools;
+        if (newTool < 0) {
+            newTool += numTools;
         }
-        if (newtool >= numTools) {
-            newtool -= numTools;
+        if (newTool >= numTools) {
+            newTool -= numTools;
         }
         tool[selected].deactivate();
-        selected = lastSelected = newtool;
+        selected = lastSelected = newTool;
         repaint();
         tool[selected].activate();
     }

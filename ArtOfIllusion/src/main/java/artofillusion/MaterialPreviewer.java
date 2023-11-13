@@ -1,4 +1,5 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -23,7 +24,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * MaterialPreviewer is a component used for renderering previews of Materials. It displays
+ * MaterialPreviewer is a component used for rendering previews of Materials. It displays
  * a scene consisting of a Sphere with the desired Material applied to it, a ground plane,
  * and a single light. Optionally, an Object3D may be specified which will then be used
  * instead of a Sphere.
@@ -158,7 +159,7 @@ public class MaterialPreviewer extends CustomWidget implements RenderListener {
     }
 
     /**
-     * Get the scene being rendererd as the preview.
+     * Get the scene being rendered as the preview.
      */
     public Scene getScene() {
         return theScene;

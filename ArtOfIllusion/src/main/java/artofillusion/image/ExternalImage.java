@@ -1,5 +1,5 @@
 /* Copyright (C) 2017 by Petri Ihalainen
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,18 +18,28 @@ import java.awt.image.*;
 import java.io.*;
 import java.util.Date;
 import javax.imageio.*;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ExternalImage extends ImageMap {
 
     private String imageType;
+    @Getter
     private ImageMap imageMap;
     private int w, h;
     private String type, lastAbsolutePath, lastRelativePath;
     private File imageFile;
     private Image brokenImage;
-    private boolean connected, nameAutomatic = true;
+    // Connected is true if the last load from file was succesful
+    @Getter
+    @Getter
+    private boolean connected, /**
+     * -- GETTER --
+     *  Check if the image name is updated automatically.
+     */
+            nameAutomatic = true;
 
     /**
      * Create an external image out of a image file
@@ -67,7 +77,7 @@ public class ExternalImage extends ImageMap {
         }
     }
 
-    // To be developed to a Thememanager thing
+    // To be developed to a Theme manager thing
     private Image loadIcon(String iconName) {
         try {
             return ImageIO.read(ExternalImage.class.getResource("/artofillusion/image/icons/" + iconName));
@@ -152,13 +162,6 @@ public class ExternalImage extends ImageMap {
     }
 
     /**
-     * Check if the image name is updated automatically.
-     */
-    public boolean isNameAutomatic() {
-        return nameAutomatic;
-    }
-
-    /**
      * Set if the image name is updated automatically.
      */
     public void setNameAutomatic(boolean automatic) {
@@ -169,23 +172,19 @@ public class ExternalImage extends ImageMap {
      * Load an image file to create, refresh or reconnect an external image
      */
     private void loadExternalImage(File file) throws Exception {
-        try {
-            imageMap = loadImage(file);
-        } catch (Exception e) {
-            throw e;
-        }
+        imageMap = loadImage(file);
     }
 
     private void setTemporaryImage() {
-        // This indicates, that also the temporary image has been created and set.
-        // The 'brokenImage' must be set null, when an image is succesfully loaded.
+        // This indicates that also the temporary image has been created and set.
+        // The 'brokenImage' must be set null, when an image is successfully loaded.
 
         if (brokenImage != null) {
             return;
         }
 
         try {
-            // This shoud not be possible
+            // This should not be possible
             if (w <= 0 || h <= 0) {
                 w = h = 256;
             }
@@ -299,15 +298,6 @@ public class ExternalImage extends ImageMap {
             setTemporaryImage();
             throw e;
         }
-    }
-
-    public boolean isConnected() {
-        // Connected is true if the last load from file was succesful
-        return connected;
-    }
-
-    public ImageMap getImageMap() {
-        return imageMap;
     }
 
     /**

@@ -1761,7 +1761,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * Triangulates selected faces Ear clipping algorithm is used
      *
      * @param selected
-     * Faces selected for etriangulation
+     * Faces selected for triangulation
      * @return The new face selection
      */
     public boolean[] triangulateFaces(boolean[] selected) {
@@ -2177,7 +2177,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 ++count;
             }
         }
-        // array v now contains the vertices for trully convex face
+        // array v now contains the vertices for truly convex face
         if (count == 3) {
             // simple triangle
             for (i = 0; i < vf.length; ++i) {
@@ -2877,7 +2877,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
     }
 
     /**
-     * Convertion to a triangle mesh
+     * Conversion to a triangle mesh
      *
      * @param tol Tolerance - ignored
      * @return The triangle mesh
@@ -4177,7 +4177,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             for (int j = 0; j < newVert.length; ++j) {
                 newVert[j].edge = edgeTable[newVert[j].edge];
             }
-        } else // two seperate selections
+        } else // two separate selections
         {
             if (beforee1 != aftere2 || aftere1 != beforee2) {
                 return null;
@@ -5369,7 +5369,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             e = ed[e.next];
             e.face = newFace;
         }
-        return;
+
     }
 
     /**
@@ -8762,7 +8762,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
     }
 
     /**
-     * Deletes a single, dangling vertex linked to antoher vertex through two
+     * Deletes a single, dangling vertex linked to another vertex through two
      * edges. This situation can occur when a two edge face is along a boundary.
      *
      * @param vert
