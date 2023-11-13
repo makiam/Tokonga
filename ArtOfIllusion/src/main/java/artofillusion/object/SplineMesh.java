@@ -1729,7 +1729,7 @@ public class SplineMesh extends Object3D implements Mesh {
         /**
          * Reconstructs the keyframe from its serialized representation.
          */
-        public SplineMeshKeyframe(DataInputStream in, Object parent) throws IOException, InvalidObjectException {
+        public SplineMeshKeyframe(DataInputStream in, Object parent) throws IOException {
             this();
             short version = in.readShort();
             if (version < 0 || version > 1) {

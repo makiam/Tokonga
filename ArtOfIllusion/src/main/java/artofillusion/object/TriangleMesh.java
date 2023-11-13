@@ -291,8 +291,8 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
      * is an error to call the constructor with a faces[][] array which
      * does not meet this condition, and the results are undefined.
      *
-     * @param v[]: An array containing the vertices.
-     * @param faces[][] An N by 3 array containing the indices of the
+     * @param v: An array containing the vertices.
+     * @param faces An N by 3 array containing the indices of the
      * vertices which define each face.
      */
     public TriangleMesh(Vertex[] v, int[][] faces) {

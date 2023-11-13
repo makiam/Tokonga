@@ -141,35 +141,12 @@ public class SSMR3DManipulator
         specificRotHandles[0] = new RotationHandle(64, XAXIS, Color.blue);
         specificRotHandles[1] = new RotationHandle(64, YAXIS, Color.green);
         specificRotHandles[2] = new RotationHandle(64, ZAXIS, Color.red);
-        valueWidgetCallback
-                = new Runnable() {
-
-            @Override
-            public void run() {
-                doValueWidgetCallback();
-            }
-        };
-        Runnable validateWidgetValue = new Runnable() {
-
-            @Override
-            public void run() {
-                doValueWidgetValidate();
-            }
-        };
-        Runnable abortWidgetValue = new Runnable() {
-
-            @Override
-            public void run() {
-                doValueWidgetAbort();
-            }
-        };
+        valueWidgetCallback = this::doValueWidgetCallback;
+        Runnable validateWidgetValue = this::doValueWidgetValidate;
+        Runnable abortWidgetValue = this::doValueWidgetAbort;
         axisLength = 80;
         view.addEventLink(ToolTipEvent.class, this, "doTooltip");
-        if (view.isPerspective()) {
-            active = true;
-        } else {
-            active = false;
-        }
+        active = view.isPerspective();
     }
 
     @Override

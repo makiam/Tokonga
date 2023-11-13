@@ -38,6 +38,11 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class ViewerCanvas extends CustomWidget {
 
     protected Camera theCamera;
+    /**
+     * -- GETTER --
+     *  Get the SceneCamera (if any) which is bound to this view.
+     */
+    @Getter
     protected ObjectInfo boundCamera;
     /**
      * -- GETTER --
@@ -47,7 +52,7 @@ public abstract class ViewerCanvas extends CustomWidget {
     protected EditingTool currentTool, activeTool, metaTool, altTool;
     protected ScrollViewTool scrollTool;
     protected PopupMenuManager popupManager;
-    @Getter
+
     @Getter
     protected int renderMode, gridSubdivisions, /**
      * -- GETTER --
@@ -59,8 +64,17 @@ public abstract class ViewerCanvas extends CustomWidget {
      *  Get the grid spacing.
      */
     @Getter
-    protected double gridSpacing, scale, distToPlane, scrollRadius, scrollX, scrollY, scrollBlend, scrollBlendX, scrollBlendY;
-    protected boolean perspective, perspectiveSwitch, hideBackfaces, showGrid, snapToGrid, drawFocus, showTemplate, showAxes;
+    protected double gridSpacing, /**
+     * -- GETTER --
+     *  Get the current scale factor for the view.
+     */
+            scale, distToPlane, scrollRadius, scrollX, scrollY, scrollBlend, scrollBlendX, scrollBlendY;
+    @Getter
+    protected boolean perspective, /**
+     * -- GETTER --
+     *  Check what the perspective was set to last
+     */
+            perspectiveSwitch, hideBackfaces, showGrid, snapToGrid, drawFocus, showTemplate, showAxes;
     protected boolean lastModelPerspective;
     protected ActionProcessor mouseProcessor;
     protected Image templateImage, renderedImage;
@@ -468,20 +482,6 @@ public abstract class ViewerCanvas extends CustomWidget {
     }
 
     /**
-     * Check what the perspective was set to last
-     */
-    public boolean isPerspectiveSwitch() {
-        return perspectiveSwitch;
-    }
-
-    /**
-     * Get the current scale factor for the view.
-     */
-    public double getScale() {
-        return scale;
-    }
-
-    /**
      * Set the scale factor for the view.
      */
     public void setScale(double scale) {
@@ -645,10 +645,8 @@ public abstract class ViewerCanvas extends CustomWidget {
      * NAVIGATE_MODEL_LANDSCAPE = 1;
      * NAVIGATE_TRAVEL_SPACE = 2;
      * NAVIGATE_TRAVEL_LANDSCAPE = 3;
-     *
      * Setting the value higher than 3 will have MoveViewTool and RotateViewTool ignore mouse commands.
      * This may be helpful for plug-in added navigation modes.
-     *
      * If the view is in tilted orientation and then set to 'landscape' the tilt angle will be reset
      * and the view set to y = up.
      */
@@ -769,13 +767,6 @@ public abstract class ViewerCanvas extends CustomWidget {
         } else {
             theCamera.setScreenParamsParallel(scale, bounds.width, bounds.height);
         }
-    }
-
-    /**
-     * Get the SceneCamera (if any) which is bound to this view.
-     */
-    public ObjectInfo getBoundCamera() {
-        return boundCamera;
     }
 
     /**

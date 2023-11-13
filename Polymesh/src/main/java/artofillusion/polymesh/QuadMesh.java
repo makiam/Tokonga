@@ -19,7 +19,6 @@ import artofillusion.RenderingTriangle;
 import artofillusion.Scene;
 import artofillusion.WireframeMesh;
 import artofillusion.animation.Keyframe;
-import artofillusion.animation.Skeleton;
 import artofillusion.math.BoundingBox;
 import artofillusion.math.Vec3;
 import artofillusion.object.FacetedMesh;
@@ -42,13 +41,14 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.util.Stack;
 import java.util.Vector;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * A QuadMesh is a mesh exclusively made up of quads. This mesh is not meant to be edited by users but
  * it backs up PolyMeshes when doing Catmull-Clark smoothing. It may however be extended in the future
  * to provide a standalone, new kind of mesh for AoI. Its structure is heavily derived from AoI trimesh.
- *
  * Smoothness and smoothing algorithm is identical to PolyMesh smoothing algorithm since a smoothed
  * PolyMesh is a quad mesh.
  *
@@ -264,8 +264,10 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 
     private QuadVertex[] vertices;
 
+    @Getter
     private QuadEdge[] edges;
 
+    @Getter
     private QuadFace[] faces;
 
     private BoundingBox bounds;
@@ -288,9 +290,8 @@ public class QuadMesh extends Object3D implements FacetedMesh {
         this.faces = faces;
     }
 
-    public QuadMesh(DataInputStream in, Scene scene) throws IOException, InvalidObjectException {
+    public QuadMesh(DataInputStream in, Scene scene) throws IOException {
         super(in, scene);
-        // TODO Auto-generated constructor stub
     }
 
     @Override
@@ -558,14 +559,6 @@ public class QuadMesh extends Object3D implements FacetedMesh {
     @Override
     public MeshVertex[] getVertices() {
         return vertices;
-    }
-
-    public QuadEdge[] getEdges() {
-        return edges;
-    }
-
-    public QuadFace[] getFaces() {
-        return faces;
     }
 
     @Override

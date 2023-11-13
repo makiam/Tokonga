@@ -30,6 +30,8 @@ import artofillusion.texture.UVMapping;
 import buoy.event.RepaintEvent;
 import buoy.widget.BScrollPane;
 import buoy.widget.CustomWidget;
+import lombok.Getter;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -72,6 +74,12 @@ public class UVMappingCanvas extends CustomWidget {
     private final MeshPreviewer preview;
     private int[][] vertIndexes;
     private int[][] vertMeshes;
+    /**
+     * -- GETTER --
+     *
+     * @return the current texture
+     */
+    @Getter
     private Texture texture;
     private UVMapping texMapping;
     private boolean boldEdges;
@@ -162,13 +170,6 @@ public class UVMappingCanvas extends CustomWidget {
         clearSelection();
         repaint();
         preview.render();
-    }
-
-    /**
-     * @return the current texture
-     */
-    public Texture getTexture() {
-        return texture;
     }
 
     /**
@@ -758,7 +759,7 @@ public class UVMappingCanvas extends CustomWidget {
      * Computes the position of a vertex given its position on the layout
      *
      * @param p The new vertex position
-     * @param index The vertex index
+     * @param v The vertex
      */
     public void LayoutToVertex(Vec2 v, Point p) {
         v.x = (p.x - size.width / 2) / scale + origin.x;
@@ -882,13 +883,13 @@ public class UVMappingCanvas extends CustomWidget {
     /**
      * @param scale the scale to set
      */
-    public void setScale(double sc) {
-        double f = scale / sc;
+    public void setScale(double scale) {
+        double f = this.scale / scale;
         umin = f * (umin - origin.x) + origin.x;
         umax = f * (umax - origin.x) + origin.x;
         vmin = f * (vmin - origin.y) + origin.y;
         vmax = f * (vmax - origin.y) + origin.y;
-        scale = sc;
+        this.scale = scale;
         createImage();
         refreshVerticesPoints();
         repaint();
@@ -1049,8 +1050,7 @@ public class UVMappingCanvas extends CustomWidget {
     /**
      * Given the index of a displayed vertex, returns the index of this vertex
      * with respect to the unfolded piece of mesh.
-     *
-     * This comes form the fact that not all vertices are displayed when the
+     * This comes from the fact that not all vertices are displayed when the
      * original mesh is not a triangle mesh
      *
      * @param index The index of the displayed vertex

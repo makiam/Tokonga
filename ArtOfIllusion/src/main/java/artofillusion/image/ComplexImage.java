@@ -13,6 +13,8 @@ package artofillusion.image;
 
 import java.awt.*;
 import java.awt.image.*;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -26,7 +28,17 @@ public class ComplexImage {
     private Image img;
     private final float[][] pixelData;
     private int[] intImage;
+    /**
+     * -- GETTER --
+     *  Get the width of the image.
+     */
+    @Getter
     private final int width;
+    /**
+     * -- GETTER --
+     *  Get the height of the image.
+     */
+    @Getter
     private final int height;
 
     public static final int BLUE = 1;
@@ -53,20 +65,6 @@ public class ComplexImage {
      */
     public void setComponentValues(int component, float[] values) {
         pixelData[getComponentIndex(component)] = values;
-    }
-
-    /**
-     * Get the width of the image.
-     */
-    public int getWidth() {
-        return width;
-    }
-
-    /**
-     * Get the height of the image.
-     */
-    public int getHeight() {
-        return height;
     }
 
     /**

@@ -29,7 +29,6 @@ import org.fife.ui.rtextarea.Gutter;
 
 /**
  * Shared code for setting up an editing widget for aoi scripts.
- *
  * This is a widget that can display and edit script text, in either
  * Groovy or Beanshell. It exists primarily to provide a unified
  * styling across the various script editors. It has a fixed preferred

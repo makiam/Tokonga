@@ -39,26 +39,20 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Apply editing functions to icon image(s).
- *
  * IconGenerator supports a number of basic image operations such as overlay,
  * blend, add, multiply, etc, and can apply these to the pixels of one or more
  * images.
- *
  * IconGenerator implements a basic macro processor, and the ability to execute
  * a macro in source (string) form, or to compile source and to execute the
  * compiled version.
- *
  * IconGenerator supports a default syntax for macros, but the symbols
  * mapped to each operation can be overridden by the caller.
- *
  * <br>
  * The editing macro consists of one of more <i>instructions</i>, each separated by a delimiter.
  * Each instruction can perform a single <i>operation</i> which can be modified in various ways.
  * Each operation and each of the modifiers are specified by an <i>operator</i>
  * each of which is specified by some token in the macro "language".
- *
  * All other words are either the pathname of an image or an object in the execution namespace.
- *
  * The operators and the tokens that specify them in the default language binding are:
  * <ul>
  * <li>COMPOSIT semicolon (;) - at the end of each <i>instruction</i>, the result of the instruction is
@@ -551,7 +545,7 @@ public class IconGenerator {
         }
 
         int[] pix = new int[width];
-        int p, a, r, g, b;
+        int p, r, g, b;
         int max = height + y;
         // add to pixels
         for (int i = y; i < max; i++) {
@@ -604,7 +598,7 @@ public class IconGenerator {
         }
 
         int[] pix = new int[width];
-        int p, a, r, g, b;
+        int p, r, g, b;
         int max = height + y;
         for (int i = y; i < max; i++) {
             pix = image.getRGB(x, i, width, 1, pix, 0, width);
@@ -1037,7 +1031,6 @@ public class IconGenerator {
      * and specifies values other than
      * (0, 0, image.width, image.height), then the feathering is
      * performed relative to the edges of this rectangle.
-     *
      * This is useful if the feathered image is going to be overlaid
      * on some other image using an identical clip region.
      */
@@ -1080,6 +1073,7 @@ public class IconGenerator {
          * we only feather pixels *less* transparent. Pixels already *more* transparent
          * are left unchanged.
          */
+        float transy = 1.0f;
         for (i = y; i <= cy; i++) {
             if (dir == FEATHER_OUT_DIR) {
 
@@ -1859,8 +1853,6 @@ public class IconGenerator {
 
             // apply a colour
             if (rhs != null && (alpha >= 0 || red >= 0 || green >= 0 || blue >= 0)) {
-
-                Graphics2D overlay;
 
                 int ired = (int) red;
                 int igreen = (int) green;

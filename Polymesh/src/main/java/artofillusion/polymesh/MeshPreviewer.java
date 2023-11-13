@@ -442,7 +442,7 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
     }
 
     public void clearVertexSelection() {
-        if (selection.size() == 0) {
+        if (selection.isEmpty()) {
             return;
         }
 

@@ -5369,7 +5369,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             e = ed[e.next];
             e.face = newFace;
         }
-        return;
+
     }
 
     /**

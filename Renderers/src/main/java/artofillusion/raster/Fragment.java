@@ -1,4 +1,5 @@
 /* Copyright (C) 2006 by Peter Eastman
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -54,12 +55,12 @@ public interface Fragment {
     /**
      * Get the material for the object this fragment is part of. This may return null.
      */
-    public ObjectMaterialInfo getMaterialMapping();
+    ObjectMaterialInfo getMaterialMapping();
 
     /**
      * Get whether the object is being entered or exited in this fragment.
      */
-    public boolean isEntering();
+    boolean isEntering();
 
     /**
      * Get the next fragment behind this one.

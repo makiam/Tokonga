@@ -17,6 +17,8 @@ import artofillusion.object.*;
 import artofillusion.ui.MeshEditController;
 import artofillusion.math.*;
 import buoy.widget.*;
+import lombok.Getter;
+
 import java.util.*;
 
 /**
@@ -27,6 +29,11 @@ public abstract class MeshViewer extends ObjectViewer {
     public static final int HANDLE_SIZE = 5;
     protected boolean showMesh, showSurface, showSkeleton;
     protected TextureParameter surfaceColoringParameter;
+    /**
+     * -- GETTER --
+     *  Get the ID of the selected joint. If no joint is selected return 0.
+     */
+    @Getter
     private int selectedJoint;
     private boolean detachSkeleton;
     private final List<Integer> lockedJoints;
@@ -34,13 +41,6 @@ public abstract class MeshViewer extends ObjectViewer {
     public MeshViewer(MeshEditController controller, RowContainer p) {
         super(controller, p);
         lockedJoints = new Vector<>();
-    }
-
-    /**
-     * Get the ID of the selected joint. If no joint is selected return 0.
-     */
-    public int getSelectedJoint() {
-        return selectedJoint;
     }
 
     /**

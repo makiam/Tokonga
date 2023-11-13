@@ -11,6 +11,8 @@ import artofillusion.ui.MeshEditController;
 import buoy.event.EventSource;
 import buoy.event.KeyPressedEvent;
 import buoy.event.WidgetMouseEvent;
+import lombok.Getter;
+
 import java.awt.Rectangle;
 
 /**
@@ -19,12 +21,41 @@ import java.awt.Rectangle;
 public abstract class Manipulator extends EventSource {
 
     protected final AdvancedEditingTool tool;
-    protected Rectangle bounds, originalBounds;
+    /**
+     * -- GETTER --
+     *  Returns the manipulator bounds, as previously calculated after a call to setBounds().
+     *  This bounds are inset by an amount of MARGIN.
+     *
+     * @return The manipulator bounds
+     */
+    @Getter
+    protected Rectangle bounds, /**
+     * -- GETTER --
+     *  Returns the original rectangle bounds, as previously set by a call to setBounds().
+     *
+     * @return The manipulator bounds
+     */
+            originalBounds;
     protected AdvancedEditingTool.SelectionProperties selectionBounds;
     protected int MARGIN = 50;
+    /**
+     * -- GETTER --
+     *  Returns the value widget associated to the manipulator, if any
+     *
+     * @return The value widget associated to the manipulator
+     */
+    @Getter
     protected PolyMeshValueWidget valueWidget;
     protected final ViewerCanvas view;
+    /**
+     * -- GETTER --
+     *  Returns true if the manipulator is active
+     *
+     * @return Manipulator status
+     */
+    @Getter
     protected boolean active;
+    @Getter
     protected static boolean helpModeOn;
 
     /**
@@ -69,34 +100,6 @@ public abstract class Manipulator extends EventSource {
             this.bounds.width += 2 * MARGIN;
             this.bounds.height += 2 * MARGIN;
         }
-    }
-
-    /**
-     * Returns the manipulator bounds, as previously calculated after a call to setBounds().
-     * This bounds are inset by an amount of MARGIN.
-     *
-     * @return The manipulator bounds
-     */
-    public Rectangle getBounds() {
-        return bounds;
-    }
-
-    /**
-     * Returns the original rectangle bounds, as previously set by a call to setBounds().
-     *
-     * @return The manipulator bounds
-     */
-    public Rectangle getOriginalBounds() {
-        return originalBounds;
-    }
-
-    /**
-     * Returns true if the manipulator is active
-     *
-     * @return Manipulator status
-     */
-    public boolean isActive() {
-        return active;
     }
 
     /**
@@ -203,15 +206,6 @@ public abstract class Manipulator extends EventSource {
     }
 
     /**
-     * Returns the value widget associated to the manipulator, if any
-     *
-     * @return The value widget associated to the manipulator
-     */
-    public PolyMeshValueWidget getValueWidget() {
-        return valueWidget;
-    }
-
-    /**
      * Sets the value widget to use in conjunction with the manipulator
      *
      * @param valueWidget
@@ -242,10 +236,6 @@ public abstract class Manipulator extends EventSource {
 
     public static void toggleHelpMode() {
         helpModeOn = !helpModeOn;
-    }
-
-    public static boolean isHelpModeOn() {
-        return helpModeOn;
     }
 
     public static void setHelpModeOn(boolean helpModeOn) {

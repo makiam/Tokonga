@@ -20,6 +20,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import javax.imageio.*;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -60,6 +62,11 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
     private final RotationHandle[] uvRotationHandle;
     private RotationHandle[] activeRotationHandleSet;
     private RotationHandle currentRotationHandle;
+    /**
+     * -- GETTER --
+     *  Get the current view mode.
+     */
+    @Getter
     private ViewMode viewMode;
     private boolean rotateAroundSelectionCenter = true;
 
@@ -167,13 +174,6 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
         axisLength = 80;
         setViewMode(XYZ_MODE);
         handlePos = new Vec3[7];
-    }
-
-    /**
-     * Get the current view mode.
-     */
-    public ViewMode getViewMode() {
-        return viewMode;
     }
 
     /**
@@ -1091,20 +1091,19 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
     /**
      * Instances of this class represent coordinate axes.
      */
+    @Getter
     public static class Axis {
 
+        /**
+         * -- GETTER --
+         *  Get the name of this axis.
+         */
         private final String name;
 
         private Axis(String name) {
             this.name = name;
         }
 
-        /**
-         * Get the name of this axis.
-         */
-        public String getName() {
-            return name;
-        }
     }
 
     /**
@@ -1202,6 +1201,12 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
      */
     public class HandleDraggedEvent extends HandleEvent {
 
+        /**
+         * -- GETTER --
+         *  Get a matrix which can be used to transform objects or vertices from their original positions
+         *  to their moved, scaled, or rotated positions.
+         */
+        @Getter
         private final Mat4 transform;
         private double angle, scale1, scale2;
 
@@ -1228,14 +1233,6 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
             this(view, handleType, axis, screenBounds, selectionBounds, event, transform);
             this.scale1 = scale1;
             this.scale2 = scale2;
-        }
-
-        /**
-         * Get a matrix which can be used to transform objects or vertices from their original positions
-         * to their moved, scaled, or rotated positions.
-         */
-        public Mat4 getTransform() {
-            return transform;
         }
 
         /**

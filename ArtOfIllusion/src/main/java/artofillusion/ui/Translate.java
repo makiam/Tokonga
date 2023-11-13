@@ -17,6 +17,7 @@ import java.text.*;
 import java.util.*;
 
 import artofillusion.*;
+import lombok.Getter;
 
 /**
  * This class provides utilities for localizing text so that it can be translated into
@@ -47,7 +48,7 @@ import artofillusion.*;
  */
 public class Translate {
 
-    private static final Set<Locale> availableLocales = new LinkedHashSet<Locale>();
+    private static final Set<Locale> availableLocales = new LinkedHashSet<>();
 
     static {
         availableLocales.add(new Locale("af", "ZA"));
@@ -68,6 +69,11 @@ public class Translate {
         availableLocales.add(new Locale("ru", "RU"));
     }
 
+    /**
+     * -- GETTER --
+     *  Get the locale currently used for generating text.
+     */
+    @Getter
     private static Locale locale = availableLocales.contains(Locale.getDefault()) ? Locale.getDefault() : Locale.US;
 
     private static final Map<String, ResourceBundle> bundles = new HashMap<String, ResourceBundle>();
@@ -78,13 +84,6 @@ public class Translate {
     public static void setLocale(Locale l) {
         locale = availableLocales.contains(l) ? l : Locale.US;
         bundles.clear();
-    }
-
-    /**
-     * Get the locale currently used for generating text.
-     */
-    public static Locale getLocale() {
-        return locale;
     }
 
     /**

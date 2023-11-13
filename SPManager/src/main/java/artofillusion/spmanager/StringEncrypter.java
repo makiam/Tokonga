@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
  * of the more popular algorithms are: Blowfish DES DESede PBEWithMD5AndDES
  * PBEWithMD5AndTripleDES TripleDES -----------------------------------------------------------------------------
  *
- * @author not me ! See http://www.idevelopment.info/, which hase several
+ * @author not me ! See <a href="http://www.idevelopment.info/">...</a>, which has several
  * java code examples
  * @created 23 mars 2004
  */

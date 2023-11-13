@@ -250,9 +250,7 @@ public class ThemeManager {
 
     /**
      * nested ButtonStyle class.
-     *
      * Forms a chain of ButtonStyle objects for a particular Theme.
-     *
      * ButtonStyle objects store all the attributes of the defining XML as
      * elements of a Map. These values can be accessed by calling
      * {@link #getAttribute(String)}.

@@ -129,7 +129,6 @@ public class SafeFileOutputStream extends FilterOutputStream {
 
     /**
      * abort the stream
-     *
      * closes the underlying stream, frees all resources, and removes any
      * temporary files.
      */
@@ -187,10 +186,10 @@ public class SafeFileOutputStream extends FilterOutputStream {
                         + "could not make file live");
             }
         } finally {
-            if (bak != null && bak.exists() == true) {
+            if (bak != null && bak.exists()) {
 
                 // recover from backup
-                if (file.exists() == false) {
+                if (!file.exists()) {
                     if (!bak.renameTo(file)) {
                         throw new IOException("SafeFileOutputStream.close: "
                                 + "Error recovering from backup."

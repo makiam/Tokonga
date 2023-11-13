@@ -4498,7 +4498,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     /**
-     * This methods extracts the current selection to AoI curves
+     * This method extracts the current selection to AoI curves
      */
     private void doExtractToCurve() {
         PolyMesh mesh = (PolyMesh) objInfo.object;

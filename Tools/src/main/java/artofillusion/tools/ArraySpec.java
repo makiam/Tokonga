@@ -270,7 +270,7 @@ public class ArraySpec {
                 displacement.z *= bounds.getSize().z;
             }
 
-            int start = (dupFirst == true ? 0 : 1);
+            int start = dupFirst ? 0 : 1;
             for (int n = start; n < linearCopies; n++) {
                 createCopy(info, displacement.times(n));
             }
@@ -304,7 +304,7 @@ public class ArraySpec {
         Vec3[] subdiv = new Curve(v, cv.getSmoothness(), cv.getSmoothingMethod(), cv.isClosed()).subdivideCurve(SD_LEVEL).getVertexPositions();
         // Vec3 startPoint = findPointOnCurve(subdiv, cv.isClosed(), 0);
         // Vec3 startPoint = v[0];
-        int startCount = (dupFirst == true ? 0 : 1);
+        int startCount = dupFirst ? 0 : 1;
         double curveLength = calcCurveLength(cv);
         if (curveMode == MODE_COPIES) {
             if (curveCopies < 1) {
