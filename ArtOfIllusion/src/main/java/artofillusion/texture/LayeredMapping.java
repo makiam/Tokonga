@@ -117,7 +117,7 @@ public class LayeredMapping extends TextureMapping {
 
         // There are two types of parameters: those corresponding to the blending fraction for
         // a layer, and those which belong to layer.  We recalculate the list every time this
-        // method is called, since there is no way of knowning when a layer texture might have
+        // method is called, since there is no way of knowing when a layer texture might have
         // been edited such that its list of parameters has changed.
         fractParamIndex = new int[texture.length];
         paramStartIndex = new int[texture.length];

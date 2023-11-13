@@ -77,7 +77,7 @@ public class CoordinateSystem {
     }
 
     /**
-     * Make this CoordianteSystem identical to another one.
+     * Make this CoordinateSystem identical to another one.
      */
     public final void copyCoords(CoordinateSystem c) {
         setOrigin(new Vec3(c.orig.x, c.orig.y, c.orig.z));

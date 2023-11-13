@@ -44,7 +44,7 @@ public final class StringEncrypter {
 
     /**
      * Constructor used to create this object. Responsible for setting and
-     * initializing this object's encrypter and decrypter Chipher instances
+     * initializing this object's encrypter and decrypter Cipher instances
      * given a Pass Phrase and algorithm.
      *
      * @param passPhrase Pass Phrase used to initialize both the encrypter and

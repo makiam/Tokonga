@@ -1,5 +1,6 @@
 /* Copyright (C) 2008 by Peter Eastman
    Updates copyright (C) 2020 by Petri Ihalainen
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -31,7 +32,7 @@ public class ObjectSet {
     }
 
     /**
-     * No-args costructor for saving/loading metadata
+     * No-args constructor for saving/loading metadata
      */
     public ObjectSet() {
         name = "";

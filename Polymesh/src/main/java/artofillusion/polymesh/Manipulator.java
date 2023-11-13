@@ -28,11 +28,11 @@ public abstract class Manipulator extends EventSource {
     protected static boolean helpModeOn;
 
     /**
-     * Creates a Manipulator with an existing value widget assoicated to it
+     * Creates a Manipulator with an existing value widget associated to it
      *
      * @param tool The tool responsible for the manipulator
      * @param view The view in which the manipulators are displayed
-     * @param valueWidget The value widget the manipualtors should use
+     * @param valueWidget The value widget the manipulators should use
      */
     public Manipulator(AdvancedEditingTool tool, ViewerCanvas view, PolyMeshValueWidget valueWidget) {
         this.tool = tool;
@@ -42,7 +42,7 @@ public abstract class Manipulator extends EventSource {
     }
 
     /**
-     * Creates a Manipulator associetd to a view
+     * Creates a Manipulator associated to a view
      *
      * @param tool The tool responsible for the manipulator
      * @param view The view in which the manipulators are displayed
@@ -188,7 +188,7 @@ public abstract class Manipulator extends EventSource {
     }
 
     /**
-     * tells the manipualtor to change the view mode if it features
+     * tells the manipulator to change the view mode if it features
      * several view modes (e.g. 3D manipulator)
      */
     public void toggleViewMode() {

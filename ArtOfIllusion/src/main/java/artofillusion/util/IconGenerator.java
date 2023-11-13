@@ -138,10 +138,10 @@ import lombok.extern.slf4j.Slf4j;
  *  from the 6th pixel from the edge into the centre.
  *
  *  "BackgroundIcon; {icon}; 0xa0804040 [-4, -4, ~3]"
- *  The image named BackgroundIcom overlaid with the {icon} image in the
+ *  The image named BackgroundIcon overlaid with the {icon} image in the
  *  namespace, overlaid with a a region of the specified colour
  *  (translucent red) which is 4 pixels smaller than the current image in both
- *  X and Y axes, and which has had the outer 3 pixels feathered to trasnparent.
+ *  X and Y axes, and which has had the outer 3 pixels feathered to tranparent.
  *
  * </pre>
  */

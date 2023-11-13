@@ -1799,7 +1799,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         modified = !ArtOfIllusion.saveScene(theScene, this);
 
         // The UI seems to react to something somewhere in the saving process and
-        // updateMenus() even without this, but that probably can not be quaranteed.
+        // updateMenus() even without this, but that probably can not be guaranteed.
         updateMenus();
     }
 

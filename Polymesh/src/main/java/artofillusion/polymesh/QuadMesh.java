@@ -47,7 +47,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * A QuadMesh is a mesh exclusively made up of quads. This mesh is not meant to be edited by users but
  * it backs up PolyMeshes when doing Catmull-Clark smoothing. It may however be extended in the future
- * to provide a standalone, new kind of mesh for AoI. Its structure is heavily dervived from AoI trimesh.
+ * to provide a standalone, new kind of mesh for AoI. Its structure is heavily derived from AoI trimesh.
  *
  * Smoothness and smoothing algorithm is identical to PolyMesh smoothing algorithm since a smoothed
  * PolyMesh is a quad mesh.
@@ -646,7 +646,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 //		long time1 = System.currentTimeMillis();
         Vec3[] normals = getNormals();
         //first, let's find which faces are subdivided, which are not and which
-        //bear Ys in between subdivivided and still faces.
+        //bear Ys in between subdivided and still faces.
 //		for (int i = 0; i < faces.length; i++) {
 //			if (! (faces[i].mark == QuadFace.SUBDIVIDE)) {
 //				System.out.println("face: " + i + " non sub");
@@ -1996,7 +1996,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
                         dot = -edge3.dot(edge4);
                     }
                     if (dot < -1.0) {
-                        dot = -1.0; // This can occassionally happen due to roundoff error
+                        dot = -1.0; // This can occasionally happen due to roundoff error
                     }
                     if (dot > 1.0) {
                         dot = 1.0;
@@ -2067,7 +2067,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
     }
 
     /**
-     * Returns the edges aroun a given vertex, unordered
+     * Returns the edges around a given vertex, unordered
      *
      * @param v The vertex to find edges for
      * @return The edges array
@@ -2077,7 +2077,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
     }
 
     /**
-     * Returns the edges aroun a given vertex, ordered
+     * Returns the edges around a given vertex, ordered
      * Ordering can be clockwise or anti-clockwise
      *
      * @param v The vertex to find edges for
@@ -2143,7 +2143,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
         if (!finished) {
             //boundary edge
             //we have to check the other side of the starting edge
-            //firt let's reverse the first set if we're storing edges
+            //first let's reverse the first set if we're storing edges
             if (numEdges > 0 && order) {
                 int[] newVertEdges = new int[numEdges];
                 for (int i = 0; i < count; i++) {

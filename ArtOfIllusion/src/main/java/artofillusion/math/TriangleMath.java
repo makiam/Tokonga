@@ -109,14 +109,14 @@ public class TriangleMath {
     }
 
     /**
-     * Interpolated point on triangle plane in 3D by given barycentic coordinates.
+     * Interpolated point on triangle plane in 3D by given barycentric coordinates.
      */
     public static Vec3 interpolate(Vec3 A, Vec3 B, Vec3 C, double[] bary) {
         return A.times(bary[0]).plus(B.times(bary[1])).plus(C.times(bary[3]));
     }
 
     /**
-     * Interpolated point on a RenderingTriangle plane by given barycentic coordinates.
+     * Interpolated point on a RenderingTriangle plane by given barycentric coordinates.
      */
     public static Vec3 interpolate(RenderingTriangle t, double[] bary) {
         return interpolate(t.theMesh.vert[t.v1], t.theMesh.vert[t.v2], t.theMesh.vert[t.v3], bary);
@@ -152,9 +152,9 @@ public class TriangleMath {
     public static double[] baryCoordinates(Vec2 A, Vec2 B, Vec2 C, Vec2 p) {
         double[] bary = new double[3];
         double wholeArea = triangleArea(A, B, C);
-        bary[0] = triangleArea(p, B, C) / wholeArea; // w -- weigth for A
-        bary[1] = triangleArea(p, C, A) / wholeArea; // v -- weigth for B
-        bary[2] = triangleArea(p, A, B) / wholeArea; // u -- weigth for C
+        bary[0] = triangleArea(p, B, C) / wholeArea; // w -- weight for A
+        bary[1] = triangleArea(p, C, A) / wholeArea; // v -- weight for B
+        bary[2] = triangleArea(p, A, B) / wholeArea; // u -- weight for C
         return bary;
     }
 

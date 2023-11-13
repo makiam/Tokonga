@@ -1,5 +1,6 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
    Modifications Copyright (C) Petri Ihalainen 2016
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -50,7 +51,7 @@ public abstract class MeshViewer extends ObjectViewer {
     }
 
     /**
-     * Get an array of size [# joints in skeleton] specifyiing which ones are locked.
+     * Get an array of size [# joints in skeleton] specifying which ones are locked.
      */
     public boolean[] getLockedJoints() {
         Skeleton s = ((Mesh) getController().getObject().getObject()).getSkeleton();

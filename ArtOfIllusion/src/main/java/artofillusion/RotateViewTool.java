@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
    Changes copyright (C) 2016-2019 by Petri Ihalainen
-   Changes copyright (C) 2020-2022 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -84,8 +84,8 @@ public class RotateViewTool extends EditingTool {
             view.setOrientation(VIEW_OTHER);
         }
 
-        // If the tool was selected in th etool palette and the user is usin MB1
-        // Only rotate modes avatlable for the palette tool.
+        // If the tool was selected in the tool palette and the user is using MB1
+        // Only rotate modes available for the palette tool.
         if (theWindow != null && theWindow.getToolPalette().getSelectedTool() == this && mouseButtonOne(e)) {
             if (view.getNavigationMode() == NAVIGATE_MODEL_SPACE) {
                 dragRotateSpace(e, view);
@@ -95,7 +95,7 @@ public class RotateViewTool extends EditingTool {
                 fwMin = -Math.PI * 0.5 + Math.asin(zD.y);
                 dragRotateLandscape(e, view);
             }
-        } // Else go by the navigationmode choise
+        } // Else go by the navigationmode choice
         else {
             switch (view.getNavigationMode()) {
                 case NAVIGATE_MODEL_SPACE:
@@ -142,7 +142,7 @@ public class RotateViewTool extends EditingTool {
         dx = dragPoint.x - clickPoint.x;
         dy = dragPoint.y - clickPoint.y;
 
-        // Action selection by modifer keys
+        // Action selection by modifier keys
         if (controlDown) {
             if (e.isShiftDown()) {
                 rotateSpace(e, view, clickPoint);
@@ -191,7 +191,7 @@ public class RotateViewTool extends EditingTool {
         dx = dragPoint.x - clickPoint.x;
         dy = dragPoint.y - clickPoint.y;
 
-        // Action selection by modifer keys
+        // Action selection by modifier keys
         if (controlDown) {
             if (e.isShiftDown()) {
                 panSpace(e, view, clickPoint);
@@ -210,7 +210,7 @@ public class RotateViewTool extends EditingTool {
                 angle = -dy * DRAG_SCALE;
             }
         } else {
-            // This is the deault action
+            // This is the default action
 
             axis = new Vec3(-dy * DRAG_SCALE, dx * DRAG_SCALE, 0.0);
             angle = axis.length();
@@ -367,7 +367,7 @@ public class RotateViewTool extends EditingTool {
         }
 
         // If the mouse was not dragged then center to the given point
-        // This shouls be directly in the ViewerCanvas but it had a side-effect.
+        // This should be directly in the ViewerCanvas but it had a side-effect.
         if (dragPoint.x == clickPoint.x && dragPoint.y == clickPoint.y) {
             view.centerToPoint(dragPoint);
         }

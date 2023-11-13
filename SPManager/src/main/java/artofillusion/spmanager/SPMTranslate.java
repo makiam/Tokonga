@@ -93,7 +93,7 @@ public class SPMTranslate {
 
     /**
      * Get the text given by the property "name". If the property is not found,
-     * this simply uses name. Any occurrance of the pattern "{0}" in the text
+     * this simply uses name. Any occurrence of the pattern "{0}" in the text
      * string will be replaced with the string representation of arg.
      *
      * @param name Description of the Parameter

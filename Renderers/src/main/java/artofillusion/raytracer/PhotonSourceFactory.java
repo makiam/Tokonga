@@ -1,4 +1,5 @@
 /* Copyright (C) 2008 by Peter Eastman
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -15,7 +16,7 @@ import java.util.*;
 /**
  * This interface defines a category of plugins that can generate PhotonSources from
  * objects in the scene. As the raytracer is processing RTObjects and Lights, it invokes
- * each registered PhotonSourcetFactory to process each one. It stops as soon as one
+ * each registered PhotonSourceFactory to process each one. It stops as soon as one
  * of them indicates that it has successfully processed the object. If no factory can process
  * the object, the raytracer generates PhotonSources itself in the default way.
  */

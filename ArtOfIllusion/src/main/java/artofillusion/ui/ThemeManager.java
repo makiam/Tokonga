@@ -570,7 +570,7 @@ public class ThemeManager {
              * Simply calling getIconURL() would allow the selectedIcon to
              * be loaded from a different theme, with strange results.
              */
-            // generate a URL on the same path (classlaoder) as icon
+            // generate a URL on the same path (classloader) as icon
             String path = url.getFile();
             int cut = path.lastIndexOf('/');
             if (cut > 0) {

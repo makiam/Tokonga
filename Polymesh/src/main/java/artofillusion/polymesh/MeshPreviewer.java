@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import javax.swing.Timer;
 
 /**
- * MeshPreviewer is a component used for renderering previews of Mesh.
+ * MeshPreviewer is a component used for rendering previews of Mesh.
  */
 public class MeshPreviewer extends CustomWidget implements RenderListener {
 

@@ -46,7 +46,7 @@ public interface Fragment {
     float getDepth();
 
     /**
-     * Get the depth of the frontmost opaque fragment. Anythinig beyond this depth has no
+     * Get the depth of the frontmost opaque fragment. Anything beyond this depth has no
      * effect on the final color.
      */
     float getOpaqueDepth();

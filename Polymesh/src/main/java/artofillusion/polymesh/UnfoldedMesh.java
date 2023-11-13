@@ -32,7 +32,7 @@ public class UnfoldedMesh {
 
         public Vec2 r; // vertex position
 
-        public int id; // vertex id to establish a correspondance with original
+        public int id; // vertex id to establish a correspondence with original
 
         // mesh
         public boolean pinned; // true if the vertex is pinned to the image;
@@ -156,7 +156,7 @@ public class UnfoldedMesh {
 
         public int e1, e2, e3; // edges
 
-        public int id; // face id to establish correspondance with original
+        public int id; // face id to establish correspondence with original
 
         // mesh
         public UnfoldedFace(int v1, int v2, int v3, int e1, int e2, int e3) {

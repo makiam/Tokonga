@@ -58,7 +58,7 @@ public class ArraySpec {
     // --- public data
     // general parameters
     /**
-     * Set to METHOD_LINEAR to create a liniar array.
+     * Set to METHOD_LINEAR to create a linear array.
      * Set to METHOD_CURVE to create an array along a curve.
      */
     public int method;
@@ -170,7 +170,7 @@ public class ArraySpec {
             objectList.add(info);
         }
 
-        // set paramters
+        // set parameters
         method = METHOD_LINEAR;
         linearCopies = 10;
         stepX = 1;

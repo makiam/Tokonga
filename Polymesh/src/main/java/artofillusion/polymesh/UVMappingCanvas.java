@@ -588,7 +588,7 @@ public class UVMappingCanvas extends CustomWidget {
     }
 
     /**
-     * Computes the difference vetween to vertex selections
+     * Computes the difference between to vertex selections
      *
      * @param sel1
      * @param sel2

@@ -152,12 +152,12 @@ public class POVExporter {
             write("", out2, 0);
         }
 
-        // Language spezific settings
+        // Language specific settings
         write("#version 3.5;", out, 0);
         write("", out, 0);
 
         // Global settings
-        // only if writeing a whole scene
+        // only if writing a whole scene
         if (wholeScene) {
             write("// Global settings", out, 0);
             // Background color

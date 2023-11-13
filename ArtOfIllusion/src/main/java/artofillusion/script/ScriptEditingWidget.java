@@ -60,7 +60,7 @@ public class ScriptEditingWidget extends BScrollPane {
             theme.apply(rsta);
 
         } catch (IOException ex) {
-            //shouldn't happen unless we are pointing at a non-existant file
+            //shouldn't happen unless we are pointing at a non-existent file
             log.atError().setCause(ex).log("Unable to load Editor theme: {}", ex.getMessage());
         }
 

@@ -74,7 +74,7 @@ public class ViewAnimation {
     }
 
     /**
-     * Check if the engine is working on an animation, that includes perspetive change
+     * Check if the engine is working on an animation, that includes perspective change
      */
     public boolean changingPerspective() {
         return changingPerspective;
@@ -104,8 +104,8 @@ public class ViewAnimation {
 
     /**
      * Start animation of perspective change.
-     * Camera position will not eventually chnage but the camera will travel
-     * from/to infinity to produce the perspectve change effect.
+     * Camera position will not eventually change, but the camera will travel
+     * from/to infinity to produce the perspective change effect.
      */
     public void start(boolean nextPerspective) {
         if (changingPerspective) {
@@ -213,7 +213,7 @@ public class ViewAnimation {
             return;
         }
 
-        // If an animationis redireceted, let's use the original starting point
+        // If an animations redirected, let's use the original starting point
         if (!animatingMove) {
             startCoords = camera.getCameraCoordinates().duplicate();
         }

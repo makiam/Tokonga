@@ -242,7 +242,7 @@ public class SplineMesh extends Object3D implements Mesh {
 
     /**
      * Set the positions for all the vertices of the mesh from a two dimensional table.
-     * The table dimensions sahould match the mesh u-v-dimensions.
+     * The table dimensions should match the mesh u-v-dimensions.
      */
     public void setVertexPositions(Vec3[][] positions) {
         for (int u = 0; u < positions.length; u++) {

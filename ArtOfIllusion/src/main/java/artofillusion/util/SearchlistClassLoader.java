@@ -1,7 +1,7 @@
 /*
  * SearchlistClassLoader: class loader which loads classes using a searchlist
  *
- * Copyright (C) 2007-2009 Nik Trevallyn-Jones, Sydney Austraila.
+ * Copyright (C) 2007-2009 Nik Trevallyn-Jones, Sydney Australia.
  * Changes copyright (C) 2023 by Maksim Khramov
  *
  * Author: Nik Trevallyn-Jones, nik777@users.sourceforge.net

@@ -487,7 +487,7 @@ public class JointEditorDialog extends BDialog {
                 return;
             }
 
-            // restriceted range
+            // restricted range
             double minLimit = panel.minField.getValue();
             double maxLimit = panel.maxField.getValue();
             double mouseAngle = getMouseAngleDeg(ev.getPoint());

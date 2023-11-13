@@ -1,4 +1,5 @@
 /* Copyright (C) 2003-2005 by Peter Eastman
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -123,17 +124,17 @@ public class ComplexImage {
      * been modified.
      */
     public void rebuildImage() {
-        int[] newimage = new int[width * height];
+        var newImage = new int[width * height];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 int red = floatToInt(getPixelComponent(i, j, RED));
                 int green = floatToInt(getPixelComponent(i, j, GREEN));
                 int blue = floatToInt(getPixelComponent(i, j, BLUE));
                 int alpha = floatToInt(getPixelComponent(i, j, ALPHA));
-                newimage[i + j * width] = (alpha << 24) + (red << 16) + (green << 8) + blue;
+                newImage[i + j * width] = (alpha << 24) + (red << 16) + (green << 8) + blue;
             }
         }
-        intImage = newimage;
+        intImage = newImage;
         MemoryImageSource imageSource = new MemoryImageSource(width, height, intImage, 0, width);
         img = Toolkit.getDefaultToolkit().createImage(imageSource);
     }

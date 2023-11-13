@@ -738,7 +738,7 @@ public class UVMappingManipulator {
             canvas.scale(Math.pow(0.99, -amount));
         }
 
-        //'computeCenter()' at 'paint()' takes cere of the position
+        //'computeCenter()' at 'paint()' takes care of the position
     }
 
     public void paint(Graphics2D g) {
@@ -753,7 +753,7 @@ public class UVMappingManipulator {
         }
 
         // This repositions the manipulator during zoom and window resize
-        // Without the 'if' the manipulator starts to wandrer whem rotated
+        // Without the 'if' the manipulator starts to wanderer when rotated
         if (!dragging) {
             computeCenter();
         }

@@ -1263,7 +1263,7 @@ public class SSMR3DManipulator
          * tell the user the rotation amount when drawn on the canvas
          *
          * @param angle
-         * @return The 2d points deinfing the polygon
+         * @return The 2d points defining the polygon
          */
         public Vec3[] getRotationFeedback(double angle) {
             Vec3[] points = new Vec3[segments + 1];
