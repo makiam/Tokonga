@@ -27,6 +27,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
@@ -135,6 +136,7 @@ public class ArtOfIllusion {
         PluginRegistry.addCategory(artofillusion.procedural.Module.class);
         PluginRegistry.addCategory(artofillusion.preferences.PreferencesEditor.class);
 
+        PluginRegistry.registerPlugin(new ArtOfIllusion.AssetsFolderWatcher());
         PluginRegistry.registerPlugin(new UniformTexture());
         PluginRegistry.registerPlugin(new ImageMapTexture());
         PluginRegistry.registerPlugin(new ProceduralTexture2D());
@@ -672,4 +674,13 @@ public class ArtOfIllusion {
     @Setter
     private static String currentDirectory;
 
+    private static final class AssetsFolderWatcher implements Plugin {
+
+        @Override
+        public void onApplicationStarting() {
+            Path path = Paths.get(ArtOfIllusion.APP_DIRECTORY, "Textures and Materials");
+            if(!Files.exists(path)) path.toFile().mkdir();            
+        }
+        
+    }    
 }
