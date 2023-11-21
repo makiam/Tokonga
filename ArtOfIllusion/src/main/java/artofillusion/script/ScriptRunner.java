@@ -150,7 +150,7 @@ public class ScriptRunner {
                 message = ex.getMessage();
                 ex.printStackTrace(output);
             }
-            if (message == null || message.length() == 0) {
+            if (message == null || message.isEmpty()) {
                 message = ex.toString();
             }
         } catch (Exception ex2) {

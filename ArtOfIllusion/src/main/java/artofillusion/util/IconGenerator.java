@@ -1439,7 +1439,7 @@ public class IconGenerator {
                         valid = (1 << OP_COLOR) + (1 << OP_NUMBER);
 
                         // default target is the current image
-                        if (target == null || target.length() == 0) {
+                        if (target == null || target.isEmpty()) {
                             target = DEFAULT_TARGET;
                         }
 
@@ -1451,7 +1451,7 @@ public class IconGenerator {
                         valid = (1 << OP_NUMBER);
 
                         // default target is the current image
-                        if (target == null || target.length() == 0) {
+                        if (target == null || target.isEmpty()) {
                             target = DEFAULT_TARGET;
                         }
 

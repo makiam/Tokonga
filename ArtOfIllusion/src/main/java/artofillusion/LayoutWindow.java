@@ -412,7 +412,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         String[] lines = config.split("\n");
         int container = 0, tab = 0, index = 0;
         for (int i = 0; i < lines.length; i++) {
-            if (lines[i].length() == 0) {
+            if (lines[i].isEmpty()) {
                 tab++;
                 index = 0;
             } else if ("-".equals(lines[i])) {

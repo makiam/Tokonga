@@ -20,6 +20,8 @@ import Jama.*;
  */
 public class SVD {
 
+    private static final double DEFAULT_TOLERANCE = 1.0e-8;
+
     /**
      * Solve a set of M linear equations in N unknowns. The parameters are:
      * a: an array of size [M][N] containing the matrix of coefficients.
@@ -29,43 +31,41 @@ public class SVD {
      * If tol is omitted, it defaults to 1.0e-8.
      */
     public static void solve(double[][] a, double[] b) {
-        solve(a, b, 1.0e-8);
+        solve(a, b, DEFAULT_TOLERANCE);
     }
 
-    public static void solve(double[][] a, double[] b, double tol) {
-        int i, j, m, n;
+    public static void solve(double[][] a, double[] b, double tolerance) {
         double d;
         double cutoff;
         double[] s;
         double[] temp;
         double[][] u;
         double[][] v;
-        Matrix mat;
-        SingularValueDecomposition svd;
 
-        m = a.length;
-        n = a[0].length;
-        mat = new Matrix(a, m, n);
+        int matrixRows = a.length;
+        int matrixColumns = a[0].length;
+
 
         // Factor the matrix.
-        svd = mat.svd();
+        SingularValueDecomposition svd = new Matrix(a, matrixRows, matrixColumns).svd();
         u = svd.getU().getArray();
         v = svd.getV().getArray();
         s = svd.getSingularValues();
-        cutoff = s[0] * tol;
-        temp = new double[n];
+        cutoff = s[0] * tolerance;
+        temp = new double[matrixColumns];
 
         // Do the back substitution to find the solution vector.
-        for (i = 0; i < n && s[i] > cutoff; i++) {
+
+        for (int i = 0; i < matrixColumns && s[i] > cutoff; i++) {
             d = 0.0;
-            for (j = 0; j < m; j++) {
+            for (int j = 0; j < matrixRows; j++) {
                 d += u[j][i] * b[j];
             }
             temp[i] = d / s[i];
         }
-        for (i = 0; i < n; i++) {
+        for (int i = 0; i < matrixColumns; i++) {
             d = 0.0;
-            for (j = 0; j < n; j++) {
+            for (int j = 0; j < matrixColumns; j++) {
                 d += v[i][j] * temp[j];
             }
             b[i] = d;

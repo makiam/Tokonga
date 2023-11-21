@@ -35,16 +35,8 @@ import java.util.Vector;
 public class PMCreateFaceTool extends EditingTool {
 
     private final List<Vec3> clickPoints;
-    private UndoRecord undo;
     private final MeshEditController controller;
-    private PolyMesh originalMesh;
-    private boolean dragging;
-    private Point dragPoint;
     private ViewerCanvas canvas;
-    private Point[] screenVert;
-    private boolean[] selection, vertSelection;
-    private boolean eligible;
-    private int boundaryEdge;
     private int from, to;
     private Vec3 fromPoint;
     Vec3[] pr;
@@ -113,14 +105,14 @@ public class PMCreateFaceTool extends EditingTool {
                 closestz = z;
             }
         }
-        if (clickPoints.size() == 0 && from == -1 && which != -1) {
+        if (clickPoints.isEmpty() && from == -1 && which != -1) {
             from = which;
             fromPoint = pr[from];
             return;
         }
         if (canvas == view && from != -1) {
             if (which == -1) {
-                if (clickPoints.size() == 0) {
+                if (clickPoints.isEmpty()) {
                     clickPoints.add(fromPoint = get3DPoint(fromPoint, e));
                     return;
                 }
@@ -189,7 +181,7 @@ public class PMCreateFaceTool extends EditingTool {
             mesh.addStandaloneFace(newPoints);
         }
         controller.setMesh(mesh);
-        theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, origMesh}));
+        theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, mesh, origMesh));
         clickPoints.clear();
         fromPoint = null;
         from = to = -1;
