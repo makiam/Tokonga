@@ -179,21 +179,21 @@ public abstract class EditingTool {
 
     @Target(value = ElementType.TYPE)
     @Retention(value = RetentionPolicy.RUNTIME)
-    public static @interface Tooltip {
+    public @interface Tooltip {
 
         String value();
     }
 
     @Target(value = ElementType.TYPE)
     @Retention(value = RetentionPolicy.RUNTIME)
-    public static @interface ButtonImage {
+    public @interface ButtonImage {
 
         String value();
     }
 
     @Target(value = ElementType.TYPE)
     @Retention(value = RetentionPolicy.RUNTIME)
-    public static @interface ActivatedToolText {
+    public @interface ActivatedToolText {
 
         String value();
     }

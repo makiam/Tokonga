@@ -39,7 +39,7 @@ public final class DataMap extends HashMap<String, Object> {
     }
 
     @SuppressWarnings("unchecked")
-    public final void load() throws IOException {
+    public void load() throws IOException {
         if (file == null || !file.exists()) {
             return;
         }

@@ -21,7 +21,7 @@ public interface Plugin {
      * initialization has happened, but before the first window has been displayed.
      * It has no arguments.
      */
-    public static final int APPLICATION_STARTING = 0;
+    int APPLICATION_STARTING = 0;
 
     default void onApplicationStarting() {
     }
@@ -30,7 +30,7 @@ public interface Plugin {
      * This message is sent just before the program shuts down. This gives plugins a
      * chance to do any necessary cleanup. It has no arguments.
      */
-    public static final int APPLICATION_STOPPING = 1;
+    int APPLICATION_STOPPING = 1;
 
     default void onApplicationStopping() {
     }
@@ -40,7 +40,7 @@ public interface Plugin {
      * the new window has been fully initialized, and just before it is displayed. The
      * LayoutWindow is passed as an argument
      */
-    public static final int SCENE_WINDOW_CREATED = 2;
+    int SCENE_WINDOW_CREATED = 2;
 
     default void onSceneWindowCreated(LayoutWindow view) {
     }
@@ -49,7 +49,7 @@ public interface Plugin {
      * This message is sent just after a scene editing window is closed. The
      * LayoutWindow is passed as an argument.
      */
-    public static final int SCENE_WINDOW_CLOSING = 3;
+    int SCENE_WINDOW_CLOSING = 3;
 
     default void onSceneWindowClosing(LayoutWindow layoutWindow) {
     }
@@ -58,7 +58,7 @@ public interface Plugin {
      * This message is sent when a scene is saved to disk. The arguments are the File
      * that has just been created, and the LayoutWindow for the scene that was saved.
      */
-    public static final int SCENE_SAVED = 4;
+    int SCENE_SAVED = 4;
 
     default void onSceneSaved(java.io.File file, LayoutWindow view) {
     }
@@ -68,7 +68,7 @@ public interface Plugin {
      * the new window has been fully initialized, and just before it is displayed. The
      * ObjectEditorWindow is passed as an argument
      */
-    public static final int OBJECT_WINDOW_CREATED = 5;
+    int OBJECT_WINDOW_CREATED = 5;
 
     default void onObjectWindowCreated(ObjectEditorWindow objectEditorWindow) {
     }
@@ -76,7 +76,7 @@ public interface Plugin {
      * This message is sent just after an object editing window is closed. The
      * ObjectEditorWindow is passed as an argument.
      */
-    public static final int OBJECT_WINDOW_CLOSING = 6;
+    int OBJECT_WINDOW_CLOSING = 6;
 
     default void onObjectWindowClosing(ObjectEditorWindow objectEditorWindow) {
     }

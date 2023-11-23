@@ -40,44 +40,44 @@ public interface Renderer {
     /**
      * Get the name of the renderer.
      */
-    public String getName();
+    String getName();
 
     /**
      * Begin rendering a scene. If depthOfField is set to 0, then depth of field effect
      * will not be used. Some renderers may not support this effect, in which case
      * depthOfField and focalDist will be ignored.
      */
-    public void renderScene(Scene theScene, Camera theCamera, RenderListener listener, SceneCamera sceneCamera);
+    void renderScene(Scene theScene, Camera theCamera, RenderListener listener, SceneCamera sceneCamera);
 
     /**
      * Cancel a rendering which is in progress.
      */
-    public void cancelRendering(Scene theScene);
+    void cancelRendering(Scene theScene);
 
     /**
      * Get a Widget in which the user can specify options about how the scene should be rendered.
      */
-    public Widget getConfigPanel();
+    Widget getConfigPanel();
 
     /**
      * Record the values which the user has entered into the configuration panel. If all
      * values are valid, return true. Otherwise, return false.
      */
-    public boolean recordConfiguration();
+    boolean recordConfiguration();
 
     /**
      * Configure the renderer in a way which is appropriate for rendering previews. This should
      * try to find a reasonable balance between speed and image quality.
      */
-    public void configurePreview();
+    void configurePreview();
 
     /**
      * Get a Map containing all current configuration options for the renderer.
      */
-    public Map<String, Object> getConfiguration();
+    Map<String, Object> getConfiguration();
 
     /**
      * Set the value of a configuration option for the renderer.
      */
-    public void setConfiguration(String property, Object value);
+    void setConfiguration(String property, Object value);
 }

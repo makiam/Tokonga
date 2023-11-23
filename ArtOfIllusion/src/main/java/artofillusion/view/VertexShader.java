@@ -26,26 +26,26 @@ public interface VertexShader {
      * @param vertex the index of the vertex to color
      * @param color the vertex color will be returned in this object
      */
-    public void getColor(int face, int vertex, RGBColor color);
+    void getColor(int face, int vertex, RGBColor color);
 
     /**
      * Get whether a particular face should be rendered with a single uniform color.
      *
      * @param face the index of the triangle being rendered
      */
-    public boolean isUniformFace(int face);
+    boolean isUniformFace(int face);
 
     /**
      * Get whether this shader represents a uniform texture. If this returns true, all
      * texture properties are uniform over the entire surface (although different parts
      * may still be colored differently due to lighting).
      */
-    public boolean isUniformTexture();
+    boolean isUniformTexture();
 
     /**
      * Get the texture properties of the surface. This should only be called if isUniformTexture() returns true.
      *
      * @param spec the surface properties will be returned in this object
      */
-    public void getTextureSpec(TextureSpec spec);
+    void getTextureSpec(TextureSpec spec);
 }

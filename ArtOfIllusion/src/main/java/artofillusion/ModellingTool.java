@@ -14,10 +14,10 @@ package artofillusion;
 public interface ModellingTool {
 
     /* Get the text that appear as the menu item.*/
-    public String getName();
+    String getName();
 
     /* This is called when the menu item for this tool is selected.  The single argument
    * is the LayoutWindow in which the command was chosen.  The Scene object can then be
    * obtained from the LayoutWindow's getScene() method. */
-    public void commandSelected(LayoutWindow window);
+    void commandSelected(LayoutWindow window);
 }

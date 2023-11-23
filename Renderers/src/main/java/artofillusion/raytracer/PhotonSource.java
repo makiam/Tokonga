@@ -20,7 +20,7 @@ public interface PhotonSource {
     /**
      * Get the total intensity of light which this object sends into the scene.
      */
-    public double getTotalIntensity();
+    double getTotalIntensity();
 
     /**
      * Generate photons and add them to a map.
@@ -29,5 +29,5 @@ public interface PhotonSource {
      * @param intensity the PhotonSource should generate Photons whose total intensity is approximately equal to this
      * @param threads a ThreadManager which may optionally be used to parallelize photon generation
      */
-    public void generatePhotons(PhotonMap map, double intensity, ThreadManager threads);
+    void generatePhotons(PhotonMap map, double intensity, ThreadManager threads);
 }

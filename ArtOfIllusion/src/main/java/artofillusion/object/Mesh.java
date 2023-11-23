@@ -22,56 +22,56 @@ import buoy.widget.*;
  */
 public interface Mesh {
 
-    public static final int NO_SMOOTHING = 0;
-    public static final int SMOOTH_SHADING = 1;
-    public static final int INTERPOLATING = 2;
-    public static final int APPROXIMATING = 3;
+    int NO_SMOOTHING = 0;
+    int SMOOTH_SHADING = 1;
+    int INTERPOLATING = 2;
+    int APPROXIMATING = 3;
 
     /**
      * Get the list of vertices which define the mesh.
      */
-    public MeshVertex[] getVertices();
+    MeshVertex[] getVertices();
 
     /**
      * Get a list of the positions of all vertices which define the mesh.
      */
-    public Vec3[] getVertexPositions();
+    Vec3[] getVertexPositions();
 
     /**
      * Set the positions for all the vertices of the mesh.
      */
-    public void setVertexPositions(Vec3[] v);
+    void setVertexPositions(Vec3[] v);
 
     /**
      * Get a bounding box for the mesh.
      */
-    public BoundingBox getBounds();
+    BoundingBox getBounds();
 
     /**
      * Get an array of normal vectors, one for each vertex.
      */
-    public Vec3[] getNormals();
+    Vec3[] getNormals();
 
     /**
      * Get an array of TextureParameters which are defined on this mesh.
      */
-    public TextureParameter[] getParameters();
+    TextureParameter[] getParameters();
 
     /**
      * Get the values of the TextureParameters which are defined on this mesh.
      */
-    public ParameterValue[] getParameterValues();
+    ParameterValue[] getParameterValues();
 
     /**
      * Create a new object which is an exact duplicate of this one.
      */
-    public Object3D duplicate();
+    Object3D duplicate();
 
     /**
      * Copy all the properties of another object, to make this one identical to it. If the
      * two objects are of different classes, this will throw a ClassCastException.
      */
-    public void copyObject(Object3D obj);
+    void copyObject(Object3D obj);
 
     /**
      * Get the skeleton for the object. If it does not have one, this should return null.
@@ -89,5 +89,5 @@ public interface Mesh {
     /**
      * Get a MeshViewer which can be used for viewing this mesh.
      */
-    public MeshViewer createMeshViewer(MeshEditController controller, RowContainer options);
+    MeshViewer createMeshViewer(MeshEditController controller, RowContainer options);
 }

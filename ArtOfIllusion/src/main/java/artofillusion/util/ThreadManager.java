@@ -204,17 +204,17 @@ public class ThreadManager {
     /**
      * This interface defines a task to be performed by the worker threads.
      */
-    public static interface Task {
+    public interface Task {
 
         /**
          * Execute the task for the specified index.
          */
-        public void execute(int index);
+        void execute(int index);
 
         /**
          * This is called once from each worker thread when finish() is called. It gives a chance
          * to do any necessary cleanup.
          */
-        public void cleanup();
+        void cleanup();
     }
 }
