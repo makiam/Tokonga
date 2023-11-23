@@ -283,11 +283,11 @@ public final class DataMap extends HashMap<String, Object> {
             return Color.BLACK;
         }
         if (val.indexOf(',') < 0)
-      try {
-            return Color.decode(val);
-        } catch (NumberFormatException e) {
-            return Color.BLACK;
-        }
+            try {
+                return Color.decode(val);
+            } catch (NumberFormatException e) {
+                return Color.BLACK;
+            }
         float[] comps = (float[]) getArray(name, EMPTY_FLOAT_ARRAY);
         if (comps.length < 3) {
             log.error("Too few color components: {}", comps.length);

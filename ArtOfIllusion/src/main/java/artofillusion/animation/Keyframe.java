@@ -18,7 +18,6 @@ import java.io.*;
  * <p>
  * Every Keyframe class should also provide a constructor of the following form, which
  * reconstructs the keyframe from its serialized representation.
- *
  * public KeyframeClass(DataInputStream in, Object parent) throws IOException, InvalidObjectException
  */
 public interface Keyframe {

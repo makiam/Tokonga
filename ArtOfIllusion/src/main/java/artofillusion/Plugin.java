@@ -85,7 +85,6 @@ public interface Plugin {
      * This is the main method for the plugin. message indicates what event
      * is taking place, and is represented by one of the constants defined above. args
      * is a list of arguments, whose meaning depends on the message.
-     *
      * This interface is designed to allow new messages to be created in the future.
      * Therefore, processMessage() should ignore any messages it is not specifically
      * intended to deal with.
