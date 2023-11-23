@@ -175,12 +175,6 @@ public class TubeEditorWindow extends CurveEditorWindow {
         onClose.run();
     }
 
-    @Override
-    protected void doCancel() {
-        oldMesh = null;
-        dispose();
-    }
-
     /**
      * Delete the selected vertices.
      */

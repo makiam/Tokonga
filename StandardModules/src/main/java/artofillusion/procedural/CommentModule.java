@@ -54,8 +54,7 @@ public class CommentModule extends ProceduralModule {
     /* Create a duplicate of this module. */
     @Override
     public CommentModule duplicate() {
-        CommentModule mod = new CommentModule(new Point(bounds.x, bounds.y), name);
-        return mod;
+        return new CommentModule(new Point(bounds.x, bounds.y), name);
     }
 
     /* Write out the parameters. */
