@@ -991,8 +991,6 @@ public class UVMappingEditorDialog extends BDialog {
 
         // Paint the background
         switch (background) {
-            case TRANSPARENT:
-                break;
             case WHITE:
                 g.setColor(Color.white);
                 g.fillRect(0, 0, resolution, resolution);
