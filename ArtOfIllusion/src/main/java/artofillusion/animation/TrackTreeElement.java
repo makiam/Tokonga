@@ -57,41 +57,6 @@ public class TrackTreeElement extends TreeElement {
      of children. */
     @Override
     public void removeChild(Object object) {
-        /*    ObjectInfo obj = (ObjectInfo) object, newinfo[];
-    TreeElement el;
-    int pos;
-
-    for (pos = 0; pos < children.size(); pos++)
-      {
-        el = (TreeElement) children.elementAt(pos);
-        if (el.getObject() == object)
-          break;
-      }
-    if (pos == children.size())
-      {
-        for (int i = 0; i < children.size(); i++)
-          ((TreeElement) children.elementAt(i)).removeChild(obj);
-        return;
-      }
-    obj.parent = null;
-    el = (TreeElement) children.elementAt(pos);
-    el.parent = null;
-    children.removeElementAt(pos);
-    if (el.getObject() instanceof ObjectInfo)
-      ((ObjectInfo) el.getObject()).parent = null;
-    if (info.object instanceof ObjectGroup)
-      {
-        newinfo = new ObjectInfo [children.size()];
-        for (int i = 0; i < newinfo.length; i++)
-          {
-            el = (TreeElement) children.elementAt(i);
-            newinfo[i] = (ObjectInfo) el.getObject();
-          }
-        ((ObjectGroup) info.object).setObjects(newinfo);
-        if (tree.undo != null)
-          tree.undo.addCommandAtBeginning(UndoRecord.ADD_TO_GROUP, new Object []
-              {info, object, new Integer(pos)});
-      }*/
     }
 
     /* Get the object corresponding to this element. */
