@@ -38,7 +38,6 @@ import artofillusion.ui.MeshEditController;
 import buoy.widget.RowContainer;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InvalidObjectException;
 import java.util.Stack;
 import java.util.Vector;
 
