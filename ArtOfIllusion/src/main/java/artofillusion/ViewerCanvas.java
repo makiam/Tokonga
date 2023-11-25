@@ -1816,7 +1816,6 @@ public abstract class ViewerCanvas extends CustomWidget {
         void update() {
             Rectangle b = getBounds();
 
-            Vec3 camZ = theCamera.getCameraCoordinates().getZDirection();
             double ds = theCamera.getDistToScreen();
             corners[0] = theCamera.convertScreenToWorld(new Point(0, 0), distToPlane, false);
             corners[1] = theCamera.convertScreenToWorld(new Point(b.width, 0), distToPlane, false);
