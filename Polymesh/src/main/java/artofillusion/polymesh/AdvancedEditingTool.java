@@ -230,10 +230,10 @@ public abstract class AdvancedEditingTool extends EditingTool {
         }
         log.debug("dragging");
         if (view.getUseWorldCoords()) {
-            log.debug("use world coords");
+            log.debug("use world coordinates");
             Mat4 trans = view.getDisplayCoordinates().toLocal();
-            for (int i = 0; i < drag.length; i++) {
-                trans.transformDirection(drag[i]);
+            for (var vec3 : drag) {
+                trans.transformDirection(vec3);
             }
         }
         for (int i = 0; i < vert.length; i++) {

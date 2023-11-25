@@ -1,6 +1,7 @@
 /* This class is an array valued keyframe. */
 
  /* Copyright (C) 2001-2002 by Peter Eastman
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -99,8 +100,8 @@ public class ArrayKeyframe implements Keyframe {
     @Override
     public void writeToStream(DataOutputStream out) throws IOException {
         out.writeShort(val.length);
-        for (int i = 0; i < val.length; i++) {
-            out.writeDouble(val[i]);
+        for (double v : val) {
+            out.writeDouble(v);
         }
     }
 

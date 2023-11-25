@@ -1459,9 +1459,8 @@ public abstract class ViewerCanvas extends CustomWidget {
      * Draw a set of filled boxes in the rendered image.
      */
     public void drawBoxes(java.util.List<Rectangle> box, Color color) {
-        if (box.size() > 0) {
-            drawer.drawBoxes(box, color);
-        }
+        if(box.isEmpty()) return;
+        drawer.drawBoxes(box, color);
     }
 
     /**

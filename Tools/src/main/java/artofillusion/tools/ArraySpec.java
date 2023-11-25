@@ -325,10 +325,8 @@ public class ArraySpec {
         CoordinateSystem startCS = new CoordinateSystem(subdiv[0], zdir[0], updir[0]);
 
         // for all objects in selection
-        for (int i = 0; i < objectList.size(); i++) {
+        for (ObjectInfo info : objectList) {
             // get object
-            ObjectInfo info = objectList.get(i);
-
             for (int n = startCount; n < curveCopies; n++) {
                 // determine displacement
                 Vec3 updir_return = new Vec3(0, 0, 0), zdir_return = new Vec3(0, 0, 0);
