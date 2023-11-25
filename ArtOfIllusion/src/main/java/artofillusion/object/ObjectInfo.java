@@ -32,7 +32,19 @@ import lombok.Setter;
  */
 public class ObjectInfo {
 
+    /**
+     * -- GETTER --
+     *  Get the Object3D defining the geometry for this ObjectInfo.
+     */
+    @Getter
     public Object3D object;
+    /**
+     * -- GETTER --
+     * Get the CoordinateSystem for this object.
+     * -- SETTER --
+     * @param coords Set the CoordinateSystem for this object.
+     */
+    @Getter @Setter
     public CoordinateSystem coords;
     public String name;
     //TODO: Access only via getter/setter
@@ -57,9 +69,10 @@ public class ObjectInfo {
      */
     public ObjectInfo(Object3D obj, CoordinateSystem c, String name) {
         setObject(obj);
-        setCoords(c);
-        this.setName(name);
-        setVisible(true);
+        this.coords = c;
+        this.name = name;
+        this.visible = true;
+
         children = new ObjectInfo[0];
         setId(-1);
     }
@@ -450,31 +463,10 @@ public class ObjectInfo {
     }
 
     /**
-     * Get the Object3D defining the geometry for this ObjectInfo.
-     */
-    public Object3D getObject() {
-        return object;
-    }
-
-    /**
      * Set the Object3D defining the geometry for this ObjectInfo.
      */
     public void setObject(Object3D object) {
         this.object = object;
-    }
-
-    /**
-     * Get the CoordinateSystem for this object.
-     */
-    public CoordinateSystem getCoords() {
-        return coords;
-    }
-
-    /**
-     * Set the CoordinateSystem for this object.
-     */
-    public void setCoords(CoordinateSystem coords) {
-        this.coords = coords;
     }
 
     /**
