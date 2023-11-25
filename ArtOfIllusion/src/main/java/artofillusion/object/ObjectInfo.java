@@ -46,11 +46,21 @@ public class ObjectInfo {
      */
     @Getter @Setter
     public CoordinateSystem coords;
+    /**
+     * -- GETTER --
+     *  Get the name of this object.
+     */
+    @Getter
     public String name;
     //TODO: Access only via getter/setter
     @Getter
     @Setter
     public boolean selected;
+    /**
+     * -- GETTER --
+     *  Get whether this object is visible.
+     */
+    @Getter
     public boolean visible, parentSelected;
     public ObjectInfo parent;
     public ObjectInfo[] children;
@@ -58,6 +68,11 @@ public class ObjectInfo {
     public Keyframe pose;
     public int id;
     private boolean locked;
+    /**
+     * -- GETTER --
+     *  Get the current Distortion applied to this object.
+     */
+    @Getter
     private Distortion distortion, prevDistortion;
     private SoftReference<RenderingMesh> cachedMesh;
     private SoftReference<WireframeMesh> cachedWire;
@@ -309,13 +324,6 @@ public class ObjectInfo {
     }
 
     /**
-     * Get the current Distortion applied to this object.
-     */
-    public Distortion getDistortion() {
-        return distortion;
-    }
-
-    /**
      * Returns true if a Distortion has been applied to this object.
      */
     public boolean isDistorted() {
@@ -470,24 +478,10 @@ public class ObjectInfo {
     }
 
     /**
-     * Get the name of this object.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
      * Set the name of this object.
      */
     public void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * Get whether this object is visible.
-     */
-    public boolean isVisible() {
-        return visible;
     }
 
     /**
