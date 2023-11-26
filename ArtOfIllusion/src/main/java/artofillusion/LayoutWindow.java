@@ -108,6 +108,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     private final BMenu viewMenu = Translate.menu("view");
 
     BMenu newScriptMenu;
+    @Getter
     BMenu recentFilesMenu, scriptMenu;
 
     BMenu addTrackMenu, positionTrackMenu, rotationTrackMenu, distortionMenu;
@@ -446,7 +447,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
         fileMenu.add(Translate.menuItem("close", this, "closeSceneAction"));
         fileMenu.addSeparator();
-        Collections.sort(translators, Comparator.comparing(Translator::getName));
+        translators.sort(Comparator.comparing(Translator::getName));
         for (Translator translator : translators) {
             if (translator.canImport()) {
                 BMenuItem item = new BMenuItem(translator.getName());
@@ -543,7 +544,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         getMenuBar().add(toolsMenu);
 
         List<ModellingTool> modellingTools = PluginRegistry.getPlugins(ModellingTool.class);
-        Collections.sort(modellingTools, Comparator.comparing(ModellingTool::getName));
+        modellingTools.sort(Comparator.comparing(ModellingTool::getName));
         for (ModellingTool tool : modellingTools) {
             BMenuItem item = new BMenuItem(tool.getName());
 
@@ -846,10 +847,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }
     }
 
-    public BMenu getRecentFilesMenu() {
-        return recentFilesMenu;
-    }
-
     /**
      * Get the popup menu.
      */
@@ -862,9 +859,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      * window.
      */
     public DockingContainer getDockingContainer(BTabbedPane.TabPosition position) {
-        for (int i = 0; i < dock.length; i++) {
-            if (dock[i].getTabPosition() == position) {
-                return dock[i];
+        for (var dockingContainer : dock) {
+            if (dockingContainer.getTabPosition() == position) {
+                return dockingContainer;
             }
         }
         return null; // should be impossible
@@ -1158,8 +1155,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         uiEventProcessor.addEvent(new Runnable() {
             public void run() {
                 sceneExplorer.setUpdateEnabled(true);
-                for (int i = 0; i < theView.length; i++) {
-                    theView[i].rebuildCameraList();
+                for (var viewer : theView) {
+                    viewer.rebuildCameraList();
                 }
                 theScore.rebuildList();
             }
@@ -2515,9 +2512,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     private void setObjectsLocked(boolean locked, boolean selectionOnly) {
         UndoRecord undo = new UndoRecord(this);
         if (selectionOnly) {
-            int[] sel = getSelectedIndices();
-            for (int i = 0; i < sel.length; i++) {
-                ObjectInfo info = theScene.getObject(sel[i]);
+
+            for (int j : getSelectedIndices()) {
+                ObjectInfo info = theScene.getObject(j);
                 undo.addCommand(UndoRecord.COPY_OBJECT_INFO, info, info.duplicate());
                 info.setLocked(locked);
             }
@@ -2896,7 +2893,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     public void executeScript(File f) {
         // Read the script from the file.
 
-        String scriptText = null;
         String language = null;
         try {
             language = ScriptRunner.getLanguageForFilename(f.getName());
@@ -2905,7 +2901,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             {
                 throw new IOException("Unrecognized extension for " + f.getName());
             }
-            scriptText = ArtOfIllusion.loadFile(f);
+            String scriptText = ArtOfIllusion.loadFile(f);
             ToolScript script = ScriptRunner.parseToolScript(language, scriptText);
             script.execute(this);
         } catch (IOException ex) {
@@ -2922,7 +2918,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     public void propertyChange(PropertyChangeEvent event) {
         String propertyName = event.getPropertyName();
         if (propertyName.equals("interactiveSurfaceError")) {
-            theScene.getObjects().forEach(info -> info.clearCachedMeshes());
+            theScene.getObjects().forEach(ObjectInfo::clearCachedMeshes);
             updateImage();
         } else if (propertyName.equals("objectPreviewRenderer")) {
             ((Renderer) event.getOldValue()).cancelRendering(theScene);
