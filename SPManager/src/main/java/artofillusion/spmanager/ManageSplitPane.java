@@ -15,7 +15,6 @@ import artofillusion.ui.Translate;
 import buoy.widget.*;
 import java.awt.*;
 import java.io.*;
-import java.util.*;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.tree.*;

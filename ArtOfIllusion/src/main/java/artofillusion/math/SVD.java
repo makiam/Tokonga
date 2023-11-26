@@ -35,12 +35,6 @@ public class SVD {
     }
 
     public static void solve(double[][] a, double[] b, double tolerance) {
-        double d;
-        double cutoff;
-        double[] s;
-        double[] temp;
-        double[][] u;
-        double[][] v;
 
         int matrixRows = a.length;
         int matrixColumns = a[0].length;
@@ -48,14 +42,15 @@ public class SVD {
 
         // Factor the matrix.
         SingularValueDecomposition svd = new Matrix(a, matrixRows, matrixColumns).svd();
-        u = svd.getU().getArray();
-        v = svd.getV().getArray();
-        s = svd.getSingularValues();
-        cutoff = s[0] * tolerance;
-        temp = new double[matrixColumns];
+        double[][] u = svd.getU().getArray();
+        double[][] v = svd.getV().getArray();
+        double[] s = svd.getSingularValues();
+        double cutoff = s[0] * tolerance;
+        double[] temp = new double[matrixColumns];
 
         // Do the back substitution to find the solution vector.
 
+        double d;
         for (int i = 0; i < matrixColumns && s[i] > cutoff; i++) {
             d = 0.0;
             for (int j = 0; j < matrixRows; j++) {

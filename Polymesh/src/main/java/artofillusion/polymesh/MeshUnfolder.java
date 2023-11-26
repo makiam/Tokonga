@@ -44,7 +44,7 @@ public class MeshUnfolder {
 
     // elements
     // vertex, minus one (see ABF++)
-    private int[] invInteriorTable; // inverse table : given an interior
+    private int[] invInteriorTable; // inverse table: given an interior
 
     /**
      * -- GETTER --
@@ -240,15 +240,7 @@ public class MeshUnfolder {
             addToMatTMat(newMat, newMatTMat, i, face.v2, face.v3, face.v1, 3 * i + 1, ntri, nint);
             addToMatTMat(newMat, newMatTMat, i, face.v3, face.v1, face.v2, 3 * i + 2, ntri, nint);
         }
-        /*for (int i = 0; i < ntri + 2*nint; i++) {
-			System.out.println("c " + i + " : " + newConstraints[i]);
-		}
-		for (int i = 0; i < ntri + 2*nint; i++) {
-			for (int j = 0; j < ntri + 2*nint; j++) {
-				System.out.print(newMatTMat.get(i, j)+" ");
-			}
-			System.out.println(" ");
-		}*/
+
         DenseVector sol = new DenseVector(ntri + 2 * nint);
         CG cg = new CG(sol);
         DenseVector newcons = new DenseVector(newConstraints);
@@ -295,7 +287,7 @@ public class MeshUnfolder {
         UnfoldedVertex[] uverts = new UnfoldedVertex[trimesh.getVertices().length];
         // first let's put proper vertex ids
         // vertex with an id of -1 don't belong to original
-        // facetted edge and are due to triangulation
+        // faceted edge and are due to triangulation
         for (int i = 0; i < uverts.length; i++) {
             uverts[i] = new UnfoldedVertex(verts[i]);
             if (vertexTable != null) {
@@ -358,8 +350,8 @@ public class MeshUnfolder {
                 }
             }
         }
-        // if there is a non null faceTable,
-        // use it to keep track of original, non triangulated
+        // if there is a non-null faceTable,
+        // use it to keep track of original, non-triangulated
         // faces
         for (int i = 0; i < ufaces.length; i++) {
             ufaces[i] = new UnfoldedFace(faces[i]);
