@@ -1778,7 +1778,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         } else if (ArtOfIllusion.getCurrentDirectory() != null) {
             chooser.setCurrentDirectory(new File(ArtOfIllusion.getCurrentDirectory()));
         }
-        if (chooser.showSaveDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
+        if (chooser.showSaveDialog(this.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
         String name = chooser.getSelectedFile().getName();
