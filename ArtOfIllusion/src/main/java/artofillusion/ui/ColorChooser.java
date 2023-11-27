@@ -17,6 +17,7 @@ import buoy.widget.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.List;
 import java.util.prefs.*;
 import javax.swing.*;
 
@@ -40,7 +41,7 @@ public class ColorChooser extends BDialog {
     private boolean ok;
 
     private static final int RECENT_COLOR_COUNT = 15;
-    private static final ArrayList<RGBColor> recentColors;
+    private static final List<RGBColor> recentColors;
     private static int mode;
     private static int rangeMode;
 
@@ -116,8 +117,7 @@ public class ColorChooser extends BDialog {
         center.add(Translate.label("recentColors"), 0, 7, 3, 1);
         RowContainer recentColorRow = new RowContainer();
         center.add(recentColorRow, 0, 8, 3, 1);
-        for (int i = 0; i < recentColors.size(); i++) {
-            final RGBColor color = recentColors.get(i);
+        for (final RGBColor color : recentColors) {
             Widget sample = color.getSample(16, 16);
             recentColorRow.add(sample);
             sample.addEventLink(MousePressedEvent.class, new Object() {

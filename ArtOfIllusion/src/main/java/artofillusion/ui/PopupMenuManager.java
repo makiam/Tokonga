@@ -21,5 +21,5 @@ public interface PopupMenuManager {
     /**
      * Display the PopupMenu.
      */
-    public void showPopupMenu(Widget w, int x, int y);
+    void showPopupMenu(Widget w, int x, int y);
 }

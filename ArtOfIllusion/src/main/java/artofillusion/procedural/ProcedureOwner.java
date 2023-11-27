@@ -22,7 +22,7 @@ public interface ProcedureOwner {
     /**
      * Get the title of the procedure's editing window.
      */
-    public String getWindowTitle();
+    String getWindowTitle();
 
     /**
      * Create an object which displays a preview of the procedure.
@@ -61,20 +61,20 @@ public interface ProcedureOwner {
     /**
      * Get the name of the procedure.
      */
-    public String getName();
+    String getName();
 
     /**
      * Set the name of the procedure.
      */
-    public void setName(String name);
+    void setName(String name);
 
     /**
      * This is called when the user clicks OK in the procedure editor.
      */
-    public void acceptEdits(ProcedureEditor editor);
+    void acceptEdits(ProcedureEditor editor);
 
     /**
      * Display the Properties dialog.
      */
-    public void editProperties(ProcedureEditor editor);
+    void editProperties(ProcedureEditor editor);
 }

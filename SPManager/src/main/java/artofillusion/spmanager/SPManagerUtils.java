@@ -160,7 +160,7 @@ public class SPManagerUtils {
      * (i.e., digit, '.', 'e', 'E', '+', or '-').
      */
     public static double parseDouble(String val) throws NumberFormatException {
-        if (val == null || val.length() == 0) {
+        if (val == null || val.isEmpty()) {
             return 0;
         }
 

@@ -108,8 +108,8 @@ public class BlurFilter extends ImageFilter {
 
         // Normalize the mask.
         double sum = 0.0;
-        for (int i = 0; i < mask.length; i++) {
-            sum += mask[i];
+        for (float v : mask) {
+            sum += v;
         }
         float scale = (float) (1.0 / sum);
         for (int i = 0; i < mask.length; i++) {

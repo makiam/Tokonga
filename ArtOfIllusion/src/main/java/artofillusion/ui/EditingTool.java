@@ -15,6 +15,7 @@ package artofillusion.ui;
 import artofillusion.*;
 import buoy.event.*;
 import buoy.widget.*;
+import lombok.Getter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -55,6 +56,11 @@ public abstract class EditingTool {
 
     protected final EditingWindow theWindow;
     protected BFrame theFrame;
+    /**
+     * -- GETTER --
+     *  Get the ToolButton used to represent this tool in a ToolPalette.
+     */
+    @Getter
     protected ToolButton button;
 
     private final Optional<Tooltip> tooltip = Optional.ofNullable(this.getClass().getAnnotation(Tooltip.class));
@@ -76,13 +82,6 @@ public abstract class EditingTool {
         return theWindow;
     }
 
-    /**
-     * Get the ToolButton used to represent this tool in a ToolPalette.
-     */
-    public ToolButton getButton() {
-        return button;
-    }
-
     protected void initButton(String name) {
         button = ThemeManager.getToolButton(this, name);
     }
@@ -91,7 +90,7 @@ public abstract class EditingTool {
      * Get the tool tip text to display for this tool (or null if it does not have a tool tip).
      */
     public String getToolTipText() {
-        return tooltip.isPresent() ? Translate.text(tooltip.get().value()) : null;
+        return tooltip.map(value -> Translate.text(value.value())).orElse(null);
     }
 
     public static final int ALL_CLICKS = 1;
@@ -179,21 +178,21 @@ public abstract class EditingTool {
 
     @Target(value = ElementType.TYPE)
     @Retention(value = RetentionPolicy.RUNTIME)
-    public static @interface Tooltip {
+    public @interface Tooltip {
 
         String value();
     }
 
     @Target(value = ElementType.TYPE)
     @Retention(value = RetentionPolicy.RUNTIME)
-    public static @interface ButtonImage {
+    public @interface ButtonImage {
 
         String value();
     }
 
     @Target(value = ElementType.TYPE)
     @Retention(value = RetentionPolicy.RUNTIME)
-    public static @interface ActivatedToolText {
+    public @interface ActivatedToolText {
 
         String value();
     }

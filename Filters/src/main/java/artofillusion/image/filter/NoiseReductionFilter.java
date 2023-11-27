@@ -160,7 +160,7 @@ public class NoiseReductionFilter extends ImageFilter {
     /**
      * This interface defines a function for calculating the conductivity between two pixels.
      */
-    private static interface ConductivityFunction {
+    private interface ConductivityFunction {
 
         float evaluate(int x1, int y1, int x2, int y2);
     }

@@ -22,7 +22,7 @@ public interface SurfaceIntersection {
     /**
      * This is a single global object that is always returned to indicate no intersections.
      */
-    public static final SurfaceIntersection NO_INTERSECTION = new SurfaceIntersection() {
+    SurfaceIntersection NO_INTERSECTION = new SurfaceIntersection() {
         @Override
         public RTObject getObject() {
             return null;
@@ -58,12 +58,12 @@ public interface SurfaceIntersection {
     /**
      * Get the object that was hit by the ray. If no object was hit, this will be null.
      */
-    public RTObject getObject();
+    RTObject getObject();
 
     /**
      * Get the number of times the ray intersects the object.
      */
-    public int numIntersections();
+    int numIntersections();
 
     /**
      * Get the point of intersection.
@@ -71,12 +71,12 @@ public interface SurfaceIntersection {
      * @param n the index of the intersection point (0 to numIntersections())
      * @param p the intersection point is returned in this
      */
-    public void intersectionPoint(int n, Vec3 p);
+    void intersectionPoint(int n, Vec3 p);
 
     /**
      * Get the distance from the ray origin to the nth point of intersection.
      */
-    public double intersectionDist(int n);
+    double intersectionDist(int n);
 
     /**
      * Get the surface properties at the point of intersection.
@@ -87,18 +87,18 @@ public interface SurfaceIntersection {
      * @param size the width of the region over which the texture should be averaged
      * @param time the time for which the image is being rendered
      */
-    public void intersectionProperties(TextureSpec spec, Vec3 n, Vec3 viewDir, double size, double time);
+    void intersectionProperties(TextureSpec spec, Vec3 n, Vec3 viewDir, double size, double time);
 
     /**
      * Same as intersectionProperties(), except only return the transparent color. This can save time in cases
      * where only the transparency is required, for example, when tracing shadow rays. This
      * also allows you to specify which intersection to get the transparency for.
      */
-    public void intersectionTransparency(int n, RGBColor trans, double angle, double size, double time);
+    void intersectionTransparency(int n, RGBColor trans, double angle, double size, double time);
 
     /**
      * Get the normal of the "true" surface (without interpolation, bump mapping, etc.)
      * at the nth point of intersection.
      */
-    public void trueNormal(Vec3 n);
+    void trueNormal(Vec3 n);
 }

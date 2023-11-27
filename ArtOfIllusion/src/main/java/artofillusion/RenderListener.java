@@ -36,7 +36,7 @@ public interface RenderListener {
     /**
      * This method will be called when rendering is complete.
      */
-    public void imageComplete(ComplexImage image);
+    void imageComplete(ComplexImage image);
 
     /**
      * This method will be called if rendering is canceled.

@@ -39,7 +39,7 @@ public final class DataMap extends HashMap<String, Object> {
     }
 
     @SuppressWarnings("unchecked")
-    public final void load() throws IOException {
+    public void load() throws IOException {
         if (file == null || !file.exists()) {
             return;
         }
@@ -183,7 +183,7 @@ public final class DataMap extends HashMap<String, Object> {
 
     public Object getArray(String name, Object array) {
         String val = getString(name);
-        if (val == null || val.length() == 0) {
+        if (val == null || val.isEmpty()) {
             if (array == null) {
                 return EMPTY_ARRAY;
             }
@@ -279,15 +279,15 @@ public final class DataMap extends HashMap<String, Object> {
 
     public Color getColor(String name) {
         String val = getString(name);
-        if (val == null || val.length() == 0) {
+        if (val == null || val.isEmpty()) {
             return Color.BLACK;
         }
         if (val.indexOf(',') < 0)
-      try {
-            return Color.decode(val);
-        } catch (NumberFormatException e) {
-            return Color.BLACK;
-        }
+            try {
+                return Color.decode(val);
+            } catch (NumberFormatException e) {
+                return Color.BLACK;
+            }
         float[] comps = (float[]) getArray(name, EMPTY_FLOAT_ARRAY);
         if (comps.length < 3) {
             log.error("Too few color components: {}", comps.length);
@@ -297,7 +297,7 @@ public final class DataMap extends HashMap<String, Object> {
     }
 
     public static long parseLong(String val) {
-        if (val == null || val.length() == 0) {
+        if (val == null || val.isEmpty()) {
             return 0L;
         }
         long result = 0L;
@@ -317,7 +317,7 @@ public final class DataMap extends HashMap<String, Object> {
     }
 
     public static double parseDouble(String val) {
-        if (val == null || val.length() == 0) {
+        if (val == null || val.isEmpty()) {
             return 0.0D;
         }
         long result = 0L;

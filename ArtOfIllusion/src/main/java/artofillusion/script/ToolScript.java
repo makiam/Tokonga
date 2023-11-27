@@ -17,5 +17,5 @@ import artofillusion.*;
  */
 public interface ToolScript {
 
-    public void execute(LayoutWindow window) throws ScriptException;
+    void execute(LayoutWindow window) throws ScriptException;
 }

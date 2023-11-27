@@ -14,9 +14,9 @@ package artofillusion;
 
 public interface ListChangeListener {
 
-    public void itemAdded(int index, Object obj);
+    void itemAdded(int index, Object obj);
 
-    public void itemRemoved(int index, Object obj);
+    void itemRemoved(int index, Object obj);
 
-    public void itemChanged(int index, Object obj);
+    void itemChanged(int index, Object obj);
 }

@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TextTool implements ModellingTool {
 
-    public static enum TextType {
+    public enum TextType {
         Outline, Tube, Surface, Solid
     }
 

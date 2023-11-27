@@ -32,13 +32,35 @@ import lombok.Setter;
  */
 public class ObjectInfo {
 
+    /**
+     * -- GETTER --
+     *  Get the Object3D defining the geometry for this ObjectInfo.
+     */
+    @Getter
     public Object3D object;
+    /**
+     * -- GETTER --
+     * Get the CoordinateSystem for this object.
+     * -- SETTER --
+     * @param coords Set the CoordinateSystem for this object.
+     */
+    @Getter @Setter
     public CoordinateSystem coords;
+    /**
+     * -- GETTER --
+     *  Get the name of this object.
+     */
+    @Getter
     public String name;
     //TODO: Access only via getter/setter
     @Getter
     @Setter
     public boolean selected;
+    /**
+     * -- GETTER --
+     *  Get whether this object is visible.
+     */
+    @Getter
     public boolean visible, parentSelected;
     public ObjectInfo parent;
     public ObjectInfo[] children;
@@ -46,6 +68,11 @@ public class ObjectInfo {
     public Keyframe pose;
     public int id;
     private boolean locked;
+    /**
+     * -- GETTER --
+     *  Get the current Distortion applied to this object.
+     */
+    @Getter
     private Distortion distortion, prevDistortion;
     private SoftReference<RenderingMesh> cachedMesh;
     private SoftReference<WireframeMesh> cachedWire;
@@ -57,9 +84,10 @@ public class ObjectInfo {
      */
     public ObjectInfo(Object3D obj, CoordinateSystem c, String name) {
         setObject(obj);
-        setCoords(c);
-        this.setName(name);
-        setVisible(true);
+        this.coords = c;
+        this.name = name;
+        this.visible = true;
+
         children = new ObjectInfo[0];
         setId(-1);
     }
@@ -113,11 +141,12 @@ public class ObjectInfo {
                 }
             }
         }
-        for (int i = 0; i < newobj.length; i++) {
-            if (newobj[i].tracks != null) {
-                for (int j = 0; j < newobj[i].tracks.length; j++) {
-                    newobj[i].tracks[j].updateObjectReferences(objectMap);
-                }
+        for (ObjectInfo objectInfo : newobj) {
+            if (objectInfo.tracks == null) {
+                continue;
+            }
+            for (int j = 0; j < objectInfo.tracks.length; j++) {
+                objectInfo.tracks[j].updateObjectReferences(objectMap);
             }
         }
         return newobj;
@@ -295,13 +324,6 @@ public class ObjectInfo {
     }
 
     /**
-     * Get the current Distortion applied to this object.
-     */
-    public Distortion getDistortion() {
-        return distortion;
-    }
-
-    /**
      * Returns true if a Distortion has been applied to this object.
      */
     public boolean isDistorted() {
@@ -449,13 +471,6 @@ public class ObjectInfo {
     }
 
     /**
-     * Get the Object3D defining the geometry for this ObjectInfo.
-     */
-    public Object3D getObject() {
-        return object;
-    }
-
-    /**
      * Set the Object3D defining the geometry for this ObjectInfo.
      */
     public void setObject(Object3D object) {
@@ -463,38 +478,10 @@ public class ObjectInfo {
     }
 
     /**
-     * Get the CoordinateSystem for this object.
-     */
-    public CoordinateSystem getCoords() {
-        return coords;
-    }
-
-    /**
-     * Set the CoordinateSystem for this object.
-     */
-    public void setCoords(CoordinateSystem coords) {
-        this.coords = coords;
-    }
-
-    /**
-     * Get the name of this object.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
      * Set the name of this object.
      */
     public void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * Get whether this object is visible.
-     */
-    public boolean isVisible() {
-        return visible;
     }
 
     /**

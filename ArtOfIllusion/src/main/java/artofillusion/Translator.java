@@ -21,24 +21,24 @@ public interface Translator {
     /**
      * Get the name of the file format which this translator imports or exports.
      */
-    public String getName();
+    String getName();
 
     /**
      * Specify whether this translator can import files.
      */
-    public boolean canImport();
+    boolean canImport();
 
     /**
      * Specify whether this translator can export files.
      */
-    public boolean canExport();
+    boolean canExport();
 
     /**
      * Prompt the user to select a file, read it, and create a new LayoutWindow containing
      * the imported scene. parent is the Frame which should be used as the parent for
      * dialog boxes. If canImport() returns false, this method will never be called.
      */
-    public void importFile(BFrame parent);
+    void importFile(BFrame parent);
 
     /**
      * Prompt the user for a filename and any other necessary information, and export the
@@ -46,5 +46,5 @@ public interface Translator {
      * The user should be given the option of only exporting the objects which are
      * currently selected. If canExport() returns false, this method will never be called.
      */
-    public void exportFile(BFrame parent, Scene theScene);
+    void exportFile(BFrame parent, Scene theScene);
 }

@@ -43,7 +43,6 @@ public class PMExtrudeCurveTool extends EditingTool {
     private final MeshEditController controller;
     private ViewerCanvas canvas;
     private Vec3 fromPoint, currentPoint;
-    Vec3[] pr;
     boolean constantSize;
     int dragging;
     boolean previewMode = true;
@@ -206,7 +205,6 @@ public class PMExtrudeCurveTool extends EditingTool {
             if (!sel[i]) {
                 continue;
             }
-            Vec3 p = new Vec3();
             int[] fe = mesh.getFaceVertices(faces[i]);
             for (int j = 0; j < fe.length; j++) {
                 if (!rotated[fe[j]]) {
@@ -263,8 +261,6 @@ public class PMExtrudeCurveTool extends EditingTool {
     }
 
     private void computeScales() {
-        double[] sizes = null;
-        sizes = new double[clickPoints.size()];
         double length = 0;
         double cumul = 0;
         Vec3 previous = fromPoint;
@@ -286,7 +282,7 @@ public class PMExtrudeCurveTool extends EditingTool {
 
     private void extrudeFaces(boolean done) {
         boolean[] sel = orSel;
-        if (clickPoints.size() < 1) {
+        if (clickPoints.isEmpty()) {
             return;
         }
         Vec3 previous;
@@ -351,7 +347,7 @@ public class PMExtrudeCurveTool extends EditingTool {
         if (done) {
             fromPoint = null;
             clickPoints.clear();
-            theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, orMesh}));
+            theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, mesh, orMesh));
         }
     }
 
@@ -402,7 +398,6 @@ public class PMExtrudeCurveTool extends EditingTool {
     private class CurvePoint {
 
         Vec3 position;
-        double angle;
         double amplitude;
         double devAngle;
         short dragging;
@@ -415,7 +410,7 @@ public class PMExtrudeCurveTool extends EditingTool {
         public CurvePoint(Vec3 position, double amplitude) {
             this.position = position;
             amplitude = 1;
-            //this.angle = angle;
+
             this.amplitude = amplitude;
         }
 

@@ -133,9 +133,10 @@ public class OctreeNode {
         ArrayList<OctreeNode> nodes = new ArrayList<>();
         if (child != null) {
             for (int i = 0; i < child.length; i++) {
-                if (child[i] != null) {
-                    nodes.add(child[i]);
+                if (child[i] == null) {
+                    continue;
                 }
+                nodes.add(child[i]);
             }
         }
         return nodes.toArray(new OctreeNode[nodes.size()]);

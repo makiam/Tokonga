@@ -662,7 +662,7 @@ public class SPMObjectInfo {
             for (int j = 0; (subnode = SPManagerUtils.getNodeFromNodeList(sl, "export", j)) != null; j++) {
 
                 String methName = SPManagerUtils.getAttribute(subnode, "method");
-                if (methName == null || methName.length() == 0) {
+                if (methName == null || methName.isEmpty()) {
                     continue;
                 }
 
@@ -717,7 +717,7 @@ public class SPMObjectInfo {
                 flags += filtName + ':' + filtVal;
 
                 val = System.getProperty(filtName);
-                if (val == null || val.length() == 0) {
+                if (val == null || val.isEmpty()) {
                     log.atInfo().log("SPMObjectInfo: could not resolve <assert> value: {}", fileName);
                     continue;
                 }
@@ -1067,7 +1067,7 @@ public class SPMObjectInfo {
 
         log.atDebug().log("Test: lhs:{}; rhs{}; oper:{}", lhs, rhs, oper);
 
-        if (oper == null || oper.length() == 0) {
+        if (oper == null || oper.isEmpty()) {
             oper = "=";
         }
 

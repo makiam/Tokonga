@@ -38,7 +38,6 @@ import artofillusion.ui.MeshEditController;
 import buoy.widget.RowContainer;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InvalidObjectException;
 import java.util.Stack;
 import java.util.Vector;
 
@@ -1494,22 +1493,12 @@ public class QuadMesh extends Object3D implements FacetedMesh {
         if (refine && ns < MAX_SMOOTHNESS - 1 && ns < maxNs) {
             smoothMesh(tol, calcProjectedEdges, ns + 1, maxNs);
         }
-//		if (ns == 0 || ns == 1) {
-//			System.out.println("vertices : " + vertices.length);
-//			System.out.println( "t1: " + t1);
-//			System.out.println( "t2: " + t2);
-//			System.out.println( "t3: " + t3);
-//			System.out.println( "t4: " + t4);
-//			System.out.println( "t5: " + t5);
-//			System.out.println( "t6: " + t6);
-//			System.out.println( "t7: " + t7);
-//		}
     }
 
     private void solveCriticalEdge(QuadEdge ed, Stack<QuadEdge> stack) {
         QuadFace f1 = faces[ed.f1];
         QuadFace f2 = faces[ed.f2];
-        //first, find out wich face edge is edge "ed"
+        //first, find out which face edge is edge "ed"
         int k1;
         if (edges[f1.e1] == ed) {
             k1 = 1;

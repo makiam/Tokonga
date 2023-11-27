@@ -140,7 +140,7 @@ public class DefaultToolButton extends ToolButton {
     public Image applyStyle(ThemeManager.ButtonStyle style, String type, Object owner, ImageIcon image) throws Exception {
         // can default the macro from other attributes
         String macro = style.attributes.get(type + ".icon");
-        if (macro == null || macro.length() == 0) {
+        if (macro == null || macro.isEmpty()) {
             StringBuilder sb = new StringBuilder(64);
 
             String att = style.attributes.get(type + ".background");

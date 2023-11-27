@@ -149,12 +149,7 @@ public abstract class AdvancedEditingTool extends EditingTool {
         for (int i = 1; i <= maxDistance; i++) {
             drag[i] = drag[0].times(Math.pow((maxDistance - i + 1.0) / (maxDistance + 1.0), tension));
         }
-        /*if (view.getUseWorldCoords())
-        {
-            Mat4 trans = view.getDisplayCoordinates().toLocal();
-            for (int i = 0; i < drag.length; i++)
-                trans.transformDirection(drag[i]);
-        }*/
+
         for (int i = 0; i < vert.length; i++) {
             if (selectDist[i] > -1) {
                 v[i] = vert[i].plus(drag[selectDist[i]]);
@@ -191,15 +186,11 @@ public abstract class AdvancedEditingTool extends EditingTool {
     /* Find the new positions of the vertices after scaling. */
     protected Vec3[] findRotatedPositions(Vec3[] vert, Mat4 mat, MeshViewer view) {
         Vec3[] v = new Vec3[vert.length];
-        Vec3 axis;
         int[] selected = controller.getSelectionDistance();
-        Camera cam = view.getCamera();
-        CoordinateSystem coords = view.getDisplayCoordinates();
-        Mat4 m;
-        int i;
+
 
         // Determine the deltas.
-        for (i = 0; i < vert.length; i++) {
+        for (var i = 0; i < vert.length; i++) {
             if (selected[i] == 0) {
                 v[i] = mat.times(vert[i]).minus(vert[i]);
             } else {
@@ -209,7 +200,7 @@ public abstract class AdvancedEditingTool extends EditingTool {
         if (theFrame instanceof MeshEditorWindow) {
             ((MeshEditorWindow) theFrame).adjustDeltas(v);
         }
-        for (i = 0; i < vert.length; i++) {
+        for (var i = 0; i < vert.length; i++) {
             v[i].add(vert[i]);
         }
         return v;
@@ -230,10 +221,10 @@ public abstract class AdvancedEditingTool extends EditingTool {
         }
         log.debug("dragging");
         if (view.getUseWorldCoords()) {
-            log.debug("use world coords");
+            log.debug("use world coordinates");
             Mat4 trans = view.getDisplayCoordinates().toLocal();
-            for (int i = 0; i < drag.length; i++) {
-                trans.transformDirection(drag[i]);
+            for (var vec3 : drag) {
+                trans.transformDirection(vec3);
             }
         }
         for (int i = 0; i < vert.length; i++) {

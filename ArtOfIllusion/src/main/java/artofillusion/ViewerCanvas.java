@@ -218,22 +218,10 @@ public abstract class ViewerCanvas extends CustomWidget {
         addEventLink(MouseExitedEvent.class, this, "mouseExited");
         addEventLink(MouseScrolledEvent.class, this, "processMouseScrolled");
         addEventLink(MouseClickedEvent.class, this, "showPopupIfNeeded");
-        getComponent().addComponentListener(new ComponentListener() {
+        getComponent().addComponentListener(new ComponentAdapter() {
             @Override
-            public void componentResized(ComponentEvent componentEvent) {
+            public void componentResized(ComponentEvent e) {
                 viewChanged(false);
-            }
-
-            @Override
-            public void componentMoved(ComponentEvent componentEvent) {
-            }
-
-            @Override
-            public void componentShown(ComponentEvent componentEvent) {
-            }
-
-            @Override
-            public void componentHidden(ComponentEvent componentEvent) {
             }
         });
         orientation = 0;
@@ -255,11 +243,11 @@ public abstract class ViewerCanvas extends CustomWidget {
      * use the standard set of menus.
      */
     protected void buildChoices(RowContainer row) {
-        for (int i = 0; i < controls.size(); i++) {
-            Widget w = controls.get(i).createWidget(this);
+        for (ViewerControl control : controls) {
+            Widget w = control.createWidget(this);
             if (w != null) {
                 row.add(w);
-                controlMap.put(controls.get(i), w);
+                controlMap.put(control, w);
             }
         }
         viewChanged(false);
@@ -296,7 +284,7 @@ public abstract class ViewerCanvas extends CustomWidget {
     }
 
     /**
-     * Processing scrollwheel events here. Subclasses may override.
+     * Processing mouse wheel events here. Subclasses may override.
      */
     protected void processMouseScrolled(MouseScrolledEvent e) {
         if (scrollTool == null) {
@@ -876,7 +864,7 @@ public abstract class ViewerCanvas extends CustomWidget {
         Rectangle screenBounds = theCamera.findScreenBounds(bb);
         double scalex = bounds.width / (double) screenBounds.width;
         double scaley = bounds.height / (double) screenBounds.height;
-        double minScale = (scalex < scaley ? scalex : scaley);
+        double minScale = (Math.min(scalex, scaley));
         minScale = Math.min(minScale, theCamera.getDistToScreen() * 100.0 / MINIMUM_ZOOM_DISTANCE);
         if (isPerspective()) {
             // Perspective mode, so adjust the camera position.
@@ -1015,8 +1003,8 @@ public abstract class ViewerCanvas extends CustomWidget {
         int h = getBounds().height;
         int d = Math.min(w, h);
 
-        double minx, miny, minz, maxx, maxy, maxz;
-        minx = miny = minz = Double.POSITIVE_INFINITY;
+        double minX, minY, minZ, maxx, maxy, maxz;
+        minX = minY = minZ = Double.POSITIVE_INFINITY;
         maxx = maxy = maxz = Double.NEGATIVE_INFINITY;
 
         for (ObjectInfo info : objects) {
@@ -1029,20 +1017,20 @@ public abstract class ViewerCanvas extends CustomWidget {
             p = worldToView.timesXY(bc.plus(cx.times(-br))); // In view space x is 'backwards'.
             maxx = Math.max(maxx, p.x);
             p = worldToView.timesXY(bc.plus(cx.times(br)));
-            minx = Math.min(minx, p.x);
+            minX = Math.min(minX, p.x);
 
             p = worldToView.timesXY(bc.plus(cy.times(br)));
             maxy = Math.max(maxy, p.y);
             p = worldToView.timesXY(bc.plus(cy.times(-br)));
-            miny = Math.min(miny, p.y);
+            minY = Math.min(minY, p.y);
 
             z = worldToView.timesZ(bc.plus(cz.times(br)));
             maxz = Math.max(maxz, z);
             z = worldToView.timesZ(bc.plus(cz.times(-br)));
-            minz = Math.min(minz, z);
+            minZ = Math.min(minZ, z);
         }
 
-        newCenter = new Vec3((minx + maxx) * 0.5, (miny + maxy) * 0.5, (minz + maxz) * 0.5);
+        newCenter = new Vec3((minX + maxx) * 0.5, (minY + maxy) * 0.5, (minZ + maxz) * 0.5);
         viewToWorld.transform(newCenter);
 
         double projectionDist;
@@ -1053,7 +1041,7 @@ public abstract class ViewerCanvas extends CustomWidget {
             projectionDist = theCamera.getDistToScreen();
         }
 
-        double newDistToPlane = 100 * projectionDist / (double) d / 0.9 * Math.max(maxx - minx, maxy - miny) + (maxz - minz) * 0.5;
+        double newDistToPlane = 100 * projectionDist / (double) d / 0.9 * Math.max(maxx - minX, maxy - minY) + (maxz - minZ) * 0.5;
         newDistToPlane = Math.max(newDistToPlane, MINIMUM_ZOOM_DISTANCE); // Attempt to zoom to zero size blanks the view.
         double newScale;
         if (perspective) {
@@ -1471,9 +1459,8 @@ public abstract class ViewerCanvas extends CustomWidget {
      * Draw a set of filled boxes in the rendered image.
      */
     public void drawBoxes(java.util.List<Rectangle> box, Color color) {
-        if (box.size() > 0) {
-            drawer.drawBoxes(box, color);
-        }
+        if(box.isEmpty()) return;
+        drawer.drawBoxes(box, color);
     }
 
     /**
@@ -1829,7 +1816,6 @@ public abstract class ViewerCanvas extends CustomWidget {
         void update() {
             Rectangle b = getBounds();
 
-            Vec3 camZ = theCamera.getCameraCoordinates().getZDirection();
             double ds = theCamera.getDistToScreen();
             corners[0] = theCamera.convertScreenToWorld(new Point(0, 0), distToPlane, false);
             corners[1] = theCamera.convertScreenToWorld(new Point(b.width, 0), distToPlane, false);

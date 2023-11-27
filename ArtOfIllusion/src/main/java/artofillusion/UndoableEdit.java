@@ -19,12 +19,12 @@ public interface UndoableEdit {
     /**
      * undoes this edit
      */
-    public void undo();
+    void undo();
 
     /**
      * redoes this edit
      */
-    public void redo();
+    void redo();
 
     default UndoableEdit execute() {
         redo();

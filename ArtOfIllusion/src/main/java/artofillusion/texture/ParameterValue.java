@@ -21,20 +21,20 @@ public interface ParameterValue {
     /**
      * Get the value of the parameter at a particular point in a particular triangle.
      */
-    public double getValue(int tri, int v1, int v2, int v3, double u, double v, double w);
+    double getValue(int tri, int v1, int v2, int v3, double u, double v, double w);
 
     /**
      * Get the average value of the parameter over the entire surface.
      */
-    public double getAverageValue();
+    double getAverageValue();
 
     /**
      * Create a duplicate of this object.
      */
-    public ParameterValue duplicate();
+    ParameterValue duplicate();
 
     /**
      * Write out a serialized representation of this object to a stream.
      */
-    public void writeToStream(DataOutputStream out) throws IOException;
+    void writeToStream(DataOutputStream out) throws IOException;
 }

@@ -14,5 +14,5 @@ package artofillusion.ui;
 
 public interface ValueChecker {
 
-    public boolean isValid(double val);
+    boolean isValid(double val);
 }

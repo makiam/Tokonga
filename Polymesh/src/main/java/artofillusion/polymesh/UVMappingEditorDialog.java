@@ -146,7 +146,7 @@ public class UVMappingEditorDialog extends BDialog {
                 }
             }
         }
-        if (texList.size() == 0) {
+        if (texList.isEmpty()) {
             texList = null;
             mappingList = null;
             oldCoordList = null;
@@ -543,7 +543,6 @@ public class UVMappingEditorDialog extends BDialog {
      */
     private void doSendToMapping(CommandEvent ev) {
         BCheckBoxMenuItem item = (BCheckBoxMenuItem) ev.getWidget();
-        UVMeshMapping newMapping = null;
         int from = -1;
         int to = -1;
         for (int i = 0; i < mappingMenuItems.length; i++) {
@@ -992,8 +991,6 @@ public class UVMappingEditorDialog extends BDialog {
 
         // Paint the background
         switch (background) {
-            case TRANSPARENT:
-                break;
             case WHITE:
                 g.setColor(Color.white);
                 g.fillRect(0, 0, resolution, resolution);

@@ -15,5 +15,5 @@ package artofillusion.script;
  */
 public interface ObjectScript {
 
-    public void execute(ScriptedObjectController script) throws ScriptException;
+    void execute(ScriptedObjectController script) throws ScriptException;
 }

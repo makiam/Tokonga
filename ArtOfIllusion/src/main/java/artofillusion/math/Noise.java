@@ -83,12 +83,12 @@ public class Noise {
     /**
      * This interface defines an object which can be used to calculate the noise function.
      */
-    public static interface NoiseGenerator {
+    public interface NoiseGenerator {
 
-        public double getValue(double x, double y, double z);
+        double getValue(double x, double y, double z);
 
-        public void getGradient(Vec3 gradient, double x, double y, double z);
+        void getGradient(Vec3 gradient, double x, double y, double z);
 
-        public void getVector(Vec3 v, double x, double y, double z);
+        void getVector(Vec3 v, double x, double y, double z);
     }
 }

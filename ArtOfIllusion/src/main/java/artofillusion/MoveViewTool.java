@@ -41,11 +41,6 @@ public class MoveViewTool extends EditingTool {
     }
 
     @Override
-    public boolean hilightSelection() {
-        return true;
-    }
-
-    @Override
     public void mousePressed(WidgetMouseEvent e, ViewerCanvas view) {
         Camera cam = view.getCamera();
 

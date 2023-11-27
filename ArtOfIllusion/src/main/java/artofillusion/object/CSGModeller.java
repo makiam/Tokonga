@@ -25,7 +25,7 @@ import java.util.*;
  * D. H. Laidlaw, W. B. Trumbore, and J. F. Hughes. "Constructive Solid Geometry
  * for Polyhedral Objects." SIGGRAPH Proceedings, 1986, p.161.
  * <p>
- * with some simplifications due to the fact that we only permit triangles, rather
+ * with some simplifications because we only permit triangles, rather
  * than arbitrary convex polygons.
  */
 public class CSGModeller {
@@ -133,7 +133,7 @@ public class CSGModeller {
         List<int[]> faceIndex = new Vector<>();
         List<float[]> faceSmoothness = new Vector<>();
         int[] index1 = new int[vert1.size()], index2 = new int[vert2.size()];
-        int firstBoundary = -1, faces1;
+        int faces1;
 
         // Original algorithm has been modified. It claimed that BOUNDARY vertices must never be deleted,
         // but this is not always true when doing difference between two objects with an overlapping surface.

@@ -19,30 +19,30 @@ public interface TrackDisplay {
     /**
      * Set the starting time to display.
      */
-    public void setStartTime(double time);
+    void setStartTime(double time);
 
     /**
      * Set the number of pixels per unit time.
      */
-    public void setScale(double s);
+    void setScale(double s);
 
     /**
      * Set the number of subdivisions per unit time.
      */
-    public void setSubdivisions(int s);
+    void setSubdivisions(int s);
 
     /**
      * Set the y offset (for vertically scrolling the panel).
      */
-    public void setYOffset(int offset);
+    void setYOffset(int offset);
 
     /**
      * Add a marker to the display.
      */
-    public void addMarker(Marker m);
+    void addMarker(Marker m);
 
     /**
      * Set the mode (select-and-move or scroll-and-scale) for this display.
      */
-    public void setMode(int m);
+    void setMode(int m);
 }

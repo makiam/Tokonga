@@ -491,7 +491,7 @@ public class SPManagerPlugin implements Plugin {
                             }
 
                             // get destination if needed
-                            if (info.name == null || info.name.length() == 0) {
+                            if (info.name == null || info.name.isEmpty()) {
 
                                 log.info("need path...");
 
@@ -543,7 +543,7 @@ public class SPManagerPlugin implements Plugin {
                             String path = null;
                             String fname = savePath.getText();
 
-                            if (fname == null || fname.length() == 0) {
+                            if (fname == null || fname.isEmpty()) {
                                 path = System.getProperty("user.home");
                                 fname = filename;
                             }
@@ -590,7 +590,7 @@ public class SPManagerPlugin implements Plugin {
                                 path = ArtOfIllusion.PLUGIN_DIRECTORY + File.separatorChar + info.name + ".jar";
                             }
 
-                            if (path == null || path.length() == 0) {
+                            if (path == null || path.isEmpty()) {
                                 log.atInfo().log("DOWNLOAD: no save location");
                                 new BStandardDialog("SPManager", SPMTranslate.text("noSaveLocation"), BStandardDialog.ERROR).showMessageDialog(null);
 

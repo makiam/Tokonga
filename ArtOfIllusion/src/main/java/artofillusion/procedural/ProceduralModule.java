@@ -28,7 +28,7 @@ public class ProceduralModule extends artofillusion.procedural.Module {
 
     @Target(value = ElementType.TYPE)
     @Retention(value = RetentionPolicy.RUNTIME)
-    public static @interface Category {
+    public @interface Category {
 
         String value();
     }

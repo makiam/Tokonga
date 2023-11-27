@@ -17,62 +17,62 @@ import artofillusion.object.*;
  */
 public interface MeshEditController {
 
-    public static final int POINT_MODE = 0;
-    public static final int EDGE_MODE = 1;
-    public static final int FACE_MODE = 2;
+    int POINT_MODE = 0;
+    int EDGE_MODE = 1;
+    int FACE_MODE = 2;
 
     /**
      * Get the object being edited.
      */
-    public ObjectInfo getObject();
+    ObjectInfo getObject();
 
     /**
      * Set the mesh being edited.
      */
-    public void setMesh(Mesh mesh);
+    void setMesh(Mesh mesh);
 
     /**
      * This should be called whenever the object has changed.
      */
-    public void objectChanged();
+    void objectChanged();
 
     /**
      * Get the current selection mode. This will be POINT_MODE, EDGE_MODE, or FACE_MODE.
      */
-    public int getSelectionMode();
+    int getSelectionMode();
 
     /**
      * Set the selection mode. The allowed values are POINT_MODE, EDGE_MODE, and FACE_MODE,
      * although some modes may not be permitted for some controllers.
      */
-    public void setSelectionMode(int mode);
+    void setSelectionMode(int mode);
 
     /**
      * Get an array of flags specifying which parts of the object are selected. Depending on the selection mode
      * and type of object, this may correspond to vertices, faces, edges, etc.
      */
-    public boolean[] getSelection();
+    boolean[] getSelection();
 
     /**
      * Set an array of flags specifying which parts of the object are selected. Depending on the selection mode
      * and type of object, this may correspond to vertices, faces, edges, etc.
      */
-    public void setSelection(boolean[] selected);
+    void setSelection(boolean[] selected);
 
     /**
      * Get the distance of each vertex from the selected part of the object. This is 0 for a selected
      * vertex, 1 for a vertex adjacent to a selected one, etc., up to a specified maximum
      * distance. For vertices more than the maximum distance for a selected one, it is -1.
      */
-    public int[] getSelectionDistance();
+    int[] getSelectionDistance();
 
     /**
      * Get the mesh tension level.
      */
-    public double getMeshTension();
+    double getMeshTension();
 
     /**
      * Get the distance over which mesh tension applies.
      */
-    public int getTensionDistance();
+    int getTensionDistance();
 }
