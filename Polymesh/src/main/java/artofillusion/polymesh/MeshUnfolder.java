@@ -230,18 +230,19 @@ public class MeshUnfolder {
         //System.out.println(ntri+2*nint);
         FlexCompRowMatrix newMat = new FlexCompRowMatrix(ntri + 2 * nint, 3 * ntri);
         FlexCompRowMatrix newMatTMat = new FlexCompRowMatrix(2 * nint + ntri, 2 * nint + ntri);
-        double[] newConstraints = new double[ntri + 2 * nint];
+        double[] constraints = new double[ntri + 2 * nint];
+
         for (int i = 0; i < ntri; i++) {
-            newConstraints[i] = Math.PI;
+            constraints[i] = Math.PI;
         }
         for (int i = ntri; i < ntri + nint; i++) {
-            newConstraints[i] = 2 * Math.PI;
+            constraints[i] = 2 * Math.PI;
         }
         for (int i = 0; i < faces.length; i++) {
             TriangleMesh.Face face = faces[i];
-            addToConstraints(newConstraints, i, face.v1, face.v2, face.v3, 3 * i, ntri, nint);
-            addToConstraints(newConstraints, i, face.v2, face.v3, face.v1, 3 * i + 1, ntri, nint);
-            addToConstraints(newConstraints, i, face.v3, face.v1, face.v2, 3 * i + 2, ntri, nint);
+            addToConstraints(constraints, i, face.v1, face.v2, face.v3, 3 * i, ntri, nint);
+            addToConstraints(constraints, i, face.v2, face.v3, face.v1, 3 * i + 1, ntri, nint);
+            addToConstraints(constraints, i, face.v3, face.v1, face.v2, 3 * i + 2, ntri, nint);
 
             addToMatTMat(newMat, newMatTMat, i, face.v1, face.v2, face.v3, 3 * i, ntri, nint);
             addToMatTMat(newMat, newMatTMat, i, face.v2, face.v3, face.v1, 3 * i + 1, ntri, nint);
@@ -250,9 +251,9 @@ public class MeshUnfolder {
 
         DenseVector sol = new DenseVector(ntri + 2 * nint);
         CG cg = new CG(sol);
-        DenseVector newcons = new DenseVector(newConstraints);
+
         try {
-            cg.solve(newMatTMat, newcons, sol);
+            cg.solve(newMatTMat, new DenseVector(constraints), sol);
         } catch (IterativeSolverNotConvergedException e) {
             textArea.append("Failure : unfolding did not converge");
             log.atInfo().setCause(e).log("Failure: unfolding did not converge {}", e.getMessage());
@@ -295,14 +296,14 @@ public class MeshUnfolder {
         // faceted edge and are due to triangulation
         for (int i = 0; i < uverts.length; i++) {
             uverts[i] = new UnfoldedVertex(verts[i]);
-            if (vertexTable != null) {
+            if (vertexTable == null) {
+                uverts[i].id = i;
+            } else {
                 if (i < vertexTable.length) {
                     uverts[i].id = vertexTable[i];
                 } else {
                     uverts[i].id = -1;
                 }
-            } else {
-                uverts[i].id = i;
             }
 
         }
@@ -360,10 +361,10 @@ public class MeshUnfolder {
         // faces
         for (int i = 0; i < ufaces.length; i++) {
             ufaces[i] = new UnfoldedFace(faces[i]);
-            if (faceTable != null) {
-                ufaces[i].id = faceTable[i];
-            } else {
+            if (faceTable == null) {
                 ufaces[i].id = i;
+            } else {
+                ufaces[i].id = faceTable[i];
             }
         }
         // 2D mesh reconstruction per se
