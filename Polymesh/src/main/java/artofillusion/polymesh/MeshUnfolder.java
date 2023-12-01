@@ -28,14 +28,19 @@ import java.util.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import no.uib.cipr.matrix.DenseVector;
-import no.uib.cipr.matrix.sparse.*;
+import no.uib.cipr.matrix.sparse.FlexCompRowMatrix;
+import no.uib.cipr.matrix.sparse.FlexCompColMatrix;
+import no.uib.cipr.matrix.sparse.SparseVector;
+import no.uib.cipr.matrix.sparse.CG;
+import no.uib.cipr.matrix.sparse.IterativeSolverNotConvergedException;
+
 
 @Slf4j
 public class MeshUnfolder {
 
     private final FacetedMesh mesh; // the mesh to unfold
 
-    private final TriangleMesh trimesh; // the trimesh version of the mesh to
+    private final TriangleMesh trianglesMesh; // the trimesh version of the mesh to
 
     // unfold
     private double[] angles; // mesh angles, 3 angles for each triangle
@@ -63,11 +68,11 @@ public class MeshUnfolder {
     private final int[] faceTable; // same for faces
 
     /**
-     * Creates a new unfolder instance. This class unfolds triangle meshes.
+     * Creates a new MeshUnfolder instance. This class unfolds triangle meshes.
      *
      * @param mesh
      * The mesh to unfold (any kind of faceted mesh)
-     * @param trimesh
+     * @param triangleMesh
      * The triangle mesh version of original mesh (maybe
      * equal to mesh if mesh is a triangle mesh).
      * @param vertexTable
@@ -82,19 +87,19 @@ public class MeshUnfolder {
      * @param faceTable
      * Table to face indices. If this array is not null, then
      * unfoldedFaces will be given an id corresponding to
-     * this array. This allows to identify which facetted
+     * this array. This allows to identify which faceted
      * face yielded a given trimesh face. This array may be
      * null if the mesh to unfold is already a triangle mesh.
      * Correct vertex index will be placed in UnfoldedVertex
-     * data. If a the vertexTable length is smaller than the
+     * data. If the vertexTable length is smaller than the
      * number of vertices, then these vertices are supposed
      * to be created for triangulation purposes and will be
      * assigned a vertex index of -1. They won't be displayed
      * by the UVMappingCanvas widget.
      */
-    public MeshUnfolder(FacetedMesh mesh, TriangleMesh trimesh, int[] vertexTable, int[] faceTable) {
+    public MeshUnfolder(FacetedMesh mesh, TriangleMesh triangleMesh, int[] vertexTable, int[] faceTable) {
         this.mesh = mesh;
-        this.trimesh = trimesh;
+        this.trianglesMesh = triangleMesh;
         this.vertexTable = vertexTable;
         this.faceTable = faceTable;
     }
@@ -106,23 +111,24 @@ public class MeshUnfolder {
     public boolean unfoldLinearAbf(BTextArea textArea) {
         textArea.append("Unfolding mesh...\n");
         // dump mesh;
-        TriangleMesh.Edge[] edges = trimesh.getEdges();
+        TriangleMesh.Edge[] edges = trianglesMesh.getEdges();
         int nedges = edges.length;
         long totaltime;
 
         totaltime = new Date().getTime();
-        TriangleMesh.Vertex[] vertices = (Vertex[]) trimesh.getVertices();
-        TriangleMesh.Face[] faces = trimesh.getFaces();
+        TriangleMesh.Vertex[] vertices = (Vertex[]) trianglesMesh.getVertices();
+        TriangleMesh.Face[] faces = trianglesMesh.getFaces();
         // number of triangles
         int ntri = faces.length;
         // number of angles
         int nangles = 3 * ntri;
         angles = new double[nangles];
-        Vec3 v1r, v2r, v3r;
+
         for (int i = 0; i < ntri; i++) {
-            v1r = vertices[faces[i].v3].r.minus(vertices[faces[i].v1].r);
-            v2r = vertices[faces[i].v2].r.minus(vertices[faces[i].v1].r);
-            v3r = vertices[faces[i].v3].r.minus(vertices[faces[i].v2].r);
+            var face = faces[i];
+            Vec3 v1r = vertices[face.v3].r.minus(vertices[face.v1].r);
+            Vec3 v2r = vertices[face.v2].r.minus(vertices[face.v1].r);
+            Vec3 v3r = vertices[face.v3].r.minus(vertices[face.v2].r);
             v1r.normalize();
             v2r.normalize();
             v3r.normalize();
@@ -130,6 +136,7 @@ public class MeshUnfolder {
             angles[i * 3 + 1] = Math.acos(-v2r.dot(v3r));
             angles[i * 3 + 2] = Math.acos(v1r.dot(v3r));
         }
+
         // setup interior vertices table
         invInteriorTable = new int[vertices.length];
         List<Integer> interiorVerticesTable = new Vector<>();
@@ -157,7 +164,7 @@ public class MeshUnfolder {
             int v = interiorVertices[i];
             int[] ed = vertices[v].getEdges();
             angleTable[i] = new int[ed.length];
-            // edges do not sequentially point to faces they delimit
+            // edges do not sequentially point to faces they delimit,
             // so we need to find the faces looking at both sides
             // of an edge
             int[] tris = new int[ed.length];
@@ -252,9 +259,7 @@ public class MeshUnfolder {
             return false;
         }
         double[] soldata = sol.getData();
-        /*for (int i = 0; i < ntri + 2*nint; i++) {
-			System.out.println("sol " + i + " : " + soldata[i]);
-		}*/
+
         Arrays.fill(var, 0);
         SparseVector matVecI;
         int[] ind;
@@ -280,11 +285,11 @@ public class MeshUnfolder {
         totaltime = new Date().getTime();
         // now let's build the unfolded meshes
         textArea.append("Rebuilding 2D mesh.\n");
-        Vertex[] verts = (Vertex[]) trimesh.getVertices();
+        Vertex[] verts = (Vertex[]) trianglesMesh.getVertices();
         ArrayList<UnfoldedMesh> unfoldedMeshesList = new ArrayList<>();
         UnfoldedEdge[] uedges = new UnfoldedEdge[nedges];
-        UnfoldedFace[] ufaces = new UnfoldedFace[trimesh.getFaces().length];
-        UnfoldedVertex[] uverts = new UnfoldedVertex[trimesh.getVertices().length];
+        UnfoldedFace[] ufaces = new UnfoldedFace[trianglesMesh.getFaces().length];
+        UnfoldedVertex[] uverts = new UnfoldedVertex[trianglesMesh.getVertices().length];
         // first let's put proper vertex ids
         // vertex with an id of -1 don't belong to original
         // faceted edge and are due to triangulation
@@ -301,7 +306,7 @@ public class MeshUnfolder {
             }
 
         }
-        // now let's find if wich edges are visible
+        // now let's find which edges are visible
         // and which come from triangulation
         int[][] faceVertIndices = new int[ufaces.length][];
         int meshFaceCount = mesh.getFaceCount();
@@ -455,15 +460,26 @@ public class MeshUnfolder {
         return true;
     }
 
-    private void addToConstraints(double[] constraints, int f, int v1, int v2, int v3, int a1, int ntri, int nint) {
-        double alpha1 = angles[a1];
-        double lsana1 = Math.log(Math.sin(alpha1));
+    /**
+     * Adds constraints to the given array based on the provided values.
+     *
+     * @param  constraints   the array to which constraints are added
+     * @param  f             the index of the constraint being added
+     * @param  v1            the first vertex index
+     * @param  v2            the second vertex index
+     * @param  v3            the third vertex index
+     * @param  a1            the index of the angle used in the calculation
+     * @param  ntri          the number of triangles
+     * @param  nint          the number of interior vertices
+     */private void addToConstraints(double[] constraints, int f, int v1, int v2, int v3, int a1, int ntri, int nint) {
+        double alpha = angles[a1];
+        double lsana1 = Math.log(Math.sin(alpha));
         int interiorVertV1 = invInteriorTable[v1];
         int interiorVertV2 = invInteriorTable[v2];
         int interiorVertV3 = invInteriorTable[v3];
-        constraints[f] -= alpha1;
+        constraints[f] -= alpha;
         if (interiorVertV1 != -1) {
-            constraints[ntri + interiorVertV1] -= alpha1;
+            constraints[ntri + interiorVertV1] -= alpha;
         }
         if (interiorVertV2 != -1) {
             constraints[ntri + nint + interiorVertV2] += lsana1;
@@ -518,10 +534,7 @@ public class MeshUnfolder {
      * unfolded mesh. Ids are kept, they will make it possible to find back
      * which face/vertex is concerned during UVMapping edition.
      */
-    private UnfoldedMesh computeUnfoldedMesh(List<Integer> vertList,
-            List<Integer> edgeList, List<Integer> faceList,
-            UnfoldedVertex[] uverts, UnfoldedEdge[] uedges,
-            UnfoldedFace[] ufaces) throws IterativeSolverNotConvergedException {
+    private UnfoldedMesh computeUnfoldedMesh(List<Integer> vertList, List<Integer> edgeList, List<Integer> faceList, UnfoldedVertex[] uverts, UnfoldedEdge[] uedges, UnfoldedFace[] ufaces) throws IterativeSolverNotConvergedException {
         UnfoldedVertex[] vertices = new UnfoldedVertex[vertList.size()];
         UnfoldedEdge[] edges = new UnfoldedEdge[edgeList.size()];
         UnfoldedFace[] faces = new UnfoldedFace[faceList.size()];
@@ -773,7 +786,7 @@ public class MeshUnfolder {
         }
         center.add(vertices[0].r);
         center.add(vertices[1].r);
-        //check if the mesh is right handed
+        //check if the mesh is right-handed
         boolean leftHanded = false;
         Vec2 v1r = vertices[faces[0].v3].r.minus(vertices[faces[0].v1].r);
         Vec2 v2r = vertices[faces[0].v2].r.minus(vertices[faces[0].v1].r);
