@@ -240,13 +240,17 @@ public class MeshUnfolder {
         }
         for (int i = 0; i < faces.length; i++) {
             TriangleMesh.Face face = faces[i];
-            addToConstraints(constraints, i, face.v1, face.v2, face.v3, 3 * i, ntri, nint);
-            addToConstraints(constraints, i, face.v2, face.v3, face.v1, 3 * i + 1, ntri, nint);
-            addToConstraints(constraints, i, face.v3, face.v1, face.v2, 3 * i + 2, ntri, nint);
+            int anglesIndex = i * 3;
+            double alpha = angles[anglesIndex];
+            addToConstraints(constraints, i, face.v1, face.v2, face.v3, alpha, ntri, nint);
+            alpha = angles[anglesIndex+1];
+            addToConstraints(constraints, i, face.v2, face.v3, face.v1, alpha, ntri, nint);
+            alpha = angles[anglesIndex+2];
+            addToConstraints(constraints, i, face.v3, face.v1, face.v2, alpha, ntri, nint);
 
-            addToMatTMat(newMat, newMatTMat, i, face.v1, face.v2, face.v3, 3 * i, ntri, nint);
-            addToMatTMat(newMat, newMatTMat, i, face.v2, face.v3, face.v1, 3 * i + 1, ntri, nint);
-            addToMatTMat(newMat, newMatTMat, i, face.v3, face.v1, face.v2, 3 * i + 2, ntri, nint);
+            addToMatTMat(newMat, newMatTMat, i, face.v1, face.v2, face.v3, anglesIndex, ntri, nint);
+            addToMatTMat(newMat, newMatTMat, i, face.v2, face.v3, face.v1, anglesIndex + 1, ntri, nint);
+            addToMatTMat(newMat, newMatTMat, i, face.v3, face.v1, face.v2, anglesIndex + 2, ntri, nint);
         }
 
         DenseVector sol = new DenseVector(ntri + 2 * nint);
@@ -461,32 +465,21 @@ public class MeshUnfolder {
         return true;
     }
 
-    /**
-     * Adds constraints to the given array based on the provided values.
-     *
-     * @param  constraints   the array to which constraints are added
-     * @param  f             the index of the constraint being added
-     * @param  v1            the first vertex index
-     * @param  v2            the second vertex index
-     * @param  v3            the third vertex index
-     * @param  a1            the index of the angle used in the calculation
-     * @param  ntri          the number of triangles
-     * @param  nint          the number of interior vertices
-     */private void addToConstraints(double[] constraints, int f, int v1, int v2, int v3, int a1, int ntri, int nint) {
-        double alpha = angles[a1];
-        double lsana1 = Math.log(Math.sin(alpha));
+    private void addToConstraints(double[] constraints, int faceIndes, int v1, int v2, int v3, double alpha, int ntri, int nint) {
+        
+        double lsa = Math.log(Math.sin(alpha));
         int interiorVertV1 = invInteriorTable[v1];
         int interiorVertV2 = invInteriorTable[v2];
         int interiorVertV3 = invInteriorTable[v3];
-        constraints[f] -= alpha;
+        constraints[faceIndes] -= alpha;
         if (interiorVertV1 != -1) {
             constraints[ntri + interiorVertV1] -= alpha;
         }
         if (interiorVertV2 != -1) {
-            constraints[ntri + nint + interiorVertV2] += lsana1;
+            constraints[ntri + nint + interiorVertV2] += lsa;
         }
         if (interiorVertV3 != -1) {
-            constraints[ntri + nint + interiorVertV3] -= lsana1;
+            constraints[ntri + nint + interiorVertV3] -= lsa;
         }
     }
 
