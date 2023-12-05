@@ -26,6 +26,7 @@ import buoy.widget.*;
 import buoy.xml.IconResource;
 import buoyx.docking.*;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -43,6 +44,7 @@ import javax.swing.text.*;
  * The LayoutWindow class represents the main window for creating and laying out
  * scenes.
  */
+@Slf4j
 public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuManager, PropertyChangeListener {
 
     SceneViewer[] theView;
@@ -540,22 +542,34 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         objectMenu.add(createMenu);
     }
 
+    private class ToolAction extends AbstractAction {
+        private final ModellingTool tool;
+        private final LayoutWindow view;
+        public ToolAction(LayoutWindow view, ModellingTool tool) {
+            super(tool.getName());
+            this.view = view;
+            this.tool = tool;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent event) {
+            tool.commandSelected(view);
+        }
+    }
+        private ModellingTool tool;
     private void createToolsMenu() {
         getMenuBar().add(toolsMenu);
+        var tmc = toolsMenu.getComponent();
 
         List<ModellingTool> modellingTools = PluginRegistry.getPlugins(ModellingTool.class);
         modellingTools.sort(Comparator.comparing(ModellingTool::getName));
         for (ModellingTool tool : modellingTools) {
-            BMenuItem item = new BMenuItem(tool.getName());
-
-            item.addEventLink(CommandEvent.class, this, "modellingToolCommand");
-            item.getComponent().putClientProperty("tool", tool);
-            toolsMenu.add(item);
+            tmc.add(new ToolAction(this, tool));
         }
 
-        toolsMenu.addSeparator();
+        tmc.addSeparator();
 
-
+        /*
         BMenu editScriptMenu = Translate.menu("editToolScript");
         editScriptMenu.add(newScriptMenu = Translate.menu("newScript"));
         for (String language : ScriptRunner.getLanguageNames()) {
@@ -572,6 +586,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         toolsMenu.add(editScriptMenu);
         toolsMenu.add(scriptMenu = Translate.menu("scripts"));
         rebuildScriptsMenu();
+        */
+
     }
 
     public void editScriptCommand(CommandEvent ev) {
@@ -598,7 +614,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     /*
-    Creating the View menu. All viewmanipulation related menuitems and sub menus should be added here.
+    Creating the View menu. All viewmanipulation related menu items and sub menus should be added here.
      */
     private void createViewMenu() {
         BMenu displayMenu;

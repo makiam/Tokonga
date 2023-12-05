@@ -52,11 +52,12 @@ public class SPManagerPlugin implements Plugin {
 
     @Override
     public void onSceneWindowCreated(LayoutWindow view) {
-        BMenu toolsMenu = view.getToolsMenu();
+        JMenu toolsMenu = view.getToolsMenu().getComponent();
+        log.info("SPM: Adding Separator to tools menu");
         toolsMenu.addSeparator();
         BMenuItem menuItem = Translate.menuItem("spmanager:SPManager", this, "doMenu");
-
-        toolsMenu.add(menuItem);
+        log.info("SPM: Adding Menu Item to tools menu");
+        toolsMenu.add(menuItem.getComponent());
     }
 
     @Override
