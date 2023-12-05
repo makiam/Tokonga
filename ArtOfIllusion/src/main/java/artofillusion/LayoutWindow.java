@@ -556,18 +556,29 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             tool.commandSelected(view);
         }
     }
-        private ModellingTool tool;
+
+    private class ScriptEditorToolAction extends AbstractAction {
+
+        public ScriptEditorToolAction() {
+            super(Translate.text("Script Editor"));
+        }
+        
+        @Override
+        public void actionPerformed(ActionEvent event) {            
+            SwingUtilities.invokeLater(() -> new ScriptEditorEx(LayoutWindow.this).setVisible(true));
+        }
+        
+    }
     private void createToolsMenu() {
         getMenuBar().add(toolsMenu);
         var tmc = toolsMenu.getComponent();
-
-        List<ModellingTool> modellingTools = PluginRegistry.getPlugins(ModellingTool.class);
-        modellingTools.sort(Comparator.comparing(ModellingTool::getName));
-        for (ModellingTool tool : modellingTools) {
-            tmc.add(new ToolAction(this, tool));
-        }
+        PluginRegistry.getPlugins(ModellingTool.class).sort(Comparator.comparing(ModellingTool::getName));
+        PluginRegistry.getPlugins(ModellingTool.class).
+                stream().sorted(Comparator.comparing(ModellingTool::getName)).
+                forEach(tool -> tmc.add(new ToolAction(this, tool)));
 
         tmc.addSeparator();
+        tmc.add(new ScriptEditorToolAction());
 
         /*
         BMenu editScriptMenu = Translate.menu("editToolScript");
