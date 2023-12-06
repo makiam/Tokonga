@@ -65,14 +65,16 @@ public class ScriptEditorEx extends JFrame {
         
         this.setJMenuBar(new JMenuBar());
         var mb = this.getJMenuBar();
-        var fileMenu =mb.add(new JMenu(Translate.text("menu.file")));
+        var fileMenu = mb.add(new JMenu(Translate.text("menu.file")));
         fileMenu.add(new NewScriptAction());
         fileMenu.add(new NewScriptAction());
         fileMenu.addSeparator();
         fileMenu.add(new CloseAction());
 
         mb.add(new JMenu(Translate.text("menu.edit")));
-        mb.add(new JMenu(Translate.text("Run")));
+        var runMenu = mb.add(new JMenu(Translate.text("Run")));
+        runMenu.add(new RunScriptAction());
+        runMenu.add(new RunSelectedAction());
     }
 
     private final class StatusPanel extends JPanel {
@@ -118,6 +120,16 @@ public class ScriptEditorEx extends JFrame {
 
     private class RunScriptAction extends AbstractAction {
         public RunScriptAction() {
+            super(Translate.text("Run"));
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            var shell = ArtOfIllusion.getShell();
+        }
+    }
+
+    private class RunSelectedAction extends AbstractAction {
+        public RunSelectedAction() {
             super(Translate.text("Run"));
         }
         @Override
