@@ -15,7 +15,6 @@ import artofillusion.LayoutWindow;
 import artofillusion.ui.Translate;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
@@ -23,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
+import org.fife.ui.rtextarea.RTextArea;
 
 @Slf4j
 public class ScriptEditorEx extends JFrame {
@@ -30,11 +30,13 @@ public class ScriptEditorEx extends JFrame {
     private StatusPanel statusPanel;
     private JLabel statusLabel;
     private RSyntaxTextArea scriptTextArea;
-
+    
     private org.fife.ui.rtextarea.RTextScrollPane scroller;
     
     private static final long serialVersionUID = 1L;
     private LayoutWindow layout;
+    private JMenu editMenu;
+    
     public ScriptEditorEx(LayoutWindow owner) {
         this.layout = owner;
         scriptTextArea = new RSyntaxTextArea(20, 60);
@@ -51,6 +53,16 @@ public class ScriptEditorEx extends JFrame {
         scroller = new org.fife.ui.rtextarea.RTextScrollPane(scriptTextArea);
         scroller.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         getContentPane().add(scroller, BorderLayout.CENTER);
+        
+        editMenu.add(createMenuItem(RTextArea.getAction(RTextArea.UNDO_ACTION)));
+        editMenu.add(createMenuItem(RTextArea.getAction(RTextArea.REDO_ACTION)));
+        editMenu.addSeparator();
+        editMenu.add(createMenuItem(RTextArea.getAction(RTextArea.CUT_ACTION)));
+        editMenu.add(createMenuItem(RTextArea.getAction(RTextArea.COPY_ACTION)));
+        editMenu.add(createMenuItem(RTextArea.getAction(RTextArea.PASTE_ACTION)));
+        editMenu.add(createMenuItem(RTextArea.getAction(RTextArea.DELETE_ACTION)));
+        editMenu.addSeparator();
+        editMenu.add(createMenuItem(RTextArea.getAction(RTextArea.SELECT_ALL_ACTION)));        
     }
 
     @Override
@@ -67,14 +79,26 @@ public class ScriptEditorEx extends JFrame {
         var mb = this.getJMenuBar();
         var fileMenu = mb.add(new JMenu(Translate.text("menu.file")));
         fileMenu.add(new NewScriptAction());
-        fileMenu.add(new NewScriptAction());
+        fileMenu.add(new OpenScriptAction());
+        fileMenu.add(new SaveAction());
+        fileMenu.add(new SaveAsAction());
         fileMenu.addSeparator();
         fileMenu.add(new CloseAction());
 
-        mb.add(new JMenu(Translate.text("menu.edit")));
+        editMenu = mb.add(new JMenu(Translate.text("menu.edit")));
+
+        
+
+
         var runMenu = mb.add(new JMenu(Translate.text("Run")));
         runMenu.add(new RunScriptAction());
         runMenu.add(new RunSelectedAction());
+    }
+
+    private static JMenuItem createMenuItem(Action action) {
+        JMenuItem item = new JMenuItem(action);
+        item.setToolTipText(null); // Swing annoyingly adds tool tip text to the menu item
+        return item;
     }
 
     private final class StatusPanel extends JPanel {
@@ -125,16 +149,45 @@ public class ScriptEditorEx extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             var shell = ArtOfIllusion.getShell();
+            var script = shell.parse(ScriptEditorEx.this.scriptTextArea.getText());
+            script.setProperty("window", layout);
+            script.run();
+            
         }
     }
 
     private class RunSelectedAction extends AbstractAction {
         public RunSelectedAction() {
-            super(Translate.text("Run"));
+            super(Translate.text("Run Selection"));
         }
         @Override
         public void actionPerformed(ActionEvent e) {
             var shell = ArtOfIllusion.getShell();
         }
     }
+    
+    private static class SaveAsAction extends AbstractAction {
+
+        public SaveAsAction() {
+            super(Translate.text("menu.save"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }
+        
+    }
+
+    private static class SaveAction extends AbstractAction {
+
+        public SaveAction() {
+            super(Translate.text("menu.saveas"));            
+        }
+        
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }        
+    }    
 }
