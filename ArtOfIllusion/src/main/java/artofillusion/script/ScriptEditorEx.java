@@ -17,7 +17,11 @@ import artofillusion.ui.Translate;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
+
+import groovy.lang.GroovyShell;
 import lombok.extern.slf4j.Slf4j;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -26,6 +30,7 @@ import org.fife.ui.rtextarea.RTextArea;
 
 @Slf4j
 public class ScriptEditorEx extends JFrame {
+    private GroovyShell shell = ArtOfIllusion.getShell();
 
     private StatusPanel statusPanel;
     private JLabel statusLabel;
@@ -145,6 +150,7 @@ public class ScriptEditorEx extends JFrame {
     private class RunScriptAction extends AbstractAction {
         public RunScriptAction() {
             super(Translate.text("Run"));
+            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
         }
         @Override
         public void actionPerformed(ActionEvent e) {
