@@ -571,14 +571,21 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
     private void createToolsMenu() {
         getMenuBar().add(toolsMenu);
-        var tmc = toolsMenu.getComponent();
-        PluginRegistry.getPlugins(ModellingTool.class).sort(Comparator.comparing(ModellingTool::getName));
+        
+        
         PluginRegistry.getPlugins(ModellingTool.class).
                 stream().sorted(Comparator.comparing(ModellingTool::getName)).
-                forEach(tool -> tmc.add(new ToolAction(this, tool)));
+                forEach(tool -> {
+                    BMenuItem mi = new BMenuItem(tool.getName());
+                    mi.getComponent().setAction(new ToolAction(this, tool));
+                    toolsMenu.add(mi);
+                });
 
-        tmc.addSeparator();
-        tmc.add(new ScriptEditorToolAction());
+        toolsMenu.addSeparator();
+        var scripto = new BMenuItem();
+        scripto.getComponent().setAction(new ScriptEditorToolAction());
+        toolsMenu.add(scripto);
+        
 
         /*
         BMenu editScriptMenu = Translate.menu("editToolScript");

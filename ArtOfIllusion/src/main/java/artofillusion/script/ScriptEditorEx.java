@@ -112,6 +112,7 @@ public class ScriptEditorEx extends JFrame {
         runMenu.add(new RunScriptAction());
         runMenu.add(new RunSelectedAction());
         runMenu.addSeparator();
+        
         runMenu.add(cleanOut = new JCheckBoxMenuItem("Clean output on run"));
     }
 
@@ -191,7 +192,9 @@ public class ScriptEditorEx extends JFrame {
         }
         @Override
         public void actionPerformed(ActionEvent event) {
-            
+            if(cleanOut.isSelected()) {
+                outputArea.setText("");
+            }
             Script script;
             try {
                 script = shell.parse(ScriptEditorEx.this.scriptTextArea.getText());
