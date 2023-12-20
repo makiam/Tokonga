@@ -23,6 +23,7 @@ import buoy.widget.*;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.Gutter;
@@ -54,8 +55,10 @@ public class ScriptEditingWidget extends BScrollPane {
 
         try {
             Theme theme = Theme.load(ScriptEditingWidget.class.getResourceAsStream("/scriptEditorTheme.xml"));
-            theme.baseFont = jbmf.deriveFont(13f);
-
+            Optional.ofNullable(jbmf).ifPresent(font -> {
+                theme.baseFont = font.deriveFont(13f);
+            });
+            
             theme.apply(rsta);
 
         } catch (IOException ex) {
