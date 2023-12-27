@@ -1,40 +1,47 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/* Copyright (C) 2023 by Maksim Khramov
+
+   This program is free software; you can redistribute it and/or modify it under the
+   terms of the GNU General Public License as published by the Free Software
+   Foundation; either version 2 of the License, or (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+   PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion.test.util;
 
 import artofillusion.ArtOfIllusion;
 import artofillusion.PluginRegistry;
-import artofillusion.ui.ThemeManager;
-import artofillusion.ui.Translate;
-import java.util.Locale;
-import org.junit.rules.ExternalResource;
+
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
+
 
 /**
  *
  * @author MaksK
  */
-public class RegisterTestResources extends ExternalResource {
+public class RegisterTestResources implements BeforeAllCallback {
 
     private static int ref = 0;
 
-    @Override
-    protected void before() throws Throwable {
+    protected void before() {
         if (ref != 0) {
             return;
         }
         ref++;
         try {
-            Translate.setLocale(Locale.US);
             PluginRegistry.registerResource("TranslateBundle", "artofillusion", ArtOfIllusion.class.getClassLoader(), "artofillusion", null);
             PluginRegistry.registerResource("UITheme", "default", ArtOfIllusion.class.getClassLoader(), "artofillusion/Icons/defaultTheme.xml", null);
-            ThemeManager.initThemes();
+            
         } catch (IllegalArgumentException iae) {
             ref++;
         }
 
     }
 
+    @Override
+    public void beforeAll(ExtensionContext context) throws Exception {
+        before();
+    }
 }
