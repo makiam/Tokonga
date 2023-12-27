@@ -1,4 +1,4 @@
-/* Copyright (C) 2016-2023 by Maksim Khramov
+/* Copyright (C) 2016-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -7,119 +7,120 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.animation;
 
 import artofillusion.math.CoordinateSystem;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
- *
  * @author makiam
- *
  */
-public class JointDOFEqualityTest {
+@DisplayName("Joint DOF Equality Test")
+class JointDOFEqualityTest {
 
     private Joint source;
 
     public JointDOFEqualityTest() {
     }
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         CoordinateSystem cs = new CoordinateSystem();
         source = new Joint(cs, null, "Origin1");
     }
 
     @Test
-    public void testDOFAreEquals() {
+    @DisplayName("Test DOF Are Equals")
+    void testDOFAreEquals() {
         Joint.DOF sourceDof = source.angle1;
         Joint.DOF targetDof = sourceDof.duplicate();
+        Assertions.assertTrue(sourceDof.equals(targetDof));
 
-        Assert.assertTrue(sourceDof.equals(targetDof));
     }
 
     @Test
-    public void testDOFAreNotEqualsByFixed() {
+    @DisplayName("Test DOF Are Not Equals By Fixed")
+    void testDOFAreNotEqualsByFixed() {
         Joint.DOF sourceDof = source.angle1;
         Joint.DOF targetDof = sourceDof.duplicate();
         targetDof.fixed = !targetDof.fixed;
-
-        Assert.assertFalse(sourceDof.equals(targetDof));
+        Assertions.assertFalse(sourceDof.equals(targetDof));
     }
 
     @Test
-    public void testDOFAreNotEqualsByComfort() {
+    @DisplayName("Test DOF Are Not Equals By Comfort")
+    void testDOFAreNotEqualsByComfort() {
         Joint.DOF sourceDof = source.angle1;
         Joint.DOF targetDof = sourceDof.duplicate();
         targetDof.comfort = !targetDof.comfort;
-
-        Assert.assertFalse(sourceDof.equals(targetDof));
+        Assertions.assertFalse(sourceDof.equals(targetDof));
     }
 
     @Test
-    public void testDOFAreNotEqualsByLoop() {
+    @DisplayName("Test DOF Are Not Equals By Loop")
+    void testDOFAreNotEqualsByLoop() {
         Joint.DOF sourceDof = source.angle1;
         Joint.DOF targetDof = sourceDof.duplicate();
         targetDof.loop = !targetDof.loop;
-
-        Assert.assertFalse(sourceDof.equals(targetDof));
+        Assertions.assertFalse(sourceDof.equals(targetDof));
     }
 
     @Test
-    public void testDOFAreNotEqualsByMin() {
+    @DisplayName("Test DOF Are Not Equals By Min")
+    void testDOFAreNotEqualsByMin() {
         Joint.DOF sourceDof = source.angle1;
         Joint.DOF targetDof = sourceDof.duplicate();
         targetDof.min = targetDof.min - 1.0;
-
-        Assert.assertFalse(sourceDof.equals(targetDof));
+        Assertions.assertFalse(sourceDof.equals(targetDof));
     }
 
     @Test
-    public void testDOFAreNotEqualsByMinComfort() {
+    @DisplayName("Test DOF Are Not Equals By Min Comfort")
+    void testDOFAreNotEqualsByMinComfort() {
         Joint.DOF sourceDof = source.angle1;
         Joint.DOF targetDof = sourceDof.duplicate();
         targetDof.minComfort = targetDof.minComfort - 1.0;
-
-        Assert.assertFalse(sourceDof.equals(targetDof));
+        Assertions.assertFalse(sourceDof.equals(targetDof));
     }
 
     @Test
-    public void testDOFAreNotEqualsByMax() {
+    @DisplayName("Test DOF Are Not Equals By Max")
+    void testDOFAreNotEqualsByMax() {
         Joint.DOF sourceDof = source.angle1;
         Joint.DOF targetDof = sourceDof.duplicate();
         targetDof.max = targetDof.max + 1.0;
-
-        Assert.assertFalse(sourceDof.equals(targetDof));
+        Assertions.assertFalse(sourceDof.equals(targetDof));
     }
 
     @Test
-    public void testDOFAreNotEqualsByMaxComfort() {
+    @DisplayName("Test DOF Are Not Equals By Max Comfort")
+    void testDOFAreNotEqualsByMaxComfort() {
         Joint.DOF sourceDof = source.angle1;
         Joint.DOF targetDof = sourceDof.duplicate();
         targetDof.maxComfort = targetDof.maxComfort + 1.0;
-
-        Assert.assertFalse(sourceDof.equals(targetDof));
+        Assertions.assertFalse(sourceDof.equals(targetDof));
     }
 
     @Test
-    public void testDOFAreNotEqualsByStiffness() {
+    @DisplayName("Test DOF Are Not Equals By Stiffness")
+    void testDOFAreNotEqualsByStiffness() {
         Joint.DOF sourceDof = source.angle1;
         Joint.DOF targetDof = sourceDof.duplicate();
         targetDof.stiffness = targetDof.stiffness + 1.0;
-
-        Assert.assertFalse(sourceDof.equals(targetDof));
+        Assertions.assertFalse(sourceDof.equals(targetDof));
     }
 
     @Test
-    public void testDOFAreNotEqualsByPos() {
+    @DisplayName("Test DOF Are Not Equals By Pos")
+    void testDOFAreNotEqualsByPos() {
         Joint.DOF sourceDof = source.angle1;
         Joint.DOF targetDof = sourceDof.duplicate();
         targetDof.pos = targetDof.pos + 1.0;
-
-        Assert.assertFalse(sourceDof.equals(targetDof));
+        Assertions.assertFalse(sourceDof.equals(targetDof));
     }
 }

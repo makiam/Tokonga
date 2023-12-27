@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2008 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -8,25 +8,26 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.texture;
 
 import artofillusion.TextureParameter;
-import org.junit.Test;
-
+import org.junit.jupiter.api.Test;
 
 import artofillusion.object.*;
 import artofillusion.procedural.*;
 
 import java.awt.*;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
-public class LayeredTextureTest {
+import org.junit.jupiter.api.DisplayName;
+
+@DisplayName("Layered Texture Test")
+class LayeredTextureTest {
 
     @Test
-    public void testHasComponent() {
+    @DisplayName("Test Has Component")
+    void testHasComponent() {
         // Create a layered texture.
-
         Object3D obj = new Sphere(1.0, 1.0, 1.0);
         LayeredTexture tex = new LayeredTexture(obj);
         LayeredMapping map = new LayeredMapping(obj, tex);
@@ -35,36 +36,33 @@ public class LayeredTextureTest {
         UniformTexture t2 = new UniformTexture();
         map.addLayer(0, t2, t2.getDefaultMapping(obj), LayeredMapping.BLEND);
         map.addLayer(0, t1, t1.getDefaultMapping(obj), LayeredMapping.BLEND);
-
         // Check a few components.
-        Assert.assertTrue(tex.hasComponent(Texture.DIFFUSE_COLOR_COMPONENT));
-        Assert.assertFalse(tex.hasComponent(Texture.SPECULAR_COLOR_COMPONENT));
+        Assertions.assertTrue(tex.hasComponent(Texture.DIFFUSE_COLOR_COMPONENT));
+        Assertions.assertFalse(tex.hasComponent(Texture.SPECULAR_COLOR_COMPONENT));
         t2.specularity = 0.2f;
-        Assert.assertTrue(tex.hasComponent(Texture.SPECULAR_COLOR_COMPONENT));
-
+        Assertions.assertTrue(tex.hasComponent(Texture.SPECULAR_COLOR_COMPONENT));
         // Check transparency, which has more complex rules than other components.
-        Assert.assertFalse(tex.hasComponent(Texture.TRANSPARENT_COLOR_COMPONENT));
+        Assertions.assertFalse(tex.hasComponent(Texture.TRANSPARENT_COLOR_COMPONENT));
         t1.transparency = 0.5f;
-        Assert.assertTrue(tex.hasComponent(Texture.TRANSPARENT_COLOR_COMPONENT));
+        Assertions.assertTrue(tex.hasComponent(Texture.TRANSPARENT_COLOR_COMPONENT));
         map.setLayerMode(0, LayeredMapping.OVERLAY_ADD_BUMPS);
-        Assert.assertFalse(tex.hasComponent(Texture.TRANSPARENT_COLOR_COMPONENT));
+        Assertions.assertFalse(tex.hasComponent(Texture.TRANSPARENT_COLOR_COMPONENT));
         t2.transparency = 0.9f;
-        Assert.assertTrue(tex.hasComponent(Texture.TRANSPARENT_COLOR_COMPONENT));
+        Assertions.assertTrue(tex.hasComponent(Texture.TRANSPARENT_COLOR_COMPONENT));
         map.setLayerMode(1, LayeredMapping.OVERLAY_ADD_BUMPS);
-        Assert.assertTrue(tex.hasComponent(Texture.TRANSPARENT_COLOR_COMPONENT));
+        Assertions.assertTrue(tex.hasComponent(Texture.TRANSPARENT_COLOR_COMPONENT));
     }
 
     @Test
-    public void testParameters() {
+    @DisplayName("Test Parameters")
+    void testParameters() {
         // Create two textures, each with two parameters.
-
         ProceduralTexture2D tex1 = new ProceduralTexture2D();
         tex1.getProcedure().addModule(new ParameterModule(new Point()));
         tex1.getProcedure().addModule(new ParameterModule(new Point()));
         ProceduralTexture2D tex2 = new ProceduralTexture2D();
         tex2.getProcedure().addModule(new ParameterModule(new Point()));
         tex2.getProcedure().addModule(new ParameterModule(new Point()));
-
         // Create a layered texture containing two copies of the first texture and one of the second.
         Object3D obj = new Sphere(1.0, 1.0, 1.0);
         LayeredTexture tex = new LayeredTexture(obj);
@@ -74,53 +72,49 @@ public class LayeredTextureTest {
         map.addLayer(1, tex2, tex2.getDefaultMapping(obj), LayeredMapping.BLEND);
         map.addLayer(2, tex1, tex1.getDefaultMapping(obj), LayeredMapping.BLEND);
         obj.setTexture(tex, map);
-
         // Call getParameters() twice and make sure the results are consistent.
         TextureParameter[] param = map.getParameters();
         TextureParameter[] param2 = map.getParameters();
-        Assert.assertEquals(9, param.length);
-        Assert.assertEquals(9, param2.length);
+        Assertions.assertEquals(9, param.length);
+        Assertions.assertEquals(9, param2.length);
         for (int i = 0; i < param.length; i++) {
             for (int j = 0; j < param2.length; j++) {
                 if (i == j) {
-                    Assert.assertEquals(param[i], param2[j]);
+                    Assertions.assertEquals(param[i], param2[j]);
                 } else {
-                    Assert.assertFalse(param[i].equals(param2[j]));
+                    Assertions.assertFalse(param[i].equals(param2[j]));
                 }
             }
         }
-
         // Now request the parameters for each layer separately and make sure they match the full list.
         for (int i = 0; i < 3; i++) {
             TextureParameter[] layerParam = map.getLayerParameters(i);
-            Assert.assertEquals(3, layerParam.length);
+            Assertions.assertEquals(3, layerParam.length);
             for (int j = 0; j < layerParam.length; j++) {
                 for (int k = 0; k < param.length; k++) {
                     if (k == j + i * 3) {
-                        Assert.assertEquals(param[k], layerParam[j]);
+                        Assertions.assertEquals(param[k], layerParam[j]);
                     } else {
-                        Assert.assertFalse(param[k].equals(layerParam[j]));
+                        Assertions.assertFalse(param[k].equals(layerParam[j]));
                     }
                 }
             }
         }
-
         // Set the values of all parameters, the make sure they are correct.
         for (int i = 0; i < param.length; i++) {
             obj.setParameterValue(param[i], new ConstantParameterValue(i));
         }
         for (int i = 0; i < param.length; i++) {
-            Assert.assertEquals(i, obj.getParameterValue(param[i]).getAverageValue(), 0.0);
+            Assertions.assertEquals(i, obj.getParameterValue(param[i]).getAverageValue(), 0.0);
         }
-
         // Test the getLayerBlendingParameter() and getParameterForLayer() methods.
         for (int layer = 0; layer < 3; layer++) {
-            Assert.assertEquals(map.getLayerBlendingParameter(layer), map.getLayerParameters(layer)[0]);
+            Assertions.assertEquals(map.getLayerBlendingParameter(layer), map.getLayerParameters(layer)[0]);
             for (int parameter = 0; parameter < 2; parameter++) {
                 TextureParameter oldParameter = map.getLayerMapping(layer).getParameters()[parameter];
                 TextureParameter newParameter = map.getLayerParameters(layer)[parameter + 1];
-                Assert.assertFalse(newParameter.equals(oldParameter));
-                Assert.assertTrue(newParameter.equals(map.getParameterForLayer(oldParameter, layer)));
+                Assertions.assertFalse(newParameter.equals(oldParameter));
+                Assertions.assertTrue(newParameter.equals(map.getParameterForLayer(oldParameter, layer)));
             }
         }
     }

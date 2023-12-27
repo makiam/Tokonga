@@ -7,71 +7,77 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.object;
 
 import artofillusion.Scene;
 import artofillusion.animation.Keyframe;
 import artofillusion.math.CoordinateSystem;
 import artofillusion.math.Vec3;
+
 import java.util.Enumeration;
 import java.util.Vector;
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
- *
  * @author maksim.khramov
  */
-public class ObjectCollectionTest {
+@DisplayName("Object Collection Test")
+class ObjectCollectionTest {
 
     @Test
-    public void testEmptyCollectionObjectIsClosed() {
+    @DisplayName("Test Empty Collection Object Is Closed")
+    void testEmptyCollectionObjectIsClosed() {
         ObjectCollection oc = new CustomObjectCollection();
-        Assert.assertNotNull(oc);
-        Assert.assertTrue(oc.isClosed());
+        Assertions.assertNotNull(oc);
+        Assertions.assertTrue(oc.isClosed());
     }
 
     @Test
-    public void testClosedSingleItemCollectionObjectIsClosed() {
+    @DisplayName("Test Closed Single Item Collection Object Is Closed")
+    void testClosedSingleItemCollectionObjectIsClosed() {
         ObjectCollection oc = new CustomObjectCollection();
         oc.cachedObjects.add(new ObjectInfo(new Cube(1, 1, 1), new CoordinateSystem(), "Cube"));
-        Assert.assertNotNull(oc);
-        Assert.assertTrue(oc.isClosed());
+        Assertions.assertNotNull(oc);
+        Assertions.assertTrue(oc.isClosed());
     }
 
     @Test
-    public void testOpenedSingleItemCollectionObjectIsNotClosed() {
+    @DisplayName("Test Opened Single Item Collection Object Is Not Closed")
+    void testOpenedSingleItemCollectionObjectIsNotClosed() {
         ObjectCollection oc = new CustomObjectCollection();
         Curve curve = new Curve(new Vec3[0], new float[0], Mesh.APPROXIMATING, false);
         oc.cachedObjects.add(new ObjectInfo(curve, new CoordinateSystem(), "Curve"));
-        Assert.assertNotNull(oc);
-        Assert.assertFalse(oc.isClosed());
-
+        Assertions.assertNotNull(oc);
+        Assertions.assertFalse(oc.isClosed());
     }
 
     @Test
-    public void testObjectCollectionIsClosed() {
+    @DisplayName("Test Object Collection Is Closed")
+    void testObjectCollectionIsClosed() {
         ObjectCollection oc = new CustomObjectCollection();
-
         oc.cachedObjects.add(new ObjectInfo(new Cube(1, 1, 1), new CoordinateSystem(), "Cube1"));
         oc.cachedObjects.add(new ObjectInfo(new Cube(1, 1, 1), new CoordinateSystem(), "Cube2"));
-
-        Assert.assertNotNull(oc);
-        Assert.assertTrue(oc.isClosed());
+        Assertions.assertNotNull(oc);
+        Assertions.assertTrue(oc.isClosed());
     }
 
     @Test
-    public void testObjectCollectionIsNotClosed() {
+    @DisplayName("Test Object Collection Is Not Closed")
+    void testObjectCollectionIsNotClosed() {
         ObjectCollection oc = new CustomObjectCollection();
         Curve curve = new Curve(new Vec3[0], new float[0], Mesh.APPROXIMATING, false);
         oc.cachedObjects.add(new ObjectInfo(new Cube(1, 1, 1), new CoordinateSystem(), "Cube"));
         oc.cachedObjects.add(new ObjectInfo(curve, new CoordinateSystem(), "Curve"));
-        Assert.assertNotNull(oc);
-        Assert.assertFalse(oc.isClosed());
+        Assertions.assertNotNull(oc);
+        Assertions.assertFalse(oc.isClosed());
     }
 
-    public class CustomObjectCollection extends ObjectCollection {
+    @DisplayName("Custom Object Collection")
+    class CustomObjectCollection extends ObjectCollection {
 
         public CustomObjectCollection() {
             super();
@@ -80,33 +86,38 @@ public class ObjectCollectionTest {
 
         @Override
         protected Enumeration<ObjectInfo> enumerateObjects(ObjectInfo info, boolean interactive, Scene scene) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public Object3D duplicate() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void copyObject(Object3D obj) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void setSize(double xsize, double ysize, double zsize) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public Keyframe getPoseKeyframe() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void applyPoseKeyframe(Keyframe k) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
-
     }
 }

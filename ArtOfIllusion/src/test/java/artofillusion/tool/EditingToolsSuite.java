@@ -1,4 +1,4 @@
-/* Copyright (C) 2022-2023 by Maksim Khramov
+/* Copyright (C) 2022-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,14 +12,16 @@ package artofillusion.tool;
 
 import artofillusion.tool.help.TestToolsHelp;
 import artofillusion.tool.hint.TestToolsHints;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SuiteDisplayName;
 
 /**
  *
  * @author MaksK
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({TestToolWhichClicks.class, TestToolsHelp.class, TestToolsHints.class})
+@Suite
+@SuiteDisplayName("Scene Tools Suite")
+@SelectClasses({TestToolWhichClicks.class, TestToolsHelp.class, TestToolsHints.class})
 public class EditingToolsSuite {
 }
