@@ -276,13 +276,12 @@ public class SearchlistClassLoader extends ClassLoader {
      * the only classloader which will return the class is the one which
      * originally loaded it (assuming no duplicates have been created yet).
      *
-     * @param name the fully-qualified name of the class
+     * @param name the full-qualified name of the class
      * @return the loaded class.
      *
      * @throws ClassNotFoundException if the class is not found.
      */
-    public Class<?> loadLocalClass(String name)
-            throws ClassNotFoundException {
+    public Class<?> loadLocalClass(String name) throws ClassNotFoundException {
         ClassNotFoundException err = null;
 
         if (getParent() != null) {
@@ -323,7 +322,7 @@ public class SearchlistClassLoader extends ClassLoader {
             }
         }
 
-        throw (err != null ? err : new ClassNotFoundException(name));
+        throw (err == null ? new ClassNotFoundException(name) : err);
     }
 
     /**
@@ -338,7 +337,7 @@ public class SearchlistClassLoader extends ClassLoader {
      * the only classloader which will return the resource is the one which
      * originally loaded it (assuming no duplicates have been created yet).
      *
-     * @param name the fully-qualified name of the resource.
+     * @param name the full-qualified name of the resource.
      * @return the located URL, or <i>null</i>.
      */
     public URL getLocalResource(String name) {
@@ -369,7 +368,7 @@ public class SearchlistClassLoader extends ClassLoader {
      * object with the SearchlistClassLaoder, rather then the non-shared
      * loader.
      *
-     * @param name the fully-qualified name of the class
+     * @param name the full-qualified name of the class
      * @return the loaded class object
      *
      * @throws ClassNotFoundException if the class could not be loaded.
@@ -420,9 +419,7 @@ public class SearchlistClassLoader extends ClassLoader {
             }
         }
 
-        throw (err != null
-                ? new ClassNotFoundException(name, err)
-                : new ClassNotFoundException(name));
+        throw (err != null ? new ClassNotFoundException(name, err) : new ClassNotFoundException(name));
     }
 
     /**
@@ -434,12 +431,12 @@ public class SearchlistClassLoader extends ClassLoader {
      * that this method is <em>not</em> called if our parent classloader has
      * already found the data.
      *
-     * @param path the fully-qualified name of the resource to retrieve
+     * @param path the full qualified name of the resource to retrieve
      * @return the URL if the resource is found, and <i>null</i> otherwise.
      */
     @Override
     public URL findResource(String path) {
-        log.atInfo().log("Looking in {} for {}", this, path);
+        log.atDebug().log("Looking in {} for {}", this, path);
 
         URL url = null;
         Loader ldr;
@@ -472,37 +469,34 @@ public class SearchlistClassLoader extends ClassLoader {
         String fileName = System.mapLibraryName(libname);
         log.info("Looking in {} for {} as {}", this, libname, fileName);
 
-        int i, j;
-        URL[] url;
-        File dir, file;
+        URL[] urls;
         Loader ldr;
-        for (i = 0; (ldr = getLoader(i++, searchMode)) != null; i++) {
+        for (int i = 0; (ldr = getLoader(i++, searchMode)) != null; i++) {
             if (ldr.loader instanceof SearchlistClassLoader) {
-                url = ((SearchlistClassLoader) ldr.loader).getSearchPath();
+                urls = ((SearchlistClassLoader) ldr.loader).getSearchPath();
             } else if (ldr.loader instanceof URLClassLoader) {
-                url = ((URLClassLoader) ldr.loader).getURLs();
+                urls = ((URLClassLoader) ldr.loader).getURLs();
             } else {
-                url = null;
+                urls = null;
             }
 
-            if (url != null) {
-                for (j = 0; j < url.length; j++) {
-                    if (!url[j].getProtocol().equalsIgnoreCase("file")) {
-                        continue;
+            if (urls == null) continue;
+
+            for (URL url : urls) {
+                if (!url.getProtocol().equalsIgnoreCase("file")) {
+                    continue;
+                }
+
+                try {
+                    File dir = new File(url.toURI()).getParentFile();
+                    File file = new File(dir, fileName);
+
+                    if (file.exists()) {
+                        log.info("Found: {}", file.getAbsolutePath());
+                        return file.getAbsolutePath();
                     }
-
-                    try {
-                        dir = new File(url[j].toURI()).getParentFile();
-                        file = new File(dir, fileName);
-
-                        if (file.exists()) {
-                            log.info("Found: {}", file.getAbsolutePath());
-
-                            return file.getAbsolutePath();
-                        }
-                    } catch (URISyntaxException e) {
-                        log.atError().setCause(e).log("Ignoring url {} {}", url[j], e.getMessage());
-                    }
+                } catch (URISyntaxException e) {
+                    log.atError().setCause(e).log("Ignoring url {} {}", url, e.getMessage());
                 }
             }
         }
