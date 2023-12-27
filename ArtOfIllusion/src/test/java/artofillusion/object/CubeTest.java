@@ -7,40 +7,49 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.object;
 
 import artofillusion.Scene;
 import artofillusion.test.util.StreamUtil;
+
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.nio.ByteBuffer;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
- *
  * @author maksim.khramov
  */
-public class CubeTest {
+@DisplayName("Cube Test")
+class CubeTest {
 
-    @Test(expected = InvalidObjectException.class)
+    @Test
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void createCubeTestBadVersionLess() throws IOException {
-        Scene scene = new Scene();
-        ByteBuffer wrap = ByteBuffer.allocate(2);
-        wrap.putShort((short) -1);
-
-        new Cube(StreamUtil.stream(wrap), scene);
+    @DisplayName("Create Cube Test Bad Version Less")
+    void createCubeTestBadVersionLess() {
+        assertThrows(InvalidObjectException.class, () -> {
+            Scene scene = new Scene();
+            ByteBuffer wrap = ByteBuffer.allocate(2);
+            wrap.putShort((short) -1);
+            new Cube(StreamUtil.stream(wrap), scene);
+        });
     }
 
-    @Test(expected = InvalidObjectException.class)
+    @Test
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void createCubeTestBadVersionMore() throws IOException {
-        Scene scene = new Scene();
-        ByteBuffer wrap = ByteBuffer.allocate(2);
-        wrap.putShort((short) 2);
-
-        new Cube(StreamUtil.stream(wrap), scene);
+    @DisplayName("Create Cube Test Bad Version More")
+    void createCubeTestBadVersionMore() {
+        assertThrows(InvalidObjectException.class, () -> {
+            Scene scene = new Scene();
+            ByteBuffer wrap = ByteBuffer.allocate(2);
+            wrap.putShort((short) 2);
+            new Cube(StreamUtil.stream(wrap), scene);
+        });
     }
-
 }

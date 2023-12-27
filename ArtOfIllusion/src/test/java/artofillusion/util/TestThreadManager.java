@@ -11,8 +11,10 @@
 
 package artofillusion.util;
 
-import static org.junit.Assert.*;
-import org.junit.Test;
+
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.*;
 
@@ -44,9 +46,9 @@ public class TestThreadManager {
             }
             error.set(false);
             tm.run();
-            assertFalse(error.get());
+            Assertions.assertFalse(error.get());
             for (int i = 0; i < flags.length; i++) {
-                assertTrue(flags[i].get());
+                Assertions.assertTrue(flags[i].get());
             }
         }
     }
@@ -77,7 +79,7 @@ public class TestThreadManager {
             canceled.set(false);
             errorCount.set(0);
             tm.run();
-            assertTrue(errorCount.get() < Runtime.getRuntime().availableProcessors());
+            Assertions.assertTrue(errorCount.get() < Runtime.getRuntime().availableProcessors());
         }
     }
 }

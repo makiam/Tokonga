@@ -7,7 +7,6 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.animation;
 
 import artofillusion.Scene;
@@ -17,118 +16,129 @@ import artofillusion.object.NullObject;
 import artofillusion.object.Object3D;
 import artofillusion.object.ObjectInfo;
 import artofillusion.test.util.StreamUtil;
+
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.nio.ByteBuffer;
-import org.junit.Test;
-import org.junit.Assert;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- *
  * @author maksim.khramov
  */
-public class VisibilityTrackTest {
+@DisplayName("Visibility Track Test")
+class VisibilityTrackTest {
 
     @Test
-    public void testCreateVisibilityTrack() {
+    @DisplayName("Test Create Visibility Track")
+    void testCreateVisibilityTrack() {
         Object3D obj = new Cube(1, 1, 1);
         ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
         VisibilityTrack vt = new VisibilityTrack(oi);
-        Assert.assertNotNull(vt);
-        Assert.assertEquals(oi, vt.getParent());
-    }
-
-    @Test(expected = InvalidObjectException.class)
-    public void testLoadTrackBadVersion() throws IOException {
-        ByteBuffer wrap = ByteBuffer.allocate(200);
-        wrap.putShort((short) 1); // Track Version
-
-        Object3D obj = new Cube(1, 1, 1);
-        ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
-        VisibilityTrack vt = new VisibilityTrack(oi);
-        vt.initFromStream(StreamUtil.stream(wrap), (Scene) null);
+        Assertions.assertNotNull(vt);
+        Assertions.assertEquals(oi, vt.getParent());
     }
 
     @Test
-    public void testLoadVisibilityTrackFromStreamNoKeys() throws IOException {
+    @DisplayName("Test Load Track Bad Version")
+    void testLoadTrackBadVersion() {
+        assertThrows(InvalidObjectException.class, () -> {
+            ByteBuffer wrap = ByteBuffer.allocate(200);
+            // Track Version
+            wrap.putShort((short) 1);
+            Object3D obj = new Cube(1, 1, 1);
+            ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
+            VisibilityTrack vt = new VisibilityTrack(oi);
+            vt.initFromStream(StreamUtil.stream(wrap), (Scene) null);
+        });
+    }
+
+    @Test
+    @DisplayName("Test Load Visibility Track From Stream No Keys")
+    void testLoadVisibilityTrackFromStreamNoKeys() throws IOException {
         ByteBuffer wrap = ByteBuffer.allocate(200);
-        wrap.putShort((short) 0); // Track Version
+        // Track Version
+        wrap.putShort((short) 0);
         {
             String trackName = "Visibility Track";
             wrap.putShort(Integer.valueOf(trackName.length()).shortValue());
             wrap.put(trackName.getBytes());
         }
-        wrap.put((byte) 0);  // Enabled - false
-        wrap.putInt(0); // No keys
-
+        // Enabled - false
+        wrap.put((byte) 0);
+        // No keys
+        wrap.putInt(0);
         Object3D obj = new Cube(1, 1, 1);
         ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
         VisibilityTrack vt = new VisibilityTrack(oi);
         vt.initFromStream(StreamUtil.stream(wrap), (Scene) null);
-
-        Assert.assertEquals("Visibility Track", vt.getName());
-        Assert.assertEquals(oi, vt.getParent());
-        Assert.assertFalse(vt.isEnabled());
-
-        Assert.assertEquals(0, vt.getTimecourse().getValues().length);
+        Assertions.assertEquals(vt.getName(), "Visibility Track");
+        Assertions.assertEquals(oi, vt.getParent());
+        Assertions.assertFalse(vt.isEnabled());
+        Assertions.assertEquals(0, vt.getTimecourse().getValues().length);
     }
 
     @Test
-    public void testLoadVisibilityTrackFromStreamWithKeys() throws IOException {
+    @DisplayName("Test Load Visibility Track From Stream With Keys")
+    void testLoadVisibilityTrackFromStreamWithKeys() throws IOException {
         ByteBuffer wrap = ByteBuffer.allocate(200);
-        wrap.putShort((short) 0); // Track Version
+        // Track Version
+        wrap.putShort((short) 0);
         {
             String trackName = "Visibility Track";
             wrap.putShort(Integer.valueOf(trackName.length()).shortValue());
             wrap.put(trackName.getBytes());
         }
-        wrap.put((byte) 0);  // Enabled - false
-        wrap.putInt(2); // 2 keys
-
-        { // Key 1
+        // Enabled - false
+        wrap.put((byte) 0);
+        // 2 keys
+        wrap.putInt(2);
+        {
+            // Key 1
             wrap.putDouble(0);
             wrap.put((byte) 0);
         }
-        { // Key 2
+        {
+            // Key 2
             wrap.putDouble(1);
             wrap.put((byte) 1);
         }
-
         Object3D obj = new Cube(1, 1, 1);
         ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
         VisibilityTrack vt = new VisibilityTrack(oi);
         vt.initFromStream(StreamUtil.stream(wrap), (Scene) null);
-
-        Assert.assertEquals("Visibility Track", vt.getName());
-        Assert.assertEquals(oi, vt.getParent());
-        Assert.assertFalse(vt.isEnabled());
-
+        Assertions.assertEquals(vt.getName(), "Visibility Track");
+        Assertions.assertEquals(oi, vt.getParent());
+        Assertions.assertFalse(vt.isEnabled());
         Timecourse tc = vt.getTimecourse();
-        Assert.assertEquals(2, tc.getValues().length);
-        Assert.assertEquals(2, tc.getTimes().length);
-        Assert.assertEquals(2, tc.getSmoothness().length);
-
+        Assertions.assertEquals(2, tc.getValues().length);
+        Assertions.assertEquals(2, tc.getTimes().length);
+        Assertions.assertEquals(2, tc.getSmoothness().length);
     }
 
     @Test
-    public void testDuplicateVisibilityTrack() {
+    @DisplayName("Test Duplicate Visibility Track")
+    void testDuplicateVisibilityTrack() {
         ObjectInfo oi = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Test null");
         VisibilityTrack vt = new VisibilityTrack(oi);
         Track dup = vt.duplicate(oi);
-
-        Assert.assertNotNull(dup);
-        Assert.assertTrue(dup instanceof VisibilityTrack);
-
-        Assert.assertNotEquals(vt, dup);
-        Assert.assertEquals("Visibility", dup.getName());
-        Assert.assertEquals(oi, dup.getParent());
-        Assert.assertTrue(dup.isEnabled());
-
-        Assert.assertEquals(vt.getTimecourse().getValues().length, dup.getTimecourse().getValues().length);
+        Assertions.assertNotNull(dup);
+        Assertions.assertTrue(dup instanceof VisibilityTrack);
+        Assertions.assertNotEquals(vt, dup);
+        Assertions.assertEquals(dup.getName(), "Visibility");
+        Assertions.assertEquals(oi, dup.getParent());
+        Assertions.assertTrue(dup.isEnabled());
+        Assertions.assertEquals(vt.getTimecourse().getValues().length, dup.getTimecourse().getValues().length);
     }
 
     @Test
-    public void testCopyVisibilityTrack() {
+    @DisplayName("Test Copy Visibility Track")
+    void testCopyVisibilityTrack() {
         ObjectInfo oi = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Test null");
         VisibilityTrack source = new VisibilityTrack(oi);
         source.setName("Source");
@@ -136,15 +146,11 @@ public class VisibilityTrackTest {
         source.setQuantized(false);
         source.getTimecourse().addTimepoint(new BooleanKeyframe(true), 5, new Smoothness());
         source.getTimecourse().addTimepoint(new BooleanKeyframe(false), 10, new Smoothness());
-
         VisibilityTrack target = new VisibilityTrack(oi);
         target.copy(source);
-
-        Assert.assertEquals("Source", target.getName());
-        Assert.assertFalse(target.isEnabled());
-        Assert.assertFalse(target.isQuantized());
-
-        Assert.assertEquals(source.getTimecourse().getValues().length, target.getTimecourse().getValues().length);
+        Assertions.assertEquals(target.getName(), "Source");
+        Assertions.assertFalse(target.isEnabled());
+        Assertions.assertFalse(target.isQuantized());
+        Assertions.assertEquals(source.getTimecourse().getValues().length, target.getTimecourse().getValues().length);
     }
-
 }

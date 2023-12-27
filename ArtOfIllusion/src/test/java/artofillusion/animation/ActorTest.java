@@ -7,7 +7,6 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.animation;
 
 import artofillusion.Scene;
@@ -16,38 +15,45 @@ import artofillusion.object.Curve;
 import artofillusion.object.Mesh;
 import artofillusion.object.Object3D;
 import artofillusion.object.Tube;
+
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.nio.ByteBuffer;
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
- *
  * @author maksim.khramov
  */
-public class ActorTest {
+@DisplayName("Actor Test")
+class ActorTest {
 
-    @Test(expected = InvalidObjectException.class)
+    @Test
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void testLoadActorBadVersion() throws IOException {
-        ByteBuffer wrap = ByteBuffer.allocate(200);
-        wrap.putShort((short) 1); // Actor Version 1. Expected exception to be thrown
-
-        new Actor(new DataInputStream(new ByteArrayInputStream(wrap.array())), (Scene) null);
-
+    @DisplayName("Test Load Actor Bad Version")
+    void testLoadActorBadVersion() {
+        assertThrows(InvalidObjectException.class, () -> {
+            ByteBuffer wrap = ByteBuffer.allocate(200);
+            // Actor Version 1. Expected exception to be thrown
+            wrap.putShort((short) 1);
+            new Actor(new DataInputStream(new ByteArrayInputStream(wrap.array())), (Scene) null);
+        });
     }
 
     @Test
-    public void testCreateActorForObject() {
-
+    @DisplayName("Test Create Actor For Object")
+    void testCreateActorForObject() {
         Object3D tube = new Tube(new Curve(new Vec3[]{new Vec3(), new Vec3()}, new float[]{0f, 1f}, Mesh.APPROXIMATING, false), new double[]{0f, 1f}, Tube.CLOSED_ENDS);
         Actor actor = new Actor(tube);
-
-        Assert.assertNotNull(actor);
-        Assert.assertEquals(1, actor.getNumGestures());
-
+        Assertions.assertNotNull(actor);
+        Assertions.assertEquals(1, actor.getNumGestures());
     }
 }

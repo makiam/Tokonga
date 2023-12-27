@@ -7,81 +7,76 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.math;
 
 import artofillusion.test.util.StreamUtil;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
- *
  * @author maksim.khramov
  */
-public class CoordinateSystemTest {
+@DisplayName("Coordinate System Test")
+class CoordinateSystemTest {
 
     @Test
-    public void testCreateCS() {
+    @DisplayName("Test Create CS")
+    void testCreateCS() {
         Vec3 vec = new Vec3();
         vec.set(1, 2.0, 3.0);
-
         CoordinateSystem test = new CoordinateSystem(vec, 0, 0, 0);
-        Assert.assertEquals(1.0, test.orig.x, 0);
-        Assert.assertEquals(2.0, test.orig.y, 0);
-        Assert.assertEquals(3.0, test.orig.z, 0);
-
+        Assertions.assertEquals(1.0, test.orig.x, 0);
+        Assertions.assertEquals(2.0, test.orig.y, 0);
+        Assertions.assertEquals(3.0, test.orig.z, 0);
     }
 
     @Test
-    public void testCreateCSWithRotate() {
+    @DisplayName("Test Create CS With Rotate")
+    void testCreateCSWithRotate() {
         Vec3 vec = new Vec3();
         vec.set(1, 2.0, 3.0);
-
         CoordinateSystem test = new CoordinateSystem(vec, 0, 45, 123);
-        Assert.assertEquals(1.0, test.orig.x, 0);
-        Assert.assertEquals(2.0, test.orig.y, 0);
-        Assert.assertEquals(3.0, test.orig.z, 0);
-
-        Assert.assertArrayEquals(new double[]{0.0, 45.0, 123.0}, test.getRotationAngles(), 0.00000000001);
-
+        Assertions.assertEquals(1.0, test.orig.x, 0);
+        Assertions.assertEquals(2.0, test.orig.y, 0);
+        Assertions.assertEquals(3.0, test.orig.z, 0);
+        Assertions.assertArrayEquals(new double[]{0.0, 45.0, 123.0}, test.getRotationAngles(), 0.00000000001);
     }
 
     @Test
-    public void testCreateCSAndAddRatate() {
+    @DisplayName("Test Create CS And Add Ratate")
+    void testCreateCSAndAddRatate() {
         Vec3 vec = new Vec3();
         vec.set(1, 2.0, 3.0);
-
         CoordinateSystem test = new CoordinateSystem(vec, 0, 0, 0);
-        Assert.assertEquals(1.0, test.orig.x, 0);
-        Assert.assertEquals(2.0, test.orig.y, 0);
-        Assert.assertEquals(3.0, test.orig.z, 0);
-
+        Assertions.assertEquals(1.0, test.orig.x, 0);
+        Assertions.assertEquals(2.0, test.orig.y, 0);
+        Assertions.assertEquals(3.0, test.orig.z, 0);
         test.setOrientation(0, 45, 123);
-        Assert.assertArrayEquals(new double[]{0.0, 45.0, 123.0}, test.getRotationAngles(), 0.00000000001);
+        Assertions.assertArrayEquals(new double[]{0.0, 45.0, 123.0}, test.getRotationAngles(), 0.00000000001);
     }
 
     @Test
-    public void testCreateCSFromStream() throws IOException {
+    @DisplayName("Test Create CS From Stream")
+    void testCreateCSFromStream() throws IOException {
         ByteBuffer wrap = ByteBuffer.allocate(200);
         wrap.putDouble(1.0);
         wrap.putDouble(2.0);
         wrap.putDouble(3.0);
-
         wrap.putDouble(0.0);
         wrap.putDouble(45.0);
         wrap.putDouble(90.0);
-
         CoordinateSystem test = new CoordinateSystem(StreamUtil.stream(wrap));
-
-        Assert.assertEquals(1.0, test.orig.x, 0);
-        Assert.assertEquals(2.0, test.orig.y, 0);
-        Assert.assertEquals(3.0, test.orig.z, 0);
-
-        Assert.assertEquals(0, test.xrot, 0);
-        Assert.assertEquals(45, test.yrot, 0);
-        Assert.assertEquals(90, test.zrot, 0);
-
+        Assertions.assertEquals(1.0, test.orig.x, 0);
+        Assertions.assertEquals(2.0, test.orig.y, 0);
+        Assertions.assertEquals(3.0, test.orig.z, 0);
+        Assertions.assertEquals(0, test.xrot, 0);
+        Assertions.assertEquals(45, test.yrot, 0);
+        Assertions.assertEquals(90, test.zrot, 0);
     }
 }

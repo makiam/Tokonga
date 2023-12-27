@@ -7,30 +7,34 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.material;
 
 import artofillusion.MaterialPreviewer;
 import artofillusion.math.Vec3;
 import artofillusion.object.Object3D;
 import buoy.widget.Widget;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
- *
  * @author maksim.khramov
  */
-public class MaterialMappingTest {
+@DisplayName("Material Mapping Test")
+class MaterialMappingTest {
 
     @Test
-    public void createMaterialMapping() {
-
+    @DisplayName("Create Material Mapping")
+    void createMaterialMapping() {
     }
 
-    public static class DummyMapping extends MaterialMapping {
+    @DisplayName("Dummy Mapping")
+    static class DummyMapping extends MaterialMapping {
 
         public DummyMapping(Object3D obj, Material mat) {
             super(obj, mat);
@@ -42,38 +46,44 @@ public class MaterialMappingTest {
 
         @Override
         public void writeToFile(DataOutputStream out) throws IOException {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public double getStepSize() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void getMaterialSpec(Vec3 pos, MaterialSpec spec, double size, double t) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public MaterialMapping duplicate() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public MaterialMapping duplicate(Object3D obj, Material mat) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void copy(MaterialMapping map) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public Widget getEditingPanel(Object3D obj, MaterialPreviewer preview) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
-
     }
 }

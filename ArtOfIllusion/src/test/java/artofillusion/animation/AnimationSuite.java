@@ -10,15 +10,17 @@
 
 package artofillusion.animation;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SuiteDisplayName;
 
 /**
  *
  * @author makiam
  *
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({artofillusion.animation.JointEqualityTest.class, artofillusion.animation.JointDOFEqualityTest.class})
+@Suite
+@SuiteDisplayName("Animation Suite")
+@SelectClasses({artofillusion.animation.JointEqualityTest.class, artofillusion.animation.JointDOFEqualityTest.class})
 public class AnimationSuite {
 }
