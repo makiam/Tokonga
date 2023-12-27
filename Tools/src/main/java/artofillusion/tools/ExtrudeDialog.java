@@ -408,8 +408,7 @@ public class ExtrudeDialog extends BDialog {
                 v[i][j].subtract(center);
             }
         }
-        SplineMesh mesh = new SplineMesh(v, usmooth, vsmooth, Math.max(profile.getSmoothingMethod(),
-                path.getSmoothingMethod()), path.isClosed(), profile.isClosed());
+        SplineMesh mesh = new SplineMesh(v, usmooth, vsmooth, Math.max(profile.getSmoothingMethod(), path.getSmoothingMethod()), path.isClosed(), profile.isClosed());
         mesh.makeRightSideOut();
         return mesh;
     }
@@ -440,7 +439,7 @@ public class ExtrudeDialog extends BDialog {
     /**
      * Extrude a triangle mesh into a solid object.
      *
-     * @param profile the TriangleMesh to extrude
+     * @param profile TriangleMesh to extrude
      * @param path the path along which to extrude it
      * @param profCoords the coordinate system of the profile
      * @param pathCoords the coordinate system of the path

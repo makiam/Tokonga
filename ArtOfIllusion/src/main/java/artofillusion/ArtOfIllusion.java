@@ -350,6 +350,8 @@ public class ArtOfIllusion {
                     ScriptRunner.executeScript(language, script, variables);
                 } catch (IOException ex) {
                     log.atError().setCause(ex).log("Unable to load script file {} due {}", file, ex.getMessage());
+                } catch(NoClassDefFoundError ex) {
+                    log.atError().setCause(ex).log("Unable to execute script file {} due {}", file, ex.getMessage());
                 }
             } else {
                 log.atError().log("{}: {}", Translate.text("unsupportedFileExtension"), file);
