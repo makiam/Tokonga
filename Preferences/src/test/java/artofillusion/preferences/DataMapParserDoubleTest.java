@@ -1,17 +1,17 @@
-/* Copyright (C) 2016-2023 by Maksim Khramov
+/* Copyright (C) 2016-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful, but WITHOUT ANY 
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.preferences;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class DataMapParserDoubleTest {
 
@@ -19,7 +19,7 @@ public class DataMapParserDoubleTest {
     @Test
     public void testSpacesOnly() {
         String val = "          ";
-        Assert.assertEquals(0, DataMap.parseDouble(val), 0);
+        Assertions.assertEquals(0, DataMap.parseDouble(val), 0);
     }
 
     @Test
@@ -98,20 +98,21 @@ public class DataMapParserDoubleTest {
         var produced = DataMap.parseDouble(val);
         var expected = Double.parseDouble(val);
 
-        Assert.assertEquals(expected, produced, 0.000000001);
+        Assertions.assertEquals(expected, produced, 0.000000001);
 
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
+    @SuppressWarnings({"ThrowableResultIgnored", "UnnecessaryTemporaryOnConversionFromString"})
     public void testEmptyNative() {
         String val = "";
-        var d2 = Double.parseDouble(val);
+        Assertions.assertThrows( NumberFormatException.class, () -> Double.parseDouble(val));
     }
 
     @Test
     public void testEmptyCustom() {
         String val = "";
         var d1 = DataMap.parseDouble(val);
-        Assert.assertEquals(0, d1, 0);
+        Assertions.assertEquals(0, d1, 0);
     }
 }
