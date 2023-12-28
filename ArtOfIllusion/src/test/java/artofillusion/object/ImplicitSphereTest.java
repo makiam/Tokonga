@@ -1,5 +1,5 @@
 /* Copyright (C) 2013 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
    Changes/refactor (C) 2020 by Lucas Stanek
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -15,7 +15,6 @@ package artofillusion.object;
 import artofillusion.math.*;
 import org.junit.Assert;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import java.util.*;
 import static java.lang.Math.*;
@@ -23,12 +22,11 @@ import org.junit.BeforeClass;
 
 public class ImplicitSphereTest {
 
-    private static int testSpheres = 20;
-    private static int samplePoints = 100;
-    private static List<TestPair> pairs = new ArrayList<>();
+    private static final int testSpheres = 20;
+    private static final int samplePoints = 100;
+    private static final List<TestPair> pairs = new ArrayList<>();
 
-    private static class TestPair //It was this, or abuse AbstractMap.SimpleEntry
-    {
+    private static class TestPair {  //It was this, or abuse AbstractMap.SimpleEntry
 
         public final ImplicitSphere sphere;
         public final Vec3 point;
@@ -37,6 +35,13 @@ public class ImplicitSphereTest {
             sphere = sp;
             point = pnt;
         }
+
+        @Override
+        public String toString() {
+            return "TestPair: {" + "Point: " + point + ", Length: " + point.length() + " Implicit Sphere: radius: " + sphere.getRadius() + " Influence radius: " + sphere.getInfluenceRadius() + "}";
+        }
+        
+        
     }
 
     @BeforeClass
@@ -44,16 +49,13 @@ public class ImplicitSphereTest {
         for (int sphere = 0; sphere < testSpheres; sphere++) {
             double r1 = 0.1 + random();
             double r2 = 0.1 + random();
-            ImplicitSphere currentSphere = new ImplicitSphere(min(r1, r2),
-                    max(r1, r2));
+            ImplicitSphere currentSphere = new ImplicitSphere(min(r1, r2), max(r1, r2));
 
             for (int point = 0; point < samplePoints; point++) {
                 /* Factor 2.05 is to cover the entire possible size range of
-         * test spheres (-1.1 to 1.1)
+                 * test spheres (-1.1 to 1.1)
                  */
-                Vec3 currentPoint = new Vec3(2.05 * (random() - 0.5),
-                        2.05 * (random() - 0.5),
-                        2.05 * (random() - 0.5));
+                Vec3 currentPoint = new Vec3(2.05 * (random() - 0.5), 2.05 * (random() - 0.5), 2.05 * (random() - 0.5));
 
                 pairs.add(new TestPair(currentSphere, currentPoint));
             }
@@ -65,32 +67,25 @@ public class ImplicitSphereTest {
         pairs.stream()
                 .filter(p -> p.point.length() < p.sphere.getRadius())
                 .forEach(p
-                        -> assertTrue(printPair(p),
-                        p.sphere.getFieldValue(p.point.x, p.point.y,
-                                p.point.z, 0, 0) > 1));
+                        -> Assert.assertTrue(p.toString(),
+                        p.sphere.getFieldValue(p.point.x, p.point.y, p.point.z, 0, 0) > 1));
     }
 
     @Test
     public void point_outside_influence_radius_is_0() {
         pairs.stream()
                 .filter(p -> p.point.length() > p.sphere.getInfluenceRadius())
-                .forEach(p
-                        -> assertTrue(printPair(p),
-                        p.sphere.getFieldValue(p.point.x, p.point.y,
-                                p.point.z, 0, 0) == 0));
+                .forEach(p -> Assert.assertTrue(p.toString(), p.sphere.getFieldValue(p.point.x, p.point.y, p.point.z, 0, 0) == 0));
     }
 
     @Test
     public void point_between_radius_and_influence_is_between_0_and_1() {
         pairs.stream()
-                .filter(p -> p.point.length() <= p.sphere.getInfluenceRadius()
-                && p.point.length() >= p.sphere.getRadius())
-                .forEach(p
+                .filter(p -> p.point.length() <= p.sphere.getInfluenceRadius() && p.point.length() >= p.sphere.getRadius())
+                .forEach((TestPair p)
                         -> {
-                    double value = p.sphere.getFieldValue(p.point.x, p.point.y,
-                            p.point.z, 0, 0);
-                    assertTrue(printPair(p) + "\nValue:" + value,
-                            1 > value && value > 0);
+                    double value = p.sphere.getFieldValue(p.point.x, p.point.y, p.point.z, 0, 0);
+                    Assert.assertTrue(p + "\nValue:" + value, 1 > value && value > 0);
                 });
     }
 
@@ -99,43 +94,35 @@ public class ImplicitSphereTest {
         pairs.stream()
                 .filter(p -> abs(p.point.length() - p.sphere.getInfluenceRadius())
                 > p.sphere.getRadius() * 1e-4)
-                .forEach(p
+                .forEach((TestPair p)
                         -> {
                     Vec3 grad = new Vec3();
-                    p.sphere.getFieldGradient(p.point.x, p.point.y, p.point.z,
-                            0, 0, grad);
+                    p.sphere.getFieldGradient(p.point.x, p.point.y, p.point.z, 0, 0, grad);
                     Vec3 estGrad = estimateGradient(p);
-                    assertEquals("X-grad" + printPair(p),
-                            estGrad.x, grad.x, 1e-4 * abs(grad.x));
-                    assertEquals("Y-grad" + printPair(p),
-                            estGrad.y, grad.y, 1e-4 * abs(grad.y));
-                    assertEquals("Z-grad" + printPair(p),
-                            estGrad.z, grad.z, 1e-4 * abs(grad.z));
+                    Assert.assertEquals("X-grad" + p, estGrad.x, grad.x, 1e-4 * abs(grad.x));
+                    Assert.assertEquals("Y-grad" + p, estGrad.y, grad.y, 1e-4 * abs(grad.y));
+                    Assert.assertEquals("Z-grad" + p, estGrad.z, grad.z, 1e-4 * abs(grad.z));
                 });
     }
 
     /**
-     * Discontinuities near the edge of influence radius make estimating
-     * the gradient difficult. For these, we just give up and make sure
-     * the returned gradients are in the correct octant
+     * Discontinuities near the edge of influence radius make estimating the
+     * gradient difficult. For these, we just give up and make sure the returned
+     * gradients are in the correct octant
      */
     @Test
     public void gradient_estimate_at_influence_edge() {
         pairs.stream()
                 .filter(p -> abs(p.point.length() - p.sphere.getInfluenceRadius())
                 <= p.sphere.getRadius() * 1e-4)
-                .forEach(p
+                .forEach((TestPair p)
                         -> {
                     Vec3 grad = new Vec3();
-                    p.sphere.getFieldGradient(p.point.x, p.point.y, p.point.z,
-                            0, 0, grad);
+                    p.sphere.getFieldGradient(p.point.x, p.point.y, p.point.z, 0, 0, grad);
                     Vec3 estGrad = estimateGradient(p);
-                    assertEquals("X-grad" + printPair(p),
-                            signum(estGrad.x), signum(grad.x), .01);
-                    assertEquals("Y-grad" + printPair(p),
-                            signum(estGrad.y), signum(grad.y), .01);
-                    assertEquals("Z-grad" + printPair(p),
-                            signum(estGrad.z), signum(grad.z), .01);
+                    Assert.assertEquals("X-grad" + p, signum(estGrad.x), signum(grad.x), .01);
+                    Assert.assertEquals("Y-grad" + p, signum(estGrad.y), signum(grad.y), .01);
+                    Assert.assertEquals("Z-grad" + p, signum(estGrad.z), signum(grad.z), .01);
                 });
     }
 
@@ -149,19 +136,7 @@ public class ImplicitSphereTest {
         double vy2 = sphere.getFieldValue(point.x, point.y + step, point.z, 0, 0);
         double vz1 = sphere.getFieldValue(point.x, point.y, point.z - step, 0, 0);
         double vz2 = sphere.getFieldValue(point.x, point.y, point.z + step, 0, 0);
-        return new Vec3((vx2 - vx1) / (2 * step),
-                (vy2 - vy1) / (2 * step), (vz2 - vz1) / (2 * step));
-    }
-
-    private String printPair(TestPair pair) {
-        return "\nTest Point:\n"
-                + "\nX:" + pair.point.x
-                + "\nY:" + pair.point.y
-                + "\nZ:" + pair.point.z
-                + "\nLength:" + pair.point.length()
-                + "\n\nImplicit Sphere:\n"
-                + "\nRadius:" + pair.sphere.getRadius()
-                + "\nInfluence:" + pair.sphere.getInfluenceRadius();
+        return new Vec3((vx2 - vx1) / (2 * step), (vy2 - vy1) / (2 * step), (vz2 - vz1) / (2 * step));
     }
 
     @Test(expected = ClassCastException.class)
