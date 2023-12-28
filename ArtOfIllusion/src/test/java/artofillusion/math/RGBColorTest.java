@@ -1,5 +1,5 @@
 /* Copyright (C) 2006 by Peter Eastman
-   Changes copyright (C) 2017-2018 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -15,7 +15,7 @@ import artofillusion.test.util.StreamUtil;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
 import org.junit.Assert;
 
 public class RGBColorTest {
@@ -57,8 +57,8 @@ public class RGBColorTest {
     }
 
     private void assertColorsEquals(RGBColor c1, RGBColor c2, float tol) {
-        assertEquals(c1.getRed(), c2.getRed(), tol);
-        assertEquals(c1.getGreen(), c2.getGreen(), tol);
-        assertEquals(c1.getBlue(), c2.getBlue(), tol);
+        Assert.assertEquals(c1.getRed(), c2.getRed(), tol);
+        Assert.assertEquals(c1.getGreen(), c2.getGreen(), tol);
+        Assert.assertEquals(c1.getBlue(), c2.getBlue(), tol);
     }
 }

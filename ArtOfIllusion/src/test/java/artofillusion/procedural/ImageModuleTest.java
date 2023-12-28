@@ -1,5 +1,5 @@
 /* Copyright (C) 2006 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -8,7 +8,6 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.procedural;
 
 import artofillusion.image.*;
@@ -17,7 +16,8 @@ import artofillusion.ui.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.util.*;
-import static org.junit.Assert.*;
+import org.junit.Assert;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -103,9 +103,9 @@ public class ImageModuleTest {
      * Compare two colors and make sure they are sufficiently close.
      */
     private void compareColors(RGBColor color1, RGBColor color2, double tolerance) {
-        assertEquals(color1.getRed(), color2.getRed(), tolerance);
-        assertEquals(color1.getGreen(), color2.getGreen(), tolerance);
-        assertEquals(color1.getBlue(), color2.getBlue(), tolerance);
+        Assert.assertEquals(color1.getRed(), color2.getRed(), tolerance);
+        Assert.assertEquals(color1.getGreen(), color2.getGreen(), tolerance);
+        Assert.assertEquals(color1.getBlue(), color2.getBlue(), tolerance);
     }
 
     /**

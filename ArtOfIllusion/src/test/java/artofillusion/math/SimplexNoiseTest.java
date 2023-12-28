@@ -1,5 +1,5 @@
 /* Copyright (C) 2006 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,8 +11,9 @@
 
 package artofillusion.math;
 
+import org.junit.Assert;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
 
 public class SimplexNoiseTest {
 
@@ -24,11 +25,11 @@ public class SimplexNoiseTest {
             double z = rand();
             double w = rand();
             double val2 = SimplexNoise.noise(x, y);
-            assertTrue(val2 >= -1 && val2 <= 1);
+            Assert.assertTrue(val2 >= -1 && val2 <= 1);
             double val3 = SimplexNoise.noise(x, y, z);
-            assertTrue(val3 >= -1 && val3 <= 1);
+            Assert.assertTrue(val3 >= -1 && val3 <= 1);
             double val4 = SimplexNoise.noise(x, y, w);
-            assertTrue(val4 >= -1 && val4 <= 1);
+            Assert.assertTrue(val4 >= -1 && val4 <= 1);
         }
     }
 
@@ -53,7 +54,7 @@ public class SimplexNoiseTest {
                 badCount++;
             }
         }
-        assertTrue(badCount < 10);
+        Assert.assertTrue(badCount < 10);
     }
 
     @Test
@@ -79,7 +80,7 @@ public class SimplexNoiseTest {
                 badCount++;
             }
         }
-        assertTrue(badCount < 10);
+        Assert.assertTrue(badCount < 10);
     }
 
     @Test
@@ -92,11 +93,11 @@ public class SimplexNoiseTest {
             double z = rand();
             SimplexNoise.noiseVector(v, x, y, z);
             double len = v.length();
-            assertTrue(len < 1.5);
+            Assert.assertTrue(len < 1.5);
             avgLength += len;
         }
         avgLength /= 10000;
-        assertTrue(avgLength > 0.3);
+        Assert.assertTrue(avgLength > 0.3);
     }
 
     private double rand() {

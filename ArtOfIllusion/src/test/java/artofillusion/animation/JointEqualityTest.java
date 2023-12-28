@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 by Maksim Khramov
+/* Copyright (C) 2016-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,8 +11,9 @@
 package artofillusion.animation;
 
 import artofillusion.math.CoordinateSystem;
+import org.junit.Assert;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
 
 /**
  *
@@ -27,7 +28,7 @@ public class JointEqualityTest {
         Joint one = new Joint(cs, null, "Origin1");
         Joint two = new Joint(cs, null, "Origin1");
 
-        assertTrue(one.equals(two));
+        Assert.assertTrue(one.equals(two));
 
     }
 
@@ -37,7 +38,7 @@ public class JointEqualityTest {
         Joint one = new Joint(cs, null, "Origin1");
         Joint two = new Joint(cs, null, "Origin2");
 
-        assertFalse(one.equals(two));
+        Assert.assertFalse(one.equals(two));
 
     }
 
@@ -47,7 +48,7 @@ public class JointEqualityTest {
         Joint one = new Joint(cs, null, "Origin1");
         Joint two = new Joint(cs, null, "Origin1");
         two.angle1.min = -90.0;
-        assertFalse(one.equals(two));
+        Assert.assertFalse(one.equals(two));
     }
 
     @Test
@@ -56,7 +57,7 @@ public class JointEqualityTest {
         Joint one = new Joint(cs, null, "Origin1");
         Joint two = new Joint(cs, null, "Origin1");
         two.angle2.min = -90.0;
-        assertFalse(one.equals(two));
+        Assert.assertFalse(one.equals(two));
     }
 
     @Test
@@ -65,7 +66,7 @@ public class JointEqualityTest {
         Joint one = new Joint(cs, null, "Origin1");
         Joint two = new Joint(cs, null, "Origin1");
         two.twist.min = -90.0;
-        assertFalse(one.equals(two));
+        Assert.assertFalse(one.equals(two));
     }
 
     @Test
@@ -74,7 +75,7 @@ public class JointEqualityTest {
         Joint one = new Joint(cs, null, "Origin1");
         Joint two = new Joint(cs, null, "Origin1");
         two.twist.fixed = !two.twist.fixed;
-        assertFalse(one.equals(two));
+        Assert.assertFalse(one.equals(two));
     }
 
     @Test
@@ -83,7 +84,7 @@ public class JointEqualityTest {
         Joint one = new Joint(cs, null, "Origin1");
         Joint two = new Joint(cs, null, "Origin1");
         two.twist.comfort = !two.twist.comfort;
-        assertFalse(one.equals(two));
+        Assert.assertFalse(one.equals(two));
     }
 
     @Test
@@ -92,7 +93,7 @@ public class JointEqualityTest {
         Joint one = new Joint(cs, null, "Origin1");
         Joint two = new Joint(cs, null, "Origin1");
         two.twist.loop = !two.twist.loop;
-        assertFalse(one.equals(two));
+        Assert.assertFalse(one.equals(two));
     }
 
     @Test
@@ -101,6 +102,6 @@ public class JointEqualityTest {
         Joint one = new Joint(cs, null, "Origin1");
         Joint two = new Joint(cs, null, "Origin1");
         two.length.max = Double.MAX_VALUE;
-        assertFalse(one.equals(two));
+        Assert.assertFalse(one.equals(two));
     }
 }

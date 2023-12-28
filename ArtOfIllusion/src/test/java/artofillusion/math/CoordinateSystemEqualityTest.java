@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 by Maksim Khramov
+/* Copyright (C) 2016-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -10,9 +10,10 @@
 
 package artofillusion.math;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
 
 /**
  *
@@ -32,7 +33,7 @@ public class CoordinateSystemEqualityTest {
         CoordinateSystem cs1 = new CoordinateSystem();
         CoordinateSystem cs2 = new CoordinateSystem();
 
-        assertTrue(cs1.equals(cs2));
+        Assert.assertTrue(cs1.equals(cs2));
     }
 
     @Test
@@ -41,7 +42,7 @@ public class CoordinateSystemEqualityTest {
         CoordinateSystem cs1 = new CoordinateSystem(vector, vector, vector);
         CoordinateSystem cs2 = new CoordinateSystem(vector, vector, vector);
 
-        assertTrue(cs1.equals(cs2));
+        Assert.assertTrue(cs1.equals(cs2));
     }
 
     @Test
@@ -50,7 +51,7 @@ public class CoordinateSystemEqualityTest {
         CoordinateSystem cs1 = new CoordinateSystem(vector, vector, vector);
         CoordinateSystem cs2 = new CoordinateSystem(vector, vector, vector);
 
-        assertTrue(cs1.equals(cs2));
+        Assert.assertTrue(cs1.equals(cs2));
     }
 
     @Test
@@ -58,7 +59,7 @@ public class CoordinateSystemEqualityTest {
         CoordinateSystem cs1 = new CoordinateSystem();
         CoordinateSystem cs2 = new CoordinateSystem();
         cs2.orig.x += 1.0;
-        assertFalse(cs1.equals(cs2));
+        Assert.assertFalse(cs1.equals(cs2));
     }
 
     @Test
@@ -66,7 +67,7 @@ public class CoordinateSystemEqualityTest {
         CoordinateSystem cs1 = new CoordinateSystem();
         CoordinateSystem cs2 = new CoordinateSystem();
         cs2.zdir.x += 1.0;
-        assertFalse(cs1.equals(cs2));
+        Assert.assertFalse(cs1.equals(cs2));
     }
 
     @Test
@@ -74,6 +75,6 @@ public class CoordinateSystemEqualityTest {
         CoordinateSystem cs1 = new CoordinateSystem();
         CoordinateSystem cs2 = new CoordinateSystem();
         cs2.updir.x += 1.0;
-        assertFalse(cs1.equals(cs2));
+        Assert.assertFalse(cs1.equals(cs2));
     }
 }
