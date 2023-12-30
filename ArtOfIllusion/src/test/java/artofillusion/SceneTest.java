@@ -29,23 +29,42 @@ import artofillusion.texture.ImageMapTexture;
 import artofillusion.texture.Texture;
 import artofillusion.texture.UniformTexture;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Locale;
 import org.junit.Assert;
 import org.junit.Test;
 
 import org.junit.Before;
+import org.mockito.Mockito;
 
 /**
  *
  * @author MaksK
  */
 public class SceneTest {
-
+    
+    private static final ApplicationPreferences preferences = Mockito.mock(ApplicationPreferences.class);
+    
     private int listenerFireCount = 0;
     private int firedPositionIndex = 0;
 
     private Scene scene;
 
+    @org.junit.BeforeClass
+    public static void setUpClass() throws Exception {
+        Locale.setDefault(Locale.ENGLISH);
+        Mockito.when(preferences.getLocale()).thenReturn(Locale.ENGLISH);
+        Mockito.when(preferences.getUseOpenGL()).thenReturn(false);
+        Mockito.when(preferences.getInteractiveSurfaceError()).thenReturn(0.01);
+        Mockito.when(preferences.getShowTravelCuesOnIdle()).thenReturn(false);
+
+        Field pf = ArtOfIllusion.class.getDeclaredField("preferences");
+        pf.setAccessible(true);
+        pf.set(null, preferences);
+        pf.setAccessible(false);        
+    }
+    
     @Before
     public void setUp() {
         scene = new Scene();
@@ -693,7 +712,7 @@ public class SceneTest {
      * Test to check scene objectModified(...) code.
      * Failed as not initialized AOI preferences system @ test time. Code is depends of interactive surface error value
      */
-    @Test(expected = NullPointerException.class) // This throws NPE due uninitialized AOI preferences
+    @Test
     public void testSceneObjectModified() {
         ObjectInfo target = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube");
         scene.addObject(target, (UndoRecord) null);
@@ -702,7 +721,9 @@ public class SceneTest {
         scene.objectModified(target.getObject());
 
         Assert.assertNull(target.getPose());
-        Assert.assertNull(target.getPreviewMesh());
+        rm = target.getPreviewMesh();
+        Assert.assertNotNull(rm);
+        Assert.assertTrue(rm instanceof RenderingMesh);
 
     }
 
