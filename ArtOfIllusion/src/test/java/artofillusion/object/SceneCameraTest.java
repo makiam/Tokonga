@@ -69,7 +69,7 @@ public class SceneCameraTest {
         Scene scene = new Scene();
         ByteBuffer wrap = ByteBuffer.allocate(4);
         wrap.putShort((short) 1); // Object Version
-        wrap.putShort((short) 3); // Object Version read AGAIN !!!
+        wrap.putShort((short) 4); // Object Version read AGAIN !!!
 
         new SceneCamera(StreamUtil.stream(wrap), scene);
     }
