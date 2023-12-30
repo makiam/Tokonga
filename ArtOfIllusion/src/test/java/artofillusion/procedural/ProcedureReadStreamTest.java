@@ -11,17 +11,14 @@
 package artofillusion.procedural;
 
 import artofillusion.Scene;
-import artofillusion.procedural.Module;
-import java.awt.Point;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InvalidObjectException;
-import java.nio.ByteBuffer;
-
 import artofillusion.test.util.StreamUtil;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.awt.*;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.nio.ByteBuffer;
 
 /**
  *
@@ -35,7 +32,7 @@ public class ProcedureReadStreamTest {
         ByteBuffer wrap = ByteBuffer.allocate(200);
         wrap.putShort((short) 1); // Procedure Version 1. Expected exception to be thrown
 
-        new Procedure(new OutputModule[0]).readFromStream(StreamUtil.stream(wrap), (Scene) null);
+        new Procedure().readFromStream(StreamUtil.stream(wrap), (Scene) null);
 
     }
 
@@ -45,7 +42,7 @@ public class ProcedureReadStreamTest {
         wrap.putShort((short) 0); // Procedure Version 0. Good version here
         wrap.putInt(0); // No Modules
         wrap.putInt(0); // No Links
-        new Procedure(new OutputModule[0]).readFromStream(StreamUtil.stream(wrap), (Scene) null);
+        new Procedure().readFromStream(StreamUtil.stream(wrap), (Scene) null);
 
     }
 
@@ -63,7 +60,7 @@ public class ProcedureReadStreamTest {
             wrap.putInt(123);
             wrap.putInt(456);
         }
-        new Procedure(new OutputModule[0]).readFromStream(StreamUtil.stream(wrap), (Scene) null);
+        new Procedure().readFromStream(StreamUtil.stream(wrap), (Scene) null);
     }
 
     @Test(expected = IOException.class)
@@ -81,7 +78,7 @@ public class ProcedureReadStreamTest {
             wrap.putInt(123);
             wrap.putInt(456);
         }
-        Procedure proc = new Procedure(new OutputModule[0]);
+        Procedure proc = new Procedure();
         proc.readFromStream(StreamUtil.stream(wrap), (Scene) null);
     }
 
@@ -100,7 +97,7 @@ public class ProcedureReadStreamTest {
             wrap.putInt(123);
             wrap.putInt(456);
         }
-        Procedure proc = new Procedure(new OutputModule[0]);
+        Procedure proc = new Procedure();
         proc.readFromStream(StreamUtil.stream(wrap), (Scene) null);
 
         Assert.assertEquals(1, proc.getModules().length);

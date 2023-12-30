@@ -78,12 +78,10 @@ public abstract class Object3D {
     /**
      * Tells whether the object can be converted to a TriangleMesh. It should return one
      * of the following values:
-     *
      * CANT_CONVERT: The object cannot be converted to a TriangleMesh.
      * EXACTLY: The object can be represented exactly by a TriangleMesh.
      * APPROXIMATELY: The object can be converted to a TriangleMesh. However, the resulting
      * mesh will not be exactly the same shape as the original object.
-     *
      * If a class overrides this method, it must also override convertToTriangleMesh().
      */
     public int canConvertToTriangleMesh() {
