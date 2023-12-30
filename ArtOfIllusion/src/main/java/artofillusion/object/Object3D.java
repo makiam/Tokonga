@@ -462,7 +462,8 @@ public abstract class Object3D {
         int materialIndex = in.readInt();
         if (materialIndex > -1) {
             try {
-                Class<?> mapClass = ArtOfIllusion.getClass(in.readUTF());
+                var className = in.readUTF();
+                Class<?> mapClass = ArtOfIllusion.getClass(className);
                 Constructor<?> con = mapClass.getConstructor(DataInputStream.class, Object3D.class, Material.class);
                 theMaterial = theScene.getMaterial(materialIndex);
                 setMaterial(theMaterial, (MaterialMapping) con.newInstance(in, this, theMaterial));
@@ -474,7 +475,8 @@ public abstract class Object3D {
         int textureIndex = in.readInt();
         if (textureIndex > -1) {
             try {
-                Class<?> mapClass = ArtOfIllusion.getClass(in.readUTF());
+                var className = in.readUTF();
+                Class<?> mapClass = ArtOfIllusion.getClass(className);
                 Constructor<?> con = mapClass.getConstructor(DataInputStream.class, Object3D.class, Texture.class);
                 theTexture = theScene.getTexture(textureIndex);
                 setTexture(theTexture, (TextureMapping) con.newInstance(in, this, theTexture));
