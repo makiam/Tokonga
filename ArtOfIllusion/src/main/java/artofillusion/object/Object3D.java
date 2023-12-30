@@ -415,9 +415,7 @@ public abstract class Object3D {
      * override this method, but also call super.writeToFile() to save information about
      * materials, etc. In addition to this method, every Object3D must include a constructor
      * with the signature
-     *
      * public Classname(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException
-     *
      * which reconstructs the object by reading its data from an input stream. This
      * constructor, similarly, should call the overridden constructor to read information
      * about materials, etc.

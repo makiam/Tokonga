@@ -145,7 +145,7 @@ public class SceneCameraTest {
         Assert.assertEquals(90, sc.getFieldOfView(), 0);
         Assert.assertEquals(500, sc.getDepthOfField(), 0);
         Assert.assertEquals(1000, sc.getFocalDistance(), 0);
-        Assert.assertTrue(!sc.isPerspective());
+        Assert.assertFalse(sc.isPerspective());
 
         Assert.assertEquals(0, sc.getImageFilters().length);
 

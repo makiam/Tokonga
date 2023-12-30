@@ -148,10 +148,10 @@ public class SceneLoadTest {
 
         Assert.assertEquals(1, scene.getTextures().size());
         Assert.assertTrue(scene.getTexture(0) instanceof UniformTexture);
-        Assert.assertTrue(scene.getTexture(0).getName().equals("<unreadable>"));
+        Assert.assertEquals("<unreadable>", scene.getTexture(0).getName());
         Assert.assertEquals(1, scene.getMaterials().size());
         Assert.assertTrue(scene.getMaterial(0) instanceof UniformMaterial);
-        Assert.assertTrue(scene.getMaterial(0).getName().equals("<unreadable>"));
+        Assert.assertEquals("<unreadable>", scene.getMaterial(0).getName());
         Assert.assertFalse(scene.getErrors().isEmpty());
     }
 
@@ -214,7 +214,7 @@ public class SceneLoadTest {
 
         Assert.assertEquals(1, scene.getNumTextures());
         Assert.assertTrue(scene.getTexture(0) instanceof UniformTexture);
-        Assert.assertTrue(scene.getTexture(0).getName().equals("<unreadable>"));
+        Assert.assertEquals("<unreadable>", scene.getTexture(0).getName());
         Assert.assertEquals(1, scene.getNumMaterials());
         Assert.assertTrue(scene.getMaterial(0) instanceof UniformMaterial);
         Assert.assertTrue(scene.getMaterial(0).getName().equals("<unreadable>"));

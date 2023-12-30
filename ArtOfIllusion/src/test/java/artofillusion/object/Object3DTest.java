@@ -301,8 +301,8 @@ public class Object3DTest {
 
     }
 
-    //@Test
-    public void testCopyTextureAndMaterialWithExistedTextureMappingAndParameters() {
+    @Test
+    public void copyTextureAndMaterialWithExistedTextureMappingAndParameters() {
         DummyObject source = new DummyObject();
         DummyObject target = new DummyObject();
 
