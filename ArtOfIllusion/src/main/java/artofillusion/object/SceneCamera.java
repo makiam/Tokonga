@@ -487,10 +487,17 @@ public class SceneCamera extends Object3D {
             filter = new ImageFilter[0];
         } else {
             filter = new ImageFilter[in.readInt()];
+            /*
+            NOTE: Bypass bad filter and pass scene camera creation?
+            */
             try {
                 for (int i = 0; i < filter.length; i++) {
-                    Class<?> cls = ArtOfIllusion.getClass(in.readUTF());
-                    filter[i] = (ImageFilter) cls.getDeclaredConstructor().newInstance();
+                    var filterClassName = in.readUTF();
+                    Class<?> filterClass = ArtOfIllusion.getClass(filterClassName);
+                    if(null == filterClass) {
+                        throw new IOException("Application cannot find given material class: " + filterClassName);
+                    }
+                    filter[i] = (ImageFilter) filterClass.getDeclaredConstructor().newInstance();
                     filter[i].initFromStream(in, theScene);
                 }
             } catch (IOException | ReflectiveOperationException | SecurityException ex) {

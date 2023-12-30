@@ -242,12 +242,15 @@ public class Procedure {
             output.setInput(output.getInputPorts()[0], null);
         }
         modules.clear();
-        int ms = in.readInt();
+        int modulesCount = in.readInt();
         try {
-            for (int i = 0; i < ms; i++) {
-                String classname = in.readUTF();
+            for (int i = 0; i < modulesCount; i++) {
+                String className = in.readUTF();
                 Point point = new Point(in.readInt(), in.readInt());
-                Class<?> cls = ArtOfIllusion.getClass(classname);
+                Class<?> cls = ArtOfIllusion.getClass(className);
+                if(null == cls) {
+                    throw new IOException("Application cannot find given module class: " + className);
+                }
                 Constructor<?> con = cls.getConstructor(Point.class);
                 var mod = (Module) con.newInstance(point);
                 mod.readFromStream(in, theScene);

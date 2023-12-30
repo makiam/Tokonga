@@ -24,7 +24,7 @@ import java.lang.reflect.*;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Object3D is the abstract superclass of any object which can be placed into a Scene.
+ * Object3D is the abstract superclass of any object that can be placed into a Scene.
  */
 @Slf4j
 public abstract class Object3D {
@@ -464,6 +464,9 @@ public abstract class Object3D {
             try {
                 var className = in.readUTF();
                 Class<?> mapClass = ArtOfIllusion.getClass(className);
+                if(mapClass == null) {
+                    throw new IOException("Application cannot find given material class: " + className);
+                }
                 Constructor<?> con = mapClass.getConstructor(DataInputStream.class, Object3D.class, Material.class);
                 theMaterial = theScene.getMaterial(materialIndex);
                 setMaterial(theMaterial, (MaterialMapping) con.newInstance(in, this, theMaterial));
@@ -477,6 +480,9 @@ public abstract class Object3D {
             try {
                 var className = in.readUTF();
                 Class<?> mapClass = ArtOfIllusion.getClass(className);
+                if(mapClass == null) {
+                    throw new IOException("Application cannot find given material class: " + className);
+                }                
                 Constructor<?> con = mapClass.getConstructor(DataInputStream.class, Object3D.class, Texture.class);
                 theTexture = theScene.getTexture(textureIndex);
                 setTexture(theTexture, (TextureMapping) con.newInstance(in, this, theTexture));
@@ -506,7 +512,11 @@ public abstract class Object3D {
      */
     public static ParameterValue readParameterValue(DataInputStream in) throws IOException {
         try {
-            Class<?> valueClass = ArtOfIllusion.getClass(in.readUTF());
+            var className = in.readUTF();
+            Class<?> valueClass = ArtOfIllusion.getClass(className);
+            if(valueClass == null) {
+                throw new IOException("Application cannot find given material class: " + className);
+            }            
             Constructor<?> con = valueClass.getConstructor(DataInputStream.class);
             return (ParameterValue) con.newInstance(in);
         } catch (IOException | ReflectiveOperationException | SecurityException ex) {
