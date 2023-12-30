@@ -442,9 +442,9 @@ public abstract class Object3D {
                 out.writeUTF(texMapping.getClass().getName());
                 texMapping.writeToFile(out);
             }
-            for (int i = 0; i < paramValue.length; i++) {
-                out.writeUTF(paramValue[i].getClass().getName());
-                paramValue[i].writeToStream(out);
+            for (var parameterValue : paramValue) {
+                out.writeUTF(parameterValue.getClass().getName());
+                parameterValue.writeToStream(out);
             }
         }
     }

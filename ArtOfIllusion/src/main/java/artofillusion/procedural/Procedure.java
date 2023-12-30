@@ -98,9 +98,7 @@ public class Procedure {
      */
     public void addLink(Link ln) {
         Link[] newlink = new Link[links.length + 1];
-        for (int i = 0; i < links.length; i++) {
-            newlink[i] = links[i];
-        }
+        System.arraycopy(links, 0, newlink, 0, links.length);
         newlink[links.length] = ln;
         links = newlink;
         ln.to.getModule().setInput(ln.to, ln.from);
@@ -184,9 +182,7 @@ public class Procedure {
      */
     public void copy(Procedure proc) {
         modules = new ArrayList<>();
-        proc.modules.forEach(module -> {
-            modules.add(module.duplicate());
-        });
+        proc.modules.forEach(module -> modules.add(module.duplicate()));
 
         links = new Link[proc.links.length];
         for (int i = 0; i < links.length; i++) {

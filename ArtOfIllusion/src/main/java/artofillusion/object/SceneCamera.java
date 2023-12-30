@@ -214,8 +214,8 @@ public class SceneCamera extends Object3D {
      */
     public int getComponentsForFilters() {
         int components = extraComponents;
-        for (int i = 0; i < filter.length; i++) {
-            components |= filter[i].getDesiredComponents();
+        for (ImageFilter imageFilter: filter) {
+            components |= imageFilter.getDesiredComponents();
         }
         return components;
     }
@@ -228,8 +228,8 @@ public class SceneCamera extends Object3D {
      * @param coords the position of this camera in the scene
      */
     public void applyImageFilters(ComplexImage image, Scene scene, CoordinateSystem coords) {
-        for (int i = 0; i < filter.length; i++) {
-            filter[i].filterImage(image, scene, this, coords);
+        for (ImageFilter imageFilter: filter) {
+            imageFilter.filterImage(image, scene, this, coords);
         }
         image.rebuildImage();
     }
@@ -518,9 +518,9 @@ public class SceneCamera extends Object3D {
         out.writeDouble(focalDist);
         out.writeBoolean(perspective);
         out.writeInt(filter.length);
-        for (int i = 0; i < filter.length; i++) {
-            out.writeUTF(filter[i].getClass().getName());
-            filter[i].writeToStream(out, theScene);
+        for (var imageFilter: filter) {
+            out.writeUTF(imageFilter.getClass().getName());
+            imageFilter.writeToStream(out, theScene);
         }
     }
 
