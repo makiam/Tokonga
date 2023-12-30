@@ -83,7 +83,10 @@ public class DirectionalLight extends Light {
 
     @Override
     public Object3D duplicate() {
-        return new DirectionalLight(color, intensity, radius);
+        var duplicate = new DirectionalLight(color, intensity, radius);
+        duplicate.type = this.type;
+        duplicate.decayRate = this.decayRate;
+        return duplicate;
     }
 
     @Override
