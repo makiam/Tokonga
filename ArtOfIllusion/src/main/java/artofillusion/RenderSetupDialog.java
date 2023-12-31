@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2015 by Peter Eastman
-   Changes copyright (C) 2016 by Maksim Khramov
+   Changes copyright (C) 2016-2023 by Maksim Khramov
    Changes copyright (C) 2020 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -234,7 +234,7 @@ public class RenderSetupDialog {
     }
 
     private Map<String, Object> getConfiguration() {
-        HashMap<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("rendererName", currentRenderer.getName());
         map.put("currentCamera", currentCamera);
         map.put("width", width);

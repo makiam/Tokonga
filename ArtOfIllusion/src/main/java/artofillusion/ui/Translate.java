@@ -76,7 +76,7 @@ public class Translate {
     @Getter
     private static Locale locale = availableLocales.contains(Locale.getDefault()) ? Locale.getDefault() : Locale.US;
 
-    private static final Map<String, ResourceBundle> bundles = new HashMap<String, ResourceBundle>();
+    private static final Map<String, ResourceBundle> bundles = new HashMap<>();
 
     /**
      * Set the locale to be used for generating text.

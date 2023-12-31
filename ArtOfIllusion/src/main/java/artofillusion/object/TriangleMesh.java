@@ -859,7 +859,7 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
 
         // Create the RenderingMesh.
         vert = new Vec3[v.length];
-        norm = new Vector<Vec3>();
+        norm = new Vector<>();
         tri = new RenderingTriangle[f.length];
         facenorm = new int[f.length * 3];
         normals = 0;

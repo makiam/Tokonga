@@ -110,7 +110,7 @@ public class Raytracer {
         factories = PluginRegistry.getPlugins(RTObjectFactory.class);
         objectList = Collections.synchronizedList(new ArrayList<>());
         lightList = Collections.synchronizedList(new ArrayList<>());
-        threadContext = new ThreadLocal<RaytracerContext>() {
+        threadContext = new ThreadLocal<>() {
             @Override
             protected RaytracerContext initialValue() {
                 return new RaytracerContext(Raytracer.this);

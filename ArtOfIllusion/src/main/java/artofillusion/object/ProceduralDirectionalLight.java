@@ -57,7 +57,7 @@ public class ProceduralDirectionalLight extends DirectionalLight {
      * Reinitialize the ThreadLocal that holds copies of the Procedure during rendering.
      */
     private void initThreadLocal() {
-        renderingProc = new ThreadLocal<Procedure>() {
+        renderingProc = new ThreadLocal<>() {
             @Override
             protected Procedure initialValue() {
                 Procedure localProc = createProcedure();

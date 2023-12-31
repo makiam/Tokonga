@@ -1,5 +1,6 @@
 /* Copyright (C) 1999-2014 by Peter Eastman
    Modifications copyright © 2020 by Petri Ihalainen
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -109,7 +110,7 @@ public class RaytracerRenderer implements Renderer, Runnable {
     }
 
     public RaytracerRenderer() {
-        threadWorkspace = new ThreadLocal<RenderWorkspace>() {
+        threadWorkspace = new ThreadLocal<>() {
             @Override
             protected RenderWorkspace initialValue() {
                 return new RenderWorkspace(RaytracerRenderer.this, raytracer.getContext());

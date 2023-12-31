@@ -55,7 +55,7 @@ public class MoveObjectTool extends EditingTool {
         int i;
         int[] sel;
 
-        toMove = new Vector<ObjectInfo>();
+        toMove = new Vector<>();
         clickedObject = theScene.getObject(obj);
         if (applyToChildren) {
             sel = theScene.getSelectionWithChildren();

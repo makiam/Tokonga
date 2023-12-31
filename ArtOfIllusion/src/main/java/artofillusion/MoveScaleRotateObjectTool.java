@@ -165,7 +165,7 @@ public class MoveScaleRotateObjectTool extends EditingTool {
     }
 
     protected void handlePressed(HandlePressedEvent ev) {
-        objects = new ArrayList<ObjectInfo>();
+        objects = new ArrayList<>();
         int[] sel;
         if (applyToChildren) {
             sel = getWindow().getSelectionWithChildren();

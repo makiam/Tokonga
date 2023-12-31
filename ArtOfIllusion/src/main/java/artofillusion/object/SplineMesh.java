@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2015 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
    Changes copyright (C) 2019 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -880,7 +880,7 @@ public class SplineMesh extends Object3D implements Mesh {
         }
 
         // Construct the list of normals.
-        ArrayList<Vec3> normal = new ArrayList<Vec3>(point.length);
+        List<Vec3> normal = new ArrayList<>(point.length);
         normIndex = new int[udim][vdim][4];
         k = 0;
         for (i = 0; i < udim; i++) {

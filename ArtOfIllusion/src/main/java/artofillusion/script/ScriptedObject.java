@@ -1,4 +1,5 @@
 /* Copyright (C) 2002-2013 by Peter Eastman
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -498,7 +499,7 @@ public class ScriptedObject extends ObjectCollection {
             for (int i = 0; i < values.length; i++) {
                 values[i] = in.readDouble();
             }
-            valueTable = new Hashtable<String, Double>();
+            valueTable = new Hashtable<>();
             for (int i = 0; i < values.length; i++) {
                 valueTable.put(script.paramName[i], values[i]);
             }

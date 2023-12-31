@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
    Modifications copyright (C) 2017-2020 Petri Ihalainen
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -24,6 +24,7 @@ import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * The TriMeshViewer class is a component which displays a TriangleMesh object and
@@ -177,8 +178,8 @@ public class TriMeshViewer extends MeshViewer {
         MeshVertex[] v = ((Mesh) getController().getObject().getObject()).getVertices();
 
         // First, draw any unselected portions of the object.
-        ArrayList<Rectangle> boxes = new ArrayList<Rectangle>();
-        ArrayList<Double> depths = new ArrayList<Double>();
+        List<Rectangle> boxes = new ArrayList<>();
+        List<Double> depths = new ArrayList<>();
         boolean[] selected = controller.getSelection();
         for (int i = 0; i < v.length; i++) {
             if (!selected[i] && visible[i]) {

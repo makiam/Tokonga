@@ -318,7 +318,7 @@ public class CSGModeller {
         for (int i = 0; i < faceIndex.length; i++) {
             faceIndex[i] = i;
         }
-        Arrays.sort(faceIndex, new Comparator<Integer>() {
+        Arrays.sort(faceIndex, new Comparator<>() {
             @Override
             public int compare(Integer index1, Integer index2) {
                 double max1 = f2.get(index1).max;

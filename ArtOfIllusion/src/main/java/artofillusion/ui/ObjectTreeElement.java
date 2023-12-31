@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2008 by Peter Eastman
-   Changes copyright (C) 2017-2020 by Maksim Khramov
+   Changes copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -33,7 +33,7 @@ public class ObjectTreeElement extends TreeElement {
         this.info = info;
         this.parent = parent;
         this.tree = tree;
-        children = new Vector<TreeElement>();
+        children = new Vector<>();
         if (addChildren) {
             for (int i = 0; i < info.getChildren().length; i++) {
                 children.add(new ObjectTreeElement(info.getChildren()[i], this, tree, true));

@@ -1,4 +1,5 @@
 /* Copyright (C) 2002-2012 by Peter Eastman
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,6 +19,7 @@ import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * UVMappingWindow is a window for editing the UV texture coordinates at
@@ -299,7 +301,7 @@ public class UVMappingWindow extends BDialog implements MeshEditController, Edit
         if (isPerFace) {
             FacetedMesh mesh = (FacetedMesh) editObj;
             Vec2[][] faceCoord = map.findFaceTextureCoordinates(mesh);
-            ArrayList<Vec2> coordList = new ArrayList<Vec2>();
+            List<Vec2> coordList = new ArrayList<>();
             for (int i = 0; i < faceCoord.length; i++) {
                 for (int j = 0; j < faceCoord[i].length; j++) {
                     coordList.add(faceCoord[i][j]);
@@ -388,7 +390,7 @@ public class UVMappingWindow extends BDialog implements MeshEditController, Edit
         if (faceBox.getState()) {
             // Convert from per-vertex to per-face-vertex mapping.
 
-            ArrayList<Vec2> coordList = new ArrayList<Vec2>();
+            List<Vec2> coordList = new ArrayList<>();
             for (int i = 0; i < mesh.getFaceCount(); i++) {
                 for (int j = 0; j < mesh.getFaceVertexCount(i); j++) {
                     coordList.add(new Vec2(coord[mesh.getFaceVertexIndex(i, j)]));

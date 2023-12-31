@@ -147,7 +147,7 @@ public class KeystrokePreferencesPanel extends FormContainer implements Preferen
      * Resort the list of records by name.
      */
     private void sortRecords() {
-        Collections.sort(records, new Comparator<KeystrokeRecord>() {
+        Collections.sort(records, new Comparator<>() {
             @Override
             public int compare(KeystrokeRecord r1, KeystrokeRecord r2) {
                 String s1, s2;

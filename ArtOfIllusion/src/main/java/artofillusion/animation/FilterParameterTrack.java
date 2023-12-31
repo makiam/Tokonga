@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2009 by Peter Eastman
-   Changes copyright (C) 2020-2021 by Maksim Khramov
+   Changes copyright (C) 2020-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -156,7 +156,7 @@ public class FilterParameterTrack extends Track {
      * Look up the current values from the filter.
      */
     private double[] getCurrentValues() {
-        ArrayList<Double> values = new ArrayList<Double>();
+        ArrayList<Double> values = new ArrayList<>();
         Property[] properties = filter.getProperties();
         for (int i = 0; i < properties.length; i++) {
             if (properties[i].getType() == Property.DOUBLE) {
@@ -251,7 +251,7 @@ public class FilterParameterTrack extends Track {
      */
     @Override
     public String[] getValueNames() {
-        ArrayList<String> names = new ArrayList<String>();
+        ArrayList<String> names = new ArrayList<>();
         for (Property property : filter.getProperties()) {
             if (property.getType() == Property.DOUBLE) {
                 names.add(property.getName());
@@ -279,7 +279,7 @@ public class FilterParameterTrack extends Track {
      */
     @Override
     public double[][] getValueRange() {
-        ArrayList<double[]> ranges = new ArrayList<double[]>();
+        ArrayList<double[]> ranges = new ArrayList<>();
         for (Property property : filter.getProperties()) {
             if (property.getType() == Property.DOUBLE) {
                 ranges.add(new double[]{property.getMinimum(), property.getMaximum()});
@@ -351,7 +351,7 @@ public class FilterParameterTrack extends Track {
         final ValueSlider s2Slider = new ValueSlider(0.0, 1.0, 100, s.getRightSmoothness());
         final BCheckBox sameBox = new BCheckBox(Translate.text("separateSmoothness"), !s.isForceSame());
         Property[] properties = filter.getProperties();
-        ArrayList<PropertyEditor> editors = new ArrayList<PropertyEditor>();
+        ArrayList<PropertyEditor> editors = new ArrayList<>();
 
         int index = 0;
         for (Property property : properties) {

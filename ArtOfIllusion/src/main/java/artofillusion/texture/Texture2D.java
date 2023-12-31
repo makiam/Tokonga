@@ -80,7 +80,7 @@ public abstract class Texture2D extends Texture {
         final int[] pixel = new int[width * height];
         final double uscale = (maxu - minu) / width;
         final double vscale = (maxv - minv) / height;
-        final ThreadLocal<TextureSpec> textureSpec = new ThreadLocal<TextureSpec>() {
+        final ThreadLocal<TextureSpec> textureSpec = new ThreadLocal<>() {
             @Override
             protected TextureSpec initialValue() {
                 return new TextureSpec();
