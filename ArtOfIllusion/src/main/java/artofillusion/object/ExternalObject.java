@@ -240,14 +240,6 @@ public class ExternalObject extends ObjectWrapper {
     }
 
     /**
-     * Determine whether the user should be allowed to convert this object to an Actor.
-     */
-    @Override
-    public boolean canConvertToActor() {
-        return false;
-    }
-
-    /**
      * The following method writes the object's data to an output stream.
      */
     @Override

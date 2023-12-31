@@ -82,13 +82,8 @@ public class NullObject extends Object3D {
         return mesh;
     }
 
-    @Override
-    public boolean isEditable() {
-        return false;
-    }
-
     /* The following two methods are used for reading and writing files.  The first is a
-     constructor which reads the necessary data from an input stream.  The other writes
+     constructor that reads the necessary data from an input stream.  The other writes
      the object's representation to an output stream. */
     public NullObject(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
         super(in, theScene);

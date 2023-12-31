@@ -896,11 +896,6 @@ public class Tube extends Curve {
         bounds = null;
     }
 
-    @Override
-    public boolean canConvertToActor() {
-        return true;
-    }
-
     /**
      * Tubes cannot be keyframed directly, since any change to mesh topology would
      * cause all keyframes to become invalid. Return an actor for this mesh.

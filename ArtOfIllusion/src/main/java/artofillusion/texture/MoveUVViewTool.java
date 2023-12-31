@@ -34,11 +34,6 @@ public class MoveUVViewTool extends EditingTool {
     }
 
     @Override
-    public boolean hilightSelection() {
-        return true;
-    }
-
-    @Override
     public void mousePressed(WidgetMouseEvent e, ViewerCanvas view) {
         UVMappingViewer uvview = (UVMappingViewer) view;
 
