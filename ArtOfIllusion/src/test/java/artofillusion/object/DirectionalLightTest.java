@@ -136,9 +136,9 @@ public class DirectionalLightTest {
 
         DirectionalLight target = (DirectionalLight) source.duplicate();
 
-        Assert.assertEquals(target.getColor(), color);
-        Assert.assertEquals(target.getIntensity(), 3, 0);
-        Assert.assertEquals(target.getRadius(), 5.0, 0);
+        Assert.assertEquals(color, target.getColor());
+        Assert.assertEquals(3, target.getIntensity(), 0);
+        Assert.assertEquals(5.0, target.getRadius(), 0);
         Assert.assertEquals(Light.TYPE_AMBIENT, target.getType());
         Assert.assertEquals(target.getDecayRate(), 0.8f, 0);
 

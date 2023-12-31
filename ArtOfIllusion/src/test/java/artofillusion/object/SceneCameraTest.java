@@ -15,11 +15,9 @@ import artofillusion.image.ComplexImage;
 import artofillusion.image.filter.ImageFilter;
 import artofillusion.math.CoordinateSystem;
 import artofillusion.test.util.StreamUtil;
-import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.nio.ByteBuffer;
 import org.junit.Assert;
@@ -71,7 +69,7 @@ public class SceneCameraTest {
         Scene scene = new Scene();
         ByteBuffer wrap = ByteBuffer.allocate(4);
         wrap.putShort((short) 1); // Object Version
-        wrap.putShort((short) 3); // Object Version read AGAIN !!!
+        wrap.putShort((short) 4); // Object Version read AGAIN !!!
 
         new SceneCamera(StreamUtil.stream(wrap), scene);
     }
@@ -147,7 +145,7 @@ public class SceneCameraTest {
         Assert.assertEquals(90, sc.getFieldOfView(), 0);
         Assert.assertEquals(500, sc.getDepthOfField(), 0);
         Assert.assertEquals(1000, sc.getFocalDistance(), 0);
-        Assert.assertTrue(!sc.isPerspective());
+        Assert.assertFalse(sc.isPerspective());
 
         Assert.assertEquals(0, sc.getImageFilters().length);
 

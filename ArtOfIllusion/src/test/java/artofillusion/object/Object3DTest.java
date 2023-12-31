@@ -1,4 +1,4 @@
-/* Copyright (C) 2018 by Maksim Khramov
+/* Copyright (C) 2018-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -30,11 +30,9 @@ import artofillusion.texture.TextureMapping;
 import artofillusion.texture.TextureSpec;
 import buoy.widget.BFrame;
 import buoy.widget.Widget;
-import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.nio.ByteBuffer;
 import org.junit.Assert;
@@ -303,8 +301,8 @@ public class Object3DTest {
 
     }
 
-    //@Test
-    public void testCopyTextureAndMaterialWithExistedTextureMappingAndParameters() {
+    @Test
+    public void copyTextureAndMaterialWithExistedTextureMappingAndParameters() {
         DummyObject source = new DummyObject();
         DummyObject target = new DummyObject();
 

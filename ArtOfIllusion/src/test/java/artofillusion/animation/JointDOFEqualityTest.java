@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 by Maksim Khramov
+/* Copyright (C) 2016-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,9 +11,10 @@
 package artofillusion.animation;
 
 import artofillusion.math.CoordinateSystem;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
 
 /**
  *
@@ -38,7 +39,7 @@ public class JointDOFEqualityTest {
         Joint.DOF sourceDof = source.angle1;
         Joint.DOF targetDof = sourceDof.duplicate();
 
-        assertTrue(sourceDof.equals(targetDof));
+        Assert.assertTrue(sourceDof.equals(targetDof));
     }
 
     @Test
@@ -47,7 +48,7 @@ public class JointDOFEqualityTest {
         Joint.DOF targetDof = sourceDof.duplicate();
         targetDof.fixed = !targetDof.fixed;
 
-        assertFalse(sourceDof.equals(targetDof));
+        Assert.assertFalse(sourceDof.equals(targetDof));
     }
 
     @Test
@@ -56,7 +57,7 @@ public class JointDOFEqualityTest {
         Joint.DOF targetDof = sourceDof.duplicate();
         targetDof.comfort = !targetDof.comfort;
 
-        assertFalse(sourceDof.equals(targetDof));
+        Assert.assertFalse(sourceDof.equals(targetDof));
     }
 
     @Test
@@ -65,7 +66,7 @@ public class JointDOFEqualityTest {
         Joint.DOF targetDof = sourceDof.duplicate();
         targetDof.loop = !targetDof.loop;
 
-        assertFalse(sourceDof.equals(targetDof));
+        Assert.assertFalse(sourceDof.equals(targetDof));
     }
 
     @Test
@@ -74,7 +75,7 @@ public class JointDOFEqualityTest {
         Joint.DOF targetDof = sourceDof.duplicate();
         targetDof.min = targetDof.min - 1.0;
 
-        assertFalse(sourceDof.equals(targetDof));
+        Assert.assertFalse(sourceDof.equals(targetDof));
     }
 
     @Test
@@ -83,7 +84,7 @@ public class JointDOFEqualityTest {
         Joint.DOF targetDof = sourceDof.duplicate();
         targetDof.minComfort = targetDof.minComfort - 1.0;
 
-        assertFalse(sourceDof.equals(targetDof));
+        Assert.assertFalse(sourceDof.equals(targetDof));
     }
 
     @Test
@@ -92,7 +93,7 @@ public class JointDOFEqualityTest {
         Joint.DOF targetDof = sourceDof.duplicate();
         targetDof.max = targetDof.max + 1.0;
 
-        assertFalse(sourceDof.equals(targetDof));
+        Assert.assertFalse(sourceDof.equals(targetDof));
     }
 
     @Test
@@ -101,7 +102,7 @@ public class JointDOFEqualityTest {
         Joint.DOF targetDof = sourceDof.duplicate();
         targetDof.maxComfort = targetDof.maxComfort + 1.0;
 
-        assertFalse(sourceDof.equals(targetDof));
+        Assert.assertFalse(sourceDof.equals(targetDof));
     }
 
     @Test
@@ -110,7 +111,7 @@ public class JointDOFEqualityTest {
         Joint.DOF targetDof = sourceDof.duplicate();
         targetDof.stiffness = targetDof.stiffness + 1.0;
 
-        assertFalse(sourceDof.equals(targetDof));
+        Assert.assertFalse(sourceDof.equals(targetDof));
     }
 
     @Test
@@ -119,6 +120,6 @@ public class JointDOFEqualityTest {
         Joint.DOF targetDof = sourceDof.duplicate();
         targetDof.pos = targetDof.pos + 1.0;
 
-        assertFalse(sourceDof.equals(targetDof));
+        Assert.assertFalse(sourceDof.equals(targetDof));
     }
 }

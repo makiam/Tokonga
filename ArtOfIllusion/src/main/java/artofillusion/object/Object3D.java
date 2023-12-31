@@ -24,7 +24,7 @@ import java.lang.reflect.*;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Object3D is the abstract superclass of any object which can be placed into a Scene.
+ * Object3D is the abstract superclass of any object that can be placed into a Scene.
  */
 @Slf4j
 public abstract class Object3D {
@@ -78,12 +78,10 @@ public abstract class Object3D {
     /**
      * Tells whether the object can be converted to a TriangleMesh. It should return one
      * of the following values:
-     *
      * CANT_CONVERT: The object cannot be converted to a TriangleMesh.
      * EXACTLY: The object can be represented exactly by a TriangleMesh.
      * APPROXIMATELY: The object can be converted to a TriangleMesh. However, the resulting
      * mesh will not be exactly the same shape as the original object.
-     *
      * If a class overrides this method, it must also override convertToTriangleMesh().
      */
     public int canConvertToTriangleMesh() {
@@ -417,9 +415,7 @@ public abstract class Object3D {
      * override this method, but also call super.writeToFile() to save information about
      * materials, etc. In addition to this method, every Object3D must include a constructor
      * with the signature
-     *
      * public Classname(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException
-     *
      * which reconstructs the object by reading its data from an input stream. This
      * constructor, similarly, should call the overridden constructor to read information
      * about materials, etc.
@@ -442,9 +438,9 @@ public abstract class Object3D {
                 out.writeUTF(texMapping.getClass().getName());
                 texMapping.writeToFile(out);
             }
-            for (int i = 0; i < paramValue.length; i++) {
-                out.writeUTF(paramValue[i].getClass().getName());
-                paramValue[i].writeToStream(out);
+            for (var parameterValue : paramValue) {
+                out.writeUTF(parameterValue.getClass().getName());
+                parameterValue.writeToStream(out);
             }
         }
     }
@@ -462,7 +458,11 @@ public abstract class Object3D {
         int materialIndex = in.readInt();
         if (materialIndex > -1) {
             try {
-                Class<?> mapClass = ArtOfIllusion.getClass(in.readUTF());
+                var className = in.readUTF();
+                Class<?> mapClass = ArtOfIllusion.getClass(className);
+                if(mapClass == null) {
+                    throw new IOException("Application cannot find given material class: " + className);
+                }
                 Constructor<?> con = mapClass.getConstructor(DataInputStream.class, Object3D.class, Material.class);
                 theMaterial = theScene.getMaterial(materialIndex);
                 setMaterial(theMaterial, (MaterialMapping) con.newInstance(in, this, theMaterial));
@@ -474,7 +474,11 @@ public abstract class Object3D {
         int textureIndex = in.readInt();
         if (textureIndex > -1) {
             try {
-                Class<?> mapClass = ArtOfIllusion.getClass(in.readUTF());
+                var className = in.readUTF();
+                Class<?> mapClass = ArtOfIllusion.getClass(className);
+                if(mapClass == null) {
+                    throw new IOException("Application cannot find given material class: " + className);
+                }                
                 Constructor<?> con = mapClass.getConstructor(DataInputStream.class, Object3D.class, Texture.class);
                 theTexture = theScene.getTexture(textureIndex);
                 setTexture(theTexture, (TextureMapping) con.newInstance(in, this, theTexture));
@@ -504,7 +508,11 @@ public abstract class Object3D {
      */
     public static ParameterValue readParameterValue(DataInputStream in) throws IOException {
         try {
-            Class<?> valueClass = ArtOfIllusion.getClass(in.readUTF());
+            var className = in.readUTF();
+            Class<?> valueClass = ArtOfIllusion.getClass(className);
+            if(valueClass == null) {
+                throw new IOException("Application cannot find given material class: " + className);
+            }            
             Constructor<?> con = valueClass.getConstructor(DataInputStream.class);
             return (ParameterValue) con.newInstance(in);
         } catch (IOException | ReflectiveOperationException | SecurityException ex) {

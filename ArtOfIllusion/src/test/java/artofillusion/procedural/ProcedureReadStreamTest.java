@@ -1,4 +1,4 @@
-/* Copyright (C) 2018 by Maksim Khramov
+/* Copyright (C) 2018-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,15 +11,14 @@
 package artofillusion.procedural;
 
 import artofillusion.Scene;
-import artofillusion.procedural.Module;
-import java.awt.Point;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
+import artofillusion.test.util.StreamUtil;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.awt.*;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.nio.ByteBuffer;
-import org.junit.Assert;
-import org.junit.Test;
 
 /**
  *
@@ -33,24 +32,24 @@ public class ProcedureReadStreamTest {
         ByteBuffer wrap = ByteBuffer.allocate(200);
         wrap.putShort((short) 1); // Procedure Version 1. Expected exception to be thrown
 
-        new Procedure(new OutputModule[0]).readFromStream(new DataInputStream(new ByteArrayInputStream(wrap.array())), (Scene) null);
+        new Procedure().readFromStream(StreamUtil.stream(wrap), (Scene) null);
 
     }
 
     @Test
     public void testReadEmptyProcedure() throws IOException {
         ByteBuffer wrap = ByteBuffer.allocate(200);
-        wrap.putShort((short) 0); // Procedure Version 1. Expected exception to be thrown
+        wrap.putShort((short) 0); // Procedure Version 0. Good version here
         wrap.putInt(0); // No Modules
         wrap.putInt(0); // No Links
-        new Procedure(new OutputModule[0]).readFromStream(new DataInputStream(new ByteArrayInputStream(wrap.array())), (Scene) null);
+        new Procedure().readFromStream(StreamUtil.stream(wrap), (Scene) null);
 
     }
 
     @Test(expected = IOException.class)
     public void testReadProcedureWithBadModuleName() throws IOException {
         ByteBuffer wrap = ByteBuffer.allocate(200);
-        wrap.putShort((short) 0); // Procedure Version 1. Expected exception to be thrown
+        wrap.putShort((short) 0); // Procedure Version 0. Good version here
         wrap.putInt(1); // One Module But bad Name
 
         String className = "module.module.BadModule";
@@ -61,13 +60,13 @@ public class ProcedureReadStreamTest {
             wrap.putInt(123);
             wrap.putInt(456);
         }
-        new Procedure(new OutputModule[0]).readFromStream(new DataInputStream(new ByteArrayInputStream(wrap.array())), (Scene) null);
+        new Procedure().readFromStream(StreamUtil.stream(wrap), (Scene) null);
     }
 
     @Test(expected = IOException.class)
     public void testReadProcedureWithBadModuleConstructor() throws IOException {
         ByteBuffer wrap = ByteBuffer.allocate(200);
-        wrap.putShort((short) 0); // Procedure Version 1. Expected exception to be thrown
+        wrap.putShort((short) 0); // Procedure Version 0. Good version here
         wrap.putInt(1); // One Module But bad Name
 
         String className = DummyModuleNoPointConstructor.class.getTypeName();
@@ -79,8 +78,8 @@ public class ProcedureReadStreamTest {
             wrap.putInt(123);
             wrap.putInt(456);
         }
-        Procedure proc = new Procedure(new OutputModule[0]);
-        proc.readFromStream(new DataInputStream(new ByteArrayInputStream(wrap.array())), (Scene) null);
+        Procedure proc = new Procedure();
+        proc.readFromStream(StreamUtil.stream(wrap), (Scene) null);
     }
 
     @Test
@@ -98,8 +97,8 @@ public class ProcedureReadStreamTest {
             wrap.putInt(123);
             wrap.putInt(456);
         }
-        Procedure proc = new Procedure(new OutputModule[0]);
-        proc.readFromStream(new DataInputStream(new ByteArrayInputStream(wrap.array())), (Scene) null);
+        Procedure proc = new Procedure();
+        proc.readFromStream(StreamUtil.stream(wrap), (Scene) null);
 
         Assert.assertEquals(1, proc.getModules().length);
         var module = proc.getModules()[0];

@@ -98,9 +98,7 @@ public class Procedure {
      */
     public void addLink(Link ln) {
         Link[] newlink = new Link[links.length + 1];
-        for (int i = 0; i < links.length; i++) {
-            newlink[i] = links[i];
-        }
+        System.arraycopy(links, 0, newlink, 0, links.length);
         newlink[links.length] = ln;
         links = newlink;
         ln.to.getModule().setInput(ln.to, ln.from);
@@ -184,9 +182,7 @@ public class Procedure {
      */
     public void copy(Procedure proc) {
         modules = new ArrayList<>();
-        proc.modules.forEach(module -> {
-            modules.add(module.duplicate());
-        });
+        proc.modules.forEach(module -> modules.add(module.duplicate()));
 
         links = new Link[proc.links.length];
         for (int i = 0; i < links.length; i++) {
@@ -242,12 +238,15 @@ public class Procedure {
             output.setInput(output.getInputPorts()[0], null);
         }
         modules.clear();
-        int ms = in.readInt();
+        int modulesCount = in.readInt();
         try {
-            for (int i = 0; i < ms; i++) {
-                String classname = in.readUTF();
+            for (int i = 0; i < modulesCount; i++) {
+                String className = in.readUTF();
                 Point point = new Point(in.readInt(), in.readInt());
-                Class<?> cls = ArtOfIllusion.getClass(classname);
+                Class<?> cls = ArtOfIllusion.getClass(className);
+                if(null == cls) {
+                    throw new IOException("Application cannot find given module class: " + className);
+                }
                 Constructor<?> con = cls.getConstructor(Point.class);
                 var mod = (Module) con.newInstance(point);
                 mod.readFromStream(in, theScene);

@@ -1,4 +1,4 @@
-/* Copyright (C) 2022 by Maksim Khramov
+/* Copyright (C) 2022-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -46,9 +46,9 @@ import artofillusion.ui.EditingTool;
 import artofillusion.ui.GenericTool;
 import buoy.widget.BLabel;
 import java.lang.reflect.Field;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.mockito.Mockito;
@@ -98,7 +98,7 @@ public class TestToolsHelp {
         EditingTool tool = new CreateCameraTool(layout);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertEquals("Click to create a camera.", toolText);
+        Assert.assertEquals("Click to create a camera.", toolText);
     }
 
     @Test
@@ -106,7 +106,7 @@ public class TestToolsHelp {
         EditingTool tool = new CreateLightTool(layout);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertEquals("Click to create a point light, drag for a directional light, control-drag for a spot light.", toolText);
+        Assert.assertEquals("Click to create a point light, drag for a directional light, control-drag for a spot light.", toolText);
     }
 
     @Test
@@ -114,7 +114,7 @@ public class TestToolsHelp {
         EditingTool tool = new CreateCurveTool(layout);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertEquals("Click to add points, shift-click for a corner.  Double-click or press Enter to finish line, control-double-click to close line.  Double-click icon to set smoothing.", toolText);
+        Assert.assertEquals("Click to add points, shift-click for a corner.  Double-click or press Enter to finish line, control-double-click to close line.  Double-click icon to set smoothing.", toolText);
     }
 
     @Test
@@ -122,7 +122,7 @@ public class TestToolsHelp {
         EditingTool tool = new MoveViewTool(layout);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertEquals("Drag to move viewpoint.  Shift-drag to constrain movement, control-drag to zoom.", toolText);
+        Assert.assertEquals("Drag to move viewpoint.  Shift-drag to constrain movement, control-drag to zoom.", toolText);
     }
 
     @Test
@@ -131,7 +131,7 @@ public class TestToolsHelp {
         tool.activate();
         BLabel label = (BLabel) helpField.get(layout);
         String toolText = label.getText();
-        assertEquals("Drag to create a box.  Shift-drag to create a cube.  Hold Ctrl to expand from center.", toolText);
+        Assert.assertEquals("Drag to create a box.  Shift-drag to create a cube.  Hold Ctrl to expand from center.", toolText);
     }
 
     @Test
@@ -139,7 +139,7 @@ public class TestToolsHelp {
         EditingTool tool = new CreateSphereTool(layout);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertEquals("Drag to create an ellipsoid.  Shift-drag to create a sphere.  Hold Ctrl to expand from center.", toolText);
+        Assert.assertEquals("Drag to create an ellipsoid.  Shift-drag to create a sphere.  Hold Ctrl to expand from center.", toolText);
     }
 
     @Test
@@ -147,7 +147,7 @@ public class TestToolsHelp {
         EditingTool tool = new CreateCylinderTool(layout);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertEquals("Drag to create a cylinder or cone.  Shift-drag to constrain.  Hold Ctrl to expand from center.  Double-click icon to set shape.", toolText);
+        Assert.assertEquals("Drag to create a cylinder or cone.  Shift-drag to constrain.  Hold Ctrl to expand from center.  Double-click icon to set shape.", toolText);
     }
 
     @SuppressWarnings("java:S1192")
@@ -157,7 +157,7 @@ public class TestToolsHelp {
         EditingTool tool = new CreateVertexTool(layout, null);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertEquals("Expected", toolText);
+        Assert.assertEquals("Expected", toolText);
     }
 
     @Test
@@ -165,7 +165,7 @@ public class TestToolsHelp {
         EditingTool tool = new CreatePolygonTool(layout);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertEquals("Drag to create a 3-sided polygon, shift-drag for a regular polygon, control-drag to expand from center.  Double-click icon to set shape and fill.", toolText);
+        Assert.assertEquals("Drag to create a 3-sided polygon, shift-drag for a regular polygon, control-drag to expand from center.  Double-click icon to set shape and fill.", toolText);
     }
 
     @Test
@@ -173,7 +173,7 @@ public class TestToolsHelp {
         EditingTool tool = new ThickenMeshTool(layout, null);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertNull(toolText);
+        Assert.assertNull(toolText);
     }
 
     @Test
@@ -181,7 +181,7 @@ public class TestToolsHelp {
         EditingTool tool = new SkewMeshTool(layout, null);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertNull(toolText);
+        Assert.assertNull(toolText);
     }
 
     @Test
@@ -189,7 +189,7 @@ public class TestToolsHelp {
         EditingTool tool = new ScaleMeshTool(layout, null);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertNull(toolText);
+        Assert.assertNull(toolText);
     }
 
     @Test
@@ -197,7 +197,7 @@ public class TestToolsHelp {
         EditingTool tool = new TaperMeshTool(layout, null);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertNull(toolText);
+        Assert.assertNull(toolText);
     }
 
     @Test
@@ -205,7 +205,7 @@ public class TestToolsHelp {
         EditingTool tool = new RotateObjectTool(layout);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertEquals("Drag to rotate selected objects.  Drag a handle to constrain rotation.  Double-click icon for options.", toolText);
+        Assert.assertEquals("Drag to rotate selected objects.  Drag a handle to constrain rotation.  Double-click icon for options.", toolText);
     }
 
     @Test
@@ -213,7 +213,7 @@ public class TestToolsHelp {
         EditingTool tool = new BevelExtrudeTool(layout, null);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertNull(toolText);
+        Assert.assertNull(toolText);
     }
 
     @Test
@@ -221,7 +221,7 @@ public class TestToolsHelp {
         EditingTool tool = new MoveScaleRotateMeshTool(layout, null);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertNull(toolText);
+        Assert.assertNull(toolText);
     }
 
     @Test
@@ -229,7 +229,7 @@ public class TestToolsHelp {
         EditingTool tool = new CreateSplineMeshTool(layout);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertEquals("Drag to create a 5 by 5 flat, approximating spline mesh.  Shift-drag to constrain shape.  Hold Ctrl to expand from center.  Double-click icon to change mesh properties.", toolText);
+        Assert.assertEquals("Drag to create a 5 by 5 flat, approximating spline mesh.  Shift-drag to constrain shape.  Hold Ctrl to expand from center.  Double-click icon to change mesh properties.", toolText);
     }
 
     @Test
@@ -237,7 +237,7 @@ public class TestToolsHelp {
         EditingTool tool = new ReshapeMeshTool(layout, null);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertEquals("Select and move points.  Shift adds to selection, Control-drag removes from selection.", toolText);
+        Assert.assertEquals("Select and move points.  Shift adds to selection, Control-drag removes from selection.", toolText);
     }
 
     @Test
@@ -245,7 +245,7 @@ public class TestToolsHelp {
         EditingTool tool = new MoveUVViewTool(layout);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertEquals("Drag to move viewpoint.  Shift-drag to constrain movement, control-drag to zoom.", toolText);
+        Assert.assertEquals("Drag to move viewpoint.  Shift-drag to constrain movement, control-drag to zoom.", toolText);
     }
 
     @Test
@@ -253,7 +253,7 @@ public class TestToolsHelp {
         EditingTool tool = new ScaleObjectTool(layout);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertEquals("Drag a handle to resize objects.  Shift-drag preserves shape, control-drag scales around center.  Double-click icon for options.", toolText);
+        Assert.assertEquals("Drag a handle to resize objects.  Shift-drag preserves shape, control-drag scales around center.  Double-click icon for options.", toolText);
     }
 
     //Expected NPE as no properly initialized EditorWindow
@@ -263,7 +263,7 @@ public class TestToolsHelp {
         EditingTool tool = new SkeletonTool(mew, true);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertEquals("Expected", toolText);
+        Assert.assertEquals("Expected", toolText);
     }
 
     //Expected NPE as no controller passed to Tool
@@ -272,7 +272,7 @@ public class TestToolsHelp {
         EditingTool tool = new RotateMeshTool(layout, null, true);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertEquals("Expected", toolText);
+        Assert.assertEquals("Expected", toolText);
     }
 
     @Test
@@ -280,7 +280,7 @@ public class TestToolsHelp {
         EditingTool tool = new MoveObjectTool(layout);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertEquals("Drag to move selected objects.  Shift-drag constrains movement, control-drag moves perpendicular to view.  Double-click icon for options.", toolText);
+        Assert.assertEquals("Drag to move selected objects.  Shift-drag constrains movement, control-drag moves perpendicular to view.  Double-click icon for options.", toolText);
     }
 
     @Test
@@ -289,7 +289,7 @@ public class TestToolsHelp {
         tool.activate();
 
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertNull(toolText);
+        Assert.assertNull(toolText);
     }
 
     @Test
@@ -297,7 +297,7 @@ public class TestToolsHelp {
         EditingTool tool = new RotateViewTool(layout);
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertEquals("Drag to rotate view.  Shift-drag to constrain movement, control-drag to rotate about axis.", toolText);
+        Assert.assertEquals("Drag to rotate view.  Shift-drag to constrain movement, control-drag to rotate about axis.", toolText);
     }
 
     @Test
@@ -305,6 +305,6 @@ public class TestToolsHelp {
         EditingTool tool = new GenericTool(layout, "", "Generic Tool");
         tool.activate();
         String toolText = ((BLabel) helpField.get(layout)).getText();
-        assertNull(toolText);
+        Assert.assertNull(toolText);
     }
 }

@@ -1,4 +1,4 @@
-/* Copyright (C) 2017 by Maksim Khramov
+/* Copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -405,7 +405,7 @@ public class LayoutWindowTest {
     @Test
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void invokeCreateScriptedObjectCommand() {
-        appMainMenu.pushMenuNoBlock("Tools|Create Scripted Object...");
+        appMainMenu.pushMenuNoBlock("Object|Create Primitive|Create Scripted Object...");
         JDialogOperator dialog = new JDialogOperator(appFrame);
 
         new JLabelOperator(dialog, "New Scripted Object");
@@ -439,8 +439,7 @@ public class LayoutWindowTest {
         appMainMenu.pushMenuNoBlock("Scene|Textures And Materials...");
         JDialogOperator dialog = new JDialogOperator(appFrame, "Textures and Materials");
 
-        JButtonOperator cancel = new JButtonOperator(dialog, "Close");
-        cancel.clickMouse();
+        dialog.close();
 
     }
 
@@ -450,7 +449,7 @@ public class LayoutWindowTest {
         appMainMenu.pushMenuNoBlock("Scene|Environment...");
         JDialogOperator dialog = new JDialogOperator(appFrame);
 
-        new JLabelOperator(dialog, "Select Environment Properties:");
+        new JLabelOperator(dialog, "Environment Properties");
 
         JButtonOperator cancel = new JButtonOperator(dialog, bundle.getResource("button.cancel"));
         cancel.clickMouse();

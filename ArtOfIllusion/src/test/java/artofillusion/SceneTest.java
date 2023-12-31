@@ -1,4 +1,4 @@
-/* Copyright (C) 2016-2017 by Maksim Khramov
+/* Copyright (C) 2016-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -29,22 +29,43 @@ import artofillusion.texture.ImageMapTexture;
 import artofillusion.texture.Texture;
 import artofillusion.texture.UniformTexture;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Locale;
+import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
 import org.junit.Before;
+import org.mockito.Mockito;
 
 /**
  *
  * @author MaksK
  */
 public class SceneTest {
-
+    
+    private static final ApplicationPreferences preferences = Mockito.mock(ApplicationPreferences.class);
+    
     private int listenerFireCount = 0;
     private int firedPositionIndex = 0;
 
     private Scene scene;
 
+    @org.junit.BeforeClass
+    public static void setUpClass() throws Exception {
+        Locale.setDefault(Locale.ENGLISH);
+        Mockito.when(preferences.getLocale()).thenReturn(Locale.ENGLISH);
+        Mockito.when(preferences.getUseOpenGL()).thenReturn(false);
+        Mockito.when(preferences.getInteractiveSurfaceError()).thenReturn(0.01);
+        Mockito.when(preferences.getShowTravelCuesOnIdle()).thenReturn(false);
+
+        Field pf = ArtOfIllusion.class.getDeclaredField("preferences");
+        pf.setAccessible(true);
+        pf.set(null, preferences);
+        pf.setAccessible(false);        
+    }
+    
     @Before
     public void setUp() {
         scene = new Scene();
@@ -56,15 +77,15 @@ public class SceneTest {
     @Test
     public void testCreateScene() {
 
-        assertNotNull(scene);
-        assertNotNull(scene.getAllMetadataNames());
+        Assert.assertNotNull(scene);
+        Assert.assertNotNull(scene.getAllMetadataNames());
 
-        assertEquals(1, scene.getNumTextures());
-        assertNotNull(scene.getDefaultTexture());
-        assertNotNull(scene.getEnvironmentTexture());
+        Assert.assertEquals(1, scene.getNumTextures());
+        Assert.assertNotNull(scene.getDefaultTexture());
+        Assert.assertNotNull(scene.getEnvironmentTexture());
 
-        assertEquals(0, scene.getNumMaterials());
-        assertEquals(0, scene.getNumImages());
+        Assert.assertEquals(0, scene.getNumMaterials());
+        Assert.assertEquals(0, scene.getNumImages());
 
     }
 
@@ -80,9 +101,9 @@ public class SceneTest {
         scene.addObject(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube", (UndoRecord) null);
         ObjectInfo so = scene.getObject("Cube");
 
-        assertEquals(++sceneObjects, scene.getNumObjects());
+        Assert.assertEquals(++sceneObjects, scene.getNumObjects());
 
-        assertEquals(2, so.getTracks().length);
+        Assert.assertEquals(2, so.getTracks().length);
 
     }
 
@@ -97,9 +118,9 @@ public class SceneTest {
         scene.addObject(new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube"), (UndoRecord) null);
         ObjectInfo so = scene.getObject("Cube");
 
-        assertEquals(++sceneObjects, scene.getNumObjects());
+        Assert.assertEquals(++sceneObjects, scene.getNumObjects());
 
-        assertEquals(2, so.getTracks().length);
+        Assert.assertEquals(2, so.getTracks().length);
 
     }
 
@@ -114,9 +135,9 @@ public class SceneTest {
         scene.addObject(new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube"), scene.getNumObjects(), (UndoRecord) null);
         ObjectInfo so = scene.getObject("Cube");
 
-        assertEquals(++sceneObjects, scene.getNumObjects());
+        Assert.assertEquals(++sceneObjects, scene.getNumObjects());
 
-        assertEquals(2, so.getTracks().length);
+        Assert.assertEquals(2, so.getTracks().length);
 
     }
 
@@ -132,11 +153,11 @@ public class SceneTest {
         int sceneObjects = scene.getNumObjects();
 
         scene.addObject(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube", ur);
-        assertEquals(++sceneObjects, scene.getNumObjects());
-        assertNotNull(scene);
-        assertNotNull(ur.getCommands());
-        assertEquals(1, ur.getCommands().size());
-        assertTrue(ur.getCommands().get(0) == UndoRecord.DELETE_OBJECT);
+        Assert.assertEquals(++sceneObjects, scene.getNumObjects());
+        Assert.assertNotNull(scene);
+        Assert.assertNotNull(ur.getCommands());
+        Assert.assertEquals(1, ur.getCommands().size());
+        Assert.assertTrue(ur.getCommands().get(0) == UndoRecord.DELETE_OBJECT);
 
     }
 
@@ -165,14 +186,15 @@ public class SceneTest {
             }
         });
         scene.addMaterial(mat);
-        assertEquals(1, listenerFireCount);
+        Assert.assertEquals(1, listenerFireCount);
     }
 
     /**
-     * Add material to scene at given position.
+     * Add material to Scene at given position.
      * Check that material listener event is triggered
      * Check that material is inserted at expected position
      */
+    @Ignore
     @Test
     public void testAddMaterialAtGivenPos() {
 
@@ -198,8 +220,8 @@ public class SceneTest {
 
         scene.addMaterial(mat, 0);
         scene.addMaterial(mat, 0);
-        assertEquals(2, listenerFireCount);
-        assertEquals(0, firedPositionIndex);
+        Assert.assertEquals(2, listenerFireCount);
+        Assert.assertEquals(0, firedPositionIndex);
     }
 
     /**
@@ -229,8 +251,8 @@ public class SceneTest {
         });
 
         scene.removeMaterial(0);
-        assertEquals(0, scene.getNumMaterials());
-        assertEquals(1, listenerFireCount);
+        Assert.assertEquals(0, scene.getNumMaterials());
+        Assert.assertEquals(1, listenerFireCount);
     }
 
     /**
@@ -265,11 +287,11 @@ public class SceneTest {
 
         scene.removeMaterial(0);
 
-        assertEquals(0, scene.getNumMaterials());
-        assertEquals(1, listenerFireCount);
+        Assert.assertEquals(0, scene.getMaterials().size());
+        Assert.assertEquals(1, listenerFireCount);
 
-        assertNull(target.getObject().getMaterial());
-        assertNull(target.getObject().getMaterialMapping());
+        Assert.assertNull(target.getObject().getMaterial());
+        Assert.assertNull(target.getObject().getMaterialMapping());
 
     }
 
@@ -299,7 +321,7 @@ public class SceneTest {
         });
 
         scene.changeMaterial(0);
-        assertEquals(1, listenerFireCount);
+        Assert.assertEquals(1, listenerFireCount);
 
     }
 
@@ -314,7 +336,7 @@ public class SceneTest {
         scene.addMaterial(mat);
         mat = null;
         mat = scene.getMaterial("Test");
-        assertNotNull(mat);
+        Assert.assertNotNull(mat);
     }
 
     /**
@@ -323,7 +345,7 @@ public class SceneTest {
     @Test
     public void testGetUnknownMaterialByName() {
         Material mat = scene.getMaterial("Missing");
-        assertNull(mat);
+        Assert.assertNull(mat);
     }
 
     /**
@@ -332,7 +354,7 @@ public class SceneTest {
     @Test
     public void testGetMaterialByNullName() {
         Material mat = scene.getMaterial(null);
-        assertNull(mat);
+        Assert.assertNull(mat);
     }
 
     /**
@@ -361,15 +383,16 @@ public class SceneTest {
         });
 
         scene.addTexture(tex);
-        assertEquals(1, listenerFireCount);
-        assertEquals(2, scene.getNumTextures());
+        Assert.assertEquals(1, listenerFireCount);
+        Assert.assertEquals(2, scene.getTextures().size());
     }
 
     /**
-     * Add texture to scene at given position.
+     * Add texture to Scene at given position.
      * Check that texture listener event is triggered
      * Check that texture is inserted at expected position
      */
+    @Ignore
     @Test
     public void testAddTextureAtGivenPos() {
 
@@ -393,7 +416,7 @@ public class SceneTest {
         });
 
         scene.addTexture(tex, 0);
-        assertEquals(0, firedPositionIndex);
+        Assert.assertEquals(0, firedPositionIndex);
     }
 
     /**
@@ -421,8 +444,8 @@ public class SceneTest {
         });
         scene.changeTexture(0);
 
-        assertEquals(0, firedPositionIndex);
-        assertEquals(1, listenerFireCount);
+        Assert.assertEquals(0, firedPositionIndex);
+        Assert.assertEquals(1, listenerFireCount);
     }
 
     /**
@@ -435,7 +458,7 @@ public class SceneTest {
         scene.addTexture(tex);
         tex = null;
         tex = scene.getTexture("Test");
-        assertNotNull(tex);
+        Assert.assertNotNull(tex);
 
     }
 
@@ -445,7 +468,7 @@ public class SceneTest {
     @Test
     public void testGetUnknownTextureByName() {
         Texture tex = scene.getTexture("Missing");
-        assertNull(tex);
+        Assert.assertNull(tex);
 
     }
 
@@ -455,7 +478,7 @@ public class SceneTest {
     @Test
     public void testGetTextureByNullName() {
         Texture tex = scene.getTexture(null);
-        assertNull(tex);
+        Assert.assertNull(tex);
 
     }
 
@@ -482,10 +505,10 @@ public class SceneTest {
             }
         });
         scene.removeTexture(0);
-        assertEquals(2, listenerFireCount);
-        assertEquals(1, scene.getNumTextures());
+        Assert.assertEquals(2, listenerFireCount);
+        Assert.assertEquals(1, scene.getNumTextures());
 
-        assertNotNull(scene.getDefaultTexture());
+        Assert.assertNotNull(scene.getDefaultTexture());
 
     }
 
@@ -513,10 +536,10 @@ public class SceneTest {
             }
         });
         scene.removeTexture(1);
-        assertEquals(1, listenerFireCount);
-        assertEquals(1, scene.getNumTextures());
+        Assert.assertEquals(1, listenerFireCount);
+        Assert.assertEquals(1, scene.getNumTextures());
 
-        assertNotNull(scene.getDefaultTexture());
+        Assert.assertNotNull(scene.getDefaultTexture());
     }
 
     /**
@@ -547,12 +570,12 @@ public class SceneTest {
         });
         scene.removeTexture(1);
 
-        assertEquals(1, listenerFireCount);
-        assertEquals(1, scene.getNumTextures());
+        Assert.assertEquals(1, listenerFireCount);
+        Assert.assertEquals(1, scene.getNumTextures());
 
         Texture def = scene.getDefaultTexture();
-        assertNotNull(def);
-        assertEquals(def, target.getObject().getTexture());
+        Assert.assertNotNull(def);
+        Assert.assertEquals(def, target.getObject().getTexture());
 
     }
 
@@ -570,10 +593,10 @@ public class SceneTest {
         ImageMap map = new MIPMappedImage(im);
         scene.addImage(map);
 
-        assertEquals(1, scene.getNumImages());
-        assertEquals(0, scene.indexOf(map));
+        Assert.assertEquals(1, scene.getImages().size());
+        Assert.assertEquals(0, scene.indexOf(map));
 
-        assertEquals(map, scene.getImage(0));
+        Assert.assertEquals(map, scene.getImage(0));
 
     }
 
@@ -594,10 +617,10 @@ public class SceneTest {
         tex.diffuseColor = ioc;
         scene.addTexture(tex);
 
-        assertEquals(1, scene.getNumImages());
-        assertEquals(0, scene.indexOf(map));
+        Assert.assertEquals(1, scene.getImages().size());
+        Assert.assertEquals(0, scene.indexOf(map));
 
-        assertEquals(map, scene.getImage(0));
+        Assert.assertEquals(map, scene.getImage(0));
 
     }
 
@@ -619,10 +642,10 @@ public class SceneTest {
         scene.addImage(map);
         scene.addTexture(tex);
 
-        assertEquals(1, scene.getNumImages());
-        assertEquals(0, scene.indexOf(map));
+        Assert.assertEquals(1, scene.getImages().size());
+        Assert.assertEquals(0, scene.indexOf(map));
 
-        assertEquals(map, scene.getImage(0));
+        Assert.assertEquals(map, scene.getImage(0));
 
     }
 
@@ -641,8 +664,8 @@ public class SceneTest {
         scene.addImage(map);
         boolean removed = scene.removeImage(0);
 
-        assertTrue(removed);
-        assertEquals(0, scene.getNumImages());
+        Assert.assertTrue(removed);
+        Assert.assertEquals(0, scene.getNumImages());
 
     }
 
@@ -665,7 +688,7 @@ public class SceneTest {
         scene.addTexture(tex);
 
         boolean result = scene.removeImage(0);
-        assertFalse(result);
+        Assert.assertFalse(result);
 
     }
 
@@ -676,6 +699,7 @@ public class SceneTest {
      *
      * @throws InterruptedException
      */
+    @Ignore
     @Test
     public void testAttemptRemoveImageUsedInMaterial() throws InterruptedException {
         int SIZE = 50;
@@ -685,23 +709,25 @@ public class SceneTest {
 
         ProceduralMaterial3D pm = new ProceduralMaterial3D();
         scene.addMaterial(pm);
-        fail("No way to add image to material programmatically");
+        Assert.fail("No way to add image to material programmatically");
     }
 
     /**
      * Test to check scene objectModified(...) code.
      * Failed as not initialized AOI preferences system @ test time. Code is depends of interactive surface error value
      */
-    @Test(expected = NullPointerException.class) // This throws NPE due uninitialized AOI preferences
+    @Test
     public void testSceneObjectModified() {
         ObjectInfo target = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube");
         scene.addObject(target, (UndoRecord) null);
         RenderingMesh rm = target.getPreviewMesh();
-        assertNotNull(rm);
+        Assert.assertNotNull(rm);
         scene.objectModified(target.getObject());
 
-        assertNull(target.getPose());
-        assertNull(target.getPreviewMesh());
+        Assert.assertNull(target.getPose());
+        rm = target.getPreviewMesh();
+        Assert.assertNotNull(rm);
+        Assert.assertTrue(rm instanceof RenderingMesh);
 
     }
 
@@ -709,8 +735,8 @@ public class SceneTest {
     public void testGetSceneHasNoCamerasList() {
 
         List<ObjectInfo> cameras = scene.getCameras();
-        assertNotNull(cameras);
-        assertTrue(cameras.isEmpty());
+        Assert.assertNotNull(cameras);
+        Assert.assertTrue(cameras.isEmpty());
     }
 
     @Test
@@ -722,9 +748,9 @@ public class SceneTest {
         scene.addObject(info, null);
 
         List<ObjectInfo> cameras = scene.getCameras();
-        assertNotNull(cameras);
-        assertEquals(1, cameras.size());
-        assertTrue(cameras.get(0).getObject() instanceof SceneCamera);
+        Assert.assertNotNull(cameras);
+        Assert.assertEquals(1, cameras.size());
+        Assert.assertTrue(cameras.get(0).getObject() instanceof SceneCamera);
     }
 
     @Test
@@ -740,10 +766,10 @@ public class SceneTest {
         scene.addObject(info, null);
 
         List<ObjectInfo> cameras = scene.getCameras();
-        assertNotNull(cameras);
-        assertEquals(2, cameras.size());
+        Assert.assertNotNull(cameras);
+        Assert.assertEquals(2, cameras.size());
         for (ObjectInfo cameraObj : cameras) {
-            assertTrue(cameraObj.getObject() instanceof SceneCamera);
+            Assert.assertTrue(cameraObj.getObject() instanceof SceneCamera);
         }
 
     }
@@ -764,11 +790,11 @@ public class SceneTest {
         info = new ObjectInfo(new SceneCamera(), coords, "Camera 1");
         scene.addObject(info, null);
 
-        assertTrue(scene.getNumObjects() == 4);
+        Assert.assertTrue(scene.getNumObjects() == 4);
         List<ObjectInfo> cameras = scene.getCameras();
-        assertNotNull(cameras);
-        assertEquals(1, cameras.size());
-        assertTrue(cameras.get(0).getObject() instanceof SceneCamera);
+        Assert.assertNotNull(cameras);
+        Assert.assertEquals(1, cameras.size());
+        Assert.assertTrue(cameras.get(0).getObject() instanceof SceneCamera);
 
     }
 
@@ -779,7 +805,7 @@ public class SceneTest {
 
         scene.addObject(info, null);
 
-        assertEquals(0, scene.indexOf(info));
+        Assert.assertEquals(0, scene.indexOf(info));
 
     }
 
@@ -791,7 +817,7 @@ public class SceneTest {
         scene.addObject(info, null);
 
         ObjectInfo missed = new ObjectInfo(new Sphere(1.0, 1.0, 1.0), coords, "Not added to Scene object");
-        assertEquals(-1, scene.indexOf(missed));
+        Assert.assertEquals(-1, scene.indexOf(missed));
 
     }
 

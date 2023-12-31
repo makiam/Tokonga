@@ -44,6 +44,7 @@ public class EnvironmentDialogTest {
         PluginRegistry.registerResource("UITheme", "default", ArtOfIllusion.class.getClassLoader(), "artofillusion/Icons/defaultTheme.xml", null);
         ThemeManager.initThemes();
 
+        Mockito.when(preferences.getLocale()).thenReturn(Locale.ENGLISH);
         Mockito.when(preferences.getUseOpenGL()).thenReturn(false);
         Mockito.when(preferences.getInteractiveSurfaceError()).thenReturn(0.01);
         Mockito.when(preferences.getShowTravelCuesOnIdle()).thenReturn(false);

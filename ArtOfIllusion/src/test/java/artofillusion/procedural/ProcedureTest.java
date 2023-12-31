@@ -1,4 +1,4 @@
-/* Copyright (C) 2017 by Maksim Khramov
+/* Copyright (C) 2017-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -13,7 +13,8 @@ package artofillusion.procedural;
 import artofillusion.math.RGBColor;
 import artofillusion.math.Vec3;
 import java.awt.Point;
-import static org.junit.Assert.*;
+import org.junit.Assert;
+
 import org.junit.Test;
 
 /**
@@ -25,20 +26,20 @@ public class ProcedureTest {
     @Test
     public void testCreateNewProcedure() {
         Procedure procedure = new Procedure(new OutputModule[]{});
-        assertNotNull(procedure);
-        assertNotNull(procedure.getOutputModules());
-        assertEquals(0, procedure.getOutputModules().length);
-        assertNotNull(procedure.getModules());
-        assertEquals(0, procedure.getModules().length);
+        Assert.assertNotNull(procedure);
+        Assert.assertNotNull(procedure.getOutputModules());
+        Assert.assertEquals(0, procedure.getOutputModules().length);
+        Assert.assertNotNull(procedure.getModules());
+        Assert.assertEquals(0, procedure.getModules().length);
 
-        assertNotNull(procedure.getLinks());
-        assertEquals(0, procedure.getLinks().length);
+        Assert.assertNotNull(procedure.getLinks());
+        Assert.assertEquals(0, procedure.getLinks().length);
     }
 
     @Test
     public void testGetNullOutputModuleIndexFromProcedure() {
         Procedure procedure = new Procedure(new OutputModule[]{});
-        assertEquals(-1, procedure.getOutputIndex(null));
+        Assert.assertEquals(-1, procedure.getOutputIndex(null));
     }
 
     @Test
@@ -47,7 +48,7 @@ public class ProcedureTest {
         Procedure procedure = new Procedure(new OutputModule[]{});
 
         OutputModule missed = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
-        assertEquals(-1, procedure.getOutputIndex(missed));
+        Assert.assertEquals(-1, procedure.getOutputIndex(missed));
 
     }
 
@@ -56,7 +57,7 @@ public class ProcedureTest {
         OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
         Procedure procedure = new Procedure(new OutputModule[]{exist});
 
-        assertEquals(0, procedure.getOutputIndex(exist));
+        Assert.assertEquals(0, procedure.getOutputIndex(exist));
 
     }
 
@@ -66,21 +67,21 @@ public class ProcedureTest {
         OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
         Procedure procedure = new Procedure(new OutputModule[]{first, exist});
 
-        assertEquals(1, procedure.getOutputIndex(exist));
+        Assert.assertEquals(1, procedure.getOutputIndex(exist));
 
     }
 
     @Test
     public void testGetNullModuleFromProcedure() {
         Procedure procedure = new Procedure(new OutputModule[]{});
-        assertEquals(-1, procedure.getModuleIndex(null));
+        Assert.assertEquals(-1, procedure.getModuleIndex(null));
     }
 
     @Test
     public void testGetMissedModuleFromProcedure() {
         var mod = new Module("Test", new IOPort[]{}, new IOPort[]{}, new Point());
         Procedure procedure = new Procedure(new OutputModule[]{});
-        assertEquals(-1, procedure.getModuleIndex(mod));
+        Assert.assertEquals(-1, procedure.getModuleIndex(mod));
     }
 
     @Test
@@ -88,7 +89,7 @@ public class ProcedureTest {
         var mod = new Module("Test", new IOPort[]{}, new IOPort[]{}, new Point());
         Procedure procedure = new Procedure(new OutputModule[]{});
         procedure.addModule(mod);
-        assertEquals(0, procedure.getModuleIndex(mod));
+        Assert.assertEquals(0, procedure.getModuleIndex(mod));
     }
 
     @Test
@@ -98,8 +99,8 @@ public class ProcedureTest {
         Procedure procedure = new Procedure(new OutputModule[]{});
         procedure.addModule(mod1);
         procedure.addModule(mod2);
-        assertEquals(0, procedure.getModuleIndex(mod1));
-        assertEquals(1, procedure.getModuleIndex(mod2));
+        Assert.assertEquals(0, procedure.getModuleIndex(mod1));
+        Assert.assertEquals(1, procedure.getModuleIndex(mod2));
     }
 
     @Test
@@ -111,7 +112,7 @@ public class ProcedureTest {
         procedure.addModule(mod2);
 
         procedure.deleteModule(0);
-        assertEquals(0, procedure.getModuleIndex(mod2));
+        Assert.assertEquals(0, procedure.getModuleIndex(mod2));
     }
 
     @Test
@@ -153,8 +154,8 @@ public class ProcedureTest {
         pi.y = 100;
         procedure.initForPoint(pi);
 
-        assertEquals(100, mod.getBounds().getX(), 0.000001);
-        assertEquals(100, mod.getBounds().getY(), 0.000001);
+        Assert.assertEquals(100, mod.getBounds().getX(), 0.000001);
+        Assert.assertEquals(100, mod.getBounds().getY(), 0.000001);
 
     }
 
@@ -170,7 +171,7 @@ public class ProcedureTest {
         Link link = new Link(from, to);
         procedure.addLink(link);
 
-        assertEquals(++linksCount, procedure.getLinks().length);
+        Assert.assertEquals(++linksCount, procedure.getLinks().length);
     }
 
     @Test
@@ -192,7 +193,7 @@ public class ProcedureTest {
         link = new Link(from, to);
         procedure.addLink(link);
 
-        assertEquals(2, procedure.getLinks().length);
+        Assert.assertEquals(2, procedure.getLinks().length);
     }
 
     @Test
@@ -204,11 +205,11 @@ public class ProcedureTest {
 
         target.copy(origin);
 
-        assertNotNull(target.getModules());
-        assertEquals(0, target.getModules().length);
+        Assert.assertNotNull(target.getModules());
+        Assert.assertEquals(0, target.getModules().length);
 
-        assertNotNull(target.getLinks());
-        assertEquals(0, target.getLinks().length);
+        Assert.assertNotNull(target.getLinks());
+        Assert.assertEquals(0, target.getLinks().length);
     }
 
     @Test
@@ -222,11 +223,11 @@ public class ProcedureTest {
 
         target.copy(origin);
 
-        assertNotNull(target.getModules());
-        assertEquals(1, target.getModules().length);
+        Assert.assertNotNull(target.getModules());
+        Assert.assertEquals(1, target.getModules().length);
 
-        assertNotNull(target.getLinks());
-        assertEquals(0, target.getLinks().length);
+        Assert.assertNotNull(target.getLinks());
+        Assert.assertEquals(0, target.getLinks().length);
     }
 
     @Test
@@ -254,11 +255,11 @@ public class ProcedureTest {
 
         target.copy(origin);
 
-        assertNotNull(target.getModules());
-        assertEquals(2, target.getModules().length);
+        Assert.assertNotNull(target.getModules());
+        Assert.assertEquals(2, target.getModules().length);
 
-        assertNotNull(target.getLinks());
-        assertEquals(1, target.getLinks().length);
+        Assert.assertNotNull(target.getLinks());
+        Assert.assertEquals(1, target.getLinks().length);
 
     }
 
@@ -295,11 +296,11 @@ public class ProcedureTest {
 
         target.copy(origin);
 
-        assertNotNull(target.getModules());
-        assertEquals(2, target.getModules().length);
+        Assert.assertNotNull(target.getModules());
+        Assert.assertEquals(2, target.getModules().length);
 
-        assertNotNull(target.getLinks());
-        assertEquals(2, target.getLinks().length);
+        Assert.assertNotNull(target.getLinks());
+        Assert.assertEquals(2, target.getLinks().length);
     }
 
     @Test
@@ -308,7 +309,7 @@ public class ProcedureTest {
         OutputModule exist = new OutputModule("TestOut", "Label", 42, new RGBColor(1, 1, 1), 0);
         Procedure origin = new Procedure(new OutputModule[]{exist});
 
-        assertEquals(42, origin.getOutputValue(0), 0);
+        Assert.assertEquals(42, origin.getOutputValue(0), 0);
     }
 
     @Test
@@ -319,9 +320,9 @@ public class ProcedureTest {
 
         Vec3 grad = new Vec3(1, 2, 3);
         origin.getOutputGradient(0, grad);
-        assertEquals(0, grad.x, 0);
-        assertEquals(0, grad.y, 0);
-        assertEquals(0, grad.z, 0);
+        Assert.assertEquals(0, grad.x, 0);
+        Assert.assertEquals(0, grad.y, 0);
+        Assert.assertEquals(0, grad.z, 0);
     }
 
     @Test
@@ -332,9 +333,9 @@ public class ProcedureTest {
 
         RGBColor color = new RGBColor();
         origin.getOutputColor(0, color);
-        assertEquals(0, color.red, 0);
-        assertEquals(0.5, color.green, 0);
-        assertEquals(1, color.blue, 0);
+        Assert.assertEquals(0, color.red, 0);
+        Assert.assertEquals(0.5, color.green, 0);
+        Assert.assertEquals(1, color.blue, 0);
     }
 
     @Test(expected = NegativeArraySizeException.class)
@@ -376,10 +377,10 @@ public class ProcedureTest {
 
         origin.deleteLink(0);
 
-        assertNotNull(origin.getLinks());
-        assertEquals(0, origin.getLinks().length);
+        Assert.assertNotNull(origin.getLinks());
+        Assert.assertEquals(0, origin.getLinks().length);
 
-        assertNull(sine.linkFrom[0]);
+        Assert.assertNull(sine.linkFrom[0]);
 
     }
 
@@ -412,10 +413,10 @@ public class ProcedureTest {
 
         origin.deleteLink(0);
 
-        assertNotNull(origin.getLinks());
-        assertEquals(1, origin.getLinks().length);
+        Assert.assertNotNull(origin.getLinks());
+        Assert.assertEquals(1, origin.getLinks().length);
 
-        assertNull(sine.linkFrom[0]);
+        Assert.assertNull(sine.linkFrom[0]);
 
     }
 
@@ -448,10 +449,10 @@ public class ProcedureTest {
 
         origin.deleteLink(1);
 
-        assertNotNull(origin.getLinks());
-        assertEquals(1, origin.getLinks().length);
+        Assert.assertNotNull(origin.getLinks());
+        Assert.assertEquals(1, origin.getLinks().length);
 
-        assertNull(procTm.linkFrom[0]);
+        Assert.assertNull(procTm.linkFrom[0]);
 
     }
 
@@ -476,10 +477,10 @@ public class ProcedureTest {
 
         origin.deleteLink(0);
 
-        assertNotNull(origin.getLinks());
-        assertEquals(0, origin.getLinks().length);
+        Assert.assertNotNull(origin.getLinks());
+        Assert.assertEquals(0, origin.getLinks().length);
 
-        assertNull(sine.linkFrom[0]);
+        Assert.assertNull(sine.linkFrom[0]);
 
     }
 }
