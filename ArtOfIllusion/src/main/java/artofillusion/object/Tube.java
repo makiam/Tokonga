@@ -280,9 +280,7 @@ public class Tube extends Curve {
                     if (news[i] > 1.0f) {
                         news[i] = 1.0f;
                     }
-                    for (int k = 0; k < numParam; k++) {
-                        newparam[i][k] = paramTemp[k];
-                    }
+                    System.arraycopy(paramTemp, 0, newparam[i], 0, numParam);
                 }
                 i++;
                 if (!refine[p2] && !refine[p3]) {
@@ -407,9 +405,7 @@ public class Tube extends Curve {
                     newvert[i] = SplineMesh.calcInterpPoint(t.vertex, t.smoothness, param, paramTemp, p1, p2, p3, p4);
                     newt[i] = calcInterpThickness(t.thickness, t.smoothness, p1, p2, p3, p4);
                     news[i] = 1.0f;
-                    for (int k = 0; k < numParam; k++) {
-                        newparam[i][k] = paramTemp[k];
-                    }
+                    System.arraycopy(paramTemp, 0, newparam[i], 0, numParam);
                     if (newvert[i].r.distance2(t.vertex[p2].r) > tol2 && newvert[i].r.distance2(t.vertex[p3].r) > tol2) {
                         Vec3 temp = t.vertex[p2].r.plus(t.vertex[p3].r).times(0.5);
                         if (temp.distance2(newvert[i].r) > tol2) {
@@ -604,16 +600,16 @@ public class Tube extends Curve {
 
         // Set the smoothness values of edges.
         TriangleMesh.Edge[] ed = mesh.getEdges();
-        TriangleMesh.Face[] fc = mesh.getFaces();
-        for (int i = 0; i < fc.length; i++) {
-            if (fc[i].v1 >= numnorm) {
-                ed[fc[i].e2].smoothness = 0.0f;
+
+        for (TriangleMesh.Face value : mesh.getFaces()) {
+            if (value.v1 >= numnorm) {
+                ed[value.e2].smoothness = 0.0f;
             }
-            if (fc[i].v2 >= numnorm) {
-                ed[fc[i].e3].smoothness = 0.0f;
+            if (value.v2 >= numnorm) {
+                ed[value.e3].smoothness = 0.0f;
             }
-            if (fc[i].v3 >= numnorm) {
-                ed[fc[i].e1].smoothness = 0.0f;
+            if (value.v3 >= numnorm) {
+                ed[value.e1].smoothness = 0.0f;
             }
         }
         return mesh;
@@ -688,13 +684,13 @@ public class Tube extends Curve {
         // Now find two vectors perpendicular to the path, and determine how much they
         // contribute to the z and up directions.
         Vec3 dir1, dir2;
-        double zfrac1, zfrac2, upfrac1, upfrac2;
+        double zfrac1, zfrac2, upfrac1;
         zfrac1 = xdir[0].dot(zdir[0]);
         zfrac2 = Math.sqrt(1.0 - zfrac1 * zfrac1);
         dir1 = zdir[0].minus(xdir[0].times(zfrac1));
         dir1.normalize();
         upfrac1 = xdir[0].dot(updir[0]);
-        upfrac2 = Math.sqrt(1.0 - upfrac1 * upfrac1);
+
         dir2 = updir[0].minus(xdir[0].times(upfrac1));
         dir2.normalize();
 
@@ -789,8 +785,8 @@ public class Tube extends Curve {
     public void editGesture(final EditingWindow parent, ObjectInfo info, Runnable cb, ObjectInfo realObject) {
         TubeEditorWindow ed = new TubeEditorWindow(parent, "Gesture '" + info.getName() + "'", info, cb, false);
         ViewerCanvas[] views = ed.getAllViews();
-        for (int i = 0; i < views.length; i++) {
-            ((MeshViewer) views[i]).setScene(parent.getScene(), realObject);
+        for (ViewerCanvas view : views) {
+            ((MeshViewer) view).setScene(parent.getScene(), realObject);
         }
         ed.setVisible(true);
     }
@@ -825,8 +821,8 @@ public class Tube extends Curve {
         for (int i = 0; i < vertex.length; i++) {
             thickness[i] = in.readDouble();
             if (version == 0) {
-                for (int j = 0; j < paramValue.length; j++) {
-                    ((VertexParameterValue) paramValue[j]).getValue()[i] = in.readDouble();
+                for (ParameterValue parameterValue : paramValue) {
+                    ((VertexParameterValue) parameterValue).getValue()[i] = in.readDouble();
                 }
             }
         }
@@ -838,8 +834,8 @@ public class Tube extends Curve {
         super.writeToFile(out, theScene);
 
         out.writeShort(1);
-        for (int i = 0; i < thickness.length; i++) {
-            out.writeDouble(thickness[i]);
+        for (double v : thickness) {
+            out.writeDouble(v);
         }
         out.writeInt(endsStyle);
     }

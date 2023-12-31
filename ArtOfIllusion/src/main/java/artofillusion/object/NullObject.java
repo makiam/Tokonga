@@ -1,4 +1,5 @@
 /* Copyright (C) 1999-2002 by Peter Eastman
+   Changes copyright (C) 2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -25,9 +26,7 @@ public class NullObject extends Object3D {
 
     static {
         Vec3[] vert;
-        double r = 0.25, i, j, k;
-        int ind1;
-        int ind2;
+        double r = 0.25;
         int[] from;
         int[] to;
 
