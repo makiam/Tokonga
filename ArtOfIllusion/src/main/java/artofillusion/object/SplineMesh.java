@@ -369,10 +369,10 @@ public class SplineMesh extends Object3D implements Mesh {
         } else {
             zscale = zsize / size.z;
         }
-        for (int i = 0; i < vertex.length; i++) {
-            vertex[i].r.x *= xscale;
-            vertex[i].r.y *= yscale;
-            vertex[i].r.z *= zscale;
+        for (MeshVertex meshVertex : vertex) {
+            meshVertex.r.x *= xscale;
+            meshVertex.r.y *= yscale;
+            meshVertex.r.z *= zscale;
         }
         skeleton.scale(xscale, yscale, zscale);
         cachedMesh = null;
@@ -394,9 +394,9 @@ public class SplineMesh extends Object3D implements Mesh {
     @Override
     public void editGesture(final EditingWindow parent, ObjectInfo info, Runnable cb, ObjectInfo realObject) {
         SplineMeshEditorWindow ed = new SplineMeshEditorWindow(parent, "Gesture '" + info.getName() + "'", info, cb, false);
-        ViewerCanvas[] views = ed.getAllViews();
-        for (int i = 0; i < views.length; i++) {
-            ((MeshViewer) views[i]).setScene(parent.getScene(), realObject);
+
+        for (ViewerCanvas view : ed.getAllViews()) {
+            ((MeshViewer) view).setScene(parent.getScene(), realObject);
         }
         ed.setVisible(true);
     }
@@ -1202,8 +1202,8 @@ public class SplineMesh extends Object3D implements Mesh {
             vertex[i].ikJoint = in.readInt();
             vertex[i].ikWeight = in.readDouble();
             if (version == 0) {
-                for (int j = 0; j < paramValue.length; j++) {
-                    ((VertexParameterValue) paramValue[j]).getValue()[i] = in.readDouble();
+                for (ParameterValue parameterValue : paramValue) {
+                    ((VertexParameterValue) parameterValue).getValue()[i] = in.readDouble();
                 }
             }
         }
@@ -1226,10 +1226,10 @@ public class SplineMesh extends Object3D implements Mesh {
         out.writeShort(1);
         out.writeInt(usize);
         out.writeInt(vsize);
-        for (int i = 0; i < vertex.length; i++) {
-            vertex[i].r.writeToFile(out);
-            out.writeInt(vertex[i].ikJoint);
-            out.writeDouble(vertex[i].ikWeight);
+        for (MeshVertex meshVertex : vertex) {
+            meshVertex.r.writeToFile(out);
+            out.writeInt(meshVertex.ikJoint);
+            out.writeDouble(meshVertex.ikWeight);
         }
         for (int i = 0; i < usize; i++) {
             out.writeFloat(usmoothness[i]);
@@ -1630,10 +1630,7 @@ public class SplineMesh extends Object3D implements Mesh {
                     return false;
                 }
             }
-            if (!skeleton.equals(key.skeleton)) {
-                return false;
-            }
-            return true;
+            return skeleton.equals(key.skeleton);
         }
 
         /**
@@ -1701,28 +1698,28 @@ public class SplineMesh extends Object3D implements Mesh {
         public void writeToStream(DataOutputStream out) throws IOException {
             out.writeShort(1); // version
             out.writeInt(vertPos.length);
-            for (int i = 0; i < vertPos.length; i++) {
-                vertPos[i].writeToFile(out);
+            for (Vec3 vertPo : vertPos) {
+                vertPo.writeToFile(out);
             }
-            for (int i = 0; i < paramValue.length; i++) {
-                out.writeUTF(paramValue[i].getClass().getName());
-                paramValue[i].writeToStream(out);
+            for (ParameterValue parameterValue : paramValue) {
+                out.writeUTF(parameterValue.getClass().getName());
+                parameterValue.writeToStream(out);
             }
             out.writeInt(usmoothness.length);
-            for (int i = 0; i < usmoothness.length; i++) {
-                out.writeFloat(usmoothness[i]);
+            for (float v : usmoothness) {
+                out.writeFloat(v);
             }
             out.writeInt(vsmoothness.length);
-            for (int i = 0; i < vsmoothness.length; i++) {
-                out.writeFloat(vsmoothness[i]);
+            for (float v : vsmoothness) {
+                out.writeFloat(v);
             }
             Joint[] joint = skeleton.getJoints();
-            for (int i = 0; i < joint.length; i++) {
-                joint[i].coords.writeToFile(out);
-                out.writeDouble(joint[i].angle1.pos);
-                out.writeDouble(joint[i].angle2.pos);
-                out.writeDouble(joint[i].twist.pos);
-                out.writeDouble(joint[i].length.pos);
+            for (Joint value : joint) {
+                value.coords.writeToFile(out);
+                out.writeDouble(value.angle1.pos);
+                out.writeDouble(value.angle2.pos);
+                out.writeDouble(value.twist.pos);
+                out.writeDouble(value.length.pos);
             }
         }
 
@@ -1747,8 +1744,8 @@ public class SplineMesh extends Object3D implements Mesh {
             for (int i = 0; i < numVert; i++) {
                 vertPos[i] = new Vec3(in);
                 if (version == 0) {
-                    for (int j = 0; j < paramValue.length; j++) {
-                        ((VertexParameterValue) paramValue[j]).getValue()[i] = in.readDouble();
+                    for (ParameterValue parameterValue : paramValue) {
+                        ((VertexParameterValue) parameterValue).getValue()[i] = in.readDouble();
                     }
                 }
             }
@@ -1767,12 +1764,12 @@ public class SplineMesh extends Object3D implements Mesh {
             }
             skeleton = mesh.getSkeleton().duplicate();
             Joint[] joint = skeleton.getJoints();
-            for (int i = 0; i < joint.length; i++) {
-                joint[i].coords = new CoordinateSystem(in);
-                joint[i].angle1.pos = in.readDouble();
-                joint[i].angle2.pos = in.readDouble();
-                joint[i].twist.pos = in.readDouble();
-                joint[i].length.pos = in.readDouble();
+            for (Joint value : joint) {
+                value.coords = new CoordinateSystem(in);
+                value.angle1.pos = in.readDouble();
+                value.angle2.pos = in.readDouble();
+                value.twist.pos = in.readDouble();
+                value.length.pos = in.readDouble();
             }
         }
     }

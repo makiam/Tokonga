@@ -172,8 +172,8 @@ public class MoveScaleRotateObjectTool extends EditingTool {
         } else {
             sel = getWindow().getSelectedIndices();
         }
-        for (int i = 0; i < sel.length; i++) {
-            objects.add(theWindow.getScene().getObject(sel[i]));
+        for (int j : sel) {
+            objects.add(theWindow.getScene().getObject(j));
         }
         originalCoords = new CoordinateSystem[objects.size()];
         for (int i = 0; i < originalCoords.length; i++) {
@@ -353,9 +353,9 @@ public class MoveScaleRotateObjectTool extends EditingTool {
 
             tooltipsEnabled = !tooltipsEnabled;
             if (tooltipsEnabled && !tooltipsAdded) {
-                ViewerCanvas[] allViews = ((MeshEditorWindow) theWindow).getAllViews();
-                for (int i = 0; i < allViews.length; i++) {
-                    allViews[i].addEventLink(ToolTipEvent.class, this, "showToolTip");
+
+                for (ViewerCanvas cView : ((MeshEditorWindow) theWindow).getAllViews()) {
+                    cView.addEventLink(ToolTipEvent.class, this, "showToolTip");
                 }
                 tooltipsAdded = true;
             }
@@ -422,8 +422,8 @@ public class MoveScaleRotateObjectTool extends EditingTool {
         }
         theWindow.setUndoRecord(undo = new UndoRecord(getWindow()));
         ArrayList<ObjectInfo> toMove = new ArrayList<>();
-        for (int i = 0; i < sel.length; i++) {
-            toMove.add(theScene.getObject(sel[i]));
+        for (int j : sel) {
+            toMove.add(theScene.getObject(j));
         }
         for (int i = 0; i < toMove.size(); i++) {
             CoordinateSystem c = toMove.get(i).getCoords();

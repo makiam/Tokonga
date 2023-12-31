@@ -69,18 +69,18 @@ public class UVMappingWindow extends BDialog implements MeshEditController, Edit
         // Find the range of coordinates displayed.
         double minu = Double.MAX_VALUE, maxu = -Double.MAX_VALUE;
         double minv = Double.MAX_VALUE, maxv = -Double.MAX_VALUE;
-        for (int i = 0; i < coord.length; i++) {
-            if (coord[i].x < minu) {
-                minu = coord[i].x;
+        for (Vec2 vec2 : coord) {
+            if (vec2.x < minu) {
+                minu = vec2.x;
             }
-            if (coord[i].x > maxu) {
-                maxu = coord[i].x;
+            if (vec2.x > maxu) {
+                maxu = vec2.x;
             }
-            if (coord[i].y < minv) {
-                minv = coord[i].y;
+            if (vec2.y < minv) {
+                minv = vec2.y;
             }
-            if (coord[i].y > maxv) {
-                maxv = coord[i].y;
+            if (vec2.y > maxv) {
+                maxv = vec2.y;
             }
         }
         double padu = 0.1 * (maxu - minu), padv = 0.1 * (maxv - minv);
@@ -300,11 +300,11 @@ public class UVMappingWindow extends BDialog implements MeshEditController, Edit
         }
         if (isPerFace) {
             FacetedMesh mesh = (FacetedMesh) editObj;
-            Vec2[][] faceCoord = map.findFaceTextureCoordinates(mesh);
+
             List<Vec2> coordList = new ArrayList<>();
-            for (int i = 0; i < faceCoord.length; i++) {
-                for (int j = 0; j < faceCoord[i].length; j++) {
-                    coordList.add(faceCoord[i][j]);
+            for (Vec2[] vec2s : map.findFaceTextureCoordinates(mesh)) {
+                for (int j = 0; j < vec2s.length; j++) {
+                    coordList.add(vec2s[j]);
                 }
             }
             coord = coordList.toArray(new Vec2[coordList.size()]);

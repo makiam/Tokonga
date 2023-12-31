@@ -111,8 +111,8 @@ public class ObjectTreeElement extends TreeElement {
             }
         }
         if (pos == children.size()) {
-            for (int i = 0; i < children.size(); i++) {
-                children.get(i).removeChild(object);
+            for (TreeElement child : children) {
+                child.removeChild(object);
             }
             return;
         }

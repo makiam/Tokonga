@@ -260,12 +260,12 @@ public class SeamFinder {
 
         // Find the total distortion by adding up the contributions from all the loops.
         double totalDistortion = 0;
-        for (int loop = 0; loop < loopEdges.size(); loop++) {
+        for (var loopEdge : loopEdges) {
             // Add up the angles formed by all the edges.
 
             double totalAngle = 0;
             boolean isBoundary = false;
-            for (int edgeIndex : loopEdges.get(loop)) {
+            for (int edgeIndex : loopEdge) {
                 TriangleMesh.Edge edge = meshEdge[edgeIndex];
                 if (edge.f2 == -1) {
                     isBoundary = true;

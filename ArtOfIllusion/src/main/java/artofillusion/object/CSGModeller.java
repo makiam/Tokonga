@@ -1093,8 +1093,7 @@ public class CSGModeller {
         // Make a list of the faces sharing each vertex.
 
         int[] faceCount = new int[v1.size()];
-        for (int i = 0; i < f1.size(); i++) {
-            FaceInfo f = f1.get(i);
+        for (FaceInfo f : f1) {
             faceCount[f.v1]++;
             faceCount[f.v2]++;
             faceCount[f.v3]++;
