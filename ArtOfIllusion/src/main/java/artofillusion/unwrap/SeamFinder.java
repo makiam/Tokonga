@@ -209,7 +209,7 @@ public class SeamFinder {
         }
     }
 
-    private double computePatchDistortion(Vec3 vertexPos, HashSet<Integer> edges) {
+    private double computePatchDistortion(Vec3 vertexPos, Set<Integer> edges) {
         // Divide the edges up into continuous loops.
 
         MeshVertex[] meshVertex = mesh.getVertices();
