@@ -50,7 +50,8 @@ public class ArtOfIllusion {
     private static final CompilerConfiguration config = new CompilerConfiguration();
     static {
         ImportCustomizer ic = new ImportCustomizer();
-        ic.addStarImports("artofillusion");
+        ic.addStarImports("artofillusion", "buoy.event", "buoy.widget");
+        
         config.addCompilationCustomizers(ic);
     }
     @Getter

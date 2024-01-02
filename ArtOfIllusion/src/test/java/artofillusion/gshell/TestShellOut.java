@@ -17,6 +17,7 @@ public class TestShellOut {
         var shell = ArtOfIllusion.getShell();
         Binding context = shell.getContext();
         context.setProperty("out", new PrintStream(new ByteArrayOutputStream()) {
+            @Override
             public void println(String message) {
                 log.info(message);
             }

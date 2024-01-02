@@ -23,6 +23,10 @@ import java.io.IOException;
 
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.nio.file.Files;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.runtime.StackTraceUtils;
@@ -47,8 +51,19 @@ public class ScriptEditorEx extends JFrame {
     private JMenu editMenu;
     private JCheckBoxMenuItem cleanOut;
     
+    public ScriptEditorEx(LayoutWindow owner, File file) {
+        this(owner);
+        try {
+            this.scriptTextArea.setText(Files.readString(file.toPath()));
+            this.setTitle(Translate.text("Script Editor") + " - " + file);
+        } catch (IOException ex) {
+            log.atError().setCause(ex).log("Unable to load file: {}", file);
+        }
+    }
+    
     public ScriptEditorEx(LayoutWindow owner) {
         this.layout = owner;
+        
         scriptTextArea = new RSyntaxTextArea(20, 60);
         try {
             Theme theme = Theme.load(ScriptEditorEx.class.getResourceAsStream("/scriptEditorTheme.xml"));
@@ -64,7 +79,7 @@ public class ScriptEditorEx extends JFrame {
         scroller.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         JSplitPane esp = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         esp.setTopComponent(scroller);
-        esp.setBottomComponent(outputArea = new JTextArea());
+        esp.setBottomComponent(new JScrollPane(outputArea = new JTextArea()));
        
         outputArea.setFont(outputArea.getFont().deriveFont(12f));
         outputArea.setLineWrap(true);
@@ -86,9 +101,18 @@ public class ScriptEditorEx extends JFrame {
     @Override
     protected void frameInit() {
         super.frameInit();
+        this.setIconImage(ArtOfIllusion.APP_ICON.getImage());
         this.setTitle(Translate.text("Script Editor"));
         this.setSize(800, 600);
-        this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent event) {
+                ScriptEditorEx.this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            }
+            
+        });
+        
         this.getContentPane().add(statusPanel = new StatusPanel(), BorderLayout.SOUTH);
 
         statusPanel.add(statusLabel = new JLabel("Ready", SwingConstants.LEFT));
@@ -151,7 +175,12 @@ public class ScriptEditorEx extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            JFileChooser chooser = new JFileChooser();
+            var chooser = new JFileChooser();
+            chooser.setName(Translate.text("selectScriptToLoad"));
+            File workingDir = chooser.getCurrentDirectory();
+            if(chooser.showOpenDialog(ScriptEditorEx.this) == JFileChooser.APPROVE_OPTION) {
+                SwingUtilities.invokeLater(() -> new ScriptEditorEx(layout, chooser.getSelectedFile()).setVisible(true));
+            }
         }
     }
 
@@ -162,7 +191,7 @@ public class ScriptEditorEx extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            ScriptEditorEx.this.dispose();
         }
     }
     
@@ -190,6 +219,7 @@ public class ScriptEditorEx extends JFrame {
             super(Translate.text("Run"));
             putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
         }
+        
         @Override
         public void actionPerformed(ActionEvent event) {
             if(cleanOut.isSelected()) {
@@ -210,13 +240,11 @@ public class ScriptEditorEx extends JFrame {
             } catch (GroovyRuntimeException gre) {
                 log.atError().setCause(gre).log("Groovy script exception: {}", gre);
                 ScriptEditorEx.this.outputArea.append("\n" + gre.getMessage());
-            } catch(Exception e) {
-                
+            } catch(Exception e) {                
                 Throwable tt = StackTraceUtils.sanitize(e);
                 log.atError().setCause(e).log("Script exception: {}", tt);
                 ScriptEditorEx.this.outputArea.append("\n" + tt.getMessage());                
-                
-                
+   
             }
 
             

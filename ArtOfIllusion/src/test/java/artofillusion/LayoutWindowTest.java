@@ -415,21 +415,7 @@ public class LayoutWindowTest {
 
     @Test
     public void invokeExecuteScriptWindowCommand() {
-        appMainMenu.pushMenuNoBlock("Tools|Edit Tool Script...|Edit Script...");
-        JFrameOperator scw = new JFrameOperator(1);
-        scw.close();
-    }
-
-    @Test
-    public void invokeNewScriptAsGroovy() {
-        appMainMenu.pushMenuNoBlock("Tools|Edit Tool Script...|New Script|Groovy");
-        JFrameOperator scw = new JFrameOperator(1);
-        scw.close();
-    }
-
-    @Test
-    public void invokeNewScriptAsBeanshell() {
-        appMainMenu.pushMenuNoBlock("Tools|Edit Tool Script...|New Script|BeanShell");
+        appMainMenu.pushMenuNoBlock("Tools|Script Editor");
         JFrameOperator scw = new JFrameOperator(1);
         scw.close();
     }
