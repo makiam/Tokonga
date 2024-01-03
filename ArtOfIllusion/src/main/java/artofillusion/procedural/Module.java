@@ -49,12 +49,8 @@ public class Module<M extends Module> {
         this.output = output;
         linkFrom = new Module[input.length];
         linkFromIndex = new int[input.length];
-        for (int i = 0; i < input.length; i++) {
-            input[i].setModule(this);
-        }
-        for (int i = 0; i < output.length; i++) {
-            output[i].setModule(this);
-        }
+        for (IOPort ioPort : input) ioPort.setModule(this);
+        for (IOPort ioPort : output) ioPort.setModule(this);
         bounds = new Rectangle(position.x, position.y, 0, 0);
         layout();
     }
@@ -253,11 +249,10 @@ public class Module<M extends Module> {
             return true;
         }
         checked = true;
-        for (int i = 0; i < linkFrom.length; i++) {
-            if (linkFrom[i] != null) {
-                if (linkFrom[i].checkFeedback()) {
-                    return true;
-                }
+        for (Module module : linkFrom) {
+            if (module == null) continue;
+            if (module.checkFeedback()) {
+                return true;
             }
         }
         checked = false;

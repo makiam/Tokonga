@@ -21,7 +21,6 @@ import java.awt.*;
 public class MinModule extends ProceduralModule<MinModule> {
 
     double lastBlur, value, error;
-    int which;
     boolean valueOk;
 
     public MinModule() {
@@ -66,12 +65,12 @@ public class MinModule extends ProceduralModule<MinModule> {
             which = 1;
         } else if (value1 < value2) {
             value = value1;
-            double minmax = (max1 < max2 ? max1 : max2);
+            double minmax = (Math.min(max1, max2));
             error = Math.abs(minmax - value);
             which = 0;
         } else {
             value = value2;
-            double minmax = (max1 < max2 ? max1 : max2);
+            double minmax = (Math.min(max1, max2));
             error = Math.abs(minmax - value);
             which = 1;
         }

@@ -26,7 +26,9 @@ import java.util.*;
 @ProceduralModule.Category(value = "Modules:menu.functions")
 public class RandomModule extends ProceduralModule<RandomModule> {
 
-    boolean repeat, valueOk, errorOk, gradOk;
+    boolean valueOk;
+    boolean errorOk;
+    boolean gradOk;
     int lastBase, octaves;
     double a1, a2, a3;
     double value, error, deriv, amplitude, lastBlur;

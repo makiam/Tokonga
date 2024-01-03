@@ -12,11 +12,15 @@
 package artofillusion.procedural;
 
 import artofillusion.math.*;
+import lombok.Setter;
+
 import java.awt.*;
 
 /* This is a Module which represents one of the output values of a procedure. */
 public class OutputModule extends ProceduralModule<OutputModule> {
 
+    /* All output modules should be the same width. */
+    @Setter
     int width;
     final double defaultValue;
     final RGBColor defaultColor;
@@ -26,11 +30,6 @@ public class OutputModule extends ProceduralModule<OutputModule> {
                 new IOPort[]{}, new Point(0, 0));
         this.defaultValue = defaultValue;
         this.defaultColor = defaultColor;
-    }
-
-    /* All output modules should be the same width. */
-    public void setWidth(int w) {
-        width = w;
     }
 
     @Override

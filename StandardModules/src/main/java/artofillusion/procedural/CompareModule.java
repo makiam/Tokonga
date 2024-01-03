@@ -71,10 +71,10 @@ public class CompareModule extends ProceduralModule<ColorSumModule> {
         } else if (value1 > value2) {
             error = 0.5 * (max2 - min1) / (max1 - min2);
             value = 1.0 - error;
-            deriv = 1.0 / (error1 > error2 ? error1 : error2);
+            deriv = 1.0 / (Math.max(error1, error2));
         } else {
             value = error = 0.5 * (max1 - min2) / (max2 - min1);
-            deriv = 1.0 / (error1 > error2 ? error1 : error2);
+            deriv = 1.0 / (Math.max(error1, error2));
         }
         return value;
     }

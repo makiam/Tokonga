@@ -21,7 +21,6 @@ import java.awt.*;
 public class MaxModule extends ProceduralModule<MaxModule> {
 
     double lastBlur, value, error;
-    int which;
     boolean valueOk;
 
     public MaxModule() {
