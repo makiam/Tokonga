@@ -19,7 +19,7 @@ import java.awt.*;
  * depending on which is greater.
  */
 @ProceduralModule.Category(value = "Modules:menu.operators")
-public class CompareModule extends ProceduralModule {
+public class CompareModule extends ProceduralModule<ColorSumModule> {
 
     double value, error, deriv, lastBlur;
     boolean valueOk, gradOk;

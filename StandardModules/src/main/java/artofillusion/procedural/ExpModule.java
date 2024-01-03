@@ -14,9 +14,11 @@ package artofillusion.procedural;
 import artofillusion.math.*;
 import java.awt.*;
 
-/* This is a Module which outputs the exponential of a number. */
+/**
+ *  This is a Module which outputs the exponential of a number.
+ */
 @ProceduralModule.Category(value = "Modules:menu.functions")
-public class ExpModule extends ProceduralModule {
+public class ExpModule extends ProceduralModule<ExpModule> {
 
     boolean valueOk, errorOk, gradOk;
     double value, error, valueIn, errorIn, lastBlur;

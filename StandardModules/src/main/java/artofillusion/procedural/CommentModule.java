@@ -22,7 +22,7 @@ import java.io.*;
  * procedure.
  */
 @ProceduralModule.Category(value = "Modules:menu.values")
-public class CommentModule extends ProceduralModule {
+public class CommentModule extends ProceduralModule<CommentModule> {
 
     public CommentModule() {
         this(new Point());
@@ -77,8 +77,8 @@ public class CommentModule extends ProceduralModule {
     public void calcSize() {
         String[] lines = name.split("\n");
         bounds.width = 0;
-        for (int i = 0; i < lines.length; i++) {
-            int len = defaultMetrics.stringWidth(lines[i]);
+        for (String line : lines) {
+            int len = defaultMetrics.stringWidth(line);
             if (len > bounds.width) {
                 bounds.width = len;
             }

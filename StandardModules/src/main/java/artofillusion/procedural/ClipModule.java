@@ -23,7 +23,7 @@ import java.io.*;
  * This is a Module which clips its input to a fixed range.
  */
 @ProceduralModule.Category(value = "Modules:menu.functions")
-public class ClipModule extends ProceduralModule {
+public class ClipModule extends ProceduralModule<ClipModule> {
 
     double min, max;
 

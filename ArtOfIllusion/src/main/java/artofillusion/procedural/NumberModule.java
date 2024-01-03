@@ -23,7 +23,7 @@ import java.io.*;
  * This is a Module which outputs a number.
  */
 @ProceduralModule.Category(value = "Modules:menu.values")
-public class NumberModule extends ProceduralModule {
+public class NumberModule extends ProceduralModule<NumberModule> {
 
     private double value;
 

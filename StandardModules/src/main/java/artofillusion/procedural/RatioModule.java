@@ -18,7 +18,7 @@ import java.awt.*;
  * This is a Module which outputs the ratio of two numbers.
  */
 @ProceduralModule.Category(value = "Modules:menu.operators")
-public class RatioModule extends ProceduralModule {
+public class RatioModule extends ProceduralModule<RatioModule> {
 
     boolean valueOk, errorOk;
     double value, error, valueIn1, valueIn2, errorIn1, errorIn2, lastBlur;

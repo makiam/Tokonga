@@ -22,7 +22,7 @@ import java.io.*;
  * This is a Module which performs a linear 3D coordinate transform.
  */
 @ProceduralModule.Category(value = "Modules:menu.transforms")
-public class TransformModule extends ProceduralModule {
+public class TransformModule extends ProceduralModule<TransformModule> {
 
     boolean valueOk, errorOk, gradOk;
     CoordinateSystem coords;

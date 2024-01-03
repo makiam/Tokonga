@@ -23,7 +23,7 @@ import java.io.*;
  * This is a Module which generates a grid of dots.
  */
 @ProceduralModule.Category(value = "Modules:menu.patterns")
-public class GridModule extends ProceduralModule {
+public class GridModule extends ProceduralModule<GridModule> {
 
     boolean valueOk, errorOk, gradOk;
     double value, error, xspace, yspace, zspace, lastBlur;

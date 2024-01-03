@@ -18,7 +18,7 @@ import java.awt.*;
  * This is a Module which outputs the square root of a number.
  */
 @ProceduralModule.Category(value = "Modules:menu.functions")
-public class SqrtModule extends ProceduralModule {
+public class SqrtModule extends ProceduralModule<SqrtModule> {
 
     boolean valueOk, errorOk, gradOk;
     double value, error, valueIn, errorIn, lastBlur;

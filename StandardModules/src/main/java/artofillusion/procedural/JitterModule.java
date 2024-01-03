@@ -23,7 +23,7 @@ import java.io.*;
  * This is a Module which randomly displaces the coordinate system.
  */
 @ProceduralModule.Category(value = "Modules:menu.transforms")
-public class JitterModule extends ProceduralModule {
+public class JitterModule extends ProceduralModule<JitterModule> {
 
     boolean valueOk;
     final Vec3 v;

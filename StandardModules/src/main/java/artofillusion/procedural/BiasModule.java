@@ -19,7 +19,7 @@ import java.awt.*;
  * This is a Module which calculates Perlin's bias function.
  */
 @ProceduralModule.Category(value = "Modules:menu.functions")
-public class BiasModule extends ProceduralModule {
+public class BiasModule extends ProceduralModule<BiasModule> {
 
     boolean valueOk, errorOk, gradOk;
     double value, error, valueIn, errorIn, power, lastBlur;

@@ -19,7 +19,7 @@ import java.awt.*;
  * and blue components of a color.
  */
 @ProceduralModule.Category(value = "Modules:menu.colorFunctions")
-public class RGBModule extends ProceduralModule {
+public class RGBModule extends ProceduralModule<RandomModule> {
 
     final RGBColor color;
     boolean colorOk;

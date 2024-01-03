@@ -24,7 +24,7 @@ import java.io.*;
  * function.
  */
 @ProceduralModule.Category(value = "Modules:menu.patterns")
-public class TurbulenceModule extends ProceduralModule {
+public class TurbulenceModule extends ProceduralModule<TurbulenceModule> {
 
     boolean valueOk, errorOk, gradOk;
     int octaves;

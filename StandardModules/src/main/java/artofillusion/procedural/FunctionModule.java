@@ -21,12 +21,12 @@ import java.io.*;
 import java.text.*;
 
 /**
- * This is a Module which outputs a user defined function of its input, y =
+ * This is a Module which outputs a user-defined function of its input, y =
  * f(x). It is defined by a set of points (x,y). For other values of x, the
  * output is determined by interpolation.
  */
 @ProceduralModule.Category(value = "Modules:menu.functions")
-public class FunctionModule extends ProceduralModule {
+public class FunctionModule extends ProceduralModule<FunctionModule> {
 
     private boolean repeat, valueOk, errorOk, gradOk;
     private double[] x;

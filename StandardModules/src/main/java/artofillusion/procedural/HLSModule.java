@@ -19,7 +19,7 @@ import java.awt.*;
  * saturation, and value components of a color.
  */
 @ProceduralModule.Category(value = "Modules:menu.colorFunctions")
-public class HLSModule extends ProceduralModule {
+public class HLSModule extends ProceduralModule<HLSModule> {
 
     final RGBColor color;
     boolean colorOk;

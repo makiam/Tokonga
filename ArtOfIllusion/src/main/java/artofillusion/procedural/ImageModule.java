@@ -25,7 +25,7 @@ import javax.swing.*;
  * This is a Module which outputs an image.
  */
 @ProceduralModule.Category(value = "Modules:menu.patterns")
-public class ImageModule extends ProceduralModule {
+public class ImageModule extends ProceduralModule<ImageModule> {
 
     private ImageMap map;
     private boolean tilex, tiley, mirrorx, mirrory, wrapx, wrapy;

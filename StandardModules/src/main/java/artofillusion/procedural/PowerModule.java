@@ -18,7 +18,7 @@ import java.awt.*;
  * This is a Module which raises a number to a power.
  */
 @ProceduralModule.Category(value = "Modules:menu.operators")
-public class PowerModule extends ProceduralModule {
+public class PowerModule extends ProceduralModule<PowerModule> {
 
     boolean valueOk, errorOk, gradOk, powerIsInteger;
     double value, error, valueIn, errorIn, power, lastBlur;

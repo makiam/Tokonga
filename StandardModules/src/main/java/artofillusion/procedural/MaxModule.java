@@ -18,7 +18,7 @@ import java.awt.*;
  * This is a Module which returns the maximum of two numbers.
  */
 @ProceduralModule.Category(value = "Modules:menu.operators")
-public class MaxModule extends ProceduralModule {
+public class MaxModule extends ProceduralModule<MaxModule> {
 
     double lastBlur, value, error;
     int which;

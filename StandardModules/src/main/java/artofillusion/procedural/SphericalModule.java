@@ -19,7 +19,7 @@ import java.awt.*;
  * This is a Module which converts from rectangular to spherical coordinates.
  */
 @ProceduralModule.Category(value = "Modules:menu.transforms")
-public class SphericalModule extends ProceduralModule {
+public class SphericalModule extends ProceduralModule<SphericalModule> {
 
     final double[] value;
     final double[] error;

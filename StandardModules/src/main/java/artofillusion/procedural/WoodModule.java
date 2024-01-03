@@ -23,7 +23,7 @@ import java.io.*;
  * This is a Module which generates a wood pattern.
  */
 @ProceduralModule.Category(value = "Modules:menu.patterns")
-public class WoodModule extends ProceduralModule {
+public class WoodModule extends ProceduralModule<WoodModule> {
 
     boolean valueOk, mod;
     int octaves;

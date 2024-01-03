@@ -23,7 +23,7 @@ import java.io.*;
  * This is a Module which generates a marble pattern.
  */
 @ProceduralModule.Category(value = "Modules:menu.patterns")
-public class MarbleModule extends ProceduralModule {
+public class MarbleModule extends ProceduralModule<MarbleModule> {
 
     boolean valueOk, gradOk;
     int octaves;

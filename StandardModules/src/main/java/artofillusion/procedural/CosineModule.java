@@ -14,9 +14,11 @@ package artofillusion.procedural;
 import artofillusion.math.*;
 import java.awt.*;
 
-/* This is a Module which outputs the cosine of a number. */
+/**
+ *  This is a Module which outputs the cosine of a number.
+ */
 @ProceduralModule.Category(value = "Modules:menu.functions")
-public class CosineModule extends ProceduralModule {
+public class CosineModule extends ProceduralModule<ColorSumModule> {
 
     boolean valueOk, errorOk, gradOk;
     double value, error, valueIn, errorIn, lastBlur;

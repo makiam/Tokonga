@@ -25,7 +25,7 @@ import java.lang.reflect.*;
  * @deprecated as of 3.1, to be removed 4.0. use {@link artofillusion.procedural.ProceduralModule}
  */
 @Deprecated
-public class Module {
+public class Module<M extends Module> {
 
     protected IOPort[] input, output;
     public Module[] linkFrom;
@@ -288,7 +288,7 @@ public class Module {
 
     /**
      * This method initializes the module in preparation for evaluating the
-     * procedure at a new point.The default implementation does nothing.
+     * procedure at a new point. The default implementation does nothing.
      * Subclasses whose output depends on the point should override this method.
      *
      * @param point - a point in space for which a module value is being evaluated.
@@ -340,7 +340,7 @@ public class Module {
      * Create a duplicate of this module. Subclasses with adjustable parameters
      * should override this.
      */
-    public <M extends Module> M duplicate() {
+    public M duplicate() {
         try {
             Constructor<?> con = getClass().getConstructor(Point.class);
             return (M) con.newInstance(new Point(bounds.x, bounds.y));

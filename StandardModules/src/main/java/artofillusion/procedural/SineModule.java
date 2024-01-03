@@ -18,7 +18,7 @@ import java.awt.*;
  * This is a Module which outputs the sine of a number.
  */
 @ProceduralModule.Category(value = "Modules:menu.functions")
-public class SineModule extends ProceduralModule {
+public class SineModule extends ProceduralModule<SineModule> {
 
     boolean valueOk, errorOk, gradOk;
     double value, error, valueIn, errorIn, lastBlur;

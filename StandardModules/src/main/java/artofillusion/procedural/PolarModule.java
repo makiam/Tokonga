@@ -19,7 +19,7 @@ import java.awt.*;
  * This is a Module which converts from rectangular to polar coordinates.
  */
 @ProceduralModule.Category(value = "Modules:menu.transforms")
-public class PolarModule extends ProceduralModule {
+public class PolarModule extends ProceduralModule<PolarModule> {
 
     final double[] value;
     final double[] error;

@@ -15,7 +15,7 @@ import artofillusion.math.*;
 import java.awt.*;
 
 /* This is a Module which represents one of the output values of a procedure. */
-public class OutputModule extends ProceduralModule {
+public class OutputModule extends ProceduralModule<OutputModule> {
 
     int width;
     final double defaultValue;

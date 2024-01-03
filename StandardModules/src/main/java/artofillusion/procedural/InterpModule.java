@@ -19,7 +19,7 @@ import java.awt.*;
  * This is a Module which interpolates between two numbers.
  */
 @ProceduralModule.Category(value = "Modules:menu.functions")
-public class InterpModule extends ProceduralModule {
+public class InterpModule extends ProceduralModule<InterpModule> {
 
     double value, error, fract, lastBlur;
     boolean valueOk, errorOk, gradOk;

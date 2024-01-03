@@ -15,9 +15,11 @@ import artofillusion.math.*;
 import artofillusion.ui.*;
 import java.awt.*;
 
-/* This is a Module which blurs the signal coming into it. */
+/**
+ *  This is a Module which blurs the signal coming into it.
+ * */
 @ProceduralModule.Category(value = "Modules:menu.functions")
-public class BlurModule extends ProceduralModule {
+public class BlurModule extends ProceduralModule<BlurModule> {
 
     boolean valueOk;
     double extraBlur, lastBlur;

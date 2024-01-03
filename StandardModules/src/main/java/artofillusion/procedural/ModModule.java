@@ -18,7 +18,7 @@ import java.awt.*;
  * This is a Module which outputs one number mod another.
  */
 @ProceduralModule.Category(value = "Modules:menu.operators")
-public class ModModule extends ProceduralModule {
+public class ModModule extends ProceduralModule<ModModule> {
 
     double value, error, gradScale, lastBlur;
     boolean valueOk;

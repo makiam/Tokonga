@@ -22,7 +22,7 @@ import java.io.*;
  * This is a Module which outputs a color.
  */
 @ProceduralModule.Category(value = "Modules:menu.values")
-public class ColorModule extends ProceduralModule {
+public class ColorModule extends ProceduralModule<ColorModule> {
 
     private RGBColor color = new RGBColor(1.0f, 1.0f, 1.0f);
 

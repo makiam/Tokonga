@@ -25,7 +25,7 @@ import java.util.*;
  * texture basis function.
  */
 @ProceduralModule.Category(value = "Modules:menu.patterns")
-public class CellsModule extends ProceduralModule {
+public class CellsModule extends ProceduralModule<CellsModule> {
 
     private final boolean[] valueOk;
     private final boolean[] gradOk;

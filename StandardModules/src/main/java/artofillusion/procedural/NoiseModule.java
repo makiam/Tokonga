@@ -24,7 +24,7 @@ import java.io.*;
  * function.
  */
 @ProceduralModule.Category(value = "Modules:menu.patterns")
-public class NoiseModule extends ProceduralModule {
+public class NoiseModule extends ProceduralModule<NoiseModule> {
 
     boolean valueOk, errorOk, gradOk;
     int octaves;

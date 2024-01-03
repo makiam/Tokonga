@@ -19,7 +19,7 @@ import java.awt.*;
  * This is a Module which calculates Perlin's gain function.
  */
 @ProceduralModule.Category(value = "Modules:menu.functions")
-public class GainModule extends ProceduralModule {
+public class GainModule extends ProceduralModule<GainModule> {
 
     boolean valueOk, errorOk, gradOk;
     double value, error, valueIn, errorIn, gain, power, lastBlur;

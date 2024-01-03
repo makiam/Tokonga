@@ -23,7 +23,7 @@ import java.io.*;
  * This is a Module which implements an arbitrary mapping of numbers to colors.
  */
 @ProceduralModule.Category(value = "Modules:menu.colorFunctions")
-public class SpectrumModule extends ProceduralModule {
+public class SpectrumModule extends ProceduralModule<SpectrumModule> {
 
     RGBColor[] color;
     final RGBColor outputColor;

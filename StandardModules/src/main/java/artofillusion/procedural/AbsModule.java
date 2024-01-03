@@ -15,9 +15,11 @@ import artofillusion.math.*;
 import artofillusion.ui.*;
 import java.awt.*;
 
-/* This is a Module which outputs the absolute value of a number. */
+/**
+ * This is a Module which outputs the absolute value of a number.
+ */
 @ProceduralModule.Category(value = "Modules:menu.functions")
-public class AbsModule extends ProceduralModule {
+public class AbsModule extends ProceduralModule<AbsModule> {
 
     private boolean signOk, positive;
     private double lastBlur;
@@ -31,8 +33,7 @@ public class AbsModule extends ProceduralModule {
                 new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output")},
                 position);
     }
-
-    /* New point, so the value will need to be recalculated. */
+    
     @Override
     public void init(PointInfo p) {
         signOk = false;

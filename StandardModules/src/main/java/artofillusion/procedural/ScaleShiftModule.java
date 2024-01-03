@@ -23,7 +23,7 @@ import java.io.*;
  * This is a Module which scales and shifts its input value.
  */
 @ProceduralModule.Category(value = "Modules:menu.functions")
-public class ScaleShiftModule extends ProceduralModule {
+public class ScaleShiftModule extends ProceduralModule<ScaleShiftModule> {
 
     private double scale, shift;
 

@@ -18,7 +18,7 @@ import java.awt.*;
  * This is a Module which returns the minimum of two numbers.
  */
 @ProceduralModule.Category(value = "Modules:menu.operators")
-public class MinModule extends ProceduralModule {
+public class MinModule extends ProceduralModule<MinModule> {
 
     double lastBlur, value, error;
     int which;

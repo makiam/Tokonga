@@ -23,7 +23,7 @@ import java.io.*;
  * This is a Module which generates a brick pattern.
  */
 @ProceduralModule.Category(value = "Modules:menu.patterns")
-public class BrickModule extends ProceduralModule {
+public class BrickModule extends ProceduralModule<BrickModule> {
 
     boolean valueOk, gradOk;
     double value, error, gap, offset, height, lastBlur;

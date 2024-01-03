@@ -15,9 +15,11 @@ import artofillusion.math.*;
 import artofillusion.ui.*;
 import java.awt.*;
 
-/* This is a Module which outputs the product of a color and a number. */
+/**
+ *  This is a Module which outputs the product of a color and a number.
+ */
 @ProceduralModule.Category(value = "Modules:menu.colorFunctions")
-public class ColorScaleModule extends ProceduralModule {
+public class ColorScaleModule extends ProceduralModule<ColorScaleModule> {
 
     final RGBColor color;
     boolean colorOk;
