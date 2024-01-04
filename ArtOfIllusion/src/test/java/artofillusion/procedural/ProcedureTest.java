@@ -79,14 +79,14 @@ public class ProcedureTest {
 
     @Test
     public void testGetMissedModuleFromProcedure() {
-        var mod = new Module("Test", new IOPort[]{}, new IOPort[]{}, new Point());
+        var mod = new ProceduralModule("Test", new IOPort[]{}, new IOPort[]{}, new Point());
         Procedure procedure = new Procedure(new OutputModule[]{});
         Assert.assertEquals(-1, procedure.getModuleIndex(mod));
     }
 
     @Test
     public void testGetSingleModuleIndex() {
-        var mod = new Module("Test", new IOPort[]{}, new IOPort[]{}, new Point());
+        var mod = new ProceduralModule("Test", new IOPort[]{}, new IOPort[]{}, new Point());
         Procedure procedure = new Procedure(new OutputModule[]{});
         procedure.addModule(mod);
         Assert.assertEquals(0, procedure.getModuleIndex(mod));
@@ -94,8 +94,8 @@ public class ProcedureTest {
 
     @Test
     public void testGetDoubleModuleIndex() {
-        var mod1 = new Module("Test1", new IOPort[]{}, new IOPort[]{}, new Point());
-        var mod2 = new Module("Test2", new IOPort[]{}, new IOPort[]{}, new Point());
+        var mod1 = new ProceduralModule("Test1", new IOPort[]{}, new IOPort[]{}, new Point());
+        var mod2 = new ProceduralModule("Test2", new IOPort[]{}, new IOPort[]{}, new Point());
         Procedure procedure = new Procedure(new OutputModule[]{});
         procedure.addModule(mod1);
         procedure.addModule(mod2);
@@ -105,8 +105,8 @@ public class ProcedureTest {
 
     @Test
     public void testDeleteFirstOfTwoModules() {
-        var mod1 = new Module("Test1", new IOPort[]{}, new IOPort[]{}, new Point());
-        var mod2 = new Module("Test2", new IOPort[]{}, new IOPort[]{}, new Point());
+        var mod1 = new ProceduralModule("Test1", new IOPort[]{}, new IOPort[]{}, new Point());
+        var mod2 = new ProceduralModule("Test2", new IOPort[]{}, new IOPort[]{}, new Point());
         Procedure procedure = new Procedure(new OutputModule[]{});
         procedure.addModule(mod1);
         procedure.addModule(mod2);
@@ -117,7 +117,7 @@ public class ProcedureTest {
 
     @Test
     public void testDeleteLastSingleModule() {
-        var mod = new Module("Test", new IOPort[]{}, new IOPort[]{}, new Point());
+        var mod = new ProceduralModule("Test", new IOPort[]{}, new IOPort[]{}, new Point());
         Procedure procedure = new Procedure(new OutputModule[]{});
         procedure.addModule(mod);
 
@@ -126,7 +126,7 @@ public class ProcedureTest {
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void testDeleteMissedModule() {
-        var mod = new Module("Test", new IOPort[]{}, new IOPort[]{}, new Point());
+        var mod = new ProceduralModule("Test", new IOPort[]{}, new IOPort[]{}, new Point());
         Procedure procedure = new Procedure(new OutputModule[]{});
         procedure.addModule(mod);
 
@@ -136,7 +136,7 @@ public class ProcedureTest {
     @Test
     public void testInitModuleFromPoint() {
 
-        var mod = new Module("Test", new IOPort[]{}, new IOPort[]{}, new Point()) {
+        var mod = new ProceduralModule("Test", new IOPort[]{}, new IOPort[]{}, new Point()) {
             private PointInfo point;
 
             @Override
@@ -216,7 +216,7 @@ public class ProcedureTest {
     public void testProcedureCopyWithSingleModuleNoLinks() {
         OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
         Procedure origin = new Procedure(new OutputModule[]{exist});
-        var mod = new Module("Test", new IOPort[]{}, new IOPort[]{}, new Point());
+        var mod = new ProceduralModule("Test", new IOPort[]{}, new IOPort[]{}, new Point());
         origin.addModule(mod);
 
         Procedure target = new Procedure(new OutputModule[]{exist});
