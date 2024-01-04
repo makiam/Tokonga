@@ -133,7 +133,6 @@ public class PolyMeshViewer extends MeshViewer {
         }
         int[] invVertTable = mesh.getInvMirroredVerts();
         Wvertex[] v = (Wvertex[]) viewMesh.getVertices();
-        Vec2[] p;
 
         // Calculate the screen coordinates of every vertex.
         int length = v.length;
@@ -213,10 +212,8 @@ public class PolyMeshViewer extends MeshViewer {
 
         boolean[] hide = null;
         int[] faceIndex = null;
-        PolyMesh polymesh = (PolyMesh) getController().getObject().getObject();
         ObjectInfo objInfo = controller.getObject();
-        if (controller instanceof PolyMeshEditorWindow
-                && ((PolyMeshEditorWindow) controller).getFaceIndexParameter() != null) {
+        if (controller instanceof PolyMeshEditorWindow && ((PolyMeshEditorWindow) controller).getFaceIndexParameter() != null) {
             RenderingMesh mesh = objInfo.getPreviewMesh();
             TextureParameter faceIndexParameter = ((PolyMeshEditorWindow) controller).getFaceIndexParameter();
             double[] param = null;
@@ -308,7 +305,6 @@ public class PolyMeshViewer extends MeshViewer {
         }
         // First, draw any unselected portions of the object.
         boolean[] selected = controller.getSelection();
-        int ref = 0;
         boolean mirror = false;
         int[] invVertTable = mesh.getInvMirroredVerts();
 
@@ -326,6 +322,7 @@ public class PolyMeshViewer extends MeshViewer {
             sv = viewMesh.getVertices();
         }
 
+        int ref;
         for (int i = 0; i < screenVert.length; i++) {
             if (mirror) {
                 ref = invVertTable[i];
@@ -382,7 +379,6 @@ public class PolyMeshViewer extends MeshViewer {
         boolean[] selected = controller.getSelection();
         PolyMesh viewMesh = mesh;
         // First, draw any unselected portions of the object.
-        int ref = 0;
         boolean mirror = false;
         int[] invEdgeTable = mesh.invMirroredEdges;
         if (mesh.getMirrorState() != PolyMesh.NO_MIRROR) {
@@ -448,6 +444,7 @@ public class PolyMeshViewer extends MeshViewer {
             if (mirror && index >= invEdgeTable.length) {
                 continue;
             }
+            int ref;
             if (mirror) {
                 ref = invEdgeTable[index];
                 v1 = e[index].vertex;
@@ -717,15 +714,15 @@ public class PolyMeshViewer extends MeshViewer {
             j = i;
             int[] vf = mesh.getFaceVertices(f[i]);
             if (mirror) {
-                for (int l = 0; l < vf.length; ++l) {
-                    if (mesh.mirroredVerts[vf[l]] != -1 && visible[mesh.mirroredVerts[vf[l]]]) {
-                        j = vf[l];
+                for (int value : vf) {
+                    if (mesh.mirroredVerts[value] != -1 && visible[mesh.mirroredVerts[value]]) {
+                        j = value;
                     }
                 }
             } else {
-                for (int l = 0; l < vf.length; ++l) {
-                    if (visible[vf[l]]) {
-                        j = vf[l];
+                for (int value : vf) {
+                    if (visible[value]) {
+                        j = value;
                     }
                 }
             }
@@ -810,8 +807,8 @@ public class PolyMeshViewer extends MeshViewer {
     }
 
     protected void mouseClicked(WidgetMouseEvent ev) {
-        for (int i = 0; i < manipulatorArray.length; i++) {
-            if (manipulatorArray[i].mouseClicked(ev)) {
+        for (Manipulator manipulator : manipulatorArray) {
+            if (manipulator.mouseClicked(ev)) {
                 return;
             }
         }
@@ -828,8 +825,8 @@ public class PolyMeshViewer extends MeshViewer {
         if (!dragging && clickPoint == null) {
             return;
         }
-        for (int i = 0; i < manipulatorArray.length; i++) {
-            if (manipulatorArray[i].mouseDragged(e)) {
+        for (Manipulator manipulator : manipulatorArray) {
+            if (manipulator.mouseDragged(e)) {
                 return;
             }
         }
@@ -853,7 +850,6 @@ public class PolyMeshViewer extends MeshViewer {
         PolyMesh mesh = (PolyMesh) getController().getObject().getObject();
         boolean[] selected = controller.getSelection();
         PolyMesh viewMesh = mesh;
-        int ref = 0;
         boolean mirror = false;
         int[] vertTable = mesh.mirroredVerts;
         int[] edgeTable = mesh.mirroredEdges;
@@ -889,6 +885,7 @@ public class PolyMeshViewer extends MeshViewer {
         // anything it intersects.
         if (selectBounds != null) {
             boolean newsel = !e.isControlDown();
+            int ref;
             if (controller.getSelectionMode() == MeshEditController.POINT_MODE) {
                 for (i = 0; i < selected.length; i++) {
                     if (mirror) {
@@ -1010,8 +1007,7 @@ public class PolyMeshViewer extends MeshViewer {
                         false,
                         UndoRecord.SET_MESH_SELECTION,
                         new Object[]{controller,
-                            new Integer(controller.getSelectionMode()),
-                            oldSelection}));
+                            new Integer(controller.getSelectionMode()), oldSelection}));
                 controller.setSelection(selected);
                 break;
             }
@@ -1358,8 +1354,7 @@ public class PolyMeshViewer extends MeshViewer {
     }
 
     private boolean isVertexVisible(int index) {
-        boolean visibleOnly = (controller instanceof PolyMeshEditorWindow
-                ? ((PolyMeshEditorWindow) controller).isFrontSelectionOn() : false);
+        boolean visibleOnly = (controller instanceof PolyMeshEditorWindow ? ((PolyMeshEditorWindow) controller).isFrontSelectionOn() : false);
         if (!visibleOnly) {
             return true;
         }
@@ -1412,8 +1407,7 @@ public class PolyMeshViewer extends MeshViewer {
     }
 
     private boolean isFaceVisible(int index) {
-        boolean visibleOnly = (controller instanceof PolyMeshEditorWindow
-                ? ((PolyMeshEditorWindow) controller).isFrontSelectionOn() : false);
+        boolean visibleOnly = (controller instanceof PolyMeshEditorWindow ? ((PolyMeshEditorWindow) controller).isFrontSelectionOn() : false);
         if (!visibleOnly) {
             return true;
         }
