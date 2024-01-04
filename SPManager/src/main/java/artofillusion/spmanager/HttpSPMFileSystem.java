@@ -492,7 +492,7 @@ public class HttpSPMFileSystem extends SPMFileSystem {
      * @param from Description of the Parameter
      * @param fileName Description of the Parameter
      * @param status Description of the Parameter
-     * @param lengthToDownload Description of the Parameter
+     * @param totalDownload Description of the Parameter
      * @param downloadedLength Description of the Parameter
      * @return Description of the Return Value
      */
