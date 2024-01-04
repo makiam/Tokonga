@@ -22,8 +22,8 @@ public class ModuleTest {
 
     @Test
     public void testModuleDuplicate() {
-        ProceduralModule source = new ColorScaleModule(new Point(128, 64));
-        ProceduralModule target = source.duplicate();
+        var source = new ColorScaleModule(new Point(128, 64));
+        var target = source.duplicate();
 
         Assert.assertTrue(target instanceof ColorScaleModule);
         Assert.assertNotNull(target);
