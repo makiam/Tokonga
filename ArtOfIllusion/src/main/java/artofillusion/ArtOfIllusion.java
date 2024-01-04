@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2013 by Peter Eastman
-   Changes copyright (C) 2016-2023 by Maksim Khramov
+   Changes copyright (C) 2016-2024 by Maksim Khramov
    Changes copyright (C) 2016 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -252,7 +252,7 @@ public class ArtOfIllusion {
                     @Override
                     public Boolean doInBackground() {
                         try {
-                            Thread.sleep(1000); //500 worked ; 250 failed
+                            Thread.sleep(1000); //500 worked; 250 failed
                         } catch (InterruptedException ex) {
                             log.atError().setCause(ex).log("Swing background process interrupted: {}", ex.getMessage());
                         }
@@ -512,43 +512,43 @@ public class ArtOfIllusion {
      * either the same scene or a different one.
      */
     public static void copyToClipboard(ObjectInfo[] obj, Scene scene) {
-        // First make a list of all textures used by the objects.
+        // First, make a list of all textures used by the objects.
 
-        ArrayList<Texture> textures = new ArrayList<>();
-        for (int i = 0; i < obj.length; i++) {
-            Texture tex = obj[i].getObject().getTexture();
+        List<Texture> textures = new ArrayList<>();
+        for (ObjectInfo co : obj) {
+            Texture tex = co.getObject().getTexture();
             if (tex instanceof LayeredTexture) {
-                LayeredMapping map = (LayeredMapping) obj[i].getObject().getTextureMapping();
+                LayeredMapping map = (LayeredMapping) co.getObject().getTextureMapping();
                 Texture[] layer = map.getLayers();
                 for (int j = 0; j < layer.length; j++) {
                     Texture dup = layer[j].duplicate();
                     dup.setID(layer[j].getID());
                     textures.add(dup);
                     map.setLayer(j, dup);
-                    map.setLayerMapping(j, map.getLayerMapping(j).duplicate(obj[i].getObject(), dup));
+                    map.setLayerMapping(j, map.getLayerMapping(j).duplicate(co.getObject(), dup));
                 }
             } else if (tex != null) {
                 Texture dup = tex.duplicate();
                 dup.setID(tex.getID());
                 textures.add(dup);
-                obj[i].getObject().setTexture(dup, obj[i].getObject().getTextureMapping().duplicate(obj[i].getObject(), dup));
+                co.getObject().setTexture(dup, co.getObject().getTextureMapping().duplicate(co.getObject(), dup));
             }
         }
 
-        // Next make a list of all materials used by the objects.
-        ArrayList<Material> materials = new ArrayList<>();
-        for (int i = 0; i < obj.length; i++) {
-            Material mat = obj[i].getObject().getMaterial();
+        // Next, make a list of all materials used by the objects.
+        List<Material> materials = new ArrayList<>();
+        for (ObjectInfo obj1 : obj) {
+            Material mat = obj1.getObject().getMaterial();
             if (mat != null) {
                 Material dup = mat.duplicate();
                 dup.setID(mat.getID());
                 materials.add(dup);
-                obj[i].getObject().setMaterial(dup, obj[i].getObject().getMaterialMapping().duplicate(obj[i].getObject(), dup));
+                obj1.getObject().setMaterial(dup, obj1.getObject().getMaterialMapping().duplicate(obj1.getObject(), dup));
             }
         }
 
         // Now make a list of all ImageMaps used by any of them.
-        ArrayList<ImageMap> images = new ArrayList<>();
+        List<ImageMap> images = new ArrayList<>();
         for (int i = 0; i < scene.getNumImages(); i++) {
             ImageMap map = scene.getImage(i);
             boolean used = false;
@@ -582,23 +582,27 @@ public class ArtOfIllusion {
         win.setUndoRecord(undo);
         int[] sel = win.getSelectedIndices();
 
-        // First add any new image maps to the scene.
-        for (int i = 0; i < clipboardImage.length; i++) {
+        // First, add any new image maps to the scene.
+        for (ImageMap ci : clipboardImage) {
             int j;
-            for (j = 0; j < scene.getNumImages() && clipboardImage[i].getID() != scene.getImage(j).getID(); j++);
+            for (j = 0; j < scene.getNumImages() && ci.getID() != scene.getImage(j).getID(); j++) {
+                ;
+            }
             if (j == scene.getNumImages()) {
-                scene.addImage(clipboardImage[i]);
+                scene.addImage(ci);
             }
         }
 
         // Now add any new textures.
-        for (int i = 0; i < clipboardTexture.length; i++) {
+        for (Texture ct : clipboardTexture) {
             Texture newtex;
             int j;
-            for (j = 0; j < scene.getNumTextures() && clipboardTexture[i].getID() != scene.getTexture(j).getID(); j++);
+            for (j = 0; j < scene.getNumTextures() && ct.getID() != scene.getTexture(j).getID(); j++) {
+                ;
+            }
             if (j == scene.getNumTextures()) {
-                newtex = clipboardTexture[i].duplicate();
-                newtex.setID(clipboardTexture[i].getID());
+                newtex = ct.duplicate();
+                newtex.setID(ct.getID());
                 scene.addTexture(newtex);
             } else {
                 newtex = scene.getTexture(j);
@@ -611,7 +615,7 @@ public class ArtOfIllusion {
                     for (int k = 0; k < newParamValues.length; k++) {
                         newParamValues[k] = oldParamValues[k].duplicate();
                     }
-                    if (current == clipboardTexture[i]) {
+                    if (current == ct) {
                         clipboardObject[j].setTexture(newtex, clipboardObject[j].getObject().getTextureMapping().duplicate(clipboardObject[j].getObject(), newtex));
                     } else if (current instanceof LayeredTexture) {
                         LayeredMapping map = (LayeredMapping) clipboardObject[j].getObject().getTextureMapping();
@@ -619,7 +623,7 @@ public class ArtOfIllusion {
                         clipboardObject[j].setTexture(new LayeredTexture(map), map);
                         Texture[] layer = map.getLayers();
                         for (int k = 0; k < layer.length; k++) {
-                            if (layer[k] == clipboardTexture[i]) {
+                            if (layer[k] == ct) {
                                 map.setLayer(k, newtex);
                                 map.setLayerMapping(k, map.getLayerMapping(k).duplicate(clipboardObject[j].getObject(), newtex));
                             }
@@ -631,29 +635,31 @@ public class ArtOfIllusion {
         }
 
         // Add any new materials.
-        for (int i = 0; i < clipboardMaterial.length; i++) {
+        for (Material cm : clipboardMaterial) {
             Material newmat;
             int j;
-            for (j = 0; j < scene.getNumMaterials() && clipboardMaterial[i].getID() != scene.getMaterial(j).getID(); j++);
+            for (j = 0; j < scene.getNumMaterials() && cm.getID() != scene.getMaterial(j).getID(); j++) {
+                ;
+            }
             if (j == scene.getNumMaterials()) {
-                newmat = clipboardMaterial[i].duplicate();
-                newmat.setID(clipboardMaterial[i].getID());
+                newmat = cm.duplicate();
+                newmat.setID(cm.getID());
                 scene.addMaterial(newmat);
             } else {
                 newmat = scene.getMaterial(j);
             }
             for (j = 0; j < clipboardObject.length; j++) {
                 Material current = clipboardObject[j].getObject().getMaterial();
-                if (current == clipboardMaterial[i]) {
+                if (current == cm) {
                     clipboardObject[j].setMaterial(newmat, clipboardObject[j].getObject().getMaterialMapping().duplicate(clipboardObject[j].getObject(), newmat));
                 }
             }
         }
 
-        // Finally add the objects to the scene.
-        ObjectInfo[] obj = ObjectInfo.duplicateAll(clipboardObject);
-        for (int i = 0; i < obj.length; i++) {
-            win.addObject(obj[i], undo);
+        // Finally, add the objects to the scene.
+        
+        for (ObjectInfo obj1:  ObjectInfo.duplicateAll(clipboardObject)) {
+            win.addObject(obj1, undo);
         }
         undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);
     }
