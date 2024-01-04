@@ -288,11 +288,6 @@ public class PolyMeshViewer extends MeshViewer {
 
     /**
      * Draw the vertices of the control mesh.
-     *
-     * @param unselectedColor
-     * Color for unselected vertices
-     * @param selectedColor
-     * Color for selected vertices
      */
     private void drawVertices() {
         if (!showMesh) {
@@ -366,10 +361,6 @@ public class PolyMeshViewer extends MeshViewer {
      *
      * @param p
      * Description of the Parameter
-     * @param unselectedColor
-     * Color for unselected vertices
-     * @param selectedColor
-     * Color for selected vertices
      */
     private void drawEdges(Vec2[] p) {
         if (!showMesh) {
@@ -382,8 +373,7 @@ public class PolyMeshViewer extends MeshViewer {
         Point[] divScreenVert = null;
         double[] divScreenZ = null;
         Vec2[] divPos = null;
-        boolean[] hideFace = (controller instanceof PolyMeshEditorWindow
-                ? ((PolyMeshEditorWindow) controller).hideFace : null);
+        boolean[] hideFace = (controller instanceof PolyMeshEditorWindow ? ((PolyMeshEditorWindow) controller).hideFace : null);
         PolyMesh mesh = (PolyMesh) getController().getObject().getObject();
         Color seamColor = mesh.getSeamColor();
         Color selectedSeamColor = seamColor;
@@ -414,8 +404,7 @@ public class PolyMeshViewer extends MeshViewer {
         Wedge[] e = viewMesh.getEdges();
         Wedge[] trueEdges = mesh.getEdges();
         Wface[] trueFaces = mesh.getFaces();
-        int[] projectedEdge = (controller instanceof PolyMeshEditorWindow
-                ? ((PolyMeshEditorWindow) controller).findProjectedEdges() : null);
+        int[] projectedEdge = (controller instanceof PolyMeshEditorWindow ? ((PolyMeshEditorWindow) controller).findProjectedEdges() : null);
         if (projectedEdge != null) {
             divMesh = viewMesh.getSubdividedMesh();
             divVert = divMesh.getVertices();
@@ -459,10 +448,10 @@ public class PolyMeshViewer extends MeshViewer {
             loop = divEdge.length;
         }
         for (int i = 0; i < loop; i++) {
-            if (projectedEdge != null) {
-                index = projectedEdge[i];
-            } else {
+            if (projectedEdge == null) {
                 index = i;
+            } else {
+                index = projectedEdge[i];
             }
             if (index == -1) {
                 continue;
@@ -500,46 +489,41 @@ public class PolyMeshViewer extends MeshViewer {
                 if (selectionMode == MeshEditController.POINT_MODE) {
                     if (projectedEdge == null) {
                         if (isVisible) {
-                            if (seams != null) {
-                                seam = seams[ref];
-                            } else {
+                            if (seams == null) {
                                 seam = false;
+                            } else {
+                                seam = seams[ref];
                             }
-                            drawLine(screenVert[v1], screenVert[v2],
-                                    seam ? seamColor : edgeColor);
+                            drawLine(screenVert[v1], screenVert[v2], seam ? seamColor : edgeColor);
                         }
                     } else {
                         if (isVisible) {
-                            if (seams != null) {
-                                seam = seams[ref];
-                            } else {
+                            if (seams == null) {
                                 seam = false;
+                            } else {
+                                seam = seams[ref];
                             }
-                            drawLine(divScreenVert[divEdge[i].v1], divScreenVert[divEdge[i].v2], seam
-                                    ? seamColor : edgeColor);
+                            drawLine(divScreenVert[divEdge[i].v1], divScreenVert[divEdge[i].v2], seam ? seamColor : edgeColor);
                         }
                     }
-                } else if (controller.getSelectionMode() == MeshEditController.EDGE_MODE
-                        || controller.getSelectionMode() == MeshEditController.FACE_MODE) {
+                } else if (controller.getSelectionMode() == MeshEditController.EDGE_MODE || controller.getSelectionMode() == MeshEditController.FACE_MODE) {
                     if (projectedEdge == null) {
                         if (!edgeSelected[ref] && isVisible) {
-                            if (seams != null) {
-                                seam = seams[ref];
-                            } else {
+                            if (seams == null) {
                                 seam = false;
+                            } else {
+                                seam = seams[ref];
                             }
-                            drawLine(screenVert[v1], screenVert[v2], seam
-                                    ? seamColor : edgeColor);
+                            drawLine(screenVert[v1], screenVert[v2], seam ? seamColor : edgeColor);
                         }
                     } else {
                         if (!edgeSelected[ref] && isVisible) {
-                            if (seams != null) {
-                                seam = seams[ref];
-                            } else {
+                            if (seams == null) {
                                 seam = false;
+                            } else {
+                                seam = seams[ref];
                             }
-                            drawLine(divScreenVert[divEdge[i].v1], divScreenVert[divEdge[i].v2], seam
-                                    ? seamColor : edgeColor);
+                            drawLine(divScreenVert[divEdge[i].v1], divScreenVert[divEdge[i].v2], seam ? seamColor : edgeColor);
                         }
                     }
                 }
@@ -547,122 +531,86 @@ public class PolyMeshViewer extends MeshViewer {
                 if (controller.getSelectionMode() == MeshEditController.POINT_MODE) {
                     if (projectedEdge == null) {
                         if (isVisible) {
-                            if (seams != null) {
-                                seam = seams[ref];
-                            } else {
+                            if (seams == null) {
                                 seam = false;
+                            } else {
+                                seam = seams[ref];
                             }
-                            renderLine(p[v1],
-                                    screenZ[v1] - 0.01,
-                                    p[v2],
-                                    screenZ[v2] - 0.01,
-                                    theCamera,
-                                    seam
-                                            ? seamColor : edgeColor);
+                            renderLine(p[v1], screenZ[v1] - 0.01, p[v2], screenZ[v2] - 0.01, theCamera, seam ? seamColor : edgeColor);
                         }
                     } else {
                         if (isVisible) {
-                            if (seams != null) {
-                                seam = seams[ref];
-                            } else {
+                            if (seams == null) {
                                 seam = false;
+                            } else {
+                                seam = seams[ref];
                             }
-                            renderLine(divPos[divEdge[i].v1],
-                                    divScreenZ[divEdge[i].v1] - 0.01,
-                                    divPos[divEdge[i].v2],
-                                    divScreenZ[divEdge[i].v2] - 0.01,
-                                    theCamera,
-                                    seam
-                                            ? seamColor : edgeColor);
+                            renderLine(divPos[divEdge[i].v1], divScreenZ[divEdge[i].v1] - 0.01, divPos[divEdge[i].v2], divScreenZ[divEdge[i].v2] - 0.01, theCamera, seam ? seamColor : edgeColor);
                         }
                     }
-                } else if (controller.getSelectionMode() == MeshEditController.EDGE_MODE
-                        || controller.getSelectionMode() == MeshEditController.FACE_MODE) {
+                } else if (controller.getSelectionMode() == MeshEditController.EDGE_MODE || controller.getSelectionMode() == MeshEditController.FACE_MODE) {
                     if (projectedEdge == null) {
                         if (!edgeSelected[ref] && isVisible) {
-                            if (seams != null) {
-                                seam = seams[ref];
-                            } else {
+                            if (seams == null) {
                                 seam = false;
+                            } else {
+                                seam = seams[ref];
                             }
-                            renderLine(p[v1], screenZ[v1] - 0.01, p[v2],
-                                    screenZ[v2] - 0.01, theCamera,
-                                    seam ? seamColor : edgeColor);
+                            renderLine(p[v1], screenZ[v1] - 0.01, p[v2], screenZ[v2] - 0.01, theCamera, seam ? seamColor : edgeColor);
                         }
                     } else {
                         if (!edgeSelected[ref] && isVisible) {
-                            if (seams != null) {
-                                seam = seams[ref];
-                            } else {
+                            if (seams == null) {
                                 seam = false;
+                            } else {
+                                seam = seams[ref];
                             }
-                            renderLine(divPos[divEdge[i].v1],
-                                    divScreenZ[divEdge[i].v1] - 0.01,
-                                    divPos[divEdge[i].v2],
-                                    divScreenZ[divEdge[i].v2] - 0.01,
-                                    theCamera,
-                                    seam
-                                            ? seamColor : edgeColor);
+                            renderLine(divPos[divEdge[i].v1], divScreenZ[divEdge[i].v1] - 0.01, divPos[divEdge[i].v2], divScreenZ[divEdge[i].v2] - 0.01, theCamera, seam ? seamColor : edgeColor);
                         }
                     }
                 }
             }
 
             // Now draw the selected portions.
-            if (controller.getSelectionMode() == MeshEditController.EDGE_MODE
-                    || controller.getSelectionMode() == MeshEditController.FACE_MODE) {
+            if (controller.getSelectionMode() == MeshEditController.EDGE_MODE || controller.getSelectionMode() == MeshEditController.FACE_MODE) {
                 if (renderMode == RENDER_WIREFRAME || renderMode == RENDER_TRANSPARENT) {
                     if (projectedEdge == null) {
                         if (edgeSelected[ref] && visible[v1] && visible[v2]) {
-                            if (seams != null) {
-                                seam = seams[ref];
-                            } else {
+                            if (seams == null) {
                                 seam = false;
+                            } else {
+                                seam = seams[ref];
                             }
-                            drawLine(screenVert[v1], screenVert[v2], seam
-                                    ? selectedSeamColor : selectedEdgeColor);
+                            drawLine(screenVert[v1], screenVert[v2], seam ? selectedSeamColor : selectedEdgeColor);
                         }
                     } else {
                         if (edgeSelected[ref] && visible[v1] && visible[v2]) {
-                            if (seams != null) {
-                                seam = seams[ref];
-                            } else {
+                            if (seams == null) {
                                 seam = false;
+                            } else {
+                                seam = seams[ref];
                             }
-                            drawLine(divScreenVert[divEdge[i].v1], divScreenVert[divEdge[i].v2], seam
-                                    ? selectedSeamColor : selectedEdgeColor);
+                            drawLine(divScreenVert[divEdge[i].v1], divScreenVert[divEdge[i].v2], seam ? selectedSeamColor : selectedEdgeColor);
                         }
                     }
                 } else {
                     if (projectedEdge == null) {
                         if (edgeSelected[ref] && visible[v1] && visible[v2]) {
-                            if (seams != null) {
-                                seam = seams[ref];
-                            } else {
+                            if (seams == null) {
                                 seam = false;
+                            } else {
+                                seam = seams[ref];
                             }
-                            renderLine(p[v1],
-                                    screenZ[v1] - 0.01,
-                                    p[v2],
-                                    screenZ[v2] - 0.01,
-                                    theCamera,
-                                    seam
-                                            ? selectedSeamColor : selectedEdgeColor);
+                            renderLine(p[v1], screenZ[v1] - 0.01, p[v2], screenZ[v2] - 0.01, theCamera, seam ? selectedSeamColor : selectedEdgeColor);
                         }
                     } else {
                         if (edgeSelected[ref] && visible[v1] && visible[v2]) {
-                            if (seams != null) {
-                                seam = seams[ref];
-                            } else {
+                            if (seams == null) {
                                 seam = false;
+                            } else {
+                                seam = seams[ref];
                             }
-                            renderLine(divPos[divEdge[i].v1],
-                                    divScreenZ[divEdge[i].v1] - 0.01,
-                                    divPos[divEdge[i].v2],
-                                    divScreenZ[divEdge[i].v2] - 0.01,
-                                    theCamera,
-                                    seam
-                                            ? selectedSeamColor : selectedEdgeColor);
+                            renderLine(divPos[divEdge[i].v1], divScreenZ[divEdge[i].v1] - 0.01, divPos[divEdge[i].v2], divScreenZ[divEdge[i].v2] - 0.01, theCamera, seam ? selectedSeamColor : selectedEdgeColor);
                         }
                     }
                 }
@@ -671,7 +619,7 @@ public class PolyMeshViewer extends MeshViewer {
     }
 
     /**
-     * Forwards mouse moved events to current tool if appropriate
+     * Forwards mouse moved events to the current tool if appropriate
      *
      * @param e
      */
