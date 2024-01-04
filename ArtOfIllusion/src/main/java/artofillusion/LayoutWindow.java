@@ -1127,12 +1127,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             return; // There's already a Runnable on the event queue waiting to dispatch a SceneChangedEvent.
         }
         sceneChangePending = true;
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                sceneChangePending = false;
-                dispatchEvent(sceneChangedEvent);
-            }
+        EventQueue.invokeLater(() -> {
+            sceneChangePending = false;
+            dispatchEvent(sceneChangedEvent);
         });
     }
 

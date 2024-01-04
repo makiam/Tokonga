@@ -58,11 +58,12 @@ public class TexturedVertexShader implements VertexShader {
 
         // Determine whether we can cache the color components for each vertex.
         ParameterValue[] value = object.getParameterValues();
-        for (int i = 0; i < value.length; i++) {
-            if (!(value[i] instanceof ConstantParameterValue || value[i] instanceof VertexParameterValue)) {
-                cachePerFace = true;
-                return;
+        for (ParameterValue parameterValue : value) {
+            if (parameterValue instanceof ConstantParameterValue || parameterValue instanceof VertexParameterValue) {
+                continue;
             }
+            cachePerFace = true;
+            return;
         }
     }
 
@@ -94,7 +95,7 @@ public class TexturedVertexShader implements VertexShader {
                 return shader;
             }
         }
-        cachedShaderMap.put(mesh, new SoftReference<TexturedVertexShader>(this));
+        cachedShaderMap.put(mesh, new SoftReference<>(this));
         return this;
     }
 

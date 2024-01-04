@@ -30,10 +30,7 @@ public class ScrollViewTool {
     private ViewerCanvas view;
     private Camera camera;
     private double distToPlane, scale;
-    private double scrollBlendX;
-    private double scrollBlendY;
     private int navigationMode;
-    private int startOrientation;
     private Vec3 startZ, startUp;
     private Rectangle bounds;
     private CoordinateSystem startCoords;
@@ -45,7 +42,6 @@ public class ScrollViewTool {
     }
 
     protected void mouseScrolled(MouseScrolledEvent e, ViewerCanvas v) {
-        int scrollSteps = v.scrollBuffer;
         v.scrollBuffer = 0;
         v.mouseMoving = false;
         view = v;
@@ -163,7 +159,6 @@ public class ScrollViewTool {
             angle = scrollRadius * scrollBlend * amount * 0.00002;
 
             deltaZ = -distToPlane * 0.01 * amount * (1.0 - scrollBlend);
-            deltaY = 0.0;
 
             // Calculate the turn
             Vec3 location = coords.getOrigin();

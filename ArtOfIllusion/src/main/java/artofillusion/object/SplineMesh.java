@@ -92,13 +92,9 @@ public class SplineMesh extends Object3D implements Mesh {
             vertex[i] = new MeshVertex(mesh.vertex[i]);
         }
         usmoothness = new float[mesh.usize];
-        for (int i = 0; i < mesh.usize; i++) {
-            usmoothness[i] = mesh.usmoothness[i];
-        }
+        System.arraycopy(mesh.usmoothness, 0, usmoothness, 0, mesh.usize);
         vsmoothness = new float[mesh.vsize];
-        for (int i = 0; i < mesh.vsize; i++) {
-            vsmoothness[i] = mesh.vsmoothness[i];
-        }
+        System.arraycopy(mesh.vsmoothness, 0, vsmoothness, 0, mesh.vsize);
         setSmoothingMethod(mesh.getSmoothingMethod());
         if (skeleton == null) {
             skeleton = mesh.skeleton.duplicate();
@@ -459,9 +455,7 @@ public class SplineMesh extends Object3D implements Mesh {
         param = new double[newparam[0].length][newparam.length][newparam[0][0].length];
         for (int i = 0; i < newparam.length; i++) {
             for (int j = 0; j < newparam[0].length; j++) {
-                for (int k = 0; k < newparam[0][0].length; k++) {
-                    param[j][i][k] = newparam[i][j][k];
-                }
+                System.arraycopy(newparam[i][j], 0, param[j][i], 0, newparam[0][0].length);
             }
         }
         if (vsize == 2) {
@@ -573,9 +567,7 @@ public class SplineMesh extends Object3D implements Mesh {
                     }
                     for (j = 0; j < v.length; j++) {
                         newv[j][k] = calcInterpPoint(v[j], s, param[j], paramTemp, p1, i, p3, p4);
-                        for (int m = 0; m < numParam; m++) {
-                            newparam[j][k][m] = paramTemp[m];
-                        }
+                        System.arraycopy(paramTemp, 0, newparam[j][k], 0, numParam);
                         if (v[j][i].r.distance2(newv[j][k].r) > tol2 && v[j][p3].r.distance2(newv[j][k].r) > tol2) {
                             temp = v[j][i].r.plus(v[j][p3].r).times(0.5);
                             if (temp.distance2(newv[j][k].r) > tol2) {
@@ -667,9 +659,7 @@ public class SplineMesh extends Object3D implements Mesh {
                 } else {
                     for (j = 0; j < v.length; j++) {
                         newv[j][k] = calcApproxPoint(v[j], s, param[j], paramTemp, p1, i, p3);
-                        for (int m = 0; m < numParam; m++) {
-                            newparam[j][k][m] = paramTemp[m];
-                        }
+                        System.arraycopy(paramTemp, 0, newparam[j][k], 0, numParam);
                         temp = newv[j][k].r.minus(v[j][i].r);
                         if (temp.length2() > tol * tol) {
                             newrefine[k] = newrefine[(k - 1 + newrefine.length) % newrefine.length] = newrefine[(k + 1) % newrefine.length] = true;

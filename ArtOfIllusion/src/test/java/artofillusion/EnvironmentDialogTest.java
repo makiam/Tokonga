@@ -228,7 +228,7 @@ public class EnvironmentDialogTest {
 
         ColorWidgetComponentOperator cwc = new ColorWidgetComponentOperator(dialog, 0);
 
-        SwingUtilities.invokeLater(() -> cwc.clickMouse());
+        SwingUtilities.invokeLater(cwc::clickMouse);
 
         ColorDialogOperator cdo = new ColorDialogOperator(cwc.getSource().getName());
         RGBColor newColor = new RGBColor(0.3, 0.7, 0.5);
@@ -257,7 +257,7 @@ public class EnvironmentDialogTest {
 
         ColorWidgetComponentOperator cwc = new ColorWidgetComponentOperator(dialog, 1);
 
-        SwingUtilities.invokeLater(() -> cwc.clickMouse());
+        SwingUtilities.invokeLater(cwc::clickMouse);
 
         ColorDialogOperator cdo = new ColorDialogOperator(cwc.getSource().getName());
         RGBColor newColor = new RGBColor(0.3, 0.7, 0.5);
@@ -286,7 +286,7 @@ public class EnvironmentDialogTest {
 
         ColorWidgetComponentOperator cwc = new ColorWidgetComponentOperator(dialog, 2);
 
-        SwingUtilities.invokeLater(() -> cwc.clickMouse());
+        SwingUtilities.invokeLater(cwc::clickMouse);
 
         ColorDialogOperator cdo = new ColorDialogOperator(cwc.getSource().getName());
         RGBColor newColor = new RGBColor(0.3, 0.7, 0.5);
@@ -316,7 +316,7 @@ public class EnvironmentDialogTest {
 
         ColorWidgetComponentOperator cwc = new ColorWidgetComponentOperator(dialog, 2);
 
-        SwingUtilities.invokeLater(() -> cwc.clickMouse());
+        SwingUtilities.invokeLater(cwc::clickMouse);
 
         ColorDialogOperator cdo = new ColorDialogOperator(cwc.getSource().getName());
         RGBColor newColor = new RGBColor(0.3, 0.7, 0.5);
@@ -357,7 +357,7 @@ public class EnvironmentDialogTest {
         new JComboBoxOperator(dialog, 0).setSelectedIndex(1);
 
         JButtonOperator chooseButton = new JButtonOperator(dialog, "Choose:");
-        SwingUtilities.invokeLater(() -> chooseButton.clickMouse());
+        SwingUtilities.invokeLater(chooseButton::clickMouse);
 
         JDialogOperator textureDialog = new JDialogOperator(Translate.text("objectTextureTitle"));
         JListOperator txList = new JListOperator(textureDialog);
@@ -403,7 +403,7 @@ public class EnvironmentDialogTest {
         new JComboBoxOperator(dialog, 0).setSelectedIndex(1);
 
         JButtonOperator chooseButton = new JButtonOperator(dialog, "Choose:");
-        SwingUtilities.invokeLater(() -> chooseButton.clickMouse());
+        SwingUtilities.invokeLater(chooseButton::clickMouse);
 
         JDialogOperator textureDialog = new JDialogOperator(Translate.text("objectTextureTitle"));
         JListOperator txList = new JListOperator(textureDialog);

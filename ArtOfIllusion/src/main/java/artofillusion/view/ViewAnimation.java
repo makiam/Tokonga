@@ -57,7 +57,6 @@ public class ViewAnimation {
     final double perspSlope = 3.0;
 
   int endOrientation, endNavigation;
-    long msStart, msEnd, ms1st = 0, msLast, msLatest;
     boolean endPerspective, changingPerspective, animatingMove;
     final int viewH;
     final int viewW;
@@ -141,7 +140,7 @@ public class ViewAnimation {
         double sinComp = view.getBounds().height / 2.0 / 100.0;
         double cosComp = refDistToScreen;
         double halfViewAngle = Math.atan2(sinComp, cosComp);
-        double timePersp = 0.0;
+        double timePersp;
         refTangent = (cosComp / sinComp);
 
         if (nextPerspective) {
