@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2007 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -49,6 +49,7 @@ public class LinearMaterialMapping extends MaterialMapping {
         return "Linear";
     }
 
+    @Override
     public boolean legalMapping(Object3D obj, Material mat) {
         return mat instanceof Material3D;
     }

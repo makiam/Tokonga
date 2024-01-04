@@ -1,5 +1,5 @@
 /* Copyright (C) 2017-2020 by Petri Ihalainen
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -21,8 +21,8 @@ import java.awt.event.*;
 import javax.swing.Timer;
 
 /**
- * ScrollViewTool is a tool to handle mouse scroll wheel events in scene and object views.
- * It moves the viewpoint in view z-directi and/or in some cases changes view orientation.
+ * ScrollViewTool is a tool to handle mouse wheel scroll events in scene and object views.
+ * It moves the viewpoint in view z-direction and/or in some cases, changes view orientation.
  */
 public class ScrollViewTool {
 
@@ -245,6 +245,7 @@ public class ScrollViewTool {
     }
 
     private final Timer scrollTimer = new Timer(500, new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
             scrollTimer.stop();
             view.scrolling = false;

@@ -1,4 +1,4 @@
-/* Copyright (C) 2022 by Maksim Khramov
+/* Copyright (C) 2022-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -415,7 +415,7 @@ public class EnvironmentDialogTest {
 
         Assert.assertEquals(scene.getDefaultTexture(), scene.getEnvironmentTexture());
         Assert.assertEquals(mapping, scene.getEnvironmentMapping());
-        Assert.assertEquals(props, scene.getEnvironmentParameterValues());
+        Assert.assertArrayEquals(props, scene.getEnvironmentParameterValues());
 
         Assert.assertTrue(layout.isModified());
     }

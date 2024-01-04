@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2015 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
    Changes copyright (C) 2019 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -840,7 +840,7 @@ public class SplineMesh extends Object3D implements Mesh {
             }
         }
         WireframeMesh wire = new WireframeMesh(point, from, to);
-        cachedWire = new SoftReference<WireframeMesh>(wire);
+        cachedWire = new SoftReference<>(wire);
         return wire;
     }
 
@@ -992,7 +992,7 @@ public class SplineMesh extends Object3D implements Mesh {
         mesh = new RenderingMesh(point, norm, tri, texMapping, matMapping);
         mesh.setParameters(newmesh.paramValue);
         if (interactive) {
-            cachedMesh = new SoftReference<RenderingMesh>(mesh);
+            cachedMesh = new SoftReference<>(mesh);
         }
         return mesh;
     }

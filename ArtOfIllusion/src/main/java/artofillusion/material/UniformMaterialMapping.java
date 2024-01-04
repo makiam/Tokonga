@@ -1,4 +1,5 @@
 /* Copyright (C) 2000-2007 by Peter Eastman
+   Changes copyright (C) 2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -35,6 +36,7 @@ public class UniformMaterialMapping extends MaterialMapping {
         ((UniformMaterial) material).getMaterialSpec(spec);
     }
 
+    @Override
     public boolean legalMapping(Object3D obj, Material mat) {
         return mat instanceof UniformMaterial;
     }

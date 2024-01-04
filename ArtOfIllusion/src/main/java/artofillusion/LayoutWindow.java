@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2015 by Peter Eastman
-   Changes copyright (C) 2016-2023 by Maksim Khramov
+   Changes copyright (C) 2016-2024 by Maksim Khramov
    Changes copyright (C) 2017-2020 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -1153,6 +1153,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         sceneExplorer.setUpdateEnabled(false);
         sceneExplorer.add(info);
         uiEventProcessor.addEvent(new Runnable() {
+            @Override
             public void run() {
                 sceneExplorer.setUpdateEnabled(true);
                 for (var viewer : theView) {

@@ -1,4 +1,5 @@
 /* Copyright (C) 2004-2017 by Peter Eastman
+   Changes copyright (C) 2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -35,7 +36,7 @@ public class TexturedVertexShader implements VertexShader {
     private boolean cachePerFace;
     private final int textureID;
 
-    private static final WeakHashMap<RenderingMesh, SoftReference<TexturedVertexShader>> cachedShaderMap = new WeakHashMap<RenderingMesh, SoftReference<TexturedVertexShader>>();
+    private static final WeakHashMap<RenderingMesh, SoftReference<TexturedVertexShader>> cachedShaderMap = new WeakHashMap<>();
 
     /**
      * Create a TexturedVertexShader for a mesh.
