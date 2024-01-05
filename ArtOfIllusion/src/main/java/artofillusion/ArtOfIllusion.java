@@ -163,7 +163,7 @@ public class ArtOfIllusion {
 
         for (Plugin plugin : PluginRegistry.getPlugins(Plugin.class)) {
             try {
-                plugin.processMessage(Plugin.APPLICATION_STARTING);
+                plugin.onApplicationStarting();
             } catch (Throwable tx) {
                 log.atError().setCause(tx).log("Plugin starting error: {}", tx.getMessage());
                 pluginsLoadResults.add(Translate.text("pluginInitError", plugin.getClass().getSimpleName()));
@@ -422,7 +422,7 @@ public class ArtOfIllusion {
 
             for (Plugin plugin : PluginRegistry.getPlugins(Plugin.class)) {
                 try {
-                    plugin.processMessage(Plugin.SCENE_SAVED, f, fr);
+                    plugin.onSceneSaved(f, fr);
                 } catch (Throwable tx) {
                     log.atError().setCause(tx).log("Error saving scene: {}", tx.getMessage());
                     new BStandardDialog("", UIUtilities.breakString(Translate.text("pluginNotifyError", plugin.getClass().getSimpleName())), BStandardDialog.ERROR).showMessageDialog(null);
