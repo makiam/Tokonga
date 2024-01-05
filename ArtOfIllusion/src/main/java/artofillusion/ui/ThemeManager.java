@@ -1,6 +1,6 @@
 /* Copyright (C) 2007 by François Guillet
    Some parts copyright 2007 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
 
  This program is free software; you can redistribute it and/or modify it under the
  terms of the GNU General Public License as published by the Free Software
@@ -145,7 +145,8 @@ public class ThemeManager {
         private final ColorSet[] colorSets;
         public final boolean classicToolBarButtons;
         public final PluginRegistry.PluginResource resource;
-        public final ClassLoader loader;
+        @Getter
+        private final ClassLoader loader;
         //public final String pathRoot;
         public final boolean selectable;
         protected ButtonStyle buttonStyles;
@@ -199,9 +200,9 @@ public class ThemeManager {
                 // parse the button styles for this theme
                 ButtonStyle bstyle = null;
                 NodeList list = node.getChildNodes();
-                Node kid = null;
+
                 for (int i = 0; i < list.getLength(); i++) {
-                    kid = list.item(i);
+                    Node kid = list.item(i);
                     if (kid.getNodeName().equals("style")) {
                         if (bstyle == null) {
                             bstyle = new ButtonStyle(kid);
@@ -350,10 +351,9 @@ public class ThemeManager {
 
     // initialize the ...NotFoundIcon objects
     static {
-        URL url = null;
-        ImageIcon icon = null;
+        ImageIcon icon;
         try {
-            url = Class.forName("artofillusion.ArtOfIllusion").getResource("artofillusion/Icons/iconNotFound.png");
+            var url = Class.forName("artofillusion.ArtOfIllusion").getResource("artofillusion/Icons/iconNotFound.png");
             icon = new ImageIcon(url);
         } catch (NullPointerException | ClassNotFoundException e) {
             BufferedImage image = new BufferedImage(16, 16, BufferedImage.TYPE_BYTE_INDEXED);
@@ -466,8 +466,8 @@ public class ThemeManager {
             defaultSource = themeIdMap.get(name.substring(0, colon));
             name = name.substring(colon + 1);
         }
-        URL url = null;
-        url = source.loader.getResource(name + ".png");
+
+        var url = source.loader.getResource(name + ".png");
         if (url == null) {
             url = source.loader.getResource(name + ".gif");
         }

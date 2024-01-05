@@ -2,7 +2,7 @@
  * IconGenerator: provide editing and compositing features for icon images
  *
  * Copyright (C) 2008 Nik Trevallyn-Jones, Sydney Australia
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
 
  * Author: Nik Trevallyn-Jones, nik777@users.sourceforge.net
  * $Id: Exp $
@@ -40,7 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Apply editing functions to icon image(s).
  * IconGenerator supports a number of basic image operations such as overlay,
- * blend, add, multiply, etc, and can apply these to the pixels of one or more
+ * blend, add, multiply, etc., and can apply these to the pixels of one or more
  * images.
  * IconGenerator implements a basic macro processor, and the ability to execute
  * a macro in source (string) form, or to compile source and to execute the
@@ -1060,8 +1060,6 @@ public class IconGenerator {
         float atten = 0.8f;
         float alpha;
 
-        int opaque = 0xff << 24;
-
         int cy = height / 2;
         int cx = width / 2;
 
@@ -1073,7 +1071,6 @@ public class IconGenerator {
          * we only feather pixels *less* transparent. Pixels already *more* transparent
          * are left unchanged.
          */
-        float transy = 1.0f;
         for (i = y; i <= cy; i++) {
             if (dir == FEATHER_OUT_DIR) {
 
@@ -1129,7 +1126,6 @@ public class IconGenerator {
                 image.setRGB(0, i, width, 1, pix1, 0, width);
                 image.setRGB(0, height - i - 1, width, 1, pix2, 0, width);
 
-                transy *= atten;
             } else if (dir == FEATHER_IN_DIR) {
 
                 pix1 = image.getRGB(0, i, width, 1, pix1, 0, width);
@@ -1736,7 +1732,7 @@ public class IconGenerator {
                     } else if (rhs == null && obj instanceof BufferedImage) {
                         rhs = (BufferedImage) obj;
                     } else {
-                        throw new Exception("Unusable result of call (" + obj.getClass().getName() + "): " + obj.toString());
+                        throw new Exception("Unusable result of call (" + obj.getClass().getName() + "): " + obj);
                     }
                 }
             }
@@ -2018,8 +2014,7 @@ public class IconGenerator {
             return vec;
         }
 
-        protected BufferedImage getImage(String name, int width, int height, Map<String, Object> namespace, ClassLoader loader)
-                throws IOException {
+        protected BufferedImage getImage(String name, int width, int height, Map<String, Object> namespace, ClassLoader loader) throws IOException {
             Object obj = namespace.get(name);
 
             // resolve reference
@@ -2034,9 +2029,6 @@ public class IconGenerator {
                 return null;
             }
 
-            int w = 0;
-            int h = 0;
-
             // not found, go looking
             if (obj == null) {
                 if (Character.isLetter(name.charAt(0))) {
@@ -2050,8 +2042,6 @@ public class IconGenerator {
 
                     if (url != null) {
                         ImageIcon icon = new ImageIcon(url);
-                        w = icon.getIconWidth();
-                        h = icon.getIconHeight();
 
                         obj = icon.getImage();
                     }
@@ -2063,8 +2053,6 @@ public class IconGenerator {
                 }
             } else {
                 Image img = (Image) obj;
-                w = img.getWidth(null);
-                h = img.getHeight(null);
             }
 
             namespace.put(name, obj);

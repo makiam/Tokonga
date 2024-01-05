@@ -1,5 +1,5 @@
 /* Copyright (C) 2007 by François Guillet
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -83,14 +83,11 @@ public class DefaultToolButton extends ToolButton {
     /**
      * create a new DefaultToolButton using the specified icons for
      * <i>normal</i> and <i>selected</i> icons.
-     *
      * <b><em>No</em></b> style is applied - the icons are used as-is.
-     *
      * This is the least-preferred constructor, since it applies no consistency
      * at all, and relies on the icon creator to have made the icons
      * consistent. This normally works well for icons that are part of the
      * theme, but usually works very poorly for icons associated with plugins.
-     *
      * @param icon the icon to use for normal button display
      * @param selectedIcon the icon to use for selected display.
      */
@@ -118,7 +115,6 @@ public class DefaultToolButton extends ToolButton {
     /**
      * apply a style for the specified type and owner, to the specified
      * icon url.
-     *
      * If the style defined no <code>type.icon</code> attribute, then
      * a definition is generated using the <code>type.background</code> and
      * <code>type.overlay</code> attributes. If no style definition can
@@ -180,7 +176,7 @@ public class DefaultToolButton extends ToolButton {
         namespace.put("{owner}", owner);
 
         // get the classloader from the selected theme
-        ClassLoader loader = ThemeManager.getSelectedTheme().loader;
+        ClassLoader loader = ThemeManager.getSelectedTheme().getLoader();
 
         // return the result of applying the style
         return IconGenerator.apply(macro, null, namespace, loader, style.width, style.height);
