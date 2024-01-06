@@ -16,6 +16,7 @@ import artofillusion.object.*;
 import artofillusion.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ClickedPointFinder {
 
@@ -29,11 +30,11 @@ public class ClickedPointFinder {
     }
 
 
-  /** 
-     Return the closest point on a surface of an object that is found under 
-     a given point on the view. If no object surface is found, then a point at  
-     ViewerCanvas.distToPlane is returned. 
-    
+  /**
+     Return the closest point on a surface of an object that is found under
+     a given point on the view. If no object surface is found, then a point at
+     ViewerCanvas.distToPlane is returned.
+
      This works only for objects, that can produce a RenderingMesh.
    */
 
@@ -56,23 +57,21 @@ public class ClickedPointFinder {
             modelToScreen = view.getCamera().getWorldToScreen();
         }
 
-        ObjectInfo info;
-        RenderingMesh surface;
+
         boolean[] hideTriangle;
         Vec3[] corner3D = new Vec3[3];
-        Vec2[] corner2D = new Vec2[3], corner2DS = new Vec2[3];
-        Mat4 toContext;
-        ArrayList<ObjectInfo> shownObjects = renderableObjects(view);
+        Vec2[] corner2D = new Vec2[3];
 
-        for (int i = 0; i < shownObjects.size(); i++) {
-            info = shownObjects.get(i);
-            surface = info.getPreviewMesh();
+
+        for (ObjectInfo info: renderableObjects(view)) {
+
+            RenderingMesh surface = info.getPreviewMesh();
             if (view instanceof ObjectViewer && (!((ObjectViewer) view).getSceneVisible() || info == ((ObjectViewer) view).thisObjectInScene)) {
                 hideTriangle = view.getHiddenRenderingTriangles();
             } else {
                 hideTriangle = null;
             }
-            toContext = contextTransform(view, info);
+            Mat4 toContext = contextTransform(view, info);
 
             for (int t = 0; t < surface.triangle.length; t++) {
                 if (hideTriangle != null && hideTriangle[t]) {
@@ -133,34 +132,18 @@ public class ClickedPointFinder {
         return (p2D.x > 0 && p2D.x < w && p2D.y > 0 && p2D.y < h);
     }
 
-    /*
-  // These two were supposed to be a pre-check for each mesh, 
-  // whether to check the individual triangles or not.
-  // This would reduce work, when the camera is inside a scene 
-  // with a lot of objects around it.
 
-  private boolean boxInView(ViewerCanvas view, ObjectInfo oi)
-  {
-    return true;
-  }
+    private List<ObjectInfo> renderableObjects(ViewerCanvas view) {
+        List<ObjectInfo> renderable = new ArrayList<>();
 
-  private boolean clickOnBox(ViewerCanvas view, ObjectInfo oi)
-  {
-    return true;
-  }
-     */
-    private ArrayList<ObjectInfo> renderableObjects(ViewerCanvas view) {
-        ArrayList<ObjectInfo> renderable = new ArrayList<>();
-        ObjectInfo oi;
 
         if (view instanceof SceneViewer || (view instanceof ObjectViewer && ((ObjectViewer) view).getSceneVisible())) {
             Scene scene = view.getScene();
-            for (int i = 0; i < scene.getNumObjects(); i++) {
-                oi = scene.getObject(i);
+            scene.getObjects().forEach((ObjectInfo oi) -> {
                 if (oi.isVisible() && oi.getObject().canSetTexture()) {
                     renderable.add(oi);
                 }
-            }
+            });
         } else if (view instanceof ObjectViewer) {
             renderable.add(((ObjectViewer) view).getController().getObject());
         } else if (view instanceof ObjectPreviewCanvas) {

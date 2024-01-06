@@ -810,8 +810,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             }
         }
         if (sel.length == 0) {
-            for (int i = 0; i < popupMenuItem.length; i++) {
-                popupMenuItem[i].setEnabled(false);
+            for (BMenuItem item : popupMenuItem) {
+                item.setEnabled(false);
             }
         } else {
             obj = ((ObjectInfo) sel[0]).getObject();
