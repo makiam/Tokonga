@@ -2,7 +2,7 @@
    This also sets the default values in the dialog.*/
 
  /* Copyright 2001 Rick van der Meiden
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -223,9 +223,7 @@ public class ArraySpec {
             displacement = displacement.times(((double) linearCopies - 1.0) / 2.0);
 
             coords = info.getCoords().duplicate();
-            Mat4 dis = Mat4.translation(displacement.x,
-                    displacement.y,
-                    displacement.z);
+            Mat4 dis = Mat4.translation(displacement.x, displacement.y, displacement.z);
             coords.transformOrigin(dis);
         }
 
@@ -302,8 +300,7 @@ public class ArraySpec {
 
         // subdive curve
         Vec3[] subdiv = new Curve(v, cv.getSmoothness(), cv.getSmoothingMethod(), cv.isClosed()).subdivideCurve(SD_LEVEL).getVertexPositions();
-        // Vec3 startPoint = findPointOnCurve(subdiv, cv.isClosed(), 0);
-        // Vec3 startPoint = v[0];
+
         int startCount = dupFirst ? 0 : 1;
         double curveLength = calcCurveLength(cv);
         if (curveMode == MODE_COPIES) {
@@ -329,7 +326,7 @@ public class ArraySpec {
             // get object
             for (int n = startCount; n < curveCopies; n++) {
                 // determine displacement
-                Vec3 updir_return = new Vec3(0, 0, 0), zdir_return = new Vec3(0, 0, 0);
+                
                 double relativePos = n * curveLength / ((curveCopies - 1) + (cv.isClosed() ? 1 : 0));
 
                 CoordinateSystem curveCS = findCoordinateSystem(subdiv, cv.isClosed(), relativePos, zdir, updir);
@@ -437,40 +434,6 @@ public class ArraySpec {
         return sum;
     }
 
-    /**
-     * determines a point on the curve for which the distance to
-     * the first point is given by relativePosition
-     */
-    //TODO: Delete
-    private Vec3 findPointOnCurve(Vec3[] subdiv, boolean isClosed, double relativePosition) {
-        // find interval around relativePosition
-        int i;
-        double sum = 0, prevsum = 0;
-        for (i = 1; i < subdiv.length; i++) {
-            prevsum = sum;
-            sum += subdiv[i].distance(subdiv[i - 1]);
-            if (sum >= relativePosition) {
-                break;
-            }
-        }
-        int prev_i = i - 1;
-        if (sum < relativePosition) {
-            if (isClosed) {
-                prevsum = sum;
-                sum += subdiv[subdiv.length - 1].distance(subdiv[0]);
-                prev_i = subdiv.length - 1;
-                i = 0;
-            } else {
-                i = i - 1;
-                prev_i = i - 2;
-            }
-        }
-
-        // find point by linear interpolation in this interval
-        double interval = sum - prevsum;
-
-        return subdiv[i].times((relativePosition - prevsum) / interval).plus(subdiv[prev_i].times((sum - relativePosition) / interval));
-    }
 
     /**
      * Construct the Minimally Rotating Frame at every point along the path.
