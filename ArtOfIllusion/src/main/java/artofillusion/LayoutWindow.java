@@ -753,25 +753,25 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     private void createPopupMenu() {
         popupMenu = new BPopupMenu();
         popupMenuItem = new BMenuItem[15];
-        popupMenu.add(popupMenuItem[0] = Translate.menuItem("editObject", this, "editObjectCommand", null));
-        popupMenu.add(popupMenuItem[1] = Translate.menuItem("objectLayout", this, "objectLayoutCommand", null));
-        popupMenu.add(popupMenuItem[2] = Translate.menuItem("setTextureAndMaterial", this, "setTextureCommand", null));
-        popupMenu.add(popupMenuItem[3] = Translate.menuItem("renameObject", this, "renameObjectCommand", null));
-        popupMenu.add(popupMenuItem[4] = Translate.menuItem("convertToTriangle", this, "convertToTriangleCommand", null));
+        popupMenu.add(popupMenuItem[0] = Translate.menuItem("editObject", this, "editObjectCommand"));
+        popupMenu.add(popupMenuItem[1] = Translate.menuItem("objectLayout", this, "objectLayoutCommand"));
+        popupMenu.add(popupMenuItem[2] = Translate.menuItem("setTextureAndMaterial", this, "setTextureCommand"));
+        popupMenu.add(popupMenuItem[3] = Translate.menuItem("renameObject", this, "renameObjectCommand"));
+        popupMenu.add(popupMenuItem[4] = Translate.menuItem("convertToTriangle", this, "convertToTriangleCommand"));
         popupMenu.addSeparator();
         popupMenu.add(popupMenuItem[5] = Translate.menuItem("selectChildren", this, "selectChildrenAction"));
-        popupMenu.add(Translate.menuItem("selectAll", this, "selectAllCommand", null));
-        popupMenu.add(popupMenuItem[6] = Translate.menuItem("deselectAll", this, "clearSelection", null));
+        popupMenu.add(Translate.menuItem("selectAll", this, "selectAllCommand"));
+        popupMenu.add(popupMenuItem[6] = Translate.menuItem("deselectAll", this, "clearSelection"));
         popupMenu.addSeparator();
-        popupMenu.add(popupMenuItem[7] = Translate.menuItem("hideSelection", this, "hideSelectionAction", null));
-        popupMenu.add(popupMenuItem[8] = Translate.menuItem("showSelection", this, "showSelectionAction", null));
+        popupMenu.add(popupMenuItem[7] = Translate.menuItem("hideSelection", this, "hideSelectionAction"));
+        popupMenu.add(popupMenuItem[8] = Translate.menuItem("showSelection", this, "showSelectionAction"));
         popupMenu.add(popupMenuItem[9] = Translate.menuItem("lockSelection", this, "lockSelectionAction"));
         popupMenu.add(popupMenuItem[10] = Translate.menuItem("unlockSelection", this, "unlockSelectionAction"));
         popupMenu.addSeparator();
-        popupMenu.add(popupMenuItem[11] = Translate.menuItem("cut", this, "cutCommand", null));
-        popupMenu.add(popupMenuItem[12] = Translate.menuItem("copy", this, "copyCommand", null));
-        popupMenu.add(popupMenuItem[13] = Translate.menuItem("paste", this, "pasteCommand", null));
-        popupMenu.add(popupMenuItem[14] = Translate.menuItem("clear", this, "clearCommand", null));
+        popupMenu.add(popupMenuItem[11] = Translate.menuItem("cut", this, "cutCommand"));
+        popupMenu.add(popupMenuItem[12] = Translate.menuItem("copy", this, "copyCommand"));
+        popupMenu.add(popupMenuItem[13] = Translate.menuItem("paste", this, "pasteCommand"));
+        popupMenu.add(popupMenuItem[14] = Translate.menuItem("clear", this, "clearCommand"));
     }
 
     /**

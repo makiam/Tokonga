@@ -155,11 +155,11 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
     private void createPopupMenu() {
         popupMenu = new BPopupMenu();
         popupMenuItem = new BMenuItem[5];
-        popupMenu.add(popupMenuItem[0] = Translate.menuItem("editTrack", this, "editSelectedTrack", null));
-        popupMenu.add(popupMenuItem[1] = Translate.menuItem("duplicateTracks", this, "duplicateSelectedTracks", null));
-        popupMenu.add(popupMenuItem[2] = Translate.menuItem("deleteTracks", this, "deleteSelectedTracks", null));
-        popupMenu.add(popupMenuItem[3] = Translate.menuItem("enableTracks", window, "enableTracksAction", null));
-        popupMenu.add(popupMenuItem[4] = Translate.menuItem("disableTracks", window, "disableTracksAction", null));
+        popupMenu.add(popupMenuItem[0] = Translate.menuItem("editTrack", this, "editSelectedTrack"));
+        popupMenu.add(popupMenuItem[1] = Translate.menuItem("duplicateTracks", this, "duplicateSelectedTracks"));
+        popupMenu.add(popupMenuItem[2] = Translate.menuItem("deleteTracks", this, "deleteSelectedTracks"));
+        popupMenu.add(popupMenuItem[3] = Translate.menuItem("enableTracks", window, "enableTracksAction"));
+        popupMenu.add(popupMenuItem[4] = Translate.menuItem("disableTracks", window, "disableTracksAction"));
     }
 
     /**

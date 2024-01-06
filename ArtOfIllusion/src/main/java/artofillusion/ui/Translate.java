@@ -173,31 +173,6 @@ public class Translate {
     }
 
     /**
-     * Get a BMenuItem whose text is given by the property "menu.(name)".
-     * If listener is not null, the specified method of it will be added to the BMenuItem as an
-     * event link for CommandEvents, and the menu item's action command will be set to
-     * (name). This form of the method allows you to explicitly specify
-     * a menu shortcut, rather than using the one given in the properties
-     * file.
-     */
-    public static BMenuItem menuItem(String name, Object listener, String method, Shortcut shortcut) {
-        String command = name;
-        try {
-            command = getValue(name, "menu.", null);
-        } catch (MissingResourceException ex) {
-        }
-        BMenuItem item = new BMenuItem(command);
-        item.setActionCommand(name);
-        if (shortcut != null) {
-            item.setShortcut(shortcut);
-        }
-        if (listener != null) {
-            item.addEventLink(CommandEvent.class, listener, method);
-        }
-        return item;
-    }
-
-    /**
      * Get a BCheckBoxMenuItem whose text is given by the property "menu.(name)".
      * If listener is not null, the specified method of it will be added to the BCheckboxMenuItem as an
      * event link for CommandEvents. state specifies the initial state of the item.
