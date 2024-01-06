@@ -49,10 +49,7 @@ public class SkeletonShapeDistortion extends Distortion {
         if (weight != s.weight) {
             return false;
         }
-        if (!skeleton.equals(s.skeleton)) {
-            return false;
-        }
-        return true;
+        return skeleton.equals(s.skeleton);
     }
 
     /**

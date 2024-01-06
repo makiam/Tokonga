@@ -1,5 +1,5 @@
 /* Copyright (C) 2016 - 2020 by Petri Ihalainen
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -110,22 +110,14 @@ public class ClickedPointFinder {
     }
 
     private boolean closer(Vec3 p1, Vec3 p2) {
-        if (p1.minus(cameraOrigin).dot(cameraZ) < p2.minus(cameraOrigin).dot(cameraZ)) {
-            return true;
-        } else {
-            return false;
-        }
+        return p1.minus(cameraOrigin).dot(cameraZ) < p2.minus(cameraOrigin).dot(cameraZ);
     }
 
     private boolean onFrontSide(Vec3 p) {
         if (!perspective) // Everything is 'in front' of the camera in parallel mode
         {
             return true;
-        } else if (p.minus(cameraOrigin).dot(cameraZ) > 0.0) {
-            return true;
-        } else {
-            return false;
-        }
+        } else return p.minus(cameraOrigin).dot(cameraZ) > 0.0;
     }
 
     private boolean onTriangle(Vec2[] corner2D, Point point) {
@@ -133,11 +125,7 @@ public class ClickedPointFinder {
         // If the point is outside, some of those will be negative.
 
         bary = TriangleMath.baryCoordinates(corner2D, point);
-        if (bary[0] >= 0.0 && bary[1] >= 0.0 && +bary[2] >= 0.0) {
-            return true;
-        } else {
-            return false;
-        }
+        return bary[0] >= 0.0 && bary[1] >= 0.0 && +bary[2] >= 0.0;
     }
 
     private boolean onView(Vec3 p3D) {

@@ -1,4 +1,5 @@
 /* Copyright (C) 2016-2019 by Petri Ihalainen
+   Changes copyright (C) 2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -49,11 +50,7 @@ public class ViewerNavigationControl implements ViewerControl {
 
         private void valueChanged() {
             int selectedValue = getSelectedIndex();
-            if (selectedValue > 1) {
-                view.perspectiveControlEnabled = false;
-            } else {
-                view.perspectiveControlEnabled = true;
-            }
+            view.perspectiveControlEnabled = selectedValue <= 1;
             view.lastSetNavigation = selectedValue;
             view.setNavigationMode(selectedValue);
         }

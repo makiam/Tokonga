@@ -934,11 +934,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      */
     public void toolChanged(EditingTool tool) {
         for (ViewerCanvas v : theView) {
-            if (tool instanceof MoveViewTool || tool instanceof RotateViewTool) {
-                v.navigationTravelEnabled = false;
-            } else {
-                v.navigationTravelEnabled = true;
-            }
+            v.navigationTravelEnabled = !(tool instanceof MoveViewTool || tool instanceof RotateViewTool);
             v.viewChanged(false); // This should do nothing now...
         }
     }

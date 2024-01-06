@@ -1,4 +1,5 @@
 /* Copyright (C) 2004-2012 by Peter Eastman
+   Changes copyright (C) 2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -48,10 +49,7 @@ public class PoseDistortion extends Distortion {
         if (weight != s.weight) {
             return false;
         }
-        if (!pose.equals(s.pose)) {
-            return false;
-        }
-        return true;
+        return pose.equals(s.pose);
     }
 
     /**
