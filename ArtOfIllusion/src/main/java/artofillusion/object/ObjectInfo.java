@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2013 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -145,8 +145,8 @@ public class ObjectInfo {
             if (objectInfo.tracks == null) {
                 continue;
             }
-            for (int j = 0; j < objectInfo.tracks.length; j++) {
-                objectInfo.tracks[j].updateObjectReferences(objectMap);
+            for (Track track : objectInfo.tracks) {
+                track.updateObjectReferences(objectMap);
             }
         }
         return newobj;
@@ -289,14 +289,16 @@ public class ObjectInfo {
         getObject().setTexture(tex, map);
         clearCachedMeshes();
 
+        
+        if (getTracks() == null) return;
+        
         // Update any texture tracks.
-        if (getTracks() != null) {
-            for (int i = 0; i < getTracks().length; i++) {
-                if (getTracks()[i] instanceof TextureTrack) {
-                    ((TextureTrack) getTracks()[i]).parametersChanged();
-                }
+        for (Track track: getTracks()) {
+            if (track instanceof TextureTrack) {
+                ((TextureTrack) track).parametersChanged();
             }
         }
+
     }
 
     /**
@@ -341,8 +343,7 @@ public class ObjectInfo {
      * See if the Distortion has changed, and clear the cached meshes if it has.
      */
     private void checkDistortionChanged() {
-        if ((prevDistortion == distortion)
-                || (distortion != null && distortion.isIdenticalTo(prevDistortion))) {
+        if ((prevDistortion == distortion) || (distortion != null && distortion.isIdenticalTo(prevDistortion))) {
             return;
         }
         prevDistortion = distortion;
