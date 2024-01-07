@@ -1,5 +1,6 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
    Changes copyright (C) 2019 by Petri Ihalainen
+   Changes copyright (C) 2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -50,6 +51,10 @@ public class Cylinder extends Object3D {
         }
     }
 
+    public Cylinder() {
+        this(1.0, 0.5, 0.5, 1.0);
+    }
+    
     public Cylinder(double height, double xradius, double yradius, double ratio) {
         this.height = height;
         rx = xradius;
