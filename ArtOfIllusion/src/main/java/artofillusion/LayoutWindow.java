@@ -495,15 +495,15 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         editMenu.add(editMenuItem[9] = Translate.menuItem("duplicate", this, "duplicateCommand"));
         editMenu.add(editMenuItem[10] = Translate.menuItem("sever", this, "severCommand"));
         editMenu.addSeparator();
-        editMenu.add(Translate.menuItem("preferences", this, "preferencesCommand"));
+        editMenu.add(Translate.menuItem("preferences", this::preferencesCommand));
     }
 
     private void createObjectMenu() {
 
         getMenuBar().add(objectMenu);
         objectMenuItem = new BMenuItem[12];
-        objectMenu.add(objectMenuItem[0] = Translate.menuItem("editObject", this, "editObjectCommand"));
-        objectMenu.add(objectMenuItem[1] = Translate.menuItem("objectLayout", this, "objectLayoutCommand"));
+        objectMenu.add(objectMenuItem[0] = Translate.menuItem("editObject", this::editObjectCommand));
+        objectMenu.add(objectMenuItem[1] = Translate.menuItem("objectLayout", this::objectLayoutCommand));
         objectMenu.add(objectMenuItem[2] = Translate.menuItem("transformObject", this, "transformObjectCommand"));
         objectMenu.add(objectMenuItem[3] = Translate.menuItem("alignObjects", this, "alignObjectsCommand"));
         objectMenu.add(objectMenuItem[4] = Translate.menuItem("setTextureAndMaterial", this, "setTextureCommand"));
@@ -753,8 +753,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     private void createPopupMenu() {
         popupMenu = new BPopupMenu();
         popupMenuItem = new BMenuItem[15];
-        popupMenu.add(popupMenuItem[0] = Translate.menuItem("editObject", this, "editObjectCommand"));
-        popupMenu.add(popupMenuItem[1] = Translate.menuItem("objectLayout", this, "objectLayoutCommand"));
+        popupMenu.add(popupMenuItem[0] = Translate.menuItem("editObject", this::editObjectCommand));
+        popupMenu.add(popupMenuItem[1] = Translate.menuItem("objectLayout", this::objectLayoutCommand));
         popupMenu.add(popupMenuItem[2] = Translate.menuItem("setTextureAndMaterial", this, "setTextureCommand"));
         popupMenu.add(popupMenuItem[3] = Translate.menuItem("renameObject", this, "renameObjectCommand"));
         popupMenu.add(popupMenuItem[4] = Translate.menuItem("convertToTriangle", this, "convertToTriangleCommand"));
@@ -1895,7 +1895,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void preferencesCommand() {
+    public void preferencesCommand(ActionEvent event) {
         new PreferencesWindow(this);
     }
 
@@ -1967,10 +1967,14 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
                     updateMenus();
                 }
             });
-        }
+        }        
+    }
+    
+    public void editObjectCommand(ActionEvent event) {
+        editObjectCommand();
     }
 
-    public void objectLayoutCommand() {
+    public void objectLayoutCommand(ActionEvent event) {
         int i;
         int[] sel = getSelectedIndices();
         TransformDialog dlg;
