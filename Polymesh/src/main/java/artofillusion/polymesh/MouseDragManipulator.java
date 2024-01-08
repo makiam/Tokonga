@@ -19,7 +19,6 @@ import artofillusion.math.Mat4;
 import artofillusion.math.Vec2;
 import artofillusion.math.Vec3;
 import artofillusion.object.Mesh;
-import artofillusion.object.MeshVertex;
 import artofillusion.ui.MeshEditController;
 import static artofillusion.ui.UIUtilities.*;
 import buoy.event.WidgetMouseEvent;
@@ -41,7 +40,6 @@ public class MouseDragManipulator extends Manipulator {
     private Point baseClick;
     private CoordinateSystem oldCoords;
     private Mat4 viewToWorld;
-    private final Vec3 clickPos = new Vec3(0, 0, 0);
     private static final double DRAG_SCALE = 0.01;
     private Vec3 center;
     private Vec2 axisCenter;
@@ -72,7 +70,6 @@ public class MouseDragManipulator extends Manipulator {
         if (bounds == null) {
             return;
         }
-        Mesh mesh = (Mesh) controller.getObject().object;
         if (!dragging) {
             center = new Vec3(props.featurePoints[0]);
         }
