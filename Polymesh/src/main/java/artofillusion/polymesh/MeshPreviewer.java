@@ -432,7 +432,7 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
                 selPos.add(pos);
                 pos = m.times(pos);
                 CoordinateSystem c = new CoordinateSystem(pos, 0, 0, 0);
-                ObjectInfo sphereInfo = new ObjectInfo(sphere, c, new String("sphere" + i));
+                ObjectInfo sphereInfo = new ObjectInfo(sphere, c, "sphere" + i);
                 selection.add(sphereInfo);
                 theScene.addObject(sphereInfo, null);
             }

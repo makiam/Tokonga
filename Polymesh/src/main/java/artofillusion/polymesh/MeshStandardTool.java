@@ -124,8 +124,8 @@ public class MeshStandardTool extends AdvancedEditingTool {
 
     private void doManipulatorRotatingMesh(SSMR2DManipulator.ManipulatorRotatingEvent e) {
         Mesh mesh = (Mesh) controller.getObject().object;
-        Vec3[] v = null;
-        v = findRotatedPositions(baseVertPos, e.getMatrix(), (MeshViewer) e.getView());
+
+        Vec3[] v = findRotatedPositions(baseVertPos, e.getMatrix(), (MeshViewer) e.getView());
         if (v != null) {
             mesh.setVertexPositions(v);
             controller.objectChanged();

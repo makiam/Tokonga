@@ -60,8 +60,8 @@ public class PMBevelExtrudeTool extends EditingTool {
     private void recordSelection() {
         selected = controller.getSelection();
         noSelection = false;
-        for (int i = 0; i < selected.length; i++) {
-            if (selected[i]) {
+        for (boolean b : selected) {
+            if (b) {
                 return;
             }
         }
@@ -170,7 +170,7 @@ public class PMBevelExtrudeTool extends EditingTool {
 
         // Update the mesh and redisplay.
         int selectMode = controller.getSelectionMode();
-        boolean[] sel = null;
+        boolean[] sel;
         mesh.copyObject(origMesh);
         if (selectMode == PolyMeshEditorWindow.POINT_MODE) {
             sel = mesh.bevelVertices(selected, height);
@@ -186,9 +186,7 @@ public class PMBevelExtrudeTool extends EditingTool {
             }
             sel = new boolean[mesh.getFaces().length];
             if (Math.abs(1.0 - width) > 0.05) {
-                for (int i = 0; i < selected.length; ++i) {
-                    sel[i] = selected[i];
-                }
+                System.arraycopy(selected, 0, sel, 0, selected.length);
             }
             theWindow.setHelpText(Translate.text("bevelExtrudeTool.dragText", 1.0 - width, height));
         }
@@ -209,9 +207,8 @@ public class PMBevelExtrudeTool extends EditingTool {
         if (noSelection || (width == 0.0 && height == 0.0)) {
             return;
         }
-        PolyMeshViewer mv = (PolyMeshViewer) view;
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
-        theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, origMesh}));
+        theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, mesh, origMesh));
         controller.objectChanged();
         theWindow.updateImage();
         theWindow.setHelpText(Translate.text("bevelExtrudeTool.helpText"));

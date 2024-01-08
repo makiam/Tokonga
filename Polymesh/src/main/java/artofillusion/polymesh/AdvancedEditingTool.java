@@ -162,10 +162,9 @@ public abstract class AdvancedEditingTool extends EditingTool {
     protected Vec3[] findScaledPositions(Vec3[] vert, Mat4 m, MeshViewer view) {
         Vec3[] v = new Vec3[vert.length];
         int[] selected = controller.getSelectionDistance();
-        int i;
 
         // Determine the deltas.
-        for (i = 0; i < vert.length; i++) {
+        for (int i = 0; i < vert.length; i++) {
             if (selected[i] == 0) {
                 v[i] = m.times(vert[i]).minus(vert[i]);
             } else {
@@ -175,7 +174,7 @@ public abstract class AdvancedEditingTool extends EditingTool {
         if (theFrame instanceof MeshEditorWindow) {
             ((MeshEditorWindow) theFrame).adjustDeltas(v);
         }
-        for (i = 0; i < vert.length; i++) {
+        for (int i = 0; i < vert.length; i++) {
             v[i].add(vert[i]);
         }
         return v;

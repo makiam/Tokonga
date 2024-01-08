@@ -280,7 +280,6 @@ public class CoordinateSystem {
         double ctheta2;
         double cphi;
         double sphi;
-        double phi;
         Vec3 v, xdir;
         Mat4 m = toLocal();
 
@@ -294,7 +293,7 @@ public class CoordinateSystem {
         } else if (updir.y == 1.0) {
             axis.set(0.0, 1.0, 0.0);  // Same for the y-axis;
         } else {
-            // The rotation axis is the cross product of (newy-oldy) and (newz-oldz).
+            // The rotation axis is the cross-product of (newy-oldy) and (newz-oldz).
 
             axis.set((updir.y - 1.0) * (zdir.z - 1.0) - updir.z * zdir.y,
                     updir.z * zdir.x - updir.x * (zdir.z - 1.0),
