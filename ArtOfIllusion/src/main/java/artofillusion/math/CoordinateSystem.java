@@ -1,4 +1,5 @@
 /* Copyright (C) 1999-2003 by Peter Eastman
+   Changes copyright (C) 2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -276,8 +277,6 @@ public class CoordinateSystem {
      * along the rotation axis.
      */
     public final double getAxisAngleRotation(Vec3 axis) {
-        double[][] a = new double[4][];
-        double[] b = new double[4];
         double ctheta2;
         double cphi;
         double sphi;

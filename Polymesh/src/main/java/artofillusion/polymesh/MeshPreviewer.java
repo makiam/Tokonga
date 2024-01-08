@@ -1,7 +1,7 @@
 /*
     Copyright (C) 1999-2005 by Peter Eastman, 2007 by Francois Guillet
     Modifications Copyright (C) 2019 by Petri Ihalainen
-    Changes copyright (C) 2023 by Maksim Khramov
+    Changes copyright (C) 2023-2024 by Maksim Khramov
 
     This program is free software; you can redistribute it and/or modify it under the 
     terms of the GNU General Public License as published by the Free Software 
@@ -93,9 +93,8 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
      * Initialize the MaterialPreviewer.
      */
     private void init(ObjectInfo obj, int width, int height) {
-        BoundingBox bounds = obj.getBounds();
-        Vec3 size = bounds.getSize();
-        boundR = bounds.getSize().length() * 0.5;
+
+        boundR = obj.getBounds().getSize().length() * 0.5;
         CoordinateSystem coords = new CoordinateSystem(new Vec3(0.0, 0.0, 8.0 * boundR),
                 new Vec3(0.0, 0.0, -1.0), Vec3.vy());
         Vec3[] vert = new Vec3[]{new Vec3(100.0 * boundR, -boundR, 100.0 * boundR),

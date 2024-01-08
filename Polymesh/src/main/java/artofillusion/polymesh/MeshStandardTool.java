@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2005 by Peter Eastman (ReshapeMeshTool) 2006 by Francois Guillet (MeshStandardTool)
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -77,12 +77,6 @@ public class MeshStandardTool extends AdvancedEditingTool {
             ((PolyMeshViewer) view).setManipulator(manip2dMap.get(view));
             ((PolyMeshViewer) view).addManipulator(manip3dMap.get(view));
         }
-    }
-
-    @Override
-    public void activate() {
-        super.activate();
-        ViewerCanvas view = theWindow.getView();
     }
 
     @Override

@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2007 by Francois Guillet
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2024 by Maksim Khramov
 
  This program is free software; you can redistribute it and/or modify it under the
  terms of the GNU General Public License as published by the Free Software
@@ -77,7 +77,7 @@ public abstract class AdvancedEditingTool extends EditingTool {
         MeshVertex[] vert = ((Mesh) controller.getObject().object).getVertices();
         double minx, miny, minz, maxx, maxy, maxz;
         Vec3 v;
-        Vec3[] features = new Vec3[1];
+
         int i;
 
         Vec3 center = new Vec3();
@@ -119,9 +119,7 @@ public abstract class AdvancedEditingTool extends EditingTool {
                 props = ((PolyMeshEditorWindow) controller).getSelectionProperties();
             } else {
                 center.scale(1.0 / (double) count);
-                features = new Vec3[2];
-                features[0] = center;
-                features[1] = new Vec3();
+
                 props = new SelectionProperties();
             }
             props.bounds = new BoundingBox(minx, maxx, miny, maxy, minz, maxz);

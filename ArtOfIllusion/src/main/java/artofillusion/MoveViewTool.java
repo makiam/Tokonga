@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
    Changes copyright (C) 2016-2019 by Petri Ihalainen
-   Changes copyright (C) 2020-2022 by Maksim Khramov
+   Changes copyright (C) 2020-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -50,7 +50,7 @@ public class MoveViewTool extends EditingTool {
         clickPos = cam.convertScreenToWorld(clickPoint, view.getDistToPlane());
         oldCoords = cam.getCameraCoordinates().duplicate();
         oldCamPos = oldCoords.getOrigin();
-        Vec3 oldRotCenter = new Vec3(view.getRotationCenter());
+
         oldScale = view.getScale();
         oldDist = view.getDistToPlane(); // distToPlane needs to be kept up to date
         view.setRotationCenter(oldCoords.getOrigin().plus(oldCoords.getZDirection().times(oldDist)));
