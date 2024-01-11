@@ -7287,8 +7287,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * @param value
      * Extrude amplitude
      */
-    public void extrudeEdgeRegion(boolean[] selected, double value,
-            Vec3 direction) {
+    public void extrudeEdgeRegion(boolean[] selected, double value, Vec3 direction) {
         Vec3[] normals = getEdgeNormals();
         boolean[] tmpSel = new boolean[selected.length];
         if (Math.abs(value) < 1e-12) {

@@ -23,22 +23,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CompoundImplicitObject extends ImplicitObject {
 
-    private final ArrayList<ImplicitObject> objects;
-    private final ArrayList<CoordinateSystem> objectCoords;
+    private final List<ImplicitObject> objects = new ArrayList<>();
+    private final List<CoordinateSystem> objectCoordinates = new ArrayList<>();
     private BoundingBox bounds;
-    private volatile ArrayList<ArrayList<Integer>> grid;
+    private volatile List<List<Integer>> grid;
     private int gridSize;
-    private double cutoff;
+    private double  cutoff = 1.0;
 
-    public CompoundImplicitObject() {
-        objects = new ArrayList<>();
-        objectCoords = new ArrayList<>();
-        cutoff = 1.0;
-    }
 
     public void addObject(ImplicitObject obj, CoordinateSystem coords) {
         objects.add(obj);
-        objectCoords.add(coords.duplicate());
+        objectCoordinates.add(coords.duplicate());
         objectsChanged();
     }
 
@@ -56,11 +51,11 @@ public class CompoundImplicitObject extends ImplicitObject {
     }
 
     public CoordinateSystem getObjectCoordinates(int index) {
-        return objectCoords.get(index).duplicate();
+        return objectCoordinates.get(index).duplicate();
     }
 
     public void setObjectCoordinates(int index, CoordinateSystem coords) {
-        objectCoords.set(index, coords.duplicate());
+        objectCoordinates.set(index, coords.duplicate());
         objectsChanged();
     }
 
@@ -83,13 +78,13 @@ public class CompoundImplicitObject extends ImplicitObject {
     public double getFieldValue(double x, double y, double z, double size, double time) {
         double value = 0;
         Vec3 pos = new Vec3();
-        ArrayList<Integer> indices = findObjectsNearPoint(x, y, z);
-        for (int i = 0; i < indices.size(); i++) {
-            int index = indices.get(i);
-            Mat4 toLocal = objectCoords.get(index).toLocal();
+
+        for (Integer indice :  findObjectsNearPoint(x, y, z)) {
+
+            Mat4 toLocal = objectCoordinates.get(indice).toLocal();
             pos.set(x, y, z);
             toLocal.transform(pos);
-            ImplicitObject obj = objects.get(index);
+            ImplicitObject obj = objects.get(indice);
             if (obj.getBounds().contains(pos)) {
                 value += obj.getFieldValue(pos.x, pos.y, pos.z, size, time);
             }
@@ -101,13 +96,13 @@ public class CompoundImplicitObject extends ImplicitObject {
     public void getFieldGradient(double x, double y, double z, double size, double time, Vec3 grad) {
         double dx = 0, dy = 0, dz = 0;
         Vec3 pos = new Vec3();
-        ArrayList<Integer> indices = findObjectsNearPoint(x, y, z);
-        for (int i = 0; i < indices.size(); i++) {
-            int index = indices.get(i);
-            Mat4 toLocal = objectCoords.get(index).toLocal();
+
+        for (Integer indice :  findObjectsNearPoint(x, y, z)) {
+
+            Mat4 toLocal = objectCoordinates.get(indice).toLocal();
             pos.set(x, y, z);
             toLocal.transform(pos);
-            ImplicitObject obj = objects.get(index);
+            ImplicitObject obj = objects.get(indice);
             if (obj.getBounds().contains(pos)) {
                 obj.getFieldGradient(pos.x, pos.y, pos.z, size, time, grad);
                 dx += grad.x;
@@ -118,7 +113,7 @@ public class CompoundImplicitObject extends ImplicitObject {
         grad.set(dx, dy, dz);
     }
 
-    private ArrayList<Integer> findObjectsNearPoint(double x, double y, double z) {
+    private List<Integer> findObjectsNearPoint(double x, double y, double z) {
         BoundingBox gridBounds = getBounds();
         if (grid == null) {
             synchronized (this) {
@@ -129,7 +124,7 @@ public class CompoundImplicitObject extends ImplicitObject {
                         grid.add(null);
                     }
                     for (int index = 0; index < objects.size(); index++) {
-                        BoundingBox objBounds = objects.get(index).getBounds().transformAndOutset(objectCoords.get(index).fromLocal());
+                        BoundingBox objBounds = objects.get(index).getBounds().transformAndOutset(objectCoordinates.get(index).fromLocal());
                         int minx = (int) Math.floor(gridSize * (objBounds.minx - gridBounds.minx) / (gridBounds.maxx - gridBounds.minx));
                         int maxx = (int) Math.ceil(gridSize * (objBounds.maxx - gridBounds.minx) / (gridBounds.maxx - gridBounds.minx));
                         int miny = (int) Math.floor(gridSize * (objBounds.miny - gridBounds.miny) / (gridBounds.maxy - gridBounds.miny));
@@ -156,7 +151,7 @@ public class CompoundImplicitObject extends ImplicitObject {
                     }
                 }
             }
-            ArrayList<Integer> empty = new ArrayList<>();
+            List<Integer> empty = new ArrayList<>();
             for (int i = 0; i < gridSize * gridSize * gridSize; i++) {
                 if (grid.get(i) == null) {
                     grid.set(i, empty);
@@ -188,7 +183,7 @@ public class CompoundImplicitObject extends ImplicitObject {
     public void copyObject(Object3D obj) {
         CompoundImplicitObject c = (CompoundImplicitObject) obj;
         objects.clear();
-        objectCoords.clear();
+        objectCoordinates.clear();
         for (int i = 0; i < c.getNumObjects(); i++) {
             addObject((ImplicitObject) c.getObject(i).duplicate(), c.getObjectCoordinates(i).duplicate());
         }
@@ -200,9 +195,9 @@ public class CompoundImplicitObject extends ImplicitObject {
             if (objects.isEmpty()) {
                 bounds = new BoundingBox(0, 0, 0, 0, 0, 0);
             } else {
-                bounds = objects.get(0).getBounds().transformAndOutset(objectCoords.get(0).fromLocal());
+                bounds = objects.get(0).getBounds().transformAndOutset(objectCoordinates.get(0).fromLocal());
                 for (int i = 1; i < objects.size(); i++) {
-                    bounds = bounds.merge(objects.get(i).getBounds().transformAndOutset(objectCoords.get(i).fromLocal()));
+                    bounds = bounds.merge(objects.get(i).getBounds().transformAndOutset(objectCoordinates.get(i).fromLocal()));
                 }
             }
         }
@@ -228,8 +223,8 @@ public class CompoundImplicitObject extends ImplicitObject {
 
     @Override
     public Keyframe getPoseKeyframe() {
-        ArrayList<Keyframe> key = new ArrayList<>();
-        ArrayList<CoordinateSystem> coords = new ArrayList<>();
+        List<Keyframe> key = new ArrayList<>();
+        List<CoordinateSystem> coords = new ArrayList<>();
         for (int i = 0; i < getNumObjects(); i++) {
             key.add(getObject(i).getPoseKeyframe());
             coords.add(getObjectCoordinates(i).duplicate());
@@ -244,7 +239,7 @@ public class CompoundImplicitObject extends ImplicitObject {
             if (key.key.get(i) != null) {
                 objects.get(i).applyPoseKeyframe(key.key.get(i));
             }
-            objectCoords.get(i).copyCoords(key.coords.get(i));
+            objectCoordinates.get(i).copyCoords(key.coordinates.get(i));
         }
         objectsChanged();
     }
@@ -259,7 +254,7 @@ public class CompoundImplicitObject extends ImplicitObject {
                 CompoundImplicitKeyframe original = (CompoundImplicitKeyframe) k;
                 CompoundImplicitKeyframe edited = (CompoundImplicitKeyframe) copy.getPoseKeyframe().duplicate(info);
                 original.key = edited.key;
-                original.coords = edited.coords;
+                original.coordinates = edited.coordinates;
             }
         };
         new CompoundImplicitEditorWindow(parent, info.getName(), copy, onClose);
@@ -270,12 +265,12 @@ public class CompoundImplicitObject extends ImplicitObject {
      */
     public static class CompoundImplicitKeyframe implements Keyframe {
 
-        public ArrayList<Keyframe> key;
-        public ArrayList<CoordinateSystem> coords;
+        public List<Keyframe> key;
+        public List<CoordinateSystem> coordinates;
 
-        public CompoundImplicitKeyframe(ArrayList<Keyframe> key, ArrayList<CoordinateSystem> coords) {
+        public CompoundImplicitKeyframe(List<Keyframe> key, List<CoordinateSystem> coordinates) {
             this.key = key;
-            this.coords = coords;
+            this.coordinates = coordinates;
         }
 
         /**
@@ -283,11 +278,11 @@ public class CompoundImplicitObject extends ImplicitObject {
          */
         @Override
         public Keyframe duplicate() {
-            ArrayList<Keyframe> newKey = new ArrayList<>();
-            ArrayList<CoordinateSystem> newCoords = new ArrayList<>();
+            List<Keyframe> newKey = new ArrayList<>();
+            List<CoordinateSystem> newCoords = new ArrayList<>();
             for (int i = 0; i < key.size(); i++) {
                 newKey.add(key.get(i).duplicate());
-                newCoords.add(coords.get(i).duplicate());
+                newCoords.add(coordinates.get(i).duplicate());
             }
             return new CompoundImplicitKeyframe(newKey, newCoords);
         }
@@ -298,11 +293,11 @@ public class CompoundImplicitObject extends ImplicitObject {
         @Override
         public Keyframe duplicate(Object owner) {
             CompoundImplicitObject other = (CompoundImplicitObject) ((ObjectInfo) owner).getObject();
-            ArrayList<Keyframe> newKey = new ArrayList<>();
-            ArrayList<CoordinateSystem> newCoords = new ArrayList<>();
+            List<Keyframe> newKey = new ArrayList<>();
+            List<CoordinateSystem> newCoords = new ArrayList<>();
             for (int i = 0; i < key.size(); i++) {
                 newKey.add(key.get(i).duplicate(other.getObject(i)));
-                newCoords.add(coords.get(i).duplicate());
+                newCoords.add(coordinates.get(i).duplicate());
             }
             return new CompoundImplicitKeyframe(newKey, newCoords);
         }
@@ -312,13 +307,13 @@ public class CompoundImplicitObject extends ImplicitObject {
         @Override
         public Keyframe blend(Keyframe o2, double weight1, double weight2) {
             CompoundImplicitKeyframe k2 = (CompoundImplicitKeyframe) o2;
-            ArrayList<Keyframe> newKey = new ArrayList<>();
-            ArrayList<CoordinateSystem> newCoords = new ArrayList<>();
+            List<Keyframe> newKey = new ArrayList<>();
+            List<CoordinateSystem> newCoords = new ArrayList<>();
             for (int i = 0; i < key.size(); i++) {
                 // Blend the new coordinate systems.
 
-                CoordinateSystem coords1 = coords.get(i);
-                CoordinateSystem coords2 = k2.coords.get(i);
+                CoordinateSystem coords1 = coordinates.get(i);
+                CoordinateSystem coords2 = k2.coordinates.get(i);
                 RotationKeyframe rot1 = new RotationKeyframe(coords1);
                 RotationKeyframe rot2 = new RotationKeyframe(coords2);
                 rot1.setUseQuaternion(true);
@@ -338,14 +333,14 @@ public class CompoundImplicitObject extends ImplicitObject {
         @Override
         public Keyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3) {
             CompoundImplicitKeyframe k2 = (CompoundImplicitKeyframe) o2, k3 = (CompoundImplicitKeyframe) o3;
-            ArrayList<Keyframe> newKey = new ArrayList<>();
-            ArrayList<CoordinateSystem> newCoords = new ArrayList<>();
+            List<Keyframe> newKey = new ArrayList<>();
+            List<CoordinateSystem> newCoords = new ArrayList<>();
             for (int i = 0; i < key.size(); i++) {
                 // Blend the new coordinate systems.
 
-                CoordinateSystem coords1 = coords.get(i);
-                CoordinateSystem coords2 = k2.coords.get(i);
-                CoordinateSystem coords3 = k3.coords.get(i);
+                CoordinateSystem coords1 = coordinates.get(i);
+                CoordinateSystem coords2 = k2.coordinates.get(i);
+                CoordinateSystem coords3 = k3.coordinates.get(i);
                 RotationKeyframe rot1 = new RotationKeyframe(coords1);
                 RotationKeyframe rot2 = new RotationKeyframe(coords2);
                 RotationKeyframe rot3 = new RotationKeyframe(coords3);
@@ -368,15 +363,15 @@ public class CompoundImplicitObject extends ImplicitObject {
         @Override
         public Keyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4) {
             CompoundImplicitKeyframe k2 = (CompoundImplicitKeyframe) o2, k3 = (CompoundImplicitKeyframe) o3, k4 = (CompoundImplicitKeyframe) o4;
-            ArrayList<Keyframe> newKey = new ArrayList<>();
-            ArrayList<CoordinateSystem> newCoords = new ArrayList<>();
+            List<Keyframe> newKey = new ArrayList<>();
+            List<CoordinateSystem> newCoords = new ArrayList<>();
             for (int i = 0; i < key.size(); i++) {
                 // Blend the new coordinate systems.
 
-                CoordinateSystem coords1 = coords.get(i);
-                CoordinateSystem coords2 = k2.coords.get(i);
-                CoordinateSystem coords3 = k3.coords.get(i);
-                CoordinateSystem coords4 = k4.coords.get(i);
+                CoordinateSystem coords1 = coordinates.get(i);
+                CoordinateSystem coords2 = k2.coordinates.get(i);
+                CoordinateSystem coords3 = k3.coordinates.get(i);
+                CoordinateSystem coords4 = k4.coordinates.get(i);
                 RotationKeyframe rot1 = new RotationKeyframe(coords1);
                 RotationKeyframe rot2 = new RotationKeyframe(coords2);
                 RotationKeyframe rot3 = new RotationKeyframe(coords3);
@@ -414,8 +409,8 @@ public class CompoundImplicitObject extends ImplicitObject {
                 if (key1 != key2 && (key1 == null || key2 == null || !key1.equals(key2))) {
                     return false;
                 }
-                CoordinateSystem coords1 = coords.get(i);
-                CoordinateSystem coords2 = other.coords.get(i);
+                CoordinateSystem coords1 = coordinates.get(i);
+                CoordinateSystem coords2 = other.coordinates.get(i);
                 if (!coords1.getOrigin().equals(coords2.getOrigin())) {
                     return false;
                 }
@@ -439,7 +434,7 @@ public class CompoundImplicitObject extends ImplicitObject {
             for (int i = 0; i < key.size(); i++) {
                 out.writeUTF(key.get(i).getClass().getName());
                 key.get(i).writeToStream(out);
-                coords.get(i).writeToFile(out);
+                coordinates.get(i).writeToFile(out);
             }
         }
 
@@ -456,13 +451,13 @@ public class CompoundImplicitObject extends ImplicitObject {
                 throw new InvalidObjectException("Keyframe contains the wrong number of component objects");
             }
             key = new ArrayList<>();
-            coords = new ArrayList<>();
+            coordinates = new ArrayList<>();
             try {
                 for (int i = 0; i < obj.getNumObjects(); i++) {
                     Class<?> cl = ArtOfIllusion.getClass(in.readUTF());
                     Constructor<?> con = cl.getConstructor(DataInputStream.class, Object.class);
                     key.add((Keyframe) con.newInstance(in, obj.getObject(i)));
-                    coords.add(new CoordinateSystem(in));
+                    coordinates.add(new CoordinateSystem(in));
                 }
             } catch (IOException | ReflectiveOperationException | SecurityException ex) {
                 log.atError().setCause(ex).log("Error instantiating keyframe: {}", ex.getMessage());
