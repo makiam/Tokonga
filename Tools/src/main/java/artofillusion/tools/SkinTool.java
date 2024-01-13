@@ -22,7 +22,7 @@ import java.util.*;
  */
 public class SkinTool implements ModellingTool {
 
-    /* Get the text that appear as the menu item.*/
+    /* Get the text that appears as the menu item.*/
     @Override
     public String getName() {
         return Translate.text("menu.skin");
@@ -59,7 +59,7 @@ public class SkinTool implements ModellingTool {
                 return;
             }
             if (c2.getSmoothingMethod() != c.getSmoothingMethod() && c.getSmoothingMethod() != Mesh.NO_SMOOTHING && c2.getSmoothingMethod() != Mesh.NO_SMOOTHING) {
-                new BStandardDialog("", UIUtilities.breakString(Translate.text("stdtool:skin.tool.curve.same.type")), BStandardDialog.INFORMATION).showMessageDialog(window.getFrame());
+                new BStandardDialog("", UIUtilities.breakString(Translate.text("Tools:skin.tool.curve.same.type")), BStandardDialog.INFORMATION).showMessageDialog(window.getFrame());
                 return;
             }
         }
