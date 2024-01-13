@@ -346,14 +346,14 @@ public class ApplicationPreferences {
     }
 
     /**
-     * Get the number of levels of Undo to support.
+     * Get the number of Undo levels to support.
      */
     public final int getUndoLevels() {
         return undoLevels;
     }
 
     /**
-     * Set the number of levels of Undo to support.
+     * Set the number of Undo levels to support.
      */
     public final void setUndoLevels(int levels) {
         undoLevels = levels;
