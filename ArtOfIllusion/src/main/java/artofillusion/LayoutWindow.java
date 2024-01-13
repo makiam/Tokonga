@@ -768,10 +768,10 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         popupMenu.add(popupMenuItem[9] = Translate.menuItem("lockSelection", this, "lockSelectionAction"));
         popupMenu.add(popupMenuItem[10] = Translate.menuItem("unlockSelection", this, "unlockSelectionAction"));
         popupMenu.addSeparator();
-        popupMenu.add(popupMenuItem[11] = Translate.menuItem("cut", this, "cutCommand"));
-        popupMenu.add(popupMenuItem[12] = Translate.menuItem("copy", this, "copyCommand"));
-        popupMenu.add(popupMenuItem[13] = Translate.menuItem("paste", this, "pasteCommand"));
-        popupMenu.add(popupMenuItem[14] = Translate.menuItem("clear", this, "clearCommand"));
+        popupMenu.add(popupMenuItem[11] = Translate.menuItem("cut", this::cutCommand));
+        popupMenu.add(popupMenuItem[12] = Translate.menuItem("copy", this::copyCommand));
+        popupMenu.add(popupMenuItem[13] = Translate.menuItem("paste", this::pasteCommand));
+        popupMenu.add(popupMenuItem[14] = Translate.menuItem("clear", this::clearCommand));
     }
 
     /**
@@ -1814,12 +1814,12 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         updateMenus();
     }
 
-    public void cutCommand() {
-        copyCommand();
-        clearCommand();
+    public void cutCommand(ActionEvent event) {
+        copyCommand(null);
+        clearCommand(null);
     }
 
-    public void copyCommand() {
+    public void copyCommand(ActionEvent event) {
         int[] sel = getSelectionWithChildren();
         if (sel.length == 0) {
             return;
@@ -1833,7 +1833,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         updateMenus();
     }
 
-    public void pasteCommand() {
+    public void pasteCommand(ActionEvent event) {
         int[] which = new int[ArtOfIllusion.getClipboardSize()];
         int num = theScene.getNumObjects();
         for (int i = 0; i < which.length; i++) {
@@ -1845,7 +1845,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         updateImage();
     }
 
-    public void clearCommand() {
+    public void clearCommand(ActionEvent event) {
         Object[] sel = sceneExplorer.getSelectedObjects();
         int[] selIndex = getSelectedIndices();
         boolean any;
