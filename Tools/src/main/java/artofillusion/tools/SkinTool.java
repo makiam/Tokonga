@@ -29,7 +29,7 @@ public class SkinTool implements ModellingTool {
     }
 
     /* See whether an appropriate set of objects is selected and either display an error
-     message, or bring up the Extrude window. */
+     message, or bring up the skin dialog window. */
     @Override
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void commandSelected(LayoutWindow window) {
