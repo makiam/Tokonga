@@ -65,4 +65,41 @@ public class SkinTool implements ModellingTool {
         }
         new SkinDialog(window, curves);
     }
+
+    final class CompoundUndoableEdit implements UndoableEdit {
+
+        private List<UndoableEdit> edits = new ArrayList<>();
+
+        @Override
+        public void undo() {
+
+        }
+
+        @Override
+        public void redo() {
+
+        }
+
+        @Override
+        public String getName() {
+            return edits.isEmpty() ? UndoableEdit.super.getName() : edits.get(0).getName();
+        }
+    }
+
+    final class ObjectAddUndoableEdit implements UndoableEdit {
+
+        @Override
+        public void undo() {
+        }
+
+        @Override
+        public void redo() {
+
+        }
+
+        @Override
+        public String getName() {
+            return "Skin";
+        }
+    }
 }
