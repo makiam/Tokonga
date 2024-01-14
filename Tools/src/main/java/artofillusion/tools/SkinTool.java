@@ -68,16 +68,20 @@ public class SkinTool implements ModellingTool {
 
     final class CompoundUndoableEdit implements UndoableEdit {
 
-        private List<UndoableEdit> edits = new ArrayList<>();
+        private final LinkedList<UndoableEdit> edits = new LinkedList<>();
 
+        public CompoundUndoableEdit(UndoableEdit edit) {
+            edits.add(edit);
+        }
+        
         @Override
         public void undo() {
-
+            edits.descendingIterator().forEachRemaining(edit -> edit.undo());
         }
 
         @Override
         public void redo() {
-
+            edits.forEach(edit -> edit.redo());
         }
 
         @Override
