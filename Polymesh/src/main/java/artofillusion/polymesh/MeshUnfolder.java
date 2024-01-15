@@ -465,13 +465,13 @@ public class MeshUnfolder {
         return true;
     }
 
-    private void addToConstraints(double[] constraints, int faceIndes, int v1, int v2, int v3, double alpha, int ntri, int nint) {
+    private void addToConstraints(double[] constraints, int faceIndex, int v1, int v2, int v3, double alpha, int ntri, int nint) {
         
         double lsa = Math.log(Math.sin(alpha));
         int interiorVertV1 = invInteriorTable[v1];
         int interiorVertV2 = invInteriorTable[v2];
         int interiorVertV3 = invInteriorTable[v3];
-        constraints[faceIndes] -= alpha;
+        constraints[faceIndex] -= alpha;
         if (interiorVertV1 != -1) {
             constraints[ntri + interiorVertV1] -= alpha;
         }
