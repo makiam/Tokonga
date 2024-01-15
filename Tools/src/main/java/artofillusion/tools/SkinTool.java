@@ -98,10 +98,12 @@ public class SkinTool implements ModellingTool {
 
         @Override
         public void undo() {
+            //Not yet   implemented
         }
 
         @Override
         public void redo() {
+            //Not yet   implemented
 
         }
 
