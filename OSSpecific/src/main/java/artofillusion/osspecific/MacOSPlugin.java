@@ -172,7 +172,7 @@ public final class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, Ope
         boolean frontIsLayoutWindow = false;
         for (EditingWindow window : ArtOfIllusion.getWindows()) {
             if (window instanceof LayoutWindow && window.getFrame().getComponent() == frontWindow) {
-                ((LayoutWindow) window).preferencesCommand();
+                ((LayoutWindow) window).preferencesCommand(null);
                 frontIsLayoutWindow = true;
                 break;
             }
