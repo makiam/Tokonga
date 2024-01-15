@@ -17,6 +17,7 @@ import java.text.*;
 import java.util.*;
 
 import artofillusion.*;
+import java.awt.event.ActionListener;
 import lombok.Getter;
 
 /**
@@ -171,32 +172,27 @@ public class Translate {
         }
         return item;
     }
-
-    /**
-     * Get a BMenuItem whose text is given by the property "menu.(name)".
-     * If listener is not null, the specified method of it will be added to the BMenuItem as an
-     * event link for CommandEvents, and the menu item's action command will be set to
-     * (name). This form of the method allows you to explicitly specify
-     * a menu shortcut, rather than using the one given in the properties
-     * file.
-     */
-    public static BMenuItem menuItem(String name, Object listener, String method, Shortcut shortcut) {
+    
+    public static BMenuItem menuItem(String name, ActionListener al) {
         String command = name;
         try {
             command = getValue(name, "menu.", null);
         } catch (MissingResourceException ex) {
         }
         BMenuItem item = new BMenuItem(command);
-        item.setActionCommand(name);
-        if (shortcut != null) {
-            item.setShortcut(shortcut);
+        try {
+            String shortcut = getValue(name, "menu.", ".shortcut");
+            if (shortcut.length() > 1 && shortcut.charAt(0) == '^') {
+                item.setShortcut(new Shortcut(shortcut.charAt(1), Shortcut.DEFAULT_MASK | Shortcut.SHIFT_MASK));
+            } else if (shortcut.length() > 0) {
+                item.setShortcut(new Shortcut(shortcut.charAt(0)));
+            }
+        } catch (MissingResourceException ex) {
         }
-        if (listener != null) {
-            item.addEventLink(CommandEvent.class, listener, method);
-        }
+        item.getComponent().addActionListener(al);
         return item;
     }
-
+    
     /**
      * Get a BCheckBoxMenuItem whose text is given by the property "menu.(name)".
      * If listener is not null, the specified method of it will be added to the BCheckboxMenuItem as an
