@@ -85,7 +85,7 @@ public class SkinTool implements ModellingTool {
 
         @Override
         public void redo() {
-            redo.forEach(edit -> edit.redo());
+            redo.forEach(UndoableEdit::redo);
         }
 
         @Override
@@ -94,16 +94,16 @@ public class SkinTool implements ModellingTool {
         }
     }
 
-    final class ObjectAddUndoableEdit implements UndoableEdit {
+    static final class ObjectAddUndoableEdit implements UndoableEdit {
 
         @Override
         public void undo() {
-            //Not yet   implemented
+            //Not yet implemented
         }
 
         @Override
         public void redo() {
-            //Not yet   implemented
+            //Not yet implemented
 
         }
 
@@ -111,5 +111,28 @@ public class SkinTool implements ModellingTool {
         public String getName() {
             return "Skin";
         }
+    }
+
+    final class SelectionChangedUndoableEdit implements UndoableEdit {
+        private final LayoutWindow layout;
+        private final int[] oldSelection;
+        private final int[] newSelection;
+
+        SelectionChangedUndoableEdit(LayoutWindow window, int... newSelection) {
+            layout = window;
+            this.oldSelection = window.getSelectedIndices();
+            this.newSelection = newSelection;
+        }
+
+        @Override
+        public void undo() {
+            layout.setSelection(oldSelection);
+        }
+
+        @Override
+        public void redo() {
+            layout.setSelection(newSelection);
+        }
+
     }
 }
