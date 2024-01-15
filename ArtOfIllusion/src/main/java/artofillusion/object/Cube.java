@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
    Changes copyright (C) 2019 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -38,6 +38,10 @@ public class Cube extends Object3D {
         new Property("Z Size", 0.0, Double.MAX_VALUE, 1.0)
     };
 
+    public Cube() {
+        this(1.0, 1.0, 1.0);
+    }
+    
     public Cube(double xsize, double ysize, double zsize) {
         halfx = xsize / 2.0;
         halfy = ysize / 2.0;

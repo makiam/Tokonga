@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
    Changes copyright (C) 2019 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -50,6 +50,11 @@ public class Sphere extends Object3D {
         }
     }
 
+    public Sphere() {
+        this(0.5, 0.5, 0.5);
+    }
+    
+    
     public Sphere(double xradius, double yradius, double zradius) {
         rx = xradius;
         ry = yradius;

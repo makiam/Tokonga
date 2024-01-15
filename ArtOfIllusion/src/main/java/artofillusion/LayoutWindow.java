@@ -2533,13 +2533,13 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         String name;
 
         if ("cube".equals(type)) {
-            obj = new Cube(1.0, 1.0, 1.0);
+            obj = new Cube();
             name = "Cube " + (CreateCubeTool.counter++);
         } else if ("sphere".equals(type)) {
-            obj = new Sphere(0.5, 0.5, 0.5);
+            obj = new Sphere();
             name = "Sphere " + (CreateSphereTool.counter++);
         } else if ("cylinder".equals(type)) {
-            obj = new Cylinder(1.0, 0.5, 0.5, 1.0);
+            obj = new Cylinder();
             name = "Cylinder " + (CreateCylinderTool.counter++);
         } else if ("cone".equals(type)) {
             obj = new Cylinder(1.0, 0.5, 0.5, 0.0);
