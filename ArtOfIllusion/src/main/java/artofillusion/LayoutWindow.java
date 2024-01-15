@@ -492,8 +492,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         editMenu.add(editMenuItem[7] = Translate.menuItem("selectAll", this, "selectAllCommand"));
         editMenu.add(editMenuItem[8] = Translate.menuItem("deselectAll", this, "clearSelection"));
         editMenu.addSeparator();
-        editMenu.add(editMenuItem[9] = Translate.menuItem("duplicate", this, "duplicateCommand"));
-        editMenu.add(editMenuItem[10] = Translate.menuItem("sever", this, "severCommand"));
+        editMenu.add(editMenuItem[9] = Translate.menuItem("duplicate", this::duplicateCommand));
+        editMenu.add(editMenuItem[10] = Translate.menuItem("sever", this::severCommand));
         editMenu.addSeparator();
         editMenu.add(Translate.menuItem("preferences", this::preferencesCommand));
     }
@@ -1899,7 +1899,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         new PreferencesWindow(this);
     }
 
-    public void duplicateCommand() {
+    public void duplicateCommand(ActionEvent event) {
         Object[] sel = sceneExplorer.getSelectedObjects();
         int[] which = new int[sel.length];
         int num = theScene.getNumObjects();
@@ -1934,7 +1934,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         updateImage();
     }
 
-    public void severCommand() {
+    public void severCommand(ActionEvent event) {
         Object[] sel = sceneExplorer.getSelectedObjects();
         ObjectInfo info;
         int i;
