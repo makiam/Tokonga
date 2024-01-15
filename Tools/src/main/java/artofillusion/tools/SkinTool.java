@@ -66,27 +66,31 @@ public class SkinTool implements ModellingTool {
         new SkinDialog(window, curves);
     }
 
-    final class CompoundUndoableEdit implements UndoableEdit {
+    static final class CompoundUndoableEdit implements UndoableEdit {
 
-        private final LinkedList<UndoableEdit> edits = new LinkedList<>();
+        private final LinkedList<UndoableEdit> undo = new LinkedList<>();
+        private final LinkedList<UndoableEdit> redo = new LinkedList<>();
 
         public CompoundUndoableEdit(UndoableEdit edit) {
-            edits.add(edit);
+            this.add(edit);
         }
-        
+        public void add(UndoableEdit edit) {
+            undo.add(edit.execute());
+        }
+
         @Override
         public void undo() {
-            edits.descendingIterator().forEachRemaining(edit -> edit.undo());
+            undo.descendingIterator().forEachRemaining(edit -> {edit.undo(); redo.addFirst(edit);});
         }
 
         @Override
         public void redo() {
-            edits.forEach(edit -> edit.redo());
+            redo.forEach(edit -> edit.redo());
         }
 
         @Override
         public String getName() {
-            return edits.isEmpty() ? UndoableEdit.super.getName() : edits.get(0).getName();
+            return undo.isEmpty() ? UndoableEdit.super.getName() : undo.get(0).getName();
         }
     }
 
