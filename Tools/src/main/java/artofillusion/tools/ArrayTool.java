@@ -1,5 +1,5 @@
 /* Copyright 2001-2004 by Rick van der Meiden and Peter Eastman
-   Changes copyright (C) 2022-2023 by Maksim Khramov
+   Changes copyright (C) 2022-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -14,7 +14,6 @@ package artofillusion.tools;
 
 import artofillusion.*;
 import artofillusion.ui.*;
-import buoy.widget.*;
 
 /**
  * The array tool creates an array of copies of an object.
@@ -39,7 +38,7 @@ public class ArrayTool implements ModellingTool {
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void commandSelected(LayoutWindow window) {
         if (window.getSelectedIndices().length < 1) {
-            new BStandardDialog("", Translate.text("Tools:array.tool.message"), BStandardDialog.INFORMATION).showMessageDialog(window.getFrame());
+            MessageDialog.create().withOwner(window.getComponent()).withTitle(this.getName()).info((Object)Translate.text("Tools:array.tool.message"));
         } else {
             new ArrayDialog(window);
         }

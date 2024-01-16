@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2008 by Peter Eastman
-   Changes copyright (C) 2022-2023 by Maksim Khramov
+   Changes copyright (C) 2022-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -14,7 +14,6 @@ package artofillusion.tools;
 import artofillusion.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
-import buoy.widget.*;
 
 /**
  * The tube tool creates Tube objects from Curves.
@@ -42,6 +41,6 @@ public class TubeTool implements ModellingTool {
                 return;
             }
         }
-        new BStandardDialog("", UIUtilities.breakString(Translate.text("Tools:tube.tool.message")), BStandardDialog.INFORMATION).showMessageDialog(window.getFrame());
+        MessageDialog.create().withOwner(window.getComponent()).withTitle(this.getName()).info((Object)Translate.text("Tools:tube.tool.message"));
     }
 }

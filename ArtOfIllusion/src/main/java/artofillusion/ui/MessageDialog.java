@@ -1,5 +1,5 @@
 /* Copyright (C) 1999,2000,2002,2004 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,11 +18,12 @@ import javax.swing.JOptionPane;
 
 public final class MessageDialog {
 
+    private static final String defaultTitle = "Art Of Illusion";
     private Component owner;
     private String title = null;
 
     public static MessageDialog create() {
-        return new MessageDialog().withTitle("Art Of Illusion");
+        return new MessageDialog().withTitle(defaultTitle);
     }
 
     public MessageDialog withTitle(String title) {
@@ -40,11 +41,11 @@ public final class MessageDialog {
     }
 
     public static void message(String message) {
-
+        JOptionPane.showMessageDialog(null, message, defaultTitle, JOptionPane.PLAIN_MESSAGE, icon);
     }
 
     public static void info(String message) {
-
+        JOptionPane.showMessageDialog(null, message, defaultTitle, JOptionPane.INFORMATION_MESSAGE, icon);
     }
 
     public void info(Object message) {

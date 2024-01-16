@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2008 by Peter Eastman
-   Changes copyright (C) 2022-2023 by Maksim Khramov
+   Changes copyright (C) 2022-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -15,7 +15,6 @@ import artofillusion.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
-import buoy.widget.*;
 
 /**
  * The extrude tool creates new objects by extruding a curve or surface along a path.
@@ -29,22 +28,21 @@ public class ExtrudeTool implements ModellingTool {
     }
 
     /* See whether an appropriate set of objects is selected and either display an error
-     message, or bring up the extrude window. */
+     message, or bring up the Extrude window. */
     @Override
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void commandSelected(LayoutWindow window) {
         Scene scene = window.getScene();
-        int[] selection = window.getSelectedIndices();
 
-        for (int i = 0; i < selection.length; i++) {
-            Object3D obj = scene.getObject(selection[i]).getObject();
+        for (int j : window.getSelectedIndices()) {
+            Object3D obj = scene.getObject(j).getObject();
             if (obj instanceof Curve || ((obj instanceof TriangleMesh
                     || obj.canConvertToTriangleMesh() != Object3D.CANT_CONVERT) && !obj.isClosed())) {
                 new ExtrudeDialog(window);
                 return;
             }
         }
-        new BStandardDialog("", UIUtilities.breakString(Translate.text("Tools:extrude.tool.message")), BStandardDialog.INFORMATION).showMessageDialog(window.getFrame());
+        MessageDialog.create().withOwner(window.getComponent()).withTitle(this.getName()).info((Object)Translate.text("Tools:extrude.tool.message"));
     }
 
     /**

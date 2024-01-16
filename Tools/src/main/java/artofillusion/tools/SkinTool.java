@@ -29,16 +29,16 @@ public class SkinTool implements ModellingTool {
     }
 
     /* See whether an appropriate set of objects is selected and either display an error
-     message, or bring up the extrude window. */
+     message, or bring up the Extrude window. */
     @Override
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void commandSelected(LayoutWindow window) {
         Scene scene = window.getScene();
-        int[] selection = window.getSelectedIndices();
+
         List<ObjectInfo> curves = new Vector<>();
 
-        for (int i = 0; i < selection.length; i++) {
-            ObjectInfo obj = scene.getObject(selection[i]);
+        for (int j : window.getSelectedIndices()) {
+            ObjectInfo obj = scene.getObject(j);
             if (obj.getObject() instanceof Curve) {
                 curves.add(obj);
             }

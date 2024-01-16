@@ -17,7 +17,7 @@ import artofillusion.math.Mat4;
 import artofillusion.math.Vec3;
 import artofillusion.object.*;
 import artofillusion.ui.*;
-import buoy.widget.*;
+
 
 /**
  * The lathe tool creates new objects by rotating a curve around an axis.
@@ -49,8 +49,8 @@ public class LatheTool implements ModellingTool {
                 new LatheDialog(window, obj);
                 return;
             }
-        }
-        new BStandardDialog("", Translate.text("Tools:lathe.tool.message"), BStandardDialog.INFORMATION).showMessageDialog(window.getFrame());
+        }        
+        MessageDialog.create().withOwner(window.getComponent()).withTitle(this.getName()).info((Object)Translate.text("Tools:lathe.tool.message"));
     }
 
     /**
@@ -93,9 +93,7 @@ public class LatheTool implements ModellingTool {
             axis.normalize();
             center.set(vert[0].r);
             radius = new Vec3();
-            for (int i = 0; i < vert.length; i++) {
-                radius.add(vert[i].r);
-            }
+            for (MeshVertex meshVertex : vert) radius.add(meshVertex.r);
             radius.scale(1.0 / vert.length);
             radius.subtract(center);
             radius.subtract(axis.times(axis.dot(center)));
@@ -118,14 +116,15 @@ public class LatheTool implements ModellingTool {
         }
 
         // Create the arrays of smoothness values.
-        float[] usmooth = new float[segments], vsmooth = new float[vert.length];
+        float[] usmooth = new float[segments];
+        float[] vsmooth = new float[vert.length];
+
         float[] s = curve.getSmoothness();
         for (int i = 0; i < segments; i++) {
             usmooth[i] = 1.0f;
         }
-        for (int i = 0; i < s.length; i++) {
-            vsmooth[i] = s[i];
-        }
+        System.arraycopy(s, 0, vsmooth, 0, s.length);
+
         int smoothMethod = curve.getSmoothingMethod();
         if (smoothMethod == Mesh.NO_SMOOTHING) {
             for (int i = 0; i < s.length; i++) {
@@ -133,16 +132,14 @@ public class LatheTool implements ModellingTool {
             }
             smoothMethod = Mesh.APPROXIMATING;
         } else {
-            for (int i = 0; i < s.length; i++) {
-                vsmooth[i] = s[i];
-            }
+            System.arraycopy(s, 0, vsmooth, 0, s.length);
         }
 
         // Center it.
         cm.scale(1.0 / (segments * vert.length));
-        for (int i = 0; i < v.length; i++) {
-            for (int j = 0; j < v[i].length; j++) {
-                v[i][j].subtract(cm);
+        for (Vec3[] vec3s : v) {
+            for (int j = 0; j < vec3s.length; j++) {
+                vec3s[j].subtract(cm);
             }
         }
         SplineMesh mesh = new SplineMesh(v, usmooth, vsmooth, smoothMethod, closed, curve.isClosed());
