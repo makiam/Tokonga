@@ -565,9 +565,9 @@ public class ArtOfIllusion {
 
         // Save all of them to the appropriate arrays.
         clipboardObject = obj;
-        clipboardTexture = textures.toArray(new Texture[textures.size()]);
-        clipboardMaterial = materials.toArray(new Material[materials.size()]);
-        clipboardImage = images.toArray(new ImageMap[images.size()]);
+        clipboardTexture = textures.toArray(Texture[]::new);
+        clipboardMaterial = materials.toArray(Material[]::new);
+        clipboardImage = images.toArray(ImageMap[]::new);
     }
 
     /**
