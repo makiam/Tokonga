@@ -807,24 +807,12 @@ public class Scene implements ObjectsContainer, MaterialsContainer, ImagesContai
     }
 
     /**
-     * Set one object to be selected, deselecting all other objects.
-     *
-     * @deprecated Call setSelection() on the LayoutWindow instead.
-     */
-    @Deprecated
-    public void setSelection(int which) {
-        clearSelection();
-        addToSelection(which);
-        updateSelectionInfo();
-    }
-
-    /**
      * Set a list of objects to be selected, deselecting all other objects.
      *
      * @deprecated Call setSelection() on the LayoutWindow instead.
      */
     @Deprecated
-    public void setSelection(int[] which) {
+    public void setSelection(int... which) {
         clearSelection();
         for (int index : which) {
             ObjectInfo info = objects.get(index);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2022 by Maksim Khramov
+ *  Copyright 2022-2024 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -62,6 +62,21 @@ public class SceneSelectionTest {
     }
 
     @Test
+    public void testSceneGetSingeSelectionOneWithArray2() {
+        Scene scene = new Scene();
+        ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
+        ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
+        scene.addObject(one, (UndoRecord) null);
+        scene.addObject(two, (UndoRecord) null);
+        scene.setSelection(0);
+
+        int[] selection = scene.getSelection();
+        Assert.assertNotNull(selection);
+        Assert.assertEquals(1, selection.length);
+
+    }
+    
+    @Test
     public void testSceneGetSingeSelectionTwo() {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
@@ -108,6 +123,21 @@ public class SceneSelectionTest {
     }
 
     @Test
+    public void testSceneGetMultipleSelectionWithSet2() {
+        Scene scene = new Scene();
+        ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
+        ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
+        scene.addObject(one, (UndoRecord) null);
+        scene.addObject(two, (UndoRecord) null);
+        scene.setSelection(0, 1);
+
+        int[] selection = scene.getSelection();
+        Assert.assertNotNull(selection);
+        Assert.assertEquals(2, selection.length);
+
+    }
+    
+    @Test
     public void testSceneAddToSelectionAndCheckFlag() {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
@@ -122,6 +152,21 @@ public class SceneSelectionTest {
 
     }
 
+    @Test
+    public void testSceneAddToSelectionAndCheckFlag2() {
+        Scene scene = new Scene();
+        ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
+        ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
+        scene.addObject(one, (UndoRecord) null);
+        scene.addObject(two, (UndoRecord) null);
+        scene.setSelection(0, 1);
+
+        scene.getObjects().forEach(item -> {
+            Assert.assertTrue(item.isSelected());
+        });
+
+    }
+    
     @Test
     public void testSceneAddToSelectionAndClearAndCheckFlag() {
         Scene scene = new Scene();
@@ -140,6 +185,24 @@ public class SceneSelectionTest {
         });
     }
 
+    @Test
+    public void testSceneAddToSelectionAndClearAndCheckFlag2() {
+        Scene scene = new Scene();
+        ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
+        ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
+        scene.addObject(one, (UndoRecord) null);
+        scene.addObject(two, (UndoRecord) null);
+        scene.setSelection(0, 1);
+
+        scene.getObjects().forEach(item -> {
+            Assert.assertTrue(item.isSelected());
+        });
+        scene.clearSelection();
+        scene.getObjects().forEach(item -> {
+            Assert.assertFalse(item.isSelected());
+        });
+    }
+    
     @Test
     public void testSceneGetSelectionWithChild() {
         Scene scene = new Scene();
