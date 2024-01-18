@@ -470,7 +470,7 @@ public class SceneViewer extends ViewerCanvas {
             info = theScene.getObject(j);
             if (!e.isShiftDown()) {
                 if (parentFrame instanceof LayoutWindow) {
-                    ((LayoutWindow) parentFrame).clearSelection();
+                    ((LayoutWindow) parentFrame).clearSelection(null);
                 } else {
                     theScene.clearSelection();
                 }
@@ -595,7 +595,7 @@ public class SceneViewer extends ViewerCanvas {
                     Math.abs(dragPoint.x - clickPoint.x), Math.abs(dragPoint.y - clickPoint.y));
             if (!e.isShiftDown()) {
                 if (parentFrame instanceof LayoutWindow) {
-                    ((LayoutWindow) parentFrame).clearSelection();
+                    ((LayoutWindow) parentFrame).clearSelection(null);
                 } else {
                     theScene.clearSelection();
                 }
