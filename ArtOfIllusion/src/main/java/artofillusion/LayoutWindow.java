@@ -1448,22 +1448,11 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     /**
-     * Set a single object in the scene to be selected.
-     */
-    public void setSelection(int which) {
-        sceneExplorer.setUpdateEnabled(false);
-        clearSelection();
-        theScene.setSelection(which);
-        sceneExplorer.setSelected(theScene.getObject(which), true);
-        sceneExplorer.setUpdateEnabled(true);
-        theScore.rebuildList();
-        updateMenus();
-    }
-
-    /**
      * Set the list of objects in the scene which should be selected.
      */
-    public void setSelection(int[] which) {
+    public void setSelection(int... which) {
+        if(which.length == 0) return;
+
         sceneExplorer.setUpdateEnabled(false);
         clearSelection();
         theScene.setSelection(which);
