@@ -614,7 +614,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         viewMenu.add(viewMenuItem[5] = Translate.menuItem("fitToAll", this, "fitToAllAction"));
         viewMenu.add(viewMenuItem[6] = Translate.menuItem("alignWithClosestAxis", this, "alignWithClosestAxisAction"));
         viewMenu.addSeparator();
-        viewMenu.add(viewMenuItem[1] = Translate.menuItem("hideObjectList", this, "hideObjectListAction"));
+        viewMenu.add(viewMenuItem[1] = Translate.menuItem("hideObjectList", event -> setObjectListVisible(objectListShown = !objectListShown)));
 
     }
 
@@ -710,8 +710,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         editKeyframeMenu.add(Translate.menuItem("loopKeyframes", this, "bulkEditKeyframeAction"));
         editKeyframeMenu.add(Translate.menuItem("deleteKeyframes", this, "bulkEditKeyframeAction"));
 
-        animationMenu.add(animationMenuItem[10] = Translate.menuItem("pathFromCurve", this, "pathFromCurveAction"));
-        animationMenu.add(animationMenuItem[11] = Translate.menuItem("bindToParent", this, "bindToParentCommand"));
+        animationMenu.add(animationMenuItem[10] = Translate.menuItem("pathFromCurve", event -> pathFromCurveAction()));
+        animationMenu.add(animationMenuItem[11] = Translate.menuItem("bindToParent", event -> bindToParentCommand()));
         animationMenu.addSeparator();
         animationMenu.add(Translate.menuItem("forwardFrame", this, "forwardFrameAction"));
         animationMenu.add(Translate.menuItem("backFrame", this, "backFrameAction"));
@@ -1628,10 +1628,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         getView().alignWithClosestAxis();
     }
 
-    private void hideObjectListAction() {
-        setObjectListVisible(objectListShown = !objectListShown);
-    }
-
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     private void pathFromCurveAction() {
         new PathFromCurveDialog(this, sceneExplorer.getSelectedObjects());
@@ -1836,10 +1832,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     public void selectAllCommand(ActionEvent event) {
-        int i;
         int[] which = new int[theScene.getNumObjects()];
 
-        for (i = 0; i < which.length; i++) {
+        for (int i = 0; i < which.length; i++) {
             which[i] = i;
         }
         setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_SCENE_SELECTION, getSelectedIndices()));
@@ -1858,7 +1853,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         int num = theScene.getNumObjects();
 
         // Create the duplicates.
-        HashMap<ObjectInfo, ObjectInfo> duplicateMap = new HashMap<>();
+        Map<ObjectInfo, ObjectInfo> duplicateMap = new HashMap<>();
         for (Object selection : sel) {
             ObjectInfo original = (ObjectInfo) selection;
             duplicateMap.put(original, original.duplicate());
