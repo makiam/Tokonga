@@ -490,19 +490,19 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         editMenu.addSeparator();
         editMenu.add(editMenuItem[6] = Translate.menuItem("selectChildren", this::selectChildrenAction));
         editMenu.add(editMenuItem[7] = Translate.menuItem("selectAll", this::selectAllCommand));
-        editMenu.add(editMenuItem[8] = Translate.menuItem("deselectAll", this::clearSelection));
+        editMenu.add(editMenuItem[8] = Translate.menuItem("deselectAll", event -> clearSelection()));
         editMenu.addSeparator();
         editMenu.add(editMenuItem[9] = Translate.menuItem("duplicate", this::duplicateCommand));
         editMenu.add(editMenuItem[10] = Translate.menuItem("sever", this::severCommand));
         editMenu.addSeparator();
-        editMenu.add(Translate.menuItem("preferences", this::preferencesCommand));
+        editMenu.add(Translate.menuItem("preferences", event -> preferencesCommand()));
     }
 
     private void createObjectMenu() {
 
         getMenuBar().add(objectMenu);
         objectMenuItem = new BMenuItem[12];
-        objectMenu.add(objectMenuItem[0] = Translate.menuItem("editObject", this::editObjectCommand));
+        objectMenu.add(objectMenuItem[0] = Translate.menuItem("editObject", event -> editObjectCommand()));
         objectMenu.add(objectMenuItem[1] = Translate.menuItem("objectLayout", this::objectLayoutCommand));
         objectMenu.add(objectMenuItem[2] = Translate.menuItem("transformObject", this, "transformObjectCommand"));
         objectMenu.add(objectMenuItem[3] = Translate.menuItem("alignObjects", this, "alignObjectsCommand"));
@@ -753,7 +753,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     private void createPopupMenu() {
         popupMenu = new BPopupMenu();
         popupMenuItem = new BMenuItem[15];
-        popupMenu.add(popupMenuItem[0] = Translate.menuItem("editObject", this::editObjectCommand));
+        popupMenu.add(popupMenuItem[0] = Translate.menuItem("editObject", event -> editObjectCommand()));
         popupMenu.add(popupMenuItem[1] = Translate.menuItem("objectLayout", this::objectLayoutCommand));
         popupMenu.add(popupMenuItem[2] = Translate.menuItem("setTextureAndMaterial", this, "setTextureCommand"));
         popupMenu.add(popupMenuItem[3] = Translate.menuItem("renameObject", this, "renameObjectCommand"));
@@ -1452,7 +1452,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      */
     public void setSelection(int which) {
         sceneExplorer.setUpdateEnabled(false);
-        clearSelection(null);
+        clearSelection();
         theScene.setSelection(which);
         sceneExplorer.setSelected(theScene.getObject(which), true);
         sceneExplorer.setUpdateEnabled(true);
@@ -1465,7 +1465,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      */
     public void setSelection(int[] which) {
         sceneExplorer.setUpdateEnabled(false);
-        clearSelection(null);
+        clearSelection();
         theScene.setSelection(which);
         for (int i = 0; i < which.length; i++) {
             sceneExplorer.setSelected(theScene.getObject(which[i]), true);
@@ -1488,7 +1488,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     /**
      * Deselect all objects.
      */
-    public void clearSelection(ActionEvent event) {
+    public void clearSelection() {
         theScene.clearSelection();
         sceneExplorer.deselectAll();
         theScore.rebuildList();
@@ -1826,7 +1826,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         if (sel.length == 0) {
             return;
         }
-        clearSelection(null);
+        clearSelection();
         UndoRecord undo = new UndoRecord(this);
 
         // First remove any selected objects.
@@ -1866,7 +1866,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void preferencesCommand(ActionEvent event) {
+    public void preferencesCommand() {
         new PreferencesWindow(this);
     }
 
@@ -1938,10 +1938,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
                 }
             });
         }        
-    }
-    
-    public void editObjectCommand(ActionEvent event) {
-        editObjectCommand();
     }
 
     public void objectLayoutCommand(ActionEvent event) {
