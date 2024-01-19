@@ -671,12 +671,12 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         addTrackMenu.add(positionTrackMenu = Translate.menu("positionTrack"));
         positionTrackMenu.add(Translate.menuItem("xyzOneTrack", this, "addOnePositionTrackAction"));
         positionTrackMenu.add(Translate.menuItem("xyzThreeTracks", this, "addThreePositionTrackAction"));
-        positionTrackMenu.add(Translate.menuItem("proceduralTrack", this, "addProceduralPositionTrackAction"));
+        positionTrackMenu.add(Translate.menuItem("proceduralTrack", event -> addProceduralPositionTrackAction()));
         addTrackMenu.add(rotationTrackMenu = Translate.menu("rotationTrack"));
         rotationTrackMenu.add(Translate.menuItem("xyzOneTrack", this, "addOneRotationTrackAction"));
         rotationTrackMenu.add(Translate.menuItem("xyzThreeTracks", this, "addThreeRotationTrackAction"));
         rotationTrackMenu.add(Translate.menuItem("quaternionTrack", this, "addQuaternionTrackAction"));
-        rotationTrackMenu.add(Translate.menuItem("proceduralTrack", this, "addProceduralRotationTrackAction"));
+        rotationTrackMenu.add(Translate.menuItem("proceduralTrack", event -> addProceduralRotationTrackAction()));
         addTrackMenu.add(Translate.menuItem("poseTrack", this, "addTrackAction"));
         addTrackMenu.add(distortionMenu = Translate.menu("distortionTrack"));
         distortionMenu.add(Translate.menuItem("bendDistortion", this, "addDistortionTrackAction"));
