@@ -722,7 +722,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         animationMenu.addSeparator();
         animationMenu.add(Translate.menuItem("forwardFrame", event -> forwardFrameAction()));
         animationMenu.add(Translate.menuItem("backFrame", event -> backFrameAction()));
-        animationMenu.add(Translate.menuItem("jumpToTime", this, "jumpToTimeCommand"));
+        animationMenu.add(Translate.menuItem("jumpToTime", event -> jumpToTimeCommand()));
         animationMenu.addSeparator();
         animationMenu.add(Translate.menuItem("previewAnimation", event -> previewAnimationAction()));
         animationMenu.add(animationMenuItem[12] = Translate.menuItem("showScore", event -> showScoreAction()));
