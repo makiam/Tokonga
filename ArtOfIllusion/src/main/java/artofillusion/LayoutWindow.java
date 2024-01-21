@@ -733,12 +733,12 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         getMenuBar().add(sceneMenu);
 
         sceneMenu.add(Translate.menuItem("renderScene", this, "renderCommand"));
-        sceneMenu.add(Translate.menuItem("renderImmediately", this, "renderImmediatelyAction"));
+        sceneMenu.add(Translate.menuItem("renderImmediately", event -> renderImmediatelyAction()));
 
         sceneMenu.addSeparator();
         sceneMenu.add(Translate.menuItem("textures", this, "texturesCommand"));
         sceneMenu.add(Translate.menuItem("images", this, "imagesDialogAction"));
-        sceneMenu.add(Translate.menuItem("environment", this, "environmentCommand"));
+        sceneMenu.add(Translate.menuItem("environment", event -> environmentCommand()));
     }
 
     /**
