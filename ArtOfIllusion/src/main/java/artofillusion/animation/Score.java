@@ -163,8 +163,8 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         popupMenu.add(popupMenuItem[0] = Translate.menuItem("editTrack", this, "editSelectedTrack"));
         popupMenu.add(popupMenuItem[1] = Translate.menuItem("duplicateTracks", this, "duplicateSelectedTracks"));
         popupMenu.add(popupMenuItem[2] = Translate.menuItem("deleteTracks", this, "deleteSelectedTracks"));
-        popupMenu.add(popupMenuItem[3] = Translate.menuItem("enableTracks", this, "enableTracks"));
-        popupMenu.add(popupMenuItem[4] = Translate.menuItem("disableTracks", this, "disableTracks"));
+        popupMenu.add(popupMenuItem[3] = Translate.menuItem("enableTracks", event -> setTracksEnabled(true)));
+        popupMenu.add(popupMenuItem[4] = Translate.menuItem("disableTracks", event -> setTracksEnabled(false)));
     }
 
     /**
