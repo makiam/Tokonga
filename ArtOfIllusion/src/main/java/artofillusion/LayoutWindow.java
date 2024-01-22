@@ -459,13 +459,14 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             if (translator.canImport()) {
                 BMenuItem item = new BMenuItem(translator.getName());
                 item.getComponent().putClientProperty("translator", translator);
-                item.addEventLink(CommandEvent.class, this, "importAction");
+                item.getComponent().addActionListener(this::importAction);
                 importMenu.add(item);
             }
             if (translator.canExport()) {
                 BMenuItem item = new BMenuItem(translator.getName());
                 item.getComponent().putClientProperty("translator", translator);
-                item.addEventLink(CommandEvent.class, this, "exportAction");
+                item.getComponent().addActionListener(this::exportAction);
+
                 exportMenu.add(item);
             }
         }
@@ -1587,15 +1588,15 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         ArtOfIllusion.quit();
     }
 
-    private void importAction(CommandEvent event) {
-        BMenuItem source = (BMenuItem) event.getWidget();
-        Translator trans = (Translator) source.getComponent().getClientProperty("translator");
+    private void importAction(ActionEvent event) {
+        var source = (JMenuItem) event.getSource();
+        Translator trans = (Translator) source.getClientProperty("translator");
         trans.importFile(this);
     }
 
-    private void exportAction(CommandEvent event) {
-        BMenuItem source = (BMenuItem) event.getWidget();
-        Translator trans = (Translator) source.getComponent().getClientProperty("translator");
+    private void exportAction(ActionEvent event) {
+        var source = (JMenuItem) event.getSource();
+        Translator trans = (Translator) source.getClientProperty("translator");
         trans.exportFile(this, theScene);
     }
 
