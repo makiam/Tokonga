@@ -584,20 +584,9 @@ public class ArtOfIllusion {
 
         // Now add any new textures.
         for (Texture ct : clipboardTexture) {
-            Texture newtex;
-            int j;
-            for (j = 0; j < scene.getNumTextures() && ct.getID() != scene.getTexture(j).getID(); j++) {
-                ;
-            }
-            if (j == scene.getNumTextures()) {
-                newtex = ct.duplicate();
-                newtex.setID(ct.getID());
-                scene.addTexture(newtex);
-            } else {
-                newtex = scene.getTexture(j);
-            }
+            Texture newTex = ArtOfIllusion.getSceneTextureOrAdd(scene, ct);
 
-            for (j = 0; j < clipboardObject.length; j++) {
+            for (int j = 0; j < clipboardObject.length; j++) {
                 Object3D object = clipboardObject[j].getObject();
                 Texture current = object.getTexture();
                 if (current != null) {
@@ -607,7 +596,7 @@ public class ArtOfIllusion {
                         newParamValues[k] = oldParamValues[k].duplicate();
                     }
                     if (current == ct) {
-                        clipboardObject[j].setTexture(newtex, object.getTextureMapping().duplicate(object, newtex));
+                        clipboardObject[j].setTexture(newTex, object.getTextureMapping().duplicate(object, newTex));
                     } else if (current instanceof LayeredTexture) {
                         LayeredMapping map = (LayeredMapping) object.getTextureMapping();
                         map = (LayeredMapping) map.duplicate();
@@ -615,8 +604,8 @@ public class ArtOfIllusion {
                         Texture[] layer = map.getLayers();
                         for (int k = 0; k < layer.length; k++) {
                             if (layer[k] == ct) {
-                                map.setLayer(k, newtex);
-                                map.setLayerMapping(k, map.getLayerMapping(k).duplicate(object, newtex));
+                                map.setLayer(k, newTex);
+                                map.setLayerMapping(k, map.getLayerMapping(k).duplicate(object, newTex));
                             }
                         }
                     }
@@ -627,22 +616,12 @@ public class ArtOfIllusion {
 
         // Add any new materials.
         for (Material cm : clipboardMaterial) {
-            Material newmat;
-            int j;
-            for (j = 0; j < scene.getNumMaterials() && cm.getID() != scene.getMaterial(j).getID(); j++) {
-                ;
-            }
-            if (j == scene.getNumMaterials()) {
-                newmat = cm.duplicate();
-                newmat.setID(cm.getID());
-                scene.addMaterial(newmat);
-            } else {
-                newmat = scene.getMaterial(j);
-            }
-            for (j = 0; j < clipboardObject.length; j++) {
+            Material newMat = ArtOfIllusion.getSceneMaterialOrAdd(scene, cm);
+
+            for (int j = 0; j < clipboardObject.length; j++) {
                 Material current = clipboardObject[j].getObject().getMaterial();
                 if (current == cm) {
-                    clipboardObject[j].setMaterial(newmat, clipboardObject[j].getObject().getMaterialMapping().duplicate(clipboardObject[j].getObject(), newmat));
+                    clipboardObject[j].setMaterial(newMat, clipboardObject[j].getObject().getMaterialMapping().duplicate(clipboardObject[j].getObject(), newMat));
                 }
             }
         }
@@ -651,6 +630,28 @@ public class ArtOfIllusion {
 
         for (ObjectInfo obj: ObjectInfo.duplicateAll(clipboardObject)) win.addObject(obj, undo);
         undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);
+    }
+
+    public static Texture getSceneTextureOrAdd(Scene scene, Texture match) {
+        Optional<Texture> asset = scene.getTextures().stream().filter(texture -> texture.getID() == match.getID()).findFirst();
+
+        return asset.orElseGet(() -> {
+            Texture newTex = match.duplicate();
+            newTex.setID(match.getID());
+            scene.addTexture(newTex);
+            return newTex;
+        });
+    }
+
+    public static Material getSceneMaterialOrAdd(Scene scene, Material match) {
+        Optional<Material> asset = scene.getMaterials().stream().filter(material -> material.getID() == match.getID()).findFirst();
+
+        return asset.orElseGet(() -> {
+            Material newMat = match.duplicate();
+            newMat.setID(match.getID());
+            scene.addMaterial(newMat);
+            return newMat;
+        });
     }
 
     /**
