@@ -516,49 +516,43 @@ public class ArtOfIllusion {
 
         List<Texture> textures = new ArrayList<>();
         for (ObjectInfo co : obj) {
+            Object3D object = co.getObject();
             Texture tex = co.getObject().getTexture();
             if (tex instanceof LayeredTexture) {
-                LayeredMapping map = (LayeredMapping) co.getObject().getTextureMapping();
+                LayeredMapping map = (LayeredMapping) object.getTextureMapping();
                 Texture[] layer = map.getLayers();
                 for (int j = 0; j < layer.length; j++) {
                     Texture dup = layer[j].duplicate();
                     dup.setID(layer[j].getID());
                     textures.add(dup);
                     map.setLayer(j, dup);
-                    map.setLayerMapping(j, map.getLayerMapping(j).duplicate(co.getObject(), dup));
+                    map.setLayerMapping(j, map.getLayerMapping(j).duplicate(object, dup));
                 }
             } else if (tex != null) {
                 Texture dup = tex.duplicate();
                 dup.setID(tex.getID());
                 textures.add(dup);
-                co.getObject().setTexture(dup, co.getObject().getTextureMapping().duplicate(co.getObject(), dup));
+                object.setTexture(dup, object.getTextureMapping().duplicate(object, dup));
             }
         }
 
         // Next, make a list of all materials used by the objects.
         List<Material> materials = new ArrayList<>();
         for (ObjectInfo obj1 : obj) {
+            Object3D object = obj1.getObject();
             Material mat = obj1.getObject().getMaterial();
             if (mat != null) {
                 Material dup = mat.duplicate();
                 dup.setID(mat.getID());
                 materials.add(dup);
-                obj1.getObject().setMaterial(dup, obj1.getObject().getMaterialMapping().duplicate(obj1.getObject(), dup));
+                object.setMaterial(dup, object.getMaterialMapping().duplicate(object, dup));
             }
         }
 
         // Now make a list of all ImageMaps used by any of them.
         List<ImageMap> images = new ArrayList<>();
-        for (int i = 0; i < scene.getNumImages(); i++) {
-            ImageMap map = scene.getImage(i);
-            boolean used = false;
-            for (int j = 0; j < textures.size() && !used; j++) {
-                used = textures.get(j).usesImage(map);
-            }
-            for (int j = 0; j < materials.size() && !used; j++) {
-                used = materials.get(j).usesImage(map);
-            }
-            if (used) {
+        for (ImageMap map : scene.getImages()) {
+            if (textures.stream().anyMatch(texture -> texture.usesImage(map)) || materials.stream().anyMatch(material -> material.usesImage(map))) {
                 images.add(map);
             }
         }
@@ -583,14 +577,9 @@ public class ArtOfIllusion {
         int[] sel = win.getSelectedIndices();
 
         // First, add any new image maps to the scene.
-        for (ImageMap ci : clipboardImage) {
-            int j;
-            for (j = 0; j < scene.getNumImages() && ci.getID() != scene.getImage(j).getID(); j++) {
-                ;
-            }
-            if (j == scene.getNumImages()) {
-                scene.addImage(ci);
-            }
+        for (ImageMap map : clipboardImage) {
+            if(scene.getImages().stream().anyMatch(image -> image.getID() == map.getID()))  continue;
+            scene.addImage(map);
         }
 
         // Now add any new textures.
@@ -657,10 +646,8 @@ public class ArtOfIllusion {
         }
 
         // Finally, add the objects to the scene.
-        
-        for (ObjectInfo obj1:  ObjectInfo.duplicateAll(clipboardObject)) {
-            win.addObject(obj1, undo);
-        }
+
+        for (ObjectInfo obj: ObjectInfo.duplicateAll(clipboardObject)) win.addObject(obj, undo);
         undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);
     }
 
