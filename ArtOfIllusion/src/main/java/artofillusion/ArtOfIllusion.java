@@ -50,14 +50,17 @@ public class ArtOfIllusion {
     private static final CompilerConfiguration config = new CompilerConfiguration();
     static {
         ImportCustomizer ic = new ImportCustomizer();
-        ic.addStarImports("artofillusion");
+        ic.addStarImports(ArtOfIllusion.class.getPackage().getName());
         config.addCompilationCustomizers(ic);
     }
     @Getter
     private static final GroovyShell shell = new GroovyShell(config);
 
-    public static final String APP_DIRECTORY, PLUGIN_DIRECTORY;
-    public static final String TOOL_SCRIPT_DIRECTORY, OBJECT_SCRIPT_DIRECTORY, STARTUP_SCRIPT_DIRECTORY;
+    public static final String APP_DIRECTORY;
+    public static final String PLUGIN_DIRECTORY;
+    public static final String TOOL_SCRIPT_DIRECTORY;
+    public static final String OBJECT_SCRIPT_DIRECTORY;
+    public static final String STARTUP_SCRIPT_DIRECTORY;
     public static final ImageIcon APP_ICON;
 
     private static ApplicationPreferences preferences;
@@ -583,27 +586,23 @@ public class ArtOfIllusion {
         }
 
         // Now add any new textures.
-        for (Texture ct : clipboardTexture) {
-            Texture newTex = ArtOfIllusion.getSceneTextureOrAdd(scene, ct);
+        for (Texture match : clipboardTexture) {
+            Texture newTex = ArtOfIllusion.getSceneTextureOrAdd(scene, match);
 
-            for (int j = 0; j < clipboardObject.length; j++) {
-                Object3D object = clipboardObject[j].getObject();
+            for (ObjectInfo cObj: clipboardObject) {
+                Object3D object = cObj.getObject();
                 Texture current = object.getTexture();
                 if (current != null) {
-                    ParameterValue[] oldParamValues = object.getParameterValues();
-                    ParameterValue[] newParamValues = new ParameterValue[oldParamValues.length];
-                    for (int k = 0; k < newParamValues.length; k++) {
-                        newParamValues[k] = oldParamValues[k].duplicate();
-                    }
-                    if (current == ct) {
-                        clipboardObject[j].setTexture(newTex, object.getTextureMapping().duplicate(object, newTex));
+                    ParameterValue[] newParamValues = copyObjectParameters(object);
+                    if (current == match) {
+                        cObj.setTexture(newTex, object.getTextureMapping().duplicate(object, newTex));
                     } else if (current instanceof LayeredTexture) {
                         LayeredMapping map = (LayeredMapping) object.getTextureMapping();
                         map = (LayeredMapping) map.duplicate();
-                        clipboardObject[j].setTexture(new LayeredTexture(map), map);
+                        cObj.setTexture(new LayeredTexture(map), map);
                         Texture[] layer = map.getLayers();
                         for (int k = 0; k < layer.length; k++) {
-                            if (layer[k] == ct) {
+                            if (layer[k] == match) {
                                 map.setLayer(k, newTex);
                                 map.setLayerMapping(k, map.getLayerMapping(k).duplicate(object, newTex));
                             }
@@ -615,13 +614,14 @@ public class ArtOfIllusion {
         }
 
         // Add any new materials.
-        for (Material cm : clipboardMaterial) {
-            Material newMat = ArtOfIllusion.getSceneMaterialOrAdd(scene, cm);
+        for (Material mat : clipboardMaterial) {
+            Material newMat = ArtOfIllusion.getSceneMaterialOrAdd(scene, mat);
 
-            for (int j = 0; j < clipboardObject.length; j++) {
-                Material current = clipboardObject[j].getObject().getMaterial();
-                if (current == cm) {
-                    clipboardObject[j].setMaterial(newMat, clipboardObject[j].getObject().getMaterialMapping().duplicate(clipboardObject[j].getObject(), newMat));
+            for (ObjectInfo cObj: clipboardObject) {
+                Object3D object = cObj.getObject();
+                Material current = object.getMaterial();
+                if (current == mat) {
+                    cObj.setMaterial(newMat, object.getMaterialMapping().duplicate(object, newMat));
                 }
             }
         }
@@ -654,14 +654,18 @@ public class ArtOfIllusion {
         });
     }
 
+    private static ParameterValue[] copyObjectParameters(Object3D object)  {
+        ParameterValue[] oldParamValues = object.getParameterValues();
+        ParameterValue[] newParamValues = new ParameterValue[oldParamValues.length];
+        for (int k = 0; k < newParamValues.length; k++) newParamValues[k] = oldParamValues[k].duplicate();
+        return newParamValues;
+    }
+
     /**
      * Get the number of objects on the clipboard.
      */
     public static int getClipboardSize() {
-        if (clipboardObject == null) {
-            return 0;
-        }
-        return clipboardObject.length;
+        return clipboardObject == null ? 0 : clipboardObject.length;
     }
 
     /**
