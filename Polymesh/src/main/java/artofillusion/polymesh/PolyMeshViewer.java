@@ -322,34 +322,18 @@ public class PolyMeshViewer extends MeshViewer {
             sv = viewMesh.getVertices();
         }
 
-        int ref;
         for (int i = 0; i < screenVert.length; i++) {
-            if (mirror) {
-                ref = invVertTable[i];
-            } else {
-                ref = i;
-            }
+
+            if(!visible[i]) continue;
+
+            Color color = selected[ mirror ? invVertTable[i] : i] ? selectedVertColor : vertColor;
 
             if (renderMode == RENDER_WIREFRAME || renderMode == RENDER_TRANSPARENT) {
-                if (!selected[ref] && visible[i]) {
-                    drawBox(screenVert[i].x - handleSize / 2, screenVert[i].y - handleSize / 2, handleSize, handleSize, vertColor);
-                }
+                drawBox(screenVert[i].x - handleSize / 2, screenVert[i].y - handleSize / 2, handleSize, handleSize, color);
             } else {
-                if (!selected[ref] && visible[i]) {
-                    renderBox(screenVert[i].x - handleSize / 2, screenVert[i].y - handleSize / 2, handleSize, handleSize, screenZ[i] - 0.01, vertColor);
-                }
+                renderBox(screenVert[i].x - handleSize / 2, screenVert[i].y - handleSize / 2, handleSize, handleSize, screenZ[i] - 0.01, color);
             }
 
-            // Now draw the selected portions.
-            if (renderMode == RENDER_WIREFRAME || renderMode == RENDER_TRANSPARENT) {
-                if (selected[ref] && visible[i]) {
-                    drawBox(screenVert[i].x - handleSize / 2, screenVert[i].y - handleSize / 2, handleSize, handleSize, selectedVertColor);
-                }
-            } else {
-                if (selected[ref] && visible[i]) {
-                    renderBox(screenVert[i].x - handleSize / 2, screenVert[i].y - handleSize / 2, handleSize, handleSize, screenZ[i] - 0.01, selectedVertColor);
-                }
-            }
         }
     }
 
