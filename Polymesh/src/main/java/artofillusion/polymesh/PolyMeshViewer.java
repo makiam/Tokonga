@@ -330,15 +330,26 @@ public class PolyMeshViewer extends MeshViewer {
                 ref = i;
             }
 
-
-            var color = selected[ref] && visible[i] ? selectedVertColor : vertColor;
-
-            if(renderMode == RENDER_WIREFRAME || renderMode == RENDER_TRANSPARENT) {
-                drawBox(screenVert[i].x - handleSize / 2, screenVert[i].y - handleSize / 2, handleSize, handleSize, color);
+            if (renderMode == RENDER_WIREFRAME || renderMode == RENDER_TRANSPARENT) {
+                if (!selected[ref] && visible[i]) {
+                    drawBox(screenVert[i].x - handleSize / 2, screenVert[i].y - handleSize / 2, handleSize, handleSize, vertColor);
+                }
             } else {
-                renderBox(screenVert[i].x - handleSize / 2, screenVert[i].y - handleSize / 2, handleSize, handleSize, screenZ[i] - 0.01, color);
+                if (!selected[ref] && visible[i]) {
+                    renderBox(screenVert[i].x - handleSize / 2, screenVert[i].y - handleSize / 2, handleSize, handleSize, screenZ[i] - 0.01, vertColor);
+                }
             }
 
+            // Now draw the selected portions.
+            if (renderMode == RENDER_WIREFRAME || renderMode == RENDER_TRANSPARENT) {
+                if (selected[ref] && visible[i]) {
+                    drawBox(screenVert[i].x - handleSize / 2, screenVert[i].y - handleSize / 2, handleSize, handleSize, selectedVertColor);
+                }
+            } else {
+                if (selected[ref] && visible[i]) {
+                    renderBox(screenVert[i].x - handleSize / 2, screenVert[i].y - handleSize / 2, handleSize, handleSize, screenZ[i] - 0.01, selectedVertColor);
+                }
+            }
         }
     }
 
