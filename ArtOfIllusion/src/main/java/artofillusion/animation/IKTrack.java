@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2013 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,6 +18,8 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+import lombok.Setter;
+
 import java.io.*;
 import java.util.*;
 
@@ -27,16 +29,19 @@ import java.util.*;
 public class IKTrack extends Track {
 
     private ObjectInfo info;
-    private List<Constraint> constraints;
-    private boolean useGestures;
+    private List<Constraint> constraints = new Vector<>();
+    /**
+     * -- SETTER --
+     *  Set whether to reshape the mesh based on its gestures.
+     */
+    @Setter
+    private boolean useGestures = true;
     private WeightTrack theWeight;
 
     public IKTrack(ObjectInfo info) {
         super("Inverse Kinematics");
         this.info = info;
         theWeight = new WeightTrack(this);
-        constraints = new Vector<>();
-        useGestures = true;
     }
 
     /**
@@ -44,13 +49,6 @@ public class IKTrack extends Track {
      */
     public boolean getUseGestures() {
         return useGestures;
-    }
-
-    /**
-     * Set whether to reshape the mesh based on its gestures.
-     */
-    public void setUseGestures(boolean use) {
-        useGestures = use;
     }
 
     /**
@@ -84,8 +82,8 @@ public class IKTrack extends Track {
         Vec3[] target = new Vec3[joint.length];
         Mat4 toLocal = info.getCoords().toLocal();
 
-        for (int i = 0; i < constraints.size(); i++) {
-            Constraint c = constraints.get(i);
+        for (Constraint c: constraints) {
+
             int index = skeleton.findJointIndex(c.jointID);
             if (index == -1) {
                 continue;
@@ -115,11 +113,8 @@ public class IKTrack extends Track {
         t.name = name;
         t.enabled = enabled;
         t.quantized = quantized;
-        t.constraints = new Vector<>();
-        for (int i = 0; i < constraints.size(); i++) {
-            Constraint c = constraints.get(i);
-            t.constraints.add(c.duplicate());
-        }
+
+        constraints.forEach(c -> t.constraints.add(c.duplicate()));
         t.theWeight = theWeight.duplicate(t);
         return t;
     }
@@ -134,11 +129,8 @@ public class IKTrack extends Track {
         name = t.name;
         enabled = t.enabled;
         quantized = t.quantized;
-        constraints = new Vector<>();
-        for (int i = 0; i < t.constraints.size(); i++) {
-            Constraint c = t.constraints.get(i);
-            constraints.add(c.duplicate());
-        }
+        constraints.clear();
+        t.constraints.forEach(c -> constraints.add(c.duplicate()));
         theWeight = t.theWeight.duplicate(t);
     }
 
@@ -170,12 +162,7 @@ public class IKTrack extends Track {
      */
     @Override
     public boolean isNullTrack() {
-        for (int i = 0; i < constraints.size(); i++) {
-            if (constraints.get(i).target != null) {
-                return false;
-            }
-        }
-        return true;
+        return constraints.stream().noneMatch(c -> c.target != null);
     }
 
     /**
@@ -216,12 +203,7 @@ public class IKTrack extends Track {
      */
     @Override
     public ObjectInfo[] getDependencies() {
-        List<ObjectInfo> dependencies = new Vector<>();
-        for (Constraint cc: constraints) {
-           if(cc.target == null) continue;
-           dependencies.add(cc.target.getObject());
-        }
-        return dependencies.toArray(new ObjectInfo[0]);
+        return constraints.stream().filter(c -> c.target != null).map(c -> c.target.getObject()).toArray(ObjectInfo[]::new);
     }
 
     /**
@@ -263,8 +245,7 @@ public class IKTrack extends Track {
         out.writeBoolean(enabled);
         out.writeBoolean(useGestures);
         out.writeInt(constraints.size());
-        for (int i = 0; i < constraints.size(); i++) {
-            Constraint c = constraints.get(i);
+        for (Constraint c: constraints) {
             out.writeInt(c.jointID);
             out.writeBoolean(c.target != null);
             if (c.target != null) {
@@ -290,7 +271,7 @@ public class IKTrack extends Track {
             useGestures = in.readBoolean();
         }
         int numConstraints = in.readInt();
-        constraints = new Vector<>();
+        constraints.clear();
         for (int i = 0; i < numConstraints; i++) {
             Constraint c = new Constraint(in.readInt(), in.readBoolean() ? new ObjectRef(in, scene) : null);
             constraints.add(c);
@@ -298,10 +279,18 @@ public class IKTrack extends Track {
         theWeight.initFromStream(in, scene);
     }
 
+    public void addConstraint(int i, ObjectRef ref) {
+        constraints.add(new Constraint(i, ref));
+    }
+
+    public List<Constraint> getConstraints() {
+        return Collections.unmodifiableList(constraints);
+    }
+
     /**
      * This inner class represents a single constraint.
      */
-    private class Constraint {
+    class Constraint {
 
         public int jointID;
         public ObjectRef target;
@@ -312,10 +301,7 @@ public class IKTrack extends Track {
         }
 
         public Constraint duplicate() {
-            if (target == null) {
-                return new Constraint(jointID, null);
-            }
-            return new Constraint(jointID, target.duplicate());
+            return new Constraint(jointID, target == null ? null : target.duplicate());
         }
     }
 
@@ -328,19 +314,15 @@ public class IKTrack extends Track {
         final BList constraintList;
         final BTextField nameField;
         final BCheckBox gesturesBox;
-        final List<Constraint> tempConstraints;
-        int[] tempJointID;
-        ObjectRef[] tempTarget;
+        final List<Constraint> tempConstraints = new Vector<>();
+
         final BButton editButton;
         final BButton deleteButton;
 
         public Editor(LayoutWindow win) {
             super(win, Translate.text("ikTrackTitle"), true);
             window = win;
-            tempConstraints = new Vector<>();
-            for (int i = 0; i < constraints.size(); i++) {
-                tempConstraints.add(constraints.get(i).duplicate());
-            }
+            constraints.forEach(c -> tempConstraints.add(c.duplicate()));
 
             // Layout the dialog.
             FormContainer content = new FormContainer(new double[]{0.0, 1.0}, new double[]{0.0, 1.0, 0.0, 0.0});
@@ -382,15 +364,15 @@ public class IKTrack extends Track {
                 return;
             }
             constraintList.setEnabled(true);
-            for (int i = 0; i < tempConstraints.size(); i++) {
-                Constraint c = tempConstraints.get(i);
+            tempConstraints.forEach(c -> {
                 Joint j = skeleton.getJoint(c.jointID);
                 if (c.target == null) {
                     constraintList.add(Translate.text("jointIsLocked", j.name));
                 } else {
                     constraintList.add(Translate.text("jointFollowsTarget", j.name, c.target.toString()));
                 }
-            }
+            });
+
         }
 
         private void doAdd() {
@@ -447,9 +429,8 @@ public class IKTrack extends Track {
             Skeleton skeleton = info.getSkeleton();
             Joint[] joint = skeleton.getJoints();
             BList jointList = new BList();
-            for (int i = 0; i < joint.length; i++) {
-                jointList.add(joint[i].name);
-            }
+            for (Joint cj : joint) jointList.add(cj.name);
+            
             if (skeleton.findJointIndex(c.jointID) > -1) {
                 jointList.setSelected(skeleton.findJointIndex(c.jointID), true);
             }
