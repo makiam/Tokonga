@@ -293,10 +293,9 @@ public class PolyMeshViewer extends MeshViewer {
         }
 
         PolyMesh mesh = (PolyMesh) getController().getObject().getObject();
-        PolyMesh viewMesh = mesh;
         Color vertColor = mesh.getVertColor();
         Color selectedVertColor = vertColor;
-        int handleSize = mesh.getHandleSize();
+
         if (currentTool.hilightSelection()) {
             selectedVertColor = mesh.getSelectedVertColor();
         }
@@ -304,25 +303,15 @@ public class PolyMeshViewer extends MeshViewer {
             selectedVertColor = disableColor(selectedVertColor);
             vertColor = disableColor(vertColor);
         }
-        // First, draw any unselected portions of the object.
+
         boolean[] selected = controller.getSelection();
         boolean mirror = false;
         int[] invVertTable = mesh.getInvMirroredVerts();
 
-        if (mesh.getMirrorState() != PolyMesh.NO_MIRROR) {
-            mirror = true;
-            viewMesh = mesh.getMirroredMesh();
-        }
-        QuadMesh subMesh = null;
-        MeshVertex[] sv;
-        boolean project = (controller instanceof PolyMeshEditorWindow && ((PolyMeshEditorWindow) controller).getProjectOntoSurface());
-        if (project && viewMesh.getSubdividedMesh() != null) {
-            subMesh = viewMesh.getSubdividedMesh();
-            sv = subMesh.getVertices();
-        } else {
-            sv = viewMesh.getVertices();
-        }
+        if (mesh.getMirrorState() != PolyMesh.NO_MIRROR) mirror = true;
 
+
+        int handleSize = mesh.getHandleSize();
         for (int i = 0; i < screenVert.length; i++) {
 
             if(!visible[i]) continue;
