@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2009 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -29,21 +29,29 @@ import javax.swing.*;
 public class TreeList extends CustomWidget {
 
     private final EditingWindow window;
-    private final List<TreeElement> elements;
-    private final List<TreeElement> showing;
-    private final List<TreeElement> selected;
-    private final List<Integer> indent;
-    private int yoffset, rowHeight, dragStart, lastDrag, lastClickRow, lastIndent, maxRowWidth;
+    private final List<TreeElement> elements = new Vector<>();
+    private final List<TreeElement> showing = new Vector<>();
+    private final List<TreeElement> selected = new Vector<>();
+    private final List<Integer> indent = new Vector<>();
+    private int yOffset;
+    private int rowHeight = 15;
+    private int dragStart;
+    private int lastDrag;
+    private int lastClickRow = -1;
+    private int lastIndent;
+    private int maxRowWidth;
     private boolean updateDisabled;
     private boolean moving;
-    private boolean[] origSelected;
+    private boolean[] origSelected = new boolean[0];
     private boolean insertAbove;
     private boolean okToInsert;
-    private boolean allowMultiple;
+    private boolean allowMultiple = true;
     private PopupMenuManager popupManager;
     protected UndoRecord undo;
 
-    private static final Polygon openHandle, closedHandle, insertHandle;
+    private static final Polygon openHandle;
+    private static final Polygon closedHandle;
+    private static final Polygon insertHandle;
     private static final int INDENT_WIDTH = 10;
     private static final int HANDLE_WIDTH = 4;
     private static final int HANDLE_HEIGHT = 8;
@@ -61,13 +69,7 @@ public class TreeList extends CustomWidget {
 
     public TreeList(EditingWindow win) {
         window = win;
-        elements = new Vector<>();
-        showing = new Vector<>();
-        indent = new Vector<>();
-        selected = new Vector<>();
-        origSelected = new boolean[0];
-        allowMultiple = true;
-        lastClickRow = -1;
+
         Font font = getFont();
         if (font == null) {
             font = UIUtilities.getDefaultFont();
@@ -75,9 +77,8 @@ public class TreeList extends CustomWidget {
         if (font != null) {
             FontMetrics fm = getComponent().getFontMetrics(font);
             rowHeight = Math.max(fm.getMaxAscent() + fm.getMaxDescent(), HANDLE_HEIGHT) + 3;
-        } else {
-            rowHeight = 15;
         }
+
         buildState();
         addEventLink(MousePressedEvent.class, this, "mousePressed");
         addEventLink(MouseReleasedEvent.class, this, "mouseReleased");
@@ -202,19 +203,13 @@ public class TreeList extends CustomWidget {
      * Get an array of all the TreeElements in the tree.
      */
     public TreeElement[] getElements() {
-        List<TreeElement> v = new Vector<>();
-        TreeElement el;
+        final List<TreeElement> v = new Vector<>();
 
-        for (int i = 0; i < elements.size(); i++) {
-            el = elements.get(i);
+        elements.forEach(el -> {
             v.add(el);
             addChildrenToList(el, v);
-        }
-        TreeElement[] allEl = new TreeElement[v.size()];
-        for (int i = 0; i < allEl.length; i++) {
-            allEl[i] = v.get(i);
-        }
-        return allEl;
+        });
+        return v.toArray(new TreeElement[0]);
     }
 
     private void addChildrenToList(TreeElement el, List<TreeElement> v) {
@@ -229,20 +224,14 @@ public class TreeList extends CustomWidget {
      * Get an array of the objects corresponding to selected TreeElements.
      */
     public Object[] getSelectedObjects() {
-        Object[] sel = new Object[selected.size()];
-        for (int i = 0; i < sel.length; i++) {
-            sel[i] = selected.get(i).getObject();
-        }
-        return sel;
+        return selected.stream().map(TreeElement::getObject).toArray(Object[]::new);
     }
 
     /**
      * Deselect all elements in the tree.
      */
     public void deselectAll() {
-        for (int i = 0; i < elements.size(); i++) {
-            deselectRecursively(elements.get(i));
-        }
+        elements.forEach(this::deselectRecursively);
         if (!updateDisabled) {
             buildState();
             repaint();
@@ -341,8 +330,8 @@ public class TreeList extends CustomWidget {
         showing.clear();
         indent.clear();
         selected.clear();
-        for (int i = 0; i < elements.size(); i++) {
-            TreeElement el = elements.get(i);
+        for (TreeElement el: elements) {
+
             showing.add(el);
             indent.add(0);
             if (el.isSelected()) {
@@ -382,7 +371,7 @@ public class TreeList extends CustomWidget {
      * Set the y offset (for vertically scrolling the panel).
      */
     public void setYOffset(int offset) {
-        yoffset = offset;
+        yOffset = offset;
     }
 
     /**
@@ -392,7 +381,7 @@ public class TreeList extends CustomWidget {
         Graphics2D g = ev.getGraphics();
         FontMetrics fm = g.getFontMetrics();
         Rectangle dim = getBounds();
-        int y = yoffset;
+        int y = yOffset;
 
         rowHeight = Math.max(fm.getMaxAscent() + fm.getMaxDescent(), HANDLE_HEIGHT) + 3;
         maxRowWidth = 0;
@@ -437,7 +426,7 @@ public class TreeList extends CustomWidget {
 
     private void mousePressed(MousePressedEvent ev) {
         Point pos = ev.getPoint();
-        pos.y -= yoffset;
+        pos.y -= yOffset;
         int row = pos.y / rowHeight;
 
         moving = false;
@@ -514,8 +503,11 @@ public class TreeList extends CustomWidget {
 
     private void mouseDragged(MouseDraggedEvent ev) {
         Point pos = ev.getPoint();
-        pos.y -= yoffset;
-        int row = pos.y / rowHeight, min, max, i;
+        pos.y -= yOffset;
+        int row = pos.y/rowHeight;
+        int min;
+        int max;
+        int i;
 
         if (moving) {
             // The selected elements are being dragged.
@@ -690,8 +682,8 @@ public class TreeList extends CustomWidget {
      * Determine whether the selected elements can be added to a particular parent.
      */
     private boolean dragTargetOk(TreeElement parent) {
-        for (int i = 0; i < selected.size(); i++) {
-            TreeElement el = selected.get(i);
+        for (TreeElement el: selected) {
+
             if (el.getParent() != null && el.getParent().isSelected()) {
                 continue;
             }
@@ -705,10 +697,10 @@ public class TreeList extends CustomWidget {
     private void mouseClicked(MouseClickedEvent ev) {
         if (ev.getClickCount() == 1 && mouseButtonTwo(ev)) {
             window.getView().fitToObjects(((LayoutWindow) window).getSelectedObjects());
-            return;
+
         } else if (ev.getClickCount() == 2) {
             Point pos = ev.getPoint();
-            pos.y -= yoffset;
+            pos.y -= yOffset;
             int row = pos.y / rowHeight, i = pos.x / INDENT_WIDTH;
             if (row >= showing.size()) {
                 return;
@@ -719,7 +711,7 @@ public class TreeList extends CustomWidget {
                 return;
             }
             dispatchEvent(new ElementDoubleClickedEvent(el));
-            return;
+
         }
     }
 
@@ -727,7 +719,8 @@ public class TreeList extends CustomWidget {
      * Draw the insertion point to show where dragged items will be moved to.
      */
     private void drawInsertionPoint(Graphics g, int pos, int indent) {
-        int x = (indent + 1) * INDENT_WIDTH, y = pos * rowHeight - 2 + yoffset;
+        int x = (indent + 1) * INDENT_WIDTH;
+        int y = pos * rowHeight - 2 + yOffset;
         Rectangle dim = getBounds();
 
         insertHandle.translate(x, y);

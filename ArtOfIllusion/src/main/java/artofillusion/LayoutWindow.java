@@ -707,8 +707,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         animationMenu.add(animationMenuItem[1] = Translate.menuItem("duplicateTracks", theScore, "duplicateSelectedTracks"));
         animationMenu.add(animationMenuItem[2] = Translate.menuItem("deleteTracks", theScore, "deleteSelectedTracks"));
         animationMenu.add(animationMenuItem[3] = Translate.menuItem("selectAllTracks", theScore, "selectAllTracks"));
-        animationMenu.add(animationMenuItem[4] = Translate.menuItem("enableTracks", this, "enableTracksAction"));
-        animationMenu.add(animationMenuItem[5] = Translate.menuItem("disableTracks", this, "disableTracksAction"));
+        animationMenu.add(animationMenuItem[4] = Translate.menuItem("enableTracks", theScore, "enableTracks"));
+        animationMenu.add(animationMenuItem[5] = Translate.menuItem("disableTracks", theScore, "disableTracks"));
         animationMenu.addSeparator();
         animationMenu.add(animationMenuItem[6] = Translate.menuItem("keyframe", theScore, "keyframeSelectedTracks"));
         animationMenu.add(animationMenuItem[7] = Translate.menuItem("keyframeModified", theScore, "keyframeModifiedTracks"));
