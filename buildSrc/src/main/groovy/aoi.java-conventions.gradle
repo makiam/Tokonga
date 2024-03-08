@@ -37,6 +37,7 @@ repositories {
 
 ext {
     lombokVersion = "1.18.+"
+    tinyLogVersion = "2.7.0"
 }
 
 dependencies {
@@ -55,9 +56,9 @@ dependencies {
     testImplementation 'org.hamcrest:hamcrest-library:1.3'
     testImplementation group: 'org.netbeans', name: 'jemmy', version: '2.2.7.5'
 
-    implementation 'org.tinylog:slf4j-tinylog:2.6.1'
-    implementation 'org.tinylog:tinylog-api:2.6.1'
-    implementation 'org.tinylog:tinylog-impl:2.6.1'
+    implementation "org.tinylog:slf4j-tinylog:${tinyLogVersion}"
+    implementation "org.tinylog:tinylog-api:${tinyLogVersion}"
+    implementation "org.tinylog:tinylog-impl:${tinyLogVersion}"
 
 }
 
