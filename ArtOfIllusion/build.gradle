@@ -6,6 +6,8 @@ plugins {
     id "kr.motd.sphinx" version "2.10.1"
     id 'jacoco'
     id 'maven-publish'
+    id "com.github.ben-manes.versions" version "0.50.0"
+
 }
 
 description = 'Art Of Illusion'
@@ -34,7 +36,7 @@ dependencies {
     implementation group: 'org.apache.groovy', name: 'groovy', version: '4.0.0'
     
     implementation fileTree(dir: '../lib', include: '*.jar')
-    implementation group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '3.3.3'
+    implementation group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '3.3.4'
     
     testImplementation 'org.mockito:mockito-core:3.+'
     testImplementation project(':StandardModules')
