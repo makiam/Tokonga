@@ -19,6 +19,7 @@ import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.script.*;
 import artofillusion.texture.*;
+import artofillusion.tools.PrimitiveFactory;
 import artofillusion.ui.*;
 import artofillusion.view.*;
 import buoy.widget.*;
@@ -137,6 +138,7 @@ public class ArtOfIllusion {
         PluginRegistry.addCategory(MaterialMapping.class);
         PluginRegistry.addCategory(ImageFilter.class);
         PluginRegistry.addCategory(artofillusion.procedural.Module.class);
+        PluginRegistry.addCategory(PrimitiveFactory.class);
         PluginRegistry.addCategory(artofillusion.preferences.PreferencesEditor.class);
 
         PluginRegistry.registerPlugin(new ArtOfIllusion.AssetsFolderWatcher());
