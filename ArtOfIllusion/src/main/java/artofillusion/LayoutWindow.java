@@ -19,6 +19,7 @@ import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.script.*;
 import artofillusion.texture.*;
+import artofillusion.tools.TracksMenu;
 import artofillusion.ui.*;
 import artofillusion.view.ViewAnimation;
 import buoy.event.*;
@@ -111,8 +112,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     @Getter
     BMenu recentFilesMenu, scriptMenu;
 
-    BMenu addTrackMenu, positionTrackMenu, rotationTrackMenu, distortionMenu;
+    private BMenu addTrackMenu, positionTrackMenu, rotationTrackMenu;
 
+    private BMenu distortionMenu;
     private final BMenuItem fileMenuItem = Translate.menuItem("save", this, "saveCommand");
     private BMenuItem[] editMenuItem, objectMenuItem, viewMenuItem;
     BMenuItem[] animationMenuItem, popupMenuItem;
@@ -732,6 +734,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         animationMenu.addSeparator();
         animationMenu.add(Translate.menuItem("previewAnimation", this, "previewAnimationAction"));
         animationMenu.add(animationMenuItem[12] = Translate.menuItem("showScore", this, "showScoreAction"));
+
+        animationMenu.add(new TracksMenu(this));
     }
 
     private void createSceneMenu() {
@@ -978,7 +982,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     @Override
     public void updateMenus() {
         Object[] sel = sceneExplorer.getSelectedObjects();
-        int numSelObjects = sel.length;
+        int selectedObjects = sel.length;
         Track[] selTrack = theScore.getSelectedTracks();
         int numSelTracks = selTrack.length;
         int numSelKeyframes = theScore.getSelectedKeyframes().length;
@@ -989,9 +993,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         Object3D obj;
         int i;
 
-        canConvert = canSetTexture = (numSelObjects > 0);
+        canConvert = canSetTexture = (selectedObjects > 0);
         curve = noncurve = enable = disable = hasChildren = hasParent = false;
-        for (i = 0; i < numSelObjects; i++) {
+        for (i = 0; i < selectedObjects; i++) {
             info = (ObjectInfo) sel[i];
             obj = info.getObject();
             if (obj instanceof Curve && !(obj instanceof Tube)) {
@@ -1025,28 +1029,28 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         editMenuItem[0].setText(undoStack.canUndo() ? Translate.text("menu.undo") + " " + undoStack.getUndoName() : Translate.text("menu.undo"));
         editMenuItem[1].setEnabled(undoStack.canRedo()); // Redo
         editMenuItem[1].setText(undoStack.canRedo() ? Translate.text("menu.redo") + " " + undoStack.getRedoName() : Translate.text("menu.redo"));
-        editMenuItem[2].setEnabled(numSelObjects > 0); // Cut
-        editMenuItem[3].setEnabled(numSelObjects > 0); // Copy
+        editMenuItem[2].setEnabled(selectedObjects > 0); // Cut
+        editMenuItem[3].setEnabled(selectedObjects > 0); // Copy
         editMenuItem[4].setEnabled(ArtOfIllusion.getClipboardSize() > 0); // Paste
-        editMenuItem[5].setEnabled(numSelObjects > 0); // Clear
+        editMenuItem[5].setEnabled(selectedObjects > 0); // Clear
         editMenuItem[6].setEnabled(hasChildren); // Select Children
-        editMenuItem[8].setEnabled(numSelObjects > 0); // Deselect All
-        editMenuItem[9].setEnabled(numSelObjects > 0); // Make Live Duplicates
-        editMenuItem[10].setEnabled(numSelObjects > 0); // Sever Duplicates
-        if (numSelObjects == 0) {
+        editMenuItem[8].setEnabled(selectedObjects > 0); // Deselect All
+        editMenuItem[9].setEnabled(selectedObjects > 0); // Make Live Duplicates
+        editMenuItem[10].setEnabled(selectedObjects > 0); // Sever Duplicates
+        if (selectedObjects == 0) {
             for (i = 0; i < objectMenuItem.length; i++) {
                 objectMenuItem[i].setEnabled(false);
             }
         } else {
             obj = ((ObjectInfo) sel[0]).getObject();
-            objectMenuItem[0].setEnabled(numSelObjects == 1 && obj.isEditable()); // Edit Object
+            objectMenuItem[0].setEnabled(selectedObjects == 1 && obj.isEditable()); // Edit Object
             objectMenuItem[1].setEnabled(true); // Object Layout
             objectMenuItem[2].setEnabled(true); // Transform Object
-            objectMenuItem[3].setEnabled(numSelObjects > 0); // Align Objects
+            objectMenuItem[3].setEnabled(selectedObjects > 0); // Align Objects
             objectMenuItem[4].setEnabled(canSetTexture); // Set Texture
             objectMenuItem[5].setEnabled(sel.length == 1); // Rename Object
             objectMenuItem[6].setEnabled(canConvert && sel.length == 1); // Convert to Triangle Mesh
-            objectMenuItem[7].setEnabled(sel.length == 1 && ((ObjectInfo) sel[0]).getObject().canConvertToActor()); // Convert to Actor
+            objectMenuItem[7].setEnabled(selectedObjects == 1 && ((ObjectInfo) sel[0]).getObject().canConvertToActor()); // Convert to Actor
             objectMenuItem[8].setEnabled(true); // Hide Selection
             objectMenuItem[9].setEnabled(true); // Show Selection
             objectMenuItem[10].setEnabled(true); // Lock Selection
@@ -1055,24 +1059,24 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         animationMenuItem[0].setEnabled(numSelTracks == 1); // Edit Track
         animationMenuItem[1].setEnabled(numSelTracks > 0); // Duplicate Tracks
         animationMenuItem[2].setEnabled(numSelTracks > 0); // Delete Tracks
-        animationMenuItem[3].setEnabled(numSelObjects > 0); // Select All Tracks
+        animationMenuItem[3].setEnabled(selectedObjects > 0); // Select All Tracks
         animationMenuItem[4].setEnabled(enable); // Enable Tracks
         animationMenuItem[5].setEnabled(disable); // Disable Tracks
         animationMenuItem[6].setEnabled(numSelTracks > 0); // Keyframe Selected Tracks
-        animationMenuItem[7].setEnabled(numSelObjects > 0); // Keyframe Modified Tracks
+        animationMenuItem[7].setEnabled(selectedObjects > 0); // Keyframe Modified Tracks
         animationMenuItem[8].setEnabled(numSelKeyframes == 1); // Edit Keyframe
         animationMenuItem[9].setEnabled(numSelKeyframes > 0); // Delete Selected Keyframes
         animationMenuItem[10].setEnabled(curve && noncurve); // Set Path From Curve
         animationMenuItem[11].setEnabled(hasParent); // Bind to Parent Skeleton
         animationMenuItem[12].setText(Translate.text(theScore.getBounds().height == 0 || theScore.getBounds().width == 0 ? "menu.showScore" : "menu.hideScore"));
-        addTrackMenu.setEnabled(numSelObjects > 0);
-        distortionMenu.setEnabled(sel.length > 0);
+        addTrackMenu.setEnabled(selectedObjects > 0);
+        distortionMenu.setEnabled(selectedObjects > 0);
 
         viewMenuItem[1].setText(Translate.text(!objectListShown ? "menu.showObjectList" : "menu.hideObjectList"));
         viewMenuItem[2].setText(Translate.text(view.getShowAxes() ? "menu.hideCoordinateAxes" : "menu.showCoordinateAxes"));
         viewMenuItem[3].setEnabled(view.getTemplateImage() != null); // Show template
         viewMenuItem[3].setText(Translate.text(view.getTemplateShown() ? "menu.hideTemplate" : "menu.showTemplate"));
-        viewMenuItem[4].setEnabled(sel.length > 0); // Frame Selection With Camera
+        viewMenuItem[4].setEnabled(selectedObjects > 0); // Frame Selection With Camera
 
         displayItem[0].setState(view.getRenderMode() == ViewerCanvas.RENDER_WIREFRAME);
         displayItem[1].setState(view.getRenderMode() == ViewerCanvas.RENDER_FLAT);

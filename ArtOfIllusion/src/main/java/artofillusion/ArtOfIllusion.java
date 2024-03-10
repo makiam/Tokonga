@@ -137,6 +137,7 @@ public class ArtOfIllusion {
         PluginRegistry.addCategory(MaterialMapping.class);
         PluginRegistry.addCategory(ImageFilter.class);
         PluginRegistry.addCategory(artofillusion.procedural.Module.class);
+        PluginRegistry.addCategory(artofillusion.tools.TrackProvider.class);
         PluginRegistry.addCategory(artofillusion.preferences.PreferencesEditor.class);
 
         PluginRegistry.registerPlugin(new ArtOfIllusion.AssetsFolderWatcher());
