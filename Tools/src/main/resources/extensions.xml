@@ -20,5 +20,7 @@
         <export method="createText" id="artofillusion.tools.TextTool.createText"/>
     </plugin>
     <plugin class="artofillusion.tools.TubeTool"/>
+
+    <plugin class="artofillusion.tools.VisibilityTrackProvider"/>
 </extension>
 
