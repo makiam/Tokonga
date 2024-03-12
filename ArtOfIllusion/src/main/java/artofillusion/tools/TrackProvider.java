@@ -1,5 +1,6 @@
 package artofillusion.tools;
 
+import artofillusion.UndoRecord;
 import artofillusion.object.ObjectInfo;
 
 import java.util.Collection;
@@ -10,5 +11,5 @@ public interface TrackProvider {
 
     String getName();
 
-    void create(Collection<ObjectInfo> objects);
+    void create(Collection<ObjectInfo> objects, UndoRecord undo);
 }

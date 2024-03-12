@@ -1,0 +1,30 @@
+package artofillusion.tools;
+
+import artofillusion.UndoRecord;
+import artofillusion.object.ObjectInfo;
+import artofillusion.ui.Translate;
+
+import java.util.Collection;
+import java.util.function.Predicate;
+
+public class PoseTrackProvider implements TrackProvider {
+    @Override
+    public String getCategory() {
+        return null;
+    }
+
+    @Override
+    public String getName() {
+        return Translate.text("menu.poseTrack");
+    }
+
+    @Override
+    public void create(Collection<ObjectInfo> objects, UndoRecord undo) {
+
+    }
+
+    private static boolean isPosable(ObjectInfo info) {
+        return info.getObject().getPosableObject() != null;
+    }
+
+}

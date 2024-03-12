@@ -2,6 +2,7 @@ package artofillusion.tools;
 
 import artofillusion.LayoutWindow;
 import artofillusion.PluginRegistry;
+import artofillusion.UndoRecord;
 import artofillusion.ui.MessageDialog;
 import artofillusion.ui.Translate;
 import buoy.widget.BMenu;
@@ -34,7 +35,8 @@ public final class TracksMenu extends BMenu {
         @Override
         public void actionPerformed(ActionEvent e) {
             LayoutWindow layout = TracksMenu.this.layout;
-            provider.create(layout.getSelectedObjects());
+            UndoRecord undo = new UndoRecord(layout);
+            provider.create(layout.getSelectedObjects(), undo);
             layout.getScore().rebuildList();
 
         }

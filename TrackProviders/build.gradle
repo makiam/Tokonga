@@ -1,0 +1,5 @@
+plugins {
+	id 'aoi.plugin-conventions'
+}
+
+description = 'Track Providers'

@@ -1,0 +1,12 @@
+<?xml version="1.0" standalone="yes"?>
+<extension name="TrackProviders" version="1.0">
+    <author>Maksim Khramov</author>
+    <date>2024</date>
+    <description>
+        This plugin contains the standard animation tracks which are included with Art of Illusion.
+    </description>
+
+
+    <plugin class="artofillusion.tools.VisibilityTrackProvider"/>
+</extension>
+

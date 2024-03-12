@@ -1,14 +1,16 @@
 package artofillusion.tools;
 
+import artofillusion.UndoRecord;
 import artofillusion.animation.VisibilityTrack;
 import artofillusion.object.ObjectInfo;
+import artofillusion.ui.Translate;
 
 import java.util.Collection;
 
 public class VisibilityTrackProvider implements TrackProvider {
     @Override
     public String getName() {
-        return "Visibility";
+        return Translate.text("menu.visibilityTrack");
     }
 
     @Override
@@ -17,7 +19,7 @@ public class VisibilityTrackProvider implements TrackProvider {
     }
 
     @Override
-    public void create(Collection<ObjectInfo> objects) {
+    public void create(Collection<ObjectInfo> objects, UndoRecord undo) {
         for (ObjectInfo item : objects) {
             item.addTrack(new VisibilityTrack(item), 0);
         }
