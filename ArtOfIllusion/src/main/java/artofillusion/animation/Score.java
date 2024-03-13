@@ -950,16 +950,12 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * Delete the selected tracks.
      */
     public void deleteSelectedTracks() {
-        Object[] sel = theList.getSelectedObjects();
+
         UndoRecord undo = new UndoRecord(window);
         List<ObjectInfo> modifiedObj = new Vector<>();
 
-        for (int i = 0; i < sel.length; i++) {
-            if (sel[i] instanceof Track) {
-                Track tr = (Track) sel[i];
-                if (!(tr.getParent() instanceof ObjectInfo)) {
-                    continue;
-                }
+        for (Track tr: Score.filterTracks(theList.getSelectedObjects())) {
+            if (tr.getParent() instanceof ObjectInfo) {
                 ObjectInfo info = (ObjectInfo) tr.getParent();
                 if (modifiedObj.indexOf(info) < 0) {
                     undo.addCommand(UndoRecord.SET_TRACK_LIST, info, info.getTracks());
@@ -1001,7 +997,15 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
     }
 
     public static List<ObjectInfo> filterTargets(Object[] obj) {
-        return Arrays.stream(obj).filter(ObjectInfo.class::isInstance).map(ObjectInfo.class::cast).collect(Collectors.toList());
+        return filterList(obj, ObjectInfo.class);
+    }
+
+    public static List<Track> filterTracks(Object[] obj) {
+        return filterList(obj, Track.class);
+    }
+
+    public static <T> List<T> filterList(Object[] obj, Class<T> clazz) {
+        return Arrays.stream(obj).filter(clazz::isInstance).map(clazz::cast).collect(Collectors.toList());
     }
 
     /**
