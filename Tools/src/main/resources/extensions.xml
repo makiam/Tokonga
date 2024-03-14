@@ -21,6 +21,5 @@
     </plugin>
     <plugin class="artofillusion.tools.TubeTool"/>
 
-    <plugin class="artofillusion.tools.VisibilityTrackProvider"/>
 </extension>
 

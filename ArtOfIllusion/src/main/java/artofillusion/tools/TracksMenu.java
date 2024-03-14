@@ -3,7 +3,6 @@ package artofillusion.tools;
 import artofillusion.LayoutWindow;
 import artofillusion.PluginRegistry;
 import artofillusion.UndoRecord;
-import artofillusion.ui.MessageDialog;
 import artofillusion.ui.Translate;
 import buoy.widget.BMenu;
 import buoy.widget.BMenuItem;
@@ -14,7 +13,7 @@ import java.awt.event.ActionEvent;
 
 @Slf4j
 public final class TracksMenu extends BMenu {
-    private LayoutWindow layout;
+    private final LayoutWindow layout;
     public TracksMenu(LayoutWindow layout) {
         super(Translate.text("menu.addTrack"));
         this.layout = layout;
@@ -25,7 +24,7 @@ public final class TracksMenu extends BMenu {
     }
 
     private class TrackAction extends AbstractAction {
-        private TrackProvider provider;
+        private final TrackProvider provider;
 
         public TrackAction(TrackProvider provider) {
             super(provider.getName());
@@ -38,6 +37,7 @@ public final class TracksMenu extends BMenu {
             UndoRecord undo = new UndoRecord(layout);
             provider.create(layout.getSelectedObjects(), undo);
             layout.getScore().rebuildList();
+            layout.setUndoRecord(undo);
 
         }
     }

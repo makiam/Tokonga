@@ -8,5 +8,6 @@
 
 
     <plugin class="artofillusion.tools.VisibilityTrackProvider"/>
+    <plugin class="artofillusion.tools.PoseTrackProvider"/>
 </extension>
 
