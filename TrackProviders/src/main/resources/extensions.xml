@@ -6,6 +6,11 @@
         This plugin contains the standard animation tracks which are included with Art of Illusion.
     </description>
 
+    <plugin class="artofillusion.tools.OneAxisPositionTrackProvider"/>
+    <plugin class="artofillusion.tools.ThreeAxisPositionTrackProvider"/>
+    <plugin class="artofillusion.tools.ProceduralPositionTrackProvider"/>
+
+    <plugin class="artofillusion.tools.ProceduralRotationTrackProvider"/>
 
     <plugin class="artofillusion.tools.VisibilityTrackProvider"/>
     <plugin class="artofillusion.tools.PoseTrackProvider"/>

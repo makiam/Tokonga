@@ -1,7 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/OkCancelDialog.java to edit this template
- */
+/* Copyright (C) 2024 by Maksim Khramov
+   This program is free software; you can redistribute it and/or modify it under the
+   terms of the GNU General Public License as published by the Free Software
+   Foundation; either version 2 of the License, or (at your option) any later version.
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+   PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion.tools;
 
 import artofillusion.object.ObjectInfo;
@@ -15,6 +19,7 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import javax.swing.table.AbstractTableModel;
+import lombok.Getter;
 
 /**
  *
@@ -71,7 +76,7 @@ public class ConvertObjectDialog extends javax.swing.JDialog {
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         javax.swing.JScrollPane tableScrollPane = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        convertItems = new javax.swing.JTable();
 
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -80,21 +85,14 @@ public class ConvertObjectDialog extends javax.swing.JDialog {
         });
 
         okButton.setText("OK");
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
+        okButton.addActionListener(this::okButtonActionPerformed);
 
         cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        cancelButton.addActionListener(this::cancelButtonActionPerformed);
 
-        jTable1.setModel(new ActorSelectTableModel(items));
-        tableScrollPane.setViewportView(jTable1);
+        convertItems.setModel(new ActorSelectTableModel(items));
+        convertItems.setDoubleBuffered(true);
+        tableScrollPane.setViewportView(convertItems);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -153,11 +151,13 @@ public class ConvertObjectDialog extends javax.swing.JDialog {
         dispose();
     }
 
-
+    public boolean[] getConvertFlags() {
+        return ((ActorSelectTableModel)this.convertItems.getModel()).getCheckboxes();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable convertItems;
     private javax.swing.JButton okButton;
     // End of variables declaration//GEN-END:variables
 
@@ -165,10 +165,12 @@ public class ConvertObjectDialog extends javax.swing.JDialog {
     
     public class ActorSelectTableModel extends AbstractTableModel {
         private final List<ObjectInfo> infos;
+        
+        @Getter
         private final boolean[] checkboxes;
 
         public ActorSelectTableModel(List<ObjectInfo> infos) {
-            this.infos = infos;
+            this.infos =infos;
             this.checkboxes = new boolean[infos.size()];
         }
 
