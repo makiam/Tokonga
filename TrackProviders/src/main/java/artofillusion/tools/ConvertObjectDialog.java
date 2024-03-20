@@ -78,6 +78,7 @@ public class ConvertObjectDialog extends javax.swing.JDialog {
         javax.swing.JScrollPane tableScrollPane = new javax.swing.JScrollPane();
         convertItems = new javax.swing.JTable();
 
+        setTitle("Convert to Actor");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 closeDialog(evt);
