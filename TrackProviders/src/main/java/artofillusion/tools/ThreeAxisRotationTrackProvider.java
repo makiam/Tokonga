@@ -9,23 +9,36 @@
 package artofillusion.tools;
 
 import artofillusion.UndoRecord;
-import artofillusion.animation.ProceduralPositionTrack;
+import artofillusion.animation.RotationTrack;
 import artofillusion.object.ObjectInfo;
 import artofillusion.ui.Translate;
 
-public class ProceduralPositionTrackProvider implements TrackProvider {
+/**
+ *
+ * @author MaksK
+ */
+public class ThreeAxisRotationTrackProvider implements TrackProvider {
+
     @Override
     public String getCategory() {
-        return Translate.text("menu.positionTrack");
+        return Translate.text("menu.rotationTrack");
     }
 
     @Override
     public String getName() {
-        return Translate.text("menu.proceduralTrack");
+        return Translate.text("menu.xyzThreeTracks");
     }
 
     @Override
     public void forEach(ObjectInfo item, UndoRecord undo) {
-        TrackProvider.add(item, new ProceduralPositionTrack(item), undo);
+        var x = new RotationTrack(item, Translate.text("Heading"), false, true, false, false);
+        var y = new RotationTrack(item, Translate.text("Pitch"), false, false, true, false);
+        var z = new RotationTrack(item, Translate.text("Bank"), false, false, false, false);
+
+
+        TrackProvider.add(item, z, undo);
+        TrackProvider.add(item, y, undo);
+        TrackProvider.add(item, x, undo);
     }
+    
 }

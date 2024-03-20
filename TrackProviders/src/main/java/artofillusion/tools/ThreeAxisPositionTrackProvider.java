@@ -9,11 +9,16 @@
 package artofillusion.tools;
 
 import artofillusion.UndoRecord;
-import artofillusion.animation.ProceduralPositionTrack;
+import artofillusion.animation.PositionTrack;
 import artofillusion.object.ObjectInfo;
 import artofillusion.ui.Translate;
 
-public class ProceduralPositionTrackProvider implements TrackProvider {
+/**
+ *
+ * @author MaksK
+ */
+public class ThreeAxisPositionTrackProvider implements TrackProvider {
+
     @Override
     public String getCategory() {
         return Translate.text("menu.positionTrack");
@@ -21,11 +26,19 @@ public class ProceduralPositionTrackProvider implements TrackProvider {
 
     @Override
     public String getName() {
-        return Translate.text("menu.proceduralTrack");
+        return Translate.text("menu.xyzThreeTracks");
     }
 
     @Override
     public void forEach(ObjectInfo item, UndoRecord undo) {
-        TrackProvider.add(item, new ProceduralPositionTrack(item), undo);
+        var x = new PositionTrack(item, Translate.text("menu.xTrack"), true, false, false);
+        var y = new PositionTrack(item, Translate.text("menu.yTrack"), false, true, false);
+        var z = new PositionTrack(item, Translate.text("menu.zTrack"), false, false, false);
+
+
+        TrackProvider.add(item, z, undo);
+        TrackProvider.add(item, y, undo);
+        TrackProvider.add(item, x, undo);
     }
+    
 }

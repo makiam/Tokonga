@@ -10,8 +10,11 @@
     <plugin class="artofillusion.tools.ThreeAxisPositionTrackProvider"/>
     <plugin class="artofillusion.tools.ProceduralPositionTrackProvider"/>
 
+    <plugin class="artofillusion.tools.OneAxisRotationTrackProvider"/>
+    <plugin class="artofillusion.tools.ThreeAxisRotationTrackProvider"/>    
     <plugin class="artofillusion.tools.ProceduralRotationTrackProvider"/>
-
+    <plugin class="artofillusion.tools.QuaternionlRotationTrackProvider"/>
+    
     <plugin class="artofillusion.tools.VisibilityTrackProvider"/>
     <plugin class="artofillusion.tools.PoseTrackProvider"/>
 </extension>
