@@ -18,7 +18,7 @@ import artofillusion.ui.Translate;
  *
  * @author MaksK
  */
-public class QuaternionlRotationTrackProvider implements TrackProvider {
+public class QuaternionRotationTrackProvider implements TrackProvider {
 
     @Override
     public String getCategory() {

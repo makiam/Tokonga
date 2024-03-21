@@ -20,6 +20,9 @@
     <plugin class="artofillusion.tools.ScaleDistortionTrackProvider"/>
     <plugin class="artofillusion.tools.ShatterDistortionTrackProvider"/>
     <plugin class="artofillusion.tools.TwistDistortionTrackProvider"/>
+    
+    <plugin class="artofillusion.tools.InverseKinematicsTrackProvider"/>
+    <plugin class="artofillusion.tools.SkeletonShapeTrackProvider"/>
 
     <plugin class="artofillusion.tools.ConstraintTrackProvider"/>
 
