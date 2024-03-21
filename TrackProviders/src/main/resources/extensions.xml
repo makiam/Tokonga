@@ -13,9 +13,20 @@
     <plugin class="artofillusion.tools.OneAxisRotationTrackProvider"/>
     <plugin class="artofillusion.tools.ThreeAxisRotationTrackProvider"/>    
     <plugin class="artofillusion.tools.ProceduralRotationTrackProvider"/>
-    <plugin class="artofillusion.tools.QuaternionlRotationTrackProvider"/>
-    
+    <plugin class="artofillusion.tools.QuaternionRotationTrackProvider"/>
+
+    <plugin class="artofillusion.tools.BendDistortionTrackProvider"/>
+    <plugin class="artofillusion.tools.CustomDistortionTrackProvider"/>
+    <plugin class="artofillusion.tools.ScaleDistortionTrackProvider"/>
+    <plugin class="artofillusion.tools.ShatterDistortionTrackProvider"/>
+    <plugin class="artofillusion.tools.TwistDistortionTrackProvider"/>
+
+    <plugin class="artofillusion.tools.ConstraintTrackProvider"/>
+
+
     <plugin class="artofillusion.tools.VisibilityTrackProvider"/>
     <plugin class="artofillusion.tools.PoseTrackProvider"/>
+    <plugin class="artofillusion.tools.TextureTrackProvider"/>
+
 </extension>
 
