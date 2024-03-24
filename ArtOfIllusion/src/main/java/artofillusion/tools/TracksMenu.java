@@ -14,11 +14,15 @@ import artofillusion.UndoRecord;
 import artofillusion.ui.Translate;
 import buoy.widget.BMenu;
 import buoy.widget.BMenuItem;
+import buoy.widget.Widget;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 public final class TracksMenu extends BMenu {
@@ -27,16 +31,25 @@ public final class TracksMenu extends BMenu {
         super(Translate.text("menu.addTrack"));
         this.layout = layout;
 
-        for (TrackProvider provider : PluginRegistry.getPlugins(TrackProvider.class)) {
-            add(new TrackMenuItem(provider));
-        }
+        Map<String, List<TrackProvider>> providers = PluginRegistry.getPlugins(TrackProvider.class).
+                stream().collect(Collectors.groupingBy(TrackProvider::getCategory));
+
+        providers.forEach((category, items) -> {
+            items.forEach(provider -> {
+                add(new TrackMenuItem(provider));;
+            });
+            if(!items.isEmpty()) this.addSeparator();
+        });
+
+        this.remove((Widget)this.getChild(this.getChildCount()-1));
+
     }
 
     private class TrackAction extends AbstractAction {
         private final TrackProvider provider;
 
         public TrackAction(TrackProvider provider) {
-            super(String.format("%s %s", provider.getName(), provider.getCategory()).stripTrailing());
+            super(String.format("%s %s Track", provider.getName(), provider.getCategory()).stripTrailing());
             this.provider = provider;
         }
 

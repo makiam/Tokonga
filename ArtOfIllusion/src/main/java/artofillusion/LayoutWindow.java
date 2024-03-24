@@ -112,7 +112,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     @Getter
     BMenu recentFilesMenu, scriptMenu;
 
-    private BMenu addTrackMenu, positionTrackMenu, rotationTrackMenu;
+    private BMenu addTrackMenu;
 
     private BMenu distortionMenu;
     private final BMenuItem fileMenuItem = Translate.menuItem("save", this, "saveCommand");
@@ -682,29 +682,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
         getMenuBar().add(animationMenu);
         animationMenuItem = new BMenuItem[13];
-        animationMenu.add(addTrackMenu = Translate.menu("addTrack"));
-        addTrackMenu.add(positionTrackMenu = Translate.menu("positionTrack"));
-        positionTrackMenu.add(Translate.menuItem("xyzOneTrack", this, "addOnePositionTrackAction"));
-        positionTrackMenu.add(Translate.menuItem("xyzThreeTracks", this, "addThreePositionTrackAction"));
-        positionTrackMenu.add(Translate.menuItem("proceduralTrack", this, "addProceduralPositionTrackAction"));
-        addTrackMenu.add(rotationTrackMenu = Translate.menu("rotationTrack"));
-        rotationTrackMenu.add(Translate.menuItem("xyzOneTrack", this, "addOneRotationTrackAction"));
-        rotationTrackMenu.add(Translate.menuItem("xyzThreeTracks", this, "addThreeRotationTrackAction"));
-        rotationTrackMenu.add(Translate.menuItem("quaternionTrack", this, "addQuaternionTrackAction"));
-        rotationTrackMenu.add(Translate.menuItem("proceduralTrack", this, "addProceduralRotationTrackAction"));
-        addTrackMenu.add(Translate.menuItem("poseTrack", this, "addTrackAction"));
-        addTrackMenu.add(distortionMenu = Translate.menu("distortionTrack"));
-        distortionMenu.add(Translate.menuItem("bendDistortion", this, "addDistortionTrackAction"));
-        distortionMenu.add(Translate.menuItem("customDistortion", this, "addDistortionTrackAction"));
-        distortionMenu.add(Translate.menuItem("scaleDistortion", this, "addDistortionTrackAction"));
-        distortionMenu.add(Translate.menuItem("shatterDistortion", this, "addDistortionTrackAction"));
-        distortionMenu.add(Translate.menuItem("twistDistortion", this, "addDistortionTrackAction"));
-        distortionMenu.addSeparator();
-        distortionMenu.add(Translate.menuItem("IKTrack", this, "addDistortionTrackAction"));
-        distortionMenu.add(Translate.menuItem("skeletonShapeTrack", this, "addDistortionTrackAction"));
-        addTrackMenu.add(Translate.menuItem("constraintTrack", this, "addTrackAction"));
-        addTrackMenu.add(Translate.menuItem("visibilityTrack", this, "addTrackAction"));
-        addTrackMenu.add(Translate.menuItem("textureTrack", this, "addTrackAction"));
+        animationMenu.add(addTrackMenu = new TracksMenu(this));
         animationMenu.add(animationMenuItem[0] = Translate.menuItem("editTrack", theScore, "editSelectedTrack"));
         animationMenu.add(animationMenuItem[1] = Translate.menuItem("duplicateTracks", theScore, "duplicateSelectedTracks"));
         animationMenu.add(animationMenuItem[2] = Translate.menuItem("deleteTracks", theScore, "deleteSelectedTracks"));
@@ -735,7 +713,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         animationMenu.add(Translate.menuItem("previewAnimation", this, "previewAnimationAction"));
         animationMenu.add(animationMenuItem[12] = Translate.menuItem("showScore", this, "showScoreAction"));
 
-        animationMenu.add(new TracksMenu(this));
     }
 
     private void createSceneMenu() {
@@ -1070,7 +1047,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         animationMenuItem[11].setEnabled(hasParent); // Bind to Parent Skeleton
         animationMenuItem[12].setText(Translate.text(theScore.getBounds().height == 0 || theScore.getBounds().width == 0 ? "menu.showScore" : "menu.hideScore"));
         addTrackMenu.setEnabled(selectedObjects > 0);
-        distortionMenu.setEnabled(selectedObjects > 0);
 
         viewMenuItem[1].setText(Translate.text(!objectListShown ? "menu.showObjectList" : "menu.hideObjectList"));
         viewMenuItem[2].setText(Translate.text(view.getShowAxes() ? "menu.hideCoordinateAxes" : "menu.showCoordinateAxes"));
@@ -1497,67 +1473,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         sceneExplorer.setSelected(theScene.getObject(which), false);
         theScore.rebuildList();
         updateMenus();
-    }
-
-    private static final Map<String, Class<? extends Track>> commandToTrack = new HashMap<>();
-
-    static {
-        commandToTrack.put("poseTrack", PoseTrack.class);
-        commandToTrack.put("constraintTrack", ConstraintTrack.class);
-        commandToTrack.put("visibilityTrack", VisibilityTrack.class);
-        commandToTrack.put("textureTrack", TextureTrack.class);
-    }
-
-    private static final Map<String, Class<? extends Track>> commandToDistortionTrack = new HashMap<>();
-
-    static {
-        commandToDistortionTrack.put("bendDistortion", BendTrack.class);
-        commandToDistortionTrack.put("customDistortion", CustomDistortionTrack.class);
-        commandToDistortionTrack.put("scaleDistortion", ScaleTrack.class);
-        commandToDistortionTrack.put("shatterDistortion", ShatterTrack.class);
-        commandToDistortionTrack.put("twistDistortion", TwistTrack.class);
-        commandToDistortionTrack.put("IKTrack", IKTrack.class);
-        commandToDistortionTrack.put("skeletonShapeTrack", SkeletonShapeTrack.class);
-    }
-
-    private void addTrackAction(CommandEvent event) {
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), commandToTrack.get(event.getActionCommand()), null, true);
-    }
-
-    private void addDistortionTrackAction(CommandEvent event) {
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), commandToDistortionTrack.get(event.getActionCommand()), null, true);
-    }
-
-    private void addOnePositionTrackAction() {
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), PositionTrack.class, null, true);
-    }
-
-    private void addThreePositionTrackAction() {
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), PositionTrack.class, new Object[]{"Z Position", Boolean.FALSE, Boolean.FALSE, Boolean.TRUE}, true);
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), PositionTrack.class, new Object[]{"Y Position", Boolean.FALSE, Boolean.TRUE, Boolean.FALSE}, false);
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), PositionTrack.class, new Object[]{"X Position", Boolean.TRUE, Boolean.FALSE, Boolean.FALSE}, false);
-    }
-
-    private void addOneRotationTrackAction() {
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), RotationTrack.class, new Object[]{"Rotation", Boolean.FALSE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE}, true);
-    }
-
-    private void addThreeRotationTrackAction() {
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), RotationTrack.class, new Object[]{"Z Rotation", Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, Boolean.TRUE}, true);
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), RotationTrack.class, new Object[]{"Y Rotation", Boolean.FALSE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE}, false);
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), RotationTrack.class, new Object[]{"X Rotation", Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE}, false);
-    }
-
-    private void addQuaternionTrackAction() {
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), RotationTrack.class, new Object[]{"Rotation", Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE}, true);
-    }
-
-    private void addProceduralPositionTrackAction() {
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), ProceduralPositionTrack.class, null, true);
-    }
-
-    private void addProceduralRotationTrackAction() {
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), ProceduralRotationTrack.class, null, true);
     }
 
     private void newSceneAction() {

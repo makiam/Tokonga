@@ -1009,59 +1009,6 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
     }
 
     /**
-     * Add a track to the specified objects.
-     */
-    public void addTrack(Object[] obj, Class<? extends Track> trackClass, Object[] extraArgs, boolean deselectOthers) {
-        Scene theScene = window.getScene();
-        UndoRecord undo = new UndoRecord(window);
-        Object[] args;
-        if (extraArgs == null) {
-            args = new Object[1];
-        } else {
-            args = new Object[extraArgs.length + 1];
-            for (int i = 0; i < extraArgs.length; i++) {
-                args[i + 1] = extraArgs[i];
-            }
-        }
-
-        Constructor<? extends Track> match = Score.getTrackConstructor(trackClass, args.length);
-        List<Track> added = new Vector<>();
-        try {
-            for (ObjectInfo info : Score.filterTargets(obj)) {
-                if (trackClass == PoseTrack.class) {
-                    Object3D posable = info.getObject().getPosableObject();
-                    if (posable == null)
-                        continue;
-                    if (posable != info.getObject()) {
-                        String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
-                        BStandardDialog dlg = new BStandardDialog("", UIUtilities.breakString(Translate.text("mustConvertToActor", info.getName())), BStandardDialog.QUESTION);
-                        int choice = dlg.showOptionDialog(window, options, options[0]);
-                        if (choice == 1)
-                            continue;
-                        theScene.replaceObject(info.getObject(), posable, undo);
-                    }
-                }
-                undo.addCommand(UndoRecord.SET_TRACK_LIST, info, info.getTracks());
-                args[0] = info;
-                Track newtrack = match.newInstance(args);
-                info.addTrack(newtrack, 0);
-                added.add(newtrack);
-            }
-        } catch (ReflectiveOperationException ex) {
-            log.atError().setCause(ex).log("Unable to create track: {}", ex.getMessage());
-        }
-
-        window.setUndoRecord(undo);
-        if (deselectOthers) {
-            theList.deselectAll();
-        }
-        rebuildList();
-        added.forEach(tr -> theList.setSelected(tr, true));
-        selectedTracksChanged();
-        window.updateMenus();
-    }
-
-    /**
      * Edit the selected keyframe.
      */
     public void editSelectedKeyframe() {
