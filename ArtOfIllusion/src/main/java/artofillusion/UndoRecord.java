@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -62,7 +62,7 @@ public class UndoRecord {
     private static final List<Integer> commandsToCache = Arrays.asList(COPY_OBJECT, COPY_VERTEX_POSITIONS);
 
     /**
-     * Create a new UndoRecord. Initially it represents an empty script. Commands can be added by calling
+     * Create a new UndoRecord. Initially, it represents an empty script. Commands can be added by calling
      * {@link #addCommand addCommand()} or {@link #addCommandAtBeginning addCommandAtBeginning()}.
      *
      * @param win the EditingWindow this record belongs to
@@ -232,13 +232,9 @@ public class UndoRecord {
                     var oldObj = group.getChildren();
                     var newObj = (ObjectInfo[]) d[1];
                     redoRecord.addCommandAtBeginning(SET_GROUP_CONTENTS, group, oldObj);
-                    for (ObjectInfo objectInfo : oldObj) {
-                        objectInfo.setParent(null);
-                    }
-                    for (ObjectInfo objectInfo : newObj) {
-                        objectInfo.setParent(group);
-                    }
-                    group.children = newObj;
+                    for (ObjectInfo objectInfo: oldObj) objectInfo.setParent(null);
+                    for (ObjectInfo objectInfo: newObj) objectInfo.setParent(group);
+                    group.setChildren(newObj);
                     break;
                 }
                 case SET_TRACK: {
@@ -251,7 +247,7 @@ public class UndoRecord {
                 case SET_TRACK_LIST: {
                     ObjectInfo info = (ObjectInfo) d[0];
                     redoRecord.addCommandAtBeginning(SET_TRACK_LIST, info, info.getTracks());
-                    info.tracks = (Track[]) d[1];
+                    info.setTracks((Track[]) d[1]);
                     break;
                 }
                 case COPY_TRACK: {

@@ -19,12 +19,13 @@ import artofillusion.math.*;
 import artofillusion.texture.*;
 import java.lang.ref.*;
 import java.util.*;
+import java.util.stream.IntStream;
 import lombok.Getter;
 import lombok.Setter;
 
 /**
  * ObjectInfo represents information about an object within a Scene: its position,
- * orientation, name, visibility, etc. The internal properties (i.e. geometry) of
+ * orientation, name, visibility, etc. The internal properties (i.e., geometry) of
  * the object are defined by the "object" property.
  * <p>
  * There may be several ObjectInfos in a scene which all reference
@@ -63,8 +64,8 @@ public class ObjectInfo {
     @Getter
     public boolean visible, parentSelected;
     public ObjectInfo parent;
-    public ObjectInfo[] children;
-    public Track[] tracks;
+    private List<ObjectInfo> children = new ArrayList<>();
+    private List<Track> tracks = new ArrayList<>();
     public Keyframe pose;
     public int id;
     private boolean locked;
@@ -73,7 +74,10 @@ public class ObjectInfo {
      *  Get the current Distortion applied to this object.
      */
     @Getter
-    private Distortion distortion, prevDistortion;
+    private Distortion distortion;
+    @Getter
+    private Distortion prevDistortion;
+    
     private SoftReference<RenderingMesh> cachedMesh;
     private SoftReference<WireframeMesh> cachedWire;
     private BoundingBox cachedBounds;
@@ -87,8 +91,6 @@ public class ObjectInfo {
         this.coords = c;
         this.name = name;
         this.visible = true;
-
-        children = new ObjectInfo[0];
         setId(-1);
     }
 
@@ -109,12 +111,9 @@ public class ObjectInfo {
         info.setVisible(isVisible());
         info.setLocked(isLocked());
         info.setId(id);
-        if (getTracks() != null) {
-            info.tracks = new Track[getTracks().length];
-            for (int i = 0; i < getTracks().length; i++) {
-                info.getTracks()[i] = getTracks()[i].duplicate(info);
-            }
-        }
+        
+        IntStream.range(0, tracks.size()).forEach(index -> info.addTrack(tracks.get(index).duplicate(info), index));
+        
         if (distortion != null) {
             info.distortion = distortion.duplicate();
         }
@@ -126,22 +125,22 @@ public class ObjectInfo {
      * point to), keeping parent-child relationships intact.
      */
     public static ObjectInfo[] duplicateAll(ObjectInfo[] info) {
-        ObjectInfo[] newobj = new ObjectInfo[info.length];
-        HashMap<ObjectInfo, ObjectInfo> objectMap = new HashMap<>();
-        for (int i = 0; i < newobj.length; i++) {
-            newobj[i] = info[i].duplicate(info[i].getObject().duplicate());
-            objectMap.put(info[i], newobj[i]);
+        ObjectInfo[] newObj = new ObjectInfo[info.length];
+        Map<ObjectInfo, ObjectInfo> objectMap = new HashMap<>();
+        for (int i = 0; i < newObj.length; i++) {
+            newObj[i] = info[i].duplicate(info[i].getObject().duplicate());
+            objectMap.put(info[i], newObj[i]);
         }
         for (int i = 0; i < info.length; i++) {
             for (int k = info[i].getChildren().length - 1; k >= 0; k--) {
                 int j;
                 for (j = 0; j < info.length && info[j] != info[i].getChildren()[k]; j++);
                 if (j < info.length) {
-                    newobj[i].addChild(newobj[j], 0);
+                    newObj[i].addChild(newObj[j], 0);
                 }
             }
         }
-        for (ObjectInfo objectInfo : newobj) {
+        for (ObjectInfo objectInfo : newObj) {
             if (objectInfo.tracks == null) {
                 continue;
             }
@@ -149,7 +148,7 @@ public class ObjectInfo {
                 track.updateObjectReferences(objectMap);
             }
         }
-        return newobj;
+        return newObj;
     }
 
     /**
@@ -166,14 +165,11 @@ public class ObjectInfo {
         cachedMesh = info.cachedMesh;
         cachedWire = info.cachedWire;
         cachedBounds = info.cachedBounds;
-        if (info.getTracks() == null) {
-            tracks = null;
-        } else {
-            tracks = new Track[info.getTracks().length];
-            for (int i = 0; i < getTracks().length; i++) {
-                getTracks()[i] = info.getTracks()[i].duplicate(this);
-            }
-        }
+        
+        tracks.clear();
+        List<Track> st = info.tracks;
+        IntStream.range(0, st.size()).forEach(index -> this.addTrack(st.get(index).duplicate(this), index));
+        
         if (info.distortion == null) {
             distortion = null;
         } else {
@@ -190,17 +186,7 @@ public class ObjectInfo {
      * Add a child to this object.
      */
     public void addChild(ObjectInfo info, int position) {
-        ObjectInfo[] newChildren = new ObjectInfo[getChildren().length + 1];
-        int i;
-
-        for (i = 0; i < position; i++) {
-            newChildren[i] = getChildren()[i];
-        }
-        newChildren[position] = info;
-        for (; i < getChildren().length; i++) {
-            newChildren[i + 1] = getChildren()[i];
-        }
-        children = newChildren;
+        children.add(position, info);
         info.setParent(this);
     }
 
@@ -208,78 +194,35 @@ public class ObjectInfo {
      * Remove a child from this object.
      */
     public void removeChild(ObjectInfo info) {
-        for (int i = 0; i < getChildren().length; i++) {
-            if (getChildren()[i] == info) {
-                removeChild(i);
-                return;
-            }
-        }
+        if(children.remove(info)) info.setParent(null);
     }
 
     /**
      * Remove a child from this object.
      */
     public void removeChild(int which) {
-        ObjectInfo[] newChildren = new ObjectInfo[getChildren().length - 1];
-        int i;
-
-        getChildren()[which].setParent(null);
-        for (i = 0; i < which; i++) {
-            newChildren[i] = getChildren()[i];
-        }
-        for (i++; i < getChildren().length; i++) {
-            newChildren[i - 1] = getChildren()[i];
-        }
-        children = newChildren;
+        children.remove(which).setParent(null);
     }
 
     /**
      * Add a track to this object.
      */
     public void addTrack(Track tr, int position) {
-        if (getTracks() == null) {
-            tracks = new Track[]{tr};
-            return;
-        }
-        Track[] newTracks = new Track[getTracks().length + 1];
-        int i;
-
-        for (i = 0; i < position; i++) {
-            newTracks[i] = getTracks()[i];
-        }
-        newTracks[position] = tr;
-        for (; i < getTracks().length; i++) {
-            newTracks[i + 1] = getTracks()[i];
-        }
-        tracks = newTracks;
+        tracks.add(position, tr);
     }
 
     /**
      * Remove a track from this object.
      */
     public void removeTrack(Track tr) {
-        for (int i = 0; i < getTracks().length; i++) {
-            if (getTracks()[i] == tr) {
-                removeTrack(i);
-                return;
-            }
-        }
+        tracks.remove(tr);
     }
 
     /**
      * Remove a track from this object.
      */
     public void removeTrack(int which) {
-        Track[] newTracks = new Track[getTracks().length - 1];
-        int i;
-
-        for (i = 0; i < which; i++) {
-            newTracks[i] = getTracks()[i];
-        }
-        for (i++; i < getTracks().length; i++) {
-            newTracks[i - 1] = getTracks()[i];
-        }
-        tracks = newTracks;
+        tracks.remove(which);
     }
 
     /**
@@ -552,13 +495,23 @@ public class ObjectInfo {
      * Get the list of children for this object.
      */
     public ObjectInfo[] getChildren() {
-        return children;
+        return children.toArray(ObjectInfo[]::new);
     }
 
+    public void setChildren(ObjectInfo... children) {
+        this.children = new ArrayList<>(Arrays.asList(children));
+    }
+    
     /**
      * Get the list of Tracks for this object.
      */
     public Track[] getTracks() {
-        return tracks;
+        return tracks.toArray(Track[]::new);
     }
+
+    public void setTracks(Track... tracks) {
+        this.tracks = new ArrayList<>(Arrays.asList(tracks));
+    }
+
+
 }

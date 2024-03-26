@@ -1422,9 +1422,7 @@ public class Scene implements ObjectsContainer, MaterialsContainer, ImagesContai
                 tr.initFromStream(in, this);
                 info.addTrack(tr, i);
             }
-            if (info.getTracks() == null) {
-                info.tracks = new Track[0];
-            }
+
         } catch (IOException | ReflectiveOperationException | SecurityException ex) {
             log.atError().setCause(ex).log("Tracks reading error: {}", ex.getMessage());
             throw new IOException();
