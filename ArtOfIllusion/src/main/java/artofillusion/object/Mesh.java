@@ -1,4 +1,5 @@
 /* Copyright (C) 1999-2004 by Peter Eastman
+    Changes copyright (C) 2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -89,5 +90,7 @@ public interface Mesh {
     /**
      * Get a MeshViewer which can be used for viewing this mesh.
      */
-    MeshViewer createMeshViewer(MeshEditController controller, RowContainer options);
+    default MeshViewer createMeshViewer(MeshEditController controller, RowContainer options) {
+        return null;
+    }
 }

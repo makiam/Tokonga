@@ -582,13 +582,6 @@ public class UVMappingViewer extends MeshViewer {
             return null;
         }
 
-        /**
-         * Unused method from Mesh.
-         */
-        @Override
-        public MeshViewer createMeshViewer(MeshEditController controller, RowContainer options) {
-            return null;
-        }
     }
 
     /**
