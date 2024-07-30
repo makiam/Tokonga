@@ -50,7 +50,7 @@ dependencies {
     
     implementation 'com.github.makiam:Buoy:1.0.0'
 
-    testImplementation('junit:junit:4.12') {
+    testImplementation('junit:junit:4.13.2') {
         exclude group: 'org.hamcrest'
     }
     testImplementation 'org.hamcrest:hamcrest-library:1.3'

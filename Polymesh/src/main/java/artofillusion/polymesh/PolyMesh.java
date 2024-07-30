@@ -164,9 +164,6 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
     private Color selectedFaceColor;
 
-    private RGBColor meshRGBColor;
-
-    private RGBColor selectedFaceRGBColor;
 
     private Color seamColor;
 
@@ -422,7 +419,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     }
                     connectVertices(indices);
                 }
-                // dumpMesh();
+
                 break;
             case 1:
                 u = 1;
@@ -495,8 +492,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         selectedFaceColor = new Color(preferences.getInt("selectedFaceColor_red", 255),
                 preferences.getInt("selectedFaceColor_green", 102),
                 preferences.getInt("selectedFaceColor_blue", 255));
-        meshRGBColor = ColorToRGB(meshColor);
-        selectedFaceRGBColor = ColorToRGB(selectedFaceColor);
+
         handleSize = preferences.getInt("handleSize", 3);
         String useCustom = preferences.get("useCustomColors", "true");
         useCustomColors = Boolean.parseBoolean(useCustom);
@@ -1313,8 +1309,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         selectedSeamColor = mesh.selectedSeamColor;
         meshColor = mesh.meshColor;
         selectedFaceColor = mesh.selectedFaceColor;
-        meshRGBColor = mesh.meshRGBColor;
-        selectedFaceRGBColor = mesh.selectedFaceRGBColor;
+
         handleSize = mesh.handleSize;
     }
 
@@ -1783,7 +1778,6 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         List<Integer> vertTable = new Vector<>();
         Map<Integer, int[]> facesTextureIndexMap = null;
 
-        // dumpMesh();
         // first let's record any per face per vertex texture parameter
         // System.out.println(vertices.length);
         facesTextureIndexMap = recordFacesTexture(selected);
@@ -3805,7 +3799,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * @return Selection corresponding to merged edge.
      */
     public boolean[] mergeEdges(int e1, int e2, boolean center) {
-        // dumpMesh();
+
         if (edges[e1].face != -1) {
             e1 = edges[e1].hedge;
         }
@@ -4027,7 +4021,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             fullSel[i] = sel[i];
             fullSel[edges[i].hedge] = sel[i];
         }
-        // dumpMesh();
+
         if (edges[e1].face != -1) {
             e1 = edges[e1].hedge;
         }
@@ -5508,8 +5502,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             selectedSeamColor = new Color(in.readInt(), in.readInt(), in.readInt());
             meshColor = new Color(in.readInt(), in.readInt(), in.readInt());
             selectedFaceColor = new Color(in.readInt(), in.readInt(), in.readInt());
-            meshRGBColor = ColorToRGB(meshColor);
-            selectedFaceRGBColor = ColorToRGB(selectedFaceColor);
+
             handleSize = in.readInt();
         }
     }
@@ -6776,7 +6769,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         if (Math.abs(scale) < 0.05) {
             removeZeroLengthEdges();
         }
-        // dumpMesh();
+
         resetMesh();
 
     }
@@ -6842,9 +6835,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * @param scale
      * Scale value for extrude/bevel combo
      */
-    public void extrudeRegion(boolean[] selected, double value, Vec3 direction,
-            double scale, Vec3 camZ, boolean useNormals, boolean constrainAxis) {
-        // dumpMesh();
+    public void extrudeRegion(boolean[] selected, double value, Vec3 direction, double scale, Vec3 camZ, boolean useNormals, boolean constrainAxis) {
+
         Vec3[] normals = getNormals();
         int count;
         if ((Math.abs(value) < 1e-12) && Math.abs(1.0 - scale) < 1e-6) {
@@ -7144,7 +7136,6 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      */
     public void extrudeEdges(boolean[] selected, double value, Vec3 direction) {
 
-        // dumpMesh();
         Vec3[] normals = getEdgeNormals();
         if (Math.abs(value) < 1e-12) {
             return;
@@ -7273,7 +7264,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         faces = newFaces;
         vertices = newVertices;
         edges = newEdges;
-        // dumpMesh();
+
         resetMesh();
     }
 
@@ -9254,7 +9245,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         int faceCount = 0;
         double prod;
 
-        // dumpMesh();
+
         boolean[] fullSel;
         fullSel = new boolean[edges.length];
         boolean[] newSel;
@@ -10471,7 +10462,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         short state = mirrorState;
         mirrorState = NO_MIRROR;
         PolyMesh mesh = (PolyMesh) this.duplicate();
-        //dumpMesh();
+
         mesh.setMirrorState(state);
         mesh.mirrorMesh();
         mirroredVerts = mesh.mirroredVerts;
@@ -10940,16 +10931,15 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             sv = ov;
         }
         int k;
-        // dumpMesh();
+
         for (int i = 0; i < lv.length; ++i) {
-            k = (int) Math.round(((double) i * sv.length)
-                    / ((double) lv.length));
+            k = (int) Math.round(((double) i * sv.length) / ((double) lv.length));
             if (k == sv.length) {
                 k = 0;
             }
             blindConnectVertices(lv[i], sv[k]);
         }
-        // dumpMesh();
+
         resetMesh();
         return true;
     }
@@ -12954,12 +12944,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * @return The faceSelected value
      */
     private boolean isFaceSelected(boolean[] selected, int f) {
-        if (f == -1) {
-            return false;
-        } // a void is never selected!
-        else {
-            return selected[f];
-        }
+        return f == -1 ? false : selected[f];
     }
 
     /**
@@ -13142,7 +13127,6 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
     public void setMeshColor(Color meshColor) {
         this.meshColor = meshColor;
-        meshRGBColor = ColorToRGB(meshColor);
     }
 
     public Color getSelectedFaceColor() {
@@ -13155,15 +13139,10 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
     public void setSelectedFaceColor(Color selectedFaceColor) {
         this.selectedFaceColor = selectedFaceColor;
-        selectedFaceRGBColor = ColorToRGB(selectedFaceColor);
     }
 
     public int getHandleSize() {
-        if (useCustomColors) {
-            return handleSize;
-        } else {
-            return 3;
-        }
+        return useCustomColors ? handleSize : 3;
     }
 
     public void setHandleSize(int handleSize) {
