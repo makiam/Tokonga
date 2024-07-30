@@ -454,12 +454,6 @@ public class QuadMesh extends Object3D implements FacetedMesh {
         return f.v4;
     }
 
-    @Override
-    public MeshViewer createMeshViewer(MeshEditController controller, RowContainer rowContainer) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     /**
      * Get an array of normal vectors. This calculates a single normal for each vertex,
      * ignoring smoothness values.
