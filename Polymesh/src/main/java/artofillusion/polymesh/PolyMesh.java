@@ -11053,8 +11053,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             } else {
                 newEdges[i + edges.length / 2].hedge += edges.length / 2;
             }
-            newEdges[i + edges.length / 2 + newEdges.length / 2] = new Wedge(
-                    addedEdges[i + addedEdges.length / 2]);
+            newEdges[i + edges.length / 2 + newEdges.length / 2] = new Wedge(addedEdges[i + addedEdges.length / 2]);
             newEdges[i + edges.length / 2 + newEdges.length / 2].vertex += vertices.length;
             if (newEdges[i + edges.length / 2 + newEdges.length / 2].face != -1) {
                 newEdges[i + edges.length / 2 + newEdges.length / 2].face += faces.length;
@@ -11102,8 +11101,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             ParameterValue[] newParamVal = new ParameterValue[oldParamVal.length];
             for (int k = 0; k < oldParamVal.length; k++) {
                 if (oldParamVal[k] instanceof FaceParameterValue) {
-                    double[] oldval = ((FaceParameterValue) oldParamVal[k])
-                            .getValue();
+                    double[] oldval = ((FaceParameterValue) oldParamVal[k]).getValue();
                     double[] newval = new double[faces.length];
                     System.arraycopy(oldval, 0, newval, 0, oldval.length);
                     for (int j = oldval.length; j < newval.length; j++) {
@@ -11111,8 +11109,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     }
                     newParamVal[k] = new FaceParameterValue(newval);
                 } else if (oldParamVal[k] instanceof VertexParameterValue) {
-                    double[] oldval = ((VertexParameterValue) oldParamVal[k])
-                            .getValue();
+                    double[] oldval = ((VertexParameterValue) oldParamVal[k]).getValue();
                     double[] newval = new double[vertices.length];
                     System.arraycopy(oldval, 0, newval, 0, oldval.length);
                     for (int j = oldval.length; j < newval.length; j++) {
