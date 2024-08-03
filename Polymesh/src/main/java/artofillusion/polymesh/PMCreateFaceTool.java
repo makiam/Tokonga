@@ -34,18 +34,16 @@ import java.util.Vector;
 @EditingTool.ActivatedToolText("polymesh:createFaceTool.helpText")
 public class PMCreateFaceTool extends EditingTool {
 
-    private final List<Vec3> clickPoints;
+    private final List<Vec3> clickPoints = new Vector<>();
     private final MeshEditController controller;
     private ViewerCanvas canvas;
-    private int from, to;
+    private int from = -1;
+    private int to = -1;
     private Vec3 fromPoint;
-    Vec3[] pr;
+    private Vec3[] pr;
 
     public PMCreateFaceTool(EditingWindow fr, MeshEditController controller) {
         super(fr);
-        clickPoints = new Vector<>();
-        from = to = -1;
-        fromPoint = null;
         this.controller = controller;
     }
 
@@ -62,21 +60,18 @@ public class PMCreateFaceTool extends EditingTool {
         Point e = ev.getPoint();
         PolyMesh mesh, viewMesh;
         viewMesh = mesh = (PolyMesh) controller.getObject().object;
-        boolean mirror;
         int[] invVertTable = null;
         int length = mesh.getVertices().length;
         if (mesh.getMirrorState() != PolyMesh.NO_MIRROR) {
-            mirror = true;
             viewMesh = mesh.getMirroredMesh();
             invVertTable = mesh.getInvMirroredVerts();
             length = invVertTable.length;
         }
-        QuadMesh subMesh = null;
-        MeshVertex[] v = null;
+
+        MeshVertex[] v;
         boolean project = (controller instanceof PolyMeshEditorWindow ? ((PolyMeshEditorWindow) controller).getProjectOntoSurface() : false);
         if (project && mesh.getSmoothingMethod() != PolyMesh.NO_SMOOTHING && viewMesh.getSubdividedMesh() != null) {
-            subMesh = viewMesh.getSubdividedMesh();
-            v = subMesh.getVertices();
+            v = viewMesh.getSubdividedMesh().getVertices();
         } else {
             v = mesh.getVertices();
         }
@@ -84,12 +79,11 @@ public class PMCreateFaceTool extends EditingTool {
         for (int i = 0; i < length; ++i) {
             pr[i] = v[i].r;
         }
-        Vec2 p;
         canvas = view;
         double closestz = Double.MAX_VALUE;
         int which = -1;
         for (int i = 0; i < pr.length; i++) {
-            p = canvas.getCamera().getObjectToScreen().timesXY(pr[i]);
+            Vec2 p = canvas.getCamera().getObjectToScreen().timesXY(pr[i]);
             Point ps = new Point((int) p.x, (int) p.y);
             if (e.x < ps.x - PolyMeshViewer.HANDLE_SIZE / 2 || e.x > ps.x + PolyMeshViewer.HANDLE_SIZE / 2
                     || e.y < ps.y - PolyMeshViewer.HANDLE_SIZE / 2 || e.y > ps.y + PolyMeshViewer.HANDLE_SIZE / 2) {
@@ -97,10 +91,10 @@ public class PMCreateFaceTool extends EditingTool {
             }
             double z = canvas.getCamera().getObjectToView().timesZ(pr[i]);
             if (z < closestz) {
-                if (invVertTable != null) {
-                    which = invVertTable[i];
-                } else {
+                if (invVertTable == null) {
                     which = i;
+                } else {
+                    which = invVertTable[i];
                 }
                 closestz = z;
             }
@@ -171,14 +165,14 @@ public class PMCreateFaceTool extends EditingTool {
 
         PolyMesh mesh = (PolyMesh) controller.getObject().object;
         PolyMesh origMesh = (PolyMesh) mesh.duplicate();
-        if (to != -1) {
+        if (to == -1) {
+            mesh.addStandaloneFace(newPoints);
+        } else {
             if (!mesh.addFaceFromPoints(from, to, newPoints)) {
                 to = -1;
                 return;
             }
 
-        } else {
-            mesh.addStandaloneFace(newPoints);
         }
         controller.setMesh(mesh);
         theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, mesh, origMesh));
