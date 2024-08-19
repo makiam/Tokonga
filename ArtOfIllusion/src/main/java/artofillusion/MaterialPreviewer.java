@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -27,19 +27,21 @@ import java.awt.event.*;
  * MaterialPreviewer is a component used for rendering previews of Materials. It displays
  * a scene consisting of a Sphere with the desired Material applied to it, a ground plane,
  * and a single light. Optionally, an Object3D may be specified which will then be used
- * instead of a Sphere.
+ * instead of redefined.
  */
-public class MaterialPreviewer extends CustomWidget implements RenderListener {
+public class MaterialPreviewer extends CustomWidget {
+    private final MaterialPreviewRenderListener listener = new MaterialPreviewRenderListener();
 
-    Scene theScene;
+    private Scene theScene;
     Camera theCamera;
     ObjectInfo info;
     CoordinateSystem objectCoords;
-    Image theImage;
-    boolean mouseInside, renderInProgress;
+    private Image theImage;
+    boolean mouseInside;
+    boolean renderInProgress;
     Point clickPoint;
     private Mat4 dragTransform;
-    private Object3D[] shape;
+    private Object3D[] shapes;
 
     public static final int HANDLE_SIZE = 5;
     static final double DRAG_SCALE = Math.PI / 360.0;
@@ -49,13 +51,13 @@ public class MaterialPreviewer extends CustomWidget implements RenderListener {
      * Either tex or mat may be null.
      */
     public MaterialPreviewer(Texture tex, Material mat, int width, int height) {
-        shape = new Object3D[]{
+        shapes = new Object3D[]{
             new Sphere(1.0, 1.0, 1.0),
             new Cube(2.0, 2.0, 2.0),
             new Cylinder(2.0, 1.0, 1.0, 1.0),
             new Cylinder(2.0, 1.0, 1.0, 0.0)
         };
-        ObjectInfo objInfo = new ObjectInfo(shape[0], new CoordinateSystem(), "");
+        ObjectInfo objInfo = new ObjectInfo(shapes[0], new CoordinateSystem(), "");
         initObject(tex, mat, objInfo);
         init(objInfo, width, height);
     }
@@ -135,19 +137,7 @@ public class MaterialPreviewer extends CustomWidget implements RenderListener {
                 render();
             }
         });
-        getComponent().addHierarchyListener(new HierarchyListener() {
-            @Override
-            public void hierarchyChanged(HierarchyEvent ev) {
-                if ((ev.getChangeFlags() & HierarchyEvent.DISPLAYABILITY_CHANGED) != 0) {
-                    if (!getComponent().isDisplayable()) {
-                        Renderer rend = ArtOfIllusion.getPreferences().getTexturePreviewRenderer();
-                        if (rend != null) {
-                            rend.cancelRendering(theScene);
-                        }
-                    }
-                }
-            }
-        });
+
         render();
     }
 
@@ -197,7 +187,7 @@ public class MaterialPreviewer extends CustomWidget implements RenderListener {
         sc.setFieldOfView(16.0);
         theCamera.setScreenTransform(sc.getScreenTransform(bounds.width, bounds.height), bounds.width, bounds.height);
         rend.configurePreview();
-        rend.renderScene(theScene, theCamera, this, sc);
+        rend.renderScene(theScene, theCamera, this.listener, sc);
         renderInProgress = true;
         repaint();
     }
@@ -278,30 +268,14 @@ public class MaterialPreviewer extends CustomWidget implements RenderListener {
      * Change what object the texture/material is displayed ob.
      */
     private void changeObject(int object) {
-        shape[object].setTexture(info.getObject().getTexture(), info.getObject().getTextureMapping());
-        shape[object].setMaterial(info.getObject().getMaterial(), info.getObject().getMaterialMapping());
-        info.setObject(shape[object]);
+        Object3D shape = shapes[object];
+        Object3D source = info.getObject();
+
+        shape.setTexture(source.getTexture(), source.getTextureMapping());
+        shape.setMaterial(source.getMaterial(), source.getMaterialMapping());
+        info.setObject(shape);
         info.clearCachedMeshes();
         render();
-    }
-
-    /**
-     * Called when more pixels are available for the current image.
-     */
-    @Override
-    public void imageUpdated(Image image) {
-        theImage = image;
-        repaint();
-    }
-
-    /**
-     * Called when rendering is complete.
-     */
-    @Override
-    public void imageComplete(ComplexImage image) {
-        theImage = image.getImage();
-        renderInProgress = false;
-        repaint();
     }
 
     private void mouseEntered(MouseEnteredEvent e) {
@@ -404,12 +378,12 @@ public class MaterialPreviewer extends CustomWidget implements RenderListener {
             Translate.text("menu.cone")
         });
         ComponentsDialog dlg;
-        if (shape == null) {
+        if (shapes == null) {
             dlg = new ComponentsDialog(UIUtilities.findWindow(this), Translate.text("configurePreview"),
                     new Widget[]{viewChoice}, new String[]{Translate.text("resetViewTo")});
         } else {
-            for (int i = 0; i < shape.length; i++) {
-                if (shape[i] == info.getObject()) {
+            for (int i = 0; i < shapes.length; i++) {
+                if (shapes[i] == info.getObject()) {
                     shapeChoice.setSelectedIndex(i);
                 }
             }
@@ -419,11 +393,27 @@ public class MaterialPreviewer extends CustomWidget implements RenderListener {
         if (!dlg.clickedOk()) {
             return;
         }
-        if (shape != null && shape[shapeChoice.getSelectedIndex()] != info.getObject()) {
+        if (shapes != null && shapes[shapeChoice.getSelectedIndex()] != info.getObject()) {
             changeObject(shapeChoice.getSelectedIndex());
         }
         if (viewChoice.getSelectedIndex() > 0) {
             changeView(viewChoice.getSelectedIndex() - 1);
+        }
+    }
+
+    private class MaterialPreviewRenderListener implements RenderListener {
+
+        @Override
+        public void imageUpdated(Image image) {
+            theImage = image;
+            repaint();
+        }
+
+        @Override
+        public void imageComplete(ComplexImage image) {
+            theImage = image.getImage();
+            renderInProgress = false;
+            repaint();
         }
     }
 }
