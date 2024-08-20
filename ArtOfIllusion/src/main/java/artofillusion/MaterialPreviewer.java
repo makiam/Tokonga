@@ -22,6 +22,7 @@ import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
 
 /**
  * MaterialPreviewer is a component used for rendering previews of Materials. It displays
@@ -30,6 +31,12 @@ import java.awt.event.*;
  * instead of predefined.
  */
 public class MaterialPreviewer extends CustomWidget {
+
+    private static java.util.List<Object3D> shapes = List.of(new Sphere(1.0, 1.0, 1.0),
+            new Cube(2.0, 2.0, 2.0),
+            new Cylinder(2.0, 1.0, 1.0, 1.0),
+            new Cylinder(2.0, 1.0, 1.0, 0.0));
+
     private final MaterialPreviewRenderListener listener = new MaterialPreviewRenderListener();
 
     private Scene theScene;
@@ -41,7 +48,8 @@ public class MaterialPreviewer extends CustomWidget {
     boolean renderInProgress;
     Point clickPoint;
     private Mat4 dragTransform;
-    private Object3D[] shapes;
+
+
 
     public static final int HANDLE_SIZE = 5;
     static final double DRAG_SCALE = Math.PI / 360.0;
@@ -51,15 +59,7 @@ public class MaterialPreviewer extends CustomWidget {
      * Either tex or mat may be null.
      */
     public MaterialPreviewer(Texture tex, Material mat, int width, int height) {
-        shapes = new Object3D[]{
-            new Sphere(1.0, 1.0, 1.0),
-            new Cube(2.0, 2.0, 2.0),
-            new Cylinder(2.0, 1.0, 1.0, 1.0),
-            new Cylinder(2.0, 1.0, 1.0, 0.0)
-        };
-        ObjectInfo objInfo = new ObjectInfo(shapes[0], new CoordinateSystem(), "");
-        initObject(tex, mat, objInfo);
-        init(objInfo, width, height);
+        this(tex, mat, shapes.get(0), width, height);
     }
 
     /**
@@ -268,7 +268,7 @@ public class MaterialPreviewer extends CustomWidget {
      * Change what object the texture/material is displayed ob.
      */
     private void changeObject(int object) {
-        Object3D shape = shapes[object];
+        Object3D shape = shapes.get(object);
         Object3D source = info.getObject();
 
         shape.setTexture(source.getTexture(), source.getTextureMapping());
@@ -382,8 +382,8 @@ public class MaterialPreviewer extends CustomWidget {
             dlg = new ComponentsDialog(UIUtilities.findWindow(this), Translate.text("configurePreview"),
                     new Widget[]{viewChoice}, new String[]{Translate.text("resetViewTo")});
         } else {
-            for (int i = 0; i < shapes.length; i++) {
-                if (shapes[i] == info.getObject()) {
+            for (int i = 0; i < shapes.size(); i++) {
+                if (shapes.get(i) == info.getObject()) {
                     shapeChoice.setSelectedIndex(i);
                 }
             }
@@ -393,7 +393,7 @@ public class MaterialPreviewer extends CustomWidget {
         if (!dlg.clickedOk()) {
             return;
         }
-        if (shapes != null && shapes[shapeChoice.getSelectedIndex()] != info.getObject()) {
+        if (shapes != null && shapes.get(shapeChoice.getSelectedIndex()) != info.getObject()) {
             changeObject(shapeChoice.getSelectedIndex());
         }
         if (viewChoice.getSelectedIndex() > 0) {
