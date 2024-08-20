@@ -27,13 +27,13 @@ import java.awt.event.*;
  * MaterialPreviewer is a component used for rendering previews of Materials. It displays
  * a scene consisting of a Sphere with the desired Material applied to it, a ground plane,
  * and a single light. Optionally, an Object3D may be specified which will then be used
- * instead of redefined.
+ * instead of predefined.
  */
 public class MaterialPreviewer extends CustomWidget {
     private final MaterialPreviewRenderListener listener = new MaterialPreviewRenderListener();
 
     private Scene theScene;
-    Camera theCamera;
+    private Camera camera;
     ObjectInfo info;
     CoordinateSystem objectCoords;
     private Image theImage;
@@ -106,15 +106,15 @@ public class MaterialPreviewer extends CustomWidget {
         }
         Vec3[] vert = new Vec3[]{new Vec3(100.0 * max, floor, 100.0 * max), new Vec3(-100.0 * max, floor, 100.0 * max), new Vec3(0.0, floor, -100.0 * max)};
         int[][] face = {{0, 1, 2}};
-        TriangleMesh tri;
 
         theScene = new Scene();
-        theCamera = new Camera();
-        theCamera.setCameraCoordinates(coords);
+        camera = new Camera();
+        camera.setCameraCoordinates(coords);
         coords = new CoordinateSystem(new Vec3(), new Vec3(-0.5, -0.4, -1.0), Vec3.vy());
         theScene.addObject(new DirectionalLight(new RGBColor(1.0f, 1.0f, 1.0f), 0.8f), coords, "", null);
         coords = new CoordinateSystem(new Vec3(), Vec3.vz(), Vec3.vy());
-        theScene.addObject(tri = new TriangleMesh(vert, face), coords, "", null);
+        TriangleMesh tri = new TriangleMesh(vert, face);
+        theScene.addObject(tri, coords, "", null);
         Texture tex = theScene.getDefaultTexture();
         tri.setTexture(tex, tex.getDefaultMapping(tri));
         info = obj;
@@ -185,9 +185,9 @@ public class MaterialPreviewer extends CustomWidget {
         }
         SceneCamera sc = new SceneCamera();
         sc.setFieldOfView(16.0);
-        theCamera.setScreenTransform(sc.getScreenTransform(bounds.width, bounds.height), bounds.width, bounds.height);
+        camera.setScreenTransform(sc.getScreenTransform(bounds.width, bounds.height), bounds.width, bounds.height);
         rend.configurePreview();
-        rend.renderScene(theScene, theCamera, this.listener, sc);
+        rend.renderScene(theScene, camera, this.listener, sc);
         renderInProgress = true;
         repaint();
     }
@@ -233,7 +233,7 @@ public class MaterialPreviewer extends CustomWidget {
         m = Mat4.translation(-origin.x, -origin.y, -origin.z).times(m);
         m = dragTransform.times(m);
         m = Mat4.translation(origin.x, origin.y, origin.z).times(m);
-        theCamera.setObjectTransform(m);
+        camera.setObjectTransform(m);
         WireframeMesh mesh = info.getObject().getWireframeMesh();
         int[] from = mesh.from;
         int[] to = mesh.to;
@@ -241,9 +241,9 @@ public class MaterialPreviewer extends CustomWidget {
         Vec3[] vert = mesh.vert;
         for (int i = 0; i < mesh.from.length; i++) {
             if (from[i] == last) {
-                theCamera.drawClippedLineTo(g, vert[(last = to[i])]);
+                camera.drawClippedLineTo(g, vert[(last = to[i])]);
             } else {
-                theCamera.drawClippedLine(g, vert[from[i]], vert[(last = to[i])]);
+                camera.drawClippedLine(g, vert[from[i]], vert[(last = to[i])]);
             }
         }
     }
@@ -319,7 +319,7 @@ public class MaterialPreviewer extends CustomWidget {
                 Vec3 rotAxis = new Vec3((clickPoint.y - dragPoint.y) * DRAG_SCALE, (dragPoint.x - clickPoint.x) * DRAG_SCALE, 0.0);
                 double angle = rotAxis.length();
                 rotAxis = rotAxis.times(1.0 / angle);
-                rotAxis = theCamera.getViewToWorld().timesDirection(rotAxis);
+                rotAxis = camera.getViewToWorld().timesDirection(rotAxis);
                 dragTransform = Mat4.axisRotation(rotAxis, angle);
                 objectCoords.transformAxes(dragTransform);
             }
@@ -349,7 +349,7 @@ public class MaterialPreviewer extends CustomWidget {
             Vec3 rotAxis = new Vec3((clickPoint.y - dragPoint.y) * DRAG_SCALE, (dragPoint.x - clickPoint.x) * DRAG_SCALE, 0.0);
             double angle = rotAxis.length();
             rotAxis = rotAxis.times(1.0 / angle);
-            rotAxis = theCamera.getViewToWorld().timesDirection(rotAxis);
+            rotAxis = camera.getViewToWorld().timesDirection(rotAxis);
             dragTransform = Mat4.axisRotation(rotAxis, angle);
         }
         g.drawImage(theImage, 0, 0, getComponent());
