@@ -35,24 +35,34 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Scene implements ObjectsContainer, MaterialsContainer, ImagesContainer {
 
-    private List<ObjectInfo> objects;
-    private List<Material> materials;
-    private List<Texture> textures;
+    private List<ObjectInfo> objects = new Vector<>();
+    private List<Material> materials = new Vector<>();
+    private List<Texture> textures = new Vector<>();
+    private List<ImageMap> images = new Vector<>();
 
-    private List<ImageMap> images;
     private List<Integer> selection;
-    private List<ListChangeListener> textureListeners, materialListeners;
+
+    private List<ListChangeListener> textureListeners = new Vector<>();
+    private List<ListChangeListener> materialListeners = new Vector<>();
+
     private HashMap<String, Object> metadataMap;
     private HashMap<ObjectInfo, Integer> objectIndexMap;
-    private RGBColor ambientColor, environColor, fogColor;
+
+    private RGBColor ambientColor = new RGBColor(0.3f, 0.3f, 0.3f);
+    private RGBColor environColor = new RGBColor(0.0f, 0.0f, 0.0f);
+    private RGBColor fogColor = new RGBColor(0.3f, 0.3f, 0.3f);
+
     private Texture environTexture;
     private TextureMapping environMapping;
-    private int gridSubdivisions, environMode, framesPerSecond, nextID;
+    private int gridSubdivisions;
+    private int environMode;
+    private int framesPerSecond;
+    private int nextID;
     private double fogDist, gridSpacing, time;
     private boolean fog, showGrid, snapToGrid;
     private String name, directory;
 
-    private ParameterValue[] environParamValue;
+    private ParameterValue[] environParamValue = new ParameterValue[0];
 
     private final List<String> errors = new ArrayList<>();
 
@@ -70,23 +80,19 @@ public class Scene implements ObjectsContainer, MaterialsContainer, ImagesContai
     public Scene() {
         UniformTexture defTex = new UniformTexture();
 
-        objects = new Vector<>();
-        materials = new Vector<>();
-        textures = new Vector<>();
-        images = new Vector<>();
         selection = new Vector<>();
         metadataMap = new HashMap<>();
-        textureListeners = new Vector<>();
-        materialListeners = new Vector<>();
+
+
         defTex.setName("Default Texture");
         textures.add(defTex);
-        ambientColor = new RGBColor(0.3f, 0.3f, 0.3f);
-        environColor = new RGBColor(0.0f, 0.0f, 0.0f);
+
+
         environTexture = defTex;
         environMapping = defTex.getDefaultMapping(new Sphere(1.0, 1.0, 1.0));
-        environParamValue = new ParameterValue[0];
+
         environMode = ENVIRON_SOLID;
-        fogColor = new RGBColor(0.3f, 0.3f, 0.3f);
+
         fogDist = 20.0;
         fog = false;
         framesPerSecond = 30;
