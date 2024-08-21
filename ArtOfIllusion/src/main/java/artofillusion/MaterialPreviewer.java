@@ -23,6 +23,8 @@ import buoy.widget.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * MaterialPreviewer is a component used for rendering previews of Materials. It displays
@@ -32,10 +34,10 @@ import java.util.List;
  */
 public class MaterialPreviewer extends CustomWidget {
 
-    private static java.util.List<Object3D> shapes = List.of(new Sphere(1.0, 1.0, 1.0),
+    private static java.util.List<Object3D> shapes = Stream.of(new Sphere(1.0, 1.0, 1.0),
             new Cube(2.0, 2.0, 2.0),
             new Cylinder(2.0, 1.0, 1.0, 1.0),
-            new Cylinder(2.0, 1.0, 1.0, 0.0));
+            new Cylinder(2.0, 1.0, 1.0, 0.0)).collect(Collectors.toList());
 
     private final MaterialPreviewRenderListener listener = new MaterialPreviewRenderListener();
 
