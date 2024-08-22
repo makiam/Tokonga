@@ -85,12 +85,53 @@ public class Scene implements ObjectsContainer, MaterialsContainer, ImagesContai
 
     private static final byte[] FILE_PREFIX = {'A', 'o', 'I', 'S', 'c', 'e', 'n', 'e'};
 
+
     public Scene() {
         UniformTexture defTex = new UniformTexture();
         defTex.setName("Default Texture");
         textures.add(defTex);
         environTexture = defTex;
         environMapping = defTex.getDefaultMapping(new Sphere(1.0, 1.0, 1.0));
+    }
+
+    /**
+     * The following constructor is used for reading files. If fullScene is false, only the
+     * Textures and Materials are read.
+     */
+    public Scene(File f, boolean fullScene) throws IOException, InvalidObjectException {
+        setName(f.getName());
+        setDirectory(f.getParent());
+        BufferedInputStream buf = new BufferedInputStream(new FileInputStream(f));
+        buf.mark(FILE_PREFIX.length);
+
+        // See if the file begins with the expected prefix.
+        boolean hasPrefix = true;
+        for (int i = 0; hasPrefix && i < FILE_PREFIX.length; i++) {
+            hasPrefix &= (buf.read() == FILE_PREFIX[i]);
+        }
+        if (!hasPrefix) {
+            buf.reset(); // This is an old file that doesn't start with the prefix.
+        }
+        // We expect the data to be gzipped, but if it's somehow gotten decompressed we should accept that to.
+
+        DataInputStream in;
+        try {
+            in = new DataInputStream(new GZIPInputStream(buf));
+        } catch (IOException ex) {
+            buf.close();
+            buf = new BufferedInputStream(new FileInputStream(f));
+            in = new DataInputStream(buf);
+        }
+        initFromStream(in, fullScene);
+        in.close();
+    }
+
+    /**
+     * The following constructor is used for reading from arbitrary input streams. If fullScene
+     * is false, only the Textures and Materials are read.
+     */
+    public Scene(DataInputStream in, boolean fullScene) throws IOException, InvalidObjectException {
+        initFromStream(in, fullScene);
     }
 
     /**
@@ -1096,46 +1137,6 @@ public class Scene implements ObjectsContainer, MaterialsContainer, ImagesContai
             }
         }
         return sel;
-    }
-
-    /**
-     * The following constructor is used for reading files. If fullScene is false, only the
-     * Textures and Materials are read.
-     */
-    public Scene(File f, boolean fullScene) throws IOException, InvalidObjectException {
-        setName(f.getName());
-        setDirectory(f.getParent());
-        BufferedInputStream buf = new BufferedInputStream(new FileInputStream(f));
-        buf.mark(FILE_PREFIX.length);
-
-        // See if the file begins with the expected prefix.
-        boolean hasPrefix = true;
-        for (int i = 0; hasPrefix && i < FILE_PREFIX.length; i++) {
-            hasPrefix &= (buf.read() == FILE_PREFIX[i]);
-        }
-        if (!hasPrefix) {
-            buf.reset(); // This is an old file that doesn't start with the prefix.
-        }
-        // We expect the data to be gzipped, but if it's somehow gotten decompressed we should accept that to.
-
-        DataInputStream in;
-        try {
-            in = new DataInputStream(new GZIPInputStream(buf));
-        } catch (IOException ex) {
-            buf.close();
-            buf = new BufferedInputStream(new FileInputStream(f));
-            in = new DataInputStream(buf);
-        }
-        initFromStream(in, fullScene);
-        in.close();
-    }
-
-    /**
-     * The following constructor is used for reading from arbitrary input streams. If fullScene
-     * is false, only the Textures and Materials are read.
-     */
-    public Scene(DataInputStream in, boolean fullScene) throws IOException, InvalidObjectException {
-        initFromStream(in, fullScene);
     }
 
     /**
