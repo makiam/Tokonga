@@ -40,13 +40,13 @@ public class Scene implements ObjectsContainer, MaterialsContainer, ImagesContai
     private List<Texture> textures = new Vector<>();
     private List<ImageMap> images = new Vector<>();
 
-    private List<Integer> selection;
+    private List<Integer> selection = new Vector<>();
 
     private List<ListChangeListener> textureListeners = new Vector<>();
     private List<ListChangeListener> materialListeners = new Vector<>();
 
-    private HashMap<String, Object> metadataMap;
-    private HashMap<ObjectInfo, Integer> objectIndexMap;
+    private Map<String, Object> metadataMap = new HashMap<>();
+    private Map<ObjectInfo, Integer> objectIndexMap;
 
     private RGBColor ambientColor = new RGBColor(0.3f, 0.3f, 0.3f);
     private RGBColor environColor = new RGBColor(0.0f, 0.0f, 0.0f);
@@ -54,13 +54,21 @@ public class Scene implements ObjectsContainer, MaterialsContainer, ImagesContai
 
     private Texture environTexture;
     private TextureMapping environMapping;
-    private int gridSubdivisions;
-    private int environMode;
-    private int framesPerSecond;
-    private int nextID;
-    private double fogDist, gridSpacing, time;
-    private boolean fog, showGrid, snapToGrid;
-    private String name, directory;
+
+    private int environMode = ENVIRON_SOLID;
+    private int framesPerSecond = 30;
+    private int nextID = 1;
+    private double fogDist = 20.0;
+    private double gridSpacing = 1.0;
+    private double time;
+    private boolean fog;
+
+    private int gridSubdivisions = 10;
+    private boolean showGrid;
+    private boolean snapToGrid;
+
+    private String name;
+    private String directory;
 
     private ParameterValue[] environParamValue = new ParameterValue[0];
 
@@ -79,29 +87,10 @@ public class Scene implements ObjectsContainer, MaterialsContainer, ImagesContai
 
     public Scene() {
         UniformTexture defTex = new UniformTexture();
-
-        selection = new Vector<>();
-        metadataMap = new HashMap<>();
-
-
         defTex.setName("Default Texture");
         textures.add(defTex);
-
-
         environTexture = defTex;
         environMapping = defTex.getDefaultMapping(new Sphere(1.0, 1.0, 1.0));
-
-        environMode = ENVIRON_SOLID;
-
-        fogDist = 20.0;
-        fog = false;
-        framesPerSecond = 30;
-        nextID = 1;
-
-        // Grids are off by default.
-        showGrid = snapToGrid = false;
-        gridSpacing = 1.0;
-        gridSubdivisions = 10;
     }
 
     /**
