@@ -527,6 +527,13 @@ public class Scene implements ObjectsContainer, MaterialsContainer, ImagesContai
     /**
      * Add a new Material to the scene.
      */
+    public void add(Material material) {
+        addMaterial(material);
+    }
+
+    /**
+     * Add a new Material to the scene.
+     */
     public void addMaterial(Material mat) {
         addMaterial(mat, materials.size());
     }
@@ -566,6 +573,13 @@ public class Scene implements ObjectsContainer, MaterialsContainer, ImagesContai
         }
         Material mat = materials.remove(oldIndex);
         materials.add(newIndex, mat);
+    }
+
+    /**
+     * Add a new Texture to the scene.
+     */
+    public void add(Texture tex) {
+        addTexture(tex);
     }
 
     /**

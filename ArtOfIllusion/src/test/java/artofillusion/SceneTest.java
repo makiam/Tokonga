@@ -185,7 +185,7 @@ public class SceneTest {
             public void itemChanged(int index, Object obj) {
             }
         });
-        scene.addMaterial(mat);
+        scene.add(mat);
         Assert.assertEquals(1, listenerFireCount);
     }
 
@@ -382,7 +382,7 @@ public class SceneTest {
             }
         });
 
-        scene.addTexture(tex);
+        scene.add(tex);
         Assert.assertEquals(1, listenerFireCount);
         Assert.assertEquals(2, scene.getTextures().size());
     }
@@ -708,7 +708,7 @@ public class SceneTest {
         ImageMap map = new MIPMappedImage(im);
 
         ProceduralMaterial3D pm = new ProceduralMaterial3D();
-        scene.addMaterial(pm);
+        scene.add(pm);
         Assert.fail("No way to add image to material programmatically");
     }
 

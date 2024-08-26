@@ -20,10 +20,8 @@ import artofillusion.texture.TextureSpec;
 import artofillusion.texture.UniformMapping;
 import artofillusion.texture.UniformTexture;
 import buoy.widget.BFrame;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InvalidObjectException;
+
+import java.io.*;
 import java.nio.ByteBuffer;
 import org.junit.Assert;
 import org.junit.Test;
@@ -278,16 +276,16 @@ public class SceneLoadTest {
 
         Scene scene = new Scene(StreamUtil.stream(wrap), true);
 
-        Assert.assertEquals(1, scene.getNumTextures());
+        Assert.assertEquals(1, scene.getTextures().size());
         Assert.assertTrue(scene.getTexture(0) instanceof LoadableTexture);
 
-        Assert.assertEquals(1, scene.getNumMaterials());
+        Assert.assertEquals(1, scene.getMaterials().size());
         Assert.assertTrue(scene.getMaterial(0) instanceof UniformMaterial);
         Assert.assertTrue(scene.getMaterial(0).getName().equals("<unreadable>"));
         Assert.assertFalse(scene.getErrors().isEmpty());
     }
 
-    //This test fails as no envirinment texture loaded. in general this is impossible situation
+    //This test fails as no environment texture loaded. in general this is impossible situation
     @Test(expected = ArrayIndexOutOfBoundsException.class)
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void testReadEmptySceneSettingsOnlyNoMeta() throws IOException {
@@ -328,6 +326,12 @@ public class SceneLoadTest {
         }
 
         new Scene(StreamUtil.stream(wrap), true);
+    }
+
+    @Test
+    public void testLoadSceneFile() throws IOException {
+        File fs = new File(this.getClass().getResource("large-troop.aoi").getFile());
+        Scene scene = new Scene(fs, true);
     }
 
     private static void colorToBuffer(RGBColor color, ByteBuffer buffer) {
