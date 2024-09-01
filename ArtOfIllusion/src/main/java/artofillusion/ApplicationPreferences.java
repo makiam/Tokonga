@@ -20,6 +20,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -49,9 +53,6 @@ public class ApplicationPreferences {
     private boolean showTiltDial;
 
     private Renderer objectPreviewRenderer, texturePreviewRenderer, defaultRenderer;
-
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    private final List<PropertyChangeListener> subscribers = new ArrayList<>();
 
     /**
      * Create a new ApplicationPreferences object, loading the preferences from a
@@ -261,11 +262,12 @@ public class ApplicationPreferences {
         if (renderer == objectPreviewRenderer) {
             return;
         }
-        PropertyChangeEvent event = new PropertyChangeEvent(this, "objectPreviewRenderer", objectPreviewRenderer, renderer);
+        ObjectPreviewRendererChangeEvent message = new ObjectPreviewRendererChangeEvent(renderer, objectPreviewRenderer);
+
         objectPreviewRenderer = renderer;
         properties.put("objectPreviewRenderer", renderer.getName());
 
-        subscribers.forEach(subscriber -> subscriber.propertyChange(event));
+        org.greenrobot.eventbus.EventBus.getDefault().post(message);
     }
 
     /**
@@ -313,11 +315,11 @@ public class ApplicationPreferences {
             return;
         }
 
-        PropertyChangeEvent event = new PropertyChangeEvent(this, "interactiveSurfaceError", interactiveSurfaceError, tolerance);
+        InteractiveSurfaceErrorChangeEvent message = new InteractiveSurfaceErrorChangeEvent(tolerance);
         this.interactiveSurfaceError = tolerance;
         properties.put("interactiveSurfaceError", Double.toString(interactiveSurfaceError));
 
-        subscribers.forEach(subscriber -> subscriber.propertyChange(event));
+        org.greenrobot.eventbus.EventBus.getDefault().post(message);
 
     }
 
@@ -336,12 +338,12 @@ public class ApplicationPreferences {
         if (current.equals(locale)) {
             return;
         }
+        LocaleChangeEvent message = new LocaleChangeEvent(locale);
 
-        PropertyChangeEvent event = new PropertyChangeEvent(this, "language", current, locale);
         Translate.setLocale(locale);
         properties.put("language", locale.getLanguage() + '_' + locale.getCountry());
 
-        subscribers.forEach(subscriber -> subscriber.propertyChange(event));
+
 
     }
 
@@ -539,12 +541,25 @@ public class ApplicationPreferences {
         showTiltDial = show;
         properties.put("showTiltDial", Boolean.toString(show));
     }
-
-    public final void addPropertyChangeListener(PropertyChangeListener subscriber) {
-        subscribers.add(subscriber);
+    @AllArgsConstructor
+    public final class LocaleChangeEvent {
+        @Getter
+        private Locale locale;
     }
+    @AllArgsConstructor
+    public final class InteractiveSurfaceErrorChangeEvent {
+        @Getter
+        double tolerance;
+    }
+    @AllArgsConstructor
+    public final class ObjectPreviewRendererChangeEvent {
+        @Getter
+        Renderer newRenderer;
+        @Getter
+        Renderer oldRenderer;
 
-    public final void removePropertyChangeListener(PropertyChangeListener subscriber) {
-        subscribers.remove(subscriber);
+        public Renderer getOldValue() {
+            return oldRenderer;
+        }
     }
 }

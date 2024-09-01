@@ -27,6 +27,9 @@ import buoy.widget.*;
 import buoy.xml.IconResource;
 import buoyx.docking.*;
 import lombok.Getter;
+import org.greenrobot.eventbus.Subscribe;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -44,8 +47,9 @@ import javax.swing.text.*;
  * The LayoutWindow class represents the main window for creating and laying out
  * scenes.
  */
-public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuManager, PropertyChangeListener {
+public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuManager {
 
+    private static final Logger log = LoggerFactory.getLogger(LayoutWindow.class);
     SceneViewer[] theView;
     BorderContainer[] viewPanel;
     FormContainer viewsContainer;
@@ -278,7 +282,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         createViewMenu();
         createPopupMenu();
         preferences = Preferences.userNodeForPackage(getClass()).node("LayoutWindow");
-        ArtOfIllusion.getPreferences().addPropertyChangeListener(this);
+        org.greenrobot.eventbus.EventBus.getDefault().register(this);
         loadPreferences();
         numViewsShown = (numViewsShown == 1 ? 4 : 1);
         toggleViewsCommand();
@@ -2773,26 +2777,27 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         dispatchSceneChangedEvent(); // To be safe, since we can't rely on scripts to set undo records or call setModified().
     }
 
-    @Override
-    public void propertyChange(PropertyChangeEvent event) {
-        String propertyName = event.getPropertyName();
-        if (propertyName.equals("interactiveSurfaceError")) {
-            theScene.getObjects().forEach(ObjectInfo::clearCachedMeshes);
-            updateImage();
-        } else if (propertyName.equals("objectPreviewRenderer")) {
-            ((Renderer) event.getOldValue()).cancelRendering(theScene);
-            for (ViewerCanvas view : theView) {
-                view.viewChanged(false);
-            }
-            updateImage();
+    @Subscribe
+    public void onObjectPreviewRendererChange(ApplicationPreferences.ObjectPreviewRendererChangeEvent event) {
+        log.info("Renderer changed to {}", event.getNewRenderer().getName());
+        event.getOldValue().cancelRendering(theScene);
+        for (ViewerCanvas view : theView) {
+            view.viewChanged(false);
         }
+        updateImage();
+    }
+
+    @Subscribe
+    public void onInteractiveSurfaceErrorChange(ApplicationPreferences.InteractiveSurfaceErrorChangeEvent event) {
+        log.info("Tolerance changed to {}", event.getTolerance());
+        theScene.getObjects().forEach(ObjectInfo::clearCachedMeshes);
+        updateImage();
     }
 
     @Override
     public void dispose() {
         super.dispose();
         KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventPostProcessor(keyEventHandler);
-        ArtOfIllusion.getPreferences().removePropertyChangeListener(this);
     }
 
 }
