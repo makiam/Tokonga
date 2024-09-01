@@ -19,6 +19,7 @@ import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.script.*;
 import artofillusion.texture.*;
+import artofillusion.tools.PrimitivesMenu;
 import artofillusion.ui.*;
 import artofillusion.view.ViewAnimation;
 import buoy.event.*;
@@ -60,49 +61,49 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     /**
      * -- GETTER --
-     *  Determine whether the scene has been modified since it was last saved.
+     * Determine whether the scene has been modified since it was last saved.
      */
     @Getter
     private boolean modified;
     /**
      * -- GETTER --
-     *  Get the File menu.
+     * Get the File menu.
      */
     @Getter
     private final BMenu fileMenu = Translate.menu("file");
     /**
      * -- GETTER --
-     *  Get the Edit menu.
+     * Get the Edit menu.
      */
     @Getter
     private final BMenu editMenu = Translate.menu("edit");
     /**
      * -- GETTER --
-     *  Get the Scene menu.
+     * Get the Scene menu.
      */
     @Getter
     private final BMenu sceneMenu = Translate.menu("scene");
     /**
      * -- GETTER --
-     *  Get the Object menu.
+     * Get the Object menu.
      */
     @Getter
     private final BMenu objectMenu = Translate.menu("object");
     /**
      * -- GETTER --
-     *  Get the Animation menu.
+     * Get the Animation menu.
      */
     @Getter
     private final BMenu animationMenu = Translate.menu("animation");
     /**
      * -- GETTER --
-     *  Get the Tools menu.
+     * Get the Tools menu.
      */
     @Getter
     private final BMenu toolsMenu = Translate.menu("tools");
     /**
      * -- GETTER --
-     *  Get the View menu.
+     * Get the View menu.
      */
     @Getter
     private final BMenu viewMenu = Translate.menu("view");
@@ -519,25 +520,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         objectMenu.add(objectMenuItem[11] = Translate.menuItem("unlockSelection", this, "unlockSelectionAction"));
         objectMenu.add(Translate.menuItem("unlockAll", this, "unlockAllAction"));
         objectMenu.addSeparator();
-
-        BMenu createMenu = Translate.menu("createPrimitive");
-        createMenu.add(Translate.menuItem("cube", this, "createObjectCommand"));
-        createMenu.add(Translate.menuItem("sphere", this, "createObjectCommand"));
-        createMenu.add(Translate.menuItem("cylinder", this, "createObjectCommand"));
-        createMenu.add(Translate.menuItem("cone", this, "createObjectCommand"));
-        createMenu.addSeparator();
-        createMenu.add(Translate.menuItem("createScriptObject", this, "createScriptObjectCommand"));
-        createMenu.addSeparator();
-        createMenu.add(Translate.menuItem("pointLight", this, "createObjectCommand"));
-        createMenu.add(Translate.menuItem("directionalLight", this, "createObjectCommand"));
-        createMenu.add(Translate.menuItem("spotLight", this, "createObjectCommand"));
-        createMenu.add(Translate.menuItem("proceduralPointLight", this, "createObjectCommand"));
-        createMenu.add(Translate.menuItem("proceduralDirectionalLight", this, "createObjectCommand"));
-        createMenu.addSeparator();
-        createMenu.add(Translate.menuItem("camera", this, "createObjectCommand"));
-        createMenu.add(Translate.menuItem("referenceImage", this, "createObjectCommand"));
-        createMenu.add(Translate.menuItem("null", this, "createObjectCommand"));
-        objectMenu.add(createMenu);
+        objectMenu.add(new PrimitivesMenu(this));
     }
 
     private void createToolsMenu() {
@@ -582,7 +565,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             new ExecuteScriptWindow(this, scriptAbsolutePath, ScriptRunner.getLanguageForFilename(scriptAbsolutePath));
         } catch (IOException ioe) {
             new BStandardDialog(null, new String[]{Translate.text("errorOpeningScript"),
-                scriptAbsolutePath + (ioe.getMessage() == null ? "" : ioe.getMessage())}, BStandardDialog.ERROR).showMessageDialog(this);
+                    scriptAbsolutePath + (ioe.getMessage() == null ? "" : ioe.getMessage())}, BStandardDialog.ERROR).showMessageDialog(this);
         }
     }
 
@@ -593,7 +576,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             new ExecuteScriptWindow(this, ExecuteScriptWindow.NEW_SCRIPT_NAME, language);
         } catch (IOException ioe) {
             new BStandardDialog(null, new String[]{Translate.text("errorCreatingScript"),
-                language + " : " + (ioe.getMessage() == null ? "" : ioe.getMessage())}, BStandardDialog.ERROR).showMessageDialog(this);
+                    language + " : " + (ioe.getMessage() == null ? "" : ioe.getMessage())}, BStandardDialog.ERROR).showMessageDialog(this);
         }
     }
 
@@ -887,6 +870,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     /* EditingWindow methods. */
+
     /**
      * This method is called to close the window. If the Scene has been
      * modified, it first gives the user a chance to save the Scene, or to
@@ -1160,8 +1144,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     /**
      * Add a new object to the scene. If undo is not null, appropriate commands
      * will be added to it to undo this operation.
-     * <P>
-     *
+     * <p>
+     * <p>
      * NOTE! This method is only used by 'UndoRecord'. Using it in any other
      * context is not safe.
      */
@@ -1272,8 +1256,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      * Set which ViewerCanvas has focus.
      *
      * @param view the ViewerCanvas which should become the currently focused
-     * view. If this is not one of the views belonging to this window, this
-     * method does nothing.
+     *             view. If this is not one of the views belonging to this window, this
+     *             method does nothing.
      */
     public void setCurrentView(ViewerCanvas view) {
         for (int i = 0; i < theView.length; i++) {
@@ -1451,7 +1435,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      * Set the list of objects in the scene which should be selected.
      */
     public void setSelection(int... which) {
-        if(which.length == 0) return;
+        if (which.length == 0) return;
 
         sceneExplorer.setUpdateEnabled(false);
         clearSelection();
@@ -1956,9 +1940,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
                     updateMenus();
                 }
             });
-        }        
+        }
     }
-    
+
     public void editObjectCommand(ActionEvent event) {
         editObjectCommand();
     }
@@ -1986,7 +1970,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             size = obj[0].getObject().getBounds().getSize();
             dlg = new TransformDialog(this, Translate.text("objectLayoutTitle", theScene.getObject(sel[0]).getName()),
                     new double[]{orig.x, orig.y, orig.z, angles[0], angles[1], angles[2],
-                        size.x, size.y, size.z}, false, false);
+                            size.x, size.y, size.z}, false, false);
             if (!dlg.clickedOk()) {
                 return;
             }
@@ -2209,29 +2193,29 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             return;
         }
         px.add(xchoice = new BComboBox(new String[]{
-            Translate.text("doNotAlign"),
-            Translate.text("Right"),
-            Translate.text("Center"),
-            Translate.text("Left"),
-            Translate.text("Origin")
+                Translate.text("doNotAlign"),
+                Translate.text("Right"),
+                Translate.text("Center"),
+                Translate.text("Left"),
+                Translate.text("Origin")
         }));
         px.add(Translate.label("alignTo"));
         px.add(vfx = new ValueField(Double.NaN, ValueField.NONE, 5));
         py.add(ychoice = new BComboBox(new String[]{
-            Translate.text("doNotAlign"),
-            Translate.text("Top"),
-            Translate.text("Center"),
-            Translate.text("Bottom"),
-            Translate.text("Origin")
+                Translate.text("doNotAlign"),
+                Translate.text("Top"),
+                Translate.text("Center"),
+                Translate.text("Bottom"),
+                Translate.text("Origin")
         }));
         py.add(Translate.label("alignTo"));
         py.add(vfy = new ValueField(Double.NaN, ValueField.NONE, 5));
         pz.add(zchoice = new BComboBox(new String[]{
-            Translate.text("doNotAlign"),
-            Translate.text("Front"),
-            Translate.text("Center"),
-            Translate.text("Back"),
-            Translate.text("Origin")
+                Translate.text("doNotAlign"),
+                Translate.text("Front"),
+                Translate.text("Center"),
+                Translate.text("Back"),
+                Translate.text("Origin")
         }));
         pz.add(Translate.label("alignTo"));
         pz.add(vfz = new ValueField(Double.NaN, ValueField.NONE, 5));
@@ -2514,118 +2498,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         setUndoRecord(undo);
         updateImage();
         sceneExplorer.repaint();
-    }
-
-    void createObjectCommand(CommandEvent ev) {
-        String type = ev.getActionCommand();
-        Object3D obj;
-        String name;
-
-        if ("cube".equals(type)) {
-            obj = new Cube();
-            name = "Cube " + (CreateCubeTool.counter++);
-        } else if ("sphere".equals(type)) {
-            obj = new Sphere();
-            name = "Sphere " + (CreateSphereTool.counter++);
-        } else if ("cylinder".equals(type)) {
-            obj = new Cylinder();
-            name = "Cylinder " + (CreateCylinderTool.counter++);
-        } else if ("cone".equals(type)) {
-            obj = new Cylinder(1.0, 0.5, 0.5, 0.0);
-            name = "Cone " + (CreateCylinderTool.counter++);
-        } else if ("pointLight".equals(type)) {
-            obj = new PointLight(new RGBColor(1.0f, 1.0f, 1.0f), 1.0f, 0.1);
-            name = "Light " + (CreateLightTool.counter++);
-        } else if ("directionalLight".equals(type)) {
-            obj = new DirectionalLight(new RGBColor(1.0f, 1.0f, 1.0f), 1.0f);
-            name = "Light " + (CreateLightTool.counter++);
-        } else if ("spotLight".equals(type)) {
-            obj = new SpotLight(new RGBColor(1.0f, 1.0f, 1.0f), 1.0f, 20.0, 0.0, 0.1);
-            name = "Light " + (CreateLightTool.counter++);
-        } else if ("proceduralPointLight".equals(type)) {
-            obj = new ProceduralPointLight(0.1);
-            name = "Light " + (CreateLightTool.counter++);
-        } else if ("proceduralDirectionalLight".equals(type)) {
-            obj = new ProceduralDirectionalLight(1.0);
-            name = "Light " + (CreateLightTool.counter++);
-        } else if ("camera".equals(type)) {
-            obj = new SceneCamera();
-            name = "Camera " + (CreateCameraTool.counter++);
-        } else if ("referenceImage".equals(type)) {
-            var fc = new ImageFileChooser(Translate.text("selectReferenceImage"));
-            if (!fc.showDialog(this)) {
-                return;
-            }
-            File f = fc.getSelectedFile();
-            Image image = new ImageIcon(f.getAbsolutePath()).getImage();
-            if (image == null || image.getWidth(null) <= 0 || image.getHeight(null) <= 0) {
-                new BStandardDialog("", UIUtilities.breakString(Translate.text("errorLoadingImage", f.getName())), BStandardDialog.ERROR).showMessageDialog(this);
-                return;
-            }
-            obj = new ReferenceImage(image);
-            name = f.getName();
-            if (name.lastIndexOf('.') > -1) {
-                name = name.substring(0, name.lastIndexOf('.'));
-            }
-        } else {
-            obj = new NullObject();
-            name = "Null";
-        }
-        CoordinateSystem coords = new CoordinateSystem(new Vec3(), Vec3.vz(), Vec3.vy());
-        ObjectInfo info = new ObjectInfo(obj, coords, name);
-        if (obj.canSetTexture()) {
-            info.setTexture(theScene.getDefaultTexture(), theScene.getDefaultTexture().getDefaultMapping(obj));
-        }
-        Vec3 orig = coords.getOrigin();
-        double[] angles = coords.getRotationAngles();
-        Vec3 size = info.getBounds().getSize();
-        TransformDialog dlg = new TransformDialog(this, Translate.text("objectLayoutTitle", name),
-                new double[]{orig.x, orig.y, orig.z, angles[0], angles[1], angles[2],
-                    size.x, size.y, size.z}, false, false);
-        if (!dlg.clickedOk()) {
-            return;
-        }
-        double[] values = dlg.getValues();
-        if (!Double.isNaN(values[0])) {
-            orig.x = values[0];
-        }
-        if (!Double.isNaN(values[1])) {
-            orig.y = values[1];
-        }
-        if (!Double.isNaN(values[2])) {
-            orig.z = values[2];
-        }
-        if (!Double.isNaN(values[3])) {
-            angles[0] = values[3];
-        }
-        if (!Double.isNaN(values[4])) {
-            angles[1] = values[4];
-        }
-        if (!Double.isNaN(values[5])) {
-            angles[2] = values[5];
-        }
-        if (!Double.isNaN(values[6])) {
-            size.x = values[6];
-        }
-        if (!Double.isNaN(values[7])) {
-            size.y = values[7];
-        }
-        if (!Double.isNaN(values[8])) {
-            size.z = values[8];
-        }
-        coords.setOrigin(orig);
-        coords.setOrientation(angles[0], angles[1], angles[2]);
-        obj.setSize(size.x, size.y, size.z);
-        info.clearCachedMeshes();
-        info.addTrack(new PositionTrack(info), 0);
-        info.addTrack(new RotationTrack(info), 1);
-        UndoRecord undo = new UndoRecord(this);
-        int[] sel = getSelectedIndices();
-        addObject(info, undo);
-        undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);
-        setSelection(theScene.getNumObjects() - 1);
-        setUndoRecord(undo);
-        updateImage();
     }
 
     public void createScriptObjectCommand() {
