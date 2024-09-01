@@ -147,7 +147,7 @@ class SceneTest {
     }
 
     /**
-     * Add material to scene.
+     * Add material to the scene.
      * Check that material listener event is triggered
      */
     @Test
@@ -174,6 +174,28 @@ class SceneTest {
         Assertions.assertEquals(1, listenerFireCount);
     }
 
+    @Test
+    public void testAddMaterialWithPolymorphicMethod() {
+        Material mat = new UniformMaterial();
+        listenerFireCount = 0;
+
+        scene.addMaterialListener(new ListChangeListener() {
+            @Override
+            public void itemAdded(int index, Object obj) {
+                listenerFireCount++;
+            }
+
+            @Override
+            public void itemRemoved(int index, Object obj) {
+            }
+
+            @Override
+            public void itemChanged(int index, Object obj) {
+            }
+        });
+        scene.add(mat);
+        Assert.assertEquals(1, listenerFireCount);
+    }
     /**
      * Add material to Scene at given position.
      * Check that material listener event is triggered
@@ -272,6 +294,12 @@ class SceneTest {
         Assertions.assertEquals(1, listenerFireCount);
         Assertions.assertNull(target.getObject().getMaterial());
         Assertions.assertNull(target.getObject().getMaterialMapping());
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testMaterialsListIsImmutable() {
+        Material mat = new UniformMaterial();
+        scene.getMaterials().add(mat);
     }
 
     /**
