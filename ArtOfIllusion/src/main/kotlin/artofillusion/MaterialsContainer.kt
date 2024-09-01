@@ -2,6 +2,7 @@ package artofillusion
 
 import artofillusion.material.Material
 import java.util.Collections
+import org.greenrobot.eventbus.EventBus;
 
 internal interface MaterialsContainer {
 
@@ -11,6 +12,9 @@ internal interface MaterialsContainer {
     fun add(material: Material) {
         val scene = this as Scene
         scene._materials.add(material)
+        val mae: MaterialAssetEvent = MaterialAssetEvent();
+        
+        EventBus.getDefault().post(MaterialAssetEvent())
     }
 
     /**
@@ -23,4 +27,6 @@ internal interface MaterialsContainer {
      * more than one material has the same name, this will return the first one.
      */
     fun getMaterial(name: String?): Material? = (this as Scene)._materials.firstOrNull { it.name == name }
+
+
 }
