@@ -196,6 +196,30 @@ class SceneTest {
         scene.add(mat);
         Assert.assertEquals(1, listenerFireCount);
     }
+
+    @Test
+    public void testAddTextureWithPolymorphicMethod() {
+        Texture tex = new UniformTexture();
+        listenerFireCount = 0;
+
+        scene.addTextureListener(new ListChangeListener() {
+            @Override
+            public void itemAdded(int index, Object obj) {
+                listenerFireCount++;
+            }
+
+            @Override
+            public void itemRemoved(int index, Object obj) {
+            }
+
+            @Override
+            public void itemChanged(int index, Object obj) {
+            }
+        });
+        scene.add(tex);
+        Assert.assertEquals(1, listenerFireCount);
+    }
+
     /**
      * Add material to Scene at given position.
      * Check that material listener event is triggered

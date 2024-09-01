@@ -12,9 +12,8 @@ internal interface MaterialsContainer {
     fun add(material: Material) {
         val scene = this as Scene
         scene._materials.add(material)
-        val mae: MaterialAssetEvent = MaterialAssetEvent();
-        
-        EventBus.getDefault().post(MaterialAssetEvent())
+        val message: MaterialAssetEvent = MaterialAssetEvent(scene, material)        
+        EventBus.getDefault().post(message)
     }
 
     /**
@@ -28,5 +27,6 @@ internal interface MaterialsContainer {
      */
     fun getMaterial(name: String?): Material? = (this as Scene)._materials.firstOrNull { it.name == name }
 
+    data class MaterialAssetEvent(val scene: Scene, val material: Material, val position: Int = scene._materials.size -1)
 
 }

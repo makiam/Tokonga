@@ -27,6 +27,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.*;
 import lombok.extern.slf4j.Slf4j;
+import org.greenrobot.eventbus.Subscribe;
 
 /**
  * The Scene class describes a collection of objects, arranged relative to each other to
@@ -68,6 +69,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
     private static final byte[] FILE_PREFIX = {'A', 'o', 'I', 'S', 'c', 'e', 'n', 'e'};
 
     public Scene() {
+        org.greenrobot.eventbus.EventBus.getDefault().register(this);
         UniformTexture defTex = new UniformTexture();
 
         objects = new Vector<>();
@@ -541,6 +543,16 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         _materials.add(index, mat);
         int size = _materials.size() - 1;
         materialListeners.forEach(listener -> listener.itemAdded(size, mat));
+    }
+
+    @Subscribe
+    public void onAddMaterial(MaterialsContainer.MaterialAssetEvent event) {
+        if(event.getScene() == this) materialListeners.forEach(listener -> listener.itemAdded(event.getPosition(), event.getMaterial()));
+    }
+
+    @Subscribe
+    public void onAddTexture(TexturesContainer.TextureAssetEvent event) {
+        if(event.getScene() == this) textureListeners.forEach(listener -> listener.itemAdded(event.getPosition(), event.getTexture()));
     }
 
     /**
