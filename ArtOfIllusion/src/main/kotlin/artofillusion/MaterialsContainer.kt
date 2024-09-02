@@ -2,7 +2,7 @@ package artofillusion
 
 import artofillusion.material.Material
 import java.util.Collections
-import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.EventBus
 
 internal interface MaterialsContainer {
 
@@ -12,7 +12,7 @@ internal interface MaterialsContainer {
     fun add(material: Material) {
         val scene = this as Scene
         scene._materials.add(material)
-        val message: MaterialAssetEvent = MaterialAssetEvent(scene, material)        
+        val message: MaterialAssetEvent = MaterialAssetEvent(scene, material)
         EventBus.getDefault().post(message)
     }
 

@@ -638,6 +638,20 @@ class SceneTest {
         Assert.assertEquals(map, scene.getImage(0));
     }
 
+    @Test
+    public void testAddImageWithPolymorphicMethod() throws InterruptedException {
+        int SIZE = 50;
+        BufferedImage im = new BufferedImage(SIZE, SIZE, BufferedImage.TYPE_INT_ARGB);
+
+        ImageMap map = new MIPMappedImage(im);
+        scene.add(map);
+
+        Assert.assertEquals(1, scene.getImages().size());
+        Assert.assertEquals(0, scene.indexOf(map));
+
+        Assert.assertEquals(map, scene.getImage(0));
+    }
+
     /**
      * Test adds new Texture to scene. Texture uses some image which is not added to scene.
      * Test fails as image used by texture not added to scene implicitly

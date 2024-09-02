@@ -764,11 +764,6 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         return metadataMap.keySet();
     }
 
-
-    public void addImage(ImageMap im) {
-        add(im);
-    }
-
     /**
      * Remove an image map from the scene.
      */
