@@ -24,8 +24,14 @@ internal interface ImagesContainer {
      */
     fun getNumImages(): Int = (this as Scene)._images.size
 
+
     /**
-     * Get the i'th image map.
+     * Get the index of the specified image map.
      */
-    fun getImage(index: Int): ImageMap? = (this as Scene)._images.get(index)
+    fun indexOf(image: ImageMap): Int = (this as Scene)._images.indexOf(image)
+
+    /**
+     * Get the image map by index.
+     */
+    fun getImage(index: Int): ImageMap? = (this as Scene)._images[index]
 }

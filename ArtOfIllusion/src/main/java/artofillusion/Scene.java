@@ -27,6 +27,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.*;
 import lombok.extern.slf4j.Slf4j;
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 /**
@@ -36,7 +37,7 @@ import org.greenrobot.eventbus.Subscribe;
 @Slf4j
 public final class Scene implements ObjectsContainer, MaterialsContainer, TexturesContainer, ImagesContainer {
 
-    private List<ObjectInfo> objects;
+    private final List<ObjectInfo> objects = new Vector<>();
 
     protected final List<Material> _materials = new Vector<>();
     protected final List<Texture> _textures = new Vector<>();
@@ -52,7 +53,10 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
     private RGBColor ambientColor, environColor, fogColor;
     private Texture environTexture;
     private TextureMapping environMapping;
-    private int gridSubdivisions, environMode, framesPerSecond, nextID;
+    private int gridSubdivisions, environMode, nextID;
+
+    private int framesPerSecond = 30;
+
     private double fogDist, gridSpacing, time;
     private boolean fog, showGrid, snapToGrid;
     private String name, directory;
@@ -76,7 +80,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         org.greenrobot.eventbus.EventBus.getDefault().register(this);
         UniformTexture defTex = new UniformTexture();
 
-        objects = new Vector<>();
+
 
         selection = new Vector<>();
         metadataMap = new HashMap<>();
@@ -93,7 +97,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         fogColor = new RGBColor(0.3f, 0.3f, 0.3f);
         fogDist = 20.0;
         fog = false;
-        framesPerSecond = 30;
+
         nextID = 1;
 
         // Grids are off by default.
@@ -962,41 +966,6 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
     }
 
     /**
-     * Get the index of the specified texture.
-     */
-    public int indexOf(Texture tex) {
-        return _textures.indexOf(tex);
-    }
-
-    /**
-     * Get the i'th texture.
-     */
-    public Texture getTexture(int i) {
-        return _textures.get(i);
-    }
-
-    /**
-     * Get the i'th material.
-     */
-    public Material getMaterial(int i) {
-        return _materials.get(i);
-    }
-
-    /**
-     * Get the index of the specified material.
-     */
-    public int indexOf(Material mat) {
-        return _materials.indexOf(mat);
-    }
-
-    /**
-     * Get the index of the specified image map.
-     */
-    public int indexOf(ImageMap im) {
-        return _images.indexOf(im);
-    }
-
-    /**
      * Get the default Texture for newly created objects.
      */
     public Texture getDefaultTexture() {
@@ -1048,7 +1017,8 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * The following constructor is used for reading files. If fullScene is false, only the
      * Textures and Materials are read.
      */
-    public Scene(File f, boolean fullScene) throws IOException, InvalidObjectException {
+    public Scene(File f, boolean fullScene) throws IOException {
+        EventBus.getDefault().register(this);
         setName(f.getName());
         setDirectory(f.getParent());
         BufferedInputStream buf = new BufferedInputStream(new FileInputStream(f));
@@ -1081,6 +1051,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * is false, only the Textures and Materials are read.
      */
     public Scene(DataInputStream in, boolean fullScene) throws IOException, InvalidObjectException {
+        EventBus.getDefault().register(this);
         initFromStream(in, fullScene);
     }
 
@@ -1198,7 +1169,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
         // Read the objects.
         count = in.readInt();
-        objects = new Vector<>(count);
+        objects.clear();
         table = new Hashtable<>(count);
         for (int i = 0; i < count; i++) {
             objects.add(readObjectFromFile(in, table, version));

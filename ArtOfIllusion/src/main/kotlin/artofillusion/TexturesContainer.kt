@@ -33,5 +33,15 @@ internal interface TexturesContainer {
      */
     fun getTexture(name: String?): Texture? = (this as Scene)._textures.firstOrNull { it.name == name }
 
+    /**
+     * Get the texture by index.
+     */
+    fun getTexture(index: Int): Texture? = (this as Scene)._textures[index]
+
+    /**
+     * Get the index of the specified texture.
+     */
+    fun indexOf(texture: Texture): Int = (this as Scene)._textures.indexOf(texture)
+
     data class TextureAssetEvent(val scene: Scene, val texture: Texture, val position: Int = scene._textures.size -1)
 }

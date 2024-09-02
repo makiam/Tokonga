@@ -27,6 +27,16 @@ internal interface MaterialsContainer {
      */
     fun getMaterial(name: String?): Material? = (this as Scene)._materials.firstOrNull { it.name == name }
 
+    /**
+     * Get the material by index.
+     */
+    fun getMaterial(index: Int): Material? = (this as Scene)._materials[index]
+
+    /**
+     * Get the index of the specified material.
+     */
+    fun indexOf(material: Material): Int = (this as Scene)._materials.indexOf(material)
+
     data class MaterialAssetEvent(val scene: Scene, val material: Material, val position: Int = scene._materials.size -1)
 
 }
