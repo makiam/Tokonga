@@ -37,12 +37,16 @@ import org.greenrobot.eventbus.Subscribe;
 public final class Scene implements ObjectsContainer, MaterialsContainer, TexturesContainer, ImagesContainer {
 
     private List<ObjectInfo> objects;
+
     protected final List<Material> _materials = new Vector<>();
     protected final List<Texture> _textures = new Vector<>();
+    protected final List<ImageMap> _images = new Vector<>();
 
-    private List<ImageMap> images;
     private List<Integer> selection;
-    private List<ListChangeListener> textureListeners, materialListeners;
+
+    private final List<ListChangeListener> textureListeners = new Vector<>();
+    private final List<ListChangeListener> materialListeners = new Vector<>();
+
     private Map<String, Object> metadataMap;
     private Map<ObjectInfo, Integer> objectIndexMap;
     private RGBColor ambientColor, environColor, fogColor;
@@ -74,14 +78,12 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
         objects = new Vector<>();
 
-
-        images = new Vector<>();
         selection = new Vector<>();
         metadataMap = new HashMap<>();
-        textureListeners = new Vector<>();
-        materialListeners = new Vector<>();
+
         defTex.setName("Default Texture");
         _textures.add(defTex);
+
         ambientColor = new RGBColor(0.3f, 0.3f, 0.3f);
         environColor = new RGBColor(0.0f, 0.0f, 0.0f);
         environTexture = defTex;
@@ -758,18 +760,16 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         return metadataMap.keySet();
     }
 
-    /**
-     * Add an image map to the scene.
-     */
+
     public void addImage(ImageMap im) {
-        images.add(im);
+        add(im);
     }
 
     /**
      * Remove an image map from the scene.
      */
     public boolean removeImage(int which) {
-        ImageMap image = images.get(which);
+        ImageMap image = _images.get(which);
 
         for (var     texture: _textures) {
             if (texture.usesImage(image)) {
@@ -781,7 +781,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
                 return false;
             }
         }
-        images.remove(which);
+        _images.remove(which);
         return true;
     }
 
@@ -789,7 +789,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * Replace an ImageMap with another one
      */
     public void replaceImage(int which, ImageMap im) {
-        images.set(which, im);
+        _images.set(which, im);
     }
 
     /**
@@ -937,19 +937,6 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         return Collections.unmodifiableList(objects);
     }
 
-
-    public List<Texture> getTextures() {
-        return Collections.unmodifiableList(_textures);
-    }
-
-
-    /*
-    Get all textures from scene as List
-     */
-    public List<ImageMap> getImages() {
-        return Collections.unmodifiableList(images);
-    }
-
     /**
      * Get the index of the specified object.
      */
@@ -1003,24 +990,10 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
     }
 
     /**
-     * Get the number of image maps in this scene.
-     */
-    public int getNumImages() {
-        return images.size();
-    }
-
-    /**
-     * Get the i'th image map.
-     */
-    public ImageMap getImage(int i) {
-        return images.get(i);
-    }
-
-    /**
      * Get the index of the specified image map.
      */
     public int indexOf(ImageMap im) {
-        return images.indexOf(im);
+        return _images.indexOf(im);
     }
 
     /**
@@ -1138,10 +1111,10 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
         // Read the image maps.
         count = in.readInt();
-        images = new Vector<>(count);
+        _images.clear();
         for (int i = 0; i < count; i++) {
             if (version == 0) {
-                images.add(new MIPMappedImage(in, (short) 0));
+                _images.add(new MIPMappedImage(in, (short) 0));
                 continue;
             }
             String classname = in.readUTF();
@@ -1151,7 +1124,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
                     throw new IOException("Unknown class: " + classname);
                 }
                 con = cls.getConstructor(DataInputStream.class);
-                images.add((ImageMap) con.newInstance(in));
+                _images.add((ImageMap) con.newInstance(in));
             } catch (IOException | ReflectiveOperationException | SecurityException ex) {
                 throw new IOException("Error loading image: " + ex.getMessage());
             }
@@ -1302,8 +1275,8 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
                 }
             }
         }
-        textureListeners = new Vector<>();
-        materialListeners = new Vector<>();
+        textureListeners.clear();
+        materialListeners.clear();
         setTime(0.0);
     }
 
@@ -1430,8 +1403,8 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         out.writeInt(framesPerSecond);
 
         // Save the image maps.
-        out.writeInt(images.size());
-        for (var     image : images) {
+        out.writeInt(_images.size());
+        for (var     image : _images) {
             out.writeUTF(image.getClass().getName());
             image.writeToStream(out, this);
         }
