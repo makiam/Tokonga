@@ -50,16 +50,32 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
     private Map<String, Object> metadataMap;
     private Map<ObjectInfo, Integer> objectIndexMap;
-    private RGBColor ambientColor, environColor, fogColor;
+
+    private RGBColor ambientColor = new RGBColor(0.3f, 0.3f, 0.3f);
+    private RGBColor environColor = new RGBColor();
+    private RGBColor fogColor = new RGBColor(0.3f, 0.3f, 0.3f);
+
     private Texture environTexture;
     private TextureMapping environMapping;
-    private int gridSubdivisions, environMode, nextID;
 
+    private int gridSubdivisions;
+    private int environMode;
+
+
+    private int nextID;
+
+    private boolean fog;
+    private double fogDist;
+
+    private double time;
     private int framesPerSecond = 30;
 
-    private double fogDist, gridSpacing, time;
-    private boolean fog, showGrid, snapToGrid;
-    private String name, directory;
+    private double gridSpacing;
+    private boolean showGrid;
+    private boolean snapToGrid;
+
+    private String name;
+    private String directory;
 
     private ParameterValue[] environParamValue;
 
@@ -88,13 +104,13 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         defTex.setName("Default Texture");
         _textures.add(defTex);
 
-        ambientColor = new RGBColor(0.3f, 0.3f, 0.3f);
-        environColor = new RGBColor(0.0f, 0.0f, 0.0f);
+
+
         environTexture = defTex;
         environMapping = defTex.getDefaultMapping(new Sphere(1.0, 1.0, 1.0));
         environParamValue = new ParameterValue[0];
         environMode = ENVIRON_SOLID;
-        fogColor = new RGBColor(0.3f, 0.3f, 0.3f);
+
         fogDist = 20.0;
         fog = false;
 
@@ -164,7 +180,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
     /**
      * This should be called after one or more objects have been modified by the user.
-     * It applies the animation tracks of all other objects which depend on the modified
+     * It applies the animation tracks of all other objects that depend on the modified
      * ones. It also applies a subset of the animation tracks on the modified objects
      * themselves to reflect their dependencies on other parts of the scene.
      */
@@ -172,7 +188,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         boolean[] changed = new boolean[objects.size()];
         boolean[] processed = new boolean[objects.size()];
 
-        // First apply a subset of the tracks of the modified objects.
+        // First, apply a subset of the tracks of the modified objects.
         for (ObjectInfo info : changedObjects) {
             int index = indexOf(info);
             changed[index] = processed[index] = true;
