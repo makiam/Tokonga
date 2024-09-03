@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.nio.ByteBuffer;
 
+import artofillusion.test.util.StreamUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -96,8 +97,9 @@ class ProcedureReadStreamTest {
                 wrap.putInt(123);
                 wrap.putInt(456);
             }
-        Procedure proc = new Procedure();
-        proc.readFromStream(StreamUtil.stream(wrap), (Scene) null);
+            Procedure proc = new Procedure();
+            proc.readFromStream(StreamUtil.stream(wrap), (Scene) null);
+        });
     }
 
     @Test
@@ -119,7 +121,7 @@ class ProcedureReadStreamTest {
         Procedure proc = new Procedure();
         proc.readFromStream(StreamUtil.stream(wrap), (Scene) null);
 
-        Assert.assertEquals(1, proc.getModules().length);
+        Assertions.assertEquals(1, proc.getModules().length);
         var module = proc.getModules()[0];
         Assertions.assertEquals(module.getName(), "DummyModule");
     }

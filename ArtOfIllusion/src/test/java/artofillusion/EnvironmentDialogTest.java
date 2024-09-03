@@ -21,6 +21,7 @@ import artofillusion.ui.ThemeManager;
 import artofillusion.ui.Translate;
 
 import java.lang.reflect.Field;
+import java.util.Locale;
 import javax.swing.SwingUtilities;
 
 import lombok.extern.slf4j.Slf4j;

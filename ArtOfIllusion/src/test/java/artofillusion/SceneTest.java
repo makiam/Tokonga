@@ -31,13 +31,11 @@ import artofillusion.texture.UniformTexture;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Locale;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
-import org.junit.jupiter.api.Assertions;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
+import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -55,8 +53,7 @@ class SceneTest {
 
     private Scene scene;
 
-    @Before
-    @org.junit.BeforeClass
+    @BeforeAll
     public static void setUpClass() throws Exception {
         Locale.setDefault(Locale.ENGLISH);
         Mockito.when(preferences.getLocale()).thenReturn(Locale.ENGLISH);
@@ -182,7 +179,7 @@ class SceneTest {
      * Check that material listener event is triggered
      * Check that material is inserted at expected position
      */
-    @Ignore
+    @Disabled
     @Test
     @DisplayName("Test Add Material At Given Pos")
     void testAddMaterialAtGivenPos() {
@@ -303,7 +300,7 @@ class SceneTest {
         });
         scene.changeMaterial(0);
         Assertions.assertEquals(1, listenerFireCount);
-        Assert.assertEquals(1, listenerFireCount);
+        Assertions.assertEquals(1, listenerFireCount);
 
     }
 
@@ -375,7 +372,7 @@ class SceneTest {
      * Check that texture listener event is triggered
      * Check that texture is inserted at expected position
      */
-    @Ignore
+    @Disabled
     @Test
     @DisplayName("Test Add Texture At Given Pos")
     void testAddTextureAtGivenPos() {
@@ -665,7 +662,7 @@ class SceneTest {
      *
      * @throws InterruptedException
      */
-    @Ignore
+    @Disabled
     @Test
     @DisplayName("Test Attempt Remove Image Used In Material")
     void testAttemptRemoveImageUsedInMaterial() throws InterruptedException {

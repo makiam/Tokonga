@@ -140,7 +140,7 @@ public class TestToolWhichClicks {
     public void testTaperMeshToolCheckWhichClickValue() {
         EditingTool tool = new TaperMeshTool(null, null);
         int click = tool.whichClicks();
-        assertEquals(EditingTool.ALL_CLICKS, click);
+        Assertions.assertEquals(EditingTool.ALL_CLICKS, click);
     }
 
     @Test

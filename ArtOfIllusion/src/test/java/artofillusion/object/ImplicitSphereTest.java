@@ -28,7 +28,6 @@ class ImplicitSphereTest {
 
     private static final int testSpheres = 20;
     private static final int samplePoints = 100;
-    private static final List<TestPair> pairs = new ArrayList<>();
 
     private static final List<TestPair> pairs = new ArrayList<>();
 
