@@ -17,7 +17,13 @@ internal interface TexturesContainer {
 
     fun add(texture: Texture) {
         val scene = this as Scene
-        scene._textures.add(texture)
+        scene._textures += texture
+        val message: TextureAssetEvent = TextureAssetEvent(scene, texture)
+        EventBus.getDefault().post(message)
+    }
+    fun add(texture: Texture, index: Int) {
+        val scene = this as Scene
+        scene._textures.add(index, texture)
         val message: TextureAssetEvent = TextureAssetEvent(scene, texture)
         EventBus.getDefault().post(message)
     }

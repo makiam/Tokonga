@@ -16,7 +16,7 @@ internal interface ImagesContainer {
      */
     fun add(image: ImageMap) {
         val scene = this as Scene
-        scene._images.add(image)
+        scene._images += image
     }
 
     /**

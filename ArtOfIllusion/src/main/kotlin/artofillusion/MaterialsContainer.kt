@@ -11,7 +11,14 @@ internal interface MaterialsContainer {
 
     fun add(material: Material) {
         val scene = this as Scene
-        scene._materials.add(material)
+        scene._materials += material
+        val message: MaterialAssetEvent = MaterialAssetEvent(scene, material)
+        EventBus.getDefault().post(message)
+    }
+
+    fun add(material: Material, index: Int) {
+        val scene = this as Scene
+        scene._materials.add(index, material)
         val message: MaterialAssetEvent = MaterialAssetEvent(scene, material)
         EventBus.getDefault().post(message)
     }

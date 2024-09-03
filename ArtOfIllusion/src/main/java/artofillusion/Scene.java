@@ -562,9 +562,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * @param index the position in the list to add it at
      */
     public void addMaterial(Material mat, int index) {
-        _materials.add(index, mat);
-        int size = _materials.size() - 1;
-        materialListeners.forEach(listener -> listener.itemAdded(size, mat));
+        add(mat, index);
     }
 
     @Subscribe
@@ -616,9 +614,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * @param index the position in the list to add it at
      */
     public void addTexture(Texture tex, int index) {
-        _textures.add(index, tex);
-        int pos = _textures.size() - 1;
-        textureListeners.forEach(listener -> listener.itemAdded(pos, tex));
+        add(tex, index);
     }
 
     /**
