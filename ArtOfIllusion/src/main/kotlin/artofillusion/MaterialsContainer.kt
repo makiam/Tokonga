@@ -9,12 +9,7 @@ internal interface MaterialsContainer {
     val materials: List<Material>
         get() = Collections.unmodifiableList((this as Scene)._materials)
 
-    fun add(material: Material) {
-        val scene = this as Scene
-        scene._materials += material
-        val message: MaterialAssetEvent = MaterialAssetEvent(scene, material)
-        EventBus.getDefault().post(message)
-    }
+    fun add(material: Material) = add(material, (this as Scene)._materials.size)
 
     fun add(material: Material, index: Int) {
         val scene = this as Scene

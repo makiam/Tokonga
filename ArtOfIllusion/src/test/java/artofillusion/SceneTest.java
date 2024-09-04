@@ -120,8 +120,8 @@ class SceneTest {
      * Check that object created, added to scene and contains default tracks...
      */
     @Test
-    @DisplayName("Test Add Object As New Object Info To Goven Pos")
-    void testAddObjectAsNewObjectInfoToGovenPos() {
+    @DisplayName("Test Add Object As New Object Info To Given Pos")
+    void testAddObjectAsNewObjectInfoToGivenPos() {
         int sceneObjects = scene.getNumObjects();
         scene.addObject(new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube"), scene.getNumObjects(), (UndoRecord) null);
         ObjectInfo so = scene.getObject("Cube");

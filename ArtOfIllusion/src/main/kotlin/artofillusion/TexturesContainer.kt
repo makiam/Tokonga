@@ -15,12 +15,8 @@ internal interface TexturesContainer {
     val textures: List<Texture>
         get() = Collections.unmodifiableList((this as Scene)._textures)
 
-    fun add(texture: Texture) {
-        val scene = this as Scene
-        scene._textures += texture
-        val message: TextureAssetEvent = TextureAssetEvent(scene, texture)
-        EventBus.getDefault().post(message)
-    }
+    fun add(texture: Texture) = add(texture, (this as Scene)._textures.size)
+
     fun add(texture: Texture, index: Int) {
         val scene = this as Scene
         scene._textures.add(index, texture)
