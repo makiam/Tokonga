@@ -26,7 +26,7 @@ internal interface MaterialsContainer {
     /**
      * Add a new Material to the scene.
      *
-     * @param mat the Material to add
+     * @param material the Material to add
      * @param index the position in the list to add it at
      */
     fun addMaterial(material: Material, index: Int) = add(material, index)

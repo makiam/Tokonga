@@ -31,7 +31,7 @@ internal interface TexturesContainer {
     /**
      * Add a new Texture to the scene.
      *
-     * @param tex the Texture to add
+     * @param texture the Texture to add
      * @param index the position in the list to add it at
      */
     fun addTexture(texture: Texture, index: Int) = add(texture, index)
