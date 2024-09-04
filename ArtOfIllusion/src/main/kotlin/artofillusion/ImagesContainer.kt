@@ -19,6 +19,8 @@ internal interface ImagesContainer {
         scene._images += image
     }
 
+    fun addImage(image: ImageMap) = add(image)
+
     /**
      * Get the number of image maps in this scene.
      */

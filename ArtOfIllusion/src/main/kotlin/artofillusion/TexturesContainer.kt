@@ -29,6 +29,18 @@ internal interface TexturesContainer {
     }
 
     /**
+     * Add a new Texture to the scene.
+     */
+    fun addTexture(texture: Texture) = add(texture)
+    /**
+     * Add a new Texture to the scene.
+     *
+     * @param tex the Texture to add
+     * @param index the position in the list to add it at
+     */
+    fun addTexture(texture: Texture, index: Int) = add(texture, index)
+
+    /**
      * Get the number of textures in this scene.
      */
     fun getNumTextures(): Int = (this as Scene)._textures.size

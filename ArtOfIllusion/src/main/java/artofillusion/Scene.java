@@ -26,6 +26,9 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.*;
+
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -74,6 +77,15 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
     private boolean showGrid;
     private boolean snapToGrid;
 
+    /**
+     * -- GETTER --
+     *  Get the name of this scene.
+     * -- SETTER --
+     *  Set the name of this scene.
+
+     */
+    @Setter
+    @Getter
     private String name;
     private String directory;
 
@@ -120,20 +132,6 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         showGrid = snapToGrid = false;
         gridSpacing = 1.0;
         gridSubdivisions = 10;
-    }
-
-    /**
-     * Get the name of this scene.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Set the name of this scene.
-     */
-    public void setName(String newName) {
-        name = newName;
     }
 
     /**
@@ -548,23 +546,6 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         clearSelection();
     }
 
-    /**
-     * Add a new Material to the scene.
-     */
-    public void addMaterial(Material mat) {
-        addMaterial(mat, _materials.size());
-    }
-
-    /**
-     * Add a new Material to the scene.
-     *
-     * @param mat the Material to add
-     * @param index the position in the list to add it at
-     */
-    public void addMaterial(Material mat, int index) {
-        add(mat, index);
-    }
-
     @Subscribe
     public void onAddMaterial(MaterialsContainer.MaterialAssetEvent event) {
         if(event.getScene() == this) materialListeners.forEach(listener -> listener.itemAdded(event.getPosition(), event.getMaterial()));
@@ -598,23 +579,6 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         }
         Material mat = _materials.remove(oldIndex);
         _materials.add(newIndex, mat);
-    }
-
-    /**
-     * Add a new Texture to the scene.
-     */
-    public void addTexture(Texture tex) {
-        addTexture(tex, _textures.size());
-    }
-
-    /**
-     * Add a new Texture to the scene.
-     *
-     * @param tex the Texture to add
-     * @param index the position in the list to add it at
-     */
-    public void addTexture(Texture tex, int index) {
-        add(tex, index);
     }
 
     /**
