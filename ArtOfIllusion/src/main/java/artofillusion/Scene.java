@@ -43,9 +43,9 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
     private final List<ObjectInfo> objects = new Vector<>();
 
-    protected final List<Material> _materials = new Vector<>();
-    protected final List<Texture> _textures = new Vector<>();
-    protected final List<ImageMap> _images = new Vector<>();
+    @SuppressWarnings("java:S116") protected final List<Material> _materials = new Vector<>();
+    @SuppressWarnings("java:S116") protected final List<Texture> _textures = new Vector<>();
+    @SuppressWarnings("java:S116") protected final List<ImageMap> _images = new Vector<>();
 
     private List<Integer> selection;
 
@@ -1030,12 +1030,8 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
     /**
      * Initialize the scene based on information read from an input stream.
      */
-    private void initFromStream(DataInputStream in, boolean fullScene) throws IOException, InvalidObjectException {
-        int count;
+    private void initFromStream(DataInputStream in, boolean fullScene) throws IOException {
         short version = in.readShort();
-        Map<Integer, Object3D> table;
-        Class<?> cls;
-        Constructor<?> con;
 
         if (version < 0 || version > 5) {
             throw new InvalidObjectException("");
@@ -1053,8 +1049,10 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         nextID = 1;
 
         // Read the image maps.
-        count = in.readInt();
+        int count = in.readInt();
         _images.clear();
+        Class<?> cls;
+        Constructor<?> con;
         for (int i = 0; i < count; i++) {
             if (version == 0) {
                 _images.add(new MIPMappedImage(in, (short) 0));
@@ -1142,7 +1140,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         // Read the objects.
         count = in.readInt();
         objects.clear();
-        table = new Hashtable<>(count);
+        Map<Integer, Object3D> table = new Hashtable<>(count);
         for (int i = 0; i < count; i++) {
             objects.add(readObjectFromFile(in, table, version));
         }
