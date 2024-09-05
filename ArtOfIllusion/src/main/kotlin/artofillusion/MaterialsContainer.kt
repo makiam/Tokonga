@@ -14,8 +14,7 @@ internal interface MaterialsContainer {
     fun add(material: Material, index: Int) {
         val scene = this as Scene
         scene._materials.add(index, material)
-        val message: MaterialAssetEvent = MaterialAssetEvent(scene, material)
-        EventBus.getDefault().post(message)
+        EventBus.getDefault().post(MaterialAssetEvent(scene, material, index))
     }
 
     /**
@@ -52,6 +51,6 @@ internal interface MaterialsContainer {
      */
     fun indexOf(material: Material): Int = (this as Scene)._materials.indexOf(material)
 
-    data class MaterialAssetEvent(val scene: Scene, val material: Material, val position: Int = scene._materials.size -1)
+    data class MaterialAssetEvent(val scene: Scene, val material: Material, val position: Int)
 
 }

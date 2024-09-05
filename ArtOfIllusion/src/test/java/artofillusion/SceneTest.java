@@ -148,18 +148,21 @@ class SceneTest {
 
     /**
      * Add material to the scene.
-     * Check that material listener event is triggered
+     * Check that material listener event is triggered and provided correct index
      */
     @Test
     @DisplayName("Test Add Material")
     void testAddMaterial() {
-        Material mat = new UniformMaterial();
+
         listenerFireCount = 0;
+        firedPositionIndex = -1;
+
         scene.addMaterialListener(new ListChangeListener() {
 
             @Override
             public void itemAdded(int index, Object obj) {
                 listenerFireCount++;
+                firedPositionIndex = index;
             }
 
             @Override
@@ -170,19 +173,57 @@ class SceneTest {
             public void itemChanged(int index, Object obj) {
             }
         });
-        scene.addMaterial(mat);
+        scene.addMaterial(new UniformMaterial());
         Assertions.assertEquals(1, listenerFireCount);
+        Assertions.assertEquals(0, firedPositionIndex);
+
+    }
+
+    /**
+     * Add material to the scene.
+     * Check that material listener event is triggered and provided correct index
+     */
+    @Test
+    public void testAddMoreMaterial() {
+
+        listenerFireCount = 0;
+        firedPositionIndex = -1;
+
+        scene.addMaterialListener(new ListChangeListener() {
+            @Override
+            public void itemAdded(int index, Object obj) {
+                listenerFireCount++;
+                firedPositionIndex = index;
+            }
+
+            @Override
+            public void itemRemoved(int index, Object obj) {
+            }
+
+            @Override
+            public void itemChanged(int index, Object obj) {
+            }
+        });
+        scene.addMaterial(new UniformMaterial());
+        scene.addMaterial(new UniformMaterial());
+        scene.addMaterial(new UniformMaterial());
+
+        Assert.assertEquals(3, listenerFireCount);
+        Assert.assertEquals(2, firedPositionIndex);
+
     }
 
     @Test
     public void testAddMaterialWithPolymorphicMethod() {
         Material mat = new UniformMaterial();
         listenerFireCount = 0;
+        firedPositionIndex = -1;
 
         scene.addMaterialListener(new ListChangeListener() {
             @Override
             public void itemAdded(int index, Object obj) {
                 listenerFireCount++;
+                firedPositionIndex = index;
             }
 
             @Override
@@ -194,18 +235,21 @@ class SceneTest {
             }
         });
         scene.add(mat);
-        Assert.assertEquals(1, listenerFireCount);
+        Assertions.assertEquals(1, listenerFireCount);
+        Assertions.assertEquals(0, firedPositionIndex);
     }
 
     @Test
     public void testAddTextureWithPolymorphicMethod() {
         Texture tex = new UniformTexture();
         listenerFireCount = 0;
+        firedPositionIndex = -1;
 
         scene.addTextureListener(new ListChangeListener() {
             @Override
             public void itemAdded(int index, Object obj) {
                 listenerFireCount++;
+                firedPositionIndex = index;
             }
 
             @Override
@@ -217,7 +261,8 @@ class SceneTest {
             }
         });
         scene.add(tex);
-        Assert.assertEquals(1, listenerFireCount);
+        Assertions.assertEquals(1, listenerFireCount);
+        Assertions.assertEquals(0, firedPositionIndex);
     }
 
     /**
@@ -225,13 +270,13 @@ class SceneTest {
      * Check that material listener event is triggered
      * Check that material is inserted at expected position
      */
-    @Disabled
     @Test
     @DisplayName("Test Add Material At Given Pos")
     void testAddMaterialAtGivenPos() {
         Material mat = new UniformMaterial();
         listenerFireCount = 0;
-        firedPositionIndex = 0;
+        firedPositionIndex = -1;
+
         scene.addMaterialListener(new ListChangeListener() {
 
             @Override
@@ -399,11 +444,13 @@ class SceneTest {
     void testAddTextureEventFired() {
         Texture tex = new UniformTexture();
         listenerFireCount = 0;
+        firedPositionIndex = -1;
         scene.addTextureListener(new ListChangeListener() {
 
             @Override
             public void itemAdded(int index, Object tex) {
                 listenerFireCount++;
+                firedPositionIndex = index;
             }
 
             @Override
@@ -417,6 +464,7 @@ class SceneTest {
         scene.addTexture(tex);
         Assertions.assertEquals(1, listenerFireCount);
         Assertions.assertEquals(2, scene.getNumTextures());
+        Assertions.assertEquals(0, firedPositionIndex);
     }
 
     /**
@@ -424,7 +472,6 @@ class SceneTest {
      * Check that texture listener event is triggered
      * Check that texture is inserted at expected position
      */
-    @Disabled
     @Test
     @DisplayName("Test Add Texture At Given Pos")
     void testAddTextureAtGivenPos() {
@@ -435,6 +482,7 @@ class SceneTest {
 
             @Override
             public void itemAdded(int index, Object obj) {
+                listenerFireCount = 0;
                 firedPositionIndex = index;
             }
 

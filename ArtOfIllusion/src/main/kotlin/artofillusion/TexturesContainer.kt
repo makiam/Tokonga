@@ -20,8 +20,7 @@ internal interface TexturesContainer {
     fun add(texture: Texture, index: Int) {
         val scene = this as Scene
         scene._textures.add(index, texture)
-        val message: TextureAssetEvent = TextureAssetEvent(scene, texture)
-        EventBus.getDefault().post(message)
+        EventBus.getDefault().post(TextureAssetEvent(scene, texture, index))
     }
 
     /**
@@ -57,5 +56,5 @@ internal interface TexturesContainer {
      */
     fun indexOf(texture: Texture): Int = (this as Scene)._textures.indexOf(texture)
 
-    data class TextureAssetEvent(val scene: Scene, val texture: Texture, val position: Int = scene._textures.size -1)
+    data class TextureAssetEvent(val scene: Scene, val texture: Texture, val position: Int)
 }
