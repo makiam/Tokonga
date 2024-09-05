@@ -890,4 +890,56 @@ class SceneTest {
         ObjectInfo missed = new ObjectInfo(new Sphere(1.0, 1.0, 1.0), coords, "Not added to Scene object");
         Assertions.assertEquals(-1, scene.indexOf(missed));
     }
+
+    @Test
+    public void testAddTextureBefore() {
+        listenerFireCount = 0;
+        firedPositionIndex = -1;
+        scene.addTextureListener(new ListChangeListener() {
+            @Override
+            public void itemAdded(int index, Object obj) {
+                listenerFireCount++;
+                firedPositionIndex = index;
+            }
+
+            @Override
+            public void itemRemoved(int index, Object obj) {
+            }
+
+            @Override
+            public void itemChanged(int index, Object obj) {
+            }
+        });
+
+        scene.add(new UniformTexture(), 0);
+        Assert.assertEquals(1, listenerFireCount);
+        Assert.assertEquals(0, firedPositionIndex);
+    }
+
+    @Test
+    public void testAddMaterialBefore() {
+        listenerFireCount = 0;
+        firedPositionIndex = -1;
+
+        scene.addMaterialListener(new ListChangeListener() {
+            @Override
+            public void itemAdded(int index, Object obj) {
+                listenerFireCount++;
+                firedPositionIndex = index;
+            }
+
+            @Override
+            public void itemRemoved(int index, Object obj) {
+            }
+
+            @Override
+            public void itemChanged(int index, Object obj) {
+            }
+        });
+        scene.add(new UniformMaterial(), 0);
+        scene.add(new UniformMaterial(), 0);
+        Assert.assertEquals(2, listenerFireCount);
+        Assert.assertEquals(0, firedPositionIndex);
+    }
+
 }
