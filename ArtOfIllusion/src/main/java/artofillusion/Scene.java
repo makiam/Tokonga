@@ -24,6 +24,7 @@ import java.beans.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.zip.*;
 
@@ -48,8 +49,8 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
     private List<Integer> selection;
 
-    private final List<ListChangeListener> textureListeners = new Vector<>();
-    private final List<ListChangeListener> materialListeners = new Vector<>();
+    private final List<ListChangeListener> textureListeners = new CopyOnWriteArrayList<>();
+    private final List<ListChangeListener> materialListeners = new CopyOnWriteArrayList<>();
 
     private Map<String, Object> metadataMap;
     private Map<ObjectInfo, Integer> objectIndexMap;
@@ -547,12 +548,12 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
     }
 
     @Subscribe
-    public void onAddMaterial(MaterialsContainer.MaterialAssetEvent event) {
+    public void onAddMaterial(MaterialsContainer.MaterialAddedEvent event) {
         if(event.getScene() == this) materialListeners.forEach(listener -> listener.itemAdded(event.getPosition(), event.getMaterial()));
     }
 
     @Subscribe
-    public void onAddTexture(TexturesContainer.TextureAssetEvent event) {
+    public void onAddTexture(TexturesContainer.TextureAddedEvent event) {
         if(event.getScene() == this) textureListeners.forEach(listener -> listener.itemAdded(event.getPosition(), event.getTexture()));
     }
 
@@ -1021,7 +1022,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * The following constructor is used for reading from arbitrary input streams. If fullScene
      * is false, only the Textures and Materials are read.
      */
-    public Scene(DataInputStream in, boolean fullScene) throws IOException, InvalidObjectException {
+    public Scene(DataInputStream in, boolean fullScene) throws IOException {
         EventBus.getDefault().register(this);
         initFromStream(in, fullScene);
     }
@@ -1032,7 +1033,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
     private void initFromStream(DataInputStream in, boolean fullScene) throws IOException, InvalidObjectException {
         int count;
         short version = in.readShort();
-        Hashtable<Integer, Object3D> table;
+        Map<Integer, Object3D> table;
         Class<?> cls;
         Constructor<?> con;
 
@@ -1158,7 +1159,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         }
 
         // Read in the environment mapping information.
-        environMode = (int) in.readShort();
+        environMode = in.readShort();
         if (environMode == ENVIRON_SOLID) {
             environColor = new RGBColor(in);
             environTexture = _textures.get(0);
@@ -1222,7 +1223,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         setTime(0.0);
     }
 
-    private ObjectInfo readObjectFromFile(DataInputStream in, Hashtable<Integer, Object3D> table, int version) throws IOException, InvalidObjectException {
+    private ObjectInfo readObjectFromFile(DataInputStream in, Map<Integer, Object3D> table, int version) throws IOException {
         ObjectInfo info = new ObjectInfo(null, new CoordinateSystem(in), in.readUTF());
         Class<?> cls;
         Constructor<?> con;

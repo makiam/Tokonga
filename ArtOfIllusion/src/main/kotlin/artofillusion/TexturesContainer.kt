@@ -1,8 +1,6 @@
 package artofillusion
 
 
-import artofillusion.MaterialsContainer.MaterialAssetEvent
-import artofillusion.material.Material
 import artofillusion.texture.Texture
 import org.greenrobot.eventbus.EventBus
 import java.util.Collections
@@ -20,7 +18,7 @@ internal interface TexturesContainer {
     fun add(texture: Texture, index: Int) {
         val scene = this as Scene
         scene._textures.add(index, texture)
-        EventBus.getDefault().post(TextureAssetEvent(scene, texture, index))
+        EventBus.getDefault().post(TextureAddedEvent(scene, texture, index))
     }
 
     /**
@@ -56,5 +54,6 @@ internal interface TexturesContainer {
      */
     fun indexOf(texture: Texture): Int = (this as Scene)._textures.indexOf(texture)
 
-    data class TextureAssetEvent(val scene: Scene, val texture: Texture, val position: Int)
+    data class TextureAddedEvent(val scene: Scene, val texture: Texture, val position: Int)
+    data class TextureRemovedEvent(val scene: Scene, val texture: Texture, val position: Int)
 }
