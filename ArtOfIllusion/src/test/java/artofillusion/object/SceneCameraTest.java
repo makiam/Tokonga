@@ -80,7 +80,7 @@ class SceneCameraTest {
 
     @Test
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    @DisplayName("Load Scene Camera Bad Version 2 Read Vesion Again")
+    @DisplayName("Load Scene Camera Bad Version 2 Read Version Again")
     void loadSceneCameraBadVersion2ReadVesionAgain() {
         assertThrows(InvalidObjectException.class, () -> {
             Scene scene = new Scene();
@@ -88,7 +88,7 @@ class SceneCameraTest {
             // Object Version
             wrap.putShort((short) 1);
             // Object Version read AGAIN !!!
-            wrap.putShort((short) 3);
+            wrap.putShort((short) 4);
             new SceneCamera(StreamUtil.stream(wrap), scene);
         });
     }

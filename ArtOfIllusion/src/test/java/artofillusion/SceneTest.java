@@ -676,20 +676,17 @@ class SceneTest {
 
     /**
      * Test to check scene objectModified(...) code.
-     * Failed as not initialized AOI preferences system @ test time. Code is depends of interactive surface error value
      */
     @Test
     @DisplayName("Test Scene Object Modified")
     void testSceneObjectModified() {
-        assertThrows(NullPointerException.class, () -> {
-            ObjectInfo target = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube");
-            scene.addObject(target, (UndoRecord) null);
-            RenderingMesh rm = target.getPreviewMesh();
-            Assertions.assertNotNull(rm);
-            scene.objectModified(target.getObject());
-            Assertions.assertNull(target.getPose());
-            Assertions.assertNull(target.getPreviewMesh());
-        });
+        ObjectInfo target = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube");
+        scene.addObject(target, (UndoRecord) null);
+        RenderingMesh rm = target.getPreviewMesh();
+        Assertions.assertNotNull(rm);
+        scene.objectModified(target.getObject());
+        Assertions.assertNull(target.getPose());
+        Assertions.assertNotNull(target.getPreviewMesh());
     }
 
     @Test
