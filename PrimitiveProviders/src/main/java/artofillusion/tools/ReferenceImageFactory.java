@@ -12,11 +12,8 @@ package artofillusion.tools;
 
 import artofillusion.object.Object3D;
 import artofillusion.object.ReferenceImage;
-import artofillusion.ui.ImageFileChooser;
+import artofillusion.ui.MessageDialog;
 import artofillusion.ui.Translate;
-import artofillusion.ui.UIUtilities;
-import buoy.widget.BFileChooser;
-import buoy.widget.BStandardDialog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,14 +41,19 @@ public class ReferenceImageFactory implements PrimitiveFactory {
 
     @Override
     public Optional<Object3D> create() {
-        BFileChooser fc = new ImageFileChooser(Translate.text("selectReferenceImage"));
-        if (!fc.showDialog(null)) return Optional.empty();
-        File f = fc.getSelectedFile();
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setDialogTitle(Translate.text("selectReferenceImage"));
+
+        int ret = chooser.showOpenDialog(null);
+        if (ret != JFileChooser.APPROVE_OPTION) return Optional.empty();
+
+        File f = chooser.getSelectedFile();
         Image image = new ImageIcon(f.getAbsolutePath()).getImage();
 
         if (image == null || image.getWidth(null) <= 0 || image.getHeight(null) <= 0)
         {
-            new BStandardDialog("", UIUtilities.breakString(Translate.text("errorLoadingImage", f.getName())), BStandardDialog.ERROR).showMessageDialog(null);
+            MessageDialog.create().error(Translate.text("errorLoadingImage", f.getName()));
             return Optional.empty();
         }
         objectName = f.getName();
