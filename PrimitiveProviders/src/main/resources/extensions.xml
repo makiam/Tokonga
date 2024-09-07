@@ -1,0 +1,28 @@
+<?xml version="1.0" standalone="yes"?>
+<extension name="Primitive Providers" version="1.0">
+    <author>Maksim Khramov</author>
+    <date>2024</date>
+    <description>
+        This plugin contains the standard Primitive Providers which are included with AOI
+    </description>
+    <category class="artofillusion.tools.PrimitiveFactory"/>
+
+    <plugin class="artofillusion.tools.CubeFactory"/>
+    <plugin class="artofillusion.tools.SphereFactory"/>
+    <plugin class="artofillusion.tools.CylinderFactory"/>
+    <plugin class="artofillusion.tools.ConeFactory"/>
+    <plugin class="artofillusion.tools.TorusMeshProvider"/>
+    <plugin class="artofillusion.tools.ScriptedObjectProvider"/>
+
+    <plugin class="artofillusion.tools.CameraFactory"/>
+
+    <plugin class="artofillusion.tools.PointLightFactory"/>
+    <plugin class="artofillusion.tools.DirectionalLightFactory"/>
+    <plugin class="artofillusion.tools.SpotLightFactory"/>
+    <plugin class="artofillusion.tools.ProceduralPointLightFactory"/>
+    <plugin class="artofillusion.tools.ProceduralDirectionalLightFactory"/>
+
+    <plugin class="artofillusion.tools.ReferenceImageFactory"/>
+    <plugin class="artofillusion.tools.NullFactory"/>
+</extension>
+

@@ -1,4 +1,5 @@
 rootProject.name = 'ArtOfIllusion'
 
-include ':ArtOfIllusion', ':Filters', ':OSSpecific', ':Renderers', ':Tools', ':Translators', ':SPManager', ':PostInstall', ':Polymesh', ':StandardModules', 'PreferencesPlugin'
+include ':ArtOfIllusion', ':Filters', ':OSSpecific', ':Renderers', ':Tools', ':Translators',
+        ':SPManager', ':PostInstall', ':Polymesh', ':StandardModules', 'PreferencesPlugin', 'PrimitiveProviders'
 project(':PreferencesPlugin').projectDir = new File('Preferences')
