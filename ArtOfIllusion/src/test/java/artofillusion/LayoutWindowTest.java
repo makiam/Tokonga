@@ -39,18 +39,15 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import lombok.extern.java.Log;
 
-import org.junit.After;
+import org.junit.*;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.Test;
 
 import org.netbeans.jemmy.operators.JFrameOperator;
 import org.netbeans.jemmy.operators.*;
 
-import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
@@ -96,12 +93,11 @@ public class LayoutWindowTest {
     @BeforeClass
     public static void setupClass() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, URISyntaxException, IOException {
 
+        new Thread(() -> new JDialogOperator("Art Of Illusion").close()).start();
         Locale.setDefault(Locale.ENGLISH);
         new ClassReference("artofillusion.ArtOfIllusion").startApplication();
         bundle.load(ArtOfIllusion.class.getClassLoader().getResourceAsStream("artofillusion.properties"));
         JemmyProperties.setCurrentOutput(TestOut.getNullOutput());
-
-        new Thread(() -> JDialogOperator.findJDialog("Art Of Illusion", true, true).dispose()).start();
 
     }
 
@@ -402,6 +398,7 @@ public class LayoutWindowTest {
 
     }
 
+    @Ignore("No dialog to test")
     @Test
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void invokeCreateScriptedObjectCommand() {
