@@ -10,38 +10,23 @@
 
 package artofillusion.test.util;
 
-import artofillusion.ArtOfIllusion;
-import artofillusion.PluginRegistry;
-
+import artofillusion.ui.ThemeManager;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-
 
 /**
  *
  * @author MaksK
  */
-public class RegisterTestResources implements BeforeAllCallback {
-
-    private static int ref = 0;
-
-    protected void before() {
-        if (ref != 0) {
-            return;
-        }
-        ref++;
-        try {
-            PluginRegistry.registerResource("TranslateBundle", "artofillusion", ArtOfIllusion.class.getClassLoader(), "artofillusion", null);
-            PluginRegistry.registerResource("UITheme", "default", ArtOfIllusion.class.getClassLoader(), "artofillusion/Icons/defaultTheme.xml", null);
-            
-        } catch (IllegalArgumentException iae) {
-            ref++;
-        }
-
-    }
+public class SetupTheme implements BeforeAllCallback {
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
-        before();
+        try {
+            ThemeManager.initThemes();
+        } catch(IllegalStateException ie) {
+            
+        }
     }
+    
 }

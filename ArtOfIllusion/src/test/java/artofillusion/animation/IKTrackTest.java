@@ -15,8 +15,8 @@ import artofillusion.object.Cube;
 import artofillusion.object.NullObject;
 import artofillusion.object.Object3D;
 import artofillusion.object.ObjectInfo;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
@@ -28,15 +28,15 @@ public class IKTrackTest {
         Object3D obj = new Cube(1, 1, 1);
         ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
         IKTrack it = new IKTrack(oi);
-        Assert.assertNotNull(it);
-        Assert.assertEquals(oi, it.getParent());
-        Assert.assertEquals("Inverse Kinematics", it.getName());
-        Assert.assertTrue(it.isEnabled());
-        Assert.assertTrue(it.isQuantized());
-        Assert.assertTrue(it.getUseGestures());
+        Assertions.assertNotNull(it);
+        Assertions.assertEquals(oi, it.getParent());
+        Assertions.assertEquals("Inverse Kinematics", it.getName());
+        Assertions.assertTrue(it.isEnabled());
+        Assertions.assertTrue(it.isQuantized());
+        Assertions.assertTrue(it.getUseGestures());
 
-        Assert.assertNotNull(it.getConstraints());
-        Assert.assertEquals(0, it.getConstraints().size());
+        Assertions.assertNotNull(it.getConstraints());
+        Assertions.assertEquals(0, it.getConstraints().size());
     }
     
     @Test
@@ -53,17 +53,17 @@ public class IKTrackTest {
         it.addConstraint(20, null);
 
         IKTrack duplicate = (IKTrack)it.duplicate(oi);
-        Assert.assertNotNull(duplicate);
-        Assert.assertEquals(oi, duplicate.getParent());
-        Assert.assertFalse(duplicate.isEnabled());
-        Assert.assertFalse(duplicate.isQuantized());
+        Assertions.assertNotNull(duplicate);
+        Assertions.assertEquals(oi, duplicate.getParent());
+        Assertions.assertFalse(duplicate.isEnabled());
+        Assertions.assertFalse(duplicate.isQuantized());
 
-        Assert.assertEquals("Test Name", duplicate.getName());
+        Assertions.assertEquals("Test Name", duplicate.getName());
 
         List<IKTrack.Constraint> constraints = duplicate.getConstraints();
-        Assert.assertNotNull(constraints);
-        Assert.assertEquals(it.getConstraints().size(), constraints.size());
-        Assert.assertTrue(duplicate.getUseGestures());
+        Assertions.assertNotNull(constraints);
+        Assertions.assertEquals(it.getConstraints().size(), constraints.size());
+        Assertions.assertTrue(duplicate.getUseGestures());
     }
 
     @Test
@@ -85,13 +85,13 @@ public class IKTrackTest {
         source.addConstraint(20, null);
         
         it.copy(source);
-        Assert.assertEquals(oi1, it.getParent());
-        Assert.assertTrue(it.isEnabled());
-        Assert.assertTrue(it.isQuantized());
+        Assertions.assertEquals(oi1, it.getParent());
+        Assertions.assertTrue(it.isEnabled());
+        Assertions.assertTrue(it.isQuantized());
 
-        Assert.assertEquals(it.getConstraints().size(), source.getConstraints().size());        
-        
-        Assert.assertFalse(it.getUseGestures());
+        Assertions.assertEquals(it.getConstraints().size(), source.getConstraints().size());
+
+        Assertions.assertFalse(it.getUseGestures());
     }
     
     @Test
@@ -99,7 +99,7 @@ public class IKTrackTest {
         Object3D obj = new Cube(1, 1, 1);
         ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
         IKTrack it = new IKTrack(oi);
-        Assert.assertTrue(it.isNullTrack());
+        Assertions.assertTrue(it.isNullTrack());
     }
     
     @Test
@@ -110,7 +110,7 @@ public class IKTrackTest {
 
         it.addConstraint(0, null);
 
-        Assert.assertTrue(it.isNullTrack());
+        Assertions.assertTrue(it.isNullTrack());
     }
 
     @Test
@@ -122,7 +122,7 @@ public class IKTrackTest {
         it.addConstraint(0, null);
         it.addConstraint(1, null);
 
-        Assert.assertTrue(it.isNullTrack());
+        Assertions.assertTrue(it.isNullTrack());
     }
 
     @Test
@@ -134,7 +134,7 @@ public class IKTrackTest {
         ObjectRef ref = new ObjectRef();
         it.addConstraint(0, ref);
         it.addConstraint(1, null);
-        Assert.assertFalse(it.isNullTrack());
+        Assertions.assertFalse(it.isNullTrack());
     }
 
     @Test
@@ -146,7 +146,7 @@ public class IKTrackTest {
         ObjectRef ref = new ObjectRef();
         it.addConstraint(0, ref);
         it.addConstraint(1, ref);
-        Assert.assertFalse(it.isNullTrack());
+        Assertions.assertFalse(it.isNullTrack());
     }
 
     @Test
@@ -159,8 +159,8 @@ public class IKTrackTest {
         it.addConstraint(1, ref);
 
         Track[] subTracks = it.getSubtracks();
-        Assert.assertEquals(1, subTracks.length);
-        Assert.assertTrue(subTracks[0] instanceof WeightTrack);
+        Assertions.assertEquals(1, subTracks.length);
+        Assertions.assertTrue(subTracks[0] instanceof WeightTrack);
     }
 
     @Test
@@ -170,7 +170,7 @@ public class IKTrackTest {
         ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
         IKTrack it = new IKTrack(oi);
 
-        Assert.assertTrue(it.canAcceptAsParent(oi));
+        Assertions.assertTrue(it.canAcceptAsParent(oi));
     }
 
     @Test
@@ -179,7 +179,7 @@ public class IKTrackTest {
         ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Null");
         IKTrack it = new IKTrack(oi);
 
-        Assert.assertFalse(it.canAcceptAsParent("oi"));
+        Assertions.assertFalse(it.canAcceptAsParent("oi"));
     }
 
     @Test
@@ -188,7 +188,7 @@ public class IKTrackTest {
         ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Null");
         IKTrack it = new IKTrack(oi);
 
-        Assert.assertFalse(it.canAcceptAsParent(oi));
+        Assertions.assertFalse(it.canAcceptAsParent(oi));
     }
 
     @Test
@@ -198,7 +198,7 @@ public class IKTrackTest {
         IKTrack it = new IKTrack(oi);
 
         ObjectInfo[] dependencies = it.getDependencies();
-        Assert.assertEquals(0, dependencies.length);
+        Assertions.assertEquals(0, dependencies.length);
     }
 
     @Test
@@ -211,7 +211,7 @@ public class IKTrackTest {
         it.addConstraint(2, null);
 
         ObjectInfo[] dependencies = it.getDependencies();
-        Assert.assertEquals(0, dependencies.length);
+        Assertions.assertEquals(0, dependencies.length);
     }
 
     @Test
@@ -228,7 +228,7 @@ public class IKTrackTest {
         it.addConstraint(2, new ObjectRef(null2oi));
 
         ObjectInfo[] dependencies = it.getDependencies();
-        Assert.assertEquals(1, dependencies.length);
-        Assert.assertEquals(null2oi, dependencies[0]);
+        Assertions.assertEquals(1, dependencies.length);
+        Assertions.assertEquals(null2oi, dependencies[0]);
     }
 }

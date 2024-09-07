@@ -7,104 +7,99 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.animation;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
- *
  * @author MaksK
  */
-public class TimecourseTest {
+@DisplayName("Timecourse Test")
+class TimecourseTest {
 
     @Test
-    public void testCreateTimecourse() {
+    @DisplayName("Test Create Timecourse")
+    void testCreateTimecourse() {
         Timecourse tc = new Timecourse(new Keyframe[0], new double[0], new Smoothness[0]);
-        Assert.assertNotNull(tc);
-        Assert.assertEquals(0, tc.getTimes().length);
-        Assert.assertEquals(0, tc.getValues().length);
-        Assert.assertEquals(0, tc.getSmoothness().length);
+        Assertions.assertNotNull(tc);
+        Assertions.assertEquals(0, tc.getTimes().length);
+        Assertions.assertEquals(0, tc.getValues().length);
+        Assertions.assertEquals(0, tc.getSmoothness().length);
     }
 
     @Test
-    public void testSubdivideTimecourseNotEnoughLength() {
+    @DisplayName("Test Subdivide Timecourse Not Enough Length")
+    void testSubdivideTimecourseNotEnoughLength() {
         Timecourse tc = new Timecourse(new Keyframe[0], new double[0], new Smoothness[0]);
         Timecourse subdiv = tc.subdivide(Timecourse.DISCONTINUOUS);
-
-        Assert.assertNotNull(tc);
-        Assert.assertEquals(tc, subdiv);
+        Assertions.assertNotNull(tc);
+        Assertions.assertEquals(tc, subdiv);
     }
 
     @Test
-    public void testTimecourseAddAndReplaceCurrentValue() {
+    @DisplayName("Test Timecourse Add And Replace Current Value")
+    void testTimecourseAddAndReplaceCurrentValue() {
         Timecourse tc = new Timecourse(new BooleanKeyframe[]{new BooleanKeyframe(true)}, new double[]{5}, new Smoothness[]{new Smoothness()});
         tc.addTimepoint(new BooleanKeyframe(false), 5, new Smoothness());
-
-        Assert.assertEquals(1, tc.getValues().length);
-        Assert.assertEquals(1, tc.getTimes().length);
-        Assert.assertEquals(1, tc.getSmoothness().length);
-        Assert.assertEquals(5, tc.getTimes()[0], 0);
-
+        Assertions.assertEquals(1, tc.getValues().length);
+        Assertions.assertEquals(1, tc.getTimes().length);
+        Assertions.assertEquals(1, tc.getSmoothness().length);
+        Assertions.assertEquals(5, tc.getTimes()[0], 0);
     }
 
     @Test
-    public void testTimecourseAddAsNewtValue() {
+    @DisplayName("Test Timecourse Add As Newt Value")
+    void testTimecourseAddAsNewtValue() {
         Timecourse tc = new Timecourse(new BooleanKeyframe[]{new BooleanKeyframe(true)}, new double[]{5}, new Smoothness[]{new Smoothness()});
         tc.addTimepoint(new BooleanKeyframe(false), 10, new Smoothness());
-
-        Assert.assertEquals(2, tc.getValues().length);
-        Assert.assertEquals(2, tc.getTimes().length);
-        Assert.assertEquals(2, tc.getSmoothness().length);
-        Assert.assertEquals(5, tc.getTimes()[0], 0);
-        Assert.assertEquals(10, tc.getTimes()[1], 0);
-
+        Assertions.assertEquals(2, tc.getValues().length);
+        Assertions.assertEquals(2, tc.getTimes().length);
+        Assertions.assertEquals(2, tc.getSmoothness().length);
+        Assertions.assertEquals(5, tc.getTimes()[0], 0);
+        Assertions.assertEquals(10, tc.getTimes()[1], 0);
     }
 
     @Test
-    public void testClearAllFromTimecourse() {
+    @DisplayName("Test Clear All From Timecourse")
+    void testClearAllFromTimecourse() {
         Timecourse tc = new Timecourse(new BooleanKeyframe[]{new BooleanKeyframe(true)}, new double[]{5}, new Smoothness[]{new Smoothness()});
         tc.addTimepoint(new BooleanKeyframe(false), 10, new Smoothness());
         tc.removeAllTimepoints();
-
-        Assert.assertEquals(0, tc.getValues().length);
-        Assert.assertEquals(0, tc.getTimes().length);
-        Assert.assertEquals(0, tc.getSmoothness().length);
+        Assertions.assertEquals(0, tc.getValues().length);
+        Assertions.assertEquals(0, tc.getTimes().length);
+        Assertions.assertEquals(0, tc.getSmoothness().length);
     }
 
     @Test
-    public void testDuplicateEmptyTimecourse() {
+    @DisplayName("Test Duplicate Empty Timecourse")
+    void testDuplicateEmptyTimecourse() {
         Timecourse tc = new Timecourse(new Keyframe[0], new double[0], new Smoothness[0]);
         tc.setSubdivideAdaptively(false);
-
         Timecourse dup = tc.duplicate(null);
-
-        Assert.assertNotNull(dup);
-        Assert.assertNotEquals(dup, tc);
-        Assert.assertFalse(dup.getSubdivideAdaptively());
-
-        Assert.assertEquals(0, dup.getTimes().length);
-        Assert.assertEquals(0, dup.getValues().length);
-        Assert.assertEquals(0, dup.getSmoothness().length);
+        Assertions.assertNotNull(dup);
+        Assertions.assertNotEquals(dup, tc);
+        Assertions.assertFalse(dup.getSubdivideAdaptively());
+        Assertions.assertEquals(0, dup.getTimes().length);
+        Assertions.assertEquals(0, dup.getValues().length);
+        Assertions.assertEquals(0, dup.getSmoothness().length);
     }
 
     @Test
-    public void testDuplicateTimecourse() {
+    @DisplayName("Test Duplicate Timecourse")
+    void testDuplicateTimecourse() {
         Timecourse tc = new Timecourse(new Keyframe[0], new double[0], new Smoothness[0]);
         tc.addTimepoint(new BooleanKeyframe(true), 5, new Smoothness());
         tc.addTimepoint(new BooleanKeyframe(false), 10, new Smoothness());
-
         tc.setSubdivideAdaptively(false);
-
         Timecourse dup = tc.duplicate(null);
-
-        Assert.assertNotNull(dup);
-        Assert.assertNotEquals(dup, tc);
-        Assert.assertFalse(dup.getSubdivideAdaptively());
-
-        Assert.assertEquals(2, dup.getTimes().length);
-        Assert.assertEquals(2, dup.getValues().length);
-        Assert.assertEquals(2, dup.getSmoothness().length);
+        Assertions.assertNotNull(dup);
+        Assertions.assertNotEquals(dup, tc);
+        Assertions.assertFalse(dup.getSubdivideAdaptively());
+        Assertions.assertEquals(2, dup.getTimes().length);
+        Assertions.assertEquals(2, dup.getValues().length);
+        Assertions.assertEquals(2, dup.getSmoothness().length);
     }
 }

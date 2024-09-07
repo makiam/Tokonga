@@ -37,6 +37,7 @@ repositories {
 
 ext {
     lombokVersion = "1.18.+"
+    junitVersion = "5.9.1"
     tinyLogVersion = "2.7.0"
 }
 
@@ -50,10 +51,10 @@ dependencies {
     
     implementation 'com.github.makiam:Buoy:1.0.0'
 
-    testImplementation('junit:junit:4.13.2') {
-        exclude group: 'org.hamcrest'
-    }
-    testImplementation 'org.hamcrest:hamcrest-library:1.3'
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+    testImplementation "org.junit.platform:junit-platform-suite:1.9.1"
+
     testImplementation group: 'org.netbeans', name: 'jemmy', version: '2.2.7.5'
 
     implementation "org.tinylog:slf4j-tinylog:${tinyLogVersion}"
@@ -68,4 +69,5 @@ javadoc {
 
 test {
     testLogging.showStandardStreams = true
+    useJUnitPlatform()
 }

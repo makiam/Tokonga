@@ -7,35 +7,39 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.object;
 
 import artofillusion.math.CoordinateSystem;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- *
  * @author maksim.khramov
  */
-public class CSGObjectTest {
+@DisplayName("Csg Object Test")
+class CSGObjectTest {
 
     @Test
-    public void testCreateCSGObject() {
-
+    @DisplayName("Test Create CSG Object")
+    void testCreateCSGObject() {
         ObjectInfo cube = new ObjectInfo(new Cube(1, 2, 3), new CoordinateSystem(), "cube");
         ObjectInfo sphere = new ObjectInfo(new Sphere(1, 2, 3), new CoordinateSystem(), "sphere");
         CSGObject cso = new CSGObject(cube, sphere, CSGObject.UNION);
-
-        Assert.assertNotNull(cso);
+        Assertions.assertNotNull(cso);
     }
 
-    @Test(expected = ClassCastException.class)
-    public void testCopyObjectFromBadSource() {
-        ObjectInfo cube = new ObjectInfo(new Cube(1, 2, 3), new CoordinateSystem(), "cube");
-        ObjectInfo sphere = new ObjectInfo(new Sphere(1, 2, 3), new CoordinateSystem(), "sphere");
-        CSGObject cso = new CSGObject(cube, sphere, CSGObject.UNION);
-
-        cso.copyObject(new Cube(1, 2, 3));
+    @Test
+    @DisplayName("Test Copy Object From Bad Source")
+    void testCopyObjectFromBadSource() {
+        assertThrows(ClassCastException.class, () -> {
+            ObjectInfo cube = new ObjectInfo(new Cube(1, 2, 3), new CoordinateSystem(), "cube");
+            ObjectInfo sphere = new ObjectInfo(new Sphere(1, 2, 3), new CoordinateSystem(), "sphere");
+            CSGObject cso = new CSGObject(cube, sphere, CSGObject.UNION);
+            cso.copyObject(new Cube(1, 2, 3));
+        });
     }
 }

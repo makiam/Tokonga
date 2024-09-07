@@ -7,7 +7,6 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.animation;
 
 import artofillusion.Scene;
@@ -16,47 +15,60 @@ import artofillusion.object.Cube;
 import artofillusion.object.Object3D;
 import artofillusion.object.ObjectInfo;
 import artofillusion.test.util.StreamUtil;
+
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.nio.ByteBuffer;
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- *
  * @author maksim.khramov
  */
-public class PoseTrackTest {
+@DisplayName("Pose Track Test")
+class PoseTrackTest {
 
     @Test
-    public void testCreatePoseTrack() {
+    @DisplayName("Test Create Pose Track")
+    void testCreatePoseTrack() {
         Object3D obj = new Cube(1, 1, 1);
         ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
         PoseTrack pt = new PoseTrack(oi);
-        Assert.assertNotNull(pt);
-        Assert.assertEquals(oi, pt.getParent());
-        Assert.assertEquals("Pose", pt.getName());
+        Assertions.assertNotNull(pt);
+        Assertions.assertEquals(oi, pt.getParent());
+        Assertions.assertEquals(pt.getName(), "Pose");
     }
 
-    @Test(expected = InvalidObjectException.class)
-    public void testLoadPoseTrackBadVersion0() throws IOException {
-        ByteBuffer wrap = ByteBuffer.allocate(200);
-        wrap.putShort((short) -1); // Track Version
-
-        Object3D obj = new Cube(1, 1, 1);
-        ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
-        PoseTrack pt = new PoseTrack(oi);
-        pt.initFromStream(StreamUtil.stream(wrap), (Scene) null);
+    @Test
+    @DisplayName("Test Load Pose Track Bad Version 0")
+    void testLoadPoseTrackBadVersion0() {
+        assertThrows(InvalidObjectException.class, () -> {
+            ByteBuffer wrap = ByteBuffer.allocate(200);
+            // Track Version
+            wrap.putShort((short) -1);
+            Object3D obj = new Cube(1, 1, 1);
+            ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
+            PoseTrack pt = new PoseTrack(oi);
+            pt.initFromStream(StreamUtil.stream(wrap), (Scene) null);
+        });
     }
 
-    @Test(expected = InvalidObjectException.class)
-    public void testLoadPoseTrackBadVersion1() throws IOException {
-        ByteBuffer wrap = ByteBuffer.allocate(200);
-        wrap.putShort((short) 3); // Track Version
-
-        Object3D obj = new Cube(1, 1, 1);
-        ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
-        PoseTrack pt = new PoseTrack(oi);
-        pt.initFromStream(StreamUtil.stream(wrap), (Scene) null);
+    @Test
+    @DisplayName("Test Load Pose Track Bad Version 1")
+    void testLoadPoseTrackBadVersion1() {
+        assertThrows(InvalidObjectException.class, () -> {
+            ByteBuffer wrap = ByteBuffer.allocate(200);
+            // Track Version
+            wrap.putShort((short) 3);
+            Object3D obj = new Cube(1, 1, 1);
+            ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
+            PoseTrack pt = new PoseTrack(oi);
+            pt.initFromStream(StreamUtil.stream(wrap), (Scene) null);
+        });
     }
 }

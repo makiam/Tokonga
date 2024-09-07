@@ -1,5 +1,5 @@
 /* Copyright (C) 2006 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -8,38 +8,42 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.math;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import org.junit.jupiter.api.Assertions;
 
-public class SimplexNoiseTest {
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+@DisplayName("Simplex Noise Test")
+class SimplexNoiseTest {
 
     @Test
-    public void testRange() {
+    @DisplayName("Test Range")
+    void testRange() {
         for (int i = 0; i < 10000; i++) {
             double x = rand();
             double y = rand();
             double z = rand();
             double w = rand();
             double val2 = SimplexNoise.noise(x, y);
-            Assert.assertTrue(val2 >= -1 && val2 <= 1);
+            Assertions.assertTrue(val2 >= -1 && val2 <= 1);
             double val3 = SimplexNoise.noise(x, y, z);
-            Assert.assertTrue(val3 >= -1 && val3 <= 1);
+            Assertions.assertTrue(val3 >= -1 && val3 <= 1);
             double val4 = SimplexNoise.noise(x, y, w);
-            Assert.assertTrue(val4 >= -1 && val4 <= 1);
+            Assertions.assertTrue(val4 >= -1 && val4 <= 1);
         }
     }
 
     @Test
-    public void testGradient2D() {
+    @DisplayName("Test Gradient 2 D")
+    void testGradient2D() {
         // Estimate the gradient by finite difference, and compare that to the value returned by
         // noiseGradient.  Usually they are very close, but if the two evaluation points happen
         // to be in different cells, the result can occassionally be far off.  We therefore
         // tolerate a few bad points.
-
         final double DELTA = 1e-5;
         int badCount = 0;
         for (int i = 0; i < 10000; i++) {
@@ -48,22 +52,21 @@ public class SimplexNoiseTest {
             Vec2 grad = new Vec2();
             SimplexNoise.noiseGradient(grad, x, y);
             double center = SimplexNoise.noise(x, y);
-            boolean close = (Math.abs((SimplexNoise.noise(x + DELTA, y) - center) / DELTA - grad.x) < 1.0e-3
-                    && Math.abs((SimplexNoise.noise(x, y + DELTA) - center) / DELTA - grad.y) < 1.0e-3);
+            boolean close = (Math.abs((SimplexNoise.noise(x + DELTA, y) - center) / DELTA - grad.x) < 1.0e-3 && Math.abs((SimplexNoise.noise(x, y + DELTA) - center) / DELTA - grad.y) < 1.0e-3);
             if (!close) {
                 badCount++;
             }
         }
-        Assert.assertTrue(badCount < 10);
+        Assertions.assertTrue(badCount < 10);
     }
 
     @Test
-    public void testGradient3D() {
+    @DisplayName("Test Gradient 3 D")
+    void testGradient3D() {
         // Estimate the gradient by finite difference, and compare that to the value returned by
         // noiseGradient.  Usually they are very close, but if the two evaluation points happen
         // to be in different cells, the result can occassionally be far off.  We therefore
         // tolerate a few bad points.
-
         final double DELTA = 1e-5;
         int badCount = 0;
         for (int i = 0; i < 10000; i++) {
@@ -73,18 +76,17 @@ public class SimplexNoiseTest {
             Vec3 grad = new Vec3();
             SimplexNoise.noiseGradient(grad, x, y, z);
             double center = SimplexNoise.noise(x, y, z);
-            boolean close = (Math.abs((SimplexNoise.noise(x + DELTA, y, z) - center) / DELTA - grad.x) < 1.0e-3
-                    && Math.abs((SimplexNoise.noise(x, y + DELTA, z) - center) / DELTA - grad.y) < 1.0e-3
-                    && Math.abs((SimplexNoise.noise(x, y, z + DELTA) - center) / DELTA - grad.z) < 1.0e-3);
+            boolean close = (Math.abs((SimplexNoise.noise(x + DELTA, y, z) - center) / DELTA - grad.x) < 1.0e-3 && Math.abs((SimplexNoise.noise(x, y + DELTA, z) - center) / DELTA - grad.y) < 1.0e-3 && Math.abs((SimplexNoise.noise(x, y, z + DELTA) - center) / DELTA - grad.z) < 1.0e-3);
             if (!close) {
                 badCount++;
             }
         }
-        Assert.assertTrue(badCount < 10);
+        Assertions.assertTrue(badCount < 10);
     }
 
     @Test
-    public void testVector() {
+    @DisplayName("Test Vector")
+    void testVector() {
         Vec3 v = new Vec3();
         double avgLength = 0.0;
         for (int i = 0; i < 10000; i++) {
@@ -93,11 +95,11 @@ public class SimplexNoiseTest {
             double z = rand();
             SimplexNoise.noiseVector(v, x, y, z);
             double len = v.length();
-            Assert.assertTrue(len < 1.5);
+            Assertions.assertTrue(len < 1.5);
             avgLength += len;
         }
         avgLength /= 10000;
-        Assert.assertTrue(avgLength > 0.3);
+        Assertions.assertTrue(avgLength > 0.3);
     }
 
     private double rand() {

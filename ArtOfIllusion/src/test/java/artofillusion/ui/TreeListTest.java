@@ -11,8 +11,8 @@
 package artofillusion.ui;
 
 import artofillusion.object.NullObject;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
@@ -62,7 +62,7 @@ public class TreeListTest {
 
         TreeList treeList = new TreeList(null);
         TreeElement[] elements = treeList.getElements();
-        Assert.assertEquals(0, elements.length);
+        Assertions.assertEquals(0, elements.length);
 
     }
 
@@ -75,8 +75,8 @@ public class TreeListTest {
 
         treeList.addElement(el, 0);
         TreeElement[] elements = treeList.getElements();
-        Assert.assertEquals(1, elements.length);
-        Assert.assertEquals(el, elements[0]);
+        Assertions.assertEquals(1, elements.length);
+        Assertions.assertEquals(el, elements[0]);
     }
 
     @Test
@@ -90,9 +90,9 @@ public class TreeListTest {
         treeList.addElement(el);
 
         TreeElement[] elements = treeList.getElements();
-        Assert.assertEquals(2, elements.length);
-        Assert.assertEquals(el, elements[0]);
-        Assert.assertEquals(el, elements[1]);
+        Assertions.assertEquals(2, elements.length);
+        Assertions.assertEquals(el, elements[0]);
+        Assertions.assertEquals(el, elements[1]);
     }
 
     @Test
@@ -107,9 +107,9 @@ public class TreeListTest {
 
         treeList.addElement(el0);
         TreeElement[] elements = treeList.getElements();
-        Assert.assertEquals(2, elements.length);
-        Assert.assertEquals(el0, elements[0]);
-        Assert.assertEquals(el2, elements[1]);
+        Assertions.assertEquals(2, elements.length);
+        Assertions.assertEquals(el0, elements[0]);
+        Assertions.assertEquals(el2, elements[1]);
     }
 
 
@@ -118,7 +118,7 @@ public class TreeListTest {
         TreeList treeList = new TreeList(null);
         treeList.setUpdateEnabled(false);
 
-        Assert.assertNull(treeList.findElement(new NullObject()));
+        Assertions.assertNull(treeList.findElement(new NullObject()));
     }
 
     @Test
@@ -128,7 +128,7 @@ public class TreeListTest {
 
         TreeElement el0 = new DummyTreeElement(new NullObject());
         treeList.addElement(el0);
-        Assert.assertNull(treeList.findElement(new NullObject()));
+        Assertions.assertNull(treeList.findElement(new NullObject()));
 
     }
 
@@ -141,7 +141,7 @@ public class TreeListTest {
         treeList.addElement(el0);
 
         TreeElement result = treeList.findElement(target);
-        Assert.assertEquals(el0, result);
+        Assertions.assertEquals(el0, result);
 
 
     }
@@ -157,7 +157,7 @@ public class TreeListTest {
         el0.addChild(el2, 0);
 
         treeList.addElement(el0);
-        Assert.assertNull(treeList.findElement(new NullObject()));
+        Assertions.assertNull(treeList.findElement(new NullObject()));
 
     }
 
@@ -176,7 +176,7 @@ public class TreeListTest {
 
         treeList.addElement(el0);
         TreeElement result = treeList.findElement(target);
-        Assert.assertEquals(el2, result);
+        Assertions.assertEquals(el2, result);
 
     }
 
@@ -186,8 +186,8 @@ public class TreeListTest {
         treeList.setUpdateEnabled(false);
 
         Object[] selected = treeList.getSelectedObjects();
-        Assert.assertNotNull(selected);
-        Assert.assertEquals(0, selected.length);
+        Assertions.assertNotNull(selected);
+        Assertions.assertEquals(0, selected.length);
     }
 
     @Test
@@ -203,8 +203,8 @@ public class TreeListTest {
 
 
         Object[] selected = treeList.getSelectedObjects();
-        Assert.assertNotNull(selected);
-        Assert.assertEquals(1, selected.length);
+        Assertions.assertNotNull(selected);
+        Assertions.assertEquals(1, selected.length);
     }
 
     @Test
@@ -223,7 +223,7 @@ public class TreeListTest {
         treeList.setSelected(el1, true);
 
         Object[] selected = treeList.getSelectedObjects();
-        Assert.assertNotNull(selected);
-        Assert.assertEquals(2, selected.length);
+        Assertions.assertNotNull(selected);
+        Assertions.assertEquals(2, selected.length);
     }
 }

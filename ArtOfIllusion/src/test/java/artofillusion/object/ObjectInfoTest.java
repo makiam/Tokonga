@@ -1,4 +1,4 @@
-/* Copyright (C) 2017-2023 by Maksim Khramov
+/* Copyright (C) 2017-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -7,7 +7,6 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.object;
 
 import artofillusion.RenderingMesh;
@@ -26,414 +25,376 @@ import artofillusion.math.Vec3;
 import artofillusion.texture.Texture;
 import artofillusion.texture.TextureMapping;
 import artofillusion.texture.UniformTexture;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import org.junit.jupiter.api.Assertions;
+
+import org.junit.jupiter.api.DisplayName;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- *
  * @author MaksK
  */
-public class ObjectInfoTest {
+@DisplayName("Object Info Test")
+class ObjectInfoTest {
 
     /**
      * Test to create new ObjectInfo object with all defaults
      */
     @Test
-    public void testCreateNewObjectInfo() {
+    @DisplayName("Test Create New Object Info")
+    void testCreateNewObjectInfo() {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
-        Assert.assertNotNull(test);
-
-        Assert.assertEquals("Test", test.getName());
-        Assert.assertEquals(-1, test.getId());
-        Assert.assertTrue(test.isVisible());
-        Assert.assertFalse(test.isLocked());
-        Assert.assertNull(test.getPose());
-
-        Assert.assertNull(test.getParent());
-        Assert.assertNotNull(test.getChildren());
-        Assert.assertEquals(0, test.getChildren().length);
-
-        Assert.assertNull(test.getTracks());
-        Assert.assertNull(test.getDistortion());
-
+        Assertions.assertNotNull(test);
+        Assertions.assertEquals(test.getName(), "Test");
+        Assertions.assertEquals(-1, test.getId());
+        Assertions.assertTrue(test.isVisible());
+        Assertions.assertFalse(test.isLocked());
+        Assertions.assertNull(test.getPose());
+        Assertions.assertNull(test.getParent());
+        Assertions.assertNotNull(test.getChildren());
+        Assertions.assertEquals(0, test.getChildren().length);
+        Assertions.assertNull(test.getTracks());
+        Assertions.assertNull(test.getDistortion());
     }
 
     /**
      * Test to check that parent object is set and get properly
      */
     @Test
-    public void testSetObjectInfoParent() {
+    @DisplayName("Test Set Object Info Parent")
+    void testSetObjectInfoParent() {
         ObjectInfo parent = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null");
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
-
         test.setParent(parent);
-        Assert.assertNotNull(test.getParent());
-        Assert.assertEquals(parent, test.getParent());
-
+        Assertions.assertNotNull(test.getParent());
+        Assertions.assertEquals(parent, test.getParent());
     }
 
     /**
      * Test to add some tracks
      */
     @Test
-    public void testAddTrack() {
+    @DisplayName("Test Add Track")
+    void testAddTrack() {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
         test.addTrack(new PositionTrack(test), 0);
         test.addTrack(new RotationTrack(test), 1);
-
-        Assert.assertNotNull(test.getTracks());
-        Assert.assertEquals(2, test.getTracks().length);
-
-        Assert.assertTrue(test.getTracks()[0] instanceof PositionTrack);
-        Assert.assertTrue(test.getTracks()[1] instanceof RotationTrack);
+        Assertions.assertNotNull(test.getTracks());
+        Assertions.assertEquals(2, test.getTracks().length);
+        Assertions.assertTrue(test.getTracks()[0] instanceof PositionTrack);
+        Assertions.assertTrue(test.getTracks()[1] instanceof RotationTrack);
     }
 
     /**
      *
      */
-    @Test(expected = ArrayIndexOutOfBoundsException.class)
-    public void testAddTrackToGivenErrorPos() {
-        ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
-        test.addTrack(new PositionTrack(test), 5);
-
-        Assert.assertNotNull(test.getTracks());
-        Assert.assertEquals(1, test.getTracks().length);
-        Assert.assertTrue(test.getTracks()[5] instanceof PositionTrack);
+    @Test
+    @DisplayName("Test Add Track To Given Error Pos")
+    void testAddTrackToGivenErrorPos() {
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
+            ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
+            test.addTrack(new PositionTrack(test), 5);
+            Assertions.assertNotNull(test.getTracks());
+            Assertions.assertEquals(1, test.getTracks().length);
+            Assertions.assertTrue(test.getTracks()[5] instanceof PositionTrack);
+        });
     }
 
     /**
      *
      */
-    @Test(expected = ArrayIndexOutOfBoundsException.class)
-    public void testAddTrackToGivenPosInExistList() {
-        ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
-        test.addTrack(new RotationTrack(test), 1);
-
-        test.addTrack(new PositionTrack(test), 5);
-
-        Assert.assertNotNull(test.getTracks());
-        Assert.assertEquals(2, test.getTracks().length);
-        Assert.assertTrue(test.getTracks()[5] instanceof PositionTrack);
-
+    @Test
+    @DisplayName("Test Add Track To Given Pos In Exist List")
+    void testAddTrackToGivenPosInExistList() {
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
+            ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
+            test.addTrack(new RotationTrack(test), 1);
+            test.addTrack(new PositionTrack(test), 5);
+            Assertions.assertNotNull(test.getTracks());
+            Assertions.assertEquals(2, test.getTracks().length);
+            Assertions.assertTrue(test.getTracks()[5] instanceof PositionTrack);
+        });
     }
 
     /**
      * Test check added track can be found and removed
      */
     @Test
-    public void testRemoveTrackByTrack() {
+    @DisplayName("Test Remove Track By Track")
+    void testRemoveTrackByTrack() {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
         Track pTrack = new PositionTrack(test);
         Track rTrack = new RotationTrack(test);
-
         test.addTrack(pTrack, 0);
         test.addTrack(rTrack, 1);
-
         test.removeTrack(pTrack);
-
-        Assert.assertNotNull(test.getTracks());
-        Assert.assertEquals(1, test.getTracks().length);
-        Assert.assertTrue(test.getTracks()[0] instanceof RotationTrack);
+        Assertions.assertNotNull(test.getTracks());
+        Assertions.assertEquals(1, test.getTracks().length);
+        Assertions.assertTrue(test.getTracks()[0] instanceof RotationTrack);
     }
 
     /**
      * Test to remove track by position
      */
     @Test
-    public void testRemoveTrackByPositionFirst() {
+    @DisplayName("Test Remove Track By Position First")
+    void testRemoveTrackByPositionFirst() {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
         Track pTrack = new PositionTrack(test);
         Track rTrack = new RotationTrack(test);
-
         test.addTrack(pTrack, 0);
         test.addTrack(rTrack, 1);
-
         test.removeTrack(0);
-
-        Assert.assertNotNull(test.getTracks());
-        Assert.assertEquals(1, test.getTracks().length);
-        Assert.assertTrue(test.getTracks()[0] instanceof RotationTrack);
+        Assertions.assertNotNull(test.getTracks());
+        Assertions.assertEquals(1, test.getTracks().length);
+        Assertions.assertTrue(test.getTracks()[0] instanceof RotationTrack);
     }
 
     /**
      * Test to remove track by position
      */
     @Test
-    public void testRemoveTrackByPositionLast() {
+    @DisplayName("Test Remove Track By Position Last")
+    void testRemoveTrackByPositionLast() {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
         Track pTrack = new PositionTrack(test);
         Track rTrack = new RotationTrack(test);
-
         test.addTrack(pTrack, 0);
         test.addTrack(rTrack, 1);
-
         test.removeTrack(1);
-
-        Assert.assertNotNull(test.getTracks());
-        Assert.assertEquals(1, test.getTracks().length);
-        Assert.assertTrue(test.getTracks()[0] instanceof PositionTrack);
+        Assertions.assertNotNull(test.getTracks());
+        Assertions.assertEquals(1, test.getTracks().length);
+        Assertions.assertTrue(test.getTracks()[0] instanceof PositionTrack);
     }
 
     /**
      * Test objectInfo duplicate
      */
     @Test
-    public void testDuplicate() {
+    @DisplayName("Test Duplicate")
+    void testDuplicate() {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
         test.setVisible(false);
         test.setLocked(true);
-
         ObjectInfo duplicate = test.duplicate();
-
-        Assert.assertNotNull(duplicate);
-        Assert.assertFalse(duplicate.isVisible());
-        Assert.assertTrue(duplicate.isLocked());
-        Assert.assertNotEquals(duplicate, test);
-        Assert.assertEquals(duplicate.getObject(), test.getObject());
+        Assertions.assertNotNull(duplicate);
+        Assertions.assertFalse(duplicate.isVisible());
+        Assertions.assertTrue(duplicate.isLocked());
+        Assertions.assertNotEquals(duplicate, test);
+        Assertions.assertEquals(duplicate.getObject(), test.getObject());
     }
 
     /**
      * Test objectInfo replace geometry and duplicate
      */
     @Test
-    public void testDuplicateWithNewGeometry() {
+    @DisplayName("Test Duplicate With New Geometry")
+    void testDuplicateWithNewGeometry() {
         ObjectInfo source = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
         source.setVisible(false);
         source.setLocked(true);
-
         Object3D newObj = new Sphere(1d, 1d, 1d);
-
         ObjectInfo duplicate = source.duplicate(newObj);
-        Assert.assertNotNull(duplicate);
-        Assert.assertFalse(duplicate.isVisible());
-        Assert.assertTrue(duplicate.isLocked());
-        Assert.assertNotEquals(duplicate, source);
-        Assert.assertNotEquals(duplicate.getObject(), source.getObject());
-        Assert.assertTrue(duplicate.getObject() instanceof Sphere);
-
+        Assertions.assertNotNull(duplicate);
+        Assertions.assertFalse(duplicate.isVisible());
+        Assertions.assertTrue(duplicate.isLocked());
+        Assertions.assertNotEquals(duplicate, source);
+        Assertions.assertNotEquals(duplicate.getObject(), source.getObject());
+        Assertions.assertTrue(duplicate.getObject() instanceof Sphere);
     }
 
     /**
      * Test objectInfo replace geometry and duplicate with existed tracks data
      */
     @Test
-    public void testDuplicateWithNewGeometryAndTracks() {
+    @DisplayName("Test Duplicate With New Geometry And Tracks")
+    void testDuplicateWithNewGeometryAndTracks() {
         ObjectInfo source = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
         source.setVisible(false);
         source.setLocked(true);
-
         source.addTrack(new PoseTrack(source), 0);
         source.addTrack(new PositionTrack(source), 1);
         source.addTrack(new RotationTrack(source), 2);
-
         Object3D newObj = new Sphere(1d, 1d, 1d);
-
         ObjectInfo duplicate = source.duplicate(newObj);
-        Assert.assertNotNull(duplicate);
-        Assert.assertFalse(duplicate.isVisible());
-        Assert.assertTrue(duplicate.isLocked());
-
-        Assert.assertNotEquals(duplicate, source);
-        Assert.assertNotEquals(duplicate.getObject(), source.getObject());
-        Assert.assertTrue(duplicate.getObject() instanceof Sphere);
-
-        Assert.assertEquals(3, duplicate.getTracks().length);
-        Assert.assertEquals(duplicate, duplicate.getTracks()[0].getParent());
+        Assertions.assertNotNull(duplicate);
+        Assertions.assertFalse(duplicate.isVisible());
+        Assertions.assertTrue(duplicate.isLocked());
+        Assertions.assertNotEquals(duplicate, source);
+        Assertions.assertNotEquals(duplicate.getObject(), source.getObject());
+        Assertions.assertTrue(duplicate.getObject() instanceof Sphere);
+        Assertions.assertEquals(3, duplicate.getTracks().length);
+        Assertions.assertEquals(duplicate, duplicate.getTracks()[0].getParent());
     }
 
     /**
      * Test objectInfo duplicate with existed tracks
      */
     @Test
-    public void testDuplicateWithTracks() {
+    @DisplayName("Test Duplicate With Tracks")
+    void testDuplicateWithTracks() {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
         test.setVisible(false);
         test.setLocked(true);
-
         test.addTrack(new PositionTrack(test), 0);
         test.addTrack(new RotationTrack(test), 1);
-
         ObjectInfo duplicate = test.duplicate();
-
-        Assert.assertNotNull(duplicate);
-        Assert.assertFalse(duplicate.isVisible());
-        Assert.assertTrue(duplicate.isLocked());
-        Assert.assertNotEquals(duplicate, test);
-        Assert.assertEquals(duplicate.getObject(), test.getObject());
-
-        Assert.assertNotNull(duplicate.tracks);
-        Assert.assertEquals(2, duplicate.tracks.length);
-
-        Assert.assertTrue(duplicate.tracks[0] instanceof PositionTrack);
-        Assert.assertTrue(duplicate.tracks[1] instanceof RotationTrack);
-
-        Assert.assertEquals(duplicate, duplicate.getTracks()[0].getParent());
-        Assert.assertNull(duplicate.getDistortion());
-
+        Assertions.assertNotNull(duplicate);
+        Assertions.assertFalse(duplicate.isVisible());
+        Assertions.assertTrue(duplicate.isLocked());
+        Assertions.assertNotEquals(duplicate, test);
+        Assertions.assertEquals(duplicate.getObject(), test.getObject());
+        Assertions.assertNotNull(duplicate.tracks);
+        Assertions.assertEquals(2, duplicate.tracks.length);
+        Assertions.assertTrue(duplicate.tracks[0] instanceof PositionTrack);
+        Assertions.assertTrue(duplicate.tracks[1] instanceof RotationTrack);
+        Assertions.assertEquals(duplicate, duplicate.getTracks()[0].getParent());
+        Assertions.assertNull(duplicate.getDistortion());
     }
 
     /**
      * Test objectInfo duplicate with distortion data
      */
     @Test
-    public void testDuplicateWithDistortion() {
+    @DisplayName("Test Duplicate With Distortion")
+    void testDuplicateWithDistortion() {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
         test.setDistortion(new DistortionImpl());
-
         ObjectInfo duplicate = test.duplicate();
-       Assert.assertNotNull(duplicate.getDistortion());
-
+        Assertions.assertNotNull(duplicate.getDistortion());
     }
 
     /**
      * Test objectInfo to add child objects at the begin of list
      */
     @Test
-    public void testAddChildFirst() {
+    @DisplayName("Test Add Child First")
+    void testAddChildFirst() {
         ObjectInfo parent = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Parent");
         ObjectInfo childOne = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube");
         ObjectInfo childTwo = new ObjectInfo(new Sphere(1d, 1d, 1d), new CoordinateSystem(), "Sphere");
         parent.addChild(childOne, 0);
         parent.addChild(childTwo, 0);
-
-       Assert.assertEquals(2, parent.getChildren().length);
-       Assert.assertEquals(childTwo, parent.getChildren()[0]);
-       Assert.assertEquals(childOne, parent.getChildren()[1]);
+        Assertions.assertEquals(2, parent.getChildren().length);
+        Assertions.assertEquals(childTwo, parent.getChildren()[0]);
+        Assertions.assertEquals(childOne, parent.getChildren()[1]);
     }
 
     /**
      * Test objectInfo to add child objects at the end of list
      */
     @Test
-    public void testAddChildTwo() {
+    @DisplayName("Test Add Child Two")
+    void testAddChildTwo() {
         ObjectInfo parent = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Parent");
         ObjectInfo childOne = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube");
         ObjectInfo childTwo = new ObjectInfo(new Sphere(1d, 1d, 1d), new CoordinateSystem(), "Sphere");
         parent.addChild(childOne, 0);
         parent.addChild(childTwo, 1);
-
-       Assert.assertEquals(2, parent.getChildren().length);
-       Assert.assertEquals(childOne, parent.getChildren()[0]);
-       Assert.assertEquals(childTwo, parent.getChildren()[1]);
-
+        Assertions.assertEquals(2, parent.getChildren().length);
+        Assertions.assertEquals(childOne, parent.getChildren()[0]);
+        Assertions.assertEquals(childTwo, parent.getChildren()[1]);
     }
 
     /**
      * Test objectInfo to remove given child from list
      */
     @Test
-    public void testRemoveChildByChild() {
+    @DisplayName("Test Remove Child By Child")
+    void testRemoveChildByChild() {
         ObjectInfo parent = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Parent");
         ObjectInfo childOne = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube");
         ObjectInfo childTwo = new ObjectInfo(new Sphere(1d, 1d, 1d), new CoordinateSystem(), "Sphere");
-
         parent.addChild(childOne, 0);
         parent.addChild(childTwo, 1);
-
         parent.removeChild(childOne);
-
-       Assert.assertEquals(1, parent.getChildren().length);
-       Assert.assertEquals(childTwo, parent.getChildren()[0]);
-
+        Assertions.assertEquals(1, parent.getChildren().length);
+        Assertions.assertEquals(childTwo, parent.getChildren()[0]);
     }
 
     /**
-     * Test objectInfo to remove non existed child from list
+     * Test objectInfo to remove non-existed child from an object list
      */
     @Test
-    public void testRemoveChildByMissedChild() {
+    @DisplayName("Test Remove Child By Missed Child")
+    void testRemoveChildByMissedChild() {
         ObjectInfo parent = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Parent");
         ObjectInfo childOne = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube");
         ObjectInfo childTwo = new ObjectInfo(new Sphere(1d, 1d, 1d), new CoordinateSystem(), "Sphere");
-
         parent.addChild(childOne, 0);
-
         parent.removeChild(childTwo);
-
-       Assert.assertEquals(1, parent.getChildren().length);
-       Assert.assertEquals(childOne, parent.getChildren()[0]);
-
+        Assertions.assertEquals(1, parent.getChildren().length);
+        Assertions.assertEquals(childOne, parent.getChildren()[0]);
     }
 
     /**
      * Test objectInfo to remove null child from list
      */
     @Test
-    public void testRemoveChildByNullChild() {
+    @DisplayName("Test Remove Child By Null Child")
+    void testRemoveChildByNullChild() {
         ObjectInfo parent = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Parent");
         ObjectInfo childOne = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube");
-
         parent.addChild(childOne, 0);
-
         parent.removeChild(null);
-
-       Assert.assertEquals(1, parent.getChildren().length);
-       Assert.assertEquals(childOne, parent.getChildren()[0]);
-
+        Assertions.assertEquals(1, parent.getChildren().length);
+        Assertions.assertEquals(childOne, parent.getChildren()[0]);
     }
 
     /**
      * Test objectInfo to remove child from list by position
      */
     @Test
-    public void testRemoveChildByPositionOne() {
+    @DisplayName("Test Remove Child By Position One")
+    void testRemoveChildByPositionOne() {
         ObjectInfo parent = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Parent");
         ObjectInfo childOne = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube");
         ObjectInfo childTwo = new ObjectInfo(new Sphere(1d, 1d, 1d), new CoordinateSystem(), "Sphere");
-
         parent.addChild(childOne, 0);
         parent.addChild(childTwo, 1);
-
         parent.removeChild(1);
-
-       Assert.assertEquals(1, parent.getChildren().length);
-       Assert.assertEquals(childOne, parent.getChildren()[0]);
-
+        Assertions.assertEquals(1, parent.getChildren().length);
+        Assertions.assertEquals(childOne, parent.getChildren()[0]);
     }
 
     /**
      * Test objectInfo to remove child from list by position
      */
     @Test
-    public void testRemoveChildByPositionTwo() {
+    @DisplayName("Test Remove Child By Position Two")
+    void testRemoveChildByPositionTwo() {
         ObjectInfo parent = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Parent");
         ObjectInfo childOne = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube");
         ObjectInfo childTwo = new ObjectInfo(new Sphere(1d, 1d, 1d), new CoordinateSystem(), "Sphere");
-
         parent.addChild(childOne, 0);
         parent.addChild(childTwo, 1);
-
         parent.removeChild(0);
-
-       Assert.assertEquals(1, parent.getChildren().length);
-       Assert.assertEquals(childTwo, parent.getChildren()[0]);
-
+        Assertions.assertEquals(1, parent.getChildren().length);
+        Assertions.assertEquals(childTwo, parent.getChildren()[0]);
     }
 
     /**
      * Test objectInfo copy data from other objectInfo and points to same geometry
      */
     @Test
-    public void testCopyInfo() {
+    @DisplayName("Test Copy Info")
+    void testCopyInfo() {
         Object3D sourceGeometry = new Cube(1d, 1d, 1d);
         CoordinateSystem sourceCoords = new CoordinateSystem(Vec3.vx(), Vec3.vy(), Vec3.vz());
-
         ObjectInfo source = new ObjectInfo(sourceGeometry, sourceCoords, "Source");
         source.setVisible(false);
         source.setLocked(true);
         source.setId(100);
         ObjectInfo target = new ObjectInfo(new Sphere(1d, 1d, 1d), new CoordinateSystem(), "Target");
-
         target.copyInfo(source);
-
-       Assert.assertEquals(100, target.getId());
-       Assert.assertEquals("Source", target.getName());
-       Assert.assertEquals(sourceGeometry, target.getObject());
-       Assert.assertEquals(sourceCoords, target.getCoords());
-
-       Assert.assertTrue(target.isLocked());
-       Assert.assertFalse(target.isVisible());
-
+        Assertions.assertEquals(100, target.getId());
+        Assertions.assertEquals(target.getName(), "Source");
+        Assertions.assertEquals(sourceGeometry, target.getObject());
+        Assertions.assertEquals(sourceCoords, target.getCoords());
+        Assertions.assertTrue(target.isLocked());
+        Assertions.assertFalse(target.isVisible());
     }
 
     /**
@@ -442,14 +403,11 @@ public class ObjectInfoTest {
      */
     public void testCopyInfoWithEmptyTracksOverExisted() {
         ObjectInfo source = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Source");
-
         ObjectInfo target = new ObjectInfo(new Sphere(1d, 1d, 1d), new CoordinateSystem(), "Target");
         target.addTrack(new PositionTrack(target), 0);
         target.addTrack(new RotationTrack(target), 1);
-
         target.copyInfo(source);
-       Assert.assertNull(target.getTracks());
-
+        Assertions.assertNull(target.getTracks());
     }
 
     /**
@@ -457,20 +415,19 @@ public class ObjectInfoTest {
      * Checks that source tracks overwrite existed one
      */
     @Test
-    public void testCopyInfoWithTracksOverExisted() {
+    @DisplayName("Test Copy Info With Tracks Over Existed")
+    void testCopyInfoWithTracksOverExisted() {
         ObjectInfo source = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Source");
         source.addTrack(new TextureTrackImpl((source)), 0);
-
         ObjectInfo target = new ObjectInfo(new Sphere(1d, 1d, 1d), new CoordinateSystem(), "Target");
         target.addTrack(new PositionTrack(target), 0);
         target.addTrack(new RotationTrack(target), 1);
-
         target.copyInfo(source);
-       Assert.assertNotNull(target.getTracks());
-       Assert.assertEquals(1, target.getTracks().length);
+        Assertions.assertNotNull(target.getTracks());
+        Assertions.assertEquals(1, target.getTracks().length);
         Track testT = target.getTracks()[0];
-       Assert.assertTrue(testT instanceof TextureTrack);
-       Assert.assertEquals(target, target.getTracks()[0].getParent());
+        Assertions.assertTrue(testT instanceof TextureTrack);
+        Assertions.assertEquals(target, target.getTracks()[0].getParent());
     }
 
     /**
@@ -478,16 +435,15 @@ public class ObjectInfoTest {
      * Checks that source distortion copied
      */
     @Test
-    public void testCopyInfoWithDistortionOverEmpty() {
+    @DisplayName("Test Copy Info With Distortion Over Empty")
+    void testCopyInfoWithDistortionOverEmpty() {
         ObjectInfo source = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Source");
         Distortion dist = new DistortionImpl();
         source.setDistortion(dist);
-
         ObjectInfo target = new ObjectInfo(new Sphere(1d, 1d, 1d), new CoordinateSystem(), "Target");
         target.copyInfo(source);
-       Assert.assertNotNull(target.getDistortion());
-       Assert.assertTrue(target.getDistortion() instanceof DistortionImpl);
-
+        Assertions.assertNotNull(target.getDistortion());
+        Assertions.assertTrue(target.getDistortion() instanceof DistortionImpl);
     }
 
     /**
@@ -495,176 +451,160 @@ public class ObjectInfoTest {
      * Checks that empty distortion data overwrites existed one
      */
     @Test
-    public void testCopyInfoWithNullDistortionOverExisted() {
+    @DisplayName("Test Copy Info With Null Distortion Over Existed")
+    void testCopyInfoWithNullDistortionOverExisted() {
         ObjectInfo source = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Source");
         ObjectInfo target = new ObjectInfo(new Sphere(1d, 1d, 1d), new CoordinateSystem(), "Target");
-
         target.setDistortion(new DistortionImpl());
-
         target.copyInfo(source);
-       Assert.assertNull(target.getDistortion());
-
+        Assertions.assertNull(target.getDistortion());
     }
 
     /**
-     * Test checks new distortion sets for object
+     * Test checks new distortion sets for an object
      */
     @Test
-    public void testSetDistortion() {
+    @DisplayName("Test Set Distortion")
+    void testSetDistortion() {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
         test.setDistortion(new DistortionImpl());
-
         Distortion cd = test.getDistortion();
-       Assert.assertNotNull(cd);
-       Assert.assertNull(cd.getPreviousDistortion());
-
+        Assertions.assertNotNull(cd);
+        Assertions.assertNull(cd.getPreviousDistortion());
     }
 
     /**
      * Test checks new distortion adds to non existed one
      */
     @Test
-    public void testAddDistortionToNull() {
+    @DisplayName("Test Add Distortion To Null")
+    void testAddDistortionToNull() {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
         test.addDistortion(new DistortionImpl());
         Distortion cd = test.getDistortion();
-       Assert.assertNotNull(cd);
-       Assert.assertNull(cd.getPreviousDistortion());
-
+        Assertions.assertNotNull(cd);
+        Assertions.assertNull(cd.getPreviousDistortion());
     }
 
     /**
      * Test checks new distortion adds to already existed one
      */
     @Test
-    public void testAddDistortionToExisted() {
+    @DisplayName("Test Add Distortion To Existed")
+    void testAddDistortionToExisted() {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
         Distortion dist1 = new DistortionImpl();
         Distortion dist2 = new DistortionImpl();
-
         test.addDistortion(dist1);
         test.addDistortion(dist2);
-
         Distortion cd = test.getDistortion();
-       Assert.assertNotNull(cd);
-       Assert.assertNotNull(cd.getPreviousDistortion());
-
+        Assertions.assertNotNull(cd);
+        Assertions.assertNotNull(cd.getPreviousDistortion());
     }
 
     /**
      * Test clears non existed distortion
      */
     @Test
-    public void testClearNullDistortion() {
+    @DisplayName("Test Clear Null Distortion")
+    void testClearNullDistortion() {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
         test.clearDistortion();
-
-       Assert.assertNull(test.getDistortion());
-       Assert.assertFalse(test.isDistorted());
+        Assertions.assertNull(test.getDistortion());
+        Assertions.assertFalse(test.isDistorted());
     }
 
     /**
      * Test clears existed distortion from object
      */
     @Test
-    public void testClearNotNullDistortion() {
+    @DisplayName("Test Clear Not Null Distortion")
+    void testClearNotNullDistortion() {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
         Distortion dist = new DistortionImpl();
-
         test.setDistortion(dist);
-       Assert.assertNull(dist.getPreviousDistortion());
-
+        Assertions.assertNull(dist.getPreviousDistortion());
         test.clearDistortion();
-
-       Assert.assertNull(test.getDistortion());
-       Assert.assertFalse(test.isDistorted());
-
+        Assertions.assertNull(test.getDistortion());
+        Assertions.assertFalse(test.isDistorted());
     }
 
     /**
      * Test sets and checks material add
      */
     @Test
-    public void setObjectInfoMaterial() {
+    @DisplayName("Set Object Info Material")
+    void setObjectInfoMaterial() {
         Object3D cube = new Cube(1d, 1d, 1d);
         ObjectInfo test = new ObjectInfo(cube, new CoordinateSystem(), "Test");
         Material mat = new UniformMaterial();
         MaterialMapping map = mat.getDefaultMapping(cube);
         test.setMaterial(mat, map);
-
         Object3D res = test.getObject();
-       Assert.assertNotNull(res.getMaterial());
-       Assert.assertNotNull(res.getMaterialMapping());
-       Assert.assertEquals(mat, res.getMaterial());
-       Assert.assertEquals(map, res.getMaterialMapping());
+        Assertions.assertNotNull(res.getMaterial());
+        Assertions.assertNotNull(res.getMaterialMapping());
+        Assertions.assertEquals(mat, res.getMaterial());
+        Assertions.assertEquals(map, res.getMaterialMapping());
     }
 
     /**
      * Test to get skeleton data
      */
     @Test
-    public void testGetCubeSkeleton() {
+    @DisplayName("Test Get Cube Skeleton")
+    void testGetCubeSkeleton() {
         Object3D cube = new Cube(1d, 1d, 1d);
         ObjectInfo test = new ObjectInfo(cube, new CoordinateSystem(), "Test");
-
-       Assert.assertNull(test.getSkeleton());
+        Assertions.assertNull(test.getSkeleton());
     }
 
     /**
      * Test to get skeleton data from mesh object
      */
     @Test
-    public void testGetMeshSkeleton() {
+    @DisplayName("Test Get Mesh Skeleton")
+    void testGetMeshSkeleton() {
         Object3D meshCube = new Cube(1d, 1d, 1d);
         TriangleMesh mesh = meshCube.convertToTriangleMesh(0.1);
-
         ObjectInfo test = new ObjectInfo(meshCube, new CoordinateSystem(), "Test");
         test.setObject(mesh);
-
         mesh = (TriangleMesh) test.getObject();
         Skeleton sc = new Skeleton();
-
         mesh.setSkeleton(sc);
-       Assert.assertNotNull(test.getSkeleton());
-       Assert.assertEquals(sc, test.getSkeleton());
-
+        Assertions.assertNotNull(test.getSkeleton());
+        Assertions.assertEquals(sc, test.getSkeleton());
     }
 
     /**
      * Test sets texture to object and checks that existed texture tracks changes its parameters
      */
     @Test
-    public void testSetTextureWithTextureTracks() {
+    @DisplayName("Test Set Texture With Texture Tracks")
+    void testSetTextureWithTextureTracks() {
         Object3D cube = new Cube(1d, 1d, 1d);
         ObjectInfo test = new ObjectInfo(cube, new CoordinateSystem(), "Test");
-
         TextureTrackImpl tt = new TextureTrackImpl(test);
-
         test.addTrack(tt, 0);
         test.addTrack(new PositionTrack(test), 1);
-
         Texture tex = new UniformTexture();
         TextureMapping map = tex.getDefaultMapping(cube);
-
         test.setTexture(tex, map);
-
-       Assert.assertEquals(1, tt.getParameterChangedEventFireCount());
-       Assert.assertEquals(tex, test.getObject().getTexture());
-       Assert.assertEquals(map, test.getObject().getTextureMapping());
-
+        Assertions.assertEquals(1, tt.getParameterChangedEventFireCount());
+        Assertions.assertEquals(tex, test.getObject().getTexture());
+        Assertions.assertEquals(map, test.getObject().getTextureMapping());
     }
 
     /**
      * Test check that getDistortedObject without distortion returns unchanged object
      */
     @Test
-    public void testGetDistortedObjectNoDistortion() {
+    @DisplayName("Test Get Distorted Object No Distortion")
+    void testGetDistortedObjectNoDistortion() {
         Object3D cube = new Cube(1d, 1d, 1d);
         ObjectInfo test = new ObjectInfo(cube, new CoordinateSystem(), "Test");
-
         Object3D distorted = test.getDistortedObject(0.1d);
-       Assert.assertNotNull(distorted);
-       Assert.assertEquals(test.getObject(), distorted);
+        Assertions.assertNotNull(distorted);
+        Assertions.assertEquals(test.getObject(), distorted);
 
     }
 
@@ -673,41 +613,42 @@ public class ObjectInfoTest {
      * Distorted object is wrapperd with ObjectWrapper
      */
     @Test
-    public void testGetDistortedObjectFromWrapperNoDistortion() {
+    @DisplayName("Test Get Distorted Object From Wrapper No Distortion")
+    void testGetDistortedObjectFromWrapperNoDistortion() {
         Object3D cube = new Cube(1d, 1d, 1d);
         ObjectWrapperImpl wrapper = new ObjectWrapperImpl(cube);
         ObjectInfo test = new ObjectInfo(wrapper, new CoordinateSystem(), "Test");
-
         Object3D distorted = test.getDistortedObject(0.1d);
-       Assert.assertNotNull(distorted);
-       Assert.assertEquals(test.getObject(), distorted);
-
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testGetRenderingMeshWithUnsetTexture() {
-        Object3D cube = new Cube(1d, 1d, 1d);
-        ObjectInfo test = new ObjectInfo(cube, new CoordinateSystem(), "Test");
-
-       Assert.assertNotNull(test.getRenderingMesh(0.1d));
-       Assert.assertTrue(test.getRenderingMesh(0.1d) instanceof RenderingMesh);
+        Assertions.assertNotNull(distorted);
+        Assertions.assertEquals(test.getObject(), distorted);
     }
 
     @Test
-    public void testGetRenderingMesh() {
+    @DisplayName("Test Get Rendering Mesh With Unset Texture")
+    void testGetRenderingMeshWithUnsetTexture() {
+        assertThrows(NullPointerException.class, () -> {
+            Object3D cube = new Cube(1d, 1d, 1d);
+            ObjectInfo test = new ObjectInfo(cube, new CoordinateSystem(), "Test");
+            Assertions.assertNotNull(test.getRenderingMesh(0.1d));
+            Assertions.assertTrue(test.getRenderingMesh(0.1d) instanceof RenderingMesh);
+        });
+    }
+
+    @Test
+    @DisplayName("Test Get Rendering Mesh")
+    void testGetRenderingMesh() {
         Object3D cube = new Cube(1d, 1d, 1d);
         ObjectInfo test = new ObjectInfo(cube, new CoordinateSystem(), "Test");
         Texture tex = new UniformTexture();
         TextureMapping map = tex.getDefaultMapping(cube);
-
         test.setTexture(tex, map);
-
-       Assert.assertNotNull(test.getRenderingMesh(0.1d));
-       Assert.assertTrue(test.getRenderingMesh(0.1d) instanceof RenderingMesh);
+        Assertions.assertNotNull(test.getRenderingMesh(0.1d));
+        Assertions.assertTrue(test.getRenderingMesh(0.1d) instanceof RenderingMesh);
     }
 
     @Test
-    public void testDuplicateAll() {
+    @DisplayName("Test Duplicate All")
+    void testDuplicateAll() {
         ObjectInfo parent = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Parent");
         ObjectInfo childOne = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube");
         ObjectInfo childTwo = new ObjectInfo(new Sphere(1d, 1d, 1d), new CoordinateSystem(), "Sphere");
@@ -717,18 +658,16 @@ public class ObjectInfoTest {
         ObjectInfo deep = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null");
         ObjectInfo wrapper = new ObjectInfo(new ObjectWrapperImpl(new Cylinder(5, 1, 2, 3)), new CoordinateSystem(), "Wrapper");
         deep.addChild(wrapper, 0);
-
         test.addTrack(new PositionTrack(test), 0);
         test.addTrack(new RotationTrack(test), 1);
-
         ObjectInfo[] source = new ObjectInfo[]{parent, test, deep};
         ObjectInfo[] result = ObjectInfo.duplicateAll(source);
-
-       Assert.assertNotNull(result);
-       Assert.assertEquals(3, result.length);
-       Assert.assertEquals(2, result[1].getTracks().length);
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(3, result.length);
+        Assertions.assertEquals(2, result[1].getTracks().length);
     }
 
+    @DisplayName("Texture Track Impl")
     private static class TextureTrackImpl extends TextureTrack {
 
         private int parameterChangedEventFireCount = 0;
@@ -745,9 +684,9 @@ public class ObjectInfoTest {
         public int getParameterChangedEventFireCount() {
             return parameterChangedEventFireCount;
         }
-
     }
 
+    @DisplayName("Distortion Impl")
     private static class DistortionImpl extends Distortion {
 
         public DistortionImpl() {
@@ -765,10 +704,12 @@ public class ObjectInfoTest {
 
         @Override
         public Mesh transform(Mesh obj) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
     }
 
+    @DisplayName("Object Wrapper Impl")
     private static class ObjectWrapperImpl extends ObjectWrapper {
 
         public ObjectWrapperImpl(Object3D target) {
@@ -777,19 +718,20 @@ public class ObjectInfoTest {
 
         @Override
         public Object3D duplicate() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void copyObject(Object3D obj) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void setSize(double xsize, double ysize, double zsize) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
-
     }
-
 }

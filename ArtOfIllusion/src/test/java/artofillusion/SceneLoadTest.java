@@ -7,7 +7,6 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion;
 
 import artofillusion.material.UniformMaterial;
@@ -20,80 +19,94 @@ import artofillusion.texture.TextureSpec;
 import artofillusion.texture.UniformMapping;
 import artofillusion.texture.UniformTexture;
 import buoy.widget.BFrame;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.nio.ByteBuffer;
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
- *
  * @author maksim.khramov
  */
-public class SceneLoadTest {
+@DisplayName("Scene Load Test")
+class SceneLoadTest {
 
-    @Test(expected = InvalidObjectException.class)
+    @Test
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void testLoadSceneBadVersion1() throws IOException {
-
-        ByteBuffer wrap = ByteBuffer.allocate(2);
-        wrap.putShort((short) -1); // Scene Version
-
-        new Scene(StreamUtil.stream(wrap), true);
-    }
-
-    @Test(expected = InvalidObjectException.class)
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void testLoadSceneBadVersion2() throws IOException {
-
-        ByteBuffer wrap = ByteBuffer.allocate(2);
-        wrap.putShort((short) 6); // Scene Version
-
-        new Scene(StreamUtil.stream(wrap), true);
-    }
-
-    @Test(expected = IOException.class)
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void testReadSceneWithMissedImage() throws IOException {
-        ByteBuffer wrap = ByteBuffer.allocate(200);
-        wrap.putShort((short) 2); // Scene Version 2. No metadata expected to  set
-
-        // Ambient color data
-        colorToBuffer(new RGBColor(100, 200, 200), wrap);
-        // Fog color data
-        colorToBuffer(new RGBColor(50, 50, 50), wrap);
-        // Fog
-        wrap.put((byte) 1);
-        // Fog Distance
-        wrap.putDouble(1000);
-        // show grid
-        wrap.put((byte) 1);
-        // snap to grid
-        wrap.put((byte) 1);
-        // grid spacing
-        wrap.putDouble(10);
-        // grid Subdivisions
-        wrap.putInt(10);
-        // FPS
-        wrap.putInt(60);
-        // Image maps count
-        wrap.putInt(1);
-        {
-            String className = "dummy.dummy.MissedImageClass";
-            wrap.putShort(Integer.valueOf(className.length()).shortValue());
-            wrap.put(className.getBytes());
-        }
-
-        new Scene(StreamUtil.stream(wrap), true);
+    @DisplayName("Test Load Scene Bad Version 1")
+    void testLoadSceneBadVersion1() {
+        assertThrows(InvalidObjectException.class, () -> {
+            ByteBuffer wrap = ByteBuffer.allocate(2);
+            // Scene Version
+            wrap.putShort((short) -1);
+            new Scene(StreamUtil.stream(wrap), true);
+        });
     }
 
     @Test
-    public void testReadEmptySceneWithMissedMaterialAndTexture() throws IOException {
-        ByteBuffer wrap = ByteBuffer.allocate(200);
-        wrap.putShort((short) 2); // Scene Version 2. No metadata expected to  set
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
+    @DisplayName("Test Load Scene Bad Version 2")
+    void testLoadSceneBadVersion2() {
+        assertThrows(InvalidObjectException.class, () -> {
+            ByteBuffer wrap = ByteBuffer.allocate(2);
+            // Scene Version
+            wrap.putShort((short) 6);
+            new Scene(StreamUtil.stream(wrap), true);
+        });
+    }
 
+    @Test
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
+    @DisplayName("Test Read Scene With Missed Image")
+    void testReadSceneWithMissedImage() {
+        assertThrows(IOException.class, () -> {
+            ByteBuffer wrap = ByteBuffer.allocate(200);
+            // Scene Version 2. No metadata expected to  set
+            wrap.putShort((short) 2);
+            // Ambient color data
+            colorToBuffer(new RGBColor(100, 200, 200), wrap);
+            // Fog color data
+            colorToBuffer(new RGBColor(50, 50, 50), wrap);
+            // Fog
+            wrap.put((byte) 1);
+            // Fog Distance
+            wrap.putDouble(1000);
+            // show grid
+            wrap.put((byte) 1);
+            // snap to grid
+            wrap.put((byte) 1);
+            // grid spacing
+            wrap.putDouble(10);
+            // grid Subdivisions
+            wrap.putInt(10);
+            // FPS
+            wrap.putInt(60);
+            // Image maps count
+            wrap.putInt(1);
+            {
+                String className = "dummy.dummy.MissedImageClass";
+                wrap.putShort(Integer.valueOf(className.length()).shortValue());
+                wrap.put(className.getBytes());
+            }
+            new Scene(StreamUtil.stream(wrap), true);
+        });
+    }
+
+    @Test
+    @DisplayName("Test Read Empty Scene With Missed Material And Texture")
+    void testReadEmptySceneWithMissedMaterialAndTexture() throws IOException {
+        ByteBuffer wrap = ByteBuffer.allocate(200);
+        // Scene Version 2. No metadata expected to  set
+        wrap.putShort((short) 2);
         // Ambient color data
         colorToBuffer(new RGBColor(100, 200, 200), wrap);
         // Fog color data
@@ -118,7 +131,6 @@ public class SceneLoadTest {
         wrap.putInt(1);
         {
             String className = "dummy.dummy.UnknownMaterialClass";
-
             wrap.putShort(Integer.valueOf(className.length()).shortValue());
             wrap.put(className.getBytes());
             // Material data length
@@ -128,7 +140,6 @@ public class SceneLoadTest {
         wrap.putInt(1);
         {
             String className = "dummy.dummy.UnknownTextureClass";
-
             wrap.putShort(Integer.valueOf(className.length()).shortValue());
             wrap.put(className.getBytes());
             // Texture data length
@@ -143,22 +154,21 @@ public class SceneLoadTest {
             System.out.println(wrap.position());
             colorToBuffer(new RGBColor(45, 45, 45), wrap);
         }
-
         Scene scene = new Scene(StreamUtil.stream(wrap), true);
-
-        Assert.assertEquals(1, scene.getTextures().size());
-        Assert.assertTrue(scene.getTexture(0) instanceof UniformTexture);
-        Assert.assertEquals("<unreadable>", scene.getTexture(0).getName());
-        Assert.assertEquals(1, scene.getMaterials().size());
-        Assert.assertTrue(scene.getMaterial(0) instanceof UniformMaterial);
-        Assert.assertEquals("<unreadable>", scene.getMaterial(0).getName());
-        Assert.assertFalse(scene.getErrors().isEmpty());
+        Assertions.assertEquals(1, scene.getNumTextures());
+        Assertions.assertTrue(scene.getTexture(0) instanceof UniformTexture);
+        Assertions.assertTrue(scene.getTexture(0).getName().equals("<unreadable>"));
+        Assertions.assertEquals(1, scene.getNumMaterials());
+        Assertions.assertTrue(scene.getMaterial(0) instanceof UniformMaterial);
+        Assertions.assertTrue(scene.getMaterial(0).getName().equals("<unreadable>"));
+        Assertions.assertFalse(scene.getErrors().isEmpty());
     }
 
     @Test
-    public void testReadEmptySceneWithMissedMaterialAndBadTexture() throws IOException {
+    @DisplayName("Test Read Empty Scene With Missed Material And Bad Texture")
+    void testReadEmptySceneWithMissedMaterialAndBadTexture() throws IOException {
         ByteBuffer wrap = ByteBuffer.allocate(200);
-        wrap.putShort((short) 2); // Scene Version 2. No metadata expected to  set
+        wrap.putShort((short) 2); // Scene Version 2. No metadata expected to set
 
         // Ambient color data
         colorToBuffer(new RGBColor(100, 200, 200), wrap);
@@ -184,7 +194,6 @@ public class SceneLoadTest {
         wrap.putInt(1);
         {
             String className = "dummy.dummy.UnknownMaterialClass";
-
             wrap.putShort(Integer.valueOf(className.length()).shortValue());
             wrap.put(className.getBytes());
             // Material data length
@@ -194,7 +203,6 @@ public class SceneLoadTest {
         wrap.putInt(1);
         {
             String className = DummyTextureNoConstructor.class.getTypeName();
-
             wrap.putShort(Integer.valueOf(className.length()).shortValue());
             wrap.put(className.getBytes());
             // Texture data length
@@ -202,30 +210,28 @@ public class SceneLoadTest {
         }
         // Objects count
         wrap.putInt(0);
-
         // Environment mode
         wrap.putShort((short) 0); // Solid EM
         {
             System.out.println(wrap.position());
             colorToBuffer(new RGBColor(45, 45, 45), wrap);
         }
-
         Scene scene = new Scene(StreamUtil.stream(wrap), true);
-
-        Assert.assertEquals(1, scene.getNumTextures());
-        Assert.assertTrue(scene.getTexture(0) instanceof UniformTexture);
-        Assert.assertEquals("<unreadable>", scene.getTexture(0).getName());
-        Assert.assertEquals(1, scene.getNumMaterials());
-        Assert.assertTrue(scene.getMaterial(0) instanceof UniformMaterial);
-        Assert.assertTrue(scene.getMaterial(0).getName().equals("<unreadable>"));
-        Assert.assertFalse(scene.getErrors().isEmpty());
+        Assertions.assertEquals(1, scene.getNumTextures());
+        Assertions.assertTrue(scene.getTexture(0) instanceof UniformTexture);
+        Assertions.assertTrue(scene.getTexture(0).getName().equals("<unreadable>"));
+        Assertions.assertEquals(1, scene.getNumMaterials());
+        Assertions.assertTrue(scene.getMaterial(0) instanceof UniformMaterial);
+        Assertions.assertTrue(scene.getMaterial(0).getName().equals("<unreadable>"));
+        Assertions.assertFalse(scene.getErrors().isEmpty());
     }
 
     @Test
-    public void testReadEmptySceneWithMissedMaterial() throws IOException {
+    @DisplayName("Test Read Empty Scene With Missed Material")
+    void testReadEmptySceneWithMissedMaterial() throws IOException {
         ByteBuffer wrap = ByteBuffer.allocate(200);
-        wrap.putShort((short) 2); // Scene Version 2. No metadata expected to  set
-
+        // Scene Version 2. No metadata expected to  set
+        wrap.putShort((short) 2);
         // Ambient color data
         colorToBuffer(new RGBColor(100, 200, 200), wrap);
         // Fog color data
@@ -250,7 +256,6 @@ public class SceneLoadTest {
         wrap.putInt(1);
         {
             String className = "dummy.dummy.UnknownMaterialClass";
-
             wrap.putShort(Integer.valueOf(className.length()).shortValue());
             wrap.put(className.getBytes());
             // Material data length
@@ -260,7 +265,6 @@ public class SceneLoadTest {
         wrap.putInt(1);
         {
             String className = LoadableTexture.class.getTypeName();
-
             wrap.putShort(Integer.valueOf(className.length()).shortValue());
             wrap.put(className.getBytes());
             // Texture data length
@@ -268,66 +272,64 @@ public class SceneLoadTest {
         }
         // Objects count
         wrap.putInt(0);
-
         // Environment mode
-        wrap.putShort((short) 0); // Solid EM
+        // Solid EM
+        wrap.putShort((short) 0);
         {
             System.out.println(wrap.position());
             colorToBuffer(new RGBColor(45, 45, 45), wrap);
         }
-
         Scene scene = new Scene(StreamUtil.stream(wrap), true);
-
-        Assert.assertEquals(1, scene.getNumTextures());
-        Assert.assertTrue(scene.getTexture(0) instanceof LoadableTexture);
-
-        Assert.assertEquals(1, scene.getNumMaterials());
-        Assert.assertTrue(scene.getMaterial(0) instanceof UniformMaterial);
-        Assert.assertTrue(scene.getMaterial(0).getName().equals("<unreadable>"));
-        Assert.assertFalse(scene.getErrors().isEmpty());
+        Assertions.assertEquals(1, scene.getNumTextures());
+        Assertions.assertTrue(scene.getTexture(0) instanceof LoadableTexture);
+        Assertions.assertEquals(1, scene.getNumMaterials());
+        Assertions.assertTrue(scene.getMaterial(0) instanceof UniformMaterial);
+        Assertions.assertTrue(scene.getMaterial(0).getName().equals("<unreadable>"));
+        Assertions.assertFalse(scene.getErrors().isEmpty());
     }
 
-    //This test fails as no envirinment texture loaded. in general this is impossible situation
-    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    // This test fails as no envirinment texture loaded. in general this is impossible situation
+    @Test
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void testReadEmptySceneSettingsOnlyNoMeta() throws IOException {
-        ByteBuffer wrap = ByteBuffer.allocate(200);
-        wrap.putShort((short) 2); // Scene Version 2. No metadata expected to  set
-
-        // Ambient color data
-        colorToBuffer(new RGBColor(100, 200, 200), wrap);
-        // Fog color data
-        colorToBuffer(new RGBColor(50, 50, 50), wrap);
-        // Fog
-        wrap.put((byte) 1);
-        // Fog Distance
-        wrap.putDouble(1000);
-        // show grid
-        wrap.put((byte) 1);
-        // snap to grid
-        wrap.put((byte) 1);
-        // grid spacing
-        wrap.putDouble(10);
-        // grid Subdivisions
-        wrap.putInt(10);
-        // FPS
-        wrap.putInt(60);
-        // Image maps count
-        wrap.putInt(0);
-        // Materials count
-        wrap.putInt(0);
-        // Textures count
-        wrap.putInt(0);
-        // Objects count
-        wrap.putInt(0);
-
-        // Environment mode
-        wrap.putInt(0); // Solid EM
-        {
-
-        }
-
-        new Scene(StreamUtil.stream(wrap), true);
+    @DisplayName("Test Read Empty Scene Settings Only No Meta")
+    void testReadEmptySceneSettingsOnlyNoMeta() {
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
+            ByteBuffer wrap = ByteBuffer.allocate(200);
+            // Scene Version 2. No metadata expected to  set
+            wrap.putShort((short) 2);
+            // Ambient color data
+            colorToBuffer(new RGBColor(100, 200, 200), wrap);
+            // Fog color data
+            colorToBuffer(new RGBColor(50, 50, 50), wrap);
+            // Fog
+            wrap.put((byte) 1);
+            // Fog Distance
+            wrap.putDouble(1000);
+            // show grid
+            wrap.put((byte) 1);
+            // snap to grid
+            wrap.put((byte) 1);
+            // grid spacing
+            wrap.putDouble(10);
+            // grid Subdivisions
+            wrap.putInt(10);
+            // FPS
+            wrap.putInt(60);
+            // Image maps count
+            wrap.putInt(0);
+            // Materials count
+            wrap.putInt(0);
+            // Textures count
+            wrap.putInt(0);
+            // Objects count
+            wrap.putInt(0);
+            // Environment mode
+            // Solid EM
+            wrap.putInt(0);
+            {
+            }
+            new Scene(StreamUtil.stream(wrap), true);
+        });
     }
 
     private static void colorToBuffer(RGBColor color, ByteBuffer buffer) {
@@ -336,26 +338,29 @@ public class SceneLoadTest {
         buffer.putFloat(color.getBlue());
     }
 
-    public static class LoadableTexture extends UniformTexture {
+    @DisplayName("Loadable Texture")
+    static class LoadableTexture extends UniformTexture {
 
         public LoadableTexture(DataInputStream in, Scene theScene) {
         }
     }
 
-    public class DummyTextureNoConstructor extends Texture {
+    @DisplayName("Dummy Texture No Constructor")
+    class DummyTextureNoConstructor extends Texture {
 
         public DummyTextureNoConstructor() {
-
         }
 
         @Override
         public boolean hasComponent(int component) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void getAverageSpec(TextureSpec spec, double time, double[] param) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
@@ -365,19 +370,20 @@ public class SceneLoadTest {
 
         @Override
         public Texture duplicate() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void edit(BFrame fr, Scene sc) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void writeToFile(DataOutputStream out, Scene theScene) throws IOException {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
-
     }
-
 }

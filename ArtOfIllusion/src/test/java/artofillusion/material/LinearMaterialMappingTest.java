@@ -7,236 +7,217 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.material;
 
 import artofillusion.Scene;
 import artofillusion.object.Cube;
 import artofillusion.test.util.StreamUtil;
 import buoy.widget.BFrame;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.nio.ByteBuffer;
-import org.junit.Test;
-import org.junit.Assert;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- *
  * @author maksim.khramov
  */
 @SuppressWarnings("ResultOfObjectAllocationIgnored")
-public class LinearMaterialMappingTest {
+@DisplayName("Linear Material Mapping Test")
+class LinearMaterialMappingTest {
 
     @Test
-    public void testCreateLMM() {
+    @DisplayName("Test Create LMM")
+    void testCreateLMM() {
         Cube cube = new Cube(1, 1, 1);
         Material3D mat = new DummyMaterial();
         LinearMaterialMapping lmm = new LinearMaterialMapping(cube, mat);
-
-        Assert.assertEquals(mat, lmm.getMaterial());
-        Assert.assertEquals("Linear", lmm.getName());
-    }
-
-    @Test(expected = InvalidObjectException.class)
-    public void testCreateLMMFromStreamBadVersion1() throws IOException {
-        Cube cube = new Cube(1, 1, 1);
-        Material3D mat = new DummyMaterial();
-
-        ByteBuffer wrap = ByteBuffer.allocate(2);
-        wrap.putShort((short) -1);
-
-        new LinearMaterialMapping(StreamUtil.stream(wrap), cube, mat);
-
-    }
-
-    @Test(expected = InvalidObjectException.class)
-    public void testCreateLMMFromStreamBadVersion2() throws IOException {
-        Cube cube = new Cube(1, 1, 1);
-        Material3D mat = new DummyMaterial();
-
-        ByteBuffer wrap = ByteBuffer.allocate(2);
-        wrap.putShort((short) 2);
-
-        new LinearMaterialMapping(StreamUtil.stream(wrap), cube, mat);
-
-        //        
-        wrap.putDouble(1.0);
-        wrap.putDouble(2.0);
-        wrap.putDouble(3.0);
-
-        wrap.putDouble(0.0);
-        wrap.putDouble(45.0);
-        wrap.putDouble(90.0);
+        Assertions.assertEquals(mat, lmm.getMaterial());
+        Assertions.assertEquals(lmm.getName(), "Linear");
     }
 
     @Test
-    public void testCreateLMMFromStreamVersion0() throws IOException {
+    @DisplayName("Test Create LMM From Stream Bad Version 1")
+    void testCreateLMMFromStreamBadVersion1() {
+        assertThrows(InvalidObjectException.class, () -> {
+            Cube cube = new Cube(1, 1, 1);
+            Material3D mat = new DummyMaterial();
+            ByteBuffer wrap = ByteBuffer.allocate(2);
+            wrap.putShort((short) -1);
+            new LinearMaterialMapping(StreamUtil.stream(wrap), cube, mat);
+        });
+    }
+
+    @Test
+    @DisplayName("Test Create LMM From Stream Bad Version 2")
+    void testCreateLMMFromStreamBadVersion2() {
+        assertThrows(InvalidObjectException.class, () -> {
+            Cube cube = new Cube(1, 1, 1);
+            Material3D mat = new DummyMaterial();
+            ByteBuffer wrap = ByteBuffer.allocate(2);
+            wrap.putShort((short) 2);
+            new LinearMaterialMapping(StreamUtil.stream(wrap), cube, mat);
+            // 
+            wrap.putDouble(1.0);
+            wrap.putDouble(2.0);
+            wrap.putDouble(3.0);
+            wrap.putDouble(0.0);
+            wrap.putDouble(45.0);
+            wrap.putDouble(90.0);
+        });
+    }
+
+    @Test
+    @DisplayName("Test Create LMM From Stream Version 0")
+    void testCreateLMMFromStreamVersion0() throws IOException {
         Cube cube = new Cube(1, 1, 1);
         Material3D mat = new DummyMaterial();
-
         ByteBuffer wrap = ByteBuffer.allocate(200);
-
-        //  Version
+        // Version
         wrap.putShort((short) 0);
-
-        //  Coordinate system data      
+        // Coordinate system data
         wrap.putDouble(1.0);
         wrap.putDouble(2.0);
         wrap.putDouble(3.0);
-
         wrap.putDouble(0.0);
         wrap.putDouble(45.0);
         wrap.putDouble(90.0);
-
         // dx,dy,dz
         wrap.putDouble(4.0);
         wrap.putDouble(5.0);
         wrap.putDouble(6.0);
-
         // x, y, z scales
         wrap.putDouble(0.1);
         wrap.putDouble(0.5);
         wrap.putDouble(3.5);
-
         LinearMaterialMapping lmm = new LinearMaterialMapping(StreamUtil.stream(wrap), cube, mat);
-
-        Assert.assertEquals(mat, lmm.getMaterial());
-        Assert.assertEquals(false, lmm.isScaledToObject());
-
-        Assert.assertEquals(1.0, lmm.coords.getOrigin().x, 0);
-        Assert.assertEquals(2.0, lmm.coords.getOrigin().y, 0);
-        Assert.assertEquals(3.0, lmm.coords.getOrigin().z, 0);
-
-        Assert.assertEquals(0.1, lmm.xscale, 0);
-        Assert.assertEquals(0.5, lmm.yscale, 0);
-        Assert.assertEquals(3.5, lmm.zscale, 0);
+        Assertions.assertEquals(mat, lmm.getMaterial());
+        Assertions.assertEquals(false, lmm.isScaledToObject());
+        Assertions.assertEquals(1.0, lmm.coords.getOrigin().x, 0);
+        Assertions.assertEquals(2.0, lmm.coords.getOrigin().y, 0);
+        Assertions.assertEquals(3.0, lmm.coords.getOrigin().z, 0);
+        Assertions.assertEquals(0.1, lmm.xscale, 0);
+        Assertions.assertEquals(0.5, lmm.yscale, 0);
+        Assertions.assertEquals(3.5, lmm.zscale, 0);
     }
 
     @Test
-    public void testCreateLMMFromStreamVersion1() throws IOException {
+    @DisplayName("Test Create LMM From Stream Version 1")
+    void testCreateLMMFromStreamVersion1() throws IOException {
         Cube cube = new Cube(1, 1, 1);
         Material3D mat = new DummyMaterial();
-
         ByteBuffer wrap = ByteBuffer.allocate(200);
-
-        //  Version
+        // Version
         wrap.putShort((short) 1);
-
-        //  Coordinate system data      
+        // Coordinate system data
         wrap.putDouble(1.0);
         wrap.putDouble(2.0);
         wrap.putDouble(3.0);
-
         wrap.putDouble(0.0);
         wrap.putDouble(45.0);
         wrap.putDouble(90.0);
-
         // dx,dy,dz
         wrap.putDouble(4.0);
         wrap.putDouble(5.0);
         wrap.putDouble(6.0);
-
         // x, y, z scales
         wrap.putDouble(0.1);
         wrap.putDouble(0.5);
         wrap.putDouble(3.5);
-
         // scale to object
         wrap.put((byte) 1);
-
         LinearMaterialMapping lmm = new LinearMaterialMapping(StreamUtil.stream(wrap), cube, mat);
-
-        Assert.assertEquals(mat, lmm.getMaterial());
-        Assert.assertEquals(true, lmm.isScaledToObject());
-
-        Assert.assertEquals(1.0, lmm.coords.getOrigin().x, 0);
-        Assert.assertEquals(2.0, lmm.coords.getOrigin().y, 0);
-        Assert.assertEquals(3.0, lmm.coords.getOrigin().z, 0);
-
-        Assert.assertEquals(0.1, lmm.xscale, 0);
-        Assert.assertEquals(0.5, lmm.yscale, 0);
-        Assert.assertEquals(3.5, lmm.zscale, 0);
+        Assertions.assertEquals(mat, lmm.getMaterial());
+        Assertions.assertEquals(true, lmm.isScaledToObject());
+        Assertions.assertEquals(1.0, lmm.coords.getOrigin().x, 0);
+        Assertions.assertEquals(2.0, lmm.coords.getOrigin().y, 0);
+        Assertions.assertEquals(3.0, lmm.coords.getOrigin().z, 0);
+        Assertions.assertEquals(0.1, lmm.xscale, 0);
+        Assertions.assertEquals(0.5, lmm.yscale, 0);
+        Assertions.assertEquals(3.5, lmm.zscale, 0);
     }
 
     @Test
-    public void testCreateLMMFromStreamVersion1Unscaled() throws IOException {
+    @DisplayName("Test Create LMM From Stream Version 1 Unscaled")
+    void testCreateLMMFromStreamVersion1Unscaled() throws IOException {
         Cube cube = new Cube(1, 1, 1);
         Material3D mat = new DummyMaterial();
-
         ByteBuffer wrap = ByteBuffer.allocate(200);
-
-        //  Version
+        // Version
         wrap.putShort((short) 1);
-
-        //  Coordinate system data      
+        // Coordinate system data
         wrap.putDouble(1.0);
         wrap.putDouble(2.0);
         wrap.putDouble(3.0);
-
         wrap.putDouble(0.0);
         wrap.putDouble(45.0);
         wrap.putDouble(90.0);
-
         // dx,dy,dz
         wrap.putDouble(4.0);
         wrap.putDouble(5.0);
         wrap.putDouble(6.0);
-
         // x, y, z scales
         wrap.putDouble(0.1);
         wrap.putDouble(0.5);
         wrap.putDouble(3.5);
-
         // scale to object
-        wrap.put((byte) 0);  // Boolean treats as byte
-
+        // Boolean treats as byte
+        wrap.put((byte) 0);
         LinearMaterialMapping lmm = new LinearMaterialMapping(StreamUtil.stream(wrap), cube, mat);
-
-        Assert.assertEquals(mat, lmm.getMaterial());
-        Assert.assertEquals(false, lmm.isScaledToObject());
-
-        Assert.assertEquals(1.0, lmm.coords.getOrigin().x, 0);
-        Assert.assertEquals(2.0, lmm.coords.getOrigin().y, 0);
-        Assert.assertEquals(3.0, lmm.coords.getOrigin().z, 0);
-
-        Assert.assertEquals(0.1, lmm.xscale, 0);
-        Assert.assertEquals(0.5, lmm.yscale, 0);
-        Assert.assertEquals(3.5, lmm.zscale, 0);
-
+        Assertions.assertEquals(mat, lmm.getMaterial());
+        Assertions.assertEquals(false, lmm.isScaledToObject());
+        Assertions.assertEquals(1.0, lmm.coords.getOrigin().x, 0);
+        Assertions.assertEquals(2.0, lmm.coords.getOrigin().y, 0);
+        Assertions.assertEquals(3.0, lmm.coords.getOrigin().z, 0);
+        Assertions.assertEquals(0.1, lmm.xscale, 0);
+        Assertions.assertEquals(0.5, lmm.yscale, 0);
+        Assertions.assertEquals(3.5, lmm.zscale, 0);
     }
 
+    @DisplayName("Dummy Material")
     private class DummyMaterial extends Material3D {
 
         @Override
         public void getMaterialSpec(MaterialSpec spec, double x, double y, double z, double xsize, double ysize, double zsize, double t) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public boolean isScattering() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public boolean castsShadows() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public Material duplicate() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void edit(BFrame fr, Scene sc) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void writeToFile(DataOutputStream out, Scene theScene) throws IOException {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            // To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
-
     }
 }

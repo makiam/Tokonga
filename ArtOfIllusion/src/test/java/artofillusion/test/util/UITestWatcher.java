@@ -8,17 +8,15 @@
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
-package artofillusion;
+package artofillusion.test.util;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.TestWatcher;
 
-/**
- *
- * @author MaksK
- */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({SceneTest.class, SceneSelectionTest.class, SceneLoadTest.class})
-public class SceneTestsSuite {
+public final class UITestWatcher implements TestWatcher {
 
+    @Override
+    public void testFailed(ExtensionContext context, Throwable cause) {
+        org.netbeans.jemmy.util.PNGEncoder.captureScreen(context.getDisplayName() + ".png");
+    }
 }

@@ -1,5 +1,5 @@
 /* Copyright (C) 2006 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -10,23 +10,28 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.procedural;
 
-import artofillusion.image.*;
-import artofillusion.math.*;
-import artofillusion.ui.*;
+import artofillusion.image.ImageMap;
+import artofillusion.image.MIPMappedImage;
+import artofillusion.math.RGBColor;
+import artofillusion.math.Vec3;
+import artofillusion.ui.Translate;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
 import java.awt.*;
-import java.awt.image.*;
-import java.util.*;
-import org.junit.Assert;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
+import java.util.Locale;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-public class ImageModuleTest {
+@DisplayName("Image Module Test")
+class ImageModuleTest {
 
     private static final int SIZE = 100;
 
-    @BeforeClass
-    public static void setUpClass() {
+    @BeforeAll
+    static void setUpClass() {
         Translate.setLocale(Locale.US);
     }
 
@@ -34,7 +39,8 @@ public class ImageModuleTest {
      * Test values and gradients in RGB mode.
      */
     @Test
-    public void testRGB() throws InterruptedException {
+    @DisplayName("Test RGB")
+    void testRGB() throws InterruptedException {
         testColorModel(ImageModule.RGB_MODEL);
     }
 
@@ -42,7 +48,8 @@ public class ImageModuleTest {
      * Test values and gradients in HSV mode.
      */
     @Test
-    public void testHSV() throws InterruptedException {
+    @DisplayName("Test HSV")
+    void testHSV() throws InterruptedException {
         testColorModel(ImageModule.HSV_MODEL);
     }
 
@@ -50,7 +57,8 @@ public class ImageModuleTest {
      * Test values and gradients in HLS mode.
      */
     @Test
-    public void testHLS() throws InterruptedException {
+    @DisplayName("Test HLS")
+    void testHLS() throws InterruptedException {
         testColorModel(ImageModule.HLS_MODEL);
     }
 
@@ -64,22 +72,19 @@ public class ImageModuleTest {
             info.x = Math.random() * 0.98;
             info.y = Math.random() * 0.98;
             module.init(info);
-
             // Get the component values, reconstruct the color, and see if it correct.
             double v1 = module.getAverageValue(1, 0.0);
             double v2 = module.getAverageValue(2, 0.0);
             double v3 = module.getAverageValue(3, 0.0);
             compareColors(createColor(v1, v2, v3, colorModel), createColor(Math.cos(info.x), Math.sin(info.y), info.x * info.y, colorModel), 0.02);
-
-            // Get the comopnent gradients, use them to predict the color a short distance away, and see if it is correct.
+            // Get the component gradients, use them to predict the color a short distance away, and see if it is correct.
             module.getValueGradient(1, grad1, 0.0);
             module.getValueGradient(2, grad2, 0.0);
             module.getValueGradient(3, grad3, 0.0);
             info.x += 0.01;
             info.y += 0.01;
             module.init(info);
-            compareColors(createColor(v1 + grad1.x * 0.01 + grad1.y * 0.01, v2 + grad2.x * 0.01 + grad2.y * 0.01, v3 + grad3.x * 0.01 + grad3.y * 0.01, colorModel),
-                    createColor(module.getAverageValue(1, 0.0), module.getAverageValue(2, 0.0), module.getAverageValue(3, 0.0), colorModel), 0.04);
+            compareColors(createColor(v1 + grad1.x * 0.01 + grad1.y * 0.01, v2 + grad2.x * 0.01 + grad2.y * 0.01, v3 + grad3.x * 0.01 + grad3.y * 0.01, colorModel), createColor(module.getAverageValue(1, 0.0), module.getAverageValue(2, 0.0), module.getAverageValue(3, 0.0), colorModel), 0.04);
         }
     }
 
@@ -103,9 +108,9 @@ public class ImageModuleTest {
      * Compare two colors and make sure they are sufficiently close.
      */
     private void compareColors(RGBColor color1, RGBColor color2, double tolerance) {
-        Assert.assertEquals(color1.getRed(), color2.getRed(), tolerance);
-        Assert.assertEquals(color1.getGreen(), color2.getGreen(), tolerance);
-        Assert.assertEquals(color1.getBlue(), color2.getBlue(), tolerance);
+        Assertions.assertEquals(color1.getRed(), color2.getRed(), tolerance);
+        Assertions.assertEquals(color1.getGreen(), color2.getGreen(), tolerance);
+        Assertions.assertEquals(color1.getBlue(), color2.getBlue(), tolerance);
     }
 
     /**
@@ -113,7 +118,7 @@ public class ImageModuleTest {
      */
     private ImageModule buildModule(int colorModel) throws InterruptedException {
         BufferedImage im = new BufferedImage(SIZE, SIZE, BufferedImage.TYPE_INT_ARGB);
-        int pixel[] = ((DataBufferInt) ((BufferedImage) im).getRaster().getDataBuffer()).getData();
+        int[] pixel = ((DataBufferInt) ((BufferedImage) im).getRaster().getDataBuffer()).getData();
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 float x = i / (float) SIZE;

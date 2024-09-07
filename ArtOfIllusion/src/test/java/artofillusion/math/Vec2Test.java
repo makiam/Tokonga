@@ -7,135 +7,140 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.math;
 
 import artofillusion.test.util.StreamUtil;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
- *
  * @author maksim.khramov
  */
-public class Vec2Test {
+@DisplayName("Vec 2 Test")
+class Vec2Test {
 
     @Test
-    public void testVec2Constructor0() {
+    @DisplayName("Test Vec 2 Constructor 0")
+    void testVec2Constructor0() {
         Vec2 test = new Vec2();
-        Assert.assertEquals(0d, test.x, 0);
-        Assert.assertEquals(0d, test.y, 0);
+        Assertions.assertEquals(0d, test.x, 0);
+        Assertions.assertEquals(0d, test.y, 0);
     }
 
     @Test
-    public void testVec2Constructor1() {
+    @DisplayName("Test Vec 2 Constructor 1")
+    void testVec2Constructor1() {
         Vec2 test = new Vec2(1.0, 1.0);
-        Assert.assertEquals(1.0, test.x, 0);
-        Assert.assertEquals(1.0, test.y, 0);
+        Assertions.assertEquals(1.0, test.x, 0);
+        Assertions.assertEquals(1.0, test.y, 0);
     }
 
     @Test
-    public void testVec2Constructor2() {
+    @DisplayName("Test Vec 2 Constructor 2")
+    void testVec2Constructor2() {
         Vec2 source = new Vec2(1.0, 1.0);
         Vec2 test = new Vec2(source);
-        Assert.assertEquals(1.0, test.x, 0);
-        Assert.assertEquals(1.0, test.y, 0);
+        Assertions.assertEquals(1.0, test.x, 0);
+        Assertions.assertEquals(1.0, test.y, 0);
     }
 
     @Test
-    public void testVec2Constructor3() throws IOException {
-
+    @DisplayName("Test Vec 2 Constructor 3")
+    void testVec2Constructor3() throws IOException {
         ByteBuffer wrap = ByteBuffer.allocate(16);
         wrap.putDouble(1.0);
         wrap.putDouble(2.0);
-
         Vec2 test = new Vec2(StreamUtil.stream(wrap));
-        Assert.assertEquals(1.0, test.x, 0);
-        Assert.assertEquals(2.0, test.y, 0);
+        Assertions.assertEquals(1.0, test.x, 0);
+        Assertions.assertEquals(2.0, test.y, 0);
     }
 
     @Test
-    public void testCreateXVect2() {
+    @DisplayName("Test Create X Vect 2")
+    void testCreateXVect2() {
         Vec2 test = Vec2.vx();
-        Assert.assertEquals(1.0, test.x, 0);
-        Assert.assertEquals(0.0, test.y, 0);
+        Assertions.assertEquals(1.0, test.x, 0);
+        Assertions.assertEquals(0.0, test.y, 0);
     }
 
     @Test
-    public void testCreateYVect2() {
+    @DisplayName("Test Create Y Vect 2")
+    void testCreateYVect2() {
         Vec2 test = Vec2.vy();
-        Assert.assertEquals(0.0, test.x, 0);
-        Assert.assertEquals(1.0, test.y, 0);
+        Assertions.assertEquals(0.0, test.x, 0);
+        Assertions.assertEquals(1.0, test.y, 0);
     }
 
     @Test
-    public void testVector2set() {
+    @DisplayName("Test Vector 2 set")
+    void testVector2set() {
         Vec2 test = new Vec2();
         test.set(1.0, 2.0);
-        Assert.assertEquals(1.0, test.x, 0);
-        Assert.assertEquals(2.0, test.y, 0);
+        Assertions.assertEquals(1.0, test.x, 0);
+        Assertions.assertEquals(2.0, test.y, 0);
     }
 
     @Test
-    public void testVector2times0() {
+    @DisplayName("Test Vector 2 times 0")
+    void testVector2times0() {
         Vec2 test = new Vec2();
-
         test = test.times(2.0);
-
-        Assert.assertEquals(0.0, test.x, 0);
-        Assert.assertEquals(0.0, test.y, 0);
+        Assertions.assertEquals(0.0, test.x, 0);
+        Assertions.assertEquals(0.0, test.y, 0);
     }
 
     @Test
-    public void testVector2scale0() {
+    @DisplayName("Test Vector 2 scale 0")
+    void testVector2scale0() {
         Vec2 test = new Vec2();
-
         test.scale(2.0);
-
-        Assert.assertEquals(0.0, test.x, 0);
-        Assert.assertEquals(0.0, test.y, 0);
+        Assertions.assertEquals(0.0, test.x, 0);
+        Assertions.assertEquals(0.0, test.y, 0);
     }
 
     @Test
-    public void testVector2times1() {
+    @DisplayName("Test Vector 2 times 1")
+    void testVector2times1() {
         Vec2 test = new Vec2();
         test.set(1.0, 2.0);
         test = test.times(0);
-
-        Assert.assertEquals(0.0, test.x, 0);
-        Assert.assertEquals(0.0, test.y, 0);
+        Assertions.assertEquals(0.0, test.x, 0);
+        Assertions.assertEquals(0.0, test.y, 0);
     }
 
     @Test
-    public void testVector2scale1() {
+    @DisplayName("Test Vector 2 scale 1")
+    void testVector2scale1() {
         Vec2 test = new Vec2();
         test.set(1.0, 2.0);
         test.scale(0);
-
-        Assert.assertEquals(0.0, test.x, 0);
-        Assert.assertEquals(0.0, test.y, 0);
+        Assertions.assertEquals(0.0, test.x, 0);
+        Assertions.assertEquals(0.0, test.y, 0);
     }
 
     @Test
-    public void testVector2times2() {
+    @DisplayName("Test Vector 2 times 2")
+    void testVector2times2() {
         Vec2 test = new Vec2();
         test.set(1.0, 2.0);
         test = test.times(2);
-
-        Assert.assertEquals(2.0, test.x, 0);
-        Assert.assertEquals(4.0, test.y, 0);
+        Assertions.assertEquals(2.0, test.x, 0);
+        Assertions.assertEquals(4.0, test.y, 0);
     }
 
     @Test
-    public void testVector2scale2() {
+    @DisplayName("Test Vector 2 scale 2")
+    void testVector2scale2() {
         Vec2 test = new Vec2();
         test.set(1.0, 2.0);
         test.scale(2);
-
-        Assert.assertEquals(2.0, test.x, 0);
-        Assert.assertEquals(4.0, test.y, 0);
+        Assertions.assertEquals(2.0, test.x, 0);
+        Assertions.assertEquals(4.0, test.y, 0);
     }
-
 }

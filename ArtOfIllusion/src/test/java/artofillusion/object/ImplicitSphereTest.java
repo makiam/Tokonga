@@ -1,5 +1,5 @@
 /* Copyright (C) 2013 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
    Changes/refactor (C) 2020 by Lucas Stanek
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -9,26 +9,33 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.object;
 
 import artofillusion.math.*;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import org.junit.jupiter.api.Assertions;
 
 import java.util.*;
-import static java.lang.Math.*;
-import org.junit.BeforeClass;
 
-public class ImplicitSphereTest {
+import static java.lang.Math.*;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+
+@DisplayName("Implicit Sphere Test")
+class ImplicitSphereTest {
 
     private static final int testSpheres = 20;
     private static final int samplePoints = 100;
+
     private static final List<TestPair> pairs = new ArrayList<>();
 
-    private static class TestPair {  //It was this, or abuse AbstractMap.SimpleEntry
+    @DisplayName("Test Pair")
+    private static class TestPair {
 
         public final ImplicitSphere sphere;
+
         public final Vec3 point;
 
         public TestPair(ImplicitSphere sp, Vec3 pnt) {
@@ -40,23 +47,21 @@ public class ImplicitSphereTest {
         public String toString() {
             return "TestPair: {" + "Point: " + point + ", Length: " + point.length() + " Implicit Sphere: radius: " + sphere.getRadius() + " Influence radius: " + sphere.getInfluenceRadius() + "}";
         }
-        
-        
+
+
     }
 
-    @BeforeClass
-    public static void setup_spheres_and_test_points() {
+    @BeforeAll
+    static void setup_spheres_and_test_points() {
         for (int sphere = 0; sphere < testSpheres; sphere++) {
             double r1 = 0.1 + random();
             double r2 = 0.1 + random();
             ImplicitSphere currentSphere = new ImplicitSphere(min(r1, r2), max(r1, r2));
-
             for (int point = 0; point < samplePoints; point++) {
                 /* Factor 2.05 is to cover the entire possible size range of
                  * test spheres (-1.1 to 1.1)
                  */
                 Vec3 currentPoint = new Vec3(2.05 * (random() - 0.5), 2.05 * (random() - 0.5), 2.05 * (random() - 0.5));
-
                 pairs.add(new TestPair(currentSphere, currentPoint));
             }
         }
@@ -66,43 +71,39 @@ public class ImplicitSphereTest {
     public void point_inside_radius_is_greater_than_1() {
         pairs.stream()
                 .filter(p -> p.point.length() < p.sphere.getRadius())
-                .forEach(p
-                        -> Assert.assertTrue(p.toString(),
-                        p.sphere.getFieldValue(p.point.x, p.point.y, p.point.z, 0, 0) > 1));
-    }
-
-    @Test
-    public void point_outside_influence_radius_is_0() {
-        pairs.stream()
-                .filter(p -> p.point.length() > p.sphere.getInfluenceRadius())
-                .forEach(p -> Assert.assertTrue(p.toString(), p.sphere.getFieldValue(p.point.x, p.point.y, p.point.z, 0, 0) == 0));
-    }
-
-    @Test
-    public void point_between_radius_and_influence_is_between_0_and_1() {
-        pairs.stream()
-                .filter(p -> p.point.length() <= p.sphere.getInfluenceRadius() && p.point.length() >= p.sphere.getRadius())
                 .forEach((TestPair p)
-                        -> {
-                    double value = p.sphere.getFieldValue(p.point.x, p.point.y, p.point.z, 0, 0);
-                    Assert.assertTrue(p + "\nValue:" + value, 1 > value && value > 0);
-                });
+                        -> Assertions.assertTrue( p.sphere.getFieldValue(p.point.x, p.point.y, p.point.z, 0, 0) > 1, ()-> p.toString()));
     }
 
     @Test
-    public void gradient_estimate_within_delta() {
-        pairs.stream()
-                .filter(p -> abs(p.point.length() - p.sphere.getInfluenceRadius())
-                > p.sphere.getRadius() * 1e-4)
-                .forEach((TestPair p)
-                        -> {
-                    Vec3 grad = new Vec3();
-                    p.sphere.getFieldGradient(p.point.x, p.point.y, p.point.z, 0, 0, grad);
-                    Vec3 estGrad = estimateGradient(p);
-                    Assert.assertEquals("X-grad" + p, estGrad.x, grad.x, 1e-4 * abs(grad.x));
-                    Assert.assertEquals("Y-grad" + p, estGrad.y, grad.y, 1e-4 * abs(grad.y));
-                    Assert.assertEquals("Z-grad" + p, estGrad.z, grad.z, 1e-4 * abs(grad.z));
-                });
+    @DisplayName("Point _ outside _ influence _ radius _ is _ 0")
+    void point_outside_influence_radius_is_0() {
+        pairs.stream().
+                filter(p -> p.point.length() > p.sphere.getInfluenceRadius()).
+                forEach((TestPair p)
+                        -> Assertions.assertTrue(p.sphere.getFieldValue(p.point.x, p.point.y, p.point.z, 0, 0) == 0, ()-> p.toString()));
+    }
+
+    @Test
+    @DisplayName("Point _ between _ radius _ and _ influence _ is _ between _ 0 _ and _ 1")
+    void point_between_radius_and_influence_is_between_0_and_1() {
+        pairs.stream().filter(p -> p.point.length() <= p.sphere.getInfluenceRadius() && p.point.length() >= p.sphere.getRadius()).forEach((TestPair p) -> {
+            double value = p.sphere.getFieldValue(p.point.x, p.point.y, p.point.z, 0, 0);
+            Assertions.assertTrue(() -> 1 > value && value > 0, () -> p.toString() + "Value: " + value);
+        });
+    }
+
+    @Test
+    @DisplayName("Gradient _ estimate _ within _ delta")
+    void gradient_estimate_within_delta() {
+        pairs.stream().filter(p -> abs(p.point.length() - p.sphere.getInfluenceRadius()) > p.sphere.getRadius() * 1e-4).forEach(p -> {
+            Vec3 grad = new Vec3();
+            p.sphere.getFieldGradient(p.point.x, p.point.y, p.point.z, 0, 0, grad);
+            Vec3 estGrad = estimateGradient(p);
+            Assertions.assertEquals(estGrad.x, grad.x, 1e-4 * abs(grad.x), "X-grad: " + p);
+            Assertions.assertEquals(estGrad.y, grad.y, 1e-4 * abs(grad.y), "Y-grad: " + p);
+            Assertions.assertEquals(estGrad.z, grad.z, 1e-4 * abs(grad.z), "Z-grad: " + p);
+        });
     }
 
     /**
@@ -111,19 +112,17 @@ public class ImplicitSphereTest {
      * gradients are in the correct octant
      */
     @Test
-    public void gradient_estimate_at_influence_edge() {
-        pairs.stream()
-                .filter(p -> abs(p.point.length() - p.sphere.getInfluenceRadius())
-                <= p.sphere.getRadius() * 1e-4)
-                .forEach((TestPair p)
-                        -> {
-                    Vec3 grad = new Vec3();
-                    p.sphere.getFieldGradient(p.point.x, p.point.y, p.point.z, 0, 0, grad);
-                    Vec3 estGrad = estimateGradient(p);
-                    Assert.assertEquals("X-grad" + p, signum(estGrad.x), signum(grad.x), .01);
-                    Assert.assertEquals("Y-grad" + p, signum(estGrad.y), signum(grad.y), .01);
-                    Assert.assertEquals("Z-grad" + p, signum(estGrad.z), signum(grad.z), .01);
-                });
+    @DisplayName("Gradient _ estimate _ at _ influence _ edge")
+    void gradient_estimate_at_influence_edge() {
+        pairs.stream().filter(p -> abs(p.point.length() - p.sphere.getInfluenceRadius()) <= p.sphere.getRadius() * 1e-4).forEach(p -> {
+            Vec3 grad = new Vec3();
+            p.sphere.getFieldGradient(p.point.x, p.point.y, p.point.z, 0, 0, grad);
+            Vec3 estGrad = estimateGradient(p);
+            Assertions.assertEquals(signum(estGrad.x), signum(grad.x), .01, "X-grad: " + p);
+            Assertions.assertEquals(signum(estGrad.y), signum(grad.y), .01, "Y-grad: " + p);
+            Assertions.assertEquals(signum(estGrad.z), signum(grad.z), .01, "Z-grad: " + p);
+
+        });
     }
 
     private Vec3 estimateGradient(TestPair pair) {
@@ -139,45 +138,49 @@ public class ImplicitSphereTest {
         return new Vec3((vx2 - vx1) / (2 * step), (vy2 - vy1) / (2 * step), (vz2 - vz1) / (2 * step));
     }
 
-    @Test(expected = ClassCastException.class)
-    public void testCopyImplicitSphereFromBadObject() {
-        ImplicitSphere me = new ImplicitSphere(1, 1);
-        Sphere bad = new Sphere(1, 1, 1);
-        me.copyObject(bad);
+    @Test
+    @DisplayName("Test Copy Implicit Sphere From Bad Object")
+    @SuppressWarnings("ThrowableResultIgnored")
+    void testCopyImplicitSphereFromBadObject() {
+
+        Assertions.assertThrows(ClassCastException.class, () -> {
+            ImplicitSphere me = new ImplicitSphere(1, 1);
+            Sphere bad = new Sphere(1, 1, 1);
+            me.copyObject(bad);
+        });
     }
 
     @Test
-    public void testCopyImplicitSphere() {
+    @DisplayName("Test Copy Implicit Sphere")
+    void testCopyImplicitSphere() {
         ImplicitSphere me = new ImplicitSphere(1, 1);
         ImplicitSphere other = new ImplicitSphere(2, 3);
-
         me.copyObject(other);
     }
 
     @Test
-    public void testImplicitSphereBounds1() {
+    @DisplayName("Test Implicit Sphere Bounds 1")
+    void testImplicitSphereBounds1() {
         ImplicitSphere sphere = new ImplicitSphere(1, 1);
         BoundingBox bb = sphere.getBounds();
-
-        Assert.assertEquals(-1.0f, bb.minx, 0);
-        Assert.assertEquals(-1.0f, bb.miny, 0);
-        Assert.assertEquals(-1.0f, bb.minz, 0);
-        Assert.assertEquals(1.0f, bb.maxx, 0);
-        Assert.assertEquals(1.0f, bb.maxy, 0);
-        Assert.assertEquals(1.0f, bb.maxz, 0);
+        Assertions.assertEquals(-1.0f, bb.minx, 0);
+        Assertions.assertEquals(-1.0f, bb.miny, 0);
+        Assertions.assertEquals(-1.0f, bb.minz, 0);
+        Assertions.assertEquals(1.0f, bb.maxx, 0);
+        Assertions.assertEquals(1.0f, bb.maxy, 0);
+        Assertions.assertEquals(1.0f, bb.maxz, 0);
     }
 
     @Test
-    public void testImplicitSphereBounds2() {
+    @DisplayName("Test Implicit Sphere Bounds 2")
+    void testImplicitSphereBounds2() {
         ImplicitSphere sphere = new ImplicitSphere(1, 2);
         BoundingBox bb = sphere.getBounds();
-
-        Assert.assertEquals(-2.0f, bb.minx, 0);
-        Assert.assertEquals(-2.0f, bb.miny, 0);
-        Assert.assertEquals(-2.0f, bb.minz, 0);
-        Assert.assertEquals(2.0f, bb.maxx, 0);
-        Assert.assertEquals(2.0f, bb.maxy, 0);
-        Assert.assertEquals(2.0f, bb.maxz, 0);
+        Assertions.assertEquals(-2.0f, bb.minx, 0);
+        Assertions.assertEquals(-2.0f, bb.miny, 0);
+        Assertions.assertEquals(-2.0f, bb.minz, 0);
+        Assertions.assertEquals(2.0f, bb.maxx, 0);
+        Assertions.assertEquals(2.0f, bb.maxy, 0);
+        Assertions.assertEquals(2.0f, bb.maxz, 0);
     }
-
 }

@@ -1,4 +1,4 @@
-/* Copyright (C) 2022-2024 by Maksim Khramov
+/* Copyright (C) 2022-2023 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -10,6 +10,7 @@
 
 package artofillusion.tool;
 
+import artofillusion.ArtOfIllusion;
 import artofillusion.BevelExtrudeTool;
 import artofillusion.CreateCameraTool;
 import artofillusion.CreateCubeTool;
@@ -24,6 +25,7 @@ import artofillusion.MoveObjectTool;
 import artofillusion.MoveScaleRotateMeshTool;
 import artofillusion.MoveScaleRotateObjectTool;
 import artofillusion.MoveViewTool;
+import artofillusion.PluginRegistry;
 import artofillusion.ReshapeMeshTool;
 import artofillusion.RotateMeshTool;
 import artofillusion.RotateObjectTool;
@@ -41,194 +43,232 @@ import artofillusion.test.util.SetupTheme;
 import artofillusion.texture.MoveUVViewTool;
 import artofillusion.ui.EditingTool;
 import artofillusion.ui.GenericTool;
+import artofillusion.ui.ThemeManager;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
 import org.junit.jupiter.api.Assertions;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
- *
  * @author MaksK
  */
-@ExtendWith({SetupLocale.class, SetupLookAndFeel.class, RegisterTestResources.class, SetupTheme.class})
-public class TestToolWhichClicks {
+@DisplayName("Tool Which Clicks Test")
+@ExtendWith({SetupLocale.class, SetupLookAndFeel.class, RegisterTestResources.class, SetupTheme.class})  
+class ToolWhichClicksTest {
+
+    @BeforeAll
+    public static void setUpClass() {
+        PluginRegistry.registerResource("TranslateBundle", "artofillusion", ArtOfIllusion.class.getClassLoader(), "artofillusion", null);
+        PluginRegistry.registerResource("UITheme", "default", ArtOfIllusion.class.getClassLoader(), "artofillusion/Icons/defaultTheme.xml", null);
+        ThemeManager.initThemes();
+    }
 
     @Test
-    public void testCreateCameraToolCheckWhichClickValue() {
+    @DisplayName("Test Create Camera Tool Check Which Click Value")
+    void testCreateCameraToolCheckWhichClickValue() {
         EditingTool tool = new CreateCameraTool(null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS, click);
     }
 
     @Test
-    public void testCreateLightToolCheckWhichClickValue() {
+    @DisplayName("Test Create Light Tool Check Which Click Value")
+    void testCreateLightToolCheckWhichClickValue() {
         EditingTool tool = new CreateLightTool(null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS, click);
     }
 
     @Test
-    public void testCreateCurveToolCheckWhichClickValue() {
+    @DisplayName("Test Create Curve Tool Check Which Click Value")
+    void testCreateCurveToolCheckWhichClickValue() {
         EditingTool tool = new CreateCurveTool(null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS, click);
     }
 
     @Test
-    public void testMoveViewToolCheckWhichClickValue() {
+    @DisplayName("Test Move View Tool Check Which Click Value")
+    void testMoveViewToolCheckWhichClickValue() {
         EditingTool tool = new MoveViewTool(null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS, click);
     }
 
     @Test
-    public void testCreateCubeToolCheckWhichClickValue() {
+    @DisplayName("Test Create Cube Tool Check Which Click Value")
+    void testCreateCubeToolCheckWhichClickValue() {
         EditingTool tool = new CreateCubeTool(null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS, click);
     }
 
     @Test
-    public void testCreateSphereToolCheckWhichClickValue() {
+    @DisplayName("Test Create Sphere Tool Check Which Click Value")
+    void testCreateSphereToolCheckWhichClickValue() {
         EditingTool tool = new CreateSphereTool(null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS, click);
     }
 
     @Test
-    public void testCreateCylinerToolCheckWhichClickValue() {
+    @DisplayName("Test Create Cyliner Tool Check Which Click Value")
+    void testCreateCylinerToolCheckWhichClickValue() {
         EditingTool tool = new CreateCylinderTool(null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS, click);
     }
 
     @Test
-    public void testCreateVertexToolCheckWhichClickValue() {
+    @DisplayName("Test Create Vertex Tool Check Which Click Value")
+    void testCreateVertexToolCheckWhichClickValue() {
         EditingTool tool = new CreateVertexTool(null, null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS, click);
     }
 
     @Test
-    public void testCreatePolygonToolCheckWhichClickValue() {
+    @DisplayName("Test Create Polygon Tool Check Which Click Value")
+    void testCreatePolygonToolCheckWhichClickValue() {
         EditingTool tool = new CreatePolygonTool(null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS, click);
     }
 
     @Test
-    public void testThickenMeshToolCheckWhichClickValue() {
+    @DisplayName("Test Thicken Mesh Tool Check Which Click Value")
+    void testThickenMeshToolCheckWhichClickValue() {
         EditingTool tool = new ThickenMeshTool(null, null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS, click);
     }
 
     @Test
-    public void testSkewMeshToolCheckWhichClickValue() {
+    @DisplayName("Test Skew Mesh Tool Check Which Click Value")
+    void testSkewMeshToolCheckWhichClickValue() {
         EditingTool tool = new SkewMeshTool(null, null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS, click);
     }
 
     @Test
-    public void testScaleMeshToolCheckWhichClickValue() {
+    @DisplayName("Test Scale Mesh Tool Check Which Click Value")
+    void testScaleMeshToolCheckWhichClickValue() {
         EditingTool tool = new ScaleMeshTool(null, null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS, click);
     }
 
     @Test
-    public void testTaperMeshToolCheckWhichClickValue() {
+    @DisplayName("Test Taper Mesh Tool Check Which Click Value")
+    void testTaperMeshToolCheckWhichClickValue() {
         EditingTool tool = new TaperMeshTool(null, null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS, click);
     }
 
     @Test
-    public void testRotateObjectToolCheckWhichClickValue() {
+    @DisplayName("Test Rotate Object Tool Check Which Click Value")
+    void testRotateObjectToolCheckWhichClickValue() {
         EditingTool tool = new RotateObjectTool(null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.HANDLE_CLICKS + EditingTool.OBJECT_CLICKS, click);
     }
 
     @Test
-    public void testBevelExtrudeToolCheckWhichClickValue() {
+    @DisplayName("Test Bevel Extrude Tool Check Which Click Value")
+    void testBevelExtrudeToolCheckWhichClickValue() {
         EditingTool tool = new BevelExtrudeTool(null, null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS, click);
     }
 
     @Test
-    public void testMoveScaleRotateMeshToolCheckWhichClickValue() {
+    @DisplayName("Test Move Scale Rotate Mesh Tool Check Which Click Value")
+    void testMoveScaleRotateMeshToolCheckWhichClickValue() {
         EditingTool tool = new MoveScaleRotateMeshTool(null, null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS + EditingTool.HANDLE_CLICKS, click);
     }
 
     @Test
-    public void testCreateSplineMeshToolCheckWhichClickValue() {
+    @DisplayName("Test Create Spline Mesh Tool Check Which Click Value")
+    void testCreateSplineMeshToolCheckWhichClickValue() {
         EditingTool tool = new CreateSplineMeshTool(null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS, click);
     }
 
     @Test
-    public void testReshapeMeshToolCheckWhichClickValue() {
+    @DisplayName("Test Reshape Mesh Tool Check Which Click Value")
+    void testReshapeMeshToolCheckWhichClickValue() {
         EditingTool tool = new ReshapeMeshTool(null, null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.HANDLE_CLICKS, click);
     }
 
     @Test
-    public void testMoveUVViewToolCheckWhichClickValue() {
+    @DisplayName("Test Move UV View Tool Check Which Click Value")
+    void testMoveUVViewToolCheckWhichClickValue() {
         EditingTool tool = new MoveUVViewTool(null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS, click);
     }
 
     @Test
-    public void testScaleObjectToolCheckWhichClickValue() {
+    @DisplayName("Test Scale Object Tool Check Which Click Value")
+    void testScaleObjectToolCheckWhichClickValue() {
         EditingTool tool = new ScaleObjectTool(null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.HANDLE_CLICKS + EditingTool.OBJECT_CLICKS, click);
     }
 
     @Test
-    public void testSkeletonToolCheckWhichClickValue() {
+    @DisplayName("Test Skeleton Tool Check Which Click Value")
+    void testSkeletonToolCheckWhichClickValue() {
         EditingTool tool = new SkeletonTool(null, true);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS, click);
     }
 
     @Test
-    public void testRotateMeshToolCheckWhichClickValue() {
+    @DisplayName("Test Rotate Mesh Tool Check Which Click Value")
+    void testRotateMeshToolCheckWhichClickValue() {
         EditingTool tool = new RotateMeshTool(null, null, true);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS, click);
     }
 
     @Test
-    public void testMoveObjectToolCheckWhichClickValue() {
+    @DisplayName("Test Move Object Tool Check Which Click Value")
+    void testMoveObjectToolCheckWhichClickValue() {
         EditingTool tool = new MoveObjectTool(null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.OBJECT_CLICKS, click);
     }
 
     @Test
-    public void testMoveScaleRotateObjectToolCheckWhichClickValue() {
+    @DisplayName("Test Move Scale Rotate Object Tool Check Which Click Value")
+    void testMoveScaleRotateObjectToolCheckWhichClickValue() {
         EditingTool tool = new MoveScaleRotateObjectTool(null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS + EditingTool.OBJECT_CLICKS, click);
     }
 
     @Test
-    public void testRotateViewToolCheckWhichClickValue() {
+    @DisplayName("Test Rotate View Tool Check Which Click Value")
+    void testRotateViewToolCheckWhichClickValue() {
         EditingTool tool = new RotateViewTool(null);
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.ALL_CLICKS, click);
     }
 
     @Test
-    public void testGenericToolCheckWhichClickValue() {
+    @DisplayName("Test Generic Tool Check Which Click Value")
+    void testGenericToolCheckWhichClickValue() {
         EditingTool tool = new GenericTool(null, "", "Generic Tool");
         int click = tool.whichClicks();
         Assertions.assertEquals(EditingTool.HANDLE_CLICKS, click);

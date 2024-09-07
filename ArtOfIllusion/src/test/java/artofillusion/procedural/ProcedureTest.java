@@ -1,4 +1,4 @@
-/* Copyright (C) 2017-2023 by Maksim Khramov
+/* Copyright (C) 2017-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -7,136 +7,142 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.procedural;
 
 import artofillusion.math.RGBColor;
 import artofillusion.math.Vec3;
-import java.awt.Point;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import java.awt.*;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- *
  * @author MaksK
  */
-public class ProcedureTest {
+@DisplayName("Procedure Test")
+class ProcedureTest {
 
     @Test
-    public void testCreateNewProcedure() {
+    @DisplayName("Test Create New Procedure")
+    void testCreateNewProcedure() {
         Procedure procedure = new Procedure(new OutputModule[]{});
-        Assert.assertNotNull(procedure);
-        Assert.assertNotNull(procedure.getOutputModules());
-        Assert.assertEquals(0, procedure.getOutputModules().length);
-        Assert.assertNotNull(procedure.getModules());
-        Assert.assertEquals(0, procedure.getModules().length);
-
-        Assert.assertNotNull(procedure.getLinks());
-        Assert.assertEquals(0, procedure.getLinks().length);
+        Assertions.assertNotNull(procedure);
+        Assertions.assertNotNull(procedure.getOutputModules());
+        Assertions.assertEquals(0, procedure.getOutputModules().length);
+        Assertions.assertNotNull(procedure.getModules());
+        Assertions.assertEquals(0, procedure.getModules().length);
+        Assertions.assertNotNull(procedure.getLinks());
+        Assertions.assertEquals(0, procedure.getLinks().length);
     }
 
     @Test
-    public void testGetNullOutputModuleIndexFromProcedure() {
+    @DisplayName("Test Get Null Output Module Index From Procedure")
+    void testGetNullOutputModuleIndexFromProcedure() {
         Procedure procedure = new Procedure(new OutputModule[]{});
-        Assert.assertEquals(-1, procedure.getOutputIndex(null));
+        Assertions.assertEquals(-1, procedure.getOutputIndex(null));
     }
 
     @Test
-    public void testGetMissedOutputModuleIndexFromProcedure() {
-
+    @DisplayName("Test Get Missed Output Module Index From Procedure")
+    void testGetMissedOutputModuleIndexFromProcedure() {
         Procedure procedure = new Procedure(new OutputModule[]{});
-
         OutputModule missed = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
-        Assert.assertEquals(-1, procedure.getOutputIndex(missed));
-
+        Assertions.assertEquals(-1, procedure.getOutputIndex(missed));
     }
 
     @Test
-    public void testGetSingleOutputModuleIndexFromProcedure() {
+    @DisplayName("Test Get Single Output Module Index From Procedure")
+    void testGetSingleOutputModuleIndexFromProcedure() {
         OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
         Procedure procedure = new Procedure(new OutputModule[]{exist});
-
-        Assert.assertEquals(0, procedure.getOutputIndex(exist));
-
+        Assertions.assertEquals(0, procedure.getOutputIndex(exist));
     }
 
     @Test
-    public void testGetSecondOutputModuleIndexFromProcedure() {
+    @DisplayName("Test Get Second Output Module Index From Procedure")
+    void testGetSecondOutputModuleIndexFromProcedure() {
         OutputModule first = new OutputModule("TestOut1", "Label0", 0, new RGBColor(1, 1, 1), 0);
         OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
         Procedure procedure = new Procedure(new OutputModule[]{first, exist});
-
-        Assert.assertEquals(1, procedure.getOutputIndex(exist));
-
+        Assertions.assertEquals(1, procedure.getOutputIndex(exist));
     }
 
     @Test
-    public void testGetNullModuleFromProcedure() {
+    @DisplayName("Test Get Null Module From Procedure")
+    void testGetNullModuleFromProcedure() {
         Procedure procedure = new Procedure(new OutputModule[]{});
-        Assert.assertEquals(-1, procedure.getModuleIndex(null));
+        Assertions.assertEquals(-1, procedure.getModuleIndex(null));
     }
 
     @Test
-    public void testGetMissedModuleFromProcedure() {
+    @DisplayName("Test Get Missed Module From Procedure")
+    void testGetMissedModuleFromProcedure() {
         var mod = new ProceduralModule("Test", new IOPort[]{}, new IOPort[]{}, new Point());
         Procedure procedure = new Procedure(new OutputModule[]{});
-        Assert.assertEquals(-1, procedure.getModuleIndex(mod));
+        Assertions.assertEquals(-1, procedure.getModuleIndex(mod));
     }
 
     @Test
-    public void testGetSingleModuleIndex() {
+    @DisplayName("Test Get Single Module Index")
+    void testGetSingleModuleIndex() {
         var mod = new ProceduralModule("Test", new IOPort[]{}, new IOPort[]{}, new Point());
         Procedure procedure = new Procedure(new OutputModule[]{});
         procedure.addModule(mod);
-        Assert.assertEquals(0, procedure.getModuleIndex(mod));
+        Assertions.assertEquals(0, procedure.getModuleIndex(mod));
     }
 
     @Test
-    public void testGetDoubleModuleIndex() {
+    @DisplayName("Test Get Double Module Index")
+    void testGetDoubleModuleIndex() {
         var mod1 = new ProceduralModule("Test1", new IOPort[]{}, new IOPort[]{}, new Point());
         var mod2 = new ProceduralModule("Test2", new IOPort[]{}, new IOPort[]{}, new Point());
         Procedure procedure = new Procedure(new OutputModule[]{});
         procedure.addModule(mod1);
         procedure.addModule(mod2);
-        Assert.assertEquals(0, procedure.getModuleIndex(mod1));
-        Assert.assertEquals(1, procedure.getModuleIndex(mod2));
+        Assertions.assertEquals(0, procedure.getModuleIndex(mod1));
+        Assertions.assertEquals(1, procedure.getModuleIndex(mod2));
     }
 
     @Test
-    public void testDeleteFirstOfTwoModules() {
+    @DisplayName("Test Delete First Of Two Modules")
+    void testDeleteFirstOfTwoModules() {
         var mod1 = new ProceduralModule("Test1", new IOPort[]{}, new IOPort[]{}, new Point());
         var mod2 = new ProceduralModule("Test2", new IOPort[]{}, new IOPort[]{}, new Point());
         Procedure procedure = new Procedure(new OutputModule[]{});
         procedure.addModule(mod1);
         procedure.addModule(mod2);
-
         procedure.deleteModule(0);
-        Assert.assertEquals(0, procedure.getModuleIndex(mod2));
+        Assertions.assertEquals(0, procedure.getModuleIndex(mod2));
     }
 
     @Test
-    public void testDeleteLastSingleModule() {
+    @DisplayName("Test Delete Last Single Module")
+    void testDeleteLastSingleModule() {
         var mod = new ProceduralModule("Test", new IOPort[]{}, new IOPort[]{}, new Point());
         Procedure procedure = new Procedure(new OutputModule[]{});
         procedure.addModule(mod);
-
         procedure.deleteModule(0);
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testDeleteMissedModule() {
-        var mod = new ProceduralModule("Test", new IOPort[]{}, new IOPort[]{}, new Point());
-        Procedure procedure = new Procedure(new OutputModule[]{});
-        procedure.addModule(mod);
-
-        procedure.deleteModule(10);
+    @Test
+    @DisplayName("Test Delete Missed Module")
+    void testDeleteMissedModule() {
+        assertThrows(IndexOutOfBoundsException.class, () -> {
+            var mod = new ProceduralModule("Test", new IOPort[]{}, new IOPort[]{}, new Point());
+            Procedure procedure = new Procedure(new OutputModule[]{});
+            procedure.addModule(mod);
+            procedure.deleteModule(10);
+        });
     }
 
     @Test
-    public void testInitModuleFromPoint() {
-
+    @DisplayName("Test Init Module From Point")
+    void testInitModuleFromPoint() {
         var mod = new ProceduralModule("Test", new IOPort[]{}, new IOPort[]{}, new Point()) {
+
             private PointInfo point;
 
             @Override
@@ -145,7 +151,6 @@ public class ProcedureTest {
                 bounds.x = (int) p.x;
                 bounds.y = (int) p.y;
             }
-
         };
         Procedure procedure = new Procedure(new OutputModule[]{});
         procedure.addModule(mod);
@@ -153,334 +158,288 @@ public class ProcedureTest {
         pi.x = 100;
         pi.y = 100;
         procedure.initForPoint(pi);
-
-        Assert.assertEquals(100, mod.getBounds().getX(), 0.000001);
-        Assert.assertEquals(100, mod.getBounds().getY(), 0.000001);
-
+        Assertions.assertEquals(100, mod.getBounds().getX(), 0.000001);
+        Assertions.assertEquals(100, mod.getBounds().getY(), 0.000001);
     }
 
     @Test
-    public void testAddLink() {
+    @DisplayName("Test Add Link")
+    void testAddLink() {
         OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
         Procedure procedure = new Procedure(new OutputModule[]{exist});
         int linksCount = procedure.getLinks().length;
         IOPort from = new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.BOTTOM, new String[]{"Link From"});
         IOPort to = new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.TOP, new String[]{"Link To"});
         to.setModule(exist);
-
         Link link = new Link(from, to);
         procedure.addLink(link);
-
-        Assert.assertEquals(++linksCount, procedure.getLinks().length);
+        Assertions.assertEquals(++linksCount, procedure.getLinks().length);
     }
 
     @Test
-    public void testAddTwoLinks() {
+    @DisplayName("Test Add Two Links")
+    void testAddTwoLinks() {
         OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
         Procedure procedure = new Procedure(new OutputModule[]{exist});
-
         IOPort from = new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.BOTTOM, new String[]{"Link From"});
         IOPort to = new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.TOP, new String[]{"Link To"});
         to.setModule(exist);
-
         Link link = new Link(from, to);
         procedure.addLink(link);
-
         from = new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.BOTTOM, new String[]{"Link From"});
         to = new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.TOP, new String[]{"Link To"});
         to.setModule(exist);
-
         link = new Link(from, to);
         procedure.addLink(link);
-
-        Assert.assertEquals(2, procedure.getLinks().length);
+        Assertions.assertEquals(2, procedure.getLinks().length);
     }
 
     @Test
-    public void testProcedureCopyWithNoModule() {
+    @DisplayName("Test Procedure Copy With No Module")
+    void testProcedureCopyWithNoModule() {
         OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
         Procedure origin = new Procedure(new OutputModule[]{exist});
-
         Procedure target = new Procedure(new OutputModule[]{exist});
-
         target.copy(origin);
-
-        Assert.assertNotNull(target.getModules());
-        Assert.assertEquals(0, target.getModules().length);
-
-        Assert.assertNotNull(target.getLinks());
-        Assert.assertEquals(0, target.getLinks().length);
+        Assertions.assertNotNull(target.getModules());
+        Assertions.assertEquals(0, target.getModules().length);
+        Assertions.assertNotNull(target.getLinks());
+        Assertions.assertEquals(0, target.getLinks().length);
     }
 
     @Test
-    public void testProcedureCopyWithSingleModuleNoLinks() {
+    @DisplayName("Test Procedure Copy With Single Module No Links")
+    void testProcedureCopyWithSingleModuleNoLinks() {
         OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
         Procedure origin = new Procedure(new OutputModule[]{exist});
         var mod = new ProceduralModule("Test", new IOPort[]{}, new IOPort[]{}, new Point());
         origin.addModule(mod);
-
         Procedure target = new Procedure(new OutputModule[]{exist});
-
         target.copy(origin);
-
-        Assert.assertNotNull(target.getModules());
-        Assert.assertEquals(1, target.getModules().length);
-
-        Assert.assertNotNull(target.getLinks());
-        Assert.assertEquals(0, target.getLinks().length);
+        Assertions.assertNotNull(target.getModules());
+        Assertions.assertEquals(1, target.getModules().length);
+        Assertions.assertNotNull(target.getLinks());
+        Assertions.assertEquals(0, target.getLinks().length);
     }
 
     @Test
-    public void testProcedureCopyTwoModulesWithSingleLink() {
-        //Create source procedure
+    @DisplayName("Test Procedure Copy Two Modules With Single Link")
+    void testProcedureCopyTwoModulesWithSingleLink() {
+        // Create source procedure
         OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
         Procedure origin = new Procedure(new OutputModule[]{exist});
-
-        //Create module with singe output Port
+        // Create module with singe output Port
         var sine = new SineModule(new java.awt.Point());
-        var coor = new CoordinateModule(new java.awt.Point(), 3); //Time module
+        // Time module
+        var coor = new CoordinateModule(new java.awt.Point(), 3);
         origin.addModule(coor);
         origin.addModule(sine);
-
-        //Made connection
+        // Made connection
         IOPort sinein = sine.getInputPorts()[0];
         IOPort coorout = coor.getOutputPorts()[0];
-
         Link link = new Link(coorout, sinein);
         origin.addLink(link);
-
-        //Create target procedure
+        // Create target procedure
         OutputModule cout = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
         Procedure target = new Procedure(new OutputModule[]{cout});
-
         target.copy(origin);
-
-        Assert.assertNotNull(target.getModules());
-        Assert.assertEquals(2, target.getModules().length);
-
-        Assert.assertNotNull(target.getLinks());
-        Assert.assertEquals(1, target.getLinks().length);
-
+        Assertions.assertNotNull(target.getModules());
+        Assertions.assertEquals(2, target.getModules().length);
+        Assertions.assertNotNull(target.getLinks());
+        Assertions.assertEquals(1, target.getLinks().length);
     }
 
     @Test
-    public void testProcedureCopyThreeModulesWithTwoLinks() {
-        //Create source procedure
+    @DisplayName("Test Procedure Copy Three Modules With Two Links")
+    void testProcedureCopyThreeModulesWithTwoLinks() {
+        // Create source procedure
         OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
         Procedure origin = new Procedure(new OutputModule[]{exist});
-
-        //Create module with singe output Port
+        // Create module with singe output Port
         var sine = new SineModule(new java.awt.Point());
-        var coor = new CoordinateModule(new java.awt.Point(), 3); //Time module
+        // Time module
+        var coor = new CoordinateModule(new java.awt.Point(), 3);
         origin.addModule(coor);
         origin.addModule(sine);
-
-        //Made connection
+        // Made connection
         IOPort sinein = sine.getInputPorts()[0];
         IOPort coorout = coor.getOutputPorts()[0];
-
         Link link = new Link(coorout, sinein);
         origin.addLink(link);
-
-        //Made one more connection
+        // Made one more connection
         IOPort sineout = sine.getOutputPorts()[0];
         var procTm = origin.getOutputModules()[0];
         IOPort procTmIn = procTm.getInputPorts()[0];
-
         Link link2 = new Link(sineout, procTmIn);
         origin.addLink(link2);
-
-        //Create target procedure
+        // Create target procedure
         OutputModule cout = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
         Procedure target = new Procedure(new OutputModule[]{cout});
-
         target.copy(origin);
-
-        Assert.assertNotNull(target.getModules());
-        Assert.assertEquals(2, target.getModules().length);
-
-        Assert.assertNotNull(target.getLinks());
-        Assert.assertEquals(2, target.getLinks().length);
+        Assertions.assertNotNull(target.getModules());
+        Assertions.assertEquals(2, target.getModules().length);
+        Assertions.assertNotNull(target.getLinks());
+        Assertions.assertEquals(2, target.getLinks().length);
     }
 
     @Test
-    public void testProcGetDefaultOutputValue() {
-        //Create source procedure
+    @DisplayName("Test Proc Get Default Output Value")
+    void testProcGetDefaultOutputValue() {
+        // Create source procedure
         OutputModule exist = new OutputModule("TestOut", "Label", 42, new RGBColor(1, 1, 1), 0);
         Procedure origin = new Procedure(new OutputModule[]{exist});
-
-        Assert.assertEquals(42, origin.getOutputValue(0), 0);
+        Assertions.assertEquals(42, origin.getOutputValue(0), 0);
     }
 
     @Test
-    public void testProcGetDefaultOutputGradient() {
-        //Create source procedure
+    @DisplayName("Test Proc Get Default Output Gradient")
+    void testProcGetDefaultOutputGradient() {
+        // Create source procedure
         OutputModule exist = new OutputModule("TestOut", "Label", 42, new RGBColor(1, 1, 1), 0);
         Procedure origin = new Procedure(new OutputModule[]{exist});
-
         Vec3 grad = new Vec3(1, 2, 3);
         origin.getOutputGradient(0, grad);
-        Assert.assertEquals(0, grad.x, 0);
-        Assert.assertEquals(0, grad.y, 0);
-        Assert.assertEquals(0, grad.z, 0);
+        Assertions.assertEquals(0, grad.x, 0);
+        Assertions.assertEquals(0, grad.y, 0);
+        Assertions.assertEquals(0, grad.z, 0);
     }
 
     @Test
-    public void testProcGetDefaultOutputColor() {
-        //Create source procedure
+    @DisplayName("Test Proc Get Default Output Color")
+    void testProcGetDefaultOutputColor() {
+        // Create source procedure
         OutputModule exist = new OutputModule("TestOut", "Label", 42, new RGBColor(0, 0.5, 1), 0);
         Procedure origin = new Procedure(new OutputModule[]{exist});
-
         RGBColor color = new RGBColor();
         origin.getOutputColor(0, color);
-        Assert.assertEquals(0, color.red, 0);
-        Assert.assertEquals(0.5, color.green, 0);
-        Assert.assertEquals(1, color.blue, 0);
-    }
-
-    @Test(expected = NegativeArraySizeException.class)
-    public void testDeleteLinkFromNoLinks() {
-        //Create source procedure
-        OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
-        Procedure origin = new Procedure(new OutputModule[]{exist});
-
-        origin.deleteLink(0);
-    }
-
-    @Test(expected = NegativeArraySizeException.class)
-    public void testDeleteIllegalIndexLinkFromNoLinks() {
-        //Create source procedure
-        OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
-        Procedure origin = new Procedure(new OutputModule[]{exist});
-
-        origin.deleteLink(10);
+        Assertions.assertEquals(0, color.red, 0);
+        Assertions.assertEquals(0.5, color.green, 0);
+        Assertions.assertEquals(1, color.blue, 0);
     }
 
     @Test
-    public void testDeleteSingleLink() {
-        //Create source procedure
-        OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
-        Procedure origin = new Procedure(new OutputModule[]{exist});
-
-        //Create module with singe output Port
-        var sine = new SineModule(new java.awt.Point());
-        var coor = new CoordinateModule(new java.awt.Point(), 3); //Time module
-        origin.addModule(coor);
-        origin.addModule(sine);
-
-        //Made connection
-        IOPort sinein = sine.getInputPorts()[0];
-        IOPort coorout = coor.getOutputPorts()[0];
-
-        Link link = new Link(coorout, sinein);
-        origin.addLink(link);
-
-        origin.deleteLink(0);
-
-        Assert.assertNotNull(origin.getLinks());
-        Assert.assertEquals(0, origin.getLinks().length);
-
-        Assert.assertNull(sine.linkFrom[0]);
-
+    @DisplayName("Test Delete Link From No Links")
+    void testDeleteLinkFromNoLinks() {
+        assertThrows(NegativeArraySizeException.class, () -> {
+            // Create source procedure
+            OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
+            Procedure origin = new Procedure(new OutputModule[]{exist});
+            origin.deleteLink(0);
+        });
     }
 
     @Test
-    public void testDeleteFirstLinkOfTwo() {
-        //Create source procedure
+    @DisplayName("Test Delete Illegal Index Link From No Links")
+    void testDeleteIllegalIndexLinkFromNoLinks() {
+        assertThrows(NegativeArraySizeException.class, () -> {
+            // Create source procedure
+            OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
+            Procedure origin = new Procedure(new OutputModule[]{exist});
+            origin.deleteLink(10);
+        });
+    }
+
+    @Test
+    @DisplayName("Test Delete Single Link")
+    void testDeleteSingleLink() {
+        // Create source procedure
         OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
         Procedure origin = new Procedure(new OutputModule[]{exist});
-
-        //Create module with singe output Port
+        // Create module with singe output Port
         var sine = new SineModule(new java.awt.Point());
-        var coor = new CoordinateModule(new java.awt.Point(), 3); //Time module
+        // Time module
+        var coor = new CoordinateModule(new java.awt.Point(), 3);
         origin.addModule(coor);
         origin.addModule(sine);
-
-        //Made connection
+        // Made connection
         IOPort sinein = sine.getInputPorts()[0];
         IOPort coorout = coor.getOutputPorts()[0];
-
         Link link = new Link(coorout, sinein);
         origin.addLink(link);
+        origin.deleteLink(0);
+        Assertions.assertNotNull(origin.getLinks());
+        Assertions. assertEquals(0, origin.getLinks().length);
+        Assertions.assertNull(sine.linkFrom[0]);
+    }
 
-        //Made one more connection
+    @Test
+    @DisplayName("Test Delete First Link Of Two")
+    void testDeleteFirstLinkOfTwo() {
+        // Create source procedure
+        OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
+        Procedure origin = new Procedure(new OutputModule[]{exist});
+        // Create module with singe output Port
+        var sine = new SineModule(new java.awt.Point());
+        // Time module
+        var coor = new CoordinateModule(new java.awt.Point(), 3);
+        origin.addModule(coor);
+        origin.addModule(sine);
+        // Made connection
+        IOPort sinein = sine.getInputPorts()[0];
+        IOPort coorout = coor.getOutputPorts()[0];
+        Link link = new Link(coorout, sinein);
+        origin.addLink(link);
+        // Made one more connection
         IOPort sineout = sine.getOutputPorts()[0];
         var procTm = origin.getOutputModules()[0];
         IOPort procTmIn = procTm.getInputPorts()[0];
-
         Link link2 = new Link(sineout, procTmIn);
         origin.addLink(link2);
-
         origin.deleteLink(0);
-
-        Assert.assertNotNull(origin.getLinks());
-        Assert.assertEquals(1, origin.getLinks().length);
-
-        Assert.assertNull(sine.linkFrom[0]);
-
+        Assertions.assertNotNull(origin.getLinks());
+        Assertions.assertEquals(1, origin.getLinks().length);
+        Assertions.assertNull(sine.linkFrom[0]);
     }
 
     @Test
-    public void testDeleteSecondLinkOfTwo() {
-        //Create source procedure
+    @DisplayName("Test Delete Second Link Of Two")
+    void testDeleteSecondLinkOfTwo() {
+        // Create source procedure
         OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
         Procedure origin = new Procedure(new OutputModule[]{exist});
-
-        //Create module with singe output Port
+        // Create module with singe output Port
         var sine = new SineModule(new java.awt.Point());
-        var coor = new CoordinateModule(new java.awt.Point(), 3); //Time module
+        // Time module
+        var coor = new CoordinateModule(new java.awt.Point(), 3);
         origin.addModule(coor);
         origin.addModule(sine);
-
-        //Made connection
+        // Made connection
         IOPort sinein = sine.getInputPorts()[0];
         IOPort coorout = coor.getOutputPorts()[0];
-
         Link link = new Link(coorout, sinein);
         origin.addLink(link);
-
-        //Made one more connection
+        // Made one more connection
         IOPort sineout = sine.getOutputPorts()[0];
         var procTm = origin.getOutputModules()[0];
         IOPort procTmIn = procTm.getInputPorts()[0];
-
         Link link2 = new Link(sineout, procTmIn);
         origin.addLink(link2);
-
         origin.deleteLink(1);
-
-        Assert.assertNotNull(origin.getLinks());
-        Assert.assertEquals(1, origin.getLinks().length);
-
-        Assert.assertNull(procTm.linkFrom[0]);
-
+        Assertions.assertNotNull(origin.getLinks());
+        Assertions.assertEquals(1, origin.getLinks().length);
+        Assertions.assertNull(procTm.linkFrom[0]);
     }
 
     @Test
-    public void testDeleteSingleLinkBackDirection() {
-        //Create source procedure
+    @DisplayName("Test Delete Single Link Back Direction")
+    void testDeleteSingleLinkBackDirection() {
+        // Create source procedure
         OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
         Procedure origin = new Procedure(new OutputModule[]{exist});
-
-        //Create module with singe output Port
+        // Create module with singe output Port
         var sine = new SineModule(new java.awt.Point());
-        var coor = new CoordinateModule(new java.awt.Point(), 3); //Time module
+        // Time module
+        var coor = new CoordinateModule(new java.awt.Point(), 3);
         origin.addModule(coor);
         origin.addModule(sine);
-
-        //Made connection
+        // Made connection
         IOPort sinein = sine.getInputPorts()[0];
         IOPort coorout = coor.getOutputPorts()[0];
-
         Link link = new Link(sinein, coorout);
         origin.addLink(link);
-
         origin.deleteLink(0);
-
-        Assert.assertNotNull(origin.getLinks());
-        Assert.assertEquals(0, origin.getLinks().length);
-
-        Assert.assertNull(sine.linkFrom[0]);
-
+        Assertions.assertNotNull(origin.getLinks());
+        Assertions.assertEquals(0, origin.getLinks().length);
+        Assertions.assertNull(sine.linkFrom[0]);
     }
 }

@@ -50,6 +50,7 @@ public final class PrimitivesMenu extends BMenu {
             if(!items.isEmpty()) this.addSeparator();
         });
 
+        if(this.getChildren().isEmpty()) return;
         this.remove((Widget)this.getChild(this.getChildCount()-1));
     }
 

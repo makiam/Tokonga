@@ -7,24 +7,24 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-
 package artofillusion.object;
 
 import artofillusion.math.Vec3;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
- *
  * @author MaksK
  */
-public class TubeTest {
+@DisplayName("Tube Test")
+class TubeTest {
 
     @Test
-    public void testCreateTubeFromCurve() {
+    @DisplayName("Test Create Tube From Curve")
+    void testCreateTubeFromCurve() {
         Tube tube = new Tube(new Curve(new Vec3[]{new Vec3(), new Vec3()}, new float[]{0f, 1f}, Mesh.APPROXIMATING, false), new double[]{0f, 1f}, Tube.CLOSED_ENDS);
-        Assert.assertNotNull(tube);
-
+        Assertions.assertNotNull(tube);
     }
-
 }
