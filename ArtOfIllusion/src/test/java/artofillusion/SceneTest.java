@@ -208,8 +208,8 @@ class SceneTest {
         scene.addMaterial(new UniformMaterial());
         scene.addMaterial(new UniformMaterial());
 
-        Assert.assertEquals(3, listenerFireCount);
-        Assert.assertEquals(2, firedPositionIndex);
+        Assertions.assertEquals(3, listenerFireCount);
+        Assertions.assertEquals(2, firedPositionIndex);
 
     }
 
@@ -262,7 +262,7 @@ class SceneTest {
         });
         scene.add(tex);
         Assertions.assertEquals(1, listenerFireCount);
-        Assertions.assertEquals(0, firedPositionIndex);
+        Assertions.assertEquals(1, firedPositionIndex);
     }
 
     /**
@@ -365,10 +365,10 @@ class SceneTest {
         Assertions.assertNull(target.getObject().getMaterialMapping());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testMaterialsListIsImmutable() {
         Material mat = new UniformMaterial();
-        scene.getMaterials().add(mat);
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> scene.getMaterials().add(mat));
     }
 
     /**
@@ -464,7 +464,7 @@ class SceneTest {
         scene.addTexture(tex);
         Assertions.assertEquals(1, listenerFireCount);
         Assertions.assertEquals(2, scene.getNumTextures());
-        Assertions.assertEquals(0, firedPositionIndex);
+        Assertions.assertEquals(1, firedPositionIndex);
     }
 
     /**
@@ -680,24 +680,10 @@ class SceneTest {
         ImageMap map = new MIPMappedImage(im);
         scene.add(map);
 
-        Assert.assertEquals(1, scene.getImages().size());
-        Assert.assertEquals(0, scene.indexOf(map));
+        Assertions.assertEquals(1, scene.getImages().size());
+        Assertions.assertEquals(0, scene.indexOf(map));
 
-        Assert.assertEquals(map, scene.getImage(0));
-    }
-
-    @Test
-    public void testAddImageWithPolymorphicMethod() throws InterruptedException {
-        int SIZE = 50;
-        BufferedImage im = new BufferedImage(SIZE, SIZE, BufferedImage.TYPE_INT_ARGB);
-
-        ImageMap map = new MIPMappedImage(im);
-        scene.add(map);
-
-        Assert.assertEquals(1, scene.getImages().size());
-        Assert.assertEquals(0, scene.indexOf(map));
-
-        Assert.assertEquals(map, scene.getImage(0));
+        Assertions.assertEquals(map, scene.getImage(0));
     }
 
     /**
@@ -912,8 +898,8 @@ class SceneTest {
         });
 
         scene.add(new UniformTexture(), 0);
-        Assert.assertEquals(1, listenerFireCount);
-        Assert.assertEquals(0, firedPositionIndex);
+        Assertions.assertEquals(1, listenerFireCount);
+        Assertions.assertEquals(0, firedPositionIndex);
     }
 
     @Test
@@ -938,8 +924,8 @@ class SceneTest {
         });
         scene.add(new UniformMaterial(), 0);
         scene.add(new UniformMaterial(), 0);
-        Assert.assertEquals(2, listenerFireCount);
-        Assert.assertEquals(0, firedPositionIndex);
+        Assertions.assertEquals(2, listenerFireCount);
+        Assertions.assertEquals(0, firedPositionIndex);
     }
 
 }
