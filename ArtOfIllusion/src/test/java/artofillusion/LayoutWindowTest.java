@@ -76,13 +76,11 @@ class LayoutWindowTest {
 
     @BeforeAll
     public static void setupClass() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, URISyntaxException, IOException {
-
         new Thread(() -> new JDialogOperator("Art Of Illusion").close()).start();
         Locale.setDefault(Locale.ENGLISH);
         new ClassReference("artofillusion.ArtOfIllusion").startApplication();
         bundle.load(ArtOfIllusion.class.getClassLoader().getResourceAsStream("artofillusion.properties"));
         JemmyProperties.setCurrentOutput(TestOut.getNullOutput());
-
     }
 
     @BeforeEach
@@ -373,7 +371,7 @@ class LayoutWindowTest {
         new JButtonOperator(dialog, bundle.getResource("button.cancel")).clickMouse();
     }
 
-    @Ignore("No dialog to test")
+    @Disabled("No dialog for this command")
     @Test
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     @DisplayName("Invoke Create Scripted Object Command")
