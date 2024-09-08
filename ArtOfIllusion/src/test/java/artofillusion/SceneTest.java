@@ -120,8 +120,8 @@ class SceneTest {
      * Check that object created, added to scene and contains default tracks...
      */
     @Test
-    @DisplayName("Test Add Object As New Object Info To Goven Pos")
-    void testAddObjectAsNewObjectInfoToGovenPos() {
+    @DisplayName("Test Add Object As New Object Info To Given Pos")
+    void testAddObjectAsNewObjectInfoToGivenPos() {
         int sceneObjects = scene.getNumObjects();
         scene.addObject(new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube"), scene.getNumObjects(), (UndoRecord) null);
         ObjectInfo so = scene.getObject("Cube");
@@ -147,19 +147,22 @@ class SceneTest {
     }
 
     /**
-     * Add material to scene.
-     * Check that material listener event is triggered
+     * Add material to the scene.
+     * Check that material listener event is triggered and provided correct index
      */
     @Test
     @DisplayName("Test Add Material")
     void testAddMaterial() {
-        Material mat = new UniformMaterial();
+
         listenerFireCount = 0;
+        firedPositionIndex = -1;
+
         scene.addMaterialListener(new ListChangeListener() {
 
             @Override
             public void itemAdded(int index, Object obj) {
                 listenerFireCount++;
+                firedPositionIndex = index;
             }
 
             @Override
@@ -170,8 +173,96 @@ class SceneTest {
             public void itemChanged(int index, Object obj) {
             }
         });
-        scene.addMaterial(mat);
+        scene.addMaterial(new UniformMaterial());
         Assertions.assertEquals(1, listenerFireCount);
+        Assertions.assertEquals(0, firedPositionIndex);
+
+    }
+
+    /**
+     * Add material to the scene.
+     * Check that material listener event is triggered and provided correct index
+     */
+    @Test
+    public void testAddMoreMaterial() {
+
+        listenerFireCount = 0;
+        firedPositionIndex = -1;
+
+        scene.addMaterialListener(new ListChangeListener() {
+            @Override
+            public void itemAdded(int index, Object obj) {
+                listenerFireCount++;
+                firedPositionIndex = index;
+            }
+
+            @Override
+            public void itemRemoved(int index, Object obj) {
+            }
+
+            @Override
+            public void itemChanged(int index, Object obj) {
+            }
+        });
+        scene.addMaterial(new UniformMaterial());
+        scene.addMaterial(new UniformMaterial());
+        scene.addMaterial(new UniformMaterial());
+
+        Assertions.assertEquals(3, listenerFireCount);
+        Assertions.assertEquals(2, firedPositionIndex);
+
+    }
+
+    @Test
+    public void testAddMaterialWithPolymorphicMethod() {
+        Material mat = new UniformMaterial();
+        listenerFireCount = 0;
+        firedPositionIndex = -1;
+
+        scene.addMaterialListener(new ListChangeListener() {
+            @Override
+            public void itemAdded(int index, Object obj) {
+                listenerFireCount++;
+                firedPositionIndex = index;
+            }
+
+            @Override
+            public void itemRemoved(int index, Object obj) {
+            }
+
+            @Override
+            public void itemChanged(int index, Object obj) {
+            }
+        });
+        scene.add(mat);
+        Assertions.assertEquals(1, listenerFireCount);
+        Assertions.assertEquals(0, firedPositionIndex);
+    }
+
+    @Test
+    public void testAddTextureWithPolymorphicMethod() {
+        Texture tex = new UniformTexture();
+        listenerFireCount = 0;
+        firedPositionIndex = -1;
+
+        scene.addTextureListener(new ListChangeListener() {
+            @Override
+            public void itemAdded(int index, Object obj) {
+                listenerFireCount++;
+                firedPositionIndex = index;
+            }
+
+            @Override
+            public void itemRemoved(int index, Object obj) {
+            }
+
+            @Override
+            public void itemChanged(int index, Object obj) {
+            }
+        });
+        scene.add(tex);
+        Assertions.assertEquals(1, listenerFireCount);
+        Assertions.assertEquals(1, firedPositionIndex);
     }
 
     /**
@@ -179,13 +270,13 @@ class SceneTest {
      * Check that material listener event is triggered
      * Check that material is inserted at expected position
      */
-    @Disabled
     @Test
     @DisplayName("Test Add Material At Given Pos")
     void testAddMaterialAtGivenPos() {
         Material mat = new UniformMaterial();
         listenerFireCount = 0;
-        firedPositionIndex = 0;
+        firedPositionIndex = -1;
+
         scene.addMaterialListener(new ListChangeListener() {
 
             @Override
@@ -274,6 +365,12 @@ class SceneTest {
         Assertions.assertNull(target.getObject().getMaterialMapping());
     }
 
+    @Test
+    public void testMaterialsListIsImmutable() {
+        Material mat = new UniformMaterial();
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> scene.getMaterials().add(mat));
+    }
+
     /**
      * Test to check itemChanged event is fired on material change
      */
@@ -347,11 +444,13 @@ class SceneTest {
     void testAddTextureEventFired() {
         Texture tex = new UniformTexture();
         listenerFireCount = 0;
+        firedPositionIndex = -1;
         scene.addTextureListener(new ListChangeListener() {
 
             @Override
             public void itemAdded(int index, Object tex) {
                 listenerFireCount++;
+                firedPositionIndex = index;
             }
 
             @Override
@@ -365,6 +464,7 @@ class SceneTest {
         scene.addTexture(tex);
         Assertions.assertEquals(1, listenerFireCount);
         Assertions.assertEquals(2, scene.getNumTextures());
+        Assertions.assertEquals(1, firedPositionIndex);
     }
 
     /**
@@ -372,7 +472,6 @@ class SceneTest {
      * Check that texture listener event is triggered
      * Check that texture is inserted at expected position
      */
-    @Disabled
     @Test
     @DisplayName("Test Add Texture At Given Pos")
     void testAddTextureAtGivenPos() {
@@ -383,6 +482,7 @@ class SceneTest {
 
             @Override
             public void itemAdded(int index, Object obj) {
+                listenerFireCount = 0;
                 firedPositionIndex = index;
             }
 
@@ -569,6 +669,20 @@ class SceneTest {
         scene.addImage(map);
         Assertions.assertEquals(1, scene.getNumImages());
         Assertions.assertEquals(0, scene.indexOf(map));
+        Assertions.assertEquals(map, scene.getImage(0));
+    }
+
+    @Test
+    public void testAddImageWithPolymorphicMethod() throws InterruptedException {
+        int SIZE = 50;
+        BufferedImage im = new BufferedImage(SIZE, SIZE, BufferedImage.TYPE_INT_ARGB);
+
+        ImageMap map = new MIPMappedImage(im);
+        scene.add(map);
+
+        Assertions.assertEquals(1, scene.getImages().size());
+        Assertions.assertEquals(0, scene.indexOf(map));
+
         Assertions.assertEquals(map, scene.getImage(0));
     }
 
@@ -762,4 +876,56 @@ class SceneTest {
         ObjectInfo missed = new ObjectInfo(new Sphere(1.0, 1.0, 1.0), coords, "Not added to Scene object");
         Assertions.assertEquals(-1, scene.indexOf(missed));
     }
+
+    @Test
+    public void testAddTextureBefore() {
+        listenerFireCount = 0;
+        firedPositionIndex = -1;
+        scene.addTextureListener(new ListChangeListener() {
+            @Override
+            public void itemAdded(int index, Object obj) {
+                listenerFireCount++;
+                firedPositionIndex = index;
+            }
+
+            @Override
+            public void itemRemoved(int index, Object obj) {
+            }
+
+            @Override
+            public void itemChanged(int index, Object obj) {
+            }
+        });
+
+        scene.add(new UniformTexture(), 0);
+        Assertions.assertEquals(1, listenerFireCount);
+        Assertions.assertEquals(0, firedPositionIndex);
+    }
+
+    @Test
+    public void testAddMaterialBefore() {
+        listenerFireCount = 0;
+        firedPositionIndex = -1;
+
+        scene.addMaterialListener(new ListChangeListener() {
+            @Override
+            public void itemAdded(int index, Object obj) {
+                listenerFireCount++;
+                firedPositionIndex = index;
+            }
+
+            @Override
+            public void itemRemoved(int index, Object obj) {
+            }
+
+            @Override
+            public void itemChanged(int index, Object obj) {
+            }
+        });
+        scene.add(new UniformMaterial(), 0);
+        scene.add(new UniformMaterial(), 0);
+        Assertions.assertEquals(2, listenerFireCount);
+        Assertions.assertEquals(0, firedPositionIndex);
+    }
+
 }
