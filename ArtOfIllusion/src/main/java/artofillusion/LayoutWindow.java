@@ -27,6 +27,7 @@ import buoy.widget.*;
 import buoy.xml.IconResource;
 import buoyx.docking.*;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.greenrobot.eventbus.Subscribe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,9 +48,10 @@ import javax.swing.text.*;
  * The LayoutWindow class represents the main window for creating and laying out
  * scenes.
  */
+@Slf4j
 public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuManager {
 
-    private static final Logger log = LoggerFactory.getLogger(LayoutWindow.class);
+
     SceneViewer[] theView;
     BorderContainer[] viewPanel;
     FormContainer viewsContainer;
@@ -1914,7 +1916,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         editObjectCommand();
     }
 
-    public void objectLayoutCommand(ActionEvent event) {
+    public void objectLayoutCommand() {
         int i;
         int[] sel = getSelectedIndices();
         TransformDialog dlg;
@@ -2024,6 +2026,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }
         setUndoRecord(undo);
         updateImage();
+    }
+    public void objectLayoutCommand(ActionEvent event) {
+        objectLayoutCommand();
     }
 
     public void transformObjectCommand() {
