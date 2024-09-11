@@ -10,9 +10,12 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.keystroke
 
+import com.thoughtworks.xstream.annotations.XStreamAlias
+
 /**
  * This class contains information about a keyboard shortcut which automates some operation.
  * A keystroke pairs a key description (key code and modifier) with a script to execute
  * when the key is pressed.
  */
+@XStreamAlias("keystroke")
 data class KeystrokeRecord(val keyCode: Int, val modifiers: Int, val name: String?, val script: String?)

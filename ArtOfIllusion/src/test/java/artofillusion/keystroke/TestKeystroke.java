@@ -10,6 +10,8 @@ public class TestKeystroke {
     @Test
     void testXMLToObject() {
         XStream xstream = new XStream(new StaxDriver());
+        xstream.alias("keystrokes", KeystrokesList.class);
+        xstream.alias("keystroke", KeystrokeRecord.class);
 
         var result = xstream.fromXML(KeystrokeManager.class.getResourceAsStream("keystrokes.xml"));
 
