@@ -30,6 +30,9 @@ import org.w3c.dom.*;
  * This class maintains the list of keystrokes, and executes them in response to KeyEvents.
  */
 public class KeystrokeManager {
+
+    private KeystrokeManager() {}
+
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(KeystrokeManager.class);
 
     private static final List<KeystrokeRecord> records = new ArrayList<>();
