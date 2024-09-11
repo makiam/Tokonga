@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2013 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -22,15 +22,15 @@ import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
-import lombok.extern.slf4j.Slf4j;
+
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.w3c.dom.*;
 
 /**
  * This class maintains the list of keystrokes, and executes them in response to KeyEvents.
  */
-@Slf4j
 public class KeystrokeManager {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(KeystrokeManager.class);
 
     private static final List<KeystrokeRecord> records = new ArrayList<>();
     private static Map<Integer, List<KeystrokeRecord>> keyIndex = new HashMap<>();
@@ -42,6 +42,10 @@ public class KeystrokeManager {
      */
     public static KeystrokeRecord[] getAllRecords() {
         return records.toArray(KeystrokeRecord[]::new);
+    }
+
+    public static List<KeystrokeRecord> getRecords() {
+        return records;
     }
 
     /**
