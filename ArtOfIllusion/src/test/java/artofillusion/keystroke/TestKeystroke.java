@@ -5,17 +5,27 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 public class TestKeystroke {
 
     @Test
     void testXMLToObject() {
-        XStream xstream = new XStream(new StaxDriver());
-        xstream.alias("keystrokes", KeystrokesList.class);
-        xstream.alias("keystroke", KeystrokeRecord.class);
 
-        var result = xstream.fromXML(KeystrokeManager.class.getResourceAsStream("keystrokes.xml"));
+        XStream xstream = new XStream(new StaxDriver());
+        xstream.allowTypes(new Class[]{KeystrokesList.class, KeystrokeRecord.class});
+
+        xstream.processAnnotations(KeystrokesList.class);
+        xstream.processAnnotations(KeystrokeRecord.class);
+
+
+        var result = (KeystrokesList)xstream.fromXML(KeystrokeManager.class.getResourceAsStream("keystrokes.xml"));
+
+        List<KeystrokeRecord> records = result.getRecords();
 
         Assertions.assertNotNull(result);
+
+
 
     }
 }

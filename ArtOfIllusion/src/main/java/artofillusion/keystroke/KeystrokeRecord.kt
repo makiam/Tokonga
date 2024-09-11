@@ -11,6 +11,9 @@
 package artofillusion.keystroke
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import com.thoughtworks.xstream.annotations.XStreamConverter
+import com.thoughtworks.xstream.converters.extended.ToAttributedValueConverter
 
 /**
  * This class contains information about a keyboard shortcut which automates some operation.
@@ -18,4 +21,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias
  * when the key is pressed.
  */
 @XStreamAlias("keystroke")
-data class KeystrokeRecord(val keyCode: Int, val modifiers: Int, val name: String?, val script: String?)
+@XStreamConverter(ToAttributedValueConverter::class, strings = ["script"])
+data class KeystrokeRecord(@XStreamAlias("code") @XStreamAsAttribute val keyCode: Int,
+                           @XStreamAsAttribute val modifiers: Int,
+                           @XStreamAsAttribute val name: String?,
+
+                           val script: String?)
