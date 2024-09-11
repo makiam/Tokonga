@@ -40,23 +40,13 @@ public class KeystrokeManager {
 
     private static final String KEYSTROKE_FILENAME = "keystrokes.xml";
 
-    /**
-     * Get a list of all defined KeystrokeRecords.
-     */
-    public static KeystrokeRecord[] getAllRecords() {
-        return records.toArray(KeystrokeRecord[]::new);
-    }
-
     public static List<KeystrokeRecord> getRecords() {
-        return records;
+        return Collections.unmodifiableList(records);
     }
 
-    /**
-     * Set the list of all defined KeystrokeRecords, completely replacing the existing ones.
-     */
-    public static void setAllRecords(KeystrokeRecord[] allRecords) {
+    public static void setRecords(List<KeystrokeRecord> records) {
         records.clear();
-        Collections.addAll(records, allRecords);
+        records.addAll(records);
         recordModified();
     }
 
