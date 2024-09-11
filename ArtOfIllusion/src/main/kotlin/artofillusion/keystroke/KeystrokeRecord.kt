@@ -13,6 +13,7 @@ package artofillusion.keystroke
 import com.thoughtworks.xstream.annotations.XStreamAlias
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamConverter
+import com.thoughtworks.xstream.annotations.XStreamImplicit
 import com.thoughtworks.xstream.converters.extended.ToAttributedValueConverter
 
 /**
@@ -27,3 +28,6 @@ data class KeystrokeRecord(@XStreamAlias("code") @XStreamAsAttribute val keyCode
                            @XStreamAsAttribute val name: String?,
 
                            val script: String?)
+
+@XStreamAlias("keystrokes")
+data class KeystrokesList(@XStreamImplicit(itemFieldName = "keystroke") val records: List<KeystrokeRecord>)
