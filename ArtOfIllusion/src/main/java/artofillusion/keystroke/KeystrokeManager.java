@@ -27,15 +27,20 @@ import org.codehaus.groovy.control.CompilationFailedException;
  * This class maintains the list of keystrokes, and executes them in response to KeyEvents.
  */
 public class KeystrokeManager {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(KeystrokeManager.class);
 
     private KeystrokeManager() {}
+
     private static final XStream xstream = new XStream(new StaxDriver());
+    private static final Path path = ApplicationPreferences.getPreferencesFolderPath();
+
+
     static {
         xstream.allowTypes(new Class[]{KeystrokesList.class, KeystrokeRecord.class});
         xstream.processAnnotations(new Class[]{KeystrokesList.class, KeystrokeRecord.class});
     }
 
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(KeystrokeManager.class);
+
 
     private static final List<KeystrokeRecord> records = new ArrayList<>();
     private static Map<Integer, List<KeystrokeRecord>> keyIndex = new HashMap<>();
@@ -55,16 +60,16 @@ public class KeystrokeManager {
     /**
      * Add a new KeystrokeRecord.
      */
-    public static void addRecord(KeystrokeRecord record) {
-        records.add(record);
+    public static void addRecord(KeystrokeRecord keystrokeRecord) {
+        records.add(keystrokeRecord);
         recordModified();
     }
 
     /**
      * Remove a KeystrokeRecord.
      */
-    public static void removeRecord(KeystrokeRecord record) {
-        records.remove(record);
+    public static void removeRecord(KeystrokeRecord keystrokeRecord) {
+        records.remove(keystrokeRecord);
         recordModified();
     }
 
@@ -85,9 +90,9 @@ public class KeystrokeManager {
         if (keyIndex.isEmpty()) {
             // We need to build an index for quickly looking up KeystrokeRecords.
             keyIndex = new HashMap<>(records.size());
-            records.forEach(record -> {
-                List<KeystrokeRecord> list = keyIndex.computeIfAbsent(record.getKeyCode(), code -> new ArrayList<>());
-                list.add(record);
+            records.forEach(keystrokeRecord -> {
+                List<KeystrokeRecord> list = keyIndex.computeIfAbsent(keystrokeRecord.getKeyCode(), code -> new ArrayList<>());
+                list.add(keystrokeRecord);
             });
         }
 
@@ -97,10 +102,10 @@ public class KeystrokeManager {
             return;
         }
 
-        for (KeystrokeRecord record : list) {
-            if (record.getModifiers() == event.getModifiers()) {
+        for (KeystrokeRecord keystrokeRecord : list) {
+            if (keystrokeRecord.getModifiers() == event.getModifiers()) {
                 try {
-                    Script script = ArtOfIllusion.getShell().parse(record.getScript());
+                    Script script = ArtOfIllusion.getShell().parse(keystrokeRecord.getScript());
                     script.setProperty("window", window);
                     script.run();
                 } catch (CompilationFailedException ee) {
@@ -116,7 +121,7 @@ public class KeystrokeManager {
      */
     public static void loadRecords() {
         try {
-            Path path = ApplicationPreferences.getPreferencesFolderPath();
+
             File inputFile = new File(path.toFile(), KEYSTROKE_FILENAME);
             InputStream in;
             if (inputFile.exists()) {
@@ -140,7 +145,7 @@ public class KeystrokeManager {
         // Build a table of existing records.
 
         Map<String, KeystrokeRecord> existing = new HashMap<>();
-        records.forEach(record -> existing.put(record.getName(), record));
+        records.forEach(keystrokeRecord -> existing.put(keystrokeRecord.getName(), keystrokeRecord));
 
         // Parse the XML and load the records.
         var result = (KeystrokesList)xstream.fromXML(in);
@@ -160,7 +165,6 @@ public class KeystrokeManager {
      */
     public static void saveRecords() throws Exception {
         // Save it to disk.
-        Path path = ApplicationPreferences.getPreferencesFolderPath();
         File outFile = new File(path.toFile(), KEYSTROKE_FILENAME);
         try (OutputStream out = new BufferedOutputStream(new SafeFileOutputStream(outFile, SafeFileOutputStream.OVERWRITE))) {
             xstream.toXML(new KeystrokesList(records), out);
