@@ -51,9 +51,9 @@ public class KeystrokeManager {
         return Collections.unmodifiableList(records);
     }
 
-    public static void setRecords(List<KeystrokeRecord> records) {
+    public static void setRecords(List<KeystrokeRecord> newRecords) {
         records.clear();
-        records.addAll(records);
+        records.addAll(newRecords);
         recordModified();
     }
 
@@ -141,7 +141,7 @@ public class KeystrokeManager {
      * it checks whether there was already an existing keystroke with the same name. If so, the
      * new keystroke replaces the old one. If not, the new keystroke is simply added.
      */
-    public static void addRecordsFromXML(InputStream in) throws Exception {
+    public static void addRecordsFromXML(InputStream in) {
         // Build a table of existing records.
 
         Map<String, KeystrokeRecord> existing = new HashMap<>();
