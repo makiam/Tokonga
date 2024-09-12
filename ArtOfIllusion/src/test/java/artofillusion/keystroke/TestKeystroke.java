@@ -14,9 +14,7 @@ public class TestKeystroke {
 
         XStream xstream = new XStream(new StaxDriver());
         xstream.allowTypes(new Class[]{KeystrokesList.class, KeystrokeRecord.class});
-
-        xstream.processAnnotations(KeystrokesList.class);
-        xstream.processAnnotations(KeystrokeRecord.class);
+        xstream.processAnnotations(new Class[]{KeystrokesList.class, KeystrokeRecord.class});
 
 
         var result = (KeystrokesList)xstream.fromXML(KeystrokeManager.class.getResourceAsStream("keystrokes.xml"));

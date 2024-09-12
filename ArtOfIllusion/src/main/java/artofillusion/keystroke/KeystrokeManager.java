@@ -13,18 +13,15 @@ package artofillusion.keystroke;
 
 import artofillusion.*;
 import artofillusion.ui.*;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
 import groovy.lang.Script;
 import java.awt.event.*;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.*;
-import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
-import javax.xml.transform.stream.*;
 
 import org.codehaus.groovy.control.CompilationFailedException;
-import org.w3c.dom.*;
 
 /**
  * This class maintains the list of keystrokes, and executes them in response to KeyEvents.
@@ -32,6 +29,11 @@ import org.w3c.dom.*;
 public class KeystrokeManager {
 
     private KeystrokeManager() {}
+    private static final XStream xstream = new XStream(new StaxDriver());
+    static {
+        xstream.allowTypes(new Class[]{KeystrokesList.class, KeystrokeRecord.class});
+        xstream.processAnnotations(new Class[]{KeystrokesList.class, KeystrokeRecord.class});
+    }
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(KeystrokeManager.class);
 
@@ -137,60 +139,31 @@ public class KeystrokeManager {
     public static void addRecordsFromXML(InputStream in) throws Exception {
         // Build a table of existing records.
 
-        HashMap<String, KeystrokeRecord> existing = new HashMap<>();
+        Map<String, KeystrokeRecord> existing = new HashMap<>();
         records.forEach(record -> existing.put(record.getName(), record));
 
         // Parse the XML and load the records.
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse(in);
-        NodeList keystrokes = doc.getElementsByTagName("keystroke");
-        for (int i = 0; i < keystrokes.getLength(); i++) {
-            Node keystroke = keystrokes.item(i);
-            String name = keystroke.getAttributes().getNamedItem("name").getNodeValue();
-            
-            int code = Integer.parseInt(keystroke.getAttributes().getNamedItem("code").getNodeValue());
-            int modifiers = Integer.parseInt(keystroke.getAttributes().getNamedItem("modifiers").getNodeValue());
-            String script = keystroke.getFirstChild().getNodeValue();
-            if (existing.containsKey(name)) {
-                records.remove(existing.get(name));
+        var result = (KeystrokesList)xstream.fromXML(in);
+        List<KeystrokeRecord> loadedRecords = result.getRecords();
+
+        loadedRecords.forEach(rec -> {
+            if (existing.containsKey(rec.getName())) {
+                records.remove(existing.get(rec.getName()));
             }
-            addRecord(new KeystrokeRecord(code, modifiers, name, script));
-        }
+            addRecord(rec);
+        });
+
     }
 
     /**
      * Save the list of keystrokes to an XML file.
      */
     public static void saveRecords() throws Exception {
-        // Construct the XML.
-
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.newDocument();
-        Element root = doc.createElement("keystrokes");
-        doc.appendChild(root);
-        for (KeystrokeRecord record : records) {
-            Element recordElement = doc.createElement("keystroke");
-            recordElement.setAttribute("name", record.getName());
-            
-            recordElement.setAttribute("code", Integer.toString(record.getKeyCode()));
-            recordElement.setAttribute("modifiers", Integer.toString(record.getModifiers()));
-            Text scriptElement = doc.createTextNode(record.getScript());
-            recordElement.appendChild(scriptElement);
-            root.appendChild(recordElement);
-        }
-
         // Save it to disk.
         Path path = ApplicationPreferences.getPreferencesFolderPath();
         File outFile = new File(path.toFile(), KEYSTROKE_FILENAME);
         try (OutputStream out = new BufferedOutputStream(new SafeFileOutputStream(outFile, SafeFileOutputStream.OVERWRITE))) {
-            DOMSource source = new DOMSource(doc);
-            StreamResult result = new StreamResult(out);
-            TransformerFactory transFactory = TransformerFactory.newInstance();
-            Transformer transformer = transFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.transform(source, result);
+            xstream.toXML(new KeystrokesList(records), out);
         }
     }
 }

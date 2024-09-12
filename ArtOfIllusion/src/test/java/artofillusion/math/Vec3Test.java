@@ -102,4 +102,15 @@ class Vec3Test {
         Assertions.assertEquals(2.0, test.y, 0);
         Assertions.assertEquals(3.0, test.z, 0);
     }
+
+    @Test
+    void testVector3set2() {
+        Vec3 test = new Vec3();
+        Vec3 app = new Vec3(1.0, 2.0, 3.0);
+        test.set(app);
+
+        Assertions.assertEquals(1.0, test.x, 0);
+        Assertions.assertEquals(2.0, test.y, 0);
+        Assertions.assertEquals(3.0, test.z, 0);
+    }
 }
