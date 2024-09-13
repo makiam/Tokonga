@@ -87,7 +87,7 @@ public class KeystrokeManager {
      * @param window the EditingWindow in which the event occurred
      */
     public static void executeKeystrokes(KeyEvent event, EditingWindow window) {
-        log.info("Event: code {}{} vs {}", event.getKeyCode(), event.getModifiers(), event.getModifiersEx());
+        log.info("Event: {} code {} m:{} vs e:{}", event, event.getKeyCode(), event.getModifiers(), event.getModifiersEx());
         if (keyIndex.isEmpty()) {
             // We need to build an index for quickly looking up KeystrokeRecords.
             keyIndex = new HashMap<>(records.size());
@@ -107,6 +107,7 @@ public class KeystrokeManager {
             if (keystrokeRecord.getModifiers() == event.getModifiers()) {
                 try {
                     Script script = ArtOfIllusion.getShell().parse(keystrokeRecord.getScript());
+                    log.info("Script: {}", script);
                     script.setProperty("window", window);
                     script.run();
                 } catch (CompilationFailedException ee) {
