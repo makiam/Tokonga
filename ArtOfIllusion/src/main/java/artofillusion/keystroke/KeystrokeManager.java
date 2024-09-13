@@ -87,6 +87,7 @@ public class KeystrokeManager {
      * @param window the EditingWindow in which the event occurred
      */
     public static void executeKeystrokes(KeyEvent event, EditingWindow window) {
+        log.info("Event: code {}{} vs {}", event.getKeyCode(), event.getModifiers(), event.getModifiersEx());
         if (keyIndex.isEmpty()) {
             // We need to build an index for quickly looking up KeystrokeRecords.
             keyIndex = new HashMap<>(records.size());

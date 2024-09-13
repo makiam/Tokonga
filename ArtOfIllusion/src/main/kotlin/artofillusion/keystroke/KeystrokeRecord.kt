@@ -24,7 +24,7 @@ import com.thoughtworks.xstream.converters.extended.ToAttributedValueConverter
 @XStreamAlias("keystroke")
 @XStreamConverter(ToAttributedValueConverter::class, strings = ["script"])
 data class KeystrokeRecord(@XStreamAlias("code") @XStreamAsAttribute val keyCode: Int,
-                           @XStreamAsAttribute val modifiers: Int,
+                           @XStreamAsAttribute val modifiers: Int = 0,
                            @XStreamAsAttribute val name: String?,
 
                            val script: String?)
