@@ -12,9 +12,7 @@ internal interface MaterialsContainer {
     fun add(material: Material) = add(material, (this as Scene)._materials.size)
 
     fun add(material: Material, index: Int) {
-        val scene = this as Scene
-        scene._materials.add(index, material)
-        EventBus.getDefault().post(MaterialAddedEvent(scene, material, index))
+        val action = AddMaterialAction(this as Scene, material, index).execute()
     }
 
     /**
@@ -53,5 +51,17 @@ internal interface MaterialsContainer {
 
     data class MaterialAddedEvent(val scene: Scene, val material: Material, val position: Int)
     data class MaterialRemovedEvent(val scene: Scene, val material: Material, val position: Int)
+
+    class AddMaterialAction(val scene: Scene, val material: Material, val index: Int): UndoableEdit {
+
+        override fun undo() {
+            TODO("Not yet implemented")
+        }
+
+        override fun redo() {
+            scene._materials.add(index, material)
+            EventBus.getDefault().post(MaterialAddedEvent(scene, material, index))
+        }
+    }
 
 }

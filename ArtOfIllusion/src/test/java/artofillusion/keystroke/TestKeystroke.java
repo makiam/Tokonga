@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.List;
 
 public class TestKeystroke {
@@ -55,5 +58,25 @@ public class TestKeystroke {
         Assertions.assertEquals("Delete Selection", record.getName());
         Assertions.assertEquals(127, record.getKeyCode());
         Assertions.assertEquals(0, record.getModifiers());
+    }
+
+
+    @Test
+    void matchKeyEvents() {
+        Component cc = new JFrame();
+        KeyEvent event0 = new KeyEvent(cc, 0, 0, 0, KeyEvent.VK_U, 'u');
+        KeyEvent event1 = new KeyEvent(cc, 0, 0, 0, KeyEvent.VK_U, 'u');
+
+        Assertions.assertFalse(event0.equals(event1));
+    }
+
+    @Test
+    void matchKeyEvents2() {
+        Component cc = new JFrame();
+        KeyEvent event0 = new KeyEvent(cc, 0, 0, 0, KeyEvent.VK_U, 'u');
+        KeyEvent event1 = new KeyEvent(cc, 0, 0, 0, KeyEvent.VK_U, 'u');
+        var ec1 = new KeyEventContainer(event0);
+        var ec2 = new KeyEventContainer(event1);
+        Assertions.assertTrue(ec1.equals(ec2));
     }
 }

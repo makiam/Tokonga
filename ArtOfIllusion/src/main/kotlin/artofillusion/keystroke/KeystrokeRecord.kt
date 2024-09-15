@@ -15,6 +15,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import com.thoughtworks.xstream.annotations.XStreamConverter
 import com.thoughtworks.xstream.annotations.XStreamImplicit
 import com.thoughtworks.xstream.converters.extended.ToAttributedValueConverter
+import java.awt.event.KeyEvent
 
 /**
  * This class contains information about a keyboard shortcut which automates some operation.
@@ -31,3 +32,7 @@ data class KeystrokeRecord(@XStreamAlias("code") @XStreamAsAttribute val keyCode
 
 @XStreamAlias("keystrokes")
 data class KeystrokesList(@XStreamImplicit(itemFieldName = "keystroke") val records: List<KeystrokeRecord>)
+
+data class KeyEventContainer(val keyCode: Int, val modifiers: Int) {
+    constructor(event: KeyEvent) : this(event.keyCode, event.modifiersEx)
+}
