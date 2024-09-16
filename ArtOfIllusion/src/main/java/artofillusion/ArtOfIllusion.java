@@ -175,6 +175,8 @@ public class ArtOfIllusion {
             }
         }
 
+        runStartupScripts();
+
         for (String arg : args) {
             try {
                 newWindow(new Scene(new File(arg), true));
@@ -183,7 +185,6 @@ public class ArtOfIllusion {
             }
         }
 
-        runStartupScripts();
         if (numNewWindows == 0) {
             newWindow();
         }
