@@ -48,6 +48,19 @@ public class TestKeystroke {
     }
 
     @Test
+    void testXMLScriptValue() {
+        String xml = "<keystrokes><keystroke name=\"Delete Selection\" code=\"8\">println(\"Delete Selection\")</keystroke></keystrokes>";
+        var result = (KeystrokesList)xstream.fromXML(xml);
+        Assertions.assertNotNull(result);
+        List<KeystrokeRecord> records = result.getRecords();
+        Assertions.assertEquals(1, records.size());
+        KeystrokeRecord record = records.get(0);
+        Assertions.assertEquals("println(\"Delete Selection\")", record.getScript());
+
+    }
+
+
+    @Test
     void testOmitXMLModifierValue() {
         String xml = "<keystrokes><keystroke name=\"Delete Selection\" code=\"127\"/></keystrokes>";
         var result = (KeystrokesList)xstream.fromXML(xml);

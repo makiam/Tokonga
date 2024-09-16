@@ -44,6 +44,7 @@ public class KeystrokeManager {
 
     private static final List<KeystrokeRecord> records = new ArrayList<>();
     private static Map<Integer, List<KeystrokeRecord>> keyIndex = new HashMap<>();
+    private static Map<KeyEventContainer, List<Script>> scripts = new HashMap<>();
 
     private static final String KEYSTROKE_FILENAME = "keystrokes.xml";
 
@@ -78,6 +79,7 @@ public class KeystrokeManager {
      */
     public static void recordModified() {
         keyIndex.clear();
+        scripts.clear();
     }
 
     /**
