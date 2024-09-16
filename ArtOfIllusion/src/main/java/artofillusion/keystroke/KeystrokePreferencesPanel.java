@@ -29,7 +29,7 @@ import java.awt.Dimension;
  */
 public class KeystrokePreferencesPanel extends FormContainer implements PreferencesEditor {
 
-    private final List<KeystrokeRecord> records = new ArrayList<>(Arrays.asList(KeystrokeManager.getAllRecords()));
+    private final List<KeystrokeRecord> records = KeystrokeManager.getRecords();
     private final BTable table;
     private final BButton editButton;
     private final BButton deleteButton;
@@ -73,7 +73,7 @@ public class KeystrokePreferencesPanel extends FormContainer implements Preferen
         if (!changed) {
             return;
         }
-        KeystrokeManager.setAllRecords(records.toArray(KeystrokeRecord[]::new));
+        KeystrokeManager.setRecords(records);
         try {
             KeystrokeManager.saveRecords();
         } catch (Exception ex) {

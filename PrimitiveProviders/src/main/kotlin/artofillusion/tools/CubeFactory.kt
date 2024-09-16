@@ -7,21 +7,17 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+package artofillusion.tools
 
-package artofillusion.tools;
+import artofillusion.`object`.Cube
+import artofillusion.`object`.Object3D
+import artofillusion.ui.Translate
+import java.util.Optional
 
-import artofillusion.object.Object3D;
+class CubeFactory : PrimitiveFactory {
+    override fun getName() = Translate.text("menu.cube")
 
+    override fun getCategory() = "Geometry"
 
-import java.util.Optional;
-
-public interface PrimitiveFactory {
-    String getCategory();
-
-    String getName();
-
-    default String getObjectName() {
-        return getName();
-    }
-    Optional<Object3D> create();
+    override fun create() = Optional.of<Object3D?>(Cube(1.0, 1.0, 1.0))
 }

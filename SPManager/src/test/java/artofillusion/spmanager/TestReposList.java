@@ -1,6 +1,6 @@
 package artofillusion.spmanager;
 
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.Arrays;
 

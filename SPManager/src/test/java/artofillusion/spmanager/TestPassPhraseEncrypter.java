@@ -14,14 +14,13 @@ package artofillusion.spmanager;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 /**
  *
  * @author MaksK
  */
-public class TestPassPhraseEncrypter {
+class TestPassPhraseEncrypter {
 
     private static final String secretString = "Attack at dawn!";
     private static final String secretString2 = "The quick brown fox jumps over the lazy dog.";
@@ -33,7 +32,7 @@ public class TestPassPhraseEncrypter {
         String desEncrypted = encrypter.encrypt("");
         String desDecrypted = encrypter.decrypt(desEncrypted);
 
-        Assert.assertEquals("", desDecrypted);
+        Assertions.assertEquals("", desDecrypted);
     }
 
     @Test
@@ -42,7 +41,7 @@ public class TestPassPhraseEncrypter {
         String desEncrypted = encrypter.encrypt(secretString);
         String desDecrypted = encrypter.decrypt(desEncrypted);
 
-        Assert.assertEquals(secretString, desDecrypted);
+        Assertions.assertEquals(secretString, desDecrypted);
     }
 
     @Test
@@ -51,7 +50,7 @@ public class TestPassPhraseEncrypter {
         String desEncrypted = encrypter.encrypt(secretString2);
         String desDecrypted = encrypter.decrypt(desEncrypted);
 
-        Assert.assertEquals(secretString2, desDecrypted);
+        Assertions.assertEquals(secretString2, desDecrypted);
     }
 
     @Test
@@ -61,7 +60,7 @@ public class TestPassPhraseEncrypter {
         String desEncrypted = encrypter.encrypt(test1);
         String desDecrypted = encrypter.decrypt(desEncrypted);
 
-        Assert.assertEquals(test1, desDecrypted);
+        Assertions.assertEquals(test1, desDecrypted);
 
     }
 }

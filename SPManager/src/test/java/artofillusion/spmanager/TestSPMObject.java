@@ -6,7 +6,7 @@
 package artofillusion.spmanager;
 
 import artofillusion.ArtOfIllusion;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 import java.nio.file.Paths;
 

@@ -7,21 +7,18 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+package artofillusion.tools
 
-package artofillusion.tools;
+import artofillusion.math.RGBColor
+import artofillusion.`object`.Object3D
+import artofillusion.`object`.PointLight
+import artofillusion.ui.Translate
+import java.util.Optional
 
-import artofillusion.object.Object3D;
+class PointLightFactory : PrimitiveFactory {
+    override fun getName() = Translate.text("menu.pointLight")
 
+    override fun getCategory() = "Lights"
 
-import java.util.Optional;
-
-public interface PrimitiveFactory {
-    String getCategory();
-
-    String getName();
-
-    default String getObjectName() {
-        return getName();
-    }
-    Optional<Object3D> create();
+    override fun create() = Optional.of<Object3D>(PointLight(RGBColor(1.0f, 1.0f, 1.0f), 1.0f, 0.1))
 }

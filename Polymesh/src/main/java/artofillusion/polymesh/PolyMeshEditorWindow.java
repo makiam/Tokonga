@@ -1719,8 +1719,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Deletes any keystroke script associated to the PolyMesh plugin
      */
     public void cleanKeystrokes() {
-        KeystrokeRecord[] keys = KeystrokeManager.getAllRecords();
-        for (KeystrokeRecord key : keys) {
+
+        for (KeystrokeRecord key : KeystrokeManager.getRecords()) {
             if (key.getName().endsWith("(PolyMesh)")) {
                 KeystrokeManager.removeRecord(key);
             }
