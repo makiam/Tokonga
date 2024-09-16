@@ -11,7 +11,5 @@ class CameraFactory: PrimitiveFactory {
 
     override fun getCategory() = "Cameras"
 
-    override fun create(): Optional<Object3D> {
-        return Optional.of<Object3D>(SceneCamera())
-    }
+    override fun create() = Optional.of<Object3D>(SceneCamera())
 }
