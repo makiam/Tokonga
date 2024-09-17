@@ -1,6 +1,6 @@
 plugins {
 	id 'aoi.plugin-conventions'
-        id 'java'
+    id 'java'
 }
 
 description = 'Polymesh'
