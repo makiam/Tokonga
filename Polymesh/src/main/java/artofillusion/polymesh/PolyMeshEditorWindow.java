@@ -46,17 +46,7 @@ import artofillusion.polymesh.PolyMeshValueWidget.ValueWidgetOwner;
 import artofillusion.texture.FaceParameterValue;
 import artofillusion.texture.ParameterValue;
 import artofillusion.texture.VertexParameterValue;
-import artofillusion.ui.ActionProcessor;
-import artofillusion.ui.ComponentsDialog;
-import artofillusion.ui.EditingTool;
-import artofillusion.ui.EditingWindow;
-import artofillusion.ui.GenericTool;
-import artofillusion.ui.PanelDialog;
-import artofillusion.ui.PopupMenuManager;
-import artofillusion.ui.ToolPalette;
-import artofillusion.ui.Translate;
-import artofillusion.ui.UIUtilities;
-import artofillusion.ui.ValueSlider;
+import artofillusion.ui.*;
 import buoy.event.CommandEvent;
 import buoy.event.EventSource;
 import buoy.event.KeyPressedEvent;
@@ -344,8 +334,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         valueWidgetDialog.pack();
         unseenValueWidgetDialog = true;
         //content.add(valueWidget = new PolymeshValueWidget(), 2, 0, 1, 1);
-        content.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER,
-                LayoutInfo.BOTH, null, null));
+        content.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
         BorderContainer widgets = new BorderContainer();
         RowContainer meshContainer = new RowContainer();
         levelContainer = new RowContainer();
@@ -355,12 +344,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         meshContainer.add(looseSelectCB = new BCheckBox(Translate.text("polymesh:looseSelect"), looseSelect));
         looseSelectCB.addEventLink(ValueChangedEvent.class, this, "doLooseSelectionChanged");
         meshContainer.add(looseSelectSpinner = new BSpinner(looseSelectValue, 1, 100, 1));
-        looseSelectSpinner.addEventLink(ValueChangedEvent.class, this,
-                "doLooseSelectionValueChanged");
-        meshContainer.add(frontSelectCB = new BCheckBox(Translate
-                .text("polymesh:frontSelect"), selectVisible));
-        frontSelectCB.addEventLink(ValueChangedEvent.class, this,
-                "doFrontSelectionChanged");
+        looseSelectSpinner.addEventLink(ValueChangedEvent.class, this, "doLooseSelectionValueChanged");
+        meshContainer.add(frontSelectCB = new BCheckBox(Translate.text("polymesh:frontSelect"), selectVisible));
+        frontSelectCB.addEventLink(ValueChangedEvent.class, this, "doFrontSelectionChanged");
         meshContainer.add(new BLabel(Translate.text("polymesh:meshTension") + ": "));
         tensionSpin = new BSpinner(tensionDistance, 0, 999, 1);
         setSpinnerColumns(tensionSpin, 3);
@@ -399,10 +385,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         buttons.add(Translate.button("ok", this, "doOk"));
         buttons.add(Translate.button("cancel", this, "doCancel"));
         content.add(buttons, 0, 3, 2, 1, new LayoutInfo());
-        FormContainer toolsContainer = new FormContainer(new double[]{1},
-                new double[]{1, 0});
-        toolsContainer.setDefaultLayout(new LayoutInfo(LayoutInfo.NORTH,
-                LayoutInfo.BOTH));
+        FormContainer toolsContainer = new FormContainer(new double[]{1}, new double[]{1, 0});
+        toolsContainer.setDefaultLayout(new LayoutInfo(LayoutInfo.NORTH, LayoutInfo.BOTH));
         content.add(toolsContainer, 0, 0);
         toolsContainer.add(tools = new ToolPalette(1, 12), 0, 0);
         tools.addTool(defaultTool = reshapeMeshTool);
@@ -487,11 +471,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         }
         editMenu.addSeparator();
         editMenu.add(editMenuItem[0] = Translate.menuItem("clear", this, "deleteCommand"));
-        editMenu.add(editMenuItem[1] = Translate.menuItem("selectAll", this, "selectAllCommand"));
-        editMenu.add(editMenuItem[2] = Translate.menuItem("polymesh:showNormal", this, "bringNormal"));
+        editMenu.add(editMenuItem[1] = Translate.menuItem("selectAll", this::selectAllCommand));
+        editMenu.add(editMenuItem[2] = Translate.menuItem("polymesh:showNormal", this::bringNormal));
         editMenu.add(editMenuItem[3] = Translate.menuItem("extendSelection", this, "extendSelectionCommand"));
         editMenu.add(Translate.menuItem("invertSelection", this, "invertSelectionCommand"));
-        editMenu.add(editMenuItem[4] = Translate.menuItem("polymesh:scaleSelection", this, "scaleSelectionCommand"));
+        editMenu.add(editMenuItem[4] = Translate.menuItem("polymesh:scaleSelection", this::scaleSelectionCommand));
         editMenu.add(editMenuItem[5] = Translate.menuItem("polymesh:scaleNormal", this, "scaleNormalSelectionCommand"));
         editMenu.add(editMenuItem[6] = Translate.checkboxMenuItem("tolerantSelection", this, "tolerantModeChanged", lastTolerant));
         editMenu.add(editMenuItem[7] = Translate.checkboxMenuItem("freehandSelection", this, "freehandModeChanged", lastFreehand));
@@ -631,11 +615,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         edgeMenuItem = new MenuWidget[22];
 
         BMenu local = Translate.menu("polymesh:divide");
-        local.add(Translate.menuItem("polymesh:two", this, "doDivideEdgesTwo"));
-        local.add(Translate.menuItem("polymesh:three", this, "doDivideEdgesThree"));
-        local.add(Translate.menuItem("polymesh:four", this, "doDivideEdgesFour"));
-        local.add(Translate.menuItem("polymesh:five", this, "doDivideEdgesFive"));
-        local.add(Translate.menuItem("polymesh:specify", this, "doDivideEdgesInteractive"));
+        local.add(Translate.menuItem("polymesh:two", this::doDivideEdgesTwo));
+        local.add(Translate.menuItem("polymesh:three", this::doDivideEdgesThree));
+        local.add(Translate.menuItem("polymesh:four", this::doDivideEdgesFour));
+        local.add(Translate.menuItem("polymesh:five", this::doDivideEdgesFive));
+        local.add(Translate.menuItem("polymesh:specify", this::doDivideEdgesInteractive));
         edgeMenu.add(edgeMenuItem[0] = local);
 
         local = Translate.menu("polymesh:moveAlong");
@@ -1027,7 +1011,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Select the entire mesh.
      */
-    void selectAllCommand() {
+    void selectAllCommand(ActionEvent event) {
         setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, this, selectMode, selected.clone()));
         for (int i = 0; i < selected.length; i++) {
             selected[i] = true;
@@ -1063,9 +1047,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 selectedVert[edges[i].vertex] = selectedVert[edges[edges[i].hedge].vertex] = true;
             }
         }
-        if (selectMode == PolyMeshEditorWindow.POINT_MODE) {
+        if (selectMode == MeshEditController.POINT_MODE) {
             setSelection(selectedVert);
-        } else if (selectMode == PolyMeshEditorWindow.EDGE_MODE) {
+        } else if (selectMode == MeshEditController.EDGE_MODE) {
             for (int i = 0; i < edges.length / 2; i++) {
                 selected[i] = (selectedVert[edges[i].vertex] && selectedVert[edges[edges[i].hedge].vertex]);
             }
@@ -1172,9 +1156,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private void freehandModeChanged() {
         lastFreehand = ((BCheckBoxMenuItem) editMenuItem[7]).getState();
         for (int i = 0; i < theView.length; i++) {
-            ((PolyMeshViewer) theView[i])
-                    .setFreehandSelection(((BCheckBoxMenuItem) editMenuItem[7])
-                            .getState());
+            ((PolyMeshViewer) theView[i]).setFreehandSelection(((BCheckBoxMenuItem) editMenuItem[7]).getState());
         }
         savePreferences();
     }
@@ -1836,23 +1818,23 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         updateImage();
     }
 
-    private void doDivideEdgesTwo() {
+    private void doDivideEdgesTwo(ActionEvent event) {
         doDivideEdges(2);
     }
 
-    private void doDivideEdgesThree() {
+    private void doDivideEdgesThree(ActionEvent event) {
         doDivideEdges(3);
     }
 
-    private void doDivideEdgesFour() {
+    private void doDivideEdgesFour(ActionEvent event) {
         doDivideEdges(4);
     }
 
-    private void doDivideEdgesFive() {
+    private void doDivideEdgesFive(ActionEvent event) {
         doDivideEdges(5);
     }
 
-    private void doDivideEdgesInteractive() {
+    private void doDivideEdgesInteractive(ActionEvent event) {
         int num = new DivideDialog(this).getNumber();
         if (num > 0) {
             doDivideEdges(num);
@@ -2788,7 +2770,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Brings normal to current selection
      */
-    private void bringNormal() {
+    private void bringNormal(ActionEvent event) {
         Camera theCamera = theView[currentView].getCamera();
         Vec3 orig = new Vec3(0, 0, 0);
         Vec3 zdir;
@@ -3901,7 +3883,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Scales current selection using the slider
      */
-    void scaleSelectionCommand() {
+    void scaleSelectionCommand(ActionEvent event) {
         if (valueWidget.isActivated()) {
             return;
         }
@@ -4511,8 +4493,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             }
             boolean b = ((Boolean) closed.get(i));
             Curve c = new Curve(v, s, mesh.getSmoothingMethod(), b);
-            ((LayoutWindow) parentWindow).addObject(c, objInfo.coords,
-                    ("PMCurve " + i), null);
+            ((LayoutWindow) parentWindow).addObject(c, objInfo.coords, ("PMCurve " + i), null);
         }
         ((LayoutWindow) parentWindow).repaint();
     }

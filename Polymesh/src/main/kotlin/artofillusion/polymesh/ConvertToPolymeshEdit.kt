@@ -1,20 +1,13 @@
-package artofillusion.polymesh;
+package artofillusion.polymesh
 
-import artofillusion.UndoableEdit;
+import artofillusion.UndoableEdit
 
-public class ConvertToPolymeshEdit implements UndoableEdit {
-    @Override
-    public void undo() {
-
+class ConvertToPolymeshEdit : UndoableEdit {
+    override fun undo() {
     }
 
-    @Override
-    public void redo() {
-
+    override fun redo() {
     }
 
-    @Override
-    public String getName() {
-        return "Convert to Polymesh";
-    }
+    override fun getName() = "Convert to Polymesh"
 }
