@@ -621,13 +621,6 @@ public class UVMappingViewer extends MeshViewer {
         }
 
         /**
-         * This is ignored, since there is only one selection mode in this window.
-         */
-        @Override
-        public void setSelectionMode(int mode) {
-        }
-
-        /**
          * Get an array of flags specifying which parts of the object are selected.
          */
         @Override
