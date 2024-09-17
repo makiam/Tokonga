@@ -204,11 +204,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     private final BDialog valueWidgetDialog;
 
-    private final BMenuItem extrudeItem = Translate.menuItem("polymesh:extrudeNormal", this, "doExtrudeNormal");
-    private final BMenuItem extrudeEdgeItem = Translate.menuItem("polymesh:extrudeNormal", this, "doExtrudeEdgeNormal");
+    private final BMenuItem extrudeItem = Translate.menuItem("polymesh:extrudeNormal", this::doExtrudeNormal);
+    private final BMenuItem extrudeEdgeItem = Translate.menuItem("polymesh:extrudeNormal", this::doExtrudeEdgeNormal);
 
-    private final BMenuItem extrudeRegionItem = Translate.menuItem("polymesh:extrudeRegionNormal", this, "doExtrudeRegionNormal");
-    private final BMenuItem extrudeEdgeRegionItem = Translate.menuItem("polymesh:extrudeRegionNormal", this, "doExtrudeEdgeRegionNormal");
+    private final BMenuItem extrudeRegionItem = Translate.menuItem("polymesh:extrudeRegionNormal", this::doExtrudeRegionNormal);
+    private final BMenuItem extrudeEdgeRegionItem = Translate.menuItem("polymesh:extrudeRegionNormal", this::doExtrudeEdgeRegionNormal);
 
     private Vec3 direction;
 
@@ -642,9 +642,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
         local = Translate.menu("polymesh:extrudeRegion");
         local.add(extrudeEdgeRegionItem);
-        local.add(Translate.menuItem("polymesh:xExtrude", this, "doExtrudeEdgeRegionX"));
-        local.add(Translate.menuItem("polymesh:yExtrude", this, "doExtrudeEdgeRegionY"));
-        local.add(Translate.menuItem("polymesh:zExtrude", this, "doExtrudeEdgeRegionZ"));
+        local.add(Translate.menuItem("polymesh:xExtrude", this::doExtrudeEdgeRegionX));
+        local.add(Translate.menuItem("polymesh:yExtrude", this::doExtrudeEdgeRegionY));
+        local.add(Translate.menuItem("polymesh:zExtrude", this::doExtrudeEdgeRegionZ));
         edgeMenu.add(edgeMenuItem[3] = local);
 
         groupNormalShortcut = extrudeEdgeRegionItem.getShortcut();
@@ -2198,7 +2198,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Face extrusion along normal
      */
-    private void doExtrudeNormal() {
+    private void doExtrudeNormal(ActionEvent event) {
         if (valueWidget.isActivated()) {
             return;
         }
@@ -2242,7 +2242,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Edge extrusion along normal
      */
-    private void doExtrudeEdgeNormal() {
+    private void doExtrudeEdgeNormal(ActionEvent event) {
         if (valueWidget.isActivated()) {
             return;
         }
@@ -2286,7 +2286,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Region extrusion along normal
      */
-    private void doExtrudeRegionNormal() {
+    private void doExtrudeRegionNormal(ActionEvent event) {
         if (valueWidget.isActivated()) {
             return;
         }
@@ -2330,7 +2330,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Edge Region extrusion along normal
      */
-    private void doExtrudeEdgeRegionNormal() {
+    private void doExtrudeEdgeRegionNormal(ActionEvent event) {
         if (valueWidget.isActivated()) {
             return;
         }
@@ -2341,7 +2341,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Edge Region extrusion along X axis
      */
-    private void doExtrudeEdgeRegionX() {
+    private void doExtrudeEdgeRegionX(ActionEvent event) {
         if (valueWidget.isActivated()) {
             return;
         }
@@ -2352,7 +2352,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Edge Region extrusion along Y axis
      */
-    private void doExtrudeEdgeRegionY() {
+    private void doExtrudeEdgeRegionY(ActionEvent event) {
         if (valueWidget.isActivated()) {
             return;
         }
@@ -2363,7 +2363,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Edge Region extrusion along Z axis
      */
-    private void doExtrudeEdgeRegionZ() {
+    private void doExtrudeEdgeRegionZ(ActionEvent event) {
         if (valueWidget.isActivated()) {
             return;
         }
