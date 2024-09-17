@@ -4195,7 +4195,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         }
     }
 
-    private void doLooseSelectionChanged(ActionEvent event) {
+    private void doLooseSelectionChanged() {
         looseSelect = looseSelectCB.getState();
     }
 
