@@ -146,19 +146,19 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     private final EditingTool reshapeMeshTool = new MeshStandardTool(this, this);
 
-    public final static int RESHAPE_TOOL = 0;
+    public static final int RESHAPE_TOOL = 0;
 
     private final EditingTool skewMeshTool = new SkewMeshTool(this, this);
 
-    public final static int SKEW_TOOL = 1;
+    public static final int SKEW_TOOL = 1;
 
     private final EditingTool taperMeshTool = new TaperMeshTool(this, this);
 
-    public final static int TAPER_TOOL = 2;
+    public static final int TAPER_TOOL = 2;
 
     private final EditingTool bevelTool = new AdvancedBevelExtrudeTool(this, this);
 
-    public final static int BEVEL_TOOL = 3;
+    public static final int BEVEL_TOOL = 3;
 
     private final EditingTool thickenMeshTool = new ThickenMeshTool(this, this);
 
@@ -333,7 +333,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         valueWidgetDialog.setContent(valueWidget);
         valueWidgetDialog.pack();
         unseenValueWidgetDialog = true;
-        //content.add(valueWidget = new PolymeshValueWidget(), 2, 0, 1, 1);
+
         content.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
         BorderContainer widgets = new BorderContainer();
         RowContainer meshContainer = new RowContainer();
@@ -564,11 +564,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         vertexMenu.add(vertexMenuItem[9] = Translate.menuItem("polymesh:closeBoundary", this::doCloseBoundary));
         vertexMenu.add(vertexMenuItem[10] = Translate.menuItem("polymesh:joinBoundaries", this::doJoinBoundaries));
         vertexMenu.addSeparator();
-        vertexMenu.add(vertexMenuItem[11] = Translate.menuItem("editPoints", this, "setPointsCommand"));
-        vertexMenu.add(vertexMenuItem[12] = Translate.menuItem("transformPoints", this, "transformPointsCommand"));
-        vertexMenu.add(vertexMenuItem[13] = Translate.menuItem("randomize", this, "randomizeCommand"));
+        vertexMenu.add(vertexMenuItem[11] = Translate.menuItem("editPoints", e -> setPointsCommand()));
+        vertexMenu.add(vertexMenuItem[12] = Translate.menuItem("transformPoints", e -> transformPointsCommand()));
+        vertexMenu.add(vertexMenuItem[13] = Translate.menuItem("randomize", e -> randomizeCommand()));
         vertexMenu.addSeparator();
-        vertexMenu.add(vertexMenuItem[14] = Translate.menuItem("parameters", this, "setParametersCommand"));
+        vertexMenu.add(vertexMenuItem[14] = Translate.menuItem("parameters", e -> setParametersCommand()));
         vertexMenu.addSeparator();
         vertexMenu.add(vertexMenuItem[15] = Translate.menuItem("polymesh:selectCorners", this::doSelectCorners));
 
@@ -593,11 +593,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         vertexPopupMenu.add(vertexPopupMenuItem[9] = Translate.menuItem("polymesh:closeBoundary", this::doCloseBoundary));
         vertexPopupMenu.add(vertexPopupMenuItem[10] = Translate.menuItem("polymesh:joinBoundaries", this::doJoinBoundaries));
         vertexPopupMenu.addSeparator();
-        vertexPopupMenu.add(vertexPopupMenuItem[11] = Translate.menuItem("editPoints", this, "setPointsCommand"));
-        vertexPopupMenu.add(vertexPopupMenuItem[12] = Translate.menuItem("transformPoints", this, "transformPointsCommand"));
-        vertexPopupMenu.add(vertexPopupMenuItem[13] = Translate.menuItem("randomize", this, "randomizeCommand"));
+        vertexPopupMenu.add(vertexPopupMenuItem[11] = Translate.menuItem("editPoints", e -> setPointsCommand()));
+        vertexPopupMenu.add(vertexPopupMenuItem[12] = Translate.menuItem("transformPoints", e -> transformPointsCommand()));
+        vertexPopupMenu.add(vertexPopupMenuItem[13] = Translate.menuItem("randomize", e -> randomizeCommand()));
         vertexPopupMenu.addSeparator();
-        vertexPopupMenu.add(vertexPopupMenuItem[14] = Translate.menuItem("parameters", this, "setParametersCommand"));
+        vertexPopupMenu.add(vertexPopupMenuItem[14] = Translate.menuItem("parameters", e -> setParametersCommand()));
         vertexPopupMenu.addSeparator();
         vertexPopupMenu.add(vertexPopupMenuItem[15] = Translate.menuItem("polymesh:selectCorners", this::doSelectCorners));
 
@@ -1544,8 +1544,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             ((BMenuItem) edgeMenuItem[11]).setEnabled(false);
             ((BMenuItem) edgePopupMenuItem[10]).setEnabled(false);
             ((BMenuItem) edgePopupMenuItem[11]).setEnabled(false);
-            ((BMenuItem) meshMenuItem[3]).setEnabled(false);
-            ((BMenuItem) meshMenuItem[4]).setEnabled(false);
+            (meshMenuItem[3]).setEnabled(false);
+            (meshMenuItem[4]).setEnabled(false);
 
             unfoldMeshAction.setEnabled(mesh.getSeams() != null);
 
@@ -1558,8 +1558,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             ((BMenuItem) edgePopupMenuItem[10]).setEnabled(true);
             ((BMenuItem) edgeMenuItem[11]).setEnabled(true);
             ((BMenuItem) edgePopupMenuItem[11]).setEnabled(true);
-            ((BMenuItem) meshMenuItem[3]).setEnabled(true);
-            ((BMenuItem) meshMenuItem[4]).setEnabled(true);
+            (meshMenuItem[3]).setEnabled(true);
+            (meshMenuItem[4]).setEnabled(true);
             unfoldMeshAction.setEnabled(true);
         }
 
@@ -2717,7 +2717,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             return;
         }
         Vec3 origin;
-        double radius;
         PolyMesh mesh = (PolyMesh) objInfo.object;
         priorValueMesh = (PolyMesh) mesh.duplicate();
         MeshVertex[] vert = priorValueMesh.getVertices();
@@ -2725,7 +2724,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         Vec3 norm = new Vec3();
         int count = 0;
         origin = new Vec3();
-        radius = 0;
         for (int i = 0; i < vert.length; ++i) {
             if (selected[i]) {
                 ++count;
@@ -2743,10 +2741,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         norm.normalize();
         for (int i = 0; i < vert.length; ++i) {
             if (selected[i]) {
-                radius += vert[i].r.minus(origin).length();
             }
         }
-        radius /= count;
         count = 0;
         for (int i = 0; i < vert.length; ++i) {
             if (selected[i]) {
