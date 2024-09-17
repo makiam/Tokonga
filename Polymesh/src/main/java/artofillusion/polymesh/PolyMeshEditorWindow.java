@@ -4458,7 +4458,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     @Override
     public void setTensionCommand() {
         super.setTensionCommand();
-        tensionSpin.setValue(new Integer(tensionDistance));
+        tensionSpin.setValue(tensionDistance);
     }
 
     public void doTensionChanged() {
