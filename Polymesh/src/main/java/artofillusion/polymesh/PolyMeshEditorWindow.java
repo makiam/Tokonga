@@ -244,8 +244,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     protected boolean[] hideVert;
 
-    protected boolean[] hideEdge;
-
     protected boolean[] selPoints;
 
     protected Vec3 selCenter;
@@ -502,7 +500,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         editMenu.add(editMenuItem[9] = Translate.menuItem("hideSelection", this, "doHideSelection"));
         editMenu.add(editMenuItem[10] = Translate.menuItem("showAll", this, "doShowAll"));
         editMenu.addSeparator();
-        editMenu.add(Translate.menuItem("polymesh:editDisplayProperties", this, "doEditProperties"));
+        editMenu.add(Translate.menuItem("polymesh:editDisplayProperties", this::doEditProperties));
     }
 
     /**
@@ -518,7 +516,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         menubar.add(meshMenu);
         meshMenuItem = new BMenuItem[5];
         BMenu smoothMenu;
-        meshMenu.add(Translate.menuItem("polymesh:centerMesh", this, "doCenterMesh"));
+        meshMenu.add(Translate.menuItem("polymesh:centerMesh", this::doCenterMesh));
         meshMenu.add(smoothMenu = Translate.menu("smoothingMethod"));
         smoothItem = new BCheckBoxMenuItem[2];
         smoothMenu.add(smoothItem[0] = Translate.checkboxMenuItem("none", this, "smoothingChanged", obj.getSmoothingMethod() == Mesh.NO_SMOOTHING));
@@ -698,7 +696,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         edgeMenu.addSeparator();
         edgeMenu.add(edgeMenuItem[20] = Translate.menuItem("polymesh:selectSmoothnessRange", this, "doSelectEdgeSmoothnessRange"));
         edgeMenu.addSeparator();
-        edgeMenu.add(edgeMenuItem[21] = Translate.menuItem("polymesh:bevelProperties", this, "doBevelProperties"));
+        edgeMenu.add(edgeMenuItem[21] = Translate.menuItem("polymesh:bevelProperties", this::doBevelProperties));
 
         edgePopupMenuItem = new MenuWidget[22];
         local = Translate.menu("polymesh:divide");
@@ -928,11 +926,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      *
      */
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void doEditProperties() {
+    public void doEditProperties(ActionEvent event) {
         new MeshPropertiesDialogAction(this);
     }
 
-    public void doCenterMesh() {
+    public void doCenterMesh(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         MeshVertex[] v = mesh.getVertices();
         Vec3 center = new Vec3();
@@ -2897,8 +2895,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
          */
         value = ed[i].smoothness;
         value = 0.001f * (Math.round(valueWidget.getValue() * 1000.0f));
-        smoothness = new ValueSlider(0.0, 1.0, 1000, valueWidget
-                .getValue());
+        smoothness = new ValueSlider(0.0, 1.0, 1000, valueWidget.getValue());
         smoothness.addEventLink(ValueChangedEvent.class, new Object() {
             void processEvent() {
                 processor.addEvent(new Runnable() {
@@ -2969,7 +2966,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Bevel properties settings
      */
-    private void doBevelProperties() {
+    private void doBevelProperties(ActionEvent event) {
         new BevelPropertiesDialog(this).setVisible(true);
     }
 
