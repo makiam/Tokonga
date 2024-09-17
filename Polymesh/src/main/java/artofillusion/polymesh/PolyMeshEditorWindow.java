@@ -546,17 +546,17 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
         menubar.add(vertexMenu);
         vertexMenuItem = new MenuWidget[16];
-        vertexMenu.add(vertexMenuItem[0] = Translate.menuItem("polymesh:connect", this, "doConnectVertices"));
+        vertexMenu.add(vertexMenuItem[0] = Translate.menuItem("polymesh:connect", this::doConnectVertices));
         BMenu local = Translate.menu("polymesh:moveAlong");
-        local.add(Translate.menuItem("polymesh:normal", this, "doMoveVerticesNormal"));
-        local.add(Translate.menuItem("polymesh:x", this, "doMoveVerticesX"));
-        local.add(Translate.menuItem("polymesh:y", this, "doMoveVerticesY"));
-        local.add(Translate.menuItem("polymesh:z", this, "doMoveVerticesZ"));
+        local.add(Translate.menuItem("polymesh:normal", this::doMoveVerticesNormal));
+        local.add(Translate.menuItem("polymesh:x", this::doMoveVerticesX));
+        local.add(Translate.menuItem("polymesh:y", this::doMoveVerticesY));
+        local.add(Translate.menuItem("polymesh:z", this::doMoveVerticesZ));
         vertexMenu.add(vertexMenuItem[1] = local);
 
-        vertexMenu.add(vertexMenuItem[2] = Translate.menuItem("polymesh:collapse", this, "doCollapseVertices"));
-        vertexMenu.add(vertexMenuItem[3] = Translate.menuItem("polymesh:facet", this, "doFacetVertices"));
-        vertexMenu.add(vertexMenuItem[4] = Translate.menuItem("polymesh:bevel", this, "doBevelVertices"));
+        vertexMenu.add(vertexMenuItem[2] = Translate.menuItem("polymesh:collapse", this::doCollapseVertices));
+        vertexMenu.add(vertexMenuItem[3] = Translate.menuItem("polymesh:facet", this::doFacetVertices));
+        vertexMenu.add(vertexMenuItem[4] = Translate.menuItem("polymesh:bevel", this::doBevelVertices));
         vertexMenu.addSeparator();
         vertexMenu.add(vertexMenuItem[5] = Translate.menuItem("polymesh:meanSphere", this, "doMeanSphere"));
         vertexMenu.add(vertexMenuItem[6] = Translate.menuItem("polymesh:closestSphere", this, "doClosestSphere"));
@@ -1760,7 +1760,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Connects selected vertices
      */
-    private void doConnectVertices() {
+    private void doConnectVertices(ActionEvent event) {
         PolyMesh theMesh = (PolyMesh) objInfo.object;
 
         PolyMesh prevMesh = (PolyMesh) theMesh.duplicate();
@@ -1977,28 +1977,28 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Move vertices menu command (normal)
      */
-    private void doMoveVerticesNormal() {
+    private void doMoveVerticesNormal(ActionEvent event) {
         move(selectMode, PolyMesh.NORMAL);
     }
 
     /**
      * Move vertices menu command (x)
      */
-    private void doMoveVerticesX() {
+    private void doMoveVerticesX(ActionEvent event) {
         move(selectMode, PolyMesh.X);
     }
 
     /**
      * Move vertices menu command (y)
      */
-    private void doMoveVerticesY() {
+    private void doMoveVerticesY(ActionEvent event) {
         move(selectMode, PolyMesh.Y);
     }
 
     /**
      * Move vertices menu command (z)
      */
-    private void doMoveVerticesZ() {
+    private void doMoveVerticesZ(ActionEvent event) {
         move(selectMode, PolyMesh.Z);
     }
 
@@ -2121,7 +2121,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Bevel edges command
      */
-    private void doBevelVertices() {
+    private void doBevelVertices(ActionEvent event) {
         if (valueWidget.isActivated()) {
             return;
         }
@@ -3782,7 +3782,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Collapse vertices command
      */
-    private void doCollapseVertices() {
+    private void doCollapseVertices(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         Wvertex[] verts = (Wvertex[]) mesh.getVertices();
         for (int i = 0; i < selected.length; ++i) {
@@ -3807,7 +3807,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Facet vertices command
      */
-    private void doFacetVertices() {
+    private void doFacetVertices(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         Wvertex[] verts = (Wvertex[]) mesh.getVertices();
         for (int i = 0; i < selected.length; ++i) {
