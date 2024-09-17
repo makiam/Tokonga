@@ -70,6 +70,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -874,15 +875,14 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     private void createPrefsMenu() {
-        BMenu prefsMenu = Translate.menu("polymesh:prefs");
-        menubar.add(prefsMenu);
-        prefsMenu.add(Translate.menuItem("polymesh:reloadKeystrokes", this, "reloadKeystrokes"));
-        // prefsMenu.addSeparator();
-        prefsMenu.add(Translate.menuItem("polymesh:editKeystrokes", this, "editKeystrokes"));
-        prefsMenu.addSeparator();
-        prefsMenu.add(Translate.menuItem("polymesh:loadDefaults", this, "doLoadDefaultProperties"));
-        prefsMenu.add(Translate.menuItem("polymesh:storeDefaults", this, "doStoreDefaultProperties"));
-        prefsMenu.add(Translate.menuItem("polymesh:resetDefaults", this, "doResetDefaultProperties"));
+        var preferencesMenu = Translate.menu("polymesh:prefs");
+        menubar.add(preferencesMenu);
+        preferencesMenu.add(Translate.menuItem("polymesh:reloadKeystrokes", this::reloadKeystrokes));
+        preferencesMenu.add(Translate.menuItem("polymesh:editKeystrokes", this::editKeystrokes));
+        preferencesMenu.addSeparator();
+        preferencesMenu.add(Translate.menuItem("polymesh:loadDefaults", this::doLoadDefaultProperties));
+        preferencesMenu.add(Translate.menuItem("polymesh:storeDefaults", this::doStoreDefaultProperties));
+        preferencesMenu.add(Translate.menuItem("polymesh:resetDefaults", this::doResetDefaultProperties));
     }
 
     @SuppressWarnings("unused")
@@ -904,20 +904,20 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     @SuppressWarnings("unused")
-    private void doLoadDefaultProperties() {
+    private void doLoadDefaultProperties(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         mesh.loadFromDisplayPropertiesPreferences();
         updateImage();
     }
 
     @SuppressWarnings("unused")
-    private void doStoreDefaultProperties() {
+    private void doStoreDefaultProperties(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         mesh.storeDisplayPropertiesAsReferences();
     }
 
     @SuppressWarnings("unused")
-    private void doResetDefaultProperties() {
+    private void doResetDefaultProperties(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         mesh.resetDisplayPropertiesPreferences();
         updateImage();
@@ -1703,7 +1703,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Edits AoI keystrokes
      */
-    public void editKeystrokes() {
+    public void editKeystrokes(ActionEvent event) {
         BorderContainer bc = new BorderContainer();
         KeystrokePreferencesPanel keystrokePanel = new KeystrokePreferencesPanel();
         bc.add(keystrokePanel, BorderContainer.CENTER);
@@ -1718,7 +1718,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Deletes any keystroke script associated to the PolyMesh plugin
      */
-    public void cleanKeystrokes() {
+    private void cleanKeystrokes() {
 
         for (KeystrokeRecord key : KeystrokeManager.getRecords()) {
             if (key.getName().endsWith("(PolyMesh)")) {
@@ -1735,7 +1735,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Reloads keystroke scripts shipped with the PolyMesh plugin
      */
-    public void reloadKeystrokes() {
+    public void reloadKeystrokes(ActionEvent event) {
         cleanKeystrokes();
         try (InputStream in = getClass().getResourceAsStream("/PMkeystrokes.xml")) {
             KeystrokeManager.addRecordsFromXML(in);
