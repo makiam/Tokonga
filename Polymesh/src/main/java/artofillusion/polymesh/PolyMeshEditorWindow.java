@@ -473,8 +473,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         editMenu.add(editMenuItem[0] = Translate.menuItem("clear", this, "deleteCommand"));
         editMenu.add(editMenuItem[1] = Translate.menuItem("selectAll", this::selectAllCommand));
         editMenu.add(editMenuItem[2] = Translate.menuItem("polymesh:showNormal", this::bringNormal));
-        editMenu.add(editMenuItem[3] = Translate.menuItem("extendSelection", this, "extendSelectionCommand"));
-        editMenu.add(Translate.menuItem("invertSelection", this, "invertSelectionCommand"));
+        editMenu.add(editMenuItem[3] = Translate.menuItem("extendSelection", this::extendSelectionCommand));
+        editMenu.add(Translate.menuItem("invertSelection", this::invertSelectionCommand));
         editMenu.add(editMenuItem[4] = Translate.menuItem("polymesh:scaleSelection", this::scaleSelectionCommand));
         editMenu.add(editMenuItem[5] = Translate.menuItem("polymesh:scaleNormal", this, "scaleNormalSelectionCommand"));
         editMenu.add(editMenuItem[6] = Translate.checkboxMenuItem("tolerantSelection", this, "tolerantModeChanged", lastTolerant));
@@ -1035,7 +1035,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Extend the selection outward by one edge.
      */
-    public void extendSelectionCommand() {
+    public void extendSelectionCommand(ActionEvent event) {
         PolyMesh theMesh = (PolyMesh) objInfo.object;
         int[] dist = getSelectionDistance();
         boolean[] selectedVert = new boolean[dist.length];
@@ -3871,7 +3871,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Invert the current selection.
      */
-    public void invertSelectionCommand() {
+    public void invertSelectionCommand(ActionEvent event) {
         boolean[] newSel = new boolean[selected.length];
         for (int i = 0; i < newSel.length; i++) {
             newSel[i] = !selected[i];
