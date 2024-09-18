@@ -259,7 +259,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * Mesh size along z
      */
     public PolyMesh(int type, int u, int v, double sx, double sy, double sz) {
-        super();
+
         initialize();
         switch (type) {
             case 0:
@@ -5410,7 +5410,6 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
     }
 
     public PolyMesh(DataInputStream in) throws IOException, InvalidObjectException {
-        super();
         initialize();
         readData(in, null);
         skeleton = new Skeleton();
