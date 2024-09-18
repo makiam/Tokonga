@@ -72,6 +72,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
 import javax.swing.JSpinner.NumberEditor;
+import javax.swing.event.ChangeEvent;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -342,28 +344,23 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         edgeContainer = new RowContainer();
         faceContainer = new RowContainer();
         meshContainer.add(looseSelectCB = new BCheckBox(Translate.text("polymesh:looseSelect"), looseSelect));
-        looseSelectCB.addEventLink(ValueChangedEvent.class, this, "doLooseSelectionChanged");
+        looseSelectCB.getComponent().addActionListener(e -> doLooseSelectionChanged());
         meshContainer.add(looseSelectSpinner = new BSpinner(looseSelectValue, 1, 100, 1));
-        looseSelectSpinner.addEventLink(ValueChangedEvent.class, this, "doLooseSelectionValueChanged");
+        looseSelectSpinner.getComponent().addChangeListener(event -> doLooseSelectionValueChanged(event));
         meshContainer.add(frontSelectCB = new BCheckBox(Translate.text("polymesh:frontSelect"), selectVisible));
-        frontSelectCB.addEventLink(ValueChangedEvent.class, this, "doFrontSelectionChanged");
+        frontSelectCB.getComponent().addActionListener(e -> doFrontSelectionChanged());
         meshContainer.add(new BLabel(Translate.text("polymesh:meshTension") + ": "));
         tensionSpin = new BSpinner(tensionDistance, 0, 999, 1);
         setSpinnerColumns(tensionSpin, 3);
-        tensionSpin.addEventLink(ValueChangedEvent.class, this, "doTensionChanged");
+        tensionSpin.getComponent().addChangeListener(event -> doTensionChanged(event));
         meshContainer.add(tensionSpin);
-//		levelContainer.add(new BLabel(Translate.text("polymesh:subdivisionLevels")
-//				+ ": "));
+
         levelContainer.add(new BLabel(Translate.text("polymesh:interactiveSubdiv")));
         ispin = new BSpinner(1, 1, 6, 1);
         levelContainer.add(ispin);
         ispin.setValue(mesh.getInteractiveSmoothLevel());
         ispin.addEventLink(ValueChangedEvent.class, this, "doInteractiveLevel");
-        //levelContainer.add(new BLabel(Translate.text("polymesh:render")));
-        //rspin = new BSpinner(1, 1, 6, 1);
-        //rspin.setValue(new Integer(mesh.getRenderingSmoothLevel()));
-        //levelContainer.add(rspin);
-        //rspin.addEventLink(ValueChangedEvent.class, this, "doRenderingLevel");
+
         meshContainer.add(levelContainer);
         cornerCB = new BCheckBox(Translate.text("polymesh:corner"), false);
         cornerCB.addEventLink(ValueChangedEvent.class, this, "doCornerChanged");
@@ -530,7 +527,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         mirrorWholeMesh.add(Translate.menuItem("polymesh:mirrorOnYZ", this::doMirrorWholeYZ));
         mirrorWholeMesh.add(Translate.menuItem("polymesh:mirrorOnXZ", this::doMirrorWholeXZ));
         meshMenu.add(Translate.menuItem("invertNormals", this::doInvertNormals));
-        meshMenu.add(Translate.menuItem("meshTension", this, "setTensionCommand"));
+        meshMenu.add(Translate.menuItem("meshTension", e -> setTensionCommand()));
         meshMenu.add(Translate.menuItem("polymesh:checkMesh", this::doCheckMesh));
         meshMenu.addSeparator();
         meshMenu.add(Translate.menuItem("polymesh:saveAsTemplate", this::doSaveAsTemplate));
@@ -4181,7 +4178,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Get the object being edited in this window.
      *
-     * @return The object valueWidget.getValue()
+     * @return The object
      */
     @Override
     public ObjectInfo getObject() {
@@ -4200,11 +4197,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         looseSelect = looseSelectCB.getState();
     }
 
-    private void doLooseSelectionValueChanged() {
+    private void doLooseSelectionValueChanged(ChangeEvent event) {
+        log.info("Loose Value Event: {}", event);
         looseSelectValue = ((Integer) looseSelectSpinner.getValue());
     }
 
-    @SuppressWarnings("unused")
     private void doFrontSelectionChanged() {
         if (selectVisible = frontSelectCB.getState()) {
             setSelection(selected);
@@ -4216,11 +4213,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     public int getLooseSelectionRange() {
-        if (looseSelectCB.getState()) {
-            return ((Integer) looseSelectSpinner.getValue());
-        } else {
-            return 0;
-        }
+        return looseSelectCB.getState() ? (Integer) looseSelectSpinner.getValue() : 0;
     }
 
     /**
@@ -4396,26 +4389,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         updateImage();
     }
 
-//	private void doAddVertexNormal() {
-//		PolyMesh mesh = (PolyMesh) objInfo.object;
-//		Wvertex[] vertices = (Wvertex[]) mesh.getVertices();
-//		Vec3[] normals = mesh.getNormals();
-//		for (int i = 0; i < selected.length; ++i)
-//			if (selected[i])
-//				vertices[i].normal = new Vec3(normals[i]);
-//		objectChanged();
-//		updateImage();
-//	}
-//
-//	private void doRemoveVertexNormal() {
-//		PolyMesh mesh = (PolyMesh) objInfo.object;
-//		Wvertex[] vertices = (Wvertex[]) mesh.getVertices();
-////		for (int i = 0; i < selected.length; ++i)
-////			if (selected[i])
-////				vertices[i].normal = null;
-//		objectChanged();
-//		updateImage();
-//	}
+
     public PolyMeshValueWidget getValueWidget() {
         return valueWidget;
     }
@@ -4458,7 +4432,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         tensionSpin.setValue(tensionDistance);
     }
 
-    public void doTensionChanged() {
+    public void doTensionChanged(ChangeEvent event) {
         lastTensionDistance = tensionDistance = ((Integer) tensionSpin.getValue());
         savePreferences();
     }
