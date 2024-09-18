@@ -423,7 +423,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         setSelectionMode(modes.getSelection());
         UIUtilities.applyDefaultFont(content);
         UIUtilities.applyDefaultBackground(content);
-        createPrefsMenu();
+        createPreferencesMenu();
         createEditMenu();
         createMeshMenu((PolyMesh) objInfo.object);
         createVertexMenu();
@@ -436,8 +436,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         Dimension d1 = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension d2;
         d2 = new Dimension((d1.width * 3) / 4, (d1.height * 3) / 4);
-        setBounds(new Rectangle((d1.width - d2.width) / 2,
-                (d1.height - d2.height) / 2, d2.width, d2.height));
+        setBounds(new Rectangle((d1.width - d2.width) / 2, (d1.height - d2.height) / 2, d2.width, d2.height));
         tools.requestFocus();
         updateMenus();
         realView = false;
@@ -458,11 +457,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         BMenu editMenu = Translate.menu("edit");
         menubar.add(editMenu);
         editMenuItem = new BMenuItem[12];
-        editMenu.add(undoItem = Translate.menuItem("undo", this, "undoCommand"));
-        editMenu.add(redoItem = Translate.menuItem("redo", this, "redoCommand"));
+        editMenu.add(undoItem = Translate.menuItem("undo", e -> undoCommand()));
+        editMenu.add(redoItem = Translate.menuItem("redo", e -> redoCommand()));
         editMenu.addSeparator();
-        editMenu.add(Translate.menuItem("polymesh:copy", this, "doCopy"));
-        editMenu.add(pasteItem = Translate.menuItem("polymesh:paste", this, "doPaste"));
+        editMenu.add(Translate.menuItem("polymesh:copy", e -> doCopy()));
+        editMenu.add(pasteItem = Translate.menuItem("polymesh:paste", e -> doPaste()));
         if (clipboardMesh == null) {
             pasteItem.setEnabled(false);
         }
@@ -509,10 +508,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
         meshMenu.add(meshMenuItem[3] = Translate.menuItem("polymesh:thickenMeshFaceNormal", this, "doThickenMesh"));
         meshMenu.add(meshMenuItem[4] = Translate.menuItem("polymesh:thickenMeshVertexNormal", this, "doThickenMesh"));
-        BMenu mirrorMenu;
-        meshMenu.add(mirrorMenu = Translate.menu("polymesh:mirrorMesh"));
+        var mirrorMenu = Translate.menu("polymesh:mirrorMesh");
+        meshMenu.add(mirrorMenu);
         mirrorItem = new BMenuItem[4];
-        mirrorMenu.add(mirrorItem[0] = Translate.menuItem("polymesh:mirrorOff", this::doMirrorOff));
+        mirrorMenu.add(mirrorItem[0] = Translate.menuItem("polymesh:mirrorOff", this::doTurnMirrorOff));
         mirrorMenu.add(mirrorItem[1] = Translate.checkboxMenuItem("polymesh:mirrorOnXY", this, "doMirrorOn", false));
         mirrorMenu.add(mirrorItem[2] = Translate.checkboxMenuItem("polymesh:mirrorOnXZ", this, "doMirrorOn", false));
         mirrorMenu.add(mirrorItem[3] = Translate.checkboxMenuItem("polymesh:mirrorOnYZ", this, "doMirrorOn", false));
@@ -854,7 +853,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         menubar.add(textureMenu);
     }
 
-    private void createPrefsMenu() {
+    private void createPreferencesMenu() {
         var preferencesMenu = Translate.menu("polymesh:prefs");
         menubar.add(preferencesMenu);
         preferencesMenu.add(Translate.menuItem("polymesh:reloadKeystrokes", this::reloadKeystrokes));
@@ -865,7 +864,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         preferencesMenu.add(Translate.menuItem("polymesh:resetDefaults", this::doResetDefaultProperties));
     }
 
-    @SuppressWarnings("unused")
     private void doSelectCorners(ActionEvent event) {
         if (selectMode != POINT_MODE) {
             return;
@@ -1613,7 +1611,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     /**
      * Toggles live smoothing on/off
+     *
      */
+    // NB. Method accessed via KeyStroke records. Do not remove!!!
     public void toggleSmoothing() {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         if (realView) {
@@ -1657,6 +1657,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Toggles manipulators between 2D and 3D (to be removed presumably)
      */
+    // NB. Method accessed via KeyStroke records.
     public void toggleManipulator() {
         if (currentTool instanceof AdvancedEditingTool) {
             PolyMeshViewer view = (PolyMeshViewer) getView();
@@ -1668,6 +1669,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Toggles manipulator view mode (i.e. X,Y,Z U,V and N, P, Q)
      */
+    // NB. Method accessed via KeyStroke records. Do not remove!!!
     public void toggleManipulatorViewMode() {
         PolyMeshViewer view = (PolyMeshViewer) getView();
         view.getManipulators().forEach(man -> man.toggleViewMode());
@@ -1722,6 +1724,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Toggles help mode on/off
      */
+    // NB. Method accessed via KeyStroke records.
     public void toggleHelpMode() {
         Manipulator.toggleHelpMode();
     }
@@ -4028,14 +4031,12 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Sets off a previously set mirror
      */
-    private void doMirrorOff(ActionEvent event) {
+    private void doTurnMirrorOff(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         if (mesh.getMirrorState() == PolyMesh.NO_MIRROR) {
             return;
         }
-        BStandardDialog dlg = new BStandardDialog(Translate
-                .text("polymesh:removeMeshMirror"),
-                Translate.text("polymesh:keepMirroredMesh"), BStandardDialog.QUESTION);
+        BStandardDialog dlg = new BStandardDialog(Translate.text("polymesh:removeMeshMirror"), Translate.text("polymesh:keepMirroredMesh"), BStandardDialog.QUESTION);
         int r = dlg.showOptionDialog(this, new String[]{
             Translate.text("polymesh:keep"), Translate.text("polymesh:discard"),
             Translate.text("polymesh:cancel")}, "cancel");
