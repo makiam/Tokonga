@@ -1,7 +1,5 @@
-
 /** The Plugin interface provides a very general means for adding features to
- * Art of Illusion. */
-
+ * Art of Illusion.  */
 /* Copyright (C) 2001 by Peter Eastman
  * Changes copyright (C) 2021 by Maksim Khramov
  * This program is free software; you can redistribute it and/or modify it under the
@@ -11,74 +9,31 @@
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-package artofillusion;
+package artofillusion
 
-public interface Plugin {
+import java.io.File
+import java.util.Locale
 
-    /* The following constants represent messages that can be passed to processMessage(). */
-    /**
-     * This message is sent when the program first starts up. It is sent after all
-     * initialization has happened, but before the first window has been displayed.
-     * It has no arguments.
-     */
-    int APPLICATION_STARTING = 0;
-
-    default void onApplicationStarting() {
+interface Plugin {
+    fun onApplicationStarting() {
     }
 
-    /**
-     * This message is sent just before the program shuts down. This gives plugins a
-     * chance to do any necessary cleanup. It has no arguments.
-     */
-    int APPLICATION_STOPPING = 1;
-
-    default void onApplicationStopping() {
+    fun onApplicationStopping() {
     }
 
-    /**
-     * This message is sent when a new scene editing window is created. It is sent after
-     * the new window has been fully initialized, and just before it is displayed. The
-     * LayoutWindow is passed as an argument
-     */
-    int SCENE_WINDOW_CREATED = 2;
-
-    default void onSceneWindowCreated(LayoutWindow view) {
+    fun onSceneWindowCreated(view: LayoutWindow?) {
     }
 
-    /**
-     * This message is sent just after a scene editing window is closed. The
-     * LayoutWindow is passed as an argument.
-     */
-    int SCENE_WINDOW_CLOSING = 3;
-
-    default void onSceneWindowClosing(LayoutWindow layoutWindow) {
+    fun onSceneWindowClosing(layoutWindow: LayoutWindow?) {
     }
 
-    /**
-     * This message is sent when a scene is saved to disk. The arguments are the File
-     * that has just been created, and the LayoutWindow for the scene that was saved.
-     */
-    int SCENE_SAVED = 4;
-
-    default void onSceneSaved(java.io.File file, LayoutWindow view) {
+    fun onSceneSaved(file: File?, view: LayoutWindow?) {
     }
 
-    /**
-     * This message is sent when a new object editing window is created. It is sent after
-     * the new window has been fully initialized, and just before it is displayed. The
-     * ObjectEditorWindow is passed as an argument
-     */
-    int OBJECT_WINDOW_CREATED = 5;
-
-    default void onObjectWindowCreated(ObjectEditorWindow objectEditorWindow) {
+    fun onObjectWindowCreated(objectEditorWindow: ObjectEditorWindow?) {
     }
-    /**
-     * This message is sent just after an object editing window is closed. The
-     * ObjectEditorWindow is passed as an argument.
-     */
-    int OBJECT_WINDOW_CLOSING = 6;
 
-    default void onObjectWindowClosing(ObjectEditorWindow objectEditorWindow) {
+    fun onObjectWindowClosing(objectEditorWindow: ObjectEditorWindow?) {
     }
 
     /**
@@ -89,44 +44,89 @@ public interface Plugin {
      * Therefore, processMessage() should ignore any messages it is not specifically
      * intended to deal with.
      */
-    default void processMessage(int message, Object... args) {
-        switch (message) {
-            case Plugin.APPLICATION_STARTING: {
-                onApplicationStarting();
-                break;
-            }
-            case Plugin.APPLICATION_STOPPING: {
-                onApplicationStopping();
-                break;
+    fun processMessage(message: Int, vararg args: Any?) {
+        when (message) {
+            APPLICATION_STARTING -> {
+                onApplicationStarting()
             }
 
-            case Plugin.SCENE_WINDOW_CREATED: {
-                onSceneWindowCreated((LayoutWindow) args[0]);
-                break;
-            }
-            case Plugin.SCENE_WINDOW_CLOSING: {
-                onSceneWindowClosing((LayoutWindow) args[0]);
-                break;
+            APPLICATION_STOPPING -> {
+                onApplicationStopping()
             }
 
-            case Plugin.OBJECT_WINDOW_CREATED: {
-                onObjectWindowCreated((ObjectEditorWindow) args[0]);
-                break;
+            SCENE_WINDOW_CREATED -> {
+                onSceneWindowCreated(args[0] as LayoutWindow?)
             }
 
-            case Plugin.OBJECT_WINDOW_CLOSING: {
-                onObjectWindowClosing((ObjectEditorWindow) args[0]);
-                break;
+            SCENE_WINDOW_CLOSING -> {
+                onSceneWindowClosing(args[0] as LayoutWindow?)
             }
 
-            case Plugin.SCENE_SAVED: {
-                onSceneSaved((java.io.File) args[0], (LayoutWindow) args[1]);
-                break;
+            OBJECT_WINDOW_CREATED -> {
+                onObjectWindowCreated(args[0] as ObjectEditorWindow?)
             }
 
-            default: {
+            OBJECT_WINDOW_CLOSING -> {
+                onObjectWindowClosing(args[0] as ObjectEditorWindow?)
             }
+
+            SCENE_SAVED -> {
+                onSceneSaved(args[0] as File?, args[1] as LayoutWindow?)
+            }
+
+            else -> {}
         }
     }
 
+    companion object {
+        /* The following constants represent messages that can be passed to processMessage(). */
+        /**
+         * This message is sent when the program first starts up. It is sent after all
+         * initialization has happened, but before the first window has been displayed.
+         * It has no arguments.
+         */
+        const val APPLICATION_STARTING: Int = 0
+
+        /**
+         * This message is sent just before the program shuts down. This gives plugins a
+         * chance to do any necessary cleanup. It has no arguments.
+         */
+        const val APPLICATION_STOPPING: Int = 1
+
+        /**
+         * This message is sent when a new scene editing window is created. It is sent after
+         * the new window has been fully initialized, and just before it is displayed. The
+         * LayoutWindow is passed as an argument
+         */
+        const val SCENE_WINDOW_CREATED: Int = 2
+
+        /**
+         * This message is sent just after a scene editing window is closed. The
+         * LayoutWindow is passed as an argument.
+         */
+        const val SCENE_WINDOW_CLOSING: Int = 3
+
+        /**
+         * This message is sent when a scene is saved to disk. The arguments are the File
+         * that has just been created, and the LayoutWindow for the scene that was saved.
+         */
+        const val SCENE_SAVED: Int = 4
+
+        /**
+         * This message is sent when a new object editing window is created. It is sent after
+         * the new window has been fully initialized, and just before it is displayed. The
+         * ObjectEditorWindow is passed as an argument
+         */
+        const val OBJECT_WINDOW_CREATED: Int = 5
+
+        /**
+         * This message is sent just after an object editing window is closed. The
+         * ObjectEditorWindow is passed as an argument.
+         */
+        const val OBJECT_WINDOW_CLOSING: Int = 6
+    }
+
+    data class Extension(val name: String, val version: String)
+
+    data class Resource(val type:String, val id:String, val name: String, val locale: Locale)
 }
