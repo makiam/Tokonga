@@ -1,4 +1,5 @@
 /* Copyright (C) 2002-2004 by Peter Eastman
+   Changes copyright (C) 2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -7,39 +8,19 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+package artofillusion.translators
 
-package artofillusion.translators;
-
-import artofillusion.*;
-import buoy.widget.*;
+import artofillusion.Scene
+import artofillusion.Translator
+import buoy.widget.BFrame
 
 /**
  * OBJTranslator is a Translator which imports and exports OBJ files.
  */
-public class OBJTranslator implements Translator {
+class OBJTranslator : Translator {
+    override fun getName() = "Wavefront (.obj)"
 
-    @Override
-    public String getName() {
-        return "Wavefront (.obj)";
-    }
+    override fun importFile(parent: BFrame?) = OBJImporter.importFile(parent)
 
-    @Override
-    public boolean canImport() {
-        return true;
-    }
-
-    @Override
-    public boolean canExport() {
-        return true;
-    }
-
-    @Override
-    public void importFile(BFrame parent) {
-        OBJImporter.importFile(parent);
-    }
-
-    @Override
-    public void exportFile(BFrame parent, Scene theScene) {
-        OBJExporter.exportFile(parent, theScene);
-    }
+    override fun exportFile(parent: BFrame?, theScene: Scene) = OBJExporter.exportFile(parent, theScene)
 }

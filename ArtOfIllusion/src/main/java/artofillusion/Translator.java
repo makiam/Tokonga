@@ -26,12 +26,16 @@ public interface Translator {
     /**
      * Specify whether this translator can import files.
      */
-    boolean canImport();
+    default boolean canImport() {
+        return true;
+    }
 
     /**
      * Specify whether this translator can export files.
      */
-    boolean canExport();
+    default boolean canExport() {
+        return true;
+    }
 
     /**
      * Prompt the user to select a file, read it, and create a new LayoutWindow containing
