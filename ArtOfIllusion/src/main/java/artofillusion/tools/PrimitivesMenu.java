@@ -35,7 +35,7 @@ public final class PrimitivesMenu extends BMenu {
 
         super(Translate.text("menu.createPrimitive"));
         this.layout = layout;
-
+        this.setName("PrimitivesMenu");
 
         Map<String, List<PrimitiveFactory>> providers = PluginRegistry.getPlugins(PrimitiveFactory.class).
                 stream().collect(Collectors.groupingBy(PrimitiveFactory::getCategory));
@@ -52,6 +52,11 @@ public final class PrimitivesMenu extends BMenu {
 
         if(this.getChildren().isEmpty()) return;
         this.remove((Widget)this.getChild(this.getChildCount()-1));
+    }
+
+    @Override
+    public String toString() {
+        return "PrimitivesMenu {} " + this.getName();
     }
 
     private class PrimitiveAction extends AbstractAction {
