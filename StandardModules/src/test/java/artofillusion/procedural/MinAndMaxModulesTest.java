@@ -12,19 +12,20 @@
 package artofillusion.procedural;
 
 import artofillusion.procedural.Module;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 import java.awt.*;
 import java.util.*;
-import static org.junit.Assert.*;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+
 
 public class MinAndMaxModulesTest {
 
     static MinModule min;
     static MaxModule max;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() {
         min = new MinModule(new Point());
         min.linkFrom[0] = new CoordinateModule(new Point(), CoordinateModule.X);
@@ -36,7 +37,7 @@ public class MinAndMaxModulesTest {
 
     // Test cases where the values are well separated.
     @Test
-    @Ignore
+    @Disabled
     public void testMaxModuleSeparated() {
         checkValue(max, 0.0, 5.0, 1.0, 2.0, 5.0, 2.0, 2.0);
         checkValue(max, 1.0, 0.0, 0.1, 0.2, 1.0, 0.1, 0.1);
@@ -44,7 +45,7 @@ public class MinAndMaxModulesTest {
 
     // Test cases where they are equal.
     @Test
-    @Ignore
+    @Disabled
     public void testMaxModuleEquals() {
         checkValue(max, 2.0, 2.0, 0.2, 0.1, 2.0, 0.1, 0.1);
         checkValue(max, 2.0, 2.0, 0.1, 0.2, 2.0, 0.1, 0.1);
@@ -52,7 +53,7 @@ public class MinAndMaxModulesTest {
 
     // Test cases where they are equal.
     @Test
-    @Ignore
+    @Disabled
     public void testMinModuleEquals() {
         checkValue(min, 2.0, 2.0, 0.2, 0.1, 2.0, 0.1, 0.1);
         checkValue(min, 2.0, 2.0, 0.1, 0.2, 2.0, 0.1, 0.1);
@@ -79,7 +80,7 @@ public class MinAndMaxModulesTest {
     // Test cases where the values are well separated.
 
     @Test
-    @Ignore
+    @Disabled
     public void testMinModuleSeparated() {
         checkValue(min, 0.0, 5.0, 1.0, 2.0, 0.0, 1.0, 1.0);
         checkValue(min, 1.0, 0.0, 0.1, 0.2, 0.0, 0.2, 0.2);
@@ -94,7 +95,7 @@ public class MinAndMaxModulesTest {
         module.init(info);
         module.linkFrom[0].init(info);
         module.linkFrom[1].init(info);
-        assertEquals(expectedValue, module.getAverageValue(0, 0.0), 0.0);
+        Assertions.assertEquals(expectedValue, module.getAverageValue(0, 0.0), 0.0);
         assert (module.getValueError(0, 0.0) >= minError);
         assert (module.getValueError(0, 0.0) <= maxError);
     }

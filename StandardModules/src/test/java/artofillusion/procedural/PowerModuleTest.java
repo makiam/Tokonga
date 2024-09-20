@@ -14,15 +14,17 @@ package artofillusion.procedural;
 import artofillusion.math.*;
 import artofillusion.procedural.Module;
 import artofillusion.ui.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import java.awt.*;
 import java.util.*;
-import static org.junit.Assert.*;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 
 public class PowerModuleTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() {
         Translate.setLocale(Locale.US);
     }
@@ -60,7 +62,7 @@ public class PowerModuleTest {
         info.x = x;
         info.xsize = 1e-10;
         module.init(info);
-        assertEquals(expected, module.getAverageValue(0, 0.0), 1e-4);
+        Assertions.assertEquals(expected, module.getAverageValue(0, 0.0), 1e-4);
     }
 
     @Test
@@ -95,9 +97,9 @@ public class PowerModuleTest {
         module.init(info);
         Vec3 grad = new Vec3();
         module.getValueGradient(0, grad, 0.0);
-        assertEquals(expectedXGrad, grad.x, 1e-4);
-        assertEquals(0.0, grad.y, 0.0);
-        assertEquals(0.0, grad.z, 0.0);
+        Assertions.assertEquals(expectedXGrad, grad.x, 1e-4);
+        Assertions.assertEquals(0.0, grad.y, 0.0);
+        Assertions.assertEquals(0.0, grad.z, 0.0);
     }
 
     public void testError() {
@@ -142,6 +144,6 @@ public class PowerModuleTest {
         info.x = x + 0.005;
         module.init(info);
         double upper = module.getAverageValue(0, 0.0);
-        assertEquals(Math.abs(upper - lower) * 0.5, error, 1e-4);
+        Assertions.assertEquals(Math.abs(upper - lower) * 0.5, error, 1e-4);
     }
 }
