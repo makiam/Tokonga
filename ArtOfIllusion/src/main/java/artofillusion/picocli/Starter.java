@@ -3,6 +3,7 @@ package artofillusion.picocli;
 import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
 
+import javax.swing.*;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -13,6 +14,9 @@ public class Starter implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         log.info("Starter called with splash: {} and old: {} {}", splash, old, files);
+        SwingUtilities.invokeLater(() -> {
+            new JFrame().setVisible(true);
+        });
         return 0;
     }
     @CommandLine.Option(names = {"--nosplash"}, description = "No splash screen", negatable = true, defaultValue = "true")
@@ -23,4 +27,8 @@ public class Starter implements Callable<Integer> {
 
     @CommandLine.Parameters
     private List<String> files;
+
+    public static void main(String... args) {
+        new CommandLine(new Starter()).execute(args);
+    }
 }
