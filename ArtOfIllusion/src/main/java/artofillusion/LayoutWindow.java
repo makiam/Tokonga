@@ -519,12 +519,12 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         objectMenuItem = new BMenuItem[12];
         objectMenu.add(objectMenuItem[0] = Translate.menuItem("editObject", event -> editObjectCommand()));
         objectMenu.add(objectMenuItem[1] = Translate.menuItem("objectLayout", event -> objectLayoutCommand()));
-        objectMenu.add(objectMenuItem[2] = Translate.menuItem("transformObject", this, "transformObjectCommand"));
-        objectMenu.add(objectMenuItem[3] = Translate.menuItem("alignObjects", this, "alignObjectsCommand"));
-        objectMenu.add(objectMenuItem[4] = Translate.menuItem("setTextureAndMaterial", this, "setTextureCommand"));
-        objectMenu.add(objectMenuItem[5] = Translate.menuItem("renameObject", this, "renameObjectCommand"));
-        objectMenu.add(objectMenuItem[6] = Translate.menuItem("convertToTriangle", this, "convertToTriangleCommand"));
-        objectMenu.add(objectMenuItem[7] = Translate.menuItem("convertToActor", this, "convertToActorCommand"));
+        objectMenu.add(objectMenuItem[2] = Translate.menuItem("transformObject", event -> transformObjectCommand()));
+        objectMenu.add(objectMenuItem[3] = Translate.menuItem("alignObjects", event -> alignObjectsCommand()));
+        objectMenu.add(objectMenuItem[4] = Translate.menuItem("setTextureAndMaterial", event -> setTextureCommand()));
+        objectMenu.add(objectMenuItem[5] = Translate.menuItem("renameObject", event -> renameObjectCommand()));
+        objectMenu.add(objectMenuItem[6] = Translate.menuItem("convertToTriangle", event -> convertToTriangleCommand()));
+        objectMenu.add(objectMenuItem[7] = Translate.menuItem("convertToActor", event -> convertToActorCommand()));
         objectMenu.addSeparator();
         objectMenu.add(objectMenuItem[8] = Translate.menuItem("hideSelection",  event -> setObjectVisibility(false, true)));
         objectMenu.add(objectMenuItem[9] = Translate.menuItem("showSelection", event -> setObjectVisibility(true, true)));
@@ -614,15 +614,15 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         displayMenu.add(displayItem[4] = Translate.checkboxMenuItem("transparentDisplay", this, "setDisplayModeTransparent", renderMode == ViewerCanvas.RENDER_TRANSPARENT));
         displayMenu.add(displayItem[5] = Translate.checkboxMenuItem("renderedDisplay", this, "setDisplayModeRendered", renderMode == ViewerCanvas.RENDER_RENDERED));
 
-        viewMenu.add(viewMenuItem[0] = Translate.menuItem("fourViews", this, "toggleViewsCommand"));
-        viewMenu.add(Translate.menuItem("grid", this, "setGridCommand"));
-        viewMenu.add(viewMenuItem[2] = Translate.menuItem("showCoordinateAxes", this, "showCoordinateAxesAction"));
+        viewMenu.add(viewMenuItem[0] = Translate.menuItem("fourViews", event -> toggleViewsCommand()));
+        viewMenu.add(Translate.menuItem("grid", event -> setGridCommand()));
+        viewMenu.add(viewMenuItem[2] = Translate.menuItem("showCoordinateAxes", event -> showCoordinateAxesAction()));
         viewMenu.add(viewMenuItem[3] = Translate.menuItem("showTemplate", event -> showTemplateAction()));
         viewMenu.add(Translate.menuItem("setTemplate", event -> setTemplateCommand()));
         viewMenu.addSeparator();
-        viewMenu.add(viewMenuItem[4] = Translate.menuItem("fitToSelection", this, "fitToSelectionAction"));
+        viewMenu.add(viewMenuItem[4] = Translate.menuItem("fitToSelection", event -> fitToSelectionAction()));
         viewMenu.add(viewMenuItem[5] = Translate.menuItem("fitToAll",  event -> fitToAllAction()));
-        viewMenu.add(viewMenuItem[6] = Translate.menuItem("alignWithClosestAxis", this, "alignWithClosestAxisAction"));
+        viewMenu.add(viewMenuItem[6] = Translate.menuItem("alignWithClosestAxis", event -> alignWithClosestAxisAction()));
         viewMenu.addSeparator();
         viewMenu.add(viewMenuItem[1] = Translate.menuItem("hideObjectList", event -> setObjectListVisible(objectListShown = !objectListShown)));
 
@@ -2026,9 +2026,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }
         setUndoRecord(undo);
         updateImage();
-    }
-    public void objectLayoutCommand(ActionEvent event) {
-        objectLayoutCommand();
     }
 
     public void transformObjectCommand() {
