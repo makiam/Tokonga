@@ -56,7 +56,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
     int scrollPos;
     int mode;
     int view;
-    double startTime;
+    @Getter double startTime;
     double timeScale;
     private boolean[] hasRepaintedView;
     private boolean isAnimating;
