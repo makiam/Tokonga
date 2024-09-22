@@ -12,7 +12,7 @@
 package artofillusion.procedural;
 
 import artofillusion.math.*;
-import artofillusion.procedural.Module;
+
 import artofillusion.ui.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
