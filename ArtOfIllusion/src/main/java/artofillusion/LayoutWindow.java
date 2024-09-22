@@ -29,13 +29,9 @@ import buoyx.docking.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.greenrobot.eventbus.Subscribe;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.text.*;
 import java.util.*;
@@ -705,10 +701,10 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         addTrackMenu.add(Translate.menuItem("constraintTrack", this, "addTrackAction"));
         addTrackMenu.add(Translate.menuItem("visibilityTrack", this, "addTrackAction"));
         addTrackMenu.add(Translate.menuItem("textureTrack", this, "addTrackAction"));
-        animationMenu.add(animationMenuItem[0] = Translate.menuItem("editTrack", theScore, "editSelectedTrack"));
-        animationMenu.add(animationMenuItem[1] = Translate.menuItem("duplicateTracks", theScore, "duplicateSelectedTracks"));
-        animationMenu.add(animationMenuItem[2] = Translate.menuItem("deleteTracks", theScore, "deleteSelectedTracks"));
-        animationMenu.add(animationMenuItem[3] = Translate.menuItem("selectAllTracks", theScore, "selectAllTracks"));
+        animationMenu.add(animationMenuItem[0] = Translate.menuItem("editTrack", event -> theScore.editSelectedTrack()));
+        animationMenu.add(animationMenuItem[1] = Translate.menuItem("duplicateTracks", event -> theScore.duplicateSelectedTracks()));
+        animationMenu.add(animationMenuItem[2] = Translate.menuItem("deleteTracks", event -> theScore.deleteSelectedTracks()));
+        animationMenu.add(animationMenuItem[3] = Translate.menuItem("selectAllTracks", event -> theScore.selectAllTracks()));
         animationMenu.add(animationMenuItem[4] = Translate.menuItem("enableTracks", event -> theScore.setTracksEnabled(true)));
         animationMenu.add(animationMenuItem[5] = Translate.menuItem("disableTracks", event -> theScore.setTracksEnabled(false)));
         animationMenu.addSeparator();
@@ -860,20 +856,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             }
         }
         return null; // should be impossible
-    }
-
-    /**
-     * Set the wait cursor on everything in this window.
-     */
-    public void setWaitCursor() {
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-    }
-
-    /**
-     * Remove the wait cursor from everything in this window.
-     */
-    public void clearWaitCursor() {
-        setCursor(Cursor.getDefaultCursor());
     }
 
     @Override

@@ -172,7 +172,7 @@ public final class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, Ope
         boolean frontIsLayoutWindow = false;
         for (EditingWindow window : ArtOfIllusion.getWindows()) {
             if (window instanceof LayoutWindow && window.getFrame().getComponent() == frontWindow) {
-                ((LayoutWindow) window).preferencesCommand(null);
+                ((LayoutWindow) window).preferencesCommand();
                 frontIsLayoutWindow = true;
                 break;
             }
@@ -202,8 +202,8 @@ public final class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, Ope
             setMenuBar(menubar);
             BMenu file = Translate.menu("file");
             menubar.add(file);
-            file.add(Translate.menuItem("new", this, "actionPerformed"));
-            file.add(Translate.menuItem("open", this, "actionPerformed"));
+            file.add(Translate.menuItem("new", e -> ArtOfIllusion.newWindow()));
+            file.add(Translate.menuItem("open", e -> ArtOfIllusion.openScene(this)));
             final BMenu recentMenu = Translate.menu("openRecent");
             RecentFiles.createMenu(recentMenu);
             file.add(recentMenu);
@@ -270,15 +270,5 @@ public final class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, Ope
             return true;
         }
 
-        private void actionPerformed(CommandEvent event) {
-            String command = event.getActionCommand();
-            if (command.equals("new")) {
-                ArtOfIllusion.newWindow();
-            } else if (command.equals("open")) {
-                ArtOfIllusion.openScene(this);
-            } else if (command.equals("quit")) {
-                ArtOfIllusion.quit();
-            }
-        }
     }
 }
