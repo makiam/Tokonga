@@ -11,6 +11,8 @@
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion
 
+import com.thoughtworks.xstream.annotations.XStreamAlias
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute
 import java.io.File
 import java.util.Locale
 
@@ -125,8 +127,11 @@ interface Plugin {
          */
         const val OBJECT_WINDOW_CLOSING: Int = 6
     }
-
+    @XStreamAlias("extension")
     data class Extension(val name: String, val version: String)
 
     data class Resource(val type:String, val id:String, val name: String, val locale: Locale)
+
+    @XStreamAlias("category")
+    data class Category(@XStreamAsAttribute @XStreamAlias(value = "class") val className: String)
 }
