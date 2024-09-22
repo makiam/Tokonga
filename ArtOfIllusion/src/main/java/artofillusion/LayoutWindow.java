@@ -116,13 +116,16 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     BMenu newScriptMenu;
     @Getter
-    BMenu recentFilesMenu, scriptMenu;
+    BMenu recentFilesMenu;
+    @Getter
+    BMenu scriptMenu;
 
     BMenu addTrackMenu, positionTrackMenu, rotationTrackMenu, distortionMenu;
 
     private final BMenuItem fileMenuItem = Translate.menuItem("save", this, "saveCommand");
     private BMenuItem[] editMenuItem, objectMenuItem, viewMenuItem;
-    BMenuItem[] animationMenuItem, popupMenuItem;
+    BMenuItem[] animationMenuItem;
+    BMenuItem[] popupMenuItem;
     BCheckBoxMenuItem[] displayItem;
     /**
      * -- GETTER --
@@ -134,7 +137,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     int numViewsShown, currentView;
     private final ActionProcessor uiEventProcessor;
 
-    private boolean sceneChangePending, objectListShown;
+    private boolean sceneChangePending;
+    private boolean objectListShown;
     private final KeyEventPostProcessor keyEventHandler;
     private final SceneChangedEvent sceneChangedEvent;
 
@@ -148,6 +152,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         for (String language : ScriptRunner.getLanguageNames()) {
             icons.add(new IconResource("artofillusion/Icons/" + language + ".png"));
         }
+        //TODO: get rid of this
         LANGUAGE_ICONS = icons.toArray(new ImageIcon[0]);
     }
 
@@ -1348,6 +1353,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     /**
      * This is called when the selection in the object tree changes.
      */
+    //NB. Bound to sceneExplorer. Do not remove.
+    @SuppressWarnings("unused")
     private void treeSelectionChanged() {
         Object[] sel = sceneExplorer.getSelectedObjects();
         int[] which = new int[sel.length];
@@ -1912,17 +1919,14 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }
     }
 
-    public void editObjectCommand(ActionEvent event) {
-        editObjectCommand();
-    }
-
     public void objectLayoutCommand() {
         int i;
         int[] sel = getSelectedIndices();
         TransformDialog dlg;
         ObjectInfo[] obj = new ObjectInfo[sel.length];
         Vec3 orig, size;
-        double[] angles, values;
+        double[] angles;
+        double[] values;
 
         if (sel.length == 0) {
             return;
