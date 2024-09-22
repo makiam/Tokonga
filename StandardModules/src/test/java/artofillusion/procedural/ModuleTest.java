@@ -10,9 +10,11 @@
 
 package artofillusion.procedural;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.awt.Point;
-import org.junit.Assert;
-import org.junit.Test;
+
 
 /**
  *
@@ -25,10 +27,10 @@ public class ModuleTest {
         var source = new ColorScaleModule(new Point(128, 64));
         var target = source.duplicate();
 
-        Assert.assertTrue(target instanceof ColorScaleModule);
-        Assert.assertNotNull(target);
-        Assert.assertEquals(128, target.getBounds().x);
-        Assert.assertEquals(64, target.getBounds().y);
+        Assertions.assertTrue(target instanceof ColorScaleModule);
+        Assertions.assertNotNull(target);
+        Assertions.assertEquals(128, target.getBounds().x);
+        Assertions.assertEquals(64, target.getBounds().y);
 
     }
 }

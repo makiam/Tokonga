@@ -168,7 +168,7 @@ public class ArtOfIllusion {
 
         for (Plugin plugin : PluginRegistry.getPlugins(Plugin.class)) {
             try {
-                plugin.onApplicationStarting();
+                plugin.processMessage(Plugin.APPLICATION_STARTING);
             } catch (Throwable tx) {
                 log.atError().setCause(tx).log("Plugin starting error: {}", tx.getMessage());
                 pluginsLoadResults.add(Translate.text("pluginInitError", plugin.getClass().getSimpleName()));

@@ -212,9 +212,9 @@ public class SPManagerPlugin implements Plugin {
                     if (errs != null) {
                         JTextArea txt = new JTextArea();
                         txt.setColumns(45);
-                        txt.setEditable(false);
+                        txt.setEditable(true);
                         txt.setRows(5);
-
+                        txt.setWrapStyleWord(true);
                         txt.setText(errs.toString());
 
                         JScrollPane detail = new JScrollPane(txt, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);

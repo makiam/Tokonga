@@ -14,7 +14,9 @@ package artofillusion.spmanager;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import org.junit.jupiter.api.*;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  *

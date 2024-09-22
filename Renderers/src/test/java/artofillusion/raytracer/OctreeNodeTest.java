@@ -16,15 +16,16 @@ import java.util.*;
 import artofillusion.object.*;
 import artofillusion.math.*;
 import artofillusion.texture.*;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 
 public class OctreeNodeTest {
 
     private static OctreeNode rootNode;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws Exception {
         // Create a scene for testing.
 
@@ -89,12 +90,12 @@ public class OctreeNodeTest {
                     Math.random() * (rootNode.maxy - rootNode.miny) + rootNode.miny,
                     Math.random() * (rootNode.maxz - rootNode.minz) + rootNode.minz);
             OctreeNode node = rootNode.findNode(pos);
-            assertTrue(node.contains(pos));
-            assertNotNull(node.getObjects()); // Make sure it's a terminal node.
+            Assertions.assertTrue(node.contains(pos));
+            Assertions.assertNotNull(node.getObjects()); // Make sure it's a terminal node.
         }
         for (int i = 0; i < 1000; i++) {
             Vec3 pos = new Vec3(20.0 * Math.random() - 5.0, 20.0 * Math.random() - 5.0, 20.0 * Math.random() - 5.0);
-            assertEquals(rootNode.contains(pos), rootNode.findNode(pos) != null);
+            Assertions.assertEquals(rootNode.contains(pos), rootNode.findNode(pos) != null);
         }
     }
 
@@ -121,13 +122,13 @@ public class OctreeNodeTest {
             // Now trace the ray through the tree and see if it hits all of the correct nodes.
             OctreeNode node = rootNode.findFirstNode(r);
             while (node != null) {
-                assertTrue(intersections.contains(node));
+                Assertions.assertTrue(intersections.contains(node));
                 intersections.remove(node);
                 OctreeNode nextNode = node.findNextNode(r);
-                assertNotSame(nextNode, node);
+                Assertions.assertNotSame(nextNode, node);
                 node = nextNode;
             }
-            assertEquals(0, intersections.size()); // Make sure we hit them all.
+            Assertions.assertEquals(0, intersections.size()); // Make sure we hit them all.
         }
     }
 

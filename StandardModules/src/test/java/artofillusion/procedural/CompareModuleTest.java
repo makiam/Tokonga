@@ -12,9 +12,11 @@
 package artofillusion.procedural;
 
 import artofillusion.procedural.Module;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.awt.*;
-import static org.junit.Assert.*;
-import org.junit.Test;
+
 
 public class CompareModuleTest {
 
@@ -49,6 +51,6 @@ public class CompareModuleTest {
         module.init(info);
         module.linkFrom[0].init(info);
         module.linkFrom[1].init(info);
-        assertEquals(expected, module.getAverageValue(0, 0.0), 1e-8);
+        Assertions.assertEquals(expected, module.getAverageValue(0, 0.0), 1e-8);
     }
 }
