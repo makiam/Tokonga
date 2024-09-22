@@ -54,7 +54,7 @@ public class SPManagerPlugin implements Plugin {
     public void onSceneWindowCreated(LayoutWindow view) {
         BMenu toolsMenu = view.getToolsMenu();
         toolsMenu.addSeparator();
-        BMenuItem menuItem = Translate.menuItem("spmanager:SPManager", this, "doMenu");
+        BMenuItem menuItem = Translate.menuItem("spmanager:SPManager", event -> doMenu());
 
         toolsMenu.add(menuItem);
     }
