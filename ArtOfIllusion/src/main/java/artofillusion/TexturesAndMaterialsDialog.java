@@ -17,6 +17,8 @@ import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
 import java.awt.datatransfer.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.lang.ref.*;
 import java.util.*;
@@ -28,6 +30,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TexturesAndMaterialsDialog extends BDialog {
+
+    private static Map<Scene, Rectangle> positions = new HashMap<>();
 
     private static final File assetsFolder = new File(ArtOfIllusion.APP_DIRECTORY, "Textures and Materials");
 
@@ -76,6 +80,14 @@ public class TexturesAndMaterialsDialog extends BDialog {
     TexturesAndMaterialsDialog(EditingWindow frame, Scene aScene) {
 
         super(frame.getFrame(), Translate.text("texturesTitle"), false);
+        this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                positions.putIfAbsent(theScene, TexturesAndMaterialsDialog.this.getComponent().getBounds());
+            }
+        });
 
         parentFrame = frame;
         theScene = aScene;
@@ -161,7 +173,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
         buttons.add(Translate.button("newLibraryFile", this, "doNewLib"));
         buttons.add(Translate.button("showExternalFile", this, "doIncludeLib"));
 
-        hilightButtons();
+        highlightButtons();
 
         addEventLink(WindowClosingEvent.class, this, "dispose");
 
@@ -180,6 +192,8 @@ public class TexturesAndMaterialsDialog extends BDialog {
         setSelection(libraryList.getRootNode(), theScene, theScene.getDefaultTexture());
         pack();
         UIUtilities.centerDialog(this, parentFrame.getFrame());
+        this.getComponent().setBounds(positions.getOrDefault(theScene, this.getBounds()));
+        setVisible(true);
 
     }
 
@@ -228,7 +242,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
             setInfoText(Translate.text("noSelection"), "&nbsp;");
         }
 
-        hilightButtons();
+        highlightButtons();
     }
 
     private boolean setSelection(TreePath node, Scene scene, Object object) {
@@ -262,7 +276,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
         return false;
     }
 
-    private void hilightButtons() {
+    private void highlightButtons() {
         if (selectedTexture == null && selectedMaterial == null) {
             duplicateButton.setEnabled(false);
             deleteButton.setEnabled(false);
@@ -423,7 +437,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
             parentFrame.updateImage();
             setSelection(libraryList.getRootNode(), theScene, newMaterial);
         }
-        hilightButtons();
+        highlightButtons();
     }
 
     @SuppressWarnings("unused")
