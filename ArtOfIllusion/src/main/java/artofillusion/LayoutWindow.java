@@ -27,14 +27,11 @@ import buoy.widget.*;
 import buoy.xml.IconResource;
 import buoyx.docking.*;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.greenrobot.eventbus.Subscribe;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.text.*;
 import java.util.*;
@@ -47,9 +44,10 @@ import javax.swing.text.*;
  * The LayoutWindow class represents the main window for creating and laying out
  * scenes.
  */
+@Slf4j
 public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuManager {
 
-    private static final Logger log = LoggerFactory.getLogger(LayoutWindow.class);
+
     SceneViewer[] theView;
     BorderContainer[] viewPanel;
     FormContainer viewsContainer;
@@ -114,20 +112,29 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     BMenu newScriptMenu;
     @Getter
-    BMenu recentFilesMenu, scriptMenu;
+    BMenu recentFilesMenu;
+    @Getter
+    BMenu scriptMenu;
 
     BMenu addTrackMenu, positionTrackMenu, rotationTrackMenu, distortionMenu;
 
     private final BMenuItem fileMenuItem = Translate.menuItem("save", this, "saveCommand");
     private BMenuItem[] editMenuItem, objectMenuItem, viewMenuItem;
-    BMenuItem[] animationMenuItem, popupMenuItem;
+    BMenuItem[] animationMenuItem;
+    BMenuItem[] popupMenuItem;
     BCheckBoxMenuItem[] displayItem;
+    /**
+     * -- GETTER --
+     *  Get the popup menu.
+     */
+    @Getter
     BPopupMenu popupMenu;
     private final UndoStack undoStack = new UndoStack();
     int numViewsShown, currentView;
     private final ActionProcessor uiEventProcessor;
 
-    private boolean sceneChangePending, objectListShown;
+    private boolean sceneChangePending;
+    private boolean objectListShown;
     private final KeyEventPostProcessor keyEventHandler;
     private final SceneChangedEvent sceneChangedEvent;
 
@@ -141,6 +148,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         for (String language : ScriptRunner.getLanguageNames()) {
             icons.add(new IconResource("artofillusion/Icons/" + language + ".png"));
         }
+        //TODO: get rid of this
         LANGUAGE_ICONS = icons.toArray(new ImageIcon[0]);
     }
 
@@ -354,6 +362,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }
     }
 
+    // This method calls only from Scene Explorer.
+    @SuppressWarnings("java:S1144")
     private void rebuildList() {
         theScore.rebuildList();
     }
@@ -445,25 +455,26 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         importMenu = Translate.menu("import");
         exportMenu = Translate.menu("export");
 
-        fileMenu.add(Translate.menuItem("new", this, "newSceneAction"));
-        fileMenu.add(Translate.menuItem("open", this, "openSceneAction"));
+        fileMenu.add(Translate.menuItem("new", event -> newSceneAction()));
+        fileMenu.add(Translate.menuItem("open", event -> openSceneAction()));
         fileMenu.add(recentFilesMenu = Translate.menu("openRecent"));
         RecentFiles.createMenu(recentFilesMenu);
 
-        fileMenu.add(Translate.menuItem("close", this, "closeSceneAction"));
+        fileMenu.add(Translate.menuItem("close", event -> closeSceneAction()));
         fileMenu.addSeparator();
         translators.sort(Comparator.comparing(Translator::getName));
         for (Translator translator : translators) {
             if (translator.canImport()) {
                 BMenuItem item = new BMenuItem(translator.getName());
                 item.getComponent().putClientProperty("translator", translator);
-                item.addEventLink(CommandEvent.class, this, "importAction");
+                item.getComponent().addActionListener(this::importAction);
                 importMenu.add(item);
             }
             if (translator.canExport()) {
                 BMenuItem item = new BMenuItem(translator.getName());
                 item.getComponent().putClientProperty("translator", translator);
-                item.addEventLink(CommandEvent.class, this, "exportAction");
+                item.getComponent().addActionListener(this::exportAction);
+
                 exportMenu.add(item);
             }
         }
@@ -473,56 +484,56 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         if (exportMenu.getChildCount() > 0) {
             fileMenu.add(exportMenu);
         }
-        fileMenu.add(Translate.menuItem("linkExternal", this, "linkExternalCommand"));
+        fileMenu.add(Translate.menuItem("linkExternal", event -> linkExternalCommand()));
         fileMenu.addSeparator();
         fileMenu.add(fileMenuItem);
-        fileMenu.add(Translate.menuItem("saveas", this, "saveAsCommand"));
+        fileMenu.add(Translate.menuItem("saveas", event -> saveAsCommand()));
         fileMenu.addSeparator();
-        fileMenu.add(Translate.menuItem("quit", this, "applicationQuitAction"));
+        fileMenu.add(Translate.menuItem("quit", event -> applicationQuitAction()));
     }
 
     private void createEditMenu() {
 
         getMenuBar().add(editMenu);
         editMenuItem = new BMenuItem[11];
-        editMenu.add(editMenuItem[0] = Translate.menuItem("undo", this, "undoCommand"));
-        editMenu.add(editMenuItem[1] = Translate.menuItem("redo", this, "redoCommand"));
+        editMenu.add(editMenuItem[0] = Translate.menuItem("undo", event -> undoCommand()));
+        editMenu.add(editMenuItem[1] = Translate.menuItem("redo", event -> redoCommand()));
         editMenu.addSeparator();
-        editMenu.add(editMenuItem[2] = Translate.menuItem("cut", this, "cutCommand"));
-        editMenu.add(editMenuItem[3] = Translate.menuItem("copy", this, "copyCommand"));
-        editMenu.add(editMenuItem[4] = Translate.menuItem("paste", this, "pasteCommand"));
-        editMenu.add(editMenuItem[5] = Translate.menuItem("clear", this, "clearCommand"));
+        editMenu.add(editMenuItem[2] = Translate.menuItem("cut", event -> cutCommand()));
+        editMenu.add(editMenuItem[3] = Translate.menuItem("copy", event -> copyCommand()));
+        editMenu.add(editMenuItem[4] = Translate.menuItem("paste", event -> pasteCommand()));
+        editMenu.add(editMenuItem[5] = Translate.menuItem("clear", event -> clearCommand()));
         editMenu.addSeparator();
-        editMenu.add(editMenuItem[6] = Translate.menuItem("selectChildren", this, "selectChildrenAction"));
-        editMenu.add(editMenuItem[7] = Translate.menuItem("selectAll", this, "selectAllCommand"));
-        editMenu.add(editMenuItem[8] = Translate.menuItem("deselectAll", this, "clearSelection"));
+        editMenu.add(editMenuItem[6] = Translate.menuItem("selectChildren", event -> selectChildrenAction()));
+        editMenu.add(editMenuItem[7] = Translate.menuItem("selectAll", event -> selectAllCommand()));
+        editMenu.add(editMenuItem[8] = Translate.menuItem("deselectAll", event -> clearSelection()));
         editMenu.addSeparator();
-        editMenu.add(editMenuItem[9] = Translate.menuItem("duplicate", this::duplicateCommand));
-        editMenu.add(editMenuItem[10] = Translate.menuItem("sever", this::severCommand));
+        editMenu.add(editMenuItem[9] = Translate.menuItem("duplicate", event -> duplicateCommand()));
+        editMenu.add(editMenuItem[10] = Translate.menuItem("sever", event -> severCommand()));
         editMenu.addSeparator();
-        editMenu.add(Translate.menuItem("preferences", this::preferencesCommand));
+        editMenu.add(Translate.menuItem("preferences", event -> preferencesCommand()));
     }
 
     private void createObjectMenu() {
 
         getMenuBar().add(objectMenu);
         objectMenuItem = new BMenuItem[12];
-        objectMenu.add(objectMenuItem[0] = Translate.menuItem("editObject", this::editObjectCommand));
-        objectMenu.add(objectMenuItem[1] = Translate.menuItem("objectLayout", this::objectLayoutCommand));
-        objectMenu.add(objectMenuItem[2] = Translate.menuItem("transformObject", this, "transformObjectCommand"));
-        objectMenu.add(objectMenuItem[3] = Translate.menuItem("alignObjects", this, "alignObjectsCommand"));
-        objectMenu.add(objectMenuItem[4] = Translate.menuItem("setTextureAndMaterial", this, "setTextureCommand"));
-        objectMenu.add(objectMenuItem[5] = Translate.menuItem("renameObject", this, "renameObjectCommand"));
-        objectMenu.add(objectMenuItem[6] = Translate.menuItem("convertToTriangle", this, "convertToTriangleCommand"));
-        objectMenu.add(objectMenuItem[7] = Translate.menuItem("convertToActor", this, "convertToActorCommand"));
+        objectMenu.add(objectMenuItem[0] = Translate.menuItem("editObject", event -> editObjectCommand()));
+        objectMenu.add(objectMenuItem[1] = Translate.menuItem("objectLayout", event -> objectLayoutCommand()));
+        objectMenu.add(objectMenuItem[2] = Translate.menuItem("transformObject", event -> transformObjectCommand()));
+        objectMenu.add(objectMenuItem[3] = Translate.menuItem("alignObjects", event -> alignObjectsCommand()));
+        objectMenu.add(objectMenuItem[4] = Translate.menuItem("setTextureAndMaterial", event -> setTextureCommand()));
+        objectMenu.add(objectMenuItem[5] = Translate.menuItem("renameObject", event -> renameObjectCommand()));
+        objectMenu.add(objectMenuItem[6] = Translate.menuItem("convertToTriangle", event -> convertToTriangleCommand()));
+        objectMenu.add(objectMenuItem[7] = Translate.menuItem("convertToActor", event -> convertToActorCommand()));
         objectMenu.addSeparator();
-        objectMenu.add(objectMenuItem[8] = Translate.menuItem("hideSelection", this, "hideSelectionAction"));
-        objectMenu.add(objectMenuItem[9] = Translate.menuItem("showSelection", this, "showSelectionAction"));
-        objectMenu.add(Translate.menuItem("showAll", this, "showAllAction"));
+        objectMenu.add(objectMenuItem[8] = Translate.menuItem("hideSelection",  event -> setObjectVisibility(false, true)));
+        objectMenu.add(objectMenuItem[9] = Translate.menuItem("showSelection", event -> setObjectVisibility(true, true)));
+        objectMenu.add(Translate.menuItem("showAll", event -> setObjectVisibility(true, false)));
         objectMenu.addSeparator();
-        objectMenu.add(objectMenuItem[10] = Translate.menuItem("lockSelection", this, "lockSelectionAction"));
-        objectMenu.add(objectMenuItem[11] = Translate.menuItem("unlockSelection", this, "unlockSelectionAction"));
-        objectMenu.add(Translate.menuItem("unlockAll", this, "unlockAllAction"));
+        objectMenu.add(objectMenuItem[10] = Translate.menuItem("lockSelection", event -> setObjectsLocked(true, true)));
+        objectMenu.add(objectMenuItem[11] = Translate.menuItem("unlockSelection",  event -> setObjectsLocked(false, true)));
+        objectMenu.add(Translate.menuItem("unlockAll", (ActionEvent e) -> setObjectsLocked(false, false)));
         objectMenu.addSeparator();
         objectMenu.add(new PrimitivesMenu(this));
     }
@@ -604,17 +615,17 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         displayMenu.add(displayItem[4] = Translate.checkboxMenuItem("transparentDisplay", this, "setDisplayModeTransparent", renderMode == ViewerCanvas.RENDER_TRANSPARENT));
         displayMenu.add(displayItem[5] = Translate.checkboxMenuItem("renderedDisplay", this, "setDisplayModeRendered", renderMode == ViewerCanvas.RENDER_RENDERED));
 
-        viewMenu.add(viewMenuItem[0] = Translate.menuItem("fourViews", this, "toggleViewsCommand"));
-        viewMenu.add(Translate.menuItem("grid", this, "setGridCommand"));
-        viewMenu.add(viewMenuItem[2] = Translate.menuItem("showCoordinateAxes", this, "showCoordinateAxesAction"));
-        viewMenu.add(viewMenuItem[3] = Translate.menuItem("showTemplate", this, "showTemplateAction"));
-        viewMenu.add(Translate.menuItem("setTemplate", this, "setTemplateCommand"));
+        viewMenu.add(viewMenuItem[0] = Translate.menuItem("fourViews", event -> toggleViewsCommand()));
+        viewMenu.add(Translate.menuItem("grid", event -> setGridCommand()));
+        viewMenu.add(viewMenuItem[2] = Translate.menuItem("showCoordinateAxes", event -> showCoordinateAxesAction()));
+        viewMenu.add(viewMenuItem[3] = Translate.menuItem("showTemplate", event -> showTemplateAction()));
+        viewMenu.add(Translate.menuItem("setTemplate", event -> setTemplateCommand()));
         viewMenu.addSeparator();
-        viewMenu.add(viewMenuItem[4] = Translate.menuItem("fitToSelection", this, "fitToSelectionAction"));
-        viewMenu.add(viewMenuItem[5] = Translate.menuItem("fitToAll", this, "fitToAllAction"));
-        viewMenu.add(viewMenuItem[6] = Translate.menuItem("alignWithClosestAxis", this, "alignWithClosestAxisAction"));
+        viewMenu.add(viewMenuItem[4] = Translate.menuItem("fitToSelection", event -> fitToSelectionAction()));
+        viewMenu.add(viewMenuItem[5] = Translate.menuItem("fitToAll",  event -> fitToAllAction()));
+        viewMenu.add(viewMenuItem[6] = Translate.menuItem("alignWithClosestAxis", event -> alignWithClosestAxisAction()));
         viewMenu.addSeparator();
-        viewMenu.add(viewMenuItem[1] = Translate.menuItem("hideObjectList", this, "hideObjectListAction"));
+        viewMenu.add(viewMenuItem[1] = Translate.menuItem("hideObjectList", event -> setObjectListVisible(objectListShown = !objectListShown)));
 
     }
 
@@ -669,14 +680,14 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         animationMenuItem = new BMenuItem[13];
         animationMenu.add(addTrackMenu = Translate.menu("addTrack"));
         addTrackMenu.add(positionTrackMenu = Translate.menu("positionTrack"));
-        positionTrackMenu.add(Translate.menuItem("xyzOneTrack", this, "addOnePositionTrackAction"));
-        positionTrackMenu.add(Translate.menuItem("xyzThreeTracks", this, "addThreePositionTrackAction"));
-        positionTrackMenu.add(Translate.menuItem("proceduralTrack", this, "addProceduralPositionTrackAction"));
+        positionTrackMenu.add(Translate.menuItem("xyzOneTrack", event -> addOnePositionTrackAction()));
+        positionTrackMenu.add(Translate.menuItem("xyzThreeTracks", event -> addThreePositionTrackAction()));
+        positionTrackMenu.add(Translate.menuItem("proceduralTrack", event -> addProceduralPositionTrackAction()));
         addTrackMenu.add(rotationTrackMenu = Translate.menu("rotationTrack"));
-        rotationTrackMenu.add(Translate.menuItem("xyzOneTrack", this, "addOneRotationTrackAction"));
-        rotationTrackMenu.add(Translate.menuItem("xyzThreeTracks", this, "addThreeRotationTrackAction"));
-        rotationTrackMenu.add(Translate.menuItem("quaternionTrack", this, "addQuaternionTrackAction"));
-        rotationTrackMenu.add(Translate.menuItem("proceduralTrack", this, "addProceduralRotationTrackAction"));
+        rotationTrackMenu.add(Translate.menuItem("xyzOneTrack", event -> addOneRotationTrackAction()));
+        rotationTrackMenu.add(Translate.menuItem("xyzThreeTracks", event -> addThreeRotationTrackAction()));
+        rotationTrackMenu.add(Translate.menuItem("quaternionTrack", event -> addQuaternionTrackAction()));
+        rotationTrackMenu.add(Translate.menuItem("proceduralTrack", event -> addProceduralRotationTrackAction()));
         addTrackMenu.add(Translate.menuItem("poseTrack", this, "addTrackAction"));
         addTrackMenu.add(distortionMenu = Translate.menu("distortionTrack"));
         distortionMenu.add(Translate.menuItem("bendDistortion", this, "addDistortionTrackAction"));
@@ -690,12 +701,12 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         addTrackMenu.add(Translate.menuItem("constraintTrack", this, "addTrackAction"));
         addTrackMenu.add(Translate.menuItem("visibilityTrack", this, "addTrackAction"));
         addTrackMenu.add(Translate.menuItem("textureTrack", this, "addTrackAction"));
-        animationMenu.add(animationMenuItem[0] = Translate.menuItem("editTrack", theScore, "editSelectedTrack"));
-        animationMenu.add(animationMenuItem[1] = Translate.menuItem("duplicateTracks", theScore, "duplicateSelectedTracks"));
-        animationMenu.add(animationMenuItem[2] = Translate.menuItem("deleteTracks", theScore, "deleteSelectedTracks"));
-        animationMenu.add(animationMenuItem[3] = Translate.menuItem("selectAllTracks", theScore, "selectAllTracks"));
-        animationMenu.add(animationMenuItem[4] = Translate.menuItem("enableTracks", theScore, "enableTracks"));
-        animationMenu.add(animationMenuItem[5] = Translate.menuItem("disableTracks", theScore, "disableTracks"));
+        animationMenu.add(animationMenuItem[0] = Translate.menuItem("editTrack", event -> theScore.editSelectedTrack()));
+        animationMenu.add(animationMenuItem[1] = Translate.menuItem("duplicateTracks", event -> theScore.duplicateSelectedTracks()));
+        animationMenu.add(animationMenuItem[2] = Translate.menuItem("deleteTracks", event -> theScore.deleteSelectedTracks()));
+        animationMenu.add(animationMenuItem[3] = Translate.menuItem("selectAllTracks", event -> theScore.selectAllTracks()));
+        animationMenu.add(animationMenuItem[4] = Translate.menuItem("enableTracks", event -> theScore.setTracksEnabled(true)));
+        animationMenu.add(animationMenuItem[5] = Translate.menuItem("disableTracks", event -> theScore.setTracksEnabled(false)));
         animationMenu.addSeparator();
         animationMenu.add(animationMenuItem[6] = Translate.menuItem("keyframe", theScore, "keyframeSelectedTracks"));
         animationMenu.add(animationMenuItem[7] = Translate.menuItem("keyframeModified", theScore, "keyframeModifiedTracks"));
@@ -710,28 +721,28 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         editKeyframeMenu.add(Translate.menuItem("loopKeyframes", this, "bulkEditKeyframeAction"));
         editKeyframeMenu.add(Translate.menuItem("deleteKeyframes", this, "bulkEditKeyframeAction"));
 
-        animationMenu.add(animationMenuItem[10] = Translate.menuItem("pathFromCurve", this, "pathFromCurveAction"));
-        animationMenu.add(animationMenuItem[11] = Translate.menuItem("bindToParent", this, "bindToParentCommand"));
+        animationMenu.add(animationMenuItem[10] = Translate.menuItem("pathFromCurve", event -> pathFromCurveAction()));
+        animationMenu.add(animationMenuItem[11] = Translate.menuItem("bindToParent", event -> bindToParentCommand()));
         animationMenu.addSeparator();
-        animationMenu.add(Translate.menuItem("forwardFrame", this, "forwardFrameAction"));
-        animationMenu.add(Translate.menuItem("backFrame", this, "backFrameAction"));
-        animationMenu.add(Translate.menuItem("jumpToTime", this, "jumpToTimeCommand"));
+        animationMenu.add(Translate.menuItem("forwardFrame", event -> forwardFrameAction()));
+        animationMenu.add(Translate.menuItem("backFrame", event -> backFrameAction()));
+        animationMenu.add(Translate.menuItem("jumpToTime", event -> jumpToTimeCommand()));
         animationMenu.addSeparator();
-        animationMenu.add(Translate.menuItem("previewAnimation", this, "previewAnimationAction"));
-        animationMenu.add(animationMenuItem[12] = Translate.menuItem("showScore", this, "showScoreAction"));
+        animationMenu.add(Translate.menuItem("previewAnimation", event -> previewAnimationAction()));
+        animationMenu.add(animationMenuItem[12] = Translate.menuItem("showScore", event -> showScoreAction()));
     }
 
     private void createSceneMenu() {
 
         getMenuBar().add(sceneMenu);
 
-        sceneMenu.add(Translate.menuItem("renderScene", this, "renderCommand"));
-        sceneMenu.add(Translate.menuItem("renderImmediately", this, "renderImmediatelyAction"));
+        sceneMenu.add(Translate.menuItem("renderScene", event -> renderCommand()));
+        sceneMenu.add(Translate.menuItem("renderImmediately", event -> renderImmediatelyAction()));
 
         sceneMenu.addSeparator();
         sceneMenu.add(Translate.menuItem("textures", this, "texturesCommand"));
         sceneMenu.add(Translate.menuItem("images", this, "imagesDialogAction"));
-        sceneMenu.add(Translate.menuItem("environment", this, "environmentCommand"));
+        sceneMenu.add(Translate.menuItem("environment", event -> environmentCommand()));
     }
 
     /**
@@ -740,8 +751,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     private void createPopupMenu() {
         popupMenu = new BPopupMenu();
         popupMenuItem = new BMenuItem[15];
-        popupMenu.add(popupMenuItem[0] = Translate.menuItem("editObject", this::editObjectCommand));
-        popupMenu.add(popupMenuItem[1] = Translate.menuItem("objectLayout", this::objectLayoutCommand));
+        popupMenu.add(popupMenuItem[0] = Translate.menuItem("editObject", event -> editObjectCommand()));
+        popupMenu.add(popupMenuItem[1] = Translate.menuItem("objectLayout", event -> objectLayoutCommand()));
         popupMenu.add(popupMenuItem[2] = Translate.menuItem("setTextureAndMaterial", this, "setTextureCommand"));
         popupMenu.add(popupMenuItem[3] = Translate.menuItem("renameObject", this, "renameObjectCommand"));
         popupMenu.add(popupMenuItem[4] = Translate.menuItem("convertToTriangle", this, "convertToTriangleCommand"));
@@ -750,15 +761,15 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         popupMenu.add(Translate.menuItem("selectAll", this, "selectAllCommand"));
         popupMenu.add(popupMenuItem[6] = Translate.menuItem("deselectAll", this, "clearSelection"));
         popupMenu.addSeparator();
-        popupMenu.add(popupMenuItem[7] = Translate.menuItem("hideSelection", this, "hideSelectionAction"));
-        popupMenu.add(popupMenuItem[8] = Translate.menuItem("showSelection", this, "showSelectionAction"));
-        popupMenu.add(popupMenuItem[9] = Translate.menuItem("lockSelection", this, "lockSelectionAction"));
-        popupMenu.add(popupMenuItem[10] = Translate.menuItem("unlockSelection", this, "unlockSelectionAction"));
+        popupMenu.add(popupMenuItem[7] = Translate.menuItem("hideSelection", event -> setObjectVisibility(false, true)));
+        popupMenu.add(popupMenuItem[8] = Translate.menuItem("showSelection", event -> setObjectVisibility(true, true)));
+        popupMenu.add(popupMenuItem[9] = Translate.menuItem("lockSelection", event -> setObjectsLocked(true, true)));
+        popupMenu.add(popupMenuItem[10] = Translate.menuItem("unlockSelection", event -> setObjectsLocked(false, true)));
         popupMenu.addSeparator();
-        popupMenu.add(popupMenuItem[11] = Translate.menuItem("cut", this::cutCommand));
-        popupMenu.add(popupMenuItem[12] = Translate.menuItem("copy", this::copyCommand));
-        popupMenu.add(popupMenuItem[13] = Translate.menuItem("paste", this::pasteCommand));
-        popupMenu.add(popupMenuItem[14] = Translate.menuItem("clear", this::clearCommand));
+        popupMenu.add(popupMenuItem[11] = Translate.menuItem("cut", event -> cutCommand()));
+        popupMenu.add(popupMenuItem[12] = Translate.menuItem("copy", event -> copyCommand()));
+        popupMenu.add(popupMenuItem[13] = Translate.menuItem("paste", event -> pasteCommand()));
+        popupMenu.add(popupMenuItem[14] = Translate.menuItem("clear", event -> clearCommand()));
     }
 
     /**
@@ -835,13 +846,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     /**
-     * Get the popup menu.
-     */
-    public BPopupMenu getPopupMenu() {
-        return popupMenu;
-    }
-
-    /**
      * Get the DockingContainer which holds DockableWidgets on one side of the
      * window.
      */
@@ -852,20 +856,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             }
         }
         return null; // should be impossible
-    }
-
-    /**
-     * Set the wait cursor on everything in this window.
-     */
-    public void setWaitCursor() {
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-    }
-
-    /**
-     * Remove the wait cursor from everything in this window.
-     */
-    public void clearWaitCursor() {
-        setCursor(Cursor.getDefaultCursor());
     }
 
     @Override
@@ -1345,6 +1335,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     /**
      * This is called when the selection in the object tree changes.
      */
+    //NB. Bound to sceneExplorer. Do not remove.
+    @SuppressWarnings("unused")
     private void treeSelectionChanged() {
         Object[] sel = sceneExplorer.getSelectedObjects();
         int[] which = new int[sel.length];
@@ -1564,54 +1556,22 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         ArtOfIllusion.quit();
     }
 
-    private void enableTracksAction() {
-        theScore.setTracksEnabled(true);
-    }
-
-    private void disableTracksAction() {
-        theScore.setTracksEnabled(true);
-    }
-
-    private void importAction(CommandEvent event) {
-        BMenuItem source = (BMenuItem) event.getWidget();
-        Translator trans = (Translator) source.getComponent().getClientProperty("translator");
+    private void importAction(ActionEvent event) {
+        var source = (JMenuItem) event.getSource();
+        Translator trans = (Translator) source.getClientProperty("translator");
         trans.importFile(this);
     }
 
-    private void exportAction(CommandEvent event) {
-        BMenuItem source = (BMenuItem) event.getWidget();
-        Translator trans = (Translator) source.getComponent().getClientProperty("translator");
+    private void exportAction(ActionEvent event) {
+        var source = (JMenuItem) event.getSource();
+        Translator trans = (Translator) source.getClientProperty("translator");
         trans.exportFile(this, theScene);
     }
 
-    private void selectChildrenAction(CommandEvent event) {
+    private void selectChildrenAction() {
         setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_SCENE_SELECTION, getSelectedIndices()));
         setSelection(getSelectionWithChildren());
         updateImage();
-    }
-
-    private void hideSelectionAction() {
-        setObjectVisibility(false, true);
-    }
-
-    private void showSelectionAction() {
-        setObjectVisibility(true, true);
-    }
-
-    private void showAllAction() {
-        setObjectVisibility(true, false);
-    }
-
-    private void lockSelectionAction() {
-        setObjectsLocked(true, true);
-    }
-
-    private void unlockSelectionAction() {
-        setObjectsLocked(false, true);
-    }
-
-    private void unlockAllAction() {
-        setObjectsLocked(false, false);
     }
 
     private void renderImmediatelyAction() {
@@ -1650,10 +1610,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     private void alignWithClosestAxisAction() {
         getView().alignWithClosestAxis();
-    }
-
-    private void hideObjectListAction() {
-        setObjectListVisible(objectListShown = !objectListShown);
     }
 
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
@@ -1767,7 +1723,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         modified = !ArtOfIllusion.saveScene(theScene, this);
 
         // The UI seems to react to something somewhere in the saving process and
-        // updateMenus() even without this, but that probably can not be guaranteed.
+        // updateMenus() even without this, but that probably cannot be guaranteed.
         updateMenus();
     }
 
@@ -1791,12 +1747,12 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         updateMenus();
     }
 
-    public void cutCommand(ActionEvent event) {
-        copyCommand(null);
-        clearCommand(null);
+    public void cutCommand() {
+        copyCommand();
+        clearCommand();
     }
 
-    public void copyCommand(ActionEvent event) {
+    public void copyCommand() {
         int[] sel = getSelectionWithChildren();
         if (sel.length == 0) {
             return;
@@ -1810,7 +1766,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         updateMenus();
     }
 
-    public void pasteCommand(ActionEvent event) {
+    public void pasteCommand() {
         int[] which = new int[ArtOfIllusion.getClipboardSize()];
         int num = theScene.getNumObjects();
         for (int i = 0; i < which.length; i++) {
@@ -1822,7 +1778,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         updateImage();
     }
 
-    public void clearCommand(ActionEvent event) {
+    public void clearCommand() {
         Object[] sel = sceneExplorer.getSelectedObjects();
         int[] selIndex = getSelectedIndices();
         boolean any;
@@ -1834,7 +1790,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         clearSelection();
         UndoRecord undo = new UndoRecord(this);
 
-        // First remove any selected objects.
+        // First, remove any selected objects.
         for (i = sel.length - 1; i >= 0; i--) {
             ObjectInfo info = (ObjectInfo) sel[i];
             int index = theScene.indexOf(info);
@@ -1860,10 +1816,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     public void selectAllCommand() {
-        int i;
         int[] which = new int[theScene.getNumObjects()];
 
-        for (i = 0; i < which.length; i++) {
+        for (int i = 0; i < which.length; i++) {
             which[i] = i;
         }
         setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_SCENE_SELECTION, getSelectedIndices()));
@@ -1872,19 +1827,19 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void preferencesCommand(ActionEvent event) {
+    public void preferencesCommand() {
         new PreferencesWindow(this);
     }
 
-    public void duplicateCommand(ActionEvent event) {
+    public void duplicateCommand() {
         Object[] sel = sceneExplorer.getSelectedObjects();
         int[] which = new int[sel.length];
         int num = theScene.getNumObjects();
 
         // Create the duplicates.
-        HashMap<ObjectInfo, ObjectInfo> duplicateMap = new HashMap<>();
-        for (int i = 0; i < sel.length; i++) {
-            ObjectInfo original = (ObjectInfo) sel[i];
+        Map<ObjectInfo, ObjectInfo> duplicateMap = new HashMap<>();
+        for (Object selection : sel) {
+            ObjectInfo original = (ObjectInfo) selection;
             duplicateMap.put(original, original.duplicate());
         }
 
@@ -1911,14 +1866,13 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         updateImage();
     }
 
-    public void severCommand(ActionEvent event) {
+    public void severCommand() {
         Object[] sel = sceneExplorer.getSelectedObjects();
-        ObjectInfo info;
-        int i;
+
 
         UndoRecord undo = new UndoRecord(this);
-        for (i = 0; i < sel.length; i++) {
-            info = (ObjectInfo) sel[i];
+        for (Object selected : sel) {
+            var info = (ObjectInfo) selected;
             undo.addCommand(UndoRecord.COPY_OBJECT_INFO, info, info.duplicate());
             info.setObject(info.object.duplicate());
         }
@@ -1947,17 +1901,14 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }
     }
 
-    public void editObjectCommand(ActionEvent event) {
-        editObjectCommand();
-    }
-
-    public void objectLayoutCommand(ActionEvent event) {
+    public void objectLayoutCommand() {
         int i;
         int[] sel = getSelectedIndices();
         TransformDialog dlg;
         ObjectInfo[] obj = new ObjectInfo[sel.length];
         Vec3 orig, size;
-        double[] angles, values;
+        double[] angles;
+        double[] values;
 
         if (sel.length == 0) {
             return;

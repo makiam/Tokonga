@@ -41,6 +41,8 @@ import java.text.MessageFormat;
 import java.util.Locale;
 
 import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -60,7 +62,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 /**
  * @author MaksK
  */
-@Log
+@Slf4j
 @DisplayName("Layout Window Test")
 @ExtendWith({UITestWatcher.class, SetupLocale.class})
 class LayoutWindowTest {
@@ -343,7 +345,7 @@ class LayoutWindowTest {
         executeTrackMenu("Texture Parameter", TextureTrack.class, 3);
     }
 
-    private void executeTrackMenu(String path, Class clazz, int count) {
+    private void executeTrackMenu(String path, @NotNull Class clazz, int count) {
         JMenuItemOperator oto = appMainMenu.showMenuItem("Animation|" + bundle.getResource("menu.addTrack"));
         assertFalse(oto.isEnabled());
         ObjectInfo test = new ObjectInfo(new Sphere(1d, 1d, 1d), new CoordinateSystem(), "Test-" + System.currentTimeMillis());
@@ -427,8 +429,8 @@ class LayoutWindowTest {
     }
 
     @Test
-    @DisplayName("Test Invoke Layoutbject Command No Selection")
-    void testInvokeLayoutbjectCommandNoSelection() {
+    @DisplayName("Test Invoke Layout Object Command No Selection")
+    void testInvokeLayoutObjectCommandNoSelection() {
         JMenuItemOperator oto = appMainMenu.showMenuItem("Object|Object Layout...");
         assertFalse(oto.isEnabled());
     }

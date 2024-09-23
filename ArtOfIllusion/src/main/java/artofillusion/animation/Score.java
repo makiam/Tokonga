@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2012 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.*;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -43,6 +44,11 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
     final ToolPalette modeTools;
     final BLabel helpText;
     final BSplitPane div;
+    /**
+     * -- GETTER --
+     *  Get the popup menu for the score.
+     */
+    @Getter
     BPopupMenu popupMenu;
     BMenuItem[] popupMenuItem;
     final Marker timeMarker;
@@ -50,12 +56,17 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
     int scrollPos;
     int mode;
     int view;
-    double startTime;
+    @Getter double startTime;
     double timeScale;
     private boolean[] hasRepaintedView;
     private boolean isAnimating;
     private long animateStartClockTime;
     private double animateStartSceneTime;
+    /**
+     * -- GETTER --
+     *  Get the playback speed.
+     */
+    @Getter
     private double playbackSpeed;
     private final BButton playButton;
     private final BButton rewindButton;
@@ -163,8 +174,8 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         popupMenu.add(popupMenuItem[0] = Translate.menuItem("editTrack", this, "editSelectedTrack"));
         popupMenu.add(popupMenuItem[1] = Translate.menuItem("duplicateTracks", this, "duplicateSelectedTracks"));
         popupMenu.add(popupMenuItem[2] = Translate.menuItem("deleteTracks", this, "deleteSelectedTracks"));
-        popupMenu.add(popupMenuItem[3] = Translate.menuItem("enableTracks", this, "enableTracks"));
-        popupMenu.add(popupMenuItem[4] = Translate.menuItem("disableTracks", this, "disableTracks"));
+        popupMenu.add(popupMenuItem[3] = Translate.menuItem("enableTracks", event -> setTracksEnabled(true)));
+        popupMenu.add(popupMenuItem[4] = Translate.menuItem("disableTracks", event -> setTracksEnabled(false)));
     }
 
     /**
@@ -177,10 +188,11 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         boolean disable = false;
 
         for (Track track : selTrack) {
-            if (track.isEnabled())
+            if (track.isEnabled()) {
                 disable = true;
-            else
+            } else {
                 enable = true;
+            }
         }
 
         popupMenuItem[0].setEnabled(selTrack.length == 1); // Edit Track
@@ -189,13 +201,6 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         popupMenuItem[3].setEnabled(enable); // Enable Tracks
         popupMenuItem[4].setEnabled(disable); // Disable Tracks
         popupMenu.show(w, x, y);
-    }
-
-    /**
-     * Get the popup menu for the score.
-     */
-    public BPopupMenu getPopupMenu() {
-        return popupMenu;
     }
 
     /**
@@ -231,7 +236,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      */
     public void setSelectedKeyframes(SelectionInfo[] sel) {
         selection = sel;
-        for (TrackDisplay graph : graphs) ((Widget) graph).repaint();
+        graphs.forEach(graph -> ((Widget) graph).repaint());
         window.updateMenus();
     }
 
@@ -276,9 +281,11 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * Determine whether a particular keyframe is selected.
      */
     public boolean isKeyframeSelected(Keyframe k) {
-        for (SelectionInfo selectionInfo : selection)
-            if (selectionInfo.key == k)
+        for (SelectionInfo selectionInfo : selection) {
+            if (selectionInfo.key == k) {
                 return true;
+            }
+        }
         return false;
     }
 
@@ -286,9 +293,9 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * Determine whether the handle for a particular value of a keyframe is selected.
      */
     public boolean isKeyframeSelected(Keyframe k, int value) {
-        for (int i = 0; i < selection.length; i++) {
-            if (selection[i].key == k) {
-                return (selection[i].selected.length > value && selection[i].selected[value]);
+        for (SelectionInfo selectionInfo: selection) {
+            if (selectionInfo.key == k) {
+                return (selectionInfo.selected.length > value && selectionInfo.selected[value]);
             }
         }
         return false;
@@ -408,13 +415,6 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
     }
 
     /**
-     * Get the starting time to display.
-     */
-    public double getStartTime() {
-        return startTime;
-    }
-
-    /**
      * Set the starting time to display.
      */
     public void setStartTime(double time) {
@@ -519,13 +519,6 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      */
     public boolean getAnimating() {
         return isAnimating;
-    }
-
-    /**
-     * Get the playback speed.
-     */
-    public double getPlaybackSpeed() {
-        return playbackSpeed;
     }
 
     /**
