@@ -58,7 +58,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     Score theScore;
     ToolPalette tools;
-    private TexturesAndMaterialsDialog assetsDialog;
+
     private final BLabel helpText = new BLabel();
     private final SceneExplorer sceneExplorer;
     Scene theScene;
@@ -2730,14 +2730,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      * Show the dialog for editing textures and materials.
      */
     public void showTexturesDialog(Scene target) {
-        if (null == assetsDialog) {
-            assetsDialog = new TexturesAndMaterialsDialog(this, target);
-        }
-        Rectangle r = assetsDialog.getBounds();
-        assetsDialog.dispose();
-        assetsDialog = new TexturesAndMaterialsDialog(this, target);
-        assetsDialog.setBounds(r);
-        assetsDialog.setVisible(true);
+        new TexturesAndMaterialsDialog(this, target);
     }
 
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
