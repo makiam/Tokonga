@@ -45,7 +45,7 @@ public interface MeshEditController {
      * Set the selection mode. The allowed values are POINT_MODE, EDGE_MODE, and FACE_MODE,
      * although some modes may not be permitted for some controllers.
      */
-    void setSelectionMode(int mode);
+    default void setSelectionMode(int mode) {}
 
     /**
      * Get an array of flags specifying which parts of the object are selected. Depending on the selection mode

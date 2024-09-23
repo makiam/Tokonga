@@ -259,7 +259,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * Mesh size along z
      */
     public PolyMesh(int type, int u, int v, double sx, double sy, double sz) {
-        super();
+
         initialize();
         switch (type) {
             case 0:
@@ -1037,9 +1037,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         faces = new Wface[euSize * evSize];
         for (int i = 0; i < uSize; ++i) {
             for (int j = 0; j < vSize; ++j) {
-                vertices[i + uSize * j] = new Wvertex(new Vec3(i * uMax
-                        / ((double) (uSize - 1)), j * vMax
-                        / ((double) (vSize - 1)), 0), -1);
+                vertices[i + uSize * j] = new Wvertex(new Vec3(i * uMax / ((double) (uSize - 1)), j * vMax / ((double) (vSize - 1)), 0), -1);
             }
         }
         int ec;
@@ -5410,7 +5408,6 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
     }
 
     public PolyMesh(DataInputStream in) throws IOException, InvalidObjectException {
-        super();
         initialize();
         readData(in, null);
         skeleton = new Skeleton();

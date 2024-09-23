@@ -19,6 +19,7 @@ import buoy.event.*;
 import buoy.widget.*;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 /**
  * The CurveEditorWindow class represents the window for editing Curve objects.
@@ -124,13 +125,13 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
         meshMenu.add(meshMenuItem[4] = Translate.menuItem("randomize", this, "randomizeCommand"));
         meshMenu.add(Translate.menuItem("centerCurve", this, "centerCommand"));
         meshMenu.addSeparator();
-        meshMenu.add(meshMenuItem[5] = Translate.menuItem("smoothness", this, "setSmoothnessCommand"));
+        meshMenu.add(meshMenuItem[5] = Translate.menuItem("smoothness", this::setSmoothnessCommand));
         meshMenu.add(smoothMenu = Translate.menu("smoothingMethod"));
         smoothItem = new BCheckBoxMenuItem[3];
         smoothMenu.add(smoothItem[0] = Translate.checkboxMenuItem("none", this, "smoothingChanged", obj.getSmoothingMethod() == Curve.NO_SMOOTHING));
         smoothMenu.add(smoothItem[1] = Translate.checkboxMenuItem("interpolating", this, "smoothingChanged", obj.getSmoothingMethod() == Curve.INTERPOLATING));
         smoothMenu.add(smoothItem[2] = Translate.checkboxMenuItem("approximating", this, "smoothingChanged", obj.getSmoothingMethod() == Curve.APPROXIMATING));
-        meshMenu.add(meshMenuItem[6] = Translate.menuItem("closedEnds", this, "toggleClosedCommand"));
+        meshMenu.add(meshMenuItem[6] = Translate.menuItem("closedEnds", this::toggleClosedCommand));
         if (obj.isClosed()) {
             meshMenuItem[6].setText(Translate.text("menu.openEnds"));
         }
@@ -202,13 +203,6 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
     @Override
     public int getSelectionMode() {
         return 0;
-    }
-
-    /**
-     * This is ignored, since there is only one selection mode in this window.
-     */
-    @Override
-    public void setSelectionMode(int mode) {
     }
 
     /**
@@ -503,7 +497,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
         setSelection(newsel);
     }
 
-    public void setSmoothnessCommand() {
+    public void setSmoothnessCommand(ActionEvent event) {
         final Curve theCurve = (Curve) objInfo.getObject();
         Curve oldCurve = (Curve) theCurve.duplicate();
         final MeshVertex[] vt = theCurve.getVertices();
@@ -566,7 +560,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
         }
     }
 
-    public void toggleClosedCommand() {
+    public void toggleClosedCommand(ActionEvent event) {
         Curve theCurve = (Curve) objInfo.getObject();
 
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theCurve, theCurve.duplicate()));

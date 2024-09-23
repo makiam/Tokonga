@@ -83,16 +83,6 @@ public class PMBevelExtrudeTool extends EditingTool {
     }
 
     /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    @Override
-    public int whichClicks() {
-        return ALL_CLICKS;
-    }
-
-    /**
      * Gets the toolTipText attribute of the BevelExtrudeTool object
      *
      * @return The toolTipText value
