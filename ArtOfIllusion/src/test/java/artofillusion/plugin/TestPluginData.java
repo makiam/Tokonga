@@ -14,35 +14,57 @@ class TestPluginData {
     @BeforeAll
     static void init() {
         xstream = new XStream(new StaxDriver());
-        xstream.allowTypes(new Class[]{Extension.class, Category.class, PluginDef.class});
-        xstream.processAnnotations(new Class[]{Extension.class, Category.class, PluginDef.class});
+        xstream.allowTypes(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class});
+        xstream.processAnnotations(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class});
+
 
     }
     @Test
-    public void testReadEmptyExtension() throws IOException {
+    void testReadEmptyExtension() throws IOException {
         Extension ext = (Extension)xstream.fromXML(TestPluginData.class.getResource("/artofillusion/plugin/EmptyExtension.xml").openStream());
         Assertions.assertEquals("Extension", ext.getName());
     }
 
     @Test
-    public void testReadCombinedExtension() throws IOException {
+    void testReadCombinedExtension0() throws IOException {
         Extension ext = (Extension)xstream.fromXML(TestPluginData.class.getResource("/artofillusion/plugin/Combined0.xml").openStream());
         Assertions.assertEquals("Extension", ext.getName());
-        Assertions.assertEquals(2, ext.categoryList.size());
+        Assertions.assertEquals(2, ext.getCategoryList().size());
 
-        ext.categoryList.forEach(cc -> System.out.println(cc.category));
+        ext.getCategoryList().forEach(cc -> System.out.println(cc.getCategory()));
     }
 
     @Test
-    public void testReadCombinedExtension2() throws IOException {
+    void testReadCombinedExtension1() throws IOException {
         Extension ext = (Extension)xstream.fromXML(TestPluginData.class.getResource("/artofillusion/plugin/Combined1.xml").openStream());
         Assertions.assertEquals("Extension", ext.getName());
-        Assertions.assertEquals(2, ext.pluginsList.size());
+        Assertions.assertEquals(0, ext.getCategoryList().size());
+        Assertions.assertEquals(2, ext.getPluginsList().size());
 
     }
 
     @Test
-    void testBadXml() throws IOException {
+    void testReadCombinedExtension2() throws IOException {
+        Extension ext = (Extension)xstream.fromXML(TestPluginData.class.getResource("/artofillusion/plugin/Combined2.xml").openStream());
+        Assertions.assertEquals("Extension", ext.getName());
+        Assertions.assertEquals(0, ext.getCategoryList().size());
+        Assertions.assertEquals(1, ext.getImports().size());
+
+    }
+
+    @Test
+    void testGetPluginExports() throws IOException {
+        Extension ext = (Extension)xstream.fromXML(TestPluginData.class.getResource("/artofillusion/plugin/Combined3.xml").openStream());
+        Assertions.assertEquals("Extension", ext.getName());
+        Assertions.assertEquals(1, ext.getPluginsList().size());
+
+        Assertions.assertEquals(2, ext.getPluginsList().get(0).getExports().size());
+        String def = ext.getPluginsList().get(0).getExports().get(1).getDescription();
+        Assertions.assertEquals("Some description", def);
+    }
+
+    @Test
+    void testBadXml() {
         Assertions.assertThrows(com.thoughtworks.xstream.mapper.CannotResolveClassException.class, () -> {
             xstream.fromXML(TestPluginData.class.getResource("/artofillusion/plugin/noextension.xml").openStream());
         });

@@ -13,19 +13,34 @@ import java.util.List;
 @Data
 public class Extension {
     @XStreamAsAttribute
-    String name;
+    private String name;
     @XStreamAsAttribute
-    String version;
+    private String version;
     @XStreamAlias("author")
-    String author;
+    private String author;
     @XStreamAlias("date")
-    String date;
+    private String date;
     @XStreamAlias("description")
-    String description;
+    private String description;
+
+    public List<Category> getCategoryList() {
+        return categoryList == null ? List.of() : categoryList;
+    }
 
     @XStreamImplicit
-    final List<Category> categoryList = new ArrayList<>();
+    private final List<Category> categoryList = new ArrayList<>();
+
+    public List<PluginDef> getPluginsList() {
+        return pluginsList == null ? List.of() : pluginsList;
+    }
 
     @XStreamImplicit
-    final List<PluginDef> pluginsList = new ArrayList<>();
+    private final List<PluginDef> pluginsList = new ArrayList<>();
+
+    public List<ImportDef> getImports() {
+        return imports == null ? List.of() : imports;
+    }
+
+    @XStreamImplicit
+    private List<ImportDef> imports = new ArrayList<>();
 }

@@ -9,5 +9,5 @@ import lombok.Data;
 public class Category {
 
     @XStreamAsAttribute
-    @XStreamAlias("class") String category;
+    @XStreamAlias("class") private String category;
 }
