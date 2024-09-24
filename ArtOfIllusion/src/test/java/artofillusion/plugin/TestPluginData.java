@@ -14,8 +14,9 @@ class TestPluginData {
     @BeforeAll
     static void init() {
         xstream = new XStream(new StaxDriver());
-        xstream.allowTypes(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class});
-        xstream.processAnnotations(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class});
+        xstream.ignoreUnknownElements();
+        xstream.allowTypes(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class});
+        xstream.processAnnotations(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class});
 
 
     }
@@ -68,5 +69,23 @@ class TestPluginData {
         Assertions.assertThrows(com.thoughtworks.xstream.mapper.CannotResolveClassException.class, () -> {
             xstream.fromXML(TestPluginData.class.getResource("/artofillusion/plugin/noextension.xml").openStream());
         });
+    }
+
+    @Test
+    void testReadComments() throws IOException {
+        Extension ext = (Extension)xstream.fromXML(TestPluginData.class.getResource("/artofillusion/plugin/History.xml").openStream());
+        Assertions.assertEquals("HIDPlugin", ext.getName());
+
+        System.out.println(ext.getDescription());
+        System.out.println(ext.getComments());
+    }
+
+    @Test
+    void testReadHistory() throws IOException {
+        Extension ext = (Extension)xstream.fromXML(TestPluginData.class.getResource("/artofillusion/plugin/History.xml").openStream());
+        Assertions.assertEquals("HIDPlugin", ext.getName());
+
+        Assertions.assertNotNull(ext.getHistory());
+        System.out.println(ext.getHistory());
     }
 }

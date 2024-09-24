@@ -43,4 +43,9 @@ public class Extension {
 
     @XStreamImplicit
     private List<ImportDef> imports = new ArrayList<>();
+
+    @XStreamAlias("comments")
+    private String comments;
+
+    private History history;
 }

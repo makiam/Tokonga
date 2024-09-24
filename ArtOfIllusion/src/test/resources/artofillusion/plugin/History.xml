@@ -1,0 +1,169 @@
+<?xml version="1.0" standalone="yes"?>
+
+<extension name="HIDPlugin" version="1.0">
+
+
+    <description>
+        A plugin for HID (Human Interface Devices).
+
+        This plugin defines a new plugin category which models an HID. New HIDs can
+        be supported simply by adding a new implementation of the HID interface.
+
+        In effect, the HIDPlugin is the "master" plugin, and each separate Device
+        sub-plugin is a device-driver for a particular piece of hardware.
+    </description>
+    <comments>
+        ** This plugin requires libraries and additional non-java files to
+        provide hardware support. SPManager copies these to a location which should work(the "lib" folder), however you
+        may need to copy these to a specific location
+        to suit your Operating System
+    </comments>
+    <history>
+        <log version="1.0" author="Nik TJ" date="March 2013">
+            - No changes to the Java code.
+            - Shipping with standard jinput jar and libs
+            - Including 64-bit native libs (require testing)
+        </log>
+        <log version="0.99b2" author="Nik TJ" date="April 2009">
+            - moved HIDPlugin-drivers to beig a separate plugin
+            -- trying to circumvent problems with downloads from SF website *sigh*
+        </log>
+        <log version="0.99b1" author="Nik TJ" date="April 2009">
+            - enabled new meta-location syntax for file todir attribute
+            - enabled icon display modes
+            -- included base icon set
+            -- added logic change the control icon
+            -- implemented LayeredToolButton
+        </log>
+        <log version="0.98" author="Nik TJ" date="February 2009">
+            - enabled new AOI 2.7 file import feature
+        </log>
+        <log version="0.97" author="Nik TJ" date="late January 2009">
+            - fixed minor NullPointer error in preferences if there is no active handler
+        </log>
+        <log version="0.96" author="Nik TJ" date="January 2009">
+            - added alias processing
+            -- explicitly list aliases for a HIDDevice (driver)
+            -- look for a match with the driver id first, and then iterate aliases
+            -- use alias name for preferences file names, but family name for init values
+        </log>
+        <log version="0.95" author="Nik TJ" date="January 2009">
+            - removed use of "classpath" action for jinput.jar
+            -- this has fixed an interaction between HIDPlugin and HelpPlugin
+        </log>
+        <log version="0.94" author="Nik TJ" date="January 2009">
+            - rewrite of logic to locate hardware
+            -- the list of devices located by OS is iterated, and matching drivers looked up.
+            -- This allows multiple devices to use the same driver simultaneously.
+
+            -- preferences are now saved using the hardware device name.
+
+            -- drivers (HIDDevice objects) are now defined as HIDDevice resources, and
+            are registered as plugins dynamically.
+        </log>
+        <log version="0.93" author="Nik TJ" date="January 2009">
+            - added "Show Controllers" to prefs window so users can see all found controllers
+        </log>
+        <log version="0.92" author="Nik TJ" date="January 2009">
+            - implemented swing Timer code for testing
+            - improved jerky redraw by stopping complete() being called on each event
+            -- complete called updateWindow()
+            - implemented UndoRecord when boundCamera is moved
+            - implemented support for START and STOP transition events
+        </log>
+        <log version="0.91" author="Nik TJ" date="January 2009">
+            - changes to work with AOI 2.7 packaging support (/lib folder)
+            - changes to work with AOI limitations (no classpath control)
+            -- plugin now downloads and installs (requires updated SPManager)
+            -- plugin now works with standard launcher
+            -- plugin is now silent if no device is present
+        </log>
+        <log version="0.9" author="Nik TJ" date="January 2009">
+            - implemented new timer-based event schedular
+            -- auto-scaling of event values based on scheduled event rate
+            -- auto-attenuate recoded to work with new schedular
+            -- now sets "descale" for the immediately following event
+            -- removed unused preferences and controls
+            -- renamed HIDPlugin:sensitivity to HIDPlugin:responsiveness
+        </log>
+        <log version="0.89" author="Nik TJ" date="January 2009">
+            - implemented auto-attenuation
+        </log>
+        <log version="0.88" author="Nik TJ" date="January 2009">
+            - changed activeHandler to be volatile (just in case)
+        </log>
+        <log version="0.87" author="Nik TJ" date="January 2009">
+            - implemented jinput EventQueue in SpaceNavigator driver
+        </log>
+        <log version="0.86" author="Nik TJ" date="January 2009">
+            - implemented regulator using an ActionProcessor
+            - implemented manual throttle control (forced pause in each loop of the event loop)
+            - reorganised preferences window
+        </log>
+        <log version="0.85" author="Nik TJ" date="January 2009">
+            - implemented direct event handling (no-queue) processing
+            -- implemented maxPending and queueEvents preferences
+        </log>
+        <log version="0.84" author="Nik TJ" date="January 2009">
+            - fixed problems with various restricted modes
+            -- dominant, single-axis, etc
+        </log>
+        <log version="0.83" author="Nik TJ" date="January 2009">
+            - Implemented reloadControl() method
+        </log>
+        <log version="0.82" author="Nik TJ" date="January 2009">
+            - implemented global plugin prefs
+            - removed Thread.yield() calls
+        </log>
+        <log version="0.81" author="Nik TJ" date="January 2009">
+            - changed priority of the EventLoop thread(s) to max-priority
+            -- Windows seems smoother
+            -- Linux seems as good as before
+            -- OSX seems slightly smoother.
+        </log>
+        <log version="0.8" author="Nik TJ" date="January 2009">
+            - implemented simple fixed-length queue in HIDPlugin.EventLoop
+            -- eliminate repeated memory allocation (trivial benefit, I expect)
+            -- implemented ability to queue, or wait for queue to empty
+            -- invokeAndWait() vs invokeLater()
+
+            - reduced idle loop delay
+        </log>
+        <log version="0.74" author="Nik TJ" date="January 2009">
+            - including source in plugin file to help debugging/hacking by users
+        </log>
+        <log version="0.7" author="Nik TJ" date="January 2009">
+            - Changes to handle new normalisation and damping
+            -- scaling is changed
+            -- Zoom multiplier changed
+
+            - Changed (yet again) how COR is found by EventHandler
+            -- Now in EditorWindows, COR is centered on object when either Local and World coords are used
+        </log>
+        <log version="0.6" author="Nik TJ" date="January 2009">
+            - Changes for compatibility with Java 1.4 and AOI 2.6.1
+        </log>
+        <log version="0.5" author="Nik TJ" date="January 2009">
+            - re-implemented how actions override the opcode
+            -- setting TURNTABLE, ROTATE_3D_ONLY or SINGLE_AXIS actions now works as expected
+        </log>
+        <log version="0.4" author="Nik TJ" date="January 2009">
+            - Added 3D_ONLY mode and SINGLE_AXIS mode
+            - fixed problems in ObjectViewers when the coordinate system was not World
+            - fixed issues with COR in ObjectViewers
+        </log>
+        <log version="0.3" author="Nik TJ" date="January 2009">
+            - Added TURNTABLE mode
+            - improved finding of rotation center when using selection
+            - implemented Zoom -> view scale for non-perspective views
+        </log>
+        <log version="0.2" author="Nik TJ" date="January 2009">
+            - Fixed (hopefully) the CPU-consumption and GUI display interference or v0.1
+            -- Change to how HIDEvents are posted to the AWT thread
+        </log>
+        <log version="0.1" author="Nik TJ" date="December 2008">
+            - Initial coding
+            - Includes support for the 3dConnexion SpaceNavigator.
+        </log>
+    </history>
+</extension>
