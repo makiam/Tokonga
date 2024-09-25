@@ -1,17 +1,13 @@
-package artofillusion.plugin;
+package artofillusion.plugin
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import lombok.Data;
-
-import java.util.Locale;
+import com.thoughtworks.xstream.annotations.XStreamAlias
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import lombok.Data
+import java.util.Locale
 
 @XStreamAlias("resource")
 @Data
-public class Resource {
-    @XStreamAsAttribute private String type;
-    @XStreamAsAttribute private String id;
-    @XStreamAsAttribute private String name;
-    @XStreamAsAttribute
-    private Locale locale;
+class Resource(@XStreamAsAttribute val type: String, @XStreamAsAttribute val id: String, @XStreamAsAttribute val name: String, @XStreamAsAttribute val locale: String?) {
+    constructor(type: String, id: String, name: String) : this(type, id, name, null)
 }
+

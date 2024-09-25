@@ -73,11 +73,12 @@ class TestPluginData {
 
     @Test
     void testReadComments() throws IOException {
+
         Extension ext = (Extension)xstream.fromXML(TestPluginData.class.getResource("/artofillusion/plugin/History.xml").openStream());
         Assertions.assertEquals("HIDPlugin", ext.getName());
 
-        System.out.println(ext.getDescription());
         System.out.println(ext.getComments());
+
     }
 
     @Test
@@ -108,5 +109,14 @@ class TestPluginData {
         var res = ext.getResources().get(4);
 
         System.out.println(res.getLocale());
+    }
+
+    @Test
+    void testResourceConstructor() {
+        var res = new Resource("UITheme", "gary.ElectricWax", "Theme1/theme.xml");
+        Assertions.assertEquals("UITheme", res.getType());
+        Assertions.assertEquals("gary.ElectricWax", res.getId());
+        Assertions.assertEquals("Theme1/theme.xml", res.getName());
+        Assertions.assertNull(res.getLocale());
     }
 }

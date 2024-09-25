@@ -43,6 +43,10 @@ public class Extension {
     @XStreamImplicit
     private List<ImportDef> imports = new ArrayList<>();
 
+    public String getComments() {
+        return comments.strip();
+    }
+
     @XStreamAlias("comments")
     private String comments;
 
@@ -54,4 +58,6 @@ public class Extension {
 
     @XStreamImplicit
     private List<Resource> resources = new ArrayList<>();
+
+
 }
