@@ -12,6 +12,7 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion;
 
+import artofillusion.plugin.*;
 import artofillusion.ui.*;
 import artofillusion.util.*;
 import java.io.*;
@@ -23,15 +24,24 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.zip.*;
 import javax.xml.parsers.*;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.*;
 
 @Slf4j
 public class PluginRegistry {
-
+    private static final XStream xstream = new XStream(new StaxDriver());
+    static {
+        xstream.ignoreUnknownElements();
+        xstream.allowTypes(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class, Resource.class});
+        xstream.processAnnotations(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class, Resource.class});
+    }
     private static final ArrayList<ClassLoader> pluginLoaders = new ArrayList<>();
     private static final Set<Class<?>> categories = new HashSet<>();
     private static final Map<Class<?>, List<Object>> categoryClasses = new HashMap<>();
@@ -424,6 +434,12 @@ public class PluginRegistry {
         }
 
         private void loadExtensionsFile(InputStream in) throws IOException {
+            Extension ext = (Extension)xstream.fromXML(in);
+            name = ext.getName();
+            version = ext.getVersion();
+            categories.addAll(ext.getCategoryList().stream().map(category -> category.getCategory()).collect(Collectors.toList()));
+            resources.addAll(ext.getResources().stream().map(res -> new ResourceInfo(res)).collect(Collectors.toList()));
+
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             try {
                 DocumentBuilder builder = factory.newDocumentBuilder();
@@ -432,15 +448,7 @@ public class PluginRegistry {
                 if (!"extension".equals(extensions.getNodeName())) {
                     throw new Exception("The root element must be <extension>");
                 }
-                Node nameNode = extensions.getAttributes().getNamedItem("name");
-                if (nameNode != null) {
-                    name = nameNode.getNodeValue();
-                }
-                NodeList categoryList = doc.getElementsByTagName("category");
-                for (int i = 0; i < categoryList.getLength(); i++) {
-                    Node category = categoryList.item(i);
-                    categories.add(category.getAttributes().getNamedItem("class").getNodeValue());
-                }
+
                 NodeList pluginList = doc.getElementsByTagName("plugin");
                 for (int i = 0; i < pluginList.getLength(); i++) {
                     Node plugin = pluginList.item(i);
@@ -470,26 +478,7 @@ public class PluginRegistry {
                         searchPath.add(importMap.getNamedItem("url").getNodeValue());
                     }
                 }
-                NodeList resourceList = doc.getElementsByTagName("resource");
-                for (int i = 0; i < resourceList.getLength(); i++) {
-                    Node resourceNode = resourceList.item(i);
-                    ResourceInfo resource = new ResourceInfo();
-                    resource.type = resourceNode.getAttributes().getNamedItem("type").getNodeValue();
-                    resource.id = resourceNode.getAttributes().getNamedItem("id").getNodeValue();
-                    resource.name = resourceNode.getAttributes().getNamedItem("name").getNodeValue();
-                    Node localeNode = resourceNode.getAttributes().getNamedItem("locale");
-                    if (localeNode != null) {
-                        String[] parts = localeNode.getNodeValue().split("_");
-                        if (parts.length == 1) {
-                            resource.locale = new Locale(parts[0]);
-                        } else if (parts.length == 2) {
-                            resource.locale = new Locale(parts[0], parts[1]);
-                        } else if (parts.length == 3) {
-                            resource.locale = new Locale(parts[0], parts[1], parts[2]);
-                        }
-                    }
-                    resources.add(resource);
-                }
+
             } catch (Exception ex) {
                 log.atError().setCause(ex).log("Error parsing plugin descriptor for {} due {}", file.getName(), ex.getMessage());
                 throw new IOException();
@@ -623,7 +612,15 @@ public class PluginRegistry {
      * This class is used to store information about a "resource" record in an XML file.
      */
     private static class ResourceInfo {
+        ResourceInfo() {
 
+        }
+        ResourceInfo(Resource res) {
+            this.id = res.getId();
+            this.type = res.getType();
+            this.locale = res.getLocale();
+            this.name = res.getName();
+        }
         String type, id, name;
         Locale locale;
     }
