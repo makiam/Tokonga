@@ -1,0 +1,9 @@
+plugins {
+    id 'aoi.java-conventions'
+}
+
+description = 'XML Data API'
+
+dependencies {
+    implementation group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.20'
+}
