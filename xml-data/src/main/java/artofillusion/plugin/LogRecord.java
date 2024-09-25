@@ -7,8 +7,8 @@ import com.thoughtworks.xstream.converters.extended.ToAttributedValueConverter;
 import lombok.Data;
 
 
-@XStreamAlias("log")
 @Data
+@XStreamAlias("log")
 @XStreamConverter(value = ToAttributedValueConverter.class, strings = {"text"})
 public class LogRecord {
     @XStreamAsAttribute private String version;

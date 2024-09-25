@@ -84,8 +84,20 @@ class TestPluginData {
     void testReadHistory() throws IOException {
         Extension ext = (Extension)xstream.fromXML(TestPluginData.class.getResource("/artofillusion/plugin/History.xml").openStream());
         Assertions.assertEquals("HIDPlugin", ext.getName());
+        var history = ext.getHistory();
+        Assertions.assertNotNull(history);
+        Assertions.assertNotNull(history.getRecords());
 
-        Assertions.assertNotNull(ext.getHistory());
-        System.out.println(ext.getHistory());
+        history.getRecords().forEach(System.out::println);
+
+    }
+
+    @Test
+    void testReadHistoryEmpty()  throws IOException {
+        Extension ext = (Extension)xstream.fromXML(TestPluginData.class.getResource("/artofillusion/plugin/HistoryEmpty.xml").openStream());
+        Assertions.assertEquals("HIDPlugin", ext.getName());
+        var history = ext.getHistory();
+        Assertions.assertNotNull(history);
+        Assertions.assertNotNull(history.getRecords());
     }
 }

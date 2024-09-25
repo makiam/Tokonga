@@ -1,0 +1,23 @@
+<?xml version="1.0" standalone="yes"?>
+
+<extension name="HIDPlugin" version="1.0">
+
+
+    <description>
+        A plugin for HID (Human Interface Devices).
+
+        This plugin defines a new plugin category which models an HID. New HIDs can
+        be supported simply by adding a new implementation of the HID interface.
+
+        In effect, the HIDPlugin is the "master" plugin, and each separate Device
+        sub-plugin is a device-driver for a particular piece of hardware.
+    </description>
+    <comments>
+        ** This plugin requires libraries and additional non-java files to
+        provide hardware support. SPManager copies these to a location which should work(the "lib" folder), however you
+        may need to copy these to a specific location
+        to suit your Operating System
+    </comments>
+    <history>
+    </history>
+</extension>
