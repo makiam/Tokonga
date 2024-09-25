@@ -7,7 +7,7 @@ import java.util.Locale
 
 @XStreamAlias("resource")
 @Data
-class Resource(@XStreamAsAttribute val type: String, @XStreamAsAttribute val id: String, @XStreamAsAttribute val name: String, @XStreamAsAttribute val locale: String?) {
+class Resource(@XStreamAsAttribute val type: String, @XStreamAsAttribute val id: String, @XStreamAsAttribute val name: String, @XStreamAsAttribute val locale: Locale?) {
     constructor(type: String, id: String, name: String) : this(type, id, name, null)
 }
 

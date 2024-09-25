@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Locale;
 
 class TestPluginData {
     static XStream xstream;
@@ -17,8 +18,6 @@ class TestPluginData {
         xstream.ignoreUnknownElements();
         xstream.allowTypes(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class, Resource.class});
         xstream.processAnnotations(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class, Resource.class});
-
-
     }
     @Test
     void testReadEmptyExtension() throws IOException {
@@ -108,7 +107,7 @@ class TestPluginData {
         Assertions.assertEquals(5, ext.getResources().size());
         var res = ext.getResources().get(4);
 
-        System.out.println(res.getLocale());
+        Assertions.assertEquals(Locale.GERMAN, res.getLocale());
     }
 
     @Test
@@ -119,4 +118,6 @@ class TestPluginData {
         Assertions.assertEquals("Theme1/theme.xml", res.getName());
         Assertions.assertNull(res.getLocale());
     }
+
+
 }
