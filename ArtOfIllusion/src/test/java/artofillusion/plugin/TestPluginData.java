@@ -15,8 +15,8 @@ class TestPluginData {
     static void init() {
         xstream = new XStream(new StaxDriver());
         xstream.ignoreUnknownElements();
-        xstream.allowTypes(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class});
-        xstream.processAnnotations(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class});
+        xstream.allowTypes(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class, Resource.class});
+        xstream.processAnnotations(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class, Resource.class});
 
 
     }
@@ -99,5 +99,14 @@ class TestPluginData {
         var history = ext.getHistory();
         Assertions.assertNotNull(history);
         Assertions.assertNotNull(history.getRecords());
+    }
+
+    @Test
+    void testReadResources() throws IOException {
+        Extension ext = (Extension)xstream.fromXML(TestPluginData.class.getResource("/artofillusion/plugin/Resources.xml").openStream());
+        Assertions.assertEquals(5, ext.getResources().size());
+        var res = ext.getResources().get(4);
+
+        System.out.println(res.getLocale());
     }
 }

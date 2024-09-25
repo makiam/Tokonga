@@ -47,4 +47,11 @@ public class Extension {
     private String comments;
 
     private History history;
+
+    public List<Resource> getResources() {
+        return resources == null ? List.of() : resources;
+    }
+
+    @XStreamImplicit
+    private List<Resource> resources = new ArrayList<>();
 }
