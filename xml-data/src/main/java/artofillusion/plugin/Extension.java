@@ -15,8 +15,9 @@ public class Extension {
     private String name;
     @XStreamAsAttribute
     private String version;
+    @XStreamImplicit
     @XStreamAlias("author")
-    private String author;
+    private List<String> authors = new ArrayList<>();
     @XStreamAlias("date")
     private String date;
     @XStreamAlias("description")

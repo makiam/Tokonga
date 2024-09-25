@@ -119,5 +119,11 @@ class TestPluginData {
         Assertions.assertNull(res.getLocale());
     }
 
+    @Test
+    void testReadPreferencesPluginDescriptor() throws IOException {
+        Extension ext = (Extension)xstream.fromXML(TestPluginData.class.getResource("/artofillusion/plugin/PreferencesPluginExtension.xml").openStream());
+        Assertions.assertNotNull(ext);
+        Assertions.assertEquals(2, ext.getAuthors().size());
+    }
 
 }
