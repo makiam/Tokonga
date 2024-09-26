@@ -1,0 +1,114 @@
+<?xml version="1.0" standalone="yes"?>
+<theme>
+  <name>ElectricWax Grey</name>
+  <buttonmargin value="1"/>
+  <palettemargin value="1"/>
+<colorset name="ElectricWax:windowsXPColorSet">
+  	<applicationbackground R="255" G="255" B="255"/>
+  	<palettebackground R="255" G="255" B="255"/>
+  	<viewerbackground R="196" G="204" B="212"/>
+  	<viewerline R="51" G="51" B="51"/>
+  	<viewerhandle R="255" G="0" B="0"/>
+  	<viewerhighlight R="255" G="0" B="0"/>
+  	<viewerspecialhighlight R="255" G="204" B="0"/>
+  	<viewerdisabled R="168" G="168" B="168"/>
+  	<viewersurface R="204" G="153" B="0"/>
+  	<viewertransparent R="051" G="153" B="255"/>
+  	<dockablebarcolor2 R="43" G="144" B="255"/>
+  	<dockablebarcolor1 R="0" G="102" B="204"/>
+  	<dockabletitlecolor R="255" G="255" B="255"/>
+  	<textcolor R="102" G="102" B="102"/>
+  </colorset>
+<colorset name="ElectricWax:windowsVistaSet">
+  	<applicationbackground R="255" G="255" B="255"/>
+  	<palettebackground R="255" G="255" B="255"/>
+  	<viewerbackground R="214" G="214" B="214"/>
+  	<viewerline R="51" G="51" B="51"/>
+  	<viewerhandle R="255" G="0" B="0"/>
+  	<viewerhighlight R="255" G="0" B="0"/>
+  	<viewerspecialhighlight R="255" G="204" B="0"/>
+  	<viewerdisabled R="168" G="168" B="168"/>
+  	<viewersurface R="204" G="153" B="0"/>
+  	<viewertransparent R="051" G="153" B="255"/>
+  	<dockablebarcolor2 R="0" G="0" B="0"/>
+  	<dockablebarcolor1 R="255" G="255" B="255"/>
+  	<dockabletitlecolor R="255" G="255" B="255"/>
+  	<textcolor R="102" G="102" B="102"/>
+  </colorset>
+      <colorset name="ElectricWax:macGraphiteColorSet">
+  	<applicationbackground R="255" G="255" B="255"/>
+  	<palettebackground R="255" G="255" B="255"/>
+  	<viewerbackground R="255" G="255" B="255"/>
+  	<viewerline R="51" G="51" B="51"/>
+  	<viewerhandle R="255" G="0" B="0"/>
+  	<viewerhighlight R="255" G="0" B="0"/>
+  	<viewerspecialhighlight R="255" G="204" B="0"/>
+  	<viewerdisabled R="168" G="168" B="168"/>
+  	<viewersurface R="204" G="153" B="0"/>
+  	<viewertransparent R="173" G="184" B="204"/>
+  	<dockablebarcolor2 R="232" G="241" B="249"/>
+  	<dockablebarcolor1 R="87" G="99" B="118"/>
+  	<dockabletitlecolor R="255" G="255" B="255"/>
+  	<textcolor R="102" G="102" B="102"/>
+  </colorset>
+<colorset name="ElectricWax:macGraphiteDarkColorSet">
+  	<applicationbackground R="255" G="255" B="255"/>
+  	<palettebackground R="255" G="255" B="255"/>
+  	<viewerbackground R="149" G="157" B="171"/>
+  	<viewerline R="51" G="51" B="51"/>
+  	<viewerhandle R="255" G="0" B="0"/>
+  	<viewerhighlight R="255" G="0" B="0"/>
+  	<viewerspecialhighlight R="255" G="204" B="0"/>
+  	<viewerdisabled R="168" G="168" B="168"/>
+  	<viewersurface R="204" G="153" B="0"/>
+  	<viewertransparent R="173" G="184" B="204"/>
+  	<dockablebarcolor2 R="232" G="241" B="249"/>
+  	<dockablebarcolor1 R="87" G="99" B="118"/>
+  	<dockabletitlecolor R="255" G="255" B="255"/>
+  	<textcolor R="102" G="102" B="102"/>
+  </colorset>
+<colorset name="ElectricWax:macAquaColorSet">
+  	<applicationbackground R="255" G="255" B="255"/>
+  	<palettebackground R="255" G="255" B="255"/>
+  	<viewerbackground R="255" G="255" B="255"/>
+  	<viewerline R="51" G="51" B="51"/>
+  	<viewerhandle R="255" G="0" B="0"/>
+  	<viewerhighlight R="255" G="0" B="0"/>
+  	<viewerspecialhighlight R="255" G="204" B="0"/>
+  	<viewerdisabled R="168" G="168" B="168"/>
+  	<viewersurface R="204" G="153" B="0"/>
+  	<viewertransparent R="82" G="169" B="255"/>
+  	<dockablebarcolor2 R="218" G="255" B="255"/>
+  	<dockablebarcolor1 R="054" G="133" B="214"/>
+  	<dockabletitlecolor R="255" G="255" B="255"/>
+  	<textcolor R="102" G="102" B="102"/>
+  </colorset>
+<colorset name="ElectricWax:macAquaDarkColorSet">
+  	<applicationbackground R="255" G="255" B="255"/>
+  	<palettebackground R="255" G="255" B="255"/>
+  	<viewerbackground R="196" G="196" B="196"/>
+  	<viewerline R="51" G="51" B="51"/>
+  	<viewerhandle R="255" G="0" B="0"/>
+  	<viewerhighlight R="255" G="0" B="0"/>
+  	<viewerspecialhighlight R="255" G="204" B="0"/>
+  	<viewerdisabled R="168" G="168" B="168"/>
+  	<viewersurface R="204" G="153" B="0"/>
+  	<viewertransparent R="82" G="169" B="255"/>
+  	<dockablebarcolor2 R="218" G="255" B="255"/>
+  	<dockablebarcolor1 R="054" G="133" B="214"/>
+  	<dockabletitlecolor R="255" G="255" B="255"/>
+  	<textcolor R="102" G="102" B="102"/>
+  </colorset>
+  <button class="artofillusion.ui.DefaultToolButton">
+    <style owner="artofillusion.ui.EditingTool" notFound="toolNotFound"
+	   size="40,40"
+	   normal.icon="{icon} [40,40,%100] ~(0.5)"
+	   selected.icon="selected/Background; {icon} [40,40,%100] ~(0.5)" />
+
+    <style owner="artofillusion.view.ViewerControl" notFound="controlNotFound"
+	   size="22,22"
+	   normal.icon="{icon} + #(r=0.35,g=0.35,b=0.35) [22,22,%100]"
+	   selected.icon="selected/controlBackground; {icon} [22,22,%100]; @(z+1)" />
+
+  </button>
+</theme>
