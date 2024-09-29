@@ -4220,29 +4220,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Checks mesh for validity
      */
     private void doCheckMesh(ActionEvent event) {
-        // dumps selection
-        PolyMesh mesh = ((PolyMesh) objInfo.object);
-        String name = "";
-        switch (selectMode) {
-            case POINT_MODE:
-                log.debug("Selected Vertices:");
-                name = "vertex ";
-                break;
-            case EDGE_MODE:
-                log.debug("Selected Edges:");
-                name = "edge ";
-                break;
-            case FACE_MODE:
-                log.debug("Selected Faces:");
-                name = "face ";
-                break;
-        }
-        for (int i = 0; i < selected.length; i++) {
-            if (selected[i]) {
-                log.debug("{}{} selected.", name, i);
-            }
-        }
-        new CheckMeshDialog(this).setVisible(true);
+        SwingUtilities.invokeLater(() -> new CheckMeshDialog(this).setVisible(true));
     }
 
     private void tolerantModeChanged() {
