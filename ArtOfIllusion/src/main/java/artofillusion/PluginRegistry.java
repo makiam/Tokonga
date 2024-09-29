@@ -1,7 +1,7 @@
 
 /* Copyright (C) 2007-2009 by Peter Eastman
    Some parts copyright (C) 2006 by Nik Trevallyn-Jones
-   Changes copyright (C) 2018-2023 by Maksim Khramov
+   Changes copyright (C) 2018-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -26,13 +26,13 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.*;
-import javax.xml.parsers.*;
+
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.w3c.dom.*;
+
 
 @Slf4j
 public class PluginRegistry {
@@ -91,9 +91,9 @@ public class PluginRegistry {
         Set<JarInfo> jars = new HashSet<>();
         List<String> results = new ArrayList<>();
 
-        for (String file : pluginsPath.toFile().list()) {
+        for (File file : pluginsPath.toFile().listFiles(f -> f.isFile() && f.getName().endsWith(".jar"))) {
             try {
-                jars.add(new JarInfo(new File(dir, file)));
+                jars.add(new JarInfo(file));
             } catch (IOException ex) {
                 // Not a zip file.
             } catch (Exception ex) {
