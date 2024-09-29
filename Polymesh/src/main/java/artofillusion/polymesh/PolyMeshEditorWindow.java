@@ -346,13 +346,13 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         meshContainer.add(looseSelectCB = new BCheckBox(Translate.text("polymesh:looseSelect"), looseSelect));
         looseSelectCB.getComponent().addActionListener(e -> doLooseSelectionChanged());
         meshContainer.add(looseSelectSpinner = new BSpinner(looseSelectValue, 1, 100, 1));
-        looseSelectSpinner.getComponent().addChangeListener(event -> doLooseSelectionValueChanged(event));
+        looseSelectSpinner.getComponent().addChangeListener(this::doLooseSelectionValueChanged);
         meshContainer.add(frontSelectCB = new BCheckBox(Translate.text("polymesh:frontSelect"), selectVisible));
         frontSelectCB.getComponent().addActionListener(e -> doFrontSelectionChanged());
         meshContainer.add(new BLabel(Translate.text("polymesh:meshTension") + ": "));
         tensionSpin = new BSpinner(tensionDistance, 0, 999, 1);
         setSpinnerColumns(tensionSpin, 3);
-        tensionSpin.getComponent().addChangeListener(event -> doTensionChanged(event));
+        tensionSpin.getComponent().addChangeListener(this::doTensionChanged);
         meshContainer.add(tensionSpin);
 
         levelContainer.add(new BLabel(Translate.text("polymesh:interactiveSubdiv")));
