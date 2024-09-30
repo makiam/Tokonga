@@ -48,14 +48,9 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
  */
 @Slf4j
 public class ArtOfIllusion {
-    private static final CompilerConfiguration config = new CompilerConfiguration();
-    static {
-        ImportCustomizer ic = new ImportCustomizer();
-        ic.addStarImports(ArtOfIllusion.class.getPackage().getName());
-        config.addCompilationCustomizers(ic);
-    }
+
     @Getter
-    private static final GroovyShell shell = new GroovyShell(config);
+    private static final GroovyShell shell = AppShell.INSTANCE.getShell();
 
     public static final String APP_DIRECTORY;
     public static final String PLUGIN_DIRECTORY;
@@ -122,7 +117,7 @@ public class ArtOfIllusion {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException ex) {
         }
-        
+
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
         ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
 
@@ -684,8 +679,8 @@ public class ArtOfIllusion {
         @Override
         public void onApplicationStarting() {
             Path path = Paths.get(ArtOfIllusion.APP_DIRECTORY, "Textures and Materials");
-            if(!Files.exists(path)) path.toFile().mkdir();            
+            if(!Files.exists(path)) path.toFile().mkdir();
         }
-        
-    }    
+
+    }
 }
