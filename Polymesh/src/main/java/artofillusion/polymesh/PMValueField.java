@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2005 by Francois Guillet.
- *  Changes copyright (C) 2023 by Maksim Khramov
+ *  Changes copyright (C) 2023-2024 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -30,38 +30,6 @@ public class PMValueField extends ValueField {
      */
     public PMValueField(double value, int constraints) {
         super(value, constraints, 5);
-    }
-
-    /**
-     * Constructor for the ValueField object
-     *
-     * @param value Description of the Parameter
-     * @param constraints Description of the Parameter
-     */
-    public PMValueField(float value, int constraints) {
-        super((double) value, constraints, 5);
-    }
-
-    /**
-     * Constructor for the ValueField object
-     *
-     * @param value Description of the Parameter
-     * @param constraints Description of the Parameter
-     * @param columns Description of the Parameter
-     */
-    public PMValueField(float value, int constraints, int columns) {
-        super((double) value, constraints, columns);
-    }
-
-    /**
-     * Constructor for the ValueField object
-     *
-     * @param value Description of the Parameter
-     * @param constraints Description of the Parameter
-     * @param columns Description of the Parameter
-     */
-    public PMValueField(double value, int constraints, int columns) {
-        super(value, constraints, columns);
     }
 
     /**
