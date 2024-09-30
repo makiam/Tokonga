@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -128,15 +128,6 @@ public abstract class Material {
      * this to implement editing.
      */
     public void edit(WindowWidget parent, Scene sc) {
-    }
-
-    /**
-     * This exists only for backward compatibility. Subclasses should override the version that takes
-     * a WindowWidget instead.
-     */
-    @Deprecated
-    public void edit(BFrame fr, Scene sc) {
-        edit((WindowWidget) fr, sc);
     }
 
     /**

@@ -129,15 +129,6 @@ public abstract class Texture {
     }
 
     /**
-     * This exists only for backward compatibility. Subclasses should override the version that takes
-     * a WindowWidget instead.
-     */
-    @Deprecated
-    public void edit(BFrame fr, Scene sc) {
-        edit((WindowWidget) fr, sc);
-    }
-
-    /**
      * The following method writes the texture's data to an output stream. In addition to this
      * method, every Texture must include a constructor with the signature
      *

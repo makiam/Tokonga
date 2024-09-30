@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.nio.ByteBuffer;
 
+import buoy.widget.WindowWidget;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -395,7 +396,7 @@ class Object3DTest {
         }
 
         @Override
-        public void edit(BFrame fr, Scene sc) {
+        public void edit(WindowWidget fr, Scene sc) {
             // To change body of generated methods, choose Tools | Templates.
             throw new UnsupportedOperationException("Not supported yet.");
         }
@@ -557,7 +558,7 @@ class Object3DTest {
         }
 
         @Override
-        public void edit(BFrame fr, Scene sc) {
+        public void edit(WindowWidget fr, Scene sc) {
             // To change body of generated methods, choose Tools | Templates.
             throw new UnsupportedOperationException("Not supported yet.");
         }
