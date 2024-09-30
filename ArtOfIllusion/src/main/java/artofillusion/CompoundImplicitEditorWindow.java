@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2013 by Peter Eastman
    Modifications copyright (C) 2016-2017 Petri Ihalainen
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -89,23 +89,23 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
     void createEditMenu() {
         BMenu editMenu = Translate.menu("edit");
         menubar.add(editMenu);
-        editMenu.add(undoItem = Translate.menuItem("undo", this, "undoCommand"));
-        editMenu.add(redoItem = Translate.menuItem("redo", this, "redoCommand"));
+        editMenu.add(undoItem = Translate.menuItem("undo", e -> undoCommand()));
+        editMenu.add(redoItem = Translate.menuItem("redo", e -> redoCommand()));
         undoItem.setEnabled(false);
         editMenu.addSeparator();
-        editMenu.add(Translate.menuItem("selectAll", this, "selectAllCommand"));
+        editMenu.add(Translate.menuItem("selectAll", e -> selectAllCommand()));
     }
 
     void createObjectMenu() {
         BMenu objectMenu = Translate.menu("object");
         menubar.add(objectMenu);
         objectMenuItem = new BMenuItem[5];
-        objectMenu.add(objectMenuItem[0] = Translate.menuItem("editObject", this, "editObjectCommand"));
-        objectMenu.add(objectMenuItem[1] = Translate.menuItem("objectLayout", this, "objectLayoutCommand"));
-        objectMenu.add(objectMenuItem[2] = Translate.menuItem("transformObject", this, "transformObjectCommand"));
-        objectMenu.add(objectMenuItem[3] = Translate.menuItem("alignObjects", this, "alignObjectsCommand"));
-        objectMenu.add(Translate.menuItem("centerObjects", this, "centerObjectsCommand"));
-        objectMenu.add(objectMenuItem[4] = Translate.menuItem("convertToTriangle", this, "convertToTriangleCommand"));
+        objectMenu.add(objectMenuItem[0] = Translate.menuItem("editObject", e -> editObjectCommand()));
+        objectMenu.add(objectMenuItem[1] = Translate.menuItem("objectLayout", e -> objectLayoutCommand()));
+        objectMenu.add(objectMenuItem[2] = Translate.menuItem("transformObject", e -> transformObjectCommand()));
+        objectMenu.add(objectMenuItem[3] = Translate.menuItem("alignObjects", e -> alignObjectsCommand()));
+        objectMenu.add(Translate.menuItem("centerObjects", e -> centerObjectsCommand()));
+        objectMenu.add(objectMenuItem[4] = Translate.menuItem("convertToTriangle", e -> convertToTriangleCommand()));
     }
 
     protected void createViewMenu() {
@@ -120,14 +120,14 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
         displayMenu.add(displayItem[2] = Translate.checkboxMenuItem("smoothDisplay", this, "displayModeChanged", view.getRenderMode() == ViewerCanvas.RENDER_SMOOTH));
         displayMenu.add(displayItem[3] = Translate.checkboxMenuItem("texturedDisplay", this, "displayModeChanged", view.getRenderMode() == ViewerCanvas.RENDER_TEXTURED));
         displayMenu.add(displayItem[4] = Translate.checkboxMenuItem("transparentDisplay", this, "displayModeChanged", view.getRenderMode() == ViewerCanvas.RENDER_TRANSPARENT));
-        viewMenu.add(splitViewItem = Translate.menuItem(numViewsShown == 1 ? "fourViews" : "oneView", this, "toggleViewsCommand"));
-        viewMenu.add(Translate.menuItem("grid", this, "setGridCommand"));
-        viewMenu.add(axesItem = Translate.menuItem(view.getShowAxes() ? "hideCoordinateAxes" : "showCoordinateAxes", this, "showAxesCommand"));
-        viewMenu.add(templateItem = Translate.menuItem("showTemplate", this, "showTemplateCommand"));
-        viewMenu.add(Translate.menuItem("setTemplate", this, "setTemplateCommand"));
+        viewMenu.add(splitViewItem = Translate.menuItem(numViewsShown == 1 ? "fourViews" : "oneView", e -> toggleViewsCommand()));
+        viewMenu.add(Translate.menuItem("grid", e -> setGridCommand()));
+        viewMenu.add(axesItem = Translate.menuItem(view.getShowAxes() ? "hideCoordinateAxes" : "showCoordinateAxes", e -> showAxesCommand()));
+        viewMenu.add(templateItem = Translate.menuItem("showTemplate", e -> showTemplateCommand()));
+        viewMenu.add(Translate.menuItem("setTemplate", e -> setTemplateCommand()));
         if (ArtOfIllusion.getPreferences().getObjectPreviewRenderer() != null) {
             viewMenu.addSeparator();
-            viewMenu.add(Translate.menuItem("renderPreview", this, "renderPreviewCommand"));
+            viewMenu.add(Translate.menuItem("renderPreview", e-> renderPreviewCommand()));
         }
     }
 
@@ -237,7 +237,8 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
         Object3D[] obj = new Object3D[sel.length];
         CoordinateSystem[] coords = new CoordinateSystem[sel.length];
         Vec3 orig, size;
-        double[] angles, values;
+        double[] angles;
+        double[] values;
 
         if (sel.length == 0) {
             return;
@@ -398,8 +399,12 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
         Object3D obj;
         CoordinateSystem coords;
         Vec3 alignTo, orig, center;
-        BComboBox xchoice, ychoice, zchoice;
-        RowContainer px = new RowContainer(), py = new RowContainer(), pz = new RowContainer();
+        BComboBox xchoice;
+        BComboBox ychoice;
+        BComboBox zchoice;
+        RowContainer px = new RowContainer();
+        RowContainer py = new RowContainer();
+        RowContainer pz = new RowContainer();
         ValueField vfx, vfy, vfz;
         BoundingBox bounds;
 
@@ -554,7 +559,8 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
 
     void convertToTriangleCommand() {
         int[] sel = theScene.getSelection();
-        Object3D obj, mesh;
+        Object3D obj;
+        Object3D mesh;
         ObjectInfo info;
 
         if (sel.length != 1) {
