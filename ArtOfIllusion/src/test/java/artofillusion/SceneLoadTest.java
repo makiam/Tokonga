@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.nio.ByteBuffer;
 
+import buoy.widget.WindowWidget;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -375,7 +376,7 @@ class SceneLoadTest {
         }
 
         @Override
-        public void edit(BFrame fr, Scene sc) {
+        public void edit(WindowWidget fr, Scene sc) {
             // To change body of generated methods, choose Tools | Templates.
             throw new UnsupportedOperationException("Not supported yet.");
         }
