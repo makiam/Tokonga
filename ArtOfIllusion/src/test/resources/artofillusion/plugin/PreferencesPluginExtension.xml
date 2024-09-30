@@ -1,0 +1,213 @@
+<?xml version="1.0"?>
+
+<extension name="PreferencesPlugin" version="1.23">
+    <author>Francois Guillet et Nik TJ</author>
+    <author>Maksim Khramov</author>
+    <date>Jun 2023</date>
+    <plugin class="artofillusion.preferences.PreferencesPlugin">
+        <export method="getPreferences" id="preferences.getPreferences" >
+            Retrieve the stored preferences values for the named owner (plugin).
+
+            @param owner the String name of the preferences owner
+            @param init (optional) a Map object containing initial values or a String naming
+            the preferences to use as the initial values.
+            If this param is *not* specified, then a resource of the name [owner] will
+            be searched for, and if found, used as the initial values.
+
+            @return the DataMap object containing the requested preferences.
+        </export>
+
+        <export method="getDefaultPreferences" id="preferences.getDefaultPreferences" >
+            Retrieves the current default values for the specified preferences and loads them
+            into the specified DataMap.
+
+            If the supplied DataMap is the DataMap previously retrieved for the named preferences,
+            then this has the effect of resetting those preference values to their current default
+            value.
+
+            @param owner the name of the owner of the preferences to load
+            @param map the DataMap to load the default preferences into
+        </export>
+
+        <export method="commit" id="preferences.commit" >
+            Commit (save) all changes to all preferences objects
+        </export>
+
+        <export method="putString" id="preferences.putString" >
+            Set a String value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+            @param value String value of the preference
+        </export>
+        <export method="getString" id="preferences.getString" >
+            Get a String value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+
+            @return the preference value as a String
+        </export>
+
+        <export method="putBoolean" id="preferences.putBoolean" >
+            Set a Boolean value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+            @param value Boolean value of the preference
+        </export>
+        <export method="getString" id="preferences.getBoolean" >
+            Get a Boolean value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+
+            @return the preference value as a Boolean
+        </export>
+
+        <export method="putInt" id="preferences.putInt" >
+            Set an Integer value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+            @param value Integer value of the preference
+        </export>
+        <export method="getString" id="preferences.getInt" >
+            Get an Integer value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+
+            @return the preference value as an Integer
+        </export>
+
+        <export method="putLong" id="preferences.putLong" >
+            Set a Long value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+            @param value Long value of the preference
+        </export>
+        <export method="getLong" id="preferences.getLong" >
+            Get a Long value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+
+            @return the preference value as a Long
+        </export>
+
+        <export method="putFloat" id="preferences.putFloat" >
+            Set a Float value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+            @param value Float value of the preference
+        </export>
+        <export method="getFloat" id="preferences.getFloat" >
+            Get a Float value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+
+            @return the preference value as a Float
+        </export>
+
+        <export method="putDouble" id="preferences.putDouble" >
+            Set a Double value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+            @param value Double value of the preference
+        </export>
+        <export method="getDouble" id="preferences.getDouble" >
+            Get a Double value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+
+            @return the preference value as a Double
+        </export>
+
+        <export method="putArray" id="preferences.putArray" >
+            Set an array of values
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+            @param value array of values
+        </export>
+        <export method="getArray" id="preferences.getArray" >
+            Get a array of values
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+            @param result (optional) an array to store the result in. If this param is null or
+            shorter than the number of values found, then a new array of the correct length, and
+            same type (if non-null) shall be allocated and assigned.
+            @return the preference values as an array
+        </export>
+
+        <export method="putColor" id="preferences.putColor" >
+            Set a Color value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+            @param value Color value of the preference
+        </export>
+        <export method="getColor" id="preferences.getColor" >
+            Get a Color value
+
+            @param owner String name of the preferences owner
+            @param name  String name of the preference value
+
+            @return the preference value as a Color
+        </export>
+    </plugin>
+    <resource type="TranslateBundle" id="PreferencesPlugin" name="Bundle"/>
+
+    <description>
+
+    </description>
+    <comments>
+    </comments>
+    <history>
+        <log version="1.21" date="Jan 2009" author="Nik TJ">
+            - added getPreferences(owner, parent) call
+        </log>
+        <log version="1.21" date="Jan 2009" author="Nik TJ">
+            - added exception handling when retrieving editing panels
+        </log>
+        <log version="1.2" date="Jan 2009" author="Nik TJ">
+            - Added the getDefaultPreferences() method
+            - changes to mark a DataMap as modified when the inherited put() and putAll()
+            methods are called.
+        </log>
+        <log version="1.1" date="April 2008" author="Nik TJ">
+            - changes to accommodate AOI 2.6 API changes
+        </log>
+        <log version="1.0b8" date="14 December 2007" author="Nik TJ">
+            - changed PreferenceProperties to DataMap, and changed its inheritance to HashMap        
+        </log>   
+        <log version="1.0b7" date="2 December 2007" author="Nik TJ">
+            - added support for array values
+            - changed GUI to presize for largest plugin panel
+        </log>
+        <log version="1.0b5" date="24 November 2007" author="Nik TJ">
+            - fixed minor bug in parsing doubles
+        </log>
+        <log version="1.0b4" date="22 November 2007" author="Nik TJ">
+            - fixed typo bug introduced in beta 3
+        </log>
+        <log version="1.0b3" date="03 october 2007" author="Nik TJ">
+            - Minor change to better handle no registered editor panels.
+        </log>
+        <log version="1.0b2" date="03 october 2007" author="Nik TJ">
+            - Second release
+            -- Closer integration with AOI PluginRegistry
+            -- Include an Object interface in addition to the method API.
+        </log>
+        <log version="1.0" date="03 october 2007" author="Francois Guillet">
+            - First release.
+        </log>
+    </history>
+</extension>

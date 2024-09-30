@@ -1,7 +1,7 @@
 
 /* Copyright (C) 2007-2009 by Peter Eastman
    Some parts copyright (C) 2006 by Nik Trevallyn-Jones
-   Changes copyright (C) 2018-2023 by Maksim Khramov
+   Changes copyright (C) 2018-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,6 +12,7 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion;
 
+import artofillusion.plugin.*;
 import artofillusion.ui.*;
 import artofillusion.util.*;
 import java.io.*;
@@ -23,15 +24,24 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.zip.*;
-import javax.xml.parsers.*;
+
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.w3c.dom.*;
+
 
 @Slf4j
 public class PluginRegistry {
-
+    private static final XStream xstream = new XStream(new StaxDriver());
+    static {
+        xstream.ignoreUnknownElements();
+        xstream.allowTypes(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class, Resource.class});
+        xstream.processAnnotations(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class, Resource.class});
+    }
     private static final ArrayList<ClassLoader> pluginLoaders = new ArrayList<>();
     private static final Set<Class<?>> categories = new HashSet<>();
     private static final Map<Class<?>, List<Object>> categoryClasses = new HashMap<>();
@@ -81,9 +91,9 @@ public class PluginRegistry {
         Set<JarInfo> jars = new HashSet<>();
         List<String> results = new ArrayList<>();
 
-        for (String file : pluginsPath.toFile().list()) {
+        for (File file : pluginsPath.toFile().listFiles(f -> f.isFile() && f.getName().endsWith(".jar"))) {
             try {
-                jars.add(new JarInfo(new File(dir, file)));
+                jars.add(new JarInfo(file));
             } catch (IOException ex) {
                 // Not a zip file.
             } catch (Exception ex) {
@@ -391,7 +401,7 @@ public class PluginRegistry {
 
         @Getter
         File file;
-        String name, version;
+        String name, version, authors;
         final List<String> imports = new ArrayList<>();
         final List<String> plugins = new ArrayList<>();
         final List<String> categories = new ArrayList<>();
@@ -424,76 +434,36 @@ public class PluginRegistry {
         }
 
         private void loadExtensionsFile(InputStream in) throws IOException {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            Extension ext = null;
             try {
-                DocumentBuilder builder = factory.newDocumentBuilder();
-                Document doc = builder.parse(in);
-                Element extensions = doc.getDocumentElement();
-                if (!"extension".equals(extensions.getNodeName())) {
-                    throw new Exception("The root element must be <extension>");
-                }
-                Node nameNode = extensions.getAttributes().getNamedItem("name");
-                if (nameNode != null) {
-                    name = nameNode.getNodeValue();
-                }
-                NodeList categoryList = doc.getElementsByTagName("category");
-                for (int i = 0; i < categoryList.getLength(); i++) {
-                    Node category = categoryList.item(i);
-                    categories.add(category.getAttributes().getNamedItem("class").getNodeValue());
-                }
-                NodeList pluginList = doc.getElementsByTagName("plugin");
-                for (int i = 0; i < pluginList.getLength(); i++) {
-                    Node plugin = pluginList.item(i);
-
-                    // Check for <export> tags inside the <plugin> tag.
-                    String className = plugin.getAttributes().getNamedItem("class").getNodeValue();
-                    plugins.add(className);
-                    NodeList children = plugin.getChildNodes();
-                    for (int k = 0; k < children.getLength(); k++) {
-                        Node childNode = children.item(k);
-                        if ("export".equals(childNode.getNodeName())) {
-                            ExportInfo export = new ExportInfo();
-                            export.method = childNode.getAttributes().getNamedItem("method").getNodeValue();
-                            export.id = childNode.getAttributes().getNamedItem("id").getNodeValue();
-                            export.className = className;
-                            exports.add(export);
-                        }
-                    }
-                }
-                // NTJ import may name a plugin or point to a file
-                NodeList importList = doc.getElementsByTagName("import");
-                for (int i = 0; i < importList.getLength(); i++) {
-                    NamedNodeMap importMap = importList.item(i).getAttributes();
-                    if (importMap.getNamedItem("name") != null) {
-                        imports.add(importMap.getNamedItem("name").getNodeValue());
-                    } else if (importMap.getNamedItem("url") != null) {
-                        searchPath.add(importMap.getNamedItem("url").getNodeValue());
-                    }
-                }
-                NodeList resourceList = doc.getElementsByTagName("resource");
-                for (int i = 0; i < resourceList.getLength(); i++) {
-                    Node resourceNode = resourceList.item(i);
-                    ResourceInfo resource = new ResourceInfo();
-                    resource.type = resourceNode.getAttributes().getNamedItem("type").getNodeValue();
-                    resource.id = resourceNode.getAttributes().getNamedItem("id").getNodeValue();
-                    resource.name = resourceNode.getAttributes().getNamedItem("name").getNodeValue();
-                    Node localeNode = resourceNode.getAttributes().getNamedItem("locale");
-                    if (localeNode != null) {
-                        String[] parts = localeNode.getNodeValue().split("_");
-                        if (parts.length == 1) {
-                            resource.locale = new Locale(parts[0]);
-                        } else if (parts.length == 2) {
-                            resource.locale = new Locale(parts[0], parts[1]);
-                        } else if (parts.length == 3) {
-                            resource.locale = new Locale(parts[0], parts[1], parts[2]);
-                        }
-                    }
-                    resources.add(resource);
-                }
+                ext = (Extension)xstream.fromXML(in);
             } catch (Exception ex) {
                 log.atError().setCause(ex).log("Error parsing plugin descriptor for {} due {}", file.getName(), ex.getMessage());
                 throw new IOException();
             }
+            name = ext.getName();
+            version = ext.getVersion();
+            authors = String.join(", ", ext.getAuthors());
+            categories.addAll(ext.getCategoryList().stream().map(category -> category.getCategory()).collect(Collectors.toList()));
+            resources.addAll(ext.getResources().stream().map(res -> new ResourceInfo(res)).collect(Collectors.toList()));
+
+            ext.getImports().forEach(def -> {
+                if(def.getName() == null) {
+                    if(def.getUrl() == null) return;
+                    searchPath.add(def.getUrl());
+                } else {
+                    imports.add(def.getName());
+                }
+            });
+
+            ext.getPluginsList().forEach((PluginDef def) -> {
+                plugins.add(def.getPluginClass());
+                def.getExports().forEach(export -> {
+                    exports.add(new ExportInfo(export.getId(), export.getMethod(), def.getPluginClass() ) );
+                });
+            });
+
+
         }
 
         private void loadPluginsFile(BufferedReader in) throws IOException {
@@ -614,16 +584,31 @@ public class PluginRegistry {
      * This class is used to store information about an "export" record in an XML file.
      */
     private static class ExportInfo {
-
         String method, id, className;
         Object plugin;
+        ExportInfo() {
+        }
+        ExportInfo(String id, String method, String className) {
+            this.id = id;
+            this.method = method;
+            this.className = className;
+        }
+
     }
 
     /**
      * This class is used to store information about a "resource" record in an XML file.
      */
     private static class ResourceInfo {
+        ResourceInfo() {
 
+        }
+        ResourceInfo(Resource res) {
+            this.id = res.getId();
+            this.type = res.getType();
+            this.locale = res.getLocale();
+            this.name = res.getName();
+        }
         String type, id, name;
         Locale locale;
     }

@@ -19,7 +19,6 @@ import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.script.*;
 import artofillusion.texture.*;
-import artofillusion.tools.PrimitiveFactory;
 import artofillusion.ui.*;
 import artofillusion.view.*;
 import buoy.widget.*;

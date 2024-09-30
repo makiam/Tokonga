@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+
+<extension name='Extension'>
+    <author>Maksim Khramov</author>
+    <date>2021/04/01</date>
+    <description>
+        Standard Translation and Resources Bundle
+    </description>
+    <category class="CategoryClass0"/>
+    <category class="CategoryClass1"/>
+</extension>
+
