@@ -32,8 +32,8 @@ class ProcedureTest {
         Assertions.assertNotNull(procedure);
         Assertions.assertNotNull(procedure.getOutputModules());
         Assertions.assertEquals(0, procedure.getOutputModules().length);
-        Assertions.assertNotNull(procedure.getModules());
-        Assertions.assertEquals(0, procedure.getModules().length);
+        Assertions.assertNotNull(procedure.getModulesList());
+        Assertions.assertEquals(0, procedure.getModulesList().size());
         Assertions.assertNotNull(procedure.getLinks());
         Assertions.assertEquals(0, procedure.getLinks().length);
     }
@@ -202,7 +202,7 @@ class ProcedureTest {
         Procedure target = new Procedure(new OutputModule[]{exist});
         target.copy(origin);
         Assertions.assertNotNull(target.getModules());
-        Assertions.assertEquals(0, target.getModules().length);
+        Assertions.assertEquals(0, target.getModulesList().size());
         Assertions.assertNotNull(target.getLinks());
         Assertions.assertEquals(0, target.getLinks().length);
     }
@@ -216,8 +216,8 @@ class ProcedureTest {
         origin.addModule(mod);
         Procedure target = new Procedure(new OutputModule[]{exist});
         target.copy(origin);
-        Assertions.assertNotNull(target.getModules());
-        Assertions.assertEquals(1, target.getModules().length);
+        Assertions.assertNotNull(target.getModulesList());
+        Assertions.assertEquals(1, target.getModulesList().size());
         Assertions.assertNotNull(target.getLinks());
         Assertions.assertEquals(0, target.getLinks().length);
     }
@@ -243,8 +243,8 @@ class ProcedureTest {
         OutputModule cout = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
         Procedure target = new Procedure(new OutputModule[]{cout});
         target.copy(origin);
-        Assertions.assertNotNull(target.getModules());
-        Assertions.assertEquals(2, target.getModules().length);
+        Assertions.assertNotNull(target.getModulesList());
+        Assertions.assertEquals(2, target.getModulesList().size());
         Assertions.assertNotNull(target.getLinks());
         Assertions.assertEquals(1, target.getLinks().length);
     }
@@ -276,8 +276,8 @@ class ProcedureTest {
         OutputModule cout = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
         Procedure target = new Procedure(new OutputModule[]{cout});
         target.copy(origin);
-        Assertions.assertNotNull(target.getModules());
-        Assertions.assertEquals(2, target.getModules().length);
+        Assertions.assertNotNull(target.getModulesList());
+        Assertions.assertEquals(2, target.getModulesList().size());
         Assertions.assertNotNull(target.getLinks());
         Assertions.assertEquals(2, target.getLinks().length);
     }
