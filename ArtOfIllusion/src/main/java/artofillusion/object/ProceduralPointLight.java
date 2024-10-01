@@ -73,7 +73,7 @@ public class ProceduralPointLight extends PointLight {
     private void findParameters() {
         var  modules = procedure.getModules();
         int count = 0;
-        for (var       module : modules) {
+        for (var module : modules) {
             if (module instanceof ParameterModule) {
                 count++;
             }
@@ -81,7 +81,7 @@ public class ProceduralPointLight extends PointLight {
         TextureParameter[] newParameters = new TextureParameter[count];
         double[] newValues = new double[count];
         count = 0;
-        for (var       module : modules) {
+        for (var module : modules) {
             if (module instanceof ParameterModule) {
                 newParameters[count] = ((ParameterModule) module).getParameter(this);
                 newValues[count] = newParameters[count].defaultVal;

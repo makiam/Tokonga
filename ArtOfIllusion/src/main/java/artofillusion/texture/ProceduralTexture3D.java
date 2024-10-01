@@ -178,7 +178,7 @@ public class ProceduralTexture3D extends Texture3D implements ProcedureOwner {
      */
     @Override
     public boolean usesImage(ImageMap image) {
-        for (var       module: proc.getModules()) {
+        for (var module: proc.getModules()) {
             if (module instanceof ImageModule && ((ImageModule) module).getMap() == image) {
                 return true;
             }
@@ -212,14 +212,14 @@ public class ProceduralTexture3D extends Texture3D implements ProcedureOwner {
         var  modules = proc.getModules();
         int count = 0;
 
-        for (var       module : modules) {
+        for (var module : modules) {
             if (module instanceof ParameterModule) {
                 count++;
             }
         }
         TextureParameter[] params = new TextureParameter[count];
         count = 0;
-        for (var       module : modules) {
+        for (var module : modules) {
             if (module instanceof ParameterModule) {
                 params[count] = ((ParameterModule) module).getParameter(this);
                 ((ParameterModule) module).setIndex(count++);
