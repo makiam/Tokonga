@@ -1,0 +1,10 @@
+<?xml version="1.0" standalone="yes"?>
+<extension name="Standard Theme" version="1.0">
+    <author>Maksim Khramov</author>
+    <date>2024</date>
+    <description>
+        This plugin contains the standard Theme resources
+    </description>
+    <resource type="UITheme" id="default" name="artofillusion/Icons/defaultTheme.xml"/>
+</extension>
+
