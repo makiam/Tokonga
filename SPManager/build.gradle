@@ -9,8 +9,8 @@ ext {
 }
 
 dependencies {
-    implementation group: 'com.github.zafarkhaja', name: 'java-semver', version: '0.9.0'
-    testImplementation group: 'com.github.zafarkhaja', name: 'java-semver', version: '0.9.0'
+    implementation group: 'com.github.zafarkhaja', name: 'java-semver', version: '0.10.2'
+    testImplementation group: 'com.github.zafarkhaja', name: 'java-semver', version: '0.10.2'
 }
 
 processResources {
