@@ -10,8 +10,8 @@ configurations {
 }
 
 dependencies {
-    implementation group: 'com.googlecode.matrix-toolkits-java', name: 'mtj', version: '0.9.14'
-    fatjar group: 'com.googlecode.matrix-toolkits-java', name: 'mtj', version: '0.9.14'
+    implementation group: 'com.googlecode.matrix-toolkits-java', name: 'mtj', version: '1.0.4'
+    fatjar group: 'com.googlecode.matrix-toolkits-java', name: 'mtj', version: '1.0.4'
 }
 
 jar {
