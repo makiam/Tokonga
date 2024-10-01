@@ -13,7 +13,7 @@ package artofillusion.procedural;
 
 import artofillusion.*;
 import artofillusion.math.*;
-import buoy.widget.*;
+
 import java.awt.*;
 import java.io.*;
 import java.lang.reflect.*;
@@ -26,11 +26,16 @@ import lombok.Getter;
  * @deprecated as of 3.1, to be removed 4.0. use {@link artofillusion.procedural.ProceduralModule}
  */
 @Deprecated
-public class Module<M extends Module> {
+public class Module<M extends Module> implements ModuleEditorProvider {
 
     protected IOPort[] input, output;
     public Module[] linkFrom;
     public int[] linkFromIndex;
+    /**
+     * -- GETTER --
+     *  Get the name of this module.
+     */
+    @Getter
     protected String name;
     /**
      * Get the boundary rectangle for this module.
@@ -58,13 +63,6 @@ public class Module<M extends Module> {
         for (IOPort ioPort : output) ioPort.setModule(this);
         bounds = new Rectangle(position.x, position.y, 0, 0);
         layout();
-    }
-
-    /**
-     * Get the name of this module.
-     */
-    public String getName() {
-        return name;
     }
 
     /**
