@@ -268,14 +268,6 @@ public class Module<M extends Module> {
      * that itself.
      */
     public boolean edit(ProcedureEditor editor, Scene theScene) {
-        return edit(editor.getParentFrame(), theScene);
-    }
-
-    /**
-     * This is an old form of edit() that exists only to maintain compatibility with old plugins.
-     * Subclasses should override the other form, not this one.
-     */
-    public boolean edit(BFrame fr, Scene theScene) {
         return false;
     }
 
