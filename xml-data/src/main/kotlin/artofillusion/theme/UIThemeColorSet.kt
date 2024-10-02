@@ -13,6 +13,7 @@ class UIThemeColorSet {
     var applicationBackground: ColorSetColor? = null
     @XStreamAlias("textcolor")
     var textColor: ColorSetColor? = null
+
 }
 
 data class ColorSetColor(@XStreamAsAttribute @XStreamAlias("R") val red: Int,
@@ -35,3 +36,5 @@ data class ButtonStyle(@XStreamAsAttribute @XStreamAlias("owner") val owner: Str
     @XStreamAsAttribute @XStreamAlias("raw.icon") val rawIcon: String,
     @XStreamAsAttribute @XStreamAlias("normal.icon") val normalIcon: String,
     @XStreamAsAttribute @XStreamAlias("selected.icon") val selectedIcon: String)
+
+data class Value(@XStreamAsAttribute @XStreamAlias("value") val value: Int)

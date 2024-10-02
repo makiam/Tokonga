@@ -27,9 +27,11 @@ public class TestThemeData {
         Assertions.assertNotNull(theme.getColorSets());
         Assertions.assertEquals(6, theme.getColorSets().size());
 
+        Assertions.assertEquals(13, theme.getButtonMargin());
+        Assertions.assertEquals(9, theme.getPaletteMargin());
+
         Assertions.assertNotNull(theme.getButtons());
         UIThemeColorSet cs = theme.getColorSets().get(0);
-        System.out.println(cs.getApplicationBackground());
-        System.out.println(cs.getTextColor().getColor());
+
     }
 }
