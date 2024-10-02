@@ -3,7 +3,6 @@ package artofillusion.theme;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import lombok.Data;
-import theme.UIThemeColorSet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,4 +18,7 @@ public class UITheme {
 
     @XStreamImplicit
     private List<UIThemeColorSet> colorSets = new ArrayList<>();
+
+    @XStreamImplicit
+    private List<Button> buttons = new ArrayList<>();
 }
