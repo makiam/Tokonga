@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.awt.*;
 import java.io.IOException;
 
 public class TestThemeData {
@@ -32,6 +33,9 @@ public class TestThemeData {
 
         Assertions.assertNotNull(theme.getButtons());
         UIThemeColorSet cs = theme.getColorSets().get(0);
+
+        Assertions.assertEquals(new Color(43, 144, 255), cs.getDockableBarColor2().getColor());
+
 
     }
 }
