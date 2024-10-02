@@ -37,5 +37,11 @@ public class TestThemeData {
         Assertions.assertEquals(new Color(43, 144, 255), cs.getDockableBarColor2().getColor());
 
 
+
+    }
+    @Test
+    void testThemeIsSelectableNoAttr() throws IOException {
+        UITheme theme = (UITheme)xstream.fromXML(UITheme.class.getResource("/artofillusion/theme/Theme1/theme.xml").openStream());
+        Assertions.assertTrue(theme.isSelectable());
     }
 }

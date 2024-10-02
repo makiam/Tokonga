@@ -2,14 +2,23 @@ package artofillusion.theme;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @XStreamAlias("theme")
-@Data
+@Getter
 public class UITheme {
+
+    @Getter(AccessLevel.NONE)
+    @XStreamAlias("selectable")
+    private Boolean selectable = true;
+
+    public Boolean isSelectable() { return selectable == null ? true : selectable; }
+
     @XStreamAlias("name")
     private String name;
 
