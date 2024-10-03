@@ -40,6 +40,6 @@ public class UITheme {
     @XStreamImplicit
     private List<UIThemeColorSet> colorSets = new ArrayList<>();
 
-    @XStreamImplicit
-    private List<Button> buttons = new ArrayList<>();
+    @XStreamAlias("button")
+    private Button button;
 }

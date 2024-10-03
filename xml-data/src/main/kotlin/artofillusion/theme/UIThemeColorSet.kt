@@ -54,10 +54,10 @@ data class ColorSetColor(@XStreamAsAttribute @XStreamAlias("R") val red: Int,
 
 @XStreamAlias("button")
 class Button {
-    @XStreamAsAttribute @XStreamAlias("class") private val buttonClass: String = ""
+    @XStreamAsAttribute private val buttonClass: String = ""
 
     @XStreamImplicit
-    private val styles: List<ButtonStyle> = ArrayList()
+    val styles: List<ButtonStyle> = ArrayList()
 }
 @XStreamAlias("style")
 data class ButtonStyle(@XStreamAsAttribute @XStreamAlias("owner") val owner: String,

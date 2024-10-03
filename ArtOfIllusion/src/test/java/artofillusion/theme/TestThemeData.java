@@ -16,8 +16,14 @@ public class TestThemeData {
     static void init() {
         xstream = new XStream(new StaxDriver());
         xstream.ignoreUnknownElements();
+
+        xstream.useAttributeFor(Button.class, "buttonClass");
+        xstream.aliasAttribute("class", "buttonClass");
+        xstream.aliasSystemAttribute("buttonClass", "class");
+
         xstream.allowTypes(new Class[]{UITheme.class, UIThemeColorSet.class, Button.class, ButtonStyle.class});
         xstream.processAnnotations(new Class[]{UITheme.class, UIThemeColorSet.class, Button.class, ButtonStyle.class});
+
     }
 
     @Test
@@ -31,7 +37,7 @@ public class TestThemeData {
         Assertions.assertEquals(13, theme.getButtonMargin());
         Assertions.assertEquals(9, theme.getPaletteMargin());
 
-        Assertions.assertNotNull(theme.getButtons());
+        Assertions.assertNotNull(theme.getButton());
         UIThemeColorSet cs = theme.getColorSets().get(0);
 
         Assertions.assertEquals(new Color(43, 144, 255), cs.getDockableBarColor2().getColor());
@@ -39,9 +45,23 @@ public class TestThemeData {
 
 
     }
+
     @Test
     void testThemeIsSelectableNoAttr() throws IOException {
         UITheme theme = (UITheme)xstream.fromXML(UITheme.class.getResource("/artofillusion/theme/Theme1/theme.xml").openStream());
         Assertions.assertTrue(theme.isSelectable());
+    }
+
+    @Test
+    void testNoButton() throws IOException {
+        UITheme theme = (UITheme)xstream.fromXML(UITheme.class.getResource("/artofillusion/theme/Theme2/theme.xml").openStream());
+        Assertions.assertNull(theme.getButton());
+    }
+
+    @Test
+    void testButton() throws IOException {
+        UITheme theme = (UITheme)xstream.fromXML(UITheme.class.getResource("/artofillusion/theme/Theme1/theme.xml").openStream());
+        Assertions.assertNotNull(theme.getButton());
+        Assertions.assertEquals(2, theme.getButton().getStyles().size());
     }
 }
