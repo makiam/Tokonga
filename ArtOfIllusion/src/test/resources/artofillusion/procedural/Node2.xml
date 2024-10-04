@@ -1,0 +1,6 @@
+<?xml version="1.0" standalone="yes"?>
+<node name="Node As Attribute">
+
+    <type>Node</type>
+    <description>Node</description>
+</node>
