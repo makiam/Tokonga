@@ -333,42 +333,42 @@ public class RGBColor {
      * based on sample code given in "Computer Graphics: Principles and Practice, 2nd Edition",
      * by Foley, van Dam, Feiner and Hughes, 1997.
      */
-    public final void setHSV(float h, float s, float v) {
+    public final void setHSV(float hue, float saturation, float value) {
         float f, p, q, t;
         int i;
 
-        if (s == 0.0f) {
-            setRGB(v, v, v);
+        if (saturation == 0.0f) {
+            setRGB(value, value, value);
             return;
         }
-        if (h == 360.0f) {
-            h = 0.0f;
+        if (hue == 360.0f) {
+            hue = 0.0f;
         } else {
-            h /= 60.0f;
+            hue /= 60.0f;
         }
-        i = (int) h;
-        f = h - (float) i;
-        p = v * (1.0f - s);
-        q = v * (1.0f - s * f);
-        t = v * (1.0f - (s * (1.0f - f)));
+        i = (int) hue;
+        f = hue - (float) i;
+        p = value * (1.0f - saturation);
+        q = value * (1.0f - saturation * f);
+        t = value * (1.0f - (saturation * (1.0f - f)));
         switch (i) {
             case 0:
-                setRGB(v, t, p);
+                setRGB(value, t, p);
                 break;
             case 1:
-                setRGB(q, v, p);
+                setRGB(q, value, p);
                 break;
             case 2:
-                setRGB(p, v, t);
+                setRGB(p, value, t);
                 break;
             case 3:
-                setRGB(p, q, v);
+                setRGB(p, q, value);
                 break;
             case 4:
-                setRGB(t, p, v);
+                setRGB(t, p, value);
                 break;
             case 5:
-                setRGB(v, p, q);
+                setRGB(value, p, q);
                 break;
         }
     }

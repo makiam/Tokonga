@@ -78,6 +78,9 @@ public class Procedure {
         modules.add(mod);
     }
 
+    public void add(Module mod) {
+        addModule(mod);
+    }
     /**
      * Delete a module from the procedure. Any links involving this module should be deleted
      * before* calling this method.
@@ -102,6 +105,10 @@ public class Procedure {
         newlink[links.length] = ln;
         links = newlink;
         ln.to.getModule().setInput(ln.to, ln.from);
+    }
+
+    public void add(Link ln) {
+        addLink(ln);
     }
 
     /**
