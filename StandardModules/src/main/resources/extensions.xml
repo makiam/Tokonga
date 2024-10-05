@@ -44,6 +44,7 @@
     <plugin class="artofillusion.procedural.PowerModule"/>
     <plugin class="artofillusion.procedural.ProductModule"/>
     <plugin class="artofillusion.procedural.RGBModule"/>
+    <plugin class="artofillusion.procedural.RGBToHSVModule"/>
     <plugin class="artofillusion.procedural.RandomModule"/>
     <plugin class="artofillusion.procedural.RatioModule"/>
     <plugin class="artofillusion.procedural.ScaleShiftModule"/>

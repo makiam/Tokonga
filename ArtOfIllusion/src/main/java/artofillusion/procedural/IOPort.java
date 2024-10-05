@@ -12,6 +12,8 @@
 package artofillusion.procedural;
 
 import java.awt.*;
+import java.util.Arrays;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -118,4 +120,12 @@ public class IOPort {
         description = desc;
     }
 
+    @Override
+    public String toString() {
+        return "IOPort{" +
+                "valueType=" + (valueType  == 0 ? "number" : "color") +
+                ", type=" + (type == 0 ? "input" : "output") +
+                ", description=" + Arrays.toString(description) +
+                '}';
+    }
 }
