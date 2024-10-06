@@ -37,9 +37,9 @@ class RGBToHSVModule @JvmOverloads constructor(position: Point? = Point()) : Pro
             }
 
             val saturation = if (max == 0.0) 0.0 else delta / max
-            val value = max
+
             if (hue < 0.0) hue += 360.0
-            return HSVColor(hue, saturation, value)
+            return HSVColor(hue, saturation, max)
         }
 
         @JvmStatic
@@ -48,7 +48,7 @@ class RGBToHSVModule @JvmOverloads constructor(position: Point? = Point()) : Pro
             return when (index) {
                 0 -> hue / 360
                 1 -> saturation
-                2 ->  value
+                2 -> value
                 else -> 0.0
             }
         }
