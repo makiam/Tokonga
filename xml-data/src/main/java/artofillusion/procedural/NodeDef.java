@@ -8,18 +8,14 @@
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
-package artofillusion.plugin
+package artofillusion.procedural;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias
-import com.thoughtworks.xstream.annotations.XStreamImplicit
-import java.util.ArrayList
 
-@XStreamAlias("history")
-class History {
-    @XStreamImplicit
-    private val records: MutableList<LogRecord?>? = ArrayList<LogRecord?>()
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import lombok.Getter;
 
-    fun getRecords(): MutableList<LogRecord?> {
-        return (if (records == null) mutableListOf<LogRecord?>() else records)
-    }
+@Getter
+@XStreamAlias("node")
+public class NodeDef {
+    private String name;
 }

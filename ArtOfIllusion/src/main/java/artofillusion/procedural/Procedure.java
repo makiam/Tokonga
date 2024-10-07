@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2004 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -78,6 +78,9 @@ public class Procedure {
         modules.add(mod);
     }
 
+    public void add(Module mod) {
+        addModule(mod);
+    }
     /**
      * Delete a module from the procedure. Any links involving this module should be deleted
      * before* calling this method.
@@ -102,6 +105,10 @@ public class Procedure {
         newlink[links.length] = ln;
         links = newlink;
         ln.to.getModule().setInput(ln.to, ln.from);
+    }
+
+    public void add(Link ln) {
+        addLink(ln);
     }
 
     /**
@@ -147,7 +154,7 @@ public class Procedure {
      * describes the point for which it is to be evaluated.
      */
     public void initForPoint(PointInfo p) {
-        for (var     module : modules) {
+        for (var module : modules) {
             module.init(p);
         }
     }

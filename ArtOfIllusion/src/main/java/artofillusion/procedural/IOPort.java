@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2012 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,6 +12,8 @@
 package artofillusion.procedural;
 
 import java.awt.*;
+import java.util.Arrays;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -118,4 +120,8 @@ public class IOPort {
         description = desc;
     }
 
+    @Override
+    public String toString() {
+        return "IOPort{" +  "valueType=" + (valueType  == 0 ? "number" : "color") + ", type=" + (type == 0 ? "input" : "output") + ", description=" + Arrays.toString(description) + '}';
+    }
 }
