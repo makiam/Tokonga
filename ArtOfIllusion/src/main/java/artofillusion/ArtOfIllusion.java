@@ -149,8 +149,8 @@ public class ArtOfIllusion {
         PluginRegistry.registerPlugin(new UVMapping());
         PluginRegistry.registerPlugin(new LinearMapping3D());
         PluginRegistry.registerPlugin(new LinearMaterialMapping());
-        PluginRegistry.registerResource("TranslateBundle", "artofillusion", ArtOfIllusion.class.getClassLoader(), "artofillusion", null);
-        PluginRegistry.registerResource("UITheme", "default", ArtOfIllusion.class.getClassLoader(), "artofillusion/Icons/defaultTheme.xml", null);
+        PluginRegistry.registerResource("TranslateBundle", "artofillusion", ArtOfIllusion.class.getClassLoader(), "artofillusion");
+
         List<String> pluginsLoadResults = PluginRegistry.scanPlugins();
         ThemeManager.initThemes();
         preferences = new ApplicationPreferences();
@@ -160,6 +160,7 @@ public class ArtOfIllusion {
         ViewerCanvas.addViewerControl(new ViewerScaleControl());
         ViewerCanvas.addViewerControl(new ViewerNavigationControl());
 
+        //TODO: Replace with PluginRegistry.notifyPlugins
         for (Plugin plugin : PluginRegistry.getPlugins(Plugin.class)) {
             try {
                 plugin.processMessage(Plugin.APPLICATION_STARTING);

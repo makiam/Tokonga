@@ -284,7 +284,7 @@ public class PluginRegistry {
      * @param loader the ClassLoader with which to load the resource
      * @param name the fully qualified name of the resource, that should be passed to
      * <code>loader.getResource()</code> to load it
-     * @param locale the locale this resource represents (may be null)
+     * @param locale the locale this resource represents (maybe null)
      * @throws IllegalArgumentException if there is already a registered resource with the same type, id, and locale
      */
     public static void registerResource(String type, String id, ClassLoader loader, String name, Locale locale) throws IllegalArgumentException {
@@ -295,6 +295,10 @@ public class PluginRegistry {
             resourcesForType.put(id, resource);
         }
         resource.addResource(name, loader, locale);
+    }
+
+    public static void registerResource(String type, String id, ClassLoader loader, String name) throws IllegalArgumentException {
+        registerResource(type, id, loader, name, null);
     }
 
     /**
