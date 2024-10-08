@@ -43,7 +43,7 @@ dependencies {
     implementation fileTree(dir: '../lib', include: '*.jar')
     implementation group: 'com.fifesoft', name: 'rsyntaxtextarea', version: "${rstaVersion}"
     
-    testImplementation 'org.mockito:mockito-core:3.+'
+    testImplementation 'org.mockito:mockito-core:5.+'
     testImplementation project(':StandardModules')
 
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
