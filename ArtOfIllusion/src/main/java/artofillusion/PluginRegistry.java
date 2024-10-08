@@ -186,7 +186,7 @@ public class PluginRegistry {
             if (jar.getName() != null && !jar.getName().isEmpty()) {
                 nameMap.put(jar.getName(), jar);
             }
-            for (String category : jar.categories) {
+            for (String category : jar.getCategories()) {
                 addCategory(jar.loader.loadClass(category));
             }
             for (String pluginName : jar.plugins) {
@@ -415,6 +415,11 @@ public class PluginRegistry {
         String authors;
         final List<String> imports = new ArrayList<>();
         final List<String> plugins = new ArrayList<>();
+
+        public List<String> getCategories() {
+            return categories;
+        }
+
         final List<String> categories = new ArrayList<>();
         final List<String> searchPath = new ArrayList<>();
 
