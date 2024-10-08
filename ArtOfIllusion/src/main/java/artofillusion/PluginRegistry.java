@@ -85,7 +85,6 @@ public class PluginRegistry {
             return Arrays.asList(Translate.text("cannotLocatePlugins"));
         }
 
-        File dir = pluginsPath.toFile();
         // Scan the plugins directory, and parse the index in every jar file.
 
         Set<JarInfo> jars = new HashSet<>();
@@ -182,8 +181,8 @@ public class PluginRegistry {
             }
             pluginLoaders.add(jar.loader);
             HashMap<String, Object> classNameMap = new HashMap<>();
-            if (jar.name != null && !jar.name.isEmpty()) {
-                nameMap.put(jar.name, jar);
+            if (jar.getName() != null && !jar.getName().isEmpty()) {
+                nameMap.put(jar.getName(), jar);
             }
             for (String category : jar.categories) {
                 addCategory(jar.loader.loadClass(category));
@@ -405,7 +404,14 @@ public class PluginRegistry {
 
         @Getter
         File file;
-        String name, version, authors;
+        private Extension ext = null;
+
+        public String getName() {
+            return ext.getName();
+        }
+
+        String version;
+        String authors;
         final List<String> imports = new ArrayList<>();
         final List<String> plugins = new ArrayList<>();
         final List<String> categories = new ArrayList<>();
@@ -414,38 +420,41 @@ public class PluginRegistry {
         final List<ExportInfo> exports = new ArrayList<>();
         ClassLoader loader;
 
+        JarInfo(Path path) throws IOException {
+            this(path.toFile());
+        }
+
         JarInfo(File file) throws IOException {
             this.file = file;
 
-            ZipFile zf = new ZipFile(file);
-            try {
+            try(ZipFile zf = new ZipFile(file)) {
                 ZipEntry ze = zf.getEntry("extensions.xml");
                 if (ze != null) {
                     InputStream in = new BufferedInputStream(zf.getInputStream(ze));
                     loadExtensionsFile(in);
+                    in.close();
                     return;
                 }
                 ze = zf.getEntry("plugins");
                 if (ze != null) {
                     BufferedReader in = new BufferedReader(new InputStreamReader(zf.getInputStream(ze)));
-                    loadPluginsFile(in);
+                    plugins.addAll(in.lines().collect(Collectors.toList()));
+                    in.close();
                     return;
                 }
                 throw new IOException(); // No index found
-            } finally {
-                zf.close();
             }
         }
 
         private void loadExtensionsFile(InputStream in) throws IOException {
-            Extension ext = null;
+
             try {
                 ext = (Extension)xstream.fromXML(in);
             } catch (Exception ex) {
                 log.atError().setCause(ex).log("Error parsing plugin descriptor for {} due {}", file.getName(), ex.getMessage());
                 throw new IOException();
             }
-            name = ext.getName();
+
             version = ext.getVersion();
             authors = String.join(", ", ext.getAuthors());
             categories.addAll(ext.getCategoryList().stream().map(category -> category.getCategory()).collect(Collectors.toList()));
@@ -470,13 +479,6 @@ public class PluginRegistry {
 
         }
 
-        private void loadPluginsFile(BufferedReader in) throws IOException {
-            String className = in.readLine();
-            while (className != null) {
-                plugins.add(className.trim());
-                className = in.readLine();
-            }
-        }
     }
 
     /**
