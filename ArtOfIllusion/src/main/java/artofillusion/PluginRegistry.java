@@ -422,7 +422,6 @@ public class PluginRegistry {
             return ext.getResources();
         }
 
-        final List<Resource> resources = new ArrayList<>();
         final List<ExportInfo> exports = new ArrayList<>();
         ClassLoader loader;
 
@@ -460,7 +459,6 @@ public class PluginRegistry {
             version = ext.getVersion();
             authors = String.join(", ", ext.getAuthors());
             categories.addAll(ext.getCategoryList().stream().map(category -> category.getCategory()).collect(Collectors.toList()));
-            resources.addAll(ext.getResources());
 
             ext.getImports().forEach(def -> {
                 if(def.getName() == null) {
