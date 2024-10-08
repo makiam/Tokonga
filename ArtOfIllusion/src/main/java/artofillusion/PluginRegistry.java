@@ -85,11 +85,12 @@ public class PluginRegistry {
             return Arrays.asList(Translate.text("cannotLocatePlugins"));
         }
 
-        File dir = pluginsPath.toFile();
         // Scan the plugins directory, and parse the index in every jar file.
 
         Set<JarInfo> jars = new HashSet<>();
         List<String> results = new ArrayList<>();
+
+
 
         for (File file : pluginsPath.toFile().listFiles(f -> f.isFile() && f.getName().endsWith(".jar"))) {
             try {
@@ -181,11 +182,11 @@ public class PluginRegistry {
                 }
             }
             pluginLoaders.add(jar.loader);
-            HashMap<String, Object> classNameMap = new HashMap<>();
-            if (jar.name != null && !jar.name.isEmpty()) {
-                nameMap.put(jar.name, jar);
+            Map<String, Object> classNameMap = new HashMap<>();
+            if (jar.getName() != null && !jar.getName().isEmpty()) {
+                nameMap.put(jar.getName(), jar);
             }
-            for (String category : jar.categories) {
+            for (String category : jar.getCategories()) {
                 addCategory(jar.loader.loadClass(category));
             }
             for (String pluginName : jar.plugins) {
@@ -197,9 +198,8 @@ public class PluginRegistry {
                 info.plugin = classNameMap.get(info.className);
                 registerExportedMethod(info);
             }
-            for (ResourceInfo info : jar.resources) {
-                registerResource(info.type, info.id, jar.loader, info.name, info.locale);
-            }
+            jar.getResources().forEach(info -> registerResource(info.getType(), info.getId(), jar.loader, info.getName(), info.getLocale()));
+
         } catch (Error | Exception ex) {
             results.add(Translate.text("pluginLoadError", jar.file.getName()));
             log.atError().setCause(ex).log("Plugin from {} initialization error: {}", jar.getFile().getName(), ex.getMessage());
@@ -405,51 +405,65 @@ public class PluginRegistry {
 
         @Getter
         File file;
-        String name, version, authors;
+        private Extension ext = new Extension();
+
+        public String getName() {
+            return ext.getName();
+        }
+
+        String version;
+        String authors;
         final List<String> imports = new ArrayList<>();
         final List<String> plugins = new ArrayList<>();
+
+        public List<String> getCategories() {
+            return categories;
+        }
+
         final List<String> categories = new ArrayList<>();
         final List<String> searchPath = new ArrayList<>();
-        final List<ResourceInfo> resources = new ArrayList<>();
+
+        public List<Resource> getResources() {
+            return ext.getResources();
+        }
+
         final List<ExportInfo> exports = new ArrayList<>();
         ClassLoader loader;
 
         JarInfo(File file) throws IOException {
             this.file = file;
 
-            ZipFile zf = new ZipFile(file);
-            try {
+            try(ZipFile zf = new ZipFile(file)) {
                 ZipEntry ze = zf.getEntry("extensions.xml");
                 if (ze != null) {
                     InputStream in = new BufferedInputStream(zf.getInputStream(ze));
                     loadExtensionsFile(in);
+                    in.close();
                     return;
                 }
                 ze = zf.getEntry("plugins");
                 if (ze != null) {
                     BufferedReader in = new BufferedReader(new InputStreamReader(zf.getInputStream(ze)));
-                    loadPluginsFile(in);
+                    plugins.addAll(in.lines().collect(Collectors.toList()));
+                    in.close();
                     return;
                 }
                 throw new IOException(); // No index found
-            } finally {
-                zf.close();
             }
         }
 
         private void loadExtensionsFile(InputStream in) throws IOException {
-            Extension ext = null;
+
             try {
                 ext = (Extension)xstream.fromXML(in);
             } catch (Exception ex) {
                 log.atError().setCause(ex).log("Error parsing plugin descriptor for {} due {}", file.getName(), ex.getMessage());
                 throw new IOException();
             }
-            name = ext.getName();
+
             version = ext.getVersion();
             authors = String.join(", ", ext.getAuthors());
             categories.addAll(ext.getCategoryList().stream().map(category -> category.getCategory()).collect(Collectors.toList()));
-            resources.addAll(ext.getResources().stream().map(res -> new ResourceInfo(res)).collect(Collectors.toList()));
 
             ext.getImports().forEach(def -> {
                 if(def.getName() == null) {
@@ -470,13 +484,6 @@ public class PluginRegistry {
 
         }
 
-        private void loadPluginsFile(BufferedReader in) throws IOException {
-            String className = in.readLine();
-            while (className != null) {
-                plugins.add(className.trim());
-                className = in.readLine();
-            }
-        }
     }
 
     /**
@@ -598,23 +605,6 @@ public class PluginRegistry {
             this.className = className;
         }
 
-    }
-
-    /**
-     * This class is used to store information about a "resource" record in an XML file.
-     */
-    private static class ResourceInfo {
-        ResourceInfo() {
-
-        }
-        ResourceInfo(Resource res) {
-            this.id = res.getId();
-            this.type = res.getType();
-            this.locale = res.getLocale();
-            this.name = res.getName();
-        }
-        String type, id, name;
-        Locale locale;
     }
 
     @Retention(RetentionPolicy.SOURCE)
