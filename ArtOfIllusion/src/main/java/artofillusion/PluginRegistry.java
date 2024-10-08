@@ -90,6 +90,8 @@ public class PluginRegistry {
         Set<JarInfo> jars = new HashSet<>();
         List<String> results = new ArrayList<>();
 
+
+
         for (File file : pluginsPath.toFile().listFiles(f -> f.isFile() && f.getName().endsWith(".jar"))) {
             try {
                 jars.add(new JarInfo(file));
@@ -180,7 +182,7 @@ public class PluginRegistry {
                 }
             }
             pluginLoaders.add(jar.loader);
-            HashMap<String, Object> classNameMap = new HashMap<>();
+            Map<String, Object> classNameMap = new HashMap<>();
             if (jar.getName() != null && !jar.getName().isEmpty()) {
                 nameMap.put(jar.getName(), jar);
             }
@@ -196,9 +198,8 @@ public class PluginRegistry {
                 info.plugin = classNameMap.get(info.className);
                 registerExportedMethod(info);
             }
-            for (ResourceInfo info : jar.resources) {
-                registerResource(info.type, info.id, jar.loader, info.name, info.locale);
-            }
+            jar.getResources().forEach(info -> registerResource(info.getType(), info.getId(), jar.loader, info.getName(), info.getLocale()));
+
         } catch (Error | Exception ex) {
             results.add(Translate.text("pluginLoadError", jar.file.getName()));
             log.atError().setCause(ex).log("Plugin from {} initialization error: {}", jar.getFile().getName(), ex.getMessage());
@@ -404,7 +405,7 @@ public class PluginRegistry {
 
         @Getter
         File file;
-        private Extension ext = null;
+        private Extension ext = new Extension();
 
         public String getName() {
             return ext.getName();
@@ -416,13 +417,14 @@ public class PluginRegistry {
         final List<String> plugins = new ArrayList<>();
         final List<String> categories = new ArrayList<>();
         final List<String> searchPath = new ArrayList<>();
-        final List<ResourceInfo> resources = new ArrayList<>();
+
+        public List<Resource> getResources() {
+            return ext.getResources();
+        }
+
+        final List<Resource> resources = new ArrayList<>();
         final List<ExportInfo> exports = new ArrayList<>();
         ClassLoader loader;
-
-        JarInfo(Path path) throws IOException {
-            this(path.toFile());
-        }
 
         JarInfo(File file) throws IOException {
             this.file = file;
@@ -458,7 +460,7 @@ public class PluginRegistry {
             version = ext.getVersion();
             authors = String.join(", ", ext.getAuthors());
             categories.addAll(ext.getCategoryList().stream().map(category -> category.getCategory()).collect(Collectors.toList()));
-            resources.addAll(ext.getResources().stream().map(res -> new ResourceInfo(res)).collect(Collectors.toList()));
+            resources.addAll(ext.getResources());
 
             ext.getImports().forEach(def -> {
                 if(def.getName() == null) {
@@ -600,23 +602,6 @@ public class PluginRegistry {
             this.className = className;
         }
 
-    }
-
-    /**
-     * This class is used to store information about a "resource" record in an XML file.
-     */
-    private static class ResourceInfo {
-        ResourceInfo() {
-
-        }
-        ResourceInfo(Resource res) {
-            this.id = res.getId();
-            this.type = res.getType();
-            this.locale = res.getLocale();
-            this.name = res.getName();
-        }
-        String type, id, name;
-        Locale locale;
     }
 
     @Retention(RetentionPolicy.SOURCE)
