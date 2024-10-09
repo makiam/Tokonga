@@ -68,37 +68,16 @@ public class ArtOfIllusion {
     private static int numNewWindows = 0;
 
     static {
-        // A clever trick for getting the location of the jar file, which David Smiley
-        // posted to the Apple java-dev mailing list on April 14, 2002.  It works on
-        // most, but not all, platforms, so in case of a problem we fall back to using
-        // user.dir.
 
-        String dir = System.getProperty("user.dir");
-        try {
-            URL url = ArtOfIllusion.class.getResource("/artofillusion/ArtOfIllusion.class");
-            if (url.toString().startsWith("jar:")) {
-                String furl = url.getFile();
-                furl = furl.substring(0, furl.indexOf('!'));
-                dir = new File(new URL(furl).getFile()).getParent();
-                if (!new File(dir).exists()) {
-                    dir = System.getProperty("user.dir");
-                }
-            }
-        } catch (MalformedURLException ex) {
-        }
 
         // Set up the standard directories.
-        APP_DIRECTORY = Paths.get(dir).getParent().toString();
+        APP_DIRECTORY = AppPath.INSTANCE.getAppPath();
         PLUGIN_DIRECTORY = Paths.get(APP_DIRECTORY, "Plugins").toString();
-
         TOOL_SCRIPT_DIRECTORY = Paths.get(APP_DIRECTORY, "Scripts", "Tools").toString();
         OBJECT_SCRIPT_DIRECTORY = Paths.get(APP_DIRECTORY, "Scripts", "Objects").toString();
         STARTUP_SCRIPT_DIRECTORY = Paths.get(APP_DIRECTORY, "Scripts", "Startup").toString();
 
-        // Load the application's icon.
-        ImageIcon icon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("artofillusion/Icons/appIcon.png"));
-
-        APP_ICON = (icon.getIconWidth() == -1 ? null : icon);
+        APP_ICON = AppIcon.INSTANCE.getAppIcon();
 
         // Build a table of classes which have moved.
         try {
