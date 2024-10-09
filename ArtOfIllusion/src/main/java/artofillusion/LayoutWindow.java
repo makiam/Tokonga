@@ -118,7 +118,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     BMenu addTrackMenu, positionTrackMenu, rotationTrackMenu, distortionMenu;
 
-    private final BMenuItem fileMenuItem = Translate.menuItem("save", this, "saveCommand");
+    private final BMenuItem fileMenuItem = Translate.menuItem("save", event -> saveCommand());
     private BMenuItem[] editMenuItem, objectMenuItem, viewMenuItem;
     BMenuItem[] animationMenuItem;
     BMenuItem[] popupMenuItem;
