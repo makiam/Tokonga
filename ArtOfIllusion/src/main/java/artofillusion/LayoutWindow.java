@@ -141,16 +141,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     protected Preferences preferences;
     private boolean hasNotifiedPlugins;
     private BMenu recentScriptMenu;
-    public static final ImageIcon[] LANGUAGE_ICONS;
 
-    static {
-        final List<ImageIcon> icons = new ArrayList<>();
-        for (String language : ScriptRunner.getLanguageNames()) {
-            icons.add(new IconResource("artofillusion/Icons/" + language + ".png"));
-        }
-        //TODO: get rid of this
-        LANGUAGE_ICONS = icons.toArray(new ImageIcon[0]);
-    }
 
     /**
      * Create a new LayoutWindow for editing a Scene. Usually, you will not use
