@@ -24,8 +24,6 @@ import artofillusion.view.*;
 import buoy.widget.*;
 import groovy.lang.GroovyShell;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,8 +35,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.codehaus.groovy.control.CompilerConfiguration;
-import org.codehaus.groovy.control.customizers.ImportCustomizer;
 
 /**
  * This is the main class for Art of Illusion. All of its methods and variables

@@ -163,7 +163,7 @@ public class ExecuteScriptWindow extends BFrame {
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean hasFocus) {
             JLabel cc = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, hasFocus);
-            cc.setIcon(new ImageIcon(getClass().getResource("/artofillusion/Icons/" + value + ".png")));
+            cc.setIcon(ThemeManager.getIcon("/artofillusion/Icons/" + value + ".png"));
             return cc;
         }
     }
