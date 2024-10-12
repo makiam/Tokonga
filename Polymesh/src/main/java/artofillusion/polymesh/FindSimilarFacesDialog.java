@@ -86,8 +86,8 @@ class FindSimilarFacesDialog extends BDialog {
             GridContainer okCancelGrid = (GridContainer) decoder.getObject("OkCancelGrid");
             okButton = ((BButton) decoder.getObject("okButton"));
             cancelButton = ((BButton) decoder.getObject("cancelButton"));
-            okButton.setText(Translate.text("polymesh:ok"));
-            cancelButton.setText(Translate.text("polymesh:cancel"));
+            okButton.setText(Translate.text("button.ok"));
+            cancelButton.setText(Translate.text("button.cancel"));
         } catch (IOException ex) {
             log.atError().setCause(ex).log("Error creating FindSimilarFacesDialog due {}", ex.getLocalizedMessage());
         }

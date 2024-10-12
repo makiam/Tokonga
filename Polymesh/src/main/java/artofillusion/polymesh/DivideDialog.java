@@ -48,9 +48,9 @@ public class DivideDialog extends BDialog {
             BLabel divideLabel = (BLabel) decoder.getObject("divideLabel");
             divideLabel.setText(Translate.text("polymesh:" + divideLabel.getText()));
             okButton = ((BButton) decoder.getObject("okButton"));
-            okButton.setText(Translate.text("polymesh:ok"));
+            okButton.setText(Translate.text("button.ok"));
             cancelButton = ((BButton) decoder.getObject("cancelButton"));
-            cancelButton.setText(Translate.text("polymesh:cancel"));
+            cancelButton.setText(Translate.text("button.cancel"));
         } catch (IOException ex) {
             log.atError().setCause(ex).log("Error creating DivideDialog due {}", ex.getLocalizedMessage());
         }

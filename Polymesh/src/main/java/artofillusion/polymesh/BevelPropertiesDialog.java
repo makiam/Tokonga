@@ -58,9 +58,9 @@ class BevelPropertiesDialog extends BDialog {
             BLabel bevelAreaLabel = (BLabel) decoder.getObject("bevelAreaLabel");
             bevelAreaLabel.setText(Translate.text("polymesh:" + bevelAreaLabel.getText()));
             okButton = ((BButton) decoder.getObject("okButton"));
-            okButton.setText(Translate.text("polymesh:ok"));
+            okButton.setText(Translate.text("button.ok"));
             cancelButton = ((BButton) decoder.getObject("cancelButton"));
-            cancelButton.setText(Translate.text("polymesh:cancel"));
+            cancelButton.setText(Translate.text("button.cancel"));
         } catch (IOException ex) {
             log.atError().setCause(ex).log("Error creating BevelPropertiesDialog due {}", ex.getLocalizedMessage());
         }

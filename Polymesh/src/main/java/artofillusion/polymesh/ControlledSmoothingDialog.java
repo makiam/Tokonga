@@ -97,10 +97,10 @@ class ControlledSmoothingDialog extends BDialog {
             BTextField maxSmoothnessValue = (BTextField) decoder.getObject("maxSmoothnessValue");
             BButton okButton = (BButton) decoder.getObject("okButton");
             okButton.addEventLink(CommandEvent.class, this, "doOK");
-            okButton.setText(Translate.text("polymesh:ok"));
+            okButton.setText(Translate.text("button.ok"));
             BButton cancelButton = (BButton) decoder.getObject("cancelButton");
             cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
-            cancelButton.setText(Translate.text("polymesh:cancel"));
+            cancelButton.setText(Translate.text("button.cancel"));
             minAngleVF = new PMValueField(0.0, ValueField.NONNEGATIVE);
             minAngleVF.setTextField(minAngleValue);
             maxAngleVF = new PMValueField(180.0, ValueField.NONNEGATIVE);
