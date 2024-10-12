@@ -1126,6 +1126,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Selects edge rings from current selection
      */
     public void doSelectRingInteractive(ActionEvent event) {
+
+
         PolyMesh mesh = (PolyMesh) objInfo.object;
         DivideDialog dlg = new DivideDialog(this);
         int counter = dlg.getNumber();
@@ -4028,6 +4030,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Sets off a previously set mirror
      */
+    //TODO: Extract this dialog
     private void doTurnMirrorOff(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         if (mesh.getMirrorState() == PolyMesh.NO_MIRROR) {
@@ -4036,7 +4039,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         BStandardDialog dlg = new BStandardDialog(Translate.text("polymesh:removeMeshMirror"), Translate.text("polymesh:keepMirroredMesh"), BStandardDialog.QUESTION);
         int r = dlg.showOptionDialog(this, new String[]{
             Translate.text("polymesh:keep"), Translate.text("polymesh:discard"),
-            Translate.text("polymesh:cancel")}, "cancel");
+            Translate.text("button.cancel")}, "cancel");
         if (r == 0) {
             PolyMesh newMesh = mesh.getMirroredMesh();
             mesh.copyObject(newMesh);
