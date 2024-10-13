@@ -1127,17 +1127,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      */
     public void doSelectRingInteractive(ActionEvent event) {
 
-
-        PolyMesh mesh = (PolyMesh) objInfo.object;
-        DivideDialog dlg = new DivideDialog(this);
-        int counter = dlg.getNumber();
-        if (counter < 0) {
-            return;
-        }
-        boolean[] ring = mesh.findEdgeStrips(selected, counter);
-        if (ring != null) {
-            setSelection(ring);
-        }
+        SwingUtilities.invokeLater(() -> new SelectEdgesDialog(this, value -> {
+            PolyMesh mesh = (PolyMesh) objInfo.object;
+            boolean[] ring = mesh.findEdgeStrips(selected, value);
+            if(ring != null) setSelection(ring);
+        }).setVisible(true));
 
     }
 
@@ -1831,10 +1825,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     private void doDivideEdgesInteractive(ActionEvent event) {
-        int num = new DivideDialog(this).getNumber();
-        if (num > 0) {
-            doDivideEdges(num);
-        }
+        SwingUtilities.invokeLater(() -> new DivideDialog(this, value -> {
+            doDivideEdges(value);
+        }).setVisible(true));
     }
 
     /**
