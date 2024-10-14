@@ -73,7 +73,7 @@ class EdgeSmoothnessRangeDialog extends BDialog {
             setButton.setText(Translate.text("polymesh:setSelection"));
             BButton cancelButton = (BButton) decoder.getObject("cancelButton");
             cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
-            cancelButton.setText(Translate.text("polymesh:cancel"));
+            cancelButton.setText(Translate.text("button.cancel"));
             minSmoothnessVF = new PMValueField(0.0, ValueField.NONNEGATIVE);
             minSmoothnessVF.setTextField(minSmoothnessTF);
             minSmoothnessVF.setValue(0.0);

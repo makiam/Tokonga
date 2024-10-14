@@ -1126,16 +1126,12 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Selects edge rings from current selection
      */
     public void doSelectRingInteractive(ActionEvent event) {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
-        DivideDialog dlg = new DivideDialog(this);
-        int counter = dlg.getNumber();
-        if (counter < 0) {
-            return;
-        }
-        boolean[] ring = mesh.findEdgeStrips(selected, counter);
-        if (ring != null) {
-            setSelection(ring);
-        }
+
+        SwingUtilities.invokeLater(() -> new SelectEdgesDialog(this, value -> {
+            PolyMesh mesh = (PolyMesh) objInfo.object;
+            boolean[] ring = mesh.findEdgeStrips(selected, value);
+            if(ring != null) setSelection(ring);
+        }).setVisible(true));
 
     }
 
@@ -1829,10 +1825,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     private void doDivideEdgesInteractive(ActionEvent event) {
-        int num = new DivideDialog(this).getNumber();
-        if (num > 0) {
-            doDivideEdges(num);
-        }
+        SwingUtilities.invokeLater(() -> new DivideDialog(this, value -> {
+            doDivideEdges(value);
+        }).setVisible(true));
     }
 
     /**
@@ -4028,6 +4023,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Sets off a previously set mirror
      */
+    //TODO: Extract this dialog
     private void doTurnMirrorOff(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         if (mesh.getMirrorState() == PolyMesh.NO_MIRROR) {
@@ -4036,7 +4032,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         BStandardDialog dlg = new BStandardDialog(Translate.text("polymesh:removeMeshMirror"), Translate.text("polymesh:keepMirroredMesh"), BStandardDialog.QUESTION);
         int r = dlg.showOptionDialog(this, new String[]{
             Translate.text("polymesh:keep"), Translate.text("polymesh:discard"),
-            Translate.text("polymesh:cancel")}, "cancel");
+            Translate.text("button.cancel")}, "cancel");
         if (r == 0) {
             PolyMesh newMesh = mesh.getMirroredMesh();
             mesh.copyObject(newMesh);
