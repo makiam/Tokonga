@@ -1,5 +1,6 @@
 package artofillusion.preferences;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.Color;
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.Properties;
 
 @Slf4j
+@NoArgsConstructor
 public final class DataMap extends HashMap<String, Object> {
 
     private File file;
@@ -23,10 +25,6 @@ public final class DataMap extends HashMap<String, Object> {
     private Object semaphore = null;
 
     private volatile boolean modified = false;
-
-    private static final Object[] EMPTY_ARRAY = new Object[0];
-
-    private static final float[] EMPTY_FLOAT_ARRAY = new float[0];
 
     public DataMap(Map<String, Object> defaults) {
         super(defaults);
@@ -55,11 +53,6 @@ public final class DataMap extends HashMap<String, Object> {
         if (err != null) {
             throw new IOException(err);
         }
-    }
-
-    public void reload() throws IOException {
-        modified = false;
-        load();
     }
 
     public void commit() throws IOException {
@@ -185,7 +178,7 @@ public final class DataMap extends HashMap<String, Object> {
         String val = getString(name);
         if (val == null || val.isEmpty()) {
             if (array == null) {
-                return EMPTY_ARRAY;
+                return new Object[0];
             }
             val = "";
         }
@@ -288,7 +281,7 @@ public final class DataMap extends HashMap<String, Object> {
             } catch (NumberFormatException e) {
                 return Color.BLACK;
             }
-        float[] comps = (float[]) getArray(name, EMPTY_FLOAT_ARRAY);
+        float[] comps = (float[]) getArray(name, new float[0]);
         if (comps.length < 3) {
             log.error("Too few color components: {}", comps.length);
             return Color.BLACK;
@@ -355,6 +348,4 @@ public final class DataMap extends HashMap<String, Object> {
         return Math.pow(10.0D, (esign * exp)) * sign * result / frac;
     }
 
-    public DataMap() {
-    }
 }

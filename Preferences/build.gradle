@@ -4,6 +4,10 @@ plugins {
 
 description = 'Preferences Plugin'
 
+dependencies {
+    implementation group: 'org.apache.groovy', name: 'groovy', version: '4.0.+'
+}
+
 jar {
  archiveBaseName = "Preferences"
 }
