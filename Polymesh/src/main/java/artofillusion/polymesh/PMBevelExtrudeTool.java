@@ -134,7 +134,7 @@ public class PMBevelExtrudeTool extends EditingTool {
         //height = dragVec.y;
         width = (dragPoint.x - clickPoint.x) / view.getScale();
         height = (clickPoint.y - dragPoint.y) / view.getScale();
-        boolean shiftMod = e.isShiftDown() && (e.isControlDown());
+        boolean shiftMod = e.isShiftDown() && e.isControlDown();
         boolean ctrlMod = ((e.getModifiers() & ActionEvent.SHIFT_MASK) == 0) && (e.isControlDown());
         /*if ( controller.getSelectionMode() == PolyMeshEditorWindow.FACE_MODE && ctrlMod )
         {
@@ -142,7 +142,7 @@ public class PMBevelExtrudeTool extends EditingTool {
             height = 0;
         }*/
         if (controller.getSelectionMode() == PolyMeshEditorWindow.FACE_MODE) {
-            if (e.isShiftDown() && ((e.getModifiers() & ActionEvent.CTRL_MASK) == 0)) {
+            if (e.isShiftDown() && !e.isControlDown()) {
                 if (Math.abs(width) > Math.abs(height)) {
                     height = 0.0;
                 } else {
@@ -170,9 +170,9 @@ public class PMBevelExtrudeTool extends EditingTool {
             theWindow.setHelpText(Translate.text("bevelExtrudeTool.dragText", 1.0 - width, height));
         } else {
             if (separateFaces) {
-                mesh.extrudeFaces(selected, height, (Vec3) null, Math.abs(1.0 - width), camZ, ctrlMod, shiftMod);
+                mesh.extrudeFaces(selected, height, null, Math.abs(1.0 - width), camZ, ctrlMod, shiftMod);
             } else {
-                mesh.extrudeRegion(selected, height, (Vec3) null, Math.abs(1.0 - width), camZ, ctrlMod, shiftMod);
+                mesh.extrudeRegion(selected, height, null, Math.abs(1.0 - width), camZ, ctrlMod, shiftMod);
             }
             sel = new boolean[mesh.getFaces().length];
             if (Math.abs(1.0 - width) > 0.05) {
