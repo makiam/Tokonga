@@ -881,7 +881,6 @@ public class SSMR3DManipulator
     public boolean rotateDragged(WidgetMouseEvent e) {
         Point p = e.getPoint();
         boolean isShiftDown = e.isShiftDown();
-        boolean isCtrlDown = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
 
         Vec2 disp = new Vec2(e.getPoint().x - baseClick.x, e.getPoint().y - baseClick.y);
         Vec2 vector = currentRotationHandle.points2d[rotSegment + 1].minus(currentRotationHandle.points2d[rotSegment]);
@@ -945,7 +944,6 @@ public class SSMR3DManipulator
             if (mouseButtonTwo(e) && handle != CENTER && e.isControlDown()) {
                 if (valueWidget != null) {
                     dispatchEvent(new ManipulatorPrepareChangingEvent(this, view));
-                    boolean isCtrlDown = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
                     isShiftDown = e.isShiftDown();
                     if (handle == ROTATE) {
                         valueWidget.setTempValueRange(-180, 180);
