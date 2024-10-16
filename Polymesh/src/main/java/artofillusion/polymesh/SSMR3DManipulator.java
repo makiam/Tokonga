@@ -453,7 +453,7 @@ public class SSMR3DManipulator
             }
             if (boxes[i].contains(p)) {
                 if (i == CENTER) {
-                    if ((e.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
+                    if (e.isControlDown()) {
                         //center drag on feature points
                         AdvancedEditingTool.SelectionProperties props = tool.findSelectionProperties(view.getCamera());
                         featurePoints2d = new Vec2[props.featurePoints.length];

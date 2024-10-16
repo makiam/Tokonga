@@ -134,15 +134,15 @@ public class PMBevelExtrudeTool extends EditingTool {
         //height = dragVec.y;
         width = (dragPoint.x - clickPoint.x) / view.getScale();
         height = (clickPoint.y - dragPoint.y) / view.getScale();
-        boolean shiftMod = ((e.getModifiers() & ActionEvent.SHIFT_MASK) != 0) && ((e.getModifiers() & ActionEvent.CTRL_MASK) != 0);
-        boolean ctrlMod = ((e.getModifiers() & ActionEvent.SHIFT_MASK) == 0) && ((e.getModifiers() & ActionEvent.CTRL_MASK) != 0);
+        boolean shiftMod = e.isShiftDown() && (e.isControlDown());
+        boolean ctrlMod = ((e.getModifiers() & ActionEvent.SHIFT_MASK) == 0) && (e.isControlDown());
         /*if ( controller.getSelectionMode() == PolyMeshEditorWindow.FACE_MODE && ctrlMod )
         {
             width = height;
             height = 0;
         }*/
         if (controller.getSelectionMode() == PolyMeshEditorWindow.FACE_MODE) {
-            if (((e.getModifiers() & ActionEvent.SHIFT_MASK) != 0) && ((e.getModifiers() & ActionEvent.CTRL_MASK) == 0)) {
+            if (e.isShiftDown() && ((e.getModifiers() & ActionEvent.CTRL_MASK) == 0)) {
                 if (Math.abs(width) > Math.abs(height)) {
                     height = 0.0;
                 } else {
@@ -150,7 +150,7 @@ public class PMBevelExtrudeTool extends EditingTool {
                 }
             }
         } else {
-            if (((e.getModifiers() & ActionEvent.SHIFT_MASK) != 0) && ((e.getModifiers() & ActionEvent.CTRL_MASK) == 0)) {
+            if (e.isShiftDown() && ((e.getModifiers() & ActionEvent.CTRL_MASK) == 0)) {
                 height = 0.0;
             }
             if (width < 0.0) {
