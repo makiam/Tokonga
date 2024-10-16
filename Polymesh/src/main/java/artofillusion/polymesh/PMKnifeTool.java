@@ -106,7 +106,7 @@ public class PMKnifeTool extends EditingTool {
         Vec3 zdir = theCamera.getCameraCoordinates().getZDirection();
         Mat4 m = theCamera.getObjectToWorld();
         for (int i = 0; i < edges.length / 2; i++) {
-            if ((e.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
+            if (!e.isShiftDown()) {
                 if (edges[i].face > -1) {
                     s1 = m.times(normals[edges[i].face]).dot(zdir);
                 } else {
@@ -150,7 +150,9 @@ public class PMKnifeTool extends EditingTool {
 
     @Override
     public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view) {
-        if ((e.getModifiers() & ActionEvent.CTRL_MASK) == 0) {
+        if (e.isControlDown()) {
+            clickPoints.add(dragPoint);
+        } else {
             dragPoint = e.getPoint();
             PolyMesh mesh = (PolyMesh) controller.getObject().object;
             dragging = false;
@@ -165,8 +167,6 @@ public class PMKnifeTool extends EditingTool {
             theWindow.updateImage();
             theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, originalMesh}));
             UndoRecord undo = null;
-        } else {
-            clickPoints.add(dragPoint);
         }
 
     }

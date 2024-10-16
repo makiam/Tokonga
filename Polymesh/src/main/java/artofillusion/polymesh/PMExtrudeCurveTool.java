@@ -63,19 +63,18 @@ public class PMExtrudeCurveTool extends EditingTool {
     }
 
     @Override
-    public void mousePressed(WidgetMouseEvent ev, ViewerCanvas view) {
+    public void mousePressed(WidgetMouseEvent e, ViewerCanvas view) {
         dragging = -1;
         if (clickPoints.isEmpty()) {
             return;
         }
         if (canvas == view) {
-            Point e = ev.getPoint();
             for (int i = 0; i < clickPoints.size(); i++) {
-                if (!(clickPoints.get(i)).clickedOnto(ev, view)) {
+                if (!(clickPoints.get(i)).clickedOnto(e, view)) {
                     continue;
                 }
                 dragging = i + 1;
-                if ((ev.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
+                if (e.isControlDown()) {
                     clickPoints.remove(i);
                     if (previewMode) {
                         extrudeFaces(false);
@@ -117,7 +116,7 @@ public class PMExtrudeCurveTool extends EditingTool {
                 return;
             }
             clickPoints.add(new CurvePoint(currentPoint = get3DPoint(fromPoint, e), 1.0));
-            if ((ev.getModifiers() & ActionEvent.SHIFT_MASK) != 0) {
+            if (ev.isShiftDown()) {
                 constantSize = true;
             } else {
                 constantSize = false;
@@ -138,7 +137,7 @@ public class PMExtrudeCurveTool extends EditingTool {
                 dragging = -1;
                 return;
             }
-            if ((ev.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
+            if (ev.isControlDown()) {
                 doCancel();
                 return;
             }
@@ -434,7 +433,7 @@ public class PMExtrudeCurveTool extends EditingTool {
             Vec2 ps = canvas.getCamera().getObjectToScreen().timesXY(position);
             if (!(e.x < ps.x - HANDLE_SIZE / 2 || e.x > ps.x + HANDLE_SIZE / 2
                     || e.y < ps.y - HANDLE_SIZE / 2 || e.y > ps.y + HANDLE_SIZE / 2)) {
-                if ((ev.getModifiers() & ActionEvent.SHIFT_MASK) != 0) {
+                if (ev.isShiftDown()) {
                     dragging = NONE;
                     amplitude = 1.0;
                 } else {

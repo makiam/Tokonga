@@ -486,13 +486,12 @@ public class SSMR2DManipulator
         Rectangle newBounds = new Rectangle();
         boolean move = false;
         boolean isShiftDown = e.isShiftDown();
-        boolean isCtrlDown = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
         double scaleX, scaleY, scaleZ;
         Vec3 drag = null;
         short anchorX = 0;
         short anchorY = 0;
         double gridSize = view.getGridSpacing() / view.getSnapToSubdivisions();
-        if (isCtrlDown) {
+        if (e.isControlDown()) {
             anchorX = ANCHOR_CENTER;
             anchorY = ANCHOR_CENTER;
             switch (handle) {
@@ -825,7 +824,7 @@ public class SSMR2DManipulator
         if (baseClick.x == e.getPoint().x && baseClick.y == e.getPoint().y && handle != TOOL_HANDLE) {
             if (mouseButtonTwo(e) && handle != CENTER) {
                 if (valueWidget != null) {
-                    isCtrlDown = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+                    isCtrlDown = e.isControlDown();
                     isShiftDown = e.isShiftDown();
                     if (state == ROTATE) {
                         valueWidget.setTempValueRange(-180, 180);

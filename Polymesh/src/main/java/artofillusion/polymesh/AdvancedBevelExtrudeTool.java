@@ -156,7 +156,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
         if (selectMode == PolyMeshEditorWindow.POINT_MODE) {
             mesh.copyObject(origMesh);
             boolean[] sel = mesh.bevelVertices(selected, drag.y);
-            theWindow.setHelpText(Translate.text("polymesh:advancedBevelExtrudeTool.pointEdgeDragText", new Double(drag.y)));
+            theWindow.setHelpText(Translate.text("polymesh:advancedBevelExtrudeTool.pointEdgeDragText", drag.y));
             for (int i = 0; i < selected.length; ++i) {
                 sel[i] = selected[i];
             }

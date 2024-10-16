@@ -453,7 +453,7 @@ public class SSMR3DManipulator
             }
             if (boxes[i].contains(p)) {
                 if (i == CENTER) {
-                    if ((e.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
+                    if (e.isControlDown()) {
                         //center drag on feature points
                         AdvancedEditingTool.SelectionProperties props = tool.findSelectionProperties(view.getCamera());
                         featurePoints2d = new Vec2[props.featurePoints.length];
@@ -763,7 +763,6 @@ public class SSMR3DManipulator
 
     public void moveDragged(WidgetMouseEvent e) {
         boolean isShiftDown = e.isShiftDown();
-        boolean isCtrlDown = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
         double gridSize = view.getGridSpacing() / view.getSnapToSubdivisions();
         Vec2 disp = new Vec2(e.getPoint().x - baseClick.x, e.getPoint().y - baseClick.y);
         Vec3 drag = null;
@@ -810,7 +809,6 @@ public class SSMR3DManipulator
     public boolean scaleDragged(WidgetMouseEvent e) {
         Point p = e.getPoint();
         boolean isShiftDown = e.isShiftDown();
-        boolean isCtrlDown = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
         double scaleX, scaleY, scaleZ;
 
         Vec2 base = new Vec2(baseClick.x - centerPoint.x, baseClick.y - centerPoint.y);
@@ -821,7 +819,7 @@ public class SSMR3DManipulator
         } else {
             scale /= (base.length() * base.length());
         }
-        if (isCtrlDown) {
+        if (e.isControlDown()) {
             axisLength = orAxisLength * scale;
             scale = 1;
             view.repaint();
@@ -883,7 +881,6 @@ public class SSMR3DManipulator
     public boolean rotateDragged(WidgetMouseEvent e) {
         Point p = e.getPoint();
         boolean isShiftDown = e.isShiftDown();
-        boolean isCtrlDown = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
 
         Vec2 disp = new Vec2(e.getPoint().x - baseClick.x, e.getPoint().y - baseClick.y);
         Vec2 vector = currentRotationHandle.points2d[rotSegment + 1].minus(currentRotationHandle.points2d[rotSegment]);
@@ -947,7 +944,6 @@ public class SSMR3DManipulator
             if (mouseButtonTwo(e) && handle != CENTER && e.isControlDown()) {
                 if (valueWidget != null) {
                     dispatchEvent(new ManipulatorPrepareChangingEvent(this, view));
-                    boolean isCtrlDown = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
                     isShiftDown = e.isShiftDown();
                     if (handle == ROTATE) {
                         valueWidget.setTempValueRange(-180, 180);
@@ -962,8 +958,8 @@ public class SSMR3DManipulator
                     return true;
                 }
             } else if (mouseButtonOne(e) && (handle == X_MOVE || handle == Y_MOVE || handle == Z_MOVE
-                    || handle == X_SCALE || handle == Y_SCALE || handle == Z_SCALE)) {
-                if ((e.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
+                || handle == X_SCALE || handle == Y_SCALE || handle == Z_SCALE)) {
+                if (e.isControlDown()) {
                     if (e.isShiftDown()) {
                         if (viewMode == XYZ_MODE) {
                             switch (handle) {

@@ -991,9 +991,7 @@ public class PolyMeshViewer extends MeshViewer {
             if (selected[k] != oldSelection[k]) {
                 currentTool.getWindow().setUndoRecord(new UndoRecord(currentTool.getWindow(),
                         false,
-                        UndoRecord.SET_MESH_SELECTION,
-                        new Object[]{controller,
-                            new Integer(controller.getSelectionMode()), oldSelection}));
+                        UndoRecord.SET_MESH_SELECTION, controller, controller.getSelectionMode(), oldSelection));
                 controller.setSelection(selected);
                 break;
             }

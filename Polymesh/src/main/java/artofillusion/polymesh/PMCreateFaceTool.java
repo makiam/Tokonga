@@ -117,7 +117,7 @@ public class PMCreateFaceTool extends EditingTool {
                             || e.y < ps.y - PolyMeshViewer.HANDLE_SIZE / 2 || e.y > ps.y + PolyMeshViewer.HANDLE_SIZE / 2) {
                         continue;
                     }
-                    if ((ev.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
+                    if (ev.isControlDown()) {
                         clickPoints.remove(i);
                         theWindow.updateImage();
                         return;

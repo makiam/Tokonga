@@ -151,7 +151,20 @@ public class PMSewTool extends EditingTool {
             }
         }
         //System.out.println( sewEdges[0] );
-        if ((e.getModifiers() & ActionEvent.CTRL_MASK) == 0) {
+        if (e.isControlDown()) {
+            if (sewEdges[0] >= 0) {
+                mesh.copyObject(originalMesh);
+                boolean[] sel = new boolean[edges.length / 2];
+                sel[sewEdges[0]] = true;
+                sel = mesh.closeBoundary(sel);
+                controller.objectChanged();
+                if (selection != null && sel != null) {
+                    controller.setSelection(sel);
+                }
+                theWindow.updateImage();
+                theWindow.setHelpText(Translate.text("polymesh:sewTool.dragText"));
+            }
+        } else {
             if (sewEdges[0] >= 0) {
                 minDist = Double.MAX_VALUE;
                 double z;
@@ -183,19 +196,6 @@ public class PMSewTool extends EditingTool {
             }
             theWindow.updateImage();
             theWindow.setHelpText(Translate.text("polymesh:sewTool.dragText"));
-        } else {
-            if (sewEdges[0] >= 0) {
-                mesh.copyObject(originalMesh);
-                boolean[] sel = new boolean[edges.length / 2];
-                sel[sewEdges[0]] = true;
-                sel = mesh.closeBoundary(sel);
-                controller.objectChanged();
-                if (selection != null && sel != null) {
-                    controller.setSelection(sel);
-                }
-                theWindow.updateImage();
-                theWindow.setHelpText(Translate.text("polymesh:sewTool.dragText"));
-            }
         }
     }
 
