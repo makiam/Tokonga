@@ -763,7 +763,6 @@ public class SSMR3DManipulator
 
     public void moveDragged(WidgetMouseEvent e) {
         boolean isShiftDown = e.isShiftDown();
-        boolean isCtrlDown = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
         double gridSize = view.getGridSpacing() / view.getSnapToSubdivisions();
         Vec2 disp = new Vec2(e.getPoint().x - baseClick.x, e.getPoint().y - baseClick.y);
         Vec3 drag = null;
