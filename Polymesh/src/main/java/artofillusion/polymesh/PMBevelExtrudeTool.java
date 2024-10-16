@@ -135,7 +135,7 @@ public class PMBevelExtrudeTool extends EditingTool {
         width = (dragPoint.x - clickPoint.x) / view.getScale();
         height = (clickPoint.y - dragPoint.y) / view.getScale();
         boolean shiftMod = e.isShiftDown() && e.isControlDown();
-        boolean ctrlMod = ((e.getModifiers() & ActionEvent.SHIFT_MASK) == 0) && (e.isControlDown());
+        boolean ctrlMod = !e.isShiftDown() && e.isControlDown();
         /*if ( controller.getSelectionMode() == PolyMeshEditorWindow.FACE_MODE && ctrlMod )
         {
             width = height;

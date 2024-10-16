@@ -501,10 +501,10 @@ public class UVMappingManipulator {
             Rectangle dragBoxRect = getDragBoxRect(click, currentPt);
             for (int i = 0; i < v.length; i++) {
                 if (dragBoxRect.contains(v[i])) {
-                    if ((ev.getModifiers() & ActionEvent.CTRL_MASK) == 0) {
-                        selected[i] = true;
-                    } else {
+                    if (ev.isControlDown()) {
                         selected[i] = !originalSelection[i];
+                    } else {
+                        selected[i] = true;
                     }
                 } else if (!ev.isShiftDown() && !ev.isControlDown()) {
                     selected[i] = false;
@@ -688,8 +688,7 @@ public class UVMappingManipulator {
                 for (int i = 0; i < selected.length; i++) {
                     if (pt[i].x != originalPositions[i].x || pt[i].y != originalPositions[i].y) {
                         vertIndices[count] = canvas.getTrueIndex(i);
-                        undoPositions[count] = canvas
-                                .LayoutToVertex(originalPositions[i]);
+                        undoPositions[count] = canvas.LayoutToVertex(originalPositions[i]);
                         redoPositions[count] = new Vec2(v[vertIndices[count]]);
                         count++;
                     }
@@ -706,7 +705,7 @@ public class UVMappingManipulator {
             computeCenter();
             canvas.updatePreview();
         } else {
-            if ((ev.getModifiers() & ActionEvent.SHIFT_MASK) == 0 && (ev.getModifiers() & ActionEvent.CTRL_MASK) == 0) {
+            if (!ev.isShiftDown() && !ev.isControlDown()) {
                 for (int i = 0; i < selected.length; i++) {
                     selected[i] = false;
                 }

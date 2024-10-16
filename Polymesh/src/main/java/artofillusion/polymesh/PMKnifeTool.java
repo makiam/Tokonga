@@ -106,7 +106,7 @@ public class PMKnifeTool extends EditingTool {
         Vec3 zdir = theCamera.getCameraCoordinates().getZDirection();
         Mat4 m = theCamera.getObjectToWorld();
         for (int i = 0; i < edges.length / 2; i++) {
-            if ((e.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
+            if (!e.isShiftDown()) {
                 if (edges[i].face > -1) {
                     s1 = m.times(normals[edges[i].face]).dot(zdir);
                 } else {
