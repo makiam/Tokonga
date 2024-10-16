@@ -958,7 +958,7 @@ public class SSMR3DManipulator
                     return true;
                 }
             } else if (mouseButtonOne(e) && (handle == X_MOVE || handle == Y_MOVE || handle == Z_MOVE
-                    || handle == X_SCALE || handle == Y_SCALE || handle == Z_SCALE)) {
+                || handle == X_SCALE || handle == Y_SCALE || handle == Z_SCALE)) {
                 if (e.isControlDown()) {
                     if (e.isShiftDown()) {
                         if (viewMode == XYZ_MODE) {

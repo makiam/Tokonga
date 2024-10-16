@@ -824,7 +824,7 @@ public class SSMR2DManipulator
         if (baseClick.x == e.getPoint().x && baseClick.y == e.getPoint().y && handle != TOOL_HANDLE) {
             if (mouseButtonTwo(e) && handle != CENTER) {
                 if (valueWidget != null) {
-                    isCtrlDown = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+                    isCtrlDown = e.isControlDown();
                     isShiftDown = e.isShiftDown();
                     if (state == ROTATE) {
                         valueWidget.setTempValueRange(-180, 180);

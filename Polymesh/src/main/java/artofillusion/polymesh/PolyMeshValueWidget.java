@@ -262,12 +262,9 @@ public class PolyMeshValueWidget extends BorderContainer {
      * @param e The KeyPressedEvent
      */
     private void doValidateValue(KeyPressedEvent e) {
-        int code = e.getKeyCode();
-        int modifiers = e.getModifiers();
-        if ((modifiers & InputEvent.CTRL_MASK) != 0) {
-            return;
-        }
-        if (code == KeyPressedEvent.VK_ENTER && runCallback != null) {
+        if(e.isControlDown()) return;
+
+        if (e.getKeyCode() == KeyPressedEvent.VK_ENTER && runCallback != null) {
             doValidate();
         }
     }
