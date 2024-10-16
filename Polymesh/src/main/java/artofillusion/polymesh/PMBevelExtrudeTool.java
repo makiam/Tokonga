@@ -150,7 +150,7 @@ public class PMBevelExtrudeTool extends EditingTool {
                 }
             }
         } else {
-            if (e.isShiftDown() && ((e.getModifiers() & ActionEvent.CTRL_MASK) == 0)) {
+            if (e.isShiftDown() && !e.isControlDown()) {
                 height = 0.0;
             }
             if (width < 0.0) {

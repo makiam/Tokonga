@@ -145,7 +145,7 @@ public class MouseDragManipulator extends Manipulator {
         double width = (dragPoint.x - baseClick.x) / view.getScale();
         double height = (baseClick.y - dragPoint.y) / view.getScale();
         if (((MeshViewer) view).getController().getSelectionMode() == MeshEditorWindow.FACE_MODE) {
-            if (e.isShiftDown() && ((e.getModifiers() & ActionEvent.CTRL_MASK) == 0)) {
+            if (e.isShiftDown() && !e.isControlDown()) {
                 if (Math.abs(width) > Math.abs(height)) {
                     height = 0.0;
                 } else {
@@ -153,7 +153,7 @@ public class MouseDragManipulator extends Manipulator {
                 }
             }
         } else {
-            if (e.isShiftDown() && ((e.getModifiers() & ActionEvent.CTRL_MASK) == 0)) {
+            if (e.isShiftDown() && !e.isControlDown()) {
                 height = 0.0;
             }
             if (width < 0.0) {
