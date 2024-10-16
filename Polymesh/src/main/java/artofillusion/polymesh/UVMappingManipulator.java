@@ -19,8 +19,10 @@ import artofillusion.ui.ThemeManager;
 import buoy.event.MouseScrolledEvent;
 import buoy.event.WidgetMouseEvent;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 /**
@@ -57,7 +59,7 @@ public class UVMappingManipulator {
     private double originalScale;
     private Vec2 originalOrigin;
     private int numSel; //number of selected but unpinned vertices. Needs to be >= 1 to draw the manipulator.
-    @Getter
+    @Getter @Setter
     private boolean liveUpdate = true;
     private boolean draggingHandle;
     private int anchor; //index of the anchor vertex, when set using ctrl drag center handle
@@ -174,7 +176,7 @@ public class UVMappingManipulator {
                 }
             }
         }
-        if (dragging == true) {
+        if (dragging) {
             if (center == null) {
                 computeCenter();
                 if (center == null) {
@@ -499,7 +501,7 @@ public class UVMappingManipulator {
             Rectangle dragBoxRect = getDragBoxRect(click, currentPt);
             for (int i = 0; i < v.length; i++) {
                 if (dragBoxRect.contains(v[i])) {
-                    if ((ev.getModifiers() & WidgetMouseEvent.CTRL_MASK) == 0) {
+                    if ((ev.getModifiers() & ActionEvent.CTRL_MASK) == 0) {
                         selected[i] = true;
                     } else {
                         selected[i] = !originalSelection[i];
@@ -704,8 +706,7 @@ public class UVMappingManipulator {
             computeCenter();
             canvas.updatePreview();
         } else {
-            if ((ev.getModifiers() & WidgetMouseEvent.SHIFT_MASK) == 0
-                    && (ev.getModifiers() & WidgetMouseEvent.CTRL_MASK) == 0) {
+            if ((ev.getModifiers() & ActionEvent.SHIFT_MASK) == 0 && (ev.getModifiers() & ActionEvent.CTRL_MASK) == 0) {
                 for (int i = 0; i < selected.length; i++) {
                     selected[i] = false;
                 }
@@ -962,9 +963,5 @@ public class UVMappingManipulator {
             }
             return which;
         }
-    }
-
-    public void setLiveUpdate(boolean liveUpdate) {
-        this.liveUpdate = liveUpdate;
     }
 }
