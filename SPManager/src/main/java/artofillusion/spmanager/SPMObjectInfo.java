@@ -15,6 +15,7 @@ import java.net.*;
 import java.util.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.TestOnly;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -121,7 +122,8 @@ public class SPMObjectInfo {
     /**
      * Script file name
      */
-    public String fileName = "**Uninitialised**";
+    @Getter
+    private String fileName = "**Uninitialised**";
     /**
      * URL of the script
      */
@@ -160,6 +162,7 @@ public class SPMObjectInfo {
         fileName = fn;
         separatorChar = File.separatorChar;
         getName();
+        log.info("Name evaluated to {} from file name {}", getName(), fn);
         remote = false;
         if (fn.endsWith(".bsh")) {
             loadXmlInfoFromScript();
@@ -248,7 +251,7 @@ public class SPMObjectInfo {
      * @param reader Description of the Parameter
      * @return The xmlHeaderAsString value
      */
-    private String getXmlHeaderAsString(BufferedReader reader) {
+    private static String getXmlHeaderAsString(BufferedReader reader) {
         char c1 = ' ';
         char c2 = ' ';
         StringBuffer sb = new StringBuffer(1024);
@@ -306,7 +309,7 @@ public class SPMObjectInfo {
         String s = null;
 
         try (BufferedReader fileReader = new BufferedReader(new FileReader(fileName))) {
-            s = getXmlHeaderAsString(fileReader);
+            s = SPMObjectInfo.getXmlHeaderAsString(fileReader);
         } catch(IOException ioe) {
             log.atError().setCause(ioe).log("IO Exception {}", ioe.getMessage());
             return;
@@ -325,7 +328,8 @@ public class SPMObjectInfo {
     /**
      * Description of the Method
      */
-    private void loadXmlInfoFromJarFile() {
+    @TestOnly
+    public void loadXmlInfoFromJarFile() {
         /*
 		 * NTJ: AOI 2.5. Default XML file name changed to 'extensions.xml'
 		 * For compatibility we try the new name first, then the old...
@@ -382,7 +386,7 @@ public class SPMObjectInfo {
                 i++;
             }
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            s = getXmlHeaderAsString(in);
+            s = SPMObjectInfo.getXmlHeaderAsString(in);
             in.close();
 
         } catch (IOException e) {
@@ -559,8 +563,6 @@ public class SPMObjectInfo {
 
     private void readInfoFromDocumentNode(Node script) {
 
-        SPMParameters params = SPManagerFrame.getParameters();
-
         if (changeLog == null) {
             changeLog = new Vector<>(16);
             details = new Vector<>(16);
@@ -596,7 +598,9 @@ public class SPMObjectInfo {
         date = SPManagerUtils.getNodeValue(script, "date", "", 0);
 
         String b = SPManagerUtils.getNodeValue(script, "beta", "", 0);
-        if (!"".equals(b)) {
+        if (b.isEmpty()) {
+            beta = -1;
+        } else {
             try {
                 // NTJ: changed to avoid exceptions for non-digits
                 //beta = Integer.parseInt( b );
@@ -604,10 +608,9 @@ public class SPMObjectInfo {
             } catch (NumberFormatException e) {
                 beta = -1;
             }
-        } else {
-            beta = -1;
         }
 
+        SPMParameters params = SPManagerFrame.getParameters();
         // NTJ: filter on beta
         if (beta > 0) {
             if (params != null) {

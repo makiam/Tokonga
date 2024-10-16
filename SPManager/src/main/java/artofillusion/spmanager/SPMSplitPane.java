@@ -326,21 +326,21 @@ public class SPMSplitPane extends BSplitPane {
     public void doTreeNodeSelection() {
 
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getComponent().getLastSelectedPathComponent();
-        if (node != null) {
-            if (node.isLeaf() && (!node.getAllowsChildren())) {
-                if (node.getUserObject() != null) {
-                    SPMObjectInfo nodeInfo = (SPMObjectInfo) node.getUserObject();
-                    displayObjectInfo(nodeInfo);
+        if (node == null) return;
 
-                    if (nodeInfo.fileName.endsWith(".bsh")) {
-                        scriptSelection(nodeInfo.deletable);
-                    } else {
-                        pluginSelection(nodeInfo.deletable);
-                    }
+        if (node.isLeaf() && (!node.getAllowsChildren())) {
+            if (node.getUserObject() != null) {
+                SPMObjectInfo nodeInfo = (SPMObjectInfo) node.getUserObject();
+                displayObjectInfo(nodeInfo);
+
+                if (nodeInfo.getFileName().endsWith(".bsh")) {
+                    scriptSelection(nodeInfo.deletable);
+                } else {
+                    pluginSelection(nodeInfo.deletable);
                 }
-            } else {
-                voidSelection();
             }
+        } else {
+            voidSelection();
         }
     }
 
@@ -458,10 +458,10 @@ public class SPMSplitPane extends BSplitPane {
         });
     }
 
-    protected final Predicate<String> requred = (String name) -> name.endsWith("= requred");
+    protected final Predicate<String> required = (String name) -> name.endsWith("= requred");
 
     /**
-     * get the infor for the named item of the named type
+     * get the info for the named item of the named type
      */
     public SPMObjectInfo getInfo(String name, String type) {
         return getInfo(name, pathMap.get(type));
@@ -619,7 +619,7 @@ public class SPMSplitPane extends BSplitPane {
 
         extMap.put(info, info);
 
-        info.getExternals().stream().filter(requred).forEach(extName -> {
+        info.getExternals().stream().peek(ex -> System.out.println("Peeked external: " + ex)).filter(required).forEach(extName -> {
             String extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
             extName = extName.substring(0, extName.indexOf(':'));
             SPMObjectInfo ext = getInfo(extName, pathMap.get(extType));
