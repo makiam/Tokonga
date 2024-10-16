@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2002,2004 by Peter Eastman, Modifications (C) 2005 by François Guillet for PolyMesh adaptation
- *  Changes copyright (C) 2023 by Maksim Khramov
+ *  Changes copyright (C) 2023-2024 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -38,6 +38,7 @@ import buoy.widget.BStandardDialog;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -50,7 +51,6 @@ import lombok.extern.slf4j.Slf4j;
  * PMOBJImporter imports .OBJ files to Polymeshes.
  *
  * @author François Guillet
- * @created 13 juin 2005
  */
 @Slf4j
 public class PMOBJImporter {
@@ -97,7 +97,7 @@ public class PMOBJImporter {
         List<Vec3> texture = new Vector<>();
         Vector<FaceInfo>[] face = new Vector[]{new Vector<>()};  // The array of Vector<FaceInfo>
         groupTable.put("default", face[0]);
-        int lineno = 0;
+        int lineNo = 0;
         int smoothingGroup = -1;
         String currentTexture = null;
         VertexInfo[] vertIndex = new VertexInfo[3];
@@ -108,7 +108,7 @@ public class PMOBJImporter {
 
         try (BufferedReader in = new BufferedReader(new FileReader(f))) {
             while ((s = in.readLine()) != null) {
-                lineno++;
+                lineNo++;
                 if (s.startsWith("#")) {
                     continue;
                 }
@@ -127,7 +127,7 @@ public class PMOBJImporter {
 
                     for (int i = 0; i < 3; i++) {
                         try {
-                            val[i] = new Double(fields[i + 1]).doubleValue();
+                            val[i] = Double.parseDouble(fields[i + 1]);
                             if (val[i] < min[i]) {
                                 min[i] = val[i];
                             }
@@ -135,8 +135,7 @@ public class PMOBJImporter {
                                 max[i] = val[i];
                             }
                         } catch (NumberFormatException ex) {
-                            throw new Exception("Illegal value '" + fields[i + 1]
-                                    + "' found in line " + lineno + ".");
+                            throw new Exception("Illegal value '" + fields[i + 1] + "' found in line " + lineNo + ".");
                         }
                     }
                     vertex.add(new Vec3(val[0], val[1], val[2]));
@@ -145,10 +144,9 @@ public class PMOBJImporter {
 
                     for (int i = 0; i < 3; i++) {
                         try {
-                            val[i] = new Double(fields[i + 1]).doubleValue();
+                            val[i] = Double.parseDouble(fields[i + 1]);
                         } catch (NumberFormatException ex) {
-                            throw new Exception("Illegal value '" + fields[i + 1]
-                                    + "' found in line " + lineno + ".");
+                            throw new Exception("Illegal value '" + fields[i + 1] + "' found in line " + lineNo + ".");
                         }
                     }
                     normal.add(new Vec3(val[0], val[1], val[2]));
@@ -158,19 +156,19 @@ public class PMOBJImporter {
                     for (int i = 0; i < 3; i++) {
                         try {
                             if (i < fields.length - 1) {
-                                val[i] = new Double(fields[i + 1]).doubleValue();
+                                val[i] = Double.parseDouble(fields[i + 1]);
                             } else {
                                 val[i] = 0.0;
                             }
                         } catch (NumberFormatException ex) {
-                            throw new Exception("Illegal value '" + fields[i + 1] + "' found in line " + lineno + ".");
+                            throw new Exception("Illegal value '" + fields[i + 1] + "' found in line " + lineNo + ".");
                         }
                     }
                     texture.add(new Vec3(val[0], val[1], val[2]));
                 } else if ("f".equals(fields[0])) {
                     vertIndex = new VertexInfo[fields.length - 1];
                     for (int i = 0; i < vertIndex.length; i++) {
-                        vertIndex[i] = parseVertexSpec(fields[i + 1], vertex.size(), texture.size(), normal.size(), lineno);
+                        vertIndex[i] = parseVertexSpec(fields[i + 1], vertex.size(), texture.size(), normal.size(), lineNo);
                     }
                     for (int i = 0; i < face.length; i++) {
                         // Add a face.
@@ -186,7 +184,7 @@ public class PMOBJImporter {
                     try {
                         smoothingGroup = Integer.parseInt(fields[1]);
                     } catch (NumberFormatException ex) {
-                        throw new Exception("Illegal value '" + fields[1] + "' found in line " + lineno + ".");
+                        throw new Exception("Illegal value '" + fields[1] + "' found in line " + lineNo + ".");
                     }
                 } else if ("g".equals(fields[0])) {
                     // Set the current group or groups.
@@ -366,11 +364,11 @@ public class PMOBJImporter {
      * @param vertex Description of the Parameter
      * @param texture Description of the Parameter
      * @param normal Description of the Parameter
-     * @param lineno Description of the Parameter
+     * @param lineNo Description of the Parameter
      * @return Description of the Return Value
      * @exception Exception Description of the Exception
      */
-    private static VertexInfo parseVertexSpec(String spec, int vertex, int texture, int normal, int lineno)
+    private static VertexInfo parseVertexSpec(String spec, int vertex, int texture, int normal, int lineNo)
             throws Exception {
         VertexInfo info = new VertexInfo();
         StringTokenizer st = new StringTokenizer(spec, "/", true);
@@ -405,7 +403,7 @@ public class PMOBJImporter {
                     info.norm = index;
                 }
             } catch (NumberFormatException ex) {
-                throw new Exception("Illegal value '" + spec + "' found in line " + lineno + ".");
+                throw new Exception("Illegal value '" + spec + "' found in line " + lineNo + ".");
             }
         }
         if (info.tex == Integer.MAX_VALUE) {
@@ -426,8 +424,7 @@ public class PMOBJImporter {
      * @param textures Description of the Parameter
      * @exception Exception Description of the Exception
      */
-    private static void parseTextures(String file, File baseDir, Map<String, TextureInfo> textures)
-            throws Exception {
+    private static void parseTextures(String file, File baseDir, Map<String, TextureInfo> textures) throws Exception {
         File f = new File(baseDir, file);
         if (!f.isFile()) {
             f = new File(file);
@@ -435,7 +432,7 @@ public class PMOBJImporter {
         if (!f.isFile()) {
             throw new Exception("Cannot locate material file '" + file + "'.");
         }
-        BufferedReader in = new BufferedReader(new FileReader(f));
+        BufferedReader in = Files.newBufferedReader(f.toPath());
         String line;
         TextureInfo currentTexture = null;
         while ((line = in.readLine()) != null) {
@@ -468,9 +465,9 @@ public class PMOBJImporter {
                 } else if ("Ks".equals(fields[0])) {
                     currentTexture.specular = parseColor(fields);
                 } else if ("d".equals(fields[0]) || "Tr".equals(fields[0])) {
-                    currentTexture.transparency = 1.0 - (new Double(fields[1]).doubleValue());
+                    currentTexture.transparency = 1.0 - (Double.parseDouble(fields[1]));
                 } else if ("Ns".equals(fields[0])) {
-                    currentTexture.shininess = new Double(fields[1]).doubleValue();
+                    currentTexture.shininess = Double.parseDouble(fields[1]);
                 } else if ("map_Kd".equals(fields[0])) {
                     currentTexture.diffuseMap = fields[1];
                 } else if ("map_Ka".equals(fields[0])) {
@@ -501,8 +498,7 @@ public class PMOBJImporter {
      * @return Description of the Return Value
      * @exception Exception Description of the Exception
      */
-    private static Texture createTexture(TextureInfo info, Scene scene, File baseDir, Map<String, ImageMap> imageMaps, BFrame parent)
-            throws Exception {
+    private static Texture createTexture(TextureInfo info, Scene scene, File baseDir, Map<String, ImageMap> imageMaps, BFrame parent) throws Exception {
         info.resolveColors();
         ImageMap diffuseMap = loadMap(info.diffuseMap, scene, baseDir, imageMaps, parent);
         ImageMap specularMap = loadMap(info.specularMap, scene, baseDir, imageMaps, parent);
@@ -555,8 +551,7 @@ public class PMOBJImporter {
      * @return Description of the Return Value
      * @exception Exception Description of the Exception
      */
-    private static ImageMap loadMap(String name, Scene scene, File baseDir, Map<String, ImageMap> imageMaps, BFrame parent)
-            throws Exception {
+    private static ImageMap loadMap(String name, Scene scene, File baseDir, Map<String, ImageMap> imageMaps, BFrame parent) throws Exception {
         if (name == null) {
             return null;
         }
@@ -588,8 +583,7 @@ public class PMOBJImporter {
      * @return Description of the Return Value
      * @exception NumberFormatException Description of the Exception
      */
-    private static RGBColor parseColor(String[] fields)
-            throws NumberFormatException {
+    private static RGBColor parseColor(String[] fields) throws NumberFormatException {
         if (fields.length < 4) {
             return null;
         }
@@ -599,8 +593,6 @@ public class PMOBJImporter {
     /**
      * Inner class for storing information about a vertex of a face.
      *
-     * @author pims
-     * @created 13 juin 2005
      */
     private static class VertexInfo {
 
@@ -613,8 +605,6 @@ public class PMOBJImporter {
     /**
      * Inner class for storing information about a face.
      *
-     * @author pims
-     * @created 13 juin 2005
      */
     private static class FaceInfo {
 
@@ -659,7 +649,6 @@ public class PMOBJImporter {
      * Inner class for storing information about a texture in a .mtl file.
      *
      * @author François Guillet
-     * @created 13 juin 2005
      */
     private static class TextureInfo {
 
