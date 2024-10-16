@@ -123,12 +123,12 @@ public class PolyMeshValueWidget extends BorderContainer {
         if (!valueSlider.isEnabled()) {
             return;
         }
-        int code = e.getKeyCode();
-        int modifiers = e.getModifiers();
-        if ((modifiers & InputEvent.CTRL_MASK) != 0) {
+
+
+        if (e.isControlDown()) {
             return;
         }
-        switch (code) {
+        switch (e.getKeyCode()) {
             case KeyPressedEvent.VK_PLUS:
             case KeyPressedEvent.VK_ADD:
                 if (valueSlider.isEnabled()) {
