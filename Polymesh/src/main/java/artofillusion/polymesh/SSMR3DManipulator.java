@@ -810,7 +810,6 @@ public class SSMR3DManipulator
     public boolean scaleDragged(WidgetMouseEvent e) {
         Point p = e.getPoint();
         boolean isShiftDown = e.isShiftDown();
-        boolean isCtrlDown = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
         double scaleX, scaleY, scaleZ;
 
         Vec2 base = new Vec2(baseClick.x - centerPoint.x, baseClick.y - centerPoint.y);
@@ -821,7 +820,7 @@ public class SSMR3DManipulator
         } else {
             scale /= (base.length() * base.length());
         }
-        if (isCtrlDown) {
+        if (e.isControlDown()) {
             axisLength = orAxisLength * scale;
             scale = 1;
             view.repaint();
