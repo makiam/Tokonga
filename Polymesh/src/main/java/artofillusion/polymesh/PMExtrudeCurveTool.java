@@ -116,7 +116,7 @@ public class PMExtrudeCurveTool extends EditingTool {
                 return;
             }
             clickPoints.add(new CurvePoint(currentPoint = get3DPoint(fromPoint, e), 1.0));
-            if ((ev.getModifiers() & ActionEvent.SHIFT_MASK) != 0) {
+            if (ev.isShiftDown()) {
                 constantSize = true;
             } else {
                 constantSize = false;
