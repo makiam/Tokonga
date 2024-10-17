@@ -231,6 +231,12 @@ public class Translate {
         return button(name, null, listener, method);
     }
 
+    public static BButton button(String name, ActionListener al) {
+        var b = button(name, null, null);
+        b.getComponent().addActionListener(al);
+        return b;
+    }
+
     /**
      * Get a BButton whose text is given by the property "button.(name)", with a suffix
      * appended to it. If listener is not null, the specified method of it will be added
