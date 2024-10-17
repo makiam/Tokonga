@@ -352,6 +352,7 @@ public class SPMObjectInfo {
             if (is == null) {
                 fn = getName() + ".xml";
                 url = new URL("jar:file:" + fileName + "!/" + fn);
+                log.atInfo().log("Fallback to old-style name: {}", fn);
                 is = url.openStream();
             }
 

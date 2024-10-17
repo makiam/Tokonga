@@ -70,5 +70,6 @@ public class Extension {
     @XStreamImplicit
     private List<Resource> resources = new ArrayList<>();
 
-
+    @XStreamImplicit
+    private List<External> externals = new ArrayList<>();
 }
