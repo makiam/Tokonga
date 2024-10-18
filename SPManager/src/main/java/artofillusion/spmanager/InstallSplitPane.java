@@ -654,9 +654,7 @@ public class InstallSplitPane extends SPMSplitPane {
 
         errs.forEach(err -> txt.append(err + "\n"));
 
-        BScrollPane detail
-                = new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER,
-                        BScrollPane.SCROLLBAR_AS_NEEDED);
+        BScrollPane detail = new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_AS_NEEDED);
 
         BLabel messg = SPMTranslate.bLabel("errMsg");
 
