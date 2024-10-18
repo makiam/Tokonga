@@ -592,8 +592,7 @@ public class SPManagerPlugin implements Plugin {
 
                             if (path == null || path.isEmpty()) {
                                 log.atInfo().log("DOWNLOAD: no save location");
-                                new BStandardDialog("SPManager", SPMTranslate.text("noSaveLocation"), BStandardDialog.ERROR).showMessageDialog(null);
-
+                                MessageDialog.create().withTitle("SPManager").error(SPMTranslate.text("noSaveLocation"));
                                 doClose();
                             }
 
@@ -619,7 +618,7 @@ public class SPManagerPlugin implements Plugin {
                             }
 
                             if (errs == null || errs.isEmpty()) {
-                                new BStandardDialog("SPManager", SPMTranslate.text("modified"), BStandardDialog.ERROR).showMessageDialog(null);
+                                MessageDialog.create().withTitle("SPManager").error(SPMTranslate.text("modified"));
                             } else {
                                 InstallSplitPane.showErrors(errs);
                             }
