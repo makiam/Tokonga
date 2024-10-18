@@ -11,8 +11,15 @@
 package artofillusion.plugin
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
+import com.thoughtworks.xstream.annotations.XStreamImplicit
 
 
 @XStreamAlias("fileset")
 class Fileset {
+    @XStreamImplicit
+    private val files: MutableList<FilesetItem?>? = ArrayList<FilesetItem?>()
+
+    fun getFiles(): MutableList<FilesetItem?> {
+        return (if (files == null) mutableListOf<FilesetItem?>() else files)
+    }
 }

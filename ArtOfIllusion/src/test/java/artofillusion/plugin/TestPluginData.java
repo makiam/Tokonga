@@ -25,9 +25,9 @@ class TestPluginData {
     @BeforeAll
     static void init() {
         xstream = new XStream(new StaxDriver());
-        xstream.ignoreUnknownElements();
-        xstream.allowTypes(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class, Resource.class, External.class, Fileset.class});
-        xstream.processAnnotations(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class, Resource.class, External.class, Fileset.class});
+        //xstream.ignoreUnknownElements();
+        xstream.allowTypes(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class, Resource.class, External.class, Fileset.class, FilesetItem.class});
+        xstream.processAnnotations(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class, Resource.class, External.class, Fileset.class, FilesetItem.class});
     }
     @Test
     void testReadEmptyExtension() throws IOException {
@@ -141,7 +141,8 @@ class TestPluginData {
         Extension ext = (Extension)xstream.fromXML(TestPluginData.class.getResource("/artofillusion/plugin/HelpPlugin.xml").openStream());
         Assertions.assertNotNull(ext);
         Assertions.assertNotNull(ext.getHistory());
-        Assertions.assertNotNull(ext.getFiles());
+        Assertions.assertNotNull(ext.getFileset());
+        ext.getFileset().getFiles().forEach(System.out::println);
     }
 
     @Test

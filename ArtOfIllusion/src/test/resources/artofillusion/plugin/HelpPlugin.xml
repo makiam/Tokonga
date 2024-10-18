@@ -3,7 +3,7 @@
 <extension name="HelpPlugin" version="1.21">
     <author>Nik Trevallyn-Jones</author>
     <date>June 16, 2008</date>
-    <beta>1</beta>
+    <!--<beta>1</beta> -->
     <plugin class="nik777.aoi.HelpPlugin">
         <export method="getContext" id="artofillusion.HelpPlugin.getContext"/>
 
@@ -38,16 +38,12 @@
     <!-- temporary hack to force HelpPlugin to have a SearchlistClassLoader -->
     <!-- <import name="Renderers" />  -->
 
-    <external type="file" name="Help/AOIHelp.zip" association="bundled"
-              action="classpath"/>
+    <external type="file" name="Help/AOIHelp.zip" association="bundled" action="classpath"/>
     <external type="file" name="Help/helpgui-1.1b.jar" association="bundled"
               action="classpath"/>
-    <external type="file" name="Help/jhall.jar" association="bundled"
-              action="classpath"/>
-    <external type="file" name="Help/jhelpaction.jar" association="bundled"
-              action="classpath"/>
-    <external type="file" name="Help/pircbot.jar" association="bundled"
-              action="classpath"/>
+    <external type="file" name="Help/jhall.jar" association="bundled" action="classpath"/>
+    <external type="file" name="Help/jhelpaction.jar" association="bundled" action="classpath"/>
+    <external type="file" name="Help/pircbot.jar" association="bundled" action="classpath"/>
 
     <fileset>
         <file todir="Help">helpgui-1.1b.jar</file>

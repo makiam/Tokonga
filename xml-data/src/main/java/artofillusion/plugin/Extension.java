@@ -64,7 +64,7 @@ public class Extension {
 
     private History history;
 
-    private Fileset files;
+    private Fileset fileset;
 
     public List<Resource> getResources() {
         return resources == null ? List.of() : resources;
