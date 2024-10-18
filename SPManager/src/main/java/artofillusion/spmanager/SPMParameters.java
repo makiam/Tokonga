@@ -147,7 +147,7 @@ public class SPMParameters {
             savePropertiesFile();
             return;
         }
-        try (InputStream in = new BufferedInputStream(Files.newInputStream(pp))) {
+        try (InputStream in = Files.newInputStream(pp)) {
             Properties props = new Properties();
             props.load(in);
             parseProperties(props);
