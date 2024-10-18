@@ -72,4 +72,6 @@ public class Extension {
 
     @XStreamImplicit
     private List<External> externals = new ArrayList<>();
+
+    private Fileset files;
 }
