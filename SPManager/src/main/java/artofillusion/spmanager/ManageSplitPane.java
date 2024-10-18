@@ -103,7 +103,7 @@ public class ManageSplitPane extends SPMSplitPane {
 
         // NTJ: set reference counts
         infos.forEach(info -> {
-            info.getExternals().stream().filter(requred).forEach((String extName) -> {
+            info.getExternals().stream().filter(required).forEach((String extName) -> {
                 if (extName.endsWith("= required")) {
                     String extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
                     extName = extName.substring(0, extName.indexOf(':'));
@@ -124,12 +124,12 @@ public class ManageSplitPane extends SPMSplitPane {
         SPMObjectInfo info = getSelectedNodeInfo();
 
         if (info.refcount > 0) {
-            JOptionPane.showMessageDialog(SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("cannotDeleteRequired"), SPMTranslate.text("Delete", info.fileName), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("cannotDeleteRequired"), SPMTranslate.text("Delete", info.getFileName()), JOptionPane.ERROR_MESSAGE);
 
             return;
         }
 
-        int r = JOptionPane.showConfirmDialog(SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("permanentlyDelete", info.fileName),
+        int r = JOptionPane.showConfirmDialog(SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("permanentlyDelete", info.getFileName()),
                 SPMTranslate.text("warning"), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
         if (r == JOptionPane.YES_OPTION) {
             deleteFile(info);
@@ -144,7 +144,7 @@ public class ManageSplitPane extends SPMSplitPane {
     private void deleteFile(SPMObjectInfo info) {
         if (info != null) {
 
-            File file = new File(info.fileName);
+            File file = new File(info.getFileName());
             if (!file.exists()) {
                 log.atInfo().log("SPManager: Delete: no such file or directory: {}", file.getAbsolutePath());
             }
@@ -152,12 +152,12 @@ public class ManageSplitPane extends SPMSplitPane {
                 log.atInfo().log("SPManager: Delete: write protected: {}", file.getAbsolutePath());
             }
             if (!file.delete()) {
-                MessageDialog.create().withOwner(SPManagerFrame.getInstance().getComponent()).error(SPMTranslate.text("cannotDeleteFile", info.fileName));
+                MessageDialog.create().withOwner(SPManagerFrame.getInstance().getComponent()).error(SPMTranslate.text("cannotDeleteFile", info.getFileName()));
                 log.atInfo().log("SPManager: File cannot be deleted: {}", file.getAbsolutePath());
                 return;
             }
 
-            if (info.fileName.lastIndexOf("Plugins") == -1) {
+            if (info.getFileName().lastIndexOf("Plugins") == -1) {
                 SPManagerUtils.updateAllAoIWindows();
             } else {
                 modified = true;
@@ -171,7 +171,7 @@ public class ManageSplitPane extends SPMSplitPane {
                 }
             }
 
-            info.getExternals().stream().filter(requred).forEach(extName -> {
+            info.getExternals().stream().filter(required).forEach(extName -> {
                 String extType = extName.substring(extName.indexOf(':') + 1, extName.indexOf('=')).trim();
                 extName = extName.substring(0, extName.indexOf(':'));
 

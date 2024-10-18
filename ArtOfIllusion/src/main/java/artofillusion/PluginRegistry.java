@@ -39,8 +39,8 @@ public class PluginRegistry {
     private static final XStream xstream = new XStream(new StaxDriver());
     static {
         xstream.ignoreUnknownElements();
-        xstream.allowTypes(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class, Resource.class});
-        xstream.processAnnotations(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class, Resource.class});
+        xstream.allowTypes(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class, Resource.class, External.class});
+        xstream.processAnnotations(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class, Resource.class, External.class});
     }
     private static final ArrayList<ClassLoader> pluginLoaders = new ArrayList<>();
     private static final Set<Class<?>> categories = new HashSet<>();

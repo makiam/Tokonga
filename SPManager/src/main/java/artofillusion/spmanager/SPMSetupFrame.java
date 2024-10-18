@@ -158,9 +158,9 @@ public class SPMSetupFrame extends BDialog {
 
         RowContainer buttons = new RowContainer();
 
-        buttons.add(Translate.button("ok", this, "doOK"));
+        buttons.add(Translate.button("ok", e -> doOK()));
+        buttons.add(Translate.button("cancel", e -> doCancel()));
 
-        buttons.add(Translate.button("cancel", this, "doCancel"));
         cc.add(buttons, new LayoutInfo());
         setContent(cc);
         addEventLink(WindowClosingEvent.class, this, "doCancel");
