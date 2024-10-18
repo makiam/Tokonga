@@ -14,12 +14,13 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @XStreamAlias("extension")
-@Data
+@Getter
 public class Extension {
     @XStreamAsAttribute
     private String name;
@@ -63,6 +64,8 @@ public class Extension {
 
     private History history;
 
+    private Fileset files;
+
     public List<Resource> getResources() {
         return resources == null ? List.of() : resources;
     }
@@ -73,5 +76,5 @@ public class Extension {
     @XStreamImplicit
     private List<External> externals = new ArrayList<>();
 
-    private Fileset files;
+
 }
