@@ -233,19 +233,9 @@ public class CreatePolyMeshTool extends EditingTool {
                 WidgetDecoder decoder = new WidgetDecoder(is);
                 setContent((BorderContainer) decoder.getRootObject());
                 typeCombo = ((BComboBox) decoder.getObject("typeCombo"));
-                typeCombo.add(Translate.text("polymesh:cube"));
-                typeCombo.add(Translate.text("polymesh:face"));
-                typeCombo.add(Translate.text("polymesh:octahedron"));
-                typeCombo.add(Translate.text("polymesh:cylinder"));
-                typeCombo.add(Translate.text("polymesh:flatMesh"));
+
                 templateStart = 5;
-                File templateDir = new File(ArtOfIllusion.PLUGIN_DIRECTORY + File.separator + "PolyMeshTemplates" + File.separator);
-                if (templateDir.isDirectory()) {
-                    String[] files = templateDir.list();
-                    for (int i = 0; i < files.length; i++) {
-                        typeCombo.add(files[i]);
-                    }
-                }
+                typeCombo.setModel(new FilesListModel());
                 sizeLabel = ((BLabel) decoder.getObject("sizeLabel"));
                 sizeLabel.setText(Translate.text("polymesh:" + sizeLabel.getText()));
                 xSpinner = ((BSpinner) decoder.getObject("xSpinner"));
@@ -265,10 +255,8 @@ public class CreatePolyMeshTool extends EditingTool {
                 typeCombo.addEventLink(ValueChangedEvent.class, this, "doComboChanged");
                 typeCombo.setPreferredVisibleRows(typeCombo.getItemCount());
                 smoothCombo = ((BComboBox) decoder.getObject("smoothCombo"));
-                smoothCombo.add(Translate.text("menu.none"));
-                smoothCombo.add(Translate.text("menu.shading"));
-                smoothCombo.add(Translate.text("menu.approximating"));
-                smoothCombo.add(Translate.text("menu.interpolating"));
+                smoothCombo.setModel(new SmoothTypesListModel());
+
                 BLabel smoothLabel = ((BLabel) decoder.getObject("smoothLabel"));
                 smoothLabel.setText(Translate.text("SmoothingMethod") + ":");
                 smoothCombo.addEventLink(ValueChangedEvent.class, this, "doSmoothComboChanged");
