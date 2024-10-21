@@ -25,7 +25,7 @@ class TestPluginData {
     @BeforeAll
     static void init() {
         xstream = new XStream(new StaxDriver());
-        //xstream.ignoreUnknownElements();
+        xstream.ignoreUnknownElements();
         xstream.allowTypes(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class, Resource.class, External.class, Fileset.class, FilesetItem.class});
         xstream.processAnnotations(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class, Resource.class, External.class, Fileset.class, FilesetItem.class});
     }

@@ -37,10 +37,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PluginRegistry {
     private static final XStream xstream = new XStream(new StaxDriver());
+
+    public static final Class[] TYPES = {Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class,
+            LogRecord.class, Resource.class, External.class, Fileset.class, FilesetItem.class};
+
     static {
         xstream.ignoreUnknownElements();
-        xstream.allowTypes(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class, Resource.class, External.class});
-        xstream.processAnnotations(new Class[]{Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class, LogRecord.class, Resource.class, External.class});
+        xstream.allowTypes(TYPES);
+        xstream.processAnnotations(TYPES);
     }
     private static final ArrayList<ClassLoader> pluginLoaders = new ArrayList<>();
     private static final Set<Class<?>> categories = new HashSet<>();
