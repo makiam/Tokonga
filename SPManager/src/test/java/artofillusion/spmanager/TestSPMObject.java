@@ -9,6 +9,7 @@ import artofillusion.ArtOfIllusion;
 import org.junit.jupiter.api.Test;
 
 
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
 /**
@@ -17,9 +18,11 @@ import java.nio.file.Paths;
  */
 public class TestSPMObject {
     @Test
-    public void testObject() {
+    public void testObject() throws URISyntaxException {
+        var path = Paths.get(TestSPMObject.class.getResource("/artofillusion/Tools.jar").toURI());
 
-        var so = new SPMObjectInfo(Paths.get(ArtOfIllusion.PLUGIN_DIRECTORY, "Tools.jar").toString());
-        System.out.println(so);
+
+        var so = new SPMObjectInfo(path.toFile().toString());
+        //System.out.println(so);
     }
 }
