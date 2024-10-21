@@ -62,7 +62,7 @@ public class PreferencesWindow {
             }
             done = true;
             if (interactiveTolField.getValue() < 0.01) {
-                String[] options = new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
+                String[] options = MessageDialog.getOptions();
                 int choice = new BStandardDialog("", Translate.text("lowSurfErrorWarning"), BStandardDialog.WARNING).showOptionDialog(parent, options, options[0]);
                 if (choice == 1) {
                     done = false;
@@ -81,7 +81,7 @@ public class PreferencesWindow {
         preferences.setUndoLevels((int) undoField.getValue());
 
         if (preferences.getUseOpenGL() != glBox.getState()) {
-            new BStandardDialog("", UIUtilities.breakString(Translate.text("glChangedWarning")), BStandardDialog.INFORMATION).showMessageDialog(parent);
+            MessageDialog.create().withOwner(parent.getComponent()).info(Translate.text("glChangedWarning"));
         }
 
         preferences.setUseOpenGL(glBox.getState());

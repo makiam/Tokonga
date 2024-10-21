@@ -26,14 +26,11 @@
             @param locale the Locale to match
         </export>
     </plugin>
+    <import name="Standard Theme"/>
     <import name="PreferencesPlugin"/>
     <plugin class="artofillusion.spmanager.SPManagerSettingsPage"/>
     <resource type="TranslateBundle" id="spmanager" name="spmanager" />
     <resource type="Preferences" id="spmanager" name="spmsettings.properties"/>
-
-    <fileset>
-        <file src="PostInstall-2_7.jar" >PostInstall.jar</file>
-    </fileset>
 
     <description>
         The Script and Plugin Manager is a plugin that makes the management of scripts and plugins easy.
