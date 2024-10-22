@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman, 2005 by Francois Guillet
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2024 by Maksim Khramov
 This program is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later version.
@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner;
+import javax.swing.SwingUtilities;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -136,7 +137,6 @@ public class CreatePolyMeshTool extends EditingTool {
         Point dragPoint = e.getPoint();
         Vec3 v1, v2, v3, orig, xdir, ydir, zdir;
         double xsize, ysize, zsize;
-        int i;
 
         if (shiftDown) {
             if (Math.abs(dragPoint.x - clickPoint.x) > Math.abs(dragPoint.y - clickPoint.y)) {
@@ -188,8 +188,7 @@ public class CreatePolyMeshTool extends EditingTool {
         }
         obj.setSmoothingMethod(smoothingMethod);
         ObjectInfo info = new ObjectInfo(obj, new CoordinateSystem(orig, zdir, ydir), "PolyMesh " + (counter++));
-        info.addTrack(new PositionTrack(info), 0);
-        info.addTrack(new RotationTrack(info), 1);
+
         UndoRecord undo = new UndoRecord(theWindow);
         undo.addCommandAtBeginning(UndoRecord.SET_SCENE_SELECTION, new Object[]{((LayoutWindow) theWindow).getSelectedIndices()});
         ((LayoutWindow) theWindow).addObject(info, undo);
@@ -203,6 +202,7 @@ public class CreatePolyMeshTool extends EditingTool {
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void iconDoubleClicked() {
         new PolyMeshToolDialog(edw.getFrame());
+        SwingUtilities.invokeLater(() -> new artofillusion.polymesh.PolyMeshToolDialog(edw.getFrame().getComponent()).setVisible(true));
         setHelpText();
     }
 
