@@ -78,3 +78,7 @@ test {
     testLogging.showStandardStreams = true
     useJUnitPlatform()
 }
+
+jar {
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+}

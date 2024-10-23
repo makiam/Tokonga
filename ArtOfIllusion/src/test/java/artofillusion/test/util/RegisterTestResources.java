@@ -32,8 +32,6 @@ public class RegisterTestResources implements BeforeAllCallback {
         ref++;
         try {
             PluginRegistry.registerResource("TranslateBundle", "artofillusion", ArtOfIllusion.class.getClassLoader(), "artofillusion", null);
-            PluginRegistry.registerResource("UITheme", "default", ArtOfIllusion.class.getClassLoader(), "artofillusion/Icons/defaultTheme.xml", null);
-            
         } catch (IllegalArgumentException iae) {
             ref++;
         }

@@ -46,11 +46,6 @@ class EnvironmentDialogTest {
     @BeforeAll
     public static void setUpClass() throws Exception {
 
-
-//        PluginRegistry.registerResource("TranslateBundle", "artofillusion", ArtOfIllusion.class.getClassLoader(), "artofillusion", null);
-//        PluginRegistry.registerResource("UITheme", "default", ArtOfIllusion.class.getClassLoader(), "artofillusion/Icons/defaultTheme.xml", null);
-//        ThemeManager.initThemes();
-
         Mockito.when(preferences.getLocale()).thenReturn(Locale.ENGLISH);
         Mockito.when(preferences.getUseOpenGL()).thenReturn(false);
         Mockito.when(preferences.getInteractiveSurfaceError()).thenReturn(0.01);
@@ -69,7 +64,7 @@ class EnvironmentDialogTest {
         JFrameOperator appFrame = new JFrameOperator(layout.getComponent());
         JMenuBarOperator appMainMenu = new JMenuBarOperator(appFrame);
         appMainMenu.pushMenuNoBlock("Scene|Environment...");
-        JDialogOperator dialog = new JDialogOperator(appFrame);
+        JDialogOperator dialog = new EnvironmentDialogOperator(appFrame);
         dialog.close();
         System.out.println("********************");
     }
@@ -84,7 +79,7 @@ class EnvironmentDialogTest {
         JFrameOperator appFrame = new JFrameOperator(layout.getComponent());
         JMenuBarOperator appMainMenu = new JMenuBarOperator(appFrame);
         appMainMenu.pushMenuNoBlock("Scene|Environment...");
-        JDialogOperator dialog = new JDialogOperator(appFrame);
+        JDialogOperator dialog = new EnvironmentDialogOperator(appFrame);
         JCheckBoxOperator fogCB = new JCheckBoxOperator(dialog);
         Assertions.assertTrue(fogCB.isSelected());
         fogCB.clickMouse();
@@ -102,7 +97,7 @@ class EnvironmentDialogTest {
         JFrameOperator appFrame = new JFrameOperator(layout.getComponent());
         JMenuBarOperator appMainMenu = new JMenuBarOperator(appFrame);
         appMainMenu.pushMenuNoBlock("Scene|Environment...");
-        JDialogOperator dialog = new JDialogOperator(appFrame);
+        JDialogOperator dialog = new EnvironmentDialogOperator(appFrame);
         org.netbeans.jemmy.operators.JTextFieldOperator fogDistance = new JTextFieldOperator(dialog);
         fogDistance.setText("25.0");
         new JButtonOperator(dialog, Translate.text("ok")).clickMouse();
@@ -119,7 +114,7 @@ class EnvironmentDialogTest {
         JFrameOperator appFrame = new JFrameOperator(layout.getComponent());
         JMenuBarOperator appMainMenu = new JMenuBarOperator(appFrame);
         appMainMenu.pushMenuNoBlock("Scene|Environment...");
-        JDialogOperator dialog = new JDialogOperator(appFrame);
+        JDialogOperator dialog = new EnvironmentDialogOperator(appFrame);
         JComboBoxOperator box = new JComboBoxOperator(dialog, 0);
         Assertions.assertEquals(0, box.getSelectedIndex());
         new JButtonOperator(dialog, Translate.text("ok")).clickMouse();
@@ -135,7 +130,7 @@ class EnvironmentDialogTest {
         JFrameOperator appFrame = new JFrameOperator(layout.getComponent());
         JMenuBarOperator appMainMenu = new JMenuBarOperator(appFrame);
         appMainMenu.pushMenuNoBlock("Scene|Environment...");
-        JDialogOperator dialog = new JDialogOperator(appFrame);
+        JDialogOperator dialog = new EnvironmentDialogOperator(appFrame);
         JComboBoxOperator box = new JComboBoxOperator(dialog, 0);
         Assertions.assertEquals(1, box.getSelectedIndex());
         new JButtonOperator(dialog, Translate.text("ok")).clickMouse();
@@ -151,7 +146,7 @@ class EnvironmentDialogTest {
         JFrameOperator appFrame = new JFrameOperator(layout.getComponent());
         JMenuBarOperator appMainMenu = new JMenuBarOperator(appFrame);
         appMainMenu.pushMenuNoBlock("Scene|Environment...");
-        JDialogOperator dialog = new JDialogOperator(appFrame);
+        JDialogOperator dialog = new EnvironmentDialogOperator(appFrame);
         JComboBoxOperator box = new JComboBoxOperator(dialog, 0);
         Assertions.assertEquals(2, box.getSelectedIndex());
         new JButtonOperator(dialog, Translate.text("ok")).clickMouse();
@@ -166,7 +161,7 @@ class EnvironmentDialogTest {
         JFrameOperator appFrame = new JFrameOperator(layout.getComponent());
         JMenuBarOperator appMainMenu = new JMenuBarOperator(appFrame);
         appMainMenu.pushMenuNoBlock("Scene|Environment...");
-        JDialogOperator dialog = new JDialogOperator(appFrame);
+        JDialogOperator dialog = new EnvironmentDialogOperator(appFrame);
         JComboBoxOperator box = new JComboBoxOperator(dialog, 0);
         box.setSelectedIndex(1);
         new JButtonOperator(dialog, Translate.text("ok")).clickMouse();
@@ -182,7 +177,7 @@ class EnvironmentDialogTest {
         JFrameOperator appFrame = new JFrameOperator(layout.getComponent());
         JMenuBarOperator appMainMenu = new JMenuBarOperator(appFrame);
         appMainMenu.pushMenuNoBlock("Scene|Environment...");
-        JDialogOperator dialog = new JDialogOperator(appFrame);
+        JDialogOperator dialog = new EnvironmentDialogOperator(appFrame);
         JComboBoxOperator box = new JComboBoxOperator(dialog, 0);
         box.setSelectedIndex(2);
         new JButtonOperator(dialog, Translate.text("ok")).clickMouse();
@@ -199,7 +194,7 @@ class EnvironmentDialogTest {
         JFrameOperator appFrame = new JFrameOperator(layout.getComponent());
         JMenuBarOperator appMainMenu = new JMenuBarOperator(appFrame);
         appMainMenu.pushMenuNoBlock("Scene|Environment...");
-        JDialogOperator dialog = new JDialogOperator(appFrame);
+        JDialogOperator dialog = new EnvironmentDialogOperator(appFrame);
         ColorWidgetComponentOperator cwc = new ColorWidgetComponentOperator(dialog, 0);
         SwingUtilities.invokeLater(cwc::clickMouse);
         ColorDialogOperator cdo = new ColorDialogOperator(cwc.getSource().getName());
@@ -221,7 +216,7 @@ class EnvironmentDialogTest {
         JFrameOperator appFrame = new JFrameOperator(layout.getComponent());
         JMenuBarOperator appMainMenu = new JMenuBarOperator(appFrame);
         appMainMenu.pushMenuNoBlock("Scene|Environment...");
-        JDialogOperator dialog = new JDialogOperator(appFrame);
+        JDialogOperator dialog = new EnvironmentDialogOperator(appFrame);
         ColorWidgetComponentOperator cwc = new ColorWidgetComponentOperator(dialog, 1);
         SwingUtilities.invokeLater(cwc::clickMouse);
         ColorDialogOperator cdo = new ColorDialogOperator(cwc.getSource().getName());
@@ -243,7 +238,7 @@ class EnvironmentDialogTest {
         JFrameOperator appFrame = new JFrameOperator(layout.getComponent());
         JMenuBarOperator appMainMenu = new JMenuBarOperator(appFrame);
         appMainMenu.pushMenuNoBlock("Scene|Environment...");
-        JDialogOperator dialog = new JDialogOperator(appFrame);
+        JDialogOperator dialog = new EnvironmentDialogOperator(appFrame);
         ColorWidgetComponentOperator cwc = new ColorWidgetComponentOperator(dialog, 2);
         SwingUtilities.invokeLater(cwc::clickMouse);
         ColorDialogOperator cdo = new ColorDialogOperator(cwc.getSource().getName());
@@ -266,7 +261,7 @@ class EnvironmentDialogTest {
         JFrameOperator appFrame = new JFrameOperator(layout.getComponent());
         JMenuBarOperator appMainMenu = new JMenuBarOperator(appFrame);
         appMainMenu.pushMenuNoBlock("Scene|Environment...");
-        JDialogOperator dialog = new JDialogOperator(appFrame);
+        JDialogOperator dialog = new EnvironmentDialogOperator(appFrame);
         ColorWidgetComponentOperator cwc = new ColorWidgetComponentOperator(dialog, 2);
         SwingUtilities.invokeLater(cwc::clickMouse);
         ColorDialogOperator cdo = new ColorDialogOperator(cwc.getSource().getName());
@@ -290,7 +285,7 @@ class EnvironmentDialogTest {
         JFrameOperator appFrame = new JFrameOperator(layout.getComponent());
         JMenuBarOperator appMainMenu = new JMenuBarOperator(appFrame);
         appMainMenu.pushMenuNoBlock("Scene|Environment...");
-        JDialogOperator dialog = new JDialogOperator(appFrame);
+        JDialogOperator dialog = new EnvironmentDialogOperator(appFrame);
         // Now clear some Scene's data to check it pushed back on dialog close
         {
             scene.setEnvironmentMapping(null);
@@ -324,7 +319,7 @@ class EnvironmentDialogTest {
         JFrameOperator appFrame = new JFrameOperator(layout.getComponent());
         JMenuBarOperator appMainMenu = new JMenuBarOperator(appFrame);
         appMainMenu.pushMenuNoBlock("Scene|Environment...");
-        JDialogOperator dialog = new JDialogOperator(appFrame);
+        JDialogOperator dialog = new EnvironmentDialogOperator(appFrame);
         // Now clear some Scene's data to check it pushed back on dialog close
         {
             scene.setEnvironmentMapping(null);
@@ -342,5 +337,13 @@ class EnvironmentDialogTest {
         Assertions.assertEquals(mapping, scene.getEnvironmentMapping());
         Assertions.assertEquals(props, scene.getEnvironmentParameterValues());
         Assertions.assertTrue(layout.isModified());
+    }
+
+    class EnvironmentDialogOperator extends JDialogOperator {
+
+
+        public EnvironmentDialogOperator(WindowOperator owner) {
+            super(owner);
+        }
     }
 }
