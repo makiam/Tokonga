@@ -14,6 +14,7 @@ package artofillusion;
 import artofillusion.animation.*;
 import artofillusion.animation.distortion.*;
 import artofillusion.image.*;
+import artofillusion.keystroke.KeystrokeManager;
 import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.script.*;
