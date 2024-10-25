@@ -349,7 +349,8 @@ public class ImagesDialog extends BDialog {
     private void addAsListener(Widget w) {
         w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
         if (w instanceof WidgetContainer) {
-            ((WidgetContainer) w).getChildren().forEach(widget -> addAsListener(widget));
+            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+            children.forEach(widget -> addAsListener(widget));
         }
     }
 
@@ -359,7 +360,8 @@ public class ImagesDialog extends BDialog {
     private void removeAsListener(Widget w) {
         w.removeEventLink(KeyPressedEvent.class, this);
         if (w instanceof WidgetContainer) {
-            ((WidgetContainer) w).getChildren().forEach(widget -> removeAsListener(widget));
+            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+            children.forEach(widget -> removeAsListener(widget));
         }
     }
 
@@ -809,7 +811,8 @@ public class ImagesDialog extends BDialog {
         private void addAsListener(Widget w) {
             w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
             if (w instanceof WidgetContainer) {
-                ((WidgetContainer) w).getChildren().forEach(widget -> addAsListener(widget));
+                Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+                children.forEach(widget -> addAsListener(widget));
             }
         }
 
@@ -819,7 +822,8 @@ public class ImagesDialog extends BDialog {
         private void removeAsListener(Widget w) {
             w.removeEventLink(KeyPressedEvent.class, this);
             if (w instanceof WidgetContainer) {
-                ((WidgetContainer) w).getChildren().forEach(widget -> removeAsListener(widget));
+                Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+                children.forEach(widget -> removeAsListener(widget));
             }
         }
     }

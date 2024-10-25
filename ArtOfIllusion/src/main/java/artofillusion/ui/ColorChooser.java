@@ -161,9 +161,8 @@ public class ColorChooser extends BDialog {
     private void addAsListener(Widget w) {
         w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
         if (w instanceof WidgetContainer) {
-            for (Widget child : ((WidgetContainer) w).getChildren()) {
-                addAsListener(child);
-            }
+            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+            children.forEach(this::addAsListener);
         }
     }
 

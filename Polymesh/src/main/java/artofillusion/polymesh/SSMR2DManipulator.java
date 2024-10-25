@@ -36,8 +36,7 @@ import java.awt.event.ActionEvent;
  * This is the manipulator responsible for moving, resizing and rotating mesh selections (2D).
  * SSMR = Select Scale Move Rotate
  */
-public class SSMR2DManipulator
-        extends SSMRManipulator {
+public class SSMR2DManipulator extends SSMRManipulator {
 
     private final Rectangle[] boxes;
     private final static int HANDLE_SIZE = 12;
@@ -101,10 +100,11 @@ public class SSMR2DManipulator
             rotateHandleImages[RIGHT] = ThemeManager.getIcon("polymesh:rotateright").getImage();
             rotateHandleImages[LEFT] = ThemeManager.getIcon("polymesh:rotateleft").getImage();
             rotateHandleImages[CENTER] = ThemeManager.getIcon("polymesh:rotatecenter").getImage();
-            moveToolTip = PMToolTip.areaToolTip(Translate.text("polymesh:moveToolTip2d.tipText"), 40);
-            scaleToolTip = PMToolTip.areaToolTip(Translate.text("polymesh:scaleToolTip2d.tipText"), 40);
-            rotateToolTip = PMToolTip.areaToolTip(Translate.text("polymesh:rotateToolTip2d.tipText"), 40);
-            centerToolTip = PMToolTip.areaToolTip(Translate.text("polymesh:centerToolTip2d.tipText"), 40);
+
+            moveToolTip = new BToolTip(Translate.text("polymesh:moveToolTip2d.tipText"));
+            scaleToolTip = new BToolTip(Translate.text("polymesh:scaleToolTip2d.tipText"));
+            rotateToolTip = new BToolTip(Translate.text("polymesh:rotateToolTip2d.tipText"));
+            centerToolTip = new BToolTip(Translate.text("polymesh:rotateToolTip2d.tipText"));
         }
         boxes = new Rectangle[9];
         for (int i = 0; i < boxes.length; ++i) {
