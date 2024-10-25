@@ -10,6 +10,8 @@
 
 package artofillusion.test.util;
 
+import artofillusion.ArtOfIllusion;
+import artofillusion.PluginRegistry;
 import artofillusion.ui.ThemeManager;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -19,14 +21,25 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  * @author MaksK
  */
 public class SetupTheme implements BeforeAllCallback {
+    private static int ref = 0;
+
+    protected void before() {
+        if (ref != 0) {
+            return;
+        }
+        ref++;
+        try {
+            PluginRegistry.registerResource("UITheme", "default", ArtOfIllusion.class.getClassLoader(), "artofillusion/Icons/defaultTheme.xml", null);
+            ThemeManager.initThemes();
+        } catch (IllegalArgumentException iae) {
+            ref++;
+        }
+
+    }
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
-        try {
-            ThemeManager.initThemes();
-        } catch(IllegalStateException ie) {
-            
-        }
+        before();
     }
     
 }

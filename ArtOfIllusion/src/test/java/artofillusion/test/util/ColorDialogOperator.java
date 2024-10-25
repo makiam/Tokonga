@@ -12,16 +12,16 @@ package artofillusion.test.util;
 
 import artofillusion.math.RGBColor;
 import artofillusion.ui.Translate;
-import org.netbeans.jemmy.operators.JButtonOperator;
-import org.netbeans.jemmy.operators.JDialogOperator;
-import org.netbeans.jemmy.operators.JSliderOperator;
-import org.netbeans.jemmy.operators.WindowOperator;
+import org.netbeans.jemmy.operators.*;
 
 /**
  *
  * @author MaksK
  */
 public class ColorDialogOperator extends JDialogOperator {
+
+    private JComboBoxOperator comboBoxModel = new JComboBoxOperator(this, 0);
+    private JComboBoxOperator comboBoxModelRange = new JComboBoxOperator(this, 1);
 
     private final JButtonOperator okButton;
     private final JButtonOperator cancelButton;
@@ -36,6 +36,8 @@ public class ColorDialogOperator extends JDialogOperator {
         super(title);
         okButton = new JButtonOperator(this, Translate.text("ok"));
         cancelButton = new JButtonOperator(this, Translate.text("cancel"));
+        comboBoxModel.selectItem("RGB");
+        comboBoxModelRange.selectItem("0 to 255");
     }
 
     public void commit() {
