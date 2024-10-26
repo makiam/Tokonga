@@ -96,34 +96,34 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
         editMenu = Translate.menu("edit");
         menubar.add(editMenu);
         editMenuItem = new BMenuItem[4];
-        editMenu.add(undoItem = Translate.menuItem("undo", this, "undoCommand"));
-        editMenu.add(redoItem = Translate.menuItem("redo", this, "redoCommand"));
+        editMenu.add(undoItem = Translate.menuItem("undo", event -> undoCommand()));
+        editMenu.add(redoItem = Translate.menuItem("redo", event -> redoCommand()));
         editMenu.addSeparator();
-        editMenu.add(editMenuItem[0] = Translate.menuItem("extendSelection", this, "extendSelectionCommand"));
-        editMenu.add(editMenuItem[1] = Translate.menuItem("invertSelection", this, "invertSelectionCommand"));
-        editMenu.add(Translate.menuItem("selectAll", this, "selectAllCommand"));
-        editMenu.add(editMenuItem[2] = Translate.menuItem("deselectAll", this, "deselectAllCommand"));
+        editMenu.add(editMenuItem[0] = Translate.menuItem("extendSelection", event -> extendSelectionCommand()));
+        editMenu.add(editMenuItem[1] = Translate.menuItem("invertSelection", event -> invertSelectionCommand()));
+        editMenu.add(Translate.menuItem("selectAll", event -> selectAllCommand()));
+        editMenu.add(editMenuItem[2] = Translate.menuItem("deselectAll", event -> deselectAllCommand()));
         editMenu.addSeparator();
         editMenu.add(editMenuItem[3] = Translate.checkboxMenuItem("freehandSelection", this, "freehandModeChanged", false));
-        editMenu.add(Translate.menuItem("curveTension", this, "setTensionCommand"));
+        editMenu.add(Translate.menuItem("curveTension", event -> setTensionCommand()));
     }
 
     void createMeshMenu(Curve obj) {
         meshMenu = Translate.menu("curve");
         menubar.add(meshMenu);
         meshMenuItem = new BMenuItem[7];
-        meshMenuItem[0] = Translate.menuItem("deletePoints", this, "deleteCommand");
+        meshMenuItem[0] = Translate.menuItem("deletePoints", event -> deleteCommand());
         if (topology) {
             meshMenu.add(meshMenuItem[0]);
         }
-        meshMenuItem[1] = Translate.menuItem("subdivide", this, "subdivideCommand");
+        meshMenuItem[1] = Translate.menuItem("subdivide", event -> subdivideCommand());
         if (topology) {
             meshMenu.add(meshMenuItem[1]);
         }
-        meshMenu.add(meshMenuItem[2] = Translate.menuItem("editPoints", this, "setPointsCommand"));
-        meshMenu.add(meshMenuItem[3] = Translate.menuItem("transformPoints", this, "transformPointsCommand"));
-        meshMenu.add(meshMenuItem[4] = Translate.menuItem("randomize", this, "randomizeCommand"));
-        meshMenu.add(Translate.menuItem("centerCurve", this, "centerCommand"));
+        meshMenu.add(meshMenuItem[2] = Translate.menuItem("editPoints", event -> setPointsCommand()));
+        meshMenu.add(meshMenuItem[3] = Translate.menuItem("transformPoints", event -> transformPointsCommand()));
+        meshMenu.add(meshMenuItem[4] = Translate.menuItem("randomize", event -> randomizeCommand()));
+        meshMenu.add(Translate.menuItem("centerCurve", event -> centerCommand()));
         meshMenu.addSeparator();
         meshMenu.add(meshMenuItem[5] = Translate.menuItem("smoothness", this::setSmoothnessCommand));
         meshMenu.add(smoothMenu = Translate.menu("smoothingMethod"));
