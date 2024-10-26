@@ -463,7 +463,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             pasteItem.setEnabled(false);
         }
         editMenu.addSeparator();
-        editMenu.add(editMenuItem[0] = Translate.menuItem("clear", this, "deleteCommand"));
+        editMenu.add(editMenuItem[0] = Translate.menuItem("clear", event -> deleteCommand()));
         editMenu.add(editMenuItem[1] = Translate.menuItem("selectAll", this::selectAllCommand));
         editMenu.add(editMenuItem[2] = Translate.menuItem("polymesh:showNormal", this::bringNormal));
         editMenu.add(editMenuItem[3] = Translate.menuItem("extendSelection", this::extendSelectionCommand));
@@ -779,7 +779,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         faceMenu.add(Translate.menuItem("polymesh:triangulate", this::doTriangulateFaces));
         faceMenu.add(Translate.menuItem("polymesh:outlineFaces", this::doOutlineFaces));
         faceMenu.addSeparator();
-        faceMenu.add(Translate.menuItem("parameters", this, "setParametersCommand"));
+        faceMenu.add(Translate.menuItem("parameters", event -> setParametersCommand()));
         faceMenu.add(faceFindSimilarMenuItem = Translate.menuItem("polymesh:findSimilar", this::doFindSimilarFaces));
         menubar.add(faceMenu);
 
@@ -813,7 +813,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         facePopupMenu.add(Translate.menuItem("polymesh:triangulate", this::doTriangulateFaces));
         facePopupMenu.add(Translate.menuItem("polymesh:outlineFaces", this::doOutlineFaces));
         facePopupMenu.addSeparator();
-        facePopupMenu.add(Translate.menuItem("parameters", this, "setParametersCommand"));
+        facePopupMenu.add(Translate.menuItem("parameters", event -> setParametersCommand()));
         facePopupMenu.add(faceFindSimilarPopupMenuItem = Translate.menuItem("polymesh:findSimilar", this::doFindSimilarFaces));
     }
 
@@ -828,12 +828,12 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         BMenu skeletonMenu = Translate.menu("skeleton");
         menubar.add(skeletonMenu);
         skeletonMenuItem = new BMenuItem[6];
-        skeletonMenu.add(skeletonMenuItem[0] = Translate.menuItem("editBone", this, "editJointCommand"));
-        skeletonMenu.add(skeletonMenuItem[1] = Translate.menuItem("deleteBone", this, "deleteJointCommand"));
-        skeletonMenu.add(skeletonMenuItem[2] = Translate.menuItem("setParentBone", this, "setJointParentCommand"));
-        skeletonMenu.add(skeletonMenuItem[3] = Translate.menuItem("importSkeleton", this, "importSkeletonCommand"));
+        skeletonMenu.add(skeletonMenuItem[0] = Translate.menuItem("editBone", event -> editJointCommand()));
+        skeletonMenu.add(skeletonMenuItem[1] = Translate.menuItem("deleteBone", event -> deleteJointCommand()));
+        skeletonMenu.add(skeletonMenuItem[2] = Translate.menuItem("setParentBone", event -> setJointParentCommand()));
+        skeletonMenu.add(skeletonMenuItem[3] = Translate.menuItem("importSkeleton", event -> importSkeletonCommand()));
         skeletonMenu.addSeparator();
-        skeletonMenu.add(skeletonMenuItem[4] = Translate.menuItem("bindSkeleton", this, "bindSkeletonCommand"));
+        skeletonMenu.add(skeletonMenuItem[4] = Translate.menuItem("bindSkeleton", event -> bindSkeletonCommand()));
         skeletonMenu.add(skeletonMenuItem[5] = Translate.checkboxMenuItem("detachSkeleton", this, "skeletonDetachedChanged", false));
     }
 
