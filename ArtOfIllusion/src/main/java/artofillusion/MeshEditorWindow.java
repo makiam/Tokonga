@@ -106,15 +106,15 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         coordsItem = new BCheckBoxMenuItem[2];
         coordsMenu.add(coordsItem[0] = Translate.checkboxMenuItem("localCoords", this, "coordinateSystemChanged", !view.getUseWorldCoords()));
         coordsMenu.add(coordsItem[1] = Translate.checkboxMenuItem("sceneCoords", this, "coordinateSystemChanged", view.getUseWorldCoords()));
-        viewMenu.add(splitViewItem = Translate.menuItem(numViewsShown == 1 ? "fourViews" : "oneView", this, "toggleViewsCommand"));
-        viewMenu.add(Translate.menuItem("grid", this, "setGridCommand"));
-        viewMenu.add(axesItem = Translate.menuItem(view.getShowAxes() ? "hideCoordinateAxes" : "showCoordinateAxes", this, "showAxesCommand"));
-        viewMenu.add(templateItem = Translate.menuItem("showTemplate", this, "showTemplateCommand"));
-        viewMenu.add(Translate.menuItem("setTemplate", this, "setTemplateCommand"));
+        viewMenu.add(splitViewItem = Translate.menuItem(numViewsShown == 1 ? "fourViews" : "oneView", event -> toggleViewsCommand()));
+        viewMenu.add(Translate.menuItem("grid", event -> setGridCommand()));
+        viewMenu.add(axesItem = Translate.menuItem(view.getShowAxes() ? "hideCoordinateAxes" : "showCoordinateAxes", event -> showAxesCommand()));
+        viewMenu.add(templateItem = Translate.menuItem("showTemplate", event -> showTemplateCommand()));
+        viewMenu.add(Translate.menuItem("setTemplate", event -> setTemplateCommand()));
         viewMenu.addSeparator();
-        viewMenu.add(fitToSelItem = Translate.menuItem("fitToSelection", this, "fitToVerticesCommand"));
-        viewMenu.add(Translate.menuItem("fitToAll", this, "fitToMeshCommand"));
-        viewMenu.add(Translate.menuItem("alignWithClosestAxis", this, "closestAxisCommand"));
+        viewMenu.add(fitToSelItem = Translate.menuItem("fitToSelection", event -> fitToVerticesCommand()));
+        viewMenu.add(Translate.menuItem("fitToAll", event -> fitToMeshCommand()));
+        viewMenu.add(Translate.menuItem("alignWithClosestAxis", event -> closestAxisCommand()));
     }
 
     protected BMenu createShowMenu() {
