@@ -247,9 +247,9 @@ public class CreatePolyMeshTool extends EditingTool {
                 BLabel meshType = ((BLabel) decoder.getObject("meshType"));
                 meshType.setText(Translate.text("polymesh:" + meshType.getText()));
                 BButton okButton = ((BButton) decoder.getObject("okButton"));
-                okButton.setText(Translate.text("polymesh:" + okButton.getText()));
+                okButton.setText(Translate.text("button.ok"));
                 BButton cancelButton = ((BButton) decoder.getObject("cancelButton"));
-                cancelButton.setText(Translate.text("polymesh:" + cancelButton.getText()));
+                cancelButton.setText(Translate.text("button.cancel"));
                 okButton.addEventLink(CommandEvent.class, this, "doOK");
                 typeCombo.setSelectedIndex(shape);
                 typeCombo.addEventLink(ValueChangedEvent.class, this, "doComboChanged");
