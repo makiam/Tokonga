@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2008 by Peter Eastman
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -80,20 +80,20 @@ public class TubeEditorWindow extends CurveEditorWindow {
         meshMenu = Translate.menu("tube");
         menubar.add(meshMenu);
         meshMenuItem = new BMenuItem[8];
-        meshMenuItem[0] = Translate.menuItem("deletePoints", this, "deleteCommand");
+        meshMenuItem[0] = Translate.menuItem("deletePoints", event -> deleteCommand());
         if (topology) {
             meshMenu.add(meshMenuItem[0]);
         }
-        meshMenuItem[1] = Translate.menuItem("subdivide", this, "subdivideCommand");
+        meshMenuItem[1] = Translate.menuItem("subdivide", event -> subdivideCommand());
         if (topology) {
             meshMenu.add(meshMenuItem[1]);
         }
-        meshMenu.add(meshMenuItem[2] = Translate.menuItem("editPoints", this, "setPointsCommand"));
-        meshMenu.add(meshMenuItem[3] = Translate.menuItem("transformPoints", this, "transformPointsCommand"));
-        meshMenu.add(meshMenuItem[4] = Translate.menuItem("randomize", this, "randomizeCommand"));
-        meshMenu.add(meshMenuItem[5] = Translate.menuItem("parameters", this, "setParametersCommand"));
-        meshMenu.add(meshMenuItem[6] = Translate.menuItem("thickness", this, "setThicknessCommand"));
-        meshMenu.add(Translate.menuItem("centerTube", this, "centerCommand"));
+        meshMenu.add(meshMenuItem[2] = Translate.menuItem("editPoints", event -> setPointsCommand()));
+        meshMenu.add(meshMenuItem[3] = Translate.menuItem("transformPoints", event -> transformPointsCommand()));
+        meshMenu.add(meshMenuItem[4] = Translate.menuItem("randomize", event -> randomizeCommand()));
+        meshMenu.add(meshMenuItem[5] = Translate.menuItem("parameters", event -> setParametersCommand()));
+        meshMenu.add(meshMenuItem[6] = Translate.menuItem("thickness", event -> setThicknessCommand()));
+        meshMenu.add(Translate.menuItem("centerTube", event -> centerCommand()));
         meshMenu.addSeparator();
         meshMenu.add(meshMenuItem[7] = Translate.menuItem("smoothness", this, "setSmoothnessCommand"));
         meshMenu.add(smoothMenu = Translate.menu("smoothingMethod"));
