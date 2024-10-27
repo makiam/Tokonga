@@ -95,7 +95,7 @@ public class TubeEditorWindow extends CurveEditorWindow {
         meshMenu.add(meshMenuItem[6] = Translate.menuItem("thickness", event -> setThicknessCommand()));
         meshMenu.add(Translate.menuItem("centerTube", event -> centerCommand()));
         meshMenu.addSeparator();
-        meshMenu.add(meshMenuItem[7] = Translate.menuItem("smoothness", this, "setSmoothnessCommand"));
+        meshMenu.add(meshMenuItem[7] = Translate.menuItem("smoothness",  event -> setSmoothnessCommand()));
         meshMenu.add(smoothMenu = Translate.menu("smoothingMethod"));
         smoothItem = new BCheckBoxMenuItem[3];
         smoothMenu.add(smoothItem[0] = Translate.checkboxMenuItem("none", this, "smoothingChanged", obj.getSmoothingMethod() == Curve.NO_SMOOTHING));

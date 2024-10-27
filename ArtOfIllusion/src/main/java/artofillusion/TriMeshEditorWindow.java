@@ -201,7 +201,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         meshMenu.add(meshMenuItem[9] = Translate.menuItem("extractFaces", event -> extractFacesCommand()));
         meshMenu.add(meshMenuItem[10] = Translate.menuItem("extractCurve", event -> extractCurveCommand()));
         meshMenu.addSeparator();
-        meshMenu.add(meshMenuItem[11] = Translate.menuItem("smoothness", this, "setSmoothnessCommand"));
+        meshMenu.add(meshMenuItem[11] = Translate.menuItem("smoothness",  event -> setSmoothnessCommand()));
         meshMenu.add(smoothMenu = Translate.menu("smoothingMethod"));
         smoothItem = new BCheckBoxMenuItem[4];
         smoothMenu.add(smoothItem[0] = Translate.checkboxMenuItem("none", this, "smoothingChanged", obj.getSmoothingMethod() == TriangleMesh.NO_SMOOTHING));

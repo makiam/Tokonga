@@ -125,7 +125,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
         meshMenu.add(meshMenuItem[4] = Translate.menuItem("randomize", event -> randomizeCommand()));
         meshMenu.add(Translate.menuItem("centerCurve", event -> centerCommand()));
         meshMenu.addSeparator();
-        meshMenu.add(meshMenuItem[5] = Translate.menuItem("smoothness", this::setSmoothnessCommand));
+        meshMenu.add(meshMenuItem[5] = Translate.menuItem("smoothness", event -> setSmoothnessCommand()));
         meshMenu.add(smoothMenu = Translate.menu("smoothingMethod"));
         smoothItem = new BCheckBoxMenuItem[3];
         smoothMenu.add(smoothItem[0] = Translate.checkboxMenuItem("none", this, "smoothingChanged", obj.getSmoothingMethod() == Curve.NO_SMOOTHING));
@@ -497,7 +497,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
         setSelection(newsel);
     }
 
-    public void setSmoothnessCommand(ActionEvent event) {
+    public void setSmoothnessCommand() {
         final Curve theCurve = (Curve) objInfo.getObject();
         Curve oldCurve = (Curve) theCurve.duplicate();
         final MeshVertex[] vt = theCurve.getVertices();
