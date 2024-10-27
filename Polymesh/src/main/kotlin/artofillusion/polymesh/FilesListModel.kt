@@ -2,6 +2,7 @@ package artofillusion.polymesh
 
 import artofillusion.ArtOfIllusion
 import artofillusion.ui.Translate
+import java.io.File
 import java.nio.file.Paths
 import java.util.stream.Stream
 import javax.swing.DefaultComboBoxModel
@@ -15,8 +16,7 @@ class FilesListModel : DefaultComboBoxModel<String?>() {
         addElement(Translate.text("polymesh:flatMesh"))
 
         val polyMeshTemplates = Paths.get(ArtOfIllusion.PLUGIN_DIRECTORY, "PolyMeshTemplates")
-        polyMeshTemplates.toFile().mkdir()
-        Stream.of<String?>(*polyMeshTemplates.toFile().list())
-            .forEach { anObject: String? -> this.addElement(anObject) }
+        polyMeshTemplates.toFile().also { it.mkdir() }.also { it.list().asSequence().forEach { it -> addElement(it) } }
+
     }
 }

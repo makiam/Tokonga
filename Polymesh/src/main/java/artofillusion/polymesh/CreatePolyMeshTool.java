@@ -258,7 +258,7 @@ public class CreatePolyMeshTool extends EditingTool {
                 smoothCombo.setModel(new SmoothTypesListModel());
 
                 BLabel smoothLabel = ((BLabel) decoder.getObject("smoothLabel"));
-                smoothLabel.setText(Translate.text("SmoothingMethod") + ":");
+                smoothLabel.setText(Translate.text("polymesh:smoothLabel"));
                 smoothCombo.addEventLink(ValueChangedEvent.class, this, "doSmoothComboChanged");
                 smoothCombo.setSelectedIndex(getSmoothComboIndex());
                 setSpinnerColumns(xSpinner, 2);
