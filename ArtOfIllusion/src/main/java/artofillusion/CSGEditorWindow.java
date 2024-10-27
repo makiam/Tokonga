@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
    Modifications copyright (C) 2016-2017 Petri Ihalainen
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -90,26 +90,26 @@ public class CSGEditorWindow extends ObjectEditorWindow {
     void createEditMenu() {
         BMenu editMenu = Translate.menu("edit");
         menubar.add(editMenu);
-        editMenu.add(undoItem = Translate.menuItem("undo", this, "undoCommand"));
-        editMenu.add(redoItem = Translate.menuItem("redo", this, "redoCommand"));
+        editMenu.add(undoItem = Translate.menuItem("undo", event -> undoCommand()));
+        editMenu.add(redoItem = Translate.menuItem("redo", event -> redoCommand()));
         undoItem.setEnabled(false);
         editMenu.addSeparator();
-        editMenu.add(Translate.menuItem("selectAll", this, "selectAllCommand"));
-        editMenu.add(Translate.menuItem("deselectAll", this, "deselectAllCommand"));
+        editMenu.add(Translate.menuItem("selectAll", event -> selectAllCommand()));
+        editMenu.add(Translate.menuItem("deselectAll", event -> deselectAllCommand()));
         editMenu.addSeparator();
-        editMenu.add(Translate.menuItem("properties", this, "propertiesCommand"));
+        editMenu.add(Translate.menuItem("properties", event -> propertiesCommand()));
     }
 
     void createObjectMenu() {
         BMenu objectMenu = Translate.menu("object");
         menubar.add(objectMenu);
         objectMenuItem = new BMenuItem[5];
-        objectMenu.add(objectMenuItem[0] = Translate.menuItem("editObject", this, "editObjectCommand"));
-        objectMenu.add(objectMenuItem[1] = Translate.menuItem("objectLayout", this, "objectLayoutCommand"));
-        objectMenu.add(objectMenuItem[2] = Translate.menuItem("transformObject", this, "transformObjectCommand"));
-        objectMenu.add(objectMenuItem[3] = Translate.menuItem("alignObjects", this, "alignObjectsCommand"));
-        objectMenu.add(Translate.menuItem("centerObjects", this, "centerObjectsCommand"));
-        objectMenu.add(objectMenuItem[4] = Translate.menuItem("convertToTriangle", this, "convertToTriangleCommand"));
+        objectMenu.add(objectMenuItem[0] = Translate.menuItem("editObject", event -> editObjectCommand()));
+        objectMenu.add(objectMenuItem[1] = Translate.menuItem("objectLayout", event -> objectLayoutCommand()));
+        objectMenu.add(objectMenuItem[2] = Translate.menuItem("transformObject", event -> transformObjectCommand()));
+        objectMenu.add(objectMenuItem[3] = Translate.menuItem("alignObjects", event -> alignObjectsCommand()));
+        objectMenu.add(Translate.menuItem("centerObjects", event -> centerObjectsCommand()));
+        objectMenu.add(objectMenuItem[4] = Translate.menuItem("convertToTriangle", event -> convertToTriangleCommand()));
     }
 
     protected void createViewMenu() {
@@ -124,20 +124,20 @@ public class CSGEditorWindow extends ObjectEditorWindow {
         displayMenu.add(displayItem[2] = Translate.checkboxMenuItem("smoothDisplay", this, "displayModeChanged", view.getRenderMode() == ViewerCanvas.RENDER_SMOOTH));
         displayMenu.add(displayItem[3] = Translate.checkboxMenuItem("texturedDisplay", this, "displayModeChanged", view.getRenderMode() == ViewerCanvas.RENDER_TEXTURED));
         displayMenu.add(displayItem[4] = Translate.checkboxMenuItem("transparentDisplay", this, "displayModeChanged", view.getRenderMode() == ViewerCanvas.RENDER_TRANSPARENT));
-        viewMenu.add(splitViewItem = Translate.menuItem(numViewsShown == 1 ? "fourViews" : "oneView", this, "toggleViewsCommand"));
-        viewMenu.add(Translate.menuItem("grid", this, "setGridCommand"));
-        viewMenu.add(axesItem = Translate.menuItem(view.getShowAxes() ? "hideCoordinateAxes" : "showCoordinateAxes", this, "showAxesCommand"));
-        viewMenu.add(templateItem = Translate.menuItem("showTemplate", this, "showTemplateCommand"));
-        viewMenu.add(Translate.menuItem("setTemplate", this, "setTemplateCommand"));
+        viewMenu.add(splitViewItem = Translate.menuItem(numViewsShown == 1 ? "fourViews" : "oneView", event -> toggleViewsCommand()));
+        viewMenu.add(Translate.menuItem("grid", event -> setGridCommand()));
+        viewMenu.add(axesItem = Translate.menuItem(view.getShowAxes() ? "hideCoordinateAxes" : "showCoordinateAxes", event -> showAxesCommand()));
+        viewMenu.add(templateItem = Translate.menuItem("showTemplate", event -> showTemplateCommand()));
+        viewMenu.add(Translate.menuItem("setTemplate", event -> setTemplateCommand()));
         if (ArtOfIllusion.getPreferences().getObjectPreviewRenderer() != null) {
             viewMenu.addSeparator();
-            viewMenu.add(Translate.menuItem("renderPreview", this, "renderPreviewCommand"));
+            viewMenu.add(Translate.menuItem("renderPreview", event -> renderPreviewCommand()));
         }
         viewMenu.addSeparator();
 
-        viewMenu.add(fitToSelItem = Translate.menuItem("fitToSelection", this, "fitToSelectedCommand"));
-        viewMenu.add(Translate.menuItem("fitToAll", this, "fitToBooleanCommand"));
-        viewMenu.add(Translate.menuItem("alignWithClosestAxis", this, "closestAxisCommand"));
+        viewMenu.add(fitToSelItem = Translate.menuItem("fitToSelection", event -> fitToSelectedCommand()));
+        viewMenu.add(Translate.menuItem("fitToAll", event -> fitToBooleanCommand()));
+        viewMenu.add(Translate.menuItem("alignWithClosestAxis", event -> closestAxisCommand()));
     }
 
     /* EditingWindow methods. */
