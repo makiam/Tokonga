@@ -46,7 +46,12 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
         super(parent, true);
         this.tool = tool;
         initComponents();
-
+        
+        this.meshTypeSelector.setSelectedIndex(tool.getShape());
+        this.smoothTypesList.setSelectedIndex(tool.getSmoothingMethod());
+        this.xSizeSpinner.getModel().setValue(tool.getUsize());
+        this.ySizeSpinner.getModel().setValue(tool.getVsize());
+        
         // Close the dialog when Esc is pressed
         String cancelName = "cancel";
         InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
@@ -83,10 +88,10 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
         javax.swing.JLabel smoothTypeLabel = new javax.swing.JLabel();
         smoothTypesList = new javax.swing.JComboBox<>();
         sizePanel = new javax.swing.JPanel();
-        xSizeLabel = new javax.swing.JLabel();
+        javax.swing.JLabel xSizeLabel = new javax.swing.JLabel();
         xSizeSpinner = new javax.swing.JSpinner();
         ySizeSpinner = new javax.swing.JSpinner();
-        ySizeLabel = new javax.swing.JLabel();
+        javax.swing.JLabel ySizeLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(Translate.text("polymesh:polyMeshToolDialogTitle"));
@@ -113,11 +118,13 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
         );
 
         meshTypeSelector.setModel(new FilesListModel());
+        meshTypeSelector.addActionListener(this::meshTypeSelectorActionPerformed);
 
         smoothTypeLabel.setLabelFor(smoothTypesList);
         smoothTypeLabel.setText(Translate.text("polymesh:smoothLabel"));
 
         smoothTypesList.setModel(new SmoothTypesListModel());
+        smoothTypesList.addActionListener(this::smoothTypesListActionPerformed);
 
         xSizeLabel.setText(Translate.text("polymesh:sizeLabel"));
 
@@ -228,6 +235,18 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
         // TODO add your handling code here:
          setPanelState(false);
     }//GEN-LAST:event_formComponentShown
+
+    private void smoothTypesListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_smoothTypesListActionPerformed
+        // TODO add your handling code here:
+        log.info("Toggle smooth mode to: {}", this.smoothTypesList.getSelectedIndex());
+    }//GEN-LAST:event_smoothTypesListActionPerformed
+
+    private void meshTypeSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meshTypeSelectorActionPerformed
+        // TODO add your handling code here:
+        log.info("Toggle type selector to: {}", this.meshTypeSelector.getSelectedIndex());
+        setPanelState(this.meshTypeSelector.getSelectedIndex() >= 2);
+        
+    }//GEN-LAST:event_meshTypeSelectorActionPerformed
     
     private void doClose(int retStatus) {
         returnStatus = retStatus;
@@ -242,17 +261,14 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
     private javax.swing.JButton okButton;
     private javax.swing.JPanel sizePanel;
     private javax.swing.JComboBox<String> smoothTypesList;
-    private javax.swing.JLabel xSizeLabel;
     private javax.swing.JSpinner xSizeSpinner;
-    private javax.swing.JLabel ySizeLabel;
     private javax.swing.JSpinner ySizeSpinner;
     // End of variables declaration//GEN-END:variables
 
     private int returnStatus = RET_CANCEL;
     
     private void setPanelState(boolean state) {
-        log.info("Set visible called: ");
         sizePanel.setEnabled(state);
-        Stream.of(sizePanel.getComponents()).peek(cc -> log.info("Component: {}", cc)).forEach(item -> item.setEnabled(state));
+        Stream.of(sizePanel.getComponents()).forEach(item -> item.setEnabled(state));
     }
 }

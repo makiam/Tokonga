@@ -122,6 +122,9 @@
           <Connection code="new FilesListModel()" type="code"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="meshTypeSelectorActionPerformed"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
       </AuxValues>
@@ -146,6 +149,9 @@
           <Connection code="new SmoothTypesListModel()" type="code"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="smoothTypesListActionPerformed"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
       </AuxValues>
@@ -190,6 +196,10 @@
               <Connection code="Translate.text(&quot;polymesh:sizeLabel&quot;)" type="code"/>
             </Property>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JSpinner" name="xSizeSpinner">
           <Properties>
@@ -217,6 +227,10 @@
               <Connection code="Translate.text(&quot;polymesh:byLabel&quot;)" type="code"/>
             </Property>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

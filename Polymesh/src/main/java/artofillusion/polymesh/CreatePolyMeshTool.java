@@ -47,6 +47,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner;
 import javax.swing.SwingUtilities;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -60,12 +61,17 @@ public class CreatePolyMeshTool extends EditingTool {
 
     private final EditingWindow edw;
     private int counter = 1;
+
+    @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
     private int shape = 0;
+    @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
     private int usize = 3;
+    @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
     private int vsize = 3;
+    @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
     private int smoothingMethod;
-    
-    @Setter(AccessLevel.PACKAGE)
+
+    @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
     private PolyMesh templateMesh;
 
     boolean shiftDown;
