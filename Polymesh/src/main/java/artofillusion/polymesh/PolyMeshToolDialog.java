@@ -12,18 +12,23 @@ package artofillusion.polymesh;
 import artofillusion.ui.Translate;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.stream.Stream;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
  * @author MaksK
  */
+@Slf4j
 public class PolyMeshToolDialog extends javax.swing.JDialog {
-
+    private static final int templateStart = 5;
+    
+    private final CreatePolyMeshTool tool;
     /**
      * A return status code - returned if Cancel button has been pressed
      */
@@ -36,8 +41,10 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
     /**
      * Creates new form PolyMeshToolDialog
      */
-    public PolyMeshToolDialog(java.awt.Frame parent) {
+    
+    public PolyMeshToolDialog(CreatePolyMeshTool tool, java.awt.Frame parent) {
         super(parent, true);
+        this.tool = tool;
         initComponents();
 
         // Close the dialog when Esc is pressed
@@ -75,9 +82,20 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
         meshTypeSelector = new javax.swing.JComboBox<>();
         javax.swing.JLabel smoothTypeLabel = new javax.swing.JLabel();
         smoothTypesList = new javax.swing.JComboBox<>();
+        sizePanel = new javax.swing.JPanel();
+        xSizeLabel = new javax.swing.JLabel();
+        xSizeSpinner = new javax.swing.JSpinner();
+        ySizeSpinner = new javax.swing.JSpinner();
+        ySizeLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(Translate.text("polymesh:polyMeshToolDialogTitle"));
+        setResizable(false);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 closeDialog(evt);
@@ -101,27 +119,65 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
 
         smoothTypesList.setModel(new SmoothTypesListModel());
 
+        xSizeLabel.setText(Translate.text("polymesh:sizeLabel"));
+
+        xSizeSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, 99, 1));
+        xSizeSpinner.setEditor(new javax.swing.JSpinner.NumberEditor(xSizeSpinner, ""));
+
+        ySizeSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, 99, 1));
+        ySizeSpinner.setEditor(new javax.swing.JSpinner.NumberEditor(ySizeSpinner, ""));
+
+        ySizeLabel.setText(Translate.text("polymesh:byLabel"));
+
+        javax.swing.GroupLayout sizePanelLayout = new javax.swing.GroupLayout(sizePanel);
+        sizePanel.setLayout(sizePanelLayout);
+        sizePanelLayout.setHorizontalGroup(
+            sizePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sizePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(xSizeLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(xSizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(ySizeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(ySizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        sizePanelLayout.setVerticalGroup(
+            sizePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(sizePanelLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addGroup(sizePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(xSizeLabel)
+                    .addComponent(xSizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ySizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ySizeLabel))
+                .addContainerGap(14, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 244, Short.MAX_VALUE)
-                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(meshTypeLabel)
                             .addComponent(smoothTypeLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(smoothTypesList, 0, 217, Short.MAX_VALUE)
-                            .addComponent(meshTypeSelector, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(meshTypeSelector, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cancelButton)))
                 .addContainerGap())
+            .addComponent(sizePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
@@ -137,11 +193,13 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(smoothTypeLabel)
                     .addComponent(smoothTypesList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(sizePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton)
-                    .addComponent(okButton))
-                .addContainerGap())
+                    .addComponent(okButton)
+                    .addComponent(cancelButton))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         getRootPane().setDefaultButton(okButton);
@@ -151,6 +209,7 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        //tool.setTemplateMesh(new PolyMesh(in));
         doClose(RET_OK);
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -164,6 +223,11 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog
+
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        // TODO add your handling code here:
+         setPanelState(false);
+    }//GEN-LAST:event_formComponentShown
     
     private void doClose(int retStatus) {
         returnStatus = retStatus;
@@ -176,8 +240,19 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
     private javax.swing.JButton cancelButton;
     private javax.swing.JComboBox<String> meshTypeSelector;
     private javax.swing.JButton okButton;
+    private javax.swing.JPanel sizePanel;
     private javax.swing.JComboBox<String> smoothTypesList;
+    private javax.swing.JLabel xSizeLabel;
+    private javax.swing.JSpinner xSizeSpinner;
+    private javax.swing.JLabel ySizeLabel;
+    private javax.swing.JSpinner ySizeSpinner;
     // End of variables declaration//GEN-END:variables
 
     private int returnStatus = RET_CANCEL;
+    
+    private void setPanelState(boolean state) {
+        log.info("Set visible called: ");
+        sizePanel.setEnabled(state);
+        Stream.of(sizePanel.getComponents()).peek(cc -> log.info("Component: {}", cc)).forEach(item -> item.setEnabled(state));
+    }
 }

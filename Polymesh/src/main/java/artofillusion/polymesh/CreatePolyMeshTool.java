@@ -17,8 +17,6 @@ import artofillusion.Scene;
 import artofillusion.SceneViewer;
 import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
-import artofillusion.animation.PositionTrack;
-import artofillusion.animation.RotationTrack;
 import artofillusion.math.CoordinateSystem;
 import artofillusion.math.Vec3;
 import artofillusion.object.Mesh;
@@ -48,6 +46,8 @@ import java.io.InputStream;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner;
 import javax.swing.SwingUtilities;
+import lombok.AccessLevel;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -64,6 +64,8 @@ public class CreatePolyMeshTool extends EditingTool {
     private int usize = 3;
     private int vsize = 3;
     private int smoothingMethod;
+    
+    @Setter(AccessLevel.PACKAGE)
     private PolyMesh templateMesh;
 
     boolean shiftDown;
@@ -202,7 +204,7 @@ public class CreatePolyMeshTool extends EditingTool {
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void iconDoubleClicked() {
         new PolyMeshToolDialog(edw.getFrame());
-        SwingUtilities.invokeLater(() -> new artofillusion.polymesh.PolyMeshToolDialog(edw.getFrame().getComponent()).setVisible(true));
+        SwingUtilities.invokeLater(() -> new artofillusion.polymesh.PolyMeshToolDialog(this, edw.getFrame().getComponent()).setVisible(true));
         setHelpText();
     }
 
@@ -220,7 +222,7 @@ public class CreatePolyMeshTool extends EditingTool {
         private BLabel byLabel;
         private BSpinner ySpinner;
         private BComboBox smoothCombo;
-        private int templateStart;
+        private final int templateStart = 5;
 
         /**
          * Constructor for the PolyMeshToolDialog object
@@ -234,7 +236,6 @@ public class CreatePolyMeshTool extends EditingTool {
                 setContent((BorderContainer) decoder.getRootObject());
                 typeCombo = ((BComboBox) decoder.getObject("typeCombo"));
 
-                templateStart = 5;
                 typeCombo.setModel(new FilesListModel());
                 sizeLabel = ((BLabel) decoder.getObject("sizeLabel"));
                 sizeLabel.setText(Translate.text("polymesh:" + sizeLabel.getText()));
