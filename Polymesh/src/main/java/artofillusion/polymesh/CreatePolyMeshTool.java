@@ -69,7 +69,7 @@ public class CreatePolyMeshTool extends EditingTool {
     @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
     private int vsize = 3;
     @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
-    private int smoothingMethod;
+    private int smoothingMethod =  Mesh.NO_SMOOTHING;
 
     @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
     private PolyMesh templateMesh;
@@ -209,7 +209,6 @@ public class CreatePolyMeshTool extends EditingTool {
     @Override
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void iconDoubleClicked() {
-        new PolyMeshToolDialog(edw.getFrame());
         SwingUtilities.invokeLater(() -> new artofillusion.polymesh.PolyMeshToolDialog(this, edw.getFrame().getComponent()).setVisible(true));
         setHelpText();
     }

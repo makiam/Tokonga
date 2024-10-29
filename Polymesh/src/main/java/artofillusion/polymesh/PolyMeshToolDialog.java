@@ -9,15 +9,24 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.polymesh;
 
+import artofillusion.ArtOfIllusion;
 import artofillusion.ui.Translate;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Map;
 import java.util.stream.Stream;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -25,7 +34,9 @@ import lombok.extern.slf4j.Slf4j;
  * @author MaksK
  */
 @Slf4j
-public class PolyMeshToolDialog extends javax.swing.JDialog {
+public class PolyMeshToolDialog extends javax.swing.JDialog {    
+    private static final Map<Integer, Integer> smoothTypesMap = Map.of(2,3,3,2);
+
     private static final int templateStart = 5;
     
     private final CreatePolyMeshTool tool;
@@ -46,9 +57,14 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
         super(parent, true);
         this.tool = tool;
         initComponents();
-        
-        this.meshTypeSelector.setSelectedIndex(tool.getShape());
-        this.smoothTypesList.setSelectedIndex(tool.getSmoothingMethod());
+
+        log.atDebug().log("Tool selected: {} Mesh types: {}", tool.getShape(), getMeshTypeSelector().getItemCount());
+
+        this.getMeshTypeSelector().setSelectedIndex(tool.getShape());
+        var sm = smoothTypesMap.getOrDefault(tool.getSmoothingMethod(), tool.getSmoothingMethod());
+        log.atDebug().log("Smooth type selected: {}", sm);
+        this.getSmoothTypesList().setSelectedIndex(sm);
+
         this.xSizeSpinner.getModel().setValue(tool.getUsize());
         this.ySizeSpinner.getModel().setValue(tool.getVsize());
         
@@ -81,8 +97,8 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        okButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
+        javax.swing.JButton okButton = new javax.swing.JButton();
+        javax.swing.JButton cancelButton = new javax.swing.JButton();
         javax.swing.JLabel meshTypeLabel = new javax.swing.JLabel();
         meshTypeSelector = new javax.swing.JComboBox<>();
         javax.swing.JLabel smoothTypeLabel = new javax.swing.JLabel();
@@ -107,10 +123,10 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
             }
         });
 
-        okButton.setText("OK");
+        okButton.setText(Translate.text("button.ok"));
         okButton.addActionListener(this::okButtonActionPerformed);
 
-        cancelButton.setText("Cancel");
+        cancelButton.setText(Translate.text("button.cancel"));
         cancelButton.addActionListener(this::cancelButtonActionPerformed);
 
         meshTypeLabel.setLabelFor(meshTypeSelector);
@@ -140,14 +156,14 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
         sizePanel.setLayout(sizePanelLayout);
         sizePanelLayout.setHorizontalGroup(
             sizePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sizePanelLayout.createSequentialGroup()
+            .addGroup(sizePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(xSizeLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
                 .addComponent(xSizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(ySizeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ySizeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ySizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -216,7 +232,25 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        //tool.setTemplateMesh(new PolyMesh(in));
+        
+        var type = this.getMeshTypeSelector().getSelectedIndex();
+        var smooth = this.getSmoothTypesList().getSelectedIndex();
+        tool.setShape(type);
+        tool.setSmoothingMethod(smoothTypesMap.getOrDefault(smooth, smooth));
+        tool.setUsize((Integer)xSizeSpinner.getValue());
+        tool.setVsize((Integer)ySizeSpinner.getValue());
+        
+        tool.setTemplateMesh(null);
+        if(type >= templateStart) {
+            try {
+                File template = Paths.get(ArtOfIllusion.PLUGIN_DIRECTORY, "PolyMeshTemplates", (String)this.getMeshTypeSelector().getSelectedItem()).toFile();
+                DataInputStream dis = new DataInputStream(new FileInputStream(template));
+                tool.setTemplateMesh(new PolyMesh(dis));;
+            } catch (IOException ex) {
+                log.atError().setCause(ex).log("Error loading template due {}", ex.getLocalizedMessage());
+            }
+        }
+
         doClose(RET_OK);
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -232,20 +266,27 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_closeDialog
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
-        // TODO add your handling code here:
-         setPanelState(false);
+        var type = this.getMeshTypeSelector().getSelectedIndex();
+        setPanelState(type >= 3 && type < templateStart);
     }//GEN-LAST:event_formComponentShown
 
     private void smoothTypesListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_smoothTypesListActionPerformed
-        // TODO add your handling code here:
-        log.info("Toggle smooth mode to: {}", this.smoothTypesList.getSelectedIndex());
+        log.debug("Toggle smooth mode to: {}", this.smoothTypesList.getSelectedIndex());
     }//GEN-LAST:event_smoothTypesListActionPerformed
 
     private void meshTypeSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meshTypeSelectorActionPerformed
-        // TODO add your handling code here:
-        log.info("Toggle type selector to: {}", this.meshTypeSelector.getSelectedIndex());
-        setPanelState(this.meshTypeSelector.getSelectedIndex() >= 2);
-        
+
+        var type = this.getMeshTypeSelector().getSelectedIndex();
+        log.debug("Toggle type selector to: {}", this.meshTypeSelector.getSelectedIndex());
+        setPanelState(type >= 3 && type < templateStart);
+        if(type == 3) {
+            xSizeSpinner.setValue(12);
+            ySizeSpinner.setValue(1);
+        }
+        if(type == 4) {
+            xSizeSpinner.setValue(3);
+            ySizeSpinner.setValue(3);
+        }        
     }//GEN-LAST:event_meshTypeSelectorActionPerformed
     
     private void doClose(int retStatus) {
@@ -256,9 +297,7 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton cancelButton;
     private javax.swing.JComboBox<String> meshTypeSelector;
-    private javax.swing.JButton okButton;
     private javax.swing.JPanel sizePanel;
     private javax.swing.JComboBox<String> smoothTypesList;
     private javax.swing.JSpinner xSizeSpinner;
@@ -270,5 +309,13 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
     private void setPanelState(boolean state) {
         sizePanel.setEnabled(state);
         Stream.of(sizePanel.getComponents()).forEach(item -> item.setEnabled(state));
+    }
+
+    public JComboBox<String> getMeshTypeSelector() {
+        return meshTypeSelector;
+    }
+
+    public JComboBox<String> getSmoothTypesList() {
+        return smoothTypesList;
     }
 }
