@@ -34,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author MaksK
  */
 @Slf4j
-public class PolyMeshToolDialog extends javax.swing.JDialog {    
+class PolyMeshToolDialog extends javax.swing.JDialog {    
     private static final Map<Integer, Integer> smoothTypesMap = Map.of(2,3,3,2);
 
     private static final int templateStart = 5;
@@ -245,7 +245,7 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
             try {
                 File template = Paths.get(ArtOfIllusion.PLUGIN_DIRECTORY, "PolyMeshTemplates", (String)this.getMeshTypeSelector().getSelectedItem()).toFile();
                 DataInputStream dis = new DataInputStream(new FileInputStream(template));
-                tool.setTemplateMesh(new PolyMesh(dis));;
+                tool.setTemplateMesh(new PolyMesh(dis));
             } catch (IOException ex) {
                 log.atError().setCause(ex).log("Error loading template due {}", ex.getLocalizedMessage());
             }
@@ -311,11 +311,11 @@ public class PolyMeshToolDialog extends javax.swing.JDialog {
         Stream.of(sizePanel.getComponents()).forEach(item -> item.setEnabled(state));
     }
 
-    public JComboBox<String> getMeshTypeSelector() {
+    final JComboBox<String> getMeshTypeSelector() {
         return meshTypeSelector;
     }
 
-    public JComboBox<String> getSmoothTypesList() {
+    final JComboBox<String> getSmoothTypesList() {
         return smoothTypesList;
     }
 }
