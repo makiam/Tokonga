@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman, 2005 by Francois Guillet
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2024 by Maksim Khramov
 This program is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later version.
@@ -17,8 +17,6 @@ import artofillusion.Scene;
 import artofillusion.SceneViewer;
 import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
-import artofillusion.animation.PositionTrack;
-import artofillusion.animation.RotationTrack;
 import artofillusion.math.CoordinateSystem;
 import artofillusion.math.Vec3;
 import artofillusion.object.Mesh;
@@ -47,6 +45,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner;
+import javax.swing.SwingUtilities;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -59,10 +61,17 @@ public class CreatePolyMeshTool extends EditingTool {
 
     private final EditingWindow edw;
     private int counter = 1;
+
+    @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
     private int shape = 0;
+    @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
     private int usize = 3;
+    @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
     private int vsize = 3;
-    private int smoothingMethod;
+    @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
+    private int smoothingMethod =  Mesh.NO_SMOOTHING;
+
+    @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
     private PolyMesh templateMesh;
 
     boolean shiftDown;
@@ -136,7 +145,6 @@ public class CreatePolyMeshTool extends EditingTool {
         Point dragPoint = e.getPoint();
         Vec3 v1, v2, v3, orig, xdir, ydir, zdir;
         double xsize, ysize, zsize;
-        int i;
 
         if (shiftDown) {
             if (Math.abs(dragPoint.x - clickPoint.x) > Math.abs(dragPoint.y - clickPoint.y)) {
@@ -188,8 +196,7 @@ public class CreatePolyMeshTool extends EditingTool {
         }
         obj.setSmoothingMethod(smoothingMethod);
         ObjectInfo info = new ObjectInfo(obj, new CoordinateSystem(orig, zdir, ydir), "PolyMesh " + (counter++));
-        info.addTrack(new PositionTrack(info), 0);
-        info.addTrack(new RotationTrack(info), 1);
+
         UndoRecord undo = new UndoRecord(theWindow);
         undo.addCommandAtBeginning(UndoRecord.SET_SCENE_SELECTION, new Object[]{((LayoutWindow) theWindow).getSelectedIndices()});
         ((LayoutWindow) theWindow).addObject(info, undo);
@@ -202,197 +209,8 @@ public class CreatePolyMeshTool extends EditingTool {
     @Override
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void iconDoubleClicked() {
-        new PolyMeshToolDialog(edw.getFrame());
+        SwingUtilities.invokeLater(() -> new artofillusion.polymesh.PolyMeshToolDialog(this, edw.getFrame().getComponent()).setVisible(true));
         setHelpText();
     }
 
-    /**
-     * Dialog for entering mesh type
-     *
-     * @author francois
-     * @created 24 janvier 2005
-     */
-    public class PolyMeshToolDialog extends BDialog {
-
-        private BComboBox typeCombo;
-        private BLabel sizeLabel;
-        private BSpinner xSpinner;
-        private BLabel byLabel;
-        private BSpinner ySpinner;
-        private BComboBox smoothCombo;
-        private int templateStart;
-
-        /**
-         * Constructor for the PolyMeshToolDialog object
-         *
-         * @param parent Description of the Parameter
-         */
-        public PolyMeshToolDialog(BFrame parent) {
-            super(parent, Translate.text("polymesh:polyMeshToolDialogTitle"), true);
-            try (InputStream is = getClass().getResource("interfaces/createTool.xml").openStream()) {
-                WidgetDecoder decoder = new WidgetDecoder(is);
-                setContent((BorderContainer) decoder.getRootObject());
-                typeCombo = ((BComboBox) decoder.getObject("typeCombo"));
-
-                templateStart = 5;
-                typeCombo.setModel(new FilesListModel());
-                sizeLabel = ((BLabel) decoder.getObject("sizeLabel"));
-                sizeLabel.setText(Translate.text("polymesh:" + sizeLabel.getText()));
-                xSpinner = ((BSpinner) decoder.getObject("xSpinner"));
-                xSpinner.setValue(usize);
-                byLabel = ((BLabel) decoder.getObject("byLabel"));
-                byLabel.setText(Translate.text("polymesh:" + byLabel.getText()));
-                ySpinner = ((BSpinner) decoder.getObject("ySpinner"));
-                ySpinner.setValue(vsize);
-                BLabel meshType = ((BLabel) decoder.getObject("meshType"));
-                meshType.setText(Translate.text("polymesh:" + meshType.getText()));
-                BButton okButton = ((BButton) decoder.getObject("okButton"));
-                okButton.setText(Translate.text("polymesh:" + okButton.getText()));
-                BButton cancelButton = ((BButton) decoder.getObject("cancelButton"));
-                cancelButton.setText(Translate.text("polymesh:" + cancelButton.getText()));
-                okButton.addEventLink(CommandEvent.class, this, "doOK");
-                typeCombo.setSelectedIndex(shape);
-                typeCombo.addEventLink(ValueChangedEvent.class, this, "doComboChanged");
-                typeCombo.setPreferredVisibleRows(typeCombo.getItemCount());
-                smoothCombo = ((BComboBox) decoder.getObject("smoothCombo"));
-                smoothCombo.setModel(new SmoothTypesListModel());
-
-                BLabel smoothLabel = ((BLabel) decoder.getObject("smoothLabel"));
-                smoothLabel.setText(Translate.text("SmoothingMethod") + ":");
-                smoothCombo.addEventLink(ValueChangedEvent.class, this, "doSmoothComboChanged");
-                smoothCombo.setSelectedIndex(getSmoothComboIndex());
-                setSpinnerColumns(xSpinner, 2);
-                setSpinnerColumns(ySpinner, 2);
-                if (typeCombo.getSelectedIndex() >= 2) {
-                    enableSize();
-                } else {
-                    disableSize();
-                }
-                Object closeObj
-                        = new Object() {
-                    void processEvent() {
-                        dispose();
-                    }
-                };
-                cancelButton.addEventLink(CommandEvent.class, closeObj);
-                this.addEventLink(WindowClosingEvent.class, closeObj);
-            } catch (IOException ex) {
-                log.atError().setCause(ex).log("Error creating PolyMeshToolDialog due {}", ex.getLocalizedMessage());
-            }
-            pack();
-            UIUtilities.centerWindow(this);
-            setVisible(true);
-        }
-
-        /**
-         * Description of the Method
-         */
-        private void disableSize() {
-            sizeLabel.setEnabled(false);
-            byLabel.setEnabled(false);
-            xSpinner.setEnabled(false);
-            ySpinner.setEnabled(false);
-        }
-
-        /**
-         * Description of the Method
-         */
-        private void enableSize() {
-            sizeLabel.setEnabled(true);
-            byLabel.setEnabled(true);
-            xSpinner.setEnabled(true);
-            ySpinner.setEnabled(true);
-        }
-
-        /**
-         * Description of the Method
-         */
-        private void doComboChanged() {
-            if (typeCombo.getSelectedIndex() >= 3 && typeCombo.getSelectedIndex() < templateStart) {
-                enableSize();
-                switch (typeCombo.getSelectedIndex()) {
-                    case 3:
-                        xSpinner.setValue(12);
-                        ySpinner.setValue(1);
-                        break;
-                    case 4:
-                        xSpinner.setValue(3);
-                        ySpinner.setValue(3);
-                        break;
-                }
-            } else {
-                disableSize();
-            }
-
-        }
-
-        private void doSmoothComboChanged() {
-            switch (smoothCombo.getSelectedIndex()) {
-                default:
-                case 0:
-                    smoothingMethod = Mesh.NO_SMOOTHING;
-                    break;
-                case 1:
-                    smoothingMethod = Mesh.SMOOTH_SHADING;
-                    break;
-                case 2:
-                    smoothingMethod = Mesh.APPROXIMATING;
-                    break;
-                case 3:
-                    smoothingMethod = Mesh.INTERPOLATING;
-                    break;
-            }
-        }
-
-        private int getSmoothComboIndex() {
-            switch (smoothingMethod) {
-                default:
-                case Mesh.NO_SMOOTHING:
-                    return 0;
-                case Mesh.SMOOTH_SHADING:
-                    return 1;
-                case Mesh.APPROXIMATING:
-                    return 2;
-                case Mesh.INTERPOLATING:
-                    return 3;
-            }
-        }
-
-        /**
-         * Description of the Method
-         */
-        private void doOK() {
-            shape = typeCombo.getSelectedIndex();
-            usize = (Integer) xSpinner.getValue();
-            vsize = (Integer) ySpinner.getValue();
-            int type = typeCombo.getSelectedIndex();
-            if (type < templateStart) {
-                templateMesh = null;
-            } else {
-                templateMesh = null;
-                try {
-                    File file = new File(ArtOfIllusion.PLUGIN_DIRECTORY + File.separator + "PolyMeshTemplates" + File.separator + (String) typeCombo.getSelectedValue());
-                    DataInputStream dis = new DataInputStream(new FileInputStream(file));
-                    templateMesh = new PolyMesh(dis);
-                    templateMesh.setSmoothingMethod(smoothingMethod);
-                } catch (IOException ex) {
-                    log.atError().setCause(ex).log("Error loading template due {}", ex.getLocalizedMessage());
-                }
-            }
-            dispose();
-        }
-
-        /**
-         * Sets the number of columns displayed by a spinner
-         *
-         * @param spinner The concerned BSpinner
-         * @param numCol The new number of columns to show
-         */
-        public void setSpinnerColumns(BSpinner spinner, int numCol) {
-            JSpinner.NumberEditor ed = (JSpinner.NumberEditor) spinner.getComponent().getEditor();
-            JFormattedTextField field = ed.getTextField();
-            field.setColumns(numCol);
-            spinner.getComponent().setEditor(ed);
-        }
-    }
 }
