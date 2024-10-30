@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2012 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -222,8 +222,8 @@ public class ProcedureEditor extends CustomWidget {
      */
     private BMenu getEditMenu() {
         BMenu editMenu = Translate.menu("edit");
-        editMenu.add(undoItem = Translate.menuItem("undo", this, "undo"));
-        editMenu.add(redoItem = Translate.menuItem("redo", this, "redo"));
+        editMenu.add(undoItem = Translate.menuItem("undo", event -> undo()));
+        editMenu.add(redoItem = Translate.menuItem("redo", event -> redo()));
         undoItem.setEnabled(false);
         redoItem.setEnabled(false);
         editMenu.addSeparator();

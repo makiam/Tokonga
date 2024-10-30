@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2007 by François Guillet
  *  Modifications Copyright (C) 2019 by Petri Ihalainen
- *  Changes copyright (C) 2022-2023 by Maksim Khramov
+ *  Changes copyright (C) 2022-2024 by Maksim Khramov
 
  *  This program is free software; you can redistribute it and/or modify it under the 
  *  terms of the GNU General Public License as published by the Free Software 
@@ -300,25 +300,25 @@ public class UVMappingEditorDialog extends BDialog {
         BMenuBar menuBar = new BMenuBar();
 
         BMenu menu = Translate.menu("polymesh:edit");
-        menu.add(undoMenuItem = Translate.menuItem("undo", this, "doUndo"));
-        menu.add(redoMenuItem = Translate.menuItem("redo", this, "doRedo"));
-        menu.add(Translate.menuItem("polymesh:undoLevels", this, "doSetUndoLevels"));
+        menu.add(undoMenuItem = Translate.menuItem("undo", event -> doUndo()));
+        menu.add(redoMenuItem = Translate.menuItem("redo", event -> doRedo()));
+        menu.add(Translate.menuItem("polymesh:undoLevels", event -> doSetUndoLevels()));
         menu.addSeparator();
-        menu.add(Translate.menuItem("polymesh:selectAll", this, "doSelectAll"));
-        menu.add(Translate.menuItem("polymesh:pinSelection", this, "doPinSelection"));
-        menu.add(Translate.menuItem("polymesh:unpinSelection", this, "doUnpinSelection"));
-        menu.add(Translate.menuItem("polymesh:renameSelectedPiece", this, "doRenameSelectedPiece"));
+        menu.add(Translate.menuItem("polymesh:selectAll", event -> doSelectAll()));
+        menu.add(Translate.menuItem("polymesh:pinSelection", event -> doPinSelection()));
+        menu.add(Translate.menuItem("polymesh:unpinSelection", event -> doUnpinSelection()));
+        menu.add(Translate.menuItem("polymesh:renameSelectedPiece", event -> doRenameSelectedPiece()));
         menu.add(new BSeparator());
-        menu.add(Translate.menuItem("polymesh:exportImage", this, "openImageExportDialog"));
+        menu.add(Translate.menuItem("polymesh:exportImage", event -> openImageExportDialog()));
         menuBar.add(menu);
 
         menu = Translate.menu("polymesh:mapping");
-        menu.add(Translate.menuItem("polymesh:fitMappingToImage", this, "doFitMappingToImage"));
-        menu.add(Translate.menuItem("polymesh:addMapping", this, "doAddMapping"));
-        menu.add(Translate.menuItem("polymesh:duplicateMapping", this, "doDuplicateMapping"));
-        BMenuItem removeMappingMenuItem = Translate.menuItem("polymesh:removeMapping", this, "doRemoveMapping");
+        menu.add(Translate.menuItem("polymesh:fitMappingToImage", event -> doFitMappingToImage()));
+        menu.add(Translate.menuItem("polymesh:addMapping", event -> doAddMapping()));
+        menu.add(Translate.menuItem("polymesh:duplicateMapping", event -> doDuplicateMapping()));
+        BMenuItem removeMappingMenuItem = Translate.menuItem("polymesh:removeMapping", event -> doRemoveMapping());
         menu.add(removeMappingMenuItem);
-        menu.add(Translate.menuItem("polymesh:editMappingColor", this, "doEditMappingColor"));
+        menu.add(Translate.menuItem("polymesh:editMappingColor", event -> doEditMappingColor()));
         menu.add(new BSeparator());
         sendTexToMappingMenu = Translate.menu("polymesh:sendTexToMapping");
         menu.add(sendTexToMappingMenu);

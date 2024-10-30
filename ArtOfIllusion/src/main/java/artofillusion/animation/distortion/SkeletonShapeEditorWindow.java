@@ -1,6 +1,6 @@
 /* Copyright (C) 2004-2006 by Peter Eastman
    Modifications copyright (C) 2016-2017 Petri Ihalainen
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -102,10 +102,10 @@ public class SkeletonShapeEditorWindow extends MeshEditorWindow implements MeshE
     void createEditMenu() {
         BMenu editMenu = Translate.menu("edit");
         menubar.add(editMenu);
-        editMenu.add(undoItem = Translate.menuItem("undo", this, "undoCommand"));
-        editMenu.add(redoItem = Translate.menuItem("redo", this, "redoCommand"));
+        editMenu.add(undoItem = Translate.menuItem("undo", event -> undoCommand()));
+        editMenu.add(redoItem = Translate.menuItem("redo", event -> redoCommand()));
         editMenu.addSeparator();
-        editMenu.add(Translate.menuItem("properties", this, "editProperties"));
+        editMenu.add(Translate.menuItem("properties", event ->  editProperties()));
     }
 
     void createSkeletonMenu() {
@@ -113,9 +113,9 @@ public class SkeletonShapeEditorWindow extends MeshEditorWindow implements MeshE
         BMenu skeletonMenu = Translate.menu("skeleton");
         menubar.add(skeletonMenu);
         skeletonMenuItem = new BMenuItem[1];
-        skeletonMenu.add(skeletonMenuItem[0] = Translate.menuItem("editBone", this, "editJointCommand"));
-        skeletonMenu.add(Translate.menuItem("resetToDefaultPose", this, "resetCommand"));
-        skeletonMenu.add(item = Translate.menuItem("createPoseFromGestures", this, "createFromGesturesCommand"));
+        skeletonMenu.add(skeletonMenuItem[0] = Translate.menuItem("editBone", event -> editJointCommand()));
+        skeletonMenu.add(Translate.menuItem("resetToDefaultPose", event -> resetCommand()));
+        skeletonMenu.add(item = Translate.menuItem("createPoseFromGestures", event -> createFromGesturesCommand()));
         Object3D obj = ((ObjectInfo) track.getParent()).getObject();
         item.setEnabled(Actor.getActor(obj) != null);
     }

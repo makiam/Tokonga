@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
    Modifications copyright (C) 2016-2017 Petri Ihalainen
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -105,16 +105,16 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         BMenu editMenu = Translate.menu("edit");
         menubar.add(editMenu);
         editMenuItem = new BMenuItem[4];
-        editMenu.add(undoItem = Translate.menuItem("undo", this, "undoCommand"));
-        editMenu.add(redoItem = Translate.menuItem("redo", this, "redoCommand"));
+        editMenu.add(undoItem = Translate.menuItem("undo", event -> undoCommand()));
+        editMenu.add(redoItem = Translate.menuItem("redo", event -> redoCommand()));
         editMenu.addSeparator();
-        editMenu.add(editMenuItem[0] = Translate.menuItem("extendSelection", this, "extendSelectionCommand"));
-        editMenu.add(editMenuItem[1] = Translate.menuItem("invertSelection", this, "invertSelectionCommand"));
-        editMenu.add(Translate.menuItem("selectAll", this, "selectAllCommand"));
-        editMenu.add(editMenuItem[2] = Translate.menuItem("deselectAll", this, "deselectAllCommand"));
+        editMenu.add(editMenuItem[0] = Translate.menuItem("extendSelection", event -> extendSelectionCommand()));
+        editMenu.add(editMenuItem[1] = Translate.menuItem("invertSelection", event -> invertSelectionCommand()));
+        editMenu.add(Translate.menuItem("selectAll", event -> selectAllCommand()));
+        editMenu.add(editMenuItem[2] = Translate.menuItem("deselectAll", event -> deselectAllCommand()));
         editMenu.addSeparator();
         editMenu.add(editMenuItem[3] = Translate.checkboxMenuItem("freehandSelection", this, "freehandModeChanged", false));
-        editMenu.add(Translate.menuItem("meshTension", this, "setTensionCommand"));
+        editMenu.add(Translate.menuItem("meshTension", event -> setTensionCommand()));
     }
 
     void createMeshMenu(SplineMesh obj) {
@@ -123,22 +123,22 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         BMenu meshMenu = Translate.menu("mesh");
         menubar.add(meshMenu);
         meshMenuItem = new BMenuItem[8];
-        meshMenuItem[0] = Translate.menuItem("deleteCurves", this, "deleteCommand");
+        meshMenuItem[0] = Translate.menuItem("deleteCurves", event -> deleteCommand());
         if (topology) {
             meshMenu.add(meshMenuItem[0]);
         }
-        meshMenuItem[1] = Translate.menuItem("subdivide", this, "subdivideCommand");
+        meshMenuItem[1] = Translate.menuItem("subdivide", event -> subdivideCommand());
         if (topology) {
             meshMenu.add(meshMenuItem[1]);
         }
-        meshMenu.add(meshMenuItem[2] = Translate.menuItem("editPoints", this, "setPointsCommand"));
-        meshMenu.add(meshMenuItem[3] = Translate.menuItem("transformPoints", this, "transformPointsCommand"));
-        meshMenu.add(meshMenuItem[4] = Translate.menuItem("randomize", this, "randomizeCommand"));
-        meshMenu.add(meshMenuItem[5] = Translate.menuItem("parameters", this, "setParametersCommand"));
-        meshMenu.add(Translate.menuItem("centerMesh", this, "centerCommand"));
-        meshMenu.add(meshMenuItem[6] = Translate.menuItem("extractCurve", this, "extractCurveCommand"));
+        meshMenu.add(meshMenuItem[2] = Translate.menuItem("editPoints", event -> setPointsCommand()));
+        meshMenu.add(meshMenuItem[3] = Translate.menuItem("transformPoints", event -> transformPointsCommand()));
+        meshMenu.add(meshMenuItem[4] = Translate.menuItem("randomize", event -> randomizeCommand()));
+        meshMenu.add(meshMenuItem[5] = Translate.menuItem("parameters", event -> setParametersCommand()));
+        meshMenu.add(Translate.menuItem("centerMesh", event -> centerCommand()));
+        meshMenu.add(meshMenuItem[6] = Translate.menuItem("extractCurve", event -> extractCurveCommand()));
         meshMenu.addSeparator();
-        meshMenu.add(meshMenuItem[7] = Translate.menuItem("smoothness", this, "setSmoothnessCommand"));
+        meshMenu.add(meshMenuItem[7] = Translate.menuItem("smoothness", event -> setSmoothnessCommand()));
         meshMenu.add(smoothMenu = Translate.menu("smoothingMethod"));
         smoothItem = new BCheckBoxMenuItem[2];
         smoothMenu.add(smoothItem[0] = Translate.checkboxMenuItem("interpolating", this, "smoothingChanged", obj.getSmoothingMethod() == TriangleMesh.INTERPOLATING));
@@ -153,7 +153,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         closedMenu.add(closedItem[2] = Translate.checkboxMenuItem("both", this, "closedTypeChanged", (obj.isUClosed() && obj.isVClosed())));
         closedMenu.add(closedItem[3] = Translate.checkboxMenuItem("neither", this, "closedTypeChanged", (!obj.isUClosed() && !obj.isVClosed())));
         if (topology) {
-            meshMenu.add(Translate.menuItem("invertNormals", this, "reverseNormalsCommand"));
+            meshMenu.add(Translate.menuItem("invertNormals", event -> reverseNormalsCommand()));
         }
     }
 
@@ -161,13 +161,13 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         BMenu skeletonMenu = Translate.menu("skeleton");
         menubar.add(skeletonMenu);
         skeletonMenuItem = new BMenuItem[7];
-        skeletonMenu.add(skeletonMenuItem[0] = Translate.menuItem("editBone", this, "editJointCommand"));
-        skeletonMenu.add(skeletonMenuItem[1] = Translate.menuItem("deleteBone", this, "deleteJointCommand"));
-        skeletonMenu.add(skeletonMenuItem[2] = Translate.menuItem("setParentBone", this, "setJointParentCommand"));
-        skeletonMenu.add(skeletonMenuItem[3] = Translate.menuItem("importSkeleton", this, "importSkeletonCommand"));
+        skeletonMenu.add(skeletonMenuItem[0] = Translate.menuItem("editBone", event -> editJointCommand()));
+        skeletonMenu.add(skeletonMenuItem[1] = Translate.menuItem("deleteBone", event -> deleteJointCommand()));
+        skeletonMenu.add(skeletonMenuItem[2] = Translate.menuItem("setParentBone", event -> setJointParentCommand()));
+        skeletonMenu.add(skeletonMenuItem[3] = Translate.menuItem("importSkeleton", event -> importSkeletonCommand()));
         skeletonMenu.addSeparator();
-        skeletonMenu.add(skeletonMenuItem[4] = Translate.menuItem("bindSkeleton", this, "bindSkeletonCommand"));
-        skeletonMenu.add(skeletonMenuItem[5] = Translate.menuItem("unbindSkeleton", this, "unbindSkeletonCommand"));
+        skeletonMenu.add(skeletonMenuItem[4] = Translate.menuItem("bindSkeleton", event -> bindSkeletonCommand()));
+        skeletonMenu.add(skeletonMenuItem[5] = Translate.menuItem("unbindSkeleton", event -> unbindSkeletonCommand()));
         skeletonMenu.add(skeletonMenuItem[6] = Translate.checkboxMenuItem("detachSkeleton", this, "skeletonDetachedChanged", false));
     }
 
