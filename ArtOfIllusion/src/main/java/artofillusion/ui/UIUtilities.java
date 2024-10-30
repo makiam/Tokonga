@@ -118,8 +118,12 @@ public class UIUtilities {
             return;
         }
         w.setFont(UIUtilities.getDefaultFont());
-        if (w instanceof WidgetContainer && !(w instanceof BMenuBar)) {
-            ((WidgetContainer) w).getChildren().forEach(widget -> applyDefaultFont(widget));
+        if (w instanceof WidgetContainer) {
+            if (w instanceof BMenuBar) {
+                return;
+            }
+            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+            children.forEach(widget -> applyDefaultFont(widget));
         }
     }
 
@@ -137,7 +141,8 @@ public class UIUtilities {
     public static void applyBackground(Widget w, Color color) {
         if (w instanceof WidgetContainer) {
             w.setBackground(color);
-            ((WidgetContainer) w).getChildren().forEach(widget -> applyBackground(widget, color));
+            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+            children.forEach(widget -> applyBackground(widget, color));
         } else if (w instanceof BLabel) {
             w.setBackground(color);
         } else if (w instanceof BButton || w instanceof BComboBox || w instanceof BCheckBox || w instanceof BRadioButton) {
@@ -150,7 +155,8 @@ public class UIUtilities {
      */
     public static void applyTextColor(Widget w, Color color) {
         if (w instanceof WidgetContainer) {
-            ((WidgetContainer) w).getChildren().forEach(widget -> applyTextColor(widget, color));
+            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+            children.forEach(widget -> applyTextColor(widget, color));
         } else if (w instanceof BLabel || w instanceof BCheckBox || w instanceof BRadioButton) {
             w.getComponent().setForeground(color);
         }
@@ -226,7 +232,8 @@ public class UIUtilities {
     public static void setEnabled(Widget w, boolean enabled) {
         w.setEnabled(enabled);
         if (w instanceof WidgetContainer) {
-            ((WidgetContainer) w).getChildren().forEach(widget -> setEnabled(widget, enabled));
+            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+            children.forEach(widget -> setEnabled(widget, enabled));
         }
     }
 
@@ -245,7 +252,8 @@ public class UIUtilities {
      */
     private static void addChildrenToList(Widget w, List<Widget> list) {
         if (w instanceof WidgetContainer) {
-            for (Widget child : ((WidgetContainer) w).getChildren()) {
+            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+            for (Widget child : children) {
                 list.add(child);
                 addChildrenToList(child, list);
             }

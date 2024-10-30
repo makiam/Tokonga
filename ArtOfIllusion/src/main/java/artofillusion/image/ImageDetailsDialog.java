@@ -21,6 +21,7 @@ import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.imageio.*;
@@ -343,7 +344,8 @@ public class ImageDetailsDialog extends BDialog {
     private void addAsListener(Widget w) {
         w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
         if (w instanceof WidgetContainer) {
-            ((WidgetContainer) w).getChildren().forEach(this::addAsListener);
+            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+            children.forEach(this::addAsListener);
         }
     }
 
@@ -353,7 +355,8 @@ public class ImageDetailsDialog extends BDialog {
     private void removeAsListener(Widget w) {
         w.removeEventLink(KeyPressedEvent.class, this);
         if (w instanceof WidgetContainer) {
-            ((WidgetContainer) w).getChildren().forEach(this::removeAsListener);
+            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+            children.forEach(this::removeAsListener);
         }
     }
 
@@ -477,7 +480,8 @@ public class ImageDetailsDialog extends BDialog {
         private void addAsListener(Widget w) {
             w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
             if (w instanceof WidgetContainer) {
-                ((WidgetContainer) w).getChildren().forEach(this::addAsListener);
+                Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+                children.forEach(this::addAsListener);
             }
         }
 
@@ -487,7 +491,8 @@ public class ImageDetailsDialog extends BDialog {
         private void removeAsListener(Widget w) {
             w.removeEventLink(KeyPressedEvent.class, this);
             if (w instanceof WidgetContainer) {
-                ((WidgetContainer) w).getChildren().forEach(this::removeAsListener);
+                Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+                children.forEach(this::removeAsListener);
             }
         }
     }

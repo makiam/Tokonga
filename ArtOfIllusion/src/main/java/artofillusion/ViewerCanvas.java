@@ -199,7 +199,7 @@ public abstract class ViewerCanvas extends CustomWidget {
         if (useOpenGL) {
             try {
                 drawer = new GLCanvasDrawer(this);
-                component = ((GLCanvasDrawer) drawer).getGLCanvas();
+                component = (javax.swing.JComponent) ((GLCanvasDrawer) drawer).getGLCanvas();
             } catch (Throwable t) {
                 log.atError().setCause(t).log("Error creating GLCanvasDrawer: {}", t.getMessage());
                 openGLAvailable = false;

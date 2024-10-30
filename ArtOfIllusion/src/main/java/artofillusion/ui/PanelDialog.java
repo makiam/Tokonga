@@ -14,6 +14,7 @@ package artofillusion.ui;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
+import java.util.Collection;
 
 
 /**
@@ -97,7 +98,8 @@ public class PanelDialog extends BDialog {
     private void addAsListener(Widget w) {
         w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
         if (w instanceof WidgetContainer) {
-            ((WidgetContainer) w).getChildren().forEach(this::addAsListener);
+            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+            children.forEach(this::addAsListener);
         }
     }
 
@@ -107,7 +109,8 @@ public class PanelDialog extends BDialog {
     private void removeAsListener(Widget w) {
         w.removeEventLink(KeyPressedEvent.class, this);
         if (w instanceof WidgetContainer) {
-            ((WidgetContainer) w).getChildren().forEach(this::removeAsListener);
+            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+            children.forEach(this::removeAsListener);
         }
     }
 }
