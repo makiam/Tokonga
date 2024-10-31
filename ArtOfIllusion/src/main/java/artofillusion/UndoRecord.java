@@ -235,10 +235,7 @@ public class UndoRecord {
                     for (ObjectInfo objectInfo : oldObj) {
                         objectInfo.setParent(null);
                     }
-                    for (ObjectInfo objectInfo : newObj) {
-                        objectInfo.setParent(group);
-                    }
-                    group.children = newObj;
+                    group.setChildren(newObj);
                     break;
                 }
                 case SET_TRACK: {

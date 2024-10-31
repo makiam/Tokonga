@@ -63,7 +63,10 @@ public class ObjectInfo {
     @Getter
     public boolean visible, parentSelected;
     public ObjectInfo parent;
-    public ObjectInfo[] children;
+
+
+    private final List<ObjectInfo> children = new ArrayList<>();
+
     public Track[] tracks;
     public Keyframe pose;
     public int id;
@@ -88,7 +91,7 @@ public class ObjectInfo {
         this.name = name;
         this.visible = true;
 
-        children = new ObjectInfo[0];
+
         setId(-1);
     }
 
@@ -190,17 +193,7 @@ public class ObjectInfo {
      * Add a child to this object.
      */
     public void addChild(ObjectInfo info, int position) {
-        ObjectInfo[] newChildren = new ObjectInfo[getChildren().length + 1];
-        int i;
-
-        for (i = 0; i < position; i++) {
-            newChildren[i] = getChildren()[i];
-        }
-        newChildren[position] = info;
-        for (; i < getChildren().length; i++) {
-            newChildren[i + 1] = getChildren()[i];
-        }
-        children = newChildren;
+        this.children.add(position, info);
         info.setParent(this);
     }
 
@@ -220,17 +213,7 @@ public class ObjectInfo {
      * Remove a child from this object.
      */
     public void removeChild(int which) {
-        ObjectInfo[] newChildren = new ObjectInfo[getChildren().length - 1];
-        int i;
-
-        getChildren()[which].setParent(null);
-        for (i = 0; i < which; i++) {
-            newChildren[i] = getChildren()[i];
-        }
-        for (i++; i < getChildren().length; i++) {
-            newChildren[i - 1] = getChildren()[i];
-        }
-        children = newChildren;
+        children.remove(which).setParent(null);
     }
 
     /**
@@ -552,7 +535,7 @@ public class ObjectInfo {
      * Get the list of children for this object.
      */
     public ObjectInfo[] getChildren() {
-        return children;
+        return children.toArray(ObjectInfo[]::new);
     }
 
     /**
@@ -560,6 +543,12 @@ public class ObjectInfo {
      */
     public Track[] getTracks() {
         return tracks;
+    }
+
+    public void setChildren(ObjectInfo[] newObj) {
+        children.clear();
+        children.addAll(Arrays.asList(newObj));
+        children.forEach(info -> info.setParent(this));
     }
 
     /**
