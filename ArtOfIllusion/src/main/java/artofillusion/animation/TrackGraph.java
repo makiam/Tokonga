@@ -16,8 +16,6 @@ import artofillusion.ui.*;
 import static artofillusion.ui.UIUtilities.*;
 import buoy.event.*;
 import buoy.widget.*;
-import lombok.AccessLevel;
-import lombok.Getter;
 
 import java.awt.*;
 import java.util.*;
@@ -260,9 +258,9 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
         for (TrackInfo info: tracks) {
             Arrays.fill(info.selected, false);
 
-            for (int j = 0; j < selection.length; j++) {
-                if (selection[j].track == info.track) {
-                    info.selected[selection[j].keyIndex] = true;
+            for (SelectionInfo selectionInfo : selection) {
+                if (selectionInfo.track == info.track) {
+                    info.selected[selectionInfo.keyIndex] = true;
                 }
             }
         }
@@ -296,24 +294,24 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
 
         // Determine whether the click was on a handle.
         Rectangle dim = getBounds();
-        for (int i = 0; i < tracks.length; i++) {
-            for (int j = 0; j < tracks[i].keyValue.length; j++) {
-                int x = (int) Math.round(hScale * (tracks[i].keyTime[j] - hStart));
+        for (TrackInfo track : tracks) {
+            for (int j = 0; j < track.keyValue.length; j++) {
+                int x = (int) Math.round(hScale * (track.keyTime[j] - hStart));
                 if (lastPos.x < x - HANDLE_SIZE / 2 || lastPos.x > x + HANDLE_SIZE / 2) {
                     continue;
                 }
-                for (int k = tracks[i].keyValue[j].length - 1; k >= 0; k--) {
-                    if (tracks[i].disabled[k]) {
+                for (int k = track.keyValue[j].length - 1; k >= 0; k--) {
+                    if (track.disabled[k]) {
                         continue;
                     }
-                    int y = dim.height - (int) Math.round(vScale * (tracks[i].keyValue[j][k] - vStart));
+                    int y = dim.height - (int) Math.round(vScale * (track.keyValue[j][k] - vStart));
                     if (lastPos.y < y - HANDLE_SIZE / 2 || lastPos.y > y + HANDLE_SIZE / 2) {
                         continue;
                     }
 
                     // Select the clicked keyframe.
-                    Keyframe key = tracks[i].track.getTimecourse().getValues()[j];
-                    SelectionInfo newsel = new SelectionInfo(tracks[i].track, key);
+                    Keyframe key = track.track.getTimecourse().getValues()[j];
+                    SelectionInfo newsel = new SelectionInfo(track.track, key);
                     for (int m = 0; m < newsel.selected.length; m++) {
                         newsel.selected[m] = (m == k);
                     }
@@ -466,21 +464,21 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
         dragPos = null;
         List<SelectionInfo> v = new Vector<>();
         Rectangle dim = getBounds();
-        for (int i = 0; i < tracks.length; i++) {
-            for (int j = 0; j < tracks[i].keyValue.length; j++) {
-                int x = (int) Math.round(hScale * (tracks[i].keyTime[j] - hStart));
+        for (TrackInfo track : tracks) {
+            for (int j = 0; j < track.keyValue.length; j++) {
+                int x = (int) Math.round(hScale * (track.keyTime[j] - hStart));
                 if (x < x1 || x > x2) {
                     continue;
                 }
-                Keyframe key = tracks[i].track.getTimecourse().getValues()[j];
-                SelectionInfo newsel = new SelectionInfo(tracks[i].track, key);
+                Keyframe key = track.track.getTimecourse().getValues()[j];
+                SelectionInfo newsel = new SelectionInfo(track.track, key);
                 boolean any = false;
-                for (int k = 0; k < tracks[i].keyValue[j].length; k++) {
+                for (int k = 0; k < track.keyValue[j].length; k++) {
                     newsel.selected[k] = false;
-                    if (tracks[i].disabled[k]) {
+                    if (track.disabled[k]) {
                         continue;
                     }
-                    int y = dim.height - (int) Math.round(vScale * (tracks[i].keyValue[j][k] - vStart));
+                    int y = dim.height - (int) Math.round(vScale * (track.keyValue[j][k] - vStart));
                     if (y < y1 || y > y2) {
                         continue;
                     }
@@ -520,8 +518,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
         int x, y, labels = 0;
         SelectionInfo[] selection = score.getSelectedKeyframes();
 
-        for (int which = 0; which < tracks.length; which++) {
-            TrackInfo info = tracks[which];
+        for (TrackInfo info : tracks) {
             num = info.valueName.length;
             for (int i = 0; i < num; i++) {
                 if (info.disabled[i]) {
@@ -536,11 +533,11 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
                 for (int j = 0; j < info.keyTime.length; j++) {
                     g.setColor(LINE_COLOR[labels % LINE_COLOR.length]);
                     if (info.selected[j]) {
-                        for (int k = 0; k < selection.length; k++) {
-                            if (selection[k].track != info.track || selection[k].keyIndex != j) {
+                        for (SelectionInfo selectionInfo : selection) {
+                            if (selectionInfo.track != info.track || selectionInfo.keyIndex != j) {
                                 continue;
                             }
-                            if (selection[k].selected[i]) {
+                            if (selectionInfo.selected[i]) {
                                 g.setColor(SELECTED_VALUE_COLOR);
                             } else {
                                 g.setColor(SELECTED_KEY_COLOR);
@@ -622,7 +619,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
     /**
      * Inner class which represents information about a particular track being shown on the graph.
      */
-    class TrackInfo {
+    static class TrackInfo {
 
         final Track track;
         String[] valueName;
