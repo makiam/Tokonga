@@ -16,6 +16,9 @@ import artofillusion.ui.*;
 import static artofillusion.ui.UIUtilities.*;
 import buoy.event.*;
 import buoy.widget.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -39,7 +42,14 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
     private Rectangle lastBounds;
     private boolean draggingBox, lineAtBottom;
     private final List<Marker> markers;
+
     private TrackInfo[] tracks;
+    @org.jetbrains.annotations.TestOnly
+    TrackInfo[] getTracks() {
+        return tracks;
+    }
+
+
     private UndoRecord undo;
 
     public static final int HANDLE_SIZE = 5;
@@ -172,13 +182,13 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
      */
     private void setDefaultGraphRange(boolean largerOnly) {
         Rectangle dim = getBounds();
-        double oldmin = vStart;
-        double oldmax = vStart + dim.height / vScale;
+        double oldMin = vStart;
+        double oldMax = vStart + dim.height / vScale;
 
         // Find the range of values.
-        double min = Double.MAX_VALUE, max = -Double.MAX_VALUE;
-        for (int which = 0; which < tracks.length; which++) {
-            TrackInfo info = tracks[which];
+        double min = Double.MAX_VALUE;
+        double max = -Double.MAX_VALUE;
+        for (TrackInfo info: tracks) {
             for (int i = 0; i < info.keyValue.length; i++) {
                 for (int j = 0; j < info.keyValue[i].length; j++) {
                     if (!info.disabled[j]) {
@@ -219,11 +229,11 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
         double extra = 0.05 * (max - min);
         min -= extra;
         max += extra;
-        if (largerOnly && min > oldmin) {
-            min = oldmin;
+        if (largerOnly && min > oldMin) {
+            min = oldMin;
         }
-        if (largerOnly && max < oldmax) {
-            max = oldmax;
+        if (largerOnly && max < oldMax) {
+            max = oldMax;
         }
         vStart = min;
         vScale = dim.height / (max - min);
@@ -235,8 +245,8 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
      * This should be called whenever a track is modified, to update the display.
      */
     public void tracksModified() {
-        for (int i = 0; i < tracks.length; i++) {
-            tracks[i].findValues();
+        for (TrackInfo track : tracks) {
+            track.findValues();
         }
         selectionChanged();
         repaint();
@@ -246,15 +256,11 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
      * Update the flags for which keyframes are selected.
      */
     public void selectionChanged() {
-        int i, j;
+        SelectionInfo[] selection = score.getSelectedKeyframes();
+        for (TrackInfo info: tracks) {
+            Arrays.fill(info.selected, false);
 
-        for (i = 0; i < tracks.length; i++) {
-            TrackInfo info = tracks[i];
-            for (j = 0; j < info.selected.length; j++) {
-                info.selected[j] = false;
-            }
-            SelectionInfo[] selection = score.getSelectedKeyframes();
-            for (j = 0; j < selection.length; j++) {
+            for (int j = 0; j < selection.length; j++) {
                 if (selection[j].track == info.track) {
                     info.selected[selection[j].keyIndex] = true;
                 }
@@ -616,7 +622,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
     /**
      * Inner class which represents information about a particular track being shown on the graph.
      */
-    private class TrackInfo {
+    class TrackInfo {
 
         final Track track;
         String[] valueName;
