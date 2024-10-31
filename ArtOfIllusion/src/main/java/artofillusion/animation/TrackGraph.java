@@ -575,8 +575,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
         }
 
         // Draw the markers.
-        for (int i = 0; i < markers.size(); i++) {
-            Marker m = markers.get(i);
+        for (Marker m : markers) {
             g.setColor(m.color);
             x = (int) Math.round(hScale * (m.position - hStart));
             g.drawLine(x, 0, x, dim.height);
