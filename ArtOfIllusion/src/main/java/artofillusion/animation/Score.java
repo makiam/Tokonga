@@ -369,7 +369,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
             graphContainer.addEventLink(MouseScrolledEvent.class, this, "mouseScrolled");
         } else if (view == SINGLE_GRAPH_MODE || tr.length == 0) {
             FormContainer graphContainer = new FormContainer(new double[]{0.0, 1.0}, new double[]{0.0, 1.0});
-            TrackGraph gr = new TrackGraph(window, this, theAxis);
+            TrackGraph gr = new TrackGraph(window, this);
             gr.setSubdivisions(scene.getFramesPerSecond());
             gr.setStartTime(startTime);
             gr.setScale(timeScale);
@@ -392,7 +392,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
             FormContainer graphContainer = new FormContainer(new double[]{0.0, 1.0}, weight);
             graphContainer.add(theAxis, 1, 0, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(0, 0, 2, 0), null));
             for (int i = 0; i < tr.length; i++) {
-                TrackGraph gr = new TrackGraph(window, this, theAxis);
+                TrackGraph gr = new TrackGraph(window, this);
                 gr.setSubdivisions(scene.getFramesPerSecond());
                 gr.setStartTime(startTime);
                 gr.setScale(timeScale);

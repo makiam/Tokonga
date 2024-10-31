@@ -61,7 +61,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
     /**
      * Create a track graph for one or more quantities which can take on any value.
      */
-    public TrackGraph(LayoutWindow win, Score sc, TimeAxis ta) {
+    public TrackGraph(LayoutWindow win, Score sc) {
         window = win;
         score = sc;
         vertAxis = new VerticalAxis();
