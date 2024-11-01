@@ -47,7 +47,7 @@ class ObjectInfoTest {
     void testCreateNewObjectInfo() {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
         Assertions.assertNotNull(test);
-        Assertions.assertEquals(test.getName(), "Test");
+        Assertions.assertEquals("Test", test.getName());
         Assertions.assertEquals(-1, test.getId());
         Assertions.assertTrue(test.isVisible());
         Assertions.assertFalse(test.isLocked());
@@ -390,7 +390,7 @@ class ObjectInfoTest {
         ObjectInfo target = new ObjectInfo(new Sphere(1d, 1d, 1d), new CoordinateSystem(), "Target");
         target.copyInfo(source);
         Assertions.assertEquals(100, target.getId());
-        Assertions.assertEquals(target.getName(), "Source");
+        Assertions.assertEquals("Source", target.getName());
         Assertions.assertEquals(sourceGeometry, target.getObject());
         Assertions.assertEquals(sourceCoords, target.getCoords());
         Assertions.assertTrue(target.isLocked());
@@ -610,7 +610,7 @@ class ObjectInfoTest {
 
     /**
      * Test check that getDistortedObject without distortion returns unchanged object
-     * Distorted object is wrapperd with ObjectWrapper
+     * Distorted object is wrapped with ObjectWrapper
      */
     @Test
     @DisplayName("Test Get Distorted Object From Wrapper No Distortion")
@@ -689,8 +689,7 @@ class ObjectInfoTest {
     @DisplayName("Distortion Impl")
     private static class DistortionImpl extends Distortion {
 
-        public DistortionImpl() {
-        }
+
 
         @Override
         public boolean isIdenticalTo(Distortion d) {
