@@ -83,8 +83,8 @@ class ObjectInfoTest {
         test.addTrack(new RotationTrack(test), 1);
         Assertions.assertNotNull(test.getTracks());
         Assertions.assertEquals(2, test.getTracks().length);
-        Assertions.assertTrue(test.getTracks()[0] instanceof PositionTrack);
-        Assertions.assertTrue(test.getTracks()[1] instanceof RotationTrack);
+        Assertions.assertInstanceOf(PositionTrack.class, test.getTracks()[0]);
+        Assertions.assertInstanceOf(RotationTrack.class, test.getTracks()[1]);
     }
 
     /**
@@ -98,7 +98,7 @@ class ObjectInfoTest {
             test.addTrack(new PositionTrack(test), 5);
             Assertions.assertNotNull(test.getTracks());
             Assertions.assertEquals(1, test.getTracks().length);
-            Assertions.assertTrue(test.getTracks()[5] instanceof PositionTrack);
+            Assertions.assertInstanceOf(PositionTrack.class, test.getTracks()[5]);
         });
     }
 
@@ -114,7 +114,7 @@ class ObjectInfoTest {
             test.addTrack(new PositionTrack(test), 5);
             Assertions.assertNotNull(test.getTracks());
             Assertions.assertEquals(2, test.getTracks().length);
-            Assertions.assertTrue(test.getTracks()[5] instanceof PositionTrack);
+            Assertions.assertInstanceOf(PositionTrack.class, test.getTracks()[5]);
         });
     }
 
@@ -132,7 +132,7 @@ class ObjectInfoTest {
         test.removeTrack(pTrack);
         Assertions.assertNotNull(test.getTracks());
         Assertions.assertEquals(1, test.getTracks().length);
-        Assertions.assertTrue(test.getTracks()[0] instanceof RotationTrack);
+        Assertions.assertInstanceOf(RotationTrack.class, test.getTracks()[0]);
     }
 
     /**
@@ -149,7 +149,7 @@ class ObjectInfoTest {
         test.removeTrack(0);
         Assertions.assertNotNull(test.getTracks());
         Assertions.assertEquals(1, test.getTracks().length);
-        Assertions.assertTrue(test.getTracks()[0] instanceof RotationTrack);
+        Assertions.assertInstanceOf(RotationTrack.class, test.getTracks()[0]);
     }
 
     /**
@@ -166,7 +166,7 @@ class ObjectInfoTest {
         test.removeTrack(1);
         Assertions.assertNotNull(test.getTracks());
         Assertions.assertEquals(1, test.getTracks().length);
-        Assertions.assertTrue(test.getTracks()[0] instanceof PositionTrack);
+        Assertions.assertInstanceOf(PositionTrack.class, test.getTracks()[0]);
     }
 
     /**
@@ -202,7 +202,7 @@ class ObjectInfoTest {
         Assertions.assertTrue(duplicate.isLocked());
         Assertions.assertNotEquals(duplicate, source);
         Assertions.assertNotEquals(duplicate.getObject(), source.getObject());
-        Assertions.assertTrue(duplicate.getObject() instanceof Sphere);
+        Assertions.assertInstanceOf(Sphere.class, duplicate.getObject());
     }
 
     /**
@@ -224,7 +224,7 @@ class ObjectInfoTest {
         Assertions.assertTrue(duplicate.isLocked());
         Assertions.assertNotEquals(duplicate, source);
         Assertions.assertNotEquals(duplicate.getObject(), source.getObject());
-        Assertions.assertTrue(duplicate.getObject() instanceof Sphere);
+        Assertions.assertInstanceOf(Sphere.class, duplicate.getObject());
         Assertions.assertEquals(3, duplicate.getTracks().length);
         Assertions.assertEquals(duplicate, duplicate.getTracks()[0].getParent());
     }
@@ -248,8 +248,8 @@ class ObjectInfoTest {
         Assertions.assertEquals(duplicate.getObject(), test.getObject());
         Assertions.assertNotNull(duplicate.tracks);
         Assertions.assertEquals(2, duplicate.tracks.length);
-        Assertions.assertTrue(duplicate.tracks[0] instanceof PositionTrack);
-        Assertions.assertTrue(duplicate.tracks[1] instanceof RotationTrack);
+        Assertions.assertInstanceOf(PositionTrack.class, duplicate.tracks[0]);
+        Assertions.assertInstanceOf(RotationTrack.class, duplicate.tracks[1]);
         Assertions.assertEquals(duplicate, duplicate.getTracks()[0].getParent());
         Assertions.assertNull(duplicate.getDistortion());
     }
@@ -401,7 +401,9 @@ class ObjectInfoTest {
      * Test objectInfo copy data from other objectInfo and points to same geometry
      * Checks that source empty tracks overwrite existed one
      */
-    public void testCopyInfoWithEmptyTracksOverExisted() {
+    @Test
+    @DisplayName("Test Copy Info With Empty Source Tracks Over Existed")
+    void testCopyInfoWithEmptyTracksOverExisted() {
         ObjectInfo source = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Source");
         ObjectInfo target = new ObjectInfo(new Sphere(1d, 1d, 1d), new CoordinateSystem(), "Target");
         target.addTrack(new PositionTrack(target), 0);
@@ -426,7 +428,7 @@ class ObjectInfoTest {
         Assertions.assertNotNull(target.getTracks());
         Assertions.assertEquals(1, target.getTracks().length);
         Track testT = target.getTracks()[0];
-        Assertions.assertTrue(testT instanceof TextureTrack);
+        Assertions.assertInstanceOf(TextureTrack.class, testT);
         Assertions.assertEquals(target, target.getTracks()[0].getParent());
     }
 
@@ -443,7 +445,7 @@ class ObjectInfoTest {
         ObjectInfo target = new ObjectInfo(new Sphere(1d, 1d, 1d), new CoordinateSystem(), "Target");
         target.copyInfo(source);
         Assertions.assertNotNull(target.getDistortion());
-        Assertions.assertTrue(target.getDistortion() instanceof DistortionImpl);
+        Assertions.assertInstanceOf(DistortionImpl.class, target.getDistortion());
     }
 
     /**
@@ -630,7 +632,7 @@ class ObjectInfoTest {
             Object3D cube = new Cube(1d, 1d, 1d);
             ObjectInfo test = new ObjectInfo(cube, new CoordinateSystem(), "Test");
             Assertions.assertNotNull(test.getRenderingMesh(0.1d));
-            Assertions.assertTrue(test.getRenderingMesh(0.1d) instanceof RenderingMesh);
+            Assertions.assertInstanceOf(RenderingMesh.class, test.getRenderingMesh(0.1d));
         });
     }
 
@@ -643,7 +645,7 @@ class ObjectInfoTest {
         TextureMapping map = tex.getDefaultMapping(cube);
         test.setTexture(tex, map);
         Assertions.assertNotNull(test.getRenderingMesh(0.1d));
-        Assertions.assertTrue(test.getRenderingMesh(0.1d) instanceof RenderingMesh);
+        Assertions.assertInstanceOf(RenderingMesh.class, test.getRenderingMesh(0.1d));
     }
 
     @Test
