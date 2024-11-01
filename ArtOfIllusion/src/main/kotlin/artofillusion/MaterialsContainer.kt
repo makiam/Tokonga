@@ -38,6 +38,8 @@ internal interface MaterialsContainer {
      */
     fun addMaterial(material: Material, index: Int) = add(material, index)
 
+    fun removeMaterial(index: Int)
+
     /**
      * Get the number of materials in this scene.
      */
@@ -72,6 +74,21 @@ internal interface MaterialsContainer {
             scene._materials.add(index, material)
             EventBus.getDefault().post(MaterialAddedEvent(scene, material, index))
         }
+
+        override fun getName() = "Add Material"
+    }
+
+    class RemoveMaterialAction(val scene: Scene, val index: Int): UndoableEdit {
+
+        override fun undo() {
+            TODO("Not yet implemented")
+        }
+
+        override fun redo() {
+
+        }
+
+        override fun getName() = "Remove Material"
     }
 
 }
