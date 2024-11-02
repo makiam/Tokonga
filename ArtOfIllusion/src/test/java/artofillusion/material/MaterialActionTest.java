@@ -57,4 +57,27 @@ public class MaterialActionTest {
         Assertions.assertNull(so.getGeometry().getMaterial());
         Assertions.assertNull(so.getGeometry().getMaterialMapping());
     }
+
+    @Test
+    @DisplayName("Test Remove Material not added to scene")
+    void testRemoveUnexistedMaterial() {
+        Material mat = new UniformMaterial();
+        scene.removeMaterial(mat);
+        Assertions.assertEquals(0, scene.getNumMaterials());
+    }
+
+    @Test
+    @DisplayName("Test Remove Material not added to scene")
+    void testRemoveUnexistedMaterialByIndex() {
+        Material mat = new UniformMaterial();
+        scene.removeMaterial(0);
+        Assertions.assertEquals(0, scene.getNumMaterials());
+    }
+
+    @Test
+    @DisplayName("Test get Material not added to scene")
+    void testGetNotExistedMaterial() {
+        Material mat = new UniformMaterial();
+        scene.getMaterial(0);
+    }
 }
