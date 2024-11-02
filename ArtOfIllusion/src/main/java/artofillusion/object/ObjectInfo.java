@@ -561,4 +561,12 @@ public class ObjectInfo {
     public Track[] getTracks() {
         return tracks;
     }
+
+    /**
+     * Alias method to getObject(). Implemented for compatibility with Kotlin as 'object' is reserved word there
+     * @return Object3D
+     */
+    public Object3D getGeometry() {
+        return getObject();
+    }
 }

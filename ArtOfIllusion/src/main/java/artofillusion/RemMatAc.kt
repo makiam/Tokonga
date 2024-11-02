@@ -18,20 +18,21 @@ class RemMatAc : UndoableEdit {
         this.scene = scene
         this.material = material
         this.which = scene._materials.indexOf(material)
+        scene.objects.filter { it.geometry.material == material }.forEach { matMap.put(it, it.geometry.materialMapping) }
     }
 
     internal constructor(scene: Scene, which: Int) {
         this.scene = scene
         this.which = which
         this.material = scene._materials[which]
+        scene.objects.filter { it.geometry.material == material }.forEach { matMap.put(it, it.geometry.materialMapping) }
     }
 
     override fun undo() {
     }
 
     override fun redo() {
-        val applied = scene.objects.filter { it -> it.getObject().material == material }
-        log.info("Filtered: {}", applied.size)
+        log.info("Found mapped objects: {}", matMap.size)
         scene.removeMaterial(which)
     }
 
