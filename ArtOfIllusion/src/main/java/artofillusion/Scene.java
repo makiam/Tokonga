@@ -602,7 +602,6 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
     /**
      * Remove a Material from the scene.
      */
-    @Override
     public void removeMaterial(int which) {
         Material mat = _materials.remove(which);
         materialListeners.forEach(listener -> listener.itemRemoved(which, mat));

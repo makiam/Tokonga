@@ -11,6 +11,8 @@
 package artofillusion
 
 import artofillusion.material.Material
+import artofillusion.material.MaterialMapping
+import artofillusion.`object`.ObjectInfo
 import java.util.Collections
 import org.greenrobot.eventbus.EventBus
 
@@ -38,7 +40,15 @@ internal interface MaterialsContainer {
      */
     fun addMaterial(material: Material, index: Int) = add(material, index)
 
-    fun removeMaterial(index: Int)
+    fun removeMaterial(material: Material) {
+        val which: Int = (this as Scene)._materials.indexOf(material)
+        val action = RemoveMaterialAction(this as Scene, which).execute()
+    }
+
+//    fun removeMaterial(index: Int) {
+//        val material = (this as Scene)._materials[index]
+//        removeMaterial(material)
+//    }
 
     /**
      * Get the number of materials in this scene.
@@ -78,7 +88,25 @@ internal interface MaterialsContainer {
         override fun getName() = "Add Material"
     }
 
-    class RemoveMaterialAction(val scene: Scene, val index: Int): UndoableEdit {
+    class RemoveMaterialAction : UndoableEdit {
+
+        private val which: Int
+        private val scene: Scene
+
+        private val matMap: MutableMap<ObjectInfo?, MaterialMapping?> = HashMap<ObjectInfo?, MaterialMapping?>()
+        private val material: Material
+
+        internal constructor(scene: Scene, material: Material) {
+            this.scene = scene
+            this.material = material
+            this.which = scene._materials.indexOf(material)
+        }
+
+        internal constructor(scene: Scene, which: Int) {
+            this.scene = scene
+            this.which = which
+            this.material = scene._materials[which]
+        }
 
         override fun undo() {
             TODO("Not yet implemented")
