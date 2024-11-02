@@ -1,6 +1,6 @@
 package artofillusion.material;
 
-import artofillusion.RemMatAc;
+
 import artofillusion.Scene;
 
 import artofillusion.math.CoordinateSystem;
@@ -35,7 +35,7 @@ public class MaterialActionTest {
         Material mat = new UniformMaterial();
         scene.addMaterial(mat);
 
-        scene.removeMaterial(mat);
+        scene.removeMaterial(0);
 
         Assertions.assertEquals(0, scene.getNumMaterials());
     }
@@ -51,7 +51,7 @@ public class MaterialActionTest {
         scene.addObject(so, null);
         so.setMaterial(mat, mat.getDefaultMapping(so.getObject()));
 
-        scene.removeMaterial(mat);
+        scene.removeMaterial(0);
 
         Assertions.assertEquals(0, scene.getNumMaterials());
         Assertions.assertNull(so.getGeometry().getMaterial());
@@ -62,7 +62,7 @@ public class MaterialActionTest {
     @DisplayName("Test Remove Material not added to scene")
     void testRemoveUnexistedMaterial() {
         Material mat = new UniformMaterial();
-        scene.removeMaterial(mat);
+        scene.removeMaterial(0);
         Assertions.assertEquals(0, scene.getNumMaterials());
     }
 
@@ -74,10 +74,4 @@ public class MaterialActionTest {
         Assertions.assertEquals(0, scene.getNumMaterials());
     }
 
-    @Test
-    @DisplayName("Test get Material not added to scene")
-    void testGetNotExistedMaterial() {
-        Material mat = new UniformMaterial();
-        scene.getMaterial(0);
-    }
 }

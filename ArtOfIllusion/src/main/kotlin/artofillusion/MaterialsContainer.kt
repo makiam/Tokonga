@@ -42,12 +42,10 @@ internal interface MaterialsContainer {
      */
     fun addMaterial(material: Material, index: Int) = add(material, index)
 
-    fun removeMaterial(material: Material) {
-        val action = RemoveMaterialAction(this as Scene, material).execute()
-    }
-
     fun removeMaterial(index: Int) {
-        val action = RemoveMaterialAction(this as Scene, index).execute()
+        if(index in (this as Scene)._materials.indices) {
+            val action = RemoveMaterialAction(this as Scene, index).execute()
+        }
     }
 
     /**
@@ -64,7 +62,7 @@ internal interface MaterialsContainer {
     /**
      * Get the material by index.
      */
-    fun getMaterial(index: Int): Material? = (this as Scene)._materials[index]
+    fun getMaterial(index: Int): Material? = (this as Scene)._materials.getOrNull(index)
 
     /**
      * Get the index of the specified material.
@@ -88,25 +86,11 @@ internal interface MaterialsContainer {
         override fun getName() = "Add Material"
     }
 
-    class RemoveMaterialAction : UndoableEdit {
-
-        private val which: Int
-        private val scene: Scene
-
+    class RemoveMaterialAction(val scene: Scene, val index: Int) : UndoableEdit {
         private val matMap: MutableMap<ObjectInfo?, MaterialMapping?> = HashMap<ObjectInfo?, MaterialMapping?>()
-        private val material: Material
+        private val material: Material = scene._materials[index]
 
-        internal constructor(scene: Scene, material: Material) {
-            this.scene = scene
-            this.material = material
-            this.which = scene._materials.indexOf(material)
-            scene.objects.filter { it.geometry.material == material }.forEach { matMap.put(it, it.geometry.materialMapping) }
-        }
-
-        internal constructor(scene: Scene, which: Int) {
-            this.scene = scene
-            this.which = which
-            this.material = scene._materials[which]
+        init {
             scene.objects.filter { it.geometry.material == material }.forEach { matMap.put(it, it.geometry.materialMapping) }
         }
 
@@ -117,7 +101,8 @@ internal interface MaterialsContainer {
         override fun redo() {
             scene._materials.remove(material)
             this.matMap.keys.forEach { it?.setMaterial(null, null) }
-            EventBus.getDefault().post(MaterialRemovedEvent(scene, material, which))
+
+            EventBus.getDefault().post(MaterialRemovedEvent(scene, material, index))
         }
 
         override fun getName() = "Remove Material"
