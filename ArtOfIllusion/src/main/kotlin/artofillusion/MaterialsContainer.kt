@@ -15,6 +15,8 @@ import artofillusion.material.MaterialMapping
 import artofillusion.`object`.ObjectInfo
 import java.util.Collections
 import org.greenrobot.eventbus.EventBus
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 internal interface MaterialsContainer {
 
@@ -41,14 +43,12 @@ internal interface MaterialsContainer {
     fun addMaterial(material: Material, index: Int) = add(material, index)
 
     fun removeMaterial(material: Material) {
-        val which: Int = (this as Scene)._materials.indexOf(material)
-        val action = RemoveMaterialAction(this as Scene, which).execute()
+        val action = RemoveMaterialAction(this as Scene, material).execute()
     }
 
-//    fun removeMaterial(index: Int) {
-//        val material = (this as Scene)._materials[index]
-//        removeMaterial(material)
-//    }
+    fun removeMaterial(index: Int) {
+        val action = RemoveMaterialAction(this as Scene, index).execute()
+    }
 
     /**
      * Get the number of materials in this scene.
@@ -100,12 +100,14 @@ internal interface MaterialsContainer {
             this.scene = scene
             this.material = material
             this.which = scene._materials.indexOf(material)
+            scene.objects.filter { it.geometry.material == material }.forEach { matMap.put(it, it.geometry.materialMapping) }
         }
 
         internal constructor(scene: Scene, which: Int) {
             this.scene = scene
             this.which = which
             this.material = scene._materials[which]
+            scene.objects.filter { it.geometry.material == material }.forEach { matMap.put(it, it.geometry.materialMapping) }
         }
 
         override fun undo() {
@@ -113,10 +115,16 @@ internal interface MaterialsContainer {
         }
 
         override fun redo() {
-
+            scene._materials.remove(material)
+            this.matMap.keys.forEach { it?.setMaterial(null, null) }
+            EventBus.getDefault().post(MaterialRemovedEvent(scene, material, which))
         }
 
         override fun getName() = "Remove Material"
+
+        companion object  {
+            private val log: Logger = LoggerFactory.getLogger(RemoveMaterialAction::class.java)
+        }
     }
 
 }

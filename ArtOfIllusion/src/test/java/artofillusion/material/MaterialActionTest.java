@@ -2,7 +2,7 @@ package artofillusion.material;
 
 import artofillusion.RemMatAc;
 import artofillusion.Scene;
-import artofillusion.UndoRecord;
+
 import artofillusion.math.CoordinateSystem;
 import artofillusion.object.Cube;
 import artofillusion.object.ObjectInfo;
@@ -24,8 +24,7 @@ public class MaterialActionTest {
         Material mat = new UniformMaterial();
         scene.addMaterial(mat);
 
-        RemMatAc action = new RemMatAc(scene, mat);
-        action.execute();
+        scene.removeMaterial(0);
 
         Assertions.assertEquals(0, scene.getNumMaterials());
     }
@@ -36,8 +35,7 @@ public class MaterialActionTest {
         Material mat = new UniformMaterial();
         scene.addMaterial(mat);
 
-        RemMatAc action = new RemMatAc(scene, 0);
-        action.execute();
+        scene.removeMaterial(mat);
 
         Assertions.assertEquals(0, scene.getNumMaterials());
     }
@@ -53,8 +51,8 @@ public class MaterialActionTest {
         scene.addObject(so, null);
         so.setMaterial(mat, mat.getDefaultMapping(so.getObject()));
 
-        RemMatAc action = new RemMatAc(scene, mat);
-        action.execute();
+        scene.removeMaterial(mat);
+
         Assertions.assertEquals(0, scene.getNumMaterials());
         Assertions.assertNull(so.getGeometry().getMaterial());
         Assertions.assertNull(so.getGeometry().getMaterialMapping());
