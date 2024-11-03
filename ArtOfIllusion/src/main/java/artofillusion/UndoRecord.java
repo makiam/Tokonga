@@ -248,7 +248,7 @@ public class UndoRecord {
                 case SET_TRACK_LIST: {
                     ObjectInfo info = (ObjectInfo) d[0];
                     redoRecord.addCommandAtBeginning(SET_TRACK_LIST, info, info.getTracks());
-                    info.tracks = (Track[]) d[1];
+                    info.setTracks((Track[]) d[1]);
                     break;
                 }
                 case COPY_TRACK: {

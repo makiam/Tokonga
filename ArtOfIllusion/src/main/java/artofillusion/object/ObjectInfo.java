@@ -67,7 +67,8 @@ public class ObjectInfo {
 
     private final List<ObjectInfo> children = new ArrayList<>();
 
-    public Track[] tracks;
+    private List<Track> tracks = new ArrayList<>();
+
     public Keyframe pose;
     public int id;
     private boolean locked;
@@ -107,21 +108,18 @@ public class ObjectInfo {
      * Create a new ObjectInfo which is identical to this one, but references a new Object3D.
      */
     public ObjectInfo duplicate(Object3D obj) {
-        ObjectInfo info = new ObjectInfo(obj, getCoords().duplicate(), getName());
+        ObjectInfo target = new ObjectInfo(obj, getCoords().duplicate(), getName());
 
-        info.setVisible(isVisible());
-        info.setLocked(isLocked());
-        info.setId(id);
-        if (getTracks() != null) {
-            info.tracks = new Track[getTracks().length];
-            for (int i = 0; i < getTracks().length; i++) {
-                info.getTracks()[i] = getTracks()[i].duplicate(info);
-            }
-        }
+        target.setVisible(isVisible());
+        target.setLocked(isLocked());
+        target.setId(id);
+        target.tracks.clear();
+        tracks.forEach(track -> target.tracks.add(track.duplicate(target)));
+
         if (distortion != null) {
-            info.distortion = distortion.duplicate();
+            target.distortion = distortion.duplicate();
         }
-        return info;
+        return target;
     }
 
     /**
@@ -159,33 +157,28 @@ public class ObjectInfo {
      * Make this ObjectInfo identical to another one. Both ObjectInfos will reference the
      * same Object3D object, but all other fields will be cloned.
      */
-    public void copyInfo(ObjectInfo info) {
-        setObject(info.getObject());
-        getCoords().copyCoords(info.getCoords());
-        setName(info.name);
-        setVisible(info.visible);
-        setLocked(info.locked);
-        setId(info.id);
-        cachedMesh = info.cachedMesh;
-        cachedWire = info.cachedWire;
-        cachedBounds = info.cachedBounds;
-        if (info.getTracks() == null) {
-            tracks = null;
-        } else {
-            tracks = new Track[info.getTracks().length];
-            for (int i = 0; i < getTracks().length; i++) {
-                getTracks()[i] = info.getTracks()[i].duplicate(this);
-            }
-        }
-        if (info.distortion == null) {
+    public void copyInfo(ObjectInfo source) {
+        setObject(source.getObject());
+        getCoords().copyCoords(source.getCoords());
+        setName(source.name);
+        setVisible(source.visible);
+        setLocked(source.locked);
+        setId(source.id);
+        cachedMesh = source.cachedMesh;
+        cachedWire = source.cachedWire;
+        cachedBounds = source.cachedBounds;
+        tracks.clear();
+        source.tracks.forEach(track -> tracks.add(track.duplicate(this)));
+
+        if (source.distortion == null) {
             distortion = null;
         } else {
-            distortion = info.distortion.duplicate();
+            distortion = source.distortion.duplicate();
         }
-        if (info.prevDistortion == null) {
+        if (source.prevDistortion == null) {
             prevDistortion = null;
         } else {
-            prevDistortion = info.prevDistortion.duplicate();
+            prevDistortion = source.prevDistortion.duplicate();
         }
     }
 
@@ -214,52 +207,33 @@ public class ObjectInfo {
     }
 
     /**
-     * Add a track to this object.
+     * Add a track to this object to given position.
      */
     public void addTrack(Track tr, int position) {
-        if (getTracks() == null) {
-            tracks = new Track[]{tr};
-            return;
-        }
-        Track[] newTracks = new Track[getTracks().length + 1];
-        int i;
+        tracks.add(position, tr);
+    }
 
-        for (i = 0; i < position; i++) {
-            newTracks[i] = getTracks()[i];
-        }
-        newTracks[position] = tr;
-        for (; i < getTracks().length; i++) {
-            newTracks[i + 1] = getTracks()[i];
-        }
-        tracks = newTracks;
+    /**
+     * Add a track to this object.
+     */
+    public void addTrack(Track tr) {
+        tracks.add(tr);
     }
 
     /**
      * Remove a track from this object.
      */
     public void removeTrack(Track tr) {
-        for (int i = 0; i < getTracks().length; i++) {
-            if (getTracks()[i] == tr) {
-                removeTrack(i);
-                return;
-            }
-        }
+        var index = tracks.indexOf(tr);
+        if(index == -1) return;;
+        removeTrack(index);
     }
 
     /**
      * Remove a track from this object.
      */
     public void removeTrack(int which) {
-        Track[] newTracks = new Track[getTracks().length - 1];
-        int i;
-
-        for (i = 0; i < which; i++) {
-            newTracks[i] = getTracks()[i];
-        }
-        for (i++; i < getTracks().length; i++) {
-            newTracks[i - 1] = getTracks()[i];
-        }
-        tracks = newTracks;
+        tracks.remove(which);
     }
 
     /**
@@ -268,17 +242,7 @@ public class ObjectInfo {
     public void setTexture(Texture tex, TextureMapping map) {
         getObject().setTexture(tex, map);
         clearCachedMeshes();
-
-        
-        if (getTracks() == null) return;
-        
-        // Update any texture tracks.
-        for (Track track: getTracks()) {
-            if (track instanceof TextureTrack) {
-                ((TextureTrack) track).parametersChanged();
-            }
-        }
-
+        tracks.stream().filter(t -> t instanceof TextureTrack).forEach(t -> ((TextureTrack) t).parametersChanged());
     }
 
     /**
@@ -539,13 +503,18 @@ public class ObjectInfo {
      * Get the list of Tracks for this object.
      */
     public Track[] getTracks() {
-        return tracks;
+        return tracks.toArray(Track[]::new);
     }
 
     public void setChildren(ObjectInfo[] newObj) {
         children.clear();
         children.addAll(Arrays.asList(newObj));
         children.forEach(info -> info.setParent(this));
+    }
+
+    public void setTracks(Track[] tracks) {
+        this.tracks.clear();
+        this.tracks.addAll(Arrays.asList(tracks));
     }
 
     /**

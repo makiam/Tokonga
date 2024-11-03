@@ -55,7 +55,7 @@ class ObjectInfoTest {
         Assertions.assertNull(test.getParent());
         Assertions.assertNotNull(test.getChildren());
         Assertions.assertEquals(0, test.getChildren().length);
-        Assertions.assertNull(test.getTracks());
+        Assertions.assertEquals(0,(test.getTracks().length));
         Assertions.assertNull(test.getDistortion());
     }
 
@@ -93,12 +93,9 @@ class ObjectInfoTest {
     @Test
     @DisplayName("Test Add Track To Given Error Pos")
     void testAddTrackToGivenErrorPos() {
-        assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-            ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
+        ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
             test.addTrack(new PositionTrack(test), 5);
-            Assertions.assertNotNull(test.getTracks());
-            Assertions.assertEquals(1, test.getTracks().length);
-            Assertions.assertInstanceOf(PositionTrack.class, test.getTracks()[5]);
         });
     }
 
@@ -107,14 +104,21 @@ class ObjectInfoTest {
      */
     @Test
     @DisplayName("Test Add Track To Given Pos In Exist List")
-    void testAddTrackToGivenPosInExistList() {
-        assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-            ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
-            test.addTrack(new RotationTrack(test), 1);
+    void testAddTrackToGivenPosInExistList0() {
+        ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
+        test.addTrack(new RotationTrack(test), 0);
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
             test.addTrack(new PositionTrack(test), 5);
-            Assertions.assertNotNull(test.getTracks());
-            Assertions.assertEquals(2, test.getTracks().length);
-            Assertions.assertInstanceOf(PositionTrack.class, test.getTracks()[5]);
+        });
+    }
+
+    @Test
+    @DisplayName("Test Add Track To Given Pos In Exist List")
+    void testAddTrackToGivenPosInExistList1() {
+        ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
+        test.addTrack(new RotationTrack(test));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
+            test.addTrack(new PositionTrack(test), 5);
         });
     }
 
@@ -246,10 +250,10 @@ class ObjectInfoTest {
         Assertions.assertTrue(duplicate.isLocked());
         Assertions.assertNotEquals(duplicate, test);
         Assertions.assertEquals(duplicate.getObject(), test.getObject());
-        Assertions.assertNotNull(duplicate.tracks);
-        Assertions.assertEquals(2, duplicate.tracks.length);
-        Assertions.assertInstanceOf(PositionTrack.class, duplicate.tracks[0]);
-        Assertions.assertInstanceOf(RotationTrack.class, duplicate.tracks[1]);
+
+        Assertions.assertEquals(2, duplicate.getTracks().length);
+        Assertions.assertInstanceOf(PositionTrack.class, duplicate.getTracks()[0]);
+        Assertions.assertInstanceOf(RotationTrack.class, duplicate.getTracks()[1]);
         Assertions.assertEquals(duplicate, duplicate.getTracks()[0].getParent());
         Assertions.assertNull(duplicate.getDistortion());
     }
@@ -409,7 +413,7 @@ class ObjectInfoTest {
         target.addTrack(new PositionTrack(target), 0);
         target.addTrack(new RotationTrack(target), 1);
         target.copyInfo(source);
-        Assertions.assertNull(target.getTracks());
+        Assertions.assertEquals(0, target.getTracks().length);
     }
 
     /**
@@ -628,11 +632,10 @@ class ObjectInfoTest {
     @Test
     @DisplayName("Test Get Rendering Mesh With Unset Texture")
     void testGetRenderingMeshWithUnsetTexture() {
+        Object3D cube = new Cube(1d, 1d, 1d);
+        ObjectInfo test = new ObjectInfo(cube, new CoordinateSystem(), "Test");
         assertThrows(NullPointerException.class, () -> {
-            Object3D cube = new Cube(1d, 1d, 1d);
-            ObjectInfo test = new ObjectInfo(cube, new CoordinateSystem(), "Test");
-            Assertions.assertNotNull(test.getRenderingMesh(0.1d));
-            Assertions.assertInstanceOf(RenderingMesh.class, test.getRenderingMesh(0.1d));
+            var rm = test.getRenderingMesh(0.1d);
         });
     }
 
