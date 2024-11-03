@@ -94,9 +94,7 @@ class ObjectInfoTest {
     @DisplayName("Test Add Track To Given Error Pos")
     void testAddTrackToGivenErrorPos() {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
-        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
-            test.addTrack(new PositionTrack(test), 5);
-        });
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> test.addTrack(new PositionTrack(test), 5));
     }
 
     /**
@@ -107,9 +105,7 @@ class ObjectInfoTest {
     void testAddTrackToGivenPosInExistList0() {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
         test.addTrack(new RotationTrack(test), 0);
-        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
-            test.addTrack(new PositionTrack(test), 5);
-        });
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> test.addTrack(new PositionTrack(test), 5));
     }
 
     @Test
@@ -672,7 +668,6 @@ class ObjectInfoTest {
         Assertions.assertEquals(2, result[1].getTracks().length);
     }
 
-    @DisplayName("Texture Track Impl")
     private static class TextureTrackImpl extends TextureTrack {
 
         private int parameterChangedEventFireCount = 0;
@@ -691,7 +686,6 @@ class ObjectInfoTest {
         }
     }
 
-    @DisplayName("Distortion Impl")
     private static class DistortionImpl extends Distortion {
 
 
@@ -713,7 +707,7 @@ class ObjectInfoTest {
         }
     }
 
-    @DisplayName("Object Wrapper Impl")
+
     private static class ObjectWrapperImpl extends ObjectWrapper {
 
         public ObjectWrapperImpl(Object3D target) {
