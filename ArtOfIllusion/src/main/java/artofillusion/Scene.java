@@ -532,17 +532,18 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * appropriate commands will be added to it to undo this operation.
      */
     public void addObject(ObjectInfo info, int index, UndoRecord undo) {
+        Object3D geo = info.getObject();
         info.setId(nextID++);
         if (info.getTracks() == null) {
             info.addTrack(new PositionTrack(info), 0);
             info.addTrack(new RotationTrack(info), 1);
         }
-        if (info.getObject().canSetTexture() && info.getObject().getTextureMapping() == null) {
-            info.setTexture(getDefaultTexture(),
-                    getDefaultTexture().getDefaultMapping(info.getObject()));
+        if (geo.canSetTexture() && geo.getTextureMapping() == null) {
+            Texture def = getDefaultTexture();
+            info.setTexture(def, def.getDefaultMapping(info.getObject()));
         }
 
-        info.getObject().sceneChanged(info, this);
+        geo.sceneChanged(info, this);
         objects.add(index, info);
         objectIndexMap = null;
 

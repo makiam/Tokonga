@@ -201,12 +201,9 @@ public class ObjectInfo {
      * Remove a child from this object.
      */
     public void removeChild(ObjectInfo info) {
-        for (int i = 0; i < getChildren().length; i++) {
-            if (getChildren()[i] == info) {
-                removeChild(i);
-                return;
-            }
-        }
+        var index = children.indexOf(info);
+        if(index == -1) return;
+        removeChild(index);
     }
 
     /**
