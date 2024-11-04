@@ -50,7 +50,7 @@ class BevelPropertiesDialog extends BDialog {
             borderContainer1 = (BorderContainer) decoder.getRootObject();
             BLabel areaLimit = (BLabel) decoder.getObject("areaLimit");
             areaLimit.setText(Translate.text("polymesh:" + areaLimit.getText()));
-            areaLimitFieldVF = new PMValueField(PolyMesh.edgeLengthLimit, ValueField.NONE);
+            areaLimitFieldVF = new PMValueField(PolyMesh.getEdgeLengthLimit(), ValueField.NONE);
             areaLimitFieldVF.setTextField((BTextField) decoder.getObject("areaLimitField"));
             applyCB = ((BCheckBox) decoder.getObject("applyCB"));
             applyCB.setText(Translate.text("polymesh:" + applyCB.getText()));

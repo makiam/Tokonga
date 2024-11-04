@@ -2934,6 +2934,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Bevel properties settings
      */
     private void doBevelProperties(ActionEvent event) {
+
+        SwingUtilities.invokeLater(() -> new BevelProperties(this.getComponent()).setVisible(true));
         new BevelPropertiesDialog(this).setVisible(true);
     }
 

@@ -65,6 +65,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.prefs.Preferences;
+
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -211,7 +214,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
     /**
      * Area under which faces are collapsed if applyEdgeLengthLimit is selected
      */
-    public static double edgeLengthLimit = 5e-3;
+    @Getter @Setter
+    public static Double edgeLengthLimit = 5e-3;
 
     /**
      * If true, faces under a certain size are collapsed.
