@@ -323,15 +323,12 @@ public class PluginRegistry {
         return new ArrayList<>(resourcesForType.values());
     }
 
+    private static final Map<String, PluginResource> EMPTY = Collections.EMPTY_MAP;
     /**
      * Get the PluginResource with a particular type and id, or null if there is no such resource.
      */
     public static PluginResource getResource(String type, String id) {
-        Map<String, PluginResource> resourcesForType = resources.get(type);
-        if (resourcesForType == null) {
-            return null;
-        }
-        return resourcesForType.get(id);
+        return resources.getOrDefault(type, EMPTY).get(id);
     }
 
     /**

@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2008 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -16,6 +16,7 @@ import artofillusion.ui.*;
 import static artofillusion.ui.UIUtilities.*;
 import buoy.event.*;
 import buoy.widget.*;
+
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -26,24 +27,30 @@ import java.util.List;
 public class TrackGraph extends CustomWidget implements TrackDisplay {
 
     private final LayoutWindow window;
-    private double hscale;
-    private double vscale;
-    private double hstart;
-    private double vstart;
+    private double hScale;
+    private double vScale;
+    private double hStart;
+    private double vStart;
     private double[] dragKeyTime;
     private double[][] dragKeyValue;
     private int subdivisions, mode, oldHeight, effectiveMode;
-    private final Score theScore;
+    private final Score score;
     private final VerticalAxis vertAxis;
     private Point lastPos, dragPos;
     private Rectangle lastBounds;
     private boolean draggingBox, lineAtBottom;
     private final List<Marker> markers;
+
     private TrackInfo[] tracks;
+    @org.jetbrains.annotations.TestOnly
+    TrackInfo[] getTracks() {
+        return tracks;
+    }
+
+
     private UndoRecord undo;
 
     public static final int HANDLE_SIZE = 5;
-    public static final int TICK_SIZE = 6;
     public static final Color[] LINE_COLOR;
     public static final Color[] LIGHT_LINE_COLOR;
     public static final Color SELECTED_VALUE_COLOR;
@@ -62,12 +69,12 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
     /**
      * Create a track graph for one or more quantities which can take on any value.
      */
-    public TrackGraph(LayoutWindow win, Score sc, TimeAxis ta) {
+    public TrackGraph(LayoutWindow win, Score sc) {
         window = win;
-        theScore = sc;
+        score = sc;
         vertAxis = new VerticalAxis();
-        hstart = win.getScore().getStartTime();
-        hscale = win.getScore().getScale();
+        hStart = score.getStartTime();
+        hScale = score.getScale();
         subdivisions = win.getScene().getFramesPerSecond();
         setBackground(Color.white);
         setPreferredSize(new Dimension(200, 100));
@@ -85,13 +92,13 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
      */
     private void sizeChanged() {
         lastBounds = getBounds();
-        if (vscale <= 0.0) {
+        if (vScale <= 0.0) {
             setDefaultGraphRange(false);
         } else {
             if (oldHeight <= 0 || lastBounds.height <= 0) {
                 return;
             }
-            vscale *= lastBounds.height / (float) oldHeight;
+            vScale *= lastBounds.height / (float) oldHeight;
             oldHeight = lastBounds.height;
         }
     }
@@ -101,7 +108,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
      */
     @Override
     public void setStartTime(double time) {
-        hstart = time;
+        hStart = time;
     }
 
     /**
@@ -109,7 +116,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
      */
     @Override
     public void setScale(double s) {
-        hscale = s;
+        hScale = s;
     }
 
     /**
@@ -169,24 +176,17 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
     }
 
     /**
-     * Set whether a line should be draw along the bottom edge.
-     */
-    public void showLineAtBottom(boolean show) {
-        lineAtBottom = show;
-    }
-
-    /**
      * Select the default range for the graph.
      */
     private void setDefaultGraphRange(boolean largerOnly) {
         Rectangle dim = getBounds();
-        double oldmin = vstart;
-        double oldmax = vstart + dim.height / vscale;
+        double oldMin = vStart;
+        double oldMax = vStart + dim.height / vScale;
 
         // Find the range of values.
-        double min = Double.MAX_VALUE, max = -Double.MAX_VALUE;
-        for (int which = 0; which < tracks.length; which++) {
-            TrackInfo info = tracks[which];
+        double min = Double.MAX_VALUE;
+        double max = -Double.MAX_VALUE;
+        for (TrackInfo info: tracks) {
             for (int i = 0; i < info.keyValue.length; i++) {
                 for (int j = 0; j < info.keyValue[i].length; j++) {
                     if (!info.disabled[j]) {
@@ -227,14 +227,14 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
         double extra = 0.05 * (max - min);
         min -= extra;
         max += extra;
-        if (largerOnly && min > oldmin) {
-            min = oldmin;
+        if (largerOnly && min > oldMin) {
+            min = oldMin;
         }
-        if (largerOnly && max < oldmax) {
-            max = oldmax;
+        if (largerOnly && max < oldMax) {
+            max = oldMax;
         }
-        vstart = min;
-        vscale = dim.height / (max - min);
+        vStart = min;
+        vScale = dim.height / (max - min);
         vertAxis.setGraphRange(min, max);
         oldHeight = dim.height;
     }
@@ -243,8 +243,8 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
      * This should be called whenever a track is modified, to update the display.
      */
     public void tracksModified() {
-        for (int i = 0; i < tracks.length; i++) {
-            tracks[i].findValues();
+        for (TrackInfo track : tracks) {
+            track.findValues();
         }
         selectionChanged();
         repaint();
@@ -254,17 +254,13 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
      * Update the flags for which keyframes are selected.
      */
     public void selectionChanged() {
-        int i, j;
+        SelectionInfo[] selection = score.getSelectedKeyframes();
+        for (TrackInfo info: tracks) {
+            Arrays.fill(info.selected, false);
 
-        for (i = 0; i < tracks.length; i++) {
-            TrackInfo info = tracks[i];
-            for (j = 0; j < info.selected.length; j++) {
-                info.selected[j] = false;
-            }
-            SelectionInfo[] selection = theScore.getSelectedKeyframes();
-            for (j = 0; j < selection.length; j++) {
-                if (selection[j].track == info.track) {
-                    info.selected[selection[j].keyIndex] = true;
+            for (SelectionInfo selectionInfo : selection) {
+                if (selectionInfo.track == info.track) {
+                    info.selected[selectionInfo.keyIndex] = true;
                 }
             }
         }
@@ -274,7 +270,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
      * Record the times and values of any selected keyframes.
      */
     private void findInitialKeyValues() {
-        SelectionInfo[] sel = theScore.getSelectedKeyframes();
+        SelectionInfo[] sel = score.getSelectedKeyframes();
         dragKeyTime = new double[sel.length];
         dragKeyValue = new double[sel.length][];
         for (int i = 0; i < sel.length; i++) {
@@ -298,49 +294,49 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
 
         // Determine whether the click was on a handle.
         Rectangle dim = getBounds();
-        for (int i = 0; i < tracks.length; i++) {
-            for (int j = 0; j < tracks[i].keyValue.length; j++) {
-                int x = (int) Math.round(hscale * (tracks[i].keyTime[j] - hstart));
+        for (TrackInfo track : tracks) {
+            for (int j = 0; j < track.keyValue.length; j++) {
+                int x = (int) Math.round(hScale * (track.keyTime[j] - hStart));
                 if (lastPos.x < x - HANDLE_SIZE / 2 || lastPos.x > x + HANDLE_SIZE / 2) {
                     continue;
                 }
-                for (int k = tracks[i].keyValue[j].length - 1; k >= 0; k--) {
-                    if (tracks[i].disabled[k]) {
+                for (int k = track.keyValue[j].length - 1; k >= 0; k--) {
+                    if (track.disabled[k]) {
                         continue;
                     }
-                    int y = dim.height - (int) Math.round(vscale * (tracks[i].keyValue[j][k] - vstart));
+                    int y = dim.height - (int) Math.round(vScale * (track.keyValue[j][k] - vStart));
                     if (lastPos.y < y - HANDLE_SIZE / 2 || lastPos.y > y + HANDLE_SIZE / 2) {
                         continue;
                     }
 
                     // Select the clicked keyframe.
-                    Keyframe key = tracks[i].track.getTimecourse().getValues()[j];
-                    SelectionInfo newsel = new SelectionInfo(tracks[i].track, key);
+                    Keyframe key = track.track.getTimecourse().getValues()[j];
+                    SelectionInfo newsel = new SelectionInfo(track.track, key);
                     for (int m = 0; m < newsel.selected.length; m++) {
                         newsel.selected[m] = (m == k);
                     }
                     if (ev.isShiftDown()) {
-                        if (theScore.isKeyframeSelected(key, k)) {
-                            theScore.removeSelectedKeyframe(key);
+                        if (score.isKeyframeSelected(key, k)) {
+                            score.removeSelectedKeyframe(key);
                         } else {
-                            theScore.addSelectedKeyframes(new SelectionInfo[]{newsel});
+                            score.addSelectedKeyframes(new SelectionInfo[]{newsel});
                         }
-                    } else if (!theScore.isKeyframeSelected(key, k)) {
-                        theScore.setSelectedKeyframes(new SelectionInfo[]{newsel});
+                    } else if (!score.isKeyframeSelected(key, k)) {
+                        score.setSelectedKeyframes(new SelectionInfo[]{newsel});
                     }
                     findInitialKeyValues();
                     selectionChanged();
-                    theScore.repaintGraphs();
+                    score.repaintGraphs();
                     return;
                 }
             }
         }
         if (!ev.isShiftDown()) {
-            theScore.setSelectedKeyframes(new SelectionInfo[0]);
+            score.setSelectedKeyframes(new SelectionInfo[0]);
         }
         selectionChanged();
         draggingBox = true;
-        theScore.repaintGraphs();
+        score.repaintGraphs();
     }
 
     private void mouseDragged(MouseDraggedEvent ev) {
@@ -356,7 +352,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
             }
 
             // Drag the selected keyframes.
-            SelectionInfo[] sel = theScore.getSelectedKeyframes();
+            SelectionInfo[] sel = score.getSelectedKeyframes();
             int i, j;
             if (undo == null) {
                 // Duplicate any tracks with selected keyframes, so we can undo the drag.
@@ -371,8 +367,8 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
                 }
                 window.setUndoRecord(undo);
             }
-            double dt = (pos.x - lastPos.x) / hscale;
-            double dv = (lastPos.y - pos.y) / vscale;
+            double dt = (pos.x - lastPos.x) / hScale;
+            double dv = (lastPos.y - pos.y) / vScale;
 
             // Update the values for selected keyframes.
             for (i = 0; i < sel.length; i++) {
@@ -418,7 +414,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
                     sel[i].keyIndex = newindex;
                 }
             }
-            theScore.tracksModified(false);
+            score.tracksModified(false);
             return;
         }
         if (effectiveMode != Score.SCROLL_AND_SCALE) {
@@ -428,28 +424,28 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
         if (ev.isShiftDown()) {
             // Change the scale of the axes.
 
-            hscale *= Math.pow(1.01, pos.x - lastPos.x);
-            vscale *= Math.pow(1.01, lastPos.y - pos.y);
-            vertAxis.setGraphRange(vstart, vstart + dim.height / vscale);
+            hScale *= Math.pow(1.01, pos.x - lastPos.x);
+            vScale *= Math.pow(1.01, lastPos.y - pos.y);
+            vertAxis.setGraphRange(vStart, vStart + dim.height / vScale);
             if (pos.x == lastPos.x) {
                 repaint();
                 vertAxis.repaint();
             } else {
-                theScore.setScale(hscale);
+                score.setScale(hScale);
             }
             lastPos = pos;
             return;
         }
 
         // Scroll the display.
-        hstart -= (pos.x - lastPos.x) / hscale;
-        vstart -= (lastPos.y - pos.y) / vscale;
-        vertAxis.setGraphRange(vstart, vstart + dim.height / vscale);
+        hStart -= (pos.x - lastPos.x) / hScale;
+        vStart -= (lastPos.y - pos.y) / vScale;
+        vertAxis.setGraphRange(vStart, vStart + dim.height / vScale);
         if (pos.x == lastPos.x) {
             repaint();
             vertAxis.repaint();
         } else {
-            theScore.setStartTime(hstart);
+            score.setStartTime(hStart);
         }
         lastPos = pos;
     }
@@ -457,7 +453,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
     private void mouseReleased(MouseReleasedEvent ev) {
         if (dragPos == null) {
             if (effectiveMode == Score.SELECT_AND_MOVE) {
-                theScore.tracksModified(true);
+                score.tracksModified(true);
             }
             return;
         }
@@ -468,21 +464,21 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
         dragPos = null;
         List<SelectionInfo> v = new Vector<>();
         Rectangle dim = getBounds();
-        for (int i = 0; i < tracks.length; i++) {
-            for (int j = 0; j < tracks[i].keyValue.length; j++) {
-                int x = (int) Math.round(hscale * (tracks[i].keyTime[j] - hstart));
+        for (TrackInfo track : tracks) {
+            for (int j = 0; j < track.keyValue.length; j++) {
+                int x = (int) Math.round(hScale * (track.keyTime[j] - hStart));
                 if (x < x1 || x > x2) {
                     continue;
                 }
-                Keyframe key = tracks[i].track.getTimecourse().getValues()[j];
-                SelectionInfo newsel = new SelectionInfo(tracks[i].track, key);
+                Keyframe key = track.track.getTimecourse().getValues()[j];
+                SelectionInfo newsel = new SelectionInfo(track.track, key);
                 boolean any = false;
-                for (int k = 0; k < tracks[i].keyValue[j].length; k++) {
+                for (int k = 0; k < track.keyValue[j].length; k++) {
                     newsel.selected[k] = false;
-                    if (tracks[i].disabled[k]) {
+                    if (track.disabled[k]) {
                         continue;
                     }
-                    int y = dim.height - (int) Math.round(vscale * (tracks[i].keyValue[j][k] - vstart));
+                    int y = dim.height - (int) Math.round(vScale * (track.keyValue[j][k] - vStart));
                     if (y < y1 || y > y2) {
                         continue;
                     }
@@ -500,14 +496,14 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
         for (int i = 0; i < sel.length; i++) {
             sel[i] = v.get(i);
         }
-        theScore.addSelectedKeyframes(sel);
+        score.addSelectedKeyframes(sel);
         selectionChanged();
-        theScore.repaintGraphs();
+        score.repaintGraphs();
     }
 
     private void mouseClicked(MouseClickedEvent ev) {
         if (ev.getClickCount() == 2 && effectiveMode == Score.SELECT_AND_MOVE) {
-            theScore.editSelectedKeyframe();
+            score.editSelectedKeyframe();
         }
     }
 
@@ -520,10 +516,9 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
         FontMetrics fm = g.getFontMetrics(g.getFont());
         int num, fontHeight = fm.getMaxAscent() + fm.getMaxDescent();
         int x, y, labels = 0;
-        SelectionInfo[] selection = theScore.getSelectedKeyframes();
+        SelectionInfo[] selection = score.getSelectedKeyframes();
 
-        for (int which = 0; which < tracks.length; which++) {
-            TrackInfo info = tracks[which];
+        for (TrackInfo info : tracks) {
             num = info.valueName.length;
             for (int i = 0; i < num; i++) {
                 if (info.disabled[i]) {
@@ -538,19 +533,19 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
                 for (int j = 0; j < info.keyTime.length; j++) {
                     g.setColor(LINE_COLOR[labels % LINE_COLOR.length]);
                     if (info.selected[j]) {
-                        for (int k = 0; k < selection.length; k++) {
-                            if (selection[k].track != info.track || selection[k].keyIndex != j) {
+                        for (SelectionInfo selectionInfo : selection) {
+                            if (selectionInfo.track != info.track || selectionInfo.keyIndex != j) {
                                 continue;
                             }
-                            if (selection[k].selected[i]) {
+                            if (selectionInfo.selected[i]) {
                                 g.setColor(SELECTED_VALUE_COLOR);
                             } else {
                                 g.setColor(SELECTED_KEY_COLOR);
                             }
                         }
                     }
-                    x = (int) Math.round(hscale * (info.keyTime[j] - hstart));
-                    y = dim.height - (int) Math.round(vscale * (info.keyValue[j][i] - vstart));
+                    x = (int) Math.round(hScale * (info.keyTime[j] - hStart));
+                    y = dim.height - (int) Math.round(vScale * (info.keyValue[j][i] - vStart));
                     g.fillRect(x - HANDLE_SIZE / 2, y - HANDLE_SIZE / 2, HANDLE_SIZE, HANDLE_SIZE);
                 }
                 g.setColor(LINE_COLOR[labels % LINE_COLOR.length]);
@@ -580,10 +575,9 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
         }
 
         // Draw the markers.
-        for (int i = 0; i < markers.size(); i++) {
-            Marker m = markers.get(i);
+        for (Marker m : markers) {
             g.setColor(m.color);
-            x = (int) Math.round(hscale * (m.position - hstart));
+            x = (int) Math.round(hScale * (m.position - hStart));
             g.drawLine(x, 0, x, dim.height);
         }
         if (lineAtBottom) {
@@ -603,8 +597,8 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
      * Plot a line on the graph.
      */
     private void plotLine(Graphics2D g, double[] x, double[][] y, int which, Rectangle dim) {
-        int fromX, fromY, toX = (int) Math.round(hscale * (x[0] - hstart));
-        int toY = dim.height - (int) Math.round(vscale * (y[0][which] - vstart));
+        int fromX, fromY, toX = (int) Math.round(hScale * (x[0] - hStart));
+        int toY = dim.height - (int) Math.round(vScale * (y[0][which] - vStart));
 
         if (toX > 0) {
             g.drawLine(0, toY, toX, toY);
@@ -612,8 +606,8 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
         for (int i = 1; i < x.length; i++) {
             fromX = toX;
             fromY = toY;
-            toX = (int) Math.round(hscale * (x[i] - hstart));
-            toY = dim.height - (int) Math.round(vscale * (y[i][which] - vstart));
+            toX = (int) Math.round(hScale * (x[i] - hStart));
+            toY = dim.height - (int) Math.round(vScale * (y[i][which] - vStart));
             g.drawLine(fromX, fromY, toX, toY);
         }
         if (toX < dim.width) {
@@ -624,7 +618,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
     /**
      * Inner class which represents information about a particular track being shown on the graph.
      */
-    private class TrackInfo {
+    static class TrackInfo {
 
         final Track track;
         String[] valueName;
