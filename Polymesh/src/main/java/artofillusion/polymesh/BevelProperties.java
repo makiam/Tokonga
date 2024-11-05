@@ -10,9 +10,9 @@
 
 package artofillusion.polymesh;
 import artofillusion.ui.Translate;
+import artofillusion.ui.ValueField;
 
 import javax.swing.*;
-import javax.swing.text.DocumentFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BevelProperties extends JDialog {
 
+    private ValueField areaLimitFieldVF;
     /**
      * A return status code - returned if Cancel button has been pressed
      */
@@ -40,7 +41,7 @@ public class BevelProperties extends JDialog {
     public BevelProperties(java.awt.Frame parent) {
         super(parent, true);
         initComponents();
-
+        
         // Close the dialog when Esc is pressed
         String cancelName = "cancel";
         InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
@@ -74,7 +75,7 @@ public class BevelProperties extends JDialog {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         applyCB = new javax.swing.JCheckBox();
-        bevelAreaValue = new javax.swing.JFormattedTextField();
+        javax.swing.JTextField bevelAreaField = (areaLimitFieldVF = new PMValueField(PolyMesh.getEdgeLengthLimit(), ValueField.NONE)).getComponent();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(Translate.text("polymesh:bevelPropertiesTitle"));
@@ -94,10 +95,10 @@ public class BevelProperties extends JDialog {
 
         jLabel2.setText(Translate.text("polymesh:bevelAreaLabel"));
 
+        applyCB.setSelected(PolyMesh.isApplyEdgeLengthLimit());
         applyCB.setText(Translate.text("polymesh:applyCB"));
 
-        bevelAreaValue.setActionCommand("<Not Set>");
-        bevelAreaValue.setValue(PolyMesh.getEdgeLengthLimit());
+        bevelAreaField.setText(String.valueOf(PolyMesh.getEdgeLengthLimit()));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -107,11 +108,11 @@ public class BevelProperties extends JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(bevelAreaValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(bevelAreaField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -132,10 +133,10 @@ public class BevelProperties extends JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2)
-                    .addComponent(bevelAreaValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(bevelAreaField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(applyCB)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(okButton))
@@ -149,6 +150,11 @@ public class BevelProperties extends JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        PolyMesh.setApplyEdgeLengthLimit(applyCB.isSelected());
+
+        if (PolyMesh.isApplyEdgeLengthLimit()) {
+            PolyMesh.setEdgeLengthLimit(areaLimitFieldVF.getValue());
+        }
         doClose(RET_OK);
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -171,30 +177,10 @@ public class BevelProperties extends JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox applyCB;
-    private javax.swing.JFormattedTextField bevelAreaValue;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
 
     private int returnStatus = RET_CANCEL;
-
-    private class AreaLimitVerifier extends InputVerifier {
-        @Override
-        public boolean verify(JComponent input) {
-            JTextField tf = (JTextField) input;
-            var valid = false;
-            try {
-                Double.valueOf(tf.getText());
-                valid = true;
-            } catch (NumberFormatException e) {
-
-            }
-            BevelProperties.log.info("Validated to {}", valid);
-            input.setForeground(valid ? Color.black : Color.red);
-            return valid;
-        }
-
-
-    }
 
 }

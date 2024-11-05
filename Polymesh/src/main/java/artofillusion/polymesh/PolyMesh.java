@@ -220,6 +220,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
     /**
      * If true, faces under a certain size are collapsed.
      */
+    @Getter @Setter
     public static boolean applyEdgeLengthLimit = true;
 
     /**
