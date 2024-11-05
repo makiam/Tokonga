@@ -599,15 +599,9 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         if(event.getScene() == this) textureListeners.forEach(listener -> listener.itemAdded(event.getPosition(), event.getTexture()));
     }
 
-    /**
-     * Remove a Material from the scene.
-     */
-    public void removeMaterial(int which) {
-        Material mat = _materials.remove(which);
-        materialListeners.forEach(listener -> listener.itemRemoved(which, mat));
-        objects.stream()
-                .filter(item -> item.getObject().getMaterial() == mat)
-                .forEach(item -> item.setMaterial(null, null));
+    @Subscribe
+    public void onRemoveMaterial(MaterialsContainer.MaterialRemovedEvent event) {
+        if(event.getScene() == this) materialListeners.forEach(listener -> listener.itemRemoved(event.getPosition(), event.getMaterial()));
     }
 
     /**

@@ -11,8 +11,12 @@
 package artofillusion
 
 import artofillusion.material.Material
+import artofillusion.material.MaterialMapping
+import artofillusion.`object`.ObjectInfo
 import java.util.Collections
 import org.greenrobot.eventbus.EventBus
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 internal interface MaterialsContainer {
 
@@ -38,6 +42,12 @@ internal interface MaterialsContainer {
      */
     fun addMaterial(material: Material, index: Int) = add(material, index)
 
+    fun removeMaterial(index: Int) {
+        if(index in (this as Scene)._materials.indices) {
+            val action = RemoveMaterialAction(this as Scene, index).execute()
+        }
+    }
+
     /**
      * Get the number of materials in this scene.
      */
@@ -52,7 +62,7 @@ internal interface MaterialsContainer {
     /**
      * Get the material by index.
      */
-    fun getMaterial(index: Int): Material? = (this as Scene)._materials[index]
+    fun getMaterial(index: Int): Material? = (this as Scene)._materials.getOrNull(index)
 
     /**
      * Get the index of the specified material.
@@ -71,6 +81,34 @@ internal interface MaterialsContainer {
         override fun redo() {
             scene._materials.add(index, material)
             EventBus.getDefault().post(MaterialAddedEvent(scene, material, index))
+        }
+
+        override fun getName() = "Add Material"
+    }
+
+    class RemoveMaterialAction(val scene: Scene, val index: Int) : UndoableEdit {
+        private val matMap: MutableMap<ObjectInfo?, MaterialMapping?> = HashMap<ObjectInfo?, MaterialMapping?>()
+        private val material: Material = scene._materials[index]
+
+        init {
+            scene.objects.filter { it.geometry.material == material }.forEach { matMap.put(it, it.geometry.materialMapping) }
+        }
+
+        override fun undo() {
+            TODO("Not yet implemented")
+        }
+
+        override fun redo() {
+            scene._materials.remove(material)
+            this.matMap.keys.forEach { it?.setMaterial(null, null) }
+
+            EventBus.getDefault().post(MaterialRemovedEvent(scene, material, index))
+        }
+
+        override fun getName() = "Remove Material"
+
+        companion object  {
+            private val log: Logger = LoggerFactory.getLogger(RemoveMaterialAction::class.java)
         }
     }
 

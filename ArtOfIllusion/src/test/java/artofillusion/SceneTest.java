@@ -305,8 +305,8 @@ class SceneTest {
      * Check that listener event is fired
      */
     @Test
-    @DisplayName("Test Remove Unassigned Matrial")
-    void testRemoveUnassignedMatrial() {
+    @DisplayName("Test Remove Unassigned Material")
+    void testRemoveUnassignedMaterial() {
         Material mat = new UniformMaterial();
         scene.addMaterial(mat);
         scene.addMaterialListener(new ListChangeListener() {
