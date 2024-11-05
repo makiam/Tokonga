@@ -532,17 +532,18 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * appropriate commands will be added to it to undo this operation.
      */
     public void addObject(ObjectInfo info, int index, UndoRecord undo) {
+        Object3D geo = info.getObject();
         info.setId(nextID++);
         if (info.getTracks() == null) {
             info.addTrack(new PositionTrack(info), 0);
             info.addTrack(new RotationTrack(info), 1);
         }
-        if (info.getObject().canSetTexture() && info.getObject().getTextureMapping() == null) {
-            info.setTexture(getDefaultTexture(),
-                    getDefaultTexture().getDefaultMapping(info.getObject()));
+        if (geo.canSetTexture() && geo.getTextureMapping() == null) {
+            Texture def = getDefaultTexture();
+            info.setTexture(def, def.getDefaultMapping(info.getObject()));
         }
 
-        info.getObject().sceneChanged(info, this);
+        geo.sceneChanged(info, this);
         objects.add(index, info);
         objectIndexMap = null;
 
@@ -1296,10 +1297,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
                 con = cls.getConstructor(ObjectInfo.class);
                 Track tr = (Track) con.newInstance(info);
                 tr.initFromStream(in, this);
-                info.addTrack(tr, i);
-            }
-            if (info.getTracks() == null) {
-                info.tracks = new Track[0];
+                info.addTrack(tr);
             }
         } catch (IOException | ReflectiveOperationException | SecurityException ex) {
             log.atError().setCause(ex).log("Tracks reading error: {}", ex.getMessage());
@@ -1346,7 +1344,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
         // Save the materials.
         out.writeInt(_materials.size());
-        for (var     mat: _materials) {
+        for (var mat: _materials) {
             out.writeUTF(mat.getClass().getName());
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             mat.writeToFile(new DataOutputStream(bos), this);
@@ -1357,7 +1355,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
         // Save the textures.
         out.writeInt(_textures.size());
-        for (var     tex: _textures) {
+        for (var tex: _textures) {
             out.writeUTF(tex.getClass().getName());
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             tex.writeToFile(new DataOutputStream(bos), this);
@@ -1376,7 +1374,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
         // Record the children of each object.  The format of this will be changed in the
         // next version.
-        for (var     object: objects) {
+        for (var object: objects) {
             out.writeInt(object.getChildren().length);
             for (ObjectInfo children : object.getChildren()) {
                 out.writeInt(indexOf(children));

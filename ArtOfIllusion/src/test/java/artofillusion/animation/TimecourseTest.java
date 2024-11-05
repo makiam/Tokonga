@@ -12,7 +12,6 @@ package artofillusion.animation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @author MaksK
@@ -51,8 +50,8 @@ class TimecourseTest {
     }
 
     @Test
-    @DisplayName("Test Timecourse Add As Newt Value")
-    void testTimecourseAddAsNewtValue() {
+    @DisplayName("Test Timecourse Add As New Value")
+    void testTimecourseAddAsNewValue() {
         Timecourse tc = new Timecourse(new BooleanKeyframe[]{new BooleanKeyframe(true)}, new double[]{5}, new Smoothness[]{new Smoothness()});
         tc.addTimepoint(new BooleanKeyframe(false), 10, new Smoothness());
         Assertions.assertEquals(2, tc.getValues().length);
