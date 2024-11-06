@@ -612,9 +612,9 @@ public class Curve extends Object3D implements Mesh {
     @Override
     public void editGesture(final EditingWindow parent, ObjectInfo info, Runnable cb, ObjectInfo realObject) {
         CurveEditorWindow ed = new CurveEditorWindow(parent, "Gesture '" + info.getName() + "'", info, cb, false);
-        ViewerCanvas[] views = ed.getAllViews();
-        for (int i = 0; i < views.length; i++) {
-            ((MeshViewer) views[i]).setScene(parent.getScene(), realObject);
+
+        for (ViewerCanvas view: ed.getAllViews()) {
+            ((MeshViewer) view).setScene(parent.getScene(), realObject);
         }
         ed.setVisible(true);
     }

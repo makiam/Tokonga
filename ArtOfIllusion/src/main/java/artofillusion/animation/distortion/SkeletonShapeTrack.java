@@ -282,9 +282,9 @@ public class SkeletonShapeTrack extends Track {
                 win.getScore().tracksModified(true);
             }
         });
-        ViewerCanvas[] views = ed.getAllViews();
-        for (int i = 0; i < views.length; i++) {
-            ((MeshViewer) views[i]).setScene(win.getScene(), info);
+
+        for (ViewerCanvas view : ed.getAllViews()) {
+            ((MeshViewer) view).setScene(win.getScene(), info);
         }
         ed.setVisible(true);
     }

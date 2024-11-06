@@ -784,8 +784,8 @@ public class Tube extends Curve {
     @Override
     public void editGesture(final EditingWindow parent, ObjectInfo info, Runnable cb, ObjectInfo realObject) {
         TubeEditorWindow ed = new TubeEditorWindow(parent, "Gesture '" + info.getName() + "'", info, cb, false);
-        ViewerCanvas[] views = ed.getAllViews();
-        for (ViewerCanvas view : views) {
+
+        for (ViewerCanvas view : ed.getAllViews()) {
             ((MeshViewer) view).setScene(parent.getScene(), realObject);
         }
         ed.setVisible(true);
