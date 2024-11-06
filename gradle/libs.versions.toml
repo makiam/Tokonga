@@ -1,0 +1,12 @@
+[versions]
+buoy = "1.1.5"
+tinylog = "2.7.0"
+
+[libraries]
+buoy = { module = "com.github.makiam:Buoy", version.ref = "buoy" }
+tinylog-api = { module = "org.tinylog:tinylog-api", version.ref = "tinylog" }
+tinylog-impl = { module = "org.tinylog:tinylog-impl", version.ref = "tinylog" }
+tinylog-slf4j = { module = "org.tinylog:slf4j-tinylog", version.ref = "tinylog" }
+
+[bundles]
+tinylog = ["tinylog-api", "tinylog-impl", "tinylog-slf4j"]

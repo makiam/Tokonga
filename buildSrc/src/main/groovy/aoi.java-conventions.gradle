@@ -45,7 +45,7 @@ repositories {
 ext {
     lombokVersion = "1.18.+"
     junitVersion = "5.9.1"
-    tinyLogVersion = "2.7.0"
+
 }
 
 dependencies {
@@ -56,7 +56,7 @@ dependencies {
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     
-    implementation 'com.github.makiam:Buoy:1.1.4'
+    implementation libs.buoy
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
@@ -64,9 +64,7 @@ dependencies {
 
     testImplementation group: 'org.netbeans', name: 'jemmy', version: '2.2.7.5'
 
-    implementation "org.tinylog:slf4j-tinylog:${tinyLogVersion}"
-    implementation "org.tinylog:tinylog-api:${tinyLogVersion}"
-    implementation "org.tinylog:tinylog-impl:${tinyLogVersion}"
+    implementation libs.bundles.tinylog
 
 }
 

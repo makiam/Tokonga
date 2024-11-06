@@ -1434,6 +1434,10 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         updateMenus();
     }
 
+    public void setSelection(int which) {
+        setSelection(new int[]{which});
+    }
+
     /**
      * Set an object to be selected.
      */
