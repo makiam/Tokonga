@@ -54,7 +54,7 @@ public class LayoutView extends BFrame implements EditingWindow {
      */
     @Override
     public void setUndoRecord(UndoRecord command) {
-
+        undoStack.addRecord(command);
     }
 
     @Override
@@ -91,8 +91,6 @@ public class LayoutView extends BFrame implements EditingWindow {
     }
 
     public static void main(String[] args) {
-            SwingUtilities.invokeLater(() -> {
-                new LayoutView().setVisible(true);
-            });
+        SwingUtilities.invokeLater(() -> new LayoutView().setVisible(true));
     }
 }
