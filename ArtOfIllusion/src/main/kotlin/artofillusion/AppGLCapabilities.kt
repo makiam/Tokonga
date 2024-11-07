@@ -20,7 +20,7 @@ object AppGLCapabilities {
     val capabilities: GLCapabilities by lazy {
         val profile = GLProfile.getMaxProgrammable(true)
         var caps = GLCapabilities(profile)
-        logger.debug("GL Profile: $profile Caps: $caps")
+        logger.debug("GL Profile: {} Caps: {}", profile, caps)
         caps
     }
 

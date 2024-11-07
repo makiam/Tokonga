@@ -6,6 +6,7 @@ import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.awt.GLJPanel;
+import kotlin.Suppress;
 import lombok.extern.slf4j.Slf4j;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -16,7 +17,7 @@ import java.awt.event.WindowEvent;
 @Slf4j
 class LayoutViewImpl extends JFrame implements GLEventListener {
 
-    private EditingWindow owner;
+    private final EditingWindow owner;
     private GLJPanel canvas;
 
     public LayoutViewImpl(EditingWindow owner) throws HeadlessException {
@@ -44,11 +45,11 @@ class LayoutViewImpl extends JFrame implements GLEventListener {
     }
 
     public void setHelpText(String text) {
-
+        log.info("Set help text to {}", text);
     }
 
     public void setTool(EditingTool tool) {
-
+        log.info("Set tool to {}", tool);
     }
 
     @Override
@@ -73,6 +74,7 @@ class LayoutViewImpl extends JFrame implements GLEventListener {
     }
 
     @Subscribe
+    @Suppress(names = "UNUSED_PARAMETER")
     public void onEvent(org.greenrobot.eventbus.NoSubscriberEvent nop) {
     }
 }
