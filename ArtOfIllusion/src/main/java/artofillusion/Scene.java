@@ -1368,7 +1368,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         int index = 0;
         Map<Object3D, Integer> table = new Hashtable<>(objects.size());
         out.writeInt(objects.size());
-        for (var     object: objects) {
+        for (var object: objects) {
             index = writeObjectToFile(out, object, table, index);
         }
 
