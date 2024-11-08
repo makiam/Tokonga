@@ -27,7 +27,7 @@ dependencies {
     implementation project(':xml-data')
     implementation project(':default-theme-lib')
 
-    implementation group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.20'
+    implementation group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.21'
 
     implementation("org.greenrobot:eventbus-java:3.3.1")
 
