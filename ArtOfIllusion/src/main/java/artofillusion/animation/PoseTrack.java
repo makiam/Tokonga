@@ -62,14 +62,14 @@ public class PoseTrack extends Track {
             } else {
                 double weight = theWeight.getWeight(time);
                 if (relative) {
-                    info.setPose(info.pose.blend(pose, 1.0, weight));
+                    info.setPose(info.getPose().blend(pose, 1.0, weight));
                 } else {
-                    info.setPose(info.pose.blend(pose, 1.0 - weight, weight));
+                    info.setPose(info.getPose().blend(pose, 1.0 - weight, weight));
                 }
             }
         }
-        for (int i = 0; i < subtracks.length; i++) {
-            subtracks[i].apply(time);
+        for (Track track: subtracks) {
+            track.apply(time);
         }
     }
 

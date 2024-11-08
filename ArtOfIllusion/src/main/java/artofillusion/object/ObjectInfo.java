@@ -61,7 +61,8 @@ public class ObjectInfo {
      *  Get whether this object is visible.
      */
     @Getter
-    public boolean visible, parentSelected;
+    public boolean visible;
+    public boolean parentSelected;
     public ObjectInfo parent;
 
 
@@ -69,7 +70,8 @@ public class ObjectInfo {
 
     private List<Track> tracks = new ArrayList<>();
 
-    public Keyframe pose;
+    @Getter
+    private Keyframe pose;
     public int id;
     private boolean locked;
     /**
@@ -225,7 +227,7 @@ public class ObjectInfo {
      */
     public void removeTrack(Track tr) {
         var index = tracks.indexOf(tr);
-        if(index == -1) return;;
+        if(index == -1) return;
         removeTrack(index);
     }
 
@@ -242,7 +244,7 @@ public class ObjectInfo {
     public void setTexture(Texture tex, TextureMapping map) {
         getObject().setTexture(tex, map);
         clearCachedMeshes();
-        tracks.stream().filter(t -> t instanceof TextureTrack).forEach(t -> ((TextureTrack) t).parametersChanged());
+        tracks.stream().filter(TextureTrack.class::isInstance).forEach(t -> ((TextureTrack) t).parametersChanged());
     }
 
     /**
