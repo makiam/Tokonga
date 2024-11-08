@@ -5,5 +5,5 @@ plugins {
 description = 'XML Data API'
 
 dependencies {
-    implementation group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.20'
+    implementation group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.21'
 }
