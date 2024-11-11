@@ -53,10 +53,10 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     private final DockingContainer[] dock;
 
-    Score theScore;
-    ToolPalette tools;
+    private final Score score;
+    private final ToolPalette tools;
 
-    private final BLabel helpText = new BLabel();
+    private final StatusPanel helpText = new StatusPanel();
     private final SceneExplorer sceneExplorer;
     Scene theScene;
 
@@ -151,7 +151,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         super(s.getName() == null ? "Untitled" : s.getName());
         theScene = s;
 
-        theScore = new Score(this);
+        score = new Score(this);
 
         sceneChangedEvent = new SceneChangedEvent(this);
         uiEventProcessor = new ActionProcessor();
@@ -208,7 +208,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         FormContainer centerContainer = new FormContainer(new double[]{0.0, 1.0}, new double[]{0.0, 1.0, 0.0, 0.0});
         centerContainer.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
         centerContainer.add(viewsContainer, 1, 0, 1, 3);
-        centerContainer.add(helpText, 0, 3, 2, 1);
+        centerContainer.add(helpText.getComponent(), 0, 3, 2, 1);
         dock = new DockingContainer[4];
         dock[0] = new DockingContainer(centerContainer, BTabbedPane.LEFT);
         dock[1] = new DockingContainer(dock[0], BTabbedPane.RIGHT);
@@ -231,7 +231,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         propertiesScroller.setBackground(ThemeManager.getAppBackgroundColor());
         getDockingContainer(BTabbedPane.RIGHT).addDockableWidget(sceneExplorer = new SceneExplorer(this));
         getDockingContainer(BTabbedPane.RIGHT).addDockableWidget(new DefaultDockableWidget(propertiesScroller, Translate.text("Properties")), 0, 1);
-        getDockingContainer(BTabbedPane.BOTTOM).addDockableWidget(new DefaultDockableWidget(theScore, Translate.text("Score")));
+        getDockingContainer(BTabbedPane.BOTTOM).addDockableWidget(new DefaultDockableWidget(score, Translate.text("Score")));
 
         // Build the tool palette.
         tools = new ToolPalette(2, 7, this);
@@ -355,7 +355,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     // This method calls only from Scene Explorer.
     @SuppressWarnings("java:S1144")
     private void rebuildList() {
-        theScore.rebuildList();
+        score.rebuildList();
     }
 
     /**
@@ -364,7 +364,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      */
     public void rebuildItemList() {
         sceneExplorer.rebuildList();
-        theScore.rebuildList();
+        score.rebuildList();
     }
 
     /**
@@ -691,17 +691,17 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         addTrackMenu.add(Translate.menuItem("constraintTrack", this, "addTrackAction"));
         addTrackMenu.add(Translate.menuItem("visibilityTrack", this, "addTrackAction"));
         addTrackMenu.add(Translate.menuItem("textureTrack", this, "addTrackAction"));
-        animationMenu.add(animationMenuItem[0] = Translate.menuItem("editTrack", event -> theScore.editSelectedTrack()));
-        animationMenu.add(animationMenuItem[1] = Translate.menuItem("duplicateTracks", event -> theScore.duplicateSelectedTracks()));
-        animationMenu.add(animationMenuItem[2] = Translate.menuItem("deleteTracks", event -> theScore.deleteSelectedTracks()));
-        animationMenu.add(animationMenuItem[3] = Translate.menuItem("selectAllTracks", event -> theScore.selectAllTracks()));
-        animationMenu.add(animationMenuItem[4] = Translate.menuItem("enableTracks", event -> theScore.setTracksEnabled(true)));
-        animationMenu.add(animationMenuItem[5] = Translate.menuItem("disableTracks", event -> theScore.setTracksEnabled(false)));
+        animationMenu.add(animationMenuItem[0] = Translate.menuItem("editTrack", event -> score.editSelectedTrack()));
+        animationMenu.add(animationMenuItem[1] = Translate.menuItem("duplicateTracks", event -> score.duplicateSelectedTracks()));
+        animationMenu.add(animationMenuItem[2] = Translate.menuItem("deleteTracks", event -> score.deleteSelectedTracks()));
+        animationMenu.add(animationMenuItem[3] = Translate.menuItem("selectAllTracks", event -> score.selectAllTracks()));
+        animationMenu.add(animationMenuItem[4] = Translate.menuItem("enableTracks", event -> score.setTracksEnabled(true)));
+        animationMenu.add(animationMenuItem[5] = Translate.menuItem("disableTracks", event -> score.setTracksEnabled(false)));
         animationMenu.addSeparator();
-        animationMenu.add(animationMenuItem[6] = Translate.menuItem("keyframe", theScore, "keyframeSelectedTracks"));
-        animationMenu.add(animationMenuItem[7] = Translate.menuItem("keyframeModified", theScore, "keyframeModifiedTracks"));
-        animationMenu.add(animationMenuItem[8] = Translate.menuItem("editKeyframe", theScore, "editSelectedKeyframe"));
-        animationMenu.add(animationMenuItem[9] = Translate.menuItem("deleteSelectedKeyframes", theScore, "deleteSelectedKeyframes"));
+        animationMenu.add(animationMenuItem[6] = Translate.menuItem("keyframe", event -> score.keyframeSelectedTracks()));
+        animationMenu.add(animationMenuItem[7] = Translate.menuItem("keyframeModified", event -> score.keyframeModifiedTracks()));
+        animationMenu.add(animationMenuItem[8] = Translate.menuItem("editKeyframe", event -> score.editSelectedKeyframe()));
+        animationMenu.add(animationMenuItem[9] = Translate.menuItem("deleteSelectedKeyframes", event -> score.deleteSelectedKeyframes()));
 
         BMenu editKeyframeMenu = Translate.menu("bulkEditKeyframes");
         animationMenu.add(editKeyframeMenu);
@@ -947,9 +947,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     public void updateMenus() {
         Object[] sel = sceneExplorer.getSelectedObjects();
         int numSelObjects = sel.length;
-        Track[] selTrack = theScore.getSelectedTracks();
+        Track[] selTrack = score.getSelectedTracks();
         int numSelTracks = selTrack.length;
-        int numSelKeyframes = theScore.getSelectedKeyframes().length;
+        int numSelKeyframes = score.getSelectedKeyframes().length;
         ViewerCanvas view = theView[currentView];
         boolean canConvert, canSetTexture;
         boolean curve, noncurve, enable, disable, hasChildren, hasParent;
@@ -1032,7 +1032,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         animationMenuItem[9].setEnabled(numSelKeyframes > 0); // Delete Selected Keyframes
         animationMenuItem[10].setEnabled(curve && noncurve); // Set Path From Curve
         animationMenuItem[11].setEnabled(hasParent); // Bind to Parent Skeleton
-        animationMenuItem[12].setText(Translate.text(theScore.getBounds().height == 0 || theScore.getBounds().width == 0 ? "menu.showScore" : "menu.hideScore"));
+        animationMenuItem[12].setText(Translate.text(score.getBounds().height == 0 || score.getBounds().width == 0 ? "menu.showScore" : "menu.hideScore"));
         addTrackMenu.setEnabled(numSelObjects > 0);
         distortionMenu.setEnabled(sel.length > 0);
 
@@ -1120,7 +1120,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
                 for (var viewer : theView) {
                     viewer.rebuildCameraList();
                 }
-                theScore.rebuildList();
+                score.rebuildList();
             }
         });
     }
@@ -1144,7 +1144,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
                 for (int i = 0; i < theView.length; i++) {
                     theView[i].rebuildCameraList();
                 }
-                theScore.rebuildList();
+                score.rebuildList();
             }
         });
     }
@@ -1180,7 +1180,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
                     }
                     theView[i].rebuildCameraList();
                 }
-                theScore.rebuildList();
+                score.rebuildList();
             }
         });
     }
@@ -1194,7 +1194,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         for (int i = 0; i < theView.length; i++) {
             theView[i].rebuildCameraList();
         }
-        theScore.rebuildList();
+        score.rebuildList();
     }
 
     /**
@@ -1202,8 +1202,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      */
     public void setTime(double time) {
         theScene.setTime(time);
-        theScore.setTime(time);
-        theScore.repaint();
+        score.setTime(time);
+        score.repaint();
         sceneExplorer.repaint();
         for (SceneViewer view : theView) {
             view.viewChanged(false);
@@ -1265,7 +1265,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      * Get the Score for this window.
      */
     public Score getScore() {
-        return theScore;
+        return score;
     }
 
     /**
@@ -1303,7 +1303,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      * Set whether the score should be displayed.
      */
     public void setScoreVisible(boolean visible) {
-        setDockableWidgetVisible((DockableWidget) theScore.getParent(), visible);
+        setDockableWidgetVisible((DockableWidget) score.getParent(), visible);
     }
 
     /**
@@ -1430,7 +1430,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             sceneExplorer.setSelected(theScene.getObject(which[i]), true);
         }
         sceneExplorer.setUpdateEnabled(true);
-        theScore.rebuildList();
+        score.rebuildList();
         updateMenus();
     }
 
@@ -1444,7 +1444,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     public void addToSelection(int which) {
         theScene.addToSelection(which);
         sceneExplorer.setSelected(theScene.getObject(which), true);
-        theScore.rebuildList();
+        score.rebuildList();
         updateMenus();
     }
 
@@ -1454,7 +1454,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     public void clearSelection() {
         theScene.clearSelection();
         sceneExplorer.deselectAll();
-        theScore.rebuildList();
+        score.rebuildList();
         updateImage();
         updateMenus();
     }
@@ -1465,7 +1465,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     public void removeFromSelection(int which) {
         theScene.removeFromSelection(which);
         sceneExplorer.setSelected(theScene.getObject(which), false);
-        theScore.rebuildList();
+        score.rebuildList();
         updateMenus();
     }
 
@@ -1491,43 +1491,43 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     private void addTrackAction(CommandEvent event) {
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), commandToTrack.get(event.getActionCommand()), null, true);
+        score.addTrack(sceneExplorer.getSelectedObjects(), commandToTrack.get(event.getActionCommand()), null, true);
     }
 
     private void addDistortionTrackAction(CommandEvent event) {
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), commandToDistortionTrack.get(event.getActionCommand()), null, true);
+        score.addTrack(sceneExplorer.getSelectedObjects(), commandToDistortionTrack.get(event.getActionCommand()), null, true);
     }
 
     private void addOnePositionTrackAction() {
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), PositionTrack.class, null, true);
+        score.addTrack(sceneExplorer.getSelectedObjects(), PositionTrack.class, null, true);
     }
 
     private void addThreePositionTrackAction() {
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), PositionTrack.class, new Object[]{"Z Position", Boolean.FALSE, Boolean.FALSE, Boolean.TRUE}, true);
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), PositionTrack.class, new Object[]{"Y Position", Boolean.FALSE, Boolean.TRUE, Boolean.FALSE}, false);
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), PositionTrack.class, new Object[]{"X Position", Boolean.TRUE, Boolean.FALSE, Boolean.FALSE}, false);
+        score.addTrack(sceneExplorer.getSelectedObjects(), PositionTrack.class, new Object[]{"Z Position", Boolean.FALSE, Boolean.FALSE, Boolean.TRUE}, true);
+        score.addTrack(sceneExplorer.getSelectedObjects(), PositionTrack.class, new Object[]{"Y Position", Boolean.FALSE, Boolean.TRUE, Boolean.FALSE}, false);
+        score.addTrack(sceneExplorer.getSelectedObjects(), PositionTrack.class, new Object[]{"X Position", Boolean.TRUE, Boolean.FALSE, Boolean.FALSE}, false);
     }
 
     private void addOneRotationTrackAction() {
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), RotationTrack.class, new Object[]{"Rotation", Boolean.FALSE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE}, true);
+        score.addTrack(sceneExplorer.getSelectedObjects(), RotationTrack.class, new Object[]{"Rotation", Boolean.FALSE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE}, true);
     }
 
     private void addThreeRotationTrackAction() {
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), RotationTrack.class, new Object[]{"Z Rotation", Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, Boolean.TRUE}, true);
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), RotationTrack.class, new Object[]{"Y Rotation", Boolean.FALSE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE}, false);
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), RotationTrack.class, new Object[]{"X Rotation", Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE}, false);
+        score.addTrack(sceneExplorer.getSelectedObjects(), RotationTrack.class, new Object[]{"Z Rotation", Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, Boolean.TRUE}, true);
+        score.addTrack(sceneExplorer.getSelectedObjects(), RotationTrack.class, new Object[]{"Y Rotation", Boolean.FALSE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE}, false);
+        score.addTrack(sceneExplorer.getSelectedObjects(), RotationTrack.class, new Object[]{"X Rotation", Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE}, false);
     }
 
     private void addQuaternionTrackAction() {
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), RotationTrack.class, new Object[]{"Rotation", Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE}, true);
+        score.addTrack(sceneExplorer.getSelectedObjects(), RotationTrack.class, new Object[]{"Rotation", Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE}, true);
     }
 
     private void addProceduralPositionTrackAction() {
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), ProceduralPositionTrack.class, null, true);
+        score.addTrack(sceneExplorer.getSelectedObjects(), ProceduralPositionTrack.class, null, true);
     }
 
     private void addProceduralRotationTrackAction() {
-        theScore.addTrack(sceneExplorer.getSelectedObjects(), ProceduralRotationTrack.class, null, true);
+        score.addTrack(sceneExplorer.getSelectedObjects(), ProceduralRotationTrack.class, null, true);
     }
 
     private void newSceneAction() {
@@ -1617,7 +1617,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     private void showScoreAction() {
-        setScoreVisible(theScore.getBounds().height == 0 || theScore.getBounds().width == 0);
+        setScoreVisible(score.getBounds().height == 0 || score.getBounds().width == 0);
     }
 
     private void forwardFrameAction() {
@@ -2345,7 +2345,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             }
         }
         if (confirmed) {
-            theScore.repaintAll();
+            score.repaintAll();
         }
         UndoRecord undo = new UndoRecord(this, false, UndoRecord.COPY_OBJECT_INFO, info, info.duplicate());
         if (obj.canConvertToTriangleMesh() == Object3D.EXACTLY) {
@@ -2558,8 +2558,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             rt.setKeyframe(theScene.getTime());
         }
         setUndoRecord(undo);
-        theScore.rebuildList();
-        theScore.repaint();
+        score.rebuildList();
+        score.repaint();
     }
 
     @SuppressWarnings("ResultOfObjectAllocationIgnored")

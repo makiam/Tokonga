@@ -573,16 +573,14 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
             }
             info.getParent().removeChild(j);
         }
-        for (var     obj : objects) {
-            for (int j = 0; j < obj.getTracks().length; j++) {
-                Track tr = obj.getTracks()[j];
-
-                for (var     depend : tr.getDependencies()) {
+        for (var obj : objects) {
+            for (Track tr: obj.getTracks()) {
+                for (var depend : tr.getDependencies()) {
                     if (depend == info) {
                         if (undo != null) {
                             undo.addCommandAtBeginning(UndoRecord.COPY_TRACK, tr, tr.duplicate(tr.getParent()));
                         }
-                        obj.getTracks()[j].deleteDependencies(info);
+                        tr.deleteDependencies(info);
                     }
                 }
             }
