@@ -26,7 +26,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.*;
-
+import java.util.Set;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
@@ -105,6 +105,12 @@ public class PluginRegistry {
                 results.add("Error loading plugin file: " + file);
                 log.atError().setCause(ex).log("Error loading file: {} due {}", file, ex.getMessage());
             }
+        }
+        try {
+            Set<String> blacklist = Files.lines(Paths.get(ArtOfIllusion.PLUGIN_DIRECTORY, "blacklist")).collect(Collectors.toSet());
+            jars.removeIf(jar -> blacklist.contains(jar.getName()));
+        } catch (IOException e) {
+            log.info("No blacklist file found");
         }
         processPlugins(jars, results);
         return results;
