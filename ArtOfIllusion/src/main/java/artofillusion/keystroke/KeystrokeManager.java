@@ -21,6 +21,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import lombok.AccessLevel;
@@ -46,7 +47,7 @@ public class KeystrokeManager {
 
 
     private static final List<KeystrokeRecord> records = new ArrayList<>();
-    private static Map<KeyEventContainer, List<KeystrokeRecord>> scripts = new HashMap<>();
+    private static Map<KeyEventContainer, List<Script>> scripts = new HashMap<>();
 
     private static final String KEYSTROKE_FILENAME = "keystrokes.xml";
 
@@ -93,19 +94,28 @@ public class KeystrokeManager {
         log.info("Event: {} code {} m:{} vs e:{}", event, event.getKeyCode(), event.getModifiers(), event.getModifiersEx());
 
         if(scripts.isEmpty()) {
-            scripts = records.stream().collect(Collectors.groupingBy(KeystrokeRecord::KeyEventKey, Collectors.toList()));
+            mapRecordsToScripts();
         }
 
         var shell = ArtOfIllusion.getShell();
-        scripts.getOrDefault(new KeyEventContainer(event), Collections.emptyList()).forEach(script -> {
-            log.info("Run script: {}", script.getScript());
-            Script compiledScript = getCompiledScript(shell, script);
-            compiledScript.setProperty("window", window);
-            compiledScript.run();
+        List<Script> rec = scripts.getOrDefault(new KeyEventContainer(event), Collections.emptyList());
+        log.info("Found {} scripts for event", rec.size(), event);
+        rec.forEach(script -> {
+            log.info("Run script: {}", script);
+            script.setProperty("window", window);
+            script.run();
+            event.consume();
         });
 
     }
 
+    private static void mapRecordsToScripts() {
+        var tmp = records.stream().collect(Collectors.groupingBy(KeystrokeRecord::KeyEventKey, Collectors.toList()));
+        var shell = ArtOfIllusion.getShell();
+        Function<KeystrokeRecord, Script> mapper = r -> getCompiledScript(shell, r);
+        tmp.forEach((k, v) -> scripts.put(k, v.stream().map(mapper).collect(Collectors.toList())));
+
+    }
 
     private static Script getCompiledScript(GroovyShell shell, KeystrokeRecord record) {
         log.info("Compile Record: {}", record);
