@@ -28,8 +28,9 @@ import java.awt.event.KeyEvent
 data class KeystrokeRecord(@XStreamAlias("code") @XStreamAsAttribute val keyCode: Int,
                            @XStreamAsAttribute val modifiers: Int = 0,
                            @XStreamAsAttribute val name: String?,
-
-                           val script: String?)
+                           val script: String?) {
+    fun KeyEventKey(): KeyEventContainer = KeyEventContainer(keyCode, modifiers)
+}
 
 @XStreamAlias("keystrokes")
 data class KeystrokesList(@XStreamImplicit(itemFieldName = "keystroke") val records: List<KeystrokeRecord>)
