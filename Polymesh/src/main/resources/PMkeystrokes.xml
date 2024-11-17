@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <keystrokes>
     <keystroke code="88" name="Decrease smoothing level (PolyMesh)">
-        if (window instanceof artofillusion.polymesh.PolyMeshEditorWindow)
+        if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.changeInteractiveSmoothLevel(-1);
     </keystroke>
     <keystroke code="67" name="Increase smoothing level (PolyMesh)">
-        if (window instanceof artofillusion.polymesh.PolyMeshEditorWindow)
+        if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.changeInteractiveSmoothLevel(1);
     </keystroke>
     <keystroke code="66" name="Select Bevel Tool (PolyMesh)">
-        if (window instanceof artofillusion.polymesh.PolyMeshEditorWindow)
+        if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.selectTool( window.BEVEL_TOOL );
     </keystroke>
     <keystroke code="68" name="Select Extrude Tool (PolyMesh)">
-        if (window instanceof artofillusion.polymesh.PolyMeshEditorWindow)
+        if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.selectTool( window.EXTRUDE_TOOL );
     </keystroke>
     <keystroke code="75" name="Select Knife Tool (PolyMesh)">
-        if (window instanceof artofillusion.polymesh.PolyMeshEditorWindow)
+        if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.selectTool( window.KNIFE_TOOL );
     </keystroke>
     <keystroke code="82" name="Select Sew Tool (PolyMesh)">
-        if (window instanceof artofillusion.polymesh.PolyMeshEditorWindow)
+        if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.selectTool( window.SEW_TOOL );
     </keystroke>
     <keystroke code="77" name="Select Shape Tool (PolyMesh)">
@@ -29,35 +29,35 @@
         window.selectTool( window.RESHAPE_TOOL );
     </keystroke>
     <keystroke code="75" modifiers="1" name="Select Skeleton Tool (PolyMesh)">
-        if (window instanceof artofillusion.polymesh.PolyMeshEditorWindow)
+        if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.selectTool( window.SKELETON_TOOL );
     </keystroke>
     <keystroke code="81" name="Select Skew Tool (PolyMesh)">
-        if (window instanceof artofillusion.polymesh.PolyMeshEditorWindow)
+        if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.selectTool( window.SKEW_TOOL );
     </keystroke>
     <keystroke code="84" name="Select Taper Tool (PolyMesh)">
-        if (window instanceof artofillusion.polymesh.PolyMeshEditorWindow)
+        if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.selectTool( window.TAPER_TOOL );
     </keystroke>
     <keystroke code="79" name="Select Thicken Tool (PolyMesh)">
-        if (window instanceof artofillusion.polymesh.PolyMeshEditorWindow)
+        if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.selectTool( window.THICKEN_TOOL );
     </keystroke>
     <keystroke code="112" name="Toggle Help Mode (PolyMesh)">
-        if (window instanceof artofillusion.polymesh.PolyMeshEditorWindow)
+        if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.toggleHelpMode();
     </keystroke>
     <keystroke code="83" name="Toggle Smoothing (PolyMesh)">
-        if (window instanceof artofillusion.polymesh.PolyMeshEditorWindow)
+        if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.toggleSmoothing();
     </keystroke>
     <keystroke code="65" name="Toggle Manipulator 2D/3D (PolyMesh)">
-        if (window instanceof artofillusion.polymesh.PolyMeshEditorWindow)
+        if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.toggleManipulator();
     </keystroke>
     <keystroke code="87" name="Toggle Manipulator View Mode (PolyMesh)">
-        if (window instanceof artofillusion.polymesh.PolyMeshEditorWindow)
+        if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.toggleManipulatorViewMode();
     </keystroke>
 </keystrokes>

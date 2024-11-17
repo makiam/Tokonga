@@ -91,7 +91,7 @@ public class KeystrokeManager {
      * @param window the EditingWindow in which the event occurred
      */
     public static void executeKeystrokes(KeyEvent event, EditingWindow window) {
-        log.info("Event: {} code {} m:{} vs e:{}", event, event.getKeyCode(), event.getModifiers(), event.getModifiersEx());
+        log.debug("KeyEvent: code {} m:{} vs e:{}", event.getKeyCode(), event.getModifiers(), event.getModifiersEx());
 
         if(scripts.isEmpty()) {
             mapRecordsToScripts();
@@ -99,9 +99,7 @@ public class KeystrokeManager {
 
         var shell = ArtOfIllusion.getShell();
         List<Script> rec = scripts.getOrDefault(new KeyEventContainer(event), Collections.emptyList());
-        log.info("Found {} scripts for event", rec.size(), event);
         rec.forEach(script -> {
-            log.info("Run script: {}", script);
             script.setProperty("window", window);
             script.run();
             event.consume();
@@ -117,9 +115,20 @@ public class KeystrokeManager {
 
     }
 
+    private static final Script stub = new Script() {
+        @Override
+        public Object run() {
+            return null;
+        }
+    };
+
     private static Script getCompiledScript(GroovyShell shell, KeystrokeRecord record) {
-        log.info("Compile Record: {}", record);
-        Script script = shell.parse(record.getScript());
+        Script script = stub;
+        try {
+            script = shell.parse(record.getScript(), record.getName());
+        } catch (org.codehaus.groovy.control.CompilationFailedException ex) {
+            log.atError().log("Unable to compile keystroke script: {} due {}", record.getName(), ex.getMessage());
+        }
         return script;
     }
     /**

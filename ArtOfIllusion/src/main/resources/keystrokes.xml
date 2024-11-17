@@ -80,15 +80,15 @@
 
 
     <keystroke name="Selection Mode: Edge/Curve" code="69">
-        if (window instanceof MeshEditController)
-        window.setSelectionMode(MeshEditController.EDGE_MODE);
+        if (window instanceof artofillusion.ui.MeshEditController)
+        window.setSelectionMode(artofillusion.ui.MeshEditController.EDGE_MODE);
     </keystroke>
     <keystroke name="Selection Mode: Face" code="70">
-        if (window instanceof MeshEditController)
+        if (window instanceof artofillusion.ui.MeshEditController)
         window.setSelectionMode(MeshEditController.FACE_MODE);
     </keystroke>
     <keystroke name="Selection Mode: Point/Vertex" code="86">
-        if (window instanceof MeshEditController)
+        if (window instanceof artofillusion.ui.MeshEditController)
         window.setSelectionMode(MeshEditController.POINT_MODE);
     </keystroke>
     <keystroke name="View: Back" code="98">window.getView().setOrientation(ViewerCanvas.VIEW_BACK);</keystroke>
@@ -132,5 +132,7 @@
         view.setScale(view.getScale()*0.99);
         }
     </keystroke>
-    <keystroke name="Align with Closest Axis" code="106" >window.getView().alignWithClosestAxis();</keystroke>
+    <keystroke name="Align with Closest Axis" code="106" >
+        window.getView().alignWithClosestAxis();
+    </keystroke>
 </keystrokes>
