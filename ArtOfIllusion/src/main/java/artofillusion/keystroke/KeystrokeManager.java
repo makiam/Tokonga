@@ -15,21 +15,25 @@ import artofillusion.*;
 import artofillusion.ui.*;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
+import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import java.awt.event.*;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import org.codehaus.groovy.control.CompilationFailedException;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class maintains the list of keystrokes, and executes them in response to KeyEvents.
  */
+@Slf4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class KeystrokeManager {
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(KeystrokeManager.class);
-
-    private KeystrokeManager() {}
 
     private static final XStream xstream = new XStream(new StaxDriver());
     private static final Path path = ApplicationPreferences.getPreferencesFolderPath();
@@ -43,7 +47,6 @@ public class KeystrokeManager {
 
 
     private static final List<KeystrokeRecord> records = new ArrayList<>();
-    private static Map<Integer, List<KeystrokeRecord>> keyIndex = new HashMap<>();
     private static Map<KeyEventContainer, List<Script>> scripts = new HashMap<>();
 
     private static final String KEYSTROKE_FILENAME = "keystrokes.xml";
@@ -78,10 +81,9 @@ public class KeystrokeManager {
      * This should be called whenever a KeystrokeRecord has been modified.
      */
     public static void recordModified() {
-        keyIndex.clear();
         scripts.clear();
-    }
 
+    }
     /**
      * Given a key event, find any matching KeystrokeRecords and execute them.
      *
@@ -89,37 +91,46 @@ public class KeystrokeManager {
      * @param window the EditingWindow in which the event occurred
      */
     public static void executeKeystrokes(KeyEvent event, EditingWindow window) {
-        log.info("Event: {} code {} m:{} vs e:{}", event, event.getKeyCode(), event.getModifiers(), event.getModifiersEx());
-        if (keyIndex.isEmpty()) {
-            // We need to build an index for quickly looking up KeystrokeRecords.
-            keyIndex = new HashMap<>(records.size());
-            records.forEach(keystrokeRecord -> {
-                List<KeystrokeRecord> list = keyIndex.computeIfAbsent(keystrokeRecord.getKeyCode(), code -> new ArrayList<>());
-                list.add(keystrokeRecord);
-            });
+        log.debug("KeyEvent: code {} m:{} vs e:{}", event.getKeyCode(), event.getModifiers(), event.getModifiersEx());
+
+        if(scripts.isEmpty()) {
+            mapRecordsToScripts();
         }
 
-        // Get the list of all records with the correct ID.
-        List<KeystrokeRecord> list = keyIndex.get(event.getKeyCode());
-        if (list == null) {
-            return;
-        }
+        var shell = ArtOfIllusion.getShell();
+        List<Script> rec = scripts.getOrDefault(new KeyEventContainer(event), Collections.emptyList());
+        rec.forEach(script -> {
+            script.setProperty("window", window);
+            script.run();
+            event.consume();
+        });
 
-        for (KeystrokeRecord keystrokeRecord : list) {
-            if (keystrokeRecord.getModifiers() == event.getModifiers()) {
-                try {
-                    Script script = ArtOfIllusion.getShell().parse(keystrokeRecord.getScript());
-                    log.info("Script: {}", script);
-                    script.setProperty("window", window);
-                    script.run();
-                } catch (CompilationFailedException ee) {
-                    log.atError().setCause(ee).log("Keystroke exception: {}", ee.getMessage());
-                }
-                event.consume();
-            }
-        }
     }
 
+    private static void mapRecordsToScripts() {
+        var tmp = records.stream().collect(Collectors.groupingBy(KeystrokeRecord::KeyEventKey, Collectors.toList()));
+        var shell = ArtOfIllusion.getShell();
+        Function<KeystrokeRecord, Script> mapper = r -> getCompiledScript(shell, r);
+        tmp.forEach((k, v) -> scripts.put(k, v.stream().map(mapper).collect(Collectors.toList())));
+
+    }
+
+    private static final Script stub = new Script() {
+        @Override
+        public Object run() {
+            return null;
+        }
+    };
+
+    private static Script getCompiledScript(GroovyShell shell, KeystrokeRecord record) {
+        Script script = stub;
+        try {
+            script = shell.parse(record.getScript(), record.getName());
+        } catch (org.codehaus.groovy.control.CompilationFailedException ex) {
+            log.atError().log("Unable to compile keystroke script: {} due {}", record.getName(), ex.getMessage());
+        }
+        return script;
+    }
     /**
      * Locate the file containing keystroke definitions and load them.
      */

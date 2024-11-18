@@ -31,38 +31,64 @@
         window.deleteCommand();
         }
     </keystroke>
-    <keystroke name="Display Mode: Flat" code="50">window.getView().setRenderMode(ViewerCanvas.RENDER_FLAT);window.updateMenus();</keystroke>
-    <keystroke name="Display Mode: Smooth" code="51">window.getView().setRenderMode(ViewerCanvas.RENDER_SMOOTH); window.updateMenus();</keystroke>
-    <keystroke name="Display Mode: Textured" code="52">window.getView().setRenderMode(ViewerCanvas.RENDER_TEXTURED);window.updateMenus();</keystroke>
-    <keystroke name="Display Mode: Transparent" code="53">window.getView().setRenderMode(ViewerCanvas.RENDER_TRANSPARENT);window.updateMenus();</keystroke>
-    <keystroke name="Display Mode: Wireframe" code="49">window.getView().setRenderMode(ViewerCanvas.RENDER_WIREFRAME);window.updateMenus();</keystroke>
-    <keystroke name="Display Mode: Rendered" code="54">window.getView().setRenderMode(ViewerCanvas.RENDER_RENDERED);window.updateMenus();</keystroke>
+
+    <keystroke name="Display Mode: Wireframe" code="49">
+        <!-- Key code 49 is the '1' key. -->
+        window.getView().setRenderMode(ViewerCanvas.RENDER_WIREFRAME);window.updateMenus();
+    </keystroke>
+    <keystroke name="Display Mode: Flat" code="50">
+        <!-- Key code 50 is the '2' key. -->
+        window.getView().setRenderMode(ViewerCanvas.RENDER_FLAT);window.updateMenus();
+    </keystroke>
+    <keystroke name="Display Mode: Smooth" code="51">
+        <!-- Key code 51 is the '3' key. -->
+        window.getView().setRenderMode(ViewerCanvas.RENDER_SMOOTH); window.updateMenus();
+    </keystroke>
+    <keystroke name="Display Mode: Textured" code="52">
+        <!-- Key code 52 is the '4' key. -->
+        window.getView().setRenderMode(ViewerCanvas.RENDER_TEXTURED);window.updateMenus();</keystroke>
+    <keystroke name="Display Mode: Transparent" code="53">
+        <!-- Key code 53 is the '5' key. -->
+        window.getView().setRenderMode(ViewerCanvas.RENDER_TRANSPARENT);window.updateMenus();
+    </keystroke>
+    <keystroke name="Display Mode: Rendered" code="54">
+        <!-- Key code 54 is the '6' key. -->
+        window.getView().setRenderMode(ViewerCanvas.RENDER_RENDERED);window.updateMenus();
+    </keystroke>
+
+    <keystroke name="Select Tool: Toggle Default" code="32">
+        <!-- Key code 32 is the 'Space' key. -->
+        tools = window.getToolPalette();
+        tools.toggleDefaultTool();
+        window.setTool(tools.getSelectedTool());
+    </keystroke>
+    <keystroke name="Select Tool: Previous" code="33">
+        <!-- Key code 33 is the Page Up key -->
+        tools = window.getToolPalette();
+        selected = tools.getSelection();
+        selected = (selected == 0 ? tools.getNumTools()-1 : selected-1);
+        tools.selectTool(tools.getTool(selected));
+    </keystroke>
     <keystroke name="Select Tool: Next" code="34">
+        <!-- Key code 34 is the Page Down key -->
         tools = window.getToolPalette();
         selected = tools.getSelection();
         selected = (selected == tools.getNumTools()-1 ? 0 : selected+1);
         tools.selectTool(tools.getTool(selected));
     </keystroke>
-    <keystroke name="Select Tool: Previous" code="33">
-        tools = window.getToolPalette();
-        selected = tools.getSelection();
-        selected = (selected == 0 ? tools.getNumTools()-1 : selected-1);
-        tools.selectTool(tools.getTool(selected));</keystroke>
-    <keystroke name="Select Tool: Toggle Default" code="32">
-        tools = window.getToolPalette();
-        tools.toggleDefaultTool();
-        window.setTool(tools.getSelectedTool());
-    </keystroke>
+
+
+
     <keystroke name="Selection Mode: Edge/Curve" code="69">
-        if (window instanceof MeshEditController)
-        window.setSelectionMode(MeshEditController.EDGE_MODE);
+        if (window instanceof artofillusion.ui.MeshEditController)
+        window.setSelectionMode(artofillusion.ui.MeshEditController.EDGE_MODE);
     </keystroke>
     <keystroke name="Selection Mode: Face" code="70">
-        if (window instanceof MeshEditController)
+        if (window instanceof artofillusion.ui.MeshEditController)
         window.setSelectionMode(MeshEditController.FACE_MODE);
     </keystroke>
     <keystroke name="Selection Mode: Point/Vertex" code="86">
-        if (window instanceof MeshEditController)
+        if (window instanceof artofillusion.ui.MeshEditController)
         window.setSelectionMode(MeshEditController.POINT_MODE);
     </keystroke>
     <keystroke name="View: Back" code="98">window.getView().setOrientation(ViewerCanvas.VIEW_BACK);</keystroke>
@@ -106,5 +132,7 @@
         view.setScale(view.getScale()*0.99);
         }
     </keystroke>
-    <keystroke name="Align with Closest Axis" code="106" >window.getView().alignWithClosestAxis();</keystroke>
+    <keystroke name="Align with Closest Axis" code="106" >
+        window.getView().alignWithClosestAxis();
+    </keystroke>
 </keystrokes>
