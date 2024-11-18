@@ -451,7 +451,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         if (hasRepaintedView != null) {
             Arrays.fill(hasRepaintedView, false);
         }
-        timeMarker.position = time;
+        timeMarker.setPosition(time);
         NumberFormat nf = NumberFormat.getNumberInstance();
         nf.setMaximumFractionDigits(3);
         timeFrameLabel.setText(Translate.text("timeFrameLabel", nf.format(time), Integer.toString((int) Math.round(time * scene.getFramesPerSecond()))));
@@ -715,8 +715,8 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * position in the middle of a drag, then intermediate will be true.
      */
     public void markerMoved(Marker m, boolean intermediate) {
-        if (/*!intermediate && */m == timeMarker && m.position != scene.getTime()) {
-            window.setTime(m.position);
+        if (/*!intermediate && */m == timeMarker && m.getPosition() != scene.getTime()) {
+            window.setTime(m.getPosition());
         } else {
             repaintGraphs();
         }

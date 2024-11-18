@@ -1,25 +1,15 @@
 /* This represents a movable marker on the time axis. */
 
- /* Copyright (C) 2001 by Peter Eastman
+/* Copyright (C) 2001 by Peter Eastman
+ *  Changes copyright (C) 2024 by Maksim Khramov
  * This program is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-package artofillusion.animation;
+package artofillusion.animation
 
-import java.awt.*;
+import java.awt.Color
 
-public class Marker {
-
-    public double position;
-    public final String name;
-    public final Color color;
-
-    public Marker(double position, String name, Color color) {
-        this.position = position;
-        this.name = name;
-        this.color = color;
-    }
-}
+data class Marker(var position: Double, val name: String, val color: Color)

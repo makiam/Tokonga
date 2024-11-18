@@ -162,8 +162,8 @@ public class TimeAxis extends CustomWidget {
         // Draw any markers.
         for (i = 0; i < markers.size(); i++) {
             Marker m = markers.get(i);
-            x = (int) Math.round(scale * (m.position - start));
-            g.setColor(m.color);
+            x = (int) Math.round(scale * (m.getPosition() - start));
+            g.setColor(m.getColor());
             g.fillRect(x - MARKER_SIZE / 2, tickPos + 2, MARKER_SIZE, TICK_HEIGHT - 2);
         }
     }
@@ -174,12 +174,12 @@ public class TimeAxis extends CustomWidget {
         process = new ActionProcessor();
         for (int i = 0; i < markers.size(); i++) {
             Marker m = markers.get(i);
-            int x = (int) (scale * (m.position - start));
+            int x = (int) (scale * (m.getPosition() - start));
             if (clickPos.x < x - MARKER_SIZE / 2 - 1 || clickPos.x > x + MARKER_SIZE / 2 + 1) {
                 continue;
             }
             draggingMarker = m;
-            origMarkerPos = m.position;
+            origMarkerPos = m.getPosition();
         }
         if (draggingMarker == null && markers.size() > 0) {
             // Snap the default marker to the click position.
@@ -210,10 +210,10 @@ public class TimeAxis extends CustomWidget {
                 if (pos.x >= width) {
                     pos.x = width - 1;
                 }
-                double t = draggingMarker.position;
-                t = origMarkerPos + (pos.x - clickPos.x) / scale;
+
+                double t = origMarkerPos + (pos.x - clickPos.x) / scale;
                 t = Math.round(t * subdivisions) / (double) subdivisions;
-                draggingMarker.position = t;
+                draggingMarker.setPosition(t);
                 theScore.markerMoved(draggingMarker, true);
             }
         };
