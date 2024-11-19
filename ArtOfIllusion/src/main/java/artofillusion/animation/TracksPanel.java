@@ -148,8 +148,8 @@ public class TracksPanel extends CustomWidget implements TrackDisplay {
         // Draw the markers.
         for (i = 0; i < markers.size(); i++) {
             Marker m = markers.get(i);
-            g.setColor(m.color);
-            x = (int) Math.round(scale * (m.position - start));
+            g.setColor(m.getColor());
+            x = (int) Math.round(scale * (m.getPosition() - start));
             g.drawLine(x, 0, x, dim.height);
         }
 
