@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PluginRegistry {
     private static final XStream xstream = new XStream(new StaxDriver());
 
-    public static final Class[] TYPES = {Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class,
+    private static final Class<?>[] TYPES = {Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class,
             LogRecord.class, Resource.class, External.class, Fileset.class, FilesetItem.class};
 
     static {
@@ -329,7 +329,7 @@ public class PluginRegistry {
         return new ArrayList<>(resourcesForType.values());
     }
 
-    private static final Map<String, PluginResource> EMPTY = Collections.EMPTY_MAP;
+    private static final Map<String, PluginResource> EMPTY = Collections.emptyMap();
     /**
      * Get the PluginResource with a particular type and id, or null if there is no such resource.
      */
@@ -415,7 +415,7 @@ public class PluginRegistry {
         private Extension ext = new Extension();
 
         public String getName() {
-            return ext.getName();
+            return ext.getName() == null ? file.getName() : ext.getName();
         }
 
         String version;
@@ -470,7 +470,7 @@ public class PluginRegistry {
 
             version = ext.getVersion();
             authors = String.join(", ", ext.getAuthors());
-            categories.addAll(ext.getCategoryList().stream().map(category -> category.getCategory()).collect(Collectors.toList()));
+            categories.addAll(ext.getCategoryList().stream().map(Category::getCategory).collect(Collectors.toList()));
 
             ext.getImports().forEach(def -> {
                 if(def.getName() == null) {
@@ -540,7 +540,8 @@ public class PluginRegistry {
          * Find which localized version of the resource best matches a locale.
          */
         private int findLocalizedVersion(Locale locale) {
-            int bestMatch = 0, bestMatchedLevels = 0;
+            int bestMatch = 0;
+            int bestMatchedLevels = 0;
             for (int i = 0; i < locales.size(); i++) {
                 Locale loc = locales.get(i);
                 int matchedLevels = 0;
