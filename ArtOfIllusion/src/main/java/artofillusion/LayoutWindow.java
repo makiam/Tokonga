@@ -13,7 +13,7 @@ package artofillusion;
 
 import artofillusion.animation.*;
 import artofillusion.animation.distortion.*;
-import artofillusion.image.*;
+import artofillusion.image.ImagesDialog;
 import artofillusion.keystroke.KeystrokeManager;
 import artofillusion.math.*;
 import artofillusion.object.*;
@@ -71,7 +71,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      * Get the File menu.
      */
     @Getter
-    private final BMenu fileMenu = Translate.menu("file");
+    private final BMenu fileMenu = new LayoutFileMenu(this);
     /**
      * -- GETTER --
      * Get the Edit menu.
@@ -83,7 +83,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      * Get the Scene menu.
      */
     @Getter
-    private final BMenu sceneMenu = Translate.menu("scene");
+    private final BMenu sceneMenu = new LayoutSceneMenu(this);
     /**
      * -- GETTER --
      * Get the Object menu.
@@ -101,7 +101,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      * Get the Tools menu.
      */
     @Getter
-    private final BMenu toolsMenu = Translate.menu("tools");
+    private final BMenu toolsMenu = new LayoutToolsMenu(this);
     /**
      * -- GETTER --
      * Get the View menu.
@@ -277,7 +277,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         setMenuBar(new BMenuBar());
         createFileMenu();
         createEditMenu();
-        createSceneMenu();
+
+        getMenuBar().add(sceneMenu);
+
         createObjectMenu();
         createAnimationMenu();
         createToolsMenu();
@@ -449,8 +451,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         importMenu = Translate.menu("import");
         exportMenu = Translate.menu("export");
 
-        fileMenu.add(Translate.menuItem("new", event -> newSceneAction()));
-        fileMenu.add(Translate.menuItem("open", event -> openSceneAction()));
+
         fileMenu.add(recentFilesMenu = Translate.menu("openRecent"));
         RecentFiles.createMenu(recentFilesMenu);
 
@@ -535,18 +536,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     private void createToolsMenu() {
         getMenuBar().add(toolsMenu);
 
-        List<ModellingTool> modellingTools = PluginRegistry.getPlugins(ModellingTool.class);
-        modellingTools.sort(Comparator.comparing(ModellingTool::getName));
-        for (ModellingTool tool : modellingTools) {
-            BMenuItem item = new BMenuItem(tool.getName());
-
-            item.addEventLink(CommandEvent.class, this, "modellingToolCommand");
-            item.getComponent().putClientProperty("tool", tool);
-            toolsMenu.add(item);
-        }
-
-        toolsMenu.addSeparator();
-
 
         BMenu editScriptMenu = Translate.menu("editToolScript");
         editScriptMenu.add(newScriptMenu = Translate.menu("newScript"));
@@ -590,7 +579,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     /*
-    Creating the View menu. All viewmanipulation related menuitems and sub menus should be added here.
+    Creating the View menu. All view manipulation related menu items and sub menus should be added here.
      */
     private void createViewMenu() {
         BMenu displayMenu;
@@ -724,19 +713,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         animationMenu.addSeparator();
         animationMenu.add(Translate.menuItem("previewAnimation", event -> previewAnimationAction()));
         animationMenu.add(animationMenuItem[12] = Translate.menuItem("showScore", event -> showScoreAction()));
-    }
-
-    private void createSceneMenu() {
-
-        getMenuBar().add(sceneMenu);
-
-        sceneMenu.add(Translate.menuItem("renderScene", event -> renderCommand()));
-        sceneMenu.add(Translate.menuItem("renderImmediately", event -> renderImmediatelyAction()));
-
-        sceneMenu.addSeparator();
-        sceneMenu.add(Translate.menuItem("textures", event -> texturesCommand()));
-        sceneMenu.add(Translate.menuItem("images", event -> imagesDialogAction()));
-        sceneMenu.add(Translate.menuItem("environment", event -> environmentCommand()));
     }
 
     /**
@@ -1534,16 +1510,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         score.addTrack(sceneExplorer.getSelectedObjects(), ProceduralRotationTrack.class, null, true);
     }
 
-    private void newSceneAction() {
-        savePreferences();
-        ArtOfIllusion.newWindow();
-    }
-
-    private void openSceneAction() {
-        savePreferences();
-        ArtOfIllusion.openScene(this);
-    }
-
     private void closeSceneAction() {
         savePreferences();
         ArtOfIllusion.closeWindow(this);
@@ -1572,13 +1538,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         updateImage();
     }
 
-    private void renderImmediatelyAction() {
-        RenderSetupDialog.renderImmediately(this, theScene);
-    }
-
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void imagesDialogAction() {
-        new ImagesDialog(this, theScene, null);
+        SwingUtilities.invokeLater(() -> new ImagesDialog(this, theScene));
     }
 
     private void showCoordinateAxesAction() {
@@ -1666,16 +1628,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         setUndoRecord(undo);
         setSelection(theScene.getNumObjects() - 1);
         editObjectCommand();
-    }
-
-    void modellingToolCommand(CommandEvent ev) {
-        BMenuItem item = (BMenuItem) ev.getWidget();
-        Object tool = item.getComponent().getClientProperty("tool");
-        if (null == tool) {
-            return;
-        }
-        ((ModellingTool) tool).commandSelected(this);
-
     }
 
     public void saveCommand() {
@@ -2568,7 +2520,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void renderCommand() {
-        new RenderSetupDialog(this, theScene);
+        SwingUtilities.invokeLater(() -> new RenderSetupDialog(this, theScene));
     }
 
     public void toggleViewsCommand() {
@@ -2680,11 +2632,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      */
     public void showTexturesDialog(Scene target) {
         new TexturesAndMaterialsDialog(this, target);
-    }
-
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void environmentCommand() {
-        new EnvironmentPropertiesDialog(this);
     }
 
     private void executeScriptCommand(CommandEvent ev) {

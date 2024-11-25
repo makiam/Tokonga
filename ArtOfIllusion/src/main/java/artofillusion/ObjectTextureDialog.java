@@ -21,6 +21,8 @@ import java.awt.*;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.swing.*;
+
 /**
  * This class implements the dialog box which is used to choose textures for objects.
  * It presents a list of all available textures from which the user can select one.
@@ -230,7 +232,7 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
         // Add the buttons at the bottom.
         RowContainer buttons = new RowContainer();
         content.add(buttons, BorderContainer.SOUTH, new LayoutInfo());
-        buttons.add(Translate.button("texturesAndMaterials", this, "doEditTextures"));
+        buttons.add(Translate.button("texturesAndMaterials", event -> doEditTextures()));
         buttons.add(Translate.button("ok", this, "doOk"));
         buttons.add(Translate.button("cancel", this, "doCancel"));
 
@@ -412,7 +414,7 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
                     ParameterValue val = new ConstantParameterValue(value);
                     editObj.getObject().setParameterValue(texParam[whichParam], val);
                     preview.getObject().getObject().setParameterValue(texParam[whichParam], val);
-                    renderPreview();
+                    renderProcessor.addEvent(preview::render);
                 }
             });
         }
@@ -440,7 +442,7 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
             Texture tex = scene.getTexture(which);
             tex.edit(window, scene);
             scene.changeTexture(which);
-            renderPreview();
+            renderProcessor.addEvent(preview::render);
         }
     }
 
@@ -463,7 +465,7 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
         editObj.setTexture(editObj.getObject().getTexture(), editObj.getObject().getTextureMapping());
         preview.setTexture(editObj.getObject().getTexture(), editObj.getObject().getTextureMapping());
         updatePreviewParameterValues();
-        renderPreview();
+        renderProcessor.addEvent(preview::render);
     }
 
     private void doEditMaterialMapping() {
@@ -526,7 +528,7 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
     }
 
     private void doEditTextures() {
-        window.showTexturesDialog(scene);
+        SwingUtilities.invokeLater(() -> new TexturesAndMaterialsDialog(window, scene));
     }
 
     private void doAddLayer() {
@@ -641,7 +643,7 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
                 } else if (type == PARAM_TYPE_NAME[FACE_VERTEX_PARAM]) {
                     editObj.getObject().setParameterValue(param, new FaceVertexParameterValue((FacetedMesh) realObject, param));
                 }
-                renderPreview();
+                renderProcessor.addEvent(preview::render);
                 return;
             }
         }
@@ -684,13 +686,12 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
             pack();
             UIUtilities.centerDialog(this, window);
             resetParameters();
-            return;
         }
     }
 
     private void blendTypeChanged() {
         layeredMap.setLayerMode(layerList.getSelectedIndex(), blendChoice.getSelectedIndex());
-        renderPreview();
+        renderProcessor.addEvent(preview::render);
     }
 
     private void textureSelectionChanged(SelectionChangedEvent ev) {
@@ -723,7 +724,7 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
             }
         }
         updateComponents();
-        renderPreview();
+        renderProcessor.addEvent(preview::render);
     }
 
     private void materialSelectionChanged() {
@@ -758,7 +759,7 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
         preview.cancelRendering();
         editObj.setTexture(editObj.getObject().getTexture(), editObj.getObject().getTextureMapping());
         preview.getObject().setTexture(preview.getObject().getObject().getTexture(), preview.getObject().getObject().getTextureMapping());
-        renderPreview();
+        renderProcessor.addEvent(preview::render);
     }
 
     // Update the status of various components.
@@ -817,12 +818,12 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
                         layerList.remove(i);
                     }
                 }
-                renderPreview();
+                renderProcessor.addEvent(preview::render);
                 updateComponents();
             } else if (editObj.getObject().getTexture() == tex) {
                 editObj.setTexture(scene.getDefaultTexture(), scene.getDefaultTexture().getDefaultMapping(editObj.getObject()));
                 preview.setTexture(editObj.getObject().getTexture(), editObj.getObject().getTextureMapping());
-                renderPreview();
+                renderProcessor.addEvent(preview::render);
                 updateComponents();
             }
         } else {
@@ -848,15 +849,4 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
         }
     }
 
-    /**
-     * Rerender the preview image after the texture has changed.
-     */
-    private void renderPreview() {
-        renderProcessor.addEvent(new Runnable() {
-            @Override
-            public void run() {
-                preview.render();
-            }
-        });
-    }
 }

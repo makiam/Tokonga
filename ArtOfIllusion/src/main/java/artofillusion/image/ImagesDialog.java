@@ -22,6 +22,7 @@ import java.awt.image.*;
 import java.io.*;
 import static java.lang.Math.*;
 import java.util.*;
+import java.util.List;
 import javax.imageio.*;
 import javax.swing.*;
 import javax.swing.Timer;
@@ -35,7 +36,10 @@ public class ImagesDialog extends BDialog {
 
     private final Scene theScene;
     private final WindowWidget parent;
-    private int selection, dialogHeight, dialogWidth, cOff = 0;
+    private int selection;
+    private int dialogHeight;
+    private int dialogWidth;
+    private int cOff = 0;
     private final BScrollPane sp;
     private final ImagesCanvas ic;
     private final BButton[] b;
@@ -44,6 +48,10 @@ public class ImagesDialog extends BDialog {
     private final int canvasWidth = 5;
     private final LayoutInfo fillLoose;
     private final ImageMap selectedImage;
+
+    public ImagesDialog(WindowWidget fr, Scene sc) {
+        this(fr, sc, null);
+    }
 
     public ImagesDialog(WindowWidget fr, Scene sc, ImageMap selected) {
         super(fr, "Images", true);
@@ -310,29 +318,29 @@ public class ImagesDialog extends BDialog {
     private void keyPressed(KeyPressedEvent ev) {
         int code = ev.getKeyCode();
 
-        if (code == KeyPressedEvent.VK_ESCAPE) {
+        if (code == KeyEvent.VK_ESCAPE) {
             cancel();
         }
 
-        if (code == KeyPressedEvent.VK_ENTER) {
+        if (code == KeyEvent.VK_ENTER) {
             close();
         }
 
-        if (code == KeyPressedEvent.VK_LEFT) {
+        if (code == KeyEvent.VK_LEFT) {
             if (selection < 0) {
                 selection = theScene.getNumImages() - 1;
             } else {
                 selection = Math.max(selection - 1, 0);
             }
-        } else if (code == KeyPressedEvent.VK_RIGHT) {
+        } else if (code == KeyEvent.VK_RIGHT) {
             selection = Math.min(selection + 1, theScene.getNumImages() - 1);
-        } else if (code == KeyPressedEvent.VK_UP) {
+        } else if (code == KeyEvent.VK_UP) {
             if (selection < 0) {
                 selection = theScene.getNumImages() - 1;
             } else if (selection > canvasWidth - 1) {
                 selection -= canvasWidth;
             }
-        } else if (code == KeyPressedEvent.VK_DOWN) {
+        } else if (code == KeyEvent.VK_DOWN) {
             if (selection < 0) {
                 selection = 0;
             } else {
@@ -378,13 +386,17 @@ public class ImagesDialog extends BDialog {
         private int iconSize;
         private int lastIconSize = -1;
         private int textSize;
-        private int step, steps, scrollIncrement, scrollFinalValue;
+        private int step;
+        private int scrollIncrement;
+        private int scrollFinalValue;
         private final Color textBGColor = new Color(95, 95, 127, 191);
         private final Color textColor = new Color(223, 223, 127, 255);
         private final Color canvasColor = new Color(223, 223, 223);
         private final Color frameColor = new Color(175, 175, 175);
-        private Image linkedIcon, linkBrokenIcon, inUseIcon;
-        private Image linkedIconTMP, linkBrokenIconTMP, inUseIconTMP;
+        private Image linkedIcon;
+        private Image linkBrokenIcon;
+        private Image inUseIcon;
+
         private ImageMap currentImage;
         private final JViewport vp = sp.getComponent().getViewport();
         private final Font templateFont = new BLabel().getFont();
@@ -488,7 +500,7 @@ public class ImagesDialog extends BDialog {
             // of the canvas. .. Have to paint one full row more for tha scroll
             head = Math.max((scrollY / gridh * w - 1), 0);
             tail = Math.min(theScene.getNumImages(), (scrollY + scrollH) / gridh * w + w + 1);
-            boolean inUse = false;
+
             for (int i = head; i < tail; i++) {
                 x = (i % w) * gridw + cOff;
                 y = (i / w) * gridh;
@@ -586,7 +598,7 @@ public class ImagesDialog extends BDialog {
         private final LayoutInfo thumb;
         private final LayoutInfo text;
         private final LayoutInfo box;
-        private ArrayList<ImageMap> unusedImages;
+        private List<ImageMap> unusedImages;
         private BCheckBox[] removeBox;
 
         PurgeDialog(boolean intent) {
@@ -651,7 +663,8 @@ public class ImagesDialog extends BDialog {
             }
             nameTagWidth = Math.max(nameTagWidth + 20, 200);
 
-            BufferedImage bg, nameTag;
+            BufferedImage bg;
+            BufferedImage nameTag;
             Image preview;
             Color textBG = new Color(223, 223, 223);
 
@@ -719,14 +732,14 @@ public class ImagesDialog extends BDialog {
         }
 
         private void selectAll() {
-            for (BCheckBox b : removeBox) {
-                b.setState(true);
+            for (BCheckBox rb : removeBox) {
+                rb.setState(true);
             }
         }
 
         private void selectNone() {
-            for (BCheckBox b : removeBox) {
-                b.setState(false);
+            for (BCheckBox rb : removeBox) {
+                rb.setState(false);
             }
         }
 
@@ -797,10 +810,10 @@ public class ImagesDialog extends BDialog {
          */
         private void keyPressed(KeyPressedEvent ev) {
             int code = ev.getKeyCode();
-            if (code == KeyPressedEvent.VK_ESCAPE) {
+            if (code == KeyEvent.VK_ESCAPE) {
                 close();
             }
-            if (code == KeyPressedEvent.VK_ENTER) {
+            if (code == KeyEvent.VK_ENTER) {
                 deleteAndClose();
             }
         }

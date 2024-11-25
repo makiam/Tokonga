@@ -8,25 +8,14 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+package artofillusion
 
-package artofillusion;
-
-import artofillusion.ui.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import artofillusion.ui.EditingWindow
 
 /**
  * A SceneChangedEvent is dispatched by an EditingWindow to indicate that some element of the
  * scene has changed. This includes all aspects of the scene, including the list of objects,
  * properties of individual objects, textures, the list of currently selected objects, etc.
  */
-@AllArgsConstructor
-public class SceneChangedEvent {
 
-    /**
-     * Get the LayoutWindow containing the scene which was changed.
-     */
-    @Getter
-    private final EditingWindow window;
-
-}
+data class SceneChangedEvent(val window: EditingWindow)

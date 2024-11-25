@@ -12,11 +12,13 @@ package artofillusion.ui;
 
 import artofillusion.object.NullObject;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
 
+@DisplayName("Tree List Component Test")
 public class TreeListTest {
     private class DummyTreeElement extends TreeElement {
 
@@ -122,7 +124,7 @@ public class TreeListTest {
     }
 
     @Test
-    public void findNonExistedItemInTreeOnelevel() {
+    public void findNonExistedItemInTreeOneLevel() {
         TreeList treeList = new TreeList(null);
         treeList.setUpdateEnabled(false);
 
@@ -133,7 +135,7 @@ public class TreeListTest {
     }
 
     @Test
-    public void findExistedItemInTreeOnelevel() {
+    public void findExistedItemInTreeOneLevel() {
         TreeList treeList = new TreeList(null);
         treeList.setUpdateEnabled(false);
         NullObject target = new NullObject();
@@ -193,16 +195,36 @@ public class TreeListTest {
     @Test
     public void findSelectedItemsInOneLevelTree() {
         TreeList treeList = new TreeList(null);
-        treeList.setUpdateEnabled(false);
+        //treeList.setUpdateEnabled(false);
 
         NullObject target = new NullObject();
         TreeElement el0 = new DummyTreeElement(target);
-
+        Assertions.assertFalse(el0.isSelected());
         treeList.addElement(el0);
         treeList.setSelected(el0, true);
 
 
         Object[] selected = treeList.getSelectedObjects();
+        Assertions.assertTrue(el0.isSelected());
+        Assertions.assertNotNull(selected);
+        Assertions.assertEquals(1, selected.length);
+    }
+
+    @Test
+    public void findSelectedItemsInOneLevelTreeByObject() {
+        TreeList treeList = new TreeList(null);
+        //treeList.setUpdateEnabled(false);
+
+        NullObject target = new NullObject();
+        TreeElement el0 = new DummyTreeElement(target);
+        Assertions.assertFalse(el0.isSelected());
+
+        treeList.addElement(el0);
+        treeList.setSelected(target, true);
+
+
+        Object[] selected = treeList.getSelectedObjects();
+        Assertions.assertTrue(el0.isSelected());
         Assertions.assertNotNull(selected);
         Assertions.assertEquals(1, selected.length);
     }
@@ -210,7 +232,7 @@ public class TreeListTest {
     @Test
     public void findSelectedItemsInTwoLevelsTree() {
         TreeList treeList = new TreeList(null);
-        treeList.setUpdateEnabled(false);
+        //treeList.setUpdateEnabled(false);
 
 
         TreeElement el0 = new DummyTreeElement( new NullObject());
