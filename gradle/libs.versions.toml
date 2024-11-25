@@ -12,7 +12,7 @@ tinylog-impl = { module = "org.tinylog:tinylog-impl", version.ref = "tinylog" }
 tinylog-slf4j = { module = "org.tinylog:slf4j-tinylog", version.ref = "tinylog" }
 
 logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.5.12" }
-slf-api = { module = "org.slf4j:slf4j-api", version = "2.0.12" }
+slf-api = { module = "org.slf4j:slf4j-api", version = "2.0.16" }
 
 modern-docking-api = { module = "io.github.andrewauclair:modern-docking-api", version.ref = "md" }
 modern-docking-app = { module = "io.github.andrewauclair:modern-docking-single-app", version.ref = "md" }
