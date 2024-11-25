@@ -8,8 +8,8 @@
 <RSyntaxTheme version="1.0">
 
     <!-- Omitting baseFont will use a system-appropriate monospaced. -->
-    <!--<baseFont family="..." size="13"/>-->
-   
+    <baseFont family="JetBrains Mono" size="13"/>
+
     <!--  General editor colors. -->
     <background color="ffffff"/>
     <caret color="ff0000"/>
