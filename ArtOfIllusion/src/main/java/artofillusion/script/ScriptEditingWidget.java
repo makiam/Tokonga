@@ -38,11 +38,19 @@ import org.fife.ui.rtextarea.Gutter;
  */
 @Slf4j
 public class ScriptEditingWidget extends BScrollPane {
-    private static Font jbmf;
 
     static {
         try {
-            jbmf = Font.createFont(Font.TRUETYPE_FONT, ArtOfIllusion.class.getResourceAsStream("/JetBrainsMono-Regular.ttf"));
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            var font = Font.createFont(Font.TRUETYPE_FONT, ArtOfIllusion.class.getResourceAsStream("/fonts/JetBrainsMono-Bold.ttf"));
+            ge.registerFont(font);
+            font = Font.createFont(Font.TRUETYPE_FONT, ArtOfIllusion.class.getResourceAsStream("/fonts/JetBrainsMono-Italic.ttf"));
+            ge.registerFont(font);
+            font = Font.createFont(Font.TRUETYPE_FONT, ArtOfIllusion.class.getResourceAsStream("/fonts/JetBrainsMono-BoldItalic.ttf"));
+            ge.registerFont(font);
+            font = Font.createFont(Font.TRUETYPE_FONT, ArtOfIllusion.class.getResourceAsStream("/fonts/JetBrainsMono-Regular.ttf"));
+            ge.registerFont(font);
+
         } catch (IOException | FontFormatException e) {
             log.atError().setCause(e).log("Unable to load font: {}", e.getMessage());
         }
@@ -55,10 +63,6 @@ public class ScriptEditingWidget extends BScrollPane {
 
         try {
             Theme theme = Theme.load(ScriptEditingWidget.class.getResourceAsStream("/scriptEditorTheme.xml"));
-            Optional.ofNullable(jbmf).ifPresent(font -> {
-                theme.baseFont = font.deriveFont(13f);
-            });
-            
             theme.apply(rsta);
 
         } catch (IOException ex) {
