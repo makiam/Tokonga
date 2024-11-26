@@ -70,6 +70,15 @@ public class ObjectInfo {
 
     private List<Track> tracks = new ArrayList<>();
 
+
+    /**
+     * -- GETTER --
+     *  Get the current pose for this object (may be null).
+     * -- SETTER --
+     *  Set the current pose for this object (may be null).
+
+     */
+    @Setter
     @Getter
     private Keyframe pose;
     public int id;
@@ -464,20 +473,6 @@ public class ObjectInfo {
      */
     public void setParent(ObjectInfo parent) {
         this.parent = parent;
-    }
-
-    /**
-     * Get the current pose for this object (may be null).
-     */
-    public Keyframe getPose() {
-        return pose;
-    }
-
-    /**
-     * Set the current pose for this object (may be null).
-     */
-    public void setPose(Keyframe pose) {
-        this.pose = pose;
     }
 
     /**
