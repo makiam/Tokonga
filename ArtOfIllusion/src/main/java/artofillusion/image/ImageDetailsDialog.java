@@ -31,6 +31,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ImageDetailsDialog extends BDialog {
 
+    private static final Color errorTextColor = new Color(143, 0, 0);
+    private static final Color hilightTextColor = new Color(0, 191, 191);
+
     private final WindowWidget parent;
     private final Scene scene;
     private ImageMap im;
@@ -43,8 +46,7 @@ public class ImageDetailsDialog extends BDialog {
     private final BLabel[] title;
     private final BLabel[] data;
     private final Color defaultTextColor;
-    private final Color errorTextColor;
-    private final Color hilightTextColor;
+
     private Color currentTextColor;
 
     public ImageDetailsDialog(WindowWidget parent, Scene scene, ImageMap image) {
@@ -91,11 +93,11 @@ public class ImageDetailsDialog extends BDialog {
         createBackground();
         paintImage();
 
-        buttonField.add(refreshButton = Translate.button("refreshImage", this, "refreshImage"));
-        buttonField.add(reconnectButton = Translate.button("reconnectImage", "...", this, "reconnectImage"));
-        buttonField.add(convertButton = Translate.button("convertImage", this, "convertToLocal"));
-        buttonField.add(exportButton = Translate.button("exportImage", "...", this, "exportImage"));
-        buttonField.add(Translate.button("ok", this, "closeDetailsDialog"));
+        buttonField.add(refreshButton = Translate.button("refreshImage", event -> refreshImage()));
+        buttonField.add(reconnectButton = Translate.button("reconnectImage", "...", event -> reconnectImage()));
+        buttonField.add(convertButton = Translate.button("convertImage", event -> convertToLocal()));
+        buttonField.add(exportButton = Translate.button("exportImage", "...", event -> exportImage()));
+        buttonField.add(Translate.button("ok", event -> closeDetailsDialog()));
 
         if (im instanceof ExternalImage) {
             exportButton.setEnabled(false);
@@ -106,12 +108,13 @@ public class ImageDetailsDialog extends BDialog {
         }
 
         defaultTextColor = currentTextColor = title[0].getComponent().getForeground();
-        hilightTextColor = new Color(0, 191, 191);
-        errorTextColor = new Color(143, 0, 0);
+
+
 
         data[0].addEventLink(MouseClickedEvent.class, this, "nameClicked");
         data[0].addEventLink(MouseEnteredEvent.class, this, "nameEntered");
         data[0].addEventLink(MouseExitedEvent.class, this, "nameExited");
+
         title[0].addEventLink(MouseClickedEvent.class, this, "nameClicked");
         title[0].addEventLink(MouseEnteredEvent.class, this, "nameEntered");
         title[0].addEventLink(MouseExitedEvent.class, this, "nameExited");

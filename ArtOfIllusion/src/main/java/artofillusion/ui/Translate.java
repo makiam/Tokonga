@@ -232,7 +232,7 @@ public class Translate {
     }
 
     public static BButton button(String name, ActionListener al) {
-        var b = button(name, null, null);
+        var b = button(name, (Object)null, (String)null);
         b.getComponent().addActionListener(al);
         return b;
     }
@@ -257,6 +257,12 @@ public class Translate {
         if (listener != null) {
             b.addEventLink(CommandEvent.class, listener, method);
         }
+        return b;
+    }
+
+    public static BButton button(String name, String suffix, ActionListener al) {
+        var b = button(name, suffix, null, null);
+        b.getComponent().addActionListener(al);
         return b;
     }
 

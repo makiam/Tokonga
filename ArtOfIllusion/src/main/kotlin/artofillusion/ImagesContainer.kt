@@ -45,4 +45,11 @@ internal interface ImagesContainer {
      *Get the image map at the specified index
      */
     fun getImage(index: Int): ImageMap? = (this as Scene)._images[index]
+
+    /**
+     * Replace an ImageMap with another one
+     */
+    fun replaceImage(which: Int, im: ImageMap) {
+        (this as Scene)._images[which] = im
+    }
 }
