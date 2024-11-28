@@ -18,6 +18,10 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.*;
 import java.io.*;
 
@@ -231,7 +235,7 @@ public class ImageDetailsDialog extends BDialog {
                 ((EditingWindow) parent).setModified();
             }
         } catch (Exception e) {
-            new BStandardDialog("", Translate.text("errorLoadingImage " + file.getName()), BStandardDialog.ERROR).showMessageDialog(this);
+            MessageDialog.create().withOwner(this.getComponent()).error(Translate.text("errorLoadingImage", file.getName()));
         }
     }
 
@@ -269,9 +273,11 @@ public class ImageDetailsDialog extends BDialog {
 
         // Check if the file already exist and the user wants to overwrite it.
         if (imageFile.isFile()) {
+            String caption = "";
+            String prompt = Translate.text("overwriteFile", fileName);
             String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
-            int choice = new BStandardDialog("", Translate.text("overwriteFile", fileName), BStandardDialog.QUESTION).showOptionDialog(this, options, options[1]);
-            if (choice == 1) {
+            var result = JOptionPane.showOptionDialog(this.getComponent(), prompt, caption, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+            if (result == 1) {
                 return;
             }
         }
@@ -286,8 +292,7 @@ public class ImageDetailsDialog extends BDialog {
                 ImageIO.write(((MIPMappedImage) im).getImage(), "png", out); // getImage returns BufferedImage
             }
         } catch (IOException ex) {
-            setCursor(Cursor.getDefaultCursor());
-            new BStandardDialog("", Translate.text("errorExportingImage", im.getName()), BStandardDialog.ERROR).showMessageDialog(this);
+            MessageDialog.create().withOwner(this.getComponent()).error(Translate.text("errorExportingImage", im.getName()));
             log.atError().setCause(ex).log("Unable to export image: {} due {}", im.getName(), ex.getMessage());
         }
     }
@@ -302,13 +307,13 @@ public class ImageDetailsDialog extends BDialog {
             name = Translate.text("unNamed");
         }
 
-        if (confirmConvert(name)) {
-            int s;
-            for (s = 0; s < scene.getNumImages() && scene.getImage(s) != im; s++);
+        if (confirm(name)) {
+
+            int imageIndex = scene.indexOf(im);
 
             ((ExternalImage) im).getImageMap().setName(im.getName());
             im = ((ExternalImage) im).getImageMap();
-            scene.replaceImage(s, im);
+            scene.replaceImage(imageIndex, im);
 
             exportButton.setEnabled(true);
             refreshButton.setEnabled(false);
@@ -318,12 +323,13 @@ public class ImageDetailsDialog extends BDialog {
         }
     }
 
-    private boolean confirmConvert(String name) {
-        String question = Translate.text("convertQuestion", name);
-
-        BStandardDialog confirm = new BStandardDialog(Translate.text("confirmTitle"), question, BStandardDialog.QUESTION);
+    private boolean confirm(String name) {
+        String caption = Translate.text("confirmTitle");
+        String prompt = Translate.text("convertQuestion", name);
         String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
-        return (confirm.showOptionDialog(this, options, options[1]) == 0);
+
+        var result = JOptionPane.showOptionDialog(this.getComponent(), prompt, caption, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+        return result == 0;
     }
 
     private void closeDetailsDialog() {
@@ -374,7 +380,7 @@ public class ImageDetailsDialog extends BDialog {
     }
 
     private void nameClicked() {
-        new ImageNameEditor(im, this);
+        new ImageNameEditor(this, im);
     }
 
     /**
@@ -384,10 +390,13 @@ public class ImageDetailsDialog extends BDialog {
 
         private final BTextField nameField;
         private BCheckBox autoBox;
+
+
         private String autoText, userText;
         private boolean automatic = false;
 
-        private ImageNameEditor(ImageMap im, WindowWidget parent) {
+        ImageNameEditor(WindowWidget parent, ImageMap im ) {
+            super(parent, true);
             setTitle(Translate.text("nameDialogTitle"));
             ColumnContainer content = new ColumnContainer();
             RowContainer buttons = new RowContainer();
@@ -411,20 +420,38 @@ public class ImageDetailsDialog extends BDialog {
             nameField.addEventLink(ValueChangedEvent.class, this, "textChanged");
             content.add(buttons);
 
-            buttons.add(Translate.button("ok", this, "okNameEditor"));
+            BButton okButton =Translate.button("ok", event -> okNameEditor());
+            buttons.add(okButton);
+            buttons.add(Translate.button("cancel", event -> cancelNameEditor()));
 
-            buttons.add(Translate.button("cancel", this, "cancelNameEditor"));
-            addEventLink(WindowClosingEvent.class, this, "cancelNameEditor");
-            addAsListener(this);
+            this.getComponent().addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    cancelNameEditor();
+                }
+            });
+
+
             layoutChildren();
             pack();
             setResizable(false);
-            setModal(true); // I wonder, why this dialog requires setModal() and the other don't.
+
+
+            String cancelName = "cancel";
+            InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+            ActionMap actionMap = getRootPane().getActionMap();
+            actionMap.put(cancelName, new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    cancelNameEditor();
+                }
+            });
 
             Rectangle pb = parent.getBounds();
             Rectangle tb = getBounds();
             getComponent().setLocation(pb.x + (pb.width - tb.width) / 2, pb.y + (625 - tb.height));
-
+            getComponent().getRootPane().setDefaultButton(okButton.getComponent());
             setVisible(true);
         }
 
@@ -446,7 +473,6 @@ public class ImageDetailsDialog extends BDialog {
 
         private void cancelNameEditor() {
             dispose();
-            removeAsListener(this);
         }
 
         private void okNameEditor() {
@@ -461,42 +487,10 @@ public class ImageDetailsDialog extends BDialog {
             im.setDataEdited();
             setDataTexts();
             dispose();
-            removeAsListener(this);
         }
 
-        /**
-         * Pressing Return and Escape are equivalent to clicking OK and Cancel.
-         */
-        private void keyPressed(KeyPressedEvent ev) {
-            int code = ev.getKeyCode();
-            if (code == KeyPressedEvent.VK_ESCAPE) {
-                cancelNameEditor();
-            }
-            if (code == KeyPressedEvent.VK_ENTER) {
-                okNameEditor();
-            }
-        }
 
-        /**
-         * Add this as a listener to every Widget.
-         */
-        private void addAsListener(Widget w) {
-            w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
-            if (w instanceof WidgetContainer) {
-                Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
-                children.forEach(this::addAsListener);
-            }
-        }
 
-        /**
-         * Remove this as a listener before returning.
-         */
-        private void removeAsListener(Widget w) {
-            w.removeEventLink(KeyPressedEvent.class, this);
-            if (w instanceof WidgetContainer) {
-                Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
-                children.forEach(this::removeAsListener);
-            }
-        }
+
     }
 }
