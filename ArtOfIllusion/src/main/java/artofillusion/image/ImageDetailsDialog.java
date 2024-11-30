@@ -1,6 +1,6 @@
 /* Copyright (C) 2017 by Petri Ihalainen
    Some methods copyright (C) by Peter Eastman
-   Changes copyright 2019-2023 by Maksim Khramov
+   Changes copyright 2019-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,10 +18,6 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.image.*;
 import java.io.*;
 
@@ -31,6 +27,7 @@ import java.util.stream.Collectors;
 import javax.imageio.*;
 import javax.swing.*;
 import lombok.extern.slf4j.Slf4j;
+import org.greenrobot.eventbus.Subscribe;
 
 @Slf4j
 public class ImageDetailsDialog extends BDialog {
@@ -55,6 +52,7 @@ public class ImageDetailsDialog extends BDialog {
 
     public ImageDetailsDialog(WindowWidget parent, Scene scene, ImageMap image) {
         super(parent, "Image data", true);
+        org.greenrobot.eventbus.EventBus.getDefault().register(this);
         this.parent = parent;
         this.scene = scene;
         this.im = image;
@@ -380,117 +378,15 @@ public class ImageDetailsDialog extends BDialog {
     }
 
     private void nameClicked() {
-        new ImageNameEditor(this, im);
+        SwingUtilities.invokeLater(() -> new  artofillusion.image.ui.ImageNameEditor(this, im).setVisible(true));
     }
 
-    /**
-     * Dialog for setting the name of the image
-     */
-    private class ImageNameEditor extends BDialog {
+    @Subscribe
+    public void onImageUpdated(ImageNameChangeEvent event) {
+        im.setDataEdited();
+        setDataTexts();
+    }
 
-        private final BTextField nameField;
-        private BCheckBox autoBox;
-
-
-        private String autoText, userText;
-        private boolean automatic = false;
-
-        ImageNameEditor(WindowWidget parent, ImageMap im ) {
-            super(parent, true);
-            setTitle(Translate.text("nameDialogTitle"));
-            ColumnContainer content = new ColumnContainer();
-            RowContainer buttons = new RowContainer();
-            setContent(content);
-            content.add(nameField = new BTextField(im.getName()));
-            autoText = userText = im.getName();
-
-            if (im instanceof ExternalImage) {
-                try {
-                    String fileName = im.getFile().getName();
-                    autoText = fileName.substring(0, fileName.lastIndexOf('.'));
-                } catch (Exception e) {
-                    // Just display the saved name
-                }
-                automatic = ((ExternalImage) im).isNameAutomatic();
-                content.add(autoBox = new BCheckBox(Translate.text("Automatic"), automatic));
-                autoBox.addEventLink(ValueChangedEvent.class, this, "autoChanged");
-                autoChanged();
-            }
-            nameField.setColumns(50);
-            nameField.addEventLink(ValueChangedEvent.class, this, "textChanged");
-            content.add(buttons);
-
-            BButton okButton =Translate.button("ok", event -> okNameEditor());
-            buttons.add(okButton);
-            buttons.add(Translate.button("cancel", event -> cancelNameEditor()));
-
-            this.getComponent().addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent e) {
-                    cancelNameEditor();
-                }
-            });
-
-
-            layoutChildren();
-            pack();
-            setResizable(false);
-
-
-            String cancelName = "cancel";
-            InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-            ActionMap actionMap = getRootPane().getActionMap();
-            actionMap.put(cancelName, new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    cancelNameEditor();
-                }
-            });
-
-            Rectangle pb = parent.getBounds();
-            Rectangle tb = getBounds();
-            getComponent().setLocation(pb.x + (pb.width - tb.width) / 2, pb.y + (625 - tb.height));
-            getComponent().getRootPane().setDefaultButton(okButton.getComponent());
-            setVisible(true);
-        }
-
-        private void textChanged() {
-            if (!automatic) {
-                userText = nameField.getText();
-            }
-        }
-
-        private void autoChanged() {
-            automatic = autoBox.getState();
-            nameField.setEnabled(!automatic);
-            if (automatic) {
-                nameField.setText(autoText);
-            } else {
-                nameField.setText(userText);
-            }
-        }
-
-        private void cancelNameEditor() {
-            dispose();
-        }
-
-        private void okNameEditor() {
-            if (automatic) {
-                im.setName(autoText);
-            } else {
-                im.setName(userText);
-            }
-            if (im instanceof ExternalImage) {
-                ((ExternalImage) im).setNameAutomatic(automatic);
-            }
-            im.setDataEdited();
-            setDataTexts();
-            dispose();
-        }
-
-
-
-
+    public static class ImageNameChangeEvent {
     }
 }
