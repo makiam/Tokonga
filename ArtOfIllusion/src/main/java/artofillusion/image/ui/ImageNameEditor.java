@@ -55,7 +55,7 @@ public class ImageNameEditor extends javax.swing.JDialog {
 
     private String autoText, userText;
     private boolean automatic = false;
-    private ImageMap image;
+    private final ImageMap image;
     
     /**
      * Creates new form ImageNameEditor

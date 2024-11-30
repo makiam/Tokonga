@@ -25,7 +25,6 @@ import java.awt.event.WindowEvent;
 import java.awt.image.*;
 import java.io.*;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.imageio.*;
@@ -116,8 +115,6 @@ public class ImageDetailsDialog extends BDialog {
 
         defaultTextColor = currentTextColor = title[0].getComponent().getForeground();
 
-
-
         data[0].addEventLink(MouseClickedEvent.class, this, "nameClicked");
         data[0].addEventLink(MouseEnteredEvent.class, this, "nameEntered");
         data[0].addEventLink(MouseExitedEvent.class, this, "nameExited");
@@ -157,7 +154,7 @@ public class ImageDetailsDialog extends BDialog {
     private void setDataTexts() {
 
         for (int d = 0; d < 7; d++) {
-            data[d].setText(new String());
+            data[d].setText("");
             if (im instanceof ExternalImage && !((ExternalImage) im).isConnected()) {
                 currentTextColor = errorTextColor;
             } else {
