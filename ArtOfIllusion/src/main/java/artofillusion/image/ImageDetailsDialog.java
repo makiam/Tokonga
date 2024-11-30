@@ -18,6 +18,10 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.*;
 import java.io.*;
 
@@ -99,6 +103,7 @@ public class ImageDetailsDialog extends BDialog {
         buttonField.add(reconnectButton = Translate.button("reconnectImage", "...", event -> reconnectImage()));
         buttonField.add(convertButton = Translate.button("convertImage", event -> convertToLocal()));
         buttonField.add(exportButton = Translate.button("exportImage", "...", event -> exportImage()));
+
         buttonField.add(Translate.button("ok", event -> closeDetailsDialog()));
 
         if (im instanceof ExternalImage) {
@@ -121,8 +126,26 @@ public class ImageDetailsDialog extends BDialog {
         title[0].addEventLink(MouseEnteredEvent.class, this, "nameEntered");
         title[0].addEventLink(MouseExitedEvent.class, this, "nameExited");
 
-        addAsListener(this);
-        addEventLink(WindowClosingEvent.class, this, "closeDetailsDialog");
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                closeDetailsDialog();
+            }
+        });
+
+        // Close the dialog when Esc is pressed
+        String cancelName = "cancel";
+        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+        ActionMap actionMap = getRootPane().getActionMap();
+        actionMap.put(cancelName, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                closeDetailsDialog();
+            }
+        });
+
+
         setDataTexts();
         pack();
         setResizable(false);
@@ -332,39 +355,6 @@ public class ImageDetailsDialog extends BDialog {
 
     private void closeDetailsDialog() {
         dispose();
-        removeAsListener(this);
-    }
-
-    /**
-     * Pressing Return and Escape are equivalent to clicking OK and Cancel.
-     */
-    private void keyPressed(KeyPressedEvent ev) {
-        int code = ev.getKeyCode();
-        if (code == KeyPressedEvent.VK_ESCAPE) {
-            closeDetailsDialog();
-        }
-    }
-
-    /**
-     * Add this as a listener to every Widget.
-     */
-    private void addAsListener(Widget w) {
-        w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
-        if (w instanceof WidgetContainer) {
-            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
-            children.forEach(this::addAsListener);
-        }
-    }
-
-    /**
-     * Remove this as a listener before returning.
-     */
-    private void removeAsListener(Widget w) {
-        w.removeEventLink(KeyPressedEvent.class, this);
-        if (w instanceof WidgetContainer) {
-            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
-            children.forEach(this::removeAsListener);
-        }
     }
 
     private void nameEntered() {
