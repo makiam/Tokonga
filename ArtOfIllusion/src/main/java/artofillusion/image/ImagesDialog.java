@@ -84,15 +84,17 @@ public class ImagesDialog extends BDialog {
 
         fillLoose = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets(2, 2, 2, 2), new Dimension(0, 0));
 
-        buttonGridUp.add(b[0] = Translate.button("load", "...", this, "doLoad"), 0, 0, fillLoose);
-        buttonGridUp.add(b[1] = Translate.button("link", "...", this, "doLink"), 0, 1, fillLoose);
-        buttonGridUp.add(b[2] = Translate.button("details", "...", this, "openDetailsDialog"), 1, 0, fillLoose);
-        buttonGridUp.add(b[3] = Translate.button("refresh", this, "doRefresh"), 1, 1, fillLoose);
-        buttonGridUp.add(b[4] = Translate.button("delete", "...", this, "doDelete"), 2, 0, fillLoose);
-        buttonGridUp.add(b[5] = Translate.button("purge", "...", this, "purge"), 2, 1, fillLoose);
-        buttonGridLow.add(b[6] = Translate.button("selectNone", this, "doSelectNone"), 0, 0, fillLoose);
-        buttonGridLow.add(b[7] = Translate.button("ok", this, "close"), 1, 0, fillLoose);
-        buttonGridLow.add(b[8] = Translate.button("cancel", this, "cancel"), 2, 0, fillLoose);
+        buttonGridUp.add(b[0] = Translate.button("load", "...", event -> doLoad()), 0, 0, fillLoose);
+        buttonGridUp.add(b[1] = Translate.button("link", "...", event -> doLink()), 0, 1, fillLoose);
+
+        buttonGridUp.add(b[2] = Translate.button("details", "...", event -> openDetailsDialog()), 1, 0, fillLoose);
+        buttonGridUp.add(b[3] = Translate.button("refresh", event -> doRefresh()), 1, 1, fillLoose);
+        buttonGridUp.add(b[4] = Translate.button("delete", "...", event -> doDelete()), 2, 0, fillLoose);
+        buttonGridUp.add(b[5] = Translate.button("purge", "...", event -> purge()), 2, 1, fillLoose);
+        buttonGridLow.add(b[6] = Translate.button("selectNone", event -> doSelectNone()), 0, 0, fillLoose);
+
+        buttonGridLow.add(b[7] = Translate.button("ok", event -> close()), 1, 0, fillLoose);
+        buttonGridLow.add(b[8] = Translate.button("cancel", event -> cancel()), 2, 0, fillLoose);
 
         hilightButtons();
         sp.setPreferredViewSize(new Dimension(ic.getGridWidth() * canvasWidth, ic.getGridHeight() * 4));
