@@ -1,6 +1,6 @@
 /* Copyright (C) 2001-2005 by Peter Eastman
    Modifications copyright (C) 2017 by Petri Ihalainen
-   Changes copyright 2019-2023 by Maksim Khramov
+   Changes copyright 2019-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -67,13 +67,7 @@ public class ImagesDialog extends BDialog {
         GridContainer buttonGridLow = new GridContainer(3, 1);
 
         setContent(content);
-        var ii = scene.getImages().indexOf(selected);
-
-        for (selection = 0; selection < sc.getNumImages() && sc.getImage(selection) != selected; selection++);
-        if (selection == sc.getNumImages()) {
-            selection = -1;
-        }
-        if(ii != selection) log.error("Selected image index not match");
+        selection = scene.getImages().indexOf(selected);
 
         sp = new BScrollPane(BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_ALWAYS);
         sp.setContent(ic = new ImagesCanvas(canvasWidth));
@@ -775,12 +769,12 @@ public class ImagesDialog extends BDialog {
         }
 
         private boolean confirmRemoval(int count) {
-            String title = Translate.text("confirmTitle");
-            String warning = Translate.text("purgeWarning", count);
-
-            BStandardDialog confirm = new BStandardDialog(title, warning, BStandardDialog.QUESTION);
+            String caption = Translate.text("confirmTitle");
+            String prompt = Translate.text("purgeWarning", count);
             String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
-            return (confirm.showOptionDialog(this, options, options[1]) == 0);
+
+            var result = JOptionPane.showOptionDialog(this.getComponent(), prompt, caption, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+            return result == 0;
         }
 
         private void deleteSelectedImages() {
