@@ -181,7 +181,7 @@ public class ImagesDialog extends BDialog {
                 scene.addImage(new ExternalImage(file, scene));
             } catch (InterruptedException ex) {
                 setCursor(Cursor.getDefaultCursor());
-                new BStandardDialog("", Translate.text("errorLoadingImage", file.getName()), BStandardDialog.ERROR).showMessageDialog(this);
+                MessageDialog.create().withOwner(this.getComponent()).error(Translate.text("errorLoadingImage", file.getName()));
                 log.atError().setCause(ex).log("Image load interrupted: {}", ex.getMessage());
                 return;
             }
@@ -205,7 +205,7 @@ public class ImagesDialog extends BDialog {
             try {
                 scene.addImage(ImageMap.loadImage(file));
             } catch (Exception ex) {
-                new BStandardDialog("", Translate.text("errorLoadingImage", file.getName()), BStandardDialog.ERROR).showMessageDialog(this);
+                MessageDialog.create().withOwner(this.getComponent()).error(Translate.text("errorLoadingImage", file.getName()));
                 log.atError().setCause(ex).log("Image load interrupted: {}", ex.getMessage());
                 setCursor(Cursor.getDefaultCursor());
 
