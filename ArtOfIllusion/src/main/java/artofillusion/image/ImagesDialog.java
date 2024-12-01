@@ -101,14 +101,20 @@ public class ImagesDialog extends BDialog {
         dialogHeight = getBounds().height;
         setResizable(true);
         addAsListener(this);
+        this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         this.getComponent().addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 ImagesDialog.this.cancel();
             }
         });
+        this.getComponent().addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                ImagesDialog.this.resize();
+            }
+        });
 
-        addEventLink(WindowResizedEvent.class, this, "resize");
         ic.scrollToSelection();
         ic.imagesChanged();
         UIUtilities.centerDialog(this, fr);
@@ -151,25 +157,19 @@ public class ImagesDialog extends BDialog {
 
     private void hilightButtons() {
         b[2].setEnabled(selection >= 0); // open details
-        boolean exts = false;
-        for (int i = 0; i < scene.getNumImages(); i++) {
-            if (scene.getImage(i) instanceof ExternalImage) {
-                exts = true;
-            }
-        }
-        b[3].setEnabled(exts); // refresh
+        boolean hasExternals = kotlin.collections.CollectionsKt.any(scene.getImages(), image -> image instanceof ExternalImage);
+
+
+        b[3].setEnabled(hasExternals); // refresh
         b[4].setEnabled(selection >= 0); // delete
         b[5].setEnabled(scene.getNumImages() > 0); // purge
         b[6].setEnabled(selection >= 0); // select none
     }
 
     private void doRefresh() {
-        for (int i = 0; i < scene.getNumImages(); i++) {
-            ImageMap imap = scene.getImage(i);
-            if (imap instanceof ExternalImage) {
-                ((ExternalImage) imap).refreshImage();
-            }
-        }
+
+        kotlin.collections.CollectionsKt.filterIsInstance(scene.getImages(), ExternalImage.class).forEach(ExternalImage::refreshImage);
+
         ic.imagesChanged();
         hilightButtons();
     }
@@ -262,7 +262,7 @@ public class ImagesDialog extends BDialog {
         hilightButtons();
     }
 
-    private void resize(WindowResizedEvent e) {
+    private void resize() {
         // To prevent handling of interrupted resize-events
         // Don't know if it really matters, but there are plenty of those.
 
@@ -285,7 +285,7 @@ public class ImagesDialog extends BDialog {
         }
     }
 
-    private Image loadIcon(String iconName) {
+    private static Image loadIcon(String iconName) {
         try {
             return ImageIO.read(ExternalImage.class.getResource("/artofillusion/image/icons/" + iconName));
         } catch (IOException ex) {
@@ -311,11 +311,7 @@ public class ImagesDialog extends BDialog {
      * Set the parent window to modified state
      */
     private void setModified() {
-        if (parent instanceof EditingWindow) {
-            ((EditingWindow) parent).setModified();
-        } else {
-            // If the dialog is accessed through a ProcedureEditor, the scene is already marked modified.
-        }
+        if (parent instanceof EditingWindow) ((EditingWindow) parent).setModified();
     }
 
     /**
@@ -637,6 +633,7 @@ public class ImagesDialog extends BDialog {
             pack();
             setResizable(false);
             addAsListener(this);
+            this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             this.getComponent().addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
