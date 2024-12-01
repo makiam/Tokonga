@@ -34,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ImagesDialog extends BDialog {
 
-    private final Scene theScene;
+    private final Scene scene;
     private final WindowWidget parent;
     private int selection;
     private int dialogHeight;
@@ -43,7 +43,7 @@ public class ImagesDialog extends BDialog {
     private final BScrollPane sp;
     private final ImagesCanvas ic;
     private final BButton[] b;
-    private final Color selectedColor;
+    private final Color selectedColor = ThemeManager.getSelectedColorSet().getViewerHighlight();
     private int previewSize = 100;
     private final int canvasWidth = 5;
     private final LayoutInfo fillLoose;
@@ -57,8 +57,8 @@ public class ImagesDialog extends BDialog {
         super(fr, "Images", true);
         selectedImage = selected;
         parent = fr;
-        theScene = sc;
-        selectedColor = ThemeManager.getSelectedColorSet().viewerHighlight;
+        scene = sc;
+
 
         BorderContainer content = new BorderContainer();
         ColumnContainer buttonContainer = new ColumnContainer();
@@ -67,10 +67,14 @@ public class ImagesDialog extends BDialog {
         GridContainer buttonGridLow = new GridContainer(3, 1);
 
         setContent(content);
+        var ii = scene.getImages().indexOf(selected);
+
         for (selection = 0; selection < sc.getNumImages() && sc.getImage(selection) != selected; selection++);
         if (selection == sc.getNumImages()) {
             selection = -1;
         }
+        if(ii != selection) log.error("Selected image index not match");
+
         sp = new BScrollPane(BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_ALWAYS);
         sp.setContent(ic = new ImagesCanvas(canvasWidth));
 
@@ -142,26 +146,26 @@ public class ImagesDialog extends BDialog {
         if (selection < 0) {
             return null;
         }
-        return theScene.getImage(selection);
+        return scene.getImage(selection);
     }
 
     private void hilightButtons() {
         b[2].setEnabled(selection >= 0); // open details
         boolean exts = false;
-        for (int i = 0; i < theScene.getNumImages(); i++) {
-            if (theScene.getImage(i) instanceof ExternalImage) {
+        for (int i = 0; i < scene.getNumImages(); i++) {
+            if (scene.getImage(i) instanceof ExternalImage) {
                 exts = true;
             }
         }
         b[3].setEnabled(exts); // refresh
         b[4].setEnabled(selection >= 0); // delete
-        b[5].setEnabled(theScene.getNumImages() > 0); // purge
+        b[5].setEnabled(scene.getNumImages() > 0); // purge
         b[6].setEnabled(selection >= 0); // select none
     }
 
     private void doRefresh() {
-        for (int i = 0; i < theScene.getNumImages(); i++) {
-            ImageMap imap = theScene.getImage(i);
+        for (int i = 0; i < scene.getNumImages(); i++) {
+            ImageMap imap = scene.getImage(i);
             if (imap instanceof ExternalImage) {
                 ((ExternalImage) imap).refreshImage();
             }
@@ -180,7 +184,7 @@ public class ImagesDialog extends BDialog {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         for (File file : files) {
             try {
-                theScene.addImage(new ExternalImage(file, theScene));
+                scene.addImage(new ExternalImage(file, scene));
             } catch (InterruptedException ex) {
                 setCursor(Cursor.getDefaultCursor());
                 new BStandardDialog("", Translate.text("errorLoadingImage", file.getName()), BStandardDialog.ERROR).showMessageDialog(this);
@@ -189,7 +193,7 @@ public class ImagesDialog extends BDialog {
             }
         }
         setCursor(Cursor.getDefaultCursor());
-        selection = theScene.getNumImages() - 1;
+        selection = scene.getNumImages() - 1;
         ic.imagesChanged();
         hilightButtons();
         setModified();
@@ -205,7 +209,7 @@ public class ImagesDialog extends BDialog {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         for (File file : files) {
             try {
-                theScene.addImage(ImageMap.loadImage(file));
+                scene.addImage(ImageMap.loadImage(file));
             } catch (Exception ex) {
                 new BStandardDialog("", Translate.text("errorLoadingImage", file.getName()), BStandardDialog.ERROR).showMessageDialog(this);
                 log.atError().setCause(ex).log("Image load interrupted: {}", ex.getMessage());
@@ -218,7 +222,7 @@ public class ImagesDialog extends BDialog {
             }
         }
         setCursor(Cursor.getDefaultCursor());
-        selection = theScene.getNumImages() - 1;
+        selection = scene.getNumImages() - 1;
         ic.imagesChanged();
         hilightButtons();
         setModified();
@@ -226,7 +230,7 @@ public class ImagesDialog extends BDialog {
 
     private void doDelete() {
         String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
-        String name = theScene.getImage(selection).getName();
+        String name = scene.getImage(selection).getName();
         if (name.equals("")) {
             name = Translate.text("unNamed");
         }
@@ -235,7 +239,7 @@ public class ImagesDialog extends BDialog {
         if (dlg.showOptionDialog(this, options, options[1]) == 1) {
             return;
         }
-        boolean success = theScene.removeImage(selection);
+        boolean success = scene.removeImage(selection);
         if (!success) {
             new BStandardDialog(null, UIUtilities.breakString(Translate.text("imageInUse")), BStandardDialog.ERROR).showMessageDialog(this);
             return;
@@ -273,7 +277,7 @@ public class ImagesDialog extends BDialog {
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     private void openDetailsDialog() {
         File oldFile = getSelection().getFile();
-        new ImageDetailsDialog(this, theScene, getSelection());
+        new ImageDetailsDialog(this, scene, getSelection());
         ic.imagesChanged();
         ic.scrollToSelection();
         if (getSelection().getFile() != oldFile) {
@@ -298,7 +302,7 @@ public class ImagesDialog extends BDialog {
     private void cancel() {
         // returning selection to, what is was at dialog open
 
-        for (selection = 0; selection < theScene.getNumImages() && theScene.getImage(selection) != selectedImage; selection++);
+        for (selection = 0; selection < scene.getNumImages() && scene.getImage(selection) != selectedImage; selection++);
         dispose();
         removeAsListener(this);
     }
@@ -330,15 +334,15 @@ public class ImagesDialog extends BDialog {
 
         if (code == KeyEvent.VK_LEFT) {
             if (selection < 0) {
-                selection = theScene.getNumImages() - 1;
+                selection = scene.getNumImages() - 1;
             } else {
                 selection = Math.max(selection - 1, 0);
             }
         } else if (code == KeyEvent.VK_RIGHT) {
-            selection = Math.min(selection + 1, theScene.getNumImages() - 1);
+            selection = Math.min(selection + 1, scene.getNumImages() - 1);
         } else if (code == KeyEvent.VK_UP) {
             if (selection < 0) {
-                selection = theScene.getNumImages() - 1;
+                selection = scene.getNumImages() - 1;
             } else if (selection > canvasWidth - 1) {
                 selection -= canvasWidth;
             }
@@ -346,7 +350,7 @@ public class ImagesDialog extends BDialog {
             if (selection < 0) {
                 selection = 0;
             } else {
-                selection = Math.min(selection + canvasWidth, theScene.getNumImages() - 1);
+                selection = Math.min(selection + canvasWidth, scene.getNumImages() - 1);
             }
         } else;
         ic.imagesChanged();
@@ -432,7 +436,7 @@ public class ImagesDialog extends BDialog {
         });
 
         public void imagesChanged() {
-            h = Math.max((theScene.getNumImages() - 1) / w + 1, 4); // Number of rows of icons
+            h = Math.max((scene.getNumImages() - 1) / w + 1, 4); // Number of rows of icons
             setPreferredSize(new Dimension(w * gridw, max(h * gridh, vp.getExtentSize().height)));
             sp.layoutChildren();
             scrollToSelection();
@@ -501,7 +505,7 @@ public class ImagesDialog extends BDialog {
             // Paint only the ones that are fit the visible part
             // of the canvas. .. Have to paint one full row more for tha scroll
             head = Math.max((scrollY / gridh * w - 1), 0);
-            tail = Math.min(theScene.getNumImages(), (scrollY + scrollH) / gridh * w + w + 1);
+            tail = Math.min(scene.getNumImages(), (scrollY + scrollH) / gridh * w + w + 1);
 
             for (int i = head; i < tail; i++) {
                 x = (i % w) * gridw + cOff;
@@ -510,7 +514,7 @@ public class ImagesDialog extends BDialog {
                 g.fillRect(x + 1, y + 1, gridw - 2, gridh - 2);
                 g.drawImage(bgImage, (i % w) * gridw + 5 + cOff, (i / w) * gridh + 5, getComponent());
 
-                currentImage = theScene.getImage(i);
+                currentImage = scene.getImage(i);
                 smoothPaint(g, i);
 
                 x = (i % w) * gridw + cOff;
@@ -535,7 +539,7 @@ public class ImagesDialog extends BDialog {
                     }
                 }
 
-                if (theScene.getTextures().stream().anyMatch(texture -> texture.usesImage(currentImage))) {
+                if (scene.getTextures().stream().anyMatch(texture -> texture.usesImage(currentImage))) {
                     g.drawImage(inUseIcon, (i % w) * gridw + 9 + cOff + previewSize - iconSize, (i / w) * gridh + 9 + previewSize - iconSize, getComponent());
                 }
 
@@ -553,7 +557,7 @@ public class ImagesDialog extends BDialog {
         }
 
         private void drawName(Graphics2D g, Font f, int i) {
-            String name = theScene.getImage(i).getName();
+            String name = scene.getImage(i).getName();
             if (name.isEmpty()) {
                 name = Translate.text("unNamed");
             }
@@ -576,7 +580,7 @@ public class ImagesDialog extends BDialog {
 
             i = ((p.x - cOff) / gridw);
             j = (p.y / gridh);
-            if (cOff - p.x < 0 && i < 5 && i + j * w < theScene.getNumImages()) {
+            if (cOff - p.x < 0 && i < 5 && i + j * w < scene.getNumImages()) {
                 selection = i + j * w;
                 scrollToSelection();
                 // No need to repaint. The partially visible parts have been painted already.
@@ -618,16 +622,11 @@ public class ImagesDialog extends BDialog {
             BLabel header = Translate.label("purgeHeader");
             header.setFont(header.getFont().deriveFont(Font.BOLD));
 
-            BButton selectNoneButton;
-            buttonsUp.add(selectNoneButton = Translate.button("selectNone", this, "selectNone"), 0, 0, fillLoose);
-            BButton selectAllButton;
-            buttonsUp.add(selectAllButton = Translate.button("selectAll", this, "selectAll"), 1, 0, fillLoose);
-            BButton purgeButton;
-            buttonsUp.add(purgeButton = Translate.button("purge", this, "deleteAndReturn"), 2, 0, fillLoose);
-            BButton cancelButton;
-            buttonsLow.add(cancelButton = Translate.button("cancel", this, "close"), 1, 0, fillLoose);
-            BButton okButton;
-            buttonsLow.add(okButton = Translate.button("ok", this, "deleteAndClose"), 0, 0, fillLoose);
+            buttonsUp.add(Translate.button("selectNone", this, "selectNone"), 0, 0, fillLoose);
+            buttonsUp.add(Translate.button("selectAll", this, "selectAll"), 1, 0, fillLoose);
+            buttonsUp.add(Translate.button("purge", this, "deleteAndReturn"), 2, 0, fillLoose);
+            buttonsLow.add(Translate.button("cancel", this, "close"), 1, 0, fillLoose);
+            buttonsLow.add(Translate.button("ok", this, "deleteAndClose"), 0, 0, fillLoose);
 
             content.add(header, new LayoutInfo(LayoutInfo.SOUTH, LayoutInfo.NONE, new Insets(15, 5, 15, 5), null));
             addUnusedImagesTable(intent);
@@ -645,9 +644,9 @@ public class ImagesDialog extends BDialog {
         private void addUnusedImagesTable(boolean intent) // intent = to delete or not
         {
             unusedImages = new ArrayList<>();
-            for (int i = 0; i < theScene.getNumImages(); i++) {
-                ImageMap im = theScene.getImage(i);
-                if (theScene.getTextures().stream().anyMatch(texture -> texture.usesImage(im))) {
+            for (int i = 0; i < scene.getNumImages(); i++) {
+                ImageMap im = scene.getImage(i);
+                if (scene.getTextures().stream().anyMatch(texture -> texture.usesImage(im))) {
                     continue;
                 }
                 unusedImages.add(im);
@@ -787,9 +786,9 @@ public class ImagesDialog extends BDialog {
         private void deleteSelectedImages() {
             for (int d = 0; d < unusedImages.size(); d++) {
                 if (removeBox[d].getState()) {
-                    for (int i = 0; i < theScene.getNumImages(); i++) {
-                        if (theScene.getImage(i) == unusedImages.get(d)) {
-                            theScene.removeImage(i);
+                    for (int i = 0; i < scene.getNumImages(); i++) {
+                        if (scene.getImage(i) == unusedImages.get(d)) {
+                            scene.removeImage(i);
                             if (selection > i) {
                                 selection--;
                             } else if (selection == i) {
