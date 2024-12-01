@@ -101,7 +101,13 @@ public class ImagesDialog extends BDialog {
         dialogHeight = getBounds().height;
         setResizable(true);
         addAsListener(this);
-        addEventLink(WindowClosingEvent.class, this, "cancel");
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                ImagesDialog.this.cancel();
+            }
+        });
+
         addEventLink(WindowResizedEvent.class, this, "resize");
         ic.scrollToSelection();
         ic.imagesChanged();
@@ -631,7 +637,12 @@ public class ImagesDialog extends BDialog {
             pack();
             setResizable(false);
             addAsListener(this);
-            addEventLink(WindowClosingEvent.class, this, "close");
+            this.getComponent().addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    PurgeDialog.this.close();
+                }
+            });
 
         }
 
@@ -797,7 +808,6 @@ public class ImagesDialog extends BDialog {
 
         private void close() {
             dispose();
-            removeAsListener(this);
         }
 
         /**
@@ -824,15 +834,5 @@ public class ImagesDialog extends BDialog {
             }
         }
 
-        /**
-         * Remove this as a listener before returning.
-         */
-        private void removeAsListener(Widget w) {
-            w.removeEventLink(KeyPressedEvent.class, this);
-            if (w instanceof WidgetContainer) {
-                Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
-                children.forEach(widget -> removeAsListener(widget));
-            }
-        }
     }
 }
