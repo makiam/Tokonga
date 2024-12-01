@@ -622,11 +622,11 @@ public class ImagesDialog extends BDialog {
             BLabel header = Translate.label("purgeHeader");
             header.setFont(header.getFont().deriveFont(Font.BOLD));
 
-            buttonsUp.add(Translate.button("selectNone", this, "selectNone"), 0, 0, fillLoose);
-            buttonsUp.add(Translate.button("selectAll", this, "selectAll"), 1, 0, fillLoose);
-            buttonsUp.add(Translate.button("purge", this, "deleteAndReturn"), 2, 0, fillLoose);
-            buttonsLow.add(Translate.button("cancel", this, "close"), 1, 0, fillLoose);
-            buttonsLow.add(Translate.button("ok", this, "deleteAndClose"), 0, 0, fillLoose);
+            buttonsUp.add(Translate.button("selectNone", event -> selectNone()), 0, 0, fillLoose);
+            buttonsUp.add(Translate.button("selectAll", event -> selectAll()), 1, 0, fillLoose);
+            buttonsUp.add(Translate.button("purge", event -> deleteAndReturn()), 2, 0, fillLoose);
+            buttonsLow.add(Translate.button("cancel", event -> close()), 1, 0, fillLoose);
+            buttonsLow.add(Translate.button("ok", event -> deleteAndClose()), 0, 0, fillLoose);
 
             content.add(header, new LayoutInfo(LayoutInfo.SOUTH, LayoutInfo.NONE, new Insets(15, 5, 15, 5), null));
             addUnusedImagesTable(intent);
