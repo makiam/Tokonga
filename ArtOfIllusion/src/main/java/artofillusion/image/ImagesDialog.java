@@ -45,7 +45,7 @@ public class ImagesDialog extends BDialog {
     private final BButton[] b;
     private final Color selectedColor = ThemeManager.getSelectedColorSet().getViewerHighlight();
     private int previewSize = 100;
-    private final int canvasWidth = 5;
+    private static final int canvasWidth = 5;
     private final LayoutInfo fillLoose;
     private final ImageMap selectedImage;
 
@@ -178,7 +178,7 @@ public class ImagesDialog extends BDialog {
 
     private void hilightButtons() {
         b[2].setEnabled(selection >= 0); // open details
-        boolean hasExternals = kotlin.collections.CollectionsKt.any(scene.getImages(), image -> image instanceof ExternalImage);
+        boolean hasExternals = kotlin.collections.CollectionsKt.any(scene.getImages(), ExternalImage.class::isInstance);
 
         SwingUtilities.invokeLater(() -> {
             b[3].setEnabled(hasExternals); // refresh
@@ -254,7 +254,7 @@ public class ImagesDialog extends BDialog {
     private void doDelete() {
         String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
         String name = scene.getImage(selection).getName();
-        if (name.equals("")) {
+        if (name.isEmpty()) {
             name = Translate.text("unNamed");
         }
         String question = Translate.text("deleteSelectedImage") + ", \"" + name + "\" ?";
@@ -634,12 +634,32 @@ public class ImagesDialog extends BDialog {
             setContent(content);
             pack();
             setResizable(false);
-            addAsListener(this);
+
             this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             this.getComponent().addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
                     PurgeDialog.this.close();
+                }
+            });
+
+            // Close the dialog when Esc is pressed
+            String cancelName = "cancel";
+            String okName = "ok";
+            InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), okName);
+            ActionMap actionMap = getRootPane().getActionMap();
+            actionMap.put(cancelName, new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    close();
+                }
+            });
+            actionMap.put(okName, new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    deleteAndClose();
                 }
             });
 
@@ -663,8 +683,8 @@ public class ImagesDialog extends BDialog {
             int nameTagWidth = 0;
             Font f = new BButton().getFont();
             FontMetrics fm = new BufferedImage(1, 1, 1).createGraphics().getFontMetrics(f);
-            for (int u = 0; u < unusedImages.size(); u++) {
-                nameTagWidth = fm.stringWidth(unusedImages.get(u).getName());
+            for (ImageMap unusedImage : unusedImages) {
+                nameTagWidth = fm.stringWidth(unusedImage.getName());
             }
             nameTagWidth = Math.max(nameTagWidth + 20, 200);
 
@@ -750,8 +770,8 @@ public class ImagesDialog extends BDialog {
 
         private void deleteAndReturn() {
             int count = 0;
-            for (int r = 0; r < removeBox.length; r++) {
-                if (removeBox[r].getState()) {
+            for (BCheckBox bCheckBox : removeBox) {
+                if (bCheckBox.getState()) {
                     count++;
                 }
             }
@@ -766,8 +786,8 @@ public class ImagesDialog extends BDialog {
 
         private void deleteAndClose() {
             int count = 0;
-            for (int r = 0; r < removeBox.length; r++) {
-                if (removeBox[r].getState()) {
+            for (BCheckBox bCheckBox : removeBox) {
+                if (bCheckBox.getState()) {
                     count++;
                 }
             }
@@ -807,30 +827,6 @@ public class ImagesDialog extends BDialog {
 
         private void close() {
             dispose();
-        }
-
-        /**
-         * Pressing Return and Escape are equivalent to clicking OK and Cancel.
-         */
-        private void keyPressed(KeyPressedEvent ev) {
-            int code = ev.getKeyCode();
-            if (code == KeyEvent.VK_ESCAPE) {
-                close();
-            }
-            if (code == KeyEvent.VK_ENTER) {
-                deleteAndClose();
-            }
-        }
-
-        /**
-         * Add this as a listener to every Widget.
-         */
-        private void addAsListener(Widget w) {
-            w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
-            if (w instanceof WidgetContainer) {
-                Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
-                children.forEach(widget -> addAsListener(widget));
-            }
         }
 
     }
