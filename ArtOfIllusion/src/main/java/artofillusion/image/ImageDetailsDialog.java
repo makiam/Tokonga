@@ -1,6 +1,6 @@
 /* Copyright (C) 2017 by Petri Ihalainen
    Some methods copyright (C) by Peter Eastman
-   Changes copyright 2019-2023 by Maksim Khramov
+   Changes copyright 2019-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,18 +18,25 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.*;
 import java.io.*;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.imageio.*;
 import javax.swing.*;
 import lombok.extern.slf4j.Slf4j;
+import org.greenrobot.eventbus.Subscribe;
 
 @Slf4j
 public class ImageDetailsDialog extends BDialog {
+
+    private static final Color errorTextColor = new Color(143, 0, 0);
+    private static final Color hilightTextColor = new Color(0, 191, 191);
 
     private final WindowWidget parent;
     private final Scene scene;
@@ -43,12 +50,12 @@ public class ImageDetailsDialog extends BDialog {
     private final BLabel[] title;
     private final BLabel[] data;
     private final Color defaultTextColor;
-    private final Color errorTextColor;
-    private final Color hilightTextColor;
+
     private Color currentTextColor;
 
     public ImageDetailsDialog(WindowWidget parent, Scene scene, ImageMap image) {
         super(parent, "Image data", true);
+        org.greenrobot.eventbus.EventBus.getDefault().register(this);
         this.parent = parent;
         this.scene = scene;
         this.im = image;
@@ -91,11 +98,12 @@ public class ImageDetailsDialog extends BDialog {
         createBackground();
         paintImage();
 
-        buttonField.add(refreshButton = Translate.button("refreshImage", this, "refreshImage"));
-        buttonField.add(reconnectButton = Translate.button("reconnectImage", "...", this, "reconnectImage"));
-        buttonField.add(convertButton = Translate.button("convertImage", this, "convertToLocal"));
-        buttonField.add(exportButton = Translate.button("exportImage", "...", this, "exportImage"));
-        buttonField.add(Translate.button("ok", this, "closeDetailsDialog"));
+        buttonField.add(refreshButton = Translate.button("refreshImage", event -> refreshImage()));
+        buttonField.add(reconnectButton = Translate.button("reconnectImage", "...", event -> reconnectImage()));
+        buttonField.add(convertButton = Translate.button("convertImage", event -> convertToLocal()));
+        buttonField.add(exportButton = Translate.button("exportImage", "...", event -> exportImage()));
+
+        buttonField.add(Translate.button("ok", event -> closeDetailsDialog()));
 
         if (im instanceof ExternalImage) {
             exportButton.setEnabled(false);
@@ -106,18 +114,35 @@ public class ImageDetailsDialog extends BDialog {
         }
 
         defaultTextColor = currentTextColor = title[0].getComponent().getForeground();
-        hilightTextColor = new Color(0, 191, 191);
-        errorTextColor = new Color(143, 0, 0);
 
         data[0].addEventLink(MouseClickedEvent.class, this, "nameClicked");
         data[0].addEventLink(MouseEnteredEvent.class, this, "nameEntered");
         data[0].addEventLink(MouseExitedEvent.class, this, "nameExited");
+
         title[0].addEventLink(MouseClickedEvent.class, this, "nameClicked");
         title[0].addEventLink(MouseEnteredEvent.class, this, "nameEntered");
         title[0].addEventLink(MouseExitedEvent.class, this, "nameExited");
 
-        addAsListener(this);
-        addEventLink(WindowClosingEvent.class, this, "closeDetailsDialog");
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                closeDetailsDialog();
+            }
+        });
+
+        // Close the dialog when Esc is pressed
+        String cancelName = "cancel";
+        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+        ActionMap actionMap = getRootPane().getActionMap();
+        actionMap.put(cancelName, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                closeDetailsDialog();
+            }
+        });
+
+
         setDataTexts();
         pack();
         setResizable(false);
@@ -129,7 +154,7 @@ public class ImageDetailsDialog extends BDialog {
     private void setDataTexts() {
 
         for (int d = 0; d < 7; d++) {
-            data[d].setText(new String());
+            data[d].setText("");
             if (im instanceof ExternalImage && !((ExternalImage) im).isConnected()) {
                 currentTextColor = errorTextColor;
             } else {
@@ -228,7 +253,7 @@ public class ImageDetailsDialog extends BDialog {
                 ((EditingWindow) parent).setModified();
             }
         } catch (Exception e) {
-            new BStandardDialog("", Translate.text("errorLoadingImage " + file.getName()), BStandardDialog.ERROR).showMessageDialog(this);
+            MessageDialog.create().withOwner(this.getComponent()).error(Translate.text("errorLoadingImage", file.getName()));
         }
     }
 
@@ -266,9 +291,11 @@ public class ImageDetailsDialog extends BDialog {
 
         // Check if the file already exist and the user wants to overwrite it.
         if (imageFile.isFile()) {
+            String caption = "";
+            String prompt = Translate.text("overwriteFile", fileName);
             String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
-            int choice = new BStandardDialog("", Translate.text("overwriteFile", fileName), BStandardDialog.QUESTION).showOptionDialog(this, options, options[1]);
-            if (choice == 1) {
+            var result = JOptionPane.showOptionDialog(this.getComponent(), prompt, caption, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+            if (result == 1) {
                 return;
             }
         }
@@ -283,8 +310,7 @@ public class ImageDetailsDialog extends BDialog {
                 ImageIO.write(((MIPMappedImage) im).getImage(), "png", out); // getImage returns BufferedImage
             }
         } catch (IOException ex) {
-            setCursor(Cursor.getDefaultCursor());
-            new BStandardDialog("", Translate.text("errorExportingImage", im.getName()), BStandardDialog.ERROR).showMessageDialog(this);
+            MessageDialog.create().withOwner(this.getComponent()).error(Translate.text("errorExportingImage", im.getName()));
             log.atError().setCause(ex).log("Unable to export image: {} due {}", im.getName(), ex.getMessage());
         }
     }
@@ -299,13 +325,13 @@ public class ImageDetailsDialog extends BDialog {
             name = Translate.text("unNamed");
         }
 
-        if (confirmConvert(name)) {
-            int s;
-            for (s = 0; s < scene.getNumImages() && scene.getImage(s) != im; s++);
+        if (confirm(name)) {
+
+            int imageIndex = scene.indexOf(im);
 
             ((ExternalImage) im).getImageMap().setName(im.getName());
             im = ((ExternalImage) im).getImageMap();
-            scene.replaceImage(s, im);
+            scene.replaceImage(imageIndex, im);
 
             exportButton.setEnabled(true);
             refreshButton.setEnabled(false);
@@ -315,49 +341,17 @@ public class ImageDetailsDialog extends BDialog {
         }
     }
 
-    private boolean confirmConvert(String name) {
-        String question = Translate.text("convertQuestion", name);
-
-        BStandardDialog confirm = new BStandardDialog(Translate.text("confirmTitle"), question, BStandardDialog.QUESTION);
+    private boolean confirm(String name) {
+        String caption = Translate.text("confirmTitle");
+        String prompt = Translate.text("convertQuestion", name);
         String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
-        return (confirm.showOptionDialog(this, options, options[1]) == 0);
+
+        var result = JOptionPane.showOptionDialog(this.getComponent(), prompt, caption, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+        return result == 0;
     }
 
     private void closeDetailsDialog() {
         dispose();
-        removeAsListener(this);
-    }
-
-    /**
-     * Pressing Return and Escape are equivalent to clicking OK and Cancel.
-     */
-    private void keyPressed(KeyPressedEvent ev) {
-        int code = ev.getKeyCode();
-        if (code == KeyPressedEvent.VK_ESCAPE) {
-            closeDetailsDialog();
-        }
-    }
-
-    /**
-     * Add this as a listener to every Widget.
-     */
-    private void addAsListener(Widget w) {
-        w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
-        if (w instanceof WidgetContainer) {
-            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
-            children.forEach(this::addAsListener);
-        }
-    }
-
-    /**
-     * Remove this as a listener before returning.
-     */
-    private void removeAsListener(Widget w) {
-        w.removeEventLink(KeyPressedEvent.class, this);
-        if (w instanceof WidgetContainer) {
-            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
-            children.forEach(this::removeAsListener);
-        }
     }
 
     private void nameEntered() {
@@ -371,129 +365,15 @@ public class ImageDetailsDialog extends BDialog {
     }
 
     private void nameClicked() {
-        new ImageNameEditor(im, this);
+        SwingUtilities.invokeLater(() -> new  artofillusion.image.ui.ImageNameEditor(this, im).setVisible(true));
     }
 
-    /**
-     * Dialog for setting the name of the image
-     */
-    private class ImageNameEditor extends BDialog {
+    @Subscribe
+    public void onImageUpdated(ImageNameChangeEvent event) {
+        im.setDataEdited();
+        setDataTexts();
+    }
 
-        private final BTextField nameField;
-        private BCheckBox autoBox;
-        private String autoText, userText;
-        private boolean automatic = false;
-
-        private ImageNameEditor(ImageMap im, WindowWidget parent) {
-            setTitle(Translate.text("nameDialogTitle"));
-            ColumnContainer content = new ColumnContainer();
-            RowContainer buttons = new RowContainer();
-            setContent(content);
-            content.add(nameField = new BTextField(im.getName()));
-            autoText = userText = im.getName();
-
-            if (im instanceof ExternalImage) {
-                try {
-                    String fileName = im.getFile().getName();
-                    autoText = fileName.substring(0, fileName.lastIndexOf('.'));
-                } catch (Exception e) {
-                    // Just display the saved name
-                }
-                automatic = ((ExternalImage) im).isNameAutomatic();
-                content.add(autoBox = new BCheckBox(Translate.text("Automatic"), automatic));
-                autoBox.addEventLink(ValueChangedEvent.class, this, "autoChanged");
-                autoChanged();
-            }
-            nameField.setColumns(50);
-            nameField.addEventLink(ValueChangedEvent.class, this, "textChanged");
-            content.add(buttons);
-
-            buttons.add(Translate.button("ok", this, "okNameEditor"));
-
-            buttons.add(Translate.button("cancel", this, "cancelNameEditor"));
-            addEventLink(WindowClosingEvent.class, this, "cancelNameEditor");
-            addAsListener(this);
-            layoutChildren();
-            pack();
-            setResizable(false);
-            setModal(true); // I wonder, why this dialog requires setModal() and the other don't.
-
-            Rectangle pb = parent.getBounds();
-            Rectangle tb = getBounds();
-            getComponent().setLocation(pb.x + (pb.width - tb.width) / 2, pb.y + (625 - tb.height));
-
-            setVisible(true);
-        }
-
-        private void textChanged() {
-            if (!automatic) {
-                userText = nameField.getText();
-            }
-        }
-
-        private void autoChanged() {
-            automatic = autoBox.getState();
-            nameField.setEnabled(!automatic);
-            if (automatic) {
-                nameField.setText(autoText);
-            } else {
-                nameField.setText(userText);
-            }
-        }
-
-        private void cancelNameEditor() {
-            dispose();
-            removeAsListener(this);
-        }
-
-        private void okNameEditor() {
-            if (automatic) {
-                im.setName(autoText);
-            } else {
-                im.setName(userText);
-            }
-            if (im instanceof ExternalImage) {
-                ((ExternalImage) im).setNameAutomatic(automatic);
-            }
-            im.setDataEdited();
-            setDataTexts();
-            dispose();
-            removeAsListener(this);
-        }
-
-        /**
-         * Pressing Return and Escape are equivalent to clicking OK and Cancel.
-         */
-        private void keyPressed(KeyPressedEvent ev) {
-            int code = ev.getKeyCode();
-            if (code == KeyPressedEvent.VK_ESCAPE) {
-                cancelNameEditor();
-            }
-            if (code == KeyPressedEvent.VK_ENTER) {
-                okNameEditor();
-            }
-        }
-
-        /**
-         * Add this as a listener to every Widget.
-         */
-        private void addAsListener(Widget w) {
-            w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
-            if (w instanceof WidgetContainer) {
-                Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
-                children.forEach(this::addAsListener);
-            }
-        }
-
-        /**
-         * Remove this as a listener before returning.
-         */
-        private void removeAsListener(Widget w) {
-            w.removeEventLink(KeyPressedEvent.class, this);
-            if (w instanceof WidgetContainer) {
-                Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
-                children.forEach(this::removeAsListener);
-            }
-        }
+    public static class ImageNameChangeEvent {
     }
 }

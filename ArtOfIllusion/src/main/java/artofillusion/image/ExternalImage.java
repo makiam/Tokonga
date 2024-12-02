@@ -33,7 +33,7 @@ public class ExternalImage extends ImageMap {
     private File imageFile;
     private Image brokenImage;
     
-    // Connected is true if the last load from file was succesful
+    // Connected is true if the last load from file was successful
     @Getter
     private boolean connected;
     /**

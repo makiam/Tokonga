@@ -81,14 +81,16 @@ public class Translate {
 
     /**
      * Set the locale to be used for generating text.
+     * @param value
      */
-    public static void setLocale(Locale l) {
-        locale = availableLocales.contains(l) ? l : Locale.US;
+    public static void setLocale(Locale value) {
+        locale = availableLocales.contains(value) ? value : Locale.US;
         bundles.clear();
     }
 
     /**
      * Get a list of the locales for which we have translations.
+     * @return 
      */
     public static Locale[] getAvailableLocales() {
         return availableLocales.toArray(new Locale[availableLocales.size()]);
@@ -232,7 +234,7 @@ public class Translate {
     }
 
     public static BButton button(String name, ActionListener al) {
-        var b = button(name, null, null);
+        var b = button(name, null, (String)null);
         b.getComponent().addActionListener(al);
         return b;
     }
@@ -257,6 +259,12 @@ public class Translate {
         if (listener != null) {
             b.addEventLink(CommandEvent.class, listener, method);
         }
+        return b;
+    }
+
+    public static BButton button(String name, String suffix, ActionListener al) {
+        var b = button(name, suffix, null, null);
+        b.getComponent().addActionListener(al);
         return b;
     }
 

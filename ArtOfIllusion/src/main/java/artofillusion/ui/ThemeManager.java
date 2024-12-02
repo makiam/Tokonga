@@ -63,7 +63,7 @@ public class ThemeManager {
         public final Color viewerBackground;
         public final Color viewerLine;
         public final Color viewerHandle;
-        public final Color viewerHighlight;
+        @Getter public final Color viewerHighlight;
         public final Color viewerSpecialHighlight;
         public final Color viewerDisabled;
         public final Color viewerSurface;

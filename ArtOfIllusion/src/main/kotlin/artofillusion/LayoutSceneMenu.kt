@@ -13,7 +13,7 @@ class LayoutSceneMenu(private val layout: LayoutWindow) : BMenu(Translate.text("
         this.add(Translate.menuItem("renderImmediately") { edt { RenderSetupDialog.renderImmediately(layout, layout.scene) }})
         this.addSeparator()
         this.add(Translate.menuItem("textures") { edt { TexturesAndMaterialsDialog(layout, layout.scene) }})
-        this.add(Translate.menuItem("images") { edt { ImagesDialog(layout, layout.scene, null) }})
+        this.add(Translate.menuItem("images") { edt { ImagesDialog(layout, layout.scene) }})
         this.add(Translate.menuItem("environment") { edt { EnvironmentPropertiesDialog(layout) }})
     }
 

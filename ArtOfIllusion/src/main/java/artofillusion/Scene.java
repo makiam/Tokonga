@@ -782,25 +782,18 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
     public boolean removeImage(int which) {
         ImageMap image = _images.get(which);
 
-        for (var     texture: _textures) {
+        for (var texture: _textures) {
             if (texture.usesImage(image)) {
                 return false;
             }
         }
-        for (var     material: _materials) {
+        for (var material: _materials) {
             if (material.usesImage(image)) {
                 return false;
             }
         }
         _images.remove(which);
         return true;
-    }
-
-    /**
-     * Replace an ImageMap with another one
-     */
-    public void replaceImage(int which, ImageMap im) {
-        _images.set(which, im);
     }
 
     /**
