@@ -182,6 +182,7 @@ public class ExtrudeDialog extends ToolDialog {
         }
     }
 
+    @Override
     public void commit() {
         ObjectInfo profile = objects.get(objChoice.getSelectedIndex());
         CoordinateSystem coords = new CoordinateSystem(new Vec3(), Vec3.vz(), Vec3.vy());
@@ -193,7 +194,6 @@ public class ExtrudeDialog extends ToolDialog {
         window.setSelection(window.getScene().getNumObjects() - 1);
         window.setUndoRecord(new UndoRecord(window, false, UndoRecord.DELETE_OBJECT, window.getScene().getNumObjects() - 1));
         window.updateImage();
-        dispose();
     }
 
     // Create the extruded object.

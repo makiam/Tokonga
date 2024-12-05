@@ -88,6 +88,7 @@ public class LatheDialog extends ToolDialog {
         setVisible(true);
     }
 
+    @Override
     public void commit() {
         CoordinateSystem coords = curveInfo.getCoords().duplicate();
         Vec3 offset = curveInfo.getCoords().fromLocal().times(theCurve.getVertices()[0].r).minus(coords.fromLocal().times(((Mesh) preview.getObject().getObject()).getVertices()[0].r));

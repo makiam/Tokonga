@@ -19,12 +19,8 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.util.Arrays;
 
 /**
  * This dialog box allows the user to specify options for creating a tube.
@@ -48,7 +44,6 @@ public class TubeDialog extends ToolDialog {
         this.window = window;
         curveInfo = curve;
         theCurve = (Curve) curve.getObject();
-        Scene scene = window.getScene();
 
         // Layout the window.
         FormContainer content = new FormContainer(4, 10);
@@ -75,6 +70,7 @@ public class TubeDialog extends ToolDialog {
         setVisible(true);
     }
 
+    @Override
     public void commit() {
         window.addObject(theTube, curveInfo.getCoords().duplicate(), "Tube " + (counter++), null);
         window.setSelection(window.getScene().getNumObjects() - 1);
@@ -86,9 +82,7 @@ public class TubeDialog extends ToolDialog {
     private void makeObject() {
         MeshVertex[] vert = theCurve.getVertices();
         double[] thickness = new double[vert.length];
-        for (int i = 0; i < thickness.length; i++) {
-            thickness[i] = thicknessField.getValue();
-        }
+        Arrays.fill(thickness, thicknessField.getValue());
         int endsStyle;
         if (theCurve.isClosed()) {
             endsStyle = Tube.CLOSED_ENDS;

@@ -151,6 +151,7 @@ public class TextDialog extends ToolDialog {
         preview.repaint();
     }
 
+    @Override
     public void commit() {
         if (objects.isEmpty()) return;
 
@@ -159,7 +160,7 @@ public class TextDialog extends ToolDialog {
             // Convert the whole string to a single mesh.
 
             TriangleMesh mesh = new TextCollection().convertToTriangleMesh(1);
-            mesh.setSmoothingMethod(TriangleMesh.APPROXIMATING);
+            mesh.setSmoothingMethod(Mesh.APPROXIMATING);
             mesh.setTexture(window.getScene().getDefaultTexture(), window.getScene().getDefaultTexture().getDefaultMapping(mesh));
             window.addObject(new ObjectInfo(mesh, new CoordinateSystem(), text.getText()), undo);
             window.setSelection(window.getScene().getNumObjects() - 1);

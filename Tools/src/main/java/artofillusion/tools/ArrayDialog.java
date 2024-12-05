@@ -73,7 +73,7 @@ public class ArrayDialog extends ToolDialog {
         content.add(createFinishPanel());
 
         // don't allow user to use nil curve
-        if (curvesVector.size() <= 0) {
+        if (curvesVector.isEmpty()) {
             curveBox.setEnabled(false);
         }
 
@@ -167,6 +167,7 @@ public class ArrayDialog extends ToolDialog {
         return panel;
     }
 
+    @Override
     public void commit() {
         updateSpec();
         spec.createArray();
@@ -178,10 +179,10 @@ public class ArrayDialog extends ToolDialog {
     private void updateSpec() {
         // get values
 
-        if (linearBox.getState() == true) {
+        if (linearBox.getState()) {
             spec.method = ArraySpec.METHOD_LINEAR;
         }
-        if (curveBox.getState() == true) {
+        if (curveBox.getState()) {
             spec.method = ArraySpec.METHOD_CURVE;
         }
         spec.linearCopies = (int) linearCopiesField.getValue();
@@ -191,14 +192,14 @@ public class ArrayDialog extends ToolDialog {
         spec.intervalX = intervalXBox.getState();
         spec.intervalY = intervalYBox.getState();
         spec.intervalZ = intervalZBox.getState();
-        if (curvesVector.size() > 0) {
+        if (!curvesVector.isEmpty()) {
             spec.curve = curvesVector.get(curveChoice.getSelectedIndex());
         }
 
-        if (curveCopiesBox.getState() == true) {
+        if (curveCopiesBox.getState()) {
             spec.curveMode = ArraySpec.MODE_COPIES;
         }
-        if (curveStepBox.getState() == true) {
+        if (curveStepBox.getState()) {
             spec.curveMode = ArraySpec.MODE_STEP;
         }
         spec.curveStep = curveStepField.getValue();

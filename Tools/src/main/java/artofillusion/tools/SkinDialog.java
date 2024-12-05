@@ -99,6 +99,7 @@ public class SkinDialog extends ToolDialog {
         reverseBox.setState(which > -1 && reverse[which]);
     }
 
+    @Override
     public void commit() {
         CoordinateSystem coords = new CoordinateSystem(new Vec3(), Vec3.vz(), Vec3.vy());
         coords.setOrigin(coords.getOrigin().plus(centerOffset));

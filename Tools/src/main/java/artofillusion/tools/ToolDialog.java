@@ -28,7 +28,7 @@ import java.awt.event.WindowEvent;
 public class ToolDialog extends BDialog {
 
     @Getter private final BButton okButton;
-    @Getter private BButton cancelButton;
+    @Getter private final BButton cancelButton;
 
     public ToolDialog(LayoutWindow view, String title) {
         super(view, title, true);
@@ -59,7 +59,7 @@ public class ToolDialog extends BDialog {
     }
 
     private void cancelImpl() {
-        log.info("Cancelling {} tool dialog");
+        log.info("Cancelling {} tool dialog", this.getClass().getSimpleName());
         cancel();
         this.getComponent().dispose();
     }
@@ -68,7 +68,7 @@ public class ToolDialog extends BDialog {
     }
 
     private void commitImpl() {
-        log.info("Committing {} tool dialog");
+        log.info("Committing {} tool dialog", this.getClass().getSimpleName());
         commit();
         this.getComponent().dispose();
     }
