@@ -17,7 +17,13 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
+import javax.swing.*;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.*;
 
 /**
@@ -45,6 +51,10 @@ public class ArrayDialog extends BDialog {
 
     public ArrayDialog(LayoutWindow window) {
         super(window, Translate.text("Tools:array.dialog.name"), true);
+
+        this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
+
         this.window = window;
 
         // set defaults from scene
@@ -70,6 +80,12 @@ public class ArrayDialog extends BDialog {
         content.add(createOptionsPanel());
         content.add(createFinishPanel());
 
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                dispose();
+            }
+        });
         // don't allow user to use nil curve
         if (curvesVector.size() <= 0) {
             curveBox.setEnabled(false);
@@ -158,12 +174,26 @@ public class ArrayDialog extends BDialog {
 
     private Widget createFinishPanel() {
         RowContainer panel = new RowContainer();
-        panel.add(Translate.button("ok", this, "doOk"));
-        panel.add(Translate.button("cancel", this, "dispose"));
+        BButton okButton;
+        panel.add(okButton = Translate.button("ok", event -> commit()));
+        panel.add(Translate.button("cancel", event -> dispose()));
+        this.getComponent().getRootPane().setDefaultButton(okButton.getComponent());
+
+        String cancelName = "cancel";
+        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+        ActionMap actionMap = getRootPane().getActionMap();
+        actionMap.put(cancelName, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
+
         return panel;
     }
 
-    private void doOk() {
+    private void commit() {
         updateSpec();
         spec.createArray();
         window.rebuildItemList();

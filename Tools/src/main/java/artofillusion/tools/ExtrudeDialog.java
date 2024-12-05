@@ -21,7 +21,13 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.*;
 import java.util.List;
 
@@ -55,6 +61,9 @@ public class ExtrudeDialog extends BDialog {
 
     public ExtrudeDialog(LayoutWindow window) {
         super(window, Translate.text("Tools:extrude.dialog.name"), true);
+        this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
+
         this.window = window;
         Scene scene = window.getScene();
         int[] selection = window.getSelectedIndices();
@@ -142,8 +151,30 @@ public class ExtrudeDialog extends BDialog {
                 new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
         RowContainer buttons = new RowContainer();
         content.add(buttons, 0, 9, 4, 1, new LayoutInfo());
-        buttons.add(okButton = Translate.button("ok", this, "doOk"));
-        buttons.add(Translate.button("cancel", this, "dispose"));
+        buttons.add(okButton = Translate.button("ok", event -> commit()));
+        buttons.add(Translate.button("cancel", event -> dispose()));
+
+        String cancelName = "cancel";
+        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+        ActionMap actionMap = getRootPane().getActionMap();
+        actionMap.put(cancelName, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
+
+
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                dispose();
+            }
+        });
+
+        this.getComponent().getRootPane().setDefaultButton(okButton.getComponent());
+
         makeObject();
         pack();
         UIUtilities.centerDialog(this, window);
@@ -179,7 +210,7 @@ public class ExtrudeDialog extends BDialog {
         }
     }
 
-    private void doOk() {
+    private void commit() {
         ObjectInfo profile = objects.get(objChoice.getSelectedIndex());
         CoordinateSystem coords = new CoordinateSystem(new Vec3(), Vec3.vz(), Vec3.vy());
         if (profile.getObject() instanceof Mesh) {

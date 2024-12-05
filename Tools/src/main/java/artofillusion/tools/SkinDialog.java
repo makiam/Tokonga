@@ -18,8 +18,14 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
+import javax.swing.*;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 
 
@@ -42,6 +48,9 @@ public class SkinDialog extends BDialog {
 
     public SkinDialog(LayoutWindow window, List<ObjectInfo> curves) {
         super(window, Translate.text("Tools:skin.dialog.title"), true);
+        this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
+
         this.window = window;
         curve = new ObjectInfo[curves.size()];
         reverse = new boolean[curves.size()];
@@ -69,8 +78,30 @@ public class SkinDialog extends BDialog {
         preview.setPreferredSize(new Dimension(150, 150));
         RowContainer buttons = new RowContainer();
         content.add(buttons, 0, 1, 3, 1, new LayoutInfo());
-        buttons.add(Translate.button("ok", this, "doOk"));
-        buttons.add(Translate.button("cancel", this, "dispose"));
+        BButton okButton;
+        buttons.add(okButton = Translate.button("ok", event -> commit()));
+        buttons.add(Translate.button("cancel", event -> dispose()));
+
+        String cancelName = "cancel";
+        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+        ActionMap actionMap = getRootPane().getActionMap();
+        actionMap.put(cancelName, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
+
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                dispose();
+            }
+        });
+
+        this.getComponent().getRootPane().setDefaultButton(okButton.getComponent());
+
         makeObject();
         pack();
         UIUtilities.centerDialog(this, window);
@@ -95,7 +126,7 @@ public class SkinDialog extends BDialog {
         reverseBox.setState(which > -1 && reverse[which]);
     }
 
-    private void doOk() {
+    private void commit() {
         CoordinateSystem coords = new CoordinateSystem(new Vec3(), Vec3.vz(), Vec3.vy());
         coords.setOrigin(coords.getOrigin().plus(centerOffset));
         window.addObject(preview.getObject().getObject(), coords, "Skinned Object " + (counter++), null);

@@ -18,7 +18,13 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.*;
 
 /**
@@ -43,6 +49,9 @@ public class TextDialog extends BDialog {
      */
     public TextDialog(LayoutWindow window) {
         super(window, Translate.text("Text"), true);
+        this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
+
         this.window = window;
 
         // Create the controls.
@@ -99,15 +108,38 @@ public class TextDialog extends BDialog {
         thicknessRow.add(thicknessValue);
         content.add(thicknessRow, 0, 5);
         content.add(preview, 1, 1, 1, 5, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH));
-        RowContainer buttonsRow = new RowContainer();
-        buttonsRow.add(okButton = Translate.button("ok", this, "doOk"));
-        buttonsRow.add(Translate.button("cancel", this, "dispose"));
-        content.add(buttonsRow, 0, 6, 2, 1);
+        RowContainer buttons = new RowContainer();
+
+        buttons.add(okButton = Translate.button("ok", event -> commit()));
+        buttons.add(Translate.button("cancel", event -> dispose()));
+
+        String cancelName = "cancel";
+        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+        ActionMap actionMap = getRootPane().getActionMap();
+        actionMap.put(cancelName, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
+
+
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                dispose();
+            }
+        });
+
+        this.getComponent().getRootPane().setDefaultButton(okButton.getComponent());
+
+        content.add(buttons, 0, 6, 2, 1);
         pack();
         UIUtilities.centerDialog(this, window);
         updateComponents();
         fontsList.scrollToItem(selectedFontIndex);
-        setDefaultButton(okButton);
+
         updatePreview();
         setVisible(true);
     }
@@ -146,7 +178,7 @@ public class TextDialog extends BDialog {
         preview.repaint();
     }
 
-    private void doOk() {
+    private void commit() {
         if (!objects.isEmpty()) {
             UndoRecord undo = new UndoRecord(window);
             if (objects.get(0).getObject() instanceof TriangleMesh) {
