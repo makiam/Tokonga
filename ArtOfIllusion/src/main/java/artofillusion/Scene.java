@@ -534,9 +534,9 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
     public void addObject(ObjectInfo info, int index, UndoRecord undo) {
         Object3D geo = info.getObject();
         info.setId(nextID++);
-        if (info.getTracks() == null) {
-            info.addTrack(new PositionTrack(info), 0);
-            info.addTrack(new RotationTrack(info), 1);
+        if (info.getTracks().length == 0) {
+            info.addTrack(new PositionTrack(info));
+            info.addTrack(new RotationTrack(info));
         }
         if (geo.canSetTexture() && geo.getTextureMapping() == null) {
             Texture def = getDefaultTexture();
