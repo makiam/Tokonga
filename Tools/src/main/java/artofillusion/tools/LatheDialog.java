@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2007 by Peter Eastman
-   Changes copyright (C) 2020-2022 by Maksim Khramov
+   Changes copyright (C) 2020-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,12 +18,13 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
 import java.awt.*;
 
 /**
  * This dialog box allows the user to specify options for creating lathed objects.
  */
-public class LatheDialog extends BDialog {
+public class LatheDialog extends ToolDialog {
 
     final LayoutWindow window;
     final Curve theCurve;
@@ -42,7 +43,8 @@ public class LatheDialog extends BDialog {
     private static int counter = 1;
 
     public LatheDialog(LayoutWindow window, ObjectInfo curve) {
-        super(window, Translate.text("Tools:lathe.dialog.name"), true);
+        super(window, Translate.text("Tools:lathe.dialog.name"));
+
         this.window = window;
         theCurve = (Curve) curve.getObject();
         curveInfo = curve;
@@ -74,9 +76,11 @@ public class LatheDialog extends BDialog {
 
         // Add the buttons at the bottom.
         RowContainer buttons = new RowContainer();
-        buttons.add(Translate.button("ok", this, "doOk"));
-        buttons.add(Translate.button("cancel", this, "dispose"));
+
+        buttons.add(getOkButton());
+        buttons.add(getCancelButton());
         content.add(buttons, 0, 9, 3, 1, new LayoutInfo());
+
         selectDefaults();
         makeObject();
         pack();
@@ -84,7 +88,8 @@ public class LatheDialog extends BDialog {
         setVisible(true);
     }
 
-    private void doOk() {
+    @Override
+    public void commit() {
         CoordinateSystem coords = curveInfo.getCoords().duplicate();
         Vec3 offset = curveInfo.getCoords().fromLocal().times(theCurve.getVertices()[0].r).minus(coords.fromLocal().times(((Mesh) preview.getObject().getObject()).getVertices()[0].r));
         coords.setOrigin(coords.getOrigin().plus(offset));
@@ -92,7 +97,7 @@ public class LatheDialog extends BDialog {
         window.setSelection(window.getScene().getNumObjects() - 1);
         window.setUndoRecord(new UndoRecord(window, false, UndoRecord.DELETE_OBJECT, window.getScene().getNumObjects() - 1));
         window.updateImage();
-        dispose();
+
     }
 
     // Select default values for the various options.

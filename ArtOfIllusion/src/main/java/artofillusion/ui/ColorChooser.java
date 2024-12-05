@@ -72,8 +72,8 @@ public class ColorChooser extends BDialog {
 
         // Add the buttons at the bottom.
         RowContainer buttons = new RowContainer();
-        buttons.add(Translate.button("ok", this, "doOk"));
-        buttons.add(Translate.button("cancel", this, "dispose"));
+        buttons.add(Translate.button("ok", event -> doOk()));
+        buttons.add(Translate.button("cancel", event -> dispose()));
         content.add(buttons, BorderContainer.SOUTH, new LayoutInfo());
 
         // Add the main panel.

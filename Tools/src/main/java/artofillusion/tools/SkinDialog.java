@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2005 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,6 +18,7 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.List;
 /**
  * This dialog box allows the user to specify options for creating skinned objects.
  */
-public class SkinDialog extends BDialog {
+public class SkinDialog extends ToolDialog {
 
     private final LayoutWindow window;
     private final BList curveList;
@@ -41,7 +42,8 @@ public class SkinDialog extends BDialog {
     private static int counter = 1;
 
     public SkinDialog(LayoutWindow window, List<ObjectInfo> curves) {
-        super(window, Translate.text("Tools:skin.dialog.title"), true);
+        super(window, Translate.text("Tools:skin.dialog.title"));
+
         this.window = window;
         curve = new ObjectInfo[curves.size()];
         reverse = new boolean[curves.size()];
@@ -69,8 +71,10 @@ public class SkinDialog extends BDialog {
         preview.setPreferredSize(new Dimension(150, 150));
         RowContainer buttons = new RowContainer();
         content.add(buttons, 0, 1, 3, 1, new LayoutInfo());
-        buttons.add(Translate.button("ok", this, "doOk"));
-        buttons.add(Translate.button("cancel", this, "dispose"));
+
+        buttons.add(getOkButton());
+        buttons.add(getCancelButton());
+
         makeObject();
         pack();
         UIUtilities.centerDialog(this, window);
@@ -95,14 +99,14 @@ public class SkinDialog extends BDialog {
         reverseBox.setState(which > -1 && reverse[which]);
     }
 
-    private void doOk() {
+    @Override
+    public void commit() {
         CoordinateSystem coords = new CoordinateSystem(new Vec3(), Vec3.vz(), Vec3.vy());
         coords.setOrigin(coords.getOrigin().plus(centerOffset));
         window.addObject(preview.getObject().getObject(), coords, "Skinned Object " + (counter++), null);
         window.setSelection(window.getScene().getNumObjects() - 1);
         window.setUndoRecord(new UndoRecord(window, false, UndoRecord.DELETE_OBJECT, window.getScene().getNumObjects() - 1));
         window.updateImage();
-        dispose();
     }
 
     private void doMoveUp() {

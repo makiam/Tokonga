@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -14,7 +14,15 @@ package artofillusion.ui;
 import artofillusion.ArtOfIllusion;
 import buoy.event.*;
 import buoy.widget.*;
+import lombok.extern.slf4j.Slf4j;
+
+import javax.swing.*;
+import javax.swing.text.html.Option;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Optional;
 
 /**
@@ -22,12 +30,13 @@ import java.util.Optional;
  * for the user to edit. Each Widget has a label next to it. At the bottom are two
  * buttons labeled OK and Cancel.
  */
+@Slf4j
 public class ComponentsDialog extends BDialog {
 
     private final Widget[] comp;
     private boolean ok;
-    private Optional<Runnable> okCallback = Optional.empty();
-    private Optional<Runnable> cancelCallback = Optional.empty();
+    private Runnable okCallback;
+    private Runnable cancelCallback;
     private final BButton okButton;
 
     /**
@@ -54,10 +63,13 @@ public class ComponentsDialog extends BDialog {
      */
     public ComponentsDialog(WindowWidget parent, String prompt, Widget[] components, String[] labels, Runnable onOK, Runnable onCancel) {
         super(parent, (onOK == null && onCancel == null));
+
+        this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
         comp = components;
-        okCallback = Optional.ofNullable(onOK);
-        cancelCallback = Optional.ofNullable(onCancel);
+        this.okCallback = onOK;
+        this.cancelCallback = onCancel;
+
         BorderContainer content = new BorderContainer();
         setContent(content);
         content.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(10, 10, 10, 10), null));
@@ -74,25 +86,33 @@ public class ComponentsDialog extends BDialog {
                 center.add(components[i], 1, i, new LayoutInfo(LayoutInfo.WEST, LayoutInfo.BOTH, new Insets(2, 0, 2, 0), null));
             }
         }
-        for (Widget w : UIUtilities.findAllChildren(this)) {
-            w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
-        }
 
         // Add the buttons at the bottom.
         RowContainer buttons = new RowContainer();
         content.add(buttons, BorderContainer.SOUTH);
-        buttons.add(okButton = Translate.button("ok", this, "buttonPressed"));
-        BButton cancelButton;
-        buttons.add(cancelButton = Translate.button("cancel", this, "buttonPressed"));
-        okButton.addEventLink(KeyPressedEvent.class, this, "keyPressed");
-        cancelButton.addEventLink(KeyPressedEvent.class, this, "keyPressed");
-        addEventLink(WindowClosingEvent.class, new Object() {
-            void processEvent() {
-                ok = false;
-                closeWindow();
+        buttons.add(okButton = Translate.button("ok", event -> buttonOK()));
+        buttons.add(Translate.button("cancel", event -> buttonCancel()));
+
+        String cancelName = "cancel";
+        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+        ActionMap actionMap = getRootPane().getActionMap();
+        actionMap.put(cancelName, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                buttonCancel();
             }
         });
-        setDefaultButton(okButton);
+
+
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                buttonCancel();
+            }
+        });
+
+        this.getComponent().getRootPane().setDefaultButton(okButton.getComponent());
         pack();
         setResizable(false);
         UIUtilities.centerDialog(this, parent);
@@ -113,32 +133,16 @@ public class ComponentsDialog extends BDialog {
         okButton.setEnabled(enabled);
     }
 
-    private void buttonPressed(CommandEvent e) {
-
-        ok = !e.getActionCommand().equals("cancel");
-        closeWindow();
-    }
-
-    private void closeWindow() {
-        if (ok) {
-            okCallback.ifPresent(action -> action.run());
-        }
-        if (!ok) {
-            cancelCallback.ifPresent(action -> action.run());
-        }
+    private void buttonOK() {
+        ok = true;
+        Optional.ofNullable(okCallback).ifPresent(action -> action.run());
         dispose();
-        for (Widget cc : comp) {
-            cc.removeEventLink(KeyPressedEvent.class, this);
-        }
     }
 
-    /**
-     * Pressing Return and Escape are equivalent to clicking OK and Cancel.
-     */
-    private void keyPressed(KeyPressedEvent ev) {
-        int code = ev.getKeyCode();
-        if (code == KeyPressedEvent.VK_ESCAPE) {
-            closeWindow();
-        }
+    private void buttonCancel() {
+        ok = false;
+        Optional.ofNullable(cancelCallback).ifPresent(action -> action.run());
+        dispose();
     }
+
 }

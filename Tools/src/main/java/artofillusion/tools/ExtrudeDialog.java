@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2005 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -21,6 +21,7 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -28,7 +29,7 @@ import java.util.List;
 /**
  * This dialog box allows the user to specify options for creating extruded objects.
  */
-public class ExtrudeDialog extends BDialog {
+public class ExtrudeDialog extends ToolDialog {
 
     private final LayoutWindow window;
     private final BComboBox objChoice;
@@ -46,7 +47,7 @@ public class ExtrudeDialog extends BDialog {
     private final ValueField segField;
     private final ValueField angleField;
     private final ValueField tolField;
-    private final BButton okButton;
+
     private final ObjectPreviewCanvas preview;
     private final List<ObjectInfo> objects;
     private final List<ObjectInfo> paths;
@@ -54,7 +55,8 @@ public class ExtrudeDialog extends BDialog {
     private static int counter = 1;
 
     public ExtrudeDialog(LayoutWindow window) {
-        super(window, Translate.text("Tools:extrude.dialog.name"), true);
+        super(window, Translate.text("Tools:extrude.dialog.name"));
+
         this.window = window;
         Scene scene = window.getScene();
         int[] selection = window.getSelectedIndices();
@@ -142,8 +144,9 @@ public class ExtrudeDialog extends BDialog {
                 new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
         RowContainer buttons = new RowContainer();
         content.add(buttons, 0, 9, 4, 1, new LayoutInfo());
-        buttons.add(okButton = Translate.button("ok", this, "doOk"));
-        buttons.add(Translate.button("cancel", this, "dispose"));
+        buttons.add(this.getOkButton());
+        buttons.add(this.getCancelButton());
+
         makeObject();
         pack();
         UIUtilities.centerDialog(this, window);
@@ -173,13 +176,14 @@ public class ExtrudeDialog extends BDialog {
         Object3D profile = objects.get(objChoice.getSelectedIndex()).getObject();
         tolField.setEnabled(!(profile instanceof Curve || profile instanceof TriangleMesh));
         if (pathBox.getState()) {
-            okButton.setEnabled(objects.get(objChoice.getSelectedIndex()) != paths.get(pathChoice.getSelectedIndex()));
+            getOkButton().setEnabled(objects.get(objChoice.getSelectedIndex()) != paths.get(pathChoice.getSelectedIndex()));
         } else {
-            okButton.setEnabled(true);
+            getOkButton().setEnabled(true);
         }
     }
 
-    private void doOk() {
+    @Override
+    public void commit() {
         ObjectInfo profile = objects.get(objChoice.getSelectedIndex());
         CoordinateSystem coords = new CoordinateSystem(new Vec3(), Vec3.vz(), Vec3.vy());
         if (profile.getObject() instanceof Mesh) {
@@ -190,7 +194,6 @@ public class ExtrudeDialog extends BDialog {
         window.setSelection(window.getScene().getNumObjects() - 1);
         window.setUndoRecord(new UndoRecord(window, false, UndoRecord.DELETE_OBJECT, window.getScene().getNumObjects() - 1));
         window.updateImage();
-        dispose();
     }
 
     // Create the extruded object.

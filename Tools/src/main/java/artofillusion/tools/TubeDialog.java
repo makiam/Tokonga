@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2004 by Peter Eastman
-   Changes copyright (C) 2020-2022 by Maksim Khramov
+   Changes copyright (C) 2020-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,12 +18,14 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
 import java.awt.*;
+import java.util.Arrays;
 
 /**
  * This dialog box allows the user to specify options for creating a tube.
  */
-public class TubeDialog extends BDialog {
+public class TubeDialog extends ToolDialog {
 
     final LayoutWindow window;
     final Curve theCurve;
@@ -37,11 +39,11 @@ public class TubeDialog extends BDialog {
     private static int counter = 1;
 
     public TubeDialog(LayoutWindow window, ObjectInfo curve) {
-        super(window, Translate.text("Tools:tube.dialog.name"), true);
+        super(window, Translate.text("Tools:tube.dialog.name"));
+
         this.window = window;
         curveInfo = curve;
         theCurve = (Curve) curve.getObject();
-        Scene scene = window.getScene();
 
         // Layout the window.
         FormContainer content = new FormContainer(4, 10);
@@ -58,29 +60,29 @@ public class TubeDialog extends BDialog {
         preview.setPreferredSize(new Dimension(150, 150));
         RowContainer buttons = new RowContainer();
         content.add(buttons, 0, 3, 2, 1, new LayoutInfo());
-        buttons.add(Translate.button("ok", this, "doOk"));
-        buttons.add(Translate.button("cancel", this, "dispose"));
+
+        buttons.add(getOkButton());
+        buttons.add(getCancelButton());
+
         makeObject();
         pack();
         UIUtilities.centerDialog(this, window);
         setVisible(true);
     }
 
-    private void doOk() {
+    @Override
+    public void commit() {
         window.addObject(theTube, curveInfo.getCoords().duplicate(), "Tube " + (counter++), null);
         window.setSelection(window.getScene().getNumObjects() - 1);
         window.setUndoRecord(new UndoRecord(window, false, UndoRecord.DELETE_OBJECT, window.getScene().getNumObjects() - 1));
         window.updateImage();
-        dispose();
     }
 
     // Create the Tube.
     private void makeObject() {
         MeshVertex[] vert = theCurve.getVertices();
         double[] thickness = new double[vert.length];
-        for (int i = 0; i < thickness.length; i++) {
-            thickness[i] = thicknessField.getValue();
-        }
+        Arrays.fill(thickness, thicknessField.getValue());
         int endsStyle;
         if (theCurve.isClosed()) {
             endsStyle = Tube.CLOSED_ENDS;

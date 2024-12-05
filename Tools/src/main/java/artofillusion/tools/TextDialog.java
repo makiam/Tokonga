@@ -1,5 +1,5 @@
 /* Copyright (C) 2013 by Peter Eastman
-   Changes copyright (C) 2022-2023 by Maksim Khramov
+   Changes copyright (C) 2022-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,13 +18,14 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
 import java.awt.*;
 import java.util.*;
 
 /**
  * TextDialog displays the user interface for creating text.
  */
-public class TextDialog extends BDialog {
+public class TextDialog extends ToolDialog {
 
     private final LayoutWindow window;
     private final BTextField text;
@@ -33,7 +34,7 @@ public class TextDialog extends BDialog {
     private final BCheckBox boldBox, italicBox;
     private final ValueField thicknessValue;
     private final ObjectPreviewCanvas preview;
-    private final BButton okButton;
+
     private ArrayList<ObjectInfo> objects;
 
     /**
@@ -42,7 +43,8 @@ public class TextDialog extends BDialog {
      * @param window the window the objects will be added to
      */
     public TextDialog(LayoutWindow window) {
-        super(window, Translate.text("Text"), true);
+        super(window, Translate.text("Text"));
+
         this.window = window;
 
         // Create the controls.
@@ -99,15 +101,18 @@ public class TextDialog extends BDialog {
         thicknessRow.add(thicknessValue);
         content.add(thicknessRow, 0, 5);
         content.add(preview, 1, 1, 1, 5, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH));
-        RowContainer buttonsRow = new RowContainer();
-        buttonsRow.add(okButton = Translate.button("ok", this, "doOk"));
-        buttonsRow.add(Translate.button("cancel", this, "dispose"));
-        content.add(buttonsRow, 0, 6, 2, 1);
+        RowContainer buttons = new RowContainer();
+
+        buttons.add(getOkButton());
+        buttons.add(getCancelButton());
+
+
+        content.add(buttons, 0, 6, 2, 1);
         pack();
         UIUtilities.centerDialog(this, window);
         updateComponents();
         fontsList.scrollToItem(selectedFontIndex);
-        setDefaultButton(okButton);
+
         updatePreview();
         setVisible(true);
     }
@@ -118,7 +123,7 @@ public class TextDialog extends BDialog {
     private void updateComponents() {
         int typeIndex = typeChoice.getSelectedIndex();
         thicknessValue.setEnabled(typeIndex == 1 || typeIndex == 3);
-        okButton.setEnabled(text.getText().length() > 0);
+        getOkButton().setEnabled(text.getText().length() > 0);
     }
 
     /**
@@ -146,35 +151,35 @@ public class TextDialog extends BDialog {
         preview.repaint();
     }
 
-    private void doOk() {
-        if (!objects.isEmpty()) {
-            UndoRecord undo = new UndoRecord(window);
-            if (objects.get(0).getObject() instanceof TriangleMesh) {
-                // Convert the whole string to a single mesh.
+    @Override
+    public void commit() {
+        if (objects.isEmpty()) return;
 
-                TriangleMesh mesh = new TextCollection().convertToTriangleMesh(1);
-                mesh.setSmoothingMethod(TriangleMesh.APPROXIMATING);
-                mesh.setTexture(window.getScene().getDefaultTexture(), window.getScene().getDefaultTexture().getDefaultMapping(mesh));
-                window.addObject(new ObjectInfo(mesh, new CoordinateSystem(), text.getText()), undo);
-                window.setSelection(window.getScene().getNumObjects() - 1);
-            } else {
-                // Create a Null object, then add the curves or tubes as children of it.
+        UndoRecord undo = new UndoRecord(window);
+        if (objects.get(0).getObject() instanceof TriangleMesh) {
+            // Convert the whole string to a single mesh.
 
-                ObjectInfo parent = new ObjectInfo(new NullObject(), new CoordinateSystem(), text.getText());
-                window.clearSelection();
-                window.addObject(parent, undo);
+            TriangleMesh mesh = new TextCollection().convertToTriangleMesh(1);
+            mesh.setSmoothingMethod(Mesh.APPROXIMATING);
+            mesh.setTexture(window.getScene().getDefaultTexture(), window.getScene().getDefaultTexture().getDefaultMapping(mesh));
+            window.addObject(new ObjectInfo(mesh, new CoordinateSystem(), text.getText()), undo);
+            window.setSelection(window.getScene().getNumObjects() - 1);
+        } else {
+            // Create a Null object, then add the curves or tubes as children of it.
+
+            ObjectInfo parent = new ObjectInfo(new NullObject(), new CoordinateSystem(), text.getText());
+            window.clearSelection();
+            window.addObject(parent, undo);
+            window.addToSelection(window.getScene().getNumObjects() - 1);
+            for (ObjectInfo obj : objects) {
+                window.addObject(obj, undo);
+                parent.addChild(obj, parent.getChildren().length);
                 window.addToSelection(window.getScene().getNumObjects() - 1);
-                for (ObjectInfo obj : objects) {
-                    window.addObject(obj, undo);
-                    parent.addChild(obj, parent.getChildren().length);
-                    window.addToSelection(window.getScene().getNumObjects() - 1);
-                }
-                window.rebuildItemList();
             }
-            window.setUndoRecord(undo);
-            window.updateImage();
+            window.rebuildItemList();
         }
-        dispose();
+        window.setUndoRecord(undo);
+        window.updateImage();
     }
 
     /**

@@ -17,6 +17,8 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * This dialog box allows the user to specify options for CSG objects, a.k.a 'boolean objects'
@@ -76,10 +78,16 @@ public class CSGDialog extends BDialog {
 
         // Add the buttons at the bottom.
         RowContainer buttons = new RowContainer();
-        buttons.add(Translate.button("ok", this, "doOk"));
-        buttons.add(Translate.button("cancel", this, "dispose"));
+        buttons.add(Translate.button("ok", event -> doOk()));
+        buttons.add(Translate.button("cancel", event -> dispose()));
         content.add(buttons, new LayoutInfo());
-        addEventLink(WindowClosingEvent.class, this, "dispose");
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                dispose();
+            }
+        });
+
         makePreview();
         pack();
         UIUtilities.centerDialog(this, window.getFrame());

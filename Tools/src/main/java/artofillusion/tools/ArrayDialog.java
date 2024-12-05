@@ -17,6 +17,7 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
 import java.awt.Insets;
 import java.util.*;
 
@@ -25,7 +26,7 @@ import java.util.*;
  *
  * @author Rick van der Meiden
  */
-public class ArrayDialog extends BDialog {
+public class ArrayDialog extends ToolDialog {
 
     private final LayoutWindow window;
     private final ArraySpec spec;
@@ -44,7 +45,8 @@ public class ArrayDialog extends BDialog {
     private final RadioButtonGroup modeGroup;
 
     public ArrayDialog(LayoutWindow window) {
-        super(window, Translate.text("Tools:array.dialog.name"), true);
+        super(window, Translate.text("Tools:array.dialog.name"));
+
         this.window = window;
 
         // set defaults from scene
@@ -71,7 +73,7 @@ public class ArrayDialog extends BDialog {
         content.add(createFinishPanel());
 
         // don't allow user to use nil curve
-        if (curvesVector.size() <= 0) {
+        if (curvesVector.isEmpty()) {
             curveBox.setEnabled(false);
         }
 
@@ -158,27 +160,29 @@ public class ArrayDialog extends BDialog {
 
     private Widget createFinishPanel() {
         RowContainer panel = new RowContainer();
-        panel.add(Translate.button("ok", this, "doOk"));
-        panel.add(Translate.button("cancel", this, "dispose"));
+
+        panel.add(getOkButton());
+        panel.add(getCancelButton());
+
         return panel;
     }
 
-    private void doOk() {
+    @Override
+    public void commit() {
         updateSpec();
         spec.createArray();
         window.rebuildItemList();
         window.updateImage();
-        dispose();
     }
 
     // Update ArraySpec data
     private void updateSpec() {
         // get values
 
-        if (linearBox.getState() == true) {
+        if (linearBox.getState()) {
             spec.method = ArraySpec.METHOD_LINEAR;
         }
-        if (curveBox.getState() == true) {
+        if (curveBox.getState()) {
             spec.method = ArraySpec.METHOD_CURVE;
         }
         spec.linearCopies = (int) linearCopiesField.getValue();
@@ -188,14 +192,14 @@ public class ArrayDialog extends BDialog {
         spec.intervalX = intervalXBox.getState();
         spec.intervalY = intervalYBox.getState();
         spec.intervalZ = intervalZBox.getState();
-        if (curvesVector.size() > 0) {
+        if (!curvesVector.isEmpty()) {
             spec.curve = curvesVector.get(curveChoice.getSelectedIndex());
         }
 
-        if (curveCopiesBox.getState() == true) {
+        if (curveCopiesBox.getState()) {
             spec.curveMode = ArraySpec.MODE_COPIES;
         }
-        if (curveStepBox.getState() == true) {
+        if (curveStepBox.getState()) {
             spec.curveMode = ArraySpec.MODE_STEP;
         }
         spec.curveStep = curveStepField.getValue();
@@ -230,9 +234,6 @@ public class ArrayDialog extends BDialog {
         useOriginBox.setEnabled(spec.method == ArraySpec.METHOD_CURVE);
         useOrientationBox.setEnabled(spec.method == ArraySpec.METHOD_CURVE);
 
-        // duplicateBox.setEnabled(true);
-        // groupBox.setEnabled(true);
-        // liveBox.setEnabled(true);
     }
 
 }
