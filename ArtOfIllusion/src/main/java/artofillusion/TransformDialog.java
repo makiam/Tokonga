@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -14,8 +14,15 @@ package artofillusion;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+import lombok.extern.slf4j.Slf4j;
+
+import javax.swing.*;
 import java.awt.*;
-import java.util.Collection;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 
 
 /**
@@ -26,6 +33,7 @@ import java.util.Collection;
  * If transformLabels is true, the rows will be labelled "Move", "Rotate", and "Scale".
  * If it is false, they will be labelled "Position", "Orientation", and "Size".
  */
+@Slf4j
 public class TransformDialog extends BDialog {
 
     private final double[] initialValues;
@@ -41,6 +49,8 @@ public class TransformDialog extends BDialog {
 
     public TransformDialog(BFrame parent, String title, double[] values, boolean transformLabels, boolean extraOptions, boolean show) {
         super(parent, title, true);
+        this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
         initialValues = values;
         finalValues = values.clone();
         fields = new ValueField[9];
@@ -143,41 +153,44 @@ public class TransformDialog extends BDialog {
             extra.add(objectCenterBox = new BRadioButton(Translate.text("individualObjectCenters"), !selectionCenter, centerGroup), 1, 0, westLayout);
             extra.add(selectionCenterBox = new BRadioButton(Translate.text("centerOfSelection"), selectionCenter, centerGroup), 1, 1, westLayout);
         }
+
         RowContainer buttons = new RowContainer();
         content.add(buttons, BorderContainer.SOUTH, new LayoutInfo());
-        buttons.add(Translate.button("ok", this, "doOk"));
-        buttons.add(Translate.button("cancel", this, "dispose"));
-        addEventLink(WindowClosingEvent.class, this, "dispose");
-        addAsListener(this);
+        BButton okButton;
+        buttons.add(okButton = Translate.button("ok", event -> buttonOK()));
+        buttons.add(Translate.button("cancel", event -> buttonCancel()));
+
+        String cancelName = "cancel";
+        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+        ActionMap actionMap = getRootPane().getActionMap();
+        actionMap.put(cancelName, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                buttonCancel();
+            }
+        });
+
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                buttonCancel();
+            }
+        });
+        this.getComponent().getRootPane().setDefaultButton(okButton.getComponent());
+
     }
 
-    private void doOk() {
+    private void buttonOK() {
+        log.info("Accepting transform dialog");
         ok = true;
         dispose();
     }
 
-    /**
-     * Pressing Return and Escape are equivalent to clicking OK and Cancel.
-     */
-    private void keyPressed(KeyPressedEvent ev) {
-        int code = ev.getKeyCode();
-
-        if (code == KeyPressedEvent.VK_ENTER) {
-            doOk();
-        }
-        if (code == KeyPressedEvent.VK_ESCAPE) {
-            dispose();
-        }
+    private void buttonCancel() {
+        log.info("Cancelling transform dialog");
+        ok = false;
+        dispose();
     }
 
-    /**
-     * Add this as a listener to every Widget.
-     */
-    private void addAsListener(Widget w) {
-        w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
-        if (w instanceof WidgetContainer) {
-            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
-            children.forEach(this::addAsListener);
-        }
-    }
 }
