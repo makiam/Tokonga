@@ -1,5 +1,5 @@
 /* Copyright (C) 2013 by Peter Eastman
-   Changes copyright (C) 2022-2023 by Maksim Khramov
+   Changes copyright (C) 2022-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -19,18 +19,13 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.*;
 
 /**
  * TextDialog displays the user interface for creating text.
  */
-public class TextDialog extends BDialog {
+public class TextDialog extends ToolDialog {
 
     private final LayoutWindow window;
     private final BTextField text;
@@ -39,7 +34,7 @@ public class TextDialog extends BDialog {
     private final BCheckBox boldBox, italicBox;
     private final ValueField thicknessValue;
     private final ObjectPreviewCanvas preview;
-    private final BButton okButton;
+
     private ArrayList<ObjectInfo> objects;
 
     /**
@@ -48,9 +43,7 @@ public class TextDialog extends BDialog {
      * @param window the window the objects will be added to
      */
     public TextDialog(LayoutWindow window) {
-        super(window, Translate.text("Text"), true);
-        this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
+        super(window, Translate.text("Text"));
 
         this.window = window;
 
@@ -110,29 +103,9 @@ public class TextDialog extends BDialog {
         content.add(preview, 1, 1, 1, 5, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH));
         RowContainer buttons = new RowContainer();
 
-        buttons.add(okButton = Translate.button("ok", event -> commit()));
-        buttons.add(Translate.button("cancel", event -> dispose()));
+        buttons.add(getOkButton());
+        buttons.add(getCancelButton());
 
-        String cancelName = "cancel";
-        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-        ActionMap actionMap = getRootPane().getActionMap();
-        actionMap.put(cancelName, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
-
-
-        this.getComponent().addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                dispose();
-            }
-        });
-
-        this.getComponent().getRootPane().setDefaultButton(okButton.getComponent());
 
         content.add(buttons, 0, 6, 2, 1);
         pack();
@@ -150,7 +123,7 @@ public class TextDialog extends BDialog {
     private void updateComponents() {
         int typeIndex = typeChoice.getSelectedIndex();
         thicknessValue.setEnabled(typeIndex == 1 || typeIndex == 3);
-        okButton.setEnabled(text.getText().length() > 0);
+        getOkButton().setEnabled(text.getText().length() > 0);
     }
 
     /**
@@ -178,35 +151,34 @@ public class TextDialog extends BDialog {
         preview.repaint();
     }
 
-    private void commit() {
-        if (!objects.isEmpty()) {
-            UndoRecord undo = new UndoRecord(window);
-            if (objects.get(0).getObject() instanceof TriangleMesh) {
-                // Convert the whole string to a single mesh.
+    public void commit() {
+        if (objects.isEmpty()) return;
 
-                TriangleMesh mesh = new TextCollection().convertToTriangleMesh(1);
-                mesh.setSmoothingMethod(TriangleMesh.APPROXIMATING);
-                mesh.setTexture(window.getScene().getDefaultTexture(), window.getScene().getDefaultTexture().getDefaultMapping(mesh));
-                window.addObject(new ObjectInfo(mesh, new CoordinateSystem(), text.getText()), undo);
-                window.setSelection(window.getScene().getNumObjects() - 1);
-            } else {
-                // Create a Null object, then add the curves or tubes as children of it.
+        UndoRecord undo = new UndoRecord(window);
+        if (objects.get(0).getObject() instanceof TriangleMesh) {
+            // Convert the whole string to a single mesh.
 
-                ObjectInfo parent = new ObjectInfo(new NullObject(), new CoordinateSystem(), text.getText());
-                window.clearSelection();
-                window.addObject(parent, undo);
+            TriangleMesh mesh = new TextCollection().convertToTriangleMesh(1);
+            mesh.setSmoothingMethod(TriangleMesh.APPROXIMATING);
+            mesh.setTexture(window.getScene().getDefaultTexture(), window.getScene().getDefaultTexture().getDefaultMapping(mesh));
+            window.addObject(new ObjectInfo(mesh, new CoordinateSystem(), text.getText()), undo);
+            window.setSelection(window.getScene().getNumObjects() - 1);
+        } else {
+            // Create a Null object, then add the curves or tubes as children of it.
+
+            ObjectInfo parent = new ObjectInfo(new NullObject(), new CoordinateSystem(), text.getText());
+            window.clearSelection();
+            window.addObject(parent, undo);
+            window.addToSelection(window.getScene().getNumObjects() - 1);
+            for (ObjectInfo obj : objects) {
+                window.addObject(obj, undo);
+                parent.addChild(obj, parent.getChildren().length);
                 window.addToSelection(window.getScene().getNumObjects() - 1);
-                for (ObjectInfo obj : objects) {
-                    window.addObject(obj, undo);
-                    parent.addChild(obj, parent.getChildren().length);
-                    window.addToSelection(window.getScene().getNumObjects() - 1);
-                }
-                window.rebuildItemList();
             }
-            window.setUndoRecord(undo);
-            window.updateImage();
+            window.rebuildItemList();
         }
-        dispose();
+        window.setUndoRecord(undo);
+        window.updateImage();
     }
 
     /**

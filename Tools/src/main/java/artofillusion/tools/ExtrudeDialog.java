@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2005 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -22,19 +22,14 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.*;
 import java.util.List;
 
 /**
  * This dialog box allows the user to specify options for creating extruded objects.
  */
-public class ExtrudeDialog extends BDialog {
+public class ExtrudeDialog extends ToolDialog {
 
     private final LayoutWindow window;
     private final BComboBox objChoice;
@@ -52,7 +47,7 @@ public class ExtrudeDialog extends BDialog {
     private final ValueField segField;
     private final ValueField angleField;
     private final ValueField tolField;
-    private final BButton okButton;
+
     private final ObjectPreviewCanvas preview;
     private final List<ObjectInfo> objects;
     private final List<ObjectInfo> paths;
@@ -60,9 +55,7 @@ public class ExtrudeDialog extends BDialog {
     private static int counter = 1;
 
     public ExtrudeDialog(LayoutWindow window) {
-        super(window, Translate.text("Tools:extrude.dialog.name"), true);
-        this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
+        super(window, Translate.text("Tools:extrude.dialog.name"));
 
         this.window = window;
         Scene scene = window.getScene();
@@ -151,29 +144,8 @@ public class ExtrudeDialog extends BDialog {
                 new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
         RowContainer buttons = new RowContainer();
         content.add(buttons, 0, 9, 4, 1, new LayoutInfo());
-        buttons.add(okButton = Translate.button("ok", event -> commit()));
-        buttons.add(Translate.button("cancel", event -> dispose()));
-
-        String cancelName = "cancel";
-        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-        ActionMap actionMap = getRootPane().getActionMap();
-        actionMap.put(cancelName, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
-
-
-        this.getComponent().addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                dispose();
-            }
-        });
-
-        this.getComponent().getRootPane().setDefaultButton(okButton.getComponent());
+        buttons.add(this.getOkButton());
+        buttons.add(this.getCancelButton());
 
         makeObject();
         pack();
@@ -204,13 +176,13 @@ public class ExtrudeDialog extends BDialog {
         Object3D profile = objects.get(objChoice.getSelectedIndex()).getObject();
         tolField.setEnabled(!(profile instanceof Curve || profile instanceof TriangleMesh));
         if (pathBox.getState()) {
-            okButton.setEnabled(objects.get(objChoice.getSelectedIndex()) != paths.get(pathChoice.getSelectedIndex()));
+            getOkButton().setEnabled(objects.get(objChoice.getSelectedIndex()) != paths.get(pathChoice.getSelectedIndex()));
         } else {
-            okButton.setEnabled(true);
+            getOkButton().setEnabled(true);
         }
     }
 
-    private void commit() {
+    public void commit() {
         ObjectInfo profile = objects.get(objChoice.getSelectedIndex());
         CoordinateSystem coords = new CoordinateSystem(new Vec3(), Vec3.vz(), Vec3.vy());
         if (profile.getObject() instanceof Mesh) {

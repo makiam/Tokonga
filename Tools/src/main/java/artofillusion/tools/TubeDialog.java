@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2004 by Peter Eastman
-   Changes copyright (C) 2020-2022 by Maksim Khramov
+   Changes copyright (C) 2020-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -29,7 +29,7 @@ import java.awt.event.WindowEvent;
 /**
  * This dialog box allows the user to specify options for creating a tube.
  */
-public class TubeDialog extends BDialog {
+public class TubeDialog extends ToolDialog {
 
     final LayoutWindow window;
     final Curve theCurve;
@@ -43,9 +43,7 @@ public class TubeDialog extends BDialog {
     private static int counter = 1;
 
     public TubeDialog(LayoutWindow window, ObjectInfo curve) {
-        super(window, Translate.text("Tools:tube.dialog.name"), true);
-        this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
+        super(window, Translate.text("Tools:tube.dialog.name"));
 
         this.window = window;
         curveInfo = curve;
@@ -67,29 +65,9 @@ public class TubeDialog extends BDialog {
         preview.setPreferredSize(new Dimension(150, 150));
         RowContainer buttons = new RowContainer();
         content.add(buttons, 0, 3, 2, 1, new LayoutInfo());
-        BButton okButton;
-        buttons.add(okButton = Translate.button("ok", event -> commit()));
-        buttons.add(Translate.button("cancel", event -> dispose()));
 
-        String cancelName = "cancel";
-        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-        ActionMap actionMap = getRootPane().getActionMap();
-        actionMap.put(cancelName, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
-
-        this.getComponent().addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                dispose();
-            }
-        });
-
-        this.getComponent().getRootPane().setDefaultButton(okButton.getComponent());
+        buttons.add(getOkButton());
+        buttons.add(getCancelButton());
 
         makeObject();
         pack();
@@ -97,12 +75,11 @@ public class TubeDialog extends BDialog {
         setVisible(true);
     }
 
-    private void commit() {
+    public void commit() {
         window.addObject(theTube, curveInfo.getCoords().duplicate(), "Tube " + (counter++), null);
         window.setSelection(window.getScene().getNumObjects() - 1);
         window.setUndoRecord(new UndoRecord(window, false, UndoRecord.DELETE_OBJECT, window.getScene().getNumObjects() - 1));
         window.updateImage();
-        dispose();
     }
 
     // Create the Tube.

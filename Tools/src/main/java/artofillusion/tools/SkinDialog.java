@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2005 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -19,20 +19,15 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 
-import javax.swing.*;
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.List;
 
 
 /**
  * This dialog box allows the user to specify options for creating skinned objects.
  */
-public class SkinDialog extends BDialog {
+public class SkinDialog extends ToolDialog {
 
     private final LayoutWindow window;
     private final BList curveList;
@@ -47,9 +42,7 @@ public class SkinDialog extends BDialog {
     private static int counter = 1;
 
     public SkinDialog(LayoutWindow window, List<ObjectInfo> curves) {
-        super(window, Translate.text("Tools:skin.dialog.title"), true);
-        this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
+        super(window, Translate.text("Tools:skin.dialog.title"));
 
         this.window = window;
         curve = new ObjectInfo[curves.size()];
@@ -78,29 +71,9 @@ public class SkinDialog extends BDialog {
         preview.setPreferredSize(new Dimension(150, 150));
         RowContainer buttons = new RowContainer();
         content.add(buttons, 0, 1, 3, 1, new LayoutInfo());
-        BButton okButton;
-        buttons.add(okButton = Translate.button("ok", event -> commit()));
-        buttons.add(Translate.button("cancel", event -> dispose()));
 
-        String cancelName = "cancel";
-        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-        ActionMap actionMap = getRootPane().getActionMap();
-        actionMap.put(cancelName, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
-
-        this.getComponent().addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                dispose();
-            }
-        });
-
-        this.getComponent().getRootPane().setDefaultButton(okButton.getComponent());
+        buttons.add(getOkButton());
+        buttons.add(getCancelButton());
 
         makeObject();
         pack();
@@ -126,14 +99,13 @@ public class SkinDialog extends BDialog {
         reverseBox.setState(which > -1 && reverse[which]);
     }
 
-    private void commit() {
+    public void commit() {
         CoordinateSystem coords = new CoordinateSystem(new Vec3(), Vec3.vz(), Vec3.vy());
         coords.setOrigin(coords.getOrigin().plus(centerOffset));
         window.addObject(preview.getObject().getObject(), coords, "Skinned Object " + (counter++), null);
         window.setSelection(window.getScene().getNumObjects() - 1);
         window.setUndoRecord(new UndoRecord(window, false, UndoRecord.DELETE_OBJECT, window.getScene().getNumObjects() - 1));
         window.updateImage();
-        dispose();
     }
 
     private void doMoveUp() {

@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2007 by Peter Eastman
-   Changes copyright (C) 2020-2022 by Maksim Khramov
+   Changes copyright (C) 2020-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -19,17 +19,12 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 /**
  * This dialog box allows the user to specify options for creating lathed objects.
  */
-public class LatheDialog extends BDialog {
+public class LatheDialog extends ToolDialog {
 
     final LayoutWindow window;
     final Curve theCurve;
@@ -48,9 +43,7 @@ public class LatheDialog extends BDialog {
     private static int counter = 1;
 
     public LatheDialog(LayoutWindow window, ObjectInfo curve) {
-        super(window, Translate.text("Tools:lathe.dialog.name"), true);
-        this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
+        super(window, Translate.text("Tools:lathe.dialog.name"));
 
         this.window = window;
         theCurve = (Curve) curve.getObject();
@@ -83,30 +76,10 @@ public class LatheDialog extends BDialog {
 
         // Add the buttons at the bottom.
         RowContainer buttons = new RowContainer();
-        BButton okButton;
-        buttons.add(okButton = Translate.button("ok", event -> commit()));
-        buttons.add(Translate.button("cancel", event -> dispose()));
+
+        buttons.add(getOkButton());
+        buttons.add(getCancelButton());
         content.add(buttons, 0, 9, 3, 1, new LayoutInfo());
-
-        String cancelName = "cancel";
-        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-        ActionMap actionMap = getRootPane().getActionMap();
-        actionMap.put(cancelName, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
-
-        this.getComponent().addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                dispose();
-            }
-        });
-
-        this.getComponent().getRootPane().setDefaultButton(okButton.getComponent());
 
         selectDefaults();
         makeObject();
@@ -115,7 +88,7 @@ public class LatheDialog extends BDialog {
         setVisible(true);
     }
 
-    private void commit() {
+    public void commit() {
         CoordinateSystem coords = curveInfo.getCoords().duplicate();
         Vec3 offset = curveInfo.getCoords().fromLocal().times(theCurve.getVertices()[0].r).minus(coords.fromLocal().times(((Mesh) preview.getObject().getObject()).getVertices()[0].r));
         coords.setOrigin(coords.getOrigin().plus(offset));
@@ -123,7 +96,7 @@ public class LatheDialog extends BDialog {
         window.setSelection(window.getScene().getNumObjects() - 1);
         window.setUndoRecord(new UndoRecord(window, false, UndoRecord.DELETE_OBJECT, window.getScene().getNumObjects() - 1));
         window.updateImage();
-        dispose();
+
     }
 
     // Select default values for the various options.

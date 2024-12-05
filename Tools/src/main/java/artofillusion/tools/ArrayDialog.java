@@ -18,12 +18,7 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 
-import javax.swing.*;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.*;
 
 /**
@@ -31,7 +26,7 @@ import java.util.*;
  *
  * @author Rick van der Meiden
  */
-public class ArrayDialog extends BDialog {
+public class ArrayDialog extends ToolDialog {
 
     private final LayoutWindow window;
     private final ArraySpec spec;
@@ -50,10 +45,7 @@ public class ArrayDialog extends BDialog {
     private final RadioButtonGroup modeGroup;
 
     public ArrayDialog(LayoutWindow window) {
-        super(window, Translate.text("Tools:array.dialog.name"), true);
-
-        this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
+        super(window, Translate.text("Tools:array.dialog.name"));
 
         this.window = window;
 
@@ -80,12 +72,6 @@ public class ArrayDialog extends BDialog {
         content.add(createOptionsPanel());
         content.add(createFinishPanel());
 
-        this.getComponent().addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                dispose();
-            }
-        });
         // don't allow user to use nil curve
         if (curvesVector.size() <= 0) {
             curveBox.setEnabled(false);
@@ -174,31 +160,18 @@ public class ArrayDialog extends BDialog {
 
     private Widget createFinishPanel() {
         RowContainer panel = new RowContainer();
-        BButton okButton;
-        panel.add(okButton = Translate.button("ok", event -> commit()));
-        panel.add(Translate.button("cancel", event -> dispose()));
-        this.getComponent().getRootPane().setDefaultButton(okButton.getComponent());
 
-        String cancelName = "cancel";
-        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-        ActionMap actionMap = getRootPane().getActionMap();
-        actionMap.put(cancelName, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        panel.add(getOkButton());
+        panel.add(getCancelButton());
 
         return panel;
     }
 
-    private void commit() {
+    public void commit() {
         updateSpec();
         spec.createArray();
         window.rebuildItemList();
         window.updateImage();
-        dispose();
     }
 
     // Update ArraySpec data
@@ -260,9 +233,6 @@ public class ArrayDialog extends BDialog {
         useOriginBox.setEnabled(spec.method == ArraySpec.METHOD_CURVE);
         useOrientationBox.setEnabled(spec.method == ArraySpec.METHOD_CURVE);
 
-        // duplicateBox.setEnabled(true);
-        // groupBox.setEnabled(true);
-        // liveBox.setEnabled(true);
     }
 
 }
