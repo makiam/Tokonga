@@ -660,6 +660,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     private void createAnimationMenu() {
 
         getMenuBar().add(animationMenu);
+
         animationMenuItem = new BMenuItem[13];
         animationMenu.add(addTrackMenu = Translate.menu("addTrack"));
         addTrackMenu.add(positionTrackMenu = Translate.menu("positionTrack"));
@@ -932,7 +933,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         int numSelKeyframes = score.getSelectedKeyframes().length;
         ViewerCanvas view = theView[currentView];
         boolean canConvert, canSetTexture;
-        boolean curve, noncurve, enable, disable, hasChildren, hasParent;
+        boolean curve, noncurve, disable, hasChildren, hasParent;
+        boolean enable;
         ObjectInfo info;
         Object3D obj;
         int i;
