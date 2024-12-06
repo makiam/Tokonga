@@ -993,6 +993,13 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         return Arrays.stream(obj).filter(ObjectInfo.class::isInstance).map(ObjectInfo.class::cast).collect(Collectors.toList());
     }
 
+    public void addTrack(Object[] obj, boolean deselectOthers, TrackSupplier supplier) {
+
+    }
+
+    public void addTrack(Object[] obj, Class<? extends Track> trackClass, Object[] extraArgs) {
+        addTrack(obj, trackClass, extraArgs, false);
+    }
     /**
      * Add a track to the specified objects.
      */
@@ -1003,9 +1010,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
             args = new Object[1];
         } else {
             args = new Object[extraArgs.length + 1];
-            for (int i = 0; i < extraArgs.length; i++) {
-                args[i + 1] = extraArgs[i];
-            }
+            System.arraycopy(extraArgs, 0, args, 1, extraArgs.length);
         }
 
         Constructor<? extends Track> match = Score.getTrackConstructor(trackClass, args.length);
