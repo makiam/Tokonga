@@ -95,7 +95,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      * Get the Animation menu.
      */
     @Getter
-    private final BMenu animationMenu = Translate.menu("animation");
+    private final BMenu animationMenu = new LayoutAnimationMenu(this);
     /**
      * -- GETTER --
      * Get the Tools menu.
@@ -1451,34 +1451,17 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         updateMenus();
     }
 
-    private static final Map<String, Class<? extends Track>> commandToTrack = new HashMap<>();
-
-    static {
-        commandToTrack.put("poseTrack", PoseTrack.class);
-        commandToTrack.put("constraintTrack", ConstraintTrack.class);
-        commandToTrack.put("visibilityTrack", VisibilityTrack.class);
-        commandToTrack.put("textureTrack", TextureTrack.class);
-    }
-
-    private static final Map<String, Class<? extends Track>> commandToDistortionTrack = new HashMap<>();
-
-    static {
-        commandToDistortionTrack.put("bendDistortion", BendTrack.class);
-        commandToDistortionTrack.put("customDistortion", CustomDistortionTrack.class);
-        commandToDistortionTrack.put("scaleDistortion", ScaleTrack.class);
-        commandToDistortionTrack.put("shatterDistortion", ShatterTrack.class);
-        commandToDistortionTrack.put("twistDistortion", TwistTrack.class);
-        commandToDistortionTrack.put("IKTrack", IKTrack.class);
-        commandToDistortionTrack.put("skeletonShapeTrack", SkeletonShapeTrack.class);
-    }
 
     private void addTrackAction(CommandEvent event) {
-        score.addTrack(sceneExplorer.getSelectedObjects(), commandToTrack.get(event.getActionCommand()), null, true);
+        var trackClass = LayoutAnimationMenu.getCommandToTrack(event.getActionCommand());
+        score.addTrack(sceneExplorer.getSelectedObjects(), trackClass, null, true);
     }
 
     private void addDistortionTrackAction(CommandEvent event) {
-        score.addTrack(sceneExplorer.getSelectedObjects(), commandToDistortionTrack.get(event.getActionCommand()), null, true);
+        var trackClass = LayoutAnimationMenu.getCommandToTrack(event.getActionCommand());
+        score.addTrack(sceneExplorer.getSelectedObjects(), trackClass, null, true);
     }
+
 
     private void addOnePositionTrackAction() {
         score.addTrack(sceneExplorer.getSelectedObjects(), PositionTrack.class, null, true);
@@ -1486,8 +1469,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     private void addThreePositionTrackAction() {
         score.addTrack(sceneExplorer.getSelectedObjects(), PositionTrack.class, new Object[]{"Z Position", Boolean.FALSE, Boolean.FALSE, Boolean.TRUE}, true);
-        score.addTrack(sceneExplorer.getSelectedObjects(), PositionTrack.class, new Object[]{"Y Position", Boolean.FALSE, Boolean.TRUE, Boolean.FALSE}, false);
-        score.addTrack(sceneExplorer.getSelectedObjects(), PositionTrack.class, new Object[]{"X Position", Boolean.TRUE, Boolean.FALSE, Boolean.FALSE}, false);
+        score.addTrack(sceneExplorer.getSelectedObjects(), PositionTrack.class, new Object[]{"Y Position", Boolean.FALSE, Boolean.TRUE, Boolean.FALSE});
+        score.addTrack(sceneExplorer.getSelectedObjects(), PositionTrack.class, new Object[]{"X Position", Boolean.TRUE, Boolean.FALSE, Boolean.FALSE});
     }
 
     private void addOneRotationTrackAction() {
@@ -1496,8 +1479,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     private void addThreeRotationTrackAction() {
         score.addTrack(sceneExplorer.getSelectedObjects(), RotationTrack.class, new Object[]{"Z Rotation", Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, Boolean.TRUE}, true);
-        score.addTrack(sceneExplorer.getSelectedObjects(), RotationTrack.class, new Object[]{"Y Rotation", Boolean.FALSE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE}, false);
-        score.addTrack(sceneExplorer.getSelectedObjects(), RotationTrack.class, new Object[]{"X Rotation", Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE}, false);
+        score.addTrack(sceneExplorer.getSelectedObjects(), RotationTrack.class, new Object[]{"Y Rotation", Boolean.FALSE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE});
+        score.addTrack(sceneExplorer.getSelectedObjects(), RotationTrack.class, new Object[]{"X Rotation", Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE});
     }
 
     private void addQuaternionTrackAction() {

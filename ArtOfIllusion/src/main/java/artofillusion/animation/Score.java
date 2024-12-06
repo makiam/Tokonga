@@ -993,6 +993,13 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         return Arrays.stream(obj).filter(ObjectInfo.class::isInstance).map(ObjectInfo.class::cast).collect(Collectors.toList());
     }
 
+    public void addTrack(Object[] obj, boolean deselectOthers, TrackSupplier supplier) {
+
+    }
+
+    public void addTrack(Object[] obj, Class<? extends Track> trackClass, Object[] extraArgs) {
+        addTrack(obj, trackClass, extraArgs, false);
+    }
     /**
      * Add a track to the specified objects.
      */
