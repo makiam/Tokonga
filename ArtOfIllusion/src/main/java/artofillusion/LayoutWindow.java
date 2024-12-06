@@ -9,10 +9,10 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion;
 
 import artofillusion.animation.*;
-import artofillusion.animation.distortion.*;
 import artofillusion.image.ImagesDialog;
 import artofillusion.keystroke.KeystrokeManager;
 import artofillusion.math.*;
@@ -672,19 +672,19 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         rotationTrackMenu.add(Translate.menuItem("xyzThreeTracks", event -> addThreeRotationTrackAction()));
         rotationTrackMenu.add(Translate.menuItem("quaternionTrack", event -> addQuaternionTrackAction()));
         rotationTrackMenu.add(Translate.menuItem("proceduralTrack", event -> addProceduralRotationTrackAction()));
-        addTrackMenu.add(Translate.menuItem("poseTrack", this, "addTrackAction"));
+        addTrackMenu.add(Translate.menuItem("poseTrack", event -> addTrackAction(event)));
         addTrackMenu.add(distortionMenu = Translate.menu("distortionTrack"));
-        distortionMenu.add(Translate.menuItem("bendDistortion", this, "addDistortionTrackAction"));
-        distortionMenu.add(Translate.menuItem("customDistortion", this, "addDistortionTrackAction"));
-        distortionMenu.add(Translate.menuItem("scaleDistortion", this, "addDistortionTrackAction"));
-        distortionMenu.add(Translate.menuItem("shatterDistortion", this, "addDistortionTrackAction"));
-        distortionMenu.add(Translate.menuItem("twistDistortion", this, "addDistortionTrackAction"));
+        distortionMenu.add(Translate.menuItem("bendDistortion", event -> addTrackAction(event)));
+        distortionMenu.add(Translate.menuItem("customDistortion", event -> addTrackAction(event)));
+        distortionMenu.add(Translate.menuItem("scaleDistortion", event -> addTrackAction(event)));
+        distortionMenu.add(Translate.menuItem("shatterDistortion", event -> addTrackAction(event)));
+        distortionMenu.add(Translate.menuItem("twistDistortion", event -> addTrackAction(event)));
         distortionMenu.addSeparator();
-        distortionMenu.add(Translate.menuItem("IKTrack", this, "addDistortionTrackAction"));
-        distortionMenu.add(Translate.menuItem("skeletonShapeTrack", this, "addDistortionTrackAction"));
-        addTrackMenu.add(Translate.menuItem("constraintTrack", this, "addTrackAction"));
-        addTrackMenu.add(Translate.menuItem("visibilityTrack", this, "addTrackAction"));
-        addTrackMenu.add(Translate.menuItem("textureTrack", this, "addTrackAction"));
+        distortionMenu.add(Translate.menuItem("IKTrack", event -> addTrackAction(event)));
+        distortionMenu.add(Translate.menuItem("skeletonShapeTrack", event -> addTrackAction(event)));
+        addTrackMenu.add(Translate.menuItem("constraintTrack", event -> addTrackAction(event)));
+        addTrackMenu.add(Translate.menuItem("visibilityTrack", event -> addTrackAction(event)));
+        addTrackMenu.add(Translate.menuItem("textureTrack", event -> addTrackAction(event)));
         animationMenu.add(animationMenuItem[0] = Translate.menuItem("editTrack", event -> score.editSelectedTrack()));
         animationMenu.add(animationMenuItem[1] = Translate.menuItem("duplicateTracks", event -> score.duplicateSelectedTracks()));
         animationMenu.add(animationMenuItem[2] = Translate.menuItem("deleteTracks", event -> score.deleteSelectedTracks()));
@@ -1452,16 +1452,10 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
 
-    private void addTrackAction(CommandEvent event) {
+    private void addTrackAction(ActionEvent event) {
         var trackClass = LayoutAnimationMenu.getCommandToTrack(event.getActionCommand());
         score.addTrack(sceneExplorer.getSelectedObjects(), trackClass, null, true);
     }
-
-    private void addDistortionTrackAction(CommandEvent event) {
-        var trackClass = LayoutAnimationMenu.getCommandToTrack(event.getActionCommand());
-        score.addTrack(sceneExplorer.getSelectedObjects(), trackClass, null, true);
-    }
-
 
     private void addOnePositionTrackAction() {
         score.addTrack(sceneExplorer.getSelectedObjects(), PositionTrack.class, null, true);

@@ -93,7 +93,7 @@ public class Translate {
      * @return 
      */
     public static Locale[] getAvailableLocales() {
-        return availableLocales.toArray(new Locale[availableLocales.size()]);
+        return availableLocales.toArray(new Locale[0]);
     }
 
     /**
