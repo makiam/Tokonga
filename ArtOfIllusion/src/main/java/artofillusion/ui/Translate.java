@@ -93,7 +93,7 @@ public class Translate {
      * @return 
      */
     public static Locale[] getAvailableLocales() {
-        return availableLocales.toArray(new Locale[availableLocales.size()]);
+        return availableLocales.toArray(new Locale[0]);
     }
 
     /**
@@ -182,6 +182,7 @@ public class Translate {
         } catch (MissingResourceException ex) {
         }
         BMenuItem item = new BMenuItem(command);
+        item.getComponent().setActionCommand(name);
         try {
             String shortcut = getValue(name, "menu.", ".shortcut");
             if (shortcut.length() > 1 && shortcut.charAt(0) == '^') {
