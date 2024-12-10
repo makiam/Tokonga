@@ -20,6 +20,7 @@ import artofillusion.ui.*;
 import buoy.widget.*;
 import java.awt.*;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * This is a Material3D which uses a Procedure to calculate its properties.
@@ -175,7 +176,19 @@ public class ProceduralMaterial3D extends Material3D implements ProcedureOwner {
     @Override
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void edit(WindowWidget fr, Scene sc) {
-        new ProcedureEditor(proc, this, sc);
+        var result = false;
+        try {
+            Object tmp = PluginRegistry.invokeExportedMethod("preferences.getBoolean", "artofillusion", "showExperimentalProcedureEditor");
+            result = Boolean.valueOf(tmp.toString());
+        } catch (InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+
+        }
+        if (result) {
+            new ExperimentalProcedureEditor(proc, this, sc);
+        } else {
+            new ProcedureEditor(proc, this, sc);
+        }
     }
 
     public ProceduralMaterial3D(DataInputStream in, Scene theScene) throws IOException {
