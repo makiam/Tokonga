@@ -138,7 +138,7 @@ public class ParameterModule extends ProceduralModule {
                 editor.updatePreview();
             }
         });
-        ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), Translate.text("selectParameterProperties"),
+        ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), Translate.text("Modules:selectParameterProperties"),
                 new Widget[]{nameField, minField, maxField, defaultField},
                 new String[]{Translate.text("Name"), Translate.text("Minimum"), Translate.text("Maximum"), Translate.text("Default")});
         if (!dlg.clickedOk()) {
@@ -149,11 +149,11 @@ public class ParameterModule extends ProceduralModule {
         maxVal = maxField.getValue();
         defaultVal = defaultField.getValue();
         if (minVal > maxVal) {
-            MessageDialog.create().withOwner(editor.getParentFrame().getComponent()).error("minimumAboveMaxError");
+            MessageDialog.create().withOwner(editor.getParentFrame().getComponent()).error(Translate.text("Modules:minimumAboveMaxError"));
             return edit(editor, theScene);
         }
         if (minVal > defaultVal || maxVal < defaultVal) {
-            MessageDialog.create().withOwner(editor.getParentFrame().getComponent()).error("defaultOutOfRangeError");
+            MessageDialog.create().withOwner(editor.getParentFrame().getComponent()).error(Translate.text("Modules:defaultOutOfRangeError"));
             return edit(editor, theScene);
         }
         layout();
