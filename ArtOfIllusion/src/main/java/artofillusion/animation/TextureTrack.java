@@ -272,8 +272,8 @@ public class TextureTrack extends Track {
 
         // Find which parameters still exist.
         for (int i = 0; i < param.length; i++) {
-            for (int j = 0; j < texParam.length; j++) {
-                if (param[i].equals(texParam[j])) {
+            for (TextureParameter textureParameter : texParam) {
+                if (param[i].equals(textureParameter)) {
                     exists[i] = true;
                     num++;
                     break;
@@ -292,14 +292,14 @@ public class TextureTrack extends Track {
 
         // Update the value arrays for all keyframes.
         Keyframe[] key = tc.getValues();
-        for (int k = 0; k < key.length; k++) {
+        for (Keyframe keyframe : key) {
             double[] newval = new double[num];
             for (int i = 0, j = 0; i < exists.length; i++) {
                 if (exists[i]) {
-                    newval[j++] = ((ArrayKeyframe) key[k]).val[i];
+                    newval[j++] = ((ArrayKeyframe) keyframe).val[i];
                 }
             }
-            ((ArrayKeyframe) key[k]).val = newval;
+            ((ArrayKeyframe) keyframe).val = newval;
         }
     }
 
@@ -324,8 +324,8 @@ public class TextureTrack extends Track {
                 }
             }
         }
-        for (int i = 0; i < index.length; i++) {
-            out.writeShort(index[i]);
+        for (int j : index) {
+            out.writeShort(j);
         }
         out.writeInt(t.length);
         for (int i = 0; i < t.length; i++) {
@@ -340,7 +340,7 @@ public class TextureTrack extends Track {
      * Initialize this tracked based on its serialized representation as written by writeToStream().
      */
     @Override
-    public void initFromStream(DataInputStream in, Scene scene) throws IOException, InvalidObjectException {
+    public void initFromStream(DataInputStream in, Scene scene) throws IOException {
         short version = in.readShort();
         if (version != 0) {
             throw new InvalidObjectException("");
