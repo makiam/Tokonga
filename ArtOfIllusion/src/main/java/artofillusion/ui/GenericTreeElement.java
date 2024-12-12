@@ -20,7 +20,15 @@ public class GenericTreeElement extends TreeElement {
     final Object obj;
     final String label;
 
-    public GenericTreeElement(String label, Object obj, TreeElement parent, TreeList tree, List<TreeElement> children) {
+    public GenericTreeElement(TreeList tree, String label, Object obj) {
+        this(tree, label, obj, null, null);
+    }
+
+    public GenericTreeElement(TreeList tree, String label, Object obj, TreeElement parent) {
+        this(tree, label, obj, parent, null);
+    }
+
+    public GenericTreeElement(TreeList tree, String label, Object obj, TreeElement parent, List<TreeElement> children) {
         this.label = label;
         this.obj = obj;
         this.parent = parent;
