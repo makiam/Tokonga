@@ -12,12 +12,15 @@
 package artofillusion.ui;
 
 import javax.swing.*;
+import javax.swing.tree.TreeNode;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
  * This is an abstract class representing an element in a tree.
  */
-public abstract class TreeElement {
+public abstract class TreeElement implements TreeNode {
 
     protected boolean selected, expanded, selectable = true;
     protected List<TreeElement> children;
@@ -133,4 +136,34 @@ public abstract class TreeElement {
      * Get whether this element should be drawn in gray (i.e. to indicate it is deactivated).
      */
     public abstract boolean isGray();
+
+    @Override
+    public TreeNode getChildAt(int which) {
+        return children.get(which);
+    }
+
+    @Override
+    public int getChildCount() {
+        return children.size();
+    }
+
+    @Override
+    public Enumeration<? extends TreeNode> children() {
+        return Collections.enumeration(children);
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return !children.isEmpty();
+    }
+
+    @Override
+    public int getIndex(TreeNode node) {
+        return children.indexOf(node);
+    }
+
+    @Override
+    public boolean getAllowsChildren() {
+        return false;
+    }
 }
