@@ -26,6 +26,7 @@ import java.awt.Dimension;
 
 import java.io.*;
 import java.util.*;
+import javax.swing.SwingUtilities;
 
 /**
  * This is a Track which controls the value of a texture parameter.
@@ -544,6 +545,7 @@ public class TextureTrack extends Track {
      */
     @Override
     public void edit(LayoutWindow win) {
+        SwingUtilities.invokeLater(() -> new TextureTrackParametersSelector(win.getComponent(), this).setVisible(true));
         TextureTrack.selectTrackableParameters(win, this);
     }
 }
