@@ -452,7 +452,7 @@ public class TextureTrack extends Track {
                     if (!(paramValue[k] instanceof ConstantParameterValue)) {
                         continue;
                     }
-                    TreeElement el = new GenericTreeElement(p.name, p.duplicate(), null, tree, null);
+                    TreeElement el = new GenericTreeElement(tree, p.name, p.duplicate());
                     for (k = 0; k < param.length; k++) {
                         if (param[k].equals(p)) {
                             el.setSelected(true);
@@ -461,12 +461,11 @@ public class TextureTrack extends Track {
                     v.add(el);
                 }
                 if (v.isEmpty()) {
-                    TreeElement el = new GenericTreeElement(Translate.text("noAdjustableParams"), null, null, tree, null);
+                    TreeElement el = new GenericTreeElement(tree, Translate.text("noAdjustableParams"), null);
                     el.setSelectable(false);
                     v.add(el);
                 }
-                TreeElement el = new GenericTreeElement(Translate.text("layerLabel", Integer.toString(i + 1), layer[i].getName()),
-                        null, null, tree, v);
+                TreeElement el = new GenericTreeElement(tree, Translate.text("layerLabel", Integer.toString(i + 1), layer[i].getName()), null, null, v);
                 el.setSelectable(false);
                 el.setExpanded(true);
                 elements.add(el);
@@ -474,7 +473,7 @@ public class TextureTrack extends Track {
         } else {
             for (int i = 0; i < texParam.length; i++) {
                 if (paramValue[i] instanceof ConstantParameterValue) {
-                    TreeElement el = new GenericTreeElement(texParam[i].name, texParam[i], null, tree, null);
+                    TreeElement el = new GenericTreeElement(tree, texParam[i].name, texParam[i]);
                     for (TextureParameter p : param) {
                         if (p.equals(texParam[i])) {
                             el.setSelected(true);
@@ -485,11 +484,11 @@ public class TextureTrack extends Track {
             }
         }
         if (elements.isEmpty()) {
-            TreeElement el = new GenericTreeElement(Translate.text("noAdjustableParams"), null, null, tree, null);
+            TreeElement el = new GenericTreeElement(tree, Translate.text("noAdjustableParams"), null);
             el.setSelectable(false);
             elements.add(el);
         }
-        TreeElement texElem = new GenericTreeElement(Translate.text("Texture"), null, null, tree, elements);
+        TreeElement texElem = new GenericTreeElement(tree, Translate.text("Texture"), null, null, elements);
         texElem.setSelectable(false);
         texElem.setExpanded(true);
         tree.addElement(texElem);
