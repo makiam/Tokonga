@@ -17,6 +17,10 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.awt.Color;
 import java.awt.Dimension;
 
@@ -28,9 +32,10 @@ import java.util.*;
  */
 public class TextureTrack extends Track {
 
-    ObjectInfo info;
+    @Getter(AccessLevel.PRIVATE) ObjectInfo info;
     Timecourse tc;
-    int smoothingMethod;
+    @Getter(AccessLevel.PRIVATE) @Setter(AccessLevel.PRIVATE) int smoothingMethod;
+
     WeightTrack theWeight;
     TextureParameter[] param;
 
@@ -420,21 +425,20 @@ public class TextureTrack extends Track {
         }
         moveKeyframe(which, timeField.getValue());
     }
+    private static void selectTrackableParameters(LayoutWindow layout, TextureTrack track) {
+        selectTrackableParameters(layout, track, track.getInfo());
+    }
 
-    /**
-     * This method presents a window in which the user can edit the track.
-     */
-    @Override
-    public void edit(LayoutWindow win) {
-        BTextField nameField = new BTextField(getName());
+    private static void selectTrackableParameters(LayoutWindow layout, TextureTrack track, ObjectInfo info) {
+        BTextField nameField = new BTextField(track.getName());
         BComboBox smoothChoice = new BComboBox(new String[]{
-            Translate.text("Discontinuous"),
-            Translate.text("Linear"),
-            Translate.text("Interpolating"),
-            Translate.text("Approximating")
+                Translate.text("Discontinuous"),
+                Translate.text("Linear"),
+                Translate.text("Interpolating"),
+                Translate.text("Approximating")
         });
-        smoothChoice.setSelectedIndex(smoothingMethod);
-        TreeList tree = new TreeList(win);
+        smoothChoice.setSelectedIndex(track.getSmoothingMethod());
+        TreeList tree = new TreeList(layout);
         BScrollPane sp = new BScrollPane(tree);
         List<TreeElement> elements = new Vector<>();
 
@@ -453,8 +457,8 @@ public class TextureTrack extends Track {
                         continue;
                     }
                     TreeElement el = new GenericTreeElement(tree, p.name, p.duplicate());
-                    for (k = 0; k < param.length; k++) {
-                        if (param[k].equals(p)) {
+                    for (k = 0; k < track.param.length; k++) {
+                        if (track.param[k].equals(p)) {
                             el.setSelected(true);
                         }
                     }
@@ -474,7 +478,7 @@ public class TextureTrack extends Track {
             for (int i = 0; i < texParam.length; i++) {
                 if (paramValue[i] instanceof ConstantParameterValue) {
                     TreeElement el = new GenericTreeElement(tree, texParam[i].name, texParam[i]);
-                    for (TextureParameter p : param) {
+                    for (TextureParameter p : track.param) {
                         if (p.equals(texParam[i])) {
                             el.setSelected(true);
                         }
@@ -497,36 +501,36 @@ public class TextureTrack extends Track {
         sp.setForceWidth(true);
         sp.setForceHeight(true);
         tree.setBackground(Color.white);
-        ComponentsDialog dlg = new ComponentsDialog(win, Translate.text("paramTrackTitle"), new Widget[]{nameField, smoothChoice, Translate.label("selectTrackParams"), sp}, new String[]{Translate.text("trackName"), Translate.text("SmoothingMethod"), null, null});
+        ComponentsDialog dlg = new ComponentsDialog(layout, Translate.text("paramTrackTitle"), new Widget[]{nameField, smoothChoice, Translate.label("selectTrackParams"), sp}, new String[]{Translate.text("trackName"), Translate.text("SmoothingMethod"), null, null});
         if (!dlg.clickedOk()) {
             return;
         }
 
         // Update the list of parameters and other info.
-        win.setUndoRecord(new UndoRecord(win, false, UndoRecord.COPY_OBJECT_INFO, info, info.duplicate()));
-        this.setName(nameField.getText());
-        smoothingMethod = smoothChoice.getSelectedIndex();
+        layout.setUndoRecord(new UndoRecord(layout, false, UndoRecord.COPY_OBJECT_INFO, info, info.duplicate()));
+        track.setName(nameField.getText());
+        track.setSmoothingMethod(smoothChoice.getSelectedIndex());
         Object[] selected = tree.getSelectedObjects();
         int[] index = new int[selected.length];
         for (int i = 0; i < selected.length; i++) {
             index[i] = -1;
-            for (int j = 0; j < param.length; j++) {
-                if (param[j].equals((TextureParameter) selected[i])) {
+            for (int j = 0; j < track.param.length; j++) {
+                if (track.param[j].equals((TextureParameter) selected[i])) {
                     index[i] = j;
                 }
             }
         }
-        param = new TextureParameter[selected.length];
-        System.arraycopy(selected, 0, param, 0, selected.length);
-        Keyframe[] key = tc.getValues();
+        track.param = new TextureParameter[selected.length];
+        System.arraycopy(selected, 0, track.param, 0, selected.length);
+        Keyframe[] key = track.tc.getValues();
         for (Keyframe keyframe : key) {
-            double[] newval = new double[param.length];
+            double[] newval = new double[track.param.length];
             for (int j = 0; j < newval.length; j++) {
                 if (index[j] > -1) {
                     newval[j] = ((ArrayKeyframe) keyframe).val[index[j]];
                 } else {
                     for (int k = 0; k < texParam.length; k++) {
-                        if (texParam[k].equals(param[j])) {
+                        if (texParam[k].equals(track.param[j])) {
                             newval[j] = paramValue[k].getAverageValue();
                         }
                     }
@@ -534,5 +538,12 @@ public class TextureTrack extends Track {
             }
             ((ArrayKeyframe) keyframe).val = newval;
         }
+    }
+    /**
+     * This method presents a window in which the user can edit the track.
+     */
+    @Override
+    public void edit(LayoutWindow win) {
+        TextureTrack.selectTrackableParameters(win, this);
     }
 }
