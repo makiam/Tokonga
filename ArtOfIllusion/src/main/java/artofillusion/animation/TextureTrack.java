@@ -519,11 +519,11 @@ public class TextureTrack extends Track {
         param = new TextureParameter[selected.length];
         System.arraycopy(selected, 0, param, 0, selected.length);
         Keyframe[] key = tc.getValues();
-        for (int i = 0; i < key.length; i++) {
+        for (Keyframe keyframe : key) {
             double[] newval = new double[param.length];
             for (int j = 0; j < newval.length; j++) {
                 if (index[j] > -1) {
-                    newval[j] = ((ArrayKeyframe) key[i]).val[index[j]];
+                    newval[j] = ((ArrayKeyframe) keyframe).val[index[j]];
                 } else {
                     for (int k = 0; k < texParam.length; k++) {
                         if (texParam[k].equals(param[j])) {
@@ -532,7 +532,7 @@ public class TextureTrack extends Track {
                     }
                 }
             }
-            ((ArrayKeyframe) key[i]).val = newval;
+            ((ArrayKeyframe) keyframe).val = newval;
         }
     }
 }
