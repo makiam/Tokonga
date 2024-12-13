@@ -11,6 +11,7 @@
 
 package artofillusion.animation;
 
+import artofillusion.TextureParameter;
 import artofillusion.ui.Translate;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -19,6 +20,7 @@ import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  *
@@ -164,4 +166,18 @@ public class TextureTrackParametersSelector extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     private int returnStatus = RET_CANCEL;
+
+    private class TextureParameterTreeNode extends DefaultMutableTreeNode {
+        public TextureParameterTreeNode(TextureParameter userObject) {
+            super(userObject);
+        }
+    }
+
+    private class TextureLayerTreeNode extends DefaultMutableTreeNode {
+
+    }
+
+    private class TextureTreeNode extends DefaultMutableTreeNode {
+
+    }
 }
