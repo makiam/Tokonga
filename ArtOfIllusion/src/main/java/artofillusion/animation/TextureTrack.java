@@ -35,7 +35,7 @@ public class TextureTrack extends Track {
 
     @Getter(AccessLevel.PRIVATE) ObjectInfo info;
     Timecourse tc;
-    @Getter(AccessLevel.PRIVATE) @Setter(AccessLevel.PRIVATE) int smoothingMethod;
+    @Getter(AccessLevel.PUBLIC) @Setter(AccessLevel.PRIVATE) int smoothingMethod;
 
     WeightTrack theWeight;
     TextureParameter[] param;
@@ -215,17 +215,6 @@ public class TextureTrack extends Track {
     @Override
     public void setParent(Object obj) {
         info = (ObjectInfo) obj;
-    }
-
-    /* Get the smoothing method for this track. */
-    @Override
-    public int getSmoothingMethod() {
-        return smoothingMethod;
-    }
-
-    /* Set the smoothing method for this track. */
-    public void setSmoothingMethod(int method) {
-        smoothingMethod = method;
     }
 
     /* Get the names of all graphable values for this track. */

@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
@@ -78,6 +79,8 @@ public class TextureTrackParametersSelector extends javax.swing.JDialog {
         cancelButton = new javax.swing.JButton();
         trackNameField = new javax.swing.JTextField();
         javax.swing.JLabel trackNameLabel = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jLabel1 = new javax.swing.JLabel();
 
         setTitle(Translate.text("paramTrackTitle"));
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -86,17 +89,23 @@ public class TextureTrackParametersSelector extends javax.swing.JDialog {
             }
         });
 
-        okButton.setText("OK");
+        okButton.setText(Translate.text("button.ok")
+        );
         okButton.addActionListener(this::okButtonActionPerformed);
 
-        cancelButton.setText("Cancel");
+        cancelButton.setText(Translate.text("button.cancel"));
         cancelButton.addActionListener(this::cancelButtonActionPerformed);
 
         trackNameField.setText(track.getName());
 
         trackNameLabel.setLabelFor(trackNameField);
-        trackNameLabel.setText(Translate.text("paramTrackNameLabel")
+        trackNameLabel.setText(Translate.text("trackName")
         );
+
+        jComboBox1.setModel(smoothModel);
+        jComboBox1.setSelectedIndex(track.smoothingMethod);
+
+        jLabel1.setText(Translate.text("SmoothingMethod"));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -106,14 +115,20 @@ public class TextureTrackParametersSelector extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(trackNameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(trackNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 352, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton)))
+                        .addComponent(cancelButton))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(trackNameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(trackNameField, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE))))
                 .addContainerGap())
         );
 
@@ -126,7 +141,11 @@ public class TextureTrackParametersSelector extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(trackNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(trackNameLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 238, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 210, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(okButton))
@@ -161,6 +180,8 @@ public class TextureTrackParametersSelector extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JButton okButton;
     private javax.swing.JTextField trackNameField;
     // End of variables declaration//GEN-END:variables
@@ -180,4 +201,6 @@ public class TextureTrackParametersSelector extends javax.swing.JDialog {
     private class TextureTreeNode extends DefaultMutableTreeNode {
 
     }
+    
+    private final DefaultComboBoxModel smoothModel = new javax.swing.DefaultComboBoxModel<>(new String[] { Translate.text("Discontinuous"),  Translate.text("Linear"),  Translate.text("Interpolating"),  Translate.text("Approximating") });
 }
