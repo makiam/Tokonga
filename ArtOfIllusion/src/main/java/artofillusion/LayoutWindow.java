@@ -455,8 +455,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         fileMenu.add(recentFilesMenu = Translate.menu("openRecent"));
         RecentFiles.createMenu(recentFilesMenu);
 
-        fileMenu.add(Translate.menuItem("close", event -> closeSceneAction()));
-        fileMenu.addSeparator();
+
+
         translators.sort(Comparator.comparing(Translator::getName));
         for (Translator translator : translators) {
             if (translator.canImport()) {
@@ -483,8 +483,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         fileMenu.addSeparator();
         fileMenu.add(fileMenuItem);
         fileMenu.add(Translate.menuItem("saveas", event -> saveAsCommand()));
-        fileMenu.addSeparator();
-        fileMenu.add(Translate.menuItem("quit", event -> applicationQuitAction()));
+
     }
 
     private void createEditMenu() {
@@ -1489,15 +1488,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         score.addTrack(sceneExplorer.getSelectedObjects(), ProceduralRotationTrack.class, null, true);
     }
 
-    private void closeSceneAction() {
-        savePreferences();
-        ArtOfIllusion.closeWindow(this);
-    }
 
-    private void applicationQuitAction() {
-        savePreferences();
-        ArtOfIllusion.quit();
-    }
 
     private void importAction(ActionEvent event) {
         var source = (JMenuItem) event.getSource();
