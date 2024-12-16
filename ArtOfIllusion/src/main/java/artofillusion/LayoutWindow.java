@@ -302,12 +302,19 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             }
         };
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventPostProcessor(keyEventHandler);
-        addEventLink(WindowActivatedEvent.class, this, "updateMenus");
-        addEventLink(WindowClosingEvent.class, new Object() {
-            void processEvent() {
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
                 ArtOfIllusion.closeWindow(LayoutWindow.this);
             }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+                log.info("Update menus on window activation {}", LayoutWindow.this.getName());
+                updateMenus();
+            }
         });
+
 
         UIUtilities.applyDefaultFont(getContent());
         UIUtilities.applyDefaultBackground(centerContainer);
@@ -927,6 +934,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     @Override
     public void updateMenus() {
         Object[] sel = sceneExplorer.getSelectedObjects();
+        dumpSelection(sel);
         int numSelObjects = sel.length;
         Track[] selTrack = score.getSelectedTracks();
         int numSelTracks = selTrack.length;
@@ -1030,6 +1038,16 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         displayItem[3].setState(view.getRenderMode() == ViewerCanvas.RENDER_TEXTURED);
         displayItem[4].setState(view.getRenderMode() == ViewerCanvas.RENDER_TRANSPARENT);
         displayItem[5].setState(view.getRenderMode() == ViewerCanvas.RENDER_RENDERED);
+    }
+
+    private void dumpSelection(Object[] sel) {
+        log.info("Do dump Selection");
+        var so = Set.of(sel);
+        if(so.size() != sel.length) throw new RuntimeException("Some selection items doubled");
+        for(Object o : sel) {
+            if (o instanceof ObjectInfo) continue;
+            throw new RuntimeException("Some selection items are not Scene Objects");
+        }
     }
 
     /**
@@ -1310,6 +1328,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     //NB. Bound to sceneExplorer. Do not remove.
     @SuppressWarnings("unused")
     private void treeSelectionChanged() {
+        log.info("Tree selection changed");
         Object[] sel = sceneExplorer.getSelectedObjects();
         int[] which = new int[sel.length];
 
