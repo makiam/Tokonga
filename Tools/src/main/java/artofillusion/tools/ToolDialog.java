@@ -35,7 +35,7 @@ public class ToolDialog extends BDialog {
         this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
 
-        okButton =Translate.button("ok", event -> commitImpl());
+        okButton = Translate.button("ok", event -> commitImpl());
         cancelButton = Translate.button("cancel", event -> cancelImpl());
 
         this.getComponent().addWindowListener(new WindowAdapter() {

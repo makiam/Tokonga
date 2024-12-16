@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,10 +11,17 @@
 
 package artofillusion.ui;
 
+import artofillusion.ArtOfIllusion;
 import artofillusion.math.*;
 import buoy.event.*;
 import buoy.widget.*;
+import lombok.extern.slf4j.Slf4j;
+
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
@@ -25,8 +32,10 @@ import javax.swing.*;
  * ColorChooser is a BDialog in which the user can edit an RGBColor object. It allows the
  * color to be specified using the RGB, HSV, or HLS color models.
  */
+@Slf4j
 public class ColorChooser extends BDialog {
 
+    private final BButton okButton;
     private final RGBColor oldColor;
     private final RGBColor newColor;
     private final ValueSlider slider1;
@@ -65,6 +74,9 @@ public class ColorChooser extends BDialog {
 
     public ColorChooser(Widget parent, String title, RGBColor c, boolean show) {
         super(UIUtilities.findWindow(parent), title, true);
+        this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
+
         BorderContainer content = new BorderContainer();
         setContent(BOutline.createEmptyBorder(content, UIUtilities.getStandardDialogInsets()));
         oldColor = c;
@@ -72,8 +84,8 @@ public class ColorChooser extends BDialog {
 
         // Add the buttons at the bottom.
         RowContainer buttons = new RowContainer();
-        buttons.add(Translate.button("ok", event -> doOk()));
-        buttons.add(Translate.button("cancel", event -> dispose()));
+        buttons.add(okButton = Translate.button("ok", event -> commitImpl()));
+        buttons.add(Translate.button("cancel", event -> cancelImpl()));
         content.add(buttons, BorderContainer.SOUTH, new LayoutInfo());
 
         // Add the main panel.
@@ -110,8 +122,8 @@ public class ColorChooser extends BDialog {
         rangeC.setSelectedIndex(rangeMode);
         LayoutInfo patchLayout = new LayoutInfo();
         center.add(Translate.label("originalColor"), 2, 0, patchLayout);
-        Widget oldColorPatch;
-        center.add(oldColorPatch = oldColor.getSample(50, 30), 2, 1, patchLayout);
+
+        center.add(oldColor.getSample(50, 30), 2, 1, patchLayout);
         center.add(Translate.label("newColor"), 2, 2, patchLayout);
         center.add(newColorPatch = newColor.getSample(50, 30), 2, 3, patchLayout);
         center.add(Translate.label("recentColors"), 0, 7, 3, 1);
@@ -126,7 +138,7 @@ public class ColorChooser extends BDialog {
                 }
             });
         }
-        addAsListener(this);
+
         modeChanged();
         pack();
         addEventLink(WindowActivatedEvent.class, new Object() {
@@ -134,6 +146,26 @@ public class ColorChooser extends BDialog {
                 updateColorGradients();
             }
         });
+
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                cancelImpl();
+            }
+        });
+        this.getComponent().getRootPane().setDefaultButton(okButton.getComponent());
+
+        String cancelName = "cancel";
+        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+        ActionMap actionMap = getRootPane().getActionMap();
+        actionMap.put(cancelName, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cancelImpl();
+            }
+        });
+
         setResizable(false);
         UIUtilities.centerDialog(this, UIUtilities.findWindow(parent));
         if (show) {
@@ -155,18 +187,7 @@ public class ColorChooser extends BDialog {
         return ok;
     }
 
-    /**
-     * Add this as a key listener to every component.
-     */
-    private void addAsListener(Widget w) {
-        w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
-        if (w instanceof WidgetContainer) {
-            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
-            children.forEach(this::addAsListener);
-        }
-    }
-
-    private void doOk() {
+    private void commit() {
         oldColor.setRGB(newColor.getRed(), newColor.getGreen(), newColor.getBlue());
         for (int i = 0; i < recentColors.size(); i++) {
             if (recentColors.get(i).equals(newColor)) {
@@ -179,7 +200,12 @@ public class ColorChooser extends BDialog {
         }
         recentColors.add(0, newColor.duplicate());
         ok = true;
-        dispose();
+    }
+
+    private void commitImpl() {
+        log.info("Committing {} dialog", this.getClass().getSimpleName());
+        commit();
+        this.getComponent().dispose();
     }
 
     private void valueChanged() {
@@ -208,24 +234,6 @@ public class ColorChooser extends BDialog {
         newColorPatch.repaint();
         dispatchEvent(new ValueChangedEvent(this));
         modeChanged();
-    }
-
-    /**
-     * Pressing Return and Escape are equivalent to clicking OK and Cancel.
-     */
-    private void keyPressed(KeyPressedEvent ev) {
-        int code = ev.getKeyCode();
-
-        if (code != KeyPressedEvent.VK_ENTER && code != KeyPressedEvent.VK_ESCAPE) {
-            return;
-        }
-        if (code == KeyPressedEvent.VK_ENTER && ev.getWidget() instanceof BButton) {
-            return;
-        }
-        if (code == KeyPressedEvent.VK_ENTER) {
-            oldColor.setRGB(newColor.getRed(), newColor.getGreen(), newColor.getBlue());
-        }
-        dispose();
     }
 
     private void modeChanged() {
@@ -307,4 +315,14 @@ public class ColorChooser extends BDialog {
             label.repaint();
         }
     }
+
+    private void cancelImpl() {
+        log.info("Cancelling {} dialog", this.getClass().getSimpleName());
+        cancel();
+        this.getComponent().dispose();
+    }
+
+    public void cancel() {
+    }
+
 }
