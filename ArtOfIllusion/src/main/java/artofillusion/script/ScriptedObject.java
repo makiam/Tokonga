@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2013 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -182,6 +182,7 @@ public class ScriptedObject extends ObjectCollection {
      */
     @Override
     public void setSize(double xsize, double ysize, double zsize) {
+        // setSize() has no effect, since the geometry of the object is set by the script.
     }
 
     /**
@@ -322,7 +323,7 @@ public class ScriptedObject extends ObjectCollection {
     /**
      * This constructor reconstructs a ScriptedObject from an input stream.
      */
-    public ScriptedObject(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+    public ScriptedObject(DataInputStream in, Scene theScene) throws IOException {
         super(in, theScene);
 
         short version = in.readShort();
