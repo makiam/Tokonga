@@ -1,5 +1,6 @@
 /* Copyright (C) 2002-2013 by Peter Eastman
    Changes Copyright (C) 2023 by Lucas Stanek
+   Changes Copyright (C) 2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -16,14 +17,19 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+import lombok.extern.slf4j.Slf4j;
+
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.nio.file.Files;
-import javax.swing.JFileChooser;
+import javax.swing.*;
 
 /**
  * This class presents a user interface for entering object scripts.
  */
+@Slf4j
 public class ScriptedObjectEditorWindow extends BFrame {
 
     private final EditingWindow window;
@@ -37,6 +43,8 @@ public class ScriptedObjectEditorWindow extends BFrame {
 
     public ScriptedObjectEditorWindow(EditingWindow parent, ObjectInfo obj, Runnable onClose) {
         super("Script '" + obj.getName() + "'");
+        this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
         window = parent;
         info = obj;
         this.onClose = onClose;
@@ -54,18 +62,23 @@ public class ScriptedObjectEditorWindow extends BFrame {
         RowContainer languageRow = new RowContainer();
         languageRow.add(Translate.label("language"));
         languageRow.add(languageChoice);
-        content.add(languageRow, BorderContainer.NORTH,
-                new LayoutInfo(LayoutInfo.EAST, LayoutInfo.NONE));
-        content.add(BOutline.createBevelBorder(scriptWidget, false),
-                BorderContainer.CENTER);
+        content.add(languageRow, BorderContainer.NORTH, new LayoutInfo(LayoutInfo.EAST, LayoutInfo.NONE));
+        content.add(BOutline.createBevelBorder(scriptWidget, false), BorderContainer.CENTER);
         RowContainer buttons = new RowContainer();
         content.add(buttons, BorderContainer.SOUTH, new LayoutInfo());
-        buttons.add(Translate.button("ok", this, "commitChanges"));
-        buttons.add(Translate.button("Load", "...", this, "loadScript"));
-        buttons.add(Translate.button("Save", "...", this, "saveScript"));
-        buttons.add(Translate.button("scriptParameters", this, "editParameters"));
-        buttons.add(Translate.button("cancel", this, "dispose"));
-        addEventLink(WindowClosingEvent.class, this, "commitChanges");
+
+        buttons.add(Translate.button("ok", event -> commitChanges()));
+        buttons.add(Translate.button("Load", "...", event -> loadScript()));
+        buttons.add(Translate.button("Save", "...", event -> saveScript()));
+        buttons.add(Translate.button("scriptParameters", event -> editParameters()));
+        buttons.add(Translate.button("cancel", event -> cancel()));
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                commitChanges();
+            }
+        });
+
         languageChoice.addEventLink(ValueChangedEvent.class, this, "updateLanguage");
         scriptWidget.getContent().setCaretPosition(0);
         pack();
@@ -73,6 +86,11 @@ public class ScriptedObjectEditorWindow extends BFrame {
         UIUtilities.centerWindow(this);
         scriptWidget.requestFocus();
         setVisible(true);
+    }
+
+    private void cancel() {
+        log.info("Cancelling {} ", this.getClass().getSimpleName());
+        this.getComponent().dispose();
     }
 
     /**
@@ -87,7 +105,7 @@ public class ScriptedObjectEditorWindow extends BFrame {
      */
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     private void editParameters() {
-        new ParametersDialog();
+        new ParametersDialog(this);
     }
 
     /**
@@ -201,9 +219,13 @@ public class ScriptedObjectEditorWindow extends BFrame {
         private String[] name;
         private double[] value;
         private int current;
+        private final ScriptedObjectEditorWindow owner;
 
-        public ParametersDialog() {
-            super(ScriptedObjectEditorWindow.this, Translate.text("objectParameters"), true);
+        public ParametersDialog(ScriptedObjectEditorWindow owner) {
+            super(owner, Translate.text("objectParameters"), true);
+            this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
+            this.owner = owner;
             script = (ScriptedObject) info.getObject();
             FormContainer content = new FormContainer(new double[]{0.0, 1.0}, new double[]{1.0, 0.0, 0.0, 0.0});
             content.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, null, null));
@@ -227,13 +249,13 @@ public class ScriptedObjectEditorWindow extends BFrame {
             valueField.addEventLink(ValueChangedEvent.class, this, "textChanged");
             RowContainer buttons = new RowContainer();
             content.add(buttons, 0, 3, 2, 1, new LayoutInfo());
-            buttons.add(Translate.button("add", this, "doAdd"));
-            buttons.add(Translate.button("remove", this, "doRemove"));
-            buttons.add(Translate.button("ok", this, "doOk"));
-            buttons.add(Translate.button("cancel", this, "dispose"));
+            buttons.add(Translate.button("add", event -> doAdd()));
+            buttons.add(Translate.button("remove", event -> doRemove()));
+            buttons.add(Translate.button("ok", event -> doOk()));
+            buttons.add(Translate.button("cancel", event -> dispose()));
             setSelectedParameter(name.length == 0 ? -1 : 0);
             pack();
-            UIUtilities.centerDialog(this, ScriptedObjectEditorWindow.this);
+            UIUtilities.centerDialog(this, owner);
             setVisible(true);
         }
 
