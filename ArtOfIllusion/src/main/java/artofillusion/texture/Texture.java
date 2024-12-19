@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2004 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -22,7 +22,7 @@ import java.io.*;
  * transparency, displacement, etc. This is distinct from the interior bulk properties,
  * which are described by a Material object.
  */
-public abstract class Texture {
+public abstract class Texture implements ImageReference {
 
     protected String name;
     protected int id = nextID++;
@@ -71,14 +71,6 @@ public abstract class Texture {
      */
     public TextureParameter[] getParameters() {
         return new TextureParameter[0];
-    }
-
-    /**
-     * Return true if this Texture makes use of the specified ImageMap. Textures which
-     * use ImageMaps should override this method.
-     */
-    public boolean usesImage(ImageMap image) {
-        return false;
     }
 
     /**
