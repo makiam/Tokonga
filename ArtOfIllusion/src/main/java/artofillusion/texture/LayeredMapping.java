@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2009 by Peter Eastman
-   Changes copyright (C) 2022-2023 by Maksim Khramov
+   Changes copyright (C) 2022-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,6 +18,7 @@ import buoy.widget.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
+import lombok.Getter;
 
 /**
  * LayeredMapping is the TextureMapping corresponding to LayeredTextures. It allows
@@ -28,13 +29,14 @@ public class LayeredMapping extends TextureMapping {
 
     final Object3D theObject;
     LayeredTexture theTexture;
-    Texture[] texture;
-    TextureMapping[] mapping;
-    int[] blendMode;
+    private Texture[] texture = new Texture[0];
+    @Getter
+    private TextureMapping[] mapping = new TextureMapping[0];
+    int[] blendMode = new int[0];
     int[] fractParamIndex;
     int[] paramStartIndex;
     int[] numParams;
-    int[] fractParamID;
+    int[] fractParamID = new int[0];
     int maxParams;
 
     public static final int BLEND = 0;
@@ -44,10 +46,6 @@ public class LayeredMapping extends TextureMapping {
     public LayeredMapping(Object3D obj, Texture tex) {
         theObject = obj;
         theTexture = (LayeredTexture) tex;
-        texture = new Texture[0];
-        mapping = new TextureMapping[0];
-        blendMode = new int[0];
-        fractParamID = new int[0];
     }
 
     /**
