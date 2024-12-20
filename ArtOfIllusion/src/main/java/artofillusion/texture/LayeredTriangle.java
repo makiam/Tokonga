@@ -1,4 +1,5 @@
 /* Copyright (C) 2000-2005 by Peter Eastman
+   Changes copyright (C) 2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -65,7 +66,7 @@ public class LayeredTriangle extends RenderingTriangle {
         int[] blendMode = map.blendMode;
         double[] paramTemp = new double[map.maxParams];
         double[] param = getParameters(u, v, w);
-        TextureMapping[] mapping = map.mapping;
+        TextureMapping[] mapping = map.getMapping();
         float r, g, b, rt = 1.0f, gt = 1.0f, bt = 1.0f;
         double f, ft = 1.0;
         boolean front = (angle > 0.0);
@@ -140,7 +141,7 @@ public class LayeredTriangle extends RenderingTriangle {
         int[] blendMode = map.blendMode;
         double[] paramTemp = new double[map.maxParams];
         double[] param = getParameters(u, v, w);
-        TextureMapping[] mapping = map.mapping;
+        TextureMapping[] mapping = map.getMapping();
         float r, g, b, rt = 1.0f, gt = 1.0f, bt = 1.0f;
         double f;
         boolean front = (angle > 0.0);
@@ -194,7 +195,7 @@ public class LayeredTriangle extends RenderingTriangle {
         int[] blendMode = map.blendMode;
         double[] paramTemp = new double[map.maxParams];
         double[] param = getParameters(u, v, w);
-        TextureMapping[] mapping = map.mapping;
+        TextureMapping[] mapping = map.getMapping();
         double f, ft = 1.0, height = 0.0, tempHeight;
 
         for (int i = 0; i < mapping.length; i++) {
@@ -246,10 +247,10 @@ public class LayeredTriangle extends RenderingTriangle {
     public void setMesh(RenderingMesh mesh, TextureMapping map, int index) {
         super.setMesh(mesh, map, index);
         LayeredMapping layered = (LayeredMapping) map;
+        TextureMapping[] mapping = layered.getMapping();
         for (int i = 0; i < layerTriangle.length; i++) {
-            if (layerTriangle[i] != null) {
-                layerTriangle[i].setMesh(mesh, layered.mapping[i], index);
-            }
+            if (layerTriangle[i] == null) continue;
+            layerTriangle[i].setMesh(mesh, mapping[i], index);
         }
     }
 }
