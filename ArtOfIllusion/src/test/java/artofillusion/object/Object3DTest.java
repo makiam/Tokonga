@@ -18,23 +18,17 @@ import artofillusion.material.Material;
 import artofillusion.material.MaterialMapping;
 import artofillusion.material.MaterialSpec;
 import artofillusion.math.BoundingBox;
-import artofillusion.math.RGBColor;
 import artofillusion.math.Vec3;
 import artofillusion.test.util.StreamUtil;
 import artofillusion.texture.ConstantParameterValue;
 import artofillusion.texture.LayeredTexture;
 import artofillusion.texture.ParameterValue;
 import artofillusion.texture.Texture;
-import artofillusion.texture.TextureMapping;
-import artofillusion.texture.TextureSpec;
-import buoy.widget.BFrame;
 import buoy.widget.Widget;
 
-import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.nio.ByteBuffer;
 
@@ -45,8 +39,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @author maksim.khramov
@@ -277,7 +269,7 @@ class Object3DTest {
     void testCopyTextureAndMaterialWithExistedTextureNoMapping() {
         DummyObject source = new DummyObject();
         DummyObject target = new DummyObject();
-        Texture mock = new MockTexture();
+        Texture mock = new DummyTexture();
         source.setTexture(mock, null);
         target.copyTextureAndMaterial(source);
         Assertions.assertNull(target.getTextureMapping());
@@ -293,7 +285,7 @@ class Object3DTest {
     void testCopyTextureAndMaterialWithExistedTextureAndMapping() {
         DummyObject source = new DummyObject();
         DummyObject target = new DummyObject();
-        Texture mock = new MockTexture();
+        Texture mock = new DummyTexture();
         source.setTexture(mock, new DummyTextureMapping(null, source, mock));
         target.copyTextureAndMaterial(source);
         Assertions.assertNotNull(target.getTextureMapping());
@@ -308,7 +300,7 @@ class Object3DTest {
     void copyTextureAndMaterialWithExistedTextureMappingAndParameters() {
         DummyObject source = new DummyObject();
         DummyObject target = new DummyObject();
-        Texture mock = new MockTexture();
+        Texture mock = new DummyTexture();
         source.setTexture(mock, new DummyTextureMapping(null, source, mock));
         target.copyTextureAndMaterial(source);
         Assertions.assertNotNull(target.getTextureMapping());
@@ -367,114 +359,6 @@ class Object3DTest {
         source.setParameterValues(new ParameterValue[]{pv});
         Assertions.assertNotNull(source.getParameterValue(tp));
         Assertions.assertEquals(pv, source.getParameterValue(tp));
-    }
-
-    @DisplayName("Mock Texture")
-    static class MockTexture extends Texture {
-
-        @Override
-        public boolean hasComponent(int component) {
-            // To change body of generated methods, choose Tools | Templates.
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public void getAverageSpec(TextureSpec spec, double time, double[] param) {
-            // To change body of generated methods, choose Tools | Templates.
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public TextureMapping getDefaultMapping(Object3D object) {
-            // To change body of generated methods, choose Tools | Templates.
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public Texture duplicate() {
-            return new MockTexture();
-        }
-
-        @Override
-        public void edit(WindowWidget fr, Scene sc) {
-            // To change body of generated methods, choose Tools | Templates.
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public void writeToFile(DataOutputStream out, Scene theScene) throws IOException {
-            // To change body of generated methods, choose Tools | Templates.
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-    }
-
-    @DisplayName("Dummy Texture Mapping")
-    static class DummyTextureMapping extends TextureMapping {
-
-        private Object3D object;
-
-        private Texture texture;
-
-        public DummyTextureMapping(DataInputStream in, Object3D obj, Texture texture) {
-            this.texture = texture;
-            this.object = obj;
-        }
-
-        @Override
-        public void writeToFile(DataOutputStream out) throws IOException {
-            // To change body of generated methods, choose Tools | Templates.
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public Texture getTexture() {
-            return texture;
-        }
-
-        @Override
-        public Object3D getObject() {
-            return object;
-        }
-
-        @Override
-        public void getTextureSpec(Vec3 pos, TextureSpec spec, double angle, double size, double t, double[] param) {
-            // To change body of generated methods, choose Tools | Templates.
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public void getTransparency(Vec3 pos, RGBColor trans, double angle, double size, double t, double[] param) {
-            // To change body of generated methods, choose Tools | Templates.
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public double getDisplacement(Vec3 pos, double size, double t, double[] param) {
-            // To change body of generated methods, choose Tools | Templates.
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public TextureMapping duplicate() {
-            return new DummyTextureMapping(null, object, texture);
-        }
-
-        @Override
-        public TextureMapping duplicate(Object3D obj, Texture tex) {
-            return new DummyTextureMapping(null, obj, tex);
-        }
-
-        @Override
-        public void copy(TextureMapping map) {
-            // To change body of generated methods, choose Tools | Templates.
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public Widget getEditingPanel(Object3D obj, MaterialPreviewer preview) {
-            // To change body of generated methods, choose Tools | Templates.
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
     }
 
     @DisplayName("Dummy Material Mapping")
