@@ -17,6 +17,8 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.geom.*;
 import java.io.*;
 import java.util.*;
@@ -25,6 +27,8 @@ import java.util.stream.IntStream;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.swing.*;
 
 /**
  * This is the editor for editing procedures. It subclasses CustomWidget, but you should never
@@ -42,7 +46,12 @@ public class ProcedureEditor extends CustomWidget {
      */
     @Getter
     private final ProcedureOwner owner;
-    private final Scene theScene;
+    /**
+     * -- GETTER --
+     *  Get the scene the procedure is part of.
+     */
+    @Getter
+    private final Scene scene;
     private EditingWindow win;
     private final Dimension size;
     private BMenuItem undoItem, redoItem, cutItem, copyItem, pasteItem, clearItem;
@@ -81,7 +90,7 @@ public class ProcedureEditor extends CustomWidget {
         super();
         this.proc = proc;
         this.owner = owner;
-        theScene = scene;
+        this.scene = scene;
         selectedModule = new boolean[proc.getModules().length];
         selectedLink = new boolean[proc.getLinks().length];
         inputInfo = new InfoBox();
@@ -90,7 +99,14 @@ public class ProcedureEditor extends CustomWidget {
         undoStack = new ArrayList<>();
         redoStack = new ArrayList<>();
         parent = new BFrame(owner.getWindowTitle());
-        parent.setIcon(ArtOfIllusion.APP_ICON);
+        parent.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        parent.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
+        parent.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                cancelImpl();
+            }
+        });
         BorderContainer content = new BorderContainer();
         parent.setContent(content);
         BScrollPane scroll;
@@ -109,7 +125,7 @@ public class ProcedureEditor extends CustomWidget {
         // Save the current state of the procedure so that editing can be canceled.
         DataOutputStream out = new DataOutputStream(cancelBuffer);
         try {
-            proc.writeToStream(out, theScene);
+            proc.writeToStream(out, this.scene);
             out.close();
         } catch (IOException ex) {
             log.atError().setCause(ex).log("Error save procedure state: {}", ex.getMessage());
@@ -118,14 +134,14 @@ public class ProcedureEditor extends CustomWidget {
         // Create the buttons at the top of the window.
         FormContainer top = new FormContainer(new double[]{0.0, 0.0, 1.0, 0.0, 0.0}, new double[]{1.0});
         top.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(0, 0, 0, 5), null));
-        top.add(Translate.button("properties", this, "actionPerformed"), 0, 0);
+        top.add(Translate.button("properties", event -> doProperties()), 0, 0);
         if (owner.canEditName()) {
             top.add(new BLabel(Translate.text("Name") + ':'), 1, 0);
             top.add(nameField = new BTextField(owner.getName()), 2, 0);
         }
-        top.add(Translate.button("ok", this, "doOk"), 3, 0);
-        top.add(Translate.button("cancel", this, "actionPerformed"), 4, 0);
-        parent.addEventLink(WindowClosingEvent.class, this, "doOk");
+        top.add(Translate.button("ok", event -> doOk()), 3, 0);
+        top.add(Translate.button("cancel", event -> cancel()), 4, 0);
+
         content.add(top, BorderContainer.NORTH);
 
         // Create the module menu.
@@ -164,6 +180,10 @@ public class ProcedureEditor extends CustomWidget {
         scroll.getHorizontalScrollBar().setValue(getBounds().width - scroll.getViewSize().width);
         preview = Optional.ofNullable(owner.getPreview());
         preview.ifPresent(view -> createPreview(getParentFrame(), view));
+    }
+
+    private void cancelImpl() {
+        doOk();
     }
 
     private static void createPreview(BFrame frame, MaterialPreviewer view) {
@@ -230,9 +250,9 @@ public class ProcedureEditor extends CustomWidget {
         editMenu.add(cutItem = Translate.menuItem("cut", this, "actionPerformed"));
         editMenu.add(copyItem = Translate.menuItem("copy", this, "actionPerformed"));
         editMenu.add(pasteItem = Translate.menuItem("paste", this, "actionPerformed"));
-        editMenu.add(clearItem = Translate.menuItem("clear", this, "actionPerformed"));
+        editMenu.add(clearItem = Translate.menuItem("clear", event -> deleteSelection()));
         editMenu.addSeparator();
-        editMenu.add(Translate.menuItem("properties", this, "actionPerformed"));
+        editMenu.add(Translate.menuItem("properties", event -> doProperties()));
         return editMenu;
     }
 
@@ -241,13 +261,6 @@ public class ProcedureEditor extends CustomWidget {
      */
     public BFrame getParentFrame() {
         return parent;
-    }
-
-    /**
-     * Get the scene the procedure is part of.
-     */
-    public Scene getScene() {
-        return theScene;
     }
 
     /**
@@ -463,17 +476,24 @@ public class ProcedureEditor extends CustomWidget {
         clearItem.setEnabled(anyModule || anyLink);
     }
 
+
+    public void cancel() {
+        undoStack.add(cancelBuffer);
+        undo();
+        parent.getComponent().dispose();
+    }
+
+    public void doProperties() {
+        owner.editProperties(this);
+        updatePreview();
+    }
+
     /**
      * Respond to menu items.
      */
     private void actionPerformed(CommandEvent e) {
         String command = e.getActionCommand();
-
-        if (command.equals("cancel")) {
-            undoStack.add(cancelBuffer);
-            undo();
-            parent.dispose();
-        } else if (command.equals("cut")) {
+        if (command.equals("cut")) {
             clipboard = new ClipboardSelection(proc, selectedModule, selectedLink);
             deleteSelection();
             updateMenus();
@@ -484,11 +504,6 @@ public class ProcedureEditor extends CustomWidget {
             saveState(false);
             clipboard.paste(this);
             repaint();
-        } else if (command.equals("clear")) {
-            deleteSelection();
-        } else if (command.equals("properties")) {
-            owner.editProperties(this);
-            updatePreview();
         }
     }
 
@@ -509,9 +524,7 @@ public class ProcedureEditor extends CustomWidget {
     public void addModule(Module mod) {
         selectedModule = new boolean[selectedModule.length + 1];
         selectedModule[selectedModule.length - 1] = true;
-        for (int i = 0; i < selectedLink.length; i++) {
-            selectedLink[i] = false;
-        }
+        Arrays.fill(selectedLink, false);
         proc.addModule(mod);
         updateMenus();
     }
@@ -524,9 +537,7 @@ public class ProcedureEditor extends CustomWidget {
 
         selectedLink = new boolean[selectedLink.length + 1];
         selectedLink[selectedLink.length - 1] = true;
-        for (int i = 0; i < selectedModule.length; i++) {
-            selectedModule[i] = false;
-        }
+        Arrays.fill(selectedModule, false);
         if (port1.getType() == IOPort.OUTPUT) {
             from = port1;
             to = port2;
@@ -554,7 +565,7 @@ public class ProcedureEditor extends CustomWidget {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(buffer);
         try {
-            proc.writeToStream(out, theScene);
+            proc.writeToStream(out, scene);
             out.close();
             stack.add(buffer);
             if (redo) {
@@ -579,7 +590,7 @@ public class ProcedureEditor extends CustomWidget {
         undoStack.remove(undoStack.size() - 1);
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(buffer.toByteArray()));
         try {
-            proc.readFromStream(in, theScene);
+            proc.readFromStream(in, scene);
             in.close();
         } catch (IOException ex) {
             log.atError().setCause(ex).log("Error read procedure state: {}", ex.getMessage());
@@ -607,7 +618,7 @@ public class ProcedureEditor extends CustomWidget {
         redoStack.remove(redoStack.size() - 1);
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(buffer.toByteArray()));
         try {
-            proc.readFromStream(in, theScene);
+            proc.readFromStream(in, scene);
             in.close();
         } catch (IOException ex) {
             log.atError().setCause(ex).log("Error read procedure state: {}", ex.getMessage());
@@ -641,7 +652,7 @@ public class ProcedureEditor extends CustomWidget {
             for (var       mod : proc.getModules()) {
                 if (mod.getBounds().contains(pos)) {
                     saveState(false);
-                    if (mod.edit(this, theScene)) {
+                    if (mod.edit(this, scene)) {
                         repaint();
                         updatePreview();
                     } else {
@@ -1061,7 +1072,7 @@ public class ProcedureEditor extends CustomWidget {
                     continue;
                 }
                 realMod[i] = module[i].duplicate();
-                if (realMod[i] instanceof ImageModule && editor.theScene.indexOf(((ImageModule) realMod[i]).getMap()) == -1) {
+                if (realMod[i] instanceof ImageModule && editor.scene.indexOf(((ImageModule) realMod[i]).getMap()) == -1) {
                     ((ImageModule) realMod[i]).setMap(null);
                 }
                 Rectangle bounds = realMod[i].getBounds();
