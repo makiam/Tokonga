@@ -94,9 +94,9 @@ public class ComponentsDialog extends BDialog {
         buttons.add(Translate.button("cancel", event -> buttonCancel()));
 
         String cancelName = "cancel";
-        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        InputMap inputMap = this.getComponent().getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-        ActionMap actionMap = getRootPane().getActionMap();
+        ActionMap actionMap = this.getComponent().getRootPane().getActionMap();
         actionMap.put(cancelName, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
