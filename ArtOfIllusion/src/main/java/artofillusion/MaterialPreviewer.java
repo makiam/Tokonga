@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -27,14 +27,15 @@ import java.awt.event.*;
  * MaterialPreviewer is a component used for rendering previews of Materials. It displays
  * a scene consisting of a Sphere with the desired Material applied to it, a ground plane,
  * and a single light. Optionally, an Object3D may be specified which will then be used
- * instead of a Sphere.
+ * instead of a predefined objects.
  */
-public class MaterialPreviewer extends CustomWidget implements RenderListener {
+public class MaterialPreviewer extends CustomWidget {
 
-    Scene theScene;
-    Camera theCamera;
+    private Scene scene;
+    private Camera camera;
+
     ObjectInfo info;
-    CoordinateSystem objectCoords;
+    CoordinateSystem objectCoordinates;
     Image theImage;
     boolean mouseInside, renderInProgress;
     Point clickPoint;
@@ -106,19 +107,19 @@ public class MaterialPreviewer extends CustomWidget implements RenderListener {
         int[][] face = {{0, 1, 2}};
         TriangleMesh tri;
 
-        theScene = new Scene();
-        theCamera = new Camera();
-        theCamera.setCameraCoordinates(coords);
+        scene = new Scene();
+        camera = new Camera();
+        camera.setCameraCoordinates(coords);
         coords = new CoordinateSystem(new Vec3(), new Vec3(-0.5, -0.4, -1.0), Vec3.vy());
-        theScene.addObject(new DirectionalLight(new RGBColor(1.0f, 1.0f, 1.0f), 0.8f), coords, "", null);
+        scene.addObject(new DirectionalLight(new RGBColor(1.0f, 1.0f, 1.0f), 0.8f), coords, "", null);
         coords = new CoordinateSystem(new Vec3(), Vec3.vz(), Vec3.vy());
-        theScene.addObject(tri = new TriangleMesh(vert, face), coords, "", null);
-        Texture tex = theScene.getDefaultTexture();
+        scene.addObject(tri = new TriangleMesh(vert, face), coords, "", null);
+        Texture tex = scene.getDefaultTexture();
         tri.setTexture(tex, tex.getDefaultMapping(tri));
         info = obj;
         info.setCoords(new CoordinateSystem());
-        objectCoords = info.getCoords();
-        theScene.addObject(info, null);
+        objectCoordinates = info.getCoords();
+        scene.addObject(info, null);
         setPreferredSize(new Dimension(width, height));
         addEventLink(MousePressedEvent.class, this, "mousePressed");
         addEventLink(MouseReleasedEvent.class, this, "mouseReleased");
@@ -135,19 +136,6 @@ public class MaterialPreviewer extends CustomWidget implements RenderListener {
                 render();
             }
         });
-        getComponent().addHierarchyListener(new HierarchyListener() {
-            @Override
-            public void hierarchyChanged(HierarchyEvent ev) {
-                if ((ev.getChangeFlags() & HierarchyEvent.DISPLAYABILITY_CHANGED) != 0) {
-                    if (!getComponent().isDisplayable()) {
-                        Renderer rend = ArtOfIllusion.getPreferences().getTexturePreviewRenderer();
-                        if (rend != null) {
-                            rend.cancelRendering(theScene);
-                        }
-                    }
-                }
-            }
-        });
         render();
     }
 
@@ -162,7 +150,7 @@ public class MaterialPreviewer extends CustomWidget implements RenderListener {
      * Get the scene being rendered as the preview.
      */
     public Scene getScene() {
-        return theScene;
+        return scene;
     }
 
     /* The following methods are used to modify the properties of the object being displayed. */
@@ -188,16 +176,16 @@ public class MaterialPreviewer extends CustomWidget implements RenderListener {
         if (rend == null) {
             return;
         }
-        rend.cancelRendering(theScene);
+        rend.cancelRendering(scene);
         Rectangle bounds = getBounds();
         if (bounds.width == 0 || bounds.height == 0) {
             return;
         }
         SceneCamera sc = new SceneCamera();
         sc.setFieldOfView(16.0);
-        theCamera.setScreenTransform(sc.getScreenTransform(bounds.width, bounds.height), bounds.width, bounds.height);
+        camera.setScreenTransform(sc.getScreenTransform(bounds.width, bounds.height), bounds.width, bounds.height);
         rend.configurePreview();
-        rend.renderScene(theScene, theCamera, this, sc);
+        rend.renderScene(scene, camera, this.listener, sc);
         renderInProgress = true;
         repaint();
     }
@@ -208,7 +196,7 @@ public class MaterialPreviewer extends CustomWidget implements RenderListener {
     public synchronized void cancelRendering() {
         Renderer rend = ArtOfIllusion.getPreferences().getTexturePreviewRenderer();
         if (rend != null) {
-            rend.cancelRendering(theScene);
+            rend.cancelRendering(scene);
         }
     }
 
@@ -238,12 +226,12 @@ public class MaterialPreviewer extends CustomWidget implements RenderListener {
 
     private void drawObject(Graphics g) {
         g.setColor(Color.gray);
-        Vec3 origin = objectCoords.getOrigin();
-        Mat4 m = objectCoords.fromLocal();
+        Vec3 origin = objectCoordinates.getOrigin();
+        Mat4 m = objectCoordinates.fromLocal();
         m = Mat4.translation(-origin.x, -origin.y, -origin.z).times(m);
         m = dragTransform.times(m);
         m = Mat4.translation(origin.x, origin.y, origin.z).times(m);
-        theCamera.setObjectTransform(m);
+        camera.setObjectTransform(m);
         WireframeMesh mesh = info.getObject().getWireframeMesh();
         int[] from = mesh.from;
         int[] to = mesh.to;
@@ -251,9 +239,9 @@ public class MaterialPreviewer extends CustomWidget implements RenderListener {
         Vec3[] vert = mesh.vert;
         for (int i = 0; i < mesh.from.length; i++) {
             if (from[i] == last) {
-                theCamera.drawClippedLineTo(g, vert[(last = to[i])]);
+                camera.drawClippedLineTo(g, vert[(last = to[i])]);
             } else {
-                theCamera.drawClippedLine(g, vert[from[i]], vert[(last = to[i])]);
+                camera.drawClippedLine(g, vert[from[i]], vert[(last = to[i])]);
             }
         }
     }
@@ -269,8 +257,8 @@ public class MaterialPreviewer extends CustomWidget implements RenderListener {
             {0.0, 90.0, 0.0},
             {-90.0, 0.0, 0.0},
             {90.0, 0.0, 0.0},};
-        objectCoords.setOrientation(angles[view][0], angles[view][1], angles[view][2]);
-        objectCoords.setOrigin(new Vec3());
+        objectCoordinates.setOrientation(angles[view][0], angles[view][1], angles[view][2]);
+        objectCoordinates.setOrigin(new Vec3());
         render();
     }
 
@@ -278,30 +266,12 @@ public class MaterialPreviewer extends CustomWidget implements RenderListener {
      * Change what object the texture/material is displayed ob.
      */
     private void changeObject(int object) {
-        shape[object].setTexture(info.getObject().getTexture(), info.getObject().getTextureMapping());
-        shape[object].setMaterial(info.getObject().getMaterial(), info.getObject().getMaterialMapping());
+        Object3D obj = info.getObject();
+        shape[object].setTexture(obj.getTexture(), obj.getTextureMapping());
+        shape[object].setMaterial(obj.getMaterial(), obj.getMaterialMapping());
         info.setObject(shape[object]);
         info.clearCachedMeshes();
         render();
-    }
-
-    /**
-     * Called when more pixels are available for the current image.
-     */
-    @Override
-    public void imageUpdated(Image image) {
-        theImage = image;
-        repaint();
-    }
-
-    /**
-     * Called when rendering is complete.
-     */
-    @Override
-    public void imageComplete(ComplexImage image) {
-        theImage = image.getImage();
-        renderInProgress = false;
-        repaint();
     }
 
     private void mouseEntered(MouseEnteredEvent e) {
@@ -321,7 +291,7 @@ public class MaterialPreviewer extends CustomWidget implements RenderListener {
         clickPoint = e.getPoint();
         Renderer rend = ArtOfIllusion.getPreferences().getTexturePreviewRenderer();
         if (rend != null) {
-            rend.cancelRendering(theScene);
+            rend.cancelRendering(scene);
         }
         dragTransform = Mat4.identity();
         drawObject(g);
@@ -340,14 +310,14 @@ public class MaterialPreviewer extends CustomWidget implements RenderListener {
                 } else {
                     dragTransform = Mat4.translation((dragPoint.x - clickPoint.x) * 0.01, (clickPoint.y - dragPoint.y) * 0.01, 0.0);
                 }
-                objectCoords.transformOrigin(dragTransform);
+                objectCoordinates.transformOrigin(dragTransform);
             } else {
                 Vec3 rotAxis = new Vec3((clickPoint.y - dragPoint.y) * DRAG_SCALE, (dragPoint.x - clickPoint.x) * DRAG_SCALE, 0.0);
                 double angle = rotAxis.length();
                 rotAxis = rotAxis.times(1.0 / angle);
-                rotAxis = theCamera.getViewToWorld().timesDirection(rotAxis);
+                rotAxis = camera.getViewToWorld().timesDirection(rotAxis);
                 dragTransform = Mat4.axisRotation(rotAxis, angle);
-                objectCoords.transformAxes(dragTransform);
+                objectCoordinates.transformAxes(dragTransform);
             }
         }
         render();
@@ -375,7 +345,7 @@ public class MaterialPreviewer extends CustomWidget implements RenderListener {
             Vec3 rotAxis = new Vec3((clickPoint.y - dragPoint.y) * DRAG_SCALE, (dragPoint.x - clickPoint.x) * DRAG_SCALE, 0.0);
             double angle = rotAxis.length();
             rotAxis = rotAxis.times(1.0 / angle);
-            rotAxis = theCamera.getViewToWorld().timesDirection(rotAxis);
+            rotAxis = camera.getViewToWorld().timesDirection(rotAxis);
             dragTransform = Mat4.axisRotation(rotAxis, angle);
         }
         g.drawImage(theImage, 0, 0, getComponent());
@@ -424,6 +394,24 @@ public class MaterialPreviewer extends CustomWidget implements RenderListener {
         }
         if (viewChoice.getSelectedIndex() > 0) {
             changeView(viewChoice.getSelectedIndex() - 1);
+        }
+    }
+
+    private final MaterialPreviewRenderListener listener = new MaterialPreviewRenderListener();
+
+    private class MaterialPreviewRenderListener implements RenderListener {
+
+        @Override
+        public void imageUpdated(Image image) {
+            theImage = image;
+            repaint();
+        }
+
+        @Override
+        public void imageComplete(ComplexImage image) {
+            theImage = image.getImage();
+            renderInProgress = false;
+            repaint();
         }
     }
 }
