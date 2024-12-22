@@ -11,7 +11,7 @@ class Dummy3DObject extends Object3D {
     }
 
     @Override
-    public Object3D duplicate() {
+    public Dummy3DObject duplicate() {
         return new Dummy3DObject();
     }
 

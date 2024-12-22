@@ -17,13 +17,21 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 
 /**
@@ -33,6 +41,8 @@ import javax.swing.*;
 public class ScriptedObjectEditorWindow extends BFrame {
 
     private final EditingWindow window;
+    
+    
     private final ObjectInfo info;
     private final ScriptEditingWidget scriptWidget;
     private final BComboBox languageChoice;
@@ -94,7 +104,7 @@ public class ScriptedObjectEditorWindow extends BFrame {
     }
 
     /**
-     * Make syntax highlighing match current scripting language
+     * Make syntax highlighting match current scripting language
      */
     private void updateLanguage() {
         scriptWidget.setLanguage((String) languageChoice.getSelectedValue());
@@ -105,7 +115,7 @@ public class ScriptedObjectEditorWindow extends BFrame {
      */
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     private void editParameters() {
-        new ParametersDialog(this);
+        new ParametersDialog(this, (ScriptedObject) info.getObject());
     }
 
     /**
@@ -210,33 +220,32 @@ public class ScriptedObjectEditorWindow extends BFrame {
     /**
      * This is an inner class for editing the list of parameters on the object.
      */
-    private class ParametersDialog extends BDialog {
+    private static class ParametersDialog extends BDialog {
 
         private final ScriptedObject script;
         private final BList paramList;
         private final BTextField nameField;
         private final ValueField valueField;
-        private String[] name;
-        private double[] value;
-        private int current;
-        private final ScriptedObjectEditorWindow owner;
 
-        public ParametersDialog(ScriptedObjectEditorWindow owner) {
+        private int current;
+
+        private final List<ParameterPair> pairs = new ArrayList<>();
+
+        public ParametersDialog(ScriptedObjectEditorWindow owner, ScriptedObject target) {
             super(owner, Translate.text("objectParameters"), true);
             this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
-            this.owner = owner;
-            script = (ScriptedObject) info.getObject();
+
+            script = target;
             FormContainer content = new FormContainer(new double[]{0.0, 1.0}, new double[]{1.0, 0.0, 0.0, 0.0});
             content.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, null, null));
             setContent(content);
-            name = new String[script.getNumParameters()];
-            value = new double[script.getNumParameters()];
-            for (int i = 0; i < name.length; i++) {
-                name[i] = script.getParameterName(i);
-                value[i] = script.getParameterValue(i);
+
+            for (int i = 0; i < script.getNumParameters(); i++) {
+                pairs.add(new ParameterPair(script.getParameterName(i),script.getParameterValue(i)));
             }
-            content.add(UIUtilities.createScrollingList(paramList = new BList()), 0, 0, 2, 1, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
+            paramList = new BList();
+            content.add(UIUtilities.createScrollingList(paramList), 0, 0, 2, 1, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
             paramList.setPreferredVisibleRows(5);
             buildParameterList();
             paramList.addEventLink(SelectionChangedEvent.class, this, "selectionChanged");
@@ -252,11 +261,34 @@ public class ScriptedObjectEditorWindow extends BFrame {
             buttons.add(Translate.button("add", event -> doAdd()));
             buttons.add(Translate.button("remove", event -> doRemove()));
             buttons.add(Translate.button("ok", event -> doOk()));
-            buttons.add(Translate.button("cancel", event -> dispose()));
-            setSelectedParameter(name.length == 0 ? -1 : 0);
+            buttons.add(Translate.button("cancel", event -> cancel()));
+            setSelectedParameter(pairs.isEmpty() ? -1 : 0);
+            this.getComponent().addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    dispose();
+                }
+            });
+
+            String cancelName = "cancel";
+            InputMap inputMap = this.getComponent().getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
+            ActionMap actionMap = this.getComponent().getRootPane().getActionMap();
+            actionMap.put(cancelName, new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    cancel();
+                }
+            });
+
             pack();
             UIUtilities.centerDialog(this, owner);
             setVisible(true);
+        }
+
+        private void cancel() {
+            log.info("Cancelling {} tool dialog", this.getClass().getSimpleName());
+            this.getComponent().dispose();
         }
 
         /**
@@ -264,10 +296,10 @@ public class ScriptedObjectEditorWindow extends BFrame {
          */
         private void buildParameterList() {
             paramList.removeAll();
-            for (String item : name) {
-                paramList.add(item);
+            for (ParameterPair item: pairs) {
+                paramList.add(item.getName());
             }
-            if (name.length == 0) {
+            if (pairs.isEmpty()) {
                 paramList.add("(no parameters)");
             }
         }
@@ -281,14 +313,14 @@ public class ScriptedObjectEditorWindow extends BFrame {
                 paramList.setSelected(which, true);
             }
             current = which;
-            if (which == -1 || which >= name.length) {
+            if (which == -1 || which >= pairs.size()) {
                 nameField.setEnabled(false);
                 valueField.setEnabled(false);
             } else {
                 nameField.setEnabled(true);
                 valueField.setEnabled(true);
-                nameField.setText(name[which]);
-                valueField.setValue(value[which]);
+                nameField.setText(pairs.get(which).getName());
+                valueField.setValue(pairs.get(which).getValue());
             }
         }
 
@@ -296,14 +328,14 @@ public class ScriptedObjectEditorWindow extends BFrame {
          * Deal with changes to the text fields.
          */
         private void textChanged(ValueChangedEvent ev) {
-            if (current < 0 || current > name.length) {
+            if (current < 0 || current > pairs.size()) {
                 return;
             }
             if (ev.getWidget() == nameField) {
-                name[current] = nameField.getText();
-//          paramList.replaceItem(name[current], current);
+                pairs.get(current).setName(nameField.getText());
+
             } else {
-                value[current] = valueField.getValue();
+                pairs.get(current).setValue(valueField.getValue());
             }
         }
 
@@ -311,7 +343,7 @@ public class ScriptedObjectEditorWindow extends BFrame {
          * When the name field loses focus, update it in the list.
          */
         private void focusLost() {
-            paramList.replace(current, name[current]);
+            paramList.replace(current, pairs.get(current).getName());
         }
 
         /**
@@ -325,36 +357,33 @@ public class ScriptedObjectEditorWindow extends BFrame {
          * Add a new parameter.
          */
         private void doAdd() {
-            String[] newName = new String[name.length + 1];
-            double[] newValue = new double[value.length + 1];
-            System.arraycopy(name, 0, newName, 0, name.length);
-            System.arraycopy(value, 0, newValue, 0, value.length);
-            newName[name.length] = "";
-            newValue[value.length] = 0.0;
-            name = newName;
-            value = newValue;
+            pairs.add(new ParameterPair(getUnusedParameterName(pairs), 0.0));
+
             buildParameterList();
-            setSelectedParameter(name.length - 1);
+            setSelectedParameter(pairs.size() - 1);
             nameField.requestFocus();
         }
+
+        private static String getUnusedParameterName(List<ParameterPair> pairs) {
+            int index = pairs.size();
+
+            do {
+                index++;
+                String newName = "Parameter " + index;
+                var matches = pairs.stream().anyMatch(p -> p.getName().equals(newName));
+                if(!matches) break;
+            } while (true);
+
+
+            return "Parameter " + index;
+        }
+
 
         /**
          * Remove a parameter.
          */
         private void doRemove() {
-            int which = paramList.getSelectedIndex();
-            String[] newName = new String[name.length - 1];
-            double[] newValue = new double[value.length - 1];
-            for (int i = 0, j = 0; i < name.length; i++) {
-                if (i == which) {
-                    continue;
-                }
-                newName[j] = name[i];
-                newValue[j] = value[i];
-                j++;
-            }
-            name = newName;
-            value = newValue;
+            pairs.remove(paramList.getSelectedIndex());
             buildParameterList();
             setSelectedParameter(-1);
         }
@@ -363,8 +392,17 @@ public class ScriptedObjectEditorWindow extends BFrame {
          * Save the changes.
          */
         private void doOk() {
-            script.setParameters(name, value);
+            var names = pairs.stream().map(ParameterPair::getName).toArray(String[]::new);
+            var values = pairs.stream().mapToDouble(ParameterPair::getValue).toArray();
+            script.setParameters(names, values);
             dispose();
+        }
+
+        @AllArgsConstructor @Getter
+        @Setter
+        private class ParameterPair {
+            String name;
+            double value;
         }
     }
 }

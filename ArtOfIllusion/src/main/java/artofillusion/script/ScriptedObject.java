@@ -150,7 +150,7 @@ public class ScriptedObject extends ObjectCollection {
      * Create a new object which is an exact duplicate of this one.
      */
     @Override
-    public Object3D duplicate() {
+    public ScriptedObject duplicate() {
         ScriptedObject so = new ScriptedObject(script, language);
         so.paramName = new String[paramName.length];
         System.arraycopy(paramName, 0, so.paramName, 0, paramName.length);
