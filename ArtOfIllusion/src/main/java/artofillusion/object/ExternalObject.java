@@ -203,6 +203,7 @@ public class ExternalObject extends ObjectWrapper {
      */
     @Override
     public void setSize(double xsize, double ysize, double zsize) {
+        // ExternalObjects cannot be resized, since they are entirely defined by a separate file.
     }
 
     /**
@@ -257,7 +258,8 @@ public class ExternalObject extends ObjectWrapper {
      * Find the relative path from the scene file containing this object to the external scene.
      */
     private String findRelativePath(Scene theScene) {
-        String scenePath = null, externalPath = null;
+        String scenePath = null;
+        String externalPath = null;
         try {
             scenePath = new File(theScene.getDirectory()).getCanonicalPath();
             externalPath = externalFile.getCanonicalPath();
@@ -292,7 +294,7 @@ public class ExternalObject extends ObjectWrapper {
     /**
      * Recreate an ExternalObject by reading in the serialized representation written by writeToFile().
      */
-    public ExternalObject(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+    public ExternalObject(DataInputStream in, Scene theScene) throws IOException {
         super(in, theScene);
         short version = in.readShort();
         if (version < 0 || version > 1) {

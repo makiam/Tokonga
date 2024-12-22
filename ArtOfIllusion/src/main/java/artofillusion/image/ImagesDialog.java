@@ -105,10 +105,10 @@ public class ImagesDialog extends BDialog {
         // Close the dialog when Esc is pressed
         String cancelName = "cancel";
         String okName = "ok";
-        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        InputMap inputMap = this.getComponent().getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), okName);
-        ActionMap actionMap = getRootPane().getActionMap();
+        ActionMap actionMap = this.getComponent().getRootPane().getActionMap();
         actionMap.put(cancelName, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -646,10 +646,10 @@ public class ImagesDialog extends BDialog {
             // Close the dialog when Esc is pressed
             String cancelName = "cancel";
             String okName = "ok";
-            InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            InputMap inputMap = this.getComponent().getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
             inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), okName);
-            ActionMap actionMap = getRootPane().getActionMap();
+            ActionMap actionMap = this.getComponent().getRootPane().getActionMap();
             actionMap.put(cancelName, new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
