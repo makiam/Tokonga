@@ -38,8 +38,8 @@ public class ModuleMenu extends CustomWidget {
     private Module newModule;
     private boolean isDraggingModule;
 
-    private final Color categoryColor = new Color(0.9f, 0.9f, 0.9f);
-    private final Color selectedCategoryColor = new Color(0.7f, 0.7f, 1.0f);
+    private final Color categoryColor = new Color(229, 229, 229);
+    private final Color selectedCategoryColor = new Color(178, 178, 255);
 
     public ModuleMenu(ProcedureEditor editor) {
         this.editor = editor;
@@ -72,22 +72,13 @@ public class ModuleMenu extends CustomWidget {
             log.info("Module category evaluated: {}", cv);
             Optional<Category> target = categories.stream().filter(cat -> cat.getName().equals(cv)).findFirst();
             log.info("Target is Present: {}", target.isPresent());
-            //Replace this
-            if (target.isPresent()) {
-                target.get().add(new Entry(module.getName(), module.getClass()));
-            } else {
+
+            target.ifPresentOrElse(cat -> cat.add(new Entry(module.getName(), module.getClass())), () -> {
                 Category newCategory = new Category(cv);
                 newCategory.add(new Entry(module.getName(), module.getClass()));
                 categories.add(newCategory);
-            }
-            //With ifPresentOrElse once java updated to 9+
-            /*
-        target.ifPresentOrElse(cat -> cat.add(new Entry(module.getName(), module.getClass())), () -> {
-            Category newCategory = new Category(cv);
-            newCategory.add(new Entry(module.getName(), module.getClass()));
-            categories.add(newCategory);
-        });
-             */
+            });
+
         });
 
         expandedFraction = new double[categories.size()];
@@ -127,8 +118,8 @@ public class ModuleMenu extends CustomWidget {
             if (expandedFraction[i] > 0) {
                 // This category is expanded, so draw its entries.
 
-                int endy = y + (int) (expandedFraction[i] * entryHeight * cat.entries.size());
-                g.setClip(0, 0, width, endy);
+                int endY = y + (int) (expandedFraction[i] * entryHeight * cat.entries.size());
+                g.setClip(0, 0, width, endY);
                 for (Entry entry : cat.entries) {
                     g.setColor(Color.WHITE);
                     Rectangle bounds = new Rectangle(0, y, width, entryHeight);
@@ -141,7 +132,7 @@ public class ModuleMenu extends CustomWidget {
                         entry.bounds = bounds;
                     }
                 }
-                y = endy;
+                y = endY;
                 g.setClip(null);
             } else {
                 for (Entry entry : cat.entries) {
