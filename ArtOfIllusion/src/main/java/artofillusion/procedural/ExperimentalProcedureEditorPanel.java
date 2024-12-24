@@ -71,7 +71,7 @@ public class ExperimentalProcedureEditorPanel extends javax.swing.JPanel {
         var result = false;
         try {
             Object tmp = PluginRegistry.invokeExportedMethod("preferences.getBoolean", "artofillusion", "showExperimentalProcedureEditor");
-            result = Boolean.valueOf(tmp.toString());
+            result = Boolean.valueOf(tmp == null ? "false" : tmp.toString());
         } catch (InvocationTargetException | NoSuchMethodException e) {            
         }
         return result;
