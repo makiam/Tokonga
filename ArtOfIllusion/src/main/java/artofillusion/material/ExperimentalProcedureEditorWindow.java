@@ -42,6 +42,7 @@ public class ExperimentalProcedureEditorWindow extends JFrame {
     private Scene scene;
     
     private ProcedureView view = new ProcedureView();
+    private ModulesMenu menu = new ModulesMenu();
     @Override
     protected void frameInit() {
         super.frameInit();
@@ -66,6 +67,7 @@ public class ExperimentalProcedureEditorWindow extends JFrame {
         this.getContentPane().setLayout(new BorderLayout());
         var split = new JSplitPane();
         split.setRightComponent(view);
+        split.setLeftComponent(menu);
         this.getContentPane().add(split, java.awt.BorderLayout.CENTER);
         this.setJMenuBar(new JMenuBar());
     }
