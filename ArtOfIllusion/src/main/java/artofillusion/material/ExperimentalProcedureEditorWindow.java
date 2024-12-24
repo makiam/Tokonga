@@ -17,6 +17,7 @@ import artofillusion.procedural.ProcedureOwner;
 import java.awt.BorderLayout;
 import lombok.Getter;
 import lombok.Setter;
+import artofillusion.procedural.ui.ModulesMenu;
 
 import javax.swing.*;
 import java.awt.event.WindowEvent;
