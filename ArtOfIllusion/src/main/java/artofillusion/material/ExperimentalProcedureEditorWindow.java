@@ -15,6 +15,8 @@ import artofillusion.Scene;
 import artofillusion.procedural.Procedure;
 import artofillusion.procedural.ProcedureOwner;
 import java.awt.BorderLayout;
+
+import artofillusion.ui.Translate;
 import lombok.Getter;
 import lombok.Setter;
 import artofillusion.procedural.ui.ModulesMenu;
@@ -47,16 +49,12 @@ public class ExperimentalProcedureEditorWindow extends JFrame {
     @Override
     protected void frameInit() {
         super.frameInit();
-
-
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
             }
         });
-        
-
     }
     
     void initPeer() {
@@ -71,5 +69,6 @@ public class ExperimentalProcedureEditorWindow extends JFrame {
         split.setLeftComponent(menu);
         this.getContentPane().add(split, java.awt.BorderLayout.CENTER);
         this.setJMenuBar(new JMenuBar());
+        this.getJMenuBar().add(new JMenu(Translate.text("menu.edit")));
     }
 }
