@@ -10,12 +10,57 @@
 
 package artofillusion.material;
 
-import javax.swing.JPanel;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
 /**
  *
  * @author MaksK
  */
-class ProcedureView extends JPanel {
-    
+class ProcedureView extends JComponent implements MouseListener, MouseWheelListener {
+    private static final Color NETWORK_GRID_COLOR = new Color(69, 69, 69);
+    private static final Color NETWORK_BACKGROUND_COLOR = new Color(85, 85, 85);
+    private static final int GRID_CELL_SIZE = 48;
+    private static final int GRID_OFFSET = 6;
+
+    public ProcedureView() {
+        this.addMouseListener(this);
+        this.addMouseWheelListener(this);
+    }
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+    }
 }
