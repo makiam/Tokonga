@@ -14,10 +14,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
 /**
  *
  * @author MaksK
  */
+@Slf4j
 class ProcedureView extends JComponent implements MouseListener, MouseWheelListener {
     private static final Color NETWORK_GRID_COLOR = new Color(69, 69, 69);
     private static final Color NETWORK_BACKGROUND_COLOR = new Color(85, 85, 85);
@@ -28,8 +31,15 @@ class ProcedureView extends JComponent implements MouseListener, MouseWheelListe
     private double viewX, viewY, viewScale = 1;
 
     public ProcedureView() {
+        this.setFocusable(true);
         this.addMouseListener(this);
         this.addMouseWheelListener(this);
+        var focusListener = new ViewFocusListener();
+        this.addFocusListener(focusListener);
+        SwingUtilities.invokeLater(() ->  {
+            SwingUtilities.getWindowAncestor(this).addWindowFocusListener(focusListener);
+        });
+        this.requestFocusInWindow();
     }
 
     @Override
@@ -91,6 +101,29 @@ class ProcedureView extends JComponent implements MouseListener, MouseWheelListe
         }
         for (int x = -gridCellSize; x < getWidth() + gridCellSize; x += gridCellSize) {
             g.drawLine(x - gridOffset + transformOffsetX, 0, x - gridOffset + transformOffsetX, getHeight());
+        }
+    }
+
+    private class ViewFocusListener implements WindowFocusListener, FocusListener {
+
+        @Override
+        public void focusGained(FocusEvent e) {
+            log.info("Focus gained");
+        }
+
+        @Override
+        public void focusLost(FocusEvent e) {
+            log.info("Focus lost");
+        }
+
+        @Override
+        public void windowGainedFocus(WindowEvent e) {
+            log.info("Window focus gained");
+        }
+
+        @Override
+        public void windowLostFocus(WindowEvent e) {
+            log.info("Window focus lost");
         }
     }
 }

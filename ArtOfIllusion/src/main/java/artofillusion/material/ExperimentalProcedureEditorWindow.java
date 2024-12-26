@@ -70,5 +70,19 @@ public class ExperimentalProcedureEditorWindow extends JFrame {
         this.getContentPane().add(split, java.awt.BorderLayout.CENTER);
         this.setJMenuBar(new JMenuBar());
         this.getJMenuBar().add(new JMenu(Translate.text("menu.edit")));
+
+        InputMap inputMap = view.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        inputMap.put(KeyStroke.getKeyStroke("control A"), "selectAll");
+        inputMap.put(KeyStroke.getKeyStroke("control C"), "copy");
+        inputMap.put(KeyStroke.getKeyStroke("control V"), "paste");
+        inputMap.put(KeyStroke.getKeyStroke("control F"), "find");
+
+        ActionMap actionMap = this.getRootPane().getActionMap();
+//        actionMap.put("selectAll", this.selectAllAction);
+//        actionMap.put("copy", this.copyAction);
+//        actionMap.put("paste", this.pasteAction);
+        //actionMap.put("find", event -> menu.);
+
+
     }
 }
