@@ -23,5 +23,7 @@ import javax.swing.SwingContainer;
 @SwingContainer(false)
 @SuppressWarnings("serial") // Same-version serialization only
 public class ATextField extends JTextField {
-    
+    public ATextField() {
+        
+    }
 }
