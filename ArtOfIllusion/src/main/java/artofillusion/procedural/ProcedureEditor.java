@@ -437,22 +437,22 @@ public class ProcedureEditor extends CustomWidget {
         int y1 = link.from.getPosition().y;
         int x2 = link.to.getPosition().x;
         int y2 = link.to.getPosition().y;
-        float ctrlx1, ctrly1, ctrlx2, ctrly2;
+        float ctrlX1, ctrlY1, ctrlX2, ctrlY2;
         if (link.from.getLocation() == IOPort.LEFT || link.from.getLocation() == IOPort.RIGHT) {
-            ctrlx1 = (x2 - x1) * BEZIER_HARDNESS + x1;
-            ctrly1 = y1;
+            ctrlX1 = (x2 - x1) * BEZIER_HARDNESS + x1;
+            ctrlY1 = y1;
         } else {
-            ctrlx1 = x1;
-            ctrly1 = (y2 - y1) * BEZIER_HARDNESS + y1;
+            ctrlX1 = x1;
+            ctrlY1 = (y2 - y1) * BEZIER_HARDNESS + y1;
         }
         if (link.to.getLocation() == IOPort.LEFT || link.to.getLocation() == IOPort.RIGHT) {
-            ctrlx2 = (1 - BEZIER_HARDNESS) * (x2 - x1) + x1;
-            ctrly2 = y2;
+            ctrlX2 = (1 - BEZIER_HARDNESS) * (x2 - x1) + x1;
+            ctrlY2 = y2;
         } else {
-            ctrlx2 = x2;
-            ctrly2 = (1 - BEZIER_HARDNESS) * (y2 - y1) + y1;
+            ctrlX2 = x2;
+            ctrlY2 = (1 - BEZIER_HARDNESS) * (y2 - y1) + y1;
         }
-        return new CubicCurve2D.Float(x1, y1, ctrlx1, ctrly1, ctrlx2, ctrly2, x2, y2);
+        return new CubicCurve2D.Float(x1, y1, ctrlX1, ctrlY1, ctrlX2, ctrlY2, x2, y2);
     }
 
     /**
@@ -973,8 +973,9 @@ public class ProcedureEditor extends CustomWidget {
         Link[] link = proc.getLinks();
         for (int i = 0; i < selectedLink.length; i++) {
             for (int j = 0; j < selectedModule.length; j++) {
-                if ((modules[j] == link[i].from.getModule() && selectedModule[j])
-                        || (modules[j] == link[i].to.getModule() && selectedModule[j])) {
+                Module module = modules.get(j);
+                boolean isSel = selectedModule[j];
+                if ((module == link[i].from.getModule() && isSel) || (module == link[i].to.getModule() && isSel)) {
                     selectedLink[i] = true;
                 }
             }
