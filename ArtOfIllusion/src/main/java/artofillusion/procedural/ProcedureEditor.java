@@ -1034,7 +1034,7 @@ public class ProcedureEditor extends CustomWidget {
 
             for (int i = 0; i < selectedModule.length; i++) {
                 if (selectedModule[i]) {
-                    mod.add(allModules[i]);
+                    mod.add(allModules.get(i));
                 }
             }
             for (int i = 0; i < selectedLink.length; i++) {

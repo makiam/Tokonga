@@ -368,14 +368,14 @@ public class ProceduralRotationTrack extends Track implements ProcedureOwner {
         var  modules = proc.getModules();
         int count = 0;
 
-        for (var       module : modules) {
+        for (var module : modules) {
             if (module instanceof ParameterModule) {
                 count++;
             }
         }
         TextureParameter[] params = new TextureParameter[count];
         count = 0;
-        for (var       module : modules) {
+        for (var module : modules) {
             if (module instanceof ParameterModule) {
                 params[count] = ((ParameterModule) module).getParameter(this);
                 ((ParameterModule) module).setIndex(count++);
