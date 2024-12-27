@@ -121,8 +121,8 @@ class ProcedureReadStreamTest {
         Procedure proc = new Procedure();
         proc.readFromStream(StreamUtil.stream(wrap), (Scene) null);
 
-        Assertions.assertEquals(1, proc.getModules().length);
-        var module = proc.getModules()[0];
+        Assertions.assertEquals(1, proc.getModules().size());
+        var module = proc.getModules().get(0);
         Assertions.assertEquals(module.getName(), "DummyModule");
     }
 

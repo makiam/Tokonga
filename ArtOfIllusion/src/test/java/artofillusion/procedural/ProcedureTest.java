@@ -33,7 +33,7 @@ class ProcedureTest {
         Assertions.assertNotNull(procedure.getOutputModules());
         Assertions.assertEquals(0, procedure.getOutputModules().length);
         Assertions.assertNotNull(procedure.getModules());
-        Assertions.assertEquals(0, procedure.getModules().length);
+        Assertions.assertEquals(0, procedure.getModules().size());
         Assertions.assertNotNull(procedure.getLinks());
         Assertions.assertEquals(0, procedure.getLinks().length);
     }
@@ -202,7 +202,7 @@ class ProcedureTest {
         Procedure target = new Procedure(new OutputModule[]{exist});
         target.copy(origin);
         Assertions.assertNotNull(target.getModules());
-        Assertions.assertEquals(0, target.getModules().length);
+        Assertions.assertEquals(0, target.getModules().size());
         Assertions.assertNotNull(target.getLinks());
         Assertions.assertEquals(0, target.getLinks().length);
     }
@@ -217,7 +217,7 @@ class ProcedureTest {
         Procedure target = new Procedure(new OutputModule[]{exist});
         target.copy(origin);
         Assertions.assertNotNull(target.getModules());
-        Assertions.assertEquals(1, target.getModules().length);
+        Assertions.assertEquals(1, target.getModules().size());
         Assertions.assertNotNull(target.getLinks());
         Assertions.assertEquals(0, target.getLinks().length);
     }
@@ -244,7 +244,7 @@ class ProcedureTest {
         Procedure target = new Procedure(new OutputModule[]{cout});
         target.copy(origin);
         Assertions.assertNotNull(target.getModules());
-        Assertions.assertEquals(2, target.getModules().length);
+        Assertions.assertEquals(2, target.getModules().size());
         Assertions.assertNotNull(target.getLinks());
         Assertions.assertEquals(1, target.getLinks().length);
     }
@@ -277,7 +277,7 @@ class ProcedureTest {
         Procedure target = new Procedure(new OutputModule[]{cout});
         target.copy(origin);
         Assertions.assertNotNull(target.getModules());
-        Assertions.assertEquals(2, target.getModules().length);
+        Assertions.assertEquals(2, target.getModules().size());
         Assertions.assertNotNull(target.getLinks());
         Assertions.assertEquals(2, target.getLinks().length);
     }
