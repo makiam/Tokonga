@@ -22,6 +22,7 @@ import lombok.Setter;
 import artofillusion.procedural.ui.ModulesMenu;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
 public class ExperimentalProcedureEditorWindow extends JFrame {
@@ -71,7 +72,7 @@ public class ExperimentalProcedureEditorWindow extends JFrame {
         this.setJMenuBar(new JMenuBar());
         this.getJMenuBar().add(new JMenu(Translate.text("menu.edit")));
 
-        InputMap inputMap = view.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        InputMap inputMap = this.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         inputMap.put(KeyStroke.getKeyStroke("control A"), "selectAll");
         inputMap.put(KeyStroke.getKeyStroke("control C"), "copy");
         inputMap.put(KeyStroke.getKeyStroke("control V"), "paste");
@@ -81,8 +82,18 @@ public class ExperimentalProcedureEditorWindow extends JFrame {
 //        actionMap.put("selectAll", this.selectAllAction);
 //        actionMap.put("copy", this.copyAction);
 //        actionMap.put("paste", this.pasteAction);
-        //actionMap.put("find", event -> menu.);
+        actionMap.put("find", findAction);
 
+
+    }
+
+    private Action findAction = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            ExperimentalProcedureEditorWindow.this.menu.setTextFocus();
+        }
+    };
+    private void doFind(ActionEvent e) {
 
     }
 }

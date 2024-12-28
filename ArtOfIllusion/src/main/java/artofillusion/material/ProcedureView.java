@@ -33,6 +33,7 @@ class ProcedureView extends JComponent implements MouseListener, MouseWheelListe
     public ProcedureView() {
         this.setFocusable(true);
         this.addMouseListener(this);
+
         this.addMouseWheelListener(this);
         var focusListener = new ViewFocusListener();
         this.addFocusListener(focusListener);
@@ -119,6 +120,8 @@ class ProcedureView extends JComponent implements MouseListener, MouseWheelListe
         @Override
         public void windowGainedFocus(WindowEvent e) {
             log.info("Window focus gained");
+            ProcedureView.this.requestFocusInWindow();
+
         }
 
         @Override
