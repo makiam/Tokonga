@@ -11,7 +11,7 @@ package artofillusion.polymesh;
 
 import artofillusion.ArtOfIllusion;
 import artofillusion.ui.Translate;
-import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.DataInputStream;
 import java.io.File;
@@ -20,9 +20,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.stream.Stream;
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
@@ -69,16 +66,9 @@ class PolyMeshToolDialog extends javax.swing.JDialog {
         this.ySizeSpinner.getModel().setValue(tool.getVsize());
         
         // Close the dialog when Esc is pressed
-        String cancelName = "cancel";
-        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-        ActionMap actionMap = getRootPane().getActionMap();
-        actionMap.put(cancelName, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                doClose(RET_CANCEL);
-            }
-        });
+        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        ActionListener action = e -> doClose(RET_CANCEL);
+        this.getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
     /**
@@ -113,11 +103,13 @@ class PolyMeshToolDialog extends javax.swing.JDialog {
         setTitle(Translate.text("polymesh:polyMeshToolDialogTitle"));
         setResizable(false);
         addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
             public void componentShown(java.awt.event.ComponentEvent evt) {
                 formComponentShown(evt);
             }
         });
         addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 closeDialog(evt);
             }

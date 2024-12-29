@@ -12,17 +12,12 @@
 package artofillusion.ui;
 
 import artofillusion.ArtOfIllusion;
-import buoy.event.*;
 import buoy.widget.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
-import javax.swing.text.html.Option;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.Optional;
 
 /**
@@ -33,7 +28,6 @@ import java.util.Optional;
 @Slf4j
 public class ComponentsDialog extends BDialog {
 
-    private final Widget[] comp;
     private boolean ok;
     private Runnable okCallback;
     private Runnable cancelCallback;
@@ -66,7 +60,6 @@ public class ComponentsDialog extends BDialog {
 
         this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
-        comp = components;
         this.okCallback = onOK;
         this.cancelCallback = onCancel;
 
@@ -93,17 +86,9 @@ public class ComponentsDialog extends BDialog {
         buttons.add(okButton = Translate.button("ok", event -> buttonOK()));
         buttons.add(Translate.button("cancel", event -> buttonCancel()));
 
-        String cancelName = "cancel";
-        InputMap inputMap = this.getComponent().getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-        ActionMap actionMap = this.getComponent().getRootPane().getActionMap();
-        actionMap.put(cancelName, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                buttonCancel();
-            }
-        });
-
+        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        ActionListener action = e -> buttonCancel();
+        this.getComponent().getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         this.getComponent().addWindowListener(new WindowAdapter() {
             @Override

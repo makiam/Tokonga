@@ -12,13 +12,11 @@
 package artofillusion.polymesh;
 
 import artofillusion.ui.Translate;
-import java.awt.event.ActionEvent;
+
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.Optional;
 import java.util.function.Consumer;
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.KeyStroke;
@@ -51,16 +49,9 @@ public class DivideDialog extends javax.swing.JDialog {
         this.onCommit = onCommit;
         
         // Close the dialog when Esc is pressed
-        String cancelName = "cancel";
-        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-        ActionMap actionMap = getRootPane().getActionMap();
-        actionMap.put(cancelName, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                doClose(RET_CANCEL);
-            }
-        });
+        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        ActionListener action = e -> doClose(RET_CANCEL);
+        this.getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
     /**
@@ -86,6 +77,7 @@ public class DivideDialog extends javax.swing.JDialog {
 
         setTitle(Translate.text("polymesh:subdivideEdgesTitle"));
         addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 closeDialog(evt);
             }

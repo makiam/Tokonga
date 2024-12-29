@@ -103,24 +103,12 @@ public class ImagesDialog extends BDialog {
         addAsListener(this);
 
         // Close the dialog when Esc is pressed
-        String cancelName = "cancel";
-        String okName = "ok";
-        InputMap inputMap = this.getComponent().getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), okName);
-        ActionMap actionMap = this.getComponent().getRootPane().getActionMap();
-        actionMap.put(cancelName, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cancel();
-            }
-        });
-        actionMap.put(okName, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                close();
-            }
-        });
+        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+        ActionListener cancelAction = e -> cancel();
+        ActionListener okAction = e -> close();
+        this.getComponent().getRootPane().registerKeyboardAction(cancelAction, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        this.getComponent().getRootPane().registerKeyboardAction(okAction, enter, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         this.getComponent().addWindowListener(new WindowAdapter() {
@@ -644,24 +632,12 @@ public class ImagesDialog extends BDialog {
             });
 
             // Close the dialog when Esc is pressed
-            String cancelName = "cancel";
-            String okName = "ok";
-            InputMap inputMap = this.getComponent().getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), okName);
-            ActionMap actionMap = this.getComponent().getRootPane().getActionMap();
-            actionMap.put(cancelName, new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    close();
-                }
-            });
-            actionMap.put(okName, new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    deleteAndClose();
-                }
-            });
+            KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+            KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+            ActionListener cancelAction = e -> close();
+            ActionListener okAction = e -> deleteAndClose();
+            this.getComponent().getRootPane().registerKeyboardAction(cancelAction, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            this.getComponent().getRootPane().registerKeyboardAction(okAction, enter, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         }
 
