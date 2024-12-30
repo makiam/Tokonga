@@ -24,10 +24,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -270,16 +267,9 @@ public class ScriptedObjectEditorWindow extends BFrame {
                 }
             });
 
-            String cancelName = "cancel";
-            InputMap inputMap = this.getComponent().getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelName);
-            ActionMap actionMap = this.getComponent().getRootPane().getActionMap();
-            actionMap.put(cancelName, new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    cancel();
-                }
-            });
+            KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+            ActionListener cancelAction = e -> cancel();
+            this.getComponent().getRootPane().registerKeyboardAction(cancelAction, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
             pack();
             UIUtilities.centerDialog(this, owner);
