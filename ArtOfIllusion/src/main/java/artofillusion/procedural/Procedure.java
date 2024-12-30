@@ -24,6 +24,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,8 +54,8 @@ public class Procedure {
     /**
      * Get the list of all other modules.
      */
-    public Module[] getModules() {
-        return modules.toArray(Module[]::new);
+    public List<Module> getModules() {
+        return Collections.unmodifiableList(modules);
     }
 
     /**

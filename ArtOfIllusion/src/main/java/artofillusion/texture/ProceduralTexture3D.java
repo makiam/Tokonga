@@ -178,12 +178,7 @@ public class ProceduralTexture3D extends Texture3D implements ProcedureOwner {
      */
     @Override
     public boolean usesImage(ImageMap image) {
-        for (var       module: proc.getModules()) {
-            if (module instanceof ImageModule && ((ImageModule) module).getMap() == image) {
-                return true;
-            }
-        }
-        return false;
+        return proc.getModules().stream().anyMatch(module -> module instanceof ImageModule && ((ImageModule) module).getMap() == image);
     }
 
     @Override
