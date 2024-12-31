@@ -61,8 +61,8 @@ public class KeystrokePreferencesPanel extends FormContainer implements Preferen
         add(buttons, 0, 1, new LayoutInfo());
         buttons.add(editButton = Translate.button("edit", "...", this, "editRecord"));
 
-        buttons.add(Translate.button("add", "...", this, "addRecord"));
-        buttons.add(deleteButton = Translate.button("delete", this, "deleteRecords"));
+        buttons.add(Translate.button("add", "...", event -> addRecord()));
+        buttons.add(deleteButton = Translate.button("delete", event -> deleteRecords()));
         selectionChanged();
     }
 

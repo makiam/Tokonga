@@ -17,6 +17,12 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
+import javax.swing.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.util.*;
 
@@ -413,12 +419,19 @@ public class ConstraintTrack extends Track {
             orientPanel.add(objSelector);
             content.add(orientPanel, 0, 5, 3, 1, new LayoutInfo());
             RowContainer buttons = new RowContainer();
-            buttons.add(Translate.button("ok", this, "doOk"));
-            buttons.add(Translate.button("cancel", this, "dispose"));
+            buttons.add(Translate.button("ok", event -> doOk()));
+            buttons.add(Translate.button("cancel", event -> dispose()));
             content.add(buttons, 0, 6, 3, 1, new LayoutInfo());
-            for (Widget w : UIUtilities.findAllChildren(this)) {
-                w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
-            }
+
+            KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+            ActionListener action = e -> dispose();
+            this.getComponent().getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            this.getComponent().addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    Editor.this.dispose();
+                }
+            });
             pack();
             UIUtilities.centerDialog(this, win);
             updateComponents();

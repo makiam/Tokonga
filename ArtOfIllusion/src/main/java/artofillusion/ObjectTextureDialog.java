@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2015 by Peter Eastman
-   Changes copyright (C) 2016-2023 by Maksim Khramov
+   Changes copyright (C) 2016-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,11 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
+import java.util.Optional;
+
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
@@ -152,7 +156,7 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
         texListPanel = new FormContainer(new double[]{1.0}, new double[]{1.0, 0.0});
         texListPanel.add(UIUtilities.createScrollingList(texList), 0, 0, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
         RowContainer texButtonRow = new RowContainer();
-        texButtonRow.add(texMapButton = Translate.button("editMapping", this, "doEditTextureMapping"));
+        texButtonRow.add(texMapButton = Translate.button("editMapping", event -> doEditTextureMapping()));
         texButtonRow.add(newTextureChoice = new BComboBox());
         newTextureChoice.add(Translate.text("button.newTexture"));
 
@@ -175,7 +179,7 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
         matListPanel.add(new BLabel(title), 0, 0);
         matListPanel.add(UIUtilities.createScrollingList(matList), 0, 1, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
         RowContainer matButtonRow = new RowContainer();
-        matButtonRow.add(matMapButton = Translate.button("editMapping", this, "doEditMaterialMapping"));
+        matButtonRow.add(matMapButton = Translate.button("editMapping", event -> doEditMaterialMapping()));
         matButtonRow.add(newMaterialChoice = new BComboBox());
         newMaterialChoice.add(Translate.text("button.newMaterial"));
 
@@ -190,10 +194,10 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
         // Create the section of the window for layered textures.
         layerPanel = new FormContainer(new double[]{1.0, 1.0}, new double[]{0.0, 0.0, 0.0, 0.0, 1.0});
         layerPanel.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(2, 2, 2, 2), null));
-        layerPanel.add(addLayerButton = Translate.button("add", " >>", this, "doAddLayer"), 0, 0);
-        layerPanel.add(deleteLayerButton = Translate.button("delete", this, "doDeleteLayer"), 0, 1);
-        layerPanel.add(moveUpButton = Translate.button("moveUp", this, "doMoveLayerUp"), 0, 2);
-        layerPanel.add(moveDownButton = Translate.button("moveDown", this, "doMoveLayerDown"), 0, 3);
+        layerPanel.add(addLayerButton = Translate.button("add", " >>", event -> doAddLayer()), 0, 0);
+        layerPanel.add(deleteLayerButton = Translate.button("delete", event -> doDeleteLayer()), 0, 1);
+        layerPanel.add(moveUpButton = Translate.button("moveUp", event -> doMoveLayerUp()), 0, 2);
+        layerPanel.add(moveDownButton = Translate.button("moveDown", event -> doMoveLayerDown()), 0, 3);
         layerList = new BList() {
             @Override
             public Dimension getPreferredSize() {
@@ -233,8 +237,8 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
         RowContainer buttons = new RowContainer();
         content.add(buttons, BorderContainer.SOUTH, new LayoutInfo());
         buttons.add(Translate.button("texturesAndMaterials", event -> doEditTextures()));
-        buttons.add(Translate.button("ok", this, "doOk"));
-        buttons.add(Translate.button("cancel", this, "doCancel"));
+        buttons.add(Translate.button("ok", event -> doOk()));
+        buttons.add(Translate.button("cancel", event -> doCancel()));
 
         // Create the parameters panel.
         paramsPanel = new FormContainer(1, 2);
@@ -254,7 +258,13 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
         }
         pack();
         setResizable(false);
-        addEventLink(WindowClosingEvent.class, this, "dispose");
+
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                ObjectTextureDialog.this.dispose();
+            }
+        });
         UIUtilities.centerDialog(this, parent);
         updateComponents();
         scene.addTextureListener(this);
@@ -613,9 +623,7 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
 
     private void doCancel() {
         dispose();
-        if (callback != null) {
-            callback.run();
-        }
+        Optional.ofNullable(callback).ifPresent(action -> action.run());
     }
 
     private void paramTypeChanged(ValueChangedEvent ev) {

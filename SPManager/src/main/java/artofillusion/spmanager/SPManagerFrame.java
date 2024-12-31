@@ -1,6 +1,6 @@
 /*
  *  Copyright 2004 Francois Guillet
- *  Changes copyright 2022-2023 by Maksim Khramov
+ *  Changes copyright 2022-2024 by Maksim Khramov
  *
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
@@ -12,6 +12,7 @@
 package artofillusion.spmanager;
 
 import artofillusion.*;
+import artofillusion.ui.Translate;
 import artofillusion.ui.UIUtilities;
 import buoy.event.*;
 import buoy.widget.*;
@@ -105,9 +106,9 @@ public class SPManagerFrame extends BFrame {
 
         //buttons setup
         RowContainer buttons = new RowContainer();
-        buttons.add(SPMTranslate.bButton("setup", this, "doSetup"));
-        buttons.add(SPMTranslate.bButton("rescan", this, "doRescan"));
-        buttons.add(SPMTranslate.bButton("close", this, "hideSPManager"));
+        buttons.add(Translate.button("spmanager:setup", event -> doSetup()));
+        buttons.add(Translate.button("spmanager:rescan", event -> doRescan()));
+        buttons.add(Translate.button("spmanager:close", event -> hideSPManager()));
         cc.add(buttons, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(3, 0, 0, 0), null));
 
         cc.add(new BOutline(statusLabel, BorderFactory.createTitledBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED), SPMTranslate.text("remoteStatus"))), new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets(1, 1, 1, 1), new Dimension(0, 0)));

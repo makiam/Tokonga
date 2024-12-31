@@ -179,8 +179,8 @@ public class UVMappingEditorDialog extends BDialog {
         setContent(content);
         RowContainer buttons = new RowContainer();
         buttons.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(2, 2, 2, 2), new Dimension(0, 0)));
-        buttons.add(Translate.button("ok", this, "doOk"));
-        buttons.add(Translate.button("cancel", this, "doCancel"));
+        buttons.add(Translate.button("ok", event -> doOk()));
+        buttons.add(Translate.button("cancel", event -> doCancel()));
         content.add(buttons,
                 BorderContainer.SOUTH,
                 new LayoutInfo(LayoutInfo.CENTER,
@@ -1371,7 +1371,7 @@ public class UVMappingEditorDialog extends BDialog {
             rightBox.add(blackButton = new BRadioButton(Translate.text("polymesh:useBlack"), false, colorButtons), radioLayout);
 
             actionContainer.add(exportButton = new BButton(Translate.text("polymesh:exportImage")));
-            actionContainer.add(Translate.button("cancel", this, "close"));
+            actionContainer.add(Translate.button("cancel", event -> close()));
 
             transparentButton.addEventLink(ValueChangedEvent.class, this, "updateDialogState");
             whiteButton.addEventLink(ValueChangedEvent.class, this, "updateDialogState");

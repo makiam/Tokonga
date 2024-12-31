@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2005 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,7 +17,13 @@ import artofillusion.math.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 
 /**
@@ -372,9 +378,18 @@ public class ImageMapTexture extends Texture2D {
 
             // Add the buttons at the bottom.
             RowContainer buttons = new RowContainer();
-            buttons.add(Translate.button("ok", this, "doOk"));
-            buttons.add(Translate.button("cancel", this, "dispose"));
+            buttons.add(Translate.button("ok", event -> doOk()));
+            buttons.add(Translate.button("cancel", event -> dispose()));
             content.add(buttons, BorderContainer.SOUTH, new LayoutInfo());
+            KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+            ActionListener action = e -> dispose();
+            this.getComponent().getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            this.getComponent().addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    ImageMapTexture.Editor.this.dispose();
+                }
+            });
 
             // Add the left panel.
             FormContainer left = new FormContainer(2, 6);

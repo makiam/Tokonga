@@ -1,6 +1,6 @@
 /*
  *  Copyright 2004 Francois Guillet
- *  Changes copyright 2022-2023 by Maksim Khramov
+ *  Changes copyright 2022-2024 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -447,11 +447,11 @@ public class SPManagerPlugin implements Plugin {
                 setText(name);
                 setProgressText(SPMTranslate.text("clickStart"));
 
-                okbtn = SPMTranslate.bButton("start", this, "ok");
+                okbtn = Translate.button("spmanager:start", this, "ok");
 
                 buttons = new RowContainer();
                 buttons.add(okbtn);
-                buttons.add(Translate.button("cancel", this, "close"));
+                buttons.add(Translate.button("cancel", null, event -> close()));
 
                 okbtn.setActionCommand("ok");
 
@@ -500,7 +500,7 @@ public class SPManagerPlugin implements Plugin {
                                 savePath = new BTextField("", 25);
                                 savePath.addEventLink(ValueChangedEvent.class, this, "savePath");
                                 row.add(savePath);
-                                row.add(SPMTranslate.bButton("browse", this, "browse"));
+                                row.add(Translate.button("spmanager:browse", event -> browse()));
                                 col.remove(buttons);
                                 col.add(row);
                                 col.add(buttons);

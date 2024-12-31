@@ -1,6 +1,6 @@
 /*
  *  Copyright 2004 Francois Guillet
- *  Changes copyright 2022-2023 by Maksim Khramov
+ *  Changes copyright 2022-2024 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -39,7 +39,7 @@ public class ManageSplitPane extends SPMSplitPane {
         acceptsFileSelection = false;
         //initialise button
         LayoutInfo layout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(0, 0, 0, 0), new Dimension(0, 0));
-        buttonRow.add(deleteButton = SPMTranslate.bButton("deleteFile", this, "doDelete"), layout);
+        buttonRow.add(deleteButton = Translate.button("spmanager:deleteFile", event -> doDelete()), layout);
         deleteButton.setIcon(new ImageIcon(getClass().getResource("/artofillusion/spmanager/icons/Delete16.gif")));
         deleteButton.setText(SPMTranslate.text("deleteScript"));
         deleteButton.setEnabled(false);

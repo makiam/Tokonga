@@ -63,8 +63,8 @@ public class SkinDialog extends ToolDialog {
         ColumnContainer col = new ColumnContainer();
         content.add(col, 1, 0);
         col.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(2, 2, 2, 2), null));
-        col.add(upButton = Translate.button("Tools:skin.dialog.move.up", this, "doMoveUp"));
-        col.add(downButton = Translate.button("Tools:skin.dialog.move.down", this, "doMoveDown"));
+        col.add(upButton = Translate.button("Tools:skin.dialog.move.up", event -> doMoveUp()));
+        col.add(downButton = Translate.button("Tools:skin.dialog.move.down", event -> doMoveDown()));
         col.add(reverseBox = new BCheckBox(Translate.text("Tools:skin.dialog.reverse"), false));
         reverseBox.addEventLink(ValueChangedEvent.class, this, "selectionChanged");
         content.add(preview = new ObjectPreviewCanvas(null), 2, 0);

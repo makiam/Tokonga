@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2009 by Peter Eastman
-   Changes copyright (C) 2022-2023 by Maksim Khramov
+   Changes copyright (C) 2022-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -19,11 +19,17 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.*;
 import java.util.List;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.swing.*;
 
 /**
  * This is dialog in which the user can edit the list of filters attached to a camera.
@@ -75,11 +81,22 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
         preview.addEventLink(RepaintEvent.class, this, "paintPreview");
         preview.setPreferredSize(new Dimension(PREVIEW_WIDTH, PREVIEW_HEIGHT));
         previewPanel.add(preview, BorderContainer.CENTER);
-        previewPanel.add(Translate.button("configurePreview", this, "doConfigure"), BorderContainer.SOUTH, new LayoutInfo());
+        previewPanel.add(Translate.button("configurePreview", event -> doConfigure()), BorderContainer.SOUTH, new LayoutInfo());
 
         // Create the OK and Cancel buttons.
-        okPanel.add(Translate.button("ok", this, "doOk"));
-        okPanel.add(Translate.button("cancel", this, "doCancel"));
+        okPanel.add(Translate.button("ok", event -> doOk()));
+        okPanel.add(Translate.button("cancel", event -> doCancel()));
+
+        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        ActionListener action = e -> doCancel();
+        this.getComponent().getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                CameraFilterDialog.this.doCancel();
+            }
+        });
 
         // Begin rendering the preview.
         savedConfiguration = previewRenderer.getConfiguration();
@@ -307,9 +324,9 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
             listsPanel.add(UIUtilities.createScrollingList(cameraFiltersList = new BList()), 2, 0, fillLayout);
             buttonsPanel.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(2, 2, 2, 2), null));
             buttonsPanel.add(addButton = Translate.button("add", " >>", this, "doAdd"));
-            buttonsPanel.add(deleteButton = Translate.button("delete", this, "doDelete"));
-            buttonsPanel.add(upButton = Translate.button("moveUp", this, "doMoveUp"));
-            buttonsPanel.add(downButton = Translate.button("moveDown", this, "doMoveDown"));
+            buttonsPanel.add(deleteButton = Translate.button("delete", event -> doDelete()));
+            buttonsPanel.add(upButton = Translate.button("moveUp", event -> doMoveUp()));
+            buttonsPanel.add(downButton = Translate.button("moveDown", event -> doMoveDown()));
             allFiltersList.addEventLink(SelectionChangedEvent.class, this, "updateComponents");
             cameraFiltersList.addEventLink(SelectionChangedEvent.class, this, "updateComponents");
             allFiltersList.setMultipleSelectionEnabled(false);

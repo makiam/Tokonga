@@ -100,13 +100,13 @@ public class ActorEditorWindow extends BDialog {
         FormContainer leftPanel = new FormContainer(new double[]{1}, new double[]{0, 0, 0, 0, 0, 1, 0, 0});
         content.add(leftPanel, 0, 1);
         leftPanel.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(2, 2, 2, 2), null));
-        leftPanel.add(editButton = Translate.button("edit", this, "doEdit"), 0, 1);
-        leftPanel.add(renameButton = Translate.button("rename", this, "doRename"), 0, 2);
-        leftPanel.add(copyButton = Translate.button("duplicate", this, "doDuplicate"), 0, 3);
-        leftPanel.add(deleteButton = Translate.button("delete", this, "doDelete"), 0, 4);
-        leftPanel.add(saveButton = Translate.button("save", "...", this, "doSave"), 0, 6);
-        BButton extractButton;
-        leftPanel.add(extractButton = Translate.button("extract", "...", this, "doExtract"), 0, 7);
+        leftPanel.add(editButton = Translate.button("edit", event -> doEdit()), 0, 1);
+        leftPanel.add(renameButton = Translate.button("rename", event -> doRename()), 0, 2);
+        leftPanel.add(copyButton = Translate.button("duplicate", event -> doDuplicate()), 0, 3);
+        leftPanel.add(deleteButton = Translate.button("delete", event -> doDelete()), 0, 4);
+        leftPanel.add(saveButton = Translate.button("save", "...", event -> doSave()), 0, 6);
+
+        leftPanel.add(Translate.button("extract", "...", event -> doExtract()), 0, 7);
 
         // The Add and Remove buttons.
         ColumnContainer addRemovePanel = new ColumnContainer();
@@ -140,10 +140,8 @@ public class ActorEditorWindow extends BDialog {
         // The buttons at the bottom.
         RowContainer bottomPanel = new RowContainer();
         content.add(bottomPanel, 0, 2, 3, 1, new LayoutInfo());
-        BButton okButton;
-        bottomPanel.add(okButton = Translate.button("ok", this, "doOk"));
-        BButton cancelButton;
-        bottomPanel.add(cancelButton = Translate.button("cancel", this, "dispose"));
+        bottomPanel.add(Translate.button("ok", event -> doOk()));
+        bottomPanel.add(Translate.button("cancel", event -> dispose()));
         pack();
         UIUtilities.centerDialog(this, parent.getFrame());
         updateComponents();

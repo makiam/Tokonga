@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2007 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -59,7 +59,7 @@ public class ExternalObjectEditingWindow extends BDialog {
         LayoutInfo labelLayout = new LayoutInfo(LayoutInfo.EAST, LayoutInfo.NONE, new Insets(2, 2, 2, 2), null);
         content.add(Translate.label("externalObject.sceneFile"), 0, 0, labelLayout);
         content.add(fileField = new BTextField(theObject.getExternalSceneFile().getAbsolutePath(), 30), 1, 0);
-        content.add(Translate.button("browse", this, "doBrowseFile"), 2, 0);
+        content.add(Translate.button("browse", event -> doBrowseFile()), 2, 0);
         fileField.setEditable(false);
         itemTree = new TreeList(parentWindow);
         itemTree.setPreferredSize(new Dimension(130, 100));
@@ -74,8 +74,8 @@ public class ExternalObjectEditingWindow extends BDialog {
         content.add(includeChildrenBox, 0, 2, 3, 1);
         RowContainer buttons = new RowContainer();
         content.add(buttons, 0, 3, 3, 1, new LayoutInfo());
-        buttons.add(okButton = Translate.button("ok", this, "doOk"));
-        buttons.add(Translate.button("cancel", this, "dispose"));
+        buttons.add(okButton = Translate.button("ok", event -> doOk()));
+        buttons.add(Translate.button("cancel", event -> dispose()));
         loadExternalScene();
         buildObjectTree();
         selectionChanged();

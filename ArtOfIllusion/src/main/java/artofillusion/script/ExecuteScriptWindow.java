@@ -1,6 +1,6 @@
 /* Copyright (C) 2002-2013 by Peter Eastman
    Changes Copyright (C) 2023 by Lucas Stanek
-   Changes Copyright (C) 2023 by Maksim Khramov
+   Changes Copyright (C) 2023-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,12 +17,13 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.prefs.Preferences;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -126,11 +127,9 @@ public class ExecuteScriptWindow extends BFrame {
 
         // another center row for the "execute selected" and various debugging items
         RowContainer debugTools = new RowContainer();
-        debugTools.add(Translate.button("executeScript", this, "executeScript"));
-        BButton executeToCursor;
-        debugTools.add(executeToCursor = Translate.button("executeToCursor", this, "executeToCursor"));
-
-        debugTools.add(Translate.button("executeSelected", this, "executeSelected"));
+        debugTools.add(Translate.button("executeScript", event -> executeScript()));
+        debugTools.add(Translate.button("executeToCursor", event -> executeToCursor()));
+        debugTools.add(Translate.button("executeSelected", event -> executeSelected()));
 
         tools.add(debugTools, BorderContainer.CENTER, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE));
 
@@ -142,8 +141,13 @@ public class ExecuteScriptWindow extends BFrame {
             languageChoice.setEnabled(false);
         }
         tools.add(languageRow, BorderContainer.EAST, new LayoutInfo(LayoutInfo.EAST, LayoutInfo.NONE));
-        //buttons.add(Translate.button("close", this, "closeWindow"));
-        addEventLink(WindowClosingEvent.class, this, "closeWindow");
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                ExecuteScriptWindow.this.closeWindow();
+            }
+        });
+
         languageChoice.addEventLink(ValueChangedEvent.class, this, "updateLanguage");
         scriptWidget.getContent().setCaretPosition(0);
         pack();

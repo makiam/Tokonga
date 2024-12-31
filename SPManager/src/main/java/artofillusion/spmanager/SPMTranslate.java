@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2003 by Francois Guillet
  *  Copyright (C) 2003 by Peter Eastman for original Translate.java code
- *  Changes copyright 2023 by Maksim Khramov
+ *  Changes copyright 2023-2024 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -11,7 +11,6 @@
  */
 package artofillusion.spmanager;
 
-import artofillusion.ui.Translate;
 import buoy.event.*;
 import buoy.widget.*;
 import java.text.*;
@@ -36,20 +35,6 @@ public class SPMTranslate {
     public static void setLocale(Locale l) {
         resources = ResourceBundle.getBundle("spmanager", l);
     }
-
-    /**
-     * Description of the Method
-     *
-     * @param name Description of the Parameter
-     * @param target Description of the Parameter
-     * @param method Description of the Parameter
-     * @return Description of the Return Value
-     */
-    public static BButton bButton(String name, Object target, String method) {
-        return Translate.button(RESOURCE + name, target, method);
-    }
-
-    private static final String RESOURCE = "spmanager:";
 
     /**
      * Description of the Method

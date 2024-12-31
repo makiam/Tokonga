@@ -1,5 +1,5 @@
 /* Copyright (C) 2011 by Helge Hansen and Peter Eastman
-   Changes copyright (C) 2016-2023 by Maksim Khramov
+   Changes copyright (C) 2016-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,6 +17,8 @@ import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
 import java.awt.datatransfer.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
@@ -167,16 +169,23 @@ public class TexturesAndMaterialsDialog extends BDialog {
         buttons.add(new BSeparator());
 
         buttons.add(new BLabel(Translate.text("libraryFunctions"), BLabel.CENTER));
-        buttons.add(loadLibButton = Translate.button("loadFromLibrary", this, "doLoadFromLibrary"));
-        buttons.add(saveLibButton = Translate.button("saveToLibrary", this, "doSaveToLibrary"));
-        buttons.add(deleteLibButton = Translate.button("deleteFromLibrary", this, "doDeleteFromLibrary"));
-        buttons.add(Translate.button("newLibraryFile", this, "doNewLib"));
-        buttons.add(Translate.button("showExternalFile", this, "doIncludeLib"));
+        buttons.add(loadLibButton = Translate.button("loadFromLibrary", event -> doLoadFromLibrary()));
+        buttons.add(saveLibButton = Translate.button("saveToLibrary", event -> doSaveToLibrary()));
+        buttons.add(deleteLibButton = Translate.button("deleteFromLibrary", event -> doDeleteFromLibrary()));
+        buttons.add(Translate.button("newLibraryFile", event -> doNewLib()));
+        buttons.add(Translate.button("showExternalFile", event -> doIncludeLib()));
 
         highlightButtons();
 
-        addEventLink(WindowClosingEvent.class, this, "dispose");
-
+        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        ActionListener action = e -> dispose();
+        this.getComponent().getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                TexturesAndMaterialsDialog.this.dispose();
+            }
+        });
         rootNodes = new ArrayList<>();
         showTextures = true;
         showMaterials = true;

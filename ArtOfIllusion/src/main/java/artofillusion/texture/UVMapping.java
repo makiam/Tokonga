@@ -361,7 +361,7 @@ public class UVMapping extends Mapping2D {
             this.preview = preview;
 
             // Add the various components to the Panel.
-            add(Translate.button("editUVCoords", this, "doEdit"), 0, 0);
+            add(Translate.button("editUVCoords", event -> doEdit()), 0, 0);
             RowContainer applyRow = new RowContainer();
             applyRow.add(new BLabel(Translate.text("applyTo") + ":"));
             applyRow.add(applyToChoice = new BComboBox(new String[]{
