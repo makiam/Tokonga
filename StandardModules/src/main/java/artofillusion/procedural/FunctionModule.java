@@ -478,8 +478,8 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
             row.add(yField = new ValueField(Double.NaN, ValueField.NONE));
             xField.addEventLink(ValueChangedEvent.class, this, "textChanged");
             yField.addEventLink(ValueChangedEvent.class, this, "textChanged");
-            row.add(Translate.button("add", this, "doAdd"));
-            row.add(deleteButton = Translate.button("delete", this, "doDelete"));
+            row.add(Translate.button("add", event -> doAdd()));
+            row.add(deleteButton = Translate.button("delete", event -> doDelete()));
             RowContainer checkboxRow = new RowContainer();
             content.add(checkboxRow, 0, 3);
             checkboxRow.add(repeatBox = new BCheckBox(Translate.text("Modules:functionIsPeriodic"), repeat));
@@ -488,8 +488,8 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
             smoothBox.addEventLink(ValueChangedEvent.class, this, "functionChanged");
             RowContainer buttons = new RowContainer();
             content.add(buttons, 0, 4);
-            buttons.add(Translate.button("ok", this, "doOk"));
-            buttons.add(Translate.button("cancel", this, "dispose"));
+            buttons.add(Translate.button("ok", event -> doOk()));
+            buttons.add(Translate.button("cancel", event -> dispose()));
             hFormat = NumberFormat.getInstance();
             vFormat = NumberFormat.getInstance();
             hFormat.setMaximumFractionDigits(1);

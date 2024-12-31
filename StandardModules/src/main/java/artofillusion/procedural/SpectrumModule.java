@@ -320,14 +320,14 @@ public class SpectrumModule extends ProceduralModule<SpectrumModule> {
             row.add(new BLabel(Translate.text("Color") + ":"));
             row.add(preview = color[0].getSample(30, 20));
             preview.addEventLink(MouseClickedEvent.class, this, "selectColor");
-            row.add(Translate.button("add", this, "doAdd"));
-            row.add(deleteButton = Translate.button("delete", this, "doDelete"));
+            row.add(Translate.button("add", event -> doAdd()));
+            row.add(deleteButton = Translate.button("delete", event -> doDelete()));
             content.add(repeatBox = new BCheckBox(Translate.text("Modules:functionIsPeriodic"), repeat), 0, 3);
             repeatBox.addEventLink(ValueChangedEvent.class, this, "repeatChanged");
             RowContainer buttons = new RowContainer();
             content.add(buttons, 0, 4);
-            buttons.add(Translate.button("ok", this, "doOk"));
-            buttons.add(Translate.button("cancel", this, "doCancel"));
+            buttons.add(Translate.button("ok", event -> doOk()));
+            buttons.add(Translate.button("cancel", event -> doCancel()));
             adjustComponents();
             handlePos = new Point[index.length];
             for (int i = 0; i < index.length; i++) {
