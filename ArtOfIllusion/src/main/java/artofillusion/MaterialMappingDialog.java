@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2004 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,15 +11,22 @@
 
 package artofillusion;
 
+import artofillusion.animation.JointEditorDialog;
 import artofillusion.material.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.lang.reflect.*;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.swing.*;
 
 /**
  * This class implements the dialog box which is used to choose material mappings for objects.
@@ -80,9 +87,17 @@ public class MaterialMappingDialog extends BDialog {
         // Add the buttons at the bottom.
         RowContainer row = new RowContainer();
         content.add(row, 0, 3);
-        row.add(Translate.button("ok", this, "dispose"));
-        row.add(Translate.button("cancel", this, "doCancel"));
-
+        row.add(Translate.button("ok", event -> dispose()));
+        row.add(Translate.button("cancel", event -> doCancel()));
+        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        ActionListener action = e -> doCancel();
+        this.getComponent().getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                MaterialMappingDialog.this.doCancel();
+            }
+        });
         // Show the dialog.
         pack();
         UIUtilities.centerDialog(this, parent);
