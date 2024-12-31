@@ -50,8 +50,8 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         content.add(helpText = new BLabel(), 0, 1, 2, 1);
         content.add(viewsContainer, 1, 0);
         RowContainer buttons = new RowContainer();
-        buttons.add(Translate.button("ok", this, "doOk"));
-        buttons.add(Translate.button("cancel", this, "doCancel"));
+        buttons.add(Translate.button("ok", event -> doOk()));
+        buttons.add(Translate.button("cancel", event -> doCancel()));
         content.add(buttons, 0, 2, 2, 1, new LayoutInfo());
         FormContainer toolsContainer = new FormContainer(new double[]{1}, new double[]{1, 0});
         toolsContainer.setDefaultLayout(new LayoutInfo(LayoutInfo.NORTH, LayoutInfo.BOTH));
