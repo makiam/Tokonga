@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,9 +18,15 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.swing.*;
 
 /**
  * This class implements the dialog box in which the user can watch a scene being rendered.
@@ -106,9 +112,9 @@ public class RenderingDialog extends BDialog implements RenderListener {
         content.setDefaultLayout(new LayoutInfo(LayoutInfo.WEST, LayoutInfo.HORIZONTAL, new Insets(2, 2, 2, 2), null));
         content.add(label1 = new BLabel(Translate.text("Rendering", "...")), 0, 0);
         content.add(label2 = new BLabel(Translate.text("elapsedTime", "0:00")), 0, 1);
-        content.add(closeButton = Translate.button("cancel", this, "doCancel"), 2, 0);
-        content.add(saveButton = Translate.button("save", this, "doSave"), 2, 1);
-        content.add(filterButton = Translate.button("filter", this, "doFilter"), 1, 1);
+        content.add(closeButton = Translate.button("cancel", event -> doCancel()), 2, 0);
+        content.add(saveButton = Translate.button("save", event -> doSave()), 2, 1);
+        content.add(filterButton = Translate.button("filter", event -> doFilter()), 1, 1);
         closeButton.setFocusable(false);
         saveButton.setVisible(false);
         filterButton.setVisible(false);
@@ -120,7 +126,16 @@ public class RenderingDialog extends BDialog implements RenderListener {
         pack();
         UIUtilities.centerDialog(this, parent);
         UIUtilities.fitWindowToScreen(this);
-        addEventLink(WindowClosingEvent.class, this, "doCancel");
+        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        ActionListener action = e -> doCancel();
+        this.getComponent().getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                RenderingDialog.this.doCancel();
+            }
+        });
+
     }
 
     private void doCancel() {
