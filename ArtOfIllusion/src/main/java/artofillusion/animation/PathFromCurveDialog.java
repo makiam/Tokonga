@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2011 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,7 +17,13 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
+import javax.swing.*;
 import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.*;
 import java.util.List;
 import java.util.Vector;
@@ -118,10 +124,17 @@ public class PathFromCurveDialog extends BDialog {
         endTimeField.setValue(curveLength);
         RowContainer buttons = new RowContainer();
         content.add(buttons, 0, 4, 4, 1);
-        buttons.add(okButton = Translate.button("ok", this, "doOk"));
-        
-        buttons.add(Translate.button("cancel", this, "dispose"));
-
+        buttons.add(okButton = Translate.button("ok", event -> doOk()));
+        buttons.add(Translate.button("cancel", event -> dispose()));
+        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        ActionListener action = e -> dispose();
+        this.getComponent().getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                PathFromCurveDialog.this.dispose();
+            }
+        });
         // Show the dialog.
         pack();
         updateComponents();

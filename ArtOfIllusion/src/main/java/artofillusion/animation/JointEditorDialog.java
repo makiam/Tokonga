@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2004 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2024 by Maksim Khramov
    Changes Copyright (C) 2020 Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -19,7 +19,13 @@ import artofillusion.math.*;
 import artofillusion.animation.Joint.*;
 import buoy.event.*;
 import buoy.widget.*;
+
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.*;
 import java.awt.geom.*;
 import java.util.*;
@@ -72,12 +78,22 @@ public class JointEditorDialog extends BDialog {
             lengthPanel.setEnabled(false);
         }
         RowContainer buttons = new RowContainer();
-        buttons.add(okButton = Translate.button("ok", this, "doOk"));
+        buttons.add(okButton = Translate.button("ok", event -> doOk()));
 
-        buttons.add(Translate.button("cancel", this, "doCancel"));
+        buttons.add(Translate.button("cancel", event -> doCancel()));
+        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        ActionListener action = e -> doCancel();
+        this.getComponent().getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+
         content.add(buttons, BorderContainer.SOUTH, new LayoutInfo());
         setResizable(false);
-        addEventLink(WindowClosingEvent.class, this, "doCancel");
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                JointEditorDialog.this.doCancel();
+            }
+        });
         pack();
         setVisible(true);
     }
