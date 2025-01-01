@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -54,12 +53,12 @@ class WeightTrackTest {
     @DisplayName("Test Duplicate Weight Track")
     void testDuplicateWeightTrack() {
         WeightTrack weight = new WeightTrack(parent);
-        Track dup = weight.duplicate(parent);
+        WeightTrack dup = weight.duplicate(parent);
         Assertions.assertNotNull(dup);
-        Assertions.assertTrue(dup instanceof WeightTrack);
+
         Assertions.assertNotEquals(weight, dup);
         Assertions.assertEquals("Weight", dup.getName());
-        Assertions.assertEquals(parent, ((WeightTrack) dup).parent);
+        Assertions.assertEquals(parent, dup.parent);
         Assertions.assertTrue(weight.isEnabled());
     }
 
@@ -68,13 +67,13 @@ class WeightTrackTest {
     void testCopyWeightTrack() {
         WeightTrack weight = new WeightTrack(parent);
         weight.setSmoothingMethod(Timecourse.DISCONTINUOUS);
-        Track dupParent = new DummyTrack();
-        Track dup = new WeightTrack(dupParent);
+        DummyTrack dupParent = new DummyTrack();
+        WeightTrack dup = new WeightTrack(dupParent);
         dup.copy(weight);
-        Assertions.assertTrue(dup instanceof WeightTrack);
+
         Assertions.assertNotEquals(weight, dup);
         Assertions.assertEquals("Weight", dup.getName());
-        Assertions.assertEquals(dupParent, ((WeightTrack) dup).parent);
+        Assertions.assertEquals(dupParent, dup.parent);
         Assertions.assertTrue(weight.isEnabled());
         Assertions.assertEquals(dup.getSmoothingMethod(), weight.getSmoothingMethod());
     }
@@ -94,8 +93,8 @@ class WeightTrackTest {
             ByteBuffer wrap = ByteBuffer.allocate(12);
             // Track Version
             wrap.putShort((short) 1);
-            Track track = new WeightTrack(parent);
-            track.initFromStream(StreamUtil.stream(wrap), (Scene) null);
+            WeightTrack track = new WeightTrack(parent);
+            track.initFromStream(StreamUtil.stream(wrap), null);
         });
     }
 
@@ -124,8 +123,8 @@ class WeightTrackTest {
                 wrap.putDouble(1);
             }
         }
-        Track track = new WeightTrack(parent);
-        track.initFromStream(StreamUtil.stream(wrap), (Scene) null);
+        WeightTrack track = new WeightTrack(parent);
+        track.initFromStream(StreamUtil.stream(wrap), null);
         Assertions.assertTrue(track.isEnabled());
         Assertions.assertEquals(Timecourse.LINEAR, track.getSmoothingMethod());
         Assertions.assertEquals(1, track.getKeyTimes().length);
