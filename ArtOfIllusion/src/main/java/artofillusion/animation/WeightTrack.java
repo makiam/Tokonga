@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman
-   Changes copyright (C) 2020-2021 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -20,13 +20,13 @@ import java.io.*;
 /**
  * This is a Track which controls the weight given to another track.
  */
-public class WeightTrack extends Track {
+public class WeightTrack extends Track<WeightTrack> {
 
-    final Track parent;
+    final Track<? extends Track> parent;
     Timecourse tc;
     int smoothingMethod;
 
-    public WeightTrack(Track parent) {
+    public WeightTrack(Track<? extends Track> parent) {
         super("Weight");
         this.parent = parent;
         tc = new Timecourse(new Keyframe[0], new double[0], new Smoothness[0]);
@@ -71,14 +71,13 @@ public class WeightTrack extends Track {
 
     /* Make this track identical to another one. */
     @Override
-    public void copy(Track tr) {
-        WeightTrack t = (WeightTrack) tr;
+    public void copy(WeightTrack track) {
 
-        name = t.name;
-        enabled = t.enabled;
-        quantized = t.quantized;
-        smoothingMethod = t.smoothingMethod;
-        tc = t.tc.duplicate(null);
+        name = track.name;
+        enabled = track.enabled;
+        quantized = track.quantized;
+        smoothingMethod = track.smoothingMethod;
+        tc = track.tc.duplicate(null);
     }
 
     /* Get the timecourse for this track. */
@@ -197,7 +196,7 @@ public class WeightTrack extends Track {
      * Initialize this tracked based on its serialized representation as written by writeToStream().
      */
     @Override
-    public void initFromStream(DataInputStream in, Scene scene) throws IOException, InvalidObjectException {
+    public void initFromStream(DataInputStream in, Scene scene) throws IOException {
         short version = in.readShort();
         if (version != 0) {
             throw new InvalidObjectException("");

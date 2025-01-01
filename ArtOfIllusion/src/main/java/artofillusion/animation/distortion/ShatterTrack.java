@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2004 by Peter Eastman
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -21,10 +21,16 @@ import java.io.*;
 /**
  * This is a Track which applies a ShatterDistortion to an object.
  */
-public class ShatterTrack extends Track {
+public class ShatterTrack extends Track<ShatterTrack> {
 
     ObjectInfo info;
-    double startTime, size, speed, randomness, gravity, spin, disappear;
+    double startTime;
+    double size;
+    double speed;
+    double randomness;
+    double gravity;
+    double spin;
+    double disappear;
     int gravityAxis;
     boolean worldCoords;
 
@@ -77,21 +83,20 @@ public class ShatterTrack extends Track {
 
     /* Make this track identical to another one. */
     @Override
-    public void copy(Track tr) {
-        ShatterTrack t = (ShatterTrack) tr;
+    public void copy(ShatterTrack track) {
 
-        name = t.name;
-        enabled = t.enabled;
-        quantized = t.quantized;
-        startTime = t.startTime;
-        size = t.size;
-        speed = t.speed;
-        randomness = t.randomness;
-        gravity = t.gravity;
-        spin = t.spin;
-        disappear = t.disappear;
-        gravityAxis = t.gravityAxis;
-        worldCoords = t.worldCoords;
+        name = track.name;
+        enabled = track.enabled;
+        quantized = track.quantized;
+        startTime = track.startTime;
+        size = track.size;
+        speed = track.speed;
+        randomness = track.randomness;
+        gravity = track.gravity;
+        spin = track.spin;
+        disappear = track.disappear;
+        gravityAxis = track.gravityAxis;
+        worldCoords = track.worldCoords;
     }
 
     /* Get a list of all keyframe times for this track. */
@@ -149,7 +154,7 @@ public class ShatterTrack extends Track {
      * Initialize this tracked based on its serialized representation as written by writeToStream().
      */
     @Override
-    public void initFromStream(DataInputStream in, Scene scene) throws IOException, InvalidObjectException {
+    public void initFromStream(DataInputStream in, Scene scene) throws IOException {
         short version = in.readShort();
         if (version != 0) {
             throw new InvalidObjectException("");

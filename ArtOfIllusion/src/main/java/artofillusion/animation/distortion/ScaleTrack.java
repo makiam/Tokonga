@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2004 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -23,7 +23,7 @@ import java.io.*;
 /**
  * This is a Track which applies a ScaleDistortion to an object.
  */
-public class ScaleTrack extends Track {
+public class ScaleTrack extends Track<ScaleTrack> {
 
     ObjectInfo info;
     Timecourse tc;
@@ -47,7 +47,8 @@ public class ScaleTrack extends Track {
         if (scale == null || (scale.x == 1.0 && scale.y == 1.0 && scale.z == 1.0)) {
             return;
         }
-        double weight = theWeight.getWeight(time), w2 = 1.0 - weight;
+        double weight = theWeight.getWeight(time);
+        double w2 = 1.0 - weight;
         if (worldCoords) {
             info.addDistortion(new ScaleDistortion(scale.x * weight + w2, scale.y * weight + w2, scale.z * weight + w2, info.getCoords().fromLocal(), info.getCoords().toLocal()));
         } else {
@@ -65,23 +66,22 @@ public class ScaleTrack extends Track {
         t.quantized = quantized;
         t.smoothingMethod = smoothingMethod;
         t.worldCoords = worldCoords;
-        t.tc = tc.duplicate((ObjectInfo) obj);
+        t.tc = tc.duplicate(obj);
         t.theWeight = theWeight.duplicate(t);
         return t;
     }
 
     /* Make this track identical to another one. */
     @Override
-    public void copy(Track tr) {
-        ScaleTrack t = (ScaleTrack) tr;
+    public void copy(ScaleTrack track) {
 
-        name = t.name;
-        enabled = t.enabled;
-        quantized = t.quantized;
-        smoothingMethod = t.smoothingMethod;
-        worldCoords = t.worldCoords;
-        tc = t.tc.duplicate(info);
-        theWeight = t.theWeight.duplicate(this);
+        name = track.name;
+        enabled = track.enabled;
+        quantized = track.quantized;
+        smoothingMethod = track.smoothingMethod;
+        worldCoords = track.worldCoords;
+        tc = track.tc.duplicate(info);
+        theWeight = track.theWeight.duplicate(this);
     }
 
     /* Get a list of all keyframe times for this track. */
@@ -214,7 +214,7 @@ public class ScaleTrack extends Track {
      * Initialize this tracked based on its serialized representation as written by writeToStream().
      */
     @Override
-    public void initFromStream(DataInputStream in, Scene scene) throws IOException, InvalidObjectException {
+    public void initFromStream(DataInputStream in, Scene scene) throws IOException {
         short version = in.readShort();
         if (version != 0) {
             throw new InvalidObjectException("");

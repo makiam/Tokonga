@@ -22,14 +22,16 @@ import java.io.*;
 /**
  * This is a Track which applies a BendDistortion to an object.
  */
-public class BendTrack extends Track {
+public class BendTrack extends Track<BendTrack> {
 
     ObjectInfo info;
     Timecourse tc;
-    int axis, direction;
+    int axis;
+    int direction;
     int smoothingMethod;
     WeightTrack theWeight;
-    boolean worldCoords, forward;
+    boolean worldCoords;
+    boolean forward;
 
     public BendTrack(ObjectInfo info) {
         super("Bend");
@@ -74,26 +76,25 @@ public class BendTrack extends Track {
         t.forward = forward;
         t.smoothingMethod = smoothingMethod;
         t.worldCoords = worldCoords;
-        t.tc = tc.duplicate((ObjectInfo) obj);
+        t.tc = tc.duplicate(obj);
         t.theWeight = theWeight.duplicate(t);
         return t;
     }
 
     /* Make this track identical to another one. */
     @Override
-    public void copy(Track tr) {
-        BendTrack t = (BendTrack) tr;
+    public void copy(BendTrack track) {
 
-        name = t.name;
-        enabled = t.enabled;
-        quantized = t.quantized;
-        axis = t.axis;
-        direction = t.direction;
-        forward = t.forward;
-        smoothingMethod = t.smoothingMethod;
-        worldCoords = t.worldCoords;
-        tc = t.tc.duplicate(info);
-        theWeight = t.theWeight.duplicate(this);
+        name = track.name;
+        enabled = track.enabled;
+        quantized = track.quantized;
+        axis = track.axis;
+        direction = track.direction;
+        forward = track.forward;
+        smoothingMethod = track.smoothingMethod;
+        worldCoords = track.worldCoords;
+        tc = track.tc.duplicate(info);
+        theWeight = track.theWeight.duplicate(this);
     }
 
     /* Get a list of all keyframe times for this track. */
@@ -223,7 +224,7 @@ public class BendTrack extends Track {
      * Initialize this tracked based on its serialized representation as written by writeToStream().
      */
     @Override
-    public void initFromStream(DataInputStream in, Scene scene) throws IOException, InvalidObjectException {
+    public void initFromStream(DataInputStream in, Scene scene) throws IOException {
         short version = in.readShort();
         if (version != 0) {
             throw new InvalidObjectException("");
@@ -283,7 +284,10 @@ public class BendTrack extends Track {
     /* This method presents a window in which the user can edit the track. */
     @Override
     public void edit(LayoutWindow win) {
-        final BComboBox smoothChoice, axisChoice, dirChoice, coordsChoice;
+        final BComboBox smoothChoice;
+        final BComboBox axisChoice;
+        final BComboBox dirChoice;
+        final BComboBox coordsChoice;
         BCheckBox reverseBox = new BCheckBox(Translate.text("reverseBendDirection"), !forward);
 
         BTextField nameField = new BTextField(BendTrack.this.getName());

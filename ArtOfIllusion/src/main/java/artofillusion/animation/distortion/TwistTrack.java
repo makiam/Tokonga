@@ -22,14 +22,15 @@ import java.io.*;
 /**
  * This is a Track which applies a TwistDistortion to an object.
  */
-public class TwistTrack extends Track {
+public class TwistTrack extends Track<TwistTrack> {
 
     ObjectInfo info;
     Timecourse tc;
     int axis;
     int smoothingMethod;
     WeightTrack theWeight;
-    boolean worldCoords, forward;
+    boolean worldCoords;
+    boolean forward;
 
     public TwistTrack(ObjectInfo info) {
         super("Twist");
@@ -76,7 +77,7 @@ public class TwistTrack extends Track {
         t.forward = forward;
         t.smoothingMethod = smoothingMethod;
         t.worldCoords = worldCoords;
-        t.tc = tc.duplicate((ObjectInfo) obj);
+        t.tc = tc.duplicate(obj);
         t.theWeight = theWeight.duplicate(t);
         return t;
     }
@@ -85,18 +86,17 @@ public class TwistTrack extends Track {
      * Make this track identical to another one.
      */
     @Override
-    public void copy(Track tr) {
-        TwistTrack t = (TwistTrack) tr;
+    public void copy(TwistTrack track) {
 
-        name = t.name;
-        enabled = t.enabled;
-        quantized = t.quantized;
-        axis = t.axis;
-        forward = t.forward;
-        smoothingMethod = t.smoothingMethod;
-        worldCoords = t.worldCoords;
-        tc = t.tc.duplicate(info);
-        theWeight = t.theWeight.duplicate(this);
+        name = track.name;
+        enabled = track.enabled;
+        quantized = track.quantized;
+        axis = track.axis;
+        forward = track.forward;
+        smoothingMethod = track.smoothingMethod;
+        worldCoords = track.worldCoords;
+        tc = track.tc.duplicate(info);
+        theWeight = track.theWeight.duplicate(this);
     }
 
     /**
@@ -255,7 +255,7 @@ public class TwistTrack extends Track {
      * Initialize this tracked based on its serialized representation as written by writeToStream().
      */
     @Override
-    public void initFromStream(DataInputStream in, Scene scene) throws IOException, InvalidObjectException {
+    public void initFromStream(DataInputStream in, Scene scene) throws IOException {
         short version = in.readShort();
         if (version != 0) {
             throw new InvalidObjectException("");
@@ -318,7 +318,9 @@ public class TwistTrack extends Track {
      */
     @Override
     public void edit(LayoutWindow win) {
-        final BComboBox smoothChoice, axisChoice, coordsChoice;
+        final BComboBox smoothChoice;
+        final BComboBox axisChoice;
+        final BComboBox coordsChoice;
         BCheckBox reverseBox = new BCheckBox(Translate.text("reverseTwistDirection"), !forward);
         BTextField nameField = new BTextField(getName());
         smoothChoice = new BComboBox(new String[]{

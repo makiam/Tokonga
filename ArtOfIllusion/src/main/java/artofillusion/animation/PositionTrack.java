@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2013 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -23,14 +23,19 @@ import java.util.*;
 /**
  * This is a Track which controls the position of an object.
  */
-public class PositionTrack extends Track {
+public class PositionTrack extends Track<PositionTrack> {
 
     ObjectInfo info;
     Timecourse tc;
-    int smoothingMethod, mode, relCoords, joint;
+    int smoothingMethod;
+    int mode;
+    int relCoords;
+    int joint;
     ObjectRef relObject;
     WeightTrack theWeight;
-    boolean enablex, enabley, enablez;
+    boolean enablex;
+    boolean enabley;
+    boolean enablez;
 
     public static final int ABSOLUTE = 0;
     public static final int RELATIVE = 1;
@@ -140,7 +145,7 @@ public class PositionTrack extends Track {
         t.mode = mode;
         t.relCoords = relCoords;
         t.smoothingMethod = smoothingMethod;
-        t.tc = tc.duplicate((ObjectInfo) obj);
+        t.tc = tc.duplicate(obj);
         t.relObject = relObject.duplicate();
         t.theWeight = theWeight.duplicate(t);
         t.enablex = enablex;
@@ -154,22 +159,21 @@ public class PositionTrack extends Track {
      * Make this track identical to another one.
      */
     @Override
-    public void copy(Track tr) {
-        PositionTrack t = (PositionTrack) tr;
+    public void copy(PositionTrack track) {
 
-        name = t.name;
-        enabled = t.enabled;
-        quantized = t.quantized;
-        mode = t.mode;
-        relCoords = t.relCoords;
-        smoothingMethod = t.smoothingMethod;
-        tc = t.tc.duplicate(info);
-        relObject = t.relObject.duplicate();
-        theWeight = t.theWeight.duplicate(this);
-        enablex = t.enablex;
-        enabley = t.enabley;
-        enablez = t.enablez;
-        joint = t.joint;
+        name = track.name;
+        enabled = track.enabled;
+        quantized = track.quantized;
+        mode = track.mode;
+        relCoords = track.relCoords;
+        smoothingMethod = track.smoothingMethod;
+        tc = track.tc.duplicate(info);
+        relObject = track.relObject.duplicate();
+        theWeight = track.theWeight.duplicate(this);
+        enablex = track.enablex;
+        enabley = track.enabley;
+        enablez = track.enablez;
+        joint = track.joint;
     }
 
     /**
@@ -645,7 +649,9 @@ public class PositionTrack extends Track {
             }
         });
         RowContainer row = new RowContainer();
-        BCheckBox xbox, ybox, zbox;
+        BCheckBox xbox;
+        BCheckBox ybox;
+        BCheckBox zbox;
         row.add(xbox = new BCheckBox("X", enablex));
         row.add(ybox = new BCheckBox("Y", enabley));
         row.add(zbox = new BCheckBox("Z", enablez));

@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  * This is a Track which controls the pose of an object.
  */
 @Slf4j
-public class PoseTrack extends Track {
+public class PoseTrack extends Track<PoseTrack> {
 
     private ObjectInfo info;
     private Timecourse tc;
@@ -68,7 +68,7 @@ public class PoseTrack extends Track {
                 }
             }
         }
-        for (Track track: subtracks) {
+        for (var track: subtracks) {
             track.apply(time);
         }
     }
@@ -84,7 +84,7 @@ public class PoseTrack extends Track {
         t.enabled = enabled;
         t.quantized = quantized;
         t.smoothingMethod = smoothingMethod;
-        t.tc = tc.duplicate((ObjectInfo) obj);
+        t.tc = tc.duplicate(obj);
         t.relative = relative;
         t.theWeight = theWeight.duplicate(t);
         t.subtracks = new Track[this.subtracks.length];
@@ -98,19 +98,18 @@ public class PoseTrack extends Track {
      * Make this track identical to another one.
      */
     @Override
-    public void copy(Track tr) {
-        PoseTrack t = (PoseTrack) tr;
+    public void copy(PoseTrack track) {
 
-        name = t.name;
-        enabled = t.enabled;
-        quantized = t.quantized;
-        smoothingMethod = t.smoothingMethod;
-        tc = t.tc.duplicate(info);
-        relative = t.relative;
-        theWeight = t.theWeight.duplicate(this);
-        this.subtracks = new Track[t.subtracks.length];
+        name = track.name;
+        enabled = track.enabled;
+        quantized = track.quantized;
+        smoothingMethod = track.smoothingMethod;
+        tc = track.tc.duplicate(info);
+        relative = track.relative;
+        theWeight = track.theWeight.duplicate(this);
+        this.subtracks = new Track[track.subtracks.length];
         for (int i = 0; i < this.subtracks.length; i++) {
-            this.subtracks[i] = t.subtracks[i].duplicate(this);
+            this.subtracks[i] = track.subtracks[i].duplicate(this);
         }
     }
 
@@ -339,7 +338,7 @@ public class PoseTrack extends Track {
      * Initialize this tracked based on its serialized representation as written by writeToStream().
      */
     @Override
-    public void initFromStream(DataInputStream in, Scene scene) throws IOException, InvalidObjectException {
+    public void initFromStream(DataInputStream in, Scene scene) throws IOException {
         short version = in.readShort();
         if (version < 0 || version > 2) {
             throw new InvalidObjectException("");

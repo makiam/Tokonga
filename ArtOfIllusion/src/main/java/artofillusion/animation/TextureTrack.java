@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2013 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -26,7 +26,7 @@ import java.util.*;
 /**
  * This is a Track which controls the value of a texture parameter.
  */
-public class TextureTrack extends Track {
+public class TextureTrack extends Track<TextureTrack> {
 
     ObjectInfo info;
     Timecourse tc;
@@ -85,7 +85,7 @@ public class TextureTrack extends Track {
         t.enabled = enabled;
         t.quantized = quantized;
         t.smoothingMethod = smoothingMethod;
-        t.tc = tc.duplicate((ObjectInfo) obj);
+        t.tc = tc.duplicate(obj);
         t.theWeight = theWeight.duplicate(t);
         t.param = param;
         return t;
@@ -93,16 +93,15 @@ public class TextureTrack extends Track {
 
     /* Make this track identical to another one. */
     @Override
-    public void copy(Track tr) {
-        TextureTrack t = (TextureTrack) tr;
+    public void copy(TextureTrack track) {
 
-        name = t.name;
-        enabled = t.enabled;
-        quantized = t.quantized;
-        smoothingMethod = t.smoothingMethod;
-        tc = t.tc.duplicate(info);
-        theWeight = t.theWeight.duplicate(this);
-        param = t.param;
+        name = track.name;
+        enabled = track.enabled;
+        quantized = track.quantized;
+        smoothingMethod = track.smoothingMethod;
+        tc = track.tc.duplicate(info);
+        theWeight = track.theWeight.duplicate(this);
+        param = track.param;
     }
 
     /* Get a list of all keyframe times for this track. */
@@ -340,7 +339,7 @@ public class TextureTrack extends Track {
      * Initialize this tracked based on its serialized representation as written by writeToStream().
      */
     @Override
-    public void initFromStream(DataInputStream in, Scene scene) throws IOException, InvalidObjectException {
+    public void initFromStream(DataInputStream in, Scene scene) throws IOException {
         short version = in.readShort();
         if (version != 0) {
             throw new InvalidObjectException("");
@@ -512,7 +511,7 @@ public class TextureTrack extends Track {
         for (int i = 0; i < selected.length; i++) {
             index[i] = -1;
             for (int j = 0; j < param.length; j++) {
-                if (param[j].equals((TextureParameter) selected[i])) {
+                if (param[j].equals(selected[i])) {
                     index[i] = j;
                 }
             }

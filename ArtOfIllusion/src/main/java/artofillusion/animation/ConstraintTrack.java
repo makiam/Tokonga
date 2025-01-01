@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2013 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -29,10 +29,14 @@ import java.util.*;
 /**
  * This is a Track which places constraints on the position or orientation of an object.
  */
-public class ConstraintTrack extends Track {
+public class ConstraintTrack extends Track<ConstraintTrack> {
 
     ObjectInfo info;
-    int xType, yType, zType, orientType, orientMode;
+    int xType;
+    int yType;
+    int zType;
+    int orientType;
+    int orientMode;
     ObjectRef faceToward;
     Vec3 pos, orient;
     WeightTrack theWeight;
@@ -177,21 +181,20 @@ public class ConstraintTrack extends Track {
      * Make this track identical to another one.
      */
     @Override
-    public void copy(Track tr) {
-        ConstraintTrack t = (ConstraintTrack) tr;
+    public void copy(ConstraintTrack track) {
 
-        name = t.name;
-        enabled = t.enabled;
-        quantized = t.quantized;
-        xType = t.xType;
-        yType = t.yType;
-        zType = t.zType;
-        orientType = t.orientType;
-        orientMode = t.orientMode;
-        pos = new Vec3(t.pos);
-        orient = new Vec3(t.orient);
-        faceToward.copy(t.faceToward);
-        theWeight = t.theWeight.duplicate(t);
+        name = track.name;
+        enabled = track.enabled;
+        quantized = track.quantized;
+        xType = track.xType;
+        yType = track.yType;
+        zType = track.zType;
+        orientType = track.orientType;
+        orientMode = track.orientMode;
+        pos = new Vec3(track.pos);
+        orient = new Vec3(track.orient);
+        faceToward.copy(track.faceToward);
+        theWeight = track.theWeight.duplicate(track);
     }
 
     /**
@@ -470,7 +473,7 @@ public class ConstraintTrack extends Track {
         }
 
         private void keyPressed(KeyPressedEvent ev) {
-            if (ev.getKeyCode() == KeyPressedEvent.VK_ESCAPE) {
+            if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
                 dispose();
             }
         }
