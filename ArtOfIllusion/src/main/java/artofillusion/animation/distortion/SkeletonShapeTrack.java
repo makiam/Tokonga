@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -21,7 +21,7 @@ import java.io.*;
 /**
  * This is a Track which applies a SkeletonDistortion to an object.
  */
-public class SkeletonShapeTrack extends Track {
+public class SkeletonShapeTrack extends Track<SkeletonShapeTrack> {
 
     private ObjectInfo info;
     private Timecourse tc;
@@ -91,15 +91,15 @@ public class SkeletonShapeTrack extends Track {
      * Make this track identical to another one.
      */
     @Override
-    public void copy(Track tr) {
-        SkeletonShapeTrack t = (SkeletonShapeTrack) tr;
-        name = t.name;
-        enabled = t.enabled;
-        quantized = t.quantized;
-        smoothingMethod = t.smoothingMethod;
-        useGestures = t.useGestures;
-        tc = t.tc.duplicate(info.getObject());
-        theWeight = t.theWeight.duplicate(this);
+    public void copy(SkeletonShapeTrack track) {
+
+        name = track.name;
+        enabled = track.enabled;
+        quantized = track.quantized;
+        smoothingMethod = track.smoothingMethod;
+        useGestures = track.useGestures;
+        tc = track.tc.duplicate(info.getObject());
+        theWeight = track.theWeight.duplicate(this);
     }
 
     /**
@@ -249,7 +249,7 @@ public class SkeletonShapeTrack extends Track {
      * Initialize this tracked based on its serialized representation as written by writeToStream().
      */
     @Override
-    public void initFromStream(DataInputStream in, Scene scene) throws IOException, InvalidObjectException {
+    public void initFromStream(DataInputStream in, Scene scene) throws IOException {
         short version = in.readShort();
         if (version != 0) {
             throw new InvalidObjectException("");
@@ -276,12 +276,8 @@ public class SkeletonShapeTrack extends Track {
      */
     @Override
     public void editKeyframe(final LayoutWindow win, int which) {
-        SkeletonShapeEditorWindow ed = new SkeletonShapeEditorWindow(win, Translate.text("editKeyframe"), this, which, new Runnable() {
-            @Override
-            public void run() {
-                win.getScore().tracksModified(true);
-            }
-        });
+        Runnable callback = () -> win.getScore().tracksModified(true);
+        SkeletonShapeEditorWindow ed = new SkeletonShapeEditorWindow(win, Translate.text("editKeyframe"), this, which, callback);
 
         for (ViewerCanvas view : ed.getAllViews()) {
             ((MeshViewer) view).setScene(win.getScene(), info);

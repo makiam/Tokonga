@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman
-   Changes copyright (C) 2020-2021 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -20,7 +20,7 @@ import java.io.*;
 /**
  * This is a Track which controls whether an object is visible.
  */
-public class VisibilityTrack extends Track {
+public class VisibilityTrack extends Track<VisibilityTrack> {
 
     ObjectInfo info;
     Timecourse tc;
@@ -50,19 +50,18 @@ public class VisibilityTrack extends Track {
         t.name = name;
         t.enabled = enabled;
         t.quantized = quantized;
-        t.tc = tc.duplicate((ObjectInfo) obj);
+        t.tc = tc.duplicate(obj);
         return t;
     }
 
     /* Make this track identical to another one. */
     @Override
-    public void copy(Track tr) {
-        VisibilityTrack t = (VisibilityTrack) tr;
+    public void copy(VisibilityTrack track) {
 
-        name = t.name;
-        enabled = t.enabled;
-        quantized = t.quantized;
-        tc = t.tc.duplicate(info);
+        name = track.name;
+        enabled = track.enabled;
+        quantized = track.quantized;
+        tc = track.tc.duplicate(info);
     }
 
     /* Get a list of all keyframe times for this track. */
@@ -180,7 +179,7 @@ public class VisibilityTrack extends Track {
      * Initialize this tracked based on its serialized representation as written by writeToStream().
      */
     @Override
-    public void initFromStream(DataInputStream in, Scene scene) throws IOException, InvalidObjectException {
+    public void initFromStream(DataInputStream in, Scene scene) throws IOException {
         short version = in.readShort();
         if (version != 0) {
             throw new InvalidObjectException("");

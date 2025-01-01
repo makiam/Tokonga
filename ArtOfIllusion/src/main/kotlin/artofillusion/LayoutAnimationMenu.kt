@@ -36,7 +36,7 @@ class LayoutAnimationMenu (private val layout: LayoutWindow) : BMenu(Translate.t
     companion object {
         private val log: Logger = LoggerFactory.getLogger(LayoutAnimationMenu::class.java)
 
-        private val commandToTrack: MutableMap<String, Class<out Track?>> = HashMap()
+        private val commandToTrack: MutableMap<String, Class<out Track<*>?>> = HashMap()
 
         init {
             commandToTrack["poseTrack"] = PoseTrack::class.java
@@ -53,7 +53,7 @@ class LayoutAnimationMenu (private val layout: LayoutWindow) : BMenu(Translate.t
         }
 
         @JvmStatic
-        fun getCommandToTrack(name: String): Class<out Track?> {
+        fun getCommandToTrack(name: String): Class<out Track<*>?> {
             return commandToTrack[name]!!
         }
     }

@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2013 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -23,12 +23,15 @@ import java.util.*;
 /**
  * This is a Track which controls the rotation of an object.
  */
-public class RotationTrack extends Track {
+public class RotationTrack extends Track<RotationTrack> {
 
     private ObjectInfo info;
     private boolean quaternion;
     private Timecourse tc;
-    private int smoothingMethod, mode, relCoords, joint;
+    private int smoothingMethod;
+    private int mode;
+    private int relCoords;
+    private int joint;
     private ObjectRef relObject;
     private WeightTrack theWeight;
     private boolean enablex, enabley, enablez;
@@ -113,7 +116,7 @@ public class RotationTrack extends Track {
         t.relCoords = relCoords;
         t.smoothingMethod = smoothingMethod;
         t.quaternion = quaternion;
-        t.tc = tc.duplicate((ObjectInfo) obj);
+        t.tc = tc.duplicate(obj);
         t.relObject = relObject.duplicate();
         t.theWeight = theWeight.duplicate(t);
         t.enablex = enablex;
@@ -127,23 +130,22 @@ public class RotationTrack extends Track {
      * Make this track identical to another one.
      */
     @Override
-    public void copy(Track tr) {
-        RotationTrack t = (RotationTrack) tr;
+    public void copy(RotationTrack track) {
 
-        name = t.name;
-        enabled = t.enabled;
-        quantized = t.quantized;
-        mode = t.mode;
-        relCoords = t.relCoords;
-        smoothingMethod = t.smoothingMethod;
-        quaternion = t.quaternion;
-        tc = t.tc.duplicate(info);
-        relObject = t.relObject.duplicate();
-        theWeight = t.theWeight.duplicate(this);
-        enablex = t.enablex;
-        enabley = t.enabley;
-        enablez = t.enablez;
-        joint = t.joint;
+        name = track.name;
+        enabled = track.enabled;
+        quantized = track.quantized;
+        mode = track.mode;
+        relCoords = track.relCoords;
+        smoothingMethod = track.smoothingMethod;
+        quaternion = track.quaternion;
+        tc = track.tc.duplicate(info);
+        relObject = track.relObject.duplicate();
+        theWeight = track.theWeight.duplicate(this);
+        enablex = track.enablex;
+        enabley = track.enabley;
+        enablez = track.enablez;
+        joint = track.joint;
     }
 
     /**
@@ -233,7 +235,8 @@ public class RotationTrack extends Track {
         }
         current = new RotationKeyframe(c);
         if (quaternion) {
-            double[] q1 = rot.getQuaternion(), q2 = current.getQuaternion();
+            double[] q1 = rot.getQuaternion();
+            double[] q2 = current.getQuaternion();
             double dot = q1[0] * q2[0] + q1[1] * q2[1] + q1[2] * q2[2] + q1[3] * q2[3];
             if (1.0 - dot < 1e-10) {
                 return null;
@@ -520,7 +523,7 @@ public class RotationTrack extends Track {
      * Initialize this tracked based on its serialized representation as written by writeToStream().
      */
     @Override
-    public void initFromStream(DataInputStream in, Scene scene) throws IOException, InvalidObjectException {
+    public void initFromStream(DataInputStream in, Scene scene) throws IOException {
         short version = in.readShort();
         if (version < 0 || version > 1) {
             throw new InvalidObjectException("");
@@ -655,7 +658,9 @@ public class RotationTrack extends Track {
         });
         final BCheckBox isoBox = new BCheckBox(Translate.text("isotropicRotations"), quaternion);
         RowContainer row = new RowContainer();
-        final BCheckBox xbox, ybox, zbox;
+        final BCheckBox xbox;
+        final BCheckBox ybox;
+        final BCheckBox zbox;
         row.add(xbox = new BCheckBox("X", enablex));
         row.add(ybox = new BCheckBox("Y", enabley));
         row.add(zbox = new BCheckBox("Z", enablez));
