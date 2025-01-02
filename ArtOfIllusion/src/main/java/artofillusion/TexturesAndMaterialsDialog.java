@@ -1,5 +1,5 @@
 /* Copyright (C) 2011 by Helge Hansen and Peter Eastman
-   Changes copyright (C) 2016-2024 by Maksim Khramov
+   Changes copyright (C) 2016-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -162,9 +162,9 @@ public class TexturesAndMaterialsDialog extends BDialog {
 
         buttons.add(typeChoice);
 
-        buttons.add(duplicateButton = Translate.button("duplicate", "...", this, "doCopy"));
-        buttons.add(deleteButton = Translate.button("delete", "...", this, "doDelete"));
-        buttons.add(editButton = Translate.button("edit", "...", this, "doEdit"));
+        buttons.add(duplicateButton = Translate.button("duplicate", "...", event -> doCopy()));
+        buttons.add(deleteButton = Translate.button("delete", "...", event -> doDelete()));
+        buttons.add(editButton = Translate.button("edit", "...", event -> doEdit()));
 
         buttons.add(new BSeparator());
 

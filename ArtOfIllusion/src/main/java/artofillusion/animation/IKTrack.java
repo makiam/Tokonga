@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2013 by Peter Eastman
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -345,8 +345,8 @@ public class IKTrack extends Track {
             gesturesBox.setEnabled(Actor.getActor(info.getObject()) != null);
             RowContainer buttons = new RowContainer();
             content.add(buttons, 0, 3, 2, 1, new LayoutInfo());
-            buttons.add(Translate.button("add", "...", this, "doAdd"));
-            buttons.add(editButton = Translate.button("edit", "...", this, "doEdit"));
+            buttons.add(Translate.button("add", "...", event -> doAdd()));
+            buttons.add(editButton = Translate.button("edit", "...", event -> doEdit()));
             buttons.add(deleteButton = Translate.button("delete", event -> doDelete()));
             buttons.add(Translate.button("ok", event -> doOk()));
             buttons.add(Translate.button("cancel", event -> dispose()));

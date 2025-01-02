@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2006 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -112,7 +112,7 @@ public class ActorEditorWindow extends BDialog {
         ColumnContainer addRemovePanel = new ColumnContainer();
         content.add(addRemovePanel, 1, 0);
         addRemovePanel.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(2, 2, 2, 2), null));
-        addRemovePanel.add(addButton = Translate.button("add", ">>", this, "doAdd"));
+        addRemovePanel.add(addButton = Translate.button("add", ">>", event -> doAdd()));
         addRemovePanel.add(removeButton = new BButton("<< " + Translate.text("button.remove")));
         removeButton.addEventLink(CommandEvent.class, this, "doRemove");
 

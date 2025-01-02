@@ -451,7 +451,7 @@ public class SPManagerPlugin implements Plugin {
 
                 buttons = new RowContainer();
                 buttons.add(okbtn);
-                buttons.add(Translate.button("cancel", null, event -> close()));
+                buttons.add(Translate.button("cancel", event -> close()));
 
                 okbtn.setActionCommand("ok");
 
