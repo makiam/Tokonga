@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2009 by Peter Eastman
-   Changes copyright (C) 2018-2023 by Maksim Khramov
+   Changes copyright (C) 2018-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -96,6 +96,15 @@ public class Translate {
         return availableLocales.toArray(new Locale[0]);
     }
 
+
+    private static String getValue(String key) throws MissingResourceException {
+        return getValue(key, null, null);
+    }
+
+    private static String getValue(String key, String prefix) throws MissingResourceException {
+        return getValue(key, prefix, null);
+    }
+
     /**
      * Look up the value corresponding to a resource key.
      *
@@ -137,7 +146,7 @@ public class Translate {
     public static BMenu menu(String name) {
         String title = name;
         try {
-            title = getValue(name, "menu.", null);
+            title = getValue(name, "menu.");
         } catch (MissingResourceException ex) {
         }
         BMenu menu = new BMenu(title);
@@ -155,7 +164,7 @@ public class Translate {
     public static BMenuItem menuItem(String name, Object listener, String method) {
         String command = name;
         try {
-            command = getValue(name, "menu.", null);
+            command = getValue(name, "menu.");
         } catch (MissingResourceException ex) {
         }
         BMenuItem item = new BMenuItem(command);
@@ -178,7 +187,7 @@ public class Translate {
     public static BMenuItem menuItem(String name, ActionListener al) {
         String command = name;
         try {
-            command = getValue(name, "menu.", null);
+            command = getValue(name, "menu.");
         } catch (MissingResourceException ex) {
         }
         BMenuItem item = new BMenuItem(command);
@@ -204,7 +213,7 @@ public class Translate {
     public static BCheckBoxMenuItem checkboxMenuItem(String name, Object listener, String method, boolean state) {
         String command = name;
         try {
-            command = getValue(name, "menu.", null);
+            command = getValue(name, "menu.");
         } catch (MissingResourceException ex) {
         }
         BCheckBoxMenuItem item = new BCheckBoxMenuItem(command, state);
@@ -249,7 +258,7 @@ public class Translate {
     public static BButton button(String name, String suffix, Object listener, String method) {
         String command = name;
         try {
-            command = getValue(name, "button.", null);
+            command = getValue(name, "button.");
         } catch (MissingResourceException ex) {
         }
         if (suffix != null) {
@@ -283,7 +292,7 @@ public class Translate {
      */
     public static BLabel label(String name, String suffix) {
         try {
-            name = getValue(name, null, null);
+            name = getValue(name, null);
         } catch (MissingResourceException ex) {
         }
         if (suffix != null) {
@@ -298,7 +307,7 @@ public class Translate {
      */
     public static String text(String name) {
         try {
-            return getValue(name, null, null);
+            return getValue(name);
         } catch (MissingResourceException ex) {
             return name;
         }
@@ -313,7 +322,7 @@ public class Translate {
     public static String text(String name, Object arg1) {
         String pattern = name;
         try {
-            pattern = getValue(name, null, null);
+            pattern = getValue(name);
         } catch (MissingResourceException ex) {
         }
         return MessageFormat.format(pattern, arg1);
@@ -328,7 +337,7 @@ public class Translate {
     public static String text(String name, Object arg1, Object arg2) {
         String pattern = name;
         try {
-            pattern = getValue(name, null, null);
+            pattern = getValue(name);
         } catch (MissingResourceException ex) {
         }
         return MessageFormat.format(pattern, arg1, arg2);
@@ -343,7 +352,7 @@ public class Translate {
     public static String text(String name, Object... args) {
         String pattern = name;
         try {
-            pattern = getValue(name, null, null);
+            pattern = getValue(name);
         } catch (MissingResourceException ex) {
         }
         return MessageFormat.format(pattern, args);

@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2013 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -59,7 +59,7 @@ public class KeystrokePreferencesPanel extends FormContainer implements Preferen
         add(scroll, 0, 0, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH));
         RowContainer buttons = new RowContainer();
         add(buttons, 0, 1, new LayoutInfo());
-        buttons.add(editButton = Translate.button("edit", "...", this, "editRecord"));
+        buttons.add(editButton = Translate.button("edit", "...", event -> editRecord()));
 
         buttons.add(Translate.button("add", "...", event -> addRecord()));
         buttons.add(deleteButton = Translate.button("delete", event -> deleteRecords()));
