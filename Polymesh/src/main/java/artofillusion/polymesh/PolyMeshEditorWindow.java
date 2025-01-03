@@ -780,7 +780,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         faceMenu.add(Translate.menuItem("polymesh:outlineFaces", this::doOutlineFaces));
         faceMenu.addSeparator();
         faceMenu.add(Translate.menuItem("parameters", event -> setParametersCommand()));
-        faceMenu.add(faceFindSimilarMenuItem = Translate.menuItem("polymesh:findSimilar", this::doFindSimilarFaces));
+        faceMenu.add(faceFindSimilarMenuItem = Translate.menuItem("polymesh:findSimilar", event -> doFindSimilarFaces()));
         menubar.add(faceMenu);
 
         moveAlong = Translate.menu("polymesh:moveAlong");
@@ -814,7 +814,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         facePopupMenu.add(Translate.menuItem("polymesh:outlineFaces", this::doOutlineFaces));
         facePopupMenu.addSeparator();
         facePopupMenu.add(Translate.menuItem("parameters", event -> setParametersCommand()));
-        facePopupMenu.add(faceFindSimilarPopupMenuItem = Translate.menuItem("polymesh:findSimilar", this::doFindSimilarFaces));
+        facePopupMenu.add(faceFindSimilarPopupMenuItem = Translate.menuItem("polymesh:findSimilar", event -> doFindSimilarFaces()));
     }
 
     /**
@@ -4333,8 +4333,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         new UVMappingEditorDialog(info, true, this);
     }
 
-    private void doFindSimilarFaces(ActionEvent event) {
-        new FindSimilarFacesDialog(this, this).setVisible(true);
+    private void doFindSimilarFaces() {
+        SwingUtilities.invokeLater(() -> new FindSimilarFacesDialogNew(this).setVisible(true));
+        new FindSimilarFacesDialog(this).setVisible(true);
+        
     }
 
     private void doFindSimilarEdges(ActionEvent event) {

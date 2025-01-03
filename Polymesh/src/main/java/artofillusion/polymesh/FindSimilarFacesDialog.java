@@ -1,5 +1,6 @@
 /* Copyright (C) 2001-2004 by Peter Eastman, 2005 by Francois Guillet
-   Changes copyright (C) 2023 Maksim Khramov
+   Changes copyright (C) 2023-2025 Maksim Khramov
+
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
@@ -35,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 class FindSimilarFacesDialog extends BDialog {
 
     private final boolean[] orSelection;
-    private BorderContainer borderContainer1;
+
     private BCheckBox normalCB;
     private BCheckBox looseShapeCB;
     private BCheckBox strictShapeCB;
@@ -49,17 +50,17 @@ class FindSimilarFacesDialog extends BDialog {
     private PMValueField strictShapeCBVF;
     private final PolyMeshEditorWindow owner;
     private final PolyMesh mesh;
-    private final PolyMeshEditorWindow outer;
 
-    public FindSimilarFacesDialog(PolyMeshEditorWindow owner, final PolyMeshEditorWindow outer) {
+    public FindSimilarFacesDialog(PolyMeshEditorWindow owner) {
         super(owner, Translate.text("polymesh:similarFacesTitle"), true);
-        this.outer = outer;
         this.owner = owner;
-        this.mesh = (PolyMesh) outer.getObject().getObject();
-        this.orSelection = outer.getSelection();
+        this.mesh = (PolyMesh) owner.getObject().getObject();
+        this.orSelection = owner.getSelection();
+        
+        BorderContainer container = null;
         try (InputStream is = getClass().getResource("interfaces/similar.xml").openStream()) {
             WidgetDecoder decoder = new WidgetDecoder(is);
-            borderContainer1 = (BorderContainer) decoder.getRootObject();
+            container = (BorderContainer) decoder.getRootObject();
             BLabel titleTextLabel = (BLabel) decoder.getObject("titleTextLabel");
             titleTextLabel.setText(Translate.text("polymesh:" + titleTextLabel.getText()));
             normalCB = ((BCheckBox) decoder.getObject("normalCB"));
@@ -74,16 +75,14 @@ class FindSimilarFacesDialog extends BDialog {
             tolerance1.setText(Translate.text("polymesh:" + tolerance1.getText()));
             tolerance2.setText(Translate.text("polymesh:" + tolerance2.getText()));
             tolerance3.setText(Translate.text("polymesh:" + tolerance3.getText()));
-            BTextField normalCBTF = (BTextField) decoder.getObject("normalCBTF");
-            BTextField looseShapeCBTF = (BTextField) decoder.getObject("looseShapeCBTF");
-            BTextField strictShapeCBTF = (BTextField) decoder.getObject("strictShapeCBTF");
+
             normalCBVF = new PMValueField(PolyMeshEditorWindow.getNormalTol(), ValueField.NONE);
             normalCBVF.setTextField((BTextField) decoder.getObject("normalCBTF"));
             looseShapeCBVF = new PMValueField(PolyMeshEditorWindow.getLooseShapeTol(), ValueField.NONE);
             looseShapeCBVF.setTextField((BTextField) decoder.getObject("looseShapeCBTF"));
             strictShapeCBVF = new PMValueField(PolyMeshEditorWindow.getStrictShapeTol(), ValueField.NONE);
             strictShapeCBVF.setTextField((BTextField) decoder.getObject("strictShapeCBTF"));
-            GridContainer okCancelGrid = (GridContainer) decoder.getObject("OkCancelGrid");
+            
             okButton = ((BButton) decoder.getObject("okButton"));
             cancelButton = ((BButton) decoder.getObject("cancelButton"));
             okButton.setText(Translate.text("button.ok"));
@@ -91,7 +90,7 @@ class FindSimilarFacesDialog extends BDialog {
         } catch (IOException ex) {
             log.atError().setCause(ex).log("Error creating FindSimilarFacesDialog due {}", ex.getLocalizedMessage());
         }
-        setContent(borderContainer1);
+        setContent(container);
         normalCBVF.addEventLink(ValueChangedEvent.class, this, "doTolValueChanged");
         strictShapeCBVF.addEventLink(ValueChangedEvent.class, this, "doTolValueChanged");
         looseShapeCBVF.addEventLink(ValueChangedEvent.class, this, "doTolValueChanged");
@@ -111,8 +110,8 @@ class FindSimilarFacesDialog extends BDialog {
         double normalTol = PolyMeshEditorWindow.getNormalTol();
         double looseShapeTol = PolyMeshEditorWindow.getLooseShapeTol();
         double strictShapeTol = PolyMeshEditorWindow.getStrictShapeTol();
-        outer.setSelection(mesh.findSimilarFaces(orSelection, isNormal(), normalTol, isLoose(), looseShapeTol, isStrict(), strictShapeTol));
-        outer.objectChanged();
+        owner.setSelection(mesh.findSimilarFaces(orSelection, isNormal(), normalTol, isLoose(), looseShapeTol, isStrict(), strictShapeTol));
+        owner.objectChanged();
         owner.updateImage();
     }
 
@@ -132,8 +131,8 @@ class FindSimilarFacesDialog extends BDialog {
     }
 
     private void doCancel() {
-        outer.setSelection(orSelection);
-        outer.objectChanged();
+        owner.setSelection(orSelection);
+        owner.objectChanged();
         owner.updateImage();
         dispose();
     }
