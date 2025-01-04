@@ -11,22 +11,22 @@
 package artofillusion.polymesh;
 
 import artofillusion.ui.Translate;
-import java.awt.event.ActionEvent;
+import artofillusion.ui.ValueField;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
  * @author MaksK
  */
+@Slf4j
 public class FindSimilarFacesDialogNew extends javax.swing.JDialog {
     
     private final PolyMeshEditorWindow owner;
+    private final PolyMesh mesh;
     
     /**
      * A return status code - returned if Cancel button has been pressed
@@ -43,6 +43,7 @@ public class FindSimilarFacesDialogNew extends javax.swing.JDialog {
     public FindSimilarFacesDialogNew(PolyMeshEditorWindow owner) {
         super(owner.getComponent(), true);
         this.owner = owner;
+        this.mesh = (PolyMesh) owner.getObject().getObject();
         initComponents();
 
         // Close the dialog when Esc is pressed
@@ -69,6 +70,16 @@ public class FindSimilarFacesDialogNew extends javax.swing.JDialog {
 
         okButton = new javax.swing.JButton();
         javax.swing.JButton cancelButton = new javax.swing.JButton();
+        tolerance1Text = tolerance1.getComponent();
+        javax.swing.JLabel titleLabel = new javax.swing.JLabel();
+        tolerance2Text = tolerance2.getComponent();
+        tolerance3Text = tolerance3.getComponent();
+        normalCB = new javax.swing.JCheckBox();
+        looseShapeCB = new javax.swing.JCheckBox();
+        strictShapeCB = new javax.swing.JCheckBox();
+        tolerance1Label = new javax.swing.JLabel();
+        tolerance2Label = new javax.swing.JLabel();
+        tolerance3Label = new javax.swing.JLabel();
 
         setTitle(Translate.text("polymesh:similarFacesTitle"));
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -78,20 +89,74 @@ public class FindSimilarFacesDialogNew extends javax.swing.JDialog {
         });
 
         okButton.setText(Translate.text("button.ok"));
+        okButton.setEnabled(false);
         okButton.addActionListener(this::okButtonActionPerformed);
 
         cancelButton.setText(Translate.text("button.cancel"));
         cancelButton.addActionListener(this::cancelButtonActionPerformed);
 
+        tolerance1Text.setEnabled(false);
+
+        titleLabel.setText(Translate.text("polymesh:chooseSelectionCriterion"));
+
+        tolerance2Text.setEnabled(false);
+
+        tolerance3Text.setEnabled(false);
+
+        normalCB.setText(Translate.text("polymesh:normalCBText"));
+        normalCB.addActionListener(this::normalCBActionPerformed);
+
+        looseShapeCB.setText(Translate.text("polymesh:looseShapeCBText"));
+        looseShapeCB.addActionListener(this::looseShapeCBActionPerformed);
+
+        strictShapeCB.setText(Translate.text("polymesh:strictShapeCBText"));
+        strictShapeCB.addActionListener(this::strictShapeCBActionPerformed);
+
+        tolerance1Label.setLabelFor(tolerance1Text);
+        tolerance1Label.setText(Translate.text("polymesh:tolerance"));
+        tolerance1Label.setEnabled(false);
+
+        tolerance2Label.setLabelFor(tolerance2Text);
+        tolerance2Label.setText(Translate.text("polymesh:tolerance"));
+        tolerance2Label.setEnabled(false);
+
+        tolerance3Label.setLabelFor(tolerance3Text);
+        tolerance3Label.setText(Translate.text("polymesh:tolerance"));
+        tolerance3Label.setEnabled(false);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(194, Short.MAX_VALUE)
-                .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cancelButton)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(titleLabel)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cancelButton))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(normalCB, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tolerance1Label)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tolerance1Text, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(looseShapeCB)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(tolerance2Label)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tolerance2Text, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(strictShapeCB)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(tolerance3Label)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tolerance3Text, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -100,7 +165,24 @@ public class FindSimilarFacesDialogNew extends javax.swing.JDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(266, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(titleLabel)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tolerance1Text, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(normalCB)
+                    .addComponent(tolerance1Label))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tolerance2Text, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(looseShapeCB)
+                    .addComponent(tolerance2Label))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tolerance3Text, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(strictShapeCB)
+                    .addComponent(tolerance3Label))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(okButton))
@@ -127,6 +209,28 @@ public class FindSimilarFacesDialogNew extends javax.swing.JDialog {
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog
+
+    private void normalCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_normalCBActionPerformed
+        // TODO add your handling code here:
+        log.info("Normal Cb Action performed");
+        tolerance1Label.setEnabled(normalCB.isSelected());
+        tolerance1Text.setEnabled(normalCB.isSelected());
+        this.okButton.setEnabled(normalCB.isSelected() || looseShapeCB.isSelected() || strictShapeCB.isSelected());
+    }//GEN-LAST:event_normalCBActionPerformed
+
+    private void looseShapeCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_looseShapeCBActionPerformed
+        // TODO add your handling code here:
+        tolerance2Label.setEnabled(looseShapeCB.isSelected());
+        tolerance2Text.setEnabled(looseShapeCB.isSelected());
+        this.okButton.setEnabled(normalCB.isSelected() || looseShapeCB.isSelected() || strictShapeCB.isSelected());
+    }//GEN-LAST:event_looseShapeCBActionPerformed
+
+    private void strictShapeCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_strictShapeCBActionPerformed
+        // TODO add your handling code here:
+        tolerance3Label.setEnabled(strictShapeCB.isSelected());
+        tolerance3Text.setEnabled(strictShapeCB.isSelected());
+        this.okButton.setEnabled(normalCB.isSelected() || looseShapeCB.isSelected() || strictShapeCB.isSelected());
+    }//GEN-LAST:event_strictShapeCBActionPerformed
     
     private void doClose(int retStatus) {
         returnStatus = retStatus;
@@ -136,8 +240,21 @@ public class FindSimilarFacesDialogNew extends javax.swing.JDialog {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox looseShapeCB;
+    private javax.swing.JCheckBox normalCB;
     private javax.swing.JButton okButton;
+    private javax.swing.JCheckBox strictShapeCB;
+    private javax.swing.JLabel tolerance1Label;
+    private javax.swing.JTextField tolerance1Text;
+    private javax.swing.JLabel tolerance2Label;
+    private javax.swing.JTextField tolerance2Text;
+    private javax.swing.JLabel tolerance3Label;
+    private javax.swing.JTextField tolerance3Text;
     // End of variables declaration//GEN-END:variables
 
     private int returnStatus = RET_CANCEL;
+    
+    private final ValueField tolerance1 = new ValueField(PolyMeshEditorWindow.getNormalTol(), ValueField.NONE);
+    private final ValueField tolerance2 = new ValueField(PolyMeshEditorWindow.getLooseShapeTol(), ValueField.NONE);
+    private final ValueField tolerance3 = new ValueField(PolyMeshEditorWindow.getStrictShapeTol(), ValueField.NONE);
 }

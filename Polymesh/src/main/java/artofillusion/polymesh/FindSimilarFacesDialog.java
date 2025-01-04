@@ -23,7 +23,6 @@ import buoy.widget.BDialog;
 import buoy.widget.BLabel;
 import buoy.widget.BTextField;
 import buoy.widget.BorderContainer;
-import buoy.widget.GridContainer;
 import buoy.xml.WidgetDecoder;
 import java.io.IOException;
 import java.io.InputStream;
