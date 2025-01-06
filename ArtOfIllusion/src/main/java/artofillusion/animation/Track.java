@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2013 by Peter Eastman
-   Changes copyright (C) 2021 by Maksim Khramov
+   Changes copyright (C) 2021-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -20,10 +20,11 @@ import java.util.*;
  * This is an abstract class representing an aspect of the scene which changes with time.
  * Tracks are typically defined either by a Timecourse or a Procedure.
  */
-public abstract class Track {
+public abstract class Track<T extends Track> {
 
     protected String name;
-    protected boolean enabled = true, quantized = true;
+    protected boolean enabled = true;
+    protected boolean quantized = true;
 
     protected Track() {
     }
@@ -124,12 +125,12 @@ public abstract class Track {
     /**
      * Create a duplicate of this track (possibly for another object and/or parent track).
      */
-    public abstract Track duplicate(Object parent);
+    public abstract T duplicate(Object parent);
 
     /**
      * Make this track identical to another one.
      */
-    public abstract void copy(Track tr);
+    public abstract void copy(T source);
 
     /**
      * Get a list of all keyframe times for this track.
@@ -247,5 +248,5 @@ public abstract class Track {
     /**
      * Initialize this tracked based on its serialized representation as written by writeToStream().
      */
-    public abstract void initFromStream(DataInputStream in, Scene scene) throws IOException, InvalidObjectException;
+    public abstract void initFromStream(DataInputStream in, Scene scene) throws IOException;
 }

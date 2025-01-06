@@ -31,7 +31,7 @@ import java.util.*;
 /**
  * This is a Track which modifies the shape of an object using inverse kinematics.
  */
-public class IKTrack extends Track {
+public class IKTrack extends Track<IKTrack> {
 
     private ObjectInfo info;
     private List<Constraint> constraints = new Vector<>();
@@ -112,7 +112,7 @@ public class IKTrack extends Track {
      * Create a duplicate of this track.
      */
     @Override
-    public Track duplicate(Object obj) {
+    public IKTrack duplicate(Object obj) {
         IKTrack t = new IKTrack((ObjectInfo) obj);
 
         t.name = name;
@@ -128,15 +128,14 @@ public class IKTrack extends Track {
      * Make this track identical to another one.
      */
     @Override
-    public void copy(Track tr) {
-        IKTrack t = (IKTrack) tr;
+    public void copy(IKTrack track) {
 
-        name = t.name;
-        enabled = t.enabled;
-        quantized = t.quantized;
+        name = track.name;
+        enabled = track.enabled;
+        quantized = track.quantized;
         constraints.clear();
-        t.constraints.forEach(c -> constraints.add(c.duplicate()));
-        theWeight = t.theWeight.duplicate(t);
+        track.constraints.forEach(c -> constraints.add(c.duplicate()));
+        theWeight = track.theWeight.duplicate(track);
     }
 
     /**

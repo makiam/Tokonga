@@ -23,13 +23,14 @@ import java.io.*;
 /**
  * This is a Track which uses a procedure to deform object.
  */
-public class CustomDistortionTrack extends Track implements ProcedureOwner {
+public class CustomDistortionTrack extends Track<CustomDistortionTrack> implements ProcedureOwner {
 
     ObjectInfo info;
     final Procedure proc;
     Timecourse tc;
     TextureParameter[] parameter;
-    int smoothingMethod, procVersion;
+    int smoothingMethod;
+    int procVersion;
     WeightTrack theWeight;
     boolean worldCoords;
 
@@ -77,24 +78,23 @@ public class CustomDistortionTrack extends Track implements ProcedureOwner {
         t.proc.copy(proc);
         t.worldCoords = worldCoords;
         t.smoothingMethod = smoothingMethod;
-        t.tc = tc.duplicate((ObjectInfo) obj);
+        t.tc = tc.duplicate(obj);
         t.theWeight = theWeight.duplicate(t);
         return t;
     }
 
     /* Make this track identical to another one. */
     @Override
-    public void copy(Track tr) {
-        CustomDistortionTrack t = (CustomDistortionTrack) tr;
+    public void copy(CustomDistortionTrack track) {
 
-        name = t.name;
-        enabled = t.enabled;
-        quantized = t.quantized;
-        proc.copy(t.proc);
-        worldCoords = t.worldCoords;
-        smoothingMethod = t.smoothingMethod;
-        tc = t.tc.duplicate(info);
-        theWeight = t.theWeight.duplicate(this);
+        name = track.name;
+        enabled = track.enabled;
+        quantized = track.quantized;
+        proc.copy(track.proc);
+        worldCoords = track.worldCoords;
+        smoothingMethod = track.smoothingMethod;
+        tc = track.tc.duplicate(info);
+        theWeight = track.theWeight.duplicate(this);
     }
 
     /* Get a list of all keyframe times for this track. */
@@ -265,7 +265,7 @@ public class CustomDistortionTrack extends Track implements ProcedureOwner {
      * Initialize this tracked based on its serialized representation as written by writeToStream().
      */
     @Override
-    public void initFromStream(DataInputStream in, Scene scene) throws IOException, InvalidObjectException {
+    public void initFromStream(DataInputStream in, Scene scene) throws IOException {
         short version = in.readShort();
         if (version != 0) {
             throw new InvalidObjectException("");

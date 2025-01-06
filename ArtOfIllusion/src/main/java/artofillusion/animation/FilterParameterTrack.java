@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2009 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -23,7 +23,7 @@ import java.util.*;
 /**
  * This is a Track which allows the parameters of an ImageFilter to be keyframed.
  */
-public class FilterParameterTrack extends Track {
+public class FilterParameterTrack extends Track<FilterParameterTrack> {
 
     private Object parent;
     private final ImageFilter filter;
@@ -87,14 +87,13 @@ public class FilterParameterTrack extends Track {
      * Make this track identical to another one.
      */
     @Override
-    public void copy(Track tr) {
-        FilterParameterTrack t = (FilterParameterTrack) tr;
+    public void copy(FilterParameterTrack track) {
 
-        name = t.name;
-        enabled = t.enabled;
-        quantized = t.quantized;
-        smoothingMethod = t.smoothingMethod;
-        tc = t.tc.duplicate(filter);
+        name = track.name;
+        enabled = track.enabled;
+        quantized = track.quantized;
+        smoothingMethod = track.smoothingMethod;
+        tc = track.tc.duplicate(filter);
     }
 
     /**
@@ -317,7 +316,7 @@ public class FilterParameterTrack extends Track {
      * Initialize this tracked based on its serialized representation as written by writeToStream().
      */
     @Override
-    public void initFromStream(DataInputStream in, Scene scene) throws IOException, InvalidObjectException {
+    public void initFromStream(DataInputStream in, Scene scene) throws IOException {
         short version = in.readShort();
 
         if (version != 0) {

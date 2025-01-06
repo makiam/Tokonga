@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2013 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -24,7 +24,7 @@ import java.util.*;
 /**
  * This is a Track which uses a procedure to control the position of an object.
  */
-public class ProceduralPositionTrack extends Track implements ProcedureOwner {
+public class ProceduralPositionTrack extends Track<ProceduralPositionTrack> implements ProcedureOwner {
 
     ObjectInfo info;
     private final Procedure proc;
@@ -63,7 +63,8 @@ public class ProceduralPositionTrack extends Track implements ProcedureOwner {
     @Override
     public void apply(double time) {
         PointInfo point = new PointInfo();
-        Vec3 v = info.getCoords().getOrigin(), jointDelta = null;
+        Vec3 v = info.getCoords().getOrigin();
+        Vec3 jointDelta = null;
         OutputModule[] output = proc.getOutputModules();
 
         point.x = v.x;
@@ -138,7 +139,7 @@ public class ProceduralPositionTrack extends Track implements ProcedureOwner {
         t.mode = mode;
         t.relCoords = relCoords;
         t.smoothingMethod = smoothingMethod;
-        t.tc = tc.duplicate((ObjectInfo) obj);
+        t.tc = tc.duplicate(obj);
         t.relObject = relObject.duplicate();
         t.theWeight = theWeight.duplicate(t);
         t.joint = joint;
@@ -147,20 +148,19 @@ public class ProceduralPositionTrack extends Track implements ProcedureOwner {
 
     /* Make this track identical to another one. */
     @Override
-    public void copy(Track tr) {
-        ProceduralPositionTrack t = (ProceduralPositionTrack) tr;
+    public void copy(ProceduralPositionTrack track) {
 
-        name = t.name;
-        enabled = t.enabled;
-        quantized = t.quantized;
-        proc.copy(t.proc);
-        mode = t.mode;
-        relCoords = t.relCoords;
-        smoothingMethod = t.smoothingMethod;
-        tc = t.tc.duplicate(info);
-        relObject = t.relObject.duplicate();
-        theWeight = t.theWeight.duplicate(this);
-        joint = t.joint;
+        name = track.name;
+        enabled = track.enabled;
+        quantized = track.quantized;
+        proc.copy(track.proc);
+        mode = track.mode;
+        relCoords = track.relCoords;
+        smoothingMethod = track.smoothingMethod;
+        tc = track.tc.duplicate(info);
+        relObject = track.relObject.duplicate();
+        theWeight = track.theWeight.duplicate(this);
+        joint = track.joint;
     }
 
     /* Get a list of all keyframe times for this track. */
