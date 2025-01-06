@@ -16,6 +16,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -27,6 +29,7 @@ public class FindSimilarFacesDialogNew extends javax.swing.JDialog {
     
     private final PolyMeshEditorWindow owner;
     private final PolyMesh mesh;
+    private final boolean[] orSelection;
     
     /**
      * A return status code - returned if Cancel button has been pressed
@@ -44,6 +47,7 @@ public class FindSimilarFacesDialogNew extends javax.swing.JDialog {
         super(owner.getComponent(), true);
         this.owner = owner;
         this.mesh = (PolyMesh) owner.getObject().getObject();
+        this.orSelection = owner.getSelection();
         initComponents();
 
         // Close the dialog when Esc is pressed
@@ -196,6 +200,9 @@ public class FindSimilarFacesDialogNew extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        if(normalCB.isSelected()) PolyMeshEditorWindow.setNormalTol(tolerance1.getValue());
+        if(looseShapeCB.isSelected()) PolyMeshEditorWindow.setLooseShapeTol(tolerance2.getValue());
+        if(strictShapeCB.isSelected()) PolyMeshEditorWindow.setStrictShapeTol(tolerance3.getValue());
         doClose(RET_OK);
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -237,7 +244,10 @@ public class FindSimilarFacesDialogNew extends javax.swing.JDialog {
         setVisible(false);
         dispose();
     }
-
+    
+    private void textChanged() {
+        
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox looseShapeCB;
@@ -257,4 +267,26 @@ public class FindSimilarFacesDialogNew extends javax.swing.JDialog {
     private final ValueField tolerance1 = new ValueField(PolyMeshEditorWindow.getNormalTol(), ValueField.NONE);
     private final ValueField tolerance2 = new ValueField(PolyMeshEditorWindow.getLooseShapeTol(), ValueField.NONE);
     private final ValueField tolerance3 = new ValueField(PolyMeshEditorWindow.getStrictShapeTol(), ValueField.NONE);
+    
+    // Copied from Image Name Editor Dialog. Extract to shared code?
+    @FunctionalInterface
+    public interface TextInputListener extends DocumentListener {
+        void update(DocumentEvent de);
+        
+        @Override
+        default void changedUpdate(DocumentEvent de) {
+            update(de);
+        }
+
+        @Override
+        default void insertUpdate(DocumentEvent de)  {
+            update(de);            
+        }
+
+        @Override
+        default void removeUpdate(DocumentEvent de) {
+            update(de);            
+        }
+        
+    }    
 }

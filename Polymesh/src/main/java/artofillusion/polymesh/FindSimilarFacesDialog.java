@@ -143,6 +143,7 @@ class FindSimilarFacesDialog extends BDialog {
 
     private void fetchTolValues() {
         if (normalCB.getState()) {
+            log.info("Normal: {}", normalCBVF.getValue());
             PolyMeshEditorWindow.setNormalTol(normalCBVF.getValue());
         }
         if (looseShapeCB.getState()) {

@@ -4334,7 +4334,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     private void doFindSimilarFaces() {
-        SwingUtilities.invokeLater(() -> new FindSimilarFacesDialogNew(this).setVisible(true));
+        //SwingUtilities.invokeLater(() -> new FindSimilarFacesDialogNew(this).setVisible(true));
         new FindSimilarFacesDialog(this).setVisible(true);
         
     }

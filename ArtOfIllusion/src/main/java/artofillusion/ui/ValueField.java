@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,6 +12,8 @@
 package artofillusion.ui;
 
 import buoy.widget.*;
+import lombok.Getter;
+
 import java.awt.*;
 
 /**
@@ -21,7 +23,13 @@ import java.awt.*;
  */
 public class ValueField extends BTextField {
 
+    /**
+     * -- GETTER --
+     *  Get the current value in this field.
+     */
+    @Getter
     private double value = Double.NaN;
+    
     private final int constraints;
     private int decimalPlaces = 3;
     private boolean validEventsOnly = true;
@@ -127,13 +135,13 @@ public class ValueField extends BTextField {
             return;
         }
         boolean suppress;
-        if (!isTextValid()) {
-            setTextColor(false);
-            suppress = validEventsOnly;
-        } else {
+        if (isTextValid()) {
             value = val;
             setTextColor(true);
             suppress = (val == oldVal);
+        } else {
+            setTextColor(false);
+            suppress = validEventsOnly;
         }
         try {
             if (suppress) {
@@ -145,13 +153,6 @@ public class ValueField extends BTextField {
                 suppressEvents--;
             }
         }
-    }
-
-    /**
-     * Get the current value in this field.
-     */
-    public double getValue() {
-        return value;
     }
 
     /**
