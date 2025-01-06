@@ -1,6 +1,6 @@
 /* Copyright (C) 2002-2013 by Peter Eastman
    Changes Copyright (C) 2023 by Lucas Stanek
-   Changes Copyright (C) 2023-2024 by Maksim Khramov
+   Changes Copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -118,9 +118,9 @@ public class ExecuteScriptWindow extends BFrame {
         BorderContainer tools = new BorderContainer();
         content.add(tools, BorderContainer.NORTH);
         RowContainer buttons = new RowContainer();
-        buttons.add(Translate.button("load", "...", this, "loadScript"));
-        buttons.add(Translate.button("saveAs", "...", this, "saveScriptAs"));
-        buttons.add(save = Translate.button("save", "", this, "saveScript"));
+        buttons.add(Translate.button("load", "...", event -> loadScript()));
+        buttons.add(Translate.button("saveAs", "...", event -> saveScriptAs()));
+        buttons.add(save = Translate.button("save", "", event -> saveScript()));
         save.setEnabled(false);
 
         tools.add(buttons, BorderContainer.WEST, new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE));

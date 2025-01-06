@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2009 by Peter Eastman
-   Changes copyright (C) 2022-2024 by Maksim Khramov
+   Changes copyright (C) 2022-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -323,7 +323,7 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
             listsPanel.add(buttonsPanel, 1, 0);
             listsPanel.add(UIUtilities.createScrollingList(cameraFiltersList = new BList()), 2, 0, fillLayout);
             buttonsPanel.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(2, 2, 2, 2), null));
-            buttonsPanel.add(addButton = Translate.button("add", " >>", this, "doAdd"));
+            buttonsPanel.add(addButton = Translate.button("add", " >>", event -> doAdd()));
             buttonsPanel.add(deleteButton = Translate.button("delete", event -> doDelete()));
             buttonsPanel.add(upButton = Translate.button("moveUp", event -> doMoveUp()));
             buttonsPanel.add(downButton = Translate.button("moveDown", event -> doMoveDown()));
