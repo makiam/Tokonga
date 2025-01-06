@@ -16,7 +16,6 @@ import artofillusion.ui.UIUtilities;
 import artofillusion.ui.ValueField;
 import buoy.event.CommandEvent;
 import buoy.event.ValueChangedEvent;
-import buoy.event.WindowClosingEvent;
 import buoy.widget.BButton;
 import buoy.widget.BCheckBox;
 import buoy.widget.BDialog;
@@ -137,11 +136,7 @@ class FindSimilarFacesDialog extends BDialog {
         tolerance3.setEnabled(strictShapeCB.getState());
         strictShapeCBVF.setEnabled(strictShapeCB.getState());
         doTolValueChanged();
-        if (normalCB.getState() || looseShapeCB.getState() || strictShapeCB.getState()) {
-            okButton.setEnabled(true);
-        } else {
-            okButton.setEnabled(false);
-        }
+        okButton.setEnabled(normalCB.getState() || looseShapeCB.getState() || strictShapeCB.getState());
     }
 
     private void doCancel() {
