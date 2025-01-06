@@ -1,4 +1,4 @@
-/* Copyright 2024 by Maksim Khramov
+/* Copyright 2024-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -231,7 +231,7 @@ public class ImageNameEditor extends javax.swing.JDialog {
 
     private int returnStatus = RET_CANCEL;
     
-    
+    // Copied to Polymesh FindSimilarFaces Dialog. Extract to shared code?
     @FunctionalInterface
     public interface TextInputListener extends DocumentListener {
         void update(DocumentEvent de);
