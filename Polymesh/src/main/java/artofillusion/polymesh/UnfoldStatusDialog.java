@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman, 2005 by Francois Guillet
-   Changes copyright (C) 2023 Maksim Khramov
+   Changes copyright (C) 2023-2025 Maksim Khramov
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
@@ -15,7 +15,6 @@ import artofillusion.ui.UIUtilities;
 import artofillusion.ui.ValueField;
 import buoy.event.CommandEvent;
 import buoy.event.ValueChangedEvent;
-import buoy.event.WindowClosingEvent;
 import buoy.widget.BButton;
 import buoy.widget.BDialog;
 import buoy.widget.BLabel;
@@ -90,7 +89,11 @@ class UnfoldStatusDialog extends BDialog {
         status = 0;
         cancelled = false;
         pack();
-        addEventLink(WindowClosingEvent.class, this, "doCancel");
+        this.getComponent().addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                doCancel();
+            }
+        });
         UIUtilities.centerWindow(this);
         advancedButton.setVisible(false);
         progressBar.setProgressText("");

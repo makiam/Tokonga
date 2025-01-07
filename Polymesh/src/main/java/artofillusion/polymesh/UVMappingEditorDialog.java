@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2007 by François Guillet
  *  Modifications Copyright (C) 2019 by Petri Ihalainen
- *  Changes copyright (C) 2022-2024 by Maksim Khramov
+ *  Changes copyright (C) 2022-2025 by Maksim Khramov
 
  *  This program is free software; you can redistribute it and/or modify it under the 
  *  terms of the GNU General Public License as published by the Free Software 
@@ -368,7 +368,11 @@ public class UVMappingEditorDialog extends BDialog {
         setBounds(b);
 
         UIUtilities.centerWindow(this); // Has to be after 'pack()'
-        addEventLink(WindowClosingEvent.class, this, "doCancel");
+        this.getComponent().addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                doCancel();
+            }
+        });
 
         setVisible(true);
     }
@@ -392,9 +396,9 @@ public class UVMappingEditorDialog extends BDialog {
 
     private void setTexturesForMapping(UVMeshMapping currentMapping) {
         textureCB.removeAll();
-        ArrayList<Integer> textures = currentMapping.textures;
-        for (int i = 0; i < textures.size(); i++) {
-            textureCB.add(texList.get(getTextureFromID(textures.get(i))).getName());
+
+        for (var id: currentMapping.textures) {
+            textureCB.add(texList.get(getTextureFromID(id)).getName());
         }
     }
 
@@ -413,16 +417,8 @@ public class UVMappingEditorDialog extends BDialog {
     }
 
     private void updateUndoRedoMenus() {
-        if (undoRedoStack.canUndo()) {
-            undoMenuItem.setEnabled(true);
-        } else {
-            undoMenuItem.setEnabled(false);
-        }
-        if (undoRedoStack.canRedo()) {
-            redoMenuItem.setEnabled(true);
-        } else {
-            redoMenuItem.setEnabled(false);
-        }
+        undoMenuItem.setEnabled(undoRedoStack.canUndo());
+        redoMenuItem.setEnabled(undoRedoStack.canRedo());
     }
 
     /**
@@ -1163,9 +1159,7 @@ public class UVMappingEditorDialog extends BDialog {
             mappingCB.remove(index);
             mappings.remove(index);
             UVMeshMapping firstMapping = mappings.get(0);
-            for (int j = 0; j < currentMapping.textures.size(); j++) {
-                firstMapping.textures.add(currentMapping.textures.get(j));
-            }
+            firstMapping.textures.addAll(currentMapping.textures);
             if (firstMapping.textures.size() > 0) {
                 currentTexture = getTextureFromID(firstMapping.textures.get(0));
                 mappingCanvas.setTexture(texList.get(currentTexture), mappingList.get(currentTexture));
@@ -1310,7 +1304,7 @@ public class UVMappingEditorDialog extends BDialog {
     }
 
     /**
-     * A dialog to to define the exported mapping image.
+     * A dialog to define the exported mapping image.
      */
     class ExportImageDialog extends BDialog {
 
@@ -1336,7 +1330,11 @@ public class UVMappingEditorDialog extends BDialog {
         // - Option to export the texture image only
         ExportImageDialog(WindowWidget parent) {
             super(parent, true);
-            addEventLink(WindowClosingEvent.class, this, "dispose");
+            this.getComponent().addWindowListener(new java.awt.event.WindowAdapter() {
+                public void windowClosing(java.awt.event.WindowEvent evt) {
+                    dispose();
+                }
+            });
 
             LayoutInfo labelLayout = new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE, new Insets(10, 10, 0, 2), null);
             LayoutInfo valueLayout = new LayoutInfo(LayoutInfo.WEST, LayoutInfo.HORIZONTAL, new Insets(10, 0, 2, 10), null);

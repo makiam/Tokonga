@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman, 2005 by Francois Guillet
-   Changes copyright (C) 2023 Maksim Khramov
+   Changes copyright (C) 2023-2025 Maksim Khramov
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
@@ -15,16 +15,20 @@ import artofillusion.ui.UIUtilities;
 import artofillusion.ui.ValueField;
 import buoy.event.CommandEvent;
 import buoy.event.ValueChangedEvent;
-import buoy.event.WindowClosingEvent;
 import buoy.widget.BButton;
 import buoy.widget.BDialog;
 import buoy.widget.BLabel;
 import buoy.widget.BTextField;
 import buoy.widget.BorderContainer;
 import buoy.xml.WidgetDecoder;
+
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.swing.*;
 
 /**
  * A dialog presenting options to find similar edges
@@ -68,7 +72,15 @@ class FindSimilarEdgesDialog extends BDialog {
         toleranceVF.addEventLink(ValueChangedEvent.class, this, "doTolValueChanged");
         okButton.addEventLink(CommandEvent.class, this, "doOK");
         cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
-        addEventLink(WindowClosingEvent.class, this, "doCancel");
+
+        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        ActionListener action = e -> doCancel();
+        this.getComponent().getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        this.getComponent().addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                doCancel();
+            }
+        });
         pack();
         UIUtilities.centerWindow(this);
         doTolValueChanged();
