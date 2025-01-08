@@ -17,6 +17,7 @@
     <plugin class="artofillusion.procedural.ClipModule"/>
     <plugin class="artofillusion.procedural.ColorDarkenModule"/>
     <plugin class="artofillusion.procedural.ColorDifferenceModule"/>
+    <plugin class="artofillusion.procedural.ColorEqualityModule"/>
     <plugin class="artofillusion.procedural.ColorLightenModule"/>
     <plugin class="artofillusion.procedural.ColorProductModule"/>
     <plugin class="artofillusion.procedural.ColorScaleModule"/>
