@@ -44,6 +44,11 @@ public interface Mesh {
     void setVertexPositions(Vec3[] v);
 
     /**
+     * Get a bounding box for the mesh.
+     */
+    BoundingBox getBounds();
+
+    /**
      * Get an array of normal vectors, one for each vertex.
      */
     Vec3[] getNormals();
@@ -57,6 +62,17 @@ public interface Mesh {
      * Get the values of the TextureParameters which are defined on this mesh.
      */
     ParameterValue[] getParameterValues();
+
+    /**
+     * Create a new object which is an exact duplicate of this one.
+     */
+    Object3D duplicate();
+
+    /**
+     * Copy all the properties of another object, to make this one identical to it. If the
+     * two objects are of different classes, this will throw a ClassCastException.
+     */
+    void copyObject(Object3D obj);
 
     /**
      * Get the skeleton for the object. If it does not have one, this should return null.
