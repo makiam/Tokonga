@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2012 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -54,7 +54,7 @@ public class CSGObject extends Object3D {
      * Create a new object which is an exact duplicate of this one.
      */
     @Override
-    public Object3D duplicate() {
+    public CSGObject duplicate() {
         CSGObject obj = new CSGObject(obj1, obj2, operation);
         obj.copyTextureAndMaterial(this);
         return obj;

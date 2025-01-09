@@ -445,7 +445,7 @@ public abstract class Object3D {
         }
     }
 
-    public Object3D(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+    public Object3D(DataInputStream in, Scene theScene) throws IOException {
         short version = in.readShort();
 
         if (version < 0 || version > 1) {
