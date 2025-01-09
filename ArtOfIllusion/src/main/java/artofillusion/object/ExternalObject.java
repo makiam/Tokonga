@@ -329,7 +329,7 @@ public class ExternalObject extends ObjectWrapper {
         }
 
         @Override
-        public Object3D duplicate() {
+        public ExternalObjectCollection duplicate() {
             return new ExternalObjectCollection(objects);
         }
 
