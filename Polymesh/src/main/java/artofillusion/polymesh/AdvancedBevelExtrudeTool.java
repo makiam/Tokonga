@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2007 by Francois Guillet
- *  Changes copyright (C) 2023 by Maksim Khramov
+ *  Changes copyright (C) 2023-2025 by Maksim Khramov
 
  This program is free software; you can redistribute it and/or modify it under the
  terms of the GNU General Public License as published by the Free Software
@@ -90,7 +90,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
     }
 
     private void doManipulatorPrepareShapingMesh(Manipulator.ManipulatorEvent e) {
-        PolyMesh mesh = (PolyMesh) controller.getObject().object;
+        PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
         baseVertPos = mesh.getVertexPositions();
         origMesh = (PolyMesh) mesh.duplicate();
         selected = controller.getSelection();
@@ -106,7 +106,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
 
     private void doAbortChangingMesh() {
         if (origMesh != null) {
-            PolyMesh mesh = (PolyMesh) controller.getObject().object;
+            PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
             mesh.copyObject(origMesh);
             controller.objectChanged();
         }
@@ -118,7 +118,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
     }
 
     private void doManipulatorShapedMesh(Manipulator.ManipulatorEvent e) {
-        PolyMesh mesh = (PolyMesh) controller.getObject().object;
+        PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
         UndoRecord undo = new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, origMesh});
         theWindow.setUndoRecord(undo);
         baseVertPos = null;
@@ -129,7 +129,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
 
     private void doManipulatorMouseDragEvent(MouseDragManipulator.ManipulatorMouseDragEvent e) {
         MeshViewer mv = (MeshViewer) e.getView();
-        PolyMesh mesh = (PolyMesh) controller.getObject().object;
+        PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
         Vec2 drag = e.getDrag();
         Vec3 camZ = mv.getCamera().getCameraCoordinates().getZDirection();
         int selectMode = controller.getSelectionMode();

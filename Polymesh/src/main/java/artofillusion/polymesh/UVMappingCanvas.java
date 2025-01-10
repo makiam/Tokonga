@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2007 by François Guillet
  *  Modifications Copyright (C) 2019 by Petri Ihalainen
- *  Changes copyright (C) 2022 by Maksim Khramov
+ *  Changes copyright (C) 2022-2025 by Maksim Khramov
  *
  *  This program is free software; you can redistribute it and/or modify it under the 
  *  terms of the GNU General Public License as published by the Free Software 
@@ -539,7 +539,7 @@ public class UVMappingCanvas extends CustomWidget {
      * This method updates the preview when the selection has been changed
      */
     public void updatePreview() {
-        Mesh mesh = (Mesh) preview.getObject().object;
+        Mesh mesh = (Mesh) preview.getObject().getGeometry();
         MeshVertex[] vert = mesh.getVertices();
         UnfoldedMesh umesh = meshes[currentPiece];
         UnfoldedVertex[] uvert = umesh.getVertices();
@@ -940,7 +940,7 @@ public class UVMappingCanvas extends CustomWidget {
      * Sets texture coordinate indices for later use
      */
     public void initializeTexCoordsIndex() {
-        FacetedMesh mesh = (FacetedMesh) preview.getObject().object;
+        FacetedMesh mesh = (FacetedMesh) preview.getObject().getGeometry();
         int[][] texCoordIndex = new int[mesh.getFaceCount()][];
         vertIndexes = new int[texCoordIndex.length][];
         vertMeshes = new int[texCoordIndex.length][];
@@ -996,7 +996,7 @@ public class UVMappingCanvas extends CustomWidget {
         if (texture == null) {
             return;
         }
-        FacetedMesh mesh = (FacetedMesh) preview.getObject().object;
+        FacetedMesh mesh = (FacetedMesh) preview.getObject().getGeometry();
         Vec2[][] texCoord = new Vec2[mesh.getFaceCount()][];
         for (int i = 0; i < texCoord.length; i++) {
             texCoord[i] = new Vec2[mesh.getFaceVertexCount(i)];
@@ -1004,7 +1004,7 @@ public class UVMappingCanvas extends CustomWidget {
                 texCoord[i][j] = new Vec2(mapping.v[vertMeshes[i][j]][vertIndexes[i][j]]);
             }
         }
-        texMapping.setFaceTextureCoordinates(preview.getObject().object, texCoord);
+        texMapping.setFaceTextureCoordinates(preview.getObject().getGeometry(), texCoord);
         preview.render();
     }
 

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2006-2007 by Francois Guillet
- *  Changes copyright (C) 2022-2024 by Maksim Khramov
+ *  Changes copyright (C) 2022-2025 by Maksim Khramov
  *
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
@@ -3413,7 +3413,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         }
         if (hideFace != null) {
             boolean[] oldHideFace = hideFace;
-            FaceParameterValue val = (FaceParameterValue) getObject().object.getParameterValue(faceIndexParam);
+            FaceParameterValue val = (FaceParameterValue) getObject().getGeometry().getParameterValue(faceIndexParam);
             double[] param = val.getValue();
             hideFace = new boolean[obj.getFaces().length];
             for (int i = 0; i < param.length; i++) {
@@ -3463,9 +3463,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 jointWeight[i] = 0.0;
             }
         }
-        VertexParameterValue value = (VertexParameterValue) getObject().object.getParameterValue(jointWeightParam);
+        VertexParameterValue value = (VertexParameterValue) getObject().getGeometry().getParameterValue(jointWeightParam);
         value.setValue(jointWeight);
-        getObject().object.setParameterValues(getObject().object.getParameterValues());
+        getObject().getGeometry().setParameterValues(getObject().getGeometry().getParameterValues());
 
         objInfo.clearCachedMeshes();
     }
@@ -3498,7 +3498,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         }
         faceIndexParam = new TextureParameter(this, "Face Index", 0.0, Double.MAX_VALUE, 0.0);
         jointWeightParam = new TextureParameter(this, "Joint Weight", 0.0, 1.0, 0.0);
-        PolyMesh mesh = (PolyMesh) getObject().object;
+        PolyMesh mesh = (PolyMesh) getObject().getGeometry();
         TextureParameter[] params = mesh.getParameters();
         TextureParameter[] newparams = new TextureParameter[params.length + 2];
         ParameterValue[] values = mesh.getParameterValues();
@@ -3532,7 +3532,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         }
         faceIndexParam = null;
         jointWeightParam = null;
-        PolyMesh mesh = (PolyMesh) getObject().object;
+        PolyMesh mesh = (PolyMesh) getObject().getGeometry();
         TextureParameter[] params = mesh.getParameters();
         TextureParameter[] newparams = new TextureParameter[params.length - 2];
         ParameterValue[] values = mesh.getParameterValues();
