@@ -62,7 +62,11 @@ public class ObjectInfo {
      */
     @Getter
     public boolean visible;
+
+    @Getter
+    @Setter
     public boolean parentSelected;
+
     public ObjectInfo parent;
 
 
