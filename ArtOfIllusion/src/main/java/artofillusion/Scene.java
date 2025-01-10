@@ -889,14 +889,14 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      */
     private void updateSelectionInfo() {
         for (int i = objects.size() - 1; i >= 0; i--) {
-            objects.get(i).parentSelected = false;
+            objects.get(i).setParentSelected(false);
         }
         for (int i = objects.size() - 1; i >= 0; i--) {
             ObjectInfo info = objects.get(i);
             ObjectInfo parent = info.getParent();
             while (parent != null) {
                 if (parent.isSelected() || parent.parentSelected) {
-                    info.parentSelected = true;
+                    info.setParentSelected(true);
                     break;
                 }
                 parent = parent.getParent();
