@@ -895,7 +895,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
             ObjectInfo info = objects.get(i);
             ObjectInfo parent = info.getParent();
             while (parent != null) {
-                if (parent.isSelected() || parent.parentSelected) {
+                if (parent.isSelected() || parent.isParentSelected()) {
                     info.setParentSelected(true);
                     break;
                 }
