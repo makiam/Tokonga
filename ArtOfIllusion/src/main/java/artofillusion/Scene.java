@@ -266,7 +266,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         // Determine whether this object possesses a Position or Rotation track, and update any
         // tracks it is dependent on.
         boolean hasPos = false, hasRot = false, hasPose = false;
-        for (Track track : info.getTracks()) {
+        for (var track : info.getTracks()) {
             if (track.isNullTrack() || !track.isEnabled()) {
                 continue;
             }
@@ -1286,7 +1286,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
             for (int i = 0; i < tracks; i++) {
                 cls = ArtOfIllusion.getClass(in.readUTF());
                 con = cls.getConstructor(ObjectInfo.class);
-                Track tr = (Track) con.newInstance(info);
+                var tr = (Track<?>) con.newInstance(info);
                 tr.initFromStream(in, this);
                 info.addTrack(tr);
             }
