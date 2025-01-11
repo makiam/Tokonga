@@ -46,9 +46,9 @@ public class ExternalObject extends ObjectWrapper {
      * @param name the name of the object to load
      */
     public ExternalObject(File file, String name) {
+        this();
         externalFile = file;
-        objectName = name;
-        theObject = new NullObject();
+        objectName = name;        
         includeChildren = true;
     }
 
@@ -174,12 +174,11 @@ public class ExternalObject extends ObjectWrapper {
 
     /**
      * Create a new object which is an exact duplicate of this one.
+     * @return current object duplicate
      */
     @Override
-    public Object3D duplicate() {
-        ExternalObject obj = new ExternalObject();
-        obj.externalFile = externalFile;
-        obj.objectName = objectName;
+    public ExternalObject duplicate() {
+        ExternalObject obj = new ExternalObject(externalFile, objectName);
         obj.theObject = theObject;
         obj.includeChildren = includeChildren;
         return obj;
@@ -217,7 +216,7 @@ public class ExternalObject extends ObjectWrapper {
 
     @Override
     public void edit(EditingWindow parent, ObjectInfo info, Runnable cb) {
-        new ExternalObjectEditingWindow(parent, this, info, cb);
+        new ExternalObjectEditingWindow2(parent, this, info, cb).setVisible(true);
     }
 
     /**
