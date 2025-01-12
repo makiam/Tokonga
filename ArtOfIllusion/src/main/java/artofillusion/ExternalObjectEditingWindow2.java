@@ -17,14 +17,24 @@ import artofillusion.ui.Translate;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.nio.file.Path;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.KeyStroke;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeModel;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 @Slf4j
-public class ExternalObjectEditingWindow2 extends JDialog {
+public final class ExternalObjectEditingWindow2 extends JDialog {
     
     private final  ExternalObject obj;
     private final ObjectInfo info;
@@ -43,6 +53,8 @@ public class ExternalObjectEditingWindow2 extends JDialog {
      */
     public ExternalObjectEditingWindow2(EditingWindow parent, ExternalObject obj, ObjectInfo info, Runnable closeCallback) {
         super(parent.getFrame().getComponent(), true);
+        org.greenrobot.eventbus.EventBus.getDefault().register(this);
+
         this.info = info;
         this.obj = obj;
         initComponents();
@@ -51,7 +63,8 @@ public class ExternalObjectEditingWindow2 extends JDialog {
         KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
         ActionListener action = e -> doClose(RET_CANCEL);
         this.getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        
+
+        new Thread(new SceneTreeBuilder(this, obj.getExternalSceneFile())).start();
     }
 
     /**
@@ -72,10 +85,12 @@ public class ExternalObjectEditingWindow2 extends JDialog {
 
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        includeChild = new javax.swing.JCheckBox();
         javax.swing.JLabel pathLabel = new javax.swing.JLabel();
         sourcePathField = new javax.swing.JTextField();
         javax.swing.JButton chooserButton = new javax.swing.JButton();
+        javax.swing.JScrollPane sceneTreeScroll = new javax.swing.JScrollPane();
+        sceneTree = new javax.swing.JTree();
 
         setTitle(info.getName());
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -91,8 +106,8 @@ public class ExternalObjectEditingWindow2 extends JDialog {
         );
         cancelButton.addActionListener(this::cancelButtonActionPerformed);
 
-        jCheckBox1.setSelected(obj.getIncludeChildren());
-        jCheckBox1.setText(Translate.text("externalObject.includeChildren"));
+        includeChild.setSelected(obj.getIncludeChildren());
+        includeChild.setText(Translate.text("externalObject.includeChildren"));
 
         pathLabel.setLabelFor(sourcePathField);
         pathLabel.setText(Translate.text("externalObject.sceneFile"));
@@ -103,27 +118,30 @@ public class ExternalObjectEditingWindow2 extends JDialog {
         chooserButton.setText(Translate.text("button.browse"));
         chooserButton.addActionListener(this::chooserButtonActionPerformed);
 
+        sceneTreeScroll.setViewportView(sceneTree);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(sceneTreeScroll)
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(0, 248, Short.MAX_VALUE)
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jCheckBox1)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(pathLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(sourcePathField)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(chooserButton)))
+                        .addComponent(chooserButton))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(includeChild)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -137,8 +155,10 @@ public class ExternalObjectEditingWindow2 extends JDialog {
                     .addComponent(pathLabel)
                     .addComponent(sourcePathField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(chooserButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 346, Short.MAX_VALUE)
-                .addComponent(jCheckBox1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(sceneTreeScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(includeChild)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
@@ -177,8 +197,11 @@ public class ExternalObjectEditingWindow2 extends JDialog {
             chooser.setSelectedFile(f);
         }
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            sourcePathField.setText(chooser.getSelectedFile().getAbsolutePath());
-        }        
+            var cf = chooser.getSelectedFile().getAbsolutePath();
+            if(cf.equals(sourcePathField.getText())) return;
+            new Thread(new SceneTreeBuilder(this, chooser.getSelectedFile())).start();
+        }
+
     }//GEN-LAST:event_chooserButtonActionPerformed
     
     private void doClose(int retStatus) {
@@ -187,12 +210,51 @@ public class ExternalObjectEditingWindow2 extends JDialog {
         dispose();
     }
 
+    @Subscribe
+    public void onSceneModelTreeBuildEvent(SceneModelTreeBuildEvent event) {
+        sourcePathField.setText(event.path.getAbsolutePath());
+        sceneTree.setModel(event.getModel());
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
-    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox includeChild;
     private javax.swing.JButton okButton;
+    private javax.swing.JTree sceneTree;
     private javax.swing.JTextField sourcePathField;
     // End of variables declaration//GEN-END:variables
 
     private int returnStatus = RET_CANCEL;
+
+    @AllArgsConstructor
+    @Data
+    private class SceneModelTreeBuildEvent {
+        private ExternalObjectEditingWindow2 owner;
+        private File path;
+        private TreeModel model;
+    }
+
+    private class SceneTreeBuilder implements Runnable {
+
+        private final File path;
+        private final ExternalObjectEditingWindow2 owner;
+
+        public SceneTreeBuilder(ExternalObjectEditingWindow2 owner, File path) {
+            this.owner = owner;
+            this.path = path;
+        }
+
+        @Override
+        public void run() {
+            var model = new DefaultTreeModel(new DefaultMutableTreeNode("Scene: " + path), true);
+            EventBus.getDefault().post(new SceneModelTreeBuildEvent(owner, path, model));
+        }
+    }
+
+    private class SceneItemNode extends DefaultMutableTreeNode {
+
+        public SceneItemNode(ObjectInfo userObject, boolean allowsChildren) {
+            super(userObject, allowsChildren);
+        }
+    }
 }

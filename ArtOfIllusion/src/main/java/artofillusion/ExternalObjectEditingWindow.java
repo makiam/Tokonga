@@ -96,7 +96,9 @@ public class ExternalObjectEditingWindow extends BDialog {
             chooser.setSelectedFile(f);
         }
         if (chooser.showOpenDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
-            fileField.setText(chooser.getSelectedFile().getAbsolutePath());
+            var cf = chooser.getSelectedFile().getAbsolutePath();
+            if(cf.equals(fileField.getText())) return;
+            fileField.setText(cf);
             loadExternalScene();
             buildObjectTree();
             selectionChanged();
@@ -110,6 +112,7 @@ public class ExternalObjectEditingWindow extends BDialog {
         File f = new File(fileField.getText());
         scene = null;
         if (!f.isFile()) {
+
             new BStandardDialog("", UIUtilities.breakString(Translate.text("externalObject.sceneNotFound",
                     obj.getExternalSceneFile().getAbsolutePath())), BStandardDialog.ERROR).showMessageDialog(this);
             return;
@@ -118,7 +121,7 @@ public class ExternalObjectEditingWindow extends BDialog {
         try {
             scene = new Scene(f, true);
         } catch (InvalidObjectException ex) {
-            new BStandardDialog("", UIUtilities.breakString(Translate.text("errorLoadingWholeScene")), BStandardDialog.ERROR).showMessageDialog(this);
+            MessageDialog.create().withOwner(this.getComponent()).error(UIUtilities.breakString(Translate.text("errorLoadingWholeScene")));            
         } catch (IOException ex) {
             new BStandardDialog("", new String[]{Translate.text("errorLoadingFile"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(this);
         }
