@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2007 by Francois Guillet
-   Changes copyright (C) 2023-2024 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
  This program is free software; you can redistribute it and/or modify it under the
  terms of the GNU General Public License as published by the Free Software
@@ -74,7 +74,7 @@ public abstract class AdvancedEditingTool extends EditingTool {
     /* This method returns a bounding box for the selected vertices in view coordinates. */
     public SelectionProperties findSelectionProperties(Camera cam) {
         int[] selected = controller.getSelectionDistance();
-        MeshVertex[] vert = ((Mesh) controller.getObject().object).getVertices();
+        MeshVertex[] vert = ((Mesh) controller.getObject().getGeometry()).getVertices();
         double minx, miny, minz, maxx, maxy, maxz;
         Vec3 v;
 

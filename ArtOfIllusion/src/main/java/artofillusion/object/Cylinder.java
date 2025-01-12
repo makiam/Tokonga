@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
    Changes copyright (C) 2019 by Petri Ihalainen
-   Changes copyright (C) 2024 by Maksim Khramov
+   Changes copyright (C) 2024-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -64,7 +64,7 @@ public class Cylinder extends Object3D {
     }
 
     @Override
-    public Object3D duplicate() {
+    public Cylinder duplicate() {
         Cylinder obj = new Cylinder(height, rx, rz, ratio);
         obj.copyTextureAndMaterial(this);
         return obj;

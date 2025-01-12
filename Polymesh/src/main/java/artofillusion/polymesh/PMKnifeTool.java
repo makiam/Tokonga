@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2004 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
 This program is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
@@ -26,7 +26,6 @@ import artofillusion.ui.Translate;
 import buoy.event.WidgetMouseEvent;
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.Vector;
 
@@ -78,7 +77,7 @@ public class PMKnifeTool extends EditingTool {
             clickPoints.clear();
             clickPoints.add(e.getPoint());
             dragPoint = e.getPoint();
-            originalMesh = (PolyMesh) ((PolyMesh) controller.getObject().object).duplicate();
+            originalMesh = ((PolyMesh) controller.getObject().getGeometry()).duplicate();
             //controller.setSelection( new boolean[originalMesh.getVertices().length] );
             MeshVertex[] v = originalMesh.getVertices();
             screenVert = new Point[v.length];
@@ -94,7 +93,7 @@ public class PMKnifeTool extends EditingTool {
     @Override
     public void mouseDragged(WidgetMouseEvent e, ViewerCanvas view) {
         MeshViewer mv = (MeshViewer) view;
-        PolyMesh mesh = (PolyMesh) controller.getObject().object;
+        PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
         Camera cam = view.getCamera();
         dragPoint = e.getPoint();
 
@@ -154,7 +153,7 @@ public class PMKnifeTool extends EditingTool {
             clickPoints.add(dragPoint);
         } else {
             dragPoint = e.getPoint();
-            PolyMesh mesh = (PolyMesh) controller.getObject().object;
+            PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
             dragging = false;
             controller.objectChanged();
             theWindow.updateImage();

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2002-2004 by Peter Eastman
- *  Changes copyright (C) 2023 by Maksim Khramov
+ *  Changes copyright (C) 2023-2025 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -62,7 +62,7 @@ public class PMOBJExporter {
         }
         boolean valid = false;
         for (ObjectInfo info : theScene.getObjects()) {
-            if (info.selected && info.object instanceof PolyMesh) {
+            if (info.isSelected() && info.getGeometry() instanceof PolyMesh) {
                 valid = true;
             }
         }
@@ -154,7 +154,7 @@ public class PMOBJExporter {
         nf.setGroupingUsed(false);
         for (ObjectInfo info : theScene.getObjects()) {
 
-            if (!info.selected || !(info.object instanceof PolyMesh)) {
+            if (!info.isSelected() || !(info.object instanceof PolyMesh)) {
                 continue;
             }
             PolyMesh mesh = (PolyMesh) info.object;
@@ -183,17 +183,16 @@ public class PMOBJExporter {
     /**
      * Write out the .mtl file describing the textures.
      *
-     * @param theScene Description of the Parameter
+     * @param scene Description of the Parameter
      * @param out Description of the Parameter
      * @param wholeScene Description of the Parameter
      * @param textureExporter Description of the Parameter
      */
-    private static void writeTextures(Scene theScene, PrintWriter out, boolean wholeScene, TextureImageExporter textureExporter) {
+    private static void writeTextures(Scene scene, PrintWriter out, boolean wholeScene, TextureImageExporter textureExporter) {
         // Find all the textures.
 
-        for (int i = 0; i < theScene.getNumObjects(); i++) {
-            ObjectInfo info = theScene.getObject(i);
-            if (!wholeScene && !info.selected) {
+        for (ObjectInfo info: scene.getObjects()) {
+            if (!wholeScene && !info.isSelected()) {
                 continue;
             }
             textureExporter.addObject(info);

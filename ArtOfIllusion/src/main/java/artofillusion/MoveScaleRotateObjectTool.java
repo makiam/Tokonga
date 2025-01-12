@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2009 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -198,7 +198,7 @@ public class MoveScaleRotateObjectTool extends EditingTool {
                 if (rotateAround == PARENT_CENTER) {
                     while (parent.getParent() != null) {
                         parent = parent.getParent();
-                        if (parent.selected) {
+                        if (parent.isSelected()) {
                             rotationCenter[i] = parent.getCoords().getOrigin();
                         }
                     }

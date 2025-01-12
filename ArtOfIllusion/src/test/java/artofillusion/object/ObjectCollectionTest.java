@@ -1,4 +1,4 @@
-/* Copyright (C) 2018 by Maksim Khramov
+/* Copyright (C) 2018-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -76,7 +76,6 @@ class ObjectCollectionTest {
         Assertions.assertFalse(oc.isClosed());
     }
 
-    @DisplayName("Custom Object Collection")
     class CustomObjectCollection extends ObjectCollection {
 
         public CustomObjectCollection() {
@@ -91,7 +90,7 @@ class ObjectCollectionTest {
         }
 
         @Override
-        public Object3D duplicate() {
+        public CustomObjectCollection duplicate() {
             // To change body of generated methods, choose Tools | Templates.
             throw new UnsupportedOperationException("Not supported yet.");
         }

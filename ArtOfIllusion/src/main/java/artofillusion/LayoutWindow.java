@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2015 by Peter Eastman
-   Changes copyright (C) 2016-2024 by Maksim Khramov
+   Changes copyright (C) 2016-2025 by Maksim Khramov
    Changes copyright (C) 2017-2020 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -1400,14 +1400,14 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      * Determine whether an object is selected.
      */
     public boolean isObjectSelected(ObjectInfo info) {
-        return info.selected;
+        return info.isSelected();
     }
 
     /**
      * Determine whether an object is selected.
      */
     public boolean isObjectSelected(int index) {
-        return theScene.getObject(index).selected;
+        return theScene.getObject(index).isSelected();
     }
 
     /**

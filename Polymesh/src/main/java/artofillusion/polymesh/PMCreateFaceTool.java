@@ -59,7 +59,7 @@ public class PMCreateFaceTool extends EditingTool {
     public void mouseReleased(WidgetMouseEvent ev, ViewerCanvas view) {
         Point e = ev.getPoint();
         PolyMesh mesh, viewMesh;
-        viewMesh = mesh = (PolyMesh) controller.getObject().object;
+        viewMesh = mesh = (PolyMesh) controller.getObject().getGeometry();
         int[] invVertTable = null;
         int length = mesh.getVertices().length;
         if (mesh.getMirrorState() != PolyMesh.NO_MIRROR) {
@@ -163,7 +163,7 @@ public class PMCreateFaceTool extends EditingTool {
         }
         Vec3[] newPoints = clickPoints.toArray(new Vec3[0]);
 
-        PolyMesh mesh = (PolyMesh) controller.getObject().object;
+        PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
         PolyMesh origMesh = (PolyMesh) mesh.duplicate();
         if (to == -1) {
             mesh.addStandaloneFace(newPoints);

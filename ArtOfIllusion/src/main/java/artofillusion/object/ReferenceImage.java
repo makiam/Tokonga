@@ -1,4 +1,5 @@
 /* Copyright (C) 2007 by Peter Eastman
+   Changes copyright (C) 2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -63,7 +64,7 @@ public class ReferenceImage extends Object3D {
     }
 
     @Override
-    public Object3D duplicate() {
+    public ReferenceImage duplicate() {
         ReferenceImage ri = new ReferenceImage();
         ri.image = image;
         ri.width = width;

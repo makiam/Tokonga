@@ -163,7 +163,7 @@ public class SSMR3DManipulator
             return;
         }
         MeshEditController controller = ((MeshViewer) view).getController();
-        Mesh mesh = (Mesh) controller.getObject().object;
+        Mesh mesh = (Mesh) controller.getObject().getGeometry();
         MeshVertex[] v = mesh.getVertices();
         Camera cam = view.getCamera();
         AdvancedEditingTool.SelectionProperties props = tool.findSelectionProperties(view.getCamera());

@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2005 by Peter Eastman (ReshapeMeshTool) 2006 by Francois Guillet (MeshStandardTool)
-   Changes copyright (C) 2023-2024 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -98,7 +98,7 @@ public class MeshStandardTool extends AdvancedEditingTool {
     }
 
     private void doManipulatorPrepareShapingMesh(Manipulator.ManipulatorEvent e) {
-        Mesh mesh = (Mesh) controller.getObject().object;
+        Mesh mesh = (Mesh) controller.getObject().getGeometry();
         if (undo == null) {
             undo = new UndoRecord(theWindow, false, UndoRecord.COPY_VERTEX_POSITIONS, new Object[]{mesh, mesh.getVertexPositions()});
         }
@@ -106,7 +106,7 @@ public class MeshStandardTool extends AdvancedEditingTool {
     }
 
     private void doAbortChangingMesh() {
-        Mesh mesh = (Mesh) controller.getObject().object;
+        Mesh mesh = (Mesh) controller.getObject().getGeometry();
         mesh.setVertexPositions(baseVertPos);
         baseVertPos = null;
         theWindow.setHelpText(Translate.text("polymesh:meshStandardTool.helpText"));
@@ -115,7 +115,7 @@ public class MeshStandardTool extends AdvancedEditingTool {
     }
 
     private void doManipulatorScalingMesh(SSMR2DManipulator.ManipulatorScalingEvent e) {
-        Mesh mesh = (Mesh) controller.getObject().object;
+        Mesh mesh = (Mesh) controller.getObject().getGeometry();
         Vec3[] v = findScaledPositions(baseVertPos, e.getScaleMatrix(), (MeshViewer) e.getView());
         mesh.setVertexPositions(v);
         controller.objectChanged();
@@ -123,7 +123,7 @@ public class MeshStandardTool extends AdvancedEditingTool {
     }
 
     private void doManipulatorRotatingMesh(SSMR2DManipulator.ManipulatorRotatingEvent e) {
-        Mesh mesh = (Mesh) controller.getObject().object;
+        Mesh mesh = (Mesh) controller.getObject().getGeometry();
 
         Vec3[] v = findRotatedPositions(baseVertPos, e.getMatrix(), (MeshViewer) e.getView());
         if (v != null) {
@@ -146,7 +146,7 @@ public class MeshStandardTool extends AdvancedEditingTool {
 
     private void doManipulatorMovingMesh(SSMR2DManipulator.ManipulatorMovingEvent e) {
         MeshViewer mv = (MeshViewer) e.getView();
-        Mesh mesh = (Mesh) controller.getObject().object;
+        Mesh mesh = (Mesh) controller.getObject().getGeometry();
         Vec3[] v;
         Vec3 drag;
 

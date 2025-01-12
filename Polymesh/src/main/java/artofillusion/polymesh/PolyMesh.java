@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2005-2007 by Francois Guillet
- *  Changes copyright (C) 2022-2023 by Maksim Khramov
+ *  Changes copyright (C) 2022-2025 by Maksim Khramov
 
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
@@ -9,6 +9,7 @@
  *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  *  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  */
+
 package artofillusion.polymesh;
 
 import artofillusion.MeshViewer;
@@ -1342,7 +1343,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * @return A duplicate of the winged mesh object
      */
     @Override
-    public Object3D duplicate() {
+    public PolyMesh duplicate() {
         PolyMesh mesh = new PolyMesh();
         mesh.copyObject(this);
         return mesh;

@@ -2,7 +2,7 @@
  *  Copyright (C) 1999-2004 by Peter Eastman (TriMeshViewer.java),
  *  Modifications for Winged Edge Mesh Copyright (C) 2004-2005 by François Guillet
  *  Modifications for mouse buttons Copyright (C) 2019 by Petri Ihalainen
- *  Changes copyright (C) 2024 by Maksim Khramov
+ *  Changes copyright (C) 2024-2025 by Maksim Khramov
  *
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
@@ -76,7 +76,7 @@ public class PolyMeshViewer extends MeshViewer {
      */
     public PolyMeshViewer(MeshEditController window, RowContainer p) {
         super(window, p);
-        PolyMesh mesh = (PolyMesh) window.getObject().object;
+        PolyMesh mesh = (PolyMesh) window.getObject().getGeometry();
         visible = new boolean[mesh.getVertices().length];
         manipulators = new ArrayList<>();
         manipulatorArray = new Manipulator[0];

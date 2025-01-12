@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2012 by Peter Eastman
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -315,14 +315,14 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         theList.removeAllElements();
 
         for (ObjectInfo info : theScene.getObjects()) {
-            if (info.selected) {
+            if (info.isSelected()) {
                 TreeElement el = new ObjectTreeElement(info, null, theList, false);
                 theList.addElement(el);
                 el.setExpanded(true);
             }
         }
         for (ObjectInfo info : theScene.getObjects()) {
-            if (!info.selected || info.getTracks().length == 0) {
+            if (!info.isSelected() || info.getTracks().length == 0) {
                 continue;
             }
             ObjectTreeElement el = (ObjectTreeElement) theList.findElement(info);

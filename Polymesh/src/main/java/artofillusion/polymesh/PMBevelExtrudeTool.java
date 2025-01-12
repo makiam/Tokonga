@@ -1,5 +1,5 @@
 /*
- *  Changes copyright (C) 2023-2024 by Maksim Khramov
+ *  Changes copyright (C) 2023-2025 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -7,6 +7,7 @@
  *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  *  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  */
+
 package artofillusion.polymesh;
 
 import artofillusion.Camera;
@@ -22,7 +23,7 @@ import buoy.event.WidgetMouseEvent;
 import buoy.widget.BComboBox;
 import buoy.widget.Widget;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
+
 
 /**
  * PMBevelExtrudeTool is an EditingTool used for beveling and extruding
@@ -105,7 +106,7 @@ public class PMBevelExtrudeTool extends EditingTool {
             return;
         }
 
-        PolyMesh mesh = (PolyMesh) controller.getObject().object;
+        PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
         origMesh = (PolyMesh) mesh.duplicate();
         //beveler = new PolyMeshBeveler( origMesh, selected, mode );
         clickPoint = e.getPoint();
@@ -123,7 +124,7 @@ public class PMBevelExtrudeTool extends EditingTool {
             return;
         }
         PolyMeshViewer mv = (PolyMeshViewer) view;
-        PolyMesh mesh = (PolyMesh) controller.getObject().object;
+        PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
         Camera cam = view.getCamera();
         Point dragPoint = e.getPoint();
         // Determine the bevel width and extrude height.
@@ -197,7 +198,7 @@ public class PMBevelExtrudeTool extends EditingTool {
         if (noSelection || (width == 0.0 && height == 0.0)) {
             return;
         }
-        PolyMesh mesh = (PolyMesh) controller.getObject().object;
+        PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
         theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, mesh, origMesh));
         controller.objectChanged();
         theWindow.updateImage();

@@ -1,5 +1,5 @@
 /* Copyright (C) 2013 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -138,7 +138,7 @@ public class ImplicitSphere extends ImplicitObject {
     }
 
     @Override
-    public Object3D duplicate() {
+    public ImplicitSphere duplicate() {
         return new ImplicitSphere(radius, influenceRadius);
     }
 

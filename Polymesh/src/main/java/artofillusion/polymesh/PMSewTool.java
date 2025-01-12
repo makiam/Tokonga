@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2004 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 This program is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later version.
@@ -54,7 +54,7 @@ public class PMSewTool extends EditingTool {
         if (!dragging) {
             dragging = true;
             selection = null;
-            originalMesh = (PolyMesh) ((PolyMesh) controller.getObject().object).duplicate();
+            originalMesh = ((PolyMesh) controller.getObject().getGeometry()).duplicate();
             PolyMesh.Wedge[] edges = originalMesh.getEdges();
             MeshVertex[] v = originalMesh.getVertices();
             Vec3[] pr = new Vec3[v.length];
@@ -108,7 +108,7 @@ public class PMSewTool extends EditingTool {
     @Override
     public void mouseDragged(WidgetMouseEvent e, ViewerCanvas view) {
         MeshViewer mv = (MeshViewer) view;
-        PolyMesh mesh = (PolyMesh) controller.getObject().object;
+        PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
         Camera cam = view.getCamera();
         dragPoint = new Point(e.getPoint());
 
@@ -201,7 +201,7 @@ public class PMSewTool extends EditingTool {
 
     @Override
     public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view) {
-        PolyMesh mesh = (PolyMesh) controller.getObject().object;
+        PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
         dragging = false;
         controller.objectChanged();
         theWindow.updateImage();

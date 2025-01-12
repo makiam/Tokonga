@@ -173,7 +173,7 @@ public class CompoundImplicitObject extends ImplicitObject {
     }
 
     @Override
-    public Object3D duplicate() {
+    public CompoundImplicitObject duplicate() {
         CompoundImplicitObject c = new CompoundImplicitObject();
         c.copyObject(this);
         return c;

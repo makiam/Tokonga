@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2011 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -23,7 +23,7 @@ import java.util.*;
 
 /**
  * Tube represents a "thick" curve. It subclasses Curve, since it has
- * all the properties of a an ordinary curve, but changes the way it is
+ * all the properties of an ordinary curve, but changes the way it is
  * rendered. The actual surface is created by extruding a circular profile
  * along the curve. The thickness of the Tube can be specified at each
  * vertex.
@@ -98,7 +98,7 @@ public class Tube extends Curve {
      * Create an exact duplicate of this object.
      */
     @Override
-    public Object3D duplicate() {
+    public Tube duplicate() {
         Curve c = (Curve) super.duplicate();
         double[] t = new double[thickness.length];
         System.arraycopy(thickness, 0, t, 0, t.length);
