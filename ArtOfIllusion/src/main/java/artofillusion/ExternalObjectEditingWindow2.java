@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Arrays;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -29,6 +30,7 @@ import javax.swing.tree.TreeModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -244,17 +246,40 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
             this.path = path;
         }
 
+        @SneakyThrows
         @Override
         public void run() {
-            var model = new DefaultTreeModel(new DefaultMutableTreeNode("Scene: " + path), true);
+            var root = new DefaultMutableTreeNode("Scene: " + path);
+            var model = new DefaultTreeModel(root, true);
+
+            var scene = new Scene(path, true);
+            scene.getObjects().stream().filter(item -> item.getParent() == null).forEach(item -> {
+                root.add(new SceneItemNode(item));
+            });
             EventBus.getDefault().post(new SceneModelTreeBuildEvent(owner, path, model));
         }
     }
 
     private class SceneItemNode extends DefaultMutableTreeNode {
 
-        public SceneItemNode(ObjectInfo userObject, boolean allowsChildren) {
-            super(userObject, allowsChildren);
+        public SceneItemNode(ObjectInfo userObject) {
+            super(userObject, true);
+            ObjectInfo[] children = userObject.getChildren();
+            if(children.length == 0) this.allowsChildren = false;
+            Arrays.stream(children).forEach(item -> {
+                this.add(new SceneItemNode(item));
+            });
+
+        }
+
+        @Override
+        public ObjectInfo getUserObject() {
+            return (ObjectInfo)super.getUserObject();
+        }
+
+        @Override
+        public String toString() {
+            return this.getUserObject().getName();
         }
     }
 }

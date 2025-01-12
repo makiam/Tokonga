@@ -123,7 +123,7 @@ public class ExternalObjectEditingWindow extends BDialog {
         } catch (InvalidObjectException ex) {
             MessageDialog.create().withOwner(this.getComponent()).error(UIUtilities.breakString(Translate.text("errorLoadingWholeScene")));            
         } catch (IOException ex) {
-            new BStandardDialog("", new String[]{Translate.text("errorLoadingFile"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(this);
+            MessageDialog.create().withOwner(this.getComponent()).error(new String[]{Translate.text("errorLoadingFile"), ex.getMessage() == null ? "" : ex.getMessage()});
         }
         setCursor(Cursor.getDefaultCursor());
 
