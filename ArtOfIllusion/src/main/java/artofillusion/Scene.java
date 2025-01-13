@@ -1020,7 +1020,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         short version = in.readShort();
 
         if (version < 0 || version > 5) {
-            throw new InvalidObjectException("");
+            throw new InvalidObjectException("Bad scene version: " + version);
         }
 
         ambientColor = new RGBColor(in);

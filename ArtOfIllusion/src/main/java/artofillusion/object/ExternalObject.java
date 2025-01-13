@@ -217,8 +217,8 @@ public class ExternalObject extends ObjectWrapper {
 
     @Override
     public void edit(EditingWindow parent, ObjectInfo info, Runnable cb) {
-        SwingUtilities.invokeLater(() -> new ExternalObjectEditingWindow2(parent, this, info, cb).setVisible(true));        
-        new ExternalObjectEditingWindow(parent, this, info, cb);                
+        SwingUtilities.invokeLater(() -> new ExternalObjectEditingWindow2(parent, this, info, cb).setVisible(true));
+        //new ExternalObjectEditingWindow(parent, this, info, cb);
     }
 
     /**

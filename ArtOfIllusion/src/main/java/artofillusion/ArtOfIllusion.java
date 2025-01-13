@@ -85,15 +85,6 @@ public class ArtOfIllusion {
 
     }
 
-    static {
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread t, Throwable e) {
-                MessageDialog.create().error(e.getMessage());
-            }
-        });
-    }
-
     public static void main(String[] args) {
         Translate.setLocale(Locale.getDefault());
         try {

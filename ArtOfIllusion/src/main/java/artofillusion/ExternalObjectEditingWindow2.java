@@ -13,12 +13,17 @@ package artofillusion;
 import artofillusion.object.ExternalObject;
 import artofillusion.object.ObjectInfo;
 import artofillusion.ui.EditingWindow;
+import artofillusion.ui.MessageDialog;
 import artofillusion.ui.Translate;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.ConcurrentModificationException;
+import java.util.concurrent.CompletableFuture;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -28,6 +33,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeModel;
 
+import artofillusion.ui.UIUtilities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -60,13 +66,14 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
         this.info = info;
         this.obj = obj;
         initComponents();
+        this.sceneTree.setModel(null);
 
         // Close the dialog when Esc is pressed
         KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
         ActionListener action = e -> doClose(RET_CANCEL);
         this.getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
-        new Thread(new SceneTreeBuilder(this, obj.getExternalSceneFile())).start();
+        
+        runSceneTreeLoad(obj.getExternalSceneFile());
     }
 
     /**
@@ -102,6 +109,7 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
         });
 
         okButton.setText(Translate.text("button.ok"));
+        okButton.setEnabled(false);
         okButton.addActionListener(this::okButtonActionPerformed);
 
         cancelButton.setText(Translate.text("button.cancel")
@@ -120,6 +128,7 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
         chooserButton.setText(Translate.text("button.browse"));
         chooserButton.addActionListener(this::chooserButtonActionPerformed);
 
+        sceneTree.addTreeSelectionListener(this::sceneTreeValueChanged);
         sceneTreeScroll.setViewportView(sceneTree);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -201,10 +210,36 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             var cf = chooser.getSelectedFile().getAbsolutePath();
             if(cf.equals(sourcePathField.getText())) return;
-            new Thread(new SceneTreeBuilder(this, chooser.getSelectedFile())).start();
+            runSceneTreeLoad(chooser.getSelectedFile());
         }
 
     }//GEN-LAST:event_chooserButtonActionPerformed
+
+    private void runSceneTreeLoad(File file) {
+        CompletableFuture<Void> task = CompletableFuture.runAsync(new SceneTreeBuilder(this, file));
+        task.exceptionally(tx -> {
+            var cause = tx.getCause();
+            var root = new DefaultMutableTreeNode("Invalid Scene: " + obj.getExternalSceneFile());
+            var model = new DefaultTreeModel(root, false);
+            this.sceneTree.setModel(model);
+            if(cause instanceof InvalidObjectException) {
+                MessageDialog.create().withOwner(this).error(UIUtilities.breakString(Translate.text("errorLoadingWholeScene")));
+                return null;
+            }
+            if(cause instanceof IOException) {
+                MessageDialog.create().withOwner(this).error(new String[]{Translate.text("errorLoadingFile"), cause.getMessage() == null ? "" : cause.getMessage()});
+                return null;
+            }
+
+            return null;
+        });        
+    }
+    
+    
+    private void sceneTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_sceneTreeValueChanged
+        // TODO add your handling code here:
+        log.info("Event: {} {} {} {}", evt, evt.isAddedPath(), evt.getNewLeadSelectionPath(), evt.getOldLeadSelectionPath());
+    }//GEN-LAST:event_sceneTreeValueChanged
     
     private void doClose(int retStatus) {
         returnStatus = retStatus;
@@ -264,9 +299,9 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
 
         public SceneItemNode(ObjectInfo userObject) {
             super(userObject, true);
-            ObjectInfo[] children = userObject.getChildren();
-            if(children.length == 0) this.allowsChildren = false;
-            Arrays.stream(children).forEach(item -> {
+            ObjectInfo[] items = userObject.getChildren();
+            if(items.length == 0) this.allowsChildren = false;
+            Arrays.stream(items).forEach(item -> {
                 this.add(new SceneItemNode(item));
             });
 
@@ -281,5 +316,7 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
         public String toString() {
             return this.getUserObject().getName();
         }
+        
+        
     }
 }
