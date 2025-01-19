@@ -15,6 +15,7 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
 import buoy.event.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.io.*;
@@ -23,6 +24,7 @@ import javax.swing.JFileChooser;
 /**
  * This is a window for editing ExternalObjects.
  */
+@Slf4j
 public class ExternalObjectEditingWindow extends BDialog {
 
     private final EditingWindow parentWindow;
@@ -53,6 +55,7 @@ public class ExternalObjectEditingWindow extends BDialog {
         this.onClose = onClose;
         objectName = obj.getExternalObjectName();
         objectId = obj.getExternalObjectId();
+        log.info("External Id: {}", obj.getExternalObjectId());
         FormContainer content = new FormContainer(new double[]{0, 1, 0, 0}, new double[]{0, 1, 0, 0});
         setContent(BOutline.createEmptyBorder(content, UIUtilities.getStandardDialogInsets()));
         content.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(2, 2, 2, 2), null));

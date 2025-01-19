@@ -20,9 +20,9 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidObjectException;
-import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.ConcurrentModificationException;
+import java.util.Collections;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -30,10 +30,10 @@ import javax.swing.JFileChooser;
 import javax.swing.KeyStroke;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 
 import artofillusion.ui.UIUtilities;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -46,7 +46,7 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
     
     private final  ExternalObject obj;
     private final ObjectInfo info;
-    
+    private final Runnable closeCallback;
     /**
      * A return status code - returned if Cancel button has been pressed
      */
@@ -65,6 +65,8 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
 
         this.info = info;
         this.obj = obj;
+        this.closeCallback = closeCallback;
+
         initComponents();
         this.sceneTree.setModel(null);
 
@@ -74,6 +76,9 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
         this.getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         
         runSceneTreeLoad(obj.getExternalSceneFile());
+
+
+
     }
 
     /**
@@ -128,6 +133,11 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
         chooserButton.setText(Translate.text("button.browse"));
         chooserButton.addActionListener(this::chooserButtonActionPerformed);
 
+        sceneTree.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                sceneTreeMouseClicked(evt);
+            }
+        });
         sceneTree.addTreeSelectionListener(this::sceneTreeValueChanged);
         sceneTreeScroll.setViewportView(sceneTree);
 
@@ -184,6 +194,8 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+
+        Optional.ofNullable(closeCallback).ifPresent(action -> action.run());
         doClose(RET_OK);
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -232,14 +244,27 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
             }
 
             return null;
-        });        
+        });
     }
     
     
     private void sceneTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_sceneTreeValueChanged
         // TODO add your handling code here:
         log.info("Event: {} {} {} {}", evt, evt.isAddedPath(), evt.getNewLeadSelectionPath(), evt.getOldLeadSelectionPath());
+        var path = evt.getNewLeadSelectionPath();
+        if (path != null && path.getPathCount() == 1) {
+            sceneTree.clearSelection();
+        }
+        okButton.setEnabled(sceneTree.getSelectionCount() != 0);
+
     }//GEN-LAST:event_sceneTreeValueChanged
+
+    private void sceneTreeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sceneTreeMouseClicked
+
+        var near = sceneTree.getClosestPathForLocation(evt.getX(), evt.getY());
+
+        log.atInfo().log("Path {}", near);
+    }//GEN-LAST:event_sceneTreeMouseClicked
     
     private void doClose(int retStatus) {
         returnStatus = retStatus;
@@ -250,7 +275,25 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
     @Subscribe
     public void onSceneModelTreeBuildEvent(SceneModelTreeBuildEvent event) {
         sourcePathField.setText(event.path.getAbsolutePath());
-        sceneTree.setModel(event.getModel());
+
+        DefaultTreeModel model = event.getModel();
+        sceneTree.setModel(model);
+        var root = (DefaultMutableTreeNode)model.getRoot();
+
+        if(this.obj.getExternalObjectId() == 0) {
+            log.atInfo().log("No selection...");
+        }
+
+        Collections.list(root.breadthFirstEnumeration()).forEach(node -> {
+            if( node instanceof SceneItemNode) {
+                var sn = (SceneItemNode) node;
+                if(sn.getUserObject().getId() == obj.getExternalObjectId()) {
+                    sceneTree.setSelectionPath(new TreePath(sn));
+                    return;
+                }
+            }
+        });
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -268,13 +311,14 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
     private class SceneModelTreeBuildEvent {
         private ExternalObjectEditingWindow2 owner;
         private File path;
-        private TreeModel model;
+        private DefaultTreeModel model;
     }
 
     private class SceneTreeBuilder implements Runnable {
 
         private final File path;
         private final ExternalObjectEditingWindow2 owner;
+
 
         public SceneTreeBuilder(ExternalObjectEditingWindow2 owner, File path) {
             this.owner = owner;
@@ -289,8 +333,10 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
 
             var scene = new Scene(path, true);
             scene.getObjects().stream().filter(item -> item.getParent() == null).forEach(item -> {
-                root.add(new SceneItemNode(item));
+                var sNode = new SceneItemNode(item);
+                root.add(sNode);
             });
+
             EventBus.getDefault().post(new SceneModelTreeBuildEvent(owner, path, model));
         }
     }
