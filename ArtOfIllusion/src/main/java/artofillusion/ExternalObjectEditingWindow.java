@@ -15,6 +15,7 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
 import buoy.event.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.io.*;
@@ -23,10 +24,11 @@ import javax.swing.JFileChooser;
 /**
  * This is a window for editing ExternalObjects.
  */
+@Slf4j
 public class ExternalObjectEditingWindow extends BDialog {
 
     private final EditingWindow parentWindow;
-    private final ExternalObject theObject;
+    private final ExternalObject obj;
     private final ObjectInfo info;
     private Scene scene;
     private final BTextField fileField;
@@ -48,17 +50,18 @@ public class ExternalObjectEditingWindow extends BDialog {
     public ExternalObjectEditingWindow(EditingWindow parent, ExternalObject obj, ObjectInfo info, Runnable onClose) {
         super(parent.getFrame(), info.getName(), true);
         parentWindow = parent;
-        theObject = obj;
+        this.obj = obj;
         this.info = info;
         this.onClose = onClose;
         objectName = obj.getExternalObjectName();
         objectId = obj.getExternalObjectId();
+        log.info("External Id: {}", obj.getExternalObjectId());
         FormContainer content = new FormContainer(new double[]{0, 1, 0, 0}, new double[]{0, 1, 0, 0});
         setContent(BOutline.createEmptyBorder(content, UIUtilities.getStandardDialogInsets()));
         content.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(2, 2, 2, 2), null));
         LayoutInfo labelLayout = new LayoutInfo(LayoutInfo.EAST, LayoutInfo.NONE, new Insets(2, 2, 2, 2), null);
         content.add(Translate.label("externalObject.sceneFile"), 0, 0, labelLayout);
-        content.add(fileField = new BTextField(theObject.getExternalSceneFile().getAbsolutePath(), 30), 1, 0);
+        content.add(fileField = new BTextField(obj.getExternalSceneFile().getAbsolutePath(), 30), 1, 0);
         content.add(Translate.button("browse", event -> doBrowseFile()), 2, 0);
         fileField.setEditable(false);
         itemTree = new TreeList(parentWindow);
@@ -91,12 +94,14 @@ public class ExternalObjectEditingWindow extends BDialog {
         var chooser = new JFileChooser();
         chooser.setName(Translate.text("externalObject.selectScene"));
 
-        File f = theObject.getExternalSceneFile();
+        File f = obj.getExternalSceneFile();
         if (f.isFile()) {
             chooser.setSelectedFile(f);
         }
         if (chooser.showOpenDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
-            fileField.setText(chooser.getSelectedFile().getAbsolutePath());
+            var cf = chooser.getSelectedFile().getAbsolutePath();
+            if(cf.equals(fileField.getText())) return;
+            fileField.setText(cf);
             loadExternalScene();
             buildObjectTree();
             selectionChanged();
@@ -110,17 +115,18 @@ public class ExternalObjectEditingWindow extends BDialog {
         File f = new File(fileField.getText());
         scene = null;
         if (!f.isFile()) {
+
             new BStandardDialog("", UIUtilities.breakString(Translate.text("externalObject.sceneNotFound",
-                    theObject.getExternalSceneFile().getAbsolutePath())), BStandardDialog.ERROR).showMessageDialog(this);
+                    obj.getExternalSceneFile().getAbsolutePath())), BStandardDialog.ERROR).showMessageDialog(this);
             return;
         }
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         try {
             scene = new Scene(f, true);
         } catch (InvalidObjectException ex) {
-            new BStandardDialog("", UIUtilities.breakString(Translate.text("errorLoadingWholeScene")), BStandardDialog.ERROR).showMessageDialog(this);
+            MessageDialog.create().withOwner(this.getComponent()).error(UIUtilities.breakString(Translate.text("errorLoadingWholeScene")));            
         } catch (IOException ex) {
-            new BStandardDialog("", new String[]{Translate.text("errorLoadingFile"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(this);
+            MessageDialog.create().withOwner(this.getComponent()).error(new String[]{Translate.text("errorLoadingFile"), ex.getMessage() == null ? "" : ex.getMessage()});
         }
         setCursor(Cursor.getDefaultCursor());
 
@@ -173,16 +179,16 @@ public class ExternalObjectEditingWindow extends BDialog {
      */
     private void doOk() {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        theObject.setExternalObjectName(objectName);
-        theObject.setExternalObjectId(objectId);
-        theObject.setExternalSceneFile(new File(fileField.getText()));
-        theObject.setIncludeChildren(includeChildrenBox.getState());
-        theObject.reloadObject();
-        if (theObject.getLoadingError() != null) {
-            new BStandardDialog("", UIUtilities.breakString(Translate.text("externalObject.loadingError", theObject.getLoadingError())), BStandardDialog.ERROR).showMessageDialog(this);
+        obj.setExternalObjectName(objectName);
+        obj.setExternalObjectId(objectId);
+        obj.setExternalSceneFile(new File(fileField.getText()));
+        obj.setIncludeChildren(includeChildrenBox.getState());
+        obj.reloadObject();
+        if (obj.getLoadingError() != null) {
+            new BStandardDialog("", UIUtilities.breakString(Translate.text("externalObject.loadingError", obj.getLoadingError())), BStandardDialog.ERROR).showMessageDialog(this);
         }
         info.clearCachedMeshes();
-        theObject.sceneChanged(info, parentWindow.getScene());
+        obj.sceneChanged(info, parentWindow.getScene());
         dispose();
         if (onClose != null) {
             onClose.run();

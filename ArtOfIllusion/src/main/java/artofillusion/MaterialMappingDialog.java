@@ -11,7 +11,6 @@
 
 package artofillusion;
 
-import artofillusion.animation.JointEditorDialog;
 import artofillusion.material.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
