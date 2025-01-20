@@ -47,6 +47,10 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
     private final  ExternalObject obj;
     private final ObjectInfo info;
     private final Runnable closeCallback;
+
+    private File externalFile;
+    private int objectId;
+
     /**
      * A return status code - returned if Cancel button has been pressed
      */
@@ -67,6 +71,9 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
         this.obj = obj;
         this.closeCallback = closeCallback;
 
+        externalFile = obj.getExternalSceneFile();
+        objectId = obj.getExternalObjectId();
+
         initComponents();
         this.sceneTree.setModel(null);
 
@@ -75,7 +82,7 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
         ActionListener action = e -> doClose(RET_CANCEL);
         this.getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         
-        runSceneTreeLoad(obj.getExternalSceneFile());
+        runSceneTreeLoad(externalFile);
 
 
 
@@ -194,6 +201,9 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        obj.setExternalObjectId(objectId);
+        obj.setExternalSceneFile(externalFile);
+        obj.setIncludeChildren(this.includeChild.isSelected());
 
         Optional.ofNullable(closeCallback).ifPresent(action -> action.run());
         doClose(RET_OK);
@@ -222,7 +232,9 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             var cf = chooser.getSelectedFile().getAbsolutePath();
             if(cf.equals(sourcePathField.getText())) return;
-            runSceneTreeLoad(chooser.getSelectedFile());
+            this.objectId = 0;
+            this.externalFile = chooser.getSelectedFile();
+            runSceneTreeLoad(externalFile);
         }
 
     }//GEN-LAST:event_chooserButtonActionPerformed
@@ -256,6 +268,10 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
             sceneTree.clearSelection();
         }
         okButton.setEnabled(sceneTree.getSelectionCount() != 0);
+        var selected = (SceneItemNode)sceneTree.getLastSelectedPathComponent();
+        objectId = selected.getUserObject().getId();
+        log.info("Selected: {}", selected);
+
 
     }//GEN-LAST:event_sceneTreeValueChanged
 
@@ -280,16 +296,16 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
         sceneTree.setModel(model);
         var root = (DefaultMutableTreeNode)model.getRoot();
 
-        if(this.obj.getExternalObjectId() == 0) {
+        if(objectId == 0) {
             log.atInfo().log("No selection...");
         }
+        var nodes = Collections.list(root.breadthFirstEnumeration());
 
-        Collections.list(root.breadthFirstEnumeration()).forEach(node -> {
+        nodes.forEach(node -> {
             if( node instanceof SceneItemNode) {
                 var sn = (SceneItemNode) node;
-                if(sn.getUserObject().getId() == obj.getExternalObjectId()) {
+                if(sn.getUserObject().getId() == objectId) {
                     sceneTree.setSelectionPath(new TreePath(sn));
-                    return;
                 }
             }
         });
