@@ -40,6 +40,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.SubscriberExceptionEvent;
 
 @Slf4j
 public final class ExternalObjectEditingWindow2 extends JDialog {
@@ -73,9 +74,10 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
 
         externalFile = obj.getExternalSceneFile();
         objectId = obj.getExternalObjectId();
+        log.atInfo().log("ObjectId: {}", objectId);
 
         initComponents();
-        this.sceneTree.setModel(null);
+        //this.sceneTree.setModel(null);
 
         // Close the dialog when Esc is pressed
         KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
@@ -232,6 +234,7 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             var cf = chooser.getSelectedFile().getAbsolutePath();
             if(cf.equals(sourcePathField.getText())) return;
+
             this.objectId = 0;
             this.externalFile = chooser.getSelectedFile();
             runSceneTreeLoad(externalFile);
@@ -269,6 +272,7 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
         }
         okButton.setEnabled(sceneTree.getSelectionCount() != 0);
         var selected = (SceneItemNode)sceneTree.getLastSelectedPathComponent();
+        if(selected == null) return;
         objectId = selected.getUserObject().getId();
         log.info("Selected: {}", selected);
 
@@ -286,6 +290,11 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
         returnStatus = retStatus;
         setVisible(false);
         dispose();
+    }
+
+    @Subscribe
+    public void onSceneModelTreeBuildErrorEvent(SubscriberExceptionEvent event) {
+        log.atError().setCause(event.throwable).log("Error building scene tree");
     }
 
     @Subscribe
