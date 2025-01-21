@@ -74,7 +74,7 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
 
         externalFile = obj.getExternalSceneFile();
         objectId = obj.getExternalObjectId();
-        log.atInfo().log("ObjectId: {}", objectId);
+        log.atDebug().log("ObjectId: {}", objectId);
 
         initComponents();
         //this.sceneTree.setModel(null);
@@ -265,7 +265,7 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
     
     private void sceneTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_sceneTreeValueChanged
         // TODO add your handling code here:
-        log.info("Event: {} {} {} {}", evt, evt.isAddedPath(), evt.getNewLeadSelectionPath(), evt.getOldLeadSelectionPath());
+        //log.info("Event: {} {} {} {}", evt, evt.isAddedPath(), evt.getNewLeadSelectionPath(), evt.getOldLeadSelectionPath());
         var path = evt.getNewLeadSelectionPath();
         if (path != null && path.getPathCount() == 1) {
             sceneTree.clearSelection();
@@ -300,21 +300,17 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
     @Subscribe
     public void onSceneModelTreeBuildEvent(SceneModelTreeBuildEvent event) {
         sourcePathField.setText(event.path.getAbsolutePath());
-
         DefaultTreeModel model = event.getModel();
         sceneTree.setModel(model);
-        var root = (DefaultMutableTreeNode)model.getRoot();
+        if(objectId == 0) return;
 
-        if(objectId == 0) {
-            log.atInfo().log("No selection...");
-        }
-        var nodes = Collections.list(root.breadthFirstEnumeration());
+        var nodes = Collections.list(((DefaultMutableTreeNode)model.getRoot()).breadthFirstEnumeration());
 
         nodes.forEach(node -> {
             if( node instanceof SceneItemNode) {
                 var sn = (SceneItemNode) node;
                 if(sn.getUserObject().getId() == objectId) {
-                    sceneTree.setSelectionPath(new TreePath(sn));
+                    sceneTree.setSelectionPath(new TreePath(sn.getPath()));
                 }
             }
         });
