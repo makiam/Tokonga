@@ -12,9 +12,8 @@ package artofillusion;
 
 import artofillusion.object.ExternalObject;
 import artofillusion.object.ObjectInfo;
-import artofillusion.ui.EditingWindow;
-import artofillusion.ui.MessageDialog;
-import artofillusion.ui.Translate;
+import artofillusion.ui.*;
+
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -32,19 +31,18 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
-import artofillusion.ui.UIUtilities;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.SubscriberExceptionEvent;
 
 @Slf4j
 public final class ExternalObjectEditingWindow2 extends JDialog {
-    
+
     private final  ExternalObject obj;
     private final ObjectInfo info;
     private final Runnable closeCallback;
@@ -60,6 +58,7 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
      * A return status code - returned if OK button has been pressed
      */
     public static final int RET_OK = 1;
+    private String objectName;
 
     /**
      * Creates new form ExternalObjectEditingWindow2
@@ -74,27 +73,19 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
 
         externalFile = obj.getExternalSceneFile();
         objectId = obj.getExternalObjectId();
-        log.atDebug().log("ObjectId: {}", objectId);
+        objectName = obj.getExternalObjectName();
 
         initComponents();
-        //this.sceneTree.setModel(null);
 
         // Close the dialog when Esc is pressed
         KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-        ActionListener action = e -> doClose(RET_CANCEL);
+        ActionListener action = e -> doClose();
         this.getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         
         runSceneTreeLoad(externalFile);
 
 
 
-    }
-
-    /**
-     * @return the return status of this dialog - one of RET_OK or RET_CANCEL
-     */
-    public int getReturnStatus() {
-        return returnStatus;
     }
 
     /**
@@ -113,7 +104,7 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
         sourcePathField = new javax.swing.JTextField();
         javax.swing.JButton chooserButton = new javax.swing.JButton();
         javax.swing.JScrollPane sceneTreeScroll = new javax.swing.JScrollPane();
-        sceneTree = new javax.swing.JTree();
+        sceneTree = new AXTree();
 
         setTitle(info.getName());
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -206,20 +197,22 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
         obj.setExternalObjectId(objectId);
         obj.setExternalSceneFile(externalFile);
         obj.setIncludeChildren(this.includeChild.isSelected());
+        obj.setExternalObjectName(objectName);
+        obj.reloadObject();
 
         Optional.ofNullable(closeCallback).ifPresent(action -> action.run());
-        doClose(RET_OK);
+        doClose();
     }//GEN-LAST:event_okButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        doClose(RET_CANCEL);
+        doClose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     /**
      * Closes the dialog
      */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
-        doClose(RET_CANCEL);
+        doClose();
     }//GEN-LAST:event_closeDialog
 
     private void chooserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooserButtonActionPerformed
@@ -265,7 +258,6 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
     
     private void sceneTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_sceneTreeValueChanged
         // TODO add your handling code here:
-        //log.info("Event: {} {} {} {}", evt, evt.isAddedPath(), evt.getNewLeadSelectionPath(), evt.getOldLeadSelectionPath());
         var path = evt.getNewLeadSelectionPath();
         if (path != null && path.getPathCount() == 1) {
             sceneTree.clearSelection();
@@ -274,20 +266,15 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
         var selected = (SceneItemNode)sceneTree.getLastSelectedPathComponent();
         if(selected == null) return;
         objectId = selected.getUserObject().getId();
-        log.info("Selected: {}", selected);
-
+        objectName = selected.getUserObject().getName();
 
     }//GEN-LAST:event_sceneTreeValueChanged
 
     private void sceneTreeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sceneTreeMouseClicked
-
         var near = sceneTree.getClosestPathForLocation(evt.getX(), evt.getY());
-
-        log.atInfo().log("Path {}", near);
     }//GEN-LAST:event_sceneTreeMouseClicked
     
-    private void doClose(int retStatus) {
-        returnStatus = retStatus;
+    private void doClose() {
         setVisible(false);
         dispose();
     }
@@ -325,7 +312,6 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
     private javax.swing.JTextField sourcePathField;
     // End of variables declaration//GEN-END:variables
 
-    private int returnStatus = RET_CANCEL;
 
     @AllArgsConstructor
     @Data

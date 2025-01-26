@@ -184,6 +184,7 @@ public class ExternalObjectEditingWindow extends BDialog {
         obj.setExternalSceneFile(new File(fileField.getText()));
         obj.setIncludeChildren(includeChildrenBox.getState());
         obj.reloadObject();
+
         if (obj.getLoadingError() != null) {
             new BStandardDialog("", UIUtilities.breakString(Translate.text("externalObject.loadingError", obj.getLoadingError())), BStandardDialog.ERROR).showMessageDialog(this);
         }
