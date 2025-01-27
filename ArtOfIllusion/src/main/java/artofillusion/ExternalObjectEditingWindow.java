@@ -41,7 +41,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.SubscriberExceptionEvent;
 
 @Slf4j
-public final class ExternalObjectEditingWindow2 extends JDialog {
+public final class ExternalObjectEditingWindow extends JDialog {
     private final EditingWindow parent;
     private final  ExternalObject obj;
     private final ObjectInfo info;
@@ -63,7 +63,7 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
     /**
      * Creates new form ExternalObjectEditingWindow2
      */
-    public ExternalObjectEditingWindow2(EditingWindow parent, ExternalObject obj, ObjectInfo info, Runnable closeCallback) {
+    public ExternalObjectEditingWindow(EditingWindow parent, ExternalObject obj, ObjectInfo info, Runnable closeCallback) {
         super(parent.getFrame().getComponent(), true);
         org.greenrobot.eventbus.EventBus.getDefault().register(this);
         this.parent = parent;
@@ -321,7 +321,7 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
     @AllArgsConstructor
     @Data
     private class SceneModelTreeBuildEvent {
-        private ExternalObjectEditingWindow2 owner;
+        private ExternalObjectEditingWindow owner;
         private File path;
         private DefaultTreeModel model;
     }
@@ -329,10 +329,10 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
     private class SceneTreeBuilder implements Runnable {
 
         private final File path;
-        private final ExternalObjectEditingWindow2 owner;
+        private final ExternalObjectEditingWindow owner;
 
 
-        public SceneTreeBuilder(ExternalObjectEditingWindow2 owner, File path) {
+        public SceneTreeBuilder(ExternalObjectEditingWindow owner, File path) {
             this.owner = owner;
             this.path = path;
         }
