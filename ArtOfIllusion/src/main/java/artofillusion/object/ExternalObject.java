@@ -165,7 +165,7 @@ public class ExternalObject extends ObjectWrapper {
     /**
      * Add an object and all its children to a list.
      */
-    private void addObjectsToList(ObjectInfo obj, ArrayList<ObjectInfo> allObjects, Mat4 transform) {
+    private void addObjectsToList(ObjectInfo obj, List<ObjectInfo> allObjects, Mat4 transform) {
         obj.getCoords().transformCoordinates(transform);
         allObjects.add(obj);
         for (ObjectInfo child : obj.getChildren()) {
@@ -218,7 +218,6 @@ public class ExternalObject extends ObjectWrapper {
     @Override
     public void edit(EditingWindow parent, ObjectInfo info, Runnable cb) {
         SwingUtilities.invokeLater(() -> new ExternalObjectEditingWindow2(parent, this, info, cb).setVisible(true));
-        //new ExternalObjectEditingWindow(parent, this, info, cb);
     }
 
     /**
