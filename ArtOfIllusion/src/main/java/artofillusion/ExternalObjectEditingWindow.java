@@ -194,7 +194,6 @@ public class ExternalObjectEditingWindow extends BDialog {
         if (onClose != null) {
             onClose.run();
         }
-        parentWindow.updateImage();
-        parentWindow.updateMenus();
+
     }
 }
