@@ -42,7 +42,7 @@ import org.greenrobot.eventbus.SubscriberExceptionEvent;
 
 @Slf4j
 public final class ExternalObjectEditingWindow2 extends JDialog {
-
+    private final EditingWindow parent;
     private final  ExternalObject obj;
     private final ObjectInfo info;
     private final Runnable closeCallback;
@@ -66,7 +66,7 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
     public ExternalObjectEditingWindow2(EditingWindow parent, ExternalObject obj, ObjectInfo info, Runnable closeCallback) {
         super(parent.getFrame().getComponent(), true);
         org.greenrobot.eventbus.EventBus.getDefault().register(this);
-
+        this.parent = parent;
         this.info = info;
         this.obj = obj;
         this.closeCallback = closeCallback;
@@ -200,8 +200,13 @@ public final class ExternalObjectEditingWindow2 extends JDialog {
         obj.setExternalObjectName(objectName);
         obj.reloadObject();
 
-        Optional.ofNullable(closeCallback).ifPresent(action -> action.run());
+        Optional.ofNullable(obj.getLoadingError()).ifPresent(action ->
+                MessageDialog.create().withOwner(this).error(UIUtilities.breakString(Translate.text("externalObject.loadingError", obj.getLoadingError())))
+        );
+        info.clearCachedMeshes();
+        obj.sceneChanged(info, parent.getScene());
         doClose();
+        Optional.ofNullable(closeCallback).ifPresent(action -> action.run());
     }//GEN-LAST:event_okButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
