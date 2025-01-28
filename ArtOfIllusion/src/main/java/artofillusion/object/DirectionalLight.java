@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2008 by Peter Eastman
    Modifications Copyright 2016 by Petri Ihalainen
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -82,7 +82,7 @@ public class DirectionalLight extends Light {
     }
 
     @Override
-    public Object3D duplicate() {
+    public DirectionalLight duplicate() {
         var duplicate = new DirectionalLight(color, intensity, radius);
         duplicate.type = this.type;
         duplicate.decayRate = this.decayRate;

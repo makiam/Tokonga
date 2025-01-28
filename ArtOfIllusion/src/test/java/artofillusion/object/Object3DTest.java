@@ -1,4 +1,4 @@
-/* Copyright (C) 2018-2024 by Maksim Khramov
+/* Copyright (C) 2018-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -454,7 +454,6 @@ class Object3DTest {
         }
     }
 
-    @DisplayName("Dummy Object")
     private static class DummyObject extends Object3D {
 
         public static boolean canSetTexture = true;
@@ -467,7 +466,7 @@ class Object3DTest {
         }
 
         @Override
-        public Object3D duplicate() {
+        public DummyObject duplicate() {
             // To change body of generated methods, choose Tools | Templates.
             throw new UnsupportedOperationException("Not supported yet.");
         }

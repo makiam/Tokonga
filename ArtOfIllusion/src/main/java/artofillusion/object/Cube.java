@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
    Changes copyright (C) 2019 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -50,7 +50,7 @@ public class Cube extends Object3D {
     }
 
     @Override
-    public Object3D duplicate() {
+    public Cube duplicate() {
         Cube obj = new Cube(halfx * 2.0, halfy * 2.0, halfz * 2.0);
         obj.copyTextureAndMaterial(this);
         return obj;

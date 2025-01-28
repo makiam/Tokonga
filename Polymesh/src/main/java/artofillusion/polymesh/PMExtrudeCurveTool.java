@@ -121,7 +121,7 @@ public class PMExtrudeCurveTool extends EditingTool {
             } else {
                 constantSize = false;
             }
-            PolyMesh mesh = (PolyMesh) controller.getObject().object;
+            PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
             orMesh = (PolyMesh) mesh.duplicate();
             orSel = controller.getSelection();
             if (!constantSize) {
@@ -155,7 +155,7 @@ public class PMExtrudeCurveTool extends EditingTool {
     private Vec3 getInitialPoint() {
         if (clickPoints.isEmpty()) {
             orSel = controller.getSelection();
-            orMesh = (PolyMesh) controller.getObject().object;
+            orMesh = (PolyMesh) controller.getObject().getGeometry();
         }
         return getInitialPoint(orSel, orMesh);
     }

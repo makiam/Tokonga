@@ -101,7 +101,7 @@ public class VRMLExporter {
                         TextureImageExporter.DIFFUSE, (int) widthField.getValue(), (int) heightField.getValue());
                 boolean wholeScene = (exportChoice.getSelectedIndex() == 0);
                 for (ObjectInfo info : theScene.getObjects()) {
-                    if (wholeScene || info.selected) {
+                    if (wholeScene || info.isSelected()) {
                         textureExporter.addObject(info);
                     }
                 }

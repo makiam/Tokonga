@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
    Changes copyright (C) 2019 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -63,7 +63,7 @@ public class Sphere extends Object3D {
     }
 
     @Override
-    public Object3D duplicate() {
+    public Sphere duplicate() {
         Sphere obj = new Sphere(rx, ry, rz);
         obj.copyTextureAndMaterial(this);
         return obj;

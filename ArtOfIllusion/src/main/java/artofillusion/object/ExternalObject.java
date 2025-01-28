@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2007 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -176,7 +176,7 @@ public class ExternalObject extends ObjectWrapper {
      * Create a new object which is an exact duplicate of this one.
      */
     @Override
-    public Object3D duplicate() {
+    public ExternalObject duplicate() {
         ExternalObject obj = new ExternalObject();
         obj.externalFile = externalFile;
         obj.objectName = objectName;
@@ -329,7 +329,7 @@ public class ExternalObject extends ObjectWrapper {
         }
 
         @Override
-        public Object3D duplicate() {
+        public ExternalObjectCollection duplicate() {
             return new ExternalObjectCollection(objects);
         }
 

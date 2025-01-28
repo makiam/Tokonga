@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
-   Changes copyright (C) 2016-2023 by Maksim Khramov
+   Changes copyright (C) 2016-2025 by Maksim Khramov
    Changes copyright (C) 2017-2019 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -269,10 +269,10 @@ public class SceneViewer extends ViewerCanvas {
                 if (obj.isLocked()) {
                     continue;
                 }
-                if (obj.selected) {
+                if (obj.isSelected()) {
                     hsize = Scene.HANDLE_SIZE;
                     boxes = selectedBoxes;
-                } else if (obj.parentSelected) {
+                } else if (obj.isParentSelected()) {
                     hsize = Scene.HANDLE_SIZE / 2;
                     boxes = parentSelectedBoxes;
                 } else {
