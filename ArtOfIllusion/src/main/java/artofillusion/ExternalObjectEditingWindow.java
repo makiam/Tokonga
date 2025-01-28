@@ -1,5 +1,4 @@
-/* Copyright (C) 2004-2007 by Peter Eastman
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+/* Copyright (C) 2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,183 +10,371 @@
 
 package artofillusion;
 
-import artofillusion.object.*;
+import artofillusion.object.ExternalObject;
+import artofillusion.object.ObjectInfo;
 import artofillusion.ui.*;
-import buoy.widget.*;
-import buoy.event.*;
 
-import java.awt.*;
-import java.io.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.KeyStroke;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 
-/**
- * This is a window for editing ExternalObjects.
- */
-public class ExternalObjectEditingWindow extends BDialog {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
-    private final EditingWindow parentWindow;
-    private final ExternalObject theObject;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.SubscriberExceptionEvent;
+
+@Slf4j
+public final class ExternalObjectEditingWindow extends JDialog {
+    private final EditingWindow parent;
+    private final  ExternalObject obj;
     private final ObjectInfo info;
-    private Scene scene;
-    private final BTextField fileField;
-    private final TreeList itemTree;
-    private final BButton okButton;
-    private final BCheckBox includeChildrenBox;
-    private String objectName;
+    private final Runnable closeCallback;
+
+    private File externalFile;
     private int objectId;
-    private final Runnable onClose;
 
     /**
-     * Display a window for editing an ExternalObject.
-     *
-     * @param parent the parent window
-     * @param obj the object to edit
-     * @param info the ObjectInfo for the ExternalObject
-     * @param onClose a callback to invoke when the user clicks OK (may be null)
+     * A return status code - returned if Cancel button has been pressed
      */
-    public ExternalObjectEditingWindow(EditingWindow parent, ExternalObject obj, ObjectInfo info, Runnable onClose) {
-        super(parent.getFrame(), info.getName(), true);
-        parentWindow = parent;
-        theObject = obj;
+    public static final int RET_CANCEL = 0;
+    /**
+     * A return status code - returned if OK button has been pressed
+     */
+    public static final int RET_OK = 1;
+    private String objectName;
+
+    /**
+     * Creates new form ExternalObjectEditingWindow2
+     */
+    public ExternalObjectEditingWindow(EditingWindow parent, ExternalObject obj, ObjectInfo info, Runnable closeCallback) {
+        super(parent.getFrame().getComponent(), true);
+        org.greenrobot.eventbus.EventBus.getDefault().register(this);
+        this.parent = parent;
         this.info = info;
-        this.onClose = onClose;
-        objectName = obj.getExternalObjectName();
+        this.obj = obj;
+        this.closeCallback = closeCallback;
+
+        externalFile = obj.getExternalSceneFile();
         objectId = obj.getExternalObjectId();
-        FormContainer content = new FormContainer(new double[]{0, 1, 0, 0}, new double[]{0, 1, 0, 0});
-        setContent(BOutline.createEmptyBorder(content, UIUtilities.getStandardDialogInsets()));
-        content.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(2, 2, 2, 2), null));
-        LayoutInfo labelLayout = new LayoutInfo(LayoutInfo.EAST, LayoutInfo.NONE, new Insets(2, 2, 2, 2), null);
-        content.add(Translate.label("externalObject.sceneFile"), 0, 0, labelLayout);
-        content.add(fileField = new BTextField(theObject.getExternalSceneFile().getAbsolutePath(), 30), 1, 0);
-        content.add(Translate.button("browse", event -> doBrowseFile()), 2, 0);
-        fileField.setEditable(false);
-        itemTree = new TreeList(parentWindow);
-        itemTree.setPreferredSize(new Dimension(130, 100));
-        itemTree.setAllowMultiple(false);
-        itemTree.addEventLink(SelectionChangedEvent.class, this, "selectionChanged");
-        BScrollPane itemTreeScroller = new BScrollPane(itemTree);
-        itemTreeScroller.setForceWidth(true);
-        itemTreeScroller.setForceHeight(true);
-        itemTreeScroller.getVerticalScrollBar().setUnitIncrement(10);
-        content.add(itemTreeScroller, 0, 1, 3, 1);
-        includeChildrenBox = new BCheckBox(Translate.text("externalObject.includeChildren"), obj.getIncludeChildren());
-        content.add(includeChildrenBox, 0, 2, 3, 1);
-        RowContainer buttons = new RowContainer();
-        content.add(buttons, 0, 3, 3, 1, new LayoutInfo());
-        buttons.add(okButton = Translate.button("ok", event -> doOk()));
-        buttons.add(Translate.button("cancel", event -> dispose()));
-        loadExternalScene();
-        buildObjectTree();
-        selectionChanged();
-        pack();
-        UIUtilities.centerDialog(this, parentWindow.getFrame());
-        setVisible(true);
+        objectName = obj.getExternalObjectName();
+
+        initComponents();
+
+        // Close the dialog when Esc is pressed
+        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        ActionListener action = e -> doClose();
+        this.getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        
+        runSceneTreeLoad(externalFile);
+
+
+
     }
 
     /**
-     * Allow the user to select a file.
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
-    private void doBrowseFile() {
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        okButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
+        includeChild = new javax.swing.JCheckBox();
+        javax.swing.JLabel pathLabel = new javax.swing.JLabel();
+        sourcePathField = new javax.swing.JTextField();
+        javax.swing.JButton chooserButton = new javax.swing.JButton();
+        javax.swing.JScrollPane sceneTreeScroll = new javax.swing.JScrollPane();
+        sceneTree = new AXTree();
+
+        setTitle(info.getName());
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                closeDialog(evt);
+            }
+        });
+
+        okButton.setText(Translate.text("button.ok"));
+        okButton.setEnabled(false);
+        okButton.addActionListener(this::okButtonActionPerformed);
+
+        cancelButton.setText(Translate.text("button.cancel")
+        );
+        cancelButton.addActionListener(this::cancelButtonActionPerformed);
+
+        includeChild.setSelected(obj.getIncludeChildren());
+        includeChild.setText(Translate.text("externalObject.includeChildren"));
+
+        pathLabel.setLabelFor(sourcePathField);
+        pathLabel.setText(Translate.text("externalObject.sceneFile"));
+
+        sourcePathField.setText(obj.getExternalSceneFile().getAbsolutePath());
+        sourcePathField.setEnabled(false);
+
+        chooserButton.setText(Translate.text("button.browse"));
+        chooserButton.addActionListener(this::chooserButtonActionPerformed);
+
+        sceneTree.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                sceneTreeMouseClicked(evt);
+            }
+        });
+        sceneTree.addTreeSelectionListener(this::sceneTreeValueChanged);
+        sceneTreeScroll.setViewportView(sceneTree);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(sceneTreeScroll)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 248, Short.MAX_VALUE)
+                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cancelButton))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(pathLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(sourcePathField)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(chooserButton))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(includeChild)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
+
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(pathLabel)
+                    .addComponent(sourcePathField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(chooserButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(sceneTreeScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(includeChild)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cancelButton)
+                    .addComponent(okButton))
+                .addContainerGap())
+        );
+
+        getRootPane().setDefaultButton(okButton);
+
+        pack();
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        obj.setExternalObjectId(objectId);
+        obj.setExternalSceneFile(externalFile);
+        obj.setIncludeChildren(this.includeChild.isSelected());
+        obj.setExternalObjectName(objectName);
+        obj.reloadObject();
+
+        Optional.ofNullable(obj.getLoadingError()).ifPresent(action ->
+                MessageDialog.create().withOwner(this).error(UIUtilities.breakString(Translate.text("externalObject.loadingError", obj.getLoadingError())))
+        );
+        info.clearCachedMeshes();
+        obj.sceneChanged(info, parent.getScene());
+        doClose();
+        Optional.ofNullable(closeCallback).ifPresent(action -> action.run());
+    }//GEN-LAST:event_okButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        doClose();
+    }//GEN-LAST:event_cancelButtonActionPerformed
+
+    /**
+     * Closes the dialog
+     */
+    private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
+        doClose();
+    }//GEN-LAST:event_closeDialog
+
+    private void chooserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooserButtonActionPerformed
+        // TODO add your handling code here:
         var chooser = new JFileChooser();
         chooser.setName(Translate.text("externalObject.selectScene"));
-
-        File f = theObject.getExternalSceneFile();
+        
+        File f = obj.getExternalSceneFile();
         if (f.isFile()) {
             chooser.setSelectedFile(f);
         }
-        if (chooser.showOpenDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
-            fileField.setText(chooser.getSelectedFile().getAbsolutePath());
-            loadExternalScene();
-            buildObjectTree();
-            selectionChanged();
-        }
-    }
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            var cf = chooser.getSelectedFile().getAbsolutePath();
+            if(cf.equals(sourcePathField.getText())) return;
 
-    /**
-     * Load the external scene file.
-     */
-    private void loadExternalScene() {
-        File f = new File(fileField.getText());
-        scene = null;
-        if (!f.isFile()) {
-            new BStandardDialog("", UIUtilities.breakString(Translate.text("externalObject.sceneNotFound",
-                    theObject.getExternalSceneFile().getAbsolutePath())), BStandardDialog.ERROR).showMessageDialog(this);
-            return;
+            this.objectId = 0;
+            this.externalFile = chooser.getSelectedFile();
+            runSceneTreeLoad(externalFile);
         }
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        try {
-            scene = new Scene(f, true);
-        } catch (InvalidObjectException ex) {
-            new BStandardDialog("", UIUtilities.breakString(Translate.text("errorLoadingWholeScene")), BStandardDialog.ERROR).showMessageDialog(this);
-        } catch (IOException ex) {
-            new BStandardDialog("", new String[]{Translate.text("errorLoadingFile"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(this);
-        }
-        setCursor(Cursor.getDefaultCursor());
 
-    }
+    }//GEN-LAST:event_chooserButtonActionPerformed
 
-    /**
-     * Build the list of objects for the user to select from.
-     */
-    private void buildObjectTree() {
-        itemTree.removeAllElements();
-        if (scene == null) {
-            return;
-        }
-        itemTree.setUpdateEnabled(false);
-
-        for (ObjectInfo item : scene.getObjects()) {
-            if (item.getParent() == null) {
-                itemTree.addElement(new ObjectTreeElement(item, itemTree));
+    private void runSceneTreeLoad(File file) {
+        CompletableFuture<Void> task = CompletableFuture.runAsync(new SceneTreeBuilder(this, file));
+        task.exceptionally(tx -> {
+            var cause = tx.getCause();
+            var root = new DefaultMutableTreeNode("Invalid Scene: " + obj.getExternalSceneFile());
+            var model = new DefaultTreeModel(root, false);
+            this.sceneTree.setModel(model);
+            if(cause instanceof InvalidObjectException) {
+                MessageDialog.create().withOwner(this).error(UIUtilities.breakString(Translate.text("errorLoadingWholeScene")));
+                return null;
             }
-        }
+            if(cause instanceof IOException) {
+                MessageDialog.create().withOwner(this).error(new String[]{Translate.text("errorLoadingFile"), cause.getMessage() == null ? "" : cause.getMessage()});
+                return null;
+            }
 
-        itemTree.setUpdateEnabled(true);
-        ObjectInfo oldSelection = scene.getObjectById(objectId);
-        if (oldSelection == null || !oldSelection.getName().equals(objectName)) {
-            oldSelection = scene.getObject(objectName);
-        }
-        if (oldSelection != null) {
-            itemTree.setSelected(oldSelection, true);
-            itemTree.expandToShowObject(oldSelection);
-        }
+            return null;
+        });
     }
-
-    /**
-     * This is called when the selection in the tree is changed.
-     */
-    private void selectionChanged() {
-        Object[] sel = itemTree.getSelectedObjects();
-        if (sel.length == 0) {
-            okButton.setEnabled(false);
-        } else {
-            okButton.setEnabled(true);
-            ObjectInfo selected = (ObjectInfo) sel[0];
-            objectName = selected.getName();
-            objectId = selected.getId();
+    
+    
+    private void sceneTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_sceneTreeValueChanged
+        // TODO add your handling code here:
+        var path = evt.getNewLeadSelectionPath();
+        if (path != null && path.getPathCount() == 1) {
+            sceneTree.clearSelection();
         }
-    }
+        okButton.setEnabled(sceneTree.getSelectionCount() != 0);
+        var selected = (SceneItemNode)sceneTree.getLastSelectedPathComponent();
+        if(selected == null) return;
+        objectId = selected.getUserObject().getId();
+        objectName = selected.getUserObject().getName();
 
-    /**
-     * Save the changes and reload the object.
-     */
-    private void doOk() {
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        theObject.setExternalObjectName(objectName);
-        theObject.setExternalObjectId(objectId);
-        theObject.setExternalSceneFile(new File(fileField.getText()));
-        theObject.setIncludeChildren(includeChildrenBox.getState());
-        theObject.reloadObject();
-        if (theObject.getLoadingError() != null) {
-            new BStandardDialog("", UIUtilities.breakString(Translate.text("externalObject.loadingError", theObject.getLoadingError())), BStandardDialog.ERROR).showMessageDialog(this);
-        }
-        info.clearCachedMeshes();
-        theObject.sceneChanged(info, parentWindow.getScene());
+    }//GEN-LAST:event_sceneTreeValueChanged
+
+    private void sceneTreeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sceneTreeMouseClicked
+        var near = sceneTree.getClosestPathForLocation(evt.getX(), evt.getY());
+    }//GEN-LAST:event_sceneTreeMouseClicked
+    
+    private void doClose() {
+        setVisible(false);
         dispose();
-        if (onClose != null) {
-            onClose.run();
+    }
+
+    @Subscribe
+    public void onSceneModelTreeBuildErrorEvent(SubscriberExceptionEvent event) {
+        log.atError().setCause(event.throwable).log("Error building scene tree");
+    }
+
+    @Subscribe
+    public void onSceneModelTreeBuildEvent(SceneModelTreeBuildEvent event) {
+        sourcePathField.setText(event.path.getAbsolutePath());
+        DefaultTreeModel model = event.getModel();
+        sceneTree.setModel(model);
+        if(objectId == 0) return;
+
+        var nodes = Collections.list(((DefaultMutableTreeNode)model.getRoot()).breadthFirstEnumeration());
+
+        nodes.forEach(node -> {
+            if( node instanceof SceneItemNode) {
+                var sn = (SceneItemNode) node;
+                if(sn.getUserObject().getId() == objectId) {
+                    sceneTree.setSelectionPath(new TreePath(sn.getPath()));
+                }
+            }
+        });
+
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cancelButton;
+    private javax.swing.JCheckBox includeChild;
+    private javax.swing.JButton okButton;
+    private javax.swing.JTree sceneTree;
+    private javax.swing.JTextField sourcePathField;
+    // End of variables declaration//GEN-END:variables
+
+
+    @AllArgsConstructor
+    @Data
+    private class SceneModelTreeBuildEvent {
+        private ExternalObjectEditingWindow owner;
+        private File path;
+        private DefaultTreeModel model;
+    }
+
+    private class SceneTreeBuilder implements Runnable {
+
+        private final File path;
+        private final ExternalObjectEditingWindow owner;
+
+
+        public SceneTreeBuilder(ExternalObjectEditingWindow owner, File path) {
+            this.owner = owner;
+            this.path = path;
         }
-        parentWindow.updateImage();
-        parentWindow.updateMenus();
+
+        @SneakyThrows
+        @Override
+        public void run() {
+            var root = new DefaultMutableTreeNode("Scene: " + path);
+            var model = new DefaultTreeModel(root, true);
+
+            var scene = new Scene(path, true);
+            scene.getObjects().stream().filter(item -> item.getParent() == null).forEach(item -> {
+                var sNode = new SceneItemNode(item);
+                root.add(sNode);
+            });
+
+            EventBus.getDefault().post(new SceneModelTreeBuildEvent(owner, path, model));
+        }
+    }
+
+    private class SceneItemNode extends DefaultMutableTreeNode {
+
+        public SceneItemNode(ObjectInfo userObject) {
+            super(userObject, true);
+            ObjectInfo[] items = userObject.getChildren();
+            if(items.length == 0) this.allowsChildren = false;
+            Arrays.stream(items).forEach(item -> {
+                this.add(new SceneItemNode(item));
+            });
+
+        }
+
+        @Override
+        public ObjectInfo getUserObject() {
+            return (ObjectInfo)super.getUserObject();
+        }
+
+        @Override
+        public String toString() {
+            return this.getUserObject().getName();
+        }
+        
+        
     }
 }

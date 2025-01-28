@@ -17,6 +17,7 @@ import artofillusion.math.*;
 import artofillusion.ui.*;
 import java.io.*;
 import java.util.*;
+import javax.swing.SwingUtilities;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,9 +47,9 @@ public class ExternalObject extends ObjectWrapper {
      * @param name the name of the object to load
      */
     public ExternalObject(File file, String name) {
+        this();
         externalFile = file;
         objectName = name;
-        theObject = new NullObject();
         includeChildren = true;
     }
 
@@ -164,7 +165,7 @@ public class ExternalObject extends ObjectWrapper {
     /**
      * Add an object and all its children to a list.
      */
-    private void addObjectsToList(ObjectInfo obj, ArrayList<ObjectInfo> allObjects, Mat4 transform) {
+    private void addObjectsToList(ObjectInfo obj, List<ObjectInfo> allObjects, Mat4 transform) {
         obj.getCoords().transformCoordinates(transform);
         allObjects.add(obj);
         for (ObjectInfo child : obj.getChildren()) {
@@ -177,9 +178,7 @@ public class ExternalObject extends ObjectWrapper {
      */
     @Override
     public ExternalObject duplicate() {
-        ExternalObject obj = new ExternalObject();
-        obj.externalFile = externalFile;
-        obj.objectName = objectName;
+        ExternalObject obj = new ExternalObject(externalFile, objectName);
         obj.theObject = theObject;
         obj.includeChildren = includeChildren;
         return obj;
@@ -217,7 +216,7 @@ public class ExternalObject extends ObjectWrapper {
 
     @Override
     public void edit(EditingWindow parent, ObjectInfo info, Runnable cb) {
-        new ExternalObjectEditingWindow(parent, this, info, cb);
+        SwingUtilities.invokeLater(() -> new ExternalObjectEditingWindow(parent, this, info, cb).setVisible(true));
     }
 
     /**
