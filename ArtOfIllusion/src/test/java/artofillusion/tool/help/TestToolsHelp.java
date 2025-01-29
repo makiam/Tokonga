@@ -88,16 +88,15 @@ public class TestToolsHelp {
     @SuppressWarnings("java:S3011")
     @BeforeEach
     public void setUp() throws IllegalAccessException {
-        BLabel label = (BLabel) helpField.get(layout);
+        artofillusion.ui.StatusPanel label = (artofillusion.ui.StatusPanel) helpField.get(layout);
         label.setText(null);
-
     }
 
     @Test
     public void testCreateCameraToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new CreateCameraTool(layout);
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertEquals("Click to create a camera.", toolText);
     }
 
@@ -105,7 +104,7 @@ public class TestToolsHelp {
     public void testCreateLightToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new CreateLightTool(layout);
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertEquals("Click to create a point light, drag for a directional light, control-drag for a spot light.", toolText);
     }
 
@@ -113,7 +112,7 @@ public class TestToolsHelp {
     public void testCreateCurveToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new CreateCurveTool(layout);
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertEquals("Click to add points, shift-click for a corner.  Double-click or press Enter to finish line, control-double-click to close line.  Double-click icon to set smoothing.", toolText);
     }
 
@@ -121,7 +120,7 @@ public class TestToolsHelp {
     public void testMoveViewToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new MoveViewTool(layout);
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertEquals("Drag to move viewpoint.  Shift-drag to constrain movement, control-drag to zoom.", toolText);
     }
 
@@ -129,7 +128,7 @@ public class TestToolsHelp {
     public void testCreateCubeToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new CreateCubeTool(layout);
         tool.activate();
-        BLabel label = (BLabel) helpField.get(layout);
+        artofillusion.ui.StatusPanel label = (artofillusion.ui.StatusPanel) helpField.get(layout);
         String toolText = label.getText();
         Assertions.assertEquals("Drag to create a box.  Shift-drag to create a cube.  Hold Ctrl to expand from center.", toolText);
     }
@@ -138,15 +137,15 @@ public class TestToolsHelp {
     public void testCreateSphereToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new CreateSphereTool(layout);
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertEquals("Drag to create an ellipsoid.  Shift-drag to create a sphere.  Hold Ctrl to expand from center.", toolText);
     }
 
     @Test
-    public void testCreateCylinerToolWindowHelpText() throws IllegalAccessException {
+    public void testCreateCylinderToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new CreateCylinderTool(layout);
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertEquals("Drag to create a cylinder or cone.  Shift-drag to constrain.  Hold Ctrl to expand from center.  Double-click icon to set shape.", toolText);
     }
 
@@ -167,7 +166,7 @@ public class TestToolsHelp {
     public void testCreatePolygonToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new CreatePolygonTool(layout);
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertEquals("Drag to create a 3-sided polygon, shift-drag for a regular polygon, control-drag to expand from center.  Double-click icon to set shape and fill.", toolText);
     }
 
@@ -175,7 +174,7 @@ public class TestToolsHelp {
     public void testThickenMeshToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new ThickenMeshTool(layout, null);
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertNull(toolText);
     }
 
@@ -183,7 +182,7 @@ public class TestToolsHelp {
     public void testSkewMeshToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new SkewMeshTool(layout, null);
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertNull(toolText);
     }
 
@@ -191,7 +190,7 @@ public class TestToolsHelp {
     public void testScaleMeshToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new ScaleMeshTool(layout, null);
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertNull(toolText);
     }
 
@@ -199,7 +198,7 @@ public class TestToolsHelp {
     public void testTaperMeshToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new TaperMeshTool(layout, null);
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertNull(toolText);
     }
 
@@ -207,7 +206,7 @@ public class TestToolsHelp {
     public void testRotateObjectToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new RotateObjectTool(layout);
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertEquals("Drag to rotate selected objects.  Drag a handle to constrain rotation.  Double-click icon for options.", toolText);
     }
 
@@ -215,7 +214,7 @@ public class TestToolsHelp {
     public void testBevelExtrudeToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new BevelExtrudeTool(layout, null);
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertNull(toolText);
     }
 
@@ -223,7 +222,7 @@ public class TestToolsHelp {
     public void testMoveScaleRotateMeshToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new MoveScaleRotateMeshTool(layout, null);
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertNull(toolText);
     }
 
@@ -231,7 +230,7 @@ public class TestToolsHelp {
     public void testCreateSplineMeshToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new CreateSplineMeshTool(layout);
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertEquals("Drag to create a 5 by 5 flat, approximating spline mesh.  Shift-drag to constrain shape.  Hold Ctrl to expand from center.  Double-click icon to change mesh properties.", toolText);
     }
 
@@ -239,7 +238,7 @@ public class TestToolsHelp {
     public void testReshapeMeshToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new ReshapeMeshTool(layout, null);
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertEquals("Select and move points.  Shift adds to selection, Control-drag removes from selection.", toolText);
     }
 
@@ -247,7 +246,7 @@ public class TestToolsHelp {
     public void testMoveUVViewToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new MoveUVViewTool(layout);
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertEquals("Drag to move viewpoint.  Shift-drag to constrain movement, control-drag to zoom.", toolText);
     }
 
@@ -255,7 +254,7 @@ public class TestToolsHelp {
     public void testScaleObjectToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new ScaleObjectTool(layout);
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertEquals("Drag a handle to resize objects.  Shift-drag preserves shape, control-drag scales around center.  Double-click icon for options.", toolText);
     }
 
@@ -283,7 +282,7 @@ public class TestToolsHelp {
     public void testMoveObjectToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new MoveObjectTool(layout);
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertEquals("Drag to move selected objects.  Shift-drag constrains movement, control-drag moves perpendicular to view.  Double-click icon for options.", toolText);
     }
 
@@ -292,7 +291,7 @@ public class TestToolsHelp {
         EditingTool tool = new MoveScaleRotateObjectTool(layout);
         tool.activate();
 
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertNull(toolText);
     }
 
@@ -300,7 +299,7 @@ public class TestToolsHelp {
     public void testRotateViewToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new RotateViewTool(layout);
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertEquals("Drag to rotate view.  Shift-drag to constrain movement, control-drag to rotate about axis.", toolText);
     }
 
@@ -308,7 +307,7 @@ public class TestToolsHelp {
     public void testGenericToolWindowHelpText() throws IllegalAccessException {
         EditingTool tool = new GenericTool(layout, "", "Generic Tool");
         tool.activate();
-        String toolText = ((BLabel) helpField.get(layout)).getText();
+        String toolText = ((artofillusion.ui.StatusPanel) helpField.get(layout)).getText();
         Assertions.assertNull(toolText);
     }
 }

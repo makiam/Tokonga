@@ -5,9 +5,12 @@ import buoy.widget.BLabel
 class StatusPanel {
     private val component: BLabel = BLabel();
 
-    fun setText(text: String) {
+    fun setText(text: String?) {
         component.text = text;
     }
 
     fun getComponent() = component;
+    fun getText(): String? {
+        return component.text
+    }
 }
