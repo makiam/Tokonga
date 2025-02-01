@@ -77,7 +77,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      * Get the Edit menu.
      */
     @Getter
-    private final BMenu editMenu = Translate.menu("edit");
+    private final BMenu editMenu = new LayoutEditMenu(this);
     /**
      * -- GETTER --
      * Get the Scene menu.
@@ -498,9 +498,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
         getMenuBar().add(editMenu);
         editMenuItem = new BMenuItem[11];
-        editMenu.add(editMenuItem[0] = Translate.menuItem("undo", event -> undoCommand()));
-        editMenu.add(editMenuItem[1] = Translate.menuItem("redo", event -> redoCommand()));
-        editMenu.addSeparator();
+
         editMenu.add(editMenuItem[2] = Translate.menuItem("cut", event -> cutCommand()));
         editMenu.add(editMenuItem[3] = Translate.menuItem("copy", event -> copyCommand()));
         editMenu.add(editMenuItem[4] = Translate.menuItem("paste", event -> pasteCommand()));
@@ -514,6 +512,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         editMenu.add(editMenuItem[10] = Translate.menuItem("sever", event -> severCommand()));
         editMenu.addSeparator();
         editMenu.add(Translate.menuItem("preferences", event -> preferencesCommand()));
+
     }
 
     private void createObjectMenu() {
@@ -979,10 +978,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }
 
         fileMenuItem.setEnabled(modified);
-        editMenuItem[0].setEnabled(undoStack.canUndo()); // Undo
-        editMenuItem[0].setText(undoStack.canUndo() ? Translate.text("menu.undo") + " " + undoStack.getUndoName() : Translate.text("menu.undo"));
-        editMenuItem[1].setEnabled(undoStack.canRedo()); // Redo
-        editMenuItem[1].setText(undoStack.canRedo() ? Translate.text("menu.redo") + " " + undoStack.getRedoName() : Translate.text("menu.redo"));
+
         editMenuItem[2].setEnabled(numSelObjects > 0); // Cut
         editMenuItem[3].setEnabled(numSelObjects > 0); // Copy
         editMenuItem[4].setEnabled(ArtOfIllusion.getClipboardSize() > 0); // Paste

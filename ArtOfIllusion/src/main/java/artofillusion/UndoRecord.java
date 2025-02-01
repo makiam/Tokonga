@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -23,6 +23,8 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -38,7 +40,12 @@ public class UndoRecord {
 
     private File cacheFile;
     private boolean redo;
-    private final EditingWindow theWindow;
+
+    public EditingWindow getView() {
+        return view;
+    }
+
+    private final EditingWindow view;
 
     public static final int COPY_OBJECT = 0;
     public static final int COPY_COORDS = 1;
@@ -68,7 +75,7 @@ public class UndoRecord {
      * @param win the EditingWindow this record belongs to
      */
     public UndoRecord(EditingWindow win) {
-        theWindow = win;
+        view = win;
     }
 
     /**
@@ -140,8 +147,8 @@ public class UndoRecord {
      * Execute the record's script.
      */
     public UndoRecord execute() {
-        UndoRecord redoRecord = new UndoRecord(theWindow, !redo);
-        int[] selection = theWindow.getScene().getSelection();
+        UndoRecord redoRecord = new UndoRecord(view, !redo);
+        int[] selection = view.getScene().getSelection();
         boolean needRestoreSelection = false;
 
         try {
@@ -157,8 +164,8 @@ public class UndoRecord {
                     Object3D obj1 = (Object3D) d[0], obj2 = (Object3D) d[1];
                     redoRecord.addCommandAtBeginning(COPY_OBJECT, obj1, obj1.duplicate());
                     obj1.copyObject(obj2);
-                    if (theWindow.getScene() != null) {
-                        theWindow.getScene().objectModified(obj1);
+                    if (view.getScene() != null) {
+                        view.getScene().objectModified(obj1);
                     }
                     break;
                 }
@@ -183,7 +190,7 @@ public class UndoRecord {
                 }
                 case ADD_OBJECT: {
                     ObjectInfo info = (ObjectInfo) d[0];
-                    LayoutWindow win = (LayoutWindow) theWindow;
+                    LayoutWindow win = (LayoutWindow) view;
                     int index = (Integer) d[1];
                     win.addObject(info, index, redoRecord);
                     if (info.selected) {
@@ -194,13 +201,13 @@ public class UndoRecord {
                 }
                 case DELETE_OBJECT: {
                     int which = (Integer) d[0];
-                    LayoutWindow win = (LayoutWindow) theWindow;
+                    LayoutWindow win = (LayoutWindow) view;
                     win.removeObject(which, redoRecord);
                     needRestoreSelection = true;
                     break;
                 }
                 case RENAME_OBJECT: {
-                    LayoutWindow win = (LayoutWindow) theWindow;
+                    LayoutWindow win = (LayoutWindow) view;
                     int which = (Integer) d[0];
                     String oldName = (win.getScene().getObject(which)).getName();
                     redoRecord.addCommandAtBeginning(RENAME_OBJECT, d[0], oldName);
@@ -263,8 +270,8 @@ public class UndoRecord {
                     Vec3[] pos = (Vec3[]) d[1];
                     redoRecord.addCommandAtBeginning(COPY_VERTEX_POSITIONS, mesh, mesh.getVertexPositions());
                     mesh.setVertexPositions(pos);
-                    if (theWindow.getScene() != null) {
-                        theWindow.getScene().objectModified((Object3D) mesh);
+                    if (view.getScene() != null) {
+                        view.getScene().objectModified((Object3D) mesh);
                     }
                     break;
                 }
@@ -286,10 +293,10 @@ public class UndoRecord {
                 case SET_SCENE_SELECTION: {
                     int[] selected = (int[]) d[0];
                     needRestoreSelection = true;
-                    if (theWindow instanceof LayoutWindow) {
-                        ((LayoutWindow) theWindow).setSelection(selected);
+                    if (view instanceof LayoutWindow) {
+                        ((LayoutWindow) view).setSelection(selected);
                     } else {
-                        theWindow.getScene().setSelection(selected);
+                        view.getScene().setSelection(selected);
                     }
                     break;
                 }
@@ -308,7 +315,7 @@ public class UndoRecord {
         if (needRestoreSelection) {
             redoRecord.addCommand(SET_SCENE_SELECTION, selection);
         }
-        theWindow.setModified();
+        view.setModified();
         redoRecord.cacheToDisk();
         return redoRecord;
     }
@@ -359,9 +366,9 @@ public class UndoRecord {
                 SoftReference<?>[] ref = new SoftReference<?>[d.length];
                 dataRef.add(ref);
                 int c = entry.getKey();
-                if (c == COPY_OBJECT && theWindow.getScene() != null) {
+                if (c == COPY_OBJECT && view.getScene() != null) {
                     out.writeUTF(d[1].getClass().getName());
-                    ((Object3D) d[1]).writeToFile(out, theWindow.getScene());
+                    ((Object3D) d[1]).writeToFile(out, view.getScene());
                     ref[1] = new SoftReference<>(d[1]);
                     d[1] = null;
                 } else if (c == COPY_VERTEX_POSITIONS) {
@@ -411,10 +418,10 @@ public class UndoRecord {
             for (Map.Entry<Integer, Object[]> entry : records) {
                 Object[] d = entry.getValue();
                 int c = entry.getKey();
-                if (c == COPY_OBJECT && theWindow.getScene() != null) {
+                if (c == COPY_OBJECT && view.getScene() != null) {
                     Class<?> cls = ArtOfIllusion.getClass(in.readUTF());
                     Constructor<?> con = cls.getDeclaredConstructor(DataInputStream.class, Scene.class);
-                    d[1] = con.newInstance(in, theWindow.getScene());
+                    d[1] = con.newInstance(in, view.getScene());
                 } else if (c == COPY_VERTEX_POSITIONS) {
                     Vec3[] positions = new Vec3[in.readInt()];
                     for (int j = 0; j < positions.length; j++) {
