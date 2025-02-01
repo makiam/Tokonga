@@ -23,7 +23,7 @@ import buoy.event.KeyPressedEvent;
 import buoy.event.WidgetMouseEvent;
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
+
 import java.util.List;
 import java.util.Vector;
 import lombok.extern.slf4j.Slf4j;
@@ -116,11 +116,7 @@ public class PMExtrudeCurveTool extends EditingTool {
                 return;
             }
             clickPoints.add(new CurvePoint(currentPoint = get3DPoint(fromPoint, e), 1.0));
-            if (ev.isShiftDown()) {
-                constantSize = true;
-            } else {
-                constantSize = false;
-            }
+            constantSize = ev.isShiftDown();
             PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
             orMesh = mesh.duplicate();
             orSel = controller.getSelection();

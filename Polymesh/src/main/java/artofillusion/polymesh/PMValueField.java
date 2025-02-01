@@ -13,7 +13,6 @@ package artofillusion.polymesh;
 
 import artofillusion.ui.ValueField;
 import buoy.widget.BTextField;
-import javax.swing.JTextField;
 
 /**
  * A PMValueField is a ValueField for which the BTextField can be set

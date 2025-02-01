@@ -144,7 +144,7 @@ class SceneTest {
         Assertions.assertNotNull(scene);
         Assertions.assertNotNull(ur.getCommands());
         Assertions.assertEquals(1, ur.getCommands().size());
-        Assertions.assertTrue(ur.getCommands().get(0) == UndoRecord.DELETE_OBJECT);
+        Assertions.assertEquals(UndoRecord.DELETE_OBJECT, (int) ur.getCommands().get(0));
     }
 
     /**

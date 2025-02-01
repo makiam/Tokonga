@@ -10,7 +10,6 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.polymesh;
 
-import artofillusion.ArtOfIllusion;
 import artofillusion.Camera;
 import artofillusion.LayoutWindow;
 import artofillusion.Scene;
@@ -24,27 +23,9 @@ import artofillusion.object.ObjectInfo;
 import artofillusion.ui.EditingTool;
 import artofillusion.ui.EditingWindow;
 import artofillusion.ui.Translate;
-import artofillusion.ui.UIUtilities;
-import buoy.event.CommandEvent;
-import buoy.event.ValueChangedEvent;
 import buoy.event.WidgetMouseEvent;
-import buoy.event.WindowClosingEvent;
-import buoy.widget.BButton;
-import buoy.widget.BComboBox;
-import buoy.widget.BDialog;
-import buoy.widget.BFrame;
-import buoy.widget.BLabel;
-import buoy.widget.BSpinner;
-import buoy.widget.BorderContainer;
-import buoy.xml.WidgetDecoder;
+
 import java.awt.Point;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import javax.swing.JFormattedTextField;
-import javax.swing.JSpinner;
 import javax.swing.SwingUtilities;
 import lombok.AccessLevel;
 import lombok.Getter;
