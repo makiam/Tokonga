@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2005 by Francois Guillet.
- *  Changes copyright (C) 2023-2024 by Maksim Khramov
+ *  Changes copyright (C) 2023-2025 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -8,6 +8,7 @@
  *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  *  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  */
+
 package artofillusion.polymesh;
 
 import artofillusion.ui.ValueField;
@@ -41,11 +42,11 @@ public class PMValueField extends ValueField {
         String text = getText();
         int c = getColumns();
         component = tf.getComponent();
-        JTextField jtf = (JTextField) component;
-        jtf.setText(text);
-        jtf.setColumns(c);
-        jtf.addCaretListener(caretListener);
-        jtf.getDocument().addDocumentListener(documentListener);
+
+        component.setText(text);
+        component.setColumns(c);
+        component.addCaretListener(caretListener);
+        component.getDocument().addDocumentListener(documentListener);
 
     }
 }

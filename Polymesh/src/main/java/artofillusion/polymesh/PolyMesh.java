@@ -5536,7 +5536,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             }
         }
         if (!onePass) {
-            PolyMesh smoothedMesh = (PolyMesh) this.duplicate();
+            PolyMesh smoothedMesh = this.duplicate();
             smoothedMesh.smoothWholeMesh(tol, calcProjectedEdges, maxNs, true);
             int[] pe = null;
             if (calcProjectedEdges) {
@@ -10464,7 +10464,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         }
         short state = mirrorState;
         mirrorState = NO_MIRROR;
-        PolyMesh mesh = (PolyMesh) this.duplicate();
+        PolyMesh mesh = this.duplicate();
 
         mesh.setMirrorState(state);
         mesh.mirrorMesh();
@@ -12445,8 +12445,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      */
     @Override
     public Object3D getPosableObject() {
-        PolyMesh m = (PolyMesh) duplicate();
-        return new Actor(m);
+        return new Actor(duplicate());
     }
 
     /**

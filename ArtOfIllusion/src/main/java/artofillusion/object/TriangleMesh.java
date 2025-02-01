@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2015 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
    A modification copyright (C) 2017 Petri Ihalainen
    
    This program is free software; you can redistribute it and/or modify it under the
@@ -745,7 +745,7 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
             }
             return subdivideLoop(this, split, tol);
         }
-        return (TriangleMesh) duplicate();
+        return duplicate();
     }
 
     @Override
@@ -3461,8 +3461,7 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
      */
     @Override
     public Object3D getPosableObject() {
-        TriangleMesh m = (TriangleMesh) duplicate();
-        return new Actor(m);
+        return new Actor(duplicate());
     }
 
     /**

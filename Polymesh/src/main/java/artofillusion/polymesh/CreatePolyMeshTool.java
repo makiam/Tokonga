@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman, 2005 by Francois Guillet
-   Changes copyright (C) 2023-2024 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 This program is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later version.
@@ -191,7 +191,7 @@ public class CreatePolyMeshTool extends EditingTool {
         if (templateMesh == null) {
             obj = new PolyMesh(shape, usize, vsize, xsize, ysize, zsize);
         } else {
-            obj = (PolyMesh) templateMesh.duplicate();
+            obj = templateMesh.duplicate();
             obj.setSize(xsize, ysize, zsize);
         }
         obj.setSmoothingMethod(smoothingMethod);

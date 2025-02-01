@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2004 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 This program is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later version.
@@ -164,7 +164,7 @@ public class PMCreateFaceTool extends EditingTool {
         Vec3[] newPoints = clickPoints.toArray(new Vec3[0]);
 
         PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
-        PolyMesh origMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh origMesh = mesh.duplicate();
         if (to == -1) {
             mesh.addStandaloneFace(newPoints);
         } else {

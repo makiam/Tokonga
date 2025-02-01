@@ -69,7 +69,7 @@ class ControlledSmoothingDialog extends BDialog {
         this.owner = owner;
         setTitle(Translate.text("polymesh:controlledSmoothnessDialogTitle"));
         mesh = (PolyMesh) owner.getObject().getObject();
-        prevMesh = (PolyMesh) mesh.duplicate();
+        prevMesh = mesh.duplicate();
         backApply = mesh.isControlledSmoothing();
         backMinAngle = mesh.getMinAngle();
         backMaxAngle = mesh.getMaxAngle();

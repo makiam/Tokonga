@@ -92,7 +92,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
     private void doManipulatorPrepareShapingMesh(Manipulator.ManipulatorEvent e) {
         PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
         baseVertPos = mesh.getVertexPositions();
-        origMesh = (PolyMesh) mesh.duplicate();
+        origMesh = mesh.duplicate();
         selected = controller.getSelection();
         int selectMode = controller.getSelectionMode();
         if (selectMode == PolyMeshEditorWindow.FACE_MODE) {

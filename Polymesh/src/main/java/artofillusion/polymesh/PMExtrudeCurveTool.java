@@ -1,5 +1,5 @@
 /*
- *  Changes copyright (C) 2023 by Maksim Khramov
+ *  Changes copyright (C) 2023-2025 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -122,7 +122,7 @@ public class PMExtrudeCurveTool extends EditingTool {
                 constantSize = false;
             }
             PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
-            orMesh = (PolyMesh) mesh.duplicate();
+            orMesh = mesh.duplicate();
             orSel = controller.getSelection();
             if (!constantSize) {
                 computeScales();
@@ -240,7 +240,7 @@ public class PMExtrudeCurveTool extends EditingTool {
                     if (previewMode && clickPoints.size() != 0) {
                         extrudeFaces(false);
                     } else if (clickPoints.size() != 0) {
-                        controller.setMesh((PolyMesh) orMesh.duplicate());
+                        controller.setMesh(orMesh.duplicate());
                         controller.setSelection(orSel);
                     }
                     theWindow.updateImage();
@@ -251,7 +251,7 @@ public class PMExtrudeCurveTool extends EditingTool {
 
     private void doCancel() {
         if (previewMode && clickPoints.size() != 0) {
-            controller.setMesh((PolyMesh) orMesh.duplicate());
+            controller.setMesh(orMesh.duplicate());
             controller.setSelection(orSel);
         }
         fromPoint = null;
@@ -285,7 +285,7 @@ public class PMExtrudeCurveTool extends EditingTool {
             return;
         }
         Vec3 previous;
-        PolyMesh mesh = (PolyMesh) orMesh.duplicate();
+        PolyMesh mesh = orMesh.duplicate();
         Vec3 extdir, nextdir, normal;
         double scale, angle;
         previous = fromPoint;
