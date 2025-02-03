@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -53,6 +53,7 @@ public final class UndoStack {
         }
         undoList.add(record);
         redoList.clear();
+        org.greenrobot.eventbus.EventBus.getDefault().post(new UndoChangedEvent(this, record));
         record.cacheToDisk();
     }
 
@@ -65,6 +66,7 @@ public final class UndoStack {
         }
         UndoRecord record = undoList.removeLast();
         redoList.add(record.execute());
+        org.greenrobot.eventbus.EventBus.getDefault().post(new UndoChangedEvent(this, record));
     }
 
     /**
@@ -76,13 +78,14 @@ public final class UndoStack {
         }
         UndoRecord record = redoList.removeLast();
         undoList.add(record.execute());
+        org.greenrobot.eventbus.EventBus.getDefault().post(new UndoChangedEvent(this, record));
     }
 
     public String getRedoName() {
         return redoList.isEmpty() ? "" : redoList.getLast().getName();
     }
 
-    public String getUndoName() {
+    public String  getUndoName() {
         return undoList.isEmpty() ? "" : undoList.getLast().getName();
     }
 }

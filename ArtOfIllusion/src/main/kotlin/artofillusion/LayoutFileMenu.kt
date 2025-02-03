@@ -16,11 +16,11 @@ class LayoutFileMenu(private val layout: LayoutWindow) : BMenu(Translate.text("m
     }
 
     @Subscribe
-    fun onSceneChangedEvent( event: SceneChangedEvent ): Unit {
+    fun onSceneChangedEvent( event: SceneChangedEvent ) {
         log.info("On Scene changed {} ", if(layout == event.window) "this" else "other")
     }
 
-    private fun edt(action: () -> Unit) = SwingUtilities.invokeLater() { action() }
+    private fun edt(action: () -> Unit) = SwingUtilities.invokeLater { action() }
 
     companion object  {
         private val log: Logger = LoggerFactory.getLogger(LayoutFileMenu::class.java)

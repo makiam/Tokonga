@@ -1,4 +1,4 @@
-/* Copyright 2024 by Maksim Khramov
+/* Copyright 2024-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -14,27 +14,11 @@ import artofillusion.animation.*
 import artofillusion.animation.distortion.*
 import artofillusion.ui.Translate
 import buoy.widget.BMenu
-import org.greenrobot.eventbus.Subscribe
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import javax.swing.SwingUtilities
+
 
 class LayoutAnimationMenu (private val layout: LayoutWindow) : BMenu(Translate.text("menu.animation")) {
 
-    private val scene by lazy { layout.theScene }
-
-    init {
-        org.greenrobot.eventbus.EventBus.getDefault().register(this)
-    }
-
-    @Subscribe
-    fun subscribeStub(event: org.greenrobot.eventbus.NoSubscriberEvent) {
-    }
-
-    private fun edt(action: () -> Unit) = SwingUtilities.invokeLater() { action() }
-
     companion object {
-        private val log: Logger = LoggerFactory.getLogger(LayoutAnimationMenu::class.java)
 
         private val commandToTrack: MutableMap<String, Class<out Track<*>?>> = HashMap()
 

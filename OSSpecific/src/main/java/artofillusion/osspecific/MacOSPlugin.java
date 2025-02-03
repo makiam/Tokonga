@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2020 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -26,7 +26,7 @@ import artofillusion.ui.EditingWindow;
 import artofillusion.ui.ToolPalette;
 import artofillusion.ui.Translate;
 import artofillusion.ui.UIUtilities;
-import buoy.event.CommandEvent;
+
 
 import buoy.widget.BFrame;
 import buoy.widget.BMenu;
@@ -56,6 +56,8 @@ import java.util.Locale;
 import java.util.prefs.*;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.swing.*;
+
 /**
  * This is a plugin to make Art of Illusion behave more like a standard Macintosh
  * application when running under Mac OS X.
@@ -81,8 +83,8 @@ public final class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, Ope
         });
         updateWindowProperties(view);
         if (usingAppMenu) {
-            removeMenuItem(view, Translate.text("menu.file"), Translate.text("menu.quit"));
-            removeMenuItem(view, Translate.text("menu.edit"), Translate.text("menu.preferences"));
+            removeMenuItem(view.getFileMenu(), Translate.text("menu.quit"));
+            removeMenuItem(view.getEditMenu(), Translate.text("menu.preferences"));
         }
     }
 
@@ -118,12 +120,26 @@ public final class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, Ope
         }
     }
 
+    private void removeMenuItem(BMenu menu, String name) {
+        for (int j = 0; j < menu.getChildCount(); j++) {
+            MenuWidget w = menu.getChild(j);
+            if (w instanceof BMenuItem && ((BMenuItem) w).getText().equals(name)) {
+                menu.remove((Widget) w);
+                if (j > 0 && menu.getChild(j - 1) instanceof BSeparator) {
+                    menu.remove((Widget) menu.getChild(j - 1));
+                }
+                return;
+            }
+        }
+    }
+
     /**
      * Remove a menu item from a menu in a window. If it is immediately preceded by a separator,
      * also remove that.
      */
     private void removeMenuItem(final BFrame frame, String menu, String item) {
         BMenuBar bar = frame.getMenuBar();
+
         for (int i = 0; i < bar.getChildCount(); i++) {
             BMenu m = bar.getChild(i);
             if (!m.getText().equals(menu)) {
