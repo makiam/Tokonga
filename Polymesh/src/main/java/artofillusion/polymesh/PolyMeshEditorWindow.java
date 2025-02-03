@@ -9,6 +9,7 @@
  *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  *  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  */
+
 package artofillusion.polymesh;
 
 import artofillusion.ArtOfIllusion;
@@ -924,9 +925,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      */
     @Override
     public void deleteCommand() {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
+        PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
 
-        PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh prevMesh = mesh.duplicate();
         if (selectMode == POINT_MODE) {
             int count = 0;
             for (int i = 0; i < selected.length; ++i) {
@@ -1751,9 +1752,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Connects selected vertices
      */
     private void doConnectVertices(ActionEvent event) {
-        PolyMesh theMesh = (PolyMesh) objInfo.object;
+        PolyMesh theMesh = (PolyMesh) objInfo.getGeometry();
 
-        PolyMesh prevMesh = (PolyMesh) theMesh.duplicate();
+        PolyMesh prevMesh = theMesh.duplicate();
         if (selectMode == POINT_MODE) {
             int[] indices = getIndicesFromSelection(selected);
             theMesh.connectVertices(indices);
@@ -1794,8 +1795,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      *
      */
     private void doDivideEdges(int counter) {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
-        PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
+        PolyMesh prevMesh = mesh.duplicate();
         boolean[] sel = mesh.divideEdges(selected, counter);
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
         objectChanged();
@@ -1875,8 +1876,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Smoothes the mesh
      */
     private void doSmoothMesh(ActionEvent event) {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
-        PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
+        PolyMesh prevMesh = mesh.duplicate();
         mesh.smoothWholeMesh(-1, false, 1, true);
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
         objectChanged();
@@ -1888,8 +1889,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Subdivides the mesh
      */
     private void doSubdivideMesh(ActionEvent event) {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
-        PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
+        PolyMesh prevMesh = mesh.duplicate();
         boolean[] selected = new boolean[mesh.getFaces().length];
         for (int i = 0; i < selected.length; ++i) {
             selected[i] = true;
@@ -1905,8 +1906,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Smoothes the mesh according to face selection
      */
     private void doSmoothFaces(ActionEvent event) {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
-        PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
+        PolyMesh prevMesh = mesh.duplicate();
         mesh.smooth(selected, false);
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
         objectChanged();
@@ -1918,8 +1919,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Subdivides the mesh according to face selection
      */
     private void doSubdivideFaces(ActionEvent event) {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
-        PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
+        PolyMesh prevMesh = mesh.duplicate();
         mesh.smooth(selected, true);
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
         objectChanged();
@@ -1931,7 +1932,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Selects edges surrounding face selection
      */
     private void doOutlineFaces(ActionEvent event) {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
+        PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
         Wedge[] edges = mesh.getEdges();
         Wface[] faces = mesh.getFaces();
         boolean[] edgeSel = new boolean[edges.length / 2];
@@ -2067,7 +2068,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Callback called when the value has changed in the value dialog (move)
      */
     private void doMoveCallback() {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
+        PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
         mesh.copyObject(priorValueMesh);
         switch (selectMode) {
             default:
@@ -2156,7 +2157,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     @Override
     public void prepareToShowValueWidget() {
-        priorValueMesh = (PolyMesh) ((PolyMesh) objInfo.object).duplicate();
+        priorValueMesh = ((PolyMesh) objInfo.getGeometry()).duplicate();
         valueSelection = selected;
     }
 
@@ -2492,8 +2493,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         }
         Vec3 origin;
         double radius;
-        PolyMesh mesh = (PolyMesh) objInfo.object;
-        priorValueMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
+        priorValueMesh = mesh.duplicate();
         MeshVertex[] vert = priorValueMesh.getVertices();
         Vec3[] normals = priorValueMesh.getNormals();
         int count = 0;
@@ -2574,8 +2575,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         if (valueWidget.isActivated()) {
             return;
         }
-        PolyMesh mesh = (PolyMesh) objInfo.object;
-        priorValueMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
+        priorValueMesh = mesh.duplicate();
         MeshVertex[] vert = priorValueMesh.getVertices();
         Vec3[] normals = priorValueMesh.getNormals();
         int count = 0;
@@ -2712,8 +2713,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             return;
         }
         Vec3 origin;
-        PolyMesh mesh = (PolyMesh) objInfo.object;
-        priorValueMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
+        priorValueMesh = mesh.duplicate();
         MeshVertex[] vert = priorValueMesh.getVertices();
         Vec3[] normals = priorValueMesh.getNormals();
         Vec3 norm = new Vec3();
@@ -2842,8 +2843,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Sets the smoothness of selected vertices or edges
      */
     void setSmoothnessCommand() {
-        final PolyMesh theMesh = (PolyMesh) objInfo.object;
-        PolyMesh prevMesh = (PolyMesh) theMesh.duplicate();
+        final PolyMesh theMesh = (PolyMesh) objInfo.getGeometry();
+        PolyMesh prevMesh = theMesh.duplicate();
         final Wvertex[] vt = (Wvertex[]) theMesh.getVertices();
         final Wedge[] ed = theMesh.getEdges();
         final boolean pointmode = (selectMode == POINT_MODE);
@@ -3610,8 +3611,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Closes selected boundaries
      */
     private void doCloseBoundary(ActionEvent event) {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
-        PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
+        PolyMesh prevMesh = mesh.duplicate();
         Wedge[] edges = mesh.getEdges();
         Wvertex[] vertices = (Wvertex[]) mesh.getVertices();
         boolean[] newFaceSel;
@@ -3648,8 +3649,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * vertex
      */
     private void doJoinBoundaries(ActionEvent event) {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
-        PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
+        PolyMesh prevMesh = mesh.duplicate();
         boolean[] newFaceSel;
         int one = -1;
         int two = -1;
@@ -3739,7 +3740,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                     BStandardDialog.ERROR).showMessageDialog(null);
             return;
         }
-        PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh prevMesh = mesh.duplicate();
         mesh.collapseFaces(selected);
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
         objectChanged();
@@ -3757,7 +3758,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                     BStandardDialog.ERROR).showMessageDialog(null);
             return;
         }
-        PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh prevMesh = mesh.duplicate();
         mesh.collapseEdges(selected);
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
         objectChanged();
@@ -3782,7 +3783,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 }
             }
         }
-        PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh prevMesh = mesh.duplicate();
         mesh.collapseVertices(selected);
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
         objectChanged();
@@ -3807,7 +3808,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 }
             }
         }
-        PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh prevMesh = mesh.duplicate();
         mesh.facetVertices(selected);
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
         objectChanged();
@@ -3818,8 +3819,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Merge edges command
      */
     private void doMergeEdges(ActionEvent event) {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
-        PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
+        PolyMesh prevMesh = mesh.duplicate();
         boolean[] sel = mesh.mergeEdges(selected);
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
         objectChanged();
@@ -3831,8 +3832,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Merge faces command
      */
     private void doMergeFaces(ActionEvent event) {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
-        PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
+        PolyMesh prevMesh = mesh.duplicate();
         boolean[] sel = mesh.mergeFaces(selected);
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
         objectChanged();
@@ -3844,8 +3845,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Triangulate faces command
      */
     private void doTriangulateFaces(ActionEvent event) {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
-        PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
+        PolyMesh prevMesh = mesh.duplicate();
         boolean[] sel = mesh.triangulateFaces(selected);
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
         objectChanged();
@@ -3999,8 +4000,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * mirrors the mesh about a plane
      */
     private void doMirrorWhole(short mirrorOrientation) {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
-        PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
+        PolyMesh prevMesh = mesh.duplicate();
         mesh.mirrorWholeMesh(mirrorOrientation);
         objectChanged();
         updateMenus();
@@ -4011,8 +4012,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * inverts normals
      */
     private void doInvertNormals(ActionEvent event) {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
-        PolyMesh prevMesh = (PolyMesh) mesh.duplicate();
+        PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
+        PolyMesh prevMesh = mesh.duplicate();
         mesh.invertNormals();
         objectChanged();
         updateMenus();
@@ -4080,7 +4081,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     private void doCopy() {
-        clipboardMesh = (PolyMesh) ((PolyMesh) objInfo.object).duplicate();
+        clipboardMesh = ((PolyMesh) objInfo.getGeometry()).duplicate();
         int selCount = 0;
 
         if (selected != null) {
@@ -4101,7 +4102,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 }
                 if (clipboardMesh.getVertices().length - indices.length < 3) {
                     //back to original mesh
-                    clipboardMesh = (PolyMesh) ((PolyMesh) objInfo.object).duplicate();
+                    clipboardMesh = ((PolyMesh) objInfo.getGeometry()).duplicate();
                 } else {
                     clipboardMesh.deleteVertices(indices);
                 }
@@ -4115,7 +4116,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 }
                 if (clipboardMesh.getEdges().length - indices.length < 3) {
                     //back to original mesh
-                    clipboardMesh = (PolyMesh) ((PolyMesh) objInfo.object).duplicate();
+                    clipboardMesh =  ((PolyMesh) objInfo.getGeometry()).duplicate();
                 } else {
                     clipboardMesh.deleteEdges(indices);
                 }
@@ -4129,7 +4130,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 }
                 if (clipboardMesh.getFaces().length - indices.length < 1) {
                     //back to original mesh
-                    clipboardMesh = (PolyMesh) ((PolyMesh) objInfo.object).duplicate();
+                    clipboardMesh = ((PolyMesh) objInfo.getGeometry()).duplicate();
                 } else {
                     clipboardMesh.deleteFaces(indices);
                 }
@@ -4276,8 +4277,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     @SuppressWarnings("unused")
     void doUnfold(UnfoldStatusDialog dlg) {
-        PolyMesh theMesh = (PolyMesh) objInfo.object;
-        PolyMesh mesh = (PolyMesh) ((PolyMesh) objInfo.object).duplicate();
+        PolyMesh theMesh = (PolyMesh) objInfo.getGeometry();
+        PolyMesh mesh =  ((PolyMesh) objInfo.getGeometry()).duplicate();
         ObjectInfo info = objInfo.duplicate();
         info.coords = new CoordinateSystem();
         int[] vertTable;

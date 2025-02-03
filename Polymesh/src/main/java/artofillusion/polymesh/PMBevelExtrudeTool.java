@@ -107,7 +107,7 @@ public class PMBevelExtrudeTool extends EditingTool {
         }
 
         PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
-        origMesh = (PolyMesh) mesh.duplicate();
+        origMesh = mesh.duplicate();
         //beveler = new PolyMeshBeveler( origMesh, selected, mode );
         clickPoint = e.getPoint();
     }

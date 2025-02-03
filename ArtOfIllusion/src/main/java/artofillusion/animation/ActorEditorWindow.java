@@ -58,7 +58,7 @@ public class ActorEditorWindow extends BDialog {
         super(parent.getFrame(), (key == null ? info.getName() : Translate.text("editKeyframeFor", info.getName())), false);
         objInfo = info;
         oldObject = obj;
-        theObject = (Actor) obj.duplicate();
+        theObject = obj.duplicate();
         theWindow = parent;
         this.key = key;
         if (key != null) {

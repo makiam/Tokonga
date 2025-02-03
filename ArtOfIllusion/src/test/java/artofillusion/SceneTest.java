@@ -1,4 +1,4 @@
-/* Copyright (C) 2016-2023 by Maksim Khramov
+/* Copyright (C) 2016-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -7,6 +7,7 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion;
 
 import artofillusion.image.ImageMap;
@@ -143,7 +144,7 @@ class SceneTest {
         Assertions.assertNotNull(scene);
         Assertions.assertNotNull(ur.getCommands());
         Assertions.assertEquals(1, ur.getCommands().size());
-        Assertions.assertTrue(ur.getCommands().get(0) == UndoRecord.DELETE_OBJECT);
+        Assertions.assertEquals(UndoRecord.DELETE_OBJECT, (int) ur.getCommands().get(0));
     }
 
     /**
@@ -341,7 +342,7 @@ class SceneTest {
         Material mat = new UniformMaterial();
         scene.addMaterial(mat);
         ObjectInfo target = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube");
-        target.setMaterial(mat, mat.getDefaultMapping(target.getObject()));
+        target.setMaterial(mat, mat.getDefaultMapping(target.getGeometry()));
         scene.addObject(target, (UndoRecord) null);
         scene.addMaterialListener(new ListChangeListener() {
 

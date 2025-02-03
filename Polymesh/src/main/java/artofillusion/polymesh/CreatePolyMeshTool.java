@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman, 2005 by Francois Guillet
-   Changes copyright (C) 2023-2024 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 This program is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later version.
@@ -10,7 +10,6 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.polymesh;
 
-import artofillusion.ArtOfIllusion;
 import artofillusion.Camera;
 import artofillusion.LayoutWindow;
 import artofillusion.Scene;
@@ -24,27 +23,9 @@ import artofillusion.object.ObjectInfo;
 import artofillusion.ui.EditingTool;
 import artofillusion.ui.EditingWindow;
 import artofillusion.ui.Translate;
-import artofillusion.ui.UIUtilities;
-import buoy.event.CommandEvent;
-import buoy.event.ValueChangedEvent;
 import buoy.event.WidgetMouseEvent;
-import buoy.event.WindowClosingEvent;
-import buoy.widget.BButton;
-import buoy.widget.BComboBox;
-import buoy.widget.BDialog;
-import buoy.widget.BFrame;
-import buoy.widget.BLabel;
-import buoy.widget.BSpinner;
-import buoy.widget.BorderContainer;
-import buoy.xml.WidgetDecoder;
+
 import java.awt.Point;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import javax.swing.JFormattedTextField;
-import javax.swing.JSpinner;
 import javax.swing.SwingUtilities;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -191,7 +172,7 @@ public class CreatePolyMeshTool extends EditingTool {
         if (templateMesh == null) {
             obj = new PolyMesh(shape, usize, vsize, xsize, ysize, zsize);
         } else {
-            obj = (PolyMesh) templateMesh.duplicate();
+            obj = templateMesh.duplicate();
             obj.setSize(xsize, ysize, zsize);
         }
         obj.setSmoothingMethod(smoothingMethod);
