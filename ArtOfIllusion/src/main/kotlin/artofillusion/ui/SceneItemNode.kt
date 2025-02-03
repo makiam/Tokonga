@@ -16,7 +16,7 @@ import javax.swing.tree.DefaultMutableTreeNode
 class SceneItemNode(userObject: ObjectInfo) : DefaultMutableTreeNode(userObject, true) {
     init {
         val items = userObject.children
-        if (items.size == 0) this.allowsChildren = false
+        if (items.isEmpty()) this.allowsChildren = false
         items.forEach { this.add(SceneItemNode(it)) }
     }
 
@@ -24,6 +24,6 @@ class SceneItemNode(userObject: ObjectInfo) : DefaultMutableTreeNode(userObject,
         get() = super.getUserObject() as ObjectInfo?
 
     override fun toString(): String {
-        return "Scene Item: ${userObject!!.getName()}"
+        return "Scene Object: ${(userObject as ObjectInfo)!!.name}"
     }
 }

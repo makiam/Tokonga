@@ -23,7 +23,7 @@ class SceneMaterialNode(userObject: Material) : DefaultMutableTreeNode(userObjec
         get() = super.getUserObject() as Material?
 
     override fun toString(): String {
-        return "Scene Item: ${userObject!!.getName()}"
+        return "Material: ${(userObject as Material)!!.name}"
     }
 
 }
