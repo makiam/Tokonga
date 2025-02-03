@@ -10,7 +10,20 @@
 
 package artofillusion.ui
 
-import javax.swing.JTree
 
-class AXTree: JTree() {
+import artofillusion.texture.Texture
+import javax.swing.tree.DefaultMutableTreeNode
+
+class SceneTextureNode(userObject: Texture) : DefaultMutableTreeNode(userObject, true) {
+
+    override fun getAllowsChildren(): Boolean {
+        return false
+    }
+
+    val userObject: Texture?
+        get() = super.getUserObject() as Texture?
+
+    override fun toString(): String {
+        return "Texture: ${(userObject as Texture)!!.name}"
+    }
 }

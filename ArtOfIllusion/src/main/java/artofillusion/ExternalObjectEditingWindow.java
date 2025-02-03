@@ -19,7 +19,6 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidObjectException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -353,28 +352,4 @@ public final class ExternalObjectEditingWindow extends JDialog {
         }
     }
 
-    private class SceneItemNode extends DefaultMutableTreeNode {
-
-        public SceneItemNode(ObjectInfo userObject) {
-            super(userObject, true);
-            ObjectInfo[] items = userObject.getChildren();
-            if(items.length == 0) this.allowsChildren = false;
-            Arrays.stream(items).forEach(item -> {
-                this.add(new SceneItemNode(item));
-            });
-
-        }
-
-        @Override
-        public ObjectInfo getUserObject() {
-            return (ObjectInfo)super.getUserObject();
-        }
-
-        @Override
-        public String toString() {
-            return this.getUserObject().getName();
-        }
-        
-        
-    }
 }
