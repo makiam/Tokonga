@@ -10,7 +10,20 @@
 
 package artofillusion.ui
 
-import javax.swing.JTree
+import artofillusion.`object`.ObjectInfo
+import javax.swing.tree.DefaultMutableTreeNode
 
-class AXTree: JTree() {
+class SceneItemNode(userObject: ObjectInfo) : DefaultMutableTreeNode(userObject, true) {
+    init {
+        val items = userObject.children
+        if (items.size == 0) this.allowsChildren = false
+        items.forEach { this.add(SceneItemNode(it)) }
+    }
+
+    val userObject: ObjectInfo?
+        get() = super.getUserObject() as ObjectInfo?
+
+    override fun toString(): String {
+        return "Scene Item: ${userObject!!.getName()}"
+    }
 }
