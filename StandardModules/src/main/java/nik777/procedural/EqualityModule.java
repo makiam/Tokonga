@@ -25,12 +25,12 @@ public class EqualityModule extends ProceduralModule<EqualityModule> {
         super("Equality", new IOPort[] {
                     new IOPort(IOPort.NUMBER, IOPort.INPUT, 2, "False", "(0.0)"),
                     new IOPort(IOPort.NUMBER, IOPort.INPUT, 2, "True", "(1.0)"),
-                    new IOPort(IOPort.COLOR, IOPort.INPUT, 0, "Color 1", '(' + Translate.text("white") + ')'),
+                    new IOPort(IOPort.COLOR, IOPort.INPUT, 0, "Color 1", '(' + Translate.text("white") + ')'),  //2
                     new IOPort(IOPort.NUMBER, IOPort.INPUT, 0, "Scalar 1:1", "(1.0)"),
                     new IOPort(IOPort.NUMBER, IOPort.INPUT, 0, "Scalar 1:2", "(1.0)"),
                     new IOPort(IOPort.NUMBER, IOPort.INPUT, 0, "Scalar 1:3", "(1.0)"),
                     new IOPort(IOPort.NUMBER, IOPort.INPUT, 0, "Scalar 1:4", "(1.0)"),
-                    new IOPort(IOPort.COLOR, IOPort.INPUT, 1, "Color 2", '(' + Translate.text("black") + ')'),
+                    new IOPort(IOPort.COLOR, IOPort.INPUT, 1, "Color 2", '(' + Translate.text("black") + ')'),  //7
                     new IOPort(IOPort.NUMBER, IOPort.INPUT, 1, "Scalar 2:1", "(0.0)"),
                     new IOPort(IOPort.NUMBER, IOPort.INPUT, 1, "Scalar 2:2", "(0.0)"),
                     new IOPort(IOPort.NUMBER, IOPort.INPUT, 1, "Scalar 2:3", "(0.0)"),
@@ -45,7 +45,11 @@ public class EqualityModule extends ProceduralModule<EqualityModule> {
 
     public double getAverageValue(int which, double blur) {
         boolean nonNull = false;
-        float r = 0.0F, g = 0.0F, b = 0.0F;
+
+        float r = 0.0F;
+        float g = 0.0F;
+        float b = 0.0F;
+
         for (int i = 2; i < 5; i++) {
             if (i == 2 && this.linkFrom[2] != null) {
                 nonNull = true;
@@ -77,7 +81,9 @@ public class EqualityModule extends ProceduralModule<EqualityModule> {
     }
 
     private double getResult(boolean trueFalse, double blur) {
-        return trueFalse ? ((this.linkFrom[TRUE_VALUE] == null) ? 1.0D : this.linkFrom[TRUE_VALUE].getAverageValue(this.linkFromIndex[TRUE_VALUE], blur)) : ((this.linkFrom[FALSE_VALUE] == null) ? 0.0D : this.linkFrom[FALSE_VALUE].getAverageValue(this.linkFromIndex[FALSE_VALUE], blur));
+        if (trueFalse)
+            return (this.linkFrom[TRUE_VALUE] == null) ? 1.0D : this.linkFrom[TRUE_VALUE].getAverageValue(this.linkFromIndex[TRUE_VALUE], blur);
+        return (this.linkFrom[FALSE_VALUE] == null) ? 0.0D : this.linkFrom[FALSE_VALUE].getAverageValue(this.linkFromIndex[FALSE_VALUE], blur);
     }
 
     public double getValueError(int which, double blur) {
