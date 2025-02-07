@@ -10,7 +10,7 @@
 
 package artofillusion.procedural
 
-import artofillusion.procedural.RGBToHSVModule.Companion.rgbToHsv
+
 import java.awt.Point
 
 @ProceduralModule.Category(value = "Modules:menu.colorFunctions")
