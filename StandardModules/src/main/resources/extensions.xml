@@ -58,5 +58,7 @@
     <plugin class="artofillusion.procedural.TurbulenceModule"/>
     <plugin class="artofillusion.procedural.WoodModule"/>
     <plugin class="troy.procedural.DebugModule"/>
+    <plugin class="nik777.procedural.EqualityModule"/>
+
 </extension>
 

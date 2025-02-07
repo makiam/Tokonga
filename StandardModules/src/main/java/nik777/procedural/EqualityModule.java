@@ -2,20 +2,20 @@ package nik777.procedural;
 
 import artofillusion.math.RGBColor;
 import artofillusion.procedural.IOPort;
-import artofillusion.procedural.Module;
+
 import artofillusion.procedural.ProceduralModule;
 import artofillusion.ui.Translate;
 import java.awt.Point;
 
 @ProceduralModule.Category("Equality")
 public class EqualityModule extends ProceduralModule<EqualityModule> {
-    private RGBColor tmpcolor = null;
+    private RGBColor tmpColor = null;
 
     private static double tol = 1.0E-12D;
 
-    private static int FALSE_VALUE = 0;
+    private static final int FALSE_VALUE = 0;
 
-    private static int TRUE_VALUE = 1;
+    private static final int TRUE_VALUE = 1;
 
     public EqualityModule() {
         this(new Point());
@@ -23,9 +23,24 @@ public class EqualityModule extends ProceduralModule<EqualityModule> {
 
     public EqualityModule(Point position) {
         super("Equality", new IOPort[] {
-                new IOPort(0, 0, 2, new String[] { "False", "(0.0)" }), new IOPort(0, 0, 2, new String[] { "True", "(1.0)" }), new IOPort(1, 0, 0, new String[] { "Color 1", '(' + Translate.text("white") + ')' }), new IOPort(0, 0, 0, new String[] { "Scalar 1:1", "(1.0)" }), new IOPort(0, 0, 0, new String[] { "Scalar 1:2", "(1.0)" }), new IOPort(0, 0, 0, new String[] { "Scalar 1:3", "(1.0)" }), new IOPort(0, 0, 0, new String[] { "Scalar 1:4", "(1.0)" }), new IOPort(1, 0, 1, new String[] { "Color 2", '(' + Translate.text("black") + ')' }), new IOPort(0, 0, 1, new String[] { "Scalar 2:1", "(0.0)" }), new IOPort(0, 0, 1, new String[] { "Scalar 2:2", "(0.0)" }),
-                new IOPort(0, 0, 1, new String[] { "Scalar 2:3", "(0.0)" }), new IOPort(0, 0, 1, new String[] { "Scalar 2:4", "(0.0)" }) }, new IOPort[] { new IOPort(0, 1, 3, new String[] { "True/False" }) }, position);
-        this.tmpcolor = new RGBColor();
+                    new IOPort(IOPort.NUMBER, IOPort.INPUT, 2, "False", "(0.0)"),
+                    new IOPort(IOPort.NUMBER, IOPort.INPUT, 2, "True", "(1.0)"),
+                    new IOPort(IOPort.COLOR, IOPort.INPUT, 0, "Color 1", '(' + Translate.text("white") + ')'),
+                    new IOPort(IOPort.NUMBER, IOPort.INPUT, 0, "Scalar 1:1", "(1.0)"),
+                    new IOPort(IOPort.NUMBER, IOPort.INPUT, 0, "Scalar 1:2", "(1.0)"),
+                    new IOPort(IOPort.NUMBER, IOPort.INPUT, 0, "Scalar 1:3", "(1.0)"),
+                    new IOPort(IOPort.NUMBER, IOPort.INPUT, 0, "Scalar 1:4", "(1.0)"),
+                    new IOPort(IOPort.COLOR, IOPort.INPUT, 1, "Color 2", '(' + Translate.text("black") + ')'),
+                    new IOPort(IOPort.NUMBER, IOPort.INPUT, 1, "Scalar 2:1", "(0.0)"),
+                    new IOPort(IOPort.NUMBER, IOPort.INPUT, 1, "Scalar 2:2", "(0.0)"),
+                    new IOPort(IOPort.NUMBER, IOPort.INPUT, 1, "Scalar 2:3", "(0.0)"),
+                    new IOPort(IOPort.NUMBER, IOPort.INPUT, 1, "Scalar 2:4", "(0.0)")
+                },
+
+                new IOPort[] {
+                        new IOPort(IOPort.NUMBER, IOPort.OUTPUT, 3, "True/False")
+                    }, position);
+        this.tmpColor = new RGBColor();
     }
 
     public double getAverageValue(int which, double blur) {
@@ -35,19 +50,19 @@ public class EqualityModule extends ProceduralModule<EqualityModule> {
             if (i == 2 && this.linkFrom[2] != null) {
                 nonNull = true;
                 if (this.linkFrom[3] != null) {
-                    this.linkFrom[3].getColor(this.linkFromIndex[3], this.tmpcolor, blur);
-                    r = this.tmpcolor.red;
-                    g = this.tmpcolor.green;
-                    b = this.tmpcolor.blue;
+                    this.linkFrom[3].getColor(this.linkFromIndex[3], this.tmpColor, blur);
+                    r = this.tmpColor.red;
+                    g = this.tmpColor.green;
+                    b = this.tmpColor.blue;
                 }
-                this.linkFrom[2].getColor(this.linkFromIndex[2], this.tmpcolor, blur);
-                double diff = (r - this.tmpcolor.red);
+                this.linkFrom[2].getColor(this.linkFromIndex[2], this.tmpColor, blur);
+                double diff = (r - this.tmpColor.red);
                 if (diff > tol || diff < -tol)
                     return getResult(false, blur);
-                diff = (g - this.tmpcolor.green);
+                diff = (g - this.tmpColor.green);
                 if (diff > tol || diff < -tol)
                     return getResult(false, blur);
-                diff = (b - this.tmpcolor.blue);
+                diff = (b - this.tmpColor.blue);
                 if (diff > tol || diff < -tol)
                     return getResult(false, blur);
             }
