@@ -1,4 +1,4 @@
-/* Copyright 2024 by Maksim Khramov
+/* Copyright 2024-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,7 +12,7 @@ package artofillusion.procedural
 
 import java.awt.Point
 
-@ProceduralModule.Category(value = "Modules:menu.colorFunctions")
+@ProceduralModule.Category("Modules:menu.colorFunctions")
 class RGBToHSVModule @JvmOverloads constructor(position: Point? = Point()) : ProceduralModule<RGBToHSVModule?>(
     "RGB to HSV",
     arrayOf<IOPort>(

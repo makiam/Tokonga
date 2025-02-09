@@ -89,7 +89,7 @@ public class ProceduralPositionTrack extends Track<ProceduralPositionTrack> impl
             point.param = params.val;
         }
         proc.initForPoint(point);
-        Vec3 pos = new Vec3(output[0].getAverageValue(0, 0.0), output[1].getAverageValue(0, 0.0), output[2].getAverageValue(0, 0.0));
+        Vec3 pos = new Vec3(output[0].getAverageValue(0), output[1].getAverageValue(0), output[2].getAverageValue(0));
         double weight = theWeight.getWeight(time);
         if (mode == ABSOLUTE) {
             double w = 1.0 - weight;

@@ -1,5 +1,5 @@
 /* Copyright (C) 2000 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,7 @@ import java.awt.*;
  * This is a Module which takes three numbers, and uses them as the red, green,
  * and blue components of a color.
  */
-@ProceduralModule.Category(value = "Modules:menu.colorFunctions")
+@ProceduralModule.Category("Modules:menu.colorFunctions")
 public class RGBModule extends ProceduralModule<RandomModule> {
 
     final RGBColor color;

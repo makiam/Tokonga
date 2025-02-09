@@ -11,20 +11,26 @@
 package artofillusion.procedural
 
 
+import artofillusion.math.RGBColor
 import java.awt.Point
 
-@ProceduralModule.Category(value = "Modules:menu.colorFunctions")
+@ProceduralModule.Category("Modules:menu.colorFunctions")
 class ColorEqualityModule @JvmOverloads constructor(position: Point? = Point()) : ProceduralModule<RGBToHSVModule?>(
-    "Color Equality",
+    "Color Equality. KT",
     arrayOf<IOPort>(
-        IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.LEFT, *arrayOf<String>("Red", "(0)")),
-        IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.LEFT, *arrayOf<String>("Green", "(0)")),
-        IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, *arrayOf<String>("Tolerance", "(0)"))
+        ColorInputPort(IOPort.LEFT, *arrayOf<String>("Color 1", "(White)")),
+        ColorInputPort(IOPort.LEFT, *arrayOf<String>("Color 2", "(Black)")),
     ),
-    arrayOf<IOPort>(),
+    arrayOf<IOPort>(IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "True/False")),
     position) {
+
     override fun getAverageValue(which: Int, blur: Double): Double {
 
-        return 0.0;
+        var colorOne = RGBColor(1.0,1.0,1.0)
+        var colorTwo = RGBColor(0.0,0.0,0.0)
+        if(linkFrom[0] != null) linkFrom[0].getColor(0, colorOne, 0.0)
+        if(linkFrom[1] != null) linkFrom[1].getColor(1, colorTwo, 0.0)
+
+        return if(colorOne.equals(colorTwo)) 1.0 else 0.0
     }
 }
