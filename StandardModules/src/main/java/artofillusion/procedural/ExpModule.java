@@ -1,5 +1,5 @@
 /* Copyright (C) 2000 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,7 +17,7 @@ import java.awt.*;
 /**
  *  This is a Module which outputs the exponential of a number.
  */
-@ProceduralModule.Category(value = "Modules:menu.functions")
+@ProceduralModule.Category("Modules:menu.functions")
 public class ExpModule extends ProceduralModule<ExpModule> {
 
     boolean valueOk, errorOk, gradOk;
@@ -29,7 +29,7 @@ public class ExpModule extends ProceduralModule<ExpModule> {
     }
 
     public ExpModule(Point position) {
-        super("Exp", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, new String[]{"Value", "(1)"})},
+        super("Exp", new IOPort[]{new NumericInputPort(IOPort.LEFT, new String[]{"Value", "(1)"})},
                 new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, new String[]{"Exponential"})},
                 position);
         gradient = new Vec3();

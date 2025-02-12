@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2005 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,7 @@ import java.awt.*;
 /**
  * This is a Module which converts from rectangular to polar coordinates.
  */
-@ProceduralModule.Category(value = "Modules:menu.transforms")
+@ProceduralModule.Category("Modules:menu.transforms")
 public class PolarModule extends ProceduralModule<PolarModule> {
 
     final double[] value;
@@ -35,8 +35,8 @@ public class PolarModule extends ProceduralModule<PolarModule> {
     }
 
     public PolarModule(Point position) {
-        super(Translate.text("Modules:menu.polarModule"), new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "X", "(X)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Y", "(Y)")},
+        super(Translate.text("Modules:menu.polarModule"), new IOPort[]{new NumericInputPort(IOPort.LEFT, "X", "(X)"),
+            new NumericInputPort(IOPort.LEFT, "Y", "(Y)")},
                 new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "R"),
                     new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Theta")},
                 position);

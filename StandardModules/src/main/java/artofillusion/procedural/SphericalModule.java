@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2005 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,7 @@ import java.awt.*;
 /**
  * This is a Module which converts from rectangular to spherical coordinates.
  */
-@ProceduralModule.Category(value = "Modules:menu.transforms")
+@ProceduralModule.Category("Modules:menu.transforms")
 public class SphericalModule extends ProceduralModule<SphericalModule> {
 
     final double[] value;
@@ -39,9 +39,9 @@ public class SphericalModule extends ProceduralModule<SphericalModule> {
     }
 
     public SphericalModule(Point position) {
-        super(Translate.text("Modules:menu.sphericalModule"), new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "X", "(X)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Y", "(Y)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Z", "(Z)")},
+        super(Translate.text("Modules:menu.sphericalModule"), new IOPort[]{new NumericInputPort(IOPort.LEFT, "X", "(X)"),
+            new NumericInputPort(IOPort.LEFT, "Y", "(Y)"),
+            new NumericInputPort(IOPort.LEFT, "Z", "(Z)")},
                 new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "R"),
                     new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Theta"),
                     new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Phi")},

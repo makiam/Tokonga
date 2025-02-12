@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2011 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -22,7 +22,7 @@ import java.io.*;
 /**
  * This is a Module which scales and shifts its input value.
  */
-@ProceduralModule.Category(value = "Modules:menu.functions")
+@ProceduralModule.Category("Modules:menu.functions")
 public class ScaleShiftModule extends ProceduralModule<ScaleShiftModule> {
 
     private double scale, shift;
@@ -32,7 +32,7 @@ public class ScaleShiftModule extends ProceduralModule<ScaleShiftModule> {
     }
 
     public ScaleShiftModule(Point position) {
-        super("\u00D7 1.0 + 0.0", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(0)")},
+        super("\u00D7 1.0 + 0.0", new IOPort[]{new NumericInputPort(IOPort.LEFT, "Input", "(0)")},
                 new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output")},
                 position);
         scale = 1.0;

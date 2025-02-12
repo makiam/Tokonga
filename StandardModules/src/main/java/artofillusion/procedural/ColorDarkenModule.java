@@ -1,5 +1,5 @@
 /* Copyright (C) 2001 by David M. Turner <novalis@novalis.org> and Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,7 @@ import java.awt.*;
 /**
  *  This is a Module which outputs the darker of two colors.
  */
-@ProceduralModule.Category(value = "Modules:menu.colorFunctions")
+@ProceduralModule.Category("Modules:menu.colorFunctions")
 public class ColorDarkenModule extends ProceduralModule<ColorDarkenModule> {
 
     final RGBColor color;
@@ -30,8 +30,8 @@ public class ColorDarkenModule extends ProceduralModule<ColorDarkenModule> {
     }
 
     public ColorDarkenModule(Point position) {
-        super(Translate.text("Modules:menu.darkerModule"), new IOPort[]{new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.TOP, "Color 1", '(' + Translate.text("white") + ')'),
-            new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.BOTTOM, "Color 2", '(' + Translate.text("white") + ')')},
+        super(Translate.text("Modules:menu.darkerModule"), new IOPort[]{new ColorInputPort(IOPort.TOP, "Color 1", '(' + Translate.text("white") + ')'),
+            new ColorInputPort(IOPort.BOTTOM, "Color 2", '(' + Translate.text("white") + ')')},
                 new IOPort[]{new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, "Darker")},
                 position);
         color = new RGBColor(0.0f, 0.0f, 0.0f);

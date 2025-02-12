@@ -1,5 +1,5 @@
 /* Copyright (C) 2000 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,7 +17,7 @@ import java.awt.*;
 /**
  * This is a Module which raises a number to a power.
  */
-@ProceduralModule.Category(value = "Modules:menu.operators")
+@ProceduralModule.Category("Modules:menu.operators")
 public class PowerModule extends ProceduralModule<PowerModule> {
 
     boolean valueOk, errorOk, gradOk, powerIsInteger;
@@ -29,8 +29,8 @@ public class PowerModule extends ProceduralModule<PowerModule> {
     }
 
     public PowerModule(Point position) {
-        super("Pow", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.TOP, "Exponent", "(1)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(0)")},
+        super("Pow", new IOPort[]{new NumericInputPort(IOPort.TOP, "Exponent", "(1)"),
+            new NumericInputPort(IOPort.LEFT, "Input", "(0)")},
                 new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output")},
                 position);
         gradient = new Vec3();

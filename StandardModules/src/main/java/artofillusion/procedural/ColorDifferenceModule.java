@@ -1,5 +1,5 @@
 /* Copyright (C) 2000 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,7 @@ import java.awt.*;
 /**
  *  This is a Module which outputs the difference between two colors.
  */
-@ProceduralModule.Category(value = "Modules:menu.colorFunctions")
+@ProceduralModule.Category("Modules:menu.colorFunctions")
 public class ColorDifferenceModule extends ProceduralModule<ColorDifferenceModule> {
 
     final RGBColor color;
@@ -30,8 +30,8 @@ public class ColorDifferenceModule extends ProceduralModule<ColorDifferenceModul
     }
 
     public ColorDifferenceModule(Point position) {
-        super("-", new IOPort[]{new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.TOP, "Color 1", '(' + Translate.text("black") + ')'),
-            new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.BOTTOM, "Color 2", '(' + Translate.text("black") + ')')},
+        super("-", new IOPort[]{new ColorInputPort(IOPort.TOP, "Color 1", '(' + Translate.text("black") + ')'),
+            new ColorInputPort(IOPort.BOTTOM, "Color 2", '(' + Translate.text("black") + ')')},
                 new IOPort[]{new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, "Difference")},
                 position);
         color = new RGBColor(0.0f, 0.0f, 0.0f);

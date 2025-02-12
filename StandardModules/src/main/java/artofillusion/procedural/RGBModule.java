@@ -30,9 +30,9 @@ public class RGBModule extends ProceduralModule<RandomModule> {
     }
 
     public RGBModule(Point position) {
-        super("RGB", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Red", "(0)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Green", "(0)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Blue", "(0)")},
+        super("RGB", new IOPort[]{new NumericInputPort(IOPort.LEFT, "Red", "(0)"),
+            new NumericInputPort(IOPort.LEFT, "Green", "(0)"),
+            new NumericInputPort(IOPort.LEFT, "Blue", "(0)")},
                 new IOPort[]{new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, "Color")},
                 position);
         color = new RGBColor(0.0f, 0.0f, 0.0f);

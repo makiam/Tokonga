@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2011 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -22,7 +22,7 @@ import java.io.*;
 /**
  * This is a Module which implements an arbitrary mapping of numbers to colors.
  */
-@ProceduralModule.Category(value = "Modules:menu.colorFunctions")
+@ProceduralModule.Category("Modules:menu.colorFunctions")
 public class SpectrumModule extends ProceduralModule<SpectrumModule> {
 
     RGBColor[] color;
@@ -37,7 +37,7 @@ public class SpectrumModule extends ProceduralModule<SpectrumModule> {
     }
 
     public SpectrumModule(Point position) {
-        super("Spectrum", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Index", "(0)")},
+        super("Spectrum", new IOPort[]{new NumericInputPort(IOPort.LEFT, "Index", "(0)")},
                 new IOPort[]{new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, "Color")},
                 position);
         color = new RGBColor[]{new RGBColor(0.0f, 0.0f, 0.0f), new RGBColor(1.0f, 1.0f, 1.0f)};

@@ -1,5 +1,5 @@
 /* Copyright (C) 2000 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,7 @@ import java.awt.*;
 /**
  *  This is a Module which outputs a weighted average of two colors.
  */
-@ProceduralModule.Category(value = "Modules:menu.colorFunctions")
+@ProceduralModule.Category("Modules:menu.colorFunctions")
 public class BlendModule extends ProceduralModule<BlendModule> {
 
     final RGBColor blendColor;
@@ -30,9 +30,9 @@ public class BlendModule extends ProceduralModule<BlendModule> {
     }
 
     public BlendModule(Point position) {
-        super(Translate.text("Modules:menu.blendModule"), new IOPort[]{new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.TOP, "Color 1", '(' + Translate.text("black") + ')'),
-            new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.BOTTOM, "Color 2", '(' + Translate.text("white") + ')'),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Fraction", "(0.5)")},
+        super(Translate.text("Modules:menu.blendModule"), new IOPort[]{new ColorInputPort(IOPort.TOP, "Color 1", '(' + Translate.text("black") + ')'),
+            new ColorInputPort(IOPort.BOTTOM, "Color 2", '(' + Translate.text("white") + ')'),
+            new NumericInputPort(IOPort.LEFT, "Fraction", "(0.5)")},
                 new IOPort[]{new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, "Blend")},
                 position);
         blendColor = new RGBColor(0.0f, 0.0f, 0.0f);

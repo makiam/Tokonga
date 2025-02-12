@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2011 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -25,7 +25,7 @@ import java.text.*;
  * f(x). It is defined by a set of points (x,y). For other values of x, the
  * output is determined by interpolation.
  */
-@ProceduralModule.Category(value = "Modules:menu.functions")
+@ProceduralModule.Category("Modules:menu.functions")
 public class FunctionModule extends ProceduralModule<FunctionModule> {
 
     private boolean repeat, valueOk, errorOk, gradOk;
@@ -47,7 +47,7 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
     }
 
     public FunctionModule(Point position) {
-        super("", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(0")},
+        super("", new IOPort[]{new NumericInputPort(IOPort.LEFT, "Input", "(0")},
                 new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output")},
                 position);
         x = new double[]{0.0, 1.0};

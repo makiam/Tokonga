@@ -1,5 +1,5 @@
 /* Copyright (C) 2000 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,7 @@ import java.awt.*;
 /**
  *  This is a Module which outputs the product of a color and a number.
  */
-@ProceduralModule.Category(value = "Modules:menu.colorFunctions")
+@ProceduralModule.Category("Modules:menu.colorFunctions")
 public class ColorScaleModule extends ProceduralModule<ColorScaleModule> {
 
     final RGBColor color;
@@ -30,8 +30,8 @@ public class ColorScaleModule extends ProceduralModule<ColorScaleModule> {
     }
 
     public ColorScaleModule(Point position) {
-        super("\u00D7", new IOPort[]{new IOPort(IOPort.COLOR, IOPort.INPUT, IOPort.TOP, "Color", '(' + Translate.text("white") + ')'),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, "Scale", "(1.0)")},
+        super("\u00D7", new IOPort[]{new ColorInputPort(IOPort.TOP, "Color", '(' + Translate.text("white") + ')'),
+            new NumericInputPort(IOPort.BOTTOM, "Scale", "(1.0)")},
                 new IOPort[]{new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, "Product")},
                 position);
         color = new RGBColor(0.0f, 0.0f, 0.0f);

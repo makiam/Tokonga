@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2011 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -23,7 +23,7 @@ import java.io.*;
  * This is a Module which generates fractal noise based on Perlin's noise
  * function.
  */
-@ProceduralModule.Category(value = "Modules:menu.patterns")
+@ProceduralModule.Category("Modules:menu.patterns")
 public class NoiseModule extends ProceduralModule<NoiseModule> {
 
     boolean valueOk, errorOk, gradOk;
@@ -38,10 +38,10 @@ public class NoiseModule extends ProceduralModule<NoiseModule> {
     }
 
     public NoiseModule(Point position) {
-        super(Translate.text("Modules:menu.noiseModule"), new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "X", "(X)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Y", "(Y)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Z", "(Z)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Noise", "(0.5)")},
+        super(Translate.text("Modules:menu.noiseModule"), new IOPort[]{new NumericInputPort(IOPort.LEFT, "X", "(X)"),
+            new NumericInputPort(IOPort.LEFT, "Y", "(Y)"),
+            new NumericInputPort(IOPort.LEFT, "Z", "(Z)"),
+            new NumericInputPort(IOPort.LEFT, "Noise", "(0.5)")},
                 new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Value")},
                 position);
         octaves = 4;
