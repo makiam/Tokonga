@@ -1,4 +1,4 @@
-/* Copyright 2024-2025 by Maksim Khramov
+/* Copyright 2024 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -19,9 +19,9 @@ class RGBToHSVModuleTest {
     @Test
     fun testRGBToHSVNoGivenInputs() {
         val module = RGBToHSVModule(Point(0, 0))
-        Assertions.assertEquals(0.0, module.getAverageValue(0), 0.0)
-        Assertions.assertEquals(0.0, module.getAverageValue(1), 0.0)
-        Assertions.assertEquals(0.0, module.getAverageValue(2), 0.0)
+        Assertions.assertEquals(0.0, module.getAverageValue(0, 0.0), 0.0)
+        Assertions.assertEquals(0.0, module.getAverageValue(1, 0.0), 0.0)
+        Assertions.assertEquals(0.0, module.getAverageValue(2, 0.0), 0.0)
     }
 
     @Test

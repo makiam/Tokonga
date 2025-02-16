@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2008 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -94,8 +94,8 @@ public class ProceduralMaterial3D extends Material3D implements ProcedureOwner {
         info.t = t;
         info.param = null;
         pr.initForPoint(info);
-        double density = output[5].getAverageValue(0, 0.0);
-        double eccentricity = output[6].getAverageValue(0, 0.0);
+        double density = output[5].getAverageValue();
+        double eccentricity = output[6].getAverageValue();
         if (density < 0.0) {
             density = 0.0;
         }
@@ -109,21 +109,21 @@ public class ProceduralMaterial3D extends Material3D implements ProcedureOwner {
             eccentricity = 1.0;
         }
         spec.eccentricity = eccentricity;
-        output[0].getColor(0, spec.color, 0.0);
+        output[0].getColor(spec.color);
         if (density == 0.0) {
             spec.transparency.setRGB(1.0f, 1.0f, 1.0f);
             spec.scattering.setRGB(0.0f, 0.0f, 0.0f);
             return;
         }
-        double scattering = output[4].getAverageValue(0, 0.0);
+        double scattering = output[4].getAverageValue();
         if (scattering < 0.0) {
             scattering = 0.0;
         }
         if (scattering > 1.0) {
             scattering = 1.0;
         }
-        output[1].getColor(0, spec.transparency, 0.0);
-        spec.transparency.scale(output[3].getAverageValue(0, 0.0));
+        output[1].getColor(spec.transparency);
+        spec.transparency.scale(output[3].getAverageValue());
         double tr = spec.transparency.getRed(), tg = spec.transparency.getGreen(), tb = spec.transparency.getBlue();
         if (tr < 0.0) {
             tr = 0.0;
@@ -135,7 +135,7 @@ public class ProceduralMaterial3D extends Material3D implements ProcedureOwner {
             tb = 0.0;
         }
         spec.transparency.setRGB((float) Math.pow(tr, density), (float) Math.pow(tg, density), (float) Math.pow(tb, density));
-        output[2].getColor(0, spec.scattering, 0.0);
+        output[2].getColor(spec.scattering);
         spec.scattering.scale(density * scattering);
     }
 

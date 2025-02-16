@@ -114,13 +114,13 @@ public class CustomDistortion extends Distortion {
             point.z = newvert[i].z;
             proc.initForPoint(point);
             if (output[0].inputConnected(0)) {
-                newvert[i].x = weight * output[0].getAverageValue(0) + w2 * newvert[i].x;
+                newvert[i].x = weight * output[0].getAverageValue() + w2 * newvert[i].x;
             }
             if (output[1].inputConnected(0)) {
-                newvert[i].y = weight * output[1].getAverageValue(0) + w2 * newvert[i].y;
+                newvert[i].y = weight * output[1].getAverageValue() + w2 * newvert[i].y;
             }
             if (output[2].inputConnected(0)) {
-                newvert[i].z = weight * output[2].getAverageValue(0) + w2 * newvert[i].z;
+                newvert[i].z = weight * output[2].getAverageValue() + w2 * newvert[i].z;
             }
             if (postTransform != null) {
                 postTransform.transform(newvert[i]);

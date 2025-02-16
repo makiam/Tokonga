@@ -16,7 +16,7 @@ import java.awt.Point
 
 @ProceduralModule.Category("Modules:menu.colorFunctions")
 class ColorEqualityModule @JvmOverloads constructor(position: Point? = Point()) : ProceduralModule<RGBToHSVModule?>(
-    "Color Equality. KT",
+    "Color Equality",
     arrayOf<IOPort>(
         ColorInputPort(IOPort.LEFT, *arrayOf<String>("Color 1", "(White)")),
         ColorInputPort(IOPort.LEFT, *arrayOf<String>("Color 2", "(Black)")),

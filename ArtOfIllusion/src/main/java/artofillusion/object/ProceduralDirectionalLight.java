@@ -132,8 +132,8 @@ public class ProceduralDirectionalLight extends DirectionalLight {
         Procedure pr = renderingProc.get();
         pr.initForPoint(point);
         OutputModule[] output = pr.getOutputModules();
-        output[0].getColor(0, light, 0.0);
-        light.scale(output[1].getAverageValue(0, 0.0));
+        output[0].getColor(light);
+        light.scale(output[1].getAverageValue());
     }
 
     /* The following two methods are used for reading and writing files.  The first is a

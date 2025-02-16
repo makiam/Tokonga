@@ -88,7 +88,7 @@ public class ProceduralRotationTrack extends Track<ProceduralRotationTrack> impl
             point.param = params.val;
         }
         proc.initForPoint(point);
-        RotationKeyframe rot = new RotationKeyframe(output[0].getAverageValue(0), output[1].getAverageValue(0), output[2].getAverageValue(0));
+        RotationKeyframe rot = new RotationKeyframe(output[0].getAverageValue(), output[1].getAverageValue(), output[2].getAverageValue());
         double weight = theWeight.getWeight(time);
         Mat4 pre = null, post = null;
         if (relCoords == PARENT && info.getParent() != null) {

@@ -25,6 +25,10 @@ public class OutputModule extends ProceduralModule<OutputModule> {
     final double defaultValue;
     final RGBColor defaultColor;
 
+//    public OutputModule(String name, RGBColor color) {
+//        this(name, name, 0, color, )
+//    }
+
     public OutputModule(String name, String defaultLabel, double defaultValue, RGBColor defaultColor, int type) {
         super(name, new IOPort[]{new IOPort(type, IOPort.INPUT, IOPort.LEFT, name, "(" + defaultLabel + ")")},
                 new IOPort[]{}, new Point(0, 0));
@@ -42,6 +46,10 @@ public class OutputModule extends ProceduralModule<OutputModule> {
         }
     }
 
+    public double getAverageValue() {
+        return this.getAverageValue(0, 0);
+    }
+    
     /* Get the output value for this module. */
     @Override
     public double getAverageValue(int which, double blur) {
@@ -51,6 +59,10 @@ public class OutputModule extends ProceduralModule<OutputModule> {
         return linkFrom[0].getAverageValue(linkFromIndex[0], blur);
     }
 
+    public void getValueGradient(Vec3 grad) {
+        this.getValueGradient(0, grad, 0);
+    }
+    
     /* Get the gradient of the output value for this module. */
     @Override
     public void getValueGradient(int which, Vec3 grad, double blur) {
@@ -61,6 +73,9 @@ public class OutputModule extends ProceduralModule<OutputModule> {
         }
     }
 
+    public void getColor(RGBColor color) {
+        this.getColor(0, color, 0);
+    }
     /* Get the output color for this module. */
     @Override
     public void getColor(int which, RGBColor color, double blur) {
