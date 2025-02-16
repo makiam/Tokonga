@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2013 by Peter Eastman
-   Changes copyright (C) 2018-2023 by Maksim Khramov
+   Changes copyright (C) 2018-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -63,7 +63,7 @@ public class Raytracer {
     /**
      * When a ray is traced to determine what objects it intersects, a RayIntersection object
      * is used for returning the results. Typically it reports only the first object that was
-     * hit, but when when two objects are almost exactly the same distance away, it reports both
+     * hit, but when two objects are almost exactly the same distance away, it reports both
      * of them to ensure that neither is missed.
      */
     public static class RayIntersection {
@@ -110,12 +110,7 @@ public class Raytracer {
         factories = PluginRegistry.getPlugins(RTObjectFactory.class);
         objectList = Collections.synchronizedList(new ArrayList<>());
         lightList = Collections.synchronizedList(new ArrayList<>());
-        threadContext = new ThreadLocal<>() {
-            @Override
-            protected RaytracerContext initialValue() {
-                return new RaytracerContext(Raytracer.this);
-            }
-        };
+        threadContext = ThreadLocal.withInitial(() -> new RaytracerContext(Raytracer.this));
     }
 
     /**

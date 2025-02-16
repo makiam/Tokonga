@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2008 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -56,14 +56,11 @@ public class ProceduralTexture2D extends Texture2D implements ProcedureOwner {
      * Reinitialize the ThreadLocal that holds copies of the Procedure during rendering.
      */
     private void initThreadLocal() {
-        renderingProc = new ThreadLocal<>() {
-            @Override
-            protected Procedure initialValue() {
-                Procedure localProc = createProcedure();
-                localProc.copy(proc);
-                return localProc;
-            }
-        };
+        renderingProc = ThreadLocal.withInitial(() -> {
+            Procedure localProc = createProcedure();
+            localProc.copy(proc);
+            return localProc;
+        });
     }
 
     @Override

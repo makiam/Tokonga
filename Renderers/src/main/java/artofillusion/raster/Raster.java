@@ -76,18 +76,8 @@ public class Raster implements Renderer, Runnable {
     private static final int WHITE_ERGB = new RGBColor(1.0f, 1.0f, 1.0f).getERGB();
 
     public Raster() {
-        threadRasterContext = new ThreadLocal<>() {
-            @Override
-            protected RasterContext initialValue() {
-                return new RasterContext(theCamera, width);
-            }
-        };
-        threadCompositingContext = new ThreadLocal<>() {
-            @Override
-            protected CompositingContext initialValue() {
-                return new CompositingContext(theCamera);
-            }
-        };
+        threadRasterContext = ThreadLocal.withInitial(() -> new RasterContext(theCamera, width));
+        threadCompositingContext = ThreadLocal.withInitial(() -> new CompositingContext(theCamera));
     }
 
     /* Methods from the Renderer interface. */
