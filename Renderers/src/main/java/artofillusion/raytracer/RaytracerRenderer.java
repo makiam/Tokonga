@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2014 by Peter Eastman
    Modifications copyright © 2020-2024 by Petri Ihalainen
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -70,7 +70,15 @@ public class RaytracerRenderer implements Renderer, Runnable {
     protected float[] depthImage;
     protected float[] errorImage;
     protected float[] objectImage;
-    protected boolean fog, depth = false, gloss = false, softShadows = false, caustics = false, transparentBackground = false, adaptive = true, roulette = false, reducedMemory = false;
+    protected boolean fog;
+    protected boolean depth = false;
+    protected boolean gloss = false;
+    protected boolean softShadows = false;
+    protected boolean caustics = false;
+    protected boolean transparentBackground = false;
+    protected boolean adaptive = true;
+    protected boolean roulette = false;
+    protected boolean reducedMemory = false;
     protected boolean useGloss, useSoftShadows;
     protected boolean needCopyToUI = true, isPreview;
     protected PhotonMap globalMap, causticsMap, volumeMap;
@@ -110,12 +118,7 @@ public class RaytracerRenderer implements Renderer, Runnable {
     }
 
     public RaytracerRenderer() {
-        threadWorkspace = new ThreadLocal<>() {
-            @Override
-            protected RenderWorkspace initialValue() {
-                return new RenderWorkspace(RaytracerRenderer.this, raytracer.getContext());
-            }
-        };
+        threadWorkspace = ThreadLocal.withInitial(() -> new RenderWorkspace(RaytracerRenderer.this, raytracer.getContext()));
     }
 
     /**

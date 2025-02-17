@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2007 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -75,25 +75,20 @@ public abstract class Texture2D extends Texture {
      * the image size, the component to represent (one of the constants defined
      * in the Texture class), and the time and texture parameters.
      */
-    public Image createComponentImage(final double minu, double maxu, double minv, final double maxv,
+    public Image createComponentImage(final double minU, double maxU, double minv, final double maxv,
             final int width, final int height, final int component, final double time, final double[] param) {
         final int[] pixel = new int[width * height];
-        final double uscale = (maxu - minu) / width;
-        final double vscale = (maxv - minv) / height;
-        final ThreadLocal<TextureSpec> textureSpec = new ThreadLocal<>() {
-            @Override
-            protected TextureSpec initialValue() {
-                return new TextureSpec();
-            }
-        };
+        final double uScale = (maxU - minU) / width;
+        final double vScale = (maxv - minv) / height;
+        final ThreadLocal<TextureSpec> textureSpec = ThreadLocal.withInitial(() -> new TextureSpec());
         ThreadManager threads = new ThreadManager(width, new ThreadManager.Task() {
             @Override
             public void execute(int i) {
                 TextureSpec spec = textureSpec.get();
                 for (int j = 0; j < height; j++) {
-                    double u = minu + i * uscale;
-                    double v = maxv - j * vscale;
-                    getTextureSpec(spec, u, v, uscale, vscale, 1.0, time, param);
+                    double u = minU + i * uScale;
+                    double v = maxv - j * vScale;
+                    getTextureSpec(spec, u, v, uScale, vScale, 1.0, time, param);
                     int index = i + j * width;
                     switch (component) {
                         case DIFFUSE_COLOR_COMPONENT:
