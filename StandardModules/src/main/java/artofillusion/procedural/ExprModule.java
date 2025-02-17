@@ -159,7 +159,7 @@ class Token {
  * This is a Module which outputs an expression applied to three numbers.
  */
 @Slf4j
-@ProceduralModule.Category(value = "Modules:menu.functions")
+@ProceduralModule.Category("Modules:menu.functions")
 public class ExprModule extends ProceduralModule {
 
     private Map<String, OPort> varTable;
@@ -179,9 +179,9 @@ public class ExprModule extends ProceduralModule {
     }
 
     public ExprModule(Point position) {
-        super("expr", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Value 1", "(0)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Value 2", "(0)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Value 3", "(0)")},
+        super("expr", new IOPort[]{new NumericInputPort(IOPort.LEFT, "Value 1", "(0)"),
+            new NumericInputPort(IOPort.LEFT, "Value 2", "(0)"),
+            new NumericInputPort(IOPort.LEFT, "Value 3", "(0)")},
                 new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Result")},
                 position);
         inputs = linkFrom;

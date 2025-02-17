@@ -89,9 +89,9 @@ public class ProceduralTexture3D extends Texture3D implements ProcedureOwner {
         info.t = t;
         info.param = param;
         pr.initForPoint(info);
-        double transparency = output[4].getAverageValue(0, 0.0);
-        double specularity = output[5].getAverageValue(0, 0.0);
-        double shininess = output[6].getAverageValue(0, 0.0);
+        double transparency = output[4].getAverageValue();
+        double specularity = output[5].getAverageValue();
+        double shininess = output[6].getAverageValue();
         if (transparency < 0.0) {
             transparency = 0.0;
         }
@@ -110,17 +110,17 @@ public class ProceduralTexture3D extends Texture3D implements ProcedureOwner {
         if (shininess > 1.0) {
             shininess = 1.0;
         }
-        output[0].getColor(0, spec.diffuse, 0.0);
-        output[1].getColor(0, spec.specular, 0.0);
-        output[2].getColor(0, spec.transparent, 0.0);
-        output[3].getColor(0, spec.emissive, 0.0);
+        output[0].getColor(spec.diffuse);
+        output[1].getColor(spec.specular);
+        output[2].getColor(spec.transparent);
+        output[3].getColor(spec.emissive);
         spec.hilight.copy(spec.specular);
         spec.diffuse.scale((1.0f - transparency) * (1.0f - specularity));
         spec.specular.scale((1.0f - transparency) * specularity);
         spec.hilight.scale((1.0f - transparency) * shininess);
         spec.transparent.scale(transparency);
-        spec.roughness = output[7].getAverageValue(0, 0.0);
-        spec.cloudiness = output[8].getAverageValue(0, 0.0);
+        spec.roughness = output[7].getAverageValue();
+        spec.cloudiness = output[8].getAverageValue();
         if (spec.roughness < 0.0) {
             spec.roughness = 0.0;
         }
@@ -133,7 +133,7 @@ public class ProceduralTexture3D extends Texture3D implements ProcedureOwner {
         if (spec.cloudiness > 1.0) {
             spec.cloudiness = 1.0;
         }
-        output[9].getValueGradient(0, spec.bumpGrad, 0.0);
+        output[9].getValueGradient(spec.bumpGrad);
         spec.bumpGrad.scale(0.04);
     }
 
@@ -152,7 +152,7 @@ public class ProceduralTexture3D extends Texture3D implements ProcedureOwner {
         info.t = t;
         info.param = param;
         pr.initForPoint(info);
-        double transparency = output[4].getAverageValue(0, 0.0);
+        double transparency = output[4].getAverageValue();
         if (transparency < 0.0) {
             transparency = 0.0;
         }
@@ -193,7 +193,7 @@ public class ProceduralTexture3D extends Texture3D implements ProcedureOwner {
         info.t = t;
         info.param = param;
         pr.initForPoint(info);
-        return output[10].getAverageValue(0, 0.0);
+        return output[10].getAverageValue();
     }
 
     /**

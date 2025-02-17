@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2009 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,7 +17,7 @@ import java.awt.*;
 /**
  * This is a Module which returns the maximum of two numbers.
  */
-@ProceduralModule.Category(value = "Modules:menu.operators")
+@ProceduralModule.Category("Modules:menu.operators")
 public class MaxModule extends ProceduralModule<MaxModule> {
 
     double lastBlur, value, error;
@@ -28,8 +28,8 @@ public class MaxModule extends ProceduralModule<MaxModule> {
     }
 
     public MaxModule(Point position) {
-        super("Max", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.TOP, "Value 1", "(0)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, "Value 2", "(0)")},
+        super("Max", new IOPort[]{new NumericInputPort(IOPort.TOP, "Value 1", "(0)"),
+            new NumericInputPort(IOPort.BOTTOM, "Value 2", "(0)")},
                 new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Maximum")},
                 position);
     }

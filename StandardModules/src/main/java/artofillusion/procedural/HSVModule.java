@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2011 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,7 @@ import java.awt.*;
  * This is a Module which takes three numbers, and uses them as the hue,
  * saturation, and value components of a color.
  */
-@ProceduralModule.Category(value = "Modules:menu.colorFunctions")
+@ProceduralModule.Category("Modules:menu.colorFunctions")
 public class HSVModule extends ProceduralModule<HSVModule> {
 
     final RGBColor color;
@@ -30,9 +30,9 @@ public class HSVModule extends ProceduralModule<HSVModule> {
     }
 
     public HSVModule(Point position) {
-        super("HSV", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Hue", "(1)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Saturation", "(1)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Value", "(1)")},
+        super("HSV", new IOPort[]{new NumericInputPort(IOPort.LEFT, "Hue", "(1)"),
+            new NumericInputPort(IOPort.LEFT, "Saturation", "(1)"),
+            new NumericInputPort(IOPort.LEFT, "Value", "(1)")},
                 new IOPort[]{new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, "Color")},
                 position);
         color = new RGBColor(0.0f, 0.0f, 0.0f);

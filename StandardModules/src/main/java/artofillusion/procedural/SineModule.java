@@ -1,5 +1,5 @@
 /* Copyright (C) 2000 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,7 +17,7 @@ import java.awt.*;
 /**
  * This is a Module which outputs the sine of a number.
  */
-@ProceduralModule.Category(value = "Modules:menu.functions")
+@ProceduralModule.Category("Modules:menu.functions")
 public class SineModule extends ProceduralModule<SineModule> {
 
     boolean valueOk, errorOk, gradOk;
@@ -29,7 +29,7 @@ public class SineModule extends ProceduralModule<SineModule> {
     }
 
     public SineModule(Point position) {
-        super("Sin", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Value", "(0)")},
+        super("Sin", new IOPort[]{new NumericInputPort(IOPort.LEFT, "Value", "(0)")},
                 new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Sine")},
                 position);
         gradient = new Vec3();

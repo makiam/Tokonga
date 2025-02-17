@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2004 by Peter Eastman
-   Changes copyright (C) 2020-2024 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -165,7 +165,7 @@ public class Procedure {
      * not have value type NUMBER, the results are undefined.
      */
     public double getOutputValue(int which) {
-        return outputs.get(which).getAverageValue(0, 0.0);
+        return outputs.get(which).getAverageValue();
     }
 
     /**

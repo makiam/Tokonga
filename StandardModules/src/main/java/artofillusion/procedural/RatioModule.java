@@ -1,5 +1,5 @@
 /* Copyright (C) 2000 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,7 +17,7 @@ import java.awt.*;
 /**
  * This is a Module which outputs the ratio of two numbers.
  */
-@ProceduralModule.Category(value = "Modules:menu.operators")
+@ProceduralModule.Category("Modules:menu.operators")
 public class RatioModule extends ProceduralModule<RatioModule> {
 
     boolean valueOk, errorOk;
@@ -29,8 +29,8 @@ public class RatioModule extends ProceduralModule<RatioModule> {
     }
 
     public RatioModule(Point position) {
-        super("\u00F7", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.TOP, "Value 1", "(0)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, "Value 2", "(0)")},
+        super("\u00F7", new IOPort[]{new NumericInputPort(IOPort.TOP, "Value 1", "(0)"),
+            new NumericInputPort(IOPort.BOTTOM, "Value 2", "(0)")},
                 new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Ratio")},
                 position);
         tempVec = new Vec3();

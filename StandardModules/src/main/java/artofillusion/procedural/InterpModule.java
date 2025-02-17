@@ -1,5 +1,5 @@
 /* Copyright (C) 2000 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,7 @@ import java.awt.*;
 /**
  * This is a Module which interpolates between two numbers.
  */
-@ProceduralModule.Category(value = "Modules:menu.functions")
+@ProceduralModule.Category("Modules:menu.functions")
 public class InterpModule extends ProceduralModule<InterpModule> {
 
     double value, error, fract, lastBlur;
@@ -31,9 +31,9 @@ public class InterpModule extends ProceduralModule<InterpModule> {
     }
 
     public InterpModule(Point position) {
-        super(Translate.text("Modules:menu.interpolateModule"), new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.TOP, "Value 1", "(0)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, "Value 2", "(1)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Fraction", "(0)")},
+        super(Translate.text("Modules:menu.interpolateModule"), new IOPort[]{new NumericInputPort(IOPort.TOP, "Value 1", "(0)"),
+            new NumericInputPort(IOPort.BOTTOM, "Value 2", "(1)"),
+            new NumericInputPort(IOPort.LEFT, "Fraction", "(0)")},
                 new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Interpolate")},
                 position);
         gradient = new Vec3();

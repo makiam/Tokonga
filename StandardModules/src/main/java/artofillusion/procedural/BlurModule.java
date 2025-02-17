@@ -1,5 +1,5 @@
 /* Copyright (C) 2000 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,7 @@ import java.awt.*;
 /**
  *  This is a Module which blurs the signal coming into it.
  * */
-@ProceduralModule.Category(value = "Modules:menu.functions")
+@ProceduralModule.Category("Modules:menu.functions")
 public class BlurModule extends ProceduralModule<BlurModule> {
 
     boolean valueOk;
@@ -29,8 +29,8 @@ public class BlurModule extends ProceduralModule<BlurModule> {
     }
 
     public BlurModule(Point position) {
-        super(Translate.text("Modules:menu.blurModule"), new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, "Blur", "(0.05)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(0)")},
+        super(Translate.text("Modules:menu.blurModule"), new IOPort[]{new NumericInputPort(IOPort.BOTTOM, "Blur", "(0.05)"),
+            new NumericInputPort(IOPort.LEFT, "Input", "(0)")},
                 new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output")},
                 position);
     }

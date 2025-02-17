@@ -1,5 +1,6 @@
 /*
 	Copyright (C) 2008 by Peter H. ("TroY")
+    Changes copyright (C) 2025 by Maksim Khramov
 
 	This program is free software; you can redistribute it and/or modify it under the
 	terms of the GNU General Public License as published by the Free Software
@@ -63,12 +64,12 @@ public class DebugModule extends ProceduralModule<DebugModule>
 	public DebugModule(Point position)
 	{
 		super("Debug", new IOPort [] {
-								new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, new String [] {"Input", "(0.0)"}),
-								new IOPort(IOPort.COLOR,  IOPort.INPUT, IOPort.LEFT, new String [] {"Color Input", "(black)"})
+								new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(0.0)"),
+								new IOPort(IOPort.COLOR,  IOPort.INPUT, IOPort.LEFT, "Color Input", "(black)")
 								},
 						new IOPort [] {
-								new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, new String [] {"Output", "(0.0)"}),
-								new IOPort(IOPort.COLOR,  IOPort.OUTPUT, IOPort.RIGHT, new String [] {"Color Output", "(black)"})
+								new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output", "(0.0)"),
+								new IOPort(IOPort.COLOR,  IOPort.OUTPUT, IOPort.RIGHT, "Color Output", "(black)")
 								},
 						position);
 		
@@ -166,8 +167,7 @@ public class DebugModule extends ProceduralModule<DebugModule>
 	{
 		// Calc default size for the text part, ports and stuff
 		bounds.width  = defaultMetrics.stringWidth(name) + IOPort.SIZE * 4;
-		bounds.height = defaultMetrics.getMaxAscent() + defaultMetrics.getMaxDescent()
-														+ IOPort.SIZE * 4;
+		bounds.height = defaultMetrics.getMaxAscent() + defaultMetrics.getMaxDescent() + IOPort.SIZE * 4;
 		
 		// Add more space for the color part if needed.
 		// Use IOPort.SIZE as a "natural" margin.
@@ -224,9 +224,7 @@ public class DebugModule extends ProceduralModule<DebugModule>
 		center.add(btnEvalColor, 0, i, new LayoutInfo(LayoutInfo.EAST, LayoutInfo.NONE, new Insets(2, 0, 2, 5), null));
 		center.add(colorWidget, 1, i, new LayoutInfo(LayoutInfo.WEST, LayoutInfo.BOTH, new Insets(2, 0, 2, 0), null));
 		
-		PanelDialog pdlg = new PanelDialog(fr, Translate.text(
-										"debugmodule:caption.panelDialog"),
-										center);
+		PanelDialog pdlg = new PanelDialog(fr, Translate.text("debugmodule:caption.panelDialog"), center);
 		
 		if (!pdlg.clickedOk())
 			return false;
@@ -248,7 +246,7 @@ public class DebugModule extends ProceduralModule<DebugModule>
 		layout();
 		return true;
 	}
-	
+
 	/**
 	 * Called from within the dialog: Evaluates the numerical value.
 	 */
@@ -256,15 +254,15 @@ public class DebugModule extends ProceduralModule<DebugModule>
 	{
 		// Get the value
 		lblNumeric.setText(Double.toString(getValueForPosition()));
-		
+
 		// Update UI
 		Widget w = e.getWidget();
 		while (!(w instanceof PanelDialog))
 			w = w.getParent();
-		
+
 		((PanelDialog)w).pack();
 	}
-	
+
 	/**
 	 * Called from within the dialog: Evaluates the color value.
 	 */

@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2011 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -23,7 +23,7 @@ import java.util.*;
 /**
  * This is a Module which outputs a random function of its input.
  */
-@ProceduralModule.Category(value = "Modules:menu.functions")
+@ProceduralModule.Category("Modules:menu.functions")
 public class RandomModule extends ProceduralModule<RandomModule> {
 
     boolean valueOk;
@@ -41,8 +41,8 @@ public class RandomModule extends ProceduralModule<RandomModule> {
     }
 
     public RandomModule(Point position) {
-        super(Translate.text("Modules:menu.randomModule"), new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(time)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Noise", "(0.5)")},
+        super(Translate.text("Modules:menu.randomModule"), new IOPort[]{new NumericInputPort(IOPort.LEFT, "Input", "(time)"),
+            new NumericInputPort(IOPort.LEFT, "Noise", "(0.5)")},
                 new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output")},
                 position);
         octaves = 3;

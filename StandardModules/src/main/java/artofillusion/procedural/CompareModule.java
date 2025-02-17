@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2007 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,7 @@ import java.awt.*;
  * This is a Module which compares two numbers, and outputs either 0 or 1
  * depending on which is greater.
  */
-@ProceduralModule.Category(value = "Modules:menu.operators")
+@ProceduralModule.Category("Modules:menu.operators")
 public class CompareModule extends ProceduralModule<ColorSumModule> {
 
     double value, error, deriv, lastBlur;
@@ -30,8 +30,8 @@ public class CompareModule extends ProceduralModule<ColorSumModule> {
     }
 
     public CompareModule(Point position) {
-        super(">", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.TOP, "Value 1", "(0)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, "Value 2", "(0)")},
+        super(">", new IOPort[]{new NumericInputPort(IOPort.TOP, "Value 1", "(0)"),
+            new NumericInputPort(IOPort.BOTTOM, "Value 2", "(0)")},
                 new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Comparison")},
                 position);
         gradient = new Vec3();

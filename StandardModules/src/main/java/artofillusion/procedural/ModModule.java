@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2005 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,7 +17,7 @@ import java.awt.*;
 /**
  * This is a Module which outputs one number mod another.
  */
-@ProceduralModule.Category(value = "Modules:menu.operators")
+@ProceduralModule.Category("Modules:menu.operators")
 public class ModModule extends ProceduralModule<ModModule> {
 
     double value, error, gradScale, lastBlur;
@@ -28,8 +28,8 @@ public class ModModule extends ProceduralModule<ModModule> {
     }
 
     public ModModule(Point position) {
-        super("Mod", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Input", "(0)"),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.BOTTOM, "Modulus", "(1)")},
+        super("Mod", new IOPort[]{new NumericInputPort(IOPort.LEFT, "Input", "(0)"),
+            new NumericInputPort(IOPort.BOTTOM, "Modulus", "(1)")},
                 new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output")},
                 position);
     }
@@ -90,7 +90,7 @@ public class ModModule extends ProceduralModule<ModModule> {
         return value;
     }
 
-    /* The error is calculate at the same time as the value. */
+    /* The error is calculated at the same time as the value. */
     @Override
     public double getValueError(int which, double blur) {
         if (!valueOk || blur != lastBlur) {
