@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2011 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -21,7 +21,7 @@ import java.io.*;
 /**
  * This is a Module which outputs a color.
  */
-@ProceduralModule.Category(value = "Modules:menu.values")
+@ProceduralModule.Category("Modules:menu.values")
 public class ColorModule extends ProceduralModule<ColorModule> {
 
     private RGBColor color = new RGBColor(1.0f, 1.0f, 1.0f);

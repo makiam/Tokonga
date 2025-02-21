@@ -32,7 +32,7 @@ import java.io.*;
  * 
  * @author TroY
  */
-@ProceduralModule.Category(value = "Debug")
+@ProceduralModule.Category("Debug")
 public class DebugModule extends ProceduralModule<DebugModule>
 {
 	//protected double X, Y, Z, T;

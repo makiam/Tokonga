@@ -12,7 +12,7 @@ package artofillusion.procedural
 
 import java.awt.Point
 
-@ProceduralModule.Category(value = "Modules:menu.operators")
+@ProceduralModule.Category("Modules:menu.operators")
 class NumberEqualityModule @JvmOverloads constructor(position: Point? = Point()): ProceduralModule<NumberEqualityModule?>(    "Number Equality",
     arrayOf<IOPort>(
         NumericInputPort(IOPort.LEFT, *arrayOf<String>("Value 1", "(0)")),

@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2011 by Peter Eastman
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -22,7 +22,7 @@ import java.io.*;
 /**
  * This is a Module which outputs the viewing angle.
  */
-@ProceduralModule.Category(value = "Modules:menu.values")
+@ProceduralModule.Category("Modules:menu.values")
 public class ViewAngleModule extends ProceduralModule<ViewAngleModule> {
 
     private boolean abs;
