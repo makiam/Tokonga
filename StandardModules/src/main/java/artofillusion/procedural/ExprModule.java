@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2011 by David M. Turner <novalis@novalis.org>
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    Various bug fixes and enhancements added by Peter Eastman, Aug. 25, 2001.
 
@@ -17,7 +17,6 @@ package artofillusion.procedural;
 
 import artofillusion.*;
 import artofillusion.math.*;
-import artofillusion.procedural.Module;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
@@ -160,10 +159,10 @@ class Token {
  */
 @Slf4j
 @ProceduralModule.Category("Modules:menu.functions")
-public class ExprModule extends ProceduralModule {
+public class ExprModule extends ProceduralModule<ExprModule> {
 
     private Map<String, OPort> varTable;
-    Module[] inputs;
+    private Module[] inputModules;
     private Module[] myModules;
     private List<Module> moduleVec;
     OPort compiled;
@@ -184,7 +183,7 @@ public class ExprModule extends ProceduralModule {
             new NumericInputPort(IOPort.LEFT, "Value 3", "(0)")},
                 new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Result")},
                 position);
-        inputs = linkFrom;
+        inputModules = linkFrom;
         setExpr("x");
         layout();
     }
@@ -218,7 +217,7 @@ public class ExprModule extends ProceduralModule {
     @Override
     public void setInput(IOPort which, IOPort port) {
         super.setInput(which, port);
-        inputs = linkFrom;
+        inputModules = linkFrom;
         initVarTable();
         compile();
     }
@@ -282,7 +281,7 @@ public class ExprModule extends ProceduralModule {
     /* Read in the expression. */
     @Override
     public void readFromStream(DataInputStream in, Scene theScene) throws IOException {
-        inputs = linkFrom;
+        inputModules = linkFrom;
         setExpr(in.readUTF());
         layout();
     }
@@ -391,9 +390,9 @@ public class ExprModule extends ProceduralModule {
         varTable.put("z", new OPort(z));
         varTable.put("t", new OPort(t));
 
-        for (int i = 0; i < inputs.length; i++) {
-            if (inputs[i] != null) {
-                OPort inp = new OPort(inputs[i], linkFromIndex[i]);
+        for (int i = 0; i < inputModules.length; i++) {
+            if (inputModules[i] != null) {
+                OPort inp = new OPort(inputModules[i], linkFromIndex[i]);
                 varTable.put("input" + (i + 1), inp);
             } else {
                 varTable.put("input" + (i + 1), createNumberPort(0));
