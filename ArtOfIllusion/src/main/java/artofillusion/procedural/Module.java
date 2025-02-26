@@ -28,7 +28,8 @@ import lombok.Getter;
 @Deprecated
 public class Module<M extends Module> {
 
-    protected IOPort[] input, output;
+    protected IOPort[] input;
+    protected IOPort[] output;
     public Module[] linkFrom;
     public int[] linkFromIndex;
     protected String name;
