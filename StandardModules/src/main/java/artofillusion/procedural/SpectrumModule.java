@@ -16,7 +16,14 @@ import artofillusion.math.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+import lombok.Getter;
+
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 
 /**
@@ -279,6 +286,8 @@ public class SpectrumModule extends ProceduralModule<SpectrumModule> {
      */
     private class EditingDialog extends BDialog {
 
+        @Getter
+        private final BButton okButton;
         final ProcedureEditor editor;
         final CustomWidget canvas;
         final ValueField indexField;
@@ -295,6 +304,8 @@ public class SpectrumModule extends ProceduralModule<SpectrumModule> {
 
         public EditingDialog(ProcedureEditor editor) {
             super(editor.getParentFrame(), "Function", true);
+            this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
             this.editor = editor;
             FormContainer content = new FormContainer(1, 5);
             setContent(BOutline.createEmptyBorder(content, UIUtilities.getStandardDialogInsets()));
@@ -326,8 +337,21 @@ public class SpectrumModule extends ProceduralModule<SpectrumModule> {
             repeatBox.addEventLink(ValueChangedEvent.class, this, "repeatChanged");
             RowContainer buttons = new RowContainer();
             content.add(buttons, 0, 4);
-            buttons.add(Translate.button("ok", event -> doOk()));
+            okButton = Translate.button("ok", event -> doOk());
+            buttons.add(okButton);
             buttons.add(Translate.button("cancel", event -> doCancel()));
+
+            this.getComponent().addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    doCancel();
+                }
+            });
+            this.getComponent().getRootPane().setDefaultButton(okButton.getComponent());
+
+            KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+            ActionListener action = e -> doCancel();
+            this.getComponent().getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             adjustComponents();
             handlePos = new Point[index.length];
             for (int i = 0; i < index.length; i++) {
@@ -479,19 +503,17 @@ public class SpectrumModule extends ProceduralModule<SpectrumModule> {
 
         private void doOk() {
             clickedOk = true;
-            dispose();
+            this.getComponent().dispose();
         }
 
         private void doCancel() {
-            dispose();
+            this.getComponent().dispose();
         }
 
         /* Respond to keypresses. */
         private void keyPressed(KeyPressedEvent ev) {
             if (ev.getKeyCode() == KeyPressedEvent.VK_ENTER) {
                 doOk();
-            } else if (ev.getKeyCode() == KeyPressedEvent.VK_ESCAPE) {
-                doCancel();
             }
             if (ev.getWidget() != canvas) {
                 return;

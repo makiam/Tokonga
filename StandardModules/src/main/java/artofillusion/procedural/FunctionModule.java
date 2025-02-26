@@ -16,7 +16,14 @@ import artofillusion.math.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+import lombok.Getter;
+
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.text.*;
 
@@ -430,6 +437,8 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
     /* Inner class used for editing the list of colors. */
     private class EditingDialog extends BDialog {
 
+        @Getter
+        private final BButton okButton;
         final ProcedureEditor editor;
         final CustomWidget canvas;
         final ValueField xField;
@@ -451,6 +460,8 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
 
         public EditingDialog(ProcedureEditor editor) {
             super(editor.getParentFrame(), "Function", true);
+            this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
             this.editor = editor;
             FormContainer content = new FormContainer(1, 5);
             setContent(BOutline.createEmptyBorder(content, UIUtilities.getStandardDialogInsets()));
@@ -488,12 +499,25 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
             smoothBox.addEventLink(ValueChangedEvent.class, this, "functionChanged");
             RowContainer buttons = new RowContainer();
             content.add(buttons, 0, 4);
-            buttons.add(Translate.button("ok", event -> doOk()));
+            okButton = Translate.button("ok", event -> doOk());
+            buttons.add(okButton);
             buttons.add(Translate.button("cancel", event -> dispose()));
             hFormat = NumberFormat.getInstance();
             vFormat = NumberFormat.getInstance();
             hFormat.setMaximumFractionDigits(1);
             findRange();
+
+            this.getComponent().addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    dispose();
+                }
+            });
+            this.getComponent().getRootPane().setDefaultButton(okButton.getComponent());
+
+            KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+            ActionListener action = e -> dispose();
+            this.getComponent().getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             adjustComponents();
             handlePos = new Point[x.length];
             for (int i = 0; i < x.length; i++) {
