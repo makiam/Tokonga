@@ -242,17 +242,17 @@ public class ExprModule extends ProceduralModule<ExprModule> {
         if (!dlg.clickedOk()) {
             return false;
         }
-        errors = new Vector<>();
+        errors.clear();
         try {
             setExpr(exprField.getText().toLowerCase());
         } catch (Exception ex) {
             addError("The expression could not be evaluated.");
         }
-        if (errors.size() > 0) {
+        if (!errors.isEmpty()) {
             displayErrors(editor.getParentFrame());
             return edit(editor, theScene);
         }
-        errors = null;
+        errors.clear();
         layout();
         return true;
     }
