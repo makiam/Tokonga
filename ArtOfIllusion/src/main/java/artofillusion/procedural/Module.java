@@ -40,7 +40,7 @@ public class Module<M extends Module> {
     protected Rectangle bounds;
     protected boolean checked;
 
-    protected static final Font defaultFont = new Font("Segoe UI", Font.PLAIN, 10);
+    protected static final Font defaultFont = new Font("Sans Serif", Font.PLAIN, 10);
 
     protected static final FontMetrics defaultMetrics = Toolkit.getDefaultToolkit().getFontMetrics(defaultFont);
 
