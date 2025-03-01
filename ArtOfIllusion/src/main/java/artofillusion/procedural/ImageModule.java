@@ -56,7 +56,7 @@ public class ImageModule extends ProceduralModule<ImageModule> {
     }
 
     public ImageModule(Point position) {
-        super("(" + Translate.text("Modules:menu.imageModule") + ")", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, new String[]{"X", "(X)"}),
+        super("(" + Translate.text("Modules:menu.imageModule") + ")", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "X", "(X)"),
             new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Y", "(Y)")},
                 new IOPort[]{new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, Translate.text("Color")),
                     new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, Translate.text("Red")),
