@@ -21,7 +21,7 @@ import java.awt.*;
 @ProceduralModule.Category("Modules:menu.colorFunctions")
 public class ColorScaleModule extends ProceduralModule<ColorScaleModule> {
 
-    final RGBColor color;
+    final RGBColor color = new RGBColor();
     boolean colorOk;
     double lastBlur;
 
@@ -34,7 +34,7 @@ public class ColorScaleModule extends ProceduralModule<ColorScaleModule> {
             new NumericInputPort(IOPort.BOTTOM, "Scale", "(1.0)")},
                 new IOPort[]{new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, "Product")},
                 position);
-        color = new RGBColor(0.0f, 0.0f, 0.0f);
+
     }
 
     /* New point, so the color will need to be recalculated. */
