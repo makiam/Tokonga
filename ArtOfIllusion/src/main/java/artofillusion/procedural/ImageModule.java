@@ -57,12 +57,12 @@ public class ImageModule extends ProceduralModule<ImageModule> {
 
     public ImageModule(Point position) {
         super("(" + Translate.text("Modules:menu.imageModule") + ")", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, new String[]{"X", "(X)"}),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, new String[]{"Y", "(Y)"})},
-                new IOPort[]{new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, new String[]{Translate.text("Color")}),
-                    new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, new String[]{Translate.text("Red")}),
-                    new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, new String[]{Translate.text("Green")}),
-                    new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, new String[]{Translate.text("Blue")}),
-                    new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, new String[]{Translate.text("Mask")})},
+            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Y", "(Y)")},
+                new IOPort[]{new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, Translate.text("Color")),
+                    new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, Translate.text("Red")),
+                    new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, Translate.text("Green")),
+                    new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, Translate.text("Blue")),
+                    new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, Translate.text("Mask"))},
                 position);
         xscale = yscale = xinv = yinv = 1.0;
         tilex = tiley = true;
