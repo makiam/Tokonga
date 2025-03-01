@@ -214,7 +214,7 @@ class ProcedureTest {
         Procedure origin = new Procedure(exist);
         var mod = new ProceduralModule("Test", new IOPort[]{}, new IOPort[]{}, new Point());
         origin.addModule(mod);
-        Procedure target = new Procedure(new OutputModule[]{exist});
+        Procedure target = new Procedure(exist);
         target.copy(origin);
         Assertions.assertNotNull(target.getModules());
         Assertions.assertEquals(1, target.getModules().size());
@@ -241,7 +241,7 @@ class ProcedureTest {
         origin.addLink(link);
         // Create target procedure
         OutputModule cout = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
-        Procedure target = new Procedure(new OutputModule[]{cout});
+        Procedure target = new Procedure(cout);
         target.copy(origin);
         Assertions.assertNotNull(target.getModules());
         Assertions.assertEquals(2, target.getModules().size());
@@ -274,7 +274,7 @@ class ProcedureTest {
         origin.addLink(link2);
         // Create target procedure
         OutputModule cout = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
-        Procedure target = new Procedure(new OutputModule[]{cout});
+        var target = new Procedure(cout);
         target.copy(origin);
         Assertions.assertNotNull(target.getModules());
         Assertions.assertEquals(2, target.getModules().size());
