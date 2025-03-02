@@ -23,7 +23,7 @@ import java.awt.Point;
 public class ModuleTest {
 
     @Test
-    public void testModuleDuplicate() {
+    public void testModuleDuplicate0() {
         var source = new ColorScaleModule(new Point(128, 64));
         var target = source.duplicate();
 
@@ -33,6 +33,31 @@ public class ModuleTest {
         Assertions.assertEquals(64, target.getBounds().y);
 
     }
+
+    @Test
+    public void testModuleDuplicate1() {
+        var source = new PowerModule(new Point(128, 64));
+        var target = source.duplicate();
+
+        Assertions.assertTrue(target instanceof PowerModule);
+        Assertions.assertNotNull(target);
+        Assertions.assertEquals(128, target.getBounds().x);
+        Assertions.assertEquals(64, target.getBounds().y);
+
+    }
+
+    @Test
+    public void testModuleDuplicate2() {
+        var source = new ParameterModule(new Point(128, 64));
+        var target = source.duplicate();
+
+        Assertions.assertTrue(target instanceof ParameterModule);
+        Assertions.assertNotNull(target);
+        Assertions.assertEquals(128, target.getBounds().x);
+        Assertions.assertEquals(64, target.getBounds().y);
+
+    }
+
 
     @Test
     public void testLookupNoInputs() {

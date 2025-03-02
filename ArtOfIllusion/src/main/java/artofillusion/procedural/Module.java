@@ -346,8 +346,9 @@ public class Module<M extends Module> {
      */
     public M duplicate() {
         try {
-            Constructor<?> con = getClass().getConstructor(Point.class);
-            return (M) con.newInstance(new Point(bounds.x, bounds.y));
+            var mod = getClass().getConstructor().newInstance();
+            mod.setPosition(bounds.x, bounds.y);
+            return (M) mod;
         } catch (ReflectiveOperationException | IllegalArgumentException | SecurityException ex) {
             return null;
         }
