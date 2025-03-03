@@ -28,18 +28,18 @@ import javax.swing.*;
 public class ImageModule extends ProceduralModule<ImageModule> {
 
     private ImageMap map;
-    private boolean tilex, tiley, mirrorx, mirrory, wrapx, wrapy;
+    private boolean tileX, tileY, mirrorX, mirrorY, wrapX, wrapY;
     private boolean pointOk;
     private boolean colorOk;
     private final boolean[] valueOk;
     private final boolean[] gradOk;
     private boolean outside;
-    private double xscale;
-    private double yscale;
-    private double xinv;
-    private double yinv;
+    private double xScale;
+    private double yScale;
+    private double xInv;
+    private double yInv;
     private final double[] componentValue;
-    private double x, y, xsize, ysize, lastBlur;
+    private double x, y, xSize, ySize, lastBlur;
     private int maxComponent, colorModel;
     private PointInfo point;
     private final RGBColor color;
@@ -56,16 +56,16 @@ public class ImageModule extends ProceduralModule<ImageModule> {
     }
 
     public ImageModule(Point position) {
-        super("(" + Translate.text("Modules:menu.imageModule") + ")", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, new String[]{"X", "(X)"}),
-            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, new String[]{"Y", "(Y)"})},
-                new IOPort[]{new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, new String[]{Translate.text("Color")}),
-                    new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, new String[]{Translate.text("Red")}),
-                    new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, new String[]{Translate.text("Green")}),
-                    new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, new String[]{Translate.text("Blue")}),
-                    new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, new String[]{Translate.text("Mask")})},
+        super("(" + Translate.text("Modules:menu.imageModule") + ")", new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "X", "(X)"),
+            new IOPort(IOPort.NUMBER, IOPort.INPUT, IOPort.LEFT, "Y", "(Y)")},
+                new IOPort[]{new IOPort(IOPort.COLOR, IOPort.OUTPUT, IOPort.RIGHT, Translate.text("Color")),
+                    new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, Translate.text("Red")),
+                    new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, Translate.text("Green")),
+                    new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, Translate.text("Blue")),
+                    new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, Translate.text("Mask"))},
                 position);
-        xscale = yscale = xinv = yinv = 1.0;
-        tilex = tiley = true;
+        xScale = yScale = xInv = yInv = 1.0;
+        tileX = tileY = true;
         colorModel = RGB_MODEL;
         color = new RGBColor(0.0f, 0.0f, 0.0f);
         tempColor = new RGBColor();
@@ -95,86 +95,86 @@ public class ImageModule extends ProceduralModule<ImageModule> {
      * Get the X scale.
      */
     public double getXScale() {
-        return xscale;
+        return xScale;
     }
 
     /**
      * Set the X scale.
      */
     public void setXScale(double scale) {
-        xscale = scale;
-        xinv = 1.0 / scale;
+        xScale = scale;
+        xInv = 1.0 / scale;
     }
 
     /**
      * Get the Y scale.
      */
     public double getYScale() {
-        return yscale;
+        return yScale;
     }
 
     /**
      * Set the Y scale.
      */
     public void setYScale(double scale) {
-        yscale = scale;
-        yinv = 1.0 / scale;
+        yScale = scale;
+        yInv = 1.0 / scale;
     }
 
     /**
      * Get whether the image is tiled in the X direction.
      */
     public boolean getTileX() {
-        return tilex;
+        return tileX;
     }
 
     /**
      * Set whether the image is tiled in the X direction.
      */
     public void setTileX(boolean b) {
-        tilex = b;
+        tileX = b;
     }
 
     /**
      * Get whether the image is tiled in the Y direction.
      */
     public boolean getTileY() {
-        return tiley;
+        return tileY;
     }
 
     /**
      * Set whether the image is tiled in the Y direction.
      */
     public void setTileY(boolean b) {
-        tiley = b;
+        tileY = b;
     }
 
     /**
      * Get whether the image is mirrored in the X direction.
      */
     public boolean getMirrorX() {
-        return mirrorx;
+        return mirrorX;
     }
 
     /**
      * Set whether the image is mirrored in the X direction.
      */
     public void setMirrorX(boolean b) {
-        mirrorx = b;
+        mirrorX = b;
     }
 
     /**
      * Get whether the image is mirrored in the Y direction.
      */
     public boolean getMirrorY() {
-        return mirrory;
+        return mirrorY;
     }
 
     /**
      * Set whether the image is mirrored in the Y direction.
      */
     public void setMirrorY(boolean b) {
-        mirrory = b;
+        mirrorY = b;
     }
 
     /**
@@ -210,13 +210,13 @@ public class ImageModule extends ProceduralModule<ImageModule> {
         colorOk = valueOk[0] = valueOk[1] = valueOk[2] = valueOk[3] = false;
         x = (linkFrom[0] == null) ? point.x : linkFrom[0].getAverageValue(linkFromIndex[0], blur);
         y = (linkFrom[1] == null) ? point.y : linkFrom[1].getAverageValue(linkFromIndex[1], blur);
-        x *= xinv;
-        y *= yinv;
-        outside = (!tilex && (x < 0.0 || x > 1.0)) || (!tiley && (y < 0.0 || y > 1.0));
+        x *= xInv;
+        y *= yInv;
+        outside = (!tileX && (x < 0.0 || x > 1.0)) || (!tileY && (y < 0.0 || y > 1.0));
         if (outside) {
             return;
         }
-        if (mirrorx) {
+        if (mirrorX) {
             double f = FastMath.floor(x);
             if ((((int) f) & 1) == 0) {
                 x = 1.0 + f - x;
@@ -226,7 +226,7 @@ public class ImageModule extends ProceduralModule<ImageModule> {
         } else {
             x = x - FastMath.floor(x);
         }
-        if (mirrory) {
+        if (mirrorY) {
             double f = FastMath.floor(y);
             if ((((int) f) & 1) == 0) {
                 y = 1.0 + f - y;
@@ -236,12 +236,12 @@ public class ImageModule extends ProceduralModule<ImageModule> {
         } else {
             y = y - FastMath.floor(y);
         }
-        xsize = (linkFrom[0] == null) ? 0.5 * point.xsize + blur : linkFrom[0].getValueError(linkFromIndex[0], blur);
-        ysize = (linkFrom[1] == null) ? 0.5 * point.ysize + blur : linkFrom[1].getValueError(linkFromIndex[1], blur);
-        xsize *= xinv;
-        ysize *= yinv;
-        wrapx = tilex && !mirrorx;
-        wrapy = tiley && !mirrory;
+        xSize = (linkFrom[0] == null) ? 0.5 * point.xsize + blur : linkFrom[0].getValueError(linkFromIndex[0], blur);
+        ySize = (linkFrom[1] == null) ? 0.5 * point.ysize + blur : linkFrom[1].getValueError(linkFromIndex[1], blur);
+        xSize *= xInv;
+        ySize *= yInv;
+        wrapX = tileX && !mirrorX;
+        wrapY = tileY && !mirrorY;
     }
 
     /**
@@ -270,7 +270,7 @@ public class ImageModule extends ProceduralModule<ImageModule> {
             c.copy(color);
             return;
         }
-        map.getColor(color, wrapx, wrapy, x, y, xsize, ysize);
+        map.getColor(color, wrapX, wrapY, x, y, xSize, ySize);
         c.copy(color);
     }
 
@@ -300,12 +300,12 @@ public class ImageModule extends ProceduralModule<ImageModule> {
         }
         if (colorModel == RGB_MODEL || component == 3) {
             valueOk[component] = true;
-            componentValue[component] = map.getComponent(component, wrapx, wrapy, x, y, xsize, ysize);
+            componentValue[component] = map.getComponent(component, wrapX, wrapY, x, y, xSize, ySize);
         } else {
             colorOk = true;
             valueOk[0] = valueOk[1] = valueOk[2] = true;
             lastBlur = blur;
-            map.getColor(color, wrapx, wrapy, x, y, xsize, ysize);
+            map.getColor(color, wrapX, wrapY, x, y, xSize, ySize);
             float[] components = (colorModel == HSV_MODEL ? color.getHSV() : color.getHLS());
             componentValue[0] = components[0] / 360.0;
             componentValue[1] = components[1];
@@ -343,17 +343,17 @@ public class ImageModule extends ProceduralModule<ImageModule> {
             return;
         }
         if (colorModel == RGB_MODEL || component == 3) {
-            map.getGradient(tempGrad, component, wrapx, wrapy, x, y, xsize, ysize);
+            map.getGradient(tempGrad, component, wrapX, wrapY, x, y, xSize, ySize);
         } else {
             double value = getAverageValue(which, blur);
             if (x >= 1.0) {
                 tempGrad.x = 0.0;
             } else {
-                double dx = xsize;
+                double dx = xSize;
                 if (x + dx > 1.0) {
                     dx = 1.0 - x;
                 }
-                map.getColor(tempColor, wrapx, wrapy, x + dx, y, xsize, ysize);
+                map.getColor(tempColor, wrapX, wrapY, x + dx, y, xSize, ySize);
                 float[] components = (colorModel == HSV_MODEL ? tempColor.getHSV() : tempColor.getHLS());
                 components[0] /= 360.0;
                 tempGrad.x = (components[component] - value) / dx;
@@ -361,11 +361,11 @@ public class ImageModule extends ProceduralModule<ImageModule> {
             if (y >= 1.0) {
                 tempGrad.y = 0.0;
             } else {
-                double dy = ysize;
+                double dy = ySize;
                 if (y + dy > 1.0) {
                     dy = 1.0 - y;
                 }
-                map.getColor(tempColor, wrapx, wrapy, x, y + dy, xsize, ysize);
+                map.getColor(tempColor, wrapX, wrapY, x, y + dy, xSize, ySize);
                 float[] components = (colorModel == HSV_MODEL ? tempColor.getHSV() : tempColor.getHLS());
                 components[0] /= 360.0;
                 tempGrad.y = -(components[component] - value) / dy;
@@ -380,7 +380,7 @@ public class ImageModule extends ProceduralModule<ImageModule> {
      * set to the appropriate gradient of the image.
      */
     private void calcGradient(int component, Vec3 grad, double blur) {
-        double dx = tempGrad.x * xinv, dy = tempGrad.y * yinv;
+        double dx = tempGrad.x * xInv, dy = tempGrad.y * yInv;
         Vec3 g = gradient[component];
         if (dx != 0.0) {
             if (linkFrom[0] == null) {
@@ -433,17 +433,17 @@ public class ImageModule extends ProceduralModule<ImageModule> {
         ImageModule mod = new ImageModule(new Point(bounds.x, bounds.y));
 
         mod.map = map;
-        mod.xscale = xscale;
-        mod.yscale = yscale;
-        mod.xinv = xinv;
-        mod.yinv = yinv;
+        mod.xScale = xScale;
+        mod.yScale = yScale;
+        mod.xInv = xInv;
+        mod.yInv = yInv;
         mod.color.copy(color);
-        mod.tilex = tilex;
-        mod.tiley = tiley;
-        mod.mirrorx = mirrorx;
-        mod.mirrory = mirrory;
-        mod.wrapx = wrapx;
-        mod.wrapy = wrapy;
+        mod.tileX = tileX;
+        mod.tileY = tileY;
+        mod.mirrorX = mirrorX;
+        mod.mirrorY = mirrorY;
+        mod.wrapX = wrapX;
+        mod.wrapY = wrapY;
         mod.maxComponent = maxComponent;
         mod.colorModel = colorModel;
         return mod;
@@ -474,23 +474,23 @@ public class ImageModule extends ProceduralModule<ImageModule> {
     @Override
     public boolean edit(final ProcedureEditor editor, final Scene theScene) {
         ImageMap oldMap = map;
-        final ValueField xField = new ValueField(xscale, ValueField.NONE, 10);
-        final ValueField yField = new ValueField(yscale, ValueField.NONE, 10);
-        final BCheckBox tilexBox = new BCheckBox("X", tilex);
-        final BCheckBox tileyBox = new BCheckBox("Y", tiley);
-        final BCheckBox mirrorxBox = new BCheckBox("X", mirrorx);
-        final BCheckBox mirroryBox = new BCheckBox("Y", mirrory);
+        final ValueField xField = new ValueField(xScale, ValueField.NONE, 10);
+        final ValueField yField = new ValueField(yScale, ValueField.NONE, 10);
+        final BCheckBox tilexBox = new BCheckBox("X", tileX);
+        final BCheckBox tileyBox = new BCheckBox("Y", tileY);
+        final BCheckBox mirrorxBox = new BCheckBox("X", mirrorX);
+        final BCheckBox mirroryBox = new BCheckBox("Y", mirrorY);
         final BComboBox modelChoice = new BComboBox(new String[]{"RGB", "HSV", "HLS"});
         Object listener = new Object() {
             void processEvent() {
-                xscale = xField.getValue();
-                yscale = yField.getValue();
-                xinv = 1.0 / xscale;
-                yinv = 1.0 / yscale;
-                tilex = tilexBox.getState();
-                tiley = tileyBox.getState();
-                mirrorx = mirrorxBox.getState();
-                mirrory = mirroryBox.getState();
+                xScale = xField.getValue();
+                yScale = yField.getValue();
+                xInv = 1.0 / xScale;
+                yInv = 1.0 / yScale;
+                tileX = tilexBox.getState();
+                tileY = tileyBox.getState();
+                mirrorX = mirrorxBox.getState();
+                mirrorY = mirroryBox.getState();
                 colorModel = modelChoice.getSelectedIndex();
                 if (map == null) {
                     maxComponent = 0;
@@ -577,12 +577,12 @@ public class ImageModule extends ProceduralModule<ImageModule> {
         } else {
             out.writeInt(theScene.indexOf(map));
         }
-        out.writeDouble(xscale);
-        out.writeDouble(yscale);
-        out.writeBoolean(tilex);
-        out.writeBoolean(tiley);
-        out.writeBoolean(mirrorx);
-        out.writeBoolean(mirrory);
+        out.writeDouble(xScale);
+        out.writeDouble(yScale);
+        out.writeBoolean(tileX);
+        out.writeBoolean(tileY);
+        out.writeBoolean(mirrorX);
+        out.writeBoolean(mirrorY);
         out.writeInt(colorModel);
     }
 
@@ -602,14 +602,14 @@ public class ImageModule extends ProceduralModule<ImageModule> {
         } else {
             map = null;
         }
-        xscale = in.readDouble();
-        yscale = in.readDouble();
-        xinv = 1.0 / xscale;
-        yinv = 1.0 / yscale;
-        tilex = in.readBoolean();
-        tiley = in.readBoolean();
-        mirrorx = in.readBoolean();
-        mirrory = in.readBoolean();
+        xScale = in.readDouble();
+        yScale = in.readDouble();
+        xInv = 1.0 / xScale;
+        yInv = 1.0 / yScale;
+        tileX = in.readBoolean();
+        tileY = in.readBoolean();
+        mirrorX = in.readBoolean();
+        mirrorY = in.readBoolean();
         colorModel = (version == -2 ? in.readInt() : RGB_MODEL);
         if (map == null) {
             maxComponent = 0;

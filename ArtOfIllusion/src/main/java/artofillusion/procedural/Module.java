@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2011 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -19,6 +19,12 @@ import java.io.*;
 import java.lang.reflect.*;
 import lombok.Getter;
 
+import java.util.Arrays;
+
+import java.util.List;
+import java.util.ArrayList;
+
+
 /**
  * This represents a module in a procedure. This is an abstract class, whose subclasses
  * represent specific kinds of modules.
@@ -28,7 +34,8 @@ import lombok.Getter;
 @Deprecated
 public class Module<M extends Module> {
 
-    protected IOPort[] input, output;
+    private List<IOPort> input;
+    protected IOPort[] output;
     public Module[] linkFrom;
     public int[] linkFromIndex;
     protected String name;
@@ -39,7 +46,7 @@ public class Module<M extends Module> {
     protected Rectangle bounds;
     protected boolean checked;
 
-    protected static final Font defaultFont = new Font("Segoe UI", Font.PLAIN, 10);
+    protected static final Font defaultFont = new Font("Sans Serif", Font.PLAIN, 10);
 
     protected static final FontMetrics defaultMetrics = Toolkit.getDefaultToolkit().getFontMetrics(defaultFont);
 
@@ -50,11 +57,14 @@ public class Module<M extends Module> {
 
     public Module(String name, IOPort[] input, IOPort[] output, Point position) {
         this.name = name;
-        this.input = input;
+
+        this.input = new ArrayList<>(Arrays.asList(input));
+        this.input.forEach(item -> item.setModule(this));
+
         this.output = output;
-        linkFrom = new Module[input.length];
-        linkFromIndex = new int[input.length];
-        for (IOPort ioPort : input) ioPort.setModule(this);
+        linkFrom = new Module[this.input.size()];
+        linkFromIndex = new int[this.input.size()];
+
         for (IOPort ioPort : output) ioPort.setModule(this);
         bounds = new Rectangle(position.x, position.y, 0, 0);
         layout();
@@ -80,7 +90,7 @@ public class Module<M extends Module> {
      * Get a list of the input ports for this module.
      */
     public IOPort[] getInputPorts() {
-        return input;
+        return input.toArray(IOPort[]::new);
     }
 
     /**
@@ -94,12 +104,7 @@ public class Module<M extends Module> {
      * Get the index of a particular input port.
      */
     public int getInputIndex(IOPort port) {
-        for (int i = 0; i < input.length; i++) {
-            if (input[i] == port) {
-                return i;
-            }
-        }
-        return -1;
+        return input.indexOf(port);
     }
 
     /**
@@ -125,9 +130,9 @@ public class Module<M extends Module> {
      * Determine whether the specified point is over an IOPort, and if so, return the port.
      */
     public IOPort getClickedPort(Point pos) {
-        for (int i = 0; i < input.length; i++) {
-            if (input[i].contains(pos)) {
-                return input[i];
+        for (IOPort port: input) {
+            if (port.contains(pos)) {
+                return port;
             }
         }
         for (int i = 0; i < output.length; i++) {
@@ -142,8 +147,8 @@ public class Module<M extends Module> {
      * Specify the module and port which one of the input ports is connected to.
      */
     public void setInput(IOPort which, IOPort port) {
-        for (int i = 0; i < input.length; i++) {
-            if (input[i] == which) {
+        for (int i = 0; i < input.size(); i++) {
+            if (input.get(i) == which) {
                 if (port == null) {
                     linkFrom[i] = null;
                     return;
@@ -168,12 +173,15 @@ public class Module<M extends Module> {
         bounds.height = defaultMetrics.getMaxAscent() + defaultMetrics.getMaxDescent() + IOPort.SIZE * 4;
 
         // Depending on how many ports there are, we might need to make it larger.
-        int numtop = 0, numbottom = 0, numleft = 0, i, j;
-        for (i = 0; i < input.length; i++) {
-            j = input[i].getLocation();
-            if (j == IOPort.TOP) {
+        int numtop = 0;
+        int numbottom = 0;
+        int numleft = 0;
+        int portLocation;
+        for (IOPort port: input) {
+            portLocation = port.getLocation();
+            if (portLocation == IOPort.TOP) {
                 numtop++;
-            } else if (j == IOPort.BOTTOM) {
+            } else if (portLocation == IOPort.BOTTOM) {
                 numbottom++;
             } else {
                 numleft++;
@@ -194,29 +202,32 @@ public class Module<M extends Module> {
     public void layout() {
         calcSize();
         int numtop = 0, numbottom = 0, numleft = 0;
-        int top = 0, bottom = 0, left = 0, i, j;
+        int top = 0;
+        int bottom = 0;
+        int left = 0;
+        int portLocation;
 
-        for (i = 0; i < input.length; i++) {
-            j = input[i].getLocation();
-            if (j == IOPort.TOP) {
+        for (IOPort port: input) {
+            portLocation = port.getLocation();
+            if (portLocation == IOPort.TOP) {
                 numtop++;
-            } else if (j == IOPort.BOTTOM) {
+            } else if (portLocation == IOPort.BOTTOM) {
                 numbottom++;
             } else {
                 numleft++;
             }
         }
-        for (i = 0; i < input.length; i++) {
-            j = input[i].getLocation();
-            if (j == IOPort.TOP) {
-                input[i].setPosition(bounds.x + (bounds.width * (++top)) / (numtop + 1), bounds.y);
-            } else if (j == IOPort.BOTTOM) {
-                input[i].setPosition(bounds.x + (bounds.width * (++bottom)) / (numbottom + 1), bounds.y + bounds.height);
+        for (IOPort port: input) {
+            portLocation = port.getLocation();
+            if (portLocation == IOPort.TOP) {
+                port.setPosition(bounds.x + (bounds.width * (++top)) / (numtop + 1), bounds.y);
+            } else if (portLocation == IOPort.BOTTOM) {
+                port.setPosition(bounds.x + (bounds.width * (++bottom)) / (numbottom + 1), bounds.y + bounds.height);
             } else {
-                input[i].setPosition(bounds.x, bounds.y + (bounds.height * (++left)) / (numleft + 1));
+                port.setPosition(bounds.x, bounds.y + (bounds.height * (++left)) / (numleft + 1));
             }
         }
-        for (i = 0; i < output.length; i++) {
+        for (int i = 0; i < output.length; i++) {
             output[i].setPosition(bounds.x + bounds.width + IOPort.SIZE, bounds.y + (bounds.height * (i + 1)) / (output.length + 1));
         }
     }
@@ -335,8 +346,9 @@ public class Module<M extends Module> {
      */
     public M duplicate() {
         try {
-            Constructor<?> con = getClass().getConstructor(Point.class);
-            return (M) con.newInstance(new Point(bounds.x, bounds.y));
+            var mod = getClass().getConstructor().newInstance();
+            mod.setPosition(bounds.x, bounds.y);
+            return (M) mod;
         } catch (ReflectiveOperationException | IllegalArgumentException | SecurityException ex) {
             return null;
         }

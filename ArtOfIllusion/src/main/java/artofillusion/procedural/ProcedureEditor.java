@@ -299,7 +299,7 @@ public class ProcedureEditor extends CustomWidget {
         // Draw the output modules.
         Arrays.stream(output).forEach(mod -> {
             drawModule(mod, g, false);
-            Arrays.stream(mod.input).forEach(port -> drawPort(port, g));
+            Arrays.stream(mod.getInputPorts()).forEach(port -> drawPort(port, g));
             mod.drawContents(g);
         });
 
@@ -308,7 +308,7 @@ public class ProcedureEditor extends CustomWidget {
         IntStream.range(0, modules.size()).forEach(index -> {
             var  mod = modules.get(index);
             drawModule(mod, g, selectedModule[index]);
-            Arrays.stream(mod.input).forEach(port -> drawPort(port, g));
+            Arrays.stream(mod.getInputPorts()).forEach(port -> drawPort(port, g));
             Arrays.stream(mod.output).forEach(port -> drawPort(port, g));
             mod.drawContents(g);
         });
