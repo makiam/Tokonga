@@ -1,4 +1,4 @@
-/* Copyright (C) 2017-2024 by Maksim Khramov
+/* Copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -320,7 +320,7 @@ class ProcedureTest {
     @Test
     @DisplayName("Test Delete Link From No Links")
     void testDeleteLinkFromNoLinks() {
-        assertThrows(NegativeArraySizeException.class, () -> {
+        assertThrows(IndexOutOfBoundsException.class, () -> {
             // Create source procedure
             OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
             Procedure origin = new Procedure(exist);
@@ -331,7 +331,7 @@ class ProcedureTest {
     @Test
     @DisplayName("Test Delete Illegal Index Link From No Links")
     void testDeleteIllegalIndexLinkFromNoLinks() {
-        assertThrows(NegativeArraySizeException.class, () -> {
+        assertThrows(IndexOutOfBoundsException.class, () -> {
             // Create source procedure
             OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), 0);
             Procedure origin = new Procedure(exist);

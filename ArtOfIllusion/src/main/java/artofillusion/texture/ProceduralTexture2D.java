@@ -262,7 +262,7 @@ public class ProceduralTexture2D extends Texture2D implements ProcedureOwner {
         new ProcedureEditor(proc, this, sc);
     }
 
-    public ProceduralTexture2D(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+    public ProceduralTexture2D(DataInputStream in, Scene theScene) throws IOException {
         short version = in.readShort();
 
         if (version < 0 || version > 1) {

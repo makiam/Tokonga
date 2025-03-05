@@ -238,8 +238,8 @@ public class ProceduralMaterial3D extends Material3D implements ProcedureOwner {
      * need to have modules added to maintain backward compatibility.
      */
     private void linkModuleToOutput(artofillusion.procedural.Module module, OutputModule output) {
-        proc.addModule(module);
-        proc.addLink(new Link(module.getOutputPorts()[0], output.getInputPorts()[0]));
+        proc.add(module);
+        proc.add(new Link(module.getOutputPorts()[0], output.getInputPorts()[0]));
     }
 
     @Override
