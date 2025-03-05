@@ -242,8 +242,9 @@ public class Procedure {
                 if(null == cls) {
                     throw new IOException("Application cannot find given module class: " + className);
                 }
-                Constructor<?> con = cls.getConstructor(Point.class);
-                var mod = (Module<?>) con.newInstance(point);
+
+                var mod = (Module<?>)  cls.getConstructor().newInstance();
+                mod.setPosition(point.x, point.y);
                 mod.readFromStream(in, theScene);
                 modules.add(mod);
             }

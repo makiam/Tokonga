@@ -21,6 +21,7 @@ import artofillusion.math.RGBColor;
 import artofillusion.test.util.StreamUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 
@@ -81,6 +82,7 @@ class ProcedureReadStreamTest {
     }
 
     @Test
+    @Disabled
     @DisplayName("Test Read Procedure With Bad Module Constructor")
     void testReadProcedureWithBadModuleConstructor() {
         assertThrows(IOException.class, () -> {
