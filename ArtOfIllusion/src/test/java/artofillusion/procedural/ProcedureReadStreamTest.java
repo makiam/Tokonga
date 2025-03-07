@@ -1,4 +1,4 @@
-/* Copyright (C) 2018-2024 by Maksim Khramov
+/* Copyright (C) 2018-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -7,10 +7,8 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-package artofillusion.procedural;
 
-import artofillusion.Scene;
-import artofillusion.procedural.Module;
+package artofillusion.procedural;
 
 import java.awt.Point;
 import java.io.ByteArrayInputStream;
@@ -19,6 +17,7 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.nio.ByteBuffer;
 
+import artofillusion.math.RGBColor;
 import artofillusion.test.util.StreamUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -26,7 +25,6 @@ import org.junit.jupiter.api.DisplayName;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @author maksim.khramov
@@ -42,7 +40,7 @@ class ProcedureReadStreamTest {
             ByteBuffer wrap = ByteBuffer.allocate(200);
             // Procedure Version 1. Expected exception to be thrown
             wrap.putShort((short) 1);
-            new Procedure(new OutputModule[0]).readFromStream(new DataInputStream(new ByteArrayInputStream(wrap.array())), (Scene) null);
+            new Procedure().readFromStream(new DataInputStream(new ByteArrayInputStream(wrap.array())), null);
         });
     }
 
@@ -56,7 +54,7 @@ class ProcedureReadStreamTest {
         wrap.putInt(0);
         // No Links
         wrap.putInt(0);
-        new Procedure(new OutputModule[0]).readFromStream(new DataInputStream(new ByteArrayInputStream(wrap.array())), (Scene) null);
+        new Procedure().readFromStream(new DataInputStream(new ByteArrayInputStream(wrap.array())), null);
     }
 
     @Test
@@ -76,7 +74,7 @@ class ProcedureReadStreamTest {
                 wrap.putInt(123);
                 wrap.putInt(456);
             }
-            new Procedure(new OutputModule[0]).readFromStream(new DataInputStream(new ByteArrayInputStream(wrap.array())), (Scene) null);
+            new Procedure().readFromStream(new DataInputStream(new ByteArrayInputStream(wrap.array())), null);
         });
     }
 
@@ -98,7 +96,7 @@ class ProcedureReadStreamTest {
                 wrap.putInt(456);
             }
             Procedure proc = new Procedure();
-            proc.readFromStream(StreamUtil.stream(wrap), (Scene) null);
+            proc.readFromStream(StreamUtil.stream(wrap), null);
         });
     }
 
@@ -119,15 +117,43 @@ class ProcedureReadStreamTest {
             wrap.putInt(456);
         }
         Procedure proc = new Procedure();
-        proc.readFromStream(StreamUtil.stream(wrap), (Scene) null);
+        proc.readFromStream(StreamUtil.stream(wrap), null);
 
         Assertions.assertEquals(1, proc.getModules().size());
         var module = proc.getModules().get(0);
-        Assertions.assertEquals(module.getName(), "DummyModule");
+        Assertions.assertEquals("DummyModule", module.getName());
+        Assertions.assertEquals(123, module.getBounds().x);
+        Assertions.assertEquals(456, module.getBounds().y);
+    }
+
+    @Test
+    @DisplayName("Test Read Procedure With Single Module 2")
+    void testReadProcedureWithSingleModule2() throws IOException {
+        ByteBuffer wrap = ByteBuffer.allocate(200);
+        // Procedure Version 1. Expected exception to be thrown
+        wrap.putShort((short) 0);
+        // One Module But bad Name
+        wrap.putInt(1);
+        String className = DummyModule.class.getTypeName();
+        wrap.putShort(Integer.valueOf(className.length()).shortValue());
+        wrap.put(className.getBytes());
+        // Module's Point
+        {
+            wrap.putInt(123);
+            wrap.putInt(456);
+        }
+        Procedure proc = new Procedure(new OutputModule("Out", "Label", 0.0, new RGBColor(), IOPort.OUTPUT));
+        proc.readFromStream(StreamUtil.stream(wrap), null);
+
+        Assertions.assertEquals(1, proc.getModules().size());
+        var module = proc.getModules().get(0);
+        Assertions.assertEquals("DummyModule", module.getName());
+        Assertions.assertEquals(123, module.getBounds().x);
+        Assertions.assertEquals(456, module.getBounds().y);
     }
 
     @DisplayName("Dummy Module No Point Constructor")
-    static class DummyModuleNoPointConstructor extends Module {
+    static class DummyModuleNoPointConstructor extends Module<DummyModuleNoPointConstructor> {
 
         public DummyModuleNoPointConstructor() {
             super("NPC", new IOPort[0], new IOPort[0], new Point(0, 0));
@@ -135,8 +161,10 @@ class ProcedureReadStreamTest {
     }
 
     @DisplayName("Dummy Module")
-    static class DummyModule extends Module {
-
+    static class DummyModule extends Module<DummyModule> {
+        public DummyModule() {
+            this(new Point());
+        }
         public DummyModule(Point modulePoint) {
             super("DummyModule", new IOPort[0], new IOPort[0], modulePoint);
         }
