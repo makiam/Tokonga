@@ -16,7 +16,7 @@ import artofillusion.math.*;
 import buoy.widget.*;
 import java.awt.*;
 import java.io.*;
-import java.lang.reflect.*;
+
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -135,9 +135,9 @@ public class Module<M extends Module> {
                 return port;
             }
         }
-        for (int i = 0; i < output.length; i++) {
-            if (output[i].contains(pos)) {
-                return output[i];
+        for (IOPort ioPort: output) {
+            if (ioPort.contains(pos)) {
+                return ioPort;
             }
         }
         return null;
