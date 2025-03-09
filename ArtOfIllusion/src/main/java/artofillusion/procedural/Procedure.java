@@ -269,12 +269,13 @@ public class Procedure {
         }
         links = new Link[in.readInt()];
         for (int i = 0; i < links.length; i++) {
-            IOPort to, from = modules.get(in.readInt()).getOutputPorts()[in.readInt()];
-            int j = in.readInt();
-            if (j < 0) {
-                to = outputs.get(-j - 1).getInputPorts()[0];
+            IOPort from = modules.get(in.readInt()).getOutputPorts()[in.readInt()];
+            int targetModuleIndex = in.readInt();
+            IOPort to;
+            if (targetModuleIndex < 0) {
+                to = outputs.get(-targetModuleIndex - 1).getInputPorts()[0];
             } else {
-                to = modules.get(j).getInputPorts()[in.readInt()];
+                to = modules.get(targetModuleIndex).getInputPorts()[in.readInt()];
             }
             links[i] = new Link(from, to);
             to.getModule().setInput(to, from);

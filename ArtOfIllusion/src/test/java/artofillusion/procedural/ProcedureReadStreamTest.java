@@ -19,6 +19,7 @@ import java.nio.ByteBuffer;
 
 import artofillusion.math.RGBColor;
 import artofillusion.test.util.StreamUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author maksim.khramov
  */
+@Slf4j
 @DisplayName("Procedure Read Stream Test")
 class ProcedureReadStreamTest {
 
@@ -69,7 +71,7 @@ class ProcedureReadStreamTest {
             String className = "module.module.BadModule";
             wrap.putShort(Integer.valueOf(className.length()).shortValue());
             wrap.put(className.getBytes());
-            // Module's Point
+            // Module 0 Point
             {
                 wrap.putInt(123);
                 wrap.putInt(456);
@@ -87,14 +89,8 @@ class ProcedureReadStreamTest {
             wrap.putShort((short) 0);
             // One Module But bad Name
             wrap.putInt(1);
-            String className = DummyModuleNoPointConstructor.class.getTypeName();
-            wrap.putShort(Integer.valueOf(className.length()).shortValue());
-            wrap.put(className.getBytes());
-            // Module's Point
-            {
-                wrap.putInt(123);
-                wrap.putInt(456);
-            }
+            ProcedureReadStreamTest.createModule(wrap, DummyModuleNoPointConstructor.class, 123, 456);
+
             Procedure proc = new Procedure();
             proc.readFromStream(StreamUtil.stream(wrap), null);
         });
@@ -104,18 +100,12 @@ class ProcedureReadStreamTest {
     @DisplayName("Test Read Procedure With Single Module")
     void testReadProcedureWithSingleModule() throws IOException {
         ByteBuffer wrap = ByteBuffer.allocate(200);
-        // Procedure Version 1. Expected exception to be thrown
+
         wrap.putShort((short) 0);
-        // One Module But bad Name
+
         wrap.putInt(1);
-        String className = DummyModule.class.getTypeName();
-        wrap.putShort(Integer.valueOf(className.length()).shortValue());
-        wrap.put(className.getBytes());
-        // Module's Point
-        {
-            wrap.putInt(123);
-            wrap.putInt(456);
-        }
+        ProcedureReadStreamTest.createModule(wrap, DummyModule.class, 123, 456);
+
         Procedure proc = new Procedure();
         proc.readFromStream(StreamUtil.stream(wrap), null);
 
@@ -130,19 +120,13 @@ class ProcedureReadStreamTest {
     @DisplayName("Test Read Procedure With Single Module 2")
     void testReadProcedureWithSingleModule2() throws IOException {
         ByteBuffer wrap = ByteBuffer.allocate(200);
-        // Procedure Version 1. Expected exception to be thrown
+
         wrap.putShort((short) 0);
-        // One Module But bad Name
+
         wrap.putInt(1);
-        String className = DummyModule.class.getTypeName();
-        wrap.putShort(Integer.valueOf(className.length()).shortValue());
-        wrap.put(className.getBytes());
-        // Module's Point
-        {
-            wrap.putInt(123);
-            wrap.putInt(456);
-        }
-        Procedure proc = new Procedure(new OutputModule("Out", "Label", 0.0, new RGBColor(), IOPort.OUTPUT));
+        ProcedureReadStreamTest.createModule(wrap, DummyModule.class, 123, 456);
+
+        Procedure proc = new Procedure(new OutputModule("Out", "Label", 0.0, new RGBColor(), IOPort.NUMBER));
         proc.readFromStream(StreamUtil.stream(wrap), null);
 
         Assertions.assertEquals(1, proc.getModules().size());
@@ -150,6 +134,122 @@ class ProcedureReadStreamTest {
         Assertions.assertEquals("DummyModule", module.getName());
         Assertions.assertEquals(123, module.getBounds().x);
         Assertions.assertEquals(456, module.getBounds().y);
+    }
+
+    @Test
+    @DisplayName("Test Read Procedure With Two Modules No Links")
+    void testReadProcedureWitTwoModulesNoLinks() throws IOException {
+        ByteBuffer wrap = ByteBuffer.allocate(200);
+
+        wrap.putShort((short) 0);
+
+        wrap.putInt(2);
+        ProcedureReadStreamTest.createModule(wrap, DummyModule.class, 123, 456);
+        ProcedureReadStreamTest.createModule(wrap, DummyModule.class, 456, 123);
+
+        Procedure proc = new Procedure(new OutputModule("Out", "Label", 0.0, new RGBColor(), IOPort.NUMBER));
+        proc.readFromStream(StreamUtil.stream(wrap), null);
+
+        Assertions.assertEquals(2, proc.getModules().size());
+        var module = proc.getModules().get(0);
+        Assertions.assertEquals("DummyModule", module.getName());
+        Assertions.assertEquals(123, module.getBounds().x);
+        Assertions.assertEquals(456, module.getBounds().y);
+
+        module = proc.getModules().get(1);
+        Assertions.assertEquals("DummyModule", module.getName());
+        Assertions.assertEquals(456, module.getBounds().x);
+        Assertions.assertEquals(123 , module.getBounds().y);
+    }
+
+    @Test
+    @DisplayName("Test Read Procedure With Two Linked Modules")
+    public void testTwoLinkedModules() throws IOException {
+        ByteBuffer wrap = ByteBuffer.allocate(200);
+
+        wrap.putShort((short) 0);
+
+        wrap.putInt(2);
+
+        ProcedureReadStreamTest.createModule(wrap, DummyModule.class, 123, 456);
+        ProcedureReadStreamTest.createModule(wrap, DummyModule.class, 456, 123);
+
+        wrap.putInt(1); // Links count
+
+        //tie second module second output to first module second input
+        wrap.putInt(1);  //Module index
+        wrap.putInt(1);  //Port index
+
+        wrap.putInt(0);  //Module index
+        wrap.putInt(1);  //Port index
+
+        Procedure proc = new Procedure();
+        proc.readFromStream(StreamUtil.stream(wrap), null);
+        Assertions.assertEquals(2, proc.getModules().size());
+        Assertions.assertEquals(1, proc.getLinks().length);
+
+        var link = proc.getLinks()[0];
+        var outPort = proc.getModules().get(1).getOutputPorts()[1];
+        var inPort = proc.getModules().get(0).getInputPorts()[1];
+
+        log.info("Link from: {} to {} ", link.from, link.to);
+        log.info("Out port: {}", outPort);
+        log.info("In port: {}", inPort);
+
+        Assertions.assertEquals(link.from, outPort);
+        Assertions.assertEquals(link.to, inPort);
+
+    }
+    @Test
+    @DisplayName("Test Read Procedure With Linked Module and Output Module")
+    public void testLinkModuleToOutput()  throws IOException {
+        ByteBuffer wrap = ByteBuffer.allocate(200);
+
+        wrap.putShort((short) 0);
+        wrap.putInt(2); // Modules count
+        ProcedureReadStreamTest.createModule(wrap, DummyModule.class, 123, 456);
+        ProcedureReadStreamTest.createModule(wrap, DummyModule.class, 456, 123);
+
+        wrap.putInt(1); // Links count
+
+        //tie second module second output to output module second input
+        wrap.putInt(1);  //Module index
+        wrap.putInt(1);  //Port index
+
+        wrap.putInt(-1);  //Output Module index; Negative value means that target module is a Procedure output module
+        // As it output module it always has only onу input port. So we don't need to read it
+
+        OutputModule pOut0 = new OutputModule("Output 0", "Label 0", 0.0, new RGBColor(), IOPort.NUMBER);
+        OutputModule pOut1 = new OutputModule("Output 1", "Label 1", 0.0, new RGBColor(), IOPort.NUMBER);
+
+        Procedure proc = new Procedure(pOut0, pOut1);
+
+        proc.readFromStream(StreamUtil.stream(wrap), null);
+
+        proc.readFromStream(StreamUtil.stream(wrap), null);
+        Assertions.assertEquals(2, proc.getModules().size());
+        Assertions.assertEquals(1, proc.getLinks().length);
+
+        var link = proc.getLinks()[0];
+        var outPort = proc.getModules().get(1).getOutputPorts()[1];
+        var inPort = proc.getOutputModules()[0].getInputPorts()[0];
+
+        log.info("Link from: {} to {} ", link.from, link.to);
+        log.info("Out port: {}", outPort);
+        log.info("In port: {}", inPort);
+
+        Assertions.assertEquals(link.from, outPort);
+        Assertions.assertEquals(link.to, inPort);
+    }
+
+    private static void createModule(ByteBuffer wrap, Class<? extends Module> mc, int X, int Y) {
+        String className = mc.getTypeName();
+        wrap.putShort(Integer.valueOf(className.length()).shortValue());
+        wrap.put(className.getBytes());
+        {
+            wrap.putInt(X);
+            wrap.putInt(Y);
+        }
     }
 
     @DisplayName("Dummy Module No Point Constructor")
@@ -166,7 +266,14 @@ class ProcedureReadStreamTest {
             this(new Point());
         }
         public DummyModule(Point modulePoint) {
-            super("DummyModule", new IOPort[0], new IOPort[0], modulePoint);
+            super("DummyModule", new IOPort[] {
+                            new NumericInputPort(IOPort.LEFT, "Input0", "(0)"),
+                            new NumericInputPort(IOPort.LEFT, "Input1", "(0)")
+                    },
+                    new IOPort[] {
+                            new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output0"),
+                            new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output1")
+                    }, modulePoint);
         }
     }
 }
