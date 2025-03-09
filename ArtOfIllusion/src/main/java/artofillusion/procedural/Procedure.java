@@ -236,7 +236,7 @@ public class Procedure {
      * Reconstruct this procedure from an input stream. The output modules must already
      * be set up before calling this method.
      */
-    public void readFromStream(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+    public void readFromStream(DataInputStream in, Scene theScene) throws IOException {
         short version = in.readShort();
 
         if (version != 0) {
