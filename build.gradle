@@ -11,7 +11,7 @@ buildscript {
 }
 
 plugins {
-  id "io.freefair.aggregate-javadoc" version "8.12.2.1"
+  id "io.freefair.aggregate-javadoc" version "8.13"
 }
 
 apply plugin: com.pvsstudio.PvsStudioGradlePlugin
