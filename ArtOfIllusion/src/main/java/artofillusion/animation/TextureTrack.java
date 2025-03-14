@@ -28,17 +28,16 @@ import java.util.*;
  */
 public class TextureTrack extends Track<TextureTrack> {
 
-    ObjectInfo info;
-    Timecourse tc;
-    int smoothingMethod;
+    private ObjectInfo info;
+    private Timecourse timecourse = new Timecourse(new Keyframe[0], new double[0], new Smoothness[0]);
+    private int smoothingMethod = Timecourse.INTERPOLATING;
     WeightTrack theWeight;
     TextureParameter[] param;
 
     public TextureTrack(ObjectInfo info) {
         super("Texture");
         this.info = info;
-        tc = new Timecourse(new Keyframe[0], new double[0], new Smoothness[0]);
-        smoothingMethod = Timecourse.INTERPOLATING;
+
         theWeight = new WeightTrack(this);
         param = info.getObject().getParameters();
     }
@@ -46,7 +45,7 @@ public class TextureTrack extends Track<TextureTrack> {
     /* Modify the parameters of the object. */
     @Override
     public void apply(double time) {
-        ArrayKeyframe val = (ArrayKeyframe) tc.evaluate(time, smoothingMethod);
+        ArrayKeyframe val = (ArrayKeyframe) timecourse.evaluate(time, smoothingMethod);
         if (val == null) {
             return;
         }
@@ -85,7 +84,7 @@ public class TextureTrack extends Track<TextureTrack> {
         t.enabled = enabled;
         t.quantized = quantized;
         t.smoothingMethod = smoothingMethod;
-        t.tc = tc.duplicate(obj);
+        t.timecourse = timecourse.duplicate(obj);
         t.theWeight = theWeight.duplicate(t);
         t.param = param;
         return t;
@@ -99,7 +98,7 @@ public class TextureTrack extends Track<TextureTrack> {
         enabled = track.enabled;
         quantized = track.quantized;
         smoothingMethod = track.smoothingMethod;
-        tc = track.tc.duplicate(info);
+        timecourse = track.timecourse.duplicate(info);
         theWeight = track.theWeight.duplicate(this);
         param = track.param;
     }
@@ -107,19 +106,19 @@ public class TextureTrack extends Track<TextureTrack> {
     /* Get a list of all keyframe times for this track. */
     @Override
     public double[] getKeyTimes() {
-        return tc.getTimes();
+        return timecourse.getTimes();
     }
 
     /* Get the timecourse describing this track. */
     @Override
     public Timecourse getTimecourse() {
-        return tc;
+        return timecourse;
     }
 
     /* Set a keyframe at the specified time. */
     @Override
     public void setKeyframe(double time, Keyframe k, Smoothness s) {
-        tc.addTimepoint(k, time, s);
+        timecourse.addTimepoint(k, time, s);
     }
 
     /**
@@ -139,7 +138,7 @@ public class TextureTrack extends Track<TextureTrack> {
             }
         }
         Keyframe k = new ArrayKeyframe(d);
-        tc.addTimepoint(k, time, new Smoothness());
+        timecourse.addTimepoint(k, time, new Smoothness());
         return k;
     }
 
@@ -154,7 +153,7 @@ public class TextureTrack extends Track<TextureTrack> {
         ParameterValue[] paramValue = info.getObject().getParameterValues();
         double[] d = new double[param.length];
         boolean change = false;
-        ArrayKeyframe key = (ArrayKeyframe) tc.evaluate(time, smoothingMethod);
+        ArrayKeyframe key = (ArrayKeyframe) timecourse.evaluate(time, smoothingMethod);
 
         for (int i = 0; i < texParam.length; i++) {
             for (int j = 0; j < param.length; j++) {
@@ -168,7 +167,7 @@ public class TextureTrack extends Track<TextureTrack> {
         }
         if (change) {
             Keyframe k = new ArrayKeyframe(d);
-            tc.addTimepoint(k, time, new Smoothness());
+            timecourse.addTimepoint(k, time, new Smoothness());
             return k;
         }
         return null;
@@ -177,19 +176,19 @@ public class TextureTrack extends Track<TextureTrack> {
     /* Move a keyframe to a new time, and return its new position in the list. */
     @Override
     public int moveKeyframe(int which, double time) {
-        return tc.moveTimepoint(which, time);
+        return timecourse.moveTimepoint(which, time);
     }
 
     /* Delete the specified keyframe. */
     @Override
     public void deleteKeyframe(int which) {
-        tc.removeTimepoint(which);
+        timecourse.removeTimepoint(which);
     }
 
     /* This track is null if it has no keyframes. */
     @Override
     public boolean isNullTrack() {
-        return (tc.getTimes().length == 0);
+        return (timecourse.getTimes().length == 0);
     }
 
     /* This has a single child track. */
@@ -290,7 +289,7 @@ public class TextureTrack extends Track<TextureTrack> {
         param = newparam;
 
         // Update the value arrays for all keyframes.
-        Keyframe[] key = tc.getValues();
+        Keyframe[] key = timecourse.getValues();
         for (int k = 0; k < key.length; k++) {
             double[] newval = new double[num];
             for (int i = 0, j = 0; i < exists.length; i++) {
@@ -306,9 +305,9 @@ public class TextureTrack extends Track<TextureTrack> {
     @Override
     public void writeToStream(DataOutputStream out, Scene scene) throws IOException {
         TextureParameter[] texParam = info.getObject().getParameters();
-        double[] t = tc.getTimes();
-        Smoothness[] s = tc.getSmoothness();
-        Keyframe[] v = tc.getValues();
+        double[] t = timecourse.getTimes();
+        Smoothness[] s = timecourse.getSmoothness();
+        Keyframe[] v = timecourse.getValues();
 
         out.writeShort(0); // Version number
         out.writeUTF(name);
@@ -362,7 +361,7 @@ public class TextureTrack extends Track<TextureTrack> {
             v[i] = new ArrayKeyframe(in, this);
             s[i] = new Smoothness(in);
         }
-        tc = new Timecourse(v, t, s);
+        timecourse = new Timecourse(v, t, s);
         theWeight.initFromStream(in, scene);
     }
 
@@ -371,9 +370,9 @@ public class TextureTrack extends Track<TextureTrack> {
      */
     @Override
     public void editKeyframe(LayoutWindow win, int which) {
-        ArrayKeyframe key = (ArrayKeyframe) tc.getValues()[which];
-        Smoothness s = tc.getSmoothness()[which];
-        double time = tc.getTimes()[which];
+        ArrayKeyframe key = (ArrayKeyframe) timecourse.getValues()[which];
+        Smoothness s = timecourse.getSmoothness()[which];
+        double time = timecourse.getTimes()[which];
         ValueField timeField = new ValueField(time, ValueField.NONE, 5);
         ValueSlider s1Slider = new ValueSlider(0.0, 1.0, 100, s.getLeftSmoothness());
         final ValueSlider s2Slider = new ValueSlider(0.0, 1.0, 100, s.getRightSmoothness());
@@ -518,7 +517,7 @@ public class TextureTrack extends Track<TextureTrack> {
         }
         param = new TextureParameter[selected.length];
         System.arraycopy(selected, 0, param, 0, selected.length);
-        Keyframe[] key = tc.getValues();
+        Keyframe[] key = timecourse.getValues();
         for (int i = 0; i < key.length; i++) {
             double[] newval = new double[param.length];
             for (int j = 0; j < newval.length; j++) {
