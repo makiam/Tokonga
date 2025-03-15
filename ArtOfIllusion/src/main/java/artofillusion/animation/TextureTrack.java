@@ -270,8 +270,8 @@ public class TextureTrack extends Track<TextureTrack> {
 
         // Find which parameters still exist.
         for (int i = 0; i < param.length; i++) {
-            for (int j = 0; j < texParam.length; j++) {
-                if (param[i].equals(texParam[j])) {
+            for (TextureParameter textureParameter : texParam) {
+                if (param[i].equals(textureParameter)) {
                     exists[i] = true;
                     num++;
                     break;
@@ -290,14 +290,14 @@ public class TextureTrack extends Track<TextureTrack> {
 
         // Update the value arrays for all keyframes.
         Keyframe[] key = timecourse.getValues();
-        for (int k = 0; k < key.length; k++) {
+        for (Keyframe keyframe : key) {
             double[] newval = new double[num];
             for (int i = 0, j = 0; i < exists.length; i++) {
                 if (exists[i]) {
-                    newval[j++] = ((ArrayKeyframe) key[k]).val[i];
+                    newval[j++] = ((ArrayKeyframe) keyframe).val[i];
                 }
             }
-            ((ArrayKeyframe) key[k]).val = newval;
+            ((ArrayKeyframe) keyframe).val = newval;
         }
     }
 
@@ -323,8 +323,8 @@ public class TextureTrack extends Track<TextureTrack> {
                 }
             }
         }
-        for (int i = 0; i < index.length; i++) {
-            out.writeShort(index[i]);
+        for (int j : index) {
+            out.writeShort(j);
         }
         out.writeInt(times.length);
         for (int i = 0; i < times.length; i++) {
@@ -451,7 +451,7 @@ public class TextureTrack extends Track<TextureTrack> {
                     if (!(paramValue[k] instanceof ConstantParameterValue)) {
                         continue;
                     }
-                    TreeElement el = new GenericTreeElement(p.name, p.duplicate(), null, tree, null);
+                    TreeElement el = new GenericTreeElement(p.name, p.duplicate(), null, tree);
                     for (k = 0; k < param.length; k++) {
                         if (param[k].equals(p)) {
                             el.setSelected(true);
@@ -460,7 +460,7 @@ public class TextureTrack extends Track<TextureTrack> {
                     v.add(el);
                 }
                 if (v.isEmpty()) {
-                    TreeElement el = new GenericTreeElement(Translate.text("noAdjustableParams"), null, null, tree, null);
+                    TreeElement el = new GenericTreeElement(Translate.text("noAdjustableParams"), null, null, tree);
                     el.setSelectable(false);
                     v.add(el);
                 }
@@ -473,7 +473,7 @@ public class TextureTrack extends Track<TextureTrack> {
         } else {
             for (int i = 0; i < texParam.length; i++) {
                 if (paramValue[i] instanceof ConstantParameterValue) {
-                    TreeElement el = new GenericTreeElement(texParam[i].name, texParam[i], null, tree, null);
+                    TreeElement el = new GenericTreeElement(texParam[i].name, texParam[i], null, tree);
                     for (TextureParameter p : param) {
                         if (p.equals(texParam[i])) {
                             el.setSelected(true);
@@ -484,7 +484,7 @@ public class TextureTrack extends Track<TextureTrack> {
             }
         }
         if (elements.isEmpty()) {
-            TreeElement el = new GenericTreeElement(Translate.text("noAdjustableParams"), null, null, tree, null);
+            TreeElement el = new GenericTreeElement(Translate.text("noAdjustableParams"), null, null, tree);
             el.setSelectable(false);
             elements.add(el);
         }

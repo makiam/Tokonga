@@ -56,4 +56,20 @@ class TextureTrackTest {
 
         Assertions.assertEquals(track.getSmoothingMethod(), dup.getSmoothingMethod());
     }
+
+    @Test
+    @DisplayName("Create texture track and set data from other")
+    public void testCopyTrack() {
+        var no = new NullObject();
+        no.setParameters(new TextureParameter[0]);
+        var oi = new ObjectInfo(no, new CoordinateSystem(), "Source Null Object");
+        var track = new TextureTrack(oi);
+        track.setSmoothingMethod(Timecourse.APPROXIMATING);
+        var co = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Target Null Object");
+
+        var copyDataTrack = new TextureTrack(co);
+        copyDataTrack.copy(track);
+
+        Assertions.assertEquals(track.getSmoothingMethod(), copyDataTrack.getSmoothingMethod());
+    }
 }
