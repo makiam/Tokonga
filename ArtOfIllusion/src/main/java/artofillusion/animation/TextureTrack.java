@@ -305,15 +305,16 @@ public class TextureTrack extends Track<TextureTrack> {
     @Override
     public void writeToStream(DataOutputStream out, Scene scene) throws IOException {
         TextureParameter[] texParam = info.getObject().getParameters();
-        double[] t = timecourse.getTimes();
-        Smoothness[] s = timecourse.getSmoothness();
-        Keyframe[] v = timecourse.getValues();
+        double[] times = timecourse.getTimes();
+        Smoothness[] smoothness = timecourse.getSmoothness();
+        Keyframe[] keyframes = timecourse.getValues();
 
         out.writeShort(0); // Version number
         out.writeUTF(name);
         out.writeBoolean(enabled);
         out.writeInt(smoothingMethod);
         out.writeShort(param.length);
+
         int[] index = new int[param.length];
         for (int i = 0; i < param.length; i++) {
             for (int j = 0; j < texParam.length; j++) {
@@ -325,11 +326,11 @@ public class TextureTrack extends Track<TextureTrack> {
         for (int i = 0; i < index.length; i++) {
             out.writeShort(index[i]);
         }
-        out.writeInt(t.length);
-        for (int i = 0; i < t.length; i++) {
-            out.writeDouble(t[i]);
-            ((ArrayKeyframe) v[i]).writeToStream(out);
-            s[i].writeToStream(out);
+        out.writeInt(times.length);
+        for (int i = 0; i < times.length; i++) {
+            out.writeDouble(times[i]);
+            keyframes[i].writeToStream(out);
+            smoothness[i].writeToStream(out);
         }
         theWeight.writeToStream(out, scene);
     }
