@@ -279,14 +279,6 @@ public class ProceduralMaterial3D extends Material3D implements ProcedureOwner {
     }
 
     /**
-     * Determine whether the procedure may contain Parameter modules.
-     */
-    @Override
-    public boolean allowParameters() {
-        return false;
-    }
-
-    /**
      * This is called when the user clicks OK in the procedure editor.
      */
     @Override
