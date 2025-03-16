@@ -38,13 +38,6 @@ public interface ProcedureOwner {
     }
 
     /**
-     * Determine whether the procedure may contain Parameter modules.
-     */
-    default boolean allowParameters() {
-        return true;
-    }
-
-    /**
      * Determine whether the procedure may contain View Angle modules.
      */
     default boolean allowViewAngle() {
