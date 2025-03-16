@@ -1067,14 +1067,10 @@ public class ProcedureEditor extends CustomWidget {
             int numModules = editor.selectedModule.length;
             int numLinks = editor.selectedLink.length;
             var realMod = new Module[module.length];
-            boolean disallowParameters = !editor.owner.allowParameters();
 
             // Add the modules.
             for (int i = 0; i < module.length; i++) {
 
-                if (module[i] instanceof ParameterModule && disallowParameters) {
-                    continue;
-                }
                 realMod[i] = module[i].duplicate();
                 if (realMod[i] instanceof ImageModule && editor.scene.indexOf(((ImageModule) realMod[i]).getMap()) == -1) {
                     ((ImageModule) realMod[i]).setMap(null);
