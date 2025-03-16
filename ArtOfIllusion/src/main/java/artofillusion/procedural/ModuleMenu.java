@@ -61,9 +61,7 @@ public class ModuleMenu extends CustomWidget {
         if (editor.getOwner().allowViewAngle()) {
             category.add(new Entry("Modules:menu.viewAngleModule", ViewAngleModule.class));
         }
-        if (editor.getOwner().allowParameters()) {
-            category.add(new Entry("Modules:menu.parameterModule", ParameterModule.class));
-        }
+        category.add(new Entry("Modules:menu.parameterModule", ParameterModule.class));
 
         final String uncategorized = Translate.text("Modules:menu.plugins");
         PluginRegistry.getPlugins(Module.class).forEach(module -> {
