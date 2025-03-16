@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2012 by Peter Eastman
-   Changes copyright (C) 2023-2024 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -1064,12 +1064,15 @@ public class ProcedureEditor extends CustomWidget {
          * Paste the clipboard selection into the procedure.
          */
         public void paste(ProcedureEditor editor) {
-            int numModules = editor.selectedModule.length, numLinks = editor.selectedLink.length;
-            var   realMod = new Module[module.length];
+            int numModules = editor.selectedModule.length;
+            int numLinks = editor.selectedLink.length;
+            var realMod = new Module[module.length];
+            boolean disallowParameters = !editor.owner.allowParameters();
 
             // Add the modules.
             for (int i = 0; i < module.length; i++) {
-                if (module[i] instanceof ParameterModule && !editor.owner.allowParameters()) {
+
+                if (module[i] instanceof ParameterModule && disallowParameters) {
                     continue;
                 }
                 realMod[i] = module[i].duplicate();
