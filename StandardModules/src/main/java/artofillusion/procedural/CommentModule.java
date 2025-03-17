@@ -14,6 +14,8 @@ package artofillusion.procedural;
 import artofillusion.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
+
+import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 
@@ -29,7 +31,7 @@ public class CommentModule extends ProceduralModule<CommentModule> {
     }
 
     public CommentModule(Point position) {
-        this(position, "Double-click to set comment");
+        this(position, "Commentary");
     }
 
     public CommentModule(Point position, String text) {
@@ -42,6 +44,10 @@ public class CommentModule extends ProceduralModule<CommentModule> {
     @Override
     public boolean edit(ProcedureEditor editor, Scene theScene) {
         BTextArea ta = new BTextArea(name, 10, 40);
+        JTextArea area = ta.getComponent();
+        area.setFont(area.getFont().deriveFont(12f));
+        area.setLineWrap(true);
+        area.setWrapStyleWord(true);
         PanelDialog dlg = new PanelDialog(editor.getParentFrame(), Translate.text("Modules:editComment"), BOutline.createBevelBorder(new BScrollPane(ta), false));
         if (!dlg.clickedOk()) {
             return false;

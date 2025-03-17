@@ -2,7 +2,7 @@
    any special behavior. */
 
  /* Copyright (C) 2001 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,6 +11,7 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion.ui;
 
 import java.util.*;
@@ -19,6 +20,10 @@ public class GenericTreeElement extends TreeElement {
 
     final Object obj;
     final String label;
+
+    public GenericTreeElement(String label, Object obj, TreeElement parent, TreeList tree) {
+        this(label, obj, parent, tree, null);
+    }
 
     public GenericTreeElement(String label, Object obj, TreeElement parent, TreeList tree, List<TreeElement> children) {
         this.label = label;
@@ -68,8 +73,8 @@ public class GenericTreeElement extends TreeElement {
             }
         }
         if (pos == children.size()) {
-            for (int i = 0; i < children.size(); i++) {
-                children.get(i).removeChild(object);
+            for (TreeElement child : children) {
+                child.removeChild(object);
             }
             return;
         }
