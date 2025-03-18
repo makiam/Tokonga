@@ -40,10 +40,10 @@ dependencies {
     implementation group: 'gov.nist.math', name: 'jama', version: '1.0.3'
 
     implementation group: 'org.beanshell', name: 'bsh', version: '3.0.0-SNAPSHOT'
-    implementation group: 'org.apache.groovy', name: 'groovy', version: '4.0.+'
+    implementation libs.groovy
     
     implementation fileTree(dir: '../lib', include: '*.jar')
-    implementation group: 'com.fifesoft', name: 'rsyntaxtextarea', version: "${rstaVersion}"
+    implementation libs.rsta
     
     testImplementation 'org.mockito:mockito-core:5.+'
     testImplementation project(':StandardModules')
