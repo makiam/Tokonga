@@ -5,7 +5,7 @@ jogl = "2.5.0"
 [libraries]
 buoy = { module = "com.github.makiam:Buoy", version.ref = "buoy" }
 
-logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.5.17" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.5.18" }
 slf-api = { module = "org.slf4j:slf4j-api", version = "2.0.17" }
 
 jogl-gluegen = { module = "org.jogamp.gluegen:gluegen-rt-main", version.ref = "jogl" }
