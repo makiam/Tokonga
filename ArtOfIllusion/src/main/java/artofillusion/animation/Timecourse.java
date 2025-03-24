@@ -1,4 +1,5 @@
 /* Copyright (C) 2001-2009 by Peter Eastman
+   Changes copyright (C) 2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -10,12 +11,19 @@
 
 package artofillusion.animation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This class represents a quantity which changes as a function of time. It is defined by
  * a series of timepoints, with a value at each one. There is also a smoothness value for
  * each timepoint, which affects how it is interpolated.
  */
 public class Timecourse {
+
+    private static final double TIME_EQUALITY_THRESHOLD = 1e-10;
+
+    private final List<TimePoint> points = new ArrayList<>();
 
     private double[] time;
     private Smoothness[] smoothness;
@@ -52,7 +60,7 @@ public class Timecourse {
         // If this has the same time as an existing timepoint, just replace it.
 
         for (int i = 0; i < time.length; i++) {
-            if (Math.abs(time[i] - t) < 1e-10) {
+            if (Math.abs(time[i] - t) < TIME_EQUALITY_THRESHOLD) {
                 value[i] = v;
                 time[i] = t;
                 smoothness[i] = s;
@@ -131,6 +139,7 @@ public class Timecourse {
         value = new Keyframe[0];
         time = new double[0];
         smoothness = new Smoothness[0];
+        points.clear();
     }
 
     /**
