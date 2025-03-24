@@ -1,4 +1,4 @@
-/* Copyright (C) 2018 by Maksim Khramov
+/* Copyright (C) 2018-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -39,10 +39,11 @@ class TimecourseTest {
     }
 
     @Test
-    @DisplayName("Test Timecourse Add And Replace Current Value")
-    void testTimecourseAddAndReplaceCurrentValue() {
+    @DisplayName("Test Timecourse Add And Replace Single Current Value")
+    void testTimecourseAddAndReplaceSingleCurrentValue() {
         Timecourse tc = new Timecourse(new BooleanKeyframe[]{new BooleanKeyframe(true)}, new double[]{5}, new Smoothness[]{new Smoothness()});
-        tc.addTimepoint(new BooleanKeyframe(false), 5, new Smoothness());
+        var result = tc.addTimepoint(new BooleanKeyframe(false), 5, new Smoothness());
+        Assertions.assertEquals(0, result);
         Assertions.assertEquals(1, tc.getValues().length);
         Assertions.assertEquals(1, tc.getTimes().length);
         Assertions.assertEquals(1, tc.getSmoothness().length);
@@ -51,14 +52,78 @@ class TimecourseTest {
 
     @Test
     @DisplayName("Test Timecourse Add As New Value")
-    void testTimecourseAddAsNewValue() {
+    void testTimecourseAddAsNewValueAfterCurrent() {
         Timecourse tc = new Timecourse(new BooleanKeyframe[]{new BooleanKeyframe(true)}, new double[]{5}, new Smoothness[]{new Smoothness()});
-        tc.addTimepoint(new BooleanKeyframe(false), 10, new Smoothness());
+        var result = tc.addTimepoint(new BooleanKeyframe(false), 10, new Smoothness());
         Assertions.assertEquals(2, tc.getValues().length);
         Assertions.assertEquals(2, tc.getTimes().length);
         Assertions.assertEquals(2, tc.getSmoothness().length);
         Assertions.assertEquals(5, tc.getTimes()[0], 0);
         Assertions.assertEquals(10, tc.getTimes()[1], 0);
+        Assertions.assertEquals(1, result);
+    }
+
+    @Test
+    @DisplayName("Test Timecourse Add As New Value")
+    void testTimecourseAddAsNewValueBeforeCurrent() {
+        Timecourse tc = new Timecourse(new BooleanKeyframe[]{new BooleanKeyframe(true)}, new double[]{5}, new Smoothness[]{new Smoothness()});
+        var result = tc.addTimepoint(new BooleanKeyframe(false), 3, new Smoothness());
+        Assertions.assertEquals(2, tc.getValues().length);
+        Assertions.assertEquals(2, tc.getTimes().length);
+        Assertions.assertEquals(2, tc.getSmoothness().length);
+        Assertions.assertEquals(3, tc.getTimes()[0], 0);
+        Assertions.assertEquals(5, tc.getTimes()[1], 0);
+        Assertions.assertEquals(0, result);
+    }
+
+    @Test
+    @DisplayName("Test Timecourse Add And Remove Single Current Value By Given Time")
+    void testTimecourseAddAndRemoveSingleCurrentValueByTime() {
+        Timecourse tc = new Timecourse(new BooleanKeyframe[]{new BooleanKeyframe(true)}, new double[]{5}, new Smoothness[]{new Smoothness()});
+        tc.removeTimepoint(5.0);
+
+        Assertions.assertEquals(0, tc.getValues().length);
+        Assertions.assertEquals(0, tc.getTimes().length);
+        Assertions.assertEquals(0, tc.getSmoothness().length);
+
+    }
+
+    @Test
+    @DisplayName("Test Timecourse Add And Remove Single Value By Given Not Exist Time")
+    void testTimecourseAddAndRemoveSingleCurrentValueByNotExistTime() {
+        Timecourse tc = new Timecourse(new BooleanKeyframe[]{new BooleanKeyframe(true)}, new double[]{5}, new Smoothness[]{new Smoothness()});
+        tc.removeTimepoint(15.0);
+
+        Assertions.assertEquals(1, tc.getValues().length);
+        Assertions.assertEquals(1, tc.getTimes().length);
+        Assertions.assertEquals(1, tc.getSmoothness().length);
+
+    }
+
+    @Test
+    @DisplayName("Test Timecourse Add And Remove Single Value By Given Not Exist Time")
+    void testTimecourseAddAndRemoveCurrentValueByNotExistTime() {
+        Timecourse tc = new Timecourse(new BooleanKeyframe[]{new BooleanKeyframe(true)}, new double[]{5}, new Smoothness[]{new Smoothness()});
+        tc.addTimepoint(new BooleanKeyframe(false), 10.0, new Smoothness());
+
+        tc.removeTimepoint(15.0);
+
+        Assertions.assertEquals(2, tc.getValues().length);
+        Assertions.assertEquals(2, tc.getTimes().length);
+        Assertions.assertEquals(2, tc.getSmoothness().length);
+
+    }
+
+    @Test
+    @DisplayName("Test Timecourse Add And Replace Single Current Value")
+    void testTimecourseAddAndRemoveSingleCurrentValueByIndex() {
+        Timecourse tc = new Timecourse(new BooleanKeyframe[]{new BooleanKeyframe(true)}, new double[]{5}, new Smoothness[]{new Smoothness()});
+        tc.removeTimepoint(0);
+
+        Assertions.assertEquals(0, tc.getValues().length);
+        Assertions.assertEquals(0, tc.getTimes().length);
+        Assertions.assertEquals(0, tc.getSmoothness().length);
+
     }
 
     @Test
