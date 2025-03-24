@@ -194,4 +194,22 @@ class TimecourseTest {
         Assertions.assertEquals(2, dup.getValues().length);
         Assertions.assertEquals(2, dup.getSmoothness().length);
     }
+
+    @Test
+    @DisplayName("Test Evaluate Empty TimeCourse")
+    void testEvaluateEmptyTimeCourse() {
+        Timecourse tc = new Timecourse(new Keyframe[0], new double[0], new Smoothness[0]);
+
+        Assertions.assertNull(tc.evaluate(0.0, Timecourse.DISCONTINUOUS));
+    }
+
+    @Test
+    @DisplayName("Test Evaluate Empty TimeCourse")
+    void testEvaluateSingleTimeCourse() {
+        Keyframe kf = new BooleanKeyframe(true);
+        Timecourse tc = new Timecourse(new Keyframe[]{kf}, new double[]{5}, new Smoothness[]{new Smoothness()});
+
+        var result = tc.evaluate(5.0, Timecourse.DISCONTINUOUS);
+        Assertions.assertEquals(kf, result);
+    }
 }
