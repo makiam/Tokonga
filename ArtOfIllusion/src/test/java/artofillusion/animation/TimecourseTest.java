@@ -30,7 +30,7 @@ class TimecourseTest {
     }
 
     @Test
-    @DisplayName("Test Subdivide Timecourse Not Enough Length")
+    @DisplayName("Test Subdivide Timecourse When Not Enough Points to subdivide")
     void testSubdivideTimecourseNotEnoughLength() {
         Timecourse tc = new Timecourse(new Keyframe[0], new double[0], new Smoothness[0]);
         Timecourse subdiv = tc.subdivide(Timecourse.DISCONTINUOUS);
@@ -115,8 +115,8 @@ class TimecourseTest {
     }
 
     @Test
-    @DisplayName("Test Timecourse Add And Replace Single Current Value")
-    void testTimecourseAddAndRemoveSingleCurrentValueByIndex() {
+    @DisplayName("Test Timecourse Remove Single Value By Index")
+    void testTimecourseRemoveSingleCurrentValueByIndex() {
         Timecourse tc = new Timecourse(new BooleanKeyframe[]{new BooleanKeyframe(true)}, new double[]{5}, new Smoothness[]{new Smoothness()});
         tc.removeTimepoint(0);
 
@@ -124,6 +124,34 @@ class TimecourseTest {
         Assertions.assertEquals(0, tc.getTimes().length);
         Assertions.assertEquals(0, tc.getSmoothness().length);
 
+    }
+
+    @Test
+    @DisplayName("Test Timecourse Add and Remove First Value By Index")
+    void testTimecourseAddAndRemoveFirstValueByIndex() {
+        Timecourse tc = new Timecourse(new BooleanKeyframe[]{new BooleanKeyframe(true)}, new double[]{5}, new Smoothness[]{new Smoothness()});
+        tc.addTimepoint(new BooleanKeyframe(false), 10.0, new Smoothness());
+        tc.removeTimepoint(0);
+
+        Assertions.assertEquals(1, tc.getValues().length);
+        Assertions.assertEquals(1, tc.getTimes().length);
+        Assertions.assertEquals(1, tc.getSmoothness().length);
+
+        Assertions.assertEquals(10, tc.getTimes()[0], 0);
+    }
+
+    @Test
+    @DisplayName("Test Timecourse Add and Remove Second Value By Index")
+    void testTimecourseAddAndRemoveSecondValueByIndex() {
+        Timecourse tc = new Timecourse(new BooleanKeyframe[]{new BooleanKeyframe(true)}, new double[]{5}, new Smoothness[]{new Smoothness()});
+        tc.addTimepoint(new BooleanKeyframe(false), 10.0, new Smoothness());
+        tc.removeTimepoint(1);
+
+        Assertions.assertEquals(1, tc.getValues().length);
+        Assertions.assertEquals(1, tc.getTimes().length);
+        Assertions.assertEquals(1, tc.getSmoothness().length);
+
+        Assertions.assertEquals(5, tc.getTimes()[0], 0);
     }
 
     @Test
