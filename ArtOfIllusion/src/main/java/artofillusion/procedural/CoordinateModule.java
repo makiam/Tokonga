@@ -32,6 +32,10 @@ public class CoordinateModule extends ProceduralModule<CoordinateModule> {
     public static final int T = 3;
     public static final String[] COORD_NAME = new String[]{"X", "Y", "Z", Translate.text("Time")};
 
+    public CoordinateModule() {
+        this(new Point());
+    }
+
     public CoordinateModule(Point position) {
         this(position, X);
     }

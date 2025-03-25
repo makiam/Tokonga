@@ -10,10 +10,16 @@
 
 package artofillusion.procedural;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.awt.Point;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.stream.Stream;
 
 
 /**
@@ -113,6 +119,14 @@ public class ModuleTest {
         Assertions.assertEquals(1, mm.getOutputIndex(port2));
     }
 
+    @ParameterizedTest
+    @MethodSource("getModuleClasses")
+    public void testDefaultModuleConstructor(Class clazz) throws ReflectiveOperationException {
+        var mod = (Module)clazz.getConstructor().newInstance();
+        mod.setPosition(123, 456);
+        Assertions.assertEquals(123, mod.bounds.x);
+        Assertions.assertEquals(456, mod.bounds.y);
+    }
 
     class TestInputsPortModule extends ProceduralModule<TestInputsPortModule> {
         public TestInputsPortModule(IOPort... ports) {
@@ -124,5 +138,9 @@ public class ModuleTest {
         public TestOutputsPortModule(IOPort... ports) {
             super("ManyInputsPortModule", new IOPort[]{}, ports,  new Point());
         }
+    }
+
+    static Stream<Class<? extends ProceduralModule<? extends ProceduralModule<?>>>> getModuleClasses() {
+        return List.of(ColorEqualityModule.class, CompareModule.class, PowerModule.class, RGBModule.class).stream();
     }
 }
