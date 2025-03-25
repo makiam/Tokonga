@@ -255,9 +255,10 @@ public class Procedure {
             throw new IOException();
         }
         links.clear();
-
-        for (int i = 0; i < in.readInt(); i++) {
-            IOPort to, from = modules.get(in.readInt()).getOutputPorts()[in.readInt()];
+        int linksCount = in.readInt();
+        for (int i = 0; i < linksCount; i++) {
+            IOPort to;
+            IOPort from = modules.get(in.readInt()).getOutputPorts()[in.readInt()];
             int j = in.readInt();
             if (j < 0) {
                 to = outputs.get(-j - 1).getInputPorts()[0];
