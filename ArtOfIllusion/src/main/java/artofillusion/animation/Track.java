@@ -24,7 +24,7 @@ public abstract class Track<T extends Track<?>> {
 
     protected String name;
     protected boolean enabled = true;
-    protected boolean quantized = true;
+
 
     protected Track() {
     }
@@ -65,14 +65,7 @@ public abstract class Track<T extends Track<?>> {
      * Returns whether timepoints for the track must lie exactly on a frame.
      */
     public boolean isQuantized() {
-        return quantized;
-    }
-
-    /**
-     * Set whether timepoints for the track must lie exactly on a frame.
-     */
-    public void setQuantized(boolean quantize) {
-        quantized = quantize;
+        return true;
     }
 
     /**

@@ -164,7 +164,7 @@ public class ConstraintTrack extends Track<ConstraintTrack> {
 
         t.name = name;
         t.enabled = enabled;
-        t.quantized = quantized;
+
         t.xType = xType;
         t.yType = yType;
         t.zType = zType;
@@ -185,7 +185,7 @@ public class ConstraintTrack extends Track<ConstraintTrack> {
 
         name = track.name;
         enabled = track.enabled;
-        quantized = track.quantized;
+
         xType = track.xType;
         yType = track.yType;
         zType = track.zType;
