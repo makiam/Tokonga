@@ -20,7 +20,7 @@ import java.util.*;
  * This is an abstract class representing an aspect of the scene which changes with time.
  * Tracks are typically defined either by a Timecourse or a Procedure.
  */
-public abstract class Track<T extends Track> {
+public abstract class Track<T extends Track<?>> {
 
     protected String name;
     protected boolean enabled = true;

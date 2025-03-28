@@ -25,6 +25,7 @@ import artofillusion.math.Vec3;
 import artofillusion.texture.Texture;
 import artofillusion.texture.TextureMapping;
 import artofillusion.texture.UniformTexture;
+import lombok.Getter;
 import org.junit.jupiter.api.Test;
 
 import org.junit.jupiter.api.Assertions;
@@ -113,9 +114,7 @@ class ObjectInfoTest {
     void testAddTrackToGivenPosInExistList1() {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
         test.addTrack(new RotationTrack(test));
-        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
-            test.addTrack(new PositionTrack(test), 5);
-        });
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> test.addTrack(new PositionTrack(test), 5));
     }
 
     /**
@@ -125,8 +124,8 @@ class ObjectInfoTest {
     @DisplayName("Test Remove Track By Track")
     void testRemoveTrackByTrack() {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
-        Track pTrack = new PositionTrack(test);
-        Track rTrack = new RotationTrack(test);
+        Track<?> pTrack = new PositionTrack(test);
+        Track<?> rTrack = new RotationTrack(test);
         test.addTrack(pTrack, 0);
         test.addTrack(rTrack, 1);
         test.removeTrack(pTrack);
@@ -142,8 +141,8 @@ class ObjectInfoTest {
     @DisplayName("Test Remove Track By Position First")
     void testRemoveTrackByPositionFirst() {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
-        Track pTrack = new PositionTrack(test);
-        Track rTrack = new RotationTrack(test);
+        Track<?> pTrack = new PositionTrack(test);
+        Track<?> rTrack = new RotationTrack(test);
         test.addTrack(pTrack, 0);
         test.addTrack(rTrack, 1);
         test.removeTrack(0);
@@ -159,8 +158,8 @@ class ObjectInfoTest {
     @DisplayName("Test Remove Track By Position Last")
     void testRemoveTrackByPositionLast() {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
-        Track pTrack = new PositionTrack(test);
-        Track rTrack = new RotationTrack(test);
+        Track<?> pTrack = new PositionTrack(test);
+        Track<?> rTrack = new RotationTrack(test);
         test.addTrack(pTrack, 0);
         test.addTrack(rTrack, 1);
         test.removeTrack(1);
@@ -382,8 +381,8 @@ class ObjectInfoTest {
     @DisplayName("Test Copy Info")
     void testCopyInfo() {
         Object3D sourceGeometry = new Cube(1d, 1d, 1d);
-        CoordinateSystem sourceCoords = new CoordinateSystem(Vec3.vx(), Vec3.vy(), Vec3.vz());
-        ObjectInfo source = new ObjectInfo(sourceGeometry, sourceCoords, "Source");
+        var coordinates = new CoordinateSystem(Vec3.vx(), Vec3.vy(), Vec3.vz());
+        ObjectInfo source = new ObjectInfo(sourceGeometry, coordinates, "Source");
         source.setVisible(false);
         source.setLocked(true);
         source.setId(100);
@@ -392,7 +391,7 @@ class ObjectInfoTest {
         Assertions.assertEquals(100, target.getId());
         Assertions.assertEquals("Source", target.getName());
         Assertions.assertEquals(sourceGeometry, target.getObject());
-        Assertions.assertEquals(sourceCoords, target.getCoords());
+        Assertions.assertEquals(coordinates, target.getCoords());
         Assertions.assertTrue(target.isLocked());
         Assertions.assertFalse(target.isVisible());
     }
@@ -427,7 +426,7 @@ class ObjectInfoTest {
         target.copyInfo(source);
         Assertions.assertNotNull(target.getTracks());
         Assertions.assertEquals(1, target.getTracks().length);
-        Track testT = target.getTracks()[0];
+        Track<?> testT = target.getTracks()[0];
         Assertions.assertInstanceOf(TextureTrack.class, testT);
         Assertions.assertEquals(target, target.getTracks()[0].getParent());
     }
@@ -630,9 +629,7 @@ class ObjectInfoTest {
     void testGetRenderingMeshWithUnsetTexture() {
         Object3D cube = new Cube(1d, 1d, 1d);
         ObjectInfo test = new ObjectInfo(cube, new CoordinateSystem(), "Test");
-        assertThrows(NullPointerException.class, () -> {
-            var rm = test.getRenderingMesh(0.1d);
-        });
+        assertThrows(NullPointerException.class, () -> test.getRenderingMesh(0.1d));
     }
 
     @Test
@@ -668,6 +665,7 @@ class ObjectInfoTest {
         Assertions.assertEquals(2, result[1].getTracks().length);
     }
 
+    @Getter
     private static class TextureTrackImpl extends TextureTrack {
 
         private int parameterChangedEventFireCount = 0;
@@ -681,9 +679,6 @@ class ObjectInfoTest {
             parameterChangedEventFireCount++;
         }
 
-        public int getParameterChangedEventFireCount() {
-            return parameterChangedEventFireCount;
-        }
     }
 
     private static class DistortionImpl extends Distortion {
@@ -727,7 +722,7 @@ class ObjectInfoTest {
         }
 
         @Override
-        public void setSize(double xsize, double ysize, double zsize) {
+        public void setSize(double xSize, double ySize, double zSize) {
             // To change body of generated methods, choose Tools | Templates.
             throw new UnsupportedOperationException("Not supported yet.");
         }
