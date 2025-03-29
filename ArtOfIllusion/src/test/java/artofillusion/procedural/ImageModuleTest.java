@@ -118,7 +118,7 @@ class ImageModuleTest {
      */
     private ImageModule buildModule(int colorModel) throws InterruptedException {
         BufferedImage im = new BufferedImage(SIZE, SIZE, BufferedImage.TYPE_INT_ARGB);
-        int[] pixel = ((DataBufferInt) ((BufferedImage) im).getRaster().getDataBuffer()).getData();
+        int[] pixel = ((DataBufferInt) im.getRaster().getDataBuffer()).getData();
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 float x = i / (float) SIZE;
