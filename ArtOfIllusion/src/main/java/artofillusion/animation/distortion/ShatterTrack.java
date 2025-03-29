@@ -68,7 +68,7 @@ public class ShatterTrack extends Track<ShatterTrack> {
 
         t.name = name;
         t.enabled = enabled;
-        t.quantized = quantized;
+
         t.startTime = startTime;
         t.size = size;
         t.speed = speed;
@@ -87,7 +87,7 @@ public class ShatterTrack extends Track<ShatterTrack> {
 
         name = track.name;
         enabled = track.enabled;
-        quantized = track.quantized;
+
         startTime = track.startTime;
         size = track.size;
         speed = track.speed;

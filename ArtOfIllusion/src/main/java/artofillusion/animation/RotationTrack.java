@@ -111,7 +111,7 @@ public class RotationTrack extends Track<RotationTrack> {
 
         t.name = name;
         t.enabled = enabled;
-        t.quantized = quantized;
+
         t.mode = mode;
         t.relCoords = relCoords;
         t.smoothingMethod = smoothingMethod;
@@ -134,7 +134,7 @@ public class RotationTrack extends Track<RotationTrack> {
 
         name = track.name;
         enabled = track.enabled;
-        quantized = track.quantized;
+
         mode = track.mode;
         relCoords = track.relCoords;
         smoothingMethod = track.smoothingMethod;

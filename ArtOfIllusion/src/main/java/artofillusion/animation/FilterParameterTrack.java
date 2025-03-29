@@ -77,7 +77,7 @@ public class FilterParameterTrack extends Track<FilterParameterTrack> {
         FilterParameterTrack t = new FilterParameterTrack(obj, filter);
         t.name = name;
         t.enabled = enabled;
-        t.quantized = quantized;
+
         t.smoothingMethod = smoothingMethod;
         t.tc = tc.duplicate(filter);
         return t;
@@ -91,7 +91,7 @@ public class FilterParameterTrack extends Track<FilterParameterTrack> {
 
         name = track.name;
         enabled = track.enabled;
-        quantized = track.quantized;
+
         smoothingMethod = track.smoothingMethod;
         tc = track.tc.duplicate(filter);
     }
@@ -162,9 +162,9 @@ public class FilterParameterTrack extends Track<FilterParameterTrack> {
                 values.add((Double) filter.getPropertyValue(i));
             } else if (properties[i].getType() == Property.COLOR) {
                 RGBColor color = (RGBColor) filter.getPropertyValue(i);
-                values.add(Double.valueOf(color.getRed()));
-                values.add(Double.valueOf(color.getGreen()));
-                values.add(Double.valueOf(color.getBlue()));
+                values.add((double) color.getRed());
+                values.add((double) color.getGreen());
+                values.add((double) color.getBlue());
             }
         }
         double[] val = new double[values.size()];
@@ -260,7 +260,7 @@ public class FilterParameterTrack extends Track<FilterParameterTrack> {
                 names.add(property.getName() + " (" + Translate.text("Blue") + ")");
             }
         }
-        return names.toArray(new String[names.size()]);
+        return names.toArray(new String[0]);
     }
 
     /**

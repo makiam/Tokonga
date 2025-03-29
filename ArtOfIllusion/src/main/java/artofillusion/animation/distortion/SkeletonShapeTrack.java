@@ -79,7 +79,7 @@ public class SkeletonShapeTrack extends Track<SkeletonShapeTrack> {
         SkeletonShapeTrack t = new SkeletonShapeTrack((ObjectInfo) obj);
         t.name = name;
         t.enabled = enabled;
-        t.quantized = quantized;
+
         t.smoothingMethod = smoothingMethod;
         t.useGestures = useGestures;
         t.tc = tc.duplicate(((ObjectInfo) obj).getObject());
@@ -95,7 +95,7 @@ public class SkeletonShapeTrack extends Track<SkeletonShapeTrack> {
 
         name = track.name;
         enabled = track.enabled;
-        quantized = track.quantized;
+
         smoothingMethod = track.smoothingMethod;
         useGestures = track.useGestures;
         tc = track.tc.duplicate(info.getObject());

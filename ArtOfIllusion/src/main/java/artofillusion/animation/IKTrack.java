@@ -117,7 +117,7 @@ public class IKTrack extends Track<IKTrack> {
 
         t.name = name;
         t.enabled = enabled;
-        t.quantized = quantized;
+
 
         constraints.forEach(c -> t.constraints.add(c.duplicate()));
         t.theWeight = theWeight.duplicate(t);
@@ -132,7 +132,7 @@ public class IKTrack extends Track<IKTrack> {
 
         name = track.name;
         enabled = track.enabled;
-        quantized = track.quantized;
+
         constraints.clear();
         track.constraints.forEach(c -> constraints.add(c.duplicate()));
         theWeight = track.theWeight.duplicate(track);
