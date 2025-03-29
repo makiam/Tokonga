@@ -150,7 +150,7 @@ class CompoundImplicitObjectTest {
     @DisplayName("Test Duplicate Empty Compound")
     void testDuplicateEmptyCompound() {
         CompoundImplicitObject source = new CompoundImplicitObject();
-        CompoundImplicitObject target = (CompoundImplicitObject) source.duplicate();
+        CompoundImplicitObject target = source.duplicate();
         Assertions.assertNotEquals(target, source);
         Assertions.assertEquals(0, target.getNumObjects());
     }
@@ -162,7 +162,7 @@ class CompoundImplicitObjectTest {
         ImplicitObject sourceImplicit = new ImplicitSphere(1.0, 1.0);
         CoordinateSystem ccs = new CoordinateSystem();
         source.addObject(sourceImplicit, ccs);
-        CompoundImplicitObject target = (CompoundImplicitObject) source.duplicate();
+        CompoundImplicitObject target = source.duplicate();
         Assertions.assertNotEquals(target, source);
         Assertions.assertEquals(1, target.getNumObjects());
         Assertions.assertNotEquals(sourceImplicit, target.getObject(0));

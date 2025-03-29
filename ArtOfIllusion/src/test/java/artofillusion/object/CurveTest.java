@@ -58,7 +58,7 @@ class CurveTest {
     @DisplayName("Test Curve Duplicate")
     void testCurveDuplicate() {
         Curve source = new Curve(new Vec3[]{new Vec3(), new Vec3()}, new float[]{0f, 1f}, Mesh.APPROXIMATING, false);
-        Curve curve = (Curve) source.duplicate();
+        Curve curve = source.duplicate();
         Assertions.assertNotEquals(source, curve);
         Assertions.assertNotNull(curve);
         Assertions.assertNotNull(curve.getVertices());
