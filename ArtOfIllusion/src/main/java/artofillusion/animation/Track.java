@@ -18,7 +18,7 @@ import java.util.*;
 
 /**
  * This is an abstract class representing an aspect of the scene which changes with time.
- * Tracks are typically defined either by a Timecourse or a Procedure.
+ * Tracks are typically defined either by a {@link Timecourse} or a {@link artofillusion.procedural.Procedure}.
  */
 public abstract class Track<T extends Track<?>> {
 
