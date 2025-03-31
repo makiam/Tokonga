@@ -82,7 +82,7 @@ public class TextureTrack extends Track<TextureTrack> {
 
         t.name = name;
         t.enabled = enabled;
-        t.quantized = quantized;
+
         t.smoothingMethod = smoothingMethod;
         t.timecourse = timecourse.duplicate(obj);
         t.theWeight = theWeight.duplicate(t);
@@ -96,7 +96,7 @@ public class TextureTrack extends Track<TextureTrack> {
 
         name = track.name;
         enabled = track.enabled;
-        quantized = track.quantized;
+
         smoothingMethod = track.smoothingMethod;
         timecourse = track.timecourse.duplicate(info);
         theWeight = track.theWeight.duplicate(this);

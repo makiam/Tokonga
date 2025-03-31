@@ -48,10 +48,9 @@ public class ProceduralRotationTrack extends Track<ProceduralRotationTrack> impl
     public ProceduralRotationTrack(ObjectInfo info) {
         super("Rotation (procedural)");
         this.info = info;
-        proc = new Procedure(new OutputModule[]{
-            new OutputModule("X", "0", 0.0, null, IOPort.NUMBER),
-            new OutputModule("Y", "0", 0.0, null, IOPort.NUMBER),
-            new OutputModule("Z", "0", 0.0, null, IOPort.NUMBER)});
+        proc = new Procedure(new OutputModule("X", "0", 0.0, null, IOPort.NUMBER),
+                new OutputModule("Y", "0", 0.0, null, IOPort.NUMBER),
+                new OutputModule("Z", "0", 0.0, null, IOPort.NUMBER));
         parameter = new TextureParameter[0];
         tc = new Timecourse(new Keyframe[0], new double[0], new Smoothness[0]);
         smoothingMethod = Timecourse.INTERPOLATING;
@@ -118,7 +117,7 @@ public class ProceduralRotationTrack extends Track<ProceduralRotationTrack> impl
 
         t.name = name;
         t.enabled = enabled;
-        t.quantized = quantized;
+
         t.proc.copy(proc);
         t.mode = mode;
         t.relCoords = relCoords;
@@ -136,7 +135,7 @@ public class ProceduralRotationTrack extends Track<ProceduralRotationTrack> impl
 
         name = track.name;
         enabled = track.enabled;
-        quantized = track.quantized;
+
         proc.copy(track.proc);
         mode = track.mode;
         relCoords = track.relCoords;
@@ -404,7 +403,7 @@ public class ProceduralRotationTrack extends Track<ProceduralRotationTrack> impl
         out.writeInt(t.length);
         for (int i = 0; i < t.length; i++) {
             out.writeDouble(t[i]);
-            ((ArrayKeyframe) v[i]).writeToStream(out);
+            v[i].writeToStream(out);
             s[i].writeToStream(out);
         }
         if (relCoords == OBJECT) {

@@ -63,7 +63,7 @@ public class WeightTrack extends Track<WeightTrack> {
 
         t.name = name;
         t.enabled = enabled;
-        t.quantized = quantized;
+
         t.smoothingMethod = smoothingMethod;
         t.tc = tc.duplicate(null);
         return t;
@@ -75,7 +75,7 @@ public class WeightTrack extends Track<WeightTrack> {
 
         name = track.name;
         enabled = track.enabled;
-        quantized = track.quantized;
+
         smoothingMethod = track.smoothingMethod;
         tc = track.tc.duplicate(null);
     }

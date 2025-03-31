@@ -1,4 +1,4 @@
-/* Copyright (C) 2018-2024 by Maksim Khramov
+/* Copyright (C) 2018-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -7,19 +7,14 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion.object;
 
 import artofillusion.Scene;
-import artofillusion.image.ComplexImage;
 import artofillusion.image.filter.ImageFilter;
-import artofillusion.math.CoordinateSystem;
 import artofillusion.test.util.StreamUtil;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.nio.ByteBuffer;
 
@@ -28,8 +23,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @author maksim.khramov
@@ -52,7 +45,7 @@ class SceneCameraTest {
 
     @Test
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    @DisplayName("Load Scene Camera Bad Version 1 Read Vesion Again")
+    @DisplayName("Load Scene Camera Bad Version 1 Read Version Again")
     void loadSceneCameraBadVersion1ReadVesionAgain() {
         assertThrows(InvalidObjectException.class, () -> {
             Scene scene = new Scene();
@@ -81,7 +74,7 @@ class SceneCameraTest {
     @Test
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     @DisplayName("Load Scene Camera Bad Version 2 Read Version Again")
-    void loadSceneCameraBadVersion2ReadVesionAgain() {
+    void loadSceneCameraBadVersion2ReadVersionAgain() {
         assertThrows(InvalidObjectException.class, () -> {
             Scene scene = new Scene();
             ByteBuffer wrap = ByteBuffer.allocate(4);
@@ -266,29 +259,4 @@ class SceneCameraTest {
         Assertions.assertEquals(sc.getImageFilters().length, clone.getImageFilters().length);
     }
 
-    @DisplayName("Dummy Image Filter")
-    static class DummyImageFilter extends ImageFilter {
-
-        @Override
-        public String getName() {
-            // To change body of generated methods, choose Tools | Templates.
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {
-            // To change body of generated methods, choose Tools | Templates.
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
-            // To change body of generated methods, choose Tools | Templates.
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public void initFromStream(DataInputStream in, Scene theScene) throws IOException {
-        }
-    }
 }

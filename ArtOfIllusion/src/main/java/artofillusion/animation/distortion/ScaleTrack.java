@@ -63,7 +63,7 @@ public class ScaleTrack extends Track<ScaleTrack> {
 
         t.name = name;
         t.enabled = enabled;
-        t.quantized = quantized;
+
         t.smoothingMethod = smoothingMethod;
         t.worldCoords = worldCoords;
         t.tc = tc.duplicate(obj);
@@ -77,7 +77,7 @@ public class ScaleTrack extends Track<ScaleTrack> {
 
         name = track.name;
         enabled = track.enabled;
-        quantized = track.quantized;
+
         smoothingMethod = track.smoothingMethod;
         worldCoords = track.worldCoords;
         tc = track.tc.duplicate(info);

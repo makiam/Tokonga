@@ -1,4 +1,4 @@
-/* Copyright (C) 2016-2023 by Maksim Khramov
+/* Copyright (C) 2016-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -21,6 +21,8 @@ import org.junit.platform.suite.api.SuiteDisplayName;
  */
 @Suite
 @SuiteDisplayName("Animation Suite")
-@SelectClasses({artofillusion.animation.JointEqualityTest.class, artofillusion.animation.JointDOFEqualityTest.class})
+@SelectClasses({ActorTest.class, IKTrackTest.class, JointEqualityTest.class, JointDOFEqualityTest.class,
+        PoseTrackTest.class, ScoreTest.class, TextureTrackTest.class, TimecourseTest.class,
+        TrackGraphTest.class, TrackQuantizeTest.class, VisibilityTrackTest.class, WeightTrackTest.class})
 public class AnimationSuite {
 }

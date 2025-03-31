@@ -45,10 +45,9 @@ public class ProceduralPositionTrack extends Track<ProceduralPositionTrack> impl
     public ProceduralPositionTrack(ObjectInfo info) {
         super("Position (procedural)");
         this.info = info;
-        proc = new Procedure(new OutputModule[]{
-            new OutputModule("X", "0", 0.0, null, IOPort.NUMBER),
-            new OutputModule("Y", "0", 0.0, null, IOPort.NUMBER),
-            new OutputModule("Z", "0", 0.0, null, IOPort.NUMBER)});
+        proc = new Procedure(new OutputModule("X", "0", 0.0, null, IOPort.NUMBER),
+                new OutputModule("Y", "0", 0.0, null, IOPort.NUMBER),
+                new OutputModule("Z", "0", 0.0, null, IOPort.NUMBER));
         parameter = new TextureParameter[0];
         tc = new Timecourse(new Keyframe[0], new double[0], new Smoothness[0]);
         smoothingMethod = Timecourse.INTERPOLATING;
@@ -134,7 +133,7 @@ public class ProceduralPositionTrack extends Track<ProceduralPositionTrack> impl
 
         t.name = name;
         t.enabled = enabled;
-        t.quantized = quantized;
+
         t.proc.copy(proc);
         t.mode = mode;
         t.relCoords = relCoords;
@@ -152,7 +151,7 @@ public class ProceduralPositionTrack extends Track<ProceduralPositionTrack> impl
 
         name = track.name;
         enabled = track.enabled;
-        quantized = track.quantized;
+
         proc.copy(track.proc);
         mode = track.mode;
         relCoords = track.relCoords;
@@ -422,7 +421,7 @@ public class ProceduralPositionTrack extends Track<ProceduralPositionTrack> impl
         out.writeInt(t.length);
         for (int i = 0; i < t.length; i++) {
             out.writeDouble(t[i]);
-            ((ArrayKeyframe) v[i]).writeToStream(out);
+            v[i].writeToStream(out);
             s[i].writeToStream(out);
         }
         if (relCoords == OBJECT) {
@@ -435,7 +434,7 @@ public class ProceduralPositionTrack extends Track<ProceduralPositionTrack> impl
      * Initialize this tracked based on its serialized representation as written by writeToStream().
      */
     @Override
-    public void initFromStream(DataInputStream in, Scene scene) throws IOException, InvalidObjectException {
+    public void initFromStream(DataInputStream in, Scene scene) throws IOException {
         short version = in.readShort();
         if (version < 0 || version > 1) {
             throw new InvalidObjectException("");

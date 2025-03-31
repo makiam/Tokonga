@@ -49,7 +49,7 @@ public class VisibilityTrack extends Track<VisibilityTrack> {
 
         t.name = name;
         t.enabled = enabled;
-        t.quantized = quantized;
+
         t.tc = tc.duplicate(obj);
         return t;
     }
@@ -60,7 +60,7 @@ public class VisibilityTrack extends Track<VisibilityTrack> {
 
         name = track.name;
         enabled = track.enabled;
-        quantized = track.quantized;
+
         tc = track.tc.duplicate(info);
     }
 

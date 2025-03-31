@@ -46,17 +46,17 @@ public class IKTrackTest {
         IKTrack it = new IKTrack(oi);
         it.setName("Test Name");
         it.setEnabled(false);
-        it.setQuantized(false);
+
         it.setUseGestures(false);
         it.addConstraint(0, new ObjectRef());
         it.addConstraint(1, new ObjectRef());
         it.addConstraint(20, null);
 
-        IKTrack duplicate = (IKTrack)it.duplicate(oi);
+        IKTrack duplicate = it.duplicate(oi);
         Assertions.assertNotNull(duplicate);
         Assertions.assertEquals(oi, duplicate.getParent());
         Assertions.assertFalse(duplicate.isEnabled());
-        Assertions.assertFalse(duplicate.isQuantized());
+        Assertions.assertTrue(duplicate.isQuantized());
 
         Assertions.assertEquals("Test Name", duplicate.getName());
 
@@ -75,7 +75,7 @@ public class IKTrackTest {
         IKTrack it = new IKTrack(oi1);
         it.setName("Inverse Kinematics");
         it.setEnabled(false);
-        it.setQuantized(false);
+
         it.setUseGestures(false);
 
         IKTrack source = new IKTrack(oi2);

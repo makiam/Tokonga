@@ -82,7 +82,7 @@ public class PoseTrack extends Track<PoseTrack> {
 
         t.name = name;
         t.enabled = enabled;
-        t.quantized = quantized;
+
         t.smoothingMethod = smoothingMethod;
         t.tc = tc.duplicate(obj);
         t.relative = relative;
@@ -102,7 +102,7 @@ public class PoseTrack extends Track<PoseTrack> {
 
         name = track.name;
         enabled = track.enabled;
-        quantized = track.quantized;
+
         smoothingMethod = track.smoothingMethod;
         tc = track.tc.duplicate(info);
         relative = track.relative;

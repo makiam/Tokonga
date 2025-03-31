@@ -143,14 +143,14 @@ class VisibilityTrackTest {
         VisibilityTrack source = new VisibilityTrack(oi);
         source.setName("Source");
         source.setEnabled(false);
-        source.setQuantized(false);
+
         source.getTimecourse().addTimepoint(new BooleanKeyframe(true), 5, new Smoothness());
         source.getTimecourse().addTimepoint(new BooleanKeyframe(false), 10, new Smoothness());
         VisibilityTrack target = new VisibilityTrack(oi);
         target.copy(source);
         Assertions.assertEquals(target.getName(), "Source");
         Assertions.assertFalse(target.isEnabled());
-        Assertions.assertFalse(target.isQuantized());
+        Assertions.assertTrue(target.isQuantized());
         Assertions.assertEquals(source.getTimecourse().getValues().length, target.getTimecourse().getValues().length);
     }
 }

@@ -37,10 +37,9 @@ public class CustomDistortionTrack extends Track<CustomDistortionTrack> implemen
     public CustomDistortionTrack(ObjectInfo info) {
         super("Deform");
         this.info = info;
-        proc = new Procedure(new OutputModule[]{
-            new OutputModule("X", "X", 0.0, null, IOPort.NUMBER),
-            new OutputModule("Y", "Y", 0.0, null, IOPort.NUMBER),
-            new OutputModule("Z", "Z", 0.0, null, IOPort.NUMBER)});
+        proc = new Procedure(new OutputModule("X", "X", 0.0, null, IOPort.NUMBER),
+                new OutputModule("Y", "Y", 0.0, null, IOPort.NUMBER),
+                new OutputModule("Z", "Z", 0.0, null, IOPort.NUMBER));
         parameter = new TextureParameter[0];
         tc = new Timecourse(new Keyframe[0], new double[0], new Smoothness[0]);
         smoothingMethod = Timecourse.INTERPOLATING;
@@ -74,7 +73,7 @@ public class CustomDistortionTrack extends Track<CustomDistortionTrack> implemen
 
         t.name = name;
         t.enabled = enabled;
-        t.quantized = quantized;
+
         t.proc.copy(proc);
         t.worldCoords = worldCoords;
         t.smoothingMethod = smoothingMethod;
@@ -89,7 +88,7 @@ public class CustomDistortionTrack extends Track<CustomDistortionTrack> implemen
 
         name = track.name;
         enabled = track.enabled;
-        quantized = track.quantized;
+
         proc.copy(track.proc);
         worldCoords = track.worldCoords;
         smoothingMethod = track.smoothingMethod;
@@ -255,7 +254,7 @@ public class CustomDistortionTrack extends Track<CustomDistortionTrack> implemen
         out.writeInt(t.length);
         for (int i = 0; i < t.length; i++) {
             out.writeDouble(t[i]);
-            ((ArrayKeyframe) v[i]).writeToStream(out);
+            v[i].writeToStream(out);
             s[i].writeToStream(out);
         }
         theWeight.writeToStream(out, scene);

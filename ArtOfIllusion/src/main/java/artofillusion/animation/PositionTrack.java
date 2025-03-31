@@ -33,9 +33,9 @@ public class PositionTrack extends Track<PositionTrack> {
     int joint;
     ObjectRef relObject;
     WeightTrack theWeight;
-    boolean enablex;
-    boolean enabley;
-    boolean enablez;
+    boolean enableX;
+    boolean enableY;
+    boolean enableZ;
 
     public static final int ABSOLUTE = 0;
     public static final int RELATIVE = 1;
@@ -58,9 +58,9 @@ public class PositionTrack extends Track<PositionTrack> {
         relCoords = PARENT;
         relObject = new ObjectRef();
         theWeight = new WeightTrack(this);
-        enablex = affectX;
-        enabley = affectY;
-        enablez = affectZ;
+        enableX = affectX;
+        enableY = affectY;
+        enableZ = affectZ;
         joint = -1;
     }
 
@@ -78,13 +78,13 @@ public class PositionTrack extends Track<PositionTrack> {
         Vec3 v = info.getCoords().getOrigin();
         if (mode == ABSOLUTE) {
             double w = 1.0 - weight;
-            if (enablex) {
+            if (enableX) {
                 v.x *= w;
             }
-            if (enabley) {
+            if (enableY) {
                 v.y *= w;
             }
-            if (enablez) {
+            if (enableZ) {
                 v.z *= w;
             }
         }
@@ -120,13 +120,13 @@ public class PositionTrack extends Track<PositionTrack> {
                 pos.add(info.getCoords().getOrigin());
             }
         }
-        if (enablex) {
+        if (enableX) {
             v.x += pos.x * weight;
         }
-        if (enabley) {
+        if (enableY) {
             v.y += pos.y * weight;
         }
-        if (enablez) {
+        if (enableZ) {
             v.z += pos.z * weight;
         }
         info.getCoords().setOrigin(v);
@@ -141,16 +141,16 @@ public class PositionTrack extends Track<PositionTrack> {
 
         t.name = name;
         t.enabled = enabled;
-        t.quantized = quantized;
+
         t.mode = mode;
         t.relCoords = relCoords;
         t.smoothingMethod = smoothingMethod;
         t.tc = tc.duplicate(obj);
         t.relObject = relObject.duplicate();
         t.theWeight = theWeight.duplicate(t);
-        t.enablex = enablex;
-        t.enabley = enabley;
-        t.enablez = enablez;
+        t.enableX = enableX;
+        t.enableY = enableY;
+        t.enableZ = enableZ;
         t.joint = joint;
         return t;
     }
@@ -163,16 +163,16 @@ public class PositionTrack extends Track<PositionTrack> {
 
         name = track.name;
         enabled = track.enabled;
-        quantized = track.quantized;
+
         mode = track.mode;
         relCoords = track.relCoords;
         smoothingMethod = track.smoothingMethod;
         tc = track.tc.duplicate(info);
         relObject = track.relObject.duplicate();
         theWeight = track.theWeight.duplicate(this);
-        enablex = track.enablex;
-        enabley = track.enabley;
-        enablez = track.enablez;
+        enableX = track.enableX;
+        enableY = track.enableY;
+        enableZ = track.enableZ;
         joint = track.joint;
     }
 
@@ -257,9 +257,9 @@ public class PositionTrack extends Track<PositionTrack> {
                 current = coords.toLocal().times(current);
             }
         }
-        if ((enablex && Math.abs(pos.x - current.x) > 1e-10)
-                || (enabley && Math.abs(pos.y - current.y) > 1e-10)
-                || (enablez && Math.abs(pos.z - current.z) > 1e-10)) {
+        if ((enableX && Math.abs(pos.x - current.x) > 1e-10)
+                || (enableY && Math.abs(pos.y - current.y) > 1e-10)
+                || (enableZ && Math.abs(pos.z - current.z) > 1e-10)) {
             return setKeyframe(time);
         }
         return null;
@@ -293,21 +293,21 @@ public class PositionTrack extends Track<PositionTrack> {
      * Determine whether this track affects the X coordinate.
      */
     public boolean affectsX() {
-        return enablex;
+        return enableX;
     }
 
     /**
      * Determine whether this track affects the Y coordinate.
      */
     public boolean affectsY() {
-        return enabley;
+        return enableY;
     }
 
     /**
      * Determine whether this track affects the Z coordinate.
      */
     public boolean affectsZ() {
-        return enablez;
+        return enableZ;
     }
 
     /**
@@ -498,9 +498,9 @@ public class PositionTrack extends Track<PositionTrack> {
         out.writeInt(mode);
         out.writeInt(relCoords);
         out.writeInt(joint);
-        out.writeBoolean(enablex);
-        out.writeBoolean(enabley);
-        out.writeBoolean(enablez);
+        out.writeBoolean(enableX);
+        out.writeBoolean(enableY);
+        out.writeBoolean(enableZ);
         out.writeInt(t.length);
         for (int i = 0; i < t.length; i++) {
             out.writeDouble(t[i]);
@@ -517,7 +517,7 @@ public class PositionTrack extends Track<PositionTrack> {
      * Initialize this tracked based on its serialized representation as written by writeToStream().
      */
     @Override
-    public void initFromStream(DataInputStream in, Scene scene) throws IOException, InvalidObjectException {
+    public void initFromStream(DataInputStream in, Scene scene) throws IOException {
         short version = in.readShort();
         if (version < 0 || version > 1) {
             throw new InvalidObjectException("");
@@ -528,9 +528,9 @@ public class PositionTrack extends Track<PositionTrack> {
         mode = in.readInt();
         relCoords = in.readInt();
         joint = (version == 0 ? -1 : in.readInt());
-        enablex = in.readBoolean();
-        enabley = in.readBoolean();
-        enablez = in.readBoolean();
+        enableX = in.readBoolean();
+        enableY = in.readBoolean();
+        enableZ = in.readBoolean();
         int keys = in.readInt();
         double[] t = new double[keys];
         Smoothness[] s = new Smoothness[keys];
@@ -652,9 +652,9 @@ public class PositionTrack extends Track<PositionTrack> {
         BCheckBox xbox;
         BCheckBox ybox;
         BCheckBox zbox;
-        row.add(xbox = new BCheckBox("X", enablex));
-        row.add(ybox = new BCheckBox("Y", enabley));
-        row.add(zbox = new BCheckBox("Z", enablez));
+        row.add(xbox = new BCheckBox("X", enableX));
+        row.add(ybox = new BCheckBox("Y", enableY));
+        row.add(zbox = new BCheckBox("Z", enableZ));
         ComponentsDialog dlg = new ComponentsDialog(win, Translate.text("positionTrackTitle"), new Widget[]{nameField, smoothChoice, modeChoice, jointChoice, coordsChoice, objSelector, row}, new String[]{Translate.text("trackName"), Translate.text("SmoothingMethod"), Translate.text("trackMode"), Translate.text("applyTo"), Translate.text("CoordinateSystem"), "", Translate.text("trackAffects")});
         if (!dlg.clickedOk()) {
             return;
@@ -670,8 +670,8 @@ public class PositionTrack extends Track<PositionTrack> {
         } else {
             joint = j[jointChoice.getSelectedIndex() - 1].id;
         }
-        enablex = xbox.getState();
-        enabley = ybox.getState();
-        enablez = zbox.getState();
+        enableX = xbox.getState();
+        enableY = ybox.getState();
+        enableZ = zbox.getState();
     }
 }

@@ -70,7 +70,7 @@ public class BendTrack extends Track<BendTrack> {
 
         t.name = name;
         t.enabled = enabled;
-        t.quantized = quantized;
+
         t.axis = axis;
         t.direction = direction;
         t.forward = forward;
@@ -87,7 +87,7 @@ public class BendTrack extends Track<BendTrack> {
 
         name = track.name;
         enabled = track.enabled;
-        quantized = track.quantized;
+
         axis = track.axis;
         direction = track.direction;
         forward = track.forward;
@@ -214,7 +214,7 @@ public class BendTrack extends Track<BendTrack> {
         out.writeInt(t.length);
         for (int i = 0; i < t.length; i++) {
             out.writeDouble(t[i]);
-            ((ScalarKeyframe) v[i]).writeToStream(out);
+            v[i].writeToStream(out);
             s[i].writeToStream(out);
         }
         theWeight.writeToStream(out, scene);

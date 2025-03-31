@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * This class represents a quantity which changes as a function of time. It is defined by
- * a series of timepoints, with a value at each one. There is also a smoothness value for
+ * a series of timepoints, with a value at each one. There is also a {@link Smoothness} value for
  * each timepoint, which affects how it is interpolated.
  */
 public class Timecourse {
