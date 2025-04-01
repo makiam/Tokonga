@@ -102,6 +102,7 @@ public class ModuleTest {
     }
 
 
+    @Test
     public void testOutputPortLookup1() {
         var port = new NumericInputPort(IOPort.LEFT, "Description");
         var mm = new TestOutputsPortModule(port);

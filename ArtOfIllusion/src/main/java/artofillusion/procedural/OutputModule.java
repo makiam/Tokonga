@@ -19,7 +19,7 @@ import java.awt.*;
 /* This is a Module which represents one of the output values of a procedure. */
 final public class OutputModule extends ProceduralModule<OutputModule> {
 
-    private Rectangle bounds;
+//    private Rectangle bounds;
     /* All output modules should be the same width. */
     @Setter
     int width;
