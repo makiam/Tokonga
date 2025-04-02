@@ -39,10 +39,10 @@ public class ProceduralTexture2D extends Texture2D implements ProcedureOwner {
      */
     private Procedure createProcedure() {
         return new Procedure(new OutputModule[]{
-            new OutputModule(Translate.text("Diffuse"), Translate.text("white"), 0.0, new RGBColor(1.0f, 1.0f, 1.0f), IOPort.COLOR),
-            new OutputModule(Translate.text("Specular"), Translate.text("white"), 0.0, new RGBColor(1.0f, 1.0f, 1.0f), IOPort.COLOR),
-            new OutputModule(Translate.text("Transparent"), Translate.text("white"), 0.0, new RGBColor(1.0f, 1.0f, 1.0f), IOPort.COLOR),
-            new OutputModule(Translate.text("Emissive"), Translate.text("black"), 0.0, new RGBColor(0.0f, 0.0f, 0.0f), IOPort.COLOR),
+            new OutputModule(Translate.text("Diffuse"), Translate.text("white"), new RGBColor(1.0f, 1.0f, 1.0f)),
+            new OutputModule(Translate.text("Specular"), Translate.text("white"), new RGBColor(1.0f, 1.0f, 1.0f)),
+            new OutputModule(Translate.text("Transparent"), Translate.text("white"), new RGBColor(1.0f, 1.0f, 1.0f)),
+            new OutputModule(Translate.text("Emissive"), Translate.text("black"), new RGBColor()),
             new OutputModule(Translate.text("Transparency"), "0", 0.0),
             new OutputModule(Translate.text("Specularity"), "0", 0.0),
             new OutputModule(Translate.text("Shininess"), "0", 0.0),

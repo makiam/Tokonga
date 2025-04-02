@@ -23,8 +23,8 @@ final public class OutputModule extends ProceduralModule<OutputModule> {
     /* All output modules should be the same width. */
     @Setter
     int width;
-    final double defaultValue;
-    final RGBColor defaultColor;
+    private final double defaultValue;
+    private final RGBColor defaultColor;
 
     public OutputModule(String name, String defaultLabel, double defaultValue) {
         this(name, defaultLabel, defaultValue, new RGBColor(), IOPort.NUMBER);
