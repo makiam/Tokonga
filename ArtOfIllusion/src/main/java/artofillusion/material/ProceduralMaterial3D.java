@@ -42,14 +42,13 @@ public class ProceduralMaterial3D extends Material3D implements ProcedureOwner {
      * Create a Procedure object for this material.
      */
     private Procedure createProcedure() {
-        return new Procedure(new OutputModule[]{
-            new OutputModule(Translate.text("EmissiveColor"), Translate.text("black"), new RGBColor(0.0f, 0.0f, 0.0f)),
-            new OutputModule(Translate.text("TransparentColor"), Translate.text("white"), new RGBColor(1.0f, 1.0f, 1.0f)),
-            new OutputModule(Translate.text("ScatteringColor"), Translate.text("gray"), new RGBColor(0.5f, 0.5f, 0.5f)),
-            new OutputModule(Translate.text("Transparency"), "" + 0.5, 0.5),
-            new OutputModule(Translate.text("Scattering"), "0", 0.0),
-            new OutputModule(Translate.text("Density"), "" + 1.0, 1.0),
-            new OutputModule(Translate.text("Eccentricity"), "0", 0.0)});
+        return new Procedure(new OutputModule(Translate.text("EmissiveColor"), Translate.text("black"), new RGBColor()),
+                new OutputModule(Translate.text("TransparentColor"), Translate.text("white"), new RGBColor(1.0f, 1.0f, 1.0f)),
+                new OutputModule(Translate.text("ScatteringColor"), Translate.text("gray"), new RGBColor(0.5f, 0.5f, 0.5f)),
+                new OutputModule(Translate.text("Transparency"), "" + 0.5, 0.5),
+                new OutputModule(Translate.text("Scattering"), "0", 0.0),
+                new OutputModule(Translate.text("Density"), "" + 1.0, 1.0),
+                new OutputModule(Translate.text("Eccentricity"), "0", 0.0));
     }
 
     /**
@@ -177,7 +176,7 @@ public class ProceduralMaterial3D extends Material3D implements ProcedureOwner {
         new ProcedureEditor(proc, this, sc);
     }
 
-    public ProceduralMaterial3D(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+    public ProceduralMaterial3D(DataInputStream in, Scene theScene) throws IOException {
         short version = in.readShort();
 
         if (version < 0 || version > 1) {

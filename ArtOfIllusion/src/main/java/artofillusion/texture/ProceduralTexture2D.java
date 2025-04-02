@@ -38,18 +38,17 @@ public class ProceduralTexture2D extends Texture2D implements ProcedureOwner {
      * Create a Procedure object for this texture.
      */
     private Procedure createProcedure() {
-        return new Procedure(new OutputModule[]{
-            new OutputModule(Translate.text("Diffuse"), Translate.text("white"), new RGBColor(1.0f, 1.0f, 1.0f)),
-            new OutputModule(Translate.text("Specular"), Translate.text("white"), new RGBColor(1.0f, 1.0f, 1.0f)),
-            new OutputModule(Translate.text("Transparent"), Translate.text("white"), new RGBColor(1.0f, 1.0f, 1.0f)),
-            new OutputModule(Translate.text("Emissive"), Translate.text("black"), new RGBColor()),
-            new OutputModule(Translate.text("Transparency"), "0", 0.0),
-            new OutputModule(Translate.text("Specularity"), "0", 0.0),
-            new OutputModule(Translate.text("Shininess"), "0", 0.0),
-            new OutputModule(Translate.text("Roughness"), "0", 0.0),
-            new OutputModule(Translate.text("Cloudiness"), "0", 0.0),
-            new OutputModule(Translate.text("BumpHeight"), "0", 0.0),
-            new OutputModule(Translate.text("Displacement"), "0", 0.0)});
+        return new Procedure(new OutputModule(Translate.text("Diffuse"), Translate.text("white"), new RGBColor(1.0f, 1.0f, 1.0f)),
+                new OutputModule(Translate.text("Specular"), Translate.text("white"), new RGBColor(1.0f, 1.0f, 1.0f)),
+                new OutputModule(Translate.text("Transparent"), Translate.text("white"), new RGBColor(1.0f, 1.0f, 1.0f)),
+                new OutputModule(Translate.text("Emissive"), Translate.text("black"), new RGBColor()),
+                new OutputModule(Translate.text("Transparency"), "0", 0.0),
+                new OutputModule(Translate.text("Specularity"), "0", 0.0),
+                new OutputModule(Translate.text("Shininess"), "0", 0.0),
+                new OutputModule(Translate.text("Roughness"), "0", 0.0),
+                new OutputModule(Translate.text("Cloudiness"), "0", 0.0),
+                new OutputModule(Translate.text("BumpHeight"), "0", 0.0),
+                new OutputModule(Translate.text("Displacement"), "0", 0.0));
     }
 
     /**
