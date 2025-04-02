@@ -37,9 +37,9 @@ public class CustomDistortionTrack extends Track<CustomDistortionTrack> implemen
     public CustomDistortionTrack(ObjectInfo info) {
         super("Deform");
         this.info = info;
-        proc = new Procedure(new OutputModule("X", "X", 0.0, null, IOPort.NUMBER),
-                new OutputModule("Y", "Y", 0.0, null, IOPort.NUMBER),
-                new OutputModule("Z", "Z", 0.0, null, IOPort.NUMBER));
+        proc = new Procedure(new OutputModule("X", "X", 0.0),
+                new OutputModule("Y", "Y", 0.0),
+                new OutputModule("Z", "Z", 0.0));
         parameter = new TextureParameter[0];
         tc = new Timecourse(new Keyframe[0], new double[0], new Smoothness[0]);
         smoothingMethod = Timecourse.INTERPOLATING;

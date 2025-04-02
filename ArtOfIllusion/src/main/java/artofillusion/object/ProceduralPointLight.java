@@ -48,9 +48,8 @@ public class ProceduralPointLight extends PointLight {
      * Create a Procedure object for this light.
      */
     private Procedure createProcedure() {
-        return new Procedure(new OutputModule[]{
-            new OutputModule("Color", "White", 0.0, new RGBColor(1.0, 1.0, 1.0), IOPort.COLOR),
-            new OutputModule("Intensity", "1/r\u00B2", 1.0, null, IOPort.NUMBER)});
+        return new Procedure(new OutputModule("Color", "White", new RGBColor(1.0, 1.0, 1.0)),
+                new OutputModule("Intensity", "1/r\u00B2", 1.0));
     }
 
     /**
