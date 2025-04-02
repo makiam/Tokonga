@@ -43,18 +43,16 @@ repositories {
 
 
 ext {
-    lombokVersion = "1.18.+"
     junitVersion = "5.9.1"
-
 }
 
 dependencies {
     compileOnly("org.jetbrains:annotations:24.0.1")
-    compileOnly "org.projectlombok:lombok:${lombokVersion}"
-    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-    
-    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
-    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
+
+    testCompileOnly libs.lombok
+    testAnnotationProcessor libs.lombok
     
     implementation libs.buoy
 
