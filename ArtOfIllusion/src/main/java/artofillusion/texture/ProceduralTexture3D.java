@@ -43,13 +43,13 @@ public class ProceduralTexture3D extends Texture3D implements ProcedureOwner {
             new OutputModule(Translate.text("Specular"), Translate.text("white"), 0.0, new RGBColor(1.0f, 1.0f, 1.0f), IOPort.COLOR),
             new OutputModule(Translate.text("Transparent"), Translate.text("white"), 0.0, new RGBColor(1.0f, 1.0f, 1.0f), IOPort.COLOR),
             new OutputModule(Translate.text("Emissive"), Translate.text("black"), 0.0, new RGBColor(0.0f, 0.0f, 0.0f), IOPort.COLOR),
-            new OutputModule(Translate.text("Transparency"), "0", 0.0, null, IOPort.NUMBER),
-            new OutputModule(Translate.text("Specularity"), "0", 0.0, null, IOPort.NUMBER),
-            new OutputModule(Translate.text("Shininess"), "0", 0.0, null, IOPort.NUMBER),
-            new OutputModule(Translate.text("Roughness"), "0", 0.0, null, IOPort.NUMBER),
-            new OutputModule(Translate.text("Cloudiness"), "0", 0.0, null, IOPort.NUMBER),
-            new OutputModule(Translate.text("BumpHeight"), "0", 0.0, null, IOPort.NUMBER),
-            new OutputModule(Translate.text("Displacement"), "0", 0.0, null, IOPort.NUMBER)
+            new OutputModule(Translate.text("Transparency"), "0", 0.0),
+            new OutputModule(Translate.text("Specularity"), "0", 0.0),
+            new OutputModule(Translate.text("Shininess"), "0", 0.0),
+            new OutputModule(Translate.text("Roughness"), "0", 0.0),
+            new OutputModule(Translate.text("Cloudiness"), "0", 0.0),
+            new OutputModule(Translate.text("BumpHeight"), "0", 0.0),
+            new OutputModule(Translate.text("Displacement"), "0", 0.0)
         });
     }
 

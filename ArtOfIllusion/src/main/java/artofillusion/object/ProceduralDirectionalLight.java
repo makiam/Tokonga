@@ -50,7 +50,7 @@ public class ProceduralDirectionalLight extends DirectionalLight {
     private Procedure createProcedure() {
         return new Procedure(new OutputModule[]{
             new OutputModule("Color", "White", 0.0, new RGBColor(1.0, 1.0, 1.0), IOPort.COLOR),
-            new OutputModule("Intensity", "1", 1.0, null, IOPort.NUMBER)});
+            new OutputModule("Intensity", "1", 1.0)});
     }
 
     /**

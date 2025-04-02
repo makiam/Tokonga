@@ -48,9 +48,9 @@ public class ProceduralRotationTrack extends Track<ProceduralRotationTrack> impl
     public ProceduralRotationTrack(ObjectInfo info) {
         super("Rotation (procedural)");
         this.info = info;
-        proc = new Procedure(new OutputModule("X", "0", 0.0, null, IOPort.NUMBER),
-                new OutputModule("Y", "0", 0.0, null, IOPort.NUMBER),
-                new OutputModule("Z", "0", 0.0, null, IOPort.NUMBER));
+        proc = new Procedure(new OutputModule("X", "0", 0.0),
+                new OutputModule("Y", "0", 0.0),
+                new OutputModule("Z", "0", 0.0));
         parameter = new TextureParameter[0];
         tc = new Timecourse(new Keyframe[0], new double[0], new Smoothness[0]);
         smoothingMethod = Timecourse.INTERPOLATING;

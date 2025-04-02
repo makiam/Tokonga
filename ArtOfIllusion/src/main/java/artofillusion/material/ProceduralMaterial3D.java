@@ -46,10 +46,10 @@ public class ProceduralMaterial3D extends Material3D implements ProcedureOwner {
             new OutputModule(Translate.text("EmissiveColor"), Translate.text("black"), 0.0, new RGBColor(0.0f, 0.0f, 0.0f), IOPort.COLOR),
             new OutputModule(Translate.text("TransparentColor"), Translate.text("white"), 0.0, new RGBColor(1.0f, 1.0f, 1.0f), IOPort.COLOR),
             new OutputModule(Translate.text("ScatteringColor"), Translate.text("gray"), 0.0, new RGBColor(0.5f, 0.5f, 0.5f), IOPort.COLOR),
-            new OutputModule(Translate.text("Transparency"), "" + 0.5, 0.5, null, IOPort.NUMBER),
-            new OutputModule(Translate.text("Scattering"), "0", 0.0, null, IOPort.NUMBER),
-            new OutputModule(Translate.text("Density"), "" + 1.0, 1.0, null, IOPort.NUMBER),
-            new OutputModule(Translate.text("Eccentricity"), "0", 0.0, null, IOPort.NUMBER)});
+            new OutputModule(Translate.text("Transparency"), "" + 0.5, 0.5),
+            new OutputModule(Translate.text("Scattering"), "0", 0.0),
+            new OutputModule(Translate.text("Density"), "" + 1.0, 1.0),
+            new OutputModule(Translate.text("Eccentricity"), "0", 0.0)});
     }
 
     /**
