@@ -1,5 +1,5 @@
 /* Copyright (C) 2011 by Peter Eastman
-   Changes copyright (C) 2022-2023 by Maksim Khramov
+   Changes copyright (C) 2022-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -257,7 +257,7 @@ public class ModuleMenu extends CustomWidget {
         public Rectangle bounds;
 
         public Entry(String name, Class<? extends Module> moduleClass) {
-            this(name, moduleClass, new Object[]{new Point()});
+            this(name, moduleClass, new Point());
         }
 
         public Entry(String name, Class<? extends Module> moduleClass, Object... args) {

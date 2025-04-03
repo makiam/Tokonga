@@ -1328,7 +1328,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
         // Save the image maps.
         out.writeInt(_images.size());
-        for (var     image : _images) {
+        for (var image : _images) {
             out.writeUTF(image.getClass().getName());
             image.writeToStream(out, this);
         }
