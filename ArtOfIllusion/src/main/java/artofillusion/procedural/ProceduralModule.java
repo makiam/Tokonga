@@ -14,12 +14,14 @@ package artofillusion.procedural;
 import artofillusion.Scene;
 
 import java.awt.*;
+import java.io.Console;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.ArrayList;
 import java.util.List;
 /**
  * This represents a module in a procedure. This is an abstract class, whose
@@ -45,7 +47,7 @@ public class ProceduralModule<P extends Module> extends artofillusion.procedural
         return new Dimension(bounds.height, bounds.width);
     }
 
-    public List<java.util.function.Supplier<ProceduralModule<?>>> getModuleSuppliers() {
+    public List<ModuleSuppler> getModuleSuppliers() {
         return List.of();
     }
 
