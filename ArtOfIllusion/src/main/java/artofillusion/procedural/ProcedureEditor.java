@@ -423,10 +423,12 @@ public class ProcedureEditor extends CustomWidget {
         Rectangle bounds = module.getBounds();
 
         Stroke currentStroke = g.getStroke();
+        //Render inner rectangle
         g.setColor(Color.lightGray);
         g.fillRoundRect(bounds.x + 1, bounds.y + 1, bounds.width - 2, bounds.height - 2, 3, 3);
         g.setColor(selected ? selectedColor : outlineColor);
         g.setStroke(contourStroke);
+        //render outer rectangle
         g.drawRoundRect(bounds.x - 1, bounds.y - 1, bounds.width + 2, bounds.height + 2, 4, 4);
         g.setStroke(currentStroke);
 
