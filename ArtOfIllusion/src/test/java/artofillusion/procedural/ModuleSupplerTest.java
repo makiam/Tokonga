@@ -1,9 +1,6 @@
 package artofillusion.procedural;
 
-import artofillusion.test.util.RegisterTestResources;
 import artofillusion.test.util.SetupLocale;
-import artofillusion.test.util.SetupLookAndFeel;
-import artofillusion.test.util.SetupTheme;
 import artofillusion.ui.Translate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,8 +13,7 @@ class ModuleSupplerTest {
     public void testModuleSupplier() {
         CoordinateModule cm = new CoordinateModule();
 
-        ModuleSuppler<CoordinateModule> cms = new ModuleSuppler<>(CoordinateModule.class, it ->
-            it.setCoordinate(CoordinateModule.Y));
+        ModuleSuppler<CoordinateModule> cms = new ModuleSuppler<>(cm, it -> it.setCoordinate(CoordinateModule.Y));
         var neww = cms.get();
         Assertions.assertNotEquals(cm, neww);
         Assertions.assertEquals(CoordinateModule.Y, neww.coordinate);
@@ -28,7 +24,7 @@ class ModuleSupplerTest {
     public void testDefaultModuleSupplier() {
         CoordinateModule cm = new CoordinateModule();
 
-        ModuleSuppler<CoordinateModule> cms = new ModuleSuppler<>(CoordinateModule.class);
+        ModuleSuppler<CoordinateModule> cms = new ModuleSuppler<>(cm);
         var neww = cms.get();
         Assertions.assertNotEquals(cm, neww);
         Assertions.assertEquals(CoordinateModule.X, neww.coordinate);
@@ -39,8 +35,7 @@ class ModuleSupplerTest {
     public void testTimeCoordinateModuleSupplier() {
         CoordinateModule cm = new CoordinateModule();
 
-        ModuleSuppler<CoordinateModule> cms = new ModuleSuppler<>(CoordinateModule.class, it ->
-                it.setCoordinate(CoordinateModule.T));
+        ModuleSuppler<CoordinateModule> cms = new ModuleSuppler<>(cm, it -> it.setCoordinate(CoordinateModule.T));
         var neww = cms.get();
         Assertions.assertNotEquals(cm, neww);
         Assertions.assertEquals(CoordinateModule.T, neww.coordinate);
@@ -51,8 +46,9 @@ class ModuleSupplerTest {
     public void testNumberModuleSupplier() {
         NumberModule cm = new NumberModule();
 
-        ModuleSuppler<NumberModule> cms = new ModuleSuppler<>(NumberModule.class);
+        ModuleSuppler<NumberModule> cms = new ModuleSuppler<>(cm);
         var neww = cms.get();
+        Assertions.assertTrue(neww instanceof NumberModule);
         Assertions.assertNotEquals(cm, neww);
         Assertions.assertEquals("0.0", neww.getName());
     }
