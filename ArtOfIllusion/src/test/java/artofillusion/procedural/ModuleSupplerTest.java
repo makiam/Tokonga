@@ -46,4 +46,16 @@ class ModuleSupplerTest {
         Assertions.assertEquals(CoordinateModule.T, neww.coordinate);
         Assertions.assertEquals(Translate.text("Time"), neww.getName());
     }
+
+    @Test
+    public void testNumberModuleSupplier() {
+        NumberModule cm = new NumberModule();
+
+        ModuleSuppler<NumberModule> cms = new ModuleSuppler<>(NumberModule.class);
+        var neww = cms.get();
+        Assertions.assertNotEquals(cm, neww);
+        Assertions.assertEquals("0.0", neww.getName());
+    }
+
+
 }
