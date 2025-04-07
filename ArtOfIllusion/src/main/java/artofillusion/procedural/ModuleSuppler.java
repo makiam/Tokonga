@@ -2,7 +2,6 @@ package artofillusion.procedural;
 
 import artofillusion.ui.Translate;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
