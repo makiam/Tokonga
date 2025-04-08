@@ -179,9 +179,8 @@ public class ProceduralMaterial3D extends Material3D implements ProcedureOwner {
     public ProceduralMaterial3D(DataInputStream in, Scene theScene) throws IOException {
         short version = in.readShort();
 
-        if (version < 0 || version > 1) {
-            throw new InvalidObjectException("");
-        }
+        if (version != 1) { throw new InvalidObjectException(""); }
+
         setName(in.readUTF());
         proc = createProcedure();
         setIndexOfRefraction(in.readDouble());
@@ -189,56 +188,8 @@ public class ProceduralMaterial3D extends Material3D implements ProcedureOwner {
         antialiasing = in.readDouble();
         stepSize = in.readDouble();
         proc.readFromStream(in, theScene);
-        if (version == 0) {
-            // Version 1 added the "transparency" output, reordered the outputs, and changed some defaults.  We need to
-            // fix everything up to maintain backward compatibility.  First, record what each output port is attached to.
 
-            OutputModule[] output = proc.getOutputModules();
-            var fromModule = new artofillusion.procedural.Module[output.length];
-            int[] fromIndex = new int[output.length];
-            for (int i = 0; i < output.length; i++) {
-                fromModule[i] = output[i].linkFrom[0];
-                fromIndex[i] = output[i].linkFromIndex[0];
-            }
-
-            // Now delete all links to output modules.
-            Link[] link = proc.getLinks();
-            for (int i = link.length - 1; i >= 0; i--) {
-                if (link[i].to.getModule() instanceof OutputModule) {
-                    proc.deleteLink(i);
-                }
-            }
-
-            // Now reconnect them.
-            int[] newIndex = new int[]{0, 1, 5, 4, 2, 6};
-            for (int i = 0; i < fromModule.length; i++) {
-                if (fromModule[i] != null) {
-                    proc.addLink(new Link(fromModule[i].getOutputPorts()[fromIndex[i]], output[newIndex[i]].getInputPorts()[0]));
-                }
-            }
-
-            // Finally, if there is nothing connected to one of the outputs whose default value has changed, create a module
-            // to maintain the old default value.
-            if (!output[0].inputConnected(0)) {
-                linkModuleToOutput(new ColorModule(new Point(800, 10)), output[0]);
-            }
-            if (output[1].inputConnected(0)) {
-                linkModuleToOutput(new NumberModule(new Point(800, 115), 1.0), output[3]);
-            }
-            if (!output[5].inputConnected(0)) {
-                linkModuleToOutput(new NumberModule(new Point(800, 185), 0.5), output[5]);
-            }
-        }
         initThreadLocal();
-    }
-
-    /**
-     * Add a module to the procedure and link it to a particular output. This is used when reading old files that
-     * need to have modules added to maintain backward compatibility.
-     */
-    private void linkModuleToOutput(artofillusion.procedural.Module module, OutputModule output) {
-        proc.add(module);
-        proc.add(new Link(module.getOutputPorts()[0], output.getInputPorts()[0]));
     }
 
     @Override
