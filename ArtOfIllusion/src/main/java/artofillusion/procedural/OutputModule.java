@@ -1,5 +1,5 @@
 /* Copyright (C) 2000 by Peter Eastman
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,17 +17,22 @@ import lombok.Setter;
 import java.awt.*;
 
 /* This is a Module which represents one of the output values of a procedure. */
-public class OutputModule extends ProceduralModule<OutputModule> {
+final public class OutputModule extends ProceduralModule<OutputModule> {
 
+//    private Rectangle bounds;
     /* All output modules should be the same width. */
     @Setter
     int width;
-    final double defaultValue;
-    final RGBColor defaultColor;
+    private final double defaultValue;
+    private final RGBColor defaultColor;
 
-//    public OutputModule(String name, RGBColor color) {
-//        this(name, name, 0, color, )
-//    }
+    public OutputModule(String name, String defaultLabel, double defaultValue) {
+        this(name, defaultLabel, defaultValue, new RGBColor(), IOPort.NUMBER);
+    }
+
+    public OutputModule(String name, String defaultLabel, RGBColor defaultColor) {
+        this(name, defaultLabel, 0.0, defaultColor, IOPort.COLOR);
+    }
 
     public OutputModule(String name, String defaultLabel, double defaultValue, RGBColor defaultColor, int type) {
         super(name, new IOPort[]{new IOPort(type, IOPort.INPUT, IOPort.LEFT, name, "(" + defaultLabel + ")")},
