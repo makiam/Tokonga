@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2009 by Peter Eastman
-   Changes copyright (C) 2022-2023 by Maksim Khramov
+   Changes copyright (C) 2022-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -89,7 +89,7 @@ public abstract class ImageFilter {
      */
     public ImageFilter duplicate() {
         try {
-            ImageFilter f = (ImageFilter) getClass().getDeclaredConstructor().newInstance();
+            ImageFilter f = getClass().getDeclaredConstructor().newInstance();
             f.copy(this);
             return f;
         } catch (ReflectiveOperationException | SecurityException ex) {

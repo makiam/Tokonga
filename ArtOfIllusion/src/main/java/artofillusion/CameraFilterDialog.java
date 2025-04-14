@@ -140,7 +140,7 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
      * Save changes and close the window.
      */
     private void doOk() {
-        var filters = filtersPanel.filters.toArray(new ImageFilter[filtersPanel.filters.size()]);
+        var filters = filtersPanel.filters.toArray(new ImageFilter[0]);
         theCamera.setImageFilters(filters);
         configureRenderer(savedConfiguration, previewRenderer);
         dispose();
@@ -297,17 +297,15 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
          *  Get the filters to apply.
          */
         @Getter
-        private final ArrayList<ImageFilter> filters;
+        private final List<ImageFilter> filters = new ArrayList<>();
         final Runnable filterChangedCallback;
 
         public FiltersPanel(SceneCamera camera, Runnable filterChangedCallback) {
             super(1, 2);
             this.filterChangedCallback = filterChangedCallback;
-            filters = new ArrayList<>();
-            ImageFilter[] oldFilters = camera.getImageFilters();
-            for (int i = 0; i < oldFilters.length; i++) {
-                filters.add(oldFilters[i]);
-            }
+
+
+            for (ImageFilter old: camera.getImageFilters()) filters.add(old);
 
             // Layout the major sections of the window.
             LayoutInfo fillLayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null);
