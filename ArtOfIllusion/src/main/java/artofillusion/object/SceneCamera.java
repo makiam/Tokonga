@@ -20,6 +20,11 @@ import artofillusion.math.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -29,12 +34,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SceneCamera extends Object3D {
 
-    private double fov;
+    private double fov = 30.0;
     private double depthOfField;
     private double focalDist;
     private double distToPlane = Camera.DEFAULT_DISTANCE_TO_SCREEN;
     private boolean perspective;
-    private ImageFilter[] filters;
+    private List<ImageFilter> filters = new ArrayList<>();
     private int extraComponents;
 
     private static final BoundingBox bounds;
@@ -128,11 +133,11 @@ public class SceneCamera extends Object3D {
     }
 
     public SceneCamera() {
-        fov = 30.0;
+
         depthOfField = Camera.DEFAULT_DISTANCE_TO_SCREEN / 2.0;
         focalDist = Camera.DEFAULT_DISTANCE_TO_SCREEN;
         perspective = true;
-        filters = new ImageFilter[0];
+
     }
 
     public double getDistToPlane() {
@@ -179,16 +184,14 @@ public class SceneCamera extends Object3D {
      * Get the list of ImageFilters for this camera.
      */
     public ImageFilter[] getImageFilters() {
-        ImageFilter[] filt = new ImageFilter[filters.length];
-        System.arraycopy(filters, 0, filt, 0, filters.length);
-        return filt;
+        return filters.toArray(ImageFilter[]::new);
     }
 
     /**
      * Set the list of ImageFilters for this camera.
      */
     public void setImageFilters(ImageFilter[] filters) {
-        this.filters = filters;
+        this.filters = new ArrayList<>(Arrays.asList(filters));
     }
 
     /**
@@ -306,10 +309,8 @@ public class SceneCamera extends Object3D {
         sc.depthOfField = depthOfField;
         sc.focalDist = focalDist;
         sc.perspective = perspective;
-        sc.filters = new ImageFilter[filters.length];
-        for (int i = 0; i < filters.length; i++) {
-            sc.filters[i] = filters[i].duplicate();
-        }
+        filters.forEach(filter -> sc.filters.add(filter.duplicate()));
+
         return sc;
     }
 
@@ -322,10 +323,9 @@ public class SceneCamera extends Object3D {
         depthOfField = sc.depthOfField;
         focalDist = sc.focalDist;
         perspective = sc.perspective;
-        filters = new ImageFilter[sc.filters.length];
-        for (int i = 0; i < filters.length; i++) {
-            filters[i] = sc.filters[i].duplicate();
-        }
+        filters.clear();
+        sc.filters.forEach(filter -> filters.add(filter.duplicate()));
+
     }
 
     @Override
