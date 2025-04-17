@@ -38,7 +38,7 @@ public class DummyImageFilter extends ImageFilter {
     @Override
     public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
         // To change body of generated methods, choose Tools | Templates.
-        throw new UnsupportedOperationException("Not supported yet.");
+
     }
 
     @Override
