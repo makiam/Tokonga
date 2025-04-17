@@ -43,7 +43,7 @@ class ProcedureReadStreamTest {
             ByteBuffer wrap = ByteBuffer.allocate(200);
             // Procedure Version 1. Expected exception to be thrown
             wrap.putShort((short) 1);
-            new Procedure().readFromStream(new DataInputStream(new ByteArrayInputStream(wrap.array())), null);
+            new Procedure().readFromStream(StreamUtil.stream(wrap), null);
         });
     }
 
@@ -57,7 +57,7 @@ class ProcedureReadStreamTest {
         wrap.putInt(0);
         // No Links
         wrap.putInt(0);
-        new Procedure().readFromStream(new DataInputStream(new ByteArrayInputStream(wrap.array())), null);
+        new Procedure().readFromStream(StreamUtil.stream(wrap), null);
     }
 
     @Test
@@ -77,7 +77,7 @@ class ProcedureReadStreamTest {
                 wrap.putInt(123);
                 wrap.putInt(456);
             }
-            new Procedure().readFromStream(new DataInputStream(new ByteArrayInputStream(wrap.array())), null);
+            new Procedure().readFromStream(StreamUtil.stream(wrap), null);
         });
     }
 

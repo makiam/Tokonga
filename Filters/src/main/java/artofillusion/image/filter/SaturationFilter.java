@@ -41,8 +41,9 @@ public class SaturationFilter extends ImageFilter {
      */
     @Override
     public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {
-        int width = image.getWidth(), height = image.getHeight();
-        float saturation = (float) paramValue[0];
+        int width = image.getWidth();
+        int height = image.getHeight();
+        float saturation = ((Double)this.getPropertyValue(0)).floatValue();
         float[] red = new float[width * height];
         float[] green = new float[width * height];
         float[] blue = new float[width * height];
