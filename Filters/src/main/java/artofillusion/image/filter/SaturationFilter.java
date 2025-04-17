@@ -77,14 +77,6 @@ public class SaturationFilter extends ImageFilter {
         image.setComponentValues(ComplexImage.BLUE, blue);
     }
 
-    /**
-     * Get a list of parameters which affect the behavior of the filter.
-     */
-    @Override
-    public TextureParameter[] getParameters() {
-        return new TextureParameter[]{new TextureParameter(this, getName(), 0.0, Double.MAX_VALUE, 1.0)};
-    }
-
     @Override
     public Property[] getProperties() {
         return new Property[]{new Property(getName(), 0.0, Double.MAX_VALUE, 1.0)};
