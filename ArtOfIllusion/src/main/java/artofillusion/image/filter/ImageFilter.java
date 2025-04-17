@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class ImageFilter {
 
     @Deprecated
-    private double[] paramValue;
+    protected double[] paramValue;
     private Object[] propertyValue;
 
     /**

@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
    Modifications Copyright 2016 by Petri Ihalainen
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -462,10 +462,11 @@ public class SceneCamera extends Object3D {
         cb.run();
     }
 
-    /* The following two methods are used for reading and writing files.  The first is a
-     constructor which reads the necessary data from an input stream.  The other writes
-     the object's representation to an output stream. */
-    public SceneCamera(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+    /** The following two methods are used for reading and writing files.  The first is a
+     constructor which reads the necessary data from an input stream.  The other {@link #writeToFile(DataOutputStream out, Scene scene) } writes
+     the object's representation to an output stream.
+     */
+    public SceneCamera(DataInputStream in, Scene theScene) throws IOException {
         super(in, theScene);
 
         short version = in.readShort();
@@ -495,21 +496,21 @@ public class SceneCamera extends Object3D {
                     var filterClassName = in.readUTF();
                     Class<?> filterClass = ArtOfIllusion.getClass(filterClassName);
                     if(null == filterClass) {
-                        throw new IOException("Application cannot find given material class: " + filterClassName);
+                        throw new IOException("Application cannot find given filter class: " + filterClassName);
                     }
                     filter[i] = (ImageFilter) filterClass.getDeclaredConstructor().newInstance();
                     filter[i].initFromStream(in, theScene);
                 }
             } catch (IOException | ReflectiveOperationException | SecurityException ex) {
                 log.atError().setCause(ex).log("Unable to instantiate SceneCamera {}", ex.getMessage());
-                throw new IOException();
+                throw new IOException(ex.getMessage());
             }
         }
     }
 
     @Override
-    public void writeToFile(DataOutputStream out, Scene theScene) throws IOException {
-        super.writeToFile(out, theScene);
+    public void writeToFile(DataOutputStream out, Scene scene) throws IOException {
+        super.writeToFile(out, scene);
 
         out.writeShort(3);
         out.writeDouble(distToPlane);
@@ -520,7 +521,7 @@ public class SceneCamera extends Object3D {
         out.writeInt(filter.length);
         for (var imageFilter: filter) {
             out.writeUTF(imageFilter.getClass().getName());
-            imageFilter.writeToStream(out, theScene);
+            imageFilter.writeToStream(out, scene);
         }
     }
 

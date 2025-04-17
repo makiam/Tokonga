@@ -223,6 +223,29 @@ class SceneCameraTest {
         Assertions.assertEquals(1, sc.getImageFilters().length);
     }
 
+
+    @Test
+    @DisplayName("Test Load Camera With Good Filter After Bad One. Check bypass bad data")
+    void testLoadCameraWithGoodFilterAfterBad() throws IOException {
+        Scene scene = new Scene();
+        ByteBuffer wrap = ByteBuffer.allocate(200);
+        // Object Version
+        wrap.putShort((short) 1);
+        // Object Version read AGAIN !!!
+        wrap.putShort((short) 2);
+        // FOV
+        wrap.putDouble(90);
+        // DOF
+        wrap.putDouble(500);
+        // Focal distance
+        wrap.putDouble(1000);
+        // Non Perspective camera. Boolean treats as byte
+        wrap.put((byte) 0);
+        // Camera filters count
+        wrap.putInt(2);
+
+    }
+
     @Test
     @DisplayName("Test Scene Camera Duplicate")
     void testSceneCameraDuplicate() {
