@@ -89,7 +89,7 @@ public abstract class ImageFilter {
      */
     public ImageFilter duplicate() {
         try {
-            ImageFilter f = (ImageFilter) getClass().getDeclaredConstructor().newInstance();
+            ImageFilter f = getClass().getDeclaredConstructor().newInstance();
             f.copy(this);
             return f;
         } catch (ReflectiveOperationException | SecurityException ex) {

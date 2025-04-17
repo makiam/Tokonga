@@ -470,9 +470,8 @@ public class SceneCamera extends Object3D {
         super(in, theScene);
 
         short version = in.readShort();
-        if (version < 0 || version > 3) {
-            throw new InvalidObjectException("");
-        }
+        if (version < 0 || version > 3) { throw new InvalidObjectException(""); }
+
         if (version >= 3) {
             distToPlane = in.readDouble();
         }
@@ -487,7 +486,8 @@ public class SceneCamera extends Object3D {
         if (version == 0) {
             filter = new ImageFilter[0];
         } else {
-            filter = new ImageFilter[in.readInt()];
+            var fc = in.readInt();
+            filter = new ImageFilter[fc];
             /*
             NOTE: Bypass bad filter and pass scene camera creation?
             */
