@@ -15,8 +15,7 @@ import artofillusion.Scene;
 import artofillusion.image.filter.ImageFilter;
 import artofillusion.test.util.StreamUtil;
 
-import java.io.IOException;
-import java.io.InvalidObjectException;
+import java.io.*;
 import java.nio.ByteBuffer;
 
 import org.junit.jupiter.api.Assertions;
@@ -47,7 +46,7 @@ class SceneCameraTest {
     @Test
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     @DisplayName("Load Scene Camera Bad Version 1 Read Version Again")
-    void loadSceneCameraBadVersion1ReadVesionAgain() {
+    void loadSceneCameraBadVersion1ReadVersionAgain() {
         assertThrows(InvalidObjectException.class, () -> {
             Scene scene = new Scene();
             ByteBuffer wrap = ByteBuffer.allocate(4);
