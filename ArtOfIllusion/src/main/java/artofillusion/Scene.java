@@ -1280,11 +1280,15 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
             obj.setParameterValues(paramValue);
         }
 
+
         // Read the tracks for this object.
         int tracks = in.readInt();
+        log.info("Read tracks: {}", tracks);
         try {
             for (int i = 0; i < tracks; i++) {
-                cls = ArtOfIllusion.getClass(in.readUTF());
+                var tc = in.readUTF();
+                cls = ArtOfIllusion.getClass(tc);
+                log.info("Reading Track: {}", tc);
                 con = cls.getConstructor(ObjectInfo.class);
                 var tr = (Track<?>) con.newInstance(info);
                 tr.initFromStream(in, this);
@@ -1328,7 +1332,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
         // Save the image maps.
         out.writeInt(_images.size());
-        for (var     image : _images) {
+        for (var image : _images) {
             out.writeUTF(image.getClass().getName());
             image.writeToStream(out, this);
         }
@@ -1447,6 +1451,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         out.writeInt(info.getTracks().length);
         for (var track : info.getTracks()) {
             var tc = track.getClass().getName();
+            log.info("Write Track: {}", tc);
             out.writeUTF(tc);
             track.writeToStream(out, this);
         }
