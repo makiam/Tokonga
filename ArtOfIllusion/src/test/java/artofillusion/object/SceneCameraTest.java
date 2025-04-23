@@ -14,8 +14,7 @@ import artofillusion.Scene;
 import artofillusion.image.filter.ImageFilter;
 import artofillusion.test.util.StreamUtil;
 
-import java.io.IOException;
-import java.io.InvalidObjectException;
+import java.io.*;
 import java.nio.ByteBuffer;
 
 import org.junit.jupiter.api.Assertions;
@@ -293,6 +292,44 @@ class SceneCameraTest {
         Assertions.assertEquals(sc.getFieldOfView(), clone.getFieldOfView(), 0);
         Assertions.assertEquals(sc.isPerspective(), clone.isPerspective());
         Assertions.assertEquals(sc.getImageFilters().length, clone.getImageFilters().length);
+    }
+
+    @Test
+    void testWriteCameraAndReadBack() throws IOException {
+        Scene scene = new Scene();
+        SceneCamera sc = new SceneCamera();
+        sc.setDistToPlane(300);
+        sc.setDepthOfField(500);
+        sc.setFieldOfView(90);
+        sc.setPerspective(false);
+        sc.setImageFilters(new ImageFilter[]{new DummyImageFilter()});
+
+        AccumulatorStream sa = new AccumulatorStream();
+        sc.writeToFile(new DataOutputStream(sa), scene);
+
+        SceneCamera copy = new SceneCamera(sa.getStream(), scene);
+
+        Assertions.assertEquals(sc.getDistToPlane(), copy.getDistToPlane());
+        Assertions.assertEquals(sc.getDepthOfField(), copy.getDepthOfField());
+        Assertions.assertEquals(sc.isPerspective(), copy.isPerspective());
+        Assertions.assertEquals(sc.getFieldOfView(), copy.getFieldOfView());
+        Assertions.assertEquals(1, copy.getImageFilters().length);
+
+    }
+
+    class AccumulatorStream extends OutputStream {
+        ByteBuffer wrap = ByteBuffer.allocate(20000);
+
+        @Override
+        public void write(int b) throws IOException {
+            wrap.put((byte)b);
+        }
+
+        DataInputStream getStream() {
+            return new DataInputStream(new ByteArrayInputStream(wrap.array()));
+        }
+
+
     }
 
 }
