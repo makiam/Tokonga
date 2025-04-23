@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
    Modifications Copyright 2016 by Petri Ihalainen
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -20,6 +20,10 @@ import artofillusion.math.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -34,7 +38,7 @@ public class SceneCamera extends Object3D {
     private double focalDist = Camera.DEFAULT_DISTANCE_TO_SCREEN;
     private double distToPlane = Camera.DEFAULT_DISTANCE_TO_SCREEN;
     private boolean perspective = true;
-    private ImageFilter[] filters;
+    private List<ImageFilter> filters = new ArrayList<>();
     private int extraComponents;
 
     private static final BoundingBox bounds;
@@ -128,11 +132,6 @@ public class SceneCamera extends Object3D {
     }
 
     public SceneCamera() {
-
-
-
-
-        filters = new ImageFilter[0];
     }
 
     public double getDistToPlane() {
@@ -179,16 +178,14 @@ public class SceneCamera extends Object3D {
      * Get the list of ImageFilters for this camera.
      */
     public ImageFilter[] getImageFilters() {
-        ImageFilter[] filt = new ImageFilter[filters.length];
-        System.arraycopy(filters, 0, filt, 0, filters.length);
-        return filt;
+        return filters.toArray(ImageFilter[]::new);
     }
 
     /**
      * Set the list of ImageFilters for this camera.
      */
     public void setImageFilters(ImageFilter[] filters) {
-        this.filters = filters;
+        this.filters = new ArrayList<>(Arrays.asList(filters));
     }
 
     /**
@@ -216,8 +213,8 @@ public class SceneCamera extends Object3D {
      */
     public int getComponentsForFilters() {
         int components = extraComponents;
-        for (ImageFilter imageFilter: filters) {
-            components |= imageFilter.getDesiredComponents();
+        for (var filter: filters) {
+            components |= filter.getDesiredComponents();
         }
         return components;
     }
@@ -230,9 +227,7 @@ public class SceneCamera extends Object3D {
      * @param coords the position of this camera in the scene
      */
     public void applyImageFilters(ComplexImage image, Scene scene, CoordinateSystem coords) {
-        for (ImageFilter imageFilter: filters) {
-            imageFilter.filterImage(image, scene, this, coords);
-        }
+        filters.forEach( flt -> flt.filterImage(image, scene, this, coords));
         image.rebuildImage();
     }
 
@@ -306,10 +301,7 @@ public class SceneCamera extends Object3D {
         sc.depthOfField = depthOfField;
         sc.focalDist = focalDist;
         sc.perspective = perspective;
-        sc.filters = new ImageFilter[filters.length];
-        for (int i = 0; i < filters.length; i++) {
-            sc.filters[i] = filters[i].duplicate();
-        }
+        filters.forEach(filter -> sc.filters.add(filter.duplicate()));
         return sc;
     }
 
@@ -322,10 +314,8 @@ public class SceneCamera extends Object3D {
         depthOfField = sc.depthOfField;
         focalDist = sc.focalDist;
         perspective = sc.perspective;
-        filters = new ImageFilter[sc.filters.length];
-        for (int i = 0; i < filters.length; i++) {
-            filters[i] = sc.filters[i].duplicate();
-        }
+        filters.clear();
+        sc.filters.forEach(filter -> filters.add(filter.duplicate()));
     }
 
     @Override
@@ -440,16 +430,16 @@ public class SceneCamera extends Object3D {
 
                         PoseTrack pose = (PoseTrack) obj.getTracks()[j];
                         Track[] old = pose.getSubtracks();
-                        Track[] newtracks = new Track[filters.length];
-                        for (int k = 0; k < filters.length; k++) {
+                        Track[] newtracks = new Track[filters.size()];
+                        for (int k = 0; k < filters.size(); k++) {
                             Track existing = null;
                             for (int m = 0; m < old.length && existing == null; m++) {
-                                if (old[m] instanceof FilterParameterTrack && ((FilterParameterTrack) old[m]).getFilter() == filters[k]) {
+                                if (old[m] instanceof FilterParameterTrack && ((FilterParameterTrack) old[m]).getFilter() == filters.get(k)) {
                                     existing = old[m];
                                 }
                             }
                             if (existing == null) {
-                                existing = new FilterParameterTrack(pose, filters[k]);
+                                existing = new FilterParameterTrack(pose, filters.get(k));
                             }
                             newtracks[k] = existing;
                         }
@@ -486,22 +476,23 @@ public class SceneCamera extends Object3D {
             perspective = in.readBoolean();
         }
         if (version == 0) {
-            filters = new ImageFilter[0];
+            filters.clear();
         } else {
             var filtersCount = in.readInt();
-            filters = new ImageFilter[filtersCount];
+            filters.clear();
             /*
             NOTE: Bypass bad filter and pass scene camera creation?
             */
             try {
-                for (int i = 0; i < filters.length; i++) {
+                for (int i = 0; i < filtersCount; i++) {
                     var filterClassName = in.readUTF();
                     Class<?> filterClass = ArtOfIllusion.getClass(filterClassName);
                     if(null == filterClass) {
                         throw new IOException("Application cannot find given scene filter class: " + filterClassName);
                     }
-                    filters[i] = (ImageFilter) filterClass.getDeclaredConstructor().newInstance();
-                    filters[i].initFromStream(in, theScene);
+                    var filter = (ImageFilter) filterClass.getDeclaredConstructor().newInstance();
+                    filter.initFromStream(in, theScene);
+                    filters.add(filter);
                 }
             } catch (IOException | ReflectiveOperationException | SecurityException ex) {
                 log.atError().setCause(ex).log("Unable to instantiate Scene filter {}", ex.getMessage());
@@ -520,8 +511,8 @@ public class SceneCamera extends Object3D {
         out.writeDouble(depthOfField);
         out.writeDouble(focalDist);
         out.writeBoolean(perspective);
-        out.writeInt(filters.length);
-        log.debug("Scene camera writes filters: {}", filters.length);
+        out.writeInt(filters.size());
+        log.debug("Scene camera writes filters: {}", filters.size());
         for (var imageFilter: filters) {
             var fc = imageFilter.getClass().getName();
             log.debug("Filter: {}", fc);
@@ -588,9 +579,9 @@ public class SceneCamera extends Object3D {
         track.setGraphableValues(new String[]{"Field of View", "Depth of Field", "Focal Distance"},
                 new double[]{fov, depthOfField, focalDist},
                 new double[][]{{0.0, 180.0}, {0.0, Double.MAX_VALUE}, {0.0, Double.MAX_VALUE}});
-        FilterParameterTrack[] subtrack = new FilterParameterTrack[filters.length];
+        FilterParameterTrack[] subtrack = new FilterParameterTrack[filters.size()];
         for (int i = 0; i < subtrack.length; i++) {
-            subtrack[i] = new FilterParameterTrack(track, filters[i]);
+            subtrack[i] = new FilterParameterTrack(track, filters.get(i));
         }
         track.setSubtracks(subtrack);
     }
