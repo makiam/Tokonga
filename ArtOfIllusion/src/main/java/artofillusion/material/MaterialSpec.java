@@ -1,6 +1,7 @@
 /* MaterialSpec describes the properties of a point in the interior of an object. */
 
  /* Copyright (C) 2000 by Peter Eastman
+   Changes copyright (C) 2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,19 +12,14 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.material;
 
-import artofillusion.math.*;
+import artofillusion.math.RGBColor;
 
 public class MaterialSpec {
 
-    public final RGBColor transparency;
-    public final RGBColor color;
-    public final RGBColor scattering;
-    public double eccentricity;
+    public final RGBColor transparency = new RGBColor();
+    public final RGBColor color = new RGBColor();
+    public final RGBColor scattering = new RGBColor();
+    public double eccentricity = 0.0;
 
-    public MaterialSpec() {
-        transparency = new RGBColor(0.0f, 0.0f, 0.0f);
-        color = new RGBColor(0.0f, 0.0f, 0.0f);
-        scattering = new RGBColor(0.0f, 0.0f, 0.0f);
-        eccentricity = 0.0;
-    }
+
 }

@@ -1,4 +1,5 @@
 /* Copyright (C) 2005-2013 by Peter Eastman
+   Changes copyright (C) 2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -28,15 +29,15 @@ public class RenderWorkspace {
     public final Ray[] ray;
     public final RGBColor[] color;
     public final RGBColor[] rayIntensity;
-    public final RGBColor tempColor;
-    public final RGBColor tempColor2;
+    public final RGBColor tempColor = new RGBColor();
+    public final RGBColor tempColor2 = new RGBColor();
     public final Vec3[] pos;
     public final Vec3[] normal;
     public final Vec3[] trueNormal;
     public final double[] transparency;
     public MaterialIntersection[] matChange;
     public final TextureSpec[] surfSpec;
-    public final MaterialSpec matSpec;
+    public final MaterialSpec matSpec = new MaterialSpec();
     public PixelInfo tempPixel;
     public PhotonMapContext globalMap, causticsMap, volumeMap;
 
@@ -54,16 +55,16 @@ public class RenderWorkspace {
         trueNormal = new Vec3[maxRayDepth + 1];
         for (int i = 0; i < maxRayDepth + 1; i++) {
             ray[i] = new Ray(context);
-            color[i] = new RGBColor(0.0f, 0.0f, 0.0f);
-            rayIntensity[i] = new RGBColor(0.0f, 0.0f, 0.0f);
+            color[i] = new RGBColor();
+            rayIntensity[i] = new RGBColor();
             surfSpec[i] = new TextureSpec();
             pos[i] = new Vec3();
             normal[i] = new Vec3();
             trueNormal[i] = new Vec3();
         }
-        matSpec = new MaterialSpec();
-        tempColor = new RGBColor(0.0f, 0.0f, 0.0f);
-        tempColor2 = new RGBColor(0.0f, 0.0f, 0.0f);
+
+
+
         matChange = new MaterialIntersection[16];
         for (int i = 0; i < matChange.length; i++) {
             matChange[i] = new MaterialIntersection();

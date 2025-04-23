@@ -113,8 +113,6 @@ public class RaytracerRenderer implements Renderer, Runnable {
         public boolean entered;
         public OctreeNode node;
 
-        public MaterialIntersection() {
-        }
     }
 
     public RaytracerRenderer() {
