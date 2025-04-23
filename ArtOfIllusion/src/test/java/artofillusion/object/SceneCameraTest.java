@@ -46,7 +46,7 @@ class SceneCameraTest {
     @Test
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     @DisplayName("Load Scene Camera Bad Version 1 Read Version Again")
-    void loadSceneCameraBadVersion1ReadVesionAgain() {
+    void loadSceneCameraBadVersion1ReadVersionAgain() {
         assertThrows(InvalidObjectException.class, () -> {
             Scene scene = new Scene();
             ByteBuffer wrap = ByteBuffer.allocate(4);

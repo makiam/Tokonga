@@ -495,13 +495,13 @@ public class SceneCamera extends Object3D {
                     var filterClassName = in.readUTF();
                     Class<?> filterClass = ArtOfIllusion.getClass(filterClassName);
                     if(null == filterClass) {
-                        throw new IOException("Application cannot find given material class: " + filterClassName);
+                        throw new IOException("Application cannot find given scene filter class: " + filterClassName);
                     }
                     filter[i] = (ImageFilter) filterClass.getDeclaredConstructor().newInstance();
                     filter[i].initFromStream(in, theScene);
                 }
             } catch (IOException | ReflectiveOperationException | SecurityException ex) {
-                log.atError().setCause(ex).log("Unable to instantiate SceneCamera {}", ex.getMessage());
+                log.atError().setCause(ex).log("Unable to instantiate Scene filter {}", ex.getMessage());
                 throw new IOException();
             }
         }
@@ -518,9 +518,10 @@ public class SceneCamera extends Object3D {
         out.writeDouble(focalDist);
         out.writeBoolean(perspective);
         out.writeInt(filter.length);
-        log.info("Scene camera writes filters: {}", filter.length);
+        log.debug("Scene camera writes filters: {}", filter.length);
         for (var imageFilter: filter) {
             var fc = imageFilter.getClass().getName();
+            log.debug("Filter: {}", fc);
             out.writeUTF(fc);
             imageFilter.writeToStream(out, theScene);
         }
