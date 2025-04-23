@@ -197,7 +197,7 @@ class SceneCameraTest {
         Assertions.assertEquals(90, sc.getFieldOfView(), 0);
         Assertions.assertEquals(500, sc.getDepthOfField(), 0);
         Assertions.assertEquals(1000, sc.getFocalDistance(), 0);
-        Assertions.assertTrue(!sc.isPerspective());
+        Assertions.assertFalse(sc.isPerspective());
         Assertions.assertEquals(0, sc.getImageFilters().length);
     }
 
@@ -351,7 +351,7 @@ class SceneCameraTest {
 
     }
 
-    class AccumulatorStream extends OutputStream {
+    static class AccumulatorStream extends OutputStream {
         ByteBuffer wrap = ByteBuffer.allocate(20000);
 
         @Override
