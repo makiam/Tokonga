@@ -1037,7 +1037,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     private void dumpSelection(Object[] sel) {
-        log.info("Do dump Selection");
+        //log.info("Do dump Selection");
         var so = Set.of(sel);
         if(so.size() != sel.length) throw new RuntimeException("Some selection items doubled");
         for(Object o : sel) {
