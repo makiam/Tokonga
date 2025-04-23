@@ -418,17 +418,17 @@ public class SceneCamera extends Object3D {
 
         // If there are any Pose tracks for this object, they need to have their subtracks updated
         // to reflect the current list of filters.
-        Scene sc = parent.getScene();
-        for (int i = 0; i < sc.getNumObjects(); i++) {
-            if (sc.getObject(i).getObject() == this) {
+
+        for (ObjectInfo oi: parent.getScene().getObjects()) {
+            if (oi.getObject() == this) {
                 // This ObjectInfo corresponds to this SceneCamera.  Check each of its tracks.
 
-                ObjectInfo obj = sc.getObject(i);
-                for (int j = 0; j < obj.getTracks().length; j++) {
-                    if (obj.getTracks()[j] instanceof PoseTrack) {
+
+                for (Track<?> track: oi.getTracks()) {
+                    if (track instanceof PoseTrack) {
                         // This is a Pose track, so update its subtracks.
 
-                        PoseTrack pose = (PoseTrack) obj.getTracks()[j];
+                        PoseTrack pose = (PoseTrack) track;
                         Track[] old = pose.getSubtracks();
                         Track[] newtracks = new Track[filters.size()];
                         for (int k = 0; k < filters.size(); k++) {
