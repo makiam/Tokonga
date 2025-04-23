@@ -351,6 +351,29 @@ class SceneCameraTest {
 
     }
 
+    @Test
+    void testWriteCameraAndReadBackThreeFiltersIn() throws IOException {
+        Scene scene = new Scene();
+        SceneCamera sc = new SceneCamera();
+        sc.setDistToPlane(300);
+        sc.setDepthOfField(500);
+        sc.setFieldOfView(90);
+        sc.setPerspective(false);
+        sc.setImageFilters(new ImageFilter[]{new DummyImageFilter(), new DummyImageFilter(), new DummyImageFilter()});
+
+        AccumulatorStream sa = new AccumulatorStream();
+        sc.writeToFile(new DataOutputStream(sa), scene);
+
+        SceneCamera copy = new SceneCamera(sa.getStream(), scene);
+
+        Assertions.assertEquals(sc.getDistToPlane(), copy.getDistToPlane());
+        Assertions.assertEquals(sc.getDepthOfField(), copy.getDepthOfField());
+        Assertions.assertEquals(sc.isPerspective(), copy.isPerspective());
+        Assertions.assertEquals(sc.getFieldOfView(), copy.getFieldOfView());
+        Assertions.assertEquals(3, copy.getImageFilters().length);
+
+    }
+
     static class AccumulatorStream extends OutputStream {
         ByteBuffer wrap = ByteBuffer.allocate(20000);
 
