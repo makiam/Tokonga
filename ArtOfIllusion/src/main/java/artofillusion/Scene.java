@@ -1423,22 +1423,25 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         out.writeInt(info.getId());
         out.writeBoolean(info.isVisible());
         out.writeBoolean(info.isLocked());
-        key = table.get(info.getObject());
+        var geometry = info.getGeometry();
+        key = table.get(geometry);
         if (key == null) {
 
             out.writeInt(index);
-            out.writeUTF(info.getObject().getClass().getName());
+            var soc = geometry.getClass().getName();
+            out.writeUTF(soc);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            info.getObject().writeToFile(new DataOutputStream(bos), this);
+            geometry.writeToFile(new DataOutputStream(bos), this);
             byte[] bytes = bos.toByteArray();
             out.writeInt(bytes.length);
             out.write(bytes, 0, bytes.length);
-            log.info("Scene object {} with class {} sized: {}", info.getName(), info.getName(), bytes.length);
+            log.info("Scene object {} index: {} with class {} sized: {}", info.getName(), index, soc, bytes.length);
             key = index++;
             table.put(info.getObject(), key);
         } else {
             out.writeInt(key);
         }
+
         log.info("Write object tracks: {}", info.getTracks().length);
         // Write the tracks for this object.
         out.writeInt(info.getTracks().length);
