@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2009 by Peter Eastman
-   Changes copyright (C) 2018-2023 by Maksim Khramov
+   Changes copyright (C) 2018-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -131,7 +131,7 @@ public class BlurFilter extends ImageFilter {
      */
     @Override
     public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
-        out.writeDouble((Integer) getPropertyValue(0));
+        out.writeDouble((Double) getPropertyValue(0));
     }
 
     /**
