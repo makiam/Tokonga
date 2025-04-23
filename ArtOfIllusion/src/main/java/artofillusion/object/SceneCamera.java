@@ -624,13 +624,13 @@ public class SceneCamera extends Object3D {
 
         /* Create a duplicate of this keyframe. */
         @Override
-        public Keyframe duplicate() {
+        public CameraKeyframe duplicate() {
             return new CameraKeyframe(fov, depthOfField, focalDist);
         }
 
         /* Create a duplicate of this keyframe for a (possibly different) object. */
         @Override
-        public Keyframe duplicate(Object owner) {
+        public CameraKeyframe duplicate(Object owner) {
             return new CameraKeyframe(fov, depthOfField, focalDist);
         }
 
@@ -651,7 +651,7 @@ public class SceneCamera extends Object3D {
         /* These methods return a new Keyframe which is a weighted average of this one and one,
        two, or three others. */
         @Override
-        public Keyframe blend(Keyframe o2, double weight1, double weight2) {
+        public CameraKeyframe blend(Keyframe o2, double weight1, double weight2) {
             CameraKeyframe k2 = (CameraKeyframe) o2;
 
             return new CameraKeyframe(weight1 * fov + weight2 * k2.fov, weight1 * depthOfField + weight2 * k2.depthOfField,
@@ -659,7 +659,7 @@ public class SceneCamera extends Object3D {
         }
 
         @Override
-        public Keyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3) {
+        public CameraKeyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3) {
             CameraKeyframe k2 = (CameraKeyframe) o2, k3 = (CameraKeyframe) o3;
 
             return new CameraKeyframe(weight1 * fov + weight2 * k2.fov + weight3 * k3.fov,
@@ -668,7 +668,7 @@ public class SceneCamera extends Object3D {
         }
 
         @Override
-        public Keyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4) {
+        public CameraKeyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4) {
             CameraKeyframe k2 = (CameraKeyframe) o2, k3 = (CameraKeyframe) o3, k4 = (CameraKeyframe) o4;
 
             return new CameraKeyframe(weight1 * fov + weight2 * k2.fov + weight3 * k3.fov + weight4 * k4.fov,
