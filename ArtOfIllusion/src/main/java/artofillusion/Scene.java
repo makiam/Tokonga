@@ -1359,6 +1359,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         int index = 0;
         Map<Object3D, Integer> table = new Hashtable<>(objects.size());
         out.writeInt(objects.size());
+        log.info("Write scene objects: {}", objects.size());
         for (var object: objects) {
             index = writeObjectToFile(out, object, table, index);
         }
@@ -1424,6 +1425,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         out.writeBoolean(info.isLocked());
         key = table.get(info.getObject());
         if (key == null) {
+
             out.writeInt(index);
             out.writeUTF(info.getObject().getClass().getName());
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -1431,16 +1433,18 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
             byte[] bytes = bos.toByteArray();
             out.writeInt(bytes.length);
             out.write(bytes, 0, bytes.length);
+            log.info("Scene object {} with class {} sized: {}", info.getName(), info.getName(), bytes.length);
             key = index++;
             table.put(info.getObject(), key);
         } else {
             out.writeInt(key);
         }
-
+        log.info("Write object tracks: {}", info.getTracks().length);
         // Write the tracks for this object.
         out.writeInt(info.getTracks().length);
-        for (var     track : info.getTracks()) {
-            out.writeUTF(track.getClass().getName());
+        for (var track : info.getTracks()) {
+            var tc = track.getClass().getName();
+            out.writeUTF(tc);
             track.writeToStream(out, this);
         }
         return index;

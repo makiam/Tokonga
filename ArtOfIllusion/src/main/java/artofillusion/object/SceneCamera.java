@@ -518,8 +518,10 @@ public class SceneCamera extends Object3D {
         out.writeDouble(focalDist);
         out.writeBoolean(perspective);
         out.writeInt(filter.length);
+        log.info("Scene camera writes filters: {}", filter.length);
         for (var imageFilter: filter) {
-            out.writeUTF(imageFilter.getClass().getName());
+            var fc = imageFilter.getClass().getName();
+            out.writeUTF(fc);
             imageFilter.writeToStream(out, theScene);
         }
     }
