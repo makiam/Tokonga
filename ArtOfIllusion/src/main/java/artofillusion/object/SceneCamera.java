@@ -486,7 +486,8 @@ public class SceneCamera extends Object3D {
         if (version == 0) {
             filter = new ImageFilter[0];
         } else {
-            filter = new ImageFilter[in.readInt()];
+            var filtersCount = in.readInt();
+            filter = new ImageFilter[filtersCount];
             /*
             NOTE: Bypass bad filter and pass scene camera creation?
             */
@@ -610,7 +611,7 @@ public class SceneCamera extends Object3D {
         key.focalDist = fdField.getValue();
     }
 
-    /* Inner class representing a pose for a cylinder. */
+    /* Inner class representing a pose for a Scene Camera */
     public static class CameraKeyframe implements Keyframe {
 
         public double fov, depthOfField, focalDist;

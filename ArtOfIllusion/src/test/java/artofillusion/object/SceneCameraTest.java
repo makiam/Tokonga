@@ -242,6 +242,24 @@ class SceneCameraTest {
     }
 
     @Test
+    @DisplayName("Test Scene Camera Duplicate")
+    void testSceneCameraDuplicate2() {
+        SceneCamera sc = new SceneCamera();
+        sc.setDistToPlane(300);
+        sc.setDepthOfField(500);
+        sc.setFieldOfView(90);
+        sc.setPerspective(false);
+        sc.setImageFilters(new ImageFilter[]{new DummyImageFilter(), new DummyImageFilter()});
+        SceneCamera clone = sc.duplicate();
+        Assertions.assertNotNull(clone);
+        Assertions.assertEquals(sc.getDistToPlane(), clone.getDistToPlane(), 0);
+        Assertions.assertEquals(sc.getDepthOfField(), clone.getDepthOfField(), 0);
+        Assertions.assertEquals(sc.getFieldOfView(), clone.getFieldOfView(), 0);
+        Assertions.assertEquals(sc.isPerspective(), clone.isPerspective());
+        Assertions.assertEquals(sc.getImageFilters().length, clone.getImageFilters().length);
+    }
+
+    @Test
     @DisplayName("Test Scene Camera Copy Object")
     void testSceneCameraCopyObject() {
         SceneCamera sc = new SceneCamera();
@@ -250,6 +268,24 @@ class SceneCameraTest {
         sc.setFieldOfView(90);
         sc.setPerspective(false);
         sc.setImageFilters(new ImageFilter[]{new DummyImageFilter()});
+        SceneCamera clone = new SceneCamera();
+        clone.copyObject(sc);
+        Assertions.assertEquals(sc.getDistToPlane(), clone.getDistToPlane(), 0);
+        Assertions.assertEquals(sc.getDepthOfField(), clone.getDepthOfField(), 0);
+        Assertions.assertEquals(sc.getFieldOfView(), clone.getFieldOfView(), 0);
+        Assertions.assertEquals(sc.isPerspective(), clone.isPerspective());
+        Assertions.assertEquals(sc.getImageFilters().length, clone.getImageFilters().length);
+    }
+
+    @Test
+    @DisplayName("Test Scene Camera Copy Object")
+    void testSceneCameraCopyObject2() {
+        SceneCamera sc = new SceneCamera();
+        sc.setDistToPlane(300);
+        sc.setDepthOfField(500);
+        sc.setFieldOfView(90);
+        sc.setPerspective(false);
+        sc.setImageFilters(new ImageFilter[]{new DummyImageFilter(), new DummyImageFilter()});
         SceneCamera clone = new SceneCamera();
         clone.copyObject(sc);
         Assertions.assertEquals(sc.getDistToPlane(), clone.getDistToPlane(), 0);
