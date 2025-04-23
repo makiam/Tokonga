@@ -29,9 +29,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SceneCamera extends Object3D {
 
-    private double fov, depthOfField, focalDist;
+    private double fov = 30.0;
+    private double depthOfField = Camera.DEFAULT_DISTANCE_TO_SCREEN / 2.0;
+    private double focalDist = Camera.DEFAULT_DISTANCE_TO_SCREEN;
     private double distToPlane = Camera.DEFAULT_DISTANCE_TO_SCREEN;
-    private boolean perspective;
+    private boolean perspective = true;
     private ImageFilter[] filter;
     private int extraComponents;
 
@@ -126,10 +128,10 @@ public class SceneCamera extends Object3D {
     }
 
     public SceneCamera() {
-        fov = 30.0;
-        depthOfField = Camera.DEFAULT_DISTANCE_TO_SCREEN / 2.0;
-        focalDist = Camera.DEFAULT_DISTANCE_TO_SCREEN;
-        perspective = true;
+
+
+
+
         filter = new ImageFilter[0];
     }
 
