@@ -1134,7 +1134,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         selection = new Vector<>();
 
         // Read the list of children for each object.
-        for (var     info : objects) {
+        for (var info: objects) {
             int num = in.readInt();
             for (int j = 0; j < num; j++) {
                 ObjectInfo child = objects.get(in.readInt());
@@ -1172,7 +1172,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
                     throw new IOException();
                 }
             }
-            environColor = new RGBColor(0.0f, 0.0f, 0.0f);
+            environColor = new RGBColor();
             environParamValue = new ParameterValue[environMapping.getParameters().length];
             if (version > 2) {
                 for (int i = 0; i < environParamValue.length; i++) {

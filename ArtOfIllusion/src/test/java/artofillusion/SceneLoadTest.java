@@ -289,7 +289,7 @@ class SceneLoadTest {
         Assertions.assertFalse(scene.getErrors().isEmpty());
     }
 
-    // This test fails as no envirinment texture loaded. in general this is impossible situation
+    // This test fails as no environment texture loaded. in general this is impossible situation
     @Test
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     @DisplayName("Test Read Empty Scene Settings Only No Meta")
