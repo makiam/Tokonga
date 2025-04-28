@@ -89,8 +89,54 @@ public class SceneCameraObjectInfoTest {
     }
 
     @Test
+    public void testToRestoreBadFilter1() throws IOException {
+        var sc = new SceneCamera();
+
+        var filters = new ArrayList<>(Arrays.asList(sc.getImageFilters()));
+        filters.add(new MissedConstructorFilter());
+
+        sc.setImageFilters(filters.toArray(ImageFilter[]::new));
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        sc.writeToFile(new DataOutputStream(bos), null);
+
+        var innerObjectBytes = bos.toByteArray();
+        var restore = new ByteArrayInputStream(innerObjectBytes);
+
+
+        Exception ee = Assertions.assertThrows(IOException.class, () -> {
+            new SceneCamera(new DataInputStream(restore), null);
+        });
+
+        Assertions.assertTrue(ee.getCause() instanceof NoSuchMethodException);
+    }
+
+    @Test
+    public void testToRestoreBadFilter2() throws IOException {
+        var sc = new SceneCamera();
+
+        var filters = new ArrayList<>(Arrays.asList(sc.getImageFilters()));
+        filters.add(new PrivateClassFilter());
+
+        sc.setImageFilters(filters.toArray(ImageFilter[]::new));
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        sc.writeToFile(new DataOutputStream(bos), null);
+
+        var innerObjectBytes = bos.toByteArray();
+        var restore = new ByteArrayInputStream(innerObjectBytes);
+
+
+        Exception ee = Assertions.assertThrows(IOException.class, () -> {
+            new SceneCamera(new DataInputStream(restore), null);
+        });
+
+        Assertions.assertTrue(ee.getCause() instanceof IllegalAccessException);
+    }
+
+    @Test
     @DisplayName("Create and restore Scene Camera with expected ReflectiveOperationException")
-    public void testSceneCameraObjectInfoWithMoreFiltersDataWithNotInstantiatableTrack() throws IOException {
+    public void testSceneCameraObjectInfoWithMoreFilters() throws IOException {
         var sc = new SceneCamera();
         var oi = new ObjectInfo(sc, new CoordinateSystem(), "Scene Camera");
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -104,7 +150,7 @@ public class SceneCameraObjectInfoTest {
         expectedIncrement *=4;
         expectedIncrement +=    SceneCameraObjectInfoTest.getUTFNameBufferSize(TestSceneCameraFilterWithDouble.class.getName());
         expectedIncrement +=8;
-        //expectedIncrement += SceneCameraObjectInfoTest.getUTFNameBufferSize(PrivateTestFilter.class.getName());
+        expectedIncrement += SceneCameraObjectInfoTest.getUTFNameBufferSize(PrivateTestFilter.class.getName());
 
         var filters = new ArrayList<>(Arrays.asList(sc.getImageFilters()));
         filters.add(new TestSceneCameraFilterNoData());
@@ -112,7 +158,7 @@ public class SceneCameraObjectInfoTest {
         filters.add(new TestSceneCameraFilterNoData());
         filters.add(new TestSceneCameraFilterWithDouble());
         filters.add(new TestSceneCameraFilterNoData());
-        //filters.add(new PrivateTestFilter());
+        filters.add(new PrivateTestFilter());
         sc.setImageFilters(filters.toArray(ImageFilter[]::new));
 
         bos = new ByteArrayOutputStream();
@@ -127,13 +173,12 @@ public class SceneCameraObjectInfoTest {
         Assertions.assertEquals(Math.PI, tdf.getValue());
         var last = copy.getImageFilters()[4];
         Assertions.assertTrue(last instanceof TestSceneCameraFilterNoData);
-//        Assertions.assertThrows(InstantiationError.class, () -> {
-//            new SceneCamera(new DataInputStream(restore), null);
-//        });
+        last = copy.getImageFilters()[5];
+        Assertions.assertTrue(last instanceof PrivateTestFilter);
     }
 
     @DisplayName("As class is private it expected to throw InstantiationException frm newInstance() call")
-    class PrivateTestFilter extends ImageFilter {
+    static class PrivateTestFilter extends ImageFilter {
 
         @Override
         public String getName() {
@@ -200,4 +245,54 @@ public class SceneCameraObjectInfoTest {
 
         }
     }
+
+    @DisplayName("As class is not marked as STATIC expected no-args constructor cannot be found")
+    class MissedConstructorFilter extends ImageFilter {
+
+        @Override
+        public String getName() {
+            return "";
+        }
+
+        @Override
+        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {
+
+        }
+
+        @Override
+        public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
+
+        }
+
+        @Override
+        public void initFromStream(DataInputStream in, Scene theScene) throws IOException {
+
+        }
+    }
+
+    @DisplayName("As class is marked as PRIVATE expected IllegalAccessException exception to be thrown")
+    private static class PrivateClassFilter extends ImageFilter {
+
+        @Override
+        public String getName() {
+            return "";
+        }
+
+        @Override
+        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {
+
+        }
+
+        @Override
+        public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
+
+        }
+
+        @Override
+        public void initFromStream(DataInputStream in, Scene theScene) throws IOException {
+
+        }
+    }
+
+
 }

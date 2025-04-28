@@ -497,7 +497,7 @@ public class SceneCamera extends Object3D {
                 }
             } catch (IOException | ReflectiveOperationException | SecurityException ex) {
                 log.atError().setCause(ex).log("Unable to instantiate Scene filter {}", ex.getMessage());
-                throw new IOException();
+                throw new IOException(ex);
             }
         }
     }
