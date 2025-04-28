@@ -15,6 +15,7 @@ import artofillusion.image.ComplexImage;
 import artofillusion.image.filter.ImageFilter;
 import artofillusion.math.CoordinateSystem;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,9 @@ import java.util.Arrays;
 
 @DisplayName("Object Info Test for Scene Camera with filters")
 public class SceneCameraObjectInfoTest {
-    private static int getUTFNameBufferSize(String name) throws IOException {
+
+    @SneakyThrows
+    private static int getUTFNameBufferSize(String name) {
         ByteArrayOutputStream nameStream = new ByteArrayOutputStream();
         new DataOutputStream(nameStream).writeUTF(name);
         return nameStream.toByteArray().length;
@@ -186,19 +189,13 @@ public class SceneCameraObjectInfoTest {
         }
 
         @Override
-        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {
-
-        }
+        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {}
 
         @Override
-        public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
-
-        }
+        public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {}
 
         @Override
-        public void initFromStream(DataInputStream in, Scene theScene) throws IOException {
-
-        }
+        public void initFromStream(DataInputStream in, Scene theScene) throws IOException {}
     }
 
     static class TestSceneCameraFilterNoData extends ImageFilter {
@@ -209,18 +206,13 @@ public class SceneCameraObjectInfoTest {
         }
 
         @Override
-        public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
-        }
+        public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {}
 
         @Override
-        public void initFromStream(DataInputStream in, Scene theScene) throws IOException {
-
-        }
+        public void initFromStream(DataInputStream in, Scene theScene) throws IOException {}
 
         @Override
-        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {
-
-        }
+        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {}
     }
 
     static class TestSceneCameraFilterWithDouble extends ImageFilter {
@@ -241,9 +233,7 @@ public class SceneCameraObjectInfoTest {
         }
 
         @Override
-        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {
-
-        }
+        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {}
     }
 
     @DisplayName("As class is not marked as STATIC expected no-args constructor cannot be found")
@@ -255,19 +245,13 @@ public class SceneCameraObjectInfoTest {
         }
 
         @Override
-        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {
-
-        }
+        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {}
 
         @Override
-        public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
-
-        }
+        public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {}
 
         @Override
-        public void initFromStream(DataInputStream in, Scene theScene) throws IOException {
-
-        }
+        public void initFromStream(DataInputStream in, Scene theScene) throws IOException {}
     }
 
     @DisplayName("As class is marked as PRIVATE expected IllegalAccessException exception to be thrown")
@@ -279,19 +263,13 @@ public class SceneCameraObjectInfoTest {
         }
 
         @Override
-        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {
-
-        }
+        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {}
 
         @Override
-        public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
-
-        }
+        public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {}
 
         @Override
-        public void initFromStream(DataInputStream in, Scene theScene) throws IOException {
-
-        }
+        public void initFromStream(DataInputStream in, Scene theScene) throws IOException {}
     }
 
 
