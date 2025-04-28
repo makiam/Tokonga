@@ -486,6 +486,7 @@ public class SceneCamera extends Object3D {
             try {
                 for (int i = 0; i < filtersCount; i++) {
                     var filterClassName = in.readUTF();
+                    log.debug("Restoring: {}", filterClassName);
                     Class<?> filterClass = ArtOfIllusion.getClass(filterClassName);
                     if(null == filterClass) {
                         throw new IOException("Application cannot find given scene filter class: " + filterClassName);

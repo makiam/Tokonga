@@ -14,14 +14,12 @@ import artofillusion.Scene;
 import artofillusion.image.ComplexImage;
 import artofillusion.image.filter.ImageFilter;
 import artofillusion.math.CoordinateSystem;
+import lombok.Getter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,7 +59,7 @@ public class SceneCameraObjectInfoTest {
     }
 
     @Test
-    public void testSceneCameraObjectInfoWIthMoreFiltersData() throws IOException {
+    public void testSceneCameraObjectInfoWithMoreFiltersData() throws IOException {
         var sc = new SceneCamera();
         var oi = new ObjectInfo(sc, new CoordinateSystem(), "Scene Camera");
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -90,7 +88,75 @@ public class SceneCameraObjectInfoTest {
         System.out.println("Size: " + innerObjectBytes.length);
     }
 
-    private static class TestSceneCameraFilterNoData extends ImageFilter {
+    @Test
+    @DisplayName("Create and restore Scene Camera with expected ReflectiveOperationException")
+    public void testSceneCameraObjectInfoWithMoreFiltersDataWithNotInstantiatableTrack() throws IOException {
+        var sc = new SceneCamera();
+        var oi = new ObjectInfo(sc, new CoordinateSystem(), "Scene Camera");
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        sc.writeToFile(new DataOutputStream(bos), null);
+
+        byte[] innerObjectBytes = bos.toByteArray();
+        int empty = innerObjectBytes.length;
+        System.out.println("Size: " + empty);
+
+        var expectedIncrement = SceneCameraObjectInfoTest.getUTFNameBufferSize(TestSceneCameraFilterNoData.class.getName());
+        expectedIncrement *=4;
+        expectedIncrement +=    SceneCameraObjectInfoTest.getUTFNameBufferSize(TestSceneCameraFilterWithDouble.class.getName());
+        expectedIncrement +=8;
+        //expectedIncrement += SceneCameraObjectInfoTest.getUTFNameBufferSize(PrivateTestFilter.class.getName());
+
+        var filters = new ArrayList<>(Arrays.asList(sc.getImageFilters()));
+        filters.add(new TestSceneCameraFilterNoData());
+        filters.add(new TestSceneCameraFilterNoData());
+        filters.add(new TestSceneCameraFilterNoData());
+        filters.add(new TestSceneCameraFilterWithDouble());
+        filters.add(new TestSceneCameraFilterNoData());
+        //filters.add(new PrivateTestFilter());
+        sc.setImageFilters(filters.toArray(ImageFilter[]::new));
+
+        bos = new ByteArrayOutputStream();
+        sc.writeToFile(new DataOutputStream(bos), null);
+        innerObjectBytes = bos.toByteArray();
+        Assertions.assertEquals(empty + expectedIncrement , innerObjectBytes.length);
+        System.out.println("Size: " + innerObjectBytes.length);
+
+        var restore = new ByteArrayInputStream(innerObjectBytes);
+        var copy = new SceneCamera(new DataInputStream(restore), null);
+        var tdf = (TestSceneCameraFilterWithDouble)copy.getImageFilters()[3];
+        Assertions.assertEquals(Math.PI, tdf.getValue());
+        var last = copy.getImageFilters()[4];
+        Assertions.assertTrue(last instanceof TestSceneCameraFilterNoData);
+//        Assertions.assertThrows(InstantiationError.class, () -> {
+//            new SceneCamera(new DataInputStream(restore), null);
+//        });
+    }
+
+    @DisplayName("As class is private it expected to throw InstantiationException frm newInstance() call")
+    class PrivateTestFilter extends ImageFilter {
+
+        @Override
+        public String getName() {
+            return "";
+        }
+
+        @Override
+        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {
+
+        }
+
+        @Override
+        public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
+
+        }
+
+        @Override
+        public void initFromStream(DataInputStream in, Scene theScene) throws IOException {
+
+        }
+    }
+
+    static class TestSceneCameraFilterNoData extends ImageFilter {
 
         @Override
         public String getName() {
@@ -112,8 +178,8 @@ public class SceneCameraObjectInfoTest {
         }
     }
 
-    private static class TestSceneCameraFilterWithDouble extends ImageFilter {
-
+    static class TestSceneCameraFilterWithDouble extends ImageFilter {
+        @Getter private Double value;
         @Override
         public String getName() {
             return "";
@@ -126,7 +192,7 @@ public class SceneCameraObjectInfoTest {
 
         @Override
         public void initFromStream(DataInputStream in, Scene theScene) throws IOException {
-
+            value = in.readDouble();
         }
 
         @Override
