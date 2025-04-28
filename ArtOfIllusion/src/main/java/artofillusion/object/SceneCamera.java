@@ -461,8 +461,8 @@ public class SceneCamera extends Object3D {
         super(in, theScene);
 
         short version = in.readShort();
-        if (version < 0 || version > 3) {
-            throw new InvalidObjectException("");
+        if (version < 1 || version > 3) {
+            throw new InvalidObjectException("SceneCamera version 0 is no more supported since 28.04.2025");
         }
         if (version >= 3) {
             distToPlane = in.readDouble();
@@ -475,31 +475,29 @@ public class SceneCamera extends Object3D {
         } else {
             perspective = in.readBoolean();
         }
-        if (version == 0) {
-            filters.clear();
-        } else {
-            var filtersCount = in.readInt();
-            filters.clear();
-            /*
-            NOTE: Bypass bad filter and pass scene camera creation?
-            */
-            try {
-                for (int i = 0; i < filtersCount; i++) {
-                    var filterClassName = in.readUTF();
-                    log.debug("Restoring: {}", filterClassName);
-                    Class<?> filterClass = ArtOfIllusion.getClass(filterClassName);
-                    if(null == filterClass) {
-                        throw new IOException("Application cannot find given scene filter class: " + filterClassName);
-                    }
-                    var filter = (ImageFilter) filterClass.getDeclaredConstructor().newInstance();
-                    filter.initFromStream(in, theScene);
-                    filters.add(filter);
+
+        var filtersCount = in.readInt();
+
+        /*
+        NOTE: Bypass bad filter and pass scene camera creation?
+        */
+        try {
+            for (int i = 0; i < filtersCount; i++) {
+                var filterClassName = in.readUTF();
+                log.debug("Restoring: {}", filterClassName);
+                Class<?> filterClass = ArtOfIllusion.getClass(filterClassName);
+                if(null == filterClass) {
+                    throw new IOException("Application cannot find given scene filter class: " + filterClassName);
                 }
-            } catch (IOException | ReflectiveOperationException | SecurityException ex) {
-                log.atError().setCause(ex).log("Unable to instantiate Scene filter {}", ex.getMessage());
-                throw new IOException(ex);
+                var filter = (ImageFilter) filterClass.getDeclaredConstructor().newInstance();
+                filter.initFromStream(in, theScene);
+                filters.add(filter);
             }
+        } catch (IOException | ReflectiveOperationException | SecurityException ex) {
+            log.atError().setCause(ex).log("Unable to instantiate Scene filter {}", ex.getMessage());
+            throw new IOException(ex);
         }
+
     }
 
     @Override

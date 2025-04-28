@@ -103,13 +103,14 @@ class SceneCameraTest {
         wrap.putDouble(1000);
         // Camera filters count
         wrap.putInt(0);
-        SceneCamera sc = new SceneCamera(StreamUtil.stream(wrap), scene);
-        Assertions.assertNotNull(sc);
-        Assertions.assertEquals(90, sc.getFieldOfView(), 0);
-        Assertions.assertEquals(500, sc.getDepthOfField(), 0);
-        Assertions.assertEquals(1000, sc.getFocalDistance(), 0);
-        Assertions.assertTrue(sc.isPerspective());
-        Assertions.assertEquals(0, sc.getImageFilters().length);
+        Assertions.assertThrows(InvalidObjectException.class, () -> new SceneCamera(StreamUtil.stream(wrap), scene));
+
+//        Assertions.assertNotNull(sc);
+//        Assertions.assertEquals(90, sc.getFieldOfView(), 0);
+//        Assertions.assertEquals(500, sc.getDepthOfField(), 0);
+//        Assertions.assertEquals(1000, sc.getFocalDistance(), 0);
+//        Assertions.assertTrue(sc.isPerspective());
+//        Assertions.assertEquals(0, sc.getImageFilters().length);
     }
 
     @Test
