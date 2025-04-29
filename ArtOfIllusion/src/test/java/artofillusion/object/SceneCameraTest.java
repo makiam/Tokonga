@@ -81,7 +81,7 @@ class SceneCameraTest {
             // Object Version
             wrap.putShort((short) 1);
             // Object Version read AGAIN !!!
-            wrap.putShort((short) 4);
+            wrap.putShort((short) 5);
             new SceneCamera(StreamUtil.stream(wrap), scene);
         });
     }

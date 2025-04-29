@@ -461,7 +461,7 @@ public class SceneCamera extends Object3D {
         super(in, theScene);
 
         short version = in.readShort();
-        if (version < 1 || version > 3) {
+        if (version < 1 || version > 4) {
             throw new InvalidObjectException("SceneCamera version 0 is no more supported since 28.04.2025");
         }
         if (version >= 3) {
@@ -501,10 +501,10 @@ public class SceneCamera extends Object3D {
     }
 
     @Override
-    public void writeToFile(DataOutputStream out, Scene theScene) throws IOException {
-        super.writeToFile(out, theScene);
+    public void writeToFile(DataOutputStream out, Scene scene) throws IOException {
+        super.writeToFile(out, scene);
 
-        out.writeShort(3);
+        out.writeShort(4);
         out.writeDouble(distToPlane);
         out.writeDouble(fov);
         out.writeDouble(depthOfField);
@@ -512,12 +512,20 @@ public class SceneCamera extends Object3D {
         out.writeBoolean(perspective);
         out.writeInt(filters.size());
         log.debug("Scene camera writes filters: {}", filters.size());
-        for (var imageFilter: filters) {
-            var fc = imageFilter.getClass().getName();
-            log.debug("Filter: {}", fc);
-            out.writeUTF(fc);
-            imageFilter.writeToStream(out, theScene);
+        for (var filter: filters) {
+            SceneCamera.writeFilter(out, filter, scene);
         }
+    }
+
+    private static void writeFilter(DataOutputStream out, ImageFilter filter, Scene scene) throws IOException {
+        var fc = filter.getClass().getName();
+        log.debug("Filter: {}", fc);
+        out.writeUTF(fc);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        filter.writeToStream(new DataOutputStream(bos), scene);
+        byte[] ba = bos.toByteArray();
+        var size = ba.length;
+        out.write(ba, 0, size);
     }
 
     @Override
