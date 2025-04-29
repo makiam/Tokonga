@@ -10,6 +10,7 @@
     </comments>
     <plugin class="artofillusion.translators.OBJTranslator"/>
     <plugin class="artofillusion.translators.POVTranslator"/>
+    <plugin class="artofillusion.translators.PLYTranslator"/>
     <plugin class="artofillusion.translators.VRMLTranslator"/>
 </extension>
 
