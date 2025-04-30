@@ -10,6 +10,7 @@
 
 package artofillusion.translators
 
+import artofillusion.ArtOfIllusion
 import artofillusion.Scene
 import artofillusion.Translator
 import artofillusion.ui.Translate
@@ -25,8 +26,9 @@ class PLYImporter {
             chooser.addChoosableFileFilter(objFilter)
             chooser.isAcceptAllFileFilterUsed = true
             chooser.fileFilter = objFilter
-            chooser.showOpenDialog(parent?.component);
-
+            if(chooser.showOpenDialog(parent?.component) == JFileChooser.APPROVE_OPTION) {
+                ArtOfIllusion.newWindow(Scene());
+            }
         }
     }
 }
