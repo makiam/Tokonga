@@ -47,7 +47,7 @@ public class VRMLExporter {
         final ValueSlider qualitySlider = new ValueSlider(0.0, 1.0, 100, 0.5);
         final BCheckBox texBox = new BCheckBox(Translate.text("Translators:createImageFilesForTextures"), false);
         BCheckBox compressBox = new BCheckBox(Translate.text("Translators:compressOutputFile"), true);
-        BCheckBox smoothBox = new BCheckBox(Translate.text("subdivideSmoothMeshes"), true);
+        BCheckBox smoothBox = new BCheckBox(Translate.text("Translators:subdivideSmoothMeshes"), true);
         BComboBox exportChoice = new BComboBox(new String[]{
             Translate.text("Translators:exportWholeScene"),
             Translate.text("Translators:selectedObjectsOnly")
@@ -123,10 +123,9 @@ public class VRMLExporter {
      * Write out the scene in VRML format to the specified OutputStream. The other parameters
      * correspond to the options in the dialog box displayed by exportFile().
      */
-    private static void writeScene(Scene theScene, OutputStream os, boolean wholeScene, double tol, boolean smooth, TextureImageExporter textureExporter) {
+    private static void writeScene(Scene scene, OutputStream os, boolean wholeScene, double tol, boolean smooth, TextureImageExporter textureExporter) {
         PrintWriter out = new PrintWriter(os);
-        int i;
-        int[] selected = theScene.getSelection();
+        int[] selected = scene.getSelection();
         RGBColor color;
 
         // Write the header information.
@@ -142,13 +141,13 @@ public class VRMLExporter {
             write("}", out, 0);
 
             // Set the background color.
-            color = theScene.getEnvironmentColor();
+            color = scene.getEnvironmentColor();
             write("Background {", out, 0);
             write("skyColor " + color.getRed() + " " + color.getGreen() + " " + color.getBlue(), out, 1);
             write("}", out, 0);
 
             // Set the ambient light.
-            color = theScene.getAmbientColor();
+            color = scene.getAmbientColor();
             write("PointLight {", out, 0);
             write("color " + color.getRed() + " " + color.getGreen() + " " + color.getBlue(), out, 1);
             write("intensity 0", out, 1);
@@ -157,25 +156,22 @@ public class VRMLExporter {
             write("}", out, 0);
 
             // Add fog, if appropriate.
-            if (theScene.getFogState()) {
-                color = theScene.getFogColor();
+            if (scene.getFogState()) {
+                color = scene.getFogColor();
                 write("Fog {", out, 0);
                 write("color " + color.getRed() + " " + color.getGreen() + " " + color.getBlue(), out, 1);
                 write("fogType \"EXPONENTIAL\"", out, 1);
-                write("visibilityRange " + 2.0 * theScene.getFogDistance(), out, 1);
+                write("visibilityRange " + 2.0 * scene.getFogDistance(), out, 1);
                 write("}", out, 0);
             }
         }
 
         // Write the objects in the scene.
         if (wholeScene) {
-            for (ObjectInfo item : theScene.getObjects()) {
-                writeObject(item, null, out, tol, smooth, 0, theScene, textureExporter);
-            }
+            scene.getObjects().forEach(item -> writeObject(item, null, out, tol, smooth, 0, scene, textureExporter));
         } else {
-            for (i = 0; i < selected.length; i++) {
-                writeObject(theScene.getObject(selected[i]), null, out, tol, smooth,
-                        0, theScene, textureExporter);
+            for (int i = 0; i < selected.length; i++) {
+                writeObject(scene.getObject(selected[i]), null, out, tol, smooth, 0, scene, textureExporter);
             }
         }
         out.flush();
@@ -215,8 +211,7 @@ public class VRMLExporter {
         double[] rot = new double[4];
         double ratio = 0.0;
         double[] pos = new double[3], scale = new double[3];
-        String name = translate(info.getName(), 0, 1, matchId, replace)
-                + translate(info.getName(), 1, -1, matchId, replace);
+        String name = translate(info.getName(), 0, 1, matchId, replace) + translate(info.getName(), 1, -1, matchId, replace);
         if (name.length() > 0 && illegalFirst.indexOf(name.charAt(0)) > 0) {
             name = '_' + name;
         }
@@ -421,8 +416,7 @@ public class VRMLExporter {
     private static void writeMesh(FacetedMesh mesh, ObjectInfo info, PrintWriter out, int indent, Scene theScene, TextureImageExporter textureExporter, boolean includeNormals) {
         MeshVertex[] vert = mesh.getVertices();
         double[] pos = new double[3];
-        String name = translate(info.getName(), 0, 1, matchId, replace)
-                + translate(info.getName(), 1, -1, matchId, replace);
+        String name = translate(info.getName(), 0, 1, matchId, replace) + translate(info.getName(), 1, -1, matchId, replace);
         if (name.length() > 0 && illegalFirst.indexOf(name.charAt(0)) > 0) {
             name = '_' + name;
         }
