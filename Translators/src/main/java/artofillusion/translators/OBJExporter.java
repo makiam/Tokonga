@@ -39,9 +39,9 @@ public class OBJExporter {
         final ValueField widthField = new ValueField(200.0, ValueField.INTEGER + ValueField.POSITIVE);
         final ValueField heightField = new ValueField(200.0, ValueField.INTEGER + ValueField.POSITIVE);
         final ValueSlider qualitySlider = new ValueSlider(0.0, 1.0, 100, 0.5);
-        final BCheckBox smoothBox = new BCheckBox(Translate.text("subdivideSmoothMeshes"), true);
-        final BCheckBox normalsBox = new BCheckBox(Translate.text("alwaysWriteNormals"), false);
-        final BCheckBox mtlBox = new BCheckBox(Translate.text("writeTexToMTL"), false);
+        final BCheckBox smoothBox = new BCheckBox(Translate.text("Translators:subdivideSmoothMeshes"), true);
+        final BCheckBox normalsBox = new BCheckBox(Translate.text("Translators:alwaysWriteNormals"), false);
+        final BCheckBox mtlBox = new BCheckBox(Translate.text("Translators:writeTexToMTL"), false);
         BComboBox exportChoice = new BComboBox(new String[]{
             Translate.text("exportWholeScene"),
             Translate.text("selectedObjectsOnly")
@@ -56,12 +56,12 @@ public class OBJExporter {
         mtlBox.dispatchEvent(new ValueChangedEvent(mtlBox));
         ComponentsDialog dlg;
         if (theScene.getSelection().length > 0) {
-            dlg = new ComponentsDialog(parent, Translate.text("exportToOBJ"),
-                    new Widget[]{exportChoice, errorField, smoothBox, normalsBox, mtlBox, Translate.label("imageSizeForTextures"), widthField, heightField, qualitySlider},
+            dlg = new ComponentsDialog(parent, Translate.text("Translators:exportToOBJ"),
+                    new Widget[]{exportChoice, errorField, smoothBox, normalsBox, mtlBox, Translate.label("Translators:imageSizeForTextures"), widthField, heightField, qualitySlider},
                     new String[]{null, Translate.text("maxSurfaceError"), null, null, null, null, Translate.text("Width"), Translate.text("Height"), Translate.text("imageQuality")});
         } else {
-            dlg = new ComponentsDialog(parent, Translate.text("exportToOBJ"),
-                    new Widget[]{errorField, smoothBox, normalsBox, mtlBox, Translate.label("imageSizeForTextures"), widthField, heightField, qualitySlider},
+            dlg = new ComponentsDialog(parent, Translate.text("Translators:exportToOBJ"),
+                    new Widget[]{errorField, smoothBox, normalsBox, mtlBox, Translate.label("Translators:imageSizeForTextures"), widthField, heightField, qualitySlider},
                     new String[]{Translate.text("maxSurfaceError"), null, null, null, null, Translate.text("Width"), Translate.text("Height"), Translate.text("imageQuality")});
         }
         if (!dlg.clickedOk()) {
@@ -69,7 +69,7 @@ public class OBJExporter {
         }
 
         // Ask the user to select the output file.
-        BFileChooser fc = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("exportToOBJ"));
+        BFileChooser fc = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("Translators:exportToOBJ"));
         fc.setSelectedFile(new File("Untitled.obj"));
         if (ArtOfIllusion.getCurrentDirectory() != null) {
             fc.setDirectory(new File(ArtOfIllusion.getCurrentDirectory()));
@@ -102,7 +102,7 @@ public class OBJExporter {
             out.close();
         } catch (IOException | InterruptedException ex) {
             log.atError().setCause(ex).log("Error exporting scene: {}", ex.getMessage());
-            new BStandardDialog("", new String[]{Translate.text("errorExportingScene"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(parent);
+            new BStandardDialog("", new String[]{Translate.text("Translators:errorExportingScene"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(parent);
         }
     }
 

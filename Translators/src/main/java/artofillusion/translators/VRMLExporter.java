@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
    Some parts copyright (C) 2005 by Nik Trevallyn-Jones
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -45,12 +45,12 @@ public class VRMLExporter {
         final ValueField widthField = new ValueField(200.0, ValueField.INTEGER + ValueField.POSITIVE);
         final ValueField heightField = new ValueField(200.0, ValueField.INTEGER + ValueField.POSITIVE);
         final ValueSlider qualitySlider = new ValueSlider(0.0, 1.0, 100, 0.5);
-        final BCheckBox texBox = new BCheckBox(Translate.text("createImageFilesForTextures"), false);
-        BCheckBox compressBox = new BCheckBox(Translate.text("compressOutputFile"), true);
+        final BCheckBox texBox = new BCheckBox(Translate.text("Translators:createImageFilesForTextures"), false);
+        BCheckBox compressBox = new BCheckBox(Translate.text("Translators:compressOutputFile"), true);
         BCheckBox smoothBox = new BCheckBox(Translate.text("subdivideSmoothMeshes"), true);
         BComboBox exportChoice = new BComboBox(new String[]{
-            Translate.text("exportWholeScene"),
-            Translate.text("selectedObjectsOnly")
+            Translate.text("Translators:exportWholeScene"),
+            Translate.text("Translators:selectedObjectsOnly")
         });
         texBox.addEventLink(ValueChangedEvent.class, new Object() {
             void processEvent() {
@@ -63,11 +63,11 @@ public class VRMLExporter {
         ComponentsDialog dlg;
         if (theScene.getSelection().length > 0) {
             dlg = new ComponentsDialog(parent, Translate.text("exportToVRML"),
-                    new Widget[]{exportChoice, errorField, compressBox, smoothBox, texBox, Translate.label("imageSizeForTextures"), widthField, heightField, qualitySlider},
+                    new Widget[]{exportChoice, errorField, compressBox, smoothBox, texBox, Translate.label("Translators:imageSizeForTextures"), widthField, heightField, qualitySlider},
                     new String[]{null, Translate.text("maxSurfaceError"), null, null, null, null, Translate.text("Width"), Translate.text("Height"), Translate.text("imageQuality")});
         } else {
             dlg = new ComponentsDialog(parent, Translate.text("exportToVRML"),
-                    new Widget[]{errorField, compressBox, smoothBox, texBox, Translate.label("imageSizeForTextures"), widthField, heightField, qualitySlider},
+                    new Widget[]{errorField, compressBox, smoothBox, texBox, Translate.label("Translators:imageSizeForTextures"), widthField, heightField, qualitySlider},
                     new String[]{Translate.text("maxSurfaceError"), null, null, null, null, Translate.text("Width"), Translate.text("Height"), Translate.text("imageQuality")});
         }
         if (!dlg.clickedOk()) {
@@ -75,7 +75,7 @@ public class VRMLExporter {
         }
 
         // Ask the user to select the output file.
-        BFileChooser fc = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("exportToVRML"));
+        BFileChooser fc = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("Translators:exportToVRML"));
         if (compressBox.getState()) {
             fc.setSelectedFile(new File("Untitled.wrz"));
         } else {
@@ -115,7 +115,7 @@ public class VRMLExporter {
             out.close();
         } catch (IOException | InterruptedException ex) {
             log.atError().setCause(ex).log("Unable to export VRML {}", ex.getMessage());
-            new BStandardDialog("", new String[]{Translate.text("errorExportingScene"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(parent);
+            new BStandardDialog("", new String[]{Translate.text("Translators:errorExportingScene"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(parent);
         }
     }
 

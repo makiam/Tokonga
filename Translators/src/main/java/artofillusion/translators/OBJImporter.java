@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2015 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -94,8 +94,7 @@ public class OBJImporter {
                                 max[i] = val[i];
                             }
                         } catch (NumberFormatException ex) {
-                            throw new Exception("Illegal value '" + fields[i + 1]
-                                    + "' found in line " + lineno + ".");
+                            throw new Exception("Illegal value '" + fields[i + 1] + "' found in line " + lineno + ".");
                         }
                     }
                     vertex.add(new Vec3(val[0], val[1], val[2]));
@@ -645,9 +644,7 @@ public class OBJImporter {
         if (fields.length < 4) {
             return null;
         }
-        return new RGBColor(Double.parseDouble(fields[1]),
-                Double.parseDouble(fields[2]),
-                Double.parseDouble(fields[3]));
+        return new RGBColor(Double.parseDouble(fields[1]), Double.parseDouble(fields[2]), Double.parseDouble(fields[3]));
     }
 
     /**
@@ -705,16 +702,16 @@ public class OBJImporter {
         public void resolveColors() {
             if (diffuse == null) {
                 if (diffuseMap == null) {
-                    diffuse = new RGBColor(0.0, 0.0, 0.0);
+                    diffuse = new RGBColor();
                 } else {
                     diffuse = new RGBColor(1.0, 1.0, 1.0);
                 }
             }
             if (ambient == null) {
-                ambient = new RGBColor(0.0, 0.0, 0.0);
+                ambient = new RGBColor();
             }
             if (specular == null) {
-                specular = new RGBColor(0.0, 0.0, 0.0);
+                specular = new RGBColor();
             } else {
                 specularity = 1.0;
             }
