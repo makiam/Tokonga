@@ -21,6 +21,9 @@ import buoy.widget.*;
 import java.io.*;
 import java.text.*;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -43,8 +46,8 @@ public class OBJExporter {
         final BCheckBox normalsBox = new BCheckBox(Translate.text("Translators:alwaysWriteNormals"), false);
         final BCheckBox mtlBox = new BCheckBox(Translate.text("Translators:writeTexToMTL"), false);
         BComboBox exportChoice = new BComboBox(new String[]{
-            Translate.text("exportWholeScene"),
-            Translate.text("selectedObjectsOnly")
+            Translate.text("Translators:exportWholeScene"),
+            Translate.text("Translators:selectedObjectsOnly")
         });
         mtlBox.addEventLink(ValueChangedEvent.class, new Object() {
             void processEvent() {
@@ -110,10 +113,10 @@ public class OBJExporter {
      * Write out the scene in OBJ format to the specified PrintWriter. The other parameters
      * correspond to the options in the dialog box displayed by exportFile().
      */
-    public static void writeScene(Scene theScene, PrintWriter out, boolean wholeScene, double tol, boolean smooth, boolean alwaysStoreNormals, TextureImageExporter textureExporter, String mtlFilename) {
+    public static void writeScene(Scene scene, PrintWriter out, boolean wholeScene, double tol, boolean smooth, boolean alwaysStoreNormals, TextureImageExporter textureExporter, String mtlFilename) {
         // Write the header information.
 
-        out.println("#Produced by Art of Illusion " + ArtOfIllusion.getVersion() + ", " + (new Date()).toString());
+        out.println("#Produced by Art of Illusion " + ArtOfIllusion.getVersion() + ", " + new Date());
         if (mtlFilename != null) {
             out.println("mtllib " + mtlFilename);
         }
@@ -124,21 +127,20 @@ public class OBJExporter {
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
         nf.setMaximumFractionDigits(5);
         nf.setGroupingUsed(false);
-        for (int i = 0; i < theScene.getNumObjects(); i++) {
+
+        List<ObjectInfo> source = wholeScene ? scene.getObjects() : scene.getObjects().stream().filter(info -> info.isSelected()).collect(Collectors.toList());
+        source = source.stream().filter(Predicate.not(info -> info.getGeometry().getTexture() == null)).collect(Collectors.toList());
+
+
+
+        for (ObjectInfo info: source) {
             // Get a rendering mesh for the object.
 
-            ObjectInfo info = theScene.getObject(i);
-            if (!wholeScene && !info.isSelected()) {
-                continue;
-            }
-            if (info.getObject().getTexture() == null) {
-                continue;
-            }
             FacetedMesh mesh;
-            if (!smooth && info.getObject() instanceof FacetedMesh) {
-                mesh = (FacetedMesh) info.getObject();
+            if (smooth || !(info.getGeometry() instanceof FacetedMesh)) {
+                mesh = info.getGeometry().convertToTriangleMesh(tol);
             } else {
-                mesh = info.getObject().convertToTriangleMesh(tol);
+                mesh = (FacetedMesh) info.getObject();
             }
             if (mesh == null) {
                 continue;
