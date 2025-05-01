@@ -62,13 +62,13 @@ public class VRMLExporter {
         texBox.dispatchEvent(new ValueChangedEvent(texBox));
         ComponentsDialog dlg;
         if (theScene.getSelection().length > 0) {
-            dlg = new ComponentsDialog(parent, Translate.text("exportToVRML"),
+            dlg = new ComponentsDialog(parent, Translate.text("Translators:exportToVRML"),
                     new Widget[]{exportChoice, errorField, compressBox, smoothBox, texBox, Translate.label("Translators:imageSizeForTextures"), widthField, heightField, qualitySlider},
-                    new String[]{null, Translate.text("maxSurfaceError"), null, null, null, null, Translate.text("Width"), Translate.text("Height"), Translate.text("imageQuality")});
+                    new String[]{null, Translate.text("maxSurfaceError"), null, null, null, null, Translate.text("Width"), Translate.text("Height"), Translate.text("Translators:imageQuality")});
         } else {
-            dlg = new ComponentsDialog(parent, Translate.text("exportToVRML"),
+            dlg = new ComponentsDialog(parent, Translate.text("Translators:exportToVRML"),
                     new Widget[]{errorField, compressBox, smoothBox, texBox, Translate.label("Translators:imageSizeForTextures"), widthField, heightField, qualitySlider},
-                    new String[]{Translate.text("maxSurfaceError"), null, null, null, null, Translate.text("Width"), Translate.text("Height"), Translate.text("imageQuality")});
+                    new String[]{Translate.text("maxSurfaceError"), null, null, null, null, Translate.text("Width"), Translate.text("Height"), Translate.text("Translators:imageQuality")});
         }
         if (!dlg.clickedOk()) {
             return;

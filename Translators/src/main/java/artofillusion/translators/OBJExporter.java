@@ -58,11 +58,11 @@ public class OBJExporter {
         if (theScene.getSelection().length > 0) {
             dlg = new ComponentsDialog(parent, Translate.text("Translators:exportToOBJ"),
                     new Widget[]{exportChoice, errorField, smoothBox, normalsBox, mtlBox, Translate.label("Translators:imageSizeForTextures"), widthField, heightField, qualitySlider},
-                    new String[]{null, Translate.text("maxSurfaceError"), null, null, null, null, Translate.text("Width"), Translate.text("Height"), Translate.text("imageQuality")});
+                    new String[]{null, Translate.text("maxSurfaceError"), null, null, null, null, Translate.text("Width"), Translate.text("Height"), Translate.text("Translators:imageQuality")});
         } else {
             dlg = new ComponentsDialog(parent, Translate.text("Translators:exportToOBJ"),
                     new Widget[]{errorField, smoothBox, normalsBox, mtlBox, Translate.label("Translators:imageSizeForTextures"), widthField, heightField, qualitySlider},
-                    new String[]{Translate.text("maxSurfaceError"), null, null, null, null, Translate.text("Width"), Translate.text("Height"), Translate.text("imageQuality")});
+                    new String[]{Translate.text("maxSurfaceError"), null, null, null, null, Translate.text("Width"), Translate.text("Height"), Translate.text("Translators:imageQuality")});
         }
         if (!dlg.clickedOk()) {
             return;

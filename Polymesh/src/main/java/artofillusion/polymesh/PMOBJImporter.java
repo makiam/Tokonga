@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2002,2004 by Peter Eastman, Modifications (C) 2005 by François Guillet for PolyMesh adaptation
- *  Changes copyright (C) 2023-2024 by Maksim Khramov
+ *  Changes copyright (C) 2023-2025 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -61,7 +61,7 @@ public class PMOBJImporter {
      * @param parent Description of the Parameter
      */
     public static void importFile(BFrame parent) {
-        BFileChooser bfc = new BFileChooser(BFileChooser.OPEN_FILE, Translate.text("importOBJ"));
+        BFileChooser bfc = new BFileChooser(BFileChooser.OPEN_FILE, Translate.text("Translators:importOBJ"));
         if (ArtOfIllusion.getCurrentDirectory() != null) {
             bfc.setDirectory(new File(ArtOfIllusion.getCurrentDirectory()));
         }

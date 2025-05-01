@@ -74,7 +74,7 @@ public class PMOBJExporter {
         final ValueField widthField = new ValueField(200.0, ValueField.INTEGER + ValueField.POSITIVE);
         final ValueField heightField = new ValueField(200.0, ValueField.INTEGER + ValueField.POSITIVE);
         final ValueSlider qualitySlider = new ValueSlider(0.0, 1.0, 100, 0.5);
-        final BCheckBox mtlBox = new BCheckBox(Translate.text("writeTexToMTL"), false);
+        final BCheckBox mtlBox = new BCheckBox(Translate.text("Translators:writeTexToMTL"), false);
         mtlBox.addEventLink(ValueChangedEvent.class,
                 new Object() {
             void processEvent() {
@@ -85,15 +85,15 @@ public class PMOBJExporter {
         });
         mtlBox.dispatchEvent(new ValueChangedEvent(mtlBox));
         ComponentsDialog dlg;
-        dlg = new ComponentsDialog(parent, Translate.text("exportToOBJ"),
-                new Widget[]{mtlBox, Translate.label("imageSizeForTextures"), widthField, heightField, qualitySlider},
-                new String[]{null, null, Translate.text("Width"), Translate.text("Height"), Translate.text("imageQuality")});
+        dlg = new ComponentsDialog(parent, Translate.text("Translators:exportToOBJ"),
+                new Widget[]{mtlBox, Translate.label("Translators:imageSizeForTextures"), widthField, heightField, qualitySlider},
+                new String[]{null, null, Translate.text("Width"), Translate.text("Height"), Translate.text("Translators:imageQuality")});
         if (!dlg.clickedOk()) {
             return;
         }
 
         // Ask the user to select the output file.
-        BFileChooser fc = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("exportToOBJ"));
+        BFileChooser fc = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("Translators:exportToOBJ"));
         fc.setSelectedFile(new File("Untitled.obj"));
         if (ArtOfIllusion.getCurrentDirectory() != null) {
             fc.setDirectory(new File(ArtOfIllusion.getCurrentDirectory()));
@@ -125,8 +125,8 @@ public class PMOBJExporter {
             writePolyMesh(theScene, out, textureExporter, mtlFilename);
             out.close();
         } catch (IOException | InterruptedException ex) {
-            log.atError().setCause(ex).log(Translate.text("errorExportingScene"));
-            new BStandardDialog("", new String[]{Translate.text("errorExportingScene"), ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(parent);
+            log.atError().setCause(ex).log(Translate.text("Translators:errorExportingScene"));
+            new BStandardDialog("", new String[]{Translate.text("Translators:errorExportingScene"), ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(parent);
         }
     }
 

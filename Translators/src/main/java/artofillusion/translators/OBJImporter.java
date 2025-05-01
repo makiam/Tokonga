@@ -399,11 +399,11 @@ public class OBJImporter {
      * and display it in a new window.
      */
     public static void importFile(BFrame parent) {
-        BFileChooser bfc = new BFileChooser(BFileChooser.OPEN_FILE, Translate.text("importOBJ"));
+        BFileChooser bfc = new BFileChooser(BFileChooser.OPEN_FILE, Translate.text("Translators:importOBJ"));
         if (ArtOfIllusion.getCurrentDirectory() != null) {
             bfc.setDirectory(new File(ArtOfIllusion.getCurrentDirectory()));
         }
-        FileNameExtensionFilter objFilter = new FileNameExtensionFilter(Translate.text("fileFilter.obj"), "obj");
+        FileNameExtensionFilter objFilter = new FileNameExtensionFilter(Translate.text("Translators:fileFilter.obj"), "obj");
         bfc.getComponent().addChoosableFileFilter(objFilter);
         bfc.getComponent().setAcceptAllFileFilterUsed(true);
         bfc.setFileFilter(objFilter);
