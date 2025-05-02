@@ -135,12 +135,12 @@ public class PMOBJExporter {
      * other parameters correspond to the options in the dialog box displayed
      * by exportFile().
      *
-     * @param theScene Description of the Parameter
+     * @param scene Description of the Parameter
      * @param out Description of the Parameter
      * @param textureExporter Description of the Parameter
      * @param mtlFilename Description of the Parameter
      */
-    public static void writePolyMesh(Scene theScene, PrintWriter out, TextureImageExporter textureExporter, String mtlFilename) {
+    public static void writePolyMesh(Scene scene, PrintWriter out, TextureImageExporter textureExporter, String mtlFilename) {
 
         // Write the header information.
         //out.println( "#Produced by Art of Illusion " + ArtOfIllusion.VERSION + ", PolyMesh Plugin, " + ( new Date() ).toString() );
@@ -152,7 +152,7 @@ public class PMOBJExporter {
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
         nf.setMaximumFractionDigits(5);
         nf.setGroupingUsed(false);
-        for (ObjectInfo info : theScene.getObjects()) {
+        for (ObjectInfo info : scene.getObjects()) {
 
             if (!info.isSelected() || !(info.object instanceof PolyMesh)) {
                 continue;

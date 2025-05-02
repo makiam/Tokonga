@@ -1,5 +1,5 @@
 /* Copyright (C) 2003 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -162,7 +162,7 @@ public class TextureImageExporter {
     }
 
     /**
-     * Write out all of the images for the various textures.
+     * Write out all the images for the various textures.
      */
     public void saveImages() throws IOException, InterruptedException {
         Enumeration<Texture> e = textureTable.keys();
