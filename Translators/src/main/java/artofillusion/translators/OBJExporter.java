@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 
+import javax.swing.*;
+
 /**
  * OBJExporter contains the actual routines for exporting OBJ files.
  */
@@ -72,16 +74,18 @@ public class OBJExporter {
         }
 
         // Ask the user to select the output file.
-        BFileChooser fc = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("Translators:exportToOBJ"));
-        fc.setSelectedFile(new File("Untitled.obj"));
-        if (ArtOfIllusion.getCurrentDirectory() != null) {
-            fc.setDirectory(new File(ArtOfIllusion.getCurrentDirectory()));
-        }
-        if (!fc.showDialog(parent)) {
+        JFileChooser jfc = new JFileChooser();
+        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfc.setDialogTitle(Translate.text("Translators:exportToOBJ"));
+        jfc.setSelectedFile(new File("Untitled.obj"));
+        Optional.ofNullable(ArtOfIllusion.getCurrentDirectory()).ifPresent(dir -> jfc.setCurrentDirectory(new File(dir)));
+
+        if (jfc.showSaveDialog(parent.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        File dir = fc.getDirectory();
-        File f = fc.getSelectedFile();
+
+        File dir = jfc.getCurrentDirectory();
+        File f = jfc.getSelectedFile();
         String name = f.getName();
         String baseName = (name.endsWith(".obj") ? name.substring(0, name.length() - 4) : name);
         ArtOfIllusion.setCurrentDirectory(dir.getAbsolutePath());
