@@ -17,15 +17,10 @@ import artofillusion.polymesh.PolyMesh.Wedge;
 import artofillusion.polymesh.PolyMesh.Wface;
 import artofillusion.polymesh.PolyMesh.Wvertex;
 import artofillusion.texture.TextureSpec;
-import artofillusion.ui.ComponentsDialog;
-import artofillusion.ui.Translate;
-import artofillusion.ui.ValueField;
-import artofillusion.ui.ValueSlider;
+import artofillusion.ui.*;
 import buoy.event.ValueChangedEvent;
 import buoy.widget.BCheckBox;
-import buoy.widget.BFileChooser;
 import buoy.widget.BFrame;
-import buoy.widget.BStandardDialog;
 import buoy.widget.Widget;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -33,11 +28,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import lombok.extern.slf4j.Slf4j;
+import javax.swing.*;
 
 /**
  * PMOBJExporter contains the actual routines for exporting OBJ files for
@@ -93,16 +86,16 @@ public class PMOBJExporter {
         }
 
         // Ask the user to select the output file.
-        BFileChooser fc = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("Translators:exportToOBJ"));
-        fc.setSelectedFile(new File("Untitled.obj"));
-        if (ArtOfIllusion.getCurrentDirectory() != null) {
-            fc.setDirectory(new File(ArtOfIllusion.getCurrentDirectory()));
-        }
-        if (!fc.showDialog(parent)) {
+        JFileChooser jfc = new JFileChooser();
+        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfc.setDialogTitle(Translate.text("Translators:exportToOBJ"));
+        jfc.setSelectedFile(new File("Untitled.obj"));
+        Optional.ofNullable(ArtOfIllusion.getCurrentDirectory()).ifPresent(dir -> jfc.setCurrentDirectory(new File(dir)));
+        if (jfc.showSaveDialog(parent.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        File dir = fc.getDirectory();
-        File f = fc.getSelectedFile();
+        File dir = jfc.getCurrentDirectory();
+        File f = jfc.getSelectedFile();
         String name = f.getName();
         String baseName = (name.endsWith(".obj") ? name.substring(0, name.length() - 4) : name);
         ArtOfIllusion.setCurrentDirectory(dir.getAbsolutePath());
@@ -126,7 +119,7 @@ public class PMOBJExporter {
             out.close();
         } catch (IOException | InterruptedException ex) {
             log.atError().setCause(ex).log(Translate.text("Translators:errorExportingScene"));
-            new BStandardDialog("", new String[]{Translate.text("Translators:errorExportingScene"), ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(parent);
+            MessageDialog.create().withOwner(parent.getComponent()).error(new String[]{Translate.text("Translators:errorExportingScene"), ex.getMessage()});
         }
     }
 

@@ -21,6 +21,7 @@ import artofillusion.ui.*;
 import buoy.widget.*;
 import java.io.*;
 import java.util.*;
+import javax.swing.*;
 import javax.swing.filechooser.*;
 
 /**
@@ -399,21 +400,23 @@ public class OBJImporter {
      * and display it in a new window.
      */
     public static void importFile(BFrame parent) {
-        BFileChooser bfc = new BFileChooser(BFileChooser.OPEN_FILE, Translate.text("Translators:importOBJ"));
-        if (ArtOfIllusion.getCurrentDirectory() != null) {
-            bfc.setDirectory(new File(ArtOfIllusion.getCurrentDirectory()));
-        }
+        JFileChooser jfc = new JFileChooser();
+        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfc.setDialogTitle(Translate.text("Translators:importOBJ"));
+        Optional.ofNullable(ArtOfIllusion.getCurrentDirectory()).ifPresent(dir -> jfc.setCurrentDirectory(new File(dir)));
+
+
         FileNameExtensionFilter objFilter = new FileNameExtensionFilter(Translate.text("Translators:fileFilter.obj"), "obj");
-        bfc.getComponent().addChoosableFileFilter(objFilter);
-        bfc.getComponent().setAcceptAllFileFilterUsed(true);
-        bfc.setFileFilter(objFilter);
-        if (!bfc.showDialog(parent)) {
+        jfc.addChoosableFileFilter(objFilter);
+        jfc.setAcceptAllFileFilterUsed(true);
+        jfc.setFileFilter(objFilter);
+        if (jfc.showOpenDialog(parent.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        ArtOfIllusion.setCurrentDirectory(bfc.getDirectory().getAbsolutePath());
+        ArtOfIllusion.setCurrentDirectory(jfc.getCurrentDirectory().getAbsolutePath());
         try {
-            Scene scene = importFile(bfc.getSelectedFile());
-            scene.setName(bfc.getSelectedFile().getName());
+            Scene scene = importFile(jfc.getSelectedFile());
+            scene.setName(jfc.getSelectedFile().getName());
             ArtOfIllusion.newWindow(scene);
         } catch (Exception ex) {
             new BStandardDialog("", new String[]{Translate.text("errorLoadingFile"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(parent);
