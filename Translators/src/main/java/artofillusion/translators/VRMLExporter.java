@@ -24,6 +24,8 @@ import java.util.*;
 import java.util.zip.GZIPOutputStream;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.swing.*;
+
 /**
  * VRMLExporter contains the actual routines for exporting VRML files.
  */
@@ -75,20 +77,23 @@ public class VRMLExporter {
         }
 
         // Ask the user to select the output file.
-        BFileChooser fc = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("Translators:exportToVRML"));
+        var jfc = new JFileChooser();
+        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfc.setDialogTitle(Translate.text("Translators:exportToVRML"));
+
+        Optional.ofNullable(ArtOfIllusion.getCurrentDirectory()).ifPresent(dir -> jfc.setCurrentDirectory(new File(dir)));
+
         if (compressBox.getState()) {
-            fc.setSelectedFile(new File("Untitled.wrz"));
+            jfc.setSelectedFile(new File("Untitled.wrz"));
         } else {
-            fc.setSelectedFile(new File("Untitled.wrl"));
+            jfc.setSelectedFile(new File("Untitled.wrl"));
         }
-        if (ArtOfIllusion.getCurrentDirectory() != null) {
-            fc.setDirectory(new File(ArtOfIllusion.getCurrentDirectory()));
-        }
-        if (!fc.showDialog(parent)) {
+
+        if (jfc.showSaveDialog(parent.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        File dir = fc.getDirectory();
-        File f = fc.getSelectedFile();
+        File dir = jfc.getCurrentDirectory();
+        File f = jfc.getSelectedFile();
         String name = f.getName();
         String baseName = (name.endsWith(".wrl") || name.endsWith(".wrz") ? name.substring(0, name.length() - 4) : name);
         ArtOfIllusion.setCurrentDirectory(dir.getAbsolutePath());

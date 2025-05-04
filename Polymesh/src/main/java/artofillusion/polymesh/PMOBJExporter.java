@@ -86,7 +86,7 @@ public class PMOBJExporter {
         }
 
         // Ask the user to select the output file.
-        JFileChooser jfc = new JFileChooser();
+        var jfc = new JFileChooser();
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfc.setDialogTitle(Translate.text("Translators:exportToOBJ"));
         jfc.setSelectedFile(new File("Untitled.obj"));
