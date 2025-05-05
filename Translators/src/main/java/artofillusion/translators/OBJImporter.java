@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2015 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -21,6 +21,7 @@ import artofillusion.ui.*;
 import buoy.widget.*;
 import java.io.*;
 import java.util.*;
+import javax.swing.*;
 import javax.swing.filechooser.*;
 
 /**
@@ -94,8 +95,7 @@ public class OBJImporter {
                                 max[i] = val[i];
                             }
                         } catch (NumberFormatException ex) {
-                            throw new Exception("Illegal value '" + fields[i + 1]
-                                    + "' found in line " + lineno + ".");
+                            throw new Exception("Illegal value '" + fields[i + 1] + "' found in line " + lineno + ".");
                         }
                     }
                     vertex.add(new Vec3(val[0], val[1], val[2]));
@@ -400,21 +400,23 @@ public class OBJImporter {
      * and display it in a new window.
      */
     public static void importFile(BFrame parent) {
-        BFileChooser bfc = new BFileChooser(BFileChooser.OPEN_FILE, Translate.text("importOBJ"));
-        if (ArtOfIllusion.getCurrentDirectory() != null) {
-            bfc.setDirectory(new File(ArtOfIllusion.getCurrentDirectory()));
-        }
-        FileNameExtensionFilter objFilter = new FileNameExtensionFilter(Translate.text("fileFilter.obj"), "obj");
-        bfc.getComponent().addChoosableFileFilter(objFilter);
-        bfc.getComponent().setAcceptAllFileFilterUsed(true);
-        bfc.setFileFilter(objFilter);
-        if (!bfc.showDialog(parent)) {
+        JFileChooser jfc = new JFileChooser();
+        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfc.setDialogTitle(Translate.text("Translators:importOBJ"));
+        Optional.ofNullable(ArtOfIllusion.getCurrentDirectory()).ifPresent(dir -> jfc.setCurrentDirectory(new File(dir)));
+
+
+        FileNameExtensionFilter objFilter = new FileNameExtensionFilter(Translate.text("Translators:fileFilter.obj"), "obj");
+        jfc.addChoosableFileFilter(objFilter);
+        jfc.setAcceptAllFileFilterUsed(true);
+        jfc.setFileFilter(objFilter);
+        if (jfc.showOpenDialog(parent.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        ArtOfIllusion.setCurrentDirectory(bfc.getDirectory().getAbsolutePath());
+        ArtOfIllusion.setCurrentDirectory(jfc.getCurrentDirectory().getAbsolutePath());
         try {
-            Scene scene = importFile(bfc.getSelectedFile());
-            scene.setName(bfc.getSelectedFile().getName());
+            Scene scene = importFile(jfc.getSelectedFile());
+            scene.setName(jfc.getSelectedFile().getName());
             ArtOfIllusion.newWindow(scene);
         } catch (Exception ex) {
             new BStandardDialog("", new String[]{Translate.text("errorLoadingFile"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(parent);
@@ -645,9 +647,7 @@ public class OBJImporter {
         if (fields.length < 4) {
             return null;
         }
-        return new RGBColor(Double.parseDouble(fields[1]),
-                Double.parseDouble(fields[2]),
-                Double.parseDouble(fields[3]));
+        return new RGBColor(Double.parseDouble(fields[1]), Double.parseDouble(fields[2]), Double.parseDouble(fields[3]));
     }
 
     /**
@@ -705,16 +705,16 @@ public class OBJImporter {
         public void resolveColors() {
             if (diffuse == null) {
                 if (diffuseMap == null) {
-                    diffuse = new RGBColor(0.0, 0.0, 0.0);
+                    diffuse = new RGBColor();
                 } else {
                     diffuse = new RGBColor(1.0, 1.0, 1.0);
                 }
             }
             if (ambient == null) {
-                ambient = new RGBColor(0.0, 0.0, 0.0);
+                ambient = new RGBColor();
             }
             if (specular == null) {
-                specular = new RGBColor(0.0, 0.0, 0.0);
+                specular = new RGBColor();
             } else {
                 specularity = 1.0;
             }

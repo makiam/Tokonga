@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2002,2004 by Peter Eastman, Modifications (C) 2005 by François Guillet for PolyMesh adaptation
- *  Changes copyright (C) 2023-2024 by Maksim Khramov
+ *  Changes copyright (C) 2023-2025 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -32,20 +32,18 @@ import artofillusion.texture.Texture2D;
 import artofillusion.texture.UVMapping;
 import artofillusion.texture.UniformTexture;
 import artofillusion.ui.Translate;
-import buoy.widget.BFileChooser;
+
 import buoy.widget.BFrame;
 import buoy.widget.BStandardDialog;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.*;
+
 import lombok.extern.slf4j.Slf4j;
+
+import javax.swing.*;
 
 /**
  * PMOBJImporter imports .OBJ files to Polymeshes.
@@ -61,15 +59,17 @@ public class PMOBJImporter {
      * @param parent Description of the Parameter
      */
     public static void importFile(BFrame parent) {
-        BFileChooser bfc = new BFileChooser(BFileChooser.OPEN_FILE, Translate.text("importOBJ"));
-        if (ArtOfIllusion.getCurrentDirectory() != null) {
-            bfc.setDirectory(new File(ArtOfIllusion.getCurrentDirectory()));
-        }
-        if (!bfc.showDialog(parent)) {
+        JFileChooser jfc = new JFileChooser();
+        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfc.setDialogTitle(Translate.text("Translators:importOBJ"));
+        Optional.ofNullable(ArtOfIllusion.getCurrentDirectory()).ifPresent(dir -> jfc.setCurrentDirectory(new File(dir)));
+
+        if(jfc.showOpenDialog(parent.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        File f = bfc.getSelectedFile();
-        ArtOfIllusion.setCurrentDirectory(bfc.getDirectory().getAbsolutePath());
+
+        File f = jfc.getSelectedFile();
+        ArtOfIllusion.setCurrentDirectory(jfc.getCurrentDirectory().getAbsolutePath());
         String objName = f.getName();
         if (objName.lastIndexOf('.') > 0) {
             objName = objName.substring(0, objName.lastIndexOf('.'));
@@ -205,7 +205,7 @@ public class PMOBJImporter {
                     // Load one or more texture libraries.
 
                     for (int i = 1; i < fields.length; i++) {
-                        parseTextures(fields[i], bfc.getDirectory(), textureTable);
+                        parseTextures(fields[i], jfc.getCurrentDirectory(), textureTable);
                     }
                 }
             }
@@ -303,7 +303,7 @@ public class PMOBJImporter {
                 if (texName != null && textureTable.get(texName) != null) {
                     Texture tex = realizedTextures.get(texName);
                     if (tex == null) {
-                        tex = createTexture(textureTable.get(texName), theScene, bfc.getDirectory(), imageMaps, parent);
+                        tex = createTexture(textureTable.get(texName), theScene, jfc.getCurrentDirectory(), imageMaps, parent);
                         realizedTextures.put(texName, tex);
                     }
                     if (tex instanceof Texture2D) {

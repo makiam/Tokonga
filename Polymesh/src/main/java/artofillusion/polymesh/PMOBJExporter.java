@@ -17,15 +17,10 @@ import artofillusion.polymesh.PolyMesh.Wedge;
 import artofillusion.polymesh.PolyMesh.Wface;
 import artofillusion.polymesh.PolyMesh.Wvertex;
 import artofillusion.texture.TextureSpec;
-import artofillusion.ui.ComponentsDialog;
-import artofillusion.ui.Translate;
-import artofillusion.ui.ValueField;
-import artofillusion.ui.ValueSlider;
+import artofillusion.ui.*;
 import buoy.event.ValueChangedEvent;
 import buoy.widget.BCheckBox;
-import buoy.widget.BFileChooser;
 import buoy.widget.BFrame;
-import buoy.widget.BStandardDialog;
 import buoy.widget.Widget;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -33,11 +28,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import lombok.extern.slf4j.Slf4j;
+import javax.swing.*;
 
 /**
  * PMOBJExporter contains the actual routines for exporting OBJ files for
@@ -74,7 +67,7 @@ public class PMOBJExporter {
         final ValueField widthField = new ValueField(200.0, ValueField.INTEGER + ValueField.POSITIVE);
         final ValueField heightField = new ValueField(200.0, ValueField.INTEGER + ValueField.POSITIVE);
         final ValueSlider qualitySlider = new ValueSlider(0.0, 1.0, 100, 0.5);
-        final BCheckBox mtlBox = new BCheckBox(Translate.text("writeTexToMTL"), false);
+        final BCheckBox mtlBox = new BCheckBox(Translate.text("Translators:writeTexToMTL"), false);
         mtlBox.addEventLink(ValueChangedEvent.class,
                 new Object() {
             void processEvent() {
@@ -85,24 +78,24 @@ public class PMOBJExporter {
         });
         mtlBox.dispatchEvent(new ValueChangedEvent(mtlBox));
         ComponentsDialog dlg;
-        dlg = new ComponentsDialog(parent, Translate.text("exportToOBJ"),
-                new Widget[]{mtlBox, Translate.label("imageSizeForTextures"), widthField, heightField, qualitySlider},
-                new String[]{null, null, Translate.text("Width"), Translate.text("Height"), Translate.text("imageQuality")});
+        dlg = new ComponentsDialog(parent, Translate.text("Translators:exportToOBJ"),
+                new Widget[]{mtlBox, Translate.label("Translators:imageSizeForTextures"), widthField, heightField, qualitySlider},
+                new String[]{null, null, Translate.text("Width"), Translate.text("Height"), Translate.text("Translators:imageQuality")});
         if (!dlg.clickedOk()) {
             return;
         }
 
         // Ask the user to select the output file.
-        BFileChooser fc = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("exportToOBJ"));
-        fc.setSelectedFile(new File("Untitled.obj"));
-        if (ArtOfIllusion.getCurrentDirectory() != null) {
-            fc.setDirectory(new File(ArtOfIllusion.getCurrentDirectory()));
-        }
-        if (!fc.showDialog(parent)) {
+        var jfc = new JFileChooser();
+        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfc.setDialogTitle(Translate.text("Translators:exportToOBJ"));
+        jfc.setSelectedFile(new File("Untitled.obj"));
+        Optional.ofNullable(ArtOfIllusion.getCurrentDirectory()).ifPresent(dir -> jfc.setCurrentDirectory(new File(dir)));
+        if (jfc.showSaveDialog(parent.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        File dir = fc.getDirectory();
-        File f = fc.getSelectedFile();
+        File dir = jfc.getCurrentDirectory();
+        File f = jfc.getSelectedFile();
         String name = f.getName();
         String baseName = (name.endsWith(".obj") ? name.substring(0, name.length() - 4) : name);
         ArtOfIllusion.setCurrentDirectory(dir.getAbsolutePath());
@@ -125,8 +118,8 @@ public class PMOBJExporter {
             writePolyMesh(theScene, out, textureExporter, mtlFilename);
             out.close();
         } catch (IOException | InterruptedException ex) {
-            log.atError().setCause(ex).log(Translate.text("errorExportingScene"));
-            new BStandardDialog("", new String[]{Translate.text("errorExportingScene"), ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(parent);
+            log.atError().setCause(ex).log(Translate.text("Translators:errorExportingScene"));
+            MessageDialog.create().withOwner(parent.getComponent()).error(new String[]{Translate.text("Translators:errorExportingScene"), ex.getMessage()});
         }
     }
 
@@ -135,12 +128,12 @@ public class PMOBJExporter {
      * other parameters correspond to the options in the dialog box displayed
      * by exportFile().
      *
-     * @param theScene Description of the Parameter
+     * @param scene Description of the Parameter
      * @param out Description of the Parameter
      * @param textureExporter Description of the Parameter
      * @param mtlFilename Description of the Parameter
      */
-    public static void writePolyMesh(Scene theScene, PrintWriter out, TextureImageExporter textureExporter, String mtlFilename) {
+    public static void writePolyMesh(Scene scene, PrintWriter out, TextureImageExporter textureExporter, String mtlFilename) {
 
         // Write the header information.
         //out.println( "#Produced by Art of Illusion " + ArtOfIllusion.VERSION + ", PolyMesh Plugin, " + ( new Date() ).toString() );
@@ -152,7 +145,7 @@ public class PMOBJExporter {
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
         nf.setMaximumFractionDigits(5);
         nf.setGroupingUsed(false);
-        for (ObjectInfo info : theScene.getObjects()) {
+        for (ObjectInfo info : scene.getObjects()) {
 
             if (!info.isSelected() || !(info.object instanceof PolyMesh)) {
                 continue;

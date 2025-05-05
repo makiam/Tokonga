@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2004 by Peter Eastman
-   Changes copyright (C) 2024 by Maksim Khramov
+   Changes copyright (C) 2024-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,7 +17,7 @@ import buoy.widget.BFrame
 /**
  * OBJTranslator is a Translator which imports and exports OBJ files.
  */
-class OBJTranslator : Translator {
+final class OBJTranslator : Translator {
     override fun getName() = "Wavefront (.obj)"
 
     override fun importFile(parent: BFrame?) = OBJImporter.importFile(parent)

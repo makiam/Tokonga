@@ -21,7 +21,12 @@ import buoy.widget.*;
 import java.io.*;
 import java.text.*;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import lombok.extern.slf4j.Slf4j;
+
+import javax.swing.*;
 
 /**
  * OBJExporter contains the actual routines for exporting OBJ files.
@@ -39,12 +44,12 @@ public class OBJExporter {
         final ValueField widthField = new ValueField(200.0, ValueField.INTEGER + ValueField.POSITIVE);
         final ValueField heightField = new ValueField(200.0, ValueField.INTEGER + ValueField.POSITIVE);
         final ValueSlider qualitySlider = new ValueSlider(0.0, 1.0, 100, 0.5);
-        final BCheckBox smoothBox = new BCheckBox(Translate.text("subdivideSmoothMeshes"), true);
-        final BCheckBox normalsBox = new BCheckBox(Translate.text("alwaysWriteNormals"), false);
-        final BCheckBox mtlBox = new BCheckBox(Translate.text("writeTexToMTL"), false);
+        final BCheckBox smoothBox = new BCheckBox(Translate.text("Translators:subdivideSmoothMeshes"), true);
+        final BCheckBox normalsBox = new BCheckBox(Translate.text("Translators:alwaysWriteNormals"), false);
+        final BCheckBox mtlBox = new BCheckBox(Translate.text("Translators:writeTexToMTL"), false);
         BComboBox exportChoice = new BComboBox(new String[]{
-            Translate.text("exportWholeScene"),
-            Translate.text("selectedObjectsOnly")
+            Translate.text("Translators:exportWholeScene"),
+            Translate.text("Translators:selectedObjectsOnly")
         });
         mtlBox.addEventLink(ValueChangedEvent.class, new Object() {
             void processEvent() {
@@ -56,29 +61,31 @@ public class OBJExporter {
         mtlBox.dispatchEvent(new ValueChangedEvent(mtlBox));
         ComponentsDialog dlg;
         if (theScene.getSelection().length > 0) {
-            dlg = new ComponentsDialog(parent, Translate.text("exportToOBJ"),
-                    new Widget[]{exportChoice, errorField, smoothBox, normalsBox, mtlBox, Translate.label("imageSizeForTextures"), widthField, heightField, qualitySlider},
-                    new String[]{null, Translate.text("maxSurfaceError"), null, null, null, null, Translate.text("Width"), Translate.text("Height"), Translate.text("imageQuality")});
+            dlg = new ComponentsDialog(parent, Translate.text("Translators:exportToOBJ"),
+                    new Widget[]{exportChoice, errorField, smoothBox, normalsBox, mtlBox, Translate.label("Translators:imageSizeForTextures"), widthField, heightField, qualitySlider},
+                    new String[]{null, Translate.text("maxSurfaceError"), null, null, null, null, Translate.text("Width"), Translate.text("Height"), Translate.text("Translators:imageQuality")});
         } else {
-            dlg = new ComponentsDialog(parent, Translate.text("exportToOBJ"),
-                    new Widget[]{errorField, smoothBox, normalsBox, mtlBox, Translate.label("imageSizeForTextures"), widthField, heightField, qualitySlider},
-                    new String[]{Translate.text("maxSurfaceError"), null, null, null, null, Translate.text("Width"), Translate.text("Height"), Translate.text("imageQuality")});
+            dlg = new ComponentsDialog(parent, Translate.text("Translators:exportToOBJ"),
+                    new Widget[]{errorField, smoothBox, normalsBox, mtlBox, Translate.label("Translators:imageSizeForTextures"), widthField, heightField, qualitySlider},
+                    new String[]{Translate.text("maxSurfaceError"), null, null, null, null, Translate.text("Width"), Translate.text("Height"), Translate.text("Translators:imageQuality")});
         }
         if (!dlg.clickedOk()) {
             return;
         }
 
         // Ask the user to select the output file.
-        BFileChooser fc = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("exportToOBJ"));
-        fc.setSelectedFile(new File("Untitled.obj"));
-        if (ArtOfIllusion.getCurrentDirectory() != null) {
-            fc.setDirectory(new File(ArtOfIllusion.getCurrentDirectory()));
-        }
-        if (!fc.showDialog(parent)) {
+        JFileChooser jfc = new JFileChooser();
+        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfc.setDialogTitle(Translate.text("Translators:exportToOBJ"));
+        jfc.setSelectedFile(new File("Untitled.obj"));
+        Optional.ofNullable(ArtOfIllusion.getCurrentDirectory()).ifPresent(dir -> jfc.setCurrentDirectory(new File(dir)));
+
+        if (jfc.showSaveDialog(parent.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        File dir = fc.getDirectory();
-        File f = fc.getSelectedFile();
+
+        File dir = jfc.getCurrentDirectory();
+        File f = jfc.getSelectedFile();
         String name = f.getName();
         String baseName = (name.endsWith(".obj") ? name.substring(0, name.length() - 4) : name);
         ArtOfIllusion.setCurrentDirectory(dir.getAbsolutePath());
@@ -102,7 +109,7 @@ public class OBJExporter {
             out.close();
         } catch (IOException | InterruptedException ex) {
             log.atError().setCause(ex).log("Error exporting scene: {}", ex.getMessage());
-            new BStandardDialog("", new String[]{Translate.text("errorExportingScene"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(parent);
+            new BStandardDialog("", new String[]{Translate.text("Translators:errorExportingScene"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(parent);
         }
     }
 
@@ -110,10 +117,10 @@ public class OBJExporter {
      * Write out the scene in OBJ format to the specified PrintWriter. The other parameters
      * correspond to the options in the dialog box displayed by exportFile().
      */
-    public static void writeScene(Scene theScene, PrintWriter out, boolean wholeScene, double tol, boolean smooth, boolean alwaysStoreNormals, TextureImageExporter textureExporter, String mtlFilename) {
+    public static void writeScene(Scene scene, PrintWriter out, boolean wholeScene, double tol, boolean smooth, boolean alwaysStoreNormals, TextureImageExporter textureExporter, String mtlFilename) {
         // Write the header information.
 
-        out.println("#Produced by Art of Illusion " + ArtOfIllusion.getVersion() + ", " + (new Date()).toString());
+        out.println("#Produced by Art of Illusion " + ArtOfIllusion.getVersion() + ", " + new Date());
         if (mtlFilename != null) {
             out.println("mtllib " + mtlFilename);
         }
@@ -124,21 +131,20 @@ public class OBJExporter {
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
         nf.setMaximumFractionDigits(5);
         nf.setGroupingUsed(false);
-        for (int i = 0; i < theScene.getNumObjects(); i++) {
+
+        List<ObjectInfo> source = wholeScene ? scene.getObjects() : scene.getObjects().stream().filter(info -> info.isSelected()).collect(Collectors.toList());
+        source = source.stream().filter(Predicate.not(info -> info.getGeometry().getTexture() == null)).collect(Collectors.toList());
+
+
+
+        for (ObjectInfo info: source) {
             // Get a rendering mesh for the object.
 
-            ObjectInfo info = theScene.getObject(i);
-            if (!wholeScene && !info.isSelected()) {
-                continue;
-            }
-            if (info.getObject().getTexture() == null) {
-                continue;
-            }
             FacetedMesh mesh;
-            if (!smooth && info.getObject() instanceof FacetedMesh) {
-                mesh = (FacetedMesh) info.getObject();
+            if (smooth || !(info.getGeometry() instanceof FacetedMesh)) {
+                mesh = info.getGeometry().convertToTriangleMesh(tol);
             } else {
-                mesh = info.getObject().convertToTriangleMesh(tol);
+                mesh = (FacetedMesh) info.getObject();
             }
             if (mesh == null) {
                 continue;

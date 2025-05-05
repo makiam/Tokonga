@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2007 by Norbert Krieg and Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -20,6 +20,8 @@ import buoy.widget.*;
 import java.io.*;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.swing.*;
 
 /**
  * POVExporter contains the actual routines for exporting POV files.
@@ -43,16 +45,16 @@ public class POVExporter {
         BCheckBox smoothBox = new BCheckBox("Smooth Meshes", true);
         BCheckBox includeBox = new BCheckBox("Produce Extra Includefile for Povray textures", true);
         BComboBox exportChoice = new BComboBox(new String[]{
-            Translate.text("exportWholeScene"),
-            Translate.text("selectedObjectsOnly")
+            Translate.text("Translators:exportWholeScene"),
+            Translate.text("Translators:selectedObjectsOnly")
         });
         ComponentsDialog dlg;
         if (theScene.getSelection().length > 0) {
-            dlg = new ComponentsDialog(parent, Translate.text("exportToPOV"),
+            dlg = new ComponentsDialog(parent, Translate.text("Translators:exportToPOV"),
                     new Widget[]{exportChoice, Translate.label("maxSurfaceError"), errorField, includeBox, smoothBox},
                     new String[]{"", "", "", "", ""});
         } else {
-            dlg = new ComponentsDialog(parent, Translate.text("exportToPOV"),
+            dlg = new ComponentsDialog(parent, Translate.text("Translators:exportToPOV"),
                     new Widget[]{Translate.label("maxSurfaceError"), errorField, includeBox, smoothBox},
                     new String[]{"", "", "", ""});
         }
@@ -61,26 +63,29 @@ public class POVExporter {
         }
 
         // Ask the user to select the output file.
-        BFileChooser fc = new BFileChooser(BFileChooser.SAVE_FILE, Translate.text("exportToPOV"));
+        var jfc = new JFileChooser();
+        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfc.setDialogTitle(Translate.text("Translators:exportToPOV"));
+
         String suffix = ".pov", suffix2 = ".inc";
-        fc.setSelectedFile(new File(exportFileName + suffix));
-        if (ArtOfIllusion.getCurrentDirectory() != null) {
-            fc.setDirectory(new File(ArtOfIllusion.getCurrentDirectory()));
-        }
+        jfc.setSelectedFile(new File(exportFileName + suffix));
+        Optional.ofNullable(ArtOfIllusion.getCurrentDirectory()).ifPresent(dir -> jfc.setCurrentDirectory(new File(dir)));
+
         // Get the result
-        if (!fc.showDialog(parent)) {
+        if (jfc.showSaveDialog(parent.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        File path = fc.getDirectory();
-        int endpos = fc.getSelectedFile().getName().indexOf(FIX_SEPARATOR);
+        File dir = jfc.getCurrentDirectory();
+        File f = jfc.getSelectedFile();
+        int endpos = f.getName().indexOf(FIX_SEPARATOR);
         if (endpos == -1) {
-            endpos = fc.getSelectedFile().getName().length();
+            endpos = f.getName().length();
         }
-        exportFileName = fc.getSelectedFile().getName().substring(0, endpos);
-        ArtOfIllusion.setCurrentDirectory(fc.getDirectory().getAbsolutePath());
+        exportFileName = jfc.getSelectedFile().getName().substring(0, endpos);
+        ArtOfIllusion.setCurrentDirectory(dir.getAbsolutePath());
 
         // Check whether file/s exist/s
-        File f = new File(path, exportFileName + suffix);
+        f = new File(dir, exportFileName + suffix);
         if (f.exists()) {
             //overwrite dialog
             String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
@@ -92,7 +97,7 @@ public class POVExporter {
         // Check whether to produce an include file or not
         boolean bIncludeFile = includeBox.getState();
         if (bIncludeFile) {
-            f = new File(path, exportFileName + suffix2);
+            f = new File(dir, exportFileName + suffix2);
             if (f.exists()) {
                 // overwrite dialog, if not then write a single pov file and inform the user
                 String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
@@ -105,12 +110,12 @@ public class POVExporter {
 
         // Create the output file.
         try {
-            FileOutputStream fos = new FileOutputStream(new File(path, exportFileName + suffix));
+            FileOutputStream fos = new FileOutputStream(new File(dir, exportFileName + suffix));
             BufferedOutputStream bos = new BufferedOutputStream(fos);
             FileOutputStream fos2 = null;
             BufferedOutputStream bos2 = null;
             if (bIncludeFile) {
-                fos2 = new FileOutputStream(new File(path, exportFileName + suffix2));
+                fos2 = new FileOutputStream(new File(dir, exportFileName + suffix2));
                 bos2 = new BufferedOutputStream(fos2);
             }
             writeScene(theScene, bos, exportChoice.getSelectedIndex() == 0, errorField.getValue(), smoothBox.getState(), bos2, exportFileName + suffix2);
@@ -123,7 +128,7 @@ public class POVExporter {
                 fos2.close();
             }
         } catch (IOException ex) {
-            new BStandardDialog("", new String[]{Translate.text("errorExportingScene"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(parent);
+            new BStandardDialog("", new String[]{Translate.text("Translators:errorExportingScene"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(parent);
         }
     }
 
