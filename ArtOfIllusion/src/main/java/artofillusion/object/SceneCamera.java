@@ -461,9 +461,13 @@ public class SceneCamera extends Object3D {
         super(in, theScene);
 
         short version = in.readShort();
-        if (version < 1 || version > 4) {
+        if(version < 1) {
             throw new InvalidObjectException("SceneCamera version 0 is no more supported since 28.04.2025");
         }
+        if (version > 4) {
+            throw new InvalidObjectException("Unexpected SceneCamera version " + version);
+        }
+
         if (version >= 3) {
             distToPlane = in.readDouble();
         }
@@ -478,6 +482,11 @@ public class SceneCamera extends Object3D {
 
         var filtersCount = in.readInt();
 
+        if(version == 3) {
+
+        } else {
+
+        }
         /*
         NOTE: Bypass bad filter and pass scene camera creation?
         */
@@ -525,6 +534,17 @@ public class SceneCamera extends Object3D {
         filter.writeToStream(new DataOutputStream(bos), scene);
         byte[] ba = bos.toByteArray();
         var size = ba.length;
+        out.write(ba, 0, size);
+    }
+
+    private static void writeFilterBuffered(DataOutputStream out, ImageFilter filter, Scene scene) throws IOException {
+        var fc = filter.getClass().getName();
+        out.writeUTF(fc);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        filter.writeToStream(new DataOutputStream(bos), scene);
+        byte[] ba = bos.toByteArray();
+        var size = ba.length;
+        out.writeInt(size);
         out.write(ba, 0, size);
     }
 
