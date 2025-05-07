@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -34,9 +36,12 @@ import lombok.extern.slf4j.Slf4j;
 public class SceneCamera extends Object3D {
 
     private double fov = 30.0;
+    @Getter @Setter
     private double depthOfField = Camera.DEFAULT_DISTANCE_TO_SCREEN / 2.0;
     private double focalDist = Camera.DEFAULT_DISTANCE_TO_SCREEN;
+    @Getter @Setter
     private double distToPlane = Camera.DEFAULT_DISTANCE_TO_SCREEN;
+    @Getter @Setter
     private boolean perspective = true;
     private List<ImageFilter> filters = new ArrayList<>();
     private int extraComponents;
@@ -134,14 +139,6 @@ public class SceneCamera extends Object3D {
     public SceneCamera() {
     }
 
-    public double getDistToPlane() {
-        return distToPlane;
-    }
-
-    public void setDistToPlane(double dist) {
-        distToPlane = dist;
-    }
-
     public double getFieldOfView() {
         return fov;
     }
@@ -150,28 +147,12 @@ public class SceneCamera extends Object3D {
         fov = fieldOfView;
     }
 
-    public double getDepthOfField() {
-        return depthOfField;
-    }
-
-    public void setDepthOfField(double dof) {
-        depthOfField = dof;
-    }
-
     public double getFocalDistance() {
         return focalDist;
     }
 
     public void setFocalDistance(double dist) {
         focalDist = dist;
-    }
-
-    public boolean isPerspective() {
-        return perspective;
-    }
-
-    public void setPerspective(boolean perspective) {
-        this.perspective = perspective;
     }
 
     /**
@@ -457,7 +438,7 @@ public class SceneCamera extends Object3D {
     /* The following two methods are used for reading and writing files.  The first is a
      constructor which reads the necessary data from an input stream.  The other writes
      the object's representation to an output stream. */
-    public SceneCamera(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+    public SceneCamera(DataInputStream in, Scene theScene) throws IOException {
         super(in, theScene);
 
         short version = in.readShort();
@@ -522,30 +503,27 @@ public class SceneCamera extends Object3D {
         out.writeInt(filters.size());
         log.debug("Scene camera writes filters: {}", filters.size());
         for (var filter: filters) {
-            SceneCamera.writeFilter(out, filter, scene);
+            SceneCamera.writeFilterDirect(out, filter, scene);
         }
     }
 
-    private static void writeFilter(DataOutputStream out, ImageFilter filter, Scene scene) throws IOException {
+    private static void writeFilter(DataOutputStream out, ImageFilter filter, Scene scene, boolean buffered) throws IOException {
         var fc = filter.getClass().getName();
-        log.debug("Filter: {}", fc);
         out.writeUTF(fc);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         filter.writeToStream(new DataOutputStream(bos), scene);
         byte[] ba = bos.toByteArray();
         var size = ba.length;
+        if(buffered) out.writeInt(size);
         out.write(ba, 0, size);
     }
 
+    private static void writeFilterDirect(DataOutputStream out, ImageFilter filter, Scene scene) throws IOException {
+        writeFilter(out, filter, scene, false);
+    }
+
     private static void writeFilterBuffered(DataOutputStream out, ImageFilter filter, Scene scene) throws IOException {
-        var fc = filter.getClass().getName();
-        out.writeUTF(fc);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        filter.writeToStream(new DataOutputStream(bos), scene);
-        byte[] ba = bos.toByteArray();
-        var size = ba.length;
-        out.writeInt(size);
-        out.write(ba, 0, size);
+        writeFilter(out, filter, scene, true);
     }
 
     @Override
