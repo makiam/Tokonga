@@ -463,16 +463,19 @@ public class SceneCamera extends Object3D {
 
         var filtersCount = in.readInt();
 
-        if(version == 3) {
-
+        if(version <= 3) {
+            SceneCamera.loadFiltersV3(in, theScene, this, filtersCount);
         } else {
-
+            SceneCamera.loadFiltersV4(in, theScene, this, filtersCount);
         }
-        /*
-        NOTE: Bypass bad filter and pass scene camera creation?
-        */
+
+    }
+    private static void loadFiltersV4(DataInputStream in, Scene theScene, SceneCamera owner, int count) throws IOException {
+
+    }
+    private static void loadFiltersV3(DataInputStream in, Scene theScene, SceneCamera owner, int count) throws IOException {
         try {
-            for (int i = 0; i < filtersCount; i++) {
+            for (int i = 0; i < count; i++) {
                 var filterClassName = in.readUTF();
                 log.debug("Restoring: {}", filterClassName);
                 Class<?> filterClass = ArtOfIllusion.getClass(filterClassName);
@@ -481,20 +484,19 @@ public class SceneCamera extends Object3D {
                 }
                 var filter = (ImageFilter) filterClass.getDeclaredConstructor().newInstance();
                 filter.initFromStream(in, theScene);
-                filters.add(filter);
+                owner.filters.add(filter);
             }
         } catch (IOException | ReflectiveOperationException | SecurityException ex) {
             log.atError().setCause(ex).log("Unable to instantiate Scene filter {}", ex.getMessage());
             throw new IOException(ex);
         }
-
     }
 
     @Override
     public void writeToFile(DataOutputStream out, Scene scene) throws IOException {
         super.writeToFile(out, scene);
 
-        out.writeShort(4);
+        out.writeShort(3);
         out.writeDouble(distToPlane);
         out.writeDouble(fov);
         out.writeDouble(depthOfField);
