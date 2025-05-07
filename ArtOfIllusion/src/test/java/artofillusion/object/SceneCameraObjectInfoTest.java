@@ -14,6 +14,7 @@ import artofillusion.Scene;
 import artofillusion.image.ComplexImage;
 import artofillusion.image.filter.ImageFilter;
 import artofillusion.math.CoordinateSystem;
+import artofillusion.test.util.StreamUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
@@ -28,12 +29,7 @@ import java.util.Arrays;
 @DisplayName("Object Info Test for Scene Camera with filters")
 public class SceneCameraObjectInfoTest {
 
-    @SneakyThrows
-    private static int getUTFNameBufferSize(String name) {
-        ByteArrayOutputStream nameStream = new ByteArrayOutputStream();
-        new DataOutputStream(nameStream).writeUTF(name);
-        return nameStream.toByteArray().length;
-    }
+
 
     @Test
     public void testSceneCameraObjectInfo() throws IOException {
@@ -46,7 +42,7 @@ public class SceneCameraObjectInfoTest {
         int empty = innerObjectBytes.length;
         System.out.println("Size: " + empty);
 
-        var expectedIncrement = SceneCameraObjectInfoTest.getUTFNameBufferSize(TestSceneCameraFilterNoData.class.getName());
+        var expectedIncrement = StreamUtil.getUTFNameBufferSize(TestSceneCameraFilterNoData.class.getName());
 
         var filters = new ArrayList<>(Arrays.asList(sc.getImageFilters()));
         filters.add(new TestSceneCameraFilterNoData());
@@ -72,9 +68,9 @@ public class SceneCameraObjectInfoTest {
         int empty = innerObjectBytes.length;
         System.out.println("Size: " + empty);
 
-        var expectedIncrement = SceneCameraObjectInfoTest.getUTFNameBufferSize(TestSceneCameraFilterNoData.class.getName());
+        var expectedIncrement = StreamUtil.getUTFNameBufferSize(TestSceneCameraFilterNoData.class.getName());
         expectedIncrement *=3;
-        expectedIncrement +=    SceneCameraObjectInfoTest.getUTFNameBufferSize(TestSceneCameraFilterWithDouble.class.getName());
+        expectedIncrement +=    StreamUtil.getUTFNameBufferSize(TestSceneCameraFilterWithDouble.class.getName());
         expectedIncrement +=8;
 
         var filters = new ArrayList<>(Arrays.asList(sc.getImageFilters()));
@@ -149,11 +145,11 @@ public class SceneCameraObjectInfoTest {
         int empty = innerObjectBytes.length;
         System.out.println("Size: " + empty);
 
-        var expectedIncrement = SceneCameraObjectInfoTest.getUTFNameBufferSize(TestSceneCameraFilterNoData.class.getName());
+        var expectedIncrement = StreamUtil.getUTFNameBufferSize(TestSceneCameraFilterNoData.class.getName());
         expectedIncrement *=4;
-        expectedIncrement +=    SceneCameraObjectInfoTest.getUTFNameBufferSize(TestSceneCameraFilterWithDouble.class.getName());
+        expectedIncrement +=    StreamUtil.getUTFNameBufferSize(TestSceneCameraFilterWithDouble.class.getName());
         expectedIncrement +=8;
-        expectedIncrement += SceneCameraObjectInfoTest.getUTFNameBufferSize(PrivateTestFilter.class.getName());
+        expectedIncrement += StreamUtil.getUTFNameBufferSize(PrivateTestFilter.class.getName());
 
         var filters = new ArrayList<>(Arrays.asList(sc.getImageFilters()));
         filters.add(new TestSceneCameraFilterNoData());
@@ -180,7 +176,7 @@ public class SceneCameraObjectInfoTest {
         Assertions.assertTrue(last instanceof PrivateTestFilter);
     }
 
-    @DisplayName("As class is private it expected to throw InstantiationException frm newInstance() call")
+    @DisplayName("As class is private it expected to throw InstantiationException from newInstance() call")
     static class PrivateTestFilter extends ImageFilter {
 
         @Override

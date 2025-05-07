@@ -10,8 +10,12 @@
 
 package artofillusion.test.util;
 
+import lombok.SneakyThrows;
+
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.nio.ByteBuffer;
 
 /**
@@ -22,5 +26,16 @@ public class StreamUtil {
 
     public static DataInputStream stream(ByteBuffer wrap) {
         return new DataInputStream(new ByteArrayInputStream(wrap.array()));
+    }
+
+    @SneakyThrows
+    public static int getUTFNameBufferSize(String name) {
+        ByteArrayOutputStream nameStream = new ByteArrayOutputStream();
+        new DataOutputStream(nameStream).writeUTF(name);
+        return nameStream.toByteArray().length;
+    }
+
+    public static int getUTFNameBufferSizeForClass(Class<?> clazz) {
+        return getUTFNameBufferSize(clazz.getName());
     }
 }

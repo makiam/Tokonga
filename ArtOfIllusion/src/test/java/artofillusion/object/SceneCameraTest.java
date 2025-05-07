@@ -12,11 +12,14 @@ package artofillusion.object;
 
 import artofillusion.Camera;
 import artofillusion.Scene;
+import artofillusion.image.ComplexImage;
 import artofillusion.image.filter.ImageFilter;
+import artofillusion.math.CoordinateSystem;
 import artofillusion.test.util.StreamUtil;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -173,10 +176,68 @@ class SceneCameraTest {
         Assertions.assertEquals(0, sc.getImageFilters().length);
     }
 
-
     @Test
-    @DisplayName("Test Load Scene Camera Version 2 No Persp")
-    void testLoadSceneCameraVersion2NoPersp() throws IOException {
+    @DisplayName("Test Load Scene Camera Version 3 With Single Filter")
+    void testLoadSceneCameraVersion3WithSingleFilter() throws IOException {
+        Scene scene = new Scene();
+        ByteBuffer wrap = ByteBuffer.allocate(200);
+        // Object Version
+        wrap.putShort((short) 1);
+        // Object Version read AGAIN !!!
+        wrap.putShort((short) 3);
+        // DistToPlane
+        wrap.putDouble(1.23456);
+        // FOV
+        wrap.putDouble(90);
+        // DOF
+        wrap.putDouble(500);
+        // Focal distance
+        wrap.putDouble(1000);
+        // Perspective camera. Boolean treats as byte
+        wrap.put((byte) 1);
+        // Camera filters count
+        wrap.putInt(1);
+
+        Charset charset = Charset.forName("UTF-8");
+        ByteBuffer byteBuffer = charset.encode(TestFilter.class.getName());
+
+        wrap.put(byteBuffer.array(), 0, byteBuffer.array().length);
+
+        SceneCamera sc = new SceneCamera(StreamUtil.stream(wrap), scene);
+        Assertions.assertNotNull(sc);
+        Assertions.assertEquals(1.23456, sc.getDistToPlane());
+        Assertions.assertEquals(90, sc.getFieldOfView(), 0);
+        Assertions.assertEquals(500, sc.getDepthOfField(), 0);
+        Assertions.assertEquals(1000, sc.getFocalDistance(), 0);
+        Assertions.assertTrue(sc.isPerspective());
+        Assertions.assertEquals(1, sc.getImageFilters().length);
+    }
+
+    static class TestFilter extends ImageFilter {
+
+        @Override
+        public String getName() {
+            return "TestFilter";
+        }
+
+        @Override
+        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {
+
+        }
+
+        @Override
+        public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
+
+        }
+
+        @Override
+        public void initFromStream(DataInputStream in, Scene theScene) throws IOException {
+
+        }
+    }
+    @Test
+    @DisplayName("Test Load Scene Camera Version 2 No Perspective")
+    void testLoadSceneCameraVersion2NoPerspective() throws IOException {
         Scene scene = new Scene();
         ByteBuffer wrap = ByteBuffer.allocate(200);
         // Object Version
