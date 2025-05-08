@@ -16,13 +16,11 @@ import artofillusion.image.filter.ImageFilter;
 import artofillusion.math.CoordinateSystem;
 import artofillusion.test.util.StreamUtil;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -42,7 +40,7 @@ public class SceneCameraObjectInfoTest {
         int empty = innerObjectBytes.length;
         System.out.println("Size: " + empty);
 
-        var expectedIncrement = StreamUtil.getUTFNameBufferSize(TestSceneCameraFilterNoData.class.getName());
+        var expectedIncrement = StreamUtil.getUTFNameAsByteArray(TestSceneCameraFilterNoData.class.getName()).length;
 
         var filters = new ArrayList<>(Arrays.asList(sc.getImageFilters()));
         filters.add(new TestSceneCameraFilterNoData());
@@ -68,9 +66,9 @@ public class SceneCameraObjectInfoTest {
         int empty = innerObjectBytes.length;
         System.out.println("Size: " + empty);
 
-        var expectedIncrement = StreamUtil.getUTFNameBufferSize(TestSceneCameraFilterNoData.class.getName());
+        var expectedIncrement = StreamUtil.getUTFNameAsByteArray(TestSceneCameraFilterNoData.class.getName()).length;
         expectedIncrement *=3;
-        expectedIncrement +=    StreamUtil.getUTFNameBufferSize(TestSceneCameraFilterWithDouble.class.getName());
+        expectedIncrement +=    StreamUtil.getUTFNameAsByteArray(TestSceneCameraFilterWithDouble.class.getName()).length;
         expectedIncrement +=8;
 
         var filters = new ArrayList<>(Arrays.asList(sc.getImageFilters()));
@@ -145,11 +143,11 @@ public class SceneCameraObjectInfoTest {
         int empty = innerObjectBytes.length;
         System.out.println("Size: " + empty);
 
-        var expectedIncrement = StreamUtil.getUTFNameBufferSize(TestSceneCameraFilterNoData.class.getName());
+        var expectedIncrement = StreamUtil.getUTFNameAsByteArray(TestSceneCameraFilterNoData.class.getName()).length;
         expectedIncrement *=4;
-        expectedIncrement +=    StreamUtil.getUTFNameBufferSize(TestSceneCameraFilterWithDouble.class.getName());
+        expectedIncrement +=    StreamUtil.getUTFNameAsByteArray(TestSceneCameraFilterWithDouble.class.getName()).length;
         expectedIncrement +=8;
-        expectedIncrement += StreamUtil.getUTFNameBufferSize(PrivateTestFilter.class.getName());
+        expectedIncrement += StreamUtil.getUTFNameAsByteArray(PrivateTestFilter.class.getName()).length;
 
         var filters = new ArrayList<>(Arrays.asList(sc.getImageFilters()));
         filters.add(new TestSceneCameraFilterNoData());

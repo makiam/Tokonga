@@ -29,13 +29,13 @@ public class StreamUtil {
     }
 
     @SneakyThrows
-    public static int getUTFNameBufferSize(String name) {
+    public static byte[] getUTFNameAsByteArray(String name) {
         ByteArrayOutputStream nameStream = new ByteArrayOutputStream();
         new DataOutputStream(nameStream).writeUTF(name);
-        return nameStream.toByteArray().length;
+        return nameStream.toByteArray();
     }
 
-    public static int getUTFNameBufferSizeForClass(Class<?> clazz) {
-        return getUTFNameBufferSize(clazz.getName());
+    public static byte[] getUTFNameAsByteArrayForClass(Class<?> clazz) {
+        return getUTFNameAsByteArray(clazz.getName());
     }
 }

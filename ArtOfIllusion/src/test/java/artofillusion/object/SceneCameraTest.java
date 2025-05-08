@@ -198,10 +198,8 @@ class SceneCameraTest {
         // Camera filters count
         wrap.putInt(1);
 
-        Charset charset = Charset.forName("UTF-8");
-        ByteBuffer byteBuffer = charset.encode(TestFilter.class.getName());
-
-        wrap.put(byteBuffer.array(), 0, byteBuffer.array().length);
+        var bb = StreamUtil.getUTFNameAsByteArrayForClass(TestFilter.class);
+        wrap.put(bb, 0, bb.length);
 
         SceneCamera sc = new SceneCamera(StreamUtil.stream(wrap), scene);
         Assertions.assertNotNull(sc);
