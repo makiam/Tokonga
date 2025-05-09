@@ -12,10 +12,7 @@ package artofillusion.test.util;
 
 import lombok.SneakyThrows;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 
 /**
@@ -35,7 +32,18 @@ public class StreamUtil {
         return nameStream.toByteArray();
     }
 
-    public static byte[] getUTFNameAsByteArrayForClass(Class<?> clazz) {
+    public static byte[] getUTFNameAsByteArray(Class<?> clazz) {
         return getUTFNameAsByteArray(clazz.getName());
+    }
+
+    public static byte[] writeObjectToStream(DataWriteProvider target) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        target.write(new DataOutputStream(bos));
+        return bos.toByteArray();
+    }
+
+    @FunctionalInterface
+    public interface DataWriteProvider {
+        void write(DataOutputStream out) throws IOException;
     }
 }
