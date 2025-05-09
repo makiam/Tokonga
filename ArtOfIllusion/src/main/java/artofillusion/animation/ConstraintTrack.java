@@ -315,7 +315,7 @@ public class ConstraintTrack extends Track<ConstraintTrack> {
      * Initialize this tracked based on its serialized representation as written by writeToStream().
      */
     @Override
-    public void initFromStream(DataInputStream in, Scene scene) throws IOException, InvalidObjectException {
+    public void initFromStream(DataInputStream in, Scene scene) throws IOException {
         short version = in.readShort();
 
         if (version != 0) {

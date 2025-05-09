@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -461,7 +461,7 @@ public abstract class Object3D {
                 var className = in.readUTF();
                 Class<?> mapClass = ArtOfIllusion.getClass(className);
                 if(mapClass == null) {
-                    throw new IOException("Application cannot find given material class: " + className);
+                    throw new IOException("Application cannot find given material mapping class: " + className);
                 }
                 Constructor<?> con = mapClass.getConstructor(DataInputStream.class, Object3D.class, Material.class);
                 theMaterial = theScene.getMaterial(materialIndex);
@@ -477,7 +477,7 @@ public abstract class Object3D {
                 var className = in.readUTF();
                 Class<?> mapClass = ArtOfIllusion.getClass(className);
                 if(mapClass == null) {
-                    throw new IOException("Application cannot find given material class: " + className);
+                    throw new IOException("Application cannot find given texture mapping class: " + className);
                 }                
                 Constructor<?> con = mapClass.getConstructor(DataInputStream.class, Object3D.class, Texture.class);
                 theTexture = theScene.getTexture(textureIndex);
