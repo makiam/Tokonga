@@ -20,9 +20,11 @@ import artofillusion.math.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -470,8 +472,40 @@ public class SceneCamera extends Object3D {
         }
 
     }
-    private static void loadFiltersV4(DataInputStream in, Scene theScene, SceneCamera owner, int count) throws IOException {
+    private static void loadFiltersV4(DataInputStream in, Scene scene, SceneCamera owner, int count) throws IOException {
+        var bus = org.greenrobot.eventbus.EventBus.getDefault();
 
+        var filterClassName = "";
+        var filterDataSize = 0;
+        byte[] filterData;
+        ImageFilter filter;
+
+        for (int i = 0; i < count; i++) {
+            // At first read binary data from input. If IOException is thrown we cannot recover data and aborting
+            try {
+                filterClassName = in.readUTF();
+                filterDataSize = in.readInt();
+                filterData = new byte[filterDataSize];
+                in.read(filterData);
+
+            } catch(IOException ie) {
+                throw ie;
+            }
+            //Now try to discover ImageFilter plugin. On exception, we cannot recover plugin, but can bypass it
+            try {
+                Class<?> filterClass = ArtOfIllusion.getClass(filterClassName);
+                if(null == filterClass) {
+                    bus.post(new BypassEvent(scene, "Filter class: " + filterClassName + " was not found"));
+                    continue;
+                }
+                filter = (ImageFilter) filterClass.getDeclaredConstructor().newInstance();
+            } catch(ReflectiveOperationException cne) {
+
+            }
+
+
+        }
+        bus.post(new BypassEvent(scene, "Not Yet implemented"));
     }
     private static void loadFiltersV3(DataInputStream in, Scene theScene, SceneCamera owner, int count) throws IOException {
         try {
