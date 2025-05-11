@@ -577,11 +577,11 @@ class SceneCameraTest {
         Assertions.assertEquals(500, sc.getDepthOfField(), 0);
         Assertions.assertEquals(1000, sc.getFocalDistance(), 0);
         Assertions.assertTrue(sc.isPerspective());
-        Assertions.assertEquals(1, listener.getCounter());
+        Assertions.assertEquals(0, listener.getCounter());
 
-        Assertions.assertEquals(0, sc.getImageFilters().length);
-        //var tdf = (SceneCameraObjectInfoTest.TestSceneCameraFilterWithDouble)sc.getImageFilters()[0];
-        //Assertions.assertEquals(Math.PI,tdf.getValue());
+        Assertions.assertEquals(1, sc.getImageFilters().length);
+        var tdf = (SceneCameraObjectInfoTest.TestSceneCameraFilterWithDouble)sc.getImageFilters()[0];
+        Assertions.assertEquals(Math.PI,tdf.getValue());
     }
 
 

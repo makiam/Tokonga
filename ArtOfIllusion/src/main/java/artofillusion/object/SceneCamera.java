@@ -500,13 +500,23 @@ public class SceneCamera extends Object3D {
                 }
                 filter = (ImageFilter) filterClass.getDeclaredConstructor().newInstance();
             } catch(ReflectiveOperationException cne) {
-
+                bus.post(new BypassEvent(scene, "Filter class: " + filterClassName + " was not found"));
+                continue;
+            }
+            //On exception, we cannot recover plugin, but can bypass it
+            try {
+                filter.initFromStream(new DataInputStream(new ByteArrayInputStream(filterData)), scene);
+            } catch(IOException ie) {
+                bus.post(new BypassEvent(scene, "Filter: " + filterClassName + " initialization error"));
+                continue;
             }
 
+            owner.filters.add(filter);
 
         }
-        bus.post(new BypassEvent(scene, "Not Yet implemented"));
+
     }
+
     private static void loadFiltersV3(DataInputStream in, Scene theScene, SceneCamera owner, int count) throws IOException {
         try {
             for (int i = 0; i < count; i++) {
