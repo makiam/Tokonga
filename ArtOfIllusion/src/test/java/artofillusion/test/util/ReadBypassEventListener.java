@@ -8,6 +8,7 @@ public class ReadBypassEventListener {
 
     @Getter
     private int counter;
+    @Getter private BypassEvent last;
 
     public ReadBypassEventListener() {
         org.greenrobot.eventbus.EventBus.getDefault().register(this);
@@ -15,6 +16,7 @@ public class ReadBypassEventListener {
 
     @Subscribe
     public void onBypassEvent(BypassEvent event) {
+        last = event;
         counter++;
     }
 

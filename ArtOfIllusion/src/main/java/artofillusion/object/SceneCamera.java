@@ -500,14 +500,14 @@ public class SceneCamera extends Object3D {
                 }
                 filter = (ImageFilter) filterClass.getDeclaredConstructor().newInstance();
             } catch(ReflectiveOperationException cne) {
-                bus.post(new BypassEvent(scene, "Filter class: " + filterClassName + " was not found"));
+                bus.post(new BypassEvent(scene, "Filter class: " + filterClassName + " was not found or cannot instantiate", cne));
                 continue;
             }
             //On exception, we cannot recover plugin, but can bypass it
             try {
                 filter.initFromStream(new DataInputStream(new ByteArrayInputStream(filterData)), scene);
             } catch(IOException ie) {
-                bus.post(new BypassEvent(scene, "Filter: " + filterClassName + " initialization error"));
+                bus.post(new BypassEvent(scene, "Filter: " + filterClassName + " initialization error", ie));
                 continue;
             }
 
@@ -536,11 +536,12 @@ public class SceneCamera extends Object3D {
         }
     }
 
+
     @Override
     public void writeToFile(DataOutputStream out, Scene scene) throws IOException {
         super.writeToFile(out, scene);
 
-        out.writeShort(3);
+        out.writeShort(4);
         out.writeDouble(distToPlane);
         out.writeDouble(fov);
         out.writeDouble(depthOfField);
@@ -549,7 +550,7 @@ public class SceneCamera extends Object3D {
         out.writeInt(filters.size());
         log.debug("Scene camera writes filters: {}", filters.size());
         for (var filter: filters) {
-            SceneCamera.writeFilterDirect(out, filter, scene);
+            SceneCamera.writeFilterBuffered(out, filter, scene);
         }
     }
 

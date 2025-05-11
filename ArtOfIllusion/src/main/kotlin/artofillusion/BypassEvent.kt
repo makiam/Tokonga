@@ -10,6 +10,9 @@
 
 package artofillusion
 
+import java.lang.Exception
 
 
-data class BypassEvent(val scene: Scene?, val filter: String);
+data class BypassEvent(val scene: Scene?, val message: String, val cause: Exception?) {
+    constructor(scene: Scene?, message: String) : this(scene, message, null)
+}

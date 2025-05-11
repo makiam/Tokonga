@@ -14,11 +14,10 @@ import artofillusion.Scene;
 import artofillusion.image.ComplexImage;
 import artofillusion.image.filter.ImageFilter;
 import artofillusion.math.CoordinateSystem;
+import artofillusion.test.util.ReadBypassEventListener;
 import artofillusion.test.util.StreamUtil;
 import lombok.Getter;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -27,7 +26,17 @@ import java.util.Arrays;
 @DisplayName("Object Info Test for Scene Camera with filters")
 public class SceneCameraObjectInfoTest {
 
+    static ReadBypassEventListener listener;
 
+    @BeforeAll
+    public static void setupClass() {
+        listener = new ReadBypassEventListener();
+    }
+
+    @BeforeEach
+    void resetCounterBefore() {
+        listener.reset();
+    }
 
     @Test
     public void testSceneCameraObjectInfo() throws IOException {
@@ -40,7 +49,7 @@ public class SceneCameraObjectInfoTest {
         int empty = innerObjectBytes.length;
         System.out.println("Size: " + empty);
 
-        var expectedIncrement = StreamUtil.getUTFNameAsByteArray(TestSceneCameraFilterNoData.class.getName()).length;
+        var expectedIncrement = StreamUtil.getUTFNameAsByteArray(TestSceneCameraFilterNoData.class.getName()).length + 4;
 
         var filters = new ArrayList<>(Arrays.asList(sc.getImageFilters()));
         filters.add(new TestSceneCameraFilterNoData());
@@ -78,6 +87,8 @@ public class SceneCameraObjectInfoTest {
         filters.add(new TestSceneCameraFilterWithDouble());
         sc.setImageFilters(filters.toArray(ImageFilter[]::new));
 
+        expectedIncrement += filters.size()*4;
+
         bos = new ByteArrayOutputStream();
         sc.writeToFile(new DataOutputStream(bos), null);
         innerObjectBytes = bos.toByteArray();
@@ -100,12 +111,11 @@ public class SceneCameraObjectInfoTest {
         var innerObjectBytes = bos.toByteArray();
         var restore = new ByteArrayInputStream(innerObjectBytes);
 
+        new SceneCamera(new DataInputStream(restore), null);
+        Assertions.assertEquals(1, listener.getCounter());
+        Assertions.assertTrue(listener.getLast().getMessage().contains(MissedConstructorFilter.class.getName()));
+        Assertions.assertTrue(listener.getLast().getCause() instanceof NoSuchMethodException);
 
-        Exception ee = Assertions.assertThrows(IOException.class, () -> {
-            new SceneCamera(new DataInputStream(restore), null);
-        });
-
-        Assertions.assertTrue(ee.getCause() instanceof NoSuchMethodException);
     }
 
     @Test
@@ -124,11 +134,10 @@ public class SceneCameraObjectInfoTest {
         var restore = new ByteArrayInputStream(innerObjectBytes);
 
 
-        Exception ee = Assertions.assertThrows(IOException.class, () -> {
-            new SceneCamera(new DataInputStream(restore), null);
-        });
-
-        Assertions.assertTrue(ee.getCause() instanceof IllegalAccessException);
+        new SceneCamera(new DataInputStream(restore), null);
+        Assertions.assertEquals(1, listener.getCounter());
+        Assertions.assertTrue(listener.getLast().getMessage().contains(PrivateClassFilter.class.getName()));
+        Assertions.assertTrue(listener.getLast().getCause() instanceof IllegalAccessException);
     }
 
     @Test
@@ -157,6 +166,8 @@ public class SceneCameraObjectInfoTest {
         filters.add(new TestSceneCameraFilterNoData());
         filters.add(new PrivateTestFilter());
         sc.setImageFilters(filters.toArray(ImageFilter[]::new));
+
+        expectedIncrement += filters.size()*4;
 
         bos = new ByteArrayOutputStream();
         sc.writeToFile(new DataOutputStream(bos), null);
