@@ -309,6 +309,8 @@ class SceneCameraTest {
         Assertions.assertEquals(Math.PI,tdf.getValue());
     }
 
+
+
     @Test
     @DisplayName("Test Load Scene Camera Version 2 No Perspective")
     void testLoadSceneCameraVersion2NoPerspective() throws IOException {
@@ -582,6 +584,53 @@ class SceneCameraTest {
         Assertions.assertEquals(1, sc.getImageFilters().length);
         var tdf = (SceneCameraObjectInfoTest.TestSceneCameraFilterWithDouble)sc.getImageFilters()[0];
         Assertions.assertEquals(Math.PI,tdf.getValue());
+    }
+
+    @Test
+    @DisplayName("Test Load Scene Camera Version 4 With Single Filter")
+    void testLoadSceneCameraVersion4WithSingleBadFilter() throws IOException {
+        Scene scene = new Scene();
+        ByteBuffer wrap = ByteBuffer.allocate(200);
+        // Object Version
+        wrap.putShort((short) 1);
+        // Object Version write AGAIN !!!
+        wrap.putShort((short) 4);
+        // DistToPlane
+        wrap.putDouble(1.23456);
+        // FOV
+        wrap.putDouble(90);
+        // DOF
+        wrap.putDouble(500);
+        // Focal distance
+        wrap.putDouble(1000);
+        // Perspective camera. Boolean treats as byte
+        wrap.put((byte) 1);
+        // Camera filters count
+        wrap.putInt(1);
+
+        SceneCameraObjectInfoTest.TestSceneCameraFilterWithDouble filter = new SceneCameraObjectInfoTest.TestSceneCameraFilterWithDouble();
+        var bb = StreamUtil.getUTFNameAsByteArray(filter.getClass().getName() + "I am missed");
+        wrap.put(bb, 0, bb.length);
+
+
+        var fb = StreamUtil.writeObjectToStream((target) -> {
+            filter.writeToStream(target, null);
+        });
+        wrap.putInt(fb.length);
+        wrap.put(fb, 0, fb.length);
+        SceneCamera sc = new SceneCamera(StreamUtil.stream(wrap), scene);
+
+        Assertions.assertNotNull(sc);
+        Assertions.assertEquals(1.23456, sc.getDistToPlane());
+        Assertions.assertEquals(90, sc.getFieldOfView(), 0);
+        Assertions.assertEquals(500, sc.getDepthOfField(), 0);
+        Assertions.assertEquals(1000, sc.getFocalDistance(), 0);
+        Assertions.assertTrue(sc.isPerspective());
+        Assertions.assertEquals(1, listener.getCounter());
+
+        Assertions.assertEquals(0, sc.getImageFilters().length);
+        //var tdf = (SceneCameraObjectInfoTest.TestSceneCameraFilterWithDouble)sc.getImageFilters()[0];
+        //Assertions.assertEquals(Math.PI,tdf.getValue());
     }
 
 
