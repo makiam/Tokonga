@@ -20,10 +20,14 @@ import artofillusion.math.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -34,9 +38,12 @@ import lombok.extern.slf4j.Slf4j;
 public class SceneCamera extends Object3D {
 
     private double fov = 30.0;
+    @Getter @Setter
     private double depthOfField = Camera.DEFAULT_DISTANCE_TO_SCREEN / 2.0;
     private double focalDist = Camera.DEFAULT_DISTANCE_TO_SCREEN;
+    @Getter @Setter
     private double distToPlane = Camera.DEFAULT_DISTANCE_TO_SCREEN;
+    @Getter @Setter
     private boolean perspective = true;
     private List<ImageFilter> filters = new ArrayList<>();
     private int extraComponents;
@@ -134,14 +141,6 @@ public class SceneCamera extends Object3D {
     public SceneCamera() {
     }
 
-    public double getDistToPlane() {
-        return distToPlane;
-    }
-
-    public void setDistToPlane(double dist) {
-        distToPlane = dist;
-    }
-
     public double getFieldOfView() {
         return fov;
     }
@@ -150,28 +149,12 @@ public class SceneCamera extends Object3D {
         fov = fieldOfView;
     }
 
-    public double getDepthOfField() {
-        return depthOfField;
-    }
-
-    public void setDepthOfField(double dof) {
-        depthOfField = dof;
-    }
-
     public double getFocalDistance() {
         return focalDist;
     }
 
     public void setFocalDistance(double dist) {
         focalDist = dist;
-    }
-
-    public boolean isPerspective() {
-        return perspective;
-    }
-
-    public void setPerspective(boolean perspective) {
-        this.perspective = perspective;
     }
 
     /**
@@ -457,13 +440,17 @@ public class SceneCamera extends Object3D {
     /* The following two methods are used for reading and writing files.  The first is a
      constructor which reads the necessary data from an input stream.  The other writes
      the object's representation to an output stream. */
-    public SceneCamera(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+    public SceneCamera(DataInputStream in, Scene theScene) throws IOException {
         super(in, theScene);
 
         short version = in.readShort();
-        if (version < 0 || version > 3) {
-            throw new InvalidObjectException("");
+        if(version < 1) {
+            throw new InvalidObjectException("SceneCamera version 0 is no more supported since 28.04.2025");
         }
+        if (version > 4) {
+            throw new InvalidObjectException("Unexpected SceneCamera version " + version);
+        }
+
         if (version >= 3) {
             distToPlane = in.readDouble();
         }
@@ -475,37 +462,86 @@ public class SceneCamera extends Object3D {
         } else {
             perspective = in.readBoolean();
         }
-        if (version == 0) {
-            filters.clear();
+
+        var filtersCount = in.readInt();
+
+        if(version <= 3) {
+            SceneCamera.loadFiltersV3(in, theScene, this, filtersCount);
         } else {
-            var filtersCount = in.readInt();
-            filters.clear();
-            /*
-            NOTE: Bypass bad filter and pass scene camera creation?
-            */
+            SceneCamera.loadFiltersV4(in, theScene, this, filtersCount);
+        }
+
+    }
+    private static void loadFiltersV4(DataInputStream in, Scene scene, SceneCamera owner, int count) throws IOException {
+        var bus = org.greenrobot.eventbus.EventBus.getDefault();
+
+        var filterClassName = "";
+        var filterDataSize = 0;
+        byte[] filterData;
+        ImageFilter filter;
+
+        for (int i = 0; i < count; i++) {
+            // At first read binary data from input. If IOException is thrown we cannot recover data and aborting
             try {
-                for (int i = 0; i < filtersCount; i++) {
-                    var filterClassName = in.readUTF();
-                    Class<?> filterClass = ArtOfIllusion.getClass(filterClassName);
-                    if(null == filterClass) {
-                        throw new IOException("Application cannot find given scene filter class: " + filterClassName);
-                    }
-                    var filter = (ImageFilter) filterClass.getDeclaredConstructor().newInstance();
-                    filter.initFromStream(in, theScene);
-                    filters.add(filter);
-                }
-            } catch (IOException | ReflectiveOperationException | SecurityException ex) {
-                log.atError().setCause(ex).log("Unable to instantiate Scene filter {}", ex.getMessage());
-                throw new IOException();
+                filterClassName = in.readUTF();
+                filterDataSize = in.readInt();
+                filterData = new byte[filterDataSize];
+                in.read(filterData);
+
+            } catch(IOException ie) {
+                throw ie;
             }
+            //Now try to discover ImageFilter plugin. On exception, we cannot recover plugin, but can bypass it
+            try {
+                Class<?> filterClass = ArtOfIllusion.getClass(filterClassName);
+                if(null == filterClass) {
+                    bus.post(new BypassEvent(scene, "Filter class: " + filterClassName + " was not found"));
+                    continue;
+                }
+                filter = (ImageFilter) filterClass.getDeclaredConstructor().newInstance();
+            } catch(ReflectiveOperationException cne) {
+                bus.post(new BypassEvent(scene, "Filter class: " + filterClassName + " was not found or cannot instantiate", cne));
+                continue;
+            }
+            //On exception, we cannot recover plugin, but can bypass it
+            try {
+                filter.initFromStream(new DataInputStream(new ByteArrayInputStream(filterData)), scene);
+            } catch(IOException ie) {
+                bus.post(new BypassEvent(scene, "Filter: " + filterClassName + " initialization error", ie));
+                continue;
+            }
+
+            owner.filters.add(filter);
+
+        }
+
+    }
+
+    private static void loadFiltersV3(DataInputStream in, Scene theScene, SceneCamera owner, int count) throws IOException {
+        try {
+            for (int i = 0; i < count; i++) {
+                var filterClassName = in.readUTF();
+                log.debug("Restoring: {}", filterClassName);
+                Class<?> filterClass = ArtOfIllusion.getClass(filterClassName);
+                if(null == filterClass) {
+                    throw new IOException("Application cannot find given scene filter class: " + filterClassName);
+                }
+                var filter = (ImageFilter) filterClass.getDeclaredConstructor().newInstance();
+                filter.initFromStream(in, theScene);
+                owner.filters.add(filter);
+            }
+        } catch (IOException | ReflectiveOperationException | SecurityException ex) {
+            log.atError().setCause(ex).log("Unable to instantiate Scene filter {}", ex.getMessage());
+            throw new IOException(ex);
         }
     }
 
-    @Override
-    public void writeToFile(DataOutputStream out, Scene theScene) throws IOException {
-        super.writeToFile(out, theScene);
 
-        out.writeShort(3);
+    @Override
+    public void writeToFile(DataOutputStream out, Scene scene) throws IOException {
+        super.writeToFile(out, scene);
+
+        out.writeShort(4);
         out.writeDouble(distToPlane);
         out.writeDouble(fov);
         out.writeDouble(depthOfField);
@@ -513,12 +549,28 @@ public class SceneCamera extends Object3D {
         out.writeBoolean(perspective);
         out.writeInt(filters.size());
         log.debug("Scene camera writes filters: {}", filters.size());
-        for (var imageFilter: filters) {
-            var fc = imageFilter.getClass().getName();
-            log.debug("Filter: {}", fc);
-            out.writeUTF(fc);
-            imageFilter.writeToStream(out, theScene);
+        for (var filter: filters) {
+            SceneCamera.writeFilterBuffered(out, filter, scene);
         }
+    }
+
+    private static void writeFilter(DataOutputStream out, ImageFilter filter, Scene scene, boolean buffered) throws IOException {
+        var fc = filter.getClass().getName();
+        out.writeUTF(fc);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        filter.writeToStream(new DataOutputStream(bos), scene);
+        byte[] ba = bos.toByteArray();
+        var size = ba.length;
+        if(buffered) out.writeInt(size);
+        out.write(ba, 0, size);
+    }
+
+    private static void writeFilterDirect(DataOutputStream out, ImageFilter filter, Scene scene) throws IOException {
+        writeFilter(out, filter, scene, false);
+    }
+
+    private static void writeFilterBuffered(DataOutputStream out, ImageFilter filter, Scene scene) throws IOException {
+        writeFilter(out, filter, scene, true);
     }
 
     @Override
