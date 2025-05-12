@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2013 by Peter Eastman
-   Changes copyright (C) 2016-2024 by Maksim Khramov
+   Changes copyright (C) 2016-2025 by Maksim Khramov
    Changes copyright (C) 2017-2020 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -1283,12 +1283,12 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
         // Read the tracks for this object.
         int tracks = in.readInt();
-        log.info("Read tracks: {}", tracks);
+        log.debug("Read tracks: {}", tracks);
         try {
             for (int i = 0; i < tracks; i++) {
                 var tc = in.readUTF();
                 cls = ArtOfIllusion.getClass(tc);
-                log.info("Reading Track: {}", tc);
+                log.debug("Reading Track: {}", tc);
                 con = cls.getConstructor(ObjectInfo.class);
                 var tr = (Track<?>) con.newInstance(info);
                 tr.initFromStream(in, this);
@@ -1439,14 +1439,14 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
             byte[] bytes = bos.toByteArray();
             out.writeInt(bytes.length);
             out.write(bytes, 0, bytes.length);
-            log.debug("Scene object {} index: {} with class {} sized: {}", info.getName(), index, soc, bytes.length);
+            log.debug("Scene object {} index: {} with class {} size: {}", info.getName(), index, soc, bytes.length);
             key = index++;
             table.put(info.getObject(), key);
         } else {
             out.writeInt(key);
         }
 
-        log.info("Write object tracks: {}", info.getTracks().length);
+        log.debug("Write object tracks: {}", info.getTracks().length);
         // Write the tracks for this object.
         out.writeInt(info.getTracks().length);
         for (var track : info.getTracks()) {

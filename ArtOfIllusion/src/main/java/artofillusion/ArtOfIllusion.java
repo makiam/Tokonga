@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2013 by Peter Eastman
-   Changes copyright (C) 2016-2024 by Maksim Khramov
+   Changes copyright (C) 2016-2025 by Maksim Khramov
    Changes copyright (C) 2016 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -9,6 +9,7 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion;
 
 import artofillusion.image.*;
@@ -448,11 +449,18 @@ public class ArtOfIllusion {
         // Open the file and read the scene.
 
         try {
+            LoadEventListener el = new LoadEventListener();
             Scene scene = new Scene(file, true);
             List<String> errors = scene.getErrors();
-            if (!errors.isEmpty()) {
-                List<String> allErrors = Arrays.asList(Translate.text("errorLoadingScenePart"));
+            List<String> eventErrors =(el.getEventMessages());
+
+            if (errors.isEmpty() && eventErrors.isEmpty()) {
+            } else {
+                List<String> allErrors = new ArrayList<>();
+                allErrors.add(Translate.text("errorLoadingScenePart"));
+                allErrors.addAll(eventErrors);
                 allErrors.addAll(errors);
+
                 showErrors(allErrors);
             }
 

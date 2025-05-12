@@ -20,11 +20,9 @@ import artofillusion.math.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
 import java.io.*;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -445,7 +443,7 @@ public class SceneCamera extends Object3D {
 
         short version = in.readShort();
         if(version < 1) {
-            throw new InvalidObjectException("SceneCamera version 0 is no more supported since 28.04.2025");
+            throw new InvalidObjectException("SceneCamera version 0 is no more supported since release 13.05.2025");
         }
         if (version > 4) {
             throw new InvalidObjectException("Unexpected SceneCamera version " + version);
@@ -495,7 +493,7 @@ public class SceneCamera extends Object3D {
             try {
                 Class<?> filterClass = ArtOfIllusion.getClass(filterClassName);
                 if(null == filterClass) {
-                    bus.post(new BypassEvent(scene, "Filter class: " + filterClassName + " was not found"));
+                    bus.post(new BypassEvent(scene, "Scene camera filter: " + filterClassName + " was not found"));
                     continue;
                 }
                 filter = (ImageFilter) filterClass.getDeclaredConstructor().newInstance();
@@ -507,7 +505,7 @@ public class SceneCamera extends Object3D {
             try {
                 filter.initFromStream(new DataInputStream(new ByteArrayInputStream(filterData)), scene);
             } catch(IOException ie) {
-                bus.post(new BypassEvent(scene, "Filter: " + filterClassName + " initialization error", ie));
+                bus.post(new BypassEvent(scene, "Scene camera filter: " + filterClassName + " initialization error", ie));
                 continue;
             }
 
