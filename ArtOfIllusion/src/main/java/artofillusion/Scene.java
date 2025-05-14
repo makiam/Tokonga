@@ -1283,7 +1283,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
         // Read the tracks for this object.
         int tracks = in.readInt();
-        log.debug("Read tracks: {}", tracks);
+
         try {
             for (int i = 0; i < tracks; i++) {
                 var tc = in.readUTF();
@@ -1299,6 +1299,14 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
             throw new IOException();
         }
         return info;
+    }
+
+    private static void loadTracksBuffered(DataInputStream in, Scene scene, ObjectInfo owner, int count) throws IOException {
+        log.debug("Read tracks: {}", count);
+    }
+
+    private static void loadTracksUnbuffered(DataInputStream in, Scene scene, ObjectInfo owner, int count) throws IOException {
+        log.debug("Read tracks: {}", count);
     }
 
     /**
