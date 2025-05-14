@@ -1301,12 +1301,25 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         return info;
     }
 
-    private static void loadTracksBuffered(DataInputStream in, Scene scene, ObjectInfo owner, int count) throws IOException {
-        log.debug("Read tracks: {}", count);
+    private static void loadImageMapsBuffered(DataInputStream in, Scene scene) {
+
     }
 
-    private static void loadTracksUnbuffered(DataInputStream in, Scene scene, ObjectInfo owner, int count) throws IOException {
-        log.debug("Read tracks: {}", count);
+    private static void loadImageMapsUnbuffered(DataInputStream in, Scene scene) {
+
+    }
+
+    private static void loadTracksBuffered(DataInputStream in, Scene scene, ObjectInfo owner) throws IOException {
+        var tracks = in.readInt();
+        log.debug("Read tracks: {}", tracks);
+    }
+
+    /*
+
+     */
+    private static void loadTracksUnbuffered(DataInputStream in, Scene scene, ObjectInfo owner) throws IOException {
+        var tracks = in.readInt();
+        log.debug("Read tracks: {}", tracks);
     }
 
     /**
