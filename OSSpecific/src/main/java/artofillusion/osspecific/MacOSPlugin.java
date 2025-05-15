@@ -174,7 +174,7 @@ public final class MacOSPlugin implements Plugin, AboutHandler, QuitHandler, Ope
     public void openFiles(OpenFilesEvent event) {
         for (var file : event.getFiles()) {
             try {
-                ArtOfIllusion.newWindow(new Scene(file, true));
+                ArtOfIllusion.newWindow(new Scene(file));
             } catch (IOException ex) {
                 log.atError().setCause(ex).log("Error opening scene: {} {}", file, ex.getMessage());
             }

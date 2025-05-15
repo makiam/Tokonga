@@ -471,7 +471,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
     private void saveToFile(File saveFile) {
         if (saveFile.exists()) {
             try {
-                Scene saveScene = new Scene(saveFile, true);
+                Scene saveScene = new Scene(saveFile);
                 if (selectedTexture != null) {
                     Texture newTexture = selectedTexture.duplicate();
                     saveScene.addTexture(newTexture, insertLocation == -1 ? saveScene.getNumTextures() : insertLocation);
@@ -925,7 +925,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
             try {
                 Scene destScene = sceneNode.getScene();
                 if (sceneNode == selectedSceneNode) {
-                    Scene saveScene = (destScene == theScene ? theScene : new Scene(sceneNode.file, true));
+                    Scene saveScene = (destScene == theScene ? theScene : new Scene(sceneNode.file));
                     if (selectedTexture != null) {
                         saveScene.reorderTexture(destScene.indexOf(selectedTexture), insertLocation);
                     } else if (selectedMaterial != null) {

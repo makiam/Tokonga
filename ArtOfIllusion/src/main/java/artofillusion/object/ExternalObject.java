@@ -127,7 +127,7 @@ public class ExternalObject extends ObjectWrapper {
                 loadingError = Translate.text("externalObject.sceneNotFound", externalFile.getAbsolutePath());
                 return;
             }
-            Scene scene = new Scene(externalFile, true);
+            Scene scene = new Scene(externalFile);
             ObjectInfo foundObject = null;
             for (ObjectInfo info : scene.getObjects()) {
                 if (!info.getName().equals(objectName)) {

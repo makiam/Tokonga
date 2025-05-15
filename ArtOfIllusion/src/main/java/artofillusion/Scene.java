@@ -23,6 +23,7 @@ import artofillusion.util.*;
 import java.beans.*;
 import java.io.*;
 import java.lang.reflect.*;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
@@ -133,6 +134,10 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         showGrid = snapToGrid = false;
         gridSpacing = 1.0;
         gridSubdivisions = 10;
+    }
+
+    public Scene(File path) throws IOException {
+        this(path, true);
     }
 
     /**
@@ -1022,6 +1027,9 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         if (version < 0 || version > 5) {
             throw new InvalidObjectException("Bad scene version: " + version);
         }
+        if(version == 0) {
+            throw new InvalidObjectException("Scene version 0 is no more supported since release 27.05.2025");
+        }
 
         ambientColor = new RGBColor(in);
         fogColor = new RGBColor(in);
@@ -1048,7 +1056,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
             try {
                 cls = ArtOfIllusion.getClass(classname);
                 if (cls == null) {
-                    throw new IOException("Unknown class: " + classname);
+                    throw new IOException("Unknown ImageMap class: " + classname);
                 }
                 con = cls.getConstructor(DataInputStream.class);
                 _images.add((ImageMap) con.newInstance(in));
@@ -1224,12 +1232,12 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         obj = table.get(key);
         if (obj == null) {
             try {
-                String classname = in.readUTF();
+                String className = in.readUTF();
                 int len = in.readInt();
                 byte[] bytes = new byte[len];
                 in.readFully(bytes);
                 try {
-                    cls = ArtOfIllusion.getClass(classname);
+                    cls = ArtOfIllusion.getClass(className);
                     con = cls.getConstructor(DataInputStream.class, Scene.class);
                     obj = (Object3D) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this);
                 } catch (SecurityException | ReflectiveOperationException ex) {
@@ -1239,9 +1247,9 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
                         log.atError().setCause(ex).log("Object reading error: {}", ex.getMessage());
                     }
                     if (ex instanceof ClassNotFoundException) {
-                        errors.add(info.getName() + ": " + Translate.text("errorFindingClass", classname));
+                        errors.add(info.getName() + ": " + Translate.text("errorFindingClass", className));
                     } else {
-                        errors.add(info.getName() + ": " + Translate.text("errorInstantiatingClass", classname));
+                        errors.add(info.getName() + ": " + Translate.text("errorInstantiatingClass", className));
                     }
                     obj = new NullObject();
                     info.setName("<unreadable> " + info.getName());
