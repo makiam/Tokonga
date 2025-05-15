@@ -19,7 +19,7 @@ public final class SceneIOUtil {
 
     private static EventBus bus = org.greenrobot.eventbus.EventBus.getDefault();
     /*
-        Buffered read introduced in Scene version 6
+        Buffered ImageMap read introduced in Scene version 6
      */
     public static void loadImageMapsBuffered(DataInputStream in, Scene scene) throws IOException {
         var images = in.readInt();
@@ -39,8 +39,10 @@ public final class SceneIOUtil {
                 }
                 scene.add((ImageMap) cls.getConstructor(DataInputStream.class).newInstance(in));
             } catch (IOException | ReflectiveOperationException rex) {
+                log.atError().setCause(rex).log("Images reading error: {}", rex.getMessage());
                 throw new IOException("Error loading image: " + rex.getMessage());
             } catch(SecurityException se) {
+                log.atError().setCause(se).log("Images reading error: {}", se.getMessage());
                 throw new IOException("Error loading image: " + se.getMessage());
             }
         }
@@ -73,8 +75,10 @@ public final class SceneIOUtil {
                 tr.initFromStream(in, scene);
                 owner.addTrack(tr);
             } catch (IOException | ReflectiveOperationException rex) {
+                log.atError().setCause(rex).log("Tracks reading error: {}", rex.getMessage());
                 throw new IOException("Error loading Track: " + rex.getMessage());
             } catch(SecurityException se) {
+                log.atError().setCause(se).log("Tracks reading error: {}", se.getMessage());
                 throw new IOException("Error loading Track: " + se.getMessage());
             }
         }
