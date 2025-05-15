@@ -1,5 +1,7 @@
 package artofillusion;
 
+import artofillusion.image.ImageMap;
+import artofillusion.image.MIPMappedImage;
 import artofillusion.object.ObjectInfo;
 import lombok.extern.slf4j.Slf4j;
 import lombok.AccessLevel;
@@ -8,6 +10,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
@@ -27,7 +30,17 @@ final class SceneIOUtil {
         log.debug("Read images: {}", images);
 
         for (int i = 0; i < images; i++) {
-
+            String className = in.readUTF();
+            try {
+                Class<?> cls = ArtOfIllusion.getClass(className);
+                if (cls == null) {
+                    throw new IOException("Unknown ImageMap class: " + className);
+                }
+                Constructor<?> con = cls.getConstructor(DataInputStream.class);
+                scene.add((ImageMap) con.newInstance(in));
+            } catch (IOException | ReflectiveOperationException | SecurityException ex) {
+                throw new IOException("Error loading image: " + ex.getMessage());
+            }
         }
 
     }
