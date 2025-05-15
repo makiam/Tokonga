@@ -1,0 +1,41 @@
+package artofillusion.animation;
+
+import artofillusion.math.CoordinateSystem;
+import artofillusion.object.Cube;
+import artofillusion.object.Object3D;
+import artofillusion.object.ObjectInfo;
+import artofillusion.test.util.StreamUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
+@Slf4j
+public class TrackRestoreTest {
+
+    @Test
+    void testRestoreTrack() throws IOException {
+        Object3D obj = new Cube(1, 1, 1);
+        ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
+        PoseTrack track = new PoseTrack(oi);
+
+
+        Assertions.assertEquals(0, oi.getTracks().length);
+
+        ByteBuffer wrap = ByteBuffer.allocate(10000);
+        var bb = StreamUtil.getUTFNameAsByteArray(track.getClass());
+
+        var fb = StreamUtil.writeObjectToStream((target) -> {
+            track.writeToStream(target, null);
+        });
+        wrap.putInt(1); // Tracks counter
+        wrap.put(bb, 0, bb.length);
+        wrap.put(fb, 0, fb.length);
+
+        artofillusion.SceneIOUtil.loadTracksUnbuffered(StreamUtil.stream(wrap), null, oi);
+        Assertions.assertEquals(1, oi.getTracks().length);
+
+    }
+}
