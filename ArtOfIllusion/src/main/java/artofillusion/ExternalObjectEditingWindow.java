@@ -342,7 +342,7 @@ public final class ExternalObjectEditingWindow extends JDialog {
             var root = new DefaultMutableTreeNode("Scene: " + path);
             var model = new DefaultTreeModel(root, true);
 
-            var scene = new Scene(path, true);
+            var scene = new Scene(path);
             scene.getObjects().stream().filter(item -> item.getParent() == null).forEach(item -> {
                 var sNode = new SceneItemNode(item);
                 root.add(sNode);
