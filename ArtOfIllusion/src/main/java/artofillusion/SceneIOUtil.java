@@ -2,7 +2,7 @@ package artofillusion;
 
 import artofillusion.animation.Track;
 import artofillusion.image.ImageMap;
-import artofillusion.image.MIPMappedImage;
+
 import artofillusion.object.ObjectInfo;
 import lombok.extern.slf4j.Slf4j;
 import lombok.AccessLevel;
@@ -15,7 +15,7 @@ import java.lang.reflect.Constructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
-final class SceneIOUtil {
+public final class SceneIOUtil {
 
     private static EventBus bus = org.greenrobot.eventbus.EventBus.getDefault();
     /*
