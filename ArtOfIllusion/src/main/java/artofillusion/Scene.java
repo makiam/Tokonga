@@ -1220,7 +1220,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
         info.setVisible(in.readBoolean());
         info.setLocked(version < 5 ? false : in.readBoolean());
-        Integer key = in.readInt();
+        var key = in.readInt();
         obj = table.get(key);
         if (obj == null) {
             try {
@@ -1299,27 +1299,6 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
             throw new IOException();
         }
         return info;
-    }
-
-    private static void loadImageMapsBuffered(DataInputStream in, Scene scene) {
-
-    }
-
-    private static void loadImageMapsUnbuffered(DataInputStream in, Scene scene) {
-
-    }
-
-    private static void loadTracksBuffered(DataInputStream in, Scene scene, ObjectInfo owner) throws IOException {
-        var tracks = in.readInt();
-        log.debug("Read tracks: {}", tracks);
-    }
-
-    /*
-
-     */
-    private static void loadTracksUnbuffered(DataInputStream in, Scene scene, ObjectInfo owner) throws IOException {
-        var tracks = in.readInt();
-        log.debug("Read tracks: {}", tracks);
     }
 
     /**
