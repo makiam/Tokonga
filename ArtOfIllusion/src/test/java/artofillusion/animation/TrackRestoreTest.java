@@ -38,4 +38,30 @@ public class TrackRestoreTest {
         Assertions.assertEquals(1, oi.getTracks().length);
 
     }
+
+    @Test
+    void testRestoreTrackBadClassName() throws IOException {
+        Object3D obj = new Cube(1, 1, 1);
+        ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
+        PoseTrack track = new PoseTrack(oi);
+
+
+        Assertions.assertEquals(0, oi.getTracks().length);
+
+        ByteBuffer wrap = ByteBuffer.allocate(10000);
+        var bb = StreamUtil.getUTFNameAsByteArray(track.getClass()+"Bad");
+
+        var fb = StreamUtil.writeObjectToStream((target) -> {
+            track.writeToStream(target, null);
+        });
+        wrap.putInt(1); // Tracks counter
+        wrap.put(bb, 0, bb.length);
+        wrap.put(fb, 0, fb.length);
+
+
+        Assertions.assertThrows(IOException.class, () -> {
+            artofillusion.SceneIOUtil.loadTracksUnbuffered(StreamUtil.stream(wrap), null, oi);
+        });
+
+    }
 }
