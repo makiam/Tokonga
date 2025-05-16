@@ -71,8 +71,6 @@ class DummyTrack extends Track<DummyTrack> {
 
     @Override
     public void writeToStream(DataOutputStream out, Scene scene) throws IOException {
-        // To change body of generated methods, choose Tools | Templates.
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
