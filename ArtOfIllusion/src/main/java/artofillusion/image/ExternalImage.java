@@ -1,5 +1,5 @@
 /* Copyright (C) 2017 by Petri Ihalainen
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -360,7 +360,7 @@ public class ExternalImage extends ImageMap {
      */
     @Override
     public void writeToStream(DataOutputStream out, Scene scene) throws IOException {
-        out.writeShort(0); // ExternalImage was not exixting in AoI 3.0.3 and earlier
+        out.writeShort(0); // ExternalImage was not existing in AoI 3.0.3 and earlier
         if (connected) {
             out.writeUTF(imageFile.getAbsolutePath());
             if (scene == null) // If used by the other writeToStream method.
