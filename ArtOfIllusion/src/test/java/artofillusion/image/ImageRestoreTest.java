@@ -94,4 +94,25 @@ public class ImageRestoreTest {
 
     }
 
+    @Test
+    void testRestoreImageMissedExpectedTrackConstructor() throws IOException {
+
+        var scene = new Scene();
+        ImageMap map = new DummyImageBad();
+        ByteBuffer wrap = ByteBuffer.allocate(10000);
+
+        var fb = StreamUtil.writeObjectToStream((target) -> {
+            map.writeToStream(target, scene);
+        });
+        var bb = StreamUtil.getUTFNameAsByteArray(map.getClass());
+
+        wrap.putInt(1); //Images counter
+        wrap.put(bb, 0, bb.length);
+        wrap.put(fb, 0, fb.length);
+
+        Assertions.assertThrows(IOException.class, () -> {
+            artofillusion.SceneIOUtil.loadImageMapsUnbuffered(StreamUtil.stream(wrap), scene);
+        });
+
+    }
 }
