@@ -61,7 +61,7 @@ public class TrackRestoreTest {
         Assertions.assertEquals(0, oi.getTracks().length);
 
         ByteBuffer wrap = ByteBuffer.allocate(10000);
-        var bb = StreamUtil.getUTFNameAsByteArray(track.getClass()+"Bad");
+        var bb = StreamUtil.getUTFNameAsByteArray(track.getClass() + "Bad");
 
         var fb = StreamUtil.writeObjectToStream((target) -> {
             track.writeToStream(target, null);

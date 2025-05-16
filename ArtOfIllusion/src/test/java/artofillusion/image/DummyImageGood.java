@@ -3,12 +3,24 @@ package artofillusion.image;
 import artofillusion.Scene;
 import artofillusion.math.RGBColor;
 import artofillusion.math.Vec2;
+import lombok.Getter;
 
 import java.awt.*;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class DummyImage extends ImageMap {
+public class DummyImageGood extends ImageMap {
+
+    @Getter
+    private Double value;
+
+    public DummyImageGood() {
+    }
+
+    public DummyImageGood(DataInputStream in) throws IOException {
+        value = in.readDouble();
+    }
 
     @Override
     public int getWidth() {
