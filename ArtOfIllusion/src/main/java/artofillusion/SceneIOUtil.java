@@ -11,22 +11,15 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
 public final class SceneIOUtil {
 
     private static EventBus bus = org.greenrobot.eventbus.EventBus.getDefault();
-    /*
-        Buffered ImageMap read introduced in Scene version 6
-     */
-    public static void loadImageMapsBuffered(DataInputStream in, Scene scene) throws IOException {
-        var images = in.readInt();
-        log.debug("Read images: {}", images);
-    }
 
-    public static void loadImageMapsUnbuffered(DataInputStream in, Scene scene) throws IOException {
+
+    public static void loadImageMaps(DataInputStream in, Scene scene) throws IOException {
         var counter = in.readInt();
         log.debug("Read images: {}", counter);
 

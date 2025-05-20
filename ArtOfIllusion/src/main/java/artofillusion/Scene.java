@@ -1043,30 +1043,14 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         nextID = 1;
 
         // Read the image maps.
-        int count = in.readInt();
-        _images.clear();
+        SceneIOUtil.loadImageMaps(in, this);
+
         Class<?> cls;
         Constructor<?> con;
-        for (int i = 0; i < count; i++) {
-            if (version == 0) {
-                _images.add(new MIPMappedImage(in, (short) 0));
-                continue;
-            }
-            String classname = in.readUTF();
-            try {
-                cls = ArtOfIllusion.getClass(classname);
-                if (cls == null) {
-                    throw new IOException("Unknown ImageMap class: " + classname);
-                }
-                con = cls.getConstructor(DataInputStream.class);
-                _images.add((ImageMap) con.newInstance(in));
-            } catch (IOException | ReflectiveOperationException | SecurityException ex) {
-                throw new IOException("Error loading image: " + ex.getMessage());
-            }
-        }
+
 
         // Read the materials.
-        count = in.readInt();
+        int count = in.readInt();
 
         for (int i = 0; i < count; i++) {
             try {
