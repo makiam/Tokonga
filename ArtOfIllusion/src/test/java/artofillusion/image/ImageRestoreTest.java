@@ -43,7 +43,7 @@ public class ImageRestoreTest {
         wrap.put(bb, 0, bb.length);
         wrap.put(fb, 0, fb.length);
 
-        artofillusion.SceneIOUtil.loadImageMapsUnbuffered(StreamUtil.stream(wrap), scene);
+        artofillusion.SceneIOUtil.loadImageMaps(StreamUtil.stream(wrap), scene);
         Assertions.assertEquals(1, scene.getImages().size());
 
     }
@@ -66,7 +66,7 @@ public class ImageRestoreTest {
         wrap.put(bb, 0, bb.length);
         wrap.put(fb, 0, fb.length);
 
-        artofillusion.SceneIOUtil.loadImageMapsUnbuffered(StreamUtil.stream(wrap), scene);
+        artofillusion.SceneIOUtil.loadImageMaps(StreamUtil.stream(wrap), scene);
         Assertions.assertEquals(2, scene.getImages().size());
 
     }
@@ -89,7 +89,7 @@ public class ImageRestoreTest {
 
 
         Assertions.assertThrows(IOException.class, () -> {
-            artofillusion.SceneIOUtil.loadImageMapsUnbuffered(StreamUtil.stream(wrap), scene);
+            artofillusion.SceneIOUtil.loadImageMaps(StreamUtil.stream(wrap), scene);
         });
 
     }
@@ -111,7 +111,7 @@ public class ImageRestoreTest {
         wrap.put(fb, 0, fb.length);
 
         Assertions.assertThrows(IOException.class, () -> {
-            artofillusion.SceneIOUtil.loadImageMapsUnbuffered(StreamUtil.stream(wrap), scene);
+            artofillusion.SceneIOUtil.loadImageMaps(StreamUtil.stream(wrap), scene);
         });
 
     }

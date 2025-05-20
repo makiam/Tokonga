@@ -470,6 +470,7 @@ public class SceneCamera extends Object3D {
         }
 
     }
+
     private static void loadFiltersV4(DataInputStream in, Scene scene, SceneCamera owner, int count) throws IOException {
         var bus = org.greenrobot.eventbus.EventBus.getDefault();
 
@@ -561,10 +562,6 @@ public class SceneCamera extends Object3D {
         var size = ba.length;
         if(buffered) out.writeInt(size);
         out.write(ba, 0, size);
-    }
-
-    private static void writeFilterDirect(DataOutputStream out, ImageFilter filter, Scene scene) throws IOException {
-        writeFilter(out, filter, scene, false);
     }
 
     private static void writeFilterBuffered(DataOutputStream out, ImageFilter filter, Scene scene) throws IOException {
