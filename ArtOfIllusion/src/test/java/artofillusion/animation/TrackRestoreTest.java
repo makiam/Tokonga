@@ -58,7 +58,14 @@ public class TrackRestoreTest {
         Track track = new PoseTrack(oi);
 
         ByteBuffer wrap = ByteBuffer.allocate(10000);
-        var bb = StreamUtil.getUTFNameAsByteArray(track.getClass());
+
+        var fb = StreamUtil.writeObjectToStream((target) -> {
+            artofillusion.SceneIOUtil.writeTrack(target, track, null, true);
+        });
+
+        wrap.putInt(1); // Tracks counter
+        wrap.put(fb, 0, fb.length);
+
     }
 
 
