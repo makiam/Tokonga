@@ -9,7 +9,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -40,6 +42,17 @@ public final class SceneIOUtil {
             }
         }
 
+    }
+
+    public static void writeTrack(DataOutputStream out, Track writable, Scene scene, boolean buffered) throws IOException {
+        var fc = writable.getClass().getName();
+        out.writeUTF(fc);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        writable.writeToStream(new DataOutputStream(bos), scene);
+        byte[] ba = bos.toByteArray();
+        var size = ba.length;
+        if(buffered) out.writeInt(size);
+        out.write(ba, 0, size);
     }
 
     /*

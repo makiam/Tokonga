@@ -190,7 +190,7 @@ public abstract class ImageFilter {
     /**
      * Write a serialized description of this filter to a stream.
      */
-    public abstract void writeToStream(DataOutputStream out, Scene theScene) throws IOException;
+    public abstract void writeToStream(DataOutputStream out, Scene scene) throws IOException;
 
     /**
      * Reconstruct this filter from its serialized representation.
