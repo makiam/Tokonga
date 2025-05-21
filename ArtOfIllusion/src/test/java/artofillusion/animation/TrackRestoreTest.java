@@ -51,6 +51,18 @@ public class TrackRestoreTest {
     }
 
     @Test
+    @DisplayName("Test Restore Track buffered")
+    void testRestoreTrackBuffered() throws IOException {
+        Object3D obj = new Cube(1, 1, 1);
+        ObjectInfo oi = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
+        Track track = new PoseTrack(oi);
+
+        ByteBuffer wrap = ByteBuffer.allocate(10000);
+        var bb = StreamUtil.getUTFNameAsByteArray(track.getClass());
+    }
+
+
+    @Test
     @DisplayName("Test Restore Track when class not found")
     void testRestoreTrackBadClassName() throws IOException {
         Object3D obj = new Cube(1, 1, 1);

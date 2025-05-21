@@ -553,11 +553,11 @@ public class SceneCamera extends Object3D {
         }
     }
 
-    private static void writeFilter(DataOutputStream out, ImageFilter filter, Scene scene, boolean buffered) throws IOException {
-        var fc = filter.getClass().getName();
+    private static void writeFilter(DataOutputStream out, ImageFilter writable, Scene scene, boolean buffered) throws IOException {
+        var fc = writable.getClass().getName();
         out.writeUTF(fc);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        filter.writeToStream(new DataOutputStream(bos), scene);
+        writable.writeToStream(new DataOutputStream(bos), scene);
         byte[] ba = bos.toByteArray();
         var size = ba.length;
         if(buffered) out.writeInt(size);
