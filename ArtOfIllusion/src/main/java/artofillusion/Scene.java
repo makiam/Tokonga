@@ -1274,22 +1274,29 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
 
         // Read the tracks for this object.
-        int tracks = in.readInt();
+        if(version >= 6) {
 
-        try {
-            for (int i = 0; i < tracks; i++) {
-                var tc = in.readUTF();
-                cls = ArtOfIllusion.getClass(tc);
-                log.debug("Reading Track: {}", tc);
-                con = cls.getConstructor(ObjectInfo.class);
-                var tr = (Track<?>) con.newInstance(info);
-                tr.initFromStream(in, this);
-                info.addTrack(tr);
-            }
-        } catch (IOException | ReflectiveOperationException | SecurityException ex) {
-            log.atError().setCause(ex).log("Tracks reading error: {}", ex.getMessage());
-            throw new IOException();
+        } else {
+            SceneIOUtil.loadTracksUnbuffered(in, this, info);
         }
+
+//        int tracks = in.readInt();
+//
+//        try {
+//            for (int i = 0; i < tracks; i++) {
+//                var tc = in.readUTF();
+//                cls = ArtOfIllusion.getClass(tc);
+//                log.debug("Reading Track: {}", tc);
+//                con = cls.getConstructor(ObjectInfo.class);
+//                var tr = (Track<?>) con.newInstance(info);
+//                tr.initFromStream(in, this);
+//                info.addTrack(tr);
+//            }
+//        } catch (IOException | ReflectiveOperationException | SecurityException ex) {
+//            log.atError().setCause(ex).log("Tracks reading error: {}", ex.getMessage());
+//            throw new IOException();
+//        }
+
         return info;
     }
 
