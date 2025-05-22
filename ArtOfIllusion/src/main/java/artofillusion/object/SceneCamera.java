@@ -493,7 +493,7 @@ public class SceneCamera extends Object3D {
             } catch(IOException ie) {
                 throw ie;
             }
-            //Now try to discover ImageFilter plugin. On exception, we cannot recover plugin, but can bypass it
+            //Now try to discover ImageFilter class. On exception, we cannot recover ImageFilter, but can bypass it
             try {
                 Class<?> filterClass = ArtOfIllusion.getClass(filterClassName);
                 if(null == filterClass) {

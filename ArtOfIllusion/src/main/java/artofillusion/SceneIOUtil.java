@@ -3,6 +3,7 @@ package artofillusion;
 import artofillusion.animation.Track;
 import artofillusion.image.ImageMap;
 
+import artofillusion.image.filter.ImageFilter;
 import artofillusion.object.ObjectInfo;
 import lombok.extern.slf4j.Slf4j;
 import lombok.AccessLevel;
@@ -56,11 +57,40 @@ public final class SceneIOUtil {
     }
 
     /*
-    Buffered track read introduced in Scene version 6
+    Buffered track read. Introduced in Scene version 6
     */
     public static void loadTracksBuffered(DataInputStream in, Scene scene, ObjectInfo owner) throws IOException {
         var tracks = in.readInt();
         log.debug("Read tracks: {}", tracks);
+
+        var trackClassName = "";
+        var trackDataSize = 0;
+        byte[] trackData;
+        Track track;
+
+        for (int i = 0; i < tracks; i++) {
+            // At first read binary data from input. If IOException is thrown we cannot recover data and aborting
+            try {
+                trackClassName = in.readUTF();
+                trackDataSize = in.readInt();
+                trackData = new byte[trackDataSize];
+                in.read(trackData);
+            } catch(IOException ie) {
+                throw  ie;
+            }
+            //Now try to discover Track class. On exception, we cannot recover track, but can bypass it
+            try {
+                Class<?> trackClass = ArtOfIllusion.getClass(trackClassName);
+                if(null == trackClass) {
+                    bus.post(new BypassEvent(scene, "Track: " + trackClassName + " was not found"));
+                    continue;
+                }
+                track = (Track) trackClass.getDeclaredConstructor(ObjectInfo.class).newInstance();
+            } catch(ReflectiveOperationException cne) {
+                bus.post(new BypassEvent(scene, "Track class: " + trackClassName + " was not found or cannot instantiate", cne));
+                continue;
+            }
+        }
     }
 
     /*
@@ -71,11 +101,11 @@ public final class SceneIOUtil {
         log.debug("Read tracks: {}", tracks);
 
         for (int i = 0; i < tracks; i++) {
-            String className = in.readUTF();
+            String trackClassName = in.readUTF();
             try {
-                Class<?> cls = ArtOfIllusion.getClass(className);
+                Class<?> cls = ArtOfIllusion.getClass(trackClassName);
                 if (cls == null) {
-                    throw new IOException("Unknown Track class: " + className);
+                    throw new IOException("Unknown Track class: " + trackClassName);
                 }
                 var tr = (Track<?>) cls.getConstructor(ObjectInfo.class).newInstance(owner);
                 tr.initFromStream(in, scene);

@@ -1,5 +1,6 @@
 package artofillusion.animation;
 
+import artofillusion.SceneIOUtil;
 import artofillusion.math.CoordinateSystem;
 import artofillusion.object.Cube;
 import artofillusion.object.Object3D;
@@ -65,6 +66,9 @@ public class TrackRestoreTest {
 
         wrap.putInt(1); // Tracks counter
         wrap.put(fb, 0, fb.length);
+
+        SceneIOUtil.loadTracksBuffered(StreamUtil.stream(wrap), null, oi);
+        Assertions.assertEquals(1, oi.getTracks().length);
 
     }
 
