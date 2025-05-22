@@ -461,17 +461,20 @@ public class SceneCamera extends Object3D {
             perspective = in.readBoolean();
         }
 
-        var filtersCount = in.readInt();
+
 
         if(version <= 3) {
-            SceneCamera.loadFiltersV3(in, theScene, this, filtersCount);
+            SceneCamera.loadFiltersUnbuffered(in, theScene, this);
         } else {
-            SceneCamera.loadFiltersV4(in, theScene, this, filtersCount);
+            SceneCamera.loadFiltersBuffered(in, theScene, this);
         }
 
     }
 
-    private static void loadFiltersV4(DataInputStream in, Scene scene, SceneCamera owner, int count) throws IOException {
+    private static void loadFiltersBuffered(DataInputStream in, Scene scene, SceneCamera owner) throws IOException {
+        var filters = in.readInt();
+        log.debug("Read filters: {}", filters);
+
         var bus = org.greenrobot.eventbus.EventBus.getDefault();
 
         var filterClassName = "";
@@ -479,7 +482,7 @@ public class SceneCamera extends Object3D {
         byte[] filterData;
         ImageFilter filter;
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < filters; i++) {
             // At first read binary data from input. If IOException is thrown we cannot recover data and aborting
             try {
                 filterClassName = in.readUTF();
@@ -516,9 +519,13 @@ public class SceneCamera extends Object3D {
 
     }
 
-    private static void loadFiltersV3(DataInputStream in, Scene theScene, SceneCamera owner, int count) throws IOException {
+    private static void loadFiltersUnbuffered(DataInputStream in, Scene theScene, SceneCamera owner) throws IOException {
+
+        var filters = in.readInt();
+        log.debug("Read filters: {}", filters);
+
         try {
-            for (int i = 0; i < count; i++) {
+            for (int i = 0; i < filters; i++) {
                 var filterClassName = in.readUTF();
                 log.debug("Restoring: {}", filterClassName);
                 Class<?> filterClass = ArtOfIllusion.getClass(filterClassName);
