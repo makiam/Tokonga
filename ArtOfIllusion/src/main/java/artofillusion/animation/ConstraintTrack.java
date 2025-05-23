@@ -29,7 +29,7 @@ import java.util.*;
 /**
  * This is a Track which places constraints on the position or orientation of an object.
  */
-public class ConstraintTrack extends Track<ConstraintTrack> {
+public class ConstraintTrack extends Track<ConstraintTrack> implements Weighted {
 
     ObjectInfo info;
     int xType;

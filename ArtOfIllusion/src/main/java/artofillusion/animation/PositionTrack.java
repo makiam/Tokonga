@@ -23,7 +23,7 @@ import java.util.*;
 /**
  * This is a Track which controls the position of an object.
  */
-public class PositionTrack extends Track<PositionTrack> {
+public class PositionTrack extends Track<PositionTrack> implements Weighted {
 
     ObjectInfo info;
     Timecourse tc;

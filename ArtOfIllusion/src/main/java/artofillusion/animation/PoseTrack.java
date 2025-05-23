@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  * This is a Track which controls the pose of an object.
  */
 @Slf4j
-public class PoseTrack extends Track<PoseTrack> {
+public class PoseTrack extends Track<PoseTrack> implements Weighted {
 
     private ObjectInfo info;
     private Timecourse tc;

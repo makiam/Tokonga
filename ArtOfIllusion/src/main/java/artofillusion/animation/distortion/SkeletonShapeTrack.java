@@ -21,7 +21,7 @@ import java.io.*;
 /**
  * This is a Track which applies a SkeletonDistortion to an object.
  */
-public class SkeletonShapeTrack extends Track<SkeletonShapeTrack> {
+public class SkeletonShapeTrack extends Track<SkeletonShapeTrack> implements Weighted {
 
     private ObjectInfo info;
     private Timecourse tc;
