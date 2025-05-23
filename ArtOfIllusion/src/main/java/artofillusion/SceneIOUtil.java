@@ -10,10 +10,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
@@ -90,6 +87,14 @@ public final class SceneIOUtil {
                 bus.post(new BypassEvent(scene, "Track class: " + trackClassName + " was not found or cannot instantiate", cne));
                 continue;
             }
+            //On exception, we cannot recover track, but can bypass it
+            try {
+                track.initFromStream(new DataInputStream(new ByteArrayInputStream(trackData)), scene);
+            } catch (IOException ie) {
+                bus.post(new BypassEvent(scene, "Track: " + trackClassName + " initialization error", ie));
+                continue;
+            }
+            owner.addTrack(track);
         }
     }
 
