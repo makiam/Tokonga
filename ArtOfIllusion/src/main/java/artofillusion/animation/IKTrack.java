@@ -31,7 +31,7 @@ import java.util.*;
 /**
  * This is a Track which modifies the shape of an object using inverse kinematics.
  */
-public class IKTrack extends Track<IKTrack> {
+public class IKTrack extends Track<IKTrack> implements Weighted {
 
     private ObjectInfo info;
     private List<Constraint> constraints = new Vector<>();

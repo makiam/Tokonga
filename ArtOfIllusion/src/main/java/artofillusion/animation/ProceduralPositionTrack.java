@@ -24,7 +24,7 @@ import java.util.*;
 /**
  * This is a Track which uses a procedure to control the position of an object.
  */
-public class ProceduralPositionTrack extends Track<ProceduralPositionTrack> implements ProcedureOwner {
+public class ProceduralPositionTrack extends Track<ProceduralPositionTrack> implements ProcedureOwner, Weighted{
 
     ObjectInfo info;
     private final Procedure proc;

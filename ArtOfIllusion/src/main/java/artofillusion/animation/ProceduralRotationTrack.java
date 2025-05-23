@@ -24,7 +24,7 @@ import java.util.*;
 /**
  * This is a Track which uses a procedure to control the orientation of an object.
  */
-public class ProceduralRotationTrack extends Track<ProceduralRotationTrack> implements ProcedureOwner {
+public class ProceduralRotationTrack extends Track<ProceduralRotationTrack> implements ProcedureOwner, Weighted {
 
     ObjectInfo info;
     final Procedure proc;

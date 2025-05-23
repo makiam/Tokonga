@@ -26,7 +26,7 @@ import java.util.*;
 /**
  * This is a Track which controls the value of a texture parameter.
  */
-public class TextureTrack extends Track<TextureTrack> {
+public class TextureTrack extends Track<TextureTrack> implements Weighted {
 
     private ObjectInfo info;
     private Timecourse timecourse = new Timecourse(new Keyframe[0], new double[0], new Smoothness[0]);

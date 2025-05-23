@@ -23,7 +23,7 @@ import java.io.*;
 /**
  * This is a Track which applies a ScaleDistortion to an object.
  */
-public class ScaleTrack extends Track<ScaleTrack> {
+public class ScaleTrack extends Track<ScaleTrack> implements Weighted {
 
     ObjectInfo info;
     Timecourse tc;
