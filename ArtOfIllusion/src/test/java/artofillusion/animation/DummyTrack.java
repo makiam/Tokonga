@@ -75,7 +75,5 @@ class DummyTrack extends Track<DummyTrack> {
 
     @Override
     public void initFromStream(DataInputStream in, Scene scene) throws IOException {
-        // To change body of generated methods, choose Tools | Templates.
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
