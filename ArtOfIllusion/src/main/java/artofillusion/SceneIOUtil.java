@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.*;
+import java.lang.reflect.Constructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
@@ -78,11 +79,11 @@ public final class SceneIOUtil {
             //Now try to discover Track class. On exception, we cannot recover track, but can bypass it
             try {
                 Class<?> trackClass = ArtOfIllusion.getClass(trackClassName);
-                if(null == trackClass) {
+                if (null == trackClass) {
                     bus.post(new BypassEvent(scene, "Track: " + trackClassName + " was not found"));
                     continue;
                 }
-                track = (Track) trackClass.getDeclaredConstructor(ObjectInfo.class).newInstance();
+                track = (Track)trackClass.getDeclaredConstructor(ObjectInfo.class).newInstance(owner);
             } catch(ReflectiveOperationException cne) {
                 bus.post(new BypassEvent(scene, "Track class: " + trackClassName + " was not found or cannot instantiate", cne));
                 continue;
