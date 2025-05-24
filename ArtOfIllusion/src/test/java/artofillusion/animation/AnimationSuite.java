@@ -23,6 +23,6 @@ import org.junit.platform.suite.api.SuiteDisplayName;
 @SuiteDisplayName("Animation Suite")
 @SelectClasses({ActorTest.class, IKTrackTest.class, JointEqualityTest.class, JointDOFEqualityTest.class,
         PoseTrackTest.class, ScoreTest.class, TextureTrackTest.class, TimecourseTest.class,
-        TrackGraphTest.class, TrackQuantizeTest.class, VisibilityTrackTest.class, WeightTrackTest.class})
+        TrackGraphTest.class, TrackQuantizeTest.class, VisibilityTrackTest.class, WeightTrackTest.class, TrackRestoreTest.class})
 public class AnimationSuite {
 }
