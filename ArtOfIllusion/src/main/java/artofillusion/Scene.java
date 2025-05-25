@@ -41,7 +41,7 @@ import org.greenrobot.eventbus.Subscribe;
  * form a scene, as well as the available textures and materials, environment options, etc.
  */
 @Slf4j
-@ImplementationVersion(min = 3, current = 6)
+@ImplementationVersion(min = 2, current = 6)
 public final class Scene implements ObjectsContainer, MaterialsContainer, TexturesContainer, ImagesContainer {
 
     private final List<ObjectInfo> objects = new Vector<>();
@@ -1026,11 +1026,11 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
     private void initFromStream(DataInputStream in, boolean fullScene) throws IOException {
         short version = in.readShort();
 
-        if (version < 0 || version > 5) {
+        if (version < 0 || version > 6) {
             throw new InvalidObjectException("Bad scene version: " + version);
         }
-        if(version == 0) {
-            throw new InvalidObjectException("Scene version 0 is no more supported since release 27.05.2025");
+        if(version < 2) {
+            throw new InvalidObjectException("Scene version below 2 is no more supported since release 27.05.2025");
         }
 
         ambientColor = new RGBColor(in);
@@ -1067,7 +1067,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
                     }
                     con = cls.getConstructor(DataInputStream.class, Scene.class);
                     _materials.add((Material) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this));
-                } catch (IOException | ReflectiveOperationException | SecurityException ex) {
+                } catch (IOException | ReflectiveOperationException ex) {
                     log.atError().setCause(ex).log("Error loading material: {}", ex.getMessage());
                     if (ex instanceof ClassNotFoundException) {
                         errors.add(Translate.text("errorFindingClass", classname));
@@ -1100,7 +1100,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
                     }
                     con = cls.getConstructor(DataInputStream.class, Scene.class);
                     _textures.add((Texture) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this));
-                } catch (IOException | SecurityException | ReflectiveOperationException ex) {
+                } catch (IOException | ReflectiveOperationException ex) {
                     log.atError().setCause(ex).log("Error loading texture: {}", ex.getMessage());
                     if (ex instanceof ClassNotFoundException) {
                         errors.add(Translate.text("errorFindingClass", classname));
@@ -1122,7 +1122,8 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         objects.clear();
         Map<Integer, Object3D> table = new Hashtable<>(count);
         for (int i = 0; i < count; i++) {
-            objects.add(readObjectFromFile(in, table, version));
+            ObjectInfo item = readObjectFromFile(in, table, version);
+            objects.add(item);
         }
         objectIndexMap = null;
         selection = new Vector<>();
@@ -1226,7 +1227,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
                     cls = ArtOfIllusion.getClass(className);
                     con = cls.getConstructor(DataInputStream.class, Scene.class);
                     obj = (Object3D) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this);
-                } catch (SecurityException | ReflectiveOperationException ex) {
+                } catch (ReflectiveOperationException ex) {
                     if (ex instanceof InvocationTargetException) {
                         log.atError().setCause(ex.getCause()).log("Object reading error: {}", ex.getCause().getMessage());
                     } else {
@@ -1249,55 +1250,13 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         }
         info.setObject(obj);
 
-        if (version < 2 && obj.getTexture() != null) {
-            // Initialize the texture parameters.
-
-            TextureParameter[] texParam = obj.getTextureMapping().getParameters();
-            ParameterValue[] paramValue = obj.getParameterValues();
-            double[] val = new double[paramValue.length];
-            boolean[] perVertex = new boolean[paramValue.length];
-            for (int i = 0; i < val.length; i++) {
-                val[i] = in.readDouble();
-            }
-            for (int i = 0; i < perVertex.length; i++) {
-                perVertex[i] = in.readBoolean();
-            }
-            for (int i = 0; i < paramValue.length; i++) {
-                if (paramValue[i] == null) {
-                    if (perVertex[i]) {
-                        paramValue[i] = new VertexParameterValue((Mesh) obj, texParam[i]);
-                    } else {
-                        paramValue[i] = new ConstantParameterValue(val[i]);
-                    }
-                }
-            }
-            obj.setParameterValues(paramValue);
-        }
-
 
         // Read the tracks for this object.
-        if(version >= 6) {
-
+        if(version == 6) {
+            SceneIOUtil.loadTracksBuffered(in, this, info);
         } else {
             SceneIOUtil.loadTracksUnbuffered(in, this, info);
         }
-
-//        int tracks = in.readInt();
-//
-//        try {
-//            for (int i = 0; i < tracks; i++) {
-//                var tc = in.readUTF();
-//                cls = ArtOfIllusion.getClass(tc);
-//                log.debug("Reading Track: {}", tc);
-//                con = cls.getConstructor(ObjectInfo.class);
-//                var tr = (Track<?>) con.newInstance(info);
-//                tr.initFromStream(in, this);
-//                info.addTrack(tr);
-//            }
-//        } catch (IOException | ReflectiveOperationException | SecurityException ex) {
-//            log.atError().setCause(ex).log("Tracks reading error: {}", ex.getMessage());
-//            throw new IOException();
-//        }
 
         return info;
     }
@@ -1320,7 +1279,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      */
     public void writeToStream(DataOutputStream out) throws IOException {
 
-        out.writeShort(5);
+        out.writeShort(6);
         ambientColor.writeToFile(out);
         fogColor.writeToFile(out);
         out.writeBoolean(fog);
@@ -1451,10 +1410,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         // Write the tracks for this object.
         out.writeInt(info.getTracks().length);
         for (var track : info.getTracks()) {
-            var tc = track.getClass().getName();
-            log.debug("Write Track: {}", tc);
-            out.writeUTF(tc);
-            track.writeToStream(out, this);
+            SceneIOUtil.writeTrack(out, track, this, true);
         }
         return index;
     }

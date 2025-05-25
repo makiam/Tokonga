@@ -44,6 +44,7 @@ public final class SceneIOUtil {
     }
 
     public static void writeTrack(DataOutputStream out, Track writable, Scene scene, boolean buffered) throws IOException {
+
         var fc = writable.getClass().getName();
         out.writeUTF(fc);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -58,8 +59,10 @@ public final class SceneIOUtil {
     Buffered track read. Introduced in Scene version 6
     */
     public static void loadTracksBuffered(DataInputStream in, Scene scene, ObjectInfo owner) throws IOException {
+        log.debug("Reading buffered tracks for {}", owner.getName());
         var tracks = in.readInt();
-        log.debug("Read tracks: {}", tracks);
+        var on = owner.getName();
+        log.debug("Tracks {}", tracks);
 
         var trackClassName = "";
         var trackDataSize = 0;
@@ -96,6 +99,7 @@ public final class SceneIOUtil {
                 continue;
             }
             owner.addTrack(track);
+            log.info("Done for {}", on);
         }
     }
 
