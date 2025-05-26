@@ -46,6 +46,7 @@ public class TrackRestoreTest {
         var fb = StreamUtil.writeObjectToStream((target) -> {
             track.writeToStream(target, null);
         });
+
         wrap.putInt(1); // Tracks counter
         wrap.put(bb, 0, bb.length);
         wrap.put(fb, 0, fb.length);
