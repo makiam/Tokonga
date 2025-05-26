@@ -1019,11 +1019,14 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * Initialize the scene based on information read from an input stream.
      */
     private void initFromStream(DataInputStream in, boolean fullScene) throws IOException {
+
         short version = in.readShort();
+        log.debug("Detected scene version: {}", version);
 
         if (version < 0 || version > 5) {
             throw new InvalidObjectException("Bad scene version: " + version);
         }
+        if(version < 2) throw new InvalidObjectException("Scene version 1 is no more supported: " + version);
 
         ambientColor = new RGBColor(in);
         fogColor = new RGBColor(in);
@@ -1037,30 +1040,13 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         nextID = 1;
 
         // Read the image maps.
-        int count = in.readInt();
-        _images.clear();
+        SceneIO.readImages(in, this);
+
         Class<?> cls;
         Constructor<?> con;
-        for (int i = 0; i < count; i++) {
-            if (version == 0) {
-                _images.add(new MIPMappedImage(in, (short) 0));
-                continue;
-            }
-            String classname = in.readUTF();
-            try {
-                cls = ArtOfIllusion.getClass(classname);
-                if (cls == null) {
-                    throw new IOException("Unknown class: " + classname);
-                }
-                con = cls.getConstructor(DataInputStream.class);
-                _images.add((ImageMap) con.newInstance(in));
-            } catch (IOException | ReflectiveOperationException | SecurityException ex) {
-                throw new IOException("Error loading image: " + ex.getMessage());
-            }
-        }
 
         // Read the materials.
-        count = in.readInt();
+        int count = in.readInt();
 
         for (int i = 0; i < count; i++) {
             try {
