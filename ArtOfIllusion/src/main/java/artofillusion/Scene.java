@@ -54,7 +54,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
     private final List<ListChangeListener> textureListeners = new CopyOnWriteArrayList<>();
     private final List<ListChangeListener> materialListeners = new CopyOnWriteArrayList<>();
 
-    private Map<String, Object> metadataMap;
+    private Map<String, Object> metadataMap = new HashMap<>();
     private Map<ObjectInfo, Integer> objectIndexMap;
 
     private RGBColor ambientColor = new RGBColor(0.3f, 0.3f, 0.3f);
@@ -114,7 +114,6 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
 
         selection = new Vector<>();
-        metadataMap = new HashMap<>();
 
         defTex.setName("Default Texture");
         _textures.add(defTex);
@@ -1170,26 +1169,11 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         }
 
         // Read the metadata.
-        metadataMap = new HashMap<>();
+
         if (version > 3) {
-            count = in.readInt();
-            SearchlistClassLoader loader = new SearchlistClassLoader(getClass().getClassLoader());
-            for (ClassLoader cl : PluginRegistry.getPluginClassLoaders()) {
-                loader.add(cl);
-            }
-            for (int i = 0; i < count; i++) {
-                try {
-                    String name = in.readUTF();
-                    byte[] data = new byte[in.readInt()];
-                    in.readFully(data);
-                    XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(data), null, null, loader);
-                    metadataMap.put(name, decoder.readObject());
-                } catch (IOException ex) {
-                    log.atError().setCause(ex).log("Metadata reading error: {}", ex.getMessage());
-                    // Nothing more we can do about it.
-                }
-            }
+            SceneIO.readSceneMetadata(in, this, metadataMap);
         }
+
         textureListeners.clear();
         materialListeners.clear();
         setTime(0.0);
