@@ -12,15 +12,19 @@
 package artofillusion;
 
 import artofillusion.image.ImageMap;
+import artofillusion.util.SearchlistClassLoader;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.groovy.tools.shell.IO;
 import org.greenrobot.eventbus.EventBus;
 
+import java.beans.XMLDecoder;
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.util.Map;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
@@ -35,7 +39,7 @@ final class SceneIO {
         Constructor<?> con;
         try {
             for (int i = 0; i < images; i++) {
-                String className = in.readUTF();
+                String className = SceneIO.readString(in);
                 Class<?> cls = ArtOfIllusion.getClass(className);
                 if (cls == null) {
                     throw new IOException("Unknown ImageMap class: " + className);
@@ -46,5 +50,29 @@ final class SceneIO {
             throw new IOException("Error loading image: " + ex.getMessage(), ex);
         }
 
+    }
+
+    public static void readSceneMetadata(DataInputStream in, Scene scene, Map<String, Object> metadata) throws IOException {
+        var count = in.readInt();
+
+        SearchlistClassLoader loader = new SearchlistClassLoader(scene.getClass().getClassLoader());
+        PluginRegistry.getPluginClassLoaders().forEach(pcl -> loader.add(pcl));
+        for (int i = 0; i < count; i++) {
+            try {
+                String name = SceneIO.readString(in);
+                byte[] data = new byte[in.readInt()];
+                in.readFully(data);
+                XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(data), null, null, loader);
+                metadata.put(name, decoder.readObject());
+            } catch (IOException ex) {
+                log.atError().setCause(ex).log("Metadata reading error: {}", ex.getMessage());
+                // Nothing more we can do about it.
+            }
+        }
+    }
+
+    private static String readString(DataInputStream in) throws IOException {
+        var ts = in.readUTF();
+        return ts;
     }
 }
