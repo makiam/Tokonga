@@ -17,7 +17,7 @@ import java.nio.ByteBuffer;
 public class PositionTrackTest {
 
     @Test
-    public void testWriteDefaultToStream() throws IOException {
+    public void testWriteDefaultToStreamUnbuffered() throws IOException {
         String origin = "Likörflasche PM";
         var oi = new ObjectInfo(new NullObject(), new CoordinateSystem(), origin);
         var track = new PositionTrack(oi);
@@ -39,6 +39,82 @@ public class PositionTrackTest {
         var restored = oi.getTracks()[0];
         Assertions.assertEquals("Position", restored.getName());
         Assertions.assertEquals(false, restored.isEnabled());
+
+
+    }
+
+    @Test
+    public void testWriteOneToStreamBuffered() throws IOException {
+        String origin = "Likörflasche PM";
+        var oi = new ObjectInfo(new NullObject(), new CoordinateSystem(), origin);
+        var track0 = new PositionTrack(oi);
+        track0.setEnabled(false);
+
+        var classBuffer = StreamUtil.getUTFNameAsByteArray(track0.getClass());
+
+        var trackBuffer = StreamUtil.writeObjectToStream((target) -> {
+            track0.writeToStream(target, null);
+        });
+
+        ByteBuffer wrap = ByteBuffer.allocate(10000);
+        wrap.putInt(1); // Tracks counter
+        wrap.put(classBuffer, 0, classBuffer.length);
+
+        wrap.putInt(trackBuffer.length);
+        wrap.put(trackBuffer, 0, trackBuffer.length);
+
+
+        artofillusion.SceneIOUtil.loadTracksBuffered(StreamUtil.stream(wrap), null, oi);
+
+        var restored = oi.getTracks()[0];
+        Assertions.assertEquals("Position", restored.getName());
+        Assertions.assertEquals(false, restored.isEnabled());
+
+
+    }
+
+    @Test
+    public void testWriteTwoToStreamBuffered() throws IOException {
+        String origin = "Likörflasche PM";
+        var oi = new ObjectInfo(new NullObject(), new CoordinateSystem(), origin);
+        var track0 = new PositionTrack(oi);
+        track0.setEnabled(false);
+        track0.setName("Likörflasche PM " + track0.getName());
+        var classBuffer = StreamUtil.getUTFNameAsByteArray(track0.getClass());
+
+        var trackBuffer = StreamUtil.writeObjectToStream((target) -> {
+            track0.writeToStream(target, null);
+        });
+
+        ByteBuffer wrap = ByteBuffer.allocate(10000);
+        wrap.putInt(2); // Tracks counter
+        wrap.put(classBuffer, 0, classBuffer.length);
+
+        wrap.putInt(trackBuffer.length);
+        wrap.put(trackBuffer, 0, trackBuffer.length);
+
+
+        var track1 = new RotationTrack(oi);
+        track1.setName("Likörflasche PM " + track1.getName());
+        track0.setEnabled(true);
+
+        classBuffer = StreamUtil.getUTFNameAsByteArray(track1.getClass());
+        trackBuffer = StreamUtil.writeObjectToStream((target) -> {
+            track1.writeToStream(target, null);
+        });
+
+        wrap.put(classBuffer, 0, classBuffer.length);
+
+        wrap.putInt(trackBuffer.length);
+        wrap.put(trackBuffer, 0, trackBuffer.length);
+
+
+        artofillusion.SceneIOUtil.loadTracksBuffered(StreamUtil.stream(wrap), null, oi);
+
+        Assertions.assertEquals(2, oi.getTracks().length);
+        var restored = oi.getTracks()[1];
+        Assertions.assertEquals("Likörflasche PM " + "Rotation", restored.getName());
+        Assertions.assertEquals(true, restored.isEnabled());
 
 
     }
