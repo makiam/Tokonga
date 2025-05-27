@@ -17,7 +17,7 @@ class TrackIO private constructor() {
 
         when (version) {
             6  -> readTracksV6(input, scene, owner, tracks)
-            else -> readTracksV6(input, scene, owner, tracks)
+            else -> readTracksV5(input, scene, owner, tracks)
         }
         log.debug("Read tracks for {} completed", owner.name)
     }
@@ -29,4 +29,6 @@ class TrackIO private constructor() {
     fun readTracksV5(input: DataInputStream, scene: Scene, owner: ObjectInfo, tracks: Int): Unit {
 
     }
+
+    fun readString(input: DataInputStream): String = input.readUTF()
 }
