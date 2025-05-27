@@ -16,7 +16,7 @@ import artofillusion.util.SearchlistClassLoader;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.codehaus.groovy.tools.shell.IO;
+
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,23 +24,22 @@ import java.beans.XMLDecoder;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
+
 import java.util.Map;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
-final class SceneIO {
+public final class SceneIO {
 
-    private static EventBus bus = org.greenrobot.eventbus.EventBus.getDefault();
+    private static final EventBus bus = org.greenrobot.eventbus.EventBus.getDefault();
 
     /*
 
      */
     public static void readImages(@NotNull DataInputStream in, Scene scene, short version) throws IOException {
         int images = in.readInt();
-        log.debug("Reading images: {}", images);
+        log.debug("Scene version: {}. Reading images: {}", version, images);
 
-        Constructor<?> con;
         try {
             for (int i = 0; i < images; i++) {
                 String className = SceneIO.readString(in);
@@ -58,9 +57,10 @@ final class SceneIO {
 
     public static void readSceneMetadata(@NotNull DataInputStream in, Scene scene, Map<String, Object> metadata, short version) throws IOException {
         var count = in.readInt();
+        log.debug("Scene version: {}. Reading metadata: {}", version, count);
 
         SearchlistClassLoader loader = new SearchlistClassLoader(scene.getClass().getClassLoader());
-        PluginRegistry.getPluginClassLoaders().forEach(pcl -> loader.add(pcl));
+        PluginRegistry.getPluginClassLoaders().forEach(loader::add);
         for (int i = 0; i < count; i++) {
             try {
                 String name = SceneIO.readString(in);
@@ -73,6 +73,7 @@ final class SceneIO {
                 // Nothing more we can do about it.
             }
         }
+        log.debug("Read metadata completed");
     }
 
     private static String readString(DataInputStream in) throws IOException {
