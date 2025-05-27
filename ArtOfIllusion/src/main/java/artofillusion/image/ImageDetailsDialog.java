@@ -1,6 +1,6 @@
 /* Copyright (C) 2017 by Petri Ihalainen
    Some methods copyright (C) by Peter Eastman
-   Changes copyright 2019-2024 by Maksim Khramov
+   Changes copyright 2019-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -281,7 +281,7 @@ public class ImageDetailsDialog extends BDialog {
         // Check if the file already exist and the user wants to overwrite it.
         if (imageFile.isFile()) {
             String caption = "";
-            String prompt = Translate.text("overwriteFile", fileName);
+            String prompt = Translate.text("Translators:overwriteFile", fileName);
             String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
             var result = JOptionPane.showOptionDialog(this.getComponent(), prompt, caption, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
             if (result == 1) {
