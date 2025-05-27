@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.groovy.tools.shell.IO;
 import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
 
 import java.beans.XMLDecoder;
 import java.io.ByteArrayInputStream;
@@ -32,9 +33,12 @@ final class SceneIO {
 
     private static EventBus bus = org.greenrobot.eventbus.EventBus.getDefault();
 
-    public static void readImages(DataInputStream in, Scene scene) throws IOException {
+    /*
+
+     */
+    public static void readImages(@NotNull DataInputStream in, Scene scene, short version) throws IOException {
         int images = in.readInt();
-        log.debug("Read images: {}", images);
+        log.debug("Reading images: {}", images);
 
         Constructor<?> con;
         try {
@@ -49,10 +53,10 @@ final class SceneIO {
         } catch(ReflectiveOperationException ex) {
             throw new IOException("Error loading image: " + ex.getMessage(), ex);
         }
-
+        log.debug("Read images completed");
     }
 
-    public static void readSceneMetadata(DataInputStream in, Scene scene, Map<String, Object> metadata) throws IOException {
+    public static void readSceneMetadata(@NotNull DataInputStream in, Scene scene, Map<String, Object> metadata, short version) throws IOException {
         var count = in.readInt();
 
         SearchlistClassLoader loader = new SearchlistClassLoader(scene.getClass().getClassLoader());
