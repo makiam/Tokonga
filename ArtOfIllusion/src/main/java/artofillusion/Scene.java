@@ -1025,7 +1025,8 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         if (version < 0 || version > 5) {
             throw new InvalidObjectException("Bad scene version: " + version);
         }
-        if(version < 2) throw new InvalidObjectException("Scene version 1 is no more supported: " + version);
+
+        if(version < 2) throw new InvalidObjectException("Scene version 1 is no more supported since 02.06.2025");
 
         ambientColor = new RGBColor(in);
         fogColor = new RGBColor(in);
@@ -1039,7 +1040,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         nextID = 1;
 
         // Read the image maps.
-        SceneIO.readImages(in, this);
+        SceneIO.readImages(in, this, version);
 
         Class<?> cls;
         Constructor<?> con;
@@ -1171,7 +1172,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         // Read the metadata.
 
         if (version > 3) {
-            SceneIO.readSceneMetadata(in, this, metadataMap);
+            SceneIO.readSceneMetadata(in, this, metadataMap, version);
         }
 
         textureListeners.clear();
