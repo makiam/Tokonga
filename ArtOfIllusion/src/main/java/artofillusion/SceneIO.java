@@ -38,7 +38,7 @@ public final class SceneIO {
      */
     public static void readImages(@NotNull DataInputStream in, Scene scene, short version) throws IOException {
         int images = in.readInt();
-        log.debug("Scene version: {}. Reading images: {}", version, images);
+        log.debug("Scene version: {}. Reading {} images: ", version, images);
 
         try {
             for (int i = 0; i < images; i++) {
