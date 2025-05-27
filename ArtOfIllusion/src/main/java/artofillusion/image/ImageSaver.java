@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -169,7 +169,7 @@ public class ImageSaver {
                 directory = file.getParentFile().getAbsolutePath();
                 if (file.isFile()) {
                     String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
-                    int choice = new BStandardDialog("", Translate.text("overwriteFile", file.getName()), BStandardDialog.QUESTION).showOptionDialog(parent, options, options[1]);
+                    int choice = new BStandardDialog("", Translate.text("Translators:overwriteFile", file.getName()), BStandardDialog.QUESTION).showOptionDialog(parent, options, options[1]);
                     if (choice == 1) {
                         ok = false;
                     }

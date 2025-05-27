@@ -89,7 +89,7 @@ public class POVExporter {
         if (f.exists()) {
             //overwrite dialog
             String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
-            int choice = new BStandardDialog("", Translate.text("overwriteFile", exportFileName + suffix), BStandardDialog.QUESTION).showOptionDialog(parent, options, options[1]);
+            int choice = new BStandardDialog("", Translate.text("Translators:overwriteFile", exportFileName + suffix), BStandardDialog.QUESTION).showOptionDialog(parent, options, options[1]);
             if (choice == 1) {
                 return;
             }
@@ -101,7 +101,7 @@ public class POVExporter {
             if (f.exists()) {
                 // overwrite dialog, if not then write a single pov file and inform the user
                 String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
-                int choice = new BStandardDialog("", Translate.text("overwriteFile", exportFileName + suffix2), BStandardDialog.QUESTION).showOptionDialog(parent, options, options[1]);
+                int choice = new BStandardDialog("", Translate.text("Translators:overwriteFile", exportFileName + suffix2), BStandardDialog.QUESTION).showOptionDialog(parent, options, options[1]);
                 if (choice == 1) {
                     bIncludeFile = false; // Write to the povray file
                 }
