@@ -232,9 +232,6 @@ public class TwistTrack extends Track<TwistTrack> {
      */
     @Override
     public void writeToStream(DataOutputStream out, Scene scene) throws IOException {
-        double[] t = tc.getTimes();
-        Smoothness[] s = tc.getSmoothness();
-        Keyframe[] v = tc.getValues();
 
         out.writeShort(0); // Version number
         out.writeUTF(name);
@@ -242,12 +239,18 @@ public class TwistTrack extends Track<TwistTrack> {
         out.writeInt(smoothingMethod);
         out.writeInt(axis);
         out.writeBoolean(forward);
+
+        double[] t = tc.getTimes();
+        Smoothness[] s = tc.getSmoothness();
+        Keyframe[] v = tc.getValues();
+
         out.writeInt(t.length);
         for (int i = 0; i < t.length; i++) {
             out.writeDouble(t[i]);
             v[i].writeToStream(out);
             s[i].writeToStream(out);
         }
+
         theWeight.writeToStream(out, scene);
     }
 

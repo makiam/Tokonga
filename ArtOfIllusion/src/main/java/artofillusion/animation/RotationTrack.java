@@ -12,6 +12,7 @@
 package artofillusion.animation;
 
 import artofillusion.*;
+import artofillusion.api.ImplementationVersion;
 import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
@@ -23,6 +24,7 @@ import java.util.*;
 /**
  * This is a Track which controls the rotation of an object.
  */
+@ImplementationVersion(current = 1)
 public class RotationTrack extends Track<RotationTrack> {
 
     private ObjectInfo info;
@@ -491,13 +493,11 @@ public class RotationTrack extends Track<RotationTrack> {
      */
     @Override
     public void writeToStream(DataOutputStream out, Scene scene) throws IOException {
-        double[] t = tc.getTimes();
-        Smoothness[] s = tc.getSmoothness();
-        Keyframe[] v = tc.getValues();
 
         out.writeShort(1); // Version number
         out.writeUTF(name);
         out.writeBoolean(enabled);
+
         out.writeInt(smoothingMethod);
         out.writeInt(mode);
         out.writeInt(relCoords);
@@ -506,6 +506,11 @@ public class RotationTrack extends Track<RotationTrack> {
         out.writeBoolean(enablex);
         out.writeBoolean(enabley);
         out.writeBoolean(enablez);
+
+        double[] t = tc.getTimes();
+        Smoothness[] s = tc.getSmoothness();
+        Keyframe[] v = tc.getValues();
+
         out.writeInt(t.length);
         for (int i = 0; i < t.length; i++) {
             RotationKeyframe k = (RotationKeyframe) v[i];
@@ -516,6 +521,7 @@ public class RotationTrack extends Track<RotationTrack> {
         if (relCoords == OBJECT) {
             relObject.writeToStream(out);
         }
+
         theWeight.writeToStream(out, scene);
     }
 

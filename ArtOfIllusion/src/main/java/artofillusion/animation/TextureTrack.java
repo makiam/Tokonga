@@ -312,6 +312,7 @@ public class TextureTrack extends Track<TextureTrack> {
         out.writeShort(0); // Version number
         out.writeUTF(name);
         out.writeBoolean(enabled);
+
         out.writeInt(smoothingMethod);
         out.writeShort(param.length);
 

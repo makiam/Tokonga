@@ -295,9 +295,11 @@ public class ConstraintTrack extends Track<ConstraintTrack> {
      */
     @Override
     public void writeToStream(DataOutputStream out, Scene scene) throws IOException {
+
         out.writeShort(0); // Version number
         out.writeUTF(name);
         out.writeBoolean(enabled);
+
         out.writeInt(xType);
         out.writeInt(yType);
         out.writeInt(zType);
@@ -308,6 +310,7 @@ public class ConstraintTrack extends Track<ConstraintTrack> {
         if (orientType != NONE && orientMode == FACES_OBJECT) {
             faceToward.writeToStream(out);
         }
+
         theWeight.writeToStream(out, scene);
     }
 
