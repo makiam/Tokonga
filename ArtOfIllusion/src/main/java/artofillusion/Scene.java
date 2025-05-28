@@ -1026,7 +1026,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
             throw new InvalidObjectException("Bad scene version: " + version);
         }
 
-        if(version < 2) throw new InvalidObjectException("Scene version 1 is no more supported since 02.06.2025");
+        if(version < 4) throw new InvalidObjectException("Scene version below 4 is no more supported since 02.06.2025");
 
         ambientColor = new RGBColor(in);
         fogColor = new RGBColor(in);
@@ -1116,7 +1116,8 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         objects.clear();
         Map<Integer, Object3D> table = new Hashtable<>(count);
         for (int i = 0; i < count; i++) {
-            objects.add(readObjectFromFile(in, table, version));
+            var item = readObjectFromFile(in, table, version);
+            objects.add(item);
         }
         objectIndexMap = null;
         selection = new Vector<>();
@@ -1170,10 +1171,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         }
 
         // Read the metadata.
-
-        if (version > 3) {
-            SceneIO.readSceneMetadata(in, this, metadataMap, version);
-        }
+        SceneIO.readSceneMetadata(in, this, metadataMap, version);
 
         textureListeners.clear();
         materialListeners.clear();
@@ -1227,32 +1225,6 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
             }
         }
         info.setObject(obj);
-
-        if (version < 2 && obj.getTexture() != null) {
-            // Initialize the texture parameters.
-
-            TextureParameter[] texParam = obj.getTextureMapping().getParameters();
-            ParameterValue[] paramValue = obj.getParameterValues();
-            double[] val = new double[paramValue.length];
-            boolean[] perVertex = new boolean[paramValue.length];
-            for (int i = 0; i < val.length; i++) {
-                val[i] = in.readDouble();
-            }
-            for (int i = 0; i < perVertex.length; i++) {
-                perVertex[i] = in.readBoolean();
-            }
-            for (int i = 0; i < paramValue.length; i++) {
-                if (paramValue[i] == null) {
-                    if (perVertex[i]) {
-                        paramValue[i] = new VertexParameterValue((Mesh) obj, texParam[i]);
-                    } else {
-                        paramValue[i] = new ConstantParameterValue(val[i]);
-                    }
-                }
-            }
-            obj.setParameterValues(paramValue);
-        }
-
 
         // Read the tracks for this object.
         int tracks = in.readInt();
