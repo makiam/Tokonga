@@ -1026,7 +1026,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
             throw new InvalidObjectException("Bad scene version: " + version);
         }
 
-        if(version < 4) throw new InvalidObjectException("Scene version below 4 is no more supported since 02.06.2025");
+        if(version < 3) throw new InvalidObjectException("Scene version below 3 is no more supported since 02.06.2025");
 
         ambientColor = new RGBColor(in);
         fogColor = new RGBColor(in);
