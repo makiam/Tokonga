@@ -55,6 +55,9 @@ public final class SceneIO {
         log.debug("Read images completed");
     }
 
+
+    // Scene metadata supported since Scene version 4 introduced in 2008
+    // passing scene version to this method for possible future changes
     public static void readSceneMetadata(@NotNull DataInputStream in, Scene scene, Map<String, Object> metadata, short version) throws IOException {
         var count = in.readInt();
         log.debug("Scene version: {}. Reading metadata: {}", version, count);
