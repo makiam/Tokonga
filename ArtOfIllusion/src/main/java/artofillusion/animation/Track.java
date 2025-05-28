@@ -12,6 +12,7 @@
 package artofillusion.animation;
 
 import artofillusion.*;
+import artofillusion.api.ImplementationVersion;
 import artofillusion.object.*;
 import java.io.*;
 import java.util.*;
@@ -20,6 +21,7 @@ import java.util.*;
  * This is an abstract class representing an aspect of the scene which changes with time.
  * Tracks are typically defined either by a {@link Timecourse} or a {@link artofillusion.procedural.Procedure}.
  */
+@ImplementationVersion
 public abstract class Track<T extends Track<?>> {
 
     protected String name;

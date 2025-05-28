@@ -13,6 +13,7 @@ package artofillusion.animation;
 
 import artofillusion.*;
 import artofillusion.animation.distortion.*;
+import artofillusion.api.ImplementationVersion;
 import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
@@ -31,6 +32,7 @@ import java.util.*;
 /**
  * This is a Track which modifies the shape of an object using inverse kinematics.
  */
+@ImplementationVersion(current = 1)
 public class IKTrack extends Track<IKTrack> {
 
     private ObjectInfo info;
@@ -244,9 +246,11 @@ public class IKTrack extends Track<IKTrack> {
      */
     @Override
     public void writeToStream(DataOutputStream out, Scene scene) throws IOException {
+
         out.writeShort(1); // Version number
         out.writeUTF(name);
         out.writeBoolean(enabled);
+
         out.writeBoolean(useGestures);
         out.writeInt(constraints.size());
         for (Constraint c: constraints) {

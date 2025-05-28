@@ -13,6 +13,7 @@ package artofillusion.animation;
 
 import artofillusion.*;
 import artofillusion.animation.distortion.*;
+import artofillusion.api.ImplementationVersion;
 import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
@@ -24,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
  * This is a Track which controls the pose of an object.
  */
 @Slf4j
+@ImplementationVersion(current = 2)
 public class PoseTrack extends Track<PoseTrack> {
 
     private ObjectInfo info;
@@ -311,15 +313,18 @@ public class PoseTrack extends Track<PoseTrack> {
      */
     @Override
     public void writeToStream(DataOutputStream out, Scene sc) throws IOException {
-        double[] t = tc.getTimes();
-        Smoothness[] s = tc.getSmoothness();
-        Keyframe[] v = tc.getValues();
 
         out.writeShort(2); // Version number
         out.writeUTF(name);
         out.writeBoolean(enabled);
+
         out.writeInt(smoothingMethod);
         out.writeBoolean(relative);
+
+        double[] t = tc.getTimes();
+        Smoothness[] s = tc.getSmoothness();
+        Keyframe[] v = tc.getValues();
+
         out.writeInt(t.length);
         if (t.length > 0) {
             out.writeUTF(v[0].getClass().getName());

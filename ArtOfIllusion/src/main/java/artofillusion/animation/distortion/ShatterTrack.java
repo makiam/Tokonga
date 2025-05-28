@@ -140,6 +140,7 @@ public class ShatterTrack extends Track<ShatterTrack> {
         out.writeShort(0); // Version number
         out.writeUTF(name);
         out.writeBoolean(enabled);
+
         out.writeDouble(startTime);
         out.writeDouble(size);
         out.writeDouble(speed);

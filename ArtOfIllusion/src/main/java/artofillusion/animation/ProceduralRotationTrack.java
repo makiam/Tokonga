@@ -12,6 +12,7 @@
 package artofillusion.animation;
 
 import artofillusion.*;
+import artofillusion.api.ImplementationVersion;
 import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.procedural.*;
@@ -24,6 +25,7 @@ import java.util.*;
 /**
  * This is a Track which uses a procedure to control the orientation of an object.
  */
+@ImplementationVersion(current = 1)
 public class ProceduralRotationTrack extends Track<ProceduralRotationTrack> implements ProcedureOwner {
 
     ObjectInfo info;
@@ -388,18 +390,20 @@ public class ProceduralRotationTrack extends Track<ProceduralRotationTrack> impl
     /* Write a serialized representation of this track to a stream. */
     @Override
     public void writeToStream(DataOutputStream out, Scene scene) throws IOException {
-        double[] t = tc.getTimes();
-        Smoothness[] s = tc.getSmoothness();
-        Keyframe[] v = tc.getValues();
 
         out.writeShort(1); // Version number
         out.writeUTF(name);
         out.writeBoolean(enabled);
+
         proc.writeToStream(out, scene);
         out.writeInt(smoothingMethod);
         out.writeInt(mode);
         out.writeInt(relCoords);
         out.writeInt(joint);
+
+        double[] t = tc.getTimes();
+        Smoothness[] s = tc.getSmoothness();
+        Keyframe[] v = tc.getValues();
         out.writeInt(t.length);
         for (int i = 0; i < t.length; i++) {
             out.writeDouble(t[i]);
@@ -409,6 +413,7 @@ public class ProceduralRotationTrack extends Track<ProceduralRotationTrack> impl
         if (relCoords == OBJECT) {
             relObject.writeToStream(out);
         }
+
         theWeight.writeToStream(out, scene);
     }
 

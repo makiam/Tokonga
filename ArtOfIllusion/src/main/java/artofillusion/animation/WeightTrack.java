@@ -176,14 +176,18 @@ public class WeightTrack extends Track<WeightTrack> {
     /* Write a serialized representation of this track to a stream. */
     @Override
     public void writeToStream(DataOutputStream out, Scene scene) throws IOException {
-        double[] t = tc.getTimes();
-        Smoothness[] s = tc.getSmoothness();
-        Keyframe[] v = tc.getValues();
+
 
         out.writeShort(0); // Version number
         out.writeUTF(name);
         out.writeBoolean(enabled);
+
         out.writeInt(smoothingMethod);
+
+        double[] t = tc.getTimes();
+        Smoothness[] s = tc.getSmoothness();
+        Keyframe[] v = tc.getValues();
+
         out.writeInt(t.length);
         for (int i = 0; i < t.length; i++) {
             out.writeDouble(t[i]);
