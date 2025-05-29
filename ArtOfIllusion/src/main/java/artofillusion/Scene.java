@@ -1227,22 +1227,8 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         info.setObject(obj);
 
         // Read the tracks for this object.
-        int tracks = in.readInt();
-        log.debug("Read tracks: {}", tracks);
-        try {
-            for (int i = 0; i < tracks; i++) {
-                var tc = in.readUTF();
-                cls = ArtOfIllusion.getClass(tc);
-                log.debug("Reading Track: {}", tc);
-                con = cls.getConstructor(ObjectInfo.class);
-                var tr = (Track<?>) con.newInstance(info);
-                tr.initFromStream(in, this);
-                info.addTrack(tr);
-            }
-        } catch (IOException | ReflectiveOperationException | SecurityException ex) {
-            log.atError().setCause(ex).log("Tracks reading error: {}", ex.getMessage());
-            throw new IOException();
-        }
+        TrackIO.INSTANCE.readTracks(in, this, info, version);
+
         return info;
     }
 
@@ -1280,26 +1266,10 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         SceneIO.writeImages(out, this, version);
 
         // Save the materials.
-        out.writeInt(_materials.size());
-        for (var mat: _materials) {
-            out.writeUTF(mat.getClass().getName());
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            mat.writeToFile(new DataOutputStream(bos), this);
-            byte[] bytes = bos.toByteArray();
-            out.writeInt(bytes.length);
-            out.write(bytes, 0, bytes.length);
-        }
+        SceneIO.writeMaterials(out, this, version);
 
         // Save the textures.
-        out.writeInt(_textures.size());
-        for (var tex: _textures) {
-            out.writeUTF(tex.getClass().getName());
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            tex.writeToFile(new DataOutputStream(bos), this);
-            byte[] bytes = bos.toByteArray();
-            out.writeInt(bytes.length);
-            out.write(bytes, 0, bytes.length);
-        }
+        SceneIO.writeTextures(out, this, version);
 
         // Save the objects.
         int index = 0;
