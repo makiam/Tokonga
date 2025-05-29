@@ -11,7 +11,7 @@ import java.io.DataOutput
 import java.io.DataOutputStream
 import java.io.IOException
 
-class TrackIO private constructor() {
+object TrackIO {
     private val bus: EventBus = EventBus.getDefault()
     private val log: Logger = LoggerFactory.getLogger(TrackIO::class.java)
 
@@ -50,14 +50,16 @@ class TrackIO private constructor() {
         for(i in 0 until tracks) {
             var className = readString(input)
             try {
-                var clazz = ArtOfIllusion.getClass(className)
+                val clazz = ArtOfIllusion.getClass(className)
                 if(clazz == null) {
                     throw IOException("Unknown Track class $className")
                 }
-                clazz.getConstructor(ObjectInfo::class.java).newInstance(owner)
-            } catch ( ioe: IOException) {
-            } catch ( roe: ReflectiveOperationException) {
-
+                val track: Track<*> = clazz.getConstructor(ObjectInfo::class.java).newInstance(owner) as Track<*>
+                track.initFromStream(input, scene)
+                owner.addTrack(track)
+            } catch ( ex: Exception) {
+                log.atError().setCause(ex).log("Tracks reading error: {}", ex.message)
+                throw ex
             }
         }
     }
