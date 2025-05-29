@@ -1277,7 +1277,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         out.writeInt(objects.size());
         log.debug("Write scene objects: {}", objects.size());
         for (var object: objects) {
-            index = writeObjectToFile(out, object, table, index);
+            index = writeObjectToFile(out, object, table, index, version);
         }
 
         // Record the children of each object.  The format of this will be changed in the
@@ -1331,7 +1331,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
     /**
      * Write the information about a single object to a file.
      */
-    private int writeObjectToFile(DataOutputStream out, ObjectInfo info, Map<Object3D, Integer> table, int index) throws IOException {
+    private int writeObjectToFile(DataOutputStream out, ObjectInfo info, Map<Object3D, Integer> table, int index, short version) throws IOException {
         Integer key;
 
         info.getCoords().writeToFile(out);
@@ -1358,15 +1358,8 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
             out.writeInt(key);
         }
 
-        log.debug("Write object tracks: {}", info.getTracks().length);
-        // Write the tracks for this object.
-        out.writeInt(info.getTracks().length);
-        for (var track : info.getTracks()) {
-            var tc = track.getClass().getName();
-            log.debug("Write Track: {}", tc);
-            out.writeUTF(tc);
-            track.writeToStream(out, this);
-        }
+        TrackIO.INSTANCE.writeTracks(out, this, info, version);
+
         return index;
     }
 

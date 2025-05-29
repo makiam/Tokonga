@@ -28,13 +28,16 @@ object TrackIO {
     }
 
     @Throws(IOException::class)
-    fun writeTracks(output: DataOutputStream, scene: Scene, owner: ObjectInfo, version: Int) {
-
+    fun writeTracks(output: DataOutputStream, scene: Scene, owner: ObjectInfo, version: Short) {
+        log.debug("Write {} tracks: {}. Version {}", owner.name, owner.tracks.size, version)
+        output.writeInt(owner.tracks.size)
+        owner.tracks.forEach { track -> writeTrack(output, scene, track, version) }
+        log.debug("Write tracks completed")
     }
 
     @Throws(IOException::class)
-    fun writeTrack(output: DataOutputStream, scene: Scene, owner: ObjectInfo, track: Track<*>, version: Int) {
-        log.debug("Write track: {} of {} for {}. Version {}", track.name, track.javaClass.name, owner.name, version)
+    fun writeTrack(output: DataOutputStream, scene: Scene, track: Track<*>, version: Short) {
+        log.debug("Write track: {} of {}. Version {}", track.name, track.javaClass.name, version)
             writeClass(output, track)
             track.writeToStream(output, scene)
         log.debug("Write track completed")
