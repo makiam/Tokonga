@@ -1263,8 +1263,9 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * Write the Scene's representation to an output stream.
      */
     public void writeToStream(DataOutputStream out) throws IOException {
+        short version = 5;
+        out.writeShort(version);
 
-        out.writeShort(5);
         ambientColor.writeToFile(out);
         fogColor.writeToFile(out);
         out.writeBoolean(fog);
@@ -1276,11 +1277,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         out.writeInt(framesPerSecond);
 
         // Save the image maps.
-        out.writeInt(_images.size());
-        for (var image : _images) {
-            out.writeUTF(image.getClass().getName());
-            image.writeToStream(out, this);
-        }
+        SceneIO.writeImages(out, this, version);
 
         // Save the materials.
         out.writeInt(_materials.size());

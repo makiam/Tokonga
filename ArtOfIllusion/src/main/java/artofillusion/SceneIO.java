@@ -12,26 +12,25 @@
 package artofillusion;
 
 import artofillusion.image.ImageMap;
+import artofillusion.material.Material;
+import artofillusion.texture.Texture;
 import artofillusion.util.SearchlistClassLoader;
 import lombok.AccessLevel;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
 import java.beans.XMLDecoder;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
+import java.io.*;
 
+import java.util.List;
 import java.util.Map;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
 public final class SceneIO {
-
-    private static final EventBus bus = org.greenrobot.eventbus.EventBus.getDefault();
 
     /*
 
@@ -55,6 +54,46 @@ public final class SceneIO {
         log.debug("Read images completed");
     }
 
+    public static void writeImages(@NotNull DataOutputStream out, Scene scene, short version) throws IOException {
+        List<ImageMap> items = scene.getImages();
+        log.debug("Scene version: {}. Writing images: {}", version, items.size());
+        out.writeInt(items.size());
+        for (var item: items) {
+            writeClass(out, item);
+            item.writeToStream(out, scene);
+        }
+        log.debug("Write images completed");
+    }
+
+    public static void writeMaterials(@NotNull DataOutputStream out, Scene scene, short version) throws IOException {
+        List<Material> items = scene.getMaterials();
+        log.debug("Scene version: {}. Writing materials: {}", version, items.size());
+        out.writeInt(items.size());
+        for (var item: items) {
+            writeClass(out, item);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            item.writeToFile(new DataOutputStream(bos), scene);
+            byte[] bytes = bos.toByteArray();
+            out.writeInt(bytes.length);
+            out.write(bytes, 0, bytes.length);
+        }
+        log.debug("Write materials completed");
+    }
+
+    public static void writeTextures(@NotNull DataOutputStream out, Scene scene, short version) throws IOException {
+        List<Texture> items = scene.getTextures();
+        log.debug("Scene version: {}. Writing textures: {}", version, items.size());
+        out.writeInt(items.size());
+        for (var item: items) {
+            writeClass(out, item);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            item.writeToFile(new DataOutputStream(bos), scene);
+            byte[] bytes = bos.toByteArray();
+            out.writeInt(bytes.length);
+            out.write(bytes, 0, bytes.length);
+        }
+        log.debug("Write textures completed");
+    }
 
     // Scene metadata supported since Scene version 4 introduced in 2008
     // passing scene version to this method for possible future changes
@@ -87,4 +126,13 @@ public final class SceneIO {
         var ts = in.readUTF();
         return ts;
     }
+
+    private static void writeString(DataOutputStream out, String value) throws IOException {
+        out.writeUTF(value);
+    }
+
+    private static void writeClass(DataOutputStream out, Object item) throws IOException {
+        out.writeUTF(item.getClass().getName());
+    }
+
 }
