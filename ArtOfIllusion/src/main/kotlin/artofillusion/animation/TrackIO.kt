@@ -1,5 +1,6 @@
 package artofillusion.animation
 
+import artofillusion.ArtOfIllusion
 import artofillusion.Scene
 import artofillusion.`object`.ObjectInfo
 import org.greenrobot.eventbus.EventBus
@@ -46,7 +47,19 @@ class TrackIO private constructor() {
 
     @Throws(IOException::class)
     fun readTracksV5(input: DataInputStream, scene: Scene, owner: ObjectInfo, tracks: Int) {
+        for(i in 0 until tracks) {
+            var className = readString(input)
+            try {
+                var clazz = ArtOfIllusion.getClass(className)
+                if(clazz == null) {
+                    throw IOException("Unknown Track class $className")
+                }
+                clazz.getConstructor(ObjectInfo::class.java).newInstance(owner)
+            } catch ( ioe: IOException) {
+            } catch ( roe: ReflectiveOperationException) {
 
+            }
+        }
     }
 
     @Throws(IOException::class)
