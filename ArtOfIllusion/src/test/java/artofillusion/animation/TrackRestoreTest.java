@@ -54,5 +54,32 @@ public class TrackRestoreTest {
     }
 
 
+    @Test
+    void testWriteAndRestoreSceneItemTrack() throws IOException {
+        Scene scene = new Scene();
+        Object3D obj = new Cube(1, 1, 1);
+        ObjectInfo owner = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
+        PoseTrack track = new PoseTrack(owner);
+        track.setName("My Pose");
+        track.setSmoothingMethod(Timecourse.APPROXIMATING);
+
+        owner.addTrack(track);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream(1000);
+        DataOutputStream data = new DataOutputStream(out);
+
+        TrackIO.INSTANCE.writeTracks(data, scene, owner, (short)5);
+        owner.removeTrack(0);
+
+        byte[] buffer = out.toByteArray();
+        ByteArrayInputStream in = new ByteArrayInputStream(buffer);
+        TrackIO.INSTANCE.readTracks(new DataInputStream(in), scene, owner, (short)5);
+
+        Assertions.assertEquals(1, owner.getTracks().length);
+        PoseTrack restored = (PoseTrack)owner.getTracks()[0];
+
+        Assertions.assertEquals("My Pose", restored.getName());
+        Assertions.assertEquals(Timecourse.APPROXIMATING, restored.getSmoothingMethod());
+    }
 
 }
