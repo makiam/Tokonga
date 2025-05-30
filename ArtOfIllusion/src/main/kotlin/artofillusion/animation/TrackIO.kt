@@ -10,6 +10,7 @@ import java.io.DataInputStream
 import java.io.DataOutput
 import java.io.DataOutputStream
 import java.io.IOException
+import java.lang.reflect.Constructor
 
 object TrackIO {
     private val bus: EventBus = EventBus.getDefault()
@@ -48,7 +49,7 @@ object TrackIO {
 
     }
 
-    @Throws(IOException::class)
+    @Throws(IOException::class, Exception::class)
     fun readTracksV5(input: DataInputStream, scene: Scene, owner: ObjectInfo, tracks: Int) {
         for(i in 0 until tracks) {
             var className = readString(input)
@@ -57,12 +58,18 @@ object TrackIO {
                 if(clazz == null) {
                     throw IOException("Unknown Track class $className")
                 }
-                val track: Track<*> = clazz.getConstructor(ObjectInfo::class.java).newInstance(owner) as Track<*>
+                val tc: Constructor<*>  = clazz.getConstructor(ObjectInfo::class.java);
+                val track: Track<*> = tc.newInstance(owner) as Track<*>
                 track.initFromStream(input, scene)
                 owner.addTrack(track)
             } catch ( ex: Exception) {
-                log.atError().setCause(ex).log("Tracks reading error: {}", ex.message)
-                throw ex
+                when(ex) {
+                    is IOException, is ReflectiveOperationException -> {
+                        log.atError().setCause(ex).log("Tracks reading error: {}", ex.message)
+                        throw IOException(ex)
+                    }
+                    else -> throw ex
+                }
             }
         }
     }

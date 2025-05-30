@@ -82,4 +82,32 @@ public class TrackRestoreTest {
         Assertions.assertEquals(Timecourse.APPROXIMATING, restored.getSmoothingMethod());
     }
 
+    @Test
+    void testTryToRestoreBadTrackOldVersion() throws IOException{
+        Scene scene = new Scene();
+        Object3D obj = new Cube(1, 1, 1);
+        ObjectInfo owner = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
+        PoseTrack track = new PrivatePoseTrack(owner);
+        track.setName("My Pose");
+        track.setSmoothingMethod(Timecourse.APPROXIMATING);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream(1000);
+        DataOutputStream data = new DataOutputStream(out);
+        data.writeInt(1);
+        TrackIO.INSTANCE.writeTrack(data, scene, track, (short)5);
+
+        byte[] buffer = out.toByteArray();
+        ByteArrayInputStream in = new ByteArrayInputStream(buffer);
+        Assertions.assertThrows(IOException.class, () -> {
+            TrackIO.INSTANCE.readTracks(new DataInputStream(in), scene, owner, (short)5);
+        });
+
+    }
+
+    private class PrivatePoseTrack extends PoseTrack {
+
+        public PrivatePoseTrack(ObjectInfo info) {
+            super(info);
+        }
+    }
 }
