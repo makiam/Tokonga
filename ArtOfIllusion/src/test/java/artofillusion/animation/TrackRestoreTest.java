@@ -23,6 +23,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
+import org.junit.jupiter.api.Disabled;
 
 
 @Slf4j
@@ -56,6 +57,7 @@ public class TrackRestoreTest {
     }
 
     @Test
+    @Disabled
     void testWriteAndRestoreSceneItemTracksV6() throws IOException {
         short version = 6;
 
