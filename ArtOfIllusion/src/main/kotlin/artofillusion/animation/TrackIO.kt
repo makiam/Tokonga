@@ -6,8 +6,8 @@ import artofillusion.`object`.ObjectInfo
 import org.greenrobot.eventbus.EventBus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.ByteArrayOutputStream
 import java.io.DataInputStream
-import java.io.DataOutput
 import java.io.DataOutputStream
 import java.io.IOException
 import java.lang.reflect.Constructor
@@ -38,10 +38,12 @@ object TrackIO {
 
     @Throws(IOException::class)
     fun writeTrack(output: DataOutputStream, scene: Scene, track: Track<*>, version: Short) {
-        log.debug("Write track: {} of {}. Version {}", track.name, track.javaClass.name, version)
-            writeClass(output, track)
-            track.writeToStream(output, scene)
-        log.debug("Write track completed")
+        writeClass(output, track)
+        val bos = ByteArrayOutputStream()
+        track.writeToStream(DataOutputStream(bos), scene)
+        val ba = bos.toByteArray()
+        val size = ba.size
+        output.write(ba, 0, size)
     }
 
     @Throws(IOException::class)
