@@ -12,6 +12,7 @@
 package artofillusion.texture;
 
 import artofillusion.*;
+import artofillusion.api.ImplementationVersion;
 import artofillusion.image.*;
 import artofillusion.math.*;
 import artofillusion.procedural.*;
@@ -22,6 +23,7 @@ import java.io.*;
 /**
  * This is a Texture3D which uses a Procedure to calculate its properties.
  */
+@ImplementationVersion(current = 1)
 public class ProceduralTexture3D extends Texture3D implements ProcedureOwner {
 
     private final Procedure proc;
@@ -194,30 +196,6 @@ public class ProceduralTexture3D extends Texture3D implements ProcedureOwner {
         return output[10].getAverageValue();
     }
 
-    /**
-     * Get the list of parameters for this texture.
-     */
-    @Override
-    public TextureParameter[] getParameters() {
-        var  modules = proc.getModules();
-        int count = 0;
-
-        for (var       module : modules) {
-            if (module instanceof ParameterModule) {
-                count++;
-            }
-        }
-        TextureParameter[] params = new TextureParameter[count];
-        count = 0;
-        for (var       module : modules) {
-            if (module instanceof ParameterModule) {
-                params[count] = ((ParameterModule) module).getParameter(this);
-                ((ParameterModule) module).setIndex(count++);
-            }
-        }
-        return params;
-    }
-
     @Override
     public Texture duplicate() {
         ProceduralTexture3D tex = new ProceduralTexture3D();
@@ -226,6 +204,30 @@ public class ProceduralTexture3D extends Texture3D implements ProcedureOwner {
         tex.setName(getName());
         tex.antialiasing = antialiasing;
         return tex;
+    }
+
+    /**
+     * Get the list of parameters for this texture.
+     */
+    @Override
+    public TextureParameter[] getParameters() {
+        var  modules = proc.getModules();
+        int count = 0;
+
+        for (var module: modules) {
+            if (module instanceof ParameterModule) {
+                count++;
+            }
+        }
+        TextureParameter[] params = new TextureParameter[count];
+        count = 0;
+        for (var module: modules) {
+            if (module instanceof ParameterModule) {
+                params[count] = ((ParameterModule) module).getParameter(this);
+                ((ParameterModule) module).setIndex(count++);
+            }
+        }
+        return params;
     }
 
     /**

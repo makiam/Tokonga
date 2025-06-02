@@ -12,6 +12,7 @@
 package artofillusion.texture;
 
 import artofillusion.*;
+import artofillusion.api.ImplementationVersion;
 import artofillusion.image.*;
 import artofillusion.math.*;
 import artofillusion.procedural.*;
@@ -22,6 +23,7 @@ import java.io.*;
 /**
  * This is a Texture2D which uses a Procedure to calculate its properties.
  */
+@ImplementationVersion(current = 1)
 public class ProceduralTexture2D extends Texture2D implements ProcedureOwner {
 
     private final Procedure proc;
@@ -212,14 +214,14 @@ public class ProceduralTexture2D extends Texture2D implements ProcedureOwner {
         var  modules = proc.getModules();
         int count = 0;
 
-        for (var       module : modules) {
+        for (var module: modules) {
             if (module instanceof ParameterModule) {
                 count++;
             }
         }
         TextureParameter[] params = new TextureParameter[count];
         count = 0;
-        for (var       module : modules) {
+        for (var module: modules) {
             if (module instanceof ParameterModule) {
                 params[count] = ((ParameterModule) module).getParameter(this);
                 ((ParameterModule) module).setIndex(count++);
@@ -361,7 +363,7 @@ public class ProceduralTexture2D extends Texture2D implements ProcedureOwner {
     public void editProperties(ProcedureEditor editor) {
         ValueField aliasField = new ValueField(antialiasing, ValueField.POSITIVE);
         ComponentsDialog dlg = new ComponentsDialog(editor.getParentFrame(), Translate.text("editTextureTitle"),
-                new Widget[]{aliasField,},
+                new Widget[]{aliasField},
                 new String[]{Translate.text("Antialiasing")});
         if (!dlg.clickedOk()) {
             return;
