@@ -107,7 +107,7 @@ class SceneLoadTest {
     void testReadEmptySceneWithMissedMaterialAndTexture() throws IOException {
         ByteBuffer wrap = ByteBuffer.allocate(200);
         // Scene Version 2. No metadata expected to  set
-        wrap.putShort((short) 2);
+        wrap.putShort((short) 3);
         // Ambient color data
         colorToBuffer(new RGBColor(100, 200, 200), wrap);
         // Fog color data
@@ -169,7 +169,7 @@ class SceneLoadTest {
     @DisplayName("Test Read Empty Scene With Missed Material And Bad Texture")
     void testReadEmptySceneWithMissedMaterialAndBadTexture() throws IOException {
         ByteBuffer wrap = ByteBuffer.allocate(200);
-        wrap.putShort((short) 2); // Scene Version 2. No metadata expected to set
+        wrap.putShort((short) 3); // Scene Version 2. No metadata expected to set
 
         // Ambient color data
         colorToBuffer(new RGBColor(100, 200, 200), wrap);
@@ -232,7 +232,7 @@ class SceneLoadTest {
     void testReadEmptySceneWithMissedMaterial() throws IOException {
         ByteBuffer wrap = ByteBuffer.allocate(200);
         // Scene Version 2. No metadata expected to  set
-        wrap.putShort((short) 2);
+        wrap.putShort((short) 3);
         // Ambient color data
         colorToBuffer(new RGBColor(100, 200, 200), wrap);
         // Fog color data
@@ -297,7 +297,7 @@ class SceneLoadTest {
         assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
             ByteBuffer wrap = ByteBuffer.allocate(200);
             // Scene Version 2. No metadata expected to  set
-            wrap.putShort((short) 2);
+            wrap.putShort((short) 3);
             // Ambient color data
             colorToBuffer(new RGBColor(100, 200, 200), wrap);
             // Fog color data

@@ -1,10 +1,6 @@
-/*  SafeFileOutputStream.java  */
-
-package artofillusion;
-
 /*
  * Copyright (C) 2004, Nik Trevallyn-Jones.
- * Changes copyright (C) 2023 by Maksim Khramov
+ * Changes copyright (C) 2023-2025 by Maksim Khramov
  * SafeFileOutputStream: writes to a file safely
  *
  * Author: Nik Trevallyn-Jones, nik777@users.sourceforge.net
@@ -24,10 +20,9 @@ package artofillusion;
  * with this program. If not, the license is available from the
  * GNU project, at http://www.gnu.org.
  */
-/**
- * A SafeFileOutputStream modifies a file safely, in a way that permits
- * rollback of the changes.
- */
+
+package artofillusion;
+
 import java.io.File;
 import java.io.FilterOutputStream;
 import java.io.FileInputStream;
@@ -35,6 +30,10 @@ import java.io.FileOutputStream;
 
 import java.io.IOException;
 
+/**
+ * A SafeFileOutputStream modifies a file safely, in a way that permits
+ * rollback of the changes.
+ */
 public class SafeFileOutputStream extends FilterOutputStream {
 
     /**
@@ -68,8 +67,7 @@ public class SafeFileOutputStream extends FilterOutputStream {
      * @param file - File to write
      * @param mode - logical OR of the desired mode values
      */
-    public SafeFileOutputStream(File file, int mode)
-            throws IOException {
+    public SafeFileOutputStream(File file, int mode) throws IOException {
         super(null);
         open(file, mode);
     }
@@ -80,8 +78,7 @@ public class SafeFileOutputStream extends FilterOutputStream {
      * @param path String pathname of the output file
      * @param mode logical OR of the desired mode values
      */
-    public void open(String path, int mode)
-            throws IOException {
+    public void open(String path, int mode) throws IOException {
         open(new File(path), mode);
     }
 
@@ -91,8 +88,7 @@ public class SafeFileOutputStream extends FilterOutputStream {
      * @param file File to write
      * @param mode logical OR of the desired mode values
      */
-    public void open(File file, int mode)
-            throws IOException {
+    public void open(File file, int mode) throws IOException {
         // abort any current output
         if (out != null) {
             abort();
@@ -132,8 +128,7 @@ public class SafeFileOutputStream extends FilterOutputStream {
      * closes the underlying stream, frees all resources, and removes any
      * temporary files.
      */
-    public void abort()
-            throws IOException {
+    public void abort() throws IOException {
         if (out != null) {
             out.close();
             out = null;
@@ -150,8 +145,7 @@ public class SafeFileOutputStream extends FilterOutputStream {
      * close the underlying stream, and complete the commit
      */
     @Override
-    public void close()
-            throws IOException {
+    public void close() throws IOException {
         // close the output first.
         out.flush();
         out.close();
@@ -166,24 +160,21 @@ public class SafeFileOutputStream extends FilterOutputStream {
             bak = new File(path + ".bak");
             if (bak.exists()) {
                 if (!bak.delete()) {
-                    throw new IOException("SafeFileOutputStream.close: "
-                            + "could not delete backup file");
+                    throw new IOException("SafeFileOutputStream.close: could not delete backup file");
                 }
             }
 
             // backup file
             if (file.exists()) {
                 if (!file.renameTo(bak)) {
-                    throw new IOException("SafeFileOutputStream.close: "
-                            + "could not create backup file");
+                    throw new IOException("SafeFileOutputStream.close: could not create backup file");
                 }
             }
 
             // rename temp file
             File temp = new File(path + ".tmp");
             if (!temp.renameTo(file)) {
-                throw new IOException("SafeFileOutputStream.close: "
-                        + "could not make file live");
+                throw new IOException("SafeFileOutputStream.close: could not make file live");
             }
         } finally {
             if (bak != null && bak.exists()) {
@@ -202,8 +193,7 @@ public class SafeFileOutputStream extends FilterOutputStream {
                 // tidy up
                 if ((mode & KEEP_BACKUP) == 0) {
                     if (!bak.delete()) {
-                        throw new IOException("SafeFileOutputStream.close: "
-                                + "could not delete backup file");
+                        throw new IOException("SafeFileOutputStream.close: could not delete backup file");
                     }
                 }
             }
@@ -223,8 +213,7 @@ public class SafeFileOutputStream extends FilterOutputStream {
      * write to the underlying stream
      */
     @Override
-    public void write(byte[] array, int start, int length)
-            throws IOException {
+    public void write(byte[] array, int start, int length) throws IOException {
         out.write(array, start, length);
     }
 
@@ -232,8 +221,7 @@ public class SafeFileOutputStream extends FilterOutputStream {
      * write to the underlying stream
      */
     @Override
-    public void write(int value)
-            throws IOException {
+    public void write(int value) throws IOException {
         out.write(value);
     }
 

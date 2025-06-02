@@ -13,6 +13,7 @@
 package artofillusion;
 
 import artofillusion.animation.*;
+import artofillusion.api.ImplementationVersion;
 import artofillusion.image.*;
 import artofillusion.material.*;
 import artofillusion.math.*;
@@ -39,6 +40,7 @@ import org.greenrobot.eventbus.Subscribe;
  * form a scene, as well as the available textures and materials, environment options, etc.
  */
 @Slf4j
+@ImplementationVersion(current = 5, min = 2)
 public final class Scene implements ObjectsContainer, MaterialsContainer, TexturesContainer, ImagesContainer {
 
     private final List<ObjectInfo> objects = new Vector<>();
@@ -52,7 +54,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
     private final List<ListChangeListener> textureListeners = new CopyOnWriteArrayList<>();
     private final List<ListChangeListener> materialListeners = new CopyOnWriteArrayList<>();
 
-    private Map<String, Object> metadataMap;
+    private Map<String, Object> metadataMap = new HashMap<>();
     private Map<ObjectInfo, Integer> objectIndexMap;
 
     private RGBColor ambientColor = new RGBColor(0.3f, 0.3f, 0.3f);
@@ -112,7 +114,6 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
 
         selection = new Vector<>();
-        metadataMap = new HashMap<>();
 
         defTex.setName("Default Texture");
         _textures.add(defTex);
@@ -1017,11 +1018,15 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * Initialize the scene based on information read from an input stream.
      */
     private void initFromStream(DataInputStream in, boolean fullScene) throws IOException {
+
         short version = in.readShort();
+        log.debug("Detected scene version: {}", version);
 
         if (version < 0 || version > 5) {
             throw new InvalidObjectException("Bad scene version: " + version);
         }
+
+        if(version < 3) throw new InvalidObjectException("Scene version below 3 is no more supported since 02.06.2025");
 
         ambientColor = new RGBColor(in);
         fogColor = new RGBColor(in);
@@ -1035,30 +1040,13 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         nextID = 1;
 
         // Read the image maps.
-        int count = in.readInt();
-        _images.clear();
+        SceneIO.readImages(in, this, version);
+
         Class<?> cls;
         Constructor<?> con;
-        for (int i = 0; i < count; i++) {
-            if (version == 0) {
-                _images.add(new MIPMappedImage(in, (short) 0));
-                continue;
-            }
-            String classname = in.readUTF();
-            try {
-                cls = ArtOfIllusion.getClass(classname);
-                if (cls == null) {
-                    throw new IOException("Unknown class: " + classname);
-                }
-                con = cls.getConstructor(DataInputStream.class);
-                _images.add((ImageMap) con.newInstance(in));
-            } catch (IOException | ReflectiveOperationException | SecurityException ex) {
-                throw new IOException("Error loading image: " + ex.getMessage());
-            }
-        }
 
         // Read the materials.
-        count = in.readInt();
+        int count = in.readInt();
 
         for (int i = 0; i < count; i++) {
             try {
@@ -1128,7 +1116,8 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         objects.clear();
         Map<Integer, Object3D> table = new Hashtable<>(count);
         for (int i = 0; i < count; i++) {
-            objects.add(readObjectFromFile(in, table, version));
+            var item = readObjectFromFile(in, table, version);
+            objects.add(item);
         }
         objectIndexMap = null;
         selection = new Vector<>();
@@ -1182,26 +1171,8 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         }
 
         // Read the metadata.
-        metadataMap = new HashMap<>();
-        if (version > 3) {
-            count = in.readInt();
-            SearchlistClassLoader loader = new SearchlistClassLoader(getClass().getClassLoader());
-            for (ClassLoader cl : PluginRegistry.getPluginClassLoaders()) {
-                loader.add(cl);
-            }
-            for (int i = 0; i < count; i++) {
-                try {
-                    String name = in.readUTF();
-                    byte[] data = new byte[in.readInt()];
-                    in.readFully(data);
-                    XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(data), null, null, loader);
-                    metadataMap.put(name, decoder.readObject());
-                } catch (IOException ex) {
-                    log.atError().setCause(ex).log("Metadata reading error: {}", ex.getMessage());
-                    // Nothing more we can do about it.
-                }
-            }
-        }
+        SceneIO.readSceneMetadata(in, this, metadataMap, version);
+
         textureListeners.clear();
         materialListeners.clear();
         setTime(0.0);
@@ -1255,49 +1226,9 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         }
         info.setObject(obj);
 
-        if (version < 2 && obj.getTexture() != null) {
-            // Initialize the texture parameters.
-
-            TextureParameter[] texParam = obj.getTextureMapping().getParameters();
-            ParameterValue[] paramValue = obj.getParameterValues();
-            double[] val = new double[paramValue.length];
-            boolean[] perVertex = new boolean[paramValue.length];
-            for (int i = 0; i < val.length; i++) {
-                val[i] = in.readDouble();
-            }
-            for (int i = 0; i < perVertex.length; i++) {
-                perVertex[i] = in.readBoolean();
-            }
-            for (int i = 0; i < paramValue.length; i++) {
-                if (paramValue[i] == null) {
-                    if (perVertex[i]) {
-                        paramValue[i] = new VertexParameterValue((Mesh) obj, texParam[i]);
-                    } else {
-                        paramValue[i] = new ConstantParameterValue(val[i]);
-                    }
-                }
-            }
-            obj.setParameterValues(paramValue);
-        }
-
-
         // Read the tracks for this object.
-        int tracks = in.readInt();
-        log.debug("Read tracks: {}", tracks);
-        try {
-            for (int i = 0; i < tracks; i++) {
-                var tc = in.readUTF();
-                cls = ArtOfIllusion.getClass(tc);
-                log.debug("Reading Track: {}", tc);
-                con = cls.getConstructor(ObjectInfo.class);
-                var tr = (Track<?>) con.newInstance(info);
-                tr.initFromStream(in, this);
-                info.addTrack(tr);
-            }
-        } catch (IOException | ReflectiveOperationException | SecurityException ex) {
-            log.atError().setCause(ex).log("Tracks reading error: {}", ex.getMessage());
-            throw new IOException();
-        }
+        TrackIO.INSTANCE.readTracks(in, this, info, version);
+
         return info;
     }
 
@@ -1318,8 +1249,9 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * Write the Scene's representation to an output stream.
      */
     public void writeToStream(DataOutputStream out) throws IOException {
+        short version = 5;
+        out.writeShort(version);
 
-        out.writeShort(5);
         ambientColor.writeToFile(out);
         fogColor.writeToFile(out);
         out.writeBoolean(fog);
@@ -1331,33 +1263,13 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         out.writeInt(framesPerSecond);
 
         // Save the image maps.
-        out.writeInt(_images.size());
-        for (var image : _images) {
-            out.writeUTF(image.getClass().getName());
-            image.writeToStream(out, this);
-        }
+        SceneIO.writeImages(out, this, version);
 
         // Save the materials.
-        out.writeInt(_materials.size());
-        for (var mat: _materials) {
-            out.writeUTF(mat.getClass().getName());
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            mat.writeToFile(new DataOutputStream(bos), this);
-            byte[] bytes = bos.toByteArray();
-            out.writeInt(bytes.length);
-            out.write(bytes, 0, bytes.length);
-        }
+        SceneIO.writeMaterials(out, this, version);
 
         // Save the textures.
-        out.writeInt(_textures.size());
-        for (var tex: _textures) {
-            out.writeUTF(tex.getClass().getName());
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            tex.writeToFile(new DataOutputStream(bos), this);
-            byte[] bytes = bos.toByteArray();
-            out.writeInt(bytes.length);
-            out.write(bytes, 0, bytes.length);
-        }
+        SceneIO.writeTextures(out, this, version);
 
         // Save the objects.
         int index = 0;
@@ -1365,7 +1277,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         out.writeInt(objects.size());
         log.debug("Write scene objects: {}", objects.size());
         for (var object: objects) {
-            index = writeObjectToFile(out, object, table, index);
+            index = writeObjectToFile(out, object, table, index, version);
         }
 
         // Record the children of each object.  The format of this will be changed in the
@@ -1419,7 +1331,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
     /**
      * Write the information about a single object to a file.
      */
-    private int writeObjectToFile(DataOutputStream out, ObjectInfo info, Map<Object3D, Integer> table, int index) throws IOException {
+    private int writeObjectToFile(DataOutputStream out, ObjectInfo info, Map<Object3D, Integer> table, int index, short version) throws IOException {
         Integer key;
 
         info.getCoords().writeToFile(out);
@@ -1446,15 +1358,8 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
             out.writeInt(key);
         }
 
-        log.debug("Write object tracks: {}", info.getTracks().length);
-        // Write the tracks for this object.
-        out.writeInt(info.getTracks().length);
-        for (var track : info.getTracks()) {
-            var tc = track.getClass().getName();
-            log.debug("Write Track: {}", tc);
-            out.writeUTF(tc);
-            track.writeToStream(out, this);
-        }
+        TrackIO.INSTANCE.writeTracks(out, this, info, version);
+
         return index;
     }
 
