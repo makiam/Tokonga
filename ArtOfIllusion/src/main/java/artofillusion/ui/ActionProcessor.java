@@ -1,4 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman
+   Changes copyright (C) 2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -30,22 +31,16 @@ public class ActionProcessor {
     private Runnable nextEvent;
     private boolean isCanceled;
 
-    public ActionProcessor() {
-    }
-
     /**
      * Add an event to the queue.
      */
     public synchronized void addEvent(Runnable event) {
         nextEvent = event;
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                if (nextEvent != null && !isCanceled) {
-                    nextEvent.run();
-                }
-                nextEvent = null;
+        SwingUtilities.invokeLater(() -> {
+            if (nextEvent != null && !isCanceled) {
+                nextEvent.run();
             }
+            nextEvent = null;
         });
     }
 

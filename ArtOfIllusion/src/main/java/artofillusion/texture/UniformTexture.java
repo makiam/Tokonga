@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2004 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,6 +12,7 @@
 package artofillusion.texture;
 
 import artofillusion.*;
+import artofillusion.api.ImplementationVersion;
 import artofillusion.object.*;
 import artofillusion.math.*;
 import artofillusion.ui.*;
@@ -22,6 +23,7 @@ import java.io.*;
 /**
  * UniformMaterial represents a material whose properties do not vary with position.
  */
+@ImplementationVersion(current = 1)
 public class UniformTexture extends Texture {
 
     public RGBColor diffuseColor, specularColor, transparentColor, emissiveColor;
@@ -139,7 +141,7 @@ public class UniformTexture extends Texture {
      * Allow the user to interactively edit the material.
      */
     @Override
-    public void edit(final WindowWidget parent, Scene sc) {
+    public void edit(final WindowWidget<?> parent, Scene sc) {
         BTextField nameField = new BTextField(name, 15);
         final ValueSlider transSlider = new ValueSlider(0.0, 1.0, 100, (double) transparency);
         final ValueSlider specSlider = new ValueSlider(0.0, 1.0, 100, (double) specularity);
@@ -153,12 +155,7 @@ public class UniformTexture extends Texture {
         final UniformTexture newTexture = (UniformTexture) duplicate();
         final MaterialPreviewer preview = new MaterialPreviewer(newTexture, null, 200, 160);
         final ActionProcessor process = new ActionProcessor();
-        final Runnable renderCallback = new Runnable() {
-            @Override
-            public void run() {
-                preview.render();
-            }
-        };
+        final Runnable renderCallback = preview::render;
         diffPatch.addEventLink(MouseClickedEvent.class, new Object() {
             void processEvent() {
                 new ColorChooser(diffPatch, Translate.text("DiffuseColor"), newTexture.diffuseColor);
@@ -233,7 +230,7 @@ public class UniformTexture extends Texture {
      * constructor which reads the necessary data from an input stream. The other writes
      * the object's representation to an output stream.
      */
-    public UniformTexture(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+    public UniformTexture(DataInputStream in, Scene theScene) throws IOException {
         short version = in.readShort();
 
         if (version < 0 || version > 1) {

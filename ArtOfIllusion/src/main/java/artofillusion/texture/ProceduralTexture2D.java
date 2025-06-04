@@ -259,7 +259,7 @@ public class ProceduralTexture2D extends Texture2D implements ProcedureOwner {
 
     @Override
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void edit(WindowWidget fr, Scene sc) {
+    public void edit(WindowWidget<?> fr, Scene sc) {
         new ProcedureEditor(proc, this, sc);
     }
 

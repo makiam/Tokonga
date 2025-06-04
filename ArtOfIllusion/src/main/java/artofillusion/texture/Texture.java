@@ -13,7 +13,6 @@ package artofillusion.texture;
 
 import artofillusion.*;
 import artofillusion.object.*;
-import artofillusion.image.*;
 import buoy.widget.*;
 import java.io.*;
 
@@ -117,15 +116,13 @@ public abstract class Texture implements ImageReference {
      * parent for Dialogs, and sc is the Scene which this Texture is part of. Subclasses should override
      * this to implement editing.
      */
-    public void edit(WindowWidget parent, Scene sc) {
+    public void edit(WindowWidget<?> parent, Scene sc) {
     }
 
     /**
      * The following method writes the texture's data to an output stream. In addition to this
      * method, every Texture must include a constructor with the signature
-     *
-     * public Classname(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException
-     *
+     * public TextureClassName(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException
      * which reconstructs the texture by reading its data from an input stream.
      */
     public abstract void writeToFile(DataOutputStream out, Scene theScene) throws IOException;

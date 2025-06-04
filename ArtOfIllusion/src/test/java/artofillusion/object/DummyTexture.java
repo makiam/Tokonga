@@ -4,7 +4,6 @@ import artofillusion.Scene;
 import artofillusion.texture.Texture;
 import artofillusion.texture.TextureMapping;
 import artofillusion.texture.TextureSpec;
-import artofillusion.texture.UniformMapping;
 import buoy.widget.WindowWidget;
 import org.junit.jupiter.api.DisplayName;
 
@@ -37,14 +36,12 @@ class DummyTexture extends Texture {
     }
 
     @Override
-    public void edit(WindowWidget fr, Scene sc) {
-        // To change body of generated methods, choose Tools | Templates.
+    public void edit(WindowWidget<?> fr, Scene sc) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void writeToFile(DataOutputStream out, Scene theScene) throws IOException {
-        // To change body of generated methods, choose Tools | Templates.
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

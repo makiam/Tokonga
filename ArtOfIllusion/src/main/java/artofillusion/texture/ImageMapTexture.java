@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2005 by Peter Eastman
-   Changes copyright (C) 2023-2024 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,6 +12,7 @@
 package artofillusion.texture;
 
 import artofillusion.*;
+import artofillusion.api.ImplementationVersion;
 import artofillusion.image.*;
 import artofillusion.math.*;
 import artofillusion.ui.*;
@@ -29,6 +30,7 @@ import java.io.*;
 /**
  * ImageMapTexture represents a texture whose properties are defined by images.
  */
+@ImplementationVersion(current = 1)
 public class ImageMapTexture extends Texture2D {
 
     public ImageOrColor diffuseColor, specularColor, transparentColor, emissiveColor;
@@ -188,7 +190,7 @@ public class ImageMapTexture extends Texture2D {
         }
         wrapx = tileX && !mirrorX;
         wrapy = tileY && !mirrorY;
-        return (double) displacement.getValue(wrapx, wrapy, x, y, xsize, ysize);
+        return displacement.getValue(wrapx, wrapy, x, y, xsize, ysize);
     }
 
     @Override
@@ -285,7 +287,7 @@ public class ImageMapTexture extends Texture2D {
      * Allow the user to interactively edit the texture.
      */
     @Override
-    public void edit(WindowWidget fr, Scene sc) {
+    public void edit(WindowWidget<?> fr, Scene sc) {
         new Editor(fr, sc);
     }
 
@@ -294,7 +296,7 @@ public class ImageMapTexture extends Texture2D {
      * constructor which reads the necessary data from an input stream. The other writes
      * the object's representation to an output stream.
      */
-    public ImageMapTexture(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+    public ImageMapTexture(DataInputStream in, Scene theScene) throws IOException {
         short version = in.readShort();
 
         if (version < 0 || version > 1) {
@@ -489,12 +491,7 @@ public class ImageMapTexture extends Texture2D {
             newTexture.tileY = tileYBox.getState();
             newTexture.mirrorX = mirrorXBox.getState();
             newTexture.mirrorY = mirrorYBox.getState();
-            renderProcessor.addEvent(new Runnable() {
-                @Override
-                public void run() {
-                    preview.render();
-                }
-            });
+            renderProcessor.addEvent(() -> preview.render());
         }
     }
 }

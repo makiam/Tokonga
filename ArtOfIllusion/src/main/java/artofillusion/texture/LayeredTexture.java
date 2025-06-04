@@ -1,4 +1,5 @@
 /* Copyright (C) 2000-2004 by Peter Eastman
+   Changes copyright (C) 2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -23,7 +24,7 @@ import java.io.*;
  */
 public class LayeredTexture extends Texture {
 
-    LayeredMapping mapping;
+    private LayeredMapping mapping;
 
     public LayeredTexture(Object3D obj) {
         mapping = new LayeredMapping(obj, this);
@@ -41,10 +42,9 @@ public class LayeredTexture extends Texture {
      */
     @Override
     public boolean usesImage(ImageMap image) {
-        Texture[] tex = mapping.getLayers();
 
-        for (int i = 0; i < tex.length; i++) {
-            if (tex[i].usesImage(image)) {
+        for (Texture texture : mapping.getLayers()) {
+            if (texture.usesImage(image)) {
                 return true;
             }
         }
@@ -111,8 +111,8 @@ public class LayeredTexture extends Texture {
         if (tex.length == 0) {
             return false;
         }
-        for (int i = 0; i < tex.length; i++) {
-            if (tex[i].hasComponent(component)) {
+        for (Texture texture : tex) {
+            if (texture.hasComponent(component)) {
                 return true;
             }
         }
@@ -124,10 +124,10 @@ public class LayeredTexture extends Texture {
      * ObjectTextureDialog.
      */
     @Override
-    public void edit(WindowWidget fr, Scene sc) {
+    public void edit(WindowWidget<?> fr, Scene sc) {
     }
 
-    public LayeredTexture(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+    public LayeredTexture(DataInputStream in, Scene theScene) throws IOException {
         short version = in.readShort();
 
         if (version != 0) {
