@@ -46,6 +46,8 @@ public class ObjectInfo {
      */
     @Getter @Setter
     public CoordinateSystem coords;
+
+    public CoordinateSystem getCoordinateSystem() { return coords; }
     /**
      * -- GETTER --
      *  Get the name of this object.
