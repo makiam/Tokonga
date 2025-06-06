@@ -153,7 +153,7 @@ public class Module<M extends Module> {
                     linkFrom[i] = null;
                     return;
                 }
-                Module module = port.getModule();
+                Module<?> module = port.getModule();
                 for (int j = 0; j < module.output.length; j++) {
                     if (module.output[j] == port) {
                         linkFrom[i] = module;
@@ -258,7 +258,7 @@ public class Module<M extends Module> {
             return true;
         }
         checked = true;
-        for (Module module : linkFrom) {
+        for (Module<?> module : linkFrom) {
             if (module == null) continue;
             if (module.checkFeedback()) {
                 return true;
