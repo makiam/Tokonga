@@ -17,16 +17,16 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.prefs.Preferences;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JList;
+import javax.swing.*;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -127,7 +127,11 @@ public class ExecuteScriptWindow extends BFrame {
 
         // another center row for the "execute selected" and various debugging items
         RowContainer debugTools = new RowContainer();
-        debugTools.add(Translate.button("executeScript", event -> executeScript()));
+        KeyStroke rc = KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0);
+        ActionListener ra = e -> executeScript();
+        this.getComponent().getRootPane().registerKeyboardAction(ra, rc, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        debugTools.add(Translate.button("executeScript", ra));
+
         debugTools.add(Translate.button("executeToCursor", event -> executeToCursor()));
         debugTools.add(Translate.button("executeSelected", event -> executeSelected()));
 
