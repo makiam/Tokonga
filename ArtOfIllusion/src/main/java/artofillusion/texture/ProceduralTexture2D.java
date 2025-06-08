@@ -23,7 +23,7 @@ import java.io.*;
 /**
  * This is a Texture2D which uses a Procedure to calculate its properties.
  */
-@ImplementationVersion(current = 1)
+@ImplementationVersion(current = 1, min = 1)
 public class ProceduralTexture2D extends Texture2D implements ProcedureOwner {
 
     private final Procedure proc;
@@ -253,8 +253,9 @@ public class ProceduralTexture2D extends Texture2D implements ProcedureOwner {
                 return outputs[9].inputConnected(0);
             case DISPLACEMENT_COMPONENT:
                 return outputs[10].inputConnected(0);
+            default:
+                return false;
         }
-        return false;
     }
 
     @Override
@@ -266,40 +267,13 @@ public class ProceduralTexture2D extends Texture2D implements ProcedureOwner {
     public ProceduralTexture2D(DataInputStream in, Scene theScene) throws IOException {
         short version = in.readShort();
 
-        if (version < 0 || version > 1) {
-            throw new InvalidObjectException("");
-        }
+        if (version != 1) { throw new InvalidObjectException(""); }
+
         setName(in.readUTF());
         antialiasing = in.readDouble();
         proc = createProcedure();
         proc.readFromStream(in, theScene);
-        if (version == 0) {
-            // Reassign the inputs to the output modules, since Shininess was add
-            // in version 1.
 
-            OutputModule[] output = proc.getOutputModules();
-            var input = new artofillusion.procedural.Module[output.length];
-            int[] index = new int[output.length];
-            for (int i = 0; i < output.length; i++) {
-                int j = (i < 6 ? i : i - 1);
-                input[i] = output[j].linkFrom[0];
-                index[i] = output[j].linkFromIndex[0];
-            }
-            Link[] link = proc.getLinks();
-            for (int i = 0; i < link.length; i++) {
-                if (link[i].to.getModule() instanceof OutputModule) {
-                    proc.deleteLink(i--);
-                    link = proc.getLinks();
-                }
-            }
-            for (int i = 0; i < input.length; i++) {
-                if (input[i] != null) {
-                    IOPort to = output[i].getInputPorts()[0];
-                    IOPort from = input[i].getOutputPorts()[index[i]];
-                    proc.addLink(new Link(from, to));
-                }
-            }
-        }
         initThreadLocal();
     }
 

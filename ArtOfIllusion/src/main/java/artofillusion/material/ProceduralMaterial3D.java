@@ -12,6 +12,7 @@
 package artofillusion.material;
 
 import artofillusion.*;
+import artofillusion.api.ImplementationVersion;
 import artofillusion.image.*;
 import artofillusion.math.*;
 import artofillusion.procedural.*;
@@ -23,6 +24,7 @@ import java.io.*;
 /**
  * This is a Material3D which uses a Procedure to calculate its properties.
  */
+@ImplementationVersion(current = 1, min = 1)
 public class ProceduralMaterial3D extends Material3D implements ProcedureOwner {
 
     private final Procedure proc;
