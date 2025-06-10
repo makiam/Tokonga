@@ -73,10 +73,10 @@ public class ProcedureEditor extends CustomWidget {
     private final ArrayList<ByteArrayOutputStream> undoStack;
     private final ArrayList<ByteArrayOutputStream> redoStack;
 
-    private final Color darkLinkColor = Color.darkGray;
-    private final Color blueLinkColor = new Color(40, 40, 255);
-    private final Color selectedLinkColor = new Color(255, 50, 50);
-    private final Color outputBackgroundColor = new Color(210, 210, 240);
+    private static final Color darkLinkColor = Color.darkGray;
+    private static final Color blueLinkColor = new Color(40, 40, 255);
+    private static final Color selectedLinkColor = new Color(255, 50, 50);
+    private static final Color outputBackgroundColor = new Color(210, 210, 240);
 
     private static final Color outlineColor = new Color(110, 110, 160);
     private static final Color selectedColor = new Color(255, 60, 60);
@@ -422,7 +422,7 @@ public class ProcedureEditor extends CustomWidget {
         }
     }
 
-    private static void drawModule(Module module, Graphics2D g, boolean selected) {
+    private static void drawModule(Module<?> module, Graphics2D g, boolean selected) {
         Rectangle bounds = module.getBounds();
 
         Stroke currentStroke = g.getStroke();
@@ -440,7 +440,10 @@ public class ProcedureEditor extends CustomWidget {
         int y1 = link.from.getPosition().y;
         int x2 = link.to.getPosition().x;
         int y2 = link.to.getPosition().y;
-        float ctrlX1, ctrlY1, ctrlX2, ctrlY2;
+        float ctrlX1;
+        float ctrlY1;
+        float ctrlX2;
+        float ctrlY2;
         if (link.from.getLocation() == IOPort.LEFT || link.from.getLocation() == IOPort.RIGHT) {
             ctrlX1 = (x2 - x1) * BEZIER_HARDNESS + x1;
             ctrlY1 = y1;
@@ -525,7 +528,7 @@ public class ProcedureEditor extends CustomWidget {
     /**
      * Add a module to the procedure.
      */
-    public void addModule(Module mod) {
+    public void addModule(Module<?> mod) {
         selectedModule = new boolean[selectedModule.length + 1];
         selectedModule[selectedModule.length - 1] = true;
         Arrays.fill(selectedLink, false);
@@ -979,7 +982,7 @@ public class ProcedureEditor extends CustomWidget {
         Link[] link = proc.getLinks();
         for (int i = 0; i < selectedLink.length; i++) {
             for (int j = 0; j < selectedModule.length; j++) {
-                Module module = modules.get(j);
+                var module = modules.get(j);
                 boolean isSel = selectedModule[j];
                 if ((module == link[i].from.getModule() && isSel) || (module == link[i].to.getModule() && isSel)) {
                     selectedLink[i] = true;
