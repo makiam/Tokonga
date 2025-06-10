@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2008 by Peter Eastman
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -82,7 +82,7 @@ class LayeredTextureTest {
                 if (i == j) {
                     Assertions.assertEquals(param[i], param2[j]);
                 } else {
-                    Assertions.assertFalse(param[i].equals(param2[j]));
+                    Assertions.assertNotEquals(param[i], param2[j]);
                 }
             }
         }
@@ -95,7 +95,7 @@ class LayeredTextureTest {
                     if (k == j + i * 3) {
                         Assertions.assertEquals(param[k], layerParam[j]);
                     } else {
-                        Assertions.assertFalse(param[k].equals(layerParam[j]));
+                        Assertions.assertNotEquals(param[k], layerParam[j]);
                     }
                 }
             }
@@ -113,8 +113,8 @@ class LayeredTextureTest {
             for (int parameter = 0; parameter < 2; parameter++) {
                 TextureParameter oldParameter = map.getLayerMapping(layer).getParameters()[parameter];
                 TextureParameter newParameter = map.getLayerParameters(layer)[parameter + 1];
-                Assertions.assertFalse(newParameter.equals(oldParameter));
-                Assertions.assertTrue(newParameter.equals(map.getParameterForLayer(oldParameter, layer)));
+                Assertions.assertNotEquals(newParameter, oldParameter);
+                Assertions.assertEquals(newParameter, map.getParameterForLayer(oldParameter, layer));
             }
         }
     }
