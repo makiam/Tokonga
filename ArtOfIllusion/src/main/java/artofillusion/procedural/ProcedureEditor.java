@@ -62,10 +62,12 @@ public class ProcedureEditor extends CustomWidget {
     private boolean draggingModule;
     private boolean draggingBox;
     private boolean draggingMultiple;
-    private Point clickPos, lastPos;
+    private Point clickPos;
+    private Point lastPos;
     private final InfoBox inputInfo;
     private final InfoBox outputInfo;
-    private IOPort dragFromPort, dragToPort;
+    private IOPort dragFromPort;
+    private IOPort dragToPort;
     private Optional<MaterialPreviewer> preview = Optional.empty();
     private final ByteArrayOutputStream cancelBuffer;
     private final ArrayList<ByteArrayOutputStream> undoStack;
@@ -80,9 +82,9 @@ public class ProcedureEditor extends CustomWidget {
     private static final Color selectedColor = new Color(255, 60, 60);
     protected static final Stroke contourStroke = new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
-    private final static float BEZIER_HARDNESS = 0.5f; //increase hardness to a have a more pronounced shape
-    private final static Stroke normal = new BasicStroke();
-    private final static Stroke bold = new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+    private static final float BEZIER_HARDNESS = 0.5f; //increase hardness to a have a more pronounced shape
+    private static final Stroke normal = new BasicStroke();
+    private static final Stroke bold = new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
     private static ClipboardSelection clipboard;
 
@@ -157,7 +159,8 @@ public class ProcedureEditor extends CustomWidget {
                 widest = om.getBounds().width;
             }
         }
-        int x = size.width - widest, y = 15;
+        int x = size.width - widest;
+        int y = 15;
         for (OutputModule om : proc.getOutputModules()) {
             om.setWidth(widest);
             om.setPosition(x - 15, y);
@@ -459,7 +462,8 @@ public class ProcedureEditor extends CustomWidget {
      * Update the items in the Edit menu whenever the selection changes.
      */
     private void updateMenus() {
-        boolean anyModule = false, anyLink = false;
+        boolean anyModule = false;
+        boolean anyLink = false;
         for (boolean selected : selectedModule) {
             if (selected) {
                 anyModule = true;
@@ -533,7 +537,8 @@ public class ProcedureEditor extends CustomWidget {
      * Add a link between two ports in the procedure.
      */
     private void addLink(IOPort port1, IOPort port2) {
-        IOPort from, to;
+        IOPort from;
+        IOPort to;
 
         selectedLink = new boolean[selectedLink.length + 1];
         selectedLink[selectedLink.length - 1] = true;
@@ -847,7 +852,7 @@ public class ProcedureEditor extends CustomWidget {
                 dragToPort = null;
             }
 
-            for (var       mod :  proc.getModules()) {
+            for (var mod :  proc.getModules()) {
                 IOPort[] port = isInput ? mod.getOutputPorts() : mod.getInputPorts();
                 for (int j = 0; j < port.length; j++) {
                     if (isInput || !mod.inputConnected(j)) {
@@ -861,7 +866,7 @@ public class ProcedureEditor extends CustomWidget {
                 }
             }
             if (!isInput) {
-                for (var       mod : proc.getOutputModules()) {
+                for (var mod : proc.getOutputModules()) {
                     IOPort[] port = mod.getInputPorts();
                     for (int j = 0; j < port.length; j++) {
                         if (!mod.inputConnected(j)) {
@@ -897,7 +902,8 @@ public class ProcedureEditor extends CustomWidget {
         if (!draggingModule) {
             return;
         }
-        int dx = 0, dy = 0;
+        int dx = 0;
+        int dy = 0;
         var  modules = proc.getModules();
         if (lastPos != null) {
             dx = pos.x - lastPos.x;
@@ -1005,7 +1011,10 @@ public class ProcedureEditor extends CustomWidget {
      * Utility function to create a Rectangle from two Points.
      */
     public Rectangle getRectangle(Point p1, Point p2) {
-        int x, y, width, height;
+        int x;
+        int y;
+        int width;
+        int height;
 
         x = Math.min(p1.x, p2.x);
         y = Math.min(p1.y, p2.y);
@@ -1082,7 +1091,8 @@ public class ProcedureEditor extends CustomWidget {
 
             // Add the links.
             for (Link ln : link) {
-                int from, to;
+                int from;
+                int to;
                 for (from = 0; module[from] != ln.from.getModule(); from++)
             ;
                 for (to = 0; module[to] != ln.to.getModule(); to++)
