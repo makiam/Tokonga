@@ -62,7 +62,9 @@ public class ProcedureEditor extends CustomWidget {
     private BMenuItem pasteItem;
     private BMenuItem clearItem;
     private BTextField nameField;
+
     private boolean[] selectedModule;
+
     private boolean[] selectedLink;
     private boolean draggingLink;
     private boolean draggingModule;
