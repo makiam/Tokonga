@@ -54,7 +54,12 @@ public class ProcedureEditor extends CustomWidget {
     private final Scene scene;
     private EditingWindow win;
     private final Dimension size;
-    private BMenuItem undoItem, redoItem, cutItem, copyItem, pasteItem, clearItem;
+    private BMenuItem undoItem;
+    private BMenuItem redoItem;
+    private BMenuItem cutItem;
+    private BMenuItem copyItem;
+    private BMenuItem pasteItem;
+    private BMenuItem clearItem;
     private BTextField nameField;
     private boolean[] selectedModule;
     private boolean[] selectedLink;
@@ -606,7 +611,7 @@ public class ProcedureEditor extends CustomWidget {
         if (redoStack.size() == ArtOfIllusion.getPreferences().getUndoLevels()) {
             redoStack.remove(0);
         }
-        undoItem.setEnabled(undoStack.size() > 0);
+        undoItem.setEnabled(!undoStack.isEmpty());
         selectedModule = new boolean[proc.getModules().size()];
         selectedLink = new boolean[proc.getLinks().length];
         repaint();
@@ -634,7 +639,7 @@ public class ProcedureEditor extends CustomWidget {
         if (undoStack.size() == ArtOfIllusion.getPreferences().getUndoLevels()) {
             undoStack.remove(0);
         }
-        redoItem.setEnabled(redoStack.size() > 0);
+        redoItem.setEnabled(!redoStack.isEmpty());
         selectedModule = new boolean[proc.getModules().size()];
         selectedLink = new boolean[proc.getLinks().length];
         repaint();
@@ -1040,7 +1045,7 @@ public class ProcedureEditor extends CustomWidget {
         public ClipboardSelection(Procedure proc, boolean[] selectedModule, boolean[] selectedLink) {
             // Determine which modules and links to copy.
 
-            List<Module> mod = new ArrayList<>();
+            List<Module<?>> mod = new ArrayList<>();
             List<Link> ln = new ArrayList<>();
             var  allModules = proc.getModules();
             Link[] allLinks = proc.getLinks();
