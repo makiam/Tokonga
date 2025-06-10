@@ -17,6 +17,7 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.*;
@@ -290,6 +291,7 @@ public class ProcedureEditor extends CustomWidget {
         return size;
     }
 
+    @SuppressWarnings("java:S1144")
     private void paint(RepaintEvent ev) {
         paint(ev.getGraphics());
     }
@@ -657,6 +659,7 @@ public class ProcedureEditor extends CustomWidget {
     /**
      * Respond to mouse clicks.
      */
+    @SuppressWarnings("java:S1144")
     private void mouseClicked(MouseClickedEvent e) {
         Point pos = e.getPoint();
         if (e.getClickCount() == 2) {
@@ -967,10 +970,11 @@ public class ProcedureEditor extends CustomWidget {
     /**
      * Respond to key presses.
      */
+    @SuppressWarnings("java:S1144")
     private void keyPressed(KeyPressedEvent e) {
         int key = e.getKeyCode();
 
-        if (key != KeyPressedEvent.VK_BACK_SPACE && key != KeyPressedEvent.VK_DELETE) {
+        if (key != KeyEvent.VK_BACK_SPACE && key != KeyEvent.VK_DELETE) {
             return;
         }
         deleteSelection();
