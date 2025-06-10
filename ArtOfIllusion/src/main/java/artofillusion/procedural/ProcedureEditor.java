@@ -361,8 +361,7 @@ public class ProcedureEditor extends CustomWidget {
         if (draggingBox && lastPos != null) {
             // Draw the selection box.
 
-            Rectangle rect;
-            rect = getRectangle(clickPos, lastPos);
+            Rectangle rect = getRectangle(clickPos, lastPos);
             g.drawRect(rect.x, rect.y, rect.width, rect.height);
         }
         if (draggingLink && lastPos != null) {
@@ -1024,7 +1023,7 @@ public class ProcedureEditor extends CustomWidget {
     /**
      * Utility function to create a Rectangle from two Points.
      */
-    public Rectangle getRectangle(Point p1, Point p2) {
+    private static Rectangle getRectangle(Point p1, Point p2) {
         int x;
         int y;
         int width;
