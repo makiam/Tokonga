@@ -17,6 +17,7 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -125,7 +126,12 @@ public class ProcedureEditor extends CustomWidget {
         new AutoScroller(scroll, 5, 5);
         size = new Dimension(1000, 1000);
         setBackground(Color.white);
-        addEventLink(KeyPressedEvent.class, this, "keyPressed");
+        KeyStroke deleteKS = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0);
+        KeyStroke backKS = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0);
+        ActionListener ra = e -> deleteSelection();
+        this.getComponent().getRootPane().registerKeyboardAction(ra, deleteKS, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        this.getComponent().getRootPane().registerKeyboardAction(ra, backKS, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
         addEventLink(MousePressedEvent.class, this, "mousePressed");
         addEventLink(MouseReleasedEvent.class, this, "mouseReleased");
         addEventLink(MouseClickedEvent.class, this, "mouseClicked");
@@ -966,19 +972,6 @@ public class ProcedureEditor extends CustomWidget {
                 }
             }
         }
-    }
-
-    /**
-     * Respond to key presses.
-     */
-    @SuppressWarnings("java:S1144")
-    private void keyPressed(KeyPressedEvent e) {
-        int key = e.getKeyCode();
-
-        if (key != KeyEvent.VK_BACK_SPACE && key != KeyEvent.VK_DELETE) {
-            return;
-        }
-        deleteSelection();
     }
 
     /**
