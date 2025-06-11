@@ -258,9 +258,9 @@ public class ProcedureEditor extends CustomWidget {
         undoItem.setEnabled(false);
         redoItem.setEnabled(false);
         editMenu.addSeparator();
-        editMenu.add(cutItem = Translate.menuItem("cut", this, "actionPerformed"));
-        editMenu.add(copyItem = Translate.menuItem("copy", this, "actionPerformed"));
-        editMenu.add(pasteItem = Translate.menuItem("paste", this, "actionPerformed"));
+        editMenu.add(cutItem = Translate.menuItem("cut", event -> doCut()));
+        editMenu.add(copyItem = Translate.menuItem("copy", event -> doCopy()));
+        editMenu.add(pasteItem = Translate.menuItem("paste", event -> doPaste()));
         editMenu.add(clearItem = Translate.menuItem("clear", event -> deleteSelection()));
         editMenu.addSeparator();
         editMenu.add(Translate.menuItem("properties", event -> doProperties()));
@@ -503,23 +503,23 @@ public class ProcedureEditor extends CustomWidget {
         updatePreview();
     }
 
-    /**
-     * Respond to menu items.
-     */
-    private void actionPerformed(CommandEvent e) {
-        String command = e.getActionCommand();
-        if (command.equals("cut")) {
-            clipboard = new ClipboardSelection(proc, selectedModule, selectedLink);
-            deleteSelection();
-            updateMenus();
-        } else if (command.equals("copy")) {
-            clipboard = new ClipboardSelection(proc, selectedModule, selectedLink);
-            updateMenus();
-        } else if (command.equals("paste") && clipboard != null) {
+    private void doPaste() {
+        Optional.ofNullable(clipboard).ifPresent(sel -> {
             saveState(false);
-            clipboard.paste(this);
+            sel.paste(this);
             repaint();
-        }
+        });
+    }
+
+    private void doCopy() {
+        clipboard = new ClipboardSelection(proc, selectedModule, selectedLink);
+        updateMenus();
+    }
+
+    private void doCut() {
+        clipboard = new ClipboardSelection(proc, selectedModule, selectedLink);
+        deleteSelection();
+        updateMenus();
     }
 
     /**
