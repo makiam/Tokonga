@@ -490,7 +490,9 @@ public class Actor extends ObjectWrapper {
      * Find the array index for a given pose ID.
      */
     int findPoseIndex(int id) {
-        int min = 0, max = gestureID.length - 1, current = (min + max) >> 1;
+        int min = 0;
+        int max = gestureID.length - 1;
+        int current = (min + max) >> 1;
 
         while (true) {
             if (gestureID[current] == id) {

@@ -111,11 +111,13 @@ public class WoodModule extends ProceduralModule<WoodModule> {
         double y = (linkFrom[1] == null) ? point.y : linkFrom[1].getAverageValue(linkFromIndex[1], blur);
         double z = (linkFrom[2] == null) ? point.z : linkFrom[2].getAverageValue(linkFromIndex[2], blur);
         double persistence = (linkFrom[3] == null) ? 0.5 : linkFrom[3].getAverageValue(linkFromIndex[3], blur);
-        double xsize = (linkFrom[0] == null) ? 0.5 * point.xsize + blur : linkFrom[0].getValueError(linkFromIndex[0], blur);
-        double ysize = (linkFrom[1] == null) ? 0.5 * point.ysize + blur : linkFrom[1].getValueError(linkFromIndex[1], blur);
-        double zsize = (linkFrom[2] == null) ? 0.5 * point.zsize + blur : linkFrom[2].getValueError(linkFromIndex[2], blur);
-        double amp = 0.5 * amplitude, scale = 1.0, d;
-        double cutoff = 0.5 / Math.max(Math.max(xsize, ysize), zsize);
+        double xSize = (linkFrom[0] == null) ? 0.5 * point.xsize + blur : linkFrom[0].getValueError(linkFromIndex[0], blur);
+        double ySize = (linkFrom[1] == null) ? 0.5 * point.ysize + blur : linkFrom[1].getValueError(linkFromIndex[1], blur);
+        double zSize = (linkFrom[2] == null) ? 0.5 * point.zsize + blur : linkFrom[2].getValueError(linkFromIndex[2], blur);
+        double amp = 0.5 * amplitude;
+        double scale = 1.0;
+        double d;
+        double cutoff = 0.5 / Math.max(Math.max(xSize, ySize), zSize);
 
         // First calculate the turbulence function.
         value = 0.0;
@@ -129,7 +131,7 @@ public class WoodModule extends ProceduralModule<WoodModule> {
             } else {
                 tempVec.scale(-amp * scale);
             }
-            error += Math.abs(xsize * tempVec.x) + Math.abs(ysize * tempVec.y) + Math.abs(zsize * tempVec.z);
+            error += Math.abs(xSize * tempVec.x) + Math.abs(ySize * tempVec.y) + Math.abs(zSize * tempVec.z);
             if (scale > 0.5 * cutoff) {
                 d *= 2.0 * (1.0 - scale / cutoff);
                 tempVec.scale(2.0 * (1.0 - scale / cutoff));
@@ -153,7 +155,7 @@ public class WoodModule extends ProceduralModule<WoodModule> {
             error = 1.0e6;
         } else {
             gradient.set(x * rinv * scale * tempVec.x + gradient.x, y * rinv * scale * tempVec.y + gradient.y, gradient.z);
-            error = Math.abs(xsize * gradient.x) + Math.abs(ysize * gradient.y) + Math.abs(zsize * gradient.z);
+            error = Math.abs(xSize * gradient.x) + Math.abs(ySize * gradient.y) + Math.abs(zSize * gradient.z);
         }
         if (!mod) {
             value = r * scale + value;

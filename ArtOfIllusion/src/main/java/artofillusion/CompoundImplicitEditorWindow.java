@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2013 by Peter Eastman
    Modifications copyright (C) 2016-2017 Petri Ihalainen
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -41,7 +41,7 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
         theScene = new Scene();
         initialize();
         oldObject = obj;
-        theObject = (CompoundImplicitObject) obj.duplicate();
+        theObject = obj.duplicate();
         this.onClose = onClose;
         for (int i = 0; i < obj.getNumObjects(); i++) {
             theScene.addObject(obj.getObject(i).duplicate(), obj.getObjectCoordinates(i).duplicate(), "", null);
@@ -56,7 +56,8 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
         buttons.add(Translate.button("cancel", event -> doCancel()));
         content.add(buttons, 0, 2, 2, 1, new LayoutInfo());
         content.add(tools = new ToolPalette(1, 5, this), 0, 0);
-        EditingTool metaTool, altTool;
+        EditingTool metaTool;
+        EditingTool altTool;
         tools.addTool(defaultTool = new MoveObjectTool(this));
         tools.addTool(new RotateObjectTool(this));
         tools.addTool(new ScaleObjectTool(this));
@@ -236,7 +237,8 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
         int[] sel = theScene.getSelection();
         Object3D[] obj = new Object3D[sel.length];
         CoordinateSystem[] coords = new CoordinateSystem[sel.length];
-        Vec3 orig, size;
+        Vec3 orig;
+        Vec3 size;
         double[] angles;
         double[] values;
 

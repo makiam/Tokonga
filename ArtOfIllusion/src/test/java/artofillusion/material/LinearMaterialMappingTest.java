@@ -1,4 +1,4 @@
-/* Copyright (C) 2018 by Maksim Khramov
+/* Copyright (C) 2018-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,7 +12,7 @@ package artofillusion.material;
 import artofillusion.Scene;
 import artofillusion.object.Cube;
 import artofillusion.test.util.StreamUtil;
-import buoy.widget.BFrame;
+
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import buoy.widget.WindowWidget;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.extension.ExtendWith;
+
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -41,7 +41,7 @@ class LinearMaterialMappingTest {
         Material3D mat = new DummyMaterial();
         LinearMaterialMapping lmm = new LinearMaterialMapping(cube, mat);
         Assertions.assertEquals(mat, lmm.getMaterial());
-        Assertions.assertEquals(lmm.getName(), "Linear");
+        Assertions.assertEquals("Linear", lmm.getName());
     }
 
     @Test
@@ -104,9 +104,9 @@ class LinearMaterialMappingTest {
         Assertions.assertEquals(1.0, lmm.coords.getOrigin().x, 0);
         Assertions.assertEquals(2.0, lmm.coords.getOrigin().y, 0);
         Assertions.assertEquals(3.0, lmm.coords.getOrigin().z, 0);
-        Assertions.assertEquals(0.1, lmm.xscale, 0);
-        Assertions.assertEquals(0.5, lmm.yscale, 0);
-        Assertions.assertEquals(3.5, lmm.zscale, 0);
+        Assertions.assertEquals(0.1, lmm.xScale, 0);
+        Assertions.assertEquals(0.5, lmm.yScale, 0);
+        Assertions.assertEquals(3.5, lmm.zScale, 0);
     }
 
     @Test
@@ -140,9 +140,9 @@ class LinearMaterialMappingTest {
         Assertions.assertEquals(1.0, lmm.coords.getOrigin().x, 0);
         Assertions.assertEquals(2.0, lmm.coords.getOrigin().y, 0);
         Assertions.assertEquals(3.0, lmm.coords.getOrigin().z, 0);
-        Assertions.assertEquals(0.1, lmm.xscale, 0);
-        Assertions.assertEquals(0.5, lmm.yscale, 0);
-        Assertions.assertEquals(3.5, lmm.zscale, 0);
+        Assertions.assertEquals(0.1, lmm.xScale, 0);
+        Assertions.assertEquals(0.5, lmm.yScale, 0);
+        Assertions.assertEquals(3.5, lmm.zScale, 0);
     }
 
     @Test
@@ -177,9 +177,9 @@ class LinearMaterialMappingTest {
         Assertions.assertEquals(1.0, lmm.coords.getOrigin().x, 0);
         Assertions.assertEquals(2.0, lmm.coords.getOrigin().y, 0);
         Assertions.assertEquals(3.0, lmm.coords.getOrigin().z, 0);
-        Assertions.assertEquals(0.1, lmm.xscale, 0);
-        Assertions.assertEquals(0.5, lmm.yscale, 0);
-        Assertions.assertEquals(3.5, lmm.zscale, 0);
+        Assertions.assertEquals(0.1, lmm.xScale, 0);
+        Assertions.assertEquals(0.5, lmm.yScale, 0);
+        Assertions.assertEquals(3.5, lmm.zScale, 0);
     }
 
     @DisplayName("Dummy Material")

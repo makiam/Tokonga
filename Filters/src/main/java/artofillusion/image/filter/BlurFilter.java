@@ -57,7 +57,8 @@ public class BlurFilter extends ImageFilter {
     private void filterComponent(ComplexImage image, int component, int radius, float[] mask) {
         Thread currentThread = Thread.currentThread();
         int maskWidth = 2 * radius + 1;
-        int width = image.getWidth(), height = image.getHeight();
+        int width = image.getWidth();
+        int height = image.getHeight();
         float[] blur = new float[width * height];
         for (int i = 0; i < width; i++) {
             if (currentThread.isInterrupted()) {
@@ -68,15 +69,16 @@ public class BlurFilter extends ImageFilter {
                 if (value == 0.0f) {
                     continue;
                 }
-                int basex = i - radius, basey = j - radius;
-                int xstart = (basex < 0 ? -basex : 0);
-                int ystart = (basey < 0 ? -basey : 0);
-                int xend = (basex + maskWidth >= width ? width - basex : maskWidth);
-                int yend = (basey + maskWidth >= height ? height - basey : maskWidth);
-                for (int y = ystart; y < yend; y++) {
+                int baseX = i - radius;
+                int baseY = j - radius;
+                int startX = (baseX < 0 ? -baseX : 0);
+                int startY = (baseY < 0 ? -baseY : 0);
+                int endX = (baseX + maskWidth >= width ? width - baseX : maskWidth);
+                int endY = (baseY + maskWidth >= height ? height - baseY : maskWidth);
+                for (int y = startY; y < endY; y++) {
                     int maskBase = y * maskWidth;
-                    int imageBase = basex + (basey + y) * width;
-                    for (int x = xstart; x < xend; x++) {
+                    int imageBase = baseX + (baseY + y) * width;
+                    for (int x = startX; x < endX; x++) {
                         blur[imageBase + x] += mask[maskBase + x] * value;
                     }
                 }
@@ -89,7 +91,8 @@ public class BlurFilter extends ImageFilter {
      * Build the mask.
      */
     private float[] createMask(int radius) {
-        int size = 2 * radius + 1, radius2 = radius * radius;
+        int size = 2 * radius + 1;
+        int radius2 = radius * radius;
         float[] mask = new float[size * size];
         for (int i = 0; i < radius; i++) {
             for (int j = 0; j < radius; j++) {

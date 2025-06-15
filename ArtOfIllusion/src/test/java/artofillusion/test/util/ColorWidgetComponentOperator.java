@@ -1,4 +1,4 @@
-/* Copyright (C) 2022 by Maksim Khramov
+/* Copyright (C) 2022-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -33,7 +33,6 @@ public class ColorWidgetComponentOperator extends JComponentOperator {
 
         @Override
         public boolean checkComponent(Component component) {
-            //System.out.println(component.getClass().getName());
             return component.getClass().getName().equals("artofillusion.ui.ColorSampleWidget$ColorSampleComponent");
         }
 

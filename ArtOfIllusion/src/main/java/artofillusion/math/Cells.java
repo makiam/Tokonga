@@ -1,4 +1,5 @@
 /* Copyright (C) 2001-2005 by Peter Eastman
+   Changes copyright (C) 2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -94,10 +95,21 @@ public class Cells {
      * not needed, null may be passed for grad[].
      */
     public void calcFunctions(Vec3 p, double[] value, Vec3[] grad, int[] id) {
-        int i, j, k, m, num;
-        int a, b, c;
+        int i;
+        int j;
+        int k;
+        int m;
+        int num;
+        int a;
+        int b;
+        int c;
         int seed;
-        double x, y, z, r, dist2, rand;
+        double x;
+        double y;
+        double z;
+        double r;
+        double dist2;
+        double rand;
 
         a = floor(p.x);
         b = floor(p.y);

@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
    Changes copyright (C) 2016 by Petri Ihalainen
-   Changes copyright (C) 2018-2023 by Maksim Khramov
+   Changes copyright (C) 2018-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -42,7 +42,8 @@ import java.awt.*;
 public class Camera implements Cloneable {
 
     private Mat4 objectToWorld, objectToView, objectToScreen, worldToView, worldToScreen;
-    private Mat4 viewToScreen, viewToWorld;
+    private Mat4 viewToScreen;
+    private Mat4 viewToWorld;
     @Getter
     private double viewDist, /**
      * -- GETTER --
@@ -55,7 +56,8 @@ public class Camera implements Cloneable {
      */
     @Getter
     private boolean perspective;
-    private int hres, vres;
+    private int hres;
+    private int vres;
     private int lastX, lastY;
     private Vec3 lastPoint;
     private CoordinateSystem cameraCoords;
@@ -354,7 +356,10 @@ public class Camera implements Cloneable {
         Vec3[] corner = bb.getCorners();
         Vec2 p;
         int i;
-        double minx = hres, miny = vres, maxx = -1.0, maxy = -1.0;
+        double minX = hres;
+        double minY = vres;
+        double maxX = -1.0;
+        double maxY = -1.0;
         boolean clipped = true;
         double z;
 
@@ -363,35 +368,35 @@ public class Camera implements Cloneable {
             z = objectToView.timesZ(corner[i]);
             if (!perspective || z > frontClipPlane) {
                 clipped = false;
-                if (p.x < minx) {
-                    minx = p.x;
+                if (p.x < minX) {
+                    minX = p.x;
                 }
-                if (p.x > maxx) {
-                    maxx = p.x;
+                if (p.x > maxX) {
+                    maxX = p.x;
                 }
-                if (p.y < miny) {
-                    miny = p.y;
+                if (p.y < minY) {
+                    minY = p.y;
                 }
-                if (p.y > maxy) {
-                    maxy = p.y;
+                if (p.y > maxY) {
+                    maxY = p.y;
                 }
             } else {
                 if (p.x < hres / 2.0) {
-                    maxx = hres;
+                    maxX = hres;
                 } else {
-                    minx = -1.0;
+                    minX = -1.0;
                 }
                 if (p.y < vres / 2.0) {
-                    maxy = vres;
+                    maxY = vres;
                 } else {
-                    miny = -1.0;
+                    minY = -1.0;
                 }
             }
         }
-        if (clipped || minx == hres || miny == vres || maxx == -1.0 || maxy == -1.0) {
+        if (clipped || minX == hres || minY == vres || maxX == -1.0 || maxY == -1.0) {
             return null;
         }
-        return new Rectangle((int) minx, (int) miny, (int) (Math.ceil(maxx) - minx), (int) (Math.ceil(maxy) - miny));
+        return new Rectangle((int) minX, (int) minY, (int) (Math.ceil(maxX) - minX), (int) (Math.ceil(maxY) - minY));
     }
 
     public static final int NOT_VISIBLE = 0;
@@ -411,9 +416,12 @@ public class Camera implements Cloneable {
      */
     public int visibility(BoundingBox bb) {
         Vec3[] corner = bb.getCorners();
-        Vec2 p;
-        boolean offLeft = true, offRight = true, offTop = true, offBottom = true;
-        int i, clippedCount = 0;
+        boolean offLeft = true;
+        boolean offRight = true;
+        boolean offTop = true;
+        boolean offBottom = true;
+        int i;
+        int clippedCount = 0;
 
         for (i = 0; i < 8; i++) {
             if (perspective && objectToView.timesZ(corner[i]) <= frontClipPlane) {
@@ -424,7 +432,7 @@ public class Camera implements Cloneable {
             return NOT_VISIBLE;
         }
         for (i = 0; i < 8; i++) {
-            p = objectToScreen.timesXY(corner[i]);
+            Vec2 p = objectToScreen.timesXY(corner[i]);
             if (p.x > 0.0) {
                 offLeft = false;
             }
@@ -498,7 +506,8 @@ public class Camera implements Cloneable {
      */
     public void drawLineTo(Graphics g, Vec3 to) {
         double w;
-        int x, y;
+        int x;
+        int y;
         final Mat4 m = objectToScreen;
 
         w = m.m41 * to.x + m.m42 * to.y + m.m43 * to.z + m.m44;
@@ -698,6 +707,7 @@ public class Camera implements Cloneable {
      * recursive subdivision. We always subdivide three times, which should be enough for
      * interactive purposes. For speed, fixed point arithmetic is used throughout.
      */
+    @SuppressWarnings("java:S1659")
     public void drawBezier2(Graphics g, Vec3 v1, Vec3 v2, Vec3 v3, Vec3 v4) {
         int x1, x2, x3, x4, y1, y2, y3, y4, w1, w2, w3, w4;
         Mat4 m = objectToScreen;

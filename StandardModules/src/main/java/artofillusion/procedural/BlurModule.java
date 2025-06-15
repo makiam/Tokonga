@@ -22,7 +22,8 @@ import java.awt.*;
 public class BlurModule extends ProceduralModule<BlurModule> {
 
     boolean valueOk;
-    double extraBlur, lastBlur;
+    double extraBlur;
+    double lastBlur;
 
     public BlurModule() {
         this(new Point());

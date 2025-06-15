@@ -38,7 +38,8 @@ public class ConstraintTrack extends Track<ConstraintTrack> {
     int orientType;
     int orientMode;
     ObjectRef faceToward;
-    Vec3 pos, orient;
+    Vec3 pos;
+    Vec3 orient;
     WeightTrack theWeight;
 
     private static final int NONE = 0;
@@ -137,7 +138,8 @@ public class ConstraintTrack extends Track<ConstraintTrack> {
         } else {
             v = new Vec3(orient);
         }
-        double len = v.length(), dot;
+        double len = v.length();
+        double dot;
         if (len == 0.0) {
             return;
         }

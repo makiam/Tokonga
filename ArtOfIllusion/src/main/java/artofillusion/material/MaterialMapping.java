@@ -57,6 +57,11 @@ public abstract class MaterialMapping {
         return "";
     }
 
+    /**
+     * @param obj
+     * @param texture
+     * @return
+     */
     public boolean legalMapping(Object3D obj, Material texture) {
         return false;
     }

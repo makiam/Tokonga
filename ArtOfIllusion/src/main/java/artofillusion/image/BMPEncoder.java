@@ -1,4 +1,5 @@
 /* Copyright (C) 2000 by Peter Eastman
+   Changes copyright (C) 2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -38,7 +39,8 @@ public class BMPEncoder {
     public static final int IMAGE_START = 0x0036;
 
     private final Image im;
-    int width, height;
+    int width;
+    int height;
     int lineSize;
     int linePad;
     private final int imageDataSize;

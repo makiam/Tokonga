@@ -452,8 +452,12 @@ public class ArraySpec {
 
         // Now find two vectors perpendicular to the path, and determine how much they
         // contribute to the z and up directions.
-        Vec3 dir1, dir2;
-        double zfrac1, zfrac2, upfrac1, upfrac2;
+        Vec3 dir1;
+        Vec3 dir2;
+        double zfrac1;
+        double zfrac2;
+        double upfrac1;
+        double upfrac2;
         zfrac1 = t[0].dot(zdir[0]);
         zfrac2 = Math.sqrt(1.0 - zfrac1 * zfrac1);
         dir1 = zdir[0].minus(t[0].times(zfrac1));

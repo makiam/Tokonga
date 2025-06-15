@@ -1,5 +1,6 @@
 /* Copyright (C) 2001-2015 by Peter Eastman
    Modifications Copyright (C) 2019 by Petri Ihalainen
+   Changes copyright (C) 2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -19,6 +20,8 @@ import buoy.widget.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
+import static artofillusion.object.Mesh.NO_SMOOTHING;
 
 /**
  * This dialog box allows the user to specify options for CSG objects, a.k.a 'boolean objects'
@@ -104,14 +107,15 @@ public class CSGDialog extends BDialog {
     private void makePreview() {
         if (modeller == null) {
             double tol = ArtOfIllusion.getPreferences().getInteractiveSurfaceError();
-            TriangleMesh mesh1, mesh2;
+            TriangleMesh mesh1;
+            TriangleMesh mesh2;
 
             mesh1 = theObject.getObject1().getObject().convertToTriangleMesh(tol);
             mesh2 = theObject.getObject2().getObject().convertToTriangleMesh(tol);
-            if (mesh1.getSmoothingMethod() != TriangleMesh.NO_SMOOTHING) {
+            if (mesh1.getSmoothingMethod() != NO_SMOOTHING) {
                 mesh1.setSmoothingMethod(TriangleMesh.SMOOTH_SHADING);
             }
-            if (mesh2.getSmoothingMethod() != TriangleMesh.NO_SMOOTHING) {
+            if (mesh2.getSmoothingMethod() != NO_SMOOTHING) {
                 mesh2.setSmoothingMethod(TriangleMesh.SMOOTH_SHADING);
             }
             modeller = new CSGModeller(mesh1, mesh2, theObject.getObject1().getCoords(), theObject.getObject2().getCoords());

@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2015 by Peter Eastman and Marco Brenco
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -132,7 +132,8 @@ public class CSGModeller {
         List<VertexInfo> allVert = new Vector<>();
         List<int[]> faceIndex = new Vector<>();
         List<float[]> faceSmoothness = new Vector<>();
-        int[] index1 = new int[vert1.size()], index2 = new int[vert2.size()];
+        int[] index1 = new int[vert1.size()];
+        int[] index2 = new int[vert2.size()];
         int faces1;
 
         // Original algorithm has been modified. It claimed that BOUNDARY vertices must never be deleted,
@@ -318,19 +319,16 @@ public class CSGModeller {
         for (int i = 0; i < faceIndex.length; i++) {
             faceIndex[i] = i;
         }
-        Arrays.sort(faceIndex, new Comparator<>() {
-            @Override
-            public int compare(Integer index1, Integer index2) {
-                double max1 = f2.get(index1).max;
-                double max2 = f2.get(index2).max;
-                if (max1 < max2) {
-                    return -1;
-                }
-                if (max2 < max1) {
-                    return 1;
-                }
-                return 0;
+        Arrays.sort(faceIndex, (index1, index2) -> {
+            double max1 = f2.get(index1).max;
+            double max2 = f2.get(index2).max;
+            if (max1 < max2) {
+                return -1;
             }
+            if (max2 < max1) {
+                return 1;
+            }
+            return 0;
         });
         double[] minAfter = new double[f2.size()];
         minAfter[f2.size() - 1] = f2.get(faceIndex[f2.size() - 1]).min;
@@ -760,7 +758,8 @@ public class CSGModeller {
             startVert.type = endVert.type = BOUNDARY;
             return;
         }
-        Vec3 startPos = null, endPos = null;
+        Vec3 startPos = null;
+        Vec3 endPos = null;
         if (startType == VERTEX) {
             startVert.type = BOUNDARY;
         } else {
@@ -1145,14 +1144,16 @@ public class CSGModeller {
         VertexInfo vi1 = v1.get(f.v1);
         VertexInfo vi2 = v1.get(f.v2);
         VertexInfo vi3 = v1.get(f.v3);
-        Vec3 orig = new Vec3(), dir = new Vec3(f.norm);
+        Vec3 orig = new Vec3();
+        Vec3 dir = new Vec3(f.norm);
 
         // Send a ray out from the center of this face, and see what are the first
         // and second thing that it intersects.
         orig.set(vi1.r.x + vi2.r.x + vi3.r.x, vi1.r.y + vi2.r.y + vi3.r.y, vi1.r.z + vi2.r.z + vi3.r.z);
         orig.scale(1.0 / 3.0);
         int first, second;
-        double firstDist, secondDist;
+        double firstDist;
+        double secondDist;
         first = -1;
         firstDist = Double.MAX_VALUE;
 
@@ -1238,7 +1239,10 @@ public class CSGModeller {
      * ray at which it enters the box, or Double.MAX_VALUE if it does not intersect.
      */
     private double rayBoxIntersectionDist(Vec3 origin, Vec3 direction, BoundingBox bb) {
-        double t1, t2, mint = -Double.MAX_VALUE, maxt = Double.MAX_VALUE;
+        double t1;
+        double t2;
+        double mint = -Double.MAX_VALUE;
+        double maxt = Double.MAX_VALUE;
         if (direction.x == 0.0) {
             if (origin.x < bb.minx - TOL || origin.x > bb.maxx + TOL) {
                 return Double.MAX_VALUE;
@@ -1356,8 +1360,10 @@ public class CSGModeller {
 
         // Determine whether the intersection point is inside the triangle.
         Vec3 ri = new Vec3(orig.x + dir.x * t, orig.y + dir.y * t, orig.z + dir.z * t);
-        Vec2 edge2d1, edge2d2;
-        double vx, vy;
+        Vec2 edge2d1;
+        Vec2 edge2d2;
+        double vx;
+        double vy;
         if (f.norm.x > 0.5 || f.norm.x < -0.5) {
             edge2d1 = new Vec2(v1.y - v2.y, v1.z - v2.z);
             edge2d2 = new Vec2(v1.y - v3.y, v1.z - v3.z);
@@ -1431,8 +1437,10 @@ public class CSGModeller {
         if (v1.param == null) {
             return null;
         }
-        Vec2 edge2d1, edge2d2;
-        double vx, vy;
+        Vec2 edge2d1;
+        Vec2 edge2d2;
+        double vx;
+        double vy;
         if (f.norm.x > 0.5 || f.norm.x < -0.5) {
             edge2d1 = new Vec2(v1.r.y - v2.r.y, v1.r.z - v2.r.z);
             edge2d2 = new Vec2(v1.r.y - v3.r.y, v1.r.z - v3.r.z);
@@ -1502,8 +1510,12 @@ public class CSGModeller {
         int type;
         BoundingBox bounds;
         Vec3 norm;
-        float smoothness1, smoothness2, smoothness3;
-        double distRoot, min, max;
+        float smoothness1;
+        float smoothness2;
+        float smoothness3;
+        double distRoot;
+        double min;
+        double max;
 
         public FaceInfo(int v1, int v2, int v3, List<VertexInfo> vertices, float s1, float s2, float s3) {
             Vec3 vert1 = vertices.get(v1).r;

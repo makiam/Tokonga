@@ -1,5 +1,5 @@
 /* Copyright (C) 2013 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -94,7 +94,9 @@ public class CompoundImplicitObject extends ImplicitObject {
 
     @Override
     public void getFieldGradient(double x, double y, double z, double size, double time, Vec3 grad) {
-        double dx = 0, dy = 0, dz = 0;
+        double dx = 0;
+        double dy = 0;
+        double dz = 0;
         Vec3 pos = new Vec3();
 
         for (Integer indice :  findObjectsNearPoint(x, y, z)) {
@@ -332,7 +334,8 @@ public class CompoundImplicitObject extends ImplicitObject {
 
         @Override
         public Keyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3) {
-            CompoundImplicitKeyframe k2 = (CompoundImplicitKeyframe) o2, k3 = (CompoundImplicitKeyframe) o3;
+            CompoundImplicitKeyframe k2 = (CompoundImplicitKeyframe) o2;
+            CompoundImplicitKeyframe k3 = (CompoundImplicitKeyframe) o3;
             List<Keyframe> newKey = new ArrayList<>();
             List<CoordinateSystem> newCoords = new ArrayList<>();
             for (int i = 0; i < key.size(); i++) {

@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2007 by Peter Eastman
-   Changes copyright (C) 2024 by Maksim Khramov
+   Changes copyright (C) 2024-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,6 +12,7 @@
 package artofillusion.material;
 
 import artofillusion.*;
+import artofillusion.api.ImplementationVersion;
 import artofillusion.math.*;
 import artofillusion.object.*;
 import buoy.widget.*;
@@ -20,6 +21,7 @@ import java.io.*;
 /**
  * UniformMaterialMapping is the MaterialMapping for UniformMaterials.
  */
+@ImplementationVersion
 public class UniformMaterialMapping extends MaterialMapping {
 
     public UniformMaterialMapping(Object3D theObject, Material theMaterial) {
@@ -61,7 +63,7 @@ public class UniformMaterialMapping extends MaterialMapping {
         return new CustomWidget();
     }
 
-    public UniformMaterialMapping(DataInputStream in, Object3D theObject, Material theMaterial) throws IOException, InvalidObjectException {
+    public UniformMaterialMapping(DataInputStream in, Object3D theObject, Material theMaterial) throws IOException {
         super(theObject, theMaterial);
 
         short version = in.readShort();

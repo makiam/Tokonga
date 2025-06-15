@@ -1,5 +1,5 @@
 /* Copyright 2001-2004 by Rick van der Meiden and Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -33,14 +33,31 @@ public class ArrayDialog extends ToolDialog {
 
     private final List<ObjectInfo> curvesVector;
 
-    private BLabel linearCopiesLabel, stepXLabel, stepYLabel, stepZLabel;
-    private BRadioButton curveCopiesBox, curveStepBox, linearBox, curveBox;
-    private BCheckBox intervalXBox, intervalYBox, intervalZBox;
-    private BCheckBox orientationBox, useOrientationBox, useOriginBox;
-    private BCheckBox duplicateBox, groupBox, liveBox, deepBox;
+    private BLabel linearCopiesLabel;
+    private BLabel stepXLabel;
+    private BLabel stepYLabel;
+    private BLabel stepZLabel;
+    private BRadioButton curveCopiesBox;
+    private BRadioButton curveStepBox;
+    private BRadioButton linearBox;
+    private BRadioButton curveBox;
+    private BCheckBox intervalXBox;
+    private BCheckBox intervalYBox;
+    private BCheckBox intervalZBox;
+    private BCheckBox orientationBox;
+    private BCheckBox useOrientationBox;
+    private BCheckBox useOriginBox;
+    private BCheckBox duplicateBox;
+    private BCheckBox groupBox;
+    private BCheckBox liveBox;
+    private BCheckBox deepBox;
     private BComboBox curveChoice;
-    private ValueField linearCopiesField, stepXField, stepYField, stepZField;
-    private ValueField curveCopiesField, curveStepField;
+    private ValueField linearCopiesField;
+    private ValueField stepXField;
+    private ValueField stepYField;
+    private ValueField stepZField;
+    private ValueField curveCopiesField;
+    private ValueField curveStepField;
     private final RadioButtonGroup methodGroup;
     private final RadioButtonGroup modeGroup;
 

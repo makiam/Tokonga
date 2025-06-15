@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -24,9 +24,15 @@ import java.io.*;
  */
 public class UniformMaterial extends Material {
 
-    RGBColor transparencyColor, matColor, scatteringColor;
-    RGBColor trueTrans, trueScat;
-    float density, scattering, transparency;
+    private RGBColor transparencyColor;
+    private RGBColor matColor = new RGBColor();
+    private RGBColor scatteringColor;
+    private RGBColor trueTrans = new RGBColor();
+    private RGBColor trueScat = new RGBColor();
+
+    float density;
+    float scattering;
+    float transparency;
     double eccentricity;
     boolean shadows;
 
@@ -34,10 +40,9 @@ public class UniformMaterial extends Material {
         // Generate the default color.
 
         transparencyColor = new RGBColor(1.0f, 1.0f, 1.0f);
-        matColor = new RGBColor(0.0f, 0.0f, 0.0f);
         scatteringColor = new RGBColor(0.5f, 0.5f, 0.5f);
-        trueTrans = new RGBColor(0.0f, 0.0f, 0.0f);
-        trueScat = new RGBColor(0.0f, 0.0f, 0.0f);
+
+
         density = 1.0f;
         scattering = 0.0f;
         transparency = 0.5f;
@@ -122,12 +127,8 @@ public class UniformMaterial extends Material {
         final BCheckBox shadowBox = new BCheckBox(Translate.text("CastsShadows"), shadows);
         final MaterialPreviewer preview = new MaterialPreviewer(null, newMaterial, 200, 160);
         final ActionProcessor process = new ActionProcessor();
-        final Runnable renderCallback = new Runnable() {
-            @Override
-            public void run() {
-                preview.render();
-            }
-        };
+        final Runnable renderCallback = () -> preview.render();
+
         transPatch.addEventLink(MouseClickedEvent.class, new Object() {
             void processEvent() {
                 new ColorChooser(transPatch, Translate.text("Transparency"), newMaterial.transparencyColor);
@@ -200,7 +201,7 @@ public class UniformMaterial extends Material {
     /* The following two methods are used for reading and writing files.  The first is a
      constructor which reads the necessary data from an input stream.  The other writes
      the object's representation to an output stream. */
-    public UniformMaterial(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+    public UniformMaterial(DataInputStream in, Scene theScene) throws IOException {
         short version = in.readShort();
 
         if (version < 0 || version > 1) {
@@ -216,8 +217,8 @@ public class UniformMaterial extends Material {
         transparency = (version == 0 ? 1.0f : in.readFloat());
         eccentricity = in.readDouble();
         shadows = in.readBoolean();
-        trueTrans = new RGBColor(0.0f, 0.0f, 0.0f);
-        trueScat = new RGBColor(0.0f, 0.0f, 0.0f);
+        trueTrans = new RGBColor();
+        trueScat = new RGBColor();
         recalcColors();
     }
 

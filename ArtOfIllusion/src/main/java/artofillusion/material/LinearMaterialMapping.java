@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2007 by Peter Eastman
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -29,7 +29,9 @@ public class LinearMaterialMapping extends MaterialMapping {
 
     protected CoordinateSystem coords;
     protected double ax, bx, cx, dx, ay, by, cy, dy, az, bz, cz, dz;
-    protected double xscale, yscale, zscale;
+    protected double xScale;
+    protected double yScale;
+    protected double zScale;
     protected boolean scaleToObject;
 
     public LinearMaterialMapping() {
@@ -39,7 +41,7 @@ public class LinearMaterialMapping extends MaterialMapping {
     public LinearMaterialMapping(Object3D theObject, Material3D theMaterial) {
         super(theObject, theMaterial);
         coords = new CoordinateSystem(new Vec3(), new Vec3(0.0, 0.0, 1.0), new Vec3(0.0, 1.0, 0.0));
-        xscale = yscale = zscale = 1.0;
+        xScale = yScale = zScale = 1.0;
         dx = dy = dz = 0.0;
         findCoefficients();
     }
@@ -60,15 +62,15 @@ public class LinearMaterialMapping extends MaterialMapping {
     private void findCoefficients() {
         Vec3 zdir = coords.getZDirection(), ydir = coords.getUpDirection();
         Vec3 xdir = ydir.cross(zdir);
-        ax = xdir.x / xscale;
-        bx = xdir.y / xscale;
-        cx = xdir.z / xscale;
-        ay = ydir.x / yscale;
-        by = ydir.y / yscale;
-        cy = ydir.z / yscale;
-        az = zdir.x / zscale;
-        bz = zdir.y / zscale;
-        cz = zdir.z / zscale;
+        ax = xdir.x / xScale;
+        bx = xdir.y / xScale;
+        cx = xdir.z / xScale;
+        ay = ydir.x / yScale;
+        by = ydir.y / yScale;
+        cy = ydir.z / yScale;
+        az = zdir.x / zScale;
+        bz = zdir.y / zScale;
+        cz = zdir.z / zScale;
     }
 
     /**
@@ -92,16 +94,16 @@ public class LinearMaterialMapping extends MaterialMapping {
      * Get a vector whose components contain the scale factors for the mapping.
      */
     public Vec3 getScale() {
-        return new Vec3(xscale, yscale, zscale);
+        return new Vec3(xScale, yScale, zScale);
     }
 
     /**
      * Set the scale factors for the mapping.
      */
     public void setScale(Vec3 scale) {
-        xscale = scale.x;
-        yscale = scale.y;
-        zscale = scale.z;
+        xScale = scale.x;
+        yScale = scale.y;
+        zScale = scale.z;
         findCoefficients();
     }
 
@@ -141,7 +143,9 @@ public class LinearMaterialMapping extends MaterialMapping {
     @Override
     public double getStepSize() {
         if (scaleToObject) {
-            double sizex, sizey, sizez;
+            double sizex;
+            double sizey;
+            double sizez;
             sizex = sizey = sizez = material.getStepSize();
             BoundingBox bounds = getObject().getBounds();
             if (bounds.maxx > bounds.minx) {
@@ -157,7 +161,7 @@ public class LinearMaterialMapping extends MaterialMapping {
                     length(ay * sizex, by * sizey, cy * sizez)),
                     length(az * sizex, bz * sizey, cz * sizez)));
         }
-        return Math.abs(material.getStepSize() / Math.max(Math.max(xscale, yscale), zscale));
+        return Math.abs(material.getStepSize() / Math.max(Math.max(xScale, yScale), zScale));
     }
 
     /* Methods from MaterialMapping. */
@@ -209,9 +213,9 @@ public class LinearMaterialMapping extends MaterialMapping {
         map.dx = dx;
         map.dy = dy;
         map.dz = dz;
-        map.xscale = xscale;
-        map.yscale = yscale;
-        map.zscale = zscale;
+        map.xScale = xScale;
+        map.yScale = yScale;
+        map.zScale = zScale;
         map.scaleToObject = scaleToObject;
         map.findCoefficients();
         return map;
@@ -225,9 +229,9 @@ public class LinearMaterialMapping extends MaterialMapping {
         dx = map.dx;
         dy = map.dy;
         dz = map.dz;
-        xscale = map.xscale;
-        yscale = map.yscale;
-        zscale = map.zscale;
+        xScale = map.xScale;
+        yScale = map.yScale;
+        zScale = map.zScale;
         scaleToObject = map.scaleToObject;
         findCoefficients();
     }
@@ -248,9 +252,9 @@ public class LinearMaterialMapping extends MaterialMapping {
         dx = in.readDouble();
         dy = in.readDouble();
         dz = in.readDouble();
-        xscale = in.readDouble();
-        yscale = in.readDouble();
-        zscale = in.readDouble();
+        xScale = in.readDouble();
+        yScale = in.readDouble();
+        zScale = in.readDouble();
         scaleToObject = (version > 0 ? in.readBoolean() : false);
         findCoefficients();
     }
@@ -262,9 +266,9 @@ public class LinearMaterialMapping extends MaterialMapping {
         out.writeDouble(dx);
         out.writeDouble(dy);
         out.writeDouble(dz);
-        out.writeDouble(xscale);
-        out.writeDouble(yscale);
-        out.writeDouble(zscale);
+        out.writeDouble(xScale);
+        out.writeDouble(yScale);
+        out.writeDouble(zScale);
         out.writeBoolean(scaleToObject);
     }
 
@@ -295,11 +299,11 @@ public class LinearMaterialMapping extends MaterialMapping {
             setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(0, 0, 0, 5), null));
             add(new BLabel(Translate.text("Scale") + ":"), 0, 0, 3, 1);
             add(new BLabel("X"), 0, 1);
-            add(xscaleField = new ValueField(xscale, ValueField.NONZERO, 5), 1, 1);
+            add(xscaleField = new ValueField(xScale, ValueField.NONZERO, 5), 1, 1);
             add(new BLabel("Y"), 2, 1);
-            add(yscaleField = new ValueField(yscale, ValueField.NONZERO, 5), 3, 1);
+            add(yscaleField = new ValueField(yScale, ValueField.NONZERO, 5), 3, 1);
             add(new BLabel("Z"), 4, 1);
-            add(zscaleField = new ValueField(zscale, ValueField.NONZERO, 5), 5, 1);
+            add(zscaleField = new ValueField(zScale, ValueField.NONZERO, 5), 5, 1);
             add(new BLabel(Translate.text("Center") + ":"), 0, 2, 3, 1);
             add(new BLabel("X"), 0, 3);
             add(xtransField = new ValueField(dx, ValueField.NONE, 5), 1, 3);
@@ -329,9 +333,9 @@ public class LinearMaterialMapping extends MaterialMapping {
         }
 
         private void processEvent() {
-            xscale = xscaleField.getValue();
-            yscale = yscaleField.getValue();
-            zscale = zscaleField.getValue();
+            xScale = xscaleField.getValue();
+            yScale = yscaleField.getValue();
+            zScale = zscaleField.getValue();
             dx = xtransField.getValue();
             dy = ytransField.getValue();
             dz = ztransField.getValue();

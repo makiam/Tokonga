@@ -1,4 +1,5 @@
 /* Copyright (C) 1999-2000 by Peter Eastman
+   Changes copyright (C) 2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -141,7 +142,9 @@ public class BoundingBox {
      * Determine the distance between a point and the closest point in the box.
      */
     public final double distanceToPoint(Vec3 p) {
-        double x, y, z;
+        double x;
+        double y;
+        double z;
 
         if (p.x < minx) {
             x = minx - p.x;

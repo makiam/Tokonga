@@ -1,5 +1,5 @@
 /* Copyright (C) 2007 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,10 +17,10 @@ import org.junit.jupiter.api.Test;
 import java.awt.*;
 
 
-public class CompareModuleTest {
+class CompareModuleTest {
 
     @Test
-    public void testCompare() {
+    void testCompare() {
         CompareModule module = new CompareModule(new Point());
         module.linkFrom[0] = new CoordinateModule(new Point(), CoordinateModule.X);
         module.linkFrom[1] = new CoordinateModule(new Point(), CoordinateModule.Y);
