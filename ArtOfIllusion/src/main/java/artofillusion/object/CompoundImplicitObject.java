@@ -248,16 +248,13 @@ public class CompoundImplicitObject extends ImplicitObject {
 
     @Override
     public void editKeyframe(EditingWindow parent, final Keyframe k, final ObjectInfo info) {
-        final CompoundImplicitObject copy = (CompoundImplicitObject) duplicate();
+        final CompoundImplicitObject copy = duplicate();
         copy.applyPoseKeyframe(k);
-        Runnable onClose = new Runnable() {
-            @Override
-            public void run() {
-                CompoundImplicitKeyframe original = (CompoundImplicitKeyframe) k;
-                CompoundImplicitKeyframe edited = (CompoundImplicitKeyframe) copy.getPoseKeyframe().duplicate(info);
-                original.key = edited.key;
-                original.coordinates = edited.coordinates;
-            }
+        Runnable onClose = () -> {
+            CompoundImplicitKeyframe original = (CompoundImplicitKeyframe) k;
+            CompoundImplicitKeyframe edited = (CompoundImplicitKeyframe) copy.getPoseKeyframe().duplicate(info);
+            original.key = edited.key;
+            original.coordinates = edited.coordinates;
         };
         new CompoundImplicitEditorWindow(parent, info.getName(), copy, onClose);
     }
@@ -365,7 +362,9 @@ public class CompoundImplicitObject extends ImplicitObject {
 
         @Override
         public Keyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4) {
-            CompoundImplicitKeyframe k2 = (CompoundImplicitKeyframe) o2, k3 = (CompoundImplicitKeyframe) o3, k4 = (CompoundImplicitKeyframe) o4;
+            CompoundImplicitKeyframe k2 = (CompoundImplicitKeyframe) o2;
+            CompoundImplicitKeyframe k3 = (CompoundImplicitKeyframe) o3;
+            CompoundImplicitKeyframe k4 = (CompoundImplicitKeyframe) o4;
             List<Keyframe> newKey = new ArrayList<>();
             List<CoordinateSystem> newCoords = new ArrayList<>();
             for (int i = 0; i < key.size(); i++) {

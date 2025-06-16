@@ -395,19 +395,23 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
     }
 
     void alignObjectsCommand() {
-        int i;
+
         int[] sel = theScene.getSelection();
         ComponentsDialog dlg;
         Object3D obj;
         CoordinateSystem coords;
-        Vec3 alignTo, orig, center;
+        Vec3 alignTo;
+        Vec3 orig;
+        Vec3 center;
         BComboBox xchoice;
         BComboBox ychoice;
         BComboBox zchoice;
         RowContainer px = new RowContainer();
         RowContainer py = new RowContainer();
         RowContainer pz = new RowContainer();
-        ValueField vfx, vfy, vfz;
+        ValueField vfx;
+        ValueField vfy;
+        ValueField vfz;
         BoundingBox bounds;
 
         if (sel.length == 0) {
@@ -450,7 +454,7 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
 
         // Determine the position to align the objects to.
         alignTo = new Vec3();
-        for (i = 0; i < sel.length; i++) {
+        for (int i = 0; i < sel.length; i++) {
             obj = theScene.getObject(sel[i]).getObject();
             coords = theScene.getObject(sel[i]).getCoords();
             bounds = obj.getBounds();
@@ -494,7 +498,7 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
         alignTo.scale(1.0 / sel.length);
 
         // Now transform all of the objects.
-        for (i = 0; i < sel.length; i++) {
+        for (int i = 0; i < sel.length; i++) {
             obj = theScene.getObject(sel[i]).getObject();
             coords = theScene.getObject(sel[i]).getCoords();
             bounds = obj.getBounds();

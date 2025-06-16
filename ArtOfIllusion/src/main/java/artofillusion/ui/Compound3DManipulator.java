@@ -58,7 +58,8 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
     private int rotSegment;
     private double rotAngle;
     private Point centerPoint, xPoint, yPoint, zPoint;
-    private double axisLength, orAxisLength;
+    private double axisLength;
+    private double orAxisLength;
     private final RotationHandle[] xyzRotHandles;
     private final RotationHandle[] pqnRotHandles;
     private final RotationHandle[] uvRotationHandle;
@@ -511,7 +512,10 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
             int[][] order = drawingOrder(view);
             Color handleColor;
             Vec2[] handlePoint;
-            int handle, quadrant, start, k0;
+            int handle;
+            int quadrant;
+            int start;
+            int k0;
             quadrant = activeRotationHandleSet[0].segments / 4; // Assume they all have the same amount of segments
 
             for (int majOrdNum = 0; majOrdNum < order[0].length; majOrdNum++) {
@@ -972,7 +976,8 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
         protected final Color color;
         protected final Vec3[] points3d;
         protected final Vec2[] points2d;
-        protected Vec3 rotAxis, refAxis;
+        protected Vec3 rotAxis;
+        protected Vec3 refAxis;
 
         /**
          * Creates a Rotation Handle with a given number of segments
