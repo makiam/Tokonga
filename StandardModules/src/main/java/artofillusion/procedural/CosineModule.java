@@ -20,7 +20,9 @@ import java.awt.*;
 @ProceduralModule.Category("Modules:menu.functions")
 public class CosineModule extends ProceduralModule<ColorSumModule> {
 
-    boolean valueOk, errorOk, gradOk;
+    boolean valueOk;
+    boolean errorOk;
+    boolean gradOk;
     double value, error, valueIn, errorIn, lastBlur;
     final Vec3 gradient;
 

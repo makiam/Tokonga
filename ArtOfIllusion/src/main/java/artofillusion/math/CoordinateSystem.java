@@ -32,7 +32,7 @@ public class CoordinateSystem {
      * Create a new CoordinateSystem which represents an identity transformation (i.e. no
      * translation or rotation).
      */
-    public CoordinateSystem() {
+    public  CoordinateSystem() {
         this(new Vec3(), Vec3.vz(), Vec3.vy());
     }
 

@@ -137,7 +137,10 @@ class CompoundImplicitObjectTest {
     void testSetObjectCoordinatesForCompound() {
         CompoundImplicitObject cio = new CompoundImplicitObject();
         cio.addObject(new ImplicitSphere(1.0, 1.0), new CoordinateSystem());
-        cio.setObjectCoordinates(0, new CoordinateSystem(Vec3.vx(), Vec3.vy(), Vec3.vz()));
+        CoordinateSystem newCS = new CoordinateSystem(Vec3.vx(), Vec3.vy(), Vec3.vz());
+        cio.setObjectCoordinates(0, newCS);
+        Assertions.assertEquals(newCS, cio.getObjectCoordinates(0));
+
     }
 
     @Test

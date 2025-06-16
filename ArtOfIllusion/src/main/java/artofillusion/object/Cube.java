@@ -21,13 +21,17 @@ import artofillusion.ui.*;
 import buoy.widget.*;
 import java.io.*;
 
+import static artofillusion.object.Mesh.NO_SMOOTHING;
+
 /**
  * Contrary to its name, the Cube class actually can represent any rectangular solid.
  * The edges do not need to all be the same length.
  */
 public class Cube extends Object3D {
 
-    double halfx, halfy, halfz;
+    double halfx;
+    double halfy;
+    double halfz;
     BoundingBox bounds;
     RenderingMesh cachedMesh;
     WireframeMesh cachedWire;
@@ -110,7 +114,7 @@ public class Cube extends Object3D {
         v[2].z = v[3].z = v[6].z = v[7].z = v[10].z = -halfz;
         v[0].z = v[1].z = v[4].z = v[5].z = v[8].z = halfz;
         mesh = new TriangleMesh(v, faces);
-        mesh.setSmoothingMethod(TriangleMesh.NO_SMOOTHING);
+        mesh.setSmoothingMethod(NO_SMOOTHING);
         mesh.copyTextureAndMaterial(this);
         return mesh;
     }
@@ -242,8 +246,9 @@ public class Cube extends Object3D {
                 return 2.0 * halfy;
             case 2:
                 return 2.0 * halfz;
+            default:
+                return null;
         }
-        return null;
     }
 
     @Override

@@ -35,7 +35,9 @@ public class CreateCameraTool extends EditingTool {
     public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view) {
         Scene theScene = ((LayoutWindow) theWindow).getScene();
         Camera cam = view.getCamera();
-        Vec3 orig, ydir, zdir;
+        Vec3 orig;
+        Vec3 ydir;
+        Vec3 zdir;
 
         orig = cam.convertScreenToWorld(e.getPoint(), view.getDistToPlane());
         ydir = new Vec3(0.0, 1.0, 0.0);

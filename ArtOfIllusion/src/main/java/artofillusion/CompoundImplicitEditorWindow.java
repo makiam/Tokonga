@@ -25,7 +25,8 @@ import java.util.List;
  */
 public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
 
-    private CompoundImplicitObject oldObject, theObject;
+    private CompoundImplicitObject oldObject;
+    private CompoundImplicitObject theObject;
     private BMenuItem undoItem;
     private BMenuItem redoItem;
     private BMenuItem[] objectMenuItem;
@@ -110,7 +111,8 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
     }
 
     protected void createViewMenu() {
-        BMenu viewMenu, displayMenu;
+        BMenu viewMenu;
+        BMenu displayMenu;
         viewMenu = Translate.menu("view");
         menubar.add(viewMenu);
         viewMenu.add(displayMenu = Translate.menu("displayMode"));
@@ -340,7 +342,8 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
         TransformDialog dlg;
         Object3D obj;
         CoordinateSystem coords;
-        Vec3 orig, size;
+        Vec3 orig;
+        Vec3 size;
         double[] values;
         Mat4 m;
 
