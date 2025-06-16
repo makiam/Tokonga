@@ -369,6 +369,7 @@ public class UVMappingEditorDialog extends BDialog {
 
         UIUtilities.centerWindow(this); // Has to be after 'pack()'
         this.getComponent().addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 doCancel();
             }
@@ -1189,12 +1190,12 @@ public class UVMappingEditorDialog extends BDialog {
                 firstMapping.textures.remove(mapping.textures.get(j));
             }
             currentMapping = newMapping;
-            if (currentMapping.textures.size() > 0) {
-                currentTexture = getTextureFromID(currentMapping.textures.get(0));
-                mappingCanvas.setTexture(texList.get(currentTexture), mappingList.get(currentTexture));
-            } else {
+            if (currentMapping.textures.isEmpty()) {
                 currentTexture = -1;
                 mappingCanvas.setTexture(null, null);
+            } else {
+                currentTexture = getTextureFromID(currentMapping.textures.get(0));
+                mappingCanvas.setTexture(texList.get(currentTexture), mappingList.get(currentTexture));
             }
             mappingCanvas.setMapping(currentMapping);
             updateMappingMenu();
@@ -1331,6 +1332,7 @@ public class UVMappingEditorDialog extends BDialog {
         ExportImageDialog(WindowWidget parent) {
             super(parent, true);
             this.getComponent().addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
                 public void windowClosing(java.awt.event.WindowEvent evt) {
                     dispose();
                 }

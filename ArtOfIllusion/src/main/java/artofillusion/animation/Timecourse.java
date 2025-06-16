@@ -72,10 +72,10 @@ public class Timecourse {
         Keyframe[] newv = new Keyframe[value.length + 1];
         double[] newt = new double[time.length + 1];
         Smoothness[] news = new Smoothness[smoothness.length + 1];
-        int i, j;
+        int i;
 
         for (i = 0; i < time.length && time[i] < t; i++);
-        for (j = 0; j < newv.length; j++) {
+        for (int j = 0; j < newv.length; j++) {
             if (j < i) {
                 newv[j] = value[j];
                 newt[j] = time[j];
@@ -380,9 +380,12 @@ public class Timecourse {
 
             return subdivide(method).evaluate(t, method);
         }
-        Keyframe[] v1 = new Keyframe[7], v2 = new Keyframe[7];
-        double[] t1 = new double[7], t2 = new double[7];
-        Smoothness[] s1 = new Smoothness[7], s2 = new Smoothness[7];
+        Keyframe[] v1 = new Keyframe[7];
+        Keyframe[] v2 = new Keyframe[7];
+        double[] t1 = new double[7];
+        double[] t2 = new double[7];
+        Smoothness[] s1 = new Smoothness[7];
+        Smoothness[] s2 = new Smoothness[7];
 
         // Subdivide the local region of the curve to get a point within one frame of the desired time.
         if (method == INTERPOLATING) {

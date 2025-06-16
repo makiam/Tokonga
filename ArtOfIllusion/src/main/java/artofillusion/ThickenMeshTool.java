@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2007 by Peter Eastman
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -27,7 +27,8 @@ public class ThickenMeshTool extends MeshEditingTool {
 
     private boolean dragInProgress;
     private Point clickPoint;
-    private Vec3[] norm, baseVertPos;
+    private Vec3[] norm;
+    private Vec3[] baseVertPos;
     private UndoRecord undo;
     private final NinePointManipulator manipulator;
 

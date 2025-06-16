@@ -57,7 +57,7 @@ public class TrackRestoreTest {
     }
 
     @Test
-    @Disabled
+    @Disabled(value = "V6 code for Tracks not yet implemented")
     void testWriteAndRestoreSceneItemTracksV6() throws IOException {
         short version = 6;
 
