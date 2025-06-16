@@ -26,7 +26,9 @@ public class ValueSlider extends WidgetContainer {
 
     final BTextField field;
     final BSlider slider;
-    double value, min, max;
+    double value;
+    double min;
+    double max;
     final int increments;
     boolean forceInt;
 

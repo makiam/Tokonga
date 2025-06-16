@@ -26,7 +26,10 @@ import java.io.*;
 @ProceduralModule.Category("Modules:menu.patterns")
 public class TurbulenceModule extends ProceduralModule<TurbulenceModule> {
 
-    boolean valueOk, errorOk, gradOk;
+    boolean valueOk;
+    boolean errorOk;
+    boolean gradOk;
+
     int octaves;
     double value;
     double error;
@@ -139,7 +142,8 @@ public class TurbulenceModule extends ProceduralModule<TurbulenceModule> {
         double xsize = (linkFrom[0] == null) ? 0.5 * point.xsize + blur : linkFrom[0].getValueError(linkFromIndex[0], blur);
         double ysize = (linkFrom[1] == null) ? 0.5 * point.ysize + blur : linkFrom[1].getValueError(linkFromIndex[1], blur);
         double zsize = (linkFrom[2] == null) ? 0.5 * point.zsize + blur : linkFrom[2].getValueError(linkFromIndex[2], blur);
-        double amp = 0.5 * amplitude, scale = 1.0;
+        double amp = 0.5 * amplitude;
+        double scale = 1.0;
         double cutoff = 0.5 / Math.max(Math.max(xsize, ysize), zsize);
         int i;
 
@@ -175,7 +179,9 @@ public class TurbulenceModule extends ProceduralModule<TurbulenceModule> {
         if (!errorOk || blur != lastBlur) {
             getValueError(which, blur);
         }
-        double dx = gradient.x, dy = gradient.y, dz = gradient.z;
+        double dx = gradient.x;
+        double dy = gradient.y;
+        double dz = gradient.z;
         if (dx != 0.0) {
             if (linkFrom[0] == null) {
                 gradient.set(dx, 0.0, 0.0);

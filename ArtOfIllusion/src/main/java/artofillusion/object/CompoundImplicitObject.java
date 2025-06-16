@@ -1,5 +1,5 @@
 /* Copyright (C) 2013 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -94,7 +94,9 @@ public class CompoundImplicitObject extends ImplicitObject {
 
     @Override
     public void getFieldGradient(double x, double y, double z, double size, double time, Vec3 grad) {
-        double dx = 0, dy = 0, dz = 0;
+        double dx = 0;
+        double dy = 0;
+        double dz = 0;
         Vec3 pos = new Vec3();
 
         for (Integer indice :  findObjectsNearPoint(x, y, z)) {
@@ -246,16 +248,13 @@ public class CompoundImplicitObject extends ImplicitObject {
 
     @Override
     public void editKeyframe(EditingWindow parent, final Keyframe k, final ObjectInfo info) {
-        final CompoundImplicitObject copy = (CompoundImplicitObject) duplicate();
+        final CompoundImplicitObject copy = duplicate();
         copy.applyPoseKeyframe(k);
-        Runnable onClose = new Runnable() {
-            @Override
-            public void run() {
-                CompoundImplicitKeyframe original = (CompoundImplicitKeyframe) k;
-                CompoundImplicitKeyframe edited = (CompoundImplicitKeyframe) copy.getPoseKeyframe().duplicate(info);
-                original.key = edited.key;
-                original.coordinates = edited.coordinates;
-            }
+        Runnable onClose = () -> {
+            CompoundImplicitKeyframe original = (CompoundImplicitKeyframe) k;
+            CompoundImplicitKeyframe edited = (CompoundImplicitKeyframe) copy.getPoseKeyframe().duplicate(info);
+            original.key = edited.key;
+            original.coordinates = edited.coordinates;
         };
         new CompoundImplicitEditorWindow(parent, info.getName(), copy, onClose);
     }
@@ -332,7 +331,8 @@ public class CompoundImplicitObject extends ImplicitObject {
 
         @Override
         public Keyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3) {
-            CompoundImplicitKeyframe k2 = (CompoundImplicitKeyframe) o2, k3 = (CompoundImplicitKeyframe) o3;
+            CompoundImplicitKeyframe k2 = (CompoundImplicitKeyframe) o2;
+            CompoundImplicitKeyframe k3 = (CompoundImplicitKeyframe) o3;
             List<Keyframe> newKey = new ArrayList<>();
             List<CoordinateSystem> newCoords = new ArrayList<>();
             for (int i = 0; i < key.size(); i++) {
@@ -362,7 +362,9 @@ public class CompoundImplicitObject extends ImplicitObject {
 
         @Override
         public Keyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4) {
-            CompoundImplicitKeyframe k2 = (CompoundImplicitKeyframe) o2, k3 = (CompoundImplicitKeyframe) o3, k4 = (CompoundImplicitKeyframe) o4;
+            CompoundImplicitKeyframe k2 = (CompoundImplicitKeyframe) o2;
+            CompoundImplicitKeyframe k3 = (CompoundImplicitKeyframe) o3;
+            CompoundImplicitKeyframe k4 = (CompoundImplicitKeyframe) o4;
             List<Keyframe> newKey = new ArrayList<>();
             List<CoordinateSystem> newCoords = new ArrayList<>();
             for (int i = 0; i < key.size(); i++) {

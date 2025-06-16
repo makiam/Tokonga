@@ -20,7 +20,10 @@ import java.awt.*;
 @ProceduralModule.Category("Modules:menu.operators")
 public class ModModule extends ProceduralModule<ModModule> {
 
-    double value, error, gradScale, lastBlur;
+    double value;
+    double error;
+    double gradScale;
+    double lastBlur;
     boolean valueOk;
 
     public ModModule() {

@@ -512,7 +512,7 @@ public class Raster implements Renderer, Runnable {
                 RGBColor multColor = context.multColor;
                 RGBColor subpixelColor = context.subpixelColor;
                 RGBColor subpixelMult = context.subpixelMult;
-                ArrayList<ObjectMaterialInfo> materialStack = context.materialStack;
+                List<ObjectMaterialInfo> materialStack = context.materialStack;
                 TextureSpec surfSpec = context.surfSpec;
                 int i2 = i1 * samplesPerPixel;
                 for (int j1 = 0, j2 = 0; j1 < imageWidth; j1++, j2 += samplesPerPixel) {

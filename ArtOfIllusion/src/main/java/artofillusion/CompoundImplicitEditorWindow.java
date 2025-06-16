@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2013 by Peter Eastman
    Modifications copyright (C) 2016-2017 Petri Ihalainen
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -25,7 +25,8 @@ import java.util.List;
  */
 public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
 
-    private CompoundImplicitObject oldObject, theObject;
+    private CompoundImplicitObject oldObject;
+    private CompoundImplicitObject theObject;
     private BMenuItem undoItem;
     private BMenuItem redoItem;
     private BMenuItem[] objectMenuItem;
@@ -41,7 +42,7 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
         theScene = new Scene();
         initialize();
         oldObject = obj;
-        theObject = (CompoundImplicitObject) obj.duplicate();
+        theObject = obj.duplicate();
         this.onClose = onClose;
         for (int i = 0; i < obj.getNumObjects(); i++) {
             theScene.addObject(obj.getObject(i).duplicate(), obj.getObjectCoordinates(i).duplicate(), "", null);
@@ -56,7 +57,8 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
         buttons.add(Translate.button("cancel", event -> doCancel()));
         content.add(buttons, 0, 2, 2, 1, new LayoutInfo());
         content.add(tools = new ToolPalette(1, 5, this), 0, 0);
-        EditingTool metaTool, altTool;
+        EditingTool metaTool;
+        EditingTool altTool;
         tools.addTool(defaultTool = new MoveObjectTool(this));
         tools.addTool(new RotateObjectTool(this));
         tools.addTool(new ScaleObjectTool(this));
@@ -109,7 +111,8 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
     }
 
     protected void createViewMenu() {
-        BMenu viewMenu, displayMenu;
+        BMenu viewMenu;
+        BMenu displayMenu;
         viewMenu = Translate.menu("view");
         menubar.add(viewMenu);
         viewMenu.add(displayMenu = Translate.menu("displayMode"));
@@ -236,7 +239,8 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
         int[] sel = theScene.getSelection();
         Object3D[] obj = new Object3D[sel.length];
         CoordinateSystem[] coords = new CoordinateSystem[sel.length];
-        Vec3 orig, size;
+        Vec3 orig;
+        Vec3 size;
         double[] angles;
         double[] values;
 
@@ -338,7 +342,8 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
         TransformDialog dlg;
         Object3D obj;
         CoordinateSystem coords;
-        Vec3 orig, size;
+        Vec3 orig;
+        Vec3 size;
         double[] values;
         Mat4 m;
 
@@ -393,19 +398,23 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
     }
 
     void alignObjectsCommand() {
-        int i;
+
         int[] sel = theScene.getSelection();
         ComponentsDialog dlg;
         Object3D obj;
         CoordinateSystem coords;
-        Vec3 alignTo, orig, center;
+        Vec3 alignTo;
+        Vec3 orig;
+        Vec3 center;
         BComboBox xchoice;
         BComboBox ychoice;
         BComboBox zchoice;
         RowContainer px = new RowContainer();
         RowContainer py = new RowContainer();
         RowContainer pz = new RowContainer();
-        ValueField vfx, vfy, vfz;
+        ValueField vfx;
+        ValueField vfy;
+        ValueField vfz;
         BoundingBox bounds;
 
         if (sel.length == 0) {
@@ -448,7 +457,7 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
 
         // Determine the position to align the objects to.
         alignTo = new Vec3();
-        for (i = 0; i < sel.length; i++) {
+        for (int i = 0; i < sel.length; i++) {
             obj = theScene.getObject(sel[i]).getObject();
             coords = theScene.getObject(sel[i]).getCoords();
             bounds = obj.getBounds();
@@ -492,7 +501,7 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
         alignTo.scale(1.0 / sel.length);
 
         // Now transform all of the objects.
-        for (i = 0; i < sel.length; i++) {
+        for (int i = 0; i < sel.length; i++) {
             obj = theScene.getObject(sel[i]).getObject();
             coords = theScene.getObject(sel[i]).getCoords();
             bounds = obj.getBounds();

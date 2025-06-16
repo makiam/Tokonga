@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2007 by François Guillet
  *  Modifications Copyright (C) 2019 by Petri Ihalainen
- *  Changes copyright (C) 2023 by Maksim Khramov
+ *  Changes copyright (C) 2023-2025 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the 
  *  terms of the GNU General Public License as published by the Free Software 
  *  Foundation; either version 2 of the License, or (at your option) any later version. 
@@ -22,7 +22,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
+
 import java.util.ArrayList;
 
 /**
@@ -891,7 +891,10 @@ public class UVMappingManipulator {
             double delta = angle / (segments - 1);
             double cs = Math.cos(delta);
             double sn = Math.sin(delta);
-            double x, y, nx, ny;
+            double x;
+            double y;
+            double nx;
+            double ny;
             px[0] = center.x;
             py[0] = center.y;
             px[1] = center.x + axisLength;

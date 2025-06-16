@@ -1,5 +1,6 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
    Additions copyright (C) 2017 by Petri Ihalainen
+   Changes copyright (C) 2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +19,8 @@ import java.io.*;
  */
 public class Vec2 {
 
-    public double x, y;
+    public double x;
+    public double y;
 
     /**
      * Create a new Vec2 whose x and y components are equal to 0.0.

@@ -1,5 +1,5 @@
 /* 
-   Copyright (C) 2017-2023 by Maksim Khramov   
+   Copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -94,8 +94,8 @@ class CompoundImplicitObjectTest {
     @Test
     @DisplayName("Test Get Object From Empty Compound Negative")
     void testGetObjectFromEmptyCompoundNegative() {
+        CompoundImplicitObject cio = new CompoundImplicitObject();
         assertThrows(IndexOutOfBoundsException.class, () -> {
-            CompoundImplicitObject cio = new CompoundImplicitObject();
             cio.getObject(0);
         });
     }
@@ -103,9 +103,10 @@ class CompoundImplicitObjectTest {
     @Test
     @DisplayName("Test Set Object To Empty Compund Negative")
     void testSetObjectToEmptyCompundNegative() {
+        CompoundImplicitObject cio = new CompoundImplicitObject();
+        ImplicitSphere nis = new ImplicitSphere(1.0, 1.0);
         assertThrows(IndexOutOfBoundsException.class, () -> {
-            CompoundImplicitObject cio = new CompoundImplicitObject();
-            cio.setObject(0, new ImplicitSphere(1.0, 1.0));
+            cio.setObject(0, nis);
         });
     }
 
@@ -124,9 +125,10 @@ class CompoundImplicitObjectTest {
     @Test
     @DisplayName("Test Set Object Coordinates For Empty Compound")
     void testSetObjectCoordinatesForEmptyCompound() {
+        CompoundImplicitObject cio = new CompoundImplicitObject();
+        CoordinateSystem cs = new CoordinateSystem();
         assertThrows(IndexOutOfBoundsException.class, () -> {
-            CompoundImplicitObject cio = new CompoundImplicitObject();
-            cio.setObjectCoordinates(0, new CoordinateSystem());
+            cio.setObjectCoordinates(0, cs);
         });
     }
 
@@ -135,7 +137,10 @@ class CompoundImplicitObjectTest {
     void testSetObjectCoordinatesForCompound() {
         CompoundImplicitObject cio = new CompoundImplicitObject();
         cio.addObject(new ImplicitSphere(1.0, 1.0), new CoordinateSystem());
-        cio.setObjectCoordinates(0, new CoordinateSystem(Vec3.vx(), Vec3.vy(), Vec3.vz()));
+        CoordinateSystem newCS = new CoordinateSystem(Vec3.vx(), Vec3.vy(), Vec3.vz());
+        cio.setObjectCoordinates(0, newCS);
+        Assertions.assertEquals(newCS, cio.getObjectCoordinates(0));
+
     }
 
     @Test

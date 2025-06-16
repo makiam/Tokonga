@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2007 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -26,7 +26,8 @@ import java.awt.*;
 public class CreateVertexTool extends MeshEditingTool {
 
     private Point clickPoint;
-    private Vec3 clickPos, constrainDir;
+    private Vec3 clickPos;
+    private Vec3 constrainDir;
     private int target;
     private int vertexToMove;
 
@@ -151,7 +152,8 @@ public class CreateVertexTool extends MeshEditingTool {
         Object3D meshobj = controller.getObject().getObject();
         TriangleMesh mesh = (TriangleMesh) meshobj;
         Point dragPoint = e.getPoint();
-        int dx, dy;
+        int dx;
+        int dy;
         Vec3[] v;
         Vec3 drag;
 
@@ -214,9 +216,7 @@ public class CreateVertexTool extends MeshEditingTool {
         // Create a new vertex and two new faces.
         TriangleMesh.Vertex[] newvert = new TriangleMesh.Vertex[vert.length + 1];
         int[][] newface = new int[face.length + 2][];
-        for (int i = 0; i < vert.length; i++) {
-            newvert[i] = vert[i];
-        }
+        System.arraycopy(vert, 0, newvert, 0, vert.length);
         newvert[vert.length] = mesh.new Vertex(v);
         for (int i = 0; i < face.length; i++) {
             newface[i] = new int[]{face[i].v1, face[i].v2, face[i].v3};

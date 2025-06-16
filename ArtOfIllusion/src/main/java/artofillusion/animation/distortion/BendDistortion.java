@@ -1,4 +1,5 @@
 /* Copyright (C) 2002-2012 by Peter Eastman
+   Changes copyright (C) 2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -106,7 +107,8 @@ public class BendDistortion extends Distortion {
         }
 
         // Find the range along the appropriate axis.
-        double min = Double.MAX_VALUE, max = Double.MIN_VALUE;
+        double min = Double.MAX_VALUE;
+        double max = Double.MIN_VALUE;
         for (int i = 0; i < newvert.length; i++) {
             double value;
             if (axis == X_AXIS) {

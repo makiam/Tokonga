@@ -1,5 +1,6 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
    Additions copyright (C) 2017 by Petri Ihalainen
+   Changes copyright (C) 2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +19,9 @@ import java.io.*;
  */
 public class Vec3 {
 
-    public double x, y, z;
+    public double x;
+    public double y;
+    public double z;
 
     /**
      * Create a new Vec3 whose x, y, and z components are all equal to 0.0.
@@ -29,10 +32,10 @@ public class Vec3 {
     /**
      * Create a new Vec3 with the specified x, y, and z components.
      */
-    public Vec3(double xval, double yval, double zval) {
-        x = xval;
-        y = yval;
-        z = zval;
+    public Vec3(double xVal, double yVal, double zvVal) {
+        x = xVal;
+        y = yVal;
+        z = zvVal;
     }
 
     /**

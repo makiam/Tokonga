@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2007 by Peter Eastman
-   Changes copyright (C) 2022 by Maksim Khramov
+   Changes copyright (C) 2022-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -26,8 +26,8 @@ public class MoveUVViewTool extends EditingTool {
 
     private Point clickPoint;
     private boolean controlDown;
-    private double minu, maxu, minv, maxv;
-    private int vwidth, vheight;
+    private double minU, maxU, minV, maxV;
+    private int vWidth, vHeight;
 
     public MoveUVViewTool(EditingWindow fr) {
         super(fr);
@@ -40,14 +40,14 @@ public class MoveUVViewTool extends EditingTool {
         controlDown = e.isControlDown();
         clickPoint = e.getPoint();
 
-        minu = uvview.getMinU();
-        maxu = uvview.getMaxU();
-        minv = uvview.getMinV();
-        maxv = uvview.getMaxV();
+        minU = uvview.getMinU();
+        maxU = uvview.getMaxU();
+        minV = uvview.getMinV();
+        maxV = uvview.getMaxV();
 
         Rectangle d = uvview.getBounds();
-        vwidth = d.width;
-        vheight = d.height;
+        vWidth = d.width;
+        vHeight = d.height;
     }
 
     @Override
@@ -60,13 +60,13 @@ public class MoveUVViewTool extends EditingTool {
         dy = dragPoint.y - clickPoint.y;
         if (controlDown) {
             double factor = Math.pow(1.01, dy);
-            double midu = (minu + maxu) / 2;
-            double midv = (minv + maxv) / 2;
+            double midu = (minU + maxU) / 2;
+            double midv = (minV + maxV) / 2;
 
-            double newminu = ((minu - midu) / factor) + midu;
-            double newmaxu = ((maxu - midu) / factor) + midu;
-            double newminv = ((minv - midv) / factor) + midv;
-            double newmaxv = ((maxv - midv) / factor) + midv;
+            double newminu = ((minU - midu) / factor) + midu;
+            double newmaxu = ((maxU - midu) / factor) + midu;
+            double newminv = ((minV - midv) / factor) + midv;
+            double newmaxv = ((maxV - midv) / factor) + midv;
 
             uvview.setParameters(newminu, newmaxu, newminv, newmaxv);
         } else {
@@ -77,9 +77,9 @@ public class MoveUVViewTool extends EditingTool {
                     dx = 0;
                 }
             }
-            double du = (minu - maxu) * dx / vwidth;
-            double dv = (maxv - minv) * dy / vheight;
-            uvview.setParameters(minu + du, maxu + du, minv + dv, maxv + dv);
+            double du = (minU - maxU) * dx / vWidth;
+            double dv = (maxV - minV) * dy / vHeight;
+            uvview.setParameters(minU + du, maxU + du, minV + dv, maxV + dv);
         }
     }
 

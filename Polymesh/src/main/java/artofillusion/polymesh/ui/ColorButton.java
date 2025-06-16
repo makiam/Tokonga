@@ -71,7 +71,7 @@ public class ColorButton extends RowContainer {
         }
     }
 
-    private final static Dimension size = new Dimension(40, 30);
+    private static final Dimension size = new Dimension(40, 30);
 
     final BButton button;
     final ColorWidget colorWidget;

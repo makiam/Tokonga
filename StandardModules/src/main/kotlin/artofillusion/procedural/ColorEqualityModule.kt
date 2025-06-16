@@ -31,6 +31,6 @@ class ColorEqualityModule @JvmOverloads constructor(position: Point? = Point()) 
         if(linkFrom[0] != null) linkFrom[0].getColor(0, colorOne, 0.0)
         if(linkFrom[1] != null) linkFrom[1].getColor(1, colorTwo, 0.0)
 
-        return if(colorOne.equals(colorTwo)) 1.0 else 0.0
+        return if(colorOne == colorTwo) 1.0 else 0.0
     }
 }

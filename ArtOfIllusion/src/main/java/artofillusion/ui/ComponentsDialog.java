@@ -120,13 +120,13 @@ public class ComponentsDialog extends BDialog {
 
     private void buttonOK() {
         ok = true;
-        Optional.ofNullable(okCallback).ifPresent(action -> action.run());
+        Optional.ofNullable(okCallback).ifPresent(Runnable::run);
         dispose();
     }
 
     private void buttonCancel() {
         ok = false;
-        Optional.ofNullable(cancelCallback).ifPresent(action -> action.run());
+        Optional.ofNullable(cancelCallback).ifPresent(Runnable::run);
         dispose();
     }
 

@@ -194,7 +194,9 @@ public class CellsModule extends ProceduralModule<CellsModule> {
             return;
         }
         Vec3 g = gradient[which - 1];
-        double dx = g.x, dy = g.y, dz = g.z;
+        double dx = g.x;
+        double dy = g.y;
+        double dz = g.z;
         if (dx != 0.0) {
             if (linkFrom[0] == null) {
                 g.set(dx, 0.0, 0.0);

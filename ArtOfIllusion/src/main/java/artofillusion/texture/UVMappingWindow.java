@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2012 by Peter Eastman
-   Changes copyright (C) 2023-2024 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -74,27 +74,30 @@ public class UVMappingWindow extends BDialog implements MeshEditController, Edit
         selectedVertices = new boolean[0];
 
         // Find the range of coordinates displayed.
-        double minu = Double.MAX_VALUE, maxu = -Double.MAX_VALUE;
-        double minv = Double.MAX_VALUE, maxv = -Double.MAX_VALUE;
+        double minU = Double.MAX_VALUE;
+        double maxU = -Double.MAX_VALUE;
+        double minV = Double.MAX_VALUE;
+        double maxV = -Double.MAX_VALUE;
         for (Vec2 vec2 : coord) {
-            if (vec2.x < minu) {
-                minu = vec2.x;
+            if (vec2.x < minU) {
+                minU = vec2.x;
             }
-            if (vec2.x > maxu) {
-                maxu = vec2.x;
+            if (vec2.x > maxU) {
+                maxU = vec2.x;
             }
-            if (vec2.y < minv) {
-                minv = vec2.y;
+            if (vec2.y < minV) {
+                minV = vec2.y;
             }
-            if (vec2.y > maxv) {
-                maxv = vec2.y;
+            if (vec2.y > maxV) {
+                maxV = vec2.y;
             }
         }
-        double padu = 0.1 * (maxu - minu), padv = 0.1 * (maxv - minv);
-        minu -= padu;
-        maxu += padu;
-        minv -= padv;
-        maxv += padv;
+        double padU = 0.1 * (maxU - minU);
+        double padV = 0.1 * (maxV - minV);
+        minU -= padU;
+        maxU += padU;
+        minV -= padV;
+        maxV += padV;
 
         // Determine the texture.
         Texture tex = obj.getTexture();
@@ -123,10 +126,11 @@ public class UVMappingWindow extends BDialog implements MeshEditController, Edit
         content.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
         setContent(content);
         BorderContainer mapViewPanel = new BorderContainer();
-        mapViewPanel.add(mapView = new UVMappingViewer((Texture2D) tex, this, minu, maxu, minv, maxv, 0, 1 << (2 - resolution), 0.0, paramVal), BorderContainer.CENTER);
+        mapViewPanel.add(mapView = new UVMappingViewer((Texture2D) tex, this, minU, maxU, minV, maxV, 0, 1 << (2 - resolution), 0.0, paramVal), BorderContainer.CENTER);
         mapView.setPreferredSize(new Dimension(200, 200));
         tools = new ToolPalette(6, 1);
-        EditingTool defaultTool, metaTool;
+        EditingTool defaultTool;
+        EditingTool metaTool;
         mapViewPanel.add(tools, BorderContainer.NORTH);
         tools.setBackground(getBackground());
         tools.addTool(defaultTool = new ReshapeMeshTool(this, mapView.getController()));
@@ -192,14 +196,14 @@ public class UVMappingWindow extends BDialog implements MeshEditController, Edit
         content.add(Translate.label("displayedCoordRange"), 1, 2);
         content.add(row = new RowContainer(), 1, 3);
         row.add(new BLabel("U:"));
-        row.add(minuField = new ValueField(minu, ValueField.NONE, 5));
+        row.add(minuField = new ValueField(minU, ValueField.NONE, 5));
         row.add(Translate.label("to"), new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(0, 5, 0, 5), null));
-        row.add(maxuField = new ValueField(maxu, ValueField.NONE, 5));
+        row.add(maxuField = new ValueField(maxU, ValueField.NONE, 5));
         content.add(row = new RowContainer(), 1, 4);
         row.add(new BLabel("V:"));
-        row.add(minvField = new ValueField(minv, ValueField.NONE, 5));
+        row.add(minvField = new ValueField(minV, ValueField.NONE, 5));
         row.add(Translate.label("to"), new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(0, 5, 0, 5), null));
-        row.add(maxvField = new ValueField(maxv, ValueField.NONE, 5));
+        row.add(maxvField = new ValueField(maxV, ValueField.NONE, 5));
         minuField.addEventLink(ValueChangedEvent.class, this, "rebuildImage");
         minvField.addEventLink(ValueChangedEvent.class, this, "rebuildImage");
         maxuField.addEventLink(ValueChangedEvent.class, this, "rebuildImage");
@@ -564,7 +568,8 @@ public class UVMappingWindow extends BDialog implements MeshEditController, Edit
     public void updateTextFields() {
         boolean[] sel = mapView.getSelection();
         boolean any = false;
-        double u = 0.0, v = 0.0;
+        double u = 0.0;
+        double v = 0.0;
         for (int i = 0; i < sel.length; i++) {
             if (sel[i]) {
                 if (!any) {

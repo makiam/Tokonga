@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
    Modifications copyright (C) 2016-2017 Petri Ihalainen
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -26,7 +26,8 @@ import java.util.List;
  */
 public class CSGEditorWindow extends ObjectEditorWindow {
 
-    private CSGObject oldObject, theObject;
+    private CSGObject oldObject;
+    private CSGObject theObject;
     private BMenuItem undoItem;
     private BMenuItem redoItem;
     private BMenuItem[] objectMenuItem;
@@ -43,7 +44,7 @@ public class CSGEditorWindow extends ObjectEditorWindow {
         theScene = new Scene();
         initialize();
         oldObject = obj;
-        theObject = (CSGObject) obj.duplicate();
+        theObject = obj.duplicate();
         this.onClose = onClose;
         theScene.addObject(obj.getObject1().getObject().duplicate(), obj.getObject1().getCoords().duplicate(), obj.getObject1().getName(), null);
         theScene.addObject(obj.getObject2().getObject().duplicate(), obj.getObject2().getCoords().duplicate(), obj.getObject2().getName(), null);
@@ -57,7 +58,8 @@ public class CSGEditorWindow extends ObjectEditorWindow {
         buttons.add(Translate.button("cancel", event -> doCancel()));
         content.add(buttons, 0, 2, 2, 1, new LayoutInfo());
         content.add(tools = new ToolPalette(1, 5, this), 0, 0);
-        EditingTool metaTool, altTool;
+        EditingTool metaTool;
+        EditingTool altTool;
         tools.addTool(defaultTool = new MoveObjectTool(this));
         tools.addTool(new RotateObjectTool(this));
         tools.addTool(new ScaleObjectTool(this));
@@ -113,7 +115,8 @@ public class CSGEditorWindow extends ObjectEditorWindow {
     }
 
     protected void createViewMenu() {
-        BMenu viewMenu, displayMenu;
+        BMenu viewMenu;
+        BMenu displayMenu;
         viewMenu = Translate.menu("view");
         menubar.add(viewMenu);
         viewMenu.add(displayMenu = Translate.menu("displayMode"));
@@ -250,19 +253,21 @@ public class CSGEditorWindow extends ObjectEditorWindow {
     }
 
     void objectLayoutCommand() {
-        int i;
+
         int[] sel = theScene.getSelection();
         Object3D[] obj = new Object3D[sel.length];
         CoordinateSystem[] coords = new CoordinateSystem[sel.length];
-        Vec3 orig, size;
-        double[] angles, values;
+        Vec3 orig;
+        Vec3 size;
+        double[] angles;
+        double[] values;
 
         if (sel.length == 0) {
             return;
         }
         UndoRecord undo = new UndoRecord(this);
         setUndoRecord(undo);
-        for (i = 0; i < sel.length; i++) {
+        for (int i = 0; i < sel.length; i++) {
             obj[i] = theScene.getObject(sel[i]).getObject();
             coords[i] = theScene.getObject(sel[i]).getCoords();
             undo.addCommand(UndoRecord.COPY_OBJECT, obj[i], obj[i].duplicate());
@@ -309,7 +314,7 @@ public class CSGEditorWindow extends ObjectEditorWindow {
         } else {
             TransformDialog dlg = new TransformDialog(this, Translate.text("objectLayoutTitleMultiple"), false, false);
             values = dlg.getValues();
-            for (i = 0; i < sel.length; i++) {
+            for (int i = 0; i < sel.length; i++) {
                 orig = coords[i].getOrigin();
                 angles = coords[i].getRotationAngles();
                 size = theScene.getObject(sel[i]).getBounds().getSize();
@@ -350,12 +355,13 @@ public class CSGEditorWindow extends ObjectEditorWindow {
     }
 
     void transformObjectCommand() {
-        int i;
+
         int[] sel = theScene.getSelection();
         TransformDialog dlg;
         Object3D obj;
         CoordinateSystem coords;
-        Vec3 orig, size;
+        Vec3 orig;
+        Vec3 size;
         double[] values;
         Mat4 m;
 
@@ -372,7 +378,7 @@ public class CSGEditorWindow extends ObjectEditorWindow {
         values = dlg.getValues();
         UndoRecord undo = new UndoRecord(this);
         setUndoRecord(undo);
-        for (i = 0; i < sel.length; i++) {
+        for (int i = 0; i < sel.length; i++) {
             obj = theScene.getObject(sel[i]).getObject();
             coords = theScene.getObject(sel[i]).getCoords();
             undo.addCommand(UndoRecord.COPY_OBJECT, obj, obj.duplicate());
@@ -415,14 +421,20 @@ public class CSGEditorWindow extends ObjectEditorWindow {
     }
 
     void alignObjectsCommand() {
-        int i;
+
         int[] sel = theScene.getSelection();
         ComponentsDialog dlg;
         Object3D obj;
         CoordinateSystem coords;
-        Vec3 alignTo, orig, center;
-        BComboBox xchoice, ychoice, zchoice;
-        RowContainer px = new RowContainer(), py = new RowContainer(), pz = new RowContainer();
+        Vec3 alignTo;
+        Vec3 orig;
+        Vec3 center;
+        BComboBox xchoice;
+        BComboBox ychoice;
+        BComboBox zchoice;
+        RowContainer px = new RowContainer();
+        RowContainer py = new RowContainer();
+        RowContainer pz = new RowContainer();
         ValueField vfx, vfy, vfz;
         BoundingBox bounds;
 
@@ -466,7 +478,7 @@ public class CSGEditorWindow extends ObjectEditorWindow {
 
         // Determine the position to align the objects to.
         alignTo = new Vec3();
-        for (i = 0; i < sel.length; i++) {
+        for (int i = 0; i < sel.length; i++) {
             obj = theScene.getObject(sel[i]).getObject();
             coords = theScene.getObject(sel[i]).getCoords();
             bounds = obj.getBounds();
@@ -510,7 +522,7 @@ public class CSGEditorWindow extends ObjectEditorWindow {
         alignTo.scale(1.0 / sel.length);
 
         // Now transform all of the objects.
-        for (i = 0; i < sel.length; i++) {
+        for (int i = 0; i < sel.length; i++) {
             obj = theScene.getObject(sel[i]).getObject();
             coords = theScene.getObject(sel[i]).getCoords();
             bounds = obj.getBounds();
@@ -577,7 +589,8 @@ public class CSGEditorWindow extends ObjectEditorWindow {
 
     void convertToTriangleCommand() {
         int[] sel = theScene.getSelection();
-        Object3D obj, mesh;
+        Object3D obj;
+        Object3D mesh;
         ObjectInfo info;
 
         if (sel.length != 1) {

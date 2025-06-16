@@ -21,7 +21,8 @@ import java.awt.*;
 @ProceduralModule.Category("Modules:menu.patterns")
 public class CheckerModule extends ProceduralModule<CheckerModule> {
 
-    boolean valueOk, gradOk;
+    boolean valueOk;
+    boolean gradOk;
     double value, error, lastBlur;
     PointInfo point;
     final Vec3 gradient;
@@ -67,9 +68,13 @@ public class CheckerModule extends ProceduralModule<CheckerModule> {
         double x = (linkFrom[0] == null) ? point.x : linkFrom[0].getAverageValue(linkFromIndex[0], blur);
         double y = (linkFrom[1] == null) ? point.y : linkFrom[1].getAverageValue(linkFromIndex[1], blur);
         double z = (linkFrom[2] == null) ? point.z : linkFrom[2].getAverageValue(linkFromIndex[2], blur);
-        double xi = Math.rint(x), yi = Math.rint(y), zi = Math.rint(z);
+        double xi = Math.rint(x);
+        double yi = Math.rint(y);
+        double zi = Math.rint(z);
         double xf = 0.5 - Math.abs(x - xi), yf = 0.5 - Math.abs(y - yi), zf = 0.5 - Math.abs(z - zi);
-        int i = (int) xi, j = (int) yi, k = (int) zi;
+        int i = (int) xi;
+        int j = (int) yi;
+        int k = (int) zi;
 
         value = ((i + j + k) & 1) == 0 ? 1.0 : 0.0;
         if (xf > xsize && yf > ysize && zf > zsize) {

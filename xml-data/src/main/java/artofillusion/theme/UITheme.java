@@ -17,7 +17,7 @@ public class UITheme {
     @XStreamAlias("selectable")
     private Boolean selectable = true;
 
-    public Boolean isSelectable() { return selectable == null ? true : selectable; }
+    public Boolean isSelectable() { return selectable == null || selectable; }
 
     @XStreamAlias("name")
     private String name;

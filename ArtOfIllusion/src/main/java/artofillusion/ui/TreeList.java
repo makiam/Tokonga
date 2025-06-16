@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2009 by Peter Eastman
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -701,7 +701,8 @@ public class TreeList extends CustomWidget {
         } else if (ev.getClickCount() == 2) {
             Point pos = ev.getPoint();
             pos.y -= yOffset;
-            int row = pos.y / rowHeight, i = pos.x / INDENT_WIDTH;
+            int row = pos.y / rowHeight;
+            int i = pos.x / INDENT_WIDTH;
             if (row >= showing.size()) {
                 return;
             }

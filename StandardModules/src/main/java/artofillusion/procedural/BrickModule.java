@@ -134,7 +134,9 @@ public class BrickModule extends ProceduralModule<BrickModule> {
             gradient.set(0.0, 0.0, 0.0);
             gradOk = true;
         } else {
-            double e1 = (xf - halfgap) / xsize, e2 = (yf - hinv * halfgap) / ysize, e3 = (zf - halfgap) / zsize;
+            double e1 = (xf - halfgap) / xsize;
+            double e2 = (yf - hinv * halfgap) / ysize;
+            double e3 = (zf - halfgap) / zsize;
             double weight;
             if (e1 < e2 && e1 < e3) {
                 weight = 0.5 - 0.5 * e1;
@@ -171,8 +173,12 @@ public class BrickModule extends ProceduralModule<BrickModule> {
             grad.set(gradient);
             return;
         }
-        double dx = gradient.x, dy = gradient.y, dz = gradient.z;
-        if (dx != 0.0) {
+        double dx = gradient.x;
+        double dy = gradient.y;
+        double dz = gradient.z;
+        if (dx == 0.0) {
+            gradient.set(0.0, 0.0, 0.0);
+        } else {
             if (linkFrom[0] == null) {
                 gradient.set(dx, 0.0, 0.0);
             } else {
@@ -181,8 +187,6 @@ public class BrickModule extends ProceduralModule<BrickModule> {
                 gradient.y = dx * grad.y;
                 gradient.z = dx * grad.z;
             }
-        } else {
-            gradient.set(0.0, 0.0, 0.0);
         }
         if (dy != 0.0) {
             if (linkFrom[1] == null) {

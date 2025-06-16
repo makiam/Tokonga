@@ -139,6 +139,7 @@ class ControlledSmoothingDialog extends BDialog {
         ActionListener action = e -> doCancel();
         this.getComponent().getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         this.getComponent().addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 doCancel();
             }

@@ -164,9 +164,9 @@ public class AppearancePreferencesPanelImpl extends javax.swing.JPanel {
 
     private void themeSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_themeSelectorActionPerformed
         String selectedThemeName = themeSelector.getSelectedItem().toString();
-        themes.stream().filter(theme -> theme.getName().equals(selectedThemeName)).findFirst().ifPresent(ft -> {
-            colorSetSelector.setModel(getColorSetModel(ft));
-        });
+        themes.stream().
+                filter(theme -> theme.getName().equals(selectedThemeName)).
+                findFirst().ifPresent(ft -> colorSetSelector.setModel(getColorSetModel(ft)));
     }//GEN-LAST:event_themeSelectorActionPerformed
 
     private void setSelectedColorSet() {

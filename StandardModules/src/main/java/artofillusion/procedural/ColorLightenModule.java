@@ -50,7 +50,7 @@ public class ColorLightenModule extends ProceduralModule<ColorLightenModule> {
             c.copy(color);
             return;
         }
-        float brightness1, brightness2;
+        float brightness1;
         colorOk = true;
         lastBlur = blur;
         if (linkFrom[0] == null) {
@@ -61,6 +61,7 @@ public class ColorLightenModule extends ProceduralModule<ColorLightenModule> {
             brightness1 = color.getBrightness();
         }
 
+        float brightness2;
         if (linkFrom[1] == null) {
             c.setRGB(1.0f, 1.0f, 1.0f);
             brightness2 = 1.0f;

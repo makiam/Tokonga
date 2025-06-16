@@ -1,5 +1,5 @@
 /* Copyright (C) 2007-2008 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -24,28 +24,25 @@ import java.util.*;
 public class CompositingContext {
 
     public Vec3[] tempVec;
-    public TextureSpec surfSpec;
-    public MaterialSpec matSpec;
+    public TextureSpec surfSpec = new TextureSpec();
+    public MaterialSpec matSpec = new MaterialSpec();
     public Camera camera;
-    public RGBColor addColor, multColor, subpixelMult;
-    public RGBColor subpixelColor, totalColor, totalTransparency;
-    public ArrayList<ObjectMaterialInfo> materialStack;
+    public RGBColor addColor = new RGBColor();
+    public RGBColor multColor = new RGBColor();
+    public RGBColor subpixelMult = new RGBColor();
+    public RGBColor subpixelColor = new RGBColor();
+    public RGBColor totalColor = new RGBColor();
+    public RGBColor totalTransparency = new RGBColor();
+    public List<ObjectMaterialInfo> materialStack = new ArrayList<>();
 
     public CompositingContext(Camera camera) {
         this.camera = (camera == null ? null : camera.duplicate());
-        surfSpec = new TextureSpec();
-        matSpec = new MaterialSpec();
+
         tempVec = new Vec3[4];
         for (int i = 0; i < tempVec.length; i++) {
             tempVec[i] = new Vec3();
         }
-        addColor = new RGBColor();
-        multColor = new RGBColor();
-        subpixelMult = new RGBColor();
-        subpixelColor = new RGBColor();
-        totalColor = new RGBColor();
-        totalTransparency = new RGBColor();
-        materialStack = new ArrayList<>();
+
     }
 
     /**

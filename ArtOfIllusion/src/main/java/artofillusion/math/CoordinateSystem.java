@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2003 by Peter Eastman
-   Changes copyright (C) 2024 by Maksim Khramov
+   Changes copyright (C) 2024-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -32,7 +32,7 @@ public class CoordinateSystem {
      * Create a new CoordinateSystem which represents an identity transformation (i.e. no
      * translation or rotation).
      */
-    public CoordinateSystem() {
+    public  CoordinateSystem() {
         this(new Vec3(), Vec3.vz(), Vec3.vy());
     }
 
@@ -92,8 +92,9 @@ public class CoordinateSystem {
      * Determine whether this coordinate system is identical to another one.
      */
     @Override
-    public final boolean equals(Object coords) {
-        CoordinateSystem cs = (CoordinateSystem) coords;
+    public final boolean equals(Object coordinates) {
+        if(!(coordinates instanceof CoordinateSystem)) return false;
+        CoordinateSystem cs = (CoordinateSystem) coordinates;
         return (orig.equals(cs.orig) && zdir.equals(cs.zdir) && updir.equals(cs.updir));
     }
 

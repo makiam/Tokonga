@@ -43,7 +43,7 @@ public final class UndoStack {
     /**
      * Add an UndoRecord to the stack.
      */
-    public void addRecord(UndoRecord record) {
+    public void addRecord(UndoRecord rec) {
         int levels = ArtOfIllusion.getPreferences().getUndoLevels();
         if (levels < 1) {
             levels = 1;
@@ -51,10 +51,10 @@ public final class UndoStack {
         while (undoList.size() >= levels) {
             undoList.removeFirst();
         }
-        undoList.add(record);
+        undoList.add(rec);
         redoList.clear();
-        org.greenrobot.eventbus.EventBus.getDefault().post(new UndoChangedEvent(this, record));
-        record.cacheToDisk();
+        org.greenrobot.eventbus.EventBus.getDefault().post(new UndoChangedEvent(this, rec));
+        rec.cacheToDisk();
     }
 
     /**
@@ -64,9 +64,9 @@ public final class UndoStack {
         if (undoList.isEmpty()) {
             return;
         }
-        UndoRecord record = undoList.removeLast();
-        redoList.add(record.execute());
-        org.greenrobot.eventbus.EventBus.getDefault().post(new UndoChangedEvent(this, record));
+        var last = undoList.removeLast();
+        redoList.add(last.execute());
+        org.greenrobot.eventbus.EventBus.getDefault().post(new UndoChangedEvent(this, last));
     }
 
     /**
@@ -76,9 +76,9 @@ public final class UndoStack {
         if (redoList.isEmpty()) {
             return;
         }
-        UndoRecord record = redoList.removeLast();
-        undoList.add(record.execute());
-        org.greenrobot.eventbus.EventBus.getDefault().post(new UndoChangedEvent(this, record));
+        var last = redoList.removeLast();
+        undoList.add(last.execute());
+        org.greenrobot.eventbus.EventBus.getDefault().post(new UndoChangedEvent(this, last));
     }
 
     public String getRedoName() {

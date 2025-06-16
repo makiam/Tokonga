@@ -21,7 +21,9 @@ import java.awt.*;
 @ProceduralModule.Category("Modules:menu.functions")
 public class GainModule extends ProceduralModule<GainModule> {
 
-    boolean valueOk, errorOk, gradOk;
+    boolean valueOk;
+    boolean errorOk;
+    boolean gradOk;
     double value, error, valueIn, errorIn, gain, power, lastBlur;
     final Vec3 gradient;
 
@@ -68,7 +70,8 @@ public class GainModule extends ProceduralModule<GainModule> {
             errorOk = true;
             return value;
         }
-        double sign, v;
+        double sign;
+        double v;
         if (valueIn < 0.0) {
             v = -valueIn;
             sign = -1.0;

@@ -118,9 +118,8 @@ public class UndoRecord {
     /**
      * Get the list of commands in this record's script.
      */
-    //TODO: Replace with Immutable Collector once migrated to JDK 11
     public List<Integer> getCommands() {
-        return records.stream().map(entry -> entry.getKey()).collect(Collectors.toList());
+        return records.stream().map(Map.Entry::getKey).collect(Collectors.toList());
     }
 
     /**
@@ -161,7 +160,8 @@ public class UndoRecord {
             Object[] d = entry.getValue();
             switch (entry.getKey()) {
                 case COPY_OBJECT: {
-                    Object3D obj1 = (Object3D) d[0], obj2 = (Object3D) d[1];
+                    Object3D obj1 = (Object3D) d[0];
+                    Object3D obj2 = (Object3D) d[1];
                     redoRecord.addCommandAtBeginning(COPY_OBJECT, obj1, obj1.duplicate());
                     obj1.copyObject(obj2);
                     if (view.getScene() != null) {
@@ -176,7 +176,8 @@ public class UndoRecord {
                     break;
                 }
                 case COPY_OBJECT_INFO: {
-                    ObjectInfo info1 = (ObjectInfo) d[0], info2 = (ObjectInfo) d[1];
+                    ObjectInfo info1 = (ObjectInfo) d[0];
+                    ObjectInfo info2 = (ObjectInfo) d[1];
                     redoRecord.addCommandAtBeginning(COPY_OBJECT_INFO, info1, info1.duplicate());
                     info1.copyInfo(info2);
                     break;
@@ -276,7 +277,8 @@ public class UndoRecord {
                     break;
                 }
                 case COPY_SKELETON: {
-                    Skeleton s1 = (Skeleton) d[0], s2 = (Skeleton) d[1];
+                    Skeleton s1 = (Skeleton) d[0];
+                    Skeleton s2 = (Skeleton) d[1];
                     redoRecord.addCommandAtBeginning(COPY_SKELETON, s1, s1.duplicate());
                     s1.copy(s2);
                     break;

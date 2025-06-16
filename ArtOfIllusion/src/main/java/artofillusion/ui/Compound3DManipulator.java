@@ -1,6 +1,6 @@
 /* Copyright (C) 2006-2009 by Francois Guillet and Peter Eastman
    Changes copyright (C) 2020 by Petri Ihalainen
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -44,7 +44,9 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
     private boolean dragging;
     private Point baseClick;
     private Vec3 center;
-    private Vec3 xpos, ypos, zpos;
+    private Vec3 xPos;
+    private Vec3 yPos;
+    private Vec3 zPos;
     private final Vec3[] handlePos;
     private Vec3 dragStartPosition;
     private Vec3 xAxis3D, yAxis3D, zAxis3D;
@@ -56,7 +58,8 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
     private int rotSegment;
     private double rotAngle;
     private Point centerPoint, xPoint, yPoint, zPoint;
-    private double axisLength, orAxisLength;
+    private double axisLength;
+    private double orAxisLength;
     private final RotationHandle[] xyzRotHandles;
     private final RotationHandle[] pqnRotHandles;
     private final RotationHandle[] uvRotationHandle;
@@ -70,9 +73,9 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
     private ViewMode viewMode;
     private boolean rotateAroundSelectionCenter = true;
 
-    public final static ViewMode XYZ_MODE = new ViewMode();
-    public final static ViewMode UV_MODE = new ViewMode();
-    public final static ViewMode PQN_MODE = new ViewMode();
+    public static final ViewMode XYZ_MODE = new ViewMode();
+    public static final ViewMode UV_MODE = new ViewMode();
+    public static final ViewMode PQN_MODE = new ViewMode();
 
     /**
      * @deprecated Redirects to PQN_MODE
@@ -82,16 +85,16 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
 
     private static final int HANDLE_SIZE = 11;
 
-    public final static short X_MOVE_INDEX = 0;
-    public final static short X_SCALE_INDEX = 1;
-    public final static short Y_MOVE_INDEX = 2;
-    public final static short Y_SCALE_INDEX = 3;
-    public final static short Z_MOVE_INDEX = 4;
-    public final static short Z_SCALE_INDEX = 5;
-    public final static short CENTER_INDEX = 6;
-    public final static short ROTATE_INDEX = 7;
-    public final static short TOOL_HANDLE = 8;
-    public final static short UV_EXTRA_INDEX = 9;
+    public static final short X_MOVE_INDEX = 0;
+    public static final short X_SCALE_INDEX = 1;
+    public static final short Y_MOVE_INDEX = 2;
+    public static final short Y_SCALE_INDEX = 3;
+    public static final short Z_MOVE_INDEX = 4;
+    public static final short Z_SCALE_INDEX = 5;
+    public static final short CENTER_INDEX = 6;
+    public static final short ROTATE_INDEX = 7;
+    public static final short TOOL_HANDLE = 8;
+    public static final short UV_EXTRA_INDEX = 9;
 
     public static final Axis X = new Axis("x");
     public static final Axis Y = new Axis("y");
@@ -341,9 +344,9 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
         xAxis3D = xDir3D.times(len);
         yAxis3D = yDir3D.times(len);
         zAxis3D = zDir3D.times(len);
-        xpos = center.plus(xAxis3D);
-        ypos = center.plus(yAxis3D);
-        zpos = center.plus(zAxis3D);
+        xPos = center.plus(xAxis3D);
+        yPos = center.plus(yAxis3D);
+        zPos = center.plus(zAxis3D);
         Vec3 xMovePos = handlePos[X_MOVE_INDEX] = center.plus(xDir3D.times(len + handleSize));
         Vec3 yMovePos = handlePos[Y_MOVE_INDEX] = center.plus(yDir3D.times(len + handleSize));
         Vec3 zMovePos = handlePos[Z_MOVE_INDEX] = center.plus(zDir3D.times(len + handleSize));
@@ -359,9 +362,9 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
         Vec2 yScalePos2D = worldToScreen.timesXY(yScalePos);
         Vec2 zScalePos2D = worldToScreen.timesXY(zScalePos);
         Vec2 center2D = worldToScreen.timesXY(center);
-        Vec2 xPos2D = worldToScreen.timesXY(xpos);
-        Vec2 yPos2D = worldToScreen.timesXY(ypos);
-        Vec2 zPos2D = worldToScreen.timesXY(zpos);
+        Vec2 xPos2D = worldToScreen.timesXY(xPos);
+        Vec2 yPos2D = worldToScreen.timesXY(yPos);
+        Vec2 zPos2D = worldToScreen.timesXY(zPos);
 
         // The 'worldToScreen' from the 3D-direction vectors produces 2D-vectors
         // with all-positive elements (!?!?). Hence the subtraction of Vec2s.
@@ -509,7 +512,10 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
             int[][] order = drawingOrder(view);
             Color handleColor;
             Vec2[] handlePoint;
-            int handle, quadrant, start, k0;
+            int handle;
+            int quadrant;
+            int start;
+            int k0;
             quadrant = activeRotationHandleSet[0].segments / 4; // Assume they all have the same amount of segments
 
             for (int majOrdNum = 0; majOrdNum < order[0].length; majOrdNum++) {
@@ -609,9 +615,9 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
         refDepth = new double[16];
 
         fromCamera[0] = center.minus(camOrg);
-        fromCamera[1] = xpos.minus(camOrg);
-        fromCamera[2] = ypos.minus(camOrg);
-        fromCamera[3] = zpos.minus(camOrg);
+        fromCamera[1] = xPos.minus(camOrg);
+        fromCamera[2] = yPos.minus(camOrg);
+        fromCamera[3] = zPos.minus(camOrg);
         fromCamera[4] = center.plus(yAxis3D).plus(zAxis3D).minus(camOrg);
         fromCamera[5] = center.minus(yAxis3D).plus(zAxis3D).minus(camOrg);
         fromCamera[6] = center.minus(yAxis3D).minus(zAxis3D).minus(camOrg);
@@ -970,7 +976,8 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
         protected final Color color;
         protected final Vec3[] points3d;
         protected final Vec2[] points2d;
-        protected Vec3 rotAxis, refAxis;
+        protected Vec3 rotAxis;
+        protected Vec3 refAxis;
 
         /**
          * Creates a Rotation Handle with a given number of segments
@@ -1208,7 +1215,9 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
          */
         @Getter
         private final Mat4 transform;
-        private double angle, scale1, scale2;
+        private double angle;
+        private double scale1;
+        private double scale2;
 
         /**
          * Create a HandleDraggedEvent for a MOVE drag.

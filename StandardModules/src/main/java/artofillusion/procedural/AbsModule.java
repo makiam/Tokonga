@@ -21,7 +21,8 @@ import java.awt.*;
 @ProceduralModule.Category("Modules:menu.functions")
 public class AbsModule extends ProceduralModule<AbsModule> {
 
-    private boolean signOk, positive;
+    private boolean signOk;
+    private boolean positive;
     private double lastBlur;
 
     public AbsModule() {

@@ -25,7 +25,8 @@ import java.io.*;
 @ProceduralModule.Category("Modules:menu.functions")
 public class ClipModule extends ProceduralModule<ClipModule> {
 
-    double min, max;
+    double min;
+    double max;
 
     public ClipModule() {
         this(new Point());

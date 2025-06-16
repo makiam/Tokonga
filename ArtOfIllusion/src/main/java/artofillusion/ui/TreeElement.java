@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2008 by Peter Eastman
- * Changes copyright (C) 2017 by Maksim Khramov
+ * Changes copyright (C) 2017-2025 by Maksim Khramov
  * 
  * This program is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -22,7 +22,9 @@ import java.util.List;
  */
 public abstract class TreeElement implements TreeNode {
 
-    protected boolean selected, expanded, selectable = true;
+    protected boolean selected;
+    protected boolean expanded;
+    protected boolean selectable = true;
     protected List<TreeElement> children;
     protected TreeElement parent;
     protected TreeList tree;

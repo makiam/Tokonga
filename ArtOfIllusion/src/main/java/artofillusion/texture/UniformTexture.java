@@ -26,8 +26,10 @@ import java.io.*;
 @ImplementationVersion(current = 1)
 public class UniformTexture extends Texture {
 
-    public RGBColor diffuseColor, specularColor, transparentColor, emissiveColor;
-    public double roughness, cloudiness;
+    public RGBColor diffuseColor, specularColor, transparentColor;
+    public RGBColor emissiveColor = new RGBColor();
+    public double roughness;
+    public double cloudiness;
     public float transparency, specularity, shininess;
 
     public UniformTexture() {
@@ -36,7 +38,7 @@ public class UniformTexture extends Texture {
         diffuseColor = new RGBColor(1.0f, 1.0f, 1.0f);
         specularColor = new RGBColor(1.0f, 1.0f, 1.0f);
         transparentColor = new RGBColor(1.0f, 1.0f, 1.0f);
-        emissiveColor = new RGBColor(0.0f, 0.0f, 0.0f);
+
         transparency = 0.0f;
         specularity = 0.0f;
         shininess = 0.0f;

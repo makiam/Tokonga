@@ -50,7 +50,8 @@ public class ColorDarkenModule extends ProceduralModule<ColorDarkenModule> {
             c.copy(color);
             return;
         }
-        float brightness1, brightness2;
+        float brightness1;
+        float brightness2;
         colorOk = true;
         lastBlur = blur;
         if (linkFrom[0] == null) {

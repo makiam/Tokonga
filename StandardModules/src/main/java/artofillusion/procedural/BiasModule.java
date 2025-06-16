@@ -21,7 +21,9 @@ import java.awt.*;
 @ProceduralModule.Category("Modules:menu.functions")
 public class BiasModule extends ProceduralModule<BiasModule> {
 
-    boolean valueOk, errorOk, gradOk;
+    boolean valueOk;
+    boolean errorOk;
+    boolean gradOk;
     double value, error, valueIn, errorIn, power, lastBlur;
     final Vec3 gradient;
 
@@ -62,12 +64,12 @@ public class BiasModule extends ProceduralModule<BiasModule> {
         valueIn = linkFrom[1].getAverageValue(linkFromIndex[1], blur);
         errorIn = linkFrom[1].getValueError(linkFromIndex[1], blur);
         if (bias <= 0.0) {
-            bias = 0.0;
+
             value = error = 0.0;
             return value;
         }
         if (bias >= 1.0) {
-            bias = 1.0;
+
             value = 1.0;
             error = 0.0;
             return value;
