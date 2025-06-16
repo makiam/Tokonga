@@ -21,7 +21,10 @@ import java.awt.*;
 @ProceduralModule.Category("Modules:menu.operators")
 public class CompareModule extends ProceduralModule<ColorSumModule> {
 
-    double value, error, deriv, lastBlur;
+    double value;
+    double error;
+    double deriv;
+    double lastBlur;
     boolean valueOk, gradOk;
     final Vec3 gradient;
 
@@ -56,8 +59,10 @@ public class CompareModule extends ProceduralModule<ColorSumModule> {
         double value2 = (linkFrom[1] == null) ? 0.0 : linkFrom[1].getAverageValue(linkFromIndex[1], blur);
         double error1 = (linkFrom[0] == null) ? 0.0 : linkFrom[0].getValueError(linkFromIndex[0], blur);
         double error2 = (linkFrom[1] == null) ? 0.0 : linkFrom[1].getValueError(linkFromIndex[1], blur);
-        double min1 = value1 - error1, max1 = value1 + error1;
-        double min2 = value2 - error2, max2 = value2 + error2;
+        double min1 = value1 - error1;
+        double max1 = value1 + error1;
+        double min2 = value2 - error2;
+        double max2 = value2 + error2;
 
         if (error1 == 0.0 && error2 == 0.0) {
             value = (value1 > value2 ? 1.0 : 0.0);
