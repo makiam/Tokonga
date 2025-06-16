@@ -20,7 +20,9 @@ import java.awt.*;
 @ProceduralModule.Category("Modules:menu.functions")
 public class ExpModule extends ProceduralModule<ExpModule> {
 
-    boolean valueOk, errorOk, gradOk;
+    boolean valueOk;
+    boolean errorOk;
+    boolean gradOk;
     double value, error, valueIn, errorIn, lastBlur;
     final Vec3 gradient;
 
@@ -29,8 +31,8 @@ public class ExpModule extends ProceduralModule<ExpModule> {
     }
 
     public ExpModule(Point position) {
-        super("Exp", new IOPort[]{new NumericInputPort(IOPort.LEFT, new String[]{"Value", "(1)"})},
-                new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, new String[]{"Exponential"})},
+        super("Exp", new IOPort[]{new NumericInputPort(IOPort.LEFT, "Value", "(1)")},
+                new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Exponential")},
                 position);
         gradient = new Vec3();
     }

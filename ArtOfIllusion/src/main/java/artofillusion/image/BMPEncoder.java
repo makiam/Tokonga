@@ -126,8 +126,9 @@ public class BMPEncoder {
      * Writes the actual image data.
      */
     private void writeImageData(DataOutputStream out) throws IOException {
-        int start, end;
-        int[] padbytes = new int[linePad];
+        int start;
+        int end;
+        int[] padBytes = new int[linePad];
 
         for (int l = height - 1; l >= 0; --l) {
             start = l * width;
@@ -138,7 +139,7 @@ public class BMPEncoder {
                 out.writeByte((data[i] >> 8) & 0xFF);  // G
                 out.writeByte((data[i] >> 16) & 0xFF);  // R
             }
-            writeIA(out, padbytes);
+            writeIA(out, padBytes);
         }
     }
 
