@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2004 by Peter Eastman
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -124,7 +124,7 @@ public class UniformMapping extends TextureMapping {
         return row;
     }
 
-    public UniformMapping(DataInputStream in, Object3D theObject, Texture theTexture) throws IOException, InvalidObjectException {
+    public UniformMapping(DataInputStream in, Object3D theObject, Texture theTexture) throws IOException {
         short version = in.readShort();
 
         if (version < 0 || version > 1) {

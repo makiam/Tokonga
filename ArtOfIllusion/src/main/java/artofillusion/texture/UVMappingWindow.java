@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2012 by Peter Eastman
-   Changes copyright (C) 2023-2024 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -564,7 +564,8 @@ public class UVMappingWindow extends BDialog implements MeshEditController, Edit
     public void updateTextFields() {
         boolean[] sel = mapView.getSelection();
         boolean any = false;
-        double u = 0.0, v = 0.0;
+        double u = 0.0;
+        double v = 0.0;
         for (int i = 0; i < sel.length; i++) {
             if (sel[i]) {
                 if (!any) {

@@ -215,7 +215,8 @@ public class VRMLExporter {
         Vec3 orig = coords.getOrigin(), size = info.getBounds().getSize(), axis = new Vec3(0.0, 0.0, 0.0);
         double[] rot = new double[4];
         double ratio = 0.0;
-        double[] pos = new double[3], scale = new double[3];
+        double[] pos = new double[3];
+        double[] scale = new double[3];
         String name = translate(info.getName(), 0, 1, matchId, replace) + translate(info.getName(), 1, -1, matchId, replace);
         if (name.length() > 0 && illegalFirst.indexOf(name.charAt(0)) > 0) {
             name = '_' + name;
@@ -687,8 +688,7 @@ public class VRMLExporter {
             replace = "";
         }
 
-        boolean copy = (match.length() != 0
-                && match.length() >= replace.length());
+        boolean copy = (!match.isEmpty() && match.length() >= replace.length());
 
         // loop over the input string
         int max = first + count;

@@ -55,7 +55,8 @@ public class BlendModule extends ProceduralModule<BlendModule> {
         lastBlur = blur;
         double fract = (linkFrom[2] == null) ? 0.5 : linkFrom[2].getAverageValue(linkFromIndex[2], blur);
         double error = (linkFrom[2] == null) ? 0.0 : linkFrom[2].getValueError(linkFromIndex[2], blur);
-        double min = fract - error, max = fract + error;
+        double min = fract - error;
+        double max = fract + error;
         if (min < 1.0 && max > 0.0) {
             if (min < 0.0 || max > 1.0) {
                 fract = 0.0;

@@ -1,5 +1,5 @@
 /* Copyright (C) 2016-2019 by Petri Ihalainen
-   Changes copyright (C) 2020-2024 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -36,9 +36,12 @@ public class ViewAnimation {
     final double displayFrq = ArtOfIllusion.getPreferences().getAnimationFrameRate();  //Hz
     final double interval = 1.0 / displayFrq; //
     final int timerInterval = (int) (interval * 1000);
-    int steps = 0, step = 1;
+    int steps = 0;
+    int step = 1;
 
-    CoordinateSystem startCoords, endCoords, aniCoords;
+    CoordinateSystem startCoords;
+    CoordinateSystem endCoords;
+    CoordinateSystem aniCoords;
     Vec3 endRotationCenter, rotStart, rotAni, aniZ, aniOrigin;
     final ViewerCanvas view;
     Camera camera;
@@ -56,7 +59,8 @@ public class ViewAnimation {
     final double distSlope = .1;
     final double perspSlope = 3.0;
 
-  int endOrientation, endNavigation;
+    int endOrientation;
+    int endNavigation;
     boolean endPerspective, changingPerspective, animatingMove;
     final int viewH;
     final int viewW;
@@ -278,7 +282,7 @@ public class ViewAnimation {
             angleMax = Math.abs(endAngles[2] - startAngles[2]);
         }
 
-        timeRot = maxDuration * ((1.0 - 1.0 / (1.0 + angleMax / 180.0 * rotSlope)));
+        timeRot = maxDuration * (1.0 - 1.0 / (1.0 + angleMax / 180.0 * rotSlope));
 
         timeScale = 0.0;
         if (endScale > startScale) {
