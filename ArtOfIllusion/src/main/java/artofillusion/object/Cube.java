@@ -29,9 +29,9 @@ import static artofillusion.object.Mesh.NO_SMOOTHING;
  */
 public class Cube extends Object3D {
 
-    double halfx;
-    double halfy;
-    double halfz;
+    private double halfX;
+    private double halfY;
+    private double halfZ;
     BoundingBox bounds;
     RenderingMesh cachedMesh;
     WireframeMesh cachedWire;
@@ -46,16 +46,16 @@ public class Cube extends Object3D {
         this(1.0, 1.0, 1.0);
     }
     
-    public Cube(double xsize, double ysize, double zsize) {
-        halfx = xsize / 2.0;
-        halfy = ysize / 2.0;
-        halfz = zsize / 2.0;
-        bounds = new BoundingBox(-halfx, halfx, -halfy, halfy, -halfz, halfz);
+    public Cube(double xSize, double ySize, double zSize) {
+        halfX = xSize / 2.0;
+        halfY = ySize / 2.0;
+        halfZ = zSize / 2.0;
+        bounds = new BoundingBox(-halfX, halfX, -halfY, halfY, -halfZ, halfZ);
     }
 
     @Override
     public Cube duplicate() {
-        Cube obj = new Cube(halfx * 2.0, halfy * 2.0, halfz * 2.0);
+        Cube obj = new Cube(halfX * 2.0, halfY * 2.0, halfZ * 2.0);
         obj.copyTextureAndMaterial(this);
         return obj;
     }
@@ -78,10 +78,10 @@ public class Cube extends Object3D {
 
     @Override
     public void setSize(double xsize, double ysize, double zsize) {
-        halfx = xsize / 2.0;
-        halfy = ysize / 2.0;
-        halfz = zsize / 2.0;
-        bounds = new BoundingBox(-halfx, halfx, -halfy, halfy, -halfz, halfz);
+        halfX = xsize / 2.0;
+        halfY = ysize / 2.0;
+        halfZ = zsize / 2.0;
+        bounds = new BoundingBox(-halfX, halfX, -halfY, halfY, -halfZ, halfZ);
         cachedMesh = null;
         cachedWire = null;
     }
@@ -107,12 +107,12 @@ public class Cube extends Object3D {
             v[i] = new Vec3();
         }
 
-        v[0].x = v[3].x = v[4].x = v[7].x = v[11].x = -halfx;
-        v[1].x = v[2].x = v[5].x = v[6].x = v[9].x = halfx;
-        v[0].y = v[1].y = v[2].y = v[3].y = v[12].y = -halfy;
-        v[4].y = v[5].y = v[6].y = v[7].y = v[13].y = halfy;
-        v[2].z = v[3].z = v[6].z = v[7].z = v[10].z = -halfz;
-        v[0].z = v[1].z = v[4].z = v[5].z = v[8].z = halfz;
+        v[0].x = v[3].x = v[4].x = v[7].x = v[11].x = -halfX;
+        v[1].x = v[2].x = v[5].x = v[6].x = v[9].x = halfX;
+        v[0].y = v[1].y = v[2].y = v[3].y = v[12].y = -halfY;
+        v[4].y = v[5].y = v[6].y = v[7].y = v[13].y = halfY;
+        v[2].z = v[3].z = v[6].z = v[7].z = v[10].z = -halfZ;
+        v[0].z = v[1].z = v[4].z = v[5].z = v[8].z = halfZ;
         mesh = new TriangleMesh(v, faces);
         mesh.setSmoothingMethod(NO_SMOOTHING);
         mesh.copyTextureAndMaterial(this);
@@ -122,7 +122,8 @@ public class Cube extends Object3D {
     @Override
     public WireframeMesh getWireframeMesh() {
         Vec3[] vert;
-        int[] from, to;
+        int[] from;
+        int[] to;
 
         if (cachedWire != null) {
             return cachedWire;
@@ -130,12 +131,13 @@ public class Cube extends Object3D {
         vert = bounds.getCorners();
         from = new int[]{0, 2, 3, 1, 4, 6, 7, 5, 0, 1, 2, 3};
         to = new int[]{2, 3, 1, 0, 6, 7, 5, 4, 4, 5, 6, 7};
-        return (cachedWire = new WireframeMesh(vert, from, to));
+        return cachedWire = new WireframeMesh(vert, from, to);
     }
 
     @Override
     public RenderingMesh getRenderingMesh(double tol, boolean interactive, ObjectInfo info) {
-        Vec3[] vert, norm;
+        Vec3[] vert;
+        Vec3[] norm;
         RenderingTriangle[] tri;
 
         if (interactive && cachedMesh != null) {
@@ -191,9 +193,9 @@ public class Cube extends Object3D {
     /* Allow the user to edit the cube's shape. */
     @Override
     public void edit(EditingWindow parent, ObjectInfo info, Runnable cb) {
-        ValueField xField = new ValueField(2.0 * halfx, ValueField.NONNEGATIVE, 5);
-        ValueField yField = new ValueField(2.0 * halfy, ValueField.NONNEGATIVE, 5);
-        ValueField zField = new ValueField(2.0 * halfz, ValueField.NONNEGATIVE, 5);
+        ValueField xField = new ValueField(2.0 * halfX, ValueField.NONNEGATIVE, 5);
+        ValueField yField = new ValueField(2.0 * halfY, ValueField.NONNEGATIVE, 5);
+        ValueField zField = new ValueField(2.0 * halfZ, ValueField.NONNEGATIVE, 5);
         ComponentsDialog dlg = new ComponentsDialog(
                 parent.getFrame(), Translate.text("editCubeTitle"),
                 new Widget[]{xField, yField, zField},
@@ -209,17 +211,17 @@ public class Cube extends Object3D {
     /* The following two methods are used for reading and writing files.  The first is a
      constructor which reads the necessary data from an input stream.  The other writes
      the object's representation to an output stream. */
-    public Cube(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+    public Cube(DataInputStream in, Scene theScene) throws IOException {
         super(in, theScene);
 
         short version = in.readShort();
         if (version != 0) {
             throw new InvalidObjectException("");
         }
-        halfx = in.readDouble();
-        halfy = in.readDouble();
-        halfz = in.readDouble();
-        bounds = new BoundingBox(-halfx, halfx, -halfy, halfy, -halfz, halfz);
+        halfX = in.readDouble();
+        halfY = in.readDouble();
+        halfZ = in.readDouble();
+        bounds = new BoundingBox(-halfX, halfX, -halfY, halfY, -halfZ, halfZ);
     }
 
     @Override
@@ -227,9 +229,9 @@ public class Cube extends Object3D {
         super.writeToFile(out, theScene);
 
         out.writeShort(0);
-        out.writeDouble(halfx);
-        out.writeDouble(halfy);
-        out.writeDouble(halfz);
+        out.writeDouble(halfX);
+        out.writeDouble(halfY);
+        out.writeDouble(halfZ);
     }
 
     @Override
@@ -241,11 +243,11 @@ public class Cube extends Object3D {
     public Object getPropertyValue(int index) {
         switch (index) {
             case 0:
-                return 2.0 * halfx;
+                return 2.0 * halfX;
             case 1:
-                return 2.0 * halfy;
+                return 2.0 * halfY;
             case 2:
-                return 2.0 * halfz;
+                return 2.0 * halfZ;
             default:
                 return null;
         }
@@ -255,18 +257,18 @@ public class Cube extends Object3D {
     public void setPropertyValue(int index, Object value) {
         double val = ((Double) value);
         if (index == 0) {
-            setSize(val, 2.0 * halfy, 2.0 * halfz);
+            setSize(val, 2.0 * halfY, 2.0 * halfZ);
         } else if (index == 1) {
-            setSize(2.0 * halfx, val, 2.0 * halfz);
+            setSize(2.0 * halfX, val, 2.0 * halfZ);
         } else if (index == 2) {
-            setSize(2.0 * halfx, 2.0 * halfy, val);
+            setSize(2.0 * halfX, 2.0 * halfY, val);
         }
     }
 
     /* Return a Keyframe which describes the current pose of this object. */
     @Override
     public Keyframe getPoseKeyframe() {
-        return new VectorKeyframe(2.0 * halfx, 2.0 * halfy, 2.0 * halfz);
+        return new VectorKeyframe(2.0 * halfX, 2.0 * halfY, 2.0 * halfZ);
     }
 
     /* Modify this object based on a pose keyframe. */
@@ -284,7 +286,7 @@ public class Cube extends Object3D {
     @Override
     public void configurePoseTrack(PoseTrack track) {
         track.setGraphableValues(new String[]{"X Size", "Y Size", "Z Size"},
-                new double[]{2.0 * halfx, 2.0 * halfy, 2.0 * halfz},
+                new double[]{2.0 * halfX, 2.0 * halfY, 2.0 * halfZ},
                 new double[][]{{0.0, Double.MAX_VALUE},
                 {0.0, Double.MAX_VALUE},
                 {0.0, Double.MAX_VALUE}});
