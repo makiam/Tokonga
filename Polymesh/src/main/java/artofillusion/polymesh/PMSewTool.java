@@ -61,10 +61,10 @@ public class PMSewTool extends EditingTool {
             for (int i = 0; i < pr.length; ++i) {
                 pr[i] = v[i].r;
             }
-            if (!(controller.getSelectionMode() == PolyMeshEditorWindow.EDGE_MODE)) {
-                controller.setSelectionMode(PolyMeshEditorWindow.EDGE_MODE);
-            } else {
+            if (controller.getSelectionMode() == PolyMeshEditorWindow.EDGE_MODE) {
                 selection = controller.getSelection();
+            } else {
+                controller.setSelectionMode(PolyMeshEditorWindow.EDGE_MODE);
             }
             int[] projectedEdge = null;
             if (controller instanceof PolyMeshEditorWindow) {
@@ -167,7 +167,7 @@ public class PMSewTool extends EditingTool {
         } else {
             if (sewEdges[0] >= 0) {
                 minDist = Double.MAX_VALUE;
-                double z;
+
                 for (int i = 0; i < edges.length / 2; i++) {
                     if (edges[i].face != -1 && edges[edges[i].hedge].face != -1) {
                         continue;

@@ -65,16 +65,14 @@ public class MeshPropertiesDialogAction {
         propertiesPanel.add(selectedFaceColorButton, 1, 8, widgetLayout);
         propertiesPanel.add(handleSpinner, 1, 9, widgetLayout);
 
-        IntStream.range(1, propertiesPanel.getChildCount()).forEach(index -> {
-            propertiesPanel.getChild(index).setEnabled(useCustomColors.getState());
-        });
+        IntStream.range(1, propertiesPanel.getChildCount()).forEach(index ->
+            propertiesPanel.getChild(index).setEnabled(useCustomColors.getState())
+        );
 
         useCustomColors.addEventLink(ValueChangedEvent.class, new Object() {
             void processEvent(ValueChangedEvent event) {
                 final Boolean state = ((BCheckBox) event.getWidget()).getState();
-                IntStream.range(1, propertiesPanel.getChildCount()).forEach(index -> {
-                    propertiesPanel.getChild(index).setEnabled(state);
-                });
+                IntStream.range(1, propertiesPanel.getChildCount()).forEach(index -> propertiesPanel.getChild(index).setEnabled(state));
             }
         });
 

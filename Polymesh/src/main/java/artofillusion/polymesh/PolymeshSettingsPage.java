@@ -28,6 +28,7 @@ public class PolymeshSettingsPage implements PreferencesEditor {
 
     @Override
     public void savePreferences() {
+        //Not yet implemented options for Polymesh
 
     }
 

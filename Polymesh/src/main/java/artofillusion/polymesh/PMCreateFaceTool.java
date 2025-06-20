@@ -148,7 +148,7 @@ public class PMCreateFaceTool extends EditingTool {
                     theWindow.updateImage();
                     break;
                 case KeyPressedEvent.VK_W:
-                    if (clickPoints.size() > 0) {
+                    if (!clickPoints.isEmpty()) {
                         clickPoints.remove(clickPoints.size() - 1);
                     }
                     theWindow.updateImage();
