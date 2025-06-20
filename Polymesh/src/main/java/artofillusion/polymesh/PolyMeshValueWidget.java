@@ -55,7 +55,8 @@ public class PolyMeshValueWidget extends BorderContainer {
         void prepareToShowValueWidget();
     }
 
-    private BButton validateButton, abortButton;
+    private BButton validateButton;
+    private BButton abortButton;
     private BSlider valueSlider;
     private BSpinner minSpinner;
     private BSpinner maxSpinner;

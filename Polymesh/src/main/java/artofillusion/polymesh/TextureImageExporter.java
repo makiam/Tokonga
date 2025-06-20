@@ -1,5 +1,5 @@
 /* Copyright (C) 2003 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
  This program is free software; you can redistribute it and/or modify it under the
  terms of the GNU General Public License as published by the Free Software
@@ -29,6 +29,10 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Map;
+
+import static artofillusion.texture.Texture.*;
+import static artofillusion.texture.Texture.EMISSIVE_COLOR_COMPONENT;
+import static artofillusion.texture.Texture.TRANSPARENT_COLOR_COMPONENT;
 
 /**
  * This class can be used by various other exporters. It collects information about the
@@ -191,19 +195,19 @@ public class TextureImageExporter {
     public void saveImages() throws IOException, InterruptedException {
         for (TextureImageInfo info : textureTable.values()) {
             if ((components & DIFFUSE) != 0) {
-                writeComponentImage(info, Texture2D.DIFFUSE_COLOR_COMPONENT, info.diffuseFilename);
+                writeComponentImage(info, DIFFUSE_COLOR_COMPONENT, info.diffuseFilename);
             }
             if ((components & SPECULAR) != 0) {
-                writeComponentImage(info, Texture2D.SPECULAR_COLOR_COMPONENT, info.specularFilename);
+                writeComponentImage(info, SPECULAR_COLOR_COMPONENT, info.specularFilename);
             }
             if ((components & HILIGHT) != 0) {
-                writeComponentImage(info, Texture2D.HILIGHT_COLOR_COMPONENT, info.hilightFilename);
+                writeComponentImage(info, HILIGHT_COLOR_COMPONENT, info.hilightFilename);
             }
             if ((components & TRANSPARENT) != 0) {
-                writeComponentImage(info, Texture2D.TRANSPARENT_COLOR_COMPONENT, info.transparentFilename);
+                writeComponentImage(info, TRANSPARENT_COLOR_COMPONENT, info.transparentFilename);
             }
             if ((components & EMISSIVE) != 0) {
-                writeComponentImage(info, Texture2D.EMISSIVE_COLOR_COMPONENT, info.emissiveFilename);
+                writeComponentImage(info, EMISSIVE_COLOR_COMPONENT, info.emissiveFilename);
             }
         }
     }

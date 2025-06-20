@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2007 by Francois Guillet
- *  Changes copyright 2023 by Maksim Khramov
+ *  Changes copyright 2023-2025 by Maksim Khramov
  *
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
@@ -61,8 +61,7 @@ public class UnfoldedMesh {
             return v;
         }
 
-        public void writeToFile(DataOutputStream out)
-                throws IOException {
+        public void writeToFile(DataOutputStream out) throws IOException {
             out.writeShort(0);
             out.writeInt(edge);
             out.writeInt(id);
@@ -195,8 +194,7 @@ public class UnfoldedMesh {
             out.writeInt(id);
         }
 
-        public UnfoldedFace(DataInputStream in) throws IOException,
-                InvalidObjectException {
+        public UnfoldedFace(DataInputStream in) throws IOException {
             short version = in.readShort();
             if (version < 0 || version > 0) {
                 throw new InvalidObjectException("");

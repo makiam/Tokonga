@@ -12901,11 +12901,11 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         public short type;
 
         //public Vec3 normal;
-        public final static short NONE = 0;
+        public static final short NONE = 0;
 
-        public final static short CREASE = 1;
+        public static final short CREASE = 1;
 
-        public final static short CORNER = 2;
+        public static final short CORNER = 2;
 
         /**
          * Constructor for the Wvertex object

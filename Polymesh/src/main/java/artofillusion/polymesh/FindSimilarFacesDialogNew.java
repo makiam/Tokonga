@@ -87,6 +87,7 @@ public class FindSimilarFacesDialogNew extends javax.swing.JDialog {
 
         setTitle(Translate.text("polymesh:similarFacesTitle"));
         addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 closeDialog(evt);
             }

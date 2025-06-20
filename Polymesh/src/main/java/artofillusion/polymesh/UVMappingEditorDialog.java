@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 import javax.imageio.ImageIO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -65,9 +66,11 @@ public class UVMappingEditorDialog extends BDialog {
     private final ObjectInfo objInfo;
     private UVMeshMapping currentMapping; // the mapping currently edited
     private int currentTexture; // the texture currently edited
-    private ArrayList<Texture> texList; // the texture list of edited mesh
-    private ArrayList<UVMapping> mappingList; // the corresponding mapping  list
-    private ArrayList<Vec2[][]> oldCoordList; // the old texture coordinates for undoing changes
+
+    private List<Texture> texList; // the texture list of edited mesh
+    private List<UVMapping> mappingList; // the corresponding mapping  list
+    private List<Vec2[][]> oldCoordList; // the old texture coordinates for undoing changes
+
     private final UVMappingData oldMappingData; // the original mapping data for undoing changes
 
     private boolean clickedOk; // true if the user clicked the ok button
