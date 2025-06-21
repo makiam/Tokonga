@@ -165,31 +165,31 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     private final EditingTool thickenMeshTool = new ThickenMeshTool(this, this);
 
-    public final static int THICKEN_TOOL = 4;
+    public static final int THICKEN_TOOL = 4;
 
     private final EditingTool extrudeTool = new AdvancedExtrudeTool(this, this);
 
-    public final static int EXTRUDE_TOOL = 5;
+    public static final int EXTRUDE_TOOL = 5;
 
     private final EditingTool knifeTool = new PMKnifeTool(this, this);
 
-    public final static int KNIFE_TOOL = 6;
+    public static final int KNIFE_TOOL = 6;
 
     private final EditingTool createFaceTool = new PMCreateFaceTool(this, this);
 
-    public final static int CREATE_FACE_TOOL = 7;
+    public static final int CREATE_FACE_TOOL = 7;
 
     private final EditingTool extrudeCurveTool = new PMExtrudeCurveTool(this, this);
 
-    public final static int EXTRUDE_CURVE_TOOL = 8;
+    public static final int EXTRUDE_CURVE_TOOL = 8;
 
     private final EditingTool sewTool = new PMSewTool(this, this);
 
-    public final static int SEW_TOOL = 9;
+    public static final int SEW_TOOL = 9;
 
     private final EditingTool skeletonTool = new SkeletonTool(this, true);
 
-    public final static int SKELETON_TOOL = 10;
+    public static final int SKELETON_TOOL = 10;
 
     private boolean realView;
 
@@ -359,7 +359,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         levelContainer.add(new BLabel(Translate.text("polymesh:interactiveSubdiv")));
         ispin = new BSpinner(1, 1, 6, 1);
         levelContainer.add(ispin);
-        ispin.setValue(mesh.getInteractiveSmoothLevel());
+        var mis = mesh.getInteractiveSmoothLevel();
+        log.info("Mesh interactive smooth level: {}", mis);
+        ispin.setValue(mis);
         ispin.addEventLink(ValueChangedEvent.class, this, "doInteractiveLevel");
 
         meshContainer.add(levelContainer);
@@ -943,8 +945,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 }
             }
             if (mesh.getVertices().length - indices.length < 3) {
-                new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities
-                        .breakString(Translate.text("illegalDelete")),
+                new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")),
                         BStandardDialog.ERROR).showMessageDialog(null);
                 return;
             }
@@ -964,8 +965,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 }
             }
             if (mesh.getEdges().length - indices.length < 3) {
-                new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities
-                        .breakString(Translate.text("illegalDelete")),
+                new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")),
                         BStandardDialog.ERROR).showMessageDialog(null);
                 return;
             }
@@ -985,8 +985,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 }
             }
             if (mesh.getFaces().length - indices.length < 1) {
-                new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities
-                        .breakString(Translate.text("illegalDelete")),
+                new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")),
                         BStandardDialog.ERROR).showMessageDialog(null);
                 return;
             }
@@ -1588,6 +1587,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * The quantity by which the level should be changed
      */
     public void changeInteractiveSmoothLevel(int amount) {
+        log.info("Change interactive smooth level to {}", amount);
         PolyMesh mesh = (PolyMesh) objInfo.object;
         int level;
         if (mesh.getSmoothingMethod() != Mesh.APPROXIMATING) {
@@ -3210,20 +3210,17 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             if (selectMode == POINT_MODE) {
                 if (tolerant) {
                     for (i = 0; i < e.length / 2; i++) {
-                        newSel[i] = selected[e[i].vertex]
-                                | selected[e[e[i].hedge].vertex];
+                        newSel[i] = selected[e[i].vertex] | selected[e[e[i].hedge].vertex];
                     }
                 } else {
                     for (i = 0; i < e.length / 2; i++) {
-                        newSel[i] = selected[e[i].vertex]
-                                & selected[e[e[i].hedge].vertex];
+                        newSel[i] = selected[e[i].vertex] & selected[e[e[i].hedge].vertex];
                     }
                 }
             } else {
                 for (i = 0; i < f.length; i++) {
                     if (selected[i]) {
-                        int[] fe = ((PolyMesh) objInfo.object)
-                                .getFaceEdges(f[i]);
+                        int[] fe = ((PolyMesh) objInfo.object).getFaceEdges(f[i]);
                         for (int j = 0; j < fe.length; ++j) {
                             if (fe[j] >= e.length / 2) {
                                 newSel[e[fe[j]].hedge] = true;

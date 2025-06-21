@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <keystrokes>
     <keystroke code="88" name="Decrease smoothing level (PolyMesh)">
+        <!-- Constant for the "X" key. -->
         if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.changeInteractiveSmoothLevel(-1);
     </keystroke>
     <keystroke code="67" name="Increase smoothing level (PolyMesh)">
+        <!-- Constant for the "C" key. -->
         if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.changeInteractiveSmoothLevel(1);
     </keystroke>
