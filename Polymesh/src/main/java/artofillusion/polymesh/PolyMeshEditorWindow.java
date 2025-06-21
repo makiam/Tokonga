@@ -356,7 +356,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         tensionSpin.getComponent().addChangeListener(this::doTensionChanged);
         meshContainer.add(tensionSpin);
 
-        levelContainer.add(new BLabel(Translate.text("polymesh:interactiveSubdiv")));
+        levelContainer.add(Translate.label("polymesh:interactiveSubdiv"));
         ispin = new BSpinner(1, 1, 6, 1);
         levelContainer.add(ispin);
         var mis = mesh.getInteractiveSmoothLevel();
@@ -1011,9 +1011,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     public void selectBoundaryCommand() {
         PolyMesh theMesh = (PolyMesh) objInfo.object;
         if (selectMode != EDGE_MODE) {
-            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities
-                    .breakString(Translate.text("polymesh:edgeModeForBoundary")),
-                    BStandardDialog.ERROR).showMessageDialog(this);
+            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("polymesh:edgeModeForBoundary")), BStandardDialog.ERROR).showMessageDialog(this);
             return;
         }
     }
@@ -2381,8 +2379,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private void doExtrudeEdgeCallback() {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         mesh.copyObject(priorValueMesh);
-        mesh.extrudeEdges(valueSelection, valueWidget.getValue(),
-                direction);
+        mesh.extrudeEdges(valueSelection, valueWidget.getValue(), direction);
+
         boolean[] sel = new boolean[mesh.getEdges().length / 2];
         for (int i = 0; i < valueSelection.length; ++i) {
             sel[i] = valueSelection[i];
@@ -3340,11 +3338,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         Wedge[] edges = mesh.getEdges();
         if (selectMode == POINT_MODE && sel.length == verts.length) {
             selected = sel;
-        } else if (selectMode == EDGE_MODE
-                && sel.length == mesh.getEdges().length / 2) {
+        } else if (selectMode == EDGE_MODE && sel.length == mesh.getEdges().length / 2) {
             selected = sel;
-        } else if (selectMode == FACE_MODE
-                && sel.length == mesh.getFaces().length) {
+        } else if (selectMode == FACE_MODE && sel.length == mesh.getFaces().length) {
             selected = sel;
         }
         findSelectionDistance();
