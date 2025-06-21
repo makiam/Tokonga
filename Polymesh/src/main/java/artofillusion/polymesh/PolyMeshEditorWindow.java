@@ -945,8 +945,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 }
             }
             if (mesh.getVertices().length - indices.length < 3) {
-                new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")),
-                        BStandardDialog.ERROR).showMessageDialog(null);
+                new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")), BStandardDialog.ERROR).showMessageDialog(null);
                 return;
             }
             mesh.deleteVertices(indices);
@@ -965,8 +964,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 }
             }
             if (mesh.getEdges().length - indices.length < 3) {
-                new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")),
-                        BStandardDialog.ERROR).showMessageDialog(null);
+                new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")), BStandardDialog.ERROR).showMessageDialog(null);
                 return;
             }
             mesh.deleteEdges(indices);
@@ -985,8 +983,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 }
             }
             if (mesh.getFaces().length - indices.length < 1) {
-                new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")),
-                        BStandardDialog.ERROR).showMessageDialog(null);
+                new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")), BStandardDialog.ERROR).showMessageDialog(null);
                 return;
             }
             mesh.deleteFaces(indices);
@@ -3381,32 +3378,23 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         setObject(obj);
         hideVert = new boolean[mesh.getVertices().length];
         for (int i = 0; i < theView.length; i++) {
-            if (getSelectionMode() == PolyMeshEditorWindow.POINT_MODE
-                    && selected.length != obj.getVertices().length) {
-                ((PolyMeshViewer) theView[i]).visible = new boolean[obj
-                        .getVertices().length];
+            if (getSelectionMode() == PolyMeshEditorWindow.POINT_MODE && selected.length != obj.getVertices().length) {
+                ((PolyMeshViewer) theView[i]).visible = new boolean[obj.getVertices().length];
             }
-            if (getSelectionMode() == PolyMeshEditorWindow.EDGE_MODE
-                    && selected.length != obj.getEdges().length / 2) {
-                ((PolyMeshViewer) theView[i]).visible = new boolean[obj
-                        .getEdges().length];
+            if (getSelectionMode() == PolyMeshEditorWindow.EDGE_MODE && selected.length != obj.getEdges().length / 2) {
+                ((PolyMeshViewer) theView[i]).visible = new boolean[obj.getEdges().length];
             }
-            if (getSelectionMode() == PolyMeshEditorWindow.FACE_MODE
-                    && selected.length != obj.getFaces().length) {
-                ((PolyMeshViewer) theView[i]).visible = new boolean[obj
-                        .getFaces().length];
+            if (getSelectionMode() == PolyMeshEditorWindow.FACE_MODE && selected.length != obj.getFaces().length) {
+                ((PolyMeshViewer) theView[i]).visible = new boolean[obj.getFaces().length];
             }
         }
-        if (getSelectionMode() == PolyMeshEditorWindow.POINT_MODE
-                && selected.length != obj.getVertices().length) {
+        if (getSelectionMode() == PolyMeshEditorWindow.POINT_MODE && selected.length != obj.getVertices().length) {
             selected = new boolean[obj.getVertices().length];
         }
-        if (getSelectionMode() == PolyMeshEditorWindow.EDGE_MODE
-                && selected.length != obj.getEdges().length / 2) {
+        if (getSelectionMode() == PolyMeshEditorWindow.EDGE_MODE && selected.length != obj.getEdges().length / 2) {
             selected = new boolean[obj.getEdges().length / 2];
         }
-        if (getSelectionMode() == PolyMeshEditorWindow.FACE_MODE
-                && selected.length != obj.getFaces().length) {
+        if (getSelectionMode() == PolyMeshEditorWindow.FACE_MODE && selected.length != obj.getFaces().length) {
             selected = new boolean[obj.getFaces().length];
         }
         if (hideFace != null) {
