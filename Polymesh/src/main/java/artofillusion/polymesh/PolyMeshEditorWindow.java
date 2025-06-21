@@ -4058,6 +4058,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * @param ev
      * CommandEvent
      */
+    @SuppressWarnings("java:S1172")
     private void doMirrorOn(CommandEvent ev) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         short mirrorState = 0;

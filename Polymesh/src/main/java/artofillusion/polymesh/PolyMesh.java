@@ -121,9 +121,11 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
     private boolean controlledSmoothing;
 
-    private double minAngle, maxAngle; //data for auto smoothness
+    private double minAngle; //data for auto smoothness
+    private double maxAngle; //data for auto smoothness
 
-    private float minSmoothness, maxSmoothness;
+    private float minSmoothness;
+    private float maxSmoothness;
 
     private boolean[] seams; //true if an edge is a seam
 
@@ -182,31 +184,31 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
     /**
      * Action along the normal
      */
-    public final static short NORMAL = 0;
+    public static final short NORMAL = 0;
 
     /**
      * Action along X axis
      */
-    public final static short X = 1;
+    public static final short X = 1;
 
     /**
      * Action along Y axis
      */
-    public final static short Y = 2;
+    public static final short Y = 2;
 
     /**
      * Action along Z axis
      */
-    public final static short Z = 3;
+    public static final short Z = 3;
 
     //Bevel markers
-    private final static short VERTEX_BEVEL = 1;
+    private static final short VERTEX_BEVEL = 1;
 
-    private final static short ONE_BEVEL = 2;
+    private static final short ONE_BEVEL = 2;
 
-    private final static short ONE_BEVEL_NEXT = 3;
+    private static final short ONE_BEVEL_NEXT = 3;
 
-    private final static short TWO_BEVEL = 4;
+    private static final short TWO_BEVEL = 4;
 
     //smoothing constants
 //	private final static short APPROXIMATING_CM = 10;
@@ -227,22 +229,22 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
     /**
      * No mirror applied to the mesh
      */
-    public final static short NO_MIRROR = 0;
+    public static final short NO_MIRROR = 0;
 
     /**
      * Mirror on xy
      */
-    public final static short MIRROR_ON_XY = 1;
+    public static final short MIRROR_ON_XY = 1;
 
     /**
      * Mirror on yz
      */
-    public final static short MIRROR_ON_YZ = 2;
+    public static final short MIRROR_ON_YZ = 2;
 
     /**
      * Mirror on xz
      */
-    public final static short MIRROR_ON_XZ = 4;
+    public static final short MIRROR_ON_XZ = 4;
 
     /* Properties */
     private static final Property[] PROPERTIES = new Property[]{
