@@ -4342,16 +4342,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         return valueWidget;
     }
 
-    public boolean showNormals() {
-        if (selectMode != POINT_MODE) {
-            return false;
-        }
-        if (((PolyMesh) objInfo.object).getSmoothingMethod() != Mesh.APPROXIMATING) {
-            return false;
-        }
-        return true;
-    }
-
     /**
      * Load all the preferences into memory.
      */
