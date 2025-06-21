@@ -12,20 +12,7 @@
 
 package artofillusion.polymesh;
 
-import artofillusion.ArtOfIllusion;
-import artofillusion.Camera;
-import artofillusion.LayoutWindow;
-import artofillusion.MeshEditorWindow;
-import artofillusion.MeshViewer;
-import artofillusion.MoveViewTool;
-import artofillusion.RenderingMesh;
-import artofillusion.RotateViewTool;
-import artofillusion.SkewMeshTool;
-import artofillusion.TaperMeshTool;
-import artofillusion.TextureParameter;
-import artofillusion.ThickenMeshTool;
-import artofillusion.UndoRecord;
-import artofillusion.ViewerCanvas;
+import artofillusion.*;
 import artofillusion.animation.Joint;
 import artofillusion.animation.Skeleton;
 import artofillusion.animation.SkeletonTool;
@@ -362,14 +349,17 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         var mis = mesh.getInteractiveSmoothLevel();
         log.info("Mesh interactive smooth level: {}", mis);
         ispin.setValue(mis);
-        ispin.addEventLink(ValueChangedEvent.class, this, "doInteractiveLevel");
+        ispin.getComponent().addChangeListener(this::onInteractiveLevelValueChange);
 
         meshContainer.add(levelContainer);
         cornerCB = new BCheckBox(Translate.text("polymesh:corner"), false);
         cornerCB.addEventLink(ValueChangedEvent.class, this, "doCornerChanged");
+        cornerCB.getComponent().addChangeListener(this::onCornerCheckboxValueChange);
+
         vertexContainer.add(cornerCB);
         edgeSlider = new ValueSlider(0.0, 1.0, 1000, 0.0);
         edgeSlider.addEventLink(ValueChangedEvent.class, this, "doEdgeSliderChanged");
+
         edgeContainer.add(new BLabel(Translate.text("polymesh:smoothness")));
         edgeContainer.add(edgeSlider);
         overlayVertexEdgeFace = new OverlayContainer();
@@ -1570,8 +1560,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * @param amount
      * The quantity by which the level should be changed
      */
+    @KeystrokeManager.UsedWithScriptBinding("PMKeystrokes.xml")
     public void changeInteractiveSmoothLevel(int amount) {
-        log.info("Change interactive smooth level to {}", amount);
         PolyMesh mesh = (PolyMesh) objInfo.object;
         int level;
         if (mesh.getSmoothingMethod() != Mesh.APPROXIMATING) {
@@ -1592,6 +1582,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      *
      */
     // NB. Method accessed via KeyStroke records. Do not remove!!!
+    @KeystrokeManager.UsedWithScriptBinding("PMKeystrokes.xml")
     public void toggleSmoothing() {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         if (realView) {
@@ -3405,7 +3396,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      */
     @Override
     public void objectChanged() {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
+        PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
         mesh.resetMesh();
         setMesh(mesh);
         super.objectChanged();
@@ -4313,8 +4304,17 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         new FindSimilarEdgesDialog(this).setVisible(true);
     }
 
-    private void doInteractiveLevel(ValueChangedEvent ev) {
-        ((PolyMesh) objInfo.object).setInteractiveSmoothLevel(((Integer) ispin.getValue()));
+    private void onEdgeSliderValueChange(ChangeEvent event) {
+        log.debug("Value changed for {}", event.getSource());
+    }
+    private void onCornerCheckboxValueChange(ChangeEvent event) {
+        log.debug("Value changed for {}", event.getSource());
+    }
+
+    private void onInteractiveLevelValueChange(ChangeEvent event) {
+
+        var model = (SpinnerNumberModel)ispin.getModel();
+        ((PolyMesh) objInfo.object).setInteractiveSmoothLevel(model.getNumber().intValue());
         objectChanged();
         updateImage();
     }

@@ -1294,13 +1294,14 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         maxSmoothness = mesh.maxSmoothness;
         interactiveSmoothLevel = mesh.interactiveSmoothLevel;
         projectedEdges = null;
-        if (mesh.mappingData != null) {
+
+        if (mesh.mappingData == null) {
+            mappingData = null;
+        } else {
             mappingData = mesh.mappingData.duplicate();
             mappingVerts = mesh.mappingVerts;
             mappingEdges = mesh.mappingEdges;
             mappingFaces = mesh.mappingFaces;
-        } else {
-            mappingData = null;
         }
         if (mesh.seams != null) {
             seams = new boolean[mesh.seams.length];
