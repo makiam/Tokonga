@@ -1810,9 +1810,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     private void doDivideEdgesInteractive(ActionEvent event) {
-        SwingUtilities.invokeLater(() -> new DivideDialog(this, value -> {
-            doDivideEdges(value);
-        }).setVisible(true));
+        SwingUtilities.invokeLater(() -> new DivideDialog(this, value -> doDivideEdges(value)).setVisible(true));
     }
 
     /**
