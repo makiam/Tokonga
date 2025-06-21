@@ -1006,17 +1006,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     /**
-     * Select the edges which form the boundary of the mesh.
-     */
-    public void selectBoundaryCommand() {
-        PolyMesh theMesh = (PolyMesh) objInfo.object;
-        if (selectMode != EDGE_MODE) {
-            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("polymesh:edgeModeForBoundary")), BStandardDialog.ERROR).showMessageDialog(this);
-            return;
-        }
-    }
-
-    /**
      * Extend the selection outward by one edge.
      */
     public void extendSelectionCommand(ActionEvent event) {
