@@ -58,7 +58,8 @@ public class PMCreateFaceTool extends EditingTool {
     @Override
     public void mouseReleased(WidgetMouseEvent ev, ViewerCanvas view) {
         Point e = ev.getPoint();
-        PolyMesh mesh, viewMesh;
+        PolyMesh mesh;
+        PolyMesh viewMesh;
         viewMesh = mesh = (PolyMesh) controller.getObject().getGeometry();
         int[] invVertTable = null;
         int length = mesh.getVertices().length;

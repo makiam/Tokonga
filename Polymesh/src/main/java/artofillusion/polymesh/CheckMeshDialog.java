@@ -124,6 +124,7 @@ public class CheckMeshDialog extends javax.swing.JDialog {
     /**
      * Closes the dialog
      */
+    @SuppressWarnings("java:S1172")
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog

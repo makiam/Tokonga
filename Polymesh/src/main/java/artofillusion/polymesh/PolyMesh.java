@@ -12712,10 +12712,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     return false;
                 }
             }
-            if (!skeleton.equals(key.skeleton)) {
-                return false;
-            }
-            return true;
+            return skeleton.equals(key.skeleton);
         }
 
         /**
@@ -12836,10 +12833,9 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
          * Description of the Parameter
          * @exception IOException
          * Description of the Exception
-         * @exception InvalidObjectException
-         * Description of the Exception
+
          */
-        public PolyMeshKeyframe(DataInputStream in, Object parent) throws IOException, InvalidObjectException {
+        public PolyMeshKeyframe(DataInputStream in, Object parent) throws IOException {
             this();
             short version = in.readShort();
             if (version < 0 || version > 2) {

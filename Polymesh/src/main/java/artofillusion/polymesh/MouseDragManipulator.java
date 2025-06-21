@@ -18,12 +18,12 @@ import artofillusion.math.CoordinateSystem;
 import artofillusion.math.Mat4;
 import artofillusion.math.Vec2;
 import artofillusion.math.Vec3;
-import artofillusion.object.Mesh;
+
 import artofillusion.ui.MeshEditController;
 import static artofillusion.ui.UIUtilities.*;
 import buoy.event.WidgetMouseEvent;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
+
 import javax.swing.ImageIcon;
 
 /**
