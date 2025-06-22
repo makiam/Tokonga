@@ -3670,8 +3670,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private void doCollapseFaces(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         if (mesh.getFaces().length == 1) {
-            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities
-                    .breakString(Translate.text("illegalDelete")),
+            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")),
                     BStandardDialog.ERROR).showMessageDialog(null);
             return;
         }
@@ -3688,8 +3687,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private void doCollapseEdges(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         if (mesh.getFaces().length == 1) {
-            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities
-                    .breakString(Translate.text("illegalDelete")),
+            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")),
                     BStandardDialog.ERROR).showMessageDialog(null);
             return;
         }
@@ -3710,9 +3708,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             if (selected[i]) {
                 int[] fv = mesh.getVertexEdges(verts[i]);
                 if (fv.length == selected.length) {
-                    new BStandardDialog(Translate.text("polymesh:errorTitle"),
-                            UIUtilities.breakString(Translate
-                                    .text("illegalDelete")),
+                    new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")),
                             BStandardDialog.ERROR).showMessageDialog(null);
                     return;
                 }
