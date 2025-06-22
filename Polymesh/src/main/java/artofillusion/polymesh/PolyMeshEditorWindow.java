@@ -420,7 +420,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         createVertexMenu();
         createEdgeMenu();
         createFaceMenu();
-        createSkeletonMenu((PolyMesh) objInfo.object);
+        createSkeletonMenu();
         createTextureMenu();
         createViewMenu();
         recursivelyAddListeners(this);
@@ -814,10 +814,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Builds the skeleton menu
      *
-     * @param obj
-     * The poly mesh being edited
      */
-    void createSkeletonMenu(PolyMesh obj) {
+    private void createSkeletonMenu() {
 
         BMenu skeletonMenu = Translate.menu("skeleton");
         menubar.add(skeletonMenu);
