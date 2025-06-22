@@ -2282,7 +2282,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
                 hasPose = true;
                 if (!confirmed && !info.getTracks()[i].isNullTrack()) {
                     BStandardDialog dlg = new BStandardDialog("", Translate.text("convertLosesPosesWarning", info.getName()), BStandardDialog.QUESTION);
-                    String[] options = new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
+                    String[] options = MessageDialog.getOptions();
                     if (dlg.showOptionDialog(this, options, options[0]) == 1) {
                         return;
                     }
@@ -2301,7 +2301,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         if (obj.canConvertToTriangleMesh() == Object3D.EXACTLY) {
             if (!confirmed) {
                 BStandardDialog dlg = new BStandardDialog("", Translate.text("confirmConvertToTriangle", info.getName()), BStandardDialog.QUESTION);
-                String[] options = new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
+                String[] options = MessageDialog.getOptions();
                 if (dlg.showOptionDialog(this, options, options[0]) == 1) {
                     return;
                 }
@@ -2348,7 +2348,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             return;
         }
         BStandardDialog dlg = new BStandardDialog("", UIUtilities.breakString(Translate.text("confirmConvertToActor", info.getName())), BStandardDialog.QUESTION);
-        String[] options = new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
+        String[] options = MessageDialog.getOptions();
         if (dlg.showOptionDialog(this, options, options[0]) == 1) {
             return;
         }
@@ -2470,7 +2470,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     public void bindToParentCommand() {
         BStandardDialog dlg = new BStandardDialog("", UIUtilities.breakString(Translate.text("confirmBindParent")), BStandardDialog.QUESTION);
-        String[] options = new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
+        String[] options = MessageDialog.getOptions();
         if (dlg.showOptionDialog(this, options, options[0]) == 1) {
             return;
         }

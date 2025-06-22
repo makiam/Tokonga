@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2020 by Peter Eastman
    Modifications copyright (C) 2016-2017 Petri Ihalainen
-   Changes copyright (C) 2020-2024 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -721,16 +721,16 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
     protected void doOk() {
         TriangleMesh theMesh = (TriangleMesh) objInfo.getObject();
         if (((TriangleMesh) oldMesh).getMaterial() != null) {
-            if (!theMesh.isClosed()) {
-                String[] options = new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
+            if (theMesh.isClosed()) {
+                theMesh.setMaterial(((TriangleMesh) oldMesh).getMaterial(), ((TriangleMesh) oldMesh).getMaterialMapping());
+            } else {
+                String[] options = MessageDialog.getOptions();
                 BStandardDialog dlg = new BStandardDialog("", UIUtilities.breakString(Translate.text("surfaceNoLongerClosed")), BStandardDialog.WARNING);
                 int choice = dlg.showOptionDialog(this, options, options[0]);
                 if (choice == 1) {
                     return;
                 }
                 theMesh.setMaterial(null, null);
-            } else {
-                theMesh.setMaterial(((TriangleMesh) oldMesh).getMaterial(), ((TriangleMesh) oldMesh).getMaterialMapping());
             }
         }
         removeExtraParameters();
@@ -1603,7 +1603,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
 
     public void optimizeCommand() {
         BStandardDialog dlg = new BStandardDialog("", UIUtilities.breakString(Translate.text("optimizeMeshTitle")), BStandardDialog.QUESTION);
-        String[] options = new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
+        String[] options = MessageDialog.getOptions();
         if (dlg.showOptionDialog(this, options, options[0]) == 1) {
             return;
         }

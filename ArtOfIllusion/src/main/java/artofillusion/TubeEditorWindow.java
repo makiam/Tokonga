@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2008 by Peter Eastman
-   Changes copyright (C) 2020-2024 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -160,7 +160,7 @@ public class TubeEditorWindow extends CurveEditorWindow {
             if (theMesh.isClosed()) {
                 theMesh.setMaterial(((Tube) oldMesh).getMaterial(), ((Tube) oldMesh).getMaterialMapping());
             } else {
-                String[] options = new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
+                String[] options = MessageDialog.getOptions();
                 BStandardDialog dlg = new BStandardDialog("", UIUtilities.breakString(Translate.text("surfaceNoLongerClosed")), BStandardDialog.WARNING);
                 int choice = dlg.showOptionDialog(this, options, options[0]);
                 if (choice == 1) {
