@@ -1611,6 +1611,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /*
          * Method runs from Polymesh keystrokes script
      */
+    @KeystrokeManager.UsedWithScriptBinding
     public void selectTool(int tool) {
         tools.selectTool(toolsMap.get(tool));
     }
@@ -1631,6 +1632,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Toggles manipulator view mode (i.e. X,Y,Z U,V and N, P, Q)
      */
     // NB. Method accessed via KeyStroke records. Do not remove!!!
+    @KeystrokeManager.UsedWithScriptBinding
     public void toggleManipulatorViewMode() {
         PolyMeshViewer view = (PolyMeshViewer) getView();
         view.getManipulators().forEach(man -> man.toggleViewMode());
@@ -1686,6 +1688,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Toggles help mode on/off
      */
     // NB. Method accessed via KeyStroke records.
+    @KeystrokeManager.UsedWithScriptBinding
     public void toggleHelpMode() {
         Manipulator.toggleHelpMode();
     }
