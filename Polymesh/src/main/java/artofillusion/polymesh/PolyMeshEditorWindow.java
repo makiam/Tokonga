@@ -923,8 +923,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         PolyMesh prevMesh = mesh.duplicate();
         if (selectMode == POINT_MODE) {
             int count = 0;
-            for (int i = 0; i < selected.length; ++i) {
-                if (selected[i]) {
+            for (boolean b : selected) {
+                if (b) {
                     ++count;
                 }
             }
@@ -942,8 +942,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             mesh.deleteVertices(indices);
         } else if (selectMode == EDGE_MODE) {
             int count = 0;
-            for (int i = 0; i < selected.length; ++i) {
-                if (selected[i]) {
+            for (boolean b : selected) {
+                if (b) {
                     ++count;
                 }
             }
@@ -961,8 +961,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             mesh.deleteEdges(indices);
         } else {
             int count = 0;
-            for (int i = 0; i < selected.length; ++i) {
-                if (selected[i]) {
+            for (boolean b : selected) {
+                if (b) {
                     ++count;
                 }
             }
@@ -1274,8 +1274,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             setSelectionMode(modes.getSelection());
             theView[currentView].getCurrentTool().activate();
         } else {
-            for (int i = 0; i < theView.length; i++) {
-                theView[i].setTool(tool);
+            for (ViewerCanvas viewerCanvas : theView) {
+                viewerCanvas.setTool(tool);
             }
             currentTool = tool;
 
@@ -1620,6 +1620,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Toggles manipulators between 2D and 3D (to be removed presumably)
      */
     // NB. Method accessed via KeyStroke records.
+    @KeystrokeManager.UsedWithScriptBinding
     public void toggleManipulator() {
         if (currentTool instanceof AdvancedEditingTool) {
             PolyMeshViewer view = (PolyMeshViewer) getView();
@@ -1635,7 +1636,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     @KeystrokeManager.UsedWithScriptBinding
     public void toggleManipulatorViewMode() {
         PolyMeshViewer view = (PolyMeshViewer) getView();
-        view.getManipulators().forEach(man -> man.toggleViewMode());
+        view.getManipulators().forEach(Manipulator::toggleViewMode);
         view.repaint();
     }
 
@@ -2695,8 +2696,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         count = 0;
         for (int i = 0; i < vert.length; ++i) {
             if (selected[i]) {
-                vertDisplacements[count++] = norm.times(-norm.dot(vert[i].r
-                        .minus(origin)));
+                vertDisplacements[count++] = norm.times(-norm.dot(vert[i].r.minus(origin)));
             }
         }
         if (checkForNullMovement(vertDisplacements)) {
