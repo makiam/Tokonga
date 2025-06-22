@@ -57,6 +57,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
@@ -900,12 +901,12 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         PolyMesh mesh = (PolyMesh) objInfo.object;
         MeshVertex[] v = mesh.getVertices();
         Vec3 center = new Vec3();
-        for (int i = 0; i < v.length; i++) {
-            center.add(v[i].r);
+        for (var meshVertex : v) {
+            center.add(meshVertex.r);
         }
         center.scale(1.0 / v.length);
-        for (int i = 0; i < v.length; i++) {
-            v[i].r.subtract(center);
+        for (var meshVertex : v) {
+            meshVertex.r.subtract(center);
         }
         mesh.resetMesh();
         objectChanged();
@@ -989,9 +990,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      */
     void selectAllCommand(ActionEvent event) {
         setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, this, selectMode, selected.clone()));
-        for (int i = 0; i < selected.length; i++) {
-            selected[i] = true;
-        }
+        Arrays.fill(selected, true);
         setSelection(selected);
     }
 
@@ -1307,20 +1306,14 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             }
         }
         for (int i = 0; i < maxDistance; i++) {
-            for (int j = 0; j < count.length; j++) {
-                count[j] = 0;
-            }
+            Arrays.fill(count, 0);
             for (int j = 0; j < edge.length; j++) {
-                if (dist[edge[j].vertex] == i
-                        && dist[edge[edge[j].hedge].vertex] == i + 1) {
+                if (dist[edge[j].vertex] == i && dist[edge[edge[j].hedge].vertex] == i + 1) {
                     count[edge[edge[j].hedge].vertex]++;
-                    delta[edge[edge[j].hedge].vertex]
-                            .add(delta[edge[j].vertex]);
-                } else if (dist[edge[edge[j].hedge].vertex] == i
-                        && dist[edge[j].vertex] == i + 1) {
+                    delta[edge[edge[j].hedge].vertex].add(delta[edge[j].vertex]);
+                } else if (dist[edge[edge[j].hedge].vertex] == i && dist[edge[j].vertex] == i + 1) {
                     count[edge[j].vertex]++;
-                    delta[edge[j].vertex]
-                            .add(delta[edge[edge[j].hedge].vertex]);
+                    delta[edge[j].vertex].add(delta[edge[edge[j].hedge].vertex]);
                 }
             }
             for (int j = 0; j < count.length; j++) {
@@ -1330,8 +1323,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             }
         }
         for (int i = 0; i < scale.length; i++) {
-            scale[i] = Math.pow((maxDistance - i + 1.0) / (maxDistance + 1.0),
-                    tension);
+            scale[i] = Math.pow((maxDistance - i + 1.0) / (maxDistance + 1.0), tension);
         }
         for (int i = 0; i < delta.length; i++) {
             if (dist[i] > 0) {
@@ -1801,7 +1793,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     private void doDivideEdgesInteractive(ActionEvent event) {
-        SwingUtilities.invokeLater(() -> new DivideDialog(this, value -> doDivideEdges(value)).setVisible(true));
+        SwingUtilities.invokeLater(() -> new DivideDialog(this, this::doDivideEdges).setVisible(true));
     }
 
     /**
@@ -1814,8 +1806,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         PolyMesh mesh = (PolyMesh) objInfo.object;
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, mesh.duplicate()));
         Object source = ev.getWidget();
-        for (int i = 0; i < smoothItem.length; i++) {
-            smoothItem[i].setState(false);
+        for (var item : smoothItem) {
+            item.setState(false);
         }
         /*
 		 * for ( int i = 0; i < smoothItem.length; i++ ) if ( source ==
@@ -1865,9 +1857,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
         PolyMesh prevMesh = mesh.duplicate();
         boolean[] selected = new boolean[mesh.getFaces().length];
-        for (int i = 0; i < selected.length; ++i) {
-            selected[i] = true;
-        }
+        Arrays.fill(selected, true);
         mesh.smooth(selected, true);
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
         objectChanged();
@@ -2343,9 +2333,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         valueMesh.copyObject(priorValueMesh);
         valueMesh.extrudeFaces(valueSelection, valueWidget.getValue(), direction);
         boolean[] sel = new boolean[valueMesh.getFaces().length];
-        for (int i = 0; i < valueSelection.length; ++i) {
-            sel[i] = valueSelection[i];
-        }
+        System.arraycopy(valueSelection, 0, sel, 0, valueSelection.length);
         objectChanged();
         setSelection(sel);
     }
@@ -2360,9 +2348,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         mesh.extrudeEdges(valueSelection, valueWidget.getValue(), direction);
 
         boolean[] sel = new boolean[mesh.getEdges().length / 2];
-        for (int i = 0; i < valueSelection.length; ++i) {
-            sel[i] = valueSelection[i];
-        }
+        System.arraycopy(valueSelection, 0, sel, 0, valueSelection.length);
         objectChanged();
         setSelection(sel);
     }
@@ -2402,9 +2388,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         mesh.extrudeRegion(valueSelection, valueWidget.getValue(),
                 direction);
         boolean[] sel = new boolean[mesh.getFaces().length];
-        for (int i = 0; i < valueSelection.length; ++i) {
-            sel[i] = valueSelection[i];
-        }
+        System.arraycopy(valueSelection, 0, sel, 0, valueSelection.length);
         objectChanged();
         setSelection(sel);
     }
@@ -2419,9 +2403,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         mesh.extrudeEdgeRegion(valueSelection, valueWidget.getValue(),
                 direction);
         boolean[] sel = new boolean[mesh.getEdges().length / 2];
-        for (int i = 0; i < valueSelection.length; ++i) {
-            sel[i] = valueSelection[i];
-        }
+        System.arraycopy(valueSelection, 0, sel, 0, valueSelection.length);
         objectChanged();
         setSelection(sel);
     }
@@ -2576,9 +2558,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             l = 0;
             for (int i = 0; i < vert.length; ++i) {
                 if (selected[i]) {
-                    l += Math.sqrt((vert[i].r.x - a) * (vert[i].r.x - a)
-                            + (vert[i].r.y - b) * (vert[i].r.y - b)
-                            + (vert[i].r.z - c) * (vert[i].r.z - c));
+                    l += Math.sqrt((vert[i].r.x - a) * (vert[i].r.x - a) + (vert[i].r.y - b) * (vert[i].r.y - b) + (vert[i].r.z - c) * (vert[i].r.z - c));
                 }
             }
             l /= count;
@@ -2586,9 +2566,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             for (int i = 0; i < vert.length; ++i) {
                 if (selected[i]) {
 
-                    t = Math.sqrt((vert[i].r.x - a) * (vert[i].r.x - a)
-                            + (vert[i].r.y - b) * (vert[i].r.y - b)
-                            + (vert[i].r.z - c) * (vert[i].r.z - c));
+                    t = Math.sqrt((vert[i].r.x - a) * (vert[i].r.x - a) + (vert[i].r.y - b) * (vert[i].r.y - b) + (vert[i].r.z - c) * (vert[i].r.z - c));
                     if (t < 1e-6) {
                         continue;
                     }
@@ -3103,8 +3081,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 case FACE_MODE:
                     int[] fv = mesh.getFaceVertices(f[i]);
                     middle = new Vec3();
-                    for (int j = 0; j < fv.length; j++) {
-                        middle.add(v[fv[j]].r);
+                    for (int k : fv) {
+                        middle.add(v[k].r);
                     }
                     middle.scale(1.0 / (double) fv.length);
                     if (selected[i]) {
@@ -3271,9 +3249,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         hideFace = hidden;
         hideVert = new boolean[mesh.getVertices().length];
         if (hideFace != null) {
-            for (int i = 0; i < hideVert.length; i++) {
-                hideVert[i] = true;
-            }
+            Arrays.fill(hideVert, true);
             Wface[] face = mesh.getFaces();
             for (int i = 0; i < face.length; i++) {
                 if (!hideFace[i]) {
