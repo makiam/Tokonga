@@ -49,6 +49,7 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -353,8 +354,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
         meshContainer.add(levelContainer);
         cornerCB = new BCheckBox(Translate.text("polymesh:corner"), false);
-        cornerCB.addEventLink(ValueChangedEvent.class, this, "doCornerChanged");
-        cornerCB.getComponent().addChangeListener(this::onCornerCheckboxValueChange);
+        cornerCB.getComponent().addItemListener(this::onCornerCheckboxValueChange);
 
         vertexContainer.add(cornerCB);
         edgeSlider = new ValueSlider(0.0, 1.0, 1000, 0.0);
@@ -4307,19 +4307,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private void onEdgeSliderValueChange(ChangeEvent event) {
         log.debug("Value changed for {}", event.getSource());
     }
-    private void onCornerCheckboxValueChange(ChangeEvent event) {
-        log.debug("Value changed for {}", event.getSource());
-    }
+    private void onCornerCheckboxValueChange(ItemEvent event) {
 
-    private void onInteractiveLevelValueChange(ChangeEvent event) {
-
-        var model = (SpinnerNumberModel)ispin.getModel();
-        ((PolyMesh) objInfo.object).setInteractiveSmoothLevel(model.getNumber().intValue());
-        objectChanged();
-        updateImage();
-    }
-
-    private void doCornerChanged() {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         Wvertex[] vertices = (Wvertex[]) mesh.getVertices();
         short type = Wvertex.NONE;
@@ -4331,6 +4320,14 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 vertices[i].type = type;
             }
         }
+        objectChanged();
+        updateImage();
+    }
+
+    private void onInteractiveLevelValueChange(ChangeEvent event) {
+
+        var model = (SpinnerNumberModel)ispin.getModel();
+        ((PolyMesh) objInfo.object).setInteractiveSmoothLevel(model.getNumber().intValue());
         objectChanged();
         updateImage();
     }
