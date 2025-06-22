@@ -917,60 +917,35 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     @Override
     public void deleteCommand() {
         PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
-
         PolyMesh prevMesh = mesh.duplicate();
+
+        int count = 0;
+        for (boolean b : selected) {
+            if (b) {
+                ++count;
+            }
+        }
+        int[] indices = new int[count];
+        count = 0;
+        for (int i = 0; i < selected.length; ++i) {
+            if (selected[i]) {
+                indices[count++] = i;
+            }
+        }
+
         if (selectMode == POINT_MODE) {
-            int count = 0;
-            for (boolean b : selected) {
-                if (b) {
-                    ++count;
-                }
-            }
-            int[] indices = new int[count];
-            count = 0;
-            for (int i = 0; i < selected.length; ++i) {
-                if (selected[i]) {
-                    indices[count++] = i;
-                }
-            }
             if (mesh.getVertices().length - indices.length < 3) {
                 new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")), BStandardDialog.ERROR).showMessageDialog(null);
                 return;
             }
             mesh.deleteVertices(indices);
         } else if (selectMode == EDGE_MODE) {
-            int count = 0;
-            for (boolean b : selected) {
-                if (b) {
-                    ++count;
-                }
-            }
-            int[] indices = new int[count];
-            count = 0;
-            for (int i = 0; i < selected.length; ++i) {
-                if (selected[i]) {
-                    indices[count++] = i;
-                }
-            }
             if (mesh.getEdges().length - indices.length < 3) {
                 new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")), BStandardDialog.ERROR).showMessageDialog(null);
                 return;
             }
             mesh.deleteEdges(indices);
         } else {
-            int count = 0;
-            for (boolean b : selected) {
-                if (b) {
-                    ++count;
-                }
-            }
-            int[] indices = new int[count];
-            count = 0;
-            for (int i = 0; i < selected.length; ++i) {
-                if (selected[i]) {
-                    indices[count++] = i;
-                }
-            }
             if (mesh.getFaces().length - indices.length < 1) {
                 new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")), BStandardDialog.ERROR).showMessageDialog(null);
                 return;
