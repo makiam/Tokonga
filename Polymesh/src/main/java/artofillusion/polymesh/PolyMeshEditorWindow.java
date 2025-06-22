@@ -3248,7 +3248,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         PolyMesh mesh = (PolyMesh) objInfo.object;
         hideFace = hidden;
         hideVert = new boolean[mesh.getVertices().length];
-        if (hideFace != null) {
+        if (hideFace == null) {
+            for (int i = 0; i < hideVert.length; i++) {
+                hideVert[i] = false;
+            }
+        } else {
             Arrays.fill(hideVert, true);
             Wface[] face = mesh.getFaces();
             for (int i = 0; i < face.length; i++) {
@@ -3258,10 +3262,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                         hideVert[vf[j]] = false;
                     }
                 }
-            }
-        } else {
-            for (int i = 0; i < hideVert.length; i++) {
-                hideVert[i] = false;
             }
         }
         FaceParameterValue val = (FaceParameterValue) objInfo.object.getParameterValue(faceIndexParam);
