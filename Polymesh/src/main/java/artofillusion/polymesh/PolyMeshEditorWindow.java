@@ -1646,8 +1646,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         BorderContainer bc = new BorderContainer();
         KeystrokePreferencesPanel keystrokePanel = new KeystrokePreferencesPanel();
         bc.add(keystrokePanel, BorderContainer.CENTER);
-        PanelDialog dlg = new PanelDialog(this, Translate.text("keystrokes"),
-                bc);
+        PanelDialog dlg = new PanelDialog(this, Translate.text("keystrokes"), bc);
         if (!dlg.clickedOk()) {
             return;
         }
