@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2005 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -13,16 +13,20 @@ package artofillusion.ui;
 
 import buoy.event.*;
 import buoy.widget.*;
+import lombok.extern.slf4j.Slf4j;
+
 import java.awt.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
 
 /**
  * A ValueSlider contains a BTextField and a BSlider which are together used for choosing
  * a value. Editing either one causes the other to change automatically. If an illegal
  * value is entered into the BTextField, the text turns red to indicate this.
  */
-public class ValueSlider extends WidgetContainer {
+@Slf4j
+public class ValueSlider extends WidgetContainer<JPanel> {
 
     final BTextField field;
     final BSlider slider;
@@ -44,14 +48,18 @@ public class ValueSlider extends WidgetContainer {
         field.addEventLink(ValueChangedEvent.class, this, "textChanged");
         slider.addEventLink(ValueChangedEvent.class, this, "sliderChanged");
         slider.setEnabled(!Double.isNaN(value));
-        ((JPanel) component).add(field.getComponent());
-        ((JPanel) component).add(slider.getComponent());
+        component.add(field.getComponent());
+        component.add(slider.getComponent());
         setAsParent(field);
         setAsParent(slider);
     }
 
     public void setForceInteger(boolean force) {
         forceInt = force;
+    }
+
+    public final BSlider getSlider() {
+        return slider;
     }
 
     private void sliderChanged(ValueChangedEvent ev) {
@@ -171,7 +179,7 @@ public class ValueSlider extends WidgetContainer {
      * Get an Iterator listing all child Widgets.
      */
     @Override
-    public Collection<Widget> getChildren() {
+    public Collection<Widget<?>> getChildren() {
         return Arrays.asList(field, slider);
     }
 

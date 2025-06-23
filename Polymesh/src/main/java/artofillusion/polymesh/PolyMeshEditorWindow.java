@@ -220,7 +220,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     protected boolean tolerant;
 
-    private TextureParameter faceIndexParam, jointWeightParam;
+    private TextureParameter faceIndexParam;
+    private TextureParameter jointWeightParam;
 
     protected boolean[] hideFace;
 
@@ -359,6 +360,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
         vertexContainer.add(cornerCB);
         edgeSlider = new ValueSlider(0.0, 1.0, 1000, 0.0);
+        edgeSlider.getSlider().getComponent().addChangeListener(this::onEdgeSliderValueChange);
         edgeSlider.addEventLink(ValueChangedEvent.class, this, "doEdgeSliderChanged");
 
         edgeContainer.add(new BLabel(Translate.text("polymesh:smoothness")));
@@ -826,7 +828,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         skeletonMenu.add(skeletonMenuItem[3] = Translate.menuItem("importSkeleton", event -> importSkeletonCommand()));
         skeletonMenu.addSeparator();
         skeletonMenu.add(skeletonMenuItem[4] = Translate.menuItem("bindSkeleton", event -> bindSkeletonCommand()));
-        skeletonMenu.add(skeletonMenuItem[5] = Translate.checkboxMenuItem("detachSkeleton", this, "skeletonDetachedChanged", false));
+        skeletonMenu.add(skeletonMenuItem[5] = Translate.checkboxMenuItem("detachSkeleton", event -> skeletonDetachedChanged(), false));
     }
 
     private final BMenuItem unfoldMeshAction = Translate.menuItem("polymesh:unfoldMesh", this::doUnfoldMesh);
@@ -2820,7 +2822,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         }
     }
 
-    public void doEdgeSliderChanged() {
+    private void onEdgeSliderValueChange(ChangeEvent event) {
+        log.debug("Slider Value changed for {}", event.getSource());
         PolyMesh theMesh = (PolyMesh) objInfo.object;
         final Wedge[] ed = theMesh.getEdges();
         float s = (float) edgeSlider.getValue();
@@ -4068,11 +4071,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     private void skeletonDetachedChanged() {
-        for (int i = 0; i < theView.length; i++) {
-            ((PolyMeshViewer) theView[i])
-                    .setSkeletonDetached(((BCheckBoxMenuItem) skeletonMenuItem[5])
-                            .getState());
-        }
+        var state = ((BCheckBoxMenuItem)skeletonMenuItem[5]).getState();
+        for (var item: theView) {((PolyMeshViewer) item).setSkeletonDetached(state); }
     }
 
     private void doLooseSelectionChanged() {
@@ -4229,9 +4229,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         new FindSimilarEdgesDialog(this).setVisible(true);
     }
 
-    private void onEdgeSliderValueChange(ChangeEvent event) {
-        log.debug("Value changed for {}", event.getSource());
-    }
+
+
     private void onCornerCheckboxValueChange(ItemEvent event) {
 
         PolyMesh mesh = (PolyMesh) objInfo.object;

@@ -233,6 +233,27 @@ public class Translate {
         return item;
     }
 
+    public static BCheckBoxMenuItem checkboxMenuItem(String name, ActionListener al, boolean state) {
+        String command = name;
+        try {
+            command = getValue(name, "menu.");
+        } catch (MissingResourceException ex) {
+        }
+        BCheckBoxMenuItem item = new BCheckBoxMenuItem(command, state);
+        item.setActionCommand(name);
+        try {
+            String shortcut = getValue(name, "menu.", ".shortcut");
+            if (shortcut.length() > 1 && shortcut.charAt(0) == '^') {
+                item.setShortcut(new Shortcut(shortcut.charAt(1), Shortcut.DEFAULT_MASK | Shortcut.SHIFT_MASK));
+            } else if (shortcut.length() > 0) {
+                item.setShortcut(new Shortcut(shortcut.charAt(0)));
+            }
+        } catch (MissingResourceException ex) {
+        }
+        item.getComponent().addActionListener(al);
+        return item;
+    }
+
     /**
      * Get a BButton whose text is given by the property "button.(name)".
      * If listener is not null, the specified method of it will be added to the BButton as an
