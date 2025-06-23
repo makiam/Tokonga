@@ -3269,9 +3269,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             }
         }
         if (vertices.length - count < 3) {
-            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities
-                    .breakString(Translate.text("illegalDelete")),
-                    BStandardDialog.ERROR).showMessageDialog(null);
+            extracted();
             return null;
         }
         newVertices = new Wvertex[vertices.length - count];
@@ -3290,9 +3288,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             }
         }
         if (edges.length / 2 - count < 3) {
-            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities
-                    .breakString(Translate.text("illegalDelete")),
-                    BStandardDialog.ERROR).showMessageDialog(null);
+            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")), BStandardDialog.ERROR).showMessageDialog(null);
             return null;
         }
 
@@ -3319,9 +3315,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             }
         }
         if (faces.length - count < 1) {
-            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities
-                    .breakString(Translate.text("illegalDelete")),
-                    BStandardDialog.ERROR).showMessageDialog(null);
+            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")), BStandardDialog.ERROR).showMessageDialog(null);
             return null;
         }
         newFaces = new Wface[faces.length - count];
@@ -3475,6 +3469,10 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         vertices = newVertices;
         resetMesh();
         return vertexTable;
+    }
+
+    private static void extracted() {
+        new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")), BStandardDialog.ERROR).showMessageDialog(null);
     }
 
     /**
@@ -9104,11 +9102,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                         }
                     }
                     if (count > 1) {
-
-                        new BStandardDialog(Translate.text("polymesh:errorTitle"),
-                                UIUtilities.breakString(Translate
-                                        .text("polymesh:illegalMeshStructure")),
-                                BStandardDialog.ERROR).showMessageDialog(null);
+                        new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("polymesh:illegalMeshStructure")), BStandardDialog.ERROR).showMessageDialog(null);
                         return selected;
                     }
                     Wedge[] newEdges = new Wedge[edges.length - 2];

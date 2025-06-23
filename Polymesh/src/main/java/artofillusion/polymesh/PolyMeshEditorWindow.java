@@ -2610,9 +2610,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             sum += movement[i].length();
         }
         if (sum / movement.length < 1e-6) {
-            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities
-                    .breakString(Translate.text("polymesh:nullMovement")),
-                    BStandardDialog.ERROR).showMessageDialog(null);
+            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("polymesh:nullMovement")), BStandardDialog.ERROR).showMessageDialog(null);
             return true;
         }
         return false;
@@ -3626,8 +3624,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private void doCollapseFaces(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         if (mesh.getFaces().length == 1) {
-            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")),
-                    BStandardDialog.ERROR).showMessageDialog(null);
+            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")), BStandardDialog.ERROR).showMessageDialog(null);
             return;
         }
         PolyMesh prevMesh = mesh.duplicate();
@@ -3643,8 +3640,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private void doCollapseEdges(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         if (mesh.getFaces().length == 1) {
-            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")),
-                    BStandardDialog.ERROR).showMessageDialog(null);
+            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")), BStandardDialog.ERROR).showMessageDialog(null);
             return;
         }
         PolyMesh prevMesh = mesh.duplicate();
@@ -3664,8 +3660,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             if (selected[i]) {
                 int[] fv = mesh.getVertexEdges(verts[i]);
                 if (fv.length == selected.length) {
-                    new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")),
-                            BStandardDialog.ERROR).showMessageDialog(null);
+                    new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")), BStandardDialog.ERROR).showMessageDialog(null);
                     return;
                 }
             }
@@ -3687,10 +3682,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             if (selected[i]) {
                 int[] fv = mesh.getVertexEdges(verts[i]);
                 if (fv.length == selected.length) {
-                    new BStandardDialog(Translate.text("polymesh:errorTitle"),
-                            UIUtilities.breakString(Translate
-                                    .text("illegalDelete")),
-                            BStandardDialog.ERROR).showMessageDialog(null);
+                    new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("illegalDelete")), BStandardDialog.ERROR).showMessageDialog(null);
                     return;
                 }
             }
