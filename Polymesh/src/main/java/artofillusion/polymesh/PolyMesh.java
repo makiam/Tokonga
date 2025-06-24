@@ -10795,8 +10795,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 }
                 newEdges[fe[j]].next = fe[next];
                 if (edges[edges[fe[j]].hedge].face == -1) {
-                    newEdges[newEdges[fe[j]].hedge] = new Wedge(
-                            edges[edges[fe[j]].hedge]);
+                    newEdges[newEdges[fe[j]].hedge] = new Wedge(edges[edges[fe[j]].hedge]);
                     newEdges[newEdges[fe[j]].hedge].vertex = edges[fe[j]].vertex;
                     int p = fe[j];
                     while (edges[p].next != edges[fe[j]].hedge) {
