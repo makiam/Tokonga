@@ -6396,9 +6396,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 } else if (oldParamVal[i] instanceof VertexParameterValue) {
                     double[] oldval = ((VertexParameterValue) oldParamVal[i]).getValue();
                     double[] newval = new double[newVert.length];
-                    for (int j = 0; j < vertices.length; ++j) {
-                        newval[j] = oldval[j];
-                    }
+                    System.arraycopy(oldval, 0, newval, 0, vertices.length);
                     for (int j = vertices.length; j < newVert.length; ++j) {
                         int[] vf = vertParamInfo[j - vertices.length].vert;
                         double[] coef = vertParamInfo[j - vertices.length].coef;
@@ -7485,9 +7483,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         // clip mesh
         if (vindex != newVertices.length) {
             Wvertex[] nverts = new Wvertex[vindex];
-            for (int i = 0; i < vindex; ++i) {
-                nverts[i] = newVertices[i];
-            }
+            System.arraycopy(newVertices, 0, nverts, 0, vindex);
             newVertices = nverts;
         }
         if (eindex != newEdges.length / 2) {
@@ -10277,9 +10273,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         int from;
         int to;
         int next;
-        for (int i = 0; i < selected.length; ++i) {
-            newSel[i] = selected[i];
-        }
+        System.arraycopy(selected, 0, newSel, 0, selected.length);
         for (int i = 0; i < selected.length; ++i) {
             if (selected[i]) {
                 e = getVertexEdges(vertices[i]);
@@ -12773,8 +12767,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             // Determine which parameter to set.
 
             int which;
-            for (which = 0; which < mesh.texParam.length
-                    && !mesh.texParam[which].equals(p); which++)
+            for (which = 0; which < mesh.texParam.length && !mesh.texParam[which].equals(p); which++)
 				;
             if (which == mesh.texParam.length) {
                 return;
