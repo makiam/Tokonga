@@ -20,6 +20,7 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.*;
@@ -824,7 +825,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
 
         // Give every candidate edge a score for how close the adjoining faces are to forming
         // a rectangle.
-        class EdgeScore implements Comparable {
+        class EdgeScore implements Comparable<EdgeScore> {
 
             public final int edge;
             public final double score;
@@ -835,8 +836,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
             }
 
             @Override
-            public int compareTo(Object o) {
-                double diff = score - ((EdgeScore) o).score;
+            public int compareTo(@NotNull EdgeScore o) {
+                double diff = score - o.score;
                 if (diff < 0.0) {
                     return -1;
                 }
@@ -846,6 +847,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                 return 0;
             }
         }
+
         List<EdgeScore> scoreVec = new Vector<>(e.length);
         Vec3 temp0 = new Vec3(), temp1 = new Vec3(), temp2 = new Vec3();
         for (int i = 0; i < e.length; i++) {
