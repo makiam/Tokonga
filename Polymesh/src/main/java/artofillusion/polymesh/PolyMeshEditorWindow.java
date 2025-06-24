@@ -363,7 +363,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         vertexContainer.add(cornerCB);
         edgeSlider = new ValueSlider(0.0, 1.0, 1000, 0.0);
         edgeSlider.getSlider().getComponent().addChangeListener(this::onEdgeSliderValueChange);
-        edgeSlider.addEventLink(ValueChangedEvent.class, this, "doEdgeSliderChanged");
 
         edgeContainer.add(new BLabel(Translate.text("polymesh:smoothness")));
         edgeContainer.add(edgeSlider);
