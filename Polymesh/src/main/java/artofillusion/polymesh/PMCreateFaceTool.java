@@ -58,7 +58,8 @@ public class PMCreateFaceTool extends EditingTool {
     @Override
     public void mouseReleased(WidgetMouseEvent ev, ViewerCanvas view) {
         Point e = ev.getPoint();
-        PolyMesh mesh, viewMesh;
+        PolyMesh mesh;
+        PolyMesh viewMesh;
         viewMesh = mesh = (PolyMesh) controller.getObject().getGeometry();
         int[] invVertTable = null;
         int length = mesh.getVertices().length;
@@ -148,7 +149,7 @@ public class PMCreateFaceTool extends EditingTool {
                     theWindow.updateImage();
                     break;
                 case KeyPressedEvent.VK_W:
-                    if (clickPoints.size() > 0) {
+                    if (!clickPoints.isEmpty()) {
                         clickPoints.remove(clickPoints.size() - 1);
                     }
                     theWindow.updateImage();

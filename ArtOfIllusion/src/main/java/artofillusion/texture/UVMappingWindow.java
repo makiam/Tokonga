@@ -435,7 +435,7 @@ public class UVMappingWindow extends BDialog implements MeshEditController, Edit
                 }
             }
             if (!consistent) {
-                String[] options = new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
+                String[] options = MessageDialog.getOptions();
                 int choice = new BStandardDialog("",
                         UIUtilities.breakString("Disabling per-face mapping will cause some mapping information to be lost.  Are you sure you want to do this?"),
                         BStandardDialog.QUESTION).showOptionDialog(this, options, options[1]);

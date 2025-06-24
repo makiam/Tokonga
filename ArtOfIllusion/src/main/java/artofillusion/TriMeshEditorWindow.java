@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2020 by Peter Eastman
    Modifications copyright (C) 2016-2017 Petri Ihalainen
-   Changes copyright (C) 2020-2024 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -20,6 +20,7 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.*;
@@ -721,16 +722,16 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
     protected void doOk() {
         TriangleMesh theMesh = (TriangleMesh) objInfo.getObject();
         if (((TriangleMesh) oldMesh).getMaterial() != null) {
-            if (!theMesh.isClosed()) {
-                String[] options = new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
+            if (theMesh.isClosed()) {
+                theMesh.setMaterial(((TriangleMesh) oldMesh).getMaterial(), ((TriangleMesh) oldMesh).getMaterialMapping());
+            } else {
+                String[] options = MessageDialog.getOptions();
                 BStandardDialog dlg = new BStandardDialog("", UIUtilities.breakString(Translate.text("surfaceNoLongerClosed")), BStandardDialog.WARNING);
                 int choice = dlg.showOptionDialog(this, options, options[0]);
                 if (choice == 1) {
                     return;
                 }
                 theMesh.setMaterial(null, null);
-            } else {
-                theMesh.setMaterial(((TriangleMesh) oldMesh).getMaterial(), ((TriangleMesh) oldMesh).getMaterialMapping());
             }
         }
         removeExtraParameters();
@@ -824,7 +825,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
 
         // Give every candidate edge a score for how close the adjoining faces are to forming
         // a rectangle.
-        class EdgeScore implements Comparable {
+        class EdgeScore implements Comparable<EdgeScore> {
 
             public final int edge;
             public final double score;
@@ -835,8 +836,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
             }
 
             @Override
-            public int compareTo(Object o) {
-                double diff = score - ((EdgeScore) o).score;
+            public int compareTo(@NotNull EdgeScore o) {
+                double diff = score - o.score;
                 if (diff < 0.0) {
                     return -1;
                 }
@@ -846,6 +847,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                 return 0;
             }
         }
+
         List<EdgeScore> scoreVec = new Vector<>(e.length);
         Vec3 temp0 = new Vec3(), temp1 = new Vec3(), temp2 = new Vec3();
         for (int i = 0; i < e.length; i++) {
@@ -1603,7 +1605,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
 
     public void optimizeCommand() {
         BStandardDialog dlg = new BStandardDialog("", UIUtilities.breakString(Translate.text("optimizeMeshTitle")), BStandardDialog.QUESTION);
-        String[] options = new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
+        String[] options = MessageDialog.getOptions();
         if (dlg.showOptionDialog(this, options, options[0]) == 1) {
             return;
         }

@@ -1,7 +1,7 @@
 /*
     Copyright (C) 1999-2005 by Peter Eastman, 2007 by Francois Guillet
     Modifications Copyright (C) 2019 by Petri Ihalainen
-    Changes copyright (C) 2023-2024 by Maksim Khramov
+    Changes copyright (C) 2023-2025 by Maksim Khramov
 
     This program is free software; you can redistribute it and/or modify it under the 
     terms of the GNU General Public License as published by the Free Software 
@@ -43,7 +43,8 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
     ObjectInfo info;
     CoordinateSystem objectCoords;
     Image theImage;
-    boolean mouseInside, renderInProgress;
+    boolean mouseInside;
+    boolean renderInProgress;
     Point clickPoint;
     private Mat4 dragTransform;
     public static final int HANDLE_SIZE = 5;

@@ -104,11 +104,11 @@ public class CreatePolyMeshTool extends EditingTool {
         }
         if (shape <= 2) {
             theWindow.setHelpText(Translate.text("polymesh:createPolyMeshTool.helpText1",
-                    new Object[]{Translate.text("polymesh:createPolyMeshTool." + shapeDesc), smoothingDesc}));
+                    Translate.text("polymesh:createPolyMeshTool." + shapeDesc), smoothingDesc));
         } else {
             theWindow.setHelpText(Translate.text("polymesh:createPolyMeshTool.helpText2",
-                    new Object[]{Translate.text("polymesh:createPolyMeshTool." + shapeDesc),
-                        Integer.toString(usize), Integer.toString(vsize), smoothingDesc}));
+                    Translate.text("polymesh:createPolyMeshTool." + shapeDesc),
+                        Integer.toString(usize), Integer.toString(vsize), smoothingDesc));
         }
     }
 

@@ -283,7 +283,8 @@ public class PMExtrudeCurveTool extends EditingTool {
         Vec3 previous;
         PolyMesh mesh = orMesh.duplicate();
         Vec3 extdir, nextdir, normal;
-        double scale, angle;
+        double scale;
+        double angle;
         previous = fromPoint;
         double size;
         for (int i = 0; i < clickPoints.size(); i++) {

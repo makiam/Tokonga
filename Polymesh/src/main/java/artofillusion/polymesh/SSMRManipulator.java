@@ -1,3 +1,14 @@
+/* Copyright (C) 2016 by Lucas Stanek
+   Changes copyright (C) 2023-2025 by Maksim Khramov
+
+ This program is free software; you can redistribute it and/or modify it under the
+ terms of the GNU General Public License as published by the Free Software
+ Foundation; either version 2 of the License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 
 package artofillusion.polymesh;
 
@@ -12,19 +23,19 @@ import artofillusion.math.Vec3;
  */
 public abstract class SSMRManipulator extends Manipulator {
 
-    public final static short SCALE = 0;
-    public final static short ROTATE = 1;
-    public final static short MOVE = 2;
-    public final static short ABORT = 3;
-    public final static short XAXIS = 0;
-    public final static short YAXIS = 1;
-    public final static short ZAXIS = 2;
+    public static final short SCALE = 0;
+    public static final short ROTATE = 1;
+    public static final short MOVE = 2;
+    public static final short ABORT = 3;
+    public static final short XAXIS = 0;
+    public static final short YAXIS = 1;
+    public static final short ZAXIS = 2;
 
-    public final static short ANCHOR_LEFT = 0;
-    public final static short ANCHOR_RIGHT = 1;
-    public final static short ANCHOR_TOP = 2;
-    public final static short ANCHOR_BOTTOM = 3;
-    public final static short ANCHOR_CENTER = 4;
+    public static final short ANCHOR_LEFT = 0;
+    public static final short ANCHOR_RIGHT = 1;
+    public static final short ANCHOR_TOP = 2;
+    public static final short ANCHOR_BOTTOM = 3;
+    public static final short ANCHOR_CENTER = 4;
 
     public SSMRManipulator(AdvancedEditingTool tool, ViewerCanvas view, PolyMeshValueWidget valueWidget) {
         super(tool, view, valueWidget);

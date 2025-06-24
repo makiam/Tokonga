@@ -1,6 +1,7 @@
 /*
  *  Copyright (C) 2007 by Francois Guillet
- *  Changes copyright (C) 2023 by Maksim Khramov
+ *  Changes copyright (C) 2023-2025 by Maksim Khramov
+ *
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -11,6 +12,7 @@
 package artofillusion.polymesh;
 
 import artofillusion.Scene;
+import artofillusion.api.ImplementationVersion;
 import artofillusion.math.Vec2;
 import artofillusion.polymesh.UnfoldedMesh.UnfoldedVertex;
 import artofillusion.texture.Texture;
@@ -32,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  */
 @Slf4j
+@ImplementationVersion(current = 1)
 public class UVMappingData {
 
     /**
@@ -76,13 +79,11 @@ public class UVMappingData {
             for (int i = 0; i < textures.size(); i++) {
                 newMapping.textures.add(textures.get(i));
             }
-            newMapping.edgeColor = new Color(edgeColor.getRed(), edgeColor
-                    .getGreen(), edgeColor.getBlue());
+            newMapping.edgeColor = new Color(edgeColor.getRed(), edgeColor.getGreen(), edgeColor.getBlue());
             return newMapping;
         }
 
-        public void writeToFile(DataOutputStream out, Scene scene)
-                throws IOException {
+        public void writeToFile(DataOutputStream out, Scene scene) throws IOException {
             out.writeShort(1);
             out.writeUTF(name);
             Texture tex;
@@ -114,8 +115,7 @@ public class UVMappingData {
             out.writeInt(edgeColor.getBlue());
         }
 
-        public UVMeshMapping(DataInputStream in, Scene scene)
-                throws IOException, InvalidObjectException {
+        public UVMeshMapping(DataInputStream in, Scene scene) throws IOException {
             short version = in.readShort();
             if (version < 0 || version > 1) {
                 throw new InvalidObjectException("");
@@ -198,8 +198,7 @@ public class UVMappingData {
         return newData;
     }
 
-    public void writeToFile(DataOutputStream out, Scene scene)
-            throws IOException {
+    public void writeToFile(DataOutputStream out, Scene scene) throws IOException {
         out.writeShort(0);
         out.writeInt(meshes.length);
         for (int i = 0; i < meshes.length; i++) {
@@ -212,8 +211,7 @@ public class UVMappingData {
         out.writeInt(sampling);
     }
 
-    public UVMappingData(DataInputStream in, Scene scene) throws IOException,
-            InvalidObjectException {
+    public UVMappingData(DataInputStream in, Scene scene) throws IOException  {
         short version = in.readShort();
         if (version < 0 || version > 0) {
             throw new InvalidObjectException("");

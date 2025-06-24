@@ -12,20 +12,7 @@
 
 package artofillusion.polymesh;
 
-import artofillusion.ArtOfIllusion;
-import artofillusion.Camera;
-import artofillusion.LayoutWindow;
-import artofillusion.MeshEditorWindow;
-import artofillusion.MeshViewer;
-import artofillusion.MoveViewTool;
-import artofillusion.RenderingMesh;
-import artofillusion.RotateViewTool;
-import artofillusion.SkewMeshTool;
-import artofillusion.TaperMeshTool;
-import artofillusion.TextureParameter;
-import artofillusion.ThickenMeshTool;
-import artofillusion.UndoRecord;
-import artofillusion.ViewerCanvas;
+import artofillusion.*;
 import artofillusion.animation.Joint;
 import artofillusion.animation.Skeleton;
 import artofillusion.animation.SkeletonTool;
@@ -62,6 +49,7 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -69,6 +57,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
@@ -80,6 +69,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.greenrobot.eventbus.Subscribe;
 
 /**
  * The PolyMeshEditorWindow class represents the window for editing PolyMesh
@@ -165,31 +155,31 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     private final EditingTool thickenMeshTool = new ThickenMeshTool(this, this);
 
-    public final static int THICKEN_TOOL = 4;
+    public static final int THICKEN_TOOL = 4;
 
     private final EditingTool extrudeTool = new AdvancedExtrudeTool(this, this);
 
-    public final static int EXTRUDE_TOOL = 5;
+    public static final int EXTRUDE_TOOL = 5;
 
     private final EditingTool knifeTool = new PMKnifeTool(this, this);
 
-    public final static int KNIFE_TOOL = 6;
+    public static final int KNIFE_TOOL = 6;
 
     private final EditingTool createFaceTool = new PMCreateFaceTool(this, this);
 
-    public final static int CREATE_FACE_TOOL = 7;
+    public static final int CREATE_FACE_TOOL = 7;
 
     private final EditingTool extrudeCurveTool = new PMExtrudeCurveTool(this, this);
 
-    public final static int EXTRUDE_CURVE_TOOL = 8;
+    public static final int EXTRUDE_CURVE_TOOL = 8;
 
     private final EditingTool sewTool = new PMSewTool(this, this);
 
-    public final static int SEW_TOOL = 9;
+    public static final int SEW_TOOL = 9;
 
     private final EditingTool skeletonTool = new SkeletonTool(this, true);
 
-    public final static int SKELETON_TOOL = 10;
+    public static final int SKELETON_TOOL = 10;
 
     private boolean realView;
 
@@ -231,7 +221,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     protected boolean tolerant;
 
-    private TextureParameter faceIndexParam, jointWeightParam;
+    private TextureParameter faceIndexParam;
+    private TextureParameter jointWeightParam;
 
     protected boolean[] hideFace;
 
@@ -320,6 +311,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      */
     public PolyMeshEditorWindow(EditingWindow parent, String title, ObjectInfo obj, Runnable onClose) {
         super(parent, title, obj);
+        org.greenrobot.eventbus.EventBus.getDefault().register(this);
         PolyMesh mesh = (PolyMesh) objInfo.object;
         if (eventSource == null) {
             eventSource = new EventSource();
@@ -356,18 +348,22 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         tensionSpin.getComponent().addChangeListener(this::doTensionChanged);
         meshContainer.add(tensionSpin);
 
-        levelContainer.add(new BLabel(Translate.text("polymesh:interactiveSubdiv")));
+        levelContainer.add(Translate.label("polymesh:interactiveSubdiv"));
         ispin = new BSpinner(1, 1, 6, 1);
         levelContainer.add(ispin);
-        ispin.setValue(mesh.getInteractiveSmoothLevel());
-        ispin.addEventLink(ValueChangedEvent.class, this, "doInteractiveLevel");
+        var mis = mesh.getInteractiveSmoothLevel();
+        log.info("Mesh interactive smooth level: {}", mis);
+        ispin.setValue(mis);
+        ispin.getComponent().addChangeListener(this::onInteractiveLevelValueChange);
 
         meshContainer.add(levelContainer);
         cornerCB = new BCheckBox(Translate.text("polymesh:corner"), false);
-        cornerCB.addEventLink(ValueChangedEvent.class, this, "doCornerChanged");
+        cornerCB.getComponent().addItemListener(this::onCornerCheckboxValueChange);
+
         vertexContainer.add(cornerCB);
         edgeSlider = new ValueSlider(0.0, 1.0, 1000, 0.0);
-        edgeSlider.addEventLink(ValueChangedEvent.class, this, "doEdgeSliderChanged");
+        edgeSlider.getSlider().getComponent().addChangeListener(this::onEdgeSliderValueChange);
+
         edgeContainer.add(new BLabel(Translate.text("polymesh:smoothness")));
         edgeContainer.add(edgeSlider);
         overlayVertexEdgeFace = new OverlayContainer();
@@ -427,7 +423,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         createVertexMenu();
         createEdgeMenu();
         createFaceMenu();
-        createSkeletonMenu((PolyMesh) objInfo.object);
+        createSkeletonMenu();
         createTextureMenu();
         createViewMenu();
         recursivelyAddListeners(this);
@@ -821,10 +817,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Builds the skeleton menu
      *
-     * @param obj
-     * The poly mesh being edited
      */
-    void createSkeletonMenu(PolyMesh obj) {
+    private void createSkeletonMenu() {
 
         BMenu skeletonMenu = Translate.menu("skeleton");
         menubar.add(skeletonMenu);
@@ -835,7 +829,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         skeletonMenu.add(skeletonMenuItem[3] = Translate.menuItem("importSkeleton", event -> importSkeletonCommand()));
         skeletonMenu.addSeparator();
         skeletonMenu.add(skeletonMenuItem[4] = Translate.menuItem("bindSkeleton", event -> bindSkeletonCommand()));
-        skeletonMenu.add(skeletonMenuItem[5] = Translate.checkboxMenuItem("detachSkeleton", this, "skeletonDetachedChanged", false));
+        skeletonMenu.add(skeletonMenuItem[5] = Translate.checkboxMenuItem("detachSkeleton", event -> skeletonDetachedChanged(), false));
     }
 
     private final BMenuItem unfoldMeshAction = Translate.menuItem("polymesh:unfoldMesh", this::doUnfoldMesh);
@@ -908,12 +902,12 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         PolyMesh mesh = (PolyMesh) objInfo.object;
         MeshVertex[] v = mesh.getVertices();
         Vec3 center = new Vec3();
-        for (int i = 0; i < v.length; i++) {
-            center.add(v[i].r);
+        for (var meshVertex : v) {
+            center.add(meshVertex.r);
         }
         center.scale(1.0 / v.length);
-        for (int i = 0; i < v.length; i++) {
-            v[i].r.subtract(center);
+        for (var meshVertex : v) {
+            meshVertex.r.subtract(center);
         }
         mesh.resetMesh();
         objectChanged();
@@ -926,68 +920,37 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     @Override
     public void deleteCommand() {
         PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
-
         PolyMesh prevMesh = mesh.duplicate();
+
+        int count = 0;
+        for (boolean b : selected) {
+            if (b) {
+                ++count;
+            }
+        }
+        int[] indices = new int[count];
+        count = 0;
+        for (int i = 0; i < selected.length; ++i) {
+            if (selected[i]) {
+                indices[count++] = i;
+            }
+        }
+
         if (selectMode == POINT_MODE) {
-            int count = 0;
-            for (int i = 0; i < selected.length; ++i) {
-                if (selected[i]) {
-                    ++count;
-                }
-            }
-            int[] indices = new int[count];
-            count = 0;
-            for (int i = 0; i < selected.length; ++i) {
-                if (selected[i]) {
-                    indices[count++] = i;
-                }
-            }
             if (mesh.getVertices().length - indices.length < 3) {
-                new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities
-                        .breakString(Translate.text("illegalDelete")),
-                        BStandardDialog.ERROR).showMessageDialog(null);
+                new IllegalMeshDeleteEvent(mesh).fire();
                 return;
             }
             mesh.deleteVertices(indices);
         } else if (selectMode == EDGE_MODE) {
-            int count = 0;
-            for (int i = 0; i < selected.length; ++i) {
-                if (selected[i]) {
-                    ++count;
-                }
-            }
-            int[] indices = new int[count];
-            count = 0;
-            for (int i = 0; i < selected.length; ++i) {
-                if (selected[i]) {
-                    indices[count++] = i;
-                }
-            }
             if (mesh.getEdges().length - indices.length < 3) {
-                new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities
-                        .breakString(Translate.text("illegalDelete")),
-                        BStandardDialog.ERROR).showMessageDialog(null);
+                new IllegalMeshDeleteEvent(mesh).fire();
                 return;
             }
             mesh.deleteEdges(indices);
         } else {
-            int count = 0;
-            for (int i = 0; i < selected.length; ++i) {
-                if (selected[i]) {
-                    ++count;
-                }
-            }
-            int[] indices = new int[count];
-            count = 0;
-            for (int i = 0; i < selected.length; ++i) {
-                if (selected[i]) {
-                    indices[count++] = i;
-                }
-            }
             if (mesh.getFaces().length - indices.length < 1) {
-                new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities
-                        .breakString(Translate.text("illegalDelete")),
-                        BStandardDialog.ERROR).showMessageDialog(null);
+                new IllegalMeshDeleteEvent(mesh).fire();
                 return;
             }
             mesh.deleteFaces(indices);
@@ -1003,23 +966,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      */
     void selectAllCommand(ActionEvent event) {
         setUndoRecord(new UndoRecord(this, false, UndoRecord.SET_MESH_SELECTION, this, selectMode, selected.clone()));
-        for (int i = 0; i < selected.length; i++) {
-            selected[i] = true;
-        }
+        Arrays.fill(selected, true);
         setSelection(selected);
-    }
-
-    /**
-     * Select the edges which form the boundary of the mesh.
-     */
-    public void selectBoundaryCommand() {
-        PolyMesh theMesh = (PolyMesh) objInfo.object;
-        if (selectMode != EDGE_MODE) {
-            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities
-                    .breakString(Translate.text("polymesh:edgeModeForBoundary")),
-                    BStandardDialog.ERROR).showMessageDialog(this);
-            return;
-        }
     }
 
     /**
@@ -1252,21 +1200,16 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             theMesh.setMirrorState(mirror);
         }
         if (((PolyMesh) oldMesh).getMaterial() != null) {
-            if (!theMesh.isClosed()) {
-                String[] options = new String[]{Translate.text("button.ok"),
-                    Translate.text("button.cancel")};
-                BStandardDialog dlg = new BStandardDialog(Translate
-                        .text("polymesh:errorTitle"), UIUtilities.breakString(Translate
-                        .text("surfaceNoLongerClosed")),
-                        BStandardDialog.WARNING);
+            if (theMesh.isClosed()) {
+                theMesh.setMaterial(((PolyMesh) oldMesh).getMaterial(), ((PolyMesh) oldMesh).getMaterialMapping());
+            } else {
+                String[] options = MessageDialog.getOptions();
+                BStandardDialog dlg = new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("surfaceNoLongerClosed")), BStandardDialog.WARNING);
                 int choice = dlg.showOptionDialog(this, options, options[0]);
                 if (choice == 1) {
                     return;
                 }
                 theMesh.setMaterial(null, null);
-            } else {
-                theMesh.setMaterial(((PolyMesh) oldMesh).getMaterial(),
-                        ((PolyMesh) oldMesh).getMaterialMapping());
             }
         }
         removeExtraParameters();
@@ -1302,8 +1245,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             setSelectionMode(modes.getSelection());
             theView[currentView].getCurrentTool().activate();
         } else {
-            for (int i = 0; i < theView.length; i++) {
-                theView[i].setTool(tool);
+            for (ViewerCanvas viewerCanvas : theView) {
+                viewerCanvas.setTool(tool);
             }
             currentTool = tool;
 
@@ -1334,20 +1277,14 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             }
         }
         for (int i = 0; i < maxDistance; i++) {
-            for (int j = 0; j < count.length; j++) {
-                count[j] = 0;
-            }
+            Arrays.fill(count, 0);
             for (int j = 0; j < edge.length; j++) {
-                if (dist[edge[j].vertex] == i
-                        && dist[edge[edge[j].hedge].vertex] == i + 1) {
+                if (dist[edge[j].vertex] == i && dist[edge[edge[j].hedge].vertex] == i + 1) {
                     count[edge[edge[j].hedge].vertex]++;
-                    delta[edge[edge[j].hedge].vertex]
-                            .add(delta[edge[j].vertex]);
-                } else if (dist[edge[edge[j].hedge].vertex] == i
-                        && dist[edge[j].vertex] == i + 1) {
+                    delta[edge[edge[j].hedge].vertex].add(delta[edge[j].vertex]);
+                } else if (dist[edge[edge[j].hedge].vertex] == i && dist[edge[j].vertex] == i + 1) {
                     count[edge[j].vertex]++;
-                    delta[edge[j].vertex]
-                            .add(delta[edge[edge[j].hedge].vertex]);
+                    delta[edge[j].vertex].add(delta[edge[edge[j].hedge].vertex]);
                 }
             }
             for (int j = 0; j < count.length; j++) {
@@ -1357,8 +1294,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             }
         }
         for (int i = 0; i < scale.length; i++) {
-            scale[i] = Math.pow((maxDistance - i + 1.0) / (maxDistance + 1.0),
-                    tension);
+            scale[i] = Math.pow((maxDistance - i + 1.0) / (maxDistance + 1.0), tension);
         }
         for (int i = 0; i < delta.length; i++) {
             if (dist[i] > 0) {
@@ -1587,6 +1523,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * @param amount
      * The quantity by which the level should be changed
      */
+    @KeystrokeManager.UsedWithScriptBinding("PMKeystrokes.xml")
     public void changeInteractiveSmoothLevel(int amount) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         int level;
@@ -1608,6 +1545,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      *
      */
     // NB. Method accessed via KeyStroke records. Do not remove!!!
+    @KeystrokeManager.UsedWithScriptBinding("PMKeystrokes.xml")
     public void toggleSmoothing() {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         if (realView) {
@@ -1644,6 +1582,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /*
          * Method runs from Polymesh keystrokes script
      */
+    @KeystrokeManager.UsedWithScriptBinding
     public void selectTool(int tool) {
         tools.selectTool(toolsMap.get(tool));
     }
@@ -1652,6 +1591,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Toggles manipulators between 2D and 3D (to be removed presumably)
      */
     // NB. Method accessed via KeyStroke records.
+    @KeystrokeManager.UsedWithScriptBinding
     public void toggleManipulator() {
         if (currentTool instanceof AdvancedEditingTool) {
             PolyMeshViewer view = (PolyMeshViewer) getView();
@@ -1664,9 +1604,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Toggles manipulator view mode (i.e. X,Y,Z U,V and N, P, Q)
      */
     // NB. Method accessed via KeyStroke records. Do not remove!!!
+    @KeystrokeManager.UsedWithScriptBinding
     public void toggleManipulatorViewMode() {
         PolyMeshViewer view = (PolyMeshViewer) getView();
-        view.getManipulators().forEach(man -> man.toggleViewMode());
+        view.getManipulators().forEach(Manipulator::toggleViewMode);
         view.repaint();
     }
 
@@ -1677,8 +1618,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         BorderContainer bc = new BorderContainer();
         KeystrokePreferencesPanel keystrokePanel = new KeystrokePreferencesPanel();
         bc.add(keystrokePanel, BorderContainer.CENTER);
-        PanelDialog dlg = new PanelDialog(this, Translate.text("keystrokes"),
-                bc);
+        PanelDialog dlg = new PanelDialog(this, Translate.text("keystrokes"), bc);
         if (!dlg.clickedOk()) {
             return;
         }
@@ -1719,6 +1659,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Toggles help mode on/off
      */
     // NB. Method accessed via KeyStroke records.
+    @KeystrokeManager.UsedWithScriptBinding
     public void toggleHelpMode() {
         Manipulator.toggleHelpMode();
     }
@@ -1826,9 +1767,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     private void doDivideEdgesInteractive(ActionEvent event) {
-        SwingUtilities.invokeLater(() -> new DivideDialog(this, value -> {
-            doDivideEdges(value);
-        }).setVisible(true));
+        SwingUtilities.invokeLater(() -> new DivideDialog(this, this::doDivideEdges).setVisible(true));
     }
 
     /**
@@ -1841,8 +1780,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         PolyMesh mesh = (PolyMesh) objInfo.object;
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, mesh.duplicate()));
         Object source = ev.getWidget();
-        for (int i = 0; i < smoothItem.length; i++) {
-            smoothItem[i].setState(false);
+        for (var item : smoothItem) {
+            item.setState(false);
         }
         /*
 		 * for ( int i = 0; i < smoothItem.length; i++ ) if ( source ==
@@ -1892,9 +1831,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
         PolyMesh prevMesh = mesh.duplicate();
         boolean[] selected = new boolean[mesh.getFaces().length];
-        for (int i = 0; i < selected.length; ++i) {
-            selected[i] = true;
-        }
+        Arrays.fill(selected, true);
         mesh.smooth(selected, true);
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
         objectChanged();
@@ -2370,9 +2307,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         valueMesh.copyObject(priorValueMesh);
         valueMesh.extrudeFaces(valueSelection, valueWidget.getValue(), direction);
         boolean[] sel = new boolean[valueMesh.getFaces().length];
-        for (int i = 0; i < valueSelection.length; ++i) {
-            sel[i] = valueSelection[i];
-        }
+        System.arraycopy(valueSelection, 0, sel, 0, valueSelection.length);
         objectChanged();
         setSelection(sel);
     }
@@ -2384,12 +2319,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private void doExtrudeEdgeCallback() {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         mesh.copyObject(priorValueMesh);
-        mesh.extrudeEdges(valueSelection, valueWidget.getValue(),
-                direction);
+        mesh.extrudeEdges(valueSelection, valueWidget.getValue(), direction);
+
         boolean[] sel = new boolean[mesh.getEdges().length / 2];
-        for (int i = 0; i < valueSelection.length; ++i) {
-            sel[i] = valueSelection[i];
-        }
+        System.arraycopy(valueSelection, 0, sel, 0, valueSelection.length);
         objectChanged();
         setSelection(sel);
     }
@@ -2426,12 +2359,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         PolyMesh mesh = (PolyMesh) objInfo.object;
         mesh.copyObject(priorValueMesh);
         mesh.copyObject(priorValueMesh);
-        mesh.extrudeRegion(valueSelection, valueWidget.getValue(),
-                direction);
+        mesh.extrudeRegion(valueSelection, valueWidget.getValue(), direction);
         boolean[] sel = new boolean[mesh.getFaces().length];
-        for (int i = 0; i < valueSelection.length; ++i) {
-            sel[i] = valueSelection[i];
-        }
+        System.arraycopy(valueSelection, 0, sel, 0, valueSelection.length);
         objectChanged();
         setSelection(sel);
     }
@@ -2443,12 +2373,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private void doExtrudeEdgeRegionCallback() {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         mesh.copyObject(priorValueMesh);
-        mesh.extrudeEdgeRegion(valueSelection, valueWidget.getValue(),
-                direction);
+        mesh.extrudeEdgeRegion(valueSelection, valueWidget.getValue(), direction);
         boolean[] sel = new boolean[mesh.getEdges().length / 2];
-        for (int i = 0; i < valueSelection.length; ++i) {
-            sel[i] = valueSelection[i];
-        }
+        System.arraycopy(valueSelection, 0, sel, 0, valueSelection.length);
         objectChanged();
         setSelection(sel);
     }
@@ -2473,8 +2400,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private void doInsertLoopsCallback() {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         mesh.copyObject(priorValueMesh);
-        boolean[] sel = mesh.divideEdges(valueSelection, valueWidget
-                .getValue());
+        boolean[] sel = mesh.divideEdges(valueSelection, valueWidget.getValue());
         mesh.connectVertices(sel);
         objectChanged();
         setSelectionMode(POINT_MODE);
@@ -2521,8 +2447,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 if (vertDisplacements[count].length() < 1e-6) {
                     vertDisplacements[count] = new Vec3(normals[i]);
                 }
-                vertDisplacements[count].scale(radius
-                        / vertDisplacements[count].length());
+                vertDisplacements[count].scale(radius / vertDisplacements[count].length());
                 vertDisplacements[count].add(origin);
                 vertDisplacements[count].subtract(vert[i].r);
                 ++count;
@@ -2546,8 +2471,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         int count = 0;
         for (int i = 0; i < vert.length; ++i) {
             if (selected[i]) {
-                vert[i].r.add(vertDisplacements[count].times(valueWidget
-                        .getValue()));
+                vert[i].r.add(vertDisplacements[count].times(valueWidget.getValue()));
                 ++count;
             }
         }
@@ -2603,9 +2527,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             l = 0;
             for (int i = 0; i < vert.length; ++i) {
                 if (selected[i]) {
-                    l += Math.sqrt((vert[i].r.x - a) * (vert[i].r.x - a)
-                            + (vert[i].r.y - b) * (vert[i].r.y - b)
-                            + (vert[i].r.z - c) * (vert[i].r.z - c));
+                    l += Math.sqrt((vert[i].r.x - a) * (vert[i].r.x - a) + (vert[i].r.y - b) * (vert[i].r.y - b) + (vert[i].r.z - c) * (vert[i].r.z - c));
                 }
             }
             l /= count;
@@ -2613,9 +2535,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             for (int i = 0; i < vert.length; ++i) {
                 if (selected[i]) {
 
-                    t = Math.sqrt((vert[i].r.x - a) * (vert[i].r.x - a)
-                            + (vert[i].r.y - b) * (vert[i].r.y - b)
-                            + (vert[i].r.z - c) * (vert[i].r.z - c));
+                    t = Math.sqrt((vert[i].r.x - a) * (vert[i].r.x - a) + (vert[i].r.y - b) * (vert[i].r.y - b) + (vert[i].r.z - c) * (vert[i].r.z - c));
                     if (t < 1e-6) {
                         continue;
                     }
@@ -2632,20 +2552,16 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             newc = origin.z + l * lc;
             delta = 0;
             if (Math.max(Math.abs(newa), Math.abs(a)) > 1e-6) {
-                delta += Math.abs(newa - a)
-                        / Math.max(Math.abs(newa), Math.abs(a));
+                delta += Math.abs(newa - a) / Math.max(Math.abs(newa), Math.abs(a));
             }
             if (Math.max(Math.abs(newb), Math.abs(b)) > 1e-6) {
-                delta += Math.abs(newb - b)
-                        / Math.max(Math.abs(newb), Math.abs(b));
+                delta += Math.abs(newb - b) / Math.max(Math.abs(newb), Math.abs(b));
             }
             if (Math.max(Math.abs(newc), Math.abs(c)) > 1e-6) {
-                delta += Math.abs(newc - c)
-                        / Math.max(Math.abs(newc), Math.abs(c));
+                delta += Math.abs(newc - c) / Math.max(Math.abs(newc), Math.abs(c));
             }
             if (Math.max(Math.abs(radius), Math.abs(l)) > 1e-6) {
-                delta += Math.abs(l - radius)
-                        / Math.max(Math.abs(radius), Math.abs(l));
+                delta += Math.abs(l - radius) / Math.max(Math.abs(radius), Math.abs(l));
             }
             a = newa;
             b = newb;
@@ -2669,8 +2585,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 if (vertDisplacements[count].length() < 1e-6) {
                     vertDisplacements[count] = new Vec3(normals[i]);
                 }
-                vertDisplacements[count].scale(radius
-                        / vertDisplacements[count].length());
+                vertDisplacements[count].scale(radius / vertDisplacements[count].length());
                 vertDisplacements[count].add(origin);
                 vertDisplacements[count].subtract(vert[i].r);
                 ++count;
@@ -2696,9 +2611,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             sum += movement[i].length();
         }
         if (sum / movement.length < 1e-6) {
-            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities
-                    .breakString(Translate.text("polymesh:nullMovement")),
-                    BStandardDialog.ERROR).showMessageDialog(null);
+            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("polymesh:nullMovement")), BStandardDialog.ERROR).showMessageDialog(null);
             return true;
         }
         return false;
@@ -2742,8 +2655,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         count = 0;
         for (int i = 0; i < vert.length; ++i) {
             if (selected[i]) {
-                vertDisplacements[count++] = norm.times(-norm.dot(vert[i].r
-                        .minus(origin)));
+                vertDisplacements[count++] = norm.times(-norm.dot(vert[i].r.minus(origin)));
             }
         }
         if (checkForNullMovement(vertDisplacements)) {
@@ -2896,10 +2808,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 });
             }
         });
-        ComponentsDialog dlg = new ComponentsDialog(this, Translate
-                .text(pointmode ? "setPointSmoothness" : "setEdgeSmoothness"),
-                new Widget[]{smoothness}, new String[]{Translate
-                            .text("Smoothness")});
+        ComponentsDialog dlg = new ComponentsDialog(this, Translate.text(pointmode ? "setPointSmoothness" : "setEdgeSmoothness"),
+                new Widget[]{smoothness}, new String[]{Translate.text("Smoothness")});
         processor.stopProcessing();
         if (dlg.clickedOk()) {
             setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, prevMesh));
@@ -2911,7 +2821,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         }
     }
 
-    public void doEdgeSliderChanged() {
+    private void onEdgeSliderValueChange(ChangeEvent event) {
+        log.debug("Slider Value changed for {}", event.getSource());
         PolyMesh theMesh = (PolyMesh) objInfo.object;
         final Wedge[] ed = theMesh.getEdges();
         float s = (float) edgeSlider.getValue();
@@ -2987,8 +2898,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             }
             for (i = 0; i < selected.length; i++) {
                 if (selected[i]) {
-                    int[] vf = ((PolyMesh) objInfo.object)
-                            .getFaceVertices(f[i]);
+                    int[] vf = ((PolyMesh) objInfo.object).getFaceVertices(f[i]);
                     for (j = 0; j < vf.length; ++j) {
                         dist[vf[j]] = 0;
                     }
@@ -3001,8 +2911,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             for (j = 0; j < e.length / 2; j++) {
                 if (dist[e[j].vertex] == -1 && dist[e[e[j].hedge].vertex] == i) {
                     dist[e[j].vertex] = i + 1;
-                } else if (dist[e[e[j].hedge].vertex] == -1
-                        && dist[e[j].vertex] == i) {
+                } else if (dist[e[e[j].hedge].vertex] == -1 && dist[e[j].vertex] == i) {
                     dist[e[e[j].hedge].vertex] = i + 1;
                 }
             }
@@ -3130,8 +3039,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 case FACE_MODE:
                     int[] fv = mesh.getFaceVertices(f[i]);
                     middle = new Vec3();
-                    for (int j = 0; j < fv.length; j++) {
-                        middle.add(v[fv[j]].r);
+                    for (int k : fv) {
+                        middle.add(v[k].r);
                     }
                     middle.scale(1.0 / (double) fv.length);
                     if (selected[i]) {
@@ -3190,8 +3099,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             if (selectMode == FACE_MODE) {
                 for (i = 0; i < f.length; i++) {
                     if (selected[i]) {
-                        int[] vf = ((PolyMesh) objInfo.object)
-                                .getFaceVertices(f[i]);
+                        int[] vf = ((PolyMesh) objInfo.object).getFaceVertices(f[i]);
                         for (int j = 0; j < vf.length; ++j) {
                             newSel[vf[j]] = true;
                         }
@@ -3210,20 +3118,17 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             if (selectMode == POINT_MODE) {
                 if (tolerant) {
                     for (i = 0; i < e.length / 2; i++) {
-                        newSel[i] = selected[e[i].vertex]
-                                | selected[e[e[i].hedge].vertex];
+                        newSel[i] = selected[e[i].vertex] | selected[e[e[i].hedge].vertex];
                     }
                 } else {
                     for (i = 0; i < e.length / 2; i++) {
-                        newSel[i] = selected[e[i].vertex]
-                                & selected[e[e[i].hedge].vertex];
+                        newSel[i] = selected[e[i].vertex] & selected[e[e[i].hedge].vertex];
                     }
                 }
             } else {
                 for (i = 0; i < f.length; i++) {
                     if (selected[i]) {
-                        int[] fe = ((PolyMesh) objInfo.object)
-                                .getFaceEdges(f[i]);
+                        int[] fe = ((PolyMesh) objInfo.object).getFaceEdges(f[i]);
                         for (int j = 0; j < fe.length; ++j) {
                             if (fe[j] >= e.length / 2) {
                                 newSel[e[fe[j]].hedge] = true;
@@ -3240,8 +3145,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             if (selectMode == POINT_MODE) {
                 if (tolerant) {
                     for (i = 0; i < f.length; i++) {
-                        int[] vf = ((PolyMesh) objInfo.object)
-                                .getFaceVertices(f[i]);
+                        int[] vf = ((PolyMesh) objInfo.object).getFaceVertices(f[i]);
                         for (int j = 0; j < vf.length; ++j) {
                             newSel[i] |= selected[vf[j]];
                         }
@@ -3249,8 +3153,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 } else {
                     for (i = 0; i < f.length; i++) {
                         newSel[i] = true;
-                        int[] vf = ((PolyMesh) objInfo.object)
-                                .getFaceVertices(f[i]);
+                        int[] vf = ((PolyMesh) objInfo.object).getFaceVertices(f[i]);
                         for (int j = 0; j < vf.length; ++j) {
                             newSel[i] &= selected[vf[j]];
                         }
@@ -3300,10 +3203,12 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         PolyMesh mesh = (PolyMesh) objInfo.object;
         hideFace = hidden;
         hideVert = new boolean[mesh.getVertices().length];
-        if (hideFace != null) {
+        if (hideFace == null) {
             for (int i = 0; i < hideVert.length; i++) {
-                hideVert[i] = true;
+                hideVert[i] = false;
             }
+        } else {
+            Arrays.fill(hideVert, true);
             Wface[] face = mesh.getFaces();
             for (int i = 0; i < face.length; i++) {
                 if (!hideFace[i]) {
@@ -3312,10 +3217,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                         hideVert[vf[j]] = false;
                     }
                 }
-            }
-        } else {
-            for (int i = 0; i < hideVert.length; i++) {
-                hideVert[i] = false;
             }
         }
         FaceParameterValue val = (FaceParameterValue) objInfo.object.getParameterValue(faceIndexParam);
@@ -3346,11 +3247,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         Wedge[] edges = mesh.getEdges();
         if (selectMode == POINT_MODE && sel.length == verts.length) {
             selected = sel;
-        } else if (selectMode == EDGE_MODE
-                && sel.length == mesh.getEdges().length / 2) {
+        } else if (selectMode == EDGE_MODE && sel.length == mesh.getEdges().length / 2) {
             selected = sel;
-        } else if (selectMode == FACE_MODE
-                && sel.length == mesh.getFaces().length) {
+        } else if (selectMode == FACE_MODE && sel.length == mesh.getFaces().length) {
             selected = sel;
         }
         findSelectionDistance();
@@ -3384,32 +3283,23 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         setObject(obj);
         hideVert = new boolean[mesh.getVertices().length];
         for (int i = 0; i < theView.length; i++) {
-            if (getSelectionMode() == PolyMeshEditorWindow.POINT_MODE
-                    && selected.length != obj.getVertices().length) {
-                ((PolyMeshViewer) theView[i]).visible = new boolean[obj
-                        .getVertices().length];
+            if (getSelectionMode() == PolyMeshEditorWindow.POINT_MODE && selected.length != obj.getVertices().length) {
+                ((PolyMeshViewer) theView[i]).visible = new boolean[obj.getVertices().length];
             }
-            if (getSelectionMode() == PolyMeshEditorWindow.EDGE_MODE
-                    && selected.length != obj.getEdges().length / 2) {
-                ((PolyMeshViewer) theView[i]).visible = new boolean[obj
-                        .getEdges().length];
+            if (getSelectionMode() == PolyMeshEditorWindow.EDGE_MODE && selected.length != obj.getEdges().length / 2) {
+                ((PolyMeshViewer) theView[i]).visible = new boolean[obj.getEdges().length];
             }
-            if (getSelectionMode() == PolyMeshEditorWindow.FACE_MODE
-                    && selected.length != obj.getFaces().length) {
-                ((PolyMeshViewer) theView[i]).visible = new boolean[obj
-                        .getFaces().length];
+            if (getSelectionMode() == PolyMeshEditorWindow.FACE_MODE && selected.length != obj.getFaces().length) {
+                ((PolyMeshViewer) theView[i]).visible = new boolean[obj.getFaces().length];
             }
         }
-        if (getSelectionMode() == PolyMeshEditorWindow.POINT_MODE
-                && selected.length != obj.getVertices().length) {
+        if (getSelectionMode() == PolyMeshEditorWindow.POINT_MODE && selected.length != obj.getVertices().length) {
             selected = new boolean[obj.getVertices().length];
         }
-        if (getSelectionMode() == PolyMeshEditorWindow.EDGE_MODE
-                && selected.length != obj.getEdges().length / 2) {
+        if (getSelectionMode() == PolyMeshEditorWindow.EDGE_MODE && selected.length != obj.getEdges().length / 2) {
             selected = new boolean[obj.getEdges().length / 2];
         }
-        if (getSelectionMode() == PolyMeshEditorWindow.FACE_MODE
-                && selected.length != obj.getFaces().length) {
+        if (getSelectionMode() == PolyMeshEditorWindow.FACE_MODE && selected.length != obj.getFaces().length) {
             selected = new boolean[obj.getFaces().length];
         }
         if (hideFace != null) {
@@ -3437,7 +3327,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      */
     @Override
     public void objectChanged() {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
+        PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
         mesh.resetMesh();
         setMesh(mesh);
         super.objectChanged();
@@ -3735,9 +3625,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private void doCollapseFaces(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         if (mesh.getFaces().length == 1) {
-            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities
-                    .breakString(Translate.text("illegalDelete")),
-                    BStandardDialog.ERROR).showMessageDialog(null);
+            new IllegalMeshDeleteEvent(mesh).fire();
             return;
         }
         PolyMesh prevMesh = mesh.duplicate();
@@ -3753,9 +3641,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private void doCollapseEdges(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         if (mesh.getFaces().length == 1) {
-            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities
-                    .breakString(Translate.text("illegalDelete")),
-                    BStandardDialog.ERROR).showMessageDialog(null);
+            new IllegalMeshDeleteEvent(mesh).fire();
             return;
         }
         PolyMesh prevMesh = mesh.duplicate();
@@ -3763,6 +3649,14 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
         objectChanged();
         updateImage();
+    }
+
+    @Subscribe
+    public final void onIllegalDeleteEvent(IllegalMeshDeleteEvent event) {
+        PolyMesh mesh = (PolyMesh) objInfo.object;
+        if(event.getMesh().equals(mesh)) {
+            MessageDialog.create().withTitle(Translate.text("polymesh:errorTitle")) .withOwner(this.getComponent()).error(Translate.text("illegalDelete"));
+        }
     }
 
     /**
@@ -3775,10 +3669,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             if (selected[i]) {
                 int[] fv = mesh.getVertexEdges(verts[i]);
                 if (fv.length == selected.length) {
-                    new BStandardDialog(Translate.text("polymesh:errorTitle"),
-                            UIUtilities.breakString(Translate
-                                    .text("illegalDelete")),
-                            BStandardDialog.ERROR).showMessageDialog(null);
+                    new IllegalMeshDeleteEvent(mesh).fire();
                     return;
                 }
             }
@@ -3800,10 +3691,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             if (selected[i]) {
                 int[] fv = mesh.getVertexEdges(verts[i]);
                 if (fv.length == selected.length) {
-                    new BStandardDialog(Translate.text("polymesh:errorTitle"),
-                            UIUtilities.breakString(Translate
-                                    .text("illegalDelete")),
-                            BStandardDialog.ERROR).showMessageDialog(null);
+                    new IllegalMeshDeleteEvent(mesh).fire();
                     return;
                 }
             }
@@ -4058,6 +3946,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * @param ev
      * CommandEvent
      */
+    @SuppressWarnings("java:S1172")
     private void doMirrorOn(CommandEvent ev) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         short mirrorState = 0;
@@ -4153,22 +4042,21 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private void doSaveAsTemplate(ActionEvent event) {
 
         File templateDir = new File(ArtOfIllusion.PLUGIN_DIRECTORY + File.separator + "PolyMeshTemplates");
-        if (!templateDir.exists() && !templateDir.mkdir()) {
-            new BStandardDialog(Translate.text("polymesh:errorTemplateDir"), UIUtilities.breakString(Translate.text("illegalDelete")),
-                    BStandardDialog.ERROR).showMessageDialog(null);
-            return;
-        }
-        var chooser = new JFileChooser();
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        chooser.setDialogTitle(Translate.text("polymesh:saveTemplate"));
-        chooser.setCurrentDirectory(templateDir);
-        if(chooser.showSaveDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
-            File file = chooser.getSelectedFile();
-            try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(file))) {
-                ((PolyMesh) objInfo.object).writeToFile(dos, null);
-            } catch (IOException ex) {
-                log.atError().setCause(ex).log("Error writing template: {}", ex.getMessage());
+        if (templateDir.exists() || templateDir.mkdir()) {
+            var chooser = new JFileChooser();
+            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            chooser.setDialogTitle(Translate.text("polymesh:saveTemplate"));
+            chooser.setCurrentDirectory(templateDir);
+            if (chooser.showSaveDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
+                File file = chooser.getSelectedFile();
+                try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(file))) {
+                    (objInfo.object).writeToFile(dos, null);
+                } catch (IOException ex) {
+                    log.atError().setCause(ex).log("Error writing template: {}", ex.getMessage());
+                }
             }
+        } else {
+            MessageDialog.create().withOwner(this.getComponent()).error(Translate.text("polymesh:errorTemplateDir"));
         }
     }
 
@@ -4183,11 +4071,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     private void skeletonDetachedChanged() {
-        for (int i = 0; i < theView.length; i++) {
-            ((PolyMeshViewer) theView[i])
-                    .setSkeletonDetached(((BCheckBoxMenuItem) skeletonMenuItem[5])
-                            .getState());
-        }
+        var state = ((BCheckBoxMenuItem)skeletonMenuItem[5]).getState();
+        for (var item: theView) {((PolyMeshViewer) item).setSkeletonDetached(state); }
     }
 
     private void doLooseSelectionChanged() {
@@ -4344,13 +4229,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         new FindSimilarEdgesDialog(this).setVisible(true);
     }
 
-    private void doInteractiveLevel(ValueChangedEvent ev) {
-        ((PolyMesh) objInfo.object).setInteractiveSmoothLevel(((Integer) ispin.getValue()));
-        objectChanged();
-        updateImage();
-    }
 
-    private void doCornerChanged() {
+
+    private void onCornerCheckboxValueChange(ItemEvent event) {
+
         PolyMesh mesh = (PolyMesh) objInfo.object;
         Wvertex[] vertices = (Wvertex[]) mesh.getVertices();
         short type = Wvertex.NONE;
@@ -4366,19 +4248,17 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         updateImage();
     }
 
+    private void onInteractiveLevelValueChange(ChangeEvent event) {
+
+        var model = (SpinnerNumberModel)ispin.getModel();
+        ((PolyMesh) objInfo.object).setInteractiveSmoothLevel(model.getNumber().intValue());
+        objectChanged();
+        updateImage();
+    }
+
 
     public PolyMeshValueWidget getValueWidget() {
         return valueWidget;
-    }
-
-    public boolean showNormals() {
-        if (selectMode != POINT_MODE) {
-            return false;
-        }
-        if (((PolyMesh) objInfo.object).getSmoothingMethod() != Mesh.APPROXIMATING) {
-            return false;
-        }
-        return true;
     }
 
     /**

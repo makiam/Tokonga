@@ -530,7 +530,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
                     setSelection(libraryList.getRootNode(), theScene, theScene.getDefaultTexture());
                 }
             } else if (selectedMaterial != null) {
-                String[] options = new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
+                String[] options = MessageDialog.getOptions();
                 int choice = MessageDialog.create().withOwner(this.getComponent()).option(Translate.text("deleteMaterial", selectedMaterial.getName()));
                 if (choice == 0) {
                     int matIndex = selectedScene.indexOf(selectedMaterial);

@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <keystrokes>
     <keystroke code="88" name="Decrease smoothing level (PolyMesh)">
-        if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
-        window.changeInteractiveSmoothLevel(-1);
+        <!-- Constant for the "X" key. -->
+        if(window instanceof PolyMeshEditorWindow) {
+            window.log.info("Decrease smoothing level (PolyMesh)")
+            window.changeInteractiveSmoothLevel(-1);
+        }
     </keystroke>
     <keystroke code="67" name="Increase smoothing level (PolyMesh)">
-        if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
-        window.changeInteractiveSmoothLevel(1);
+        <!-- Constant for the "C" key. -->
+        if(window instanceof PolyMeshEditorWindow) {
+            window.log.info("Increase smoothing level (PolyMesh)")
+            window.changeInteractiveSmoothLevel(1);
+        }
     </keystroke>
     <keystroke code="66" name="Select Bevel Tool (PolyMesh)">
         if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )

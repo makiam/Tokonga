@@ -19,6 +19,8 @@ import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import java.awt.event.*;
 import java.io.*;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
@@ -184,5 +186,10 @@ public class KeystrokeManager {
         try (OutputStream out = new BufferedOutputStream(new SafeFileOutputStream(outFile, SafeFileOutputStream.OVERWRITE))) {
             xstream.toXML(new KeystrokesList(records), out);
         }
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface UsedWithScriptBinding {
+        String value() default "";
     }
 }

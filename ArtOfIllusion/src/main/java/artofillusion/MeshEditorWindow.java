@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
    Modifications copyright (C) 2016 Petri Ihalainen
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -85,7 +85,8 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
     }
 
     protected void createViewMenu() {
-        BMenu displayMenu, coordsMenu;
+        BMenu displayMenu;
+        BMenu coordsMenu;
 
         viewMenu = Translate.menu("view");
         menubar.add(viewMenu);
@@ -819,7 +820,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
 
             private void processEvent() {
                 BStandardDialog dlg = new BStandardDialog("", Translate.text("resetCoordsToPos"), BStandardDialog.QUESTION);
-                String[] options = new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
+                String[] options = MessageDialog.getOptions();
                 int choice = dlg.showOptionDialog(this, options, options[0]);
                 if (choice == 1) {
                     return;
@@ -1435,7 +1436,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
 
         // Get confirmation from the user.
         BStandardDialog dlg = new BStandardDialog("", Translate.text("unbindPointsFromBone"), BStandardDialog.QUESTION);
-        String[] options = new String[]{Translate.text("button.ok"), Translate.text("button.cancel")};
+        String[] options = MessageDialog.getOptions();
         if (dlg.showOptionDialog(this, options, options[0]) == 1) {
             return;
         }

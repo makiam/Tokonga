@@ -121,9 +121,11 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
     private boolean controlledSmoothing;
 
-    private double minAngle, maxAngle; //data for auto smoothness
+    private double minAngle; //data for auto smoothness
+    private double maxAngle; //data for auto smoothness
 
-    private float minSmoothness, maxSmoothness;
+    private float minSmoothness;
+    private float maxSmoothness;
 
     private boolean[] seams; //true if an edge is a seam
 
@@ -182,31 +184,31 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
     /**
      * Action along the normal
      */
-    public final static short NORMAL = 0;
+    public static final short NORMAL = 0;
 
     /**
      * Action along X axis
      */
-    public final static short X = 1;
+    public static final short X = 1;
 
     /**
      * Action along Y axis
      */
-    public final static short Y = 2;
+    public static final short Y = 2;
 
     /**
      * Action along Z axis
      */
-    public final static short Z = 3;
+    public static final short Z = 3;
 
     //Bevel markers
-    private final static short VERTEX_BEVEL = 1;
+    private static final short VERTEX_BEVEL = 1;
 
-    private final static short ONE_BEVEL = 2;
+    private static final short ONE_BEVEL = 2;
 
-    private final static short ONE_BEVEL_NEXT = 3;
+    private static final short ONE_BEVEL_NEXT = 3;
 
-    private final static short TWO_BEVEL = 4;
+    private static final short TWO_BEVEL = 4;
 
     //smoothing constants
 //	private final static short APPROXIMATING_CM = 10;
@@ -227,22 +229,22 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
     /**
      * No mirror applied to the mesh
      */
-    public final static short NO_MIRROR = 0;
+    public static final short NO_MIRROR = 0;
 
     /**
      * Mirror on xy
      */
-    public final static short MIRROR_ON_XY = 1;
+    public static final short MIRROR_ON_XY = 1;
 
     /**
      * Mirror on yz
      */
-    public final static short MIRROR_ON_YZ = 2;
+    public static final short MIRROR_ON_YZ = 2;
 
     /**
      * Mirror on xz
      */
-    public final static short MIRROR_ON_XZ = 4;
+    public static final short MIRROR_ON_XZ = 4;
 
     /* Properties */
     private static final Property[] PROPERTIES = new Property[]{
@@ -1292,13 +1294,14 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         maxSmoothness = mesh.maxSmoothness;
         interactiveSmoothLevel = mesh.interactiveSmoothLevel;
         projectedEdges = null;
-        if (mesh.mappingData != null) {
+
+        if (mesh.mappingData == null) {
+            mappingData = null;
+        } else {
             mappingData = mesh.mappingData.duplicate();
             mappingVerts = mesh.mappingVerts;
             mappingEdges = mesh.mappingEdges;
             mappingFaces = mesh.mappingFaces;
-        } else {
-            mappingData = null;
         }
         if (mesh.seams != null) {
             seams = new boolean[mesh.seams.length];
@@ -3266,9 +3269,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             }
         }
         if (vertices.length - count < 3) {
-            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities
-                    .breakString(Translate.text("illegalDelete")),
-                    BStandardDialog.ERROR).showMessageDialog(null);
+            new IllegalMeshDeleteEvent(this).fire();
             return null;
         }
         newVertices = new Wvertex[vertices.length - count];
@@ -3287,9 +3288,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             }
         }
         if (edges.length / 2 - count < 3) {
-            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities
-                    .breakString(Translate.text("illegalDelete")),
-                    BStandardDialog.ERROR).showMessageDialog(null);
+            new IllegalMeshDeleteEvent(this).fire();
             return null;
         }
 
@@ -3316,9 +3315,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             }
         }
         if (faces.length - count < 1) {
-            new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities
-                    .breakString(Translate.text("illegalDelete")),
-                    BStandardDialog.ERROR).showMessageDialog(null);
+            new IllegalMeshDeleteEvent(this).fire();
             return null;
         }
         newFaces = new Wface[faces.length - count];
@@ -6399,9 +6396,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 } else if (oldParamVal[i] instanceof VertexParameterValue) {
                     double[] oldval = ((VertexParameterValue) oldParamVal[i]).getValue();
                     double[] newval = new double[newVert.length];
-                    for (int j = 0; j < vertices.length; ++j) {
-                        newval[j] = oldval[j];
-                    }
+                    System.arraycopy(oldval, 0, newval, 0, vertices.length);
                     for (int j = vertices.length; j < newVert.length; ++j) {
                         int[] vf = vertParamInfo[j - vertices.length].vert;
                         double[] coef = vertParamInfo[j - vertices.length].coef;
@@ -7488,9 +7483,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         // clip mesh
         if (vindex != newVertices.length) {
             Wvertex[] nverts = new Wvertex[vindex];
-            for (int i = 0; i < vindex; ++i) {
-                nverts[i] = newVertices[i];
-            }
+            System.arraycopy(newVertices, 0, nverts, 0, vindex);
             newVertices = nverts;
         }
         if (eindex != newEdges.length / 2) {
@@ -9101,11 +9094,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                         }
                     }
                     if (count > 1) {
-
-                        new BStandardDialog(Translate.text("polymesh:errorTitle"),
-                                UIUtilities.breakString(Translate
-                                        .text("polymesh:illegalMeshStructure")),
-                                BStandardDialog.ERROR).showMessageDialog(null);
+                        new BStandardDialog(Translate.text("polymesh:errorTitle"), UIUtilities.breakString(Translate.text("polymesh:illegalMeshStructure")), BStandardDialog.ERROR).showMessageDialog(null);
                         return selected;
                     }
                     Wedge[] newEdges = new Wedge[edges.length - 2];
@@ -10284,9 +10273,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         int from;
         int to;
         int next;
-        for (int i = 0; i < selected.length; ++i) {
-            newSel[i] = selected[i];
-        }
+        System.arraycopy(selected, 0, newSel, 0, selected.length);
         for (int i = 0; i < selected.length; ++i) {
             if (selected[i]) {
                 e = getVertexEdges(vertices[i]);
@@ -10802,8 +10789,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 }
                 newEdges[fe[j]].next = fe[next];
                 if (edges[edges[fe[j]].hedge].face == -1) {
-                    newEdges[newEdges[fe[j]].hedge] = new Wedge(
-                            edges[edges[fe[j]].hedge]);
+                    newEdges[newEdges[fe[j]].hedge] = new Wedge(edges[edges[fe[j]].hedge]);
                     newEdges[newEdges[fe[j]].hedge].vertex = edges[fe[j]].vertex;
                     int p = fe[j];
                     while (edges[p].next != edges[fe[j]].hedge) {
@@ -12712,10 +12698,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     return false;
                 }
             }
-            if (!skeleton.equals(key.skeleton)) {
-                return false;
-            }
-            return true;
+            return skeleton.equals(key.skeleton);
         }
 
         /**
@@ -12784,8 +12767,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             // Determine which parameter to set.
 
             int which;
-            for (which = 0; which < mesh.texParam.length
-                    && !mesh.texParam[which].equals(p); which++)
+            for (which = 0; which < mesh.texParam.length && !mesh.texParam[which].equals(p); which++)
 				;
             if (which == mesh.texParam.length) {
                 return;
@@ -12836,10 +12818,9 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
          * Description of the Parameter
          * @exception IOException
          * Description of the Exception
-         * @exception InvalidObjectException
-         * Description of the Exception
+
          */
-        public PolyMeshKeyframe(DataInputStream in, Object parent) throws IOException, InvalidObjectException {
+        public PolyMeshKeyframe(DataInputStream in, Object parent) throws IOException {
             this();
             short version = in.readShort();
             if (version < 0 || version > 2) {
@@ -12901,11 +12882,11 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         public short type;
 
         //public Vec3 normal;
-        public final static short NONE = 0;
+        public static final short NONE = 0;
 
-        public final static short CREASE = 1;
+        public static final short CREASE = 1;
 
-        public final static short CORNER = 2;
+        public static final short CORNER = 2;
 
         /**
          * Constructor for the Wvertex object
