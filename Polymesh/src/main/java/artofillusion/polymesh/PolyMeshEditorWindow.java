@@ -3653,7 +3653,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     @Subscribe
-    private void onIllegalDeleteEvent(IllegalMeshDeleteEvent event) {
+    public final void onIllegalDeleteEvent(IllegalMeshDeleteEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         if(event.getMesh().equals(mesh)) {
             MessageDialog.create().withTitle(Translate.text("polymesh:errorTitle")) .withOwner(this.getComponent()).error(Translate.text("illegalDelete"));
