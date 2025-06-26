@@ -331,6 +331,18 @@ public class Translate {
 
     /**
      * Get the text given by the property "name". If the property is not
+     * found, this simply returns name.
+     */
+    public static String text(String name) {
+        try {
+            return getValue(name);
+        } catch (MissingResourceException ex) {
+            return name;
+        }
+    }
+
+    /**
+     * Get the text given by the property "name". If the property is not
      * found, this simply uses name. That string and the args array are
      * then passed to MessageFormat.format() so that any variable fields
      * can be replaced with the correct values.
