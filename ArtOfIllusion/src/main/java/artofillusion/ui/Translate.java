@@ -229,6 +229,7 @@ public class Translate {
                 item.setShortcut(new Shortcut(shortcut.charAt(0)));
             }
         } catch (MissingResourceException ex) {
+            log.info("No menu item resource found for: {}", name);;
         }
         if (listener != null) {
             item.addEventLink(CommandEvent.class, listener, method);
@@ -252,6 +253,7 @@ public class Translate {
                 item.setShortcut(new Shortcut(shortcut.charAt(0)));
             }
         } catch (MissingResourceException ex) {
+            log.info("No menu item resource found for: {}", name);
         }
         item.getComponent().addActionListener(al);
         return item;
@@ -319,54 +321,12 @@ public class Translate {
         try {
             name = getValue(name, null);
         } catch (MissingResourceException ex) {
+            log.info("No label resource found for: {}", name);
         }
         if (suffix != null) {
             name += suffix;
         }
         return new BLabel(name);
-    }
-
-    /**
-     * Get the text given by the property "name". If the property is not
-     * found, this simply returns name.
-     */
-    public static String text(String name) {
-        try {
-            return getValue(name);
-        } catch (MissingResourceException ex) {
-            return name;
-        }
-    }
-
-    /**
-     * Get the text given by the property "name". If the property is not
-     * found, this simply uses name. Any occurrence of the pattern "{0}"
-     * in the text string will be replaced with the string representation
-     * of arg1.
-     */
-    public static String text(String name, Object arg1) {
-        String pattern = name;
-        try {
-            pattern = getValue(name);
-        } catch (MissingResourceException ex) {
-            log.info("No text resource found for: {}", name);
-        }
-        return MessageFormat.format(pattern, arg1);
-    }
-
-    /**
-     * Get the text given by the property "name". If the property is not
-     * found, this simply uses name. Any occurrences of the patterns
-     * "{0}" and "{1}" in the text string will be replaced with the
-     * strings representations of arg1 and arg2, respectively.
-     */
-    public static String text(String name, Object arg1, Object arg2) {
-        String pattern = name;
-        try {
-            pattern = getValue(name);
-        } catch (MissingResourceException ex) {
-        }
-        return MessageFormat.format(pattern, arg1, arg2);
     }
 
     /**
@@ -380,6 +340,7 @@ public class Translate {
         try {
             pattern = getValue(name);
         } catch (MissingResourceException ex) {
+            log.info("No text resource found for: {}", name);
         }
         return MessageFormat.format(pattern, args);
     }
