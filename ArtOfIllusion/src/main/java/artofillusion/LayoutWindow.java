@@ -125,7 +125,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     BMenuItem[] animationMenuItem;
     BMenuItem[] popupMenuItem;
-    BCheckBoxMenuItem[] displayItem;
+
+    private final ButtonGroup displayModesGroup = new ButtonGroup();
+    private BCheckBoxMenuItem[] displayItem;
     /**
      * -- GETTER --
      *  Get the popup menu.
@@ -597,12 +599,14 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         displayItem = new BCheckBoxMenuItem[6];
         int renderMode = theView[0].getRenderMode();
 
-        displayMenu.add(displayItem[0] = Translate.checkboxMenuItem("wireframeDisplay", this, "setDisplayModeWireframe", renderMode == ViewerCanvas.RENDER_WIREFRAME));
-        displayMenu.add(displayItem[1] = Translate.checkboxMenuItem("shadedDisplay", this, "setDisplayModeShaded", renderMode == ViewerCanvas.RENDER_FLAT));
-        displayMenu.add(displayItem[2] = Translate.checkboxMenuItem("smoothDisplay", this, "setDisplayModeSmooth", renderMode == ViewerCanvas.RENDER_SMOOTH));
-        displayMenu.add(displayItem[3] = Translate.checkboxMenuItem("texturedDisplay", this, "setDisplayModeTextured", renderMode == ViewerCanvas.RENDER_TEXTURED));
-        displayMenu.add(displayItem[4] = Translate.checkboxMenuItem("transparentDisplay", this, "setDisplayModeTransparent", renderMode == ViewerCanvas.RENDER_TRANSPARENT));
-        displayMenu.add(displayItem[5] = Translate.checkboxMenuItem("renderedDisplay", this, "setDisplayModeRendered", renderMode == ViewerCanvas.RENDER_RENDERED));
+        displayMenu.add(displayItem[0] = Translate.checkboxMenuItem("wireframeDisplay", event -> setViewMode(ViewerCanvas.RENDER_WIREFRAME), renderMode == ViewerCanvas.RENDER_WIREFRAME));
+        displayMenu.add(displayItem[1] = Translate.checkboxMenuItem("shadedDisplay", event -> setViewMode(ViewerCanvas.RENDER_FLAT), renderMode == ViewerCanvas.RENDER_FLAT));
+        displayMenu.add(displayItem[2] = Translate.checkboxMenuItem("smoothDisplay", event -> setViewMode(ViewerCanvas.RENDER_SMOOTH), renderMode == ViewerCanvas.RENDER_SMOOTH));
+        displayMenu.add(displayItem[3] = Translate.checkboxMenuItem("texturedDisplay", event -> setViewMode(ViewerCanvas.RENDER_TEXTURED), renderMode == ViewerCanvas.RENDER_TEXTURED));
+        displayMenu.add(displayItem[4] = Translate.checkboxMenuItem("transparentDisplay", event -> setViewMode(ViewerCanvas.RENDER_TRANSPARENT), renderMode == ViewerCanvas.RENDER_TRANSPARENT));
+        displayMenu.add(displayItem[5] = Translate.checkboxMenuItem("renderedDisplay", event -> setViewMode(ViewerCanvas.RENDER_RENDERED), renderMode == ViewerCanvas.RENDER_RENDERED));
+
+        for(var di: displayItem) displayModesGroup.add(di.getComponent());
 
         viewMenu.add(viewMenuItem[0] = Translate.menuItem("fourViews", event -> toggleViewsCommand()));
         viewMenu.add(Translate.menuItem("grid", event -> setGridCommand()));
@@ -1022,7 +1026,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         addTrackMenu.setEnabled(numSelObjects > 0);
         distortionMenu.setEnabled(sel.length > 0);
 
-        viewMenuItem[1].setText(Translate.text(!objectListShown ? "menu.showObjectList" : "menu.hideObjectList"));
+        viewMenuItem[1].setText(Translate.text(objectListShown ? "menu.hideObjectList" : "menu.showObjectList"));
         viewMenuItem[2].setText(Translate.text(view.getShowAxes() ? "menu.hideCoordinateAxes" : "menu.showCoordinateAxes"));
         viewMenuItem[3].setEnabled(view.getTemplateImage() != null); // Show template
         viewMenuItem[3].setText(Translate.text(view.getTemplateShown() ? "menu.hideTemplate" : "menu.showTemplate"));
@@ -1336,42 +1340,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         updateImage();
     }
 
-    private void setViewMode(Widget source, int mode) {
+    private void setViewMode(int mode) {
         theView[currentView].setRenderMode(mode);
-        for (BCheckBoxMenuItem item : displayItem) {
-            item.setState(item == source);
-        }
         savePreferences();
-    }
-
-    @SuppressWarnings("unused")
-    private void setDisplayModeWireframe(CommandEvent event) {
-        setViewMode(event.getWidget(), ViewerCanvas.RENDER_WIREFRAME);
-    }
-
-    @SuppressWarnings("unused")
-    private void setDisplayModeShaded(CommandEvent event) {
-        setViewMode(event.getWidget(), ViewerCanvas.RENDER_FLAT);
-    }
-
-    @SuppressWarnings("unused")
-    private void setDisplayModeSmooth(CommandEvent event) {
-        setViewMode(event.getWidget(), ViewerCanvas.RENDER_SMOOTH);
-    }
-
-    @SuppressWarnings("unused")
-    private void setDisplayModeTextured(CommandEvent event) {
-        setViewMode(event.getWidget(), ViewerCanvas.RENDER_TEXTURED);
-    }
-
-    @SuppressWarnings("unused")
-    private void setDisplayModeTransparent(CommandEvent event) {
-        setViewMode(event.getWidget(), ViewerCanvas.RENDER_TRANSPARENT);
-    }
-
-    @SuppressWarnings("unused")
-    private void setDisplayModeRendered(CommandEvent event) {
-        setViewMode(event.getWidget(), ViewerCanvas.RENDER_RENDERED);
     }
 
     /**

@@ -19,6 +19,7 @@ import java.util.*;
 import artofillusion.*;
 import java.awt.event.ActionListener;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class provides utilities for localizing text so that it can be translated into
@@ -47,6 +48,7 @@ import lombok.Getter;
  * <p>
  * BLabel instructions = Translate.label("myplugin:instructionsLabel");
  */
+@Slf4j
 public class Translate {
 
     private static final Set<Locale> availableLocales = new LinkedHashSet<>();
@@ -189,6 +191,7 @@ public class Translate {
         try {
             command = getValue(name, "menu.");
         } catch (MissingResourceException ex) {
+            log.info("No menu item resource found for: {}", name);
         }
         BMenuItem item = new BMenuItem(command);
         item.getComponent().setActionCommand(name);
@@ -281,6 +284,7 @@ public class Translate {
         try {
             command = getValue(name, "button.");
         } catch (MissingResourceException ex) {
+            log.info("No button resource found for: {}", name);
         }
         if (suffix != null) {
             command += suffix;
@@ -345,6 +349,7 @@ public class Translate {
         try {
             pattern = getValue(name);
         } catch (MissingResourceException ex) {
+            log.info("No text resource found for: {}", name);
         }
         return MessageFormat.format(pattern, arg1);
     }
