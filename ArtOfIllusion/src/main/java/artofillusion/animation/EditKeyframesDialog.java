@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -15,6 +15,9 @@ import artofillusion.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+
 import java.text.*;
 import java.util.*;
 
@@ -22,6 +25,7 @@ import java.util.*;
  * EditKeyframesDialog presents a dialog box for doing bulk editing of keyframes. It is used
  * for the Move, Copy, Rescale, Loop, and Delete commands
  */
+@Slf4j
 public class EditKeyframesDialog {
 
     final LayoutWindow window;
@@ -30,7 +34,7 @@ public class EditKeyframesDialog {
     final ValueField startField;
     final ValueField endField;
     final ValueField extraField;
-    BButton okButton, cancelButton;
+
     final int operation;
 
     public static final int MOVE = 0;
@@ -47,15 +51,15 @@ public class EditKeyframesDialog {
         Translate.text("Delete")
     };
 
-    public EditKeyframesDialog(LayoutWindow win, int operation) {
+    public EditKeyframesDialog(@NotNull final LayoutWindow win, final int operation) {
         window = win;
         this.operation = operation;
         theScene = window.getScene();
 
         // Layout the dialog.
         ColumnContainer content = new ColumnContainer();
-        RowContainer row;
-        content.add(row = new RowContainer());
+        RowContainer row = new RowContainer();
+        content.add(row);
         row.add(Translate.label("applyTo"));
         row.add(tracksChoice = new BComboBox(new String[]{
             Translate.text("allTracks"),
@@ -104,41 +108,38 @@ public class EditKeyframesDialog {
      */
     private boolean doEdit() {
         int whichTracks = tracksChoice.getSelectedIndex();
-        double fps = (double) theScene.getFramesPerSecond();
+        double fps = theScene.getFramesPerSecond();
         Track[] track;
 
         // Find which tracks to apply the operation to.
         if (whichTracks == 0) {
-            List<Track> tracks = new Vector<>();
+            List<Track<?>> tracks = new Vector<>();
             for (ObjectInfo info : theScene.getObjects()) {
                 for (int j = 0; j < info.getTracks().length; j++) {
-                    addToVector(info.getTracks()[j], tracks);
+                    addAll(info.getTracks()[j], tracks);
                 }
             }
-            track = new Track[tracks.size()];
-            for (int i = 0; i < track.length; i++) {
-                track[i] = tracks.get(i);
-            }
+            track = tracks.toArray(Track[]::new);
         } else if (whichTracks == 1) {
             int[] sel = theScene.getSelection();
-            List<Track> tracks = new Vector<>();
-            for (int i = 0; i < sel.length; i++) {
-                ObjectInfo info = theScene.getObject(sel[i]);
+            List<Track<?>> tracks = new Vector<>();
+            for (int k: sel) {
+                ObjectInfo info = theScene.getObject(k);
                 for (int j = 0; j < info.getTracks().length; j++) {
-                    addToVector(info.getTracks()[j], tracks);
+                    addAll(info.getTracks()[j], tracks);
                 }
             }
-            track = new Track[tracks.size()];
-            for (int i = 0; i < track.length; i++) {
-                track[i] = tracks.get(i);
-            }
+            track = tracks.toArray(Track[]::new);
         } else {
             track = window.getScore().getSelectedTracks();
         }
 
         // Find the range of times affected by the operation.
-        double start = startField.getValue(), end = endField.getValue();
-        double extra = extraField.getValue(), scaleStart = 0.0, scaleFactor = 0.0;
+        double start = startField.getValue();
+        double end = endField.getValue();
+        double extra = extraField.getValue();
+        double scaleStart = 0.0;
+        double scaleFactor = 0.0;
         int numLoops = 0;
 
         if (start > end) {
@@ -146,7 +147,8 @@ public class EditKeyframesDialog {
             start = end;
             end = temp;
         }
-        double targetStart, targetEnd;
+        double targetStart;
+        double targetEnd;
         if (operation == MOVE || operation == COPY) {
             targetStart = extra;
             targetEnd = targetStart + (end - start);
@@ -266,10 +268,10 @@ public class EditKeyframesDialog {
     }
 
     /* Given a Track, add it and all of its subtracks to the specified vector. */
-    private void addToVector(Track track, List<Track> v) {
-        v.add(track);
+    private void addAll(Track track, List<Track<?>> tracksList) {
+        tracksList.add(track);
         for (Track subTrack : track.getSubtracks()) {
-            addToVector(subTrack, v);
+            addAll(subTrack, tracksList);
         }
     }
 

@@ -682,19 +682,19 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         rotationTrackMenu.add(Translate.menuItem("xyzThreeTracks", event -> addThreeRotationTrackAction()));
         rotationTrackMenu.add(Translate.menuItem("quaternionTrack", event -> addQuaternionTrackAction()));
         rotationTrackMenu.add(Translate.menuItem("proceduralTrack", event -> addProceduralRotationTrackAction()));
-        addTrackMenu.add(Translate.menuItem("poseTrack", event -> addTrackAction(event)));
+        addTrackMenu.add(Translate.menuItem("poseTrack", this::addTrackAction));
         addTrackMenu.add(distortionMenu = Translate.menu("distortionTrack"));
-        distortionMenu.add(Translate.menuItem("bendDistortion", event -> addTrackAction(event)));
-        distortionMenu.add(Translate.menuItem("customDistortion", event -> addTrackAction(event)));
-        distortionMenu.add(Translate.menuItem("scaleDistortion", event -> addTrackAction(event)));
-        distortionMenu.add(Translate.menuItem("shatterDistortion", event -> addTrackAction(event)));
-        distortionMenu.add(Translate.menuItem("twistDistortion", event -> addTrackAction(event)));
+        distortionMenu.add(Translate.menuItem("bendDistortion", this::addTrackAction));
+        distortionMenu.add(Translate.menuItem("customDistortion", this::addTrackAction));
+        distortionMenu.add(Translate.menuItem("scaleDistortion", this::addTrackAction));
+        distortionMenu.add(Translate.menuItem("shatterDistortion", this::addTrackAction));
+        distortionMenu.add(Translate.menuItem("twistDistortion", this::addTrackAction));
         distortionMenu.addSeparator();
-        distortionMenu.add(Translate.menuItem("IKTrack", event -> addTrackAction(event)));
-        distortionMenu.add(Translate.menuItem("skeletonShapeTrack", event -> addTrackAction(event)));
-        addTrackMenu.add(Translate.menuItem("constraintTrack", event -> addTrackAction(event)));
-        addTrackMenu.add(Translate.menuItem("visibilityTrack", event -> addTrackAction(event)));
-        addTrackMenu.add(Translate.menuItem("textureTrack", event -> addTrackAction(event)));
+        distortionMenu.add(Translate.menuItem("IKTrack", this::addTrackAction));
+        distortionMenu.add(Translate.menuItem("skeletonShapeTrack", this::addTrackAction));
+        addTrackMenu.add(Translate.menuItem("constraintTrack", this::addTrackAction));
+        addTrackMenu.add(Translate.menuItem("visibilityTrack", this::addTrackAction));
+        addTrackMenu.add(Translate.menuItem("textureTrack", this::addTrackAction));
         animationMenu.add(animationMenuItem[0] = Translate.menuItem("editTrack", event -> score.editSelectedTrack()));
         animationMenu.add(animationMenuItem[1] = Translate.menuItem("duplicateTracks", event -> score.duplicateSelectedTracks()));
         animationMenu.add(animationMenuItem[2] = Translate.menuItem("deleteTracks", event -> score.deleteSelectedTracks()));
@@ -709,11 +709,11 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
         BMenu editKeyframeMenu = Translate.menu("bulkEditKeyframes");
         animationMenu.add(editKeyframeMenu);
-        editKeyframeMenu.add(Translate.menuItem("moveKeyframes", this, "bulkEditKeyframeAction"));
-        editKeyframeMenu.add(Translate.menuItem("copyKeyframes", this, "bulkEditKeyframeAction"));
-        editKeyframeMenu.add(Translate.menuItem("rescaleKeyframes", this, "bulkEditKeyframeAction"));
-        editKeyframeMenu.add(Translate.menuItem("loopKeyframes", this, "bulkEditKeyframeAction"));
-        editKeyframeMenu.add(Translate.menuItem("deleteKeyframes", this, "bulkEditKeyframeAction"));
+        editKeyframeMenu.add(Translate.menuItem("moveKeyframes", event -> bulkEditKeyframeAction(EditKeyframesDialog.MOVE)));
+        editKeyframeMenu.add(Translate.menuItem("copyKeyframes", event -> bulkEditKeyframeAction(EditKeyframesDialog.COPY)));
+        editKeyframeMenu.add(Translate.menuItem("rescaleKeyframes", event -> bulkEditKeyframeAction(EditKeyframesDialog.RESCALE)));
+        editKeyframeMenu.add(Translate.menuItem("loopKeyframes", event -> bulkEditKeyframeAction(EditKeyframesDialog.LOOP)));
+        editKeyframeMenu.add(Translate.menuItem("deleteKeyframes", event -> bulkEditKeyframeAction(EditKeyframesDialog.DELETE)));
 
         animationMenu.add(animationMenuItem[10] = Translate.menuItem("pathFromCurve", event -> pathFromCurveAction()));
         animationMenu.add(animationMenuItem[11] = Translate.menuItem("bindToParent", event -> bindToParentCommand()));
@@ -1537,12 +1537,10 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         getView().alignWithClosestAxis();
     }
 
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
     private void pathFromCurveAction() {
         new PathFromCurveDialog(this, sceneExplorer.getSelectedObjects());
     }
 
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
     private void previewAnimationAction() {
         new AnimationPreviewer(this);
     }
@@ -1559,20 +1557,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         setTime(theScene.getTime() - 1.0 / theScene.getFramesPerSecond());
     }
 
-    private static final Map<String, Integer> bmap;
-
-    static {
-        bmap = new HashMap<>();
-        bmap.put("moveKeyframes", EditKeyframesDialog.MOVE);
-        bmap.put("copyKeyframes", EditKeyframesDialog.COPY);
-        bmap.put("rescaleKeyframes", EditKeyframesDialog.RESCALE);
-        bmap.put("loopKeyframes", EditKeyframesDialog.LOOP);
-        bmap.put("deleteKeyframes", EditKeyframesDialog.DELETE);
-    }
-
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    private void bulkEditKeyframeAction(CommandEvent event) {
-        new EditKeyframesDialog(this, bmap.get(event.getActionCommand()));
+    private void bulkEditKeyframeAction(int mode) {
+        new EditKeyframesDialog(this, mode);
     }
 
     public void linkExternalCommand() {
