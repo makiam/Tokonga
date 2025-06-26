@@ -20,6 +20,7 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -33,7 +34,13 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
     protected Mesh oldMesh;
     protected BMenu viewMenu, colorSurfaceMenu;
     protected BMenuItem undoItem, redoItem, templateItem, axesItem, splitViewItem, fitToSelItem;
-    protected BCheckBoxMenuItem[] displayItem, coordsItem, showItem, colorSurfaceItem;
+
+    private final ButtonGroup displayModesGroup = new ButtonGroup();
+    protected BCheckBoxMenuItem[] displayItem;
+
+    protected BCheckBoxMenuItem[] coordsItem;
+    protected BCheckBoxMenuItem[] showItem;
+    protected BCheckBoxMenuItem[] colorSurfaceItem;
     protected int meshTension, tensionDistance;
 
     protected static int lastMeshTension = 2;
@@ -93,12 +100,16 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         viewMenu.add(displayMenu = Translate.menu("displayMode"));
         displayItem = new BCheckBoxMenuItem[6];
         MeshViewer view = (MeshViewer) theView[currentView];
-        displayMenu.add(displayItem[0] = Translate.checkboxMenuItem("wireframeDisplay", this, "displayModeChanged", view.getRenderMode() == ViewerCanvas.RENDER_WIREFRAME));
-        displayMenu.add(displayItem[1] = Translate.checkboxMenuItem("shadedDisplay", this, "displayModeChanged", view.getRenderMode() == ViewerCanvas.RENDER_FLAT));
-        displayMenu.add(displayItem[2] = Translate.checkboxMenuItem("smoothDisplay", this, "displayModeChanged", view.getRenderMode() == ViewerCanvas.RENDER_SMOOTH));
-        displayMenu.add(displayItem[3] = Translate.checkboxMenuItem("texturedDisplay", this, "displayModeChanged", view.getRenderMode() == ViewerCanvas.RENDER_TEXTURED));
-        displayMenu.add(displayItem[4] = Translate.checkboxMenuItem("transparentDisplay", this, "displayModeChanged", view.getRenderMode() == ViewerCanvas.RENDER_TRANSPARENT));
-        displayMenu.add(displayItem[5] = Translate.checkboxMenuItem("renderedDisplay", this, "displayModeChanged", view.getRenderMode() == ViewerCanvas.RENDER_RENDERED));
+
+        displayMenu.add(displayItem[0] = Translate.checkboxMenuItem("wireframeDisplay", event -> setViewMode(ViewerCanvas.RENDER_WIREFRAME), view.getRenderMode() == ViewerCanvas.RENDER_WIREFRAME));
+        displayMenu.add(displayItem[1] = Translate.checkboxMenuItem("shadedDisplay", event -> setViewMode(ViewerCanvas.RENDER_FLAT), view.getRenderMode() == ViewerCanvas.RENDER_FLAT));
+        displayMenu.add(displayItem[2] = Translate.checkboxMenuItem("smoothDisplay", event -> setViewMode(ViewerCanvas.RENDER_SMOOTH), view.getRenderMode() == ViewerCanvas.RENDER_SMOOTH));
+        displayMenu.add(displayItem[3] = Translate.checkboxMenuItem("texturedDisplay", event -> setViewMode(ViewerCanvas.RENDER_TEXTURED), view.getRenderMode() == ViewerCanvas.RENDER_TEXTURED));
+        displayMenu.add(displayItem[4] = Translate.checkboxMenuItem("transparentDisplay", event -> setViewMode(ViewerCanvas.RENDER_TRANSPARENT), view.getRenderMode() == ViewerCanvas.RENDER_TRANSPARENT));
+        displayMenu.add(displayItem[5] = Translate.checkboxMenuItem("renderedDisplay", event -> setViewMode(ViewerCanvas.RENDER_RENDERED), view.getRenderMode() == ViewerCanvas.RENDER_RENDERED));
+
+        for(var di: displayItem) displayModesGroup.add(di.getComponent());
+
         if (getObject().getObject().canSetTexture()) {
             viewMenu.add(colorSurfaceMenu = createColorSurfaceMenu());
         }
@@ -252,12 +263,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         templateItem.setText(view.getTemplateShown() ? Translate.text("menu.hideTemplate") : Translate.text("menu.showTemplate"));
         splitViewItem.setText(numViewsShown == 1 ? Translate.text("menu.fourViews") : Translate.text("menu.oneView"));
         axesItem.setText(Translate.text(view.getShowAxes() ? "menu.hideCoordinateAxes" : "menu.showCoordinateAxes"));
-        displayItem[0].setState(view.getRenderMode() == ViewerCanvas.RENDER_WIREFRAME);
-        displayItem[1].setState(view.getRenderMode() == ViewerCanvas.RENDER_FLAT);
-        displayItem[2].setState(view.getRenderMode() == ViewerCanvas.RENDER_SMOOTH);
-        displayItem[3].setState(view.getRenderMode() == ViewerCanvas.RENDER_TEXTURED);
-        displayItem[4].setState(view.getRenderMode() == ViewerCanvas.RENDER_TRANSPARENT);
-        displayItem[5].setState(view.getRenderMode() == ViewerCanvas.RENDER_RENDERED);
+
         if (showItem[0] != null) {
             showItem[0].setState(view.getMeshVisible());
         }
@@ -281,37 +287,13 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
                 colorSurfaceItem[i].setState(view.getSurfaceTextureParameter() == params[i - 2]);
             }
         }
-
-        /* This should be here but it had to be implemented in sub classes because some
-       plugin erditors couldn't deal with code change. */
-        //boolean selected[] = getSelection();
-        //boolean enable = false;
-        //for (int s = 0; s < selected.length; s++)
-        //  enable = (selected[s] ? true : enable);
-        //fitToSelItem.setEnabled(enable);
     }
 
-    private void displayModeChanged(WidgetEvent ev) {
-        Widget source = ev.getWidget();
-        for (int i = 0; i < displayItem.length; i++) {
-            displayItem[i].setState(source == displayItem[i]);
-        }
-        if (source == displayItem[0]) {
-            theView[currentView].setRenderMode(ViewerCanvas.RENDER_WIREFRAME);
-        } else if (source == displayItem[1]) {
-            theView[currentView].setRenderMode(ViewerCanvas.RENDER_FLAT);
-        } else if (source == displayItem[2]) {
-            theView[currentView].setRenderMode(ViewerCanvas.RENDER_SMOOTH);
-        } else if (source == displayItem[3]) {
-            theView[currentView].setRenderMode(ViewerCanvas.RENDER_TEXTURED);
-        } else if (source == displayItem[4]) {
-            theView[currentView].setRenderMode(ViewerCanvas.RENDER_TRANSPARENT);
-        } else if (source == displayItem[5]) {
-            theView[currentView].setRenderMode(ViewerCanvas.RENDER_RENDERED);
-        }
+    private void setViewMode(int mode) {
+        theView[currentView].setRenderMode(mode);
         savePreferences();
-        updateMenus();
     }
+
 
     private void coordinateSystemChanged(WidgetEvent ev) {
         Widget source = ev.getWidget();
@@ -795,7 +777,9 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
 
             VertexParameterValue xparamVal, yparamVal, zparamVal;
             double[] xvalList, yvalList, zvalList;
-            ValueField xfield, yfield, zfield;
+            ValueField xfield;
+            ValueField yfield;
+            ValueField zfield;
 
             public ResetButton() {
                 super(Translate.text("Reset"));

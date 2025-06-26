@@ -1032,12 +1032,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         viewMenuItem[3].setText(Translate.text(view.getTemplateShown() ? "menu.hideTemplate" : "menu.showTemplate"));
         viewMenuItem[4].setEnabled(sel.length > 0); // Frame Selection With Camera
 
-        displayItem[0].setState(view.getRenderMode() == ViewerCanvas.RENDER_WIREFRAME);
-        displayItem[1].setState(view.getRenderMode() == ViewerCanvas.RENDER_FLAT);
-        displayItem[2].setState(view.getRenderMode() == ViewerCanvas.RENDER_SMOOTH);
-        displayItem[3].setState(view.getRenderMode() == ViewerCanvas.RENDER_TEXTURED);
-        displayItem[4].setState(view.getRenderMode() == ViewerCanvas.RENDER_TRANSPARENT);
-        displayItem[5].setState(view.getRenderMode() == ViewerCanvas.RENDER_RENDERED);
     }
 
     private void dumpSelection(Object[] sel) {
