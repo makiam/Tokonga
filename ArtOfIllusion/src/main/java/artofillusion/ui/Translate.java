@@ -218,6 +218,7 @@ public class Translate {
         try {
             command = getValue(name, "menu.");
         } catch (MissingResourceException ex) {
+            log.info("No menu item resource found for menu: {}", name);
         }
         BCheckBoxMenuItem item = new BCheckBoxMenuItem(command, state);
         item.setActionCommand(name);
@@ -229,7 +230,7 @@ public class Translate {
                 item.setShortcut(new Shortcut(shortcut.charAt(0)));
             }
         } catch (MissingResourceException ex) {
-            log.info("No menu item resource found for: {}", name);;
+            log.info("No menu shortcut item resource found for menu: {}", name);
         }
         if (listener != null) {
             item.addEventLink(CommandEvent.class, listener, method);
@@ -242,6 +243,7 @@ public class Translate {
         try {
             command = getValue(name, "menu.");
         } catch (MissingResourceException ex) {
+            log.info("No menu item resource found for menu: {}", name);
         }
         BCheckBoxMenuItem item = new BCheckBoxMenuItem(command, state);
         item.setActionCommand(name);
@@ -253,7 +255,7 @@ public class Translate {
                 item.setShortcut(new Shortcut(shortcut.charAt(0)));
             }
         } catch (MissingResourceException ex) {
-            log.info("No menu item resource found for: {}", name);
+            log.info("No menu shortcut item resource found for menu: {}", name);
         }
         item.getComponent().addActionListener(al);
         return item;
