@@ -35,6 +35,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
@@ -46,6 +47,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
+import javax.swing.*;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -161,7 +164,7 @@ public class UVMappingEditorDialog extends BDialog {
             for (int i = 0; i < texList.size(); i++) {
                 boolean hasTexture = false;
                 for (int j = 0; j < mappingData.mappings.size(); j++) {
-                    ArrayList<Integer> textures = mappingData.mappings.get(j).textures;
+                    List<Integer> textures = mappingData.mappings.get(j).textures;
                     for (int k = 0; k < textures.size(); k++) {
                         if (getTextureFromID(textures.get(k)) == i) {
                             hasTexture = true;
@@ -279,12 +282,7 @@ public class UVMappingEditorDialog extends BDialog {
         BSplitPane div = new BSplitPane(BSplitPane.HORIZONTAL, sp, meshViewPanel);
         div.setResizeWeight(1.0);
         div.setContinuousLayout(true);
-        content.add(div,
-                BorderContainer.CENTER,
-                new LayoutInfo(LayoutInfo.CENTER,
-                        LayoutInfo.BOTH,
-                        new Insets(2, 2, 2, 2),
-                        new Dimension(0, 0)));
+        content.add(div, BorderContainer.CENTER, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets(2, 2, 2, 2), new Dimension(0, 0)));
         UnfoldedMesh[] meshes = mappingData.getMeshes();
         for (int i = 0; i < meshes.length; i++) {
             pieceList.add(meshes[i].getName());
@@ -329,9 +327,9 @@ public class UVMappingEditorDialog extends BDialog {
         menuBar.add(menu);
 
         menu = Translate.menu("polymesh:preferences");
-        menu.add(Translate.checkboxMenuItem("polymesh:showSelectionOnPreview", this, "doShowSelection", true));
-        menu.add(Translate.checkboxMenuItem("polymesh:liveUpdate", this, "doLiveUpdate", true));
-        menu.add(Translate.checkboxMenuItem("polymesh:boldEdges", this, "doBoldEdges", true));
+        menu.add(Translate.checkboxMenuItem("polymesh:showSelectionOnPreview", this::doShowSelection, true));
+        menu.add(Translate.checkboxMenuItem("polymesh:liveUpdate", this::toggleLiveUpdateAction, true));
+        menu.add(Translate.checkboxMenuItem("polymesh:boldEdges", this::toggleBoldEdgesAction, true));
         menuBar.add(menu);
 
         // Would prefer to use translations of AoI, but unfortunately, those come with keyboard shortcuts
@@ -451,15 +449,22 @@ public class UVMappingEditorDialog extends BDialog {
         mappingCanvas.pinSelection(false);
     }
 
-    private void doBoldEdges(CommandEvent evt) {
-        BCheckBoxMenuItem item = (BCheckBoxMenuItem) evt.getWidget();
-        mappingCanvas.setBoldEdges(item.getState());
+
+    private void doShowSelection(ActionEvent event) {
+        boolean state = ((JCheckBoxMenuItem)event.getSource()).getState();
+        preview.setShowSelection(state);
+        mappingCanvas.setSelection(mappingCanvas.getSelection());
     }
 
-    private void doLiveUpdate(CommandEvent evt) {
-        BCheckBoxMenuItem item = (BCheckBoxMenuItem) evt.getWidget();
-        preview.setShowSelection(item.getState());
-        manipulator.setLiveUpdate(item.getState());
+    private void toggleBoldEdgesAction(ActionEvent event) {
+        boolean state = ((JCheckBoxMenuItem)event.getSource()).getState();
+        mappingCanvas.setBoldEdges(state);
+    }
+
+    private void toggleLiveUpdateAction(ActionEvent event) {
+        boolean state = ((JCheckBoxMenuItem)event.getSource()).getState();
+        preview.setShowSelection(state);
+        manipulator.setLiveUpdate(state);
     }
 
     private void doRenameSelectedPiece() {
@@ -727,11 +732,6 @@ public class UVMappingEditorDialog extends BDialog {
         }
     }
 
-    private void doShowSelection(CommandEvent evt) {
-        BCheckBoxMenuItem item = (BCheckBoxMenuItem) evt.getWidget();
-        preview.setShowSelection(item.getState());
-        mappingCanvas.setSelection(mappingCanvas.getSelection());
-    }
 
     private void doSelectAll() {
         mappingCanvas.selectAll();
@@ -851,15 +851,6 @@ public class UVMappingEditorDialog extends BDialog {
      */
     public UVMappingData getMappingData() {
         return mappingData;
-    }
-
-    //for debugging purposes
-    private void dumpTextureIDs() {
-        mappingData.getMappings().forEach(mapping -> {
-            mapping.textures.forEach(tex -> {
-                log.atDebug().log("Mapping {} Texture Id: {}", mapping.getName(), tex);
-            });
-        });
     }
 
     /**

@@ -18,7 +18,10 @@ import java.util.*;
 
 import artofillusion.*;
 import java.awt.event.ActionListener;
+
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -49,9 +52,12 @@ import lombok.extern.slf4j.Slf4j;
  * BLabel instructions = Translate.label("myplugin:instructionsLabel");
  */
 @Slf4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Translate {
 
     private static final Set<Locale> availableLocales = new LinkedHashSet<>();
+    public static final String MENU_RESOURCE_PREFIX = "menu.";
+    public static final String MENU_SHORTCUT_RESOURCE_SUFFIX = ".shortcut";
 
     static {
         availableLocales.add(new Locale("af", "ZA"));
@@ -148,8 +154,9 @@ public class Translate {
     public static BMenu menu(String name) {
         String title = name;
         try {
-            title = getValue(name, "menu.");
+            title = getValue(name, MENU_RESOURCE_PREFIX);
         } catch (MissingResourceException ex) {
+            log.info("No menu resource found for: {}", name);
         }
         BMenu menu = new BMenu(title);
         menu.setName(name);
@@ -166,19 +173,21 @@ public class Translate {
     public static BMenuItem menuItem(String name, Object listener, String method) {
         String command = name;
         try {
-            command = getValue(name, "menu.");
+            command = getValue(name, MENU_RESOURCE_PREFIX);
         } catch (MissingResourceException ex) {
+            log.info("No menu item resource found for: {}", name);
         }
         BMenuItem item = new BMenuItem(command);
         item.setActionCommand(name);
         try {
-            String shortcut = getValue(name, "menu.", ".shortcut");
+            String shortcut = getValue(name, MENU_RESOURCE_PREFIX, MENU_SHORTCUT_RESOURCE_SUFFIX);
             if (shortcut.length() > 1 && shortcut.charAt(0) == '^') {
                 item.setShortcut(new Shortcut(shortcut.charAt(1), Shortcut.DEFAULT_MASK | Shortcut.SHIFT_MASK));
             } else if (shortcut.length() > 0) {
                 item.setShortcut(new Shortcut(shortcut.charAt(0)));
             }
         } catch (MissingResourceException ex) {
+            log.info("No menu item shortcut resource found for: {}", name);
         }
         if (listener != null) {
             item.addEventLink(CommandEvent.class, listener, method);
@@ -189,20 +198,21 @@ public class Translate {
     public static BMenuItem menuItem(String name, ActionListener al) {
         String command = name;
         try {
-            command = getValue(name, "menu.");
+            command = getValue(name, MENU_RESOURCE_PREFIX);
         } catch (MissingResourceException ex) {
             log.info("No menu item resource found for: {}", name);
         }
         BMenuItem item = new BMenuItem(command);
         item.getComponent().setActionCommand(name);
         try {
-            String shortcut = getValue(name, "menu.", ".shortcut");
+            String shortcut = getValue(name, MENU_RESOURCE_PREFIX, MENU_SHORTCUT_RESOURCE_SUFFIX);
             if (shortcut.length() > 1 && shortcut.charAt(0) == '^') {
                 item.setShortcut(new Shortcut(shortcut.charAt(1), Shortcut.DEFAULT_MASK | Shortcut.SHIFT_MASK));
             } else if (shortcut.length() > 0) {
                 item.setShortcut(new Shortcut(shortcut.charAt(0)));
             }
         } catch (MissingResourceException ex) {
+            log.info("No menu item shortcut resource found for: {}", name);
         }
         item.getComponent().addActionListener(al);
         return item;
@@ -216,14 +226,14 @@ public class Translate {
     public static BCheckBoxMenuItem checkboxMenuItem(String name, Object listener, String method, boolean state) {
         String command = name;
         try {
-            command = getValue(name, "menu.");
+            command = getValue(name, MENU_RESOURCE_PREFIX);
         } catch (MissingResourceException ex) {
             log.info("No menu item resource found for menu: {}", name);
         }
         BCheckBoxMenuItem item = new BCheckBoxMenuItem(command, state);
         item.setActionCommand(name);
         try {
-            String shortcut = getValue(name, "menu.", ".shortcut");
+            String shortcut = getValue(name, MENU_RESOURCE_PREFIX, MENU_SHORTCUT_RESOURCE_SUFFIX);
             if (shortcut.length() > 1 && shortcut.charAt(0) == '^') {
                 item.setShortcut(new Shortcut(shortcut.charAt(1), Shortcut.DEFAULT_MASK | Shortcut.SHIFT_MASK));
             } else if (shortcut.length() > 0) {
@@ -241,14 +251,14 @@ public class Translate {
     public static BCheckBoxMenuItem checkboxMenuItem(String name, ActionListener al, boolean state) {
         String command = name;
         try {
-            command = getValue(name, "menu.");
+            command = getValue(name, MENU_RESOURCE_PREFIX);
         } catch (MissingResourceException ex) {
             log.info("No menu item resource found for menu: {}", name);
         }
         BCheckBoxMenuItem item = new BCheckBoxMenuItem(command, state);
         item.setActionCommand(name);
         try {
-            String shortcut = getValue(name, "menu.", ".shortcut");
+            String shortcut = getValue(name, MENU_RESOURCE_PREFIX, MENU_SHORTCUT_RESOURCE_SUFFIX);
             if (shortcut.length() > 1 && shortcut.charAt(0) == '^') {
                 item.setShortcut(new Shortcut(shortcut.charAt(1), Shortcut.DEFAULT_MASK | Shortcut.SHIFT_MASK));
             } else if (shortcut.length() > 0) {
