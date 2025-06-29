@@ -354,7 +354,7 @@ public class UVMappingCanvas extends CustomWidget {
         double v = Math.round(vmin - 1.0);
         double u = Math.round(umin - 1.0);
 
-        // Avoiding to draw lines over already drawn lines becuse they are transparent
+        // Avoid to draw lines over already drawn lines because they are transparent
         while (u < umax) {
             g.setColor(ink1);
             g.draw(new Line2D.Double(u, vmin, u, vmax));
