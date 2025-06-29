@@ -506,9 +506,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         meshMenu.add(mirrorMenu);
         mirrorItem = new BMenuItem[4];
         mirrorMenu.add(mirrorItem[0] = Translate.menuItem("polymesh:mirrorOff", this::doTurnMirrorOff));
-        mirrorMenu.add(mirrorItem[1] = Translate.checkboxMenuItem("polymesh:mirrorOnXY", this, "doMirrorOn", false));
-        mirrorMenu.add(mirrorItem[2] = Translate.checkboxMenuItem("polymesh:mirrorOnXZ", this, "doMirrorOn", false));
-        mirrorMenu.add(mirrorItem[3] = Translate.checkboxMenuItem("polymesh:mirrorOnYZ", this, "doMirrorOn", false));
+        mirrorMenu.add(mirrorItem[1] = Translate.checkboxMenuItem("polymesh:mirrorOnXY", event -> doMirrorOn(), false));
+        mirrorMenu.add(mirrorItem[2] = Translate.checkboxMenuItem("polymesh:mirrorOnXZ", event -> doMirrorOn(), false));
+        mirrorMenu.add(mirrorItem[3] = Translate.checkboxMenuItem("polymesh:mirrorOnYZ", event -> doMirrorOn(), false));
         if ((mesh.getMirrorState() & PolyMesh.MIRROR_ON_XY) != 0) {
             ((BCheckBoxMenuItem) mirrorItem[1]).setState(true);
         }
@@ -3943,22 +3943,21 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Sets a mirror on XY, YZ or XZ plane
      *
-     * @param ev
-     * CommandEvent
      */
-    @SuppressWarnings("java:S1172")
-    private void doMirrorOn(CommandEvent ev) {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
+    private void doMirrorOn() {
+
         short mirrorState = 0;
-        if (((BCheckBoxMenuItem) mirrorItem[1]).getState()) {
+        if (mirrorItem[1].getComponent().isSelected()) {
             mirrorState |= PolyMesh.MIRROR_ON_XY;
         }
-        if (((BCheckBoxMenuItem) mirrorItem[2]).getState()) {
+        if ((mirrorItem[2]).getComponent().isSelected()) {
             mirrorState |= PolyMesh.MIRROR_ON_XZ;
         }
-        if (((BCheckBoxMenuItem) mirrorItem[3]).getState()) {
+        if ((mirrorItem[3]).getComponent().isSelected()) {
             mirrorState |= PolyMesh.MIRROR_ON_YZ;
         }
+
+        PolyMesh mesh = (PolyMesh) objInfo.object;
         mesh.setMirrorState(mirrorState);
         realMirror = false;
         objectChanged();
