@@ -1155,12 +1155,12 @@ public class UVMappingEditorDialog extends BDialog {
             mappings.remove(index);
             UVMeshMapping firstMapping = mappings.get(0);
             firstMapping.textures.addAll(currentMapping.textures);
-            if (firstMapping.textures.size() > 0) {
-                currentTexture = getTextureFromID(firstMapping.textures.get(0));
-                mappingCanvas.setTexture(texList.get(currentTexture), mappingList.get(currentTexture));
-            } else {
+            if (firstMapping.textures.isEmpty()) {
                 currentTexture = -1;
                 mappingCanvas.setTexture(null, null);
+            } else {
+                currentTexture = getTextureFromID(firstMapping.textures.get(0));
+                mappingCanvas.setTexture(texList.get(currentTexture), mappingList.get(currentTexture));
             }
             mappingCanvas.setMapping(firstMapping);
             currentMapping = firstMapping;
@@ -1316,8 +1316,8 @@ public class UVMappingEditorDialog extends BDialog {
         final ColumnContainer content;
         final ColumnContainer leftBox;
         final ColumnContainer rightBox;
-        final RowContainer resoContainer;
-        final RowContainer optsContainer;
+        final RowContainer resolutionContainer;
+        final RowContainer optionsContainer;
         final RowContainer actionContainer;
 
         // Things to consider:
@@ -1327,8 +1327,7 @@ public class UVMappingEditorDialog extends BDialog {
             super(parent, true);
             this.getComponent().addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override
-                public void windowClosing(java.awt.event.WindowEvent evt) {
-                    dispose();
+                public void windowClosing(java.awt.event.WindowEvent evt) {dispose();
                 }
             });
 
@@ -1338,17 +1337,17 @@ public class UVMappingEditorDialog extends BDialog {
             LayoutInfo radioLayout = new LayoutInfo(LayoutInfo.NORTHWEST, LayoutInfo.NONE, new Insets(0, 25, 0, 10), null);
 
             LayoutInfo boxLayout = new LayoutInfo(LayoutInfo.NORTHWEST, LayoutInfo.NONE, new Insets(0, 0, 0, 0), null);
-            LayoutInfo actboxLayout = new LayoutInfo(LayoutInfo.SOUTHEAST, LayoutInfo.NONE, new Insets(15, 0, 0, 10), null);
+            LayoutInfo actionsBoxLayout = new LayoutInfo(LayoutInfo.SOUTHEAST, LayoutInfo.NONE, new Insets(15, 0, 0, 10), null);
 
             content = new ColumnContainer();
-            content.add(resoContainer = new RowContainer(), boxLayout);
-            content.add(optsContainer = new RowContainer(), boxLayout);
-            content.add(actionContainer = new RowContainer(), actboxLayout);
-            optsContainer.add(leftBox = new ColumnContainer(), boxLayout);
-            optsContainer.add(rightBox = new ColumnContainer(), boxLayout);
+            content.add(resolutionContainer = new RowContainer(), boxLayout);
+            content.add(optionsContainer = new RowContainer(), boxLayout);
+            content.add(actionContainer = new RowContainer(), actionsBoxLayout);
+            optionsContainer.add(leftBox = new ColumnContainer(), boxLayout);
+            optionsContainer.add(rightBox = new ColumnContainer(), boxLayout);
 
-            resoContainer.add(new BLabel(Translate.text("polymesh:imageResolution")), labelLayout);
-            resoContainer.add(resolutionSpinner = new BSpinner(), valueLayout);
+            resolutionContainer.add(new BLabel(Translate.text("polymesh:imageResolution")), labelLayout);
+            resolutionContainer.add(resolutionSpinner = new BSpinner(), valueLayout);
 
             RadioButtonGroup bgButtons = new RadioButtonGroup();
             leftBox.add(new BLabel(Translate.text("polymesh:backgroundType")), headerLayout);

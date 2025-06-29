@@ -83,14 +83,14 @@ public class UVMappingCanvas extends CustomWidget {
     private Texture texture;
     private UVMapping texMapping;
     private boolean boldEdges;
-    private final static Stroke normal = new BasicStroke();
-    private final static Stroke bold = new BasicStroke(2.0f);
-    private final static Dimension minSize = new Dimension(640, 640);
-    private final static Dimension maxSize = new Dimension(5000, 5000);
-    private final static Color unselectedColor = new Color(0, 180, 0);
-    private final static Color selectedColor = Color.red;
-    private final static Color pinnedColor = new Color(182, 0, 185);
-    private final static Color pinnedSelectedColor = new Color(255, 142, 255);
+    private static final Stroke normal = new BasicStroke();
+    private static final Stroke bold = new BasicStroke(2.0f);
+    private static final Dimension minSize = new Dimension(640, 640);
+    private static final Dimension maxSize = new Dimension(5000, 5000);
+    private static final Color unselectedColor = new Color(0, 180, 0);
+    private static final Color selectedColor = Color.red;
+    private static final Color pinnedColor = new Color(182, 0, 185);
+    private static final Color pinnedSelectedColor = new Color(255, 142, 255);
     private final Color bgColor2 = new Color(223, 223, 223);
     private final Color txAreaColor = new Color(255, 255, 255, 159);
     private final Color ink = new Color(63, 127, 191);
@@ -346,11 +346,11 @@ public class UVMappingCanvas extends CustomWidget {
         g.setTransform(aNow);
         g.setStroke(new BasicStroke((float) (1.0 / scale)));
 
-        //double opacy = Math.min(255*Math.sqrt(scale/640), 223);
-        double opacy = Math.min(255.0 * Math.pow(scale / 520.0, 2.0 / 3.0), 223.0);
-        Color ink1 = new Color(ink.getRed(), ink.getGreen(), ink.getBlue(), (int) opacy);
-        Color ink2 = new Color(ink.getRed(), ink.getGreen(), ink.getBlue(), (int) (opacy / 1.6));
-        Color ink3 = new Color(ink.getRed(), ink.getGreen(), ink.getBlue(), (int) (opacy / 2.5));
+        //double opacity = Math.min(255*Math.sqrt(scale/640), 223);
+        double opacity = Math.min(255.0 * Math.pow(scale / 520.0, 2.0 / 3.0), 223.0);
+        Color ink1 = new Color(ink.getRed(), ink.getGreen(), ink.getBlue(), (int) opacity);
+        Color ink2 = new Color(ink.getRed(), ink.getGreen(), ink.getBlue(), (int) (opacity / 1.6));
+        Color ink3 = new Color(ink.getRed(), ink.getGreen(), ink.getBlue(), (int) (opacity / 2.5));
         double v = Math.round(vmin - 1.0);
         double u = Math.round(umin - 1.0);
 
