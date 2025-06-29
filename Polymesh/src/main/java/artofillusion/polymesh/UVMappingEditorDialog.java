@@ -225,7 +225,7 @@ public class UVMappingEditorDialog extends BDialog {
                             LayoutInfo.BOTH,
                             new Insets(2, 2, 2, 2),
                             new Dimension(0, 0)));
-            ArrayList<UVMeshMapping> mappings = mappingData.getMappings();
+            List<UVMeshMapping> mappings = mappingData.getMappings();
 
             for (int i = 0; i < mappings.size(); i++) {
                 mappingCB.add(mappings.get(i).name);
@@ -335,9 +335,9 @@ public class UVMappingEditorDialog extends BDialog {
         // Would prefer to use translations of AoI, but unfortunately, those come with keyboard shortcuts
         // that aren't implemented.
         menu = Translate.menu("view");
-        menu.add(Translate.menuItem("polymesh:fitToSelection", mappingCanvas, "fitToSelection"));
-        menu.add(Translate.menuItem("polymesh:fitToAll", mappingCanvas, "fitToAll"));
-        menu.add(gridMenuItem = Translate.checkboxMenuItem("polymesh:showGrid", mappingCanvas, "repaint", true));
+        menu.add(Translate.menuItem("polymesh:fitToSelection", event -> mappingCanvas.fitToSelection()));
+        menu.add(Translate.menuItem("polymesh:fitToAll", event -> mappingCanvas.fitToAll()));
+        menu.add(gridMenuItem = Translate.checkboxMenuItem("polymesh:showGrid", event -> mappingCanvas.repaint(), true));
         menuBar.add(menu);
 
         setMenuBar(menuBar);
@@ -641,7 +641,7 @@ public class UVMappingEditorDialog extends BDialog {
             return;
         }
 
-        ArrayList<UVMeshMapping> mappings = mappingData.getMappings();
+        List<UVMeshMapping> mappings = mappingData.getMappings();
         for (int i = 0; i < mappings.size(); i++) {
             if (mappings.get(i) == currentMapping) {
                 RemoveMappingCommand cmd = new RemoveMappingCommand(currentMapping, i);
@@ -1151,7 +1151,7 @@ public class UVMappingEditorDialog extends BDialog {
 
         @Override
         public void redo() {
-            ArrayList<UVMeshMapping> mappings = mappingData.getMappings();
+            List<UVMeshMapping> mappings = mappingData.getMappings();
             mappingCB.remove(index);
             mappings.remove(index);
             UVMeshMapping firstMapping = mappings.get(0);
@@ -1176,7 +1176,7 @@ public class UVMappingEditorDialog extends BDialog {
 
         @Override
         public void undo() {
-            ArrayList<UVMeshMapping> mappings = mappingData.getMappings();
+            List<UVMeshMapping> mappings = mappingData.getMappings();
             UVMeshMapping newMapping = mapping.duplicate();
             mappingCB.add(index, newMapping.name);
             mappings.add(index, newMapping);
@@ -1232,7 +1232,7 @@ public class UVMappingEditorDialog extends BDialog {
 
         @Override
         public void undo() {
-            ArrayList<UVMeshMapping> mappings = mappingData.getMappings();
+            List<UVMeshMapping> mappings = mappingData.getMappings();
             int index = mappings.size() - 1;
             mappingCB.remove(index);
             mappings.remove(index);

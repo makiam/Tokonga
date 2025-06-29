@@ -467,9 +467,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         editMenu.add(Translate.menuItem("invertSelection", this::invertSelectionCommand));
         editMenu.add(editMenuItem[4] = Translate.menuItem("polymesh:scaleSelection", this::scaleSelectionCommand));
         editMenu.add(editMenuItem[5] = Translate.menuItem("polymesh:scaleNormal", this::scaleNormalSelectionCommand));
-        editMenu.add(editMenuItem[6] = Translate.checkboxMenuItem("tolerantSelection", this, "tolerantModeChanged", lastTolerant));
-        editMenu.add(editMenuItem[7] = Translate.checkboxMenuItem("freehandSelection", this, "freehandModeChanged", lastFreehand));
-        editMenu.add(editMenuItem[8] = Translate.checkboxMenuItem("projectOntoSurface", this, "projectModeChanged", lastProjectOntoSurface));
+        editMenu.add(editMenuItem[6] = Translate.checkboxMenuItem("tolerantSelection", event -> tolerantModeChanged(), lastTolerant));
+        editMenu.add(editMenuItem[7] = Translate.checkboxMenuItem("freehandSelection", event -> freehandModeChanged(), lastFreehand));
+        editMenu.add(editMenuItem[8] = Translate.checkboxMenuItem("projectOntoSurface", event -> projectModeChanged(), lastProjectOntoSurface));
         editMenu.addSeparator();
         editMenu.add(editMenuItem[9] = Translate.menuItem("hideSelection", this::doHideSelection));
         editMenu.add(editMenuItem[10] = Translate.menuItem("showAll", this::doShowAll));

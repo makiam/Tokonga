@@ -76,7 +76,7 @@ public class UVMappingData {
                     newMapping.v[i][j] = new Vec2(v[i][j]);
                 }
             }
-            newMapping.name = new String(name);
+            newMapping.name = name;
             newMapping.textures = new ArrayList<>();
             newMapping.textures.addAll(textures);
 
