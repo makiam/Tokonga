@@ -3981,8 +3981,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         }
         if (selCount > 0) {
             if (selectMode == POINT_MODE) {
-                int[] indices = new int[selCount];
                 int count = 0;
+                int[] indices = new int[selCount];
                 for (int i = 0; i < selected.length; ++i) {
                     if (!selected[i]) {
                         indices[count++] = i;
