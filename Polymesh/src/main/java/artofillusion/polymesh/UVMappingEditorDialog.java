@@ -532,6 +532,7 @@ public class UVMappingEditorDialog extends BDialog {
     private void updateMappingMenu() {
         sendTexToMappingMenu.removeAll();
         mappingMenuItems = new BCheckBoxMenuItem[mappingData.mappings.size()];
+
         for (int i = 0; i < mappingData.mappings.size(); i++) {
             sendTexToMappingMenu.add(mappingMenuItems[i] = new BCheckBoxMenuItem(mappingData.mappings.get(i).name, false));
             mappingMenuItems[i].addEventLink(CommandEvent.class, this, "doSendToMapping");
