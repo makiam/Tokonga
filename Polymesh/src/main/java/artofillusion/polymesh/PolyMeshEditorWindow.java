@@ -3980,14 +3980,14 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             }
         }
         if (selCount > 0) {
-            if (selectMode == POINT_MODE) {
-                int count = 0;
-                int[] indices = new int[selCount];
-                for (int i = 0; i < selected.length; ++i) {
-                    if (!selected[i]) {
-                        indices[count++] = i;
-                    }
+            int count = 0;
+            int[] indices = new int[selCount];
+            for (int i = 0; i < selected.length; ++i) {
+                if (!selected[i]) {
+                    indices[count++] = i;
                 }
+            }
+            if (selectMode == POINT_MODE) {
                 if (clipboardMesh.getVertices().length - indices.length < 3) {
                     //back to original mesh
                     clipboardMesh = ((PolyMesh) objInfo.getGeometry()).duplicate();
@@ -3995,13 +3995,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                     clipboardMesh.deleteVertices(indices);
                 }
             } else if (selectMode == EDGE_MODE) {
-                int count = 0;
-                int[] indices = new int[selCount];
-                for (int i = 0; i < selected.length; ++i) {
-                    if (!selected[i]) {
-                        indices[count++] = i;
-                    }
-                }
                 if (clipboardMesh.getEdges().length - indices.length < 3) {
                     //back to original mesh
                     clipboardMesh =  ((PolyMesh) objInfo.getGeometry()).duplicate();
@@ -4009,13 +4002,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                     clipboardMesh.deleteEdges(indices);
                 }
             } else {
-                int count = 0;
-                int[] indices = new int[selCount];
-                for (int i = 0; i < selected.length; ++i) {
-                    if (!selected[i]) {
-                        indices[count++] = i;
-                    }
-                }
                 if (clipboardMesh.getFaces().length - indices.length < 1) {
                     //back to original mesh
                     clipboardMesh = ((PolyMesh) objInfo.getGeometry()).duplicate();
