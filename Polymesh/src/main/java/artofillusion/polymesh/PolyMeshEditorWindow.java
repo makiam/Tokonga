@@ -4331,6 +4331,20 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         updateImage();
     }
 
+    @Subscribe
+    public void onUndoChangedEvent(UndoChangedEvent event) {
+        var rec = event.getRecord();
+        if(rec.getView() == this) {
+            log.info("My Undo event: {}", event);
+            PolyMesh mesh = (PolyMesh) objInfo.object;
+            smoothNone.setState(mesh.getSmoothingMethod() == Mesh.NO_SMOOTHING);
+            smoothApproximate.setState(mesh.getSmoothingMethod() == Mesh.APPROXIMATING);
+        } else {
+            log.info("Foreign Undo event: {}", event);
+        }
+
+    }
+
     @AllArgsConstructor
     private class CopyEvent implements WidgetEvent {
 
