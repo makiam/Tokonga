@@ -234,7 +234,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         skeletonMenu.addSeparator();
         skeletonMenu.add(skeletonMenuItem[4] = Translate.menuItem("bindSkeleton", event -> bindSkeletonCommand()));
         skeletonMenu.add(skeletonMenuItem[5] = Translate.menuItem("unbindSkeleton", event -> unbindSkeletonCommand()));
-        skeletonMenu.add(skeletonMenuItem[6] = Translate.checkboxMenuItem("detachSkeleton", this, "skeletonDetachedChanged", false));
+        skeletonMenu.add(skeletonMenuItem[6] = Translate.checkboxMenuItem("detachSkeleton", event -> skeletonDetachedChanged(), false));
     }
 
     /**

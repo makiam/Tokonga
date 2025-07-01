@@ -104,7 +104,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
         editMenu.add(Translate.menuItem("selectAll", event -> selectAllCommand()));
         editMenu.add(editMenuItem[2] = Translate.menuItem("deselectAll", event -> deselectAllCommand()));
         editMenu.addSeparator();
-        editMenu.add(editMenuItem[3] = Translate.checkboxMenuItem("freehandSelection", this, "freehandModeChanged", false));
+        editMenu.add(editMenuItem[3] = Translate.checkboxMenuItem("freehandSelection", event -> freehandModeChanged(), false));
         editMenu.add(Translate.menuItem("curveTension", event -> setTensionCommand()));
     }
 

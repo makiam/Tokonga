@@ -113,7 +113,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         editMenu.add(Translate.menuItem("selectAll", event -> selectAllCommand()));
         editMenu.add(editMenuItem[2] = Translate.menuItem("deselectAll", event -> deselectAllCommand()));
         editMenu.addSeparator();
-        editMenu.add(editMenuItem[3] = Translate.checkboxMenuItem("freehandSelection", this, "freehandModeChanged", false));
+        editMenu.add(editMenuItem[3] = Translate.checkboxMenuItem("freehandSelection", event -> freehandModeChanged(), false));
         editMenu.add(Translate.menuItem("meshTension", event -> setTensionCommand()));
     }
 
@@ -168,7 +168,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         skeletonMenu.addSeparator();
         skeletonMenu.add(skeletonMenuItem[4] = Translate.menuItem("bindSkeleton", event -> bindSkeletonCommand()));
         skeletonMenu.add(skeletonMenuItem[5] = Translate.menuItem("unbindSkeleton", event -> unbindSkeletonCommand()));
-        skeletonMenu.add(skeletonMenuItem[6] = Translate.checkboxMenuItem("detachSkeleton", this, "skeletonDetachedChanged", false));
+        skeletonMenu.add(skeletonMenuItem[6] = Translate.checkboxMenuItem("detachSkeleton", event -> skeletonDetachedChanged(), false));
     }
 
     /**
