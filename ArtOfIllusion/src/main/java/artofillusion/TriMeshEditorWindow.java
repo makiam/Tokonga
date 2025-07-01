@@ -20,6 +20,8 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -29,6 +31,7 @@ import java.util.List;
 /**
  * The TriMeshEditorWindow class represents the window for editing TriangleMesh objects.
  */
+@Slf4j
 public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWindow {
 
     private final ToolPalette modes;
@@ -44,7 +47,13 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
     boolean[] hideEdge;
     boolean[] selected;
     boolean showQuads;
+    /**
+     * -- GETTER --
+     *  Determine whether we are in tolerant selection mode.
+     */
+    @Getter
     boolean tolerant;
+
     private int[] selectionDistance;
     private int maxDistance;
     private int selectMode;
@@ -110,7 +119,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         modes.addTool(new GenericTool(this, "edge", Translate.text("edgeSelectionModeTool.tipText")));
         modes.addTool(new GenericTool(this, "face", Translate.text("faceSelectionModeTool.tipText")));
         setSelectionMode(modes.getSelection());
-        createEditMenu((TriangleMesh) obj.getObject());
+        createEditMenu();
         createMeshMenu((TriangleMesh) obj.getObject());
         createSkeletonMenu((TriangleMesh) obj.getObject());
         createViewMenu();
@@ -128,7 +137,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         updateMenus();
     }
 
-    void createEditMenu(TriangleMesh obj) {
+    private void createEditMenu() {
         BMenu editMenu = Translate.menu("edit");
         menubar.add(editMenu);
         editMenuItem = new BMenuItem[9];
@@ -153,10 +162,10 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         editMenu.addSeparator();
         editMenu.add(selectSpecialMenu);
         editMenu.addSeparator();
-        editMenu.add(editMenuItem[4] = Translate.checkboxMenuItem("tolerantSelection", this, "tolerantModeChanged", lastTolerant));
-        editMenu.add(editMenuItem[5] = Translate.checkboxMenuItem("freehandSelection", this, "freehandModeChanged", lastFreehand));
-        editMenu.add(editMenuItem[6] = Translate.checkboxMenuItem("displayAsQuads", this, "quadModeChanged", lastShowQuads));
-        editMenu.add(editMenuItem[7] = Translate.checkboxMenuItem("projectOntoSurface", this, "projectModeChanged", lastProjectOntoSurface));
+        editMenu.add(editMenuItem[4] = Translate.checkboxMenuItem("tolerantSelection", event -> tolerantModeChanged(), lastTolerant));
+        editMenu.add(editMenuItem[5] = Translate.checkboxMenuItem("freehandSelection", event -> freehandModeChanged(), lastFreehand));
+        editMenu.add(editMenuItem[6] = Translate.checkboxMenuItem("displayAsQuads", event -> quadModeChanged(), lastShowQuads));
+        editMenu.add(editMenuItem[7] = Translate.checkboxMenuItem("projectOntoSurface", event -> projectModeChanged(), lastProjectOntoSurface));
         editMenu.addSeparator();
         editMenu.add(editMenuItem[8] = Translate.menuItem("hideSelection", event -> hideSelectionCommand()));
         editMenu.add(Translate.menuItem("showAll", event -> showAllCommand()));
@@ -743,13 +752,6 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         }
         parentWindow.updateImage();
         parentWindow.updateMenus();
-    }
-
-    /**
-     * Determine whether we are in tolerant selection mode.
-     */
-    public boolean isTolerant() {
-        return tolerant;
     }
 
     /**
