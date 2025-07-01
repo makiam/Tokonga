@@ -116,7 +116,7 @@ public class TubeEditorWindow extends CurveEditorWindow {
         showItem = new BCheckBoxMenuItem[4];
         menu.add(showItem[0] = Translate.checkboxMenuItem("curve", this, "shownItemChanged", view.getMeshVisible()));
         menu.add(showItem[1] = Translate.checkboxMenuItem("surface", this, "shownItemChanged", view.getSurfaceVisible()));
-        menu.add(showItem[3] = Translate.checkboxMenuItem("entireScene", this, "shownItemChanged", view.getSceneVisible()));
+        menu.add(showItem[3] = Translate.checkboxMenuItem("entireScene", this::toggleSceneVisible, view.getSceneVisible()));
         return menu;
     }
 

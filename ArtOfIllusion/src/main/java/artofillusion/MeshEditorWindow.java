@@ -22,6 +22,7 @@ import buoy.widget.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.*;
 import java.util.List;
 
@@ -136,7 +137,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         menu.add(showItem[0] = Translate.checkboxMenuItem("controlMesh", this, "shownItemChanged", view.getMeshVisible()));
         menu.add(showItem[1] = Translate.checkboxMenuItem("surface", this, "shownItemChanged", view.getSurfaceVisible()));
         menu.add(showItem[2] = Translate.checkboxMenuItem("skeleton", this, "shownItemChanged", view.getSkeletonVisible()));
-        menu.add(showItem[3] = Translate.checkboxMenuItem("entireScene", this, "shownItemChanged", view.getSceneVisible()));
+        menu.add(showItem[3] = Translate.checkboxMenuItem("entireScene", this::toggleSceneVisible, view.getSceneVisible()));
         return menu;
     }
 
@@ -308,6 +309,14 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         updateImage();
     }
 
+    protected final void toggleSceneVisible(ActionEvent event) {
+        var state = ((JCheckBoxMenuItem)event.getSource()).isSelected();
+        MeshViewer view = (MeshViewer) theView[currentView];
+        view.setSceneVisible(lastShowScene[currentView] = state);
+        savePreferences();
+        updateImage();
+    }
+
     private void shownItemChanged(WidgetEvent ev) {
         Widget source = ev.getWidget();
         MeshViewer view = (MeshViewer) theView[currentView];
@@ -317,9 +326,8 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
             view.setSurfaceVisible(lastShowSurface[currentView] = showItem[1].getState());
         } else if (source == showItem[2]) {
             view.setSkeletonVisible(lastShowSkeleton[currentView] = showItem[2].getState());
-        } else if (source == showItem[3]) {
-            view.setSceneVisible(lastShowScene[currentView] = showItem[3].getState());
         }
+
         savePreferences();
         updateImage();
     }

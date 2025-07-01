@@ -142,7 +142,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
         BMenu menu = Translate.menu("show");
         showItem = new BCheckBoxMenuItem[4];
         menu.add(showItem[0] = Translate.checkboxMenuItem("curve", this, "shownItemChanged", true));
-        menu.add(showItem[3] = Translate.checkboxMenuItem("entireScene", this, "shownItemChanged", ((MeshViewer) theView[currentView]).getSceneVisible()));
+        menu.add(showItem[3] = Translate.checkboxMenuItem("entireScene", this::toggleSceneVisible, ((MeshViewer) theView[currentView]).getSceneVisible()));
         return menu;
     }
 
