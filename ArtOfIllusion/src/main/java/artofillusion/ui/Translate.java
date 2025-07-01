@@ -18,7 +18,11 @@ import java.util.*;
 
 import artofillusion.*;
 import java.awt.event.ActionListener;
+
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class provides utilities for localizing text so that it can be translated into
@@ -47,9 +51,13 @@ import lombok.Getter;
  * <p>
  * BLabel instructions = Translate.label("myplugin:instructionsLabel");
  */
+@Slf4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Translate {
 
     private static final Set<Locale> availableLocales = new LinkedHashSet<>();
+    public static final String MENU_RESOURCE_PREFIX = "menu.";
+    public static final String MENU_SHORTCUT_RESOURCE_SUFFIX = ".shortcut";
 
     static {
         availableLocales.add(new Locale("af", "ZA"));
@@ -146,8 +154,9 @@ public class Translate {
     public static BMenu menu(String name) {
         String title = name;
         try {
-            title = getValue(name, "menu.");
+            title = getValue(name, MENU_RESOURCE_PREFIX);
         } catch (MissingResourceException ex) {
+            log.info("No menu resource found for: {}", name);
         }
         BMenu menu = new BMenu(title);
         menu.setName(name);
@@ -164,19 +173,21 @@ public class Translate {
     public static BMenuItem menuItem(String name, Object listener, String method) {
         String command = name;
         try {
-            command = getValue(name, "menu.");
+            command = getValue(name, MENU_RESOURCE_PREFIX);
         } catch (MissingResourceException ex) {
+            log.info("No menu item resource found for: {}", name);
         }
         BMenuItem item = new BMenuItem(command);
         item.setActionCommand(name);
         try {
-            String shortcut = getValue(name, "menu.", ".shortcut");
+            String shortcut = getValue(name, MENU_RESOURCE_PREFIX, MENU_SHORTCUT_RESOURCE_SUFFIX);
             if (shortcut.length() > 1 && shortcut.charAt(0) == '^') {
                 item.setShortcut(new Shortcut(shortcut.charAt(1), Shortcut.DEFAULT_MASK | Shortcut.SHIFT_MASK));
             } else if (shortcut.length() > 0) {
                 item.setShortcut(new Shortcut(shortcut.charAt(0)));
             }
         } catch (MissingResourceException ex) {
+            log.info("No menu item shortcut resource found for: {}", name);
         }
         if (listener != null) {
             item.addEventLink(CommandEvent.class, listener, method);
@@ -187,19 +198,21 @@ public class Translate {
     public static BMenuItem menuItem(String name, ActionListener al) {
         String command = name;
         try {
-            command = getValue(name, "menu.");
+            command = getValue(name, MENU_RESOURCE_PREFIX);
         } catch (MissingResourceException ex) {
+            log.info("No menu item resource found for: {}", name);
         }
         BMenuItem item = new BMenuItem(command);
         item.getComponent().setActionCommand(name);
         try {
-            String shortcut = getValue(name, "menu.", ".shortcut");
+            String shortcut = getValue(name, MENU_RESOURCE_PREFIX, MENU_SHORTCUT_RESOURCE_SUFFIX);
             if (shortcut.length() > 1 && shortcut.charAt(0) == '^') {
                 item.setShortcut(new Shortcut(shortcut.charAt(1), Shortcut.DEFAULT_MASK | Shortcut.SHIFT_MASK));
             } else if (shortcut.length() > 0) {
                 item.setShortcut(new Shortcut(shortcut.charAt(0)));
             }
         } catch (MissingResourceException ex) {
+            log.info("No menu item shortcut resource found for: {}", name);
         }
         item.getComponent().addActionListener(al);
         return item;
@@ -213,19 +226,21 @@ public class Translate {
     public static BCheckBoxMenuItem checkboxMenuItem(String name, Object listener, String method, boolean state) {
         String command = name;
         try {
-            command = getValue(name, "menu.");
+            command = getValue(name, MENU_RESOURCE_PREFIX);
         } catch (MissingResourceException ex) {
+            log.info("No menu item resource found for menu: {}", name);
         }
         BCheckBoxMenuItem item = new BCheckBoxMenuItem(command, state);
         item.setActionCommand(name);
         try {
-            String shortcut = getValue(name, "menu.", ".shortcut");
+            String shortcut = getValue(name, MENU_RESOURCE_PREFIX, MENU_SHORTCUT_RESOURCE_SUFFIX);
             if (shortcut.length() > 1 && shortcut.charAt(0) == '^') {
                 item.setShortcut(new Shortcut(shortcut.charAt(1), Shortcut.DEFAULT_MASK | Shortcut.SHIFT_MASK));
             } else if (shortcut.length() > 0) {
                 item.setShortcut(new Shortcut(shortcut.charAt(0)));
             }
         } catch (MissingResourceException ex) {
+            log.info("No menu shortcut item resource found for menu: {}", name);
         }
         if (listener != null) {
             item.addEventLink(CommandEvent.class, listener, method);
@@ -236,19 +251,21 @@ public class Translate {
     public static BCheckBoxMenuItem checkboxMenuItem(String name, ActionListener al, boolean state) {
         String command = name;
         try {
-            command = getValue(name, "menu.");
+            command = getValue(name, MENU_RESOURCE_PREFIX);
         } catch (MissingResourceException ex) {
+            log.info("No menu item resource found for menu: {}", name);
         }
         BCheckBoxMenuItem item = new BCheckBoxMenuItem(command, state);
         item.setActionCommand(name);
         try {
-            String shortcut = getValue(name, "menu.", ".shortcut");
+            String shortcut = getValue(name, MENU_RESOURCE_PREFIX, MENU_SHORTCUT_RESOURCE_SUFFIX);
             if (shortcut.length() > 1 && shortcut.charAt(0) == '^') {
                 item.setShortcut(new Shortcut(shortcut.charAt(1), Shortcut.DEFAULT_MASK | Shortcut.SHIFT_MASK));
             } else if (shortcut.length() > 0) {
                 item.setShortcut(new Shortcut(shortcut.charAt(0)));
             }
         } catch (MissingResourceException ex) {
+            log.info("No menu shortcut item resource found for menu: {}", name);
         }
         item.getComponent().addActionListener(al);
         return item;
@@ -281,6 +298,7 @@ public class Translate {
         try {
             command = getValue(name, "button.");
         } catch (MissingResourceException ex) {
+            log.info("No button resource found for: {}", name);
         }
         if (suffix != null) {
             command += suffix;
@@ -315,6 +333,7 @@ public class Translate {
         try {
             name = getValue(name, null);
         } catch (MissingResourceException ex) {
+            log.info("No label resource found for: {}", name);
         }
         if (suffix != null) {
             name += suffix;
@@ -336,36 +355,6 @@ public class Translate {
 
     /**
      * Get the text given by the property "name". If the property is not
-     * found, this simply uses name. Any occurrence of the pattern "{0}"
-     * in the text string will be replaced with the string representation
-     * of arg1.
-     */
-    public static String text(String name, Object arg1) {
-        String pattern = name;
-        try {
-            pattern = getValue(name);
-        } catch (MissingResourceException ex) {
-        }
-        return MessageFormat.format(pattern, arg1);
-    }
-
-    /**
-     * Get the text given by the property "name". If the property is not
-     * found, this simply uses name. Any occurrences of the patterns
-     * "{0}" and "{1}" in the text string will be replaced with the
-     * strings representations of arg1 and arg2, respectively.
-     */
-    public static String text(String name, Object arg1, Object arg2) {
-        String pattern = name;
-        try {
-            pattern = getValue(name);
-        } catch (MissingResourceException ex) {
-        }
-        return MessageFormat.format(pattern, arg1, arg2);
-    }
-
-    /**
-     * Get the text given by the property "name". If the property is not
      * found, this simply uses name. That string and the args array are
      * then passed to MessageFormat.format() so that any variable fields
      * can be replaced with the correct values.
@@ -375,6 +364,7 @@ public class Translate {
         try {
             pattern = getValue(name);
         } catch (MissingResourceException ex) {
+            log.info("No text resource found for: {}", name);
         }
         return MessageFormat.format(pattern, args);
     }

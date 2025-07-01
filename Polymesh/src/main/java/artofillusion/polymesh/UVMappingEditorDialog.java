@@ -35,6 +35,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
@@ -46,6 +47,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
+import javax.swing.*;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -161,7 +164,7 @@ public class UVMappingEditorDialog extends BDialog {
             for (int i = 0; i < texList.size(); i++) {
                 boolean hasTexture = false;
                 for (int j = 0; j < mappingData.mappings.size(); j++) {
-                    ArrayList<Integer> textures = mappingData.mappings.get(j).textures;
+                    List<Integer> textures = mappingData.mappings.get(j).textures;
                     for (int k = 0; k < textures.size(); k++) {
                         if (getTextureFromID(textures.get(k)) == i) {
                             hasTexture = true;
@@ -222,7 +225,7 @@ public class UVMappingEditorDialog extends BDialog {
                             LayoutInfo.BOTH,
                             new Insets(2, 2, 2, 2),
                             new Dimension(0, 0)));
-            ArrayList<UVMeshMapping> mappings = mappingData.getMappings();
+            List<UVMeshMapping> mappings = mappingData.getMappings();
 
             for (int i = 0; i < mappings.size(); i++) {
                 mappingCB.add(mappings.get(i).name);
@@ -279,12 +282,7 @@ public class UVMappingEditorDialog extends BDialog {
         BSplitPane div = new BSplitPane(BSplitPane.HORIZONTAL, sp, meshViewPanel);
         div.setResizeWeight(1.0);
         div.setContinuousLayout(true);
-        content.add(div,
-                BorderContainer.CENTER,
-                new LayoutInfo(LayoutInfo.CENTER,
-                        LayoutInfo.BOTH,
-                        new Insets(2, 2, 2, 2),
-                        new Dimension(0, 0)));
+        content.add(div, BorderContainer.CENTER, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets(2, 2, 2, 2), new Dimension(0, 0)));
         UnfoldedMesh[] meshes = mappingData.getMeshes();
         for (int i = 0; i < meshes.length; i++) {
             pieceList.add(meshes[i].getName());
@@ -329,17 +327,17 @@ public class UVMappingEditorDialog extends BDialog {
         menuBar.add(menu);
 
         menu = Translate.menu("polymesh:preferences");
-        menu.add(Translate.checkboxMenuItem("polymesh:showSelectionOnPreview", this, "doShowSelection", true));
-        menu.add(Translate.checkboxMenuItem("polymesh:liveUpdate", this, "doLiveUpdate", true));
-        menu.add(Translate.checkboxMenuItem("polymesh:boldEdges", this, "doBoldEdges", true));
+        menu.add(Translate.checkboxMenuItem("polymesh:showSelectionOnPreview", this::doShowSelection, true));
+        menu.add(Translate.checkboxMenuItem("polymesh:liveUpdate", this::toggleLiveUpdateAction, true));
+        menu.add(Translate.checkboxMenuItem("polymesh:boldEdges", this::toggleBoldEdgesAction, true));
         menuBar.add(menu);
 
         // Would prefer to use translations of AoI, but unfortunately, those come with keyboard shortcuts
         // that aren't implemented.
         menu = Translate.menu("view");
-        menu.add(Translate.menuItem("polymesh:fitToSelection", mappingCanvas, "fitToSelection"));
-        menu.add(Translate.menuItem("polymesh:fitToAll", mappingCanvas, "fitToAll"));
-        menu.add(gridMenuItem = Translate.checkboxMenuItem("polymesh:showGrid", mappingCanvas, "repaint", true));
+        menu.add(Translate.menuItem("polymesh:fitToSelection", event -> mappingCanvas.fitToSelection()));
+        menu.add(Translate.menuItem("polymesh:fitToAll", event -> mappingCanvas.fitToAll()));
+        menu.add(gridMenuItem = Translate.checkboxMenuItem("polymesh:showGrid", event -> mappingCanvas.repaint(), true));
         menuBar.add(menu);
 
         setMenuBar(menuBar);
@@ -451,15 +449,22 @@ public class UVMappingEditorDialog extends BDialog {
         mappingCanvas.pinSelection(false);
     }
 
-    private void doBoldEdges(CommandEvent evt) {
-        BCheckBoxMenuItem item = (BCheckBoxMenuItem) evt.getWidget();
-        mappingCanvas.setBoldEdges(item.getState());
+
+    private void doShowSelection(ActionEvent event) {
+        boolean state = ((JCheckBoxMenuItem)event.getSource()).getState();
+        preview.setShowSelection(state);
+        mappingCanvas.setSelection(mappingCanvas.getSelection());
     }
 
-    private void doLiveUpdate(CommandEvent evt) {
-        BCheckBoxMenuItem item = (BCheckBoxMenuItem) evt.getWidget();
-        preview.setShowSelection(item.getState());
-        manipulator.setLiveUpdate(item.getState());
+    private void toggleBoldEdgesAction(ActionEvent event) {
+        boolean state = ((JCheckBoxMenuItem)event.getSource()).getState();
+        mappingCanvas.setBoldEdges(state);
+    }
+
+    private void toggleLiveUpdateAction(ActionEvent event) {
+        boolean state = ((JCheckBoxMenuItem)event.getSource()).getState();
+        preview.setShowSelection(state);
+        manipulator.setLiveUpdate(state);
     }
 
     private void doRenameSelectedPiece() {
@@ -527,6 +532,7 @@ public class UVMappingEditorDialog extends BDialog {
     private void updateMappingMenu() {
         sendTexToMappingMenu.removeAll();
         mappingMenuItems = new BCheckBoxMenuItem[mappingData.mappings.size()];
+
         for (int i = 0; i < mappingData.mappings.size(); i++) {
             sendTexToMappingMenu.add(mappingMenuItems[i] = new BCheckBoxMenuItem(mappingData.mappings.get(i).name, false));
             mappingMenuItems[i].addEventLink(CommandEvent.class, this, "doSendToMapping");
@@ -635,7 +641,7 @@ public class UVMappingEditorDialog extends BDialog {
             return;
         }
 
-        ArrayList<UVMeshMapping> mappings = mappingData.getMappings();
+        List<UVMeshMapping> mappings = mappingData.getMappings();
         for (int i = 0; i < mappings.size(); i++) {
             if (mappings.get(i) == currentMapping) {
                 RemoveMappingCommand cmd = new RemoveMappingCommand(currentMapping, i);
@@ -727,11 +733,6 @@ public class UVMappingEditorDialog extends BDialog {
         }
     }
 
-    private void doShowSelection(CommandEvent evt) {
-        BCheckBoxMenuItem item = (BCheckBoxMenuItem) evt.getWidget();
-        preview.setShowSelection(item.getState());
-        mappingCanvas.setSelection(mappingCanvas.getSelection());
-    }
 
     private void doSelectAll() {
         mappingCanvas.selectAll();
@@ -851,15 +852,6 @@ public class UVMappingEditorDialog extends BDialog {
      */
     public UVMappingData getMappingData() {
         return mappingData;
-    }
-
-    //for debugging purposes
-    private void dumpTextureIDs() {
-        mappingData.getMappings().forEach(mapping -> {
-            mapping.textures.forEach(tex -> {
-                log.atDebug().log("Mapping {} Texture Id: {}", mapping.getName(), tex);
-            });
-        });
     }
 
     /**
@@ -1159,17 +1151,17 @@ public class UVMappingEditorDialog extends BDialog {
 
         @Override
         public void redo() {
-            ArrayList<UVMeshMapping> mappings = mappingData.getMappings();
+            List<UVMeshMapping> mappings = mappingData.getMappings();
             mappingCB.remove(index);
             mappings.remove(index);
             UVMeshMapping firstMapping = mappings.get(0);
             firstMapping.textures.addAll(currentMapping.textures);
-            if (firstMapping.textures.size() > 0) {
-                currentTexture = getTextureFromID(firstMapping.textures.get(0));
-                mappingCanvas.setTexture(texList.get(currentTexture), mappingList.get(currentTexture));
-            } else {
+            if (firstMapping.textures.isEmpty()) {
                 currentTexture = -1;
                 mappingCanvas.setTexture(null, null);
+            } else {
+                currentTexture = getTextureFromID(firstMapping.textures.get(0));
+                mappingCanvas.setTexture(texList.get(currentTexture), mappingList.get(currentTexture));
             }
             mappingCanvas.setMapping(firstMapping);
             currentMapping = firstMapping;
@@ -1184,7 +1176,7 @@ public class UVMappingEditorDialog extends BDialog {
 
         @Override
         public void undo() {
-            ArrayList<UVMeshMapping> mappings = mappingData.getMappings();
+            List<UVMeshMapping> mappings = mappingData.getMappings();
             UVMeshMapping newMapping = mapping.duplicate();
             mappingCB.add(index, newMapping.name);
             mappings.add(index, newMapping);
@@ -1240,7 +1232,7 @@ public class UVMappingEditorDialog extends BDialog {
 
         @Override
         public void undo() {
-            ArrayList<UVMeshMapping> mappings = mappingData.getMappings();
+            List<UVMeshMapping> mappings = mappingData.getMappings();
             int index = mappings.size() - 1;
             mappingCB.remove(index);
             mappings.remove(index);
@@ -1325,8 +1317,8 @@ public class UVMappingEditorDialog extends BDialog {
         final ColumnContainer content;
         final ColumnContainer leftBox;
         final ColumnContainer rightBox;
-        final RowContainer resoContainer;
-        final RowContainer optsContainer;
+        final RowContainer resolutionContainer;
+        final RowContainer optionsContainer;
         final RowContainer actionContainer;
 
         // Things to consider:
@@ -1336,8 +1328,7 @@ public class UVMappingEditorDialog extends BDialog {
             super(parent, true);
             this.getComponent().addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override
-                public void windowClosing(java.awt.event.WindowEvent evt) {
-                    dispose();
+                public void windowClosing(java.awt.event.WindowEvent evt) {dispose();
                 }
             });
 
@@ -1347,17 +1338,17 @@ public class UVMappingEditorDialog extends BDialog {
             LayoutInfo radioLayout = new LayoutInfo(LayoutInfo.NORTHWEST, LayoutInfo.NONE, new Insets(0, 25, 0, 10), null);
 
             LayoutInfo boxLayout = new LayoutInfo(LayoutInfo.NORTHWEST, LayoutInfo.NONE, new Insets(0, 0, 0, 0), null);
-            LayoutInfo actboxLayout = new LayoutInfo(LayoutInfo.SOUTHEAST, LayoutInfo.NONE, new Insets(15, 0, 0, 10), null);
+            LayoutInfo actionsBoxLayout = new LayoutInfo(LayoutInfo.SOUTHEAST, LayoutInfo.NONE, new Insets(15, 0, 0, 10), null);
 
             content = new ColumnContainer();
-            content.add(resoContainer = new RowContainer(), boxLayout);
-            content.add(optsContainer = new RowContainer(), boxLayout);
-            content.add(actionContainer = new RowContainer(), actboxLayout);
-            optsContainer.add(leftBox = new ColumnContainer(), boxLayout);
-            optsContainer.add(rightBox = new ColumnContainer(), boxLayout);
+            content.add(resolutionContainer = new RowContainer(), boxLayout);
+            content.add(optionsContainer = new RowContainer(), boxLayout);
+            content.add(actionContainer = new RowContainer(), actionsBoxLayout);
+            optionsContainer.add(leftBox = new ColumnContainer(), boxLayout);
+            optionsContainer.add(rightBox = new ColumnContainer(), boxLayout);
 
-            resoContainer.add(new BLabel(Translate.text("polymesh:imageResolution")), labelLayout);
-            resoContainer.add(resolutionSpinner = new BSpinner(), valueLayout);
+            resolutionContainer.add(new BLabel(Translate.text("polymesh:imageResolution")), labelLayout);
+            resolutionContainer.add(resolutionSpinner = new BSpinner(), valueLayout);
 
             RadioButtonGroup bgButtons = new RadioButtonGroup();
             leftBox.add(new BLabel(Translate.text("polymesh:backgroundType")), headerLayout);

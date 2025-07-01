@@ -125,7 +125,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     BMenuItem[] animationMenuItem;
     BMenuItem[] popupMenuItem;
-    BCheckBoxMenuItem[] displayItem;
+
+    private final ButtonGroup displayModesGroup = new ButtonGroup();
+    private BCheckBoxMenuItem[] displayItem;
     /**
      * -- GETTER --
      *  Get the popup menu.
@@ -597,12 +599,14 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         displayItem = new BCheckBoxMenuItem[6];
         int renderMode = theView[0].getRenderMode();
 
-        displayMenu.add(displayItem[0] = Translate.checkboxMenuItem("wireframeDisplay", this, "setDisplayModeWireframe", renderMode == ViewerCanvas.RENDER_WIREFRAME));
-        displayMenu.add(displayItem[1] = Translate.checkboxMenuItem("shadedDisplay", this, "setDisplayModeShaded", renderMode == ViewerCanvas.RENDER_FLAT));
-        displayMenu.add(displayItem[2] = Translate.checkboxMenuItem("smoothDisplay", this, "setDisplayModeSmooth", renderMode == ViewerCanvas.RENDER_SMOOTH));
-        displayMenu.add(displayItem[3] = Translate.checkboxMenuItem("texturedDisplay", this, "setDisplayModeTextured", renderMode == ViewerCanvas.RENDER_TEXTURED));
-        displayMenu.add(displayItem[4] = Translate.checkboxMenuItem("transparentDisplay", this, "setDisplayModeTransparent", renderMode == ViewerCanvas.RENDER_TRANSPARENT));
-        displayMenu.add(displayItem[5] = Translate.checkboxMenuItem("renderedDisplay", this, "setDisplayModeRendered", renderMode == ViewerCanvas.RENDER_RENDERED));
+        displayMenu.add(displayItem[0] = Translate.checkboxMenuItem("wireframeDisplay", event -> setViewMode(ViewerCanvas.RENDER_WIREFRAME), renderMode == ViewerCanvas.RENDER_WIREFRAME));
+        displayMenu.add(displayItem[1] = Translate.checkboxMenuItem("shadedDisplay", event -> setViewMode(ViewerCanvas.RENDER_FLAT), renderMode == ViewerCanvas.RENDER_FLAT));
+        displayMenu.add(displayItem[2] = Translate.checkboxMenuItem("smoothDisplay", event -> setViewMode(ViewerCanvas.RENDER_SMOOTH), renderMode == ViewerCanvas.RENDER_SMOOTH));
+        displayMenu.add(displayItem[3] = Translate.checkboxMenuItem("texturedDisplay", event -> setViewMode(ViewerCanvas.RENDER_TEXTURED), renderMode == ViewerCanvas.RENDER_TEXTURED));
+        displayMenu.add(displayItem[4] = Translate.checkboxMenuItem("transparentDisplay", event -> setViewMode(ViewerCanvas.RENDER_TRANSPARENT), renderMode == ViewerCanvas.RENDER_TRANSPARENT));
+        displayMenu.add(displayItem[5] = Translate.checkboxMenuItem("renderedDisplay", event -> setViewMode(ViewerCanvas.RENDER_RENDERED), renderMode == ViewerCanvas.RENDER_RENDERED));
+
+        for(var di: displayItem) displayModesGroup.add(di.getComponent());
 
         viewMenu.add(viewMenuItem[0] = Translate.menuItem("fourViews", event -> toggleViewsCommand()));
         viewMenu.add(Translate.menuItem("grid", event -> setGridCommand()));
@@ -678,19 +682,19 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         rotationTrackMenu.add(Translate.menuItem("xyzThreeTracks", event -> addThreeRotationTrackAction()));
         rotationTrackMenu.add(Translate.menuItem("quaternionTrack", event -> addQuaternionTrackAction()));
         rotationTrackMenu.add(Translate.menuItem("proceduralTrack", event -> addProceduralRotationTrackAction()));
-        addTrackMenu.add(Translate.menuItem("poseTrack", event -> addTrackAction(event)));
+        addTrackMenu.add(Translate.menuItem("poseTrack", this::addTrackAction));
         addTrackMenu.add(distortionMenu = Translate.menu("distortionTrack"));
-        distortionMenu.add(Translate.menuItem("bendDistortion", event -> addTrackAction(event)));
-        distortionMenu.add(Translate.menuItem("customDistortion", event -> addTrackAction(event)));
-        distortionMenu.add(Translate.menuItem("scaleDistortion", event -> addTrackAction(event)));
-        distortionMenu.add(Translate.menuItem("shatterDistortion", event -> addTrackAction(event)));
-        distortionMenu.add(Translate.menuItem("twistDistortion", event -> addTrackAction(event)));
+        distortionMenu.add(Translate.menuItem("bendDistortion", this::addTrackAction));
+        distortionMenu.add(Translate.menuItem("customDistortion", this::addTrackAction));
+        distortionMenu.add(Translate.menuItem("scaleDistortion", this::addTrackAction));
+        distortionMenu.add(Translate.menuItem("shatterDistortion", this::addTrackAction));
+        distortionMenu.add(Translate.menuItem("twistDistortion", this::addTrackAction));
         distortionMenu.addSeparator();
-        distortionMenu.add(Translate.menuItem("IKTrack", event -> addTrackAction(event)));
-        distortionMenu.add(Translate.menuItem("skeletonShapeTrack", event -> addTrackAction(event)));
-        addTrackMenu.add(Translate.menuItem("constraintTrack", event -> addTrackAction(event)));
-        addTrackMenu.add(Translate.menuItem("visibilityTrack", event -> addTrackAction(event)));
-        addTrackMenu.add(Translate.menuItem("textureTrack", event -> addTrackAction(event)));
+        distortionMenu.add(Translate.menuItem("IKTrack", this::addTrackAction));
+        distortionMenu.add(Translate.menuItem("skeletonShapeTrack", this::addTrackAction));
+        addTrackMenu.add(Translate.menuItem("constraintTrack", this::addTrackAction));
+        addTrackMenu.add(Translate.menuItem("visibilityTrack", this::addTrackAction));
+        addTrackMenu.add(Translate.menuItem("textureTrack", this::addTrackAction));
         animationMenu.add(animationMenuItem[0] = Translate.menuItem("editTrack", event -> score.editSelectedTrack()));
         animationMenu.add(animationMenuItem[1] = Translate.menuItem("duplicateTracks", event -> score.duplicateSelectedTracks()));
         animationMenu.add(animationMenuItem[2] = Translate.menuItem("deleteTracks", event -> score.deleteSelectedTracks()));
@@ -705,11 +709,11 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
         BMenu editKeyframeMenu = Translate.menu("bulkEditKeyframes");
         animationMenu.add(editKeyframeMenu);
-        editKeyframeMenu.add(Translate.menuItem("moveKeyframes", this, "bulkEditKeyframeAction"));
-        editKeyframeMenu.add(Translate.menuItem("copyKeyframes", this, "bulkEditKeyframeAction"));
-        editKeyframeMenu.add(Translate.menuItem("rescaleKeyframes", this, "bulkEditKeyframeAction"));
-        editKeyframeMenu.add(Translate.menuItem("loopKeyframes", this, "bulkEditKeyframeAction"));
-        editKeyframeMenu.add(Translate.menuItem("deleteKeyframes", this, "bulkEditKeyframeAction"));
+        editKeyframeMenu.add(Translate.menuItem("moveKeyframes", event -> bulkEditKeyframeAction(EditKeyframesDialog.MOVE)));
+        editKeyframeMenu.add(Translate.menuItem("copyKeyframes", event -> bulkEditKeyframeAction(EditKeyframesDialog.COPY)));
+        editKeyframeMenu.add(Translate.menuItem("rescaleKeyframes", event -> bulkEditKeyframeAction(EditKeyframesDialog.RESCALE)));
+        editKeyframeMenu.add(Translate.menuItem("loopKeyframes", event -> bulkEditKeyframeAction(EditKeyframesDialog.LOOP)));
+        editKeyframeMenu.add(Translate.menuItem("deleteKeyframes", event -> bulkEditKeyframeAction(EditKeyframesDialog.DELETE)));
 
         animationMenu.add(animationMenuItem[10] = Translate.menuItem("pathFromCurve", event -> pathFromCurveAction()));
         animationMenu.add(animationMenuItem[11] = Translate.menuItem("bindToParent", event -> bindToParentCommand()));
@@ -1022,18 +1026,12 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         addTrackMenu.setEnabled(numSelObjects > 0);
         distortionMenu.setEnabled(sel.length > 0);
 
-        viewMenuItem[1].setText(Translate.text(!objectListShown ? "menu.showObjectList" : "menu.hideObjectList"));
+        viewMenuItem[1].setText(Translate.text(objectListShown ? "menu.hideObjectList" : "menu.showObjectList"));
         viewMenuItem[2].setText(Translate.text(view.getShowAxes() ? "menu.hideCoordinateAxes" : "menu.showCoordinateAxes"));
         viewMenuItem[3].setEnabled(view.getTemplateImage() != null); // Show template
         viewMenuItem[3].setText(Translate.text(view.getTemplateShown() ? "menu.hideTemplate" : "menu.showTemplate"));
         viewMenuItem[4].setEnabled(sel.length > 0); // Frame Selection With Camera
 
-        displayItem[0].setState(view.getRenderMode() == ViewerCanvas.RENDER_WIREFRAME);
-        displayItem[1].setState(view.getRenderMode() == ViewerCanvas.RENDER_FLAT);
-        displayItem[2].setState(view.getRenderMode() == ViewerCanvas.RENDER_SMOOTH);
-        displayItem[3].setState(view.getRenderMode() == ViewerCanvas.RENDER_TEXTURED);
-        displayItem[4].setState(view.getRenderMode() == ViewerCanvas.RENDER_TRANSPARENT);
-        displayItem[5].setState(view.getRenderMode() == ViewerCanvas.RENDER_RENDERED);
     }
 
     private void dumpSelection(Object[] sel) {
@@ -1336,42 +1334,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         updateImage();
     }
 
-    private void setViewMode(Widget source, int mode) {
+    private void setViewMode(int mode) {
         theView[currentView].setRenderMode(mode);
-        for (BCheckBoxMenuItem item : displayItem) {
-            item.setState(item == source);
-        }
         savePreferences();
-    }
-
-    @SuppressWarnings("unused")
-    private void setDisplayModeWireframe(CommandEvent event) {
-        setViewMode(event.getWidget(), ViewerCanvas.RENDER_WIREFRAME);
-    }
-
-    @SuppressWarnings("unused")
-    private void setDisplayModeShaded(CommandEvent event) {
-        setViewMode(event.getWidget(), ViewerCanvas.RENDER_FLAT);
-    }
-
-    @SuppressWarnings("unused")
-    private void setDisplayModeSmooth(CommandEvent event) {
-        setViewMode(event.getWidget(), ViewerCanvas.RENDER_SMOOTH);
-    }
-
-    @SuppressWarnings("unused")
-    private void setDisplayModeTextured(CommandEvent event) {
-        setViewMode(event.getWidget(), ViewerCanvas.RENDER_TEXTURED);
-    }
-
-    @SuppressWarnings("unused")
-    private void setDisplayModeTransparent(CommandEvent event) {
-        setViewMode(event.getWidget(), ViewerCanvas.RENDER_TRANSPARENT);
-    }
-
-    @SuppressWarnings("unused")
-    private void setDisplayModeRendered(CommandEvent event) {
-        setViewMode(event.getWidget(), ViewerCanvas.RENDER_RENDERED);
     }
 
     /**
@@ -1566,12 +1531,10 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         getView().alignWithClosestAxis();
     }
 
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
     private void pathFromCurveAction() {
         new PathFromCurveDialog(this, sceneExplorer.getSelectedObjects());
     }
 
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
     private void previewAnimationAction() {
         new AnimationPreviewer(this);
     }
@@ -1588,20 +1551,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         setTime(theScene.getTime() - 1.0 / theScene.getFramesPerSecond());
     }
 
-    private static final Map<String, Integer> bmap;
-
-    static {
-        bmap = new HashMap<>();
-        bmap.put("moveKeyframes", EditKeyframesDialog.MOVE);
-        bmap.put("copyKeyframes", EditKeyframesDialog.COPY);
-        bmap.put("rescaleKeyframes", EditKeyframesDialog.RESCALE);
-        bmap.put("loopKeyframes", EditKeyframesDialog.LOOP);
-        bmap.put("deleteKeyframes", EditKeyframesDialog.DELETE);
-    }
-
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    private void bulkEditKeyframeAction(CommandEvent event) {
-        new EditKeyframesDialog(this, bmap.get(event.getActionCommand()));
+    private void bulkEditKeyframeAction(int mode) {
+        new EditKeyframesDialog(this, mode);
     }
 
     public void linkExternalCommand() {

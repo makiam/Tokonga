@@ -17,6 +17,8 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
+import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -35,7 +37,10 @@ public class CSGEditorWindow extends ObjectEditorWindow {
     private BMenuItem axesItem;
     private BMenuItem splitViewItem;
     private BMenuItem fitToSelItem;
+
+    private final ButtonGroup displayModesGroup = new ButtonGroup();
     private BCheckBoxMenuItem[] displayItem;
+
     private Scene theScene;
     private final Runnable onClose;
 
@@ -122,11 +127,15 @@ public class CSGEditorWindow extends ObjectEditorWindow {
         viewMenu.add(displayMenu = Translate.menu("displayMode"));
         displayItem = new BCheckBoxMenuItem[5];
         ViewerCanvas view = theView[currentView];
-        displayMenu.add(displayItem[0] = Translate.checkboxMenuItem("wireframeDisplay", this, "displayModeChanged", view.getRenderMode() == ViewerCanvas.RENDER_WIREFRAME));
-        displayMenu.add(displayItem[1] = Translate.checkboxMenuItem("shadedDisplay", this, "displayModeChanged", view.getRenderMode() == ViewerCanvas.RENDER_FLAT));
-        displayMenu.add(displayItem[2] = Translate.checkboxMenuItem("smoothDisplay", this, "displayModeChanged", view.getRenderMode() == ViewerCanvas.RENDER_SMOOTH));
-        displayMenu.add(displayItem[3] = Translate.checkboxMenuItem("texturedDisplay", this, "displayModeChanged", view.getRenderMode() == ViewerCanvas.RENDER_TEXTURED));
-        displayMenu.add(displayItem[4] = Translate.checkboxMenuItem("transparentDisplay", this, "displayModeChanged", view.getRenderMode() == ViewerCanvas.RENDER_TRANSPARENT));
+
+        displayMenu.add(displayItem[0] = Translate.checkboxMenuItem("wireframeDisplay", event -> setViewMode(ViewerCanvas.RENDER_WIREFRAME), view.getRenderMode() == ViewerCanvas.RENDER_WIREFRAME));
+        displayMenu.add(displayItem[1] = Translate.checkboxMenuItem("shadedDisplay", event -> setViewMode(ViewerCanvas.RENDER_FLAT), view.getRenderMode() == ViewerCanvas.RENDER_FLAT));
+        displayMenu.add(displayItem[2] = Translate.checkboxMenuItem("smoothDisplay", event -> setViewMode(ViewerCanvas.RENDER_SMOOTH), view.getRenderMode() == ViewerCanvas.RENDER_SMOOTH));
+        displayMenu.add(displayItem[3] = Translate.checkboxMenuItem("texturedDisplay", event -> setViewMode(ViewerCanvas.RENDER_TEXTURED), view.getRenderMode() == ViewerCanvas.RENDER_TEXTURED));
+        displayMenu.add(displayItem[4] = Translate.checkboxMenuItem("transparentDisplay", event -> setViewMode(ViewerCanvas.RENDER_TRANSPARENT), view.getRenderMode() == ViewerCanvas.RENDER_TRANSPARENT));
+
+        for(var di: displayItem) displayModesGroup.add(di.getComponent());
+
         viewMenu.add(splitViewItem = Translate.menuItem(numViewsShown == 1 ? "fourViews" : "oneView", event -> toggleViewsCommand()));
         viewMenu.add(Translate.menuItem("grid", event -> setGridCommand()));
         viewMenu.add(axesItem = Translate.menuItem(view.getShowAxes() ? "hideCoordinateAxes" : "showCoordinateAxes", event -> showAxesCommand()));
@@ -190,22 +199,8 @@ public class CSGEditorWindow extends ObjectEditorWindow {
         dispose();
     }
 
-    private void displayModeChanged(WidgetEvent ev) {
-        Object source = ev.getWidget();
-        for (int i = 0; i < displayItem.length; i++) {
-            displayItem[i].setState(source == displayItem[i]);
-        }
-        if (source == displayItem[0]) {
-            theView[currentView].setRenderMode(ViewerCanvas.RENDER_WIREFRAME);
-        } else if (source == displayItem[1]) {
-            theView[currentView].setRenderMode(ViewerCanvas.RENDER_FLAT);
-        } else if (source == displayItem[2]) {
-            theView[currentView].setRenderMode(ViewerCanvas.RENDER_SMOOTH);
-        } else if (source == displayItem[3]) {
-            theView[currentView].setRenderMode(ViewerCanvas.RENDER_TEXTURED);
-        } else if (source == displayItem[4]) {
-            theView[currentView].setRenderMode(ViewerCanvas.RENDER_TRANSPARENT);
-        }
+    private void setViewMode(int mode) {
+        theView[currentView].setRenderMode(mode);
         savePreferences();
     }
 

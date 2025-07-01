@@ -104,7 +104,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
         editMenu.add(Translate.menuItem("selectAll", event -> selectAllCommand()));
         editMenu.add(editMenuItem[2] = Translate.menuItem("deselectAll", event -> deselectAllCommand()));
         editMenu.addSeparator();
-        editMenu.add(editMenuItem[3] = Translate.checkboxMenuItem("freehandSelection", this, "freehandModeChanged", false));
+        editMenu.add(editMenuItem[3] = Translate.checkboxMenuItem("freehandSelection", event -> freehandModeChanged(), false));
         editMenu.add(Translate.menuItem("curveTension", event -> setTensionCommand()));
     }
 
@@ -142,7 +142,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
         BMenu menu = Translate.menu("show");
         showItem = new BCheckBoxMenuItem[4];
         menu.add(showItem[0] = Translate.checkboxMenuItem("curve", this, "shownItemChanged", true));
-        menu.add(showItem[3] = Translate.checkboxMenuItem("entireScene", this, "shownItemChanged", ((MeshViewer) theView[currentView]).getSceneVisible()));
+        menu.add(showItem[3] = Translate.checkboxMenuItem("entireScene", this::toggleSceneVisible, ((MeshViewer) theView[currentView]).getSceneVisible()));
         return menu;
     }
 

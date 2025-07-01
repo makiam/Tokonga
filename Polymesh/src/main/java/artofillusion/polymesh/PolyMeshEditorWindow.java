@@ -88,7 +88,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     private BMenuItem[] meshMenuItem;
 
-    private BCheckBoxMenuItem[] smoothItem;
+    private ButtonGroup smoothModesGroup = new ButtonGroup();
+    private BCheckBoxMenuItem smoothApproximate;
+    private BCheckBoxMenuItem smoothNone;
+
 
     private BMenuItem[] mirrorItem;
 
@@ -467,9 +470,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         editMenu.add(Translate.menuItem("invertSelection", this::invertSelectionCommand));
         editMenu.add(editMenuItem[4] = Translate.menuItem("polymesh:scaleSelection", this::scaleSelectionCommand));
         editMenu.add(editMenuItem[5] = Translate.menuItem("polymesh:scaleNormal", this::scaleNormalSelectionCommand));
-        editMenu.add(editMenuItem[6] = Translate.checkboxMenuItem("tolerantSelection", this, "tolerantModeChanged", lastTolerant));
-        editMenu.add(editMenuItem[7] = Translate.checkboxMenuItem("freehandSelection", this, "freehandModeChanged", lastFreehand));
-        editMenu.add(editMenuItem[8] = Translate.checkboxMenuItem("projectOntoSurface", this, "projectModeChanged", lastProjectOntoSurface));
+        editMenu.add(editMenuItem[6] = Translate.checkboxMenuItem("tolerantSelection", event -> tolerantModeChanged(), lastTolerant));
+        editMenu.add(editMenuItem[7] = Translate.checkboxMenuItem("freehandSelection", event -> freehandModeChanged(), lastFreehand));
+        editMenu.add(editMenuItem[8] = Translate.checkboxMenuItem("projectOntoSurface", event -> projectModeChanged(), lastProjectOntoSurface));
         editMenu.addSeparator();
         editMenu.add(editMenuItem[9] = Translate.menuItem("hideSelection", this::doHideSelection));
         editMenu.add(editMenuItem[10] = Translate.menuItem("showAll", this::doShowAll));
@@ -492,9 +495,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         BMenu smoothMenu;
         meshMenu.add(Translate.menuItem("polymesh:centerMesh", this::doCenterMesh));
         meshMenu.add(smoothMenu = Translate.menu("smoothingMethod"));
-        smoothItem = new BCheckBoxMenuItem[2];
-        smoothMenu.add(smoothItem[0] = Translate.checkboxMenuItem("none", this, "smoothingChanged", obj.getSmoothingMethod() == Mesh.NO_SMOOTHING));
-        smoothMenu.add(smoothItem[1] = Translate.checkboxMenuItem("approximating", this, "smoothingChanged", obj.getSmoothingMethod() == Mesh.APPROXIMATING));
+
+        smoothMenu.add(smoothNone = Translate.checkboxMenuItem("none", event -> setMeshSmoothingMethod(Mesh.NO_SMOOTHING), obj.getSmoothingMethod() == Mesh.NO_SMOOTHING));
+        smoothMenu.add(smoothApproximate = Translate.checkboxMenuItem("approximating", event -> setMeshSmoothingMethod(Mesh.APPROXIMATING), obj.getSmoothingMethod() == Mesh.APPROXIMATING));
+        smoothModesGroup.add(smoothNone.getComponent());
+        smoothModesGroup.add(smoothApproximate.getComponent());
 
         meshMenu.add(meshMenuItem[0] = Translate.menuItem("polymesh:controlledSmoothing", this::doControlledSmoothing));
         meshMenu.add(meshMenuItem[1] = Translate.menuItem("polymesh:smoothMesh", this::doSmoothMesh));
@@ -506,9 +511,9 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         meshMenu.add(mirrorMenu);
         mirrorItem = new BMenuItem[4];
         mirrorMenu.add(mirrorItem[0] = Translate.menuItem("polymesh:mirrorOff", this::doTurnMirrorOff));
-        mirrorMenu.add(mirrorItem[1] = Translate.checkboxMenuItem("polymesh:mirrorOnXY", this, "doMirrorOn", false));
-        mirrorMenu.add(mirrorItem[2] = Translate.checkboxMenuItem("polymesh:mirrorOnXZ", this, "doMirrorOn", false));
-        mirrorMenu.add(mirrorItem[3] = Translate.checkboxMenuItem("polymesh:mirrorOnYZ", this, "doMirrorOn", false));
+        mirrorMenu.add(mirrorItem[1] = Translate.checkboxMenuItem("polymesh:mirrorOnXY", event -> doMirrorOn(), false));
+        mirrorMenu.add(mirrorItem[2] = Translate.checkboxMenuItem("polymesh:mirrorOnXZ", event -> doMirrorOn(), false));
+        mirrorMenu.add(mirrorItem[3] = Translate.checkboxMenuItem("polymesh:mirrorOnYZ", event -> doMirrorOn(), false));
         if ((mesh.getMirrorState() & PolyMesh.MIRROR_ON_XY) != 0) {
             ((BCheckBoxMenuItem) mirrorItem[1]).setState(true);
         }
@@ -1773,36 +1778,16 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Called when a smoothing method command is selected
      *
-     * @param ev
-     * The command event
      */
-    private void smoothingChanged(CommandEvent ev) {
+    private void setMeshSmoothingMethod(int mode) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, mesh.duplicate()));
-        Object source = ev.getWidget();
-        for (var item : smoothItem) {
-            item.setState(false);
-        }
-        /*
-		 * for ( int i = 0; i < smoothItem.length; i++ ) if ( source ==
-		 * smoothItem[i] ) { mesh.setSmoothingMethod( i );
-		 * smoothItem[i].setState( true ); }
-         */
-        if (source == smoothItem[1]) {
-            mesh.setSmoothingMethod(Mesh.APPROXIMATING);
-            smoothItem[1].setState(true);
-//		} else if (source == smoothItem[1]) {
-//			mesh.setSmoothingMethod(Mesh.SMOOTH_SHADING);
-//			smoothItem[1].setState(true);
-        } else {
-            mesh.setSmoothingMethod(Mesh.NO_SMOOTHING);
-            smoothItem[0].setState(true);
-        }
+        mesh.setSmoothingMethod(mode);
+
         realView = false;
         doLevelContainerEnable();
         objectChanged();
         updateImage();
-
     }
 
     private void doLevelContainerEnable() {
@@ -2642,11 +2627,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         }
         vertDisplacements = new Vec3[count];
         origin.scale(1.0 / count);
-        /*
-		 * if ( norm.length() < 1e-6 ) { new BStandardDialog( "",
-		 * UIUtilities.breakString( Translate.text( "cantFlatten" ) ),
-		 * BStandardDialog.ERROR ).showMessageDialog( null ); return; }
-         */
+
         norm.normalize();
         for (int i = 0; i < vert.length; ++i) {
             if (selected[i]) {
@@ -3943,22 +3924,21 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Sets a mirror on XY, YZ or XZ plane
      *
-     * @param ev
-     * CommandEvent
      */
-    @SuppressWarnings("java:S1172")
-    private void doMirrorOn(CommandEvent ev) {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
+    private void doMirrorOn() {
+
         short mirrorState = 0;
-        if (((BCheckBoxMenuItem) mirrorItem[1]).getState()) {
+        if (mirrorItem[1].getComponent().isSelected()) {
             mirrorState |= PolyMesh.MIRROR_ON_XY;
         }
-        if (((BCheckBoxMenuItem) mirrorItem[2]).getState()) {
+        if ((mirrorItem[2]).getComponent().isSelected()) {
             mirrorState |= PolyMesh.MIRROR_ON_XZ;
         }
-        if (((BCheckBoxMenuItem) mirrorItem[3]).getState()) {
+        if ((mirrorItem[3]).getComponent().isSelected()) {
             mirrorState |= PolyMesh.MIRROR_ON_YZ;
         }
+
+        PolyMesh mesh = (PolyMesh) objInfo.object;
         mesh.setMirrorState(mirrorState);
         realMirror = false;
         objectChanged();
@@ -3981,14 +3961,14 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             }
         }
         if (selCount > 0) {
-            if (selectMode == POINT_MODE) {
-                int[] indices = new int[selCount];
-                int count = 0;
-                for (int i = 0; i < selected.length; ++i) {
-                    if (!selected[i]) {
-                        indices[count++] = i;
-                    }
+            int count = 0;
+            int[] indices = new int[selCount];
+            for (int i = 0; i < selected.length; ++i) {
+                if (!selected[i]) {
+                    indices[count++] = i;
                 }
+            }
+            if (selectMode == POINT_MODE) {
                 if (clipboardMesh.getVertices().length - indices.length < 3) {
                     //back to original mesh
                     clipboardMesh = ((PolyMesh) objInfo.getGeometry()).duplicate();
@@ -3996,13 +3976,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                     clipboardMesh.deleteVertices(indices);
                 }
             } else if (selectMode == EDGE_MODE) {
-                int count = 0;
-                int[] indices = new int[selCount];
-                for (int i = 0; i < selected.length; ++i) {
-                    if (!selected[i]) {
-                        indices[count++] = i;
-                    }
-                }
                 if (clipboardMesh.getEdges().length - indices.length < 3) {
                     //back to original mesh
                     clipboardMesh =  ((PolyMesh) objInfo.getGeometry()).duplicate();
@@ -4010,13 +3983,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                     clipboardMesh.deleteEdges(indices);
                 }
             } else {
-                int count = 0;
-                int[] indices = new int[selCount];
-                for (int i = 0; i < selected.length; ++i) {
-                    if (!selected[i]) {
-                        indices[count++] = i;
-                    }
-                }
                 if (clipboardMesh.getFaces().length - indices.length < 1) {
                     //back to original mesh
                     clipboardMesh = ((PolyMesh) objInfo.getGeometry()).duplicate();
@@ -4125,7 +4091,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         updateImage();
     }
 
-    @SuppressWarnings("unused")
     private void doMarkSelAsSeams(ActionEvent event) {
         if (selectMode == EDGE_MODE) {
             boolean[] seams = new boolean[selected.length];
@@ -4364,6 +4329,20 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         mesh.setSeams(seams);
         objectChanged();
         updateImage();
+    }
+
+    @Subscribe
+    public void onUndoChangedEvent(UndoChangedEvent event) {
+        var rec = event.getRecord();
+        if(rec.getView() == this) {
+            log.info("My Undo event: {}", event);
+            PolyMesh mesh = (PolyMesh) objInfo.object;
+            smoothNone.setState(mesh.getSmoothingMethod() == Mesh.NO_SMOOTHING);
+            smoothApproximate.setState(mesh.getSmoothingMethod() == Mesh.APPROXIMATING);
+        } else {
+            log.info("Foreign Undo event: {}", event);
+        }
+
     }
 
     @AllArgsConstructor

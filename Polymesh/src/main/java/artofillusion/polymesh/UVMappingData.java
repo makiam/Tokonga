@@ -23,7 +23,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
+import java.util.List;
+
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -43,6 +47,7 @@ public class UVMappingData {
      * @author pims
      *
      */
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public class UVMeshMapping {
 
         public Vec2[][] v; //mesh pieces vertices positions
@@ -50,13 +55,10 @@ public class UVMappingData {
         @Getter
         public String name; //mapping name
 
-        public ArrayList<Integer> textures; //textures associated
+        public List<Integer> textures; //textures associated
 
         //to this mapping (ids)
         public Color edgeColor;
-
-        private UVMeshMapping() {
-        }
 
         public UVMeshMapping(Vec2[][] v, String name) {
             this.v = v;
@@ -74,11 +76,10 @@ public class UVMappingData {
                     newMapping.v[i][j] = new Vec2(v[i][j]);
                 }
             }
-            newMapping.name = new String(name);
+            newMapping.name = name;
             newMapping.textures = new ArrayList<>();
-            for (int i = 0; i < textures.size(); i++) {
-                newMapping.textures.add(textures.get(i));
-            }
+            newMapping.textures.addAll(textures);
+
             newMapping.edgeColor = new Color(edgeColor.getRed(), edgeColor.getGreen(), edgeColor.getBlue());
             return newMapping;
         }
@@ -170,7 +171,7 @@ public class UVMappingData {
 
     public int[][] invVerticesTable;
 
-    protected ArrayList<UVMeshMapping> mappings;
+    protected List<UVMeshMapping> mappings;
 
     protected int sampling; //texture display resolution is persistent
 
@@ -313,7 +314,7 @@ public class UVMappingData {
     /**
      * @return The list of mappings
      */
-    public ArrayList<UVMeshMapping> getMappings() {
+    public List<UVMeshMapping> getMappings() {
         return mappings;
     }
 
