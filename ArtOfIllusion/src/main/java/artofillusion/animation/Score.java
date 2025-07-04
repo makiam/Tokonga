@@ -38,7 +38,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
     final LayoutWindow window;
     final Scene scene;
     
-    final TreeList theList;
+    private final TreeList theList;
     final TimeAxis theAxis;
     private final List<TrackDisplay> graphs;
     final BScrollBar scroll;
@@ -262,7 +262,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
                 currentSelection.add(item);
         }
 
-        selection = currentSelection.toArray(new SelectionInfo[0]);
+        selection = currentSelection.toArray(SelectionInfo[]::new);
         window.updateMenus();
     }
 
@@ -276,7 +276,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
             if (selectionInfo.key == key) continue;
             filtered.add(selectionInfo);
         }
-        selection = filtered.toArray(new SelectionInfo[0]);
+        selection = filtered.toArray(SelectionInfo[]::new);
         window.updateMenus();
     }
 
@@ -802,15 +802,14 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * Add a keyframe to each selected track, based on the current state of the scene.
      */
     public void keyframeSelectedTracks() {
-        Scene theScene = scene;
-        Object[] sel = theList.getSelectedObjects();
-        double time = theScene.getTime();
-        UndoRecord undo = new UndoRecord(window);
-        Vector<SelectionInfo> newkeys = new Vector<>();
 
-        for (int i = 0; i < sel.length; i++) {
-            if (sel[i] instanceof Track) {
-                Track tr = (Track) sel[i];
+        final double time = scene.getTime();
+        UndoRecord undo = new UndoRecord(window);
+        List<SelectionInfo> newKeys = new Vector<>();
+
+        for (var si: theList.getSelectedObjects()) {
+            if (si instanceof Track) {
+                Track tr = (Track) si;
                 if (tr.getParent() instanceof ObjectInfo) {
                     ObjectInfo info = (ObjectInfo) tr.getParent();
                     for (int j = 0; j < info.getTracks().length; j++) {
@@ -819,17 +818,13 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
                         }
                     }
                 }
-                Keyframe k = tr.setKeyframe(time);
-                if (k != null) {
-                    newkeys.add(new SelectionInfo(tr, k));
-                }
+                Optional.ofNullable(tr.setKeyframe(time)).ifPresent(k -> newKeys.add(new SelectionInfo(tr, k)));
             }
         }
+
         window.setUndoRecord(undo);
-        if (newkeys.size() > 0) {
-            SelectionInfo[] newsel = new SelectionInfo[newkeys.size()];
-            newkeys.copyInto(newsel);
-            setSelectedKeyframes(newsel);
+        if (newKeys.size() > 0) {
+            setSelectedKeyframes(newKeys.toArray(SelectionInfo[]::new));
         }
         selectedTracksChanged();
         repaintGraphs();
