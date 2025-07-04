@@ -12,7 +12,6 @@ package artofillusion.object;
 import artofillusion.Scene;
 import artofillusion.test.util.StreamUtil;
 
-import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.nio.ByteBuffer;
 
@@ -20,8 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @author maksim.khramov
