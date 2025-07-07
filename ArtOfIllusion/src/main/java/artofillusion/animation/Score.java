@@ -791,7 +791,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
                 tr.setEnabled(enable);
             }
         }
-        owners.forEach(owner -> scene.applyTracksToObject(owner));
+        owners.forEach(scene::applyTracksToObject);
         theList.repaint();
         window.setUndoRecord(undo);
         window.updateImage();
@@ -823,7 +823,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         }
 
         window.setUndoRecord(undo);
-        if (newKeys.size() > 0) {
+        if (!newKeys.isEmpty()) {
             setSelectedKeyframes(newKeys.toArray(SelectionInfo[]::new));
         }
         selectedTracksChanged();
@@ -881,7 +881,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
             }
         }
         window.setUndoRecord(undo);
-        if (newKeys.size() > 0) {
+        if (!newKeys.isEmpty()) {
             setSelectedKeyframes(newKeys.toArray(SelectionInfo[]::new));
         }
         selectedTracksChanged();
