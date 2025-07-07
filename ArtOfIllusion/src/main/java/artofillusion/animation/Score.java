@@ -893,14 +893,14 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * Duplicate the selected tracks.
      */
     public void duplicateSelectedTracks() {
-        Object[] sel = theList.getSelectedObjects();
+
         UndoRecord undo = new UndoRecord(window);
         List<ObjectInfo> modifiedObj = new Vector<>();
         List<Track> addedTrack = new Vector<>();
 
-        for (int i = 0; i < sel.length; i++) {
-            if (sel[i] instanceof Track) {
-                Track tr = (Track) sel[i];
+        for (var sel: theList.getSelectedObjects()) {
+            if (sel instanceof Track) {
+                Track tr = (Track) sel;
                 if (!(tr.getParent() instanceof ObjectInfo)) {
                     continue;
                 }
