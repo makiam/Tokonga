@@ -1,7 +1,6 @@
 # Art of Illusion
 
 [![Build workflow](https://github.com/makiam/Tokonga/actions/workflows/gradle.yml/badge.svg?branch=main)](https://github.com/makiam/Tokonga/actions/workflows/gradle.yml)
-![coverage](https://github.com/makiam/Tokonga/blob/master/.github/badges/jacoco.svg)
 
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 
