@@ -113,8 +113,7 @@ public class OBJImporter {
                         try {
                             val[i] = Double.parseDouble(fields[i + 1]);
                         } catch (NumberFormatException ex) {
-                            throw new Exception("Illegal value '" + fields[i + 1]
-                                    + "' found in line " + lineno + ".");
+                            throw new Exception("Illegal value '" + fields[i + 1] + "' found in line " + lineno + ".");
                         }
                     }
                     normal.add(new Vec3(val[0], val[1], val[2]));
@@ -272,8 +271,7 @@ public class OBJImporter {
                 }
                 CoordinateSystem coords = new CoordinateSystem(center, Vec3.vz(), Vec3.vy());
                 ObjectInfo info = new ObjectInfo(new TriangleMesh(vert, fc), coords, ("default".equals(group) ? objName : group));
-                info.addTrack(new PositionTrack(info), 0);
-                info.addTrack(new RotationTrack(info), 1);
+
 
                 // Find the smoothness values for the edges.
                 TriangleMesh.Edge[] edge = ((TriangleMesh) info.getObject()).getEdges();
