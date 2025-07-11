@@ -29,6 +29,20 @@ import javax.swing.filechooser.*;
  */
 public class OBJImporter {
 
+    public static Scene prepareScene() {
+        var scene = new Scene();
+        var coords = new CoordinateSystem(new Vec3(0.0, 0.0, Camera.DEFAULT_DISTANCE_TO_SCREEN), new Vec3(0.0, 0.0, -1.0), Vec3.vy());
+        var info = new ObjectInfo(new SceneCamera(), coords, "Camera 1");
+        scene.addObject(info, null);
+        info = new ObjectInfo(new DirectionalLight(new RGBColor(1.0f, 1.0f, 1.0f), 0.8f), coords.duplicate(), "Light 1");
+
+        scene.addObject(info, null);
+        return scene;
+    }
+
+    public static void importToScene(Scene scene, File source) {
+
+    }
     /**
      * Import an OBJ file and create a Scene that represents its contents.
      */
@@ -40,14 +54,7 @@ public class OBJImporter {
         File directory = f.getCanonicalFile().getParentFile();
 
         // Create a scene to add objects to.
-        Scene theScene = new Scene();
-        CoordinateSystem coords = new CoordinateSystem(new Vec3(0.0, 0.0, Camera.DEFAULT_DISTANCE_TO_SCREEN), new Vec3(0.0, 0.0, -1.0), Vec3.vy());
-        ObjectInfo info = new ObjectInfo(new SceneCamera(), coords, "Camera 1");
-
-        theScene.addObject(info, (UndoRecord) null);
-        info = new ObjectInfo(new DirectionalLight(new RGBColor(1.0f, 1.0f, 1.0f), 0.8f), coords.duplicate(), "Light 1");
-
-        theScene.addObject(info, (UndoRecord) null);
+        Scene scene = OBJImporter.prepareScene();
 
         // Open the file and read the contents.
         Map<String, List<FaceInfo>> groupTable = new Hashtable<>();
@@ -154,8 +161,9 @@ public class OBJImporter {
                             } else {
                                 // We couldn't triangulate it correctly, so do the best we can.
 
-                                int step, start;
-                                for (step = 1; 2 * step < vertIndex.length; step *= 2) {
+
+                                int start;
+                                for (int step = 1; 2 * step < vertIndex.length; step *= 2) {
                                     for (start = 0; start + 2 * step < vertIndex.length; start += 2 * step) {
                                         face.get(i).add(new FaceInfo(vertIndex[start], vertIndex[start + step], vertIndex[start + 2 * step], smoothingGroup, currentTexture));
                                     }
@@ -262,8 +270,8 @@ public class OBJImporter {
                 for (int i = 0; i < vert.length; i++) {
                     vert[i] = vert[i].minus(center);
                 }
-                coords = new CoordinateSystem(center, Vec3.vz(), Vec3.vy());
-                info = new ObjectInfo(new TriangleMesh(vert, fc), coords, ("default".equals(group) ? objName : group));
+                CoordinateSystem coords = new CoordinateSystem(center, Vec3.vz(), Vec3.vy());
+                ObjectInfo info = new ObjectInfo(new TriangleMesh(vert, fc), coords, ("default".equals(group) ? objName : group));
                 info.addTrack(new PositionTrack(info), 0);
                 info.addTrack(new RotationTrack(info), 1);
 
@@ -317,7 +325,7 @@ public class OBJImporter {
                 for (String texName : texNames) {
                     Texture tex = realizedTextures.get(texName);
                     if (tex == null) {
-                        tex = createTexture(textureTable.get(texName), texName, theScene, directory, imageMaps);
+                        tex = createTexture(textureTable.get(texName), texName, scene, directory, imageMaps);
                         realizedTextures.put(texName, tex);
                     }
                     if (tex instanceof Texture2D) {
@@ -387,9 +395,9 @@ public class OBJImporter {
                         info.getObject().setParameterValue(parameter, new FaceParameterValue(paramValue));
                     }
                 }
-                theScene.addObject(info, null);
+                scene.addObject(info, null);
             }
-            return theScene;
+            return scene;
         } finally {
             in.close();
         }
