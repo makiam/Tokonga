@@ -76,7 +76,7 @@ public class OBJImporter {
         double[] min = new double[]{Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE};
         double[] max = new double[]{-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE};
         String s;
-        BufferedReader in = new BufferedReader(new FileReader(f));
+        BufferedReader in = Files.newBufferedReader(f.toPath());
         try {
             while ((s = in.readLine()) != null) {
                 lineno++;

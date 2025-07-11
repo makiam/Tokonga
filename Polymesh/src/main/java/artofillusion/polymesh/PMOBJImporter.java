@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.function.Predicate;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -433,6 +434,11 @@ public class PMOBJImporter {
             throw new Exception("Cannot locate material file '" + file + "'.");
         }
         BufferedReader in = Files.newBufferedReader(f.toPath());
+
+
+//        Files.lines(f.toPath()).filter(Predicate.not(line -> line.startsWith("#"))).forEach(line -> {
+//
+//        });
         String line;
         TextureInfo currentTexture = null;
         while ((line = in.readLine()) != null) {
