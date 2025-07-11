@@ -20,7 +20,11 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Predicate;
 import javax.swing.*;
 import javax.swing.filechooser.*;
 
@@ -496,6 +500,8 @@ public class OBJImporter {
      * Parse the contents of a .mtl file and add TextureInfo object to a hashtable.
      */
     private static void parseTextures(String file, File baseDir, Map<String, TextureInfo> textures) throws Exception {
+        Path materialsDefFile = Paths.get(baseDir.toString(), file);
+
         File f = new File(baseDir, file);
         if (!f.isFile()) {
             f = new File(file);
@@ -504,9 +510,10 @@ public class OBJImporter {
             new BStandardDialog("Error Importing File", "Cannot locate material file '" + file + "'.", BStandardDialog.ERROR).showMessageDialog(null);
             return;
         }
-        BufferedReader in = new BufferedReader(new FileReader(f));
-        String line;
+        BufferedReader in = Files.newBufferedReader(f.toPath());
+        String line = "";
         TextureInfo currentTexture = null;
+
         while ((line = in.readLine()) != null) {
             try {
                 if (line.startsWith("#")) {
