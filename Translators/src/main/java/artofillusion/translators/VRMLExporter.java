@@ -102,8 +102,7 @@ public class VRMLExporter {
         try {
             TextureImageExporter textureExporter = null;
             if (texBox.getState()) {
-                textureExporter = new TextureImageExporter(dir, baseName, (int) (100 * qualitySlider.getValue()),
-                        TextureImageExporter.DIFFUSE, (int) widthField.getValue(), (int) heightField.getValue());
+                textureExporter = new TextureImageExporter(dir, baseName, (int) (100 * qualitySlider.getValue()), TextureImageExporter.DIFFUSE, (int) widthField.getValue(), (int) heightField.getValue());
                 boolean wholeScene = (exportChoice.getSelectedIndex() == 0);
                 for (ObjectInfo info : theScene.getObjects()) {
                     if (wholeScene || info.isSelected()) {
@@ -489,13 +488,13 @@ public class VRMLExporter {
             // A per-face-vertex texture mapping.
 
             Vec2[][] coords = ((UVMapping) ((Object3D) mesh).getTextureMapping()).findFaceTextureCoordinates(mesh);
-            double uscale = (ti.maxu == ti.minu ? 1.0 : 1.0 / (ti.maxu - ti.minu));
-            double vscale = (ti.maxv == ti.minv ? 1.0 : 1.0 / (ti.maxv - ti.minv));
+            double uscale = (ti.maxU == ti.minU ? 1.0 : 1.0 / (ti.maxU - ti.minU));
+            double vscale = (ti.maxV == ti.minV ? 1.0 : 1.0 / (ti.maxV - ti.minV));
             write("texCoord TextureCoordinate { point [", out, indent + 2);
             for (int j = 0; j < coords.length; j++) {
                 for (int k = 0; k < coords[j].length; k++) {
-                    pos[0] = (coords[j][k].x - ti.minu) * uscale;
-                    pos[1] = (coords[j][k].y - ti.minv) * vscale;
+                    pos[0] = (coords[j][k].x - ti.minU) * uscale;
+                    pos[1] = (coords[j][k].y - ti.minV) * vscale;
                     pos[0] = Math.round(pos[0] * 1e6) / 1e6;
                     pos[1] = Math.round(pos[1] * 1e6) / 1e6;
                     write(pos[0] + " " + pos[1] + ",", out, indent + 3);
@@ -520,12 +519,12 @@ public class VRMLExporter {
             // A per-vertex texture mapping.
 
             Vec2[] coords = ((Mapping2D) ((Object3D) mesh).getTextureMapping()).findTextureCoordinates(mesh);
-            double uscale = (ti.maxu == ti.minu ? 1.0 : 1.0 / (ti.maxu - ti.minu));
-            double vscale = (ti.maxv == ti.minv ? 1.0 : 1.0 / (ti.maxv - ti.minv));
+            double uscale = (ti.maxU == ti.minU ? 1.0 : 1.0 / (ti.maxU - ti.minU));
+            double vscale = (ti.maxV == ti.minV ? 1.0 : 1.0 / (ti.maxV - ti.minV));
             write("texCoord TextureCoordinate { point [", out, indent + 2);
             for (int i = 0; i < coords.length; i++) {
-                pos[0] = (coords[i].x - ti.minu) * uscale;
-                pos[1] = (coords[i].y - ti.minv) * vscale;
+                pos[0] = (coords[i].x - ti.minU) * uscale;
+                pos[1] = (coords[i].y - ti.minV) * vscale;
                 pos[0] = Math.round(pos[0] * 1e6) / 1e6;
                 pos[1] = Math.round(pos[1] * 1e6) / 1e6;
                 write(pos[0] + " " + pos[1] + ",", out, indent + 3);

@@ -241,12 +241,12 @@ public class OBJExporter {
                 // A per-face-vertex texture mapping.
 
                 Vec2[][] coords = ((UVMapping) ((Object3D) mesh).getTextureMapping()).findFaceTextureCoordinates(mesh);
-                double uscale = (ti.maxu == ti.minu ? 1.0 : 1.0 / (ti.maxu - ti.minu));
-                double vscale = (ti.maxv == ti.minv ? 1.0 : 1.0 / (ti.maxv - ti.minv));
+                double uscale = (ti.maxU == ti.minU ? 1.0 : 1.0 / (ti.maxU - ti.minU));
+                double vscale = (ti.maxV == ti.minV ? 1.0 : 1.0 / (ti.maxV - ti.minV));
                 for (int j = 0; j < coords.length; j++) {
                     for (int k = 0; k < coords[j].length; k++) {
-                        double u = (coords[j][k].x - ti.minu) * uscale;
-                        double v = (coords[j][k].y - ti.minv) * vscale;
+                        double u = (coords[j][k].x - ti.minU) * uscale;
+                        double v = (coords[j][k].y - ti.minV) * vscale;
                         out.println("vt " + nf.format(u) + " " + nf.format(v));
                     }
                 }
@@ -272,11 +272,11 @@ public class OBJExporter {
                 // A per-vertex texture mapping.
 
                 Vec2[] coords = ((Mapping2D) ((Object3D) mesh).getTextureMapping()).findTextureCoordinates(mesh);
-                double uscale = (ti.maxu == ti.minu ? 1.0 : 1.0 / (ti.maxu - ti.minu));
-                double vscale = (ti.maxv == ti.minv ? 1.0 : 1.0 / (ti.maxv - ti.minv));
+                double uscale = (ti.maxU == ti.minU ? 1.0 : 1.0 / (ti.maxU - ti.minU));
+                double vscale = (ti.maxV == ti.minV ? 1.0 : 1.0 / (ti.maxV - ti.minV));
                 for (int j = 0; j < coords.length; j++) {
-                    double u = (coords[j].x - ti.minu) * uscale;
-                    double v = (coords[j].y - ti.minv) * vscale;
+                    double u = (coords[j].x - ti.minU) * uscale;
+                    double v = (coords[j].y - ti.minV) * vscale;
                     out.println("vt " + nf.format(u) + " " + nf.format(v));
                 }
                 for (int j = 0; j < mesh.getFaceCount(); j++) {

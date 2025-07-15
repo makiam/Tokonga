@@ -1,4 +1,5 @@
 /* Copyright (C) 2003 by Peter Eastman
+   Changes copyright (C) 2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -19,14 +20,14 @@ public class TextureImageInfo {
 
     final Texture texture;
     String name;
-    String diffuseFilename, specularFilename, hilightFilename, transparentFilename, emissiveFilename, bumpFilename;
-    double minu, minv, maxu, maxv;
+    String diffuseFilename, specularFilename, hilightFilename, transparentFilename, emissiveFilename;
+    double minU, minV, maxU, maxV;
     final double[] paramValue;
 
     public TextureImageInfo(Texture tex, double[] param) {
         texture = tex;
         paramValue = param;
-        minu = minv = Double.MAX_VALUE;
-        maxu = maxv = -Double.MAX_VALUE;
+        minU = minV = Double.MAX_VALUE;
+        maxU = maxV = -Double.MAX_VALUE;
     }
 }

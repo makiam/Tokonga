@@ -14,6 +14,7 @@ package artofillusion.polymesh;
 import artofillusion.image.ImageSaver;
 import artofillusion.math.Vec2;
 import artofillusion.object.Mesh;
+import artofillusion.object.Object3D;
 import artofillusion.object.ObjectInfo;
 import artofillusion.object.TriangleMesh;
 
@@ -43,26 +44,18 @@ public class TextureImageExporter {
     private final Map<Texture, TextureImageInfo> textureTable;
 
     private final File dir;
-
     private final String baseFilename;
-
     private final int quality;
     private final int components;
     private final int width;
     private final int height;
-
     private int nextID;
 
     public static final int DIFFUSE = 1;
-
     public static final int SPECULAR = 2;
-
     public static final int HILIGHT = 4;
-
     public static final int TRANSPARENT = 8;
-
     public static final int EMISSIVE = 16;
-
     public static final int BUMP = 32;
 
     /**
@@ -75,8 +68,7 @@ public class TextureImageExporter {
      * @param width the width to use for images
      * @param height the height to use for images
      */
-    public TextureImageExporter(File dir, String baseFilename, int quality,
-            int components, int width, int height) {
+    public TextureImageExporter(File dir, String baseFilename, int quality, int components, int width, int height) {
         textureTable = new Hashtable<>();
 
         this.dir = dir;
@@ -92,7 +84,7 @@ public class TextureImageExporter {
      * Check the texture of an object, and record what information needs to be exported.
      */
     public void addObject(ObjectInfo obj) {
-        Texture tex = obj.object.getTexture();
+        Texture tex = obj.getObject().getTexture();
         if (tex == null) {
             return;
         }
@@ -123,45 +115,44 @@ public class TextureImageExporter {
 
         // Determine the range of UV coordinates for this object.
         if (tex instanceof ImageMapTexture) {
-            info.minu = info.minv = 0.0;
-            info.maxu = info.maxv = 1.0;
+            info.minU = info.minV = 0.0;
+            info.maxU = info.maxV = 1.0;
         } else if (tex instanceof ProceduralTexture2D) {
-            Mesh mesh = (obj.object instanceof Mesh ? (Mesh) obj.object
-                    : obj.object.convertToTriangleMesh(0.1));
-            Mapping2D map = (Mapping2D) obj.object.getTextureMapping();
-            if (map instanceof UVMapping && mesh instanceof TriangleMesh
-                    && ((UVMapping) map).isPerFaceVertex((TriangleMesh) mesh)) {
+            Object3D geometry = obj.getGeometry();
+            Mesh mesh = geometry instanceof Mesh ? (Mesh) geometry : geometry.convertToTriangleMesh(0.1);
+            Mapping2D map = (Mapping2D) geometry.getTextureMapping();
+            if (map instanceof UVMapping && mesh instanceof TriangleMesh && ((UVMapping) map).isPerFaceVertex((TriangleMesh) mesh)) {
                 Vec2[][] coords = ((UVMapping) map).findFaceTextureCoordinates((TriangleMesh) mesh);
                 for (int i = 0; i < coords.length; i++) {
                     for (int j = 0; j < coords[i].length; j++) {
-                        if (coords[i][j].x < info.minu) {
-                            info.minu = coords[i][j].x;
+                        if (coords[i][j].x < info.minU) {
+                            info.minU = coords[i][j].x;
                         }
-                        if (coords[i][j].x > info.maxu) {
-                            info.maxu = coords[i][j].x;
+                        if (coords[i][j].x > info.maxU) {
+                            info.maxU = coords[i][j].x;
                         }
-                        if (coords[i][j].y < info.minv) {
-                            info.minv = coords[i][j].y;
+                        if (coords[i][j].y < info.minV) {
+                            info.minV = coords[i][j].y;
                         }
-                        if (coords[i][j].y > info.maxv) {
-                            info.maxv = coords[i][j].y;
+                        if (coords[i][j].y > info.maxV) {
+                            info.maxV = coords[i][j].y;
                         }
                     }
                 }
             } else {
-                Vec2[] coords = map.findTextureCoordinates(mesh);
-                for (int i = 0; i < coords.length; i++) {
-                    if (coords[i].x < info.minu) {
-                        info.minu = coords[i].x;
+
+                for (Vec2 coord:  map.findTextureCoordinates(mesh)) {
+                    if (coord.x < info.minU) {
+                        info.minU = coord.x;
                     }
-                    if (coords[i].x > info.maxu) {
-                        info.maxu = coords[i].x;
+                    if (coord.x > info.maxU) {
+                        info.maxU = coord.x;
                     }
-                    if (coords[i].y < info.minv) {
-                        info.minv = coords[i].y;
+                    if (coord.y < info.minV) {
+                        info.minV =coord.y;
                     }
-                    if (coords[i].y > info.maxv) {
-                        info.maxv = coords[i].y;
+                    if (coord.y > info.maxV) {
+                        info.maxV = coord.y;
                     }
                 }
             }
@@ -190,7 +181,7 @@ public class TextureImageExporter {
     }
 
     /**
-     * Write out all of the images for the various textures.
+     * Write out all the images for the various textures.
      */
     public void saveImages() throws IOException, InterruptedException {
         for (TextureImageInfo info : textureTable.values()) {
@@ -213,15 +204,13 @@ public class TextureImageExporter {
     }
 
     /**
-     * Write an image file to disk representating a component of a texture.
+     * Write an image file to disk representing a component of a texture.
      */
     private void writeComponentImage(TextureImageInfo info, int component, String filename) throws IOException, InterruptedException {
         if (filename == null || !(info.texture instanceof Texture2D)) {
             return;
         }
-        Image img = ((Texture2D) info.texture).createComponentImage(info.minu,
-                info.maxu, info.minv, info.maxv, width, height, component, 0.0,
-                info.paramValue);
+        Image img = ((Texture2D) info.texture).createComponentImage(info.minU, info.maxU, info.minV, info.maxV, width, height, component, 0.0, info.paramValue);
         ImageSaver.saveImage(img, new File(dir, filename), ImageSaver.FORMAT_JPEG, quality);
     }
 }
