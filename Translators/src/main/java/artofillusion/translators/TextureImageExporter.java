@@ -19,6 +19,10 @@ import java.awt.Image;
 import java.io.*;
 import java.util.*;
 
+import static artofillusion.texture.Texture.*;
+import static artofillusion.texture.Texture.DIFFUSE_COLOR_COMPONENT;
+import static artofillusion.texture.Texture.SPECULAR_COLOR_COMPONENT;
+
 /**
  * This class can be used by various other exporters. It collects information about the
  * textures used by a set of objects, and writes out image files for the 2D textures.
@@ -156,19 +160,19 @@ public class TextureImageExporter {
             Texture tex = e.nextElement();
             TextureImageInfo info = textureTable.get(tex);
             if ((components & DIFFUSE) != 0) {
-                writeComponentImage(info, Texture2D.DIFFUSE_COLOR_COMPONENT, info.diffuseFilename);
+                writeComponentImage(info, DIFFUSE_COLOR_COMPONENT, info.diffuseFilename);
             }
             if ((components & SPECULAR) != 0) {
-                writeComponentImage(info, Texture2D.SPECULAR_COLOR_COMPONENT, info.specularFilename);
+                writeComponentImage(info, SPECULAR_COLOR_COMPONENT, info.specularFilename);
             }
             if ((components & HILIGHT) != 0) {
-                writeComponentImage(info, Texture2D.HILIGHT_COLOR_COMPONENT, info.hilightFilename);
+                writeComponentImage(info, HILIGHT_COLOR_COMPONENT, info.hilightFilename);
             }
             if ((components & TRANSPARENT) != 0) {
-                writeComponentImage(info, Texture2D.TRANSPARENT_COLOR_COMPONENT, info.transparentFilename);
+                writeComponentImage(info, TRANSPARENT_COLOR_COMPONENT, info.transparentFilename);
             }
             if ((components & EMISSIVE) != 0) {
-                writeComponentImage(info, Texture2D.EMISSIVE_COLOR_COMPONENT, info.emissiveFilename);
+                writeComponentImage(info, EMISSIVE_COLOR_COMPONENT, info.emissiveFilename);
             }
         }
     }
