@@ -98,18 +98,18 @@ public class TextureImageExporter {
                 // Go through the image maps, and see which ones are being used.
 
                 ImageMapTexture imt = (ImageMapTexture) tex;
-                info.diffuseFilename = (imt.diffuseColor.getImage() != null ? newName() : null);
+                info.diffuseFilename = imt.diffuseColor.getImage() == null ? null : newName();
                 info.specularFilename = (imt.specularColor.getImage() != null || imt.specularity.getImage() != null ? newName() : null);
                 info.hilightFilename = (imt.specularColor.getImage() != null || imt.shininess.getImage() != null ? newName() : null);
                 info.transparentFilename = (imt.transparentColor.getImage() != null || imt.transparency.getImage() != null ? newName() : null);
-                info.emissiveFilename = (imt.emissiveColor.getImage() != null ? newName() : null);
+                info.emissiveFilename = imt.emissiveColor.getImage() == null ? null : newName();
             } else if (tex instanceof ProceduralTexture2D) {
                 var output = ((ProceduralTexture2D) tex).getProcedure().getOutputModules();
-                info.diffuseFilename = (output[0].inputConnected(0) ? newName() : null);
-                info.specularFilename = (output[1].inputConnected(0) || output[5].inputConnected(0) ? newName() : null);
-                info.hilightFilename = (output[1].inputConnected(0) || output[6].inputConnected(0) ? newName() : null);
-                info.transparentFilename = (output[2].inputConnected(0) || output[4].inputConnected(0) ? newName() : null);
-                info.emissiveFilename = (output[3].inputConnected(0) ? newName() : null);
+                info.diffuseFilename = output[0].inputConnected(0) ? newName() : null;
+                info.specularFilename = output[1].inputConnected(0) || output[5].inputConnected(0) ? newName() : null;
+                info.hilightFilename = output[1].inputConnected(0) || output[6].inputConnected(0) ? newName() : null;
+                info.transparentFilename = output[2].inputConnected(0) || output[4].inputConnected(0) ? newName() : null;
+                info.emissiveFilename = output[3].inputConnected(0) ? newName() : null;
             }
         }
 
@@ -122,38 +122,21 @@ public class TextureImageExporter {
             Mesh mesh = geometry instanceof Mesh ? (Mesh) geometry : geometry.convertToTriangleMesh(0.1);
             Mapping2D map = (Mapping2D) geometry.getTextureMapping();
             if (map instanceof UVMapping && mesh instanceof TriangleMesh && ((UVMapping) map).isPerFaceVertex((TriangleMesh) mesh)) {
-                Vec2[][] coords = ((UVMapping) map).findFaceTextureCoordinates((TriangleMesh) mesh);
-                for (int i = 0; i < coords.length; i++) {
-                    for (int j = 0; j < coords[i].length; j++) {
-                        if (coords[i][j].x < info.minU) {
-                            info.minU = coords[i][j].x;
-                        }
-                        if (coords[i][j].x > info.maxU) {
-                            info.maxU = coords[i][j].x;
-                        }
-                        if (coords[i][j].y < info.minV) {
-                            info.minV = coords[i][j].y;
-                        }
-                        if (coords[i][j].y > info.maxV) {
-                            info.maxV = coords[i][j].y;
-                        }
+                for (var cl: ((UVMapping) map).findFaceTextureCoordinates((TriangleMesh) mesh)) {
+                    for (var coord: cl) {
+                        info.minU = Math.min(coord.x, info.minU);
+                        info.maxU = Math.max(coord.x, info.maxU);
+                        info.minV = Math.min(coord.y, info.minV);
+                        info.maxV = Math.max(coord.y, info.maxV);
                     }
                 }
             } else {
 
-                for (Vec2 coord:  map.findTextureCoordinates(mesh)) {
-                    if (coord.x < info.minU) {
-                        info.minU = coord.x;
-                    }
-                    if (coord.x > info.maxU) {
-                        info.maxU = coord.x;
-                    }
-                    if (coord.y < info.minV) {
-                        info.minV =coord.y;
-                    }
-                    if (coord.y > info.maxV) {
-                        info.maxV = coord.y;
-                    }
+                for (var coord:  map.findTextureCoordinates(mesh)) {
+                    info.minU = Math.min(coord.x, info.minU);
+                    info.maxU = Math.max(coord.x, info.maxU);
+                    info.minV = Math.min(coord.y, info.minV);
+                    info.maxV = Math.max(coord.y, info.maxV);
                 }
             }
         }

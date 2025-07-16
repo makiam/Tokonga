@@ -5,8 +5,8 @@
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful, but WITHOUT ANY 
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.translators;
@@ -107,8 +107,8 @@ public class TextureImageExporter {
             info.maxU = info.maxV = 1.0;
         } else if (tex instanceof ProceduralTexture2D) {
             Object3D geometry = obj.getGeometry();
-            Mesh mesh = geometry instanceof Mesh ? (Mesh)geometry : geometry.convertToTriangleMesh(0.1);
-            Mapping2D map = (Mapping2D) obj.getGeometry().getTextureMapping();
+            Mesh mesh = geometry instanceof Mesh ? (Mesh) geometry : geometry.convertToTriangleMesh(0.1);
+            Mapping2D map = (Mapping2D) geometry.getTextureMapping();
             if (map instanceof UVMapping && mesh instanceof FacetedMesh && ((UVMapping) map).isPerFaceVertex((FacetedMesh) mesh)) {
                 for (var cl: ((UVMapping) map).findFaceTextureCoordinates((FacetedMesh) mesh)) {
                     for (var coord: cl) {
@@ -120,7 +120,7 @@ public class TextureImageExporter {
                 }
             } else {
 
-                for (Vec2 coord:  map.findTextureCoordinates(mesh)) {
+                for (var coord:  map.findTextureCoordinates(mesh)) {
                     info.minU = Math.min(coord.x, info.minU);
                     info.maxU = Math.max(coord.x, info.maxU);
                     info.minV = Math.min(coord.y, info.minV);
