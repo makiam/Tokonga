@@ -12,7 +12,6 @@
 package artofillusion.translators;
 
 import artofillusion.image.*;
-import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.texture.*;
 import java.awt.Image;
@@ -29,7 +28,7 @@ import static artofillusion.texture.Texture.SPECULAR_COLOR_COMPONENT;
  */
 public class TextureImageExporter {
 
-    private final Hashtable<Texture, TextureImageInfo> textureTable;
+    private final Hashtable<Texture, TextureImageInfo> texturesMap = new Hashtable<>();
 
     private final File dir;
     private final String baseFilename;
@@ -57,7 +56,6 @@ public class TextureImageExporter {
      * @param height the height to use for images
      */
     public TextureImageExporter(File dir, String baseFilename, int quality, int components, int width, int height) {
-        textureTable = new Hashtable<>();
 
         this.dir = dir;
         this.baseFilename = baseFilename;
@@ -72,16 +70,16 @@ public class TextureImageExporter {
      * Check the texture of an object, and record what information needs to be exported.
      */
     public void addObject(ObjectInfo obj) {
-        Texture tex = obj.getObject().getTexture();
+        Texture tex = obj.getGeometry().getTexture();
         if (tex == null) {
             return;
         }
-        TextureImageInfo info = textureTable.get(tex);
+        TextureImageInfo info = texturesMap.get(tex);
         if (info == null) {
             // We haven't encountered this texture before, so create a new TextureImageInfo for it.
 
-            info = new TextureImageInfo(tex, obj.getObject().getAverageParameterValues());
-            textureTable.put(tex, info);
+            info = new TextureImageInfo(tex, obj.getGeometry().getAverageParameterValues());
+            texturesMap.put(tex, info);
             if (tex instanceof ImageMapTexture) {
                 // Go through the image maps, and see which ones are being used.
 
@@ -141,24 +139,24 @@ public class TextureImageExporter {
      * Get the TextureImageInfo (which may be null) for a particular texture.
      */
     public TextureImageInfo getTextureInfo(Texture tex) {
-        return tex == null ? null : textureTable.get(tex);
+        return tex == null ? null : texturesMap.get(tex);
     }
 
     /**
      * Get an Enumeration of all TextureImageInfos.
      */
     public Enumeration<TextureImageInfo> getTextures() {
-        return textureTable.elements();
+        return texturesMap.elements();
     }
 
     /**
      * Write out all the images for the various textures.
      */
     public void saveImages() throws IOException, InterruptedException {
-        Enumeration<Texture> e = textureTable.keys();
+        Enumeration<Texture> e = texturesMap.keys();
         while (e.hasMoreElements()) {
             Texture tex = e.nextElement();
-            TextureImageInfo info = textureTable.get(tex);
+            TextureImageInfo info = texturesMap.get(tex);
             if ((components & DIFFUSE) != 0) {
                 writeComponentImage(info, DIFFUSE_COLOR_COMPONENT, info.diffuseFilename);
             }

@@ -12,7 +12,6 @@
 package artofillusion.polymesh;
 
 import artofillusion.image.ImageSaver;
-import artofillusion.math.Vec2;
 import artofillusion.object.Mesh;
 import artofillusion.object.Object3D;
 import artofillusion.object.ObjectInfo;
@@ -41,7 +40,7 @@ import static artofillusion.texture.Texture.TRANSPARENT_COLOR_COMPONENT;
  */
 public class TextureImageExporter {
 
-    private final Map<Texture, TextureImageInfo> textureTable;
+    private final Map<Texture, TextureImageInfo> texturesMap = new Hashtable<>();
 
     private final File dir;
     private final String baseFilename;
@@ -69,7 +68,6 @@ public class TextureImageExporter {
      * @param height the height to use for images
      */
     public TextureImageExporter(File dir, String baseFilename, int quality, int components, int width, int height) {
-        textureTable = new Hashtable<>();
 
         this.dir = dir;
         this.baseFilename = baseFilename;
@@ -84,16 +82,16 @@ public class TextureImageExporter {
      * Check the texture of an object, and record what information needs to be exported.
      */
     public void addObject(ObjectInfo obj) {
-        Texture tex = obj.getObject().getTexture();
+        Texture tex = obj.getGeometry().getTexture();
         if (tex == null) {
             return;
         }
-        TextureImageInfo info = textureTable.get(tex);
+        TextureImageInfo info = texturesMap.get(tex);
         if (info == null) {
             // We haven't encountered this texture before, so create a new TextureImageInfo for it.
 
-            info = new TextureImageInfo(tex, obj.getObject().getAverageParameterValues());
-            textureTable.put(tex, info);
+            info = new TextureImageInfo(tex, obj.getGeometry().getAverageParameterValues());
+            texturesMap.put(tex, info);
             if (tex instanceof ImageMapTexture) {
                 // Go through the image maps, and see which ones are being used.
 
@@ -153,21 +151,21 @@ public class TextureImageExporter {
      * Get the TextureImageInfo (which may be null) for a particular texture.
      */
     public TextureImageInfo getTextureInfo(Texture tex) {
-        return textureTable.get(tex);
+        return texturesMap.get(tex);
     }
 
     /**
      * Get an Enumeration of all TextureImageInfos.
      */
     public Collection<TextureImageInfo> getTextures() {
-        return textureTable.values();
+        return texturesMap.values();
     }
 
     /**
      * Write out all the images for the various textures.
      */
     public void saveImages() throws IOException, InterruptedException {
-        for (TextureImageInfo info : textureTable.values()) {
+        for (TextureImageInfo info : texturesMap.values()) {
             if ((components & DIFFUSE) != 0) {
                 writeComponentImage(info, DIFFUSE_COLOR_COMPONENT, info.diffuseFilename);
             }
