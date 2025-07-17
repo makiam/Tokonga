@@ -90,7 +90,7 @@ public class ArtOfIllusion {
         Translate.setLocale(Locale.getDefault());
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException ex) {
+        } catch (ReflectiveOperationException | UnsupportedLookAndFeelException ex) {
         }
 
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);

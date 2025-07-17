@@ -14,7 +14,7 @@ package artofillusion.polymesh;
 import artofillusion.texture.Texture;
 
 /**
- * This class is used by TextureImageExporter for storing information about texture images.
+ * This class is used by TextureImage Exporters for storing information about texture images.
  */
 public class TextureImageInfo {
 
