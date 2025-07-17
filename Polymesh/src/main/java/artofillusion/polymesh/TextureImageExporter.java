@@ -155,7 +155,7 @@ public class TextureImageExporter {
     }
 
     /**
-     * Get an Enumeration of all TextureImageInfos.
+     * Get Collection of all TextureImageInfos.
      */
     public Collection<TextureImageInfo> getTextures() {
         return texturesMap.values();

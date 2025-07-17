@@ -28,7 +28,7 @@ import static artofillusion.texture.Texture.SPECULAR_COLOR_COMPONENT;
  */
 public class TextureImageExporter {
 
-    private final Hashtable<Texture, TextureImageInfo> texturesMap = new Hashtable<>();
+    private final Map<Texture, TextureImageInfo> texturesMap = new Hashtable<>();
 
     private final File dir;
     private final String baseFilename;
@@ -139,24 +139,21 @@ public class TextureImageExporter {
      * Get the TextureImageInfo (which may be null) for a particular texture.
      */
     public TextureImageInfo getTextureInfo(Texture tex) {
-        return tex == null ? null : texturesMap.get(tex);
+        return texturesMap.get(tex);
     }
 
     /**
-     * Get an Enumeration of all TextureImageInfos.
+     * Get Collection of all TextureImageInfos.
      */
-    public Enumeration<TextureImageInfo> getTextures() {
-        return texturesMap.elements();
+    public Collection<TextureImageInfo> getTextures() {
+        return texturesMap.values();
     }
 
     /**
      * Write out all the images for the various textures.
      */
     public void saveImages() throws IOException, InterruptedException {
-        Enumeration<Texture> e = texturesMap.keys();
-        while (e.hasMoreElements()) {
-            Texture tex = e.nextElement();
-            TextureImageInfo info = texturesMap.get(tex);
+        for (TextureImageInfo info : texturesMap.values()) {
             if ((components & DIFFUSE) != 0) {
                 writeComponentImage(info, DIFFUSE_COLOR_COMPONENT, info.diffuseFilename);
             }

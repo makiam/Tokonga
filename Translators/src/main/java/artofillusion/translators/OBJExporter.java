@@ -74,7 +74,7 @@ public class OBJExporter {
         }
 
         // Ask the user to select the output file.
-        JFileChooser jfc = new JFileChooser();
+        var jfc = new JFileChooser();
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfc.setDialogTitle(Translate.text("Translators:exportToOBJ"));
         jfc.setSelectedFile(new File("Untitled.obj"));
@@ -326,24 +326,23 @@ public class OBJExporter {
     /**
      * Write out the .mtl file describing the textures.
      */
-    private static void writeTextures(Scene theScene, PrintWriter out, boolean wholeScene, TextureImageExporter textureExporter) {
+    private static void writeTextures(Scene scene, PrintWriter out, boolean wholeScene, TextureImageExporter textureExporter) {
         // Find all the textures.
 
-        for (ObjectInfo info : theScene.getObjects()) {
+        for (ObjectInfo info: scene.getObjects()) {
             if (wholeScene || info.isSelected()) {
                 textureExporter.addObject(info);
             }
         }
 
         // Write out the .mtl file.
-        out.println("#Produced by Art of Illusion " + ArtOfIllusion.getVersion() + ", " + (new Date()).toString());
-        Enumeration<TextureImageInfo> textures = textureExporter.getTextures();
+        out.println("#Produced by Art of Illusion " + ArtOfIllusion.getVersion() + ", " + new Date());
+
         Map<String, TextureImageInfo> names = new Hashtable<>();
         TextureSpec spec = new TextureSpec();
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
         nf.setMaximumFractionDigits(5);
-        while (textures.hasMoreElements()) {
-            TextureImageInfo info = textures.nextElement();
+        for (TextureImageInfo info : textureExporter.getTextures()) {
 
             // Select a name for the texture.
             String baseName = info.texture.getName().replace(' ', '_');

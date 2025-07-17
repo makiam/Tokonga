@@ -11,7 +11,7 @@
 
 package artofillusion.translators;
 
-import artofillusion.texture.*;
+import artofillusion.texture.Texture;
 
 /**
  * This class is used by TextureImageExporter for storing information about texture images.

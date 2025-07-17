@@ -91,9 +91,11 @@ public class PMOBJExporter {
         jfc.setDialogTitle(Translate.text("Translators:exportToOBJ"));
         jfc.setSelectedFile(new File("Untitled.obj"));
         Optional.ofNullable(ArtOfIllusion.getCurrentDirectory()).ifPresent(dir -> jfc.setCurrentDirectory(new File(dir)));
+
         if (jfc.showSaveDialog(parent.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
+
         File dir = jfc.getCurrentDirectory();
         File f = jfc.getSelectedFile();
         String name = f.getName();
@@ -175,11 +177,6 @@ public class PMOBJExporter {
 
     /**
      * Write out the .mtl file describing the textures.
-     *
-     * @param scene Description of the Parameter
-     * @param out Description of the Parameter
-     * @param wholeScene Description of the Parameter
-     * @param textureExporter Description of the Parameter
      */
     private static void writeTextures(Scene scene, PrintWriter out, boolean wholeScene, TextureImageExporter textureExporter) {
         // Find all the textures.
@@ -192,7 +189,7 @@ public class PMOBJExporter {
         }
 
         // Write out the .mtl file.
-        out.println("#Produced by Art of Illusion " + ArtOfIllusion.getVersion() + ", PolyMesh Plugin, " + (new Date()).toString());
+        out.println("#Produced by Art of Illusion " + ArtOfIllusion.getVersion() + ", PolyMesh Plugin, " + new Date());
 
         Map<String, TextureImageInfo> names = new Hashtable<>();
         TextureSpec spec = new TextureSpec();
