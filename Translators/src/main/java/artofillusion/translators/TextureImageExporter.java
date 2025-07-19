@@ -5,19 +5,22 @@
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful, but WITHOUT ANY 
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.translators;
 
 import artofillusion.image.*;
-import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.texture.*;
 import java.awt.Image;
 import java.io.*;
 import java.util.*;
+
+import static artofillusion.texture.Texture.*;
+import static artofillusion.texture.Texture.DIFFUSE_COLOR_COMPONENT;
+import static artofillusion.texture.Texture.SPECULAR_COLOR_COMPONENT;
 
 /**
  * This class can be used by various other exporters. It collects information about the
@@ -25,7 +28,8 @@ import java.util.*;
  */
 public class TextureImageExporter {
 
-    private final Hashtable<Texture, TextureImageInfo> textureTable;
+    private final Map<Texture, TextureImageInfo> texturesMap = new Hashtable<>();
+
     private final File dir;
     private final String baseFilename;
     private final int quality;
@@ -52,7 +56,7 @@ public class TextureImageExporter {
      * @param height the height to use for images
      */
     public TextureImageExporter(File dir, String baseFilename, int quality, int components, int width, int height) {
-        textureTable = new Hashtable<>();
+
         this.dir = dir;
         this.baseFilename = baseFilename;
         this.quality = quality;
@@ -66,75 +70,59 @@ public class TextureImageExporter {
      * Check the texture of an object, and record what information needs to be exported.
      */
     public void addObject(ObjectInfo obj) {
-        Texture tex = obj.getObject().getTexture();
+        Texture tex = obj.getGeometry().getTexture();
         if (tex == null) {
             return;
         }
-        TextureImageInfo info = textureTable.get(tex);
+        TextureImageInfo info = texturesMap.get(tex);
         if (info == null) {
             // We haven't encountered this texture before, so create a new TextureImageInfo for it.
 
-            info = new TextureImageInfo(tex, obj.getObject().getAverageParameterValues());
-            textureTable.put(tex, info);
+            info = new TextureImageInfo(tex, obj.getGeometry().getAverageParameterValues());
+            texturesMap.put(tex, info);
             if (tex instanceof ImageMapTexture) {
                 // Go through the image maps, and see which ones are being used.
 
                 ImageMapTexture imt = (ImageMapTexture) tex;
-                info.diffuseFilename = (imt.diffuseColor.getImage() != null ? newName() : null);
+                info.diffuseFilename = imt.diffuseColor.getImage() == null ? null : newName();
                 info.specularFilename = (imt.specularColor.getImage() != null || imt.specularity.getImage() != null ? newName() : null);
                 info.hilightFilename = (imt.specularColor.getImage() != null || imt.shininess.getImage() != null ? newName() : null);
                 info.transparentFilename = (imt.transparentColor.getImage() != null || imt.transparency.getImage() != null ? newName() : null);
-                info.emissiveFilename = (imt.emissiveColor.getImage() != null ? newName() : null);
+                info.emissiveFilename = imt.emissiveColor.getImage() == null ? null : newName();
             } else if (tex instanceof ProceduralTexture2D) {
                 var output = ((ProceduralTexture2D) tex).getProcedure().getOutputModules();
-                info.diffuseFilename = (output[0].inputConnected(0) ? newName() : null);
-                info.specularFilename = (output[1].inputConnected(0) || output[5].inputConnected(0) ? newName() : null);
-                info.hilightFilename = (output[1].inputConnected(0) || output[6].inputConnected(0) ? newName() : null);
-                info.transparentFilename = (output[2].inputConnected(0) || output[4].inputConnected(0) ? newName() : null);
-                info.emissiveFilename = (output[3].inputConnected(0) ? newName() : null);
+                info.diffuseFilename = output[0].inputConnected(0) ? newName() : null;
+                info.specularFilename = output[1].inputConnected(0) || output[5].inputConnected(0) ? newName() : null;
+                info.hilightFilename = output[1].inputConnected(0) || output[6].inputConnected(0) ? newName() : null;
+                info.transparentFilename = output[2].inputConnected(0) || output[4].inputConnected(0) ? newName() : null;
+                info.emissiveFilename = output[3].inputConnected(0) ? newName() : null;
             }
         }
 
         // Determine the range of UV coordinates for this object.
         if (tex instanceof ImageMapTexture) {
-            info.minu = info.minv = 0.0;
-            info.maxu = info.maxv = 1.0;
+            info.minU = info.minV = 0.0;
+            info.maxU = info.maxV = 1.0;
         } else if (tex instanceof ProceduralTexture2D) {
-            Mesh mesh = (obj.getObject() instanceof Mesh ? (Mesh) obj.getObject() : obj.getObject().convertToTriangleMesh(0.1));
-            Mapping2D map = (Mapping2D) obj.getObject().getTextureMapping();
+            Object3D geometry = obj.getGeometry();
+            Mesh mesh = geometry instanceof Mesh ? (Mesh) geometry : geometry.convertToTriangleMesh(0.1);
+            Mapping2D map = (Mapping2D) geometry.getTextureMapping();
             if (map instanceof UVMapping && mesh instanceof FacetedMesh && ((UVMapping) map).isPerFaceVertex((FacetedMesh) mesh)) {
-                Vec2[][] coords = ((UVMapping) map).findFaceTextureCoordinates((FacetedMesh) mesh);
-                for (int i = 0; i < coords.length; i++) {
-                    for (int j = 0; j < coords[i].length; j++) {
-                        if (coords[i][j].x < info.minu) {
-                            info.minu = coords[i][j].x;
-                        }
-                        if (coords[i][j].x > info.maxu) {
-                            info.maxu = coords[i][j].x;
-                        }
-                        if (coords[i][j].y < info.minv) {
-                            info.minv = coords[i][j].y;
-                        }
-                        if (coords[i][j].y > info.maxv) {
-                            info.maxv = coords[i][j].y;
-                        }
+                for (var cl: ((UVMapping) map).findFaceTextureCoordinates((FacetedMesh) mesh)) {
+                    for (var coord: cl) {
+                        info.minU = Math.min(coord.x, info.minU);
+                        info.maxU = Math.max(coord.x, info.maxU);
+                        info.minV = Math.min(coord.y, info.minV);
+                        info.maxV = Math.max(coord.y, info.maxV);
                     }
                 }
             } else {
-                Vec2[] coords = map.findTextureCoordinates(mesh);
-                for (int i = 0; i < coords.length; i++) {
-                    if (coords[i].x < info.minu) {
-                        info.minu = coords[i].x;
-                    }
-                    if (coords[i].x > info.maxu) {
-                        info.maxu = coords[i].x;
-                    }
-                    if (coords[i].y < info.minv) {
-                        info.minv = coords[i].y;
-                    }
-                    if (coords[i].y > info.maxv) {
-                        info.maxv = coords[i].y;
-                    }
+
+                for (var coord:  map.findTextureCoordinates(mesh)) {
+                    info.minU = Math.min(coord.x, info.minU);
+                    info.maxU = Math.max(coord.x, info.maxU);
+                    info.minV = Math.min(coord.y, info.minV);
+                    info.maxV = Math.max(coord.y, info.maxV);
                 }
             }
         }
@@ -151,51 +139,47 @@ public class TextureImageExporter {
      * Get the TextureImageInfo (which may be null) for a particular texture.
      */
     public TextureImageInfo getTextureInfo(Texture tex) {
-        return tex == null ? null : textureTable.get(tex);
+        return texturesMap.get(tex);
     }
 
     /**
-     * Get an Enumeration of all TextureImageInfos.
+     * Get Collection of all TextureImageInfos.
      */
-    public Enumeration<TextureImageInfo> getTextures() {
-        return textureTable.elements();
+    public Collection<TextureImageInfo> getTextures() {
+        return texturesMap.values();
     }
 
     /**
      * Write out all the images for the various textures.
      */
     public void saveImages() throws IOException, InterruptedException {
-        Enumeration<Texture> e = textureTable.keys();
-        while (e.hasMoreElements()) {
-            Texture tex = e.nextElement();
-            TextureImageInfo info = textureTable.get(tex);
+        for (TextureImageInfo info : texturesMap.values()) {
             if ((components & DIFFUSE) != 0) {
-                writeComponentImage(info, Texture2D.DIFFUSE_COLOR_COMPONENT, info.diffuseFilename);
+                writeComponentImage(info, DIFFUSE_COLOR_COMPONENT, info.diffuseFilename);
             }
             if ((components & SPECULAR) != 0) {
-                writeComponentImage(info, Texture2D.SPECULAR_COLOR_COMPONENT, info.specularFilename);
+                writeComponentImage(info, SPECULAR_COLOR_COMPONENT, info.specularFilename);
             }
             if ((components & HILIGHT) != 0) {
-                writeComponentImage(info, Texture2D.HILIGHT_COLOR_COMPONENT, info.hilightFilename);
+                writeComponentImage(info, HILIGHT_COLOR_COMPONENT, info.hilightFilename);
             }
             if ((components & TRANSPARENT) != 0) {
-                writeComponentImage(info, Texture2D.TRANSPARENT_COLOR_COMPONENT, info.transparentFilename);
+                writeComponentImage(info, TRANSPARENT_COLOR_COMPONENT, info.transparentFilename);
             }
             if ((components & EMISSIVE) != 0) {
-                writeComponentImage(info, Texture2D.EMISSIVE_COLOR_COMPONENT, info.emissiveFilename);
+                writeComponentImage(info, EMISSIVE_COLOR_COMPONENT, info.emissiveFilename);
             }
         }
     }
 
     /**
-     * Write an image file to disk representating a component of a texture.
+     * Write an image file to disk representing a component of a texture.
      */
     private void writeComponentImage(TextureImageInfo info, int component, String filename) throws IOException, InterruptedException {
-        if (filename == null || !(info.texture instanceof Texture2D)) {
+        if (filename == null || !(info.getTexture() instanceof Texture2D)) {
             return;
         }
-        Image img = ((Texture2D) info.texture).createComponentImage(info.minu, info.maxu, info.minv, info.maxv,
-                width, height, component, 0.0, info.paramValue);
+        Image img = ((Texture2D) info.getTexture()).createComponentImage(info.minU, info.maxU, info.minV, info.maxV, width, height, component, 0.0, info.getParamValues());
         ImageSaver.saveImage(img, new File(dir, filename), ImageSaver.FORMAT_JPEG, quality);
     }
 }

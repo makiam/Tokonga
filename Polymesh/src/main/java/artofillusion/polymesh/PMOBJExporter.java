@@ -16,6 +16,7 @@ import artofillusion.object.ObjectInfo;
 import artofillusion.polymesh.PolyMesh.Wedge;
 import artofillusion.polymesh.PolyMesh.Wface;
 import artofillusion.polymesh.PolyMesh.Wvertex;
+import artofillusion.texture.TextureImageInfo;
 import artofillusion.texture.TextureSpec;
 import artofillusion.ui.*;
 import buoy.event.ValueChangedEvent;
@@ -91,9 +92,11 @@ public class PMOBJExporter {
         jfc.setDialogTitle(Translate.text("Translators:exportToOBJ"));
         jfc.setSelectedFile(new File("Untitled.obj"));
         Optional.ofNullable(ArtOfIllusion.getCurrentDirectory()).ifPresent(dir -> jfc.setCurrentDirectory(new File(dir)));
+
         if (jfc.showSaveDialog(parent.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
+
         File dir = jfc.getCurrentDirectory();
         File f = jfc.getSelectedFile();
         String name = f.getName();
@@ -175,11 +178,6 @@ public class PMOBJExporter {
 
     /**
      * Write out the .mtl file describing the textures.
-     *
-     * @param scene Description of the Parameter
-     * @param out Description of the Parameter
-     * @param wholeScene Description of the Parameter
-     * @param textureExporter Description of the Parameter
      */
     private static void writeTextures(Scene scene, PrintWriter out, boolean wholeScene, TextureImageExporter textureExporter) {
         // Find all the textures.
@@ -192,7 +190,7 @@ public class PMOBJExporter {
         }
 
         // Write out the .mtl file.
-        out.println("#Produced by Art of Illusion " + ArtOfIllusion.getVersion() + ", PolyMesh Plugin, " + (new Date()).toString());
+        out.println("#Produced by Art of Illusion " + ArtOfIllusion.getVersion() + ", PolyMesh Plugin, " + new Date());
 
         Map<String, TextureImageInfo> names = new Hashtable<>();
         TextureSpec spec = new TextureSpec();
@@ -201,21 +199,21 @@ public class PMOBJExporter {
         for (TextureImageInfo info : textureExporter.getTextures()) {
 
             // Select a name for the texture.
-            String baseName = info.texture.getName().replace(' ', '_');
+            String baseName = info.getTexture().getName().replace(' ', '_');
             if (names.get(baseName) == null) {
-                info.name = baseName;
+                info.setName(baseName);
             } else {
                 int i = 1;
                 while (names.get(baseName + i) != null) {
                     i++;
                 }
-                info.name = baseName + i;
+                info.setName( baseName + i);
             }
-            names.put(info.name, info);
+            names.put(info.getName(), info);
 
             // Write the texture.
-            out.println("newmtl " + info.name);
-            info.texture.getAverageSpec(spec, 0.0, info.paramValue);
+            out.println("newmtl " + info.getName());
+            info.getTexture().getAverageSpec(spec, 0.0, info.getParamValues());
             if (info.diffuseFilename == null) {
                 out.println("Kd " + nf.format(spec.diffuse.getRed()) + " " + nf.format(spec.diffuse.getGreen()) + " " + nf.format(spec.diffuse.getBlue()));
             } else {

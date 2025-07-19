@@ -74,7 +74,7 @@ public class OBJExporter {
         }
 
         // Ask the user to select the output file.
-        JFileChooser jfc = new JFileChooser();
+        var jfc = new JFileChooser();
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfc.setDialogTitle(Translate.text("Translators:exportToOBJ"));
         jfc.setSelectedFile(new File("Untitled.obj"));
@@ -219,7 +219,7 @@ public class OBJExporter {
             if (textureExporter != null) {
                 ti = textureExporter.getTextureInfo(info.getObject().getTexture());
                 if (ti != null) {
-                    out.println("usemtl " + ti.name);
+                    out.println("usemtl " + ti.getName());
                 }
             }
             Mat4 trans = info.getCoords().fromLocal();
@@ -241,12 +241,12 @@ public class OBJExporter {
                 // A per-face-vertex texture mapping.
 
                 Vec2[][] coords = ((UVMapping) ((Object3D) mesh).getTextureMapping()).findFaceTextureCoordinates(mesh);
-                double uscale = (ti.maxu == ti.minu ? 1.0 : 1.0 / (ti.maxu - ti.minu));
-                double vscale = (ti.maxv == ti.minv ? 1.0 : 1.0 / (ti.maxv - ti.minv));
+                double uscale = (ti.maxU == ti.minU ? 1.0 : 1.0 / (ti.maxU - ti.minU));
+                double vscale = (ti.maxV == ti.minV ? 1.0 : 1.0 / (ti.maxV - ti.minV));
                 for (int j = 0; j < coords.length; j++) {
                     for (int k = 0; k < coords[j].length; k++) {
-                        double u = (coords[j][k].x - ti.minu) * uscale;
-                        double v = (coords[j][k].y - ti.minv) * vscale;
+                        double u = (coords[j][k].x - ti.minU) * uscale;
+                        double v = (coords[j][k].y - ti.minV) * vscale;
                         out.println("vt " + nf.format(u) + " " + nf.format(v));
                     }
                 }
@@ -272,11 +272,11 @@ public class OBJExporter {
                 // A per-vertex texture mapping.
 
                 Vec2[] coords = ((Mapping2D) ((Object3D) mesh).getTextureMapping()).findTextureCoordinates(mesh);
-                double uscale = (ti.maxu == ti.minu ? 1.0 : 1.0 / (ti.maxu - ti.minu));
-                double vscale = (ti.maxv == ti.minv ? 1.0 : 1.0 / (ti.maxv - ti.minv));
+                double uscale = (ti.maxU == ti.minU ? 1.0 : 1.0 / (ti.maxU - ti.minU));
+                double vscale = (ti.maxV == ti.minV ? 1.0 : 1.0 / (ti.maxV - ti.minV));
                 for (int j = 0; j < coords.length; j++) {
-                    double u = (coords[j].x - ti.minu) * uscale;
-                    double v = (coords[j].y - ti.minv) * vscale;
+                    double u = (coords[j].x - ti.minU) * uscale;
+                    double v = (coords[j].y - ti.minV) * vscale;
                     out.println("vt " + nf.format(u) + " " + nf.format(v));
                 }
                 for (int j = 0; j < mesh.getFaceCount(); j++) {
@@ -326,41 +326,40 @@ public class OBJExporter {
     /**
      * Write out the .mtl file describing the textures.
      */
-    private static void writeTextures(Scene theScene, PrintWriter out, boolean wholeScene, TextureImageExporter textureExporter) {
+    private static void writeTextures(Scene scene, PrintWriter out, boolean wholeScene, TextureImageExporter textureExporter) {
         // Find all the textures.
 
-        for (ObjectInfo info : theScene.getObjects()) {
+        for (ObjectInfo info: scene.getObjects()) {
             if (wholeScene || info.isSelected()) {
                 textureExporter.addObject(info);
             }
         }
 
         // Write out the .mtl file.
-        out.println("#Produced by Art of Illusion " + ArtOfIllusion.getVersion() + ", " + (new Date()).toString());
-        Enumeration<TextureImageInfo> textures = textureExporter.getTextures();
+        out.println("#Produced by Art of Illusion " + ArtOfIllusion.getVersion() + ", " + new Date());
+
         Map<String, TextureImageInfo> names = new Hashtable<>();
         TextureSpec spec = new TextureSpec();
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
         nf.setMaximumFractionDigits(5);
-        while (textures.hasMoreElements()) {
-            TextureImageInfo info = textures.nextElement();
+        for (TextureImageInfo info : textureExporter.getTextures()) {
 
             // Select a name for the texture.
-            String baseName = info.texture.getName().replace(' ', '_');
+            String baseName = info.getTexture().getName().replace(' ', '_');
             if (names.get(baseName) == null) {
-                info.name = baseName;
+                info.setName(baseName);
             } else {
                 int i = 1;
                 while (names.get(baseName + i) != null) {
                     i++;
                 }
-                info.name = baseName + i;
+                info.setName(baseName + i);
             }
-            names.put(info.name, info);
+            names.put(info.getName(), info);
 
             // Write the texture.
-            out.println("newmtl " + info.name);
-            info.texture.getAverageSpec(spec, 0.0, info.paramValue);
+            out.println("newmtl " + info.getName());
+            info.getTexture().getAverageSpec(spec, 0.0, info.getParamValues());
             if (info.diffuseFilename == null) {
                 out.println("Kd " + nf.format(spec.diffuse.getRed()) + " " + nf.format(spec.diffuse.getGreen()) + " " + nf.format(spec.diffuse.getBlue()));
             } else {

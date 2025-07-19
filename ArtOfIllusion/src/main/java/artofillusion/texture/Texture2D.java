@@ -75,11 +75,11 @@ public abstract class Texture2D extends Texture {
      * the image size, the component to represent (one of the constants defined
      * in the Texture class), and the time and texture parameters.
      */
-    public Image createComponentImage(final double minU, double maxU, double minv, final double maxv,
-            final int width, final int height, final int component, final double time, final double[] param) {
+    public Image createComponentImage(final double minU, double maxU, double minV, final double maxV, final int width, final int height, final int component, final double time, final double[] param) {
+
         final int[] pixel = new int[width * height];
         final double uScale = (maxU - minU) / width;
-        final double vScale = (maxv - minv) / height;
+        final double vScale = (maxV - minV) / height;
         final ThreadLocal<TextureSpec> textureSpec = ThreadLocal.withInitial(() -> new TextureSpec());
         ThreadManager threads = new ThreadManager(width, new ThreadManager.Task() {
             @Override
@@ -87,7 +87,7 @@ public abstract class Texture2D extends Texture {
                 TextureSpec spec = textureSpec.get();
                 for (int j = 0; j < height; j++) {
                     double u = minU + i * uScale;
-                    double v = maxv - j * vScale;
+                    double v = maxV - j * vScale;
                     getTextureSpec(spec, u, v, uScale, vScale, 1.0, time, param);
                     int index = i + j * width;
                     switch (component) {
