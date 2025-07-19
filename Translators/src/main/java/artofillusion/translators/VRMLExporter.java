@@ -330,7 +330,7 @@ public class VRMLExporter {
         write("children [", out, indent + 1);
 
         // Create an appropriate Shape node.
-        TextureImageInfo ti = (textureExporter == null ? null : textureExporter.getTextureInfo(obj.getTexture()));
+        TextureImageInfo ti = textureExporter == null ? null : textureExporter.getTextureInfo(obj.getTexture());
         boolean hasTexture = (ti != null && ti.diffuseFilename != null);
         if (obj instanceof Cube && !hasTexture) {
             write("Shape {", out, indent + 2);
@@ -553,14 +553,13 @@ public class VRMLExporter {
      */
     private static void writeTexture(ObjectInfo info, PrintWriter out, int indent, Scene theScene, TextureImageExporter textureExporter) {
         Texture tex = info.getObject().getTexture();
-        TextureSpec spec;
 
         if (tex == null) {
             return;
         }
-        TextureImageInfo ti = (textureExporter == null ? null : textureExporter.getTextureInfo(tex));
+        TextureImageInfo ti = textureExporter == null ? null : textureExporter.getTextureInfo(tex);
         boolean hasMap = (ti != null && ti.diffuseFilename != null);
-        spec = new TextureSpec();
+        TextureSpec spec = new TextureSpec();
         tex.getAverageSpec(spec, theScene.getTime(), info.getObject().getAverageParameterValues());
         write("appearance Appearance {", out, indent);
         write("material Material {", out, indent + 1);
