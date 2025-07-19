@@ -176,10 +176,10 @@ public class TextureImageExporter {
      * Write an image file to disk representing a component of a texture.
      */
     private void writeComponentImage(TextureImageInfo info, int component, String filename) throws IOException, InterruptedException {
-        if (filename == null || !(info.texture instanceof Texture2D)) {
+        if (filename == null || !(info.getTexture() instanceof Texture2D)) {
             return;
         }
-        Image img = ((Texture2D) info.texture).createComponentImage(info.minU, info.maxU, info.minV, info.maxV, width, height, component, 0.0, info.paramValue);
+        Image img = ((Texture2D) info.getTexture()).createComponentImage(info.minU, info.maxU, info.minV, info.maxV, width, height, component, 0.0, info.getParamValues());
         ImageSaver.saveImage(img, new File(dir, filename), ImageSaver.FORMAT_JPEG, quality);
     }
 }

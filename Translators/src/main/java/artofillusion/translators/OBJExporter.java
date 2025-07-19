@@ -219,7 +219,7 @@ public class OBJExporter {
             if (textureExporter != null) {
                 ti = textureExporter.getTextureInfo(info.getObject().getTexture());
                 if (ti != null) {
-                    out.println("usemtl " + ti.name);
+                    out.println("usemtl " + ti.getName());
                 }
             }
             Mat4 trans = info.getCoords().fromLocal();
@@ -345,21 +345,21 @@ public class OBJExporter {
         for (TextureImageInfo info : textureExporter.getTextures()) {
 
             // Select a name for the texture.
-            String baseName = info.texture.getName().replace(' ', '_');
+            String baseName = info.getTexture().getName().replace(' ', '_');
             if (names.get(baseName) == null) {
-                info.name = baseName;
+                info.setName(baseName);
             } else {
                 int i = 1;
                 while (names.get(baseName + i) != null) {
                     i++;
                 }
-                info.name = baseName + i;
+                info.setName(baseName + i);
             }
-            names.put(info.name, info);
+            names.put(info.getName(), info);
 
             // Write the texture.
-            out.println("newmtl " + info.name);
-            info.texture.getAverageSpec(spec, 0.0, info.paramValue);
+            out.println("newmtl " + info.getName());
+            info.getTexture().getAverageSpec(spec, 0.0, info.getParamValues());
             if (info.diffuseFilename == null) {
                 out.println("Kd " + nf.format(spec.diffuse.getRed()) + " " + nf.format(spec.diffuse.getGreen()) + " " + nf.format(spec.diffuse.getBlue()));
             } else {

@@ -9,20 +9,25 @@
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
-package artofillusion.polymesh;
+package artofillusion.texture;
 
-import artofillusion.texture.Texture;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This class is used by TextureImage Exporters for storing information about texture images.
  */
-public class TextureImageInfo {
+public final class TextureImageInfo {
 
+    @Getter
     final Texture texture;
-    String name;
-    String diffuseFilename, specularFilename, hilightFilename, transparentFilename, emissiveFilename;
-    double minU, minV, maxU, maxV;
-    final double[] paramValue;
+    @Getter @Setter private String name;
+
+    public String diffuseFilename, specularFilename, hilightFilename, transparentFilename, emissiveFilename;
+
+    public double minU, minV, maxU, maxV;
+    @Getter final double[] paramValue;
 
     public TextureImageInfo(Texture tex, double[] param) {
         texture = tex;
@@ -31,4 +36,7 @@ public class TextureImageInfo {
         maxU = maxV = -Double.MAX_VALUE;
     }
 
+    public double[] getParamValues() {
+        return paramValue;
+    }
 }

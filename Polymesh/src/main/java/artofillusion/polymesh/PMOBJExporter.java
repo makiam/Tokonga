@@ -16,6 +16,7 @@ import artofillusion.object.ObjectInfo;
 import artofillusion.polymesh.PolyMesh.Wedge;
 import artofillusion.polymesh.PolyMesh.Wface;
 import artofillusion.polymesh.PolyMesh.Wvertex;
+import artofillusion.texture.TextureImageInfo;
 import artofillusion.texture.TextureSpec;
 import artofillusion.ui.*;
 import buoy.event.ValueChangedEvent;
@@ -198,21 +199,21 @@ public class PMOBJExporter {
         for (TextureImageInfo info : textureExporter.getTextures()) {
 
             // Select a name for the texture.
-            String baseName = info.texture.getName().replace(' ', '_');
+            String baseName = info.getTexture().getName().replace(' ', '_');
             if (names.get(baseName) == null) {
-                info.name = baseName;
+                info.setName(baseName);
             } else {
                 int i = 1;
                 while (names.get(baseName + i) != null) {
                     i++;
                 }
-                info.name = baseName + i;
+                info.setName( baseName + i);
             }
-            names.put(info.name, info);
+            names.put(info.getName(), info);
 
             // Write the texture.
-            out.println("newmtl " + info.name);
-            info.texture.getAverageSpec(spec, 0.0, info.paramValue);
+            out.println("newmtl " + info.getName());
+            info.getTexture().getAverageSpec(spec, 0.0, info.getParamValues());
             if (info.diffuseFilename == null) {
                 out.println("Kd " + nf.format(spec.diffuse.getRed()) + " " + nf.format(spec.diffuse.getGreen()) + " " + nf.format(spec.diffuse.getBlue()));
             } else {
