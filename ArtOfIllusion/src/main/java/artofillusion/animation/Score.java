@@ -38,7 +38,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
     final LayoutWindow window;
     final Scene scene;
     
-    final TreeList theList;
+    private final TreeList theList;
     final TimeAxis theAxis;
     private final List<TrackDisplay> graphs;
     final BScrollBar scroll;
@@ -262,7 +262,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
                 currentSelection.add(item);
         }
 
-        selection = currentSelection.toArray(new SelectionInfo[0]);
+        selection = currentSelection.toArray(SelectionInfo[]::new);
         window.updateMenus();
     }
 
@@ -276,7 +276,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
             if (selectionInfo.key == key) continue;
             filtered.add(selectionInfo);
         }
-        selection = filtered.toArray(new SelectionInfo[0]);
+        selection = filtered.toArray(SelectionInfo[]::new);
         window.updateMenus();
     }
 
@@ -791,7 +791,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
                 tr.setEnabled(enable);
             }
         }
-        owners.forEach(owner -> scene.applyTracksToObject(owner));
+        owners.forEach(scene::applyTracksToObject);
         theList.repaint();
         window.setUndoRecord(undo);
         window.updateImage();
@@ -802,15 +802,14 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * Add a keyframe to each selected track, based on the current state of the scene.
      */
     public void keyframeSelectedTracks() {
-        Scene theScene = scene;
-        Object[] sel = theList.getSelectedObjects();
-        double time = theScene.getTime();
-        UndoRecord undo = new UndoRecord(window);
-        Vector<SelectionInfo> newkeys = new Vector<>();
 
-        for (int i = 0; i < sel.length; i++) {
-            if (sel[i] instanceof Track) {
-                Track tr = (Track) sel[i];
+        final double time = scene.getTime();
+        UndoRecord undo = new UndoRecord(window);
+        List<SelectionInfo> newKeys = new Vector<>();
+
+        for (var si: theList.getSelectedObjects()) {
+            if (si instanceof Track) {
+                Track tr = (Track) si;
                 if (tr.getParent() instanceof ObjectInfo) {
                     ObjectInfo info = (ObjectInfo) tr.getParent();
                     for (int j = 0; j < info.getTracks().length; j++) {
@@ -819,17 +818,13 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
                         }
                     }
                 }
-                Keyframe k = tr.setKeyframe(time);
-                if (k != null) {
-                    newkeys.add(new SelectionInfo(tr, k));
-                }
+                Optional.ofNullable(tr.setKeyframe(time)).ifPresent(k -> newKeys.add(new SelectionInfo(tr, k)));
             }
         }
+
         window.setUndoRecord(undo);
-        if (newkeys.size() > 0) {
-            SelectionInfo[] newsel = new SelectionInfo[newkeys.size()];
-            newkeys.copyInto(newsel);
-            setSelectedKeyframes(newsel);
+        if (!newKeys.isEmpty()) {
+            setSelectedKeyframes(newKeys.toArray(SelectionInfo[]::new));
         }
         selectedTracksChanged();
         repaintGraphs();
@@ -841,19 +836,20 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      */
     public void keyframeModifiedTracks() {
         Scene theScene = scene;
-        int[] sel = window.getSelectedIndices();
+
         double time = theScene.getTime();
         UndoRecord undo = new UndoRecord(window);
-        Vector<SelectionInfo> newkeys = new Vector<>();
+        List<SelectionInfo> newKeys = new Vector<>();
 
-        for (int i = 0; i < sel.length; i++) {
-            ObjectInfo info = theScene.getObject(sel[i]);
+        for (int si: window.getSelectedIndices()) {
+            ObjectInfo info = theScene.getObject(si);
             boolean posx = false;
             boolean posy = false;
             boolean posz = false;
             boolean rotx = false;
             boolean roty = false;
             boolean rotz = false;
+
             for (int j = 0; j < info.getTracks().length; j++) {
                 Track tr = info.getTracks()[j];
                 if (!tr.isEnabled()) {
@@ -867,28 +863,26 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
                 }
                 undo.addCommand(UndoRecord.SET_TRACK, info, j, tr.duplicate(info));
                 Keyframe k = tr.setKeyframeIfModified(time);
-                if (k != null) {
-                    newkeys.add(new SelectionInfo(tr, k));
-                    if (tr instanceof PositionTrack) {
-                        PositionTrack pt = (PositionTrack) tr;
-                        posx |= pt.affectsX();
-                        posy |= pt.affectsY();
-                        posz |= pt.affectsZ();
-                    }
-                    if (tr instanceof RotationTrack) {
-                        RotationTrack rt = (RotationTrack) tr;
-                        rotx |= rt.affectsX();
-                        roty |= rt.affectsY();
-                        rotz |= rt.affectsZ();
-                    }
+                if (k == null) continue;
+
+                newKeys.add(new SelectionInfo(tr, k));
+                if (tr instanceof PositionTrack) {
+                    PositionTrack pt = (PositionTrack) tr;
+                    posx |= pt.affectsX();
+                    posy |= pt.affectsY();
+                    posz |= pt.affectsZ();
+                }
+                if (tr instanceof RotationTrack) {
+                    RotationTrack rt = (RotationTrack) tr;
+                    rotx |= rt.affectsX();
+                    roty |= rt.affectsY();
+                    rotz |= rt.affectsZ();
                 }
             }
         }
         window.setUndoRecord(undo);
-        if (newkeys.size() > 0) {
-            SelectionInfo[] newsel = new SelectionInfo[newkeys.size()];
-            newkeys.copyInto(newsel);
-            setSelectedKeyframes(newsel);
+        if (!newKeys.isEmpty()) {
+            setSelectedKeyframes(newKeys.toArray(SelectionInfo[]::new));
         }
         selectedTracksChanged();
         repaintGraphs();
@@ -899,14 +893,14 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * Duplicate the selected tracks.
      */
     public void duplicateSelectedTracks() {
-        Object[] sel = theList.getSelectedObjects();
+
         UndoRecord undo = new UndoRecord(window);
         List<ObjectInfo> modifiedObj = new Vector<>();
         List<Track> addedTrack = new Vector<>();
 
-        for (int i = 0; i < sel.length; i++) {
-            if (sel[i] instanceof Track) {
-                Track tr = (Track) sel[i];
+        for (var sel: theList.getSelectedObjects()) {
+            if (sel instanceof Track) {
+                Track tr = (Track) sel;
                 if (!(tr.getParent() instanceof ObjectInfo)) {
                     continue;
                 }
@@ -939,13 +933,13 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * Delete the selected tracks.
      */
     public void deleteSelectedTracks() {
-        Object[] sel = theList.getSelectedObjects();
+
         UndoRecord undo = new UndoRecord(window);
         List<ObjectInfo> modifiedObj = new Vector<>();
 
-        for (int i = 0; i < sel.length; i++) {
-            if (sel[i] instanceof Track) {
-                Track tr = (Track) sel[i];
+        for (var item: theList.getSelectedObjects()) {
+            if (item instanceof Track) {
+                Track tr = (Track) item;
                 if (!(tr.getParent() instanceof ObjectInfo)) {
                     continue;
                 }
