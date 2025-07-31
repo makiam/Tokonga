@@ -1022,7 +1022,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         short version = in.readShort();
         log.debug("Detected scene version: {}", version);
 
-        if (version < 0 || version > 5) {
+        if (version < 0 || version > 6) {
             throw new InvalidObjectException("Bad scene version: " + version);
         }
 
@@ -1249,7 +1249,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * Write the Scene's representation to an output stream.
      */
     public void writeToStream(DataOutputStream out) throws IOException {
-        short version = 5;
+        short version = 6;
         out.writeShort(version);
 
         ambientColor.writeToFile(out);
