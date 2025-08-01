@@ -40,7 +40,7 @@ import org.greenrobot.eventbus.Subscribe;
  * form a scene, as well as the available textures and materials, environment options, etc.
  */
 @Slf4j
-@ImplementationVersion(current = 5, min = 2)
+@ImplementationVersion(current = 6, min = 2)
 public final class Scene implements ObjectsContainer, MaterialsContainer, TexturesContainer, ImagesContainer {
 
     private final List<ObjectInfo> objects = new Vector<>();
