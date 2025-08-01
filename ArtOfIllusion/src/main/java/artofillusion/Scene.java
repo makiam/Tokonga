@@ -136,6 +136,10 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         gridSubdivisions = 10;
     }
 
+    public Scene(File path) throws IOException {
+        this(path, true);
+    }
+
     /**
      * The following constructor is used for reading files. If fullScene is false, only the
      * Textures and Materials are read.

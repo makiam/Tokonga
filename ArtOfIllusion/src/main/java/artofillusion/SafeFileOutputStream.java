@@ -182,11 +182,8 @@ public class SafeFileOutputStream extends FilterOutputStream {
                 // recover from backup
                 if (!file.exists()) {
                     if (!bak.renameTo(file)) {
-                        throw new IOException("SafeFileOutputStream.close: "
-                                + "Error recovering from backup."
-                                + "\nFailed to rename "
-                                + bak.getAbsolutePath() + " to "
-                                + file.getAbsolutePath());
+                        throw new IOException("SafeFileOutputStream.close: Error recovering from backup."
+                                + "\nFailed to rename " + bak.getAbsolutePath() + " to " + file.getAbsolutePath());
                     }
                 }
 
@@ -204,8 +201,7 @@ public class SafeFileOutputStream extends FilterOutputStream {
      * write to the underlying stream
      */
     @Override
-    public void write(byte[] array)
-            throws IOException {
+    public void write(byte[] array)  throws IOException {
         out.write(array, 0, array.length);
     }
 
