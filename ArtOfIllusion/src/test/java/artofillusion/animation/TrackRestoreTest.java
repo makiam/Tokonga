@@ -16,18 +16,28 @@ import artofillusion.object.Cube;
 import artofillusion.object.Object3D;
 import artofillusion.object.ObjectInfo;
 
+import artofillusion.test.util.ReadBypassEventListener;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.*;
-import org.junit.jupiter.api.Disabled;
 
 
 @Slf4j
 public class TrackRestoreTest {
+
+    private static ReadBypassEventListener listener;
+
+    @BeforeAll
+    public static void setupClass() {
+        listener = new ReadBypassEventListener();
+    }
+
+    @BeforeEach
+    void resetCounterBefore() {
+        listener.reset();
+    }
 
     @Test
     void testWriteAndRestoreTrack() throws IOException {
