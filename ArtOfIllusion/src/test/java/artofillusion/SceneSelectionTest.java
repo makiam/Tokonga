@@ -17,6 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.util.Arrays;
+
 /**
  * @author MaksK
  */
@@ -38,8 +40,8 @@ class SceneSelectionTest {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
-        scene.addObject(one, (UndoRecord) null);
-        scene.addObject(two, (UndoRecord) null);
+        scene.addObject(one,  null);
+        scene.addObject(two,  null);
         scene.setSelection(0);
         int[] selection = scene.getSelection();
         Assertions.assertNotNull(selection);
@@ -52,8 +54,8 @@ class SceneSelectionTest {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
-        scene.addObject(one, (UndoRecord) null);
-        scene.addObject(two, (UndoRecord) null);
+        scene.addObject(one,  null);
+        scene.addObject(two,  null);
         scene.setSelection(new int[]{0});
 
         int[] selection = scene.getSelection();
@@ -68,8 +70,8 @@ class SceneSelectionTest {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
-        scene.addObject(one, (UndoRecord) null);
-        scene.addObject(two, (UndoRecord) null);
+        scene.addObject(one,  null);
+        scene.addObject(two,  null);
         scene.setSelection(0);
 
         int[] selection = scene.getSelection();
@@ -83,8 +85,8 @@ class SceneSelectionTest {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
-        scene.addObject(one, (UndoRecord) null);
-        scene.addObject(two, (UndoRecord) null);
+        scene.addObject(one, null);
+        scene.addObject(two, null);
         scene.setSelection(1);
         int[] selection = scene.getSelection();
         Assertions.assertNotNull(selection);
@@ -97,8 +99,8 @@ class SceneSelectionTest {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
-        scene.addObject(one, (UndoRecord) null);
-        scene.addObject(two, (UndoRecord) null);
+        scene.addObject(one, null);
+        scene.addObject(two, null);
         scene.setSelection(1);
         scene.addToSelection(0);
         int[] selection = scene.getSelection();
@@ -112,8 +114,8 @@ class SceneSelectionTest {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
-        scene.addObject(one, (UndoRecord) null);
-        scene.addObject(two, (UndoRecord) null);
+        scene.addObject(one, null);
+        scene.addObject(two, null);
         scene.setSelection(new int[]{0, 1});
 
         int[] selection = scene.getSelection();
@@ -128,8 +130,8 @@ class SceneSelectionTest {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
-        scene.addObject(one, (UndoRecord) null);
-        scene.addObject(two, (UndoRecord) null);
+        scene.addObject(one, null);
+        scene.addObject(two, null);
         scene.setSelection(0, 1);
 
         int[] selection = scene.getSelection();
@@ -143,8 +145,8 @@ class SceneSelectionTest {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
-        scene.addObject(one, (UndoRecord) null);
-        scene.addObject(two, (UndoRecord) null);
+        scene.addObject(one, null);
+        scene.addObject(two, null);
         scene.setSelection(new int[]{0, 1});
 
         scene.getObjects().forEach(item -> {
@@ -159,8 +161,8 @@ class SceneSelectionTest {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
-        scene.addObject(one, (UndoRecord) null);
-        scene.addObject(two, (UndoRecord) null);
+        scene.addObject(one, null);
+        scene.addObject(two, null);
         scene.setSelection(0, 1);
 
         scene.getObjects().forEach(item -> {
@@ -174,8 +176,8 @@ class SceneSelectionTest {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
-        scene.addObject(one, (UndoRecord) null);
-        scene.addObject(two, (UndoRecord) null);
+        scene.addObject(one, null);
+        scene.addObject(two, null);
         scene.setSelection(new int[]{0, 1});
 
         scene.getObjects().forEach(item -> {
@@ -193,8 +195,8 @@ class SceneSelectionTest {
         Scene scene = new Scene();
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
-        scene.addObject(one, (UndoRecord) null);
-        scene.addObject(two, (UndoRecord) null);
+        scene.addObject(one, null);
+        scene.addObject(two, null);
         scene.setSelection(0, 1);
 
         scene.getObjects().forEach(item -> {
@@ -213,8 +215,8 @@ class SceneSelectionTest {
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
         one.addChild(two, 0);
-        scene.addObject(one, (UndoRecord) null);
-        scene.addObject(two, (UndoRecord) null);
+        scene.addObject(one, null);
+        scene.addObject(two, null);
         scene.setSelection(0);
         int[] selection = scene.getSelectionWithChildren();
         Assertions.assertNotNull(selection);
@@ -228,11 +230,68 @@ class SceneSelectionTest {
         ObjectInfo one = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null1");
         ObjectInfo two = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null2");
         one.addChild(two, 0);
-        scene.addObject(one, (UndoRecord) null);
-        scene.addObject(two, (UndoRecord) null);
-        scene.setSelection(new int[]{0});
+        scene.addObject(one, null);
+        scene.addObject(two, null);
+        scene.setSelection(0);
         int[] selection = scene.getSelectionWithChildren();
         Assertions.assertNotNull(selection);
         Assertions.assertEquals(2, selection.length);
+    }
+
+    @Test
+    @DisplayName("Test Scene Get Selection With More Child")
+    void testSceneGetSelectionWithChildMore() {
+        Scene scene = new Scene();
+        for(var loop = 0; loop < 10; loop++) {
+            var so = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null" + loop);
+
+            scene.addObject(so, null);
+        }
+        int[] selection = scene.getSelectionWithChildren();
+        Assertions.assertNotNull(selection);
+        Assertions.assertEquals(0, selection.length);
+
+        scene.setSelection(0, 3, 6, 9);
+
+        selection = scene.getSelectionWithChildren();
+        Assertions.assertNotNull(selection);
+        Assertions.assertEquals(4, selection.length);
+
+
+    }
+
+    @Test
+    @DisplayName("Test Scene Get Selection With Child Deep hierarchy")
+    void testSceneGetSelectionWithChildDeep() {
+        Scene scene = new Scene();
+        var parent = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null" + 0);
+        scene.addObject(parent, null);
+
+        for(var loop = 1; loop < 10; loop++) {
+
+            var so = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Null" + loop);
+            scene.addObject(so, null);
+            parent.addChild(so, 0);
+
+            parent = so;
+        }
+
+        int[] selection = scene.getSelectionWithChildren();
+        Assertions.assertNotNull(selection);
+        Assertions.assertEquals(0, selection.length);
+
+        scene.setSelection(0);
+
+        selection = scene.getSelectionWithChildren();
+        Assertions.assertNotNull(selection);
+        Assertions.assertEquals(10, selection.length);
+
+        scene.setSelection(4);
+
+        selection = scene.getSelectionWithChildren();
+        Assertions.assertNotNull(selection);
+        Assertions.assertEquals(6, selection.length);
+
+
     }
 }

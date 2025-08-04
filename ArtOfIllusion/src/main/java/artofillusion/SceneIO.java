@@ -131,7 +131,7 @@ public final class SceneIO {
         out.writeUTF(value);
     }
 
-    private static void writeClass(DataOutputStream out, Object item) throws IOException {
+    public static void writeClass(DataOutputStream out, Object item) throws IOException {
         out.writeUTF(item.getClass().getName());
     }
 
