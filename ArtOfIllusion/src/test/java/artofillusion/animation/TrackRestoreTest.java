@@ -52,11 +52,11 @@ public class TrackRestoreTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream(1000);
         DataOutputStream data = new DataOutputStream(out);
         data.writeInt(1);
-        TrackIO.INSTANCE.writeTrack(data, scene, track, (short)5);
+        TrackIO.INSTANCE.writeTrack(data, scene, track, (short)6);
 
         byte[] buffer = out.toByteArray();
         ByteArrayInputStream in = new ByteArrayInputStream(buffer);
-        TrackIO.INSTANCE.readTracks(new DataInputStream(in), scene, owner, (short)5);
+        TrackIO.INSTANCE.readTracks(new DataInputStream(in), scene, owner, (short)6);
 
         Assertions.assertEquals(1, owner.getTracks().length);
         PoseTrack restored = (PoseTrack)owner.getTracks()[0];
@@ -67,7 +67,6 @@ public class TrackRestoreTest {
     }
 
     @Test
-    @Disabled(value = "V6 code for Tracks not yet implemented")
     void testWriteAndRestoreSceneItemTracksV6() throws IOException {
         short version = 6;
 
@@ -113,12 +112,12 @@ public class TrackRestoreTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream(1000);
         DataOutputStream data = new DataOutputStream(out);
 
-        TrackIO.INSTANCE.writeTracks(data, scene, owner, (short)5);
+        TrackIO.INSTANCE.writeTracks(data, scene, owner, (short)6);
         owner.removeTrack(0);
 
         byte[] buffer = out.toByteArray();
         ByteArrayInputStream in = new ByteArrayInputStream(buffer);
-        TrackIO.INSTANCE.readTracks(new DataInputStream(in), scene, owner, (short)5);
+        TrackIO.INSTANCE.readTracks(new DataInputStream(in), scene, owner, (short)6);
 
         Assertions.assertEquals(1, owner.getTracks().length);
         PoseTrack restored = (PoseTrack)owner.getTracks()[0];
@@ -161,11 +160,11 @@ public class TrackRestoreTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream(1000);
         DataOutputStream data = new DataOutputStream(out);
         data.writeInt(1);
-        TrackIO.INSTANCE.writeTrack(data, scene, track, (short)5);
+        TrackIO.INSTANCE.writeTrack(data, scene, track, (short)6);
 
         byte[] buffer = out.toByteArray();
         ByteArrayInputStream in = new ByteArrayInputStream(buffer);
-        TrackIO.INSTANCE.readTracks(new DataInputStream(in), scene, owner, (short)5);
+        TrackIO.INSTANCE.readTracks(new DataInputStream(in), scene, owner, (short)6);
 
         Assertions.assertEquals(1, owner.getTracks().length);
         StringContainerTrack restored = (StringContainerTrack)owner.getTracks()[0];
