@@ -9,6 +9,7 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion;
 
+import artofillusion.api.ImplementationVersion;
 import artofillusion.material.UniformMaterial;
 import artofillusion.math.RGBColor;
 import artofillusion.object.Object3D;
@@ -57,12 +58,12 @@ class SceneLoadTest {
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     @DisplayName("Test Load Scene Bad Version 2")
     void testLoadSceneBadVersion2() {
-        assertThrows(InvalidObjectException.class, () -> {
-            ByteBuffer wrap = ByteBuffer.allocate(2);
-            // Scene Version
-            wrap.putShort((short) 6);
-            new Scene(StreamUtil.stream(wrap), true);
-        });
+        ByteBuffer wrap = ByteBuffer.allocate(2);
+        // Scene Version
+        var cv = Scene.class.getAnnotation(ImplementationVersion.class).current();
+        wrap.putShort(++cv);
+
+        assertThrows(InvalidObjectException.class, () -> new Scene(StreamUtil.stream(wrap), true));
     }
 
     @Test
