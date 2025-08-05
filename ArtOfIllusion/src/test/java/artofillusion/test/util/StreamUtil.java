@@ -10,6 +10,7 @@
 
 package artofillusion.test.util;
 
+import artofillusion.SceneIO;
 import lombok.SneakyThrows;
 
 import java.io.*;
@@ -36,14 +37,11 @@ public class StreamUtil {
         return getUTFNameAsByteArray(clazz.getName());
     }
 
-    public static byte[] writeObjectToStream(DataWriteProvider target) throws IOException {
+    public static byte[] writeObjectToStream(SceneIO.DataWriteProvider target) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         target.write(new DataOutputStream(bos));
         return bos.toByteArray();
     }
 
-    @FunctionalInterface
-    public interface DataWriteProvider {
-        void write(DataOutputStream out) throws IOException;
-    }
+
 }

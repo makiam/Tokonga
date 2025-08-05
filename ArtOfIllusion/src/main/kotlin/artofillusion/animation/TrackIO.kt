@@ -1,15 +1,14 @@
 package artofillusion.animation
 
 import artofillusion.ArtOfIllusion
+import artofillusion.BypassEvent
 import artofillusion.Scene
+import artofillusion.SceneIO
 import artofillusion.`object`.ObjectInfo
 import org.greenrobot.eventbus.EventBus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.ByteArrayOutputStream
-import java.io.DataInputStream
-import java.io.DataOutputStream
-import java.io.IOException
+import java.io.*
 import java.lang.reflect.Constructor
 
 object TrackIO {
@@ -38,29 +37,60 @@ object TrackIO {
 
     @Throws(IOException::class)
     fun writeTrack(output: DataOutputStream, scene: Scene, track: Track<*>, version: Short) {
-        writeClass(output, track)
-        val bos = ByteArrayOutputStream()
-        track.writeToStream(DataOutputStream(bos), scene)
-        val ba = bos.toByteArray()
-        val size = ba.size
-        output.write(ba, 0, size)
+        SceneIO.writeClass(output, track)
+        SceneIO.writeBuffered(output) { target: DataOutputStream? -> track.writeToStream(target, scene) }
     }
 
     @Throws(IOException::class)
     fun readTracksV6(input: DataInputStream, scene: Scene, owner: ObjectInfo, tracks: Int) {
 
+        var trackClassName: String
+        var dataSize: Int
+        var data: ByteArray;
+        var track: Track<*>
+
+        for(i in 0 until tracks) {
+            // At first read binary data from input. If IOException is thrown we cannot recover data and aborting
+            try {
+                trackClassName = readString(input)
+                dataSize = input.readInt()
+                data = ByteArray(dataSize)
+                input.readFully(data)
+            } catch (ioe: IOException) {
+                throw ioe
+            }
+            //Now try to discover Track. On exception, we cannot recover track, but can bypass it
+            try {
+                val trackClass = ArtOfIllusion.getClass(trackClassName)
+                if (null == trackClass) {
+                    bus.post(BypassEvent(scene, "Scene camera filter: $trackClassName was not found"))
+                    continue
+                }
+                val tc: Constructor<*>  = trackClass.getConstructor(ObjectInfo::class.java)
+                track = tc.newInstance(owner) as Track<*>
+
+            } catch (_: ReflectiveOperationException) {
+                bus.post(BypassEvent(scene, "Scene camera filter: $trackClassName was not found"))
+                continue
+            }
+            //On exception, we cannot recover track, but can bypass it
+            try {
+                track.initFromStream(DataInputStream(ByteArrayInputStream(data)), scene)
+            } catch (_: IOException) {
+                bus.post(BypassEvent(scene, "Track: $trackClassName  initialization error"))
+                continue
+            }
+            owner.addTrack(track)
+        }
     }
 
     @Throws(IOException::class, Exception::class)
     fun readTracksV5(input: DataInputStream, scene: Scene, owner: ObjectInfo, tracks: Int) {
         for(i in 0 until tracks) {
-            var className = readString(input)
+            val className = readString(input)
             try {
-                val clazz = ArtOfIllusion.getClass(className)
-                if(clazz == null) {
-                    throw IOException("Unknown Track class $className")
-                }
-                val tc: Constructor<*>  = clazz.getConstructor(ObjectInfo::class.java);
+                val clazz = ArtOfIllusion.getClass(className) ?: throw IOException("Unknown Track class $className")
+                val tc: Constructor<*>  = clazz.getConstructor(ObjectInfo::class.java)
                 val track: Track<*> = tc.newInstance(owner) as Track<*>
                 track.initFromStream(input, scene)
                 owner.addTrack(track)
@@ -79,8 +109,4 @@ object TrackIO {
     @Throws(IOException::class)
     fun readString(input: DataInputStream): String = input.readUTF()
 
-    @Throws(IOException::class)
-    fun writeClass(output: DataOutputStream, item: Any) {
-        output.writeUTF(item.javaClass.name)
-    }
 }

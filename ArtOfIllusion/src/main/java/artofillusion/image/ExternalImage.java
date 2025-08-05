@@ -360,7 +360,7 @@ public class ExternalImage extends ImageMap {
      */
     @Override
     public void writeToStream(DataOutputStream out, Scene scene) throws IOException {
-        out.writeShort(0); // ExternalImage was not exixting in AoI 3.0.3 and earlier
+        out.writeShort(0); // ExternalImage was not existing in AoI 3.0.3 and earlier
         if (connected) {
             out.writeUTF(imageFile.getAbsolutePath());
             if (scene == null) // If used by the other writeToStream method.

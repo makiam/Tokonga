@@ -12,6 +12,7 @@
 package artofillusion.animation;
 
 import artofillusion.*;
+import artofillusion.api.ImplementationVersion;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
@@ -20,6 +21,7 @@ import java.io.*;
 /**
  * This is a Track which controls the weight given to another track.
  */
+@ImplementationVersion
 public class WeightTrack extends Track<WeightTrack> {
 
     final Track<? extends Track> parent;

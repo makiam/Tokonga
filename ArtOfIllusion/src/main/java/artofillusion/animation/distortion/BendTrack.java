@@ -13,6 +13,7 @@ package artofillusion.animation.distortion;
 
 import artofillusion.*;
 import artofillusion.animation.*;
+import artofillusion.api.ImplementationVersion;
 import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
@@ -22,6 +23,7 @@ import java.io.*;
 /**
  * This is a Track which applies a BendDistortion to an object.
  */
+@ImplementationVersion
 public class BendTrack extends Track<BendTrack> {
 
     ObjectInfo info;

@@ -40,7 +40,7 @@ import org.greenrobot.eventbus.Subscribe;
  * form a scene, as well as the available textures and materials, environment options, etc.
  */
 @Slf4j
-@ImplementationVersion(current = 5, min = 2)
+@ImplementationVersion(current = 6, min = 2)
 public final class Scene implements ObjectsContainer, MaterialsContainer, TexturesContainer, ImagesContainer {
 
     private final List<ObjectInfo> objects = new Vector<>();
@@ -134,6 +134,10 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         showGrid = snapToGrid = false;
         gridSpacing = 1.0;
         gridSubdivisions = 10;
+    }
+
+    public Scene(File path) throws IOException {
+        this(path, true);
     }
 
     /**
@@ -525,6 +529,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * added to it to undo this operation.
      */
     public void addObject(ObjectInfo info, UndoRecord undo) {
+        log.info("Add object: {}", info);
         addObject(info, objects.size(), undo);
     }
 
@@ -533,7 +538,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * appropriate commands will be added to it to undo this operation.
      */
     public void addObject(ObjectInfo info, int index, UndoRecord undo) {
-        Object3D geo = info.getObject();
+        Object3D geo = info.getGeometry();
         info.setId(nextID++);
         if (info.getTracks().length == 0) {
             info.addTrack(new PositionTrack(info));
@@ -1022,7 +1027,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         short version = in.readShort();
         log.debug("Detected scene version: {}", version);
 
-        if (version < 0 || version > 5) {
+        if (version < 0 || version > 6) {
             throw new InvalidObjectException("Bad scene version: " + version);
         }
 
@@ -1249,7 +1254,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * Write the Scene's representation to an output stream.
      */
     public void writeToStream(DataOutputStream out) throws IOException {
-        short version = 5;
+        short version = 6;
         out.writeShort(version);
 
         ambientColor.writeToFile(out);
@@ -1332,7 +1337,6 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * Write the information about a single object to a file.
      */
     private int writeObjectToFile(DataOutputStream out, ObjectInfo info, Map<Object3D, Integer> table, int index, short version) throws IOException {
-        Integer key;
 
         info.getCoords().writeToFile(out);
         out.writeUTF(info.getName());
@@ -1340,20 +1344,15 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         out.writeBoolean(info.isVisible());
         out.writeBoolean(info.isLocked());
         var geometry = info.getGeometry();
-        key = table.get(geometry);
+
+        Integer key = table.get(geometry);
         if (key == null) {
 
             out.writeInt(index);
-            var soc = geometry.getClass().getName();
-            out.writeUTF(soc);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            geometry.writeToFile(new DataOutputStream(bos), this);
-            byte[] bytes = bos.toByteArray();
-            out.writeInt(bytes.length);
-            out.write(bytes, 0, bytes.length);
-            log.debug("Scene object {} index: {} with class {} size: {}", info.getName(), index, soc, bytes.length);
+            SceneIO.writeClass(out, geometry);
+            SceneIO.writeBuffered(out, (target) -> geometry.writeToFile(target, this));
             key = index++;
-            table.put(info.getObject(), key);
+            table.put(geometry, key);
         } else {
             out.writeInt(key);
         }
