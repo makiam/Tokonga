@@ -1350,12 +1350,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
             out.writeInt(index);
             SceneIO.writeClass(out, geometry);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            geometry.writeToFile(new DataOutputStream(bos), this);
-            byte[] bytes = bos.toByteArray();
-            out.writeInt(bytes.length);
-            out.write(bytes, 0, bytes.length);
-
+            SceneIO.writeBuffered(out, (target) -> geometry.writeToFile(target, this));
             key = index++;
             table.put(geometry, key);
         } else {

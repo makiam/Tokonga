@@ -11,6 +11,7 @@
 
 package artofillusion;
 
+import artofillusion.animation.Track;
 import artofillusion.image.ImageMap;
 import artofillusion.material.Material;
 import artofillusion.texture.Texture;
@@ -70,12 +71,8 @@ public final class SceneIO {
         log.debug("Scene version: {}. Writing materials: {}", version, items.size());
         out.writeInt(items.size());
         for (var item: items) {
-            writeClass(out, item);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            item.writeToFile(new DataOutputStream(bos), scene);
-            byte[] bytes = bos.toByteArray();
-            out.writeInt(bytes.length);
-            out.write(bytes, 0, bytes.length);
+            SceneIO.writeClass(out, item);
+            SceneIO.writeBuffered(out, target -> item.writeToFile(target, scene));
         }
         log.debug("Write materials completed");
     }
@@ -85,12 +82,8 @@ public final class SceneIO {
         log.debug("Scene version: {}. Writing textures: {}", version, items.size());
         out.writeInt(items.size());
         for (var item: items) {
-            writeClass(out, item);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            item.writeToFile(new DataOutputStream(bos), scene);
-            byte[] bytes = bos.toByteArray();
-            out.writeInt(bytes.length);
-            out.write(bytes, 0, bytes.length);
+            SceneIO.writeClass(out, item);
+            SceneIO.writeBuffered(out, target -> item.writeToFile(target, scene));
         }
         log.debug("Write textures completed");
     }
@@ -135,4 +128,16 @@ public final class SceneIO {
         out.writeUTF(item.getClass().getName());
     }
 
+    public static void writeBuffered(DataOutputStream out, DataWriteProvider writer)throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        writer.write(new DataOutputStream(bos));
+        byte[] bytes = bos.toByteArray();
+        out.writeInt(bytes.length);
+        out.write(bytes, 0, bytes.length);
+    }
+
+    @FunctionalInterface
+    public interface DataWriteProvider {
+        void write(DataOutputStream out) throws IOException;
+    }
 }

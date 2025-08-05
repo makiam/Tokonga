@@ -3,15 +3,12 @@ package artofillusion.animation
 import artofillusion.ArtOfIllusion
 import artofillusion.BypassEvent
 import artofillusion.Scene
+import artofillusion.SceneIO
 import artofillusion.`object`.ObjectInfo
 import org.greenrobot.eventbus.EventBus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.DataInputStream
-import java.io.DataOutputStream
-import java.io.IOException
+import java.io.*
 import java.lang.reflect.Constructor
 
 object TrackIO {
@@ -40,13 +37,8 @@ object TrackIO {
 
     @Throws(IOException::class)
     fun writeTrack(output: DataOutputStream, scene: Scene, track: Track<*>, version: Short) {
-        writeClass(output, track)
-        val bos = ByteArrayOutputStream()
-        track.writeToStream(DataOutputStream(bos), scene)
-        val ba = bos.toByteArray()
-        val size = ba.size
-        output.writeInt(size)
-        output.write(ba, 0, size)
+        SceneIO.writeClass(output, track)
+        SceneIO.writeBuffered(output) { target: DataOutputStream? -> track.writeToStream(target, scene) }
     }
 
     @Throws(IOException::class)
