@@ -19,7 +19,6 @@ import artofillusion.texture.TextureMapping;
 import artofillusion.texture.TextureSpec;
 import artofillusion.texture.UniformMapping;
 import artofillusion.texture.UniformTexture;
-import buoy.widget.BFrame;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -33,8 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @author maksim.khramov
@@ -158,11 +155,11 @@ class SceneLoadTest {
         }
         Scene scene = new Scene(StreamUtil.stream(wrap), true);
         Assertions.assertEquals(1, scene.getNumTextures());
-        Assertions.assertTrue(scene.getTexture(0) instanceof UniformTexture);
-        Assertions.assertTrue(scene.getTexture(0).getName().equals("<unreadable>"));
+        Assertions.assertInstanceOf(UniformTexture.class, scene.getTexture(0));
+        Assertions.assertEquals("<unreadable>", scene.getTexture(0).getName());
         Assertions.assertEquals(1, scene.getNumMaterials());
-        Assertions.assertTrue(scene.getMaterial(0) instanceof UniformMaterial);
-        Assertions.assertTrue(scene.getMaterial(0).getName().equals("<unreadable>"));
+        Assertions.assertInstanceOf(UniformMaterial.class, scene.getMaterial(0));
+        Assertions.assertEquals("<unreadable>", scene.getMaterial(0).getName());
         Assertions.assertFalse(scene.getErrors().isEmpty());
     }
 
@@ -220,11 +217,11 @@ class SceneLoadTest {
         }
         Scene scene = new Scene(StreamUtil.stream(wrap), true);
         Assertions.assertEquals(1, scene.getNumTextures());
-        Assertions.assertTrue(scene.getTexture(0) instanceof UniformTexture);
+        Assertions.assertInstanceOf(UniformTexture.class, scene.getTexture(0));
         Assertions.assertTrue(scene.getTexture(0).getName().equals("<unreadable>"));
         Assertions.assertEquals(1, scene.getNumMaterials());
-        Assertions.assertTrue(scene.getMaterial(0) instanceof UniformMaterial);
-        Assertions.assertTrue(scene.getMaterial(0).getName().equals("<unreadable>"));
+        Assertions.assertInstanceOf(UniformMaterial.class, scene.getMaterial(0));
+        Assertions.assertEquals("<unreadable>", scene.getMaterial(0).getName());
         Assertions.assertFalse(scene.getErrors().isEmpty());
     }
 
@@ -283,10 +280,10 @@ class SceneLoadTest {
         }
         Scene scene = new Scene(StreamUtil.stream(wrap), true);
         Assertions.assertEquals(1, scene.getNumTextures());
-        Assertions.assertTrue(scene.getTexture(0) instanceof LoadableTexture);
+        Assertions.assertInstanceOf(LoadableTexture.class, scene.getTexture(0));
         Assertions.assertEquals(1, scene.getNumMaterials());
-        Assertions.assertTrue(scene.getMaterial(0) instanceof UniformMaterial);
-        Assertions.assertTrue(scene.getMaterial(0).getName().equals("<unreadable>"));
+        Assertions.assertInstanceOf(UniformMaterial.class, scene.getMaterial(0));
+        Assertions.assertEquals("<unreadable>", scene.getMaterial(0).getName());
         Assertions.assertFalse(scene.getErrors().isEmpty());
     }
 

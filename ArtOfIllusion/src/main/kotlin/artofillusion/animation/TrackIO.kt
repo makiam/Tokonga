@@ -43,9 +43,9 @@ object TrackIO {
 
     @Throws(IOException::class)
     fun readTracksV6(input: DataInputStream, scene: Scene, owner: ObjectInfo, tracks: Int) {
-        val bus = EventBus.getDefault()
-        var trackClassName = "";
-        var dataSize = 0
+
+        var trackClassName: String
+        var dataSize: Int
         var data: ByteArray;
         var track: Track<*>
 
@@ -57,7 +57,7 @@ object TrackIO {
                 data = ByteArray(dataSize)
                 input.readFully(data)
             } catch (ioe: IOException) {
-                throw ioe;
+                throw ioe
             }
             //Now try to discover Track. On exception, we cannot recover track, but can bypass it
             try {
@@ -69,14 +69,14 @@ object TrackIO {
                 val tc: Constructor<*>  = trackClass.getConstructor(ObjectInfo::class.java)
                 track = tc.newInstance(owner) as Track<*>
 
-            } catch (roe: ReflectiveOperationException) {
+            } catch (_: ReflectiveOperationException) {
                 bus.post(BypassEvent(scene, "Scene camera filter: $trackClassName was not found"))
                 continue
             }
             //On exception, we cannot recover track, but can bypass it
             try {
                 track.initFromStream(DataInputStream(ByteArrayInputStream(data)), scene)
-            } catch (ioe: IOException) {
+            } catch (_: IOException) {
                 bus.post(BypassEvent(scene, "Track: $trackClassName  initialization error"))
                 continue
             }
@@ -87,13 +87,10 @@ object TrackIO {
     @Throws(IOException::class, Exception::class)
     fun readTracksV5(input: DataInputStream, scene: Scene, owner: ObjectInfo, tracks: Int) {
         for(i in 0 until tracks) {
-            var className = readString(input)
+            val className = readString(input)
             try {
-                val clazz = ArtOfIllusion.getClass(className)
-                if(clazz == null) {
-                    throw IOException("Unknown Track class $className")
-                }
-                val tc: Constructor<*>  = clazz.getConstructor(ObjectInfo::class.java);
+                val clazz = ArtOfIllusion.getClass(className) ?: throw IOException("Unknown Track class $className")
+                val tc: Constructor<*>  = clazz.getConstructor(ObjectInfo::class.java)
                 val track: Track<*> = tc.newInstance(owner) as Track<*>
                 track.initFromStream(input, scene)
                 owner.addTrack(track)
@@ -112,8 +109,4 @@ object TrackIO {
     @Throws(IOException::class)
     fun readString(input: DataInputStream): String = input.readUTF()
 
-    @Throws(IOException::class)
-    fun writeClass(output: DataOutputStream, item: Any) {
-        output.writeUTF(item.javaClass.name)
-    }
 }

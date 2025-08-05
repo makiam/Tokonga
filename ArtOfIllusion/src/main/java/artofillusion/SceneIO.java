@@ -11,13 +11,11 @@
 
 package artofillusion;
 
-import artofillusion.animation.Track;
 import artofillusion.image.ImageMap;
 import artofillusion.material.Material;
 import artofillusion.texture.Texture;
 import artofillusion.util.SearchlistClassLoader;
 import lombok.AccessLevel;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
