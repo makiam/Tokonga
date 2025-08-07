@@ -133,7 +133,9 @@ distributions {
     
 }
 
-installMacDist.dependsOn subprojects.jar
+task installMacDist {
+    dependsOn allprojects*.tasks*.withType(Jar)
+}
 
 //This section suppresses TAR file generation
 tasks.withType(Tar) {
