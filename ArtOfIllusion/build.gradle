@@ -91,7 +91,7 @@ createExe {
 
 assemble.dependsOn subprojects.jar, createExe
 installDist.dependsOn subprojects.jar, createExe
-installMacDist.dependsOn subprojects.jar
+
 distZip.dependsOn subprojects.jar, createExe
 
 
@@ -132,6 +132,8 @@ distributions {
     }
     
 }
+
+installMacDist.dependsOn subprojects.jar
 
 //This section suppresses TAR file generation
 tasks.withType(Tar) {
