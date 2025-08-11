@@ -565,27 +565,13 @@ public class SceneCamera extends Object3D {
         out.writeInt(filters.size());
         log.debug("Scene camera writes filters: {}", filters.size());
         for (var filter: filters) {
-            SceneCamera.writeFilterBuffered(out, filter, scene);
+            SceneCamera.writeFilter(out, filter, scene);
         }
     }
 
-    private static void writeFilter(DataOutputStream out, ImageFilter filter, Scene scene, boolean buffered) throws IOException {
-        var fc = filter.getClass().getName();
-        out.writeUTF(fc);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        filter.writeToStream(new DataOutputStream(bos), scene);
-        byte[] ba = bos.toByteArray();
-        var size = ba.length;
-        if(buffered) out.writeInt(size);
-        out.write(ba, 0, size);
-    }
-
-    private static void writeFilterDirect(DataOutputStream out, ImageFilter filter, Scene scene) throws IOException {
-        writeFilter(out, filter, scene, false);
-    }
-
-    private static void writeFilterBuffered(DataOutputStream out, ImageFilter filter, Scene scene) throws IOException {
-        writeFilter(out, filter, scene, true);
+    private static void writeFilter(DataOutputStream out, ImageFilter filter, Scene scene) throws IOException {
+        SceneIO.writeClass(out, filter);
+        SceneIO.writeBuffered(out, target -> filter.writeToStream(target, scene));
     }
 
     @Override
