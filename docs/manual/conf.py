@@ -58,7 +58,7 @@ master_doc = 'index'
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -102,7 +102,7 @@ html_sidebars = {'**': ['globaltoc.html', 'relations.html', 'searchbox.html']}
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'ArtofIllusiondoc'
-
+app_doc_Name = 'Art Of Illusion Documentation'
 
 # -- Options for LaTeX output ------------------------------------------------
 
@@ -128,7 +128,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'ArtofIllusion.tex', 'Art of Illusion Documentation',
+    (master_doc, 'ArtofIllusion.tex', app_doc_Name,
      'Julian MacDonald and Peter Eastman', 'manual'),
 ]
 
@@ -138,7 +138,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'artofillusion', 'Art of Illusion Documentation',
+    (master_doc, 'artofillusion', app_doc_Name,
      [author], 1)
 ]
 
