@@ -23,6 +23,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -400,9 +402,16 @@ public class SceneCamera extends Object3D {
         // If there are any Pose tracks for this object, they need to have their subtracks updated
         // to reflect the current list of filters.
 
+        List<ObjectInfo> ci = SceneCamera.getCameraInstances(parent.getScene(), this);
+        ci.forEach(item -> {
+            Arrays.stream(item.getTracks()).filter(PoseTrack.class::isInstance).map(track -> (PoseTrack)track).peek(pt -> {
+
+            });
+        });
+
         for (ObjectInfo oi: parent.getScene().getObjects()) {
             if (oi.getObject() == this) {
-                // This ObjectInfo corresponds to this SceneCamera.  Check each of its tracks.
+                // This ObjectInfo's corresponds to this SceneCamera.  Check each of its tracks.
 
 
                 for (Track<?> track: oi.getTracks()) {
@@ -433,6 +442,14 @@ public class SceneCamera extends Object3D {
             ((LayoutWindow) parent).getScore().rebuildList();
         }
         cb.run();
+    }
+
+    private static void updatePoseSubTracks(ObjectInfo objectInfo) {
+    }
+
+    static Function<Track, PoseTrack>  ttp = track -> (PoseTrack)track;
+    private static List<ObjectInfo> getCameraInstances(Scene scene, SceneCamera camera) {
+        return  scene.getObjects().stream().filter(item -> item.getObject() == camera).collect(Collectors.toList());
     }
 
     /* The following two methods are used for reading and writing files.  The first is a
