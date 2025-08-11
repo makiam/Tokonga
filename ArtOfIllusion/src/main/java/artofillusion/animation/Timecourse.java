@@ -13,22 +13,23 @@ package artofillusion.animation;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.function.BiFunction;
 /**
  * This class represents a quantity which changes as a function of time. It is defined by
  * a series of timepoints, with a value at each one. There is also a {@link Smoothness} value for
  * each timepoint, which affects how it is interpolated.
  */
-public class Timecourse {
+public class Timecourse<T extends Keyframe> implements BiFunction<Double, Integer, T> {
 
     private static final double TIME_EQUALITY_THRESHOLD = 1e-10;
 
     private final List<TimePoint> points = new ArrayList<>();
 
-    private double[] time;
+    private double[] time = new double[0];
+
     private Smoothness[] smoothness;
     private Keyframe[] value;
-    private boolean subdivideAdaptively;
+    private boolean subdivideAdaptively = true;
 
     public static final int DISCONTINUOUS = 0;
     public static final int LINEAR = 1;
@@ -37,11 +38,13 @@ public class Timecourse {
 
     private static final int FIXED_SUBDIVISION_LEVELS = 7;
 
+    public Timecourse() {
+    }
+
     public Timecourse(Keyframe[] value, double[] time, Smoothness[] smoothness) {
         this.value = value;
         this.time = time;
         this.smoothness = smoothness;
-        subdivideAdaptively = true;
     }
 
     /**
@@ -507,6 +510,11 @@ public class Timecourse {
         v2[6] = approx.value;
         t2[6] = approx.time;
         s2[6] = approx.smoothness;
+    }
+
+    @Override
+    public T apply(Double time, Integer method) {
+        return (T) this.evaluate(time, method);
     }
 
     private static class TimePoint {
