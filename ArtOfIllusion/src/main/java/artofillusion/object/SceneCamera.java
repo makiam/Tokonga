@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * SceneCamera is a type of Object3D. It represents a camera which the user can position
@@ -404,8 +405,10 @@ public class SceneCamera extends Object3D {
 
         List<ObjectInfo> ci = SceneCamera.getCameraInstances(parent.getScene(), this);
         ci.forEach(item -> {
-            Arrays.stream(item.getTracks()).filter(PoseTrack.class::isInstance).map(track -> (PoseTrack)track).peek(pt -> {
-
+            Arrays.stream(item.getTracks()).filter(PoseTrack.class::isInstance).map(PoseTrack.class::cast).forEach(track -> {
+                var spt = track.getSubtracks();
+                log.info("Pose track subtracks: {}", spt.length);
+                Arrays.stream(spt).forEach(st -> log.info("Subtrack {}", st.getName()));
             });
         });
 
@@ -442,9 +445,6 @@ public class SceneCamera extends Object3D {
             ((LayoutWindow) parent).getScore().rebuildList();
         }
         cb.run();
-    }
-
-    private static void updatePoseSubTracks(ObjectInfo objectInfo) {
     }
 
     static Function<Track, PoseTrack>  ttp = track -> (PoseTrack)track;
@@ -488,7 +488,7 @@ public class SceneCamera extends Object3D {
 
     }
     private static void loadFiltersV4(DataInputStream in, Scene scene, SceneCamera owner, int count) throws IOException {
-        var bus = org.greenrobot.eventbus.EventBus.getDefault();
+        var bus = EventBus.getDefault();
 
         var filterClassName = "";
         var filterDataSize = 0;
@@ -590,8 +590,9 @@ public class SceneCamera extends Object3D {
                 return focalDist;
             case 3:
                 return perspective;
+            default:
+                return null;
         }
-        return null;
     }
 
     @Override
