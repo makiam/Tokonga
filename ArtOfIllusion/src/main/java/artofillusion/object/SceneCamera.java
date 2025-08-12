@@ -59,7 +59,8 @@ public class SceneCamera extends Object3D {
         new Property(Translate.text("Perspective"), true),};
 
     static {
-        double[] sine, cosine;
+        double[] sine;
+        double[] cosine;
         int i;
         int[] t;
         int[] f;
@@ -450,7 +451,7 @@ public class SceneCamera extends Object3D {
         cb.run();
     }
 
-    static Function<Track, PoseTrack>  ttp = track -> (PoseTrack)track;
+
     private static List<ObjectInfo> getCameraInstances(Scene scene, SceneCamera camera) {
         return  scene.getObjects().stream().filter(item -> item.getObject() == camera).collect(Collectors.toList());
     }
@@ -613,7 +614,7 @@ public class SceneCamera extends Object3D {
 
     /* Return a Keyframe which describes the current pose of this object. */
     @Override
-    public Keyframe getPoseKeyframe() {
+    public Keyframe<?> getPoseKeyframe() {
         return new CameraKeyframe(fov, depthOfField, focalDist);
     }
 
@@ -645,7 +646,7 @@ public class SceneCamera extends Object3D {
 
     /* Allow the user to edit a keyframe returned by getPoseKeyframe(). */
     @Override
-    public void editKeyframe(EditingWindow parent, Keyframe k, ObjectInfo info) {
+    public void editKeyframe(EditingWindow parent, Keyframe<?> k, ObjectInfo info) {
         CameraKeyframe key = (CameraKeyframe) k;
         ValueSlider fovSlider = new ValueSlider(0.0, 180.0, 90, key.fov);
         ValueField dofField = new ValueField(key.depthOfField, ValueField.POSITIVE);

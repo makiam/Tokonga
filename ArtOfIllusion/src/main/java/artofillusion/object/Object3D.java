@@ -41,7 +41,7 @@ public abstract class Object3D {
     public static final int EXACTLY = 1;
     public static final int APPROXIMATELY = 2;
 
-    public Object3D() {
+    protected Object3D() {
     }
 
     /**
@@ -445,7 +445,7 @@ public abstract class Object3D {
         }
     }
 
-    public Object3D(DataInputStream in, Scene theScene) throws IOException {
+    protected Object3D(DataInputStream in, Scene theScene) throws IOException {
         short version = in.readShort();
 
         if (version < 0 || version > 1) {
@@ -554,7 +554,7 @@ public abstract class Object3D {
     /**
      * Modify this object based on a pose keyframe.
      */
-    public abstract void applyPoseKeyframe(Keyframe k);
+    public abstract void applyPoseKeyframe(Keyframe<?> k);
 
     /**
      * This will be called whenever a new pose track is created for this object. It allows
@@ -567,8 +567,9 @@ public abstract class Object3D {
     /**
      * Allow the user to edit a keyframe returned by getPoseKeyframe().
      */
-    public void editKeyframe(EditingWindow parent, Keyframe k, ObjectInfo info) {
-        new BStandardDialog("", Translate.text("noParamsForKeyframe"), BStandardDialog.INFORMATION).showMessageDialog((Widget) parent);
+    @SuppressWarnings("java:S1172")
+    public void editKeyframe(EditingWindow parent, Keyframe<?> k, ObjectInfo info) {
+        MessageDialog.create().withOwner(parent.getFrame().getComponent()).info(Translate.text("noParamsForKeyframe"));
     }
 
     /**

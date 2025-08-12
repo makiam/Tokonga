@@ -20,7 +20,7 @@ import java.io.*;
  * reconstructs the keyframe from its serialized representation.
  * public KeyframeClass(DataInputStream in, Object parent) throws IOException, InvalidObjectException
  */
-public interface Keyframe<K extends Keyframe> {
+public interface Keyframe<K extends Keyframe<K>> {
 
     /**
      * Create a duplicate of this keyframe.
