@@ -1557,7 +1557,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         new NavigateNextKeyEdit(this).execute();
     }
 
-    private void backKeyAction() {
+    private void backKeyAction() {;
         new NavigateBackKeyEdit(this).execute();
     }
 
