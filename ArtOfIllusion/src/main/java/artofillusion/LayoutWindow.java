@@ -44,6 +44,7 @@ import javax.swing.text.*;
  * scenes.
  */
 @Slf4j
+@SuppressWarnings("java:S1121")
 public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuManager {
 
 
@@ -719,7 +720,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         animationMenu.add(animationMenuItem[11] = Translate.menuItem("bindToParent", event -> bindToParentCommand()));
         animationMenu.addSeparator();
         animationMenu.add(Translate.menuItem("forwardFrame", event -> forwardFrameAction()));
-        animationMenu.add(Translate.menuItem("backFrame", event -> backFrameAction()));
+        animationMenu.add(Translate.menuItem("backFrame", event ->  backFrameAction()));
+        animationMenu.add(Translate.menuItem("forwardKey", event -> forwardKeyAction()));
+        animationMenu.add(Translate.menuItem("backKey", event -> backKeyAction()));
         animationMenu.add(Translate.menuItem("jumpToTime", event -> jumpToTimeCommand()));
         animationMenu.addSeparator();
         animationMenu.add(Translate.menuItem("previewAnimation", event -> previewAnimationAction()));
@@ -1197,8 +1200,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     public void setTime(double time) {
         theScene.setTime(time);
         score.setTime(time);
-        score.repaint();
-        sceneExplorer.repaint();
+
         for (SceneViewer view : theView) {
             view.viewChanged(false);
         }
@@ -1549,6 +1551,14 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     private void backFrameAction() {
         setTime(theScene.getTime() - 1.0 / theScene.getFramesPerSecond());
+    }
+
+    private void forwardKeyAction() {
+        new NavigateNextKeyEdit(this).execute();
+    }
+
+    private void backKeyAction() {
+        new NavigateBackKeyEdit(this).execute();
     }
 
     private void bulkEditKeyframeAction(int mode) {
