@@ -14,7 +14,7 @@ package artofillusion.animation;
 
 import java.io.*;
 
-public class ArrayKeyframe implements Keyframe {
+public class ArrayKeyframe implements Keyframe<ArrayKeyframe> {
 
     public double[] val;
 
@@ -23,12 +23,12 @@ public class ArrayKeyframe implements Keyframe {
     }
 
     @Override
-    public Keyframe duplicate() {
+    public ArrayKeyframe duplicate() {
         return new ArrayKeyframe(val);
     }
 
     @Override
-    public Keyframe duplicate(Object owner) {
+    public ArrayKeyframe duplicate(Object owner) {
         return new ArrayKeyframe(val);
     }
 
@@ -46,37 +46,31 @@ public class ArrayKeyframe implements Keyframe {
     }
 
     @Override
-    public Keyframe blend(Keyframe o2, double weight1, double weight2) {
+    public ArrayKeyframe blend(ArrayKeyframe o2, double weight1, double weight2) {
         double[] d = new double[val.length];
-        ArrayKeyframe key2 = (ArrayKeyframe) o2;
 
         for (int i = 0; i < val.length; i++) {
-            d[i] = (weight1 * val[i] + weight2 * key2.val[i]);
+            d[i] = (weight1 * val[i] + weight2 * o2.val[i]);
         }
         return new ArrayKeyframe(d);
     }
 
     @Override
-    public Keyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3) {
+    public ArrayKeyframe blend(ArrayKeyframe o2, ArrayKeyframe o3, double weight1, double weight2, double weight3) {
         double[] d = new double[val.length];
-        ArrayKeyframe key2 = (ArrayKeyframe) o2;
-        ArrayKeyframe key3 = (ArrayKeyframe) o3;
 
         for (int i = 0; i < val.length; i++) {
-            d[i] = (weight1 * val[i] + weight2 * key2.val[i] + weight3 * key3.val[i]);
+            d[i] = (weight1 * val[i] + weight2 * o2.val[i] + weight3 * o3.val[i]);
         }
         return new ArrayKeyframe(d);
     }
 
     @Override
-    public Keyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4) {
+    public ArrayKeyframe blend(ArrayKeyframe o2, ArrayKeyframe o3, ArrayKeyframe o4, double weight1, double weight2, double weight3, double weight4) {
         double[] d = new double[val.length];
-        ArrayKeyframe key2 = (ArrayKeyframe) o2;
-        ArrayKeyframe key3 = (ArrayKeyframe) o3;
-        ArrayKeyframe key4 = (ArrayKeyframe) o4;
 
         for (int i = 0; i < val.length; i++) {
-            d[i] = (weight1 * val[i] + weight2 * key2.val[i] + weight3 * key3.val[i] + weight4 * key4.val[i]);
+            d[i] = (weight1 * val[i] + weight2 * o2.val[i] + weight3 * o3.val[i] + weight4 * o4.val[i]);
         }
         return new ArrayKeyframe(d);
     }

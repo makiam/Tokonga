@@ -662,7 +662,7 @@ public class SceneCamera extends Object3D {
     }
 
     /* Inner class representing a pose for a Scene Camera */
-    public static class CameraKeyframe implements Keyframe {
+    public static class CameraKeyframe implements Keyframe<CameraKeyframe> {
 
         public double fov, depthOfField, focalDist;
 
@@ -701,16 +701,14 @@ public class SceneCamera extends Object3D {
         /* These methods return a new Keyframe which is a weighted average of this one and one,
        two, or three others. */
         @Override
-        public CameraKeyframe blend(Keyframe o2, double weight1, double weight2) {
-            CameraKeyframe k2 = (CameraKeyframe) o2;
+        public CameraKeyframe blend(CameraKeyframe k2, double weight1, double weight2) {
 
             return new CameraKeyframe(weight1 * fov + weight2 * k2.fov, weight1 * depthOfField + weight2 * k2.depthOfField,
                     weight1 * focalDist + weight2 * k2.focalDist);
         }
 
         @Override
-        public CameraKeyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3) {
-            CameraKeyframe k2 = (CameraKeyframe) o2, k3 = (CameraKeyframe) o3;
+        public CameraKeyframe blend(CameraKeyframe k2, CameraKeyframe k3, double weight1, double weight2, double weight3) {
 
             return new CameraKeyframe(weight1 * fov + weight2 * k2.fov + weight3 * k3.fov,
                     weight1 * depthOfField + weight2 * k2.depthOfField + weight3 * k3.depthOfField,
@@ -718,8 +716,7 @@ public class SceneCamera extends Object3D {
         }
 
         @Override
-        public CameraKeyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4) {
-            CameraKeyframe k2 = (CameraKeyframe) o2, k3 = (CameraKeyframe) o3, k4 = (CameraKeyframe) o4;
+        public CameraKeyframe blend(CameraKeyframe k2, CameraKeyframe k3, CameraKeyframe k4, double weight1, double weight2, double weight3, double weight4) {
 
             return new CameraKeyframe(weight1 * fov + weight2 * k2.fov + weight3 * k3.fov + weight4 * k4.fov,
                     weight1 * depthOfField + weight2 * k2.depthOfField + weight3 * k3.depthOfField + weight4 * k4.depthOfField,

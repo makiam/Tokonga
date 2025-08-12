@@ -20,17 +20,17 @@ import java.io.*;
  * reconstructs the keyframe from its serialized representation.
  * public KeyframeClass(DataInputStream in, Object parent) throws IOException, InvalidObjectException
  */
-public interface Keyframe {
+public interface Keyframe<K extends Keyframe> {
 
     /**
      * Create a duplicate of this keyframe.
      */
-    Keyframe duplicate();
+    K duplicate();
 
     /**
      * Create a duplicate of this keyframe for a (possibly different) object.
      */
-    Keyframe duplicate(Object owner);
+    K duplicate(Object owner);
 
     /**
      * Get the list of graphable values for this keyframe.
@@ -48,17 +48,17 @@ public interface Keyframe {
     /**
      * Return a new Keyframe which is a weighted average of this one and one other.
      */
-    Keyframe blend(Keyframe o2, double weight1, double weight2);
+    K blend(K o2, double weight1, double weight2);
 
     /**
      * Return a new Keyframe which is a weighted average of this one and two others.
      */
-    Keyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3);
+    K blend(K o2, K o3, double weight1, double weight2, double weight3);
 
     /**
      * Return a new Keyframe which is a weighted average of this one and three others.
      */
-    Keyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4);
+    K blend(K o2, K o3, K o4, double weight1, double weight2, double weight3, double weight4);
 
     /**
      * Determine whether this keyframe is identical to another one.
