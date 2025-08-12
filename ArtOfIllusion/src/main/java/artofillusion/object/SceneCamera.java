@@ -403,11 +403,11 @@ public class SceneCamera extends Object3D {
         // If there are any Pose tracks for this object, they need to have their subtracks updated
         // to reflect the current list of filters.
 
-        List<ObjectInfo> ci = SceneCamera.getCameraInstances(parent.getScene(), this);
+        var ci = SceneCamera.getCameraInstances(parent.getScene(), this);
         ci.forEach(item -> {
-            Arrays.stream(item.getTracks()).filter(PoseTrack.class::isInstance).map(PoseTrack.class::cast).forEach(track -> {
-                var spt = track.getSubtracks();
-                log.info("Pose track subtracks: {}", spt.length);
+            Arrays.stream(item.getTracks()).filter(PoseTrack.class::isInstance).map(PoseTrack.class::cast).forEach(pose -> {
+                var spt = pose.getSubtracks();
+                log.debug("Pose track subtracks: {}", spt.length);
                 Arrays.stream(spt).forEach(st -> log.info("Subtrack {}", st.getName()));
             });
         });
@@ -422,17 +422,20 @@ public class SceneCamera extends Object3D {
                         // This is a Pose track, so update its subtracks.
 
                         PoseTrack pose = (PoseTrack) track;
-                        Track[] old = pose.getSubtracks();
+                        var spt = pose.getSubtracks();
                         Track[] newtracks = new Track[filters.size()];
                         for (int k = 0; k < filters.size(); k++) {
-                            Track existing = null;
-                            for (int m = 0; m < old.length && existing == null; m++) {
-                                if (old[m] instanceof FilterParameterTrack && ((FilterParameterTrack) old[m]).getFilter() == filters.get(k)) {
-                                    existing = old[m];
+                            Track<?> existing = null;
+                            ImageFilter fk = filters.get(k);
+
+                            for (int m = 0; m < spt.length && existing == null; m++) {
+                                var subTrack = spt[m];
+                                if (subTrack instanceof FilterParameterTrack && ((FilterParameterTrack) subTrack).getFilter() == fk) {
+                                    existing = subTrack;
                                 }
                             }
                             if (existing == null) {
-                                existing = new FilterParameterTrack(pose, filters.get(k));
+                                existing = new FilterParameterTrack(pose, fk);
                             }
                             newtracks[k] = existing;
                         }
