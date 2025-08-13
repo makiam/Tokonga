@@ -17,7 +17,8 @@ public final class NavigateNextKeyEdit implements UndoableEdit {
 
     @Override
     public void redo() {
-        layout.getScore().getSelectedTracks();
+        var st = layout.getScore().getSelectedTracks();
+        if(st.length == 0) return;
     }
 
     @Override

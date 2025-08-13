@@ -218,13 +218,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * Get the currently selected tracks.
      */
     public Track[] getSelectedTracks() {
-        Object[] obj = theList.getSelectedObjects();
-        Track[] tr = new Track[obj.length];
-
-        for (int i = 0; i < tr.length; i++) {
-            tr[i] = (Track) obj[i];
-        }
-        return tr;
+        return Arrays.stream(theList.getSelectedObjects()).map(Track.class::cast).toArray(Track[]::new);
     }
 
     /**
