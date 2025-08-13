@@ -16,37 +16,37 @@ import java.io.*;
  * This is a keyframes which contains no information. It is occasionally useful as a
  * placeholder.
  */
-public class NullKeyframe implements Keyframe {
+public class NullKeyframe implements Keyframe<NullKeyframe> {
 
     public NullKeyframe() {
     }
 
     /* Create a duplicate of this keyframe. */
     @Override
-    public Keyframe duplicate() {
+    public NullKeyframe duplicate() {
         return new NullKeyframe();
     }
 
     /* Create a duplicate of this keyframe for a (possibly different) object. */
     @Override
-    public Keyframe duplicate(Object owner) {
+    public NullKeyframe duplicate(Object owner) {
         return new NullKeyframe();
     }
 
     /* These methods return a new Keyframe which is a weighted average of this one and one,
      two, or three others. */
     @Override
-    public Keyframe blend(Keyframe o2, double weight1, double weight2) {
+    public NullKeyframe blend(NullKeyframe o2, double weight1, double weight2) {
         return new NullKeyframe();
     }
 
     @Override
-    public Keyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3) {
+    public NullKeyframe blend(NullKeyframe o2, NullKeyframe o3, double weight1, double weight2, double weight3) {
         return new NullKeyframe();
     }
 
     @Override
-    public Keyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4) {
+    public NullKeyframe blend(NullKeyframe o2, NullKeyframe o3, NullKeyframe o4, double weight1, double weight2, double weight3, double weight4) {
         return new NullKeyframe();
     }
 

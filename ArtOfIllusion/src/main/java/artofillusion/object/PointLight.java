@@ -235,8 +235,9 @@ public class PointLight extends Light {
                 return radius;
             case 4:
                 return PROPERTIES[index].getAllowedValues()[type];
+            default:
+                return null;
         }
-        return null;
     }
 
     @Override
@@ -323,7 +324,7 @@ public class PointLight extends Light {
     /**
      * Inner class representing a pose for a cylinder.
      */
-    public static class PointLightKeyframe implements Keyframe {
+    public static class PointLightKeyframe implements Keyframe<PointLightKeyframe> {
 
         public final RGBColor color;
         public float intensity, decayRate;
@@ -340,7 +341,7 @@ public class PointLight extends Light {
          * Create a duplicate of this keyframe.
          */
         @Override
-        public Keyframe duplicate() {
+        public PointLightKeyframe duplicate() {
             return new PointLightKeyframe(color, intensity, decayRate, radius);
         }
 
@@ -348,7 +349,7 @@ public class PointLight extends Light {
          * Create a duplicate of this keyframe for a (possibly different) object.
          */
         @Override
-        public Keyframe duplicate(Object owner) {
+        public PointLightKeyframe duplicate(Object owner) {
             return duplicate();
         }
 
@@ -375,8 +376,7 @@ public class PointLight extends Light {
          * two, or three others.
          */
         @Override
-        public Keyframe blend(Keyframe o2, double weight1, double weight2) {
-            PointLightKeyframe k2 = (PointLightKeyframe) o2;
+        public PointLightKeyframe blend(PointLightKeyframe k2, double weight1, double weight2) {
             RGBColor c = new RGBColor(weight1 * color.getRed() + weight2 * k2.color.getRed(),
                     weight1 * color.getGreen() + weight2 * k2.color.getGreen(),
                     weight1 * color.getBlue() + weight2 * k2.color.getBlue());
@@ -386,8 +386,7 @@ public class PointLight extends Light {
         }
 
         @Override
-        public Keyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3) {
-            PointLightKeyframe k2 = (PointLightKeyframe) o2, k3 = (PointLightKeyframe) o3;
+        public PointLightKeyframe blend(PointLightKeyframe k2, PointLightKeyframe k3, double weight1, double weight2, double weight3) {
             RGBColor c = new RGBColor(weight1 * color.getRed() + weight2 * k2.color.getRed() + weight3 * k3.color.getRed(),
                     weight1 * color.getGreen() + weight2 * k2.color.getGreen() + weight3 * k3.color.getGreen(),
                     weight1 * color.getBlue() + weight2 * k2.color.getBlue() + weight3 * k3.color.getBlue());
@@ -397,8 +396,7 @@ public class PointLight extends Light {
         }
 
         @Override
-        public Keyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4) {
-            PointLightKeyframe k2 = (PointLightKeyframe) o2, k3 = (PointLightKeyframe) o3, k4 = (PointLightKeyframe) o4;
+        public PointLightKeyframe blend(PointLightKeyframe k2, PointLightKeyframe k3, PointLightKeyframe k4, double weight1, double weight2, double weight3, double weight4) {
             RGBColor c = new RGBColor(weight1 * color.getRed() + weight2 * k2.color.getRed() + weight3 * k3.color.getRed() + weight4 * k4.color.getRed(),
                     weight1 * color.getGreen() + weight2 * k2.color.getGreen() + weight3 * k3.color.getGreen() + weight4 * k4.color.getGreen(),
                     weight1 * color.getBlue() + weight2 * k2.color.getBlue() + weight3 * k3.color.getBlue() + weight4 * k4.color.getBlue());

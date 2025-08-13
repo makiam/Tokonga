@@ -1,7 +1,5 @@
-/* This class is a boolean valued keyframe. */
-
- /* Copyright (C) 2001-2002 by Peter Eastman
-
+/* Copyright (C) 2001-2002 by Peter Eastman
+   Changes copyright (C) 2025 by Maksim Khramov
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
@@ -9,11 +7,12 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion.animation;
 
 import java.io.*;
 
-public class BooleanKeyframe implements Keyframe {
+public class BooleanKeyframe implements Keyframe<BooleanKeyframe> {
 
     public boolean val;
 
@@ -22,12 +21,12 @@ public class BooleanKeyframe implements Keyframe {
     }
 
     @Override
-    public Keyframe duplicate() {
+    public BooleanKeyframe duplicate() {
         return new BooleanKeyframe(val);
     }
 
     @Override
-    public Keyframe duplicate(Object owner) {
+    public BooleanKeyframe duplicate(Object owner) {
         return new BooleanKeyframe(val);
     }
 
@@ -46,24 +45,24 @@ public class BooleanKeyframe implements Keyframe {
     }
 
     @Override
-    public Keyframe blend(Keyframe o2, double weight1, double weight2) {
+    public BooleanKeyframe blend(BooleanKeyframe o2, double weight1, double weight2) {
         if (weight1 < 1e-10) {
-            return new BooleanKeyframe(((BooleanKeyframe) o2).val);
+            return new BooleanKeyframe(o2.val);
         }
         return new BooleanKeyframe(val);
     }
 
     @Override
-    public Keyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3) {
-        return new BooleanKeyframe(((BooleanKeyframe) o2).val);
+    public BooleanKeyframe blend(BooleanKeyframe o2, BooleanKeyframe o3, double weight1, double weight2, double weight3) {
+        return new BooleanKeyframe(o2.val);
     }
 
     @Override
-    public Keyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4) {
+    public BooleanKeyframe blend(BooleanKeyframe o2, BooleanKeyframe o3, BooleanKeyframe o4, double weight1, double weight2, double weight3, double weight4) {
         if (weight2 < 1e-10) {
-            return new BooleanKeyframe(((BooleanKeyframe) o3).val);
+            return new BooleanKeyframe(o3.val);
         }
-        return new BooleanKeyframe(((BooleanKeyframe) o2).val);
+        return new BooleanKeyframe(o2.val);
     }
 
     /* Determine whether this keyframe is identical to another one. */
