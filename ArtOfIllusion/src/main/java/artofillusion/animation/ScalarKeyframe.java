@@ -1,4 +1,5 @@
 /* Copyright (C) 2001-2002 by Peter Eastman
+   Changes copyright (C) 2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -15,7 +16,7 @@ import java.io.*;
 /**
  * This class is a scalar valued keyframe.
  */
-public class ScalarKeyframe implements Keyframe {
+public class ScalarKeyframe implements Keyframe<ScalarKeyframe> {
 
     public double val;
 
@@ -24,12 +25,12 @@ public class ScalarKeyframe implements Keyframe {
     }
 
     @Override
-    public Keyframe duplicate() {
+    public ScalarKeyframe duplicate() {
         return new ScalarKeyframe(val);
     }
 
     @Override
-    public Keyframe duplicate(Object owner) {
+    public ScalarKeyframe duplicate(Object owner) {
         return new ScalarKeyframe(val);
     }
 
@@ -52,23 +53,18 @@ public class ScalarKeyframe implements Keyframe {
     }
 
     @Override
-    public Keyframe blend(Keyframe o2, double weight1, double weight2) {
-        return new ScalarKeyframe(weight1 * val + weight2 * ((ScalarKeyframe) o2).val);
+    public ScalarKeyframe blend(ScalarKeyframe o2, double weight1, double weight2) {
+        return new ScalarKeyframe(weight1 * val + weight2 * o2.val);
     }
 
     @Override
-    public Keyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3) {
-        return new ScalarKeyframe(weight1 * val
-                + weight2 * ((ScalarKeyframe) o2).val
-                + weight3 * ((ScalarKeyframe) o3).val);
+    public ScalarKeyframe blend(ScalarKeyframe o2, ScalarKeyframe o3, double weight1, double weight2, double weight3) {
+        return new ScalarKeyframe(weight1 * val + weight2 * o2.val + weight3 * o3.val);
     }
 
     @Override
-    public Keyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4) {
-        return new ScalarKeyframe(weight1 * val
-                + weight2 * ((ScalarKeyframe) o2).val
-                + weight3 * ((ScalarKeyframe) o3).val
-                + weight4 * ((ScalarKeyframe) o4).val);
+    public ScalarKeyframe blend(ScalarKeyframe o2, ScalarKeyframe o3, ScalarKeyframe o4, double weight1, double weight2, double weight3, double weight4) {
+        return new ScalarKeyframe(weight1 * val + weight2 * o2.val + weight3 * o3.val + weight4 * o4.val);
     }
 
     /**
@@ -94,6 +90,7 @@ public class ScalarKeyframe implements Keyframe {
     /**
      * Reconstructs the keyframe from its serialized representation.
      */
+    @SuppressWarnings("java:S1172")
     public ScalarKeyframe(DataInputStream in, Object parent) throws IOException {
         val = in.readDouble();
     }
