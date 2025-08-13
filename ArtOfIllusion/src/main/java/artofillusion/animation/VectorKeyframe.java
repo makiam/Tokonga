@@ -1,4 +1,5 @@
 /* Copyright (C) 2001-2002 by Peter Eastman
+   Changes copyright (C) 2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -16,7 +17,7 @@ import java.io.*;
 /**
  * This class is a vector valued keyframe.
  */
-public class VectorKeyframe extends Vec3 implements Keyframe {
+public class VectorKeyframe extends Vec3 implements Keyframe<VectorKeyframe> {
 
     public VectorKeyframe() {
         super();
@@ -31,12 +32,12 @@ public class VectorKeyframe extends Vec3 implements Keyframe {
     }
 
     @Override
-    public Keyframe duplicate(Object owner) {
+    public VectorKeyframe duplicate(Object owner) {
         return new VectorKeyframe(this);
     }
 
     @Override
-    public Keyframe duplicate() {
+    public VectorKeyframe duplicate() {
         return new VectorKeyframe(this);
     }
 
@@ -55,15 +56,12 @@ public class VectorKeyframe extends Vec3 implements Keyframe {
     }
 
     @Override
-    public Keyframe blend(Keyframe o2, double weight1, double weight2) {
-        VectorKeyframe v2 = (VectorKeyframe) o2;
-
+    public VectorKeyframe blend(VectorKeyframe v2, double weight1, double weight2) {
         return new VectorKeyframe(weight1 * x + weight2 * v2.x, weight1 * y + weight2 * v2.y, weight1 * z + weight2 * v2.z);
     }
 
     @Override
-    public Keyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3) {
-        VectorKeyframe v2 = (VectorKeyframe) o2, v3 = (VectorKeyframe) o3;
+    public VectorKeyframe blend(VectorKeyframe v2, VectorKeyframe v3, double weight1, double weight2, double weight3) {
 
         return new VectorKeyframe(weight1 * x + weight2 * v2.x + weight3 * v3.x,
                 weight1 * y + weight2 * v2.y + weight3 * v3.y,
@@ -71,8 +69,7 @@ public class VectorKeyframe extends Vec3 implements Keyframe {
     }
 
     @Override
-    public Keyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4) {
-        VectorKeyframe v2 = (VectorKeyframe) o2, v3 = (VectorKeyframe) o3, v4 = (VectorKeyframe) o4;
+    public VectorKeyframe blend(VectorKeyframe v2, VectorKeyframe v3, VectorKeyframe v4, double weight1, double weight2, double weight3, double weight4) {
 
         return new VectorKeyframe(weight1 * x + weight2 * v2.x + weight3 * v3.x + weight4 * v4.x,
                 weight1 * y + weight2 * v2.y + weight3 * v3.y + weight4 * v4.y,
@@ -96,6 +93,7 @@ public class VectorKeyframe extends Vec3 implements Keyframe {
     }
 
     /* Reconstructs the keyframe from its serialized representation. */
+    @SuppressWarnings("java:S1172")
     public VectorKeyframe(DataInputStream in, Object parent) throws IOException {
         super(in);
     }
