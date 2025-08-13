@@ -17,7 +17,7 @@ import java.io.*;
  * This class is a keyframe for a rotation track. It can represent rotations both in
  * terms of rotation angles and in terms of quaternions.
  */
-public class RotationKeyframe implements Keyframe {
+public class RotationKeyframe implements Keyframe<RotationKeyframe> {
 
     public double x, y, z;
     private double[] q;
@@ -174,22 +174,21 @@ public class RotationKeyframe implements Keyframe {
     }
 
     @Override
-    public Keyframe duplicate() {
+    public RotationKeyframe duplicate() {
         RotationKeyframe f = new RotationKeyframe(x, y, z);
         f.setUseQuaternion(useQuaternion);
         return f;
     }
 
     @Override
-    public Keyframe duplicate(Object owner) {
+    public RotationKeyframe duplicate(Object owner) {
         RotationKeyframe f = new RotationKeyframe(x, y, z);
         f.setUseQuaternion(useQuaternion);
         return f;
     }
 
     @Override
-    public Keyframe blend(Keyframe o2, double weight1, double weight2) {
-        RotationKeyframe v2 = (RotationKeyframe) o2;
+    public RotationKeyframe blend(RotationKeyframe v2, double weight1, double weight2) {
         RotationKeyframe r = new RotationKeyframe(weight1 * x + weight2 * v2.x, weight1 * y + weight2 * v2.y, weight1 * z + weight2 * v2.z);
 
         if (!useQuaternion) {
@@ -203,8 +202,7 @@ public class RotationKeyframe implements Keyframe {
     }
 
     @Override
-    public Keyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3) {
-        RotationKeyframe v2 = (RotationKeyframe) o2, v3 = (RotationKeyframe) o3;
+    public RotationKeyframe blend(RotationKeyframe v2, RotationKeyframe v3, double weight1, double weight2, double weight3) {
         RotationKeyframe r = new RotationKeyframe(weight1 * x + weight2 * v2.x + weight3 * v3.x,
                 weight1 * y + weight2 * v2.y + weight3 * v3.y, weight1 * z + weight2 * v2.z + weight3 * v3.z);
 
@@ -226,8 +224,7 @@ public class RotationKeyframe implements Keyframe {
     }
 
     @Override
-    public Keyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4) {
-        RotationKeyframe v2 = (RotationKeyframe) o2, v3 = (RotationKeyframe) o3, v4 = (RotationKeyframe) o4;
+    public RotationKeyframe blend(RotationKeyframe v2, RotationKeyframe v3, RotationKeyframe v4, double weight1, double weight2, double weight3, double weight4) {
         RotationKeyframe r = new RotationKeyframe(weight1 * x + weight2 * v2.x + weight3 * v3.x + weight4 * v4.x,
                 weight1 * y + weight2 * v2.y + weight3 * v3.y + weight4 * v4.y,
                 weight1 * z + weight2 * v2.z + weight3 * v3.z + weight4 * v4.z);
@@ -250,7 +247,8 @@ public class RotationKeyframe implements Keyframe {
      * This performs spherical linear interpolation (slerp) between two quaternions.
      */
     private static double[] slerp(double[] q1, double[] q2, double t) {
-        double dot = q1[0] * q2[0] + q1[1] * q2[1] + q1[2] * q2[2] + q1[3] * q2[3], sign;
+        double dot = q1[0] * q2[0] + q1[1] * q2[1] + q1[2] * q2[2] + q1[3] * q2[3];
+        double sign;
         if (dot < 0.0) {
             dot = -dot;
             sign = -1.0;
