@@ -22,6 +22,7 @@ import artofillusion.material.MaterialMapping;
 import artofillusion.material.UniformMaterial;
 import artofillusion.math.CoordinateSystem;
 import artofillusion.math.Vec3;
+import artofillusion.test.util.TrackTestUtil;
 import artofillusion.texture.Texture;
 import artofillusion.texture.TextureMapping;
 import artofillusion.texture.UniformTexture;
@@ -40,6 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("Object Info Test")
 class ObjectInfoTest {
 
+
+
     /**
      * Test to create new ObjectInfo object with all defaults
      */
@@ -56,7 +59,7 @@ class ObjectInfoTest {
         Assertions.assertNull(test.getParent());
         Assertions.assertNotNull(test.getChildren());
         Assertions.assertEquals(0, test.getChildren().length);
-        Assertions.assertEquals(0,(test.getTracks().length));
+        Assertions.assertEquals(0, TrackTestUtil.getLength(test));
         Assertions.assertNull(test.getDistortion());
     }
 
@@ -82,10 +85,10 @@ class ObjectInfoTest {
         ObjectInfo test = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Test");
         test.addTrack(new PositionTrack(test), 0);
         test.addTrack(new RotationTrack(test), 1);
-        Assertions.assertNotNull(test.getTracks());
-        Assertions.assertEquals(2, test.getTracks().length);
-        Assertions.assertInstanceOf(PositionTrack.class, test.getTracks()[0]);
-        Assertions.assertInstanceOf(RotationTrack.class, test.getTracks()[1]);
+        Assertions.assertNotNull(TrackTestUtil.getTracks(test));
+        Assertions.assertEquals(2, TrackTestUtil.getLength(test));
+        Assertions.assertInstanceOf(PositionTrack.class, TrackTestUtil.getTrack(test, 0));
+        Assertions.assertInstanceOf(RotationTrack.class, TrackTestUtil.getTrack(test, 1));
     }
 
     /**
@@ -129,9 +132,10 @@ class ObjectInfoTest {
         test.addTrack(pTrack, 0);
         test.addTrack(rTrack, 1);
         test.removeTrack(pTrack);
-        Assertions.assertNotNull(test.getTracks());
-        Assertions.assertEquals(1, test.getTracks().length);
-        Assertions.assertInstanceOf(RotationTrack.class, test.getTracks()[0]);
+
+        Assertions.assertNotNull(TrackTestUtil.getTracks(test));
+        Assertions.assertEquals(1, TrackTestUtil.getLength(test));
+        Assertions.assertInstanceOf(RotationTrack.class, TrackTestUtil.getTrack(test, 0));
     }
 
     /**
@@ -146,9 +150,9 @@ class ObjectInfoTest {
         test.addTrack(pTrack, 0);
         test.addTrack(rTrack, 1);
         test.removeTrack(0);
-        Assertions.assertNotNull(test.getTracks());
-        Assertions.assertEquals(1, test.getTracks().length);
-        Assertions.assertInstanceOf(RotationTrack.class, test.getTracks()[0]);
+        Assertions.assertNotNull(TrackTestUtil.getTracks(test));
+        Assertions.assertEquals(1, TrackTestUtil.getLength(test));
+        Assertions.assertInstanceOf(RotationTrack.class, TrackTestUtil.getTrack(test, 0));
     }
 
     /**
@@ -163,9 +167,9 @@ class ObjectInfoTest {
         test.addTrack(pTrack, 0);
         test.addTrack(rTrack, 1);
         test.removeTrack(1);
-        Assertions.assertNotNull(test.getTracks());
-        Assertions.assertEquals(1, test.getTracks().length);
-        Assertions.assertInstanceOf(PositionTrack.class, test.getTracks()[0]);
+        Assertions.assertNotNull(TrackTestUtil.getTracks(test));
+        Assertions.assertEquals(1, TrackTestUtil.getLength(test));
+        Assertions.assertInstanceOf(PositionTrack.class, TrackTestUtil.getTrack(test, 0));
     }
 
     /**
@@ -224,8 +228,8 @@ class ObjectInfoTest {
         Assertions.assertNotEquals(duplicate, source);
         Assertions.assertNotEquals(duplicate.getObject(), source.getObject());
         Assertions.assertInstanceOf(Sphere.class, duplicate.getObject());
-        Assertions.assertEquals(3, duplicate.getTracks().length);
-        Assertions.assertEquals(duplicate, duplicate.getTracks()[0].getParent());
+        Assertions.assertEquals(3, TrackTestUtil.getLength(duplicate));
+        Assertions.assertEquals(duplicate, TrackTestUtil.getTrack(duplicate, 0).getParent());
     }
 
     /**
@@ -246,10 +250,11 @@ class ObjectInfoTest {
         Assertions.assertNotEquals(duplicate, test);
         Assertions.assertEquals(duplicate.getObject(), test.getObject());
 
-        Assertions.assertEquals(2, duplicate.getTracks().length);
-        Assertions.assertInstanceOf(PositionTrack.class, duplicate.getTracks()[0]);
-        Assertions.assertInstanceOf(RotationTrack.class, duplicate.getTracks()[1]);
-        Assertions.assertEquals(duplicate, duplicate.getTracks()[0].getParent());
+        var dt = TrackTestUtil.getTracks(duplicate);
+        Assertions.assertEquals(2, dt.length);
+        Assertions.assertInstanceOf(PositionTrack.class, dt[0]);
+        Assertions.assertInstanceOf(RotationTrack.class, dt[1]);
+        Assertions.assertEquals(duplicate,dt[0].getParent());
         Assertions.assertNull(duplicate.getDistortion());
     }
 
@@ -408,7 +413,7 @@ class ObjectInfoTest {
         target.addTrack(new PositionTrack(target), 0);
         target.addTrack(new RotationTrack(target), 1);
         target.copyInfo(source);
-        Assertions.assertEquals(0, target.getTracks().length);
+        Assertions.assertEquals(0, TrackTestUtil.getLength(target));
     }
 
     /**
@@ -424,11 +429,13 @@ class ObjectInfoTest {
         target.addTrack(new PositionTrack(target), 0);
         target.addTrack(new RotationTrack(target), 1);
         target.copyInfo(source);
-        Assertions.assertNotNull(target.getTracks());
-        Assertions.assertEquals(1, target.getTracks().length);
-        Track<?> testT = target.getTracks()[0];
+        var dt = TrackTestUtil.getTracks(target);
+
+        Assertions.assertNotNull(dt);
+        Assertions.assertEquals(1, dt.length);
+        Track<?> testT = dt[0];
         Assertions.assertInstanceOf(TextureTrack.class, testT);
-        Assertions.assertEquals(target, target.getTracks()[0].getParent());
+        Assertions.assertEquals(target, dt[0].getParent());
     }
 
     /**
@@ -662,7 +669,7 @@ class ObjectInfoTest {
         ObjectInfo[] result = ObjectInfo.duplicateAll(source);
         Assertions.assertNotNull(result);
         Assertions.assertEquals(3, result.length);
-        Assertions.assertEquals(2, result[1].getTracks().length);
+        Assertions.assertEquals(2, TrackTestUtil.getLength(result[1]));
     }
 
     @Getter

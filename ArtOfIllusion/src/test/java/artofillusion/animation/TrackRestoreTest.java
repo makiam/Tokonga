@@ -17,6 +17,7 @@ import artofillusion.object.Object3D;
 import artofillusion.object.ObjectInfo;
 
 import artofillusion.test.util.ReadBypassEventListener;
+import artofillusion.test.util.TrackTestUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
@@ -47,7 +48,7 @@ public class TrackRestoreTest {
         PoseTrack track = new PoseTrack(owner);
         track.setName("My Pose");
         track.setSmoothingMethod(Timecourse.APPROXIMATING);
-        Assertions.assertEquals(0, owner.getTracks().length);
+        Assertions.assertEquals(0, TrackTestUtil.getLength(owner));
 
         ByteArrayOutputStream out = new ByteArrayOutputStream(1000);
         DataOutputStream data = new DataOutputStream(out);
@@ -58,8 +59,8 @@ public class TrackRestoreTest {
         ByteArrayInputStream in = new ByteArrayInputStream(buffer);
         TrackIO.INSTANCE.readTracks(new DataInputStream(in), scene, owner, (short)6);
 
-        Assertions.assertEquals(1, owner.getTracks().length);
-        PoseTrack restored = (PoseTrack)owner.getTracks()[0];
+        Assertions.assertEquals(1, TrackTestUtil.getLength(owner));
+        PoseTrack restored = (PoseTrack)TrackTestUtil.getTracks(owner)[0];
 
         Assertions.assertEquals("My Pose", restored.getName());
         Assertions.assertEquals(Timecourse.APPROXIMATING, restored.getSmoothingMethod());
@@ -91,8 +92,8 @@ public class TrackRestoreTest {
         ByteArrayInputStream in = new ByteArrayInputStream(buffer);
         TrackIO.INSTANCE.readTracks(new DataInputStream(in), scene, owner, version);
 
-        Assertions.assertEquals(2, owner.getTracks().length);
-        PoseTrack restored = (PoseTrack)owner.getTracks()[0];
+        Assertions.assertEquals(2, TrackTestUtil.getLength(owner));
+        PoseTrack restored = (PoseTrack)TrackTestUtil.getTracks(owner)[0];
         Assertions.assertEquals("My Pose", restored.getName());
         Assertions.assertEquals(Timecourse.APPROXIMATING, restored.getSmoothingMethod());
     }
@@ -119,8 +120,8 @@ public class TrackRestoreTest {
         ByteArrayInputStream in = new ByteArrayInputStream(buffer);
         TrackIO.INSTANCE.readTracks(new DataInputStream(in), scene, owner, (short)6);
 
-        Assertions.assertEquals(1, owner.getTracks().length);
-        PoseTrack restored = (PoseTrack)owner.getTracks()[0];
+        Assertions.assertEquals(1, TrackTestUtil.getLength(owner));
+        PoseTrack restored = (PoseTrack)TrackTestUtil.getTracks(owner)[0];
 
         Assertions.assertEquals("My Pose", restored.getName());
         Assertions.assertEquals(Timecourse.APPROXIMATING, restored.getSmoothingMethod());
@@ -166,8 +167,8 @@ public class TrackRestoreTest {
         ByteArrayInputStream in = new ByteArrayInputStream(buffer);
         TrackIO.INSTANCE.readTracks(new DataInputStream(in), scene, owner, (short)6);
 
-        Assertions.assertEquals(1, owner.getTracks().length);
-        StringContainerTrack restored = (StringContainerTrack)owner.getTracks()[0];
+        Assertions.assertEquals(1, TrackTestUtil.getLength(owner));
+        StringContainerTrack restored = (StringContainerTrack)TrackTestUtil.getTrack(owner, 0);
 
         Assertions.assertEquals("А роза упала на лапу азора", restored.getPalindrome());
     }
