@@ -1060,11 +1060,12 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      */
     public void deleteSelectedKeyframes() {
         Hashtable<Track, Track> changedTracks = new Hashtable<>();
-        for (int i = 0; i < selection.length; i++) {
-            Track tr = selection[i].track;
+
+        for (var si: selection) {
+            Track tr = si.track;
             Keyframe[] keys = tr.getTimecourse().getValues();
             for (int j = 0; j < keys.length; j++) {
-                if (keys[j] == selection[i].key) {
+                if (keys[j] == si.key) {
                     if (changedTracks.get(tr) == null) {
                         changedTracks.put(tr, tr.duplicate(tr.getParent()));
                     }
@@ -1073,8 +1074,11 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
                 }
             }
         }
+
         selection = new SelectionInfo[0];
         UndoRecord undo = new UndoRecord(window);
+
+
         Enumeration<Track> tracks = changedTracks.keys();
         while (tracks.hasMoreElements()) {
             Track tr = tracks.nextElement();
@@ -1087,6 +1091,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
             }
             undo.addCommand(UndoRecord.COPY_TRACK, tr, changedTracks.get(tr));
         }
+
         window.setUndoRecord(undo);
         window.updateMenus();
         tracksModified(true);
