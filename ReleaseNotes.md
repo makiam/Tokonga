@@ -1,3 +1,10 @@
+### Release #62
+* Issue fixed: https://github.com/makiam/Tokonga/issues/164
+
+### Release #61
+**NB!** Current release drops compatibility.  Release introduces new fault tolerant read/write for scene object tracks. This increased scene verison, so new scene will not open in previous versions
+* Buffered write/restore for scene's tracks: https://github.com/makiam/Tokonga/pull/161
+
 ### Release #60
 
 * Update Checkbox Menu Items processing: https://github.com/makiam/Tokonga/pull/156
