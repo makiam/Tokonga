@@ -13,6 +13,10 @@ package artofillusion.animation;
 
 public class SelectionInfo {
 
+    public Track getTrack() {
+        return track;
+    }
+
     public final Track track;
     public final Keyframe key;
     public int keyIndex;
