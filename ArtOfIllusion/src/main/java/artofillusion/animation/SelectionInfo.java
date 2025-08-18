@@ -9,8 +9,10 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion.animation;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
@@ -18,7 +20,9 @@ import java.util.Arrays;
 @Slf4j
 public final class SelectionInfo {
 
+    @Getter
     public final Track<?> track;
+
     public final Keyframe key;
     public int keyIndex = -1;
     public final boolean[] selected;

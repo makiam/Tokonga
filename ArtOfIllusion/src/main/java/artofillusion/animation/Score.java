@@ -1059,16 +1059,14 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * Delete all selected keyframes.
      */
     public void deleteSelectedKeyframes() {
-        Hashtable<Track, Track> changedTracks = new Hashtable<>();
+        Map<Track, Track> changedTracks = new Hashtable<>();
 
         for (var si: selection) {
-            Track tr = si.track;
+            Track<?> tr = si.getTrack();
             Keyframe[] keys = tr.getTimecourse().getValues();
             for (int j = 0; j < keys.length; j++) {
                 if (keys[j] == si.key) {
-                    if (changedTracks.get(tr) == null) {
-                        changedTracks.put(tr, tr.duplicate(tr.getParent()));
-                    }
+                    changedTracks.putIfAbsent(tr, tr.duplicate(tr.getParent()));
                     tr.deleteKeyframe(j);
                     break;
                 }
@@ -1078,19 +1076,16 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         selection = new SelectionInfo[0];
         UndoRecord undo = new UndoRecord(window);
 
-
-        Enumeration<Track> tracks = changedTracks.keys();
-        while (tracks.hasMoreElements()) {
-            Track tr = tracks.nextElement();
-            Object parent = tr.getParent();
+        changedTracks.forEach((key, value) -> {
+            Object parent = key.getParent();
             while (parent != null && parent instanceof Track) {
                 parent = ((Track) parent).getParent();
             }
             if (parent instanceof ObjectInfo) {
                 scene.applyTracksToObject((ObjectInfo) parent);
             }
-            undo.addCommand(UndoRecord.COPY_TRACK, tr, changedTracks.get(tr));
-        }
+            undo.addCommand(UndoRecord.COPY_TRACK, key, value);
+        });
 
         window.setUndoRecord(undo);
         window.updateMenus();
