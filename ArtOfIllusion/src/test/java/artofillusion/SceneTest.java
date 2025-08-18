@@ -25,6 +25,7 @@ import artofillusion.object.ObjectInfo;
 import artofillusion.object.SceneCamera;
 import artofillusion.object.Sphere;
 import artofillusion.object.SpotLight;
+import artofillusion.test.util.TrackTestUtil;
 import artofillusion.texture.ImageMapTexture;
 import artofillusion.texture.Texture;
 import artofillusion.texture.UniformTexture;
@@ -99,7 +100,7 @@ class SceneTest {
         scene.addObject(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube", (UndoRecord) null);
         ObjectInfo so = scene.getObject("Cube");
         Assertions.assertEquals(++sceneObjects, scene.getNumObjects());
-        Assertions.assertEquals(2, so.getTracks().length);
+        Assertions.assertEquals(2, TrackTestUtil.getLength(so));
     }
 
     /**
@@ -113,7 +114,7 @@ class SceneTest {
         scene.addObject(new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube"), (UndoRecord) null);
         ObjectInfo so = scene.getObject("Cube");
         Assertions.assertEquals(++sceneObjects, scene.getNumObjects());
-        Assertions.assertEquals(2, so.getTracks().length);
+        Assertions.assertEquals(2, TrackTestUtil.getLength(so));
     }
 
     /**
@@ -127,7 +128,7 @@ class SceneTest {
         scene.addObject(new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube"), scene.getNumObjects(), (UndoRecord) null);
         ObjectInfo so = scene.getObject("Cube");
         Assertions.assertEquals(++sceneObjects, scene.getNumObjects());
-        Assertions.assertEquals(2, so.getTracks().length);
+        Assertions.assertEquals(2, TrackTestUtil.getLength(so));
     }
 
     /**

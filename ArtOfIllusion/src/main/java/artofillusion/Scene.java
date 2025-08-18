@@ -240,12 +240,14 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
             changed[index] = processed[index] = true;
 
             // Find Constraint and IK tracks at the top of the list and apply them.
+
             int i;
-            for (i = 0; i < info.getTracks().length && (info.getTracks()[i] instanceof ConstraintTrack
-                    || info.getTracks()[i] instanceof IKTrack || info.getTracks()[i].isNullTrack()); i++);
+            Track[] tracks = info.getTracks();
+            for (i = 0; i < tracks.length && (tracks[i] instanceof ConstraintTrack || tracks[i] instanceof IKTrack || tracks[i].isNullTrack()); i++);
+
             for (int j = i - 1; j >= 0; j--) {
-                if (info.getTracks()[j].isEnabled()) {
-                    info.getTracks()[j].apply(time);
+                if (tracks[j].isEnabled()) {
+                    tracks[j].apply(time);
                 }
             }
             if (info.getPose() != null) {
@@ -254,8 +256,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         }
 
         // Now apply tracks to all dependent objects.
-        objects.forEach(item
-                -> applyTracksToObject(item, processed, changed, objects.indexOf(item)));
+        objects.forEach(item -> applyTracksToObject(item, processed, changed, objects.indexOf(item)));
         objects.forEach(item -> item.getObject().sceneChanged(item, this));
     }
 

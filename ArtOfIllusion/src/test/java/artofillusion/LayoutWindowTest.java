@@ -32,6 +32,7 @@ import artofillusion.object.Curve;
 import artofillusion.object.ObjectInfo;
 import artofillusion.object.Sphere;
 import artofillusion.test.util.SetupLocale;
+import artofillusion.test.util.TrackTestUtil;
 import artofillusion.test.util.UITestWatcher;
 
 import java.io.IOException;
@@ -353,9 +354,9 @@ class LayoutWindowTest {
         layout.setSelection(2);
         appMainMenu.pushMenu("Animation|Add Track To Selected Objects|" + path);
         test = layout.getScene().getObject(2);
-        assertEquals(count, test.getTracks().length);
-        Track[] tracks = test.getTracks();
-        assertTrue(clazz.isInstance(tracks[0]));
+        var tt = TrackTestUtil.getTracks(test);
+        assertEquals(count, tt.length);
+        assertTrue(clazz.isInstance(tt[0]));
     }
 
     // </editor-fold>

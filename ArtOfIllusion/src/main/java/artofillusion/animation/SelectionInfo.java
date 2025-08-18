@@ -11,19 +11,26 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.animation;
 
-public class SelectionInfo {
+import lombok.extern.slf4j.Slf4j;
 
-    public final Track track;
+import java.util.Arrays;
+
+@Slf4j
+public final class SelectionInfo {
+
+    public final Track<?> track;
     public final Keyframe key;
-    public int keyIndex;
+    public int keyIndex = -1;
     public final boolean[] selected;
 
-    public SelectionInfo(Track tr, Keyframe k) {
+
+    public SelectionInfo(Track<?> tr, Keyframe k) {
         track = tr;
         key = k;
-        keyIndex = -1;
+
         selected = new boolean[track.getValueNames().length];
-        Timecourse tc = track.getTimecourse();
+
+        Timecourse<?> tc = track.getTimecourse();
         if (tc == null) {
             return;
         }
@@ -33,8 +40,11 @@ public class SelectionInfo {
         if (i < keys.length) {
             keyIndex = i;
         }
-        for (i = 0; i < selected.length; i++) {
-            selected[i] = true;
-        }
+        Arrays.fill(selected, true);
     }
+
+    public int getIndex() {
+        return keyIndex;
+    }
+
 }
