@@ -583,11 +583,11 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * to selected keyframes.
      */
     public void tracksModified(boolean updateScene) {
-        for (int i = 0; i < graphs.size(); i++) {
-            if (graphs.get(i) instanceof TrackGraph) {
-                ((TrackGraph) graphs.get(i)).tracksModified();
+        for (var graph: graphs) {
+            if (graph instanceof TrackGraph) {
+                ((TrackGraph) graph).tracksModified();
             } else {
-                ((Widget) graphs.get(i)).repaint();
+                ((Widget) graph).repaint();
             }
         }
         if (!updateScene) {
@@ -595,16 +595,15 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         }
 
         // Find the list of tracks with selected keyframes.
-        List<Track> v = new Vector<>();
-        for (int i = 0; i < selection.length; i++) {
-            if (!v.contains(selection[i].track)) {
-                v.add(selection[i].track);
-            }
+        List<Track<?>> affected = new Vector<>();
+        for(var si: selection) {
+            if(affected.contains(si.getTrack())) continue;
+            affected.add(si.getTrack());
         }
 
         // Now update them.
-        for (int i = 0; i < v.size(); i++) {
-            Track tr = v.get(i);
+        for (var tr: affected) {
+
             Object parent = tr.getParent();
             while (parent != null && parent instanceof Track) {
                 parent = ((Track) parent).getParent();
@@ -613,6 +612,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
                 scene.applyTracksToObject((ObjectInfo) parent);
             }
         }
+
         window.updateImage();
     }
 
@@ -1059,7 +1059,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * Delete all selected keyframes.
      */
     public void deleteSelectedKeyframes() {
-        Map<Track, Track> changedTracks = new Hashtable<>();
+        Map<Track<?>, Track<?>> changedTracks = new Hashtable<>();
 
         for (var si: selection) {
             Track<?> tr = si.getTrack();
