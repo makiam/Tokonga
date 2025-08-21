@@ -10,12 +10,16 @@
 
 package artofillusion.animation;
 
+import artofillusion.CompoundUndoableEdit;
 import artofillusion.math.CoordinateSystem;
 import artofillusion.object.Cube;
 import artofillusion.object.ObjectInfo;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 public class ScoreTest {
 
@@ -35,5 +39,30 @@ public class ScoreTest {
     public void testScoreSelectionFilterOneGood() {
         Object[] input = new Object[] {1, new ObjectInfo(new Cube(1d,1d,1d), new CoordinateSystem(), "Test"), "String", "String", "String"};
         Assertions.assertEquals(1, Score.filterTargets(input).size());
+    }
+
+    @Test
+    public void testGetTracks() {
+        var input = new Object[] {new DummyTrack(), new DummyTrack(), new DummyTrack()};
+
+        Stream<Track<?>> result = Arrays.stream(input).map(Track.class::cast);
+
+        result.forEach(System.out::println);
+    }
+
+    @Test
+    public void testGetTrackOwner() {
+        var oi = new ObjectInfo(new Cube(1d,1d,1d), new CoordinateSystem(), "Test");
+        DummyParentedWeightedTrack dwt = new DummyParentedWeightedTrack(oi);
+
+        Assertions.assertEquals(oi, Score.getTrackOwner(dwt.getWeightTrack()));
+    }
+
+    @Test
+    public void testToggleTrack() {
+        Score.TrackDisableAction ta = new Score.TrackDisableAction(new DummyTrack());
+        CompoundUndoableEdit cue = new CompoundUndoableEdit();
+        cue.add(ta);
+        cue.execute();
     }
 }

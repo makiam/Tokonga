@@ -23,6 +23,7 @@ import java.text.*;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.swing.*;
 
 import lombok.Getter;
@@ -776,11 +777,17 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         Object[] sel = theList.getSelectedObjects();
         UndoRecord undo = new UndoRecord(window);
         List<ObjectInfo> owners = new Vector<>();
+        Set<ObjectInfo> os = new LinkedHashSet<>();
+
+        Score.getSelectedTracks(this).forEach(item -> {
+            log.info("Enable Track {}", item.getName());
+            os.add(Score.getTrackOwner(item));
+        });
 
         for (int i = 0; i < sel.length; i++) {
             if (sel[i] instanceof Track) {
-                Track tr = (Track) sel[i];
-                Object parent = tr.getParent();
+                Track item = (Track) sel[i];
+                Object parent = item.getParent();
                 while (parent instanceof Track) {
                     parent = ((Track) parent).getParent();
                 }
@@ -788,14 +795,47 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
                     owners.add((ObjectInfo) parent);
                     undo.addCommand(UndoRecord.COPY_OBJECT_INFO, parent, ((ObjectInfo) parent).duplicate());
                 }
-                tr.setEnabled(enable);
+                item.setEnabled(enable);
             }
         }
+
         owners.forEach(scene::applyTracksToObject);
         theList.repaint();
         window.setUndoRecord(undo);
         window.updateImage();
         window.updateMenus();
+    }
+
+    public static final class TrackDisableAction implements UndoableEdit {
+
+        private Track<?> target;
+
+        TrackDisableAction(Track<?> target) {
+            this.target = target;
+        }
+
+        @Override
+        public void undo() {
+
+        }
+
+        @Override
+        public void redo() {
+            target.setEnabled(false);
+
+        }
+    }
+
+    private static Stream<Track<?>> getSelectedTracks(Score score) {
+        return Arrays.stream(score.theList.getSelectedObjects()).map(Track.class::cast);
+    }
+
+    public static ObjectInfo getTrackOwner(Track<?> track) {
+        Object parent = track.getParent();
+        while (parent instanceof Track) {
+            parent = ((Track) parent).getParent();
+        }
+        return (ObjectInfo)parent;
     }
 
     /**
