@@ -30,7 +30,7 @@ public class ProceduralPositionTrack extends Track<ProceduralPositionTrack> impl
 
     ObjectInfo info;
     private final Procedure proc;
-    Timecourse tc;
+    private Timecourse<ArrayKeyframe> tc;
     TextureParameter[] parameter;
     int smoothingMethod, mode, relCoords, joint;
     ObjectRef relObject;
@@ -85,7 +85,7 @@ public class ProceduralPositionTrack extends Track<ProceduralPositionTrack> impl
             }
         }
         point.t = time;
-        ArrayKeyframe params = (ArrayKeyframe) tc.evaluate(time, smoothingMethod);
+        ArrayKeyframe params = tc.apply(time, smoothingMethod);
         if (params != null) {
             point.param = params.val;
         }

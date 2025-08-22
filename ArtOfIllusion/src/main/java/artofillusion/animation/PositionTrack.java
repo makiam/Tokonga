@@ -28,7 +28,7 @@ import java.util.*;
 public class PositionTrack extends Track<PositionTrack> {
 
     ObjectInfo info;
-    Timecourse tc;
+    private Timecourse<VectorKeyframe> tc;
     int smoothingMethod;
     int mode;
     int relCoords;
@@ -71,7 +71,7 @@ public class PositionTrack extends Track<PositionTrack> {
      */
     @Override
     public void apply(double time) {
-        Vec3 pos = (VectorKeyframe) tc.evaluate(time, smoothingMethod);
+        Vec3 pos = tc.apply(time, smoothingMethod);
         double weight = theWeight.getWeight(time);
 
         if (pos == null) {

@@ -29,7 +29,7 @@ import java.util.*;
 public class TextureTrack extends Track<TextureTrack> {
 
     private ObjectInfo info;
-    private Timecourse timecourse = new Timecourse(new Keyframe[0], new double[0], new Smoothness[0]);
+    private Timecourse<ArrayKeyframe> timecourse = new Timecourse(new Keyframe[0], new double[0], new Smoothness[0]);
     private int smoothingMethod = Timecourse.INTERPOLATING;
     WeightTrack theWeight;
     TextureParameter[] param;
@@ -45,7 +45,7 @@ public class TextureTrack extends Track<TextureTrack> {
     /* Modify the parameters of the object. */
     @Override
     public void apply(double time) {
-        ArrayKeyframe val = (ArrayKeyframe) timecourse.evaluate(time, smoothingMethod);
+        ArrayKeyframe val = timecourse.apply(time, smoothingMethod);
         if (val == null) {
             return;
         }
