@@ -11,4 +11,5 @@ configurations {
 
 dependencies {
     implementation("org.greenrobot:eventbus-java:3.3.1")
+    implementation group: 'com.googlecode.matrix-toolkits-java', name: 'mtj', version: '0.9.14'
 }
