@@ -38,6 +38,8 @@ dependencies {
     implementation group: 'com.github.blackears', name: 'svgSalamander', version: 'v1.1.3'
 
     implementation group: 'gov.nist.math', name: 'jama', version: '1.0.3'
+    implementation group: 'org.ejml', name: 'ejml-core', version: '0.44.0'
+    implementation group: 'com.googlecode.matrix-toolkits-java', name: 'mtj', version: '0.9.14'
 
     implementation group: 'org.beanshell', name: 'bsh', version: '3.0.0-SNAPSHOT'
     implementation libs.groovy
