@@ -11,6 +11,7 @@
 package artofillusion.math;
 
 import Jama.*;
+import org.ejml.simple.SimpleMatrix;
 
 /**
  * The SVD class defines methods for solving sets of linear equations by singular value
@@ -34,14 +35,14 @@ public class SVD {
         solve(a, b, DEFAULT_TOLERANCE);
     }
 
-    public static void solve(double[][] a, double[] b, double tolerance) {
+    public static void solve(double[][] input, double[] b, double tolerance) {
 
-        int matrixRows = a.length;
-        int matrixColumns = a[0].length;
+        int matrixRows = input.length;
+        int matrixColumns = input[0].length;
 
 
         // Factor the matrix.
-        SingularValueDecomposition svd = new Matrix(a, matrixRows, matrixColumns).svd();
+        SingularValueDecomposition svd = new Matrix(input, matrixRows, matrixColumns).svd();
         double[][] u = svd.getU().getArray();
         double[][] v = svd.getV().getArray();
         double[] s = svd.getSingularValues();
@@ -62,6 +63,42 @@ public class SVD {
             d = 0.0;
             for (int j = 0; j < matrixColumns; j++) {
                 d += v[i][j] * temp[j];
+            }
+            b[i] = d;
+        }
+    }
+
+    public static void solve2(double[][] input, double[] b) {
+        solve2(input, b, DEFAULT_TOLERANCE);
+    }
+
+    public static void solve2(double[][] input, double[] b, double tolerance) {
+        int matrixRows = input.length;
+        int matrixColumns = input[0].length;
+
+        var svd = new SimpleMatrix(input).svd();
+        var u = svd.getU();
+        var v = svd.getU();
+        var s = svd.getSingularValues();
+
+        var cutoff = s[0] * tolerance;
+        double[] temp = new double[matrixColumns];
+
+
+        // Do the back substitution to find the solution vector.
+        double d;
+        for (int i = 0; i < matrixColumns && s[i] > cutoff; i++) {
+            d = 0.0;
+            for (int j = 0; j < matrixRows; j++) {
+                d += u.get(i, j) * b[j];
+            }
+            temp[i] = d / s[i];
+        }
+
+        for (int i = 0; i < matrixColumns; i++) {
+            d = 0.0;
+            for (int j = 0; j < matrixColumns; j++) {
+                d += v.get(i, j) * temp[j];
             }
             b[i] = d;
         }
