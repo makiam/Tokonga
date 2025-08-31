@@ -65,6 +65,7 @@ dependencies {
     testImplementation group: 'org.netbeans', name: 'jemmy', version: '2.2.7.5'
 
     implementation libs.bundles.logging
+    implementation("org.jspecify:jspecify:1.0.0")
 
 }
 
