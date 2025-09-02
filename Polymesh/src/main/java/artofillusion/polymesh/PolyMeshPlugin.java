@@ -10,14 +10,9 @@
  */
 package artofillusion.polymesh;
 
-import artofillusion.LayoutWindow;
-import artofillusion.Plugin;
-import artofillusion.UndoRecord;
-import artofillusion.UndoableEdit;
+import artofillusion.*;
 import artofillusion.keystroke.KeystrokeManager;
 import artofillusion.keystroke.KeystrokeRecord;
-import artofillusion.math.CoordinateSystem;
-import artofillusion.object.ObjectInfo;
 import artofillusion.object.SplineMesh;
 import artofillusion.object.TriangleMesh;
 import artofillusion.ui.ToolPalette;
@@ -90,7 +85,7 @@ public class PolyMeshPlugin implements Plugin {
         private final LayoutWindow window;
 
         private void doConvert() {
-            PolyMesh mesh;
+
             BStandardDialog dlg = new BStandardDialog(Translate.text("polymesh:triangleToPolyTitle"), Translate.text("polymesh:convertToQuads"), BStandardDialog.QUESTION);
             String[] options = new String[]{Translate.text("polymesh:findQuadsDistance"), Translate.text("polymesh:findQuadsAngular"), Translate.text("polymesh:keepTriangles")};
 
@@ -99,28 +94,18 @@ public class PolyMeshPlugin implements Plugin {
             var objects = window.getSelectedObjects();
             if(objects.isEmpty()) return;
 
-            UndoableEdit convert = new ConvertToPolymeshEdit();
+            CompoundUndoableEdit convert = new CompoundUndoableEdit();
 
-            for (ObjectInfo item : objects) {
-                CoordinateSystem coords = new CoordinateSystem();
-                String name = "Polymesh" + item.getName();
-
-                if (item.getObject() instanceof SplineMesh) {
-                    mesh = new PolyMesh((SplineMesh) item.getObject());
-
-                    coords.copyCoords(item.getCoords());
-
-                    window.addObject(mesh, coords, name, (UndoRecord) null);
-                } else if (item.getObject() instanceof TriangleMesh) {
-                    int r = dlg.showOptionDialog(window, options, optionDefault);
-                    mesh = new PolyMesh((TriangleMesh) item.getObject(), r == 0 || r == 1, r == 1);
-                    coords.copyCoords(item.getCoords());
-
-                    window.addObject(mesh, coords, name, (UndoRecord) null);
+                for (var item: objects) {
+                    if (item.getObject() instanceof SplineMesh) {
+                        convert.add(new CreatePolymeshFromSpline(window, item));
+                    } else if (item.getObject() instanceof TriangleMesh) {
+                        int response = dlg.showOptionDialog(window, options, optionDefault);
+                        convert.add(new CreatePolymeshFromMesh(window, item, response));
+                    }
                 }
-            }
 
-            //window.setUndoRecord(new UndoRecord(window, false, convert));
+            window.setUndoRecord(new UndoRecord(window, false, convert.execute()));
             window.updateImage();
         }
     }
