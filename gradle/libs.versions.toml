@@ -3,7 +3,7 @@ buoy = "1.1.5"
 jogl = "2.5.0"
 
 [libraries]
-lombok = { module = "org.projectlombok:lombok", version = "1.18.38"}
+lombok = { module = "org.projectlombok:lombok", version = "1.18.40"}
 buoy = { module = "com.github.makiam:Buoy", version.ref = "buoy" }
 rsta = { module = "com.fifesoft:rsyntaxtextarea", version = "3.6.0" }
 groovy = { module = "org.apache.groovy:groovy", version = "5.0.0" }
