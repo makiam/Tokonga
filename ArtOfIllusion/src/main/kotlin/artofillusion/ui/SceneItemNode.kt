@@ -20,10 +20,7 @@ class SceneItemNode(userObject: ObjectInfo) : DefaultMutableTreeNode(userObject,
         items.forEach { this.add(SceneItemNode(it)) }
     }
 
-    val userObject: ObjectInfo?
-        get() = super.getUserObject() as ObjectInfo?
+    override fun getUserObject(): ObjectInfo? = super.getUserObject() as ObjectInfo?
 
-    override fun toString(): String {
-        return "Scene Object: ${(userObject as ObjectInfo)!!.name}"
-    }
+    override fun toString(): String = "Scene Object: ${(userObject as ObjectInfo).name}"
 }

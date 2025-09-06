@@ -20,10 +20,7 @@ class SceneTextureNode(userObject: Texture) : DefaultMutableTreeNode(userObject,
         return false
     }
 
-    val userObject: Texture?
-        get() = super.getUserObject() as Texture?
+    override fun getUserObject(): Texture? = super.getUserObject() as Texture?
 
-    override fun toString(): String {
-        return "Texture: ${(userObject as Texture)!!.name}"
-    }
+    override fun toString(): String = "Texture: ${(userObject as Texture).name}"
 }
