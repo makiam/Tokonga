@@ -1,6 +1,6 @@
 [versions]
 buoy = "1.1.5"
-jogl = "2.5.0"
+jogl = "2.6.0"
 
 [libraries]
 lombok = { module = "org.projectlombok:lombok", version = "1.18.40"}
