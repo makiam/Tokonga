@@ -561,6 +561,12 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         updateSelectionInfo();
     }
 
+    public void removeObject(ObjectInfo target, UndoRecord undo) {
+        var which = objects.indexOf(target);
+        if(which == -1) return;
+        removeObject(which, undo);
+    }
+
     /**
      * Delete an object from the scene. If undo is not null, appropriate commands will be
      * added to it to undo this operation.
