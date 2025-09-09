@@ -38,7 +38,7 @@ public class PolyMeshPlugin implements Plugin {
     public void onApplicationStarting() {
         boolean keysImplemented = false;
         for (KeystrokeRecord key : KeystrokeManager.getRecords()) {
-            if (key.getName().endsWith("(PolyMesh)")) {
+            if (key.getGroup().equals("Polymesh")) {
                 keysImplemented = true;
                 break;
             }
