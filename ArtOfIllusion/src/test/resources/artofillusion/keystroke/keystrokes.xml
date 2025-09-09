@@ -107,4 +107,8 @@
         }
     </keystroke>
     <keystroke name="Align with Closest Axis" code="106" modifiers="0" >window.getView().alignWithClosestAxis();</keystroke>
+    <keystroke code="66" name="Select Bevel Tool (PolyMesh)" group="Polymesh">
+        if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
+        window.selectTool( window.BEVEL_TOOL );
+    </keystroke>
 </keystrokes>

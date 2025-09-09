@@ -28,7 +28,9 @@ import java.awt.event.KeyEvent
 data class KeystrokeRecord(@XStreamAlias("code") @XStreamAsAttribute val keyCode: Int,
                            @XStreamAsAttribute val modifiers: Int = 0,
                            @XStreamAsAttribute val name: String?,
+                           @XStreamAsAttribute val group: String?,
                            val script: String?) {
+    constructor(keyCode: Int, modifiers: Int = 0, name: String?, script: String?) : this(keyCode, modifiers, name, "", script)
     fun KeyEventKey(): KeyEventContainer = KeyEventContainer(keyCode, modifiers)
 }
 
