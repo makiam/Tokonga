@@ -54,7 +54,7 @@ public class KeystrokeManager {
     private static final String KEYSTROKE_FILENAME = "keystrokes.xml";
 
     public static List<KeystrokeRecord> getRecords() {
-        return Collections.unmodifiableList(records);
+        return new ArrayList<>(records);
     }
 
     public static void setRecords(List<KeystrokeRecord> newRecords) {
