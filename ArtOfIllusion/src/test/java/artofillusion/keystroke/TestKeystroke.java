@@ -65,6 +65,8 @@ class TestKeystroke {
         List<KeystrokeRecord> records = result.getRecords();
         var ks = records.get(records.size()-1);
         Assertions.assertEquals("Polymesh", ks.getGroup());
+        ks = records.get(0);
+        Assertions.assertEquals("", ks.getGroup());
     }
 
 
@@ -98,7 +100,7 @@ class TestKeystroke {
         KeyEvent event1 = new KeyEvent(cc, 0, 0, 0, KeyEvent.VK_U, 'u');
         var ec1 = new KeyEventContainer(event0);
         var ec2 = new KeyEventContainer(event1);
-        Assertions.assertTrue(ec1.equals(ec2));
+        Assertions.assertEquals(ec1, ec2);
     }
 
     @Test

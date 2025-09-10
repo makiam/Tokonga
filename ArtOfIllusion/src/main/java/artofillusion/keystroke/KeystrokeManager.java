@@ -110,7 +110,7 @@ public class KeystrokeManager {
     }
 
     private static void mapRecordsToScripts() {
-        var tmp = records.stream().collect(Collectors.groupingBy(KeystrokeRecord::KeyEventKey, Collectors.toList()));
+        var tmp = records.stream().collect(Collectors.groupingBy(KeystrokeRecord::getKeyEventKey, Collectors.toList()));
         var shell = ArtOfIllusion.getShell();
         Function<KeystrokeRecord, Script> mapper = r -> getCompiledScript(shell, r);
         tmp.forEach((k, v) -> scripts.put(k, v.stream().map(mapper).collect(Collectors.toList())));
@@ -124,12 +124,12 @@ public class KeystrokeManager {
         }
     };
 
-    private static Script getCompiledScript(GroovyShell shell, KeystrokeRecord record) {
+    private static Script getCompiledScript(GroovyShell shell, KeystrokeRecord rec) {
         Script script = stub;
         try {
-            script = shell.parse(record.getScript(), record.getName());
+            script = shell.parse(rec.getScript(), rec.getName());
         } catch (org.codehaus.groovy.control.CompilationFailedException ex) {
-            log.atError().log("Unable to compile keystroke script: {} due {}", record.getName(), ex.getMessage());
+            log.atError().log("Unable to compile keystroke script: {} due {}", rec.getName(), ex.getMessage());
         }
         return script;
     }
