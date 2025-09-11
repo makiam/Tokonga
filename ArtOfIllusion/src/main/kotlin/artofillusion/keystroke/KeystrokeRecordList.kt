@@ -12,25 +12,8 @@
 package artofillusion.keystroke
 
 import com.thoughtworks.xstream.annotations.XStreamAlias
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import com.thoughtworks.xstream.annotations.XStreamConverter
 import com.thoughtworks.xstream.annotations.XStreamImplicit
-import com.thoughtworks.xstream.converters.extended.ToAttributedValueConverter
 import java.awt.event.KeyEvent
-
-/**
- * This class contains information about a keyboard shortcut which automates some operation.
- * A keystroke pairs a key description (key code and modifier) with a script to execute
- * when the key is pressed.
- */
-@XStreamAlias("keystroke")
-@XStreamConverter(ToAttributedValueConverter::class, strings = ["script"])
-data class KeystrokeRecord(@XStreamAlias("code") @XStreamAsAttribute val keyCode: Int,
-                           @XStreamAsAttribute val modifiers: Int = 0,
-                           @XStreamAsAttribute val name: String?,
-                           val script: String?) {
-    fun KeyEventKey(): KeyEventContainer = KeyEventContainer(keyCode, modifiers)
-}
 
 @XStreamAlias("keystrokes")
 data class KeystrokesList(@XStreamImplicit(itemFieldName = "keystroke") val records: List<KeystrokeRecord>)

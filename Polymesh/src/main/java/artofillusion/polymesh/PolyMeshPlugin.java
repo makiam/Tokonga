@@ -1,6 +1,6 @@
 /*
  *  Copyright 2004-2007 Francois Guillet
- *  Changes copyright 2023 Maksim Khramov
+ *  Changes copyright 2023-2025 Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -36,14 +36,7 @@ public class PolyMeshPlugin implements Plugin {
 
     @Override
     public void onApplicationStarting() {
-        boolean keysImplemented = false;
-        for (KeystrokeRecord key : KeystrokeManager.getRecords()) {
-            if (key.getName().endsWith("(PolyMesh)")) {
-                keysImplemented = true;
-                break;
-            }
-        }
-        if (keysImplemented) {
+        if (KeystrokeManager.getRecords().stream().anyMatch(rec -> rec.getGroup().equals("Polymesh"))) {
             return;
         }
 

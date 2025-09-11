@@ -1,68 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <keystrokes>
-    <keystroke code="88" name="Decrease smoothing level (PolyMesh)">
+    <keystroke code="88" name="Decrease smoothing level (PolyMesh)" group="Polymesh">
         <!-- Constant for the "X" key. -->
         if(window instanceof PolyMeshEditorWindow) {
             window.log.info("Decrease smoothing level (PolyMesh)")
             window.changeInteractiveSmoothLevel(-1);
         }
     </keystroke>
-    <keystroke code="67" name="Increase smoothing level (PolyMesh)">
+    <keystroke code="67" name="Increase smoothing level (PolyMesh)" group="Polymesh">
         <!-- Constant for the "C" key. -->
         if(window instanceof PolyMeshEditorWindow) {
             window.log.info("Increase smoothing level (PolyMesh)")
             window.changeInteractiveSmoothLevel(1);
         }
     </keystroke>
-    <keystroke code="66" name="Select Bevel Tool (PolyMesh)">
+    <keystroke code="66" name="Select Bevel Tool (PolyMesh)" group="Polymesh">
         if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.selectTool( window.BEVEL_TOOL );
     </keystroke>
-    <keystroke code="68" name="Select Extrude Tool (PolyMesh)">
+    <keystroke code="68" name="Select Extrude Tool (PolyMesh)" group="Polymesh">
         if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.selectTool( window.EXTRUDE_TOOL );
     </keystroke>
-    <keystroke code="75" name="Select Knife Tool (PolyMesh)">
+    <keystroke code="75" name="Select Knife Tool (PolyMesh)" group="Polymesh">
         if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.selectTool( window.KNIFE_TOOL );
     </keystroke>
-    <keystroke code="82" name="Select Sew Tool (PolyMesh)">
+    <keystroke code="82" name="Select Sew Tool (PolyMesh)" group="Polymesh">
         if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.selectTool( window.SEW_TOOL );
     </keystroke>
-    <keystroke code="77" name="Select Shape Tool (PolyMesh)">
+    <keystroke code="77" name="Select Shape Tool (PolyMesh)" group="Polymesh">
         if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.selectTool( window.RESHAPE_TOOL );
     </keystroke>
-    <keystroke code="75" modifiers="1" name="Select Skeleton Tool (PolyMesh)">
+    <keystroke code="75" modifiers="1" name="Select Skeleton Tool (PolyMesh)" group="Polymesh">
         if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.selectTool( window.SKELETON_TOOL );
     </keystroke>
-    <keystroke code="81" name="Select Skew Tool (PolyMesh)">
+    <keystroke code="81" name="Select Skew Tool (PolyMesh)" group="Polymesh">
         if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.selectTool( window.SKEW_TOOL );
     </keystroke>
-    <keystroke code="84" name="Select Taper Tool (PolyMesh)">
+    <keystroke code="84" name="Select Taper Tool (PolyMesh)" group="Polymesh">
         if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.selectTool( window.TAPER_TOOL );
     </keystroke>
-    <keystroke code="79" name="Select Thicken Tool (PolyMesh)">
+    <keystroke code="79" name="Select Thicken Tool (PolyMesh)" group="Polymesh">
         if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.selectTool( window.THICKEN_TOOL );
     </keystroke>
-    <keystroke code="112" name="Toggle Help Mode (PolyMesh)">
+    <keystroke code="112" name="Toggle Help Mode (PolyMesh)" group="Polymesh">
         if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.toggleHelpMode();
     </keystroke>
-    <keystroke code="83" name="Toggle Smoothing (PolyMesh)">
+    <keystroke code="83" name="Toggle Smoothing (PolyMesh)" group="Polymesh">
         if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.toggleSmoothing();
     </keystroke>
-    <keystroke code="65" name="Toggle Manipulator 2D/3D (PolyMesh)">
+    <keystroke code="65" name="Toggle Manipulator 2D/3D (PolyMesh)" group="Polymesh">
         if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.toggleManipulator();
     </keystroke>
-    <keystroke code="87" name="Toggle Manipulator View Mode (PolyMesh)">
+    <keystroke code="87" name="Toggle Manipulator View Mode (PolyMesh)" group="Polymesh">
         if ( window.getClass().getName().endsWith( "PolyMeshEditorWindow" ) )
         window.toggleManipulatorViewMode();
     </keystroke>
