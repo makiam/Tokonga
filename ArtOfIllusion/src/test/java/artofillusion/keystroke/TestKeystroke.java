@@ -11,7 +11,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
-public class TestKeystroke {
+class TestKeystroke {
     static XStream xstream;
 
     @BeforeAll
@@ -29,7 +29,7 @@ public class TestKeystroke {
         List<KeystrokeRecord> records = result.getRecords();
 
         Assertions.assertNotNull(result);
-
+        Assertions.assertNotNull(records);
 
 
     }
@@ -41,10 +41,10 @@ public class TestKeystroke {
         Assertions.assertNotNull(result);
         List<KeystrokeRecord> records = result.getRecords();
         Assertions.assertEquals(1, records.size());
-        KeystrokeRecord record = records.get(0);
-        Assertions.assertEquals("Delete Selection", record.getName());
-        Assertions.assertEquals(8, record.getKeyCode());
-        Assertions.assertEquals(0, record.getModifiers());
+        var rec = records.get(0);
+        Assertions.assertEquals("Delete Selection", rec.getName());
+        Assertions.assertEquals(8, rec.getKeyCode());
+        Assertions.assertEquals(0, rec.getModifiers());
     }
 
     @Test
@@ -54,9 +54,19 @@ public class TestKeystroke {
         Assertions.assertNotNull(result);
         List<KeystrokeRecord> records = result.getRecords();
         Assertions.assertEquals(1, records.size());
-        KeystrokeRecord record = records.get(0);
-        Assertions.assertEquals("println(\"Delete Selection\")", record.getScript());
+        var rec = records.get(0);
+        Assertions.assertEquals("println(\"Delete Selection\")", rec.getScript());
 
+    }
+
+    @Test
+    void testXMLGroupValue() {
+        var result = (KeystrokesList)xstream.fromXML(KeystrokeManager.class.getResourceAsStream("keystrokes.xml"));
+        List<KeystrokeRecord> records = result.getRecords();
+        var ks = records.get(records.size()-1);
+        Assertions.assertEquals("Polymesh", ks.getGroup());
+        ks = records.get(0);
+        Assertions.assertEquals("", ks.getGroup());
     }
 
 
@@ -67,10 +77,10 @@ public class TestKeystroke {
         Assertions.assertNotNull(result);
         List<KeystrokeRecord> records = result.getRecords();
         Assertions.assertEquals(1, records.size());
-        KeystrokeRecord record = records.get(0);
-        Assertions.assertEquals("Delete Selection", record.getName());
-        Assertions.assertEquals(127, record.getKeyCode());
-        Assertions.assertEquals(0, record.getModifiers());
+        var rec = records.get(0);
+        Assertions.assertEquals("Delete Selection", rec.getName());
+        Assertions.assertEquals(127, rec.getKeyCode());
+        Assertions.assertEquals(0, rec.getModifiers());
     }
 
 
@@ -80,7 +90,7 @@ public class TestKeystroke {
         KeyEvent event0 = new KeyEvent(cc, 0, 0, 0, KeyEvent.VK_U, 'u');
         KeyEvent event1 = new KeyEvent(cc, 0, 0, 0, KeyEvent.VK_U, 'u');
 
-        Assertions.assertFalse(event0.equals(event1));
+        Assertions.assertNotEquals(event0, event1);
     }
 
     @Test
@@ -90,6 +100,22 @@ public class TestKeystroke {
         KeyEvent event1 = new KeyEvent(cc, 0, 0, 0, KeyEvent.VK_U, 'u');
         var ec1 = new KeyEventContainer(event0);
         var ec2 = new KeyEventContainer(event1);
-        Assertions.assertTrue(ec1.equals(ec2));
+        Assertions.assertEquals(ec1, ec2);
     }
+
+    @Test
+    void createNewKSNoGroup() {
+        var rec = new KeystrokeRecord(0, 0, "", "println()");
+        Assertions.assertEquals("", rec.getGroup());
+        Assertions.assertEquals("println()", rec.getScript());
+    }
+
+    @Test
+    void createNewKSWithGroup() {
+        var rec = new KeystrokeRecord(0, 0, "", "Polymesh", "println()");
+        Assertions.assertEquals("Polymesh", rec.getGroup());
+        Assertions.assertEquals("println()", rec.getScript());
+    }
+
+
 }

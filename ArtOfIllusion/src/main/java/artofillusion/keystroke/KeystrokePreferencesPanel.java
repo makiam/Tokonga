@@ -204,21 +204,22 @@ public class KeystrokePreferencesPanel extends FormContainer implements Preferen
 
         @Override
         public int getColumnCount() {
-            return 2;
+            return 3;
         }
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
-            KeystrokeRecord record = records.get(rowIndex);
+            KeystrokeRecord rec = records.get(rowIndex);
             if (columnIndex == 1) {
-                return record.getName();
+                return rec.getName();
             }
-            return getKeyDescription(record.getKeyCode(), record.getModifiers());
+            if(columnIndex == 2) return rec.getGroup();
+            return getKeyDescription(rec.getKeyCode(), rec.getModifiers());
         }
 
         @Override
         public String getColumnName(int column) {
-            return (column == 1 ? Translate.text("Name") : Translate.text("Key"));
+            return (column == 0 ? Translate.text("Key") : (column == 1 ? Translate.text("Key") : "Group"));
         }
     }
 }

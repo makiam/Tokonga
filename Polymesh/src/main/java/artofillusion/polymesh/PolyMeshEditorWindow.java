@@ -56,10 +56,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.JSpinner.NumberEditor;
 import javax.swing.event.ChangeEvent;
@@ -1631,27 +1628,13 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     /**
-     * Deletes any keystroke script associated to the PolyMesh plugin
-     */
-    private void cleanKeystrokes() {
-
-        for (KeystrokeRecord key : KeystrokeManager.getRecords()) {
-            if (key.getName().endsWith("(PolyMesh)")) {
-                KeystrokeManager.removeRecord(key);
-            }
-        }
-        try {
-            KeystrokeManager.saveRecords();
-        } catch (Exception ex) {
-            log.atError().setCause(ex).log("Error saving keystrokes: {}", ex.getMessage());
-        }
-    }
-
-    /**
      * Reloads keystroke scripts shipped with the PolyMesh plugin
      */
     public void reloadKeystrokes(ActionEvent event) {
-        cleanKeystrokes();
+        List<KeystrokeRecord> recs = KeystrokeManager.getRecords();
+        recs.removeIf(rec -> rec.getGroup().equals("Polymesh"));
+        KeystrokeManager.setRecords(recs);
+
         try (InputStream in = getClass().getResourceAsStream("/PMkeystrokes.xml")) {
             KeystrokeManager.addRecordsFromXML(in);
             KeystrokeManager.saveRecords();
