@@ -11,13 +11,16 @@
 package artofillusion.math;
 
 import Jama.*;
-
+import lombok.extern.slf4j.Slf4j;
+import org.ejml.simple.SimpleSVD;
+import org.ejml.simple.SimpleMatrix;
 /**
  * The SVD class defines methods for solving sets of linear equations by singular value
  * decomposition. It uses classes from the Java Matrix (JAMA) package to factor the
  * matrix. The complete JAMA package, including documentation and source, can be obtained
  * from <a href="http://math.nist.gov/javanumerics/jama/">...</a>
  */
+@Slf4j
 public class SVD {
 
     private static final double DEFAULT_TOLERANCE = 1.0e-8;
@@ -35,10 +38,41 @@ public class SVD {
     }
 
     public static void solve(double[][] a, double[] b, double tolerance) {
+        SimpleMatrix sm = new SimpleMatrix(a);
+        var svd = sm.svd();
+        var u = svd.getU();
+        var v = svd.getV();
+        var sv = svd.getSingularValues();
 
         int matrixRows = a.length;
         int matrixColumns = a[0].length;
 
+        double cutoff = sv[0] * tolerance;
+        double[] temp = new double[matrixColumns];
+
+        // Do the back substitution to find the solution vector.
+
+        double d;
+        for (int i = 0; i < matrixColumns && sv[i] > cutoff; i++) {
+            d = 0.0;
+            for (int j = 0; j < matrixRows; j++) {
+                d += u.get(j, i) * b[j];
+            }
+            temp[i] = d / sv[i];
+        }
+        for (int i = 0; i < matrixColumns; i++) {
+            d = 0.0;
+            for (int j = 0; j < matrixColumns; j++) {
+                d += v.get(i, j) * temp[j];
+            }
+            b[i] = d;
+        }
+    }
+
+    public static void solveJAMA(double[][] a, double[] b, double tolerance) {
+
+        int matrixRows = a.length;
+        int matrixColumns = a[0].length;
 
         // Factor the matrix.
         SingularValueDecomposition svd = new Matrix(a, matrixRows, matrixColumns).svd();
