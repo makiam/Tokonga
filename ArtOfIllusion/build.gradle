@@ -39,7 +39,7 @@ dependencies {
 
     implementation group: 'gov.nist.math', name: 'jama', version: '1.0.3'
 
-    implementation group: 'org.beanshell', name: 'bsh', version: '3.0.0-SNAPSHOT'
+    //implementation group: 'org.beanshell', name: 'bsh', version: '3.0.0-SNAPSHOT'
     implementation libs.groovy
     
     implementation fileTree(dir: '../lib', include: '*.jar')

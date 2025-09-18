@@ -412,6 +412,7 @@ public class ActorEditorWindow extends BDialog {
     /**
      * This is the renderer for values in the Weight column of the table.
      */
+    @SuppressWarnings("java:S1948")
     private class ValueRenderer extends BuoyComponent implements TableCellRenderer {
 
         private final ValueSelector selector;
@@ -438,6 +439,7 @@ public class ActorEditorWindow extends BDialog {
     /**
      * This is the editor for values in the Weight column of the table.
      */
+    @SuppressWarnings("java:S1948")
     private class ValueEditor extends AbstractCellEditor implements TableCellEditor {
 
         private final ValueSelector selector;
