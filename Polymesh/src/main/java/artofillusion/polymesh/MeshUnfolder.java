@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2007 by Francois Guillet
  *  Modifications Copyright (C) 2020 Py Petri Ihalainen
- *  Changes copyright (C) 2022-2023 by Maksim Khramov
+ *  Changes copyright (C) 2022-2025 by Maksim Khramov
  *
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
@@ -38,33 +38,43 @@ import no.uib.cipr.matrix.sparse.IterativeSolverNotConvergedException;
 @Slf4j
 public class MeshUnfolder {
 
-    private final FacetedMesh mesh; // the mesh to unfold
+    /*
+        the mesh to unfold
+     */
+    private final FacetedMesh mesh;
 
-    private final TriangleMesh trianglesMesh; // the trimesh version of the mesh to
+    /*
+        the trimesh version of the mesh to unfold
+     */
+    private final TriangleMesh trianglesMesh;
 
-    // unfold
     private double[] angles; // mesh angles, 3 angles for each triangle
 
-    private double[] var; // variables, i.e. angles plus Lagrange
+    /*
+        variables, i.e. angles plus Lagrange elements vertex, minus one (see ABF++)
+     */
+    private double[] var;
 
-    // elements
-    // vertex, minus one (see ABF++)
-    private int[] invInteriorTable; // inverse table: given an interior
+
+    /*
+        inverse table: given an interior vertex, yields the index to vertex in the mesh
+     */
+    private int[] invInteriorTable;
 
     /**
      * -- GETTER --
      *
-     * @return the unfolded meshes in an array of UnfoldedMesh
+     * @return the unfolded meshes in an array of UnfoldedMesh from unfolding process
      */
-    // vertex, yields the index to vertex in
-    // the mesh
     @Getter
-    private UnfoldedMesh[] unfoldedMeshes; // the unfolded meshes resulting
+    private UnfoldedMesh[] unfoldedMeshes;
 
-    // from unfolding process
-    private final int[] vertexTable; // vertex table correspondence between
+    /*
+        vertex table correspondence between original mesh vertices and opened mesh vertices
+     */
+    private final int[] vertexTable;
 
-    // original mesh vertices and opened mesh vertices
+
     private final int[] faceTable; // same for faces
 
     /**

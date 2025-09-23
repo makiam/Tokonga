@@ -40,6 +40,12 @@ public class ValueField extends BTextField {
     public static final int NONZERO = 2;
     public static final int POSITIVE = 3;
     public static final int INTEGER = 4;
+    public static final int POSITIVE_INTEGER = POSITIVE + INTEGER;
+
+    public ValueField(double value) {
+        this(value, NONE);
+    }
+
 
     public ValueField(double value, int constraints) {
         this(value, constraints, 5);

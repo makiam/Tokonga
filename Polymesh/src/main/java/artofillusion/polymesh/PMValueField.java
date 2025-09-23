@@ -29,7 +29,11 @@ public class PMValueField extends ValueField {
      * @param constraints Description of the Parameter
      */
     public PMValueField(double value, int constraints) {
-        super(value, constraints, 5);
+        super(value, constraints);
+    }
+
+    public PMValueField(double value) {
+        super(value);
     }
 
     /**
