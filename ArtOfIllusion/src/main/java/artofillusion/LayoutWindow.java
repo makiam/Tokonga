@@ -231,8 +231,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             split.setResizeWeight(pos == BTabbedPane.TOP || pos == BTabbedPane.LEFT ? 1.0 : 0.0);
             split.addEventLink(ValueChangedEvent.class, this, "updateMenus");
         }
-        ObjectPropertiesPanel propertiesPanel = new ObjectPropertiesPanel(this);
-        BScrollPane propertiesScroller = new BScrollPane(propertiesPanel, BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_AS_NEEDED);
+        
+        BScrollPane propertiesScroller = new BScrollPane(new ObjectPropertiesPanel(this), BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_AS_NEEDED);
         propertiesScroller.getVerticalScrollBar().setUnitIncrement(10);
         propertiesScroller.setBackground(ThemeManager.getAppBackgroundColor());
         getDockingContainer(BTabbedPane.RIGHT).addDockableWidget(sceneExplorer = new SceneExplorer(this));

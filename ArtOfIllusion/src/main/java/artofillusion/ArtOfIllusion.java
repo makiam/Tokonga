@@ -23,6 +23,11 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import artofillusion.view.*;
 import buoy.widget.*;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.AppenderBase;
+import ch.qos.logback.core.read.ListAppender;
 import groovy.lang.GroovyShell;
 import java.io.*;
 import java.nio.file.Files;
@@ -36,6 +41,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is the main class for Art of Illusion. All of its methods and variables
@@ -66,6 +72,9 @@ public class ArtOfIllusion {
 
     static {
 
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            log.atError().setCause(e).log("Caught exception: " + e.getMessage());
+        });
 
         // Set up the standard directories.
         APP_DIRECTORY = AppPath.INSTANCE.getAppPath();
@@ -126,6 +135,7 @@ public class ArtOfIllusion {
         PluginRegistry.registerPlugin(new LinearMapping3D());
         PluginRegistry.registerPlugin(new LinearMaterialMapping());
         PluginRegistry.registerResource("TranslateBundle", "artofillusion", ArtOfIllusion.class.getClassLoader(), "artofillusion");
+        PluginRegistry.registerPlugin(new LoggingListener());
 
         List<String> pluginsLoadResults = PluginRegistry.scanPlugins();
         ThemeManager.initThemes();
@@ -665,5 +675,34 @@ public class ArtOfIllusion {
             if(!Files.exists(path)) path.toFile().mkdir();
         }
 
+    }
+
+    private static final class LoggingListener extends AppenderBase<ILoggingEvent> implements Plugin {
+
+        private final List<ILoggingEvent> events = new ArrayList<>();
+
+        @Override
+        public void onApplicationStarting() {
+            LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+            Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+            this.setContext(lc);
+            rootLogger.addAppender(this);
+            this.start();
+            
+        }
+
+        @Override
+        public void onApplicationStopping() {
+            this.stop();
+        }
+
+        public void clear() {
+            events.clear();
+        }
+
+        @Override
+        protected void append(ILoggingEvent event) {
+            events.add(event);
+        }
     }
 }
