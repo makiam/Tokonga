@@ -7,7 +7,7 @@ plugins {
     id "kr.motd.sphinx" version "2.10.1"
     id 'jacoco'
     id 'maven-publish'
-    id "com.github.ben-manes.versions" version "0.52.0"
+    id "com.github.ben-manes.versions" version "0.53.0"
     id "kotlin-kapt"
 }
 
