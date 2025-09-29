@@ -12,6 +12,7 @@
 
 package artofillusion.polymesh;
 
+import artofillusion.api.ImplementationVersion;
 import artofillusion.math.Vec2;
 import artofillusion.object.TriangleMesh;
 import java.io.DataInputStream;
@@ -26,6 +27,7 @@ import java.io.InvalidObjectException;
  * @author Francois Guillet
  *
  */
+@ImplementationVersion
 public class UnfoldedMesh {
 
     public static class UnfoldedVertex {
@@ -81,6 +83,7 @@ public class UnfoldedMesh {
         }
     }
 
+    @ImplementationVersion
     public static class UnfoldedEdge {
 
         public int v1; // edge first vertex
@@ -125,8 +128,7 @@ public class UnfoldedMesh {
             return e;
         }
 
-        public void writeToFile(DataOutputStream out)
-                throws IOException {
+        public void writeToFile(DataOutputStream out) throws IOException {
             out.writeShort(0);
             out.writeInt(v1);
             out.writeInt(v2);
@@ -135,12 +137,9 @@ public class UnfoldedMesh {
             out.writeBoolean(hidden);
         }
 
-        public UnfoldedEdge(DataInputStream in) throws IOException,
-                InvalidObjectException {
+        public UnfoldedEdge(DataInputStream in) throws IOException {
             short version = in.readShort();
-            if (version < 0 || version > 0) {
-                throw new InvalidObjectException("");
-            }
+            if (version < 0 || version > 0) { throw new InvalidObjectException(""); }
             v1 = in.readInt();
             v2 = in.readInt();
             f1 = in.readInt();
@@ -149,6 +148,7 @@ public class UnfoldedMesh {
         }
     }
 
+    @ImplementationVersion
     public static class UnfoldedFace {
 
         public int v1, v2, v3; // vertices
@@ -182,8 +182,7 @@ public class UnfoldedMesh {
             return f;
         }
 
-        public void writeToFile(DataOutputStream out)
-                throws IOException {
+        public void writeToFile(DataOutputStream out) throws IOException {
             out.writeShort(0);
             out.writeInt(v1);
             out.writeInt(v2);
@@ -217,8 +216,7 @@ public class UnfoldedMesh {
 
     private String name;
 
-    public UnfoldedMesh(UnfoldedVertex[] vertices, UnfoldedEdge[] edges,
-            UnfoldedFace[] faces) {
+    public UnfoldedMesh(UnfoldedVertex[] vertices, UnfoldedEdge[] edges, UnfoldedFace[] faces) {
         super();
         this.vertices = vertices;
         this.edges = edges;
@@ -244,8 +242,7 @@ public class UnfoldedMesh {
         return mesh;
     }
 
-    public void writeToFile(DataOutputStream out)
-            throws IOException {
+    public void writeToFile(DataOutputStream out) throws IOException {
         out.writeShort(0);
         out.writeUTF(name);
         out.writeInt(vertices.length);
