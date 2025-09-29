@@ -172,7 +172,7 @@ public class PMOBJImporter {
                     }
                     for (int i = 0; i < face.length; i++) {
                         // Add a face.
-                        face[i].addElement(new FaceInfo(vertIndex, smoothingGroup, currentTexture));
+                        face[i].add(new FaceInfo(vertIndex, smoothingGroup, currentTexture));
                     }
                 } else if ("s".equals(fields[0])) {
                     // Set the smoothing group.
@@ -234,7 +234,7 @@ public class PMOBJImporter {
                 int[][] fc = new int[groupFaces.size()][];
                 int numVert = 0;
                 for (int i = 0; i < fc.length; i++) {
-                    FaceInfo fi = groupFaces.elementAt(i);
+                    FaceInfo fi = groupFaces.get(i);
                     for (int j = 0; j < fi.vi.length; j++) {
                         if (realIndex[fi.getVertex(j).vert] == -1) {
                             realIndex[fi.getVertex(j).vert] = numVert++;
@@ -273,8 +273,8 @@ public class PMOBJImporter {
                     if (edges[i].face == -1 || edges[edges[i].hedge].face == -1) {
                         continue;
                     }
-                    FaceInfo f1 = groupFaces.elementAt(edges[i].face);
-                    FaceInfo f2 = groupFaces.elementAt(edges[edges[i].hedge].face);
+                    FaceInfo f1 = groupFaces.get(edges[i].face);
+                    FaceInfo f2 = groupFaces.get(edges[edges[i].hedge].face);
                     if (f1.smoothingGroup == 0 || f1.smoothingGroup != f2.smoothingGroup) {
                         // They are in different smoothing groups.
 
@@ -314,7 +314,7 @@ public class PMOBJImporter {
                         Vec2[] uv = new Vec2[numVert];
                         boolean needPerFace = false;
                         for (int j = 0; j < groupFaces.size() && !needPerFace; j++) {
-                            FaceInfo fi = groupFaces.elementAt(j);
+                            FaceInfo fi = groupFaces.get(j);
                             for (int k = 0; k < fi.vi.length; k++) {
                                 VertexInfo vi = fi.getVertex(k);
                                 Vec3 texCoords = (vi.tex < texture.size() ? texture.get(vi.tex) : vertex.get(vi.vert));
@@ -342,18 +342,15 @@ public class PMOBJImporter {
 
     /**
      * Separate a line into pieces divided by whitespace.
-     *
-     * @param line Description of the Parameter
-     * @return Description of the Return Value
      */
     private static String[] breakLine(String line) {
         StringTokenizer st = new StringTokenizer(line);
-        List<String> v = new ArrayList<>();
+        List<String> tokens = new ArrayList<>();
 
         while (st.hasMoreTokens()) {
-            v.add(st.nextToken());
+            tokens.add(st.nextToken());
         }
-        return v.toArray(new String[0]);
+        return tokens.toArray(new String[0]);
     }
 
     /**
@@ -368,8 +365,7 @@ public class PMOBJImporter {
      * @return Description of the Return Value
      * @exception Exception Description of the Exception
      */
-    private static VertexInfo parseVertexSpec(String spec, int vertex, int texture, int normal, int lineNo)
-            throws Exception {
+    private static VertexInfo parseVertexSpec(String spec, int vertex, int texture, int normal, int lineNo) throws Exception {
         VertexInfo info = new VertexInfo();
         StringTokenizer st = new StringTokenizer(spec, "/", true);
         info.tex = info.norm = Integer.MAX_VALUE;
@@ -382,7 +378,7 @@ public class PMOBJImporter {
             }
             try {
                 int index = Integer.parseInt(value);
-                int total = 0;
+                int total;
                 if (i == 0) {
                     total = vertex;
                 } else if (i == 1) {
@@ -465,7 +461,7 @@ public class PMOBJImporter {
                 } else if ("Ks".equals(fields[0])) {
                     currentTexture.specular = parseColor(fields);
                 } else if ("d".equals(fields[0]) || "Tr".equals(fields[0])) {
-                    currentTexture.transparency = 1.0 - (Double.parseDouble(fields[1]));
+                    currentTexture.transparency = 1.0 - Double.parseDouble(fields[1]);
                 } else if ("Ns".equals(fields[0])) {
                     currentTexture.shininess = Double.parseDouble(fields[1]);
                 } else if ("map_Kd".equals(fields[0])) {
@@ -592,13 +588,9 @@ public class PMOBJImporter {
 
     /**
      * Inner class for storing information about a vertex of a face.
-     *
      */
     private static class VertexInfo {
 
-        /**
-         * Description of the Field
-         */
         public int vert, norm, tex;
     }
 
@@ -679,10 +671,10 @@ public class PMOBJImporter {
                 diffuse = new RGBColor(0.0, 0.0, 0.0);
             }
             if (ambient == null) {
-                ambient = new RGBColor(0.0, 0.0, 0.0);
+                ambient = new RGBColor();
             }
             if (specular == null) {
-                specular = new RGBColor(0.0, 0.0, 0.0);
+                specular = new RGBColor();
             } else {
                 specularity = 1.0;
             }

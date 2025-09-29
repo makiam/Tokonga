@@ -19,7 +19,10 @@ import artofillusion.object.*;
 import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.filechooser.*;
@@ -27,6 +30,7 @@ import javax.swing.filechooser.*;
 /**
  * OBJImporter implements the importing of OBJ files.
  */
+@Slf4j
 public class OBJImporter {
 
     /**
@@ -58,17 +62,17 @@ public class OBJImporter {
         Vector<List<FaceInfo>> face = new Vector<>();
         face.add(new Vector<>());
         groupTable.put("default", face.get(0));
-        int lineno = 0, smoothingGroup = -1;
+        int lineNo = 0, smoothingGroup = -1;
         String currentTexture = null;
         VertexInfo[] vertIndex = new VertexInfo[3];
         double[] val = new double[3];
         double[] min = new double[]{Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE};
         double[] max = new double[]{-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE};
         String s;
-        BufferedReader in = new BufferedReader(new FileReader(f));
-        try {
+
+        try (BufferedReader in = new BufferedReader(new FileReader(f))) {
             while ((s = in.readLine()) != null) {
-                lineno++;
+                lineNo++;
                 if (s.startsWith("#")) {
                     continue;
                 }
@@ -95,7 +99,7 @@ public class OBJImporter {
                                 max[i] = val[i];
                             }
                         } catch (NumberFormatException ex) {
-                            throw new Exception("Illegal value '" + fields[i + 1] + "' found in line " + lineno + ".");
+                            throw new Exception("Illegal value '" + fields[i + 1] + "' found in line " + lineNo + ".");
                         }
                     }
                     vertex.add(new Vec3(val[0], val[1], val[2]));
@@ -106,8 +110,7 @@ public class OBJImporter {
                         try {
                             val[i] = Double.parseDouble(fields[i + 1]);
                         } catch (NumberFormatException ex) {
-                            throw new Exception("Illegal value '" + fields[i + 1]
-                                    + "' found in line " + lineno + ".");
+                            throw new Exception("Illegal value '" + fields[i + 1] + "' found in line " + lineNo + ".");
                         }
                     }
                     normal.add(new Vec3(val[0], val[1], val[2]));
@@ -122,7 +125,7 @@ public class OBJImporter {
                                 val[i] = 0.0;
                             }
                         } catch (NumberFormatException ex) {
-                            throw new Exception("Illegal value '" + fields[i + 1] + "' found in line " + lineno + ".");
+                            throw new Exception("Illegal value '" + fields[i + 1] + "' found in line " + lineNo + ".");
                         }
                     }
                     texture.add(new Vec3(val[0], val[1], val[2]));
@@ -131,7 +134,7 @@ public class OBJImporter {
                         vertIndex = new VertexInfo[fields.length - 1];
                     }
                     for (int i = 0; i < vertIndex.length; i++) {
-                        vertIndex[i] = parseVertexSpec(fields[i + 1], vertex.size(), texture.size(), normal.size(), lineno);
+                        vertIndex[i] = parseVertexSpec(fields[i + 1], vertex.size(), texture.size(), normal.size(), lineNo);
                     }
                     for (int i = 0; i < face.size(); i++) {
                         if (fields.length == 4) {
@@ -176,7 +179,7 @@ public class OBJImporter {
                     try {
                         smoothingGroup = Integer.parseInt(fields[1]);
                     } catch (NumberFormatException ex) {
-                        throw new Exception("Illegal value '" + fields[1]  + "' found in line " + lineno + ".");
+                        throw new Exception("Illegal value '" + fields[1] + "' found in line " + lineNo + ".");
                     }
                 } else if ("g".equals(fields[0])) {
                     // Set the current group or groups.
@@ -268,17 +271,17 @@ public class OBJImporter {
                 info.addTrack(new RotationTrack(info), 1);
 
                 // Find the smoothness values for the edges.
-                TriangleMesh.Edge[] edge = ((TriangleMesh) info.getObject()).getEdges();
-                for (int i = 0; i < edge.length; i++) {
-                    if (edge[i].f2 == -1) {
+                TriangleMesh.Edge[] edges = ((TriangleMesh) info.getObject()).getEdges();
+                for (int i = 0; i < edges.length; i++) {
+                    if (edges[i].f2 == -1) {
                         continue;
                     }
-                    FaceInfo f1 = groupFaces.get(edge[i].f1);
-                    FaceInfo f2 = groupFaces.get(edge[i].f2);
+                    FaceInfo f1 = groupFaces.get(edges[i].f1);
+                    FaceInfo f2 = groupFaces.get(edges[i].f2);
                     if (f1.smoothingGroup == 0 || f1.smoothingGroup != f2.smoothingGroup) {
                         // They are in different smoothing groups.
 
-                        edge[i].smoothness = 0.0f;
+                        edges[i].smoothness = 0.0f;
                         continue;
                     }
 
@@ -289,7 +292,7 @@ public class OBJImporter {
                                 int n1 = f1.getVertex(j).norm;
                                 int n2 = f2.getVertex(k).norm;
                                 if (n1 != n2 && normal.get(n1).distance(normal.get(n2)) > 1e-10) {
-                                    edge[i].smoothness = 0.0f;
+                                    edges[i].smoothness = 0.0f;
                                 }
                                 break;
                             }
@@ -390,8 +393,6 @@ public class OBJImporter {
                 theScene.addObject(info, null);
             }
             return theScene;
-        } finally {
-            in.close();
         }
     }
 
@@ -428,7 +429,7 @@ public class OBJImporter {
      */
     private static String[] breakLine(String line) {
         StringTokenizer st = new StringTokenizer(line);
-        List<String> tokens = new Vector<>();
+        List<String> tokens = new ArrayList<>();
 
         while (st.hasMoreTokens()) {
             tokens.add(st.nextToken());
@@ -440,7 +441,7 @@ public class OBJImporter {
      * Parse the specification for a vertex and return the index of the vertex
      * to use.
      */
-    private static VertexInfo parseVertexSpec(String spec, int vertex, int texture, int normal, int lineno) throws Exception {
+    private static VertexInfo parseVertexSpec(String spec, int vertex, int texture, int normal, int lineNo) throws Exception {
         VertexInfo info = new VertexInfo();
         StringTokenizer st = new StringTokenizer(spec, "/", true);
         info.tex = info.norm = Integer.MAX_VALUE;
@@ -474,7 +475,7 @@ public class OBJImporter {
                     info.norm = index;
                 }
             } catch (NumberFormatException ex) {
-                throw new Exception("Illegal value '" + spec + "' found in line " + lineno + ".");
+                throw new Exception("Illegal value '" + spec + "' found in line " + lineNo + ".");
             }
         }
         if (info.tex == Integer.MAX_VALUE) {
@@ -498,7 +499,7 @@ public class OBJImporter {
             new BStandardDialog("Error Importing File", "Cannot locate material file '" + file + "'.", BStandardDialog.ERROR).showMessageDialog(null);
             return;
         }
-        BufferedReader in = new BufferedReader(new FileReader(f));
+        BufferedReader in = Files.newBufferedReader(f.toPath());
         String line;
         TextureInfo currentTexture = null;
         while ((line = in.readLine()) != null) {
@@ -642,6 +643,10 @@ public class OBJImporter {
 
     /**
      * Parse the specification for a color.
+     *
+     * @param fields Description of the Parameter
+     * @return Description of the Return Value
+     * @exception NumberFormatException Description of the Exception
      */
     private static RGBColor parseColor(String[] fields) throws NumberFormatException {
         if (fields.length < 4) {
@@ -660,6 +665,7 @@ public class OBJImporter {
 
     /**
      * Inner class for storing information about a face.
+     *
      */
     private static class FaceInfo {
 
@@ -731,9 +737,13 @@ public class OBJImporter {
 
         /**
          * Make sure that the components of a color are all between 0 and 1.
+         *
+         * @param c Description of the Parameter
          */
         private void checkColorRange(RGBColor c) {
-            float r = c.getRed(), g = c.getGreen(), b = c.getBlue();
+            float r = c.getRed();
+            float g = c.getGreen();
+            float b = c.getBlue();
             if (r < 0.0f) {
                 r = 0.0f;
             }
