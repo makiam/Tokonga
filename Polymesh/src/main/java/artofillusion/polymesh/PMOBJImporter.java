@@ -14,8 +14,7 @@ package artofillusion.polymesh;
 import artofillusion.ArtOfIllusion;
 import artofillusion.Camera;
 import artofillusion.Scene;
-import artofillusion.animation.PositionTrack;
-import artofillusion.animation.RotationTrack;
+
 import artofillusion.image.ImageMap;
 import artofillusion.image.ImageOrColor;
 import artofillusion.image.ImageOrValue;
@@ -79,18 +78,14 @@ public class PMOBJImporter {
         Scene theScene = new Scene();
         CoordinateSystem coords = new CoordinateSystem(new Vec3(0.0, 0.0, Camera.DEFAULT_DISTANCE_TO_SCREEN), new Vec3(0.0, 0.0, -1.0), Vec3.vy());
         ObjectInfo info = new ObjectInfo(new SceneCamera(), coords, "Camera 1");
-        info.addTrack(new PositionTrack(info), 0);
-        info.addTrack(new RotationTrack(info), 1);
+
         theScene.addObject(info, null);
         info = new ObjectInfo(new DirectionalLight(new RGBColor(1.0f, 1.0f, 1.0f), 0.8f), coords.duplicate(), "Light 1");
-        info.addTrack(new PositionTrack(info), 0);
-        info.addTrack(new RotationTrack(info), 1);
+
         theScene.addObject(info, null);
 
         // Open the file and read the contents.
         Map<String, Vector<FaceInfo>> groupTable = new Hashtable<>();
-
-        // Open the file and read the contents.
         Map<String, TextureInfo> textureTable = new Hashtable<>();
         List<Vec3> vertex = new Vector<>();
         List<Vec3> normal = new Vector<>();
@@ -219,9 +214,9 @@ public class PMOBJImporter {
             Map<String, Texture> realizedTextures = new Hashtable<>();
             Map<String, ImageMap> imageMaps = new Hashtable<>();
 
-            for (Map.Entry<String, Vector<FaceInfo>> entry : groupTable.entrySet()) {
-                String group = entry.getKey();
-                Vector<FaceInfo> groupFaces = groupTable.get(group);
+            for (Map.Entry<String, Vector<FaceInfo>> entry: groupTable.entrySet()) {
+                var group = entry.getKey();
+                var groupFaces = entry.getValue();
                 if (groupFaces.isEmpty()) {
                     continue;
                 }
@@ -264,8 +259,6 @@ public class PMOBJImporter {
                 }
                 coords = new CoordinateSystem(center, Vec3.vz(), Vec3.vy());
                 info = new ObjectInfo(new PolyMesh(vert, fc), coords, ("default".equals(group) ? objName : group));
-                info.addTrack(new PositionTrack(info), 0);
-                info.addTrack(new RotationTrack(info), 1);
 
                 // Find the smoothness values for the edges.
                 PolyMesh.Wedge[] edges = ((PolyMesh) info.object).getEdges();
@@ -356,14 +349,6 @@ public class PMOBJImporter {
     /**
      * Parse the specification for a vertex and return the index of the vertex
      * to use.
-     *
-     * @param spec Description of the Parameter
-     * @param vertex Description of the Parameter
-     * @param texture Description of the Parameter
-     * @param normal Description of the Parameter
-     * @param lineNo Description of the Parameter
-     * @return Description of the Return Value
-     * @exception Exception Description of the Exception
      */
     private static VertexInfo parseVertexSpec(String spec, int vertex, int texture, int normal, int lineNo) throws Exception {
         VertexInfo info = new VertexInfo();
@@ -412,13 +397,7 @@ public class PMOBJImporter {
     }
 
     /**
-     * Parse the contents of a .mtl file and add TextureInfo object to a
-     * hashtable.
-     *
-     * @param file Description of the Parameter
-     * @param baseDir Description of the Parameter
-     * @param textures Description of the Parameter
-     * @exception Exception Description of the Exception
+     * Parse the contents of a .mtl file and add TextureInfo object to a hashtable.
      */
     private static void parseTextures(String file, File baseDir, Map<String, TextureInfo> textures) throws Exception {
         File f = new File(baseDir, file);
@@ -485,14 +464,6 @@ public class PMOBJImporter {
 
     /**
      * Create a texture from a TextureInfo and add it to the scene.
-     *
-     * @param info Description of the Parameter
-     * @param scene Description of the Parameter
-     * @param baseDir Description of the Parameter
-     * @param imageMaps Description of the Parameter
-     * @param parent Description of the Parameter
-     * @return Description of the Return Value
-     * @exception Exception Description of the Exception
      */
     private static Texture createTexture(TextureInfo info, Scene scene, File baseDir, Map<String, ImageMap> imageMaps, BFrame parent) throws Exception {
         info.resolveColors();
@@ -536,16 +507,7 @@ public class PMOBJImporter {
     }
 
     /**
-     * Return the image map corresponding to the specified filename, and add it
-     * to the scene.
-     *
-     * @param name Description of the Parameter
-     * @param scene Description of the Parameter
-     * @param baseDir Description of the Parameter
-     * @param imageMaps Description of the Parameter
-     * @param parent Description of the Parameter
-     * @return Description of the Return Value
-     * @exception Exception Description of the Exception
+     * Return the image map corresponding to the specified filename, and add it to the scene.
      */
     private static ImageMap loadMap(String name, Scene scene, File baseDir, Map<String, ImageMap> imageMaps, BFrame parent) throws Exception {
         if (name == null) {
@@ -639,8 +601,6 @@ public class PMOBJImporter {
 
     /**
      * Inner class for storing information about a texture in a .mtl file.
-     *
-     * @author François Guillet
      */
     private static class TextureInfo {
 

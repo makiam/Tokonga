@@ -48,10 +48,10 @@ public class OBJImporter {
         CoordinateSystem coords = new CoordinateSystem(new Vec3(0.0, 0.0, Camera.DEFAULT_DISTANCE_TO_SCREEN), new Vec3(0.0, 0.0, -1.0), Vec3.vy());
         ObjectInfo info = new ObjectInfo(new SceneCamera(), coords, "Camera 1");
 
-        theScene.addObject(info, (UndoRecord) null);
+        theScene.addObject(info, null);
         info = new ObjectInfo(new DirectionalLight(new RGBColor(1.0f, 1.0f, 1.0f), 0.8f), coords.duplicate(), "Light 1");
 
-        theScene.addObject(info, (UndoRecord) null);
+        theScene.addObject(info, null);
 
         // Open the file and read the contents.
         Map<String, List<FaceInfo>> groupTable = new Hashtable<>();
@@ -220,17 +220,15 @@ public class OBJImporter {
             // If necessary, rescale the vertices to make the object an appropriate size.
             double maxSize = Math.max(Math.max(max[0] - min[0], max[1] - min[1]), max[2] - min[2]);
             double scale = Math.pow(10.0, -Math.floor(Math.log(maxSize) / Math.log(10.0)));
-            for (int i = 0; i < vertex.size(); i++) {
-                vertex.get(i).scale(scale);
-            }
+            vertex.forEach(item -> item.scale(scale));
 
             // Create a triangle mesh for each group.
-            Enumeration<String> keys = Collections.enumeration(groupTable.keySet());
             Map<String, Texture> realizedTextures = new Hashtable<>();
             Map<String, ImageMap> imageMaps = new Hashtable<>();
-            while (keys.hasMoreElements()) {
-                String group = keys.nextElement();
-                List<FaceInfo> groupFaces = groupTable.get(group);
+
+            for(Map.Entry<String, List<FaceInfo>> entry: groupTable.entrySet()) {
+                var group = entry.getKey();
+                var groupFaces = entry.getValue();
                 if (groupFaces.isEmpty()) {
                     continue;
                 }
@@ -267,8 +265,6 @@ public class OBJImporter {
                 }
                 coords = new CoordinateSystem(center, Vec3.vz(), Vec3.vy());
                 info = new ObjectInfo(new TriangleMesh(vert, fc), coords, ("default".equals(group) ? objName : group));
-                info.addTrack(new PositionTrack(info), 0);
-                info.addTrack(new RotationTrack(info), 1);
 
                 // Find the smoothness values for the edges.
                 TriangleMesh.Edge[] edges = ((TriangleMesh) info.getObject()).getEdges();
