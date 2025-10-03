@@ -62,7 +62,8 @@ public class OBJImporter {
         Vector<List<FaceInfo>> face = new Vector<>();
         face.add(new Vector<>());
         groupTable.put("default", face.get(0));
-        int lineNo = 0, smoothingGroup = -1;
+        int lineNo = 0;
+        int smoothingGroup = -1;
         String currentTexture = null;
         VertexInfo[] vertIndex = new VertexInfo[3];
         double[] val = new double[3];
@@ -70,7 +71,7 @@ public class OBJImporter {
         double[] max = new double[]{-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE};
         String s;
 
-        try (BufferedReader in = new BufferedReader(new FileReader(f))) {
+        try (BufferedReader in = java.nio.file.Files.newBufferedReader(f.toPath())) {
             while ((s = in.readLine()) != null) {
                 lineNo++;
                 if (s.startsWith("#")) {

@@ -1,9 +1,11 @@
 /*
  *  Copyright (C) 2002,2004 by Peter Eastman, Modifications (C) 2005 by François Guillet for PolyMesh adaptation
  *  Changes copyright (C) 2023-2025 by Maksim Khramov
+ *
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
+ *
  *  This program is distributed in the hope that it will be useful, but WITHOUT ANY
  *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  *  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
@@ -66,9 +68,9 @@ public class PMOBJImporter {
         if(jfc.showOpenDialog(parent.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
-
-        File f = jfc.getSelectedFile();
+        
         ArtOfIllusion.setCurrentDirectory(jfc.getCurrentDirectory().getAbsolutePath());
+        File f = jfc.getSelectedFile();
         String objName = f.getName();
         if (objName.lastIndexOf('.') > 0) {
             objName = objName.substring(0, objName.lastIndexOf('.'));
@@ -101,7 +103,7 @@ public class PMOBJImporter {
         double[] max = new double[]{-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE};
         String s;
 
-        try (BufferedReader in = new BufferedReader(new FileReader(f))) {
+        try (BufferedReader in = java.nio.file.Files.newBufferedReader(f.toPath())) {
             while ((s = in.readLine()) != null) {
                 lineNo++;
                 if (s.startsWith("#")) {
