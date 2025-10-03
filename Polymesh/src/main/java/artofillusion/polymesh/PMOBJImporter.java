@@ -244,8 +244,6 @@ public class PMOBJImporter {
 
                 // Build the list of vertices and center them.
                 Vec3[] vert = new Vec3[numVert];
-
-                // Build the list of vertices and center them.
                 Vec3 center = new Vec3();
                 for (int i = 0; i < realIndex.length; i++) {
                     if (realIndex[i] > -1) {
@@ -302,7 +300,7 @@ public class PMOBJImporter {
                     if (tex instanceof Texture2D) {
                         // Set the UV coordinates.
 
-                        UVMapping map = new UVMapping(info.object, tex);
+                        UVMapping map = new UVMapping(info.getObject(), tex);
                         info.setTexture(tex, map);
                         Vec2[] uv = new Vec2[numVert];
                         boolean needPerFace = false;
@@ -562,18 +560,15 @@ public class PMOBJImporter {
      */
     private static class FaceInfo {
 
-        /**
-         * Description of the Field
-         */
         public final VertexInfo[] vi;
-        /**
-         * Description of the Field
-         */
         public final int smoothingGroup;
-        /**
-         * Description of the Field
-         */
         public final String texture;
+
+        public FaceInfo(VertexInfo v1, VertexInfo v2, VertexInfo v3, int smoothingGroup, String texture) {
+            this.vi = new VertexInfo[] {v1, v2, v3};
+            this.smoothingGroup = smoothingGroup;
+            this.texture = texture;
+        }
 
         /**
          * Constructor for the FaceInfo object

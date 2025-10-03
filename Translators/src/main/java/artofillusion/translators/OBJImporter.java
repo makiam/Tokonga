@@ -226,7 +226,7 @@ public class OBJImporter {
             Map<String, Texture> realizedTextures = new Hashtable<>();
             Map<String, ImageMap> imageMaps = new Hashtable<>();
 
-            for(Map.Entry<String, List<FaceInfo>> entry: groupTable.entrySet()) {
+            for (Map.Entry<String, List<FaceInfo>> entry: groupTable.entrySet()) {
                 var group = entry.getKey();
                 var groupFaces = entry.getValue();
                 if (groupFaces.isEmpty()) {
@@ -247,7 +247,7 @@ public class OBJImporter {
                             realIndex[fi.getVertex(j).vert] = numVert++;
                         }
                     }
-                    fc[i] = new int[]{realIndex[fi.v1.vert], realIndex[fi.v2.vert], realIndex[fi.v3.vert]};
+                    fc[i] = new int[]{realIndex[fi.getVertex(0).vert], realIndex[fi.getVertex(1).vert], realIndex[fi.getVertex(2).vert]};
                 }
 
                 // Build the list of vertices and center them.
@@ -665,29 +665,37 @@ public class OBJImporter {
      */
     private static class FaceInfo {
 
-        public final VertexInfo v1;
-        public final VertexInfo v2;
-        public final VertexInfo v3;
+        public final VertexInfo[] vi;
         public final int smoothingGroup;
         public final String texture;
 
         public FaceInfo(VertexInfo v1, VertexInfo v2, VertexInfo v3, int smoothingGroup, String texture) {
-            this.v1 = v1;
-            this.v2 = v2;
-            this.v3 = v3;
+            this.vi = new VertexInfo[] {v1, v2, v3};
             this.smoothingGroup = smoothingGroup;
             this.texture = texture;
         }
 
-        public VertexInfo getVertex(int which) {
-            switch (which) {
-                case 0:
-                    return v1;
-                case 1:
-                    return v2;
-                default:
-                    return v3;
-            }
+        /**
+         * Constructor for the FaceInfo object
+         *
+         * @param vi Description of the Parameter
+         * @param smoothingGroup Description of the Parameter
+         * @param texture Description of the Parameter
+         */
+        public FaceInfo(VertexInfo[] vi, int smoothingGroup, String texture) {
+            this.vi = vi;
+            this.smoothingGroup = smoothingGroup;
+            this.texture = texture;
+        }
+
+        /**
+         * Gets the vertex attribute of the FaceInfo object
+         *
+         * @param index Description of the Parameter
+         * @return The vertex value
+         */
+        public VertexInfo getVertex(int index) {
+            return vi[index];
         }
     }
 
