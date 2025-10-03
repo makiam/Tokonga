@@ -20,12 +20,13 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.filechooser.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * OBJImporter implements the importing of OBJ files.
@@ -36,7 +37,7 @@ public class OBJImporter {
     /**
      * Import an OBJ file and create a Scene that represents its contents.
      */
-    public static Scene importFile(File f) throws Exception {
+    private static Scene importFile(File f) throws Exception {
         String objName = f.getName();
         if (objName.lastIndexOf('.') > 0) {
             objName = objName.substring(0, objName.lastIndexOf('.'));
@@ -71,7 +72,7 @@ public class OBJImporter {
         double[] max = new double[]{-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE};
         String s;
 
-        try (BufferedReader in = java.nio.file.Files.newBufferedReader(f.toPath())) {
+        try (BufferedReader in = Files.newBufferedReader(f.toPath())) {
             while ((s = in.readLine()) != null) {
                 lineNo++;
                 if (s.startsWith("#")) {
@@ -397,12 +398,11 @@ public class OBJImporter {
      * Present a file chooser to the user so they can select an OBJ file. Create a Scene from it,
      * and display it in a new window.
      */
-    public static void importFile(BFrame parent) {
+    public static void importFile(@NotNull BFrame parent)  {
         JFileChooser jfc = new JFileChooser();
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfc.setDialogTitle(Translate.text("Translators:importOBJ"));
         Optional.ofNullable(ArtOfIllusion.getCurrentDirectory()).ifPresent(dir -> jfc.setCurrentDirectory(new File(dir)));
-
 
         FileNameExtensionFilter objFilter = new FileNameExtensionFilter(Translate.text("Translators:fileFilter.obj"), "obj");
         jfc.addChoosableFileFilter(objFilter);
@@ -411,6 +411,7 @@ public class OBJImporter {
         if (jfc.showOpenDialog(parent.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
+
         ArtOfIllusion.setCurrentDirectory(jfc.getCurrentDirectory().getAbsolutePath());
         try {
             Scene scene = importFile(jfc.getSelectedFile());
@@ -485,7 +486,7 @@ public class OBJImporter {
     }
 
     /**
-     * Parse the contents of a .mtl file and add TextureInfo object to a hashtable.
+     * Parse the contents of a .mtl file and add TextureInfo object to map.
      */
     private static void parseTextures(String file, File baseDir, Map<String, TextureInfo> textures) throws Exception {
         File f = new File(baseDir, file);
@@ -493,6 +494,7 @@ public class OBJImporter {
             f = new File(file);
         }
         if (!f.isFile()) {
+            //TODO: Collect error noUI
             new BStandardDialog("Error Importing File", "Cannot locate material file '" + file + "'.", BStandardDialog.ERROR).showMessageDialog(null);
             return;
         }
