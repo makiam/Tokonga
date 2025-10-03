@@ -20,7 +20,7 @@ import buoy.widget.BFrame
 final class OBJTranslator : Translator {
     override fun getName() = "Wavefront (.obj)"
 
-    override fun importFile(parent: BFrame?) = OBJImporter.importFile(parent)
+    override fun importFile(parent: BFrame) = OBJImporter.importFile(parent)
 
     override fun exportFile(parent: BFrame?, theScene: Scene) = OBJExporter.exportFile(parent, theScene)
 }

@@ -30,7 +30,7 @@ class PMOBJTranslator : Translator {
      */
     override fun getName(): String? = Translate.text("polymesh:importWavefront")
 
-    override fun importFile(parent: BFrame?) = PMOBJImporter.importFile(parent)
+    override fun importFile(parent: BFrame) = PMOBJImporter.importFile(parent)
 
     override fun exportFile(parent: BFrame?, theScene: Scene) = PMOBJExporter.exportFile(parent, theScene)
 }
