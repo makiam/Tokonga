@@ -20,12 +20,13 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.filechooser.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * OBJImporter implements the importing of OBJ files.
@@ -36,7 +37,7 @@ public class OBJImporter {
     /**
      * Import an OBJ file and create a Scene that represents its contents.
      */
-    public static Scene importFile(File f) throws Exception {
+    private static Scene importFile(File f) throws Exception {
         String objName = f.getName();
         if (objName.lastIndexOf('.') > 0) {
             objName = objName.substring(0, objName.lastIndexOf('.'));
@@ -62,7 +63,8 @@ public class OBJImporter {
         Vector<List<FaceInfo>> face = new Vector<>();
         face.add(new Vector<>());
         groupTable.put("default", face.get(0));
-        int lineNo = 0, smoothingGroup = -1;
+        int lineNo = 0;
+        int smoothingGroup = -1;
         String currentTexture = null;
         VertexInfo[] vertIndex = new VertexInfo[3];
         double[] val = new double[3];
@@ -70,7 +72,7 @@ public class OBJImporter {
         double[] max = new double[]{-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE};
         String s;
 
-        try (BufferedReader in = new BufferedReader(new FileReader(f))) {
+        try (BufferedReader in = Files.newBufferedReader(f.toPath())) {
             while ((s = in.readLine()) != null) {
                 lineNo++;
                 if (s.startsWith("#")) {
@@ -226,7 +228,7 @@ public class OBJImporter {
             Map<String, Texture> realizedTextures = new Hashtable<>();
             Map<String, ImageMap> imageMaps = new Hashtable<>();
 
-            for(Map.Entry<String, List<FaceInfo>> entry: groupTable.entrySet()) {
+            for (Map.Entry<String, List<FaceInfo>> entry: groupTable.entrySet()) {
                 var group = entry.getKey();
                 var groupFaces = entry.getValue();
                 if (groupFaces.isEmpty()) {
@@ -247,7 +249,7 @@ public class OBJImporter {
                             realIndex[fi.getVertex(j).vert] = numVert++;
                         }
                     }
-                    fc[i] = new int[]{realIndex[fi.v1.vert], realIndex[fi.v2.vert], realIndex[fi.v3.vert]};
+                    fc[i] = new int[]{realIndex[fi.getVertex(0).vert], realIndex[fi.getVertex(1).vert], realIndex[fi.getVertex(2).vert]};
                 }
 
                 // Build the list of vertices and center them.
@@ -396,12 +398,11 @@ public class OBJImporter {
      * Present a file chooser to the user so they can select an OBJ file. Create a Scene from it,
      * and display it in a new window.
      */
-    public static void importFile(BFrame parent) {
+    public static void importFile(@NotNull BFrame parent)  {
         JFileChooser jfc = new JFileChooser();
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfc.setDialogTitle(Translate.text("Translators:importOBJ"));
         Optional.ofNullable(ArtOfIllusion.getCurrentDirectory()).ifPresent(dir -> jfc.setCurrentDirectory(new File(dir)));
-
 
         FileNameExtensionFilter objFilter = new FileNameExtensionFilter(Translate.text("Translators:fileFilter.obj"), "obj");
         jfc.addChoosableFileFilter(objFilter);
@@ -410,6 +411,7 @@ public class OBJImporter {
         if (jfc.showOpenDialog(parent.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
+
         ArtOfIllusion.setCurrentDirectory(jfc.getCurrentDirectory().getAbsolutePath());
         try {
             Scene scene = importFile(jfc.getSelectedFile());
@@ -484,7 +486,7 @@ public class OBJImporter {
     }
 
     /**
-     * Parse the contents of a .mtl file and add TextureInfo object to a hashtable.
+     * Parse the contents of a .mtl file and add TextureInfo object to map.
      */
     private static void parseTextures(String file, File baseDir, Map<String, TextureInfo> textures) throws Exception {
         File f = new File(baseDir, file);
@@ -492,6 +494,7 @@ public class OBJImporter {
             f = new File(file);
         }
         if (!f.isFile()) {
+            //TODO: Collect error noUI
             new BStandardDialog("Error Importing File", "Cannot locate material file '" + file + "'.", BStandardDialog.ERROR).showMessageDialog(null);
             return;
         }
@@ -665,29 +668,37 @@ public class OBJImporter {
      */
     private static class FaceInfo {
 
-        public final VertexInfo v1;
-        public final VertexInfo v2;
-        public final VertexInfo v3;
+        public final VertexInfo[] vi;
         public final int smoothingGroup;
         public final String texture;
 
         public FaceInfo(VertexInfo v1, VertexInfo v2, VertexInfo v3, int smoothingGroup, String texture) {
-            this.v1 = v1;
-            this.v2 = v2;
-            this.v3 = v3;
+            this.vi = new VertexInfo[] {v1, v2, v3};
             this.smoothingGroup = smoothingGroup;
             this.texture = texture;
         }
 
-        public VertexInfo getVertex(int which) {
-            switch (which) {
-                case 0:
-                    return v1;
-                case 1:
-                    return v2;
-                default:
-                    return v3;
-            }
+        /**
+         * Constructor for the FaceInfo object
+         *
+         * @param vi Description of the Parameter
+         * @param smoothingGroup Description of the Parameter
+         * @param texture Description of the Parameter
+         */
+        public FaceInfo(VertexInfo[] vi, int smoothingGroup, String texture) {
+            this.vi = vi;
+            this.smoothingGroup = smoothingGroup;
+            this.texture = texture;
+        }
+
+        /**
+         * Gets the vertex attribute of the FaceInfo object
+         *
+         * @param index Description of the Parameter
+         * @return The vertex value
+         */
+        public VertexInfo getVertex(int index) {
+            return vi[index];
         }
     }
 

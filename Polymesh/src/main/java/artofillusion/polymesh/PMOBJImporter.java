@@ -1,9 +1,11 @@
 /*
  *  Copyright (C) 2002,2004 by Peter Eastman, Modifications (C) 2005 by François Guillet for PolyMesh adaptation
  *  Changes copyright (C) 2023-2025 by Maksim Khramov
+ *
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
+ *
  *  This program is distributed in the hope that it will be useful, but WITHOUT ANY
  *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  *  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
@@ -36,13 +38,14 @@ import buoy.widget.BFrame;
 import buoy.widget.BStandardDialog;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.nio.file.Files;
 import java.util.*;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * PMOBJImporter imports .OBJ files to Polymeshes.
@@ -53,26 +56,14 @@ import javax.swing.*;
 public class PMOBJImporter {
 
     /**
-     * Description of the Method
-     *
-     * @param parent Description of the Parameter
+     * Import an OBJ file and create a Scene that represents its contents.
      */
-    public static void importFile(BFrame parent) {
-        JFileChooser jfc = new JFileChooser();
-        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        jfc.setDialogTitle(Translate.text("Translators:importOBJ"));
-        Optional.ofNullable(ArtOfIllusion.getCurrentDirectory()).ifPresent(dir -> jfc.setCurrentDirectory(new File(dir)));
-
-        if(jfc.showOpenDialog(parent.getComponent()) != JFileChooser.APPROVE_OPTION) {
-            return;
-        }
-
-        File f = jfc.getSelectedFile();
-        ArtOfIllusion.setCurrentDirectory(jfc.getCurrentDirectory().getAbsolutePath());
+    private static Scene importFile(File f) throws Exception {
         String objName = f.getName();
         if (objName.lastIndexOf('.') > 0) {
             objName = objName.substring(0, objName.lastIndexOf('.'));
         }
+        File directory = f.getCanonicalFile().getParentFile();
 
         // Create a scene to add objects to.
         Scene theScene = new Scene();
@@ -101,7 +92,7 @@ public class PMOBJImporter {
         double[] max = new double[]{-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE};
         String s;
 
-        try (BufferedReader in = new BufferedReader(new FileReader(f))) {
+        try (BufferedReader in = Files.newBufferedReader(f.toPath())) {
             while ((s = in.readLine()) != null) {
                 lineNo++;
                 if (s.startsWith("#")) {
@@ -200,7 +191,7 @@ public class PMOBJImporter {
                     // Load one or more texture libraries.
 
                     for (int i = 1; i < fields.length; i++) {
-                        parseTextures(fields[i], jfc.getCurrentDirectory(), textureTable);
+                        parseTextures(fields[i], directory, textureTable);
                     }
                 }
             }
@@ -244,8 +235,6 @@ public class PMOBJImporter {
 
                 // Build the list of vertices and center them.
                 Vec3[] vert = new Vec3[numVert];
-
-                // Build the list of vertices and center them.
                 Vec3 center = new Vec3();
                 for (int i = 0; i < realIndex.length; i++) {
                     if (realIndex[i] > -1) {
@@ -296,13 +285,13 @@ public class PMOBJImporter {
                 if (texName != null && textureTable.get(texName) != null) {
                     Texture tex = realizedTextures.get(texName);
                     if (tex == null) {
-                        tex = createTexture(textureTable.get(texName), theScene, jfc.getCurrentDirectory(), imageMaps, parent);
+                        tex = createTexture(textureTable.get(texName), theScene, directory, imageMaps);
                         realizedTextures.put(texName, tex);
                     }
                     if (tex instanceof Texture2D) {
                         // Set the UV coordinates.
 
-                        UVMapping map = new UVMapping(info.object, tex);
+                        UVMapping map = new UVMapping(info.getObject(), tex);
                         info.setTexture(tex, map);
                         Vec2[] uv = new Vec2[numVert];
                         boolean needPerFace = false;
@@ -325,12 +314,38 @@ public class PMOBJImporter {
                 }
                 theScene.addObject(info, null);
             }
-        } catch (Exception ex) {
-            log.atError().setCause(ex).log(Translate.text("errorLoadingFile"));
-            new BStandardDialog("Error", new String[]{Translate.text("errorLoadingFile"), ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(parent);
+        }
+        
+        return theScene;
+    }
+
+    /**
+     * Description of the Method
+     *
+     * @param parent Description of the Parameter
+     */
+    public static void importFile(@NotNull BFrame parent)  {
+        JFileChooser jfc = new JFileChooser();
+        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfc.setDialogTitle(Translate.text("Translators:importOBJ"));
+        Optional.ofNullable(ArtOfIllusion.getCurrentDirectory()).ifPresent(dir -> jfc.setCurrentDirectory(new File(dir)));
+
+        FileNameExtensionFilter objFilter = new FileNameExtensionFilter(Translate.text("Translators:fileFilter.obj"), "obj");
+        jfc.addChoosableFileFilter(objFilter);
+        jfc.setAcceptAllFileFilterUsed(true);
+        jfc.setFileFilter(objFilter);
+        if (jfc.showOpenDialog(parent.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        ArtOfIllusion.newWindow(theScene);
+
+        ArtOfIllusion.setCurrentDirectory(jfc.getCurrentDirectory().getAbsolutePath());
+        try {
+            Scene scene = importFile(jfc.getSelectedFile());
+            scene.setName(jfc.getSelectedFile().getName());
+            ArtOfIllusion.newWindow(scene);
+        } catch (Exception ex) {
+            new BStandardDialog("", new String[]{Translate.text("errorLoadingFile"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(parent);
+        }
     }
 
     /**
@@ -397,7 +412,7 @@ public class PMOBJImporter {
     }
 
     /**
-     * Parse the contents of a .mtl file and add TextureInfo object to a hashtable.
+     * Parse the contents of a .mtl file and add TextureInfo object to map.
      */
     private static void parseTextures(String file, File baseDir, Map<String, TextureInfo> textures) throws Exception {
         File f = new File(baseDir, file);
@@ -405,7 +420,9 @@ public class PMOBJImporter {
             f = new File(file);
         }
         if (!f.isFile()) {
-            throw new Exception("Cannot locate material file '" + file + "'.");
+            //TODO: Collect error noUI
+            new BStandardDialog("Error Importing File", "Cannot locate material file '" + file + "'.", BStandardDialog.ERROR).showMessageDialog(null);
+            return;
         }
         BufferedReader in = Files.newBufferedReader(f.toPath());
         String line;
@@ -465,12 +482,12 @@ public class PMOBJImporter {
     /**
      * Create a texture from a TextureInfo and add it to the scene.
      */
-    private static Texture createTexture(TextureInfo info, Scene scene, File baseDir, Map<String, ImageMap> imageMaps, BFrame parent) throws Exception {
+    private static Texture createTexture(TextureInfo info, Scene scene, File baseDir, Map<String, ImageMap> imageMaps) throws Exception {
         info.resolveColors();
-        ImageMap diffuseMap = loadMap(info.diffuseMap, scene, baseDir, imageMaps, parent);
-        ImageMap specularMap = loadMap(info.specularMap, scene, baseDir, imageMaps, parent);
-        ImageMap transparentMap = loadMap(info.transparentMap, scene, baseDir, imageMaps, parent);
-        ImageMap bumpMap = loadMap(info.bumpMap, scene, baseDir, imageMaps, parent);
+        ImageMap diffuseMap = loadMap(info.diffuseMap, scene, baseDir, imageMaps);
+        ImageMap specularMap = loadMap(info.specularMap, scene, baseDir, imageMaps);
+        ImageMap transparentMap = loadMap(info.transparentMap, scene, baseDir, imageMaps);
+        ImageMap bumpMap = loadMap(info.bumpMap, scene, baseDir, imageMaps);
         RGBColor transparentColor = new RGBColor(info.transparency, info.transparency, info.transparency);
         if (diffuseMap == null && specularMap == null && transparentMap == null && bumpMap == null) {
             // Create a uniform texture.
@@ -509,7 +526,7 @@ public class PMOBJImporter {
     /**
      * Return the image map corresponding to the specified filename, and add it to the scene.
      */
-    private static ImageMap loadMap(String name, Scene scene, File baseDir, Map<String, ImageMap> imageMaps, BFrame parent) throws Exception {
+    private static ImageMap loadMap(String name, Scene scene, File baseDir, Map<String, ImageMap> imageMaps) throws Exception {
         if (name == null) {
             return null;
         }
@@ -562,18 +579,15 @@ public class PMOBJImporter {
      */
     private static class FaceInfo {
 
-        /**
-         * Description of the Field
-         */
         public final VertexInfo[] vi;
-        /**
-         * Description of the Field
-         */
         public final int smoothingGroup;
-        /**
-         * Description of the Field
-         */
         public final String texture;
+
+        public FaceInfo(VertexInfo v1, VertexInfo v2, VertexInfo v3, int smoothingGroup, String texture) {
+            this.vi = new VertexInfo[] {v1, v2, v3};
+            this.smoothingGroup = smoothingGroup;
+            this.texture = texture;
+        }
 
         /**
          * Constructor for the FaceInfo object
