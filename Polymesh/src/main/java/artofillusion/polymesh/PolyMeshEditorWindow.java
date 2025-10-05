@@ -834,7 +834,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         skeletonMenu.add(skeletonMenuItem[5] = Translate.checkboxMenuItem("detachSkeleton", event -> skeletonDetachedChanged(), false));
     }
 
-    private final BMenuItem unfoldMeshAction = Translate.menuItem("polymesh:unfoldMesh", this::doUnfoldMesh);
+    private final BMenuItem unfoldMeshAction = new BMenuItem();
     private final BMenuItem editMappingAction = Translate.menuItem("polymesh:editMapping", this::doEditMapping);
 
     /**
@@ -842,6 +842,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      */
     void createTextureMenu() {
         BMenu textureMenu = Translate.menu("polymesh:texture");
+        unfoldMeshAction.getComponent().setAction(new UnfoldAction());
         textureMenu.add(unfoldMeshAction);
         textureMenu.add(editMappingAction);
         menubar.add(textureMenu);
@@ -1477,7 +1478,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             (meshMenuItem[3]).setEnabled(false);
             (meshMenuItem[4]).setEnabled(false);
 
-            unfoldMeshAction.setEnabled(mesh.getSeams() != null);
+
+            var t = mesh.getSeams() != null;
+            log.info("UA: Mesh is closed. Seams is null {}", t);
+            unfoldMeshAction.setEnabled(t);
 
         } else {
             ((BMenuItem) vertexMenuItem[8]).setEnabled(true);
@@ -4334,4 +4338,17 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         private final Widget widget;
     }
 
+    private class UnfoldAction extends AbstractAction {
+
+        public UnfoldAction() {
+            super(Translate.text("polymesh:menu.unfoldMesh"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            PolyMeshEditorWindow.this.doUnfoldMesh(null);
+            SwingUtilities.invokeLater(() -> new ProgressDialog(PolyMeshEditorWindow.this.getComponent()));
+        }
+        
+    }
 }
