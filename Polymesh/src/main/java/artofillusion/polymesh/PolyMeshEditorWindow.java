@@ -4103,9 +4103,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     private void doUnfoldMesh(ActionEvent event) {
         UnfoldStatusDialog dlg = new UnfoldStatusDialog(this);
-        if (!dlg.cancelled) {
-            doEditMapping(null);
-        }
+        if(dlg.cancelled) return;
+        doEditMapping(null);
     }
 
     @SuppressWarnings("unused")
