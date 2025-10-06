@@ -42,7 +42,7 @@ class UnfoldStatusDialog extends BDialog {
     private BButton advancedButton;
     private BLabel residualLabel;
     private RowContainer rowContainer1;
-    private BTextField residualTF;
+
     private int status;
     protected boolean cancelled;
     protected double residual;
