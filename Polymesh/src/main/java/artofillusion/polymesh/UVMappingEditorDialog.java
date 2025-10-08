@@ -194,8 +194,8 @@ public class UVMappingEditorDialog extends BDialog {
                         new Insets(2, 2, 2, 2),
                         new Dimension(0, 0)));
 
-        try (InputStream inputStream = getClass().getResource("interfaces/unfoldEditor.xml").openStream()) {
-            WidgetDecoder decoder = new WidgetDecoder(inputStream);
+        try (InputStream is = getClass().getResource("interfaces/unfoldEditor.xml").openStream()) {
+            WidgetDecoder decoder = new WidgetDecoder(is);
             BorderContainer borderContainer = (BorderContainer) decoder.getRootObject();
             uMinValue = ((BLabel) decoder.getObject("uMinValue"));
             uMaxValue = ((BLabel) decoder.getObject("uMaxValue"));
