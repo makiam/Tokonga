@@ -75,9 +75,9 @@ public class DivideDialog extends javax.swing.JDialog {
         valueSpinnerLabel = new javax.swing.JLabel();
         valueSpinner = new javax.swing.JSpinner();
 
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(Translate.text("polymesh:subdivideEdgesTitle"));
         addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 closeDialog(evt);
             }
@@ -86,7 +86,7 @@ public class DivideDialog extends javax.swing.JDialog {
         okButton.setText("OK");
         okButton.addActionListener(this::okButtonActionPerformed);
 
-        cancelButton.setText("Cancel");
+        cancelButton.setText(Translate.text("button.cancel"));
         cancelButton.addActionListener(this::cancelButtonActionPerformed);
 
         valueSpinnerLabel.setText(Translate.text("polymesh:divideLabel"));
@@ -101,7 +101,7 @@ public class DivideDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 353, Short.MAX_VALUE)
+                        .addGap(0, 269, Short.MAX_VALUE)
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton))
