@@ -29,13 +29,20 @@ import lombok.extern.slf4j.Slf4j;
 public class MirrorDialog extends javax.swing.JDialog {
 
     /**
+     * A return status code - returned if KEEP button has been pressed
+     */
+    public static final int RET_KEEP = 2;
+
+    /**
+     * A return status code - returned if DISCARD button has been pressed
+     */
+    public static final int RET_DISCARD = 1;
+
+    /**
      * A return status code - returned if Cancel button has been pressed
      */
     public static final int RET_CANCEL = 0;
-    /**
-     * A return status code - returned if OK button has been pressed
-     */
-    public static final int RET_OK = 1;
+
 
     /**
      * Creates new form MirrorDialog
@@ -73,10 +80,11 @@ public class MirrorDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        okButton = new javax.swing.JButton();
+        discardButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        getRootPane().setDefaultButton(cancelButton);
+        keepButton = new javax.swing.JButton();
+        javax.swing.JLabel promptLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(Translate.text("polymesh:removeMeshMirror"));
@@ -86,10 +94,10 @@ public class MirrorDialog extends javax.swing.JDialog {
             }
         });
 
-        okButton.setText(Translate.text("polymesh:discard"));
-        okButton.addActionListener(new java.awt.event.ActionListener() {
+        discardButton.setText(Translate.text("polymesh:discard"));
+        discardButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
+                discardButtonActionPerformed(evt);
             }
         });
 
@@ -100,9 +108,14 @@ public class MirrorDialog extends javax.swing.JDialog {
             }
         });
 
-        jButton1.setText(Translate.text("polymesh:keep"));
+        keepButton.setText(Translate.text("polymesh:keep"));
+        keepButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                keepButtonActionPerformed(evt);
+            }
+        });
 
-        jLabel1.setText(Translate.text("polymesh:keepMirroredMesh"));
+        promptLabel.setText(Translate.text("polymesh:keepMirroredMesh"));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -113,39 +126,37 @@ public class MirrorDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 36, Short.MAX_VALUE)
-                        .addComponent(jButton1)
+                        .addComponent(keepButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(discardButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton))
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(promptLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, discardButton});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(promptLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
-                    .addComponent(okButton)
-                    .addComponent(jButton1))
+                    .addComponent(discardButton)
+                    .addComponent(keepButton))
                 .addContainerGap())
         );
-
-        getRootPane().setDefaultButton(okButton);
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        doClose(RET_OK);
-    }//GEN-LAST:event_okButtonActionPerformed
+    private void discardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_discardButtonActionPerformed
+        doClose(RET_DISCARD);
+    }//GEN-LAST:event_discardButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         doClose(RET_CANCEL);
@@ -157,6 +168,11 @@ public class MirrorDialog extends javax.swing.JDialog {
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog
+
+    private void keepButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_keepButtonActionPerformed
+        // TODO add your handling code here:
+        doClose(RET_KEEP);
+    }//GEN-LAST:event_keepButtonActionPerformed
     
     private void doClose(int retStatus) {
         returnStatus = retStatus;
@@ -167,9 +183,8 @@ public class MirrorDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JButton okButton;
+    private javax.swing.JButton discardButton;
+    private javax.swing.JButton keepButton;
     // End of variables declaration//GEN-END:variables
 
     private int returnStatus = RET_CANCEL;
