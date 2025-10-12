@@ -5,15 +5,19 @@ import artofillusion.ui.Translate;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 public class ProgressDialog extends JDialog {
+
     private PolyMeshEditorWindow owner;
     private JProgressBar progressBar;
+    @Getter
     private JTextArea textArea;
     private JButton button;
     private JScrollPane scrollPane;
 
-    public ProgressDialog(PolyMeshEditorWindow owner) {
+    public ProgressDialog(@NotNull PolyMeshEditorWindow owner) {
         this(owner.getComponent());
         this.owner = owner;
     }
@@ -101,34 +105,5 @@ public class ProgressDialog extends JDialog {
         textArea.setText("");
     }
 
-    // Example usage
-    public static void main(String... args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ReflectiveOperationException | UnsupportedLookAndFeelException ex) {
-        }
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                JFrame frame = new JFrame("Test Frame");
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.setSize(300, 200);
-                frame.setLocationRelativeTo(null);
 
-                ProgressDialog dialog = new ProgressDialog(frame);
-
-                // Add some sample content
-                dialog.appendText("Starting process...");
-                dialog.appendText("Processing item 1...");
-                dialog.appendText("Processing item 2...");
-                dialog.setProgress(50);
-                dialog.appendText("Halfway there!");
-                dialog.appendText("Processing item 3...");
-                dialog.setProgress(100);
-                dialog.appendText("Process completed!");
-
-                dialog.setVisible(true);
-            }
-        });
-    }
 }
