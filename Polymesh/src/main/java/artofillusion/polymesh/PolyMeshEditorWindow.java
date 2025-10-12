@@ -4144,7 +4144,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             }
             int[] faceTable = mesh.getTriangleFaceIndex();
             MeshUnfolder unfolder = new MeshUnfolder(mesh, triMesh, vertTable, faceTable);
-            if (unfolder.unfold(dlg.textArea, dlg.residual)) {
+            if (unfolder.unfold(dlg.getTextArea())) {
                 UVMappingData data = new UVMappingData(unfolder.getUnfoldedMeshes());
                 theMesh.setMappingData(data);
                 dlg.unfoldFinished(true);
@@ -4347,7 +4347,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         @Override
         public void actionPerformed(ActionEvent ae) {
             PolyMeshEditorWindow.this.doUnfoldMesh(null);
-            SwingUtilities.invokeLater(() -> new ProgressDialog(PolyMeshEditorWindow.this.getComponent()));
+            SwingUtilities.invokeLater(() -> new ProgressDialog(PolyMeshEditorWindow.this.getComponent()).setVisible(true));
         }
         
     }

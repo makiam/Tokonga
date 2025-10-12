@@ -22,8 +22,8 @@ import artofillusion.polymesh.UnfoldedMesh.UnfoldedEdge;
 import artofillusion.polymesh.UnfoldedMesh.UnfoldedFace;
 import artofillusion.polymesh.UnfoldedMesh.UnfoldedVertex;
 import artofillusion.ui.Translate;
-import buoy.widget.BTextArea;
 import java.util.*;
+import javax.swing.JTextArea;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -114,11 +114,7 @@ public class MeshUnfolder {
         this.faceTable = faceTable;
     }
 
-    public boolean unfold(BTextArea textArea, double res) {
-        return unfoldLinearAbf(textArea);
-    }
-
-    public boolean unfoldLinearAbf(BTextArea textArea) {
+    public boolean unfold(JTextArea textArea) {
         textArea.append("Unfolding mesh...\n");
         // dump mesh;
         TriangleMesh.Edge[] edges = trianglesMesh.getEdges();
@@ -347,8 +343,7 @@ public class MeshUnfolder {
                     if (next >= faceVertIndices[f1].length) {
                         next = 0;
                     }
-                    if ((uedges[i].v1 == faceVertIndices[f1][j] && uedges[i].v2 == faceVertIndices[f1][next])
-                            || (uedges[i].v2 == faceVertIndices[f1][j] && uedges[i].v1 == faceVertIndices[f1][next])) {
+                    if ((uedges[i].v1 == faceVertIndices[f1][j] && uedges[i].v2 == faceVertIndices[f1][next]) || (uedges[i].v2 == faceVertIndices[f1][j] && uedges[i].v1 == faceVertIndices[f1][next])) {
                         uedges[i].hidden = false;
                     }
                 }
@@ -363,8 +358,7 @@ public class MeshUnfolder {
                     if (next >= faceVertIndices[f2].length) {
                         next = 0;
                     }
-                    if ((uedges[i].v1 == faceVertIndices[f2][j] && uedges[i].v2 == faceVertIndices[f2][next])
-                            || (uedges[i].v2 == faceVertIndices[f2][j] && uedges[i].v1 == faceVertIndices[f2][next])) {
+                    if ((uedges[i].v1 == faceVertIndices[f2][j] && uedges[i].v2 == faceVertIndices[f2][next]) || (uedges[i].v2 == faceVertIndices[f2][j] && uedges[i].v1 == faceVertIndices[f2][next])) {
                         uedges[i].hidden = false;
                     }
                 }
@@ -815,8 +809,7 @@ public class MeshUnfolder {
      * Given an edge and a face, this method checks the 3rd vertex as being
      * unfolded if's not already checked
      */
-    private void computeFace(int e, int f, UnfoldedEdge[] uedges, UnfoldedFace[] ufaces, boolean[] unfoldedFace, boolean[] unfoldedVerts,
-            List<Integer> vertList, List<Integer> faceList) {
+    private void computeFace(int e, int f, UnfoldedEdge[] uedges, UnfoldedFace[] ufaces, boolean[] unfoldedFace, boolean[] unfoldedVerts, List<Integer> vertList, List<Integer> faceList) {
         int v1, v2, v3;
         v1 = ufaces[f].v1;
         v2 = ufaces[f].v2;

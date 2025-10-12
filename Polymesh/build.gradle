@@ -13,10 +13,7 @@ dependencies {
     implementation project(':Translators')
     implementation("org.greenrobot:eventbus-java:3.3.1")
     implementation group: 'com.googlecode.matrix-toolkits-java', name: 'mtj', version: '0.9.14'
-    //implementation("com.xemantic.kotlin:xemantic-kotlin-swing-dsl-core:1.2.14")
-    //runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.1")
     fatjar group: 'com.googlecode.matrix-toolkits-java', name: 'mtj', version: '0.9.14'
-//    fatjar("com.xemantic.kotlin:xemantic-kotlin-swing-dsl-core:1.2.14")
 }
 
 jar {

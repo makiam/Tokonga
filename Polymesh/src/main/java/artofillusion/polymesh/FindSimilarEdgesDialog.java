@@ -1,5 +1,6 @@
 /* Copyright (C) 2001-2004 by Peter Eastman, 2005 by Francois Guillet
    Changes copyright (C) 2023-2025 Maksim Khramov
+
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
@@ -37,7 +38,7 @@ import javax.swing.*;
 class FindSimilarEdgesDialog extends BDialog {
 
     private final boolean[] orSelection;
-    private BorderContainer borderContainer;
+
     private BButton okButton;
     private BButton cancelButton;
     private PMValueField toleranceVF;
@@ -51,9 +52,10 @@ class FindSimilarEdgesDialog extends BDialog {
         this.orSelection = owner.getSelection();
         this.mesh = (PolyMesh) owner.getObject().getObject();
 
+        BorderContainer container = null;
         try (InputStream is = getClass().getResource("interfaces/similaredges.xml").openStream()) {
             WidgetDecoder decoder = new WidgetDecoder(is);
-            borderContainer = (BorderContainer) decoder.getRootObject();
+            container = (BorderContainer) decoder.getRootObject();
             BLabel tolerance1 = (BLabel) decoder.getObject("tolerance1");
             tolerance1.setText(Translate.text("polymesh:" + tolerance1.getText()));
             okButton = ((BButton) decoder.getObject("okButton"));
@@ -68,7 +70,7 @@ class FindSimilarEdgesDialog extends BDialog {
         } catch (IOException ex) {
             log.atError().setCause(ex).log("Error creating FindSimilarEdgesDialog due{}", ex.getLocalizedMessage());
         }
-        setContent(borderContainer);
+        setContent(container);
         toleranceVF.addEventLink(ValueChangedEvent.class, this, "doTolValueChanged");
         okButton.addEventLink(CommandEvent.class, this, "doOK");
         cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
@@ -82,6 +84,7 @@ class FindSimilarEdgesDialog extends BDialog {
                 doCancel();
             }
         });
+
         pack();
         UIUtilities.centerWindow(this);
         doTolValueChanged();
