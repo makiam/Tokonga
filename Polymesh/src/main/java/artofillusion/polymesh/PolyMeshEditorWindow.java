@@ -3880,7 +3880,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     /**
      * Sets off a previously set mirror
      */
-    //TODO: Extract this dialog
     private void doTurnMirrorOff(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         if (mesh.getMirrorState() == PolyMesh.NO_MIRROR) {
@@ -3888,9 +3887,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         }
         MirrorDialog md = new MirrorDialog(this.getComponent());
         if(md.getReturnStatus() == MirrorDialog.RET_KEEP) {
-            log.info("Select keep 1");
+            log.info("Keep mirror");
         } else if(md.getReturnStatus() == MirrorDialog.RET_DISCARD) {
-            log.info("Select discard 1");
+            log.info("Discard mirror");
+            new DiscardMeshMirrorAction(this).execute();
         }
         BStandardDialog dlg = new BStandardDialog(Translate.text("polymesh:removeMeshMirror"), Translate.text("polymesh:keepMirroredMesh"), BStandardDialog.QUESTION);
         int r = dlg.showOptionDialog(this, new String[]{
@@ -4359,14 +4359,45 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         }
         
     }
-
-    private class DiscardMirrorAction implements UndoableEdit {
+    private class KeepMeshMirrorAction implements UndoableEdit {
         private Boolean xAxisFlag;
         private Boolean yAxisFlag;
         private Boolean zAxisFlag;
         private PolyMeshEditorWindow layout;
 
-        public DiscardMirrorAction(PolyMeshEditorWindow layout) {
+        public KeepMeshMirrorAction() {
+            this.layout = layout;
+            xAxisFlag = ((BCheckBoxMenuItem)layout.mirrorItem[1]).getState();
+            yAxisFlag = ((BCheckBoxMenuItem)layout.mirrorItem[1]).getState();
+            zAxisFlag = ((BCheckBoxMenuItem)layout.mirrorItem[1]).getState();
+        }
+
+        @Override
+        public void undo() {
+        }
+        
+        @Override
+        public void redo() {
+            ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
+            ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
+            ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
+            var mesh = (PolyMesh) layout.objInfo.getGeometry()
+            PolyMesh copy = mesh.getMirroredMesh();
+            mesh.copyObject(copy);
+        }
+        
+        @Override
+        public String getName() {
+            return "Turn Off Mirror";
+        }      
+    }
+    private class DiscardMeshMirrorAction implements UndoableEdit {
+        private Boolean xAxisFlag;
+        private Boolean yAxisFlag;
+        private Boolean zAxisFlag;
+        private PolyMeshEditorWindow layout;
+
+        public DiscardMeshMirrorAction(PolyMeshEditorWindow layout) {
             this.layout = layout;
             xAxisFlag = ((BCheckBoxMenuItem)layout.mirrorItem[1]).getState();
             yAxisFlag = ((BCheckBoxMenuItem)layout.mirrorItem[1]).getState();
@@ -4382,7 +4413,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
             ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
             ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
-            ((PolyMesh) layout.objInfo.object).setMirrorState(PolyMesh.NO_MIRROR);
+            var mesh = (PolyMesh) layout.objInfo.getGeometry()
+            mesh.setMirrorState(PolyMesh.NO_MIRROR);
         }
 
         @Override
