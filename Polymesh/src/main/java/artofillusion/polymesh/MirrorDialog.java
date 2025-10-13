@@ -12,13 +12,12 @@
 package artofillusion.polymesh;
 
 import artofillusion.ui.Translate;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
+import javax.swing.*;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -26,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author Maksim Khramov
  */
 @Slf4j
-public class MirrorDialog extends javax.swing.JDialog {
+public final class MirrorDialog extends javax.swing.JDialog {
 
     /**
      * A return status code - returned if KEEP button has been pressed
@@ -47,8 +46,8 @@ public class MirrorDialog extends javax.swing.JDialog {
     /**
      * Creates new form MirrorDialog
      */
-    public MirrorDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public MirrorDialog(Frame parent) {
+        super(parent, true);
         initComponents();
 
         // Close the dialog when Esc is pressed
@@ -62,6 +61,8 @@ public class MirrorDialog extends javax.swing.JDialog {
                 doClose(RET_CANCEL);
             }
         });
+        this.setLocationRelativeTo(getOwner());
+        this.setVisible(true);
     }
 
     /**
@@ -122,21 +123,19 @@ public class MirrorDialog extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 36, Short.MAX_VALUE)
-                        .addComponent(keepButton)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(promptLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(keepButton, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(discardButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(discardButton, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton))
-                    .addComponent(promptLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                        .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
+                        .addGap(18, 18, 18))))
         );
-
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, discardButton});
-
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
