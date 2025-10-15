@@ -4346,8 +4346,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         public KeepMeshMirrorAction(PolyMeshEditorWindow layout) {
             this.layout = layout;
             xAxisFlag = ((BCheckBoxMenuItem)layout.mirrorItem[1]).getState();
-            yAxisFlag = ((BCheckBoxMenuItem)layout.mirrorItem[1]).getState();
-            zAxisFlag = ((BCheckBoxMenuItem)layout.mirrorItem[1]).getState();
+            yAxisFlag = ((BCheckBoxMenuItem)layout.mirrorItem[2]).getState();
+            zAxisFlag = ((BCheckBoxMenuItem)layout.mirrorItem[3]).getState();
         }
 
         @Override
@@ -4359,8 +4359,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         public void redo() {
             SwingUtilities.invokeLater(() -> {
                 ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
-                ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
-                ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
+                ((BCheckBoxMenuItem)layout.mirrorItem[2]).setState(false);
+                ((BCheckBoxMenuItem)layout.mirrorItem[3]).setState(false);
             });
             var mesh = (PolyMesh) layout.objInfo.getGeometry();
             PolyMesh copy = mesh.getMirroredMesh();
@@ -4385,8 +4385,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         public DiscardMeshMirrorAction(PolyMeshEditorWindow layout) {
             this.layout = layout;
             xAxisFlag = ((BCheckBoxMenuItem)layout.mirrorItem[1]).getState();
-            yAxisFlag = ((BCheckBoxMenuItem)layout.mirrorItem[1]).getState();
-            zAxisFlag = ((BCheckBoxMenuItem)layout.mirrorItem[1]).getState();
+            yAxisFlag = ((BCheckBoxMenuItem)layout.mirrorItem[2]).getState();
+            zAxisFlag = ((BCheckBoxMenuItem)layout.mirrorItem[3]).getState();
         }
 
         @Override
@@ -4398,8 +4398,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         public void redo() {
             SwingUtilities.invokeLater(() -> {
                 ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
-                ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
-                ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
+                ((BCheckBoxMenuItem)layout.mirrorItem[2]).setState(false);
+                ((BCheckBoxMenuItem)layout.mirrorItem[3]).setState(false);
             });
             var mesh = (PolyMesh) layout.objInfo.getGeometry();
             mesh.setMirrorState(PolyMesh.NO_MIRROR);
