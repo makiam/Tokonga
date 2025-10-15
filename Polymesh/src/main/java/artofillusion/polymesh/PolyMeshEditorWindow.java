@@ -75,6 +75,7 @@ import org.greenrobot.eventbus.Subscribe;
  * @author Francois Guillet
  */
 @Slf4j
+@SuppressWarnings("java:S1121")
 public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWindow, PopupMenuManager, ValueWidgetOwner {
 
     private final ToolPalette modes;
@@ -265,7 +266,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     private boolean thickenFaces;
 
-    private Shortcut singleNormalShortcut, groupNormalShortcut;
+    private Shortcut singleNormalShortcut;
+    private Shortcut groupNormalShortcut;
 
     private static boolean selectVisible = false;
 
@@ -2477,8 +2479,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         Vec3[] normals = priorValueMesh.getNormals();
         int count = 0;
         origin = new Vec3();
-        radius = 0;
-        l = 0;
         for (int i = 0; i < vert.length; ++i) {
             if (selected[i]) {
                 ++count;
@@ -2729,7 +2729,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         final Wedge[] ed = theMesh.getEdges();
         final boolean pointmode = (selectMode == POINT_MODE);
         final ActionProcessor processor = new ActionProcessor();
-        float value;
         final ValueSlider smoothness;
         int i;
 
@@ -2741,8 +2740,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         /*
 		 * if ( pointmode ) valueWidget.getValue() = vt[i].smoothness; else
          */
-        value = ed[i].smoothness;
-        value = 0.001f * (Math.round(valueWidget.getValue() * 1000.0f));
         smoothness = new ValueSlider(0.0, 1.0, 1000, valueWidget.getValue());
         smoothness.addEventLink(ValueChangedEvent.class, new Object() {
             void processEvent() {
@@ -3251,23 +3248,23 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         setObject(obj);
         hideVert = new boolean[mesh.getVertices().length];
         for (int i = 0; i < theView.length; i++) {
-            if (getSelectionMode() == PolyMeshEditorWindow.POINT_MODE && selected.length != obj.getVertices().length) {
+            if (getSelectionMode() == MeshEditController.POINT_MODE && selected.length != obj.getVertices().length) {
                 ((PolyMeshViewer) theView[i]).visible = new boolean[obj.getVertices().length];
             }
-            if (getSelectionMode() == PolyMeshEditorWindow.EDGE_MODE && selected.length != obj.getEdges().length / 2) {
+            if (getSelectionMode() == MeshEditController.EDGE_MODE && selected.length != obj.getEdges().length / 2) {
                 ((PolyMeshViewer) theView[i]).visible = new boolean[obj.getEdges().length];
             }
-            if (getSelectionMode() == PolyMeshEditorWindow.FACE_MODE && selected.length != obj.getFaces().length) {
+            if (getSelectionMode() == MeshEditController.FACE_MODE && selected.length != obj.getFaces().length) {
                 ((PolyMeshViewer) theView[i]).visible = new boolean[obj.getFaces().length];
             }
         }
-        if (getSelectionMode() == PolyMeshEditorWindow.POINT_MODE && selected.length != obj.getVertices().length) {
+        if (getSelectionMode() == MeshEditController.POINT_MODE && selected.length != obj.getVertices().length) {
             selected = new boolean[obj.getVertices().length];
         }
-        if (getSelectionMode() == PolyMeshEditorWindow.EDGE_MODE && selected.length != obj.getEdges().length / 2) {
+        if (getSelectionMode() == MeshEditController.EDGE_MODE && selected.length != obj.getEdges().length / 2) {
             selected = new boolean[obj.getEdges().length / 2];
         }
-        if (getSelectionMode() == PolyMeshEditorWindow.FACE_MODE && selected.length != obj.getFaces().length) {
+        if (getSelectionMode() == MeshEditController.FACE_MODE && selected.length != obj.getFaces().length) {
             selected = new boolean[obj.getFaces().length];
         }
         if (hideFace != null) {
@@ -3888,31 +3885,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         MirrorDialog md = new MirrorDialog(this.getComponent());
         if(md.getReturnStatus() == MirrorDialog.RET_KEEP) {
             log.info("Keep mirror");
+            new KeepMeshMirrorAction(this).execute();
         } else if(md.getReturnStatus() == MirrorDialog.RET_DISCARD) {
             log.info("Discard mirror");
             new DiscardMeshMirrorAction(this).execute();
-        }
-        BStandardDialog dlg = new BStandardDialog(Translate.text("polymesh:removeMeshMirror"), Translate.text("polymesh:keepMirroredMesh"), BStandardDialog.QUESTION);
-        int r = dlg.showOptionDialog(this, new String[]{
-            Translate.text("polymesh:keep"), Translate.text("polymesh:discard"),
-            Translate.text("button.cancel")}, "cancel");
-        if (r == 0) {
-            log.info("Select keep 2");
-            PolyMesh newMesh = mesh.getMirroredMesh();
-            mesh.copyObject(newMesh);
-            ((BCheckBoxMenuItem) mirrorItem[1]).setState(false);
-            ((BCheckBoxMenuItem) mirrorItem[2]).setState(false);
-            ((BCheckBoxMenuItem) mirrorItem[3]).setState(false);
-            objectChanged();
-            updateImage();
-        } else if (r == 1) {
-            log.info("Select discard 2");
-            ((BCheckBoxMenuItem) mirrorItem[1]).setState(false);
-            ((BCheckBoxMenuItem) mirrorItem[2]).setState(false);
-            ((BCheckBoxMenuItem) mirrorItem[3]).setState(false);
-            mesh.setMirrorState(PolyMesh.NO_MIRROR);
-            objectChanged();
-            setSelection(selected);
         }
     }
 
@@ -4359,13 +4335,15 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         }
         
     }
+
+    @SuppressWarnings("java:S1068")
     private class KeepMeshMirrorAction implements UndoableEdit {
         private Boolean xAxisFlag;
         private Boolean yAxisFlag;
         private Boolean zAxisFlag;
         private PolyMeshEditorWindow layout;
 
-        public KeepMeshMirrorAction() {
+        public KeepMeshMirrorAction(PolyMeshEditorWindow layout) {
             this.layout = layout;
             xAxisFlag = ((BCheckBoxMenuItem)layout.mirrorItem[1]).getState();
             yAxisFlag = ((BCheckBoxMenuItem)layout.mirrorItem[1]).getState();
@@ -4374,23 +4352,30 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
         @Override
         public void undo() {
+            //Not yet implemented undo operation
         }
         
         @Override
         public void redo() {
-            ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
-            ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
-            ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
-            var mesh = (PolyMesh) layout.objInfo.getGeometry()
+            SwingUtilities.invokeLater(() -> {
+                ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
+                ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
+                ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
+            });
+            var mesh = (PolyMesh) layout.objInfo.getGeometry();
             PolyMesh copy = mesh.getMirroredMesh();
             mesh.copyObject(copy);
+            layout.objectChanged();
+            layout.updateImage();
         }
         
         @Override
         public String getName() {
-            return "Turn Off Mirror";
+            return "Turn Off Mirroring (Keep Changes)";
         }      
     }
+
+    @SuppressWarnings("java:S1068")
     private class DiscardMeshMirrorAction implements UndoableEdit {
         private Boolean xAxisFlag;
         private Boolean yAxisFlag;
@@ -4406,20 +4391,25 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
         @Override
         public void undo() {
+            //Not yet implemented undo operation
         }
 
         @Override
         public void redo() {
-            ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
-            ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
-            ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
-            var mesh = (PolyMesh) layout.objInfo.getGeometry()
+            SwingUtilities.invokeLater(() -> {
+                ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
+                ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
+                ((BCheckBoxMenuItem)layout.mirrorItem[1]).setState(false);
+            });
+            var mesh = (PolyMesh) layout.objInfo.getGeometry();
             mesh.setMirrorState(PolyMesh.NO_MIRROR);
+            layout.objectChanged();
+            layout.setSelection(layout.getSelection());
         }
 
         @Override
         public String getName() {
-            return "Turn Off Mirror";
+            return "Turn Off Mirroring (Discard Changes)";
         }
     }
 }
