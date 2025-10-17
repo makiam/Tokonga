@@ -56,12 +56,12 @@ class FindSimilarEdgesDialog extends BDialog {
         try (InputStream is = getClass().getResource("interfaces/similaredges.xml").openStream()) {
             WidgetDecoder decoder = new WidgetDecoder(is);
             container = (BorderContainer) decoder.getRootObject();
-            BLabel tolerance1 = (BLabel) decoder.getObject("tolerance1");
-            tolerance1.setText(Translate.text("polymesh:" + tolerance1.getText()));
+            var toleranceFieldLabel = (BLabel) decoder.getObject("tolerance1");
+            toleranceFieldLabel.setText(Translate.text("polymesh:toleranceEdges"));
             okButton = ((BButton) decoder.getObject("okButton"));
             cancelButton = ((BButton) decoder.getObject("cancelButton"));
-            BTextField toleranceTF = (BTextField) decoder.getObject("toleranceTF");
-            toleranceVF = new PMValueField(PolyMeshEditorWindow.getEdgeTol(), ValueField.NONE);
+
+            toleranceVF = new PMValueField(PolyMeshEditorWindow.getEdgeTol(), ValueField.POSITIVE);
             toleranceVF.setTextField((BTextField) decoder.getObject("toleranceTF"));
             okButton = ((BButton) decoder.getObject("okButton"));
             cancelButton = ((BButton) decoder.getObject("cancelButton"));

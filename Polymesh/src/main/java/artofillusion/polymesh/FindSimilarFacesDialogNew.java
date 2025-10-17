@@ -269,25 +269,5 @@ public class FindSimilarFacesDialogNew extends javax.swing.JDialog {
     private final ValueField tolerance2 = new ValueField(PolyMeshEditorWindow.getLooseShapeTol(), ValueField.NONE);
     private final ValueField tolerance3 = new ValueField(PolyMeshEditorWindow.getStrictShapeTol(), ValueField.NONE);
     
-    // Copied from Image Name Editor Dialog. Extract to shared code?
-    @FunctionalInterface
-    public interface TextInputListener extends DocumentListener {
-        void update(DocumentEvent de);
-        
-        @Override
-        default void changedUpdate(DocumentEvent de) {
-            update(de);
-        }
 
-        @Override
-        default void insertUpdate(DocumentEvent de)  {
-            update(de);            
-        }
-
-        @Override
-        default void removeUpdate(DocumentEvent de) {
-            update(de);            
-        }
-        
-    }    
 }
