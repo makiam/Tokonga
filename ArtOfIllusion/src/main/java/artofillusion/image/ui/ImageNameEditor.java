@@ -13,6 +13,7 @@ package artofillusion.image.ui;
 import artofillusion.image.ExternalImage;
 import artofillusion.image.ImageDetailsDialog;
 import artofillusion.image.ImageMap;
+import artofillusion.ui.TextInputListener;
 import artofillusion.ui.Translate;
 import java.awt.Component;
 import java.awt.Rectangle;
@@ -27,8 +28,7 @@ import javax.swing.KeyStroke;
 import javax.swing.LayoutStyle;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -230,26 +230,5 @@ public class ImageNameEditor extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     private int returnStatus = RET_CANCEL;
-    
-    // Copied to Polymesh FindSimilarFaces Dialog. Extract to shared code?
-    @FunctionalInterface
-    public interface TextInputListener extends DocumentListener {
-        void update(DocumentEvent de);
-        
-        @Override
-        default void changedUpdate(DocumentEvent de) {
-            update(de);
-        }
 
-        @Override
-        default void insertUpdate(DocumentEvent de)  {
-            update(de);            
-        }
-
-        @Override
-        default void removeUpdate(DocumentEvent de) {
-            update(de);            
-        }
-        
-    }
 }
