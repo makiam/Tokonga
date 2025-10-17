@@ -117,7 +117,7 @@
         </Property>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="nameField.getDocument().addDocumentListener((artofillusion.image.ui.ImageNameEditor.TextInputListener) event -&gt; textChanged());"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="nameField.getDocument().addDocumentListener((artofillusion.ui.TextInputListener) event -&gt; textChanged());"/>
         <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="false"/>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="2"/>
       </AuxValues>
