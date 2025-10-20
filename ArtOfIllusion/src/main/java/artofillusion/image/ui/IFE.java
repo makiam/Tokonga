@@ -6,6 +6,8 @@ package artofillusion.image.ui;
 
 import artofillusion.ui.NumericInputField;
 import artofillusion.ui.ValueField;
+import buoy.event.ValueChangedEvent;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 
@@ -13,18 +15,23 @@ import javax.swing.*;
  *
  * @author MaksK
  */
+@Slf4j
 public class IFE extends javax.swing.JDialog {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(IFE.class.getName());
-
+    private ValueField vfl = new ValueField(0);
     /**
      * Creates new form IFE
      */
     public IFE(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        vfl.addEventLink(ValueChangedEvent.class, this, "onValueChange");
     }
 
+    private void onValueChange(ValueChangedEvent event) {
+        log.info("Value now: {}", vfl.getValue());
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -35,7 +42,7 @@ public class IFE extends javax.swing.JDialog {
     private void initComponents() {
 
         jTextField1 = new NumericInputField();
-        jTextField2 = new ValueField(0).getComponent();
+        jTextField2 = vfl.getComponent();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
