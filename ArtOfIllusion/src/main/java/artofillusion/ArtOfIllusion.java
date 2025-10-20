@@ -18,6 +18,7 @@ import artofillusion.keystroke.*;
 import artofillusion.material.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
+import artofillusion.procedural.ExperimentalProcedureEditorSettingsPage;
 import artofillusion.script.*;
 import artofillusion.texture.*;
 import artofillusion.ui.*;
@@ -120,6 +121,7 @@ public class ArtOfIllusion {
 
         PluginRegistry.addCategory(artofillusion.preferences.PreferencesEditor.class);
 
+        PluginRegistry.registerPlugin(new ExperimentalProcedureEditorSettingsPage());
         PluginRegistry.registerPlugin(new ArtOfIllusion.AssetsFolderWatcher());
         PluginRegistry.registerPlugin(new UniformTexture());
         PluginRegistry.registerPlugin(new ImageMapTexture());
