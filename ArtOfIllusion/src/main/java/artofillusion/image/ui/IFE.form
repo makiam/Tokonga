@@ -59,7 +59,7 @@
         <Property name="text" type="java.lang.String" value="jTextField2"/>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ValueField(0).getComponent();"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="vfl.getComponent();"/>
       </AuxValues>
     </Component>
   </SubComponents>
