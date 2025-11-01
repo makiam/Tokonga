@@ -19,10 +19,10 @@ import artofillusion.image.filter.*;
 import artofillusion.math.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
+
+import java.awt.event.ActionEvent;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -380,25 +380,24 @@ public class SceneCamera extends Object3D {
         final ValueField dofField = new ValueField(depthOfField, ValueField.POSITIVE);
         final ValueField fdField = new ValueField(focalDist, ValueField.POSITIVE);
         BCheckBox perspectiveBox = new BCheckBox(Translate.text("Perspective"), perspective);
-        BButton filtersButton = Translate.button("filters", new Object() {
-            void processEvent() {
-                SceneCamera temp = SceneCamera.this.duplicate();
-                temp.fov = fovSlider.getValue();
-                temp.depthOfField = dofField.getValue();
-                temp.focalDist = fdField.getValue();
-                new CameraFilterDialog(UIUtilities.findWindow(fovSlider), parent.getScene(), temp, info.getCoords());
-                filters = temp.filters;
-            }
-        }, "processEvent");
-        ComponentsDialog dlg = new ComponentsDialog(parent.getFrame(), Translate.text("editCameraTitle"),
-                new Widget[]{fovSlider, dofField, fdField, perspectiveBox, filtersButton},
-                new String[]{Translate.text("fieldOfView"), Translate.text("depthOfField"), Translate.text("focalDist"), null, null});
-        if (dlg.clickedOk()) {
+        BButton filtersButton = Translate.button("filters", (ActionEvent event) -> {
+            SceneCamera temp = SceneCamera.this.duplicate();
+            temp.fov = fovSlider.getValue();
+            temp.depthOfField = dofField.getValue();
+            temp.focalDist = fdField.getValue();
+            new CameraFilterDialog(UIUtilities.findWindow(fovSlider), parent.getScene(), temp, info.getCoords());
+            filters = temp.filters;
+        });
+        Runnable commit = () -> {
             fov = fovSlider.getValue();
             depthOfField = dofField.getValue();
             focalDist = fdField.getValue();
             perspective = perspectiveBox.getState();
-        }
+        };
+        new ComponentsDialog(parent.getFrame(), Translate.text("editCameraTitle"),
+                new Widget[]{fovSlider, dofField, fdField, perspectiveBox, filtersButton},
+                new String[]{Translate.text("fieldOfView"), Translate.text("depthOfField"), Translate.text("focalDist"), null, null},
+                commit, null);
 
         // If there are any Pose tracks for this object, they need to have their subtracks updated
         // to reflect the current list of filters.
@@ -423,6 +422,10 @@ public class SceneCamera extends Object3D {
 
                         PoseTrack pose = (PoseTrack) track;
                         var spt = pose.getSubtracks();
+
+
+                        for(var st: spt) log.info("Track {}", st);
+
                         Track[] newtracks = new Track[filters.size()];
                         for (int k = 0; k < filters.size(); k++) {
                             Track<?> existing = null;
@@ -430,7 +433,9 @@ public class SceneCamera extends Object3D {
 
                             for (int m = 0; m < spt.length && existing == null; m++) {
                                 var subTrack = spt[m];
-                                if (subTrack instanceof FilterParameterTrack && ((FilterParameterTrack) subTrack).getFilter() == fk) {
+                                var subtrackIsAFilterTrack = subTrack instanceof FilterParameterTrack;
+
+                                if (subtrackIsAFilterTrack && ((FilterParameterTrack) subTrack).getFilter() == fk) {
                                     existing = subTrack;
                                 }
                             }

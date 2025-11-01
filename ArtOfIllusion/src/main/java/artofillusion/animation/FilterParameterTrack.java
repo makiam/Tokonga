@@ -17,12 +17,15 @@ import artofillusion.image.filter.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.*;
 import java.util.*;
 
 /**
  * This is a Track which allows the parameters of an ImageFilter to be keyframed.
  */
+@Slf4j
 public class FilterParameterTrack extends Track<FilterParameterTrack> {
 
     private Object parent;
@@ -35,6 +38,7 @@ public class FilterParameterTrack extends Track<FilterParameterTrack> {
      */
     public FilterParameterTrack(Object parent, ImageFilter filter) {
         super(filter.getName());
+        log.info("Instantiate bridge track for: {}", filter);
         this.parent = parent;
         this.filter = filter;
         tc = new Timecourse(new Keyframe[0], new double[0], new Smoothness[0]);
@@ -429,5 +433,10 @@ public class FilterParameterTrack extends Track<FilterParameterTrack> {
         win.setUndoRecord(new UndoRecord(win, false, UndoRecord.COPY_TRACK, this, duplicate(filter)));
         this.setName(nameField.getText());
         smoothingMethod = smoothChoice.getSelectedIndex();
+    }
+
+    @Override
+    public String toString() {
+        return "Filter Track for " + this.getFilter().getName() + " " + this.getFilter().hashCode();
     }
 }

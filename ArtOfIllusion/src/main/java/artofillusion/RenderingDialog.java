@@ -11,6 +11,7 @@
 
 package artofillusion;
 
+import artofillusion.CameraFilterDialog.FiltersPanel;
 import artofillusion.image.*;
 import artofillusion.image.filter.*;
 import artofillusion.object.*;
@@ -18,10 +19,7 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import lombok.extern.slf4j.Slf4j;
@@ -174,41 +172,31 @@ public class RenderingDialog extends BDialog implements RenderListener {
     }
 
     private void doFilter() {
-        final CameraFilterDialog.FiltersPanel filtersPanel = new CameraFilterDialog.FiltersPanel(cameraForFilters, new Runnable() {
-            @Override
-            public void run() {
-            }
-        });
+        final FiltersPanel filtersPanel = new FiltersPanel(cameraForFilters, () -> {});
         final BDialog dlg = new BDialog(this, Translate.text("Filters"), true);
         final ImageFilter[] originalFilters = cameraForFilters.getImageFilters();
         final boolean[] hasAppliedFilters = new boolean[1];
         RowContainer buttonPanel = new RowContainer();
-        buttonPanel.add(Translate.button("apply", new Object() {
-            void processEvent() {
-                hasAppliedFilters[0] = true;
-                cameraForFilters.setImageFilters(filtersPanel.getFilters().toArray(new ImageFilter[0]));
+        buttonPanel.add(Translate.button("apply",  (ActionEvent event) -> {
+            hasAppliedFilters[0] = true;
+            cameraForFilters.setImageFilters(filtersPanel.getFilters().toArray(new ImageFilter[0]));
+            applyFilters(false);
+            verifyFilters(dlg);
+        }));
+        buttonPanel.add(Translate.button("ok",  (ActionEvent event) -> {
+            cameraForFilters.setImageFilters(filtersPanel.getFilters().toArray(new ImageFilter[0]));
+            applyFilters(false);
+            verifyFilters(dlg);
+            hasModifiedFilters = true;
+            dlg.dispose();
+        }));
+        buttonPanel.add(Translate.button("cancel",  (ActionEvent event) -> {
+            if (hasAppliedFilters[0]) {
+                cameraForFilters.setImageFilters(originalFilters);
                 applyFilters(false);
-                verifyFilters(dlg);
             }
-        }, "processEvent"));
-        buttonPanel.add(Translate.button("ok", new Object() {
-            void processEvent() {
-                cameraForFilters.setImageFilters(filtersPanel.getFilters().toArray(new ImageFilter[0]));
-                applyFilters(false);
-                verifyFilters(dlg);
-                hasModifiedFilters = true;
-                dlg.dispose();
-            }
-        }, "processEvent"));
-        buttonPanel.add(Translate.button("cancel", new Object() {
-            void processEvent() {
-                if (hasAppliedFilters[0]) {
-                    cameraForFilters.setImageFilters(originalFilters);
-                    applyFilters(false);
-                }
-                dlg.dispose();
-            }
-        }, "processEvent"));
+            dlg.dispose();
+        }));
         BorderContainer content = new BorderContainer();
         content.add(filtersPanel, BorderContainer.CENTER);
         content.add(buttonPanel, BorderContainer.SOUTH, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE));
@@ -243,9 +231,9 @@ public class RenderingDialog extends BDialog implements RenderListener {
      * Make sure all filters can be applied, and show a warning message if now.
      */
     private void verifyFilters(WindowWidget parent) {
-        ImageFilter[] filters = cameraForFilters.getImageFilters();
-        for (int i = 0; i < filters.length; i++) {
-            int required = filters[i].getDesiredComponents();
+
+        for (ImageFilter filter: cameraForFilters.getImageFilters()) {
+            int required = filter.getDesiredComponents();
             while (required != 0) {
                 int component = required - (required & (required - 1));
                 if (!originalImage.hasFloatData(component)) {
