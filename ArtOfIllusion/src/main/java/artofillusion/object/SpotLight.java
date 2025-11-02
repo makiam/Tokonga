@@ -1,6 +1,6 @@
 /* Copyright (C) 2000-2007 by Peter Eastman
    Changes Copyright 2016-2019 by Petri Ihalainen
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,13 @@ import artofillusion.math.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.*;
 import java.io.*;
 
@@ -237,13 +243,13 @@ public class SpotLight extends Light {
         final Preview preview = new Preview(100);
         final RGBColor oldColor = color.duplicate();
         final BFrame parentFrame = parent.getFrame();
-        final BDialog dlg = new BDialog(parentFrame, "", true);
+        final BDialog dlg = new BDialog(parentFrame, Translate.text("editSpotLightTitle", info.getName()), true);
         FormContainer content = new FormContainer(3, 9);
 
         dlg.setContent(content);
         LayoutInfo labelLayout = new LayoutInfo(LayoutInfo.EAST, LayoutInfo.NONE, new Insets(0, 0, 0, 5), null);
         LayoutInfo widgetLayout = new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE);
-        content.add(Translate.label("editSpotLightTitle"), 0, 0, 3, 1);
+
         content.add(Translate.label("coneAngle"), 0, 1, labelLayout);
         content.add(Translate.label("falloffRate"), 0, 2, labelLayout);
         content.add(Translate.label("Color"), 0, 3, labelLayout);
@@ -261,24 +267,23 @@ public class SpotLight extends Light {
         content.add(preview, 2, 1, 1, 7);
         RowContainer buttons = new RowContainer();
         content.add(buttons, 0, 8, 3, 1);
-        BButton okButton = Translate.button("ok", new Object() {
-            void processEvent() {
-                setParameters(color, (float) intensityField.getValue(), typeChoice.getSelectedIndex(),
-                        (float) decayField.getValue());
-                setRadius(radiusField.getValue());
-                setAngle(angleSlider.getValue());
-                setFalloff(falloffSlider.getValue());
-                dlg.dispose();
-                cb.run();
-            }
-        }, "processEvent");
+
+        ActionListener okAction = e -> {
+            setParameters(color, (float) intensityField.getValue(), typeChoice.getSelectedIndex(), (float) decayField.getValue());
+            setRadius(radiusField.getValue());
+            setAngle(angleSlider.getValue());
+            setFalloff(falloffSlider.getValue());
+            dlg.dispose();
+            cb.run();
+        };
+        BButton okButton = Translate.button("ok", okAction);
         buttons.add(okButton);
-        BButton cancelButton = Translate.button("cancel", new Object() {
-            void processEvent() {
-                color.copy(oldColor);
-                dlg.dispose();
-            }
-        }, "processEvent");
+
+        ActionListener cancelAction = e -> {
+            color.copy(oldColor);
+            dlg.dispose();
+        };
+        BButton cancelButton = Translate.button("cancel", cancelAction);
         buttons.add(cancelButton);
         patch.addEventLink(MouseClickedEvent.class, new Object() {
             void processEvent() {
@@ -294,6 +299,16 @@ public class SpotLight extends Light {
         };
         angleSlider.addEventLink(ValueChangedEvent.class, listener);
         falloffSlider.addEventLink(ValueChangedEvent.class, listener);
+
+        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        dlg.getComponent().getRootPane().registerKeyboardAction(cancelAction, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        dlg.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                cancelAction.actionPerformed(null);
+            }
+        });
+        dlg.getComponent().getRootPane().setDefaultButton(okButton.getComponent());
         dlg.pack();
         UIUtilities.centerDialog(dlg, parentFrame);
         dlg.setVisible(true);
@@ -379,8 +394,10 @@ public class SpotLight extends Light {
     }
 
     /* Allow the user to edit a keyframe returned by getPoseKeyframe(). */
+    // TODO: Unify this with edit()
     @Override
     public void editKeyframe(EditingWindow parent, Keyframe k, ObjectInfo info) {
+
         final SpotLightKeyframe key = (SpotLightKeyframe) k;
         final Widget patch = key.color.getSample(50, 30);
         final ValueField intensityField = new ValueField(key.intensity, ValueField.NONE);
@@ -391,12 +408,12 @@ public class SpotLight extends Light {
         final Preview preview = new Preview(100);
         final RGBColor oldColor = key.color.duplicate();
         final BFrame parentFrame = parent.getFrame();
-        final BDialog dlg = new BDialog(parentFrame, "", true);
+        final BDialog dlg = new BDialog(parentFrame, Translate.text("editSpotLightTitle", info.getName()), true);
         FormContainer content = new FormContainer(3, 8);
 
         dlg.setContent(content);
         LayoutInfo labelLayout = new LayoutInfo(LayoutInfo.EAST, LayoutInfo.NONE, new Insets(0, 0, 0, 5), null);
-        content.add(Translate.label("editSpotLightTitle"), 0, 0, 3, 1);
+
         content.add(Translate.label("coneAngle"), 0, 1, labelLayout);
         content.add(Translate.label("falloffRate"), 0, 2, labelLayout);
         content.add(Translate.label("Color"), 0, 3, labelLayout);
@@ -412,24 +429,26 @@ public class SpotLight extends Light {
         content.add(preview, 2, 1, 1, 6);
         RowContainer buttons = new RowContainer();
         content.add(buttons, 0, 7, 3, 1);
-        BButton okButton = Translate.button("ok", new Object() {
-            void processEvent() {
-                key.intensity = (float) intensityField.getValue();
-                key.decayRate = (float) decayField.getValue();
-                key.radius = radiusField.getValue();
-                key.angle = angleSlider.getValue();
-                key.falloff = falloffSlider.getValue();
-                dlg.dispose();
-            }
-        }, "processEvent");
+
+        ActionListener okAction = e -> {
+            key.intensity = (float) intensityField.getValue();
+            key.decayRate = (float) decayField.getValue();
+            key.radius = radiusField.getValue();
+            key.angle = angleSlider.getValue();
+            key.falloff = falloffSlider.getValue();
+            dlg.dispose();
+        };
+        BButton okButton = Translate.button("ok", okAction);
         buttons.add(okButton);
-        BButton cancelButton = Translate.button("cancel", new Object() {
-            void processEvent() {
-                key.color.copy(oldColor);
-                dlg.dispose();
-            }
-        }, "processEvent");
+
+        ActionListener cancelAction = e -> {
+            key.color.copy(oldColor);
+            dlg.dispose();
+        };
+
+        BButton cancelButton = Translate.button("cancel", cancelAction);
         buttons.add(cancelButton);
+
         patch.addEventLink(MouseClickedEvent.class, new Object() {
             void processEvent() {
                 new ColorChooser(patch, Translate.text("lightColor"), key.color);
@@ -444,6 +463,16 @@ public class SpotLight extends Light {
         };
         angleSlider.addEventLink(ValueChangedEvent.class, listener);
         falloffSlider.addEventLink(ValueChangedEvent.class, listener);
+
+        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        dlg.getComponent().getRootPane().registerKeyboardAction(cancelAction, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        dlg.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                cancelAction.actionPerformed(null);
+            }
+        });
+        dlg.getComponent().getRootPane().setDefaultButton(okButton.getComponent());
         dlg.pack();
         UIUtilities.centerDialog(dlg, parentFrame);
         dlg.setVisible(true);

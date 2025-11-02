@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2006 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,10 +11,17 @@
 
 package artofillusion.ui;
 
-import buoy.event.*;
+import artofillusion.ArtOfIllusion;
+
 import buoy.widget.*;
+
+import javax.swing.*;
 import java.awt.*;
-import java.util.Collection;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 
 
 /**
@@ -30,11 +37,15 @@ public class PanelDialog extends BDialog {
      * Create a modal dialog containing a panel.
      *
      * @param parent the parent of the dialog
-     * @param prompt a text string to appear at the top of the dialog (may be null)
+     * @param prompt a text string to appear at the top of the dialog (prompt may be null)
      * @param thePanel the panel to display
      */
     public PanelDialog(WindowWidget parent, String prompt, Widget thePanel) {
         super(parent, true);
+
+        this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
+
         BorderContainer content = new BorderContainer();
         setContent(content);
         content.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(10, 10, 10, 10), null));
@@ -46,17 +57,22 @@ public class PanelDialog extends BDialog {
         // Add the buttons at the bottom.
         RowContainer buttons = new RowContainer();
         content.add(buttons, BorderContainer.SOUTH);
-        BButton okButton;
-        buttons.add(okButton = Translate.button("ok", this, "buttonPressed"));
-        buttons.add(Translate.button("cancel", this, "buttonPressed"));
-        addEventLink(WindowClosingEvent.class, new Object() {
-            void processEvent() {
-                ok = false;
-                closeWindow();
+        var okButton = Translate.button("ok", event -> buttonOK());
+        buttons.add(okButton);
+        buttons.add(Translate.button("cancel", event -> buttonCancel()));
+
+        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        ActionListener action = e -> buttonCancel();
+        this.getComponent().getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+        this.getComponent().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                buttonCancel();
             }
         });
-        addAsListener(this);
-        setDefaultButton(okButton);
+        
+        this.getComponent().getRootPane().setDefaultButton(okButton.getComponent());
         pack();
         setResizable(false);
         UIUtilities.centerDialog(this, parent);
@@ -70,47 +86,15 @@ public class PanelDialog extends BDialog {
         return ok;
     }
 
-    private void buttonPressed(CommandEvent e) {
-        String command = e.getActionCommand();
-
-        ok = !command.equals("cancel");
-        closeWindow();
-    }
-
-    private void closeWindow() {
+    private void buttonOK() {
+        ok = true;
         dispose();
-        removeAsListener(this);
     }
 
-    /**
-     * Pressing Return and Escape are equivalent to clicking OK and Cancel.
-     */
-    private void keyPressed(KeyPressedEvent ev) {
-        int code = ev.getKeyCode();
-        if (code == KeyPressedEvent.VK_ESCAPE) {
-            closeWindow();
-        }
+    private void buttonCancel() {
+        ok = false;
+        dispose();
     }
 
-    /**
-     * Add this as a listener to every Widget.
-     */
-    private void addAsListener(Widget w) {
-        w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
-        if (w instanceof WidgetContainer) {
-            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
-            children.forEach(this::addAsListener);
-        }
-    }
 
-    /**
-     * Remove this as a listener before returning.
-     */
-    private void removeAsListener(Widget w) {
-        w.removeEventLink(KeyPressedEvent.class, this);
-        if (w instanceof WidgetContainer) {
-            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
-            children.forEach(this::removeAsListener);
-        }
-    }
 }
