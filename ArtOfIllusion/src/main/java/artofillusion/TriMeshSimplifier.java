@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,6 +17,8 @@ import artofillusion.object.TriangleMesh.*;
 import artofillusion.ui.*;
 import artofillusion.texture.*;
 import buoy.widget.*;
+
+import java.awt.event.ActionEvent;
 
 /**
  * TriMeshSimplifier defines methods for simplifying a TriangleMesh. The algorithm
@@ -155,12 +157,10 @@ public class TriMeshSimplifier implements Runnable {
         grid.add(new BLabel(String.valueOf(faces)), 1, 0);
         grid.add(status = new BLabel(String.valueOf(faces)), 1, 1);
         content.add(grid, BorderContainer.CENTER);
-        content.add(cancelButton = Translate.button("cancel", new Object() {
-            void processEvent() {
-                cancel = true;
-                dial.dispose();
-            }
-        }, "processEvent"), BorderContainer.SOUTH, new LayoutInfo());
+        content.add(cancelButton = Translate.button("cancel", (ActionEvent event) -> {
+            cancel = true;
+            dial.getComponent().dispose();
+        }), BorderContainer.SOUTH, new LayoutInfo());
         dial.pack();
         dial.setResizable(false);
         UIUtilities.centerDialog(dial, fr);
