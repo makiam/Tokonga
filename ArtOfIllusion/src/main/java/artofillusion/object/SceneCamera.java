@@ -13,12 +13,14 @@
 package artofillusion.object;
 
 import artofillusion.*;
+import artofillusion.Renderer;
 import artofillusion.animation.*;
 import artofillusion.image.*;
 import artofillusion.image.filter.*;
 import artofillusion.math.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +32,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.greenrobot.eventbus.EventBus;
+
+import javax.swing.*;
 
 /**
  * SceneCamera is a type of Object3D. It represents a camera which the user can position
@@ -380,16 +384,14 @@ public class SceneCamera extends Object3D {
         final ValueField dofField = new ValueField(depthOfField, ValueField.POSITIVE);
         final ValueField fdField = new ValueField(focalDist, ValueField.POSITIVE);
         BCheckBox perspectiveBox = new BCheckBox(Translate.text("Perspective"), perspective);
-        BButton filtersButton = Translate.button("filters", new Object() {
-            void processEvent() {
-                SceneCamera temp = SceneCamera.this.duplicate();
-                temp.fov = fovSlider.getValue();
-                temp.depthOfField = dofField.getValue();
-                temp.focalDist = fdField.getValue();
-                new CameraFilterDialog(UIUtilities.findWindow(fovSlider), parent.getScene(), temp, info.getCoords());
-                filters = temp.filters;
-            }
-        }, "processEvent");
+        BButton filtersButton = Translate.button("filters", e -> {
+            var temp = this.duplicate();
+            temp.fov = fovSlider.getValue();
+            temp.depthOfField = dofField.getValue();
+            temp.focalDist = fdField.getValue();
+            new CameraFilterDialog(UIUtilities.findWindow(fovSlider), parent.getScene(), temp, info.getCoords());
+            filters = temp.filters;
+        });
         ComponentsDialog dlg = new ComponentsDialog(parent.getFrame(), Translate.text("editCameraTitle"),
                 new Widget[]{fovSlider, dofField, fdField, perspectiveBox, filtersButton},
                 new String[]{Translate.text("fieldOfView"), Translate.text("depthOfField"), Translate.text("focalDist"), null, null});
@@ -664,7 +666,9 @@ public class SceneCamera extends Object3D {
     /* Inner class representing a pose for a Scene Camera */
     public static class CameraKeyframe implements Keyframe {
 
-        public double fov, depthOfField, focalDist;
+        public double fov;
+        public double depthOfField;
+        public double focalDist;
 
         public CameraKeyframe(double fov, double depthOfField, double focalDist) {
             this.fov = fov;
