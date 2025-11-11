@@ -614,25 +614,13 @@ public class PMOBJImporter {
     }
 
     /**
-     * Inner class for storing information about a texture in a .mtl file.
+     * Class for storing information about a material in a .mtl file.
      */
-    private static class TextureInfo {
+    public static class TextureInfo {
 
-        /**
-         * Description of the Field
-         */
         public String name;
-        /**
-         * Description of the Field
-         */
         public RGBColor ambient, diffuse, specular;
-        /**
-         * Description of the Field
-         */
         public double shininess, transparency, specularity, roughness;
-        /**
-         * Description of the Field
-         */
         public String ambientMap, diffuseMap, specularMap, transparentMap, bumpMap;
 
         /**
@@ -642,7 +630,11 @@ public class PMOBJImporter {
          */
         public void resolveColors() {
             if (diffuse == null) {
-                diffuse = new RGBColor(0.0, 0.0, 0.0);
+                if (diffuseMap == null) {
+                    diffuse = new RGBColor();
+                } else {
+                    diffuse = new RGBColor(1.0, 1.0, 1.0);
+                }
             }
             if (ambient == null) {
                 ambient = new RGBColor();

@@ -703,17 +703,19 @@ public class OBJImporter {
     }
 
     /**
-     * Inner class for storing information about a texture in a .mtl file.
+     * Class for storing information about a material in a .mtl file.
      */
-    private static class TextureInfo {
+    public static class TextureInfo {
 
+        public String name;
         public RGBColor ambient, diffuse, specular;
         public double shininess, transparency, specularity, roughness;
         public String ambientMap, diffuseMap, specularMap, transparentMap, bumpMap;
 
         /**
-         * This should be called once, after the TextureInfo is created but before it is actually used. It converts from the
-         * representation used by .obj files to the one used by Art of Illusion.
+         * This should be called once, after the TextureInfo is created but
+         * before it is actually used. It converts from the representation used
+         * by .obj files to the one used by Art of Illusion.
          */
         public void resolveColors() {
             if (diffuse == null) {
