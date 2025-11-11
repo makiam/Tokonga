@@ -31,7 +31,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * OBJImporter implements the importing of OBJ files.
  */
 @Slf4j
-public class OBJImporter {
+public final class OBJImporter {
 
     /**
      * Import an OBJ file and create a Scene that represents its contents.
@@ -424,7 +424,7 @@ public class OBJImporter {
     /**
      * Separate a line into pieces divided by whitespace.
      */
-    private static String[] breakLine(String line) {
+    public static String[] breakLine(String line) {
         StringTokenizer st = new StringTokenizer(line);
         List<String> tokens = new ArrayList<>();
 
@@ -438,7 +438,7 @@ public class OBJImporter {
      * Parse the specification for a vertex and return the index of the vertex
      * to use.
      */
-    private static VertexInfo parseVertexSpec(String spec, int vertex, int texture, int normal, int lineNo) throws Exception {
+    public static VertexInfo parseVertexSpec(String spec, int vertex, int texture, int normal, int lineNo) throws Exception {
         VertexInfo info = new VertexInfo();
         StringTokenizer st = new StringTokenizer(spec, "/", true);
         info.tex = info.norm = Integer.MAX_VALUE;
@@ -487,7 +487,7 @@ public class OBJImporter {
     /**
      * Parse the contents of a .mtl file and add TextureInfo object to map.
      */
-    private static void parseTextures(String file, File baseDir, Map<String, WavefrontTextureInfo> textures) throws Exception {
+    public static void parseTextures(String file, File baseDir, Map<String, WavefrontTextureInfo> textures) throws Exception {
         File f = new File(baseDir, file);
         if (!f.isFile()) {
             f = new File(file);
@@ -615,7 +615,7 @@ public class OBJImporter {
     /**
      * Return the image map corresponding to the specified filename, and add it to the scene.
      */
-    private static ImageMap loadMap(String name, Scene scene, File baseDir, Map<String, ImageMap> imageMaps) throws Exception {
+    public static ImageMap loadMap(String name, Scene scene, File baseDir, Map<String, ImageMap> imageMaps) throws Exception {
         if (name == null) {
             return null;
         }
@@ -655,18 +655,18 @@ public class OBJImporter {
     }
 
     /**
-     * Inner class for storing information about a vertex of a face.
+     * Class for storing information about a vertex of a face.
      */
-    private static class VertexInfo {
+    public static class VertexInfo {
 
         public int vert, norm, tex;
     }
 
     /**
-     * Inner class for storing information about a face.
+     * Class for storing information about a face.
      *
      */
-    private static class FaceInfo {
+    public static class FaceInfo {
 
         public final VertexInfo[] vi;
         public final int smoothingGroup;
