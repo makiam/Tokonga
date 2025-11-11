@@ -32,6 +32,7 @@ import artofillusion.texture.Texture;
 import artofillusion.texture.Texture2D;
 import artofillusion.texture.UVMapping;
 import artofillusion.texture.UniformTexture;
+import artofillusion.translators.WavefrontTextureInfo;
 import artofillusion.ui.Translate;
 
 import buoy.widget.BFrame;
@@ -77,7 +78,7 @@ public class PMOBJImporter {
 
         // Open the file and read the contents.
         Map<String, Vector<FaceInfo>> groupTable = new Hashtable<>();
-        Map<String, TextureInfo> textureTable = new Hashtable<>();
+        Map<String, WavefrontTextureInfo> textureTable = new Hashtable<>();
         List<Vec3> vertex = new Vector<>();
         List<Vec3> normal = new Vector<>();
         List<Vec3> texture = new Vector<>();
@@ -414,7 +415,7 @@ public class PMOBJImporter {
     /**
      * Parse the contents of a .mtl file and add TextureInfo object to map.
      */
-    private static void parseTextures(String file, File baseDir, Map<String, TextureInfo> textures) throws Exception {
+    private static void parseTextures(String file, File baseDir, Map<String, WavefrontTextureInfo> textures) throws Exception {
         File f = new File(baseDir, file);
         if (!f.isFile()) {
             f = new File(file);
@@ -426,7 +427,7 @@ public class PMOBJImporter {
         }
         BufferedReader in = Files.newBufferedReader(f.toPath());
         String line;
-        TextureInfo currentTexture = null;
+        WavefrontTextureInfo currentTexture = null;
         while ((line = in.readLine()) != null) {
             try {
                 if (line.startsWith("#")) {
@@ -443,7 +444,7 @@ public class PMOBJImporter {
                     if (fields.length == 1 || textures.get(fields[1]) != null) {
                         continue;
                     }
-                    currentTexture = new TextureInfo();
+                    currentTexture = new WavefrontTextureInfo();
                     currentTexture.name = fields[1];
                     textures.put(fields[1], currentTexture);
                 }
@@ -482,7 +483,7 @@ public class PMOBJImporter {
     /**
      * Create a texture from a TextureInfo and add it to the scene.
      */
-    private static Texture createTexture(TextureInfo info, Scene scene, File baseDir, Map<String, ImageMap> imageMaps) throws Exception {
+    private static Texture createTexture(WavefrontTextureInfo info, Scene scene, File baseDir, Map<String, ImageMap> imageMaps) throws Exception {
         info.resolveColors();
         ImageMap diffuseMap = loadMap(info.diffuseMap, scene, baseDir, imageMaps);
         ImageMap specularMap = loadMap(info.specularMap, scene, baseDir, imageMaps);
@@ -613,76 +614,4 @@ public class PMOBJImporter {
         }
     }
 
-    /**
-     * Class for storing information about a material in a .mtl file.
-     */
-    public static class TextureInfo {
-
-        public String name;
-        public RGBColor ambient, diffuse, specular;
-        public double shininess, transparency, specularity, roughness;
-        public String ambientMap, diffuseMap, specularMap, transparentMap, bumpMap;
-
-        /**
-         * This should be called once, after the TextureInfo is created but
-         * before it is actually used. It converts from the representation used
-         * by .obj files to the one used by Art of Illusion.
-         */
-        public void resolveColors() {
-            if (diffuse == null) {
-                if (diffuseMap == null) {
-                    diffuse = new RGBColor();
-                } else {
-                    diffuse = new RGBColor(1.0, 1.0, 1.0);
-                }
-            }
-            if (ambient == null) {
-                ambient = new RGBColor();
-            }
-            if (specular == null) {
-                specular = new RGBColor();
-            } else {
-                specularity = 1.0;
-            }
-            diffuse.scale(1.0 - transparency);
-            specular.scale(1.0 - transparency);
-            roughness = 1.0 - (shininess - 1.0) / 128.0;
-            if (roughness > 1.0) {
-                roughness = 1.0;
-            }
-            checkColorRange(ambient);
-            checkColorRange(diffuse);
-            checkColorRange(specular);
-        }
-
-        /**
-         * Make sure that the components of a color are all between 0 and 1.
-         *
-         * @param c Description of the Parameter
-         */
-        private void checkColorRange(RGBColor c) {
-            float r = c.getRed();
-            float g = c.getGreen();
-            float b = c.getBlue();
-            if (r < 0.0f) {
-                r = 0.0f;
-            }
-            if (r > 1.0f) {
-                r = 1.0f;
-            }
-            if (g < 0.0f) {
-                g = 0.0f;
-            }
-            if (g > 1.0f) {
-                g = 1.0f;
-            }
-            if (b < 0.0f) {
-                b = 0.0f;
-            }
-            if (b > 1.0f) {
-                b = 1.0f;
-            }
-            c.setRGB(r, g, b);
-        }
-    }
 }
