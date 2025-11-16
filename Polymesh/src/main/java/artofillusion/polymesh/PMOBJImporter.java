@@ -32,6 +32,10 @@ import artofillusion.texture.Texture;
 import artofillusion.texture.Texture2D;
 import artofillusion.texture.UVMapping;
 import artofillusion.texture.UniformTexture;
+import artofillusion.translators.OBJImporter;
+import artofillusion.translators.OBJImporter.VertexInfo;
+import artofillusion.translators.OBJImporter.FaceInfo;
+import artofillusion.translators.WavefrontTextureInfo;
 import artofillusion.ui.Translate;
 
 import buoy.widget.BFrame;
@@ -77,7 +81,7 @@ public class PMOBJImporter {
 
         // Open the file and read the contents.
         Map<String, Vector<FaceInfo>> groupTable = new Hashtable<>();
-        Map<String, TextureInfo> textureTable = new Hashtable<>();
+        Map<String, WavefrontTextureInfo> textureTable = new Hashtable<>();
         List<Vec3> vertex = new Vector<>();
         List<Vec3> normal = new Vector<>();
         List<Vec3> texture = new Vector<>();
@@ -104,7 +108,7 @@ public class PMOBJImporter {
                         s = s.substring(0, s.length() - 1) + s2;
                     }
                 }
-                String[] fields = breakLine(s);
+                String[] fields = OBJImporter.breakLine(s);
                 if (fields.length == 0) {
                     continue;
                 }
@@ -154,7 +158,7 @@ public class PMOBJImporter {
                 } else if ("f".equals(fields[0])) {
                     vertIndex = new VertexInfo[fields.length - 1];
                     for (int i = 0; i < vertIndex.length; i++) {
-                        vertIndex[i] = parseVertexSpec(fields[i + 1], vertex.size(), texture.size(), normal.size(), lineNo);
+                        vertIndex[i] = OBJImporter.parseVertexSpec(fields[i + 1], vertex.size(), texture.size(), normal.size(), lineNo);
                     }
                     for (int i = 0; i < face.length; i++) {
                         // Add a face.
@@ -191,7 +195,7 @@ public class PMOBJImporter {
                     // Load one or more texture libraries.
 
                     for (int i = 1; i < fields.length; i++) {
-                        parseTextures(fields[i], directory, textureTable);
+                        OBJImporter.parseTextures(fields[i], directory, textureTable);
                     }
                 }
             }
@@ -320,9 +324,8 @@ public class PMOBJImporter {
     }
 
     /**
-     * Description of the Method
-     *
-     * @param parent Description of the Parameter
+     * Present a file chooser to the user so they can select an OBJ file. Create a Scene from it,
+     * and display it in a new window.
      */
     public static void importFile(@NotNull BFrame parent)  {
         JFileChooser jfc = new JFileChooser();
@@ -349,145 +352,14 @@ public class PMOBJImporter {
     }
 
     /**
-     * Separate a line into pieces divided by whitespace.
-     */
-    private static String[] breakLine(String line) {
-        StringTokenizer st = new StringTokenizer(line);
-        List<String> tokens = new ArrayList<>();
-
-        while (st.hasMoreTokens()) {
-            tokens.add(st.nextToken());
-        }
-        return tokens.toArray(new String[0]);
-    }
-
-    /**
-     * Parse the specification for a vertex and return the index of the vertex
-     * to use.
-     */
-    private static VertexInfo parseVertexSpec(String spec, int vertex, int texture, int normal, int lineNo) throws Exception {
-        VertexInfo info = new VertexInfo();
-        StringTokenizer st = new StringTokenizer(spec, "/", true);
-        info.tex = info.norm = Integer.MAX_VALUE;
-        int i = 0;
-        while (st.hasMoreTokens()) {
-            String value = st.nextToken();
-            if ("/".equals(value)) {
-                i++;
-                continue;
-            }
-            try {
-                int index = Integer.parseInt(value);
-                int total;
-                if (i == 0) {
-                    total = vertex;
-                } else if (i == 1) {
-                    total = texture;
-                } else {
-                    total = normal;
-                }
-                if (index < 0) {
-                    index += total;
-                } else {
-                    index--;
-                }
-                if (i == 0) {
-                    info.vert = index;
-                } else if (i == 1) {
-                    info.tex = index;
-                } else {
-                    info.norm = index;
-                }
-            } catch (NumberFormatException ex) {
-                throw new Exception("Illegal value '" + spec + "' found in line " + lineNo + ".");
-            }
-        }
-        if (info.tex == Integer.MAX_VALUE) {
-            info.tex = info.vert;
-        }
-        if (info.norm == Integer.MAX_VALUE) {
-            info.norm = info.vert;
-        }
-        return info;
-    }
-
-    /**
-     * Parse the contents of a .mtl file and add TextureInfo object to map.
-     */
-    private static void parseTextures(String file, File baseDir, Map<String, TextureInfo> textures) throws Exception {
-        File f = new File(baseDir, file);
-        if (!f.isFile()) {
-            f = new File(file);
-        }
-        if (!f.isFile()) {
-            //TODO: Collect error noUI
-            new BStandardDialog("Error Importing File", "Cannot locate material file '" + file + "'.", BStandardDialog.ERROR).showMessageDialog(null);
-            return;
-        }
-        BufferedReader in = Files.newBufferedReader(f.toPath());
-        String line;
-        TextureInfo currentTexture = null;
-        while ((line = in.readLine()) != null) {
-            try {
-                if (line.startsWith("#")) {
-                    continue;
-                }
-                String[] fields = breakLine(line);
-                if (fields.length == 0) {
-                    continue;
-                }
-                if ("newmtl".equals(fields[0])) {
-                    // This is the start of a new texture.
-
-                    currentTexture = null;
-                    if (fields.length == 1 || textures.get(fields[1]) != null) {
-                        continue;
-                    }
-                    currentTexture = new TextureInfo();
-                    currentTexture.name = fields[1];
-                    textures.put(fields[1], currentTexture);
-                }
-                if (currentTexture == null || fields.length < 2) {
-                    continue;
-                }
-                if ("Kd".equals(fields[0])) {
-                    currentTexture.diffuse = parseColor(fields);
-                } else if ("Ka".equals(fields[0])) {
-                    currentTexture.ambient = parseColor(fields);
-                } else if ("Ks".equals(fields[0])) {
-                    currentTexture.specular = parseColor(fields);
-                } else if ("d".equals(fields[0]) || "Tr".equals(fields[0])) {
-                    currentTexture.transparency = 1.0 - Double.parseDouble(fields[1]);
-                } else if ("Ns".equals(fields[0])) {
-                    currentTexture.shininess = Double.parseDouble(fields[1]);
-                } else if ("map_Kd".equals(fields[0])) {
-                    currentTexture.diffuseMap = fields[1];
-                } else if ("map_Ka".equals(fields[0])) {
-                    currentTexture.ambientMap = fields[1];
-                } else if ("map_Ks".equals(fields[0])) {
-                    currentTexture.specularMap = fields[1];
-                } else if ("map_d".equals(fields[0])) {
-                    currentTexture.transparentMap = fields[1];
-                } else if ("map_Bump".equals(fields[0])) {
-                    currentTexture.bumpMap = fields[1];
-                }
-            } catch (Exception ex) {
-                in.close();
-                throw new Exception("Illegal line '" + line + "' found in file '" + file + "'.");
-            }
-        }
-        in.close();
-    }
-
-    /**
      * Create a texture from a TextureInfo and add it to the scene.
      */
-    private static Texture createTexture(TextureInfo info, Scene scene, File baseDir, Map<String, ImageMap> imageMaps) throws Exception {
+    private static Texture createTexture(WavefrontTextureInfo info, Scene scene, File baseDir, Map<String, ImageMap> imageMaps) throws Exception {
         info.resolveColors();
-        ImageMap diffuseMap = loadMap(info.diffuseMap, scene, baseDir, imageMaps);
-        ImageMap specularMap = loadMap(info.specularMap, scene, baseDir, imageMaps);
-        ImageMap transparentMap = loadMap(info.transparentMap, scene, baseDir, imageMaps);
-        ImageMap bumpMap = loadMap(info.bumpMap, scene, baseDir, imageMaps);
+        ImageMap diffuseMap = OBJImporter.loadMap(info.diffuseMap, scene, baseDir, imageMaps);
+        ImageMap specularMap = OBJImporter.loadMap(info.specularMap, scene, baseDir, imageMaps);
+        ImageMap transparentMap = OBJImporter.loadMap(info.transparentMap, scene, baseDir, imageMaps);
+        ImageMap bumpMap = OBJImporter.loadMap(info.bumpMap, scene, baseDir, imageMaps);
         RGBColor transparentColor = new RGBColor(info.transparency, info.transparency, info.transparency);
         if (diffuseMap == null && specularMap == null && transparentMap == null && bumpMap == null) {
             // Create a uniform texture.
@@ -523,174 +395,5 @@ public class PMOBJImporter {
         }
     }
 
-    /**
-     * Return the image map corresponding to the specified filename, and add it to the scene.
-     */
-    private static ImageMap loadMap(String name, Scene scene, File baseDir, Map<String, ImageMap> imageMaps) throws Exception {
-        if (name == null) {
-            return null;
-        }
-        ImageMap map = imageMaps.get(name);
-        if (map != null) {
-            return map;
-        }
-        File f = new File(baseDir, name);
-        if (!f.isFile()) {
-            f = new File(name);
-        }
-        if (!f.isFile()) {
-            throw new Exception("Cannot locate image map file '" + name + "'.");
-        }
-        try {
-            map = ImageMap.loadImage(f);
-        } catch (InterruptedException ex) {
-            throw new Exception("Unable to load image map file '" + f.getAbsolutePath() + "'.");
-        }
-        scene.addImage(map);
-        imageMaps.put(name, map);
-        return map;
-    }
 
-    /**
-     * Parse the specification for a color.
-     *
-     * @param fields Description of the Parameter
-     * @return Description of the Return Value
-     * @exception NumberFormatException Description of the Exception
-     */
-    private static RGBColor parseColor(String[] fields) throws NumberFormatException {
-        if (fields.length < 4) {
-            return null;
-        }
-        return new RGBColor(Double.parseDouble(fields[1]), Double.parseDouble(fields[2]), Double.parseDouble(fields[3]));
-    }
-
-    /**
-     * Inner class for storing information about a vertex of a face.
-     */
-    private static class VertexInfo {
-
-        public int vert, norm, tex;
-    }
-
-    /**
-     * Inner class for storing information about a face.
-     *
-     */
-    private static class FaceInfo {
-
-        public final VertexInfo[] vi;
-        public final int smoothingGroup;
-        public final String texture;
-
-        public FaceInfo(VertexInfo v1, VertexInfo v2, VertexInfo v3, int smoothingGroup, String texture) {
-            this.vi = new VertexInfo[] {v1, v2, v3};
-            this.smoothingGroup = smoothingGroup;
-            this.texture = texture;
-        }
-
-        /**
-         * Constructor for the FaceInfo object
-         *
-         * @param vi Description of the Parameter
-         * @param smoothingGroup Description of the Parameter
-         * @param texture Description of the Parameter
-         */
-        public FaceInfo(VertexInfo[] vi, int smoothingGroup, String texture) {
-            this.vi = vi;
-            this.smoothingGroup = smoothingGroup;
-            this.texture = texture;
-        }
-
-        /**
-         * Gets the vertex attribute of the FaceInfo object
-         *
-         * @param index Description of the Parameter
-         * @return The vertex value
-         */
-        public VertexInfo getVertex(int index) {
-            return vi[index];
-        }
-    }
-
-    /**
-     * Inner class for storing information about a texture in a .mtl file.
-     */
-    private static class TextureInfo {
-
-        /**
-         * Description of the Field
-         */
-        public String name;
-        /**
-         * Description of the Field
-         */
-        public RGBColor ambient, diffuse, specular;
-        /**
-         * Description of the Field
-         */
-        public double shininess, transparency, specularity, roughness;
-        /**
-         * Description of the Field
-         */
-        public String ambientMap, diffuseMap, specularMap, transparentMap, bumpMap;
-
-        /**
-         * This should be called once, after the TextureInfo is created but
-         * before it is actually used. It converts from the representation used
-         * by .obj files to the one used by Art of Illusion.
-         */
-        public void resolveColors() {
-            if (diffuse == null) {
-                diffuse = new RGBColor(0.0, 0.0, 0.0);
-            }
-            if (ambient == null) {
-                ambient = new RGBColor();
-            }
-            if (specular == null) {
-                specular = new RGBColor();
-            } else {
-                specularity = 1.0;
-            }
-            diffuse.scale(1.0 - transparency);
-            specular.scale(1.0 - transparency);
-            roughness = 1.0 - (shininess - 1.0) / 128.0;
-            if (roughness > 1.0) {
-                roughness = 1.0;
-            }
-            checkColorRange(ambient);
-            checkColorRange(diffuse);
-            checkColorRange(specular);
-        }
-
-        /**
-         * Make sure that the components of a color are all between 0 and 1.
-         *
-         * @param c Description of the Parameter
-         */
-        private void checkColorRange(RGBColor c) {
-            float r = c.getRed();
-            float g = c.getGreen();
-            float b = c.getBlue();
-            if (r < 0.0f) {
-                r = 0.0f;
-            }
-            if (r > 1.0f) {
-                r = 1.0f;
-            }
-            if (g < 0.0f) {
-                g = 0.0f;
-            }
-            if (g > 1.0f) {
-                g = 1.0f;
-            }
-            if (b < 0.0f) {
-                b = 0.0f;
-            }
-            if (b > 1.0f) {
-                b = 1.0f;
-            }
-            c.setRGB(r, g, b);
-        }
-    }
 }

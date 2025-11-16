@@ -12,7 +12,6 @@
 package artofillusion.translators;
 
 import artofillusion.*;
-import artofillusion.animation.*;
 import artofillusion.image.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
@@ -32,7 +31,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * OBJImporter implements the importing of OBJ files.
  */
 @Slf4j
-public class OBJImporter {
+public final class OBJImporter {
 
     /**
      * Import an OBJ file and create a Scene that represents its contents.
@@ -56,7 +55,7 @@ public class OBJImporter {
 
         // Open the file and read the contents.
         Map<String, List<FaceInfo>> groupTable = new Hashtable<>();
-        Map<String, TextureInfo> textureTable = new Hashtable<>();
+        Map<String, WavefrontTextureInfo> textureTable = new Hashtable<>();
         List<Vec3> vertex = new Vector<>();
         List<Vec3> normal = new Vector<>();
         List<Vec3> texture = new Vector<>();
@@ -84,7 +83,7 @@ public class OBJImporter {
                         s = s.substring(0, s.length() - 1) + s2;
                     }
                 }
-                String[] fields = breakLine(s);
+                String[] fields = OBJImporter.breakLine(s);
                 if (fields.length == 0) {
                     continue;
                 }
@@ -205,7 +204,7 @@ public class OBJImporter {
                     // Load one or more texture libraries.
 
                     for (int i = 1; i < fields.length; i++) {
-                        parseTextures(fields[i], directory, textureTable);
+                        OBJImporter.parseTextures(fields[i], directory, textureTable);
                     }
                 }
             }
@@ -425,12 +424,14 @@ public class OBJImporter {
     /**
      * Separate a line into pieces divided by whitespace.
      */
-    private static String[] breakLine(String line) {
+    public static String[] breakLine(String line) {
         StringTokenizer st = new StringTokenizer(line);
         List<String> tokens = new ArrayList<>();
 
         while (st.hasMoreTokens()) {
-            tokens.add(st.nextToken());
+            var ct = st.nextToken();
+            if(ct.startsWith("#")) break;
+            tokens.add(ct);
         }
         return tokens.toArray(new String[0]);
     }
@@ -439,7 +440,7 @@ public class OBJImporter {
      * Parse the specification for a vertex and return the index of the vertex
      * to use.
      */
-    private static VertexInfo parseVertexSpec(String spec, int vertex, int texture, int normal, int lineNo) throws Exception {
+    public static VertexInfo parseVertexSpec(String spec, int vertex, int texture, int normal, int lineNo) throws Exception {
         VertexInfo info = new VertexInfo();
         StringTokenizer st = new StringTokenizer(spec, "/", true);
         info.tex = info.norm = Integer.MAX_VALUE;
@@ -488,7 +489,7 @@ public class OBJImporter {
     /**
      * Parse the contents of a .mtl file and add TextureInfo object to map.
      */
-    private static void parseTextures(String file, File baseDir, Map<String, TextureInfo> textures) throws Exception {
+    public static void parseTextures(String file, File baseDir, Map<String, WavefrontTextureInfo> textures) throws Exception {
         File f = new File(baseDir, file);
         if (!f.isFile()) {
             f = new File(file);
@@ -500,7 +501,7 @@ public class OBJImporter {
         }
         BufferedReader in = Files.newBufferedReader(f.toPath());
         String line;
-        TextureInfo currentTexture = null;
+        WavefrontTextureInfo currentTexture = null;
         while ((line = in.readLine()) != null) {
             try {
                 if (line.startsWith("#")) {
@@ -517,7 +518,8 @@ public class OBJImporter {
                     if (fields.length == 1 || textures.get(fields[1]) != null) {
                         continue;
                     }
-                    currentTexture = new TextureInfo();
+                    currentTexture = new WavefrontTextureInfo();
+                    currentTexture.name = fields[1];
                     textures.put(fields[1], currentTexture);
                 }
                 if (currentTexture == null || fields.length < 2) {
@@ -555,7 +557,7 @@ public class OBJImporter {
     /**
      * Create a texture from a TextureInfo and add it to the scene.
      */
-    private static Texture createTexture(TextureInfo info, String name, Scene scene, File baseDir, Map<String, ImageMap> imageMaps) throws Exception {
+    private static Texture createTexture(WavefrontTextureInfo info, String name, Scene scene, File baseDir, Map<String, ImageMap> imageMaps) throws Exception {
         if (info == null) {
             // This texture was not defined in an MTL file.  Create an empty image mapped texture
             // so that texture coordinates will be preserved and the user can specify the images
@@ -567,10 +569,10 @@ public class OBJImporter {
             return tex;
         }
         info.resolveColors();
-        ImageMap diffuseMap = loadMap(info.diffuseMap, scene, baseDir, imageMaps);
-        ImageMap specularMap = loadMap(info.specularMap, scene, baseDir, imageMaps);
-        ImageMap transparentMap = loadMap(info.transparentMap, scene, baseDir, imageMaps);
-        ImageMap bumpMap = loadMap(info.bumpMap, scene, baseDir, imageMaps);
+        ImageMap diffuseMap = OBJImporter.loadMap(info.diffuseMap, scene, baseDir, imageMaps);
+        ImageMap specularMap = OBJImporter.loadMap(info.specularMap, scene, baseDir, imageMaps);
+        ImageMap transparentMap = OBJImporter.loadMap(info.transparentMap, scene, baseDir, imageMaps);
+        ImageMap bumpMap = OBJImporter.loadMap(info.bumpMap, scene, baseDir, imageMaps);
         RGBColor transparentColor = new RGBColor(info.transparency, info.transparency, info.transparency);
         if (diffuseMap == null && specularMap == null && transparentMap == null && bumpMap == null) {
             // Create a uniform texture.
@@ -582,7 +584,7 @@ public class OBJImporter {
             tex.shininess = (float) info.specularity;
             tex.specularity = 0.0f;
             tex.roughness = info.roughness;
-            tex.setName(name);
+            tex.setName(info.name);
             scene.addTexture(tex);
             return tex;
         } else {
@@ -606,7 +608,7 @@ public class OBJImporter {
             tex.roughness = new ImageOrValue((float) info.roughness);
             tex.tileX = tex.tileY = true;
             tex.mirrorX = tex.mirrorY = false;
-            tex.setName(name);
+            tex.setName(info.name);
             scene.addTexture(tex);
             return tex;
         }
@@ -615,7 +617,7 @@ public class OBJImporter {
     /**
      * Return the image map corresponding to the specified filename, and add it to the scene.
      */
-    private static ImageMap loadMap(String name, Scene scene, File baseDir, Map<String, ImageMap> imageMaps) throws Exception {
+    public static ImageMap loadMap(String name, Scene scene, File baseDir, Map<String, ImageMap> imageMaps) throws Exception {
         if (name == null) {
             return null;
         }
@@ -655,18 +657,18 @@ public class OBJImporter {
     }
 
     /**
-     * Inner class for storing information about a vertex of a face.
+     * Class for storing information about a vertex of a face.
      */
-    private static class VertexInfo {
+    public static class VertexInfo {
 
         public int vert, norm, tex;
     }
 
     /**
-     * Inner class for storing information about a face.
+     * Class for storing information about a face.
      *
      */
-    private static class FaceInfo {
+    public static class FaceInfo {
 
         public final VertexInfo[] vi;
         public final int smoothingGroup;
@@ -702,74 +704,4 @@ public class OBJImporter {
         }
     }
 
-    /**
-     * Inner class for storing information about a texture in a .mtl file.
-     */
-    private static class TextureInfo {
-
-        public RGBColor ambient, diffuse, specular;
-        public double shininess, transparency, specularity, roughness;
-        public String ambientMap, diffuseMap, specularMap, transparentMap, bumpMap;
-
-        /**
-         * This should be called once, after the TextureInfo is created but before it is actually used. It converts from the
-         * representation used by .obj files to the one used by Art of Illusion.
-         */
-        public void resolveColors() {
-            if (diffuse == null) {
-                if (diffuseMap == null) {
-                    diffuse = new RGBColor();
-                } else {
-                    diffuse = new RGBColor(1.0, 1.0, 1.0);
-                }
-            }
-            if (ambient == null) {
-                ambient = new RGBColor();
-            }
-            if (specular == null) {
-                specular = new RGBColor();
-            } else {
-                specularity = 1.0;
-            }
-            diffuse.scale(1.0 - transparency);
-            specular.scale(1.0 - transparency);
-            roughness = 1.0 - (shininess - 1.0) / 128.0;
-            if (roughness > 1.0) {
-                roughness = 1.0;
-            }
-            checkColorRange(ambient);
-            checkColorRange(diffuse);
-            checkColorRange(specular);
-        }
-
-        /**
-         * Make sure that the components of a color are all between 0 and 1.
-         *
-         * @param c Description of the Parameter
-         */
-        private void checkColorRange(RGBColor c) {
-            float r = c.getRed();
-            float g = c.getGreen();
-            float b = c.getBlue();
-            if (r < 0.0f) {
-                r = 0.0f;
-            }
-            if (r > 1.0f) {
-                r = 1.0f;
-            }
-            if (g < 0.0f) {
-                g = 0.0f;
-            }
-            if (g > 1.0f) {
-                g = 1.0f;
-            }
-            if (b < 0.0f) {
-                b = 0.0f;
-            }
-            if (b > 1.0f) {
-                b = 1.0f;
-            }
-            c.setRGB(r, g, b);
-        }
-    }
 }
