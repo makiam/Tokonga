@@ -324,9 +324,8 @@ public class PMOBJImporter {
     }
 
     /**
-     * Description of the Method
-     *
-     * @param parent Description of the Parameter
+     * Present a file chooser to the user so they can select an OBJ file. Create a Scene from it,
+     * and display it in a new window.
      */
     public static void importFile(@NotNull BFrame parent)  {
         JFileChooser jfc = new JFileChooser();

@@ -83,7 +83,7 @@ public final class OBJImporter {
                         s = s.substring(0, s.length() - 1) + s2;
                     }
                 }
-                String[] fields = breakLine(s);
+                String[] fields = OBJImporter.breakLine(s);
                 if (fields.length == 0) {
                     continue;
                 }
@@ -204,7 +204,7 @@ public final class OBJImporter {
                     // Load one or more texture libraries.
 
                     for (int i = 1; i < fields.length; i++) {
-                        parseTextures(fields[i], directory, textureTable);
+                        OBJImporter.parseTextures(fields[i], directory, textureTable);
                     }
                 }
             }
@@ -429,7 +429,9 @@ public final class OBJImporter {
         List<String> tokens = new ArrayList<>();
 
         while (st.hasMoreTokens()) {
-            tokens.add(st.nextToken());
+            var ct = st.nextToken();
+            if(ct.startsWith("#")) break;
+            tokens.add(ct);
         }
         return tokens.toArray(new String[0]);
     }
@@ -567,10 +569,10 @@ public final class OBJImporter {
             return tex;
         }
         info.resolveColors();
-        ImageMap diffuseMap = loadMap(info.diffuseMap, scene, baseDir, imageMaps);
-        ImageMap specularMap = loadMap(info.specularMap, scene, baseDir, imageMaps);
-        ImageMap transparentMap = loadMap(info.transparentMap, scene, baseDir, imageMaps);
-        ImageMap bumpMap = loadMap(info.bumpMap, scene, baseDir, imageMaps);
+        ImageMap diffuseMap = OBJImporter.loadMap(info.diffuseMap, scene, baseDir, imageMaps);
+        ImageMap specularMap = OBJImporter.loadMap(info.specularMap, scene, baseDir, imageMaps);
+        ImageMap transparentMap = OBJImporter.loadMap(info.transparentMap, scene, baseDir, imageMaps);
+        ImageMap bumpMap = OBJImporter.loadMap(info.bumpMap, scene, baseDir, imageMaps);
         RGBColor transparentColor = new RGBColor(info.transparency, info.transparency, info.transparency);
         if (diffuseMap == null && specularMap == null && transparentMap == null && bumpMap == null) {
             // Create a uniform texture.
