@@ -111,7 +111,7 @@ public class SPManagerPlugin implements Plugin {
                 try {
                     addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
                     addUrl.setAccessible(true);
-                } catch (NoSuchMethodException | SecurityException e) {
+                } catch (InaccessibleObjectException | NoSuchMethodException | SecurityException e) {
                     log.atError().setCause(e).log("Error getting addURL method: {}", e.getMessage());
                 }
 

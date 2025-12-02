@@ -11,6 +11,11 @@ plugins {
     id "kotlin-kapt"
 }
 
+application {
+    applicationDefaultJvmArgs = [
+            "-Dsun.java2d.noddraw=true"
+    ]
+}
 description = 'Art Of Illusion'
 
 kapt {
