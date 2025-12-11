@@ -331,7 +331,9 @@ public class ArtOfIllusion {
 
         for (String file : files) {
             String language = ScriptRunner.getLanguageForFilename(file);
-            if (language != ScriptRunner.UNKNOWN_LANGUAGE) {
+            if (language == ScriptRunner.UNKNOWN_LANGUAGE) {
+                log.atError().log("{}: {}", Translate.text("unsupportedFileExtension"), file);
+            } else {
                 try {
                     String script = loadFile(new File(STARTUP_SCRIPT_DIRECTORY, file));
                     ScriptRunner.executeScript(language, script, variables);
@@ -340,8 +342,6 @@ public class ArtOfIllusion {
                 } catch(NoClassDefFoundError ex) {
                     log.atError().setCause(ex).log("Unable to execute script file {} due {}", file, ex.getMessage());
                 }
-            } else {
-                log.atError().log("{}: {}", Translate.text("unsupportedFileExtension"), file);
             }
         }
     }
