@@ -6971,8 +6971,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 Wedge[] newEdges = new Wedge[edges.length + 4 * fc.length];
                 Wface[] newFaces = new Wface[faces.length + fc.length];
                 int[] paramFaceTable = new int[newFaces.length - faces.length];
-                int[] paramVertexTable = new int[newVertices.length
-                        - vertices.length];
+                int[] paramVertexTable = new int[newVertices.length - vertices.length];
                 translateMesh(newVertices, newEdges, newFaces);
                 for (int j = 0; j < nfc.length; ++j) {
                     nfc[j] = fc[j];
@@ -7019,29 +7018,21 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     newEdges[newEdgeCount + 2 * j + newEdges.length / 2] = new Wedge(nfv[j], newEdgeCount + 2 * j, newFaceCount + next, nfc[next]);
                     newEdges[newEdgeCount + 2 * j].smoothness = 1.0f;
                     newEdges[newEdgeCount + 2 * j + newEdges.length / 2].smoothness = 1.0f;
-                    newEdges[newEdgeCount + 2 * j + 1] = new Wedge(newVertCount
-                            + prev, newEdgeCount + 2 * j + 1 + newEdges.length
-                            / 2, newFaceCount + j, newEdgeCount + 2 * prev
-                            + newEdges.length / 2);
-                    newEdges[newEdgeCount + 2 * j + 1 + newEdges.length / 2] = new Wedge(
-                            newVertCount + j, newEdgeCount + 2 * j + 1,
-                            currentFace, newEdgeCount + 2 * next + 1
-                            + newEdges.length / 2);
+                    newEdges[newEdgeCount + 2 * j + 1] = new Wedge(newVertCount + prev, newEdgeCount + 2 * j + 1 + newEdges.length / 2, newFaceCount + j, newEdgeCount + 2 * prev + newEdges.length / 2);
+                    newEdges[newEdgeCount + 2 * j + 1 + newEdges.length / 2] = new Wedge(newVertCount + j, newEdgeCount + 2 * j + 1, currentFace, newEdgeCount + 2 * next + 1 + newEdges.length / 2);
                     newEdges[newEdgeCount + 2 * j + 1].smoothness = 1.0f;
                     newEdges[newEdgeCount + 2 * j + 1 + newEdges.length / 2].smoothness = 1.0f;
                     newEdges[nfc[j]].next = newEdgeCount + 2 * j;
                     newEdges[nfc[j]].face = newFaceCount + j;
                     newFaces[newFaceCount + j] = new Wface(newEdgeCount + 2 * j);
-                    newFaces[currentFace].edge = newEdgeCount + 2 * j + 1
-                            + newEdges.length / 2;
+                    newFaces[currentFace].edge = newEdgeCount + 2 * j + 1 + newEdges.length / 2;
                     paramFaceTable[newFaceCount + j - faces.length] = currentFace;
                     currentFace = edges[fc[next]].face;
                     newNext = newEdgeCount + 2 * next + 1 + newEdges.length / 2;
                     next = edges[fc[j]].next;
                     changed = false;
                     count = 0;
-                    while (isFaceSelected(selected,
-                            edges[edges[next].hedge].face)) {
+                    while (isFaceSelected(selected, edges[edges[next].hedge].face)) {
                         if (next >= edges.length / 2) {
                             n = next + newEdges.length / 2 - edges.length / 2;
                         } else {
@@ -7188,8 +7179,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             previous = getPreviousEdge(newEdges, newCurrent);
 
             newVertices[vindex] = new Wvertex(vertices[edges[current].vertex]);
-            newVertices[vindex + 1] = new Wvertex(
-                    vertices[edges[edges[current].hedge].vertex]);
+            newVertices[vindex + 1] = new Wvertex(vertices[edges[edges[current].hedge].vertex]);
             paramVertexTable[vindex - vertices.length] = edges[current].vertex;
             paramVertexTable[vindex - vertices.length] = edges[edges[current].hedge].vertex;
             newVertices[vindex].edge = eindex + 2;
@@ -7349,8 +7339,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             previous = getPreviousEdge(current);
             newPrevious = getPreviousEdge(newEdges, newCurrent);
             newVertices[vindex] = new Wvertex(vertices[edges[current].vertex]);
-            newVertices[vindex + 1] = new Wvertex(
-                    vertices[edges[edges[current].hedge].vertex]);
+            newVertices[vindex + 1] = new Wvertex(vertices[edges[edges[current].hedge].vertex]);
             paramVertexTable[vindex - vertices.length] = edges[current].vertex;
             paramVertexTable[vindex + 1 - vertices.length] = edges[edges[current].hedge].vertex;
             newVertices[vindex].edge = eindex + 2;
@@ -7372,10 +7361,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 newVertices[vindex].r.add(disp);
                 newVertices[vindex + 1].r.add(disp);
             }
-            newEdges[eindex] = new Wedge(vindex + 1, newEdges.length / 2
-                    + eindex, -1, eindex + 1);
-            newEdges[newEdges.length / 2 + eindex] = new Wedge(
-                    newEdges[newPrevious].vertex, eindex, findex, newCurrent);
+            newEdges[eindex] = new Wedge(vindex + 1, newEdges.length / 2 + eindex, -1, eindex + 1);
+            newEdges[newEdges.length / 2 + eindex] = new Wedge(newEdges[newPrevious].vertex, eindex, findex, newCurrent);
             newEdges[eindex].smoothness = newEdges[newEdges.length / 2 + eindex].smoothness = newEdges[newCurrent].smoothness;
             newEdges[newPrevious].next = eindex;
             newEdges[eindex + 1] = new Wedge(vindex, newEdges.length / 2 + eindex + 1, -1, eindex + 2);
@@ -7413,46 +7400,32 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     newCurrent = current + 3 * count;
                 }
                 if (!closed || e != laste) {
-                    newVertices[vindex] = new Wvertex(
-                            vertices[edges[current].vertex]);
+                    newVertices[vindex] = new Wvertex(vertices[edges[current].vertex]);
                     paramVertexTable[vindex - vertices.length] = edges[current].vertex;
                     newVertices[vindex].edge = eindex + 1;
                     if (direction == null) {
                         if (isEdgeSelected(edges[e].next, selected)) {
-                            newVertices[vindex].r.add(normals[current]
-                                    .times(value * 0.5));
-                            newVertices[vindex].r.add(normals[edges[e].next]
-                                    .times(value * 0.5));
+                            newVertices[vindex].r.add(normals[current].times(value * 0.5));
+                            newVertices[vindex].r.add(normals[edges[e].next].times(value * 0.5));
                         } else {
-                            newVertices[vindex].r.add(normals[current]
-                                    .times(value));
+                            newVertices[vindex].r.add(normals[current].times(value));
                         }
                     } else {
                         newVertices[vindex].r.add(disp);
                     }
-                    newEdges[eindex] = new Wedge(vindex, newEdges.length / 2
-                            + eindex, -1, eindex + 1);
-                    newEdges[newEdges.length / 2 + eindex] = new Wedge(
-                            prevVertex, eindex, findex, eindex - 1);
-                    newEdges[eindex].smoothness = newEdges[newEdges.length / 2
-                            + eindex].smoothness = newEdges[newCurrent].smoothness;
+                    newEdges[eindex] = new Wedge(vindex, newEdges.length / 2 + eindex, -1, eindex + 1);
+                    newEdges[newEdges.length / 2 + eindex] = new Wedge(prevVertex, eindex, findex, eindex - 1);
+                    newEdges[eindex].smoothness = newEdges[newEdges.length / 2 + eindex].smoothness = newEdges[newCurrent].smoothness;
                     newEdges[oldCurrent].next = eindex;
-                    newEdges[eindex + 1] = new Wedge(
-                            newEdges[newCurrent].vertex, newEdges.length / 2
-                            + eindex + 1, -1, newEdges[newCurrent].next);
-                    newEdges[newEdges.length / 2 + eindex + 1] = new Wedge(
-                            vindex, eindex + 1, findex, newEdges.length / 2
-                            + eindex);
-                    newEdges[eindex + 1].smoothness = newEdges[newEdges.length
-                            / 2 + eindex + 1].smoothness = newEdges[newCurrent].smoothness;
-                    newEdges[newCurrent].next = newEdges.length / 2 + eindex
-                            + 1;
+                    newEdges[eindex + 1] = new Wedge(newEdges[newCurrent].vertex, newEdges.length / 2 + eindex + 1, -1, newEdges[newCurrent].next);
+                    newEdges[newEdges.length / 2 + eindex + 1] = new Wedge(vindex, eindex + 1, findex, newEdges.length / 2 + eindex);
+                    newEdges[eindex + 1].smoothness = newEdges[newEdges.length / 2 + eindex + 1].smoothness = newEdges[newCurrent].smoothness;
+                    newEdges[newCurrent].next = newEdges.length / 2 + eindex + 1;
                     newFaces[findex] = new Wface(newCurrent);
                     paramFaceTable[findex - faces.length] = newEdges[newEdges[newCurrent].hedge].face;
                     newEdges[newCurrent].face = findex;
                     newEdges[eindex - 1].face = findex;
-                    swapEdge(newCurrent, eindex, newVertices, newEdges,
-                            newFaces);
+                    swapEdge(newCurrent, eindex, newVertices, newEdges, newFaces);
                     oldCurrent = newCurrent;
                     ++findex;
                     eindex += 2;
@@ -7797,8 +7770,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * @param newFaces
      * New faces array
      */
-    private void translateMesh(Wvertex[] newVertices, Wedge[] newEdges,
-            Wface[] newFaces) {
+    private void translateMesh(Wvertex[] newVertices, Wedge[] newEdges, Wface[] newFaces) {
         int max = Math.min(edges.length, newEdges.length);
         for (int i = 0; i < vertices.length; ++i) {
             newVertices[i] = new Wvertex(vertices[i]);
@@ -11392,11 +11364,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                         seamsCopy[i] = false;
                         continue;
                     }
-                    bv1 = getBoundaryEdgeOnVertex(
-                            newEdges[newEdges[i].hedge].vertex, newVertices,
-                            newEdges);
-                    bv2 = getBoundaryEdgeOnVertex(newEdges[i].vertex,
-                            newVertices, newEdges);
+                    bv1 = getBoundaryEdgeOnVertex(newEdges[newEdges[i].hedge].vertex, newVertices, newEdges);
+                    bv2 = getBoundaryEdgeOnVertex(newEdges[i].vertex, newVertices, newEdges);
                     if (bv1 == -1 && bv2 == -1) {
                         // each side of the edge is a boundary vertex
                         // let's see if the next vertex is also selected so we
@@ -11432,8 +11401,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                             while (index != i && nextSeam == -1) {
                                 int boundary = getBoundaryEdgeOnVertex(newEdges[index].vertex, newVertices, newEdges);
                                 if (boundary == -1) {
-                                    if (index < edges.length / 2
-                                            && seamsCopy[index]) {
+                                    if (index < edges.length / 2 && seamsCopy[index]) {
                                         nextSeam = index;
                                         seamsCopy[i] = false;
                                         seamsCopy[index] = false;
