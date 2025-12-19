@@ -184,3 +184,8 @@ publishing {
         }
     }
 }
+
+rewrite {
+    activeRecipe("org.openrewrite.staticanalysis.InstanceOfPatternMatch")
+    setExportDatatables(true)
+}
