@@ -123,11 +123,14 @@ distributions {
         }
         into("${description}.app/Contents/MacOS") { from("${rootProject.projectDir}/InstallerSrc/apple/") {
                 include "universalJavaApplicationStub.sh"
-                filePermissions {
-                  unix('rwxr-xr-x')
-                }
                 //fileMode 0755
-            }            
+            }
+            filePermissions {
+                user {
+                    read = true
+                    execute = true
+                }
+            }
         }
         into("${description}.app/Contents/Resources") { from("${rootProject.projectDir}/InstallerSrc/apple/") { include "*.icns"}}
         into("${description}.app/Contents/Resources/Java") { from(jar) }
