@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2004 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -1148,8 +1148,8 @@ public class TriMeshBeveler {
         ParameterValue[] oldParam = mesh.getParameterValues();
         ParameterValue[] newParam = new ParameterValue[oldParam.length];
         for (int i = 0; i < oldParam.length; i++) {
-            if (oldParam[i] instanceof VertexParameterValue) {
-                double[] oldval = ((VertexParameterValue) oldParam[i]).getValue();
+            if (oldParam[i] instanceof VertexParameterValue value1) {
+                double[] oldval = value1.getValue();
                 double[] newval = new double[vert.size()];
                 double defaultVal = mesh.getParameters()[i].defaultVal;
                 for (int j = 0; j < newval.length; j++) {
@@ -1165,8 +1165,8 @@ public class TriMeshBeveler {
                     }
                 }
                 newParam[i] = new VertexParameterValue(newval);
-            } else if (oldParam[i] instanceof FaceParameterValue) {
-                double[] oldval = ((FaceParameterValue) oldParam[i]).getValue();
+            } else if (oldParam[i] instanceof FaceParameterValue value) {
+                double[] oldval = value.getValue();
                 double[] newval = new double[face.size()];
                 double defaultVal = mesh.getParameters()[i].defaultVal;
                 for (int j = 0; j < newval.length; j++) {
@@ -1178,8 +1178,7 @@ public class TriMeshBeveler {
                     }
                 }
                 newParam[i] = new FaceParameterValue(newval);
-            } else if (oldParam[i] instanceof FaceVertexParameterValue) {
-                FaceVertexParameterValue fvpv = (FaceVertexParameterValue) oldParam[i];
+            } else if (oldParam[i] instanceof FaceVertexParameterValue fvpv) {
                 double[][] newval = new double[face.size()][3];
                 double defaultVal = mesh.getParameters()[i].defaultVal;
                 for (int j = 0; j < face.size(); j++) {

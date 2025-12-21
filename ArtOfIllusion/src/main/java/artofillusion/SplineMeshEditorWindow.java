@@ -795,8 +795,8 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         newv = new MeshVertex[vsize][usize + usplitcount];
         param = new double[vsize][usize][numParam];
         for (int k = 0; k < numParam; k++) {
-            if (theMesh.getParameterValues()[k] instanceof VertexParameterValue) {
-                double[] val = ((VertexParameterValue) theMesh.getParameterValues()[k]).getValue();
+            if (theMesh.getParameterValues()[k] instanceof VertexParameterValue value) {
+                double[] val = value.getValue();
                 for (i = 0; i < usize; i++) {
                     for (j = 0; j < vsize; j++) {
                         param[j][i][k] = val[i + usize * j];

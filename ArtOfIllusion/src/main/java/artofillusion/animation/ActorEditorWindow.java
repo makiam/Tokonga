@@ -196,8 +196,8 @@ public class ActorEditorWindow extends BDialog {
                 new CoordinateSystem(new Vec3(), Vec3.vz(), Vec3.vy()), name);
         info.addTrack(new PositionTrack(info), 0);
         info.addTrack(new RotationTrack(info), 1);
-        if (theWindow instanceof LayoutWindow) {
-            ((LayoutWindow) theWindow).addObject(info, null);
+        if (theWindow instanceof LayoutWindow window) {
+            window.addObject(info, null);
         } else {
             theWindow.getScene().addObject(info, null);
         }

@@ -268,7 +268,7 @@ public class TreeList extends CustomWidget {
      * Select or deselect the element corresponding to a particular object.
      */
     public void setSelected(Object obj, boolean selected) {
-        TreeElement el = (obj instanceof TreeElement ? (TreeElement) obj : findElement(obj));
+        TreeElement el = (obj instanceof TreeElement te ? te : findElement(obj));
         boolean wasDisabled = updateDisabled;
         updateDisabled = true;
         if (el != null) {
@@ -291,7 +291,7 @@ public class TreeList extends CustomWidget {
      * Expand all parents of the specified object to make it visible.
      */
     public void expandToShowObject(Object obj) {
-        TreeElement el = (obj instanceof TreeElement ? (TreeElement) obj : findElement(obj));
+        TreeElement el = (obj instanceof TreeElement te ? te : findElement(obj));
         if (el == null) {
             return;
         }

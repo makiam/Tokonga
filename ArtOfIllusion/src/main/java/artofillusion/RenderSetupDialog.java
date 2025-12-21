@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2015 by Peter Eastman
-   Changes copyright (C) 2016-2023 by Maksim Khramov
+   Changes copyright (C) 2016-2025 by Maksim Khramov
    Changes copyright (C) 2020 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -344,25 +344,25 @@ public class RenderSetupDialog {
             for (Map.Entry<String, Object> currentEntry : currentRenderer.getConfiguration().entrySet()) {
                 curValue = currentEntry.getValue();
                 if (recKey.equals(currentEntry.getKey())) {
-                    if (recValue instanceof Boolean) {
-                        if ((boolean) recValue != (boolean) curValue) {
+                    if (recValue instanceof Boolean boolean1) {
+                        if (boolean1 != (boolean) curValue) {
                             modified = true;
                         }
                     }
-                    if (recValue instanceof Integer) {
-                        if ((int) recValue != (int) curValue) {
+                    if (recValue instanceof Integer integer) {
+                        if (integer != (int) curValue) {
                             modified = true;
                         }
                     }
-                    if (recValue instanceof Number && !(recValue instanceof Integer)) // 'else if' did not work right
+                    if (recValue instanceof Number number && !(recValue instanceof Integer)) // 'else if' did not work right
                     {
-                        if (((Number) recValue).doubleValue() != ((Number) curValue).doubleValue()) {
+                        if (number.doubleValue() != ((Number) curValue).doubleValue()) {
                             modified = true;
                         }
                     }
-                    if (recValue instanceof String) // No Strings in built-in renderers, but who knows...?
+                    if (recValue instanceof String string) // No Strings in built-in renderers, but who knows...?
                     {
-                        if (!((String) recValue).equals((String) curValue)) {
+                        if (!string.equals((String) curValue)) {
                             modified = true;
                         }
                     }

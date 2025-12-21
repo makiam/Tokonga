@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2013 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -132,15 +132,14 @@ public class ScriptRunner {
      * in which the error occurred, or -1 if it could not be determined.
      */
     public static int displayError(String language, Exception ex) {
-        if (ex instanceof UndeclaredThrowableException) {
-            ex = (Exception) ((UndeclaredThrowableException) ex).getUndeclaredThrowable();
+        if (ex instanceof UndeclaredThrowableException exception) {
+            ex = (Exception) exception.getUndeclaredThrowable();
         }
         String head = "An error occurred while executing the script:";
         String message = null, errorText = null, column = null;
         int line = -1;
         try {
-            if (ex instanceof ScriptException) {
-                ScriptException t = (ScriptException) ex;
+            if (ex instanceof ScriptException t) {
                 message = t.getMessage();
                 if (t.getLineNumber() > -1) {
                     line = t.getLineNumber();

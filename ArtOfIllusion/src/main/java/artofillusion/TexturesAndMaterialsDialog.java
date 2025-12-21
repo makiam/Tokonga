@@ -221,8 +221,8 @@ public class TexturesAndMaterialsDialog extends BDialog {
                 selectedScene = sceneNode.getScene();
                 libraryFile = sceneNode.file;
                 Object node = selection.getLastPathComponent();
-                if (node instanceof TextureTreeNode) {
-                    selectedTexture = selectedScene.getTexture(((TextureTreeNode) node).index);
+                if (node instanceof TextureTreeNode treeNode) {
+                    selectedTexture = selectedScene.getTexture(treeNode.index);
                     if (selectedTexture != oldTexture) {
                         preview.setTexture(selectedTexture, selectedTexture.getDefaultMapping(preview.getObject().getObject()));
                         preview.setMaterial(null, null);
@@ -261,8 +261,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
         }
         TreeModel model = libraryList.getModel();
         int numChildren = model.getChildCount(value);
-        if (value instanceof SceneTreeNode) {
-            SceneTreeNode stn = (SceneTreeNode) value;
+        if (value instanceof SceneTreeNode stn) {
             if (stn.scene == null || stn.scene.get() != scene) {
                 return false;
             }
@@ -749,8 +748,8 @@ public class TexturesAndMaterialsDialog extends BDialog {
             if (o == root) {
                 return rootNodes.get(i);
             }
-            if (o instanceof FolderTreeNode) {
-                return ((FolderTreeNode) o).getChildren().get(i);
+            if (o instanceof FolderTreeNode node) {
+                return node.getChildren().get(i);
             }
             SceneTreeNode node = (SceneTreeNode) o;
             node.ensureChildrenValid();
@@ -768,8 +767,8 @@ public class TexturesAndMaterialsDialog extends BDialog {
             if (o == root) {
                 return rootNodes.size();
             }
-            if (o instanceof FolderTreeNode) {
-                return ((FolderTreeNode) o).getChildren().size();
+            if (o instanceof FolderTreeNode node) {
+                return node.getChildren().size();
             }
             if (!(o instanceof SceneTreeNode)) {
                 return 0;
@@ -800,8 +799,8 @@ public class TexturesAndMaterialsDialog extends BDialog {
             if (o == root) {
                 return rootNodes.indexOf(o1);
             }
-            if (o instanceof FolderTreeNode) {
-                return ((FolderTreeNode) o).getChildren().indexOf(o1);
+            if (o instanceof FolderTreeNode node) {
+                return node.getChildren().indexOf(o1);
             }
             SceneTreeNode node = (SceneTreeNode) o;
             node.ensureChildrenValid();
@@ -817,8 +816,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
         }
 
         void rebuildNode(Object node, File file) {
-            if (node instanceof SceneTreeNode) {
-                SceneTreeNode sct = (SceneTreeNode) node;
+            if (node instanceof SceneTreeNode sct) {
                 if (file == null || file.equals(sct.file)) {
                     sct.textures = null;
                     sct.materials = null;
@@ -828,7 +826,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
                 }
                 return;
             }
-            if (node instanceof FolderTreeNode && ((FolderTreeNode) node).children == null) {
+            if (node instanceof FolderTreeNode treeNode && treeNode.children == null) {
                 return;
             }
             int numChildren = getChildCount(node);
@@ -959,8 +957,8 @@ public class TexturesAndMaterialsDialog extends BDialog {
                 insertLocation = ((MaterialTreeNode) location.getLastPathComponent()).index;
             }
             for (Object node : location.getPath()) {
-                if (node instanceof SceneTreeNode) {
-                    return (SceneTreeNode) node;
+                if (node instanceof SceneTreeNode treeNode) {
+                    return treeNode;
                 }
             }
             return null;

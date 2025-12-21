@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2006 by Peter Eastman
    Modification copyright (C) 2016 by Petri Ihalainen
-   Changes copyright (C) 2021-2023 by Maksim Khramov
+   Changes copyright (C) 2021-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -218,11 +218,11 @@ public class ToolPalette extends CustomWidget {
             // This is a bit ugly. The 'toolChanged' should be defined in EditingWindow but that
             // causes error at compile with Score and UVMappingEditorWindow
             if (window != null) {
-                if (window instanceof LayoutWindow) {
-                    ((LayoutWindow) window).toolChanged(tool[i]);
+                if (window instanceof LayoutWindow layoutWindow) {
+                    layoutWindow.toolChanged(tool[i]);
                 }
-                if (window instanceof ObjectEditorWindow) {
-                    ((ObjectEditorWindow) window).toolChanged(tool[i]);
+                if (window instanceof ObjectEditorWindow editorWindow) {
+                    editorWindow.toolChanged(tool[i]);
                 }
             }
         }

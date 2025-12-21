@@ -1,5 +1,5 @@
 /* Copyright (C) 2004 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -71,8 +71,8 @@ public class RecentFiles {
 
         // Rebuild the menus in all open windows.
         for (EditingWindow window : ArtOfIllusion.getWindows()) {
-            if (window instanceof LayoutWindow) {
-                createMenu(((LayoutWindow) window).getRecentFilesMenu());
+            if (window instanceof LayoutWindow layoutWindow) {
+                createMenu(layoutWindow.getRecentFilesMenu());
             }
         }
     }

@@ -1272,16 +1272,15 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
         for (i = 0; i < mesh.paramValue.length; i++) {
             if (mesh.paramValue[i] instanceof ConstantParameterValue) {
                 paramType[i] = PER_OBJECT;
-            } else if (mesh.paramValue[i] instanceof VertexParameterValue) {
-                oldParamValue[i] = new double[][]{((VertexParameterValue) mesh.paramValue[i]).getValue()};
+            } else if (mesh.paramValue[i] instanceof VertexParameterValue value1) {
+                oldParamValue[i] = new double[][]{value1.getValue()};
                 newParamValue[i] = new double[1][numVert];
                 paramType[i] = PER_VERTEX;
-            } else if (mesh.paramValue[i] instanceof FaceParameterValue) {
-                oldParamValue[i] = new double[][]{((FaceParameterValue) mesh.paramValue[i]).getValue()};
+            } else if (mesh.paramValue[i] instanceof FaceParameterValue value) {
+                oldParamValue[i] = new double[][]{value.getValue()};
                 newParamValue[i] = new double[1][numFace];
                 paramType[i] = PER_FACE;
-            } else if (mesh.paramValue[i] instanceof FaceVertexParameterValue) {
-                FaceVertexParameterValue fvpv = (FaceVertexParameterValue) mesh.paramValue[i];
+            } else if (mesh.paramValue[i] instanceof FaceVertexParameterValue fvpv) {
                 oldParamValue[i] = new double[3][fvpv.getFaceCount()];
                 for (int index = 0; index < fvpv.getFaceCount(); index++) {
                     oldParamValue[i][0][index] = fvpv.getValue(index, 0);
@@ -1392,14 +1391,13 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
         for (i = 0; i < mesh.paramValue.length; i++) {
             if (mesh.paramValue[i] instanceof ConstantParameterValue) {
                 paramType[i] = PER_OBJECT;
-            } else if (mesh.paramValue[i] instanceof VertexParameterValue) {
-                oldParamValue[i] = new double[][]{((VertexParameterValue) mesh.paramValue[i]).getValue()};
+            } else if (mesh.paramValue[i] instanceof VertexParameterValue value1) {
+                oldParamValue[i] = new double[][]{value1.getValue()};
                 paramType[i] = PER_VERTEX;
-            } else if (mesh.paramValue[i] instanceof FaceParameterValue) {
-                oldParamValue[i] = new double[][]{((FaceParameterValue) mesh.paramValue[i]).getValue()};
+            } else if (mesh.paramValue[i] instanceof FaceParameterValue value) {
+                oldParamValue[i] = new double[][]{value.getValue()};
                 paramType[i] = PER_FACE;
-            } else if (mesh.paramValue[i] instanceof FaceVertexParameterValue) {
-                FaceVertexParameterValue fvpv = (FaceVertexParameterValue) mesh.paramValue[i];
+            } else if (mesh.paramValue[i] instanceof FaceVertexParameterValue fvpv) {
                 oldParamValue[i] = new double[3][fvpv.getFaceCount()];
                 for (int index = 0; index < fvpv.getFaceCount(); index++) {
                     oldParamValue[i][0][index] = fvpv.getValue(index, 0);
@@ -1798,14 +1796,13 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
         for (i = 0; i < mesh.paramValue.length; i++) {
             if (mesh.paramValue[i] instanceof ConstantParameterValue) {
                 paramType[i] = PER_OBJECT;
-            } else if (mesh.paramValue[i] instanceof VertexParameterValue) {
-                oldParamValue[i] = new double[][]{((VertexParameterValue) mesh.paramValue[i]).getValue()};
+            } else if (mesh.paramValue[i] instanceof VertexParameterValue value1) {
+                oldParamValue[i] = new double[][]{value1.getValue()};
                 paramType[i] = PER_VERTEX;
-            } else if (mesh.paramValue[i] instanceof FaceParameterValue) {
-                oldParamValue[i] = new double[][]{((FaceParameterValue) mesh.paramValue[i]).getValue()};
+            } else if (mesh.paramValue[i] instanceof FaceParameterValue value) {
+                oldParamValue[i] = new double[][]{value.getValue()};
                 paramType[i] = PER_FACE;
-            } else if (mesh.paramValue[i] instanceof FaceVertexParameterValue) {
-                FaceVertexParameterValue fvpv = (FaceVertexParameterValue) mesh.paramValue[i];
+            } else if (mesh.paramValue[i] instanceof FaceVertexParameterValue fvpv) {
                 oldParamValue[i] = new double[3][fvpv.getFaceCount()];
                 for (int index = 0; index < fvpv.getFaceCount(); index++) {
                     oldParamValue[i][0][index] = fvpv.getValue(index, 0);
@@ -2633,16 +2630,15 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
         for (i = 0; i < mesh.paramValue.length; i++) {
             if (mesh.paramValue[i] instanceof ConstantParameterValue) {
                 paramType[i] = PER_OBJECT;
-            } else if (mesh.paramValue[i] instanceof VertexParameterValue) {
-                oldParamValue[i] = new double[][]{((VertexParameterValue) mesh.paramValue[i]).getValue()};
+            } else if (mesh.paramValue[i] instanceof VertexParameterValue value1) {
+                oldParamValue[i] = new double[][]{value1.getValue()};
                 newParamValue[i] = new double[1][numVert];
                 paramType[i] = PER_VERTEX;
-            } else if (mesh.paramValue[i] instanceof FaceParameterValue) {
-                oldParamValue[i] = new double[][]{((FaceParameterValue) mesh.paramValue[i]).getValue()};
+            } else if (mesh.paramValue[i] instanceof FaceParameterValue value) {
+                oldParamValue[i] = new double[][]{value.getValue()};
                 newParamValue[i] = new double[1][numFace];
                 paramType[i] = PER_FACE;
-            } else if (mesh.paramValue[i] instanceof FaceVertexParameterValue) {
-                FaceVertexParameterValue fvpv = (FaceVertexParameterValue) mesh.paramValue[i];
+            } else if (mesh.paramValue[i] instanceof FaceVertexParameterValue fvpv) {
                 oldParamValue[i] = new double[3][fvpv.getFaceCount()];
                 for (int index = 0; index < fvpv.getFaceCount(); index++) {
                     oldParamValue[i][0][index] = fvpv.getValue(index, 0);
@@ -2889,8 +2885,8 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
         TextureMapping map = getTextureMapping();
         for (int i = 0; i < v.length; i++) {
             for (int j = 0; j < paramValue.length; j++) {
-                if (paramValue[j] instanceof VertexParameterValue) {
-                    param[j] = ((VertexParameterValue) paramValue[j]).getValue()[i];
+                if (paramValue[j] instanceof VertexParameterValue value) {
+                    param[j] = value.getValue()[i];
                 }
             }
             double height = map.getDisplacement(v[i].r, tol, time, param);
@@ -3549,8 +3545,8 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
         @Override
         public Keyframe duplicate(Object owner) {
             TriangleMeshKeyframe k = new TriangleMeshKeyframe();
-            if (owner instanceof TriangleMesh) {
-                k.mesh = (TriangleMesh) owner;
+            if (owner instanceof TriangleMesh triangleMesh) {
+                k.mesh = triangleMesh;
             } else {
                 k.mesh = (TriangleMesh) ((ObjectInfo) owner).getObject();
             }

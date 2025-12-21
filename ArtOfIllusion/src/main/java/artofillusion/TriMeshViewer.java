@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
    Modifications copyright (C) 2017-2020 Petri Ihalainen
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -50,7 +50,7 @@ public class TriMeshViewer extends MeshViewer {
         TriangleMesh mesh = (TriangleMesh) getController().getObject().getObject();
         MeshVertex[] v = mesh.getVertices();
         RenderingMesh previewMesh = getController().getObject().getPreviewMesh();
-        boolean project = (controller instanceof TriMeshEditorWindow ? ((TriMeshEditorWindow) controller).getProjectOntoSurface() : false);
+        boolean project = (controller instanceof TriMeshEditorWindow tmew ? tmew.getProjectOntoSurface() : false);
 
         // Calculate the screen coordinates of every vertex.
         screenVert = new Point[v.length];
@@ -60,7 +60,7 @@ public class TriMeshViewer extends MeshViewer {
         }
         screenVec2 = new Vec2[v.length];
         double clipDist = theCamera.getClipDistance();
-        boolean[] hideVert = (controller instanceof TriMeshEditorWindow ? ((TriMeshEditorWindow) controller).hideVert : new boolean[v.length]);
+        boolean[] hideVert = (controller instanceof TriMeshEditorWindow tmew ? tmew.hideVert : new boolean[v.length]);
         for (int i = 0; i < v.length; i++) {
             Vec3 pos = (project ? previewMesh.vert[i] : v[i].r);
             screenVec2[i] = theCamera.getObjectToScreen().timesXY(pos);
@@ -112,9 +112,9 @@ public class TriMeshViewer extends MeshViewer {
         hideRenderingTriangle = null;
         int[] faceIndex = null;
         ObjectInfo objInfo = controller.getObject();
-        if (controller instanceof TriMeshEditorWindow && ((TriMeshEditorWindow) controller).getFaceIndexParameter() != null) {
+        if (controller instanceof TriMeshEditorWindow window && window.getFaceIndexParameter() != null) {
             RenderingMesh mesh = objInfo.getPreviewMesh();
-            TextureParameter faceIndexParameter = ((TriMeshEditorWindow) controller).getFaceIndexParameter();
+            TextureParameter faceIndexParameter = window.getFaceIndexParameter();
             double[] param = null;
             for (int i = 0; i < mesh.param.length; i++) {
                 if (objInfo.getObject().getParameters()[i] == faceIndexParameter) {
@@ -125,7 +125,7 @@ public class TriMeshViewer extends MeshViewer {
             for (int i = 0; i < faceIndex.length; i++) {
                 faceIndex[i] = (int) param[i];
             }
-            boolean[] hideFace = ((TriMeshEditorWindow) controller).hideFace;
+            boolean[] hideFace = window.hideFace;
             if (hideFace != null) {
                 hideRenderingTriangle = new boolean[param.length];
                 for (int i = 0; i < hideRenderingTriangle.length; i++) {
@@ -212,7 +212,7 @@ public class TriMeshViewer extends MeshViewer {
 
         // Determine which edges are selected.
         int selectMode = controller.getSelectionMode();
-        boolean[] hideEdge = (controller instanceof TriMeshEditorWindow ? ((TriMeshEditorWindow) controller).hideEdge : new boolean[e.length]);
+        boolean[] hideEdge = (controller instanceof TriMeshEditorWindow tmew ? tmew.hideEdge : new boolean[e.length]);
         boolean[] selected = controller.getSelection();
         boolean[] isSelected;
         if (selectMode == MeshEditController.POINT_MODE) {
@@ -225,7 +225,7 @@ public class TriMeshViewer extends MeshViewer {
                 isSelected[i] = (selected[e[i].f1] || (e[i].f2 > -1 && selected[e[i].f2]));
             }
         }
-        int[] projectedEdge = (controller instanceof TriMeshEditorWindow ? ((TriMeshEditorWindow) controller).findProjectedEdges() : null);
+        int[] projectedEdge = (controller instanceof TriMeshEditorWindow tmew ? tmew.findProjectedEdges() : null);
         if (projectedEdge == null) {
             // Draw the edges of the control mesh.
 
@@ -362,7 +362,7 @@ public class TriMeshViewer extends MeshViewer {
             }
         }
         selected[i] = true;
-        boolean[] hideEdge = (controller instanceof TriMeshEditorWindow ? ((TriMeshEditorWindow) controller).hideEdge : new boolean[ed.length]);
+        boolean[] hideEdge = (controller instanceof TriMeshEditorWindow tmew ? tmew.hideEdge : new boolean[ed.length]);
         if (controller.getSelectionMode() == MeshEditController.FACE_MODE) {
             if (hideEdge[f[i].e1]) {
                 selected[ed[f[i].e1].f1] = selected[ed[f[i].e1].f2] = true;
@@ -414,10 +414,10 @@ public class TriMeshViewer extends MeshViewer {
 
         // If the user was dragging a selection box, then select or deselect anything
         // it intersects.
-        boolean[] hideVert = (controller instanceof TriMeshEditorWindow ? ((TriMeshEditorWindow) controller).hideVert : new boolean[mesh.getVertices().length]);
-        boolean[] hideEdge = (controller instanceof TriMeshEditorWindow ? ((TriMeshEditorWindow) controller).hideEdge : new boolean[ed.length]);
-        boolean[] hideFace = (controller instanceof TriMeshEditorWindow ? ((TriMeshEditorWindow) controller).hideFace : new boolean[fc.length]);
-        boolean tolerant = (controller instanceof TriMeshEditorWindow ? ((TriMeshEditorWindow) controller).tolerant : false);
+        boolean[] hideVert = (controller instanceof TriMeshEditorWindow tmew ? tmew.hideVert : new boolean[mesh.getVertices().length]);
+        boolean[] hideEdge = (controller instanceof TriMeshEditorWindow tmew ? tmew.hideEdge : new boolean[ed.length]);
+        boolean[] hideFace = (controller instanceof TriMeshEditorWindow tmew ? tmew.hideFace : new boolean[fc.length]);
+        boolean tolerant = (controller instanceof TriMeshEditorWindow tmew ? tmew.tolerant : false);
         if (selectBounds != null) {
             boolean newsel = !e.isControlDown();
             if (controller.getSelectionMode() == MeshEditController.POINT_MODE) {
@@ -540,15 +540,15 @@ public class TriMeshViewer extends MeshViewer {
             Vertex[] vt;
             Edge[] ed, origEd = mesh.getEdges();
             int[] projectedEdge = null;
-            if (controller instanceof TriMeshEditorWindow) {
-                projectedEdge = ((TriMeshEditorWindow) controller).findProjectedEdges();
+            if (controller instanceof TriMeshEditorWindow window) {
+                projectedEdge = window.findProjectedEdges();
             }
             if (projectedEdge != null) {
                 mesh = ((TriMeshEditorWindow) controller).getSubdividedMesh();
             }
             vt = (Vertex[]) mesh.getVertices();
             ed = mesh.getEdges();
-            boolean[] hideEdge = (controller instanceof TriMeshEditorWindow ? ((TriMeshEditorWindow) controller).hideEdge : new boolean[ed.length]);
+            boolean[] hideEdge = (controller instanceof TriMeshEditorWindow tmew ? tmew.hideEdge : new boolean[ed.length]);
             for (int i = 0; i < ed.length; i++) {
                 Point v1, v2;
                 if (projectedEdge == null) {
@@ -626,8 +626,8 @@ public class TriMeshViewer extends MeshViewer {
             }
         } else {
             TriangleMesh mesh = null;
-            if (controller instanceof TriMeshEditorWindow) {
-                mesh = ((TriMeshEditorWindow) controller).getSubdividedMesh();
+            if (controller instanceof TriMeshEditorWindow window) {
+                mesh = window.getSubdividedMesh();
             }
             if (mesh == null) {
                 mesh = (TriangleMesh) getController().getObject().getObject();
@@ -637,8 +637,7 @@ public class TriMeshViewer extends MeshViewer {
             Face[] origFc = ((TriangleMesh) getController().getObject().getObject()).getFaces();
             double[] param = null;
             boolean[] hideFace = null;
-            if (controller instanceof TriMeshEditorWindow) {
-                TriMeshEditorWindow win = (TriMeshEditorWindow) controller;
+            if (controller instanceof TriMeshEditorWindow win) {
                 if (win.getFaceIndexParameter() != null) {
                     param = ((FaceParameterValue) mesh.getParameterValue(win.getFaceIndexParameter())).getValue();
                 }

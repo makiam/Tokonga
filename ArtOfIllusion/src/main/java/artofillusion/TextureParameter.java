@@ -1,4 +1,5 @@
 /* Copyright (C) 2000-2009 by Peter Eastman
+   Changes copyright (C) 2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -66,8 +67,8 @@ public class TextureParameter {
         boolean sameOwner = false;
         if (param.owner == owner) {
             sameOwner = true;
-        } else if (param.owner instanceof Texture && owner instanceof Texture
-                && ((Texture) param.owner).getID() == ((Texture) owner).getID()) {
+        } else if (param.owner instanceof Texture texture && owner instanceof Texture texture1
+                && texture.getID() == texture1.getID()) {
             sameOwner = true;
         } else if (owner instanceof TextureMapping && owner.getClass() == param.owner.getClass()) {
             sameOwner = true;

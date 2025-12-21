@@ -147,8 +147,8 @@ public class ReferenceImage extends Object3D {
 
         // Save the image to the file.
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        if (image instanceof RenderedImage) {
-            ImageIO.write((RenderedImage) image, "png", baos);
+        if (image instanceof RenderedImage renderedImage) {
+            ImageIO.write(renderedImage, "png", baos);
         } else {
             // We need to copy it into a BufferedImage.
 

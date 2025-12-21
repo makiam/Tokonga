@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2015 by Peter Eastman
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
    Changes copyright (C) 2019 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -423,8 +423,8 @@ public class SplineMesh extends Object3D implements Mesh {
             }
         }
         for (int k = 0; k < numParam; k++) {
-            if (mesh.paramValue[k] instanceof VertexParameterValue) {
-                double[] val = ((VertexParameterValue) mesh.paramValue[k]).getValue();
+            if (mesh.paramValue[k] instanceof VertexParameterValue value) {
+                double[] val = value.getValue();
                 for (int i = 0; i < usize; i++) {
                     for (int j = 0; j < vsize; j++) {
                         param[j][i][k] = val[i + usize * j];
@@ -1500,8 +1500,8 @@ public class SplineMesh extends Object3D implements Mesh {
         @Override
         public Keyframe duplicate(Object owner) {
             SplineMeshKeyframe k = new SplineMeshKeyframe();
-            if (owner instanceof SplineMesh) {
-                k.mesh = (SplineMesh) owner;
+            if (owner instanceof SplineMesh splineMesh) {
+                k.mesh = splineMesh;
             } else {
                 k.mesh = (SplineMesh) ((ObjectInfo) owner).getObject();
             }

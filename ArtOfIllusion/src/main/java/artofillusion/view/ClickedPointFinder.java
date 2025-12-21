@@ -1,5 +1,5 @@
 /* Copyright (C) 2016 - 2020 by Petri Ihalainen
-   Changes copyright (C) 2023-2024 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -51,7 +51,7 @@ public class ClickedPointFinder {
         h = view.getBounds().height;
 
         // ToScreen matrices produce the actual pixel coordinates on the ViewerCanvas.
-        if ((view instanceof ObjectViewer) && !(((ObjectViewer) view).getUseWorldCoords())) {
+        if ((view instanceof ObjectViewer viewer) && !(viewer.getUseWorldCoords())) {
             modelToScreen = view.getCamera().getObjectToScreen();
         } else {
             modelToScreen = view.getCamera().getWorldToScreen();
@@ -66,7 +66,7 @@ public class ClickedPointFinder {
         for (ObjectInfo info: renderableObjects(view)) {
 
             RenderingMesh surface = info.getPreviewMesh();
-            if (view instanceof ObjectViewer && (!((ObjectViewer) view).getSceneVisible() || info == ((ObjectViewer) view).thisObjectInScene)) {
+            if (view instanceof ObjectViewer viewer && (!viewer.getSceneVisible() || info == viewer.thisObjectInScene)) {
                 hideTriangle = view.getHiddenRenderingTriangles();
             } else {
                 hideTriangle = null;
@@ -137,17 +137,17 @@ public class ClickedPointFinder {
         List<ObjectInfo> renderable = new ArrayList<>();
 
 
-        if (view instanceof SceneViewer || (view instanceof ObjectViewer && ((ObjectViewer) view).getSceneVisible())) {
+        if (view instanceof SceneViewer || (view instanceof ObjectViewer viewer1 && viewer1.getSceneVisible())) {
             Scene scene = view.getScene();
             scene.getObjects().forEach((ObjectInfo oi) -> {
                 if (oi.isVisible() && oi.getObject().canSetTexture()) {
                     renderable.add(oi);
                 }
             });
-        } else if (view instanceof ObjectViewer) {
-            renderable.add(((ObjectViewer) view).getController().getObject());
-        } else if (view instanceof ObjectPreviewCanvas) {
-            renderable.add(((ObjectPreviewCanvas) view).getObject());
+        } else if (view instanceof ObjectViewer viewer) {
+            renderable.add(viewer.getController().getObject());
+        } else if (view instanceof ObjectPreviewCanvas canvas) {
+            renderable.add(canvas.getObject());
         }
 
         return renderable;
@@ -156,19 +156,19 @@ public class ClickedPointFinder {
     private Mat4 contextTransform(ViewerCanvas view, ObjectInfo info) {
         Mat4 t;
 
-        if (view instanceof ObjectViewer) {
-            if (((ObjectViewer) view).getUseWorldCoords()) {
-                if (((ObjectViewer) view).getSceneVisible()) {
+        if (view instanceof ObjectViewer viewer) {
+            if (viewer.getUseWorldCoords()) {
+                if (viewer.getSceneVisible()) {
                     t = info.getCoords().fromLocal();
                 } else {
-                    t = ((ObjectViewer) view).getDisplayCoordinates().fromLocal();
+                    t = viewer.getDisplayCoordinates().fromLocal();
                     t = t.times(info.getCoords().toLocal());
                 }
-            } else if (((ObjectViewer) view).getSceneVisible()) {
-                ((ObjectViewer) view).setUseWorldCoords(true);
-                t = ((ObjectViewer) view).getDisplayCoordinates().toLocal();
+            } else if (viewer.getSceneVisible()) {
+                viewer.setUseWorldCoords(true);
+                t = viewer.getDisplayCoordinates().toLocal();
                 t = t.times(info.getCoords().fromLocal());
-                ((ObjectViewer) view).setUseWorldCoords(false);
+                viewer.setUseWorldCoords(false);
             } else {
                 t = Mat4.identity();
             }

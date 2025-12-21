@@ -216,24 +216,21 @@ public class TriMeshSimplifier implements Runnable {
         ParameterValue[] paramValue = mesh.getParameterValues();
         if (paramValue != null) {
             for (int i = 0; i < paramValue.length; i++) {
-                if (paramValue[i] instanceof VertexParameterValue) {
-                    VertexParameterValue value = (VertexParameterValue) paramValue[i];
+                if (paramValue[i] instanceof VertexParameterValue value) {
                     double[] oldValue = value.getValue();
                     double[] newValue = new double[vertex.length];
                     for (int j = 0; j < newValue.length; j++) {
                         newValue[index[j]] = oldValue[j];
                     }
                     value.setValue(newValue);
-                } else if (paramValue[i] instanceof FaceParameterValue) {
-                    FaceParameterValue value = (FaceParameterValue) paramValue[i];
+                } else if (paramValue[i] instanceof FaceParameterValue value) {
                     double[] oldValue = value.getValue();
                     double[] newValue = new double[faces];
                     for (int j = 0; j < newValue.length; j++) {
                         newValue[j] = oldValue[face[j].origIndex];
                     }
                     value.setValue(newValue);
-                } else if (paramValue[i] instanceof FaceVertexParameterValue) {
-                    FaceVertexParameterValue value = (FaceVertexParameterValue) paramValue[i];
+                } else if (paramValue[i] instanceof FaceVertexParameterValue value) {
                     double[][] newValue = new double[faces][3];
                     for (int j = 0; j < newValue.length; j++) {
                         newValue[j][0] = value.getValue(face[j].origIndex, 0);

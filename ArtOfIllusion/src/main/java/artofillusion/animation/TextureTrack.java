@@ -409,8 +409,8 @@ public class TextureTrack extends Track<TextureTrack> {
         }
         win.setUndoRecord(new UndoRecord(win, false, UndoRecord.COPY_TRACK, this, duplicate(info)));
         for (int i = 0; i < param.length; i++) {
-            if (widget[i] instanceof ValueField) {
-                key.val[i] = ((ValueField) widget[i]).getValue();
+            if (widget[i] instanceof ValueField field) {
+                key.val[i] = field.getValue();
             } else {
                 key.val[i] = ((ValueSlider) widget[i]).getValue();
             }

@@ -528,8 +528,8 @@ public class Actor extends ObjectWrapper {
      */
     public static Actor getActor(Object3D obj) {
         while (obj instanceof ObjectWrapper) {
-            if (obj instanceof Actor) {
-                return (Actor) obj;
+            if (obj instanceof Actor actor) {
+                return actor;
             }
             obj = ((ObjectWrapper) obj).getWrappedObject();
         }

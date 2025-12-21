@@ -348,8 +348,8 @@ public class ImageSaver {
      * for using the ImageIO classes, which only work on BufferedImages.
      */
     private static BufferedImage getBufferedImage(Image im, boolean hasAlpha) {
-        if (im instanceof BufferedImage) {
-            return (BufferedImage) im;
+        if (im instanceof BufferedImage image) {
+            return image;
         }
         BufferedImage bi = new BufferedImage(im.getWidth(null), im.getHeight(null), hasAlpha ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB);
         Graphics g = bi.getGraphics();

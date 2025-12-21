@@ -1,5 +1,5 @@
 /* Copyright (C) 2006 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -159,13 +159,13 @@ public class Property {
      */
     public boolean isLegalValue(Object value) {
         if (type == DOUBLE) {
-            if (value instanceof Double) {
-                double val = ((Double) value);
+            if (value instanceof Double double1) {
+                double val = double1;
                 return (val >= min && val <= max);
             }
         } else if (type == INTEGER) {
-            if (value instanceof Integer) {
-                int val = ((Integer) value);
+            if (value instanceof Integer integer) {
+                int val = integer;
                 return (val >= min && val <= max);
             }
         } else if (type == BOOLEAN) {

@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2012 by Peter Eastman
-   Changes copyright (C) 2024 by Maksim Khramov
+   Changes copyright (C) 2024-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -74,10 +74,10 @@ public class PoseDistortion extends Distortion {
         }
         try {
             Keyframe toApply = pose;
-            if (actor != null && pose instanceof Actor.ActorKeyframe) {
+            if (actor != null && pose instanceof Actor.ActorKeyframe keyframe) {
                 Gesture base = actor.getGesture(0);
                 Gesture current = (Gesture) ((Object3D) obj).getPoseKeyframe();
-                Gesture poseGesture = (Gesture) ((Actor.ActorKeyframe) pose).createObjectKeyframe(actor);
+                Gesture poseGesture = (Gesture) keyframe.createObjectKeyframe(actor);
                 if (relative) {
                     toApply = base.blend(new Gesture[]{current, poseGesture}, new double[]{1.0, weight});
                 } else if (weight < 1.0) {

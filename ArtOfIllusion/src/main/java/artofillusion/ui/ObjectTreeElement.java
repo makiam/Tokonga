@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2008 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -118,8 +118,8 @@ public class ObjectTreeElement extends TreeElement {
         }
         el.parent = null;
         children.remove(pos);
-        if (object instanceof Track) {
-            info.removeTrack((Track) object);
+        if (object instanceof Track track) {
+            info.removeTrack(track);
             return;
         }
         info.removeChild((ObjectInfo) object);

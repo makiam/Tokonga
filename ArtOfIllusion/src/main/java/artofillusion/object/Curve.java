@@ -808,8 +808,8 @@ public class Curve extends Object3D implements Mesh {
         @Override
         public Keyframe duplicate(Object owner) {
             CurveKeyframe k = new CurveKeyframe();
-            if (owner instanceof Curve) {
-                k.curve = (Curve) owner;
+            if (owner instanceof Curve curve1) {
+                k.curve = curve1;
             } else {
                 k.curve = (Curve) ((ObjectInfo) owner).getObject();
             }

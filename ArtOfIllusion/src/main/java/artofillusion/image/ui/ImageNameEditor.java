@@ -62,11 +62,11 @@ public class ImageNameEditor extends javax.swing.JDialog {
         autoText = userText = image.getName();
 
         initComponents();
-        if(image instanceof ExternalImage) {
+        if(image instanceof ExternalImage externalImage) {
             String fileName = image.getFile().getName();
             autoText = fileName.substring(0, fileName.lastIndexOf('.'));
             autoBox.setEnabled(true);
-            automatic = ((ExternalImage) image).isNameAutomatic();
+            automatic = externalImage.isNameAutomatic();
             autoBox.setSelected(automatic);
             autoBoxActionPerformed(null);
         }
@@ -181,8 +181,8 @@ public class ImageNameEditor extends javax.swing.JDialog {
         } else {
             image.setName(userText);
         }
-        if (image instanceof ExternalImage) {
-            ((ExternalImage) image).setNameAutomatic(automatic);
+        if (image instanceof ExternalImage externalImage) {
+            externalImage.setNameAutomatic(automatic);
         }
         org.greenrobot.eventbus.EventBus.getDefault().post(new ImageDetailsDialog.ImageNameChangeEvent());
         doClose(RET_OK);

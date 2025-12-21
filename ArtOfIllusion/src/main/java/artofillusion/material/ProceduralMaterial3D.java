@@ -142,7 +142,7 @@ public class ProceduralMaterial3D extends Material3D implements ProcedureOwner {
      */
     @Override
     public boolean usesImage(ImageMap image) {
-        return proc.getModules().stream().anyMatch(module -> module instanceof ImageModule && ((ImageModule) module).getMap() == image);
+        return proc.getModules().stream().anyMatch(module -> module instanceof ImageModule im && im.getMap() == image);
     }
 
     /**

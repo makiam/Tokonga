@@ -208,7 +208,7 @@ public class PoseTrack extends Track<PoseTrack> {
      */
     @Override
     public boolean canAcceptAsParent(Object obj) {
-        return (obj instanceof ObjectInfo && ((ObjectInfo) obj).getObject() == info.getObject());
+        return (obj instanceof ObjectInfo oi && oi.getObject() == info.getObject());
     }
 
     /**

@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2015 by Peter Eastman
-   Changes copyright (C) 2016-2024 by Maksim Khramov
+   Changes copyright (C) 2016-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -101,9 +101,9 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
         editObj.setObject(editObj.object.duplicate());
         oldTexture = editObj.getObject().getTexture();
         oldTexMapping = editObj.getObject().getTextureMapping();
-        if (oldTexture instanceof LayeredTexture) {
+        if (oldTexture instanceof LayeredTexture texture) {
             layeredMap = (LayeredMapping) oldTexMapping;
-            layeredTex = (LayeredTexture) oldTexture;
+            layeredTex = texture;
         } else {
             layeredTex = new LayeredTexture(editObj.getObject());
             layeredMap = (LayeredMapping) layeredTex.getDefaultMapping(editObj.getObject());
@@ -803,8 +803,7 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
     /* ListChangeListener methods. */
     @Override
     public void itemAdded(int index, Object obj) {
-        if (obj instanceof Texture) {
-            Texture tex = (Texture) obj;
+        if (obj instanceof Texture tex) {
             texList.add(index, tex.getName());
         } else {
             Material mat = (Material) obj;
@@ -814,8 +813,7 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
 
     @Override
     public void itemRemoved(int index, Object obj) {
-        if (obj instanceof Texture) {
-            Texture tex = (Texture) obj;
+        if (obj instanceof Texture tex) {
             texList.remove(index);
             preview.cancelRendering();
             if (editObj.getObject().getTextureMapping() instanceof LayeredMapping) {
@@ -848,8 +846,7 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
 
     @Override
     public void itemChanged(int index, Object obj) {
-        if (obj instanceof Texture) {
-            Texture tex = (Texture) obj;
+        if (obj instanceof Texture tex) {
             texList.replace(index, tex.getName());
         } else {
             Material mat = (Material) obj;

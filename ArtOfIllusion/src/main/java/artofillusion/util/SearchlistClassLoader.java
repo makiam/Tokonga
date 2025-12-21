@@ -2,11 +2,10 @@
  * SearchlistClassLoader: class loader which loads classes using a searchlist
  *
  * Copyright (C) 2007-2009 Nik Trevallyn-Jones, Sydney Australia.
- * Changes copyright (C) 2023 by Maksim Khramov
+ * Changes copyright (C) 2017-2025 by Maksim Khramov
  *
  * Author: Nik Trevallyn-Jones, nik777@users.sourceforge.net
  * $Id: Exp $
- * Changes copyright (C) 2017-2023 by Maksim Khramov
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
@@ -246,10 +245,10 @@ public class SearchlistClassLoader extends ClassLoader {
         ArrayList<URL> path = new ArrayList<>(8);
 
         for (int i = 0; (ldr = getLoader(i++, searchMode)) != null; i++) {
-            if (ldr.loader instanceof SearchlistClassLoader) {
-                url = ((SearchlistClassLoader) ldr.loader).getSearchPath();
-            } else if (ldr.loader instanceof URLClassLoader) {
-                url = ((URLClassLoader) ldr.loader).getURLs();
+            if (ldr.loader instanceof SearchlistClassLoader loader1) {
+                url = loader1.getSearchPath();
+            } else if (ldr.loader instanceof URLClassLoader loader) {
+                url = loader.getURLs();
             } else {
                 url = null;
             }
@@ -472,10 +471,10 @@ public class SearchlistClassLoader extends ClassLoader {
         URL[] urls;
         Loader ldr;
         for (int i = 0; (ldr = getLoader(i++, searchMode)) != null; i++) {
-            if (ldr.loader instanceof SearchlistClassLoader) {
-                urls = ((SearchlistClassLoader) ldr.loader).getSearchPath();
-            } else if (ldr.loader instanceof URLClassLoader) {
-                urls = ((URLClassLoader) ldr.loader).getURLs();
+            if (ldr.loader instanceof SearchlistClassLoader loader1) {
+                urls = loader1.getSearchPath();
+            } else if (ldr.loader instanceof URLClassLoader loader) {
+                urls = loader.getURLs();
             } else {
                 urls = null;
             }

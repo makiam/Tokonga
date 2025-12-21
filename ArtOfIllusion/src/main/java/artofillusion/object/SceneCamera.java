@@ -420,10 +420,7 @@ public class SceneCamera extends Object3D {
 
 
                 for (Track<?> track: oi.getTracks()) {
-                    if (track instanceof PoseTrack) {
-                        // This is a Pose track, so update its subtracks.
-
-                        PoseTrack pose = (PoseTrack) track;
+                    if (track instanceof PoseTrack pose) {
                         var spt = pose.getSubtracks();
                         Track[] newtracks = new Track[filters.size()];
                         for (int k = 0; k < filters.size(); k++) {
@@ -432,7 +429,7 @@ public class SceneCamera extends Object3D {
 
                             for (int m = 0; m < spt.length && existing == null; m++) {
                                 var subTrack = spt[m];
-                                if (subTrack instanceof FilterParameterTrack && ((FilterParameterTrack) subTrack).getFilter() == fk) {
+                                if (subTrack instanceof FilterParameterTrack parameterTrack && parameterTrack.getFilter() == fk) {
                                     existing = subTrack;
                                 }
                             }
@@ -446,8 +443,8 @@ public class SceneCamera extends Object3D {
                 }
             }
         }
-        if (parent instanceof LayoutWindow) {
-            ((LayoutWindow) parent).getScore().rebuildList();
+        if (parent instanceof LayoutWindow window) {
+            window.getScore().rebuildList();
         }
         cb.run();
     }

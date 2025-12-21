@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2009 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -118,11 +118,11 @@ public class UIUtilities {
             return;
         }
         w.setFont(UIUtilities.getDefaultFont());
-        if (w instanceof WidgetContainer) {
+        if (w instanceof WidgetContainer container) {
             if (w instanceof BMenuBar) {
                 return;
             }
-            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+            Collection<Widget<?>> children = container.getChildren();
             children.forEach(widget -> applyDefaultFont(widget));
         }
     }
@@ -139,9 +139,9 @@ public class UIUtilities {
      * Set up a Widget and all of its children to have a specific background color.
      */
     public static void applyBackground(Widget w, Color color) {
-        if (w instanceof WidgetContainer) {
+        if (w instanceof WidgetContainer container) {
             w.setBackground(color);
-            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+            Collection<Widget<?>> children = container.getChildren();
             children.forEach(widget -> applyBackground(widget, color));
         } else if (w instanceof BLabel) {
             w.setBackground(color);
@@ -154,8 +154,8 @@ public class UIUtilities {
      * Set up a Widget and all of its children to have a specific text color.
      */
     public static void applyTextColor(Widget w, Color color) {
-        if (w instanceof WidgetContainer) {
-            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+        if (w instanceof WidgetContainer container) {
+            Collection<Widget<?>> children = container.getChildren();
             children.forEach(widget -> applyTextColor(widget, color));
         } else if (w instanceof BLabel || w instanceof BCheckBox || w instanceof BRadioButton) {
             w.getComponent().setForeground(color);
@@ -177,8 +177,8 @@ public class UIUtilities {
      * Given a Widget, find the window that contains it. If the Widget is not in a window, return null.
      */
     public static WindowWidget findWindow(Widget w) {
-        if (w instanceof WindowWidget) {
-            return (WindowWidget) w;
+        if (w instanceof WindowWidget widget) {
+            return widget;
         }
         if (w == null) {
             return null;
@@ -192,8 +192,8 @@ public class UIUtilities {
      * this returns null.
      */
     public static BFrame findFrame(Widget w) {
-        if (w instanceof BFrame) {
-            return (BFrame) w;
+        if (w instanceof BFrame frame) {
+            return frame;
         }
         if (w == null) {
             return null;
@@ -231,8 +231,8 @@ public class UIUtilities {
      */
     public static void setEnabled(Widget w, boolean enabled) {
         w.setEnabled(enabled);
-        if (w instanceof WidgetContainer) {
-            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+        if (w instanceof WidgetContainer container) {
+            Collection<Widget<?>> children = container.getChildren();
             children.forEach(widget -> setEnabled(widget, enabled));
         }
     }
@@ -251,8 +251,8 @@ public class UIUtilities {
      * Recursively add child Widgets to a list.
      */
     private static void addChildrenToList(Widget w, List<Widget> list) {
-        if (w instanceof WidgetContainer) {
-            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+        if (w instanceof WidgetContainer container) {
+            Collection<Widget<?>> children = container.getChildren();
             for (Widget child : children) {
                 list.add(child);
                 addChildrenToList(child, list);

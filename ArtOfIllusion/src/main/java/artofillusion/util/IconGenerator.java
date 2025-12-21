@@ -2,7 +2,7 @@
  * IconGenerator: provide editing and compositing features for icon images
  *
  * Copyright (C) 2008 Nik Trevallyn-Jones, Sydney Australia
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
  * Author: Nik Trevallyn-Jones, nik777@users.sourceforge.net
  * $Id: Exp $
@@ -1727,10 +1727,10 @@ public class IconGenerator {
 
                 //System.out.println("...to " + obj);
                 if (obj != null) {
-                    if (obj instanceof Color) {
-                        background = (Color) obj;
-                    } else if (rhs == null && obj instanceof BufferedImage) {
-                        rhs = (BufferedImage) obj;
+                    if (obj instanceof Color color) {
+                        background = color;
+                    } else if (rhs == null && obj instanceof BufferedImage image) {
+                        rhs = image;
                     } else {
                         throw new Exception("Unusable result of call (" + obj.getClass().getName() + "): " + obj);
                     }

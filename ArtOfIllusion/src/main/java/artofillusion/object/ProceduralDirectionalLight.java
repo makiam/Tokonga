@@ -78,8 +78,8 @@ public class ProceduralDirectionalLight extends DirectionalLight {
         double[] newValues = new double[count];
         count = 0;
         for (var       module : modules) {
-            if (module instanceof ParameterModule) {
-                newParameters[count] = ((ParameterModule) module).getParameter(this);
+            if (module instanceof ParameterModule parameterModule) {
+                newParameters[count] = parameterModule.getParameter(this);
                 newValues[count] = newParameters[count].defaultVal;
                 if (parameters != null) {
                     for (int j = 0; j < parameters.length; j++) {
@@ -88,7 +88,7 @@ public class ProceduralDirectionalLight extends DirectionalLight {
                         }
                     }
                 }
-                ((ParameterModule) module).setIndex(count++);
+                parameterModule.setIndex(count++);
             }
         }
         parameters = newParameters;

@@ -203,8 +203,8 @@ public class EditKeyframesDialog {
         for (int i = 0; i < track.length; i++) {
             Object parent = track[i].getParent();
             Track dup;
-            if (parent instanceof ObjectInfo) {
-                dup = track[i].duplicate((ObjectInfo) parent);
+            if (parent instanceof ObjectInfo info) {
+                dup = track[i].duplicate(info);
             } else {
                 dup = track[i].duplicate(null);
             }

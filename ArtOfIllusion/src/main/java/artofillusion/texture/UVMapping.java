@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2009 by Peter Eastman
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -143,10 +143,7 @@ public class UVMapping extends Mapping2D {
     public Vec2[] findTextureCoordinates(Mesh mesh) {
         TextureParameter[] param = mesh.getParameters();
         ParameterValue[] values = mesh.getParameterValues();
-        if (mesh instanceof FacetedMesh && isPerFaceVertex((FacetedMesh) mesh)) {
-            // This is a per-face-vertex mapping, so we need to simplify it down to per-vertex.
-
-            FacetedMesh fm = (FacetedMesh) mesh;
+        if (mesh instanceof FacetedMesh fm && isPerFaceVertex(fm)) {
             FaceVertexParameterValue uval = null, vval = null;
             for (int i = 0; i < param.length; i++) {
                 if (param[i].equals(uparam)) {

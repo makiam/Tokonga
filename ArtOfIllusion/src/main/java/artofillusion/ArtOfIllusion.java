@@ -245,10 +245,10 @@ public class ArtOfIllusion {
                         }
 
                         for (EditingWindow window : windows) {
-                            if (window instanceof LayoutWindow
+                            if (window instanceof LayoutWindow layoutWindow
                                     && window != fr
-                                    && ((LayoutWindow) window).getScene().getName() == null
-                                    && ((LayoutWindow) window).isModified() == false) {
+                                    && layoutWindow.getScene().getName() == null
+                                    && layoutWindow.isModified() == false) {
                                 closeWindow(window);
                             }
                         }

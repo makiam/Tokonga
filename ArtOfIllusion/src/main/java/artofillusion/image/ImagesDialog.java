@@ -1,6 +1,6 @@
 /* Copyright (C) 2001-2005 by Peter Eastman
    Modifications copyright (C) 2017 by Petri Ihalainen
-   Changes copyright 2019-2024 by Maksim Khramov
+   Changes copyright 2019-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -320,7 +320,7 @@ public class ImagesDialog extends BDialog {
      * Set the parent window to modified state
      */
     private void setModified() {
-        if (parent instanceof EditingWindow) ((EditingWindow) parent).setModified();
+        if (parent instanceof EditingWindow window) window.setModified();
     }
 
     /**
@@ -359,8 +359,8 @@ public class ImagesDialog extends BDialog {
      */
     private void addAsListener(Widget w) {
         w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
-        if (w instanceof WidgetContainer) {
-            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+        if (w instanceof WidgetContainer container) {
+            Collection<Widget<?>> children = container.getChildren();
             children.forEach(widget -> addAsListener(widget));
         }
     }
@@ -517,8 +517,8 @@ public class ImagesDialog extends BDialog {
                 }
 
                 drawName(g, textFont, i);
-                if (currentImage instanceof ExternalImage) {
-                    if (((ExternalImage) currentImage).isConnected()) {
+                if (currentImage instanceof ExternalImage image) {
+                    if (image.isConnected()) {
                         g.drawImage(linkedIcon, (i % w) * gridW + 1 + cOff, (i / w) * gridH + 9 + previewSize - iconSize, getComponent());
                     } else {
                         g.drawImage(linkBrokenIcon, (i % w) * gridW + 1 + cOff, (i / w) * gridH + 9 + previewSize - iconSize, getComponent());

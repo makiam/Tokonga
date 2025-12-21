@@ -1,5 +1,6 @@
 /* Copyright (C) 2002-2012 by Peter Eastman
    A modification copyright (C) 2017 Petri Ihalainen
+   Changes copyright (C) 2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -92,7 +93,7 @@ public class ShatterDistortion extends Distortion {
         if (previous != null) {
             obj = previous.transform(obj);
         }
-        TriangleMesh mesh = (obj instanceof TriangleMesh ? (TriangleMesh) obj : ((Object3D) obj).convertToTriangleMesh(size));
+        TriangleMesh mesh = (obj instanceof TriangleMesh tm ? tm : ((Object3D) obj).convertToTriangleMesh(size));
         mesh = mesh.subdivideToLimit(size);
         TriangleMesh.Vertex[] vert = (TriangleMesh.Vertex[]) mesh.getVertices();
         TriangleMesh.Face[] face = mesh.getFaces();

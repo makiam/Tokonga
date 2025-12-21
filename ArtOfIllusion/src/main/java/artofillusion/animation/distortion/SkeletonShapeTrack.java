@@ -178,7 +178,7 @@ public class SkeletonShapeTrack extends Track<SkeletonShapeTrack> {
      */
     @Override
     public boolean canAcceptAsParent(Object obj) {
-        return (obj instanceof ObjectInfo && ((ObjectInfo) obj).getSkeleton() != null);
+        return (obj instanceof ObjectInfo oi && oi.getSkeleton() != null);
     }
 
     /**
