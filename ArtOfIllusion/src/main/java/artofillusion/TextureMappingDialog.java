@@ -170,8 +170,8 @@ public class TextureMappingDialog extends BDialog {
                 innerObj = ((ObjectWrapper) innerObj).getWrappedObject();
             }
             Mesh m = (Mesh) innerObj;
-            if (m instanceof FacetedMesh && oldmap instanceof UVMapping && ((UVMapping) oldmap).isPerFaceVertex((FacetedMesh) m)) {
-                uvf = ((UVMapping) oldmap).findFaceTextureCoordinates((FacetedMesh) m);
+            if (m instanceof FacetedMesh mesh && oldmap instanceof UVMapping mapping && mapping.isPerFaceVertex(mesh)) {
+                uvf = mapping.findFaceTextureCoordinates(mesh);
             } else {
                 uv = oldmap.findTextureCoordinates(m);
             }

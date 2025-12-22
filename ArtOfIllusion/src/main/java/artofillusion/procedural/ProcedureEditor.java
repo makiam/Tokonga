@@ -1087,8 +1087,8 @@ public class ProcedureEditor extends CustomWidget {
             for (int i = 0; i < module.length; i++) {
 
                 realMod[i] = module[i].duplicate();
-                if (realMod[i] instanceof ImageModule && editor.scene.indexOf(((ImageModule) realMod[i]).getMap()) == -1) {
-                    ((ImageModule) realMod[i]).setMap(null);
+                if (realMod[i] instanceof ImageModule imageModule && editor.scene.indexOf(imageModule.getMap()) == -1) {
+                    imageModule.setMap(null);
                 }
                 Rectangle bounds = realMod[i].getBounds();
                 realMod[i].setPosition(bounds.x - 30, bounds.y + 30);

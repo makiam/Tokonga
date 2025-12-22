@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2009 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -400,7 +400,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
      */
     private void nameChanged(WidgetEvent ev) {
         lastEventSource = ev.getWidget();
-        if (ev instanceof KeyPressedEvent && ((KeyPressedEvent) ev).getKeyCode() != KeyEvent.VK_ENTER) {
+        if (ev instanceof KeyPressedEvent event && event.getKeyCode() != KeyEvent.VK_ENTER) {
             return;
         }
         if (objects.length == 0 || objects[0].getName().equals(nameField.getText())) {

@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2009 by Peter Eastman
-
+   Changes copyright (C) 2025 by Maksim Khramov
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
@@ -97,18 +97,18 @@ public class PropertyEditor {
      * Get the value of the Property.
      */
     public Object getValue() {
-        if (widget instanceof ValueSelector) {
-            return ((ValueSelector) widget).getValue();
-        } else if (widget instanceof ValueField) {
-            return (int) ((ValueField) widget).getValue();
-        } else if (widget instanceof BCheckBox) {
-            return ((BCheckBox) widget).getState();
-        } else if (widget instanceof BTextField) {
-            return ((BTextField) widget).getText();
-        } else if (widget instanceof ColorSelector) {
-            return ((ColorSelector) widget).getColor();
-        } else if (widget instanceof BComboBox) {
-            return ((BComboBox) widget).getSelectedValue();
+        if (widget instanceof ValueSelector selector1) {
+            return selector1.getValue();
+        } else if (widget instanceof ValueField field1) {
+            return (int) field1.getValue();
+        } else if (widget instanceof BCheckBox box1) {
+            return box1.getState();
+        } else if (widget instanceof BTextField field) {
+            return field.getText();
+        } else if (widget instanceof ColorSelector selector) {
+            return selector.getColor();
+        } else if (widget instanceof BComboBox box) {
+            return box.getSelectedValue();
         }
         throw new AssertionError("Unexpected Widget type");
     }
@@ -117,18 +117,18 @@ public class PropertyEditor {
      * Set the value of the Property.
      */
     public void setValue(Object value) {
-        if (widget instanceof ValueSelector) {
-            ((ValueSelector) widget).setValue(value == null ? Double.NaN : ((Double) value));
-        } else if (widget instanceof ValueField) {
-            ((ValueField) widget).setValue(value == null ? Double.NaN : ((Integer) value));
-        } else if (widget instanceof BCheckBox) {
-            ((BCheckBox) widget).setState(value == null ? false : ((Boolean) value));
-        } else if (widget instanceof BTextField) {
-            ((BTextField) widget).setText((String) value);
-        } else if (widget instanceof ColorSelector) {
-            ((ColorSelector) widget).setColor((RGBColor) value);
-        } else if (widget instanceof BComboBox) {
-            ((BComboBox) widget).setSelectedValue(value);
+        if (widget instanceof ValueSelector selector1) {
+            selector1.setValue(value == null ? Double.NaN : ((Double) value));
+        } else if (widget instanceof ValueField field1) {
+            field1.setValue(value == null ? Double.NaN : ((Integer) value));
+        } else if (widget instanceof BCheckBox box1) {
+            box1.setState(value == null ? false : ((Boolean) value));
+        } else if (widget instanceof BTextField field) {
+            field.setText((String) value);
+        } else if (widget instanceof ColorSelector selector) {
+            selector.setColor((RGBColor) value);
+        } else if (widget instanceof BComboBox box) {
+            box.setSelectedValue(value);
         }
     }
 
@@ -138,7 +138,7 @@ public class PropertyEditor {
      * is complete.
      */
     private void stringValueChanged(WidgetEvent ev) {
-        if (ev instanceof FocusLostEvent || (ev instanceof KeyPressedEvent && ((KeyPressedEvent) ev).getKeyCode() == KeyPressedEvent.VK_ENTER)) {
+        if (ev instanceof FocusLostEvent || (ev instanceof KeyPressedEvent event && event.getKeyCode() == KeyPressedEvent.VK_ENTER)) {
             widget.dispatchEvent(new ValueChangedEvent(ev.getWidget(), false));
         }
     }

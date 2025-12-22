@@ -1,6 +1,6 @@
 /* Copyright (C) 2004-2006 by Peter Eastman
    Modifications copyright (C) 2016-2017 Petri Ihalainen
-   Changes copyright (C) 2020-2024 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -93,8 +93,8 @@ public class SkeletonShapeEditorWindow extends MeshEditorWindow implements MeshE
         while (object instanceof ObjectWrapper) {
             object = ((ObjectWrapper) object).getWrappedObject();
         }
-        if (object instanceof Mesh) {
-            return (Mesh) object;
+        if (object instanceof Mesh mesh) {
+            return mesh;
         }
         return object.convertToTriangleMesh(Double.MAX_VALUE);
     }

@@ -971,8 +971,8 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, theMesh.duplicate()));
         for (j = 0; j < editWidget.length; j++) {
             double d;
-            if (editWidget[j] instanceof ValueField) {
-                d = ((ValueField) editWidget[j]).getValue();
+            if (editWidget[j] instanceof ValueField field) {
+                d = field.getValue();
             } else {
                 d = ((ValueSlider) editWidget[j]).getValue();
             }
@@ -1035,8 +1035,8 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         }
         value = new double[paramIndex.length][];
         for (i = 0; i < paramIndex.length; i++) {
-            if (paramValue[paramIndex[i]] instanceof FaceParameterValue) {
-                double[] currentVal = ((FaceParameterValue) paramValue[paramIndex[i]]).getValue();
+            if (paramValue[paramIndex[i]] instanceof FaceParameterValue parameterValue) {
+                double[] currentVal = parameterValue.getValue();
                 double commonVal = currentVal[j];
                 for (k = j; k < selected.length; k++) {
                     if (selected[k] && currentVal[k] != commonVal) {
@@ -1129,26 +1129,26 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         }
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, theMesh.duplicate()));
         for (j = 0; j < editWidget.length; j++) {
-            if (paramValue[paramIndex[j]] instanceof FaceParameterValue) {
+            if (paramValue[paramIndex[j]] instanceof FaceParameterValue parameterValue) {
                 double d;
-                if (editWidget[j][0] instanceof ValueField) {
-                    d = ((ValueField) editWidget[j][0]).getValue();
+                if (editWidget[j][0] instanceof ValueField field) {
+                    d = field.getValue();
                 } else {
                     d = ((ValueSlider) editWidget[j][0]).getValue();
                 }
                 if (!Double.isNaN(d)) {
-                    double[] val = ((FaceParameterValue) paramValue[paramIndex[j]]).getValue();
+                    double[] val = parameterValue.getValue();
                     for (i = 0; i < selected.length; i++) {
                         if (selected[i]) {
                             val[i] = d;
                         }
                     }
-                    ((FaceParameterValue) paramValue[paramIndex[j]]).setValue(val);
+                    parameterValue.setValue(val);
                 }
             } else {
                 double[] d;
-                if (editWidget[j][0] instanceof ValueField) {
-                    d = new double[]{((ValueField) editWidget[j][0]).getValue(), ((ValueField) editWidget[j][1]).getValue(), ((ValueField) editWidget[j][2]).getValue()};
+                if (editWidget[j][0] instanceof ValueField field) {
+                    d = new double[]{field.getValue(), ((ValueField) editWidget[j][1]).getValue(), ((ValueField) editWidget[j][2]).getValue()};
                 } else {
                     d = new double[]{((ValueSlider) editWidget[j][0]).getValue(), ((ValueSlider) editWidget[j][1]).getValue(), ((ValueSlider) editWidget[j][2]).getValue()};
                 }

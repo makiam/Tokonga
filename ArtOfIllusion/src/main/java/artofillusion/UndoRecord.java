@@ -297,8 +297,8 @@ public class UndoRecord {
                 case SET_SCENE_SELECTION: {
                     int[] selected = (int[]) d[0];
                     needRestoreSelection = true;
-                    if (view instanceof LayoutWindow) {
-                        ((LayoutWindow) view).setSelection(selected);
+                    if (view instanceof LayoutWindow window) {
+                        window.setSelection(selected);
                     } else {
                         view.getScene().setSelection(selected);
                     }

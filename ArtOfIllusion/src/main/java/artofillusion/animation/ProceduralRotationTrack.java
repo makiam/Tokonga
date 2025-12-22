@@ -379,9 +379,9 @@ public class ProceduralRotationTrack extends Track<ProceduralRotationTrack> impl
         TextureParameter[] params = new TextureParameter[count];
         count = 0;
         for (var module : modules) {
-            if (module instanceof ParameterModule) {
-                params[count] = ((ParameterModule) module).getParameter(this);
-                ((ParameterModule) module).setIndex(count++);
+            if (module instanceof ParameterModule parameterModule) {
+                params[count] = parameterModule.getParameter(this);
+                parameterModule.setIndex(count++);
             }
         }
         return params;
@@ -490,8 +490,8 @@ public class ProceduralRotationTrack extends Track<ProceduralRotationTrack> impl
         }
         win.setUndoRecord(new UndoRecord(win, false, UndoRecord.COPY_TRACK, this, duplicate(info)));
         for (int i = 0; i < parameter.length; i++) {
-            if (widget[i] instanceof ValueField) {
-                key.val[i] = ((ValueField) widget[i]).getValue();
+            if (widget[i] instanceof ValueField field) {
+                key.val[i] = field.getValue();
             } else {
                 key.val[i] = ((ValueSlider) widget[i]).getValue();
             }

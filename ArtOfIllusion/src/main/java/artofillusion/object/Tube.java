@@ -227,8 +227,8 @@ public class Tube extends Curve {
 
         param = new double[t.vertex.length][numParam];
         for (i = 0; i < numParam; i++) {
-            if (paramValue[i] instanceof VertexParameterValue) {
-                double[] val = ((VertexParameterValue) paramValue[i]).getValue();
+            if (paramValue[i] instanceof VertexParameterValue value) {
+                double[] val = value.getValue();
                 for (j = 0; j < val.length; j++) {
                     param[j][i] = val[j];
                 }
@@ -351,8 +351,8 @@ public class Tube extends Curve {
 
         param = new double[t.vertex.length][numParam];
         for (i = 0; i < numParam; i++) {
-            if (paramValue[i] instanceof VertexParameterValue) {
-                double[] val = ((VertexParameterValue) paramValue[i]).getValue();
+            if (paramValue[i] instanceof VertexParameterValue value) {
+                double[] val = value.getValue();
                 for (j = 0; j < val.length; j++) {
                     param[j][i] = val[j];
                 }
@@ -631,8 +631,8 @@ public class Tube extends Curve {
         int numParam = (texParam == null ? 0 : texParam.length);
         double[][] tubeParamVal = new double[t.vertex.length][numParam];
         for (int i = 0; i < numParam; i++) {
-            if (t.paramValue[i] instanceof VertexParameterValue) {
-                double[] val = ((VertexParameterValue) t.paramValue[i]).getValue();
+            if (t.paramValue[i] instanceof VertexParameterValue value) {
+                double[] val = value.getValue();
                 for (int j = 0; j < tubeParamVal.length; j++) {
                     tubeParamVal[j][i] = val[j];
                 }
@@ -977,8 +977,8 @@ public class Tube extends Curve {
         @Override
         public Keyframe duplicate(Object owner) {
             TubeKeyframe k = new TubeKeyframe();
-            if (owner instanceof Tube) {
-                k.tube = (Tube) owner;
+            if (owner instanceof Tube tube1) {
+                k.tube = tube1;
             } else {
                 k.tube = (Tube) ((ObjectInfo) owner).getObject();
             }

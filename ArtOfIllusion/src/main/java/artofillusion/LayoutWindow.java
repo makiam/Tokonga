@@ -422,8 +422,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         HashMap<String, DockableWidget> widgets = new HashMap<>();
         for (int i = 0; i < dock.length; i++) {
             for (Widget next : dock[i].getChildren()) {
-                if (next instanceof DockableWidget) {
-                    DockableWidget w = (DockableWidget) next;
+                if (next instanceof DockableWidget w) {
                     widgets.put(w.getContent().getClass().getName() + '\t' + w.getLabel(), w);
                 }
             }

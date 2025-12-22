@@ -253,8 +253,8 @@ public class ExecuteScriptWindow extends BFrame {
                     languageChoice.setEnabled(false);
                     setScriptNameFromFile(scriptFile.getAbsolutePath());
                     for (EditingWindow edWindow : ArtOfIllusion.getWindows()) {
-                        if (edWindow instanceof LayoutWindow) {
-                            ((LayoutWindow) edWindow).rebuildRecentScriptsMenu();
+                        if (edWindow instanceof LayoutWindow layoutWindow) {
+                            layoutWindow.rebuildRecentScriptsMenu();
                         }
                     }
                     setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -316,8 +316,8 @@ public class ExecuteScriptWindow extends BFrame {
             setScriptNameFromFile(f.getAbsolutePath());
             // Update the Scripts menus in all windows.
             for (EditingWindow edWin : ArtOfIllusion.getWindows()) {
-                if (edWin instanceof LayoutWindow) {
-                    ((LayoutWindow) edWin).rebuildScriptsMenu();
+                if (edWin instanceof LayoutWindow layoutWindow) {
+                    layoutWindow.rebuildScriptsMenu();
                 }
             }
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

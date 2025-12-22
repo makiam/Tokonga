@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2008 by Peter Eastman
    Modifications copyright (C) 2017-2019 Petri Ihalainen
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -215,8 +215,8 @@ public abstract class ObjectViewer extends ViewerCanvas {
         if (activeTool != null) {
             activeTool.drawOverlay(this);
         }
-        if (controller instanceof ObjectEditorWindow) {
-            for (ViewerCanvas v : ((ObjectEditorWindow) controller).getAllViews()) {
+        if (controller instanceof ObjectEditorWindow window) {
+            for (ViewerCanvas v : window.getAllViews()) {
                 v.drawOverlay(this);
             }
         }
@@ -364,11 +364,11 @@ public abstract class ObjectViewer extends ViewerCanvas {
      * Determine whether the selection region contains the specified point.
      */
     public boolean selectionRegionContains(Point p) {
-        if (selectBounds instanceof Rectangle) {
-            return ((Rectangle) selectBounds).contains(p);
+        if (selectBounds instanceof Rectangle rectangle) {
+            return rectangle.contains(p);
         }
-        if (selectBounds instanceof Polygon) {
-            return ((Polygon) selectBounds).contains(p);
+        if (selectBounds instanceof Polygon polygon) {
+            return polygon.contains(p);
         }
         return false;
     }
@@ -386,12 +386,12 @@ public abstract class ObjectViewer extends ViewerCanvas {
         if (selectionRegionContains(p1) || selectionRegionContains(p2)) {
             return true;
         }
-        if (selectBounds instanceof Rectangle) {
-            return ((Rectangle) selectBounds).intersectsLine(p1.x, p1.y, p2.x, p2.y);
+        if (selectBounds instanceof Rectangle rectangle) {
+            return rectangle.intersectsLine(p1.x, p1.y, p2.x, p2.y);
         }
-        if (selectBounds instanceof Polygon) {
+        if (selectBounds instanceof Polygon polygon1) {
             // if any of the edges of the polygon intersect, return true
-            final Polygon polygon = ((Polygon) selectBounds);
+            final Polygon polygon = polygon1;
             final int[] xpoints = polygon.xpoints;
             final int[] ypoints = polygon.ypoints;
             final int npoints = polygon.npoints;

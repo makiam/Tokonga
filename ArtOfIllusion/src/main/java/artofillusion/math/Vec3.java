@@ -105,8 +105,7 @@ public class Vec3 {
      */
     @Override
     public final boolean equals(Object o) {
-        if (o instanceof Vec3) {
-            Vec3 v = (Vec3) o;
+        if (o instanceof Vec3 v) {
             return (v.x == x && v.y == y && v.z == z);
         }
         return false;

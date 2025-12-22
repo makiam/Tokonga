@@ -144,7 +144,7 @@ public class ImageDetailsDialog extends BDialog {
 
         for (int d = 0; d < 7; d++) {
             data[d].setText("");
-            if (im instanceof ExternalImage && !((ExternalImage) im).isConnected()) {
+            if (im instanceof ExternalImage image && !image.isConnected()) {
                 currentTextColor = errorTextColor;
             } else {
                 currentTextColor = defaultTextColor;
@@ -155,8 +155,8 @@ public class ImageDetailsDialog extends BDialog {
         data[0].setText(im.getName());
         data[1].setText(im.getType());
         data[2].setText(im.getWidth() + " x " + im.getHeight());
-        if (im instanceof ExternalImage) {
-            data[3].setText(((ExternalImage) im).getPath());
+        if (im instanceof ExternalImage image) {
+            data[3].setText(image.getPath());
         }
         if (!im.getUserCreated().isEmpty()) {
             data[4].setText(im.getUserCreated() + " - " + im.getDateCreated() + " - " + im.getZoneCreated());
@@ -231,15 +231,15 @@ public class ImageDetailsDialog extends BDialog {
 
         try {
             Scene sc = null;
-            if (parent instanceof EditingWindow) {
-                sc = ((EditingWindow) parent).getScene();
+            if (parent instanceof EditingWindow window) {
+                sc = window.getScene();
             }
             ((ExternalImage) im).reconnectImage(file, sc);
             createBackground();
             paintImage();
             setDataTexts();
-            if (parent instanceof EditingWindow) {
-                ((EditingWindow) parent).setModified();
+            if (parent instanceof EditingWindow window) {
+                window.setModified();
             }
         } catch (Exception e) {
             MessageDialog.create().withOwner(this.getComponent()).error(Translate.text("errorLoadingImage", file.getName()));
@@ -291,10 +291,10 @@ public class ImageDetailsDialog extends BDialog {
 
         // Write the file
         try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(imageFile))) {
-            if (im instanceof HDRImage) {
-                HDREncoder.writeImage((HDRImage) im, out);
-            } else if (im instanceof SVGImage) {
-                out.write(((SVGImage) im).getXML());
+            if (im instanceof HDRImage image1) {
+                HDREncoder.writeImage(image1, out);
+            } else if (im instanceof SVGImage image) {
+                out.write(image.getXML());
             } else { // MIPMappedImage
                 ImageIO.write(((MIPMappedImage) im).getImage(), "png", out); // getImage returns BufferedImage
             }

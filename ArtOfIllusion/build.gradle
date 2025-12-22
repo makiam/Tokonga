@@ -118,13 +118,15 @@ distributions {
     mac.contents {        
         into("${description}.app/Contents") { from("${rootProject.projectDir}/InstallerSrc/apple/") {
                 include "Info.plist"
-                expand VERSION: "3.2.0", JAR: file(jar.archivePath).name, APPCLASS: "${mainClass}"
+                expand VERSION: "3.2.0", JAR: file(jar.archiveFileName.get()).name, APPCLASS: "${mainClass}"
             } 
         }
         into("${description}.app/Contents/MacOS") { from("${rootProject.projectDir}/InstallerSrc/apple/") {
                 include "universalJavaApplicationStub.sh"
-                fileMode 0755
-            }            
+                eachFile { fileCopyDetails ->
+                    fileCopyDetails.mode = 0755
+                }
+            }
         }
         into("${description}.app/Contents/Resources") { from("${rootProject.projectDir}/InstallerSrc/apple/") { include "*.icns"}}
         into("${description}.app/Contents/Resources/Java") { from(jar) }
@@ -146,7 +148,7 @@ startScripts.dependsOn jar
 
 //This passes to startup scripts classpath of main class only as other passed through jar metadata
 startScripts {
-    classpath = files("${jar.archivePath}")
+    classpath = files("${jar.archiveFileName.get()}")
 }
 
 sphinx {
@@ -158,7 +160,7 @@ sphinx {
 tasks.register("createMacVolume", Exec) {
     dependsOn "installMacDist"
         def volumeName = "Art Of Illusion"
-        def volumeFileName = "ArtOfIIllusion"
+        def volumeFileName = "ArtOfIllusion"
         def srcFolder = "$buildDir/install/${project.name}-mac"
         def mac = org.gradle.internal.os.OperatingSystem.current().isMacOsX()
 
@@ -184,3 +186,9 @@ publishing {
         }
     }
 }
+
+//rewrite {
+//    activeRecipe("org.openrewrite.java.migrate.UpgradeBuildToJava17")
+//    activeRecipe("org.openrewrite.staticanalysis.InstanceOfPatternMatch")
+//    setExportDatatables(true)
+//}

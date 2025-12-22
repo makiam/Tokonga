@@ -8,4 +8,5 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin:2.3.0")
+    implementation("org.openrewrite.rewrite:org.openrewrite.rewrite.gradle.plugin:7.23.0")
 }

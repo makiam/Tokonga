@@ -245,8 +245,8 @@ public class TubeEditorWindow extends CurveEditorWindow {
         param = new double[vt.length][numParam];
         ParameterValue[] paramValue = theTube.getParameterValues();
         for (i = 0; i < numParam; i++) {
-            if (paramValue[i] instanceof VertexParameterValue) {
-                double[] val = ((VertexParameterValue) paramValue[i]).getValue();
+            if (paramValue[i] instanceof VertexParameterValue value) {
+                double[] val = value.getValue();
                 for (j = 0; j < val.length; j++) {
                     param[j][i] = val[j];
                 }

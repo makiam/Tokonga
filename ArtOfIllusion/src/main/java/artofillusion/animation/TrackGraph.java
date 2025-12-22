@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2008 by Peter Eastman
-   Changes copyright (C) 2020-2024 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -661,11 +661,9 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
             Keyframe[] graphKeyframe;
 
             // Determine which values are disabled.
-            if (track instanceof PositionTrack) {
-                PositionTrack tr = (PositionTrack) track;
+            if (track instanceof PositionTrack tr) {
                 disabled = new boolean[]{!tr.affectsX(), !tr.affectsY(), !tr.affectsZ()};
-            } else if (track instanceof RotationTrack) {
-                RotationTrack tr = (RotationTrack) track;
+            } else if (track instanceof RotationTrack tr) {
                 disabled = new boolean[]{!tr.affectsX(), !tr.affectsY(), !tr.affectsZ()};
             } else {
                 disabled = new boolean[num];
@@ -673,7 +671,7 @@ public class TrackGraph extends CustomWidget implements TrackDisplay {
             if (selected == null || selected.length != keyTime.length) {
                 selected = new boolean[keyTime.length];
             }
-            dimmed = (track instanceof RotationTrack && ((RotationTrack) track).getUseQuaternion());
+            dimmed = (track instanceof RotationTrack rt && rt.getUseQuaternion());
 
             // Subdivide the track to get the keyframes for the graph.
             if (keyTime.length == 0) {

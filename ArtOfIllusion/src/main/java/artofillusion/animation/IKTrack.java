@@ -184,7 +184,7 @@ public class IKTrack extends Track<IKTrack> {
      */
     @Override
     public boolean canAcceptAsParent(Object obj) {
-        return (obj instanceof ObjectInfo && ((ObjectInfo) obj).getObject() instanceof Mesh);
+        return (obj instanceof ObjectInfo oi && ((ObjectInfo) obj).getObject() instanceof Mesh);
     }
 
     /**

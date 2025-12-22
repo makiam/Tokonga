@@ -1442,8 +1442,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         ParameterValue[] oldParamVal = theMesh.getParameterValues();
         ParameterValue[] newParamVal = new ParameterValue[oldParamVal.length];
         for (int i = 0; i < oldParamVal.length; i++) {
-            if (oldParamVal[i] instanceof VertexParameterValue) {
-                double[] oldval = ((VertexParameterValue) oldParamVal[i]).getValue();
+            if (oldParamVal[i] instanceof VertexParameterValue value1) {
+                double[] oldval = value1.getValue();
                 double[] newval = new double[newVertCount];
                 for (int j = 0, k = 0; j < oldval.length; j++) {
                     if (!deleteVert[j]) {
@@ -1451,8 +1451,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                     }
                 }
                 newParamVal[i] = new VertexParameterValue(newval);
-            } else if (oldParamVal[i] instanceof FaceParameterValue) {
-                double[] oldval = ((FaceParameterValue) oldParamVal[i]).getValue();
+            } else if (oldParamVal[i] instanceof FaceParameterValue value) {
+                double[] oldval = value.getValue();
                 double[] newval = new double[newFaceCount];
                 for (int j = 0, k = 0; j < oldval.length; j++) {
                     if (!deleteFace[j]) {
@@ -1460,8 +1460,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                     }
                 }
                 newParamVal[i] = new FaceParameterValue(newval);
-            } else if (oldParamVal[i] instanceof FaceVertexParameterValue) {
-                FaceVertexParameterValue fvpv = (FaceVertexParameterValue) oldParamVal[i];
+            } else if (oldParamVal[i] instanceof FaceVertexParameterValue fvpv) {
                 double[][] newval = new double[newFaceCount][3];
                 for (int j = 0, k = 0; j < fvpv.getFaceCount(); j++) {
                     if (!deleteFace[j]) {
@@ -1844,8 +1843,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         ParameterValue[] oldParamVal = theMesh.getParameterValues();
         ParameterValue[] newParamVal = new ParameterValue[oldParamVal.length];
         for (int i = 0; i < oldParamVal.length; i++) {
-            if (oldParamVal[i] instanceof VertexParameterValue) {
-                double[] oldval = ((VertexParameterValue) oldParamVal[i]).getValue();
+            if (oldParamVal[i] instanceof VertexParameterValue value1) {
+                double[] oldval = value1.getValue();
                 double[] newval = new double[newvert.length];
                 for (int j = 0; j < oldval.length; j++) {
                     newval[j] = oldval[j];
@@ -1854,8 +1853,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                     newval[j] = param[i].defaultVal;
                 }
                 newParamVal[i] = new VertexParameterValue(newval);
-            } else if (oldParamVal[i] instanceof FaceParameterValue) {
-                double[] oldval = ((FaceParameterValue) oldParamVal[i]).getValue();
+            } else if (oldParamVal[i] instanceof FaceParameterValue value) {
+                double[] oldval = value.getValue();
                 double[] newval = new double[newface.length];
                 for (int j = 0; j < oldval.length; j++) {
                     newval[j] = oldval[j];
@@ -1864,8 +1863,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                     newval[j] = param[i].defaultVal;
                 }
                 newParamVal[i] = new FaceParameterValue(newval);
-            } else if (oldParamVal[i] instanceof FaceVertexParameterValue) {
-                FaceVertexParameterValue fvpv = (FaceVertexParameterValue) oldParamVal[i];
+            } else if (oldParamVal[i] instanceof FaceVertexParameterValue fvpv) {
                 double[][] newval = new double[newface.length][3];
                 for (int j = 0; j < 3; j++) {
                     for (int k = 0; k < fvpv.getFaceCount(); k++) {
@@ -2131,8 +2129,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         ParameterValue[] oldParamVal = theMesh.getParameterValues();
         ParameterValue[] newParamVal = new ParameterValue[oldParamVal.length];
         for (int i = 0; i < oldParamVal.length; i++) {
-            if (oldParamVal[i] instanceof FaceParameterValue) {
-                double[] oldval = ((FaceParameterValue) oldParamVal[i]).getValue();
+            if (oldParamVal[i] instanceof FaceParameterValue value) {
+                double[] oldval = value.getValue();
                 double[] newval = new double[newface.length];
                 for (int j = 0; j < oldval.length; j++) {
                     newval[j] = oldval[j];
@@ -2148,8 +2146,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                     }
                 }
                 newParamVal[i] = new FaceParameterValue(newval);
-            } else if (oldParamVal[i] instanceof FaceVertexParameterValue) {
-                FaceVertexParameterValue fvpv = (FaceVertexParameterValue) oldParamVal[i];
+            } else if (oldParamVal[i] instanceof FaceVertexParameterValue fvpv) {
                 double[][] newval = new double[newface.length][3];
                 for (int j = 0; j < 3; j++) {
                     for (int k = 0; k < fvpv.getFaceCount(); k++) {
@@ -2257,15 +2254,13 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         ParameterValue[] oldValues = theMesh.getParameterValues();
         ParameterValue[] newValues = mesh.getParameterValues();
         for (int i = 0; i < oldValues.length; i++) {
-            if (oldValues[i] instanceof FaceParameterValue) {
-                FaceParameterValue old = (FaceParameterValue) oldValues[i];
+            if (oldValues[i] instanceof FaceParameterValue old) {
                 double[] val = new double[faces.size()];
                 for (int j = 0; j < val.length; j++) {
                     val[j] = old.getValue()[faces.get(j)];
                 }
                 newValues[i] = new FaceParameterValue(val);
-            } else if (oldValues[i] instanceof VertexParameterValue) {
-                VertexParameterValue old = (VertexParameterValue) oldValues[i];
+            } else if (oldValues[i] instanceof VertexParameterValue old) {
                 double[] val = new double[vertices.size()];
                 for (int j = 0; j < vertIndex.length; j++) {
                     if (vertIndex[j] != -1) {
@@ -2273,8 +2268,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                     }
                 }
                 newValues[i] = new VertexParameterValue(val);
-            } else if (oldValues[i] instanceof FaceVertexParameterValue) {
-                FaceVertexParameterValue old = (FaceVertexParameterValue) oldValues[i];
+            } else if (oldValues[i] instanceof FaceVertexParameterValue old) {
                 double[][] val = new double[faces.size()][];
                 for (int j = 0; j < val.length; j++) {
                     int faceIndex = faces.get(j);

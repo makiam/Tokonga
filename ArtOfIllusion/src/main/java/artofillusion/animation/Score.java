@@ -609,8 +609,8 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
             while (parent != null && parent instanceof Track) {
                 parent = ((Track) parent).getParent();
             }
-            if (parent instanceof ObjectInfo) {
-                scene.applyTracksToObject((ObjectInfo) parent);
+            if (parent instanceof ObjectInfo info) {
+                scene.applyTracksToObject(info);
             }
         }
         window.updateImage();
@@ -623,8 +623,8 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         for (int i = 0; i < graphs.size(); i++) {
             Widget gr = (Widget) graphs.get(i);
             gr.repaint();
-            if (gr instanceof TrackGraph) {
-                ((TrackGraph) gr).getAxis().repaint();
+            if (gr instanceof TrackGraph graph) {
+                graph.getAxis().repaint();
             }
         }
         theAxis.repaint();
@@ -656,8 +656,8 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
             while (parent != null && parent instanceof Track) {
                 parent = ((Track) parent).getParent();
             }
-            if (parent instanceof ObjectInfo) {
-                scene.applyTracksToObject((ObjectInfo) parent);
+            if (parent instanceof ObjectInfo info) {
+                scene.applyTracksToObject(info);
             }
             window.updateImage();
             selectedTracksChanged();
@@ -737,8 +737,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      */
     public void editSelectedTrack() {
         Object[] sel = theList.getSelectedObjects();
-        if (sel.length == 1 && sel[0] instanceof Track) {
-            Track tr = (Track) sel[0];
+        if (sel.length == 1 && sel[0] instanceof Track tr) {
             tr.edit(window);
             finishEditingTrack(tr);
         }
@@ -752,8 +751,8 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         while (parent != null && parent instanceof Track) {
             parent = ((Track) parent).getParent();
         }
-        if (parent instanceof ObjectInfo) {
-            scene.applyTracksToObject((ObjectInfo) parent);
+        if (parent instanceof ObjectInfo info) {
+            scene.applyTracksToObject(info);
         }
         setModified();
         window.updateImage();
@@ -778,15 +777,14 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         List<ObjectInfo> owners = new Vector<>();
 
         for (int i = 0; i < sel.length; i++) {
-            if (sel[i] instanceof Track) {
-                Track tr = (Track) sel[i];
+            if (sel[i] instanceof Track tr) {
                 Object parent = tr.getParent();
                 while (parent instanceof Track) {
                     parent = ((Track) parent).getParent();
                 }
-                if (parent instanceof ObjectInfo && owners.indexOf(parent) == -1) {
-                    owners.add((ObjectInfo) parent);
-                    undo.addCommand(UndoRecord.COPY_OBJECT_INFO, parent, ((ObjectInfo) parent).duplicate());
+                if (parent instanceof ObjectInfo info && owners.indexOf(parent) == -1) {
+                    owners.add(info);
+                    undo.addCommand(UndoRecord.COPY_OBJECT_INFO, parent, info.duplicate());
                 }
                 tr.setEnabled(enable);
             }
@@ -808,8 +806,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         List<SelectionInfo> newKeys = new Vector<>();
 
         for (var si: theList.getSelectedObjects()) {
-            if (si instanceof Track) {
-                Track tr = (Track) si;
+            if (si instanceof Track tr) {
                 if (tr.getParent() instanceof ObjectInfo) {
                     ObjectInfo info = (ObjectInfo) tr.getParent();
                     for (int j = 0; j < info.getTracks().length; j++) {
@@ -866,14 +863,12 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
                 if (k == null) continue;
 
                 newKeys.add(new SelectionInfo(tr, k));
-                if (tr instanceof PositionTrack) {
-                    PositionTrack pt = (PositionTrack) tr;
+                if (tr instanceof PositionTrack pt) {
                     posx |= pt.affectsX();
                     posy |= pt.affectsY();
                     posz |= pt.affectsZ();
                 }
-                if (tr instanceof RotationTrack) {
-                    RotationTrack rt = (RotationTrack) tr;
+                if (tr instanceof RotationTrack rt) {
                     rotx |= rt.affectsX();
                     roty |= rt.affectsY();
                     rotz |= rt.affectsZ();
@@ -899,8 +894,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         List<Track> addedTrack = new Vector<>();
 
         for (var sel: theList.getSelectedObjects()) {
-            if (sel instanceof Track) {
-                Track tr = (Track) sel;
+            if (sel instanceof Track tr) {
                 if (!(tr.getParent() instanceof ObjectInfo)) {
                     continue;
                 }
@@ -938,8 +932,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         List<ObjectInfo> modifiedObj = new Vector<>();
 
         for (var item: theList.getSelectedObjects()) {
-            if (item instanceof Track) {
-                Track tr = (Track) item;
+            if (item instanceof Track tr) {
                 if (!(tr.getParent() instanceof ObjectInfo)) {
                     continue;
                 }
@@ -1081,8 +1074,8 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
             while (parent != null && parent instanceof Track) {
                 parent = ((Track) parent).getParent();
             }
-            if (parent instanceof ObjectInfo) {
-                scene.applyTracksToObject((ObjectInfo) parent);
+            if (parent instanceof ObjectInfo info) {
+                scene.applyTracksToObject(info);
             }
             undo.addCommand(UndoRecord.COPY_TRACK, key, value);
         });

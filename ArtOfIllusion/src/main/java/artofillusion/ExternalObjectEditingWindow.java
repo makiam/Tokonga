@@ -298,8 +298,7 @@ public final class ExternalObjectEditingWindow extends JDialog {
         var nodes = Collections.list(((DefaultMutableTreeNode)model.getRoot()).breadthFirstEnumeration());
 
         nodes.forEach(node -> {
-            if( node instanceof SceneItemNode) {
-                var sn = (SceneItemNode) node;
+            if( node instanceof SceneItemNode sn) {
                 if(sn.getUserObject().getId() == objectId) {
                     sceneTree.setSelectionPath(new TreePath(sn.getPath()));
                 }

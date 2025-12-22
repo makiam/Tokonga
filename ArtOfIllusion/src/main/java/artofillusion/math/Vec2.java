@@ -93,8 +93,7 @@ public class Vec2 {
      */
     @Override
     public final boolean equals(Object o) {
-        if (o instanceof Vec2) {
-            Vec2 v = (Vec2) o;
+        if (o instanceof Vec2 v) {
             return (v.x == x && v.y == y);
         }
         return false;

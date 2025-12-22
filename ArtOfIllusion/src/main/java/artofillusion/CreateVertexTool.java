@@ -253,23 +253,22 @@ public class CreateVertexTool extends MeshEditingTool {
         TextureParameter[] param = mesh.getParameters();
         ParameterValue[] paramValue = mesh.getParameterValues();
         for (int i = 0; i < paramValue.length; i++) {
-            if (paramValue[i] instanceof VertexParameterValue) {
-                double[] val = ((VertexParameterValue) paramValue[i]).getValue();
+            if (paramValue[i] instanceof VertexParameterValue value) {
+                double[] val = value.getValue();
                 double[] newval = new double[newvert.length];
                 System.arraycopy(val, 0, newval, 0, val.length);
                 newval[val.length] = val[target];
-                ((VertexParameterValue) paramValue[i]).setValue(newval);
+                value.setValue(newval);
             }
-            if (paramValue[i] instanceof FaceParameterValue) {
-                double[] val = ((FaceParameterValue) paramValue[i]).getValue();
+            if (paramValue[i] instanceof FaceParameterValue value) {
+                double[] val = value.getValue();
                 double[] newval = new double[newface.length];
                 System.arraycopy(val, 0, newval, 0, val.length);
                 newval[val.length] = val[oldFace1];
                 newval[val.length + 1] = val[oldFace2];
-                ((FaceParameterValue) paramValue[i]).setValue(newval);
+                value.setValue(newval);
             }
-            if (paramValue[i] instanceof FaceVertexParameterValue) {
-                FaceVertexParameterValue fvpv = (FaceVertexParameterValue) paramValue[i];
+            if (paramValue[i] instanceof FaceVertexParameterValue fvpv) {
                 double[][] newval = new double[newface.length][3];
                 for (int index = 0; index < newval.length; index++) {
                     newval[index][0] = fvpv.getValue(index, 0);

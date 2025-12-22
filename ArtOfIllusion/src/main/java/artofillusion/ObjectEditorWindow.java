@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
    Modifications copyright (C) 2017 Petri Ihalainen
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -159,8 +159,8 @@ public abstract class ObjectEditorWindow extends BFrame implements EditingWindow
         if (!(w instanceof TextWidget)) {
             w.addEventLink(KeyPressedEvent.class, this, "keyPressed");
         }
-        if (w instanceof WidgetContainer) {
-            Collection<Widget<?>> children = ((WidgetContainer) w).getChildren();
+        if (w instanceof WidgetContainer container) {
+            Collection<Widget<?>> children = container.getChildren();
             children.forEach(widget -> recursivelyAddListeners(widget));
         }
     }

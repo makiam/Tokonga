@@ -175,11 +175,11 @@ public class UVMappingWindow extends BDialog implements MeshEditController, Edit
         row.add(new BLabel(" V:"));
         row.add(vField = new ValueField(Double.NaN, ValueField.NONE, 5));
         faceBox = new BCheckBox(Translate.text("mapFacesIndependently"), false);
-        if (editObj instanceof FacetedMesh) {
-            faceBox.setState(map.isPerFaceVertex((FacetedMesh) editObj));
+        if (editObj instanceof FacetedMesh mesh) {
+            faceBox.setState(map.isPerFaceVertex(mesh));
             if (faceBox.getState()) {
                 selectMode = FACE_MODE;
-                selected = new boolean[((FacetedMesh) editObj).getFaceCount()];
+                selected = new boolean[mesh.getFaceCount()];
             }
             content.add(faceBox, 0, 4);
         }
@@ -315,8 +315,8 @@ public class UVMappingWindow extends BDialog implements MeshEditController, Edit
      */
     private void findTextureVertices() {
         boolean isPerFace = false;
-        if (editObj instanceof FacetedMesh) {
-            isPerFace = map.isPerFaceVertex((FacetedMesh) editObj);
+        if (editObj instanceof FacetedMesh mesh) {
+            isPerFace = map.isPerFaceVertex(mesh);
         }
         if (isPerFace) {
             FacetedMesh mesh = (FacetedMesh) editObj;

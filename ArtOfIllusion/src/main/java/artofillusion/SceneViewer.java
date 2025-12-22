@@ -82,8 +82,8 @@ public class SceneViewer extends ViewerCanvas {
         }
         for (Iterator<Widget> iter = getViewerControlWidgets().values().iterator(); iter.hasNext();) {
             Widget w = iter.next();
-            if (w instanceof ViewerOrientationControl.OrientationChoice) {
-                ((ViewerOrientationControl.OrientationChoice) w).rebuildCameraList();
+            if (w instanceof ViewerOrientationControl.OrientationChoice choice) {
+                choice.rebuildCameraList();
             }
         }
     }
@@ -182,8 +182,8 @@ public class SceneViewer extends ViewerCanvas {
     @Override
     public Vec3 getDefaultRotationCenter() {
         int[] selection = null;
-        if (parentFrame instanceof LayoutWindow) {
-            selection = ((LayoutWindow) parentFrame).getSelectedIndices();
+        if (parentFrame instanceof LayoutWindow window) {
+            selection = window.getSelectedIndices();
         }
         if (selection == null || selection.length == 0) {
             CoordinateSystem coords = theCamera.getCameraCoordinates();
@@ -469,15 +469,15 @@ public class SceneViewer extends ViewerCanvas {
         if (j > -1) {
             info = theScene.getObject(j);
             if (!e.isShiftDown()) {
-                if (parentFrame instanceof LayoutWindow) {
-                    ((LayoutWindow) parentFrame).clearSelection();
+                if (parentFrame instanceof LayoutWindow window) {
+                    window.clearSelection();
                 } else {
                     theScene.clearSelection();
                 }
             }
-            if (parentFrame instanceof LayoutWindow) {
+            if (parentFrame instanceof LayoutWindow window) {
                 parentFrame.setUndoRecord(new UndoRecord(parentFrame, false, UndoRecord.SET_SCENE_SELECTION, sel));
-                ((LayoutWindow) parentFrame).addToSelection(j);
+                window.addToSelection(j);
             } else {
                 theScene.addToSelection(j);
             }
@@ -594,8 +594,8 @@ public class SceneViewer extends ViewerCanvas {
             r = new Rectangle(Math.min(clickPoint.x, dragPoint.x), Math.min(clickPoint.y, dragPoint.y),
                     Math.abs(dragPoint.x - clickPoint.x), Math.abs(dragPoint.y - clickPoint.y));
             if (!e.isShiftDown()) {
-                if (parentFrame instanceof LayoutWindow) {
-                    ((LayoutWindow) parentFrame).clearSelection();
+                if (parentFrame instanceof LayoutWindow window) {
+                    window.clearSelection();
                 } else {
                     theScene.clearSelection();
                 }
@@ -610,8 +610,8 @@ public class SceneViewer extends ViewerCanvas {
                     b = theCamera.findScreenBounds(info.getBounds());
                     if (b != null && b.x < r.x + r.width && b.y < r.y + r.height && r.x < b.x + b.width && r.y < b.y + b.height) {
                         if (!e.isShiftDown()) {
-                            if (parentFrame instanceof LayoutWindow) {
-                                ((LayoutWindow) parentFrame).addToSelection(i);
+                            if (parentFrame instanceof LayoutWindow window) {
+                                window.addToSelection(i);
                             } else {
                                 theScene.addToSelection(i);
                             }
@@ -619,8 +619,8 @@ public class SceneViewer extends ViewerCanvas {
                         } else {
                             for (j = 0; j < sel.length && sel[j] != i; j++);
                             if (j == sel.length) {
-                                if (parentFrame instanceof LayoutWindow) {
-                                    ((LayoutWindow) parentFrame).addToSelection(i);
+                                if (parentFrame instanceof LayoutWindow window) {
+                                    window.addToSelection(i);
                                 } else {
                                     theScene.addToSelection(i);
                                 }
@@ -639,8 +639,8 @@ public class SceneViewer extends ViewerCanvas {
         // If the user shift-clicked a selected object and released the mouse without dragging,
         // then deselect the point.
         if (deselect > -1) {
-            if (parentFrame instanceof LayoutWindow) {
-                ((LayoutWindow) parentFrame).removeFromSelection(deselect);
+            if (parentFrame instanceof LayoutWindow window) {
+                window.removeFromSelection(deselect);
             } else {
                 theScene.removeFromSelection(deselect);
             }

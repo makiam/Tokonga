@@ -1,6 +1,7 @@
 plugins {
 	id 'base'
     id 'org.jetbrains.kotlin.jvm'
+    id "org.openrewrite.rewrite"
 }
 
 java {
@@ -66,6 +67,8 @@ dependencies {
     implementation libs.bundles.logging
     implementation("org.jspecify:jspecify:1.0.0")
 
+    rewrite("org.openrewrite.recipe:rewrite-static-analysis:2.24.0")
+    rewrite("org.openrewrite.recipe:rewrite-migrate-java:3.24.0")
 }
 
 javadoc { 

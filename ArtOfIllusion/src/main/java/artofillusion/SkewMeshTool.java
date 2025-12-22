@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
-   Changes copyright (C) 2020-2022 by Maksim Khramov
+   Changes copyright (C) 2020-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -218,8 +218,8 @@ public class SkewMeshTool extends MeshEditingTool {
                 v[i] = new Vec3();
             }
         }
-        if (theFrame instanceof MeshEditorWindow) {
-            ((MeshEditorWindow) theFrame).adjustDeltas(v);
+        if (theFrame instanceof MeshEditorWindow window) {
+            window.adjustDeltas(v);
         }
         for (i = 0; i < vert.length; i++) {
             v[i].add(vert[i]);

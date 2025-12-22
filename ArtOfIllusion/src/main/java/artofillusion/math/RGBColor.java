@@ -1,4 +1,5 @@
 /* Copyright (C) 1999,2000,2003,2004 by Peter Eastman
+   Changes copyright (C) 2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -102,8 +103,7 @@ public class RGBColor {
      */
     @Override
     public boolean equals(Object c) {
-        if (c instanceof RGBColor) {
-            RGBColor col = (RGBColor) c;
+        if (c instanceof RGBColor col) {
             return (col.red == red && col.green == green && col.blue == blue);
         }
         return false;

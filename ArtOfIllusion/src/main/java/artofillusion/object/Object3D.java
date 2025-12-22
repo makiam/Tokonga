@@ -160,8 +160,8 @@ public abstract class Object3D {
     public void setTexture(Texture tex, TextureMapping map) {
         theTexture = tex;
         texMapping = map;
-        if (map instanceof LayeredMapping) {
-            theTexture = ((LayeredMapping) map).getTexture();
+        if (map instanceof LayeredMapping mapping) {
+            theTexture = mapping.getTexture();
         }
 
         // Update the texture parameters.

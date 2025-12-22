@@ -662,11 +662,10 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
             environTexture = def;
             environMapping = def.getDefaultMapping(new Sphere(1.0, 1.0, 1.0));
         }
-        if (environMapping instanceof LayeredMapping) {
+        if (environMapping instanceof LayeredMapping map) {
             Sphere tempObject = new Sphere(1, 1, 1);
             tempObject.setTexture(environTexture, environMapping);
             tempObject.setParameterValues(environParamValue);
-            LayeredMapping map = (LayeredMapping) environMapping;
             for (int j = map.getNumLayers() - 1; j >= 0; j--) {
                 if (map.getLayer(j) == tex) {
                     map.deleteLayer(j);
@@ -1308,8 +1307,8 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         } else {
             out.writeInt(_textures.lastIndexOf(environTexture));
             out.writeUTF(environMapping.getClass().getName());
-            if (environMapping instanceof LayeredMapping) {
-                ((LayeredMapping) environMapping).writeToFile(out, this);
+            if (environMapping instanceof LayeredMapping mapping) {
+                mapping.writeToFile(out, this);
             } else {
                 environMapping.writeToFile(out);
             }
