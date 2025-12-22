@@ -160,7 +160,7 @@ sphinx {
 tasks.register("createMacVolume", Exec) {
     dependsOn "installMacDist"
         def volumeName = "Art Of Illusion"
-        def volumeFileName = "ArtOfIIllusion"
+        def volumeFileName = "ArtOfIllusion"
         def srcFolder = "$buildDir/install/${project.name}-mac"
         def mac = org.gradle.internal.os.OperatingSystem.current().isMacOsX()
 
