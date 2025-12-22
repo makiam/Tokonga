@@ -122,14 +122,10 @@ distributions {
             } 
         }
         into("${description}.app/Contents/MacOS") { from("${rootProject.projectDir}/InstallerSrc/apple/") {
-                include "universalJavaApplicationStub.sh"
-                //fileMode 0755
-            }
-            filePermissions {
-                user {
-                    read = true
-                    execute = true
+                filePermissions {
+                    unix(0755)    
                 }
+                include "universalJavaApplicationStub.sh"
             }
         }
         into("${description}.app/Contents/Resources") { from("${rootProject.projectDir}/InstallerSrc/apple/") { include "*.icns"}}
