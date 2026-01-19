@@ -8,7 +8,7 @@ buoy = { module = "com.github.makiam:Buoy", version.ref = "buoy" }
 rsta = { module = "com.fifesoft:rsyntaxtextarea", version = "3.6.1" }
 groovy = { module = "org.apache.groovy:groovy", version = "5.0.3" }
 
-logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.5.24" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.5.25" }
 slf-api = { module = "org.slf4j:slf4j-api", version = "2.0.17" }
 
 jogl-gluegen = { module = "org.jogamp.gluegen:gluegen-rt-main", version.ref = "jogl" }
