@@ -266,44 +266,28 @@ public class RenderSetupDialog {
         try {
             Object settings = scene.getMetadata("RenderSetupDialog settings");
             if (settings instanceof Map) {
-                Map<String, Object> savedSettings = (Map<String, Object>) settings;
-                for (Map.Entry<String, Object> entry : savedSettings.entrySet()) {
-                    String rendererName;
-                    switch (entry.getKey()) {
-                        case "rendererName":
-                            rendererName = (String) entry.getValue();
+                Map<String, Object> saved = (Map<String, Object>) settings;
+                saved.forEach((key, value) -> {
+                    switch(key) {
+                        case "rendererName" -> {
+                            var rendererName = (String) value;
                             for (Renderer r : renderers) {
                                 if (r.getName().equals(rendererName)) {
                                     currentRenderer = r;
                                 }
                             }
-                            break;
-                        case "currentCamera":
-                            currentCamera = (Integer) entry.getValue();
-                            break;
-                        case "width":
-                            width = (Integer) entry.getValue();
-                            break;
-                        case "height":
-                            height = (Integer) entry.getValue();
-                            break;
-                        case "fps":
-                            fps = (Integer) entry.getValue();
-                            break;
-                        case "subimages":
-                            subimages = (Integer) entry.getValue();
-                            break;
-                        case "startTime":
-                            startTime = ((Number) entry.getValue()).doubleValue();
-                            break;
-                        case "endTime":
-                            endTime = ((Number) entry.getValue()).doubleValue();
-                            break;
-                        case "movie":
-                            movie = (Boolean) entry.getValue();
-                            break;
+                        }
+                        case "currentCamera" -> currentCamera = (Integer)value;
+                        case "width" -> width = (Integer) value;
+                        case "height" -> height = (Integer) value;
+                        case "fps" -> fps = (Integer) value;
+                        case "subimages" -> subimages = (Integer) value;
+                        case "startTime" -> startTime = ((Number) value).doubleValue();
+                        case "endTime" -> endTime = ((Number) value).doubleValue();
+                        case "movie" -> movie = (Boolean) value;
+                        default -> throw new IllegalStateException("Unexpected value: " + key);
                     }
-                }
+                });
             }
         } catch (ClassCastException ex) {
         }
@@ -338,6 +322,7 @@ public class RenderSetupDialog {
         boolean modified = false;
         Object recValue, curValue;
         String recKey;
+
         for (Map.Entry<String, Object> recordedEntry : rendererConfiguration.entrySet()) {
             recKey = recordedEntry.getKey();
             recValue = recordedEntry.getValue();
