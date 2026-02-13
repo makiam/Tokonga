@@ -18,13 +18,17 @@ import artofillusion.math.*;
 import artofillusion.procedural.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
+import lombok.extern.slf4j.Slf4j;
+
 import java.awt.*;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * This is a Material3D which uses a Procedure to calculate its properties.
  */
 @ImplementationVersion(current = 1, min = 1)
+@Slf4j
 public class ProceduralMaterial3D extends Material3D implements ProcedureOwner {
 
     private final Procedure proc;
@@ -175,7 +179,22 @@ public class ProceduralMaterial3D extends Material3D implements ProcedureOwner {
     @Override
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void edit(WindowWidget fr, Scene sc) {
-        new ProcedureEditor(proc, this, sc);
+        var result = false;
+        log.atInfo().log(">>>>>>>>>>>>>>>>>Show Experimental Procedure Editor: {}", result);
+        try {
+            Object tmp = PluginRegistry.invokeExportedMethod("preferences.getBoolean", "artofillusion", "showExperimentalProcedureEditor");
+            result = Boolean.valueOf(tmp == null ? "false" : tmp.toString());
+        } catch (InvocationTargetException | NoSuchMethodException e) {
+            log.atError().setCause(e).log("Unable to get showExperimentalProcedureEditor preference due {}", e.getMessage());
+            throw new RuntimeException(e);
+
+        }
+        log.atInfo().log("Show Experimental Procedure Editor: {}", result);
+        if (result) {
+            new ExperimentalProcedureEditor(proc, this, sc);
+        } else {
+            new ProcedureEditor(proc, this, sc);
+        }
     }
 
     public ProceduralMaterial3D(DataInputStream in, Scene theScene) throws IOException {

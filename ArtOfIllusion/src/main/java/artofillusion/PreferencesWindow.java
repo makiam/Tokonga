@@ -20,10 +20,8 @@ import artofillusion.preferences.PreferencesEditor;
 import buoy.widget.*;
 import buoy.event.*;
 
-import java.util.*;
 import java.util.List;
 import java.awt.*;
-import java.util.stream.Collectors;
 
 /**
  * This is the window for editing application-wide preferences.
