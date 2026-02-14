@@ -2,7 +2,7 @@
  * SearchlistClassLoader: class loader which loads classes using a searchlist
  *
  * Copyright (C) 2007-2009 Nik Trevallyn-Jones, Sydney Australia.
- * Changes copyright (C) 2017-2025 by Maksim Khramov
+ * Changes copyright (C) 2017-2026 by Maksim Khramov
  *
  * Author: Nik Trevallyn-Jones, nik777@users.sourceforge.net
  * $Id: Exp $
@@ -50,6 +50,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.Map;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -121,7 +122,7 @@ public class SearchlistClassLoader extends ClassLoader {
 
     protected Vector<Loader> list;
     protected Vector<Loader> search;
-    protected Hashtable<String, Class<?>> cache;
+    protected Map<String, Class<?>> cache;
     protected Loader content = null;
     protected byte searchMode = SHARED;
     protected int divide = 0;
@@ -652,8 +653,8 @@ public class SearchlistClassLoader extends ClassLoader {
     protected static class Loader {
 
         @Getter
-        ClassLoader loader;		// the actual classloader
-        boolean shared;			// shared flag
+        final ClassLoader loader;		// the actual classloader
+        final boolean shared;			// shared flag
 
         Loader(ClassLoader loader, boolean shared) {
             this.loader = loader;

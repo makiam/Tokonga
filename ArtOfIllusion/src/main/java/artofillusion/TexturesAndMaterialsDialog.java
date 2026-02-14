@@ -1,5 +1,5 @@
 /* Copyright (C) 2011 by Helge Hansen and Peter Eastman
-   Changes copyright (C) 2016-2025 by Maksim Khramov
+   Changes copyright (C) 2016-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TexturesAndMaterialsDialog extends BDialog {
 
-    private static Map<Scene, Rectangle> positions = new HashMap<>();
+    private static final Map<Scene, Rectangle> positions = new HashMap<>();
 
     private static final File assetsFolder = new File(ArtOfIllusion.APP_DIRECTORY, "Textures and Materials");
 

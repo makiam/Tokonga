@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 by Maksim Khramov
+/* Copyright (C) 2025-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -19,9 +19,9 @@ import org.mockito.Mockito;
 
 class TrackGraphTest {
 
-    static Score score = Mockito.mock(Score.class);
-    static LayoutWindow layout = Mockito.mock(LayoutWindow.class);
-    static Scene scene = Mockito.mock(Scene.class);
+    static final Score score = Mockito.mock(Score.class);
+    static final LayoutWindow layout = Mockito.mock(LayoutWindow.class);
+    static final Scene scene = Mockito.mock(Scene.class);
 
     @BeforeAll
     public static void setUpClass() {

@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
-   Changes copyright (C) 2023-2024 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -29,8 +29,8 @@ import java.util.Optional;
 public class ComponentsDialog extends BDialog {
 
     private boolean ok;
-    private Runnable okCallback;
-    private Runnable cancelCallback;
+    private final Runnable okCallback;
+    private final Runnable cancelCallback;
     private final BButton okButton;
 
     /**

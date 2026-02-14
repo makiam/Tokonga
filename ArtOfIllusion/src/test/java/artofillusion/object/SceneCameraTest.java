@@ -1,4 +1,4 @@
-/* Copyright (C) 2018-2025 by Maksim Khramov
+/* Copyright (C) 2018-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -513,7 +513,7 @@ class SceneCameraTest {
     }
 
     static class AccumulatorStream extends OutputStream {
-        ByteBuffer wrap = ByteBuffer.allocate(20000);
+        final ByteBuffer wrap = ByteBuffer.allocate(20000);
 
         @Override
         public void write(int b) throws IOException {

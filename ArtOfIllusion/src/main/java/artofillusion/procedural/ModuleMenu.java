@@ -1,5 +1,5 @@
 /* Copyright (C) 2011 by Peter Eastman
-   Changes copyright (C) 2022-2023 by Maksim Khramov
+   Changes copyright (C) 2022-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -236,7 +236,7 @@ public class ModuleMenu extends CustomWidget {
     private static class Category {
 
         @Getter
-        public String name;
+        public final String name;
         public final ArrayList<Entry> entries = new ArrayList<>();
         public Rectangle bounds;
 

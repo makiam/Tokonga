@@ -1,6 +1,6 @@
 /*
  *  Copyright 2004 Francois Guillet
- *  Changes copyright 2022-2023 by Maksim Khramov
+ *  Changes copyright 2022-2026 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -8,6 +8,7 @@
  *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  *  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  */
+
 package artofillusion.spmanager;
 
 import java.io.*;
@@ -100,7 +101,7 @@ public class SPMObjectInfo {
     @Getter
     private String comments = null;
 
-    private Map<String, String> externals = new HashMap<>();
+    private final Map<String, String> externals = new HashMap<>();
 
     /**
      * get the change log

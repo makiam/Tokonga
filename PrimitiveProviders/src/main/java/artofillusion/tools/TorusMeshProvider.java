@@ -1,4 +1,4 @@
-/* Copyright (C) 2024 by Maksim Khramov
+/* Copyright (C) 2024-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -22,8 +22,8 @@ import java.util.Optional;
 public class TorusMeshProvider implements PrimitiveFactory {
 
     private static final double thickness = 0.5;
-    private int uSize = 5;
-    private int vSize = 5;
+    private final int uSize = 5;
+    private final int vSize = 5;
 
     @Override
     public String getCategory() {

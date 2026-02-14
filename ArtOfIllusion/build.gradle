@@ -99,7 +99,7 @@ installDist.dependsOn subprojects.jar, createExe
 distZip.dependsOn subprojects.jar, createExe
 
 
-tasks.withType(Zip){
+tasks.withType(Zip).configureEach {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 

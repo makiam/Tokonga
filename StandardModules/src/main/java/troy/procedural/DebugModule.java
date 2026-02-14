@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2008 by Peter H. ("TroY")
-    Changes copyright (C) 2025 by Maksim Khramov
+    Changes copyright (C) 2025-2026 by Maksim Khramov
 
 	This program is free software; you can redistribute it and/or modify it under the
 	terms of the GNU General Public License as published by the Free Software
@@ -45,15 +45,15 @@ public class DebugModule extends ProceduralModule<DebugModule>
 	
 	protected RGBColor color = null;
 	
-	protected BButton btnEvalNumeric = new BButton(Translate.text("Evaluate Number"));
-	protected BButton btnEvalColor = new BButton(Translate.text("Evaluate Color"));
-	protected BLabel lblNumeric  = new BLabel("-");
-	protected CustomWidget colorWidget = new CustomWidget();
+	protected final BButton btnEvalNumeric = new BButton(Translate.text("Evaluate Number"));
+	protected final BButton btnEvalColor = new BButton(Translate.text("Evaluate Color"));
+	protected final BLabel lblNumeric  = new BLabel("-");
+	protected final CustomWidget colorWidget = new CustomWidget();
 	
-	protected ValueField fieldX = new ValueField(0.0, ValueField.NONE);
-	protected ValueField fieldY = new ValueField(0.0, ValueField.NONE);
-	protected ValueField fieldZ = new ValueField(0.0, ValueField.NONE);
-	protected ValueField fieldT = new ValueField(0.0, ValueField.NONE);
+	protected final ValueField fieldX = new ValueField(0.0, ValueField.NONE);
+	protected final ValueField fieldY = new ValueField(0.0, ValueField.NONE);
+	protected final ValueField fieldZ = new ValueField(0.0, ValueField.NONE);
+	protected final ValueField fieldT = new ValueField(0.0, ValueField.NONE);
 	
 	public DebugModule()
 	{

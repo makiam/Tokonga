@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 by Maksim Khramov
+/* Copyright (C) 2025-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 public final class LoadEventListener {
-    private List<BypassEvent> events = new ArrayList<>();
+    private final List<BypassEvent> events = new ArrayList<>();
 
     LoadEventListener() {
         EventBus.getDefault().register(this);

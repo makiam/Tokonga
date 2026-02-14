@@ -1,4 +1,4 @@
-/* Copyright (C) 2024 by Maksim Khramov
+/* Copyright (C) 2024-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 public class TreeListTest {
     private class DummyTreeElement extends TreeElement {
 
-        private Object item;
+        private final Object item;
         public  DummyTreeElement(Object item) {
             this.item = item;
             this.children = new ArrayList<>();

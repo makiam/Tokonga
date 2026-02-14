@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2013 by Peter Eastman
-   Changes copyright (C) 2020-2024 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -49,7 +49,7 @@ public class KeystrokeManager {
 
 
     private static final List<KeystrokeRecord> records = new ArrayList<>();
-    private static Map<KeyEventContainer, List<Script>> scripts = new HashMap<>();
+    private static final Map<KeyEventContainer, List<Script>> scripts = new HashMap<>();
 
     private static final String KEYSTROKE_FILENAME = "keystrokes.xml";
 

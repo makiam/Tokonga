@@ -1,4 +1,4 @@
-/* Copyright 2024 by Maksim Khramov
+/* Copyright 2024-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -28,7 +28,7 @@ public class Extension {
     private String version;
     @XStreamImplicit
     @XStreamAlias("author")
-    private List<String> authors = new ArrayList<>();
+    private final List<String> authors = new ArrayList<>();
     @XStreamAlias("date")
     private String date;
     @XStreamAlias("description")
@@ -53,7 +53,7 @@ public class Extension {
     }
 
     @XStreamImplicit
-    private List<ImportDef> imports = new ArrayList<>();
+    private final List<ImportDef> imports = new ArrayList<>();
 
     public String getComments() {
         return comments.strip();
@@ -71,10 +71,10 @@ public class Extension {
     }
 
     @XStreamImplicit
-    private List<Resource> resources = new ArrayList<>();
+    private final List<Resource> resources = new ArrayList<>();
 
     @XStreamImplicit
-    private List<External> externals = new ArrayList<>();
+    private final List<External> externals = new ArrayList<>();
 
 
 }

@@ -1,4 +1,4 @@
-/* Copyright (C) 2021 by Maksim Khramov
+/* Copyright (C) 2021-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -42,12 +42,12 @@ public class SplashScreen extends JDialog implements PropertyChangeListener {
     private final String vendor = String.format(bundle.getString("splash.java"), System.getProperty("java.version"), System.getProperty("java.vendor"));
     private final String os = String.format(bundle.getString("splash.system"), System.getProperty("os.name"), System.getProperty("os.version"), System.getProperty("os.arch"));
 
-    private long used = (runtime.totalMemory() - runtime.freeMemory()) / 1048576L;
-    private long allocated = runtime.totalMemory() / 1048576L;
-    private long max = runtime.maxMemory() / 1048576L;
+    private final long used = (runtime.totalMemory() - runtime.freeMemory()) / 1048576L;
+    private final long allocated = runtime.totalMemory() / 1048576L;
+    private final long max = runtime.maxMemory() / 1048576L;
 
-    private String memory = String.format(bundle.getString("splash.memory"), used, allocated, max);
-    private String cpu = String.format(bundle.getString("splash.cpu"), runtime.availableProcessors());
+    private final String memory = String.format(bundle.getString("splash.memory"), used, allocated, max);
+    private final String cpu = String.format(bundle.getString("splash.cpu"), runtime.availableProcessors());
 
     private static final Border border = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1), BorderFactory.createEmptyBorder(0, 0, 5, 0));
     private JLabel label;
