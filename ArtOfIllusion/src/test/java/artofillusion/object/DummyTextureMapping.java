@@ -1,4 +1,4 @@
-/* Copyright 2024-2026 by Maksim Khramov
+/* Copyright (C) 2024-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.DisplayName;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
+
 
 @DisplayName("Mock Texture Mapping")
 class DummyTextureMapping extends TextureMapping {
@@ -37,7 +37,7 @@ class DummyTextureMapping extends TextureMapping {
     }
 
     @Override
-    public void writeToFile(DataOutputStream out) throws IOException {
+    public void writeToFile(DataOutputStream out) {
         // To change body of generated methods, choose Tools | Templates.
         throw new UnsupportedOperationException("Not supported yet.");
     }

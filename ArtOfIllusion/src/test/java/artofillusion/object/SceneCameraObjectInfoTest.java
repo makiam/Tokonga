@@ -24,12 +24,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 @DisplayName("Object Info Test for Scene Camera with filters")
-public class SceneCameraObjectInfoTest {
+class SceneCameraObjectInfoTest {
 
     static ReadBypassEventListener listener;
 
     @BeforeAll
-    public static void setupClass() {
+    static void setupClass() {
         listener = new ReadBypassEventListener();
     }
 
@@ -39,7 +39,7 @@ public class SceneCameraObjectInfoTest {
     }
 
     @Test
-    public void testSceneCameraObjectInfo() throws IOException {
+    void testSceneCameraObjectInfo() throws IOException {
         var sc = new SceneCamera();
         var oi = new ObjectInfo(sc, new CoordinateSystem(), "Scene Camera");
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -114,7 +114,7 @@ public class SceneCameraObjectInfoTest {
         new SceneCamera(new DataInputStream(restore), null);
         Assertions.assertEquals(1, listener.getCounter());
         Assertions.assertTrue(listener.getLast().getMessage().contains(MissedConstructorFilter.class.getName()));
-        Assertions.assertTrue(listener.getLast().getCause() instanceof NoSuchMethodException);
+        Assertions.assertInstanceOf(NoSuchMethodException.class, listener.getLast().getCause());
 
     }
 
@@ -180,9 +180,9 @@ public class SceneCameraObjectInfoTest {
         var tdf = (TestSceneCameraFilterWithDouble)copy.getImageFilters()[3];
         Assertions.assertEquals(Math.PI, tdf.getValue());
         var last = copy.getImageFilters()[4];
-        Assertions.assertTrue(last instanceof TestSceneCameraFilterNoData);
+        Assertions.assertInstanceOf(TestSceneCameraFilterNoData.class, last);
         last = copy.getImageFilters()[5];
-        Assertions.assertTrue(last instanceof PrivateTestFilter);
+        Assertions.assertInstanceOf(PrivateTestFilter.class, last);
     }
 
     @DisplayName("As class is private it expected to throw InstantiationException from newInstance() call")
@@ -197,10 +197,10 @@ public class SceneCameraObjectInfoTest {
         public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {}
 
         @Override
-        public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {}
+        public void writeToStream(DataOutputStream out, Scene theScene) {}
 
         @Override
-        public void initFromStream(DataInputStream in, Scene theScene) throws IOException {}
+        public void initFromStream(DataInputStream in, Scene theScene) {}
     }
 
     static class TestSceneCameraFilterNoData extends ImageFilter {
@@ -211,10 +211,10 @@ public class SceneCameraObjectInfoTest {
         }
 
         @Override
-        public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {}
+        public void writeToStream(DataOutputStream out, Scene theScene) {}
 
         @Override
-        public void initFromStream(DataInputStream in, Scene theScene) throws IOException {}
+        public void initFromStream(DataInputStream in, Scene theScene) {}
 
         @Override
         public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {}
@@ -253,10 +253,10 @@ public class SceneCameraObjectInfoTest {
         public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {}
 
         @Override
-        public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {}
+        public void writeToStream(DataOutputStream out, Scene theScene) {}
 
         @Override
-        public void initFromStream(DataInputStream in, Scene theScene) throws IOException {}
+        public void initFromStream(DataInputStream in, Scene theScene) {}
     }
 
     @DisplayName("As class is marked as PRIVATE expected IllegalAccessException exception to be thrown")
@@ -271,10 +271,10 @@ public class SceneCameraObjectInfoTest {
         public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {}
 
         @Override
-        public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {}
+        public void writeToStream(DataOutputStream out, Scene theScene) {}
 
         @Override
-        public void initFromStream(DataInputStream in, Scene theScene) throws IOException {}
+        public void initFromStream(DataInputStream in, Scene theScene) {}
     }
 
 

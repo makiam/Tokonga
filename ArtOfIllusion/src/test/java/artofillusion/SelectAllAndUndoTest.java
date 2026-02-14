@@ -1,4 +1,4 @@
-/* Copyright (C) 2016-2024 by Maksim Khramov
+/* Copyright (C) 2016-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -16,7 +16,7 @@ import artofillusion.object.Sphere;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URISyntaxException;
+
 import java.util.Locale;
 
 import org.junit.jupiter.api.*;
@@ -28,7 +28,7 @@ import org.netbeans.jemmy.JemmyProperties;
 import org.netbeans.jemmy.TestOut;
 import org.netbeans.jemmy.operators.JFrameOperator;
 import org.netbeans.jemmy.operators.JMenuBarOperator;
-import org.junit.jupiter.api.extension.ExtendWith;
+
 
 /**
  * @author MaksK
@@ -44,11 +44,8 @@ class SelectAllAndUndoTest {
 
     private LayoutWindow layout;
 
-    public SelectAllAndUndoTest() {
-    }
-
     @BeforeAll
-    static void setupClass() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, URISyntaxException, IOException {
+    static void setupClass() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IOException {
         Locale.setDefault(Locale.ENGLISH);
         new ClassReference("artofillusion.ArtOfIllusion").startApplication();
         bundle.load(ArtOfIllusion.class.getClassLoader().getResourceAsStream("artofillusion.properties"));

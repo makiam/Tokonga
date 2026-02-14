@@ -1,4 +1,5 @@
 /* Copyright (C) 2001-2002 by Peter Eastman
+   Changes copyright (C) 2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -9,6 +10,8 @@
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.animation;
+
+import artofillusion.PluginRegistry;
 
 import java.io.*;
 
@@ -58,10 +61,11 @@ public class NullKeyframe implements Keyframe {
 
     /* Write out a representation of this keyframe to a stream. */
     @Override
-    public void writeToStream(DataOutputStream out) throws IOException {
+    public void writeToStream(DataOutputStream out) {
     }
 
     /* Reconstructs the keyframe from its serialized representation. */
-    public NullKeyframe(DataInputStream in, Object parent) throws IOException {
+    @PluginRegistry.UsedViaReflection
+    public NullKeyframe(DataInputStream in, Object parent) {
     }
 }

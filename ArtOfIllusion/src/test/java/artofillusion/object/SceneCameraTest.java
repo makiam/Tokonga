@@ -22,8 +22,6 @@ import artofillusion.test.util.StreamUtil;
 import java.io.*;
 import java.nio.ByteBuffer;
 
-import lombok.Getter;
-import org.greenrobot.eventbus.Subscribe;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -37,7 +35,7 @@ class SceneCameraTest {
     static ReadBypassEventListener listener;
 
     @BeforeAll
-    public static void setupClass() {
+    static void setupClass() {
         listener = new ReadBypassEventListener();
     }
 
@@ -99,7 +97,7 @@ class SceneCameraTest {
 
     @Test
     @DisplayName("Test Load Scene Camera Version 0")
-    void testLoadSceneCameraVersion0() throws IOException {
+    void testLoadSceneCameraVersion0() {
         Scene scene = new Scene();
         ByteBuffer wrap = ByteBuffer.allocate(200);
         // Object Version
@@ -246,9 +244,7 @@ class SceneCameraTest {
         wrap.put(bb, 0, bb.length);
 
 
-        var fb = StreamUtil.writeObjectToStream((target) -> {
-            filter.writeToStream(target, null);
-        });
+        var fb = StreamUtil.writeObjectToStream(target -> filter.writeToStream(target, null));
         wrap.put(fb, 0, fb.length);
         SceneCamera sc = new SceneCamera(StreamUtil.stream(wrap), scene);
         Assertions.assertNotNull(sc);
@@ -289,9 +285,7 @@ class SceneCameraTest {
         wrap.put(bb, 0, bb.length);
 
 
-        var fb = StreamUtil.writeObjectToStream((target) -> {
-            filter.writeToStream(target, null);
-        });
+        var fb = StreamUtil.writeObjectToStream(target -> filter.writeToStream(target, null));
         wrap.put(fb, 0, fb.length);
 
         wrap.put(bb, 0, bb.length);
@@ -516,7 +510,7 @@ class SceneCameraTest {
         final ByteBuffer wrap = ByteBuffer.allocate(20000);
 
         @Override
-        public void write(int b) throws IOException {
+        public void write(int b) {
             wrap.put((byte)b);
         }
 
@@ -566,9 +560,7 @@ class SceneCameraTest {
         wrap.put(bb, 0, bb.length);
 
 
-        var fb = StreamUtil.writeObjectToStream((target) -> {
-            filter.writeToStream(target, null);
-        });
+        var fb = StreamUtil.writeObjectToStream(target -> filter.writeToStream(target, null));
         wrap.putInt(fb.length);
         wrap.put(fb, 0, fb.length);
         SceneCamera sc = new SceneCamera(StreamUtil.stream(wrap), scene);
@@ -613,9 +605,7 @@ class SceneCameraTest {
         wrap.put(bb, 0, bb.length);
 
 
-        var fb = StreamUtil.writeObjectToStream((target) -> {
-            filter.writeToStream(target, null);
-        });
+        var fb = StreamUtil.writeObjectToStream(target -> filter.writeToStream(target, null));
         wrap.putInt(fb.length);
         wrap.put(fb, 0, fb.length);
         SceneCamera sc = new SceneCamera(StreamUtil.stream(wrap), scene);
@@ -647,12 +637,12 @@ class SceneCameraTest {
         }
 
         @Override
-        public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
+        public void writeToStream(DataOutputStream out, Scene theScene) {
 
         }
 
         @Override
-        public void initFromStream(DataInputStream in, Scene theScene) throws IOException {
+        public void initFromStream(DataInputStream in, Scene theScene) {
 
         }
     }

@@ -1,4 +1,4 @@
-/* Copyright (C) 2017-2024 by Maksim Khramov
+/* Copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,7 @@ import artofillusion.animation.ProceduralPositionTrack;
 import artofillusion.animation.ProceduralRotationTrack;
 import artofillusion.animation.RotationTrack;
 import artofillusion.animation.TextureTrack;
-import artofillusion.animation.Track;
+
 import artofillusion.animation.VisibilityTrack;
 import artofillusion.animation.distortion.BendTrack;
 import artofillusion.animation.distortion.CustomDistortionTrack;
@@ -37,11 +37,11 @@ import artofillusion.test.util.UITestWatcher;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URISyntaxException;
+
 import java.text.MessageFormat;
 import java.util.Locale;
 
-import lombok.extern.java.Log;
+
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.*;
@@ -79,7 +79,7 @@ class LayoutWindowTest {
     private static final Bundle bundle = new Bundle();
 
     @BeforeAll
-    public static void setupClass() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, URISyntaxException, IOException {
+    static void setupClass() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IOException {
         new Thread(() -> new JDialogOperator("Art Of Illusion").close()).start();
         Locale.setDefault(Locale.ENGLISH);
         new ClassReference("artofillusion.ArtOfIllusion").startApplication();
@@ -88,7 +88,7 @@ class LayoutWindowTest {
     }
 
     @BeforeEach
-    public void setUp(TestInfo info) {
+    void setUp(TestInfo info) {
         appFrame = new JFrameOperator("Untitled");
         appMainMenu = new JMenuBarOperator(appFrame);
         appMainMenu.closeSubmenus();
@@ -100,7 +100,7 @@ class LayoutWindowTest {
     }
 
     @AfterEach
-    public void done() {
+    void done() {
         int scc = scene.getObjects().size();
         for (int i = 2; i < scc; i++) {
             layout.removeObject(2, null);
@@ -438,7 +438,7 @@ class LayoutWindowTest {
 
     @Test
     @DisplayName("Test Invoke Layout For Single Object Command")
-    void testInvokeLayoutForSingleObjectCommand() throws InterruptedException {
+    void testInvokeLayoutForSingleObjectCommand() {
         String objectName = "Test-" + System.currentTimeMillis();
         ObjectInfo test = new ObjectInfo(new Sphere(1d, 1d, 1d), new CoordinateSystem(), objectName);
         layout.addObject(test, null);

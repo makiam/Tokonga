@@ -8,6 +8,7 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion;
 
 import artofillusion.material.*;
@@ -981,7 +982,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
         }
 
         @Override
-        public Object getTransferData(DataFlavor dataFlavor) throws UnsupportedFlavorException, IOException {
+        public Object getTransferData(DataFlavor dataFlavor) {
             if (dataFlavor == DataFlavor.stringFlavor) {
                 return data.toString();
             }
