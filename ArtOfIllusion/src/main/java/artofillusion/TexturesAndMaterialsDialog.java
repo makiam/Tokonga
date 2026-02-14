@@ -39,22 +39,27 @@ public class TexturesAndMaterialsDialog extends BDialog {
 
 
     private final Scene theScene;
-    private EditingWindow parentFrame;
-    private BTree libraryList;
+    private final EditingWindow parentFrame;
+    private final BTree libraryList;
     private File libraryFile;
     private Scene selectedScene;
     private Texture selectedTexture;
     private Material selectedMaterial;
     private SceneTreeNode selectedSceneNode;
     private int insertLocation;
-    private BButton duplicateButton, deleteButton, editButton;
-    private BButton loadLibButton, saveLibButton, deleteLibButton;
-    private BComboBox typeChoice;
-    private BRadioButton showTexturesButton, showMaterialsButton;
+    private final BButton duplicateButton;
+    private final BButton deleteButton;
+    private final BButton editButton;
+    private final BButton loadLibButton;
+    private final BButton saveLibButton;
+    private final BButton deleteLibButton;
+    private final BComboBox typeChoice;
+    private final BRadioButton showTexturesButton;
+    private final BRadioButton showMaterialsButton;
     private final List<Texture> textureTypes = PluginRegistry.getPlugins(Texture.class);
     private final List<Material> materialTypes = PluginRegistry.getPlugins(Material.class);
-    private MaterialPreviewer preview;
-    private BLabel matInfo;
+    private final MaterialPreviewer preview;
+    private final BLabel matInfo;
 
     private boolean showTextures, showMaterials;
     private final List<Object> rootNodes;
