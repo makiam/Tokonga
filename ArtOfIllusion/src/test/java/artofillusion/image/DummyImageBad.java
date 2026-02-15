@@ -1,4 +1,4 @@
-/* Copyright 2025 by Maksim Khramov
+/* Copyright 2025-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -16,7 +16,6 @@ import artofillusion.math.Vec2;
 
 import java.awt.*;
 import java.io.DataOutputStream;
-import java.io.IOException;
 
 public class DummyImageBad extends ImageMap {
 
@@ -71,7 +70,7 @@ public class DummyImageBad extends ImageMap {
     }
 
     @Override
-    public void writeToStream(DataOutputStream out, Scene scene) throws IOException {
+    public void writeToStream(DataOutputStream out, Scene scene) {
 
     }
 }

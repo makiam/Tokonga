@@ -1,5 +1,5 @@
 /* Copyright (C) 2013 by Peter Eastman
-   Changes copyright (C) 2020-2022 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -51,20 +51,18 @@ public class GroovyScriptEngine implements ScriptEngine {
     }
 
     @Override
-    public void addImport(String packageOrClass) throws Exception {
+    public void addImport(String packageOrClass) {
         imports.append("import ").append(packageOrClass).append(";\n");
         numImports++;
     }
 
     @Override
     public void executeScript(String scriptBody, Map<String, Object> variables) throws ScriptException {
-        variables.forEach((key, value) -> shell.setVariable(key, value));
-        String hash = imports.toString() + scriptBody;
+        variables.forEach(shell::setVariable);
+        String hash = imports + scriptBody;
 
         try {
-            Script script = cache.computeIfAbsent(hash, (String text) -> {
-                return shell.parse(text);
-            });
+            Script script = cache.computeIfAbsent(hash, shell::parse);
             script.run();
 
         } catch (GroovyRuntimeException gre) {
@@ -77,7 +75,7 @@ public class GroovyScriptEngine implements ScriptEngine {
     @Override
     public ToolScript createToolScript(String script) throws ScriptException {
         try {
-            return new CompiledToolScript(shell.parse(imports.toString() + script));
+            return new CompiledToolScript(shell.parse(imports + script));
         } catch (CompilationFailedException e) {
             throw new ScriptException(e.getMessage(), -1);
         }
@@ -86,7 +84,7 @@ public class GroovyScriptEngine implements ScriptEngine {
     @Override
     public ObjectScript createObjectScript(String script) throws ScriptException {
         try {
-            return new CompiledObjectScript(shell.parse(imports.toString() + script));
+            return new CompiledObjectScript(shell.parse(imports + script));
         } catch (CompilationFailedException e) {
             throw new ScriptException(e.getMessage(), -1, e);
         }
@@ -135,7 +133,7 @@ public class GroovyScriptEngine implements ScriptEngine {
         }
 
         @Override
-        public void execute(ScriptedObjectController controller) throws ScriptException {
+        public void execute(ScriptedObjectController controller) {
             script.setProperty("script", controller);
             script.run();
         }

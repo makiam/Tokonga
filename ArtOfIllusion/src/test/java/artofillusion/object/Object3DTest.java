@@ -1,4 +1,4 @@
-/* Copyright (C) 2018-2025 by Maksim Khramov
+/* Copyright (C) 2018-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -7,6 +7,7 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion.object;
 
 import artofillusion.MaterialPreviewer;
@@ -47,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class Object3DTest {
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         DummyObject.canSetTexture = true;
     }
 
@@ -120,7 +121,7 @@ class Object3DTest {
         Assertions.assertNotNull(dob);
         Assertions.assertNull(dob.getMaterial());
         Assertions.assertNotNull(dob.getTexture());
-        Assertions.assertTrue(dob.getTexture() instanceof LayeredTexture);
+        Assertions.assertInstanceOf(LayeredTexture.class, dob.getTexture());
     }
 
     @Test
@@ -373,7 +374,7 @@ class Object3DTest {
         }
 
         @Override
-        public void writeToFile(DataOutputStream out) throws IOException {
+        public void writeToFile(DataOutputStream out) {
             // To change body of generated methods, choose Tools | Templates.
             throw new UnsupportedOperationException("Not supported yet.");
         }
@@ -448,7 +449,7 @@ class Object3DTest {
         }
 
         @Override
-        public void writeToFile(DataOutputStream out, Scene theScene) throws IOException {
+        public void writeToFile(DataOutputStream out, Scene theScene) {
             // To change body of generated methods, choose Tools | Templates.
             throw new UnsupportedOperationException("Not supported yet.");
         }

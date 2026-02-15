@@ -1,4 +1,4 @@
-/* Copyright (C) 2023 by Maksim Khramov
+/* Copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -39,7 +39,7 @@ public class RegisterTestResources implements BeforeAllCallback {
     }
 
     @Override
-    public void beforeAll(ExtensionContext context) throws Exception {
+    public void beforeAll(ExtensionContext context) {
         before();
     }
 }

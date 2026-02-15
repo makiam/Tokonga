@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2009 by Peter Eastman
-   Changes copyright (C) 2022-2024 by Maksim Khramov
+   Changes copyright (C) 2022-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -111,7 +111,8 @@ public class LayeredMapping extends TextureMapping {
     public TextureParameter[] getParameters() {
         Vector<TextureParameter> param = new Vector<>();
         TextureParameter[] p;
-        int i, j;
+        int i;
+        int j;
 
         // There are two types of parameters: those corresponding to the blending fraction for
         // a layer, and those which belong to layer.  We recalculate the list every time this
@@ -263,7 +264,8 @@ public class LayeredMapping extends TextureMapping {
         TextureMapping[] newmapping = new TextureMapping[texture.length - 1];
         int[] newblendMode = new int[texture.length - 1];
         int[] newFractParamID = new int[texture.length - 1];
-        int i, j;
+        int i;
+        int j;
 
         for (i = j = 0; i < texture.length; i++) {
             if (i != which) {
@@ -288,7 +290,8 @@ public class LayeredMapping extends TextureMapping {
         TextureMapping[] newmapping = new TextureMapping[texture.length];
         int[] newblendMode = new int[texture.length];
         int[] newFractParamID = new int[texture.length];
-        int i, j;
+        int i;
+        int j;
 
         for (i = j = 0; i < newtexture.length; i++) {
             if (j == which) {
@@ -317,7 +320,7 @@ public class LayeredMapping extends TextureMapping {
      * Loading and saving of layered mappings works a bit differently from other mappings,
      * since it needs to refer other textures in the scene.
      */
-    public void readFromFile(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+    public void readFromFile(DataInputStream in, Scene theScene) throws IOException {
         short version = in.readShort();
         int numTextures = in.readInt();
 
@@ -357,7 +360,7 @@ public class LayeredMapping extends TextureMapping {
      * This form of writeToFile() is never used, and should never be called.
      */
     @Override
-    public void writeToFile(DataOutputStream out) throws IOException {
+    public void writeToFile(DataOutputStream out) {
         throw new IllegalStateException();
     }
 
@@ -400,7 +403,9 @@ public class LayeredMapping extends TextureMapping {
      */
     @Override
     public void getTextureSpec(Vec3 pos, TextureSpec spec, double angle, double size, double t, double[] param) {
-        float rt = 1.0f, gt = 1.0f, bt = 1.0f;
+        float rt = 1.0f;
+        float gt = 1.0f;
+        float bt = 1.0f;
         double ft = 1.0;
         boolean front = (angle > 0.0);
         spec.diffuse.setRGB(0.0f, 0.0f, 0.0f);
@@ -463,7 +468,9 @@ public class LayeredMapping extends TextureMapping {
      * of the layers.
      */
     public void getAverageSpec(TextureSpec spec, double time, double[] param) {
-        float rt = 1.0f, gt = 1.0f, bt = 1.0f;
+        float rt = 1.0f;
+        float gt = 1.0f;
+        float bt = 1.0f;
         double ft = 1.0;
         spec.diffuse.setRGB(0.0f, 0.0f, 0.0f);
         spec.specular.setRGB(0.0f, 0.0f, 0.0f);
@@ -522,7 +529,9 @@ public class LayeredMapping extends TextureMapping {
      */
     @Override
     public void getTransparency(Vec3 pos, RGBColor trans, double angle, double size, double t, double[] param) {
-        float rt = 1.0f, gt = 1.0f, bt = 1.0f;
+        float rt = 1.0f;
+        float gt = 1.0f;
+        float bt = 1.0f;
         RGBColor tempColor = new RGBColor();
         boolean front = (angle > 0.0);
         double[] paramTemp = new double[maxParams];
@@ -563,7 +572,9 @@ public class LayeredMapping extends TextureMapping {
      */
     @Override
     public double getDisplacement(Vec3 pos, double size, double t, double[] param) {
-        double ft = 1.0, height = 0.0, temp;
+        double ft = 1.0;
+        double height = 0.0;
+        double temp;
         RGBColor tempColor = new RGBColor();
         double[] paramTemp = new double[maxParams];
         for (int i = 0; i < texture.length; i++) {

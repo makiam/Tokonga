@@ -1,4 +1,4 @@
-/* Copyright (C) 2018 by Maksim Khramov
+/* Copyright (C) 2018-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -7,6 +7,7 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion.material;
 
 import artofillusion.MaterialPreviewer;
@@ -16,11 +17,11 @@ import buoy.widget.Widget;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
+
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.extension.ExtendWith;
+
 
 /**
  * @author maksim.khramov
@@ -45,7 +46,7 @@ class MaterialMappingTest {
         }
 
         @Override
-        public void writeToFile(DataOutputStream out) throws IOException {
+        public void writeToFile(DataOutputStream out) {
             // To change body of generated methods, choose Tools | Templates.
             throw new UnsupportedOperationException("Not supported yet.");
         }

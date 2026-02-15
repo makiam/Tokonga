@@ -1,5 +1,5 @@
 /* Copyright (C) 2007 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -21,12 +21,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 
-public class OctreeNodeTest {
+class OctreeNodeTest {
 
     private static OctreeNode rootNode;
 
     @BeforeAll
-    public static void setUpClass() throws Exception {
+    static void setUpClass() {
         // Create a scene for testing.
 
         Texture tex = new UniformTexture();
@@ -46,7 +46,7 @@ public class OctreeNodeTest {
         var objects = objectList.toArray(RTObject[]::new);
 
         // Create an octree for it.
-        BoundingBox objBounds[] = new BoundingBox[objects.length];
+        BoundingBox[] objBounds = new BoundingBox[objects.length];
         double minx, maxx, miny, maxy, minz, maxz;
         minx = miny = minz = Double.MAX_VALUE;
         maxx = maxy = maxz = -Double.MAX_VALUE;
@@ -84,7 +84,7 @@ public class OctreeNodeTest {
      * Test the findNode() method.
      */
     @Test
-    public void testFindNode() {
+    void testFindNode() {
         for (int i = 0; i < 1000; i++) {
             Vec3 pos = new Vec3(Math.random() * (rootNode.maxx - rootNode.minx) + rootNode.minx,
                     Math.random() * (rootNode.maxy - rootNode.miny) + rootNode.miny,
@@ -103,7 +103,7 @@ public class OctreeNodeTest {
      * Test tracing a ray through the octree, and make sure it hits all the right nodes.
      */
     @Test
-    public void testTraceRay() {
+    void testTraceRay() {
         Ray r = new Ray(null);
         for (int i = 0; i < 1000; i++) {
             // Select a random ray direction and origin outside the scene.

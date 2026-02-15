@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 by Maksim Khramov
+/* Copyright (C) 2025-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
+
 
 @DisplayName("Dummy Image Filter")
 public class DummyImageFilter extends ImageFilter {
@@ -36,10 +36,10 @@ public class DummyImageFilter extends ImageFilter {
     }
 
     @Override
-    public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
+    public void writeToStream(DataOutputStream out, Scene theScene) {
     }
 
     @Override
-    public void initFromStream(DataInputStream in, Scene theScene) throws IOException {
+    public void initFromStream(DataInputStream in, Scene theScene) {
     }
 }
