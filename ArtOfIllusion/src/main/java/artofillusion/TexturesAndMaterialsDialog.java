@@ -1,5 +1,5 @@
 /* Copyright (C) 2011 by Helge Hansen and Peter Eastman
-   Changes copyright (C) 2016-2025 by Maksim Khramov
+   Changes copyright (C) 2016-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -33,28 +33,33 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TexturesAndMaterialsDialog extends BDialog {
 
-    private static Map<Scene, Rectangle> positions = new HashMap<>();
+    private static final Map<Scene, Rectangle> positions = new HashMap<>();
 
     private static final File assetsFolder = new File(ArtOfIllusion.APP_DIRECTORY, "Textures and Materials");
 
 
     private final Scene theScene;
-    private EditingWindow parentFrame;
-    private BTree libraryList;
+    private final EditingWindow parentFrame;
+    private final BTree libraryList;
     private File libraryFile;
     private Scene selectedScene;
     private Texture selectedTexture;
     private Material selectedMaterial;
     private SceneTreeNode selectedSceneNode;
     private int insertLocation;
-    private BButton duplicateButton, deleteButton, editButton;
-    private BButton loadLibButton, saveLibButton, deleteLibButton;
-    private BComboBox typeChoice;
-    private BRadioButton showTexturesButton, showMaterialsButton;
+    private final BButton duplicateButton;
+    private final BButton deleteButton;
+    private final BButton editButton;
+    private final BButton loadLibButton;
+    private final BButton saveLibButton;
+    private final BButton deleteLibButton;
+    private final BComboBox typeChoice;
+    private final BRadioButton showTexturesButton;
+    private final BRadioButton showMaterialsButton;
     private final List<Texture> textureTypes = PluginRegistry.getPlugins(Texture.class);
     private final List<Material> materialTypes = PluginRegistry.getPlugins(Material.class);
-    private MaterialPreviewer preview;
-    private BLabel matInfo;
+    private final MaterialPreviewer preview;
+    private final BLabel matInfo;
 
     private boolean showTextures, showMaterials;
     private final List<Object> rootNodes;

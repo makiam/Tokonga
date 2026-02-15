@@ -1,4 +1,4 @@
-/* Copyright (C) 2023 by Maksim Khramov
+/* Copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -26,7 +26,7 @@ import java.util.*;
 
 @Slf4j
 public class PreferencesPlugin implements Plugin {
-    protected static Map<String, DataMap> prefs = new HashMap<>();
+    protected static final Map<String, DataMap> prefs = new HashMap<>();
 
     protected static File prefdir;
 

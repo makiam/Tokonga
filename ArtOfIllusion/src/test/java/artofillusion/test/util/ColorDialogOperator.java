@@ -1,4 +1,4 @@
-/* Copyright (C) 2022 by Maksim Khramov
+/* Copyright (C) 2022-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -20,8 +20,8 @@ import org.netbeans.jemmy.operators.*;
  */
 public class ColorDialogOperator extends JDialogOperator {
 
-    private JComboBoxOperator comboBoxModel = new JComboBoxOperator(this, 0);
-    private JComboBoxOperator comboBoxModelRange = new JComboBoxOperator(this, 1);
+    private final JComboBoxOperator comboBoxModel = new JComboBoxOperator(this, 0);
+    private final JComboBoxOperator comboBoxModelRange = new JComboBoxOperator(this, 1);
 
     private final JButtonOperator okButton;
     private final JButtonOperator cancelButton;

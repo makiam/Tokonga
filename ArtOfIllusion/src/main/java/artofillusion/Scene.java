@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2013 by Peter Eastman
-   Changes copyright (C) 2016-2025 by Maksim Khramov
+   Changes copyright (C) 2016-2026 by Maksim Khramov
    Changes copyright (C) 2017-2020 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -54,7 +54,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
     private final List<ListChangeListener> textureListeners = new CopyOnWriteArrayList<>();
     private final List<ListChangeListener> materialListeners = new CopyOnWriteArrayList<>();
 
-    private Map<String, Object> metadataMap = new HashMap<>();
+    private final Map<String, Object> metadataMap = new HashMap<>();
     private Map<ObjectInfo, Integer> objectIndexMap;
 
     private RGBColor ambientColor = new RGBColor(0.3f, 0.3f, 0.3f);

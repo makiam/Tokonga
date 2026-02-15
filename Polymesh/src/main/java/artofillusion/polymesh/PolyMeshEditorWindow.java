@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2006-2007 by Francois Guillet
- *  Changes copyright (C) 2022-2025 by Maksim Khramov
+ *  Changes copyright (C) 2022-2026 by Maksim Khramov
  *
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
@@ -85,7 +85,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     private BMenuItem[] meshMenuItem;
 
-    private ButtonGroup smoothModesGroup = new ButtonGroup();
+    private final ButtonGroup smoothModesGroup = new ButtonGroup();
     private BCheckBoxMenuItem smoothApproximate;
     private BCheckBoxMenuItem smoothNone;
 

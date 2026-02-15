@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2015 by Peter Eastman
-   Changes copyright (C) 2016-2025 by Maksim Khramov
+   Changes copyright (C) 2016-2026 by Maksim Khramov
    Changes copyright (C) 2017-2020 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -47,9 +47,9 @@ import javax.swing.text.*;
 public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuManager {
 
 
-    SceneViewer[] theView;
-    BorderContainer[] viewPanel;
-    FormContainer viewsContainer;
+    final SceneViewer[] theView;
+    final BorderContainer[] viewPanel;
+    final FormContainer viewsContainer;
 
     private final DockingContainer[] dock;
 
@@ -58,7 +58,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     private final StatusPanel helpText = new StatusPanel();
     private final SceneExplorer sceneExplorer;
-    Scene theScene;
+    final Scene theScene;
 
     /**
      * -- GETTER --
@@ -143,7 +143,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     private final KeyEventPostProcessor keyEventHandler;
     private final SceneChangedEvent sceneChangedEvent;
 
-    protected Preferences preferences;
+    protected final Preferences preferences;
     private boolean hasNotifiedPlugins;
     private BMenu recentScriptMenu;
 

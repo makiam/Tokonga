@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2013 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -58,7 +58,7 @@ class KeystrokeEditor extends javax.swing.JDialog {
 
     private int recordCode;
     private int recordCodeModifiers;
-    private String scriptName;
+    private final String scriptName;
 
     private KeystrokeEditor(KeystrokeRecord record) {
         super((Frame)null, true);

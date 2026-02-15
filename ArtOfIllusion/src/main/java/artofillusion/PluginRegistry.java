@@ -1,7 +1,6 @@
-
 /* Copyright (C) 2007-2009 by Peter Eastman
    Some parts copyright (C) 2006 by Nik Trevallyn-Jones
-   Changes copyright (C) 2018-2024 by Maksim Khramov
+   Changes copyright (C) 2018-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -10,6 +9,7 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion;
 
 import artofillusion.plugin.*;
@@ -411,7 +411,7 @@ public class PluginRegistry {
     private static class JarInfo {
 
         @Getter
-        File file;
+        final File file;
         private Extension ext = new Extension();
 
         public String getName() {
