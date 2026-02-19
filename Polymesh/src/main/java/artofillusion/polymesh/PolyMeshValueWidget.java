@@ -1,4 +1,4 @@
-/* Changes copyright (C) 2023 by Maksim Khramov
+/* Changes copyright (C) 2023-2026 by Maksim Khramov
 
  This program is free software; you can redistribute it and/or modify it under the
  terms of the GNU General Public License as published by the Free Software
@@ -24,7 +24,7 @@ import buoy.widget.BTextField;
 import buoy.widget.BorderContainer;
 import buoy.widget.Widget;
 import buoy.xml.WidgetDecoder;
-import java.awt.event.InputEvent;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;

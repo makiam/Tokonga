@@ -1,5 +1,5 @@
 /* Copyright (C) 2006 by Peter Eastman
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -8,6 +8,7 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion.math;
 
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.extension.ExtendWith;
+
 
 @DisplayName("Simplex Noise Test")
 class SimplexNoiseTest {

@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2008 by Peter Eastman
- * Changes copyright (C) 2024 by Maksim Khramov
+ * Changes copyright (C) 2024-2026 by Maksim Khramov
  *
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,7 +12,7 @@
 package artofillusion.script;
 
 import artofillusion.ui.*;
-import buoy.event.*;
+
 import buoy.widget.*;
 
 import java.awt.event.WindowAdapter;

@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2007 by François Guillet
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
    Editions copyright © 2023 Petri Ihalainen
 
  This program is free software; you can redistribute it and/or modify it under the
@@ -13,7 +13,6 @@
 
 package artofillusion.polymesh;
 
-import artofillusion.MeshViewer;
 import artofillusion.RenderingMesh;
 import artofillusion.RenderingTriangle;
 import artofillusion.Scene;
@@ -34,8 +33,7 @@ import artofillusion.texture.FaceVertexParameterValue;
 import artofillusion.texture.ParameterValue;
 import artofillusion.texture.TextureMapping;
 import artofillusion.texture.VertexParameterValue;
-import artofillusion.ui.MeshEditController;
-import buoy.widget.RowContainer;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Stack;
@@ -69,11 +67,11 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 
         public short type;
 
-        public final static short NONE = 0;
+        public static final short NONE = 0;
 
-        public final static short CREASE = 1;
+        public static final short CREASE = 1;
 
-        public final static short CORNER = 2;
+        public static final short CORNER = 2;
 
         //private boolean marked;
         public QuadVertex(Vec3 p) {
@@ -117,7 +115,10 @@ public class QuadMesh extends Object3D implements FacetedMesh {
      */
     public static class QuadEdge {
 
-        public int v1, v2, f1, f2;
+        public int v1;
+        public int v2;
+        public int f1;
+        public int f2;
 
         public final float smoothness;
 
@@ -275,7 +276,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 
     private int[] projectedEdges;
 
-    public final static int MAX_SMOOTHNESS = 11;
+    public static final int MAX_SMOOTHNESS = 11;
 
     long t1, t2, t3, t4, t5, t6, t7;
 

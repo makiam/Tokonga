@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
    Modifications copyright (C) 2016-2017 Petri Ihalainen
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -15,7 +15,7 @@ package artofillusion;
 import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
-import buoy.event.*;
+
 import buoy.widget.*;
 
 import javax.swing.*;
@@ -44,6 +44,7 @@ public class CSGEditorWindow extends ObjectEditorWindow {
     private Scene theScene;
     private final Runnable onClose;
 
+    @SuppressWarnings("java:S1121")
     public CSGEditorWindow(EditingWindow parent, String title, CSGObject obj, Runnable onClose) {
         super(parent, title, new ObjectInfo(obj, new CoordinateSystem(), ""));
         theScene = new Scene();
@@ -119,6 +120,7 @@ public class CSGEditorWindow extends ObjectEditorWindow {
         objectMenu.add(objectMenuItem[4] = Translate.menuItem("convertToTriangle", event -> convertToTriangleCommand()));
     }
 
+    @SuppressWarnings("java:S1121")
     protected void createViewMenu() {
         BMenu viewMenu;
         BMenu displayMenu;
@@ -430,7 +432,9 @@ public class CSGEditorWindow extends ObjectEditorWindow {
         RowContainer px = new RowContainer();
         RowContainer py = new RowContainer();
         RowContainer pz = new RowContainer();
-        ValueField vfx, vfy, vfz;
+        ValueField vfx;
+        ValueField vfy;
+        ValueField vfz;
         BoundingBox bounds;
 
         if (sel.length == 0) {

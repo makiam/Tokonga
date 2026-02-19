@@ -1,5 +1,5 @@
 /* Copyright (C) 2003 by Peter Eastman
-   Changes copyright (C) 2023-2025 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -19,8 +19,7 @@ import java.io.*;
 import java.util.*;
 
 import static artofillusion.texture.Texture.*;
-import static artofillusion.texture.Texture.DIFFUSE_COLOR_COMPONENT;
-import static artofillusion.texture.Texture.SPECULAR_COLOR_COMPONENT;
+
 
 /**
  * This class can be used by various other exporters. It collects information about the

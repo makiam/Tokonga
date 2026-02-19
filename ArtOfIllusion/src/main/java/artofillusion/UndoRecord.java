@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import lombok.Getter;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**

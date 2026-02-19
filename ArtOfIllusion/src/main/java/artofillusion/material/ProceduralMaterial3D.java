@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2008 by Peter Eastman
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,7 @@ import artofillusion.math.*;
 import artofillusion.procedural.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
-import java.awt.*;
+
 import java.io.*;
 
 /**
@@ -29,7 +29,8 @@ public class ProceduralMaterial3D extends Material3D implements ProcedureOwner {
 
     private final Procedure proc;
     private boolean shadows;
-    private double stepSize, antialiasing;
+    private double stepSize;
+    private double antialiasing;
     private ThreadLocal<Procedure> renderingProc;
 
     public ProceduralMaterial3D() {

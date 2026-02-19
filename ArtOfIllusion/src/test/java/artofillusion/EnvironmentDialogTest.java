@@ -1,4 +1,4 @@
-/* Copyright (C) 2022-2024 by Maksim Khramov
+/* Copyright (C) 2022-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -7,6 +7,7 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion;
 
 import artofillusion.math.RGBColor;
@@ -17,7 +18,7 @@ import artofillusion.test.util.SetupLocale;
 import artofillusion.test.util.SetupLookAndFeel;
 import artofillusion.test.util.SetupTheme;
 import artofillusion.texture.UniformTexture;
-import artofillusion.ui.ThemeManager;
+
 import artofillusion.ui.Translate;
 
 import java.lang.reflect.Field;

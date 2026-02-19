@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2005 by Peter Eastman
-   Changes copyright (C) 2023-2025 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.awt.*;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
+
 
 /**
  * A ValueSlider contains a BTextField and a BSlider which are together used for choosing

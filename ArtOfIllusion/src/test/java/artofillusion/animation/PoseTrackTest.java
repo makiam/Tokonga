@@ -1,4 +1,4 @@
-/* Copyright (C) 2018 by Maksim Khramov
+/* Copyright (C) 2018-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -7,6 +7,7 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion.animation;
 
 import artofillusion.Scene;
@@ -16,14 +17,14 @@ import artofillusion.object.Object3D;
 import artofillusion.object.ObjectInfo;
 import artofillusion.test.util.StreamUtil;
 
-import java.io.IOException;
+
 import java.io.InvalidObjectException;
 import java.nio.ByteBuffer;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.extension.ExtendWith;
+
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -41,7 +42,7 @@ class PoseTrackTest {
         PoseTrack pt = new PoseTrack(oi);
         Assertions.assertNotNull(pt);
         Assertions.assertEquals(oi, pt.getParent());
-        Assertions.assertEquals(pt.getName(), "Pose");
+        Assertions.assertEquals("Pose", pt.getName());
     }
 
     @Test

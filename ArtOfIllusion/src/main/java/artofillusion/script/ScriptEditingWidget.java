@@ -1,5 +1,5 @@
 /* Copyright (C) 2023 by Lucas Stanek
- * Changes copyright 2023 by Maksim Khramov
+ * Changes copyright 2023-2026 by Maksim Khramov
  *
  *This program is free software; you can redistribute it and/or
  *modify it under the terms of the GNU General Public License
@@ -23,7 +23,7 @@ import buoy.widget.*;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.Optional;
+
 import lombok.extern.slf4j.Slf4j;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.Gutter;

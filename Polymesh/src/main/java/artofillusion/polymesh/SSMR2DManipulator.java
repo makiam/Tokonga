@@ -1,5 +1,5 @@
 /*
- *  Changes copyright (C) 2023 by Maksim Khramov
+ *  Changes copyright (C) 2023-2026 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -30,7 +30,7 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
+
 
 /**
  * This is the manipulator responsible for moving, resizing and rotating mesh selections (2D).
@@ -39,7 +39,7 @@ import java.awt.event.ActionEvent;
 public class SSMR2DManipulator extends SSMRManipulator {
 
     private final Rectangle[] boxes;
-    private final static int HANDLE_SIZE = 12;
+    private static final int HANDLE_SIZE = 12;
     private int handle;
     private boolean dragging = false;
     private boolean drawBounds = false;
@@ -56,16 +56,16 @@ public class SSMR2DManipulator extends SSMRManipulator {
     private static final Image[] rotateHandleImages = new Image[9];
     private static BToolTip moveToolTip, scaleToolTip, rotateToolTip, centerToolTip;
 
-    public final static short TOP_LEFT = 0;
-    public final static short TOP_RIGHT = 1;
-    public final static short BOTTOM_LEFT = 2;
-    public final static short BOTTOM_RIGHT = 3;
-    public final static short TOP = 4;
-    public final static short LEFT = 5;
-    public final static short BOTTOM = 6;
-    public final static short RIGHT = 7;
-    public final static short CENTER = 8;
-    public final static short TOOL_HANDLE = 9;
+    public static final short TOP_LEFT = 0;
+    public static final short TOP_RIGHT = 1;
+    public static final short BOTTOM_LEFT = 2;
+    public static final short BOTTOM_RIGHT = 3;
+    public static final short TOP = 4;
+    public static final short LEFT = 5;
+    public static final short BOTTOM = 6;
+    public static final short RIGHT = 7;
+    public static final short CENTER = 8;
+    public static final short TOOL_HANDLE = 9;
 
     private static final double DRAG_SCALE = Math.PI / 360.0;
 
