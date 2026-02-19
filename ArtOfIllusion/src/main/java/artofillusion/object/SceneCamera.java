@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
    Modifications Copyright 2016 by Petri Ihalainen
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -13,7 +13,7 @@
 package artofillusion.object;
 
 import artofillusion.*;
-import artofillusion.Renderer;
+
 import artofillusion.animation.*;
 import artofillusion.image.*;
 import artofillusion.image.filter.*;
@@ -32,8 +32,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.greenrobot.eventbus.EventBus;
-
-import javax.swing.*;
 
 /**
  * SceneCamera is a type of Object3D. It represents a camera which the user can position

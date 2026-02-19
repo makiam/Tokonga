@@ -1,6 +1,6 @@
 /* Copyright (C) 2002-2009 by Peter Eastman
    Changes Copyright (C) 2016-2019 by Petri Ihalainen
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -13,8 +13,7 @@
 package artofillusion;
 
 import artofillusion.ui.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,7 +21,6 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,7 +42,8 @@ public class ApplicationPreferences {
 
     private boolean keepBackupFiles;
     private boolean useOpenGL = true;
-    private boolean useCompoundMeshTool, reverseZooming;
+    private boolean useCompoundMeshTool;
+    private boolean reverseZooming;
     private boolean useViewAnimations = true;
     private boolean drawActiveFrustum;
     private boolean drawCameraFrustum = true;

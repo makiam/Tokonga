@@ -13,7 +13,7 @@ package artofillusion.theme;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import lombok.AccessLevel;
-import lombok.Data;
+
 import lombok.Getter;
 
 import java.util.ArrayList;

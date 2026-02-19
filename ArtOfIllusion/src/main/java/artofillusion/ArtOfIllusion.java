@@ -27,7 +27,6 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
-import ch.qos.logback.core.read.ListAppender;
 import groovy.lang.GroovyShell;
 import java.io.*;
 import java.nio.file.Files;
@@ -42,6 +41,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.LoggerFactory;
+
+import static org.slf4j.Logger.ROOT_LOGGER_NAME;
 
 /**
  * This is the main class for Art of Illusion. All of its methods and variables
@@ -72,9 +73,7 @@ public class ArtOfIllusion {
 
     static {
 
-        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
-            log.atError().setCause(e).log("Caught exception: " + e.getMessage());
-        });
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> log.atError().setCause(e).log("Caught exception: " + e.getMessage()));
 
         // Set up the standard directories.
         APP_DIRECTORY = AppPath.INSTANCE.getAppPath();
@@ -263,11 +262,7 @@ public class ArtOfIllusion {
                         } catch (java.util.concurrent.ExecutionException ex) {
                             String why;
                             Throwable cause = ex.getCause();
-                            if (cause == null) {
-                                why = ex.getMessage();
-                            } else {
-                                why = cause.getMessage();
-                            }
+                            why = Objects.requireNonNullElse(cause, ex).getMessage();
                             log.atError().setCause(ex).log("Swing background process interrupted: {}", why);
                         }
                     }
@@ -684,7 +679,7 @@ public class ArtOfIllusion {
         @Override
         public void onApplicationStarting() {
             LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-            Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+            Logger rootLogger = (Logger) LoggerFactory.getLogger(ROOT_LOGGER_NAME);
             this.setContext(lc);
             rootLogger.addAppender(this);
             this.start();

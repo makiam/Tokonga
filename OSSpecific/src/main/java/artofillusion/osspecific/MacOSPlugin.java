@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2020 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -55,8 +55,6 @@ import java.io.*;
 import java.util.Locale;
 import java.util.prefs.*;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.swing.*;
 
 /**
  * This is a plugin to make Art of Illusion behave more like a standard Macintosh

@@ -1,5 +1,5 @@
 /* Copyright (C) 2000,2002-2004 by Peter Eastman
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,7 +11,7 @@
 
 package artofillusion;
 
-import artofillusion.animation.JointEditorDialog;
+
 import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.texture.*;

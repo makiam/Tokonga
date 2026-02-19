@@ -1,4 +1,4 @@
-/* Copyright (C) 2022-2024 by Maksim Khramov
+/* Copyright (C) 2022-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -45,7 +45,7 @@ import artofillusion.test.util.SetupTheme;
 import artofillusion.texture.MoveUVViewTool;
 import artofillusion.ui.EditingTool;
 import artofillusion.ui.GenericTool;
-import buoy.widget.BLabel;
+
 import java.lang.reflect.Field;
 
 import org.junit.jupiter.api.Assertions;

@@ -20,10 +20,10 @@ import artofillusion.preferences.PreferencesEditor;
 import buoy.widget.*;
 import buoy.event.*;
 
-import java.util.*;
+
 import java.util.List;
 import java.awt.*;
-import java.util.stream.Collectors;
+
 
 /**
  * This is the window for editing application-wide preferences.
@@ -35,7 +35,10 @@ public class PreferencesWindow {
     private final PreferencesEditor keystrokePanel = new KeystrokePreferencesPanel();
     
     private BComboBox defaultRendChoice, objectRendChoice, texRendChoice, toolChoice;
-    private ValueField interactiveTolField, undoField, animationDurationField, animationFrameRateField;
+    private ValueField interactiveTolField;
+    private ValueField undoField;
+    private ValueField animationDurationField;
+    private ValueField animationFrameRateField;
     private BCheckBox drawActiveFrustumBox, drawCameraFrustumBox, showTravelCuesOnIdleBox, showTravelCuesScrollingBox;
     private BCheckBox showTiltDialBox;
     private BCheckBox glBox, backupBox, reverseZoomBox, useViewAnimationsBox;

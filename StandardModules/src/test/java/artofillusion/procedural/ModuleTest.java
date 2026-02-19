@@ -10,14 +10,14 @@
 
 package artofillusion.procedural;
 
-import org.jetbrains.annotations.NotNull;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.awt.Point;
-import java.lang.reflect.InvocationTargetException;
+
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -26,10 +26,10 @@ import java.util.stream.Stream;
  *
  * @author MaksK
  */
-public class ModuleTest {
+class ModuleTest {
 
     @Test
-    public void testModuleDuplicate0() {
+    void testModuleDuplicate0() {
         var source = new ColorScaleModule(new Point(128, 64));
         var target = source.duplicate();
 
@@ -41,7 +41,7 @@ public class ModuleTest {
     }
 
     @Test
-    public void testModuleDuplicate1() {
+    void testModuleDuplicate1() {
         var source = new PowerModule(new Point(128, 64));
         var target = source.duplicate();
 
@@ -53,7 +53,7 @@ public class ModuleTest {
     }
 
     @Test
-    public void testModuleDuplicate2() {
+    void testModuleDuplicate2() {
         var source = new ParameterModule(new Point(128, 64));
         var target = source.duplicate();
 
@@ -66,7 +66,7 @@ public class ModuleTest {
 
 
     @Test
-    public void testLookupNoInputs() {
+    void testLookupNoInputs() {
         var port = new NumericInputPort(IOPort.LEFT, "Description");
         var mm = new TestInputsPortModule();
         Assertions.assertNotNull(mm);
@@ -75,7 +75,7 @@ public class ModuleTest {
     }
 
     @Test
-    public void testLookupNoOutputs() {
+    void testLookupNoOutputs() {
         var port = new NumericInputPort(IOPort.LEFT, "Description");
         var mm = new TestOutputsPortModule();
         Assertions.assertNotNull(mm);
@@ -84,7 +84,7 @@ public class ModuleTest {
     }
 
     @Test
-    public void testInputPortLookup1() {
+    void testInputPortLookup1() {
         var port = new NumericInputPort(IOPort.LEFT, "Description");
         var mm = new TestInputsPortModule(port);
         Assertions.assertNotNull(mm);
@@ -92,7 +92,7 @@ public class ModuleTest {
     }
 
     @Test
-    public void testInputPortLookup2() {
+    void testInputPortLookup2() {
         var port1 = new NumericInputPort(IOPort.LEFT, "Description 1");
         var port2 = new NumericInputPort(IOPort.LEFT, "Description 2");
         var mm = new TestInputsPortModule(port1, port2);
@@ -103,7 +103,7 @@ public class ModuleTest {
 
 
     @Test
-    public void testOutputPortLookup1() {
+    void testOutputPortLookup1() {
         var port = new NumericInputPort(IOPort.LEFT, "Description");
         var mm = new TestOutputsPortModule(port);
         Assertions.assertNotNull(mm);
@@ -111,7 +111,7 @@ public class ModuleTest {
     }
 
     @Test
-    public void testOutputPortLookup2() {
+    void testOutputPortLookup2() {
         var port1 = new NumericInputPort(IOPort.LEFT, "Description 1");
         var port2 = new NumericInputPort(IOPort.LEFT, "Description 2");
         var mm = new TestOutputsPortModule(port1, port2);
@@ -122,7 +122,7 @@ public class ModuleTest {
 
     @ParameterizedTest
     @MethodSource("getModuleClasses")
-    public void testDefaultModuleConstructor(Class clazz) throws ReflectiveOperationException {
+    void testDefaultModuleConstructor(Class clazz) throws ReflectiveOperationException {
         var mod = (Module)clazz.getConstructor().newInstance();
         mod.setPosition(123, 456);
         Assertions.assertEquals(123, mod.bounds.x);

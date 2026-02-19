@@ -50,7 +50,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.netbeans.jemmy.operators.JFrameOperator;
 import org.netbeans.jemmy.operators.*;
 
 import org.netbeans.jemmy.Bundle;

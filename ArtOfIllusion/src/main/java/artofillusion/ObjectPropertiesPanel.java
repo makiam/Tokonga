@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2009 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -42,6 +42,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
     private final ValueField zRotField;
     private final BComboBox textureChoice;
     private final BComboBox materialChoice;
+    //private final AWTWidget materialAppender;
     private PropertyEditor[] propEditor;
     private ObjectInfo[] objects;
     private Property[] properties;
@@ -61,6 +62,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         zRotField = new ValueField(0.0, ValueField.NONE, 1);
         textureChoice = new BComboBox();
         materialChoice = new BComboBox();
+        //materialAppender = new AWTWidget(new MenuButton(AppIcon.INSTANCE.getAppIcon()));
         paramChangeProcessor = new ActionProcessor();
         rebuildContents();
         window.addEventLink(SceneChangedEvent.class, this, "rebuildContents");
@@ -273,10 +275,12 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         if (canSetTexture) {
             add(Translate.label("Texture"));
             add(textureChoice, fillLayout);
+
         }
         if (canSetMaterial) {
             add(Translate.label("Material"));
             add(materialChoice, fillLayout);
+            //add(materialAppender, fillLayout);
         }
 
         // Build widgets for object parameters.
@@ -368,8 +372,8 @@ public class ObjectPropertiesPanel extends ColumnContainer {
                 undo.addCommand(UndoRecord.COPY_COORDS, object.getCoords(), object.getCoords().duplicate());
             }
         }
-        for (int i = 0; i < objects.length; i++) {
-            CoordinateSystem coords = objects[i].getCoords();
+        for (ObjectInfo info: objects) {
+            CoordinateSystem coords = info.getCoords();
             Vec3 origin = coords.getOrigin();
             origin.x = getNewValue(origin.x, xPosField.getValue());
             origin.y = getNewValue(origin.y, yPosField.getValue());

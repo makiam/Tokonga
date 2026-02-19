@@ -1,4 +1,4 @@
-/* Copyright (C) 2016-2024 by Maksim Khramov
+/* Copyright (C) 2016-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -10,11 +10,10 @@
 package artofillusion.math;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.extension.ExtendWith;
+
 
 /**
  * @author makiam
@@ -22,19 +21,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @DisplayName("Coordinate System Equality Test")
 class CoordinateSystemEqualityTest {
 
-    public CoordinateSystemEqualityTest() {
-    }
-
-    @BeforeEach
-    void setUp() {
-    }
-
     @Test
     @DisplayName("Test CS Are Equals")
     void testCSAreEquals() {
         CoordinateSystem cs1 = new CoordinateSystem();
         CoordinateSystem cs2 = new CoordinateSystem();
-        Assertions.assertTrue(cs1.equals(cs2));
+        Assertions.assertEquals(cs1, cs2);
     }
 
     @Test
@@ -43,7 +35,7 @@ class CoordinateSystemEqualityTest {
         Vec3 vector = new Vec3();
         CoordinateSystem cs1 = new CoordinateSystem(vector, vector, vector);
         CoordinateSystem cs2 = new CoordinateSystem(vector, vector, vector);
-        Assertions.assertTrue(cs1.equals(cs2));
+        Assertions.assertEquals(cs1, cs2);
     }
 
     @Test
@@ -52,7 +44,7 @@ class CoordinateSystemEqualityTest {
         Vec3 vector = new Vec3(1.0, 1.0, 1.0);
         CoordinateSystem cs1 = new CoordinateSystem(vector, vector, vector);
         CoordinateSystem cs2 = new CoordinateSystem(vector, vector, vector);
-        Assertions.assertTrue(cs1.equals(cs2));
+        Assertions.assertEquals(cs1, cs2);
     }
 
     @Test
@@ -61,7 +53,7 @@ class CoordinateSystemEqualityTest {
         CoordinateSystem cs1 = new CoordinateSystem();
         CoordinateSystem cs2 = new CoordinateSystem();
         cs2.orig.x += 1.0;
-        Assertions.assertFalse(cs1.equals(cs2));
+        Assertions.assertNotEquals(cs1, cs2);
     }
 
     @Test
@@ -70,7 +62,7 @@ class CoordinateSystemEqualityTest {
         CoordinateSystem cs1 = new CoordinateSystem();
         CoordinateSystem cs2 = new CoordinateSystem();
         cs2.zdir.x += 1.0;
-        Assertions.assertFalse(cs1.equals(cs2));
+        Assertions.assertNotEquals(cs1, cs2);
     }
 
     @Test
@@ -79,6 +71,6 @@ class CoordinateSystemEqualityTest {
         CoordinateSystem cs1 = new CoordinateSystem();
         CoordinateSystem cs2 = new CoordinateSystem();
         cs2.updir.x += 1.0;
-        Assertions.assertFalse(cs1.equals(cs2));
+        Assertions.assertNotEquals(cs1, cs2);
     }
 }
