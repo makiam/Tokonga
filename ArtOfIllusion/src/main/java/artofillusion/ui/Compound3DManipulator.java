@@ -704,9 +704,9 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
             rotHandles = pqnRotHandles;
         }
         //and detect if click happened in one of them
-        for (int i = 0; i < rotHandles.length; i++) {
-            if ((rotSegment = rotHandles[i].findClickTarget(p, view.getCamera())) != -1) {
-                currentRotationHandle = rotHandles[i];
+        for(var handle: rotHandles) {
+            if((rotSegment = handle.findClickTarget(p, view.getCamera())) != -1) {
+                currentRotationHandle = handle;
                 dragHandleType = ROTATE;
                 dragAxis = currentRotationHandle.axis;
                 dragging = true;
