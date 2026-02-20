@@ -51,7 +51,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     final BorderContainer[] viewPanel;
     final FormContainer viewsContainer;
 
-    private final DockingContainer[] dock;
+    private final DockingContainer[] docks;
 
     private final Score score;
     private final ToolPalette tools;
@@ -153,6 +153,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      * this constructor directly. Instead, call ArtOfIllusion.newWindow(Scene
      * s).
      */
+    @SuppressWarnings("java:S1121")
     public LayoutWindow(Scene s) {
         super(s.getName() == null ? "Untitled" : s.getName());
         theScene = s;
@@ -215,20 +216,20 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         centerContainer.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
         centerContainer.add(viewsContainer, 1, 0, 1, 3);
         centerContainer.add(helpText.getComponent(), 0, 3, 2, 1);
-        dock = new DockingContainer[4];
-        dock[0] = new DockingContainer(centerContainer, BTabbedPane.LEFT);
-        dock[1] = new DockingContainer(dock[0], BTabbedPane.RIGHT);
-        dock[2] = new DockingContainer(dock[1], BTabbedPane.BOTTOM);
-        dock[3] = new DockingContainer(dock[2], BTabbedPane.TOP);
-        setContent(dock[3]);
-        for (int i = 0; i < dock.length; i++) {
-            dock[i].setHideSingleTab(true);
-            dock[i].addEventLink(DockingEvent.class, this, "dockableWidgetMoved");
-            BSplitPane split = dock[i].getSplitPane();
+        docks = new DockingContainer[4];
+        docks[0] = new DockingContainer(centerContainer, BTabbedPane.LEFT);
+        docks[1] = new DockingContainer(docks[0], BTabbedPane.RIGHT);
+        docks[2] = new DockingContainer(docks[1], BTabbedPane.BOTTOM);
+        docks[3] = new DockingContainer(docks[2], BTabbedPane.TOP);
+        setContent(docks[3]);
+        for(var dock: docks) {
+            dock.setHideSingleTab(true);
+            dock.addEventLink(DockingEvent.class, this, "dockableWidgetMoved");
+            BSplitPane split = dock.getSplitPane();
             split.setContinuousLayout(true);
             split.setOneTouchExpandable(true);
-            BTabbedPane.TabPosition pos = dock[i].getTabPosition();
-            split.setResizeWeight(pos == BTabbedPane.TOP || pos == BTabbedPane.LEFT ? 1.0 : 0.0);
+            BTabbedPane.TabPosition pos = dock.getTabPosition();
+            split.setResizeWeight(pos == BTabbedPane.TOP || pos == BTabbedPane.LEFT ? 1.0: 0.0);
             split.addEventLink(ValueChangedEvent.class, this, "updateMenus");
         }
         
@@ -266,10 +267,10 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }
         tools.setDefaultTool(defaultTool);
         tools.selectTool(defaultTool);
-        for (int i = 0; i < theView.length; i++) {
-            theView[i].setMetaTool(metaTool);
-            theView[i].setAltTool(altTool);
-            theView[i].setScrollTool(scrollTool);
+        for(var view: theView) {
+            view.setMetaTool(metaTool);
+            view.setAltTool(altTool);
+            view.setScrollTool(scrollTool);
         }
 
         // Fill in the left hand panel.
@@ -388,10 +389,10 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      */
     private void dockableWidgetMoved() {
         StringBuilder config = new StringBuilder();
-        for (int i = 0; i < dock.length; i++) {
-            for (int j = 0; j < dock[i].getTabCount(); j++) {
-                for (int k = 0; k < dock[i].getTabChildCount(j); k++) {
-                    DockableWidget w = dock[i].getChild(j, k);
+        for(var dock: docks) {
+            for(int j = 0; j < dock.getTabCount(); j++) {
+                for(int k = 0; k < dock.getTabChildCount(j); k++) {
+                    DockableWidget w = dock.getChild(j, k);
                     config.append(w.getContent().getClass().getName());
                     config.append('\t');
                     config.append(w.getLabel());
@@ -420,9 +421,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
         // Make a table of all DockableWidgets.
         HashMap<String, DockableWidget> widgets = new HashMap<>();
-        for (int i = 0; i < dock.length; i++) {
-            for (Widget next : dock[i].getChildren()) {
-                if (next instanceof DockableWidget w) {
+        for(var dock: docks) {
+            for(Widget next: dock.getChildren()) {
+                if(next instanceof DockableWidget w) {
                     widgets.put(w.getContent().getClass().getName() + '\t' + w.getLabel(), w);
                 }
             }
@@ -431,19 +432,19 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         // Rearrange them.
         String[] lines = config.split("\n");
         int container = 0, tab = 0, index = 0;
-        for (int i = 0; i < lines.length; i++) {
-            if (lines[i].isEmpty()) {
+        for(var line: lines) {
+            if(line.isEmpty()) {
                 tab++;
                 index = 0;
-            } else if ("-".equals(lines[i])) {
+            } else if("-".equals(line)) {
                 container++;
                 tab = 0;
                 index = 0;
             } else {
-                DockableWidget w = widgets.get(lines[i]);
-                if (w != null) {
-                    dock[container].addDockableWidget(w, tab, index++);
-                    widgets.remove(lines[i]);
+                DockableWidget w = widgets.get(line);
+                if(w != null) {
+                    docks[container].addDockableWidget(w, tab, index++);
+                    widgets.remove(line);
                 }
             }
         }
@@ -495,6 +496,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         fileMenu.add(Translate.menuItem("quit", event -> applicationQuitAction()));
     }
 
+    @SuppressWarnings("java:S1121")
     private void createEditMenu() {
 
         getMenuBar().add(editMenu);
@@ -516,6 +518,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     }
 
+    @SuppressWarnings("java:S1121")
     private void createObjectMenu() {
 
         getMenuBar().add(objectMenu);
@@ -540,6 +543,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         objectMenu.add(new PrimitivesMenu(this));
     }
 
+    @SuppressWarnings("java:S1121")
     private void createToolsMenu() {
         getMenuBar().add(toolsMenu);
 
@@ -588,6 +592,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     /*
     Creating the View menu. All view manipulation related menu items and sub menus should be added here.
      */
+    @SuppressWarnings("java:S1121")
     private void createViewMenu() {
         BMenu displayMenu;
 
@@ -666,6 +671,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }
     }
 
+    @SuppressWarnings("java:S1121")
     private void createAnimationMenu() {
 
         getMenuBar().add(animationMenu);
@@ -728,6 +734,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     /**
      * Create the popup menu.
      */
+    @SuppressWarnings("java:S1121")
     private void createPopupMenu() {
         popupMenu = new BPopupMenu();
         popupMenuItem = new BMenuItem[15];
@@ -764,24 +771,24 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
         canConvert = canSetTexture = (sel.length > 0);
         canHide = canShow = canLock = canUnlock = hasChildren = false;
-        for (int i = 0; i < sel.length; i++) {
-            info = (ObjectInfo) sel[i];
+        for(var o: sel) {
+            info = (ObjectInfo) o;
             obj = info.getObject();
-            if (obj.canConvertToTriangleMesh() == Object3D.CANT_CONVERT) {
+            if(obj.canConvertToTriangleMesh() == Object3D.CANT_CONVERT) {
                 canConvert = false;
             }
-            if (!obj.canSetTexture()) {
+            if(!obj.canSetTexture()) {
                 canSetTexture = false;
             }
-            if (info.getChildren().length > 0) {
+            if(info.getChildren().length > 0) {
                 hasChildren = true;
             }
-            if (info.isVisible()) {
+            if(info.isVisible()) {
                 canHide = true;
             } else {
                 canShow = true;
             }
-            if (info.isLocked()) {
+            if(info.isLocked()) {
                 canUnlock = true;
             } else {
                 canLock = true;
@@ -830,7 +837,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      * window.
      */
     public DockingContainer getDockingContainer(BTabbedPane.TabPosition position) {
-        for (var dockingContainer : dock) {
+        for (var dockingContainer : docks) {
             if (dockingContainer.getTabPosition() == position) {
                 return dockingContainer;
             }
@@ -942,7 +949,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         int numSelTracks = selTrack.length;
         int numSelKeyframes = score.getSelectedKeyframes().length;
         ViewerCanvas view = theView[currentView];
-        boolean canConvert, canSetTexture;
+        boolean canConvert;
+        boolean canSetTexture;
         boolean curve, noncurve, disable, hasChildren, hasParent;
         boolean enable;
         ObjectInfo info;
@@ -1134,8 +1142,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             @Override
             public void run() {
                 sceneExplorer.setUpdateEnabled(true);
-                for (int i = 0; i < theView.length; i++) {
-                    theView[i].rebuildCameraList();
+                for(var sceneViewer: theView) {
+                    sceneViewer.rebuildCameraList();
                 }
                 score.rebuildList();
             }
@@ -1167,11 +1175,11 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             @Override
             public void run() {
                 sceneExplorer.setUpdateEnabled(true);
-                for (int i = 0; i < theView.length; i++) {
-                    if (theView[i].getBoundCamera() == info) {
-                        theView[i].setOrientation(ViewerCanvas.VIEW_OTHER);
+                for(var sceneViewer: theView) {
+                    if(sceneViewer.getBoundCamera() == info) {
+                        sceneViewer.setOrientation(ViewerCanvas.VIEW_OTHER);
                     }
-                    theView[i].rebuildCameraList();
+                    sceneViewer.rebuildCameraList();
                 }
                 score.rebuildList();
             }
@@ -1184,8 +1192,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     public void setObjectName(int which, String name) {
         theScene.getObject(which).setName(name);
         sceneExplorer.repaint();
-        for (int i = 0; i < theView.length; i++) {
-            theView[i].rebuildCameraList();
+        for(var sceneViewer: theView) {
+            sceneViewer.rebuildCameraList();
         }
         score.rebuildList();
     }
@@ -1387,8 +1395,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         sceneExplorer.setUpdateEnabled(false);
         clearSelection();
         theScene.setSelection(which);
-        for (int i = 0; i < which.length; i++) {
-            sceneExplorer.setSelected(theScene.getObject(which[i]), true);
+        for(int j: which) {
+            sceneExplorer.setSelected(theScene.getObject(j), true);
         }
         sceneExplorer.setUpdateEnabled(true);
         score.rebuildList();
@@ -2032,10 +2040,14 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         ComponentsDialog dlg;
         ObjectInfo info;
         CoordinateSystem coords;
-        Vec3 alignTo, orig, center;
+        Vec3 alignTo;
+        Vec3 orig;
+        Vec3 center;
         BComboBox xchoice, ychoice, zchoice;
         RowContainer px = new RowContainer(), py = new RowContainer(), pz = new RowContainer();
-        ValueField vfx, vfy, vfz;
+        ValueField vfx;
+        ValueField vfy;
+        ValueField vfz;
         BoundingBox bounds;
 
         if (sel.length == 0) {
@@ -2226,7 +2238,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }
 
         // If the object has a Pose track, all Pose keyframes will need to be deleted.
-        boolean confirmed = false, hasPose = false;
+        boolean confirmed = false;
+        boolean hasPose = false;
         for (int i = 0; i < info.getTracks().length; i++) {
             if (info.getTracks()[i] instanceof PoseTrack) {
                 hasPose = true;
@@ -2313,8 +2326,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         UndoRecord undo = new UndoRecord(this);
         if (selectionOnly) {
             int[] sel = getSelectedIndices();
-            for (int i = 0; i < sel.length; i++) {
-                ObjectInfo info = theScene.getObject(sel[i]);
+            for(int j: sel) {
+                ObjectInfo info = theScene.getObject(j);
                 undo.addCommand(UndoRecord.COPY_OBJECT_INFO, info, info.duplicate());
                 info.setVisible(visible);
             }
@@ -2427,21 +2440,21 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         int[] sel = getSelectedIndices();
 
         UndoRecord undo = new UndoRecord(this);
-        for (int i = 0; i < sel.length; i++) {
-            ObjectInfo info = theScene.getObject(sel[i]);
-            if (info.getParent() == null) {
+        for(int k: sel) {
+            ObjectInfo info = theScene.getObject(k);
+            if(info.getParent() == null) {
                 continue;
             }
             Skeleton s = info.getParent().getSkeleton();
             ObjectRef relObj = new ObjectRef(info.getParent());
-            if (s != null) {
+            if(s != null) {
                 double nearest = Double.MAX_VALUE;
-                Joint[] jt = s.getJoints();
+
                 Vec3 pos = info.getCoords().getOrigin();
-                for (int j = 0; j < jt.length; j++) {
-                    ObjectRef r = new ObjectRef(info.getParent(), jt[j]);
+                for(var joint: s.getJoints()) {
+                    ObjectRef r = new ObjectRef(info.getParent(), joint);
                     double dist = r.getCoords().getOrigin().distance2(pos);
-                    if (dist < nearest) {
+                    if(dist < nearest) {
                         relObj = r;
                         nearest = dist;
                     }
@@ -2520,8 +2533,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         theScene.setGridSubdivisions((int) divField.getValue());
         theScene.setShowGrid(showBox.getState());
         theScene.setSnapToGrid(snapBox.getState());
-        for (int i = 0; i < theView.length; i++) {
-            theView[i].setGrid(theScene.getGridSpacing(), theScene.getGridSubdivisions(), theScene.getShowGrid(), theScene.getSnapToGrid());
+        for(var sceneViewer: theView) {
+            sceneViewer.setGrid(theScene.getGridSpacing(), theScene.getGridSubdivisions(), theScene.getShowGrid(), theScene.getSnapToGrid());
         }
         updateImage();
     }
@@ -2535,10 +2548,10 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         BoundingBox bb = null;
 
         if (selectionOnly) {
-            for (int i = 0; i < sel.length; i++) {
-                ObjectInfo info = theScene.getObject(sel[i]);
+            for(int j: sel) {
+                ObjectInfo info = theScene.getObject(j);
                 BoundingBox bounds = info.getBounds().transformAndOutset(info.getCoords().fromLocal());
-                if (bb == null) {
+                if(bb == null) {
                     bb = bounds;
                 } else {
                     bb = bb.merge(bounds);
@@ -2560,9 +2573,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         if (numViewsShown == 1) {
             theView[currentView].frameBox(bb);
         } else {
-            for (int i = 0; i < theView.length; i++) {
-                theView[i].frameBox(bb);
-            }
+            for(var sceneViewer: theView) sceneViewer.frameBox(bb);
         }
         updateImage();
     }

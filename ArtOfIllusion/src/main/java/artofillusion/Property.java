@@ -1,5 +1,5 @@
 /* Copyright (C) 2006 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -21,7 +21,8 @@ public class Property {
 
     private final String name;
     private final PropertyType type;
-    private double min, max;
+    private double min;
+    private double max;
     private Object[] allowedValues;
     private final Object defaultValue;
 
@@ -175,8 +176,8 @@ public class Property {
         } else if (type == COLOR) {
             return (value instanceof RGBColor);
         } else if (type == ENUMERATION) {
-            for (int i = 0; i < allowedValues.length; i++) {
-                if (allowedValues[i] == value) {
+            for(var allowedValue: allowedValues) {
+                if(allowedValue == value) {
                     return true;
                 }
             }
