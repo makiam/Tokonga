@@ -1,5 +1,5 @@
 /*
- *  Changes copyright (C) 2023-2025 by Maksim Khramov
+ *  Changes copyright (C) 2023-2026 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -162,9 +162,9 @@ public class PMExtrudeCurveTool extends EditingTool {
             return null;
         }
         boolean nonZeroSel = false;
-        for (int i = 0; i < sel.length; i++) {
-            nonZeroSel |= sel[i];
-            if (nonZeroSel) {
+        for(boolean b: sel) {
+            nonZeroSel |= b;
+            if(nonZeroSel) {
                 break;
             }
         }
@@ -182,9 +182,7 @@ public class PMExtrudeCurveTool extends EditingTool {
             ++count;
             Vec3 p = new Vec3();
             int[] fe = mesh.getFaceVertices(faces[i]);
-            for (int j = 0; j < fe.length; j++) {
-                p.add(verts[fe[j]].r);
-            }
+            for(int k: fe) p.add(verts[k].r);
             p.scale(1.0 / (float) fe.length);
             fromPoint.add(p);
         }
@@ -201,11 +199,10 @@ public class PMExtrudeCurveTool extends EditingTool {
                 continue;
             }
             int[] fe = mesh.getFaceVertices(faces[i]);
-            for (int j = 0; j < fe.length; j++) {
-                if (!rotated[fe[j]]) {
-                    verts[fe[j]].r = m.times(verts[fe[j]].r);
-                    rotated[fe[j]] = true;
-                }
+            for(int k: fe) {
+                if(rotated[k]) continue;
+                verts[k].r = m.times(verts[k].r);
+                rotated[k] = true;
             }
         }
     }
@@ -259,18 +256,18 @@ public class PMExtrudeCurveTool extends EditingTool {
         double length = 0;
         double cumul = 0;
         Vec3 previous = fromPoint;
-        for (int i = 0; i < clickPoints.size(); i++) {
-            length += clickPoints.get(i).position.minus(previous).length();
-            previous = clickPoints.get(i).position;
+        for(var clickPoint: clickPoints) {
+            length += clickPoint.position.minus(previous).length();
+            previous = clickPoint.position;
         }
         if (length < 0.005) {
             clickPoints.forEach(cp -> cp.amplitude = 1.0);
         } else {
             previous = fromPoint;
-            for (int i = 0; i < clickPoints.size(); i++) {
-                cumul += clickPoints.get(i).position.minus(previous).length();
-                clickPoints.get(i).amplitude = 1.0 - cumul / length;
-                previous = clickPoints.get(i).position;
+            for(var clickPoint: clickPoints) {
+                cumul += clickPoint.position.minus(previous).length();
+                clickPoint.amplitude = 1.0 - cumul / length;
+                previous = clickPoint.position;
             }
         }
     }
