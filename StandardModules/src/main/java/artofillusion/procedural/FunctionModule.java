@@ -336,7 +336,8 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
     @Override
     protected void drawContents(Graphics2D g) {
         Rectangle r = new Rectangle(bounds.x + IOPort.SIZE, bounds.y + IOPort.SIZE, bounds.width - 2 * IOPort.SIZE, bounds.height - 2 * IOPort.SIZE);
-        double miny = Double.MAX_VALUE, maxy = -Double.MAX_VALUE;
+        double miny = Double.MAX_VALUE;
+        double maxy = -Double.MAX_VALUE;
 
         for (int i = 0; i < y.length; i++) {
             if (y[i] < miny) {
