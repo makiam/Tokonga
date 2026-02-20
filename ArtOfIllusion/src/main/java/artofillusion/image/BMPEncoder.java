@@ -1,5 +1,5 @@
 /* Copyright (C) 2000 by Peter Eastman
-   Changes copyright (C) 2025 by Maksim Khramov
+   Changes copyright (C) 2025-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -72,11 +72,8 @@ public class BMPEncoder {
         imageDataSize = lineSize * height;
     }
 
-    protected static void writeIA(DataOutputStream out, int[] data)
-            throws IOException {
-        for (int i = 0; i < data.length; ++i) {
-            out.writeByte(data[i]);
-        }
+    protected static void writeIA(DataOutputStream out, int[] data) throws IOException {
+        for(int datum: data) out.writeByte(datum);
     }
 
     protected static int[] formatLittleEndian(int data) {
