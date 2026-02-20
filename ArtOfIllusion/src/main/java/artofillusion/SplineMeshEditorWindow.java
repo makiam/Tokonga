@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
    Modifications copyright (C) 2016-2017 Petri Ihalainen
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -73,8 +73,8 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         tools.addTool(altTool = new RotateViewTool(this));
         tools.setDefaultTool(defaultTool);
         tools.selectTool(defaultTool);
-        for (int i = 0; i < theView.length; i++) {
-            MeshViewer view = (MeshViewer) theView[i];
+        for(var viewerCanvas: theView) {
+            MeshViewer view = (MeshViewer) viewerCanvas;
             view.setMetaTool(metaTool);
             view.setAltTool(altTool);
             view.setScene(parent.getScene(), obj);
@@ -339,14 +339,14 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         SplineMesh obj = (SplineMesh) mesh;
 
         setObject(obj);
-        for (int i = 0; i < theView.length; i++) {
-            if (selectMode == POINT_MODE && selected.length != obj.getVertices().length) {
+        for(var viewerCanvas: theView) {
+            if(selectMode == POINT_MODE && selected.length != obj.getVertices().length) {
                 selected = new boolean[obj.getVertices().length];
             }
-            if (selectMode == EDGE_MODE && selected.length != obj.getUSize() + obj.getVSize()) {
+            if(selectMode == EDGE_MODE && selected.length != obj.getUSize() + obj.getVSize()) {
                 selected = new boolean[obj.getUSize() + obj.getVSize()];
             }
-            ((SplineMeshViewer) theView[i]).visible = new boolean[obj.getVertices().length];
+            ((SplineMeshViewer) viewerCanvas).visible = new boolean[obj.getVertices().length];
         }
         updateJointWeightParam();
         findSelectionDistance();
@@ -366,9 +366,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
             setSelectionMode(modes.getSelection());
             theView[currentView].getCurrentTool().activate();
         } else {
-            for (int i = 0; i < theView.length; i++) {
-                theView[i].setTool(tool);
-            }
+            for(var viewerCanvas: theView) viewerCanvas.setTool(tool);
             currentTool = tool;
         }
     }
@@ -389,8 +387,8 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         MeshViewer view = (MeshViewer) theView[currentView];
         int count = 0;
 
-        for (int i = 0; i < selected.length; i++) {
-            if (selected[i]) {
+        for(boolean b: selected) {
+            if(b) {
                 count++;
             }
         }
@@ -410,9 +408,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
             editMenuItem[0].setEnabled(false); // Extend
             editMenuItem[1].setEnabled(false); // Invert
             editMenuItem[2].setEnabled(false); // Deselect
-            for (int i = 0; i < meshMenuItem.length; i++) {
-                meshMenuItem[i].setEnabled(false);
-            }
+            for(var bMenuItem: meshMenuItem) bMenuItem.setEnabled(false);
         }
         Skeleton s = theMesh.getSkeleton();
         Joint selJoint = s.getJoint(view.getSelectedJoint());
@@ -425,8 +421,8 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         // This should go to the super class, but some plugin editors can not handle it
         boolean[] selected = getSelection();
         boolean enable = (view.getSelectedJoint() > 0);
-        for (int i = 0; i < selected.length; i++) {
-            enable = (selected[i] ? true : enable);
+        for(boolean b: selected) {
+            enable = (b ? true: enable);
         }
         fitToSelItem.setEnabled(enable);
 
@@ -571,8 +567,8 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
     }
 
     private void skeletonDetachedChanged() {
-        for (int i = 0; i < theView.length; i++) {
-            ((SplineMeshViewer) theView[i]).setSkeletonDetached(((BCheckBoxMenuItem) skeletonMenuItem[6]).getState());
+        for(var viewerCanvas: theView) {
+            ((SplineMeshViewer) viewerCanvas).setSkeletonDetached(((BCheckBoxMenuItem) skeletonMenuItem[6]).getState());
         }
     }
 
@@ -1071,8 +1067,8 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         SplineMesh theMesh = (SplineMesh) objInfo.getObject();
 
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, theMesh.duplicate()));
-        for (int i = 0; i < smoothItem.length; i++) {
-            smoothItem[i].setState(false);
+        for(BCheckBoxMenuItem bCheckBoxMenuItem: smoothItem) {
+            bCheckBoxMenuItem.setState(false);
         }
         smoothItem[method - 2].setState(true);
         theMesh.setSmoothingMethod(method);
