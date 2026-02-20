@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
    Modifications copyright (C) 2017 Petri Ihalainen
-   Changes copyright (C) 2023-2025 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -37,7 +37,8 @@ public abstract class ObjectEditorWindow extends BFrame implements EditingWindow
     protected FormContainer viewsContainer;
     protected int numViewsShown, currentView;
     protected ToolPalette tools;
-    protected EditingTool defaultTool, currentTool;
+    protected EditingTool defaultTool;
+    protected EditingTool currentTool;
     protected BLabel helpText;
     protected BMenuBar menubar;
     protected UndoStack undoStack;
@@ -218,9 +219,7 @@ public abstract class ObjectEditorWindow extends BFrame implements EditingWindow
     /* EditingWindow methods. */
     @Override
     public void setTool(EditingTool tool) {
-        for (int i = 0; i < theView.length; i++) {
-            theView[i].setTool(tool);
-        }
+        for(var viewerCanvas: theView) viewerCanvas.setTool(tool);
         currentTool = tool;
     }
 
@@ -345,9 +344,7 @@ public abstract class ObjectEditorWindow extends BFrame implements EditingWindow
      */
     public void showAxesCommand() {
         boolean wasShown = theView[currentView].getShowAxes();
-        for (int i = 0; i < theView.length; i++) {
-            theView[i].setShowAxes(!wasShown);
-        }
+        for(var viewerCanvas: theView) viewerCanvas.setShowAxes(!wasShown);
         lastShowAxes = !wasShown;
         savePreferences();
         updateMenus();
@@ -426,8 +423,8 @@ public abstract class ObjectEditorWindow extends BFrame implements EditingWindow
         lastGridSubdivisions = (int) divField.getValue();
         lastShowGrid = showBox.getState();
         lastSnapToGrid = snapBox.getState();
-        for (int i = 0; i < theView.length; i++) {
-            theView[i].setGrid(lastGridSpacing, lastGridSubdivisions, lastShowGrid, lastSnapToGrid);
+        for(var viewerCanvas: theView) {
+            viewerCanvas.setGrid(lastGridSpacing, lastGridSubdivisions, lastShowGrid, lastSnapToGrid);
         }
         savePreferences();
         updateImage();
