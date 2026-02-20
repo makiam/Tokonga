@@ -527,17 +527,17 @@ public class ObjectPropertiesPanel extends ColumnContainer {
             }
         }
         boolean changed = false;
-        for (int i = 0; i < objects.length; i++) {
-            for (int j = 0; j < propEditor.length; j++) {
-                if (propEditor[j].getWidget() == ev.getSource()) {
+        for(var item: objects) {
+            for(int j = 0; j < propEditor.length; j++) {
+                if(propEditor[j].getWidget() == ev.getSource()) {
                     Object value = propEditor[j].getValue();
-                    if (!objects[i].getObject().getPropertyValue(j).equals(value)) {
-                        objects[i].getObject().setPropertyValue(j, value);
+                    if(!item.getObject().getPropertyValue(j).equals(value)) {
+                        item.getObject().setPropertyValue(j, value);
                         changed = true;
                     }
                 }
             }
-            window.getScene().objectModified(objects[i].getObject());
+            window.getScene().objectModified(item.getObject());
         }
         lastEventSource = ev.getWidget();
         if (undo != null && changed) {
