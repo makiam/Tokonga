@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2007 by Peter Eastman
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -240,11 +240,11 @@ public class CreateVertexTool extends MeshEditingTool {
         mesh.setShape(newvert, newface);
 
         // Copy over the edge smoothness values.
-        TriangleMesh.Edge[] newedge = mesh.getEdges();
-        for (int i = 0; i < newedge.length; i++) {
-            for (int j = 0; j < edge.length; j++) {
-                if ((newedge[i].v1 == edge[j].v1 && newedge[i].v2 == edge[j].v2) || (newedge[i].v1 == edge[j].v2 && newedge[i].v2 == edge[j].v1)) {
-                    newedge[i].smoothness = edge[j].smoothness;
+
+        for(var item: mesh.getEdges()) {
+            for(var value: edge) {
+                if ((item.v1 == value.v1 && item.v2 == value.v2) || (item.v1 == value.v2 && item.v2 == value.v1)) {
+                    item.smoothness = value.smoothness;
                 }
             }
         }
