@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2008 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -117,7 +117,8 @@ public abstract class MeshGesture implements Gesture {
         }
 
         // Now update the vertex positions and parameters.
-        Vec3 temp1 = new Vec3(), temp2 = new Vec3();
+        Vec3 temp1 = new Vec3();
+        Vec3 temp2 = new Vec3();
         for (int i = 0; i < weight.length; i++) {
             MeshGesture key = p[i];
             Vec3[] keyPos = key.getVertexPositions();
@@ -155,29 +156,29 @@ public abstract class MeshGesture implements Gesture {
             }
             TextureParameter[] params = mesh.getParameters();
             if (params != null) {
-                for (int j = 0; j < params.length; j++) {
-                    ParameterValue val = average.getTextureParameter(params[j]);
+                for(TextureParameter param: params) {
+                    ParameterValue val = average.getTextureParameter(param);
                     if (val instanceof ConstantParameterValue tv) {
-                        ConstantParameterValue kv = (ConstantParameterValue) key.getTextureParameter(params[j]);
+                        ConstantParameterValue kv = (ConstantParameterValue) key.getTextureParameter(param);
                         tv.setValue(tv.getValue() + weight[i] * (kv.getValue() - tv.getValue()));
-                    } else if (val instanceof VertexParameterValue value1) {
-                        double[] tv = value1.getValue();
-                        double[] kv = ((VertexParameterValue) key.getTextureParameter(params[j])).getValue();
-                        for (int m = 0; m < tv.length; m++) {
+                    } else if (val instanceof VertexParameterValue vertexParameter) {
+                        double[] tv = vertexParameter.getValue();
+                        double[] kv = ((VertexParameterValue) key.getTextureParameter(param)).getValue();
+                        for(int m = 0; m < tv.length; m++) {
                             tv[m] += weight[i] * (kv[m] - tv[m]);
                         }
-                        value1.setValue(tv);
-                    } else if (val instanceof FaceParameterValue value) {
-                        double[] tv = value.getValue();
-                        double[] kv = ((FaceParameterValue) key.getTextureParameter(params[j])).getValue();
-                        for (int m = 0; m < tv.length; m++) {
+                        vertexParameter.setValue(tv);
+                    } else if (val instanceof FaceParameterValue faceParameter) {
+                        double[] tv = faceParameter.getValue();
+                        double[] kv = ((FaceParameterValue) key.getTextureParameter(param)).getValue();
+                        for(int m = 0; m < tv.length; m++) {
                             tv[m] += weight[i] * (kv[m] - tv[m]);
                         }
-                        value.setValue(tv);
+                        faceParameter.setValue(tv);
                     } else if (val instanceof FaceVertexParameterValue tv) {
-                        FaceVertexParameterValue kv = (FaceVertexParameterValue) getTextureParameter(params[j]);
-                        for (int m = 0; m < tv.getFaceCount(); m++) {
-                            for (int n = 0; n < tv.getFaceVertexCount(m); n++) {
+                        FaceVertexParameterValue kv = (FaceVertexParameterValue) getTextureParameter(param);
+                        for(int m = 0; m < tv.getFaceCount(); m++) {
+                            for(int n = 0; n < tv.getFaceVertexCount(m); n++) {
                                 tv.setValue(m, n, tv.getValue(m, n) + weight[i] * (kv.getValue(m, n) - tv.getValue(m, n)));
                             }
                         }
