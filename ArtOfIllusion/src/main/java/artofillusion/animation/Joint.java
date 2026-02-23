@@ -1,5 +1,6 @@
 /* Copyright (C) 2002,2003 by Peter Eastman
    Change Copyright (C) Petri Ihalainen 2020
+   Changes copyright (C) 2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -21,7 +22,10 @@ public class Joint {
 
     public CoordinateSystem coords;
     public String name;
-    public DOF angle1, angle2, twist, length;
+    public DOF angle1;
+    public DOF angle2;
+    public DOF twist;
+    public DOF length;
     public Joint parent;
     public Joint[] children;
     public int id;
@@ -103,11 +107,7 @@ public class Joint {
             Vec3 updir = parent.coords.fromLocal().timesDirection(m.timesDirection(Vec3.vy()));
             coords = new CoordinateSystem(parentPos.plus(zdir.times(length.pos)), zdir, updir);
         }
-        if (recursive) {
-            for (int i = 0; i < children.length; i++) {
-                children[i].recalcCoords(true);
-            }
-        }
+        if(recursive) for(var child: children) child.recalcCoords(true);
     }
 
     /**
@@ -148,11 +148,7 @@ public class Joint {
             angle2.pos = -ang[1];
             twist.pos = -ang[2];
         }
-        if (recursive) {
-            for (int i = 0; i < children.length; i++) {
-                children[i].calcAnglesFromCoords(true);
-            }
-        }
+        if(recursive) for(Joint child: children) child.calcAnglesFromCoords(true);
     }
 
     /**
