@@ -33,6 +33,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 
 
 /**
@@ -44,20 +45,26 @@ public class SSMR3DManipulator
 
     private final Rectangle[] boxes;
     private Rectangle extraUVBox;
-    private final static int HANDLE_SIZE = 12;
+    private static final int HANDLE_SIZE = 12;
     private int handle;
     private boolean dragging = false;
     private Point baseClick;
     private final Runnable valueWidgetCallback;
     private boolean isShiftDown;
     private Vec3 rotateCenter;
-    private Vec3 xaxis, yaxis, zaxis;
-    private Vec2 x2DaxisNormed, y2DaxisNormed, z2DaxisNormed;
+    private Vec3 xaxis;
+    private Vec3 yaxis;
+    private Vec3 zaxis;
+    private Vec2 x2DAxisNormed;
+    private Vec2 y2DAxisNormed;
+    private Vec2 z2DAxisNormed;
     private int rotSegment;
     private double rotAngle;
     private Point centerPoint, centerLocation;
     private Vec3 center;
-    private double scale, extraScaleX, extraScaleY;
+    private double scale;
+    private double extraScaleX;
+    private double extraScaleY;
     private int selCenter, selNum;
     private Vec3 toolHandePos;
     private Vec2[] featurePoints2d;
@@ -72,26 +79,26 @@ public class SSMR3DManipulator
     private Mat4 viewToWorld;
 
     private static BToolTip moveToolTip, scaleToolTip, rotateToolTip, centerToolTip;
-    private static Image ghostscale;
-    private static Image centerhandle;
+    private static Image ghostScale;
+    private static Image centerHandle;
     private static final Image[] xyzHandleImages = new Image[6];
     private static final Image[] uvHandleImages = new Image[4];
     private static final Image[] specificHandleImages = new Image[6];
 
-    public final static short X_MOVE = 0;
-    public final static short X_SCALE = 1;
-    public final static short Y_MOVE = 2;
-    public final static short Y_SCALE = 3;
-    public final static short Z_MOVE = 4;
-    public final static short Z_SCALE = 5;
-    public final static short CENTER = 6;
-    public final static short ROTATE = 7;
-    public final static short TOOL_HANDLE = 8;
-    public final static short UV_EXTRA = 9;
+    public static final short X_MOVE = 0;
+    public static final short X_SCALE = 1;
+    public static final short Y_MOVE = 2;
+    public static final short Y_SCALE = 3;
+    public static final short Z_MOVE = 4;
+    public static final short Z_SCALE = 5;
+    public static final short CENTER = 6;
+    public static final short ROTATE = 7;
+    public static final short TOOL_HANDLE = 8;
+    public static final short UV_EXTRA = 9;
 
-    public final static short XYZ_MODE = 0;
-    public final static short UV_MODE = 1;
-    public final static short SPECIFIC_MODE = 2;
+    public static final short XYZ_MODE = 0;
+    public static final short UV_MODE = 1;
+    public static final short SPECIFIC_MODE = 2;
 
     private static final double DRAG_SCALE = 0.01;
 
@@ -109,8 +116,8 @@ public class SSMR3DManipulator
             uvHandleImages[X_SCALE] = ThemeManager.getIcon("polymesh:uvscale").getImage();
             uvHandleImages[Y_MOVE] = ThemeManager.getIcon("polymesh:vhandle").getImage();
             uvHandleImages[Y_SCALE] = ThemeManager.getIcon("polymesh:uvscale").getImage();
-            ghostscale = ThemeManager.getIcon("polymesh:ghostscale").getImage();
-            centerhandle = ThemeManager.getIcon("polymesh:centerhandle").getImage();
+            ghostScale = ThemeManager.getIcon("polymesh:ghostscale").getImage();
+            centerHandle = ThemeManager.getIcon("polymesh:centerhandle").getImage();
             specificHandleImages[X_MOVE] = ThemeManager.getIcon("polymesh:phandle").getImage();
             specificHandleImages[X_SCALE] = ThemeManager.getIcon("polymesh:xscale").getImage();
             specificHandleImages[Y_MOVE] = ThemeManager.getIcon("polymesh:qhandle").getImage();
@@ -236,12 +243,12 @@ public class SSMR3DManipulator
         Vec2 x2Daxis = screenX.minus(axisCenter);
         Vec2 y2Daxis = screenY.minus(axisCenter);
         Vec2 z2Daxis = screenZ.minus(axisCenter);
-        x2DaxisNormed = new Vec2(x2Daxis);
-        y2DaxisNormed = new Vec2(y2Daxis);
-        z2DaxisNormed = new Vec2(z2Daxis);
-        x2DaxisNormed.normalize();
-        y2DaxisNormed.normalize();
-        z2DaxisNormed.normalize();
+        x2DAxisNormed = new Vec2(x2Daxis);
+        y2DAxisNormed = new Vec2(y2Daxis);
+        z2DAxisNormed = new Vec2(z2Daxis);
+        x2DAxisNormed.normalize();
+        y2DAxisNormed.normalize();
+        z2DAxisNormed.normalize();
         if (!freezeManipulator) {
             centerPoint = new Point((int) Math.round(axisCenter.x), (int) Math.round(axisCenter.y));
         }
@@ -264,7 +271,8 @@ public class SSMR3DManipulator
         else if (dragging && (handle == X_SCALE || handle == Y_SCALE || handle == Z_SCALE)) {
             Vec3 pos = null;
             Vec3 handlePos = null;
-            Vec2 screenPos, screenHandle;
+            Vec2 screenPos;
+            Vec2 screenHandle;
             double sign = 1.0;
             if (scale < 0) {
                 sign = -1;
@@ -288,7 +296,7 @@ public class SSMR3DManipulator
             screenPos = cam.getObjectToScreen().timesXY(pos);
             screenHandle = cam.getObjectToScreen().timesXY(handlePos);
             view.drawLine(centerPoint, new Point((int) screenPos.x, (int) screenPos.y), Color.black);
-            view.drawImage(ghostscale, (int) (screenHandle.x - HANDLE_SIZE / 2), (int) (screenHandle.y - HANDLE_SIZE / 2));
+            view.drawImage(ghostScale, (int) (screenHandle.x - HANDLE_SIZE / 2), (int) (screenHandle.y - HANDLE_SIZE / 2));
         } else if (dragging && handle == UV_EXTRA) {
             Vec3 pos = null;
             Vec3 handlePos = null;
@@ -314,10 +322,10 @@ public class SSMR3DManipulator
             screenPos = cam.getObjectToScreen().timesXY(pos);
             screenHandle = cam.getObjectToScreen().timesXY(handlePos);
             view.drawLine(centerPoint, new Point((int) screenPos.x, (int) screenPos.y), Color.black);
-            view.drawImage(ghostscale, (int) (screenHandle.x - HANDLE_SIZE / 2), (int) (screenHandle.y - HANDLE_SIZE / 2));
+            view.drawImage(ghostScale, (int) (screenHandle.x - HANDLE_SIZE / 2), (int) (screenHandle.y - HANDLE_SIZE / 2));
         } //center drag
         else if (dragging && handle == CENTER) {
-            view.drawImage(centerhandle, centerLocation.x - HANDLE_SIZE / 2, centerLocation.y - HANDLE_SIZE / 2);
+            view.drawImage(centerHandle, centerLocation.x - HANDLE_SIZE / 2, centerLocation.y - HANDLE_SIZE / 2);
 
         }
 
@@ -352,7 +360,7 @@ public class SSMR3DManipulator
         // Draw the handles.
         boxes[CENTER].x = (centerPoint.x - HANDLE_SIZE / 2);
         boxes[CENTER].y = (centerPoint.y - HANDLE_SIZE / 2);
-        view.drawImage(centerhandle, boxes[CENTER].x, boxes[CENTER].y);
+        view.drawImage(centerHandle, boxes[CENTER].x, boxes[CENTER].y);
         for (int i = 0; i < 2; i++) {
             boxes[X_MOVE + i].x = (int) (screenXHandle.x - HANDLE_SIZE / 2 + i * x2DHandleOffset.x);
             boxes[X_MOVE + i].y = (int) (screenXHandle.y - HANDLE_SIZE / 2 + i * x2DHandleOffset.y);
@@ -398,13 +406,12 @@ public class SSMR3DManipulator
                 rotHandles = specificRotHandles;
                 break;
         }
-        RotationHandle rotHandle;
-        for (int i = 0; i < rotHandles.length; ++i) {
-            rotHandle = rotHandles[i];
-            for (int j = 0; j < rotHandle.points3d.length; j++) {
+
+        for(RotationHandle rotHandle: rotHandles) {
+            for(int j = 0; j < rotHandle.points3d.length; j++) {
                 rotHandle.points2d[j] = cam.getObjectToScreen().timesXY(center.plus(rotHandle.points3d[j].times(len)));
             }
-            for (int j = 0; j < rotHandle.points3d.length - 1; j++) {
+            for(int j = 0; j < rotHandle.points3d.length - 1; j++) {
                 view.drawLine(new Point((int) rotHandle.points2d[j].x, (int) rotHandle.points2d[j].y),
                         new Point((int) rotHandle.points2d[j + 1].x, (int) rotHandle.points2d[j + 1].y), rotHandle.color);
             }
@@ -491,9 +498,9 @@ public class SSMR3DManipulator
                 break;
         }
         //and detect if click happened in one of them
-        for (int i = 0; i < rotHandles.length; i++) {
-            if ((rotSegment = rotHandles[i].findClickTarget(p, view.getCamera())) != -1) {
-                currentRotationHandle = rotHandles[i];
+        for(RotationHandle rotHandle: rotHandles) {
+            if ((rotSegment = rotHandle.findClickTarget(p, view.getCamera())) != -1) {
+                currentRotationHandle = rotHandle;
                 handle = ROTATE;
                 dragging = true;
                 baseClick = new Point(e.getPoint());
@@ -532,20 +539,11 @@ public class SSMR3DManipulator
             if (boxes[i].contains(p)) {
 
                 switch (i) {
-                    case X_MOVE:
-                    case Y_MOVE:
-                    case Z_MOVE:
-                        moveToolTip.processEvent(e);
-                        break;
-                    case X_SCALE:
-                    case Y_SCALE:
-                    case Z_SCALE:
-                        scaleToolTip.processEvent(e);
-                        break;
-                    case CENTER:
-                        centerToolTip.processEvent(e);
-                        break;
-                    default:
+                    case X_MOVE, Y_MOVE, Z_MOVE -> moveToolTip.processEvent(e);
+                    case X_SCALE, Y_SCALE, Z_SCALE -> scaleToolTip.processEvent(e);
+                    case CENTER -> centerToolTip.processEvent(e);
+                    default -> {
+                    }
                 }
 
             }
@@ -564,8 +562,8 @@ public class SSMR3DManipulator
                 break;
         }
         //and detect if movement happened in one of them
-        for (int i = 0; i < rotHandles.length; i++) {
-            if ((rotSegment = rotHandles[i].findClickTarget(p, view.getCamera())) != -1) {
+        for(RotationHandle rotHandle: rotHandles) {
+            if ((rotSegment = rotHandle.findClickTarget(p, view.getCamera())) != -1) {
                 rotateToolTip.processEvent(e);
                 return true;
             }
@@ -695,7 +693,8 @@ public class SSMR3DManipulator
         Camera cam = view.getCamera();
         Point dragPoint = e.getPoint();
         CoordinateSystem c = oldCoords.duplicate();
-        int dx, dy;
+        int dx;
+        int dy;
         double angle;
         Vec3 axis;
 
@@ -769,7 +768,7 @@ public class SSMR3DManipulator
         double amplitude = 0;
         switch (handle) {
             case X_MOVE:
-                amplitude = disp.dot(x2DaxisNormed);
+                amplitude = disp.dot(x2DAxisNormed);
                 amplitude /= view.getScale();
                 if (isShiftDown) {
                     amplitude /= gridSize;
@@ -779,7 +778,7 @@ public class SSMR3DManipulator
                 drag = xaxis.times(amplitude);
                 break;
             case Y_MOVE:
-                amplitude = disp.dot(y2DaxisNormed);
+                amplitude = disp.dot(y2DAxisNormed);
                 amplitude /= view.getScale();
                 if (isShiftDown) {
                     amplitude /= gridSize;
@@ -789,7 +788,7 @@ public class SSMR3DManipulator
                 drag = yaxis.times(amplitude);
                 break;
             case Z_MOVE:
-                amplitude = disp.dot(z2DaxisNormed);
+                amplitude = disp.dot(z2DAxisNormed);
                 amplitude /= view.getScale();
                 if (isShiftDown) {
                     amplitude /= gridSize;
@@ -809,7 +808,9 @@ public class SSMR3DManipulator
     public boolean scaleDragged(WidgetMouseEvent e) {
         Point p = e.getPoint();
         boolean isShiftDown = e.isShiftDown();
-        double scaleX, scaleY, scaleZ;
+        double scaleX;
+        double scaleY;
+        double scaleZ;
 
         Vec2 base = new Vec2(baseClick.x - centerPoint.x, baseClick.y - centerPoint.y);
         Vec2 current = new Vec2(p.x - centerPoint.x, p.y - centerPoint.y);
@@ -849,8 +850,8 @@ public class SSMR3DManipulator
                     }
                     break;
                 case UV_EXTRA:
-                    scaleX = x2DaxisNormed.dot(current) / x2DaxisNormed.dot(base);
-                    scaleY = y2DaxisNormed.dot(current) / y2DaxisNormed.dot(base);
+                    scaleX = x2DAxisNormed.dot(current) / x2DAxisNormed.dot(base);
+                    scaleY = y2DAxisNormed.dot(current) / y2DAxisNormed.dot(base);
                     if (isShiftDown) {
                         if (scaleX < 1 && scaleY < 1) {
                             scaleX = scaleY = Math.min(scaleX, scaleY);
@@ -935,9 +936,9 @@ public class SSMR3DManipulator
                     rotHandles = specificRotHandles;
                     break;
             }
-            for (int i = 0; i < rotHandles.length; i++) {
-                if ((rotSegment = rotHandles[i].findClickTarget(p, view.getCamera())) != -1) {
-                    currentRotationHandle = rotHandles[i];
+            for(RotationHandle rotHandle: rotHandles) {
+                if ((rotSegment = rotHandle.findClickTarget(p, view.getCamera())) != -1) {
+                    currentRotationHandle = rotHandle;
                     handle = ROTATE;
                 }
             }
@@ -1121,16 +1122,16 @@ public class SSMR3DManipulator
         int dx = 0;
         int dy = 0;
         // Pressing an arrow key is equivalent to dragging the first selected point by one pixel.
-        if (key == KeyPressedEvent.VK_UP) {
+        if (key == KeyEvent.VK_UP) {
             dx = 0;
             dy = -1;
-        } else if (key == KeyPressedEvent.VK_DOWN) {
+        } else if (key == KeyEvent.VK_DOWN) {
             dx = 0;
             dy = 1;
-        } else if (key == KeyPressedEvent.VK_LEFT) {
+        } else if (key == KeyEvent.VK_LEFT) {
             dx = -1;
             dy = 0;
-        } else if (key == KeyPressedEvent.VK_RIGHT) {
+        } else if (key == KeyEvent.VK_RIGHT) {
             dx = 1;
             dy = 0;
         } else {
@@ -1188,7 +1189,8 @@ public class SSMR3DManipulator
         protected final Color color;
         protected final Vec3[] points3d;
         protected final Vec2[] points2d;
-        protected Vec3 rotAxis, refAxis;
+        protected Vec3 rotAxis;
+        protected Vec3 refAxis;
 
         /**
          * Creates a Rotation Handle with a given number of segments
@@ -1262,11 +1264,13 @@ public class SSMR3DManipulator
          * clicked on the handle
          */
         public int findClickTarget(Point pos, Camera camera) {
-            double u, v, w, z;
+            double u;
+            double v;
+            double w;
+            double z;
             double closestz = Double.MAX_VALUE;
             int which = -1;
             for (int i = 0; i < points2d.length - 1; i++) {
-                int orig;
                 Vec2 v1 = points2d[i];
                 Vec2 v2 = points2d[i + 1];
                 if ((pos.x < v1.x - HANDLE_SIZE / 4 && pos.x < v2.x - HANDLE_SIZE / 4)
