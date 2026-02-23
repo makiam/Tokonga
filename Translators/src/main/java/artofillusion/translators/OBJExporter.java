@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2009 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -151,16 +151,16 @@ public class OBJExporter {
             }
 
             // Find the normals.
-            Vec3[] norm;
+            Vec3[] normals;
             int[][] normIndex = new int[mesh.getFaceCount()][];
             if (mesh instanceof TriangleMesh) {
                 RenderingMesh rm = ((TriangleMesh) mesh).getRenderingMesh(Double.MAX_VALUE, false, info);
-                norm = rm.norm;
+                normals = rm.norm;
                 for (int j = 0; j < normIndex.length; j++) {
                     normIndex[j] = new int[]{rm.triangle[j].n1, rm.triangle[j].n2, rm.triangle[j].n3};
                 }
             } else {
-                norm = mesh.getNormals();
+                normals = mesh.getNormals();
                 for (int j = 0; j < normIndex.length; j++) {
                     normIndex[j] = new int[mesh.getFaceVertexCount(j)];
                     for (int k = 0; k < normIndex[j].length; k++) {
@@ -170,24 +170,24 @@ public class OBJExporter {
             }
 
             // Determine whether normals are actually required.
-            MeshVertex[] vert = mesh.getVertices();
+            MeshVertex[] vertices = mesh.getVertices();
             boolean needNormals = false;
             if (alwaysStoreNormals) {
                 needNormals = true;
             } else {
                 for (int j = 0; j < normIndex.length && !needNormals; j++) {
                     for (int k = 1; k < normIndex[j].length; k++) {
-                        if (!norm[normIndex[j][k]].equals(norm[normIndex[j][0]])) {
+                        if (!normals[normIndex[j][k]].equals(normals[normIndex[j][0]])) {
                             needNormals = true;
                         }
                     }
                 }
                 if (needNormals) {
                     needNormals = false;
-                    Vec3[] vertNormal = new Vec3[vert.length];
+                    Vec3[] vertNormal = new Vec3[vertices.length];
                     for (int j = 0; j < mesh.getFaceCount() && !needNormals; j++) {
                         for (int k = 0; k < mesh.getFaceVertexCount(j); k++) {
-                            Vec3 n = norm[normIndex[j][k]];
+                            Vec3 n = normals[normIndex[j][k]];
                             int index = mesh.getFaceVertexIndex(j, k);
                             if (vertNormal[index] == null) {
                                 vertNormal[index] = n;
@@ -223,16 +223,16 @@ public class OBJExporter {
                 }
             }
             Mat4 trans = info.getCoords().fromLocal();
-            for (int j = 0; j < vert.length; j++) {
-                Vec3 v = trans.times(vert[j].r);
+            for(var vertex: vertices) {
+                Vec3 v = trans.times(vertex.r);
                 out.println("v " + nf.format(v.x) + " " + nf.format(v.y) + " " + nf.format(v.z));
             }
             if (needNormals) {
-                for (int j = 0; j < norm.length; j++) {
-                    if (norm[j] == null) {
+                for(var normal: normals) {
+                    if (normal == null) {
                         out.println("vn 1 0 0");
                     } else {
-                        Vec3 v = trans.timesDirection(norm[j]);
+                        Vec3 v = trans.timesDirection(normal);
                         out.println("vn " + nf.format(v.x) + " " + nf.format(v.y) + " " + nf.format(v.z));
                     }
                 }
@@ -243,10 +243,10 @@ public class OBJExporter {
                 Vec2[][] coords = ((UVMapping) ((Object3D) mesh).getTextureMapping()).findFaceTextureCoordinates(mesh);
                 double uscale = (ti.maxU == ti.minU ? 1.0 : 1.0 / (ti.maxU - ti.minU));
                 double vscale = (ti.maxV == ti.minV ? 1.0 : 1.0 / (ti.maxV - ti.minV));
-                for (int j = 0; j < coords.length; j++) {
-                    for (int k = 0; k < coords[j].length; k++) {
-                        double u = (coords[j][k].x - ti.minU) * uscale;
-                        double v = (coords[j][k].y - ti.minV) * vscale;
+                for(Vec2[] coord: coords) {
+                    for(Vec2 vec2: coord) {
+                        double u = (vec2.x - ti.minU) * uscale;
+                        double v = (vec2.y - ti.minV) * vscale;
                         out.println("vt " + nf.format(u) + " " + nf.format(v));
                     }
                 }
@@ -274,9 +274,9 @@ public class OBJExporter {
                 Vec2[] coords = ((Mapping2D) ((Object3D) mesh).getTextureMapping()).findTextureCoordinates(mesh);
                 double uscale = (ti.maxU == ti.minU ? 1.0 : 1.0 / (ti.maxU - ti.minU));
                 double vscale = (ti.maxV == ti.minV ? 1.0 : 1.0 / (ti.maxV - ti.minV));
-                for (int j = 0; j < coords.length; j++) {
-                    double u = (coords[j].x - ti.minU) * uscale;
-                    double v = (coords[j].y - ti.minV) * vscale;
+                for(Vec2 coord: coords) {
+                    double u = (coord.x - ti.minU) * uscale;
+                    double v = (coord.y - ti.minV) * vscale;
                     out.println("vt " + nf.format(u) + " " + nf.format(v));
                 }
                 for (int j = 0; j < mesh.getFaceCount(); j++) {
@@ -316,9 +316,9 @@ public class OBJExporter {
                     out.println();
                 }
             }
-            numVert += vert.length;
+            numVert += vertices.length;
             if (needNormals) {
-                numNorm += norm.length;
+                numNorm += normals.length;
             }
         }
     }
