@@ -1,4 +1,5 @@
 /* Copyright (C) 2001,2004 by Peter Eastman
+   Changes copyright (C) 2016-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -22,8 +23,8 @@ public class VerticalAxis extends CustomWidget {
 
     private double minValue;
     private double maxValue;
-    private double vscale;
-    private double[] tickPos;
+    private double vScale;
+    private double[] tickPositions;
     private final NumberFormat nf = NumberFormat.getNumberInstance();
     private boolean lineAtBottom;
     private Rectangle lastBounds;
@@ -43,7 +44,7 @@ public class VerticalAxis extends CustomWidget {
         Rectangle dim = getBounds();
         minValue = min;
         maxValue = max;
-        vscale = dim.height / (max - min);
+        vScale = dim.height / (max - min);
 
         // Select the vertical tick positions.
         double height = dim.height;
@@ -62,14 +63,14 @@ public class VerticalAxis extends CustomWidget {
         }
         double lowest = Math.ceil(min / increment) * increment;
         int num = (int) Math.ceil((max - lowest) / increment) + 1;
-        tickPos = new double[num];
+        tickPositions = new double[num];
         for (int i = 0; i < num; i++) {
-            tickPos[i] = lowest + i * increment;
+            tickPositions[i] = lowest + i * increment;
         }
     }
 
     /**
-     * Set whether a line should be draw along the bottom edge.
+     * Set whether a line should be drawn along the bottom edge.
      */
     public void showLineAtBottom(boolean show) {
         lineAtBottom = show;
@@ -85,18 +86,18 @@ public class VerticalAxis extends CustomWidget {
         }
 
         // Draw the ticks on the vertical axis.
-        if (tickPos == null) {
+        if (tickPositions == null) {
             return;
         }
-        if (tickPos.length > 1) {
-            nf.setMaximumFractionDigits((int) Math.max(0, 1 - Math.log(tickPos[1] - tickPos[0]) / Math.log(10)));
+        if (tickPositions.length > 1) {
+            nf.setMaximumFractionDigits((int) Math.max(0, 1 - Math.log(tickPositions[1] - tickPositions[0]) / Math.log(10)));
         } else {
             nf.setMaximumFractionDigits(3);
         }
-        for (int i = 0; i < tickPos.length; i++) {
-            int y = dim.height - (int) Math.round(vscale * (tickPos[i] - minValue));
+        for(double pos: tickPositions) {
+            int y = dim.height - (int) Math.round(vScale * (pos - minValue));
             g.drawLine(dim.width - TICK_SIZE, y, dim.width, y);
-            String s = nf.format(tickPos[i]);
+            String s = nf.format(pos);
             int x = dim.width - TICK_SIZE - 2 - fm.stringWidth(s);
             g.drawString(s, x, y + labelOffset);
         }
