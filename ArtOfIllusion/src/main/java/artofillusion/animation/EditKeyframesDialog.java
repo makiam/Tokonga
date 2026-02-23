@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -200,62 +200,62 @@ public class EditKeyframesDialog {
 
         // Prepare an undo record.
         UndoRecord undo = new UndoRecord(window);
-        for (int i = 0; i < track.length; i++) {
-            Object parent = track[i].getParent();
+        for(var value: track) {
+            Object parent = value.getParent();
             Track dup;
             if (parent instanceof ObjectInfo info) {
-                dup = track[i].duplicate(info);
+                dup = value.duplicate(info);
             } else {
-                dup = track[i].duplicate(null);
+                dup = value.duplicate(null);
             }
-            undo.addCommand(UndoRecord.COPY_TRACK, track[i], dup);
+            undo.addCommand(UndoRecord.COPY_TRACK, value, dup);
         }
 
         // Perform the operation.
-        for (int i = 0; i < track.length; i++) {
+        for(var value: track) {
             // Delete existing keyframes in the target region.
 
-            double[] t = track[i].getKeyTimes();
-            for (int j = t.length - 1; j >= 0; j--) {
+            double[] t = value.getKeyTimes();
+            for(int j = t.length - 1; j >= 0; j--) {
                 if (t[j] > targetStart && t[j] < targetEnd) {
-                    track[i].deleteKeyframe(j);
+                    value.deleteKeyframe(j);
                 }
             }
 
             // Create the new keyframes.
-            Timecourse tc = track[i].getTimecourse();
+            Timecourse tc = value.getTimecourse();
             if (tc == null) {
                 continue;
             }
             Keyframe[] key = tc.getValues();
             Smoothness[] s = tc.getSmoothness();
-            t = track[i].getKeyTimes();
+            t = value.getKeyTimes();
             if (operation == MOVE || operation == RESCALE || operation == DELETE) {
-                for (int j = t.length - 1; j >= 0; j--) {
+                for(int j = t.length - 1; j >= 0; j--) {
                     if (t[j] >= start && t[j] <= end) {
-                        track[i].deleteKeyframe(j);
+                        value.deleteKeyframe(j);
                     }
                 }
             }
             if (operation == MOVE || operation == COPY) {
-                for (int j = 0; j < t.length; j++) {
+                for(int j = 0; j < t.length; j++) {
                     if (t[j] >= start && t[j] <= end) {
-                        track[i].setKeyframe(roundTime(t[j] - start + extra, fps), key[j].duplicate(), s[j]);
+                        value.setKeyframe(roundTime(t[j] - start + extra, fps), key[j].duplicate(), s[j]);
                     }
                 }
             }
             if (operation == RESCALE) {
-                for (int j = 0; j < t.length; j++) {
+                for(int j = 0; j < t.length; j++) {
                     if (t[j] >= start && t[j] <= end) {
-                        track[i].setKeyframe(roundTime(scaleStart + scaleFactor * (t[j] - start), fps), key[j].duplicate(), s[j]);
+                        value.setKeyframe(roundTime(scaleStart + scaleFactor * (t[j] - start), fps), key[j].duplicate(), s[j]);
                     }
                 }
             }
             if (operation == LOOP) {
-                for (int j = 0; j < t.length; j++) {
+                for(int j = 0; j < t.length; j++) {
                     if (t[j] >= start && t[j] <= end) {
-                        for (int k = 1; k < numLoops; k++) {
-                            track[i].setKeyframe(roundTime(t[j] + k * (end - start), fps), key[j].duplicate(), s[j]);
+                        for(int k = 1; k < numLoops; k++) {
+                            value.setKeyframe(roundTime(t[j] + k * (end - start), fps), key[j].duplicate(), s[j]);
                         }
                     }
                 }
