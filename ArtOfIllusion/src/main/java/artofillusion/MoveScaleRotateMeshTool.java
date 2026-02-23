@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2007 by Peter Eastman
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -33,7 +33,8 @@ public class MoveScaleRotateMeshTool extends MeshEditingTool {
     private Vec3[] baseVertPos;
     private UndoRecord undo;
     private final Compound3DManipulator manipulator;
-    private boolean tooltipsEnabled, tooltipsAdded;
+    private boolean tooltipsEnabled;
+    private boolean tooltipsAdded;
 
     private static final BToolTip ROTATE_TIP = new BToolTip(Translate.text("moveScaleRotateMeshTool.rotateTipText"));
     private static final BToolTip MOVE_TIP = new BToolTip(Translate.text("moveScaleRotateMeshTool.moveTipText"));
@@ -208,9 +209,7 @@ public class MoveScaleRotateMeshTool extends MeshEditingTool {
             tooltipsEnabled = !tooltipsEnabled;
             if (tooltipsEnabled && !tooltipsAdded) {
                 ViewerCanvas[] allViews = ((MeshEditorWindow) theWindow).getAllViews();
-                for (int i = 0; i < allViews.length; i++) {
-                    allViews[i].addEventLink(ToolTipEvent.class, this, "showToolTip");
-                }
+                for(var allView: allViews) allView.addEventLink(ToolTipEvent.class, this, "showToolTip");
                 tooltipsAdded = true;
             }
             if (!tooltipsEnabled) {
@@ -224,19 +223,20 @@ public class MoveScaleRotateMeshTool extends MeshEditingTool {
         int i;
         int[] selectDist = controller.getSelectionDistance();
         int key = e.getKeyCode();
-        double dx, dy;
+        double dx;
+        double dy;
 
         // Pressing an arrow key is equivalent to dragging the first selected point by one pixel.
-        if (key == KeyPressedEvent.VK_UP) {
+        if (key == KeyEvent.VK_UP) {
             dx = 0;
             dy = -1;
-        } else if (key == KeyPressedEvent.VK_DOWN) {
+        } else if (key == KeyEvent.VK_DOWN) {
             dx = 0;
             dy = 1;
-        } else if (key == KeyPressedEvent.VK_LEFT) {
+        } else if (key == KeyEvent.VK_LEFT) {
             dx = -1;
             dy = 0;
-        } else if (key == KeyPressedEvent.VK_RIGHT) {
+        } else if (key == KeyEvent.VK_RIGHT) {
             dx = 1;
             dy = 0;
         } else {

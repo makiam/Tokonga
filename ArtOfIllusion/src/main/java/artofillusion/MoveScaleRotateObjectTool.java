@@ -421,15 +421,16 @@ public class MoveScaleRotateObjectTool extends EditingTool {
             v = cam.findDragVector(origin, dx, dy);
         }
         theWindow.setUndoRecord(undo = new UndoRecord(getWindow()));
-        ArrayList<ObjectInfo> toMove = new ArrayList<>();
-        for (int j : sel) {
+        List<ObjectInfo> toMove = new ArrayList<>();
+        for (int j: sel) {
             toMove.add(theScene.getObject(j));
         }
-        for (int i = 0; i < toMove.size(); i++) {
-            CoordinateSystem c = toMove.get(i).getCoords();
+        toMove.forEach(item -> {
+            CoordinateSystem c = item.getCoords();
             undo.addCommand(UndoRecord.COPY_COORDS, c, c.duplicate());
             c.setOrigin(c.getOrigin().plus(v));
-        }
+        });
+
         theWindow.getScene().applyTracksAfterModification(toMove);
         theWindow.updateImage();
         undo = null;
