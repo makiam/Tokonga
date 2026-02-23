@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
    Modifications Copyright (C) 2016-2017 Petri Ihalainen
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -31,7 +31,8 @@ public class SoftwareCanvasDrawer implements CanvasDrawer {
     protected final ViewerCanvas view;
     protected BufferedImage theImage;
     protected Graphics2D imageGraphics;
-    protected int[] pixel, zbuffer;
+    protected int[] pixel;
+    protected int[] zbuffer;
     protected final boolean hideBackfaces;
     protected int[] templatePixel;
     protected Rectangle bounds;
@@ -228,10 +229,7 @@ public class SoftwareCanvasDrawer implements CanvasDrawer {
      */
     @Override
     public void drawBoxes(java.util.List<Rectangle> box, Color color) {
-        for (int i = 0; i < box.size(); i++) {
-            Rectangle r = box.get(i);
-            drawBox(r.x, r.y, r.width, r.height, color);
-        }
+        box.forEach(r -> drawBox(r.x, r.y, r.width, r.height, color));
     }
 
     /**
@@ -691,8 +689,8 @@ public class SoftwareCanvasDrawer implements CanvasDrawer {
             if (z[v1] < clip || z[v2] < clip || z[v3] < clip) {
                 Vec2[] clipPos = clipTriangle(vert[v1], vert[v2], vert[v3], z[v1], z[v2], z[v3], cam, clipz);
                 boolean inside = true;
-                for (int j = 0; j < clipPos.length; j++) {
-                    if (clipPos[j].x < -32767.0 || clipPos[j].x > 32767.0 || clipPos[j].y < -32767.0 || clipPos[j].y > 32767.0) {
+                for(Vec2 clipPo: clipPos) {
+                    if (clipPo.x < -32767.0 || clipPo.x > 32767.0 || clipPo.y < -32767.0 || clipPo.y > 32767.0) {
                         inside = false;
                     }
                 }
@@ -760,8 +758,8 @@ public class SoftwareCanvasDrawer implements CanvasDrawer {
                 if (needClipping) {
                     Vec2[] clipPos = clipTriangle(vert[v1], vert[v2], vert[v3], z[v1], z[v2], z[v3], cam, clipz);
                     boolean inside = true;
-                    for (int j = 0; j < clipPos.length; j++) {
-                        if (clipPos[j].x < -32767.0 || clipPos[j].x > 32767.0 || clipPos[j].y < -32767.0 || clipPos[j].y > 32767.0) {
+                    for(Vec2 clipPo: clipPos) {
+                        if (clipPo.x < -32767.0 || clipPo.x > 32767.0 || clipPo.y < -32767.0 || clipPo.y > 32767.0) {
                             inside = false;
                         }
                     }
@@ -781,8 +779,8 @@ public class SoftwareCanvasDrawer implements CanvasDrawer {
             if (needClipping) {
                 Vec2[] clipPos = clipSmoothTriangle(vert[v1], vert[v2], vert[v3], z[v1], z[v2], z[v3], cam, color1, color2, color3, color4, color5, color6, color7, clipz);
                 boolean inside = true;
-                for (int j = 0; j < clipPos.length; j++) {
-                    if (clipPos[j].x < -32767.0 || clipPos[j].x > 32767.0 || clipPos[j].y < -32767.0 || clipPos[j].y > 32767.0) {
+                for(Vec2 clipPo: clipPos) {
+                    if (clipPo.x < -32767.0 || clipPo.x > 32767.0 || clipPo.y < -32767.0 || clipPo.y > 32767.0) {
                         inside = false;
                     }
                 }
