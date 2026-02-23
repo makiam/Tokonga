@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2004 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -15,6 +15,8 @@ import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.object.TriangleMesh.*;
 import artofillusion.texture.*;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -53,17 +55,13 @@ public class TriMeshBeveler {
      * @param width the bevel width
      */
     public TriangleMesh bevelMesh(double height, double width) {
-        switch (mode) {
-            case BEVEL_FACES:
-                return bevelIndividualFaces(height, width);
-            case BEVEL_FACE_GROUPS:
-                return bevelFacesAsGroup(height, width);
-            case BEVEL_EDGES:
-                return bevelEdges(height, width);
-            case BEVEL_VERTICES:
-                return bevelVertices(height, width);
-        }
-        return null;
+        return switch (mode) {
+            case BEVEL_FACES -> bevelIndividualFaces(height, width);
+            case BEVEL_FACE_GROUPS -> bevelFacesAsGroup(height, width);
+            case BEVEL_EDGES -> bevelEdges(height, width);
+            case BEVEL_VERTICES -> bevelVertices(height, width);
+            default -> null;
+        };
     }
 
     /**
@@ -88,9 +86,7 @@ public class TriMeshBeveler {
         findVertexInsets(height, width);
 
         // All old vertices will be in the new mesh, so first copy them over.
-        for (int i = 0; i < v.length; i++) {
-            vert.add(v[i]);
-        }
+        Collections.addAll(vert, v);
 
         // Create the new list of faces.
         for (int i = 0; i < f.length; i++) {
@@ -115,10 +111,10 @@ public class TriMeshBeveler {
 
         // Copy over smoothness values for edges.
         Edge[] newe = mesh.getEdges();
-        for (int i = 0; i < e.length; i++) {
-            for (int j : mesh.getVertex(e[i].v1).getEdges()) {
-                if (newe[j].v1 == e[i].v2 || newe[j].v2 == e[i].v2) {
-                    newe[j].smoothness = e[i].smoothness;
+        for(Edge edge: e) {
+            for(int j: mesh.getVertex(edge.v1).getEdges()) {
+                if (newe[j].v1 == edge.v2 || newe[j].v2 == edge.v2) {
+                    newe[j].smoothness = edge.smoothness;
                     break;
                 }
             }
@@ -126,8 +122,8 @@ public class TriMeshBeveler {
 
         // Record which faces should be selected.
         newSelection = new boolean[mesh.getFaces().length];
-        for (int i = 0; i < newIndex.size(); i++) {
-            newSelection[newIndex.get(i)] = true;
+        for(Integer index: newIndex) {
+            newSelection[index] = true;
         }
         return mesh;
     }
@@ -138,8 +134,12 @@ public class TriMeshBeveler {
     private void findVertexInsets(double height, double width) {
         Vertex[] v = (Vertex[]) mesh.getVertices();
         Face[] f = mesh.getFaces();
-        double length, dot;
-        Vec3 e1, e2, e3, normal;
+        double length;
+        double dot;
+        Vec3 e1;
+        Vec3 e2;
+        Vec3 e3;
+        Vec3 normal;
         int i;
 
         faceInsets = new Vec3[f.length][];
@@ -189,7 +189,7 @@ public class TriMeshBeveler {
         Face[] f = mesh.getFaces();
         int m;
         int n;
-        int[][] newface;
+
         int[][] vertFace;
         int[] numVertFaces;
         int[] tempFace;
@@ -203,7 +203,8 @@ public class TriMeshBeveler {
         List<Vertex> vert = new Vector<>();
         List<int[]> bevel = new Vector<>();
 
-        boolean[] someSelected = new boolean[v.length], allSelected = new boolean[v.length];
+        boolean[] someSelected = new boolean[v.length];
+        boolean[] allSelected = new boolean[v.length];
         boolean[][] touching;
         boolean[] inGroup;
         boolean[] beveled = new boolean[e.length];
@@ -214,9 +215,8 @@ public class TriMeshBeveler {
         findEdgeInsets(height, width);
 
         // First copy over the old faces and vertices.  (Some of these will be modified later.)
-        for (int i = 0; i < v.length; i++) {
-            vert.add(v[i]);
-        }
+        Collections.addAll(vert, v);
+
         for (int i = 0; i < f.length; i++) {
             face.add(new int[]{f[i].v1, f[i].v2, f[i].v3, i});
         }
@@ -504,8 +504,11 @@ public class TriMeshBeveler {
     private void findEdgeInsets(double height, double width) {
         Vertex[] v = (Vertex[]) mesh.getVertices();
         Face[] f = mesh.getFaces();
-        double length, dot;
-        Vec3 e1, e2, e3;
+        double length;
+        double dot;
+        Vec3 e1;
+        Vec3 e2;
+        Vec3 e3;
         int i;
 
         faceInsets = new Vec3[f.length][];
@@ -897,7 +900,8 @@ public class TriMeshBeveler {
             }
             int[] vi = new int[4];
             for (int j = 0; j < faceList.length; j++) {
-                int v1 = -1, v2 = -1;
+                int v1 = -1;
+                int v2 = -1;
                 for (int k = 0; k < vertFaceIndex[e[i].v1].length && v1 == -1; k++) {
                     if (vertFaceIndex[e[i].v1][k] == faceList[j]) {
                         v1 = faceVertIndex[e[i].v1][k];
@@ -1065,7 +1069,10 @@ public class TriMeshBeveler {
                 faceList[1] = e[i].f2;
             }
             for (int j = 0; j < faceList.length; j++) {
-                int v0, v1, v2, v3;
+                int v0;
+                int v1;
+                int v2;
+                int v3;
                 v0 = vertIndex[e[i].v1];
                 v3 = vertIndex[e[i].v2];
                 v1 = v2 = -1;

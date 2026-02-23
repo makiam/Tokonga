@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
-   Changes copyright (C) 2023-2025 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -67,7 +67,8 @@ public class TriMeshSimplifier implements Runnable {
 
     private class MeshEdge {
 
-        int v1, v2;
+        int v1;
+        int v2;
         MeshFace f1, f2;
         float smoothness;
         double cost;
@@ -96,11 +97,14 @@ public class TriMeshSimplifier implements Runnable {
     private VertexInfo[] vertex;
     private MeshEdge[] edge;
     private MeshFace[] face;
-    private Vec3 temp1, temp2, temp3;
+    private Vec3 temp1;
+    private Vec3 temp2;
+    private Vec3 temp3;
     private int faces;
     private BDialog dial;
     private BButton cancelButton;
-    private BLabel status, numLabel;
+    private BLabel status;
+    private BLabel numLabel;
     private boolean cancel;
     private final double tol;
 
@@ -146,6 +150,7 @@ public class TriMeshSimplifier implements Runnable {
     }
 
     /* Put up a status dialog. */
+    @SuppressWarnings("java:S1121")
     private void createDialog(BFrame fr) {
         dial = new BDialog(fr, true);
         BorderContainer content = new BorderContainer();
@@ -171,7 +176,7 @@ public class TriMeshSimplifier implements Runnable {
         int[] index = new int[vertex.length];
         int[][] f = new int[faces][];
         Vertex[] vert;
-        Edge[] ed;
+
 
         // Find the indices of all unique vertices.
         int k = 0;
@@ -215,24 +220,24 @@ public class TriMeshSimplifier implements Runnable {
         // Update surface parameters.
         ParameterValue[] paramValue = mesh.getParameterValues();
         if (paramValue != null) {
-            for (int i = 0; i < paramValue.length; i++) {
-                if (paramValue[i] instanceof VertexParameterValue value) {
+            for(ParameterValue parameterValue: paramValue) {
+                if (parameterValue instanceof VertexParameterValue value) {
                     double[] oldValue = value.getValue();
                     double[] newValue = new double[vertex.length];
-                    for (int j = 0; j < newValue.length; j++) {
+                    for(int j = 0; j < newValue.length; j++) {
                         newValue[index[j]] = oldValue[j];
                     }
                     value.setValue(newValue);
-                } else if (paramValue[i] instanceof FaceParameterValue value) {
+                } else if (parameterValue instanceof FaceParameterValue value) {
                     double[] oldValue = value.getValue();
                     double[] newValue = new double[faces];
-                    for (int j = 0; j < newValue.length; j++) {
+                    for(int j = 0; j < newValue.length; j++) {
                         newValue[j] = oldValue[face[j].origIndex];
                     }
                     value.setValue(newValue);
-                } else if (paramValue[i] instanceof FaceVertexParameterValue value) {
+                } else if (parameterValue instanceof FaceVertexParameterValue value) {
                     double[][] newValue = new double[faces][3];
-                    for (int j = 0; j < newValue.length; j++) {
+                    for(int j = 0; j < newValue.length; j++) {
                         newValue[j][0] = value.getValue(face[j].origIndex, 0);
                         newValue[j][1] = value.getValue(face[j].origIndex, 1);
                         newValue[j][2] = value.getValue(face[j].origIndex, 2);
@@ -254,7 +259,8 @@ public class TriMeshSimplifier implements Runnable {
         int[] edgeCount;
         int[] faceCount;
         MeshEdge tempEdge;
-        VertexInfo v1, v2;
+        VertexInfo v1;
+        VertexInfo v2;
         Constraint con;
 
         vertex = new VertexInfo[v.length];
@@ -391,7 +397,10 @@ public class TriMeshSimplifier implements Runnable {
      */
     private void doSimplification() {
         int i, j, k, skip;
-        MeshEdge rem1, rem2, rep1, rep2;
+        MeshEdge rem1;
+        MeshEdge rem2;
+        MeshEdge rep1;
+        MeshEdge rep2;
         MeshEdge e;
         MeshEdge[] star;
         MeshEdge tempEdge;
@@ -788,16 +797,16 @@ public class TriMeshSimplifier implements Runnable {
             if (ed.f2 != null) {
                 MeshEdge[] star = vertex[ed.v1].star;
                 boolean v1IsBoundary = false;
-                for (int i = 0; i < star.length; i++) {
-                    if (star[i].f2 == null) {
+                for(MeshEdge meshEdge: star) {
+                    if (meshEdge.f2 == null) {
                         v1IsBoundary = true;
                         break;
                     }
                 }
                 if (v1IsBoundary) {
                     star = vertex[ed.v2].star;
-                    for (int i = 0; i < star.length; i++) {
-                        if (star[i].f2 == null) {
+                    for(MeshEdge meshEdge: star) {
+                        if (meshEdge.f2 == null) {
                             ed.cost = tol;
                             return;
                         }
@@ -812,10 +821,12 @@ public class TriMeshSimplifier implements Runnable {
      return as soon as it determines the edge will never be contracted, and also speeds
      up the sorting of edges (since many edges will have identical costs). */
     private double findCost(MeshEdge ed) {
-        VertexInfo v1 = vertex[ed.v1], v2 = vertex[ed.v2];
+        VertexInfo v1 = vertex[ed.v1];
+        VertexInfo v2 = vertex[ed.v2];
         MeshFace f;
         Zone zone = v2.zone;
-        double cost, max = 0.0;
+        double cost;
+        double max = 0.0;
         int i;
 
         if (!ed.selected) {

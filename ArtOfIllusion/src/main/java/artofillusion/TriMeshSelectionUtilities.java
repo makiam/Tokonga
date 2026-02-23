@@ -1,5 +1,5 @@
 /* Copyright (C) 2005 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
 This program is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
@@ -135,19 +135,19 @@ public class TriMeshSelectionUtilities {
             int[] vertEdges = v[currentVert].getEdges();
             int bestEdge = -1;
             double maxDot = -1.0;
-            for (int i = 0; i < vertEdges.length; i++) {
-                if (vertEdges[i] == currentEdge) {
+            for (int vertEdge : vertEdges) {
+                if (vertEdge == currentEdge) {
                     continue;
                 }
-                Vec3 dir2 = v[e[vertEdges[i]].v1].r.minus(v[e[vertEdges[i]].v2].r);
+                Vec3 dir2 = v[e[vertEdge].v1].r.minus(v[e[vertEdge].v2].r);
                 dir2.normalize();
                 double dot = dir1.dot(dir2);
-                if (e[currentEdge].v1 == e[vertEdges[i]].v1 || e[currentEdge].v2 == e[vertEdges[i]].v2) {
+                if (e[currentEdge].v1 == e[vertEdge].v1 || e[currentEdge].v2 == e[vertEdge].v2) {
                     dot = -dot;
                 }
                 if (dot > maxDot) {
                     maxDot = dot;
-                    bestEdge = vertEdges[i];
+                    bestEdge = vertEdge;
                 }
             }
             currentEdge = bestEdge;
@@ -210,16 +210,16 @@ public class TriMeshSelectionUtilities {
             // Record every neighbor of each vertex of the current edge.
             Set<Integer> v1neighbors = new HashSet<>();
             int[] v1edges = v[ce.v1].getEdges();
-            for (int i = 0; i < v1edges.length; i++) {
-                Edge ed = e[v1edges[i]];
+            for (int v1edge : v1edges) {
+                Edge ed = e[v1edge];
                 if (ed != ce) {
                     v1neighbors.add(ed.v1 == ce.v1 ? ed.v2 : ed.v1);
                 }
             }
             Set<Integer> v2neighbors = new HashSet<>();
             int[] v2edges = v[ce.v2].getEdges();
-            for (int i = 0; i < v2edges.length; i++) {
-                Edge ed = e[v2edges[i]];
+            for (int v2edge : v2edges) {
+                Edge ed = e[v2edge];
                 if (ed != ce) {
                     v2neighbors.add(ed.v1 == ce.v2 ? ed.v2 : ed.v1);
                 }
@@ -231,11 +231,11 @@ public class TriMeshSelectionUtilities {
             while (n2iter.hasNext()) {
                 int neighbor = n2iter.next();
                 int[] neighborEdges = v[neighbor].getEdges();
-                for (int i = 0; i < neighborEdges.length; i++) {
-                    if (neighborEdges[i] == prevEdge) {
+                for (int neighborEdge : neighborEdges) {
+                    if (neighborEdge == prevEdge) {
                         continue;
                     }
-                    Edge ed = e[neighborEdges[i]];
+                    Edge ed = e[neighborEdge];
                     if (v1neighbors.contains(ed.v1) || v1neighbors.contains(ed.v2)) {
                         // This edge is a candidate.  See how close it is to being parallel to the current edge.
 
@@ -244,7 +244,7 @@ public class TriMeshSelectionUtilities {
                         double dot = Math.abs(dir1.dot(dir2));
                         if (dot > maxDot) {
                             maxDot = dot;
-                            bestEdge = neighborEdges[i];
+                            bestEdge = neighborEdge;
                         }
                     }
                 }
@@ -265,10 +265,8 @@ public class TriMeshSelectionUtilities {
             if (e[bestEdge].f2 != -1) {
                 faceList2.add(f[e[bestEdge].f2]);
             }
-            for (int i = 0; i < faceList1.size(); i++) {
-                Face fc1 = faceList1.get(i);
-                for (int j = 0; j < faceList2.size(); j++) {
-                    Face fc2 = faceList2.get(j);
+            for (var fc1 : faceList1) {
+                for (var fc2 : faceList2) {
                     if (fc1.e1 == fc2.e1 || fc1.e1 == fc2.e2 || fc1.e1 == fc2.e3) {
                         newSel[fc1.e1] = true;
                         break;
