@@ -148,6 +148,7 @@ public class Cells {
         dy[2] = (1.0 - y) * (1.0 - y);
         dz[2] = (1.0 - z) * (1.0 - z);
         r = value[value.length - 1];
+        //noinspection ForLoopReplaceableByForEach
         for (int cell = 0; cell < cellIndex.length; cell++) {
             i = cellIndex[cell][0];
             j = cellIndex[cell][1];
@@ -162,10 +163,10 @@ public class Cells {
             random.setSeed(seed);
             random.nextInt();
             rand = random.nextDouble();
-            for (num = 1; num < 9 && rand > prob[num]; num++);
+            for(num = 1; num < 9 && rand > prob[num]; num++) ;
 
             // Find the nearest features in this cell.
-            for (m = 0; m < num; m++) {
+            for(m = 0; m < num; m++) {
                 feature.x = random.nextDouble() + (double) i;
                 feature.y = random.nextDouble() + (double) j;
                 feature.z = random.nextDouble() + (double) k;
