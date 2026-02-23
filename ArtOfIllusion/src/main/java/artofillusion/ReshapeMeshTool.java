@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -182,9 +182,7 @@ public class ReshapeMeshTool extends MeshEditingTool {
         }
         if (view.getUseWorldCoords()) {
             Mat4 trans = view.getDisplayCoordinates().toLocal();
-            for (int i = 0; i < drag.length; i++) {
-                trans.transformDirection(drag[i]);
-            }
+            for(Vec3 vec3: drag) trans.transformDirection(vec3);
         }
         for (int i = 0; i < vert.length; i++) {
             if (selectDist[i] > -1) {
