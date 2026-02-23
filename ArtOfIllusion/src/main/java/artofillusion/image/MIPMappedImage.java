@@ -1,6 +1,6 @@
 /* Copyright (C) 2001-2009 by Peter Eastman
    Modifications copyright (C) 2017 by Petri Ihalainen
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -37,7 +37,12 @@ public class MIPMappedImage extends ImageMap {
     private byte[][][] maps;
     private float[] average;
     private float aspectRatio;
-    private double[] xscale, yscale, scale, scaleMult, gradXScale, gradYScale;
+    private double[] xScale;
+    private double[] yScale;
+    private double[] scale;
+    private double[] scaleMult;
+    private double[] gradXScale;
+    private double[] gradYScale;
     private SoftReference<Image> preview;
     private SoftReference<BufferedImage> mapImage;
     private static final float SCALE = 1.0f / 255.0f;
@@ -106,8 +111,8 @@ public class MIPMappedImage extends ImageMap {
         width = new int[num];
         height = new int[num];
         scale = new double[num];
-        xscale = new double[num];
-        yscale = new double[num];
+        xScale = new double[num];
+        yScale = new double[num];
         gradXScale = new double[num];
         gradYScale = new double[num];
         scaleMult = new double[num - 1];
@@ -148,10 +153,10 @@ public class MIPMappedImage extends ImageMap {
 
         // Finally, record the scales for all of the maps.
         for (i = 0; i < num; i++) {
-            xscale[i] = (double) width[i];
-            yscale[i] = (double) height[i];
-            gradXScale[i] = SCALE * xscale[i];
-            gradYScale[i] = SCALE * yscale[i];
+            xScale[i] = (double) width[i];
+            yScale[i] = (double) height[i];
+            gradXScale[i] = SCALE * xScale[i];
+            gradYScale[i] = SCALE * yScale[i];
         }
     }
 
@@ -192,8 +197,7 @@ public class MIPMappedImage extends ImageMap {
      */
     private void countComponents(int[] data) {
         components = 1;
-        for (int i = 0; i < data.length; i++) {
-            int j = data[i];
+        for(int j: data) {
             if ((j & 0xFF000000) != 0xFF000000) {
                 components = 4;
                 return;
@@ -287,7 +291,7 @@ public class MIPMappedImage extends ImageMap {
         float frac;
         double size;
 
-        if (xsize * xscale[0] > ysize * yscale[0]) {
+        if (xsize * xScale[0] > ysize * yScale[0]) {
             size = xsize;
         } else {
             size = ysize;
@@ -321,7 +325,7 @@ public class MIPMappedImage extends ImageMap {
         byte[] map = maps[which][component];
 
         // Determine which elements to interpolate between.
-        frac1 = (float) (x * xscale[which]);
+        frac1 = (float) (x * xScale[which]);
         i1 = (int) frac1;
         frac1 -= (float) i1;
         if (i1 >= w - 1) {
@@ -330,7 +334,7 @@ public class MIPMappedImage extends ImageMap {
         } else {
             i2 = i1 + 1;
         }
-        frac2 = (float) (y * yscale[which]);
+        frac2 = (float) (y * yScale[which]);
         j1 = (int) frac2;
         frac2 -= (float) j1;
         if (j1 >= h - 1) {
@@ -382,7 +386,7 @@ public class MIPMappedImage extends ImageMap {
         float frac;
         double size;
 
-        if (xsize * xscale[0] > ysize * yscale[0]) {
+        if (xsize * xScale[0] > ysize * yScale[0]) {
             size = xsize;
         } else {
             size = ysize;
@@ -423,7 +427,7 @@ public class MIPMappedImage extends ImageMap {
         byte[][] map = maps[which];
 
         // Determine which elements to interpolate between.
-        frac1 = (float) (x * xscale[which]);
+        frac1 = (float) (x * xScale[which]);
         i1 = (int) frac1;
         frac1 -= (float) i1;
         if (i1 >= w - 1) {
@@ -432,7 +436,7 @@ public class MIPMappedImage extends ImageMap {
         } else {
             i2 = i1 + 1;
         }
-        frac2 = (float) (y * yscale[which]);
+        frac2 = (float) (y * yScale[which]);
         j1 = (int) frac2;
         frac2 -= (float) j1;
         if (j1 >= h - 1) {
@@ -479,7 +483,7 @@ public class MIPMappedImage extends ImageMap {
         double frac;
         double size;
 
-        if (xsize * xscale[0] > ysize * yscale[0]) {
+        if (xsize * xScale[0] > ysize * yScale[0]) {
             size = xsize;
         } else {
             size = ysize;
@@ -522,7 +526,7 @@ public class MIPMappedImage extends ImageMap {
         byte[] map = maps[which][component];
 
         // Determine which elements to interpolate between.
-        frac1 = x * xscale[which];
+        frac1 = x * xScale[which];
         i1 = (int) frac1;
         frac1 -= (double) i1;
         if (i1 >= w - 1) {
@@ -531,7 +535,7 @@ public class MIPMappedImage extends ImageMap {
         } else {
             i2 = i1 + 1;
         }
-        frac2 = y * yscale[which];
+        frac2 = y * yScale[which];
         j1 = (int) frac2;
         frac2 -= (double) j1;
         if (j1 >= h - 1) {

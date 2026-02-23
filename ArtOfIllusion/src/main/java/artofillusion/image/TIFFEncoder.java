@@ -1,7 +1,8 @@
 /* This class saves images in TIFF format (uncompressed 32 bit ARGB).  Much of this
    code is adapted from the TiffEncoder class in the public domain JImage program. */
 
- /* Copyright (C) 2000 by Peter Eastman
+/* Copyright (C) 2000 by Peter Eastman
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -10,6 +11,7 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion.image;
 
 import artofillusion.*;
@@ -106,8 +108,8 @@ public class TIFFEncoder {
 
         pg.grabPixels();
         data = (int[]) pg.getPixels();
-        for (int i = 0; i < data.length; i++) {
-            if ((data[i] & 0xFF000000) != 0xFF000000) {
+        for(int datum: data) {
+            if ((datum & 0xFF000000) != 0xFF000000) {
                 transparent = true;
                 return;
             }
@@ -183,12 +185,12 @@ public class TIFFEncoder {
 
     /* Writes the actual image data. */
     private void writeImageData(DataOutputStream out) throws IOException {
-        for (int i = 0; i < data.length; i++) {
-            out.writeByte((data[i] >> 16) & 0xFF);
-            out.writeByte((data[i] >> 8) & 0xFF);
-            out.writeByte(data[i] & 0xFF);
+        for(int datum: data) {
+            out.writeByte((datum >> 16) & 0xFF);
+            out.writeByte((datum >> 8) & 0xFF);
+            out.writeByte(datum & 0xFF);
             if (transparent) {
-                out.writeByte((data[i] >> 24) & 0xFF);
+                out.writeByte((datum >> 24) & 0xFF);
             }
         }
     }
