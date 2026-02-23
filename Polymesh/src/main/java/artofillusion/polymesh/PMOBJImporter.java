@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2002,2004 by Peter Eastman, Modifications (C) 2005 by François Guillet for PolyMesh adaptation
- *  Changes copyright (C) 2023-2025 by Maksim Khramov
+ *  Changes copyright (C) 2023-2026 by Maksim Khramov
  *
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
@@ -160,6 +160,7 @@ public class PMOBJImporter {
                     for (int i = 0; i < vertIndex.length; i++) {
                         vertIndex[i] = OBJImporter.parseVertexSpec(fields[i + 1], vertex.size(), texture.size(), normal.size(), lineNo);
                     }
+                    //noinspection ForLoopReplaceableByForEach
                     for (int i = 0; i < face.length; i++) {
                         // Add a face.
                         face[i].add(new FaceInfo(vertIndex, smoothingGroup, currentTexture));
@@ -255,27 +256,27 @@ public class PMOBJImporter {
 
                 // Find the smoothness values for the edges.
                 PolyMesh.Wedge[] edges = ((PolyMesh) info.object).getEdges();
-                for (int i = 0; i < edges.length; i++) {
-                    if (edges[i].face == -1 || edges[edges[i].hedge].face == -1) {
+                for(PolyMesh.Wedge edge: edges) {
+                    if (edge.face == -1 || edges[edge.hedge].face == -1) {
                         continue;
                     }
-                    FaceInfo f1 = groupFaces.get(edges[i].face);
-                    FaceInfo f2 = groupFaces.get(edges[edges[i].hedge].face);
+                    FaceInfo f1 = groupFaces.get(edge.face);
+                    FaceInfo f2 = groupFaces.get(edges[edge.hedge].face);
                     if (f1.smoothingGroup == 0 || f1.smoothingGroup != f2.smoothingGroup) {
                         // They are in different smoothing groups.
 
-                        edges[i].smoothness = 0.0f;
+                        edge.smoothness = 0.0f;
                         continue;
                     }
 
                     // Find matching vertices and compare their normals.
-                    for (int j = 0; j < f1.vi.length; j++) {
-                        for (int k = 0; k < f2.vi.length; k++) {
+                    for(int j = 0; j < f1.vi.length; j++) {
+                        for(int k = 0; k < f2.vi.length; k++) {
                             if (f1.getVertex(j).vert == f2.getVertex(k).vert) {
                                 int n1 = f1.getVertex(j).norm;
                                 int n2 = f2.getVertex(k).norm;
                                 if (n1 != n2 && (normal.get(n1)).distance(normal.get(n2)) > 1e-10) {
-                                    edges[i].smoothness = 0.0f;
+                                    edge.smoothness = 0.0f;
                                 }
                                 break;
                             }
