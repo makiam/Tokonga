@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2004 by Peter Eastman
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -387,17 +387,17 @@ public class CustomDistortionTrack extends Track<CustomDistortionTrack> implemen
             }
         }
         parameter = newparams;
-        Keyframe[] key = tc.getValues();
-        for (int i = 0; i < key.length; i++) {
+
+        for(var keyframe: tc.getValues()) {
             double[] newval = new double[parameter.length];
-            for (int j = 0; j < newval.length; j++) {
+            for(int j = 0; j < newval.length; j++) {
                 if (index[j] > -1) {
-                    newval[j] = ((ArrayKeyframe) key[i]).val[index[j]];
+                    newval[j] = ((ArrayKeyframe) keyframe).val[index[j]];
                 } else {
                     newval[j] = parameter[j].defaultVal;
                 }
             }
-            ((ArrayKeyframe) key[i]).val = newval;
+            ((ArrayKeyframe) keyframe).val = newval;
         }
         procVersion++;
         ((LayoutWindow) win).getScore().finishEditingTrack(this);
