@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
-   Changes copyright (C) 2020-2022 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -194,9 +194,8 @@ public class SkeletonTool extends EditingTool {
                 j = new Joint(new CoordinateSystem(clickPos, zdir, ydir), parent, "Bone " + s.getNextJointID());
                 s.addJoint(j, parent.id);
             }
-            for (int k = 0; k < allViews.length; k++) {
-                ((MeshViewer) allViews[k]).setSelectedJoint(j.id);
-            }
+            for(var allView: allViews) ((MeshViewer) allView).setSelectedJoint(j.id);
+
             boolean[] moving = new boolean[s.getNumJoints()];
             moving[s.findJointIndex(j.id)] = true;
             ik = new IKSolver(s, mv.getLockedJoints(), moving);
@@ -236,9 +235,8 @@ public class SkeletonTool extends EditingTool {
         if (i == joint.length) {
             // No joint was clicked on, so deselect the selected joint.
 
-            for (int j = 0; j < allViews.length; j++) {
-                ((MeshViewer) allViews[j]).setSelectedJoint(-1);
-            }
+            for(var allView: allViews) ((MeshViewer) allView).setSelectedJoint(-1);
+
             theWindow.updateImage();
             theWindow.updateMenus();
             return;
@@ -246,8 +244,8 @@ public class SkeletonTool extends EditingTool {
         if (e.isShiftDown()) {
             // Toggle whether this joint is locked.
 
-            for (int j = 0; j < allViews.length; j++) {
-                MeshViewer v = (MeshViewer) allViews[j];
+            for(var allView: allViews) {
+                MeshViewer v = (MeshViewer) allView;
                 if (v.isJointLocked(joint[i].id)) {
                     v.unlockJoint(joint[i].id);
                 } else {
@@ -259,9 +257,8 @@ public class SkeletonTool extends EditingTool {
         }
 
         // Make it the selected joint, and prepare to drag it.
-        for (int j = 0; j < allViews.length; j++) {
-            ((MeshViewer) allViews[j]).setSelectedJoint(joint[i].id);
-        }
+        for(ViewerCanvas allView: allViews) ((MeshViewer) allView).setSelectedJoint(joint[i].id);
+
         clickPos = joint[i].coords.getOrigin();
         theWindow.updateImage();
         theWindow.updateMenus();

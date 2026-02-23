@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2006 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -24,7 +24,7 @@ import java.io.*;
  */
 public class Skeleton {
 
-    private Joint[] joint;
+    private Joint[] joints;
     private int nextID;
 
     private static final int MARKER_WIDTH = 10;
@@ -32,7 +32,7 @@ public class Skeleton {
     private static final double WIDEST_POINT = 0.8;
 
     public Skeleton() {
-        joint = new Joint[0];
+        joints = new Joint[0];
         nextID = 1;
     }
 
@@ -43,17 +43,17 @@ public class Skeleton {
         Skeleton s = new Skeleton();
 
         s.nextID = nextID;
-        s.joint = new Joint[joint.length];
-        for (int i = 0; i < joint.length; i++) {
-            s.joint[i] = joint[i].duplicate();
+        s.joints = new Joint[joints.length];
+        for (int i = 0; i < joints.length; i++) {
+            s.joints[i] = joints[i].duplicate();
         }
-        for (int i = 0; i < joint.length; i++) {
-            if (joint[i].parent != null) {
-                s.joint[i].parent = s.joint[s.findJointIndex(joint[i].parent.id)];
+        for (int i = 0; i < joints.length; i++) {
+            if (joints[i].parent != null) {
+                s.joints[i].parent = s.joints[s.findJointIndex(joints[i].parent.id)];
             }
-            s.joint[i].children = new Joint[joint[i].children.length];
-            for (int j = 0; j < joint[i].children.length; j++) {
-                s.joint[i].children[j] = s.joint[s.findJointIndex(joint[i].children[j].id)];
+            s.joints[i].children = new Joint[joints[i].children.length];
+            for (int j = 0; j < joints[i].children.length; j++) {
+                s.joints[i].children[j] = s.joints[s.findJointIndex(joints[i].children[j].id)];
             }
         }
         return s;
@@ -64,17 +64,17 @@ public class Skeleton {
      */
     public void copy(Skeleton s) {
         nextID = s.nextID;
-        joint = new Joint[s.joint.length];
-        for (int i = 0; i < joint.length; i++) {
-            joint[i] = s.joint[i].duplicate();
+        joints = new Joint[s.joints.length];
+        for (int i = 0; i < joints.length; i++) {
+            joints[i] = s.joints[i].duplicate();
         }
-        for (int i = 0; i < joint.length; i++) {
-            if (s.joint[i].parent != null) {
-                joint[i].parent = joint[findJointIndex(s.joint[i].parent.id)];
+        for (int i = 0; i < joints.length; i++) {
+            if (s.joints[i].parent != null) {
+                joints[i].parent = joints[findJointIndex(s.joints[i].parent.id)];
             }
-            joint[i].children = new Joint[s.joint[i].children.length];
-            for (int j = 0; j < joint[i].children.length; j++) {
-                joint[i].children[j] = joint[findJointIndex(s.joint[i].children[j].id)];
+            joints[i].children = new Joint[s.joints[i].children.length];
+            for (int j = 0; j < joints[i].children.length; j++) {
+                joints[i].children[j] = joints[findJointIndex(s.joints[i].children[j].id)];
             }
         }
     }
@@ -88,11 +88,11 @@ public class Skeleton {
             return false;
         }
         Skeleton s = (Skeleton) o;
-        if (joint.length != s.joint.length) {
+        if (joints.length != s.joints.length) {
             return false;
         }
-        for (int i = 0; i < joint.length; i++) {
-            if (!joint[i].equals(s.joint[i])) {
+        for (int i = 0; i < joints.length; i++) {
+            if (!joints[i].equals(s.joints[i])) {
                 return false;
             }
         }
@@ -103,10 +103,10 @@ public class Skeleton {
      * Add a joint to the skeleton.
      */
     public void addJoint(Joint j, int parentID) {
-        Joint[] newjoint = new Joint[joint.length + 1];
-        System.arraycopy(joint, 0, newjoint, 0, joint.length);
-        newjoint[joint.length] = j;
-        joint = newjoint;
+        Joint[] newjoint = new Joint[joints.length + 1];
+        System.arraycopy(joints, 0, newjoint, 0, joints.length);
+        newjoint[joints.length] = j;
+        joints = newjoint;
         if (j.id == -1) {
             j.id = nextID++;
         }
@@ -115,7 +115,7 @@ public class Skeleton {
             j.parent = null;
             return;
         }
-        Joint parent = joint[parentIndex];
+        Joint parent = joints[parentIndex];
         j.parent = parent;
         Joint[] newchildren = new Joint[parent.children.length + 1];
         System.arraycopy(parent.children, 0, newchildren, 0, parent.children.length);
@@ -129,18 +129,19 @@ public class Skeleton {
      */
     public void deleteJoint(int id) {
         int which = findJointIndex(id);
-        Joint j = joint[which], parent = j.parent;
+        Joint j = joints[which];
+        Joint parent = j.parent;
         while (j.children.length > 0) {
             deleteJoint(j.children[0].id);
         }
         which = findJointIndex(id);
-        Joint[] newjoint = new Joint[joint.length - 1];
-        for (int i = 0, k = 0; i < joint.length; i++) {
+        Joint[] newjoint = new Joint[joints.length - 1];
+        for (int i = 0, k = 0; i < joints.length; i++) {
             if (i != which) {
-                newjoint[k++] = joint[i];
+                newjoint[k++] = joints[i];
             }
         }
-        joint = newjoint;
+        joints = newjoint;
         if (parent == null) {
             return;
         }
@@ -157,24 +158,24 @@ public class Skeleton {
      * Add every joint from another skeleton to this one.
      */
     public void addAllJoints(Skeleton s) {
-        Joint[] newjoint = new Joint[joint.length + s.joint.length];
-        System.arraycopy(joint, 0, newjoint, 0, joint.length);
-        for (int i = 0; i < s.joint.length; i++) {
-            newjoint[joint.length + i] = s.joint[i].duplicate();
+        Joint[] newjoint = new Joint[joints.length + s.joints.length];
+        System.arraycopy(joints, 0, newjoint, 0, joints.length);
+        for (int i = 0; i < s.joints.length; i++) {
+            newjoint[joints.length + i] = s.joints[i].duplicate();
         }
-        for (int i = 0; i < s.joint.length; i++) {
-            Joint newj = newjoint[joint.length + i];
-            Joint oldj = s.joint[i];
+        for (int i = 0; i < s.joints.length; i++) {
+            Joint newj = newjoint[joints.length + i];
+            Joint oldj = s.joints[i];
             newj.id = nextID++;
             if (oldj.parent != null) {
-                newj.parent = newjoint[joint.length + s.findJointIndex(oldj.parent.id)];
+                newj.parent = newjoint[joints.length + s.findJointIndex(oldj.parent.id)];
             }
             newj.children = new Joint[oldj.children.length];
             for (int k = 0; k < newj.children.length; k++) {
-                newj.children[k] = newjoint[joint.length + s.findJointIndex(oldj.children[k].id)];
+                newj.children[k] = newjoint[joints.length + s.findJointIndex(oldj.children[k].id)];
             }
         }
-        joint = newjoint;
+        joints = newjoint;
     }
 
     /**
@@ -203,22 +204,22 @@ public class Skeleton {
      * Find the array index for a given joint ID.
      */
     public int findJointIndex(int id) {
-        int min = 0, max = joint.length - 1, current = (min + max) >> 1;
+        int min = 0, max = joints.length - 1, current = (min + max) >> 1;
 
-        if (joint.length == 0) {
+        if (joints.length == 0) {
             return -1;
         }
         while (true) {
-            if (joint[current].id == id) {
+            if (joints[current].id == id) {
                 return current;
             }
-            if (joint[current].id > id) {
+            if (joints[current].id > id) {
                 max = current - 1;
             } else {
                 min = current + 1;
             }
             if (min >= max) {
-                if (min < joint.length && joint[min].id == id) {
+                if (min < joints.length && joints[min].id == id) {
                     return min;
                 }
                 return -1;
@@ -232,19 +233,19 @@ public class Skeleton {
      */
     public Joint getJoint(int id) {
         int which = findJointIndex(id);
-        if (which < 0 || which >= joint.length) {
+        if (which < 0 || which >= joints.length) {
             return null;
         }
-        return joint[which];
+        return joints[which];
     }
 
     /**
      * Get an array of all the joints.
      */
     public Joint[] getJoints() {
-        Joint[] j = new Joint[joint.length];
+        Joint[] j = new Joint[joints.length];
         for (int i = 0; i < j.length; i++) {
-            j[i] = joint[i];
+            j[i] = joints[i];
         }
         return j;
     }
@@ -253,7 +254,7 @@ public class Skeleton {
      * Get the number of joints in the skeleton.
      */
     public int getNumJoints() {
-        return joint.length;
+        return joints.length;
     }
 
     /**
@@ -267,31 +268,31 @@ public class Skeleton {
      * Scale the skeleton by the specified amount along each axis.
      */
     public void scale(double x, double y, double z) {
-        for (int i = 0; i < joint.length; i++) {
-            Vec3 pos = joint[i].coords.getOrigin();
+        for(Joint joint: joints) {
+            Vec3 pos = joint.coords.getOrigin();
             pos.x *= x;
             pos.y *= y;
             pos.z *= z;
-            joint[i].coords.setOrigin(pos);
-            Vec3 zdir = joint[i].coords.getZDirection();
+            joint.coords.setOrigin(pos);
+            Vec3 zdir = joint.coords.getZDirection();
             Vec3 newzdir = new Vec3(zdir.x * x, zdir.y * y, zdir.z * z);
             double len = newzdir.length();
             if (len > 0.0) {
                 zdir = newzdir.times(1.0 / len);
             }
-            Vec3 updir = joint[i].coords.getUpDirection();
+            Vec3 updir = joint.coords.getUpDirection();
             Vec3 newupdir = new Vec3(updir.x * x, updir.y * y, updir.z * z);
             len = newupdir.length();
             if (len > 0.0) {
                 updir = newupdir.times(1.0 / len);
             }
-            joint[i].coords.setOrientation(zdir, updir);
+            joint.coords.setOrientation(zdir, updir);
         }
-        for (int i = 0; i < joint.length; i++) {
-            if (joint[i].parent == null) {
-                joint[i].calcAnglesFromCoords(true);
+        for(Joint value: joints) {
+            if (value.parent == null) {
+                value.calcAnglesFromCoords(true);
             } else {
-                joint[i].length.pos = joint[i].coords.getOrigin().distance(joint[i].parent.coords.getOrigin());
+                value.length.pos = value.coords.getOrigin().distance(value.parent.coords.getOrigin());
             }
         }
     }
@@ -305,40 +306,41 @@ public class Skeleton {
      * @param weight the weights for the different Skeletons
      */
     public void blend(Skeleton average, Skeleton[] s, double[] weight) {
-        for (int i = 0; i < joint.length; i++) {
-            Joint javg = average.getJoint(joint[i].id);
-            Vec3 pos = null, newpos = null;
+        for(Joint joint: joints) {
+            Joint javg = average.getJoint(joint.id);
+            Vec3 pos = null;
+            Vec3 newpos = null;
             double[] rootangles = null;
-            if (joint[i].parent == null) {
-                pos = joint[i].coords.getOrigin();
+            if (joint.parent == null) {
+                pos = joint.coords.getOrigin();
                 newpos = new Vec3(pos);
-                rootangles = joint[i].coords.getRotationAngles();
-                javg.coords = joint[i].coords.duplicate();
+                rootangles = joint.coords.getRotationAngles();
+                javg.coords = joint.coords.duplicate();
             }
 
             // Find the average DOF values.
-            javg.angle1.pos = joint[i].angle1.pos;
-            javg.angle2.pos = joint[i].angle2.pos;
-            javg.twist.pos = joint[i].twist.pos;
-            javg.length.pos = joint[i].length.pos;
-            for (int j = 0; j < s.length; j++) {
-                Joint jother = s[j].getJoint(joint[i].id);
+            javg.angle1.pos = joint.angle1.pos;
+            javg.angle2.pos = joint.angle2.pos;
+            javg.twist.pos = joint.twist.pos;
+            javg.length.pos = joint.length.pos;
+            for(int j = 0; j < s.length; j++) {
+                Joint jother = s[j].getJoint(joint.id);
                 if (jother == null) {
                     continue;
                 }
-                javg.length.pos += weight[j] * findOffset(jother.length, joint[i].length);
-                if (joint[i].parent == null) {
+                javg.length.pos += weight[j] * findOffset(jother.length, joint.length);
+                if (joint.parent == null) {
                     newpos.add(jother.coords.getOrigin().minus(pos).times(weight[j]));
                     double[] angles = jother.coords.getRotationAngles();
                     RotationKeyframe rot = new RotationKeyframe(angles[0] - rootangles[0], angles[1] - rootangles[1], angles[2] - rootangles[2]);
                     rot.applyToCoordinates(javg.coords, weight[j], null, null, true, true, true, true);
                 } else {
-                    javg.angle1.pos += weight[j] * findOffset(jother.angle1, joint[i].angle1);
-                    javg.angle2.pos += weight[j] * findOffset(jother.angle2, joint[i].angle2);
-                    javg.twist.pos += weight[j] * findOffset(jother.twist, joint[i].twist);
+                    javg.angle1.pos += weight[j] * findOffset(jother.angle1, joint.angle1);
+                    javg.angle2.pos += weight[j] * findOffset(jother.angle2, joint.angle2);
+                    javg.twist.pos += weight[j] * findOffset(jother.twist, joint.twist);
                 }
             }
-            if (joint[i].parent == null) {
+            if (joint.parent == null) {
                 javg.coords.setOrigin(newpos);
                 double[] angles = javg.coords.getRotationAngles();
                 javg.angle1.pos = angles[0];
@@ -354,9 +356,9 @@ public class Skeleton {
         }
 
         // Update coordinate systems.
-        for (int i = 0; i < average.joint.length; i++) {
-            if (average.joint[i].parent == null) {
-                average.joint[i].recalcCoords(true);
+        for (int i = 0; i < average.joints.length; i++) {
+            if (average.joints[i].parent == null) {
+                average.joints[i].recalcCoords(true);
             }
         }
     }
@@ -385,18 +387,18 @@ public class Skeleton {
         Camera cam = view.getCamera();
         int mode = view.getRenderMode();
         boolean render = (mode != ViewerCanvas.RENDER_WIREFRAME && mode != ViewerCanvas.RENDER_TRANSPARENT && !(view.getCurrentTool() instanceof SkeletonTool));
-        Vec2[] p = new Vec2[joint.length];
+        Vec2[] p = new Vec2[joints.length];
         Vec2 v1 = new Vec2();
         Vec2 v2 = new Vec2();
-        Point[] screenVert = new Point[joint.length];
+        Point[] screenVert = new Point[joints.length];
         Point p1 = new Point();
         Point p2 = new Point();
-        double[] screenZ = new double[joint.length];
+        double[] screenZ = new double[joints.length];
         Color color = enabled ? ViewerCanvas.lineColor : ViewerCanvas.disabledColor;
 
         // First, calculate the positions of all the joints.
-        for (int i = 0; i < joint.length; i++) {
-            Joint j = joint[i];
+        for (int i = 0; i < joints.length; i++) {
+            Joint j = joints[i];
             Vec3 pos = j.coords.getOrigin();
             p[i] = cam.getObjectToScreen().timesXY(pos);
             screenVert[i] = new Point((int) p[i].x, (int) p[i].y);
@@ -406,8 +408,9 @@ public class Skeleton {
         // Now draw the bones.
         Color col = color;
         Mat4 objToScreen = cam.getObjectToScreen();
-        for (int i = 0; i < joint.length; i++) {
-            Joint j = joint[i], parent = j.parent;
+        for (int i = 0; i < joints.length; i++) {
+            Joint j = joints[i];
+            Joint parent = j.parent;
             if (parent == null) {
                 continue;
             }
@@ -420,11 +423,13 @@ public class Skeleton {
             ydir.scale(0.5 * BONE_WIDTH * length);
             zdir.scale(WIDEST_POINT);
             Vec3 center = parent.coords.getOrigin().plus(zdir);
-            Vec3 cx1 = center.plus(xdir), cx2 = center.minus(xdir);
-            Vec3 cy1 = center.plus(ydir), cy2 = center.minus(ydir);
+            Vec3 cx1 = center.plus(xdir);
+            Vec3 cx2 = center.minus(xdir);
+            Vec3 cy1 = center.plus(ydir);
+            Vec3 cy2 = center.minus(ydir);
             if (render) {
                 Vec3[] pos = new Vec3[]{
-                    cx1, cx2, cy1, cy2, joint[i].coords.getOrigin(), joint[parentIndex].coords.getOrigin()
+                    cx1, cx2, cy1, cy2, joints[i].coords.getOrigin(), joints[parentIndex].coords.getOrigin()
                 };
                 for (int k = 1; k < pos.length; k++) {
                     for (int m = 0; m < k; m++) {
@@ -452,8 +457,8 @@ public class Skeleton {
         // Finally, draw the markers for all the joints.
         int selectedID = view.getSelectedJoint();
         boolean[] locked = view.getLockedJoints();
-        for (int i = 0; i < joint.length; i++) {
-            Joint j = joint[i];
+        for (int i = 0; i < joints.length; i++) {
+            Joint j = joints[i];
             if (locked[i]) {
                 col = ViewerCanvas.specialHighlightColor;
             } else if (j.id == selectedID) {
@@ -489,8 +494,10 @@ public class Skeleton {
      * method repositions the vertices of newMesh based on the skeleton.
      */
     public static void adjustMesh(Mesh oldMesh, Mesh newMesh) {
-        Skeleton s1 = oldMesh.getSkeleton(), s2 = newMesh.getSkeleton();
-        MeshVertex[] v1 = oldMesh.getVertices(), v2 = newMesh.getVertices();
+        Skeleton s1 = oldMesh.getSkeleton();
+        Skeleton s2 = newMesh.getSkeleton();
+        MeshVertex[] v1 = oldMesh.getVertices();
+        MeshVertex[] v2 = newMesh.getVertices();
         Vec3[] v = new Vec3[v2.length];
         Vec3 temp = new Vec3();
 
@@ -499,7 +506,8 @@ public class Skeleton {
             if (v2[i].ikJoint == -1) {
                 continue;
             }
-            Joint j1 = s1.getJoint(v1[i].ikJoint), j2 = s2.getJoint(v2[i].ikJoint);
+            Joint j1 = s1.getJoint(v1[i].ikJoint);
+            Joint j2 = s2.getJoint(v2[i].ikJoint);
             if (j1 == null || j2 == null) {
                 continue;
             }
@@ -534,11 +542,10 @@ public class Skeleton {
      */
     public void writeToStream(DataOutputStream out) throws IOException {
         out.writeShort(0); // Version number
-        out.writeInt(joint.length);
-        for (int i = 0; i < joint.length; i++) {
+        out.writeInt(joints.length);
+        for(Joint j: joints) {
             // Write the information about this joint.
 
-            Joint j = joint[i];
             out.writeInt(j.id);
             out.writeUTF(j.name);
             j.coords.writeToFile(out);
@@ -548,7 +555,7 @@ public class Skeleton {
             j.length.writeToStream(out);
             out.writeInt(j.parent == null ? -1 : j.parent.id);
             out.writeInt(j.children.length);
-            for (int k = 0; k < j.children.length; k++) {
+            for(int k = 0; k < j.children.length; k++) {
                 out.writeInt(j.children[k].id);
             }
         }
@@ -563,16 +570,16 @@ public class Skeleton {
             throw new InvalidObjectException("");
         }
         nextID = 1;
-        joint = new Joint[in.readInt()];
-        int[] parentID = new int[joint.length];
-        int[][] childID = new int[joint.length][];
-        for (int i = 0; i < joint.length; i++) {
+        joints = new Joint[in.readInt()];
+        int[] parentID = new int[joints.length];
+        int[][] childID = new int[joints.length][];
+        for (int i = 0; i < joints.length; i++) {
             // Read in the information about joints.
 
             int id = in.readInt();
             String name = in.readUTF();
             Joint j = new Joint(new CoordinateSystem(in), null, name);
-            joint[i] = j;
+            joints[i] = j;
             j.id = id;
             j.angle1 = j.new DOF(in);
             j.angle2 = j.new DOF(in);
@@ -590,11 +597,11 @@ public class Skeleton {
         }
 
         // Assign the parents and children for each joint.
-        for (int i = 0; i < joint.length; i++) {
-            joint[i].parent = getJoint(parentID[i]);
-            joint[i].children = new Joint[childID[i].length];
+        for (int i = 0; i < joints.length; i++) {
+            joints[i].parent = getJoint(parentID[i]);
+            joints[i].children = new Joint[childID[i].length];
             for (int k = 0; k < childID[i].length; k++) {
-                joint[i].children[k] = getJoint(childID[i][k]);
+                joints[i].children[k] = getJoint(childID[i][k]);
             }
         }
     }
