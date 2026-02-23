@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2008 by Peter Eastman
-   Changes copyright (C) 2022-2023 by Maksim Khramov
+   Changes copyright (C) 2022-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -68,7 +68,9 @@ public class LatheTool implements ModellingTool {
      */
     protected static Mesh latheCurve(Curve curve, int latheAxis, int segments, double angle, double latheRadius) {
         MeshVertex[] vert = curve.getVertices();
-        Vec3 axis, radius, center = new Vec3();
+        Vec3 axis;
+        Vec3 radius;
+        Vec3 center = new Vec3();
         double angleStep = angle * Math.PI / (segments * 180.0);
         boolean closed = false;
 
@@ -138,8 +140,8 @@ public class LatheTool implements ModellingTool {
         // Center it.
         cm.scale(1.0 / (segments * vert.length));
         for (Vec3[] vec3s : v) {
-            for (int j = 0; j < vec3s.length; j++) {
-                vec3s[j].subtract(cm);
+            for(Vec3 vec3: vec3s) {
+                vec3.subtract(cm);
             }
         }
         SplineMesh mesh = new SplineMesh(v, usmooth, vsmooth, smoothMethod, closed, curve.isClosed());

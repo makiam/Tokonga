@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2007 by Peter Eastman
-   Changes copyright (C) 2020-2024 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -42,6 +42,7 @@ public class LatheDialog extends ToolDialog {
 
     private static int counter = 1;
 
+    @SuppressWarnings("java:S1121")
     public LatheDialog(LayoutWindow window, ObjectInfo curve) {
         super(window, Translate.text("Tools:lathe.dialog.name"));
 
@@ -109,20 +110,19 @@ public class LatheDialog extends ToolDialog {
             return;
         }
         endsBox.setEnabled(false);
-        double minx = Double.MAX_VALUE;
-        for (int i = 0; i < vert.length; i++) {
-            if (vert[i].r.x < minx) {
-                minx = vert[i].r.x;
-            }
+        double minX = Double.MAX_VALUE;
+        for(var meshVertex: vert) {
+            minX = Math.min(minX, meshVertex.r.x);
         }
-        minx = Math.max(-minx, 0.0);
-        radiusField.setValue(Math.ceil(minx));
+        minX = Math.max(-minX, 0.0);
+        radiusField.setValue(Math.ceil(minX));
     }
 
     // Create the extruded object.
     private void makeObject() {
         int segments = (int) segmentsField.getValue();
-        double angle = angleSlider.getValue(), radius = radiusField.getValue();
+        double angle = angleSlider.getValue();
+        double radius = radiusField.getValue();
         int axis;
         if (axisGroup.getSelection() == xBox) {
             axis = LatheTool.X_AXIS;
