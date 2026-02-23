@@ -1,5 +1,5 @@
 /* Copyright (C) 2007 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -41,15 +41,11 @@ public class TestThreadManager {
             }
         });
         for (int repeat = 0; repeat < 50; repeat++) {
-            for (int i = 0; i < flags.length; i++) {
-                flags[i].set(false);
-            }
+            for(var flag: flags) flag.set(false);
             error.set(false);
             tm.run();
             Assertions.assertFalse(error.get());
-            for (int i = 0; i < flags.length; i++) {
-                Assertions.assertTrue(flags[i].get());
-            }
+            for(var flag: flags) Assertions.assertTrue(flag.get());
         }
     }
 
