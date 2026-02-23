@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
    Some parts copyright (C) 2005 by Nik Trevallyn-Jones
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -174,8 +174,8 @@ public class VRMLExporter {
         if (wholeScene) {
             scene.getObjects().forEach(item -> writeObject(item, null, out, tol, smooth, 0, scene, textureExporter));
         } else {
-            for (int i = 0; i < selected.length; i++) {
-                writeObject(scene.getObject(selected[i]), null, out, tol, smooth, 0, scene, textureExporter);
+            for(int selIndex: selected) {
+                writeObject(scene.getObject(selIndex), null, out, tol, smooth, 0, scene, textureExporter);
             }
         }
         out.flush();
@@ -363,10 +363,10 @@ public class VRMLExporter {
                 write("Shape {", out, indent + 2);
                 write("geometry DEF " + name + " IndexedLineSet {", out, indent + 3);
                 write("coord Coordinate { point [", out, indent + 4);
-                for (int i = 0; i < vert.length; i++) {
-                    pos[0] = Math.round(vert[i].x * 1e6) / 1e6;
-                    pos[1] = Math.round(vert[i].y * 1e6) / 1e6;
-                    pos[2] = Math.round(vert[i].z * 1e6) / 1e6;
+                for(Vec3 vec3: vert) {
+                    pos[0] = Math.round(vec3.x * 1e6) / 1e6;
+                    pos[1] = Math.round(vec3.y * 1e6) / 1e6;
+                    pos[2] = Math.round(vec3.z * 1e6) / 1e6;
                     write(pos[0] + " " + pos[1] + " " + pos[2] + ",", out, indent + 5);
                 }
                 write("] }", out, indent + 4);
@@ -435,10 +435,10 @@ public class VRMLExporter {
             write("solid FALSE", out, indent + 2);
         }
         write("coord Coordinate { point [", out, indent + 2);
-        for (int i = 0; i < vert.length; i++) {
-            pos[0] = Math.round(vert[i].r.x * 1e6) / 1e6;
-            pos[1] = Math.round(vert[i].r.y * 1e6) / 1e6;
-            pos[2] = Math.round(vert[i].r.z * 1e6) / 1e6;
+        for(MeshVertex meshVertex: vert) {
+            pos[0] = Math.round(meshVertex.r.x * 1e6) / 1e6;
+            pos[1] = Math.round(meshVertex.r.y * 1e6) / 1e6;
+            pos[2] = Math.round(meshVertex.r.z * 1e6) / 1e6;
             write(pos[0] + " " + pos[1] + " " + pos[2] + ",", out, indent + 3);
         }
         write("] }", out, indent + 2);
@@ -458,13 +458,13 @@ public class VRMLExporter {
         if (includeNormals) {
             Vec3[] norm = mesh.getNormals();
             write("normal Normal { vector [", out, indent + 2);
-            for (int i = 0; i < norm.length; i++) {
-                if (norm[i] == null) {
+            for(Vec3 vec3: norm) {
+                if (vec3 == null) {
                     write("1 0 0,", out, indent + 3);
                 } else {
-                    pos[0] = Math.round(norm[i].x * 1e6) / 1e6;
-                    pos[1] = Math.round(norm[i].y * 1e6) / 1e6;
-                    pos[2] = Math.round(norm[i].z * 1e6) / 1e6;
+                    pos[0] = Math.round(vec3.x * 1e6) / 1e6;
+                    pos[1] = Math.round(vec3.y * 1e6) / 1e6;
+                    pos[2] = Math.round(vec3.z * 1e6) / 1e6;
                     write(pos[0] + " " + pos[1] + " " + pos[2] + ",", out, indent + 3);
                 }
             }
@@ -491,10 +491,10 @@ public class VRMLExporter {
             double uscale = (ti.maxU == ti.minU ? 1.0 : 1.0 / (ti.maxU - ti.minU));
             double vscale = (ti.maxV == ti.minV ? 1.0 : 1.0 / (ti.maxV - ti.minV));
             write("texCoord TextureCoordinate { point [", out, indent + 2);
-            for (int j = 0; j < coords.length; j++) {
-                for (int k = 0; k < coords[j].length; k++) {
-                    pos[0] = (coords[j][k].x - ti.minU) * uscale;
-                    pos[1] = (coords[j][k].y - ti.minV) * vscale;
+            for(Vec2[] coord: coords) {
+                for(Vec2 vec2: coord) {
+                    pos[0] = (vec2.x - ti.minU) * uscale;
+                    pos[1] = (vec2.y - ti.minV) * vscale;
                     pos[0] = Math.round(pos[0] * 1e6) / 1e6;
                     pos[1] = Math.round(pos[1] * 1e6) / 1e6;
                     write(pos[0] + " " + pos[1] + ",", out, indent + 3);
@@ -522,9 +522,9 @@ public class VRMLExporter {
             double uscale = (ti.maxU == ti.minU ? 1.0 : 1.0 / (ti.maxU - ti.minU));
             double vscale = (ti.maxV == ti.minV ? 1.0 : 1.0 / (ti.maxV - ti.minV));
             write("texCoord TextureCoordinate { point [", out, indent + 2);
-            for (int i = 0; i < coords.length; i++) {
-                pos[0] = (coords[i].x - ti.minU) * uscale;
-                pos[1] = (coords[i].y - ti.minV) * vscale;
+            for(Vec2 coord: coords) {
+                pos[0] = (coord.x - ti.minU) * uscale;
+                pos[1] = (coord.y - ti.minV) * vscale;
                 pos[0] = Math.round(pos[0] * 1e6) / 1e6;
                 pos[1] = Math.round(pos[1] * 1e6) / 1e6;
                 write(pos[0] + " " + pos[1] + ",", out, indent + 3);
