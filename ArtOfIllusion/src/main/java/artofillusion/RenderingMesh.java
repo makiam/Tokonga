@@ -1,4 +1,5 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -22,7 +23,9 @@ import artofillusion.texture.*;
  */
 public class RenderingMesh implements Cloneable {
 
-    public Vec3[] vert, norm, faceNorm;
+    public Vec3[] vert;
+    public Vec3[] norm;
+    public Vec3[] faceNorm;
     public ParameterValue[] param;
     public RenderingTriangle[] triangle;
     public final TextureMapping mapping;
@@ -34,7 +37,8 @@ public class RenderingMesh implements Cloneable {
      * Construct a rendering mesh.
      */
     public RenderingMesh(Vec3[] vert, Vec3[] norm, RenderingTriangle[] triangle, TextureMapping mapping, MaterialMapping matMapping) {
-        int i, j;
+        int i;
+        int j;
         double length;
 
         this.vert = vert;
@@ -168,8 +172,7 @@ public class RenderingMesh implements Cloneable {
         if (vert.length != norm.length) {
             return null;
         }
-        for (int i = 0; i < triangle.length; i++) {
-            RenderingTriangle tri = triangle[i];
+        for(var tri: triangle) {
             if (tri.v1 != tri.n1 || tri.v2 != tri.n2 || tri.v3 != tri.n3) {
                 return null;
             }
