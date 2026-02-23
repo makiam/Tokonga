@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2013 by Peter Eastman
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -599,7 +599,7 @@ public class PositionTrack extends Track<PositionTrack> {
     @Override
     public void edit(LayoutWindow win) {
         Skeleton s = info.getSkeleton();
-        Joint[] j = (s == null ? null : s.getJoints());
+        Joint[] joints = (s == null ? null : s.getJoints());
         BTextField nameField = new BTextField(getName());
         BComboBox smoothChoice = new BComboBox(new String[]{
             Translate.text("Discontinuous"),
@@ -624,12 +624,10 @@ public class PositionTrack extends Track<PositionTrack> {
         coordsChoice.setSelectedIndex(relCoords);
         BComboBox jointChoice = new BComboBox();
         jointChoice.add(Translate.text("objectOrigin"));
-        if (j != null) {
-            for (int i = 0; i < j.length; i++) {
-                jointChoice.add(j[i].name);
-            }
-            for (int i = 0; i < j.length; i++) {
-                if (j[i].id == joint) {
+        if (joints != null) {
+            for(var value: joints) jointChoice.add(value.name);
+            for (int i = 0; i < joints.length; i++) {
+                if (joints[i].id == joint) {
                     jointChoice.setSelectedIndex(i + 1);
                 }
             }
@@ -673,7 +671,7 @@ public class PositionTrack extends Track<PositionTrack> {
         if (jointChoice.getSelectedIndex() == 0) {
             joint = -1;
         } else {
-            joint = j[jointChoice.getSelectedIndex() - 1].id;
+            joint = joints[jointChoice.getSelectedIndex() - 1].id;
         }
         enableX = xbox.getState();
         enableY = ybox.getState();

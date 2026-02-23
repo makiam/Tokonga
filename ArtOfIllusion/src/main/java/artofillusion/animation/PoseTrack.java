@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -157,9 +157,7 @@ public class PoseTrack extends Track<PoseTrack> {
      */
     @Override
     public Keyframe setKeyframeIfModified(double time) {
-        for (int i = 0; i < subtracks.length; i++) {
-            subtracks[i].setKeyframeIfModified(time);
-        }
+        for(var subtrack: subtracks) subtrack.setKeyframeIfModified(time);
         if (tc.getTimes().length == 0) {
             return setKeyframe(time);
         }
@@ -312,7 +310,7 @@ public class PoseTrack extends Track<PoseTrack> {
      * Write a serialized representation of this track to a stream.
      */
     @Override
-    public void writeToStream(DataOutputStream out, Scene sc) throws IOException {
+    public void writeToStream(DataOutputStream out, Scene scene) throws IOException {
 
         out.writeShort(2); // Version number
         out.writeUTF(name);
@@ -334,9 +332,7 @@ public class PoseTrack extends Track<PoseTrack> {
             v[i].writeToStream(out);
             s[i].writeToStream(out);
         }
-        for (int i = 0; i < subtracks.length; i++) {
-            subtracks[i].writeToStream(out, sc);
-        }
+        for(var subtrack: subtracks) subtrack.writeToStream(out, scene);
     }
 
     /**
@@ -375,9 +371,7 @@ public class PoseTrack extends Track<PoseTrack> {
         if (version == 0) {
             theWeight.initFromStream(in, scene);
         } else {
-            for (int i = 0; i < subtracks.length; i++) {
-                subtracks[i].initFromStream(in, scene);
-            }
+            for(var subtrack: subtracks) subtrack.initFromStream(in, scene);
         }
     }
 
