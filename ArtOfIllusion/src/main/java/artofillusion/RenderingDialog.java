@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
-   Changes copyright (C) 2023-2024 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -243,9 +243,9 @@ public class RenderingDialog extends BDialog implements RenderListener {
      * Make sure all filters can be applied, and show a warning message if now.
      */
     private void verifyFilters(WindowWidget parent) {
-        ImageFilter[] filters = cameraForFilters.getImageFilters();
-        for (int i = 0; i < filters.length; i++) {
-            int required = filters[i].getDesiredComponents();
+
+        for(ImageFilter filter: cameraForFilters.getImageFilters()) {
+            int required = filter.getDesiredComponents();
             while (required != 0) {
                 int component = required - (required & (required - 1));
                 if (!originalImage.hasFloatData(component)) {

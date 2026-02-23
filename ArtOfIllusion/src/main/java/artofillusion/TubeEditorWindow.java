@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2008 by Peter Eastman
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -22,6 +22,7 @@ import java.awt.*;
 /**
  * The TubeEditorWindow class represents the window for editing Tube objects.
  */
+@SuppressWarnings("java:S1121")
 public class TubeEditorWindow extends CurveEditorWindow {
 
     private BCheckBoxMenuItem[] endsItem;
@@ -55,8 +56,8 @@ public class TubeEditorWindow extends CurveEditorWindow {
         tools.addTool(altTool = new RotateViewTool(this));
         tools.setDefaultTool(defaultTool);
         tools.selectTool(defaultTool);
-        for (int i = 0; i < theView.length; i++) {
-            MeshViewer view = (MeshViewer) theView[i];
+        for(var viewerCanvas: theView) {
+            MeshViewer view = (MeshViewer) viewerCanvas;
             view.setMetaTool(metaTool);
             view.setAltTool(altTool);
             view.setScene(parent.getScene(), obj);
@@ -98,9 +99,9 @@ public class TubeEditorWindow extends CurveEditorWindow {
         meshMenu.add(meshMenuItem[7] = Translate.menuItem("smoothness",  event -> setSmoothnessCommand()));
         meshMenu.add(smoothMenu = Translate.menu("smoothingMethod"));
         smoothItem = new BCheckBoxMenuItem[3];
-        smoothMenu.add(smoothItem[0] = Translate.checkboxMenuItem("none", this, "smoothingChanged", obj.getSmoothingMethod() == Curve.NO_SMOOTHING));
-        smoothMenu.add(smoothItem[1] = Translate.checkboxMenuItem("interpolating", this, "smoothingChanged", obj.getSmoothingMethod() == Curve.INTERPOLATING));
-        smoothMenu.add(smoothItem[2] = Translate.checkboxMenuItem("approximating", this, "smoothingChanged", obj.getSmoothingMethod() == Curve.APPROXIMATING));
+        smoothMenu.add(smoothItem[0] = Translate.checkboxMenuItem("none", this, "smoothingChanged", obj.getSmoothingMethod() == Mesh.NO_SMOOTHING));
+        smoothMenu.add(smoothItem[1] = Translate.checkboxMenuItem("interpolating", this, "smoothingChanged", obj.getSmoothingMethod() == Mesh.INTERPOLATING));
+        smoothMenu.add(smoothItem[2] = Translate.checkboxMenuItem("approximating", this, "smoothingChanged", obj.getSmoothingMethod() == Mesh.APPROXIMATING));
         endsItem = new BCheckBoxMenuItem[3];
         BMenu endsMenu = Translate.menu("endsStyle");
         meshMenu.add(endsMenu);
@@ -183,12 +184,17 @@ public class TubeEditorWindow extends CurveEditorWindow {
         if (!topology) {
             return;
         }
-        int i, j, num = 0;
+        int i;
+        int j;
+        int num = 0;
         Tube theTube = (Tube) objInfo.getObject();
         boolean[] newsel;
-        MeshVertex[] vt = theTube.getVertices(), newv;
-        double[] t = theTube.getThickness(), newt;
-        float[] s = theTube.getSmoothness(), news;
+        MeshVertex[] vt = theTube.getVertices();
+        MeshVertex[] newv;
+        double[] t = theTube.getThickness();
+        double[] newt;
+        float[] s = theTube.getSmoothness();
+        float[] news;
 
         for (i = 0; i < selected.length; i++) {
             if (selected[i]) {
@@ -231,15 +237,25 @@ public class TubeEditorWindow extends CurveEditorWindow {
     @Override
     public void subdivideCommand() {
         Tube theTube = (Tube) objInfo.getObject();
-        MeshVertex[] vt = theTube.getVertices(), newpos;
-        float[] s = theTube.getSmoothness(), news;
-        double[] t = theTube.getThickness(), newt;
+        MeshVertex[] vt = theTube.getVertices();
+        MeshVertex[] newpos;
+        float[] s = theTube.getSmoothness();
+        float[] news;
+        double[] t = theTube.getThickness();
+        double[] newt;
         int numParam = (theTube.getParameters() == null ? 0 : theTube.getParameters().length);
         double[][] param;
         double[][] newparam;
         double[] paramTemp = new double[numParam];
-        boolean[] newsel, split;
-        int i, j, p1, p3, p4, splitcount = 0, method = theTube.getSmoothingMethod();
+        boolean[] newsel;
+        boolean[] split;
+        int i;
+        int j;
+        int p1;
+        int p3;
+        int p4;
+        int splitcount = 0;
+        int method = theTube.getSmoothingMethod();
 
         // Record parameter values.
         param = new double[vt.length][numParam];
