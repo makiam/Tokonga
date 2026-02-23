@@ -1,4 +1,5 @@
 /* Copyright (C) 2004 by Peter Eastman
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -87,9 +88,7 @@ public class VertexParameterValue implements ParameterValue {
     @Override
     public double getAverageValue() {
         double avg = 0.0;
-        for (int i = 0; i < value.length; i++) {
-            avg += value[i];
-        }
+        for(double v: value) avg += v;
         return (avg / value.length);
     }
 
@@ -129,9 +128,7 @@ public class VertexParameterValue implements ParameterValue {
     @Override
     public void writeToStream(DataOutputStream out) throws IOException {
         out.writeInt(value.length);
-        for (int i = 0; i < value.length; i++) {
-            out.writeDouble(value[i]);
-        }
+        for(double v: value) out.writeDouble(v);
     }
 
     /**
