@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2005 by Peter Eastman
-   Changes copyright (C) 2020-2024 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -41,6 +41,7 @@ public class SkinDialog extends ToolDialog {
 
     private static int counter = 1;
 
+    @SuppressWarnings("java:S1121")
     public SkinDialog(LayoutWindow window, List<ObjectInfo> curves) {
         super(window, Translate.text("Tools:skin.dialog.title"));
 
@@ -145,7 +146,8 @@ public class SkinDialog extends ToolDialog {
     private void makeObject() {
         Vec3[][] v = new Vec3[curve.length][];
         Vec3 center = new Vec3();
-        float[] us = new float[curve.length], vs = new float[((Curve) curve[0].getObject()).getVertices().length];
+        float[] us = new float[curve.length];
+        float[] vs = new float[((Curve) curve[0].getObject()).getVertices().length];
         int smoothMethod = Mesh.INTERPOLATING;
         boolean closed = false;
 
@@ -174,9 +176,9 @@ public class SkinDialog extends ToolDialog {
 
         // Center it.
         center.scale(1.0 / (v.length * v[0].length));
-        for (int i = 0; i < v.length; i++) {
-            for (int j = 0; j < v[i].length; j++) {
-                v[i][j].subtract(center);
+        for(Vec3[] vec3s: v) {
+            for(Vec3 vec3: vec3s) {
+                vec3.subtract(center);
             }
         }
         centerOffset = center;

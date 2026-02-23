@@ -1,6 +1,6 @@
 /* Copyright (C) 2001-2008 by Peter Eastman
    Modifications Copyright (C) 2019 by Petri Ihalainen
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -39,12 +39,12 @@ public class CSGTool implements ModellingTool {
     @Override
     public void commandSelected(LayoutWindow window) {
         Scene scene = window.getScene();
-        int[] selection = window.getSelectedIndices();
+
         int closedCount = 0;
         List<ObjectInfo> inputObj = new Vector<>();
 
-        for (int i = 0; i < selection.length; i++) {
-            ObjectInfo obj = scene.getObject(selection[i]);
+        for(int j: window.getSelectedIndices()) {
+            ObjectInfo obj = scene.getObject(j);
             if (obj.getObject().canSetTexture()) {
                 if (obj.getObject() instanceof TriangleMesh || obj.getObject().canConvertToTriangleMesh() != Object3D.CANT_CONVERT) {
                     inputObj.add(obj);
