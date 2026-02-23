@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2011 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -35,14 +35,21 @@ import java.text.*;
 @ProceduralModule.Category("Modules:menu.functions")
 public class FunctionModule extends ProceduralModule<FunctionModule> {
 
-    private boolean repeat, valueOk, errorOk, gradOk;
+    private boolean repeat;
+    private boolean valueOk;
+    private boolean errorOk;
+    private boolean gradOk;
     private double[] x;
     private double[] y;
     private double value;
     private double error;
     private double deriv;
     private double lastBlur;
-    private double[] a0, a1, a2, a3, b;
+    private double[] a0;
+    private double[] a1;
+    private double[] a2;
+    private double[] a3;
+    private double[] b;
     private short shape;
     private final Vec3 gradient;
 
@@ -149,7 +156,9 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
 
     /* Calculate the integral of the function at a given point. */
     private double integral(double valueIn) {
-        double vi, vf, result;
+        double vi;
+        double vf;
+        double result;
         int i;
 
         if (repeat) {
@@ -336,50 +345,53 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
     @Override
     protected void drawContents(Graphics2D g) {
         Rectangle r = new Rectangle(bounds.x + IOPort.SIZE, bounds.y + IOPort.SIZE, bounds.width - 2 * IOPort.SIZE, bounds.height - 2 * IOPort.SIZE);
-        double miny = Double.MAX_VALUE;
-        double maxy = -Double.MAX_VALUE;
+        double minY = Double.MAX_VALUE;
+        double maxY = -Double.MAX_VALUE;
 
-        for (int i = 0; i < y.length; i++) {
-            if (y[i] < miny) {
-                miny = y[i];
+        for(double v: y) {
+            if (v < minY) {
+                minY = v;
             }
-            if (y[i] > maxy) {
-                maxy = y[i];
+            if (v > maxY) {
+                maxY = v;
             }
         }
+
         g.setColor(Color.white);
         g.fillRect(r.x, r.y, r.width, r.height);
         g.setColor(Color.black);
         if (shape == SMOOTH_INTERPOLATE) {
-            int lastx = (int) (r.x + x[0] * r.width);
-            int lasty = (int) (r.y + (maxy - y[0]) * r.height / (maxy - miny));
+            int lastX = (int) (r.x + x[0] * r.width);
+            int lastY = (int) (r.y + (maxY - y[0]) * r.height / (maxY - minY));
             for (int i = 0; i < x.length - 1; i++) {
                 double dx = x[i + 1] - x[i];
-                int nextx = 0, nexty = 0;
+                int nextX = 0;
+                int nextY = 0;
                 if (dx == 0.0) {
-                    nextx = (int) (r.x + x[i + 1] * r.width);
-                    nexty = (int) (r.y + (maxy - y[i + 1]) * r.height / (maxy - miny));
+                    nextX = (int) (r.x + x[i + 1] * r.width);
+                    nextY = (int) (r.y + (maxY - y[i + 1]) * r.height / (maxY - minY));
                 } else {
                     for (int j = 1; j < 8; j++) {
-                        double xf = x[i] + j * 0.125 * dx, yf = calcValue(xf);
-                        nextx = (int) (r.x + xf * r.width);
-                        nexty = (int) (r.y + (maxy - yf) * r.height / (maxy - miny));
-                        g.drawLine(lastx, lasty, nextx, nexty);
-                        lastx = nextx;
-                        lasty = nexty;
+                        double xf = x[i] + j * 0.125 * dx;
+                        double yf = calcValue(xf);
+                        nextX = (int) (r.x + xf * r.width);
+                        nextY = (int) (r.y + (maxY - yf) * r.height / (maxY - minY));
+                        g.drawLine(lastX, lastY, nextX, nextY);
+                        lastX = nextX;
+                        lastY = nextY;
                     }
                 }
-                g.drawLine(lastx, lasty, nextx, nexty);
-                lastx = nextx;
-                lasty = nexty;
+                g.drawLine(lastX, lastY, nextX, nextY);
+                lastX = nextX;
+                lastY = nextY;
             }
             return;
         }
         for (int i = 0; i < x.length - 1; i++) {
             int x1 = (int) (r.x + x[i] * r.width);
-            int y1 = (int) (r.y + (maxy - y[i]) * r.height / (maxy - miny));
+            int y1 = (int) (r.y + (maxY - y[i]) * r.height / (maxY - minY));
             int x2 = (int) (r.x + x[i + 1] * r.width);
-            int y2 = (int) (r.y + (maxy - y[i + 1]) * r.height / (maxy - miny));
+            int y2 = (int) (r.y + (maxY - y[i + 1]) * r.height / (maxY - minY));
             g.drawLine(x1, y1, x2, y2);
         }
     }
@@ -454,8 +466,11 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
         final NumberFormat hFormat;
         final NumberFormat vFormat;
         int selected;
-        boolean clickedOk, fixRange;
-        double miny, maxy, labelstep;
+        boolean clickedOk;
+        boolean fixRange;
+        double minY;
+        double maxY;
+        double labelStep;
 
         static final int HANDLE_SIZE = 5;
 
@@ -541,27 +556,27 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
             deleteButton.setEnabled(movable);
         }
 
-        /* Determine the range of y values and the labels to use on the y axis. */
+        /* Determine the range of y values and the labels to use on the y-axis. */
         private void findRange() {
             if (fixRange) {
                 return;
             }
-            miny = Double.MAX_VALUE;
-            maxy = -Double.MAX_VALUE;
-            for (int i = 0; i < y.length; i++) {
-                if (y[i] < miny) {
-                    miny = y[i];
+            minY = Double.MAX_VALUE;
+            maxY = -Double.MAX_VALUE;
+            for(double v: y) {
+                if (v < minY) {
+                    minY = v;
                 }
-                if (y[i] > maxy) {
-                    maxy = y[i];
+                if (v > maxY) {
+                    maxY = v;
                 }
             }
-            if (miny == maxy) {
-                miny = FastMath.floor(miny);
-                maxy = miny + 1.0;
+            if (minY == maxY) {
+                minY = FastMath.floor(minY);
+                maxY = minY + 1.0;
             }
-            int decimals = FastMath.floor(Math.log(maxy - miny) / Math.log(10.0));
-            labelstep = FastMath.pow(10.0, decimals);
+            int decimals = FastMath.floor(Math.log(maxY - minY) / Math.log(10.0));
+            labelStep = FastMath.pow(10.0, decimals);
             vFormat.setMaximumFractionDigits(decimals < 0 ? -decimals : 1);
         }
 
@@ -569,36 +584,37 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
         private void positionHandles(Rectangle r) {
             for (int i = 0; i < x.length; i++) {
                 handlePos[i].x = (int) (r.x + x[i] * r.width);
-                handlePos[i].y = (int) (r.y + (maxy - y[i]) * r.height / (maxy - miny));
+                handlePos[i].y = (int) (r.y + (maxY - y[i]) * r.height / (maxY - minY));
             }
         }
 
         /* Paint the axes on the graph, and calculate the bounds of the graph. */
         private void paintAxes(Graphics2D g) {
-            int maxWidth = 0, fontHeight = fm.getHeight();
+            int maxWidth = 0;
+            int fontHeight = fm.getHeight();
             Rectangle bounds = canvas.getBounds();
-            double pos = labelstep * Math.ceil(miny / labelstep);
+            double pos = labelStep * Math.ceil(minY / labelStep);
             String label;
 
             graphBounds.y = HANDLE_SIZE / 2;
             graphBounds.height = bounds.height - HANDLE_SIZE - fontHeight - 5;
             g.setColor(Color.black);
-            while (pos <= maxy) {
+            while (pos <= maxY) {
                 label = vFormat.format(pos);
                 int w = fm.stringWidth(label);
                 if (w > maxWidth) {
                     maxWidth = w;
                 }
-                g.drawString(label, 0, graphBounds.y + ((int) ((maxy - pos) * graphBounds.height / (maxy - miny))) + fontHeight / 2);
-                pos += labelstep;
+                g.drawString(label, 0, graphBounds.y + ((int) ((maxY - pos) * graphBounds.height / (maxY - minY))) + fontHeight / 2);
+                pos += labelStep;
             }
             graphBounds.x = maxWidth + 5;
             graphBounds.width = bounds.width - maxWidth - 5 - HANDLE_SIZE / 2;
-            pos = labelstep * Math.ceil(miny / labelstep);
-            while (pos <= maxy) {
-                int v = graphBounds.y + ((int) ((maxy - pos) * graphBounds.height / (maxy - miny)));
+            pos = labelStep * Math.ceil(minY / labelStep);
+            while (pos <= maxY) {
+                int v = graphBounds.y + ((int) ((maxY - pos) * graphBounds.height / (maxY - minY)));
                 g.drawLine(graphBounds.x - 3, v, graphBounds.x, v);
-                pos += labelstep;
+                pos += labelStep;
             }
             for (int i = 0; i < 10; i++) {
                 label = hFormat.format(0.1 * i);
@@ -617,26 +633,28 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
             paintAxes(g);
             g.setColor(Color.black);
             if (smoothBox.getState()) {
-                int lastx = handlePos[0].x, lasty = handlePos[0].y;
+                int lastX = handlePos[0].x;
+                int lastY = handlePos[0].y;
                 for (int i = 0; i < handlePos.length - 1; i++) {
                     double dx = x[i + 1] - x[i];
                     if (dx == 0.0) {
-                        g.drawLine(lastx, lasty, handlePos[i + 1].x, handlePos[i + 1].y);
-                        lastx = handlePos[i + 1].x;
-                        lasty = handlePos[i + 1].y;
+                        g.drawLine(lastX, lastY, handlePos[i + 1].x, handlePos[i + 1].y);
+                        lastX = handlePos[i + 1].x;
+                        lastY = handlePos[i + 1].y;
                         continue;
                     }
                     for (int j = 1; j < 8; j++) {
-                        double xf = x[i] + j * 0.125 * dx, yf = calcValue(xf);
-                        int nextx = (int) (graphBounds.x + xf * graphBounds.width);
-                        int nexty = (int) (graphBounds.y + (maxy - yf) * graphBounds.height / (maxy - miny));
-                        g.drawLine(lastx, lasty, nextx, nexty);
-                        lastx = nextx;
-                        lasty = nexty;
+                        double xf = x[i] + j * 0.125 * dx;
+                        double yf = calcValue(xf);
+                        int nextX = (int) (graphBounds.x + xf * graphBounds.width);
+                        int nextY = (int) (graphBounds.y + (maxY - yf) * graphBounds.height / (maxY - minY));
+                        g.drawLine(lastX, lastY, nextX, nextY);
+                        lastX = nextX;
+                        lastY = nextY;
                     }
-                    g.drawLine(lastx, lasty, handlePos[i + 1].x, handlePos[i + 1].y);
-                    lastx = handlePos[i + 1].x;
-                    lasty = handlePos[i + 1].y;
+                    g.drawLine(lastX, lastY, handlePos[i + 1].x, handlePos[i + 1].y);
+                    lastX = handlePos[i + 1].x;
+                    lastY = handlePos[i + 1].y;
                 }
             } else {
                 for (int i = 0; i < handlePos.length - 1; i++) {
@@ -655,22 +673,23 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
 
         /* Add a new handle at the specified position. */
         private void addHandle(double where, double val) {
-            double[] newx = new double[x.length + 1], newy = new double[y.length + 1];
+            double[] newX = new double[x.length + 1];
+            double[] newY = new double[y.length + 1];
             int i;
 
             for (i = 0; i < x.length && x[i] < where; i++) {
-                newx[i] = x[i];
-                newy[i] = y[i];
+                newX[i] = x[i];
+                newY[i] = y[i];
             }
-            newx[i] = where;
-            newy[i] = val;
+            newX[i] = where;
+            newY[i] = val;
             selected = i;
             for (; i < x.length; i++) {
-                newx[i + 1] = x[i];
-                newy[i + 1] = y[i];
+                newX[i + 1] = x[i];
+                newY[i + 1] = y[i];
             }
-            x = newx;
-            y = newy;
+            x = newX;
+            y = newY;
             handlePos = new Point[x.length];
             for (i = 0; i < handlePos.length; i++) {
                 handlePos[i] = new Point(0, 0);
@@ -688,21 +707,22 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
             if (selected == 0 || selected == x.length - 1) {
                 return;
             }
-            double[] newx = new double[x.length - 1], newy = new double[y.length - 1];
+            double[] newX = new double[x.length - 1];
+            double[] newY = new double[y.length - 1];
             int i;
 
             for (i = 0; i < x.length - 1; i++) {
                 if (i < selected) {
-                    newx[i] = x[i];
-                    newy[i] = y[i];
+                    newX[i] = x[i];
+                    newY[i] = y[i];
                 } else {
-                    newx[i] = x[i + 1];
-                    newy[i] = y[i + 1];
+                    newX[i] = x[i + 1];
+                    newY[i] = y[i + 1];
                 }
             }
             selected = 0;
-            x = newx;
-            y = newy;
+            x = newX;
+            y = newY;
             handlePos = new Point[x.length];
             for (i = 0; i < handlePos.length; i++) {
                 handlePos[i] = new Point(0, 0);
@@ -726,16 +746,16 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
 
         /* Respond to key presses. */
         private void keyPressed(KeyPressedEvent ev) {
-            if (ev.getKeyCode() == KeyPressedEvent.VK_ENTER) {
+            if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
                 doOk();
             }
-            if (ev.getKeyCode() == KeyPressedEvent.VK_ESCAPE) {
+            if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
                 dispose();
             }
             if (ev.getSource() != canvas) {
                 return;
             }
-            if (ev.getKeyCode() == KeyPressedEvent.VK_BACK_SPACE || ev.getKeyCode() == KeyPressedEvent.VK_DELETE) {
+            if (ev.getKeyCode() == KeyEvent.VK_BACK_SPACE || ev.getKeyCode() == KeyEvent.VK_DELETE) {
                 doDelete();
             }
         }
@@ -748,12 +768,13 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
             if (ev.isControlDown()) {
                 double h = (clickPoint.x - graphBounds.x) / (graphBounds.width - 1.0);
                 double v = (graphBounds.height - clickPoint.y + graphBounds.y) / (graphBounds.height - 1.0);
-                v = v * (maxy - miny) + miny;
+                v = v * (maxY - minY) + minY;
                 addHandle(0.001 * ((int) (1000.0 * h)), 0.001 * ((int) (1000.0 * v)));
                 return;
             }
             for (int i = 0; i < handlePos.length; i++) {
-                int xh = handlePos[i].x, yh = handlePos[i].y;
+                int xh = handlePos[i].x;
+                int yh = handlePos[i].y;
                 if (clickPoint.x >= xh - HANDLE_SIZE / 2 && clickPoint.x <= xh + HANDLE_SIZE / 2
                         && clickPoint.y >= yh - HANDLE_SIZE / 2 && clickPoint.y <= yh + HANDLE_SIZE / 2) {
                     selected = i;
@@ -775,18 +796,18 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
             handlePos[selected].x = pos.x;
             double newx = ((double) pos.x - graphBounds.x) / (graphBounds.width - 1.0);
             double newy = ((double) (graphBounds.height - pos.y + graphBounds.y)) / (graphBounds.height - 1.0);
-            newy = newy * (maxy - miny) + miny;
+            newy = newy * (maxY - minY) + minY;
             if (newx < 0.0) {
                 newx = 0.0;
             }
             if (newx > 1.0) {
                 newx = 1.0;
             }
-            if (newy < miny) {
-                newy = miny;
+            if (newy < minY) {
+                newy = minY;
             }
-            if (newy > maxy) {
-                newy = maxy;
+            if (newy > maxY) {
+                newy = maxY;
             }
             y[selected] = 0.001 * ((int) (1000.0 * newy));
             if (selected == 0 || selected == x.length - 1) {
