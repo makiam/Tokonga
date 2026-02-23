@@ -1,5 +1,6 @@
 /* Copyright (C) 2002-2009 by Peter Eastman
-   Changes copyright (C) 2023-2025 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
+
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
@@ -33,13 +34,15 @@ public class UVMappingViewer extends MeshViewer {
     private final UVMesh uvmesh;
     private final ObjectInfo meshInfo;
     private final UVEditController controller;
-    private double minu;
+    private double minU;
     private double maxu;
     private double minv;
     private double maxv;
     private final double time;
     private final double[] param;
-    private int component, sampling, deselect;
+    private int component;
+    private int sampling;
+    private int deselect;
     private boolean[] selected;
     private boolean dragging;
     private boolean draggingSelectionBox;
@@ -89,7 +92,7 @@ public class UVMappingViewer extends MeshViewer {
      * Set the parameters for what part of the texture to display.
      */
     public void setParameters(double minu, double maxu, double minv, double maxv, int component, int sampling) {
-        this.minu = minu;
+        this.minU = minu;
         this.maxu = maxu;
         this.minv = minv;
         this.maxv = maxv;
@@ -107,11 +110,11 @@ public class UVMappingViewer extends MeshViewer {
      */
     private void adjustCamera() {
         Rectangle dim = getBounds();
-        double uscale = dim.width / (maxu - minu);
+        double uscale = dim.width / (maxu - minU);
         double vscale = dim.height / (maxv - minv);
         theCamera.setScreenParamsParallel(1.0, dim.width, dim.height);
-        Mat4 worldToView = Mat4.scale(-uscale, vscale, 1.0).times(Mat4.translation(-minu - 0.5 * dim.width / uscale, -maxv + 0.5 * dim.height / vscale, 0.0));
-        Mat4 viewToWorld = Mat4.translation(minu + 0.5 * dim.width / uscale, maxv - 0.5 * dim.height / vscale, 0.0).times(Mat4.scale(-1.0 / uscale, 1.0 / vscale, 1.0));
+        Mat4 worldToView = Mat4.scale(-uscale, vscale, 1.0).times(Mat4.translation(-minU - 0.5 * dim.width / uscale, -maxv + 0.5 * dim.height / vscale, 0.0));
+        Mat4 viewToWorld = Mat4.translation(minU + 0.5 * dim.width / uscale, maxv - 0.5 * dim.height / vscale, 0.0).times(Mat4.scale(-1.0 / uscale, 1.0 / vscale, 1.0));
         theCamera.setViewTransform(worldToView, viewToWorld);
     }
 
@@ -124,9 +127,9 @@ public class UVMappingViewer extends MeshViewer {
             return;
         }
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        double uoffset = 0.5 * sampling * (maxu - minu) / dim.width;
+        double uoffset = 0.5 * sampling * (maxu - minU) / dim.width;
         double voffset = 0.5 * sampling * (maxv - minv) / dim.height;
-        Image theImage = ((Texture2D) tex.duplicate()).createComponentImage(minu + uoffset, maxu + uoffset, minv - voffset, maxv - voffset,
+        Image theImage = ((Texture2D) tex.duplicate()).createComponentImage(minU + uoffset, maxu + uoffset, minv - voffset, maxv - voffset,
                 dim.width / sampling, dim.height / sampling, component, time, param);
         if (sampling > 1) {
             theImage = theImage.getScaledInstance(dim.width, dim.height, Image.SCALE_SMOOTH);
@@ -152,11 +155,11 @@ public class UVMappingViewer extends MeshViewer {
      */
     private void calcScreenPositions() {
         Rectangle dim = getBounds();
-        double uscale = dim.width / (maxu - minu);
+        double uscale = dim.width / (maxu - minU);
         double vscale = dim.height / (maxv - minv);
         screenVert = new Point[uvmesh.vert.length];
         for (int i = 0; i < uvmesh.vert.length; i++) {
-            int x = (int) ((uvmesh.vert[i].r.x - minu) * uscale - 0.5);
+            int x = (int) ((uvmesh.vert[i].r.x - minU) * uscale - 0.5);
             int y = (int) ((maxv - uvmesh.vert[i].r.y) * vscale - 0.5);
             screenVert[i] = new Point(x, y);
         }
@@ -211,8 +214,8 @@ public class UVMappingViewer extends MeshViewer {
     public void setDisplayedVertices(Vec2[] coord, boolean[] display) {
         this.coord = coord;
         int count = 0;
-        for (int i = 0; i < display.length; i++) {
-            if (display[i]) {
+        for(boolean b: display) {
+            if (b) {
                 count++;
             }
         }
@@ -245,7 +248,7 @@ public class UVMappingViewer extends MeshViewer {
      * Get the minimum U value.
      */
     public double getMinU() {
-        return minu;
+        return minU;
     }
 
     /**
@@ -423,9 +426,9 @@ public class UVMappingViewer extends MeshViewer {
             amount *= -1;
         }
         double factor = Math.pow(1.01, -amount);
-        double midu = (minu + maxu) / 2;
+        double midu = (minU + maxu) / 2;
         double midv = (minv + maxv) / 2;
-        double newminu = ((minu - midu) / factor) + midu;
+        double newminu = ((minU - midu) / factor) + midu;
         double newmaxu = ((maxu - midu) / factor) + midu;
         double newminv = ((minv - midv) / factor) + midv;
         double newmaxv = ((maxv - midv) / factor) + midv;

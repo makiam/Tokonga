@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2007 by François Guillet
  *  Modifications Copyright (C) 2019 by Petri Ihalainen
- *  Changes copyright (C) 2022-2025 by Maksim Khramov
+ *  Changes copyright (C) 2022-2026 by Maksim Khramov
 
  *  This program is free software; you can redistribute it and/or modify it under the 
  *  terms of the GNU General Public License as published by the Free Software 
@@ -110,7 +110,9 @@ public class UVMappingEditorDialog extends BDialog {
     private BCheckBoxMenuItem[] mappingMenuItems;
     private final BCheckBoxMenuItem gridMenuItem;
 
-    public static final int TRANSPARENT = 0, WHITE = 1, TEXTURED = 2;
+    public static final int TRANSPARENT = 0;
+    public static final int WHITE = 1;
+    public static final int TEXTURED = 2;
 
     /**
      * Construct a new UVMappingEditorDialog
@@ -164,9 +166,8 @@ public class UVMappingEditorDialog extends BDialog {
             for (int i = 0; i < texList.size(); i++) {
                 boolean hasTexture = false;
                 for (int j = 0; j < mappingData.mappings.size(); j++) {
-                    List<Integer> textures = mappingData.mappings.get(j).textures;
-                    for (int k = 0; k < textures.size(); k++) {
-                        if (getTextureFromID(textures.get(k)) == i) {
+                    for(Integer texture: mappingData.mappings.get(j).textures) {
+                        if (getTextureFromID(texture) == i) {
                             hasTexture = true;
                         }
                     }
@@ -225,11 +226,8 @@ public class UVMappingEditorDialog extends BDialog {
                             LayoutInfo.BOTH,
                             new Insets(2, 2, 2, 2),
                             new Dimension(0, 0)));
-            List<UVMeshMapping> mappings = mappingData.getMappings();
 
-            for (int i = 0; i < mappings.size(); i++) {
-                mappingCB.add(mappings.get(i).name);
-            }
+            mappingData.getMappings().forEach(cm -> mappingCB.add(cm.name));
 
             setTexturesForMapping(currentMapping);
             componentCB.setContents(new String[]{Translate.text("Diffuse"),
@@ -283,10 +281,9 @@ public class UVMappingEditorDialog extends BDialog {
         div.setResizeWeight(1.0);
         div.setContinuousLayout(true);
         content.add(div, BorderContainer.CENTER, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets(2, 2, 2, 2), new Dimension(0, 0)));
-        UnfoldedMesh[] meshes = mappingData.getMeshes();
-        for (int i = 0; i < meshes.length; i++) {
-            pieceList.add(meshes[i].getName());
-        }
+
+        for(var unfoldedMesh: mappingData.getMeshes()) pieceList.add(unfoldedMesh.getName());
+
         pieceList.setMultipleSelectionEnabled(false);
         pieceList.setSelected(0, true);
         pieceList.addEventLink(SelectionChangedEvent.class, this, "doPieceListSelection");
@@ -624,6 +621,7 @@ public class UVMappingEditorDialog extends BDialog {
         updateState();
     }
 
+    // TODO: Move this method to only used it class ChangeTextureCommand
     private void doTextureChanged() {
         if (currentTexture == textureCB.getSelectedIndex()) {
             return;
@@ -934,6 +932,7 @@ public class UVMappingEditorDialog extends BDialog {
         new ExportImageDialog(this);
     }
 
+    // TODO: Move this method to only used it class ExportImageDialog
     private void createAndExportMapImage(ExportImageDialog exportDialog, File outputFile) {
         BufferedImage mappingImage = mappingImage(exportDialog.getResolution(),
                 exportDialog.getSelectedBackground(),
@@ -1023,15 +1022,14 @@ public class UVMappingEditorDialog extends BDialog {
                 g.setColor(Color.black);
             }
             for (int i = 0; i < meshes.length; i++) {
-                UnfoldedMesh mesh = meshes[i];
                 Vec2[] v = currentMapping.v[i];
-                UnfoldedEdge[] e = mesh.getEdges();
-                for (int j = 0; j < e.length; j++) {
-                    if (e[j].hidden) // What is this? Need another user choice?
+
+                for(UnfoldedEdge unfoldedEdge: meshes[i].getEdges()) {
+                    if (unfoldedEdge.hidden) // What is this? Need another user choice?
                     {
                         continue;
                     }
-                    g.draw(new Line2D.Double(v[e[j].v1].x, v[e[j].v1].y, v[e[j].v2].x, v[e[j].v2].y));
+                    g.draw(new Line2D.Double(v[unfoldedEdge.v1].x, v[unfoldedEdge.v1].y, v[unfoldedEdge.v2].x, v[unfoldedEdge.v2].y));
                 }
             }
         }
@@ -1324,6 +1322,7 @@ public class UVMappingEditorDialog extends BDialog {
         // Things to consider:
         // - Selection for line width? More choices for antialiased image?
         // - Option to export the texture image only
+        @SuppressWarnings("java:S1121")
         ExportImageDialog(WindowWidget parent) {
             super(parent, true);
             this.getComponent().addWindowListener(new java.awt.event.WindowAdapter() {

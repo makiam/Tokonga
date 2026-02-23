@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2007 by François Guillet
  *  Modifications Copyright (C) 2019 by Petri Ihalainen
- *  Changes copyright (C) 2022-2025 by Maksim Khramov
+ *  Changes copyright (C) 2022-2026 by Maksim Khramov
  *
  *  This program is free software; you can redistribute it and/or modify it under the 
  *  terms of the GNU General Public License as published by the Free Software 
@@ -67,7 +67,10 @@ public class UVMappingCanvas extends CustomWidget {
     private final UVMappingData mappingData;
     private final Vec2 origin;
     private double scale;
-    private double umin, umax, vmin, vmax;
+    private double umin;
+    private double umax;
+    private double vmin;
+    private double vmax;
     private Image textureImage;
     private int component;
     private boolean disableImageDisplay;
@@ -98,12 +101,7 @@ public class UVMappingCanvas extends CustomWidget {
     /**
      * Construct a new UVMappingCanvas
      */
-    public UVMappingCanvas(UVMappingEditorDialog window,
-            UVMappingData mappingData,
-            MeshPreviewer preview,
-            Texture texture,
-            UVMapping texMapping) {
-
+    public UVMappingCanvas(UVMappingEditorDialog window, UVMappingData mappingData, MeshPreviewer preview, Texture texture, UVMapping texMapping) {
         super();
         parent = window;
         this.preview = preview;
@@ -272,11 +270,9 @@ public class UVMappingCanvas extends CustomWidget {
         }
         drawGrid(g);
         for (int i = 0; i < meshes.length; i++) {
-            UnfoldedMesh mesh = meshes[i];
+
             Vec2[] v = mapping.v[i];
-            UnfoldedEdge[] e = mesh.getEdges();
-            Point p1;
-            Point p2;
+
             if (currentPiece == i) {
                 g.setColor(mapping.edgeColor);
                 if (boldEdges) {
@@ -287,13 +283,11 @@ public class UVMappingCanvas extends CustomWidget {
                 g.setColor(Color.gray);
                 g.setStroke(normal);
             }
-            for (int j = 0; j < e.length; j++) {
-                if (e[j].hidden) {
-                    continue;
-                }
+            for(var unfoldedEdge: meshes[i].getEdges()) {
+                if (unfoldedEdge.hidden) continue;
 
-                p1 = VertexToLayout(v[e[j].v1]);
-                p2 = VertexToLayout(v[e[j].v2]);
+                var p1 = VertexToLayout(v[unfoldedEdge.v1]);
+                var p2 = VertexToLayout(v[unfoldedEdge.v2]);
                 g.drawLine(p1.x, p1.y, p2.x, p2.y);
             }
         }
@@ -607,7 +601,9 @@ public class UVMappingCanvas extends CustomWidget {
             }
         }
 
-        if (count != 0) {
+        if (count == 0) {
+            return null;
+        } else {
             int[] selChange = new int[count];
             count = 0;
             for (int i = 0; i < sel1.length; i++) {
@@ -618,17 +614,13 @@ public class UVMappingCanvas extends CustomWidget {
             }
             return selChange;
 
-        } else {
-            return null;
         }
     }
 
     public void clearSelection() {
         int count = 0;
-        for (int i = 0; i < selected.length; i++) {
-            if (selected[i]) {
-                count++;
-            }
+        for(boolean b: selected) {
+            if (b) count++;
         }
         int[] selChange = null;
         if (count > 0) {
@@ -711,18 +703,20 @@ public class UVMappingCanvas extends CustomWidget {
 
     /**
      * This function returns the rectangle that encloses the mesh, taking into
-     * accout mesh origin, orientation and scale
+     * account mesh origin, orientation and scale
      *
      * @return mesh bounds
      */
     public BoundingBox getBounds(UnfoldedMesh mesh) {
-        int xmin, xmax, ymin, ymax;
+        int xmin;
+        int xmax;
+        int ymin;
+        int ymax;
         xmax = ymax = Integer.MIN_VALUE;
         xmin = ymin = Integer.MAX_VALUE;
-        Point p;
-        Vec2[] v = mapping.v[currentPiece];
-        for (int i = 0; i < v.length; i++) {
-            p = VertexToLayout(v[i]);
+
+        for(Vec2 vec2: mapping.v[currentPiece]) {
+            Point p = VertexToLayout(vec2);
             if (xmax < p.x) {
                 xmax = p.x;
             }
@@ -956,36 +950,29 @@ public class UVMappingCanvas extends CustomWidget {
                 vertMeshes[i][j] = -1;
             }
         }
-        UnfoldedFace[] f;
-        UnfoldedVertex[] v;
-        int count = 0;
+
         for (int i = 0; i < meshes.length; i++) {
-            v = meshes[i].getVertices();
-            count += v.length;
-        }
-        count = 0;
-        for (int i = 0; i < meshes.length; i++) {
-            f = meshes[i].getFaces();
-            v = meshes[i].getVertices();
-            for (int j = 0; j < f.length; j++) {
-                if (f[j].id >= 0 && f[j].id < texCoordIndex.length) {
-                    for (int k = 0; k < texCoordIndex[f[j].id].length; k++) {
-                        if (f[j].v1 >= 0 && v[f[j].v1].id == texCoordIndex[f[j].id][k]) {
-                            vertIndexes[f[j].id][k] = f[j].v1;
-                            vertMeshes[f[j].id][k] = i;
+
+            UnfoldedVertex[] v = meshes[i].getVertices();
+            for(UnfoldedFace unfoldedFace: meshes[i].getFaces()) {
+                if (unfoldedFace.id >= 0 && unfoldedFace.id < texCoordIndex.length) {
+                    for(int k = 0; k < texCoordIndex[unfoldedFace.id].length; k++) {
+                        if (unfoldedFace.v1 >= 0 && v[unfoldedFace.v1].id == texCoordIndex[unfoldedFace.id][k]) {
+                            vertIndexes[unfoldedFace.id][k] = unfoldedFace.v1;
+                            vertMeshes[unfoldedFace.id][k] = i;
                         }
-                        if (f[j].v2 >= 0 && v[f[j].v2].id == texCoordIndex[f[j].id][k]) {
-                            vertIndexes[f[j].id][k] = f[j].v2;
-                            vertMeshes[f[j].id][k] = i;
+                        if (unfoldedFace.v2 >= 0 && v[unfoldedFace.v2].id == texCoordIndex[unfoldedFace.id][k]) {
+                            vertIndexes[unfoldedFace.id][k] = unfoldedFace.v2;
+                            vertMeshes[unfoldedFace.id][k] = i;
                         }
-                        if (f[j].v3 >= 0 && v[f[j].v3].id == texCoordIndex[f[j].id][k]) {
-                            vertIndexes[f[j].id][k] = f[j].v3;
-                            vertMeshes[f[j].id][k] = i;
+                        if (unfoldedFace.v3 >= 0 && v[unfoldedFace.v3].id == texCoordIndex[unfoldedFace.id][k]) {
+                            vertIndexes[unfoldedFace.id][k] = unfoldedFace.v3;
+                            vertMeshes[unfoldedFace.id][k] = i;
                         }
                     }
                 }
             }
-            count += v.length;
+
         }
     }
 
@@ -1070,7 +1057,8 @@ public class UVMappingCanvas extends CustomWidget {
      */
     // from triangle mesh editor
     public void findSelectionDistance() {
-        int i, j;
+        int i;
+        int j;
         UnfoldedMesh mesh = meshes[currentPiece];
         int[] dist = new int[mesh.getVertices().length];
         UnfoldedEdge[] e = mesh.getEdges();
@@ -1121,14 +1109,15 @@ public class UVMappingCanvas extends CustomWidget {
                 delta[i].set(0.0, 0.0);
             }
         }
-        int v1, v2;
+        int v1;
+        int v2;
         for (int i = 0; i < maxDistance; i++) {
             for (int j = 0; j < count.length; j++) {
                 count[j] = 0;
             }
-            for (int j = 0; j < edge.length; j++) {
-                v1 = mappingData.invVerticesTable[currentPiece][edge[j].v1];
-                v2 = mappingData.invVerticesTable[currentPiece][edge[j].v2];
+            for(UnfoldedEdge unfoldedEdge: edge) {
+                v1 = mappingData.invVerticesTable[currentPiece][unfoldedEdge.v1];
+                v2 = mappingData.invVerticesTable[currentPiece][unfoldedEdge.v2];
                 if (v1 == -1 || v2 == -1) {
                     continue;
                 }
@@ -1167,8 +1156,14 @@ public class UVMappingCanvas extends CustomWidget {
 
         private Vec2[][] oldPos;
         private Vec2[][] newPos;
-        private double oldUmin, oldUmax, oldVmin, oldVmax;
-        private double newUmin, newUmax, newVmin, newVmax;
+        private double oldUmin;
+        private double oldUmax;
+        private double oldVmin;
+        private double oldVmax;
+        private double newUmin;
+        private double newUmax;
+        private double newVmin;
+        private double newVmax;
 
         public MappingPositionsCommand() {
             oldPos = newPos = null;
@@ -1272,9 +1267,9 @@ public class UVMappingCanvas extends CustomWidget {
 
         @Override
         public void redo() {
-            for (int i = 0; i < selection.length; i++) {
-                mappingData.meshes[currentPiece].vertices[mappingData.verticesTable[currentPiece][selection[i]]].pinned
-                        = !mappingData.meshes[currentPiece].vertices[mappingData.verticesTable[currentPiece][selection[i]]].pinned;
+            for(int j: selection) {
+                mappingData.meshes[currentPiece].vertices[mappingData.verticesTable[currentPiece][j]].pinned
+                        = !mappingData.meshes[currentPiece].vertices[mappingData.verticesTable[currentPiece][j]].pinned;
             }
             repaint();
         }
@@ -1299,9 +1294,7 @@ public class UVMappingCanvas extends CustomWidget {
 
         @Override
         public void redo() {
-            for (int i = 0; i < selection.length; i++) {
-                selected[selection[i]] = !selected[selection[i]];
-            }
+            for(int j: selection) selected[j] = !selected[j];
             manipulator.selectionUpdated();
             repaint();
         }
