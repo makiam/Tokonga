@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2009 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -603,7 +603,8 @@ public class TreeList extends CustomWidget {
 
                 recordUndo();
                 updateDisabled = true;
-                TreeElement el = null, parent;
+                TreeElement el = null;
+                TreeElement parent;
                 int position = 0;
 
                 // First figure out where to insert them.
@@ -648,15 +649,15 @@ public class TreeList extends CustomWidget {
                     position = 0;
                 }
                 if (parent == null) {
-                    for (int i = 0; i < selected.size(); i++) {
-                        el = selected.get(i);
+                    for(TreeElement treeElement: selected) {
+                        el = treeElement;
                         if (el.getParent() == null || !el.getParent().isSelected()) {
                             addElement(el, position++);
                         }
                     }
                 } else {
-                    for (int i = 0; i < selected.size(); i++) {
-                        el = selected.get(i);
+                    for(TreeElement treeElement: selected) {
+                        el = treeElement;
                         if (el.getParent() == null || !el.getParent().isSelected()) {
                             parent.addChild(el, position++);
                         }
