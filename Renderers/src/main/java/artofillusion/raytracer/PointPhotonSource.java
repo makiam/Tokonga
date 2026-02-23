@@ -1,4 +1,5 @@
 /* Copyright (C) 2003-2013 by Peter Eastman
+    Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -35,8 +36,8 @@ public class PointPhotonSource implements PhotonSource {
         // Select an average intensity based on the size of the scene.
         Vec3[] corner = map.getBounds().getCorners();
         double maxDist2 = 0.0;
-        for (int i = 0; i < corner.length; i++) {
-            double dist2 = pos.distance2(corner[i]);
+        for(Vec3 vec3: corner) {
+            double dist2 = pos.distance2(vec3);
             if (dist2 > maxDist2) {
                 maxDist2 = dist2;
             }
@@ -88,7 +89,7 @@ public class PointPhotonSource implements PhotonSource {
                     }
                     int i = index / n;
                     int j = index - (i * n);
-                    double baseu = -1.0 + i * du;
+                    double baseU = -1.0 + i * du;
                     double basephi = j * dphi;
                     Ray r = new Ray(map.getWorkspace().context);
                     Vec3 orig = r.getOrigin();
@@ -97,10 +98,11 @@ public class PointPhotonSource implements PhotonSource {
                     if (randomizeOrigin) {
                         map.randomizePoint(orig, light.getRadius());
                     }
-                    double ctheta = baseu + map.random.nextDouble() * du, phi = basephi + map.random.nextDouble() * dphi;
-                    double stheta = Math.sqrt(1.0 - ctheta * ctheta);
+                    double cTheta = baseU + map.random.nextDouble() * du;
+                    double phi = basephi + map.random.nextDouble() * dphi;
+                    double stheta = Math.sqrt(1.0 - cTheta * cTheta);
                     double cphi = Math.cos(phi), sphi = Math.sin(phi);
-                    dir.set(stheta * sphi, stheta * cphi, ctheta);
+                    dir.set(stheta * sphi, stheta * cphi, cTheta);
                     r.newID();
                     map.spawnPhoton(r, color, false);
                 }
