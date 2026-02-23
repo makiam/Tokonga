@@ -24,6 +24,7 @@ import buoy.event.WidgetMouseEvent;
 import java.awt.Color;
 import java.awt.Point;
 
+import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Vector;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +43,8 @@ public class PMExtrudeCurveTool extends EditingTool {
     private boolean[] orSel;
     private final MeshEditController controller;
     private ViewerCanvas canvas;
-    private Vec3 fromPoint, currentPoint;
+    private Vec3 fromPoint;
+    private Vec3 currentPoint;
     boolean constantSize;
     int dragging;
     boolean previewMode = true;
@@ -215,20 +217,20 @@ public class PMExtrudeCurveTool extends EditingTool {
         int key = e.getKeyCode();
         if (fromPoint != null) {
             switch (key) {
-                case KeyPressedEvent.VK_ESCAPE:
+                case KeyEvent.VK_ESCAPE:
                     log.debug("Escape...");
                     doCancel();
                     break;
-                case KeyPressedEvent.VK_W:
+                case KeyEvent.VK_W:
                     if (clickPoints.size() > 0) {
                         clickPoints.remove(clickPoints.size() - 1);
                     }
                     theWindow.updateImage();
                     break;
-                case KeyPressedEvent.VK_ENTER:
+                case KeyEvent.VK_ENTER:
                     extrudeFaces(true);
                     break;
-                case KeyPressedEvent.VK_J:
+                case KeyEvent.VK_J:
                     previewMode = !previewMode;
                     if (previewMode && clickPoints.size() != 0) {
                         extrudeFaces(false);
@@ -377,13 +379,8 @@ public class PMExtrudeCurveTool extends EditingTool {
                     vppt = new Point((int) Math.round(vp.x), (int) Math.round(vp.y));
                     view.drawLine(vpp, vppt, Color.black);
                 }
-                for (int k = 0; k < clickPoints.size(); ++k) {
-                    clickPoints.get(k).draw(view);
-                    //v = ((CurvePoint)clickPoints.get(k)).position;
-                    //vp = canvas.getCamera().getObjectToScreen().timesXY( v );
-                    //vpp = new Point( (int)Math.round(vp.x), (int)Math.round(vp.y) );
-                    //view.drawBox( vpp.x - HANDLE_SIZE/2, vpp.y - HANDLE_SIZE/2, HANDLE_SIZE, HANDLE_SIZE, Color.red);
-                }
+                clickPoints.forEach(point -> point.draw(view));
+
             }
         }
     }

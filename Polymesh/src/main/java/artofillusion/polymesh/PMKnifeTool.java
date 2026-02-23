@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2004 by Peter Eastman
-   Changes copyright (C) 2023-2025 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
 This program is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
@@ -63,8 +63,8 @@ public class PMKnifeTool extends EditingTool {
                 selection = controller.getSelection();
             }
             int sel = 0;
-            for (int i = 0; i < selection.length; i++) {
-                if (selection[i]) {
+            for(boolean b: selection) {
+                if (b) {
                     ++sel;
                     break;
                 }
@@ -180,8 +180,9 @@ public class PMKnifeTool extends EditingTool {
                 view.drawLine(clickPoints.get(k), clickPoints.get(k + 1), Color.black);
             }
             view.drawLine(clickPoints.get(clickPoints.size() - 1), dragPoint, Color.black);
-            for (int k = 0; k < clickPoints.size(); ++k) {
-                Point p1 = new Point(clickPoints.get(k));
+
+            clickPoints.forEach(point -> {
+                Point p1 = new Point(point);
                 Point p2 = new Point(p1);
                 p1.x += 5;
                 p2.x -= 5;
@@ -191,7 +192,8 @@ public class PMKnifeTool extends EditingTool {
                 p2.x += 5;
                 p2.y -= 5;
                 view.drawLine(p1, p2, Color.black);
-            }
+            });
+
             Point p1 = new Point(dragPoint);
             Point p2 = new Point(p1);
             p1.x += 5;
