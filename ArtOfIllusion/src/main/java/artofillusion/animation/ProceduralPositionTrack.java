@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2013 by Peter Eastman
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -557,17 +557,17 @@ public class ProceduralPositionTrack extends Track<ProceduralPositionTrack> impl
             }
         }
         parameter = newparams;
-        Keyframe[] key = tc.getValues();
-        for (int i = 0; i < key.length; i++) {
+
+        for(var keyframe: tc.getValues()) {
             double[] newval = new double[parameter.length];
-            for (int j = 0; j < newval.length; j++) {
+            for(int j = 0; j < newval.length; j++) {
                 if (index[j] > -1) {
-                    newval[j] = ((ArrayKeyframe) key[i]).val[index[j]];
+                    newval[j] = ((ArrayKeyframe) keyframe).val[index[j]];
                 } else {
                     newval[j] = parameter[j].defaultVal;
                 }
             }
-            ((ArrayKeyframe) key[i]).val = newval;
+            ((ArrayKeyframe) keyframe).val = newval;
         }
         ((LayoutWindow) win).getScore().finishEditingTrack(this);
     }
@@ -578,7 +578,7 @@ public class ProceduralPositionTrack extends Track<ProceduralPositionTrack> impl
     @Override
     public void editProperties(ProcedureEditor editor) {
         Skeleton s = info.getSkeleton();
-        Joint[] j = (s == null ? null : s.getJoints());
+        Joint[] joints = (s == null ? null : s.getJoints());
         BComboBox smoothChoice = new BComboBox(new String[]{
             Translate.text("Discontinuous"),
             Translate.text("Linear"),
@@ -593,12 +593,10 @@ public class ProceduralPositionTrack extends Track<ProceduralPositionTrack> impl
         modeChoice.setSelectedIndex(mode);
         BComboBox jointChoice = new BComboBox();
         jointChoice.add(Translate.text("objectOrigin"));
-        if (j != null) {
-            for (int i = 0; i < j.length; i++) {
-                jointChoice.add(j[i].name);
-            }
-            for (int i = 0; i < j.length; i++) {
-                if (j[i].id == joint) {
+        if (joints != null) {
+            for(var value: joints) jointChoice.add(value.name);
+            for (int i = 0; i < joints.length; i++) {
+                if (joints[i].id == joint) {
                     jointChoice.setSelectedIndex(i + 1);
                 }
             }
@@ -643,7 +641,7 @@ public class ProceduralPositionTrack extends Track<ProceduralPositionTrack> impl
         if (jointChoice.getSelectedIndex() == 0) {
             joint = -1;
         } else {
-            joint = j[jointChoice.getSelectedIndex() - 1].id;
+            joint = joints[jointChoice.getSelectedIndex() - 1].id;
         }
     }
 }
