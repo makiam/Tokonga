@@ -20,11 +20,7 @@ import artofillusion.WireframeMesh;
 import artofillusion.animation.Keyframe;
 import artofillusion.math.BoundingBox;
 import artofillusion.math.Vec3;
-import artofillusion.object.FacetedMesh;
-import artofillusion.object.MeshVertex;
-import artofillusion.object.Object3D;
-import artofillusion.object.ObjectInfo;
-import artofillusion.object.TriangleMesh;
+import artofillusion.object.*;
 import artofillusion.polymesh.PolyMesh.Wedge;
 import artofillusion.polymesh.PolyMesh.Wface;
 import artofillusion.polymesh.PolyMesh.Wvertex;
@@ -278,7 +274,13 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 
     public static final int MAX_SMOOTHNESS = 11;
 
-    long t1, t2, t3, t4, t5, t6, t7;
+    long t1;
+    long t2;
+    long t3;
+    long t4;
+    long t5;
+    long t6;
+    long t7;
 
     private QuadMesh() {
     }
@@ -312,9 +314,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
             edges[i] = new QuadEdge(mesh.edges[i]);
         }
         faces = new QuadFace[mesh.faces.length];
-        for (int i = 0; i < faces.length; i++) {
-            faces[i] = mesh.faces[i];
-        }
+        System.arraycopy(mesh.faces, 0, faces, 0, faces.length);
     }
 
     @Override
@@ -415,10 +415,10 @@ public class QuadMesh extends Object3D implements FacetedMesh {
         } else {
             zscale = zsize / size.z;
         }
-        for (int i = 0; i < vertices.length; i++) {
-            vertices[i].r.x *= xscale;
-            vertices[i].r.y *= yscale;
-            vertices[i].r.z *= zscale;
+        for(var vertex: vertices) {
+            vertex.r.x *= xscale;
+            vertex.r.y *= yscale;
+            vertex.r.z *= zscale;
         }
         //skeleton.scale(xscale, yscale, zscale);
         resetMesh();
@@ -463,7 +463,8 @@ public class QuadMesh extends Object3D implements FacetedMesh {
     public Vec3[] getNormals() {
         Vec3 faceNorm;
         Vec3[] norm = new Vec3[vertices.length];
-        double length, dot;
+        double length;
+        double dot;
         // Calculate a normal for each face, and average the face normals for each vertex.
 
         for (int i = 0; i < norm.length; i++) {
@@ -527,9 +528,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
                 norm[faces[i].v4].add(faceNorm.times(Math.acos(dot)));
             }
         }
-        for (int i = 0; i < norm.length; i++) {
-            norm[i].normalize();
-        }
+        for(var vec3: norm) vec3.normalize();
         return norm;
     }
 
@@ -572,7 +571,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
         }
         TriangleMesh triMesh = new TriangleMesh(vertArray, facesArray);
         triMesh.copyTextureAndMaterial(this);
-        triMesh.setSmoothingMethod(TriangleMesh.APPROXIMATING);
+        triMesh.setSmoothingMethod(Mesh.APPROXIMATING);
 //		 Compute the trimesh texture parameters.
         ParameterValue[] oldParamVal = getParameterValues();
         if (oldParamVal != null) {
@@ -642,9 +641,8 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 //			}
 //				
 //		}
-        for (int i = 0; i < edges.length; i++) {
-            edges[i].mark = false;
-        }
+        for(var edge: edges) edge.mark = false;
+
         Stack<QuadEdge> stack = new Stack<>();
         //check for initial critical edges
         for (int i = 0; i < faces.length; i++) {
@@ -679,9 +677,8 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 //		t1 += time2 - time1;
 //		time1 = System.currentTimeMillis();
         //subdivided edges are marked and counted
-        for (int i = 0; i < edges.length; i++) {
-            edges[i].mark = false;
-        }
+        for(var edge: edges) edge.mark = false;
+
         int edgeCount = 0;
         int face3count = 0;
         int face4count = 0;
@@ -844,21 +841,13 @@ public class QuadMesh extends Object3D implements FacetedMesh {
         index = 0;
         fc = 0;
         int faceStart = faces.length - (face3count + face4count);
-        for (int i = 0; i < faces.length; i++) {
-            if (faces[i].mark == QuadFace.SUBDIVIDE) {
-                nedges[edges.length + edgeCount + fc] = new QuadEdge(
-                        edgeTable[faces[i].e1] + vertices.length, edgeCount
-                        + vertices.length + index, faceStart + fc, faceStart + fc + 1);
-                nedges[edges.length + edgeCount + fc + 1] = new QuadEdge(
-                        edgeTable[faces[i].e2] + vertices.length, edgeCount
-                        + vertices.length + index, faceStart + fc + 1, faceStart + fc + 2);
-                nedges[edges.length + edgeCount + +fc + 2] = new QuadEdge(
-                        edgeTable[faces[i].e3] + vertices.length, edgeCount
-                        + vertices.length + index, faceStart + fc + 2, faceStart + fc + 3);
-                nedges[edges.length + edgeCount + fc + 3] = new QuadEdge(
-                        edgeTable[faces[i].e4] + vertices.length, edgeCount
-                        + vertices.length + index, faceStart + fc + 3, faceStart + fc);
-                if (calcProjectedEdges) {
+        for(var quadFace: faces) {
+            if(quadFace.mark == QuadFace.SUBDIVIDE) {
+                nedges[edges.length + edgeCount + fc] = new QuadEdge(edgeTable[quadFace.e1] + vertices.length, edgeCount + vertices.length + index, faceStart + fc, faceStart + fc + 1);
+                nedges[edges.length + edgeCount + fc + 1] = new QuadEdge(edgeTable[quadFace.e2] + vertices.length, edgeCount + vertices.length + index, faceStart + fc + 1, faceStart + fc + 2);
+                nedges[edges.length + edgeCount + +fc + 2] = new QuadEdge(edgeTable[quadFace.e3] + vertices.length, edgeCount + vertices.length + index, faceStart + fc + 2, faceStart + fc + 3);
+                nedges[edges.length + edgeCount + fc + 3] = new QuadEdge(edgeTable[quadFace.e4] + vertices.length, edgeCount + vertices.length + index, faceStart + fc + 3, faceStart + fc);
+                if(calcProjectedEdges) {
                     npe[edges.length + edgeCount + fc] = -1;
                     npe[edges.length + edgeCount + fc + 1] = -1;
                     npe[edges.length + edgeCount + fc + 2] = -1;
@@ -866,34 +855,22 @@ public class QuadMesh extends Object3D implements FacetedMesh {
                 }
                 fc += 4;
                 index++;
-            } else if (faces[i].mark == QuadFace.YV2) {
-                nedges[edges.length + edgeCount + fc] = new QuadEdge(
-                        edgeTable[faces[i].e1] + vertices.length, edgeCount
-                        + vertices.length + index, faceStart + fc, faceStart + fc + 1);
-                nedges[edges.length + edgeCount + fc + 1] = new QuadEdge(
-                        edgeTable[faces[i].e2] + vertices.length, edgeCount
-                        + vertices.length + index, faceStart + fc + 1, faceStart + fc + 2);
-                nedges[edges.length + edgeCount + fc + 2] = new QuadEdge(
-                        faces[i].v4, edgeCount
-                        + vertices.length + index, faceStart + fc + 2, faceStart + fc);
-                if (calcProjectedEdges) {
+            } else if(quadFace.mark == QuadFace.YV2) {
+                nedges[edges.length + edgeCount + fc] = new QuadEdge(edgeTable[quadFace.e1] + vertices.length, edgeCount + vertices.length + index, faceStart + fc, faceStart + fc + 1);
+                nedges[edges.length + edgeCount + fc + 1] = new QuadEdge(edgeTable[quadFace.e2] + vertices.length, edgeCount + vertices.length + index, faceStart + fc + 1, faceStart + fc + 2);
+                nedges[edges.length + edgeCount + fc + 2] = new QuadEdge(quadFace.v4, edgeCount + vertices.length + index, faceStart + fc + 2, faceStart + fc);
+                if(calcProjectedEdges) {
                     npe[edges.length + edgeCount + fc] = -1;
                     npe[edges.length + edgeCount + fc + 1] = -1;
                     npe[edges.length + edgeCount + fc + 2] = -1;
                 }
                 fc += 3;
                 index++;
-            } else if (faces[i].mark == QuadFace.YV4) {
-                nedges[edges.length + edgeCount + fc] = new QuadEdge(
-                        faces[i].v2, edgeCount
-                        + vertices.length + index, faceStart + fc, faceStart + fc + 1);
-                nedges[edges.length + edgeCount + fc + 1] = new QuadEdge(
-                        edgeTable[faces[i].e3] + vertices.length, edgeCount
-                        + vertices.length + index, faceStart + fc + 1, faceStart + fc + 2);
-                nedges[edges.length + edgeCount + fc + 2] = new QuadEdge(
-                        edgeTable[faces[i].e4] + vertices.length, edgeCount
-                        + vertices.length + index, faceStart + fc + 2, faceStart + fc);
-                if (calcProjectedEdges) {
+            } else if(quadFace.mark == QuadFace.YV4) {
+                nedges[edges.length + edgeCount + fc] = new QuadEdge(quadFace.v2, edgeCount + vertices.length + index, faceStart + fc, faceStart + fc + 1);
+                nedges[edges.length + edgeCount + fc + 1] = new QuadEdge(edgeTable[quadFace.e3] + vertices.length, edgeCount + vertices.length + index, faceStart + fc + 1, faceStart + fc + 2);
+                nedges[edges.length + edgeCount + fc + 2] = new QuadEdge(edgeTable[quadFace.e4] + vertices.length, edgeCount + vertices.length + index, faceStart + fc + 2, faceStart + fc);
+                if(calcProjectedEdges) {
                     npe[edges.length + edgeCount + fc] = -1;
                     npe[edges.length + edgeCount + fc + 1] = -1;
                     npe[edges.length + edgeCount + fc + 2] = -1;
@@ -903,7 +880,14 @@ public class QuadMesh extends Object3D implements FacetedMesh {
             }
         }
         //compute new faces
-        int fe1, fe2, fe3, fe4, fe5, fe6, fe7, fe8;
+        int fe1;
+        int fe2;
+        int fe3;
+        int fe4;
+        int fe5;
+        int fe6;
+        int fe7;
+        int fe8;
         index = 0;
         for (int i = 0; i < faces.length; i++) {
             if (faces[i].mark == QuadFace.FINAL) {
@@ -1426,7 +1410,15 @@ public class QuadMesh extends Object3D implements FacetedMesh {
                     }
                     newParamVal[i] = new VertexParameterValue(newval);
                 } else if (oldParamVal[i] instanceof FaceVertexParameterValue) {
-                    double center, val1, val2, val3, val4, nv1, nv2, nv3, nv4;
+                    double center;
+                    double val1;
+                    double val2;
+                    double val3;
+                    double val4;
+                    double nv1;
+                    double nv2;
+                    double nv3;
+                    double nv4;
                     FaceVertexParameterValue fvpv = (FaceVertexParameterValue) oldParamVal[i];
                     double[][] newval = new double[nfaces.length][];
                     fc = 0;
@@ -1813,9 +1805,13 @@ public class QuadMesh extends Object3D implements FacetedMesh {
         int f;
         QuadFace tmpFace;
         QuadEdge tmpEdge;
-        int loop, index, first;
-        int faceIndex, otherFace;
-        int m, last;
+        int loop;
+        int index;
+        int first;
+        int faceIndex;
+        int otherFace;
+        int m;
+        int last;
         for (int i = 0; i < vertices.length; i++) {
             ed = getVertexOrderedEdges(vertices[i]);
 
