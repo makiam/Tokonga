@@ -13,6 +13,8 @@
 package artofillusion.animation;
 
 import artofillusion.math.*;
+import lombok.Getter;
+
 import java.io.*;
 
 /**
@@ -20,7 +22,9 @@ import java.io.*;
  */
 public class Joint {
 
+    @Getter
     public CoordinateSystem coords;
+
     public String name;
     public DOF angle1;
     public DOF angle2;

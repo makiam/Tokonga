@@ -70,6 +70,7 @@ import java.util.prefs.Preferences;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Contract;
 
 /**
  * Winged edge mesh implementation for Art of Illusion.
@@ -81,6 +82,13 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
     private BoundingBox bounds; //the bounds enclosing the mesh
 
+    /**
+     * -- GETTER --
+     *  Gets the smoothing method applied to this PolyMesh object
+     *
+     * @return The smoothingMethod value
+     */
+    @Getter
     private int smoothingMethod;
 
     private RenderingMesh cachedMesh;
@@ -93,10 +101,25 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
     private Vec3[] cachedFaceNormals;
 
+    @Getter
     private Wvertex[] vertices;
 
+    /**
+     * -- GETTER --
+     *  Returns the mesh edges
+     *
+     * @return The edges value
+     */
+    @Getter
     private Wedge[] edges;
 
+    /**
+     * -- GETTER --
+     *  Returns the mesh faces
+     *
+     * @return The faces value
+     */
+    @Getter
     private Wface[] faces;
 
     private boolean closed;
@@ -152,7 +175,9 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
     private UVMappingData mappingData; //UV Mapping
 
-    private int mappingVerts, mappingEdges, mappingFaces; //markers to check if UVMapping data
+    private int mappingVerts;
+    private int mappingEdges;
+    private int mappingFaces; //markers to check if UVMapping data
     //is still valid
 
     //colors and preferences
@@ -1212,20 +1237,19 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             }
 
         }
+
         Wedge[] newEdges = new Wedge[edgeCount];
         for (int i = 0; i < edges.length; ++i) {
-            if (edges[i] != null) {
-                newEdges[edgeTable[i]] = new Wedge(edges[i]);
-                newEdges[edgeTable[i]].hedge = edgeTable[edges[i].hedge];
-                newEdges[edgeTable[i]].next = edgeTable[edges[i].next];
-            }
+            if(edges[i] == null) continue;
+            newEdges[edgeTable[i]] = new Wedge(edges[i]);
+            newEdges[edgeTable[i]].hedge = edgeTable[edges[i].hedge];
+            newEdges[edgeTable[i]].next = edgeTable[edges[i].next];
         }
-        for (int i = 0; i < vertices.length; ++i) {
-            vertices[i].edge = edgeTable[vertices[i].edge];
-        }
-        for (int i = 0; i < faces.length; ++i) {
-            faces[i].edge = edgeTable[faces[i].edge];
-        }
+
+        for(var vertex: vertices) vertex.edge = edgeTable[vertex.edge];
+
+        for(var face: faces) face.edge = edgeTable[face.edge];
+
         edges = newEdges;
         setSkeleton(new Skeleton());
     }
@@ -1318,15 +1342,6 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         selectedFaceColor = mesh.selectedFaceColor;
 
         handleSize = mesh.handleSize;
-    }
-
-    /**
-     * Gets the smoothing method applied to this PolyMesh object
-     *
-     * @return The smoothingMethod value
-     */
-    public int getSmoothingMethod() {
-        return smoothingMethod;
     }
 
     /**
@@ -2073,7 +2088,10 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         boolean[] deleted = new boolean[vf.length];
         int start = -1;
         int prev;
-        int pi, pnext, pprev, ppprev;
+        int pi;
+        int pnext;
+        int pprev;
+        int ppprev;
         int next;
         Vec3 norm = new Vec3();
         Vec3 v = new Vec3();
@@ -2483,22 +2501,11 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      */
     private int getDelLength(boolean[] deleted) {
         int count = 0;
-        for (int i = 0; i < deleted.length; i++) {
-            if (!deleted[i]) {
-                ++count;
-            }
+        for(boolean b: deleted) {
+            if(b) continue;
+            count++;
         }
         return count;
-    }
-
-    /**
-     * Get the list of vertices which define the mesh.
-     *
-     * @return The vertices value
-     */
-    @Override
-    public MeshVertex[] getVertices() {
-        return vertices;
     }
 
     /**
@@ -2738,24 +2745,6 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             norm[i].normalize();
         }
         return cachedFaceNormals = norm;
-    }
-
-    /**
-     * Returns the mesh edges
-     *
-     * @return The edges value
-     */
-    public Wedge[] getEdges() {
-        return edges;
-    }
-
-    /**
-     * Returns the mesh faces
-     *
-     * @return The faces value
-     */
-    public Wface[] getFaces() {
-        return faces;
     }
 
     /**
@@ -3807,8 +3796,15 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         if (edges[e2].face != -1) {
             e2 = edges[e2].hedge;
         }
-        int pe1, ne1, pe2, ne2, he1, he2, phe2;
-        int v1, v2;
+        int pe1;
+        int ne1;
+        int pe2;
+        int ne2;
+        int he1;
+        int he2;
+        int phe2;
+        int v1;
+        int v2;
         int re1 = -1;
         int re2 = -1;
         pe1 = getPreviousEdge(e1);
@@ -12754,26 +12750,24 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         @Override
         public void writeToStream(DataOutputStream out) throws IOException {
             out.writeShort(2);
-            // version
+
             out.writeInt(vertPos.length);
-            for (int i = 0; i < vertPos.length; i++) {
-                vertPos[i].writeToFile(out);
+            for(var pos: vertPos) pos.writeToFile(out);
+
+            for(var parameterValue: paramValue) {
+                out.writeUTF(parameterValue.getClass().getName());
+                parameterValue.writeToStream(out);
             }
-            for (int i = 0; i < paramValue.length; i++) {
-                out.writeUTF(paramValue[i].getClass().getName());
-                paramValue[i].writeToStream(out);
-            }
+
             out.writeInt(edgeSmoothness.length);
-            for (int i = 0; i < edgeSmoothness.length; i++) {
-                out.writeFloat(edgeSmoothness[i]);
-            }
-            Joint[] joint = skeleton.getJoints();
-            for (int i = 0; i < joint.length; i++) {
-                joint[i].coords.writeToFile(out);
-                out.writeDouble(joint[i].angle1.pos);
-                out.writeDouble(joint[i].angle2.pos);
-                out.writeDouble(joint[i].twist.pos);
-                out.writeDouble(joint[i].length.pos);
+            for(float smoothness: edgeSmoothness) out.writeFloat(smoothness);
+
+            for(var value: skeleton.getJoints()) {
+                value.getCoords().writeToFile(out);
+                out.writeDouble(value.angle1.pos);
+                out.writeDouble(value.angle2.pos);
+                out.writeDouble(value.twist.pos);
+                out.writeDouble(value.length.pos);
             }
         }
 
