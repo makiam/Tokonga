@@ -37,6 +37,7 @@ import java.util.Stack;
 import java.util.Vector;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -251,7 +252,6 @@ public class QuadMesh extends Object3D implements FacetedMesh {
                 default -> "";
             };
             return "verts: " + v1 + " " + v2 + " " + v3 + " " + v4 + " edges: " + e1 + " " + e2 + " " + e3 + " " + e4 + " " + markString;
-            //return "verts: " + v1 + " edges: " + e1 + " " + e2 + " " + e3 + " " + e4 + " " + markString;
         }
     }
 
@@ -267,6 +267,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
 
     private RenderingMesh cachedMesh;
 
+    @Getter @Setter
     private int[] projectedEdges;
 
     public static final int MAX_SMOOTHNESS = 11;
@@ -576,8 +577,7 @@ public class QuadMesh extends Object3D implements FacetedMesh {
                     newParamVal[i] = oldParamVal[i].duplicate();
 
                 } else if (oldParamVal[i] instanceof FaceParameterValue) {
-                    double[] oldval = ((FaceParameterValue) oldParamVal[i])
-                            .getValue();
+                    double[] oldval = ((FaceParameterValue) oldParamVal[i]).getValue();
                     double[] newval = new double[facesArray.length];
                     for (int j = 0; j < oldval.length; ++j) {
                         newval[2 * j] = oldval[j];
@@ -835,41 +835,48 @@ public class QuadMesh extends Object3D implements FacetedMesh {
         fc = 0;
         int faceStart = faces.length - (face3count + face4count);
         for(var quadFace: faces) {
-            if(quadFace.mark == QuadFace.SUBDIVIDE) {
-                nedges[edges.length + edgeCount + fc] = new QuadEdge(edgeTable[quadFace.e1] + vertices.length, edgeCount + vertices.length + index, faceStart + fc, faceStart + fc + 1);
-                nedges[edges.length + edgeCount + fc + 1] = new QuadEdge(edgeTable[quadFace.e2] + vertices.length, edgeCount + vertices.length + index, faceStart + fc + 1, faceStart + fc + 2);
-                nedges[edges.length + edgeCount + +fc + 2] = new QuadEdge(edgeTable[quadFace.e3] + vertices.length, edgeCount + vertices.length + index, faceStart + fc + 2, faceStart + fc + 3);
-                nedges[edges.length + edgeCount + fc + 3] = new QuadEdge(edgeTable[quadFace.e4] + vertices.length, edgeCount + vertices.length + index, faceStart + fc + 3, faceStart + fc);
-                if(calcProjectedEdges) {
-                    npe[edges.length + edgeCount + fc] = -1;
-                    npe[edges.length + edgeCount + fc + 1] = -1;
-                    npe[edges.length + edgeCount + fc + 2] = -1;
-                    npe[edges.length + edgeCount + fc + 3] = -1;
+            final int vertex2 = edgeCount + vertices.length + index;
+            switch (quadFace.mark) {
+                case QuadFace.SUBDIVIDE -> {
+                    nedges[edges.length + edgeCount + fc] = new QuadEdge(edgeTable[quadFace.e1] + vertices.length, vertex2, faceStart + fc, faceStart + fc + 1);
+                    nedges[edges.length + edgeCount + fc + 1] = new QuadEdge(edgeTable[quadFace.e2] + vertices.length, vertex2, faceStart + fc + 1, faceStart + fc + 2);
+                    nedges[edges.length + edgeCount + fc + 2] = new QuadEdge(edgeTable[quadFace.e3] + vertices.length, vertex2, faceStart + fc + 2, faceStart + fc + 3);
+                    nedges[edges.length + edgeCount + fc + 3] = new QuadEdge(edgeTable[quadFace.e4] + vertices.length, vertex2, faceStart + fc + 3, faceStart + fc);
+                    if(calcProjectedEdges) {
+                        npe[edges.length + edgeCount + fc] = -1;
+                        npe[edges.length + edgeCount + fc + 1] = -1;
+                        npe[edges.length + edgeCount + fc + 2] = -1;
+                        npe[edges.length + edgeCount + fc + 3] = -1;
+                    }
+                    fc += 4;
+                    index++;
                 }
-                fc += 4;
-                index++;
-            } else if(quadFace.mark == QuadFace.YV2) {
-                nedges[edges.length + edgeCount + fc] = new QuadEdge(edgeTable[quadFace.e1] + vertices.length, edgeCount + vertices.length + index, faceStart + fc, faceStart + fc + 1);
-                nedges[edges.length + edgeCount + fc + 1] = new QuadEdge(edgeTable[quadFace.e2] + vertices.length, edgeCount + vertices.length + index, faceStart + fc + 1, faceStart + fc + 2);
-                nedges[edges.length + edgeCount + fc + 2] = new QuadEdge(quadFace.v4, edgeCount + vertices.length + index, faceStart + fc + 2, faceStart + fc);
-                if(calcProjectedEdges) {
-                    npe[edges.length + edgeCount + fc] = -1;
-                    npe[edges.length + edgeCount + fc + 1] = -1;
-                    npe[edges.length + edgeCount + fc + 2] = -1;
+                case QuadFace.YV2 -> {
+                    nedges[edges.length + edgeCount + fc] = new QuadEdge(edgeTable[quadFace.e1] + vertices.length, vertex2, faceStart + fc, faceStart + fc + 1);
+                    nedges[edges.length + edgeCount + fc + 1] = new QuadEdge(edgeTable[quadFace.e2] + vertices.length, vertex2, faceStart + fc + 1, faceStart + fc + 2);
+                    nedges[edges.length + edgeCount + fc + 2] = new QuadEdge(quadFace.v4, vertex2, faceStart + fc + 2, faceStart + fc);
+                    if(calcProjectedEdges) {
+                        npe[edges.length + edgeCount + fc] = -1;
+                        npe[edges.length + edgeCount + fc + 1] = -1;
+                        npe[edges.length + edgeCount + fc + 2] = -1;
+                    }
+                    fc += 3;
+                    index++;
                 }
-                fc += 3;
-                index++;
-            } else if(quadFace.mark == QuadFace.YV4) {
-                nedges[edges.length + edgeCount + fc] = new QuadEdge(quadFace.v2, edgeCount + vertices.length + index, faceStart + fc, faceStart + fc + 1);
-                nedges[edges.length + edgeCount + fc + 1] = new QuadEdge(edgeTable[quadFace.e3] + vertices.length, edgeCount + vertices.length + index, faceStart + fc + 1, faceStart + fc + 2);
-                nedges[edges.length + edgeCount + fc + 2] = new QuadEdge(edgeTable[quadFace.e4] + vertices.length, edgeCount + vertices.length + index, faceStart + fc + 2, faceStart + fc);
-                if(calcProjectedEdges) {
-                    npe[edges.length + edgeCount + fc] = -1;
-                    npe[edges.length + edgeCount + fc + 1] = -1;
-                    npe[edges.length + edgeCount + fc + 2] = -1;
+                case QuadFace.YV4 -> {
+                    nedges[edges.length + edgeCount + fc] = new QuadEdge(quadFace.v2, vertex2, faceStart + fc, faceStart + fc + 1);
+                    nedges[edges.length + edgeCount + fc + 1] = new QuadEdge(edgeTable[quadFace.e3] + vertices.length, vertex2, faceStart + fc + 1, faceStart + fc + 2);
+                    nedges[edges.length + edgeCount + fc + 2] = new QuadEdge(edgeTable[quadFace.e4] + vertices.length, vertex2, faceStart + fc + 2, faceStart + fc);
+                    if(calcProjectedEdges) {
+                        npe[edges.length + edgeCount + fc] = -1;
+                        npe[edges.length + edgeCount + fc + 1] = -1;
+                        npe[edges.length + edgeCount + fc + 2] = -1;
+                    }
+                    fc += 3;
+                    index++;
                 }
-                fc += 3;
-                index++;
+                default -> {}
+
             }
         }
         //compute new faces
@@ -1107,7 +1114,9 @@ public class QuadMesh extends Object3D implements FacetedMesh {
         double[] smoothEdgeValue = new double[10];
         Vec3 pos;
         int count;
-        int face1, face2, nextVert;
+        int face1;
+        int face2;
+        int nextVert;
         double maxHard;
         sharpEdge[1] = sharpEdge[0] = -1;
         smoothEdgeValue[1] = smoothEdgeValue[0] = 1;
@@ -2172,11 +2181,4 @@ public class QuadMesh extends Object3D implements FacetedMesh {
         }
     }
 
-    public int[] getProjectedEdges() {
-        return projectedEdges;
-    }
-
-    public void setProjectedEdges(int[] projectedEdges) {
-        this.projectedEdges = projectedEdges;
-    }
 }
