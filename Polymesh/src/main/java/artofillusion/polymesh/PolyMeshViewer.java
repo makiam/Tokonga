@@ -132,7 +132,7 @@ public class PolyMeshViewer extends MeshViewer {
             viewMesh = mesh.getMirroredMesh();
             mirror = true;
         }
-        int[] invVertTable = mesh.getInvMirroredVerts();
+        int[] invVertTable = mesh.getInvMirroredVertices();
         Wvertex[] v = (Wvertex[]) viewMesh.getVertices();
 
         // Calculate the screen coordinates of every vertex.
@@ -304,7 +304,7 @@ public class PolyMeshViewer extends MeshViewer {
 
         boolean[] selected = controller.getSelection();
         boolean mirror = false;
-        int[] invVertTable = mesh.getInvMirroredVerts();
+        int[] invVertTable = mesh.getInvMirroredVertices();
 
         if (mesh.getMirrorState() != PolyMesh.NO_MIRROR) mirror = true;
 
@@ -682,7 +682,7 @@ public class PolyMeshViewer extends MeshViewer {
         // so that it can be passed to editing tools.
         if (controller.getSelectionMode() == MeshEditController.EDGE_MODE) {
             if (mirror) {
-                if (visible[mesh.mirroredVerts[ed[i].vertex]]) {
+                if (visible[mesh.mirroredVertices[ed[i].vertex]]) {
                     j = ed[i].vertex;
                 } else {
                     j = ed[ed[i].hedge].vertex;
@@ -699,7 +699,7 @@ public class PolyMeshViewer extends MeshViewer {
             int[] vf = mesh.getFaceVertices(f[i]);
             if (mirror) {
                 for (int value : vf) {
-                    if (mesh.mirroredVerts[value] != -1 && visible[mesh.mirroredVerts[value]]) {
+                    if (mesh.mirroredVertices[value] != -1 && visible[mesh.mirroredVertices[value]]) {
                         j = value;
                     }
                 }
@@ -835,7 +835,7 @@ public class PolyMeshViewer extends MeshViewer {
         boolean[] selected = controller.getSelection();
         PolyMesh viewMesh = mesh;
         boolean mirror = false;
-        int[] vertTable = mesh.mirroredVerts;
+        int[] vertTable = mesh.mirroredVertices;
         int[] edgeTable = mesh.mirroredEdges;
         int[] faceTable = mesh.mirroredFaces;
         if (mesh.getMirrorState() != PolyMesh.NO_MIRROR) {
@@ -1043,7 +1043,7 @@ public class PolyMeshViewer extends MeshViewer {
             mirror = true;
             viewMesh = polymesh.getMirroredMesh();
             invEdgeTable = polymesh.invMirroredEdges;
-            invVertTable = polymesh.invMirroredVerts;
+            invVertTable = polymesh.invMirroredVertices;
             invFaceTable = polymesh.invMirroredFaces;
         }
         MeshVertex[] pv = viewMesh.getVertices();

@@ -68,7 +68,7 @@ public class PMCreateFaceTool extends EditingTool {
         int length = mesh.getVertices().length;
         if (mesh.getMirrorState() != PolyMesh.NO_MIRROR) {
             viewMesh = mesh.getMirroredMesh();
-            invVertTable = mesh.getInvMirroredVerts();
+            invVertTable = mesh.getInvMirroredVertices();
             length = invVertTable.length;
         }
 
