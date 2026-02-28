@@ -4506,29 +4506,26 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * @return Array of selected vertices for further selection
      */
     public boolean[] divideEdges(double[] fractions) {
-        Wvertex[] newVertices;
-        Wedge[] newEdges;
-        double fraction;
-        int[] toVert;
-        int[] fromVert;
-        double[] fract;
 
 
         int count = 0;
-        for (int i = 0; i < fractions.length; ++i) {
-            if (fractions[i] > 0 && fractions[i] < 1) {
+        for(double fi: fractions) {
+            if (fi > 0 && fi < 1) {
                 count++;
             }
         }
-        newVertices = new Wvertex[vertices.length + count];
-        newEdges = new Wedge[edges.length + 2 * count];
-        toVert = new int[count];
-        fromVert = new int[count];
-        fract = new double[count];
+
+        Wvertex[] newVertices = new Wvertex[vertices.length + count];
+        Wedge[] newEdges = new Wedge[edges.length + 2 * count];
+        int[] toVert = new int[count];
+        int[] fromVert = new int[count];
+
+        double[] fract = new double[count];
         translateMesh(newVertices, newEdges, faces);
         int index = 0;
         int vl = vertices.length;
         int el = edges.length / 2;
+        double fraction;
         for (int i = 0; i < fractions.length; ++i) {
             if (fractions[i] > 0 && fractions[i] < 1) {
                 Vec3 delta;
@@ -4616,8 +4613,6 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         if (fraction <= 0 || fraction >= 1) {
             return new boolean[vertices.length];
         }
-        Wvertex[] newVertices;
-        Wedge[] newEdges;
         int[] toVert;
         int[] fromVert;
         Vec3 v;
@@ -4640,8 +4635,9 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         if (count == 0) {
             return new boolean[vertices.length];
         }
-        newVertices = new Wvertex[vertices.length + count];
-        newEdges = new Wedge[edges.length + 2 * count];
+
+        Wvertex[] newVertices = new Wvertex[vertices.length + count];
+        Wedge[] newEdges = new Wedge[edges.length + 2 * count];
         toVert = new int[count];
         fromVert = new int[count];
         translateMesh(newVertices, newEdges, faces);
@@ -4738,8 +4734,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      */
     public void connectVertices(boolean[] sel) {
         int count = 0;
-        for (int i = 0; i < sel.length; ++i) {
-            if (sel[i]) {
+        for(boolean b: sel) {
+            if (b) {
                 count++;
             }
         }
@@ -8569,32 +8565,34 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
                 // remove the face
 
-                for (int j = 0; j < edges.length; ++j) {
-                    if (edges[j].next == edges[fe[1]].hedge) {
-                        edges[j].next = fe[0];
+                for(Wedge edge: edges) {
+                    if (edge.next == edges[fe[1]].hedge) {
+                        edge.next = fe[0];
                     }
-                    if (edges[j].next == fe[1]) {
-                        edges[j].next = edges[fe[0]].hedge;
+                    if (edge.next == fe[1]) {
+                        edge.next = edges[fe[0]].hedge;
                     }
                 }
                 edges[fe[0]].face = edges[edges[fe[1]].hedge].face;
                 edges[fe[0]].next = edges[edges[fe[1]].hedge].next;
-                for (int j = 0; j < vertices.length; ++j) {
-                    if (vertices[j].edge == edges[fe[1]].hedge) {
-                        vertices[j].edge = fe[0];
+
+                for(Wvertex vertex: vertices) {
+                    if (vertex.edge == edges[fe[1]].hedge) {
+                        vertex.edge = fe[0];
                     }
-                    if (vertices[j].edge == fe[1]) {
-                        vertices[j].edge = edges[fe[0]].hedge;
-                    }
-                }
-                for (int j = 0; j < faces.length; ++j) {
-                    if (faces[j].edge == edges[fe[1]].hedge) {
-                        faces[j].edge = fe[0];
-                    }
-                    if (faces[j].edge == fe[1]) {
-                        faces[j].edge = edges[fe[0]].hedge;
+                    if (vertex.edge == fe[1]) {
+                        vertex.edge = edges[fe[0]].hedge;
                     }
                 }
+                for(Wface face: faces) {
+                    if (face.edge == edges[fe[1]].hedge) {
+                        face.edge = fe[0];
+                    }
+                    if (face.edge == fe[1]) {
+                        face.edge = edges[fe[0]].hedge;
+                    }
+                }
+
                 Wedge[] newEdges = new Wedge[edges.length - 2];
                 Wface[] newFaces = new Wface[faces.length - 1];
                 int count = 0;
