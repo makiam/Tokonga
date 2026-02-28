@@ -4275,20 +4275,20 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     edgeTable[i] = -1;
                 }
             }
-            for (int j = 0; j < faces.length; ++j) {
-                int e = faces[j].edge;
+            for(Wface face: faces) {
+                int e = face.edge;
                 while (edgeTable[e] == -1) {
                     e = edges[e].next;
                 }
-                faces[j].edge = edgeTable[e];
+                face.edge = edgeTable[e];
             }
-            for (int j = 0; j < newEdges.length; ++j) {
-                newEdges[j].next = edgeTable[newEdges[j].next];
-                newEdges[j].hedge = edgeTable[newEdges[j].hedge];
-                newEdges[j].vertex = vertexTable[newEdges[j].vertex];
+            for(Wedge newEdge: newEdges) {
+                newEdge.next = edgeTable[newEdge.next];
+                newEdge.hedge = edgeTable[newEdge.hedge];
+                newEdge.vertex = vertexTable[newEdge.vertex];
             }
-            for (int j = 0; j < newVert.length; ++j) {
-                newVert[j].edge = edgeTable[newVert[j].edge];
+            for(Wvertex wvertex: newVert) {
+                wvertex.edge = edgeTable[wvertex.edge];
             }
         }
         // Update the texture parameters.
@@ -5036,8 +5036,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         Vector<Vec3> v = new Vector<>();
         Vec3 normDir = null;
 
-        Vec3 vv = vertices[edges[startEdge].vertex].r
-                .minus(vertices[edges[edges[startEdge].hedge].vertex].r);
+        Vec3 vv = vertices[edges[startEdge].vertex].r.minus(vertices[edges[edges[startEdge].hedge].vertex].r);
         if (vv.length() < 1.0e-6) {
             v.add(vv);
         }
@@ -6541,8 +6540,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         boolean[] moved = new boolean[vertices.length];
         switch (direction) {
             case NORMAL:
-                Vec3[] v = getVertexPositionsForFacesNormalDisplacement(selected,
-                        amount);
+                Vec3[] v = getVertexPositionsForFacesNormalDisplacement(selected, amount);
                 for (int i = 0; i < vertices.length; ++i) {
                     vertices[i].r = v[i];
                 }
@@ -6552,11 +6550,11 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             case Z:
                 for (int i = 0; i < faces.length; i++) {
                     if (selected[i]) {
-                        int[] fv = getFaceVertices(faces[i]);
-                        for (int j = 0; j < fv.length; ++j) {
-                            if (!moved[fv[j]]) {
-                                vertices[fv[j]].r.add(disp);
-                                moved[fv[j]] = true;
+
+                        for(int k: getFaceVertices(faces[i])) {
+                            if (!moved[k]) {
+                                vertices[k].r.add(disp);
+                                moved[k] = true;
                             }
                         }
                     }
@@ -6724,8 +6722,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             if (selected[i]) {
                 diff = new Vec3();
                 int[] fv = getFaceVertices(faces[i]);
-                for (int j = 0; j < fv.length; ++j) {
-                    diff.add(vertices[fv[j]].r);
+                for(int k: fv) {
+                    diff.add(vertices[k].r);
                 }
                 diff.scale(1.0 / fv.length);
                 for (int j = 0; j < fv.length; ++j) {
@@ -8276,8 +8274,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     neighbors[j] = edges[ve[j]].vertex;
                 }
                 Vec3 pt = new Vec3();
-                for (int j = 0; j < neighbors.length; ++j) {
-                    pt.add(vertices[neighbors[j]].r);
+                for(int neighbor: neighbors) {
+                    pt.add(vertices[neighbor].r);
                 }
                 pt.scale(1.0 / neighbors.length);
                 vertices[i].r = pt;
@@ -8339,20 +8337,20 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     }
                 }
 
-                for (int j = 0; j < faces.length; ++j) {
-                    int e = faces[j].edge;
+                for(Wface face: faces) {
+                    int e = face.edge;
                     while (edgeTable[e] == -1) {
                         e = edges[e].next;
                     }
-                    faces[j].edge = edgeTable[e];
+                    face.edge = edgeTable[e];
                 }
-                for (int j = 0; j < newEdges.length; ++j) {
-                    newEdges[j].next = edgeTable[newEdges[j].next];
-                    newEdges[j].hedge = edgeTable[newEdges[j].hedge];
-                    newEdges[j].vertex = vertexTable[newEdges[j].vertex];
+                for(Wedge newEdge: newEdges) {
+                    newEdge.next = edgeTable[newEdge.next];
+                    newEdge.hedge = edgeTable[newEdge.hedge];
+                    newEdge.vertex = vertexTable[newEdge.vertex];
                 }
-                for (int j = 0; j < newVert.length; ++j) {
-                    newVert[j].edge = edgeTable[newVert[j].edge];
+                for(Wvertex wvertex: newVert) {
+                    wvertex.edge = edgeTable[wvertex.edge];
                 }
                 // Update the texture parameters.
                 TextureParameter[] param = getParameters();
