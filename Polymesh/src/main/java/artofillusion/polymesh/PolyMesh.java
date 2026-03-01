@@ -1499,18 +1499,13 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     double[][] newval = new double[v1.size()][3];
                     for (int j = 0; j < v1.size(); ++j) {
                         for (int k = 0; k < 3; k++) {
-                            int vertex = -1;
-                            switch (k) {
-                                case 0:
-                                    vertex = v1.get(j);
-                                    break;
-                                case 1:
-                                    vertex = v2.get(j);
-                                    break;
-                                case 2:
-                                    vertex = v3.get(j);
-                                    break;
-                            }
+
+                            int vertex = switch (k) {
+                                case 0 -> v1.get(j);
+                                case 1 -> v2.get(j);
+                                case 2 -> v3.get(j);
+                                default -> -1;
+                            };
                             int pmeFace = faceInfo.get(j);
                             int[] fv = getFaceVertices(faces[pmeFace]);
                             int[] vf = vertInfo.get(vertex).vert;
@@ -5940,8 +5935,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         int[] newToOldFaceIndex = null;
         int orFace;
         if (oldParamVal != null) {
-            for (int i = 0; i < oldParamVal.length; i++) {
-                if (oldParamVal[i] instanceof FaceVertexParameterValue) {
+            for(ParameterValue parameterValue: oldParamVal) {
+                if (parameterValue instanceof FaceVertexParameterValue) {
                     newToOldFaceIndex = new int[newFaces.length];
                     oldFaceVert = new int[faces.length][];
                     newFaceVert = new int[newFaces.length][];
@@ -5949,25 +5944,25 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     newFaceVertIndexRef = new int[newFaces.length][];
                     int[] fv;
                     orFace = 0;
-                    for (int j = 0; j < oldFaceVert.length; j++) {
+                    for(int j = 0; j < oldFaceVert.length; j++) {
                         fv = getFaceVertices(faces[j]);
-                        for (int k = 0; k < fv.length / 2; k++) {
+                        for(int k = 0; k < fv.length / 2; k++) {
                             newToOldFaceIndex[orFace++] = j;
                         }
                         oldFaceVert[j] = new int[fv.length];
                         System.arraycopy(fv, 0, oldFaceVert[j], 0, fv.length);
                     }
-                    for (int j = 0; j < newFaces.length; ++j) {
+                    for(int j = 0; j < newFaces.length; ++j) {
                         fv = getFaceVertices(j, newEdges, newFaces);
                         newFaceVert[j] = new int[fv.length];
                         newFaceVertFaceRef[j] = new int[fv.length];
                         newFaceVertIndexRef[j] = new int[fv.length];
                         orFace = newToOldFaceIndex[j];
-                        for (int k = 0; k < fv.length; k++) {
+                        for(int k = 0; k < fv.length; k++) {
                             newFaceVert[j][k] = fv[k];
                             if (fv[k] < vertices.length) {
                                 boolean found = false;
-                                for (int l = 0; l < oldFaceVert[orFace].length; l++) {
+                                for(int l = 0; l < oldFaceVert[orFace].length; l++) {
                                     if (oldFaceVert[orFace][l] == fv[k]) {
                                         newFaceVertFaceRef[j][k] = orFace;
                                         newFaceVertIndexRef[j][k] = l;
@@ -6138,9 +6133,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         for (int i = 0; i < faces.length; ++i) {
             if (selectType[i] > 0) {
                 ++faceNum;
-                int[] fe = getFaceEdges(faces[i]);
-                for (int j = 0; j < fe.length; ++j) {
-                    index = fe[j];
+                for(int k: getFaceEdges(faces[i])) {
+                    index = k;
                     if (index >= edges.length / 2) {
                         index = edges[index].hedge;
                     }
@@ -6215,8 +6209,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             if (selectType[i] == 0) {
                 newFaces[count] = new Wface(faces[i]);
                 if (newFaces[count].edge >= edges.length / 2) {
-                    newFaces[count].edge += newEdges.length / 2 - edges.length
-                            / 2;
+                    newFaces[count].edge += newEdges.length / 2 - edges.length / 2;
                 }
                 paramFaceTable[count] = i;
                 changeFace(newEdges, newFaces[count].edge, count);
@@ -6258,14 +6251,13 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
                 int[] ve = getVertexEdges(vertices[i]);
                 n = ve.length;
-                move = false;
 
                 pos = new Vec3();
                 count = 0;
                 move = false;
-                for (int j = 0; j < ve.length; ++j) {
-                    face1 = edges[ve[j]].face;
-                    face2 = edges[edges[ve[j]].hedge].face;
+                for(int k: ve) {
+                    face1 = edges[k].face;
+                    face2 = edges[edges[k].hedge].face;
                     if (face1 != -1) {
                         move |= (selectType[face1] == 2);
                         pos.add(facePos[face1]);
@@ -6282,8 +6274,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 }
                 pos.scale(1.0 / (count * n));
                 pt = new Vec3();
-                for (int j = 0; j < ve.length; ++j) {
-                    pt.add(vertices[edges[ve[j]].vertex].r);
+                for(int k: ve) {
+                    pt.add(vertices[edges[k].vertex].r);
                 }
                 pt.scale(2.0 / ((double) n * n));
                 pos.add(pt);
@@ -6452,36 +6444,29 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      */
     public void moveEdges(boolean[] selected, double amount, short direction) {
         boolean[] moved = new boolean[vertices.length];
-        Vec3 disp = null;
-        switch (direction) {
-            case X:
-                disp = new Vec3(amount, 0, 0);
-                break;
-            case Y:
-                disp = new Vec3(0, amount, 0);
-                break;
-            case Z:
-                disp = new Vec3(0, 0, amount);
-                break;
-        }
+        Vec3 disp = switch (direction) {
+            case X -> new Vec3(amount, 0, 0);
+            case Y -> new Vec3(0, amount, 0);
+            case Z -> new Vec3(0, 0, amount);
+            default -> null;
+        };
+
         switch (direction) {
             case NORMAL:
                 boolean[] facesSelected = new boolean[faces.length];
                 int sel;
                 for (int i = 0; i < faces.length; ++i) {
-                    int[] fe = getFaceEdges(faces[i]);
-                    for (int j = 0; j < fe.length; ++j) {
-                        sel = fe[j];
+                    for(int k: getFaceEdges(faces[i])) {
+                        sel = k;
                         if (sel >= edges.length / 2) {
-                            sel = edges[fe[j]].hedge;
+                            sel = edges[k].hedge;
                         }
                         if (selected[sel]) {
                             facesSelected[i] = true;
                         }
                     }
                 }
-                Vec3[] v = getVertexPositionsForFacesNormalDisplacement(
-                        facesSelected, amount);
+                Vec3[] v = getVertexPositionsForFacesNormalDisplacement(facesSelected, amount);
                 for (int i = 0; i < edges.length / 2; ++i) {
                     if (selected[i]) {
                         vertices[edges[i].vertex].r = v[edges[i].vertex];
@@ -6817,10 +6802,9 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         if (direction == null) {
             v = getVertexPositionsForFacesNormalDisplacement(selected, value);
             for (int i = 0; i < faces.length; ++i) {
-                int[] vf = getFaceVertices(faces[i]);
                 if (selected[i]) {
-                    for (int j = 0; j < vf.length; ++j) {
-                        done[vf[j]] = true;
+                    for(int k: getFaceVertices(faces[i])) {
+                        done[k] = true;
                     }
                 }
             }
@@ -6846,8 +6830,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             if (selected[i]) {
                 int[] fv = getFaceVertices(faces[i]);
                 sclFaceVert[i] = new Vec3();
-                for (int j = 0; j < fv.length; ++j) {
-                    sclFaceVert[i].add(v[fv[j]]);
+                for(int element: fv) {
+                    sclFaceVert[i].add(v[element]);
                 }
                 sclFaceVert[i].scale(1.0 / fv.length);
                 List<Integer> vv = new Vector<>();
@@ -6893,18 +6877,15 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             Vec3 mean = null;
 
             if (done[i]) {
-                int[] ve = getVertexEdges(vertices[i]);
                 int start = -1;
-                for (int j = 0; j < ve.length; ++j) {
-                    if (isFaceSelected(selected, edges[ve[j]].face)
-                            && !isFaceSelected(selected,
-                                    edges[edges[ve[j]].hedge].face)) {
-                        start = ve[j];
+                for(int item: getVertexEdges(vertices[i])) {
+                    if (isFaceSelected(selected, edges[item].face) && !isFaceSelected(selected, edges[edges[item].hedge].face)) {
+                        start = item;
                     }
-                    if (isFaceSelected(selected, edges[ve[j]].face) && (mean == null)) {
-                        List<Integer> vv = sclFace[edges[ve[j]].face];
+                    if (isFaceSelected(selected, edges[item].face) && (mean == null)) {
+                        List<Integer> vv = sclFace[edges[item].face];
                         mean = new Vec3();
-                        for (int k = 0; k < vv.size(); ++k) {
+                        for(int k = 0; k < vv.size(); ++k) {
                             mean.add(sclFaceVert[vv.get(k)]);
                         }
                         mean.scale(1.0 / vv.size());
