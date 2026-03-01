@@ -7765,20 +7765,20 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             double t;
             double d;
             boolean sel;
-            for (int j = 0; j < ve.length; ++j) {
+            for(int k: ve) {
                 if (selected == null) {
-                    if (edges[ve[j]].face != -1) {
+                    if (edges[k].face != -1) {
                         sel = true;
                     } else {
                         sel = false;
                     }
-                } else if (isFaceSelected(selected, edges[ve[j]].face)) {
+                } else if (isFaceSelected(selected, edges[k].face)) {
                     sel = true;
                 } else {
                     sel = false;
                 }
                 if (sel) {
-                    disp.add(faceNormals[edges[ve[j]].face]);
+                    disp.add(faceNormals[edges[k].face]);
                 }
 
             }
@@ -7788,25 +7788,25 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             }
             disp.normalize();
             int count = 0;
-            for (int j = 0; j < ve.length; ++j) {
+            for(int k: ve) {
                 if (selected == null) {
-                    if (edges[ve[j]].face != -1) {
+                    if (edges[k].face != -1) {
                         sel = true;
                     } else {
                         sel = false;
                     }
-                } else if (isFaceSelected(selected, edges[ve[j]].face)) {
+                } else if (isFaceSelected(selected, edges[k].face)) {
                     sel = true;
                 } else {
                     sel = false;
                 }
                 if (sel) {
-                    if (Math.abs(disp.dot(faceNormals[edges[ve[j]].face])) < 1e-12) {
-                        v[i].add(vertices[i].r.plus(faceNormals[edges[ve[j]].face].times(amount)));
+                    if (Math.abs(disp.dot(faceNormals[edges[k].face])) < 1e-12) {
+                        v[i].add(vertices[i].r.plus(faceNormals[edges[k].face].times(amount)));
                     } else {
-                        orig = faceCenters[edges[ve[j]].face].plus(faceNormals[edges[ve[j]].face].times(amount));
-                        d = -orig.dot(faceNormals[edges[ve[j]].face]);
-                        t = -(faceNormals[edges[ve[j]].face].dot(vertices[i].r) + d) / (disp.dot(faceNormals[edges[ve[j]].face]));
+                        orig = faceCenters[edges[k].face].plus(faceNormals[edges[k].face].times(amount));
+                        d = -orig.dot(faceNormals[edges[k].face]);
+                        t = -(faceNormals[edges[k].face].dot(vertices[i].r) + d) / (disp.dot(faceNormals[edges[k].face]));
                         v[i].add(vertices[i].r.plus(disp.times(t)));
                     }
                     ++count;
@@ -7970,16 +7970,16 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     boolean checkNext = true;
                     while (checkNext) {
                         checkNext = false;
-                        for(int k = 0; k < fe.length; ++k) {
-                            if (edge.next == edges[fe[k]].hedge) {
-                                edge.next = edges[edges[fe[k]].hedge].next;
+                        for(int j: fe) {
+                            if (edge.next == edges[j].hedge) {
+                                edge.next = edges[edges[j].hedge].next;
                                 v0edge = edge.next;
                                 checkNext = true;
                             }
                         }
                     }
-                    for(int k = 0; k < vf.length; ++k) {
-                        if (edge.vertex == vf[k]) {
+                    for(int j: vf) {
+                        if (edge.vertex == j) {
                             edge.vertex = vf[0];
                         }
                     }
@@ -8009,8 +8009,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 count = 0;
                 for (int j = 0; j < edges.length; ++j) {
                     add = true;
-                    for (int k = 0; k < fe.length; ++k) {
-                        if (fe[k] == j || edges[fe[k]].hedge == j) {
+                    for(int value: fe) {
+                        if (value == j || edges[value].hedge == j) {
                             add = false;
                         }
                     }
