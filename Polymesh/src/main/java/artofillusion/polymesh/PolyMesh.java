@@ -7616,26 +7616,22 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         newEdges = new Wedge[edges.length + boundaries.size() * 2];
         newFaces = new Wface[faces.length + boundaries.size()];
         translateMesh(vertices, newEdges, newFaces);
-        int e;
-        int en;
-        int ve;
-        int ee;
-        int eep;
-        int vve;
+
+
         int index = edges.length / 2;
-        for (int j = 0; j < boundaries.size(); ++j) {
-            e = boundaries.get(j);
-            ee = e + el / 2;
+
+        for(int e: boundaries) {
+            int ee = e + el / 2;
             if (e >= edges.length / 2) {
                 e += newEdges.length / 2 - edges.length / 2;
             }
             if (ee >= edges.length / 2) {
                 ee += newEdges.length / 2 - edges.length / 2;
             }
-            ve = newEdges[e].vertex;
-            en = newEdges[e].next;
-            vve = ve + vertices.length / 2;
-            eep = newEdges[ee].hedge;
+            int ve = newEdges[e].vertex;
+            int en = newEdges[e].next;
+            int vve = ve + vertices.length / 2;
+            int eep = newEdges[ee].hedge;
             while (newEdges[eep].next != ee) {
                 eep = newEdges[newEdges[eep].next].hedge;
             }
@@ -7645,9 +7641,9 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             newEdges[e].next = index;
             ++index;
         }
+
         index = faces.length;
-        for (int j = 0; j < boundaries.size(); ++j) {
-            e = boundaries.get(j);
+        for(int e: boundaries) {
             if (e >= edges.length / 2) {
                 e += newEdges.length / 2 - edges.length / 2;
             }
@@ -7655,6 +7651,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             newFaces[index] = new Wface(e);
             ++index;
         }
+
         edges = newEdges;
         faces = newFaces;
         // Update the texture parameters.
