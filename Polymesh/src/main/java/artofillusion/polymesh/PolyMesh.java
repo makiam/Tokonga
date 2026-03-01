@@ -10438,36 +10438,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             changed |= del;
         }
 
-        if (!changed) {
-            if ((mirrorState & MIRROR_ON_XY) != 0) {
-                mirrorState -= MIRROR_ON_XY;
-            } else if ((mirrorState & MIRROR_ON_YZ) != 0) {
-                mirrorState -= MIRROR_ON_YZ;
-            } else if ((mirrorState & MIRROR_ON_XZ) != 0) {
-                mirrorState -= MIRROR_ON_XZ;
-            }
-            if (mirroredVertices == null) {
-                mirroredVertices = new int[vertices.length];
-                invMirroredVertices = new int[vertices.length];
-                for (int i = 0; i < mirroredVertices.length; ++i) {
-                    mirroredVertices[i] = i;
-                    invMirroredVertices[i] = i;
-                }
-                mirroredEdges = new int[edges.length / 2];
-                invMirroredEdges = new int[edges.length / 2];
-                for (int i = 0; i < mirroredEdges.length; ++i) {
-                    mirroredEdges[i] = i;
-                    invMirroredEdges[i] = i;
-                }
-                mirroredFaces = new int[faces.length];
-                invMirroredFaces = new int[faces.length];
-                for (int i = 0; i < mirroredFaces.length; ++i) {
-                    mirroredFaces[i] = i;
-                    invMirroredFaces[i] = i;
-                }
-            }
-
-        } else {
+        if (changed) {
             deleteFaces(sel, true);
             Wvertex[] newVertices = new Wvertex[vertices.length * 2];
             Wedge[] newEdges = new Wedge[edges.length * 2];
@@ -10687,6 +10658,35 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 }
                 setParameterValues(newParamVal);
             }
+        } else {
+            if ((mirrorState & MIRROR_ON_XY) != 0) {
+                mirrorState -= MIRROR_ON_XY;
+            } else if ((mirrorState & MIRROR_ON_YZ) != 0) {
+                mirrorState -= MIRROR_ON_YZ;
+            } else if ((mirrorState & MIRROR_ON_XZ) != 0) {
+                mirrorState -= MIRROR_ON_XZ;
+            }
+            if (mirroredVertices == null) {
+                mirroredVertices = new int[vertices.length];
+                invMirroredVertices = new int[vertices.length];
+                for (int i = 0; i < mirroredVertices.length; ++i) {
+                    mirroredVertices[i] = i;
+                    invMirroredVertices[i] = i;
+                }
+                mirroredEdges = new int[edges.length / 2];
+                invMirroredEdges = new int[edges.length / 2];
+                for (int i = 0; i < mirroredEdges.length; ++i) {
+                    mirroredEdges[i] = i;
+                    invMirroredEdges[i] = i;
+                }
+                mirroredFaces = new int[faces.length];
+                invMirroredFaces = new int[faces.length];
+                for (int i = 0; i < mirroredFaces.length; ++i) {
+                    mirroredFaces[i] = i;
+                    invMirroredFaces[i] = i;
+                }
+            }
+
         }
         mirrorMesh();
         resetMesh();
