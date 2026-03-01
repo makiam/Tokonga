@@ -4416,11 +4416,10 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         // deal with open curves
         for (int i = 0; i < edges.length / 2; i++) {
             if (sel[i]) {
-                int[] ve = getVertexEdges(vertices[edges[i].vertex]);
                 int selected = 0;
                 boolean regular = false;
-                for (int j = 0; j < ve.length; j++) {
-                    if (ve[j] != i && ve[j] != edges[i].hedge && isEdgeSelected(ve[j], sel)) {
+                for(int value: getVertexEdges(vertices[edges[i].vertex])) {
+                    if (value != i && value != edges[i].hedge && isEdgeSelected(value, sel)) {
                         selected++;
                         regular = true;
                     }
@@ -4447,8 +4446,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     } else {
                         sel[edges[p].hedge] = false;
                     }
-                    ve = getVertexEdges(vertices[edges[p].vertex]);
-                    for(int k: ve) {
+                    for(int k: getVertexEdges(vertices[edges[p].vertex])) {
                         if (k != p && k != edges[p].hedge && isEdgeSelected(k, sel)) {
                             p = k;
                         }
@@ -4819,9 +4817,9 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 int[] vf = getFaceVertices(faces[face]);
                 if (vf.length == 4) {
                     ll = 0;
-                    for (int k = 0; k < vf.length; ++k) {
-                        for (int l = 0; l < connect.length; ++l) {
-                            if (connect[l] == vf[k]) {
+                    for(int value: vf) {
+                        for(int k: connect) {
+                            if (k == value) {
                                 ++ll;
                             }
                         }
@@ -5058,33 +5056,33 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             } else {
                 if (v.size() < 2) {
                     double maxDot = -1.0;
-                    for (int i = 0; i < vertEdges.length; i++) {
-                        if (vertEdges[i] == edges[currentEdge].hedge) {
+                    for(int vertEdge: vertEdges) {
+                        if (vertEdge == edges[currentEdge].hedge) {
                             continue;
                         }
-                        Vec3 dir2 = vertices[edges[vertEdges[i]].vertex].r.minus(vertices[edges[edges[vertEdges[i]].hedge].vertex].r);
+                        Vec3 dir2 = vertices[edges[vertEdge].vertex].r.minus(vertices[edges[edges[vertEdge].hedge].vertex].r);
                         dir2.normalize();
                         double dot = dir1.dot(dir2);
-                        if (edges[currentEdge].vertex == edges[vertEdges[i]].vertex || edges[currentEdge].vertex == edges[vertEdges[i]].vertex) {
+                        if (edges[currentEdge].vertex == edges[vertEdge].vertex || edges[currentEdge].vertex == edges[vertEdge].vertex) {
                             dot = -dot;
                         }
                         if (dot > maxDot) {
                             maxDot = dot;
-                            bestEdge = vertEdges[i];
+                            bestEdge = vertEdge;
                         }
                     }
                 } else {
                     double minDot = 1.0;
-                    for (int i = 0; i < vertEdges.length; i++) {
-                        if (vertEdges[i] == edges[currentEdge].hedge) {
+                    for(int vertEdge: vertEdges) {
+                        if (vertEdge == edges[currentEdge].hedge) {
                             continue;
                         }
-                        Vec3 dir2 = vertices[edges[vertEdges[i]].vertex].r.minus(vertices[edges[edges[vertEdges[i]].hedge].vertex].r);
+                        Vec3 dir2 = vertices[edges[vertEdge].vertex].r.minus(vertices[edges[edges[vertEdge].hedge].vertex].r);
                         dir2.normalize();
                         double dot = Math.abs(normDir.dot(dir2));
                         if (dot < minDot) {
                             minDot = dot;
-                            bestEdge = vertEdges[i];
+                            bestEdge = vertEdge;
                         }
                     }
                 }
@@ -5349,8 +5347,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             return mirroredMesh.isClosed();
         }
         if (cachedMesh == null) {
-            for (int i = 0; i < edges.length; ++i) {
-                if (edges[i].face == -1) {
+            for(Wedge edge: edges) {
+                if (edge.face == -1) {
                     return false;
                 }
             }
@@ -5487,8 +5485,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         if (mirrorState == NO_MIRROR && !onePass) {
             //first, check if this is a quad mesh
             boolean quad = true;
-            for (int i = 0; i < faces.length; i++) {
-                if (getFaceVertCount(faces[i]) != 4) {
+            for(Wface face: faces) {
+                if (getFaceVertCount(face) != 4) {
                     quad = false;
                     break;
                 }
@@ -5557,8 +5555,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         for (int i = 0; i < faces.length; ++i) {
             int[] vf = getFaceVertices(faces[i]);
             pt = new Vec3();
-            for (int j = 0; j < vf.length; ++j) {
-                pt.add(vertices[vf[j]].r);
+            for(int k: vf) {
+                pt.add(vertices[k].r);
             }
             pt.scale(1.0 / vf.length);
             facePos[i] = pt;
@@ -5749,12 +5747,10 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                         if (hardnum == 0) {
                             newVert[i].r = pos;
                         } else if (hardnum == 1) {
-                            newVert[i].r = pos.times(1 - maxHard).plus(
-                                    newVert[i].r.times(maxHard));
+                            newVert[i].r = pos.times(1 - maxHard).plus(newVert[i].r.times(maxHard));
                         } else {
                             weight /= hardnum;
-                            newVert[i].r = pos.times(1 - weight).plus(
-                                    newVert[i].r.times(weight));
+                            newVert[i].r = pos.times(1 - weight).plus(newVert[i].r.times(weight));
                         }
                         break;
                     case 2:
@@ -5765,8 +5761,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                             newVert[i].r = sharpPt;
                         } else {
                             weight /= hardnum;
-                            newVert[i].r = sharpPt.times(1 - weight).plus(
-                                    newVert[i].r.times(weight));
+                            newVert[i].r = sharpPt.times(1 - weight).plus(newVert[i].r.times(weight));
                         }
                         break;
                     default:
@@ -5783,9 +5778,20 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         }
 
         // location of the new midpoints
-        int v3, v4, v5, v6;
-        Vec3 v1r, v2r, v3r, v4r, v5r, v6r;
-        int e1, e2, e1h, e2h;
+        int v3;
+        int v4;
+        int v5;
+        int v6;
+        Vec3 v1r;
+        Vec3 v2r;
+        Vec3 v3r;
+        Vec3 v4r;
+        Vec3 v5r;
+        Vec3 v6r;
+        int e1;
+        int e2;
+        int e1h;
+        int e2h;
         double gamma;
         for (int i = originalVert; i < addedVert; ++i) {
             oldPos = newVert[i].r;
@@ -5884,16 +5890,13 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 next += newEdges.length / 2 - edges.length / 2;
             }
             newEdges[next].next = count;
-            newEdges[count] = new Wedge(addedVert + i, count + newEdges.length
-                    / 2, faceCount, count + n - 1 + newEdges.length / 2);
+            newEdges[count] = new Wedge(addedVert + i, count + newEdges.length / 2, faceCount, count + n - 1 + newEdges.length / 2);
             newEdges[count].smoothness = 1.0f;
             next = ref2;
             if (next >= edges.length / 2) {
                 next += newEdges.length / 2 - edges.length / 2;
             }
-            newEdges[count + n - 1 + newEdges.length / 2] = new Wedge(
-                    edges[edges[ref2].hedge].vertex, count + n - 1, faceCount,
-                    next);
+            newEdges[count + n - 1 + newEdges.length / 2] = new Wedge(edges[edges[ref2].hedge].vertex, count + n - 1, faceCount, next);
             newEdges[count + n - 1 + newEdges.length / 2].smoothness = 1.0f;
             changeFace(newEdges, count, faceCount);
             ++faceCount;
@@ -5907,17 +5910,13 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     next += newEdges.length / 2 - edges.length / 2;
                 }
                 newEdges[next].next = count + j;
-                newEdges[count + j] = new Wedge(addedVert + i, count + j
-                        + newEdges.length / 2, faceCount, count + j - 1
-                        + newEdges.length / 2);
+                newEdges[count + j] = new Wedge(addedVert + i, count + j + newEdges.length / 2, faceCount, count + j - 1 + newEdges.length / 2);
                 newEdges[count + j].smoothness = 1.0f;
                 next = ref2;
                 if (next >= edges.length / 2) {
                     next += newEdges.length / 2 - edges.length / 2;
                 }
-                newEdges[count + j - 1 + newEdges.length / 2] = new Wedge(
-                        edges[edges[ref2].hedge].vertex, count + j - 1,
-                        faceCount, next);
+                newEdges[count + j - 1 + newEdges.length / 2] = new Wedge(edges[edges[ref2].hedge].vertex, count + j - 1, faceCount, next);
                 newEdges[count + j - 1 + newEdges.length / 2].smoothness = 1.0f;
                 changeFace(newEdges, count + j, faceCount);
                 ++faceCount;
@@ -6018,9 +6017,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                         for (int k = 0; k < newval[j].length; k++) {
                             if (newFaceVertFaceRef[j][k] != -1) {
                                 // old vertex
-                                newval[j][k] = fvpv.getValue(
-                                        newFaceVertFaceRef[j][k],
-                                        newFaceVertIndexRef[j][k]);
+                                newval[j][k] = fvpv.getValue(newFaceVertFaceRef[j][k], newFaceVertIndexRef[j][k]);
                             } else {
                                 // new vertex
                                 orFace = newToOldFaceIndex[j];
@@ -8872,9 +8869,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 if (esel >= edges.length / 2) {
                     esel = edges[e].hedge;
                 }
-                while (edges[e].face == face1
-                        && edges[edges[e].hedge].face == face2
-                        && selected[esel] && e != i) {
+                while (edges[e].face == face1 && edges[edges[e].hedge].face == face2 && selected[esel] && e != i) {
                     edgeLink[count] = e;
                     vertexLink[count] = edges[e].vertex;
                     ++count;
@@ -8928,13 +8923,13 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 }
                 newEdges[edgeTable[edgeLink[0]]].vertex = edges[edgeLink[edgeLink.length - 1]].vertex;
                 newEdges[edgeTable[edgeLink[0]]].next = edges[edgeLink[edgeLink.length - 1]].next;
-                for (int j = 0; j < newVert.length; ++j) {
-                    newVert[j].edge = edgeTable[newVert[j].edge];
+                for(Wvertex wvertex: newVert) {
+                    wvertex.edge = edgeTable[wvertex.edge];
                 }
-                for (int j = 0; j < newEdges.length; ++j) {
-                    newEdges[j].next = edgeTable[newEdges[j].next];
-                    newEdges[j].hedge = edgeTable[newEdges[j].hedge];
-                    newEdges[j].vertex = vertexTable[newEdges[j].vertex];
+                for(Wedge newEdge: newEdges) {
+                    newEdge.next = edgeTable[newEdge.next];
+                    newEdge.hedge = edgeTable[newEdge.hedge];
+                    newEdge.vertex = vertexTable[newEdge.vertex];
                 }
                 for (int j = 0; j < faces.length; ++j) {
                     e = faces[j].edge;
@@ -9152,7 +9147,6 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             return selected;
         }
 
-        int[] e;
         int ed;
         int ned;
         int ped;
@@ -9192,9 +9186,9 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 ++edgeCount;
             }
             cutsTable[i] = cutsTable[edges[i].hedge] = -1;
-            cutsTable[i + edges.length] = cutsTable[edges[i].hedge
-                    + edges.length] = -1;
+            cutsTable[i + edges.length] = cutsTable[edges[i].hedge + edges.length] = -1;
         }
+        int[] e;
         for (int i = 0; i < vertices.length; ++i) {
             e = getVertexEdges(vertices[i]);
             boolean cut = false;
@@ -9458,10 +9452,10 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                         p1.normalize();
                         a1 = Math.acos(edgeNormals[ed].times(-1.0).dot(p1));
                         a1 = Math.sin(a1);
-                        if (a1 < 0) {
-                            log.info("a1 negative");
-                        }
+
+                        if (a1 < 0) log.info("a1 negative");
                         log.info("a1: {}", a1);
+
                         if (Math.abs(a1) > 1e-6) {
                             t = value / (2.0 * a1);
                         } else {
@@ -9474,11 +9468,9 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                         cuts[ed] = vertices[i].r.plus(p1.times(t));
                     } else {
                         // intersection of ed bevel with ned.
-                        p2 = vertices[edges[edges[ed].hedge].vertex].r
-                                .minus(vertices[i].r);
+                        p2 = vertices[edges[edges[ed].hedge].vertex].r.minus(vertices[i].r);
                         p2.normalize();
-                        a2 = Math.acos(edgeNormals[edges[ned].hedge]
-                                .times(-1.0).dot(p2));
+                        a2 = Math.acos(edgeNormals[edges[ned].hedge].times(-1.0).dot(p2));
                         a2 = Math.sin(a2);
                         if (a2 < 0) {
                             log.info("a2 negative");
@@ -9524,20 +9516,20 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             }
             p3 = new Vec3();
             int k = 0;
-            for (int j = 0; j < e.length; ++j) {
-                ed = edges[e[j]].hedge;
+            for(int item: e) {
+                ed = edges[item].hedge;
                 if ((cutsTable[ed] != -1) && (cuts[ed] != null)) {
                     p3.add(cuts[ed]);
                     ++k;
                 }
             }
             p3.scale(1.0 / k);
-            for (int j = 0; j < e.length; ++j) {
-                ed = edges[e[j]].hedge;
+            for(int item: e) {
+                ed = edges[item].hedge;
                 if ((cutsTable[ed] != -1) && (cuts[ed] == null)) {
                     if (p3.distance(vertices[i].r) < 1e-6) {
                         log.info("#1");
-                        p1 = vertices[edges[e[j]].vertex].r.minus(vertices[i].r);
+                        p1 = vertices[edges[item].vertex].r.minus(vertices[i].r);
                         if (p1.length() < 1e-4) {
                             cuts[ed] = vertices[i].r;
                         } else {
@@ -9553,10 +9545,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
                         n3 = normals[i];
                         d = -p3.dot(n3);
-                        n1 = vertices[edges[edges[ed].hedge].vertex].r
-                                .minus(vertices[i].r);
-                        t = Math.abs(-(n3.dot(vertices[i].r) + d)
-                                / (n3.dot(n1)));
+                        n1 = vertices[edges[edges[ed].hedge].vertex].r.minus(vertices[i].r);
+                        t = Math.abs(-(n3.dot(vertices[i].r) + d) / (n3.dot(n1)));
                         if (t * n1.length() <= value) {
 
                             if (n1.length() < 1e-4) {
@@ -9859,8 +9849,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     }
                 } else {
                     ved = getVertexEdges(vertices[newEdges[i].vertex]);
-                    for (int j = 0; j < ved.length; ++j) {
-                        newEdges[newEdges[ved[j]].hedge].vertex = cutsTable[i];
+                    for(int k: ved) {
+                        newEdges[newEdges[k].hedge].vertex = cutsTable[i];
                     }
                     nn1 = ved[ved.length - 1];
                 }
@@ -9881,8 +9871,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     }
                 } else {
                     ved = getVertexEdges(vertices[newEdges[nhed].vertex]);
-                    for (int j = 0; j < ved.length; ++j) {
-                        newEdges[newEdges[ved[j]].hedge].vertex = cutsTable[ed2];
+                    for(int k: ved) {
+                        newEdges[newEdges[k].hedge].vertex = cutsTable[ed2];
                     }
                     nn2 = ved[ved.length - 1];
                     newVertices[cutsTable[ed2]].edge = nn2;
@@ -10011,11 +10001,11 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     edges[edgeTable[i]].next = edgeTable[newEdges[i].next];
                 }
             }
-            for (int i = 0; i < newVertices.length; ++i) {
-                newVertices[i].edge = edgeTable[newVertices[i].edge];
+            for(Wvertex newVertex: newVertices) {
+                newVertex.edge = edgeTable[newVertex.edge];
             }
-            for (int i = 0; i < newFaces.length; ++i) {
-                newFaces[i].edge = edgeTable[newFaces[i].edge];
+            for(Wface newFace: newFaces) {
+                newFace.edge = edgeTable[newFace.edge];
             }
             newSel = sel;
         } else {
@@ -10493,9 +10483,11 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 newFaces[i + faces.length].edge += edges.length / 2;
                 parmFaceTable[i] = i;
             }
+
             List<Integer> boundary = new Vector<>();
             List<Integer> boundaries = new Vector<>();
             boolean[] done = new boolean[edges.length];
+
             for (int i = 0; i < edges.length; ++i) {
                 if ((edges[i].face == -1) && (!done[i])) {
                     done[i] = true;
@@ -10542,8 +10534,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     boundaries.addAll(boundary);
                 }
             }
-            for (int j = 0; j < boundaries.size(); ++j) {
-                int e = boundaries.get(j);
+
+            for(int e: boundaries) {
                 if (e >= edges.length / 2) {
                     e += edges.length / 2;
                 }
