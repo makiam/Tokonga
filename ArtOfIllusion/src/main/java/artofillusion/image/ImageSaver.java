@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
-   Changes copyright (C) 2023-2025 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -102,9 +102,8 @@ public class ImageSaver {
         index = startFrameNumber;
 
         final BComboBox formatChoice = new BComboBox();
-        for (int i = 0; i < FORMAT_NAME.length; i++) {
-            formatChoice.add(FORMAT_NAME[i]);
-        }
+        for(String s: FORMAT_NAME) formatChoice.add(s);
+
         formatChoice.setSelectedValue(FORMAT_NAME[animate ? lastMovieFormat : lastImageFormat]);
         BCheckBox premultBox = new BCheckBox("Premultiply Transparency", premultiplyDefault);
         final ValueSlider qualitySlider = new ValueSlider(0.0, 100.0, 100, qualityDefault);

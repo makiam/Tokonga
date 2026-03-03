@@ -1,4 +1,5 @@
 /* Copyright (C) 2003-2013 by Peter Eastman
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -23,7 +24,7 @@ public class SpotlightPhotonSource implements PhotonSource {
     private final CoordinateSystem coords;
     private final RGBColor color;
     private float lightIntensity;
-    private final double minu;
+    private final double minU;
 
     /**
      * Create a SpotlightPhotonSource.
@@ -32,15 +33,15 @@ public class SpotlightPhotonSource implements PhotonSource {
         this.light = light;
         this.coords = coords;
         double exp = light.getExponent() + 1.0;
-        minu = Math.pow(light.getAngleCosine(), exp) / exp;
+        minU = Math.pow(light.getAngleCosine(), exp) / exp;
 
         // Because the light does not fall off exactly as 1/r^2, the "intensity" varies with distance.
         // Select an effective intensity based on the furthest point in the scene from the light.
-        Vec3[] corner = map.getBounds().getCorners();
+
         Vec3 pos = coords.getOrigin();
         double maxDist2 = 0.0;
-        for (int i = 0; i < corner.length; i++) {
-            double dist2 = pos.distance2(corner[i]);
+        for(Vec3 vec3: map.getBounds().getCorners()) {
+            double dist2 = pos.distance2(vec3);
             if (dist2 > maxDist2) {
                 maxDist2 = dist2;
             }
@@ -53,7 +54,7 @@ public class SpotlightPhotonSource implements PhotonSource {
             return;
         }
         color.scale(1.0f / lightIntensity);
-        lightIntensity *= (float) ((1.0 / exp - minu) * 2.0 * Math.PI * radius * radius);
+        lightIntensity *= (float) ((1.0 / exp - minU) * 2.0 * Math.PI * radius * radius);
     }
 
     /**
@@ -80,7 +81,7 @@ public class SpotlightPhotonSource implements PhotonSource {
         final Vec3 zdir = coords.getZDirection();
         final double exp = light.getExponent() + 1.0, expInv = 1.0 / exp;
         final double maxu = 1.0 / exp;
-        final double usize = maxu - minu;
+        final double usize = maxu - minU;
         final boolean randomizeOrigin = map.getRaytracer().getUseSoftShadows();
         int num = (int) intensity;
 
@@ -99,7 +100,7 @@ public class SpotlightPhotonSource implements PhotonSource {
                     }
                     int i = index / n;
                     int j = index - (i * n);
-                    double baseu = minu + i * du;
+                    double baseu = minU + i * du;
                     double basev = j + dv;
                     Ray r = new Ray(map.getWorkspace().context);
                     Vec3 orig = r.getOrigin();

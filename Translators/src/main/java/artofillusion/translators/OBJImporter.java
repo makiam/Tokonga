@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2015 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -137,34 +137,35 @@ public final class OBJImporter {
                     for (int i = 0; i < vertIndex.length; i++) {
                         vertIndex[i] = parseVertexSpec(fields[i + 1], vertex.size(), texture.size(), normal.size(), lineNo);
                     }
-                    for (int i = 0; i < face.size(); i++) {
+                    for(List<FaceInfo> faceInfos: face) {
                         if (fields.length == 4) {
                             // Add a triangular face.
 
-                            face.get(i).add(new FaceInfo(vertIndex[0], vertIndex[1], vertIndex[2], smoothingGroup, currentTexture));
+                            faceInfos.add(new FaceInfo(vertIndex[0], vertIndex[1], vertIndex[2], smoothingGroup, currentTexture));
                         } else {
                             // Triangulate the outline.
 
                             Vec3[] v = new Vec3[fields.length - 1];
-                            for (int j = 0; j < v.length; j++) {
+                            for(int j = 0; j < v.length; j++) {
                                 v[j] = vertex.get(vertIndex[j].vert);
                             }
                             Curve c = new Curve(v, new float[v.length], Mesh.NO_SMOOTHING, true);
                             TriangleMesh m = c.convertToTriangleMesh(1.0);
                             if (m != null) {
-                                for (int j = 0; j < m.getFaceCount(); j++) {
-                                    face.get(i).add(new FaceInfo(vertIndex[m.getFaceVertexIndex(j, 0)], vertIndex[m.getFaceVertexIndex(j, 1)], vertIndex[m.getFaceVertexIndex(j, 2)], smoothingGroup, currentTexture));
+                                for(int j = 0; j < m.getFaceCount(); j++) {
+                                    faceInfos.add(new FaceInfo(vertIndex[m.getFaceVertexIndex(j, 0)], vertIndex[m.getFaceVertexIndex(j, 1)], vertIndex[m.getFaceVertexIndex(j, 2)], smoothingGroup, currentTexture));
                                 }
                             } else {
                                 // We couldn't triangulate it correctly, so do the best we can.
 
-                                int step, start;
-                                for (step = 1; 2 * step < vertIndex.length; step *= 2) {
-                                    for (start = 0; start + 2 * step < vertIndex.length; start += 2 * step) {
-                                        face.get(i).add(new FaceInfo(vertIndex[start], vertIndex[start + step], vertIndex[start + 2 * step], smoothingGroup, currentTexture));
+                                int step;
+                                int start;
+                                for(step = 1; 2 * step < vertIndex.length; step *= 2) {
+                                    for(start = 0; start + 2 * step < vertIndex.length; start += 2 * step) {
+                                        faceInfos.add(new FaceInfo(vertIndex[start], vertIndex[start + step], vertIndex[start + 2 * step], smoothingGroup, currentTexture));
                                     }
                                     if (start + step < vertIndex.length) {
-                                        face.get(i).add(new FaceInfo(vertIndex[start], vertIndex[start + step], vertIndex[0], smoothingGroup, currentTexture));
+                                        faceInfos.add(new FaceInfo(vertIndex[start], vertIndex[start + step], vertIndex[0], smoothingGroup, currentTexture));
                                     }
                                 }
                             }
@@ -269,27 +270,27 @@ public final class OBJImporter {
 
                 // Find the smoothness values for the edges.
                 TriangleMesh.Edge[] edges = ((TriangleMesh) info.getObject()).getEdges();
-                for (int i = 0; i < edges.length; i++) {
-                    if (edges[i].f2 == -1) {
+                for(TriangleMesh.Edge edge: edges) {
+                    if (edge.f2 == -1) {
                         continue;
                     }
-                    FaceInfo f1 = groupFaces.get(edges[i].f1);
-                    FaceInfo f2 = groupFaces.get(edges[i].f2);
+                    FaceInfo f1 = groupFaces.get(edge.f1);
+                    FaceInfo f2 = groupFaces.get(edge.f2);
                     if (f1.smoothingGroup == 0 || f1.smoothingGroup != f2.smoothingGroup) {
                         // They are in different smoothing groups.
 
-                        edges[i].smoothness = 0.0f;
+                        edge.smoothness = 0.0f;
                         continue;
                     }
 
                     // Find matching vertices and compare their normals.
-                    for (int j = 0; j < 3; j++) {
-                        for (int k = 0; k < 3; k++) {
+                    for(int j = 0; j < 3; j++) {
+                        for(int k = 0; k < 3; k++) {
                             if (f1.getVertex(j).vert == f2.getVertex(k).vert) {
                                 int n1 = f1.getVertex(j).norm;
                                 int n2 = f2.getVertex(k).norm;
                                 if (n1 != n2 && normal.get(n1).distance(normal.get(n2)) > 1e-10) {
-                                    edges[i].smoothness = 0.0f;
+                                    edge.smoothness = 0.0f;
                                 }
                                 break;
                             }

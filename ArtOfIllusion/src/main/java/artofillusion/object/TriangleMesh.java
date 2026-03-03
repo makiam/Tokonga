@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2015 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
    A modification copyright (C) 2017 Petri Ihalainen
    
    This program is free software; you can redistribute it and/or modify it under the
@@ -2947,10 +2947,10 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
         for (int i = 0; i < norm.length; i++) {
             norm[i] = new Vec3();
         }
-        for (int i = 0; i < face.length; i++) {
-            Vec3 edge1 = vertex[face[i].v2].r.minus(vertex[face[i].v1].r);
-            Vec3 edge2 = vertex[face[i].v3].r.minus(vertex[face[i].v1].r);
-            Vec3 edge3 = vertex[face[i].v3].r.minus(vertex[face[i].v2].r);
+        for(var value: face) {
+            Vec3 edge1 = vertex[value.v2].r.minus(vertex[value.v1].r);
+            Vec3 edge2 = vertex[value.v3].r.minus(vertex[value.v1].r);
+            Vec3 edge3 = vertex[value.v3].r.minus(vertex[value.v2].r);
             edge1.normalize();
             edge2.normalize();
             edge3.normalize();
@@ -2981,13 +2981,11 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
             if (dot3 > 1.0) {
                 dot3 = 1.0;
             }
-            norm[face[i].v1].add(faceNorm.times(Math.acos(dot1)));
-            norm[face[i].v2].add(faceNorm.times(Math.acos(dot2)));
-            norm[face[i].v3].add(faceNorm.times(Math.acos(dot3)));
+            norm[value.v1].add(faceNorm.times(Math.acos(dot1)));
+            norm[value.v2].add(faceNorm.times(Math.acos(dot2)));
+            norm[value.v3].add(faceNorm.times(Math.acos(dot3)));
         }
-        for (int i = 0; i < norm.length; i++) {
-            norm[i].normalize();
-        }
+        for(var vec3: norm) vec3.normalize();
         return norm;
     }
 
@@ -3180,9 +3178,9 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
                 numEdges[swapVert[best][3]]++;
                 for (int i = 0; i < 4; i++) {
                     int[] vertEdges = vertex[swapVert[best][i]].getEdges();
-                    for (int j = 0; j < vertEdges.length; j++) {
-                        if (candidate[vertEdges[j]]) {
-                            score[vertEdges[j]] = calcSwapScore(minAngle[vertEdges[j]], swapVert[vertEdges[j]], numEdges, onBoundary);
+                    for(int vertEdge: vertEdges) {
+                        if (candidate[vertEdge]) {
+                            score[vertEdge] = calcSwapScore(minAngle[vertEdge], swapVert[vertEdge], numEdges, onBoundary);
                         }
                     }
                 }
@@ -3191,8 +3189,7 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
             // We now know which edges we want to swap.  Create the new mesh.
             int[][] newface = new int[face.length][];
             int next = 0;
-            for (int i = 0; i < face.length; i++) {
-                Face f = face[i];
+            for(Face f: face) {
                 if (!swap[f.e1] && !swap[f.e2] && !swap[f.e3]) {
                     newface[next++] = new int[]{f.v1, f.v2, f.v3};
                 }
@@ -3213,8 +3210,8 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
                 if (!swap[i] && edge[i].smoothness != 1.0) {
                     int[] edges2 = newvert[edge[i].v1].getEdges();
                     Edge e1 = edge[i];
-                    for (int k = 0; k < edges2.length; k++) {
-                        Edge e2 = newedge[edges2[k]];
+                    for(int j: edges2) {
+                        Edge e2 = newedge[j];
                         if ((e1.v1 == e2.v1 && e1.v2 == e2.v2) || (e1.v1 == e2.v2 && e1.v2 == e2.v1)) {
                             e2.smoothness = e1.smoothness;
                             break;
@@ -3272,21 +3269,21 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
      */
     public void autosmoothMeshEdges(double angle) {
         double cutoff = Math.cos(angle);
-        for (int i = 0; i < edge.length; i++) {
-            if (edge[i].f2 == -1) {
-                edge[i].smoothness = 1.0f;
+        for(Edge value: edge) {
+            if (value.f2 == -1) {
+                value.smoothness = 1.0f;
                 continue;
             }
-            Face f1 = face[edge[i].f1];
-            Face f2 = face[edge[i].f2];
+            Face f1 = face[value.f1];
+            Face f2 = face[value.f2];
             Vec3 norm1 = vertex[f1.v1].r.minus(vertex[f1.v2].r).cross(vertex[f1.v1].r.minus(vertex[f1.v3].r));
             Vec3 norm2 = vertex[f2.v1].r.minus(vertex[f2.v2].r).cross(vertex[f2.v1].r.minus(vertex[f2.v3].r));
             norm1.normalize();
             norm2.normalize();
             if (norm1.dot(norm2) < cutoff) {
-                edge[i].smoothness = 0.0f;
+                value.smoothness = 0.0f;
             } else {
-                edge[i].smoothness = 1.0f;
+                value.smoothness = 1.0f;
             }
         }
     }

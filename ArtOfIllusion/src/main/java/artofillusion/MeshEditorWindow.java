@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2012 by Peter Eastman
    Modifications copyright (C) 2016 Petri Ihalainen
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -298,12 +298,12 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
 
     private void coordinateSystemChanged(WidgetEvent ev) {
         Widget source = ev.getWidget();
-        for (int i = 0; i < coordsItem.length; i++) {
-            coordsItem[i].setState(source == coordsItem[i]);
+        for(var bCheckBoxMenuItem: coordsItem) {
+            bCheckBoxMenuItem.setState(source == bCheckBoxMenuItem);
         }
         lastUseWorldCoords = source == coordsItem[1];
-        for (int i = 0; i < theView.length; i++) {
-            ((MeshViewer) theView[i]).setUseWorldCoords(lastUseWorldCoords);
+        for(var viewerCanvas: theView) {
+            ((MeshViewer) viewerCanvas).setUseWorldCoords(lastUseWorldCoords);
         }
         savePreferences();
         updateImage();
@@ -363,8 +363,8 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
      */
     public void setFreehand(boolean freehand) {
         lastFreehand = freehand;
-        for (int i = 0; i < theView.length; i++) {
-            ((MeshViewer) theView[i]).setFreehandSelection(freehand);
+        for(var viewerCanvas: theView) {
+            ((MeshViewer) viewerCanvas).setFreehandSelection(freehand);
         }
         savePreferences();
     }
@@ -647,13 +647,12 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
             points[i] = vert[i].r.minus(center);
         }
         theMesh.setVertexPositions(points);
-        Skeleton skeleton = theMesh.getSkeleton();
-        if (skeleton != null) {
-            Joint[] joint = skeleton.getJoints();
-            for (int i = 0; i < joint.length; i++) {
-                joint[i].coords.setOrigin(joint[i].coords.getOrigin().minus(center));
+
+        Optional.ofNullable(theMesh.getSkeleton()).ifPresent((Skeleton skeleton) -> {
+            for(var value: skeleton.getJoints()) {
+                value.coords.setOrigin(value.coords.getOrigin().minus(center));
             }
-        }
+        });
         setMesh(theMesh);
         updateImage();
     }
@@ -1196,8 +1195,8 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         }
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_SKELETON, theMesh.getSkeleton(), theMesh.getSkeleton().duplicate()));
         s.deleteJoint(view.getSelectedJoint());
-        for (int i = 0; i < theView.length; i++) {
-            ((MeshViewer) theView[i]).setSelectedJoint(j.parent == null ? -1 : j.parent.id);
+        for(var viewerCanvas: theView) {
+            ((MeshViewer) viewerCanvas).setSelectedJoint(j.parent == null ? -1: j.parent.id);
         }
         updateImage();
         updateMenus();

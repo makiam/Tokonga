@@ -322,10 +322,8 @@ public class UVMappingWindow extends BDialog implements MeshEditController, Edit
             FacetedMesh mesh = (FacetedMesh) editObj;
 
             List<Vec2> coordList = new ArrayList<>();
-            for (Vec2[] vec2s : map.findFaceTextureCoordinates(mesh)) {
-                for (int j = 0; j < vec2s.length; j++) {
-                    coordList.add(vec2s[j]);
-                }
+            for(Vec2[] vec2s: map.findFaceTextureCoordinates(mesh)) {
+                Collections.addAll(coordList, vec2s);
             }
             coord = coordList.toArray(new Vec2[coordList.size()]);
         } else {

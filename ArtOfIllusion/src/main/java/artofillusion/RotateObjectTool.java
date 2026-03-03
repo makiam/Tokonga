@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -228,9 +228,7 @@ public class RotateObjectTool extends EditingTool {
             sel = theScene.getSelection();
         }
         toMove = new Vector<>();
-        for (int i = 0; i < sel.length; i++) {
-            toMove.add(theScene.getObject(sel[i]));
-        }
+        for(int j: sel) toMove.add(theScene.getObject(j));
         rotationCenter = new Vec3[toMove.size()];
         for (int i = 0; i < rotationCenter.length; i++) {
             ObjectInfo info = toMove.get(i), parent = info;

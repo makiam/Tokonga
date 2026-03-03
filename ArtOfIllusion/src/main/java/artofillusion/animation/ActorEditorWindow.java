@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2006 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -361,11 +361,11 @@ public class ActorEditorWindow extends BDialog {
                     }
                     Skeleton olds = theObject.gesture[i].getSkeleton();
                     Skeleton news = s.duplicate();
-                    Joint[] joint = news.getJoints();
-                    for (int j = 0; j < joint.length; j++) {
-                        Joint j2 = olds.getJoint(joint[j].id);
-                        if (j2 != null) {
-                            joint[j].copy(j2);
+
+                    for(Joint value: news.getJoints()) {
+                        Joint j2 = olds.getJoint(value.id);
+                        if(j2 != null) {
+                            value.copy(j2);
                         }
                     }
                     theObject.gesture[i].setSkeleton(news);

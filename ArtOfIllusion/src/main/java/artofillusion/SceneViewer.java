@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
-   Changes copyright (C) 2016-2025 by Maksim Khramov
+   Changes copyright (C) 2016-2026 by Maksim Khramov
    Changes copyright (C) 2017-2019 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -22,6 +22,7 @@ import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * The SceneViewer class is a component which displays a view of a Scene.
@@ -30,7 +31,7 @@ public class SceneViewer extends ViewerCanvas {
 
     final Scene theScene;
     final EditingWindow parentFrame;
-    private final Vector<ObjectInfo> cameras;
+    private final List<ObjectInfo> cameras;
     boolean draggingBox, draggingSelectionBox, squareBox, sentClick, dragging;
     Point clickPoint, dragPoint;
     ObjectInfo clickedObject;
@@ -80,8 +81,7 @@ public class SceneViewer extends ViewerCanvas {
                 cameras.add(info);
             }
         }
-        for (Iterator<Widget> iter = getViewerControlWidgets().values().iterator(); iter.hasNext();) {
-            Widget w = iter.next();
+        for(Widget w: getViewerControlWidgets().values()) {
             if (w instanceof ViewerOrientationControl.OrientationChoice choice) {
                 choice.rebuildCameraList();
             }
@@ -102,7 +102,7 @@ public class SceneViewer extends ViewerCanvas {
     public void setOrientation(int which) {
         super.setOrientation(which);
         if (which > 5 && which < 6 + cameras.size()) {
-            ObjectInfo nextCamera = cameras.elementAt(which - 6);
+            ObjectInfo nextCamera = cameras.get(which - 6);
             CoordinateSystem nextCoords = nextCamera.coords.duplicate();
             double workingDepth, projectionDist, nextScale;
             Vec3 nextCenter;
@@ -150,7 +150,7 @@ public class SceneViewer extends ViewerCanvas {
     @Override
     public void finishAnimation(int which, boolean persp, int navi) {
         if (which > 5 && which < 6 + cameras.size()) {
-            boundCamera = cameras.elementAt(which - 6);
+            boundCamera = cameras.get(which - 6);
         }
         orientation = which;
         perspective = persp;
@@ -260,11 +260,11 @@ public class SceneViewer extends ViewerCanvas {
         // Hilight the selection.
         if (currentTool.hilightSelection())// && !animation.changingPerspective())
         {
-            ArrayList<Rectangle> selectedBoxes = new ArrayList<>();
-            ArrayList<Rectangle> parentSelectedBoxes = new ArrayList<>();
+            List<Rectangle> selectedBoxes = new ArrayList<>();
+            List<Rectangle> parentSelectedBoxes = new ArrayList<>();
             for (ObjectInfo obj : theScene.getObjects()) {
                 int hsize;
-                ArrayList<Rectangle> boxes;
+                List<Rectangle> boxes;
 
                 if (obj.isLocked()) {
                     continue;

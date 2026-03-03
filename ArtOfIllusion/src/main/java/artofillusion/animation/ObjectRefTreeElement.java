@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2002 by Peter Eastman
-   Changes copyright (C) 2017 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -16,7 +16,7 @@ import artofillusion.ui.*;
 import java.util.*;
 
 /**
- * This class represents an ObjectRef in a the TreeList.
+ * This class represents an ObjectRef in a TreeList.
  */
 public class ObjectRefTreeElement extends TreeElement {
 
@@ -33,9 +33,8 @@ public class ObjectRefTreeElement extends TreeElement {
         if (ref.getJoint() == null) {
             Skeleton s = info.getSkeleton();
             if (s != null) {
-                Joint[] j = s.getJoints();
-                for (int i = 0; i < j.length; i++) {
-                    children.add(new ObjectRefTreeElement(new ObjectRef(info, j[i]), this, tree, exclude));
+                for(var joint: s.getJoints()) {
+                    children.add(new ObjectRefTreeElement(new ObjectRef(info, joint), this, tree, exclude));
                 }
             }
             for (int i = 0; i < info.getChildren().length; i++) {

@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2005 by Peter Eastman
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -65,8 +65,8 @@ public class ExtrudeDialog extends ToolDialog {
         // extruded.
         objects = new Vector<>();
         paths = new Vector<>();
-        for (int i = 0; i < selection.length; i++) {
-            ObjectInfo obj = scene.getObject(selection[i]);
+        for(int j: selection) {
+            ObjectInfo obj = scene.getObject(j);
             if (obj.getObject() instanceof Curve) {
                 objects.add(obj);
                 paths.add(obj);
@@ -86,9 +86,9 @@ public class ExtrudeDialog extends ToolDialog {
         content.setDefaultLayout(new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE, new Insets(0, 0, 0, 5), null));
         content.add(Translate.label("Tools:extrude.target.label"), 0, 0, 2, 1);
         content.add(objChoice = new BComboBox(), 0, 1, 2, 1);
-        for (int i = 0; i < objects.size(); i++) {
-            objChoice.add(objects.get(i).getName());
-        }
+
+        for(var object: objects) objChoice.add(object.getName());
+
         objChoice.addEventLink(ValueChangedEvent.class, this, "stateChanged");
         content.add(Translate.label("Tools:extrude.direction.label"), 0, 2, 2, 1);
         RadioButtonGroup pathGroup = new RadioButtonGroup();
@@ -106,9 +106,9 @@ public class ExtrudeDialog extends ToolDialog {
         distanceRow.add(distField = new ValueField(1.0, ValueField.POSITIVE, 5));
         distField.addEventLink(ValueChangedEvent.class, this, "makeObject");
         content.add(pathChoice = new BComboBox(), 1, 6);
-        for (int i = 0; i < paths.size(); i++) {
-            pathChoice.add(paths.get(i).getName());
-        }
+
+        for(ObjectInfo path: paths) pathChoice.add(path.getName());
+
         pathChoice.addEventLink(ValueChangedEvent.class, this, "stateChanged");
         RowContainer vectorRow = new RowContainer();
         content.add(vectorRow, 1, 7);
@@ -280,7 +280,8 @@ public class ExtrudeDialog extends ToolDialog {
      * @return the extruded object
      */
     public static Object3D extrudeCurve(Curve profile, Curve path, CoordinateSystem profCoords, CoordinateSystem pathCoords, double angle, boolean orient) {
-        MeshVertex[] profVert = profile.getVertices(), pathVert = path.getVertices();
+        MeshVertex[] profVert = profile.getVertices();
+        MeshVertex[] pathVert = path.getVertices();
         Vec3[] profv = new Vec3[profVert.length], pathv = new Vec3[pathVert.length];
         Vec3[] subdiv;
         Vec3 center = new Vec3();
@@ -288,11 +289,12 @@ public class ExtrudeDialog extends ToolDialog {
         Vec3[] updir;
         Vec3[] t;
         Vec3[][] v;
-        float[] usmooth = new float[pathVert.length], vsmooth = new float[profVert.length];
+        float[] usmooth = new float[pathVert.length];
+        float[] vsmooth = new float[profVert.length];
         float[] profSmooth = profile.getSmoothness(), pathSmooth = path.getSmoothness();
         CoordinateSystem localCoords = new CoordinateSystem(new Vec3(), Vec3.vz(), Vec3.vy());
         Mat4 rotate;
-        int i, j;
+        int i;
 
         for (i = 0; i < profVert.length; i++) {
             profv[i] = profCoords.fromLocal().timesDirection(profVert[i].r);
@@ -314,8 +316,12 @@ public class ExtrudeDialog extends ToolDialog {
 
         // Now find two vectors perpendicular to the path, and determine how much they
         // contribute to the z and up directions.
-        Vec3 dir1, dir2;
-        double zfrac1, zfrac2, upfrac1, upfrac2;
+        Vec3 dir1;
+        Vec3 dir2;
+        double zfrac1;
+        double zfrac2;
+        double upfrac1;
+        double upfrac2;
         zfrac1 = t[0].dot(zdir[0]);
         zfrac2 = Math.sqrt(1.0 - zfrac1 * zfrac1);
         dir1 = zdir[0].minus(t[0].times(zfrac1));
@@ -390,6 +396,7 @@ public class ExtrudeDialog extends ToolDialog {
 
         // Create the extruded surface.
         v = new Vec3[pathv.length][profv.length];
+        int j;
         for (i = 0; i < pathv.length; i++) {
             localCoords.setOrigin(pathv[i]);
             int k = (pathv.length == subdiv.length ? i : 2 * i);
@@ -455,7 +462,8 @@ public class ExtrudeDialog extends ToolDialog {
         MeshVertex[] pathVert = path.getVertices();
         Edge[] profEdge = profile.getEdges();
         Face[] profFace = profile.getFaces();
-        Vec3[] profv = new Vec3[profVert.length], pathv = new Vec3[pathVert.length];
+        Vec3[] profv = new Vec3[profVert.length];
+        Vec3[] pathv = new Vec3[pathVert.length];
         Vec3[] subdiv;
         Vec3 center;
         Vec3[] zdir;

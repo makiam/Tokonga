@@ -1,5 +1,5 @@
 /* Copyright (C) 2006 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -32,7 +32,8 @@ public class NinePointManipulator extends EventSource implements Manipulator {
     private Rectangle screenBounds;
     private BoundingBox selectionBounds;
     private HandlePosition handle;
-    private int imageWidth, imageHeight;
+    private int imageWidth;
+    private int imageHeight;
 
     public static final Image ARROWS_N_S = loadImage("arrows_N_S.gif");
     public static final Image ARROWS_E_W = loadImage("arrows_E_W.gif");
@@ -85,10 +86,10 @@ public class NinePointManipulator extends EventSource implements Manipulator {
      */
     public NinePointManipulator(Image[] images) {
         this.images = images.clone();
-        for (int i = 0; i < images.length; i++) {
-            if (images[i] != null) {
-                imageWidth = images[i].getWidth(null);
-                imageHeight = images[i].getHeight(null);
+        for(Image image: images) {
+            if (image != null) {
+                imageWidth = image.getWidth(null);
+                imageHeight = image.getHeight(null);
             }
         }
     }
@@ -134,7 +135,8 @@ public class NinePointManipulator extends EventSource implements Manipulator {
         if (r == null || !r.contains(pos)) {
             return false;
         }
-        int x = -1, y = -1;
+        int x = -1;
+        int y = -1;
         if (pos.x < r.x + imageWidth) {
             x = 0;
         } else if (pos.x > r.x + (r.width - imageWidth) / 2 && pos.x < r.x + (r.width + imageWidth) / 2) {

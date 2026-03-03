@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2013 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -136,9 +136,7 @@ public class KeystrokePreferencesPanel extends FormContainer implements Preferen
     private void deleteRecords() {
         int[] selected = table.getSelectedRows();
         Arrays.sort(selected);
-        for (int i = 0; i < selected.length; i++) {
-            records.remove(selected[i]);
-        }
+        for(int j: selected) records.remove(j);
         sortRecords();
         changed = true;
     }

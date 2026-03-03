@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2008 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -232,10 +232,10 @@ public class Curve extends Object3D implements Mesh {
         } else {
             zscale = zsize / size.z;
         }
-        for (int i = 0; i < vertex.length; i++) {
-            vertex[i].r.x *= xscale;
-            vertex[i].r.y *= yscale;
-            vertex[i].r.z *= zscale;
+        for(var meshVertex: vertex) {
+            meshVertex.r.x *= xscale;
+            meshVertex.r.y *= yscale;
+            meshVertex.r.z *= zscale;
         }
         clearCachedMesh();
     }

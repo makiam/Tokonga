@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2006 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -96,10 +96,8 @@ public class FaceVertexParameterValue implements ParameterValue {
         }
         values = new double[totalValues];
         int index = 0;
-        for (int i = 0; i < val.length; i++) {
-            for (int j = 0; j < val[i].length; j++) {
-                values[index++] = val[i][j];
-            }
+        for(double[] doubles: val) {
+            for(double aDouble: doubles) values[index++] = aDouble;
         }
     }
 
@@ -157,11 +155,8 @@ public class FaceVertexParameterValue implements ParameterValue {
     @Override
     public double getAverageValue() {
         double avg = 0.0;
-
-        for (int i = 0; i < values.length; i++) {
-            avg += values[i];
-        }
-        return (avg / values.length);
+        for(double value: values) avg += value;
+        return avg / values.length;
     }
 
     /**
@@ -207,9 +202,7 @@ public class FaceVertexParameterValue implements ParameterValue {
     public void writeToStream(DataOutputStream out) throws IOException {
         out.writeInt(-1);
         out.writeInt(values.length);
-        for (int i = 0; i < values.length; i++) {
-            out.writeDouble(values[i]);
-        }
+        for(double value: values) out.writeDouble(value);
         out.writeInt(faceStartIndex.length);
         for (int i = 1; i < faceStartIndex.length; i++) {
             out.writeInt(faceStartIndex[i]);

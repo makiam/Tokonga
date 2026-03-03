@@ -37,8 +37,7 @@ public class MeshVertex {
      * Create a new MeshVertex which is a weighted average of two other ones.
      */
     public static MeshVertex blend(MeshVertex v1, MeshVertex v2, double w1, double w2) {
-        MeshVertex v = new MeshVertex(new Vec3(w1 * v1.r.x + w2 * v2.r.x,
-                w1 * v1.r.y + w2 * v2.r.y, w1 * v1.r.z + w2 * v2.r.z));
+        MeshVertex v = new MeshVertex(new Vec3(w1 * v1.r.x + w2 * v2.r.x, w1 * v1.r.y + w2 * v2.r.y, w1 * v1.r.z + w2 * v2.r.z));
         if (v1.ikJoint == v2.ikJoint) {
             v.ikJoint = v1.ikJoint;
             v.ikWeight = (w1 * v1.ikWeight + w2 * v2.ikWeight);

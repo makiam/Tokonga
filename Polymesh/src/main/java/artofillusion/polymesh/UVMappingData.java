@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2007 by Francois Guillet
- *  Changes copyright (C) 2023-2025 by Maksim Khramov
+ *  Changes copyright (C) 2023-2026 by Maksim Khramov
  *
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
@@ -90,11 +90,12 @@ public class UVMappingData {
             Texture tex;
             int numTex = scene.getNumTextures();
             out.writeInt(textures.size());
-            for (int i = 0; i < textures.size(); i++) {
+
+            for(Integer texture: textures) {
                 boolean found = false;
-                for (int j = 0; j < numTex; j++) {
+                for(int j = 0; j < numTex; j++) {
                     tex = scene.getTexture(j);
-                    if (tex.getID() == textures.get(i).intValue()) {
+                    if (tex.getID() == texture.intValue()) {
                         out.writeInt(j);
                         found = true;
                         break;
@@ -104,12 +105,11 @@ public class UVMappingData {
                     out.writeInt(-1);
                 }
             }
+
             out.writeInt(v.length);
-            for (int i = 0; i < v.length; i++) {
-                out.writeInt(v[i].length);
-                for (int j = 0; j < v[i].length; j++) {
-                    v[i][j].writeToFile(out);
-                }
+            for(Vec2[] vec2s: v) {
+                out.writeInt(vec2s.length);
+                for(Vec2 vec2: vec2s) vec2.writeToFile(out);
             }
             out.writeInt(edgeColor.getRed());
             out.writeInt(edgeColor.getGreen());
@@ -152,7 +152,9 @@ public class UVMappingData {
                 }
             }
             if (version >= 1) {
-                int r, g, b;
+                int r;
+                int g;
+                int b;
                 r = in.readInt();
                 g = in.readInt();
                 b = in.readInt();
@@ -202,13 +204,11 @@ public class UVMappingData {
     public void writeToFile(DataOutputStream out, Scene scene) throws IOException {
         out.writeShort(0);
         out.writeInt(meshes.length);
-        for (int i = 0; i < meshes.length; i++) {
-            meshes[i].writeToFile(out);
-        }
+        for(UnfoldedMesh mesh: meshes) mesh.writeToFile(out);
+
         out.writeInt(mappings.size());
-        for (int i = 0; i < mappings.size(); i++) {
-            mappings.get(i).writeToFile(out, scene);
-        }
+        for(UVMeshMapping mapping: mappings) mapping.writeToFile(out, scene);
+        
         out.writeInt(sampling);
     }
 
@@ -269,10 +269,9 @@ public class UVMappingData {
         for (int i = 0; i < meshes.length; i++) {
             int count = 0;
             UnfoldedVertex[] vert = meshes[i].vertices;
-            for (int j = 0; j < vert.length; j++) {
-                if (vert[j].id != -1) {
-                    count++;
-                }
+            for(UnfoldedVertex unfoldedVertex: vert) {
+                if (unfoldedVertex.id == -1) continue;
+                count++;
             }
             displayed[i] = count;
             verticesTable[i] = new int[count];

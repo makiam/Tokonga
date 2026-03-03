@@ -2,7 +2,7 @@
  * IconGenerator: provide editing and compositing features for icon images
  *
  * Copyright (C) 2008 Nik Trevallyn-Jones, Sydney Australia
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
  * Author: Nik Trevallyn-Jones, nik777@users.sourceforge.net
  * $Id: Exp $
@@ -110,32 +110,32 @@ import lombok.extern.slf4j.Slf4j;
  *  multiplied by 1.0 on red, and 0.5 on green and blue (made redder).
  *
  *  "BackgroundIcon; {icon} ~(0.5)"
- *  The image named BackgroundIcom overlaid with the {icon} image in the
+ *  The image named BackgroundIcon overlaid with the {icon} image in the
  *  namespace which has had antialiasing applied using alpha=50% for dark AA
- *  pixels, and light AA pixels having a alpha calculated from the dark pixels.
+ *  pixels, and light AA pixels having an alpha calculated from the dark pixels.
  *
  *  "BackgroundIcon; {icon} ~(0.5, 0.66)"
- *  The image named BackgroundIcom overlaid with the {icon} image in the
+ *  The image named BackgroundIcon overlaid with the {icon} image in the
  *  namespace which has had antialiasing applied using alpha=50% for the
  *  darkest AA pixels, with successively lighter pixels being 66% as dark.
  *
  *  "BackgroundIcon; {icon} ~[3,3]"
  *  The image named BackgroundIcon overlaid with the {icon} image in the
- *  namespace which has had it edges feathered to transparent over an area
+ *  namespace which has had its edges feathered to transparent over an area
  *  3 pixels wide on each side (x-axis) and 3 pixels wide on top and bottom
  *  (y-axis).
  *
  *  "BackgroundIcon; {icon}; 0xa0804040 ~[-6,-6]"
- *  The image named BackgroundIcom overlaid with the {icon} image in the
+ *  The image named BackgroundIcon overlaid with the {icon} image in the
  *  namespace which has then been overlaid with a region of the specified
- *  colour (translucent red) which has had its centre feathered to transparent
- *  from the 6th pixel from the edge into the centre.
+ *  colour (translucent red) which has had its center feathered to transparent
+ *  from the 6th pixel from the edge into the center.
  *
  *  "BackgroundIcon; {icon}; 0xa0804040 [-4, -4, ~3]"
  *  The image named BackgroundIcon overlaid with the {icon} image in the
- *  namespace, overlaid with a a region of the specified colour
+ *  namespace, overlaid with a region of the specified colour
  *  (translucent red) which is 4 pixels smaller than the current image in both
- *  X and Y axes, and which has had the outer 3 pixels feathered to tranparent.
+ *  X and Y axes, and which has had the outer 3 pixels feathered to transparent.
  *
  * </pre>
  */
@@ -206,8 +206,7 @@ public class IconGenerator {
      * @param macro
      * @throws Exception
      */
-    public IconGenerator(String macro)
-            throws Exception {
+    public IconGenerator(String macro) throws Exception {
         delims = DEFAULT_DELIMS;
         compile(macro);
     }
@@ -219,8 +218,7 @@ public class IconGenerator {
      * @param delims
      * @throws Exception
      */
-    public IconGenerator(String macro, String[] delims)
-            throws Exception {
+    public IconGenerator(String macro, String[] delims) throws Exception {
         this.delims = delims;
         compile(macro);
     }
@@ -231,8 +229,7 @@ public class IconGenerator {
      * @param macro
      * @throws Exception
      */
-    public void compile(String macro)
-            throws Exception {
+    public void compile(String macro) throws Exception {
         int len = macro.length();
         program = new Instruction(imageWidth, imageHeight);
         program.compile(macro, 0, delims);
@@ -2018,8 +2015,7 @@ public class IconGenerator {
             Object obj = namespace.get(name);
 
             // resolve reference
-            if (obj != null && obj.getClass() == String.class
-                    && delims[ARG_DELIMS].indexOf(name.charAt(0)) == ARG_RESOLVE) {
+            if (obj != null && obj.getClass() == String.class && delims[ARG_DELIMS].indexOf(name.charAt(0)) == ARG_RESOLVE) {
                 name = obj.toString();
                 obj = namespace.get(name);
             }
@@ -2070,32 +2066,26 @@ public class IconGenerator {
             return copy((Image) obj, width, height, scale);
         }
 
-        protected Object resolve(String target, List<String> method, Map<String, Object> namespace)
-                throws Exception {
+        protected Object resolve(String target, List<String> method, Map<String, Object> namespace) throws Exception {
             Object obj = namespace.get(target);
 
             // resolve reference
-            if (obj != null && obj.getClass() == String.class
-                    && delims[ARG_DELIMS].indexOf(target.charAt(0)) == ARG_RESOLVE) {
+            if (obj != null && obj.getClass() == String.class && delims[ARG_DELIMS].indexOf(target.charAt(0)) == ARG_RESOLVE) {
                 target = obj.toString();
                 obj = namespace.get(target);
             }
 
             if (obj == null) {
-                return obj;
+                return null;
             }
 
             try {
-                Method meth;
-                String methName;
-                int cut;
-                for (int i = 0; i < method.size(); i++) {
-                    methName = method.get(i);
-                    cut = methName.indexOf('(');
+                for(String methName: method) {
+                    int cut = methName.indexOf('(');
                     if (cut > 0) {
                         methName = methName.substring(0, cut);
                     }
-                    meth = obj.getClass().getMethod(methName, NULL_SIG);
+                    var meth = obj.getClass().getMethod(methName, NULL_SIG);
                     obj = meth.invoke(obj, NULL_ARGS);
                 }
                 return obj;

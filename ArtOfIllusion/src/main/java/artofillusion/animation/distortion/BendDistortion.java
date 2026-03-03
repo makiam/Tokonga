@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2012 by Peter Eastman
-   Changes copyright (C) 2025 by Maksim Khramov
+   Changes copyright (C) 2025-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -109,19 +109,19 @@ public class BendDistortion extends Distortion {
         // Find the range along the appropriate axis.
         double min = Double.MAX_VALUE;
         double max = Double.MIN_VALUE;
-        for (int i = 0; i < newvert.length; i++) {
+        for(Vec3 vec3: newvert) {
             double value;
-            if (axis == X_AXIS) {
-                value = newvert[i].x;
-            } else if (axis == Y_AXIS) {
-                value = newvert[i].y;
+            if(axis == X_AXIS) {
+                value = vec3.x;
+            } else if(axis == Y_AXIS) {
+                value = vec3.y;
             } else {
-                value = newvert[i].z;
+                value = vec3.z;
             }
-            if (value < min) {
+            if(value < min) {
                 min = value;
             }
-            if (value > max) {
+            if(value > max) {
                 max = value;
             }
         }
@@ -139,52 +139,50 @@ public class BendDistortion extends Distortion {
         if (Math.abs(theta) > 1e-10) {
             if (axis == X_AXIS) {
                 if (direction == Y_AXIS) {
-                    for (int i = 0; i < newvert.length; i++) {
-                        double a = scale * (newvert[i].x - min);
-                        double b = newvert[i].y - origin.y - radius;
-                        newvert[i].set(min - Math.sin(a) * b, origin.y + radius + Math.cos(a) * b, newvert[i].z);
+                    for(Vec3 vec3: newvert) {
+                        double a = scale * (vec3.x - min);
+                        double b = vec3.y - origin.y - radius;
+                        vec3.set(min - Math.sin(a) * b, origin.y + radius + Math.cos(a) * b, vec3.z);
                     }
                 } else {
-                    for (int i = 0; i < newvert.length; i++) {
-                        double a = scale * (newvert[i].x - min);
-                        double b = newvert[i].z - origin.z - radius;
-                        newvert[i].set(min - Math.sin(a) * b, newvert[i].y, origin.z + radius + Math.cos(a) * b);
+                    for(Vec3 vec3: newvert) {
+                        double a = scale * (vec3.x - min);
+                        double b = vec3.z - origin.z - radius;
+                        vec3.set(min - Math.sin(a) * b, vec3.y, origin.z + radius + Math.cos(a) * b);
                     }
                 }
             } else if (axis == Y_AXIS) {
                 if (direction == X_AXIS) {
-                    for (int i = 0; i < newvert.length; i++) {
-                        double a = scale * (newvert[i].y - min);
-                        double b = newvert[i].x - origin.x - radius;
-                        newvert[i].set(origin.x + radius + Math.cos(a) * b, min - Math.sin(a) * b, newvert[i].z);
+                    for(Vec3 vec3: newvert) {
+                        double a = scale * (vec3.y - min);
+                        double b = vec3.x - origin.x - radius;
+                        vec3.set(origin.x + radius + Math.cos(a) * b, min - Math.sin(a) * b, vec3.z);
                     }
                 } else {
-                    for (int i = 0; i < newvert.length; i++) {
-                        double a = scale * (newvert[i].y - min);
-                        double b = newvert[i].z - origin.z - radius;
-                        newvert[i].set(newvert[i].x, min - Math.sin(a) * b, origin.z + radius + Math.cos(a) * b);
+                    for(Vec3 vec3: newvert) {
+                        double a = scale * (vec3.y - min);
+                        double b = vec3.z - origin.z - radius;
+                        vec3.set(vec3.x, min - Math.sin(a) * b, origin.z + radius + Math.cos(a) * b);
                     }
                 }
             } else {
                 if (direction == X_AXIS) {
-                    for (int i = 0; i < newvert.length; i++) {
-                        double a = scale * (newvert[i].z - min);
-                        double b = newvert[i].x - origin.x - radius;
-                        newvert[i].set(origin.x + radius + Math.cos(a) * b, newvert[i].y, min - Math.sin(a) * b);
+                    for(Vec3 vec3: newvert) {
+                        double a = scale * (vec3.z - min);
+                        double b = vec3.x - origin.x - radius;
+                        vec3.set(origin.x + radius + Math.cos(a) * b, vec3.y, min - Math.sin(a) * b);
                     }
                 } else {
-                    for (int i = 0; i < newvert.length; i++) {
-                        double a = scale * (newvert[i].z - min);
-                        double b = newvert[i].y - origin.y - radius;
-                        newvert[i].set(newvert[i].x, origin.y + radius + Math.cos(a) * b, min - Math.sin(a) * b);
+                    for(Vec3 vec3: newvert) {
+                        double a = scale * (vec3.z - min);
+                        double b = vec3.y - origin.y - radius;
+                        vec3.set(vec3.x, origin.y + radius + Math.cos(a) * b, min - Math.sin(a) * b);
                     }
                 }
             }
         }
         if (postTransform != null) {
-            for (int i = 0; i < newvert.length; i++) {
-                postTransform.transform(newvert[i]);
-            }
+            for(Vec3 vec3: newvert) postTransform.transform(vec3);
         }
         newmesh.setVertexPositions(newvert);
         return newmesh;

@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2012 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -329,17 +329,18 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
             el.addTracks();
         }
 
-        for (int i = 0; i < allEl.length; i++) {
-            TreeElement el = theList.findElement(allEl[i].getObject());
+        for(TreeElement treeElement: allEl) {
+            TreeElement el = theList.findElement(treeElement.getObject());
             if (el == null) {
                 continue;
             }
-            el.setExpanded(allEl[i].isExpanded());
-            el.setSelected(allEl[i].isSelected());
+            el.setExpanded(treeElement.isExpanded());
+            el.setSelected(treeElement.isSelected());
         }
+
         allEl = theList.getElements();
-        for (int i = 0; i < allEl.length; i++) {
-            allEl[i].setSelectable(allEl[i] instanceof TrackTreeElement);
+        for(TreeElement treeElement: allEl) {
+            treeElement.setSelectable(treeElement instanceof TrackTreeElement);
         }
         theList.setUpdateEnabled(true);
         selectedTracksChanged();
@@ -556,10 +557,10 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         List<SelectionInfo> v = new Vector<>();
         Track[] sel = getSelectedTracks();
 
-        for (int i = 0; i < selection.length; i++) {
-            for (int j = 0; j < sel.length; j++) {
-                if (selection[i].track == sel[j]) {
-                    v.add(selection[i]);
+        for(SelectionInfo selectionInfo: selection) {
+            for(Track track: sel) {
+                if (selectionInfo.track == track) {
+                    v.add(selectionInfo);
                     break;
                 }
             }
@@ -583,28 +584,27 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * to selected keyframes.
      */
     public void tracksModified(boolean updateScene) {
-        for (int i = 0; i < graphs.size(); i++) {
-            if (graphs.get(i) instanceof TrackGraph) {
-                ((TrackGraph) graphs.get(i)).tracksModified();
+        graphs.forEach(td -> {
+            if(td instanceof TrackGraph gi) {
+                gi.tracksModified();
             } else {
-                ((Widget) graphs.get(i)).repaint();
+                ((Widget) td).repaint();
             }
-        }
+        });
+
         if (!updateScene) {
             return;
         }
 
         // Find the list of tracks with selected keyframes.
         List<Track> v = new Vector<>();
-        for (int i = 0; i < selection.length; i++) {
-            if (!v.contains(selection[i].track)) {
-                v.add(selection[i].track);
-            }
+        for(var selectionInfo: selection) {
+            if (v.contains(selectionInfo.track)) continue;
+            v.add(selectionInfo.track);
         }
 
         // Now update them.
-        for (int i = 0; i < v.size(); i++) {
-            Track tr = v.get(i);
+        for(Track tr: v) {
             Object parent = tr.getParent();
             while (parent != null && parent instanceof Track) {
                 parent = ((Track) parent).getParent();
@@ -620,8 +620,8 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * Repaint all of the graphs.
      */
     public void repaintGraphs() {
-        for (int i = 0; i < graphs.size(); i++) {
-            Widget gr = (Widget) graphs.get(i);
+        for(TrackDisplay trackDisplay: graphs) {
+            Widget gr = (Widget) trackDisplay;
             gr.repaint();
             if (gr instanceof TrackGraph graph) {
                 graph.getAxis().repaint();
@@ -776,8 +776,8 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         UndoRecord undo = new UndoRecord(window);
         List<ObjectInfo> owners = new Vector<>();
 
-        for (int i = 0; i < sel.length; i++) {
-            if (sel[i] instanceof Track tr) {
+        for(Object o: sel) {
+            if (o instanceof Track tr) {
                 Object parent = tr.getParent();
                 while (parent instanceof Track) {
                     parent = ((Track) parent).getParent();
@@ -957,13 +957,12 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         int[] sel = window.getSelectedIndices();
 
         theList.setUpdateEnabled(false);
-        for (int i = 0; i < sel.length; i++) {
-            ObjectInfo info = theScene.getObject(sel[i]);
+        for(int k: sel) {
+            ObjectInfo info = theScene.getObject(k);
             TreeElement el = theList.findElement(info);
-            if (el != null) {
-                for (int j = 0; j < el.getNumChildren(); j++) {
-                    theList.setSelected(el.getChild(j), true);
-                }
+            if (el == null) continue;
+            for(int j = 0; j < el.getNumChildren(); j++) {
+                theList.setSelected(el.getChild(j), true);
             }
         }
         theList.setUpdateEnabled(true);

@@ -1,6 +1,6 @@
 /* Copyright (C) 2006-2009 by Francois Guillet and Peter Eastman
    Changes copyright (C) 2020 by Petri Ihalainen
-   Changes copyright (C) 2023-2025 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -290,8 +290,8 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
             rotHandles = pqnRotHandles;
         }
         //and detect if click happened in one of them
-        for (int i = 0; i < rotHandles.length; i++) {
-            if ((rotSegment = rotHandles[i].findClickTarget(location, view.getCamera())) != -1) {
+        for(var handle: rotHandles) {
+            if((rotSegment = handle.findClickTarget(location, view.getCamera())) != -1) {
                 return ROTATE;
             }
         }
@@ -410,10 +410,9 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
         } else if (viewMode == PQN_MODE) {
             activeRotationHandleSet = pqnRotHandles;
         }
-        for (int i = 0; i < activeRotationHandleSet.length; ++i) {
-            RotationHandle rotHandle = activeRotationHandleSet[i];
-            for (int j = 0; j < rotHandle.points3d.length; j++) {
-                rotHandle.points2d[j] = worldToScreen.timesXY(center.plus(rotHandle.points3d[j].times(len)));
+        for(var handle: activeRotationHandleSet) {
+            for(int j = 0; j < handle.points3d.length; j++) {
+                handle.points2d[j] = worldToScreen.timesXY(center.plus(handle.points3d[j].times(len)));
             }
         }
     }
@@ -705,9 +704,9 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
             rotHandles = pqnRotHandles;
         }
         //and detect if click happened in one of them
-        for (int i = 0; i < rotHandles.length; i++) {
-            if ((rotSegment = rotHandles[i].findClickTarget(p, view.getCamera())) != -1) {
-                currentRotationHandle = rotHandles[i];
+        for(var handle: rotHandles) {
+            if((rotSegment = handle.findClickTarget(p, view.getCamera())) != -1) {
+                currentRotationHandle = handle;
                 dragHandleType = ROTATE;
                 dragAxis = currentRotationHandle.axis;
                 dragging = true;

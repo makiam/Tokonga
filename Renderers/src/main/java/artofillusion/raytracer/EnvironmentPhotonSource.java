@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2013 by Peter Eastman
-
+ *  Changes copyright (C) 2026 by Maksim Khramov
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
@@ -36,8 +36,8 @@ public class EnvironmentPhotonSource implements PhotonSource {
         center = map.getBounds().getCenter();
         Vec3[] corner = map.getBounds().getCorners();
         double maxDist2 = 0.0;
-        for (int i = 0; i < corner.length; i++) {
-            double dist2 = center.distance2(corner[i]);
+        for(var vec3: corner) {
+            double dist2 = center.distance2(vec3);
             if (dist2 > maxDist2) {
                 maxDist2 = dist2;
             }

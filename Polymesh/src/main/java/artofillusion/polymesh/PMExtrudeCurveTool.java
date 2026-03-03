@@ -1,5 +1,5 @@
 /*
- *  Changes copyright (C) 2023-2025 by Maksim Khramov
+ *  Changes copyright (C) 2023-2026 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -24,6 +24,7 @@ import buoy.event.WidgetMouseEvent;
 import java.awt.Color;
 import java.awt.Point;
 
+import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Vector;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +43,8 @@ public class PMExtrudeCurveTool extends EditingTool {
     private boolean[] orSel;
     private final MeshEditController controller;
     private ViewerCanvas canvas;
-    private Vec3 fromPoint, currentPoint;
+    private Vec3 fromPoint;
+    private Vec3 currentPoint;
     boolean constantSize;
     int dragging;
     boolean previewMode = true;
@@ -162,9 +164,9 @@ public class PMExtrudeCurveTool extends EditingTool {
             return null;
         }
         boolean nonZeroSel = false;
-        for (int i = 0; i < sel.length; i++) {
-            nonZeroSel |= sel[i];
-            if (nonZeroSel) {
+        for(boolean b: sel) {
+            nonZeroSel |= b;
+            if(nonZeroSel) {
                 break;
             }
         }
@@ -182,9 +184,7 @@ public class PMExtrudeCurveTool extends EditingTool {
             ++count;
             Vec3 p = new Vec3();
             int[] fe = mesh.getFaceVertices(faces[i]);
-            for (int j = 0; j < fe.length; j++) {
-                p.add(verts[fe[j]].r);
-            }
+            for(int k: fe) p.add(verts[k].r);
             p.scale(1.0 / (float) fe.length);
             fromPoint.add(p);
         }
@@ -201,11 +201,10 @@ public class PMExtrudeCurveTool extends EditingTool {
                 continue;
             }
             int[] fe = mesh.getFaceVertices(faces[i]);
-            for (int j = 0; j < fe.length; j++) {
-                if (!rotated[fe[j]]) {
-                    verts[fe[j]].r = m.times(verts[fe[j]].r);
-                    rotated[fe[j]] = true;
-                }
+            for(int k: fe) {
+                if(rotated[k]) continue;
+                verts[k].r = m.times(verts[k].r);
+                rotated[k] = true;
             }
         }
     }
@@ -218,20 +217,20 @@ public class PMExtrudeCurveTool extends EditingTool {
         int key = e.getKeyCode();
         if (fromPoint != null) {
             switch (key) {
-                case KeyPressedEvent.VK_ESCAPE:
+                case KeyEvent.VK_ESCAPE:
                     log.debug("Escape...");
                     doCancel();
                     break;
-                case KeyPressedEvent.VK_W:
+                case KeyEvent.VK_W:
                     if (clickPoints.size() > 0) {
                         clickPoints.remove(clickPoints.size() - 1);
                     }
                     theWindow.updateImage();
                     break;
-                case KeyPressedEvent.VK_ENTER:
+                case KeyEvent.VK_ENTER:
                     extrudeFaces(true);
                     break;
-                case KeyPressedEvent.VK_J:
+                case KeyEvent.VK_J:
                     previewMode = !previewMode;
                     if (previewMode && clickPoints.size() != 0) {
                         extrudeFaces(false);
@@ -259,18 +258,18 @@ public class PMExtrudeCurveTool extends EditingTool {
         double length = 0;
         double cumul = 0;
         Vec3 previous = fromPoint;
-        for (int i = 0; i < clickPoints.size(); i++) {
-            length += clickPoints.get(i).position.minus(previous).length();
-            previous = clickPoints.get(i).position;
+        for(var clickPoint: clickPoints) {
+            length += clickPoint.position.minus(previous).length();
+            previous = clickPoint.position;
         }
         if (length < 0.005) {
             clickPoints.forEach(cp -> cp.amplitude = 1.0);
         } else {
             previous = fromPoint;
-            for (int i = 0; i < clickPoints.size(); i++) {
-                cumul += clickPoints.get(i).position.minus(previous).length();
-                clickPoints.get(i).amplitude = 1.0 - cumul / length;
-                previous = clickPoints.get(i).position;
+            for(var clickPoint: clickPoints) {
+                cumul += clickPoint.position.minus(previous).length();
+                clickPoint.amplitude = 1.0 - cumul / length;
+                previous = clickPoint.position;
             }
         }
     }
@@ -380,13 +379,8 @@ public class PMExtrudeCurveTool extends EditingTool {
                     vppt = new Point((int) Math.round(vp.x), (int) Math.round(vp.y));
                     view.drawLine(vpp, vppt, Color.black);
                 }
-                for (int k = 0; k < clickPoints.size(); ++k) {
-                    clickPoints.get(k).draw(view);
-                    //v = ((CurvePoint)clickPoints.get(k)).position;
-                    //vp = canvas.getCamera().getObjectToScreen().timesXY( v );
-                    //vpp = new Point( (int)Math.round(vp.x), (int)Math.round(vp.y) );
-                    //view.drawBox( vpp.x - HANDLE_SIZE/2, vpp.y - HANDLE_SIZE/2, HANDLE_SIZE, HANDLE_SIZE, Color.red);
-                }
+                clickPoints.forEach(point -> point.draw(view));
+
             }
         }
     }

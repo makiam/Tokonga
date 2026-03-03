@@ -2,6 +2,7 @@
    on them. */
 
  /* Copyright (C) 2000 by Peter Eastman
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -16,29 +17,18 @@ import java.awt.*;
 
 public class InfoBox {
 
-    String[] text;
-    final Rectangle bounds;
+    private String[] text = new String[0];
+    final Rectangle bounds = new Rectangle();
 
     static final Font defaultFont = Font.decode("Serif");
     static final FontMetrics defaultMetrics = Toolkit.getDefaultToolkit().getFontMetrics(defaultFont);
 
-    public InfoBox() {
-        text = new String[0];
-        bounds = new Rectangle();
-    }
-
     /* Set the text for the box. */
     public void setText(String[] text) {
         this.text = text;
-        bounds.height = text.length * (defaultMetrics.getMaxAscent()
-                + defaultMetrics.getMaxDescent()) + 10;
+        bounds.height = text.length * (defaultMetrics.getMaxAscent() + defaultMetrics.getMaxDescent()) + 10;
         bounds.width = 10;
-        for (int i = 0; i < text.length; i++) {
-            int j = defaultMetrics.stringWidth(text[i]) + 10;
-            if (j > bounds.width) {
-                bounds.width = j;
-            }
-        }
+        for(String s: text) bounds.width = Math.max(bounds.width, defaultMetrics.stringWidth(s) + 10);
     }
 
     /* Set the position of the box. */

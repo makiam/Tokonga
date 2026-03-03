@@ -1,6 +1,6 @@
 /* Copyright (C) 2004-2006 by Peter Eastman
    Modifications copyright (C) 2016-2017 Petri Ihalainen
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -36,6 +36,7 @@ public class SkeletonShapeEditorWindow extends MeshEditorWindow implements MeshE
     private boolean[] selected;
     private final Runnable onClose;
 
+    @SuppressWarnings("java:S1121")
     public SkeletonShapeEditorWindow(EditingWindow parent, String title, SkeletonShapeTrack track, int keyIndex, Runnable onClose) {
         super(parent, title, new ObjectInfo((Object3D) getEditMesh(((ObjectInfo) track.getParent()).getObject()), new CoordinateSystem(), ""));
         this.track = track;
@@ -58,7 +59,8 @@ public class SkeletonShapeEditorWindow extends MeshEditorWindow implements MeshE
         buttons.add(Translate.button("cancel", event -> doCancel()));
         content.add(buttons, 0, 2, 2, 1, new LayoutInfo());
         content.add(tools = new ToolPalette(1, 3, this), 0, 0, new LayoutInfo(LayoutInfo.NORTH, LayoutInfo.NONE, null, null));
-        EditingTool metaTool, altTool;
+        EditingTool metaTool;
+        EditingTool altTool;
         tools.addTool(defaultTool = new SkeletonTool(this, false) {
             @Override
             protected void adjustMesh(Mesh newMesh) {
@@ -68,8 +70,8 @@ public class SkeletonShapeEditorWindow extends MeshEditorWindow implements MeshE
         tools.addTool(metaTool = new MoveViewTool(this));
         tools.addTool(altTool = new RotateViewTool(this));
         tools.selectTool(defaultTool);
-        for (int i = 0; i < theView.length; i++) {
-            MeshViewer view = (MeshViewer) theView[i];
+        for(var viewerCanvas: theView) {
+            MeshViewer view = (MeshViewer) viewerCanvas;
             view.setMetaTool(metaTool);
             view.setAltTool(altTool);
             view.setScene(parent.getScene(), obj);

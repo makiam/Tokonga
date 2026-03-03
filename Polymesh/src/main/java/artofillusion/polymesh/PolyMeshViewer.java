@@ -2,7 +2,7 @@
  *  Copyright (C) 1999-2004 by Peter Eastman (TriMeshViewer.java),
  *  Modifications for Winged Edge Mesh Copyright (C) 2004-2005 by François Guillet
  *  Modifications for mouse buttons Copyright (C) 2019 by Petri Ihalainen
- *  Changes copyright (C) 2024-2025 by Maksim Khramov
+ *  Changes copyright (C) 2024-2026 by Maksim Khramov
  *
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
@@ -132,7 +132,7 @@ public class PolyMeshViewer extends MeshViewer {
             viewMesh = mesh.getMirroredMesh();
             mirror = true;
         }
-        int[] invVertTable = mesh.getInvMirroredVerts();
+        int[] invVertTable = mesh.getInvMirroredVertices();
         Wvertex[] v = (Wvertex[]) viewMesh.getVertices();
 
         // Calculate the screen coordinates of every vertex.
@@ -198,9 +198,7 @@ public class PolyMeshViewer extends MeshViewer {
             }
         }
         // Now draw manipulators
-        for (int i = 0; i < manipulatorArray.length; i++) {
-            manipulatorArray[i].draw();
-        }
+        for(Manipulator manipulator: manipulatorArray) manipulator.draw();
     }
 
     /**
@@ -306,7 +304,7 @@ public class PolyMeshViewer extends MeshViewer {
 
         boolean[] selected = controller.getSelection();
         boolean mirror = false;
-        int[] invVertTable = mesh.getInvMirroredVerts();
+        int[] invVertTable = mesh.getInvMirroredVertices();
 
         if (mesh.getMirrorState() != PolyMesh.NO_MIRROR) mirror = true;
 
@@ -398,8 +396,8 @@ public class PolyMeshViewer extends MeshViewer {
             for (int i = 0; i < trueFaces.length; i++) {
                 int[] fe = mesh.getFaceEdges(trueFaces[i]);
                 if (selected[i]) {
-                    for (int j = 0; j < fe.length; j++) {
-                        int k = fe[j];
+                    for(int value: fe) {
+                        int k = value;
                         if (k >= trueEdges.length / 2) {
                             k = trueEdges[k].hedge;
                         }
@@ -598,8 +596,8 @@ public class PolyMeshViewer extends MeshViewer {
     protected void mouseMoved(WidgetMouseEvent e) {
         activeTool = currentTool;
         if (activeTool instanceof AdvancedEditingTool) {
-            for (int i = 0; i < manipulatorArray.length; i++) {
-                if (manipulatorArray[i].mouseMoved(e)) {
+            for(var manipulator: manipulatorArray) {
+                if (manipulator.mouseMoved(e)) {
                     return;
                 }
             }
@@ -684,7 +682,7 @@ public class PolyMeshViewer extends MeshViewer {
         // so that it can be passed to editing tools.
         if (controller.getSelectionMode() == MeshEditController.EDGE_MODE) {
             if (mirror) {
-                if (visible[mesh.mirroredVerts[ed[i].vertex]]) {
+                if (visible[mesh.mirroredVertices[ed[i].vertex]]) {
                     j = ed[i].vertex;
                 } else {
                     j = ed[ed[i].hedge].vertex;
@@ -701,7 +699,7 @@ public class PolyMeshViewer extends MeshViewer {
             int[] vf = mesh.getFaceVertices(f[i]);
             if (mirror) {
                 for (int value : vf) {
-                    if (mesh.mirroredVerts[value] != -1 && visible[mesh.mirroredVerts[value]]) {
+                    if (mesh.mirroredVertices[value] != -1 && visible[mesh.mirroredVertices[value]]) {
                         j = value;
                     }
                 }
@@ -837,7 +835,7 @@ public class PolyMeshViewer extends MeshViewer {
         boolean[] selected = controller.getSelection();
         PolyMesh viewMesh = mesh;
         boolean mirror = false;
-        int[] vertTable = mesh.mirroredVerts;
+        int[] vertTable = mesh.mirroredVertices;
         int[] edgeTable = mesh.mirroredEdges;
         int[] faceTable = mesh.mirroredFaces;
         if (mesh.getMirrorState() != PolyMesh.NO_MIRROR) {
@@ -1045,7 +1043,7 @@ public class PolyMeshViewer extends MeshViewer {
             mirror = true;
             viewMesh = polymesh.getMirroredMesh();
             invEdgeTable = polymesh.invMirroredEdges;
-            invVertTable = polymesh.invMirroredVerts;
+            invVertTable = polymesh.invMirroredVertices;
             invFaceTable = polymesh.invMirroredFaces;
         }
         MeshVertex[] pv = viewMesh.getVertices();
@@ -1266,8 +1264,8 @@ public class PolyMeshViewer extends MeshViewer {
 
                 int[] vf = viewMesh.getFaceVertices(fc[i]);
                 boolean whole = true;
-                for (int j = 0; j < vf.length; ++j) {
-                    whole |= visible[vf[j]];
+                for(int k: vf) {
+                    whole |= visible[k];
                 }
                 if (!whole) {
                     continue;
@@ -1280,8 +1278,8 @@ public class PolyMeshViewer extends MeshViewer {
                 polygon = new Polygon();
                 Vec3 bary = new Vec3();
                 z = 0;
-                for (int j = 0; j < vf.length; ++j) {
-                    vv = vf[j];
+                for(int k: vf) {
+                    vv = k;
                     polygon.addPoint(screenVert[vv].x, screenVert[vv].y);
                     bary.add(vt[vv].r);
                 }
@@ -1316,8 +1314,8 @@ public class PolyMeshViewer extends MeshViewer {
     }
 
     protected void keyPressed(KeyPressedEvent e) {
-        for (int i = 0; i < manipulatorArray.length; i++) {
-            if (manipulatorArray[i].keyPressed(e)) {
+        for(Manipulator manipulator: manipulatorArray) {
+            if (manipulator.keyPressed(e)) {
                 return;
             }
         }
@@ -1325,9 +1323,7 @@ public class PolyMeshViewer extends MeshViewer {
 
     @Override
     public void setPerspective(boolean perspective) {
-        for (int i = 0; i < manipulatorArray.length; i++) {
-            manipulatorArray[i].setPerspective(perspective);
-        }
+        for(var manipulator: manipulatorArray) manipulator.setPerspective(perspective);
         super.setPerspective(perspective);
     }
 

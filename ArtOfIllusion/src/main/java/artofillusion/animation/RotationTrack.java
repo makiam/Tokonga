@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2013 by Peter Eastman
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -36,7 +36,9 @@ public class RotationTrack extends Track<RotationTrack> {
     private int joint;
     private ObjectRef relObject;
     private WeightTrack theWeight;
-    private boolean enablex, enabley, enablez;
+    private boolean enableX;
+    private boolean enableY;
+    private boolean enableZ;
 
     public static final int ABSOLUTE = 0;
     public static final int RELATIVE = 1;
@@ -61,9 +63,9 @@ public class RotationTrack extends Track<RotationTrack> {
         relObject = new ObjectRef();
         theWeight = new WeightTrack(this);
         quaternion = useQuaternion;
-        enablex = affectX;
-        enabley = affectY;
-        enablez = affectZ;
+        enableX = affectX;
+        enableY = affectY;
+        enableZ = affectZ;
         joint = -1;
     }
 
@@ -78,7 +80,8 @@ public class RotationTrack extends Track<RotationTrack> {
         if (rot == null) {
             return;
         }
-        Mat4 pre = null, post = null;
+        Mat4 pre = null;
+        Mat4 post = null;
         if (relCoords == PARENT && info.getParent() != null) {
             pre = info.getParent().getCoords().toLocal();
             post = info.getParent().getCoords().fromLocal();
@@ -92,7 +95,7 @@ public class RotationTrack extends Track<RotationTrack> {
             pre = info.getCoords().fromLocal();
             post = info.getCoords().toLocal();
         }
-        rot.applyToCoordinates(info.getCoords(), weight, pre, post, (mode == RELATIVE), enablex, enabley, enablez);
+        rot.applyToCoordinates(info.getCoords(), weight, pre, post, (mode == RELATIVE), enableX, enableY, enableZ);
         Joint j = (joint > -1 ? info.getSkeleton().getJoint(joint) : null);
         if (j != null && mode == ABSOLUTE) {
             if (info.getPose() != null && !info.getPose().equals(info.getObject().getPoseKeyframe())) {
@@ -121,9 +124,9 @@ public class RotationTrack extends Track<RotationTrack> {
         t.tc = tc.duplicate(obj);
         t.relObject = relObject.duplicate();
         t.theWeight = theWeight.duplicate(t);
-        t.enablex = enablex;
-        t.enabley = enabley;
-        t.enablez = enablez;
+        t.enableX = enableX;
+        t.enableY = enableY;
+        t.enableZ = enableZ;
         t.joint = joint;
         return t;
     }
@@ -144,9 +147,9 @@ public class RotationTrack extends Track<RotationTrack> {
         tc = track.tc.duplicate(info);
         relObject = track.relObject.duplicate();
         theWeight = track.theWeight.duplicate(this);
-        enablex = track.enablex;
-        enabley = track.enabley;
-        enablez = track.enablez;
+        enableX = track.enableX;
+        enableY = track.enableY;
+        enableZ = track.enableZ;
         joint = track.joint;
     }
 
@@ -243,9 +246,9 @@ public class RotationTrack extends Track<RotationTrack> {
             if (1.0 - dot < 1e-10) {
                 return null;
             }
-        } else if ((!enablex || Math.abs(rot.x - current.x) < 1e-10)
-                && (!enabley || Math.abs(rot.y - current.y) < 1e-10)
-                && (!enablez || Math.abs(rot.z - current.z) < 1e-10)) {
+        } else if ((!enableX || Math.abs(rot.x - current.x) < 1e-10)
+                && (!enableY || Math.abs(rot.y - current.y) < 1e-10)
+                && (!enableZ || Math.abs(rot.z - current.z) < 1e-10)) {
             return null;
         }
         return setKeyframe(time);
@@ -279,21 +282,21 @@ public class RotationTrack extends Track<RotationTrack> {
      * Determine whether this track affects the X coordinate.
      */
     public boolean affectsX() {
-        return enablex || quaternion;
+        return enableX || quaternion;
     }
 
     /**
      * Determine whether this track affects the Y coordinate.
      */
     public boolean affectsY() {
-        return enabley || quaternion;
+        return enableY || quaternion;
     }
 
     /**
      * Determine whether this track affects the Z coordinate.
      */
     public boolean affectsZ() {
-        return enablez || quaternion;
+        return enableZ || quaternion;
     }
 
     /**
@@ -360,12 +363,11 @@ public class RotationTrack extends Track<RotationTrack> {
      * Set whether quaternion interpolation should be used.
      */
     public void setUseQuaternion(boolean use) {
-        Keyframe[] val = tc.getValues();
 
         quaternion = use;
         tc.setSubdivideAdaptively(!quaternion);
-        for (int i = 0; i < val.length; i++) {
-            RotationKeyframe v = (RotationKeyframe) val[i];
+        for(var keyframe: tc.getValues()) {
+            RotationKeyframe v = (RotationKeyframe) keyframe;
             v.setUseQuaternion(use);
         }
     }
@@ -503,9 +505,9 @@ public class RotationTrack extends Track<RotationTrack> {
         out.writeInt(relCoords);
         out.writeInt(joint);
         out.writeBoolean(quaternion);
-        out.writeBoolean(enablex);
-        out.writeBoolean(enabley);
-        out.writeBoolean(enablez);
+        out.writeBoolean(enableX);
+        out.writeBoolean(enableY);
+        out.writeBoolean(enableZ);
 
         double[] t = tc.getTimes();
         Smoothness[] s = tc.getSmoothness();
@@ -541,9 +543,9 @@ public class RotationTrack extends Track<RotationTrack> {
         relCoords = in.readInt();
         joint = (version == 0 ? -1 : in.readInt());
         quaternion = in.readBoolean();
-        enablex = in.readBoolean();
-        enabley = in.readBoolean();
-        enablez = in.readBoolean();
+        enableX = in.readBoolean();
+        enableY = in.readBoolean();
+        enableZ = in.readBoolean();
         int keys = in.readInt();
         double[] t = new double[keys];
         Smoothness[] s = new Smoothness[keys];
@@ -608,7 +610,7 @@ public class RotationTrack extends Track<RotationTrack> {
     @Override
     public void edit(LayoutWindow win) {
         Skeleton s = info.getSkeleton();
-        Joint[] j = (s == null ? null : s.getJoints());
+
         BTextField nameField = new BTextField(getName());
         BComboBox smoothChoice = new BComboBox(new String[]{
             Translate.text("Discontinuous"),
@@ -633,12 +635,11 @@ public class RotationTrack extends Track<RotationTrack> {
         coordsChoice.setSelectedIndex(relCoords);
         BComboBox jointChoice = new BComboBox();
         jointChoice.add(Translate.text("objectOrigin"));
-        if (j != null) {
-            for (int i = 0; i < j.length; i++) {
-                jointChoice.add(j[i].name);
-            }
-            for (int i = 0; i < j.length; i++) {
-                if (j[i].id == joint) {
+        Joint[] joints = (s == null ? null : s.getJoints());
+        if (joints != null) {
+            for(Joint value: joints) jointChoice.add(value.name);
+            for (int i = 0; i < joints.length; i++) {
+                if (joints[i].id == joint) {
                     jointChoice.setSelectedIndex(i + 1);
                 }
             }
@@ -667,9 +668,9 @@ public class RotationTrack extends Track<RotationTrack> {
         final BCheckBox xbox;
         final BCheckBox ybox;
         final BCheckBox zbox;
-        row.add(xbox = new BCheckBox("X", enablex));
-        row.add(ybox = new BCheckBox("Y", enabley));
-        row.add(zbox = new BCheckBox("Z", enablez));
+        row.add(xbox = new BCheckBox("X", enableX));
+        row.add(ybox = new BCheckBox("Y", enableY));
+        row.add(zbox = new BCheckBox("Z", enableZ));
         isoBox.addEventLink(ValueChangedEvent.class, new Object() {
             void processEvent() {
                 xbox.setEnabled(!isoBox.getState());
@@ -690,11 +691,11 @@ public class RotationTrack extends Track<RotationTrack> {
         if (jointChoice.getSelectedIndex() == 0) {
             joint = -1;
         } else {
-            joint = j[jointChoice.getSelectedIndex() - 1].id;
+            joint = joints[jointChoice.getSelectedIndex() - 1].id;
         }
         setUseQuaternion(isoBox.getState());
-        enablex = xbox.getState();
-        enabley = ybox.getState();
-        enablez = zbox.getState();
+        enableX = xbox.getState();
+        enableY = ybox.getState();
+        enableZ = zbox.getState();
     }
 }

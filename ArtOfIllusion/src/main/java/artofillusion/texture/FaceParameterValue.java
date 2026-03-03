@@ -1,5 +1,6 @@
 /* Copyright (C) 2003 by Peter Eastman
-
+ *  Changes copyright (C) 2026 by Maksim Khramov
+ *
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
@@ -66,10 +67,8 @@ public class FaceParameterValue implements ParameterValue {
     @Override
     public double getAverageValue() {
         double avg = 0.0;
-        for (int i = 0; i < value.length; i++) {
-            avg += value[i];
-        }
-        return (avg / value.length);
+        for(double v: value) avg += v;
+        return avg / value.length;
     }
 
     /**
@@ -108,9 +107,7 @@ public class FaceParameterValue implements ParameterValue {
     @Override
     public void writeToStream(DataOutputStream out) throws IOException {
         out.writeInt(value.length);
-        for (int i = 0; i < value.length; i++) {
-            out.writeDouble(value[i]);
-        }
+        for(double v: value) out.writeDouble(v);
     }
 
     /**

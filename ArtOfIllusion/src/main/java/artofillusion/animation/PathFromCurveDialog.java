@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2011 by Peter Eastman
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -53,6 +53,7 @@ public class PathFromCurveDialog extends BDialog {
     private Vec3[] subdiv;
     private double curveLength;
 
+    @SuppressWarnings("java:S1121")
     public PathFromCurveDialog(LayoutWindow win, Object[] sel) {
         super(win, Translate.text("pathFromCurveTitle"), true);
         window = win;
@@ -63,8 +64,8 @@ public class PathFromCurveDialog extends BDialog {
         curves = new Vector<>();
         objList = new BList();
         curveList = new BList();
-        for (int i = 0; i < sel.length; i++) {
-            ObjectInfo info = (ObjectInfo) sel[i];
+        for(Object o: sel) {
+            ObjectInfo info = (ObjectInfo) o;
             if (info.getObject() instanceof Curve && !(info.getObject() instanceof Tube)) {
                 curves.add(info);
                 curveList.add(info.getName());
@@ -198,9 +199,12 @@ public class PathFromCurveDialog extends BDialog {
     private void adjustTextFields(ValueChangedEvent ev) {
         Widget src = ev.getWidget();
         int spacing = spacingChoice.getSelectedIndex();
-        double startTime = startTimeField.getValue(), endTime = endTimeField.getValue();
-        double startSpeed = startSpeedField.getValue(), endSpeed = endSpeedField.getValue();
-        double accel = accelField.getValue(), time = endTime - startTime;
+        double startTime = startTimeField.getValue();
+        double endTime = endTimeField.getValue();
+        double startSpeed = startSpeedField.getValue();
+        double endSpeed = endSpeedField.getValue();
+        double accel = accelField.getValue();
+        double time = endTime - startTime;
 
         if (startTime == endTime) {
             okButton.setEnabled(false);
@@ -271,7 +275,8 @@ public class PathFromCurveDialog extends BDialog {
         Curve cv = (Curve) info.getObject();
         MeshVertex[] vert = cv.getVertices();
         int n = (cv.isClosed() ? vert.length + 1 : vert.length);
-        double[] dist = new double[n], time = new double[n];
+        double[] dist = new double[n];
+        double[] time = new double[n];
         String curveName = info.getName();
 
         // Find the distance along the curve of each keyframe.
@@ -287,10 +292,14 @@ public class PathFromCurveDialog extends BDialog {
         }
 
         // Find the time of each keyframe.
-        int spacing = spacingChoice.getSelectedIndex(), fps = theScene.getFramesPerSecond();
-        double startTime = startTimeField.getValue(), endTime = endTimeField.getValue();
-        double startSpeed = startSpeedField.getValue(), endSpeed = endSpeedField.getValue();
-        double accel = accelField.getValue(), totalTime = endTime - startTime;
+        int spacing = spacingChoice.getSelectedIndex();
+        int fps = theScene.getFramesPerSecond();
+        double startTime = startTimeField.getValue();
+        double endTime = endTimeField.getValue();
+        double startSpeed = startSpeedField.getValue();
+
+        double accel = accelField.getValue();
+        double totalTime = endTime - startTime;
         for (int i = 0; i < n; i++) {
             if (spacing == 0) {
                 time[i] = startTime + (i * totalTime) / (n - 1);
@@ -326,8 +335,10 @@ public class PathFromCurveDialog extends BDialog {
         // Create the rotation track.
         if (orientBox.getState()) {
             RotationTrack tr2 = new RotationTrack(info);
-            RotationKeyframe lastKey, nextKey;
-            Vec3 zdir, updir;
+            RotationKeyframe lastKey;
+            RotationKeyframe nextKey;
+            Vec3 zdir;
+            Vec3 updir;
 
             tr2.setName(curveName + " Rotation");
             if (k != 1 && cv.isClosed()) {
@@ -347,7 +358,8 @@ public class PathFromCurveDialog extends BDialog {
             CoordinateSystem coords = new CoordinateSystem(new Vec3(), zdir, updir);
             tr2.setKeyframe(time[0], lastKey = new RotationKeyframe(coords), new Smoothness(smoothness[0]));
 
-            double d = 0.0, t;
+            double d = 0.0;
+            double t;
             int interval = (cv.getSmoothingMethod() == Mesh.NO_SMOOTHING ? 1 : 8);
             for (int i = 1; i < subdiv.length; i++) {
                 if (i == subdiv.length - 1) {
@@ -420,12 +432,19 @@ public class PathFromCurveDialog extends BDialog {
     }
 
     /* Given two successive keyframes, make sure that they will interpolate correctly (such that
-     the y axis remains in a plane)), and modify the second one if necessary. */
+     the y-axis remains in a plane)), and modify the second one if necessary. */
     private void validateKeyframe(RotationKeyframe r1, RotationKeyframe r2) {
         CoordinateSystem coords = new CoordinateSystem(new Vec3(), Vec3.vz(), Vec3.vy());
         RotationKeyframe r3 = (RotationKeyframe) r1.blend(r2, 0.75, 0.25);
-        Vec3 u1, u2, u3, z1, z2, z3, mid = new Vec3();
-        boolean upcheck, zcheck;
+        Vec3 u1;
+        Vec3 u2;
+        Vec3 u3;
+        Vec3 z1;
+        Vec3 z2;
+        Vec3 z3;
+        Vec3 mid = new Vec3();
+        boolean upcheck;
+        boolean zcheck;
 
         coords.setOrientation(r1.x, r1.y, r1.z);
         u1 = new Vec3(coords.getUpDirection());

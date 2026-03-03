@@ -247,9 +247,9 @@ public class Actor extends ObjectWrapper {
 
         // Set them on every gesture.
         TextureParameter[] params = getParameters();
-        for (int i = 0; i < gesture.length; i++) {
+        for (Gesture value: gesture) {
             for (int j = 0; j < params.length; j++) {
-                gesture[i].setTextureParameter(params[j], val[j].duplicate());
+                value.setTextureParameter(params[j], val[j].duplicate());
             }
         }
     }
@@ -264,8 +264,8 @@ public class Actor extends ObjectWrapper {
         theObject.setParameterValue(param, value);
 
         // Set it on every gesture.
-        for (int i = 0; i < gesture.length; i++) {
-            gesture[i].setTextureParameter(param, value.duplicate());
+        for (Gesture item: gesture) {
+            item.setTextureParameter(param, value.duplicate());
         }
     }
 
@@ -317,10 +317,9 @@ public class Actor extends ObjectWrapper {
             // Build the matrix to solve.
 
             int numGesture = 0;
-            for (int i = 0; i < negative.length; i++) {
-                if (!negative[i]) {
-                    numGesture++;
-                }
+            for (var b: negative) {
+                if (b) continue;
+                numGesture++;
             }
             if (numGesture == 0) {
                 MeshGesture average = (MeshGesture) obj.getPoseKeyframe();

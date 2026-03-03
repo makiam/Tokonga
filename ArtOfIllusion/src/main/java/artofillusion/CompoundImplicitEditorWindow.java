@@ -69,9 +69,9 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
         tools.addTool(metaTool = new MoveViewTool(this));
         tools.addTool(altTool = new RotateViewTool(this));
         tools.selectTool(defaultTool);
-        for (int i = 0; i < theView.length; i++) {
-            theView[i].setMetaTool(metaTool);
-            theView[i].setAltTool(altTool);
+        for(var viewerCanvas: theView) {
+            viewerCanvas.setMetaTool(metaTool);
+            viewerCanvas.setAltTool(altTool);
         }
         UIUtilities.applyDefaultFont(content);
         UIUtilities.applyDefaultBackground(content);
@@ -450,83 +450,83 @@ public class CompoundImplicitEditorWindow extends ObjectEditorWindow {
 
         // Determine the position to align the objects to.
         alignTo = new Vec3();
-        for (int i = 0; i < sel.length; i++) {
-            obj = theScene.getObject(sel[i]).getObject();
-            coords = theScene.getObject(sel[i]).getCoords();
+        for(int j: sel) {
+            obj = theScene.getObject(j).getObject();
+            coords = theScene.getObject(j).getCoords();
             bounds = obj.getBounds();
             bounds = bounds.transformAndOutset(coords.fromLocal());
             center = bounds.getCenter();
             orig = coords.getOrigin();
-            if (!Double.isNaN(vfx.getValue())) {
+            if(!Double.isNaN(vfx.getValue())) {
                 alignTo.x += vfx.getValue();
-            } else if (xchoice.getSelectedIndex() == 1) {
+            } else if(xchoice.getSelectedIndex() == 1) {
                 alignTo.x += bounds.maxx;
-            } else if (xchoice.getSelectedIndex() == 2) {
+            } else if(xchoice.getSelectedIndex() == 2) {
                 alignTo.x += center.x;
-            } else if (xchoice.getSelectedIndex() == 3) {
+            } else if(xchoice.getSelectedIndex() == 3) {
                 alignTo.x += bounds.minx;
-            } else if (xchoice.getSelectedIndex() == 4) {
+            } else if(xchoice.getSelectedIndex() == 4) {
                 alignTo.x += orig.x;
             }
-            if (!Double.isNaN(vfy.getValue())) {
+            if(!Double.isNaN(vfy.getValue())) {
                 alignTo.y += vfy.getValue();
-            } else if (ychoice.getSelectedIndex() == 1) {
+            } else if(ychoice.getSelectedIndex() == 1) {
                 alignTo.y += bounds.maxy;
-            } else if (ychoice.getSelectedIndex() == 2) {
+            } else if(ychoice.getSelectedIndex() == 2) {
                 alignTo.y += center.y;
-            } else if (ychoice.getSelectedIndex() == 3) {
+            } else if(ychoice.getSelectedIndex() == 3) {
                 alignTo.y += bounds.miny;
-            } else if (ychoice.getSelectedIndex() == 4) {
+            } else if(ychoice.getSelectedIndex() == 4) {
                 alignTo.y += orig.y;
             }
-            if (!Double.isNaN(vfz.getValue())) {
+            if(!Double.isNaN(vfz.getValue())) {
                 alignTo.z += vfz.getValue();
-            } else if (zchoice.getSelectedIndex() == 1) {
+            } else if(zchoice.getSelectedIndex() == 1) {
                 alignTo.z += bounds.maxz;
-            } else if (zchoice.getSelectedIndex() == 2) {
+            } else if(zchoice.getSelectedIndex() == 2) {
                 alignTo.z += center.z;
-            } else if (zchoice.getSelectedIndex() == 3) {
+            } else if(zchoice.getSelectedIndex() == 3) {
                 alignTo.z += bounds.minz;
-            } else if (zchoice.getSelectedIndex() == 4) {
+            } else if(zchoice.getSelectedIndex() == 4) {
                 alignTo.z += orig.z;
             }
         }
         alignTo.scale(1.0 / sel.length);
 
         // Now transform all of the objects.
-        for (int i = 0; i < sel.length; i++) {
-            obj = theScene.getObject(sel[i]).getObject();
-            coords = theScene.getObject(sel[i]).getCoords();
+        for(int j: sel) {
+            obj = theScene.getObject(j).getObject();
+            coords = theScene.getObject(j).getCoords();
             bounds = obj.getBounds();
             bounds = bounds.transformAndOutset(coords.fromLocal());
             center = bounds.getCenter();
             orig = coords.getOrigin();
             undo.addCommand(UndoRecord.COPY_COORDS, coords, coords.duplicate());
-            if (xchoice.getSelectedIndex() == 1) {
+            if(xchoice.getSelectedIndex() == 1) {
                 orig.x += alignTo.x - bounds.maxx;
-            } else if (xchoice.getSelectedIndex() == 2) {
+            } else if(xchoice.getSelectedIndex() == 2) {
                 orig.x += alignTo.x - center.x;
-            } else if (xchoice.getSelectedIndex() == 3) {
+            } else if(xchoice.getSelectedIndex() == 3) {
                 orig.x += alignTo.x - bounds.minx;
-            } else if (xchoice.getSelectedIndex() == 4) {
+            } else if(xchoice.getSelectedIndex() == 4) {
                 orig.x += alignTo.x - orig.x;
             }
-            if (ychoice.getSelectedIndex() == 1) {
+            if(ychoice.getSelectedIndex() == 1) {
                 orig.y += alignTo.y - bounds.maxy;
-            } else if (ychoice.getSelectedIndex() == 2) {
+            } else if(ychoice.getSelectedIndex() == 2) {
                 orig.y += alignTo.y - center.y;
-            } else if (ychoice.getSelectedIndex() == 3) {
+            } else if(ychoice.getSelectedIndex() == 3) {
                 orig.y += alignTo.y - bounds.miny;
-            } else if (ychoice.getSelectedIndex() == 4) {
+            } else if(ychoice.getSelectedIndex() == 4) {
                 orig.y += alignTo.y - orig.y;
             }
-            if (zchoice.getSelectedIndex() == 1) {
+            if(zchoice.getSelectedIndex() == 1) {
                 orig.z += alignTo.z - bounds.maxz;
-            } else if (zchoice.getSelectedIndex() == 2) {
+            } else if(zchoice.getSelectedIndex() == 2) {
                 orig.z += alignTo.z - center.z;
-            } else if (zchoice.getSelectedIndex() == 3) {
+            } else if(zchoice.getSelectedIndex() == 3) {
                 orig.z += alignTo.z - bounds.minz;
-            } else if (zchoice.getSelectedIndex() == 4) {
+            } else if(zchoice.getSelectedIndex() == 4) {
                 orig.z += alignTo.z - orig.z;
             }
             coords.setOrigin(orig);

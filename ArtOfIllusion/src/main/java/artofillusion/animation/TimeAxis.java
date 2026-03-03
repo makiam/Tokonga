@@ -1,5 +1,5 @@
 /* Copyright (C) 2001,2003,2004 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -172,15 +172,14 @@ public class TimeAxis extends CustomWidget {
         clickPos = ev.getPoint();
         draggingMarker = null;
         process = new ActionProcessor();
-        for (int i = 0; i < markers.size(); i++) {
-            Marker m = markers.get(i);
+        markers.forEach(m -> {
             int x = (int) (scale * (m.getPosition() - start));
             if (clickPos.x < x - MARKER_SIZE / 2 - 1 || clickPos.x > x + MARKER_SIZE / 2 + 1) {
-                continue;
+                return;
             }
             draggingMarker = m;
             origMarkerPos = m.getPosition();
-        }
+        });
         if (draggingMarker == null && markers.size() > 0) {
             // Snap the default marker to the click position.
 

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2007 by Francois Guillet
  *  Modifications Copyright (C) 2020 Py Petri Ihalainen
- *  Changes copyright (C) 2022-2025 by Maksim Khramov
+ *  Changes copyright (C) 2022-2026 by Maksim Khramov
  *
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
@@ -802,11 +802,11 @@ public class MeshUnfolder {
         if (!leftHanded) {
             center.y *= -1;
         }
-        for (int i = 0; i < vertices.length; i++) {
+        for(var vertex: vertices) {
             if (!leftHanded) {
-                vertices[i].r.y *= -1;
+                vertex.r.y *= -1;
             }
-            vertices[i].r.subtract(center);
+            vertex.r.subtract(center);
         }
         return new UnfoldedMesh(vertices, edges, faces);
     }

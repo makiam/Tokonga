@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2012 by Peter Eastman
-    Changes copyright (C) 2025 by Maksim Khramov
+    Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -96,14 +96,14 @@ public class TwistDistortion extends Distortion {
         // Find the range along the appropriate axis.
         double min = Double.MAX_VALUE;
         double max = Double.MIN_VALUE;
-        for (int i = 0; i < newvert.length; i++) {
+        for(var vertex: newvert) {
             double value;
             if (axis == X_AXIS) {
-                value = newvert[i].x;
+                value = vertex.x;
             } else if (axis == Y_AXIS) {
-                value = newvert[i].y;
+                value = vertex.y;
             } else {
-                value = newvert[i].z;
+                value = vertex.z;
             }
             if (value < min) {
                 min = value;
@@ -122,28 +122,26 @@ public class TwistDistortion extends Distortion {
         }
         double scale = angle * (Math.PI / 180.0);
         if (axis == X_AXIS) {
-            for (int i = 0; i < newvert.length; i++) {
-                double c = Math.cos(scale * (newvert[i].x - min));
-                double s = Math.sin(scale * (newvert[i].x - min));
-                newvert[i].set(newvert[i].x, newvert[i].y * c - newvert[i].z * s, newvert[i].y * s + newvert[i].z * c);
+            for(var vertex: newvert) {
+                double c = Math.cos(scale * (vertex.x - min));
+                double s = Math.sin(scale * (vertex.x - min));
+                vertex.set(vertex.x, vertex.y * c - vertex.z * s, vertex.y * s + vertex.z * c);
             }
         } else if (axis == Y_AXIS) {
-            for (int i = 0; i < newvert.length; i++) {
-                double c = Math.cos(scale * (newvert[i].y - min));
-                double s = Math.sin(scale * (newvert[i].y - min));
-                newvert[i].set(newvert[i].x * c - newvert[i].z * s, newvert[i].y, newvert[i].x * s + newvert[i].z * c);
+            for(var vertex: newvert) {
+                double c = Math.cos(scale * (vertex.y - min));
+                double s = Math.sin(scale * (vertex.y - min));
+                vertex.set(vertex.x * c - vertex.z * s, vertex.y, vertex.x * s + vertex.z * c);
             }
         } else {
-            for (int i = 0; i < newvert.length; i++) {
-                double c = Math.cos(scale * (newvert[i].z - min));
-                double s = Math.sin(scale * (newvert[i].z - min));
-                newvert[i].set(newvert[i].x * c - newvert[i].y * s, newvert[i].x * s + newvert[i].y * c, newvert[i].z);
+            for(var vertex: newvert) {
+                double c = Math.cos(scale * (vertex.z - min));
+                double s = Math.sin(scale * (vertex.z - min));
+                vertex.set(vertex.x * c - vertex.y * s, vertex.x * s + vertex.y * c, vertex.z);
             }
         }
         if (postTransform != null) {
-            for (int i = 0; i < newvert.length; i++) {
-                postTransform.transform(newvert[i]);
-            }
+            for(var vertex: newvert) postTransform.transform(vertex);
         }
         newmesh.setVertexPositions(newvert);
         return newmesh;

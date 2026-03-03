@@ -1,5 +1,6 @@
 /* Copyright (C) 1999-2004 by Peter Eastman
-   Changes copyright (C) 2023-2025 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
+
 This program is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later version.
@@ -14,6 +15,7 @@ import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
 import artofillusion.math.Vec2;
 import artofillusion.math.Vec3;
+import artofillusion.object.Mesh;
 import artofillusion.object.MeshVertex;
 import artofillusion.ui.EditingTool;
 import artofillusion.ui.EditingWindow;
@@ -23,6 +25,7 @@ import buoy.event.WidgetMouseEvent;
 import java.awt.Color;
 import java.awt.Point;
 
+import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Vector;
 
@@ -65,13 +68,13 @@ public class PMCreateFaceTool extends EditingTool {
         int length = mesh.getVertices().length;
         if (mesh.getMirrorState() != PolyMesh.NO_MIRROR) {
             viewMesh = mesh.getMirroredMesh();
-            invVertTable = mesh.getInvMirroredVerts();
+            invVertTable = mesh.getInvMirroredVertices();
             length = invVertTable.length;
         }
 
         MeshVertex[] v;
         boolean project = (controller instanceof PolyMeshEditorWindow ? ((PolyMeshEditorWindow) controller).getProjectOntoSurface() : false);
-        if (project && mesh.getSmoothingMethod() != PolyMesh.NO_SMOOTHING && viewMesh.getSubdividedMesh() != null) {
+        if (project && mesh.getSmoothingMethod() != Mesh.NO_SMOOTHING && viewMesh.getSubdividedMesh() != null) {
             v = viewMesh.getSubdividedMesh().getVertices();
         } else {
             v = mesh.getVertices();
@@ -143,12 +146,12 @@ public class PMCreateFaceTool extends EditingTool {
         int key = e.getKeyCode();
         if (from != -1) {
             switch (key) {
-                case KeyPressedEvent.VK_ESCAPE:
+                case KeyEvent.VK_ESCAPE:
                     from = -1;
                     clickPoints.clear();
                     theWindow.updateImage();
                     break;
-                case KeyPressedEvent.VK_W:
+                case KeyEvent.VK_W:
                     if (!clickPoints.isEmpty()) {
                         clickPoints.remove(clickPoints.size() - 1);
                     }
@@ -211,9 +214,8 @@ public class PMCreateFaceTool extends EditingTool {
                     vppt = new Point((int) Math.round(vp.x), (int) Math.round(vp.y));
                     view.drawLine(vpp, vppt, Color.black);
                 }
-                for (int k = 0; k < clickPoints.size(); ++k) {
-                    v = clickPoints.get(k);
-                    vp = canvas.getCamera().getObjectToScreen().timesXY(v);
+                for(var clickPoint: clickPoints) {
+                    vp = canvas.getCamera().getObjectToScreen().timesXY(clickPoint);
                     vpp = new Point((int) Math.round(vp.x), (int) Math.round(vp.y));
                     view.drawBox(vpp.x - PolyMeshViewer.HANDLE_SIZE / 2, vpp.y - PolyMeshViewer.HANDLE_SIZE / 2, PolyMeshViewer.HANDLE_SIZE, PolyMeshViewer.HANDLE_SIZE, Color.red);
                 }

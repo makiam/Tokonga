@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2015 by Peter Eastman and Marco Brenco
-   Changes copyright (C) 2023-2025 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -80,36 +80,35 @@ public class CSGModeller {
         face2 = new Vector<>();
         TriangleMesh.Vertex[] vert = (TriangleMesh.Vertex[]) obj1.getVertices();
         Mat4 trans = coords1.fromLocal();
-        for (int i = 0; i < vert.length; i++) {
-            vert1.add(new VertexInfo(trans.times(vert[i].r), vert[i].smoothness, null));
+        for(var vertex: vert) {
+            vert1.add(new VertexInfo(trans.times(vertex.r), vertex.smoothness, null));
         }
         vert = (TriangleMesh.Vertex[]) obj2.getVertices();
         trans = coords2.fromLocal();
-        for (int i = 0; i < vert.length; i++) {
-            vert2.add(new VertexInfo(trans.times(vert[i].r), vert[i].smoothness, null));
+        for(var vertex: vert) {
+            vert2.add(new VertexInfo(trans.times(vertex.r), vertex.smoothness, null));
         }
         TriangleMesh.Edge[] edge = obj1.getEdges();
         TriangleMesh.Face[] face = obj1.getFaces();
         if (obj1.getSmoothingMethod() == Mesh.NO_SMOOTHING) {
-            for (int i = 0; i < face.length; i++) {
-                face1.add(new FaceInfo(face[i].v1, face[i].v2, face[i].v3, vert1, 0.0f, 0.0f, 0.0f));
+            for(TriangleMesh.Face value: face) {
+                face1.add(new FaceInfo(value.v1, value.v2, value.v3, vert1, 0.0f, 0.0f, 0.0f));
             }
         } else {
-            for (int i = 0; i < face.length; i++) {
-                face1.add(new FaceInfo(face[i].v1, face[i].v2, face[i].v3, vert1,
-                        edge[face[i].e1].smoothness, edge[face[i].e2].smoothness, edge[face[i].e3].smoothness));
+            for(var value: face) {
+                face1.add(new FaceInfo(value.v1, value.v2, value.v3, vert1,
+                        edge[value.e1].smoothness, edge[value.e2].smoothness, edge[value.e3].smoothness));
             }
         }
         edge = obj2.getEdges();
         face = obj2.getFaces();
         if (obj2.getSmoothingMethod() == Mesh.NO_SMOOTHING) {
-            for (int i = 0; i < face.length; i++) {
-                face2.add(new FaceInfo(face[i].v1, face[i].v2, face[i].v3, vert2, 0.0f, 0.0f, 0.0f));
+            for(var value: face) {
+                face2.add(new FaceInfo(value.v1, value.v2, value.v3, vert2, 0.0f, 0.0f, 0.0f));
             }
         } else {
-            for (int i = 0; i < face.length; i++) {
-                face2.add(new FaceInfo(face[i].v1, face[i].v2, face[i].v3, vert2,
-                        edge[face[i].e1].smoothness, edge[face[i].e2].smoothness, edge[face[i].e3].smoothness));
+            for(var value: face) {
+                face2.add(new FaceInfo(value.v1, value.v2, value.v3, vert2, edge[value.e1].smoothness, edge[value.e2].smoothness, edge[value.e3].smoothness));
             }
         }
 
@@ -148,30 +147,28 @@ public class CSGModeller {
         }
 
         // Add the faces from object 1.
-        for (int i = 0; i < face1.size(); i++) {
-            FaceInfo f = face1.get(i);
-            if (f.type == INSIDE && op == CSGObject.INTERSECTION) {
+        for(var f: face1) {
+            if(f.type == INSIDE && op == CSGObject.INTERSECTION) {
                 addPolygon(f, false, vert1, allVert, index1, faceIndex, faceSmoothness);
-            } else if ((f.type == INSIDE || f.type == OPPOSITE) && op == CSGObject.DIFFERENCE21) {
+            } else if((f.type == INSIDE || f.type == OPPOSITE) && op == CSGObject.DIFFERENCE21) {
                 addPolygon(f, true, vert1, allVert, index1, faceIndex, faceSmoothness);
-            } else if (f.type == OUTSIDE && (op == CSGObject.UNION || op == CSGObject.DIFFERENCE12)) {
+            } else if(f.type == OUTSIDE && (op == CSGObject.UNION || op == CSGObject.DIFFERENCE12)) {
                 addPolygon(f, false, vert1, allVert, index1, faceIndex, faceSmoothness);
-            } else if (f.type == SAME && (op == CSGObject.UNION || op == CSGObject.INTERSECTION)) {
+            } else if(f.type == SAME && (op == CSGObject.UNION || op == CSGObject.INTERSECTION)) {
                 addPolygon(f, false, vert1, allVert, index1, faceIndex, faceSmoothness);
-            } else if (f.type == OPPOSITE && op == CSGObject.DIFFERENCE12) {
+            } else if(f.type == OPPOSITE && op == CSGObject.DIFFERENCE12) {
                 addPolygon(f, false, vert1, allVert, index1, faceIndex, faceSmoothness);
             }
         }
         faces1 = faceIndex.size();
 
         // Add the faces from object 2.
-        for (int i = 0; i < face2.size(); i++) {
-            FaceInfo f = face2.get(i);
-            if (f.type == INSIDE && op == CSGObject.INTERSECTION) {
+        for(var f: face2) {
+            if(f.type == INSIDE && op == CSGObject.INTERSECTION) {
                 addPolygon(f, false, vert2, allVert, index2, faceIndex, faceSmoothness);
-            } else if (f.type == INSIDE && op == CSGObject.DIFFERENCE12) {
+            } else if(f.type == INSIDE && op == CSGObject.DIFFERENCE12) {
                 addPolygon(f, true, vert2, allVert, index2, faceIndex, faceSmoothness);
-            } else if (f.type == OUTSIDE && (op == CSGObject.UNION || op == CSGObject.DIFFERENCE21)) {
+            } else if(f.type == OUTSIDE && (op == CSGObject.UNION || op == CSGObject.DIFFERENCE21)) {
                 addPolygon(f, false, vert2, allVert, index2, faceIndex, faceSmoothness);
             }
         }
@@ -202,33 +199,33 @@ public class CSGModeller {
         }
         TriangleMesh.Edge[] edge = mesh.getEdges();
         TriangleMesh.Face[] face = mesh.getFaces();
-        for (int i = 0; i < edge.length; i++) {
-            for (int k = 0; k < 2; k++) {
-                int j = (k == 0 ? edge[i].f1 : edge[i].f2);
-                if (j == -1) {
+        for(var value: edge) {
+            for(int k = 0; k < 2; k++) {
+                int j = (k == 0 ? value.f1: value.f2);
+                if(j == -1) {
                     continue;
                 }
                 float[] smoothness = faceSmoothness.get(j);
                 float s;
-                if (face[j].v1 == edge[i].v1 && face[j].v2 == edge[i].v2) {
+                if(face[j].v1 == value.v1 && face[j].v2 == value.v2) {
                     s = smoothness[0];
-                } else if (face[j].v1 == edge[i].v2 && face[j].v2 == edge[i].v1) {
+                } else if(face[j].v1 == value.v2 && face[j].v2 == value.v1) {
                     s = smoothness[0];
-                } else if (face[j].v2 == edge[i].v1 && face[j].v3 == edge[i].v2) {
+                } else if(face[j].v2 == value.v1 && face[j].v3 == value.v2) {
                     s = smoothness[1];
-                } else if (face[j].v2 == edge[i].v2 && face[j].v3 == edge[i].v1) {
+                } else if(face[j].v2 == value.v2 && face[j].v3 == value.v1) {
                     s = smoothness[1];
-                } else if (face[j].v3 == edge[i].v1 && face[j].v1 == edge[i].v2) {
+                } else if(face[j].v3 == value.v1 && face[j].v1 == value.v2) {
                     s = smoothness[2];
-                } else if (face[j].v3 == edge[i].v2 && face[j].v1 == edge[i].v1) {
+                } else if(face[j].v3 == value.v2 && face[j].v1 == value.v1) {
                     s = smoothness[2];
                 } else {
                     continue;
                 }
-                edge[i].smoothness = Math.min(edge[i].smoothness, s);
+                value.smoothness = Math.min(value.smoothness, s);
             }
-            if ((edge[i].f1 < faces1 && edge[i].f2 >= faces1) || (edge[i].f2 < faces1 && edge[i].f1 >= faces1)) {
-                edge[i].smoothness = 0.0f; // This edge is part of the boundary.
+            if((value.f1 < faces1 && value.f2 >= faces1) || (value.f2 < faces1 && value.f1 >= faces1)) {
+                value.smoothness = 0.0f; // This edge is part of the boundary.
             }
         }
 

@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2015 by Peter Eastman
-   Changes copyright (C) 2016-2025 by Maksim Khramov
+   Changes copyright (C) 2016-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -588,16 +588,16 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
         TextureParameter[] param = editObj.getObject().getParameters();
         ParameterValue[] paramValue = editObj.getObject().getParameterValues();
         UndoRecord undo = new UndoRecord(window);
-        for (int i = 0; i < obj.length; i++) {
-            undo.addCommand(UndoRecord.COPY_OBJECT, obj[i].getObject(), obj[i].getObject().duplicate());
-            if (editObj.getObject().getTexture() instanceof LayeredTexture) {
-                LayeredMapping m = (LayeredMapping) editObj.getObject().getTextureMapping().duplicate(obj[i].getObject(), editObj.getObject().getTexture());
-                obj[i].setTexture(new LayeredTexture(m), m);
+        for(var info: obj) {
+            undo.addCommand(UndoRecord.COPY_OBJECT, info.getObject(), info.getObject().duplicate());
+            if(editObj.getObject().getTexture() instanceof LayeredTexture) {
+                LayeredMapping m = (LayeredMapping) editObj.getObject().getTextureMapping().duplicate(info.getObject(), editObj.getObject().getTexture());
+                info.setTexture(new LayeredTexture(m), m);
             } else {
-                obj[i].setTexture(editObj.getObject().getTexture(), editObj.getObject().getTextureMapping().duplicate());
+                info.setTexture(editObj.getObject().getTexture(), editObj.getObject().getTextureMapping().duplicate());
             }
-            for (int j = 0; j < param.length; j++) {
-                obj[i].getObject().setParameterValue(param[j], paramValue[j].duplicate());
+            for(int j = 0; j < param.length; j++) {
+                info.getObject().setParameterValue(param[j], paramValue[j].duplicate());
             }
         }
         if (editObj.getObject().getMaterial() == null) {

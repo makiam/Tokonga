@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2013 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,7 @@ import artofillusion.util.*;
 import java.util.*;
 
 /**
- * This class is a three dimensional data structure containing the photons in a scene. The map can
+ * This class is a three-dimensional data structure containing the photons in a scene. The map can
  * be searched very efficiently for locating the photons near a particular point and evaluating the
  * local illumination
  *
@@ -30,7 +30,7 @@ public class PhotonMap {
 
     private final Raytracer rt;
     private final RaytracerRenderer renderer;
-    private ArrayList<Photon> photonList;
+    private List<Photon> photonList;
     private Photon[] photon, workspace;
     private final int numWanted;
     private final int filter;
@@ -181,11 +181,11 @@ public class PhotonMap {
         PhotonList nearbyPhotons = new PhotonList(numEstimate);
         RGBColor tempColor = new RGBColor();
         nearbyPhotons.init(0.0f);
-        for (int i = 0; i < photon.length; i++) {
-            tempColor.setERGB(photon[i].ergb);
+        for(Photon value: photon) {
+            tempColor.setERGB(value.ergb);
             float intensity = -(tempColor.getRed() + tempColor.getGreen() + tempColor.getBlue());
             if (intensity <= nearbyPhotons.cutoff2) {
-                nearbyPhotons.addPhoton(photon[i], intensity);
+                nearbyPhotons.addPhoton(value, intensity);
             }
         }
         float red = 0.0f, green = 0.0f, blue = 0.0f;

@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2008 by Peter Eastman
    Modifications copyright (C) 2016-2017 Petri Ihalainen
-   Changes copyright (C) 2020-2024 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -63,8 +63,8 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
         tools.addTool(altTool = new RotateViewTool(this));
         tools.setDefaultTool(defaultTool);
         tools.selectTool(defaultTool);
-        for (int i = 0; i < theView.length; i++) {
-            MeshViewer view = (MeshViewer) theView[i];
+        for(var viewerCanvas: theView) {
+            MeshViewer view = (MeshViewer) viewerCanvas;
             view.setMetaTool(metaTool);
             view.setAltTool(altTool);
             view.setMeshVisible(true);
@@ -293,8 +293,8 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
     }
 
     protected void freehandModeChanged() {
-        for (int i = 0; i < theView.length; i++) {
-            ((CurveViewer) theView[i]).setFreehandSelection(((BCheckBoxMenuItem) editMenuItem[3]).getState());
+        for(var viewerCanvas: theView) {
+            ((CurveViewer) viewerCanvas).setFreehandSelection(((BCheckBoxMenuItem) editMenuItem[3]).getState());
         }
     }
 
@@ -521,9 +521,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
                 }
                 theCurve.setSmoothness(news);
                 objectChanged();
-                for (int i = 0; i < theView.length; i++) {
-                    theView[i].repaint();
-                }
+                for(var viewerCanvas: theView) viewerCanvas.repaint();
             }
         });
         ComponentsDialog dlg = new ComponentsDialog(this, Translate.text("setPointSmoothness"), new Widget[]{smoothness},
@@ -533,9 +531,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
         } else {
             theCurve.copyObject(oldCurve);
             objectChanged();
-            for (int j = 0; j < theView.length; j++) {
-                theView[j].repaint();
-            }
+            for(var viewerCanvas: theView) viewerCanvas.repaint();
         }
     }
 
@@ -543,9 +539,9 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
         Curve theCurve = (Curve) objInfo.getObject();
 
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theCurve, theCurve.duplicate()));
-        for (int i = 0; i < smoothItem.length; i++) {
-            smoothItem[i].setState(false);
-        }
+
+        for(var bCheckBoxMenuItem: smoothItem) bCheckBoxMenuItem.setState(false);
+
         if (method == Mesh.NO_SMOOTHING) {
             smoothItem[0].setState(true);
         } else if (method == Mesh.INTERPOLATING) {
@@ -555,9 +551,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
         }
         theCurve.setSmoothingMethod(method);
         objectChanged();
-        for (int i = 0; i < theView.length; i++) {
-            theView[i].repaint();
-        }
+        for(var viewerCanvas: theView) viewerCanvas.repaint();
     }
 
     public void toggleClosedCommand(ActionEvent event) {
@@ -572,9 +566,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
             meshMenuItem[6].setText(Translate.text("menu.openEnds"));
         }
         setMesh(theCurve);
-        for (int i = 0; i < theView.length; i++) {
-            theView[i].repaint();
-        }
+        for(ViewerCanvas viewerCanvas: theView) viewerCanvas.repaint();
     }
 
     /**
