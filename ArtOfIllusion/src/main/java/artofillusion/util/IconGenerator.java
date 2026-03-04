@@ -2280,23 +2280,13 @@ public class IconGenerator {
                 String val = (index < length ? value[index] : null);
                 float rhs = (val != null ? Float.parseFloat(val) : 0.0f);
 
-                switch (op) {
-                    case OP_ADD:
-                        return (int) (lhs + rhs);
-
-                    case OP_SUBTRACT:
-                        return (int) (lhs - rhs);
-
-                    case OP_MULTIPLY:
-                        return (int) (lhs * rhs);
-
-                    case OP_ASSIGN:
-                    case OP_FEATHER:
-                        return (int) rhs;
-
-                    default:
-                        return lhs;
-                }
+                return switch (op) {
+                    case OP_ADD -> (int) (lhs + rhs);
+                    case OP_SUBTRACT -> (int) (lhs - rhs);
+                    case OP_MULTIPLY -> (int) (lhs * rhs);
+                    case OP_ASSIGN, OP_FEATHER -> (int) rhs;
+                    default -> lhs;
+                };
             }
 
             protected float calc(float lhs, int index) {
@@ -2304,23 +2294,13 @@ public class IconGenerator {
                 String val = (index < length ? value[index] : null);
                 float rhs = (val != null ? Float.parseFloat(val) : 0.0f);
 
-                switch (op) {
-                    case OP_ADD:
-                        return lhs + rhs;
-
-                    case OP_SUBTRACT:
-                        return lhs - rhs;
-
-                    case OP_MULTIPLY:
-                        return lhs * rhs;
-
-                    case OP_ASSIGN:
-                    case OP_FEATHER:
-                        return rhs;
-
-                    default:
-                        return lhs;
-                }
+                return switch (op) {
+                    case OP_ADD -> lhs + rhs;
+                    case OP_SUBTRACT -> lhs - rhs;
+                    case OP_MULTIPLY -> lhs * rhs;
+                    case OP_ASSIGN, OP_FEATHER -> rhs;
+                    default -> lhs;
+                };
             }
         }
     }

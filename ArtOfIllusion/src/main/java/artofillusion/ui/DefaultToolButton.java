@@ -1,5 +1,5 @@
 /* Copyright (C) 2007 by François Guillet
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -102,13 +102,8 @@ public class DefaultToolButton extends ToolButton {
     @Override
     public void paint(Graphics2D g) {
         switch (state) {
-            case NORMAL_STATE:
-            case HIGHLIGHTED_STATE:
-                g.drawImage(icon, position.x, position.y, null);
-                break;
-            case SELECTED_STATE:
-                g.drawImage(selectedIcon, position.x, position.y, null);
-                break;
+            case NORMAL_STATE, HIGHLIGHTED_STATE -> g.drawImage(icon, position.x, position.y, null);
+            case SELECTED_STATE -> g.drawImage(selectedIcon, position.x, position.y, null);
         }
     }
 
@@ -164,7 +159,7 @@ public class DefaultToolButton extends ToolButton {
         }
 
         // we're still here, so apply the style...
-        // initialise the namespace
+        // initialize the namespace
         HashMap<String, Object> namespace = new HashMap<>(style.attributes);
 
         if (image != null) {

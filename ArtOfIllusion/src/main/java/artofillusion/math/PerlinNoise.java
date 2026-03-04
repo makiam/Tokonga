@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2005 by Peter Eastman
-   Changes copyright (C) 2018 by Maksim Khramov
+   Changes copyright (C) 2018-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -111,34 +111,21 @@ public class PerlinNoise {
         drop = 1.0 - u2 * (10.0 * u + (6.0 * u - 15.0) * u2);
         drop *= 1.0 - v2 * (10.0 * v + (6.0 * v - 15.0) * v2);
         drop *= 1.0 - w2 * (10.0 * w + (6.0 * w - 15.0) * w2);
-        switch (grad[permute[permute[i] + j] + k]) {
-            case 0:
-                return drop * (u + v);
-            case 1:
-                return drop * (-u + v);
-            case 2:
-                return drop * (u - v);
-            case 3:
-                return drop * (-u - v);
-            case 4:
-                return drop * (u + w);
-            case 5:
-                return drop * (-u + w);
-            case 6:
-                return drop * (u - w);
-            case 7:
-                return drop * (-u - w);
-            case 8:
-                return drop * (v + w);
-            case 9:
-                return drop * (-v + w);
-            case 10:
-                return drop * (v - w);
-            case 11:
-                return drop * (-v - w);
-            default:
-                return 0.0;  // Should never get here
-        }
+        return switch (grad[permute[permute[i] + j] + k]) {
+            case 0 -> drop * (u + v);
+            case 1 -> drop * (-u + v);
+            case 2 -> drop * (u - v);
+            case 3 -> drop * (-u - v);
+            case 4 -> drop * (u + w);
+            case 5 -> drop * (-u + w);
+            case 6 -> drop * (u - w);
+            case 7 -> drop * (-u - w);
+            case 8 -> drop * (v + w);
+            case 9 -> drop * (-v + w);
+            case 10 -> drop * (v - w);
+            case 11 -> drop * (-v - w);
+            default -> 0.0;  // Should never get here
+        };
     }
 
     /**

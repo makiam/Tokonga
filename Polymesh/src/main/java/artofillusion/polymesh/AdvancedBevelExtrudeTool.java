@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2007 by Francois Guillet
- *  Changes copyright (C) 2023-2025 by Maksim Khramov
+ *  Changes copyright (C) 2023-2026 by Maksim Khramov
 
  This program is free software; you can redistribute it and/or modify it under the
  terms of the GNU General Public License as published by the Free Software
@@ -192,21 +192,14 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
 
     @Override
     public void selectionModeChanged(int selectionMode) {
-        ImageIcon image = null;
-        switch (selectionMode) {
-            case MeshEditorWindow.POINT_MODE:
-                image = AdvancedBevelExtrudeTool.bevelExtrudeVerticesIcon;
-                break;
-            case MeshEditorWindow.EDGE_MODE:
-                image = AdvancedBevelExtrudeTool.bevelExtrudeEdgesIcon;
-                break;
-            case MeshEditorWindow.FACE_MODE:
-                image = AdvancedBevelExtrudeTool.bevelExtrudeFacesIcon;
-                break;
-        }
-        final ImageIcon tmpImage = image;
+        final ImageIcon image = switch (selectionMode) {
+            case MeshEditorWindow.POINT_MODE -> AdvancedBevelExtrudeTool.bevelExtrudeVerticesIcon;
+            case MeshEditorWindow.EDGE_MODE -> AdvancedBevelExtrudeTool.bevelExtrudeEdgesIcon;
+            case MeshEditorWindow.FACE_MODE -> AdvancedBevelExtrudeTool.bevelExtrudeFacesIcon;
+            default -> null;
+        };
         mouseDragManipHashMap.forEach((ViewerCanvas view, Manipulator manipulator) -> {
-            ((MouseDragManipulator) manipulator).setImage(tmpImage);
+            ((MouseDragManipulator) manipulator).setImage(image);
         });
     }
 

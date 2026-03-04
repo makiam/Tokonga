@@ -581,18 +581,13 @@ public class SceneCamera extends Object3D {
 
     @Override
     public Object getPropertyValue(int index) {
-        switch (index) {
-            case 0:
-                return fov;
-            case 1:
-                return depthOfField;
-            case 2:
-                return focalDist;
-            case 3:
-                return perspective;
-            default:
-                return null;
-        }
+        return switch (index) {
+            case 0 -> fov;
+            case 1 -> depthOfField;
+            case 2 -> focalDist;
+            case 3 -> perspective;
+            default -> null;
+        };
     }
 
     @Override

@@ -133,7 +133,7 @@ public class PolyMeshViewer extends MeshViewer {
             mirror = true;
         }
         int[] invVertTable = mesh.getInvMirroredVertices();
-        Wvertex[] v = (Wvertex[]) viewMesh.getVertices();
+        Wvertex[] v = viewMesh.getVertices();
 
         // Calculate the screen coordinates of every vertex.
         int length = v.length;
@@ -147,19 +147,18 @@ public class PolyMeshViewer extends MeshViewer {
             visible = new boolean[length];
         }
         double clipDist = (theCamera.isPerspective() ? theCamera.getClipDistance() : -Double.MAX_VALUE);
-        boolean[] hideVert = (controller instanceof PolyMeshEditorWindow
-                ? ((PolyMeshEditorWindow) controller).hideVert : new boolean[v.length]);
+        boolean[] hideVert = (controller instanceof PolyMeshEditorWindow ? ((PolyMeshEditorWindow) controller).hideVert : new boolean[v.length]);
         QuadMesh subMesh = null;
-        MeshVertex[] sv = null;
-        boolean project = (controller instanceof PolyMeshEditorWindow
-                && ((PolyMeshEditorWindow) controller).getProjectOntoSurface());
-        if (project && viewMesh.getSubdividedMesh() != null) {
+        MeshVertex[] sv;
+        boolean project = (controller instanceof PolyMeshEditorWindow && ((PolyMeshEditorWindow) controller).getProjectOntoSurface());
+
+        if(!project || viewMesh.getSubdividedMesh() == null) {
+            sv = viewMesh.getVertices();
+        } else {
             subMesh = viewMesh.getSubdividedMesh();
             sv = subMesh.getVertices();
-        } else {
-            sv = viewMesh.getVertices();
         }
-        Vec2 npt;
+
         for (int i = 0; i < length; i++) {
             Vec3 pos = sv[i].r;
             screenVec2[i] = theCamera.getObjectToScreen().timesXY(pos);
@@ -618,7 +617,6 @@ public class PolyMeshViewer extends MeshViewer {
         MeshVertex[] v = mesh.getVertices();
         Wedge[] ed = mesh.getEdges();
         Wface[] f = mesh.getFaces();
-        int i;
         int j;
         int k;
 
@@ -649,7 +647,15 @@ public class PolyMeshViewer extends MeshViewer {
 
         // Left button actions
         activeTool = currentTool;
-        if (!(activeTool instanceof AdvancedEditingTool)) {
+
+        if(activeTool instanceof AdvancedEditingTool) {
+            for(Manipulator manipulator: manipulatorArray) {
+                if(manipulator.mousePressed(e)) {
+                    dragging = true;
+                    return;
+                }
+            }
+        } else {
             // If the current tool wants all clicks, just forward the event and return.
 
             if (activeTool.whichClicks() == EditingTool.ALL_CLICKS) {
@@ -657,17 +663,10 @@ public class PolyMeshViewer extends MeshViewer {
                 dragging = true;
                 return;
             }
-        } else {
-            for (i = 0; i < manipulatorArray.length; i++) {
-                if (manipulatorArray[i].mousePressed(e)) {
-                    dragging = true;
-                    return;
-                }
-            }
         }
 
         // Determine what the click was on.
-        i = findClickTarget(e.getPoint(), null);
+        int i = findClickTarget(e.getPoint(), null);
         // If the click was not on an object, start dragging a selection box.
 
         if (i == -1) {
@@ -720,18 +719,12 @@ public class PolyMeshViewer extends MeshViewer {
         boolean[] selected = controller.getSelection();
 
         if (selected[i]) {
-            Vec3 pos = null;
-            switch (controller.getSelectionMode()) {
-                case MeshEditController.POINT_MODE:
-                    pos = v[i].r;
-                    break;
-                case MeshEditController.EDGE_MODE:
-                    pos = mesh.getEdgePosition(i);
-                    break;
-                case MeshEditController.FACE_MODE:
-                    pos = mesh.getFacePosition(i);
-                    break;
-            }
+            Vec3 pos = switch (controller.getSelectionMode()) {
+                case MeshEditController.POINT_MODE -> v[i].r;
+                case MeshEditController.EDGE_MODE -> mesh.getEdgePosition(i);
+                case MeshEditController.FACE_MODE -> mesh.getFacePosition(i);
+                default -> null;
+            };
             if (e.isShiftDown()) {
                 deselect = i;
             }

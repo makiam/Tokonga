@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman, 2005 by Francois Guillet
-   Changes copyright (C) 2023-2025 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 This program is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later version.
@@ -70,7 +70,7 @@ public class CreatePolyMeshTool extends EditingTool {
     }
 
     private void setHelpText() {
-        String shapeDesc, smoothingDesc;
+        String shapeDesc;
         if (shape == 0) {
             shapeDesc = "cube";
         } else if (shape == 2) {
@@ -82,21 +82,12 @@ public class CreatePolyMeshTool extends EditingTool {
         } else {
             shapeDesc = "flat";
         }
-        switch (smoothingMethod) {
-            default:
-            case 0:
-                smoothingDesc = "none";
-                break;
-            case 1:
-                smoothingDesc = "shading";
-                break;
-            case 2:
-                smoothingDesc = "approximating";
-                break;
-            case 3:
-                smoothingDesc = "interpolating";
-                break;
-        }
+        String smoothingDesc = switch (smoothingMethod) {
+            default -> "none";
+            case 1 -> "shading";
+            case 2 -> "approximating";
+            case 3 -> "interpolating";
+        };
         if ("none".equals(smoothingDesc)) {
             smoothingDesc = Translate.text("polymesh:none");
         } else {

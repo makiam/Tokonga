@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2008 by Peter Eastman
    Modifications Copyright 2016 by Petri Ihalainen
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -223,17 +223,13 @@ public class DirectionalLight extends Light {
 
     @Override
     public Object getPropertyValue(int index) {
-        switch (index) {
-            case 0:
-                return color.duplicate();
-            case 1:
-                return (double) intensity;
-            case 2:
-                return radius;
-            case 3:
-                return PROPERTIES[index].getAllowedValues()[type];
-        }
-        return null;
+        return switch (index) {
+            case 0 -> color.duplicate();
+            case 1 -> (double) intensity;
+            case 2 -> radius;
+            case 3 -> PROPERTIES[index].getAllowedValues()[type];
+            default -> null;
+        };
     }
 
     @Override

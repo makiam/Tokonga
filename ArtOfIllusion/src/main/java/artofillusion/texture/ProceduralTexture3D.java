@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2008 by Peter Eastman
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -238,24 +238,16 @@ public class ProceduralTexture3D extends Texture3D implements ProcedureOwner {
     @Override
     public boolean hasComponent(int component) {
         var  outputs = proc.getOutputModules();
-        switch (component) {
-            case DIFFUSE_COLOR_COMPONENT:
-                return true;
-            case SPECULAR_COLOR_COMPONENT:
-                return outputs[5].inputConnected(0);
-            case TRANSPARENT_COLOR_COMPONENT:
-                return outputs[4].inputConnected(0);
-            case HILIGHT_COLOR_COMPONENT:
-                return outputs[6].inputConnected(0);
-            case EMISSIVE_COLOR_COMPONENT:
-                return outputs[3].inputConnected(0);
-            case BUMP_COMPONENT:
-                return outputs[9].inputConnected(0);
-            case DISPLACEMENT_COMPONENT:
-                return outputs[10].inputConnected(0);
-            default:
-                return false;
-        }
+        return switch (component) {
+            case DIFFUSE_COLOR_COMPONENT -> true;
+            case EMISSIVE_COLOR_COMPONENT -> outputs[3].inputConnected(0);
+            case TRANSPARENT_COLOR_COMPONENT -> outputs[4].inputConnected(0);
+            case SPECULAR_COLOR_COMPONENT -> outputs[5].inputConnected(0);
+            case HILIGHT_COLOR_COMPONENT -> outputs[6].inputConnected(0);
+            case BUMP_COMPONENT -> outputs[9].inputConnected(0);
+            case DISPLACEMENT_COMPONENT -> outputs[10].inputConnected(0);
+            default -> false;
+        };
     }
 
     @Override

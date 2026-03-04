@@ -1,5 +1,5 @@
 /* Copyright (C) 2000 by Peter Eastman
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -64,31 +64,23 @@ public class CoordinateModule extends ProceduralModule<CoordinateModule> {
     /* This module outputs the value of the specified coordinate. */
     @Override
     public double getAverageValue(int which, double blur) {
-        switch (coordinate) {
-            case X:
-                return point.x;
-            case Y:
-                return point.y;
-            case Z:
-                return point.z;
-            default:
-                return point.t;
-        }
+        return switch (coordinate) {
+            case X -> point.x;
+            case Y -> point.y;
+            case Z -> point.z;
+            default -> point.t;
+        };
     }
 
     /* Return the error in the specified coordinate. */
     @Override
     public double getValueError(int which, double blur) {
-        switch (coordinate) {
-            case X:
-                return 0.5 * point.xsize + blur;
-            case Y:
-                return 0.5 * point.ysize + blur;
-            case Z:
-                return 0.5 * point.zsize + blur;
-            default:
-                return 0.0;
-        }
+        return switch (coordinate) {
+            case X -> 0.5 * point.xsize + blur;
+            case Y -> 0.5 * point.ysize + blur;
+            case Z -> 0.5 * point.zsize + blur;
+            default -> 0.0;
+        };
     }
 
     /* The gradient is simply linear in the appropriate coordinate. */

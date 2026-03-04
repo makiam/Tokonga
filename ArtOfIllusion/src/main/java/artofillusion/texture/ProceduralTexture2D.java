@@ -238,24 +238,16 @@ public class ProceduralTexture2D extends Texture2D implements ProcedureOwner {
     @Override
     public boolean hasComponent(int component) {
         var  outputs = proc.getOutputModules();
-        switch (component) {
-            case DIFFUSE_COLOR_COMPONENT:
-                return true;
-            case SPECULAR_COLOR_COMPONENT:
-                return outputs[5].inputConnected(0);
-            case TRANSPARENT_COLOR_COMPONENT:
-                return outputs[4].inputConnected(0);
-            case HILIGHT_COLOR_COMPONENT:
-                return outputs[6].inputConnected(0);
-            case EMISSIVE_COLOR_COMPONENT:
-                return outputs[3].inputConnected(0);
-            case BUMP_COMPONENT:
-                return outputs[9].inputConnected(0);
-            case DISPLACEMENT_COMPONENT:
-                return outputs[10].inputConnected(0);
-            default:
-                return false;
-        }
+        return switch (component) {
+            case DIFFUSE_COLOR_COMPONENT -> true;
+            case SPECULAR_COLOR_COMPONENT -> outputs[5].inputConnected(0);
+            case TRANSPARENT_COLOR_COMPONENT -> outputs[4].inputConnected(0);
+            case HILIGHT_COLOR_COMPONENT -> outputs[6].inputConnected(0);
+            case EMISSIVE_COLOR_COMPONENT -> outputs[3].inputConnected(0);
+            case BUMP_COMPONENT -> outputs[9].inputConnected(0);
+            case DISPLACEMENT_COMPONENT -> outputs[10].inputConnected(0);
+            default -> false;
+        };
     }
 
     @Override

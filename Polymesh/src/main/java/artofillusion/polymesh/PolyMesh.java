@@ -2999,17 +2999,12 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     for (int j = 0; j < v1.size(); ++j) {
                         for (int k = 0; k < 3; k++) {
                             int vertex = -1;
-                            switch (k) {
-                                case 0:
-                                    vertex = v1.get(j);
-                                    break;
-                                case 1:
-                                    vertex = v2.get(j);
-                                    break;
-                                case 2:
-                                    vertex = v3.get(j);
-                                    break;
-                            }
+                            vertex = switch (k) {
+                                case 0 -> v1.get(j);
+                                case 1 -> v2.get(j);
+                                case 2 -> v3.get(j);
+                                default -> vertex;
+                            };
                             int pmeFace = faceInfo.get(j);
                             int[] fv = getFaceVertices(faces[pmeFace]);
                             int[] vf = vertInfo.get(vertex).vert;
@@ -6505,18 +6500,12 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * Description of the Parameter
      */
     public void moveFaces(boolean[] selected, double amount, short direction) {
-        Vec3 disp = null;
-        switch (direction) {
-            case X:
-                disp = new Vec3(amount, 0, 0);
-                break;
-            case Y:
-                disp = new Vec3(0, amount, 0);
-                break;
-            case Z:
-                disp = new Vec3(0, 0, amount);
-                break;
-        }
+        Vec3 disp = switch (direction) {
+            case X -> new Vec3(amount, 0, 0);
+            case Y -> new Vec3(0, amount, 0);
+            case Z -> new Vec3(0, 0, amount);
+            default -> null;
+        };
         boolean[] moved = new boolean[vertices.length];
         switch (direction) {
             case NORMAL:

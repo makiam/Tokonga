@@ -524,54 +524,36 @@ public class OctreeNode {
     }
 
     private static float findMinimum(OctreeNode box, int axis) {
-        switch (axis) {
-            case 0:
-                return box.minx;
-            case 1:
-                return box.miny;
-            default:
-                return box.minz;
-        }
+        return switch (axis) {
+            case 0 -> box.minx;
+            case 1 -> box.miny;
+            default -> box.minz;
+        };
     }
 
     private static float findMaximum(OctreeNode box, int axis) {
-        switch (axis) {
-            case 0:
-                return box.maxx;
-            case 1:
-                return box.maxy;
-            default:
-                return box.maxz;
-        }
+        return switch (axis) {
+            case 0 -> box.maxx;
+            case 1 -> box.maxy;
+            default -> box.maxz;
+        };
     }
 
     private static float findMinimum(BoundingBox box, int axis) {
-        double val;
-        switch (axis) {
-            case 0:
-                val = box.minx;
-                break;
-            case 1:
-                val = box.miny;
-                break;
-            default:
-                val = box.minz;
-        }
+        double val = switch (axis) {
+            case 0 -> box.minx;
+            case 1 -> box.miny;
+            default -> box.minz;
+        };
         return Math.nextAfter((float) val, Float.NEGATIVE_INFINITY);
     }
 
     private static float findMaximum(BoundingBox box, int axis) {
-        double val;
-        switch (axis) {
-            case 0:
-                val = box.maxx;
-                break;
-            case 1:
-                val = box.maxy;
-                break;
-            default:
-                val = box.maxz;
-        }
+        double val = switch (axis) {
+            case 0 -> box.maxx;
+            case 1 -> box.maxy;
+            default -> box.maxz;
+        };
         return Math.nextAfter((float) val, Float.POSITIVE_INFINITY);
     }
 }
