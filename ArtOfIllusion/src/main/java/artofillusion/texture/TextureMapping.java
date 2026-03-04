@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -15,6 +15,8 @@ import artofillusion.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
 import buoy.widget.*;
+
+import javax.swing.*;
 import java.io.*;
 
 /**
@@ -182,5 +184,5 @@ public abstract class TextureMapping {
      * parameters are the object whose mapping is being edited, and a MaterialPreviewer
      * which should be rendered whenever one of the mapping's parameters changes.
      */
-    public abstract Widget getEditingPanel(Object3D obj, MaterialPreviewer preview);
+    public abstract Widget<JPanel> getEditingPanel(Object3D obj, MaterialPreviewer preview);
 }

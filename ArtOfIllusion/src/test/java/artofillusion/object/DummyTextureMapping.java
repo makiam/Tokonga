@@ -20,6 +20,7 @@ import artofillusion.texture.TextureSpec;
 import buoy.widget.Widget;
 import org.junit.jupiter.api.DisplayName;
 
+import javax.swing.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
@@ -89,7 +90,7 @@ class DummyTextureMapping extends TextureMapping {
     }
 
     @Override
-    public Widget getEditingPanel(Object3D obj, MaterialPreviewer preview) {
+    public Widget<JPanel> getEditingPanel(Object3D obj, MaterialPreviewer preview) {
         // To change body of generated methods, choose Tools | Templates.
         return null;
     }

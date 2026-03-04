@@ -20,6 +20,8 @@ import java.lang.reflect.*;
 import java.util.*;
 import lombok.Getter;
 
+import javax.swing.*;
+
 /**
  * LayeredMapping is the TextureMapping corresponding to LayeredTextures. It allows
  * multiple textures to be layered on top of each other. Most of the actual work is done
@@ -679,7 +681,7 @@ public class LayeredMapping extends TextureMapping {
      * object texture dialog.
      */
     @Override
-    public Widget getEditingPanel(Object3D obj, MaterialPreviewer preview) {
+    public Widget<JPanel> getEditingPanel(Object3D obj, MaterialPreviewer preview) {
         return null;
     }
 }
