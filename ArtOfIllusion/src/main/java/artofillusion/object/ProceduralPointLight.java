@@ -183,13 +183,11 @@ public class ProceduralPointLight extends PointLight {
         if (index < parameterValues.length) {
             return parameterValues[index];
         }
-        switch (index - parameterValues.length) {
-            case 0:
-                return getRadius();
-            case 1:
-                return PROPERTIES[1].getAllowedValues()[type];
-        }
-        return null;
+        return switch (index - parameterValues.length) {
+            case 0 -> getRadius();
+            case 1 -> PROPERTIES[1].getAllowedValues()[type];
+            default -> null;
+        };
     }
 
     @Override

@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -224,19 +224,14 @@ public class PointLight extends Light {
 
     @Override
     public Object getPropertyValue(int index) {
-        switch (index) {
-            case 0:
-                return color.duplicate();
-            case 1:
-                return Double.valueOf(intensity);
-            case 2:
-                return Double.valueOf(decayRate);
-            case 3:
-                return radius;
-            case 4:
-                return PROPERTIES[index].getAllowedValues()[type];
-        }
-        return null;
+        return switch (index) {
+            case 0 -> color.duplicate();
+            case 1 -> Double.valueOf(intensity);
+            case 2 -> Double.valueOf(decayRate);
+            case 3 -> radius;
+            case 4 -> PROPERTIES[index].getAllowedValues()[type];
+            default -> null;
+        };
     }
 
     @Override

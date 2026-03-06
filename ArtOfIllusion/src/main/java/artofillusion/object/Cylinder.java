@@ -424,17 +424,13 @@ public class Cylinder extends Object3D {
 
     @Override
     public Object getPropertyValue(int index) {
-        switch (index) {
-            case 0:
-                return rx;
-            case 1:
-                return rz;
-            case 2:
-                return ratio;
-            case 3:
-                return height;
-        }
-        return null;
+        return switch (index) {
+            case 0 -> rx;
+            case 1 -> rz;
+            case 2 -> ratio;
+            case 3 -> height;
+            default -> null;
+        };
     }
 
     @Override

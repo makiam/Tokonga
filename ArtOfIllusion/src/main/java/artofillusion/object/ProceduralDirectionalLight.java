@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2008 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -177,13 +177,11 @@ public class ProceduralDirectionalLight extends DirectionalLight {
         if (index < parameterValues.length) {
             return parameterValues[index];
         }
-        switch (index - parameterValues.length) {
-            case 0:
-                return getRadius();
-            case 1:
-                return PROPERTIES[1].getAllowedValues()[type];
-        }
-        return null;
+        return switch (index - parameterValues.length) {
+            case 0 -> getRadius();
+            case 1 -> PROPERTIES[1].getAllowedValues()[type];
+            default -> null;
+        };
     }
 
     @Override

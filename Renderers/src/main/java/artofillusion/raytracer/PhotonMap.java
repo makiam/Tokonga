@@ -835,14 +835,11 @@ public class PhotonMap {
      * Get the position of a photon along an axis.
      */
     private float axisPosition(int index, int axis) {
-        switch (axis) {
-            case 0:
-                return workspace[index].x;
-            case 1:
-                return workspace[index].y;
-            default:
-                return workspace[index].z;
-        }
+        return switch (axis) {
+            case 0 -> workspace[index].x;
+            case 1 -> workspace[index].y;
+            default -> workspace[index].z;
+        };
     }
 
     /**
@@ -979,17 +976,11 @@ public class PhotonMap {
         Photon p = photon[index];
         float dx = p.x - (float) pos.x, dy = p.y - (float) pos.y, dz = p.z - (float) pos.z;
         float dist2 = dx * dx + dy * dy + dz * dz;
-        float delta;
-        switch (p.axis) {
-            case 0:
-                delta = dx;
-                break;
-            case 1:
-                delta = dy;
-                break;
-            default:
-                delta = dz;
-        }
+        float delta = switch (p.axis) {
+            case 0 -> dx;
+            case 1 -> dy;
+            default -> dz;
+        };
         if (delta > 0.0f) {
             int child = (index << 1) + 1;
             if (child < photon.length) {

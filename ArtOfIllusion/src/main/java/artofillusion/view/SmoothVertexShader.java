@@ -68,17 +68,11 @@ public class SmoothVertexShader implements VertexShader {
      */
     @Override
     public void getColor(int face, int vertex, RGBColor color) {
-        int norm;
-        switch (vertex) {
-            case 0:
-                norm = mesh.triangle[face].n1;
-                break;
-            case 1:
-                norm = mesh.triangle[face].n2;
-                break;
-            default:
-                norm = mesh.triangle[face].n3;
-        }
+        int norm = switch (vertex) {
+            case 0 -> mesh.triangle[face].n1;
+            case 1 -> mesh.triangle[face].n2;
+            default -> mesh.triangle[face].n3;
+        };
         if (light[norm] == 0.0f) {
             float dot = (float) viewDir.dot(mesh.norm[norm]);
             light[norm] = 0.1f + 0.8f * (dot > 0.0f ? dot : -dot);

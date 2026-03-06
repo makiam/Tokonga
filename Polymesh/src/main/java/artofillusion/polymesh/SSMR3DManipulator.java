@@ -485,18 +485,12 @@ public class SSMR3DManipulator
             }
         }
         //select proper rotation handles
-        RotationHandle[] rotHandles = null;
-        switch (viewMode) {
-            case XYZ_MODE:
-                rotHandles = xyzRotHandles;
-                break;
-            case UV_MODE:
-                rotHandles = uvRotationHandle;
-                break;
-            case SPECIFIC_MODE:
-                rotHandles = specificRotHandles;
-                break;
-        }
+        RotationHandle[] rotHandles = switch (viewMode) {
+            case XYZ_MODE -> xyzRotHandles;
+            case UV_MODE -> uvRotationHandle;
+            case SPECIFIC_MODE -> specificRotHandles;
+            default -> null;
+        };
         //and detect if click happened in one of them
         for(RotationHandle rotHandle: rotHandles) {
             if ((rotSegment = rotHandle.findClickTarget(p, view.getCamera())) != -1) {
@@ -549,18 +543,12 @@ public class SSMR3DManipulator
             }
         }
         //select proper rotation handles
-        RotationHandle[] rotHandles = null;
-        switch (viewMode) {
-            case XYZ_MODE:
-                rotHandles = xyzRotHandles;
-                break;
-            case UV_MODE:
-                rotHandles = uvRotationHandle;
-                break;
-            case SPECIFIC_MODE:
-                rotHandles = specificRotHandles;
-                break;
-        }
+        RotationHandle[] rotHandles = switch (viewMode) {
+            case XYZ_MODE -> xyzRotHandles;
+            case UV_MODE -> uvRotationHandle;
+            case SPECIFIC_MODE -> specificRotHandles;
+            default -> null;
+        };
         //and detect if movement happened in one of them
         for(RotationHandle rotHandle: rotHandles) {
             if ((rotSegment = rotHandle.findClickTarget(p, view.getCamera())) != -1) {
@@ -924,18 +912,12 @@ public class SSMR3DManipulator
                     handle = i;
                 }
             }
-            RotationHandle[] rotHandles = null;
-            switch (viewMode) {
-                case XYZ_MODE:
-                    rotHandles = xyzRotHandles;
-                    break;
-                case UV_MODE:
-                    rotHandles = uvRotationHandle;
-                    break;
-                case SPECIFIC_MODE:
-                    rotHandles = specificRotHandles;
-                    break;
-            }
+            RotationHandle[] rotHandles = switch (viewMode) {
+                case XYZ_MODE -> xyzRotHandles;
+                case UV_MODE -> uvRotationHandle;
+                case SPECIFIC_MODE -> specificRotHandles;
+                default -> null;
+            };
             for(RotationHandle rotHandle: rotHandles) {
                 if ((rotSegment = rotHandle.findClickTarget(p, view.getCamera())) != -1) {
                     currentRotationHandle = rotHandle;

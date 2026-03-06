@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2011 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
    Changes copyright (C) 2019 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -463,15 +463,12 @@ public class Sphere extends Object3D {
 
     @Override
     public Object getPropertyValue(int index) {
-        switch (index) {
-            case 0:
-                return rx;
-            case 1:
-                return ry;
-            case 2:
-                return rz;
-        }
-        return null;
+        return switch (index) {
+            case 0 -> rx;
+            case 1 -> ry;
+            case 2 -> rz;
+            default -> null;
+        };
     }
 
     @Override
