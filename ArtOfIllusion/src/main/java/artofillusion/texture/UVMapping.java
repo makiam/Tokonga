@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2009 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,6 +17,8 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
+import javax.swing.*;
 import java.io.*;
 
 /**
@@ -325,11 +327,11 @@ public class UVMapping extends Mapping2D {
     }
 
     @Override
-    public Widget getEditingPanel(Object3D obj, MaterialPreviewer preview) {
+    public Widget<JPanel> getEditingPanel(Object3D obj, MaterialPreviewer preview) {
         return new Editor(obj, preview);
     }
 
-    public UVMapping(DataInputStream in, Object3D theObject, Texture theTexture) throws IOException, InvalidObjectException {
+    public UVMapping(DataInputStream in, Object3D theObject, Texture theTexture) throws IOException {
         super(theObject, theTexture);
 
         short version = in.readShort();

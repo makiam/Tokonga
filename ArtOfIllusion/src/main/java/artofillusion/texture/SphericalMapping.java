@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2007 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -18,6 +18,8 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
+import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 
@@ -408,7 +410,7 @@ public class SphericalMapping extends NonlinearMapping2D {
     }
 
     @Override
-    public Widget getEditingPanel(Object3D obj, MaterialPreviewer preview) {
+    public Widget<JPanel> getEditingPanel(Object3D obj, MaterialPreviewer preview) {
         return new Editor(obj, preview);
     }
 

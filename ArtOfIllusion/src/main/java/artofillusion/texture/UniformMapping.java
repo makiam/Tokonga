@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2004 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,6 +17,8 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
+import javax.swing.*;
 import java.io.*;
 
 /**
@@ -104,7 +106,7 @@ public class UniformMapping extends TextureMapping {
     }
 
     @Override
-    public Widget getEditingPanel(Object3D obj, final MaterialPreviewer preview) {
+    public Widget<JPanel> getEditingPanel(Object3D obj, final MaterialPreviewer preview) {
         RowContainer row = new RowContainer();
         final BComboBox c = new BComboBox(new String[]{
             Translate.text("frontAndBackFaces"),
