@@ -11,7 +11,7 @@
  */
 
 package artofillusion.polymesh;
-
+import artofillusion.api.ImplementationVersion;
 import artofillusion.MeshViewer;
 import artofillusion.ObjectViewer;
 import artofillusion.Property;
@@ -73,6 +73,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author Francois Guillet
  */
 @Slf4j
+@ImplementationVersion(current = 10, min = 0)
 public final class PolyMesh extends Object3D implements FacetedMesh {
 
     private BoundingBox bounds; //the bounds enclosing the mesh
