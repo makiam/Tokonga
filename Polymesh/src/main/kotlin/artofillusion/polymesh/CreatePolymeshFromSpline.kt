@@ -22,5 +22,5 @@ class CreatePolymeshFromSpline internal constructor(private val layout: LayoutWi
         layout.addObject(item, null)
     }
 
-    override fun getName(): String = "Convert to Polymesh";
+    override fun getName(): String = "Convert to Polymesh"
 }
