@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2008 by Peter Eastman
    Modifications copyright (C) 2017-2019 Petri Ihalainen
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -33,8 +33,14 @@ import java.util.*;
 public abstract class ObjectViewer extends ViewerCanvas {
 
     protected final MeshEditController controller;
-    protected boolean showScene, useWorldCoords, freehandSelection, draggingBox, squareBox, sentClick;
-    protected Point clickPoint, dragPoint;
+    protected boolean showScene;
+    protected boolean useWorldCoords;
+    protected boolean freehandSelection;
+    protected boolean draggingBox;
+    protected boolean squareBox;
+    protected boolean sentClick;
+    protected Point clickPoint;
+    protected Point dragPoint;
     protected List<Point> selectBoundsPoints;
     protected Shape selectBounds;
     public ObjectInfo thisObjectInScene;
@@ -71,7 +77,8 @@ public abstract class ObjectViewer extends ViewerCanvas {
         double size = 0.5 * Math.sqrt(dx * dx + dy * dy + dz * dz);
         Vec3 origin = getDisplayCoordinates().fromLocal().times(bounds.getCenter());
         double depth = toView.times(origin).z;
-        double min = depth - size, max = depth + size;
+        double min = depth - size;
+        double max = depth + size;
 
         // Now check the rest of the scene.
         if (showScene) {
@@ -303,6 +310,7 @@ public abstract class ObjectViewer extends ViewerCanvas {
     /**
      * Set orientation of this view
      */
+    @Override
     public void setOrientation(int which) {
         if (which < 6) {
             super.setOrientation(which);
@@ -397,13 +405,13 @@ public abstract class ObjectViewer extends ViewerCanvas {
             final int npoints = polygon.npoints;
             int lastx = xpoints[npoints - 1];
             int lasty = ypoints[npoints - 1];
-            int curx, cury;
+            int curx;
+            int cury;
 
             for (int i = 0; i < npoints; i++) {
                 curx = xpoints[i];
                 cury = ypoints[i];
-                final boolean intersect
-                        = Line2D.linesIntersect(
+                final boolean intersect = Line2D.linesIntersect(
                                 lastx, lasty, curx, cury, // polygon selection line
                                 p1.x, p1.y, p2.x, p2.y // tested line
                         );

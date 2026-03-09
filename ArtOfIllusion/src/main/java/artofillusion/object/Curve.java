@@ -41,10 +41,8 @@ public class Curve extends Object3D implements Mesh {
     };
 
     public Curve(Vec3[] v, float[] smoothness, int smoothingMethod, boolean isClosed) {
-        int i;
-
         vertex = new MeshVertex[v.length];
-        for (i = 0; i < v.length; i++) {
+        for (int i = 0; i < v.length; i++) {
             vertex[i] = new MeshVertex(v[i]);
         }
         this.smoothness = smoothness;
@@ -81,17 +79,22 @@ public class Curve extends Object3D implements Mesh {
     }
 
     protected void findBounds() {
-        double minx, miny, minz, maxx, maxy, maxz;
+        double minx;
+        double miny;
+        double minz;
+        double maxx;
+        double maxy;
+        double maxz;
         Vec3 v;
         Vec3[] points;
-        int i;
 
         getWireframeMesh();
         points = cachedWire.vert;
         minx = maxx = points[0].x;
         miny = maxy = points[0].y;
         minz = maxz = points[0].z;
-        for (i = 1; i < points.length; i++) {
+
+        for (int i = 1; i < points.length; i++) {
             v = points[i];
             if (v.x < minx) {
                 minx = v.x;
@@ -250,7 +253,6 @@ public class Curve extends Object3D implements Mesh {
 
     @Override
     public WireframeMesh getWireframeMesh() {
-        int i;
         int[] from;
         int[] to;
         Curve subdiv;
@@ -265,7 +267,8 @@ public class Curve extends Object3D implements Mesh {
             subdiv = subdivideCurve().subdivideCurve();
         }
         vert = new Vec3[subdiv.vertex.length];
-        for (i = 0; i < vert.length; i++) {
+
+        for (int i = 0; i < vert.length; i++) {
             vert[i] = subdiv.vertex[i].r;
         }
         if (closed) {
@@ -277,7 +280,7 @@ public class Curve extends Object3D implements Mesh {
             from = new int[vert.length - 1];
             to = new int[vert.length - 1];
         }
-        for (i = 0; i < vert.length - 1; i++) {
+        for (int i = 0; i < vert.length - 1; i++) {
             from[i] = i;
             to[i] = i + 1;
         }
@@ -430,7 +433,11 @@ public class Curve extends Object3D implements Mesh {
         Vec3[] v = new Vec3[vertex.length];
         Vec3 size = getBounds().getSize();
         Vec2[] v2 = new Vec2[vertex.length];
-        int i, j, current, count, min;
+        int i;
+        int j;
+        int current;
+        int count;
+        int min;
         int[] index = new int[vertex.length];
         int[][] faces = new int[vertex.length - 2][3];
         double dir, dir2;
@@ -528,8 +535,8 @@ public class Curve extends Object3D implements Mesh {
      * which way a triangle centered at the vertex will face.
      */
     double triangleDirection(Vec2[] v2, int[] index, int count, int which) {
-        Vec2 va,
-         vb;
+        Vec2 va;
+        Vec2 vb;
 
         if (which == 0) {
             va  = v2[index[which]].minus(v2[index[count - 1]]);
@@ -550,8 +557,9 @@ public class Curve extends Object3D implements Mesh {
      * other vertices.
      */
     boolean containsPoints(Vec2[] v2, int[] index, int count, int which) {
-        Vec2 va,
-         vb, v;
+        Vec2 va;
+        Vec2 vb;
+        Vec2 v;
         double a, b, c;
         int i, prev, next;
 
@@ -635,7 +643,6 @@ public class Curve extends Object3D implements Mesh {
     public Curve(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
         super(in, theScene);
 
-        int i;
         short version = in.readShort();
 
         if (version != 0) {
@@ -643,7 +650,7 @@ public class Curve extends Object3D implements Mesh {
         }
         vertex = new MeshVertex[in.readInt()];
         smoothness = new float[vertex.length];
-        for (i = 0; i < vertex.length; i++) {
+        for (int i = 0; i < vertex.length; i++) {
             vertex[i] = new MeshVertex(new Vec3(in));
             smoothness[i] = in.readFloat();
         }
@@ -655,11 +662,9 @@ public class Curve extends Object3D implements Mesh {
     public void writeToFile(DataOutputStream out, Scene theScene) throws IOException {
         super.writeToFile(out, theScene);
 
-        int i;
-
         out.writeShort(0);
         out.writeInt(vertex.length);
-        for (i = 0; i < vertex.length; i++) {
+        for (int i = 0; i < vertex.length; i++) {
             vertex[i].r.writeToFile(out);
             out.writeFloat(smoothness[i]);
         }
@@ -932,7 +937,7 @@ public class Curve extends Object3D implements Mesh {
         /**
          * Reconstructs the keyframe from its serialized representation.
          */
-        public CurveKeyframe(DataInputStream in, Object parent) throws IOException, InvalidObjectException {
+        public CurveKeyframe(DataInputStream in, Object parent) throws IOException {
             this();
             short version = in.readShort();
             if (version != 0) {
