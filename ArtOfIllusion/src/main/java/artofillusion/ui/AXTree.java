@@ -1,4 +1,4 @@
-/* Copyright 2024 by Maksim Khramov
+/* Copyright (C) 2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -8,10 +8,9 @@
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
-package artofillusion.plugin
+package artofillusion.ui;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import javax.swing.*;
 
-@XStreamAlias("import")
-data class ImportDef(@XStreamAsAttribute val name: String? = null, @XStreamAsAttribute val url: String? = null)
+public class AXTree extends JTree {
+}

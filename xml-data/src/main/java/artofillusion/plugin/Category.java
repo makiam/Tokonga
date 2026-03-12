@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 by Maksim Khramov
+/* Copyright 2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -8,9 +8,17 @@
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
-package artofillusion.ui
+package artofillusion.plugin;
 
-import javax.swing.JTree
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import lombok.Data;
 
-class AXTree: JTree() {
+@XStreamAlias("category")
+@Data
+public class Category {
+
+    @XStreamAsAttribute
+    @XStreamAlias("class")
+    private String category;
 }

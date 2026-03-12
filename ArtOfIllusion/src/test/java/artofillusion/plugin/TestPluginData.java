@@ -59,6 +59,8 @@ class TestPluginData {
         Assertions.assertEquals("Extension", ext.getName());
         Assertions.assertEquals(0, ext.getCategoryList().size());
         Assertions.assertEquals(1, ext.getImports().size());
+        var id = ext.getImports().get(0);
+        Assertions.assertEquals("PreferencesPlugin", id.getName());
 
     }
 
@@ -150,6 +152,8 @@ class TestPluginData {
         Extension ext = (Extension)xstream.fromXML(TestPluginData.class.getResource("/artofillusion/plugin/HelpPlugin.xml").openStream());
         Assertions.assertNotNull(ext);
         Assertions.assertEquals(5, ext.getExternals().size());
+        var ei = ext.getExternals().get(0);
+        Assertions.assertEquals("file", ei.getType());
     }
 
 

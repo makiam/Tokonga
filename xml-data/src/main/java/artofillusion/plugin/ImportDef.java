@@ -1,4 +1,4 @@
-/* Copyright 2024 by Maksim Khramov
+/* Copyright 2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -8,18 +8,17 @@
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
-package artofillusion.plugin
+package artofillusion.plugin;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias
-import com.thoughtworks.xstream.annotations.XStreamImplicit
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import lombok.Data;
 
-
-@XStreamAlias("fileset")
-class Fileset {
-    @XStreamImplicit
-    private val files: MutableList<FilesetItem?>? = ArrayList<FilesetItem?>()
-
-    fun getFiles(): MutableList<FilesetItem?> {
-        return (files ?: mutableListOf<FilesetItem?>())
-    }
+@XStreamAlias("import")
+@Data
+public class ImportDef {
+    @XStreamAsAttribute
+    private String name;
+    @XStreamAsAttribute
+    private String url;
 }
