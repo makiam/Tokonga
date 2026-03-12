@@ -1641,7 +1641,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         while (ne[e.next].vertex != start) {
             ++count;
             if (count > ne.length) {
-                log.error("Error in getFaceVertices : face is not closed {}", nf[f].edge);
+                log.error("Error in getFaceVertices: face is not closed {}", nf[f].edge);
                 return null;
             }
             e = ne[e.next];
@@ -1666,9 +1666,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      */
     public int[] getFaceEdges(Wface f) {
         Wedge e = edges[f.edge];
-        int start = f.edge;
         int count = 1;
-        while (e.next != start) {
+        while (e.next != f.edge) {
             ++count;
             if (count > edges.length) {
                 log.error("Error: face is not closed {}", f.edge);
@@ -1680,7 +1679,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         e = edges[f.edge];
         fe[0] = f.edge;
         count = 0;
-        while (e.next != start) {
+        while (e.next != f.edge) {
             fe[++count] = e.next;
             e = edges[e.next];
         }
@@ -1696,12 +1695,11 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      */
     public int[] getVertexEdges(Wvertex v) {
         Wedge e = edges[v.edge];
-        int start = v.edge;
         int count = 1;
-        while (edges[e.hedge].next != start) {
+        while (edges[e.hedge].next != v.edge) {
             ++count;
             if (count > edges.length) {
-                log.error("Error : too many edges around a vertex ref {}", v.edge);
+                log.error("Error: too many edges around a vertex ref {}", v.edge);
                 return null;
             }
             e = edges[edges[e.hedge].next];
@@ -1710,7 +1708,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         e = edges[v.edge];
         ed[0] = v.edge;
         count = 0;
-        while (edges[e.hedge].next != start) {
+        while (edges[e.hedge].next != v.edge) {
             ed[++count] = edges[e.hedge].next;
             e = edges[edges[e.hedge].next];
         }
@@ -1732,7 +1730,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         while (nEdges[e.hedge].next != start) {
             ++count;
             if (count > nEdges.length) {
-                log.atError().log("Error : too many edges around a vertex (tmp edges). Edge {}", start);
+                log.atError().log("Error: too many edges around a vertex (tmp edges). Edge {}", start);
                 return -1;
             }
             e = nEdges[nEdges[e.hedge].next];
@@ -1753,7 +1751,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         while (edges[e.hedge].next != index) {
             ++count;
             if (count > edges.length) {
-                log.atError().log("Error : too many edges around a vertex. Edge {}", index);
+                log.atError().log("Error: too many edges around a vertex. Edge {}", index);
                 return -1;
             }
             e = edges[edges[e.hedge].next];
@@ -10153,7 +10151,6 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         Vec3[] normals = getNormals();
         int[] e;
         Vec3[] v;
-        Vec3 orig;
         Wvertex[] newVertices;
         Wedge[] newEdges;
         Wface[] newFaces;
@@ -10161,9 +10158,6 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         boolean[] tSel;
         int[] vertTable;
         int faceTable = 0;
-        double d;
-        int el;
-        int vl;
         int from;
         int to;
         int next;
@@ -10175,9 +10169,9 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 for (int j = 0; j < v.length; ++j) {
                     v[j] = vertices[edges[e[j]].vertex].r.minus(vertices[i].r);
                 }
-                orig = new Vec3(vertices[i].r);
+                Vec3 orig = new Vec3(vertices[i].r);
                 orig.subtract(normals[i].times(value));
-                d = -orig.dot(normals[i]);
+                double d = -orig.dot(normals[i]);
                 for (int j = 0; j < v.length; ++j) {
                     double t;
                     if (Math.abs(normals[i].dot(v[j])) < 1e-12) {
@@ -10196,8 +10190,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     }
                     v[j] = vertices[i].r.plus(v[j].times(t));
                 }
-                el = edges.length;
-                vl = vertices.length;
+                int el = edges.length;
+                int vl = vertices.length;
                 if (v.length == 2) {
                     newVertices = new Wvertex[vertices.length + 1];
                     tSel = newSel;
