@@ -1,4 +1,4 @@
-/* Copyright 2024 by Maksim Khramov
+/* Copyright 2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -8,10 +8,21 @@
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
-package artofillusion.plugin
+package artofillusion.plugin;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import lombok.Data;
 
-@XStreamAlias("import")
-data class ImportDef(@XStreamAsAttribute val name: String? = null, @XStreamAsAttribute val url: String? = null)
+@XStreamAlias("external")
+@Data
+public class External {
+    @XStreamAsAttribute
+    private String name;
+    @XStreamAsAttribute
+    private String type;
+    @XStreamAsAttribute
+    private String association;
+    @XStreamAsAttribute
+    private String action;
+}
