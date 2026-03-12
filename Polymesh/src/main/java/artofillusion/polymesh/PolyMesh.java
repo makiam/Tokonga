@@ -2031,19 +2031,19 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * @return a Map containing for each face the list of vertices
      */
     private Map<Integer, int[]> recordFacesTexture(boolean[] selected) {
-        Map<Integer, int[]> facesTextureIndexMap = null;
         ParameterValue[] oldParamVal = getParameterValues();
-        if (oldParamVal != null) {
-            for(ParameterValue parameterValue: oldParamVal) {
-                if (parameterValue instanceof FaceVertexParameterValue) {
-                    facesTextureIndexMap = new HashMap<>();
-                    for(int i = 0; i < faces.length; i++) {
-                        if (selected == null || selected[i]) {
-                            facesTextureIndexMap.put(i, getFaceVertices(faces[i]));
-                        }
+        if(oldParamVal == null) return null;
+
+        Map<Integer, int[]> facesTextureIndexMap = null;
+        for(ParameterValue parameterValue: oldParamVal) {
+            if (parameterValue instanceof FaceVertexParameterValue) {
+                facesTextureIndexMap = new HashMap<>();
+                for(int i = 0; i < faces.length; i++) {
+                    if (selected == null || selected[i]) {
+                        facesTextureIndexMap.put(i, getFaceVertices(faces[i]));
                     }
-                    break;
                 }
+                break;
             }
         }
         return facesTextureIndexMap;
