@@ -73,7 +73,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author Francois Guillet
  */
 @Slf4j
-@ImplementationVersion(current = 10, min = 0)
+@ImplementationVersion(current = 10)
 public final class PolyMesh extends Object3D implements FacetedMesh {
 
     private BoundingBox bounds; //the bounds enclosing the mesh
@@ -169,6 +169,12 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
     int[] invMirroredEdges;
 
+    /**
+     * -- GETTER --
+     *
+     * @return the mappingData
+     */
+    @Getter
     private UVMappingData mappingData; //UV Mapping
 
     private int mappingVertices;
@@ -191,11 +197,11 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
     private Color selectedFaceColor;
 
-
     private Color seamColor;
 
     private Color selectedSeamColor;
 
+    @Setter
     private int handleSize;
 
     //preferences
@@ -2365,7 +2371,9 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         if (norm.length() < 1e-8) {
             return false;
         }
-        double u, v, tmp;
+        double u;
+        double v;
+        double tmp;
         Vec3 p;
         vv1 = v2.minus(v1);
         vv2 = v3.minus(v1);
@@ -6470,9 +6478,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     }
                 }
                 break;
-            case X:
-            case Y:
-            case Z:
+            case X, Y, Z:
                 for (int i = 0; i < edges.length / 2; i++) {
                     if (selected[i]) {
                         if (!moved[edges[i].vertex]) {
@@ -6515,9 +6521,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                     vertices[i].r = v[i];
                 }
                 break;
-            case X:
-            case Y:
-            case Z:
+
+            case X, Y, Z:
                 for (int i = 0; i < faces.length; i++) {
                     if (selected[i]) {
 
@@ -10157,7 +10162,6 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         int[] vertTable;
         int faceTable = 0;
         double d;
-        double t;
         int el;
         int vl;
         int from;
@@ -10175,6 +10179,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 orig.subtract(normals[i].times(value));
                 d = -orig.dot(normals[i]);
                 for (int j = 0; j < v.length; ++j) {
+                    double t;
                     if (Math.abs(normals[i].dot(v[j])) < 1e-12) {
                         t = value / v[j].length();
                         if (t > 1) {
@@ -10258,8 +10263,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                         } else {
                             to = vl + j - 1;
                         }
-                        edges[el / 2 + j] = new Wedge(to, el + v.length + j,
-                                edges[e[j]].face, e[j]);
+                        edges[el / 2 + j] = new Wedge(to, el + v.length + j, edges[e[j]].face, e[j]);
                         edges[el / 2 + j].smoothness = 1.0f;
                         // faces[edges[e[j]].face].edge = el / 2 + j;
                         from = j - 1;
@@ -10277,8 +10281,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                         } else {
                             next = el + v.length + j - 1;
                         }
-                        edges[el + v.length + j] = new Wedge(from, el / 2 + j,
-                                faces.length - 1, next);
+                        edges[el + v.length + j] = new Wedge(from, el / 2 + j, faces.length - 1, next);
                         edges[el + v.length + j].smoothness = edges[el / 2 + j].smoothness;
                     }
                     faces[faces.length - 1] = new Wface(edges.length - 1);
@@ -12903,9 +12906,9 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         }
 
         /**
-         * Description of the Method
+         * Returns a string representation of the object.
          *
-         * @return Description of the Return Value
+         * @return Vertex string representation
          */
         @Override
         public String toString() {
@@ -12977,13 +12980,6 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             this.vert = vert;
             this.coef = coef;
         }
-    }
-
-    /**
-     * @return the mappingData
-     */
-    public UVMappingData getMappingData() {
-        return mappingData;
     }
 
     /**
@@ -13106,8 +13102,36 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
     }
 
     public RGBColor ColorToRGB(Color color) {
-        return new RGBColor(((float) color.getRed()) / 255.0f, ((float) color
-                .getGreen()) / 255.0f, ((float) color.getBlue()) / 255.0f);
+        return new RGBColor(((float) color.getRed()) / 255.0f, ((float) color.getGreen()) / 255.0f, ((float) color.getBlue()) / 255.0f);
+    }
 
+    private static class PolyMeshCustomColors {
+
+        private Color vertColor;
+        private Color selectedVertColor;
+        private Color edgeColor;
+        private Color selectedEdgeColor;
+
+        private Color seamColor;
+        private Color selectedSeamColor;
+        private Color selectedFaceColor;
+        private Color meshColor;
+
+        private void writeColor(DataOutputStream out, Color color) throws IOException {
+            out.writeInt(color.getRed());
+            out.writeInt(color.getGreen());
+            out.writeInt(color.getBlue());
+        }
+
+        public void write(DataOutputStream out) throws IOException {
+            writeColor(out, vertColor);
+            writeColor(out, selectedVertColor);
+            writeColor(out, edgeColor);
+            writeColor(out, selectedEdgeColor);
+            writeColor(out, seamColor);
+            writeColor(out, selectedSeamColor);
+            writeColor(out, meshColor);
+            writeColor(out, selectedFaceColor);
+        }
     }
 }
