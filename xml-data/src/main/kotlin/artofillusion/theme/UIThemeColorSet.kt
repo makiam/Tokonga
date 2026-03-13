@@ -52,13 +52,7 @@ data class ColorSetColor(@XStreamAsAttribute @XStreamAlias("R") val red: Int,
         fun getColor(): Color = java.awt.Color(this.red, this.green, this.blue)
 }
 
-@XStreamAlias("button")
-class Button {
-    @XStreamAsAttribute private val buttonClass: String = ""
 
-    @XStreamImplicit
-    val styles: List<ButtonStyle> = ArrayList()
-}
 @XStreamAlias("style")
 data class ButtonStyle(@XStreamAsAttribute @XStreamAlias("owner") val owner: String,
     @XStreamAsAttribute @XStreamAlias("notFound") val notFound: String,
@@ -67,4 +61,3 @@ data class ButtonStyle(@XStreamAsAttribute @XStreamAlias("owner") val owner: Str
     @XStreamAsAttribute @XStreamAlias("normal.icon") val normalIcon: String,
     @XStreamAsAttribute @XStreamAlias("selected.icon") val selectedIcon: String)
 
-data class Value(@XStreamAsAttribute @XStreamAlias("value") val value: Int)

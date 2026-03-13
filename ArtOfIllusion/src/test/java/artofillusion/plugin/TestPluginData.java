@@ -123,12 +123,22 @@ class TestPluginData {
     }
 
     @Test
-    void testResourceConstructor() {
+    void testResourceConstructor3() {
         var res = new Resource("UITheme", "gary.ElectricWax", "Theme1/theme.xml");
         Assertions.assertEquals("UITheme", res.getType());
         Assertions.assertEquals("gary.ElectricWax", res.getId());
         Assertions.assertEquals("Theme1/theme.xml", res.getName());
         Assertions.assertNull(res.getLocale());
+    }
+
+    @Test
+    void testResourceConstuctor() {
+        var res = new Resource("UITheme", "gary.ElectricWax", "Theme1/theme.xml", Locale.CHINA);
+        Assertions.assertEquals("UITheme", res.getType());
+        Assertions.assertEquals("gary.ElectricWax", res.getId());
+        Assertions.assertEquals("Theme1/theme.xml", res.getName());
+        Assertions.assertNotNull(res.getLocale());
+        Assertions.assertEquals(Locale.CHINA, res.getLocale());
     }
 
     @Test
