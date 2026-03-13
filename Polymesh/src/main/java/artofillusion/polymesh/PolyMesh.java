@@ -642,8 +642,9 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         int v;
         int[][] vertTable = new int[uSize][vSize];
         for (int i = 0; i < uSize * vSize; ++i) {
-            u = (int) Math.round(vertices[i].r.x);
-            v = (int) Math.round(vertices[i].r.y);
+            var r = vertices[i].r;
+            u = (int) Math.round(r.x);
+            v = (int) Math.round(r.y);
             if (i != u + uSize * v) {
                 log.info("pb");
             }
@@ -2369,32 +2370,25 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         if (norm.length() < 1e-8) {
             return false;
         }
-        double u;
-        double v;
-        double tmp;
+
         Vec3 p;
         vv1 = v2.minus(v1);
         vv2 = v3.minus(v1);
         p = norm.cross(vv2);
-        tmp = p.dot(vv1);
+        double tmp = p.dot(vv1);
 
         if (tmp < 1e-8 && tmp > -1e-8) {
             return false;
         }
         tmp = 1.0 / tmp;
         Vec3 s = pt.minus(v1);
-        u = tmp * s.dot(p);
+        double u = tmp * s.dot(p);
         if (u < -0.00001 || u > 1.00001) {
             return false;
         }
 
-        Vec3 q = s.cross(vv1);
-        v = tmp * norm.dot(q);
-        if (v < -0.00001 || v > 1.00001) {
-            return false;
-        }
-
-        return true;
+        double v = tmp * norm.dot(s.cross(vv1));
+        return !(v < -0.00001) && !(v > 1.00001);
 
     }
 
