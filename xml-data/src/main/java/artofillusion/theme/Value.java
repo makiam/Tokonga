@@ -12,20 +12,11 @@ package artofillusion.theme;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import lombok.Data;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
-@XStreamAlias("button")
 @Data
-public class Button {
-
+public class Value {
     @XStreamAsAttribute
-    private String buttonClass = "";
-
-    @XStreamImplicit
-    private List<ButtonStyle> styles = new ArrayList<>();
+    @XStreamAlias("value")
+    private Integer value;
 }

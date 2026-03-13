@@ -61,4 +61,3 @@ data class ButtonStyle(@XStreamAsAttribute @XStreamAlias("owner") val owner: Str
     @XStreamAsAttribute @XStreamAlias("normal.icon") val normalIcon: String,
     @XStreamAsAttribute @XStreamAlias("selected.icon") val selectedIcon: String)
 
-data class Value(@XStreamAsAttribute @XStreamAlias("value") val value: Int)
