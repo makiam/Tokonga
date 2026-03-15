@@ -36,16 +36,16 @@ public class SplineMesh extends Object3D implements Mesh {
 
     MeshVertex[] vertex;
     Skeleton skeleton;
-    boolean uСlosed;
-    boolean vСlosed;
+    private boolean uСlosed;
+    private boolean vСlosed;
     BoundingBox bounds;
     int usize;
     int vsize;
     int cachedUSize;
     int cachedVSize;
     int smoothingMethod;
-    float[] usmoothness;
-    float[] vsmoothness;
+    float[] uSmoothness;
+    float[] vSmoothness;
     SoftReference<RenderingMesh> cachedMesh;
     SoftReference<WireframeMesh> cachedWire;
 
@@ -102,10 +102,10 @@ public class SplineMesh extends Object3D implements Mesh {
         for (int i = 0; i < mesh.vertex.length; i++) {
             vertex[i] = new MeshVertex(mesh.vertex[i]);
         }
-        usmoothness = new float[mesh.usize];
-        System.arraycopy(mesh.usmoothness, 0, usmoothness, 0, mesh.usize);
-        vsmoothness = new float[mesh.vsize];
-        System.arraycopy(mesh.vsmoothness, 0, vsmoothness, 0, mesh.vsize);
+        uSmoothness = new float[mesh.usize];
+        System.arraycopy(mesh.uSmoothness, 0, uSmoothness, 0, mesh.usize);
+        vSmoothness = new float[mesh.vsize];
+        System.arraycopy(mesh.vSmoothness, 0, vSmoothness, 0, mesh.vsize);
         setSmoothingMethod(mesh.getSmoothingMethod());
         if (skeleton == null) {
             skeleton = mesh.skeleton.duplicate();
@@ -125,7 +125,6 @@ public class SplineMesh extends Object3D implements Mesh {
     void findBounds() {
         double minx, miny, minz, maxx, maxy, maxz;
         Vec3[] vert = null;
-        int i;
 
         if (cachedMesh != null) {
             RenderingMesh cached = cachedMesh.get();
@@ -147,7 +146,7 @@ public class SplineMesh extends Object3D implements Mesh {
         minx = maxx = vert[0].x;
         miny = maxy = vert[0].y;
         minz = maxz = vert[0].z;
-        for (i = 1; i < vert.length; i++) {
+        for (int i = 1; i < vert.length; i++) {
             minx = Math.min(minx, vert[i].x);
             maxx = Math.max(maxx, vert[i].x);
             miny = Math.min(miny, vert[i].y);
@@ -212,14 +211,14 @@ public class SplineMesh extends Object3D implements Mesh {
      * Get the array of U smoothness values.
      */
     public float[] getUSmoothness() {
-        return usmoothness;
+        return uSmoothness;
     }
 
     /**
      * Get the array of V smoothness values.
      */
     public float[] getVSmoothness() {
-        return vsmoothness;
+        return vSmoothness;
     }
 
     /**
@@ -248,7 +247,7 @@ public class SplineMesh extends Object3D implements Mesh {
     }
 
     /**
-     * Set the positions for all the vertices of the mesh from a two dimensional table.
+     * Set the positions for all the vertices of the mesh from a two-dimensional table.
      * The table dimensions should match the mesh u-v-dimensions.
      */
     public void setVertexPositions(Vec3[][] positions) {
@@ -275,9 +274,9 @@ public class SplineMesh extends Object3D implements Mesh {
     /**
      * Set the smoothness values.
      */
-    public void setSmoothness(float[] usmoothness, float[] vsmoothness) {
-        this.usmoothness = usmoothness;
-        this.vsmoothness = vsmoothness;
+    public void setSmoothness(float[] uSmoothness, float[] vSmoothness) {
+        this.uSmoothness = uSmoothness;
+        this.vSmoothness = vSmoothness;
         cachedMesh = null;
         cachedWire = null;
         bounds = null;
@@ -296,8 +295,8 @@ public class SplineMesh extends Object3D implements Mesh {
                 vertex[i + usize * j] = v[i][j];
             }
         }
-        this.usmoothness = uSmoothness;
-        this.vsmoothness = vSmoothness;
+        this.uSmoothness = uSmoothness;
+        this.vSmoothness = vSmoothness;
         cachedMesh = null;
         cachedWire = null;
         bounds = null;
@@ -448,11 +447,11 @@ public class SplineMesh extends Object3D implements Mesh {
 
         // First subdivide along the u direction.
         if (usize == 2) {
-            output = new Object[]{v, mesh.usmoothness, param};
+            output = new Object[]{v, mesh.uSmoothness, param};
         } else if (mesh.smoothingMethod == INTERPOLATING) {
-            output = interpOneAxis(v, mesh.usmoothness, param, mesh.uСlosed, tol);
+            output = interpOneAxis(v, mesh.uSmoothness, param, mesh.uСlosed, tol);
         } else {
-            output = approxOneAxis(v, mesh.usmoothness, param, mesh.uСlosed, tol);
+            output = approxOneAxis(v, mesh.uSmoothness, param, mesh.uСlosed, tol);
         }
         newv = (MeshVertex[][]) output[0];
         newus = (float[]) output[1];
@@ -472,11 +471,11 @@ public class SplineMesh extends Object3D implements Mesh {
             }
         }
         if (vsize == 2) {
-            output = new Object[]{v, mesh.vsmoothness, param};
+            output = new Object[]{v, mesh.vSmoothness, param};
         } else if (mesh.smoothingMethod == INTERPOLATING) {
-            output = interpOneAxis(v, mesh.vsmoothness, param, mesh.vСlosed, tol);
+            output = interpOneAxis(v, mesh.vSmoothness, param, mesh.vСlosed, tol);
         } else {
-            output = approxOneAxis(v, mesh.vsmoothness, param, mesh.vСlosed, tol);
+            output = approxOneAxis(v, mesh.vSmoothness, param, mesh.vСlosed, tol);
         }
 
         // Set all the fields of the mesh.
@@ -489,8 +488,8 @@ public class SplineMesh extends Object3D implements Mesh {
                 newMesh.vertex[i + newMesh.usize * j] = v[i][j];
             }
         }
-        newMesh.usmoothness = newus;
-        newMesh.vsmoothness = (float[]) output[1];
+        newMesh.uSmoothness = newus;
+        newMesh.vSmoothness = (float[]) output[1];
         newMesh.uСlosed = mesh.uСlosed;
         newMesh.vСlosed = mesh.vСlosed;
         newMesh.smoothingMethod = mesh.smoothingMethod;
@@ -873,8 +872,8 @@ public class SplineMesh extends Object3D implements Mesh {
 
         // First get the array of points.
         SplineMesh newmesh = subdivideMesh(this, tol);
-        us = newmesh.usmoothness;
-        vs = newmesh.vsmoothness;
+        us = newmesh.uSmoothness;
+        vs = newmesh.vSmoothness;
         cachedUSize = udim = newmesh.usize;
         cachedVSize = vdim = newmesh.vsize;
         point = new Vec3[newmesh.vertex.length];
@@ -1058,8 +1057,8 @@ public class SplineMesh extends Object3D implements Mesh {
         Vec3[] point;
 
         SplineMesh newmesh = subdivideMesh(this, tol);
-        us = newmesh.usmoothness;
-        vs = newmesh.vsmoothness;
+        us = newmesh.uSmoothness;
+        vs = newmesh.vSmoothness;
         udim = newmesh.usize;
         vdim = newmesh.vsize;
         point = new Vec3[newmesh.vertex.length];
@@ -1194,8 +1193,8 @@ public class SplineMesh extends Object3D implements Mesh {
         usize = in.readInt();
         vsize = in.readInt();
         vertex = new MeshVertex[usize * vsize];
-        usmoothness = new float[usize];
-        vsmoothness = new float[vsize];
+        uSmoothness = new float[usize];
+        vSmoothness = new float[vsize];
         if (version == 0) {
             for (int i = 0; i < paramValue.length; i++) {
                 paramValue[i] = new VertexParameterValue(new double[vertex.length]);
@@ -1212,10 +1211,10 @@ public class SplineMesh extends Object3D implements Mesh {
             }
         }
         for (int i = 0; i < usize; i++) {
-            usmoothness[i] = in.readFloat();
+            uSmoothness[i] = in.readFloat();
         }
         for (int i = 0; i < vsize; i++) {
-            vsmoothness[i] = in.readFloat();
+            vSmoothness[i] = in.readFloat();
         }
         uСlosed = in.readBoolean();
         vСlosed = in.readBoolean();
@@ -1236,10 +1235,10 @@ public class SplineMesh extends Object3D implements Mesh {
             out.writeDouble(meshVertex.ikWeight);
         }
         for (int i = 0; i < usize; i++) {
-            out.writeFloat(usmoothness[i]);
+            out.writeFloat(uSmoothness[i]);
         }
         for (int i = 0; i < vsize; i++) {
-            out.writeFloat(vsmoothness[i]);
+            out.writeFloat(vSmoothness[i]);
         }
         out.writeBoolean(uСlosed);
         out.writeBoolean(vСlosed);
@@ -1282,9 +1281,9 @@ public class SplineMesh extends Object3D implements Mesh {
                 vertex[i + usize * j] = vertex[usize - 1 - i + usize * j];
                 vertex[usize - 1 - i + usize * j] = swapVert;
             }
-            swapSmooth = usmoothness[i];
-            usmoothness[i] = usmoothness[usize - 1 - i];
-            usmoothness[usize - 1 - i] = swapSmooth;
+            swapSmooth = uSmoothness[i];
+            uSmoothness[i] = uSmoothness[usize - 1 - i];
+            uSmoothness[usize - 1 - i] = swapSmooth;
         }
         cachedMesh = null;
     }
@@ -1401,8 +1400,8 @@ public class SplineMesh extends Object3D implements Mesh {
         for (int i = 0; i < vertex.length; i++) {
             vertex[i].r.set(key.vertPos[i]);
         }
-        System.arraycopy(key.usmoothness, 0, usmoothness, 0, usmoothness.length);
-        System.arraycopy(key.vsmoothness, 0, vsmoothness, 0, vsmoothness.length);
+        System.arraycopy(key.uSmoothness, 0, uSmoothness, 0, uSmoothness.length);
+        System.arraycopy(key.vSmoothness, 0, vSmoothness, 0, vSmoothness.length);
         if (texParam != null && texParam.length > 0) {
             for (int i = 0; i < texParam.length; i++) {
                 paramValue[i] = key.paramValue[i].duplicate();
@@ -1428,7 +1427,7 @@ public class SplineMesh extends Object3D implements Mesh {
      */
     @Override
     public Object3D getPosableObject() {
-        SplineMesh m = (SplineMesh) duplicate();
+        SplineMesh m = duplicate();
         return new Actor(m);
     }
 
@@ -1438,7 +1437,8 @@ public class SplineMesh extends Object3D implements Mesh {
     public static class SplineMeshKeyframe extends MeshGesture {
 
         Vec3[] vertPos;
-        float[] usmoothness, vsmoothness;
+        float[] uSmoothness;
+        float[] vSmoothness;
         ParameterValue[] paramValue;
         Skeleton skeleton;
         SplineMesh mesh;
@@ -1447,13 +1447,13 @@ public class SplineMesh extends Object3D implements Mesh {
             this.mesh = mesh;
             skeleton = mesh.getSkeleton().duplicate();
             vertPos = new Vec3[mesh.vertex.length];
-            usmoothness = new float[mesh.usmoothness.length];
-            vsmoothness = new float[mesh.vsmoothness.length];
+            uSmoothness = new float[mesh.uSmoothness.length];
+            vSmoothness = new float[mesh.vSmoothness.length];
             for (int i = 0; i < vertPos.length; i++) {
                 vertPos[i] = new Vec3(mesh.vertex[i].r);
             }
-            System.arraycopy(mesh.usmoothness, 0, usmoothness, 0, usmoothness.length);
-            System.arraycopy(mesh.vsmoothness, 0, vsmoothness, 0, vsmoothness.length);
+            System.arraycopy(mesh.uSmoothness, 0, uSmoothness, 0, uSmoothness.length);
+            System.arraycopy(mesh.vSmoothness, 0, vSmoothness, 0, vSmoothness.length);
             paramValue = new ParameterValue[mesh.texParam.length];
             for (int i = 0; i < paramValue.length; i++) {
                 paramValue[i] = mesh.paramValue[i].duplicate();
@@ -1521,13 +1521,13 @@ public class SplineMesh extends Object3D implements Mesh {
             }
             k.skeleton = skeleton.duplicate();
             k.vertPos = new Vec3[vertPos.length];
-            k.usmoothness = new float[usmoothness.length];
-            k.vsmoothness = new float[vsmoothness.length];
+            k.uSmoothness = new float[uSmoothness.length];
+            k.vSmoothness = new float[vSmoothness.length];
             for (int i = 0; i < vertPos.length; i++) {
                 k.vertPos[i] = new Vec3(vertPos[i]);
             }
-            System.arraycopy(usmoothness, 0, k.usmoothness, 0, usmoothness.length);
-            System.arraycopy(vsmoothness, 0, k.vsmoothness, 0, vsmoothness.length);
+            System.arraycopy(uSmoothness, 0, k.uSmoothness, 0, uSmoothness.length);
+            System.arraycopy(vSmoothness, 0, k.vSmoothness, 0, vSmoothness.length);
             k.paramValue = new ParameterValue[paramValue.length];
             for (int i = 0; i < paramValue.length; i++) {
                 k.paramValue[i] = paramValue[i].duplicate();
@@ -1578,29 +1578,29 @@ public class SplineMesh extends Object3D implements Mesh {
             SplineMeshKeyframe avg = (SplineMeshKeyframe) average;
             for (int i = 0; i < weight.length; i++) {
                 SplineMeshKeyframe key = (SplineMeshKeyframe) p[i];
-                for (int j = 0; j < usmoothness.length; j++) {
-                    avg.usmoothness[j] += weight[i] * (key.usmoothness[j] - usmoothness[j]);
+                for (int j = 0; j < uSmoothness.length; j++) {
+                    avg.uSmoothness[j] += weight[i] * (key.uSmoothness[j] - uSmoothness[j]);
                 }
-                for (int j = 0; j < vsmoothness.length; j++) {
-                    avg.vsmoothness[j] += weight[i] * (key.vsmoothness[j] - vsmoothness[j]);
+                for (int j = 0; j < vSmoothness.length; j++) {
+                    avg.vSmoothness[j] += weight[i] * (key.vSmoothness[j] - vSmoothness[j]);
                 }
             }
 
             // Make sure all smoothness values are within legal bounds.
-            for (int i = 0; i < avg.usmoothness.length; i++) {
-                if (avg.usmoothness[i] < 0.0) {
-                    avg.usmoothness[i] = 0.0f;
+            for (int i = 0; i < avg.uSmoothness.length; i++) {
+                if (avg.uSmoothness[i] < 0.0) {
+                    avg.uSmoothness[i] = 0.0f;
                 }
-                if (avg.usmoothness[i] > 1.0) {
-                    avg.usmoothness[i] = 1.0f;
+                if (avg.uSmoothness[i] > 1.0) {
+                    avg.uSmoothness[i] = 1.0f;
                 }
             }
-            for (int i = 0; i < avg.vsmoothness.length; i++) {
-                if (avg.vsmoothness[i] < 0.0) {
-                    avg.vsmoothness[i] = 0.0f;
+            for (int i = 0; i < avg.vSmoothness.length; i++) {
+                if (avg.vSmoothness[i] < 0.0) {
+                    avg.vSmoothness[i] = 0.0f;
                 }
-                if (avg.vsmoothness[i] > 1.0) {
-                    avg.vsmoothness[i] = 1.0f;
+                if (avg.vSmoothness[i] > 1.0) {
+                    avg.vSmoothness[i] = 1.0f;
                 }
             }
         }
@@ -1624,13 +1624,13 @@ public class SplineMesh extends Object3D implements Mesh {
                     return false;
                 }
             }
-            for (int i = 0; i < usmoothness.length; i++) {
-                if (usmoothness[i] != key.usmoothness[i]) {
+            for (int i = 0; i < uSmoothness.length; i++) {
+                if (uSmoothness[i] != key.uSmoothness[i]) {
                     return false;
                 }
             }
-            for (int i = 0; i < vsmoothness.length; i++) {
-                if (vsmoothness[i] != key.vsmoothness[i]) {
+            for (int i = 0; i < vSmoothness.length; i++) {
+                if (vSmoothness[i] != key.vSmoothness[i]) {
                     return false;
                 }
             }
@@ -1709,12 +1709,12 @@ public class SplineMesh extends Object3D implements Mesh {
                 out.writeUTF(parameterValue.getClass().getName());
                 parameterValue.writeToStream(out);
             }
-            out.writeInt(usmoothness.length);
-            for (float v : usmoothness) {
+            out.writeInt(uSmoothness.length);
+            for (float v : uSmoothness) {
                 out.writeFloat(v);
             }
-            out.writeInt(vsmoothness.length);
-            for (float v : vsmoothness) {
+            out.writeInt(vSmoothness.length);
+            for (float v : vSmoothness) {
                 out.writeFloat(v);
             }
             Joint[] joint = skeleton.getJoints();
@@ -1758,13 +1758,13 @@ public class SplineMesh extends Object3D implements Mesh {
                     paramValue[i] = readParameterValue(in);
                 }
             }
-            usmoothness = new float[in.readInt()];
-            for (int i = 0; i < usmoothness.length; i++) {
-                usmoothness[i] = in.readFloat();
+            uSmoothness = new float[in.readInt()];
+            for (int i = 0; i < uSmoothness.length; i++) {
+                uSmoothness[i] = in.readFloat();
             }
-            vsmoothness = new float[in.readInt()];
-            for (int i = 0; i < vsmoothness.length; i++) {
-                vsmoothness[i] = in.readFloat();
+            vSmoothness = new float[in.readInt()];
+            for (int i = 0; i < vSmoothness.length; i++) {
+                vSmoothness[i] = in.readFloat();
             }
             skeleton = mesh.getSkeleton().duplicate();
             Joint[] joint = skeleton.getJoints();

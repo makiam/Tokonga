@@ -100,8 +100,9 @@ public abstract class MeshGesture implements Gesture {
                 if (index == -1) {
                     continue;
                 }
-                Joint j1 = joint[index], j2 = jt[index];
-                double wt = (j2.parent == null ? 1.0 : v.ikWeight);
+                Joint j1 = joint[index];
+                Joint j2 = jt[index];
+                double wt = j2.parent == null ? 1.0 : v.ikWeight;
                 avgPos[j].set(vertPos[j]);
                 j1.coords.toLocal().transform(avgPos[j]);
                 j2.coords.fromLocal().transform(avgPos[j]);
@@ -132,7 +133,9 @@ public abstract class MeshGesture implements Gesture {
                 } else {
                     // Add up the offsets in the coordinate systems of the joints.
 
-                    Joint j1 = joint[index], j2 = jt[index], j3 = key.getSkeleton().getJoint(j1.id);
+                    Joint j1 = joint[index];
+                    Joint j2 = jt[index];
+                    Joint j3 = key.getSkeleton().getJoint(j1.id);
                     double wt = (j1.parent == null ? 1.0 : v.ikWeight);
                     temp1.set(keyPos[j]);
                     temp2.set(vertPos[j]);

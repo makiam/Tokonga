@@ -218,7 +218,9 @@ public class Curve extends Object3D implements Mesh {
     @Override
     public void setSize(double xsize, double ysize, double zsize) {
         Vec3 size = getBounds().getSize();
-        double xscale, yscale, zscale;
+        double xscale;
+        double yscale;
+        double zscale;
 
         if (size.x == 0.0) {
             xscale = 1.0;
@@ -292,7 +294,7 @@ public class Curve extends Object3D implements Mesh {
      */
     public Curve subdivideCurve() {
         if (vertex.length < 2) {
-            return (Curve) duplicate();
+            return duplicate();
         }
         if (vertex.length == 2) {
             Vec3[] newpos = new Vec3[]{new Vec3(vertex[0].r), vertex[0].r.plus(vertex[1].r).times(0.5), new Vec3(vertex[1].r)};
@@ -305,7 +307,8 @@ public class Curve extends Object3D implements Mesh {
         }
         Vec3[] newpos;
         float[] news;
-        int i, j;
+        int i;
+        int j;
         if (closed) {
             newpos = new Vec3[v.length * 2];
             news = new float[smoothness.length * 2];
@@ -387,7 +390,10 @@ public class Curve extends Object3D implements Mesh {
      * from which the new point will be calculated.
      */
     public static Vec3 calcInterpPoint(Vec3[] v, float[] s, int i, int j, int k, int m) {
-        double w1, w2, w3, w4;
+        double w1;
+        double w2;
+        double w3;
+        double w4;
 
         w1 = -0.0625 * s[j];
         w2 = 0.5 - w1;
@@ -400,7 +406,8 @@ public class Curve extends Object3D implements Mesh {
     }
 
     public static Vec3 calcApproxPoint(Vec3[] v, float[] s, int i, int j, int k) {
-        double w1 = 0.125 * s[j], w2 = 1.0 - 2.0 * w1;
+        double w1 = 0.125 * s[j];
+        double w2 = 1.0 - 2.0 * w1;
 
         return new Vec3(w1 * v[i].x + w2 * v[j].x + w1 * v[k].x,
                 w1 * v[i].y + w2 * v[j].y + w1 * v[k].y,
@@ -440,7 +447,8 @@ public class Curve extends Object3D implements Mesh {
         int min;
         int[] index = new int[vertex.length];
         int[][] faces = new int[vertex.length - 2][3];
-        double dir, dir2;
+        double dir;
+        double dir2;
         boolean inside;
 
         // Find the largest dimension of the line, and project the vertices onto the other two.
@@ -557,11 +565,8 @@ public class Curve extends Object3D implements Mesh {
      * other vertices.
      */
     boolean containsPoints(Vec2[] v2, int[] index, int count, int which) {
-        Vec2 va;
-        Vec2 vb;
-        Vec2 v;
-        double a, b, c;
-        int i, prev, next;
+        int prev;
+        int next;
 
         if (which == 0) {
             prev = count - 1;
@@ -573,16 +578,16 @@ public class Curve extends Object3D implements Mesh {
         } else {
             next = which + 1;
         }
-        va  = v2[index[which]].minus(v2[index[prev]]);
-        vb = v2[index[which]].minus(v2[index[next]]);
-        a = va.cross(vb);
+        Vec2 va = v2[index[which]].minus(v2[index[prev]]);
+        Vec2 vb = v2[index[which]].minus(v2[index[next]]);
+        double a = va.cross(vb);
         va.scale(1.0 / a);
         vb.scale(1.0 / a);
-        for (i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++) {
             if (i != prev && i != which && i != next) {
-                v = v2[index[i]].minus(v2[index[which]]);
-                b = vb.cross(v);
-                c = v.cross(va);
+                Vec2 v = v2[index[i]].minus(v2[index[which]]);
+                double b = vb.cross(v);
+                double c = v.cross(va);
                 a = 1 - b - c;
                 if (a >= 0.0 && a <= 1.0 && b >= 0.0 && b <= 1.0 && c >= 0.0 && c <= 1.0) {
                     return true;
@@ -640,7 +645,7 @@ public class Curve extends Object3D implements Mesh {
      * constructor which reads the necessary data from an input stream. The other writes
      * the object's representation to an output stream.
      */
-    public Curve(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+    public Curve(DataInputStream in, Scene theScene) throws IOException {
         super(in, theScene);
 
         short version = in.readShort();
@@ -737,7 +742,7 @@ public class Curve extends Object3D implements Mesh {
      */
     @Override
     public Object3D getPosableObject() {
-        Curve m = (Curve) duplicate();
+        Curve m = duplicate();
         return new Actor(m);
     }
 
