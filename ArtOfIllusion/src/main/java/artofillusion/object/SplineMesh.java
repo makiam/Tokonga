@@ -20,6 +20,7 @@ import artofillusion.math.*;
 import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
+import lombok.Getter;
 import org.jetbrains.annotations.VisibleForTesting;
 
 import java.io.*;
@@ -36,8 +37,18 @@ public class SplineMesh extends Object3D implements Mesh {
 
     MeshVertex[] vertex;
     Skeleton skeleton;
-    private boolean uСlosed;
-    private boolean vСlosed;
+    /**
+     * -- GETTER --
+     *  Determine whether this mesh is closed in the U direction.
+     */
+    @Getter
+    private boolean uClosed;
+    /**
+     * -- GETTER --
+     *  Determine whether this mesh is closed in the V direction.
+     */
+    @Getter
+    private boolean vClosed;
     BoundingBox bounds;
     int usize;
     int vsize;
@@ -70,8 +81,8 @@ public class SplineMesh extends Object3D implements Mesh {
      */
     public SplineMesh(Vec3[][] v, float[] uSmoothness, float[] vSmoothness, int smoothingMethod, boolean uClosed, boolean vClosed) {
         this.smoothingMethod = smoothingMethod;
-        this.uСlosed = uClosed;
-        this.vСlosed = vClosed;
+        this.uClosed = uClosed;
+        this.vClosed = vClosed;
         setSkeleton(new Skeleton());
         MeshVertex[][] vert = new MeshVertex[v.length][v[0].length];
         for (int i = 0; i < v.length; i++) {
@@ -114,8 +125,8 @@ public class SplineMesh extends Object3D implements Mesh {
         }
         usize = mesh.usize;
         vsize = mesh.vsize;
-        uСlosed = mesh.uСlosed;
-        vСlosed = mesh.vСlosed;
+        uClosed = mesh.uClosed;
+        vClosed = mesh.vClosed;
         copyTextureAndMaterial(obj);
     }
 
@@ -123,7 +134,12 @@ public class SplineMesh extends Object3D implements Mesh {
      * Calculate the (approximate) bounding box for the mesh.
      */
     void findBounds() {
-        double minx, miny, minz, maxx, maxy, maxz;
+        double minx;
+        double miny;
+        double minz;
+        double maxx;
+        double maxy;
+        double maxz;
         Vec3[] vert = null;
 
         if (cachedMesh != null) {
@@ -303,34 +319,22 @@ public class SplineMesh extends Object3D implements Mesh {
     }
 
     /**
-     * Determine whether this mesh is closed in the U direction.
-     */
-    public boolean isUClosed() {
-        return uСlosed;
-    }
-
-    /**
-     * Determine whether this mesh is closed in the V direction.
-     */
-    public boolean isVClosed() {
-        return vСlosed;
-    }
-
-    /**
      * Determine whether this mesh is completely closed.
      */
     @Override
     public boolean isClosed() {
-        if (!vСlosed) {
-            Vec3 v1 = vertex[0].r, v2 = vertex[usize * (vsize - 1)].r;
+        if (!vClosed) {
+            Vec3 v1 = vertex[0].r;
+            Vec3 v2 = vertex[usize * (vsize - 1)].r;
             for (int i = 1; i < usize; i++) {
                 if (v1.distance2(vertex[i].r) > 1e-24 || v2.distance2(vertex[i + usize * (vsize - 1)].r) > 1e-24) {
                     return false;
                 }
             }
         }
-        if (!uСlosed) {
-            Vec3 v1 = vertex[0].r, v2 = vertex[usize - 1].r;
+        if (!uClosed) {
+            Vec3 v1 = vertex[0].r;
+            Vec3 v2 = vertex[usize - 1].r;
             for (int i = 1; i < vsize; i++) {
                 if (v1.distance2(vertex[i * usize].r) > 1e-24 || v2.distance2(vertex[i * usize + usize - 1].r) > 1e-24) {
                     return false;
@@ -344,8 +348,8 @@ public class SplineMesh extends Object3D implements Mesh {
      * Set whether this mesh is closed in each direction.
      */
     public void setClosed(boolean u, boolean v) {
-        uСlosed = u;
-        vСlosed = v;
+        uClosed = u;
+        vClosed = v;
         cachedMesh = null;
         cachedWire = null;
         bounds = null;
@@ -357,7 +361,9 @@ public class SplineMesh extends Object3D implements Mesh {
     @Override
     public void setSize(double xsize, double ysize, double zsize) {
         Vec3 size = getBounds().getSize();
-        double xscale, yscale, zscale;
+        double xscale;
+        double yscale;
+        double zscale;
 
         if (size.x == 0.0) {
             xscale = 1.0;
@@ -449,9 +455,9 @@ public class SplineMesh extends Object3D implements Mesh {
         if (usize == 2) {
             output = new Object[]{v, mesh.uSmoothness, param};
         } else if (mesh.smoothingMethod == INTERPOLATING) {
-            output = interpOneAxis(v, mesh.uSmoothness, param, mesh.uСlosed, tol);
+            output = interpOneAxis(v, mesh.uSmoothness, param, mesh.uClosed, tol);
         } else {
-            output = approxOneAxis(v, mesh.uSmoothness, param, mesh.uСlosed, tol);
+            output = approxOneAxis(v, mesh.uSmoothness, param, mesh.uClosed, tol);
         }
         newv = (MeshVertex[][]) output[0];
         newus = (float[]) output[1];
@@ -473,9 +479,9 @@ public class SplineMesh extends Object3D implements Mesh {
         if (vsize == 2) {
             output = new Object[]{v, mesh.vSmoothness, param};
         } else if (mesh.smoothingMethod == INTERPOLATING) {
-            output = interpOneAxis(v, mesh.vSmoothness, param, mesh.vСlosed, tol);
+            output = interpOneAxis(v, mesh.vSmoothness, param, mesh.vClosed, tol);
         } else {
-            output = approxOneAxis(v, mesh.vSmoothness, param, mesh.vСlosed, tol);
+            output = approxOneAxis(v, mesh.vSmoothness, param, mesh.vClosed, tol);
         }
 
         // Set all the fields of the mesh.
@@ -490,8 +496,8 @@ public class SplineMesh extends Object3D implements Mesh {
         }
         newMesh.uSmoothness = newus;
         newMesh.vSmoothness = (float[]) output[1];
-        newMesh.uСlosed = mesh.uСlosed;
-        newMesh.vСlosed = mesh.vСlosed;
+        newMesh.uClosed = mesh.uClosed;
+        newMesh.vClosed = mesh.vClosed;
         newMesh.smoothingMethod = mesh.smoothingMethod;
         newMesh.skeleton = mesh.skeleton.duplicate();
         newMesh.copyTextureAndMaterial(mesh);
@@ -516,14 +522,21 @@ public class SplineMesh extends Object3D implements Mesh {
      * the subdivided matrix, the new list of smoothness values, and the new list of parameter values.
      */
     private static Object[] interpOneAxis(MeshVertex[][] v, float[] s, double[][][] param, boolean closed, double tol) {
-        boolean[] refine, newrefine;
+        boolean[] refine;
+        boolean[] newrefine;
         float[] news;
         int numParam = param[0][0].length;
         double[] paramTemp = new double[numParam];
         double[][][] newparam;
         Vec3 temp;
         MeshVertex[][] newv;
-        int i, j, k, count, p1, p3, p4;
+        int i;
+        int j;
+        int k;
+        int count;
+        int p1;
+        int p3;
+        int p4;
         double tol2 = tol * tol;
 
         if (closed) {
@@ -619,14 +632,20 @@ public class SplineMesh extends Object3D implements Mesh {
      * the subdivided matrix, the new list of smoothness values, and the new list of parameter values.
      */
     private static Object[] approxOneAxis(MeshVertex[][] v, float[] s, double[][][] param, boolean closed, double tol) {
-        boolean[] refine, newrefine;
+        boolean[] refine;
+        boolean[] newrefine;
         float[] news;
         int numParam = param[0][0].length;
         double[] paramTemp = new double[numParam];
         double[][][] newparam;
         Vec3 temp;
         MeshVertex[][] newv;
-        int i, j, k, count, p1, p3;
+        int i;
+        int j;
+        int k;
+        int count;
+        int p1;
+        int p3;
 
         refine = new boolean[v[0].length];
         for (i = 0; i < refine.length; i++) {
@@ -803,10 +822,10 @@ public class SplineMesh extends Object3D implements Mesh {
 
         // Determine how many lines there will be.
         i = udim * (vdim - 1) + vdim * (udim - 1);
-        if (uСlosed) {
+        if (uClosed) {
             i += vdim;
         }
-        if (vСlosed) {
+        if (vClosed) {
             i += udim;
         }
 
@@ -829,13 +848,13 @@ public class SplineMesh extends Object3D implements Mesh {
             from[k] = udim - 1 + udim * i;
             to[k++] = udim - 1 + udim * (i + 1);
         }
-        if (uСlosed) {
+        if (uClosed) {
             for (i = 0; i < vdim; i++) {
                 from[k] = i * udim;
                 to[k++] = i * udim + udim - 1;
             }
         }
-        if (vСlosed) {
+        if (vClosed) {
             for (i = 0; i < udim; i++) {
                 from[k] = i;
                 to[k++] = i + udim * (vdim - 1);
@@ -889,7 +908,7 @@ public class SplineMesh extends Object3D implements Mesh {
             for (j = 0; j < vdim; j++) {
                 u1 = i - 1;
                 if (u1 == -1) {
-                    if (uСlosed) {
+                    if (uClosed) {
                         u1 = udim - 1;
                     } else {
                         u1 = 0;
@@ -897,7 +916,7 @@ public class SplineMesh extends Object3D implements Mesh {
                 }
                 u2 = i + 1;
                 if (u2 == udim) {
-                    if (uСlosed) {
+                    if (uClosed) {
                         u2 = 0;
                     } else {
                         u2 = i;
@@ -905,7 +924,7 @@ public class SplineMesh extends Object3D implements Mesh {
                 }
                 v1 = j - 1;
                 if (v1 == -1) {
-                    if (vСlosed) {
+                    if (vClosed) {
                         v1 = vdim - 1;
                     } else {
                         v1 = 0;
@@ -913,7 +932,7 @@ public class SplineMesh extends Object3D implements Mesh {
                 }
                 v2 = j + 1;
                 if (v2 == vdim) {
-                    if (vСlosed) {
+                    if (vClosed) {
                         v2 = 0;
                     } else {
                         v2 = j;
@@ -955,13 +974,13 @@ public class SplineMesh extends Object3D implements Mesh {
 
         // Determine how many triangles there will be.
         i = (udim - 1) * (vdim - 1);
-        if (uСlosed) {
+        if (uClosed) {
             i += vdim - 1;
         }
-        if (vСlosed) {
+        if (vClosed) {
             i += udim - 1;
         }
-        if (uСlosed && vСlosed) {
+        if (uClosed && vClosed) {
             i++;
         }
         i *= 2;
@@ -975,19 +994,19 @@ public class SplineMesh extends Object3D implements Mesh {
                 tri[k++] = texMapping.mapTriangle(i + udim * j, i + 1 + udim * (j + 1), i + udim * (j + 1), normIndex[i][j][3], normIndex[i + 1][j + 1][0], normIndex[i][j + 1][1], point);
             }
         }
-        if (uСlosed) {
+        if (uClosed) {
             for (i = 0; i < vdim - 1; i++) {
                 tri[k++] = texMapping.mapTriangle((i + 1) * udim - 1, i * udim, (i + 1) * udim, normIndex[udim - 1][i][3], normIndex[0][i][2], normIndex[0][i + 1][0], point);
                 tri[k++] = texMapping.mapTriangle((i + 1) * udim - 1, (i + 1) * udim, (i + 2) * udim - 1, normIndex[udim - 1][i][3], normIndex[0][i + 1][0], normIndex[udim - 1][i + 1][1], point);
             }
         }
-        if (vСlosed) {
+        if (vClosed) {
             for (i = 0; i < udim - 1; i++) {
                 tri[k++] = texMapping.mapTriangle(i + udim * (vdim - 1), i + 1 + udim * (vdim - 1), i + 1, normIndex[i][vdim - 1][3], normIndex[i + 1][vdim - 1][2], normIndex[i + 1][0][0], point);
                 tri[k++] = texMapping.mapTriangle(i + udim * (vdim - 1), i + 1, i, normIndex[i][vdim - 1][3], normIndex[i + 1][0][0], normIndex[i][0][1], point);
             }
         }
-        if (uСlosed && vСlosed) {
+        if (uClosed && vClosed) {
             tri[k++] = texMapping.mapTriangle(udim * vdim - 1, udim * (vdim - 1), 0, normIndex[udim - 1][vdim - 1][3], normIndex[0][vdim - 1][2], normIndex[0][0][0], point);
             tri[k++] = texMapping.mapTriangle(udim * vdim - 1, 0, udim - 1, normIndex[udim - 1][vdim - 1][3], normIndex[0][0][0], normIndex[udim - 1][0][1], point);
         }
@@ -1068,13 +1087,13 @@ public class SplineMesh extends Object3D implements Mesh {
 
         // Determine how many triangles there will be.
         i = (udim - 1) * (vdim - 1);
-        if (uСlosed) {
+        if (uClosed) {
             i += vdim - 1;
         }
-        if (vСlosed) {
+        if (vClosed) {
             i += udim - 1;
         }
-        if (uСlosed && vСlosed) {
+        if (uClosed && vClosed) {
             i++;
         }
         i *= 2;
@@ -1088,19 +1107,19 @@ public class SplineMesh extends Object3D implements Mesh {
                 faces[k++] = new int[]{i + udim * j, i + 1 + udim * (j + 1), i + udim * (j + 1)};
             }
         }
-        if (uСlosed) {
+        if (uClosed) {
             for (i = 0; i < vdim - 1; i++) {
                 faces[k++] = new int[]{(i + 1) * udim - 1, i * udim, (i + 1) * udim};
                 faces[k++] = new int[]{(i + 1) * udim - 1, (i + 1) * udim, (i + 2) * udim - 1};
             }
         }
-        if (vСlosed) {
+        if (vClosed) {
             for (i = 0; i < udim - 1; i++) {
                 faces[k++] = new int[]{i + udim * (vdim - 1), i + 1 + udim * (vdim - 1), i + 1};
                 faces[k++] = new int[]{i + udim * (vdim - 1), i + 1, i};
             }
         }
-        if (uСlosed && vСlosed) {
+        if (uClosed && vClosed) {
             faces[k++] = new int[]{udim * vdim - 1, udim * (vdim - 1), 0};
             faces[k++] = new int[]{udim * vdim - 1, 0, udim - 1};
         }
@@ -1216,8 +1235,8 @@ public class SplineMesh extends Object3D implements Mesh {
         for (int i = 0; i < vsize; i++) {
             vSmoothness[i] = in.readFloat();
         }
-        uСlosed = in.readBoolean();
-        vСlosed = in.readBoolean();
+        uClosed = in.readBoolean();
+        vClosed = in.readBoolean();
         smoothingMethod = in.readInt();
         skeleton = new Skeleton(in);
         findBounds();
@@ -1240,8 +1259,8 @@ public class SplineMesh extends Object3D implements Mesh {
         for (int i = 0; i < vsize; i++) {
             out.writeFloat(vSmoothness[i]);
         }
-        out.writeBoolean(uСlosed);
-        out.writeBoolean(vСlosed);
+        out.writeBoolean(uClosed);
+        out.writeBoolean(vClosed);
         out.writeInt(smoothingMethod);
         skeleton.writeToStream(out);
     }
@@ -1294,8 +1313,14 @@ public class SplineMesh extends Object3D implements Mesh {
      */
     @Override
     public Vec3[] getNormals() {
-        Vec3[] point = new Vec3[vertex.length], norm = new Vec3[vertex.length];
-        int u1, u2, v1, v2, i, j;
+        Vec3[] point = new Vec3[vertex.length];
+        Vec3[] norm = new Vec3[vertex.length];
+        int u1;
+        int u2;
+        int v1;
+        int v2;
+        int i;
+        int j;
 
         for (i = 0; i < vertex.length; i++) {
             point[i] = vertex[i].r;
@@ -1304,7 +1329,7 @@ public class SplineMesh extends Object3D implements Mesh {
             for (j = 0; j < vsize; j++) {
                 u1 = i - 1;
                 if (u1 == -1) {
-                    if (uСlosed) {
+                    if (uClosed) {
                         u1 = usize - 1;
                     } else {
                         u1 = 0;
@@ -1312,7 +1337,7 @@ public class SplineMesh extends Object3D implements Mesh {
                 }
                 u2 = i + 1;
                 if (u2 == usize) {
-                    if (uСlosed) {
+                    if (uClosed) {
                         u2 = 0;
                     } else {
                         u2 = i;
@@ -1320,7 +1345,7 @@ public class SplineMesh extends Object3D implements Mesh {
                 }
                 v1 = j - 1;
                 if (v1 == -1) {
-                    if (vСlosed) {
+                    if (vClosed) {
                         v1 = vsize - 1;
                     } else {
                         v1 = 0;
@@ -1328,7 +1353,7 @@ public class SplineMesh extends Object3D implements Mesh {
                 }
                 v2 = j + 1;
                 if (v2 == vsize) {
-                    if (vСlosed) {
+                    if (vClosed) {
                         v2 = 0;
                     } else {
                         v2 = j;
@@ -1351,13 +1376,13 @@ public class SplineMesh extends Object3D implements Mesh {
             return PROPERTIES[0].getAllowedValues()[smoothingMethod - 2];
         }
         Object[] values = PROPERTIES[1].getAllowedValues();
-        if (uСlosed && !vСlosed) {
+        if (uClosed && !vClosed) {
             return values[0];
         }
-        if (!uСlosed && vСlosed) {
+        if (!uClosed && vClosed) {
             return values[1];
         }
-        if (uСlosed && vСlosed) {
+        if (uClosed && vClosed) {
             return values[2];
         }
         return values[3];

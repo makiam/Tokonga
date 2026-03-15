@@ -185,9 +185,7 @@ public class Curve extends Object3D implements Mesh {
      * Set the smoothness values for all vertices.
      */
     public void setSmoothness(float[] s) {
-        for (int i = 0; i < s.length; i++) {
-            smoothness[i] = s[i];
-        }
+        System.arraycopy(s, 0, smoothness, 0, s.length);
         clearCachedMesh();
     }
 
@@ -889,10 +887,9 @@ public class Curve extends Object3D implements Mesh {
          */
         @Override
         public boolean equals(Keyframe k) {
-            if (!(k instanceof CurveKeyframe)) {
+            if (!(k instanceof CurveKeyframe key)) {
                 return false;
             }
-            CurveKeyframe key = (CurveKeyframe) k;
             for (int i = 0; i < vertPos.length; i++) {
                 if (!vertPos[i].equals(key.vertPos[i])) {
                     return false;
