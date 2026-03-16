@@ -869,7 +869,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             return;
         }
         PolyMesh mesh = (PolyMesh) objInfo.object;
-        Wvertex[] vertices = (Wvertex[]) mesh.getVertices();
+        Wvertex[] vertices = mesh.getVertices();
         for (int i = 0; i < selected.length; i++) {
             selected[i] |= (vertices[i].type == Wvertex.CORNER);
         }
@@ -1389,7 +1389,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                     if (mesh.getSmoothingMethod() == Mesh.APPROXIMATING) {
                         cornerCB.setEnabled(true);
                         boolean corner = true;
-                        Wvertex[] vertices = (Wvertex[]) mesh.getVertices();
+                        Wvertex[] vertices = mesh.getVertices();
                         if (selected != null && selected.length == vertices.length) {
                             for (i = 0; i < selected.length; i++) {
                                 if (selected[i]) {
@@ -1504,7 +1504,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             ((BMenuItem) edgePopupMenuItem[j]).setEnabled(mesh.getSeams() != null);
         }
 
-        // ( (BMenuItem) edgeMenuItem[4] ).setEnabled( false );
         templateItem.setEnabled(theView[currentView].getTemplateImage() != null);
         Skeleton s = mesh.getSkeleton();
         Joint selJoint = s.getJoint(view.getSelectedJoint());
@@ -2060,7 +2059,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         PolyMesh mesh = (PolyMesh) objInfo.object;
         mesh.copyObject(priorValueMesh);
         objectChanged();
-        PolyMesh valueMesh = null;
+
         priorValueMesh = null;
         setSelection(valueSelection);
         updateImage();
@@ -2725,11 +2724,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     void setSmoothnessCommand() {
         final PolyMesh theMesh = (PolyMesh) objInfo.getGeometry();
         PolyMesh prevMesh = theMesh.duplicate();
-        final Wvertex[] vt = (Wvertex[]) theMesh.getVertices();
+
         final Wedge[] ed = theMesh.getEdges();
         final boolean pointmode = (selectMode == POINT_MODE);
         final ActionProcessor processor = new ActionProcessor();
-        float value;
         final ValueSlider smoothness;
         int i;
 
@@ -2741,8 +2739,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         /*
 		 * if ( pointmode ) valueWidget.getValue() = vt[i].smoothness; else
          */
-        value = ed[i].smoothness;
-        value = 0.001f * (Math.round(valueWidget.getValue() * 1000.0f));
         smoothness = new ValueSlider(0.0, 1.0, 1000, valueWidget.getValue());
         smoothness.addEventLink(ValueChangedEvent.class, new Object() {
             void processEvent() {
@@ -2766,9 +2762,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                                 // }
                             }
                         }
-                        theMesh
-                                .setSmoothingMethod(theMesh
-                                        .getSmoothingMethod());
+                        theMesh.setSmoothingMethod(theMesh.getSmoothingMethod());
                         objectChanged();
                         updateImage();
 
@@ -3205,7 +3199,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     @Override
     public void setSelection(boolean[] sel) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
-        Wvertex[] verts = (Wvertex[]) mesh.getVertices();
+        Wvertex[] verts = mesh.getVertices();
         Wedge[] edges = mesh.getEdges();
         if (selectMode == POINT_MODE && sel.length == verts.length) {
             selected = sel;
@@ -3245,23 +3239,23 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         setObject(obj);
         hideVert = new boolean[mesh.getVertices().length];
         for(var viewerCanvas: theView) {
-            if(getSelectionMode() == PolyMeshEditorWindow.POINT_MODE && selected.length != obj.getVertices().length) {
+            if(getSelectionMode() == MeshEditController.POINT_MODE && selected.length != obj.getVertices().length) {
                 ((PolyMeshViewer) viewerCanvas).visible = new boolean[obj.getVertices().length];
             }
-            if(getSelectionMode() == PolyMeshEditorWindow.EDGE_MODE && selected.length != obj.getEdges().length / 2) {
+            if(getSelectionMode() == MeshEditController.EDGE_MODE && selected.length != obj.getEdges().length / 2) {
                 ((PolyMeshViewer) viewerCanvas).visible = new boolean[obj.getEdges().length];
             }
-            if(getSelectionMode() == PolyMeshEditorWindow.FACE_MODE && selected.length != obj.getFaces().length) {
+            if(getSelectionMode() == MeshEditController.FACE_MODE && selected.length != obj.getFaces().length) {
                 ((PolyMeshViewer) viewerCanvas).visible = new boolean[obj.getFaces().length];
             }
         }
-        if (getSelectionMode() == PolyMeshEditorWindow.POINT_MODE && selected.length != obj.getVertices().length) {
+        if (getSelectionMode() == MeshEditController.POINT_MODE && selected.length != obj.getVertices().length) {
             selected = new boolean[obj.getVertices().length];
         }
-        if (getSelectionMode() == PolyMeshEditorWindow.EDGE_MODE && selected.length != obj.getEdges().length / 2) {
+        if (getSelectionMode() == MeshEditController.EDGE_MODE && selected.length != obj.getEdges().length / 2) {
             selected = new boolean[obj.getEdges().length / 2];
         }
-        if (getSelectionMode() == PolyMeshEditorWindow.FACE_MODE && selected.length != obj.getFaces().length) {
+        if (getSelectionMode() == MeshEditController.FACE_MODE && selected.length != obj.getFaces().length) {
             selected = new boolean[obj.getFaces().length];
         }
         if (hideFace != null) {
@@ -3406,7 +3400,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private void doSelectBoundary(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
         Wedge[] edges = mesh.getEdges();
-        Wvertex[] vertices = (Wvertex[]) mesh.getVertices();
+        Wvertex[] vertices = mesh.getVertices();
 
         boolean emptySel = true;
         for(boolean b: selected) {
@@ -3466,7 +3460,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         PolyMesh mesh = (PolyMesh) objInfo.getGeometry();
         PolyMesh prevMesh = mesh.duplicate();
         Wedge[] edges = mesh.getEdges();
-        Wvertex[] vertices = (Wvertex[]) mesh.getVertices();
+        Wvertex[] vertices = mesh.getVertices();
         boolean[] newFaceSel;
         if (selectMode == POINT_MODE) {
             boolean[] edgeSel = new boolean[edges.length / 2];
@@ -3626,7 +3620,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      */
     private void doCollapseVertices(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
-        Wvertex[] verts = (Wvertex[]) mesh.getVertices();
+        Wvertex[] verts = mesh.getVertices();
         for (int i = 0; i < selected.length; ++i) {
             if (selected[i]) {
                 int[] fv = mesh.getVertexEdges(verts[i]);
@@ -3648,7 +3642,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      */
     private void doFacetVertices(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
-        Wvertex[] verts = (Wvertex[]) mesh.getVertices();
+        Wvertex[] verts = mesh.getVertices();
         for (int i = 0; i < selected.length; ++i) {
             if (selected[i]) {
                 int[] fv = mesh.getVertexEdges(verts[i]);
@@ -4179,7 +4173,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private void onCornerCheckboxValueChange(ItemEvent event) {
 
         PolyMesh mesh = (PolyMesh) objInfo.object;
-        Wvertex[] vertices = (Wvertex[]) mesh.getVertices();
+        Wvertex[] vertices = mesh.getVertices();
         short type = Wvertex.NONE;
         if (cornerCB.getState()) {
             type = Wvertex.CORNER;

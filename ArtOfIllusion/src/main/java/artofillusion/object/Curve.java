@@ -41,10 +41,8 @@ public class Curve extends Object3D implements Mesh {
     };
 
     public Curve(Vec3[] v, float[] smoothness, int smoothingMethod, boolean isClosed) {
-        int i;
-
         vertex = new MeshVertex[v.length];
-        for (i = 0; i < v.length; i++) {
+        for (int i = 0; i < v.length; i++) {
             vertex[i] = new MeshVertex(v[i]);
         }
         this.smoothness = smoothness;
@@ -81,17 +79,22 @@ public class Curve extends Object3D implements Mesh {
     }
 
     protected void findBounds() {
-        double minx, miny, minz, maxx, maxy, maxz;
+        double minx;
+        double miny;
+        double minz;
+        double maxx;
+        double maxy;
+        double maxz;
         Vec3 v;
         Vec3[] points;
-        int i;
 
         getWireframeMesh();
         points = cachedWire.vert;
         minx = maxx = points[0].x;
         miny = maxy = points[0].y;
         minz = maxz = points[0].z;
-        for (i = 1; i < points.length; i++) {
+
+        for (int i = 1; i < points.length; i++) {
             v = points[i];
             if (v.x < minx) {
                 minx = v.x;
@@ -182,9 +185,7 @@ public class Curve extends Object3D implements Mesh {
      * Set the smoothness values for all vertices.
      */
     public void setSmoothness(float[] s) {
-        for (int i = 0; i < s.length; i++) {
-            smoothness[i] = s[i];
-        }
+        System.arraycopy(s, 0, smoothness, 0, s.length);
         clearCachedMesh();
     }
 
@@ -215,7 +216,9 @@ public class Curve extends Object3D implements Mesh {
     @Override
     public void setSize(double xsize, double ysize, double zsize) {
         Vec3 size = getBounds().getSize();
-        double xscale, yscale, zscale;
+        double xscale;
+        double yscale;
+        double zscale;
 
         if (size.x == 0.0) {
             xscale = 1.0;
@@ -250,7 +253,6 @@ public class Curve extends Object3D implements Mesh {
 
     @Override
     public WireframeMesh getWireframeMesh() {
-        int i;
         int[] from;
         int[] to;
         Curve subdiv;
@@ -265,7 +267,8 @@ public class Curve extends Object3D implements Mesh {
             subdiv = subdivideCurve().subdivideCurve();
         }
         vert = new Vec3[subdiv.vertex.length];
-        for (i = 0; i < vert.length; i++) {
+
+        for (int i = 0; i < vert.length; i++) {
             vert[i] = subdiv.vertex[i].r;
         }
         if (closed) {
@@ -277,7 +280,7 @@ public class Curve extends Object3D implements Mesh {
             from = new int[vert.length - 1];
             to = new int[vert.length - 1];
         }
-        for (i = 0; i < vert.length - 1; i++) {
+        for (int i = 0; i < vert.length - 1; i++) {
             from[i] = i;
             to[i] = i + 1;
         }
@@ -289,7 +292,7 @@ public class Curve extends Object3D implements Mesh {
      */
     public Curve subdivideCurve() {
         if (vertex.length < 2) {
-            return (Curve) duplicate();
+            return duplicate();
         }
         if (vertex.length == 2) {
             Vec3[] newpos = new Vec3[]{new Vec3(vertex[0].r), vertex[0].r.plus(vertex[1].r).times(0.5), new Vec3(vertex[1].r)};
@@ -302,7 +305,8 @@ public class Curve extends Object3D implements Mesh {
         }
         Vec3[] newpos;
         float[] news;
-        int i, j;
+        int i;
+        int j;
         if (closed) {
             newpos = new Vec3[v.length * 2];
             news = new float[smoothness.length * 2];
@@ -384,7 +388,10 @@ public class Curve extends Object3D implements Mesh {
      * from which the new point will be calculated.
      */
     public static Vec3 calcInterpPoint(Vec3[] v, float[] s, int i, int j, int k, int m) {
-        double w1, w2, w3, w4;
+        double w1;
+        double w2;
+        double w3;
+        double w4;
 
         w1 = -0.0625 * s[j];
         w2 = 0.5 - w1;
@@ -397,7 +404,8 @@ public class Curve extends Object3D implements Mesh {
     }
 
     public static Vec3 calcApproxPoint(Vec3[] v, float[] s, int i, int j, int k) {
-        double w1 = 0.125 * s[j], w2 = 1.0 - 2.0 * w1;
+        double w1 = 0.125 * s[j];
+        double w2 = 1.0 - 2.0 * w1;
 
         return new Vec3(w1 * v[i].x + w2 * v[j].x + w1 * v[k].x,
                 w1 * v[i].y + w2 * v[j].y + w1 * v[k].y,
@@ -430,10 +438,15 @@ public class Curve extends Object3D implements Mesh {
         Vec3[] v = new Vec3[vertex.length];
         Vec3 size = getBounds().getSize();
         Vec2[] v2 = new Vec2[vertex.length];
-        int i, j, current, count, min;
+        int i;
+        int j;
+        int current;
+        int count;
+        int min;
         int[] index = new int[vertex.length];
         int[][] faces = new int[vertex.length - 2][3];
-        double dir, dir2;
+        double dir;
+        double dir2;
         boolean inside;
 
         // Find the largest dimension of the line, and project the vertices onto the other two.
@@ -528,8 +541,8 @@ public class Curve extends Object3D implements Mesh {
      * which way a triangle centered at the vertex will face.
      */
     double triangleDirection(Vec2[] v2, int[] index, int count, int which) {
-        Vec2 va,
-         vb;
+        Vec2 va;
+        Vec2 vb;
 
         if (which == 0) {
             va  = v2[index[which]].minus(v2[index[count - 1]]);
@@ -550,10 +563,8 @@ public class Curve extends Object3D implements Mesh {
      * other vertices.
      */
     boolean containsPoints(Vec2[] v2, int[] index, int count, int which) {
-        Vec2 va,
-         vb, v;
-        double a, b, c;
-        int i, prev, next;
+        int prev;
+        int next;
 
         if (which == 0) {
             prev = count - 1;
@@ -565,16 +576,16 @@ public class Curve extends Object3D implements Mesh {
         } else {
             next = which + 1;
         }
-        va  = v2[index[which]].minus(v2[index[prev]]);
-        vb = v2[index[which]].minus(v2[index[next]]);
-        a = va.cross(vb);
+        Vec2 va = v2[index[which]].minus(v2[index[prev]]);
+        Vec2 vb = v2[index[which]].minus(v2[index[next]]);
+        double a = va.cross(vb);
         va.scale(1.0 / a);
         vb.scale(1.0 / a);
-        for (i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++) {
             if (i != prev && i != which && i != next) {
-                v = v2[index[i]].minus(v2[index[which]]);
-                b = vb.cross(v);
-                c = v.cross(va);
+                Vec2 v = v2[index[i]].minus(v2[index[which]]);
+                double b = vb.cross(v);
+                double c = v.cross(va);
                 a = 1 - b - c;
                 if (a >= 0.0 && a <= 1.0 && b >= 0.0 && b <= 1.0 && c >= 0.0 && c <= 1.0) {
                     return true;
@@ -632,10 +643,9 @@ public class Curve extends Object3D implements Mesh {
      * constructor which reads the necessary data from an input stream. The other writes
      * the object's representation to an output stream.
      */
-    public Curve(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+    public Curve(DataInputStream in, Scene theScene) throws IOException {
         super(in, theScene);
 
-        int i;
         short version = in.readShort();
 
         if (version != 0) {
@@ -643,7 +653,7 @@ public class Curve extends Object3D implements Mesh {
         }
         vertex = new MeshVertex[in.readInt()];
         smoothness = new float[vertex.length];
-        for (i = 0; i < vertex.length; i++) {
+        for (int i = 0; i < vertex.length; i++) {
             vertex[i] = new MeshVertex(new Vec3(in));
             smoothness[i] = in.readFloat();
         }
@@ -655,11 +665,9 @@ public class Curve extends Object3D implements Mesh {
     public void writeToFile(DataOutputStream out, Scene theScene) throws IOException {
         super.writeToFile(out, theScene);
 
-        int i;
-
         out.writeShort(0);
         out.writeInt(vertex.length);
-        for (i = 0; i < vertex.length; i++) {
+        for (int i = 0; i < vertex.length; i++) {
             vertex[i].r.writeToFile(out);
             out.writeFloat(smoothness[i]);
         }
@@ -732,7 +740,7 @@ public class Curve extends Object3D implements Mesh {
      */
     @Override
     public Object3D getPosableObject() {
-        Curve m = (Curve) duplicate();
+        Curve m = duplicate();
         return new Actor(m);
     }
 
@@ -879,10 +887,9 @@ public class Curve extends Object3D implements Mesh {
          */
         @Override
         public boolean equals(Keyframe k) {
-            if (!(k instanceof CurveKeyframe)) {
+            if (!(k instanceof CurveKeyframe key)) {
                 return false;
             }
-            CurveKeyframe key = (CurveKeyframe) k;
             for (int i = 0; i < vertPos.length; i++) {
                 if (!vertPos[i].equals(key.vertPos[i])) {
                     return false;
@@ -932,7 +939,7 @@ public class Curve extends Object3D implements Mesh {
         /**
          * Reconstructs the keyframe from its serialized representation.
          */
-        public CurveKeyframe(DataInputStream in, Object parent) throws IOException, InvalidObjectException {
+        public CurveKeyframe(DataInputStream in, Object parent) throws IOException {
             this();
             short version = in.readShort();
             if (version != 0) {
