@@ -1,6 +1,6 @@
 /* Copyright (C) 2002-2013 by Peter Eastman
    Changes Copyright (C) 2023 by Lucas Stanek
-   Changes Copyright (C) 2024 by Maksim Khramov
+   Changes Copyright (C) 2024-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -41,7 +41,7 @@ public class ScriptedObjectEditorWindow extends BFrame {
     
     
     private final ObjectInfo info;
-    private final ScriptEditingWidget scriptWidget;
+    private final RSyntaxTextAreaWidget scriptWidget;
     private final BComboBox languageChoice;
     private String scriptName;
     private final Runnable onClose;
@@ -61,7 +61,7 @@ public class ScriptedObjectEditorWindow extends BFrame {
         }
         BorderContainer content = new BorderContainer();
         setContent(content);
-        scriptWidget = new ScriptEditingWidget(((ScriptedObject) info.getObject()).getScript());
+        scriptWidget = new RSyntaxTextAreaWidget(((ScriptedObject) info.getObject()).getScript());
 
         content.add(scriptWidget, BorderContainer.CENTER);
         languageChoice = new BComboBox(ScriptRunner.getLanguageNames());
@@ -87,7 +87,7 @@ public class ScriptedObjectEditorWindow extends BFrame {
         });
 
         languageChoice.addEventLink(ValueChangedEvent.class, this, "updateLanguage");
-        scriptWidget.getContent().setCaretPosition(0);
+        scriptWidget.setCaretPosition(0);
         pack();
         updateLanguage();
         UIUtilities.centerWindow(this);
@@ -139,7 +139,7 @@ public class ScriptedObjectEditorWindow extends BFrame {
                 languageChoice.setSelectedValue(language);
                 
                 try {
-                    scriptWidget.getContent().setText(Files.readString(f.toPath()));
+                    scriptWidget.setText(Files.readString(f.toPath()));
                 } catch (IOException ex) {
                     new BStandardDialog(null, new String[]{Translate.text("errorReadingScript"),
                         ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(this);
@@ -173,7 +173,7 @@ public class ScriptedObjectEditorWindow extends BFrame {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             File f = chooser.getSelectedFile();
             try(BufferedWriter out = new BufferedWriter(new FileWriter(f))) {
-                out.write(scriptWidget.getContent().getText().toCharArray());
+                out.write(scriptWidget.getText().toCharArray());
             } catch (Exception ex) {
                 new BStandardDialog(null, new String[]{Translate.text("errorWritingScript"),
                     ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(this);
@@ -203,7 +203,7 @@ public class ScriptedObjectEditorWindow extends BFrame {
     private void commitChanges() {
         ScriptedObject so = (ScriptedObject) info.getObject();
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        so.setScript(scriptWidget.getContent().getText());
+        so.setScript(scriptWidget.getText());
         so.setLanguage(languageChoice.getSelectedValue().toString());
         so.sceneChanged(info, window.getScene());
         if (onClose != null) {

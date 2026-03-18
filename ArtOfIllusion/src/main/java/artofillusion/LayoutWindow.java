@@ -552,9 +552,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         editScriptMenu.add(newScriptMenu = Translate.menu("newScript"));
         for (String language : ScriptRunner.getLanguageNames()) {
             BMenuItem item = new BMenuItem(language);
-            item.addEventLink(CommandEvent.class, this, "newScriptCommand");
-            item.setActionCommand("newScript");
             item.getComponent().putClientProperty("language", language);
+            item.getComponent().addActionListener(e -> newScriptCommand(new CommandEvent(item, 0,0)));
+
             newScriptMenu.add(item);
         }
         editScriptMenu.add(this.recentScriptMenu = Translate.menu("recentScript"));
@@ -573,8 +573,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         try {
             new ExecuteScriptWindow(this, scriptAbsolutePath, ScriptRunner.getLanguageForFilename(scriptAbsolutePath));
         } catch (IOException ioe) {
-            new BStandardDialog(null, new String[]{Translate.text("errorOpeningScript"),
-                    scriptAbsolutePath + (ioe.getMessage() == null ? "" : ioe.getMessage())}, BStandardDialog.ERROR).showMessageDialog(this);
+            new BStandardDialog(null, new String[]{Translate.text("errorOpeningScript"), scriptAbsolutePath + (ioe.getMessage() == null ? "" : ioe.getMessage())}, BStandardDialog.ERROR).showMessageDialog(this);
         }
     }
 
@@ -584,8 +583,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         try {
             new ExecuteScriptWindow(this, ExecuteScriptWindow.NEW_SCRIPT_NAME, language);
         } catch (IOException ioe) {
-            new BStandardDialog(null, new String[]{Translate.text("errorCreatingScript"),
-                    language + " : " + (ioe.getMessage() == null ? "" : ioe.getMessage())}, BStandardDialog.ERROR).showMessageDialog(this);
+            new BStandardDialog(null, new String[]{Translate.text("errorCreatingScript"), language + " : " + (ioe.getMessage() == null ? "" : ioe.getMessage())}, BStandardDialog.ERROR).showMessageDialog(this);
         }
     }
 
