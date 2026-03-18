@@ -14,7 +14,7 @@ package artofillusion.polymesh;
 
 import artofillusion.*;
 import artofillusion.animation.Joint;
-import artofillusion.animation.Skeleton;
+
 import artofillusion.animation.SkeletonTool;
 import artofillusion.keystroke.KeystrokeManager;
 import artofillusion.keystroke.KeystrokePreferencesPanel;
