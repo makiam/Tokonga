@@ -1436,7 +1436,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         if (interactive && cachedMesh != null) {
             return cachedMesh;
         }
-        RenderingMesh rend = null;
+        RenderingMesh rend;
         if (mirrorState != NO_MIRROR) {
             if (mirroredMesh == null) {
                 getMirroredMesh();
@@ -4061,10 +4061,10 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         }
         int[] vertexTable = new int[vertices.length];
         int[] edgeTable = new int[edges.length];
-        Wvertex[] newVert = null;
-        Wedge[] newEdges = null;
-        int[] edges1 = null;
-        int[] edges2 = null;
+        Wvertex[] newVert;
+        Wedge[] newEdges;
+        int[] edges1;
+        int[] edges2;
 
         // if both selection are boundaries, treat this special case
 
@@ -11163,8 +11163,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                                     if (next == fe.length) {
                                         next = 0;
                                     }
-                                    v1 = vertices[fe[pred]].r
-                                            .minus(vertices[fe[current]].r);
+                                    v1 = vertices[fe[pred]].r.minus(vertices[fe[current]].r);
                                     diff += Math.pow((v1.length() - fil[k]) / fil[k], 2);
                                 }
                                 diff = Math.sqrt(diff) / fe.length;
@@ -12962,7 +12961,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * @author Francois Guillet
      * @created February, 12, 2005
      */
-    public class VertexParamInfo {
+    public static class VertexParamInfo {
 
         /**
          * Vertices involved
