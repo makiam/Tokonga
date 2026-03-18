@@ -11,7 +11,7 @@
 
 package artofillusion.keystroke;
 
-import artofillusion.script.ScriptEditingWidget;
+import artofillusion.ArtOfIllusion;
 import artofillusion.ui.Translate;
 import buoy.widget.WindowWidget;
 import java.awt.Frame;
@@ -68,7 +68,7 @@ class KeystrokeEditor extends javax.swing.JDialog {
         scriptTextArea = new RSyntaxTextArea(20, 60);
 
         try {
-            Theme theme = Theme.load(ScriptEditingWidget.class.getResourceAsStream("/scriptEditorTheme.xml"));
+            Theme theme = Theme.load(ArtOfIllusion.class.getResourceAsStream("/scriptEditorTheme.xml"));
             theme.apply(scriptTextArea);
         } catch (IOException ex) {
             //shouldn't happen unless we are pointing at a non-existent file

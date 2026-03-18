@@ -17,13 +17,12 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
 import java.util.prefs.Preferences;
 import javax.swing.*;
 
@@ -36,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ExecuteScriptWindow extends BFrame {
 
     private final LayoutWindow window;
-    private final ScriptEditingWidget scriptWidget;
+    private final RSyntaxTextAreaWidget scriptWidget;
     private final BComboBox languageChoice;
     public static final String NEW_SCRIPT_NAME = Translate.text("untitled");
     private String scriptPath;
@@ -91,11 +90,12 @@ public class ExecuteScriptWindow extends BFrame {
      */
     public ExecuteScriptWindow(LayoutWindow win, String scriptAbsolutePath, String scriptLanguage) throws IOException {
         super(scriptAbsolutePath);
+        this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
         setScriptNameFromFile(scriptAbsolutePath);
         language = scriptLanguage;
         scriptPath = scriptAbsolutePath;
         // Get the extensions dynamically
-        final java.util.List<String> extensions = new ArrayList<>();
+        final List<String> extensions = new ArrayList<>();
         for (String language : ScriptRunner.getLanguageNames()) {
             extensions.add(ScriptRunner.getFilenameExtension(language));
         }
@@ -109,14 +109,20 @@ public class ExecuteScriptWindow extends BFrame {
         if (scriptLanguage != ScriptRunner.UNKNOWN_LANGUAGE && scriptAbsolutePath.contains(".")) {
             editorTextContent = ArtOfIllusion.loadFile(new File(scriptAbsolutePath));
         }
-        scriptWidget = new ScriptEditingWidget(editorTextContent);
-        scriptWidget.getContent().addEventLink(KeyTypedEvent.class, this, "scriptWasEdited");
+        scriptWidget = new RSyntaxTextAreaWidget(editorTextContent);
+        scriptWidget.setEditorTypingListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                ExecuteScriptWindow.this.save.setEnabled(true);
+            }
+        });
 
         content.add(scriptWidget, BorderContainer.CENTER);
         languageChoice = new BComboBox(ScriptRunner.getLanguageNames());
         languageChoice.getComponent().setRenderer(new LanguageRenderer());
         BorderContainer tools = new BorderContainer();
         content.add(tools, BorderContainer.NORTH);
+
         RowContainer buttons = new RowContainer();
         buttons.add(Translate.button("load", "...", event -> loadScript()));
         buttons.add(Translate.button("saveAs", "...", event -> saveScriptAs()));
@@ -153,7 +159,7 @@ public class ExecuteScriptWindow extends BFrame {
         });
 
         languageChoice.addEventLink(ValueChangedEvent.class, this, "updateLanguage");
-        scriptWidget.getContent().setCaretPosition(0);
+        scriptWidget.setCaretPosition(0);
         pack();
         updateLanguage();
         UIUtilities.centerWindow(this);
@@ -179,9 +185,9 @@ public class ExecuteScriptWindow extends BFrame {
     private void updateEditableStatus(String previousScriptAbsolutePath, String scriptAbsolutePath) {
         if (!previousScriptAbsolutePath.equals(scriptAbsolutePath)) {
             boolean isOpen = openedScripts.contains(scriptAbsolutePath);
-            scriptWidget.getContent().setEditable(!isOpen);
-            scriptWidget.getContent().setEnabled(!isOpen);
-            scriptWidget.getContent().setBackground(isOpen ? Color.LIGHT_GRAY : Color.WHITE);
+            scriptWidget.setEditable(!isOpen);
+            scriptWidget.setEnabled(!isOpen);
+            scriptWidget.setBackground(isOpen ? Color.LIGHT_GRAY : Color.WHITE);
             if (isOpen) {
                 new BStandardDialog(null,
                         new String[]{Translate.text("alreadyOpenedScript"),
@@ -207,8 +213,7 @@ public class ExecuteScriptWindow extends BFrame {
         // Warning message if the script hasn't been saved
         if (save.isEnabled()) {
             action = new BStandardDialog(null, new String[]{Translate.text("unsavedChanges"),
-                Translate.text("unsavedChangesPrompt")}, BStandardDialog.ERROR)
-                    .showOptionDialog(this, new String[]{
+                Translate.text("unsavedChangesPrompt")}, BStandardDialog.ERROR).showOptionDialog(this, new String[]{
                 Translate.text("saveAndClose"),
                 Translate.text("discardChangesAndClose"),
                 Translate.text("cancelClosing")}, scriptPath);
@@ -241,10 +246,10 @@ public class ExecuteScriptWindow extends BFrame {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             File scriptFile = chooser.getSelectedFile();
             try {
-                scriptWidget.getContent().setText(ArtOfIllusion.loadFile(scriptFile));
+                scriptWidget.setText(ArtOfIllusion.loadFile(scriptFile));
                 updateEditableStatus(scriptPath, scriptFile.getAbsolutePath());
                 scriptPath = scriptFile.getAbsolutePath();
-                scriptWidget.getContent().setCaretPosition(0);
+                scriptWidget.setCaretPosition(0);
                 String filename = scriptFile.getName();
                 String fileLanguage = ScriptRunner.getLanguageForFilename(filename);
                 if (!fileLanguage.equals(ScriptRunner.UNKNOWN_LANGUAGE)) {
@@ -299,9 +304,9 @@ public class ExecuteScriptWindow extends BFrame {
             // Write the script to disk.
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             File f = chooser.getSelectedFile();
-            try( BufferedWriter out = new BufferedWriter(new FileWriter(f))) {
 
-                out.write(scriptWidget.getContent().getText().toCharArray());
+            try( BufferedWriter out = new BufferedWriter(new FileWriter(f))) {
+                out.write(scriptWidget.getText().toCharArray());
 
             } catch (IOException ex) {
                 log.atError().setCause(ex).log("Error writing script: {}", ex.getMessage());
@@ -339,7 +344,7 @@ public class ExecuteScriptWindow extends BFrame {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
         try(BufferedWriter out = new BufferedWriter(new FileWriter(Paths.get(scriptPath).toFile()))) {            
-            out.write(scriptWidget.getContent().getText().toCharArray());
+            out.write(scriptWidget.getText().toCharArray());
         } catch (IOException ex) {
             new BStandardDialog(null, new String[]{Translate.text("errorWritingScript"),
                 scriptPath + (ex.getMessage() == null ? "" : ex.getMessage())}, BStandardDialog.ERROR).showMessageDialog(this);
@@ -363,21 +368,18 @@ public class ExecuteScriptWindow extends BFrame {
     }
 
     private void executeSelected() {
-        executeText(scriptWidget.getContent().getSelectedText());
+        executeText(scriptWidget.getSelectedText());
         window.updateImage();
         scriptWidget.requestFocus();
     }
 
     private void executeToCursor() {
-        final String substringAfterCaret = scriptWidget.getContent().getText()
-                .substring(scriptWidget.getContent().getCaretPosition());
+        final String substringAfterCaret = scriptWidget.getText().substring(scriptWidget.getCaretPosition());
         int charactersUntilEndOfLine = substringAfterCaret.indexOf("\n");
         if (charactersUntilEndOfLine == -1) {
             charactersUntilEndOfLine = substringAfterCaret.length();
         }
-        final String textToEndOfCaretLine = scriptWidget.getContent().getText()
-                .substring(0, scriptWidget.getContent().getCaretPosition()
-                        + charactersUntilEndOfLine);
+        final String textToEndOfCaretLine = scriptWidget.getText().substring(0, scriptWidget.getCaretPosition() + charactersUntilEndOfLine);
         executeText(textToEndOfCaretLine);
         window.updateImage();
         scriptWidget.requestFocus();
@@ -387,18 +389,17 @@ public class ExecuteScriptWindow extends BFrame {
      * Execute the script.
      */
     private void executeScript() {
-        executeText(scriptWidget.getContent().getText());
+        executeText(scriptWidget.getText());
         window.updateImage();
         scriptWidget.requestFocus();
     }
 
     public void executeText(final String text) {
         try {
-            String scriptLanguage = (language == ScriptRunner.UNKNOWN_LANGUAGE)
-                    ? (String) languageChoice.getSelectedValue()
-                    : language;
+            String scriptLanguage = (language == ScriptRunner.UNKNOWN_LANGUAGE) ? (String) languageChoice.getSelectedValue() : language;
 
             ToolScript script = ScriptRunner.parseToolScript(scriptLanguage, text);
+
             script.execute(window);
         } catch (Exception e) {
             int line = ScriptRunner.displayError(language, e);
@@ -414,7 +415,7 @@ public class ExecuteScriptWindow extends BFrame {
                     index = next + 1;
                 }
                 if (index > -1) {
-                    scriptWidget.getContent().setCaretPosition(index);
+                    scriptWidget.setCaretPosition(index);
                 }
                 scriptWidget.requestFocus();
             }
