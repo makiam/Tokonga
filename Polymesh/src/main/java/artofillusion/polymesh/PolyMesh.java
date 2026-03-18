@@ -470,13 +470,13 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             vertex.r.z *= sz;
         }
         smoothingMethod = Mesh.NO_SMOOTHING;
-        setSkeleton(new Skeleton());
+
     }
 
     private PolyMesh() {
         smoothingMethod = Mesh.NO_SMOOTHING;
         initialize();
-        setSkeleton(new Skeleton());
+
     }
 
     /**
@@ -614,7 +614,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         edges = e;
         faces = f;
         initialize();
-        setSkeleton(new Skeleton());
+
     }
 
     /**
@@ -835,7 +835,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             v = (int) Math.round(vertex.r.y);
             vertex.r = new Vec3(vp[u + uSize * v]);
         }
-        setSkeleton(new Skeleton());
+        skeleton = new Skeleton();
         if (smesh.getSmoothingMethod() == Mesh.APPROXIMATING || smesh.getSmoothingMethod() == Mesh.INTERPOLATING) {
             setSmoothingMethod(Mesh.APPROXIMATING);
         } else {
@@ -954,7 +954,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 }
             }
         }
-        setSkeleton(new Skeleton());
+
         setSmoothingMethod(trimesh.getSmoothingMethod());
         copyTextureAndMaterial(trimesh);
     }
@@ -1248,7 +1248,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         for(var face: faces) face.edge = edgeTable[face.edge];
 
         edges = newEdges;
-        setSkeleton(new Skeleton());
+
     }
 
     /**
@@ -3114,16 +3114,14 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             }
         }
         bounds = null;
-        if (seams != null) {
-            if (edges.length / 2 != seams.length) {
-                seams = null;
-            }
+        if (seams != null && edges.length / 2 != seams.length) {
+            seams = null;
         }
-        if (mappingData != null) {
-            if (vertices.length != mappingVertices || edges.length != mappingEdges || faces.length != mappingFaces) {
-                mappingData = null;
-            }
+
+        if (mappingData != null && (vertices.length != mappingVertices || edges.length != mappingEdges || faces.length != mappingFaces)) {
+            mappingData = null;
         }
+
     }
 
     /**
@@ -5256,22 +5254,21 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      */
     private double calcPenalty(int[] vf) {
         int next;
-        int next2;
         Vec3 v1;
         Vec3 v2;
         double r = 0.0;
         double t;
-        double mean;
         double l1;
         double l2;
 
-        mean = 2 * Math.PI / vf.length;
+        final double mean = 2 * Math.PI / vf.length;
+
         for (int i = 0; i < vf.length; ++i) {
             next = i + 1;
             if (next == vf.length) {
                 next = 0;
             }
-            next2 = next + 1;
+            int next2 = next + 1;
             if (next2 == vf.length) {
                 next2 = 0;
             }
@@ -5371,7 +5368,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
     public PolyMesh(DataInputStream in) throws IOException {
         initialize();
         readData(in, null);
-        skeleton = new Skeleton();
+
     }
 
     private void readData(DataInputStream in, Scene scene) throws IOException {

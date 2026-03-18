@@ -12,7 +12,7 @@ package artofillusion.polymesh;
 
 import artofillusion.Camera;
 import artofillusion.LayoutWindow;
-import artofillusion.Scene;
+
 import artofillusion.SceneViewer;
 import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
@@ -83,10 +83,10 @@ public class CreatePolyMeshTool extends EditingTool {
             shapeDesc = "flat";
         }
         String smoothingDesc = switch (smoothingMethod) {
-            default -> "none";
             case 1 -> "shading";
             case 2 -> "approximating";
             case 3 -> "interpolating";
+            default -> "none";
         };
         if ("none".equals(smoothingDesc)) {
             smoothingDesc = Translate.text("polymesh:none");
@@ -112,11 +112,12 @@ public class CreatePolyMeshTool extends EditingTool {
 
     @Override
     public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view) {
-        Scene theScene = ((LayoutWindow) theWindow).getScene();
-        Camera cam = view.getCamera();
+
+
         Point dragPoint = e.getPoint();
-        Vec3 v1, v2, v3, orig, xdir, ydir, zdir;
-        double xsize, ysize, zsize;
+        Vec3 xdir;
+        Vec3 ydir;
+        Vec3 zdir;
 
         if (shiftDown) {
             if (Math.abs(dragPoint.x - clickPoint.x) > Math.abs(dragPoint.y - clickPoint.y)) {
@@ -134,13 +135,16 @@ public class CreatePolyMeshTool extends EditingTool {
             }
         }
         if (dragPoint.x == clickPoint.x || dragPoint.y == clickPoint.y) {
-            ((SceneViewer) view).repaint();
+            view.repaint();
             return;
         }
-        v1 = cam.convertScreenToWorld(clickPoint, cam.getDistToScreen());
-        v2 = cam.convertScreenToWorld(new Point(dragPoint.x, clickPoint.y), cam.getDistToScreen());
-        v3 = cam.convertScreenToWorld(dragPoint, cam.getDistToScreen());
-        orig = v1.plus(v3).times(0.5);
+
+        Camera cam = view.getCamera();
+        Vec3 v1 = cam.convertScreenToWorld(clickPoint, cam.getDistToScreen());
+        Vec3 v2 = cam.convertScreenToWorld(new Point(dragPoint.x, clickPoint.y), cam.getDistToScreen());
+        Vec3 v3 = cam.convertScreenToWorld(dragPoint, cam.getDistToScreen());
+        Vec3 orig = v1.plus(v3).times(0.5);
+
         if (dragPoint.x < clickPoint.x) {
             xdir = v1.minus(v2);
         } else {
@@ -151,20 +155,21 @@ public class CreatePolyMeshTool extends EditingTool {
         } else {
             ydir = v2.minus(v3);
         }
-        xsize = xdir.length();
-        ysize = ydir.length();
-        xdir = xdir.times(1.0 / xsize);
-        ydir = ydir.times(1.0 / ysize);
+
+        double xSize = xdir.length();
+        double ySize = ydir.length();
+        xdir = xdir.times(1.0 / xSize);
+        ydir = ydir.times(1.0 / ySize);
         zdir = xdir.cross(ydir);
-        zsize = Math.min(xsize, ysize);
+        double zSize = Math.min(xSize, ySize);
 
         //SplineMesh obj = new SplineMesh(v, usmoothness, vsmoothness, smoothing, shape != FLAT, shape == TORUS);
-        PolyMesh obj = null;
+        PolyMesh obj;
         if (templateMesh == null) {
-            obj = new PolyMesh(shape, usize, vsize, xsize, ysize, zsize);
+            obj = new PolyMesh(shape, usize, vsize, xSize, ySize, zSize);
         } else {
             obj = templateMesh.duplicate();
-            obj.setSize(xsize, ysize, zsize);
+            obj.setSize(xSize, ySize, zSize);
         }
         obj.setSmoothingMethod(smoothingMethod);
         ObjectInfo info = new ObjectInfo(obj, new CoordinateSystem(orig, zdir, ydir), "PolyMesh " + (counter++));
@@ -173,7 +178,7 @@ public class CreatePolyMeshTool extends EditingTool {
         undo.addCommandAtBeginning(UndoRecord.SET_SCENE_SELECTION, new Object[]{((LayoutWindow) theWindow).getSelectedIndices()});
         ((LayoutWindow) theWindow).addObject(info, undo);
         theWindow.setUndoRecord(undo);
-        ((LayoutWindow) theWindow).setSelection(theScene.getNumObjects() - 1);
+        ((LayoutWindow) theWindow).setSelection(theWindow.getScene().getNumObjects() - 1);
         theWindow.updateImage();
         theWindow.setModified();
     }

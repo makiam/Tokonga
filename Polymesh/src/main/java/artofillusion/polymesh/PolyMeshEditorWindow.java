@@ -1505,8 +1505,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         }
 
         templateItem.setEnabled(theView[currentView].getTemplateImage() != null);
-        Skeleton s = mesh.getSkeleton();
-        Joint selJoint = s.getJoint(view.getSelectedJoint());
+        Joint selJoint = mesh.getSkeleton().getJoint(view.getSelectedJoint());
         ((BMenuItem) skeletonMenuItem[0]).setEnabled(selJoint != null);
         ((BMenuItem) skeletonMenuItem[1]).setEnabled(selJoint != null && selJoint.children.length == 0);
         ((BMenuItem) skeletonMenuItem[2]).setEnabled(selJoint != null);
