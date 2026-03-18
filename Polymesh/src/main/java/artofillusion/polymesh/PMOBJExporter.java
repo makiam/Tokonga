@@ -159,7 +159,7 @@ public class PMOBJExporter {
                 continue;
             }
 
-            Wvertex[] vertices = (Wvertex[]) mesh.getVertices();
+            Wvertex[] vertices = mesh.getVertices();
             out.println(vertices.length);
             for(var vertex: vertices) {
                 out.println(vertex.r.x + " " + vertex.r.y + " " + vertex.r.z + " " + vertex.edge);
