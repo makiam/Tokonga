@@ -12771,7 +12771,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * @author Francois Guillet
      * @created december 19, 2004
      */
-    public class Wvertex extends MeshVertex {
+    public static class Wvertex extends MeshVertex {
 
         /**
          * Edges next to this vertex
@@ -12832,7 +12832,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * @author Francois Guillet
      * @created december 19, 2004
      */
-    public class Wedge {
+    public static class Wedge {
 
         /**
          * The vertex at the end of the edge
@@ -12910,7 +12910,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * @author Francois Guillet
      * @created december 19, 2004
      */
-    public class Wface {
+    public static class Wface {
 
         /**
          * A half-edge that borders the face
