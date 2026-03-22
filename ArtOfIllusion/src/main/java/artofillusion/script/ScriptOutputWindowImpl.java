@@ -45,7 +45,7 @@ final class ScriptOutputWindowImpl extends JFrame {
         textArea.setText("");
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
-        
+        textArea.setEditable(false);
         // Wrap textArea area in JScrollPane for scrolling capability
         JScrollPane scrollPane = new JScrollPane(textArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         
@@ -78,18 +78,6 @@ final class ScriptOutputWindowImpl extends JFrame {
             public void windowClosing(WindowEvent e) {
                 ScriptOutputWindowImpl.this.closeWindow();
             }            
-        });
-    }
-    
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ReflectiveOperationException | UnsupportedLookAndFeelException ex) {
-        }        
-        SwingUtilities.invokeLater(() -> {
-            ScriptOutputWindowImpl frame = new ScriptOutputWindowImpl();
-            frame.pack(); // Size window to fit components nicely
-            frame.setVisible(true);
         });
     }
     
