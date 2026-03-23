@@ -16,8 +16,13 @@ import artofillusion.math.Vec3;
 import artofillusion.polymesh.PolyMesh.Wvertex;
 import artofillusion.polymesh.PolyMesh.Wedge;
 import artofillusion.polymesh.PolyMesh.Wface;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 final class PolyMeshBuilder {
+
     static void buildOctahedronMesh(PolyMesh mesh) {
         var vertices = new Wvertex[6];
         vertices[0] = new Wvertex(new Vec3(0.0, -0.707107, 0.0), 0);

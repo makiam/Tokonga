@@ -11,16 +11,8 @@
  */
 
 package artofillusion.polymesh;
+import artofillusion.*;
 import artofillusion.api.ImplementationVersion;
-import artofillusion.MeshViewer;
-import artofillusion.ObjectViewer;
-import artofillusion.Property;
-import artofillusion.RenderingMesh;
-import artofillusion.RenderingTriangle;
-import artofillusion.Scene;
-import artofillusion.TextureParameter;
-import artofillusion.ViewerCanvas;
-import artofillusion.WireframeMesh;
 import artofillusion.animation.Actor;
 import artofillusion.animation.Keyframe;
 import artofillusion.animation.MeshGesture;
@@ -62,7 +54,6 @@ import java.io.InvalidObjectException;
 import java.util.*;
 import java.util.prefs.Preferences;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -12650,6 +12641,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
          * Description of the Exception
 
          */
+        @PluginRegistry.UsedViaReflection
         public PolyMeshKeyframe(DataInputStream in, Object parent) throws IOException {
             this();
             short version = in.readShort();
@@ -12743,7 +12735,10 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             type = vertex.type;
         }
 
-
+        @Override
+        public String toString() {
+            return "WVertex {" + "R = " + r + ", Edge = " + edge + '}';
+        }
     }
 
     /**
@@ -12869,6 +12864,11 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         public Wface(Wface face) {
             edge = face.edge;
         }
+
+        @Override
+        public String toString() {
+            return "WFace {" + "Edge = " + edge + '}';
+        }
     }
 
     /**
@@ -12877,7 +12877,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * @author Francois Guillet
      * @created February, 12, 2005
      */
-    public class VertexParamInfo {
+    public static class VertexParamInfo {
 
         /**
          * Vertices involved
