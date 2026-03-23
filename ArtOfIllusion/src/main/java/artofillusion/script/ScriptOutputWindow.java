@@ -11,32 +11,23 @@
 
 package artofillusion.script;
 
-import artofillusion.ui.*;
-
-import buoy.widget.*;
-
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.*;
 import java.awt.*;
+
+import javax.swing.JTextArea;
 
 /**
  * This class creates a window for displaying output from scripts.
  */
 public class ScriptOutputWindow extends OutputStream {
 
-    BFrame window;
-    BTextArea text;
+    private ScriptOutputWindowImpl window;
+    private JTextArea text;
 
     @Override
     public void write(final int b) {
         if (!EventQueue.isDispatchThread()) {
-            EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    write(b);
-                }
-            });
+            EventQueue.invokeLater(() -> write(b));
             return;
         }
         if (window == null) {
@@ -51,12 +42,7 @@ public class ScriptOutputWindow extends OutputStream {
     public void write(byte[] b, final int off, final int len) {
         if (!EventQueue.isDispatchThread()) {
             final byte[] bytes = b.clone();
-            EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    write(bytes, off, len);
-                }
-            });
+            EventQueue.invokeLater(() -> write(bytes, off, len));
             return;
         }
         if (window == null) {
@@ -71,29 +57,9 @@ public class ScriptOutputWindow extends OutputStream {
      * Create the window.
      */
     private void createWindow() {
-        window = new BFrame("Script Output");
-        BorderContainer content = new BorderContainer();
-        window.setContent(content);
-        text = new BTextArea(10, 60);
-        text.setFont(UIUtilities.getDefaultFont());
-        BScrollPane sp = new BScrollPane(text, BScrollPane.SCROLLBAR_ALWAYS, BScrollPane.SCROLLBAR_ALWAYS);
-        content.add(sp, BorderContainer.CENTER);
-        content.add(Translate.button("close", event -> closeWindow()), BorderContainer.SOUTH, new LayoutInfo());
-        window.getComponent().addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                ScriptOutputWindow.this.closeWindow();
-            }
-        });
+        window = new ScriptOutputWindowImpl();
         window.pack();
         window.setVisible(true);
-    }
-
-    /**
-     * Hide the window.
-     */
-    private void closeWindow() {
-        window.setVisible(false);
-        text.setText("");
+        text = window.getTextArea();
     }
 }
