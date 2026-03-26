@@ -259,67 +259,6 @@ public class SearchlistClassLoader extends ClassLoader {
     }
 
     /**
-     * Return the local class instance for <i>name</i>.
-     *
-     * <br>This does <i>not</i> search the searchlist. Only classes loaded
-     * directly by this loader or its parent are returned.
-     *
-     * <br>This method can be used to retrieve the <i>canonical</i> instance
-     * of a class.
-     * If this method is called on a set of SearchlistClassLoaders, then
-     * the only classloader which will return the class is the one which
-     * originally loaded it (assuming no duplicates have been created yet).
-     *
-     * @param name the full-qualified name of the class
-     * @return the loaded class.
-     *
-     * @throws ClassNotFoundException if the class is not found.
-     */
-    public Class<?> loadLocalClass(String name) throws ClassNotFoundException {
-        ClassNotFoundException err = null;
-
-        if (getParent() != null) {
-            try {
-                return getParent().loadClass(name);
-            } catch (ClassNotFoundException e) {
-                err = e;
-            }
-        }
-
-        if (content != null) {
-
-            // try the cache first
-            Class<?> result = (cache == null ? null : cache.get(name));
-            if (result != null) {
-                return result;
-            }
-
-            // try loading the class data
-            byte[] data = loadClassData(content.getLoader(), name);
-
-            if (data != null) {
-
-                // define the class
-                result = defineClass(name, data, 0, data.length);
-
-                if (result != null) {
-                    //System.out.println("defined class: " + name);
-
-                    // cache the result
-                    if (cache == null) {
-                        cache = new Hashtable<>(1024);
-                    }
-                    cache.put(name, result);
-
-                    return result;
-                }
-            }
-        }
-
-        throw (err == null ? new ClassNotFoundException(name) : err);
-    }
-
-    /**
      * Return a Class object for the specified class name.
      * overloads java.lang.ClassLoader#findClass(String)
      * Traverses the searchlist looking for a classloader which can return
