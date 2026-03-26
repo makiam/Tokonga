@@ -320,35 +320,6 @@ public class SearchlistClassLoader extends ClassLoader {
     }
 
     /**
-     * Return the URL for the local resource specified by <i>name</i>.
-     *
-     * <br>This does <i>not</i> search the searchlist. Only resources loaded
-     * directly by this loader or its parent are returned.
-     *
-     * <br>This method can be used to retrieve the <i>canonical</i> URL for a
-     * resource.
-     * If this method is called on a set of SearchlistClassLoaders, then
-     * the only classloader which will return the resource is the one which
-     * originally loaded it (assuming no duplicates have been created yet).
-     *
-     * @param name the full-qualified name of the resource.
-     * @return the located URL, or <i>null</i>.
-     */
-    public URL getLocalResource(String name) {
-        URL result = null;
-
-        if (getParent() != null) {
-            result = getParent().getResource(name);
-        }
-
-        if (result == null && content != null) {
-            result = content.getLoader().getResource(name);
-        }
-
-        return result;
-    }
-
-    /**
      * Return a Class object for the specified class name.
      * overloads java.lang.ClassLoader#findClass(String)
      * Traverses the searchlist looking for a classloader which can return
