@@ -95,10 +95,6 @@ import lombok.extern.slf4j.Slf4j;
  * they were added to the searchlist.
  * </ul>
  *
- * <br>There is also a method which retrieves a class <i>without</i> searching
- * any added classloaders. This effectively retrieves the <i>canonical</i>
- * instance of the requested class (see {@link #loadLocalClass(String)}
- * and {@link #getLocalResource(String)}).
  *
  * <p>
  * <i>Implementation notes:</i>.
