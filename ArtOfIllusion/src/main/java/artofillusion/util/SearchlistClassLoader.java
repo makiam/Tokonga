@@ -303,7 +303,9 @@ public class SearchlistClassLoader extends ClassLoader {
             }
         }
 
-        throw (err != null ? new ClassNotFoundException(name, err) : new ClassNotFoundException(name));
+
+        throw err == null ? new ClassNotFoundException(name) : new ClassNotFoundException(name, err);
+
     }
 
     /**
@@ -442,7 +444,7 @@ public class SearchlistClassLoader extends ClassLoader {
         var t1 = name.replace(".", "/");
         var t2 = translate(name, ".", "/");
         assert t1.equals(t2);
-
+        log.atDebug().log("Loading {}", t1);
         InputStream in = cl.getResourceAsStream(translate(name, ".", "/") + ".class");
 
         if (in == null) {
@@ -544,11 +546,13 @@ public class SearchlistClassLoader extends ClassLoader {
         private boolean shared;			// shared flag
 
         Loader(ClassLoader loader, boolean shared) {
+            log.atInfo().log("Creating Loader for {} shared={}", loader, shared ? "true" : "false");
             this.owner = loader;
             this.shared = shared;
         }
 
         Loader(ClassLoader loader) {
+            log.atInfo().log("Creating not shared Loader for {}", loader.getName());
             this.owner = loader;
         }
     }
