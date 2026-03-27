@@ -74,10 +74,6 @@ import lombok.extern.slf4j.Slf4j;
  * internally created classloader is <i>non-shared</i>.
  * <br>
  *
- * <br>SearchlistClassLoader therefore also allows control over the order in
- * which classloaders are searched, through the {@link #setSearchMode(byte)}
- * method.
- *
  * <br>The possible <i>searchmodes</i> are:
  * <ul>
  * <li>SHARED
@@ -118,7 +114,6 @@ public class SearchlistClassLoader extends ClassLoader {
 
     protected Map<String, Class<?>> cache;
     protected Loader content = null;
-    protected byte searchMode = SHARED;
     protected int divide = 0;
 
     /**
@@ -126,7 +121,7 @@ public class SearchlistClassLoader extends ClassLoader {
      */
     public static final byte SHARED = 0x1;
     public static final byte NONSHARED = 0x2;
-    public static final byte ORDERED = 0x3;
+
 
     protected static final URL[] EMPTY_URL = new URL[0];
 
@@ -156,20 +151,6 @@ public class SearchlistClassLoader extends ClassLoader {
     public SearchlistClassLoader(URL[] url, ClassLoader parent) {
         super(parent);
         content = new Loader(new URLClassLoader(url));
-    }
-
-    /**
-     * set the search mode.
-     *
-     * @param mode enum for the searchmode: SHARED, NONSHARED, ORDERED
-     */
-    public void setSearchMode(byte mode) {
-        searchMode = mode;
-
-        if (searchMode <= 0 || searchMode > ORDERED) {
-            log.atInfo().log("Invalid search mode: {}; defaulting to SHARED", mode);
-            searchMode = SHARED;
-        }
     }
 
     /**
@@ -239,7 +220,7 @@ public class SearchlistClassLoader extends ClassLoader {
 
         List<URL> path = new ArrayList<>(8);
 
-        for (int i = 0; (ldr = getLoader(i++, searchMode)) != null; i++) {
+        for (int i = 0; (ldr = getLoader(i++, SHARED)) != null; i++) {
             if (ldr.getLoader() instanceof SearchlistClassLoader scl) {
                 url = scl.getSearchPath();
             } else if (ldr.getLoader() instanceof URLClassLoader loader) {
@@ -284,7 +265,7 @@ public class SearchlistClassLoader extends ClassLoader {
         Class<?> result;
         byte[] data;
 
-        for (int i = 0; (ldr = getLoader(i, searchMode)) != null; i++) {
+        for (int i = 0; (ldr = getLoader(i, SHARED)) != null; i++) {
             try {
                 // for shared loaders - just try getting the class
                 if (ldr.isShared()) {
@@ -343,7 +324,7 @@ public class SearchlistClassLoader extends ClassLoader {
 
         URL url = null;
         Loader ldr;
-        for (int i = 0; (ldr = getLoader(i, searchMode)) != null; i++) {
+        for (int i = 0; (ldr = getLoader(i, SHARED)) != null; i++) {
 
             url = ldr.getLoader().getResource(path);
 
@@ -374,7 +355,7 @@ public class SearchlistClassLoader extends ClassLoader {
 
         URL[] urls;
         Loader ldr;
-        for (int i = 0; (ldr = getLoader(i++, searchMode)) != null; i++) {
+        for (int i = 0; (ldr = getLoader(i++, SHARED)) != null; i++) {
             if (ldr.getLoader() instanceof SearchlistClassLoader loader1) {
                 urls = loader1.getSearchPath();
             } else if (ldr.getLoader() instanceof URLClassLoader loader) {
@@ -419,7 +400,8 @@ public class SearchlistClassLoader extends ClassLoader {
      */
     protected Loader getLoader(int index, byte mode) {
         // content is always the first loader searched
-        if (content != null) {
+        if(content == null) {
+        } else {
             if (index == 0) {
                 return content;
             } else {
@@ -457,6 +439,9 @@ public class SearchlistClassLoader extends ClassLoader {
      * @return a byte[] containing the class bytecode or <i>null</i>
      */
     protected byte[] loadClassData(ClassLoader cl, String name) {
+        var t1 = name.replace(".", "/");
+        var t2 = translate(name, ".", "/");
+        assert t1.equals(t2);
 
         InputStream in = cl.getResourceAsStream(translate(name, ".", "/") + ".class");
 
@@ -500,7 +485,7 @@ public class SearchlistClassLoader extends ClassLoader {
      *
      * @return the result as a string.
      */
-    public static String translate(String str, String match, String replace) {
+    private static String translate(String str, String match, String replace) {
         StringBuilder b = new StringBuilder(str.length());
 
         int pos = 0;
