@@ -49,6 +49,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -539,14 +540,11 @@ public class SearchlistClassLoader extends ClassLoader {
 
         private final ClassLoader owner;		// the actual classloader
 
-        public boolean isShared() {
-            return shared;
-        }
-
+        @Getter
         private boolean shared;			// shared flag
 
         Loader(ClassLoader loader, boolean shared) {
-            log.atInfo().log("Creating Loader for {} shared={}", loader, shared ? "true" : "false");
+            log.atInfo().log("Creating Loader for {} shared={}", loader, Boolean.toString(shared));
             this.owner = loader;
             this.shared = shared;
         }
