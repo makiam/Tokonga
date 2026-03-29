@@ -169,12 +169,12 @@ public class PluginRegistry {
                     loader = new SearchlistClassLoader(jar.loader);
                 }
                 jar.loader = loader;
-                for (String importName : jar.imports) {
+                for (var importName: jar.getImports()) {
                     loader.add(nameMap.get(importName).loader);
                 }
 
                 // NTJ - add URL of searchpath to class loader
-                for (String uri : jar.searchPath) {
+                for (var uri: jar.getSearchPath()) {
 
                     URL url = new URL(uri);
                     // resolve any registry-based authority
@@ -426,6 +426,7 @@ public class PluginRegistry {
         }
 
         final List<String> categories = new ArrayList<>();
+        @Getter
         final List<String> searchPath = new ArrayList<>();
 
         public List<Resource> getResources() {

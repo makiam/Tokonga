@@ -217,6 +217,7 @@ public class SearchlistClassLoader extends ClassLoader {
         List<URL> path = new ArrayList<>(8);
 
         for (int i = 0; (ldr = getLoader(i++, SHARED)) != null; i++) {
+            log.info("Get Search path: {}", i);
             if (ldr.getLoader() instanceof SearchlistClassLoader scl) {
                 url = scl.getSearchPath();
             } else if (ldr.getLoader() instanceof URLClassLoader loader) {
@@ -262,6 +263,7 @@ public class SearchlistClassLoader extends ClassLoader {
         byte[] data;
 
         for (int i = 0; (ldr = getLoader(i, SHARED)) != null; i++) {
+            log.info("Find class: {}", i);
             try {
                 // for shared loaders - just try getting the class
                 if (ldr.isShared()) {
@@ -323,7 +325,7 @@ public class SearchlistClassLoader extends ClassLoader {
         URL url = null;
         Loader ldr;
         for (int i = 0; (ldr = getLoader(i, SHARED)) != null; i++) {
-
+            log.info("Find resource: {}", i);
             url = ldr.getLoader().getResource(path);
 
             if (url != null) {
@@ -354,6 +356,7 @@ public class SearchlistClassLoader extends ClassLoader {
         URL[] urls;
         Loader ldr;
         for (int i = 0; (ldr = getLoader(i++, SHARED)) != null; i++) {
+            log.info("Find library: {}", i);
             if (ldr.getLoader() instanceof SearchlistClassLoader loader1) {
                 urls = loader1.getSearchPath();
             } else if (ldr.getLoader() instanceof URLClassLoader loader) {
@@ -413,18 +416,19 @@ public class SearchlistClassLoader extends ClassLoader {
 
         Loader result;
 
-        switch (mode) {
-            case SHARED ->
-                // return shared loaders before non-shared loaders
+        switch (mode) {// return shared loaders before non-shared loaders
+            case SHARED:
                 result = search.get(index);
-            case NONSHARED -> // return non-shared loaders before shared loaders
-            {
+                break;
+            // return non-shared loaders before shared loaders
+            case NONSHARED:
                 int pos = index + divide;
-                result = (pos < search.size() ? search.get(pos): search.get(pos - divide));
-            }
-            default ->
-                // return loaders in the order in which they were added
+                result = (pos < search.size() ? search.get(pos) : search.get(pos - divide));
+                break;
+            // return loaders in the order in which they were added
+            default:
                 result = list.get(index);
+                break;
         }
 
         return result;
