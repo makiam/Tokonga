@@ -126,11 +126,6 @@ public class SearchlistClassLoader extends ClassLoader {
 
     protected static final URL[] EMPTY_URL = new URL[0];
 
-    /**
-     * create a SearchlistClassLoader.
-     */
-    public SearchlistClassLoader() {
-    }
 
     /**
      * create a SearchlistClassLoader.
@@ -287,7 +282,7 @@ public class SearchlistClassLoader extends ClassLoader {
                         result = defineClass(name, data, 0, data.length);
 
                         if (result != null) {
-                            //System.out.println("defined class: " + name);
+
 
                             // cache the result
                             if (cache == null) {
@@ -442,88 +437,13 @@ public class SearchlistClassLoader extends ClassLoader {
      * @return a byte[] containing the class bytecode or <i>null</i>
      */
     protected byte[] loadClassData(ClassLoader cl, String name) {
-        var t1 = name.replace(".", "/");
-        var t2 = translate(name, ".", "/");
-        assert t1.equals(t2);
-        log.atDebug().log("Loading {}", t1);
-        InputStream in = cl.getResourceAsStream(translate(name, ".", "/") + ".class");
 
-        if (in == null) {
+        try(InputStream is = cl.getResourceAsStream(name.replace(".", "/") + ".class")) {
+            return is == null ? null : is.readAllBytes();
+        } catch (IOException ioe) {
+            log.atError().log("Error reading class data: {}", ioe.getMessage());
             return null;
         }
-
-        try {
-
-            ByteArrayOutputStream barray = new ByteArrayOutputStream(1024 * 16);
-            byte[] buff = new byte[1024];
-
-            int len;
-            do {
-                len = in.read(buff, 0, buff.length);
-                if (len > 0) {
-                    barray.write(buff, 0, len);
-                }
-            } while (len >= 0);
-
-            return (barray.size() > 0 ? barray.toByteArray() : null);
-
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
-     * translate matching chars in a string.
-     *
-     * @param str the String to translate
-     * @param match the list of chars to match, in a string.
-     * @param replace the list of corresponding chars to replace matched chars
-     * with.
-     *
-     * <pre>
-     *  Eg: translate("the dog.", "o.", "i")
-     *  returns "the dig", because 'o' is replaced with 'i', and '.' is
-     *  replaced with nothing (ie deleted).
-     * </pre>
-     *
-     * @return the result as a string.
-     */
-    private static String translate(String str, String match, String replace) {
-        StringBuilder b = new StringBuilder(str.length());
-
-        int pos = 0;
-        char c = 0;
-
-        if (match == null) {
-            match = "";
-        }
-        if (replace == null) {
-            replace = "";
-        }
-
-        boolean copy = (match.length() != 0 && match.length() >= replace.length());
-
-        // loop over the input string
-        int max = str.length();
-        for (int x = 0; x < max; x++) {
-            c = str.charAt(x);
-            pos = match.indexOf(c);
-
-            // if found c in 'match'
-            if (pos >= 0) {
-                // translate
-                if (pos < replace.length()) {
-                    b.append(replace.charAt(pos));
-                }
-            } // copy
-            else if (copy || replace.indexOf(c) >= match.length()) {
-                b.append(c);
-            }
-
-            // otherwise, effectively, delete...
-        }
-
-        return b.toString();
     }
 
     /**
