@@ -56,12 +56,7 @@ public class PluginRegistry {
     static {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             Map<String, Throwable> errors = PluginRegistry.notifyPlugins(Plugin.APPLICATION_STOPPING);
-            errors.forEach((plugin, ex) -> {
-                //NB! At least JUL logger will not outputs log from inside shutdown thread. So I leave System.out.println here
-                String out = "Plugin: " + plugin + " throw: " + ex.getMessage() + " with" + Arrays.toString(ex.getStackTrace()) + " at shutdown";
-                System.out.println(out);
-
-            });
+            errors.forEach((plugin, ex) -> log.atError().setCause(ex).log("Plugin: {} throw: {} at shutdown", plugin, ex.getMessage()));
         }, "Plugin shutdown thread"));
     }
 
@@ -71,7 +66,7 @@ public class PluginRegistry {
         categoryClasses.getOrDefault(Plugin.class, Collections.emptyList()).forEach(plugin -> {
             try {
                 ((Plugin) plugin).processMessage(message, args);
-            } catch (Throwable tx) {
+            } catch (Exception tx) {
                 log.atInfo().setCause(tx).log("Plugin: {} error due: {}", plugin.getClass().getSimpleName(), tx.getMessage());
                 errors.put(plugin.getClass().getSimpleName(), tx);
             }
@@ -121,13 +116,13 @@ public class PluginRegistry {
         // This needs to be done in the proper order to account for dependencies between plugins.
 
         Map<String, JarInfo> nameMap = new HashMap<>();
-        while (jars.size() > 0) {
+        while (!jars.isEmpty()) {
             boolean processedAny = false;
-            for (JarInfo jar : new ArrayList<>(jars)) {
+            for (var jar: new ArrayList<>(jars)) {
                 // See if we've already processed all other jars it depends on.
 
                 boolean importsOk = true;
-                for (String importName : jar.imports) {
+                for (var importName: jar.getImports()) {
                     importsOk &= nameMap.containsKey(importName);
                     if (!importsOk) {
                         break;
@@ -141,7 +136,7 @@ public class PluginRegistry {
             }
             if (!processedAny) {
 
-                for (JarInfo info : jars) {
+                for (var info: jars) {
                     Object source = "(plugin loaded from ClassLoader)";
                     if (info.file != null) {
                         source = info.file.getName();
@@ -162,13 +157,13 @@ public class PluginRegistry {
      */
     private static void processJar(JarInfo jar, Map<String, JarInfo> nameMap, List<String> results) {
         try {
-            if (jar.imports.isEmpty() && jar.searchPath.isEmpty()) {
+            if (jar.getImports().isEmpty() && jar.searchPath.isEmpty()) {
                 if (jar.loader == null) {
                     jar.loader = new URLClassLoader(new URL[]{jar.file.toURI().toURL()});
                 }
             } else {
                 SearchlistClassLoader loader;
-                if (jar.loader == null) {
+                if (jar.getLoader() == null) {
                     loader = new SearchlistClassLoader(new URL[]{jar.file.toURI().toURL()});
                 } else {
                     loader = new SearchlistClassLoader(jar.loader);
@@ -264,7 +259,7 @@ public class PluginRegistry {
         if (plugins == null) {
             return new ArrayList<T>();
         }
-        ArrayList<T> list = new ArrayList<T>(plugins.size());
+        List<T> list = new ArrayList<>(plugins.size());
         for (Object plugin : plugins) {
             list.add((T) plugin);
         }
@@ -412,6 +407,7 @@ public class PluginRegistry {
 
         @Getter
         final File file;
+
         private Extension ext = new Extension();
 
         public String getName() {
@@ -420,6 +416,8 @@ public class PluginRegistry {
 
         String version;
         String authors;
+
+        @Getter
         final List<String> imports = new ArrayList<>();
         final List<String> plugins = new ArrayList<>();
 
@@ -435,7 +433,9 @@ public class PluginRegistry {
         }
 
         final List<ExportInfo> exports = new ArrayList<>();
-        ClassLoader loader;
+
+        @Getter
+        private ClassLoader loader;
 
         JarInfo(File file) throws IOException {
             this.file = file;
@@ -451,7 +451,7 @@ public class PluginRegistry {
                 ze = zf.getEntry("plugins");
                 if (ze != null) {
                     BufferedReader in = new BufferedReader(new InputStreamReader(zf.getInputStream(ze)));
-                    plugins.addAll(in.lines().collect(Collectors.toList()));
+                    plugins.addAll(in.lines().toList());
                     in.close();
                     return;
                 }
@@ -470,7 +470,7 @@ public class PluginRegistry {
 
             version = ext.getVersion();
             authors = String.join(", ", ext.getAuthors());
-            categories.addAll(ext.getCategoryList().stream().map(Category::getCategory).collect(Collectors.toList()));
+            categories.addAll(ext.getCategoryList().stream().map(Category::getCategory).toList());
 
             ext.getImports().forEach(def -> {
                 if(def.getName() == null) {
@@ -483,9 +483,7 @@ public class PluginRegistry {
 
             ext.getPluginsList().forEach((PluginDef def) -> {
                 plugins.add(def.getPluginClass());
-                def.getExports().forEach(export -> {
-                    exports.add(new ExportInfo(export.getId(), export.getMethod(), def.getPluginClass() ) );
-                });
+                def.getExports().forEach(export -> exports.add(new ExportInfo(export.getId(), export.getMethod(), def.getPluginClass() ) ));
             });
 
 
@@ -547,9 +545,9 @@ public class PluginRegistry {
                 int matchedLevels = 0;
                 if (loc != null && loc.getLanguage().equals(locale.getLanguage())) {
                     matchedLevels++;
-                    if (loc.getCountry() == locale.getCountry()) {
+                    if (loc.getCountry().equals(locale.getCountry())) {
                         matchedLevels++;
-                        if (loc.getVariant() == locale.getVariant()) {
+                        if (loc.getVariant().equals(locale.getVariant())) {
                             matchedLevels++;
                         }
                     }
@@ -603,8 +601,11 @@ public class PluginRegistry {
      * This class is used to store information about an "export" record in an XML file.
      */
     private static class ExportInfo {
-        String method, id, className;
+        String method;
+        String id;
+        String className;
         Object plugin;
+
         ExportInfo() {
         }
         ExportInfo(String id, String method, String className) {
