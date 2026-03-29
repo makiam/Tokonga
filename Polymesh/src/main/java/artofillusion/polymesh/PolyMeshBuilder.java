@@ -120,4 +120,29 @@ final class PolyMeshBuilder {
         mesh.setFaces(faces);
         mesh.setEdges(edges);
     }
+
+    static void buildFaceMesh(PolyMesh mesh) {
+        var vertices = new Wvertex[4];
+        vertices[0] = new Wvertex(new Vec3(-0.5, -0.5, 0.0), 0);
+        vertices[1] = new Wvertex(new Vec3(0.5, -0.5, 0.0), 4);
+        vertices[2] = new Wvertex(new Vec3(-0.5, 0.5, 0.0), 3);
+        vertices[3] = new Wvertex(new Vec3(0.5, 0.5, 0.0), 5);
+
+        var edges = new Wedge[8];
+        edges[0] = new Wedge(1, 4, 0, 1);
+        edges[1] = new Wedge(3, 5, 0, 2);
+        edges[2] = new Wedge(2, 6, 0, 3);
+        edges[3] = new Wedge(0, 7, 0, 0);
+        edges[4] = new Wedge(0, 0, -1, 7);
+        edges[5] = new Wedge(1, 1, -1, 4);
+        edges[6] = new Wedge(3, 2, -1, 5);
+        edges[7] = new Wedge(2, 3, -1, 6);
+
+        var faces = new Wface[1];
+        faces[0] = new Wface(0);
+
+        mesh.setVertices(vertices);
+        mesh.setFaces(faces);
+        mesh.setEdges(edges);
+    }
 }

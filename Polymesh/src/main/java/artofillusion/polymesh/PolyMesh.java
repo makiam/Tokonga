@@ -375,8 +375,9 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
                 break;
             case 1:
-                u = 1;
-                v = 1;
+
+                PolyMeshBuilder.buildFaceMesh(this);
+                break;
             case 4:
                 // planar mesh, single face;
                 planarMesh(u + 1, v + 1, 1.0, 1.0);
@@ -386,6 +387,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 }
                 break;
         }
+
         for (var vertex : vertices) {
             vertex.r.x *= sx;
             vertex.r.y *= sy;
