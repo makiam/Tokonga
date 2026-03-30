@@ -99,7 +99,6 @@ public class KeystrokeManager {
             mapRecordsToScripts();
         }
 
-        var shell = ArtOfIllusion.getShell();
         List<Script> rec = scripts.getOrDefault(new KeyEventContainer(event), Collections.emptyList());
         rec.forEach(script -> {
             script.setProperty("window", window);

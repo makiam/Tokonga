@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2013 by Peter Eastman
-   Changes copyright (C) 2023-2025 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -28,7 +28,7 @@ public class ScriptRunner {
     private static SearchlistClassLoader parentLoader;
     private static PrintStream output;
     // This is a cache of script engine instances
-    private static final HashMap<String, ScriptEngine> engines = new HashMap<>();
+    private static final Map<String, ScriptEngine> engines = new HashMap<>();
     private static final String[] IMPORTS = {"artofillusion.*", "artofillusion.image.*", "artofillusion.material.*",
         "artofillusion.math.*", "artofillusion.object.*", "artofillusion.script.*", "artofillusion.texture.*",
         "artofillusion.procedural.*", "artofillusion.ui.*", "buoy.event.*", "buoy.widget.*"};
@@ -66,39 +66,38 @@ public class ScriptRunner {
      * Get the ScriptEngine for running scripts written in a particular language.
      */
     public static ScriptEngine getScriptEngine(String language) throws ScriptException {
-        if (!engines.containsKey(language)) {
-            if (parentLoader == null) {
-                parentLoader = new SearchlistClassLoader(ScriptRunner.class.getClassLoader());
-                for (ClassLoader plugin : PluginRegistry.getPluginClassLoaders()) {
-                    parentLoader.add(plugin);
-                }
-            }
-            ScriptEngine engine;
-            Class<? extends ScriptEngine> languageEngine = null;
-            for (Language implementedLanguage : Language.values()) {
-                if (implementedLanguage.name.equals(language)) {
-                    languageEngine = implementedLanguage.engineClass;
-                }
-            }
-            if (languageEngine == null) {
-                throw new IllegalArgumentException("Unknown name for scripting language: " + language);
-            }
-            try {
-                engine = languageEngine.getConstructor(ClassLoader.class).newInstance(parentLoader);
-            } catch (ReflectiveOperationException | SecurityException ex) {
-                throw new ScriptException("Could not create a script engine of class " + languageEngine, -1, ex);
-            }
-            engines.put(language, engine);
-            try {
-                for (String packageName : IMPORTS) {
-                    engine.addImport(packageName);
-                }
-            } catch (Exception e) {
-                throw new ScriptException("Could not import the required packages (" + IMPORTS.toString() + ")", -1, e);
-            }
-            output = new PrintStream(new ScriptOutputWindow());
-            engine.setOutput(output);
+        if (engines.containsKey(language)) {
+            return engines.get(language);
         }
+        if (parentLoader == null) {
+            parentLoader = new SearchlistClassLoader(ScriptRunner.class.getClassLoader());
+            PluginRegistry.getPluginClassLoaders().forEach(loader -> parentLoader.add(loader));
+        }
+        ScriptEngine engine;
+        Class<? extends ScriptEngine> languageEngine = null;
+        for (Language implementedLanguage : Language.values()) {
+            if (implementedLanguage.name.equals(language)) {
+                languageEngine = implementedLanguage.engineClass;
+            }
+        }
+        if (languageEngine == null) {
+            throw new IllegalArgumentException("Unknown name for scripting language: " + language);
+        }
+        try {
+            engine = languageEngine.getConstructor(ClassLoader.class).newInstance(parentLoader);
+        } catch (ReflectiveOperationException | SecurityException ex) {
+            throw new ScriptException("Could not create a script engine of class " + languageEngine, -1, ex);
+        }
+        engines.put(language, engine);
+        try {
+            for (String packageName : IMPORTS) {
+                engine.addImport(packageName);
+            }
+        } catch (Exception e) {
+            throw new ScriptException("Could not import the required packages (" + IMPORTS.toString() + ")", -1, e);
+        }
+        output = new PrintStream(new ScriptOutputWindow());
+        engine.setOutput(output);
         return engines.get(language);
     }
 

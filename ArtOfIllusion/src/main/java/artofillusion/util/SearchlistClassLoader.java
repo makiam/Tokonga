@@ -47,10 +47,8 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.Map;
+import java.util.*;
+
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -77,10 +75,6 @@ import lombok.extern.slf4j.Slf4j;
  * internally created classloader is <i>non-shared</i>.
  * <br>
  *
- * <br>SearchlistClassLoader therefore also allows control over the order in
- * which classloaders are searched, through the {@link #setSearchMode(byte)}
- * method.
- *
  * <br>The possible <i>searchmodes</i> are:
  * <ul>
  * <li>SHARED
@@ -92,16 +86,8 @@ import lombok.extern.slf4j.Slf4j;
  * <br>added URLs are searched <i>before</i> added classloaders. This will
  * create a NON-SHARED copy of a class (ie a duplicate) in preference to
  * using a SHARED one from another classloader.
- *
- * <li>ORDERED
- * <br>added classloaders and URLs are searched in the order in which
- * they were added to the searchlist.
  * </ul>
  *
- * <br>There is also a method which retrieves a class <i>without</i> searching
- * any added classloaders. This effectively retrieves the <i>canonical</i>
- * instance of the requested class (see {@link #loadLocalClass(String)}
- * and {@link #getLocalResource(String)}).
  *
  * <p>
  * <i>Implementation notes:</i>.
@@ -120,27 +106,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SearchlistClassLoader extends ClassLoader {
 
-    protected Vector<Loader> list;
-    protected Vector<Loader> search;
+    protected List<Loader> list;
+    protected List<Loader> search;
+
     protected Map<String, Class<?>> cache;
     protected Loader content = null;
-    protected byte searchMode = SHARED;
     protected int divide = 0;
 
-    /**
-     * search mode enums
-     */
-    public static final byte SHARED = 0x1;
-    public static final byte NONSHARED = 0x2;
-    public static final byte ORDERED = 0x3;
 
     protected static final URL[] EMPTY_URL = new URL[0];
 
-    /**
-     * create a SearchlistClassLoader.
-     */
-    public SearchlistClassLoader() {
-    }
 
     /**
      * create a SearchlistClassLoader.
@@ -153,7 +128,7 @@ public class SearchlistClassLoader extends ClassLoader {
      * create a SearchlistClassLoader.
      */
     public SearchlistClassLoader(URL[] url) {
-        content = new Loader(new URLClassLoader(url), false);
+        content = new Loader(new URLClassLoader(url));
     }
 
     /**
@@ -161,21 +136,7 @@ public class SearchlistClassLoader extends ClassLoader {
      */
     public SearchlistClassLoader(URL[] url, ClassLoader parent) {
         super(parent);
-        content = new Loader(new URLClassLoader(url), false);
-    }
-
-    /**
-     * set the search mode.
-     *
-     * @param mode enum for the searchmode: SHARED, NONSHARED, ORDERED
-     */
-    public void setSearchMode(byte mode) {
-        searchMode = mode;
-
-        if (searchMode <= 0 || searchMode > ORDERED) {
-            log.atInfo().log("Invalid search mode: {}; defaulting to SHARED", mode);
-            searchMode = SHARED;
-        }
+        content = new Loader(new URLClassLoader(url));
     }
 
     /**
@@ -214,7 +175,7 @@ public class SearchlistClassLoader extends ClassLoader {
      * @param url the URL to add to the searchlist.
      */
     public void add(URL url) {
-        Loader ldr = new Loader(new URLClassLoader(new URL[]{url}), false);
+        Loader ldr = new Loader(new URLClassLoader(new URL[]{url}));
 
         // store loaders in order in list
         if (list == null) {
@@ -233,7 +194,7 @@ public class SearchlistClassLoader extends ClassLoader {
      * return the array of URLs used locally by this class loader
      */
     public URL[] getURLs() {
-        return content == null ? EMPTY_URL : ((URLClassLoader) content.loader).getURLs();
+        return content == null ? EMPTY_URL : ((URLClassLoader) content.getLoader()).getURLs();
     }
 
     /**
@@ -242,116 +203,27 @@ public class SearchlistClassLoader extends ClassLoader {
     public URL[] getSearchPath() {
         Loader ldr;
         URL[] url;
-        int j;
-        ArrayList<URL> path = new ArrayList<>(8);
 
-        for (int i = 0; (ldr = getLoader(i++, searchMode)) != null; i++) {
-            if (ldr.loader instanceof SearchlistClassLoader loader1) {
-                url = loader1.getSearchPath();
-            } else if (ldr.loader instanceof URLClassLoader loader) {
+        List<URL> path = new ArrayList<>(8);
+
+        for (int i = 0; (ldr = getLoader(i++)) != null; i++) {
+            log.info("Get Search path: {}", i);
+            if (ldr.getLoader() instanceof SearchlistClassLoader scl) {
+                url = scl.getSearchPath();
+            } else if (ldr.getLoader() instanceof URLClassLoader loader) {
                 url = loader.getURLs();
             } else {
                 url = null;
             }
 
             if (url != null) {
-                for (j = 0; j < url.length; j++) {
-                    path.add(url[j]);
+                for (var item: url) {
+                    path.add(item);
                 }
             }
         }
 
         return path.isEmpty() ? EMPTY_URL : path.toArray(EMPTY_URL);
-    }
-
-    /**
-     * Return the local class instance for <i>name</i>.
-     *
-     * <br>This does <i>not</i> search the searchlist. Only classes loaded
-     * directly by this loader or its parent are returned.
-     *
-     * <br>This method can be used to retrieve the <i>canonical</i> instance
-     * of a class.
-     * If this method is called on a set of SearchlistClassLoaders, then
-     * the only classloader which will return the class is the one which
-     * originally loaded it (assuming no duplicates have been created yet).
-     *
-     * @param name the full-qualified name of the class
-     * @return the loaded class.
-     *
-     * @throws ClassNotFoundException if the class is not found.
-     */
-    public Class<?> loadLocalClass(String name) throws ClassNotFoundException {
-        ClassNotFoundException err = null;
-
-        if (getParent() != null) {
-            try {
-                return getParent().loadClass(name);
-            } catch (ClassNotFoundException e) {
-                err = e;
-            }
-        }
-
-        if (content != null) {
-
-            // try the cache first
-            Class<?> result = (cache == null ? null : cache.get(name));
-            if (result != null) {
-                return result;
-            }
-
-            // try loading the class data
-            byte[] data = loadClassData(content.loader, name);
-
-            if (data != null) {
-
-                // define the class
-                result = defineClass(name, data, 0, data.length);
-
-                if (result != null) {
-                    //System.out.println("defined class: " + name);
-
-                    // cache the result
-                    if (cache == null) {
-                        cache = new Hashtable<>(1024);
-                    }
-                    cache.put(name, result);
-
-                    return result;
-                }
-            }
-        }
-
-        throw (err == null ? new ClassNotFoundException(name) : err);
-    }
-
-    /**
-     * Return the URL for the local resource specified by <i>name</i>.
-     *
-     * <br>This does <i>not</i> search the searchlist. Only resources loaded
-     * directly by this loader or its parent are returned.
-     *
-     * <br>This method can be used to retrieve the <i>canonical</i> URL for a
-     * resource.
-     * If this method is called on a set of SearchlistClassLoaders, then
-     * the only classloader which will return the resource is the one which
-     * originally loaded it (assuming no duplicates have been created yet).
-     *
-     * @param name the full-qualified name of the resource.
-     * @return the located URL, or <i>null</i>.
-     */
-    public URL getLocalResource(String name) {
-        URL result = null;
-
-        if (getParent() != null) {
-            result = getParent().getResource(name);
-        }
-
-        if (result == null && content != null) {
-            result = content.loader.getResource(name);
-        }
-
-        return result;
     }
 
     /**
@@ -374,18 +246,18 @@ public class SearchlistClassLoader extends ClassLoader {
      * @throws ClassNotFoundException if the class could not be loaded.
      */
     @Override
-    public Class<?> findClass(String name)
-            throws ClassNotFoundException {
+    public Class<?> findClass(String name) throws ClassNotFoundException {
         Loader ldr;
         Throwable err = null;
         Class<?> result;
         byte[] data;
 
-        for (int i = 0; (ldr = getLoader(i, searchMode)) != null; i++) {
+        for (int i = 0; (ldr = getLoader(i)) != null; i++) {
+            log.info("Find class: {}", i);
             try {
                 // for shared loaders - just try getting the class
-                if (ldr.shared) {
-                    return ldr.loader.loadClass(name);
+                if (ldr.isShared()) {
+                    return ldr.getLoader().loadClass(name);
                 } // for non-shared loaders, we have to define the class manually
                 else {
                     // check the cache first
@@ -395,14 +267,14 @@ public class SearchlistClassLoader extends ClassLoader {
                     }
 
                     // try loading the class
-                    data = loadClassData(ldr.loader, name);
+                    data = loadClassData(ldr.getLoader(), name);
                     if (data != null) {
 
                         // data loaded, define the class
                         result = defineClass(name, data, 0, data.length);
 
                         if (result != null) {
-                            //System.out.println("defined class: " + name);
+
 
                             // cache the result
                             if (cache == null) {
@@ -419,7 +291,9 @@ public class SearchlistClassLoader extends ClassLoader {
             }
         }
 
-        throw (err != null ? new ClassNotFoundException(name, err) : new ClassNotFoundException(name));
+
+        throw err == null ? new ClassNotFoundException(name) : new ClassNotFoundException(name, err);
+
     }
 
     /**
@@ -440,9 +314,9 @@ public class SearchlistClassLoader extends ClassLoader {
 
         URL url = null;
         Loader ldr;
-        for (int i = 0; (ldr = getLoader(i, searchMode)) != null; i++) {
-
-            url = ldr.loader.getResource(path);
+        for (int i = 0; (ldr = getLoader(i)) != null; i++) {
+            log.info("Find resource: {}", i);
+            url = ldr.getLoader().getResource(path);
 
             if (url != null) {
                 log.info("Found {} in loader {}", path, ldr.getLoader());
@@ -471,10 +345,11 @@ public class SearchlistClassLoader extends ClassLoader {
 
         URL[] urls;
         Loader ldr;
-        for (int i = 0; (ldr = getLoader(i++, searchMode)) != null; i++) {
-            if (ldr.loader instanceof SearchlistClassLoader loader1) {
+        for (int i = 0; (ldr = getLoader(i++)) != null; i++) {
+            log.info("Find library: {}", i);
+            if (ldr.getLoader() instanceof SearchlistClassLoader loader1) {
                 urls = loader1.getSearchPath();
-            } else if (ldr.loader instanceof URLClassLoader loader) {
+            } else if (ldr.getLoader() instanceof URLClassLoader loader) {
                 urls = loader.getURLs();
             } else {
                 urls = null;
@@ -482,7 +357,7 @@ public class SearchlistClassLoader extends ClassLoader {
 
             if (urls == null) continue;
 
-            for (URL url : urls) {
+            for (URL url: urls) {
                 if (!url.getProtocol().equalsIgnoreCase("file")) {
                     continue;
                 }
@@ -510,13 +385,13 @@ public class SearchlistClassLoader extends ClassLoader {
      * search.
      *
      * @param index the position (step) in the search process
-     * @param mode the search mode to use
      *
      * @return The corresponding Loader or <i>null</i>
      */
-    protected Loader getLoader(int index, byte mode) {
+    protected Loader getLoader(int index) {
         // content is always the first loader searched
-        if (content != null) {
+        if(content == null) {
+        } else {
             if (index == 0) {
                 return content;
             } else {
@@ -528,29 +403,8 @@ public class SearchlistClassLoader extends ClassLoader {
             return null;
         }
 
-        Loader result;
 
-        switch (mode) {
-            case SHARED:
-                // return shared loaders before non-shared loaders
-                result = search.get(index);
-                break;
-
-            case NONSHARED: // return non-shared loaders before shared loaders
-            {
-                int pos = index + divide;
-                result = (pos < search.size()
-                        ? search.get(pos)
-                        : search.get(pos - divide));
-            }
-            break;
-
-            default:
-                // return loaders in the order in which they were added
-                result = list.get(index);
-        }
-
-        return result;
+        return search.get(index);
     }
 
     /**
@@ -560,89 +414,13 @@ public class SearchlistClassLoader extends ClassLoader {
      * @return a byte[] containing the class bytecode or <i>null</i>
      */
     protected byte[] loadClassData(ClassLoader cl, String name) {
-        ByteArrayOutputStream barray;
-        byte[] buff;
-        int len;
 
-        InputStream in = cl.getResourceAsStream(translate(name, ".", "/")
-                + ".class");
-
-        if (in == null) {
+        try(InputStream is = cl.getResourceAsStream(name.replace(".", "/") + ".class")) {
+            return is == null ? null : is.readAllBytes();
+        } catch (IOException ioe) {
+            log.atError().log("Error reading class data: {}", ioe.getMessage());
             return null;
         }
-
-        try {
-
-            barray = new ByteArrayOutputStream(1024 * 16);
-            buff = new byte[1024];
-
-            do {
-                len = in.read(buff, 0, buff.length);
-                if (len > 0) {
-                    barray.write(buff, 0, len);
-                }
-            } while (len >= 0);
-
-            return (barray.size() > 0 ? barray.toByteArray() : null);
-
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
-     * translate matching chars in a string.
-     *
-     * @param str the String to translate
-     * @param match the list of chars to match, in a string.
-     * @param replace the list of corresponding chars to replace matched chars
-     * with.
-     *
-     * <pre>
-     *  Eg: translate("the dog.", "o.", "i")
-     *  returns "the dig", because 'o' is replaced with 'i', and '.' is
-     *  replaced with nothing (ie deleted).
-     * </pre>
-     *
-     * @return the result as a string.
-     */
-    public static String translate(String str, String match, String replace) {
-        StringBuilder b = new StringBuilder(str.length());
-
-        int pos = 0;
-        char c = 0;
-
-        if (match == null) {
-            match = "";
-        }
-        if (replace == null) {
-            replace = "";
-        }
-
-        boolean copy = (match.length() != 0
-                && match.length() >= replace.length());
-
-        // loop over the input string
-        int max = str.length();
-        for (int x = 0; x < max; x++) {
-            c = str.charAt(x);
-            pos = match.indexOf(c);
-
-            // if found c in 'match'
-            if (pos >= 0) {
-                // translate
-                if (pos < replace.length()) {
-                    b.append(replace.charAt(pos));
-                }
-            } // copy
-            else if (copy || replace.indexOf(c) >= match.length()) {
-                b.append(c);
-            }
-
-            // otherwise, effectively, delete...
-        }
-
-        return b.toString();
     }
 
     /**
@@ -652,13 +430,25 @@ public class SearchlistClassLoader extends ClassLoader {
      */
     protected static class Loader {
 
+
+        public ClassLoader getLoader() {
+            return owner;
+        }
+
+        private final ClassLoader owner;		// the actual classloader
+
         @Getter
-        final ClassLoader loader;		// the actual classloader
-        final boolean shared;			// shared flag
+        private boolean shared;			// shared flag
 
         Loader(ClassLoader loader, boolean shared) {
-            this.loader = loader;
+            log.atInfo().log("Creating Loader for {} shared={}", loader, Boolean.toString(shared));
+            this.owner = loader;
             this.shared = shared;
+        }
+
+        Loader(ClassLoader loader) {
+            log.atInfo().log("Creating not shared Loader for {}", loader.getName());
+            this.owner = loader;
         }
     }
 }
