@@ -86,10 +86,6 @@ import lombok.extern.slf4j.Slf4j;
  * <br>added URLs are searched <i>before</i> added classloaders. This will
  * create a NON-SHARED copy of a class (ie a duplicate) in preference to
  * using a SHARED one from another classloader.
- *
- * <li>ORDERED
- * <br>added classloaders and URLs are searched in the order in which
- * they were added to the searchlist.
  * </ul>
  *
  *
@@ -116,12 +112,6 @@ public class SearchlistClassLoader extends ClassLoader {
     protected Map<String, Class<?>> cache;
     protected Loader content = null;
     protected int divide = 0;
-
-    /**
-     * search mode enums
-     */
-    public static final byte SHARED = 0x1;
-    public static final byte NONSHARED = 0x2;
 
 
     protected static final URL[] EMPTY_URL = new URL[0];
@@ -216,7 +206,7 @@ public class SearchlistClassLoader extends ClassLoader {
 
         List<URL> path = new ArrayList<>(8);
 
-        for (int i = 0; (ldr = getLoader(i++, SHARED)) != null; i++) {
+        for (int i = 0; (ldr = getLoader(i++)) != null; i++) {
             log.info("Get Search path: {}", i);
             if (ldr.getLoader() instanceof SearchlistClassLoader scl) {
                 url = scl.getSearchPath();
@@ -262,7 +252,7 @@ public class SearchlistClassLoader extends ClassLoader {
         Class<?> result;
         byte[] data;
 
-        for (int i = 0; (ldr = getLoader(i, SHARED)) != null; i++) {
+        for (int i = 0; (ldr = getLoader(i)) != null; i++) {
             log.info("Find class: {}", i);
             try {
                 // for shared loaders - just try getting the class
@@ -324,7 +314,7 @@ public class SearchlistClassLoader extends ClassLoader {
 
         URL url = null;
         Loader ldr;
-        for (int i = 0; (ldr = getLoader(i, SHARED)) != null; i++) {
+        for (int i = 0; (ldr = getLoader(i)) != null; i++) {
             log.info("Find resource: {}", i);
             url = ldr.getLoader().getResource(path);
 
@@ -355,7 +345,7 @@ public class SearchlistClassLoader extends ClassLoader {
 
         URL[] urls;
         Loader ldr;
-        for (int i = 0; (ldr = getLoader(i++, SHARED)) != null; i++) {
+        for (int i = 0; (ldr = getLoader(i++)) != null; i++) {
             log.info("Find library: {}", i);
             if (ldr.getLoader() instanceof SearchlistClassLoader loader1) {
                 urls = loader1.getSearchPath();
@@ -395,11 +385,10 @@ public class SearchlistClassLoader extends ClassLoader {
      * search.
      *
      * @param index the position (step) in the search process
-     * @param mode the search mode to use
      *
      * @return The corresponding Loader or <i>null</i>
      */
-    protected Loader getLoader(int index, byte mode) {
+    protected Loader getLoader(int index) {
         // content is always the first loader searched
         if(content == null) {
         } else {
@@ -414,24 +403,8 @@ public class SearchlistClassLoader extends ClassLoader {
             return null;
         }
 
-        Loader result;
 
-        switch (mode) {// return shared loaders before non-shared loaders
-            case SHARED:
-                result = search.get(index);
-                break;
-            // return non-shared loaders before shared loaders
-            case NONSHARED:
-                int pos = index + divide;
-                result = (pos < search.size() ? search.get(pos) : search.get(pos - divide));
-                break;
-            // return loaders in the order in which they were added
-            default:
-                result = list.get(index);
-                break;
-        }
-
-        return result;
+        return search.get(index);
     }
 
     /**

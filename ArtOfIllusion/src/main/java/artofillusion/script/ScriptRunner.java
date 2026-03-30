@@ -71,9 +71,7 @@ public class ScriptRunner {
         }
         if (parentLoader == null) {
             parentLoader = new SearchlistClassLoader(ScriptRunner.class.getClassLoader());
-            for (ClassLoader plugin : PluginRegistry.getPluginClassLoaders()) {
-                parentLoader.add(plugin);
-            }
+            PluginRegistry.getPluginClassLoaders().forEach(loader -> parentLoader.add(loader));
         }
         ScriptEngine engine;
         Class<? extends ScriptEngine> languageEngine = null;
