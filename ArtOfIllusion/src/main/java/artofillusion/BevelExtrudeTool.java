@@ -18,6 +18,7 @@ import artofillusion.ui.NinePointManipulator.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
+import java.util.Optional;
 
 /**
  * BevelExtrudeTool is an EditingTool used for beveling and extruding TriangleMesh objects.
@@ -137,10 +138,7 @@ public class BevelExtrudeTool extends MeshEditingTool {
 
     protected void handleReleased(HandleReleasedEvent ev) {
         if (width != 0.0 || height != 0.0) {
-            TriangleMesh mesh = (TriangleMesh) controller.getObject().getObject();
-            if (undo != null) {
-                theWindow.setUndoRecord(undo);
-            }
+            Optional.ofNullable(undo).ifPresent(theWindow::setUndoRecord);
             controller.objectChanged();
         }
         theWindow.updateImage();

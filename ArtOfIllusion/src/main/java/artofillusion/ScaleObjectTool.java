@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,6 +17,7 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -44,13 +45,16 @@ public class ScaleObjectTool extends EditingTool {
     private Vec3[] objectPos, scaleCenter;
     private Object3D[] oldObj;
     private CoordinateSystem[] oldCoords;
-    private Vector<ObjectInfo> toMove;
-    private double halfx, halfy, centerx, centery;
+    private List<ObjectInfo> toMove;
+    private double halfX;
+    private double halfY;
+    private double centerX;
+    private double centerY;
     private ObjectInfo clickedObject;
     private int whichSides;
     private int opmode;
-    private int[] haxis;
-    private int[] vaxis;
+    private int[] hAxis;
+    private int[] vAxis;
     private int scaleAround = POSITIONS_FIXED;
     private boolean scaleAll, dragged, applyToChildren = true;
 
@@ -86,67 +90,67 @@ public class ScaleObjectTool extends EditingTool {
             sel = theScene.getSelection();
         }
         for (i = 0; i < sel.length; i++) {
-            toMove.addElement(theScene.getObject(sel[i]));
+            toMove.add(theScene.getObject(sel[i]));
         }
         bounds = new BoundingBox[toMove.size()];
         scaleCenter = new Vec3[toMove.size()];
-        haxis = new int[toMove.size()];
-        vaxis = new int[toMove.size()];
+        hAxis = new int[toMove.size()];
+        vAxis = new int[toMove.size()];
         int[] haxisDir = new int[toMove.size()];
         int[] vaxisDir = new int[toMove.size()];
         objectPos = new Vec3[toMove.size()];
         for (i = 0; i < objectPos.length; i++) {
-            ObjectInfo info = toMove.elementAt(i);
+            ObjectInfo info = toMove.get(i);
             objectPos[i] = info.getCoords().getOrigin();
         }
 
         // Figure out the correspondence between the object's x, y, and z axes, on the
         // horizontal and vertical axes on the screen.
         for (i = 0; i < bounds.length; i++) {
-            bounds[i] = toMove.elementAt(i).getBounds();
-            cam.setObjectTransform(toMove.elementAt(i).getCoords().fromLocal());
+            bounds[i] = toMove.get(i).getBounds();
+            cam.setObjectTransform(toMove.get(i).getCoords().fromLocal());
             screenx = cam.getObjectToView().timesDirection(Vec3.vx());
             screeny = cam.getObjectToView().timesDirection(Vec3.vy());
             screenz = cam.getObjectToView().timesDirection(Vec3.vz());
             if (Math.abs(screenx.x) > Math.abs(screeny.x)) {
                 if (Math.abs(screenz.x) > Math.abs(screenx.x)) {
-                    haxis[i] = 2;
+                    hAxis[i] = 2;
                 } else {
-                    haxis[i] = 0;
+                    hAxis[i] = 0;
                 }
             } else {
                 if (Math.abs(screenz.x) > Math.abs(screeny.x)) {
-                    haxis[i] = 2;
+                    hAxis[i] = 2;
                 } else {
-                    haxis[i] = 1;
+                    hAxis[i] = 1;
                 }
             }
             if (Math.abs(screenx.y) > Math.abs(screeny.y)) {
                 if (Math.abs(screenz.y) > Math.abs(screenx.y)) {
-                    vaxis[i] = 2;
+                    vAxis[i] = 2;
                 } else {
-                    vaxis[i] = 0;
+                    vAxis[i] = 0;
                 }
             } else {
                 if (Math.abs(screenz.y) > Math.abs(screeny.y)) {
-                    vaxis[i] = 2;
+                    vAxis[i] = 2;
                 } else {
-                    vaxis[i] = 1;
+                    vAxis[i] = 1;
                 }
             }
-            if (vaxis[i] == haxis[i]) {
-                vaxis[i] = (vaxis[i] + 1) % 3;
+            if (vAxis[i] == hAxis[i]) {
+                vAxis[i] = (vAxis[i] + 1) % 3;
             }
             Vec3[] dirs = new Vec3[]{screenx, screeny, screenz};
-            haxisDir[i] = (dirs[haxis[i]].x > 0.0 ? 1 : -1);
-            vaxisDir[i] = (dirs[vaxis[i]].y > 0.0 ? 1 : -1);
+            haxisDir[i] = (dirs[hAxis[i]].x > 0.0 ? 1 : -1);
+            vaxisDir[i] = (dirs[vAxis[i]].y > 0.0 ? 1 : -1);
         }
 
         // Figure out how the position of each object will scale.
         if (e.isControlDown()) {
             if (scaleAround == POSITIONS_FIXED) {
                 for (i = 0; i < scaleCenter.length; i++) {
-                    scaleCenter[i] = toMove.elementAt(i).getCoords().getOrigin();
+                    scaleCenter[i] = toMove.get(i).getCoords().getOrigin();
                 }
             } else {
                 for (i = 0; i < scaleCenter.length; i++) {
@@ -154,50 +158,50 @@ public class ScaleObjectTool extends EditingTool {
                 }
             }
             for (i = 0; i < scaleCenter.length; i++) {
-                scaleCenter[i] = toMove.elementAt(i).getCoords().toLocal().times(scaleCenter[i]);
+                scaleCenter[i] = toMove.get(i).getCoords().toLocal().times(scaleCenter[i]);
             }
             cam.setObjectTransform(clickedObject.getCoords().fromLocal());
             r = cam.findScreenBounds(clickedObject.getBounds());
-            halfx = r.width / 2.0;
-            halfy = r.height / 2.0;
-            centerx = r.x + halfx;
-            centery = r.y + halfy;
+            halfX = r.width / 2.0;
+            halfY = r.height / 2.0;
+            centerX = r.x + halfX;
+            centerY = r.y + halfY;
         } else {
             if (scaleAround == POSITIONS_FIXED) {
                 for (i = 0; i < scaleCenter.length; i++) {
-                    ObjectInfo info = toMove.elementAt(i);
+                    ObjectInfo info = toMove.get(i);
                     scaleCenter[i] = findBorderPos(info.getBounds(),
-                            info.getCoords().getOrigin(), haxis[i], vaxis[i], haxisDir[i], vaxisDir[i], handle);
+                            info.getCoords().getOrigin(), hAxis[i], vAxis[i], haxisDir[i], vaxisDir[i], handle);
                 }
             } else {
-                for (i = 0; toMove.elementAt(i) != clickedObject; i++);
+                for (i = 0; toMove.get(i) != clickedObject; i++);
                 Vec3 center = findBorderPos(clickedObject.getBounds(),
-                        clickedObject.getCoords().getOrigin(), haxis[i], vaxis[i], haxisDir[i], vaxisDir[i], handle);
+                        clickedObject.getCoords().getOrigin(), hAxis[i], vAxis[i], haxisDir[i], vaxisDir[i], handle);
                 center = clickedObject.getCoords().fromLocal().times(center);
                 for (i = 0; i < scaleCenter.length; i++) {
-                    scaleCenter[i] = toMove.elementAt(i).getCoords().toLocal().times(center);
+                    scaleCenter[i] = toMove.get(i).getCoords().toLocal().times(center);
                 }
             }
             cam.setObjectTransform(clickedObject.getCoords().fromLocal());
             r = cam.findScreenBounds(clickedObject.getBounds());
-            halfx = r.width / 2.0;
-            halfy = r.height / 2.0;
+            halfX = r.width / 2.0;
+            halfY = r.height / 2.0;
             if (handle == 0 || handle == 3 || handle == 5) {
-                centerx = r.x + r.width;
+                centerX = r.x + r.width;
             } else if (handle == 1 || handle == 6) {
-                centerx = r.x + halfx;
+                centerX = r.x + halfX;
             } else {
-                centerx = r.x;
+                centerX = r.x;
             }
             if (handle == 0 || handle == 1 || handle == 2) {
-                centery = r.y + r.height;
+                centerY = r.y + r.height;
             } else if (handle == 3 || handle == 4) {
-                centery = r.y + halfy;
+                centerY = r.y + halfY;
             } else {
-                centery = r.y;
+                centerY = r.y;
             }
-            halfx *= 2;
-            halfy *= 2;
+            halfX *= 2;
+            halfY *= 2;
         }
         dragged = false;
         scaleAll = e.isShiftDown();
@@ -219,7 +223,7 @@ public class ScaleObjectTool extends EditingTool {
     @Override
     public void mousePressedOnObject(WidgetMouseEvent e, ViewerCanvas view, int obj) {
         Scene theScene = theWindow.getScene();
-        int i;
+
         int[] sel;
 
         opmode = OPMODE_MOVE;
@@ -230,13 +234,12 @@ public class ScaleObjectTool extends EditingTool {
         } else {
             sel = theScene.getSelection();
         }
-        for (i = 0; i < sel.length; i++) {
-            toMove.addElement(theScene.getObject(sel[i]));
+        for (int i = 0; i < sel.length; i++) {
+            toMove.add(theScene.getObject(sel[i]));
         }
         objectPos = new Vec3[toMove.size()];
-        for (i = 0; i < objectPos.length; i++) {
-            ObjectInfo info = toMove.elementAt(i);
-            objectPos[i] = info.getCoords().getOrigin();
+        for (int i = 0; i < objectPos.length; i++) {
+            objectPos[i] = toMove.get(i).getCoords().getOrigin();
         }
         clickPoint = e.getPoint();
         dragged = false;
@@ -327,22 +330,21 @@ public class ScaleObjectTool extends EditingTool {
     public void mouseDraggedMoveOp(final WidgetMouseEvent e, final ViewerCanvas view) {
         Camera cam = view.getCamera();
         Point dragPoint = e.getPoint();
-        CoordinateSystem c;
-        int i, dx, dy;
+
         Vec3 v;
 
         if (!dragged) {
             UndoRecord undo;
             theWindow.setUndoRecord(undo = new UndoRecord(theWindow));
-            for (i = 0; i < toMove.size(); i++) {
-                ObjectInfo info = toMove.elementAt(i);
-                c = info.getCoords();
+            for (int i = 0; i < toMove.size(); i++) {
+                var c = toMove.get(i).getCoords();
                 undo.addCommand(UndoRecord.COPY_COORDS, c, c.duplicate());
             }
             dragged = true;
         }
-        dx = dragPoint.x - clickPoint.x;
-        dy = dragPoint.y - clickPoint.y;
+        int dx = dragPoint.x - clickPoint.x;
+        int dy = dragPoint.y - clickPoint.y;
+
         if (e.isShiftDown() && !e.isControlDown()) {
             if (Math.abs(dx) > Math.abs(dy)) {
                 dy = 0;
@@ -355,10 +357,8 @@ public class ScaleObjectTool extends EditingTool {
         } else {
             v = cam.findDragVector(clickedObject.getCoords().getOrigin(), dx, dy);
         }
-        for (i = 0; i < toMove.size(); i++) {
-            ObjectInfo info = toMove.elementAt(i);
-            c = info.getCoords();
-            c.setOrigin(objectPos[i].plus(v));
+        for (int i = 0; i < toMove.size(); i++) {
+            toMove.get(i).getCoords().setOrigin(objectPos[i].plus(v));
         }
         theWindow.setModified();
         theWindow.updateImage();
@@ -380,7 +380,7 @@ public class ScaleObjectTool extends EditingTool {
             UndoRecord undo;
             theWindow.setUndoRecord(undo = new UndoRecord(theWindow));
             for (int i = 0; i < toMove.size(); i++) {
-                ObjectInfo info = toMove.elementAt(i);
+                var info = toMove.get(i);
                 oldObj[i] = info.getObject().duplicate();
                 oldCoords[i] = info.getCoords().duplicate();
                 undo.addCommand(UndoRecord.COPY_COORDS, info.getCoords(), oldCoords[i]);
@@ -394,43 +394,43 @@ public class ScaleObjectTool extends EditingTool {
             hscale = vscale = 1.0;
         }
         if ((whichSides & TOP) > 0) {
-            size = centery - dragPoint.y;
+            size = centerY - dragPoint.y;
             if (size < 1.0) {
                 size = 1.0;
             }
-            vscale = size / halfy;
+            vscale = size / halfY;
         }
         if ((whichSides & BOTTOM) > 0) {
-            size = dragPoint.y - centery;
+            size = dragPoint.y - centerY;
             if (size < 1.0) {
                 size = 1.0;
             }
-            vscale = size / halfy;
+            vscale = size / halfY;
         }
         if ((whichSides & LEFT) > 0) {
-            size = centerx - dragPoint.x;
+            size = centerX - dragPoint.x;
             if (size < 1.0) {
                 size = 1.0;
             }
-            hscale = size / halfx;
+            hscale = size / halfX;
         }
         if ((whichSides & RIGHT) > 0) {
-            size = dragPoint.x - centerx;
+            size = dragPoint.x - centerX;
             if (size < 1.0) {
                 size = 1.0;
             }
-            hscale = size / halfx;
+            hscale = size / halfX;
         }
         for (int i = 0; i < toMove.size(); i++) {
             if (scaleAll) {
                 scale[0] = scale[1] = scale[2] = Math.max(hscale, vscale);
             } else {
                 scale[0] = scale[1] = scale[2] = 1.0;
-                scale[haxis[i]] = hscale;
-                scale[vaxis[i]] = vscale;
+                scale[hAxis[i]] = hscale;
+                scale[vAxis[i]] = vscale;
             }
             Vec3 oldsize = bounds[i].getSize();
-            ObjectInfo info = toMove.elementAt(i);
+            ObjectInfo info = toMove.get(i);
             Object3D obj = info.getObject();
             obj.copyObject(oldObj[i]);
             obj.setSize(scale[0] * oldsize.x, scale[1] * oldsize.y, scale[2] * oldsize.z);

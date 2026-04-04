@@ -208,7 +208,7 @@ public class MoveScaleRotateMeshTool extends MeshEditingTool {
 
             tooltipsEnabled = !tooltipsEnabled;
             if (tooltipsEnabled && !tooltipsAdded) {
-                ViewerCanvas[] allViews = ((MeshEditorWindow) theWindow).getAllViews();
+                ViewerCanvas[] allViews = theWindow.getAllViews();
                 for(var allView: allViews) allView.addEventLink(ToolTipEvent.class, this, "showToolTip");
                 tooltipsAdded = true;
             }
@@ -270,6 +270,7 @@ public class MoveScaleRotateMeshTool extends MeshEditingTool {
         theWindow.updateImage();
     }
 
+    @PluginRegistry.UsedViaReflection
     private void showToolTip(ToolTipEvent ev) {
         if (!tooltipsEnabled) {
             return;

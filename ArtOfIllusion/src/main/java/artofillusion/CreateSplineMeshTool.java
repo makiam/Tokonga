@@ -100,7 +100,7 @@ public class CreateSplineMeshTool extends EditingTool {
             // the probability of accidentally creating zero size objects.
 
             if (Math.abs(dragPoint.x - clickPoint.x) + Math.abs(dragPoint.y - clickPoint.y) > 3) {
-                Scene theScene = ((LayoutWindow) theWindow).getScene();
+                Scene theScene = theWindow.getScene();
                 Vec3[][] v = getMeshPoints(1.0, 1.0);
                 float[] uSmoothness = new float[uSize];
                 float[] vSmoothness = new float[vSize];

@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
    Changes copyright (C) 2016-2019 by Petri Ihalainen
-   Changes copyright (C) 2020-2024 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -77,16 +77,9 @@ public class MoveViewTool extends EditingTool {
         } // else work according to navigation mode selection
         else {
             switch (view.getNavigationMode()) {
-                case NAVIGATE_MODEL_SPACE:
-                case NAVIGATE_MODEL_LANDSCAPE:
-                    dragMoveModel(e, view);
-                    break;
-                case NAVIGATE_TRAVEL_SPACE:
-                case NAVIGATE_TRAVEL_LANDSCAPE:
-                    dragMoveTravel(e, view);
-                    break;
-                default:
-                    break;
+                case NAVIGATE_MODEL_SPACE, NAVIGATE_MODEL_LANDSCAPE -> dragMoveModel(e, view);
+                case NAVIGATE_TRAVEL_SPACE, NAVIGATE_TRAVEL_LANDSCAPE -> dragMoveTravel(e, view);
+                default -> {}
             }
         }
         if (view.getBoundCamera() != null) {

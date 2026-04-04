@@ -12,7 +12,6 @@
 
 package artofillusion;
 
-import artofillusion.animation.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
@@ -25,9 +24,13 @@ import java.awt.*;
  */
 public class CreatePolygonTool extends EditingTool {
 
-    private static int counter = 1, sides = 3, shape = Curve.NO_SMOOTHING;
+    private static int counter = 1;
+    private static int sides = 3;
+    private static int shape = Mesh.NO_SMOOTHING;
     private boolean drawFilled = false;
-    private boolean dragging, equilateral, centered;
+    private boolean dragging;
+    private boolean equilateral;
+    private boolean centered;
     private ViewerCanvas workingView;
     private Point clickPoint;
     private double[] sine;
@@ -53,14 +56,11 @@ public class CreatePolygonTool extends EditingTool {
     }
 
     private void setHelpText() {
-        String type;
-        if (shape == Curve.NO_SMOOTHING) {
-            type = "polygon";
-        } else if (shape == Curve.INTERPOLATING) {
-            type = "interpolatingCurve";
-        } else {
-            type = "approximatingCurve";
-        }
+        String type = switch (shape) {
+            case Mesh.NO_SMOOTHING -> "polygon";
+            case Mesh.INTERPOLATING -> "interpolatingCurve";
+            default -> "approximatingCurve";
+        };
         theWindow.setHelpText(Translate.text("createPolygonTool.helpText", Integer.toString(sides), Translate.text("createPolygonTool." + type)));
     }
 
@@ -109,8 +109,7 @@ public class CreatePolygonTool extends EditingTool {
                 Scene theScene =  theWindow.getScene();
                 Object3D object = createObject();
                 objInfo = new ObjectInfo(object, new CoordinateSystem(), "Polygon " + (counter++));
-                objInfo.addTrack(new PositionTrack(objInfo), 0);
-                objInfo.addTrack(new RotationTrack(objInfo), 1);
+
                 UndoRecord undo = new UndoRecord(theWindow);
                 int[] sel = ((LayoutWindow) theWindow).getSelectedIndices();
                 ((LayoutWindow) theWindow).addObject(objInfo, undo);
@@ -258,12 +257,10 @@ public class CreatePolygonTool extends EditingTool {
         RadioButtonGroup fillRadio = new RadioButtonGroup();
         BRadioButton openButton = new BRadioButton(Translate.text("Open") + " (" + Translate.text("Curve") + ")", !drawFilled, fillRadio);
         BRadioButton filledButton = new BRadioButton(Translate.text("Filled") + " (" + Translate.text("triangleMesh") + ")", drawFilled, fillRadio);
-        if (shape == Curve.NO_SMOOTHING) {
-            shapeChoice.setSelectedIndex(0);
-        } else if (shape == Curve.INTERPOLATING) {
-            shapeChoice.setSelectedIndex(1);
-        } else {
-            shapeChoice.setSelectedIndex(2);
+        switch (shape) {
+            case Mesh.NO_SMOOTHING -> shapeChoice.setSelectedIndex(0);
+            case Mesh.INTERPOLATING -> shapeChoice.setSelectedIndex(1);
+            default -> shapeChoice.setSelectedIndex(2);
         }
         ComponentsDialog dlg = new ComponentsDialog(theFrame, Translate.text("definePolygon"),
                 new Widget[]{sidesField, shapeChoice, openButton, filledButton},
@@ -278,12 +275,10 @@ public class CreatePolygonTool extends EditingTool {
         }
         sides = i;
         i = shapeChoice.getSelectedIndex();
-        if (i == 0) {
-            shape = Curve.NO_SMOOTHING;
-        } else if (i == 1) {
-            shape = Curve.INTERPOLATING;
-        } else {
-            shape = Curve.APPROXIMATING;
+        switch (i) {
+            case 0 -> shape = Mesh.NO_SMOOTHING;
+            case 1 -> shape = Mesh.INTERPOLATING;
+            default -> shape = Mesh.APPROXIMATING;
         }
         drawFilled = filledButton.getState();
         tabulateSines();

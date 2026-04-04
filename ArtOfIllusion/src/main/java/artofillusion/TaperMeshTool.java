@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -26,7 +26,8 @@ public class TaperMeshTool extends MeshEditingTool {
     private boolean dragInProgress, taperAll, towardCenter;
     private Point clickPoint;
     private HandlePosition whichHandle;
-    private double boundsHeight, boundsWidth;
+    private double boundsHeight;
+    private double boundsWidth;
     private Vec3[] baseVertPos;
     private UndoRecord undo;
     private final NinePointManipulator manipulator;
@@ -58,13 +59,13 @@ public class TaperMeshTool extends MeshEditingTool {
     @Override
     public void drawOverlay(ViewerCanvas view) {
         BoundingBox selectionBounds = findSelectionBounds(view.getCamera());
-        if (selectionBounds != null) {
+        if (selectionBounds == null) {
+            theWindow.setHelpText(Translate.text("taperMeshTool.errorText"));
+        } else {
             if (!dragInProgress) {
                 manipulator.draw(view, selectionBounds);
             }
             theWindow.setHelpText(Translate.text("taperMeshTool.helpText"));
-        } else {
-            theWindow.setHelpText(Translate.text("taperMeshTool.errorText"));
         }
     }
 
@@ -94,8 +95,8 @@ public class TaperMeshTool extends MeshEditingTool {
         taperAll = ev.getMouseEvent().isShiftDown();
         towardCenter = ev.getMouseEvent().isControlDown();
         Rectangle r = ev.getScreenBounds();
-        boundsHeight = (double) r.height;
-        boundsWidth = (double) r.width;
+        boundsHeight = r.height;
+        boundsWidth = r.width;
         baseVertPos = mesh.getVertexPositions();
     }
 
@@ -130,20 +131,16 @@ public class TaperMeshTool extends MeshEditingTool {
     private Vec3[] findTaperedPositions(Vec3[] vert, Point pos, BoundingBox bounds, MeshViewer view) {
         Vec3[] v = new Vec3[vert.length];
         int[] selected = controller.getSelectionDistance();
-        Camera cam = view.getCamera();
-        double clickX, clickY, posX, posY, taper;
-        Vec3 center;
-        Mat4 m1, m2;
-        int i, direction;
+        double taper;
 
-        clickX = (double) clickPoint.x;
-        clickY = (double) clickPoint.y;
-        posX = (double) pos.x;
-        posY = (double) pos.y;
+        double clickX = clickPoint.x;
+        double clickY = clickPoint.y;
+        double posX = pos.x;
+        double posY = pos.y;
 
         // Figure out which way to taper the mesh, and toward which point.
-        direction = (Math.abs(posX - clickX) > Math.abs(posY - clickY)) ? 0 : 1;
-        center = new Vec3(0.0, 0.0, (bounds.minz + bounds.maxz) / 2.0);
+        int direction = (Math.abs(posX - clickX) > Math.abs(posY - clickY)) ? 0 : 1;
+        Vec3 center = new Vec3(0.0, 0.0, (bounds.minz + bounds.maxz) / 2.0);
         if (bounds.minx == bounds.maxx || bounds.miny == bounds.maxy) {
             taper = 0.0;
         } else if (direction == 0) {
@@ -198,21 +195,21 @@ public class TaperMeshTool extends MeshEditingTool {
 
         // If the points are not being tapered, just copy them over.
         if (taper == 0.0) {
-            for (i = 0; i < vert.length; i++) {
+            for (int i = 0; i < vert.length; i++) {
                 v[i] = new Vec3(vert[i]);
             }
             return v;
         }
 
         // Find the transformation matrix.
-        m1 = cam.getObjectToView();
+        Mat4 m1 = view.getCamera().getObjectToView();
         m1 = Mat4.translation(-center.x, -center.y, -center.z).times(m1);
-        m2 = Mat4.translation(center.x, center.y, center.z);
-        m2 = cam.getViewToWorld().times(m2);
+        Mat4 m2 = Mat4.translation(center.x, center.y, center.z);
+        m2 = view.getCamera().getViewToWorld().times(m2);
         m2 = view.getDisplayCoordinates().toLocal().times(m2);
 
         // Determine the deltas.
-        for (i = 0; i < vert.length; i++) {
+        for (int i = 0; i < vert.length; i++) {
             if (selected[i] == 0) {
                 v[i] = m1.times(vert[i]);
                 if (direction == 0) {
@@ -234,7 +231,7 @@ public class TaperMeshTool extends MeshEditingTool {
         if (theFrame instanceof MeshEditorWindow window) {
             window.adjustDeltas(v);
         }
-        for (i = 0; i < vert.length; i++) {
+        for (int i = 0; i < vert.length; i++) {
             v[i].add(vert[i]);
         }
         return v;

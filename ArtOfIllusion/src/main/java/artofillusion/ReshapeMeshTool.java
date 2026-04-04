@@ -16,6 +16,7 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 /**
  * ReshapeMeshTool is an EditingTool used for moving the vertices of TriangleMesh objects.
@@ -61,7 +62,8 @@ public class ReshapeMeshTool extends MeshEditingTool {
         Point dragPoint = e.getPoint();
         Vec3[] v;
         Vec3 drag;
-        int dx, dy;
+        int dx;
+        int dy;
 
         if (undo == null) {
             undo = new UndoRecord(theWindow, false, UndoRecord.COPY_VERTEX_POSITIONS, mesh, mesh.getVertexPositions());
@@ -92,7 +94,8 @@ public class ReshapeMeshTool extends MeshEditingTool {
     public void mouseReleased(WidgetMouseEvent e, ViewerCanvas view) {
         Mesh mesh = (Mesh) controller.getObject().getObject();
         Point dragPoint = e.getPoint();
-        int dx, dy;
+        int dx;
+        int dy;
         Vec3[] v;
 
         dx = dragPoint.x - clickPoint.x;
@@ -125,20 +128,21 @@ public class ReshapeMeshTool extends MeshEditingTool {
         int i;
         int[] selectDist = controller.getSelectionDistance();
         int key = e.getKeyCode();
-        double dx, dy;
+        double dx;
+        double dy;
         Vec3[] v;
 
         // Pressing an arrow key is equivalent to dragging the first selected point by one pixel.
-        if (key == KeyPressedEvent.VK_UP) {
+        if (key == KeyEvent.VK_UP) {
             dx = 0;
             dy = -1;
-        } else if (key == KeyPressedEvent.VK_DOWN) {
+        } else if (key == KeyEvent.VK_DOWN) {
             dx = 0;
             dy = 1;
-        } else if (key == KeyPressedEvent.VK_LEFT) {
+        } else if (key == KeyEvent.VK_LEFT) {
             dx = -1;
             dy = 0;
-        } else if (key == KeyPressedEvent.VK_RIGHT) {
+        } else if (key == KeyEvent.VK_RIGHT) {
             dx = 1;
             dy = 0;
         } else {
@@ -170,7 +174,8 @@ public class ReshapeMeshTool extends MeshEditingTool {
     private Vec3[] findDraggedPositions(Vec3 pos, Vec3[] vert, double dx, double dy, MeshViewer view, boolean controlDown, int[] selectDist) {
         int maxDistance = view.getController().getTensionDistance();
         double tension = view.getController().getMeshTension();
-        Vec3[] drag = new Vec3[maxDistance + 1], v = new Vec3[vert.length];
+        Vec3[] drag = new Vec3[maxDistance + 1];
+        Vec3[] v = new Vec3[vert.length];
 
         if (controlDown) {
             drag[0] = view.getCamera().getCameraCoordinates().getZDirection().times(-dy * 0.01);

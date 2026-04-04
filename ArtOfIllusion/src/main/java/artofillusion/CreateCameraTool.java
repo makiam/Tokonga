@@ -11,7 +11,6 @@
 
 package artofillusion;
 
-import artofillusion.animation.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
@@ -43,8 +42,7 @@ public class CreateCameraTool extends EditingTool {
         ydir = new Vec3(0.0, 1.0, 0.0);
         zdir = new Vec3(0.0, 0.0, 1.0);
         ObjectInfo info = new ObjectInfo(new SceneCamera(), new CoordinateSystem(orig, zdir, ydir), "Camera " + (counter++));
-        info.addTrack(new PositionTrack(info), 0);
-        info.addTrack(new RotationTrack(info), 1);
+
         UndoRecord undo = new UndoRecord(theWindow);
         int[] sel = ((LayoutWindow) theWindow).getSelectedIndices();
         ((LayoutWindow) theWindow).addObject(info, undo);

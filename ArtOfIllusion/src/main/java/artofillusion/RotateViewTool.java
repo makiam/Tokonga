@@ -137,10 +137,9 @@ public class RotateViewTool extends EditingTool {
         Vec3 axis, location;
         CoordinateSystem c = oldCoords.duplicate();
         location = c.getOrigin();
-        int dx, dy;
 
-        dx = dragPoint.x - clickPoint.x;
-        dy = dragPoint.y - clickPoint.y;
+        int dx = dragPoint.x - clickPoint.x;
+        int dy = dragPoint.y - clickPoint.y;
 
         // Action selection by modifier keys
         if (controlDown) {
@@ -185,11 +184,10 @@ public class RotateViewTool extends EditingTool {
 
         Point dragPoint = e.getPoint();
         CoordinateSystem c = oldCoords.duplicate();
-        int dx, dy;
         Vec3 axis;
 
-        dx = dragPoint.x - clickPoint.x;
-        dy = dragPoint.y - clickPoint.y;
+        int dx = dragPoint.x - clickPoint.x;
+        int dy = dragPoint.y - clickPoint.y;
 
         // Action selection by modifier keys
         if (controlDown) {

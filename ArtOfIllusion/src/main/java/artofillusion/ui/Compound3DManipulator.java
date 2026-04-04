@@ -19,6 +19,7 @@ import buoy.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.Arrays;
 import javax.imageio.*;
 
 import lombok.Getter;
@@ -81,7 +82,7 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
      * @deprecated Redirects to PQN_MODE
      */
     @Deprecated
-    public final static ViewMode NPQ_MODE = PQN_MODE;
+    public static final ViewMode NPQ_MODE = PQN_MODE;
 
     private static final int HANDLE_SIZE = 11;
 
@@ -160,9 +161,7 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
         xyzRotHandles = new RotationHandle[3];
         boxes = new Rectangle[7];
         extraUVBox = new Rectangle();
-        for (int i = 0; i < boxes.length; ++i) {
-            boxes[i] = new Rectangle(0, 0, HANDLE_SIZE, HANDLE_SIZE);
-        }
+        Arrays.setAll(boxes, i -> new Rectangle(0, 0, HANDLE_SIZE, HANDLE_SIZE));
         extraUVBox = new Rectangle(0, 0, HANDLE_SIZE, HANDLE_SIZE);
         boxHandleType = new HandleType[]{MOVE, SCALE, MOVE, SCALE, MOVE, SCALE, MOVE};
         xyzRotHandles[0] = new RotationHandle(64, X, handleBlue);
@@ -442,10 +441,8 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
 
         // Don't draw if the selection too close or behind the viewing point
         if (view.isPerspective()) {
-            if (center.
-                    minus(view.getCamera().getCameraCoordinates().getOrigin()).
-                    dot(view.getCamera().getCameraCoordinates().getZDirection())
-                    < 0.5) {
+            var cc = view.getCamera().getCameraCoordinates();
+            if (center.minus(cc.getOrigin()).dot(cc.getZDirection()) < 0.5) {
                 return;
             }
         }
@@ -467,7 +464,9 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
         }
 
         // Draw the axes.
-        Color xColor, yColor, zColor;
+        Color xColor;
+        Color yColor;
+        Color zColor;
         Image[] handles = null;
         if (viewMode == XYZ_MODE) {
             xColor = handleBlue;
@@ -853,8 +852,10 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
     private void scaleDragged(WidgetMouseEvent ev, ViewerCanvas view) {
         Point p = ev.getPoint();
         boolean isShiftDown = ev.isShiftDown();
-        boolean isCtrlDown = (ev.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-        double scaleX, scaleY, scaleZ;
+
+        double scaleX;
+        double scaleY;
+        double scaleZ;
 
         Vec2 base = toVec2(centerPoint, baseClick);
         Vec2 current = toVec2(centerPoint, p);
@@ -864,7 +865,7 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
         } else {
             scale /= (base.length() * base.length());
         }
-        if (isCtrlDown) {
+        if (ev.isControlDown()) {
             axisLength = orAxisLength * scale;
             scale = 1;
             view.repaint();
@@ -937,7 +938,7 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
     This is a value that really should be provided by the view camera object.
 
     The method should be used, when the view is in perspective mode.
-    In parallel mode it just return the distToScreen of Camera.
+    In parallel mode it just returns the distToScreen of Camera.
      */
     private double calculateProjectionDistance(ViewerCanvas view) {
         double projectionDist;
@@ -1047,7 +1048,10 @@ public class Compound3DManipulator extends EventSource implements Manipulator {
          * clicked on the handle
          */
         public int findClickTarget(Point pos, Camera camera) {
-            double u, v, w, z;
+            double u;
+            double v;
+            double w;
+            double z;
             double closestz = Double.MAX_VALUE;
             int which = -1;
             for (int i = 0; i < points2d.length - 1; i++) {

@@ -17,6 +17,7 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Vector;
 
@@ -200,20 +201,20 @@ public class RotateObjectTool extends EditingTool {
 
         // Find the axis to rotate around.
         if (e.isControlDown()) {
-            if (key == KeyPressedEvent.VK_UP || key == KeyPressedEvent.VK_RIGHT) {
+            if (key == KeyEvent.VK_UP || key == KeyEvent.VK_RIGHT) {
                 rotAxis = new Vec3(0.0, 0.0, 1.0);
-            } else if (key == KeyPressedEvent.VK_DOWN || key == KeyPressedEvent.VK_LEFT) {
+            } else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_LEFT) {
                 rotAxis = new Vec3(0.0, 0.0, -1.0);
             } else {
                 return;
             }
-        } else if (key == KeyPressedEvent.VK_UP) {
+        } else if (key == KeyEvent.VK_UP) {
             rotAxis = new Vec3(1.0, 0.0, 0.0);
-        } else if (key == KeyPressedEvent.VK_DOWN) {
+        } else if (key == KeyEvent.VK_DOWN) {
             rotAxis = new Vec3(-1.0, 0.0, 0.0);
-        } else if (key == KeyPressedEvent.VK_LEFT) {
+        } else if (key == KeyEvent.VK_LEFT) {
             rotAxis = new Vec3(0.0, -1.0, 0.0);
-        } else if (key == KeyPressedEvent.VK_RIGHT) {
+        } else if (key == KeyEvent.VK_RIGHT) {
             rotAxis = new Vec3(0.0, 1.0, 0.0);
         } else {
             return;
@@ -231,7 +232,8 @@ public class RotateObjectTool extends EditingTool {
         for(int j: sel) toMove.add(theScene.getObject(j));
         rotationCenter = new Vec3[toMove.size()];
         for (int i = 0; i < rotationCenter.length; i++) {
-            ObjectInfo info = toMove.get(i), parent = info;
+            ObjectInfo info = toMove.get(i);
+            ObjectInfo parent = info;
             if (rotateAround == SELECTION_CENTER) {
                 rotationCenter[i] = center;
                 if (info.isSelected()) {

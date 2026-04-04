@@ -211,13 +211,13 @@ public class RotateMeshTool extends MeshEditingTool {
         Camera cam = view.getCamera();
         CoordinateSystem coords = view.getDisplayCoordinates();
         Mat4 m;
-        int i;
 
-        // Determine whether the coordinate system is right or left handed.
-        Vec3 xdir = cam.getWorldToView().timesDirection(Vec3.vx());
-        Vec3 ydir = cam.getWorldToView().timesDirection(Vec3.vy());
-        Vec3 zdir = cam.getWorldToView().timesDirection(Vec3.vz());
-        if (xdir.cross(ydir).dot(zdir) < 0.0) {
+
+        // Determine whether the coordinate system is right or left-handed.
+        Vec3 xDir = cam.getWorldToView().timesDirection(Vec3.vx());
+        Vec3 yDir = cam.getWorldToView().timesDirection(Vec3.vy());
+        Vec3 zDir = cam.getWorldToView().timesDirection(Vec3.vz());
+        if (xDir.cross(yDir).dot(zDir) < 0.0) {
             angle = -angle;
         }
 
@@ -236,7 +236,7 @@ public class RotateMeshTool extends MeshEditingTool {
         m = coords.toLocal().times(m);
 
         // Determine the deltas.
-        for (i = 0; i < vert.length; i++) {
+        for (int i = 0; i < vert.length; i++) {
             if (selected[i] == 0) {
                 v[i] = m.times(vert[i]).minus(vert[i]);
             } else {
@@ -246,7 +246,7 @@ public class RotateMeshTool extends MeshEditingTool {
         if (theFrame instanceof MeshEditorWindow window) {
             window.adjustDeltas(v);
         }
-        for (i = 0; i < vert.length; i++) {
+        for (int i = 0; i < vert.length; i++) {
             v[i].add(vert[i]);
         }
         return v;
