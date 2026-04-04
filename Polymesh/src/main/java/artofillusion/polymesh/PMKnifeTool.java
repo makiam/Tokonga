@@ -11,7 +11,6 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.polymesh;
 
-import artofillusion.Camera;
 import artofillusion.MeshViewer;
 import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
@@ -44,7 +43,8 @@ public class PMKnifeTool extends EditingTool {
     private Point dragPoint;
     private ViewerCanvas canvas;
     private Point[] screenVert;
-    private boolean[] selection, vertSelection;
+    private boolean[] selection;
+    private boolean[] vertSelection;
 
     public PMKnifeTool(EditingWindow fr, MeshEditController controller) {
         super(fr);
@@ -56,10 +56,10 @@ public class PMKnifeTool extends EditingTool {
     public void mousePressed(WidgetMouseEvent e, ViewerCanvas view) {
         if (!dragging) {
             dragging = true;
-            if (controller.getSelectionMode() == PolyMeshEditorWindow.EDGE_MODE) {
+            if (controller.getSelectionMode() == MeshEditController.EDGE_MODE) {
                 selection = controller.getSelection();
             } else {
-                controller.setSelectionMode(PolyMeshEditorWindow.EDGE_MODE);
+                controller.setSelectionMode(MeshEditController.EDGE_MODE);
                 selection = controller.getSelection();
             }
             int sel = 0;
@@ -72,13 +72,13 @@ public class PMKnifeTool extends EditingTool {
             if (sel == 0) {
                 selection = null;
             }
-            controller.setSelectionMode(PolyMeshEditorWindow.POINT_MODE);
+            controller.setSelectionMode(MeshEditController.POINT_MODE);
             vertSelection = controller.getSelection();
             clickPoints.clear();
             clickPoints.add(e.getPoint());
             dragPoint = e.getPoint();
             originalMesh = ((PolyMesh) controller.getObject().getGeometry()).duplicate();
-            //controller.setSelection( new boolean[originalMesh.getVertices().length] );
+
             MeshVertex[] v = originalMesh.getVertices();
             screenVert = new Point[v.length];
             Vec2 p;
@@ -94,25 +94,26 @@ public class PMKnifeTool extends EditingTool {
     public void mouseDragged(WidgetMouseEvent e, ViewerCanvas view) {
         MeshViewer mv = (MeshViewer) view;
         PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
-        Camera cam = view.getCamera();
+
         dragPoint = e.getPoint();
 
         PolyMesh.Wedge[] edges = originalMesh.getEdges();
         Vec3[] normals = originalMesh.getFaceNormals();
         double[] fraction = new double[edges.length / 2];
-        double f, s1, s2;
-        Camera theCamera = mv.getCamera();
-        Vec3 zdir = theCamera.getCameraCoordinates().getZDirection();
-        Mat4 m = theCamera.getObjectToWorld();
+        double f;
+        double s1;
+        double s2;
+        Vec3 zDir = mv.getCamera().getCameraCoordinates().getZDirection();
+        Mat4 m = mv.getCamera().getObjectToWorld();
         for (int i = 0; i < edges.length / 2; i++) {
             if (!e.isShiftDown()) {
                 if (edges[i].face > -1) {
-                    s1 = m.times(normals[edges[i].face]).dot(zdir);
+                    s1 = m.times(normals[edges[i].face]).dot(zDir);
                 } else {
                     s1 = -1;
                 }
                 if (edges[edges[i].hedge].face > -1) {
-                    s2 = m.times(normals[edges[edges[i].hedge].face]).dot(zdir);
+                    s2 = m.times(normals[edges[edges[i].hedge].face]).dot(zDir);
                 } else {
                     s2 = -1;
                 }
@@ -165,7 +166,7 @@ public class PMKnifeTool extends EditingTool {
             controller.setSelection(sel);
             theWindow.updateImage();
             theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, mesh, originalMesh));
-            UndoRecord undo = null;
+
         }
 
     }

@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2004 by Peter Eastman
-   Changes copyright (C) 2023-2025 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 This program is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later version.
@@ -10,11 +10,8 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.polymesh;
 
-import artofillusion.Camera;
-import artofillusion.MeshViewer;
 import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
-import artofillusion.math.Mat4;
 import artofillusion.math.Vec2;
 import artofillusion.math.Vec3;
 import artofillusion.object.MeshVertex;
@@ -23,13 +20,14 @@ import artofillusion.ui.EditingWindow;
 import artofillusion.ui.MeshEditController;
 import artofillusion.ui.Translate;
 import buoy.event.WidgetMouseEvent;
+
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 
 /**
- * PMKnifeTool is an EditingTool used fto divide edges of PolyMesh objects.
+ * PMKnifeTool is an EditingTool used to divide edges of PolyMesh objects.
  */
+
 @EditingTool.ButtonImage("polymesh:sew")
 @EditingTool.Tooltip("polymesh:sewTool.tipText")
 @EditingTool.ActivatedToolText("polymesh:sewTool.helpText")
@@ -61,10 +59,10 @@ public class PMSewTool extends EditingTool {
             for (int i = 0; i < pr.length; ++i) {
                 pr[i] = v[i].r;
             }
-            if (controller.getSelectionMode() == PolyMeshEditorWindow.EDGE_MODE) {
+            if (controller.getSelectionMode() == MeshEditController.EDGE_MODE) {
                 selection = controller.getSelection();
             } else {
-                controller.setSelectionMode(PolyMeshEditorWindow.EDGE_MODE);
+                controller.setSelectionMode(MeshEditController.EDGE_MODE);
             }
             int[] projectedEdge = null;
             if (controller instanceof PolyMeshEditorWindow) {
@@ -94,7 +92,7 @@ public class PMSewTool extends EditingTool {
             }
             clickPoint = new Point(e.getPoint());
             dragPoint = e.getPoint();
-            //controller.setSelection( new boolean[originalMesh.getVertices().length] );
+
             screenVert = new Point[v.length];
             Vec2 p;
             for (int i = 0; i < v.length; i++) {
@@ -107,48 +105,28 @@ public class PMSewTool extends EditingTool {
 
     @Override
     public void mouseDragged(WidgetMouseEvent e, ViewerCanvas view) {
-        MeshViewer mv = (MeshViewer) view;
+
         PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
-        Camera cam = view.getCamera();
+
         dragPoint = new Point(e.getPoint());
 
         PolyMesh.Wedge[] edges = originalMesh.getEdges();
-        PolyMesh.Wvertex[] v = (PolyMesh.Wvertex[]) originalMesh.getVertices();
-        Vec3[] normals = originalMesh.getFaceNormals();
+
         int[] sewEdges = new int[2];
-        double f, dist;
-        Camera theCamera = mv.getCamera();
-        Vec3 zdir = theCamera.getCameraCoordinates().getZDirection();
-        Mat4 m = theCamera.getObjectToWorld();
+
         double minDist = Double.MAX_VALUE;
-        /* if ( ( e.getModifiers() & ActionEvent.SHIFT_MASK ) == 0 )
-            {
-                if (edges[i].face > -1)
-                    s1 = m.times(normals[edges[i].face]).dot(zdir);
-                else
-                    s1 = -1;
-                if ( edges[edges[i].hedge].face > -1)
-                    s2 = m.times(normals[edges[edges[i].hedge].face]).dot(zdir);
-                else
-                    s2 = -1;
-                if ( s1 > 0 && s2 > 0)
-                    continue;
-            }
-            if ( selection != null && ! selection[i] )
-                continue;*/
+
         sewEdges[0] = sewEdges[1] = -1;
         for (int i = 0; i < edges.length / 2; i++) {
             if (edges[i].face != -1 && edges[edges[i].hedge].face != -1) {
                 continue;
             }
-            f = findIntersection(screenVert[edges[i].vertex], screenVert[edges[edges[i].hedge].vertex], clickPoint, dragPoint);
-            if (f > 0) {
-                if (f < minDist) {
-                    sewEdges[0] = i;
-                    minDist = f;
-                }
-
+            var intersection = findIntersection(screenVert[edges[i].vertex], screenVert[edges[edges[i].hedge].vertex], clickPoint, dragPoint);
+            if (intersection > 0 && intersection < minDist) {
+                sewEdges[0] = i;
+                minDist = intersection;
             }
+
         }
         //System.out.println( sewEdges[0] );
         if (e.isControlDown()) {
@@ -175,11 +153,11 @@ public class PMSewTool extends EditingTool {
                     if (i == sewEdges[0]) {
                         continue;
                     }
-                    f = findIntersection(screenVert[edges[i].vertex], screenVert[edges[edges[i].hedge].vertex], clickPoint, dragPoint);
-                    if (f > 0) {
-                        if ((1 - f) < minDist) {
+                    var intersection = findIntersection(screenVert[edges[i].vertex], screenVert[edges[edges[i].hedge].vertex], clickPoint, dragPoint);
+                    if (intersection > 0) {
+                        if ((1 - intersection) < minDist) {
                             sewEdges[1] = i;
-                            minDist = 1 - f;
+                            minDist = 1 - intersection;
                         }
 
                     }
@@ -188,7 +166,7 @@ public class PMSewTool extends EditingTool {
             mesh.copyObject(originalMesh);
             boolean[] sel = null;
             if (sewEdges[1] >= 0) {
-                sel = mesh.mergeEdges(sewEdges[0], sewEdges[1], selection, (e.getModifiers() & ActionEvent.SHIFT_MASK) == 1);
+                sel = mesh.mergeEdges(sewEdges[0], sewEdges[1], selection, e.isShiftDown());
             }
             controller.objectChanged();
             if (selection != null && sel != null) {
@@ -207,7 +185,7 @@ public class PMSewTool extends EditingTool {
         theWindow.updateImage();
         theWindow.setHelpText(Translate.text("polymesh:sewTool.helpText"));
         theWindow.setUndoRecord(new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, originalMesh}));
-        UndoRecord undo = null;
+
 
     }
 
@@ -247,16 +225,16 @@ public class PMSewTool extends EditingTool {
         Vec2 p1v = new Vec2(p1.x, p1.y);
         Vec2 d1v = new Vec2(d1.x, d1.y).minus(p1v);
         Vec2 e = p1v.minus(p0v);
-        double kross = d0v.cross(d1v);
-        double sqrkross = kross * kross;
+        double cross = d0v.cross(d1v);
+        double sqrCross = cross * cross;
         double len0 = d0v.length2();
         double len1 = d1v.length2();
-        if (sqrkross > 1.0e-12 * len0 * len1) {
-            double s = e.cross(d1v) / kross;
+        if (sqrCross > 1.0e-12 * len0 * len1) {
+            double s = e.cross(d1v) / cross;
             if (s < 0 || s > 1) {
                 return -1;
             }
-            s = e.cross(d0v) / kross;
+            s = e.cross(d0v) / cross;
             if (s < 0 || s > 1) {
                 return -1;
             }
