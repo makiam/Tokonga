@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
    Changes Copyright 2016 by Petri Ihalainen
-   Changes copyright (C) 2022 by Maksim Khramov
+   Changes copyright (C) 2022-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -66,7 +66,7 @@ public abstract class EditingTool {
     private final Optional<Tooltip> tooltip = Optional.ofNullable(this.getClass().getAnnotation(Tooltip.class));
     private final Optional<ActivatedToolText> helpText = Optional.ofNullable(this.getClass().getAnnotation(ActivatedToolText.class));
 
-    public EditingTool(EditingWindow win) {
+    protected EditingTool(EditingWindow win) {
         theWindow = win;
         if (win != null) {
             theFrame = win.getFrame();
@@ -115,7 +115,7 @@ public abstract class EditingTool {
     }
 
     /**
-     * Get whether the current selection should be hilighted when this tool is active.
+     * Get whether the current selection should be highlighted when this tool is active.
      */
     public boolean hilightSelection() {
         return true;
@@ -148,11 +148,6 @@ public abstract class EditingTool {
     public void mouseScrolled(MouseScrolledEvent e, ViewerCanvas view) {
     }
 
-    /*
-  public void mouseStoppedScrolling()
-  {
-  }
-     */
     public void keyPressed(KeyPressedEvent e, ViewerCanvas view) {
     }
 
