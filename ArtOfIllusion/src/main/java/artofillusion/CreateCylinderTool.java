@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2008 by Peter Eastman
    Changes Copyright (C) 2016, 2019 by Petri Ihalainen
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,28 +12,32 @@
 
 package artofillusion;
 
-import artofillusion.animation.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
 import java.awt.*;
 
 /**
  * CreateCylinderTool is an EditingTool used for creating Cylinder objects.
  */
+
+
 @EditingTool.ButtonImage("cylinder")
 @EditingTool.Tooltip("createCylinderTool.tipText")
 @EditingTool.ActivatedToolText("createCylinderTool.helpText")
 public class CreateCylinderTool extends EditingTool {
 
     static int counter = 1;
-    private boolean equilateral, centered;
+    private boolean equilateral;
+    private boolean centered;
     private Point clickPoint;
     private double ratio = 1.0;
     private ObjectInfo objInfo;
-    private Vec3 ydir, zdir;
+    private Vec3 yDir;
+    private Vec3 zDir;
 
     public CreateCylinderTool(LayoutWindow fr) {
         super(fr);
@@ -44,27 +48,27 @@ public class CreateCylinderTool extends EditingTool {
         clickPoint = e.getPoint();
         equilateral = e.isShiftDown();
         centered = e.isControlDown();
-        ydir = Vec3.vy();
-        zdir = Vec3.vz();
+        yDir = Vec3.vy();
+        zDir = Vec3.vz();
     }
 
     @Override
     public void mouseDragged(WidgetMouseEvent e, ViewerCanvas view) {
+
         Camera cam = view.getCamera();
         Point dragPoint = e.getPoint();
-        ydir.set(cam.getCameraCoordinates().getUpDirection());
-        zdir.set(cam.getCameraCoordinates().getZDirection());
-        zdir.scale(-1.0);
+        yDir.set(cam.getCameraCoordinates().getUpDirection());
+        zDir.set(cam.getCameraCoordinates().getZDirection());
+        zDir.scale(-1.0);
 
         if (objInfo == null) {
             // Create the initial cube, if the mouse has moved enough. The limit is there to reduce
             // the probability of accidentally creating zero size objects.
 
             if (Math.abs(dragPoint.x - clickPoint.x) + Math.abs(dragPoint.y - clickPoint.y) > 3) {
-                Scene theScene = ((LayoutWindow) theWindow).getScene();
+                Scene theScene = theWindow.getScene();
                 objInfo = new ObjectInfo(new Cylinder(1.0, 1.0, 1.0, ratio), new CoordinateSystem(), "Cylinder " + (counter++));
-                objInfo.addTrack(new PositionTrack(objInfo), 0);
-                objInfo.addTrack(new RotationTrack(objInfo), 1);
+
                 UndoRecord undo = new UndoRecord(theWindow);
                 int[] sel = ((LayoutWindow) theWindow).getSelectedIndices();
                 ((LayoutWindow) theWindow).addObject(objInfo, undo);
@@ -77,8 +81,10 @@ public class CreateCylinderTool extends EditingTool {
         }
 
         // Determine the size and position for the cylinder.
-        Vec3 v1, v2, v3, orig;
-        double xsize, ysize, zsize;
+        Vec3 orig;
+        double xSize;
+        double ySize;
+        double zSize;
 
         if (equilateral) {
             if (Math.abs(dragPoint.x - clickPoint.x) > Math.abs(dragPoint.y - clickPoint.y)) {
@@ -95,25 +101,25 @@ public class CreateCylinderTool extends EditingTool {
                 }
             }
         }
-        v1 = cam.convertScreenToWorld(clickPoint, view.getDistToPlane());
-        v2 = cam.convertScreenToWorld(new Point(dragPoint.x, clickPoint.y), view.getDistToPlane());
-        v3 = cam.convertScreenToWorld(dragPoint, view.getDistToPlane());
+        Vec3 v1 = cam.convertScreenToWorld(clickPoint, view.getDistToPlane());
+        Vec3 v2 = cam.convertScreenToWorld(new Point(dragPoint.x, clickPoint.y), view.getDistToPlane());
+        Vec3 v3 = cam.convertScreenToWorld(dragPoint, view.getDistToPlane());
 
         if (centered) {
             orig = v1;
-            xsize = v2.minus(v1).length() * 2.0;
-            ysize = v2.minus(v3).length() * 2.0;
+            xSize = v2.minus(v1).length() * 2.0;
+            ySize = v2.minus(v3).length() * 2.0;
         } else {
             orig = v1.plus(v3).times(0.5);
-            xsize = v2.minus(v1).length();
-            ysize = v2.minus(v3).length();
+            xSize = v2.minus(v1).length();
+            ySize = v2.minus(v3).length();
         }
-        zsize = Math.min(xsize, ysize);
+        zSize = Math.min(xSize, ySize);
 
         // Update the size and position, and redraw the display.
-        ((Cylinder) objInfo.getObject()).setSize(xsize, ysize, zsize);
+        objInfo.getObject().setSize(xSize, ySize, zSize);
         objInfo.getCoords().setOrigin(orig);
-        objInfo.getCoords().setOrientation(zdir, ydir);
+        objInfo.getCoords().setOrientation(zDir, yDir);
         objInfo.clearCachedMeshes();
         theWindow.setModified();
         theWindow.updateImage();

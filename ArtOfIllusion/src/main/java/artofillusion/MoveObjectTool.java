@@ -17,6 +17,7 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.util.List;
 
 import java.util.Vector;
@@ -33,7 +34,8 @@ public class MoveObjectTool extends EditingTool {
     Vec3[] objectPos;
     List<ObjectInfo> toMove;
     ObjectInfo clickedObject;
-    boolean dragged, applyToChildren = true;
+    boolean dragged;
+    boolean applyToChildren = true;
 
     public MoveObjectTool(EditingWindow fr) {
         super(fr);
@@ -85,8 +87,7 @@ public class MoveObjectTool extends EditingTool {
         if (!dragged) {
             UndoRecord undo;
             theWindow.setUndoRecord(undo = new UndoRecord(theWindow));
-            for (i = 0; i < toMove.size(); i++) {
-                ObjectInfo info = toMove.get(i);
+            for (ObjectInfo info: toMove) {
                 c = info.getCoords();
                 undo.addCommand(UndoRecord.COPY_COORDS, c, c.duplicate());
             }
@@ -134,21 +135,22 @@ public class MoveObjectTool extends EditingTool {
         UndoRecord undo;
         int i;
         int[] sel;
-        double dx, dy;
+        double dx;
+        double dy;
         Vec3 v;
         int key = e.getKeyCode();
 
         // Pressing an arrow key is equivalent to dragging the first selected object by one pixel.
-        if (key == KeyPressedEvent.VK_UP) {
+        if (key == KeyEvent.VK_UP) {
             dx = 0;
             dy = -1;
-        } else if (key == KeyPressedEvent.VK_DOWN) {
+        } else if (key == KeyEvent.VK_DOWN) {
             dx = 0;
             dy = 1;
-        } else if (key == KeyPressedEvent.VK_LEFT) {
+        } else if (key == KeyEvent.VK_LEFT) {
             dx = -1;
             dy = 0;
-        } else if (key == KeyPressedEvent.VK_RIGHT) {
+        } else if (key == KeyEvent.VK_RIGHT) {
             dx = 1;
             dy = 0;
         } else {
@@ -192,8 +194,8 @@ public class MoveObjectTool extends EditingTool {
         for (i = 0; i < sel.length; i++) {
             toMove.add(theScene.getObject(sel[i]));
         }
-        for (i = 0; i < toMove.size(); i++) {
-            c = toMove.get(i).getCoords();
+        for (var move: toMove) {
+            c = move.getCoords();
             undo.addCommand(UndoRecord.COPY_COORDS, c, c.duplicate());
             c.setOrigin(c.getOrigin().plus(v));
         }

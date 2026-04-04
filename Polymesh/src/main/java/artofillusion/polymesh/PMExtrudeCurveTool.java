@@ -408,22 +408,20 @@ public class PMExtrudeCurveTool extends EditingTool {
             Vec2 p = view.getCamera().getObjectToScreen().timesXY(position);
             Point pf = new Point((int) p.x, (int) p.y);
             view.drawBox(pf.x - HANDLE_SIZE / 2, pf.y - HANDLE_SIZE / 2, HANDLE_SIZE, HANDLE_SIZE, Color.red);
-            double scaleFactor = view.getScale();
-            Point handleup = new Point(pf.x, (int) Math.round(pf.y + amplitude * SCALE_HEIGHT));
-            Point handledown = new Point(pf.x, (int) Math.round(pf.y - amplitude * SCALE_HEIGHT));
-            //Shape dot = new Ellipse2D.Float(handleup.x,handleup.y,8,8);
-            //view.fillShape(dot, Color.blue);
-            view.drawBox(handleup.x - HANDLE_SIZE / 2, handleup.y - HANDLE_SIZE / 2, HANDLE_SIZE, HANDLE_SIZE, Color.blue);
-            view.drawBox(handledown.x - HANDLE_SIZE / 2, handledown.y - HANDLE_SIZE / 2, HANDLE_SIZE, HANDLE_SIZE, Color.blue);
-            view.drawLine(pf, handleup, Color.black);
-            view.drawLine(pf, handledown, Color.black);
+
+            Point handleUp = new Point(pf.x, (int) Math.round(pf.y + amplitude * SCALE_HEIGHT));
+            Point handleDown = new Point(pf.x, (int) Math.round(pf.y - amplitude * SCALE_HEIGHT));
+
+            view.drawBox(handleUp.x - HANDLE_SIZE / 2, handleUp.y - HANDLE_SIZE / 2, HANDLE_SIZE, HANDLE_SIZE, Color.blue);
+            view.drawBox(handleDown.x - HANDLE_SIZE / 2, handleDown.y - HANDLE_SIZE / 2, HANDLE_SIZE, HANDLE_SIZE, Color.blue);
+            view.drawLine(pf, handleUp, Color.black);
+            view.drawLine(pf, handleDown, Color.black);
         }
 
         public boolean clickedOnto(WidgetMouseEvent ev, ViewerCanvas view) {
             Point e = ev.getPoint();
             Vec2 ps = canvas.getCamera().getObjectToScreen().timesXY(position);
-            if (!(e.x < ps.x - HANDLE_SIZE / 2 || e.x > ps.x + HANDLE_SIZE / 2
-                    || e.y < ps.y - HANDLE_SIZE / 2 || e.y > ps.y + HANDLE_SIZE / 2)) {
+            if (!(e.x < ps.x - HANDLE_SIZE / 2 || e.x > ps.x + HANDLE_SIZE / 2 || e.y < ps.y - HANDLE_SIZE / 2 || e.y > ps.y + HANDLE_SIZE / 2)) {
                 if (ev.isShiftDown()) {
                     dragging = NONE;
                     amplitude = 1.0;
@@ -433,14 +431,12 @@ public class PMExtrudeCurveTool extends EditingTool {
                 return true;
             }
             Point hpt = new Point((int) Math.round(ps.x), (int) Math.round(ps.y + amplitude * SCALE_HEIGHT));
-            if (!(e.x < hpt.x - HANDLE_SIZE / 2 || e.x > hpt.x + HANDLE_SIZE / 2
-                    || e.y < hpt.y - HANDLE_SIZE / 2 || e.y > hpt.y + HANDLE_SIZE / 2)) {
+            if (!(e.x < hpt.x - HANDLE_SIZE / 2 || e.x > hpt.x + HANDLE_SIZE / 2 || e.y < hpt.y - HANDLE_SIZE / 2 || e.y > hpt.y + HANDLE_SIZE / 2)) {
                 dragging = HANDLE_UP;
                 return true;
             }
             hpt = new Point((int) Math.round(ps.x), (int) Math.round(ps.y - amplitude * SCALE_HEIGHT));
-            if (!(e.x < hpt.x - HANDLE_SIZE / 2 || e.x > hpt.x + HANDLE_SIZE / 2
-                    || e.y < hpt.y - HANDLE_SIZE / 2 || e.y > hpt.y + HANDLE_SIZE / 2)) {
+            if (!(e.x < hpt.x - HANDLE_SIZE / 2 || e.x > hpt.x + HANDLE_SIZE / 2 || e.y < hpt.y - HANDLE_SIZE / 2 || e.y > hpt.y + HANDLE_SIZE / 2)) {
                 dragging = HANDLE_DOWN;
                 return true;
             }

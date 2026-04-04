@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2007 by Peter Eastman
-   Changes copyright (C) 2022-2025 by Maksim Khramov
+   Changes copyright (C) 2022-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -26,8 +26,12 @@ public class MoveUVViewTool extends EditingTool {
 
     private Point clickPoint;
     private boolean controlDown;
-    private double minU, maxU, minV, maxV;
-    private int vWidth, vHeight;
+    private double minU;
+    private double maxU;
+    private double minV;
+    private double maxV;
+    private int vWidth;
+    private int vHeight;
 
     public MoveUVViewTool(EditingWindow fr) {
         super(fr);
@@ -35,17 +39,17 @@ public class MoveUVViewTool extends EditingTool {
 
     @Override
     public void mousePressed(WidgetMouseEvent e, ViewerCanvas view) {
-        UVMappingViewer uvview = (UVMappingViewer) view;
+        UVMappingViewer uvView = (UVMappingViewer) view;
 
         controlDown = e.isControlDown();
         clickPoint = e.getPoint();
 
-        minU = uvview.getMinU();
-        maxU = uvview.getMaxU();
-        minV = uvview.getMinV();
-        maxV = uvview.getMaxV();
+        minU = uvView.getMinU();
+        maxU = uvView.getMaxU();
+        minV = uvView.getMinV();
+        maxV = uvView.getMaxV();
 
-        Rectangle d = uvview.getBounds();
+        Rectangle d = uvView.getBounds();
         vWidth = d.width;
         vHeight = d.height;
     }
@@ -53,11 +57,11 @@ public class MoveUVViewTool extends EditingTool {
     @Override
     public void mouseDragged(WidgetMouseEvent e, ViewerCanvas view) {
         Point dragPoint = e.getPoint();
-        UVMappingViewer uvview = (UVMappingViewer) view;
-        int dx, dy;
+        UVMappingViewer uvView = (UVMappingViewer) view;
 
-        dx = dragPoint.x - clickPoint.x;
-        dy = dragPoint.y - clickPoint.y;
+        int dx = dragPoint.x - clickPoint.x;
+        int dy = dragPoint.y - clickPoint.y;
+
         if (controlDown) {
             double factor = Math.pow(1.01, dy);
             double midu = (minU + maxU) / 2;
@@ -68,7 +72,7 @@ public class MoveUVViewTool extends EditingTool {
             double newminv = ((minV - midv) / factor) + midv;
             double newmaxv = ((maxV - midv) / factor) + midv;
 
-            uvview.setParameters(newminu, newmaxu, newminv, newmaxv);
+            uvView.setParameters(newminu, newmaxu, newminv, newmaxv);
         } else {
             if (e.isShiftDown()) {
                 if (Math.abs(dx) > Math.abs(dy)) {
@@ -79,7 +83,7 @@ public class MoveUVViewTool extends EditingTool {
             }
             double du = (minU - maxU) * dx / vWidth;
             double dv = (maxV - minV) * dy / vHeight;
-            uvview.setParameters(minU + du, maxU + du, minV + dv, maxV + dv);
+            uvView.setParameters(minU + du, maxU + du, minV + dv, maxV + dv);
         }
     }
 

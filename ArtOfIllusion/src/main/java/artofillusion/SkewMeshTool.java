@@ -85,19 +85,19 @@ public class SkewMeshTool extends MeshEditingTool {
     protected void handlePressed(HandlePressedEvent ev) {
         Mesh mesh = (Mesh) controller.getObject().getObject();
         Point clickPoint = ev.getMouseEvent().getPoint();
-        clickX = (double) clickPoint.x;
-        clickY = (double) clickPoint.y;
+        clickX = clickPoint.x;
+        clickY = clickPoint.y;
         BoundingBox bounds = ev.getSelectionBounds();
         Rectangle r = ev.getScreenBounds();
         HandlePosition handle = ev.getHandle();
         skewCenter = new Vec3(0.0, 0.0, (bounds.minz + bounds.maxz) / 2.0);
         if (handle.isWest()) {
             skewY = true;
-            centerX = (double) (r.x + r.width);
+            centerX = (r.x + r.width);
             skewCenter.x = bounds.minx;
         } else if (handle.isEast()) {
             skewY = true;
-            centerX = (double) r.x;
+            centerX = r.x;
             skewCenter.x = bounds.maxx;
         } else {
             skewY = false;
@@ -105,11 +105,11 @@ public class SkewMeshTool extends MeshEditingTool {
         }
         if (handle.isNorth()) {
             skewX = true;
-            centerY = (double) (r.y + r.height);
+            centerY = (r.y + r.height);
             skewCenter.y = bounds.miny;
         } else if (handle.isSouth()) {
             skewX = true;
-            centerY = (double) r.y;
+            centerY = r.y;
             skewCenter.y = bounds.maxy;
         } else {
             skewX = false;
@@ -158,28 +158,28 @@ public class SkewMeshTool extends MeshEditingTool {
     protected void handleReleased(HandleReleasedEvent ev) {
         Mesh mesh = (Mesh) controller.getObject().getObject();
         Point dragPoint = ev.getMouseEvent().getPoint();
-        double max, xskew, yskew;
+        double xSkew, ySkew;
 
-        xskew = yskew = 0.0;
+        xSkew = ySkew = 0.0;
         if (skewX) {
-            xskew = (dragPoint.x - clickX) / (dragPoint.y - centerY);
+            xSkew = (dragPoint.x - clickX) / (dragPoint.y - centerY);
         }
         if (skewY) {
-            yskew = (dragPoint.y - clickY) / (dragPoint.x - centerX);
+            ySkew = (dragPoint.y - clickY) / (dragPoint.x - centerX);
         }
         if (skewAll) {
-            max = Math.max(Math.abs(xskew), Math.abs(yskew));
-            if (xskew != 0.0) {
-                xskew *= max / Math.abs(xskew);
+            double max = Math.max(Math.abs(xSkew), Math.abs(ySkew));
+            if (xSkew != 0.0) {
+                xSkew *= max / Math.abs(xSkew);
             }
-            if (yskew != 0.0) {
-                yskew *= max / Math.abs(yskew);
+            if (ySkew != 0.0) {
+                ySkew *= max / Math.abs(ySkew);
             }
         }
         if (undo != null) {
             theWindow.setUndoRecord(undo);
         }
-        Vec3[] v = findSkewedPositions(baseVertPos, xskew, yskew, (MeshViewer) ev.getView());
+        Vec3[] v = findSkewedPositions(baseVertPos, xSkew, ySkew, (MeshViewer) ev.getView());
         mesh.setVertexPositions(v);
         controller.objectChanged();
         theWindow.updateImage();
@@ -191,27 +191,26 @@ public class SkewMeshTool extends MeshEditingTool {
     /**
      * Find the new positions of the vertices after scaling.
      */
-    private Vec3[] findSkewedPositions(Vec3[] vert, double xskew, double yskew, MeshViewer view) {
+    private Vec3[] findSkewedPositions(Vec3[] vert, double xSkew, double ySkew, MeshViewer view) {
         Vec3[] v = new Vec3[vert.length];
         int[] selected = controller.getSelectionDistance();
-        Camera cam = view.getCamera();
-        Mat4 m, s;
-        int i;
+        Mat4 m;
+
 
         // Find the transformation matrix.
-        m = cam.getObjectToView();
+        m = view.getCamera().getObjectToView();
         m = Mat4.translation(-skewCenter.x, -skewCenter.y, -skewCenter.z).times(m);
-        s = new Mat4(1.0, xskew, 0.0, 0.0,
-                yskew, 1.0, 0.0, 0.0,
+        Mat4 s = new Mat4(1.0, xSkew, 0.0, 0.0,
+                ySkew, 1.0, 0.0, 0.0,
                 0.0, 0.0, 1.0, 0.0,
                 0.0, 0.0, 0.0, 1.0);
         m = s.times(m);
         m = Mat4.translation(skewCenter.x, skewCenter.y, skewCenter.z).times(m);
-        m = cam.getViewToWorld().times(m);
+        m = view.getCamera().getViewToWorld().times(m);
         m = view.getDisplayCoordinates().toLocal().times(m);
 
         // Determine the deltas.
-        for (i = 0; i < vert.length; i++) {
+        for (int i = 0; i < vert.length; i++) {
             if (selected[i] == 0) {
                 v[i] = m.times(vert[i]).minus(vert[i]);
             } else {
@@ -221,7 +220,7 @@ public class SkewMeshTool extends MeshEditingTool {
         if (theFrame instanceof MeshEditorWindow window) {
             window.adjustDeltas(v);
         }
-        for (i = 0; i < vert.length; i++) {
+        for (int i = 0; i < vert.length; i++) {
             v[i].add(vert[i]);
         }
         return v;

@@ -132,7 +132,8 @@ public class CreateVertexTool extends MeshEditingTool {
         Point dragPoint = e.getPoint();
         Vec3[] v;
         Vec3 drag;
-        int dx, dy;
+        int dx;
+        int dy;
 
         dx = dragPoint.x - clickPoint.x;
         dy = dragPoint.y - clickPoint.y;

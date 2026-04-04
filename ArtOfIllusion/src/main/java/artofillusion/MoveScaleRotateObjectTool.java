@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2009 by Peter Eastman
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -368,16 +368,16 @@ public class MoveScaleRotateObjectTool extends EditingTool {
         // Handle arrow keys.  This is equivalent to dragging the first selected object by one pixel.
         double dx, dy;
         int key = e.getKeyCode();
-        if (key == KeyPressedEvent.VK_UP) {
+        if (key == KeyEvent.VK_UP) {
             dx = 0;
             dy = -1;
-        } else if (key == KeyPressedEvent.VK_DOWN) {
+        } else if (key == KeyEvent.VK_DOWN) {
             dx = 0;
             dy = 1;
-        } else if (key == KeyPressedEvent.VK_LEFT) {
+        } else if (key == KeyEvent.VK_LEFT) {
             dx = -1;
             dy = 0;
-        } else if (key == KeyPressedEvent.VK_RIGHT) {
+        } else if (key == KeyEvent.VK_RIGHT) {
             dx = 1;
             dy = 0;
         } else {

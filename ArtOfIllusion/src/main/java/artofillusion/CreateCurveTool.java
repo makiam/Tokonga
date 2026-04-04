@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
    Changes copyright (C) 2016 by Petri Ihalainen
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,8 +12,6 @@
 
 package artofillusion;
 
-import artofillusion.animation.PositionTrack;
-import artofillusion.animation.RotationTrack;
 import artofillusion.math.CoordinateSystem;
 import artofillusion.math.Mat4;
 import artofillusion.math.Vec2;
@@ -24,6 +22,7 @@ import buoy.event.*;
 import buoy.widget.*;
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.List;
@@ -124,9 +123,6 @@ public class CreateCurveTool extends EditingTool {
         Camera cam = view.getCamera();
         Point dragPoint = e.getPoint();
         Vec3[] vertex;
-        Vec3 orig;
-        Vec3 ydir;
-        Vec3 zdir;
         float[] s;
 
         if (e.getClickCount() != 2) {
@@ -138,7 +134,7 @@ public class CreateCurveTool extends EditingTool {
 
             vertex = new Vec3[clickPoint.size()];
             s = new float[clickPoint.size()];
-            orig = new Vec3();
+            Vec3 orig = new Vec3();
             for (int i = 0; i < vertex.length; i++) {
                 vertex[i] = clickPoint.get(i);
                 s[i] = smoothness.get(i);
@@ -147,8 +143,8 @@ public class CreateCurveTool extends EditingTool {
             orig = orig.times(1.0 / vertex.length);
 
             // Find the object's coordinate system.
-            ydir = cam.getViewToWorld().timesDirection(Vec3.vy());
-            zdir = cam.getViewToWorld().timesDirection(new Vec3(0.0, 0.0, -1.0));
+            Vec3 ydir = cam.getViewToWorld().timesDirection(Vec3.vy());
+            Vec3 zdir = cam.getViewToWorld().timesDirection(new Vec3(0.0, 0.0, -1.0));
             coords = new CoordinateSystem(orig, zdir, ydir);
             if (view.getSnapToGrid()) {
                 double spacing = view.getGridSpacing() / view.getSnapToSubdivisions();
@@ -180,7 +176,7 @@ public class CreateCurveTool extends EditingTool {
      */
     @Override
     public void keyPressed(KeyPressedEvent e, ViewerCanvas view) {
-        if (e.getKeyCode() == KeyPressedEvent.VK_ENTER && theCurve != null) {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER && theCurve != null) {
             theCurve.setClosed(e.isControlDown());
             addToScene();
             e.consume();
@@ -194,8 +190,7 @@ public class CreateCurveTool extends EditingTool {
         boolean addCurve = (theCurve != null);
         if (addCurve) {
             ObjectInfo info = new ObjectInfo(theCurve, coords, "Curve " + (counter++));
-            info.addTrack(new PositionTrack(info), 0);
-            info.addTrack(new RotationTrack(info), 1);
+
             UndoRecord undo = new UndoRecord(theWindow);
             int[] sel = ((LayoutWindow) theWindow).getSelectedIndices();
             ((LayoutWindow) theWindow).addObject(info, undo);

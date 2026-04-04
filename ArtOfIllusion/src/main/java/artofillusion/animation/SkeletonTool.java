@@ -161,7 +161,7 @@ public class SkeletonTool extends EditingTool {
     @Override
     public void mousePressed(WidgetMouseEvent e, ViewerCanvas view) {
         MeshViewer mv = (MeshViewer) view;
-        ViewerCanvas[] allViews = ((MeshEditorWindow) theWindow).getAllViews();
+        ViewerCanvas[] allViews = theWindow.getAllViews();
         mesh = (Mesh) mv.getController().getObject().getObject();
         Skeleton s = mesh.getSkeleton();
         Joint selectedJoint = s.getJoint(mv.getSelectedJoint());
@@ -187,11 +187,11 @@ public class SkeletonTool extends EditingTool {
                 double distToJoint = cam.getWorldToView().timesZ(parent.coords.getOrigin());
                 clickPos = cam.convertScreenToWorld(clickPoint, distToJoint);
                 objCoords.toLocal().transform(clickPos);
-                Vec3 zdir = clickPos.minus(parent.coords.getOrigin());
-                zdir.normalize();
-                Vec3 ydir = cam.getCameraCoordinates().getZDirection().cross(zdir);
-                ydir.normalize();
-                j = new Joint(new CoordinateSystem(clickPos, zdir, ydir), parent, "Bone " + s.getNextJointID());
+                Vec3 zDir = clickPos.minus(parent.coords.getOrigin());
+                zDir.normalize();
+                Vec3 yDir = cam.getCameraCoordinates().getZDirection().cross(zDir);
+                yDir.normalize();
+                j = new Joint(new CoordinateSystem(clickPos, zDir, yDir), parent, "Bone " + s.getNextJointID());
                 s.addJoint(j, parent.id);
             }
             for(var allView: allViews) ((MeshViewer) allView).setSelectedJoint(j.id);

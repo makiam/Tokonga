@@ -55,11 +55,11 @@ public class ThickenMeshTool extends MeshEditingTool {
     public void drawOverlay(ViewerCanvas view) {
         BoundingBox selectionBounds = findSelectionBounds(view.getCamera());
         if (!dragInProgress) {
-            if (selectionBounds != null) {
+            if (selectionBounds == null) {
+                theWindow.setHelpText(Translate.text("thickenMeshTool.errorText"));
+            } else {
                 manipulator.draw(view, selectionBounds);
                 theWindow.setHelpText(Translate.text("thickenMeshTool.helpText"));
-            } else {
-                theWindow.setHelpText(Translate.text("thickenMeshTool.errorText"));
             }
         }
     }

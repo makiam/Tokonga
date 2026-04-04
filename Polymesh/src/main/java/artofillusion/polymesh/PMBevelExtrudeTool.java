@@ -10,7 +10,6 @@
 
 package artofillusion.polymesh;
 
-import artofillusion.Camera;
 import artofillusion.UndoRecord;
 import artofillusion.ViewerCanvas;
 import artofillusion.math.Vec3;
@@ -109,7 +108,7 @@ public class PMBevelExtrudeTool extends EditingTool {
 
         PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
         origMesh = mesh.duplicate();
-        //beveler = new PolyMeshBeveler( origMesh, selected, mode );
+
         clickPoint = e.getPoint();
     }
 
@@ -124,26 +123,20 @@ public class PMBevelExtrudeTool extends EditingTool {
         if (noSelection) {
             return;
         }
-        PolyMeshViewer mv = (PolyMeshViewer) view;
+
         PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
-        Camera cam = view.getCamera();
+
         Point dragPoint = e.getPoint();
         // Determine the bevel width and extrude height.
 
-        //Vec3 dragVec = cam.convertScreenToWorld( dragPoint, cam.getDistToScreen() ).minus( cam.convertScreenToWorld( clickPoint, cam.getDistToScreen() ) );
         Vec3 camZ = view.getCamera().getCameraCoordinates().getZDirection();
-        //width = 0.5 * dragVec.x;
-        //height = dragVec.y;
+
         width = (dragPoint.x - clickPoint.x) / view.getScale();
         height = (clickPoint.y - dragPoint.y) / view.getScale();
         boolean shiftMod = e.isShiftDown() && e.isControlDown();
         boolean ctrlMod = !e.isShiftDown() && e.isControlDown();
-        /*if ( controller.getSelectionMode() == PolyMeshEditorWindow.FACE_MODE && ctrlMod )
-        {
-            width = height;
-            height = 0;
-        }*/
-        if (controller.getSelectionMode() == PolyMeshEditorWindow.FACE_MODE) {
+
+        if (controller.getSelectionMode() == MeshEditController.FACE_MODE) {
             if (e.isShiftDown() && !e.isControlDown()) {
                 if (Math.abs(width) > Math.abs(height)) {
                     height = 0.0;
@@ -164,10 +157,10 @@ public class PMBevelExtrudeTool extends EditingTool {
         int selectMode = controller.getSelectionMode();
         boolean[] sel;
         mesh.copyObject(origMesh);
-        if (selectMode == PolyMeshEditorWindow.POINT_MODE) {
+        if (selectMode == MeshEditController.POINT_MODE) {
             sel = mesh.bevelVertices(selected, height);
             theWindow.setHelpText(Translate.text("bevelExtrudeTool.dragText", 1.0 - width, height));
-        } else if (selectMode == PolyMeshEditorWindow.EDGE_MODE) {
+        } else if (selectMode == MeshEditController.EDGE_MODE) {
             sel = mesh.bevelEdges(selected, height);
             theWindow.setHelpText(Translate.text("bevelExtrudeTool.dragText", 1.0 - width, height));
         } else {

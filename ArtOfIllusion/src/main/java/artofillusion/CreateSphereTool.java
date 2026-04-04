@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2008 by Peter Eastman
    Changes Copyright (C) 2016, 2019 by Petri Ihalainen
-   Changes copyright (C) 2020-2023 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,11 +12,11 @@
 
 package artofillusion;
 
-import artofillusion.animation.*;
 import artofillusion.math.*;
 import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.event.*;
+
 import java.awt.*;
 
 /**
@@ -28,10 +28,12 @@ import java.awt.*;
 public class CreateSphereTool extends EditingTool {
 
     static int counter = 1;
-    private boolean equilateral, centered;
+    private boolean equilateral;
+    private boolean centered;
     private Point clickPoint;
     private ObjectInfo objInfo;
-    private Vec3 ydir, zdir;
+    private Vec3 ydir;
+    private Vec3 zdir;
 
     public CreateSphereTool(LayoutWindow fr) {
         super(fr);
@@ -48,6 +50,7 @@ public class CreateSphereTool extends EditingTool {
 
     @Override
     public void mouseDragged(WidgetMouseEvent e, ViewerCanvas view) {
+
         Camera cam = view.getCamera();
         Point dragPoint = e.getPoint();
         ydir.set(cam.getCameraCoordinates().getUpDirection());
@@ -61,8 +64,7 @@ public class CreateSphereTool extends EditingTool {
             if (Math.abs(dragPoint.x - clickPoint.x) + Math.abs(dragPoint.y - clickPoint.y) > 3) {
                 Scene theScene = ((LayoutWindow) theWindow).getScene();
                 objInfo = new ObjectInfo(new Sphere(1.0, 1.0, 1.0), new CoordinateSystem(), "Sphere " + (counter++));
-                objInfo.addTrack(new PositionTrack(objInfo), 0);
-                objInfo.addTrack(new RotationTrack(objInfo), 1);
+
                 UndoRecord undo = new UndoRecord(theWindow);
                 int[] sel = ((LayoutWindow) theWindow).getSelectedIndices();
                 ((LayoutWindow) theWindow).addObject(objInfo, undo);
@@ -75,8 +77,13 @@ public class CreateSphereTool extends EditingTool {
         }
 
         // Determine the size and position for the sphere.
-        Vec3 v1, v2, v3, orig;
-        double xsize, ysize, zsize;
+        Vec3 v1;
+        Vec3 v2;
+        Vec3 v3;
+        Vec3 orig;
+        double xsize;
+        double ysize;
+        double zsize;
 
         if (equilateral) {
             if (Math.abs(dragPoint.x - clickPoint.x) > Math.abs(dragPoint.y - clickPoint.y)) {

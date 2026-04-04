@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -166,61 +166,64 @@ public class ScaleMeshTool extends MeshEditingTool {
     private Vec3 scaleMesh(HandleEvent ev) {
         Point dragPoint = ev.getMouseEvent().getPoint();
         Mesh mesh = (Mesh) controller.getObject().getObject();
-        double size, xscale, yscale, zscale;
+        double size;
+        double xScale;
+        double yScale;
+        double zScale;
 
         // Figure out how much to scale by.
         if (scaleAll) {
-            xscale = yscale = 0.0;
+            xScale = yScale = 0.0;
         } else {
-            xscale = yscale = 1.0;
+            xScale = yScale = 1.0;
         }
         if (scaleX) {
             size = dragPoint.x - centerX;
-            xscale = size / (clickX - centerX);
-            if (xscale <= 0) {
-                xscale = Math.abs(1.0 / (clickX - centerX));
+            xScale = size / (clickX - centerX);
+            if (xScale <= 0) {
+                xScale = Math.abs(1.0 / (clickX - centerX));
             }
         }
         if (scaleY) {
             size = dragPoint.y - centerY;
-            yscale = size / (clickY - centerY);
-            if (yscale <= 0) {
-                yscale = Math.abs(1.0 / (clickY - centerY));
+            yScale = size / (clickY - centerY);
+            if (yScale <= 0) {
+                yScale = Math.abs(1.0 / (clickY - centerY));
             }
         }
         if (scaleAll) {
-            xscale = yscale = zscale = Math.max(xscale, yscale);
+            xScale = yScale = zScale = Math.max(xScale, yScale);
         } else {
-            zscale = 1.0;
+            zScale = 1.0;
         }
 
         // Modify the vertex positions.
-        Vec3[] v = findScaledPositions(baseVertPos, xscale, yscale, zscale, (MeshViewer) ev.getView());
+        Vec3[] v = findScaledPositions(baseVertPos, xScale, yScale, zScale, (MeshViewer) ev.getView());
         mesh.setVertexPositions(v);
         controller.objectChanged();
-        return new Vec3(xscale, yscale, zscale);
+        return new Vec3(xScale, yScale, zScale);
     }
 
     /**
      * Find the new positions of the vertices after scaling.
      */
-    private Vec3[] findScaledPositions(Vec3[] vert, double xscale, double yscale, double zscale, MeshViewer view) {
+    private Vec3[] findScaledPositions(Vec3[] vert, double xScale, double yScale, double zScale, MeshViewer view) {
         Vec3[] v = new Vec3[vert.length];
         int[] selected = controller.getSelectionDistance();
         Camera cam = view.getCamera();
         Mat4 m;
-        int i;
+
 
         // Find the transformation matrix.
         m = cam.getObjectToView();
         m = Mat4.translation(-scaleCenter.x, -scaleCenter.y, -scaleCenter.z).times(m);
-        m = Mat4.scale(xscale, yscale, zscale).times(m);
+        m = Mat4.scale(xScale, yScale, zScale).times(m);
         m = Mat4.translation(scaleCenter.x, scaleCenter.y, scaleCenter.z).times(m);
         m = cam.getViewToWorld().times(m);
         m = view.getDisplayCoordinates().toLocal().times(m);
 
         // Determine the deltas.
-        for (i = 0; i < vert.length; i++) {
+        for (int i = 0; i < vert.length; i++) {
             if (selected[i] == 0) {
                 v[i] = m.times(vert[i]).minus(vert[i]);
             } else {
@@ -230,7 +233,7 @@ public class ScaleMeshTool extends MeshEditingTool {
         if (theFrame instanceof MeshEditorWindow window) {
             window.adjustDeltas(v);
         }
-        for (i = 0; i < vert.length; i++) {
+        for (int i = 0; i < vert.length; i++) {
             v[i].add(vert[i]);
         }
         return v;
