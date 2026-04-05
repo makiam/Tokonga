@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman, 2005 by Francois Guillet
-   Changes copyright (C) 2023-2025 Maksim Khramov
+   Changes copyright (C) 2023-2026 Maksim Khramov
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
@@ -12,23 +12,10 @@ package artofillusion.polymesh;
 
 import artofillusion.UndoRecord;
 import artofillusion.ui.Translate;
-import artofillusion.ui.UIUtilities;
 import artofillusion.ui.ValueField;
-import buoy.event.CommandEvent;
-import buoy.event.ValueChangedEvent;
-import buoy.widget.BButton;
-import buoy.widget.BCheckBox;
-import buoy.widget.BDialog;
-import buoy.widget.BLabel;
-import buoy.widget.BSlider;
-import buoy.widget.BTextField;
-import buoy.widget.ColumnContainer;
-import buoy.xml.WidgetDecoder;
 
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
-import java.io.InputStream;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
@@ -38,16 +25,16 @@ import javax.swing.*;
  * @author MaksK
  */
 @Slf4j
-class ControlledSmoothingDialog extends BDialog {
+class ControlledSmoothingDialog extends JDialog {
 
     private final PolyMeshEditorWindow owner;
-    private BCheckBox applyCB;
-    private BLabel maxAngle;
-    private BLabel minAngle;
-    private BLabel angleRange;
-    private BLabel smoothnessRange;
-    private BLabel minSmoothness;
-    private BLabel maxSmoothness;
+    private JCheckBox applyCB;
+    private JLabel maxAngle;
+    private JLabel minAngle;
+    private JLabel angleRange;
+    private JLabel smoothnessRange;
+    private JLabel minSmoothness;
+    private JLabel maxSmoothness;
     private PMValueField minAngleVF;
     private PMValueField maxAngleVF;
     private PMValueField minSmoothnessVF;
@@ -59,15 +46,15 @@ class ControlledSmoothingDialog extends BDialog {
     private final double backMaxSmoothness;
     private final PolyMesh mesh;
     private final PolyMesh prevMesh;
-    private BSlider minAngleSlider;
-    private BSlider maxAngleSlider;
-    private BSlider minSmoothnessSlider;
-    private BSlider maxSmoothnessSlider;
+    private JSlider minAngleSlider;
+    private JSlider maxAngleSlider;
+    private JSlider minSmoothnessSlider;
+    private JSlider maxSmoothnessSlider;
 
     public ControlledSmoothingDialog(PolyMeshEditorWindow owner) {
-        super(owner, Translate.text("polymesh:controlledSmoothness"), true);
+        super(owner.getComponent(), Translate.text("polymesh:controlledSmoothnessDialogTitle"), true);
         this.owner = owner;
-        setTitle(Translate.text("polymesh:controlledSmoothnessDialogTitle"));
+
         mesh = (PolyMesh) owner.getObject().getObject();
         prevMesh = mesh.duplicate();
         backApply = mesh.isControlledSmoothing();
@@ -75,77 +62,221 @@ class ControlledSmoothingDialog extends BDialog {
         backMaxAngle = mesh.getMaxAngle();
         backMinSmoothness = mesh.getMinSmoothness();
         backMaxSmoothness = mesh.getMaxSmoothness();
-        try (InputStream is = getClass().getResource("interfaces/controlledSmoothing.xml").openStream()) {
-            WidgetDecoder decoder = new WidgetDecoder(is);
-            ColumnContainer columnContainer = (ColumnContainer) decoder.getRootObject();
-            BLabel controlledSmoothing = (BLabel) decoder.getObject("controlledSmoothing");
-            controlledSmoothing.setText(Translate.text("polymesh:" + controlledSmoothing.getText()));
-            applyCB = (BCheckBox) decoder.getObject("applyCB");
-            applyCB.setText(Translate.text("polymesh:" + applyCB.getText()));
-            applyCB.addEventLink(ValueChangedEvent.class, this, "doApplyCB");
-            maxAngle = ((BLabel) decoder.getObject("maxAngle"));
-            maxAngle.setText(Translate.text("polymesh:" + maxAngle.getText()));
-            BTextField maxAngleValue = (BTextField) decoder.getObject("maxAngleValue");
-            BTextField minAngleValue = (BTextField) decoder.getObject("minAngleValue");
-            minAngle = (BLabel) decoder.getObject("minAngle");
-            minAngle.setText(Translate.text("polymesh:" + minAngle.getText()));
-            angleRange = (BLabel) decoder.getObject("angleRange");
-            angleRange.setText(Translate.text("polymesh:" + angleRange.getText()));
-            smoothnessRange = (BLabel) decoder.getObject("smoothnessRange");
-            smoothnessRange.setText(Translate.text("polymesh:" + smoothnessRange.getText()));
-            minSmoothness = (BLabel) decoder.getObject("minSmoothness");
-            minSmoothness.setText(Translate.text("polymesh:" + minSmoothness.getText()));
-            BTextField minSmoothnessValue = (BTextField) decoder.getObject("minSmoothnessValue");
-            maxSmoothness = (BLabel) decoder.getObject("maxSmoothness");
-            maxSmoothness.setText(Translate.text("polymesh:" + maxSmoothness.getText()));
-            BTextField maxSmoothnessValue = (BTextField) decoder.getObject("maxSmoothnessValue");
-            BButton okButton = (BButton) decoder.getObject("okButton");
-            okButton.addEventLink(CommandEvent.class, this, "doOK");
-            okButton.setText(Translate.text("button.ok"));
-            BButton cancelButton = (BButton) decoder.getObject("cancelButton");
-            cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
-            cancelButton.setText(Translate.text("button.cancel"));
-            minAngleVF = new PMValueField(0.0, ValueField.NONNEGATIVE);
-            minAngleVF.setTextField(minAngleValue);
-            maxAngleVF = new PMValueField(180.0, ValueField.NONNEGATIVE);
-            maxAngleVF.setTextField(maxAngleValue);
-            minSmoothnessVF = new PMValueField(1.0, ValueField.NONNEGATIVE);
-            minSmoothnessVF.setTextField(minSmoothnessValue);
-            maxSmoothnessVF = new PMValueField(0.0, ValueField.NONNEGATIVE);
-            maxSmoothnessVF.setTextField(maxSmoothnessValue);
-            applyCB.setState(mesh.isControlledSmoothing());
+        try {
+            initComponents();
+            applyCB.setSelected(mesh.isControlledSmoothing());
             minAngleVF.setValue(mesh.getMinAngle());
             maxAngleVF.setValue(mesh.getMaxAngle());
             minSmoothnessVF.setValue(mesh.getMinSmoothness());
             maxSmoothnessVF.setValue(mesh.getMaxSmoothness());
-            minAngleVF.addEventLink(ValueChangedEvent.class, this, "doApplyVF");
-            maxAngleVF.addEventLink(ValueChangedEvent.class, this, "doApplyVF");
-            minSmoothnessVF.addEventLink(ValueChangedEvent.class, this, "doApplyVF");
-            maxSmoothnessVF.addEventLink(ValueChangedEvent.class, this, "doApplyVF");
-            minAngleSlider = (BSlider) decoder.getObject("minAngleSlider");
-            maxAngleSlider = (BSlider) decoder.getObject("maxAngleSlider");
-            minSmoothnessSlider = (BSlider) decoder.getObject("minSmoothnessSlider");
-            maxSmoothnessSlider = (BSlider) decoder.getObject("maxSmoothnessSlider");
-            minAngleSlider.addEventLink(ValueChangedEvent.class, this, "doApplySL");
-            maxAngleSlider.addEventLink(ValueChangedEvent.class, this, "doApplySL");
-            minSmoothnessSlider.addEventLink(ValueChangedEvent.class, this, "doApplySL");
-            maxSmoothnessSlider.addEventLink(ValueChangedEvent.class, this, "doApplySL");
             doApplyCB();
-            setContent(columnContainer);
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             log.atError().setCause(ex).log("Error creating ControlledSmoothingDialog due {}", ex.getLocalizedMessage());
         }
         KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
         ActionListener action = e -> doCancel();
-        this.getComponent().getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        this.getComponent().addWindowListener(new java.awt.event.WindowAdapter() {
+        this.getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 doCancel();
             }
         });
         pack();
-        UIUtilities.centerWindow(this);
+        setLocationRelativeTo(null);
+
+    }
+
+    @SuppressWarnings("unchecked")
+    private void initComponents() {
+        JButton okButton = new JButton();
+        JButton cancelButton = new JButton();
+        minAngleVF = new PMValueField(0.0, ValueField.NONNEGATIVE);
+        maxAngleVF = new PMValueField(180.0, ValueField.NONNEGATIVE);
+        minSmoothnessVF = new PMValueField(1.0, ValueField.NONNEGATIVE);
+        maxSmoothnessVF = new PMValueField(0.0, ValueField.NONNEGATIVE);
+        minAngleSlider = new JSlider();
+        maxAngleSlider = new JSlider();
+        minSmoothnessSlider = new JSlider();
+        maxSmoothnessSlider = new JSlider();
+
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
+
+        // Apply checkbox
+        applyCB = new JCheckBox();
+        applyCB.setText(Translate.text("polymesh:applyCB"));
+        applyCB.addActionListener(e -> doApplyCB());
+
+        // Angle labels
+        angleRange = new JLabel();
+        angleRange.setText(Translate.text("polymesh:angleRange"));
+
+        minAngle = new JLabel();
+        minAngle.setText(Translate.text("polymesh:minAngle"));
+
+        maxAngle = new JLabel();
+        maxAngle.setText(Translate.text("polymesh:maxAngle"));
+
+        // Smoothness labels
+        smoothnessRange = new JLabel();
+        smoothnessRange.setText(Translate.text("polymesh:smoothnessRange"));
+
+        minSmoothness = new JLabel();
+        minSmoothness.setText(Translate.text("polymesh:minSmoothness"));
+
+        maxSmoothness = new JLabel();
+        maxSmoothness.setText(Translate.text("polymesh:maxSmoothness"));
+
+        // Configure sliders
+        minAngleSlider.setOrientation(JSlider.HORIZONTAL);
+        minAngleSlider.setMinimum(0);
+        minAngleSlider.setMaximum(100);
+        minAngleSlider.addChangeListener(e -> doApplySL());
+
+        maxAngleSlider.setOrientation(JSlider.HORIZONTAL);
+        maxAngleSlider.setMinimum(0);
+        maxAngleSlider.setMaximum(100);
+        maxAngleSlider.addChangeListener(e -> doApplySL());
+
+        minSmoothnessSlider.setOrientation(JSlider.HORIZONTAL);
+        minSmoothnessSlider.setMinimum(0);
+        minSmoothnessSlider.setMaximum(100);
+        minSmoothnessSlider.addChangeListener(e -> doApplySL());
+
+        maxSmoothnessSlider.setOrientation(JSlider.HORIZONTAL);
+        maxSmoothnessSlider.setMinimum(0);
+        maxSmoothnessSlider.setMaximum(100);
+        maxSmoothnessSlider.addChangeListener(e -> doApplySL());
+
+        // Configure text fields
+        JTextField minAngleField = minAngleVF.getComponent();
+        minAngleField.setColumns(5);
+        //minAngleVF.addValueFieldListener(e -> doApplyVF());
+
+        JTextField maxAngleField = maxAngleVF.getComponent();
+        maxAngleField.setColumns(5);
+        //maxAngleVF.addValueFieldListener(e -> doApplyVF());
+
+        JTextField minSmoothnessField = minSmoothnessVF.getComponent();
+        minSmoothnessField.setColumns(5);
+        //minSmoothnessVF.addValueFieldListener(e -> doApplyVF());
+
+        JTextField maxSmoothnessField = maxSmoothnessVF.getComponent();
+        maxSmoothnessField.setColumns(5);
+        //maxSmoothnessVF.addValueFieldListener(e -> doApplyVF());
+
+        // OK/Cancel buttons
+        okButton.setText(Translate.text("button.ok"));
+        okButton.addActionListener(e -> doOK());
+
+        cancelButton.setText(Translate.text("button.cancel"));
+        cancelButton.addActionListener(e -> doCancel());
+
+        // Titled border panel
+        JPanel paramsPanel = new JPanel();
+        paramsPanel.setBorder(BorderFactory.createTitledBorder(
+            BorderFactory.createEtchedBorder(),
+            Translate.text("polymesh:smoothingParameters")));
+
+        GroupLayout paramsLayout = new GroupLayout(paramsPanel);
+        paramsPanel.setLayout(paramsLayout);
+        paramsLayout.setHorizontalGroup(
+            paramsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(paramsLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(paramsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(angleRange)
+                        .addGroup(paramsLayout.createSequentialGroup()
+                            .addComponent(minAngle)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(minAngleField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addComponent(minAngleSlider, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(paramsLayout.createSequentialGroup()
+                            .addComponent(maxAngle)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(maxAngleField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addComponent(maxAngleSlider, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(smoothnessRange)
+                        .addGroup(paramsLayout.createSequentialGroup()
+                            .addComponent(minSmoothness)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(minSmoothnessField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addComponent(minSmoothnessSlider, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(paramsLayout.createSequentialGroup()
+                            .addComponent(maxSmoothness)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(maxSmoothnessField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addComponent(maxSmoothnessSlider, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addContainerGap()));
+
+        paramsLayout.setVerticalGroup(
+            paramsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(paramsLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(angleRange)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(paramsLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(minAngle)
+                        .addComponent(minAngleField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(minAngleSlider, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(paramsLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(maxAngle)
+                        .addComponent(maxAngleField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(maxAngleSlider, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(smoothnessRange)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(paramsLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(minSmoothness)
+                        .addComponent(minSmoothnessField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(minSmoothnessSlider, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(paramsLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(maxSmoothness)
+                        .addComponent(maxSmoothnessField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(maxSmoothnessSlider, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+
+
+        // Main layout
+        GroupLayout layout = new GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(applyCB)
+                        .addComponent(paramsPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addGap(0, 0, Short.MAX_VALUE)
+                            .addComponent(okButton)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(cancelButton)))
+                    .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(applyCB)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(paramsPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(cancelButton)
+                        .addComponent(okButton))
+                    .addContainerGap())
+        );
+
+        getRootPane().setDefaultButton(okButton);
     }
 
     private void doCancel() {
@@ -160,7 +291,7 @@ class ControlledSmoothingDialog extends BDialog {
     }
 
     private void doApplyCB() {
-        boolean state = applyCB.getState();
+        boolean state = applyCB.isSelected();
         angleRange.setEnabled(state);
         smoothnessRange.setEnabled(state);
         minAngle.setEnabled(state);
@@ -179,7 +310,7 @@ class ControlledSmoothingDialog extends BDialog {
     }
 
     private void doApplyVF() {
-        boolean state = applyCB.getState();
+        boolean state = applyCB.isSelected();
         if (minAngleVF.getValue() > 180.0) {
             minAngleVF.setValue(180);
         }
@@ -210,7 +341,7 @@ class ControlledSmoothingDialog extends BDialog {
     }
 
     private void doApplySL() {
-        boolean state = applyCB.getState();
+        boolean state = applyCB.isSelected();
         mesh.setControlledSmoothing(state);
         double val = minAngleSlider.getValue() * 1.8;
         mesh.setMinAngle(val);
