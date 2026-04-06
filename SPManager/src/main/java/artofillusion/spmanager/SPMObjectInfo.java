@@ -1110,25 +1110,13 @@ public class SPMObjectInfo {
             comp = lhs.compareToIgnoreCase(rhs);
         }
 
-        switch (oper.charAt(0)) {
-            case '>':
-                return (oper.length() > 1 ? comp >= 0 : comp > 0);
-
-            case '<':
-                return (oper.length() > 1 ? comp <= 0 : comp < 0);
-
-            case '+':
-                return (comp >= 0);
-
-            case '-':
-                return (comp <= 0);
-
-            case '!':
-                return (comp != 0);
-
-            case '=':
-            default:
-                return (comp == 0);
-        }
+        return switch (oper.charAt(0)) {
+            case '>' -> (oper.length() > 1 ? comp >= 0 : comp > 0);
+            case '<' -> (oper.length() > 1 ? comp <= 0 : comp < 0);
+            case '+' -> (comp >= 0);
+            case '-' -> (comp <= 0);
+            case '!' -> (comp != 0);
+            default -> (comp == 0);
+        };
     }
 }

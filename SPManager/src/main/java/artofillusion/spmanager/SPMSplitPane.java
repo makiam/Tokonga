@@ -707,7 +707,7 @@ public class SPMSplitPane extends BSplitPane {
      * @author francois
      * @created 1 juillet 2004
      */
-    public class OverlayIcon implements Icon {
+    public static class OverlayIcon implements Icon {
 
         private final Icon originalIcon;
         private final Icon overlayIcon;

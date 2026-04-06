@@ -276,11 +276,9 @@ public class SPManagerFrame extends BFrame {
             Rectangle bounds = (Rectangle) PluginRegistry.invokeExportedMethod("nik777.OneFixSizesAll.getChildBounds",new Object[]{root});
 
             Dimension d2 = getComponent().getSize();
-            int x;
-            int y;
 
-            x = bounds.x + (bounds.width - d2.width) / 2;
-            y = bounds.y + (bounds.height - d2.height) / 2;
+            int x = bounds.x + (bounds.width - d2.width) / 2;
+            int y = bounds.y + (bounds.height - d2.height) / 2;
 
             if (x < 0) {
                 x = 0;
