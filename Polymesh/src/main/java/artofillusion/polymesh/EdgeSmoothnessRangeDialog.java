@@ -102,7 +102,7 @@ class EdgeSmoothnessRangeDialog extends JDialog {
         JPanel minPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         minPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         JLabel minLabel = new JLabel(Translate.text("polymesh:minSmoothness"));
-        minSmoothnessVF = new PMValueField(0.0, ValueField.NONNEGATIVE);
+        minSmoothnessVF = new ValueField(0.0, ValueField.NONNEGATIVE);
         minSmoothnessTF = minSmoothnessVF.getComponent();
         minSmoothnessTF.setText("0.0");
         minPanel.add(minLabel);
