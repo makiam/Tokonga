@@ -14,27 +14,20 @@ import artofillusion.ui.Translate;
 
 import artofillusion.ui.ValueField;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-
 
 import buoy.event.ValueChangedEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -85,85 +78,74 @@ class EdgeSmoothnessRangeDialog extends JDialog {
     private void initComponents() {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-        // Main panel with border layout
-        JPanel mainPanel = new JPanel(new BorderLayout(5, 5));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-        // Top label
-        JLabel titleLabel = new JLabel(Translate.text("polymesh:specifySmoothnessRange"));
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-        mainPanel.add(titleLabel, BorderLayout.NORTH);
-
-        // Center panel with smoothness controls
-        JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-
-        // Min smoothness row
-        JPanel minPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        minPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        JLabel minLabel = new JLabel(Translate.text("polymesh:minSmoothness"));
+        // Create components
+        var minLabel = new JLabel(Translate.text("polymesh:minSmoothness"));
         minSmoothnessVF = new ValueField(0.0, ValueField.NONNEGATIVE);
         minSmoothnessTF = minSmoothnessVF.getComponent();
         minSmoothnessTF.setText("0.0");
-        minPanel.add(minLabel);
-        minPanel.add(Box.createHorizontalStrut(5));
-        minPanel.add(minSmoothnessTF);
-
         minSmoothnessSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
-        minSmoothnessSlider.setAlignmentX(LEFT_ALIGNMENT);
 
-        // Max smoothness row
-        JPanel maxPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        maxPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        JLabel maxLabel = new JLabel(Translate.text("polymesh:maxSmoothness"));
+        var maxLabel = new JLabel(Translate.text("polymesh:maxSmoothness"));
         maxSmoothnessVF = new ValueField(1.0, ValueField.POSITIVE);
         maxSmoothnessTF = maxSmoothnessVF.getComponent();
         maxSmoothnessTF.setText("1.0");
-        maxPanel.add(maxLabel);
-        maxPanel.add(Box.createHorizontalStrut(5));
-        maxPanel.add(maxSmoothnessTF);
-
         maxSmoothnessSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 100);
-        maxSmoothnessSlider.setAlignmentX(LEFT_ALIGNMENT);
 
-        centerPanel.add(minPanel);
-        centerPanel.add(minSmoothnessSlider);
-        centerPanel.add(Box.createVerticalStrut(5));
-        centerPanel.add(maxPanel);
-        centerPanel.add(maxSmoothnessSlider);
-
-        mainPanel.add(centerPanel, BorderLayout.CENTER);
-
-        // Bottom button panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 2));
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         JButton addButton = new JButton(Translate.text("polymesh:addToSelection"));
         JButton setButton = new JButton(Translate.text("polymesh:setSelection"));
         JButton cancelButton = new JButton(Translate.text("button.cancel"));
 
-        buttonPanel.add(addButton);
-        buttonPanel.add(setButton);
-        buttonPanel.add(cancelButton);
-
-        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
-
         // Add listeners
         minSmoothnessSlider.addChangeListener(e -> doMinSliderChanged());
-
         maxSmoothnessSlider.addChangeListener(e -> doMaxSliderChanged());
         minSmoothnessVF.addEventLink(ValueChangedEvent.class, this, "doValuesChanged");
-
         maxSmoothnessVF.addEventLink(ValueChangedEvent.class, this, "doValuesChanged");
-
-
         addButton.addActionListener(e -> doAdd());
-
         setButton.addActionListener(e -> doSet());
-
         cancelButton.addActionListener(e -> doCancel());
 
+        // Layout using GroupLayout
+        JPanel contentPane = new JPanel();
+        GroupLayout layout = new GroupLayout(contentPane);
+        contentPane.setLayout(layout);
+
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+
+        // Horizontal group
+        layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(minLabel)
+                    .addComponent(maxLabel))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(minSmoothnessTF, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(maxSmoothnessTF, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+            .addComponent(minSmoothnessSlider)
+            .addComponent(maxSmoothnessSlider)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(addButton)
+                .addComponent(setButton)
+                .addComponent(cancelButton)));
+
+        // Vertical group
+        layout.setVerticalGroup(layout.createSequentialGroup()
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addComponent(minLabel)
+                .addComponent(minSmoothnessTF, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+            .addComponent(minSmoothnessSlider)
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addComponent(maxLabel)
+                .addComponent(maxSmoothnessTF, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+            .addComponent(maxSmoothnessSlider)
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addComponent(addButton)
+                .addComponent(setButton)
+                .addComponent(cancelButton)));
+
         getRootPane().setDefaultButton(setButton);
-        setContentPane(mainPanel);
+        setContentPane(contentPane);
     }
 
     private void doMinSliderChanged() {
