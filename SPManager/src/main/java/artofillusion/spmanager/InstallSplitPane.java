@@ -310,10 +310,10 @@ public class InstallSplitPane extends SPMSplitPane {
                             reason = "\n";
                         }
 
-                        reason = SPMTranslate.text("markedConfirm", nodeInfo.getName()) + reason + SPMTranslate.text("Confirm");
+                        reason = Translate.text("spmanager:text.markedConfirm", nodeInfo.getName()) + reason + Translate.text("spmanager:text.Confirm");
                         if (new BStandardDialog("SPManager", UIUtilities.breakString(reason),
                                 BStandardDialog.QUESTION).showOptionDialog(null, SPManagerFrame.YES_NO, SPManagerFrame.YES_NO[1]) == 1) {
-                            errors.add(SPMTranslate.text("Cancelled", nodeInfo.getName()));
+                            errors.add(Translate.text("spmanager:text.Cancelled", nodeInfo.getName()));
 
                             continue;
                         }
@@ -327,7 +327,7 @@ public class InstallSplitPane extends SPMSplitPane {
 
                         BStandardDialog dlg = new BStandardDialog("SPManager", messg, BStandardDialog.WARNING);
 
-                        switch (dlg.showOptionDialog(null, SPManagerFrame.CONTINUE_IGNORE, SPMTranslate.text("Continue"))) {
+                        switch (dlg.showOptionDialog(null, SPManagerFrame.CONTINUE_IGNORE, Translate.text("spmanager:text.Continue"))) {
 
                             case 1:
                                 break download;
@@ -382,7 +382,7 @@ public class InstallSplitPane extends SPMSplitPane {
         log.info("Folder={}", folder.getAbsolutePath());
 
         if (!folder.exists() && !folder.mkdirs()) {
-            errors.add(SPMTranslate.text("error") + "cannot open/create " + folder.getAbsolutePath());
+            errors.add(Translate.text("spmanager:text.error") + "cannot open/create " + folder.getAbsolutePath());
 
             log.info("cannot open/create {}", folder.getAbsolutePath());
         }
@@ -395,7 +395,7 @@ public class InstallSplitPane extends SPMSplitPane {
             status = new StatusDialog(SPManagerPlugin.getFrame());
         }
 
-        status.setText(SPMTranslate.text("downloading", nodeInfo.getName()));
+        status.setText(Translate.text("spmanager:text.downloading", nodeInfo.getName()));
 
         if (fs.getInfoType(nodeInfo) == SPMFileSystem.PLUGIN_TYPE) {
             downloadedLength += HttpSPMFileSystem.downloadRemoteBinaryFile(nodeInfo.httpFile, update.getAbsolutePath(), nodeInfo.length, status, lengthToDownload, downloadedLength, errors);
@@ -444,7 +444,7 @@ public class InstallSplitPane extends SPMSplitPane {
                 folder = new File(SPManagerPlugin.TEMP_DIR, file.getParentFile().getName());
 
                 if (!folder.exists() && !folder.mkdirs()) {
-                    errors.add(SPMTranslate.text("error") + "cannot open/create " + folder.getAbsolutePath());
+                    errors.add(Translate.text("spmanager:text.error") + "cannot open/create " + folder.getAbsolutePath());
                     log.error("cannot open/create {}", folder.getAbsolutePath());
                 }
 
@@ -453,7 +453,7 @@ public class InstallSplitPane extends SPMSplitPane {
                 log.info("downloading to {}", update.getAbsolutePath());
 
                 if (status != null) {
-                    status.setText(SPMTranslate.text("downloading", nodeInfo.files[j]));
+                    status.setText(Translate.text("spmanager:text.downloading", nodeInfo.files[j]));
                 }
 
                 URL addFileURL = nodeInfo.getAddFileURL(j);
@@ -518,7 +518,7 @@ public class InstallSplitPane extends SPMSplitPane {
                     }
                 }
             } catch (IOException | RuntimeException e) {
-                errors.add(SPMTranslate.text("error") + "(" + file.getName() + ")" + e);
+                errors.add(Translate.text("spmanager:text.error") + "(" + file.getName() + ")" + e);
             }
         }
     }

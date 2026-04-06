@@ -53,12 +53,12 @@ public class SPManagerFrame extends BFrame {
     private final ActionListener statusTextClearAction = (ActionEvent ae) -> statusLabel.setText(" ");
 
     public static final String[] YES_NO = {
-        SPMTranslate.text("Yes"), SPMTranslate.text("No")
+        Translate.text("spmanager:text.Yes"), Translate.text("spmanager:text.No")
     };
 
     public static final String[] CONTINUE_IGNORE = {
-        SPMTranslate.text("Continue"), SPMTranslate.text("Stop"),
-        SPMTranslate.text("Ignore")
+        Translate.text("spmanager:text.Continue"), Translate.text("spmanager:text.Stop"),
+        Translate.text("spmanager:text.Ignore")
     };
 
     /**
@@ -74,7 +74,7 @@ public class SPManagerFrame extends BFrame {
      * Constructor for the SPManagerFrame object
      */
     public SPManagerFrame() {
-        super(SPMTranslate.text("SPManager"));
+        super(Translate.text("spmanager:text.SPManager"));
         setIcon(ArtOfIllusion.APP_ICON);
 
         spmFrame = this;
@@ -96,9 +96,9 @@ public class SPManagerFrame extends BFrame {
 
         //Tabbed Pane setup
         tabbedPane = new BTabbedPane();
-        tabbedPane.add(manageSplitPane, SPMTranslate.text("manage"));
-        tabbedPane.add(updateSplitPane, SPMTranslate.text("update"));
-        tabbedPane.add(installSplitPane, SPMTranslate.text("install"));
+        tabbedPane.add(manageSplitPane, Translate.text("spmanager:text.manage"));
+        tabbedPane.add(updateSplitPane, Translate.text("spmanager:text.update"));
+        tabbedPane.add(installSplitPane, Translate.text("spmanager:text.install"));
         tabbedPane.addEventLink(SelectionChangedEvent.class, this, "doTabbedPaneSelection");
 
         LayoutInfo tabbedPaneLayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets(0, 0, 0, 0), new Dimension(0, 0));
@@ -111,7 +111,7 @@ public class SPManagerFrame extends BFrame {
         buttons.add(Translate.button("spmanager:close", event -> hideSPManager()));
         cc.add(buttons, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(3, 0, 0, 0), null));
 
-        cc.add(new BOutline(statusLabel, BorderFactory.createTitledBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED), SPMTranslate.text("remoteStatus"))), new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets(1, 1, 1, 1), new Dimension(0, 0)));
+        cc.add(new BOutline(statusLabel, BorderFactory.createTitledBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED), Translate.text("spmanager:text.remoteStatus"))), new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets(1, 1, 1, 1), new Dimension(0, 0)));
 
         setContent(cc);
         pack();
@@ -128,7 +128,7 @@ public class SPManagerFrame extends BFrame {
      */
     protected void hideSPManager() {
         if (manageSplitPane.isModified() || updateSplitPane.isModified() || installSplitPane.isModified()) {
-            JOptionPane.showMessageDialog(null, SPMTranslate.text("modified"), SPMTranslate.text("alert"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, Translate.text("spmanager:text.modified"), Translate.text("spmanager:text.alert"), JOptionPane.ERROR_MESSAGE);
         }
         getComponent().setVisible(false);
     }
@@ -185,7 +185,7 @@ public class SPManagerFrame extends BFrame {
         // we found an update for SPManager, so offer to install it now
         if (update) {
             if (new BStandardDialog("SPManager",
-                    UIUtilities.breakString(SPMTranslate.text("updateSPManager")),
+                    UIUtilities.breakString(Translate.text("spmanager:text.updateSPManager")),
                     BStandardDialog.QUESTION).showOptionDialog(null, SPManagerFrame.YES_NO, SPManagerFrame.YES_NO[0]) == 0) {
                 final StatusDialog status = new StatusDialog(SPManagerPlugin.getFrame());
                 final SPMObjectInfo info = remoteinfo;

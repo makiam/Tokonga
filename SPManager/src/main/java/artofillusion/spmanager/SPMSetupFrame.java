@@ -54,7 +54,7 @@ public class SPMSetupFrame extends BDialog {
     public SPMSetupFrame(SPManagerFrame fr) {
 
         super(fr, true);
-        setTitle(SPMTranslate.text("SPManagerSetup"));
+        setTitle(Translate.text("spmanager:text.SPManagerSetup"));
         parameters = SPManagerFrame.getParameters();
         addEventLink(WindowClosingEvent.class, this, "doCancel");
 
@@ -111,7 +111,7 @@ public class SPMSetupFrame extends BDialog {
 
             sp.setPreferredViewSize(dim);
 
-            BOutline bo = new BOutline(sp, BorderFactory.createTitledBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED), SPMTranslate.text("filters")));
+            BOutline bo = new BOutline(sp, BorderFactory.createTitledBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED), Translate.text("spmanager:text.filters")));
 
             cc.add(bo, layout);
         }

@@ -142,13 +142,13 @@ public class HttpSPMFileSystem extends SPMFileSystem {
             String s = repository.toString();
             s = s.substring(0, s.lastIndexOf('/'));
             s = s + "/cgi-bin/scripts.cgi?Plugins%20" + SPManagerPlugin.AOI_VERSION;
-            SPManagerFrame.getInstance().setRemoteStatusText(SPMTranslate.text("scanningPluginsFrom", s), 5000);
+            SPManagerFrame.getInstance().setRemoteStatusText(Translate.text("spmanager:text.scanningPluginsFrom", s), 5000);
         } else {
-            SPManagerFrame.getInstance().setRemoteStatusText(SPMTranslate.text("scanningPluginsFrom", repository), 5000);
+            SPManagerFrame.getInstance().setRemoteStatusText(Translate.text("spmanager:text.scanningPluginsFrom", repository), 5000);
         }
 
         if (statusDialog != null) {
-            statusDialog.setText(SPMTranslate.text("scanningPlugins"));
+            statusDialog.setText(Translate.text("spmanager:text.scanningPlugins"));
         }
         pluginsInfo = new Vector<>();
         if (SPManagerFrame.getParameters().getUseCache()) {
@@ -172,13 +172,13 @@ public class HttpSPMFileSystem extends SPMFileSystem {
             String s = repository.toString();
             s = s.substring(0, s.lastIndexOf('/'));
             s = s + "/cgi-bin/scripts.cgi?Scripts/Tools%20" + SPManagerPlugin.AOI_VERSION;
-            SPManagerFrame.getInstance().setRemoteStatusText(SPMTranslate.text("scanningToolScriptsFrom", s), 5000);
+            SPManagerFrame.getInstance().setRemoteStatusText(Translate.text("spmanager:text.scanningToolScriptsFrom", s), 5000);
         } else {
-            SPManagerFrame.getInstance().setRemoteStatusText(SPMTranslate.text("scanningToolScriptsFrom", repository), 5000);
+            SPManagerFrame.getInstance().setRemoteStatusText(Translate.text("spmanager:text.scanningToolScriptsFrom", repository), 5000);
         }
 
         if (statusDialog != null) {
-            statusDialog.setText(SPMTranslate.text("scanningToolScripts"));
+            statusDialog.setText(Translate.text("spmanager:text.scanningToolScripts"));
         }
         toolInfo = new Vector<>();
         if (SPManagerFrame.getParameters().getUseCache()) {
@@ -202,13 +202,13 @@ public class HttpSPMFileSystem extends SPMFileSystem {
             String s = repository.toString();
             s = s.substring(0, s.lastIndexOf('/'));
             s = s + "/cgi-bin/scripts.cgi?Scripts/Objects%20" + SPManagerPlugin.AOI_VERSION;
-            SPManagerFrame.getInstance().setRemoteStatusText(SPMTranslate.text("scanningObjectScriptsFrom", s), 5000);
+            SPManagerFrame.getInstance().setRemoteStatusText(Translate.text("spmanager:text.scanningObjectScriptsFrom", s), 5000);
         } else {
-            SPManagerFrame.getInstance().setRemoteStatusText(SPMTranslate.text("scanningObjectScriptsFrom", repository), 5000);
+            SPManagerFrame.getInstance().setRemoteStatusText(Translate.text("spmanager:text.scanningObjectScriptsFrom", repository), 5000);
         }
 
         if (statusDialog != null) {
-            statusDialog.setText(SPMTranslate.text("scanningObjectScripts"));
+            statusDialog.setText(Translate.text("spmanager:text.scanningObjectScripts"));
         }
         objectInfo = new Vector<>();
         if (SPManagerFrame.getParameters().getUseCache()) {
@@ -232,13 +232,13 @@ public class HttpSPMFileSystem extends SPMFileSystem {
             String s = repository.toString();
             s = s.substring(0, s.lastIndexOf('/'));
             s = s + "/cgi-bin/scripts.cgi?Scripts/Startup%20" + SPManagerPlugin.AOI_VERSION;
-            SPManagerFrame.getInstance().setRemoteStatusText(SPMTranslate.text("scanningStartupScriptsFrom", s), 5000);
+            SPManagerFrame.getInstance().setRemoteStatusText(Translate.text("spmanager:text.scanningStartupScriptsFrom", s), 5000);
         } else {
-            SPManagerFrame.getInstance().setRemoteStatusText(SPMTranslate.text("scanningStartupScriptsFrom", repository), 5000);
+            SPManagerFrame.getInstance().setRemoteStatusText(Translate.text("spmanager:text.scanningStartupScriptsFrom", repository), 5000);
         }
 
         if (statusDialog != null) {
-            statusDialog.setText(SPMTranslate.text("scanningStartupScripts"));
+            statusDialog.setText(Translate.text("spmanager:text.scanningStartupScripts"));
         }
         startupInfo = new Vector<>();
         if (SPManagerFrame.getParameters().getUseCache()) {
@@ -275,10 +275,10 @@ public class HttpSPMFileSystem extends SPMFileSystem {
             ((InputStream) obj).close();
         } catch (IOException e) {
             if (e instanceof UnknownHostException) {
-                JOptionPane.showMessageDialog(null, from + ": " + SPMTranslate.text("unknownHost"), SPMTranslate.text("error"), JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, from + ": " + Translate.text("spmanager:text.unknownHost"), Translate.text("spmanager:text.error"), JOptionPane.ERROR_MESSAGE);
                 unknownHost = true;
             } else if (e instanceof FileNotFoundException) {
-                JOptionPane.showMessageDialog(null, from + ": " + SPMTranslate.text("fileNotFound"), SPMTranslate.text("error"), JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, from + ": " + Translate.text("spmanager:text.fileNotFound"), Translate.text("spmanager:text.error"), JOptionPane.ERROR_MESSAGE);
                 unknownHost = true;
             } else {
                 log.atError().setCause(e).log("IO Exception {}", e.getMessage());
@@ -446,19 +446,19 @@ public class HttpSPMFileSystem extends SPMFileSystem {
                 is.close();
             }
             if (!received) {
-                JOptionPane.showMessageDialog(null, cgiUrl + ": " + SPMTranslate.text("scriptServerFailed"), SPMTranslate.text("error") + " " + err, JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, cgiUrl + ": " + Translate.text("spmanager:text.scriptServerFailed"), Translate.text("spmanager:text.error") + " " + err, JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
         } catch (HeadlessException | IOException | InterruptedException | NumberFormatException | DOMException | SAXException e) {
             if (e instanceof UnknownHostException) {
-                JOptionPane.showMessageDialog(null, cgiUrl.toString() + ": " + SPMTranslate.text("unknownHost"), SPMTranslate.text("error"), JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, cgiUrl.toString() + ": " + Translate.text("spmanager:text.unknownHost"), Translate.text("spmanager:text.error"), JOptionPane.ERROR_MESSAGE);
                 unknownHost = true;
             } else if (e instanceof FileNotFoundException) {
-                JOptionPane.showMessageDialog(null, cgiUrl.toString() + ": " + SPMTranslate.text("fileNotFound"), SPMTranslate.text("error"), JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, cgiUrl.toString() + ": " + Translate.text("spmanager:text.fileNotFound"), Translate.text("spmanager:text.error"), JOptionPane.ERROR_MESSAGE);
                 unknownHost = true;
             } else {
-                JOptionPane.showMessageDialog(null, cgiUrl.toString() + ": " + SPMTranslate.text("httpError"), SPMTranslate.text("error") + ": " + e.getMessage(), JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, cgiUrl.toString() + ": " + Translate.text("spmanager:text.httpError"), Translate.text("spmanager:text.error") + ": " + e.getMessage(), JOptionPane.ERROR_MESSAGE);
                 log.atError().setCause(e).log("IO Exception {}", e.getMessage());
             }
         }
@@ -513,7 +513,7 @@ public class HttpSPMFileSystem extends SPMFileSystem {
 
             if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
                 new BStandardDialog("SPManager", new String[]{
-                    SPMTranslate.text("httpError"),
+                    Translate.text("spmanager:text.httpError"),
                     conn.getResponseMessage()
                     + " (" + conn.getResponseCode() + ")",}, BStandardDialog.ERROR)
                         .showMessageDialog(SPManagerFrame.getInstance());
@@ -593,7 +593,7 @@ public class HttpSPMFileSystem extends SPMFileSystem {
             }
 
         } catch (IOException | InterruptedException e) {
-            errors.add(SPMTranslate.text("error") + "(" + fileName + ")" + e);
+            errors.add(Translate.text("spmanager:text.error") + "(" + fileName + ")" + e);
 
         } finally {
             try {
@@ -789,11 +789,11 @@ public class HttpSPMFileSystem extends SPMFileSystem {
          * Constructor for the StatusDialog object
          */
         public HttpStatusDialog() {
-            super(SPManagerPlugin.getFrame(), SPMTranslate.text("remoteStatus"), false);
+            super(SPManagerPlugin.getFrame(), Translate.text("spmanager:text.remoteStatus"), false);
             ColumnContainer cc = new ColumnContainer();
             LayoutInfo layout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(10, 10, 10, 10), new Dimension(0, 0));
             cc.add(label = SPMTranslate.bLabel("status"), layout);
-            label.setText(SPMTranslate.text("scanningPlugins"));
+            label.setText(Translate.text("spmanager:text.scanningPlugins"));
             layout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(10, 10, 10, 10), new Dimension(0, 0));
             BProgressBar progressBar;
             cc.add(progressBar = new BProgressBar(), layout);

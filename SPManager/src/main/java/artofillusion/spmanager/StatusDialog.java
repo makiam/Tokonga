@@ -9,6 +9,7 @@
  */
 package artofillusion.spmanager;
 
+import artofillusion.ui.Translate;
 import artofillusion.ui.UIUtilities;
 import buoy.event.*;
 import buoy.widget.*;
@@ -29,11 +30,11 @@ public class StatusDialog extends BDialog {
      * Constructor for the StatusDialog object
      */
     public StatusDialog(BFrame parent) {
-        super(parent, SPMTranslate.text("remoteStatus"), false);
+        super(parent, Translate.text("spmanager:text.remoteStatus"), false);
         ColumnContainer cc = new ColumnContainer();
         LayoutInfo layout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(10, 10, 10, 10), new Dimension(0, 0));
         cc.add(label = SPMTranslate.bLabel("status"), layout);
-        label.setText(SPMTranslate.text("scanningPlugins"));
+        label.setText(Translate.text("spmanager:text.scanningPlugins"));
         layout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(10, 10, 10, 10), new Dimension(0, 0));
         cc.add(progressBar = new BProgressBar(0, 100), layout);
         progressBar.setShowProgressText(true);

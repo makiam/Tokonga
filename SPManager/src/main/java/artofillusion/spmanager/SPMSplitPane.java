@@ -171,7 +171,7 @@ public class SPMSplitPane extends BSplitPane {
         long kbsize;
         String[] files = info.getFiles();
         if (info.files != null) {
-            addFiles = " (" + SPMTranslate.text("additionalFiles") + " ";
+            addFiles = " (" + Translate.text("spmanager:text.additionalFiles") + " ";
             for (int i = 0; i < files.length; ++i) {
                 kbsize = Math.round(info.getFileSizes()[i] / 1000);
                 if (kbsize < 1) {
@@ -198,6 +198,7 @@ public class SPMSplitPane extends BSplitPane {
      * @param s Description of the Parameter
      */
     private void initialize(String s) {
+
         uncheckedIcon = UIManager.getDefaults().getIcon("Tree.leafIcon");
         if (uncheckedIcon == null) {
             uncheckedIcon = new ImageIcon(getClass().getResource("/artofillusion/spmanager/icons/file.png"));
@@ -224,7 +225,7 @@ public class SPMSplitPane extends BSplitPane {
 
         ColumnContainer cc = new ColumnContainer();
 
-        add(new BScrollPane(tree = new BTree(new DefaultMutableTreeNode(SPMTranslate.text(s)))), 0);
+        add(new BScrollPane(tree = new BTree(new DefaultMutableTreeNode(Translate.text("spmanager:text." + s)))), 0);
 
         add(cc, 1);
 
@@ -241,7 +242,7 @@ public class SPMSplitPane extends BSplitPane {
 
         // NTJ: added change-log pull-down
         descSelect = new BComboBox();
-        descSelect.add(SPMTranslate.text("description"));
+        descSelect.add(Translate.text("spmanager:text.description"));
         descSelect.addEventLink(ValueChangedEvent.class, new Object() {
             void processEvent() {
                 int index = descSelect.getSelectedIndex();
@@ -261,13 +262,13 @@ public class SPMSplitPane extends BSplitPane {
 
         rc.add(descSelect, labelLayout);
 
-        rc.add(new BLabel(SPMTranslate.text("flags") + ":"));
+        rc.add(new BLabel(Translate.text("spmanager:text.flags") + ":"));
 
-        rc.add(new BLabel("=" + SPMTranslate.text("alertFlag"), alertIcon, BLabel.CENTER, BLabel.EAST));
-        rc.add(new BLabel("=" + SPMTranslate.text("filtMark"), flagIcon, BLabel.CENTER, BLabel.EAST));
-        rc.add(new BLabel("=" + SPMTranslate.text("filtDisable"), disableIcon, BLabel.CENTER, BLabel.EAST));
-        rc.add(new BLabel("=" + SPMTranslate.text("filtConfirm"), confirmIcon, BLabel.CENTER, BLabel.EAST));
-        rc.add(new BLabel("=" + SPMTranslate.text("required"), referedIcon, BLabel.CENTER, BLabel.EAST));
+        rc.add(new BLabel("=" + Translate.text("spmanager:text.alertFlag"), alertIcon, BLabel.CENTER, BLabel.EAST));
+        rc.add(new BLabel("=" + Translate.text("spmanager:text.filtMark"), flagIcon, BLabel.CENTER, BLabel.EAST));
+        rc.add(new BLabel("=" + Translate.text("spmanager:text.filtDisable"), disableIcon, BLabel.CENTER, BLabel.EAST));
+        rc.add(new BLabel("=" + Translate.text("spmanager:text.filtConfirm"), confirmIcon, BLabel.CENTER, BLabel.EAST));
+        rc.add(new BLabel("=" + Translate.text("spmanager:text.required"), referedIcon, BLabel.CENTER, BLabel.EAST));
 
         objectDescription = new BTextArea("", 8, 50);
         objectDescription.setWrapStyle(BTextArea.WRAP_WORD);
@@ -286,12 +287,12 @@ public class SPMSplitPane extends BSplitPane {
         tree.addEventLink(SelectionChangedEvent.class, this, "doTreeNodeSelection");
         tree.setMultipleSelectionEnabled(false);
 
-        //initialise the tree nodes
-        pluginsPath = tree.addNode(tree.getRootNode(), new DefaultMutableTreeNode(SPMTranslate.text("plugins")));
-        scriptsPath = tree.addNode(tree.getRootNode(), new DefaultMutableTreeNode(SPMTranslate.text("scripts")));
-        toolScriptsPath = tree.addNode(scriptsPath, new DefaultMutableTreeNode(SPMTranslate.text("tools")));
-        objectScriptsPath = tree.addNode(scriptsPath, new DefaultMutableTreeNode(SPMTranslate.text("objects")));
-        startupScriptsPath = tree.addNode(scriptsPath, new DefaultMutableTreeNode(SPMTranslate.text("startup")));
+        //initialize the tree nodes
+        pluginsPath = tree.addNode(tree.getRootNode(), new DefaultMutableTreeNode(Translate.text("spmanager:text.plugins")));
+        scriptsPath = tree.addNode(tree.getRootNode(), new DefaultMutableTreeNode(Translate.text("spmanager:text.scripts")));
+        toolScriptsPath = tree.addNode(scriptsPath, new DefaultMutableTreeNode(Translate.text("spmanager:text.tools")));
+        objectScriptsPath = tree.addNode(scriptsPath, new DefaultMutableTreeNode(Translate.text("spmanager:text.objects")));
+        startupScriptsPath = tree.addNode(scriptsPath, new DefaultMutableTreeNode(Translate.text("spmanager:text.startup")));
         ((DefaultTreeModel) tree.getModel()).reload();
         setOneTouchExpandable(true);
         MouseListener ml = new MouseAdapter() {
@@ -375,7 +376,7 @@ public class SPMSplitPane extends BSplitPane {
             objectDescription.setText("");
 
             descSelect.removeAll();
-            descSelect.add(SPMTranslate.text("description"));
+            descSelect.add(Translate.text("spmanager:text.description"));
         } else {
             objectName.setBackground(Color.WHITE);
 
@@ -418,18 +419,18 @@ public class SPMSplitPane extends BSplitPane {
                 }
 
             if (missing) {
-                name += "\n" + SPMTranslate.text("missingFile", SPMTranslate.text("otherFiles"));
+                name += "\n" + Translate.text("spmanager:text.missingFile", Translate.text("spmanager:text.otherFiles"));
 
                 objectName.setBackground(Color.PINK);
             }
 
             if (info.invalid) {
-                name += "\n" + SPMTranslate.text("failedRequirement", SPMTranslate.text("flags"));
+                name += "\n" + Translate.text("spmanager:text.failedRequirement", Translate.text("spmanager:text.flags"));
 
                 objectName.setBackground(Color.PINK);
             }
 
-            info.setLog(SPMTranslate.text("otherFiles"), extList, 2);
+            info.setLog(Translate.text("spmanager:text.otherFiles"), extList, 2);
             }
 
             objectName.setText(name);
@@ -443,8 +444,8 @@ public class SPMSplitPane extends BSplitPane {
             List<String> changeLog = info.getChangeLog();
             if (changeLog == null) {
                 descSelect.removeAll();
-                descSelect.add(SPMTranslate.text("description"));
-                descSelect.add(SPMTranslate.text("history"));
+                descSelect.add(Translate.text("spmanager:text.description"));
+                descSelect.add(Translate.text("spmanager:text.history"));
             } else {
                 descSelect.setContents(changeLog);
             }

@@ -134,7 +134,7 @@ public class SPManagerPlugin implements Plugin {
                             if (errs.length() > 0) {
                                 errs.append('\n');
                             }
-                            errs.append(SPMTranslate.text("pluginFailure", info.getName()));
+                            errs.append(Translate.text("spmanager:text.pluginFailure", info.getName()));
                         }
 
                         if (info.actions != null && info.actions.size() > 0) {
@@ -445,7 +445,7 @@ public class SPManagerPlugin implements Plugin {
                 }
 
                 setText(name);
-                setProgressText(SPMTranslate.text("clickStart"));
+                setProgressText(Translate.text("spmanager:text.clickStart"));
 
                 okbtn = Translate.button("spmanager:start", this, "ok");
 
@@ -477,7 +477,7 @@ public class SPManagerPlugin implements Plugin {
 
                 if (cmd.equals("ok")) {
 
-                    setProgressText(SPMTranslate.text("contacting"));
+                    setProgressText(Translate.text("spmanager:text.contacting"));
                     setIdle(true);
 
                     log.info("DOWNLOAD: creating ObjectInfo... {}", url.toString());
@@ -523,10 +523,10 @@ public class SPManagerPlugin implements Plugin {
 
                             setText(info.getName() + " " + sz);
                             setIdle(false);
-                            setProgressText(SPMTranslate.text("ready"));
+                            setProgressText(Translate.text("spmanager:text.ready"));
 
                             okbut.setActionCommand("install");
-                            okbut.setText(SPMTranslate.text("install"));
+                            okbut.setText(Translate.text("spmanager:text.install"));
                             okbut.setEnabled(true);
                             pack();
                         }
@@ -573,7 +573,7 @@ public class SPManagerPlugin implements Plugin {
                 } else if (cmd.equals("install")) {
                     log.atInfo().log("DOWNLOAD: downloading: {}", url);
 
-                    setText(SPMTranslate.text("downloading", info.getName()));
+                    setText(Translate.text("spmanager:text.downloading", info.getName()));
                     pack();
 
                     final List<String> errs = new ArrayList<>();
@@ -592,7 +592,7 @@ public class SPManagerPlugin implements Plugin {
 
                             if (path == null || path.isEmpty()) {
                                 log.atInfo().log("DOWNLOAD: no save location");
-                                MessageDialog.create().withTitle("SPManager").error(SPMTranslate.text("noSaveLocation"));
+                                MessageDialog.create().withTitle("SPManager").error(Translate.text("spmanager:text.noSaveLocation"));
                                 doClose();
                             }
 
@@ -611,14 +611,14 @@ public class SPManagerPlugin implements Plugin {
 
                                 name = PLUGIN_DIRECTORY + File.separatorChar + info.destination.get(i) + info.files[i];
 
-                                setText(SPMTranslate.text("downloading", info.files[i]));
+                                setText(Translate.text("spmanager:text.downloading", info.files[i]));
                                 pack();
 
                                 dl += HttpSPMFileSystem.downloadRemoteBinaryFile(info.getAddFileURL(i), name, info.fileSizes[i], stat, total, dl, errs);
                             }
 
                             if (errs == null || errs.isEmpty()) {
-                                MessageDialog.create().withTitle("SPManager").error(SPMTranslate.text("modified"));
+                                MessageDialog.create().withTitle("SPManager").error(Translate.text("spmanager:text.modified"));
                             } else {
                                 InstallSplitPane.showErrors(errs);
                             }
