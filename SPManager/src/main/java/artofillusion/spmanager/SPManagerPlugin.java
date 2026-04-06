@@ -61,7 +61,7 @@ public class SPManagerPlugin implements Plugin {
 
     @Override
     public void onApplicationStarting() {
-        SPMTranslate.setLocale(ArtOfIllusion.getPreferences().getLocale());
+
 
         APP_DIRECTORY = ArtOfIllusion.APP_DIRECTORY;
         PLUGIN_DIRECTORY = ArtOfIllusion.PLUGIN_DIRECTORY;
