@@ -37,11 +37,11 @@ public class ManageSplitPane extends SPMSplitPane {
     public ManageSplitPane() {
         super("installedScriptsPlugins");
         acceptsFileSelection = false;
-        //initialise button
+        //initialize button
         LayoutInfo layout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(0, 0, 0, 0), new Dimension(0, 0));
         buttonRow.add(deleteButton = Translate.button("spmanager:deleteFile", event -> doDelete()), layout);
         deleteButton.setIcon(new ImageIcon(getClass().getResource("/artofillusion/spmanager/icons/Delete16.gif")));
-        deleteButton.setText(SPMTranslate.text("deleteScript"));
+        deleteButton.setText(Translate.text("spmanager:text.deleteScript"));
         deleteButton.setEnabled(false);
         fs = new LocalSPMFileSystem();
         updateTree();
@@ -124,13 +124,13 @@ public class ManageSplitPane extends SPMSplitPane {
         SPMObjectInfo info = getSelectedNodeInfo();
 
         if (info.refcount > 0) {
-            JOptionPane.showMessageDialog(SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("cannotDeleteRequired"), SPMTranslate.text("Delete", info.getFileName()), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(SPManagerFrame.getInstance().getComponent(), Translate.text("spmanager:text.cannotDeleteRequired"), Translate.text("spmanager:text.Delete", info.getFileName()), JOptionPane.ERROR_MESSAGE);
 
             return;
         }
 
-        int r = JOptionPane.showConfirmDialog(SPManagerFrame.getInstance().getComponent(), SPMTranslate.text("permanentlyDelete", info.getFileName()),
-                SPMTranslate.text("warning"), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+        int r = JOptionPane.showConfirmDialog(SPManagerFrame.getInstance().getComponent(), Translate.text("spmanager:text.permanentlyDelete", info.getFileName()),
+                Translate.text("spmanager:text.warning"), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
         if (r == JOptionPane.YES_OPTION) {
             deleteFile(info);
         }
@@ -152,7 +152,7 @@ public class ManageSplitPane extends SPMSplitPane {
                 log.atInfo().log("SPManager: Delete: write protected: {}", file.getAbsolutePath());
             }
             if (!file.delete()) {
-                MessageDialog.create().withOwner(SPManagerFrame.getInstance().getComponent()).error(SPMTranslate.text("cannotDeleteFile", info.getFileName()));
+                MessageDialog.create().withOwner(SPManagerFrame.getInstance().getComponent()).error(Translate.text("spmanager:text.cannotDeleteFile", info.getFileName()));
                 log.atInfo().log("SPManager: File cannot be deleted: {}", file.getAbsolutePath());
                 return;
             }
@@ -198,7 +198,7 @@ public class ManageSplitPane extends SPMSplitPane {
      */
     public void doDeleteAll() {
         int r = JOptionPane.showConfirmDialog(SPManagerFrame.getInstance().getComponent(), Translate.text("spmanager:text.permanentlyDeleteAll"),
-                SPMTranslate.text("warning"), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+                Translate.text("spmanager:text.warning"), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
         if (r == JOptionPane.YES_OPTION) {
             deleteAllSelected(toolScriptsPath);
             deleteAllSelected(objectScriptsPath);

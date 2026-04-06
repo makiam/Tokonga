@@ -14,6 +14,8 @@ package artofillusion.spmanager;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
+import artofillusion.ui.Translate;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.TestOnly;
@@ -699,10 +701,10 @@ public class SPMObjectInfo {
         // create the display lists
         String extList = String.join("\n", externals.values());
 
-        setLog(SPMTranslate.text("flags"), flags, 1);
-        setLog(SPMTranslate.text("otherFiles"), extList, 2);
-        setLog(SPMTranslate.text("exports"), exportList, 3);
-        setLog(SPMTranslate.text("history"), "none", 4);
+        setLog(Translate.text("spmanager:text.flags"), flags, 1);
+        setLog(Translate.text("spmanager:text.otherFiles"), extList, 2);
+        setLog(Translate.text("spmanager:text.exports"), exportList, 3);
+        setLog(Translate.text("spmanager:text.history"), "none", 4);
 
         // check assertions and set restriction accordingly
         node = SPManagerUtils.getNodeFromNodeList(nl, "assert", 0);
@@ -769,7 +771,7 @@ public class SPMObjectInfo {
         }
 
         if (flags.length() > 0) {
-            setLog(SPMTranslate.text("flags"), flags, 1);
+            setLog(Translate.text("spmanager:text.flags"), flags, 1);
         }
 
         // NTJ: set changeLog from the history nodes
@@ -802,7 +804,7 @@ public class SPMObjectInfo {
 
             // update the history
             if (history.length() > 0) {
-                setLog(SPMTranslate.text("history"), history, 4);
+                setLog(Translate.text("spmanager:text.history"), history, 4);
             }
         }
 
@@ -942,7 +944,7 @@ public class SPMObjectInfo {
             desc += "\n\n" + comments;
         }
 
-        setLog(SPMTranslate.text("description"), desc, 0);
+        setLog(Translate.text("spmanager:text.description"), desc, 0);
     }
 
     /**
@@ -961,7 +963,7 @@ public class SPMObjectInfo {
             desc = description + "\n\n" + comments;
         }
 
-        setLog(SPMTranslate.text("description"), desc, 0);
+        setLog(Translate.text("spmanager:text.description"), desc, 0);
     }
 
     /**
@@ -1108,25 +1110,13 @@ public class SPMObjectInfo {
             comp = lhs.compareToIgnoreCase(rhs);
         }
 
-        switch (oper.charAt(0)) {
-            case '>':
-                return (oper.length() > 1 ? comp >= 0 : comp > 0);
-
-            case '<':
-                return (oper.length() > 1 ? comp <= 0 : comp < 0);
-
-            case '+':
-                return (comp >= 0);
-
-            case '-':
-                return (comp <= 0);
-
-            case '!':
-                return (comp != 0);
-
-            case '=':
-            default:
-                return (comp == 0);
-        }
+        return switch (oper.charAt(0)) {
+            case '>' -> (oper.length() > 1 ? comp >= 0 : comp > 0);
+            case '<' -> (oper.length() > 1 ? comp <= 0 : comp < 0);
+            case '+' -> (comp >= 0);
+            case '-' -> (comp <= 0);
+            case '!' -> (comp != 0);
+            default -> (comp == 0);
+        };
     }
 }

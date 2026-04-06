@@ -95,9 +95,9 @@ public class SPMParameters {
     public static final int FILTER_MODULO = LAST_FILTER;
 
     public static final String[] FILTER_NAMES = {
-        SPMTranslate.text("filtDefault"), SPMTranslate.text("filtEnable"),
-        SPMTranslate.text("filtMark"), SPMTranslate.text("filtConfirm"),
-        SPMTranslate.text("filtDisable"), SPMTranslate.text("filtHide"),
+        Translate.text("spmanager:text.filtDefault"), Translate.text("spmanager:text.filtEnable"),
+        Translate.text("spmanager:text.filtMark"), Translate.text("spmanager:text.filtConfirm"),
+        Translate.text("spmanager:text.filtDisable"), Translate.text("spmanager:text.filtHide"),
         "default", "enable", "mark", "confirm", "disable", "hide"
     };
 
@@ -172,7 +172,7 @@ public class SPMParameters {
      * @param forceUpdate Description of the Parameter
      */
     private void getThreadedRepositoriesList(boolean forceUpdate) {
-        final BDialog dlg = new BDialog(SPManagerFrame.getInstance(), SPMTranslate.text("remoteStatus"),true);
+        final BDialog dlg = new BDialog(SPManagerFrame.getInstance(), Translate.text("spmanager:text.remoteStatus"),true);
 
         dlg.setEnabled(true);
 
@@ -182,7 +182,7 @@ public class SPMParameters {
                 try {
                     Thread.sleep(500);
                     if (dlg.isEnabled()) {
-                        dlg.setContent(new BLabel(SPMTranslate.text("waiting")));
+                        dlg.setContent(new BLabel(Translate.text("spmanager:text.waiting")));
 
                         dlg.pack();
                         UIUtilities.centerWindow(dlg);
@@ -204,13 +204,13 @@ public class SPMParameters {
         } catch (MalformedURLException me) {
             log.atError().setCause(me).log("Bad URL: {}", me.getMessage());
         }
-        SPManagerFrame.getInstance().setRemoteStatusText(SPMTranslate.text("fetchingRepositoriesList") + " " + repListURL, -1);
+        SPManagerFrame.getInstance().setRemoteStatusText(Translate.text("spmanager:text.fetchingRepositoriesList") + " " + repListURL, -1);
         try {
             HttpURLConnection conn = (HttpURLConnection) repListURL.openConnection();
 
             if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
                 new BStandardDialog("SPManager", new String[]{
-                    SPMTranslate.text("noRepoList"),
+                    Translate.text("spmanager:text.noRepoList"),
                     conn.getResponseMessage()
                     + " (" + conn.getResponseCode() + ")",}, BStandardDialog.ERROR).showMessageDialog(SPManagerFrame.getInstance());
 
@@ -236,7 +236,7 @@ public class SPMParameters {
 
                 if (repoName.startsWith("<DOC")) {
                     log.atDebug().log("Error retrieving repositories list.");
-                    SPManagerFrame.getInstance().setRemoteStatusText(SPMTranslate.text("noRepoList"), -1);
+                    SPManagerFrame.getInstance().setRemoteStatusText(Translate.text("spmanager:text.noRepoList"), -1);
 
                     currentRepository = previous;
                     return;
@@ -268,7 +268,7 @@ public class SPMParameters {
             if (!((e instanceof UnknownHostException) || (e instanceof SocketException))) {
                 log.atError().setCause(e).log("IO Error: {}", e.getMessage());
             }
-            SPManagerFrame.getInstance().setRemoteStatusText(SPMTranslate.text("unknownRepositoriesHost", repListURL), -1);
+            SPManagerFrame.getInstance().setRemoteStatusText(Translate.text("spmanager:text.unknownRepositoriesHost", repListURL), -1);
         } finally {
             // close and dispose of the dialog
             dlg.setEnabled(false);

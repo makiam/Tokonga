@@ -54,13 +54,13 @@ public class SPMSetupFrame extends BDialog {
     public SPMSetupFrame(SPManagerFrame fr) {
 
         super(fr, true);
-        setTitle(SPMTranslate.text("SPManagerSetup"));
+        setTitle(Translate.text("spmanager:text.SPManagerSetup"));
         parameters = SPManagerFrame.getParameters();
         addEventLink(WindowClosingEvent.class, this, "doCancel");
 
         ColumnContainer cc = new ColumnContainer();
         LayoutInfo topLayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(5, 3, 3, 3), new Dimension(0, 0));
-        cc.add(SPMTranslate.bLabel("chooseRepository"), topLayout);
+        cc.add(Translate.label("spmanager:label.chooseRepository"), topLayout);
         LayoutInfo layout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(3, 3, 5, 3), new Dimension(0, 0));
         cc.add(repositoriesCB = new BComboBox(rep = parameters.getRepositories()), layout);
         repositoriesCB.addEventLink(ValueChangedEvent.class, this, "doRepositoriesCBChanged");
@@ -111,12 +111,12 @@ public class SPMSetupFrame extends BDialog {
 
             sp.setPreferredViewSize(dim);
 
-            BOutline bo = new BOutline(sp, BorderFactory.createTitledBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED), SPMTranslate.text("filters")));
+            BOutline bo = new BOutline(sp, BorderFactory.createTitledBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED), Translate.text("spmanager:text.filters")));
 
             cc.add(bo, layout);
         }
-
-        useCacheCB = SPMTranslate.bCheckBox("useCache", parameters.getUseCache(), this, "doUseCacheCB");
+        useCacheCB = new BCheckBox(Translate.text("spmanager:checkbox.useCache"), parameters.getUseCache());
+        useCacheCB.addEventLink(ValueChangedEvent.class, this, "doUseCacheCB");
         cc.add(useCacheCB, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(2, 3, 2, 3), new Dimension(0, 0)));
 
         LayoutInfo rcLayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(4, 3, 4, 3), new Dimension(0, 0));
@@ -124,22 +124,23 @@ public class SPMSetupFrame extends BDialog {
         FormContainer fm = new FormContainer(2, 5);
         LayoutInfo formLayout = new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE, new Insets(2, 4, 2, 4), new Dimension(0, 0));
 
-        useProxyCB = SPMTranslate.bCheckBox("useProxy", parameters.useProxy(), this, "doUseProxyCB");
+        useProxyCB = new BCheckBox(Translate.text("spmanager:checkbox.useProxy"), SPMParameters.isUseProxy());
+        useProxyCB.addEventLink(ValueChangedEvent.class, this, "doUseProxyCB");
         fm.add(useProxyCB, 0, 0, formLayout);
 
-        fm.add(proxyHostLabel = SPMTranslate.bLabel("proxyHost"), 0, 1, formLayout);
+        fm.add(proxyHostLabel = Translate.label("spmanager:label.proxyHost"), 0, 1, formLayout);
         proxyHostEntry = new BTextField(SPMParameters.getProxyHost(), 25);
         fm.add(proxyHostEntry, 1, 1, formLayout);
 
-        fm.add(proxyPortLabel = SPMTranslate.bLabel("proxyPort"), 0, 2, formLayout);
+        fm.add(proxyPortLabel = Translate.label("spmanager:label.proxyPort"), 0, 2, formLayout);
         proxyPortEntry = new BTextField(SPMParameters.getProxyPort(), 25);
         fm.add(proxyPortEntry, 1, 2, formLayout);
 
-        fm.add(usernameLabel = SPMTranslate.bLabel("username"), 0, 3, formLayout);
+        fm.add(usernameLabel = Translate.label("spmanager:label.username"), 0, 3, formLayout);
         usernameEntry = new BTextField(SPMParameters.getUserName(), 15);
         fm.add(usernameEntry, 1, 3, formLayout);
 
-        fm.add(passwordLabel = SPMTranslate.bLabel("password"), 0, 4, formLayout);
+        fm.add(passwordLabel = Translate.label("spmanager:label.password"), 0, 4, formLayout);
         passwordEntry = new BPasswordField(SPMParameters.getPassword(), 15);
         fm.add(passwordEntry, 1, 4, formLayout);
 
