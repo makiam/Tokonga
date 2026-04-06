@@ -231,7 +231,7 @@ public class SPMSplitPane extends BSplitPane {
 
         LayoutInfo labelLayout = new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE, new Insets(3, 3, 3, 3), new Dimension(0, 0));
         LayoutInfo textAreaLayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(3, 3, 3, 3), new Dimension(0, 0));
-        cc.add(SPMTranslate.bLabel("name"), labelLayout);
+        cc.add(Translate.label("spmanager:label.name"), labelLayout);
         objectName = new BTextArea("", 3, 50);
         objectName.setWrapStyle(BTextArea.WRAP_WORD);
         objectName.setFont(objectName.getFont().deriveFont(12f));

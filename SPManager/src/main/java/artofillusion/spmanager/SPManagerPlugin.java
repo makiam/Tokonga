@@ -356,7 +356,7 @@ public class SPManagerPlugin implements Plugin {
         txt.setText(String.join("\n", errors));
 
         BScrollPane detail = new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_AS_NEEDED);
-        BLabel messg = SPMTranslate.bLabel("errMsg");
+        BLabel messg = Translate.label("spmanager:label.errMsg");
         new BStandardDialog("SPManager initialise", new Widget[]{messg, detail}, BStandardDialog.WARNING).showMessageDialog(null);
 
     }
@@ -496,7 +496,7 @@ public class SPManagerPlugin implements Plugin {
                                 log.info("need path...");
 
                                 RowContainer row = new RowContainer();
-                                row.add(SPMTranslate.bLabel("savePath"));
+                                row.add(Translate.label("spmanager:label.savePath"));
                                 savePath = new BTextField("", 25);
                                 savePath.addEventLink(ValueChangedEvent.class, this, "savePath");
                                 row.add(savePath);

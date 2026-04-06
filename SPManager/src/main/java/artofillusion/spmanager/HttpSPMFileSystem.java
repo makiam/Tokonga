@@ -792,7 +792,7 @@ public class HttpSPMFileSystem extends SPMFileSystem {
             super(SPManagerPlugin.getFrame(), Translate.text("spmanager:text.remoteStatus"), false);
             ColumnContainer cc = new ColumnContainer();
             LayoutInfo layout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(10, 10, 10, 10), new Dimension(0, 0));
-            cc.add(label = SPMTranslate.bLabel("status"), layout);
+            cc.add(label = Translate.label("spmanager:label.status"), layout);
             label.setText(Translate.text("spmanager:text.scanningPlugins"));
             layout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(10, 10, 10, 10), new Dimension(0, 0));
             BProgressBar progressBar;

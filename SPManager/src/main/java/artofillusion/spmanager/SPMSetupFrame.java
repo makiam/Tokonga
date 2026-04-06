@@ -60,7 +60,7 @@ public class SPMSetupFrame extends BDialog {
 
         ColumnContainer cc = new ColumnContainer();
         LayoutInfo topLayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(5, 3, 3, 3), new Dimension(0, 0));
-        cc.add(SPMTranslate.bLabel("chooseRepository"), topLayout);
+        cc.add(Translate.label("spmanager:label.chooseRepository"), topLayout);
         LayoutInfo layout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(3, 3, 5, 3), new Dimension(0, 0));
         cc.add(repositoriesCB = new BComboBox(rep = parameters.getRepositories()), layout);
         repositoriesCB.addEventLink(ValueChangedEvent.class, this, "doRepositoriesCBChanged");
@@ -128,19 +128,19 @@ public class SPMSetupFrame extends BDialog {
         useProxyCB.addEventLink(ValueChangedEvent.class, this, "doUseProxyCB");
         fm.add(useProxyCB, 0, 0, formLayout);
 
-        fm.add(proxyHostLabel = SPMTranslate.bLabel("proxyHost"), 0, 1, formLayout);
+        fm.add(proxyHostLabel = Translate.label("spmanager:label.proxyHost"), 0, 1, formLayout);
         proxyHostEntry = new BTextField(SPMParameters.getProxyHost(), 25);
         fm.add(proxyHostEntry, 1, 1, formLayout);
 
-        fm.add(proxyPortLabel = SPMTranslate.bLabel("proxyPort"), 0, 2, formLayout);
+        fm.add(proxyPortLabel = Translate.label("spmanager:label.proxyPort"), 0, 2, formLayout);
         proxyPortEntry = new BTextField(SPMParameters.getProxyPort(), 25);
         fm.add(proxyPortEntry, 1, 2, formLayout);
 
-        fm.add(usernameLabel = SPMTranslate.bLabel("username"), 0, 3, formLayout);
+        fm.add(usernameLabel = Translate.label("spmanager:label.username"), 0, 3, formLayout);
         usernameEntry = new BTextField(SPMParameters.getUserName(), 15);
         fm.add(usernameEntry, 1, 3, formLayout);
 
-        fm.add(passwordLabel = SPMTranslate.bLabel("password"), 0, 4, formLayout);
+        fm.add(passwordLabel = Translate.label("spmanager:label.password"), 0, 4, formLayout);
         passwordEntry = new BPasswordField(SPMParameters.getPassword(), 15);
         fm.add(passwordEntry, 1, 4, formLayout);
 

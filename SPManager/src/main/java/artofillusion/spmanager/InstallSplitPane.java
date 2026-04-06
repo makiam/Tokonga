@@ -323,7 +323,7 @@ public class InstallSplitPane extends SPMSplitPane {
                     tree.removeNode(tree.getChildNode(path, j));
 
                     if (errors.size() > err && ignoreErrs == false) {
-                        BLabel messg = SPMTranslate.bLabel("errMsg");
+                        BLabel messg = Translate.label("spmanager:label.errMsg");
 
                         BStandardDialog dlg = new BStandardDialog("SPManager", messg, BStandardDialog.WARNING);
 
@@ -659,7 +659,7 @@ public class InstallSplitPane extends SPMSplitPane {
 
         BScrollPane detail = new BScrollPane(txt, BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_AS_NEEDED);
 
-        BLabel messg = SPMTranslate.bLabel("errMsg");
+        BLabel messg = Translate.label("spmanager:label.errMsg");
 
         new BStandardDialog("SPManager",
                 new Widget[]{messg, detail},
