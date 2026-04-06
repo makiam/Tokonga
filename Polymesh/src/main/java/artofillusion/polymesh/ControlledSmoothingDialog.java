@@ -16,6 +16,8 @@ import artofillusion.ui.ValueField;
 
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+
+import buoy.event.ValueChangedEvent;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
@@ -35,10 +37,10 @@ class ControlledSmoothingDialog extends JDialog {
     private JLabel smoothnessRange;
     private JLabel minSmoothness;
     private JLabel maxSmoothness;
-    private PMValueField minAngleVF;
-    private PMValueField maxAngleVF;
-    private PMValueField minSmoothnessVF;
-    private PMValueField maxSmoothnessVF;
+    private ValueField minAngleVF;
+    private ValueField maxAngleVF;
+    private ValueField minSmoothnessVF;
+    private ValueField maxSmoothnessVF;
     private final boolean backApply;
     private final double backMaxAngle;
     private final double backMinAngle;
@@ -91,10 +93,10 @@ class ControlledSmoothingDialog extends JDialog {
     private void initComponents() {
         JButton okButton = new JButton();
         JButton cancelButton = new JButton();
-        minAngleVF = new PMValueField(0.0, ValueField.NONNEGATIVE);
-        maxAngleVF = new PMValueField(180.0, ValueField.NONNEGATIVE);
-        minSmoothnessVF = new PMValueField(1.0, ValueField.NONNEGATIVE);
-        maxSmoothnessVF = new PMValueField(0.0, ValueField.NONNEGATIVE);
+        minAngleVF = new ValueField(0.0, ValueField.NONNEGATIVE);
+        maxAngleVF = new ValueField(180.0, ValueField.NONNEGATIVE);
+        minSmoothnessVF = new ValueField(1.0, ValueField.NONNEGATIVE);
+        maxSmoothnessVF = new ValueField(0.0, ValueField.NONNEGATIVE);
         minAngleSlider = new JSlider();
         maxAngleSlider = new JSlider();
         minSmoothnessSlider = new JSlider();
@@ -152,19 +154,19 @@ class ControlledSmoothingDialog extends JDialog {
         // Configure text fields
         JTextField minAngleField = minAngleVF.getComponent();
         minAngleField.setColumns(5);
-        //minAngleVF.addValueFieldListener(e -> doApplyVF());
+        minAngleVF.addEventLink(ValueChangedEvent.class, this, "doApplyVF");
 
         JTextField maxAngleField = maxAngleVF.getComponent();
         maxAngleField.setColumns(5);
-        //maxAngleVF.addValueFieldListener(e -> doApplyVF());
+        maxAngleVF.addEventLink(ValueChangedEvent.class, this, "doApplyVF");
 
         JTextField minSmoothnessField = minSmoothnessVF.getComponent();
         minSmoothnessField.setColumns(5);
-        //minSmoothnessVF.addValueFieldListener(e -> doApplyVF());
+        minSmoothnessVF.addEventLink(ValueChangedEvent.class, this, "doApplyVF");
 
         JTextField maxSmoothnessField = maxSmoothnessVF.getComponent();
         maxSmoothnessField.setColumns(5);
-        //maxSmoothnessVF.addValueFieldListener(e -> doApplyVF());
+        maxSmoothnessVF.addEventLink(ValueChangedEvent.class, this, "doApplyVF");
 
         // OK/Cancel buttons
         okButton.setText(Translate.text("button.ok"));
