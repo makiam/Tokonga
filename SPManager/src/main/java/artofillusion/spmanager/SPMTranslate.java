@@ -11,7 +11,7 @@
  */
 package artofillusion.spmanager;
 
-import buoy.event.*;
+import artofillusion.ui.Translate;
 import buoy.widget.*;
 import java.text.*;
 import java.util.*;
@@ -34,28 +34,6 @@ public class SPMTranslate {
      */
     public static void setLocale(Locale l) {
         resources = ResourceBundle.getBundle("spmanager", l);
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @param name Description of the Parameter
-     * @param state Description of the Parameter
-     * @param target Description of the Parameter
-     * @param method Description of the Parameter
-     * @return Description of the Return Value
-     */
-    public static BCheckBox bCheckBox(String name, boolean state, Object target, String method) {
-        String command = name;
-        try {
-            command = resources.getString("checkbox." + name);
-        } catch (MissingResourceException ex) {
-        }
-        BCheckBox b = new BCheckBox(command, state);
-        if (target != null) {
-            b.addEventLink(ValueChangedEvent.class, target, method);
-        }
-        return b;
     }
 
     /**

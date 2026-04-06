@@ -115,8 +115,8 @@ public class SPMSetupFrame extends BDialog {
 
             cc.add(bo, layout);
         }
-
-        useCacheCB = SPMTranslate.bCheckBox("useCache", parameters.getUseCache(), this, "doUseCacheCB");
+        useCacheCB = new BCheckBox(Translate.text("spmanager:checkbox.useCache"), parameters.getUseCache());
+        useCacheCB.addEventLink(ValueChangedEvent.class, this, "doUseCacheCB");
         cc.add(useCacheCB, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(2, 3, 2, 3), new Dimension(0, 0)));
 
         LayoutInfo rcLayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(4, 3, 4, 3), new Dimension(0, 0));
@@ -124,7 +124,8 @@ public class SPMSetupFrame extends BDialog {
         FormContainer fm = new FormContainer(2, 5);
         LayoutInfo formLayout = new LayoutInfo(LayoutInfo.WEST, LayoutInfo.NONE, new Insets(2, 4, 2, 4), new Dimension(0, 0));
 
-        useProxyCB = SPMTranslate.bCheckBox("useProxy", parameters.useProxy(), this, "doUseProxyCB");
+        useProxyCB = new BCheckBox(Translate.text("spmanager:checkbox.useProxy"), SPMParameters.isUseProxy());
+        useProxyCB.addEventLink(ValueChangedEvent.class, this, "doUseProxyCB");
         fm.add(useProxyCB, 0, 0, formLayout);
 
         fm.add(proxyHostLabel = SPMTranslate.bLabel("proxyHost"), 0, 1, formLayout);

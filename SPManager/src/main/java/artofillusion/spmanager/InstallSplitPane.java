@@ -81,7 +81,9 @@ public class InstallSplitPane extends SPMSplitPane {
             buttonRow.add(installAllButton = Translate.button("spmanager:installAllSelected", event -> doInstallAll()), layout);
             installAllButton.setIcon(new ImageIcon(getClass().getResource("/artofillusion/spmanager/icons/Import16.gif")));
         }
-        buttonRow.add(selectCB = SPMTranslate.bCheckBox("selected", false, this, "doSelectCB"));
+        var selectCB = new BCheckBox(Translate.text("spmanager:checkbox.selected"), false);
+        selectCB.addEventLink(ValueChangedEvent.class, this, "doSelectCB");
+        buttonRow.add(selectCB);
         selectCB.setEnabled(false);
         updateTree();
         modified = false;
