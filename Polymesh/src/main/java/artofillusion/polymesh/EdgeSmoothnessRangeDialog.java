@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman, 2005 by Francois Guillet
-   Changes copyright (C) 2023-2025 Maksim Khramov
+   Changes copyright (C) 2023-2026 Maksim Khramov
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
@@ -11,43 +11,46 @@
 package artofillusion.polymesh;
 
 import artofillusion.ui.Translate;
-import artofillusion.ui.UIUtilities;
+
 import artofillusion.ui.ValueField;
-import buoy.event.CommandEvent;
-import buoy.event.ValueChangedEvent;
-import buoy.widget.BButton;
-import buoy.widget.BDialog;
-import buoy.widget.BLabel;
-import buoy.widget.BSlider;
-import buoy.widget.BTextField;
-import buoy.widget.BorderContainer;
-import buoy.xml.WidgetDecoder;
 
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
-import java.io.InputStream;
-import lombok.extern.slf4j.Slf4j;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-import javax.swing.*;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+
+import buoy.event.ValueChangedEvent;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
  * @author MaksK
  */
 @Slf4j
-class EdgeSmoothnessRangeDialog extends BDialog {
+class EdgeSmoothnessRangeDialog extends JDialog {
 
-    private PMValueField minSmoothnessVF;
-    private BSlider minSmoothnessSlider;
-    private PMValueField maxSmoothnessVF;
-    private BSlider maxSmoothnessSlider;
+    private ValueField minSmoothnessVF;
+    private JSlider minSmoothnessSlider;
+    private JTextField minSmoothnessTF;
+    private ValueField maxSmoothnessVF;
+    private JSlider maxSmoothnessSlider;
+    private JTextField maxSmoothnessTF;
     private final boolean[] orSel;
     private final boolean[] newSel;
     private final PolyMeshEditorWindow owner;
 
     public EdgeSmoothnessRangeDialog(PolyMeshEditorWindow owner) {
-        super(owner, Translate.text("polymesh:smoothnessRange"), true);
+        super(owner.getComponent(), Translate.text("polymesh:smoothnessRange"), true);
 
         this.owner = owner;
         int sl = owner.getSelection().length;
@@ -55,65 +58,103 @@ class EdgeSmoothnessRangeDialog extends BDialog {
         newSel = new boolean[sl];
         System.arraycopy(owner.getSelection(), 0, orSel, 0, sl);
         owner.setSelection(newSel);
-        try (InputStream inputStream = getClass().getResource("interfaces/smoothnessRange.xml").openStream()) {
-            WidgetDecoder decoder = new WidgetDecoder(inputStream);
-            BorderContainer borderContainer = (BorderContainer) decoder.getRootObject();
-            BLabel label = (BLabel) decoder.getObject("Label1");
-            label.setText(Translate.text("polymesh:specifySmoothnessRange"));
-            label = (BLabel) decoder.getObject("Label2");
-            label.setText(Translate.text("polymesh:minSmoothness"));
-            label = (BLabel) decoder.getObject("Label3");
-            label.setText(Translate.text("polymesh:maxSmoothness"));
-            BTextField minSmoothnessTF = ((BTextField) decoder.getObject("minSmoothnessTF"));
-            minSmoothnessSlider = ((BSlider) decoder.getObject("minSmoothnessSlider"));
-            BTextField maxSmoothnessTF = ((BTextField) decoder.getObject("maxSmoothnessTF"));
-            maxSmoothnessSlider = ((BSlider) decoder.getObject("maxSmoothnessSlider"));
-            minSmoothnessSlider.addEventLink(ValueChangedEvent.class, this, "doMinSliderChanged");
-            maxSmoothnessSlider.addEventLink(ValueChangedEvent.class, this, "doMaxSliderChanged");
-            BButton addButton = (BButton) decoder.getObject("addButton");
-            addButton.setText(Translate.text("polymesh:addToSelection"));
-            addButton.addEventLink(CommandEvent.class, this, "doAdd");
-            BButton setButton = (BButton) decoder.getObject("setButton");
-            setButton.addEventLink(CommandEvent.class, this, "doSet");
-            setButton.setText(Translate.text("polymesh:setSelection"));
-            BButton cancelButton = (BButton) decoder.getObject("cancelButton");
-            cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
-            cancelButton.setText(Translate.text("button.cancel"));
-            minSmoothnessVF = new PMValueField(0.0, ValueField.NONNEGATIVE);
-            minSmoothnessVF.setTextField(minSmoothnessTF);
-            minSmoothnessVF.setValue(0.0);
-            maxSmoothnessVF = new PMValueField(1.0, ValueField.POSITIVE);
-            maxSmoothnessVF.setTextField(maxSmoothnessTF);
-            maxSmoothnessVF.setValue(1.0);
-            maxSmoothnessSlider.setValue(100);
-            minSmoothnessVF.addEventLink(ValueChangedEvent.class, this, "doValuesChanged");
-            maxSmoothnessVF.addEventLink(ValueChangedEvent.class, this, "doValuesChanged");
-            setContent(borderContainer);
-        } catch (IOException ex) {
-            log.atError().setCause(ex).log("Error creating EdgeSmoothnessRangeDialog due {}", ex.getLocalizedMessage());
-        }
+
+        initComponents();
 
         updateSelection();
         KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
         ActionListener action = e -> doCancel();
-        this.getComponent().getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        this.getComponent().addWindowListener(new java.awt.event.WindowAdapter() {
+        getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(java.awt.event.WindowEvent evt) {
+            public void windowClosing(WindowEvent evt) {
                 doCancel();
             }
         });
         pack();
-        UIUtilities.centerWindow(this);
+        setLocationRelativeTo(null);
+    }
+
+    private void initComponents() {
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+        // Create components
+        var minLabel = new JLabel(Translate.text("polymesh:minSmoothness"));
+        minSmoothnessVF = new ValueField(0.0, ValueField.NONNEGATIVE);
+        minSmoothnessTF = minSmoothnessVF.getComponent();
+        minSmoothnessTF.setText("0.0");
+        minSmoothnessSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
+
+        var maxLabel = new JLabel(Translate.text("polymesh:maxSmoothness"));
+        maxSmoothnessVF = new ValueField(1.0, ValueField.POSITIVE);
+        maxSmoothnessTF = maxSmoothnessVF.getComponent();
+        maxSmoothnessTF.setText("1.0");
+        maxSmoothnessSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 100);
+
+        JButton addButton = new JButton(Translate.text("polymesh:addToSelection"));
+        JButton setButton = new JButton(Translate.text("polymesh:setSelection"));
+        JButton cancelButton = new JButton(Translate.text("button.cancel"));
+
+        // Add listeners
+        minSmoothnessSlider.addChangeListener(e -> doMinSliderChanged());
+        maxSmoothnessSlider.addChangeListener(e -> doMaxSliderChanged());
+        minSmoothnessVF.addEventLink(ValueChangedEvent.class, this, "doValuesChanged");
+        maxSmoothnessVF.addEventLink(ValueChangedEvent.class, this, "doValuesChanged");
+        addButton.addActionListener(e -> doAdd());
+        setButton.addActionListener(e -> doSet());
+        cancelButton.addActionListener(e -> doCancel());
+
+        // Layout using GroupLayout
+        JPanel contentPane = new JPanel();
+        GroupLayout layout = new GroupLayout(contentPane);
+        contentPane.setLayout(layout);
+
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+
+        // Horizontal group
+        layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(minLabel)
+                    .addComponent(maxLabel))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(minSmoothnessTF, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(maxSmoothnessTF, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+            .addComponent(minSmoothnessSlider)
+            .addComponent(maxSmoothnessSlider)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(addButton)
+                .addComponent(setButton)
+                .addComponent(cancelButton)));
+
+        // Vertical group
+        layout.setVerticalGroup(layout.createSequentialGroup()
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addComponent(minLabel)
+                .addComponent(minSmoothnessTF, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+            .addComponent(minSmoothnessSlider)
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addComponent(maxLabel)
+                .addComponent(maxSmoothnessTF, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+            .addComponent(maxSmoothnessSlider)
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addComponent(addButton)
+                .addComponent(setButton)
+                .addComponent(cancelButton)));
+
+        getRootPane().setDefaultButton(setButton);
+        setContentPane(contentPane);
     }
 
     private void doMinSliderChanged() {
-        minSmoothnessVF.setValue(((Integer) minSmoothnessSlider.getValue()) / 100.0);
+        minSmoothnessVF.setValue(minSmoothnessSlider.getValue() / 100.0);
         updateSelection();
     }
 
     private void doMaxSliderChanged() {
-        maxSmoothnessVF.setValue(((Integer) maxSmoothnessSlider.getValue()) / 100.0);
+        maxSmoothnessVF.setValue(maxSmoothnessSlider.getValue() / 100.0);
         updateSelection();
     }
 
