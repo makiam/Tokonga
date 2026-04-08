@@ -26,11 +26,15 @@ import java.io.DataOutputStream;
 
 
 @DisplayName("Mock Texture Mapping")
-class DummyTextureMapping extends TextureMapping {
+public class DummyTextureMapping extends TextureMapping {
 
     private final Object3D object;
 
     private final Texture texture;
+
+    public DummyTextureMapping(Object3D object, Texture texture) {
+        this(null, object, texture);
+    }
 
     public DummyTextureMapping(DataInputStream in, Object3D obj, Texture texture) {
         this.texture = texture;

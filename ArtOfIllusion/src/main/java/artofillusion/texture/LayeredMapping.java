@@ -113,8 +113,7 @@ public class LayeredMapping extends TextureMapping {
     public TextureParameter[] getParameters() {
         Vector<TextureParameter> param = new Vector<>();
         TextureParameter[] p;
-        int i;
-        int j;
+
 
         // There are two types of parameters: those corresponding to the blending fraction for
         // a layer, and those which belong to layer.  We recalculate the list every time this
@@ -124,7 +123,7 @@ public class LayeredMapping extends TextureMapping {
         paramStartIndex = new int[texture.length];
         numParams = new int[texture.length];
         maxParams = 0;
-        for (i = 0; i < texture.length; i++) {
+        for (int i = 0; i < texture.length; i++) {
             fractParamIndex[i] = param.size();
             TextureParameter fractParam = new TextureParameter(this, texture[i].getName() + " fraction", 0.0f, 1.0f, 1.0f);
             fractParam.setID(fractParamID[i]);
@@ -133,7 +132,7 @@ public class LayeredMapping extends TextureMapping {
             if (p != null) {
                 numParams[i] = p.length;
                 paramStartIndex[i] = param.size();
-                for (j = 0; j < p.length; j++) {
+                for (int j = 0; j < p.length; j++) {
                     param.add(p[j].duplicate());
                     if (p[j].identifier != -1) {
                         param.lastElement().setID(System.identityHashCode(mapping[i]) + p[j].identifier * 1025);
@@ -145,7 +144,7 @@ public class LayeredMapping extends TextureMapping {
             }
         }
         p = new TextureParameter[param.size()];
-        for (i = 0; i < p.length; i++) {
+        for (int i = 0; i < p.length; i++) {
             p[i] = param.get(i);
         }
         return p;

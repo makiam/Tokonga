@@ -21,7 +21,7 @@ import java.io.DataOutputStream;
 
 
 @DisplayName("Mock Texture")
-class DummyTexture extends Texture {
+public class DummyTexture extends Texture {
 
     @Override
     public boolean hasComponent(int component) {
