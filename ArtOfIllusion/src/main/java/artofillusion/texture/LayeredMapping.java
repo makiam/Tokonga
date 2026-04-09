@@ -198,35 +198,6 @@ public class LayeredMapping extends TextureMapping {
     /**
      * Add a layer to the texture.
      *
-     * @deprecated Use {@link #addLayer(int, Texture, TextureMapping, int)} instead.
-     */
-    @Deprecated
-    public void addLayer(Texture tex) {
-        Texture[] newtexture = new Texture[texture.length + 1];
-        TextureMapping[] newmapping = new TextureMapping[texture.length + 1];
-        int[] newblendMode = new int[texture.length + 1];
-        int[] newFractParamID = new int[texture.length + 1];
-        int i;
-
-        newtexture[0] = tex;
-        newmapping[0] = tex.getDefaultMapping(theObject);
-        newblendMode[0] = BLEND;
-        newFractParamID[0] = TextureParameter.getUniqueID();
-        for (i = 0; i < texture.length; i++) {
-            newtexture[i + 1] = texture[i];
-            newmapping[i + 1] = mapping[i];
-            newblendMode[i + 1] = blendMode[i];
-            newFractParamID[i + 1] = fractParamID[i];
-        }
-        texture = newtexture;
-        mapping = newmapping;
-        blendMode = newblendMode;
-        fractParamID = newFractParamID;
-    }
-
-    /**
-     * Add a layer to the texture.
-     *
      * @param index the position at which the new layer should be added, where layer 0
      * is the topmost layer (the one visible over all others)
      * @param tex the Texture of the new layer
