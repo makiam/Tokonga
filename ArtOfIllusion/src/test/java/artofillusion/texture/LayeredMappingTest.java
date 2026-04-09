@@ -189,7 +189,7 @@ class LayeredMappingTest {
     @Test
     @DisplayName("Move not existed layer 1")
     void testMoveLayer() {
-        
+
         map.moveLayer(0,0);
         Assertions.assertEquals(0, map.getNumLayers());
     }

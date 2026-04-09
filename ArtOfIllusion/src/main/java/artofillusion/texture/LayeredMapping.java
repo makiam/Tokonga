@@ -597,7 +597,7 @@ public class LayeredMapping extends TextureMapping {
      * Create a new TextureMapping which is identical to this one.
      */
     @Override
-    public TextureMapping duplicate() {
+    public LayeredMapping duplicate() {
         return duplicate(theObject, theTexture);
     }
 
@@ -606,7 +606,7 @@ public class LayeredMapping extends TextureMapping {
      * different Texture.
      */
     @Override
-    public TextureMapping duplicate(Object3D obj, Texture tex) {
+    public LayeredMapping duplicate(Object3D obj, Texture tex) {
         LayeredMapping map = new LayeredMapping(obj, null);
         int layers = texture.length;
 
