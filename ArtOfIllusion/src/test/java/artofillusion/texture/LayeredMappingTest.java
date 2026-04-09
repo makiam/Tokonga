@@ -16,6 +16,7 @@ import artofillusion.object.DummyTextureMapping;
 import artofillusion.object.Object3D;
 import artofillusion.object.Sphere;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -23,11 +24,20 @@ import org.junit.jupiter.api.Test;
 
 @DisplayName("Layered Mapping Test")
 class LayeredMappingTest {
+
+    private Object3D obj;
+    private LayeredMapping map;
+
+
+    @BeforeEach
+    void setUpEach() {
+        obj = new Sphere(1.0, 1.0, 1.0);
+        map = new LayeredMapping(obj, new LayeredTexture(obj));
+    }
+
     @Test
     void testCreateMapping() {
-        Object3D obj = new Sphere(1.0, 1.0, 1.0);
-        LayeredTexture tex = new LayeredTexture(obj);
-        LayeredMapping map = new LayeredMapping(obj, tex);
+
         Assertions.assertNotNull(map);
         Assertions.assertEquals(0, map.getNumLayers());
         Assertions.assertEquals(0, map.getMapping().length);
@@ -35,9 +45,7 @@ class LayeredMappingTest {
 
     @Test
     void testAddLayer() {
-        Object3D obj = new Sphere(1.0, 1.0, 1.0);
-        LayeredTexture tex = new LayeredTexture(obj);
-        LayeredMapping map = new LayeredMapping(obj, tex);
+
         DummyTexture dummy = new DummyTexture();
         TextureMapping mapping = new DummyTextureMapping(obj, dummy);
         map.addLayer(0, dummy, mapping, LayeredMapping.BLEND);
@@ -50,9 +58,7 @@ class LayeredMappingTest {
 
     @Test
     void testAddLayer2() {
-        Object3D obj = new Sphere(1.0, 1.0, 1.0);
-        LayeredTexture tex = new LayeredTexture(obj);
-        LayeredMapping map = new LayeredMapping(obj, tex);
+
         DummyTexture dummy0 = new DummyTexture();
         dummy0.setName("dummy0");
         TextureMapping mapping0 = new DummyTextureMapping(obj, dummy0);
@@ -76,9 +82,7 @@ class LayeredMappingTest {
 
     @Test
     void testAddLayer3() {
-        Object3D obj = new Sphere(1.0, 1.0, 1.0);
-        LayeredTexture tex = new LayeredTexture(obj);
-        LayeredMapping map = new LayeredMapping(obj, tex);
+
         DummyTexture dummy0 = new DummyTexture();
         dummy0.setName("dummy0");
         TextureMapping mapping0 = new DummyTextureMapping(obj, dummy0);
@@ -102,9 +106,7 @@ class LayeredMappingTest {
 
     @Test
     void testAddLayerBadIndex() {
-        Object3D obj = new Sphere(1.0, 1.0, 1.0);
-        LayeredTexture tex = new LayeredTexture(obj);
-        final LayeredMapping map = new LayeredMapping(obj, tex);
+
         DummyTexture dummy = new DummyTexture();
         TextureMapping mapping = new DummyTextureMapping(obj, dummy);
 
@@ -113,5 +115,112 @@ class LayeredMappingTest {
             map.addLayer(5, dummy, mapping, LayeredMapping.BLEND);
         });
 
+    }
+
+    @Test
+    @DisplayName("Delete single mapping layer")
+    void testDeleteLayerSingle() {
+
+
+        DummyTexture dummy0 = new DummyTexture();
+        dummy0.setName("dummy0");
+        TextureMapping mapping0 = new DummyTextureMapping(obj, dummy0);
+
+        map.addLayer(0, dummy0, mapping0, LayeredMapping.BLEND);
+
+        Assertions.assertEquals(1, map.getNumLayers());
+        Assertions.assertEquals(1, map.getMapping().length);
+
+        Assertions.assertEquals("dummy0", map.getLayer(0).getName());
+
+        map.deleteLayer(0);
+        Assertions.assertEquals(0, map.getNumLayers());
+        Assertions.assertEquals(0, map.getMapping().length);
+    }
+
+    @Test
+    @DisplayName("Delete not existed layer")
+    void testDeleteMissedLayer() {
+
+
+        Assertions.assertThrows(NegativeArraySizeException.class, () -> {
+            map.deleteLayer(0);
+        });
+    }
+
+    @Test
+    @DisplayName("Delete not existed layer")
+    void testDeleteMissedLayer2() {
+
+
+        DummyTexture dummy0 = new DummyTexture();
+        dummy0.setName("dummy0");
+        TextureMapping mapping0 = new DummyTextureMapping(obj, dummy0);
+
+        map.addLayer(0, dummy0, mapping0, LayeredMapping.BLEND);
+
+        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
+            map.deleteLayer(1);
+        });
+    }
+
+    @Test
+    @DisplayName("Delete first layer of two")
+    void testDeleteLayerFirstOfTwo() {
+
+
+        DummyTexture dummy0 = new DummyTexture();
+        dummy0.setName("dummy0");
+        TextureMapping mapping0 = new DummyTextureMapping(obj, dummy0);
+
+        DummyTexture dummy1 = new DummyTexture();
+        dummy1.setName("dummy1");
+        TextureMapping mapping1 = new DummyTextureMapping(obj, dummy0);
+
+        map.addLayer(0, dummy0, mapping0, LayeredMapping.BLEND);
+        map.addLayer(1, dummy1, mapping1, LayeredMapping.OVERLAY_ADD_BUMPS);
+
+        map.deleteLayer(0);
+        Assertions.assertEquals(1, map.getNumLayers());
+        Assertions.assertEquals(1, map.getMapping().length);
+        Assertions.assertEquals("dummy1", map.getLayer(0).getName());
+    }
+
+    @Test
+    @DisplayName("Move not existed layer 1")
+    void testMoveLayer() {
+        
+        map.moveLayer(0,0);
+        Assertions.assertEquals(0, map.getNumLayers());
+    }
+
+    @Test
+    @DisplayName("Move not existed layer 2")
+    void testMoveLayer1() {
+
+        map.moveLayer(1,1);
+        Assertions.assertEquals(0, map.getNumLayers());
+    }
+
+    @Test
+    @DisplayName("Delete first layer of two")
+    void testDeleteLayerLastOfTwo() {
+
+
+        DummyTexture dummy0 = new DummyTexture();
+        dummy0.setName("dummy0");
+        TextureMapping mapping0 = new DummyTextureMapping(obj, dummy0);
+
+        DummyTexture dummy1 = new DummyTexture();
+        dummy1.setName("dummy1");
+        TextureMapping mapping1 = new DummyTextureMapping(obj, dummy0);
+
+        map.addLayer(0, dummy0, mapping0, LayeredMapping.BLEND);
+        map.addLayer(1, dummy1, mapping1, LayeredMapping.OVERLAY_ADD_BUMPS);
+
+        map.deleteLayer(1);
+        Assertions.assertEquals(1, map.getNumLayers());
+        Assertions.assertEquals(1, map.getMapping().length);
+        Assertions.assertEquals("dummy0", map.getLayer(0).getName());
     }
 }

@@ -291,10 +291,10 @@ public class LayeredMapping extends TextureMapping {
         TextureMapping[] newmapping = new TextureMapping[texture.length];
         int[] newblendMode = new int[texture.length];
         int[] newFractParamID = new int[texture.length];
-        int i;
+
         int j;
 
-        for (i = j = 0; i < newtexture.length; i++) {
+        for (int i = j = 0; i < newtexture.length; i++) {
             if (j == which) {
                 j++;
             }
