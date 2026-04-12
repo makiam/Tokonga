@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2003 by Francois Guillet
- *  Changes copyright 2023 by Maksim Khramov
+ *  Changes copyright 2023-2026 by Maksim Khramov
  *  This program is free software; you can redistribute it and/or modify it under the
  *  terms of the GNU General Public License as published by the Free Software
  *  Foundation; either version 2 of the License, or (at your option) any later version.
@@ -15,27 +15,41 @@ import artofillusion.ui.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.*;
 
-/**
- * Description of the Class
- *
- * @author pims
- * @created 6 juillet 2004
- */
+import java.io.StringWriter;
+
+
 @Slf4j
 public class SPManagerUtils {
 
-    public static final DocumentBuilderFactory factory;
+
     public static DocumentBuilder builder;
 
     static {
-        factory = DocumentBuilderFactory.newInstance();
+        var factory = DocumentBuilderFactory.newInstance();
         try {
             builder = factory.newDocumentBuilder();
         } catch (ParserConfigurationException ex) {
             log.atError().setCause(ex).log("Bad parser configuration");
+        }
+    }
+
+    static Transformer transformer;
+    static {
+        try {
+            TransformerFactory tf = TransformerFactory.newInstance();
+            transformer = tf.newTransformer();
+        } catch (TransformerConfigurationException ex) {
+            log.atError().setCause(ex).log("Bad transformer configuration");
         }
     }
 
@@ -68,6 +82,13 @@ public class SPManagerUtils {
             }
         }
         return null;
+    }
+
+    public static String getNodeString(Node node) throws TransformerException {
+
+        StringWriter writer = new StringWriter();
+        transformer.transform(new DOMSource(node), new StreamResult(writer));
+        return writer.toString();
     }
 
     /**

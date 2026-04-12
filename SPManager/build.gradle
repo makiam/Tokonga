@@ -11,6 +11,9 @@ ext {
 dependencies {
     implementation group: 'com.github.zafarkhaja', name: 'java-semver', version: '0.10.2'
     testImplementation group: 'com.github.zafarkhaja', name: 'java-semver', version: '0.10.2'
+
+    implementation project(':xml-data')
+    implementation group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.21'
 }
 
 processResources {

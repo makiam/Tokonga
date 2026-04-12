@@ -31,11 +31,14 @@ import java.util.zip.*;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
 public class PluginRegistry {
+
+    @Getter
     private static final XStream xstream = new XStream(new StaxDriver());
 
     private static final Class<?>[] TYPES = {Extension.class, Category.class, PluginDef.class, ImportDef.class, Export.class, History.class,
@@ -46,7 +49,7 @@ public class PluginRegistry {
         xstream.allowTypes(TYPES);
         xstream.processAnnotations(TYPES);
     }
-    private static final ArrayList<ClassLoader> pluginLoaders = new ArrayList<>();
+    private static final Map<ClassLoader, JarInfo> pluginLoaders = new HashMap<>();
     private static final Set<Class<?>> categories = new HashSet<>();
     private static final Map<Class<?>, List<Object>> categoryClasses = new HashMap<>();
     private static final Map<String, Map<String, PluginResource>> resources = new HashMap<>();
@@ -91,7 +94,7 @@ public class PluginRegistry {
 
 
 
-        for (File file : pluginsPath.toFile().listFiles(f -> f.isFile() && f.getName().endsWith(".jar"))) {
+        for (File file: pluginsPath.toFile().listFiles(f -> f.isFile() && f.getName().endsWith(".jar"))) {
             try {
                 jars.add(new JarInfo(file));
             } catch (IOException ex) {
@@ -159,7 +162,7 @@ public class PluginRegistry {
         try {
             if (jar.getImports().isEmpty() && jar.searchPath.isEmpty()) {
                 if (jar.loader == null) {
-                    jar.loader = new URLClassLoader(new URL[]{jar.file.toURI().toURL()});
+                    jar.loader = new PluginURLClassLoader(new URL[]{jar.file.toURI().toURL()});
                 }
             } else {
                 SearchlistClassLoader loader;
@@ -186,7 +189,7 @@ public class PluginRegistry {
                     loader.add(url);
                 }
             }
-            pluginLoaders.add(jar.loader);
+            pluginLoaders.putIfAbsent(jar.getLoader(), jar);
             Map<String, Object> classNameMap = new HashMap<>();
             if (jar.getName() != null && !jar.getName().isEmpty()) {
                 nameMap.put(jar.getName(), jar);
@@ -216,7 +219,11 @@ public class PluginRegistry {
      * for every jar.
      */
     public static List<ClassLoader> getPluginClassLoaders() {
-        return new ArrayList<>(pluginLoaders);
+        return new ArrayList<>(pluginLoaders.keySet());
+    }
+
+    public static Map<ClassLoader, JarInfo> getPluginLoaders() {
+        return pluginLoaders;
     }
 
     /**
@@ -403,7 +410,7 @@ public class PluginRegistry {
     /**
      * This class is used to store information about the content of a jar file during initialization.
      */
-    private static class JarInfo {
+    public static class JarInfo {
 
         @Getter
         final File file;
@@ -444,16 +451,16 @@ public class PluginRegistry {
             try(ZipFile zf = new ZipFile(file)) {
                 ZipEntry ze = zf.getEntry("extensions.xml");
                 if (ze != null) {
-                    InputStream in = new BufferedInputStream(zf.getInputStream(ze));
-                    loadExtensionsFile(in);
-                    in.close();
+                    try(InputStream in = new BufferedInputStream(zf.getInputStream(ze))) {
+                        loadExtensionsFile(in);
+                    }
                     return;
                 }
                 ze = zf.getEntry("plugins");
                 if (ze != null) {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(zf.getInputStream(ze)));
-                    plugins.addAll(in.lines().toList());
-                    in.close();
+                    try(BufferedReader in = new BufferedReader(new InputStreamReader(zf.getInputStream(ze)))) {
+                        plugins.addAll(in.lines().toList());
+                    }
                     return;
                 }
                 throw new IOException(); // No index found
@@ -601,14 +608,13 @@ public class PluginRegistry {
     /**
      * This class is used to store information about an "export" record in an XML file.
      */
+    @NoArgsConstructor
     private static class ExportInfo {
         String method;
         String id;
         String className;
         Object plugin;
 
-        ExportInfo() {
-        }
         ExportInfo(String id, String method, String className) {
             this.id = id;
             this.method = method;
@@ -619,5 +625,17 @@ public class PluginRegistry {
 
     @Retention(RetentionPolicy.SOURCE)
     public @interface UsedViaReflection {
+    }
+
+    public static final class PluginURLClassLoader extends URLClassLoader {
+
+        PluginURLClassLoader(URL[] urls) {
+            super(urls);
+        }
+
+        @Override
+        public void addURL(URL url) {
+            super.addURL(url);
+        }
     }
 }

@@ -15,12 +15,16 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import artofillusion.PluginRegistry;
 import artofillusion.ui.Translate;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
+
+import javax.xml.transform.TransformerException;
 
 /**
  * Description of the Class
@@ -120,7 +124,9 @@ public class SPMObjectInfo {
     private List<String> details;
 
     protected Map<String, String> exports;
-    public Map<String, String> actions;
+
+    @Getter
+    private Map<String, String> actions;
 
     /**
      * Script file name
@@ -331,7 +337,7 @@ public class SPMObjectInfo {
     /**
      * Description of the Method
      */
-    @TestOnly
+    @VisibleForTesting
     public void loadXmlInfoFromJarFile() {
         /*
 		 * NTJ: AOI 2.5. Default XML file name changed to 'extensions.xml'
@@ -362,6 +368,11 @@ public class SPMObjectInfo {
             try (BufferedInputStream xmlStream = new BufferedInputStream(is)) {
                 Element element = SPManagerUtils.builder.parse(xmlStream).getDocumentElement();
                 readInfoFromDocumentNode(element);
+                try {
+                    var nss = SPManagerUtils.getNodeString(element);
+                } catch (TransformerException e) {
+                    throw new RuntimeException(e);
+                }
             } catch (IOException | SAXException t) {
                 log.atError().setCause(t).log("Error reading XML header: {}", t.getMessage());
             }
@@ -389,9 +400,9 @@ public class SPMObjectInfo {
                 }
                 i++;
             }
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            s = SPMObjectInfo.getXmlHeaderAsString(in);
-            in.close();
+            try(BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                s = SPMObjectInfo.getXmlHeaderAsString(in);
+            }
 
         } catch (IOException e) {
             log.atError().setCause(e).log("IO Exception {}", e.getMessage());

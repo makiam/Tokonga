@@ -25,4 +25,8 @@ public class External {
     private String association;
     @XStreamAsAttribute
     private String action;
+
+    public String getKey() {
+        return "";
+    }
 }

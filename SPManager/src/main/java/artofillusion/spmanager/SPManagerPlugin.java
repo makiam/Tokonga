@@ -21,6 +21,10 @@ import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
 import java.util.List;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -88,15 +92,18 @@ public class SPManagerPlugin implements Plugin {
                 URL[] urlList;
 
                 ClassLoader ldr = null;
-                URLClassLoader urlldr = null;
+                PluginRegistry.PluginURLClassLoader urlldr = null;
                 SearchlistClassLoader searchldr = null;
                 Object obj;
 
                 Map<URL, ClassLoader> loaders = new HashMap<>();
-                for (ClassLoader loader : PluginRegistry.getPluginClassLoaders()) {
+                PluginRegistry.getPluginLoaders().forEach((classLoader, jarInfo) -> {
+
+                });
+                for (ClassLoader loader: PluginRegistry.getPluginClassLoaders()) {
                     obj = loader;
-                    if (obj instanceof URLClassLoader) {
-                        urlList = ((URLClassLoader) obj).getURLs();
+                    if (obj instanceof PluginRegistry.PluginURLClassLoader) {
+                        urlList = ((PluginRegistry.PluginURLClassLoader) obj).getURLs();
                     } else {
                         urlList = ((SearchlistClassLoader) obj).getURLs();
                     }
@@ -106,14 +113,14 @@ public class SPManagerPlugin implements Plugin {
                     }
                 }
 
-                Method addUrl = null;
-
-                try {
-                    addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-                    addUrl.setAccessible(true);
-                } catch (InaccessibleObjectException | NoSuchMethodException | SecurityException e) {
-                    log.atError().setCause(e).log("Error getting addURL method: {}", e.getMessage());
-                }
+//                Method addUrl = null;
+//
+//                try {
+//                    addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+//                    addUrl.setAccessible(true);
+//                } catch (InaccessibleObjectException | NoSuchMethodException | SecurityException e) {
+//                    log.atError().setCause(e).log("Error getting addURL method: {}", e.getMessage());
+//                }
 
                 // get details of all local plugins
                 StringBuffer errs = null;
@@ -124,7 +131,7 @@ public class SPManagerPlugin implements Plugin {
                 File plugdir = new File(PLUGIN_DIRECTORY);
                 if (plugdir.exists()) {
 
-                    for (File file : plugdir.listFiles()) {
+                    for (File file: plugdir.listFiles()) {
                         SPMObjectInfo info = new SPMObjectInfo(file.getAbsolutePath());
 
                         if (info.invalid) {
@@ -137,7 +144,7 @@ public class SPManagerPlugin implements Plugin {
                             errs.append(Translate.text("spmanager:text.pluginFailure", info.getName()));
                         }
 
-                        if (info.actions != null && info.actions.size() > 0) {
+                        if (info.getActions() != null && info.getActions().size() > 0) {
 
                             try {
                                 url = file.toURI().toURL();
@@ -157,12 +164,16 @@ public class SPManagerPlugin implements Plugin {
                             if (obj instanceof SearchlistClassLoader) {
                                 searchldr = (SearchlistClassLoader) obj;
                             } else {
-                                urlldr = (URLClassLoader) obj;
+                                urlldr = (PluginRegistry.PluginURLClassLoader) obj;
 
                             }
 
                             // ok, now perform the actions
-                            for (Map.Entry<String, String> entry : info.actions.entrySet()) {
+                            info.getActions().forEach((key, value) -> {
+
+                            });
+
+                            for (Map.Entry<String, String> entry : info.getActions().entrySet()) {
                                 String value = entry.getValue();
                                 String[] key = entry.getKey().split(":");
 
@@ -184,12 +195,8 @@ public class SPManagerPlugin implements Plugin {
                                 if ("classpath".equalsIgnoreCase(value)) {
                                     if (searchldr != null) {
                                         searchldr.add(url);
-                                    } else if (addUrl != null) {
-                                        try {
-                                            addUrl.invoke(urlldr, url);
-                                        } catch (IllegalAccessException | InvocationTargetException e) {
-                                            log.atError().setCause(e).log("Error invoking: {}", e.getMessage());
-                                        }
+                                    } else if (urlldr != null) {
+                                        urlldr.addURL(url);
                                     } else {
                                         log.error("Could not add path {}", url);
                                     }
@@ -241,7 +248,7 @@ public class SPManagerPlugin implements Plugin {
     }
 
     /**
-     * initialise the plugin
+     * initialize the plugin
      */
     public void init() {
 
