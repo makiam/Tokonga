@@ -111,9 +111,7 @@ class LayeredMappingTest {
         TextureMapping mapping = new DummyTextureMapping(obj, dummy);
 
 
-        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-            map.addLayer(5, dummy, mapping, LayeredMapping.BLEND);
-        });
+        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> map.addLayer(5, dummy, mapping, LayeredMapping.BLEND));
 
     }
 
@@ -143,9 +141,7 @@ class LayeredMappingTest {
     void testDeleteMissedLayer() {
 
 
-        Assertions.assertThrows(NegativeArraySizeException.class, () -> {
-            map.deleteLayer(0);
-        });
+        Assertions.assertThrows(NegativeArraySizeException.class, () -> map.deleteLayer(0));
     }
 
     @Test
@@ -159,9 +155,7 @@ class LayeredMappingTest {
 
         map.addLayer(0, dummy0, mapping0, LayeredMapping.BLEND);
 
-        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-            map.deleteLayer(1);
-        });
+        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> map.deleteLayer(1));
     }
 
     @Test
@@ -233,15 +227,35 @@ class LayeredMappingTest {
 
     @Test
     void testGetLayerBlendingParameterNoLayers0() {
-        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () ->{
-            map.getLayerBlendingParameter(0);
-        });
+        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> map.getLayerBlendingParameter(0));
     }
 
     @Test
     void testGetLayerBlendingParameterNoLayers1() {
-        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () ->{
-            map.getLayerBlendingParameter(1);
-        });
+        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> map.getLayerBlendingParameter(1));
+    }
+
+    @Test
+    void testGetSingleTextureLayerParams() {
+        DummyTexture dummy1 = new DummyTexture();
+        dummy1.setName("dummy1");
+        TextureMapping mapping1 = new DummyTextureMapping(obj, dummy1);
+
+        map.addLayer(0, dummy1, mapping1, LayeredMapping.BLEND);
+
+        var tpp = map.getLayerBlendingParameter(0);
+
+        Assertions.assertEquals(tpp.identifier, map.fractParamID[0]);
+    }
+
+    @Test
+    void testGetSingleTextureLayerParamsSingleLayerAndBadIndex() {
+        DummyTexture dummy1 = new DummyTexture();
+        dummy1.setName("dummy1");
+        TextureMapping mapping1 = new DummyTextureMapping(obj, dummy1);
+
+        map.addLayer(0, dummy1, mapping1, LayeredMapping.BLEND);
+
+        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, ()-> map.getLayerBlendingParameter(1));
     }
 }

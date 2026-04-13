@@ -668,6 +668,10 @@ public class LayeredMapping extends TextureMapping {
             this.blendingMode = blendingMode;
             this.fractParamID = TextureParameter.getUniqueID();
         }
+
+        public LayerBlendingParameter getBlendingParameter(Object owner) {
+            return new LayerBlendingParameter(owner, this.texture, this.fractParamID);
+        }
     }
 
     static final class LayerBlendingParameter extends TextureParameter {
@@ -679,6 +683,10 @@ public class LayeredMapping extends TextureMapping {
         public LayerBlendingParameter(Object owner, Texture texture, int id) {
             super(owner, texture.getName() + " fraction", 0.0f, 1.0f, 1.0f);
             this.setID(id);
+        }
+
+        public int getId() {
+            return identifier;
         }
     }
 }
