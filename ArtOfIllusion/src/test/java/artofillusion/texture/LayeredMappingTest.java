@@ -223,4 +223,25 @@ class LayeredMappingTest {
         Assertions.assertEquals(1, map.getMapping().length);
         Assertions.assertEquals("dummy0", map.getLayer(0).getName());
     }
+
+    @Test
+    void testGetParams0() {
+        var params = map.getParameters();
+        Assertions.assertNotNull(params);
+        Assertions.assertEquals(0, params.length);
+    }
+
+    @Test
+    void testGetLayerBlendingParameterNoLayers0() {
+        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () ->{
+            map.getLayerBlendingParameter(0);
+        });
+    }
+
+    @Test
+    void testGetLayerBlendingParameterNoLayers1() {
+        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () ->{
+            map.getLayerBlendingParameter(1);
+        });
+    }
 }

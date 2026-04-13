@@ -654,4 +654,31 @@ public class LayeredMapping extends TextureMapping {
     public Widget<JPanel> getEditingPanel(Object3D obj, MaterialPreviewer preview) {
         return null;
     }
+
+    private static final class MappingLayer {
+        @Getter
+        private Texture texture;
+        private TextureMapping mapping;
+        private int fractParamID;
+        private int blendingMode;
+
+        public MappingLayer(Texture texture, TextureMapping mapping, int blendingMode) {
+            this.texture = texture;
+            this.mapping = mapping;
+            this.blendingMode = blendingMode;
+            this.fractParamID = TextureParameter.getUniqueID();
+        }
+    }
+
+    static final class LayerBlendingParameter extends TextureParameter {
+
+        public LayerBlendingParameter(Object owner, MappingLayer layer, int id) {
+            this(owner, layer.getTexture(), id);
+        }
+
+        public LayerBlendingParameter(Object owner, Texture texture, int id) {
+            super(owner, texture.getName() + " fraction", 0.0f, 1.0f, 1.0f);
+            this.setID(id);
+        }
+    }
 }
