@@ -106,6 +106,10 @@ public class LayeredMapping extends TextureMapping {
         blendMode[which] = mode;
     }
 
+    public int getFractionParameterId(int which) {
+        return fractParamID[which];
+    }
+
     /**
      * Get the list of texture parameters.
      */

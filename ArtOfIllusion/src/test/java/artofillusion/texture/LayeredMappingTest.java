@@ -11,6 +11,7 @@
 
 package artofillusion.texture;
 
+import artofillusion.TextureParameter;
 import artofillusion.object.DummyTexture;
 import artofillusion.object.DummyTextureMapping;
 import artofillusion.object.Object3D;
@@ -224,6 +225,34 @@ class LayeredMappingTest {
         Assertions.assertNotNull(params);
         Assertions.assertEquals(0, params.length);
     }
+
+    @Test
+    @DisplayName("Get only Blending texture parameter")
+    void testGetParamsForSingleLayerWithoutLayerParams() {
+
+        DummyTexture dummy1 = new DummyTexture();
+        dummy1.setName("dummy1");
+        Assertions.assertNotNull(dummy1.getParameters());
+
+        TextureMapping mapping1 = new DummyTextureMapping(obj, dummy1);
+        mapping1.getParameters();  // Default implementation takes parameters from associated Texture
+        Assertions.assertNotNull(mapping1.getParameters());
+        Assertions.assertEquals(0, mapping1.getParameters().length);
+
+        map.addLayer(0, dummy1, mapping1, LayeredMapping.BLEND);
+
+        var params = map.getParameters();
+        var id = map.fractParamID[0];
+        var id2 = map.getFractionParameterId(0);
+
+        Assertions.assertEquals(id, id2);
+        Assertions.assertNotNull(params);
+        Assertions.assertEquals(1, params.length);
+
+        Assertions.assertInstanceOf(TextureParameter.class, params[0]);
+        Assertions.assertEquals(id2, params[0].identifier);
+    }
+
 
     @Test
     void testGetLayerBlendingParameterNoLayers0() {
