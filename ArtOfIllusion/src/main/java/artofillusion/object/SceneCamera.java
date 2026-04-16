@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2009 by Peter Eastman
-   Modifications Copyright 2016 by Petri Ihalainen
+   Modifications Copyright 2016-2025 by Petri Ihalainen
    Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -14,6 +14,7 @@ package artofillusion.object;
 
 import artofillusion.*;
 
+import artofillusion.Renderer;
 import artofillusion.animation.*;
 import artofillusion.image.*;
 import artofillusion.image.filter.*;
@@ -25,13 +26,14 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.greenrobot.eventbus.EventBus;
+
+import javax.swing.*;
 
 /**
  * SceneCamera is a type of Object3D. It represents a camera which the user can position
@@ -58,7 +60,8 @@ public class SceneCamera extends Object3D {
         new Property(Translate.text("fieldOfView"), 0.0, 180.0, 30.0),
         new Property(Translate.text("depthOfField"), Double.MIN_VALUE, Double.MAX_VALUE, Camera.DEFAULT_DISTANCE_TO_SCREEN / 2.0),
         new Property(Translate.text("focalDist"), Double.MIN_VALUE, Double.MAX_VALUE, Camera.DEFAULT_DISTANCE_TO_SCREEN),
-        new Property(Translate.text("Perspective"), true),};
+        new Property(Translate.text("Perspective"), true),
+    };
 
     static {
         double[] sine, cosine;
@@ -378,49 +381,99 @@ public class SceneCamera extends Object3D {
 
     @Override
     public void edit(final EditingWindow parent, final ObjectInfo info, Runnable cb) {
+        // The Runnable that is passed to all object edit methods does not
+        // have all the needed functions to cover SceneCamera changes.
+        // Therfore we'll do all those locally.
+
+        UndoRecord undo = new UndoRecord(parent, false);
+
         final ValueSlider fovSlider = new ValueSlider(0.0, 180.0, 90, fov);
         final ValueField dofField = new ValueField(depthOfField, ValueField.POSITIVE);
         final ValueField fdField = new ValueField(focalDist, ValueField.POSITIVE);
         BCheckBox perspectiveBox = new BCheckBox(Translate.text("Perspective"), perspective);
-        BButton filtersButton = Translate.button("filters", e -> {
-            var temp = this.duplicate();
-            temp.fov = fovSlider.getValue();
-            temp.depthOfField = dofField.getValue();
-            temp.focalDist = fdField.getValue();
-            new CameraFilterDialog(UIUtilities.findWindow(fovSlider), parent.getScene(), temp, info.getCoords());
-            filters = temp.filters;
-        });
+        BButton filtersButton = Translate.button("filters", e -> editFilters(parent, info, UIUtilities.findWindow(fovSlider), fovSlider.getValue(), dofField.getValue(), fdField.getValue(), undo));
+
         ComponentsDialog dlg = new ComponentsDialog(parent.getFrame(), Translate.text("editCameraTitle"),
                 new Widget[]{fovSlider, dofField, fdField, perspectiveBox, filtersButton},
                 new String[]{Translate.text("fieldOfView"), Translate.text("depthOfField"), Translate.text("focalDist"), null, null});
+
         if (dlg.clickedOk()) {
+            // This UndoRecord covers the following changes to the camera parameters.
+            // For safety the commands will be executed in reversed order.
+
+            undo.addCommandAtBeginning(UndoRecord.COPY_OBJECT, SceneCamera.this, SceneCamera.this.duplicate());
+
             fov = fovSlider.getValue();
             depthOfField = dofField.getValue();
             focalDist = fdField.getValue();
             perspective = perspectiveBox.getState();
         }
 
+        // All filter track and camera parameter changes are packed
+        // in one UndoRecord. If both dialogs were exited by Cancel, the record
+        // is empty and will not be added to history.
+
+        if(undo.getCommands().size() > 0)
+            parent.setUndoRecord(undo);
+
+        // The rest of the ignored Runnable.
+
+        if(parent.getScene() != null)
+            parent.getScene().objectModified(SceneCamera.this);
+        parent.updateImage();
+        parent.updateMenus();
+    }
+
+    private void editFilters(EditingWindow parent, ObjectInfo info, WindowWidget camDlg, double fov, double dof, double foc, UndoRecord undo) {
+        // This copy of the camera is there to save the filter settings before they are edited.
+        // OK in filter dialog already changes the settings, though the filter list on
+        // this side is still unchanged.
+
+        SceneCamera undoCam = SceneCamera.this.duplicate();
+
+        // This camera carries the camera dialog values (and filters) to the filter dialog
+
+        SceneCamera msgrCam = SceneCamera.this.duplicate();
+        msgrCam.fov = fov;
+        msgrCam.depthOfField = dof;
+        msgrCam.focalDist = foc;
+        msgrCam.filters = filters; // We need to edit the current filters (if any exist), not the duplicates.
+
+        CameraFilterDialog filtDlg = new CameraFilterDialog(camDlg, parent.getScene(), msgrCam, info.getCoords());
+
+        // If Cancel was pressed, nothing needs to be done.
+        // The filter dialog has reverted any edited values back
+        // to what they were.
+
+        if(!filtDlg.isClickedOk()) {
+            return;
+        }
+
+        // This addition to undo only covers the filter changes.
+
+        undo.addCommandAtBeginning(UndoRecord.COPY_OBJECT, SceneCamera.this, undoCam);
+
+        // Get the modified filter list and dispose of the filter dialog
+
+        filters = msgrCam.filters;
+
         // If there are any Pose tracks for this object, they need to have their subtracks updated
         // to reflect the current list of filters.
 
-        var ci = SceneCamera.getCameraInstances(parent.getScene(), this);
-        ci.forEach(item -> {
-            Arrays.stream(item.getTracks()).filter(PoseTrack.class::isInstance).map(PoseTrack.class::cast).forEach(pose -> {
-                var spt = pose.getSubtracks();
-                log.debug("Pose track subtracks: {}", spt.length);
-                Arrays.stream(spt).forEach(st -> log.info("Subtrack {}", st.getName()));
-            });
-        });
-
         for (ObjectInfo oi: parent.getScene().getObjects()) {
             if (oi.getObject() == this) {
-                // This ObjectInfo's corresponds to this SceneCamera.  Check each of its tracks.
+                // This ObjectInfo corresponds to this SceneCamera.  Check each of its tracks.
 
 
                 for (Track<?> track: oi.getTracks()) {
                     if (track instanceof PoseTrack pose) {
+                        // This is a Pose track, so update its subtracks.
+
+                        // This addition to undo takes care of the changed, added or removed filter tracks
+                        undo.addCommandAtBeginning(UndoRecord.COPY_TRACK, pose, pose.duplicate(oi));
+
                         var spt = pose.getSubtracks();
-                        Track[] newtracks = new Track[filters.size()];
+                        var newtracks = new Track[filters.size()];
                         for (int k = 0; k < filters.size(); k++) {
                             Track<?> existing = null;
                             ImageFilter fk = filters.get(k);
@@ -444,10 +497,8 @@ public class SceneCamera extends Object3D {
         if (parent instanceof LayoutWindow window) {
             window.getScore().rebuildList();
         }
-        cb.run();
     }
 
-    static Function<Track, PoseTrack>  ttp = track -> (PoseTrack)track;
     private static List<ObjectInfo> getCameraInstances(Scene scene, SceneCamera camera) {
         return  scene.getObjects().stream().filter(item -> item.getObject() == camera).collect(Collectors.toList());
     }
@@ -704,7 +755,8 @@ public class SceneCamera extends Object3D {
 
         @Override
         public CameraKeyframe blend(Keyframe o2, Keyframe o3, double weight1, double weight2, double weight3) {
-            CameraKeyframe k2 = (CameraKeyframe) o2, k3 = (CameraKeyframe) o3;
+            CameraKeyframe k2 = (CameraKeyframe) o2;
+            CameraKeyframe k3 = (CameraKeyframe) o3;
 
             return new CameraKeyframe(weight1 * fov + weight2 * k2.fov + weight3 * k3.fov,
                     weight1 * depthOfField + weight2 * k2.depthOfField + weight3 * k3.depthOfField,
@@ -713,7 +765,9 @@ public class SceneCamera extends Object3D {
 
         @Override
         public CameraKeyframe blend(Keyframe o2, Keyframe o3, Keyframe o4, double weight1, double weight2, double weight3, double weight4) {
-            CameraKeyframe k2 = (CameraKeyframe) o2, k3 = (CameraKeyframe) o3, k4 = (CameraKeyframe) o4;
+            CameraKeyframe k2 = (CameraKeyframe) o2;
+            CameraKeyframe k3 = (CameraKeyframe) o3;
+            CameraKeyframe k4 = (CameraKeyframe) o4;
 
             return new CameraKeyframe(weight1 * fov + weight2 * k2.fov + weight3 * k3.fov + weight4 * k4.fov,
                     weight1 * depthOfField + weight2 * k2.depthOfField + weight3 * k3.depthOfField + weight4 * k4.depthOfField,
