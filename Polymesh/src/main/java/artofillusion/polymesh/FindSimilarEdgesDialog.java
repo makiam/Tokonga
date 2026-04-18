@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman, 2005 by Francois Guillet
-   Changes copyright (C) 2023-2025 Maksim Khramov
+   Changes copyright (C) 2023-2026 Maksim Khramov
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
@@ -11,80 +11,100 @@
 package artofillusion.polymesh;
 
 import artofillusion.ui.Translate;
-import artofillusion.ui.UIUtilities;
 import artofillusion.ui.ValueField;
-import buoy.event.CommandEvent;
 import buoy.event.ValueChangedEvent;
-import buoy.widget.BButton;
-import buoy.widget.BDialog;
-import buoy.widget.BLabel;
-import buoy.widget.BTextField;
-import buoy.widget.BorderContainer;
-import buoy.xml.WidgetDecoder;
 
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
-import java.io.InputStream;
-import lombok.extern.slf4j.Slf4j;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 
-import javax.swing.*;
+import javax.swing.KeyStroke;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * A dialog presenting options to find similar edges
  */
 @Slf4j
-class FindSimilarEdgesDialog extends BDialog {
+class FindSimilarEdgesDialog extends JDialog {
 
     private final boolean[] orSelection;
-    private BorderContainer borderContainer;
-    private BButton okButton;
-    private BButton cancelButton;
-    private PMValueField toleranceVF;
+    private ValueField toleranceVF;
+
     private final PolyMeshEditorWindow owner;
     private final PolyMesh mesh;
 
     public FindSimilarEdgesDialog(PolyMeshEditorWindow owner) {
-        super(owner, Translate.text("polymesh:similarEdgesTitle"), true);
+        super(owner.getComponent(), Translate.text("polymesh:similarEdgesTitle"), true);
 
         this.owner = owner;
         this.orSelection = owner.getSelection();
         this.mesh = (PolyMesh) owner.getObject().getObject();
 
-        try (InputStream is = getClass().getResource("interfaces/similaredges.xml").openStream()) {
-            WidgetDecoder decoder = new WidgetDecoder(is);
-            borderContainer = (BorderContainer) decoder.getRootObject();
-            BLabel tolerance1 = (BLabel) decoder.getObject("tolerance1");
-            tolerance1.setText(Translate.text("polymesh:" + tolerance1.getText()));
-            okButton = ((BButton) decoder.getObject("okButton"));
-            cancelButton = ((BButton) decoder.getObject("cancelButton"));
-            BTextField toleranceTF = (BTextField) decoder.getObject("toleranceTF");
-            toleranceVF = new PMValueField(PolyMeshEditorWindow.getEdgeTol(), ValueField.NONE);
-            toleranceVF.setTextField((BTextField) decoder.getObject("toleranceTF"));
-            okButton = ((BButton) decoder.getObject("okButton"));
-            cancelButton = ((BButton) decoder.getObject("cancelButton"));
-            okButton.setText(Translate.text("button.ok"));
-            cancelButton.setText(Translate.text("button.cancel"));
-        } catch (IOException ex) {
-            log.atError().setCause(ex).log("Error creating FindSimilarEdgesDialog due{}", ex.getLocalizedMessage());
-        }
-        setContent(borderContainer);
-        toleranceVF.addEventLink(ValueChangedEvent.class, this, "doTolValueChanged");
-        okButton.addEventLink(CommandEvent.class, this, "doOK");
-        cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
+        initComponents();
 
         KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
         ActionListener action = e -> doCancel();
-        this.getComponent().getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        this.getComponent().addWindowListener(new java.awt.event.WindowAdapter() {
+        getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(java.awt.event.WindowEvent evt) {
+            public void windowClosing(WindowEvent evt) {
                 doCancel();
             }
         });
         pack();
-        UIUtilities.centerWindow(this);
+        setLocationRelativeTo(owner.getComponent());
         doTolValueChanged();
+    }
+
+    private void initComponents() {
+        var toleranceLabel = new JLabel(Translate.text("polymesh:toleranceEdges"));
+        toleranceVF = new ValueField(PolyMeshEditorWindow.getEdgeTol(), ValueField.NONE);
+        toleranceVF.addEventLink(ValueChangedEvent.class, this, "doTolValueChanged");
+
+        var okButton = new JButton(Translate.text("button.ok"));
+        var cancelButton = new JButton(Translate.text("button.cancel"));
+
+
+        okButton.addActionListener(e -> doOK());
+        cancelButton.addActionListener(e -> doCancel());
+
+        GroupLayout layout = new GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addComponent(toleranceLabel)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(toleranceVF.getComponent(), GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(okButton, GroupLayout.PREFERRED_SIZE, 67, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(cancelButton))
+        );
+
+        layout.setVerticalGroup(
+            layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(toleranceLabel)
+                    .addComponent(toleranceVF.getComponent(), GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(okButton)
+                    .addComponent(cancelButton))
+        );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, okButton, cancelButton);
+        getRootPane().setDefaultButton(okButton);
     }
 
     private void doTolValueChanged() {
