@@ -4132,7 +4132,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             }
             int[] faceTable = mesh.getTriangleFaceIndex();
             MeshUnfolder unfolder = new MeshUnfolder(mesh, triMesh, vertTable, faceTable);
-            if (unfolder.unfold(dlg.textArea, dlg.residual)) {
+            if (unfolder.unfold(dlg.textArea)) {
                 UVMappingData data = new UVMappingData(unfolder.getUnfoldedMeshes());
                 theMesh.setMappingData(data);
                 dlg.unfoldFinished(true);

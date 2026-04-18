@@ -114,7 +114,7 @@ public class MeshUnfolder {
         this.faceTable = faceTable;
     }
 
-    public boolean unfold(BTextArea textArea, double res) {
+    public boolean unfold(BTextArea textArea) {
         return unfoldLinearAbf(textArea);
     }
 
