@@ -666,7 +666,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         edgeMenu.add(edgeMenuItem[9] = Translate.menuItem("polymesh:insertLoops", this::doInsertLoops));
         edgeMenu.add(edgeMenuItem[10] = Translate.menuItem("polymesh:selectBoundary", this::doSelectBoundary));
         edgeMenu.add(edgeMenuItem[11] = Translate.menuItem("polymesh:closeBoundary", this::doCloseBoundary));
-        edgeMenu.add(edgeMenuItem[12] = Translate.menuItem("polymesh:findSimilar", this::doFindSimilarEdges));
+        edgeMenu.add(edgeMenuItem[12] = Translate.menuItem("polymesh:findSimilar", event -> doFindSimilarEdges()));
         edgeMenu.add(edgeMenuItem[13] = Translate.menuItem("polymesh:extractToCurve", this::doExtractToCurve));
         edgeMenu.addSeparator();
         edgeMenu.add(edgeMenuItem[14] = Translate.menuItem("polymesh:markSelAsSeams", this::doMarkSelAsSeams));
@@ -732,7 +732,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         edgePopupMenu.add(edgePopupMenuItem[9] = Translate.menuItem("polymesh:insertLoops", this::doInsertLoops));
         edgePopupMenu.add(edgePopupMenuItem[10] = Translate.menuItem("polymesh:selectBoundary", this::doSelectBoundary));
         edgePopupMenu.add(edgePopupMenuItem[11] = Translate.menuItem("polymesh:closeBoundary", this::doCloseBoundary));
-        edgePopupMenu.add(edgePopupMenuItem[12] = Translate.menuItem("polymesh:findSimilar", this::doFindSimilarEdges));
+        edgePopupMenu.add(edgePopupMenuItem[12] = Translate.menuItem("polymesh:findSimilar", event -> doFindSimilarEdges()));
         edgePopupMenu.add(edgePopupMenuItem[13] = Translate.menuItem("polymesh:extractToCurve", this::doExtractToCurve));
         edgePopupMenu.addSeparator();
         edgePopupMenu.add(edgePopupMenuItem[14] = Translate.menuItem("polymesh:markSelAsSeams", this::doMarkSelAsSeams));
@@ -4159,12 +4159,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     private void doFindSimilarFaces() {
-
-        new FindSimilarFacesDialog(this).setVisible(true);
-        
+        SwingUtilities.invokeLater(() -> new FindSimilarFacesDialog(this).setVisible(true));
     }
 
-    private void doFindSimilarEdges(ActionEvent event) {
+    private void doFindSimilarEdges() {
         SwingUtilities.invokeLater(() -> new FindSimilarEdgesDialog(this).setVisible(true));
     }
 

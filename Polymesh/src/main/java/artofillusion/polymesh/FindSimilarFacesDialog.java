@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman, 2005 by Francois Guillet
-   Changes copyright (C) 2023-2025 Maksim Khramov
+   Changes copyright (C) 2023-2026 Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,111 +12,157 @@
 package artofillusion.polymesh;
 
 import artofillusion.ui.Translate;
-import artofillusion.ui.UIUtilities;
 import artofillusion.ui.ValueField;
-import buoy.event.CommandEvent;
 import buoy.event.ValueChangedEvent;
-import buoy.widget.BButton;
-import buoy.widget.BCheckBox;
-import buoy.widget.BDialog;
-import buoy.widget.BLabel;
-import buoy.widget.BTextField;
-import buoy.widget.BorderContainer;
-import buoy.xml.WidgetDecoder;
 
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
-import java.io.InputStream;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.swing.*;
 
 /**
  * A dialog presenting options to find similar faces
  */
 @Slf4j
-class FindSimilarFacesDialog extends BDialog {
+class FindSimilarFacesDialog extends JDialog {
 
     private final boolean[] orSelection;
 
-    private BCheckBox normalCB;
-    private BCheckBox looseShapeCB;
-    private BCheckBox strictShapeCB;
-    private BLabel tolerance1;
-    private BLabel tolerance2;
-    private BLabel tolerance3;
-    private BButton okButton;
-    private BButton cancelButton;
-    private PMValueField normalCBVF;
-    private PMValueField looseShapeCBVF;
-    private PMValueField strictShapeCBVF;
+    private JCheckBox normalCB;
+    private JCheckBox looseShapeCB;
+    private JCheckBox strictShapeCB;
+    private JLabel tolerance1Label;
+    private JLabel tolerance2Label;
+    private JLabel tolerance3Label;
+    private ValueField normalCBVF;
+    private ValueField looseShapeCBVF;
+    private ValueField strictShapeCBVF;
+    private JTextField normalCBTF;
+    private JTextField looseShapeCBTF;
+    private JTextField strictShapeCBTF;
+    private JButton okButton;
     private final PolyMeshEditorWindow owner;
     private final PolyMesh mesh;
 
     public FindSimilarFacesDialog(PolyMeshEditorWindow owner) {
-        super(owner, Translate.text("polymesh:similarFacesTitle"), true);
+        super(owner.getComponent(), Translate.text("polymesh:similarFacesTitle"), true);
         this.owner = owner;
         this.mesh = (PolyMesh) owner.getObject().getObject();
         this.orSelection = owner.getSelection();
-        
-        BorderContainer container = null;
-        try (InputStream is = getClass().getResource("interfaces/similar.xml").openStream()) {
-            WidgetDecoder decoder = new WidgetDecoder(is);
-            container = (BorderContainer) decoder.getRootObject();
-            BLabel titleTextLabel = (BLabel) decoder.getObject("titleTextLabel");
-            titleTextLabel.setText(Translate.text("polymesh:" + titleTextLabel.getText()));
-            normalCB = ((BCheckBox) decoder.getObject("normalCB"));
-            normalCB.setText(Translate.text("polymesh:" + normalCB.getText()));
-            looseShapeCB = ((BCheckBox) decoder.getObject("looseShapeCB"));
-            looseShapeCB.setText(Translate.text("polymesh:" + looseShapeCB.getText()));
-            strictShapeCB = ((BCheckBox) decoder.getObject("strictShapeCB"));
-            strictShapeCB.setText(Translate.text("polymesh:" + strictShapeCB.getText()));
-            tolerance1 = ((BLabel) decoder.getObject("tolerance1"));
-            tolerance2 = ((BLabel) decoder.getObject("tolerance2"));
-            tolerance3 = ((BLabel) decoder.getObject("tolerance3"));
-            tolerance1.setText(Translate.text("polymesh:" + tolerance1.getText()));
-            tolerance2.setText(Translate.text("polymesh:" + tolerance2.getText()));
-            tolerance3.setText(Translate.text("polymesh:" + tolerance3.getText()));
 
-            normalCBVF = new PMValueField(PolyMeshEditorWindow.getNormalTol(), ValueField.NONE);
-            normalCBVF.setTextField((BTextField) decoder.getObject("normalCBTF"));
-            looseShapeCBVF = new PMValueField(PolyMeshEditorWindow.getLooseShapeTol(), ValueField.NONE);
-            looseShapeCBVF.setTextField((BTextField) decoder.getObject("looseShapeCBTF"));
-            strictShapeCBVF = new PMValueField(PolyMeshEditorWindow.getStrictShapeTol(), ValueField.NONE);
-            strictShapeCBVF.setTextField((BTextField) decoder.getObject("strictShapeCBTF"));
-            
-            okButton = ((BButton) decoder.getObject("okButton"));
-            cancelButton = ((BButton) decoder.getObject("cancelButton"));
-            okButton.setText(Translate.text("button.ok"));
-            cancelButton.setText(Translate.text("button.cancel"));
-        } catch (IOException ex) {
-            log.atError().setCause(ex).log("Error creating FindSimilarFacesDialog due {}", ex.getLocalizedMessage());
-        }
-        setContent(container);
-        normalCBVF.addEventLink(ValueChangedEvent.class, this, "doTolValueChanged");
-        strictShapeCBVF.addEventLink(ValueChangedEvent.class, this, "doTolValueChanged");
-        looseShapeCBVF.addEventLink(ValueChangedEvent.class, this, "doTolValueChanged");
-        normalCB.addEventLink(ValueChangedEvent.class, this, "doCBValueChanged");
-        strictShapeCB.addEventLink(ValueChangedEvent.class, this, "doCBValueChanged");
-        looseShapeCB.addEventLink(ValueChangedEvent.class, this, "doCBValueChanged");
-        okButton.addEventLink(CommandEvent.class, this, "doOK");
-        cancelButton.addEventLink(CommandEvent.class, this, "doCancel");
-
-        okButton.setEnabled(false);
+        initComponents();
 
         KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
         ActionListener action = e -> doCancel();
-        this.getComponent().getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        this.getComponent().addWindowListener(new java.awt.event.WindowAdapter() {
+        getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(java.awt.event.WindowEvent evt) {
+            public void windowClosing(WindowEvent evt) {
                 doCancel();
             }
         });
 
         pack();
-        UIUtilities.centerWindow(this);
+        setLocationRelativeTo(owner.getComponent());
+    }
+
+    private void initComponents() {
+        var titleLabel = new JLabel(Translate.text("polymesh:chooseSelectionCriterion"));
+
+        normalCB = new JCheckBox(Translate.text("polymesh:normalCBText"));
+        looseShapeCB = new JCheckBox(Translate.text("polymesh:looseShapeCBText"));
+        strictShapeCB = new JCheckBox(Translate.text("polymesh:strictShapeCBText"));
+
+        tolerance1Label = new JLabel(Translate.text("polymesh:tolerance"));
+        tolerance2Label = new JLabel(Translate.text("polymesh:tolerance"));
+        tolerance3Label = new JLabel(Translate.text("polymesh:tolerance"));
+
+        normalCBVF = new ValueField(PolyMeshEditorWindow.getNormalTol(), ValueField.NONE);
+        normalCBTF = normalCBVF.getComponent();
+        looseShapeCBVF = new ValueField(PolyMeshEditorWindow.getLooseShapeTol(), ValueField.NONE);
+        looseShapeCBTF = looseShapeCBVF.getComponent();
+        strictShapeCBVF = new ValueField(PolyMeshEditorWindow.getStrictShapeTol(), ValueField.NONE);
+        strictShapeCBTF = strictShapeCBVF.getComponent();
+
+        okButton = new JButton(Translate.text("button.ok"));
+        var cancelButton = new JButton(Translate.text("button.cancel"));
+
+        // Initial state: text fields disabled until checkbox selected
+        tolerance1Label.setEnabled(false);
+        normalCBTF.setEnabled(false);
+        tolerance2Label.setEnabled(false);
+        looseShapeCBTF.setEnabled(false);
+        tolerance3Label.setEnabled(false);
+        strictShapeCBTF.setEnabled(false);
+        okButton.setEnabled(false);
+
+        // Event listeners
+        normalCBVF.addEventLink(ValueChangedEvent.class, this, "doTolValueChanged");
+        looseShapeCBVF.addEventLink(ValueChangedEvent.class, this, "doTolValueChanged");
+        strictShapeCBVF.addEventLink(ValueChangedEvent.class, this, "doTolValueChanged");
+        normalCB.addActionListener(e -> doCBValueChanged());
+        looseShapeCB.addActionListener(e -> doCBValueChanged());
+        strictShapeCB.addActionListener(e -> doCBValueChanged());
+        okButton.addActionListener(e -> doOK());
+        cancelButton.addActionListener(e -> doCancel());
+
+        GroupLayout layout = new GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addComponent(titleLabel)
+                .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addComponent(normalCB, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(tolerance1Label)
+                    .addComponent(normalCBTF, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addComponent(looseShapeCB, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(tolerance2Label)
+                    .addComponent(looseShapeCBTF, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addComponent(strictShapeCB, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(tolerance3Label)
+                    .addComponent(strictShapeCBTF, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(okButton, GroupLayout.PREFERRED_SIZE, 67, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cancelButton))
+        );
+
+        layout.setVerticalGroup(
+            layout.createSequentialGroup()
+                .addComponent(titleLabel)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(normalCB)
+                    .addComponent(tolerance1Label)
+                    .addComponent(normalCBTF, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(looseShapeCB)
+                    .addComponent(tolerance2Label)
+                    .addComponent(looseShapeCBTF, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(strictShapeCB)
+                    .addComponent(tolerance3Label)
+                    .addComponent(strictShapeCBTF, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(okButton)
+                    .addComponent(cancelButton))
+        );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, okButton, cancelButton);
+        getRootPane().setDefaultButton(okButton);
     }
 
     private void doTolValueChanged() {
@@ -130,14 +176,14 @@ class FindSimilarFacesDialog extends BDialog {
     }
 
     private void doCBValueChanged() {
-        tolerance1.setEnabled(normalCB.getState());
-        normalCBVF.setEnabled(normalCB.getState());
-        tolerance2.setEnabled(looseShapeCB.getState());
-        looseShapeCBVF.setEnabled(looseShapeCB.getState());
-        tolerance3.setEnabled(strictShapeCB.getState());
-        strictShapeCBVF.setEnabled(strictShapeCB.getState());
+        tolerance1Label.setEnabled(normalCB.isSelected());
+        normalCBTF.setEnabled(normalCB.isSelected());
+        tolerance2Label.setEnabled(looseShapeCB.isSelected());
+        looseShapeCBTF.setEnabled(looseShapeCB.isSelected());
+        tolerance3Label.setEnabled(strictShapeCB.isSelected());
+        strictShapeCBTF.setEnabled(strictShapeCB.isSelected());
         doTolValueChanged();
-        okButton.setEnabled(normalCB.getState() || looseShapeCB.getState() || strictShapeCB.getState());
+        okButton.setEnabled(normalCB.isSelected() || looseShapeCB.isSelected() || strictShapeCB.isSelected());
     }
 
     private void doCancel() {
@@ -153,28 +199,28 @@ class FindSimilarFacesDialog extends BDialog {
     }
 
     private void fetchTolValues() {
-        if (normalCB.getState()) {
+        if (normalCB.isSelected()) {
             log.info("Normal: {}", normalCBVF.getValue());
             PolyMeshEditorWindow.setNormalTol(normalCBVF.getValue());
         }
-        if (looseShapeCB.getState()) {
+        if (looseShapeCB.isSelected()) {
             PolyMeshEditorWindow.setLooseShapeTol(looseShapeCBVF.getValue());
         }
-        if (strictShapeCB.getState()) {
+        if (strictShapeCB.isSelected()) {
             PolyMeshEditorWindow.setStrictShapeTol(strictShapeCBVF.getValue());
         }
     }
 
     public boolean isNormal() {
-        return normalCB.getState();
+        return normalCB.isSelected();
     }
 
     public boolean isLoose() {
-        return looseShapeCB.getState();
+        return looseShapeCB.isSelected();
     }
 
     public boolean isStrict() {
-        return strictShapeCB.getState();
+        return strictShapeCB.isSelected();
     }
 
 }
