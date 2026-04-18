@@ -85,14 +85,14 @@ class ControlledSmoothingDialog extends JDialog {
             }
         });
         pack();
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(owner.getComponent());
 
     }
 
     @SuppressWarnings("unchecked")
     private void initComponents() {
-        JButton okButton = new JButton();
-        JButton cancelButton = new JButton();
+        var okButton = new JButton();
+        var cancelButton = new JButton();
         minAngleVF = new ValueField(0.0, ValueField.NONNEGATIVE);
         maxAngleVF = new ValueField(180.0, ValueField.NONNEGATIVE);
         minSmoothnessVF = new ValueField(1.0, ValueField.NONNEGATIVE);
