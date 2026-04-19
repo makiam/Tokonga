@@ -40,12 +40,9 @@ class UnfoldStatusDialog extends BDialog {
 
     private BButton proceedButton;
 
-
-
-
-    private int status;
+    private int status = 0;
     @Getter
-    private boolean cancelled;
+    private boolean cancelled = false;
 
     private Thread unfoldThread;
     private final PolyMeshEditorWindow owner;
@@ -74,9 +71,10 @@ class UnfoldStatusDialog extends BDialog {
             log.atError().setCause(ex).log("Error creating UnfoldStatusDialog due {}", ex.getLocalizedMessage());
         }
         textArea.getComponent().setFont(UIManager.getFont("TextField.font"));
-        status = 0;
-        cancelled = false;
+
         pack();
+        this.getComponent().setLocationRelativeTo(owner.getComponent());
+
         this.getComponent().addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -84,13 +82,16 @@ class UnfoldStatusDialog extends BDialog {
             }
         });
 
-        this.getComponent().setLocationRelativeTo(owner.getComponent());
+
         progressBar.setProgressText("");
         progressBar.setEnabled(false);
         progressBar.setVisible(false);
         setVisible(true);
     }
 
+    private void initComponents() {
+
+    }
 
     private void doProceedButton() {
         switch (status) {

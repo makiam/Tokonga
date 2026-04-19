@@ -4154,7 +4154,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         if (data == null) {
             return;
         }
-        new UVMappingEditorDialog(info, true, this);
+        new UVMappingEditorDialog(info, this);
     }
 
     private void doFindSimilarFaces() {
