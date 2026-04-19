@@ -11,8 +11,6 @@
 package artofillusion.polymesh;
 
 import artofillusion.ui.Translate;
-import artofillusion.ui.UIUtilities;
-import buoy.event.CommandEvent;
 import buoy.widget.BButton;
 import buoy.widget.BDialog;
 import buoy.widget.BLabel;
