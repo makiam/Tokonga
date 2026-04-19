@@ -12952,10 +12952,6 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         return useCustomColors ? handleSize : 3;
     }
 
-    public void setHandleSize(int handleSize) {
-        this.handleSize = handleSize;
-    }
-
     public Color getSelectedEdgeColor() {
         if (useCustomColors) {
             return selectedEdgeColor;

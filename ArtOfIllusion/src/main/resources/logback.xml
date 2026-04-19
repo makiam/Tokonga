@@ -10,4 +10,5 @@
     </root>
 
     <logger name="artofillusion.ui.Translate" level="OFF"/>
+    <logger name="artofillusion.keystroke.KeystrokeManager" level="OFF"/>
 </configuration>
