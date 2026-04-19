@@ -22,7 +22,7 @@ import artofillusion.polymesh.UnfoldedMesh.UnfoldedEdge;
 import artofillusion.polymesh.UnfoldedMesh.UnfoldedFace;
 import artofillusion.polymesh.UnfoldedMesh.UnfoldedVertex;
 import artofillusion.ui.Translate;
-import buoy.widget.BTextArea;
+
 import java.util.*;
 
 import lombok.Getter;
@@ -33,6 +33,8 @@ import no.uib.cipr.matrix.sparse.FlexCompColMatrix;
 import no.uib.cipr.matrix.sparse.SparseVector;
 import no.uib.cipr.matrix.sparse.CG;
 import no.uib.cipr.matrix.sparse.IterativeSolverNotConvergedException;
+
+import javax.swing.*;
 
 
 @Slf4j
@@ -114,11 +116,11 @@ public class MeshUnfolder {
         this.faceTable = faceTable;
     }
 
-    public boolean unfold(BTextArea textArea) {
-        return unfoldLinearAbf(textArea);
+    public boolean unfold(UnfoldStatusDialog usd) {
+        return unfold(usd.getTextArea().getComponent());
     }
 
-    public boolean unfoldLinearAbf(BTextArea textArea) {
+    private boolean unfold(JTextArea textArea) {
         textArea.append("Unfolding mesh...\n");
         // dump mesh;
         TriangleMesh.Edge[] edges = trianglesMesh.getEdges();
@@ -167,7 +169,6 @@ public class MeshUnfolder {
         for (int i = 0; i < nint; i++) {
             interiorVertices[i] = interiorVerticesTable.get(i);
         }
-        interiorVerticesTable = null;
         // angle references for each interior vertex
         int[][] angleTable = new int[nint][];
         for (int i = 0; i < nint; i++) {

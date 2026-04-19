@@ -38,7 +38,7 @@ import javax.swing.ImageIcon;
 @EditingTool.ActivatedToolText("polymesh:advancedBevelExtrudeTool.helpText")
 public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
 
-    private Vec3[] baseVertPos;
+
     private final Map<ViewerCanvas, Manipulator> mouseDragManipHashMap;
     private boolean[] selected;
     private boolean separateFaces;
@@ -59,8 +59,10 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
 
     @Override
     public void activateManipulators(ViewerCanvas view) {
-        if (!mouseDragManipHashMap.containsKey(view)) {
-            PolyMeshValueWidget valueWidget = null;
+        if (mouseDragManipHashMap.containsKey(view)) {
+            ((PolyMeshViewer) view).addManipulator(mouseDragManipHashMap.get(view));
+        } else {
+
             Manipulator mouseDragManip = new MouseDragManipulator(this, view, AdvancedBevelExtrudeTool.bevelExtrudeFacesIcon);
             mouseDragManip.addEventLink(Manipulator.ManipulatorPrepareChangingEvent.class, this, "doManipulatorPrepareShapingMesh");
             mouseDragManip.addEventLink(Manipulator.ManipulatorCompletedEvent.class, this, "doManipulatorShapedMesh");
@@ -70,8 +72,6 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
             ((PolyMeshViewer) view).setManipulator(mouseDragManip);
             mouseDragManipHashMap.put(view, mouseDragManip);
             selectionModeChanged(controller.getSelectionMode());
-        } else {
-            ((PolyMeshViewer) view).addManipulator(mouseDragManipHashMap.get(view));
         }
     }
 
@@ -91,11 +91,11 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
 
     private void doManipulatorPrepareShapingMesh(Manipulator.ManipulatorEvent e) {
         PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
-        baseVertPos = mesh.getVertexPositions();
+
         origMesh = mesh.duplicate();
         selected = controller.getSelection();
         int selectMode = controller.getSelectionMode();
-        if (selectMode == PolyMeshEditorWindow.FACE_MODE) {
+        if (selectMode == MeshEditController.FACE_MODE) {
             short EXTRUDE_FACE_GROUPS = 2;
             mode = (separateFaces ? EXTRUDE_FACE_GROUPS : EXTRUDE_FACES);
         } else {
@@ -111,7 +111,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
             controller.objectChanged();
         }
         origMesh = null;
-        baseVertPos = null;
+
         theWindow.setHelpText(Translate.text("polymesh:advancedBevelExtrudeTool.helpText"));
         controller.objectChanged();
         theWindow.updateImage();
@@ -121,7 +121,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
         PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
         UndoRecord undo = new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, origMesh});
         theWindow.setUndoRecord(undo);
-        baseVertPos = null;
+
         origMesh = null;
         theWindow.setHelpText(Translate.text("polymesh:advancedBevelExtrudeTool.helpText"));
         theWindow.updateImage();
@@ -136,7 +136,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
         boolean shiftMod = e.isShiftDown() && e.isCtrlDown();
         boolean ctrlMod = (!e.isShiftDown()) && e.isCtrlDown();
 
-        if (selectMode == MeshEditorWindow.FACE_MODE) {
+        if (selectMode == MeshEditController.FACE_MODE) {
             if (e.isShiftDown() && !e.isCtrlDown()) {
                 if (Math.abs(drag.x) > Math.abs(drag.y)) {
                     drag.y = 0.0;
@@ -162,7 +162,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
             }
             controller.objectChanged();
             controller.setSelection(sel);
-        } else if (selectMode == PolyMeshEditorWindow.EDGE_MODE) {
+        } else if (selectMode == MeshEditController.EDGE_MODE) {
             mesh.copyObject(origMesh);
             boolean[] sel = mesh.bevelEdges(selected, drag.y);
             theWindow.setHelpText(Translate.text("polymesh:advancedBevelExtrudeTool.pointEdgeDragText", drag.y));
@@ -193,14 +193,12 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
     @Override
     public void selectionModeChanged(int selectionMode) {
         final ImageIcon image = switch (selectionMode) {
-            case MeshEditorWindow.POINT_MODE -> AdvancedBevelExtrudeTool.bevelExtrudeVerticesIcon;
-            case MeshEditorWindow.EDGE_MODE -> AdvancedBevelExtrudeTool.bevelExtrudeEdgesIcon;
-            case MeshEditorWindow.FACE_MODE -> AdvancedBevelExtrudeTool.bevelExtrudeFacesIcon;
+            case MeshEditController.POINT_MODE -> AdvancedBevelExtrudeTool.bevelExtrudeVerticesIcon;
+            case MeshEditController.EDGE_MODE -> AdvancedBevelExtrudeTool.bevelExtrudeEdgesIcon;
+            case MeshEditController.FACE_MODE -> AdvancedBevelExtrudeTool.bevelExtrudeFacesIcon;
             default -> null;
         };
-        mouseDragManipHashMap.forEach((ViewerCanvas view, Manipulator manipulator) -> {
-            ((MouseDragManipulator) manipulator).setImage(image);
-        });
+        mouseDragManipHashMap.forEach((ViewerCanvas view, Manipulator manipulator) -> ((MouseDragManipulator) manipulator).setImage(image));
     }
 
     @Override

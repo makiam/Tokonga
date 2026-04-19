@@ -23,6 +23,8 @@ import buoy.xml.WidgetDecoder;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.swing.UIManager;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -33,14 +35,17 @@ import lombok.extern.slf4j.Slf4j;
 class UnfoldStatusDialog extends BDialog {
 
     private BProgressBar progressBar;
-    protected BTextArea textArea;
+    @Getter
+    private  BTextArea textArea;
+
     private BButton proceedButton;
-    private BButton advancedButton;
+
 
 
 
     private int status;
-    protected boolean cancelled;
+    @Getter
+    private boolean cancelled;
 
     private Thread unfoldThread;
     private final PolyMeshEditorWindow owner;
@@ -59,13 +64,11 @@ class UnfoldStatusDialog extends BDialog {
 
             proceedButton = (BButton) decoder.getObject("proceedButton");
             proceedButton.setText(Translate.text("polymesh:proceed"));
-            advancedButton = (BButton) decoder.getObject("advancedButton");
-            advancedButton.setText(Translate.text("polymesh:advanced"));
+
 
 
             setContent(borderContainer);
-            proceedButton.addEventLink(CommandEvent.class, this, "doProceedButton");
-
+            proceedButton.getComponent().addActionListener(e -> doProceedButton());
 
         } catch (IOException ex) {
             log.atError().setCause(ex).log("Error creating UnfoldStatusDialog due {}", ex.getLocalizedMessage());
@@ -80,8 +83,8 @@ class UnfoldStatusDialog extends BDialog {
                 doCancel();
             }
         });
-        UIUtilities.centerWindow(this);
-        advancedButton.setVisible(false);
+
+        this.getComponent().setLocationRelativeTo(owner.getComponent());
         progressBar.setProgressText("");
         progressBar.setEnabled(false);
         progressBar.setVisible(false);

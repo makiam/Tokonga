@@ -25,6 +25,7 @@ import buoy.widget.BorderContainer;
 import buoy.widget.Widget;
 import buoy.xml.WidgetDecoder;
 
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
@@ -62,7 +63,8 @@ public class PolyMeshValueWidget extends BorderContainer {
     private BSpinner maxSpinner;
     private PMValueField valueField;
     private BCheckBox retainValueCB;
-    private double valueMin, valueMax;
+    private double valueMin;
+    private double valueMax;
     @Getter
     private double value;
     private final NumberFormat format;
@@ -130,8 +132,8 @@ public class PolyMeshValueWidget extends BorderContainer {
             return;
         }
         switch (e.getKeyCode()) {
-            case KeyPressedEvent.VK_PLUS:
-            case KeyPressedEvent.VK_ADD:
+            case KeyEvent.VK_PLUS:
+            case KeyEvent.VK_ADD:
                 if (valueSlider.isEnabled()) {
                     int slider = valueSlider.getValue();
                     if (slider < 100) {
@@ -144,8 +146,8 @@ public class PolyMeshValueWidget extends BorderContainer {
                     }
                 }
                 break;
-            case KeyPressedEvent.VK_MINUS:
-            case KeyPressedEvent.VK_SUBTRACT:
+            case KeyEvent.VK_MINUS:
+            case KeyEvent.VK_SUBTRACT:
                 if (valueSlider.isEnabled()) {
                     int slider = valueSlider.getValue();
                     if (slider > 0) {
@@ -158,12 +160,12 @@ public class PolyMeshValueWidget extends BorderContainer {
                     }
                 }
                 break;
-            case KeyPressedEvent.VK_ENTER:
+            case KeyEvent.VK_ENTER:
                 if (runCallback != null) {
                     doValidate();
                 }
                 break;
-            case KeyPressedEvent.VK_END:
+            case KeyEvent.VK_END:
                 if (runCallback != null) {
                     doAbort();
                 }
@@ -177,8 +179,6 @@ public class PolyMeshValueWidget extends BorderContainer {
      * Call this methode to activate the value widget with a default value of 0.
      *
      * @param runCallback Callback to call when value has changed
-     * @param validateCallback Callback to call when value is validated by user
-     * @param abortCallback Callback to call when process is cancelled by user
      */
     public void activate(Runnable runCallback) {
         activate(0.0, runCallback);
@@ -265,7 +265,7 @@ public class PolyMeshValueWidget extends BorderContainer {
     private void doValidateValue(KeyPressedEvent e) {
         if(e.isControlDown()) return;
 
-        if (e.getKeyCode() == KeyPressedEvent.VK_ENTER && runCallback != null) {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER && runCallback != null) {
             doValidate();
         }
     }

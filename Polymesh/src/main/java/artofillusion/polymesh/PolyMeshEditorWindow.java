@@ -840,8 +840,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         skeletonMenu.add(skeletonMenuItem[5] = Translate.checkboxMenuItem("detachSkeleton", event -> skeletonDetachedChanged(), false));
     }
 
-    private final BMenuItem unfoldMeshAction = Translate.menuItem("polymesh:unfoldMesh", this::doUnfoldMesh);
-    private final BMenuItem editMappingAction = Translate.menuItem("polymesh:editMapping", this::doEditMapping);
+    private final BMenuItem unfoldMeshAction = Translate.menuItem("polymesh:unfoldMesh", e -> doUnfoldMesh());
+    private final BMenuItem editMappingAction = Translate.menuItem("polymesh:editMapping", e -> doEditMapping());
 
     /**
      * Builds the texture menu
@@ -4092,11 +4092,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         updateMenus();
     }
 
-    private void doUnfoldMesh(ActionEvent event) {
+    private void doUnfoldMesh() {
         UnfoldStatusDialog dlg = new UnfoldStatusDialog(this);
-        if (!dlg.cancelled) {
-            doEditMapping(null);
-        }
+        if(dlg.isCancelled()) return;
+        doEditMapping();
     }
 
     @SuppressWarnings("unused")
@@ -4132,7 +4131,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             }
             int[] faceTable = mesh.getTriangleFaceIndex();
             MeshUnfolder unfolder = new MeshUnfolder(mesh, triMesh, vertTable, faceTable);
-            if (unfolder.unfold(dlg.textArea)) {
+            if (unfolder.unfold(dlg)) {
                 UVMappingData data = new UVMappingData(unfolder.getUnfoldedMeshes());
                 theMesh.setMappingData(data);
                 dlg.unfoldFinished(true);
@@ -4147,7 +4146,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    private void doEditMapping(ActionEvent event) {
+    private void doEditMapping() {
         PolyMesh theMesh = (PolyMesh) objInfo.object;
         ObjectInfo info = objInfo.duplicate();
         info.coords = new CoordinateSystem();
