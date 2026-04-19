@@ -117,7 +117,7 @@ public class MeshUnfolder {
     }
 
     public boolean unfold(UnfoldStatusDialog usd) {
-        return unfold(usd.getTextArea().getComponent());
+        return unfold(usd.getTextArea());
     }
 
     private boolean unfold(JTextArea textArea) {

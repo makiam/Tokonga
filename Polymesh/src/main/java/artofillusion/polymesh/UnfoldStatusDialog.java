@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2004 by Peter Eastman, 2005 by Francois Guillet
-   Changes copyright (C) 2023-2025 Maksim Khramov
+   Changes copyright (C) 2023-2026 Maksim Khramov
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
@@ -10,33 +10,28 @@
 
 package artofillusion.polymesh;
 
+import artofillusion.ui.AXButton;
+import artofillusion.ui.AXLabel;
+import artofillusion.ui.AXText;
 import artofillusion.ui.Translate;
-import buoy.widget.BButton;
-import buoy.widget.BDialog;
-import buoy.widget.BLabel;
-import buoy.widget.BProgressBar;
-import buoy.widget.BTextArea;
-import buoy.widget.BorderContainer;
-import buoy.xml.WidgetDecoder;
-import java.io.IOException;
-import java.io.InputStream;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author MaksK
- */
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+
+
 @Slf4j
-class UnfoldStatusDialog extends BDialog {
+class UnfoldStatusDialog extends JDialog {
 
-    private BProgressBar progressBar;
+    private JProgressBar progressBar;
+
     @Getter
-    private  BTextArea textArea;
+    private AXText textArea;
 
-    private BButton proceedButton;
+    private AXButton proceedButton;
 
     private int status = 0;
     @Getter
@@ -46,48 +41,79 @@ class UnfoldStatusDialog extends BDialog {
     private final PolyMeshEditorWindow owner;
 
     public UnfoldStatusDialog(final PolyMeshEditorWindow owner) {
-        super(owner, Translate.text("polymesh:meshUnfolding"), true);
+        super(owner.getComponent(), Translate.text("polymesh:meshUnfolding"), true);
         this.owner = owner;
 
-        try (InputStream is = getClass().getResource("interfaces/unfoldStatus.xml").openStream()) {
-            WidgetDecoder decoder = new WidgetDecoder(is);
-            BorderContainer borderContainer = (BorderContainer) decoder.getRootObject();
-            BLabel unfoldStatusLabel = (BLabel) decoder.getObject("unfoldStatusLabel");
-            unfoldStatusLabel.setText(Translate.text("polymesh:unfoldStatus"));
-            progressBar = (BProgressBar) decoder.getObject("progressBar");
-            textArea = (BTextArea) decoder.getObject("TextArea");
+        initComponents();
 
-            proceedButton = (BButton) decoder.getObject("proceedButton");
-            proceedButton.setText(Translate.text("polymesh:proceed"));
+        proceedButton.addActionListener(e -> doProceedButton());
 
+        // Close the dialog when Esc is pressed
+        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        ActionListener action = e -> doCancel();
+        this.getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-
-            setContent(borderContainer);
-            proceedButton.getComponent().addActionListener(e -> doProceedButton());
-
-        } catch (IOException ex) {
-            log.atError().setCause(ex).log("Error creating UnfoldStatusDialog due {}", ex.getLocalizedMessage());
-        }
-        textArea.getComponent().setFont(UIManager.getFont("TextField.font"));
-
-        pack();
-        this.getComponent().setLocationRelativeTo(owner.getComponent());
-
-        this.getComponent().addWindowListener(new java.awt.event.WindowAdapter() {
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 doCancel();
             }
         });
+        pack();
+        getRootPane().setDefaultButton(proceedButton);
+        this.setLocationRelativeTo(owner.getComponent());
 
-
-        progressBar.setProgressText("");
-        progressBar.setEnabled(false);
-        progressBar.setVisible(false);
         setVisible(true);
     }
 
     private void initComponents() {
+        var statusLabel = new AXLabel("polymesh:unfoldStatus");
+        var scrollPane = new JScrollPane();
+        progressBar = new JProgressBar();
+
+        progressBar.setString("");
+        progressBar.setEnabled(false);
+        progressBar.setVisible(false);
+        progressBar.setStringPainted(true);
+
+
+        textArea = new AXText();
+        textArea.setEditable(false);
+        scrollPane.setViewportView(textArea);
+
+        proceedButton = new AXButton("polymesh:proceed");
+        proceedButton.setVisible(true);
+
+        GroupLayout layout = new GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
+                                        .addComponent(statusLabel)
+                                        .addComponent(progressBar, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap())
+                        .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(proceedButton)
+                                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(statusLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(progressBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(proceedButton)
+                                .addContainerGap())
+        );
 
     }
 
@@ -95,7 +121,7 @@ class UnfoldStatusDialog extends BDialog {
         switch (status) {
             case 0:
                 proceedButton.setText(Translate.text("polymesh:abort"));
-                progressBar.setProgressText(Translate.text("polymesh:unfolding"));
+                progressBar.setString(Translate.text("polymesh:unfolding"));
                 progressBar.setEnabled(true);
                 progressBar.setVisible(true);
                 pack();
@@ -128,7 +154,7 @@ class UnfoldStatusDialog extends BDialog {
     void unfoldFinished(boolean ok) {
         if (ok) {
             proceedButton.setText(Translate.text("polymesh:continue"));
-            progressBar.setProgressText("");
+            progressBar.setString("");
             progressBar.setEnabled(false);
             progressBar.setVisible(false);
             pack();
