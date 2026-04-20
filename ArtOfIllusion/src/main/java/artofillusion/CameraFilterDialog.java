@@ -45,7 +45,8 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
     private final CustomWidget preview;
     private ComplexImage unfilteredImage;
     private Image displayImage;
-    private boolean doneRendering, doneFiltering;
+    private boolean doneRendering;
+    private boolean doneFiltering;
     private Map<String, Object> savedConfiguration;
     private Thread filterThread;
 
@@ -54,6 +55,10 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
 
     private static final int PREVIEW_WIDTH = 200;
     private static final int PREVIEW_HEIGHT = 150;
+
+    /** Check whether the dialog was exited by clicking OK. **/
+    @Getter
+    private boolean clickedOk = false;
 
     public CameraFilterDialog(WindowWidget parent, Scene scene, SceneCamera camera, CoordinateSystem cameraCoords) {
         super(parent, Translate.text("Filters"), true);
@@ -140,6 +145,7 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
      * Save changes and close the window.
      */
     private void doOk() {
+        clickedOk = true;
         var filters = filtersPanel.filters.toArray(new ImageFilter[filtersPanel.filters.size()]);
         theCamera.setImageFilters(filters);
         configureRenderer(savedConfiguration, previewRenderer);
@@ -240,10 +246,9 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
                     return;
                 }
                 ComplexImage img = unfilteredImage.duplicate();
-                for (int i = 0; i < filtersPanel.filters.size(); i++) {
-                    filtersPanel.filters.get(i).filterImage(img, theScene, theCamera, cameraCoords);
-                }
-                if (filtersPanel.filters.size() > 0) {
+                var fl = filtersPanel.filters;
+                fl.forEach(it -> it.filterImage(img, theScene, theCamera, cameraCoords));
+                if (!fl.isEmpty()) {
                     img.rebuildImage();
                 }
                 if (filterThread == Thread.currentThread()) {
@@ -291,21 +296,21 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
         private final BButton deleteButton;
         private final BButton upButton;
         private final BButton downButton;
-        private final Class<?>[] filterClasses;
+        private final List<Class<ImageFilter>> filterClasses = new ArrayList<>();
         /**
          * -- GETTER --
          *  Get the filters to apply.
          */
         @Getter
-        private final ArrayList<ImageFilter> filters;
+        private final List<ImageFilter> filters = new ArrayList<>();
         final Runnable filterChangedCallback;
 
         public FiltersPanel(SceneCamera camera, Runnable filterChangedCallback) {
             super(1, 2);
             this.filterChangedCallback = filterChangedCallback;
-            filters = new ArrayList<>();
-            ImageFilter[] oldFilters = camera.getImageFilters();
-            Collections.addAll(filters, oldFilters);
+
+
+            Collections.addAll(filters, camera.getImageFilters());
 
             // Layout the major sections of the window.
             LayoutInfo fillLayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null);
@@ -331,16 +336,12 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
             cameraFiltersList.setMultipleSelectionEnabled(false);
 
             // Fill in the Lists.
-            List<ImageFilter> filters = PluginRegistry.getPlugins(ImageFilter.class);
-            filterClasses = new Class<?>[filters.size()];
-            for (int i = 0; i < filterClasses.length; i++) {
-                filterClasses[i] = filters.get(i).getClass();
-                try {
-                    allFiltersList.add(((ImageFilter) filterClasses[i].getDeclaredConstructor().newInstance()).getName());
-                } catch (ReflectiveOperationException | SecurityException ex) {
-                    log.atError().setCause(ex).log("Error adding filter {}", ex.getMessage());
-                }
-            }
+
+            PluginRegistry.getPlugins(ImageFilter.class).forEach(it ->{
+                filterClasses.add((Class<ImageFilter>) it.getClass());
+                allFiltersList.add(it.getName());
+            });
+
             rebuildFilterList();
             if (cameraFiltersList.getItemCount() > 0) {
                 cameraFiltersList.setSelected(0, true);
@@ -383,7 +384,7 @@ public class CameraFilterDialog extends BDialog implements RenderListener {
                 return;
             }
             try {
-                filters.add((ImageFilter) filterClasses[sel].getDeclaredConstructor().newInstance());
+                filters.add(filterClasses.get(sel).getDeclaredConstructor().newInstance());
                 rebuildFilterList();
                 cameraFiltersList.setSelected(filters.size() - 1, true);
             } catch (ReflectiveOperationException | SecurityException ex) {
