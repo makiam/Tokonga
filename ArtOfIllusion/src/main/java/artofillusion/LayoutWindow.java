@@ -940,8 +940,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      */
     @Override
     public void updateMenus() {
-        Object[] sel = sceneExplorer.getSelectedObjects();
-        dumpSelection(sel);
+        var sel = sceneExplorer.getSelectedObjects();
+        //dumpSelection(sel);
         int numSelObjects = sel.length;
         Track[] selTrack = score.getSelectedTracks();
         int numSelTracks = selTrack.length;
@@ -953,11 +953,10 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         boolean enable;
         ObjectInfo info;
         Object3D obj;
-        int i;
 
         canConvert = canSetTexture = (numSelObjects > 0);
         curve = noncurve = enable = disable = hasChildren = hasParent = false;
-        for (i = 0; i < numSelObjects; i++) {
+        for (int i = 0; i < numSelObjects; i++) {
             info = (ObjectInfo) sel[i];
             obj = info.getObject();
             if (obj instanceof Curve && !(obj instanceof Tube)) {
@@ -978,8 +977,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
                 hasParent = true;
             }
         }
-        for (i = 0; i < numSelTracks; i++) {
-            if (selTrack[i].isEnabled()) {
+        for (var st: selTrack) {
+            if (st.isEnabled()) {
                 disable = true;
             } else {
                 enable = true;
@@ -997,9 +996,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         editMenuItem[9].setEnabled(numSelObjects > 0); // Make Live Duplicates
         editMenuItem[10].setEnabled(numSelObjects > 0); // Sever Duplicates
         if (numSelObjects == 0) {
-            for (i = 0; i < objectMenuItem.length; i++) {
-                objectMenuItem[i].setEnabled(false);
-            }
+            for (var omi: objectMenuItem) omi.setEnabled(false);
         } else {
             obj = ((ObjectInfo) sel[0]).getObject();
             objectMenuItem[0].setEnabled(numSelObjects == 1 && obj.isEditable()); // Edit Object
