@@ -666,7 +666,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         edgeMenu.add(edgeMenuItem[9] = Translate.menuItem("polymesh:insertLoops", this::doInsertLoops));
         edgeMenu.add(edgeMenuItem[10] = Translate.menuItem("polymesh:selectBoundary", this::doSelectBoundary));
         edgeMenu.add(edgeMenuItem[11] = Translate.menuItem("polymesh:closeBoundary", this::doCloseBoundary));
-        edgeMenu.add(edgeMenuItem[12] = Translate.menuItem("polymesh:findSimilar", this::doFindSimilarEdges));
+        edgeMenu.add(edgeMenuItem[12] = Translate.menuItem("polymesh:findSimilar", event -> doFindSimilarEdges()));
         edgeMenu.add(edgeMenuItem[13] = Translate.menuItem("polymesh:extractToCurve", this::doExtractToCurve));
         edgeMenu.addSeparator();
         edgeMenu.add(edgeMenuItem[14] = Translate.menuItem("polymesh:markSelAsSeams", this::doMarkSelAsSeams));
@@ -732,7 +732,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         edgePopupMenu.add(edgePopupMenuItem[9] = Translate.menuItem("polymesh:insertLoops", this::doInsertLoops));
         edgePopupMenu.add(edgePopupMenuItem[10] = Translate.menuItem("polymesh:selectBoundary", this::doSelectBoundary));
         edgePopupMenu.add(edgePopupMenuItem[11] = Translate.menuItem("polymesh:closeBoundary", this::doCloseBoundary));
-        edgePopupMenu.add(edgePopupMenuItem[12] = Translate.menuItem("polymesh:findSimilar", this::doFindSimilarEdges));
+        edgePopupMenu.add(edgePopupMenuItem[12] = Translate.menuItem("polymesh:findSimilar", event -> doFindSimilarEdges()));
         edgePopupMenu.add(edgePopupMenuItem[13] = Translate.menuItem("polymesh:extractToCurve", this::doExtractToCurve));
         edgePopupMenu.addSeparator();
         edgePopupMenu.add(edgePopupMenuItem[14] = Translate.menuItem("polymesh:markSelAsSeams", this::doMarkSelAsSeams));
@@ -840,8 +840,8 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         skeletonMenu.add(skeletonMenuItem[5] = Translate.checkboxMenuItem("detachSkeleton", event -> skeletonDetachedChanged(), false));
     }
 
-    private final BMenuItem unfoldMeshAction = Translate.menuItem("polymesh:unfoldMesh", this::doUnfoldMesh);
-    private final BMenuItem editMappingAction = Translate.menuItem("polymesh:editMapping", this::doEditMapping);
+    private final BMenuItem unfoldMeshAction = Translate.menuItem("polymesh:unfoldMesh", e -> doUnfoldMesh());
+    private final BMenuItem editMappingAction = Translate.menuItem("polymesh:editMapping", e -> doEditMapping());
 
     /**
      * Builds the texture menu
@@ -2808,7 +2808,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Bevel properties settings
      */
     private void doBevelProperties(ActionEvent event) {
-        SwingUtilities.invokeLater(() -> new BevelProperties(this.getComponent()).setVisible(true));
+        SwingUtilities.invokeLater(() -> new BevelProperties(this).setVisible(true));
     }
 
     /**
@@ -4092,11 +4092,10 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         updateMenus();
     }
 
-    private void doUnfoldMesh(ActionEvent event) {
+    private void doUnfoldMesh() {
         UnfoldStatusDialog dlg = new UnfoldStatusDialog(this);
-        if (!dlg.cancelled) {
-            doEditMapping(null);
-        }
+        if(dlg.isCancelled()) return;
+        doEditMapping();
     }
 
     @SuppressWarnings("unused")
@@ -4132,7 +4131,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             }
             int[] faceTable = mesh.getTriangleFaceIndex();
             MeshUnfolder unfolder = new MeshUnfolder(mesh, triMesh, vertTable, faceTable);
-            if (unfolder.unfold(dlg.textArea, dlg.residual)) {
+            if (unfolder.unfold(dlg)) {
                 UVMappingData data = new UVMappingData(unfolder.getUnfoldedMeshes());
                 theMesh.setMappingData(data);
                 dlg.unfoldFinished(true);
@@ -4147,7 +4146,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    private void doEditMapping(ActionEvent event) {
+    private void doEditMapping() {
         PolyMesh theMesh = (PolyMesh) objInfo.object;
         ObjectInfo info = objInfo.duplicate();
         info.coords = new CoordinateSystem();
@@ -4155,17 +4154,15 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         if (data == null) {
             return;
         }
-        new UVMappingEditorDialog(info, true, this);
+        new UVMappingEditorDialog(info, this);
     }
 
     private void doFindSimilarFaces() {
-        //SwingUtilities.invokeLater(() -> new FindSimilarFacesDialogNew(this).setVisible(true));
-        new FindSimilarFacesDialog(this).setVisible(true);
-        
+        SwingUtilities.invokeLater(() -> new FindSimilarFacesDialog(this).setVisible(true));
     }
 
-    private void doFindSimilarEdges(ActionEvent event) {
-        new FindSimilarEdgesDialog(this).setVisible(true);
+    private void doFindSimilarEdges() {
+        SwingUtilities.invokeLater(() -> new FindSimilarEdgesDialog(this).setVisible(true));
     }
 
 

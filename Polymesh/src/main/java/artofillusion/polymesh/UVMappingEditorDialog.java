@@ -117,7 +117,7 @@ public class UVMappingEditorDialog extends BDialog {
     /**
      * Construct a new UVMappingEditorDialog
      */
-    public UVMappingEditorDialog(ObjectInfo objInfo, boolean initialize, BFrame parent) {
+    public UVMappingEditorDialog(ObjectInfo objInfo, BFrame parent) {
 
         super(parent, Translate.text("uvCoordsTitle"), true);
         this.objInfo = objInfo;

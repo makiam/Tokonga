@@ -11,10 +11,13 @@
 package artofillusion.polymesh;
 import artofillusion.ui.Translate;
 import artofillusion.ui.ValueField;
+import java.awt.Component;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -37,8 +40,8 @@ public class BevelProperties extends JDialog {
     /**
      * Creates new form BevelProperties
      */
-    public BevelProperties(java.awt.Frame parent) {
-        super(parent, true);
+    public BevelProperties(PolyMeshEditorWindow owner) {
+        super(owner.getComponent(), true);
         initComponents();
         
         // Close the dialog when Esc is pressed
@@ -63,75 +66,66 @@ public class BevelProperties extends JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.JButton okButton = new javax.swing.JButton();
-        javax.swing.JButton cancelButton = new javax.swing.JButton();
-        javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
-        javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
-        applyCB = new javax.swing.JCheckBox();
-        javax.swing.JTextField bevelAreaField = (areaLimitFieldVF = new PMValueField(PolyMesh.getEdgeLengthLimit(), ValueField.NONE)).getComponent();
+        JButton okButton = new JButton(Translate.text("button.ok"));
+        JButton cancelButton = new JButton(Translate.text("button.cancel"));
+        JLabel jLabel1 = new JLabel(Translate.text("polymesh:areaLimit"));
+        JLabel jLabel2 = new JLabel(Translate.text("polymesh:bevelAreaLabel"));
+        applyCB = new JCheckBox();
+        JTextField bevelAreaField = (areaLimitFieldVF = new ValueField(PolyMesh.getEdgeLengthLimit(), ValueField.NONE)).getComponent();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(Translate.text("polymesh:bevelPropertiesTitle"));
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosing(java.awt.event.WindowEvent evt) {
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent evt) {
                 closeDialog(evt);
             }
         });
 
-        okButton.setText(Translate.text("button.ok"));
         okButton.addActionListener(this::okButtonActionPerformed);
 
-        cancelButton.setText(Translate.text("button.cancel"));
         cancelButton.addActionListener(this::cancelButtonActionPerformed);
-
-        jLabel1.setText(Translate.text("polymesh:areaLimit"));
-
-        jLabel2.setText(Translate.text("polymesh:bevelAreaLabel"));
 
         applyCB.setSelected(PolyMesh.isApplyEdgeLengthLimit());
         applyCB.setText(Translate.text("polymesh:applyCB"));
 
         bevelAreaField.setText(String.valueOf(PolyMesh.getEdgeLengthLimit()));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel2, GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bevelAreaField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(bevelAreaField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(okButton, GroupLayout.PREFERRED_SIZE, 67, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(cancelButton))
-                            .addComponent(applyCB, javax.swing.GroupLayout.Alignment.TRAILING))))
+                            .addComponent(applyCB, GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {cancelButton, okButton});
 
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+        layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2)
-                    .addComponent(bevelAreaField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(bevelAreaField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(applyCB)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(okButton))
                 .addContainerGap())
@@ -171,7 +165,7 @@ public class BevelProperties extends JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JCheckBox applyCB;
+    private JCheckBox applyCB;
     // End of variables declaration//GEN-END:variables
 
     private int returnStatus = RET_CANCEL;
