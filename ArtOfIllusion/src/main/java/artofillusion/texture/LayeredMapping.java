@@ -106,6 +106,10 @@ public class LayeredMapping extends TextureMapping {
         blendMode[which] = mode;
     }
 
+    public int getFractionParameterId(int which) {
+        return fractParamID[which];
+    }
+
     /**
      * Get the list of texture parameters.
      */
@@ -113,8 +117,7 @@ public class LayeredMapping extends TextureMapping {
     public TextureParameter[] getParameters() {
         Vector<TextureParameter> param = new Vector<>();
         TextureParameter[] p;
-        int i;
-        int j;
+
 
         // There are two types of parameters: those corresponding to the blending fraction for
         // a layer, and those which belong to layer.  We recalculate the list every time this
@@ -124,7 +127,7 @@ public class LayeredMapping extends TextureMapping {
         paramStartIndex = new int[texture.length];
         numParams = new int[texture.length];
         maxParams = 0;
-        for (i = 0; i < texture.length; i++) {
+        for (int i = 0; i < texture.length; i++) {
             fractParamIndex[i] = param.size();
             TextureParameter fractParam = new TextureParameter(this, texture[i].getName() + " fraction", 0.0f, 1.0f, 1.0f);
             fractParam.setID(fractParamID[i]);
@@ -133,7 +136,7 @@ public class LayeredMapping extends TextureMapping {
             if (p != null) {
                 numParams[i] = p.length;
                 paramStartIndex[i] = param.size();
-                for (j = 0; j < p.length; j++) {
+                for (int j = 0; j < p.length; j++) {
                     param.add(p[j].duplicate());
                     if (p[j].identifier != -1) {
                         param.lastElement().setID(System.identityHashCode(mapping[i]) + p[j].identifier * 1025);
@@ -145,7 +148,7 @@ public class LayeredMapping extends TextureMapping {
             }
         }
         p = new TextureParameter[param.size()];
-        for (i = 0; i < p.length; i++) {
+        for (int i = 0; i < p.length; i++) {
             p[i] = param.get(i);
         }
         return p;
@@ -194,35 +197,6 @@ public class LayeredMapping extends TextureMapping {
             }
         }
         return null;
-    }
-
-    /**
-     * Add a layer to the texture.
-     *
-     * @deprecated Use {@link #addLayer(int, Texture, TextureMapping, int)} instead.
-     */
-    @Deprecated
-    public void addLayer(Texture tex) {
-        Texture[] newtexture = new Texture[texture.length + 1];
-        TextureMapping[] newmapping = new TextureMapping[texture.length + 1];
-        int[] newblendMode = new int[texture.length + 1];
-        int[] newFractParamID = new int[texture.length + 1];
-        int i;
-
-        newtexture[0] = tex;
-        newmapping[0] = tex.getDefaultMapping(theObject);
-        newblendMode[0] = BLEND;
-        newFractParamID[0] = TextureParameter.getUniqueID();
-        for (i = 0; i < texture.length; i++) {
-            newtexture[i + 1] = texture[i];
-            newmapping[i + 1] = mapping[i];
-            newblendMode[i + 1] = blendMode[i];
-            newFractParamID[i + 1] = fractParamID[i];
-        }
-        texture = newtexture;
-        mapping = newmapping;
-        blendMode = newblendMode;
-        fractParamID = newFractParamID;
     }
 
     /**
@@ -292,10 +266,10 @@ public class LayeredMapping extends TextureMapping {
         TextureMapping[] newmapping = new TextureMapping[texture.length];
         int[] newblendMode = new int[texture.length];
         int[] newFractParamID = new int[texture.length];
-        int i;
+
         int j;
 
-        for (i = j = 0; i < newtexture.length; i++) {
+        for (int i = j = 0; i < newtexture.length; i++) {
             if (j == which) {
                 j++;
             }
@@ -627,7 +601,7 @@ public class LayeredMapping extends TextureMapping {
      * Create a new TextureMapping which is identical to this one.
      */
     @Override
-    public TextureMapping duplicate() {
+    public LayeredMapping duplicate() {
         return duplicate(theObject, theTexture);
     }
 
@@ -636,7 +610,7 @@ public class LayeredMapping extends TextureMapping {
      * different Texture.
      */
     @Override
-    public TextureMapping duplicate(Object3D obj, Texture tex) {
+    public LayeredMapping duplicate(Object3D obj, Texture tex) {
         LayeredMapping map = new LayeredMapping(obj, null);
         int layers = texture.length;
 
@@ -683,5 +657,40 @@ public class LayeredMapping extends TextureMapping {
     @Override
     public Widget<JPanel> getEditingPanel(Object3D obj, MaterialPreviewer preview) {
         return null;
+    }
+
+    private static final class MappingLayer {
+        @Getter
+        private Texture texture;
+        private TextureMapping mapping;
+        private int fractParamID;
+        private int blendingMode;
+
+        public MappingLayer(Texture texture, TextureMapping mapping, int blendingMode) {
+            this.texture = texture;
+            this.mapping = mapping;
+            this.blendingMode = blendingMode;
+            this.fractParamID = TextureParameter.getUniqueID();
+        }
+
+        public LayerBlendingParameter getBlendingParameter(Object owner) {
+            return new LayerBlendingParameter(owner, this.texture, this.fractParamID);
+        }
+    }
+
+    static final class LayerBlendingParameter extends TextureParameter {
+
+        public LayerBlendingParameter(Object owner, MappingLayer layer, int id) {
+            this(owner, layer.getTexture(), id);
+        }
+
+        public LayerBlendingParameter(Object owner, Texture texture, int id) {
+            super(owner, texture.getName() + " fraction", 0.0f, 1.0f, 1.0f);
+            this.setID(id);
+        }
+
+        public int getId() {
+            return identifier;
+        }
     }
 }
