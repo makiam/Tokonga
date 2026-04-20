@@ -10825,13 +10825,13 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
     }
 
     public boolean[] addMesh(PolyMesh addedMesh) {
-        Wvertex[] addedVerts = (Wvertex[]) addedMesh.getVertices();
+        Wvertex[] addedVertices = addedMesh.getVertices();
         Wedge[] addedEdges = addedMesh.getEdges();
         Wface[] addedFaces = addedMesh.getFaces();
-        Wvertex[] newVerts = new Wvertex[vertices.length + addedVerts.length];
+        Wvertex[] newVertices = new Wvertex[vertices.length + addedVertices.length];
         Wedge[] newEdges = new Wedge[edges.length + addedEdges.length];
         Wface[] newFaces = new Wface[faces.length + addedFaces.length];
-        translateMesh(newVerts, newEdges, newFaces);
+        translateMesh(newVertices, newEdges, newFaces);
         for (int i = 0; i < addedEdges.length / 2; i++) {
             newEdges[i + edges.length / 2] = new Wedge(addedEdges[i]);
             newEdges[i + edges.length / 2].vertex += vertices.length;
@@ -10865,13 +10865,13 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             }
         }
         Vec3 delta = new Vec3(0.1, 0.1, 0.1);
-        for (int i = 0; i < addedVerts.length; i++) {
-            newVerts[i + vertices.length] = new Wvertex(addedVerts[i]);
-            newVerts[i + vertices.length].r.add(delta);
-            if (addedVerts[i].edge >= addedEdges.length / 2) {
-                newVerts[i + vertices.length].edge += edges.length;
+        for (int i = 0; i < addedVertices.length; i++) {
+            newVertices[i + vertices.length] = new Wvertex(addedVertices[i]);
+            newVertices[i + vertices.length].r.add(delta);
+            if (addedVertices[i].edge >= addedEdges.length / 2) {
+                newVertices[i + vertices.length].edge += edges.length;
             } else {
-                newVerts[i + vertices.length].edge += edges.length / 2;
+                newVertices[i + vertices.length].edge += edges.length / 2;
             }
         }
         for (int i = 0; i < addedFaces.length; i++) {
@@ -10882,11 +10882,11 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
                 newFaces[i + faces.length].edge += edges.length / 2;
             }
         }
-        boolean[] sel = new boolean[newVerts.length];
-        for (int i = vertices.length; i < newVerts.length; i++) {
+        boolean[] sel = new boolean[newVertices.length];
+        for (int i = vertices.length; i < newVertices.length; i++) {
             sel[i] = true;
         }
-        vertices = newVerts;
+        vertices = newVertices;
         edges = newEdges;
         faces = newFaces;
         // Update the texture parameters.

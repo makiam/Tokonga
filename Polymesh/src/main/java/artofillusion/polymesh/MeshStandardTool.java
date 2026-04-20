@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2005 by Peter Eastman (ReshapeMeshTool) 2006 by Francois Guillet (MeshStandardTool)
-   Changes copyright (C) 2023-2025 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -35,7 +35,7 @@ public class MeshStandardTool extends AdvancedEditingTool {
 
     private Vec3[] baseVertPos;
     private UndoRecord undo;
-    private static Image icon, selectedIcon;
+    //private static Image icon, selectedIcon;
     /**
      * hash maps are used to store manipulators for views
      */
@@ -48,7 +48,10 @@ public class MeshStandardTool extends AdvancedEditingTool {
 
     @Override
     public void activateManipulators(ViewerCanvas view) {
-        if (!manip2dMap.containsKey(view)) {
+        if (manip2dMap.containsKey(view)) {
+            ((PolyMeshViewer) view).setManipulator(manip2dMap.get(view));
+            ((PolyMeshViewer) view).addManipulator(manip3dMap.get(view));
+        } else {
             PolyMeshValueWidget valueWidget = null;
             if (controller instanceof PolyMeshEditorWindow) {
                 valueWidget = ((PolyMeshEditorWindow) controller).getValueWidget();
@@ -73,9 +76,6 @@ public class MeshStandardTool extends AdvancedEditingTool {
             ((PolyMeshViewer) view).addManipulator(manip3d);
             manip2dMap.put(view, manip2d);
             manip3dMap.put(view, manip3d);
-        } else {
-            ((PolyMeshViewer) view).setManipulator(manip2dMap.get(view));
-            ((PolyMeshViewer) view).addManipulator(manip3dMap.get(view));
         }
     }
 
@@ -89,13 +89,13 @@ public class MeshStandardTool extends AdvancedEditingTool {
         });
     }
 
-    public Image getIcon() {
-        return icon;
-    }
-
-    public Image getSelectedIcon() {
-        return selectedIcon;
-    }
+//    public Image getIcon() {
+//        return icon;
+//    }
+//
+//    public Image getSelectedIcon() {
+//        return selectedIcon;
+//    }
 
     private void doManipulatorPrepareShapingMesh(Manipulator.ManipulatorEvent e) {
         Mesh mesh = (Mesh) controller.getObject().getGeometry();
@@ -122,10 +122,10 @@ public class MeshStandardTool extends AdvancedEditingTool {
         theWindow.updateImage();
     }
 
-    private void doManipulatorRotatingMesh(SSMR2DManipulator.ManipulatorRotatingEvent e) {
+    private void doManipulatorRotatingMesh(SSMRManipulator.ManipulatorRotatingEvent e) {
         Mesh mesh = (Mesh) controller.getObject().getGeometry();
 
-        Vec3[] v = findRotatedPositions(baseVertPos, e.getMatrix(), (MeshViewer) e.getView());
+        var v = findRotatedPositions(baseVertPos, e.getMatrix(), (MeshViewer) e.getView());
         if (v != null) {
             mesh.setVertexPositions(v);
             controller.objectChanged();
@@ -144,14 +144,14 @@ public class MeshStandardTool extends AdvancedEditingTool {
         theWindow.updateImage();
     }
 
-    private void doManipulatorMovingMesh(SSMR2DManipulator.ManipulatorMovingEvent e) {
+    private void doManipulatorMovingMesh(SSMRManipulator.ManipulatorMovingEvent e) {
         MeshViewer mv = (MeshViewer) e.getView();
         Mesh mesh = (Mesh) controller.getObject().getGeometry();
-        Vec3[] v;
+
         Vec3 drag;
 
         drag = e.getDrag();
-        v = findDraggedPositions(drag, baseVertPos, mv, controller.getSelectionDistance());
+        var v = findDraggedPositions(drag, baseVertPos, mv, controller.getSelectionDistance());
         mesh.setVertexPositions(v);
         controller.objectChanged();
         theWindow.updateImage();

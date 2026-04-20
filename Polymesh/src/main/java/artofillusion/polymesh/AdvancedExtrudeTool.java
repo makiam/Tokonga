@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2007 by Francois Guillet
-   Changes copyright (C) 2023-2025 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
  This program is free software; you can redistribute it and/or modify it under the
  terms of the GNU General Public License as published by the Free Software
@@ -55,7 +55,9 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool {
 
     @Override
     public void activateManipulators(ViewerCanvas view) {
-        if (!manip3dHashMap.containsKey(view)) {
+        if (manip3dHashMap.containsKey(view)) {
+            ((PolyMeshViewer) view).setManipulator(manip3dHashMap.get(view));
+        } else {
             PolyMeshValueWidget valueWidget = null;
             if (controller instanceof PolyMeshEditorWindow) {
                 valueWidget = ((PolyMeshEditorWindow) controller).getValueWidget();
@@ -71,8 +73,6 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool {
             ((PolyMeshViewer) view).setManipulator(manip3d);
             manip3dHashMap.put(view, manip3d);
             selectionModeChanged(((MeshViewer) view).getController().getSelectionMode());
-        } else {
-            ((PolyMeshViewer) view).setManipulator(manip3dHashMap.get(view));
         }
     }
 
@@ -85,9 +85,7 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool {
     @Override
     public void deactivate() {
         super.deactivate();
-        manip3dHashMap.forEach((ViewerCanvas view, Manipulator manipulator) -> {
-            ((PolyMeshViewer) view).removeManipulator(manipulator);
-        });
+        manip3dHashMap.forEach((ViewerCanvas view, Manipulator manipulator) -> ((PolyMeshViewer) view).removeManipulator(manipulator));
     }
 
     private void doManipulatorPrepareShapingMesh(Manipulator.ManipulatorEvent e) {
@@ -96,9 +94,9 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool {
         origMesh = mesh.duplicate();
         selected = controller.getSelection();
         int selectMode = controller.getSelectionMode();
-        if (selectMode == PolyMeshEditorWindow.FACE_MODE) {
+        if (selectMode == MeshEditController.FACE_MODE) {
             mode = (separateFaces ? EXTRUDE_FACES : EXTRUDE_FACE_GROUPS);
-        } else if (selectMode == PolyMeshEditorWindow.EDGE_MODE) {
+        } else if (selectMode == MeshEditController.EDGE_MODE) {
             mode = (separateFaces ? EXTRUDE_EDGES : EXTRUDE_EDGE_GROUPS);
         } else {
             mode = NO_EXTRUDE;
@@ -147,7 +145,7 @@ public class AdvancedExtrudeTool extends AdvancedEditingTool {
         theWindow.updateImage();
     }
 
-    private void doManipulatorMovingMesh(SSMR2DManipulator.ManipulatorMovingEvent e) {
+    private void doManipulatorMovingMesh(SSMRManipulator.ManipulatorMovingEvent e) {
         MeshViewer mv = (MeshViewer) e.getView();
         PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
         Vec3 drag = e.getDrag();
