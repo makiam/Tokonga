@@ -29,8 +29,19 @@ public class UITheme {
 
     public Boolean isSelectable() { return selectable == null || selectable; }
 
+    public String getName() {
+        return name == null ? "" : name;
+    }
+
+    public String getAuthor() {
+        return author == null ? "" : author;
+    }
+
     @XStreamAlias("name")
     private String name;
+
+    @XStreamAlias("author")
+    private String author;
 
     @XStreamAlias("description")
     private String description;

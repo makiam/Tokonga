@@ -15,6 +15,7 @@ import artofillusion.util.IconGenerator;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
+import java.util.Map;
 import javax.swing.ImageIcon;
 import lombok.extern.slf4j.Slf4j;
 
@@ -160,7 +161,7 @@ public class DefaultToolButton extends ToolButton {
 
         // we're still here, so apply the style...
         // initialize the namespace
-        HashMap<String, Object> namespace = new HashMap<>(style.attributes);
+        Map<String, Object> namespace = new HashMap<>(style.attributes);
 
         if (image != null) {
             Image img = image.getImage();

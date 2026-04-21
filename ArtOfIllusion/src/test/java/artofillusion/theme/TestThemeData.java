@@ -27,9 +27,23 @@ public class TestThemeData {
     }
 
     @Test
+    void testThemeNameOmitted() throws IOException {
+        UITheme theme = (UITheme)xstream.fromXML(UITheme.class.getResource("/artofillusion/theme/Theme3/theme.xml").openStream());
+        Assertions.assertNotNull(theme.getName());
+        Assertions.assertEquals("", theme.getName());
+    }
+
+    @Test
+    void testThemeButtonOmitted() throws IOException {
+        UITheme theme = (UITheme)xstream.fromXML(UITheme.class.getResource("/artofillusion/theme/Theme3/theme.xml").openStream());
+        Assertions.assertNull(theme.getButton());
+    }
+
+    @Test
     void testThemeData() throws IOException {
         UITheme theme = (UITheme)xstream.fromXML(UITheme.class.getResource("/artofillusion/theme/Theme1/theme.xml").openStream());
 
+        Assertions.assertNotNull(theme.getName());
         Assertions.assertEquals("ElectricWax Grey", theme.getName());
         Assertions.assertNotNull(theme.getColorSets());
         Assertions.assertEquals(6, theme.getColorSets().size());
