@@ -69,22 +69,22 @@ public class ThemeManager {
      */
     public static class ColorSet {
 
-        public final Color appBackground;
-        public final Color paletteBackground;
-        public final Color viewerBackground;
-        public final Color viewerLine;
-        public final Color viewerHandle;
-        @Getter public final Color viewerHighlight;
-        public final Color viewerSpecialHighlight;
-        public final Color viewerDisabled;
-        public final Color viewerSurface;
-        public final Color viewerTransparent;
-        public final Color viewerLowValue;
-        public final Color viewerHighValue;
-        public final Color dockableBarColor1;
-        public final Color dockableBarColor2;
-        public final Color dockableTitleColor;
-        public final Color textColor;
+        private final Color appBackground;
+        private final Color paletteBackground;
+        private final Color viewerBackground;
+        private final Color viewerLine;
+        private final Color viewerHandle;
+        @Getter private final Color viewerHighlight;
+        private final Color viewerSpecialHighlight;
+        private final Color viewerDisabled;
+        private final Color viewerSurface;
+        private final Color viewerTransparent;
+        private final Color viewerLowValue;
+        private final Color viewerHighValue;
+        private final Color dockableBarColor1;
+        private final Color dockableBarColor2;
+        private final Color dockableTitleColor;
+        private final Color textColor;
         private final String name;
 
         private ColorSet(UIThemeColorSet colorSet) {
@@ -139,7 +139,7 @@ public class ThemeManager {
         public final int paletteMargin;
         //the theme colorsets
         private final List<ColorSet> colorSets;
-        public final boolean classicToolBarButtons;
+
         public final PluginRegistry.PluginResource resource;
         @Getter
         private final ClassLoader loader;
@@ -157,9 +157,7 @@ public class ThemeManager {
 
             var theme = (UITheme) xstream.fromXML(new ByteArrayInputStream(barr));
 
-            DocumentBuilder builder;
-            builder = documentBuilderFactory.newDocumentBuilder();
-            Document document = builder.parse(new ByteArrayInputStream(barr));
+            Document document = documentBuilderFactory.newDocumentBuilder().parse(new ByteArrayInputStream(barr));
 
             Element rootNode = document.getDocumentElement();
             NodeList themeNodeList = rootNode.getChildNodes();
@@ -187,7 +185,7 @@ public class ThemeManager {
             if (btn == null) {
                 buttonClass = DefaultToolButton.class;
                 buttonProperties = null;
-                classicToolBarButtons = false;
+
             } else {
                 String className = btn.getButtonClass();
                 Object properties = null;
@@ -203,8 +201,8 @@ public class ThemeManager {
                 // parse the button styles for this theme
                 ButtonStyle bstyle = null;
                 NodeList list = node.getChildNodes();
-
-                for (int i = 0; i < list.getLength(); i++) {
+                var nls = list.getLength();
+                for (int i = 0; i < nls; i++) {
                     Node kid = list.item(i);
                     if (kid.getNodeName().equals("style")) {
                         if (bstyle == null) {
@@ -218,8 +216,7 @@ public class ThemeManager {
                 buttonClass = cls;
                 buttonProperties = properties;
                 buttonStyles = bstyle;
-                String s = getAttribute(node, "useintoolbars");
-                classicToolBarButtons = s != null && !Boolean.parseBoolean(s);
+
             }
 
             paletteMargin = theme.getPaletteMargin();
@@ -263,7 +260,8 @@ public class ThemeManager {
          * @param node the XML defining the style.
          */
         public ButtonStyle(Node node) {
-            String name, value;
+            String name;
+            String value;
 
             // stash all attributes in the attributes map
             NamedNodeMap kids = node.getAttributes();
@@ -334,7 +332,7 @@ public class ThemeManager {
     private static ColorSet selectedColorSet;
     private static ThemeInfo[] themeList;
     private static Map<String, ThemeInfo> themeIdMap;
-    private static DocumentBuilderFactory documentBuilderFactory; //XML parsing
+    private static DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance(); //XML parsing
 
     /**
      * icon to use if no other icon can be found
@@ -389,36 +387,18 @@ public class ThemeManager {
 
     private static void applyThemeColors() {
         ColorSet set = selectedColorSet;
-        ViewerCanvas.backgroundColor = new Color(set.viewerBackground.getRed(),
-                set.viewerBackground.getGreen(),
-                set.viewerBackground.getBlue());
-        ViewerCanvas.lineColor = new Color(set.viewerLine.getRed(),
-                set.viewerLine.getGreen(),
-                set.viewerLine.getBlue());
-        ViewerCanvas.handleColor = new Color(set.viewerHandle.getRed(),
-                set.viewerHandle.getGreen(),
-                set.viewerHandle.getBlue());
-        ViewerCanvas.highlightColor = new Color(set.viewerHighlight.getRed(),
-                set.viewerHighlight.getGreen(),
-                set.viewerHighlight.getBlue());
-        ViewerCanvas.specialHighlightColor = new Color(set.viewerSpecialHighlight.getRed(),
-                set.viewerSpecialHighlight.getGreen(),
-                set.viewerSpecialHighlight.getBlue());
-        ViewerCanvas.disabledColor = new Color(set.viewerDisabled.getRed(),
-                set.viewerDisabled.getGreen(),
-                set.viewerDisabled.getBlue());
-        Color viewerSurface = new Color(set.viewerSurface.getRed(),
-                set.viewerSurface.getGreen(),
-                set.viewerSurface.getBlue());
-        Color viewerTransparent = new Color(set.viewerTransparent.getRed(),
-                set.viewerTransparent.getGreen(),
-                set.viewerTransparent.getBlue());
-        Color viewerLowValue = new Color(set.viewerLowValue.getRed(),
-                set.viewerLowValue.getGreen(),
-                set.viewerLowValue.getBlue());
-        Color viewerHighValue = new Color(set.viewerHighValue.getRed(),
-                set.viewerHighValue.getGreen(),
-                set.viewerHighValue.getBlue());
+
+        ViewerCanvas.backgroundColor = set.viewerBackground;
+        ViewerCanvas.lineColor = set.viewerLine;
+        ViewerCanvas.handleColor = set.viewerHandle;
+        ViewerCanvas.highlightColor = set.viewerHighlight;
+        ViewerCanvas.specialHighlightColor = set.viewerSpecialHighlight;
+        ViewerCanvas.disabledColor = set.viewerDisabled;
+        Color viewerSurface = set.viewerSurface;
+        Color viewerTransparent = set.viewerTransparent;
+        Color viewerLowValue = set.viewerLowValue;
+        Color viewerHighValue = set.viewerHighValue;
+
         ViewerCanvas.surfaceColor = viewerSurface;
         ViewerCanvas.surfaceRGBColor = new RGBColor(viewerSurface.getRed() / 255.0, viewerSurface.getGreen() / 255.0, viewerSurface.getBlue() / 255.0);
         ViewerCanvas.transparentColor = new RGBColor(viewerTransparent.getRed() / 255.0, viewerTransparent.getGreen() / 255.0, viewerTransparent.getBlue() / 255.0);
@@ -592,7 +572,7 @@ public class ThemeManager {
             try {
                 ctor = buttonClass.getConstructor(Object.class, ImageIcon.class);
                 return (ToolButton) ctor.newInstance(owner, new ImageIcon(url));
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 log.atError().setCause(t).log("Could not find a usable constructor for ToolButton: {}: {} due {}", buttonClass.getName(), iconName, t.getLocalizedMessage());
             }
         }
@@ -671,7 +651,8 @@ public class ThemeManager {
             throw new IllegalStateException("The themes have already been initialized.");
         }
         themeIdMap = new HashMap<>();
-        documentBuilderFactory = DocumentBuilderFactory.newInstance();
+
+
         List<PluginRegistry.PluginResource> resources = PluginRegistry.getResources("UITheme");
         List<ThemeInfo> list = new ArrayList<>();
         for (PluginRegistry.PluginResource resource: resources) {
@@ -683,7 +664,7 @@ public class ThemeManager {
             }
         }
         themeList = list.toArray(new ThemeInfo[0]);
-        for (ThemeInfo themeInfo : themeList) {
+        for (ThemeInfo themeInfo: themeList) {
             themeIdMap.put(themeInfo.resource.getId(), themeInfo);
         }
         defaultTheme = themeIdMap.get("default");

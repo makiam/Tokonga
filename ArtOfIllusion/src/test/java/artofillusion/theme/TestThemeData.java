@@ -78,4 +78,23 @@ public class TestThemeData {
         Assertions.assertNotNull(theme.getButton());
         Assertions.assertEquals(2, theme.getButton().getStyles().size());
     }
+
+    @Test
+    void testNoColorSet() throws IOException {
+        UITheme theme = (UITheme) xstream.fromXML(UITheme.class.getResource("/artofillusion/theme/Polymesh/theme.xml").openStream());
+        Assertions.assertNotNull(theme.getColorSets());
+    }
+
+    @Test
+    void testThemeNoButtonMargin() throws IOException {
+        UITheme theme = (UITheme) xstream.fromXML(UITheme.class.getResource("/artofillusion/theme/Polymesh/theme.xml").openStream());
+        Assertions.assertEquals(0, theme.getButtonMargin());
+    }
+
+    @Test
+    void testThemeNoPaletteMargin() throws IOException {
+        UITheme theme = (UITheme) xstream.fromXML(UITheme.class.getResource("/artofillusion/theme/Polymesh/theme.xml").openStream());
+        Assertions.assertEquals(0, theme.getPaletteMargin());
+    }
+
 }
