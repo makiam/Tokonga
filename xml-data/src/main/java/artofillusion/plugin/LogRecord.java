@@ -1,4 +1,4 @@
-/* Copyright 2024 by Maksim Khramov
+/* Copyright 2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -8,21 +8,25 @@
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
-package artofillusion.plugin
 
-import com.thoughtworks.xstream.annotations.XStreamAlias
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute
-import com.thoughtworks.xstream.annotations.XStreamConverter
-import com.thoughtworks.xstream.converters.extended.ToAttributedValueConverter
+package artofillusion.plugin;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
+import com.thoughtworks.xstream.converters.extended.ToAttributedValueConverter;
+import lombok.Getter;
 
 @XStreamAlias("log")
-@XStreamConverter(value = ToAttributedValueConverter::class, strings = ["text"])
-data class LogRecord(
+@XStreamConverter(value = ToAttributedValueConverter.class, strings = {"text"})
+@Getter
+public class LogRecord {
     @XStreamAsAttribute
-    val version: String? = null,
+    String version;
     @XStreamAsAttribute
-    private val date: String? = null,
+    String date;
     @XStreamAsAttribute
-    val author: String? = null,
-    val text: String? = null
-)
+    String author;
+    @XStreamAsAttribute
+    String text;
+}
