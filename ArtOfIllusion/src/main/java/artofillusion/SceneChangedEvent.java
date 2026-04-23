@@ -5,12 +5,18 @@
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful, but WITHOUT ANY 
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
-package artofillusion
 
-import artofillusion.ui.EditingWindow
+
+package artofillusion;
+
+import artofillusion.ui.EditingWindow;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+
 
 /**
  * A SceneChangedEvent is dispatched by an EditingWindow to indicate that some element of the
@@ -18,4 +24,8 @@ import artofillusion.ui.EditingWindow
  * properties of individual objects, textures, the list of currently selected objects, etc.
  */
 
-data class SceneChangedEvent(val window: EditingWindow)
+@Data
+@AllArgsConstructor
+public final class SceneChangedEvent {
+    private EditingWindow window;
+}
