@@ -8,11 +8,23 @@
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
-package artofillusion
+package artofillusion;
 
-import java.lang.Exception
+import lombok.Getter;
 
+@Getter
+public final class BypassEvent {
+    private final Scene scene;
+    private final String message;
+    private final Exception cause;
 
-data class BypassEvent(val scene: Scene?, val message: String, val cause: Exception?) {
-    constructor(scene: Scene?, message: String) : this(scene, message, null)
+    public BypassEvent(Scene scene, String message) {
+        this(scene, message, null);
+    }
+
+    public BypassEvent(Scene scene, String message, Exception cause) {
+        this.scene = scene;
+        this.message = message;
+        this.cause = cause;
+    }
 }
