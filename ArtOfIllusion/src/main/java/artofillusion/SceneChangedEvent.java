@@ -14,8 +14,7 @@ package artofillusion;
 
 import artofillusion.ui.EditingWindow;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-
+import lombok.Getter;
 
 
 /**
@@ -24,8 +23,12 @@ import lombok.Data;
  * properties of individual objects, textures, the list of currently selected objects, etc.
  */
 
-@Data
 @AllArgsConstructor
 public final class SceneChangedEvent {
+
+    public EditingWindow getWindow() {
+        return window;
+    }
+
     private EditingWindow window;
 }
