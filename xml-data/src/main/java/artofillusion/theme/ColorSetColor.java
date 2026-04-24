@@ -1,4 +1,4 @@
-/* Copyright 2026 by Maksim Khramov
+/* Copyright (C) 2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,20 +12,21 @@ package artofillusion.theme;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import lombok.Data;
+import lombok.Getter;
 
+import java.awt.*;
 
-import java.util.ArrayList;
-import java.util.List;
+@Getter
+public final class ColorSetColor {
 
-@XStreamAlias("button")
-@Data
-public class Button {
+    @XStreamAsAttribute @XStreamAlias("R")
+    int red;
+    @XStreamAsAttribute @XStreamAlias("G")
+    int green;
+    @XStreamAsAttribute @XStreamAlias("B")
+    int blue;
 
-    @XStreamAsAttribute
-    private String buttonClass = "";
-
-    @XStreamImplicit
-    private List<StyleAttribute> styles = new ArrayList<>();
+    public Color getColor() {
+        return new Color(red, green, blue);
+    }
 }

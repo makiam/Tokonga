@@ -16,6 +16,7 @@ import artofillusion.ArtOfIllusion;
 import artofillusion.PluginRegistry;
 import artofillusion.ViewerCanvas;
 import artofillusion.math.RGBColor;
+import artofillusion.theme.StyleAttribute;
 import artofillusion.theme.UITheme;
 import artofillusion.theme.UIThemeColorSet;
 import com.thoughtworks.xstream.XStream;
@@ -26,7 +27,6 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import javax.swing.*;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
@@ -58,8 +58,8 @@ public class ThemeManager {
         xstream.useAttributeFor(artofillusion.theme.Button.class, "buttonClass");
         xstream.aliasAttribute("class", "buttonClass");
         xstream.aliasSystemAttribute("buttonClass", "class");
-        xstream.allowTypes(new Class[]{UITheme.class, UIThemeColorSet.class, artofillusion.theme.Button.class, artofillusion.theme.ButtonStyle.class, DefaultToolButton.class});
-        xstream.processAnnotations(new Class[]{UITheme.class, UIThemeColorSet.class, artofillusion.theme.Button.class, artofillusion.theme.ButtonStyle.class});
+        xstream.allowTypes(new Class[]{UITheme.class, UIThemeColorSet.class, artofillusion.theme.Button.class, StyleAttribute.class, DefaultToolButton.class});
+        xstream.processAnnotations(new Class[]{UITheme.class, UIThemeColorSet.class, artofillusion.theme.Button.class, StyleAttribute.class});
     }
     /**
      * This class hold all the colors used by a theme. A theme can propose several color sets.
@@ -89,23 +89,23 @@ public class ThemeManager {
 
         private ColorSet(UIThemeColorSet colorSet) {
             name = colorSet.getName();
-            appBackground = colorSet.getApplicationBackground().getColor();
-            textColor = colorSet.getTextColor().getColor();
-            dockableTitleColor = colorSet.getDockableTitleColor().getColor();
-            paletteBackground = colorSet.getPaletteBackground().getColor();
-            viewerBackground = colorSet.getViewerBackground().getColor();
-            viewerLine = colorSet.getViewerLine().getColor();
-            viewerHandle = colorSet.getViewerHandle().getColor();
-            viewerHighValue = colorSet.getViewerHighValue().getColor();
-            dockableBarColor1 = colorSet.getDockableBarColor1().getColor();
-            dockableBarColor2 = colorSet.getDockableBarColor2().getColor();
+            appBackground = colorSet.getApplicationBackground();
+            textColor = colorSet.getTextColor();
+            dockableTitleColor = colorSet.getDockableTitleColor();
+            paletteBackground = colorSet.getPaletteBackground();
+            viewerBackground = colorSet.getViewerBackground();
+            viewerLine = colorSet.getViewerLine();
+            viewerHandle = colorSet.getViewerHandle();
+            viewerHighValue = colorSet.getViewerHighValue();
+            dockableBarColor1 = colorSet.getDockableBarColor1();
+            dockableBarColor2 = colorSet.getDockableBarColor2();
 
-            viewerHighlight = colorSet.getViewerHighlight().getColor();
-            viewerSpecialHighlight = colorSet.getViewerSpecialHighlight().getColor();
-            viewerDisabled = colorSet.getViewerDisabled().getColor();
-            viewerSurface = colorSet.getViewerSurface().getColor();
-            viewerTransparent = colorSet.getViewerTransparent().getColor();
-            viewerLowValue = colorSet.getViewerLowValue().getColor();
+            viewerHighlight = colorSet.getViewerHighlight();
+            viewerSpecialHighlight = colorSet.getViewerSpecialHighlight();
+            viewerDisabled = colorSet.getViewerDisabled();
+            viewerSurface = colorSet.getViewerSurface();
+            viewerTransparent = colorSet.getViewerTransparent();
+            viewerLowValue = colorSet.getViewerLowValue();
         }
 
 
