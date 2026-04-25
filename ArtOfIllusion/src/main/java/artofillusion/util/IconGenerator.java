@@ -31,7 +31,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Method;
+
 import java.net.URL;
 import java.util.*;
 import javax.swing.ImageIcon;
@@ -146,7 +146,8 @@ public class IconGenerator {
     public static final byte FEATHER_IN_DIR = 0x2;
 
     protected Instruction program = null;
-    protected int imageWidth, imageHeight;
+    protected int imageWidth;
+    protected int imageHeight;
     protected final String[] delims;
 
     // the meaning of the chars in delims[ARG_DELIMS]
@@ -264,8 +265,7 @@ public class IconGenerator {
      * @throws Exception if this IconGenerator is <i>not</i> compiled, or the compiled instructions
      * throw and exception.
      */
-    public Image execute(Map<String, Object> namespace, ClassLoader loader)
-            throws Exception {
+    public Image execute(Map<String, Object> namespace, ClassLoader loader) throws Exception {
         if (program == null) {
             throw new Exception("IconGenerator has no compiled program");
         }
@@ -285,8 +285,7 @@ public class IconGenerator {
      * @return the resulting Image
      * @throws Exception
      */
-    public static Image apply(String macro, String[] delims, Map<String, Object> namespace, ClassLoader loader, int width, int height)
-            throws Exception {
+    public static Image apply(String macro, String[] delims, Map<String, Object> namespace, ClassLoader loader, int width, int height) throws Exception {
         int len = macro.length();
         Instruction instr = new Instruction(width, height);
         BufferedImage result = null;
@@ -304,8 +303,7 @@ public class IconGenerator {
      *
      * @see #apply(String, String[], Map, ClassLoader, int, int)
      */
-    public static Image apply(String macro, String[] delims, Map<String, Object> namespace, ClassLoader loader)
-            throws Exception {
+    public static Image apply(String macro, String[] delims, Map<String, Object> namespace, ClassLoader loader) throws Exception {
         return apply(macro, delims, namespace, loader, -1, -1);
     }
 
@@ -314,8 +312,7 @@ public class IconGenerator {
      *
      * @see #apply(String, String[], Map, ClassLoader, int, int)
      */
-    public static Image apply(String macro, Map<String, Object> namespace, ClassLoader loader)
-            throws Exception {
+    public static Image apply(String macro, Map<String, Object> namespace, ClassLoader loader) throws Exception {
         return apply(macro, DEFAULT_DELIMS, namespace, loader, -1, -1);
     }
 
@@ -370,11 +367,11 @@ public class IconGenerator {
         BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR_PRE);
         Graphics2D graphics = (Graphics2D) result.getGraphics();
 
-        //graphics.setClip(x, y, width, height);
-        if (scale != 0) {
-            graphics.drawImage(orig, x, y, w, h, null);
-        } else {
+
+        if(scale == 0) {
             graphics.drawImage(orig, x, y, null);
+        } else {
+            graphics.drawImage(orig, x, y, w, h, null);
         }
 
         graphics.dispose();
@@ -433,8 +430,7 @@ public class IconGenerator {
 
         float alpha = 0.65f;
         float feather = 0.85f;
-        //float comp = 1.0f;
-        //float darkComp;
+
         int max = (depth < 0 ? -depth : depth);
 
         Color light = Color.WHITE;
@@ -481,8 +477,7 @@ public class IconGenerator {
             // set the alpha value for the light lines
             graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SrcOver.getRule(), alpha));
 
-            // now draw light lines (so corners get antialiasing)
-            //graphics.setColor(new Color(comp, comp, comp));
+
             graphics.setColor(light);
 
             if (depth > 0) {
@@ -542,7 +537,10 @@ public class IconGenerator {
         }
 
         int[] pix = new int[width];
-        int p, r, g, b;
+        int p;
+        int r;
+        int g;
+        int b;
         int max = height + y;
         // add to pixels
         for (int i = y; i < max; i++) {
@@ -595,15 +593,15 @@ public class IconGenerator {
         }
 
         int[] pix = new int[width];
-        int p, r, g, b;
+        int p;
         int max = height + y;
         for (int i = y; i < max; i++) {
             pix = image.getRGB(x, i, width, 1, pix, 0, width);
             for (int j = 0; j < width; j++) {
                 p = pix[j];
-                r = Math.max(0, ((p >> 16) & 0xff) - red);
-                g = Math.max(0, ((p >> 8) & 0xff) - green);
-                b = Math.max(0, (p & 0xff) - blue);
+                int r = Math.max(0, ((p >> 16) & 0xff) - red);
+                int g = Math.max(0, ((p >> 8) & 0xff) - green);
+                int b = Math.max(0, (p & 0xff) - blue);
 
                 pix[j] = (p & 0xff000000) + (r << 16) + (g << 8) + b;
             }
@@ -647,16 +645,16 @@ public class IconGenerator {
         }
 
         int[] pix = new int[width];
-        int p, a, r, g, b;
+        int p;
         int max = height + y;
         for (int i = y; i < max; i++) {
             pix = image.getRGB(x, i, width, 1, pix, 0, width);
             for (int j = 0; j < width; j++) {
                 p = pix[j];
-                a = (int) Math.min(0xff, alpha * ((p >> 24) & 0xff));
-                r = (int) Math.min(0xff, red * ((p >> 16) & 0xff));
-                g = (int) Math.min(0xff, green * ((p >> 8) & 0xff));
-                b = (int) Math.min(0xff, blue * (p & 0xff));
+                int a = (int) Math.min(0xff, alpha * ((p >> 24) & 0xff));
+                int r = (int) Math.min(0xff, red * ((p >> 16) & 0xff));
+                int g = (int) Math.min(0xff, green * ((p >> 8) & 0xff));
+                int b = (int) Math.min(0xff, blue * (p & 0xff));
 
                 pix[j] = (a << 24) + (r << 16) + (g << 8) + b;
             }
@@ -779,7 +777,8 @@ public class IconGenerator {
      * then <i>overlay</i> is centered on <i>image</i>.
      */
     public static void overlay(BufferedImage image, Image overlay, Rectangle clip) {
-        int x = 0, y = 0;
+        int x = 0;
+        int y = 0;
 
         if (clip == null) {
             int width = image.getWidth();
@@ -860,21 +859,20 @@ public class IconGenerator {
         int dark = Math.max(0, Math.min(0xff, (int) (alpha * 255.0f))) << 24;
         int light = Math.max(0, Math.min(0xff, (int) (alpha * attenuate * 255.0f))) << 24;
 
-        int i, j;
         int p, a, r, g, b;
 
         // get the first row
         pix[1] = image.getRGB(x, y, width, 1, pix[1], 0, width);
 
         int max = y + height;
-        for (i = y; i < max; i++) {
+        for (int i = y; i < max; i++) {
             if (i < max - 1) {
                 pix[2] = image.getRGB(x, i + 1, width, 1, pix[2], 0, width);
             } else {
                 pix[2] = null;
             }
 
-            for (j = x; j < width; j++) {
+            for (int j = x; j < width; j++) {
                 tl = tp = tr = lt = rt = bl = bm = br = -1;
 
                 p = pix[1][j];
@@ -1051,7 +1049,7 @@ public class IconGenerator {
         int[] pix1 = new int[width];
         int[] pix2 = new int[width];
 
-        int i, j, pa, a;
+        int pa, a;
 
         float transx;
         float atten = 0.8f;
@@ -1060,7 +1058,7 @@ public class IconGenerator {
         int cy = height / 2;
         int cx = width / 2;
 
-        int firstx = xsize;
+        int firstx;
         int mitre = Math.min(xsize, (ysize > 0 ? ysize : xsize));
 
         /*
@@ -1068,7 +1066,8 @@ public class IconGenerator {
          * we only feather pixels *less* transparent. Pixels already *more* transparent
          * are left unchanged.
          */
-        for (i = y; i <= cy; i++) {
+        for (int i = y; i <= cy; i++) {
+            int j;
             if (dir == FEATHER_OUT_DIR) {
 
                 pix1 = image.getRGB(0, i, width, 1, pix1, 0, width);
@@ -1252,7 +1251,7 @@ public class IconGenerator {
         /**
          * name of method to call for this instruction
          */
-        ArrayList<String> method;
+        List<String> method;
 
         /**
          * antia-alias blend factors
@@ -1309,8 +1308,7 @@ public class IconGenerator {
         /**
          * compile the next Instruction
          */
-        public Instruction compileNext(String[] delims)
-                throws Exception {
+        public Instruction compileNext(String[] delims) throws Exception {
             if (next == null) {
                 next = new Instruction(imageWidth, imageHeight);
             }
@@ -1322,8 +1320,7 @@ public class IconGenerator {
         /**
          * compile one instruction from the macro into this Instruction object.
          */
-        public void compile(String macro, int pos, String[] delims)
-                throws Exception {
+        public void compile(String macro, int pos, String[] delims) throws Exception {
             source = macro;
             this.delims = delims;
 
@@ -1353,11 +1350,8 @@ public class IconGenerator {
 
             Color color;
 
-            int i, arglen;
-
             int valid = 0, validop;
 
-            char c;
             String arg;
             byte opval;
 
@@ -1382,7 +1376,7 @@ public class IconGenerator {
 
             // collect all the close chars into a single string
             String close = ops.substring(OP_COMPOSIT - 1, OP_COMPOSIT);
-            for (i = 1; i < openclose.length(); i += 2) {
+            for (int i = 1; i < openclose.length(); i += 2) {
                 close += openclose.charAt(i);
             }
 
@@ -1393,7 +1387,7 @@ public class IconGenerator {
 
             while (pos >= 0 && (end = parseToken(macro, pos)) >= pos) {
 
-                c = macro.charAt(pos);
+                char c = macro.charAt(pos);
                 opval = (byte) (optok.indexOf(c) + 1);
 
                 // test for valid
@@ -1421,13 +1415,10 @@ public class IconGenerator {
                     break;
                 }
 
+                int arglen;
                 switch (opval) {
 
-                    case OP_ADD:
-                    case OP_SUBTRACT:
-                    case OP_MULTIPLY:
-                    case OP_OVERLAY:
-                    case OP_ASSIGN:
+                    case OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_OVERLAY, OP_ASSIGN:
                         // set the valid operands
                         valid = (1 << OP_COLOR) + (1 << OP_NUMBER);
 
@@ -1568,8 +1559,7 @@ public class IconGenerator {
                                     antialias = parseArgs(antialias, 1, pos, end);
                                     break;
 
-                                case OP_ADD:
-                                case OP_SUBTRACT:
+                                case OP_ADD, OP_SUBTRACT:
                                     red = green = blue = Float.parseFloat(arg);
                                     break;
 
@@ -1613,8 +1603,7 @@ public class IconGenerator {
                 // scale set values and default unset ones
                 if (opval == OP_COLOR) {
                     switch (opcode) {
-                        case OP_ADD:
-                        case OP_SUBTRACT:
+                        case OP_ADD, OP_SUBTRACT:
                             red = (red >= 0 ? red * 0xff : 0.0f);
                             green = (green >= 0 ? green * 0xff : 0.0f);
                             blue = (blue >= 0 ? blue * 0xff : 0.0f);
@@ -1666,8 +1655,7 @@ public class IconGenerator {
         /**
          * execute this instruction
          */
-        public BufferedImage execute(BufferedImage lhs, Map<String, Object> namespace, ClassLoader loader)
-                throws Exception {
+        public BufferedImage execute(BufferedImage lhs, Map<String, Object> namespace, ClassLoader loader) throws Exception {
             int x, y, z, w, h;
             int width, height;
 
@@ -1704,11 +1692,11 @@ public class IconGenerator {
 
             // if LHS dimensions are still unknown, try defaulting to RHS
             if (width < 0 && height < 0) {
-                if (rhs != null) {
+                if (rhs == null) {
+                    throw new Exception("IconGenerator: cannot determine initial image size. Source: " + source.substring(start, end));
+                } else {
                     width = rhs.getWidth();
                     height = rhs.getHeight();
-                } else {
-                    throw new Exception("IconGenerator: cannot determine initial image size. Source: " + source.substring(start, end));
                 }
             }
 
@@ -1889,13 +1877,8 @@ public class IconGenerator {
                 // antialias
                 if (antialias != null && antialias.length > 0) {
                     float a = antialias.getFloat(0);
-                    float atten;
+                    float atten = antialias.length > 1 ? antialias.getFloat(1) : -1;
 
-                    if (antialias.length > 1) {
-                        atten = antialias.getFloat(1);
-                    } else {
-                        atten = -1;
-                    }
                     antialias(rhs, a, atten, null);
                 } /*
                 // overlay
@@ -1908,8 +1891,7 @@ public class IconGenerator {
                     int tb = 0;
                     tb = resize.calc(tb, 1);
 
-                    byte dir = (lr < 0 || tb < 0
-                            ? FEATHER_IN_DIR : FEATHER_OUT_DIR);
+                    byte dir = (lr < 0 || tb < 0 ? FEATHER_IN_DIR : FEATHER_OUT_DIR);
 
                     if (lr < 0) {
                         lr = -lr;
@@ -1991,8 +1973,7 @@ public class IconGenerator {
             return (next != null ? next.execute(lhs, namespace, loader) : lhs);
         }
 
-        protected void error(String message, int pos)
-                throws Exception {
+        protected void error(String message, int pos) throws Exception {
             int first = Math.max(0, pos - 10);
             int last = Math.min(source.length(), pos + 10);
             int max = dots.length() - 1;
@@ -2043,26 +2024,13 @@ public class IconGenerator {
                     }
                 }
 
-                //if (obj == null) return null;
+
                 if (obj == null) {
                     throw new FileNotFoundException(name);
                 }
-            } else {
-                Image img = (Image) obj;
             }
 
             namespace.put(name, obj);
-
-            // make a copy
-            /*
-            BufferedImage tmp = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR_PRE);
-            Graphics gr = tmp.getGraphics();
-            gr.drawImage((Image) obj, 0, 0, null);
-            gr.dispose();
-            obj = tmp;
-
-            return (BufferedImage) obj;
-             */
             return copy((Image) obj, width, height, scale);
         }
 
@@ -2118,20 +2086,15 @@ public class IconGenerator {
             switch (c) {
 
                 //case '(':
-                case ' ':
-                case '\t':
-                case '\r':
-                case '\n':
+                case ' ', '\t', '\r', '\n':
                     // skip whitespace and nested parens
                     //while (macro.charAt(++pos) == ' ');
-                    while (++pos < len && " \t\r\n".indexOf(macro.charAt(pos)) >= 0);
+                    while (++pos < len && WHITESPACE.indexOf(macro.charAt(pos)) >= 0);
 
                     // and dequote
                     return (QUOTES.indexOf(macro.charAt(pos)) >= 0 ? pos + 1 : pos);
 
-                case ')':
-                case ']':
-                case '}':
+                case ')', ']', '}':
                     // skip nested parens
                     while (++pos < len && " )]}\t\r\n".indexOf(macro.charAt(pos)) >= 0);
                     return (pos < len ? pos : -1);
@@ -2205,32 +2168,22 @@ public class IconGenerator {
                     if (pos2 - pos1 > 1 && "+-=".indexOf(macro.charAt(pos1 + 1)) >= 0) {
 
                         switch (macro.charAt(pos1)) {
-                            case 'x':
-                            case 'X':
-                            case 'a':
-                            case 'A':
+                            case 'x', 'X', 'a', 'A':
                                 index = 0;
                                 pos1++;
                                 break;
 
-                            case 'y':
-                            case 'Y':
-                            case 'r':
-                            case 'R':
+                            case 'y', 'Y', 'r', 'R':
                                 index = 1;
                                 pos1++;
                                 break;
 
-                            case 'z':
-                            case 'Z':
-                            case 'g':
-                            case 'G':
+                            case 'z', 'Z', 'g', 'G':
                                 index = 2;
                                 pos1++;
                                 break;
 
-                            case 'b':
-                            case 'B':
+                            case 'b', 'B':
                                 index = 3;
                                 pos1++;
                                 break;
@@ -2240,11 +2193,7 @@ public class IconGenerator {
                     if (pos2 > pos1) {
                         opval = (byte) (delims[OPS].indexOf(macro.charAt(pos1)) + 1);
                         switch (opval) {
-                            case OP_SUBTRACT:
-                            case OP_ADD:
-                            case OP_ASSIGN:
-                            case OP_FEATHER:
-                            case OP_SCALE:
+                            case OP_SUBTRACT, OP_ADD, OP_ASSIGN, OP_FEATHER, OP_SCALE:
                                 pos1++;
                                 opcode[index] = opval;
                                 break;
