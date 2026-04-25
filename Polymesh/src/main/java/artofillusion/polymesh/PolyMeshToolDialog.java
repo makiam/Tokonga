@@ -125,7 +125,7 @@ class PolyMeshToolDialog extends javax.swing.JDialog {
         meshTypeLabel.setText(Translate.text("polymesh:meshType")
         );
 
-        meshTypeSelector.setModel(new FilesListModel());
+        meshTypeSelector.setModel(new TemplatesListModel());
         meshTypeSelector.addActionListener(this::meshTypeSelectorActionPerformed);
 
         smoothTypeLabel.setLabelFor(smoothTypesList);
