@@ -1,4 +1,4 @@
-/* Copyright (C) 2026 by Maksim Khramov
+/* Copyright (C) 2024-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -10,25 +10,25 @@
 
 package artofillusion.tools;
 
-import artofillusion.object.Cylinder;
+import artofillusion.object.NullObject;
 import artofillusion.object.Object3D;
 import artofillusion.ui.Translate;
 
 import java.util.Optional;
 
-public class ConeFactory implements PrimitiveFactory {
+public class NullFactory implements PrimitiveFactory {
     @Override
-    public String getCategory() {
-        return "Geometry";
+    public String getName() {
+        return Translate.text("menu.null");
     }
 
     @Override
-    public String getName() {
-        return Translate.text("menu.cone");
+    public String getCategory() {
+        return "Other";
     }
 
     @Override
     public Optional<Object3D> create() {
-        return Optional.of(new Cylinder(1.0, 0.5, 0.5, 0.0));
+        return Optional.of(new NullObject());
     }
 }
