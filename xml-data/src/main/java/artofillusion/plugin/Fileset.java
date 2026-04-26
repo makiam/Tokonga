@@ -1,4 +1,4 @@
-/* Copyright 2024 by Maksim Khramov
+/* Copyright 2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -8,18 +8,22 @@
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
-package artofillusion.plugin
+package artofillusion.plugin;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias
-import com.thoughtworks.xstream.annotations.XStreamImplicit
-import java.util.ArrayList
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-@XStreamAlias("history")
-class History {
-    @XStreamImplicit
-    private val records: MutableList<LogRecord?>? = ArrayList<LogRecord?>()
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-    fun getRecords(): MutableList<LogRecord?> {
-        return (if (records == null) mutableListOf<LogRecord?>() else records)
+@XStreamAlias("fileset")
+public final class Fileset {
+
+    public List<FilesetItem> getFiles() {
+        return files == null ? Collections.emptyList() : files;
     }
+
+    @XStreamImplicit
+    private List<FilesetItem> files = new ArrayList<>();
 }

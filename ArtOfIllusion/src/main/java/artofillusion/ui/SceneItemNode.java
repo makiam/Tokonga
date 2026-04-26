@@ -1,0 +1,34 @@
+/* Copyright (C) 2025-2026 by Maksim Khramov
+
+   This program is free software; you can redistribute it and/or modify it under the
+   terms of the GNU General Public License as published by the Free Software
+   Foundation; either version 2 of the License, or (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+   PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
+package artofillusion.ui;
+
+import artofillusion.object.ObjectInfo;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+
+public class SceneItemNode extends DefaultMutableTreeNode {
+    public SceneItemNode(ObjectInfo sceneItem) {
+        super(sceneItem, true);
+        var items = sceneItem.getChildren();
+        if (items.length == 0) this.allowsChildren = false;
+        for (var item : items) add(new SceneItemNode(item));
+    }
+
+    @Override
+    public String toString() {
+        return "Scene Object: " + getUserObject().getName();
+    }
+
+    @Override
+    public ObjectInfo getUserObject() {
+        return (ObjectInfo) super.getUserObject();
+    }
+}

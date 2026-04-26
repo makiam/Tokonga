@@ -53,7 +53,7 @@ import static org.slf4j.Logger.ROOT_LOGGER_NAME;
 public class ArtOfIllusion {
 
     @Getter
-    private static final GroovyShell shell = AppShell.INSTANCE.getShell();
+    private static final GroovyShell shell = AppShell.getShell();
 
     public static final String APP_DIRECTORY;
     public static final String PLUGIN_DIRECTORY;
@@ -76,13 +76,13 @@ public class ArtOfIllusion {
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> log.atError().setCause(e).log("Caught exception: " + e.getMessage()));
 
         // Set up the standard directories.
-        APP_DIRECTORY = AppPath.INSTANCE.getAppPath();
+        APP_DIRECTORY = AppPath.getAppPath();
         PLUGIN_DIRECTORY = Paths.get(APP_DIRECTORY, "Plugins").toString();
         TOOL_SCRIPT_DIRECTORY = Paths.get(APP_DIRECTORY, "Scripts", "Tools").toString();
         OBJECT_SCRIPT_DIRECTORY = Paths.get(APP_DIRECTORY, "Scripts", "Objects").toString();
         STARTUP_SCRIPT_DIRECTORY = Paths.get(APP_DIRECTORY, "Scripts", "Startup").toString();
 
-        APP_ICON = AppIcon.INSTANCE.getAppIcon();
+        APP_ICON = AppIcon.getAppIcon();
 
         // Build a table of classes which have moved.
         try {

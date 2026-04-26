@@ -1,4 +1,4 @@
-/* Copyright 2024 by Maksim Khramov
+/* Copyright 2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -8,14 +8,23 @@
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
-package artofillusion.procedural;
+package artofillusion.plugin;
 
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import lombok.Getter;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import lombok.val;
 
-@Getter
-@XStreamAlias("node")
-public class NodeDef {
-    private String name;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+@XStreamAlias("history")
+public final class History {
+    public List<LogRecord> getRecords() {
+        return records == null ? Collections.emptyList() : records;
+    }
+
+    @XStreamImplicit
+    private List<LogRecord> records = new ArrayList<>();
 }
