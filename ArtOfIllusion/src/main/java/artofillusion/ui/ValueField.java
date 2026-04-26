@@ -1,4 +1,5 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
+   Changes copyright (C) 2024 by Petri Ihalainen
    Changes copyright (C) 2023-2025 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -11,16 +12,22 @@
 
 package artofillusion.ui;
 
+import buoy.event.FocusLostEvent;
 import buoy.widget.*;
 import lombok.Getter;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 /**
  * A ValueField is a BTextField used for entering a numerical value. Constraints can
  * be specified for the value, for example, that it must be positive. If an illegal
- * value is entered into the text field, the text turns red to indicate this.
+ * value is entered into the text field, the text turns red to indicate this. The field
+ * can handle a comma or a point as decimal separator.
  */
+
 public class ValueField extends BTextField {
 
     /**
@@ -46,7 +53,6 @@ public class ValueField extends BTextField {
         this(value, NONE);
     }
 
-
     public ValueField(double value, int constraints) {
         this(value, constraints, 5);
     }
@@ -63,6 +69,10 @@ public class ValueField extends BTextField {
         super(columns);
         this.constraints = constraints;
         setValue(value);
+        getComponent().addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {ValueField.this.commaToPoint(); }
+        });
     }
 
     /**
@@ -88,9 +98,30 @@ public class ValueField extends BTextField {
 
         try {
             if ((constraints & INTEGER) != 0) {
-                val = (double) Integer.parseInt(getText());
+                val = Integer.parseInt(getText());
             } else {
                 val = Double.valueOf(getText());
+            }
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+        return isValid(val);
+    }
+
+    /**
+     * Determine whether the given text is a valid number.
+     * <p>
+     * This variant is used while the text is being edited.
+     * It pretends to see commas as points.
+     **/
+    private boolean isTextValid(String text) {
+        double val = value;
+
+        try {
+            if ((constraints & INTEGER) != 0) {
+                val = (double) Integer.parseInt(text);
+            } else {
+                val = new Double(text);
             }
         } catch (NumberFormatException ex) {
             return false;
@@ -132,16 +163,16 @@ public class ValueField extends BTextField {
 
         try {
             if ((constraints & INTEGER) != 0) {
-                val = (double) Integer.parseInt(getText());
+                val = Integer.parseInt(getDecimalText());
             } else {
-                val = Double.parseDouble(getText());
+                val = Double.parseDouble(getDecimalText());
             }
         } catch (NumberFormatException ex) {
             setTextColor(false);
             return;
         }
         boolean suppress;
-        if (isTextValid()) {
+        if (isTextValid(getDecimalText())) {
             value = val;
             setTextColor(true);
             suppress = (val == oldVal);
@@ -150,16 +181,13 @@ public class ValueField extends BTextField {
             suppress = validEventsOnly;
         }
         try {
-            if (suppress) {
-                suppressEvents++;
-            }
+            if (suppress) suppressEvents++;
             super.textChanged();
         } finally {
-            if (suppress) {
-                suppressEvents--;
-            }
+            if (suppress) suppressEvents--;
         }
     }
+
 
     /**
      * Set the value in this field.
@@ -192,6 +220,31 @@ public class ValueField extends BTextField {
             int digits = (int) Math.floor(Math.log(Math.abs(val)) / Math.log(10.0));
             double scale = Math.pow(10.0, digits < 0 ? decimalPlaces - 1 - digits : decimalPlaces);
             return Double.toString(Math.round(val * scale) / scale);
+        }
+    }
+
+    /**
+     * Read the field text in a form that treats comma as alternative decimal separator
+     * This is used while the text field is being edited.
+     **/
+    private String getDecimalText() {
+        return getText().replace(",", ".");
+    }
+
+    /**
+     * Change a decimal comma into a decimal point.
+     * This shoud be called, when editing is done.
+     **/
+    private void commaToPoint() {
+        if (isTextValid()) // The text is valid as such, nothing to do.
+            return;
+
+        // If the text is valid, with comma for point, let's switch it. Using 'setText()'
+        // directly threw "java.lang.IllegalStateException: Attempt to mutate in notification".
+        // The solution is invokeLater, which allows the correct thread to do the work.
+
+        if (isTextValid(getDecimalText())) {
+            SwingUtilities.invokeLater(() -> setText(getDecimalText()));
         }
     }
 
