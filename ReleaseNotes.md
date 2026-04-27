@@ -59,11 +59,8 @@ Extracted some Polymesh code to helper class: https://github.com/makiam/Tokonga/
 ### Release #60
 
 * Update Checkbox Menu Items processing: https://github.com/makiam/Tokonga/pull/156
-
 * Simplify code for toggle Smooth mode for Polymesh editor
-
 * Simplify code for copy data to clipboard in Polymesh editor
-
 * Fix menu response on Undo/Redo commands for toggle Smooth mode in Polymesh editor
 
 ### Release #59
@@ -73,7 +70,6 @@ Extracted some Polymesh code to helper class: https://github.com/makiam/Tokonga/
 ### Release #58
 
 * Minor update for Procedure Editor related to shortcut and menu processing: https://github.com/makiam/Tokonga/pull/150
-
 * Update to clean some SonarLint code warnings: https://github.com/makiam/Tokonga/pull/149
 
 ### Release #57 (10.06.2025)
@@ -81,7 +77,6 @@ Extracted some Polymesh code to helper class: https://github.com/makiam/Tokonga/
 **NB!** Current release drops compatibility with Procedural Textures version 0. Version 1 introduced in 2007 so older scenes with Procedural texture will not open (As workaround open and save scene in previous build)
 
 * Drop Procedural Texture version 0 compatibility: https://github.com/makiam/Tokonga/pull/148
-
 * Now Script can be run from Script Editor window using F5 shortcut
 
 ### Release #56
@@ -112,9 +107,57 @@ Extracted some Polymesh code to helper class: https://github.com/makiam/Tokonga/
 * Drop Procedure Material version 0 compatibility: https://github.com/makiam/Tokonga/pull/129
 
 ### Release #51 
+
 * Update animation tracks code: https://github.com/makiam/Tokonga/pull/126
 
 ### Release #50 (25.03.2025)
 
 * Fixed regression in procedure loading code: https://github.com/makiam/Tokonga/pull/123
 * Groovy and Script editor libraries updated to latest: https://github.com/makiam/Tokonga/pull/119
+
+### Release #49 (17.03.2025)
+
+* Update UI for Commentary module: https://github.com/makiam/Tokonga/pull/118
+
+### Release #48 (10.03.2025)
+
+* Updatу procedure code: https://github.com/makiam/Tokonga/pull/115
+
+### Release #47 (03.03.2025)
+
+* Update some procedural modules dialogs: https://github.com/makiam/Tokonga/pull/111
+* Update base procedural module internals: https://github.com/makiam/Tokonga/pull/112
+
+### Release #46 (17.02.2025)
+
+* Update procedural modules annotations: https://github.com/makiam/Tokonga/pull/106
+
+### Release #45 (10.02.2025)
+
+* Broken Equality module is replaced with new Color and Numeric equality modules: https://github.com/makiam/Tokonga/pull/105
+
+### Release #44 (03.02.2025)
+
+* Minor update in Layout Window Edit menu Undo/Redo implementation: https://github.com/makiam/Tokonga/pull/101
+
+### Release #43 (28.01.2025)
+
+* Updated External Object Wizard: https://github.com/makiam/Tokonga/pull/94
+* Minor code updates: https://github.com/makiam/Tokonga/pull/95
+
+### Release #42 (07.01.2025)
+
+* Logging library version update: https://github.com/makiam/Tokonga/pull/92
+* Minor update Polymesh dialogs: https://github.com/makiam/Tokonga/pull/93
+* Minor code changes affects UI and animation tracks code: https://github.com/makiam/Tokonga/pull/91 and https://github.com/makiam/Tokonga/pull/90
+
+### Release #41 (31.12.2024)
+
+* Logging library version update: https://github.com/makiam/Tokonga/pull/83
+* Minor procedural editor modules menu update: https://github.com/makiam/Tokonga/pull/84
+* Update Ok/Cancel button processing code and Windows closing button processing: https://github.com/makiam/Tokonga/pull/86 and https://github.com/makiam/Tokonga/pull/88
+
+### Release #40 (23.12.2024)
+
+* Minor updates in Procedure Editor code: https://github.com/makiam/Tokonga/pull/79
+* Update for Scripted Object Parameters editor: now new paraneter created with generated name: https://github.com/makiam/Tokonga/pull/81
