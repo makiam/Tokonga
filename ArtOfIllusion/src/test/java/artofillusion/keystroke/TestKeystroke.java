@@ -26,7 +26,7 @@ class TestKeystroke {
 
         var result = (KeystrokesList)xstream.fromXML(KeystrokeManager.class.getResourceAsStream("keystrokes.xml"));
 
-        List<KeystrokeRecord> records = result.getRecords();
+        List<KeystrokeRecord> records = result.records();
 
         Assertions.assertNotNull(result);
         Assertions.assertNotNull(records);
@@ -39,7 +39,7 @@ class TestKeystroke {
         String xml = "<keystrokes><keystroke name=\"Delete Selection\" code=\"8\" modifiers=\"0\"/></keystrokes>";
         var result = (KeystrokesList)xstream.fromXML(xml);
         Assertions.assertNotNull(result);
-        List<KeystrokeRecord> records = result.getRecords();
+        List<KeystrokeRecord> records = result.records();
         Assertions.assertEquals(1, records.size());
         var rec = records.get(0);
         Assertions.assertEquals("Delete Selection", rec.getName());
@@ -52,7 +52,7 @@ class TestKeystroke {
         String xml = "<keystrokes><keystroke name=\"Delete Selection\" code=\"8\">println(\"Delete Selection\")</keystroke></keystrokes>";
         var result = (KeystrokesList)xstream.fromXML(xml);
         Assertions.assertNotNull(result);
-        List<KeystrokeRecord> records = result.getRecords();
+        List<KeystrokeRecord> records = result.records();
         Assertions.assertEquals(1, records.size());
         var rec = records.get(0);
         Assertions.assertEquals("println(\"Delete Selection\")", rec.getScript());
@@ -62,7 +62,7 @@ class TestKeystroke {
     @Test
     void testXMLGroupValue() {
         var result = (KeystrokesList)xstream.fromXML(KeystrokeManager.class.getResourceAsStream("keystrokes.xml"));
-        List<KeystrokeRecord> records = result.getRecords();
+        List<KeystrokeRecord> records = result.records();
         var ks = records.get(records.size()-1);
         Assertions.assertEquals("Polymesh", ks.getGroup());
         ks = records.get(0);
@@ -75,7 +75,7 @@ class TestKeystroke {
         String xml = "<keystrokes><keystroke name=\"Delete Selection\" code=\"127\"/></keystrokes>";
         var result = (KeystrokesList)xstream.fromXML(xml);
         Assertions.assertNotNull(result);
-        List<KeystrokeRecord> records = result.getRecords();
+        List<KeystrokeRecord> records = result.records();
         Assertions.assertEquals(1, records.size());
         var rec = records.get(0);
         Assertions.assertEquals("Delete Selection", rec.getName());
@@ -117,5 +117,16 @@ class TestKeystroke {
         Assertions.assertEquals("println()", rec.getScript());
     }
 
+    @Test
+    void testCanIDeleteRecord() {
+        String xml = "<keystrokes><keystroke name=\"Delete Selection\" code=\"127\"/></keystrokes>";
+        var result = (KeystrokesList)xstream.fromXML(xml);
+        Assertions.assertNotNull(result);
+        List<KeystrokeRecord> records = result.records();
+        var rec = records.get(0);
+        records.remove(rec);
+        Assertions.assertEquals(0, records.size());
+
+    }
 
 }
