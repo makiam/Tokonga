@@ -218,5 +218,33 @@ NB, Last change may affect 3rd-party plugins
 * Updated Polymesh Divide Edges dialog and also some i18n changes: https://github.com/makiam/Tokonga/pull/45
 * Deleted unused code from Layout: https://github.com/makiam/Tokonga/pull/42
 * Clean Plugin Registry code: https://github.com/makiam/Tokonga/pull/41
+
+### Release #29 (07.10.2024)
+
+* Update windows application launcher: https://github.com/makiam/Tokonga/pull/34
+* Application Standard Theme extracted to separate plugin: https://github.com/makiam/Tokonga/pull/35
+* Added RGBToHSVModule module to standard modules set: https://github.com/makiam/Tokonga/pull/37
+  (No more separate plugin needed)
+
+### Release #28 (30.09.2024)
+
+* Groovy version updated: https://github.com/makiam/Tokonga/pull/22
+* Groovy shell constructing move to separate class: https://github.com/makiam/Tokonga/pull/27
+* Remove deprecated edit methods from Material and Texture: https://github.com/makiam/Tokonga/pull/26
+* Updated Plugin Manager code: https://github.com/makiam/Tokonga/pull/24
+* Update one of PolyMesh dialogs: https://github.com/makiam/Tokonga/pull/23
+* Update CompoundImplicitEditorWindow: https://github.com/makiam/Tokonga/pull/28
+
+### Release #27 (23.09.2024)
+
+* Fixed some plugins compatibility issues: https://github.com/makiam/Tokonga/pull/19
+* Updated LayoutWindow to prevent double creation AssetsDialog: https://github.com/makiam/Tokonga/pull/21
+* Update Layout Window && Polymesh menu initialization: https://github.com/makiam/Tokonga/pull/17 , https://github.com/makiam/Tokonga/pull/20
+
+### Release #26 (16.09.2024)
+
+* Updates in Keystroke manager && Primitive Providers implementations: https://github.com/makiam/Tokonga/pull/15
+* Changed startup scripts order to be executed before Views created : https://github.com/makiam/Tokonga/pull/16
+
 * Fixed Script Editor regression: https://github.com/makiam/Tokonga/commit/6206d7925447c6f2077a6edc58826e9ce4db726a
 * Update application startup code: https://github.com/makiam/Tokonga/pull/43
