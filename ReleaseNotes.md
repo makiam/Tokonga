@@ -161,3 +161,62 @@ Extracted some Polymesh code to helper class: https://github.com/makiam/Tokonga/
 
 * Minor updates in Procedure Editor code: https://github.com/makiam/Tokonga/pull/79
 * Update for Scripted Object Parameters editor: now new paraneter created with generated name: https://github.com/makiam/Tokonga/pull/81
+
+### Release #39 (16.12.2024)
+
+* Update some localization data: https://github.com/makiam/Tokonga/pull/73
+* Updated Color chooser dialog to response on Escape and window close button: https://github.com/makiam/Tokonga/pull/76
+* Logger implementation switched from tiny log to logback: https://github.com/makiam/Tokonga/pull/74
+
+### Release #38 (09.12.2024)
+
+* Fixed regression error adding default track for new scene object: https://github.com/makiam/Tokonga/pull/71
+* Update application dialogs: https://github.com/makiam/Tokonga/pull/70
+* Minor rework for layout animation menu: https://github.com/makiam/Tokonga/pull/72
+
+### Release #37 (02.12.2024)
+
+* Update Image dialogs: https://github.com/makiam/Tokonga/pull/69
+
+### Release #36 (25.11.2024)
+
+* Jetbrains Mono font used in Script editor: https://github.com/makiam/Tokonga/pull/66
+* Main Window code split to smaller parts: https://github.com/makiam/Tokonga/pull/63
+
+### Release #35 (18.11.2024)
+
+* Keyboard shortcut scripts now compiled only once at first invocation: https://github.com/makiam/Tokonga/pull/61
+
+### Release #34 (13.11.2024)
+
+* Support for plugins blacklist: https://github.com/makiam/Tokonga/pull/59
+* Update application library: https://github.com/makiam/Tokonga/pull/58
+
+### Release #33 (05.11.2024)
+
+* Update Scene materials collection: https://github.com/makiam/Tokonga/pull/54
+* ObjectInfo class update: https://github.com/makiam/Tokonga/pull/55
+* Score view classes update: https://github.com/makiam/Tokonga/pull/56
+* Polymesh Bevel Dialog update: https://github.com/makiam/Tokonga/pull/57
+
+### Release #32 (30.10.2024)
+
+* Standard Theme layout and tests update: https://github.com/makiam/Tokonga/pull/50
+* More menu items used typed code bindings: https://github.com/makiam/Tokonga/pull/51
+* Polymesh create tool updated: https://github.com/makiam/Tokonga/pull/53
+* Underlaying buoy library updated: https://github.com/makiam/Tokonga/pull/52
+(Buoy sources: https://github.com/makiam/Buoy/archive/refs/tags/1.1.3.zip)
+
+NB, Last change may affect 3rd-party plugins
+
+### Release #31 (21.10.2024)
+
+* Build contains only minor code cleanup in Polymesh and Plugin Manager plugins
+
+### Release #30 (14.10.2024)
+
+* Updated Polymesh Divide Edges dialog and also some i18n changes: https://github.com/makiam/Tokonga/pull/45
+* Deleted unused code from Layout: https://github.com/makiam/Tokonga/pull/42
+* Clean Plugin Registry code: https://github.com/makiam/Tokonga/pull/41
+* Fixed Script Editor regression: https://github.com/makiam/Tokonga/commit/6206d7925447c6f2077a6edc58826e9ce4db726a
+* Update application startup code: https://github.com/makiam/Tokonga/pull/43
