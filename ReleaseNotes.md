@@ -248,3 +248,148 @@ NB, Last change may affect 3rd-party plugins
 
 * Fixed Script Editor regression: https://github.com/makiam/Tokonga/commit/6206d7925447c6f2077a6edc58826e9ce4db726a
 * Update application startup code: https://github.com/makiam/Tokonga/pull/43
+
+### Release #25 (08.09.2024)
+
+* Ported Applied Ray Aim fix: https://github.com/ArtOfIllusion/ArtOfIllusion/pull/328
+* Ported Primitive creation moved to separate plugin: https://github.com/ArtOfIllusion/ArtOfIllusion/pull/322
+
+### Release #24 (15.01.2024)
+
+* Minor fixes
+* Tests code update
+* Skin tool localization fix
+
+### Release #23 (11.27.2023)
+
+* Fixed regression in Scene SaveAs command
+* Misc updates
+
+### Release #22 (14.11.2023)
+
+* Minor code changes in Textures And Materials dialog.
+* Fixed some logging issues
+* Code typo fixes
+
+### Release #21 (06.11.2023)
+
+* Minor code changes: Reduce BFileChooser usages
+
+### Release #20 (26.10.2023)
+
+* Preferences panel updated to separate Language and Look And feel option to separate tab
+
+### Release #19 (21.08.2023)
+
+* OpenGL library updated to Version 2.5.0
+* Small updates in Polymesh plugin code.
+
+### Release #18 (14.08.2023)
+
+* Fixed missed Image module registration
+
+### Release #17 (10.08.2023)
+
+* Application now bundled with Preferences plugin
+
+### Release #16 (01.08.2023)
+
+* Included @peteihis Polymesh QuadMesh smooth fix (see PR https://github.com/ArtOfIllusion/Polymesh/pull/34)
+* Minor updates in Textures And Materials dialog
+* In Layout window create Scripted object relocated under Objects menu
+* Updated SPManager and PostInstall plugins
+
+### Release #15 (25.07.2023)
+
+* Keyborad shortcuts dialog reworked with pure Swing and uses groovy only syntax
+
+### Release #14 (03.07.2023)
+
+* Added extra Preferences Panel for custom plugin settings
+* Minor code cleanup
+
+### Release #13 (19.06.2023)
+
+* Fixed PropertiesPanel Rename-Undo sequence
+* Updated SplashScreen implementation
+
+### Release #12 (12.06.2023)
+
+* Scene Environment Properties dialog changes now can be reverted with standard Undo command.
+* Some code cleanup across all codebase
+
+### Release #11 (12.06.2023)
+
+* Minimal java version to run set to 11
+* JOGL libraries updated to 2.5.0 RC 2023.05.23
+
+### Release #10 (29.05.2023)
+
+* Updated UndoManager code
+* Fixed some localization issues with procedural modules
+* Minor code cleanup and format
+
+### Release #09 (22.05.2023)
+
+* Fixed application shutdown hung after SPManager window open
+* Environment properties dialog extracted to separate class
+* Included PR https://github.com/ArtOfIllusion/SPManager/pull/10
+* Minor code cleanup and format
+
+### Release #08 (22.05.2023)
+
+* Updated Open GL libraries to 2.5.0-rc-20230509
+
+### Release #07 (08.05.2023)
+
+* All code relocated with maven/gradle layout style 
+* Implemented RFE: https://github.com/ArtOfIllusion/ArtOfIllusion/issues/279
+* Merged upstream PR https://github.com/ArtOfIllusion/ArtOfIllusion/pull/301
+* Merged upstream PR https://github.com/ArtOfIllusion/ArtOfIllusion/pull/300
+* Merged upstream PR https://github.com/ArtOfIllusion/ArtOfIllusion/pull/219
+* Merged upstream PR https://github.com/ArtOfIllusion/ArtOfIllusion/pull/225
+* Merged upstream PR https://github.com/ArtOfIllusion/ArtOfIllusion/pull/222
+* Merged upstream PR https://github.com/ArtOfIllusion/ArtOfIllusion/pull/223
+
+### Release #06 (30.04.2023)
+
+* Polymesh plugin module merged into build
+* Merged upstream PR https://github.com/ArtOfIllusion/Polymesh/pull/2
+* Merged upstream PR https://github.com/ArtOfIllusion/Polymesh/pull/4
+* Merged upstream PR https://github.com/ArtOfIllusion/Polymesh/pull/29
+* Merged upstream PR https://github.com/ArtOfIllusion/Polymesh/pull/30
+* Merged upstream PR https://github.com/ArtOfIllusion/Polymesh/pull/33
+
+### Release #05 (23.04.2023)
+
+* Merged upstream PR https://github.com/ArtOfIllusion/SPManager/pull/9
+* Merged upstream PR https://github.com/ArtOfIllusion/SPManager/pull/5
+
+### Release #04 (16.04.2023)
+
+* Merged upstream PR https://github.com/ArtOfIllusion/ArtOfIllusion/pull/261
+* Merged upstream PR https://github.com/ArtOfIllusion/ArtOfIllusion/pull/298
+
+
+### Release #03 (09.04.2023)
+
+* RSyntax text area library bumped to version 3.3.3
+* Merged upstream PR https://github.com/ArtOfIllusion/ArtOfIllusion/pull/38
+* Merged upstream PR https://github.com/ArtOfIllusion/ArtOfIllusion/pull/285
+* Merged upstream PR https://github.com/ArtOfIllusion/ArtOfIllusion/pull/254
+
+### Release #02 (03.04.2023)
+
+* Merged upstream PR https://github.com/ArtOfIllusion/ArtOfIllusion/pull/123
+* Merged upstream PR https://github.com/ArtOfIllusion/ArtOfIllusion/pull/287
+* Merged upstream PR https://github.com/ArtOfIllusion/ArtOfIllusion/pull/24
+* Merged upstream PR https://github.com/ArtOfIllusion/ArtOfIllusion/pull/47
+
+### Release #01 (26.03.2023)
+
+* Build with OpenGL libraries 2.4.0 using gradle build system
+* Build with Groovy 4.0.0 and BeanShell 3.0.0
+
+* Merged upstream PR https://github.com/ArtOfIllusion/ArtOfIllusion/pull/238
+* Merged upstream PR https://github.com/ArtOfIllusion/ArtOfIllusion/pull/72
+* Merged upstream PR https://github.com/ArtOfIllusion/ArtOfIllusion/pull/297
