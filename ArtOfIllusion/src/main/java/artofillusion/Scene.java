@@ -43,11 +43,11 @@ import org.greenrobot.eventbus.Subscribe;
 @ImplementationVersion(current = 6, min = 2)
 public final class Scene implements ObjectsContainer, MaterialsContainer, TexturesContainer, ImagesContainer {
 
-    private final List<ObjectInfo> objects = new Vector<>();
+    final List<ObjectInfo> objects = new Vector<>();
 
-    @SuppressWarnings("java:S116") protected final List<Material> _materials = new Vector<>();
-    @SuppressWarnings("java:S116") protected final List<Texture> _textures = new Vector<>();
-    @SuppressWarnings("java:S116") protected final List<ImageMap> _images = new Vector<>();
+    final List<Material> materials = new Vector<>();
+    final List<Texture> textures = new Vector<>();
+    final List<ImageMap> images = new Vector<>();
 
     private List<Integer> selection;
 
@@ -116,7 +116,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         selection = new Vector<>();
 
         defTex.setName("Default Texture");
-        _textures.add(defTex);
+        textures.add(defTex);
 
 
 
@@ -603,17 +603,17 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
     @Subscribe
     public void onAddMaterial(MaterialsContainer.MaterialAddedEvent event) {
-        if(event.getScene() == this) materialListeners.forEach(listener -> listener.itemAdded(event.getPosition(), event.getMaterial()));
+        if(event.scene() == this) materialListeners.forEach(listener -> listener.itemAdded(event.position(), event.material()));
     }
 
     @Subscribe
     public void onAddTexture(TexturesContainer.TextureAddedEvent event) {
-        if(event.getScene() == this) textureListeners.forEach(listener -> listener.itemAdded(event.getPosition(), event.getTexture()));
+        if(event.scene() == this) textureListeners.forEach(listener -> listener.itemAdded(event.position(), event.texture()));
     }
 
     @Subscribe
     public void onRemoveMaterial(MaterialsContainer.MaterialRemovedEvent event) {
-        if(event.getScene() == this) materialListeners.forEach(listener -> listener.itemRemoved(event.getPosition(), event.getMaterial()));
+        if(event.scene() == this) materialListeners.forEach(listener -> listener.itemRemoved(event.position(), event.material()));
     }
 
     /**
@@ -623,11 +623,11 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * @param newIndex the new position to move it to
      */
     public void reorderMaterial(int oldIndex, int newIndex) {
-        if (newIndex < 0 || newIndex >= _materials.size()) {
+        if (newIndex < 0 || newIndex >= materials.size()) {
             throw new IllegalArgumentException("Illegal value for newIndex: " + newIndex);
         }
-        Material mat = _materials.remove(oldIndex);
-        _materials.add(newIndex, mat);
+        Material mat = materials.remove(oldIndex);
+        materials.add(newIndex, mat);
     }
 
     /**
@@ -635,16 +635,16 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      */
     public void removeTexture(int which) {
 
-        Texture tex = _textures.remove(which);
+        Texture tex = textures.remove(which);
         textureListeners.forEach(listener -> listener.itemRemoved(which, tex));
-        if (_textures.isEmpty()) {
+        if (textures.isEmpty()) {
             UniformTexture defTex = new UniformTexture();
             defTex.setName("Default Texture");
-            _textures.add(defTex);
+            textures.add(defTex);
             textureListeners.forEach(listener -> listener.itemAdded(0, defTex));
         }
-        Texture def = _textures.get(0);
-        for (var     obj : objects) {
+        Texture def = textures.get(0);
+        for (var obj : objects) {
             if (obj.getObject().getTexture() == tex) {
                 obj.setTexture(def, def.getDefaultMapping(obj.getObject()));
             }
@@ -683,11 +683,11 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * @param newIndex the new position to move it to
      */
     public void reorderTexture(int oldIndex, int newIndex) {
-        if (newIndex < 0 || newIndex >= _textures.size()) {
+        if (newIndex < 0 || newIndex >= textures.size()) {
             throw new IllegalArgumentException("Illegal value for newIndex: " + newIndex);
         }
-        Texture tex = _textures.remove(oldIndex);
-        _textures.add(newIndex, tex);
+        Texture tex = textures.remove(oldIndex);
+        textures.add(newIndex, tex);
     }
 
     /**
@@ -695,7 +695,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * any objects using the Material that it has changed.
      */
     public void changeMaterial(int which) {
-        Material mat = _materials.get(which);
+        Material mat = materials.get(which);
 
         objects.stream().filter(item -> item.getObject().getMaterial() == mat).
                 forEach(item -> {
@@ -710,7 +710,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * any objects using the Texture that it has changed.
      */
     public void changeTexture(int which) {
-        Texture tex = _textures.get(which);
+        Texture tex = textures.get(which);
 
         for (ObjectInfo obj : objects) {
 
@@ -792,19 +792,19 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * Remove an image map from the scene.
      */
     public boolean removeImage(int which) {
-        ImageMap image = _images.get(which);
+        ImageMap image = images.get(which);
 
-        for (var texture: _textures) {
+        for (var texture: textures) {
             if (texture.usesImage(image)) {
                 return false;
             }
         }
-        for (var material: _materials) {
+        for (var material: materials) {
             if (material.usesImage(image)) {
                 return false;
             }
         }
-        _images.remove(which);
+        images.remove(which);
         return true;
     }
 
@@ -917,43 +917,6 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
     }
 
     /**
-     * Get the number of objects in this scene.
-     */
-    public int getNumObjects() {
-        return objects.size();
-    }
-
-    /**
-     * Get the i'th object.
-     */
-    public ObjectInfo getObject(int i) {
-        return objects.get(i);
-    }
-
-    /**
-     * Get the object with the specified name, or null if there is none. If
-     * more than one object has the same name, this will return the first one.
-     */
-    public ObjectInfo getObject(String name) {
-        return objects.stream().filter(info -> info.getName().equals(name)).findFirst().orElse(null);
-    }
-
-    /**
-     * Get the object with the specified ID, or null if there is none.
-     */
-    public ObjectInfo getObjectById(int id) {
-        return objects.stream().filter(info -> info.getId() == id).findFirst().orElse(null);
-    }
-
-    /**
-     * Get all objects in the Scene in the form of a List.
-     */
-    @Override
-    public List<ObjectInfo> getObjects() {
-        return Collections.unmodifiableList(objects);
-    }
-
-    /**
      * Get the index of the specified object.
      */
     public int indexOf(ObjectInfo info) {
@@ -981,7 +944,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * Get the default Texture for newly created objects.
      */
     public Texture getDefaultTexture() {
-        return _textures.get(0);
+        return textures.get(0);
     }
 
     /**
@@ -1071,7 +1034,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
                         throw new IOException("Unknown class: " + classname);
                     }
                     con = cls.getConstructor(DataInputStream.class, Scene.class);
-                    _materials.add((Material) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this));
+                    materials.add((Material) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this));
                 } catch (IOException | ReflectiveOperationException | SecurityException ex) {
                     log.atError().setCause(ex).log("Error loading material: {}", ex.getMessage());
                     if (ex instanceof ClassNotFoundException) {
@@ -1081,7 +1044,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
                     }
                     UniformMaterial m = new UniformMaterial();
                     m.setName("<unreadable>");
-                    _materials.add(m);
+                    materials.add(m);
                 }
             } catch (IOException | ClassNotFoundException ex) {
                 log.atError().setCause(ex).log("Error reading: {}", ex.getMessage());
@@ -1104,7 +1067,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
                         throw new IOException("Unknown class: " + classname);
                     }
                     con = cls.getConstructor(DataInputStream.class, Scene.class);
-                    _textures.add((Texture) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this));
+                    textures.add((Texture) con.newInstance(new DataInputStream(new ByteArrayInputStream(bytes)), this));
                 } catch (IOException | SecurityException | ReflectiveOperationException ex) {
                     log.atError().setCause(ex).log("Error loading texture: {}", ex.getMessage());
                     if (ex instanceof ClassNotFoundException) {
@@ -1114,7 +1077,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
                     }
                     UniformTexture t = new UniformTexture();
                     t.setName("<unreadable>");
-                    _textures.add(t);
+                    textures.add(t);
                 }
             } catch (IOException | ClassNotFoundException | IllegalArgumentException ex) {
                 log.atError().setCause(ex).log("Error reading: {}", ex.getMessage());
@@ -1146,7 +1109,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         environMode = in.readShort();
         if (environMode == ENVIRON_SOLID) {
             environColor = new RGBColor(in);
-            environTexture = _textures.get(0);
+            environTexture = textures.get(0);
             environMapping = environTexture.getDefaultMapping(new Sphere(1.0, 1.0, 1.0));
             environParamValue = new ParameterValue[0];
         } else {
@@ -1163,7 +1126,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
                 environMapping = environTexture.getDefaultMapping(sphere);
                 ((LayeredMapping) environMapping).readFromFile(in, this);
             } else {
-                environTexture = _textures.get(texIndex);
+                environTexture = textures.get(texIndex);
                 try {
                     Class<?> mapClass = ArtOfIllusion.getClass(in.readUTF());
                     con = mapClass.getConstructor(DataInputStream.class, Object3D.class, Texture.class);
@@ -1305,7 +1268,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         if (environMode == ENVIRON_SOLID) {
             environColor.writeToFile(out);
         } else {
-            out.writeInt(_textures.lastIndexOf(environTexture));
+            out.writeInt(textures.lastIndexOf(environTexture));
             out.writeUTF(environMapping.getClass().getName());
             if (environMapping instanceof LayeredMapping mapping) {
                 mapping.writeToFile(out, this);
