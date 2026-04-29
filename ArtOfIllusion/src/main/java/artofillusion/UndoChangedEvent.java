@@ -1,4 +1,4 @@
-/* Copyright 2025 by Maksim Khramov
+/* Copyright 2025-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -8,6 +8,10 @@
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
-package artofillusion
+package artofillusion;
 
-data class UndoChangedEvent(val stack: UndoStack, val record: UndoRecord )
+public record UndoChangedEvent(UndoStack stack, UndoRecord rec) {
+    public UndoRecord getRecord() {
+        return rec;
+    }
+}
