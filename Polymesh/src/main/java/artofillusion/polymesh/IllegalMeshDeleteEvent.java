@@ -1,5 +1,5 @@
-/* Copyright (C) 2025 by Maksim Khramov
-
+/*
+   Copyright (C) 2025-2026 Maksim Khramov
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
@@ -8,19 +8,14 @@
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
-package artofillusion.ui
+package artofillusion.polymesh;
 
-import artofillusion.material.Material
-import javax.swing.tree.DefaultMutableTreeNode
-
-class SceneMaterialNode(userObject: Material) : DefaultMutableTreeNode(userObject, true) {
-
-    override fun getAllowsChildren(): Boolean {
-        return false
+public record IllegalMeshDeleteEvent(PolyMesh mesh) {
+    void fire() {
+        org.greenrobot.eventbus.EventBus.getDefault().post(this);
     }
 
-    override fun getUserObject(): Material? = super.getUserObject() as Material?
-
-    override fun toString(): String = "Material: ${(userObject as Material).name}"
-
+    public PolyMesh getMesh() {
+        return mesh;
+    }
 }

@@ -1,4 +1,4 @@
-/* Copyright 2025 by Maksim Khramov
+/* Copyright 2024-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -8,6 +8,10 @@
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
-package artofillusion
+package artofillusion.procedural;
 
-data class UndoChangedEvent(val stack: UndoStack, val record: UndoRecord )
+public final class ColorInputPort extends IOPort {
+    public ColorInputPort(int location, String... description) {
+        super(IOPort.COLOR, IOPort.INPUT, location, description);
+    }
+}

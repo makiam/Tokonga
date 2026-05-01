@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 by Maksim Khramov
+/* Copyright 2024-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -8,19 +8,10 @@
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
-package artofillusion.ui
+package artofillusion.procedural;
 
-
-import artofillusion.texture.Texture
-import javax.swing.tree.DefaultMutableTreeNode
-
-class SceneTextureNode(userObject: Texture) : DefaultMutableTreeNode(userObject, true) {
-
-    override fun getAllowsChildren(): Boolean {
-        return false
+public final class NumericInputPort extends IOPort {
+    public NumericInputPort(int location, String... description) {
+        super(IOPort.NUMBER, IOPort.INPUT, location, description);
     }
-
-    override fun getUserObject(): Texture? = super.getUserObject() as Texture?
-
-    override fun toString(): String = "Texture: ${(userObject as Texture).name}"
 }
