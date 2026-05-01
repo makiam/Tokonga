@@ -39,7 +39,7 @@ public class LayoutAnimationMenu extends BMenu {
         super(Translate.text("menu.animation"));
     }
 
-    Class<? extends Track> getCommandToTrack(String command) {
+    static Class<? extends Track> getCommandToTrack(String command) {
         return commandToTrack.get(command);
     }
 
