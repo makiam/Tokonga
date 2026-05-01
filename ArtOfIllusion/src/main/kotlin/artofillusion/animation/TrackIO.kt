@@ -16,32 +16,6 @@ object TrackIO {
     private val log: Logger = LoggerFactory.getLogger(TrackIO::class.java)
 
     @Throws(IOException::class)
-    fun readTracks(input: DataInputStream, scene: Scene, owner: ObjectInfo, version: Int) {
-        val tracks = input.readInt()
-        log.debug("Scene version {}. Reading {} tracks for {}.", version, tracks, owner.name )
-
-        when (version) {
-            6  -> readTracksV6(input, scene, owner, tracks)
-            else -> readTracksV5(input, scene, owner, tracks)
-        }
-        log.debug("Read tracks for {} completed", owner.name)
-    }
-
-    @Throws(IOException::class)
-    fun writeTracks(output: DataOutputStream, scene: Scene, owner: ObjectInfo, version: Short) {
-        log.debug("Write {} tracks: {}. Version {}", owner.name, owner.tracks.size, version)
-        output.writeInt(owner.tracks.size)
-        owner.tracks.forEach { track -> writeTrack(output, scene, track, version) }
-        log.debug("Write tracks completed")
-    }
-
-    @Throws(IOException::class)
-    fun writeTrack(output: DataOutputStream, scene: Scene, track: Track<*>, version: Short) {
-        SceneIO.writeClass(output, track)
-        SceneIO.writeBuffered(output) { target: DataOutputStream? -> track.writeToStream(target, scene) }
-    }
-
-    @Throws(IOException::class)
     fun readTracksV6(input: DataInputStream, scene: Scene, owner: ObjectInfo, tracks: Int) {
 
         var trackClassName: String
@@ -52,25 +26,25 @@ object TrackIO {
         for(i in 0 until tracks) {
             // At first read binary data from input. If IOException is thrown we cannot recover data and aborting
             try {
-                trackClassName = readString(input)
+                trackClassName = SceneIO.readString(input)
                 dataSize = input.readInt()
                 data = ByteArray(dataSize)
                 input.readFully(data)
             } catch (ioe: IOException) {
                 throw ioe
             }
-            //Now try to discover Track. On exception, we cannot recover track, but can bypass it
+            //Now try to discover Track class. On exception, we cannot recover track, but can bypass it
             try {
                 val trackClass = ArtOfIllusion.getClass(trackClassName)
                 if (null == trackClass) {
-                    bus.post(BypassEvent(scene, "Scene camera filter: $trackClassName was not found"))
+                    bus.post(BypassEvent(scene, "Track class: $trackClassName was not found"))
                     continue
                 }
                 val tc: Constructor<*>  = trackClass.getConstructor(ObjectInfo::class.java)
                 track = tc.newInstance(owner) as Track<*>
 
             } catch (_: ReflectiveOperationException) {
-                bus.post(BypassEvent(scene, "Scene camera filter: $trackClassName was not found"))
+                bus.post(BypassEvent(scene, "Track class: $trackClassName was not found"))
                 continue
             }
             //On exception, we cannot recover track, but can bypass it
@@ -87,7 +61,7 @@ object TrackIO {
     @Throws(IOException::class, Exception::class)
     fun readTracksV5(input: DataInputStream, scene: Scene, owner: ObjectInfo, tracks: Int) {
         for(i in 0 until tracks) {
-            val className = readString(input)
+            val className = SceneIO.readString(input)
             try {
                 val clazz = ArtOfIllusion.getClass(className) ?: throw IOException("Unknown Track class $className")
                 val tc: Constructor<*>  = clazz.getConstructor(ObjectInfo::class.java)
@@ -105,8 +79,5 @@ object TrackIO {
             }
         }
     }
-
-    @Throws(IOException::class)
-    fun readString(input: DataInputStream): String = input.readUTF()
 
 }
