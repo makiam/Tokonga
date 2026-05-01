@@ -66,12 +66,12 @@ public class RGBToHSVModule extends ProceduralModule<RGBToHSVModule> {
 
     static double rgbToHsv(double red, double green, double blue, int index) {
         HSVColor hsv = rgbToHsv(red, green, blue);
-        switch (index) {
-            case 0: return hsv.hue() / 360;
-            case 1: return hsv.saturation();
-            case 2: return hsv.value();
-            default: return 0.0;
-        }
+        return switch (index) {
+            case 0 -> hsv.hue() / 360;
+            case 1 -> hsv.saturation();
+            case 2 -> hsv.value();
+            default -> 0.0;
+        };
     }
 
     record HSVColor(double hue, double saturation, double value) {}
