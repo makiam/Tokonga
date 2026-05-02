@@ -58,26 +58,4 @@ object TrackIO {
         }
     }
 
-    @Throws(IOException::class, Exception::class)
-    fun readTracksV5(input: DataInputStream, scene: Scene, owner: ObjectInfo, tracks: Int) {
-        for(i in 0 until tracks) {
-            val className = SceneIO.readString(input)
-            try {
-                val clazz = ArtOfIllusion.getClass(className) ?: throw IOException("Unknown Track class $className")
-                val tc: Constructor<*>  = clazz.getConstructor(ObjectInfo::class.java)
-                val track: Track<*> = tc.newInstance(owner) as Track<*>
-                track.initFromStream(input, scene)
-                owner.addTrack(track)
-            } catch ( ex: Exception) {
-                when(ex) {
-                    is IOException, is ReflectiveOperationException -> {
-                        log.atError().setCause(ex).log("Tracks reading error: {}", ex.message)
-                        throw IOException(ex)
-                    }
-                    else -> throw ex
-                }
-            }
-        }
-    }
-
 }
