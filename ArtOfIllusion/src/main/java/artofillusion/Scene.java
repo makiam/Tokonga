@@ -1201,7 +1201,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         info.setObject(obj);
 
         // Read the tracks for this object.
-        TrackIO.INSTANCE.readTracks(in, this, info, version);
+        SceneIO.readTracks(in, this, info, version);
 
         return info;
     }
@@ -1326,7 +1326,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
             out.writeInt(key);
         }
 
-        TrackIO.INSTANCE.writeTracks(out, this, info, version);
+        SceneIO.writeTracks(out, this, info, version);
 
         return index;
     }

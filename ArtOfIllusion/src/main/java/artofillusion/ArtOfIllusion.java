@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2013 by Peter Eastman
-   Changes copyright (C) 2016-2025 by Maksim Khramov
+   Changes copyright (C) 2016-2026 by Maksim Khramov
    Changes copyright (C) 2016 by Petri Ihalainen
 
    This program is free software; you can redistribute it and/or modify it under the
@@ -457,7 +457,7 @@ public class ArtOfIllusion {
             LoadEventListener el = new LoadEventListener();
             Scene scene = new Scene(file, true);
             List<String> errors = scene.getErrors();
-            List<String> eventErrors =(el.getEventMessages());
+            List<String> eventErrors = el.getEventMessages();
 
             if (errors.isEmpty() && eventErrors.isEmpty()) {
             } else {

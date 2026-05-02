@@ -557,7 +557,7 @@ public class SceneCamera extends Object3D {
             } catch(IOException ie) {
                 throw ie;
             }
-            //Now try to discover ImageFilter plugin. On exception, we cannot recover filter, but can bypass it
+            //Now try to discover ImageFilter class. On exception, we cannot recover filter, but can bypass it
             try {
                 Class<?> filterClass = ArtOfIllusion.getClass(filterClassName);
                 if(null == filterClass) {
@@ -569,7 +569,7 @@ public class SceneCamera extends Object3D {
                 bus.post(new BypassEvent(scene, "Filter class: " + filterClassName + " was not found or cannot instantiate", cne));
                 continue;
             }
-            //On exception, we cannot recover plugin, but can bypass it
+            //On exception, we cannot recover filter, but can bypass it
             try {
                 filter.initFromStream(new DataInputStream(new ByteArrayInputStream(filterData)), scene);
             } catch(IOException ie) {

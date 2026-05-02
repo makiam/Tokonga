@@ -1,4 +1,4 @@
-/* Copyright 2025 by Maksim Khramov
+/* Copyright 2025-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -10,21 +10,9 @@
 
 package artofillusion;
 
-import lombok.Getter;
-
-@Getter
-public final class BypassEvent {
-    private final Scene scene;
-    private final String message;
-    private final Exception cause;
-
+public record BypassEvent(Scene scene, String message, Exception cause) {
     public BypassEvent(Scene scene, String message) {
         this(scene, message, null);
     }
 
-    public BypassEvent(Scene scene, String message, Exception cause) {
-        this.scene = scene;
-        this.message = message;
-        this.cause = cause;
-    }
 }

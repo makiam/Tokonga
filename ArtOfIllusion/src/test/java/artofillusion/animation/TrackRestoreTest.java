@@ -11,6 +11,8 @@
 package artofillusion.animation;
 
 import artofillusion.Scene;
+import artofillusion.SceneIO;
+import artofillusion.api.ImplementationVersion;
 import artofillusion.math.CoordinateSystem;
 import artofillusion.object.Cube;
 import artofillusion.object.Object3D;
@@ -26,12 +28,14 @@ import java.io.*;
 
 
 @Slf4j
+@SuppressWarnings("java:S5786")
 public class TrackRestoreTest {
 
     private static ReadBypassEventListener listener;
+    private static short sceneVersion = 6;
 
     @BeforeAll
-    public static void setupClass() {
+    static void setupClass() {
         listener = new ReadBypassEventListener();
     }
 
@@ -40,8 +44,9 @@ public class TrackRestoreTest {
         listener.reset();
     }
 
+
     @Test
-    void testWriteAndRestoreTrack() throws IOException {
+    void testWriteAndRestoreTrack() throws Exception {
         Scene scene = new Scene();
         Object3D obj = new Cube(1, 1, 1);
         ObjectInfo owner = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
@@ -52,12 +57,14 @@ public class TrackRestoreTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream(1000);
         DataOutputStream data = new DataOutputStream(out);
-        data.writeInt(1);
-        TrackIO.INSTANCE.writeTrack(data, scene, track, (short)6);
+        owner.addTrack(track);
+        SceneIO.writeTracks(data, scene, owner, sceneVersion);
 
         byte[] buffer = out.toByteArray();
         ByteArrayInputStream in = new ByteArrayInputStream(buffer);
-        TrackIO.INSTANCE.readTracks(new DataInputStream(in), scene, owner, (short)6);
+
+        owner.removeTrack(track);
+        SceneIO.readTracks(new DataInputStream(in), scene, owner, sceneVersion);
 
         Assertions.assertEquals(1, TrackTestUtil.getLength(owner));
         PoseTrack restored = (PoseTrack)TrackTestUtil.getTracks(owner)[0];
@@ -68,7 +75,7 @@ public class TrackRestoreTest {
     }
 
     @Test
-    void testWriteAndRestoreSceneItemTracksV6() throws IOException {
+    void testWriteAndRestoreSceneItemTracksV6() throws Exception {
         short version = 6;
 
         Scene scene = new Scene();
@@ -84,13 +91,13 @@ public class TrackRestoreTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream(1000);
         DataOutputStream data = new DataOutputStream(out);
 
-        TrackIO.INSTANCE.writeTracks(data, scene, owner, version);
+        SceneIO.writeTracks(data, scene, owner, version);
         owner.removeTrack(0);
         owner.removeTrack(0);
 
         byte[] buffer = out.toByteArray();
         ByteArrayInputStream in = new ByteArrayInputStream(buffer);
-        TrackIO.INSTANCE.readTracks(new DataInputStream(in), scene, owner, version);
+        SceneIO.readTracks(new DataInputStream(in), scene, owner, version);
 
         Assertions.assertEquals(2, TrackTestUtil.getLength(owner));
         PoseTrack restored = (PoseTrack)TrackTestUtil.getTracks(owner)[0];
@@ -100,7 +107,7 @@ public class TrackRestoreTest {
 
 
     @Test
-    void testWriteAndRestoreSceneItemTrack() throws IOException {
+    void testWriteAndRestoreSceneItemTrack() throws Exception {
         Scene scene = new Scene();
         Object3D obj = new Cube(1, 1, 1);
         ObjectInfo owner = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
@@ -113,12 +120,12 @@ public class TrackRestoreTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream(1000);
         DataOutputStream data = new DataOutputStream(out);
 
-        TrackIO.INSTANCE.writeTracks(data, scene, owner, (short)6);
+        SceneIO.writeTracks(data, scene, owner, sceneVersion);
         owner.removeTrack(0);
 
         byte[] buffer = out.toByteArray();
         ByteArrayInputStream in = new ByteArrayInputStream(buffer);
-        TrackIO.INSTANCE.readTracks(new DataInputStream(in), scene, owner, (short)6);
+        SceneIO.readTracks(new DataInputStream(in), scene, owner,sceneVersion);
 
         Assertions.assertEquals(1, TrackTestUtil.getLength(owner));
         PoseTrack restored = (PoseTrack)TrackTestUtil.getTracks(owner)[0];
@@ -137,35 +144,36 @@ public class TrackRestoreTest {
         track.setName("My Pose");
         track.setSmoothingMethod(Timecourse.APPROXIMATING);
 
+        owner.addTrack(track);
         ByteArrayOutputStream out = new ByteArrayOutputStream(1000);
         DataOutputStream data = new DataOutputStream(out);
-        data.writeInt(1);
-        TrackIO.INSTANCE.writeTrack(data, scene, track, (short)5);
+        SceneIO.writeTracks(data, scene, owner, (short) 5);
 
         byte[] buffer = out.toByteArray();
         ByteArrayInputStream in = new ByteArrayInputStream(buffer);
         Assertions.assertThrows(IOException.class, () -> {
-            TrackIO.INSTANCE.readTracks(new DataInputStream(in), scene, owner, (short)5);
+            SceneIO.readTracks(new DataInputStream(in), scene, owner, (short)5);
         });
 
     }
 
     @Test
-    void testRestoreStringContainer() throws IOException {
+    void testRestoreStringContainer() throws Exception {
         Scene scene = new Scene();
         Object3D obj = new Cube(1, 1, 1);
         ObjectInfo owner = new ObjectInfo(obj, new CoordinateSystem(), "Cube");
 
         Track track = new StringContainerTrack(owner);
+        owner.addTrack(track);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream(1000);
         DataOutputStream data = new DataOutputStream(out);
-        data.writeInt(1);
-        TrackIO.INSTANCE.writeTrack(data, scene, track, (short)6);
+        SceneIO.writeTracks(data, scene, owner, sceneVersion);
 
+        owner.removeTrack(track);
         byte[] buffer = out.toByteArray();
         ByteArrayInputStream in = new ByteArrayInputStream(buffer);
-        TrackIO.INSTANCE.readTracks(new DataInputStream(in), scene, owner, (short)6);
+        SceneIO.readTracks(new DataInputStream(in), scene, owner, sceneVersion);
 
         Assertions.assertEquals(1, TrackTestUtil.getLength(owner));
         StringContainerTrack restored = (StringContainerTrack)TrackTestUtil.getTrack(owner, 0);
@@ -173,14 +181,12 @@ public class TrackRestoreTest {
         Assertions.assertEquals("А роза упала на лапу азора", restored.getPalindrome());
     }
 
-    static class StringContainerTrack extends DummyTrack {
+    public static class StringContainerTrack extends DummyTrack {
 
         @Getter
         private String palindrome = "";
 
-        public StringContainerTrack(ObjectInfo info) {
-
-        }
+        public StringContainerTrack(ObjectInfo info) {}
 
         @Override
         public void writeToStream(DataOutputStream out, Scene scene) throws IOException {

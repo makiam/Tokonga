@@ -12,7 +12,6 @@ package artofillusion;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -30,6 +29,6 @@ public final class LoadEventListener {
     }
 
     public List<String> getEventMessages() {
-        return events.stream().map(event -> event.getMessage()).collect(Collectors.toList());
+        return events.stream().map(BypassEvent::message).toList();
     }
 }

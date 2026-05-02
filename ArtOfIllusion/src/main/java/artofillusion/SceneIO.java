@@ -1,4 +1,4 @@
-/* Copyright 2025 by Maksim Khramov
+/* Copyright 2025-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -8,17 +8,17 @@
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
-
 package artofillusion;
 
+import artofillusion.animation.Track;
 import artofillusion.image.ImageMap;
-import artofillusion.material.Material;
-import artofillusion.texture.Texture;
+import artofillusion.object.ObjectInfo;
 import artofillusion.util.SearchlistClassLoader;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
 import java.beans.XMLDecoder;
@@ -26,14 +26,14 @@ import java.io.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
 public final class SceneIO {
 
-    /*
+    private static EventBus bus = EventBus.getDefault();
 
-     */
     public static void readImages(@NotNull DataInputStream in, Scene scene, short version) throws IOException {
         int images = in.readInt();
         log.debug("Scene version: {}. Reading {} images: ", version, images);
@@ -41,10 +41,7 @@ public final class SceneIO {
         try {
             for (int i = 0; i < images; i++) {
                 String className = SceneIO.readString(in);
-                Class<?> cls = ArtOfIllusion.getClass(className);
-                if (cls == null) {
-                    throw new IOException("Unknown ImageMap class: " + className);
-                }
+                var cls = Optional.ofNullable(ArtOfIllusion.getClass(className)).orElseThrow(() -> new IOException("Unknown ImageMap class: " + className));
                 scene.add((ImageMap) cls.getConstructor(DataInputStream.class).newInstance(in));
             }
         } catch(ReflectiveOperationException ex) {
@@ -65,7 +62,7 @@ public final class SceneIO {
     }
 
     public static void writeMaterials(@NotNull DataOutputStream out, Scene scene, short version) throws IOException {
-        List<Material> items = scene.getMaterials();
+        var items = scene.getMaterials();
         log.debug("Scene version: {}. Writing materials: {}", version, items.size());
         out.writeInt(items.size());
         for (var item: items) {
@@ -75,8 +72,20 @@ public final class SceneIO {
         log.debug("Write materials completed");
     }
 
+    public static void writeTracks(@NotNull DataOutputStream out, Scene scene, ObjectInfo owner, short version) throws IOException {
+        var items = owner.getTracks();
+        log.debug("Write {} tracks: {}. Version {}", owner.name, items.length, version);
+        out.writeInt(items.length);
+        for (var item: items) {
+            SceneIO.writeClass(out, item);
+            SceneIO.writeBuffered(out, target -> item.writeToStream(target, scene));
+        }
+        log.debug("Write tracks completed");
+    }
+
+
     public static void writeTextures(@NotNull DataOutputStream out, Scene scene, short version) throws IOException {
-        List<Texture> items = scene.getTextures();
+        var items = scene.getTextures();
         log.debug("Scene version: {}. Writing textures: {}", version, items.size());
         out.writeInt(items.size());
         for (var item: items) {
@@ -113,25 +122,87 @@ public final class SceneIO {
         log.debug("Read metadata completed");
     }
 
-    private static String readString(DataInputStream in) throws IOException {
-        var ts = in.readUTF();
-        return ts;
-    }
-
-    private static void writeString(DataOutputStream out, String value) throws IOException {
-        out.writeUTF(value);
+    public static String readString(DataInputStream in) throws IOException {
+        return in.readUTF();
     }
 
     public static void writeClass(DataOutputStream out, Object item) throws IOException {
         out.writeUTF(item.getClass().getName());
     }
 
-    public static void writeBuffered(DataOutputStream out, DataWriteProvider writer)throws IOException {
+    public static void writeBuffered(DataOutputStream out, DataWriteProvider writer) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         writer.write(new DataOutputStream(bos));
         byte[] bytes = bos.toByteArray();
         out.writeInt(bytes.length);
         out.write(bytes, 0, bytes.length);
+    }
+
+    public static void readTracks(DataInputStream in, Scene scene, ObjectInfo owner, int version) throws IOException {
+        var tracks = in.readInt();
+        log.debug("Scene version {}. Reading {} tracks for {}.", version, tracks, owner.getName());
+        switch (version) {
+            case 6 -> SceneIO.readTracksV6(in, scene, owner, tracks);
+            default -> SceneIO.readTracksV5(in, scene, owner, tracks);
+        }
+        log.debug("Read tracks for {} completed", owner.getName());
+
+    }
+    private static void readTracksV6(DataInputStream in, Scene scene, ObjectInfo owner, int tracks) throws IOException {
+        String className;
+        int dataSize;
+        byte[] data;
+        Track<?> track;
+        for (int i = 0; i < tracks; i++) {
+            // At first read binary data from input. If IOException is thrown we cannot recover data and aborting
+            try {
+                className = SceneIO.readString(in);
+                dataSize = in.readInt();
+                data = new byte[dataSize];
+                in.readFully(data);
+
+            } catch (IOException ex) {
+                throw ex;
+            }
+            //Now try to discover Track class. On exception, we cannot recover track, but can bypass it
+            try {
+                var cls = ArtOfIllusion.getClass(className);
+                if(null == cls) {
+                    bus.post(new BypassEvent(scene, "Track class not found: " + className));
+                    continue;
+                }
+                var tc = cls.getConstructor(ObjectInfo.class);
+                track = (Track<?>) tc.newInstance(owner);
+
+            } catch(ReflectiveOperationException ex) {
+                bus.post(new BypassEvent(scene, "Track class not found: " + className, ex));
+                continue;
+            }
+            //On exception, we cannot recover track, but can bypass it
+            try {
+                track.initFromStream(new DataInputStream(new ByteArrayInputStream(data)), scene);
+            } catch(IOException ex) {
+                bus.post(new BypassEvent(scene, "Track initialization error: " + ex.getMessage(),ex));
+                continue;
+            }
+            owner.addTrack(track);
+        }
+    }
+
+    private static void readTracksV5(DataInputStream in, Scene scene, ObjectInfo owner, int tracks) throws IOException {
+        for (int i = 0; i < tracks; i++) {
+            var className = SceneIO.readString(in);
+            try {
+                var cls = Optional.ofNullable(ArtOfIllusion.getClass(className)).orElseThrow(() -> new IOException("Unknown Track class: " + className));
+                Track<?> track = (Track) cls.getConstructor(ObjectInfo.class).newInstance(owner);
+                track.initFromStream(in, scene);
+                owner.addTrack(track);
+            } catch(IOException | ReflectiveOperationException ex) {
+                log.atError().setCause(ex).log("Track Reading error: {}", ex.getMessage());
+                throw new IOException();
+                // Nothing more we can do about it.
+            }
+        }
     }
 
     @FunctionalInterface
