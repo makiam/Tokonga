@@ -11,15 +11,11 @@
 package artofillusion;
 
 import artofillusion.animation.Track;
-import artofillusion.animation.TrackIO;
 import artofillusion.image.ImageMap;
-import artofillusion.material.Material;
 import artofillusion.object.ObjectInfo;
-import artofillusion.texture.Texture;
 import artofillusion.util.SearchlistClassLoader;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import org.greenrobot.eventbus.EventBus;
@@ -127,8 +123,7 @@ public final class SceneIO {
     }
 
     public static String readString(DataInputStream in) throws IOException {
-        var ts = in.readUTF();
-        return ts;
+        return in.readUTF();
     }
 
     public static void writeClass(DataOutputStream out, Object item) throws IOException {
@@ -147,11 +142,51 @@ public final class SceneIO {
         var tracks = in.readInt();
         log.debug("Scene version {}. Reading {} tracks for {}.", version, tracks, owner.getName());
         switch (version) {
-            case 6 -> TrackIO.INSTANCE.readTracksV6(in, scene, owner, tracks);
+            case 6 -> SceneIO.readTracksV6(in, scene, owner, tracks);
             default -> SceneIO.readTracksV5(in, scene, owner, tracks);
         }
         log.debug("Read tracks for {} completed", owner.getName());
 
+    }
+    private static void readTracksV6(DataInputStream in, Scene scene, ObjectInfo owner, int tracks) throws IOException {
+        String className;
+        int dataSize;
+        byte[] data;
+        Track<?> track;
+        for (int i = 0; i < tracks; i++) {
+            // At first read binary data from input. If IOException is thrown we cannot recover data and aborting
+            try {
+                className = SceneIO.readString(in);
+                dataSize = in.readInt();
+                data = new byte[dataSize];
+                in.readFully(data);
+
+            } catch (IOException ex) {
+                throw ex;
+            }
+            //Now try to discover Track class. On exception, we cannot recover track, but can bypass it
+            try {
+                var cls = ArtOfIllusion.getClass(className);
+                if(null == cls) {
+                    bus.post(new BypassEvent(scene, "Track class not found: " + className));
+                    continue;
+                }
+                var tc = cls.getConstructor(ObjectInfo.class);
+                track = (Track<?>) tc.newInstance(owner);
+
+            } catch(ReflectiveOperationException ex) {
+                bus.post(new BypassEvent(scene, "Track class not found: " + className, ex));
+                continue;
+            }
+            //On exception, we cannot recover track, but can bypass it
+            try {
+                track.initFromStream(new DataInputStream(new ByteArrayInputStream(data)), scene);
+            } catch(IOException ex) {
+                bus.post(new BypassEvent(scene, "Track initialization error: " + ex.getMessage(),ex));
+                continue;
+            }
+            owner.addTrack(track);
+        }
     }
 
     private static void readTracksV5(DataInputStream in, Scene scene, ObjectInfo owner, int tracks) throws IOException {
@@ -159,7 +194,7 @@ public final class SceneIO {
             var className = SceneIO.readString(in);
             try {
                 var cls = Optional.ofNullable(ArtOfIllusion.getClass(className)).orElseThrow(() -> new IOException("Unknown Track class: " + className));
-                Track track = (Track) cls.getConstructor(ObjectInfo.class).newInstance(owner);
+                Track<?> track = (Track) cls.getConstructor(ObjectInfo.class).newInstance(owner);
                 track.initFromStream(in, scene);
                 owner.addTrack(track);
             } catch(IOException | ReflectiveOperationException ex) {

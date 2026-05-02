@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 by Maksim Khramov
+/* Copyright (C) 2025-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,6 +17,7 @@ import artofillusion.math.CoordinateSystem;
 import artofillusion.test.util.ReadBypassEventListener;
 import artofillusion.test.util.StreamUtil;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
 import java.io.*;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 @DisplayName("Object Info Test for Scene Camera with filters")
+@Slf4j
 class SceneCameraObjectInfoTest {
 
     static ReadBypassEventListener listener;
@@ -41,13 +43,13 @@ class SceneCameraObjectInfoTest {
     @Test
     void testSceneCameraObjectInfo() throws IOException {
         var sc = new SceneCamera();
-        var oi = new ObjectInfo(sc, new CoordinateSystem(), "Scene Camera");
+
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         sc.writeToFile(new DataOutputStream(bos), null);
 
         byte[] innerObjectBytes = bos.toByteArray();
         int empty = innerObjectBytes.length;
-        System.out.println("Size: " + empty);
+        log.info("Size: {}", empty);
 
         var expectedIncrement = StreamUtil.getUTFNameAsByteArray(TestSceneCameraFilterNoData.class.getName()).length + 4;
 
@@ -61,19 +63,19 @@ class SceneCameraObjectInfoTest {
         sc.writeToFile(new DataOutputStream(bos), null);
         innerObjectBytes = bos.toByteArray();
         Assertions.assertEquals(empty + expectedIncrement * 3 , innerObjectBytes.length);
-        System.out.println("Size: " + innerObjectBytes.length);
+        log.info("Size: {}",  innerObjectBytes.length);
     }
 
     @Test
-    public void testSceneCameraObjectInfoWithMoreFiltersData() throws IOException {
+    void testSceneCameraObjectInfoWithMoreFiltersData() throws IOException {
         var sc = new SceneCamera();
-        var oi = new ObjectInfo(sc, new CoordinateSystem(), "Scene Camera");
+
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         sc.writeToFile(new DataOutputStream(bos), null);
 
         byte[] innerObjectBytes = bos.toByteArray();
         int empty = innerObjectBytes.length;
-        System.out.println("Size: " + empty);
+        log.info("Size: {}", empty);
 
         var expectedIncrement = StreamUtil.getUTFNameAsByteArray(TestSceneCameraFilterNoData.class.getName()).length;
         expectedIncrement *=3;
@@ -93,11 +95,11 @@ class SceneCameraObjectInfoTest {
         sc.writeToFile(new DataOutputStream(bos), null);
         innerObjectBytes = bos.toByteArray();
         Assertions.assertEquals(empty + expectedIncrement , innerObjectBytes.length);
-        System.out.println("Size: " + innerObjectBytes.length);
+        log.info("Size: {}",  innerObjectBytes.length);
     }
 
     @Test
-    public void testToRestoreBadFilter1() throws IOException {
+    void testToRestoreBadFilter1() throws IOException {
         var sc = new SceneCamera();
 
         var filters = new ArrayList<>(Arrays.asList(sc.getImageFilters()));
@@ -113,13 +115,13 @@ class SceneCameraObjectInfoTest {
 
         new SceneCamera(new DataInputStream(restore), null);
         Assertions.assertEquals(1, listener.getCounter());
-        Assertions.assertTrue(listener.getLast().getMessage().contains(MissedConstructorFilter.class.getName()));
-        Assertions.assertInstanceOf(NoSuchMethodException.class, listener.getLast().getCause());
+        Assertions.assertTrue(listener.getLast().message().contains(MissedConstructorFilter.class.getName()));
+        Assertions.assertInstanceOf(NoSuchMethodException.class, listener.getLast().cause());
 
     }
 
     @Test
-    public void testToRestoreBadFilter2() throws IOException {
+    void testToRestoreBadFilter2() throws IOException {
         var sc = new SceneCamera();
 
         var filters = new ArrayList<>(Arrays.asList(sc.getImageFilters()));
@@ -136,21 +138,21 @@ class SceneCameraObjectInfoTest {
 
         new SceneCamera(new DataInputStream(restore), null);
         Assertions.assertEquals(1, listener.getCounter());
-        Assertions.assertTrue(listener.getLast().getMessage().contains(PrivateClassFilter.class.getName()));
-        Assertions.assertTrue(listener.getLast().getCause() instanceof IllegalAccessException);
+        Assertions.assertTrue(listener.getLast().message().contains(PrivateClassFilter.class.getName()));
+        Assertions.assertTrue(listener.getLast().cause() instanceof IllegalAccessException);
     }
 
     @Test
     @DisplayName("Create and restore Scene Camera with expected ReflectiveOperationException")
-    public void testSceneCameraObjectInfoWithMoreFilters() throws IOException {
+    void testSceneCameraObjectInfoWithMoreFilters() throws IOException {
         var sc = new SceneCamera();
-        var oi = new ObjectInfo(sc, new CoordinateSystem(), "Scene Camera");
+
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         sc.writeToFile(new DataOutputStream(bos), null);
 
         byte[] innerObjectBytes = bos.toByteArray();
         int empty = innerObjectBytes.length;
-        System.out.println("Size: " + empty);
+        log.info("Size: {}", empty);
 
         var expectedIncrement = StreamUtil.getUTFNameAsByteArray(TestSceneCameraFilterNoData.class.getName()).length;
         expectedIncrement *=4;
@@ -173,7 +175,7 @@ class SceneCameraObjectInfoTest {
         sc.writeToFile(new DataOutputStream(bos), null);
         innerObjectBytes = bos.toByteArray();
         Assertions.assertEquals(empty + expectedIncrement , innerObjectBytes.length);
-        System.out.println("Size: " + innerObjectBytes.length);
+        log.info("Size: {}",  innerObjectBytes.length);
 
         var restore = new ByteArrayInputStream(innerObjectBytes);
         var copy = new SceneCamera(new DataInputStream(restore), null);
@@ -194,13 +196,13 @@ class SceneCameraObjectInfoTest {
         }
 
         @Override
-        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {}
+        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) { /* No implementation need */ }
 
         @Override
-        public void writeToStream(DataOutputStream out, Scene theScene) {}
+        public void writeToStream(DataOutputStream out, Scene theScene) { /* No implementation need */ }
 
         @Override
-        public void initFromStream(DataInputStream in, Scene theScene) {}
+        public void initFromStream(DataInputStream in, Scene theScene) { /* No implementation need */ }
     }
 
     static class TestSceneCameraFilterNoData extends ImageFilter {
@@ -211,13 +213,13 @@ class SceneCameraObjectInfoTest {
         }
 
         @Override
-        public void writeToStream(DataOutputStream out, Scene theScene) {}
+        public void writeToStream(DataOutputStream out, Scene theScene) { /* No implementation need */ }
 
         @Override
-        public void initFromStream(DataInputStream in, Scene theScene) {}
+        public void initFromStream(DataInputStream in, Scene theScene) { /* No implementation need */ }
 
         @Override
-        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {}
+        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) { /* No implementation need */ }
     }
 
     static class TestSceneCameraFilterWithDouble extends ImageFilter {
@@ -238,7 +240,7 @@ class SceneCameraObjectInfoTest {
         }
 
         @Override
-        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {}
+        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) { /* No implementation need */ }
     }
 
     @DisplayName("As class is not marked as STATIC expected no-args constructor cannot be found")
@@ -250,13 +252,13 @@ class SceneCameraObjectInfoTest {
         }
 
         @Override
-        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {}
+        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) { /* No implementation need */ }
 
         @Override
-        public void writeToStream(DataOutputStream out, Scene theScene) {}
+        public void writeToStream(DataOutputStream out, Scene theScene) { /* No implementation need */ }
 
         @Override
-        public void initFromStream(DataInputStream in, Scene theScene) {}
+        public void initFromStream(DataInputStream in, Scene theScene) { /* No implementation need */ }
     }
 
     @DisplayName("As class is marked as PRIVATE expected IllegalAccessException exception to be thrown")
@@ -268,13 +270,13 @@ class SceneCameraObjectInfoTest {
         }
 
         @Override
-        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) {}
+        public void filterImage(ComplexImage image, Scene scene, SceneCamera camera, CoordinateSystem cameraPos) { /* No implementation need */ }
 
         @Override
-        public void writeToStream(DataOutputStream out, Scene theScene) {}
+        public void writeToStream(DataOutputStream out, Scene theScene) { /* No implementation need */ }
 
         @Override
-        public void initFromStream(DataInputStream in, Scene theScene) {}
+        public void initFromStream(DataInputStream in, Scene theScene) { /* No implementation need */ }
     }
 
 

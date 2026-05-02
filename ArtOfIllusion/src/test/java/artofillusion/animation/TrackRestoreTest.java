@@ -28,13 +28,14 @@ import java.io.*;
 
 
 @Slf4j
+@SuppressWarnings("java:S5786")
 public class TrackRestoreTest {
 
     private static ReadBypassEventListener listener;
     private static short sceneVersion = 6;
 
     @BeforeAll
-    public static void setupClass() {
+    static void setupClass() {
         listener = new ReadBypassEventListener();
     }
 
@@ -42,6 +43,7 @@ public class TrackRestoreTest {
     void resetCounterBefore() {
         listener.reset();
     }
+
 
     @Test
     void testWriteAndRestoreTrack() throws Exception {
@@ -179,14 +181,12 @@ public class TrackRestoreTest {
         Assertions.assertEquals("А роза упала на лапу азора", restored.getPalindrome());
     }
 
-    static class StringContainerTrack extends DummyTrack {
+    public static class StringContainerTrack extends DummyTrack {
 
         @Getter
         private String palindrome = "";
 
-        public StringContainerTrack(ObjectInfo info) {
-
-        }
+        public StringContainerTrack(ObjectInfo info) {}
 
         @Override
         public void writeToStream(DataOutputStream out, Scene scene) throws IOException {
