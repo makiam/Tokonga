@@ -43,7 +43,7 @@ import java.util.Locale;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
+
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -345,7 +345,7 @@ class LayoutWindowTest {
         executeTrackMenu("Texture Parameter", TextureTrack.class, 3);
     }
 
-    private void executeTrackMenu(String path, @NotNull Class clazz, int count) {
+    private void executeTrackMenu(String path, Class clazz, int count) {
         JMenuItemOperator oto = appMainMenu.showMenuItem("Animation|" + bundle.getResource("menu.addTrack"));
         assertFalse(oto.isEnabled());
         ObjectInfo test = new ObjectInfo(new Sphere(1d, 1d, 1d), new CoordinateSystem(), "Test-" + System.currentTimeMillis());

@@ -1,6 +1,6 @@
 /* Copyright (C) 2001-2005 by Peter Eastman
    Modifications copyright (C) 2017 by Petri Ihalainen
-   Changes copyright 2019-2025 by Maksim Khramov
+   Changes copyright 2019-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -166,7 +166,7 @@ public class ImagesDialog extends BDialog {
 
     private void hilightButtons() {
         b[2].setEnabled(selection >= 0); // open details
-        boolean hasExternals = kotlin.collections.CollectionsKt.any(scene.getImages(), ExternalImage.class::isInstance);
+        boolean hasExternals = scene.getImages().stream().anyMatch(ExternalImage.class::isInstance);
 
         SwingUtilities.invokeLater(() -> {
             b[3].setEnabled(hasExternals); // refresh
@@ -178,9 +178,11 @@ public class ImagesDialog extends BDialog {
     }
 
     private void doRefresh() {
-
-        kotlin.collections.CollectionsKt.filterIsInstance(scene.getImages(), ExternalImage.class).forEach(ExternalImage::refreshImage);
-
+        for (ImageMap image : scene.getImages()) {
+            if (image instanceof ExternalImage ei) {
+                ei.refreshImage();
+            }
+        }
         ic.imagesChanged();
         hilightButtons();
     }
@@ -193,7 +195,7 @@ public class ImagesDialog extends BDialog {
         }
         File[] files = fc.getSelectedFiles();
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        for (File file : files) {
+        for (File file: files) {
             try {
                 scene.addImage(new ExternalImage(file, scene));
             } catch (InterruptedException ex) {

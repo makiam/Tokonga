@@ -1,3 +1,9 @@
+### Release #72 (03.05.2026)
+* Add PM templates folder watchdog code by @makiam in https://github.com/makiam/Tokonga/pull/254
+* Icon generator update by @makiam in https://github.com/makiam/Tokonga/pull/250
+* Value Field change sync by @makiam in https://github.com/makiam/Tokonga/pull/255
+* Theme manager update by @makiam in https://github.com/makiam/Tokonga/pull/261
+
 ### Release #71 (21.04.2026)
 * Camera filter bug fix ported from upstream AOI: https://github.com/makiam/Tokonga/pull/242
 * Remove deprecated code from LayeredMapping class: https://github.com/makiam/Tokonga/pull/243
@@ -15,23 +21,23 @@
 * Groovy libraries updated from 5.0.4 to 5.0.5: https://github.com/makiam/Tokonga/pull/235
 
 ### Release #68 (23.03.2026)
-Fixed Script Editor window layout: https://github.com/makiam/Tokonga/pull/228
-Fixed Script Output window layout: https://github.com/makiam/Tokonga/pull/231
-Extracted some Polymesh code to helper class: https://github.com/makiam/Tokonga/pull/232
+* Fixed Script Editor window layout: https://github.com/makiam/Tokonga/pull/228
+* Fixed Script Output window layout: https://github.com/makiam/Tokonga/pull/231
+* Extracted some Polymesh code to helper class: https://github.com/makiam/Tokonga/pull/232
 
 ### Release #67 (03.03.2026)
 * Migrate old-style JDK5 for loops to modern for-each where possible: https://github.com/makiam/Tokonga/pull/217
-* Syntax highligting library updated from 3.6.1 to 3.6.2: https://github.com/makiam/Tokonga/pull/218
+* Syntax highlighting library updated from 3.6.1 to 3.6.2: https://github.com/makiam/Tokonga/pull/218
 * Logging library updated from 1.5.28 to 1.5.32: https://github.com/makiam/Tokonga/pull/215
 
 ### Release #66 (03.03.2026)
 * Migrate old-style JDK5 for loops to modern for-each where possible: https://github.com/makiam/Tokonga/pull/217
-* Syntax highligting library updated from 3.6.1 to 3.6.2: https://github.com/makiam/Tokonga/pull/218
+* Syntax highlighting library updated from 3.6.1 to 3.6.2: https://github.com/makiam/Tokonga/pull/218
 * Logging library updated from 1.5.28 to 1.5.32: https://github.com/makiam/Tokonga/pull/215
 
 ### Release #66 (09.02.2026)
 * Groovy version updated from 5.0.3 to 5.0.4: https://github.com/makiam/Tokonga/pull/203
-* Syntax highligting library updated from 3.6.0 to 3.6.1: https://github.com/makiam/Tokonga/pull/200
+* Syntax highlighting library updated from 3.6.0 to 3.6.1: https://github.com/makiam/Tokonga/pull/200
 * Logging library updated from 1.5.23 to 1.5.28
 * 
 ### Release #65 (22.12.2025)
@@ -121,7 +127,7 @@ Extracted some Polymesh code to helper class: https://github.com/makiam/Tokonga/
 
 ### Release #48 (10.03.2025)
 
-* Updatу procedure code: https://github.com/makiam/Tokonga/pull/115
+* Update procedure code: https://github.com/makiam/Tokonga/pull/115
 
 ### Release #47 (03.03.2025)
 
@@ -180,7 +186,7 @@ Extracted some Polymesh code to helper class: https://github.com/makiam/Tokonga/
 
 ### Release #36 (25.11.2024)
 
-* Jetbrains Mono font used in Script editor: https://github.com/makiam/Tokonga/pull/66
+* JetBrains Mono font used in Script editor: https://github.com/makiam/Tokonga/pull/66
 * Main Window code split to smaller parts: https://github.com/makiam/Tokonga/pull/63
 
 ### Release #35 (18.11.2024)
@@ -204,7 +210,7 @@ Extracted some Polymesh code to helper class: https://github.com/makiam/Tokonga/
 * Standard Theme layout and tests update: https://github.com/makiam/Tokonga/pull/50
 * More menu items used typed code bindings: https://github.com/makiam/Tokonga/pull/51
 * Polymesh create tool updated: https://github.com/makiam/Tokonga/pull/53
-* Underlaying buoy library updated: https://github.com/makiam/Tokonga/pull/52
+* Underlying buoy library updated: https://github.com/makiam/Tokonga/pull/52
 (Buoy sources: https://github.com/makiam/Buoy/archive/refs/tags/1.1.3.zip)
 
 NB, Last change may affect 3rd-party plugins
@@ -387,7 +393,7 @@ NB, Last change may affect 3rd-party plugins
 
 ### Release #01 (26.03.2023)
 
-* Build with OpenGL libraries 2.4.0 using gradle build system
+* Build with OpenGL libraries 2.4.0 using Gradle build system
 * Build with Groovy 4.0.0 and BeanShell 3.0.0
 
 * Merged upstream PR https://github.com/ArtOfIllusion/ArtOfIllusion/pull/238
