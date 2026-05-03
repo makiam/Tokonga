@@ -132,7 +132,8 @@ public class ThemeManager {
         //Relevant XML node is passed onto the button class, so it can parse
         //it and deliver button style parameters the theme will give the buttons
         //whenever it is selected.
-        public final Object buttonProperties;
+        @Getter
+        private final Object buttonProperties;
         //button margin is the space around each button
         public final int buttonMargin;
         //palette margin is the space around the buttons
@@ -271,59 +272,7 @@ public class ThemeManager {
         }
 
         /**
-         * create a new ButtonStyle by parsing the XML represented by node.
-         *
-         * @param node the XML defining the style.
-         */
-        public ButtonStyle(Node node) {
-            String name;
-            String value;
-
-            // stash all attributes in the attributes map
-            NamedNodeMap kids = node.getAttributes();
-            for (int i = 0; i < kids.getLength(); i++) {
-                node = kids.item(i);
-                name = node.getNodeName();
-                value = node.getNodeValue();
-                attributes.put(name, value);
-
-                if (name.equalsIgnoreCase("owner")) {
-                    try {
-                        ownerType = ArtOfIllusion.getClass(value);
-                    } catch (ClassNotFoundException ex) {
-                        log.atDebug().setCause(ex).log("Unable to identify ButtonStyle.owner: {}", ex.getMessage());
-                    }
-                }
-
-                if (name.equalsIgnoreCase("size")) {
-                    int cut = value.indexOf(',');
-                    if (cut >= 0) {
-                        width = Integer.parseInt(value.substring(0, cut).trim());
-                        height = Integer.parseInt(value.substring(cut + 1).trim());
-                    } else {
-                        width = height = Integer.parseInt(value.trim());
-                    }
-                }
-            }
-
-            if (ownerType == null) {
-                ownerType = EditingTool.class;
-            }
-        }
-
-        /**
-         * Add a new ButtonStyle to this ButtonStyle.
-         */
-        protected void add(Node node) {
-            if (next == null) {
-                next = new ButtonStyle(node);
-            } else {
-                next.add(node);
-            }
-        }
-
-        /**
-         * Add a new ButtonStyle to this ButtonStyle.
+         * Add new ButtonStyle to this ButtonStyle.
          */
         protected void add(ButtonStyle style){
             if(next == null) {
@@ -440,7 +389,7 @@ public class ThemeManager {
         Class<?> buttonClass = selectedTheme.buttonClass;
         try {
             Method m = buttonClass.getMethod("setProperties", Object.class);
-            m.invoke(buttonClass, selectedTheme.buttonProperties);
+            m.invoke(buttonClass, selectedTheme.getButtonProperties());
         } catch (NoSuchMethodException e) {
             // missing method is quite normal - silently ignore
         } catch (ReflectiveOperationException | SecurityException ex) {
@@ -737,22 +686,4 @@ public class ThemeManager {
         return null;
     }
 
-    /**
-     * Utility for parsing XML Documents: gets a named attribute value from a node
-     *
-     * @param name The attribute name
-     * @param node Description of the Parameter
-     * @return The attribute value
-     */
-    private static String getAttribute(Node node, String name) {
-        NamedNodeMap nm = node.getAttributes();
-        if (nm == null) {
-            return null;
-        }
-        Node nn = nm.getNamedItem(name);
-        if (nn == null) {
-            return null;
-        }
-        return nn.getNodeValue();
-    }
 }
