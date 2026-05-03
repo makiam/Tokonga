@@ -1,4 +1,4 @@
-### Release #72 (26.04.2026)
+### Release #72 (03.05.2026)
 * Add PM templates folder watchdog code by @makiam in https://github.com/makiam/Tokonga/pull/254
 * Icon generator update by @makiam in https://github.com/makiam/Tokonga/pull/250
 * Value Field change sync by @makiam in https://github.com/makiam/Tokonga/pull/255
