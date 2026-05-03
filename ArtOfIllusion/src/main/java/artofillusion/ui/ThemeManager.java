@@ -23,11 +23,9 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import javax.swing.*;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -133,7 +131,7 @@ public class ThemeManager {
         //it and deliver button style parameters the theme will give the buttons
         //whenever it is selected.
         @Getter
-        private final Object buttonProperties;
+        private final Object buttonProperties = null;
         //button margin is the space around each button
         public final int buttonMargin;
         //palette margin is the space around the buttons
@@ -149,7 +147,7 @@ public class ThemeManager {
         @Getter
         private ButtonStyle buttonStyles;
 
-        private ThemeInfo(PluginRegistry.PluginResource resource) throws IOException, SAXException, ParserConfigurationException {
+        private ThemeInfo(PluginRegistry.PluginResource resource) throws IOException {
 
             InputStream is = resource.getInputStream();
             var barr = is.readAllBytes();
@@ -157,10 +155,6 @@ public class ThemeManager {
 
             var theme = (UITheme) xstream.fromXML(new ByteArrayInputStream(barr));
 
-            Document document = documentBuilderFactory.newDocumentBuilder().parse(new ByteArrayInputStream(barr));
-
-            Element rootNode = document.getDocumentElement();
-            NodeList themeNodeList = rootNode.getChildNodes();
             this.resource = resource;
             URL url = resource.getURL();
 
@@ -181,19 +175,13 @@ public class ThemeManager {
 
             var btn = theme.getButton();
 
-            var node = getNodeFromNodeList(themeNodeList, "button");
             if (btn == null) {
                 buttonClass = DefaultToolButton.class;
-                buttonProperties = null;
-
             } else {
                 String className = btn.getButtonClass();
-                Object properties = null;
                 Class<?> cls = DefaultToolButton.class;
                 try {
                     cls = resource.getClassLoader().loadClass(className);
-                    Method m = cls.getMethod("readPropertiesFromXMLNode", Node.class);
-                    properties = m.invoke(className, node);
                 } catch (ReflectiveOperationException | SecurityException ex) {
                     log.atError().setCause(ex).log("Unable to invoke method: {}", ex.getMessage());
                 }
@@ -208,9 +196,8 @@ public class ThemeManager {
                 }
 
                 buttonClass = cls;
-                buttonProperties = properties;
-
             }
+
 
             paletteMargin = theme.getPaletteMargin();
             buttonMargin = theme.getButtonMargin();
@@ -308,7 +295,6 @@ public class ThemeManager {
     private static ColorSet selectedColorSet;
     private static ThemeInfo[] themeList;
     private static Map<String, ThemeInfo> themeIdMap;
-    private static DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance(); //XML parsing
 
     /**
      * icon to use if no other icon can be found
@@ -633,9 +619,8 @@ public class ThemeManager {
         List<ThemeInfo> list = new ArrayList<>();
         for (PluginRegistry.PluginResource resource: resources) {
             try {
-                ThemeInfo themeInfo = new ThemeInfo(resource);
-                list.add(themeInfo);
-            } catch (IOException | ParserConfigurationException | SAXException ex) {
+                list.add(new ThemeInfo(resource));
+            } catch (IOException ex) {
                 log.atError().setCause(ex).log("Unable to init themes: {}", ex.getMessage());
             }
         }
@@ -666,24 +651,6 @@ public class ThemeManager {
      */
     public static ButtonStyle getButtonStyle(Object owner) {
         return selectedTheme.buttonStyles == null ? null: selectedTheme.buttonStyles.getStyle(owner);
-    }
-
-    /**
-     * Utility for parsing XML Documents: gets a named node from a node list. Returns null if the node does not
-     * exist.
-     *
-     * @param nl The node list
-     * @param nodeName The node name
-     * @return The node named nodeName
-     */
-    private static Node getNodeFromNodeList(NodeList nl, String nodeName) {
-        for (int i = 0; i < nl.getLength(); ++i) {
-            Node n = nl.item(i);
-            if (n.getNodeName().equals(nodeName)) {
-                return n;
-            }
-        }
-        return null;
     }
 
 }
