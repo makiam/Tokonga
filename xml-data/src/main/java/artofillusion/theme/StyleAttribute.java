@@ -12,22 +12,11 @@ package artofillusion.theme;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.awt.*;
 import java.util.Map;
 
 @XStreamConverter(StyleAttributeConverter.class)
 @XStreamAlias("style")
 public class StyleAttribute {
-
-    @Getter @Setter
-    private String owner;
-
-    @Getter @Setter(AccessLevel.PACKAGE)
-    private Dimension size = new Dimension(-1, -1);
 
     private Map<String, String> attributes;
 

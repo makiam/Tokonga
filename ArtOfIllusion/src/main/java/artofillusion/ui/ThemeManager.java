@@ -1,6 +1,6 @@
 /* Copyright (C) 2007 by François Guillet
    Some parts copyright 2007 by Peter Eastman
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
  This program is free software; you can redistribute it and/or modify it under the
  terms of the GNU General Public License as published by the Free Software
@@ -145,14 +145,13 @@ public class ThemeManager {
         private final ClassLoader loader;
 
         public final boolean selectable;
-        protected ButtonStyle buttonStyles;
+        @Getter
+        private ButtonStyle buttonStyles;
 
         private ThemeInfo(PluginRegistry.PluginResource resource) throws IOException, SAXException, ParserConfigurationException {
 
             InputStream is = resource.getInputStream();
             var barr = is.readAllBytes();
-            var sb = new String(barr, "UTF-8");
-
             is.close();
 
             var theme = (UITheme) xstream.fromXML(new ByteArrayInputStream(barr));
@@ -198,24 +197,17 @@ public class ThemeManager {
                     log.atError().setCause(ex).log("Unable to invoke method: {}", ex.getMessage());
                 }
 
-                // parse the button styles for this theme
-                ButtonStyle bstyle = null;
-                NodeList list = node.getChildNodes();
-                var nls = list.getLength();
-                for (int i = 0; i < nls; i++) {
-                    Node kid = list.item(i);
-                    if (kid.getNodeName().equals("style")) {
-                        if (bstyle == null) {
-                            bstyle = new ButtonStyle(kid);
-                        } else {
-                            bstyle.add(kid);
-                        }
+                // Parse the button styles for this theme
+                for(var sa: btn.getStyles()) {
+                    if(buttonStyles == null) {
+                        buttonStyles = new ButtonStyle(sa);
+                        continue;
                     }
+                    buttonStyles.add(new ButtonStyle(sa));
                 }
 
                 buttonClass = cls;
                 buttonProperties = properties;
-                buttonStyles = bstyle;
 
             }
 
@@ -238,7 +230,7 @@ public class ThemeManager {
     }
 
     /**
-     * nested ButtonStyle class.
+     * Nested ButtonStyle class.
      * Forms a chain of ButtonStyle objects for a particular Theme.
      * ButtonStyle objects store all the attributes of the defining XML as
      * elements of a Map. These values can be accessed by calling
@@ -246,13 +238,37 @@ public class ThemeManager {
      */
     public static class ButtonStyle {
 
-        protected Class<?> ownerType;
+        protected Class<?> ownerType = EditingTool.class;
 
         protected int width = -1;
         protected int height = -1;
 
+        @Getter
         protected final Map<String, String> attributes = new HashMap<>();
-        protected ButtonStyle next;
+        protected ButtonStyle next = null;
+
+        public ButtonStyle(StyleAttribute sa) {
+            this.attributes.putAll(sa.getAttributes());
+
+            if(attributes.containsKey("owner")) {
+                try {
+                    ownerType = ArtOfIllusion.getClass(attributes.get("owner"));
+                } catch (ClassNotFoundException ex) {
+                    log.atDebug().setCause(ex).log("Unable to identify ButtonStyle.owner: {}", ex.getMessage());
+                }
+            }
+
+            if(attributes.containsKey("size")) {
+                var value = attributes.get("size");
+                int cut = value.indexOf(',');
+                if (cut >= 0) {
+                    width = Integer.parseInt(value.substring(0, cut).trim());
+                    height = Integer.parseInt(value.substring(cut + 1).trim());
+                } else {
+                    width = height = Integer.parseInt(value.trim());
+                }
+            }
+        }
 
         /**
          * create a new ButtonStyle by parsing the XML represented by node.
@@ -296,7 +312,7 @@ public class ThemeManager {
         }
 
         /**
-         * add a new ButtonNode to this ButtonNode.
+         * Add a new ButtonStyle to this ButtonStyle.
          */
         protected void add(Node node) {
             if (next == null) {
@@ -307,7 +323,18 @@ public class ThemeManager {
         }
 
         /**
-         * get the ButtonStyle associated with <i>owner</i>
+         * Add a new ButtonStyle to this ButtonStyle.
+         */
+        protected void add(ButtonStyle style){
+            if(next == null) {
+                next = style;
+            } else {
+                next.add(style);
+            }
+        }
+
+        /**
+         * Get the ButtonStyle associated with <i>owner</i>
          */
         public ButtonStyle getStyle(Object owner) {
             if (ownerType != null && ownerType.isInstance(owner)) {
@@ -686,7 +713,7 @@ public class ThemeManager {
     }
 
     /**
-     * returns the ButtonStyle for the current Theme and the specified owner.
+     * Returns the ButtonStyle for the current Theme and the specified owner.
      */
     public static ButtonStyle getButtonStyle(Object owner) {
         return selectedTheme.buttonStyles == null ? null: selectedTheme.buttonStyles.getStyle(owner);

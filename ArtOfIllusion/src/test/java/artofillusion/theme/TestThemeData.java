@@ -110,7 +110,7 @@ public class TestThemeData {
     void testThemeButtonGetStyles() throws IOException {
         UITheme theme = getTheme("Theme1");
         Assertions.assertEquals(2, theme.getButton().getStyles().size());
-        Assertions.assertEquals("artofillusion.view.ViewerControl", theme.getButton().getStyles().get(1).getOwner());
+        Assertions.assertEquals("artofillusion.view.ViewerControl", theme.getButton().getStyles().get(1).getAttributes().get("owner"));
     }
 
     @Test
@@ -128,9 +128,28 @@ public class TestThemeData {
     }
 
     @Test
-    void testSplit() {
-        String[] s1 = "22,22".split(",");
-        String[] s2 = "22 , 22".split(",");
-        String[] s3 = "22".split(",");
+    void testThemeGetUnsetData() throws IOException {
+        UITheme theme = getTheme("Theme4");
+        var dtc = theme.getColorSets().get(0).getViewerHighValue();
+        Assertions.assertNotNull(dtc);
+
+    }
+
+    @Test
+    void testThemeGetUnsetColorAttributeData() throws IOException {
+        UITheme theme = getTheme("Theme4");
+        var dtc = theme.getColorSets().get(0).getTextColor();
+        Assertions.assertNotNull(dtc);
+        Assertions.assertEquals(new Color(0,0,0), dtc);
+
+    }
+
+    @Test
+    void testThemeGetUnsetColorAttributeData2() throws IOException {
+        UITheme theme = getTheme("Theme4");
+        var dtc = theme.getColorSets().get(0).getPaletteBackground();
+        Assertions.assertNotNull(dtc);
+        Assertions.assertEquals(new Color(255,0,255), dtc);
+
     }
 }

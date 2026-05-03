@@ -1,0 +1,13 @@
+<?xml version="1.0" standalone="yes"?>
+<theme>
+
+    <buttonmargin value="1"/>
+    <palettemargin value="1"/>
+    <colorset name="ElectricWax:windowsXPColorSet">
+        <applicationbackground R="255" G="255" B="255"/>
+        <palettebackground R="255" B="255"/>
+
+        <textcolor/>
+    </colorset>
+
+</theme>

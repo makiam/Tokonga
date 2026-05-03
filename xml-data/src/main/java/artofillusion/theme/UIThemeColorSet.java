@@ -19,6 +19,7 @@ import java.awt.*;
 @XStreamAlias("colorset")
 @Getter
 public final class UIThemeColorSet {
+    private static final Color dc = new Color(0,0,0);
 
     @XStreamAsAttribute @XStreamAlias("name")
     private String name = "";
@@ -64,66 +65,67 @@ public final class UIThemeColorSet {
 
 
     public Color getTextColor() {
-        return textColor.getColor();
+        return textColor == null ? dc : textColor.getColor();
     }
 
     public Color getViewerBackground() {
-        return viewerBackground.getColor();
+        return viewerBackground == null ? dc : viewerBackground.getColor();
     }
 
     public Color getViewerLine() {
-        return viewerLine.getColor();
+        return viewerLine == null ? dc : viewerLine.getColor();
     }
 
     public Color getPaletteBackground() {
-        return paletteBackground.getColor();
+        return paletteBackground == null ? dc : paletteBackground.getColor();
     }
 
     public Color getApplicationBackground() {
-        return applicationBackground.getColor();
+        return applicationBackground == null ? dc : applicationBackground.getColor();
     }
 
     public Color getViewerHandle() {
-        return viewerHandle.getColor();
+        return viewerHandle == null ? dc : viewerHandle.getColor();
     }
 
     public Color getViewerHighlight() {
-        return viewerHighlight.getColor();
+        return viewerHighlight == null ? dc : viewerHighlight.getColor();
     }
 
     public Color getViewerSpecialHighlight() {
-        return viewerSpecialHighlight.getColor();
+        return viewerSpecialHighlight == null ? dc : viewerSpecialHighlight.getColor();
     }
 
     public Color getViewerDisabled() {
-        return viewerDisabled.getColor();
+        return viewerDisabled == null ? dc : viewerDisabled.getColor();
     }
 
     public Color getViewerSurface() {
-        return viewerSurface.getColor();
+        return viewerSurface == null ? dc : viewerSurface.getColor();
     }
 
     public Color getViewerTransparent() {
-        return viewerTransparent.getColor();
+        return viewerTransparent == null ? dc : viewerTransparent.getColor();
     }
 
     public Color getViewerLowValue() {
-        return viewerLowValue.getColor();
+        return viewerLowValue == null ? dc : viewerLowValue.getColor();
     }
 
     public Color getViewerHighValue() {
-        return viewerHighValue.getColor();
+        return viewerHighValue == null ? dc : viewerHighValue.getColor();
     }
 
     public Color getDockableTitleColor() {
-        return dockableTitleColor.getColor();
+        return dockableTitleColor == null ? dc : dockableTitleColor.getColor();
     }
 
     public Color getDockableBarColor1() {
-        return dockableBarColor1.getColor();
+        return dockableBarColor1 == null ? dc : dockableBarColor1.getColor();
     }
 
     public Color getDockableBarColor2() {
-        return dockableBarColor2.getColor();
+        return dockableBarColor2 == null ? dc : dockableBarColor2.getColor();
     }
+
 }

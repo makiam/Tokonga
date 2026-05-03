@@ -22,6 +22,7 @@ import java.util.Map;
 public class StyleAttributeConverter implements Converter {
     @Override
     public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
+        //No marshalling
     }
 
     @Override
@@ -33,7 +34,6 @@ public class StyleAttributeConverter implements Converter {
 
         StyleAttribute style = new StyleAttribute();
         style.setAttributes(attrs);
-        style.setOwner(attrs.getOrDefault("owner", null));
 
         return style;
     }
