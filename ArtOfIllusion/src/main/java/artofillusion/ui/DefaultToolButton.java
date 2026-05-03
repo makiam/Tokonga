@@ -15,6 +15,7 @@ import artofillusion.util.IconGenerator;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
+import java.util.Map;
 import javax.swing.ImageIcon;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,13 +32,9 @@ public class DefaultToolButton extends ToolButton {
     protected Image icon;
     protected Image selectedIcon;
 
-    /*
-    public DefaultToolButton(Object owner, String iconFileName, String selectedIconFilename) {
-        this(owner, ThemeManager.getIcon(iconFileName), ThemeManager.getIcon(selectedIconFilename));
-    }
-     */
+
     /**
-     * create a DefaultToolButton for the specified owner, and the icon
+     * Create a DefaultToolButton for the specified owner, and the icon
      * specified by the <i>image</i>, by applying the correct style to the
      * image to generate theme-consistent <i>normal</i> and <i>selected</i>
      * icons.
@@ -81,7 +78,7 @@ public class DefaultToolButton extends ToolButton {
     }
 
     /**
-     * create a new DefaultToolButton using the specified icons for
+     * Create a new DefaultToolButton using the specified icons for
      * <i>normal</i> and <i>selected</i> icons.
      * <b><em>No</em></b> style is applied - the icons are used as-is.
      * This is the least-preferred constructor, since it applies no consistency
@@ -129,23 +126,26 @@ public class DefaultToolButton extends ToolButton {
      * @return the generated icon.
      */
     public Image applyStyle(ThemeManager.ButtonStyle style, String type, Object owner, ImageIcon image) throws Exception {
+
         // can default the macro from other attributes
-        String macro = style.attributes.get(type + ".icon");
+        Map<String, String> attributes = style.getAttributes();
+
+        String macro = attributes.get(type + ".icon");
         if (macro == null || macro.isEmpty()) {
             StringBuilder sb = new StringBuilder(64);
 
-            String att = style.attributes.get(type + ".background");
+            String att = attributes.get(type + ".background");
             if (att == null) {
-                att = style.attributes.get("background");
+                att = attributes.get("background");
             }
 
             if (att != null) {
                 sb.append(att);
                 sb.append("; {icon};");
 
-                att = style.attributes.get(type + ".overlay");
+                att = attributes.get(type + ".overlay");
                 if (att == null) {
-                    att = style.attributes.get("overlay");
+                    att = attributes.get("overlay");
                 }
                 if (att != null) {
                     sb.append(att);
@@ -160,7 +160,7 @@ public class DefaultToolButton extends ToolButton {
 
         // we're still here, so apply the style...
         // initialize the namespace
-        HashMap<String, Object> namespace = new HashMap<>(style.attributes);
+        Map<String, Object> namespace = new HashMap<>(attributes);
 
         if (image != null) {
             Image img = image.getImage();

@@ -1,6 +1,6 @@
 /* Copyright (C) 2007 by François Guillet
    Some parts copyright 2007 by Peter Eastman
-   Changes copyright (C) 2017-2024 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
  This program is free software; you can redistribute it and/or modify it under the
  terms of the GNU General Public License as published by the Free Software
@@ -16,20 +16,20 @@ import artofillusion.ArtOfIllusion;
 import artofillusion.PluginRegistry;
 import artofillusion.ViewerCanvas;
 import artofillusion.math.RGBColor;
+import artofillusion.theme.StyleAttribute;
+import artofillusion.theme.UITheme;
+import artofillusion.theme.UIThemeColorSet;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.swing.*;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -49,7 +49,16 @@ import java.util.*;
  */
 @Slf4j
 public class ThemeManager {
+    private static final XStream xstream = new XStream(new StaxDriver());
 
+    static {
+        xstream.ignoreUnknownElements();
+        xstream.useAttributeFor(artofillusion.theme.Button.class, "buttonClass");
+        xstream.aliasAttribute("class", "buttonClass");
+        xstream.aliasSystemAttribute("buttonClass", "class");
+        xstream.allowTypes(new Class[]{UITheme.class, UIThemeColorSet.class, artofillusion.theme.Button.class, StyleAttribute.class, DefaultToolButton.class});
+        xstream.processAnnotations(new Class[]{UITheme.class, UIThemeColorSet.class, artofillusion.theme.Button.class, StyleAttribute.class});
+    }
     /**
      * This class hold all the colors used by a theme. A theme can propose several color sets.
      *
@@ -58,60 +67,45 @@ public class ThemeManager {
      */
     public static class ColorSet {
 
-        public final Color appBackground;
-        public final Color paletteBackground;
-        public final Color viewerBackground;
-        public final Color viewerLine;
-        public final Color viewerHandle;
-        @Getter public final Color viewerHighlight;
-        public final Color viewerSpecialHighlight;
-        public final Color viewerDisabled;
-        public final Color viewerSurface;
-        public final Color viewerTransparent;
-        public final Color viewerLowValue;
-        public final Color viewerHighValue;
-        public final Color dockableBarColor1;
-        public final Color dockableBarColor2;
-        public final Color dockableTitleColor;
-        public final Color textColor;
+        private final Color appBackground;
+        private final Color paletteBackground;
+        private final Color viewerBackground;
+        private final Color viewerLine;
+        private final Color viewerHandle;
+        @Getter private final Color viewerHighlight;
+        private final Color viewerSpecialHighlight;
+        private final Color viewerDisabled;
+        private final Color viewerSurface;
+        private final Color viewerTransparent;
+        private final Color viewerLowValue;
+        private final Color viewerHighValue;
+        private final Color dockableBarColor1;
+        private final Color dockableBarColor2;
+        private final Color dockableTitleColor;
+        private final Color textColor;
         private final String name;
 
-        private ColorSet(Node node) {
-            name = getAttribute(node, "name");
-            NodeList list = node.getChildNodes();
-            node = getNodeFromNodeList(list, "applicationbackground");
-            appBackground = getColorFromNode(node);
-            node = getNodeFromNodeList(list, "palettebackground");
-            paletteBackground = getColorFromNode(node);
-            node = getNodeFromNodeList(list, "viewerbackground");
-            viewerBackground = getColorFromNode(node);
-            node = getNodeFromNodeList(list, "viewerline");
-            viewerLine = getColorFromNode(node);
-            node = getNodeFromNodeList(list, "viewerhandle");
-            viewerHandle = getColorFromNode(node);
-            node = getNodeFromNodeList(list, "viewerhighlight");
-            viewerHighlight = getColorFromNode(node);
-            node = getNodeFromNodeList(list, "viewerspecialhighlight");
-            viewerSpecialHighlight = getColorFromNode(node);
-            node = getNodeFromNodeList(list, "viewerdisabled");
-            viewerDisabled = getColorFromNode(node);
-            node = getNodeFromNodeList(list, "viewersurface");
-            viewerSurface = getColorFromNode(node);
-            node = getNodeFromNodeList(list, "viewerlowvalue");
-            viewerLowValue = getColorFromNode(node);
-            node = getNodeFromNodeList(list, "viewerhighvalue");
-            viewerHighValue = getColorFromNode(node);
-            node = getNodeFromNodeList(list, "viewertransparent");
-            viewerTransparent = getColorFromNode(node);
-            node = getNodeFromNodeList(list, "dockablebarcolor1");
-            dockableBarColor1 = getColorFromNode(node);
-            node = getNodeFromNodeList(list, "dockablebarcolor2");
-            dockableBarColor2 = getColorFromNode(node);
-            node = getNodeFromNodeList(list, "dockabletitlecolor");
-            dockableTitleColor = getColorFromNode(node);
-            node = getNodeFromNodeList(list, "textcolor");
-            textColor = getColorFromNode(node);
+        private ColorSet(UIThemeColorSet colorSet) {
+            name = colorSet.getName();
+            appBackground = colorSet.getApplicationBackground();
+            textColor = colorSet.getTextColor();
+            dockableTitleColor = colorSet.getDockableTitleColor();
+            paletteBackground = colorSet.getPaletteBackground();
+            viewerBackground = colorSet.getViewerBackground();
+            viewerLine = colorSet.getViewerLine();
+            viewerHandle = colorSet.getViewerHandle();
+            viewerHighValue = colorSet.getViewerHighValue();
+            dockableBarColor1 = colorSet.getDockableBarColor1();
+            dockableBarColor2 = colorSet.getDockableBarColor2();
+
+            viewerHighlight = colorSet.getViewerHighlight();
+            viewerSpecialHighlight = colorSet.getViewerSpecialHighlight();
+            viewerDisabled = colorSet.getViewerDisabled();
+            viewerSurface = colorSet.getViewerSurface();
+            viewerTransparent = colorSet.getViewerTransparent();
+            viewerLowValue = colorSet.getViewerLowValue();
         }
+
 
         public String getName() {
             return Translate.text(name);
@@ -136,29 +130,31 @@ public class ThemeManager {
         //Relevant XML node is passed onto the button class, so it can parse
         //it and deliver button style parameters the theme will give the buttons
         //whenever it is selected.
-        public final Object buttonProperties;
+        @Getter
+        private final Object buttonProperties = null;
         //button margin is the space around each button
         public final int buttonMargin;
         //palette margin is the space around the buttons
         public final int paletteMargin;
         //the theme colorsets
-        private final ColorSet[] colorSets;
-        public final boolean classicToolBarButtons;
+        private final List<ColorSet> colorSets;
+
         public final PluginRegistry.PluginResource resource;
         @Getter
         private final ClassLoader loader;
-        //public final String pathRoot;
-        public final boolean selectable;
-        protected ButtonStyle buttonStyles;
 
-        private ThemeInfo(PluginRegistry.PluginResource resource) throws IOException, SAXException, ParserConfigurationException {
+        public final boolean selectable;
+        @Getter
+        private ButtonStyle buttonStyles;
+
+        private ThemeInfo(PluginRegistry.PluginResource resource) throws IOException {
+
             InputStream is = resource.getInputStream();
-            DocumentBuilder builder;
-            builder = documentBuilderFactory.newDocumentBuilder();
-            Document document = builder.parse(is);
+            var barr = is.readAllBytes();
             is.close();
-            Node rootNode = document.getDocumentElement();
-            NodeList themeNodeList = rootNode.getChildNodes();
+
+            var theme = (UITheme) xstream.fromXML(new ByteArrayInputStream(barr));
+
             this.resource = resource;
             URL url = resource.getURL();
 
@@ -172,72 +168,44 @@ public class ThemeManager {
             url = new URL(url.getProtocol(), url.getHost(), path);
             loader = new URLClassLoader(new URL[]{url});
 
-            Node node = getNodeFromNodeList(themeNodeList, "name");
-            name = (node == null ? "" : node.getFirstChild().getNodeValue());
-            node = getNodeFromNodeList(themeNodeList, "author");
-            author = (node == null ? "" : node.getFirstChild().getNodeValue());
-            node = getNodeFromNodeList(themeNodeList, "description");
-            description = (node == null ? "" : node.getFirstChild().getNodeValue());
-            node = getNodeFromNodeList(themeNodeList, "selectable");
-            selectable = (node == null ? true : Boolean.parseBoolean(node.getFirstChild().getNodeValue()));
-            node = getNodeFromNodeList(themeNodeList, "button");
-            if (node == null) {
+            name = theme.getName();
+            author = theme.getAuthor();
+            description = theme.getDescription();
+            selectable = theme.isSelectable();
+
+            var btn = theme.getButton();
+
+            if (btn == null) {
                 buttonClass = DefaultToolButton.class;
-                buttonProperties = null;
-                classicToolBarButtons = false;
             } else {
-                String className = getAttribute(node, "class");
-                Object properties = null;
+                String className = btn.getButtonClass();
                 Class<?> cls = DefaultToolButton.class;
                 try {
                     cls = resource.getClassLoader().loadClass(className);
-                    Method m = cls.getMethod("readPropertiesFromXMLNode", Node.class);
-                    properties = m.invoke(className, node);
                 } catch (ReflectiveOperationException | SecurityException ex) {
                     log.atError().setCause(ex).log("Unable to invoke method: {}", ex.getMessage());
                 }
 
-                // parse the button styles for this theme
-                ButtonStyle bstyle = null;
-                NodeList list = node.getChildNodes();
-
-                for (int i = 0; i < list.getLength(); i++) {
-                    Node kid = list.item(i);
-                    if (kid.getNodeName().equals("style")) {
-                        if (bstyle == null) {
-                            bstyle = new ButtonStyle(kid);
-                        } else {
-                            bstyle.add(kid);
-                        }
+                // Parse the button styles for this theme
+                for(var sa: btn.getStyles()) {
+                    if(buttonStyles == null) {
+                        buttonStyles = new ButtonStyle(sa);
+                        continue;
                     }
+                    buttonStyles.add(new ButtonStyle(sa));
                 }
 
                 buttonClass = cls;
-                buttonProperties = properties;
-                buttonStyles = bstyle;
-                String s = getAttribute(node, "useintoolbars");
-                classicToolBarButtons = s != null && !Boolean.parseBoolean(s);
             }
-            node = getNodeFromNodeList(themeNodeList, "palettemargin");
-            paletteMargin = getIntegerValueFromNode(node);
-            node = getNodeFromNodeList(themeNodeList, "buttonmargin");
-            buttonMargin = getIntegerValueFromNode(node);
-            //color sets
-            int count = 0;
-            for (int i = 0; i < themeNodeList.getLength(); i++) {
-                node = themeNodeList.item(i);
-                if (node.getNodeName().equals("colorset")) {
-                    count++;
-                }
-            }
-            colorSets = new ColorSet[count];
-            count = 0;
-            for (int i = 0; i < themeNodeList.getLength(); i++) {
-                node = themeNodeList.item(i);
-                if (node.getNodeName().equals("colorset")) {
-                    colorSets[count++] = new ColorSet(node);
-                }
-            }
+
+
+            paletteMargin = theme.getPaletteMargin();
+            buttonMargin = theme.getButtonMargin();
+
+            colorSets = new ArrayList<>();
+            theme.getColorSets().forEach(colorSet -> colorSets.add(new ColorSet(colorSet)));
+
+
         }
 
         public String getName() {
@@ -245,12 +213,12 @@ public class ThemeManager {
         }
 
         public ColorSet[] getColorSets() {
-            return colorSets.clone();
+            return colorSets.toArray(ColorSet[]::new);
         }
     }
 
     /**
-     * nested ButtonStyle class.
+     * Nested ButtonStyle class.
      * Forms a chain of ButtonStyle objects for a particular Theme.
      * ButtonStyle objects store all the attributes of the defining XML as
      * elements of a Map. These values can be accessed by calling
@@ -258,72 +226,57 @@ public class ThemeManager {
      */
     public static class ButtonStyle {
 
-        protected Class<?> ownerType;
+        protected Class<?> ownerType = EditingTool.class;
+
         protected int width = -1;
         protected int height = -1;
 
+        @Getter
         protected final Map<String, String> attributes = new HashMap<>();
-        protected ButtonStyle next;
+        protected ButtonStyle next = null;
 
-        /**
-         * create a new ButtonStyle by parsing the XML represented by node.
-         *
-         * @param node the XML defining the style.
-         */
-        public ButtonStyle(Node node) {
-            String name, value;
+        public ButtonStyle(StyleAttribute sa) {
+            this.attributes.putAll(sa.getAttributes());
 
-            // stash all attributes in the attributes map
-            NamedNodeMap kids = node.getAttributes();
-            for (int i = 0; i < kids.getLength(); i++) {
-                node = kids.item(i);
-                name = node.getNodeName();
-                value = node.getNodeValue();
-                attributes.put(name, value);
-
-                if (name.equalsIgnoreCase("owner")) {
-                    try {
-                        ownerType = ArtOfIllusion.getClass(value);
-                    } catch (ClassNotFoundException ex) {
-                        log.atDebug().setCause(ex).log("Unable to identify ButtonStyle.owner: {}", ex.getMessage());
-                    }
-                }
-
-                if (name.equalsIgnoreCase("size")) {
-                    int cut = value.indexOf(',');
-                    if (cut >= 0) {
-                        width = Integer.parseInt(value.substring(0, cut).trim());
-                        height = Integer.parseInt(value.substring(cut + 1).trim());
-                    } else {
-                        width = height = Integer.parseInt(value.trim());
-                    }
+            if(attributes.containsKey("owner")) {
+                try {
+                    ownerType = ArtOfIllusion.getClass(attributes.get("owner"));
+                } catch (ClassNotFoundException ex) {
+                    log.atDebug().setCause(ex).log("Unable to identify ButtonStyle.owner: {}", ex.getMessage());
                 }
             }
 
-            if (ownerType == null) {
-                ownerType = EditingTool.class;
+            if(attributes.containsKey("size")) {
+                var value = attributes.get("size");
+                int cut = value.indexOf(',');
+                if (cut >= 0) {
+                    width = Integer.parseInt(value.substring(0, cut).trim());
+                    height = Integer.parseInt(value.substring(cut + 1).trim());
+                } else {
+                    width = height = Integer.parseInt(value.trim());
+                }
             }
         }
 
         /**
-         * add a new ButtonNode to this ButtonNode.
+         * Add new ButtonStyle to this ButtonStyle.
          */
-        protected void add(Node node) {
-            if (next == null) {
-                next = new ButtonStyle(node);
+        protected void add(ButtonStyle style){
+            if(next == null) {
+                next = style;
             } else {
-                next.add(node);
+                next.add(style);
             }
         }
 
         /**
-         * get the ButtonStyle associated with <i>owner</i>
+         * Get the ButtonStyle associated with <i>owner</i>
          */
         public ButtonStyle getStyle(Object owner) {
             if (ownerType != null && ownerType.isInstance(owner)) {
                 return this;
             }
-            return (next == null ? null : next.getStyle(owner));
+            return next == null ? null : next.getStyle(owner);
         }
 
         /**
@@ -342,7 +295,6 @@ public class ThemeManager {
     private static ColorSet selectedColorSet;
     private static ThemeInfo[] themeList;
     private static Map<String, ThemeInfo> themeIdMap;
-    private static DocumentBuilderFactory documentBuilderFactory; //XML parsing
 
     /**
      * icon to use if no other icon can be found
@@ -376,7 +328,7 @@ public class ThemeManager {
      */
     public static void setSelectedTheme(ThemeInfo theme) {
         selectedTheme = theme;
-        setSelectedColorSet(theme.colorSets[0]);
+        setSelectedColorSet(theme.colorSets.get(0));
         applyButtonProperties();
     }
 
@@ -397,36 +349,18 @@ public class ThemeManager {
 
     private static void applyThemeColors() {
         ColorSet set = selectedColorSet;
-        ViewerCanvas.backgroundColor = new Color(set.viewerBackground.getRed(),
-                set.viewerBackground.getGreen(),
-                set.viewerBackground.getBlue());
-        ViewerCanvas.lineColor = new Color(set.viewerLine.getRed(),
-                set.viewerLine.getGreen(),
-                set.viewerLine.getBlue());
-        ViewerCanvas.handleColor = new Color(set.viewerHandle.getRed(),
-                set.viewerHandle.getGreen(),
-                set.viewerHandle.getBlue());
-        ViewerCanvas.highlightColor = new Color(set.viewerHighlight.getRed(),
-                set.viewerHighlight.getGreen(),
-                set.viewerHighlight.getBlue());
-        ViewerCanvas.specialHighlightColor = new Color(set.viewerSpecialHighlight.getRed(),
-                set.viewerSpecialHighlight.getGreen(),
-                set.viewerSpecialHighlight.getBlue());
-        ViewerCanvas.disabledColor = new Color(set.viewerDisabled.getRed(),
-                set.viewerDisabled.getGreen(),
-                set.viewerDisabled.getBlue());
-        Color viewerSurface = new Color(set.viewerSurface.getRed(),
-                set.viewerSurface.getGreen(),
-                set.viewerSurface.getBlue());
-        Color viewerTransparent = new Color(set.viewerTransparent.getRed(),
-                set.viewerTransparent.getGreen(),
-                set.viewerTransparent.getBlue());
-        Color viewerLowValue = new Color(set.viewerLowValue.getRed(),
-                set.viewerLowValue.getGreen(),
-                set.viewerLowValue.getBlue());
-        Color viewerHighValue = new Color(set.viewerHighValue.getRed(),
-                set.viewerHighValue.getGreen(),
-                set.viewerHighValue.getBlue());
+
+        ViewerCanvas.backgroundColor = set.viewerBackground;
+        ViewerCanvas.lineColor = set.viewerLine;
+        ViewerCanvas.handleColor = set.viewerHandle;
+        ViewerCanvas.highlightColor = set.viewerHighlight;
+        ViewerCanvas.specialHighlightColor = set.viewerSpecialHighlight;
+        ViewerCanvas.disabledColor = set.viewerDisabled;
+        Color viewerSurface = set.viewerSurface;
+        Color viewerTransparent = set.viewerTransparent;
+        Color viewerLowValue = set.viewerLowValue;
+        Color viewerHighValue = set.viewerHighValue;
+
         ViewerCanvas.surfaceColor = viewerSurface;
         ViewerCanvas.surfaceRGBColor = new RGBColor(viewerSurface.getRed() / 255.0, viewerSurface.getGreen() / 255.0, viewerSurface.getBlue() / 255.0);
         ViewerCanvas.transparentColor = new RGBColor(viewerTransparent.getRed() / 255.0, viewerTransparent.getGreen() / 255.0, viewerTransparent.getBlue() / 255.0);
@@ -441,7 +375,7 @@ public class ThemeManager {
         Class<?> buttonClass = selectedTheme.buttonClass;
         try {
             Method m = buttonClass.getMethod("setProperties", Object.class);
-            m.invoke(buttonClass, selectedTheme.buttonProperties);
+            m.invoke(buttonClass, selectedTheme.getButtonProperties());
         } catch (NoSuchMethodException e) {
             // missing method is quite normal - silently ignore
         } catch (ReflectiveOperationException | SecurityException ex) {
@@ -600,7 +534,7 @@ public class ThemeManager {
             try {
                 ctor = buttonClass.getConstructor(Object.class, ImageIcon.class);
                 return (ToolButton) ctor.newInstance(owner, new ImageIcon(url));
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 log.atError().setCause(t).log("Could not find a usable constructor for ToolButton: {}: {} due {}", buttonClass.getName(), iconName, t.getLocalizedMessage());
             }
         }
@@ -679,55 +613,23 @@ public class ThemeManager {
             throw new IllegalStateException("The themes have already been initialized.");
         }
         themeIdMap = new HashMap<>();
-        documentBuilderFactory = DocumentBuilderFactory.newInstance();
+
+
         List<PluginRegistry.PluginResource> resources = PluginRegistry.getResources("UITheme");
-        ArrayList<ThemeInfo> list = new ArrayList<>();
-        for (PluginRegistry.PluginResource resource : resources) {
+        List<ThemeInfo> list = new ArrayList<>();
+        for (PluginRegistry.PluginResource resource: resources) {
             try {
-                ThemeInfo themeInfo = new ThemeInfo(resource);
-                list.add(themeInfo);
-            } catch (IOException | ParserConfigurationException | SAXException ex) {
+                list.add(new ThemeInfo(resource));
+            } catch (IOException ex) {
                 log.atError().setCause(ex).log("Unable to init themes: {}", ex.getMessage());
             }
         }
         themeList = list.toArray(new ThemeInfo[0]);
-        for (ThemeInfo themeInfo : themeList) {
+        for (ThemeInfo themeInfo: themeList) {
             themeIdMap.put(themeInfo.resource.getId(), themeInfo);
         }
         defaultTheme = themeIdMap.get("default");
         setSelectedTheme(defaultTheme);
-    }
-
-    private static int getIntegerValueFromNode(Node node) {
-        if (node != null) {
-            String s = getAttribute(node, "value");
-            if (s != null) {
-                return Integer.parseInt(s);
-            }
-        }
-        return 0;
-    }
-
-    private static Color getColorFromNode(Node node) {
-        if (node == null) {
-            return new Color(0, 0, 0);
-        }
-        String s = getAttribute(node, "R");
-        int r = 0;
-        if (s != null) {
-            r = Integer.parseInt(s);
-        }
-        int g = 0;
-        s = getAttribute(node, "G");
-        if (s != null) {
-            g = Integer.parseInt(s);
-        }
-        int b = 0;
-        s = getAttribute(node, "B");
-        if (s != null) {
-            b = Integer.parseInt(s);
-        }
-        return new Color(r, g, b);
     }
 
     /**
@@ -745,46 +647,10 @@ public class ThemeManager {
     }
 
     /**
-     * returns the ButtonStyle for the current Theme and the specified owner.
+     * Returns the ButtonStyle for the current Theme and the specified owner.
      */
     public static ButtonStyle getButtonStyle(Object owner) {
-        return (selectedTheme.buttonStyles != null ? selectedTheme.buttonStyles.getStyle(owner) : null);
+        return selectedTheme.buttonStyles == null ? null: selectedTheme.buttonStyles.getStyle(owner);
     }
 
-    /**
-     * Utility for parsing XML Documents: gets a named node from a node list. Returns null if the node does not
-     * exist.
-     *
-     * @param nl The node list
-     * @param nodeName The node name
-     * @return The node named nodeName
-     */
-    private static Node getNodeFromNodeList(NodeList nl, String nodeName) {
-        for (int i = 0; i < nl.getLength(); ++i) {
-            Node n = nl.item(i);
-            if (n.getNodeName().equals(nodeName)) {
-                return n;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Utility for parsing XML Documents: gets a named attribute value from a node
-     *
-     * @param name The attribute name
-     * @param node Description of the Parameter
-     * @return The attribute value
-     */
-    private static String getAttribute(Node node, String name) {
-        NamedNodeMap nm = node.getAttributes();
-        if (nm == null) {
-            return null;
-        }
-        Node nn = nm.getNamedItem(name);
-        if (nn == null) {
-            return null;
-        }
-        return nn.getNodeValue();
-    }
 }

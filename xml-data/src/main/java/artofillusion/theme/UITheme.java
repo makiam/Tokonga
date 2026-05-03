@@ -18,6 +18,7 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @XStreamAlias("theme")
 @Getter
@@ -29,23 +30,38 @@ public class UITheme {
 
     public Boolean isSelectable() { return selectable == null || selectable; }
 
+    public String getName() {
+        return name == null ? "" : name;
+    }
+
+    public String getAuthor() {
+        return author == null ? "" : author;
+    }
+
     @XStreamAlias("name")
     private String name;
+
+    @XStreamAlias("author")
+    private String author;
 
     @XStreamAlias("description")
     private String description;
 
     public Integer getButtonMargin() {
-        return buttonMargin.getValue();
+        return  buttonMargin == null ? 0 : buttonMargin.getValue();
     }
 
     public Integer getPaletteMargin() {
-        return paletteMargin.getValue();
+        return paletteMargin == null ? 0 : paletteMargin.getValue();
     }
 
     @XStreamAlias("buttonmargin") private final Value buttonMargin = null;
 
     @XStreamAlias("palettemargin") private final Value paletteMargin = null;
+
+    public List<UIThemeColorSet> getColorSets() {
+        return colorSets == null ? List.of() : colorSets;
+    }
 
     @XStreamImplicit
     private final List<UIThemeColorSet> colorSets = new ArrayList<>();

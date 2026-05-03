@@ -1,4 +1,4 @@
-/* Copyright 2026 by Maksim Khramov
+/* Copyright (C) 2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,21 +11,15 @@
 package artofillusion.theme;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import lombok.Data;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
+import java.util.Map;
 
+@XStreamConverter(StyleAttributeConverter.class)
+@XStreamAlias("style")
+public class StyleAttribute {
 
-import java.util.ArrayList;
-import java.util.List;
+    private Map<String, String> attributes;
 
-@XStreamAlias("button")
-@Data
-public class Button {
-
-    @XStreamAsAttribute
-    private String buttonClass = "";
-
-    @XStreamImplicit
-    private List<StyleAttribute> styles = new ArrayList<>();
+    public Map<String, String> getAttributes() { return attributes; }
+    public void setAttributes(Map<String, String> attributes) { this.attributes = attributes; }
 }
