@@ -8,7 +8,6 @@ plugins {
     id 'jacoco'
     id 'maven-publish'
     id "com.github.ben-manes.versions" version "0.54.0"
-    id "kotlin-kapt"
 }
 
 application {
@@ -17,10 +16,6 @@ application {
     ]
 }
 description = 'Art Of Illusion'
-
-kapt {
-    keepJavacAnnotationProcessors = true
-}
 
 ext {
    mainClass = "artofillusion.ArtOfIllusion"

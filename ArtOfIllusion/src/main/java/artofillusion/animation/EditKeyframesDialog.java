@@ -16,7 +16,7 @@ import artofillusion.object.*;
 import artofillusion.ui.*;
 import buoy.widget.*;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
+
 
 import java.text.*;
 import java.util.*;
@@ -51,7 +51,7 @@ public class EditKeyframesDialog {
         Translate.text("Delete")
     };
 
-    public EditKeyframesDialog(@NotNull final LayoutWindow win, final int operation) {
+    public EditKeyframesDialog(final LayoutWindow win, final int operation) {
         window = win;
         this.operation = operation;
         theScene = window.getScene();

@@ -1,24 +1,3 @@
-buildscript {
-  repositories {
-    mavenCentral()
-    maven {
-      url uri('https://files.pvs-studio.com/java/pvsstudio-maven-repository/')
-    }
-  }
-  dependencies {
-    classpath 'com.pvsstudio:pvsstudio-gradle-plugin:latest.release'
-  }
-}
-
 plugins {
   id "io.freefair.aggregate-javadoc" version "8.14.2"
-}
-
-apply plugin: com.pvsstudio.PvsStudioGradlePlugin
-
-pvsstudio {
-  outputType = 'fullhtml'
-  outputFile = "${rootProject.projectDir}/report/"
-  analysisMode = ['GA', 'OWASP']
-  disabledWarnings = ["V6071"]
 }
