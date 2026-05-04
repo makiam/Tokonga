@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 by Maksim Khramov
+/* Copyright (C) 2025-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -85,6 +85,12 @@ public final class ExternalObjectEditingWindow extends JDialog {
 
 
 
+    }
+
+    @Override
+    public void dispose() {
+        org.greenrobot.eventbus.EventBus.getDefault().unregister(this);
+        super.dispose();
     }
 
     /**

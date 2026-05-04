@@ -29,11 +29,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.zip.*;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
+
 
 /**
  * The Scene class describes a collection of objects, arranged relative to each other to
@@ -51,7 +51,9 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
 
     private List<Integer> selection;
 
+    @Getter(AccessLevel.PACKAGE)
     private final List<ListChangeListener> textureListeners = new CopyOnWriteArrayList<>();
+    @Getter(AccessLevel.PACKAGE)
     private final List<ListChangeListener> materialListeners = new CopyOnWriteArrayList<>();
 
     private final Map<String, Object> metadataMap = new HashMap<>();
@@ -108,7 +110,6 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
     private static final byte[] FILE_PREFIX = {'A', 'o', 'I', 'S', 'c', 'e', 'n', 'e'};
 
     public Scene() {
-        org.greenrobot.eventbus.EventBus.getDefault().register(this);
         UniformTexture defTex = new UniformTexture();
 
 
@@ -145,7 +146,6 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * Textures and Materials are read.
      */
     public Scene(File f, boolean fullScene) throws IOException {
-        EventBus.getDefault().register(this);
         setName(f.getName());
         setDirectory(f.getParent());
         BufferedInputStream buf = new BufferedInputStream(new FileInputStream(f));
@@ -178,7 +178,6 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * is false, only the Textures and Materials are read.
      */
     public Scene(DataInputStream in, boolean fullScene) throws IOException {
-        EventBus.getDefault().register(this);
         initFromStream(in, fullScene);
     }
 
@@ -601,19 +600,16 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
         clearSelection();
     }
 
-    @Subscribe
-    public void onAddMaterial(MaterialsContainer.MaterialAddedEvent event) {
-        if(event.scene() == this) materialListeners.forEach(listener -> listener.itemAdded(event.position(), event.material()));
+    void onAddMaterial(MaterialsContainer.MaterialAddedEvent event) {
+        materialListeners.forEach(listener -> listener.itemAdded(event.position(), event.material()));
     }
 
-    @Subscribe
-    public void onAddTexture(TexturesContainer.TextureAddedEvent event) {
-        if(event.scene() == this) textureListeners.forEach(listener -> listener.itemAdded(event.position(), event.texture()));
+    void onAddTexture(TexturesContainer.TextureAddedEvent event) {
+        textureListeners.forEach(listener -> listener.itemAdded(event.position(), event.texture()));
     }
 
-    @Subscribe
     public void onRemoveMaterial(MaterialsContainer.MaterialRemovedEvent event) {
-        if(event.scene() == this) materialListeners.forEach(listener -> listener.itemRemoved(event.position(), event.material()));
+        materialListeners.forEach(listener -> listener.itemRemoved(event.position(), event.material()));
     }
 
     /**

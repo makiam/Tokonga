@@ -130,7 +130,7 @@ public sealed interface MaterialsContainer permits Scene {
         @Override
         public void redo() {
             scene.materials.add(position, material);
-            EventBus.getDefault().post(new MaterialAddedEvent(scene, material, position));
+            scene.onAddMaterial(new MaterialAddedEvent(material, position));
         }
 
         @Override
@@ -164,7 +164,7 @@ public sealed interface MaterialsContainer permits Scene {
         public void redo() {
             scene.materials.remove(position);
             map.keySet().forEach(it -> it.setMaterial(null, null));
-            EventBus.getDefault().post(new MaterialRemovedEvent(scene, material, position));
+            scene.onRemoveMaterial(new MaterialRemovedEvent(material, position));
         }
 
         @Override
@@ -172,6 +172,6 @@ public sealed interface MaterialsContainer permits Scene {
     }
 
 
-    record MaterialAddedEvent(Scene scene, Material material, int position) {}
-    record MaterialRemovedEvent(Scene scene, Material material, int position) {}
+    record MaterialAddedEvent(Material material, int position) {}
+    record MaterialRemovedEvent(Material material, int position) {}
 }

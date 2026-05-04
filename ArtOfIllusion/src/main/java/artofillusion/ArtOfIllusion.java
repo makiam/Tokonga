@@ -453,8 +453,8 @@ public class ArtOfIllusion {
     public static void openScene(File file, BFrame frame) {
         // Open the file and read the scene.
 
-        try {
-            LoadEventListener el = new LoadEventListener();
+        try(LoadEventListener el = new LoadEventListener()) {
+
             Scene scene = new Scene(file, true);
             List<String> errors = scene.getErrors();
             List<String> eventErrors = el.getEventMessages();
@@ -502,7 +502,7 @@ public class ArtOfIllusion {
      */
     public static void copyToClipboard(ObjectInfo[] obj, Scene scene) {
         // First, make a list of all textures used by the objects.
-
+        org.greenrobot.eventbus.EventBus.getDefault().post(new ClipboardChangedEvent(obj.length));
         List<Texture> textures = new ArrayList<>();
         for (ObjectInfo co : obj) {
             Object3D object = co.getObject();
