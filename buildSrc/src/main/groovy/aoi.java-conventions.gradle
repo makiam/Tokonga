@@ -34,11 +34,6 @@ repositories {
     }
 }
 
-
-ext {
-    junitVersion = "5.9.1"
-}
-
 dependencies {
     compileOnly("org.jetbrains:annotations:24.0.1")
     testCompileOnly("org.jetbrains:annotations:24.0.1")
@@ -50,11 +45,8 @@ dependencies {
     
     implementation libs.buoy
 
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
-
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
-    testImplementation "org.junit.platform:junit-platform-suite:1.9.1"
+    testImplementation("org.junit.jupiter:junit-jupiter:6.0.3")
+    testImplementation("org.junit.platform:junit-platform-suite:6.0.3")
 
     testImplementation group: 'org.netbeans', name: 'jemmy', version: '2.2.7.5'
 
