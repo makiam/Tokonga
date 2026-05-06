@@ -1,4 +1,4 @@
-/* Copyright (C) 2017-2025 by Maksim Khramov
+/* Copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -35,13 +35,8 @@ import org.junit.jupiter.api.DisplayName;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author MaksK
- */
 @DisplayName("Object Info Test")
 class ObjectInfoTest {
-
-
 
     /**
      * Test to create new ObjectInfo object with all defaults
@@ -300,6 +295,36 @@ class ObjectInfoTest {
         Assertions.assertEquals(2, parent.getChildren().length);
         Assertions.assertEquals(childOne, parent.getChildren()[0]);
         Assertions.assertEquals(childTwo, parent.getChildren()[1]);
+    }
+
+    @Test
+    void testAddChildAndReplaceBatch() {
+        ObjectInfo parent = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Parent");
+        ObjectInfo childOne = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube");
+        ObjectInfo childTwo = new ObjectInfo(new Sphere(1d, 1d, 1d), new CoordinateSystem(), "Sphere");
+
+        parent.setChildren(childOne, childTwo);
+        parent.setChildren();
+
+        Assertions.assertEquals(0, parent.getChildren().length);
+
+        Assertions.assertEquals(null, childOne.getParent());
+        Assertions.assertEquals(null, childTwo.getParent());
+    }
+    @Test
+    void testAddChildBatch() {
+        ObjectInfo parent = new ObjectInfo(new NullObject(), new CoordinateSystem(), "Parent");
+        ObjectInfo childOne = new ObjectInfo(new Cube(1d, 1d, 1d), new CoordinateSystem(), "Cube");
+        ObjectInfo childTwo = new ObjectInfo(new Sphere(1d, 1d, 1d), new CoordinateSystem(), "Sphere");
+
+        parent.setChildren(childOne, childTwo);
+
+        Assertions.assertEquals(2, parent.getChildren().length);
+        Assertions.assertEquals(childOne, parent.getChildren()[0]);
+        Assertions.assertEquals(childTwo, parent.getChildren()[1]);
+
+        Assertions.assertEquals(parent, childOne.getParent());
+        Assertions.assertEquals(parent, childTwo.getParent());
     }
 
     /**
