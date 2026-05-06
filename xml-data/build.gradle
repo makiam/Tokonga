@@ -5,5 +5,8 @@ plugins {
 description = 'XML Data API'
 
 dependencies {
-    implementation group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.21'
+    implementation("com.thoughtworks.xstream:xstream:1.4.21") {
+        exclude group: "xmlpull"
+        exclude group: "io.github.x-stream"
+    }
 }
