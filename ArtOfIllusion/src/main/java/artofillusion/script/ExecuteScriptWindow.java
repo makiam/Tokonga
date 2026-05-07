@@ -1,6 +1,6 @@
 /* Copyright (C) 2002-2013 by Peter Eastman
    Changes Copyright (C) 2023 by Lucas Stanek
-   Changes Copyright (C) 2023-2025 by Maksim Khramov
+   Changes Copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -177,7 +177,7 @@ public class ExecuteScriptWindow extends BFrame {
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean hasFocus) {
             JLabel cc = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, hasFocus);
-            cc.setIcon(ThemeManager.getIcon("/artofillusion/Icons/" + value + ".png"));
+            cc.setIcon(ThemeManager.getIcon((String)value));
             return cc;
         }
     }
