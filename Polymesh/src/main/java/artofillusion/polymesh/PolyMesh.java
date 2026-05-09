@@ -138,6 +138,13 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
     private List<Integer> faceInfo;
 
+    /**
+     * -- GETTER --
+     *  Gets the mirror state attribute of the PolyMesh object
+     *
+     * @return The mirrorState value
+     */
+    @Getter
     private short mirrorState; //live mirrors
 
     private PolyMesh mirroredMesh;
@@ -12020,15 +12027,6 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
     }
 
     /**
-     * Gets the mirror state attribute of the PolyMesh object
-     *
-     * @return The mirrorState value
-     */
-    public short getMirrorState() {
-        return mirrorState;
-    }
-
-    /**
      * Sets the mirror state attribute of the PolyMesh object
      *
      * @param state
@@ -12123,7 +12121,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         out.writeInt(smoothingMethod);
         out.writeInt(vertices.length);
 
-        for (var vertex : vertices) {
+        for (var vertex: vertices) {
             vertex.r.writeToFile(out);
             out.writeInt(vertex.edge);
             out.writeInt(vertex.ikJoint);
@@ -12131,7 +12129,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             out.writeShort(vertex.type);
         }
         out.writeInt(edges.length);
-        for (var edge : edges) {
+        for (var edge: edges) {
             out.writeInt(edge.vertex);
             out.writeInt(edge.hedge);
             out.writeInt(edge.face);
@@ -12140,7 +12138,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         }
 
         out.writeInt(faces.length);
-        for (var face : faces) {
+        for (var face: faces) {
             out.writeInt(face.edge);
         }
 

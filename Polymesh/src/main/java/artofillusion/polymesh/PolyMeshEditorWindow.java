@@ -31,6 +31,7 @@ import artofillusion.polymesh.PolyMesh.Wedge;
 import artofillusion.polymesh.PolyMesh.Wface;
 import artofillusion.polymesh.PolyMesh.Wvertex;
 import artofillusion.polymesh.PolyMeshValueWidget.ValueWidgetOwner;
+import artofillusion.polymesh.ui.MirrorMenu;
 import artofillusion.texture.FaceParameterValue;
 import artofillusion.texture.ParameterValue;
 import artofillusion.texture.VertexParameterValue;
@@ -90,7 +91,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     private BCheckBoxMenuItem smoothNone;
 
 
-    private BMenuItem[] mirrorItem;
+    BCheckBoxMenuItem[] mirrorItem;
 
     private final BMenu vertexMenu = Translate.menu("polymesh:vertex");
 
@@ -507,21 +508,22 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
         meshMenu.add(meshMenuItem[3] = Translate.menuItem("polymesh:thickenMeshFaceNormal", this, "doThickenMesh"));
         meshMenu.add(meshMenuItem[4] = Translate.menuItem("polymesh:thickenMeshVertexNormal", this, "doThickenMesh"));
-        var mirrorMenu = Translate.menu("polymesh:mirrorMesh");
+        var mirrorMenu = new MirrorMenu(this);
         meshMenu.add(mirrorMenu);
-        mirrorItem = new BMenuItem[4];
-        mirrorMenu.add(mirrorItem[0] = Translate.menuItem("polymesh:mirrorOff", this::doTurnMirrorOff));
+
+        mirrorItem = new BCheckBoxMenuItem[4];
+
         mirrorMenu.add(mirrorItem[1] = Translate.checkboxMenuItem("polymesh:mirrorOnXY", event -> doMirrorOn(), false));
         mirrorMenu.add(mirrorItem[2] = Translate.checkboxMenuItem("polymesh:mirrorOnXZ", event -> doMirrorOn(), false));
         mirrorMenu.add(mirrorItem[3] = Translate.checkboxMenuItem("polymesh:mirrorOnYZ", event -> doMirrorOn(), false));
         if ((mesh.getMirrorState() & PolyMesh.MIRROR_ON_XY) != 0) {
-            ((BCheckBoxMenuItem) mirrorItem[1]).setState(true);
+            mirrorItem[1].setState(true);
         }
         if ((mesh.getMirrorState() & PolyMesh.MIRROR_ON_XZ) != 0) {
-            ((BCheckBoxMenuItem) mirrorItem[2]).setState(true);
+            mirrorItem[2].setState(true);
         }
         if ((mesh.getMirrorState() & PolyMesh.MIRROR_ON_YZ) != 0) {
-            ((BCheckBoxMenuItem) mirrorItem[3]).setState(true);
+            mirrorItem[3].setState(true);
         }
         BMenu mirrorWholeMesh;
         meshMenu.add(mirrorWholeMesh = Translate.menu("polymesh:mirrorWholeMesh"));
@@ -3863,37 +3865,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         updateMenus();
         updateImage();
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
-    }
-
-    /**
-     * Sets off a previously set mirror
-     */
-    //TODO: Extract this dialog
-    private void doTurnMirrorOff(ActionEvent event) {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
-        if (mesh.getMirrorState() == PolyMesh.NO_MIRROR) {
-            return;
-        }
-        BStandardDialog dlg = new BStandardDialog(Translate.text("polymesh:removeMeshMirror"), Translate.text("polymesh:keepMirroredMesh"), BStandardDialog.QUESTION);
-        int r = dlg.showOptionDialog(this, new String[]{
-            Translate.text("polymesh:keep"), Translate.text("polymesh:discard"),
-            Translate.text("button.cancel")}, "cancel");
-        if (r == 0) {
-            PolyMesh newMesh = mesh.getMirroredMesh();
-            mesh.copyObject(newMesh);
-            ((BCheckBoxMenuItem) mirrorItem[1]).setState(false);
-            ((BCheckBoxMenuItem) mirrorItem[2]).setState(false);
-            ((BCheckBoxMenuItem) mirrorItem[3]).setState(false);
-            objectChanged();
-            updateImage();
-        } else if (r == 1) {
-            ((BCheckBoxMenuItem) mirrorItem[1]).setState(false);
-            ((BCheckBoxMenuItem) mirrorItem[2]).setState(false);
-            ((BCheckBoxMenuItem) mirrorItem[3]).setState(false);
-            mesh.setMirrorState(PolyMesh.NO_MIRROR);
-            objectChanged();
-            setSelection(selected);
-        }
     }
 
     /**
