@@ -1881,8 +1881,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             ParameterValue[] newParamVal = new ParameterValue[oldParamVal.length];
             for (int k = 0; k < oldParamVal.length; k++) {
                 if (oldParamVal[k] instanceof FaceParameterValue) {
-                    double[] oldval = ((FaceParameterValue) oldParamVal[k])
-                            .getValue();
+                    double[] oldval = ((FaceParameterValue) oldParamVal[k]).getValue();
                     double[] newval = new double[faces.length];
                     System.arraycopy(oldval, 0, newval, 0, oldval.length);
                     for (int j = oldval.length; j < newval.length; j++) {

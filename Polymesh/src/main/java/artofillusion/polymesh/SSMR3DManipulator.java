@@ -40,8 +40,7 @@ import java.awt.event.KeyEvent;
  * This is the manipulator responsible for moving, resizing and rotating selections (2D).
  * SSMR = Select Scale Move Rotate
  */
-public class SSMR3DManipulator
-        extends SSMRManipulator {
+public class SSMR3DManipulator extends SSMRManipulator {
 
     private final Rectangle[] boxes;
     private Rectangle extraUVBox;

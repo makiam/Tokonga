@@ -31,9 +31,11 @@ import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.Optional;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.text.html.Option;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -132,8 +134,8 @@ public class PolyMeshValueWidget extends BorderContainer {
             return;
         }
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_PLUS:
-            case KeyEvent.VK_ADD:
+
+            case KeyEvent.VK_PLUS, KeyEvent.VK_ADD:
                 if (valueSlider.isEnabled()) {
                     int slider = valueSlider.getValue();
                     if (slider < 100) {
@@ -146,8 +148,8 @@ public class PolyMeshValueWidget extends BorderContainer {
                     }
                 }
                 break;
-            case KeyEvent.VK_MINUS:
-            case KeyEvent.VK_SUBTRACT:
+
+            case KeyEvent.VK_MINUS, KeyEvent.VK_SUBTRACT:
                 if (valueSlider.isEnabled()) {
                     int slider = valueSlider.getValue();
                     if (slider > 0) {
@@ -161,14 +163,10 @@ public class PolyMeshValueWidget extends BorderContainer {
                 }
                 break;
             case KeyEvent.VK_ENTER:
-                if (runCallback != null) {
-                    doValidate();
-                }
+                Optional.ofNullable(runCallback).ifPresent(callback -> doValidate());
                 break;
             case KeyEvent.VK_END:
-                if (runCallback != null) {
-                    doAbort();
-                }
+                Optional.ofNullable(runCallback).ifPresent(callback -> doAbort());
                 break;
             default:
                 break;
@@ -212,9 +210,7 @@ public class PolyMeshValueWidget extends BorderContainer {
         abortButton.setEnabled(true);
         valueSlider.setEnabled(true);
         owner.prepareToShowValueWidget();
-        if (runCallback != null) {
-            runCallback.run();
-        }
+        Optional.ofNullable(runCallback).ifPresent(callback -> callback.run());
         owner.showValueWidget();
     }
 
@@ -252,9 +248,7 @@ public class PolyMeshValueWidget extends BorderContainer {
 
         }
 
-        if (runCallback != null) {
-            runCallback.run();
-        }
+        Optional.ofNullable(runCallback).ifPresent(callback -> callback.run());
     }
 
     /**

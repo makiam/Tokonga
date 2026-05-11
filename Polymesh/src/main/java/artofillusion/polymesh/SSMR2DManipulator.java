@@ -111,28 +111,10 @@ public class SSMR2DManipulator extends SSMRManipulator {
             boxes[i] = new Rectangle(0, 0, HANDLE_SIZE, HANDLE_SIZE);
         }
         state = SCALE;
-        valueWidgetCallback
-                = new Runnable() {
+        valueWidgetCallback = this::doValueWidgetCallback;
+        Runnable validateWidgetValue = this::doValueWidgetValidate;
+        Runnable abortWidgetValue = this::doValueWidgetAbort;
 
-            @Override
-            public void run() {
-                doValueWidgetCallback();
-            }
-        };
-        Runnable validateWidgetValue = new Runnable() {
-
-            @Override
-            public void run() {
-                doValueWidgetValidate();
-            }
-        };
-        Runnable abortWidgetValue = new Runnable() {
-
-            @Override
-            public void run() {
-                doValueWidgetAbort();
-            }
-        };
         view.addEventLink(ToolTipEvent.class, this, "doTooltip");
         if (view.isPerspective()) {
             active = false;
@@ -905,17 +887,17 @@ public class SSMR2DManipulator extends SSMRManipulator {
         Point p = e.getPoint();
         for (int i = boxes.length - 1; i >= 0; --i) {
             if (boxes[i].contains(p)) {
-                if (i != CENTER) {
-                    if (state == SCALE) {
-                        scaleToolTip.processEvent(e);
-                    } else {
-                        rotateToolTip.processEvent(e);
-                    }
-                } else {
+                if (i == CENTER) {
                     if (state == SCALE) {
                         moveToolTip.processEvent(e);
                     } else {
                         centerToolTip.processEvent(e);
+                    }
+                } else {
+                    if (state == SCALE) {
+                        scaleToolTip.processEvent(e);
+                    } else {
+                        rotateToolTip.processEvent(e);
                     }
                 }
             }

@@ -84,7 +84,7 @@ public abstract class Manipulator extends EventSource {
 
     /**
      * Sets the manipulator bounds on screen, for example after user sets a new selection.
-     * Some manipulators rely on bounds being non null to show up.
+     * Some manipulators rely on bounds being non-null to show up.
      *
      * @param bounds The new manipulator bounds (2D)
      */

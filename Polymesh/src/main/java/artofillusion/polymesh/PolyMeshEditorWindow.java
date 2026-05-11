@@ -325,7 +325,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         FormContainer content = new FormContainer(new double[]{0, 1, 0}, new double[]{1, 0, 0, 0});
         setContent(content);
         valueWidget = new PolyMeshValueWidget(this);
-        valueWidgetDialog = new BDialog(this, "choose value", true);
+        valueWidgetDialog = new BDialog(this, "Choose value", true);
         valueWidgetDialog.setContent(valueWidget);
         valueWidgetDialog.pack();
         unseenValueWidgetDialog = true;
@@ -3791,8 +3791,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
         for (int i = 0; i < selPoints.length; i++) {
             if (selPoints[i]) {
-                vertices[i].r = selCenter.plus(orVerts[i].r.minus(selCenter)
-                        .times(valueWidget.getValue()));
+                vertices[i].r = selCenter.plus(orVerts[i].r.minus(selCenter).times(valueWidget.getValue()));
             }
         }
         objectChanged();
