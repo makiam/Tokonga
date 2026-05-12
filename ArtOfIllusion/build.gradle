@@ -29,7 +29,10 @@ dependencies {
     implementation project(':xml-data')
     implementation project(':default-theme-lib')
 
-    implementation group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.21'
+    implementation("com.thoughtworks.xstream:xstream:1.4.21") {
+        exclude group: "xmlpull"
+        exclude group: "io.github.x-stream"
+    }
 
     implementation("org.greenrobot:eventbus-java:3.3.1")
 
