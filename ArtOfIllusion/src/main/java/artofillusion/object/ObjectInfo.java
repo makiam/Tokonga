@@ -144,30 +144,30 @@ public class ObjectInfo {
      * point to), keeping parent-child relationships intact.
      */
     public static ObjectInfo[] duplicateAll(ObjectInfo[] info) {
-        ObjectInfo[] newobj = new ObjectInfo[info.length];
-        HashMap<ObjectInfo, ObjectInfo> objectMap = new HashMap<>();
-        for (int i = 0; i < newobj.length; i++) {
-            newobj[i] = info[i].duplicate(info[i].getObject().duplicate());
-            objectMap.put(info[i], newobj[i]);
+        ObjectInfo[] newObj = new ObjectInfo[info.length];
+        Map<ObjectInfo, ObjectInfo> objectMap = new HashMap<>();
+        for (int i = 0; i < newObj.length; i++) {
+            newObj[i] = info[i].duplicate(info[i].getObject().duplicate());
+            objectMap.put(info[i], newObj[i]);
         }
         for (int i = 0; i < info.length; i++) {
             for (int k = info[i].getChildren().length - 1; k >= 0; k--) {
                 int j;
                 for (j = 0; j < info.length && info[j] != info[i].getChildren()[k]; j++);
                 if (j < info.length) {
-                    newobj[i].addChild(newobj[j], 0);
+                    newObj[i].addChild(newObj[j], 0);
                 }
             }
         }
-        for (ObjectInfo objectInfo : newobj) {
+        for (ObjectInfo objectInfo: newObj) {
             if (objectInfo.tracks == null) {
                 continue;
             }
-            for (Track track : objectInfo.tracks) {
+            for (Track track: objectInfo.tracks) {
                 track.updateObjectReferences(objectMap);
             }
         }
-        return newobj;
+        return newObj;
     }
 
     /**
@@ -509,9 +509,10 @@ public class ObjectInfo {
         return tracks.toArray(Track[]::new);
     }
 
-    public void setChildren(ObjectInfo[] newObj) {
+    public void setChildren(ObjectInfo... items) {
+        children.forEach(info -> info.setParent(null));
         children.clear();
-        children.addAll(Arrays.asList(newObj));
+        children.addAll(Arrays.asList(items));
         children.forEach(info -> info.setParent(this));
     }
 
