@@ -77,7 +77,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      * Get the Edit menu.
      */
     @Getter
-    private final BMenu editMenu = new LayoutEditMenu(this);
+    private final LayoutEditMenu editMenu = new LayoutEditMenu(this);
     /**
      * -- GETTER --
      * Get the Scene menu.
@@ -504,7 +504,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
         editMenu.add(editMenuItem[2] = Translate.menuItem("cut", event -> cutCommand()));
         editMenu.add(editMenuItem[3] = Translate.menuItem("copy", event -> copyCommand()));
-        editMenu.add(editMenuItem[4] = Translate.menuItem("paste", event -> pasteCommand()));
+        editMenu.add(editMenu.getPasteItem());
         editMenu.add(editMenuItem[5] = Translate.menuItem("clear", event -> clearCommand()));
         editMenu.addSeparator();
         editMenu.add(editMenuItem[6] = Translate.menuItem("selectChildren", event -> selectChildrenAction()));
@@ -989,7 +989,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
         editMenuItem[2].setEnabled(numSelObjects > 0); // Cut
         editMenuItem[3].setEnabled(numSelObjects > 0); // Copy
-        editMenuItem[4].setEnabled(ArtOfIllusion.getClipboardSize() > 0); // Paste
+        
         editMenuItem[5].setEnabled(numSelObjects > 0); // Clear
         editMenuItem[6].setEnabled(hasChildren); // Select Children
         editMenuItem[8].setEnabled(numSelObjects > 0); // Deselect All

@@ -60,7 +60,7 @@ sealed interface TexturesContainer permits Scene {
     default void add(Texture texture, int position) {
         var scene = (Scene) this;
         scene.textures.add(position, texture);
-        EventBus.getDefault().post(new TextureAddedEvent(scene, texture, position));
+        scene.onAddTexture(new TextureAddedEvent(texture, position));
     }
 
     /**
@@ -100,6 +100,6 @@ sealed interface TexturesContainer permits Scene {
     }
 
 
-    record TextureAddedEvent(Scene scene, Texture texture, int position) {}
-    record TextureRemovedEvent(Scene scene, Texture texture, int position) {}
+    record TextureAddedEvent(Texture texture, int position) {}
+    record TextureRemovedEvent(Texture texture, int position) {}
 }

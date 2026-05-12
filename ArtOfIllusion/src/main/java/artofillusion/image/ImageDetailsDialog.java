@@ -363,6 +363,12 @@ public class ImageDetailsDialog extends BDialog {
         setDataTexts();
     }
 
+    @Override
+    public void dispose() {
+        org.greenrobot.eventbus.EventBus.getDefault().unregister(this);
+        getComponent().dispose();
+    }
+
     public static class ImageNameChangeEvent {
     }
 }

@@ -20,14 +20,10 @@ import org.greenrobot.eventbus.Subscribe;
 import javax.swing.*;
 
 @Slf4j
-public final class LayoutFileMenu extends BMenu {
-
-    private final LayoutWindow layout;
+public final class LayoutFileMenu extends LayoutMenu {
 
     LayoutFileMenu(LayoutWindow layout) {
-        super(Translate.text("menu.file"));
-        this.layout = layout;
-        org.greenrobot.eventbus.EventBus.getDefault().register(this);
+        super(layout, "menu.file");
 
         this.add(Translate.menuItem("new", event -> {
             layout.savePreferences();
@@ -41,6 +37,6 @@ public final class LayoutFileMenu extends BMenu {
 
     @Subscribe
     public void onSceneChangedEvent(SceneChangedEvent event) {
-        log.info("On Scene changed {} ", layout == event.getWindow() ? "this" : "other");
+        log.info("On Scene changed {} ", this.getLayout() == event.getWindow() ? "this" : "other");
     }
 }
