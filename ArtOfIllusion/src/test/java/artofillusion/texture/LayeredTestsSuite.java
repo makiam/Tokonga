@@ -6,6 +6,6 @@ import org.junit.platform.suite.api.SuiteDisplayName;
 
 @Suite
 @SuiteDisplayName("Suite for Layered Texture and Mapping Tests")
-@SelectClasses({LayeredTextureTest.class, LayeredMappingTest.class})
+@SelectClasses({LayeredTextureTest.class, LayeredMappingTest.class, LayeredMappingDuplicateTest.class})
 public class LayeredTestsSuite {
 }
