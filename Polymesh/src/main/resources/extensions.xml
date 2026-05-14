@@ -98,5 +98,5 @@
     <comments>
     </comments>
     <resource type="TranslateBundle" id="polymesh" name="polymesh"/>
-
+    <resource type="UITheme" id="polymesh" name="polymesh/theme.xml"/>
 </extension>
