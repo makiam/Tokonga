@@ -256,7 +256,7 @@ public class PluginRegistry {
      */
     public static <T> List<T> getPlugins(Class<T> category) {
         var plugins = categoryClasses.getOrDefault(category, new ArrayList<>());
-        return (List<T>) Collections.unmodifiableList(plugins);
+        return new ArrayList<T>((Collection<? extends T>) plugins);
 
     }
 
