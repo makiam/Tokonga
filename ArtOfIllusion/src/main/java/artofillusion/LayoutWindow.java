@@ -2636,6 +2636,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     @Override
     public void dispose() {
         super.dispose();
+        org.greenrobot.eventbus.EventBus.getDefault().unregister(this);
         KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventPostProcessor(keyEventHandler);
     }
 
