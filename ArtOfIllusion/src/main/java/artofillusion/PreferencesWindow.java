@@ -1,6 +1,7 @@
 /* Copyright (C) 2002-2009 by Peter Eastman
    Changes Copyright (C) 2016-2019 by Petri Ihalainen
    Changes copyright (C) 2017-2026 by Maksim Khramov
+   Changes Copyright (C) 2026 by Lucas Stanek
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -76,9 +77,9 @@ public class PreferencesWindow {
         
         List<Renderer> renderers = PluginRegistry.getPlugins(Renderer.class);
         if (!renderers.isEmpty()) {
-            preferences.setDefaultRenderer(renderers.get(defaultRendChoice.getSelectedIndex()));
-            preferences.setObjectPreviewRenderer(renderers.get(objectRendChoice.getSelectedIndex()));
-            preferences.setTexturePreviewRenderer(renderers.get(texRendChoice.getSelectedIndex()));
+            preferences.setDefaultRenderer(PreferencesWindow.createNamedRenderer(renderers.get(defaultRendChoice.getSelectedIndex())));
+            preferences.setObjectPreviewRenderer(PreferencesWindow.createNamedRenderer(renderers.get(objectRendChoice.getSelectedIndex())));
+            preferences.setTexturePreviewRenderer(PreferencesWindow.createNamedRenderer(renderers.get(texRendChoice.getSelectedIndex())));
         }
         preferences.setInteractiveSurfaceError(interactiveTolField.getValue());
         preferences.setUndoLevels((int) undoField.getValue());
@@ -108,6 +109,15 @@ public class PreferencesWindow {
         extras.savePreferences();
     }
 
+    private static Renderer createNamedRenderer(Renderer renderer)
+    {
+        try {
+            return renderer.getClass().getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException ex) {
+            return null;
+        }
+
+    }
     /**
      * Create a Choice for selecting a renderer.
      */

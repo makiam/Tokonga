@@ -1,6 +1,7 @@
 /* Copyright (C) 2002-2009 by Peter Eastman
    Changes Copyright (C) 2016-2019 by Petri Ihalainen
    Changes copyright (C) 2017-2026 by Maksim Khramov
+   Changes Copyright (C) 2026 by Lucas Stanek
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -216,22 +217,32 @@ public class ApplicationPreferences {
         }
     }
 
-    /**
-     * Look up a renderer by name.
-     */
+    /** Look up a renderer by name.
+     *  This returns a new instance of the named render type, to prevent
+     *  the different default render settings from walking over each other.
+     **/
     private Renderer getNamedRenderer(String name) {
         List<Renderer> renderers = PluginRegistry.getPlugins(Renderer.class);
         if (renderers.isEmpty()) {
             return null;
         }
-        for (Renderer r : renderers) {
+        for (Renderer r: renderers) {
             if (r.getName().equals(name)) {
-                return r;
+                return ApplicationPreferences.createNamedRenderer(r);
             }
         }
-        return renderers.get(renderers.size() - 1);
+        return ApplicationPreferences.createNamedRenderer(renderers.get(renderers.size() - 1));
     }
 
+    private static Renderer createNamedRenderer(Renderer renderer)
+    {
+        try {
+            return renderer.getClass().getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException ex) {
+            return null;
+        }
+
+    }
     /**
      * Get the default renderer.
      */
