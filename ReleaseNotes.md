@@ -1,3 +1,8 @@
+### Release #73 (12.05.2026)
+* PM Mirror dialog extracted to separate class by @makiam in https://github.com/makiam/Tokonga/pull/270
+* Fixed memory leak error by @makiam in https://github.com/makiam/Tokonga/pull/264
+* Groovy version updated by @makiam in https://github.com/makiam/Tokonga/pull/268
+  
 ### Release #72 (03.05.2026)
 * Add PM templates folder watchdog code by @makiam in https://github.com/makiam/Tokonga/pull/254
 * Icon generator update by @makiam in https://github.com/makiam/Tokonga/pull/250
