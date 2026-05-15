@@ -467,21 +467,11 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         fileMenu.add(Translate.menuItem("close", event -> closeSceneAction()));
         fileMenu.addSeparator();
         translators.sort(Comparator.comparing(Translator::getName));
-        for (Translator translator : translators) {
-            if (translator.canImport()) {
-                BMenuItem item = new BMenuItem(translator.getName());
-                item.getComponent().putClientProperty("translator", translator);
-                item.getComponent().addActionListener(this::importAction);
-                importMenu.add(item);
-            }
-            if (translator.canExport()) {
-                BMenuItem item = new BMenuItem(translator.getName());
-                item.getComponent().putClientProperty("translator", translator);
-                item.getComponent().addActionListener(this::exportAction);
+        translators.forEach(translator -> {
+            if (translator.canImport()) importMenu.add(new ImportAction(this, translator));
+            if (translator.canExport()) exportMenu.add(new ExportAction(this, translator));
+        });
 
-                exportMenu.add(item);
-            }
-        }
         if (importMenu.getChildCount() > 0) {
             fileMenu.add(importMenu);
         }
@@ -1479,18 +1469,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     private void applicationQuitAction() {
         savePreferences();
         ArtOfIllusion.quit();
-    }
-
-    private void importAction(ActionEvent event) {
-        var source = (JMenuItem) event.getSource();
-        Translator trans = (Translator) source.getClientProperty("translator");
-        trans.importFile(this);
-    }
-
-    private void exportAction(ActionEvent event) {
-        var source = (JMenuItem) event.getSource();
-        Translator trans = (Translator) source.getClientProperty("translator");
-        trans.exportFile(this, theScene);
     }
 
     private void selectChildrenAction() {
