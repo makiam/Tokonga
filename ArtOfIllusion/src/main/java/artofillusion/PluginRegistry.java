@@ -255,15 +255,9 @@ public class PluginRegistry {
      * Get all registered plugins in a particular category.
      */
     public static <T> List<T> getPlugins(Class<T> category) {
-        List<Object> plugins = categoryClasses.get(category);
-        if (plugins == null) {
-            return new ArrayList<T>();
-        }
-        List<T> list = new ArrayList<>(plugins.size());
-        for (Object plugin : plugins) {
-            list.add((T) plugin);
-        }
-        return list;
+        var plugins = categoryClasses.getOrDefault(category, new ArrayList<>());
+        return (List<T>) Collections.unmodifiableList(plugins);
+
     }
 
     /**
