@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2012 by Peter Eastman
-   Changes copyright (C) 2023-2025 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -33,9 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.swing.*;
 
 /**
- * This is the editor for editing procedures. It subclasses CustomWidget, but you should never
- * add it to any Container. Instead, it will automatically create a BFrame and add itself
- * to that.
+ * This is the editor for editing procedures.
  */
 @Slf4j
 public class ProcedureEditor extends CustomWidget {
@@ -73,29 +71,21 @@ public class ProcedureEditor extends CustomWidget {
     private boolean draggingMultiple;
     private Point clickPos;
     private Point lastPos;
-    private final InfoBox inputInfo;
-    private final InfoBox outputInfo;
+
+    private final InfoBox inputInfo = new InfoBox();
+    private final InfoBox outputInfo = new InfoBox();
+
     private IOPort dragFromPort;
     private IOPort dragToPort;
+
     private Optional<MaterialPreviewer> preview = Optional.empty();
-    private final ByteArrayOutputStream cancelBuffer;
-    private final ArrayList<ByteArrayOutputStream> undoStack;
-    private final ArrayList<ByteArrayOutputStream> redoStack;
 
-    private static final Color darkLinkColor = Color.darkGray;
-    private static final Color blueLinkColor = new Color(40, 40, 255);
-    private static final Color selectedLinkColor = new Color(255, 50, 50);
-    private static final Color outputBackgroundColor = new Color(210, 210, 240);
-
-    private static final Color outlineColor = new Color(110, 110, 160);
-    private static final Color selectedColor = new Color(255, 60, 60);
-    protected static final Stroke contourStroke = new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-
-    private static final float BEZIER_HARDNESS = 0.5f; //increase hardness to a have a more pronounced shape
-    private static final Stroke normal = new BasicStroke();
-    private static final Stroke bold = new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+    private final ByteArrayOutputStream cancelBuffer = new ByteArrayOutputStream();
+    private final List<ByteArrayOutputStream> undoStack = new ArrayList<>();
+    private final List<ByteArrayOutputStream> redoStack = new ArrayList<>();
 
     private static ClipboardSelection clipboard;
+
 
     public ProcedureEditor(Procedure proc, ProcedureOwner owner, Scene scene) {
         super();
@@ -104,11 +94,11 @@ public class ProcedureEditor extends CustomWidget {
         this.scene = scene;
         selectedModule = new boolean[proc.getModules().size()];
         selectedLink = new boolean[proc.getLinks().length];
-        inputInfo = new InfoBox();
-        outputInfo = new InfoBox();
-        cancelBuffer = new ByteArrayOutputStream();
-        undoStack = new ArrayList<>();
-        redoStack = new ArrayList<>();
+
+
+
+
+
         parent = new BFrame(owner.getWindowTitle());
         parent.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         parent.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
@@ -311,7 +301,7 @@ public class ProcedureEditor extends CustomWidget {
 
         // Draw the line marking off the output modules.
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setColor(outputBackgroundColor);
+        g.setColor(ProcedureEditorTheme.outputBackgroundColor);
         g.fillRoundRect(divider, 5, size.width - divider - 10, size.height - 10, 8, 8);
 
         // Draw the output modules.
@@ -334,22 +324,22 @@ public class ProcedureEditor extends CustomWidget {
         Link[] link = proc.getLinks();
         // Draw the unselected links.
 
-        g.setStroke(bold);
+        g.setStroke(ProcedureEditorTheme.bold);
         for (int i = 0; i < link.length; i++) {
             if (!selectedLink[i]) {
-                g.setColor(link[i].from.getValueType() == IOPort.NUMBER ? darkLinkColor : blueLinkColor);
+                g.setColor(link[i].from.getValueType() == IOPort.NUMBER ? ProcedureEditorTheme.darkLinkColor : ProcedureEditorTheme.blueLinkColor);
                 g.draw(createBezierCurve(link[i]));
             }
         }
 
         // Draw the selected links.
-        g.setColor(selectedLinkColor);
+        g.setColor(ProcedureEditorTheme.selectedLinkColor);
         for (int i = 0; i < link.length; i++) {
             if (selectedLink[i]) {
                 g.draw(createBezierCurve(link[i]));
             }
         }
-        g.setStroke(normal);
+        g.setStroke(ProcedureEditorTheme.normal);
 
         // If we are in the middle of dragging something, draw the thing being dragged.
         if (draggingLink) {
@@ -442,8 +432,8 @@ public class ProcedureEditor extends CustomWidget {
         Stroke currentStroke = g.getStroke();
         g.setColor(Color.lightGray);
         g.fillRoundRect(bounds.x + 1, bounds.y + 1, bounds.width - 2, bounds.height - 2, 3, 3);
-        g.setColor(selected ? selectedColor : outlineColor);
-        g.setStroke(contourStroke);
+        g.setColor(selected ? ProcedureEditorTheme.selectedColor : ProcedureEditorTheme.outlineColor);
+        g.setStroke(ProcedureEditorTheme.contourStroke);
         g.drawRoundRect(bounds.x - 1, bounds.y - 1, bounds.width + 2, bounds.height + 2, 4, 4);
         g.setStroke(currentStroke);
 
@@ -459,18 +449,18 @@ public class ProcedureEditor extends CustomWidget {
         float ctrlX2;
         float ctrlY2;
         if (link.from.getLocation() == IOPort.LEFT || link.from.getLocation() == IOPort.RIGHT) {
-            ctrlX1 = (x2 - x1) * BEZIER_HARDNESS + x1;
+            ctrlX1 = (x2 - x1) * ProcedureEditorTheme.BEZIER_HARDNESS + x1;
             ctrlY1 = y1;
         } else {
             ctrlX1 = x1;
-            ctrlY1 = (y2 - y1) * BEZIER_HARDNESS + y1;
+            ctrlY1 = (y2 - y1) * ProcedureEditorTheme.BEZIER_HARDNESS + y1;
         }
         if (link.to.getLocation() == IOPort.LEFT || link.to.getLocation() == IOPort.RIGHT) {
-            ctrlX2 = (1 - BEZIER_HARDNESS) * (x2 - x1) + x1;
+            ctrlX2 = (1 - ProcedureEditorTheme.BEZIER_HARDNESS) * (x2 - x1) + x1;
             ctrlY2 = y2;
         } else {
             ctrlX2 = x2;
-            ctrlY2 = (1 - BEZIER_HARDNESS) * (y2 - y1) + y1;
+            ctrlY2 = (1 - ProcedureEditorTheme.BEZIER_HARDNESS) * (y2 - y1) + y1;
         }
         return new CubicCurve2D.Float(x1, y1, ctrlX1, ctrlY1, ctrlX2, ctrlY2, x2, y2);
     }
@@ -580,7 +570,7 @@ public class ProcedureEditor extends CustomWidget {
      * Record the current state of the procedure, so that it can be undone.
      */
     public void saveState(boolean redo) {
-        ArrayList<ByteArrayOutputStream> stack = (redo ? redoStack : undoStack);
+        List<ByteArrayOutputStream> stack = (redo ? redoStack : undoStack);
         if (stack.size() == ArtOfIllusion.getPreferences().getUndoLevels()) {
             stack.remove(0);
         }
