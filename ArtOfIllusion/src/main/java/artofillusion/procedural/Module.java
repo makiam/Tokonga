@@ -32,7 +32,7 @@ import java.util.ArrayList;
  * @deprecated as of 3.1, to be removed 4.0. use {@link artofillusion.procedural.ProceduralModule}
  */
 @Deprecated
-public class Module<M extends Module> {
+public class Module<M extends Module> implements Serializable{
 
     private List<IOPort> input;
     protected IOPort[] output;

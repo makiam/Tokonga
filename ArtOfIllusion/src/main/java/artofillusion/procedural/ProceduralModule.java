@@ -12,6 +12,7 @@
 package artofillusion.procedural;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -21,7 +22,7 @@ import java.lang.annotation.Target;
  * This represents a module in a procedure. This is an abstract class, whose
  * subclasses represent specific kinds of modules.
  */
-public class ProceduralModule<P extends Module> extends artofillusion.procedural.Module<P> {
+public class ProceduralModule<P extends Module> extends artofillusion.procedural.Module<P> implements Serializable {
 
     public ProceduralModule(String name, IOPort[] input, IOPort[] output, Point position) {
         super(name, input, output, position);
