@@ -1,7 +1,15 @@
 package artofillusion.translators;
 
 import artofillusion.ArtOfIllusion;
+import artofillusion.Camera;
 import artofillusion.Scene;
+import artofillusion.math.CoordinateSystem;
+import artofillusion.math.RGBColor;
+import artofillusion.math.Vec3;
+import artofillusion.object.DirectionalLight;
+import artofillusion.object.ObjectInfo;
+import artofillusion.object.SceneCamera;
+import artofillusion.object.TriangleMesh;
 import artofillusion.ui.Translate;
 import buoy.widget.BFrame;
 import buoy.widget.BStandardDialog;
@@ -42,6 +50,19 @@ public class PLYImporter {
     }
 
     private static Scene importFile(File f) throws Exception {
-        return new Scene();
+        var scene = new Scene();
+        CoordinateSystem coords = new CoordinateSystem(new Vec3(0.0, 0.0, Camera.DEFAULT_DISTANCE_TO_SCREEN), new Vec3(0.0, 0.0, -1.0), Vec3.vy());
+        ObjectInfo info = new ObjectInfo(new SceneCamera(), coords, "Camera 1");
+
+        scene.addObject(info, null);
+        info = new ObjectInfo(new DirectionalLight(new RGBColor(1.0f, 1.0f, 1.0f), 0.8f), coords.duplicate(), "Light 1");
+
+        scene.addObject(info, null);
+        Vec3 center = new Vec3();
+        coords = new CoordinateSystem(center, Vec3.vz(), Vec3.vy());
+        var mesh = PLYReader.read(f.getPath());
+        info = new ObjectInfo(mesh, coords, f.getName());
+        scene.addObject(info, null);
+        return scene;
     }
 }
