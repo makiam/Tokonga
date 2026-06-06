@@ -16,6 +16,8 @@ import artofillusion.ui.Translate;
 import javax.swing.*;
 
 public class ProcedureEditorImpl extends JFrame {
+
+
     /**
      * Called by the constructors to init the <code>JFrame</code> properly.
      */
@@ -29,5 +31,9 @@ public class ProcedureEditorImpl extends JFrame {
         this.setJMenuBar(new JMenuBar());
         var mb = this.getJMenuBar();
         mb.add(new JMenu(Translate.text("menu.edit")));
+
+    }
+
+    public void setModel(Procedure proc) {
     }
 }

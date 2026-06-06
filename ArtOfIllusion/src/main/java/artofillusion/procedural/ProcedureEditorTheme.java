@@ -18,6 +18,10 @@ import java.awt.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProcedureEditorTheme {
+
+    public static final Color BACKGROUND_COLOR = new Color(125, 125, 125);
+    public static final Color GRID_COLOR = new Color(140, 140, 140);
+
     protected static final Stroke contourStroke = new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
     static final Color darkLinkColor = Color.darkGray;
     static final Color blueLinkColor = new Color(40, 40, 255);
@@ -28,4 +32,7 @@ public class ProcedureEditorTheme {
     static final float BEZIER_HARDNESS = 0.5f; //increase hardness to a have a more pronounced shape
     static final Stroke normal = new BasicStroke();
     static final Stroke bold = new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+
+    public static final double MIN_ZOOM = 0.1;
+    public static final double MAX_ZOOM = 5.0;
 }

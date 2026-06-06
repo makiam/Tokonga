@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * This is the editor for editing procedures.
@@ -31,13 +32,21 @@ public class ProcedureEditor2 extends BFrame {
     private final Scene scene;
 
     public ProcedureEditor2(Procedure proc, ProcedureOwner owner, Scene scene) {
+        super();
         this.proc = proc;
         this.owner = owner;
         this.scene = scene;
 
-        this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        ProcedureEditorImpl cc = (ProcedureEditorImpl) this.getComponent();
+        cc.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        cc.setModel(proc);
+        cc.setLayout(new BorderLayout());
+        cc.getContentPane().add(new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JTree(), new ProcedureEditorCanvas()));
         this.setTitle(owner.getWindowTitle());
+
         this.setVisible(true);
+
+
     }
 
     /**
