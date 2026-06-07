@@ -19,6 +19,8 @@ public final class ProcedureEditorCanvas extends JComponent implements MouseWhee
         setBackground(ProcedureEditorTheme.BACKGROUND_COLOR);
         setDoubleBuffered(true);
         setFocusable(true);
+        this.addMouseWheelListener(this);
+        SwingUtilities.invokeLater(() -> { panX = getWidth() / 2.0; panY = getHeight() / 2.0; repaint(); });
     }
 
     @Override
@@ -37,13 +39,20 @@ public final class ProcedureEditorCanvas extends JComponent implements MouseWhee
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
+        paintBackground(g);
+        
         var g2d = (Graphics2D) g.create();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
         drawGrid(g2d);
     }
+
+    private void paintBackground(Graphics graphics) {
+        graphics.setColor(ProcedureEditorTheme.BACKGROUND_COLOR);
+        graphics.fillRect(0, 0,this.getWidth(), this.getHeight());
+    }
+
 
     private void drawGrid(Graphics2D g2d) {
         var gridSize = 40.0;

@@ -12,12 +12,16 @@ package artofillusion.procedural;
 
 import artofillusion.ArtOfIllusion;
 import artofillusion.ui.Translate;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
 
+@Slf4j
 public class ProcedureEditorImpl extends JFrame {
 
-
+    private JMenuItem undoMenu;
+    private JMenuItem redoMenu;
     /**
      * Called by the constructors to init the <code>JFrame</code> properly.
      */
@@ -29,11 +33,20 @@ public class ProcedureEditorImpl extends JFrame {
         this.setSize(1280, 1024);
 
         this.setJMenuBar(new JMenuBar());
-        var mb = this.getJMenuBar();
-        mb.add(new JMenu(Translate.text("menu.edit")));
+        JMenu em = new JMenu(Translate.text("menu.edit"));
+        em.add(undoMenu = new JMenuItem(Translate.text("menu.undo"))).addActionListener(this::onUndo);
+        em.add(redoMenu = new JMenuItem(Translate.text("menu.redo"))).addActionListener(this::onRedo);
+        em.addSeparator();
+        this.getJMenuBar().add(em);
 
     }
 
     public void setModel(Procedure proc) {
+    }
+
+    void onUndo(ActionEvent event) {
+    }
+
+    void onRedo(ActionEvent event) {
     }
 }
