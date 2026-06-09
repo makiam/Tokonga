@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2012 by Peter Eastman
-   Changes copyright (C) 2023-2025 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -79,8 +79,9 @@ public class ProcedureEditor extends CustomWidget {
     private IOPort dragToPort;
     private Optional<MaterialPreviewer> preview = Optional.empty();
     private final ByteArrayOutputStream cancelBuffer;
-    private final ArrayList<ByteArrayOutputStream> undoStack;
-    private final ArrayList<ByteArrayOutputStream> redoStack;
+
+    private final List<ByteArrayOutputStream> undoStack = new ArrayList<>();
+    private final List<ByteArrayOutputStream> redoStack = new ArrayList<>();
 
     private static ClipboardSelection clipboard;
 
@@ -94,8 +95,8 @@ public class ProcedureEditor extends CustomWidget {
         inputInfo = new InfoBox();
         outputInfo = new InfoBox();
         cancelBuffer = new ByteArrayOutputStream();
-        undoStack = new ArrayList<>();
-        redoStack = new ArrayList<>();
+
+
         parent = new BFrame(owner.getWindowTitle());
         parent.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         parent.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
@@ -111,7 +112,7 @@ public class ProcedureEditor extends CustomWidget {
         content.add(scroll = new BScrollPane(this), BorderContainer.CENTER);
         scroll.setPreferredViewSize(new Dimension(600, 600));
         new AutoScroller(scroll, 5, 5);
-        size = new Dimension(1000, 1000);
+        size = new Dimension(1280, 1024);
         setBackground(Color.white);
         KeyStroke deleteKS = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0);
         KeyStroke backKS = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0);
@@ -567,7 +568,7 @@ public class ProcedureEditor extends CustomWidget {
      * Record the current state of the procedure, so that it can be undone.
      */
     public void saveState(boolean redo) {
-        ArrayList<ByteArrayOutputStream> stack = (redo ? redoStack : undoStack);
+        List<ByteArrayOutputStream> stack = redo ? redoStack : undoStack;
         if (stack.size() == ArtOfIllusion.getPreferences().getUndoLevels()) {
             stack.remove(0);
         }
@@ -659,7 +660,7 @@ public class ProcedureEditor extends CustomWidget {
         if (e.getClickCount() == 2) {
             // See if the click was on a module.  If so, call its edit() method.
 
-            for (var       mod : proc.getModules()) {
+            for (var mod : proc.getModules()) {
                 if (mod.getBounds().contains(pos)) {
                     saveState(false);
                     if (mod.edit(this, scene)) {

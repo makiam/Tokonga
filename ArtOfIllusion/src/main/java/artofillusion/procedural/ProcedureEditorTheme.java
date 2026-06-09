@@ -1,3 +1,13 @@
+/* Copyright (C) 2026 by Maksim Khramov
+
+   This program is free software; you can redistribute it and/or modify it under the
+   terms of the GNU General Public License as published by the Free Software
+   Foundation; either version 2 of the License, or (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+   PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion.procedural;
 
 import lombok.AccessLevel;
@@ -8,7 +18,7 @@ import java.awt.*;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProcedureEditorTheme {
 
-    static final Color darkLinkColor = Color.darkGray;
+    static final Color darkLinkColor = new Color(64, 64, 64);
     static final Color blueLinkColor = new Color(40, 40, 255);
     static final Color selectedLinkColor = new Color(255, 50, 50);
     static final Color outputBackgroundColor = new Color(210, 210, 240);
