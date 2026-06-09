@@ -82,14 +82,6 @@ public class ProcedureEditor extends CustomWidget {
     private final ArrayList<ByteArrayOutputStream> undoStack;
     private final ArrayList<ByteArrayOutputStream> redoStack;
 
-    private static final Color outlineColor = new Color(110, 110, 160);
-    private static final Color selectedColor = new Color(255, 60, 60);
-    protected static final Stroke contourStroke = new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-
-    private static final float BEZIER_HARDNESS = 0.5f; //increase hardness to a have a more pronounced shape
-    private static final Stroke normal = new BasicStroke();
-    private static final Stroke bold = new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-
     private static ClipboardSelection clipboard;
 
     public ProcedureEditor(Procedure proc, ProcedureOwner owner, Scene scene) {
@@ -329,7 +321,7 @@ public class ProcedureEditor extends CustomWidget {
         Link[] link = proc.getLinks();
         // Draw the unselected links.
 
-        g.setStroke(bold);
+        g.setStroke(ProcedureEditorTheme.bold);
         for (int i = 0; i < link.length; i++) {
             if (!selectedLink[i]) {
                 g.setColor(link[i].from.getValueType() == IOPort.NUMBER ? ProcedureEditorTheme.darkLinkColor : ProcedureEditorTheme.blueLinkColor);
@@ -344,7 +336,7 @@ public class ProcedureEditor extends CustomWidget {
                 g.draw(createBezierCurve(link[i]));
             }
         }
-        g.setStroke(normal);
+        g.setStroke(ProcedureEditorTheme.normal);
 
         // If we are in the middle of dragging something, draw the thing being dragged.
         if (draggingLink) {
@@ -437,8 +429,8 @@ public class ProcedureEditor extends CustomWidget {
         Stroke currentStroke = g.getStroke();
         g.setColor(Color.lightGray);
         g.fillRoundRect(bounds.x + 1, bounds.y + 1, bounds.width - 2, bounds.height - 2, 3, 3);
-        g.setColor(selected ? selectedColor : outlineColor);
-        g.setStroke(contourStroke);
+        g.setColor(selected ? ProcedureEditorTheme.selectedColor : ProcedureEditorTheme.outlineColor);
+        g.setStroke(ProcedureEditorTheme.contourStroke);
         g.drawRoundRect(bounds.x - 1, bounds.y - 1, bounds.width + 2, bounds.height + 2, 4, 4);
         g.setStroke(currentStroke);
 
@@ -454,18 +446,18 @@ public class ProcedureEditor extends CustomWidget {
         float ctrlX2;
         float ctrlY2;
         if (link.from.getLocation() == IOPort.LEFT || link.from.getLocation() == IOPort.RIGHT) {
-            ctrlX1 = (x2 - x1) * BEZIER_HARDNESS + x1;
+            ctrlX1 = (x2 - x1) * ProcedureEditorTheme.BEZIER_HARDNESS + x1;
             ctrlY1 = y1;
         } else {
             ctrlX1 = x1;
-            ctrlY1 = (y2 - y1) * BEZIER_HARDNESS + y1;
+            ctrlY1 = (y2 - y1) * ProcedureEditorTheme.BEZIER_HARDNESS + y1;
         }
         if (link.to.getLocation() == IOPort.LEFT || link.to.getLocation() == IOPort.RIGHT) {
-            ctrlX2 = (1 - BEZIER_HARDNESS) * (x2 - x1) + x1;
+            ctrlX2 = (1 - ProcedureEditorTheme.BEZIER_HARDNESS) * (x2 - x1) + x1;
             ctrlY2 = y2;
         } else {
             ctrlX2 = x2;
-            ctrlY2 = (1 - BEZIER_HARDNESS) * (y2 - y1) + y1;
+            ctrlY2 = (1 - ProcedureEditorTheme.BEZIER_HARDNESS) * (y2 - y1) + y1;
         }
         return new CubicCurve2D.Float(x1, y1, ctrlX1, ctrlY1, ctrlX2, ctrlY2, x2, y2);
     }
