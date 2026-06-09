@@ -12,7 +12,6 @@
 package artofillusion.procedural;
 
 import artofillusion.*;
-import static artofillusion.procedural.IOPort.SIZE;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
@@ -295,8 +294,8 @@ public class ProcedureEditor extends CustomWidget {
 
         // Draw the output modules.
         Arrays.stream(output).forEach(mod -> {
-            drawModule(mod, graphics, false);
-            Arrays.stream(mod.getInputPorts()).forEach(port -> drawPort(port, graphics));
+            ProcedureEditorPane.drawModule(mod, graphics, false);
+            Arrays.stream(mod.getInputPorts()).forEach(port -> ProcedureEditorPane.drawPort(port, graphics));
             mod.drawContents(graphics);
         });
 
@@ -304,9 +303,9 @@ public class ProcedureEditor extends CustomWidget {
         var  modules = proc.getModules();
         IntStream.range(0, modules.size()).forEach(index -> {
             var  mod = modules.get(index);
-            drawModule(mod, graphics, selectedModule[index]);
-            Arrays.stream(mod.getInputPorts()).forEach(port -> drawPort(port, graphics));
-            Arrays.stream(mod.output).forEach(port -> drawPort(port, graphics));
+            ProcedureEditorPane.drawModule(mod, graphics, selectedModule[index]);
+            Arrays.stream(mod.getInputPorts()).forEach(port -> ProcedureEditorPane.drawPort(port, graphics));
+            Arrays.stream(mod.output).forEach(port -> ProcedureEditorPane.drawPort(port, graphics));
             mod.drawContents(graphics);
         });
 
@@ -387,45 +386,6 @@ public class ProcedureEditor extends CustomWidget {
                 }
             }
         }
-    }
-
-    private static void drawPort(IOPort port, Graphics2D g) {
-        g.setColor(Color.BLUE);
-        if (port.getValueType() == IOPort.NUMBER) {
-            g.setColor(Color.BLACK);
-        }
-        int x = port.x;
-        int y = port.y;
-
-        switch (port.getLocation()) {
-            case IOPort.TOP:
-                g.fillPolygon(new int[]{x + SIZE, x - SIZE, x}, new int[]{y, y, y + SIZE}, 3);
-                break;
-            case IOPort.BOTTOM:
-                g.fillPolygon(new int[]{x + SIZE, x - SIZE, x}, new int[]{y, y, y - SIZE}, 3);
-                break;
-            case IOPort.LEFT:
-                g.fillPolygon(new int[]{x, x, x + SIZE}, new int[]{y + SIZE, y - SIZE, y}, 3);
-                break;
-            case IOPort.RIGHT:
-                g.fillPolygon(new int[]{x - SIZE, x - SIZE, x}, new int[]{y + SIZE, y - SIZE, y}, 3);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private static void drawModule(Module<?> module, Graphics2D g, boolean selected) {
-        Rectangle bounds = module.getBounds();
-
-        Stroke currentStroke = g.getStroke();
-        g.setColor(Color.lightGray);
-        g.fillRoundRect(bounds.x + 1, bounds.y + 1, bounds.width - 2, bounds.height - 2, 3, 3);
-        g.setColor(selected ? ProcedureEditorTheme.selectedColor : ProcedureEditorTheme.outlineColor);
-        g.setStroke(ProcedureEditorTheme.contourStroke);
-        g.drawRoundRect(bounds.x - 1, bounds.y - 1, bounds.width + 2, bounds.height + 2, 4, 4);
-        g.setStroke(currentStroke);
-
     }
 
     /**

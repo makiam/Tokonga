@@ -16,6 +16,8 @@ import buoy.widget.CustomWidget;
 import java.awt.*;
 import java.awt.geom.CubicCurve2D;
 
+import static artofillusion.procedural.IOPort.SIZE;
+
 public class ProcedureEditorPane extends CustomWidget {
 
     public ProcedureEditorPane() {
@@ -26,7 +28,47 @@ public class ProcedureEditorPane extends CustomWidget {
         addEventLink(RepaintEvent.class, this, "paint");
     }
 
+    static void drawModule(Module<?> module, Graphics2D g, boolean selected) {
+        drawModule(module, g, selected, false);
+    }
 
+    static void drawModule(Module<?> module, Graphics2D g, boolean selected, boolean hovered) {
+        Rectangle bounds = module.getBounds();
+
+        Stroke currentStroke = g.getStroke();
+        g.setColor(Color.lightGray);
+        g.fillRoundRect(bounds.x + 1, bounds.y + 1, bounds.width - 2, bounds.height - 2, 3, 3);
+        g.setColor(selected ? ProcedureEditorTheme.selectedColor : ProcedureEditorTheme.outlineColor);
+        g.setStroke(ProcedureEditorTheme.contourStroke);
+        g.drawRoundRect(bounds.x - 1, bounds.y - 1, bounds.width + 2, bounds.height + 2, 4, 4);
+        g.setStroke(currentStroke);
+    }
+
+    static void drawPort(IOPort port, Graphics2D g) {
+        g.setColor(Color.BLUE);
+        if (port.getValueType() == IOPort.NUMBER) {
+            g.setColor(Color.BLACK);
+        }
+        int x = port.x;
+        int y = port.y;
+
+        switch (port.getLocation()) {
+            case IOPort.TOP:
+                g.fillPolygon(new int[]{x + SIZE, x - SIZE, x}, new int[]{y, y, y + SIZE}, 3);
+                break;
+            case IOPort.BOTTOM:
+                g.fillPolygon(new int[]{x + SIZE, x - SIZE, x}, new int[]{y, y, y - SIZE}, 3);
+                break;
+            case IOPort.LEFT:
+                g.fillPolygon(new int[]{x, x, x + SIZE}, new int[]{y + SIZE, y - SIZE, y}, 3);
+                break;
+            case IOPort.RIGHT:
+                g.fillPolygon(new int[]{x - SIZE, x - SIZE, x}, new int[]{y + SIZE, y - SIZE, y}, 3);
+                break;
+            default:
+                break;
+        }
+    }
 
     @SuppressWarnings("java:S1144")
     private void paint(RepaintEvent ev) {
@@ -43,10 +85,10 @@ public class ProcedureEditorPane extends CustomWidget {
         int y1 = link.from.getPosition().y;
         int x2 = link.to.getPosition().x;
         int y2 = link.to.getPosition().y;
-        float ctrlX1;
-        float ctrlY1;
-        float ctrlX2;
-        float ctrlY2;
+        double ctrlX1;
+        double ctrlY1;
+        double ctrlX2;
+        double ctrlY2;
         if (link.from.getLocation() == IOPort.LEFT || link.from.getLocation() == IOPort.RIGHT) {
             ctrlX1 = (x2 - x1) * ProcedureEditorTheme.BEZIER_HARDNESS + x1;
             ctrlY1 = y1;
@@ -61,6 +103,6 @@ public class ProcedureEditorPane extends CustomWidget {
             ctrlX2 = x2;
             ctrlY2 = (1 - ProcedureEditorTheme.BEZIER_HARDNESS) * (y2 - y1) + y1;
         }
-        return new CubicCurve2D.Float(x1, y1, ctrlX1, ctrlY1, ctrlX2, ctrlY2, x2, y2);
+        return new CubicCurve2D.Double(x1, y1, ctrlX1, ctrlY1, ctrlX2, ctrlY2, x2, y2);
     }
 }
