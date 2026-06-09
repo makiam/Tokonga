@@ -21,7 +21,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
@@ -120,11 +119,7 @@ public class ProcedureEditor extends CustomWidget {
         this.getComponent().getRootPane().registerKeyboardAction(ra, deleteKS, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         this.getComponent().getRootPane().registerKeyboardAction(ra, backKS, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        addEventLink(MousePressedEvent.class, this, "mousePressed");
-        addEventLink(MouseReleasedEvent.class, this, "mouseReleased");
-        addEventLink(MouseClickedEvent.class, this, "mouseClicked");
-        addEventLink(MouseDraggedEvent.class, this, "mouseDragged");
-        addEventLink(RepaintEvent.class, this, "paint");
+
 
         // Save the current state of the procedure so that editing can be canceled.
         DataOutputStream out = new DataOutputStream(cancelBuffer);
@@ -287,57 +282,53 @@ public class ProcedureEditor extends CustomWidget {
         return size;
     }
 
-    @SuppressWarnings("java:S1144")
-    private void paint(RepaintEvent ev) {
-        paint(ev.getGraphics());
-    }
 
-    private void paint(Graphics2D g) {
+    private void paint(Graphics2D graphics) {
         OutputModule[] output = proc.getOutputModules();
 
         int divider = output[0].getBounds().x - 5;
 
         // Draw the line marking off the output modules.
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setColor(ProcedureEditorTheme.outputBackgroundColor);
-        g.fillRoundRect(divider, 5, size.width - divider - 10, size.height - 10, 8, 8);
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        graphics.setColor(ProcedureEditorTheme.outputBackgroundColor);
+        graphics.fillRoundRect(divider, 5, size.width - divider - 10, size.height - 10, 8, 8);
 
         // Draw the output modules.
         Arrays.stream(output).forEach(mod -> {
-            drawModule(mod, g, false);
-            Arrays.stream(mod.getInputPorts()).forEach(port -> drawPort(port, g));
-            mod.drawContents(g);
+            drawModule(mod, graphics, false);
+            Arrays.stream(mod.getInputPorts()).forEach(port -> drawPort(port, graphics));
+            mod.drawContents(graphics);
         });
 
         // Draw the modules.
         var  modules = proc.getModules();
         IntStream.range(0, modules.size()).forEach(index -> {
             var  mod = modules.get(index);
-            drawModule(mod, g, selectedModule[index]);
-            Arrays.stream(mod.getInputPorts()).forEach(port -> drawPort(port, g));
-            Arrays.stream(mod.output).forEach(port -> drawPort(port, g));
-            mod.drawContents(g);
+            drawModule(mod, graphics, selectedModule[index]);
+            Arrays.stream(mod.getInputPorts()).forEach(port -> drawPort(port, graphics));
+            Arrays.stream(mod.output).forEach(port -> drawPort(port, graphics));
+            mod.drawContents(graphics);
         });
 
         Link[] link = proc.getLinks();
         // Draw the unselected links.
 
-        g.setStroke(ProcedureEditorTheme.bold);
+        graphics.setStroke(ProcedureEditorTheme.bold);
         for (int i = 0; i < link.length; i++) {
             if (!selectedLink[i]) {
-                g.setColor(link[i].from.getValueType() == IOPort.NUMBER ? ProcedureEditorTheme.darkLinkColor : ProcedureEditorTheme.blueLinkColor);
-                g.draw(createBezierCurve(link[i]));
+                graphics.setColor(link[i].from.getValueType() == IOPort.NUMBER ? ProcedureEditorTheme.darkLinkColor : ProcedureEditorTheme.blueLinkColor);
+                graphics.draw(ProcedureEditorPane.createBezierCurve(link[i]));
             }
         }
 
         // Draw the selected links.
-        g.setColor(ProcedureEditorTheme.selectedLinkColor);
+        graphics.setColor(ProcedureEditorTheme.selectedLinkColor);
         for (int i = 0; i < link.length; i++) {
             if (selectedLink[i]) {
-                g.draw(createBezierCurve(link[i]));
+                graphics.draw(ProcedureEditorPane.createBezierCurve(link[i]));
             }
         }
-        g.setStroke(ProcedureEditorTheme.normal);
+        graphics.setStroke(ProcedureEditorTheme.normal);
 
         // If we are in the middle of dragging something, draw the thing being dragged.
         if (draggingLink) {
@@ -345,18 +336,18 @@ public class ProcedureEditor extends CustomWidget {
 
             boolean isInput = (dragFromPort.getType() == IOPort.INPUT);
             if (isInput || dragToPort != null) {
-                inputInfo.draw(g);
+                inputInfo.draw(graphics);
             }
             if (!isInput || dragToPort != null) {
-                outputInfo.draw(g);
+                outputInfo.draw(graphics);
             }
         }
-        g.setColor(Color.BLACK);
+        graphics.setColor(Color.BLACK);
         if (draggingBox && lastPos != null) {
             // Draw the selection box.
 
             Rectangle rect = getRectangle(clickPos, lastPos);
-            g.drawRect(rect.x, rect.y, rect.width, rect.height);
+            graphics.drawRect(rect.x, rect.y, rect.width, rect.height);
         }
         if (draggingLink && lastPos != null) {
             if (dragToPort == null) {
@@ -368,11 +359,11 @@ public class ProcedureEditor extends CustomWidget {
                     IOPort[] ports = (dragFromPort.getType() == IOPort.OUTPUT ? dragFromPort.getModule().getOutputPorts() : dragFromPort.getModule().getInputPorts());
                     for (IOPort port : ports) {
                         if (port.getType() == IOPort.OUTPUT || !port.getModule().inputConnected(port.getIndex())) {
-                            g.drawLine(port.getPosition().x, port.getPosition().y, port.getPosition().x + dx, port.getPosition().y + dy);
+                            graphics.drawLine(port.getPosition().x, port.getPosition().y, port.getPosition().x + dx, port.getPosition().y + dy);
                         }
                     }
                 } else {
-                    g.drawLine(clickPos.x, clickPos.y, lastPos.x, lastPos.y);
+                    graphics.drawLine(clickPos.x, clickPos.y, lastPos.x, lastPos.y);
                 }
             } else {
                 // Draw lines between the origin and target port(s).
@@ -387,12 +378,12 @@ public class ProcedureEditor extends CustomWidget {
                     for (int i = 0; i < outputs.length; i++) {
                         int j = i - outputIndex + inputIndex;
                         if (j >= 0 && j < inputs.length && !inputPort.getModule().inputConnected(j)) {
-                            g.drawLine(outputs[i].getPosition().x, outputs[i].getPosition().y, inputs[j].getPosition().x, inputs[j].getPosition().y);
+                            graphics.drawLine(outputs[i].getPosition().x, outputs[i].getPosition().y, inputs[j].getPosition().x, inputs[j].getPosition().y);
                         }
                     }
                 } else {
                     Point pos = dragToPort.getPosition();
-                    g.drawLine(clickPos.x, clickPos.y, pos.x, pos.y);
+                    graphics.drawLine(clickPos.x, clickPos.y, pos.x, pos.y);
                 }
             }
         }
@@ -435,32 +426,6 @@ public class ProcedureEditor extends CustomWidget {
         g.drawRoundRect(bounds.x - 1, bounds.y - 1, bounds.width + 2, bounds.height + 2, 4, 4);
         g.setStroke(currentStroke);
 
-    }
-
-    private static Shape createBezierCurve(Link link) {
-        int x1 = link.from.getPosition().x;
-        int y1 = link.from.getPosition().y;
-        int x2 = link.to.getPosition().x;
-        int y2 = link.to.getPosition().y;
-        float ctrlX1;
-        float ctrlY1;
-        float ctrlX2;
-        float ctrlY2;
-        if (link.from.getLocation() == IOPort.LEFT || link.from.getLocation() == IOPort.RIGHT) {
-            ctrlX1 = (x2 - x1) * ProcedureEditorTheme.BEZIER_HARDNESS + x1;
-            ctrlY1 = y1;
-        } else {
-            ctrlX1 = x1;
-            ctrlY1 = (y2 - y1) * ProcedureEditorTheme.BEZIER_HARDNESS + y1;
-        }
-        if (link.to.getLocation() == IOPort.LEFT || link.to.getLocation() == IOPort.RIGHT) {
-            ctrlX2 = (1 - ProcedureEditorTheme.BEZIER_HARDNESS) * (x2 - x1) + x1;
-            ctrlY2 = y2;
-        } else {
-            ctrlX2 = x2;
-            ctrlY2 = (1 - ProcedureEditorTheme.BEZIER_HARDNESS) * (y2 - y1) + y1;
-        }
-        return new CubicCurve2D.Float(x1, y1, ctrlX1, ctrlY1, ctrlX2, ctrlY2, x2, y2);
     }
 
     /**
@@ -742,7 +707,7 @@ public class ProcedureEditor extends CustomWidget {
         // See if the mouse was pressed on a link.
         for (i = 0; i < link.length; i++) {
             int tol = 2;
-            if (!createBezierCurve(link[i]).intersects(new Rectangle(clickPos.x - tol, clickPos.y - tol, 2 * tol, 2 * tol))) {
+            if (!ProcedureEditorPane.createBezierCurve(link[i]).intersects(new Rectangle(clickPos.x - tol, clickPos.y - tol, 2 * tol, 2 * tol))) {
                 continue;
             }
             if (!e.isShiftDown()) {
