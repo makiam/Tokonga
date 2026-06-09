@@ -82,11 +82,6 @@ public class ProcedureEditor extends CustomWidget {
     private final ArrayList<ByteArrayOutputStream> undoStack;
     private final ArrayList<ByteArrayOutputStream> redoStack;
 
-    private static final Color darkLinkColor = Color.darkGray;
-    private static final Color blueLinkColor = new Color(40, 40, 255);
-    private static final Color selectedLinkColor = new Color(255, 50, 50);
-    private static final Color outputBackgroundColor = new Color(210, 210, 240);
-
     private static final Color outlineColor = new Color(110, 110, 160);
     private static final Color selectedColor = new Color(255, 60, 60);
     protected static final Stroke contourStroke = new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
@@ -311,7 +306,7 @@ public class ProcedureEditor extends CustomWidget {
 
         // Draw the line marking off the output modules.
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setColor(outputBackgroundColor);
+        g.setColor(ProcedureEditorTheme.outputBackgroundColor);
         g.fillRoundRect(divider, 5, size.width - divider - 10, size.height - 10, 8, 8);
 
         // Draw the output modules.
@@ -337,13 +332,13 @@ public class ProcedureEditor extends CustomWidget {
         g.setStroke(bold);
         for (int i = 0; i < link.length; i++) {
             if (!selectedLink[i]) {
-                g.setColor(link[i].from.getValueType() == IOPort.NUMBER ? darkLinkColor : blueLinkColor);
+                g.setColor(link[i].from.getValueType() == IOPort.NUMBER ? ProcedureEditorTheme.darkLinkColor : ProcedureEditorTheme.blueLinkColor);
                 g.draw(createBezierCurve(link[i]));
             }
         }
 
         // Draw the selected links.
-        g.setColor(selectedLinkColor);
+        g.setColor(ProcedureEditorTheme.selectedLinkColor);
         for (int i = 0; i < link.length; i++) {
             if (selectedLink[i]) {
                 g.draw(createBezierCurve(link[i]));
