@@ -71,10 +71,13 @@ public class ProcedureEditor extends CustomWidget {
     private boolean draggingMultiple;
     private Point clickPos;
     private Point lastPos;
-    private final InfoBox inputInfo;
-    private final InfoBox outputInfo;
+
+    private final InfoBox inputInfo = new InfoBox();
+    private final InfoBox outputInfo = new InfoBox();
+
     private IOPort dragFromPort;
     private IOPort dragToPort;
+
     private Optional<MaterialPreviewer> preview = Optional.empty();
     private final ByteArrayOutputStream cancelBuffer;
 
@@ -90,8 +93,8 @@ public class ProcedureEditor extends CustomWidget {
         this.scene = scene;
         selectedModule = new boolean[proc.getModules().size()];
         selectedLink = new boolean[proc.getLinks().length];
-        inputInfo = new InfoBox();
-        outputInfo = new InfoBox();
+
+
         cancelBuffer = new ByteArrayOutputStream();
 
 
