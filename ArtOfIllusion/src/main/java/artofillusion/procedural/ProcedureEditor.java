@@ -53,7 +53,7 @@ public class ProcedureEditor extends CustomWidget {
     @Getter
     private final Scene scene;
     private EditingWindow win;
-    private final Dimension size;
+    private static final Dimension size = new Dimension(1280, 1024);
     private BMenuItem undoItem;
     private BMenuItem redoItem;
     private BMenuItem cutItem;
@@ -110,10 +110,11 @@ public class ProcedureEditor extends CustomWidget {
         BorderContainer content = new BorderContainer();
         parent.setContent(content);
         BScrollPane scroll;
+
         content.add(scroll = new BScrollPane(this), BorderContainer.CENTER);
         scroll.setPreferredViewSize(new Dimension(600, 600));
         new AutoScroller(scroll, 5, 5);
-        size = new Dimension(1280, 1024);
+
         setBackground(Color.white);
         KeyStroke deleteKS = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0);
         KeyStroke backKS = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0);
