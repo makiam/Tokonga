@@ -107,8 +107,8 @@ class ProcedureTest {
     }
 
     @Test
-    @DisplayName("Test Delete First Of Two Modules")
-    void testDeleteFirstOfTwoModules() {
+    @DisplayName("Test Delete First Of Two Modules By Index")
+    void testDeleteFirstOfTwoModulesByIndex() {
         var mod1 = new ProceduralModule("Test1", new IOPort[]{}, new IOPort[]{}, new Point());
         var mod2 = new ProceduralModule("Test2", new IOPort[]{}, new IOPort[]{}, new Point());
         Procedure procedure = new Procedure();
@@ -120,16 +120,30 @@ class ProcedureTest {
 
     @Test
     @DisplayName("Test Delete Last Single Module")
-    void testDeleteLastSingleModule() {
+    void testDeleteLastSingleModuleByIndex() {
         var mod = new ProceduralModule("Test", new IOPort[]{}, new IOPort[]{}, new Point());
         Procedure procedure = new Procedure();
         procedure.addModule(mod);
         procedure.deleteModule(0);
+
+        Assertions.assertEquals(0, procedure.getModules().size());
     }
 
     @Test
+    @DisplayName("Test Delete Last Single Module By Reference")
+    void testDeleteLastSingleModuleByRef() {
+        var mod = new ProceduralModule("Test", new IOPort[]{}, new IOPort[]{}, new Point());
+        Procedure procedure = new Procedure();
+        procedure.addModule(mod);
+        procedure.deleteModule(mod);
+
+        Assertions.assertEquals(0, procedure.getModules().size());
+    }
+
+
+    @Test
     @DisplayName("Test Delete Missed Module")
-    void testDeleteMissedModule() {
+    void testDeleteMissedModuleByIndex() {
         assertThrows(IndexOutOfBoundsException.class, () -> {
             var mod = new ProceduralModule("Test", new IOPort[]{}, new IOPort[]{}, new Point());
             Procedure procedure = new Procedure();
