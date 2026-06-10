@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2004 by Peter Eastman
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -111,24 +111,27 @@ public class Procedure {
      * Delete a link from the procedure.
      */
     public void deleteLink(int which) {
-        var link = links.remove(which);
-
-        if (link.to.getType() == IOPort.INPUT) {
-            link.to.getModule().setInput(link.to, null);
-        } else {
-            link.from.getModule().setInput(link.from, null);
-        }
+        deleteLink(links.get(which));
     }
 
+    public void deleteLink(Link link) {
+        if(links.remove(link)) {
+            if (link.to.getType() == IOPort.INPUT) {
+                link.to.getModule().setInput(link.to, null);
+            } else {
+                link.from.getModule().setInput(link.from, null);
+            }
+        }
+    }
     /**
      * Check for feedback loops in this procedure.
      */
     public boolean checkFeedback() {
-        for (OutputModule outer : outputs) {
-            for (OutputModule inner : outputs) {
+        for (var outer: outputs) {
+            for (var inner: outputs) {
                 inner.checked = false;
             }
-            for (var     module : modules) {
+            for (var module : modules) {
                 module.checked = false;
             }
             if (outer.checkFeedback()) {
