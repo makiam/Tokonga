@@ -1,4 +1,4 @@
-/* Copyright (C) 2017-2025 by Maksim Khramov
+/* Copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -340,8 +340,8 @@ class ProcedureTest {
     }
 
     @Test
-    @DisplayName("Test Delete Single Link")
-    void testDeleteSingleLink() {
+    @DisplayName("Test Delete Single Link by index")
+    void testDeleteSingleLinkByIndex() {
         // Create source procedure
         OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), IOPort.NUMBER);
         Procedure origin = new Procedure(exist);
@@ -363,8 +363,31 @@ class ProcedureTest {
     }
 
     @Test
+    @DisplayName("Test Delete Single Link by index")
+    void testDeleteSingleLinkByRef() {
+        // Create source procedure
+        OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), IOPort.NUMBER);
+        Procedure origin = new Procedure(exist);
+        // Create module with singe output Port
+        var sine = new SineModule(new java.awt.Point());
+        // Time module
+        var coor = new CoordinateModule(new java.awt.Point(), 3);
+        origin.addModule(coor);
+        origin.addModule(sine);
+        // Made connection
+        IOPort sinein = sine.getInputPorts()[0];
+        IOPort coorout = coor.getOutputPorts()[0];
+        Link link = new Link(coorout, sinein);
+        origin.addLink(link);
+        origin.deleteLink(link);
+        Assertions.assertNotNull(origin.getLinks());
+        Assertions. assertEquals(0, origin.getLinks().length);
+        Assertions.assertNull(sine.linkFrom[0]);
+    }
+
+    @Test
     @DisplayName("Test Delete First Link Of Two")
-    void testDeleteFirstLinkOfTwo() {
+    void testDeleteFirstLinkOfTwoByIndex() {
         // Create source procedure
         OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), IOPort.NUMBER);
         Procedure origin = new Procedure(exist);
@@ -392,8 +415,37 @@ class ProcedureTest {
     }
 
     @Test
-    @DisplayName("Test Delete Second Link Of Two")
-    void testDeleteSecondLinkOfTwo() {
+    @DisplayName("Test Delete First Link Of Two By Reference")
+    void testDeleteFirstLinkOfTwoByRef() {
+        // Create source procedure
+        OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), IOPort.NUMBER);
+        Procedure origin = new Procedure(exist);
+        // Create module with singe output Port
+        var sine = new SineModule(new java.awt.Point());
+        // Time module
+        var coor = new CoordinateModule(new java.awt.Point(), 3);
+        origin.addModule(coor);
+        origin.addModule(sine);
+        // Made connection
+        IOPort sinein = sine.getInputPorts()[0];
+        IOPort coorout = coor.getOutputPorts()[0];
+        Link link = new Link(coorout, sinein);
+        origin.addLink(link);
+        // Made one more connection
+        IOPort sineout = sine.getOutputPorts()[0];
+        var procTm = origin.getOutputModules()[0];
+        IOPort procTmIn = procTm.getInputPorts()[0];
+        Link link2 = new Link(sineout, procTmIn);
+        origin.addLink(link2);
+        origin.deleteLink(link);
+        Assertions.assertNotNull(origin.getLinks());
+        Assertions.assertEquals(1, origin.getLinks().length);
+        Assertions.assertNull(sine.linkFrom[0]);
+    }
+
+    @Test
+    @DisplayName("Test Delete Second Link Of Two By Index")
+    void testDeleteSecondLinkOfTwoByIndex() {
         // Create source procedure
         OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), IOPort.NUMBER);
         Procedure origin = new Procedure(exist);
@@ -419,6 +471,36 @@ class ProcedureTest {
         Assertions.assertEquals(1, origin.getLinks().length);
         Assertions.assertNull(procTm.linkFrom[0]);
     }
+
+    @Test
+    @DisplayName("Test Delete Second Link Of Two By Reference")
+    void testDeleteSecondLinkOfTwoByRef() {
+        // Create source procedure
+        OutputModule exist = new OutputModule("TestOut", "Label", 0, new RGBColor(1, 1, 1), IOPort.NUMBER);
+        Procedure origin = new Procedure(exist);
+        // Create module with singe output Port
+        var sine = new SineModule(new java.awt.Point());
+        // Time module
+        var coor = new CoordinateModule(new java.awt.Point(), 3);
+        origin.addModule(coor);
+        origin.addModule(sine);
+        // Made connection
+        IOPort sinein = sine.getInputPorts()[0];
+        IOPort coorout = coor.getOutputPorts()[0];
+        Link link = new Link(coorout, sinein);
+        origin.addLink(link);
+        // Made one more connection
+        IOPort sineout = sine.getOutputPorts()[0];
+        var procTm = origin.getOutputModules()[0];
+        IOPort procTmIn = procTm.getInputPorts()[0];
+        Link link2 = new Link(sineout, procTmIn);
+        origin.addLink(link2);
+        origin.deleteLink(link2);
+        Assertions.assertNotNull(origin.getLinks());
+        Assertions.assertEquals(1, origin.getLinks().length);
+        Assertions.assertNull(procTm.linkFrom[0]);
+    }
+
 
     @Test
     @DisplayName("Test Delete Single Link Back Direction")
