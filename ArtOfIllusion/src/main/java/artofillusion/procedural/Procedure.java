@@ -80,11 +80,24 @@ public class Procedure {
     public void add(Module mod) {
         addModule(mod);
     }
+
+    public void remove(Module module) {
+        deleteModule(module);
+    }
+
+    public void remove(Link link) {
+        deleteLink(link);
+    }
+
     /**
      * Delete a module from the procedure. Any links involving this module should be deleted
      * before* calling this method.
      */
     public void deleteModule(int which) {
+        deleteModule(modules.get(which));
+    }
+
+    public void deleteModule(Module which) {
         modules.remove(which);
     }
 
