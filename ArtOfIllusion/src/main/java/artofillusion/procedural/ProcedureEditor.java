@@ -55,6 +55,7 @@ public class ProcedureEditor extends CustomWidget {
     private final Scene scene;
     private EditingWindow win;
     private final Dimension size;
+
     private BMenuItem undoItem;
     private BMenuItem redoItem;
     private BMenuItem cutItem;
@@ -64,8 +65,8 @@ public class ProcedureEditor extends CustomWidget {
     private BTextField nameField;
 
     private Set<Module<?>> selectedModules = new HashSet<>();
-
     private Set<Link> selectedLinks = new HashSet<>();
+
     private boolean draggingLink;
     private boolean draggingModule;
     private boolean draggingBox;
@@ -76,10 +77,12 @@ public class ProcedureEditor extends CustomWidget {
     private final InfoBox outputInfo;
     private IOPort dragFromPort;
     private IOPort dragToPort;
+
     private Optional<MaterialPreviewer> preview = Optional.empty();
-    private final ByteArrayOutputStream cancelBuffer;
-    private final ArrayList<ByteArrayOutputStream> undoStack;
-    private final ArrayList<ByteArrayOutputStream> redoStack;
+
+    private final ByteArrayOutputStream cancelBuffer = new ByteArrayOutputStream();
+    private final List<ByteArrayOutputStream> undoStack = new ArrayList<>();
+    private final List<ByteArrayOutputStream> redoStack = new ArrayList<>();
 
     private static final Color darkLinkColor = Color.darkGray;
     private static final Color blueLinkColor = new Color(40, 40, 255);
@@ -103,9 +106,9 @@ public class ProcedureEditor extends CustomWidget {
         this.scene = scene;
         inputInfo = new InfoBox();
         outputInfo = new InfoBox();
-        cancelBuffer = new ByteArrayOutputStream();
-        undoStack = new ArrayList<>();
-        redoStack = new ArrayList<>();
+
+
+
         parent = new BFrame(owner.getWindowTitle());
         parent.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         parent.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
@@ -136,10 +139,8 @@ public class ProcedureEditor extends CustomWidget {
         addEventLink(RepaintEvent.class, this, "paint");
 
         // Save the current state of the procedure so that editing can be canceled.
-        DataOutputStream out = new DataOutputStream(cancelBuffer);
-        try {
+        try(var out = new DataOutputStream(cancelBuffer)) {
             proc.writeToStream(out, this.scene);
-            out.close();
         } catch (IOException ex) {
             log.atError().setCause(ex).log("Error save procedure state: {}", ex.getMessage());
         }
@@ -319,7 +320,7 @@ public class ProcedureEditor extends CustomWidget {
         });
 
         // Draw the modules.
-        for (var mod : proc.getModules()) {
+        for (var mod: proc.getModules()) {
             drawModule(mod, g, selectedModules.contains(mod));
             Arrays.stream(mod.getInputPorts()).forEach(port -> drawPort(port, g));
             Arrays.stream(mod.output).forEach(port -> drawPort(port, g));
@@ -373,7 +374,7 @@ public class ProcedureEditor extends CustomWidget {
                     int dx = lastPos.x - clickPos.x;
                     int dy = lastPos.y - clickPos.y;
                     IOPort[] ports = (dragFromPort.getType() == IOPort.OUTPUT ? dragFromPort.getModule().getOutputPorts() : dragFromPort.getModule().getInputPorts());
-                    for (IOPort port : ports) {
+                    for (IOPort port: ports) {
                         if (port.getType() == IOPort.OUTPUT || !port.getModule().inputConnected(port.getIndex())) {
                             g.drawLine(port.getPosition().x, port.getPosition().y, port.getPosition().x + dx, port.getPosition().y + dy);
                         }
@@ -449,10 +450,10 @@ public class ProcedureEditor extends CustomWidget {
         int y1 = link.from.getPosition().y;
         int x2 = link.to.getPosition().x;
         int y2 = link.to.getPosition().y;
-        float ctrlX1;
-        float ctrlY1;
-        float ctrlX2;
-        float ctrlY2;
+        double ctrlX1;
+        double ctrlY1;
+        double ctrlX2;
+        double ctrlY2;
         if (link.from.getLocation() == IOPort.LEFT || link.from.getLocation() == IOPort.RIGHT) {
             ctrlX1 = (x2 - x1) * BEZIER_HARDNESS + x1;
             ctrlY1 = y1;
@@ -467,15 +468,15 @@ public class ProcedureEditor extends CustomWidget {
             ctrlX2 = x2;
             ctrlY2 = (1 - BEZIER_HARDNESS) * (y2 - y1) + y1;
         }
-        return new CubicCurve2D.Float(x1, y1, ctrlX1, ctrlY1, ctrlX2, ctrlY2, x2, y2);
+        return new CubicCurve2D.Double(x1, y1, ctrlX1, ctrlY1, ctrlX2, ctrlY2, x2, y2);
     }
 
     /**
      * Update the items in the Edit menu whenever the selection changes.
      */
     private void updateMenus() {
-        boolean anyModule = !selectedModules.isEmpty();
-        boolean anyLink = !selectedLinks.isEmpty();
+        var anyModule = !selectedModules.isEmpty();
+        var anyLink = !selectedLinks.isEmpty();
         cutItem.setEnabled(anyModule);
         copyItem.setEnabled(anyModule);
         pasteItem.setEnabled(clipboard != null);
@@ -565,7 +566,7 @@ public class ProcedureEditor extends CustomWidget {
      * Record the current state of the procedure, so that it can be undone.
      */
     public void saveState(boolean redo) {
-        ArrayList<ByteArrayOutputStream> stack = (redo ? redoStack : undoStack);
+        List<ByteArrayOutputStream> stack = redo ? redoStack : undoStack;
         if (stack.size() == ArtOfIllusion.getPreferences().getUndoLevels()) {
             stack.remove(0);
         }
@@ -595,10 +596,9 @@ public class ProcedureEditor extends CustomWidget {
         saveState(true);
         ByteArrayOutputStream buffer = undoStack.get(undoStack.size() - 1);
         undoStack.remove(undoStack.size() - 1);
-        DataInputStream in = new DataInputStream(new ByteArrayInputStream(buffer.toByteArray()));
-        try {
+
+        try(DataInputStream in = new DataInputStream(new ByteArrayInputStream(buffer.toByteArray()))) {
             proc.readFromStream(in, scene);
-            in.close();
         } catch (IOException ex) {
             log.atError().setCause(ex).log("Error read procedure state: {}", ex.getMessage());
         }
@@ -606,7 +606,6 @@ public class ProcedureEditor extends CustomWidget {
             redoStack.remove(0);
         }
         undoItem.setEnabled(!undoStack.isEmpty());
-        selectedModules.clear();
         selectedModules.clear();
         selectedLinks.clear();
         repaint();
@@ -624,10 +623,9 @@ public class ProcedureEditor extends CustomWidget {
         saveState(false);
         ByteArrayOutputStream buffer = redoStack.get(redoStack.size() - 1);
         redoStack.remove(redoStack.size() - 1);
-        DataInputStream in = new DataInputStream(new ByteArrayInputStream(buffer.toByteArray()));
-        try {
+
+        try(DataInputStream in = new DataInputStream(new ByteArrayInputStream(buffer.toByteArray()))) {
             proc.readFromStream(in, scene);
-            in.close();
         } catch (IOException ex) {
             log.atError().setCause(ex).log("Error read procedure state: {}", ex.getMessage());
         }
@@ -658,7 +656,7 @@ public class ProcedureEditor extends CustomWidget {
         if (e.getClickCount() == 2) {
             // See if the click was on a module.  If so, call its edit() method.
 
-            for (var       mod : proc.getModules()) {
+            for (var mod: proc.getModules()) {
                 if (mod.getBounds().contains(pos)) {
                     saveState(false);
                     if (mod.edit(this, scene)) {
@@ -679,7 +677,7 @@ public class ProcedureEditor extends CustomWidget {
     protected void mousePressed(MousePressedEvent e) {
         OutputModule[] output = proc.getOutputModules();
         var  modules = proc.getModules();
-        Link[] link = proc.getLinks();
+
         IOPort port;
         int i;
 
@@ -740,16 +738,17 @@ public class ProcedureEditor extends CustomWidget {
         }
 
         // See if the mouse was pressed on a link.
-        for (i = 0; i < link.length; i++) {
-            int tol = 2;
-            if (!createBezierCurve(link[i]).intersects(new Rectangle(clickPos.x - tol, clickPos.y - tol, 2 * tol, 2 * tol))) {
+        int tol = 2;
+        for (var link: proc.getLinks()) {
+            var curve = createBezierCurve(link);
+            if (!curve.intersects(new Rectangle(clickPos.x - tol, clickPos.y - tol, 2 * tol, 2 * tol))) {
                 continue;
             }
             if (!e.isShiftDown()) {
                 selectedModules.clear();
                 selectedLinks.clear();
             }
-            selectedLinks.add(link[i]);
+            selectedLinks.add(link);
             repaint();
             updateMenus();
             return;
