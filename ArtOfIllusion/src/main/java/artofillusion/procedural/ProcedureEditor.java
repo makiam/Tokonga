@@ -73,8 +73,10 @@ public class ProcedureEditor extends CustomWidget {
     private boolean draggingMultiple;
     private Point clickPos;
     private Point lastPos;
-    private final InfoBox inputInfo;
-    private final InfoBox outputInfo;
+
+    private final InfoBox inputInfo = new InfoBox();
+    private final InfoBox outputInfo = new InfoBox();
+
     private IOPort dragFromPort;
     private IOPort dragToPort;
 
@@ -91,8 +93,8 @@ public class ProcedureEditor extends CustomWidget {
         this.proc = proc;
         this.owner = owner;
         this.scene = scene;
-        inputInfo = new InfoBox();
-        outputInfo = new InfoBox();
+
+
 
 
 
@@ -584,7 +586,7 @@ public class ProcedureEditor extends CustomWidget {
         ByteArrayOutputStream buffer = undoStack.get(undoStack.size() - 1);
         undoStack.remove(undoStack.size() - 1);
 
-        try(DataInputStream in = new DataInputStream(new ByteArrayInputStream(buffer.toByteArray()))) {
+        try(var in = new DataInputStream(new ByteArrayInputStream(buffer.toByteArray()))) {
             proc.readFromStream(in, scene);
         } catch (IOException ex) {
             log.atError().setCause(ex).log("Error read procedure state: {}", ex.getMessage());
@@ -611,7 +613,7 @@ public class ProcedureEditor extends CustomWidget {
         ByteArrayOutputStream buffer = redoStack.get(redoStack.size() - 1);
         redoStack.remove(redoStack.size() - 1);
 
-        try(DataInputStream in = new DataInputStream(new ByteArrayInputStream(buffer.toByteArray()))) {
+        try(var in = new DataInputStream(new ByteArrayInputStream(buffer.toByteArray()))) {
             proc.readFromStream(in, scene);
         } catch (IOException ex) {
             log.atError().setCause(ex).log("Error read procedure state: {}", ex.getMessage());
@@ -662,7 +664,7 @@ public class ProcedureEditor extends CustomWidget {
      * Respond to mouse presses.
      */
     protected void mousePressed(MousePressedEvent e) {
-        OutputModule[] output = proc.getOutputModules();
+
         var  modules = proc.getModules();
 
         IOPort port;
@@ -682,8 +684,8 @@ public class ProcedureEditor extends CustomWidget {
                 return;
             }
         }
-        for (i = 0; i < output.length; i++) {
-            port = output[i].getClickedPort(clickPos);
+        for (var output: proc.getOutputModules()) {
+            port = output.getClickedPort(clickPos);
             if (port != null) {
                 startDragLink(port);
                 draggingMultiple = e.isShiftDown();
@@ -844,7 +846,7 @@ public class ProcedureEditor extends CustomWidget {
                 dragToPort = null;
             }
 
-            for (var mod :  proc.getModules()) {
+            for (var mod: proc.getModules()) {
                 IOPort[] port = isInput ? mod.getOutputPorts() : mod.getInputPorts();
                 for (int j = 0; j < port.length; j++) {
                     if (isInput || !mod.inputConnected(j)) {
@@ -858,7 +860,7 @@ public class ProcedureEditor extends CustomWidget {
                 }
             }
             if (!isInput) {
-                for (var mod : proc.getOutputModules()) {
+                for (var mod: proc.getOutputModules()) {
                     IOPort[] port = mod.getInputPorts();
                     for (int j = 0; j < port.length; j++) {
                         if (!mod.inputConnected(j)) {
@@ -900,7 +902,7 @@ public class ProcedureEditor extends CustomWidget {
             dx = pos.x - lastPos.x;
             dy = pos.y - lastPos.y;
         }
-        for (var mod : selectedModules) {
+        for (var mod: selectedModules) {
             Rectangle rect = mod.getBounds();
             mod.setPosition(rect.x + dx, rect.y + dy);
         }
