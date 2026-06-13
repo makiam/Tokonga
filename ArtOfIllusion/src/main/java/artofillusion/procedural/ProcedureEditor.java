@@ -964,11 +964,7 @@ public class ProcedureEditor extends CustomWidget {
         }
 
         // Delete any selected links.
-        for (int i = link.length - 1; i >= 0; i--) {
-            if (selectedLinks.contains(link[i])) {
-                proc.deleteLink(i);
-            }
-        }
+        selectedLinks.forEach(sl -> proc.deleteLink(sl));
 
         // Now delete any selected modules.
         for (int i = modules.size() - 1; i >= 0; i--) {
@@ -1025,11 +1021,9 @@ public class ProcedureEditor extends CustomWidget {
             }
 
             // Duplicate them and build the arrays.
-            module = new Module[mod.size()];
+            module = mod.stream().map( mm -> mm.duplicate()).toArray(Module[]::new);
             link = new Link[ln.size()];
-            for (int i = 0; i < module.length; i++) {
-                module[i] = mod.get(i).duplicate();
-            }
+
             for (int i = 0; i < link.length; i++) {
                 Link thisLink = ln.get(i);
                 int from = mod.indexOf(thisLink.from.getModule());
