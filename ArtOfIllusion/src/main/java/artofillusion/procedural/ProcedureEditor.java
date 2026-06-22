@@ -322,7 +322,7 @@ public class ProcedureEditor extends CustomWidget {
         g.setStroke(ProcedureEditorTheme.bold);
         for (var link: proc.getLinks()) {
             if(selectedLinks.contains(link)) continue;
-            g.setColor(link.from.getValueType() == IOPort.NUMBER ? ProcedureEditorTheme.darkLinkColor : ProcedureEditorTheme.blueLinkColor);
+            g.setColor(link.from().getValueType() == IOPort.NUMBER ? ProcedureEditorTheme.darkLinkColor : ProcedureEditorTheme.blueLinkColor);
             var curve = createBezierCurve(link);
             g.draw(curve);
         }
@@ -435,22 +435,22 @@ public class ProcedureEditor extends CustomWidget {
     }
 
     private static Shape createBezierCurve(Link link) {
-        int x1 = link.from.getPosition().x;
-        int y1 = link.from.getPosition().y;
-        int x2 = link.to.getPosition().x;
-        int y2 = link.to.getPosition().y;
+        int x1 = link.from().getPosition().x;
+        int y1 = link.from().getPosition().y;
+        int x2 = link.to().getPosition().x;
+        int y2 = link.to().getPosition().y;
         double ctrlX1;
         double ctrlY1;
         double ctrlX2;
         double ctrlY2;
-        if (link.from.getLocation() == IOPort.LEFT || link.from.getLocation() == IOPort.RIGHT) {
+        if (link.from().getLocation() == IOPort.LEFT || link.from().getLocation() == IOPort.RIGHT) {
             ctrlX1 = (x2 - x1) * ProcedureEditorTheme.BEZIER_HARDNESS + x1;
             ctrlY1 = y1;
         } else {
             ctrlX1 = x1;
             ctrlY1 = (y2 - y1) * ProcedureEditorTheme.BEZIER_HARDNESS + y1;
         }
-        if (link.to.getLocation() == IOPort.LEFT || link.to.getLocation() == IOPort.RIGHT) {
+        if (link.to().getLocation() == IOPort.LEFT || link.to().getLocation() == IOPort.RIGHT) {
             ctrlX2 = (1 - ProcedureEditorTheme.BEZIER_HARDNESS) * (x2 - x1) + x1;
             ctrlY2 = y2;
         } else {
@@ -957,8 +957,8 @@ public class ProcedureEditor extends CustomWidget {
         var  modules = proc.getModules();
         Link[] link = proc.getLinks();
         for (int i = 0; i < link.length; i++) {
-            if (selectedModules.contains(link[i].from.getModule())
-                || selectedModules.contains(link[i].to.getModule())) {
+            if (selectedModules.contains(link[i].from().getModule())
+                || selectedModules.contains(link[i].to().getModule())) {
                 selectedLinks.add(link[i]);
             }
         }
@@ -1015,7 +1015,7 @@ public class ProcedureEditor extends CustomWidget {
 
             for (int i = 0; i < allLinks.length; i++) {
                 if (selectedLinks.contains(allLinks[i])
-                    || (mod.contains(allLinks[i].from.getModule()) && mod.contains(allLinks[i].to.getModule()))) {
+                    || (mod.contains(allLinks[i].from().getModule()) && mod.contains(allLinks[i].to().getModule()))) {
                     ln.add(allLinks[i]);
                 }
             }
@@ -1026,10 +1026,10 @@ public class ProcedureEditor extends CustomWidget {
 
             for (int i = 0; i < link.length; i++) {
                 Link thisLink = ln.get(i);
-                int from = mod.indexOf(thisLink.from.getModule());
-                int to = mod.indexOf(thisLink.to.getModule());
-                int fromPort = thisLink.getFromPortIndex();
-                int toPort = thisLink.getToPortIndex();
+                int from = mod.indexOf(thisLink.from().getModule());
+                int to = mod.indexOf(thisLink.to().getModule());
+                int fromPort = thisLink.from().getModule().getOutputIndex(thisLink.from());
+                int toPort = thisLink.to().getModule().getInputIndex(thisLink.to());
                 link[i] = new Link(module[from].getOutputPorts()[fromPort], module[to].getInputPorts()[toPort]);
             }
         }
@@ -1057,15 +1057,15 @@ public class ProcedureEditor extends CustomWidget {
             for (Link ln : link) {
                 int from;
                 int to;
-                for (from = 0; module[from] != ln.from.getModule(); from++)
+                for (from = 0; module[from] != ln.from().getModule(); from++)
             ;
-                for (to = 0; module[to] != ln.to.getModule(); to++)
+                for (to = 0; module[to] != ln.to().getModule(); to++)
             ;
                 if (realMod[from] == null || realMod[to] == null) {
                     continue;
                 }
-                int fromPort = ln.getFromPortIndex();
-                int toPort = ln.getToPortIndex();
+                int fromPort = ln.from().getModule().getOutputIndex(ln.from());
+                int toPort = ln.to().getModule().getInputIndex(ln.to());
                 editor.addLink(realMod[from].getOutputPorts()[fromPort], realMod[to].getInputPorts()[toPort]);
             }
 

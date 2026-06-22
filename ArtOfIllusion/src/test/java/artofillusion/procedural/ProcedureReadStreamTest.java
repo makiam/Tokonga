@@ -1,4 +1,4 @@
-/* Copyright (C) 2018-2025 by Maksim Khramov
+/* Copyright (C) 2018-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -194,12 +194,12 @@ class ProcedureReadStreamTest {
         var outPort = proc.getModules().get(1).getOutputPorts()[1];
         var inPort = proc.getModules().get(0).getInputPorts()[1];
 
-        log.info("Link from: {} to {} ", link.from, link.to);
+        log.info("Link from: {} to {} ", link.from(), link.to());
         log.info("Out port: {}", outPort);
         log.info("In port: {}", inPort);
 
-        Assertions.assertEquals(link.from, outPort);
-        Assertions.assertEquals(link.to, inPort);
+        Assertions.assertEquals(link.from(), outPort);
+        Assertions.assertEquals(link.to(), inPort);
 
     }
     @Test
@@ -236,12 +236,12 @@ class ProcedureReadStreamTest {
         var outPort = proc.getModules().get(1).getOutputPorts()[1];
         var inPort = proc.getOutputModules()[0].getInputPorts()[0];
 
-        log.info("Link from: {} to {} ", link.from, link.to);
+        log.info("Link from: {} to {} ", link.from(), link.to());
         log.info("Out port: {}", outPort);
         log.info("In port: {}", inPort);
 
-        Assertions.assertEquals(link.from, outPort);
-        Assertions.assertEquals(link.to, inPort);
+        Assertions.assertEquals(link.from(), outPort);
+        Assertions.assertEquals(link.to(), inPort);
     }
 
     private static void createModule(ByteBuffer wrap, Class<? extends Module> mc, int X, int Y) {
