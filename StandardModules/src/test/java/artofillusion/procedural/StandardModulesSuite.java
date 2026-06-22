@@ -10,13 +10,13 @@
 
 package artofillusion.procedural;
 
-
 import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.SelectPackages;
 import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SuiteDisplayName;
 
 @Suite
 @SuiteDisplayName("Procedural Suite")
-@SelectClasses({ProcedureTest.class, ProcedureReadStreamTest.class})
-public class ProcedureTests {
+@SelectPackages("artofillusion.procedural")
+public class StandardModulesSuite {
 }
