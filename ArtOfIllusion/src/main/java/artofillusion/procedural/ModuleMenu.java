@@ -67,9 +67,9 @@ public class ModuleMenu extends CustomWidget {
         PluginRegistry.getPlugins(Module.class).forEach(module -> {
             ProceduralModule.Category modCategory = module.getClass().getAnnotation(ProceduralModule.Category.class);
             String cv = modCategory == null ? uncategorized : Translate.text(modCategory.value());
-            log.info("Module category evaluated: {}", cv);
+
             Optional<Category> target = categories.stream().filter(cat -> cat.getName().equals(cv)).findFirst();
-            log.info("Target is Present: {}", target.isPresent());
+
 
             target.ifPresentOrElse(cat -> cat.add(new Entry(module.getName(), module.getClass())), () -> {
                 Category newCategory = new Category(cv);

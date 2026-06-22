@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2011 by Peter Eastman
-   Changes copyright (C) 2020 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,6 +12,7 @@
 package artofillusion.procedural;
 
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -22,6 +23,8 @@ import java.lang.annotation.Target;
  * subclasses represent specific kinds of modules.
  */
 public class ProceduralModule<P extends Module> extends artofillusion.procedural.Module<P> {
+
+    static DataFlavor moduleFlavor = new DataFlavor(Module.class, "AOI Procedural module");
 
     public ProceduralModule(String name, IOPort[] input, IOPort[] output, Point position) {
         super(name, input, output, position);

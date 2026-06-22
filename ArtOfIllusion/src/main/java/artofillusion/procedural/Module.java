@@ -127,7 +127,7 @@ public class Module<M extends Module> {
      * Determine whether the specified point is over an IOPort, and if so, return the port.
      */
     public IOPort getClickedPort(Point pos) {
-        for (IOPort port: input) {
+        for (var port: input) {
             if (port.contains(pos)) {
                 return port;
             }
@@ -256,7 +256,7 @@ public class Module<M extends Module> {
             return true;
         }
         checked = true;
-        for (Module<?> module : linkFrom) {
+        for (var module: linkFrom) {
             if (module == null) continue;
             if (module.checkFeedback()) {
                 return true;
