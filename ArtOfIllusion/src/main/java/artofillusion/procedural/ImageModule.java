@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2011 by Peter Eastman
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -411,8 +411,8 @@ public class ImageModule extends ProceduralModule<ImageModule> {
     public void calcSize() {
         bounds.width = ImageMap.PREVIEW_WIDTH + IOPort.SIZE * 2;
         bounds.height = ImageMap.PREVIEW_HEIGHT + IOPort.SIZE * 2;
-        if (output.length * IOPort.SIZE * 3 > bounds.height) {
-            bounds.height = output.length * IOPort.SIZE * 3;
+        if (output.size() * IOPort.SIZE * 3 > bounds.height) {
+            bounds.height = output.size() * IOPort.SIZE * 3;
         }
     }
 
@@ -454,17 +454,17 @@ public class ImageModule extends ProceduralModule<ImageModule> {
      */
     private void setupOutputs() {
         if (colorModel == RGB_MODEL) {
-            output[1].setDescription(Translate.text("Red"));
-            output[2].setDescription(Translate.text("Green"));
-            output[3].setDescription(Translate.text("Blue"));
+            output.get(1).setDescription(Translate.text("Red"));
+            output.get(2).setDescription(Translate.text("Green"));
+            output.get(3).setDescription(Translate.text("Blue"));
         } else if (colorModel == HSV_MODEL) {
-            output[1].setDescription(Translate.text("Hue"));
-            output[2].setDescription(Translate.text("Saturation"));
-            output[3].setDescription(Translate.text("Value"));
+            output.get(1).setDescription(Translate.text("Hue"));
+            output.get(2).setDescription(Translate.text("Saturation"));
+            output.get(3).setDescription(Translate.text("Value"));
         } else if (colorModel == HLS_MODEL) {
-            output[1].setDescription(Translate.text("Hue"));
-            output[2].setDescription(Translate.text("Lightness"));
-            output[3].setDescription(Translate.text("Saturation"));
+            output.get(1).setDescription(Translate.text("Hue"));
+            output.get(2).setDescription(Translate.text("Lightness"));
+            output.get(3).setDescription(Translate.text("Saturation"));
         }
     }
 

@@ -51,7 +51,7 @@ public class CoordinateModule extends ProceduralModule<CoordinateModule> {
     public void setCoordinate(int coordinate) {
         this.coordinate = coordinate;
         name = COORD_NAME[coordinate];
-        output[0].setDescription(COORD_NAME[coordinate]);
+        output.get(0).setDescription(COORD_NAME[coordinate]);
         layout();
     }
 
@@ -121,7 +121,7 @@ public class CoordinateModule extends ProceduralModule<CoordinateModule> {
     public void readFromStream(DataInputStream in, Scene theScene) throws IOException {
         coordinate = in.readInt();
         name = COORD_NAME[coordinate];
-        output[0].setDescription(COORD_NAME[coordinate]);
+        output.get(0).setDescription(COORD_NAME[coordinate]);
         layout();
     }
 }

@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2011 by Peter Eastman
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -35,7 +35,7 @@ import java.util.ArrayList;
 public class Module<M extends Module> {
 
     private List<IOPort> input;
-    protected IOPort[] output;
+    protected List<IOPort> output;
     public Module[] linkFrom;
     public int[] linkFromIndex;
     protected String name;
@@ -59,13 +59,15 @@ public class Module<M extends Module> {
         this.name = name;
 
         this.input = new ArrayList<>(Arrays.asList(input));
-        this.input.forEach(item -> item.setModule(this));
+        this.input.forEach(port -> port.setModule(this));
 
-        this.output = output;
+        this.output = new ArrayList<>(Arrays.asList(output));
+        this.output.forEach(port -> port.setModule(this));
+
         linkFrom = new Module[this.input.size()];
         linkFromIndex = new int[this.input.size()];
 
-        for (IOPort ioPort : output) ioPort.setModule(this);
+
         bounds = new Rectangle(position.x, position.y, 0, 0);
         layout();
     }
@@ -97,7 +99,7 @@ public class Module<M extends Module> {
      * Get a list of the output ports for this module.
      */
     public IOPort[] getOutputPorts() {
-        return output;
+        return output.toArray(IOPort[]::new);
     }
 
     /**
@@ -111,12 +113,7 @@ public class Module<M extends Module> {
      * Get the index of a particular output port.
      */
     public int getOutputIndex(IOPort port) {
-        for (int i = 0; i < output.length; i++) {
-            if (output[i] == port) {
-                return i;
-            }
-        }
-        return -1;
+        return output.indexOf(port);
     }
 
     /**
@@ -154,8 +151,8 @@ public class Module<M extends Module> {
                     return;
                 }
                 Module<?> module = port.getModule();
-                for (int j = 0; j < module.output.length; j++) {
-                    if (module.output[j] == port) {
+                for (int j = 0; j < module.output.size(); j++) {
+                    if (module.output.get(j) == port) {
                         linkFrom[i] = module;
                         linkFromIndex[i] = j;
                     }
@@ -190,8 +187,8 @@ public class Module<M extends Module> {
         if (Math.max(numtop, numbottom) * IOPort.SIZE * 4 > bounds.width) {
             bounds.width = Math.max(numtop, numbottom) * IOPort.SIZE * 4;
         }
-        if (Math.max(numleft, output.length) * IOPort.SIZE * 4 > bounds.height) {
-            bounds.height = Math.max(numleft, output.length) * IOPort.SIZE * 4;
+        if (Math.max(numleft, output.size()) * IOPort.SIZE * 4 > bounds.height) {
+            bounds.height = Math.max(numleft, output.size()) * IOPort.SIZE * 4;
         }
     }
 
@@ -227,8 +224,9 @@ public class Module<M extends Module> {
                 port.setPosition(bounds.x, bounds.y + (bounds.height * (++left)) / (numleft + 1));
             }
         }
-        for (int i = 0; i < output.length; i++) {
-            output[i].setPosition(bounds.x + bounds.width + IOPort.SIZE, bounds.y + (bounds.height * (i + 1)) / (output.length + 1));
+        var ol = output.size() + 1;
+        for (int i = 0; i < output.size(); i++) {
+            output.get(i).setPosition(bounds.x + bounds.width + IOPort.SIZE, bounds.y + (bounds.height * (i + 1)) / ol);
         }
     }
 
