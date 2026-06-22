@@ -11,14 +11,6 @@
 
 package artofillusion.procedural;
 
-public class Link {
-
-    public final IOPort from;
-    public final IOPort to;
-
-    public Link(IOPort from, IOPort to) {
-        this.from = from;
-        this.to = to;
-    }
+public record Link(IOPort from, IOPort to) {
 
 }
