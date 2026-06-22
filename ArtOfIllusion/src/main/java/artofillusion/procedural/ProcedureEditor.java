@@ -1028,8 +1028,8 @@ public class ProcedureEditor extends CustomWidget {
                 Link thisLink = ln.get(i);
                 int from = mod.indexOf(thisLink.from.getModule());
                 int to = mod.indexOf(thisLink.to.getModule());
-                int fromPort = thisLink.getFromPortIndex();
-                int toPort = thisLink.getToPortIndex();
+                int fromPort = thisLink.from.getModule().getOutputIndex(thisLink.from);
+                int toPort = thisLink.to.getModule().getInputIndex(thisLink.to);
                 link[i] = new Link(module[from].getOutputPorts()[fromPort], module[to].getInputPorts()[toPort]);
             }
         }
@@ -1064,8 +1064,8 @@ public class ProcedureEditor extends CustomWidget {
                 if (realMod[from] == null || realMod[to] == null) {
                     continue;
                 }
-                int fromPort = ln.getFromPortIndex();
-                int toPort = ln.getToPortIndex();
+                int fromPort = ln.from.getModule().getOutputIndex(ln.from);
+                int toPort = ln.to.getModule().getInputIndex(ln.to);
                 editor.addLink(realMod[from].getOutputPorts()[fromPort], realMod[to].getInputPorts()[toPort]);
             }
 

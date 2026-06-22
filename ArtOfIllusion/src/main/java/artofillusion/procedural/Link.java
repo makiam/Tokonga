@@ -1,6 +1,5 @@
-/* This represents a link between an input port and an output port. */
-
- /* Copyright (C) 2000,2003 by Peter Eastman
+/* Copyright (C) 2000,2003 by Peter Eastman
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -9,6 +8,7 @@
    This program is distributed in the hope that it will be useful, but WITHOUT ANY 
    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion.procedural;
 
 public class Link {
@@ -21,17 +21,4 @@ public class Link {
         this.to = to;
     }
 
-    /**
-     * Get the index (within its module) of the from port.
-     */
-    public int getFromPortIndex() {
-        return from.getModule().getOutputIndex(from);
-    }
-
-    /**
-     * Get the index (within its module) of the to port.
-     */
-    public int getToPortIndex() {
-        return to.getModule().getInputIndex(to);
-    }
 }
