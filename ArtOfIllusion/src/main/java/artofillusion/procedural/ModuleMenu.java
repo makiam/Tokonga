@@ -83,7 +83,7 @@ public class ModuleMenu extends CustomWidget {
         expandedFraction[expandedCategory] = 1.0;
 
         // Compute the width of the menu.
-        FontMetrics metrics = Toolkit.getDefaultToolkit().getFontMetrics(editor.getFont());
+        FontMetrics metrics = Toolkit.getDefaultToolkit().getFontMetrics(UIManager.getDefaults().getFont("Label.font"));
         int width = 0;
         for (Category cat : categories) {
             width = Math.max(width, metrics.stringWidth(cat.name));
@@ -184,27 +184,27 @@ public class ModuleMenu extends CustomWidget {
         SwingUtilities.convertPointToScreen(screenPoint, getComponent());
         if (!isDraggingModule) {
             Point viewPoint = new Point(screenPoint);
-            SwingUtilities.convertPointFromScreen(viewPoint, editor.getParent().getComponent());
-            if (viewPoint.x >= 0 && viewPoint.y >= 0 && viewPoint.x < editor.getParent().getBounds().width && viewPoint.y < editor.getParent().getBounds().height) {
+            SwingUtilities.convertPointFromScreen(viewPoint, editor.getComponent());
+            if (viewPoint.x >= 0 && viewPoint.y >= 0 && viewPoint.x < editor.getBounds().width && viewPoint.y < editor.getBounds().height) {
                 // They dragged from the ModuleMenu into the editor, so add the Module to the procedure and begin dragging it.
 
                 isDraggingModule = true;
                 editor.saveState(false);
                 Point editorPoint = new Point(screenPoint);
-                SwingUtilities.convertPointFromScreen(editorPoint, editor.getComponent());
+                SwingUtilities.convertPointFromScreen(editorPoint, editor.getCanvas().getComponent());
                 Point modulePosition = new Point(editorPoint);
                 modulePosition.x -= newModule.getBounds().width / 2;
                 modulePosition.y -= newModule.getBounds().height / 2;
                 newModule.setPosition(modulePosition.x, modulePosition.y);
                 editor.addModule(newModule);
-                editor.mousePressed(new MousePressedEvent(this, ev.getWhen(), ev.getModifiers(), editorPoint.x, editorPoint.y, ev.getClickCount(), ev.isPopupTrigger(), ev.getButton()));
+                editor.getCanvas().mousePressed(new MousePressedEvent(this, ev.getWhen(), ev.getModifiers(), editorPoint.x, editorPoint.y, ev.getClickCount(), ev.isPopupTrigger(), ev.getButton()));
             }
         } else {
             // Continue dragging the module.
 
             Point editorPoint = new Point(screenPoint);
-            SwingUtilities.convertPointFromScreen(editorPoint, editor.getComponent());
-            editor.mouseDragged(new MouseDraggedEvent(editor, ev.getWhen(), ev.getModifiers(), editorPoint.x, editorPoint.y));
+            SwingUtilities.convertPointFromScreen(editorPoint, editor.getCanvas().getComponent());
+            editor.getCanvas().mouseDragged(new MouseDraggedEvent(editor.getCanvas(), ev.getWhen(), ev.getModifiers(), editorPoint.x, editorPoint.y));
         }
     }
 
@@ -215,21 +215,21 @@ public class ModuleMenu extends CustomWidget {
         if (!isDraggingModule) {
             // They just clicked on an entry, so add the Module to the procedure.
 
-            Rectangle bounds = editor.getParent().getBounds();
+            Rectangle bounds = editor.getBounds();
             Point p = new Point((int) (0.5 * bounds.width * Math.random()), (int) (0.5 * bounds.height * Math.random()));
-            p = SwingUtilities.convertPoint(editor.getParent().getComponent(), p, editor.getComponent());
+            p = SwingUtilities.convertPoint(editor.getComponent(), p, editor.getCanvas().getComponent());
             newModule.setPosition(p.x, p.y);
             editor.saveState(false);
             editor.addModule(newModule);
-            editor.repaint();
+            editor.getCanvas().repaint();
         } else {
             // Finish dragging the Module.
 
             Point screenPoint = ev.getPoint();
             SwingUtilities.convertPointToScreen(screenPoint, getComponent());
             Point editorPoint = new Point(screenPoint);
-            SwingUtilities.convertPointFromScreen(editorPoint, editor.getComponent());
-            editor.mouseReleased();
+            SwingUtilities.convertPointFromScreen(editorPoint, editor.getCanvas().getComponent());
+            editor.getCanvas().mouseReleased();
         }
     }
 
