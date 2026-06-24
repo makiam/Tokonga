@@ -196,8 +196,8 @@ public class Procedure {
 
         links.clear();
         for (var pl: proc.links) {
-            var  fromModule = pl.from().getModule();
-            var  toModule = pl.to().getModule();
+            var fromModule = pl.from().getModule();
+            var toModule = pl.to().getModule();
             int fromIndex = proc.getModuleIndex(fromModule);
             int toIndex = toModule instanceof OutputModule ? proc.getOutputIndex(toModule) : proc.getModuleIndex(toModule);
             IOPort from = modules.get(fromIndex).getOutputPorts()[proc.modules.get(fromIndex).getOutputIndex(pl.from())];
@@ -215,21 +215,24 @@ public class Procedure {
     public void writeToStream(DataOutputStream out, Scene theScene) throws IOException {
         out.writeShort(0);
         out.writeInt(modules.size());
-        for (var module : modules) {
+        for (var module: modules) {
             out.writeUTF(module.getClass().getName());
             out.writeInt(module.getBounds().x);
             out.writeInt(module.getBounds().y);
             module.writeToStream(out, theScene);
         }
         out.writeInt(links.size());
-        for (Link link : links) {
-            out.writeInt(getModuleIndex(link.from().getModule()));
-            out.writeInt(link.from().getModule().getOutputIndex(link.from()));
-            if (link.to().getModule() instanceof OutputModule) {
-                out.writeInt(-getOutputIndex(link.to().getModule()) - 1);
+        for (Link link: links) {
+            var source = link.from().getModule();
+            var target = link.to().getModule();
+
+            out.writeInt(modules.indexOf(source));
+            out.writeInt(source.getOutputIndex(link.from()));
+            if (target instanceof OutputModule) {
+                out.writeInt(-outputs.indexOf(target) - 1);
             } else {
-                out.writeInt(getModuleIndex(link.to().getModule()));
-                out.writeInt(link.to().getModule().getInputIndex(link.to()));
+                out.writeInt(modules.indexOf(target));
+                out.writeInt(target.getInputIndex(link.to()));
             }
         }
     }

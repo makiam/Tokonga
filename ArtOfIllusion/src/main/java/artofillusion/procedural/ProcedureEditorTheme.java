@@ -20,7 +20,7 @@ public class ProcedureEditorTheme {
     protected static final Stroke contourStroke = new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
     static final Color darkLinkColor = new Color(64, 64, 64);
     static final Color blueLinkColor = new Color(40, 40, 255);
-    static final Color selectedLinkColor = new Color(255, 50, 50);
+    static final Color selectedLinkColor = new Color(255, 165, 0);
     static final Color outputBackgroundColor = new Color(210, 210, 240);
     static final Color outlineColor = new Color(110, 110, 160);
     static final Color selectedColor = new Color(255, 60, 60);

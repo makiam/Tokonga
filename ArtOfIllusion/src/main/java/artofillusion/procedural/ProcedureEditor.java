@@ -17,10 +17,9 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.*;
+import java.awt.event.*;
 import java.awt.geom.*;
 import java.io.*;
 import java.util.*;
@@ -134,6 +133,11 @@ public class ProcedureEditor extends CustomWidget {
             log.atError().setCause(ex).log("Error save procedure state: {}", ex.getMessage());
         }
 
+        try {
+            initAsDropTarget();
+        } catch (TooManyListenersException e) {
+            throw new RuntimeException(e);
+        }
         // Create the buttons at the top of the window.
         FormContainer top = new FormContainer(new double[]{0.0, 0.0, 1.0, 0.0, 0.0}, new double[]{1.0});
         top.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(0, 0, 0, 5), null));
@@ -667,9 +671,6 @@ public class ProcedureEditor extends CustomWidget {
 
         var  modules = proc.getModules();
 
-        IOPort port;
-        int i;
-
         requestFocus();
         clickPos = e.getPoint();
         lastPos = null;
@@ -677,7 +678,7 @@ public class ProcedureEditor extends CustomWidget {
 
         // First see if the mouse was pressed on a port.
         for (var mod: modules) {
-            port = mod.getClickedPort(clickPos);
+            var port = mod.getClickedPort(clickPos);
             if (port != null) {
                 startDragLink(port);
                 draggingMultiple = e.isShiftDown();
@@ -685,8 +686,9 @@ public class ProcedureEditor extends CustomWidget {
             }
         }
         for (var output: proc.getOutputModules()) {
-            port = output.getClickedPort(clickPos);
-            if (port != null) {
+            // Take in account that Output module always have only one input port
+            var port = output.getInputPorts()[0];
+            if (port.contains(clickPos)) {
                 startDragLink(port);
                 draggingMultiple = e.isShiftDown();
                 return;
@@ -694,7 +696,7 @@ public class ProcedureEditor extends CustomWidget {
         }
 
         // See if the mouse was pressed on a selected module.
-        for (i = modules.size() - 1; i >= 0; i--) {
+        for (int i = modules.size() - 1; i >= 0; i--) {
             var mod = modules.get(i);
             if (selectedModules.contains(mod) && mod.getBounds().contains(clickPos)) {
                 draggingModule = true;
@@ -709,7 +711,7 @@ public class ProcedureEditor extends CustomWidget {
         }
 
         // See if the mouse was pressed on an unselected module.
-        for (i = modules.size() - 1; i >= 0; i--) {
+        for (int i = modules.size() - 1; i >= 0; i--) {
             var mod = modules.get(i);
             if (!selectedModules.contains(mod) && mod.getBounds().contains(clickPos)) {
                 draggingModule = true;
@@ -793,7 +795,7 @@ public class ProcedureEditor extends CustomWidget {
                 return;
             }
             Rectangle rect = getRectangle(clickPos, lastPos);
-            for (var mod : proc.getModules()) {
+            for (var mod: proc.getModules()) {
                 if (mod.getBounds().intersects(rect)) {
                     selectedModules.add(mod);
                 }
@@ -954,12 +956,9 @@ public class ProcedureEditor extends CustomWidget {
         saveState(false);
 
         // First select any links which are connected to selected modules, since they will also need to be deleted.
-        var  modules = proc.getModules();
-        Link[] link = proc.getLinks();
-        for (int i = 0; i < link.length; i++) {
-            if (selectedModules.contains(link[i].from().getModule())
-                || selectedModules.contains(link[i].to().getModule())) {
-                selectedLinks.add(link[i]);
+        for (var link: proc.getLinks()) {
+            if (selectedModules.contains(link.from().getModule()) || selectedModules.contains(link.to().getModule())) {
+                selectedLinks.add(link);
             }
         }
 
@@ -967,11 +966,7 @@ public class ProcedureEditor extends CustomWidget {
         selectedLinks.forEach(sl -> proc.deleteLink(sl));
 
         // Now delete any selected modules.
-        for (int i = modules.size() - 1; i >= 0; i--) {
-            if (selectedModules.contains(modules.get(i))) {
-                proc.deleteModule(i);
-            }
-        }
+        selectedModules.forEach(mod -> proc.deleteModule(mod));
         selectedModules.clear();
         selectedLinks.clear();
         updatePreview();
@@ -1071,7 +1066,7 @@ public class ProcedureEditor extends CustomWidget {
 
             // Select everything that was just pasted.
             editor.selectedModules.clear();
-            for (Module<?> m : realMod) {
+            for (var m: realMod) {
                 editor.selectedModules.add(m);
             }
             Link[] allLinks = editor.proc.getLinks();
@@ -1080,5 +1075,31 @@ public class ProcedureEditor extends CustomWidget {
             }
             editor.updateMenus();
         }
+    }
+
+    void initAsDropTarget() throws TooManyListenersException {
+
+        var dt = new DropTarget();
+        dt.setComponent(this.getComponent());
+        dt.setActive(true);
+
+        dt.addDropTargetListener(new DropTargetAdapter() {
+            @Override
+            public void drop(DropTargetDropEvent event) {
+                try {
+                    Module module = (Module)event.getTransferable().getTransferData(ProceduralModule.moduleFlavor);
+                    module.setPosition(event.getLocation().x, event.getLocation().y);
+                    ProcedureEditor.this.addModule(module); // Wrap into undoable action
+                    repaint();
+                    updateMenus();
+                } catch (UnsupportedFlavorException | IOException ex) {
+                    log.atError().setCause(ex).log("Error: {}", ex.getMessage());
+
+                }
+
+            }
+
+        });
+
     }
 }
