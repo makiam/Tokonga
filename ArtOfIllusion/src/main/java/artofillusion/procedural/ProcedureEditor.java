@@ -52,7 +52,12 @@ public final class ProcedureEditor extends BFrame {
     @Getter
     private final Scene scene;
     private EditingWindow win;
-    private final Dimension size;
+
+    /**
+     * -- GETTER --
+     *  Get the procedure canvas widget.
+     */
+    @Getter
     private final ProcedureCanvas canvas;
 
     private BMenuItem undoItem;
@@ -73,8 +78,7 @@ public final class ProcedureEditor extends BFrame {
     private Point clickPos;
     private Point lastPos;
 
-    private final InfoBox inputInfo = new InfoBox();
-    private final InfoBox outputInfo = new InfoBox();
+
 
     private IOPort dragFromPort;
     private IOPort dragToPort;
@@ -109,7 +113,7 @@ public final class ProcedureEditor extends BFrame {
         content.add(scroll, BorderContainer.CENTER);
         scroll.setPreferredViewSize(new Dimension(600, 600));
         new AutoScroller(scroll, 5, 5);
-        size = new Dimension(1000, 1000);
+
 
         KeyStroke deleteKS = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0);
         KeyStroke backKS = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0);
@@ -149,15 +153,13 @@ public final class ProcedureEditor extends BFrame {
         // Let each output module calculate its preferred width, then set all of them to be
         // as wide as the widest one.
         int widest = 0;
-        for (OutputModule om : proc.getOutputModules()) {
+        for (var om: proc.getOutputModules()) {
             om.calcSize();
-            if (om.getBounds().width > widest) {
-                widest = om.getBounds().width;
-            }
+            widest = Math.max(om.getBounds().width, widest);
         }
-        int x = size.width - widest;
+        int x = canvas.getPreferredSize().width - widest;
         int y = 15;
-        for (OutputModule om : proc.getOutputModules()) {
+        for (var om: proc.getOutputModules()) {
             om.setWidth(widest);
             om.setPosition(x - 15, y);
             y += om.getBounds().height + 15;
@@ -177,7 +179,7 @@ public final class ProcedureEditor extends BFrame {
         scroll.getHorizontalScrollBar().setUnitIncrement(10);
         scroll.getVerticalScrollBar().setUnitIncrement(10);
 
-        scroll.getHorizontalScrollBar().setValue(size.width - scroll.getViewSize().width);
+        scroll.getHorizontalScrollBar().setValue(canvas.getPreferredSize().width - scroll.getViewSize().width);
         preview = owner.getPreview();
         Optional.ofNullable(preview).ifPresent(view -> createPreview(this, view));
     }
@@ -262,13 +264,6 @@ public final class ProcedureEditor extends BFrame {
      */
     public BFrame getParentFrame() {
         return this;
-    }
-
-    /**
-     * Get the procedure canvas widget.
-     */
-    public ProcedureCanvas getCanvas() {
-        return canvas;
     }
 
     /**
@@ -514,6 +509,11 @@ public final class ProcedureEditor extends BFrame {
      * mouse interaction with them.
      */
     public class ProcedureCanvas extends CustomWidget {
+
+        private static final Dimension size = new Dimension(1000, 1000);
+
+        private final InfoBox inputInfo = new InfoBox();
+        private final InfoBox outputInfo = new InfoBox();
 
         ProcedureCanvas() {
             addEventLink(MousePressedEvent.class, this, "mousePressed");
