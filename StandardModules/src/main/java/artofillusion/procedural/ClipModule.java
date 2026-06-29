@@ -1,5 +1,5 @@
 /* Copyright (C) 2000-2011 by Peter Eastman
-   Changes copyright (C) 2020-2025 by Maksim Khramov
+   Changes copyright (C) 2020-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -137,7 +137,7 @@ public class ClipModule extends ProceduralModule<ClipModule> {
         min = minField.getValue();
         max = maxField.getValue();
         if (min > max) {
-            new BStandardDialog("", Translate.text("minimumAboveMaxError"), BStandardDialog.INFORMATION).showMessageDialog(editor.getParent());
+            new BStandardDialog("", Translate.text("minimumAboveMaxError"), BStandardDialog.INFORMATION).showMessageDialog(editor.getParentFrame());
             return edit(editor, theScene);
         }
         return true;

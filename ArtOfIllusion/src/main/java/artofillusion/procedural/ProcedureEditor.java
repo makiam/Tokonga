@@ -31,14 +31,13 @@ import lombok.extern.slf4j.Slf4j;
 import javax.swing.*;
 
 /**
- * This is the editor for editing procedures. It subclasses CustomWidget, but you should never
- * add it to any Container. Instead, it will automatically create a BFrame and add itself
- * to that.
+ * This is the editor for editing procedures. It extends BFrame and contains a
+ * {@link ProcedureCanvas} which handles the visual representation and interaction
+ * with the procedure modules and links.
  */
 @Slf4j
-public class ProcedureEditor extends CustomWidget {
+public final class ProcedureEditor extends BFrame {
 
-    private final BFrame parent;
     private final Procedure proc;
     /**
      * -- GETTER --
@@ -53,7 +52,13 @@ public class ProcedureEditor extends CustomWidget {
     @Getter
     private final Scene scene;
     private EditingWindow win;
-    private final Dimension size;
+
+    /**
+     * -- GETTER --
+     *  Get the procedure canvas widget.
+     */
+    @Getter
+    private final ProcedureCanvas canvas;
 
     private BMenuItem undoItem;
     private BMenuItem redoItem;
@@ -63,23 +68,10 @@ public class ProcedureEditor extends CustomWidget {
     private BMenuItem clearItem;
     private BTextField nameField;
 
-    private Set<Module<?>> selectedModules = new HashSet<>();
-    private Set<Link> selectedLinks = new HashSet<>();
+    private final Set<Module<?>> selectedModules = new HashSet<>();
+    private final Set<Link> selectedLinks = new HashSet<>();
 
-    private boolean draggingLink;
-    private boolean draggingModule;
-    private boolean draggingBox;
-    private boolean draggingMultiple;
-    private Point clickPos;
-    private Point lastPos;
-
-    private final InfoBox inputInfo = new InfoBox();
-    private final InfoBox outputInfo = new InfoBox();
-
-    private IOPort dragFromPort;
-    private IOPort dragToPort;
-
-    private Optional<MaterialPreviewer> preview = Optional.empty();
+    private MaterialPreviewer preview;
 
     private final ByteArrayOutputStream cancelBuffer = new ByteArrayOutputStream();
     private final List<ByteArrayOutputStream> undoStack = new ArrayList<>();
@@ -88,43 +80,34 @@ public class ProcedureEditor extends CustomWidget {
     private static ClipboardSelection clipboard;
 
     public ProcedureEditor(Procedure proc, ProcedureOwner owner, Scene scene) {
-        super();
+        super(owner.getWindowTitle());
         this.proc = proc;
         this.owner = owner;
         this.scene = scene;
 
-
-
-
-
-        parent = new BFrame(owner.getWindowTitle());
-        parent.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        parent.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
-        parent.getComponent().addWindowListener(new WindowAdapter() {
+        this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
+        this.getComponent().addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 cancelImpl();
             }
         });
         BorderContainer content = new BorderContainer();
-        parent.setContent(content);
-        BScrollPane scroll;
-        content.add(scroll = new BScrollPane(this), BorderContainer.CENTER);
+        this.setContent(content);
+
+        canvas = new ProcedureCanvas();
+        BScrollPane scroll = new BScrollPane(canvas);
+        content.add(scroll, BorderContainer.CENTER);
         scroll.setPreferredViewSize(new Dimension(600, 600));
         new AutoScroller(scroll, 5, 5);
-        size = new Dimension(1000, 1000);
-        setBackground(Color.white);
+
+
         KeyStroke deleteKS = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0);
         KeyStroke backKS = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0);
         ActionListener ra = e -> deleteSelection();
         this.getComponent().getRootPane().registerKeyboardAction(ra, deleteKS, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         this.getComponent().getRootPane().registerKeyboardAction(ra, backKS, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
-        addEventLink(MousePressedEvent.class, this, "mousePressed");
-        addEventLink(MouseReleasedEvent.class, this, "mouseReleased");
-        addEventLink(MouseClickedEvent.class, this, "mouseClicked");
-        addEventLink(MouseDraggedEvent.class, this, "mouseDragged");
-        addEventLink(RepaintEvent.class, this, "paint");
 
         // Save the current state of the procedure so that editing can be canceled.
         try(var out = new DataOutputStream(cancelBuffer)) {
@@ -158,15 +141,13 @@ public class ProcedureEditor extends CustomWidget {
         // Let each output module calculate its preferred width, then set all of them to be
         // as wide as the widest one.
         int widest = 0;
-        for (OutputModule om : proc.getOutputModules()) {
+        for (var om: proc.getOutputModules()) {
             om.calcSize();
-            if (om.getBounds().width > widest) {
-                widest = om.getBounds().width;
-            }
+            widest = Math.max(om.getBounds().width, widest);
         }
-        int x = size.width - widest;
+        int x = canvas.getPreferredSize().width - widest;
         int y = 15;
-        for (OutputModule om : proc.getOutputModules()) {
+        for (var om: proc.getOutputModules()) {
             om.setWidth(widest);
             om.setPosition(x - 15, y);
             y += om.getBounds().height + 15;
@@ -174,20 +155,21 @@ public class ProcedureEditor extends CustomWidget {
 
         // Add the menu bar.
         BMenuBar mb = new BMenuBar();
-        parent.setMenuBar(mb);
+        this.setMenuBar(mb);
         mb.add(getEditMenu());
         updateMenus();
 
         // Display the window.
-        parent.pack();
+        this.pack();
+        this.setVisible(true);
         scroll.getHorizontalScrollBar().setBlockIncrement(100);
         scroll.getVerticalScrollBar().setBlockIncrement(100);
         scroll.getHorizontalScrollBar().setUnitIncrement(10);
         scroll.getVerticalScrollBar().setUnitIncrement(10);
-        parent.setVisible(true);
-        scroll.getHorizontalScrollBar().setValue(getBounds().width - scroll.getViewSize().width);
-        preview = Optional.ofNullable(owner.getPreview());
-        preview.ifPresent(view -> createPreview(getParentFrame(), view));
+
+        scroll.getHorizontalScrollBar().setValue(canvas.getPreferredSize().width - scroll.getViewSize().width);
+        preview = owner.getPreview();
+        Optional.ofNullable(preview).ifPresent(view -> createPreview(this, view));
     }
 
     private void cancelImpl() {
@@ -197,11 +179,11 @@ public class ProcedureEditor extends CustomWidget {
     private static void createPreview(BFrame frame, MaterialPreviewer view) {
 
         BDialog previewDialog = new BDialog(frame, "Preview", false);
-        BorderContainer content = new BorderContainer();
+        BorderContainer previewContent = new BorderContainer();
 
-        content.add(view, BorderContainer.CENTER);
+        previewContent.add(view, BorderContainer.CENTER);
         RowContainer row = new RowContainer();
-        content.add(row, BorderContainer.SOUTH, new LayoutInfo());
+        previewContent.add(row, BorderContainer.SOUTH, new LayoutInfo());
         row.add(Translate.label("Time", ":"));
         final ValueSelector value = new ValueSelector(0.0, -Double.MAX_VALUE, Double.MAX_VALUE, 0.01);
         final ActionProcessor processor = new ActionProcessor();
@@ -215,7 +197,7 @@ public class ProcedureEditor extends CustomWidget {
                 });
             }
         });
-        previewDialog.setContent(content);
+        previewDialog.setContent(previewContent);
         previewDialog.pack();
         frame.getComponent().addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
@@ -265,10 +247,11 @@ public class ProcedureEditor extends CustomWidget {
     }
 
     /**
-     * Get the editor's parent Frame.
+     * Get the editor's parent Frame. Since ProcedureEditor is itself a BFrame,
+     * this returns this editor instance.
      */
     public BFrame getParentFrame() {
-        return parent;
+        return this;
     }
 
     /**
@@ -283,185 +266,6 @@ public class ProcedureEditor extends CustomWidget {
      */
     public EditingWindow getEditingWindow() {
         return win;
-    }
-
-    @Override
-    public Dimension getPreferredSize() {
-        return size;
-    }
-
-    @SuppressWarnings("java:S1144")
-    private void paint(RepaintEvent ev) {
-        paint(ev.getGraphics());
-    }
-
-    private void paint(Graphics2D g) {
-        OutputModule[] output = proc.getOutputModules();
-
-        int divider = output[0].getBounds().x - 5;
-
-        // Draw the line marking off the output modules.
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setColor(ProcedureEditorTheme.outputBackgroundColor);
-        g.fillRoundRect(divider, 5, size.width - divider - 10, size.height - 10, 8, 8);
-
-        // Draw the output modules.
-        Arrays.stream(output).forEach(mod -> {
-            drawModule(mod, g, false);
-            Arrays.stream(mod.getInputPorts()).forEach(port -> drawPort(port, g));
-            mod.drawContents(g);
-        });
-
-        // Draw the modules.
-        for (var mod: proc.getModules()) {
-            drawModule(mod, g, selectedModules.contains(mod));
-            Arrays.stream(mod.getInputPorts()).forEach(port -> drawPort(port, g));
-            Arrays.stream(mod.getOutputPorts()).forEach(port -> drawPort(port, g));
-            mod.drawContents(g);
-        }
-
-
-        // Draw the unselected links.
-
-        g.setStroke(ProcedureEditorTheme.bold);
-        for (var link: proc.getLinks()) {
-            if(selectedLinks.contains(link)) continue;
-            g.setColor(link.from().getValueType() == IOPort.NUMBER ? ProcedureEditorTheme.darkLinkColor : ProcedureEditorTheme.blueLinkColor);
-            var curve = createBezierCurve(link);
-            g.draw(curve);
-        }
-
-        // Draw the selected links.
-        g.setColor(ProcedureEditorTheme.selectedLinkColor);
-        selectedLinks.forEach(link -> {
-            var curve = createBezierCurve(link);
-            g.draw(curve);
-        });
-
-        g.setStroke(ProcedureEditorTheme.normal);
-
-        // If we are in the middle of dragging something, draw the thing being dragged.
-        if (draggingLink) {
-            // Draw the info boxes on the input and output ports.
-
-            boolean isInput = (dragFromPort.getType() == IOPort.INPUT);
-            if (isInput || dragToPort != null) {
-                inputInfo.draw(g);
-            }
-            if (!isInput || dragToPort != null) {
-                outputInfo.draw(g);
-            }
-        }
-        g.setColor(Color.BLACK);
-        if (draggingBox && lastPos != null) {
-            // Draw the selection box.
-
-            Rectangle rect = getRectangle(clickPos, lastPos);
-            g.drawRect(rect.x, rect.y, rect.width, rect.height);
-        }
-        if (draggingLink && lastPos != null) {
-            if (dragToPort == null) {
-                // Draw lines from the origin port(s) to the current mouse position.
-
-                if (draggingMultiple) {
-                    int dx = lastPos.x - clickPos.x;
-                    int dy = lastPos.y - clickPos.y;
-                    IOPort[] ports = (dragFromPort.getType() == IOPort.OUTPUT ? dragFromPort.getModule().getOutputPorts() : dragFromPort.getModule().getInputPorts());
-                    for (IOPort port: ports) {
-                        if (port.getType() == IOPort.OUTPUT || !port.getModule().inputConnected(port.getIndex())) {
-                            g.drawLine(port.getPosition().x, port.getPosition().y, port.getPosition().x + dx, port.getPosition().y + dy);
-                        }
-                    }
-                } else {
-                    g.drawLine(clickPos.x, clickPos.y, lastPos.x, lastPos.y);
-                }
-            } else {
-                // Draw lines between the origin and target port(s).
-
-                if (draggingMultiple) {
-                    IOPort outputPort = (dragFromPort.getType() == IOPort.OUTPUT ? dragFromPort : dragToPort);
-                    IOPort inputPort = (dragFromPort.getType() == IOPort.INPUT ? dragFromPort : dragToPort);
-                    IOPort[] outputs = outputPort.getModule().getOutputPorts();
-                    IOPort[] inputs = inputPort.getModule().getInputPorts();
-                    int outputIndex = outputPort.getIndex();
-                    int inputIndex = inputPort.getIndex();
-                    for (int i = 0; i < outputs.length; i++) {
-                        int j = i - outputIndex + inputIndex;
-                        if (j >= 0 && j < inputs.length && !inputPort.getModule().inputConnected(j)) {
-                            g.drawLine(outputs[i].getPosition().x, outputs[i].getPosition().y, inputs[j].getPosition().x, inputs[j].getPosition().y);
-                        }
-                    }
-                } else {
-                    Point pos = dragToPort.getPosition();
-                    g.drawLine(clickPos.x, clickPos.y, pos.x, pos.y);
-                }
-            }
-        }
-    }
-
-    private static void drawPort(IOPort port, Graphics2D g) {
-        g.setColor(Color.BLUE);
-        if (port.getValueType() == IOPort.NUMBER) {
-            g.setColor(Color.BLACK);
-        }
-        int x = port.x;
-        int y = port.y;
-
-        switch (port.getLocation()) {
-            case IOPort.TOP:
-                g.fillPolygon(new int[]{x + SIZE, x - SIZE, x}, new int[]{y, y, y + SIZE}, 3);
-                break;
-            case IOPort.BOTTOM:
-                g.fillPolygon(new int[]{x + SIZE, x - SIZE, x}, new int[]{y, y, y - SIZE}, 3);
-                break;
-            case IOPort.LEFT:
-                g.fillPolygon(new int[]{x, x, x + SIZE}, new int[]{y + SIZE, y - SIZE, y}, 3);
-                break;
-            case IOPort.RIGHT:
-                g.fillPolygon(new int[]{x - SIZE, x - SIZE, x}, new int[]{y + SIZE, y - SIZE, y}, 3);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private static void drawModule(Module<?> module, Graphics2D g, boolean selected) {
-        Rectangle bounds = module.getBounds();
-
-        Stroke currentStroke = g.getStroke();
-        g.setColor(Color.lightGray);
-        g.fillRoundRect(bounds.x + 1, bounds.y + 1, bounds.width - 2, bounds.height - 2, 3, 3);
-        g.setColor(selected ? ProcedureEditorTheme.selectedColor : ProcedureEditorTheme.outlineColor);
-        g.setStroke(ProcedureEditorTheme.contourStroke);
-        g.drawRoundRect(bounds.x - 1, bounds.y - 1, bounds.width + 2, bounds.height + 2, 4, 4);
-        g.setStroke(currentStroke);
-
-    }
-
-    private static Shape createBezierCurve(Link link) {
-        int x1 = link.from().getPosition().x;
-        int y1 = link.from().getPosition().y;
-        int x2 = link.to().getPosition().x;
-        int y2 = link.to().getPosition().y;
-        double ctrlX1;
-        double ctrlY1;
-        double ctrlX2;
-        double ctrlY2;
-        if (link.from().getLocation() == IOPort.LEFT || link.from().getLocation() == IOPort.RIGHT) {
-            ctrlX1 = (x2 - x1) * ProcedureEditorTheme.BEZIER_HARDNESS + x1;
-            ctrlY1 = y1;
-        } else {
-            ctrlX1 = x1;
-            ctrlY1 = (y2 - y1) * ProcedureEditorTheme.BEZIER_HARDNESS + y1;
-        }
-        if (link.to().getLocation() == IOPort.LEFT || link.to().getLocation() == IOPort.RIGHT) {
-            ctrlX2 = (1 - ProcedureEditorTheme.BEZIER_HARDNESS) * (x2 - x1) + x1;
-            ctrlY2 = y2;
-        } else {
-            ctrlX2 = x2;
-            ctrlY2 = (1 - ProcedureEditorTheme.BEZIER_HARDNESS) * (y2 - y1) + y1;
-        }
-        return new CubicCurve2D.Double(x1, y1, ctrlX1, ctrlY1, ctrlX2, ctrlY2, x2, y2);
     }
 
     /**
@@ -480,7 +284,7 @@ public class ProcedureEditor extends CustomWidget {
     public void cancel() {
         undoStack.add(cancelBuffer);
         undo();
-        parent.getComponent().dispose();
+        this.dispose();
     }
 
     public void doProperties() {
@@ -492,7 +296,7 @@ public class ProcedureEditor extends CustomWidget {
         Optional.ofNullable(clipboard).ifPresent(sel -> {
             saveState(false);
             sel.paste(this);
-            repaint();
+            canvas.repaint();
         });
     }
 
@@ -515,7 +319,7 @@ public class ProcedureEditor extends CustomWidget {
             owner.setName(nameField.getText());
         }
         owner.acceptEdits(this);
-        parent.dispose();
+        this.dispose();
     }
 
     /**
@@ -601,7 +405,7 @@ public class ProcedureEditor extends CustomWidget {
         undoItem.setEnabled(!undoStack.isEmpty());
         selectedModules.clear();
         selectedLinks.clear();
-        repaint();
+        canvas.repaint();
         updatePreview();
         updateMenus();
     }
@@ -628,7 +432,7 @@ public class ProcedureEditor extends CustomWidget {
         redoItem.setEnabled(!redoStack.isEmpty());
         selectedModules.clear();
         selectedLinks.clear();
-        repaint();
+        canvas.repaint();
         updatePreview();
         updateMenus();
     }
@@ -637,316 +441,7 @@ public class ProcedureEditor extends CustomWidget {
      * Update the preview.
      */
     public void updatePreview() {
-        preview.ifPresent(owner::updatePreview);
-    }
-
-    /**
-     * Respond to mouse clicks.
-     */
-    @SuppressWarnings("java:S1144")
-    private void mouseClicked(MouseClickedEvent e) {
-        Point pos = e.getPoint();
-        if (e.getClickCount() == 2) {
-            // See if the click was on a module.  If so, call its edit() method.
-
-            for (var mod: proc.getModules()) {
-                if (mod.getBounds().contains(pos)) {
-                    saveState(false);
-                    if (mod.edit(this, scene)) {
-                        repaint();
-                        updatePreview();
-                    } else {
-                        undo();
-                    }
-                    return;
-                }
-            }
-        }
-    }
-
-    /**
-     * Respond to mouse presses.
-     */
-    protected void mousePressed(MousePressedEvent e) {
-
-        var  modules = proc.getModules();
-
-        requestFocus();
-        clickPos = e.getPoint();
-        lastPos = null;
-        draggingMultiple = false;
-
-        // First see if the mouse was pressed on a port.
-        for (var mod: modules) {
-            var port = mod.getClickedPort(clickPos);
-            if (port != null) {
-                startDragLink(port);
-                draggingMultiple = e.isShiftDown();
-                return;
-            }
-        }
-        for (var output: proc.getOutputModules()) {
-            // Take in account that Output module always have only one input port
-            var port = output.getInputPorts()[0];
-            if (port.contains(clickPos)) {
-                startDragLink(port);
-                draggingMultiple = e.isShiftDown();
-                return;
-            }
-        }
-
-        // See if the mouse was pressed on a selected module.
-        for (int i = modules.size() - 1; i >= 0; i--) {
-            var mod = modules.get(i);
-            if (selectedModules.contains(mod) && mod.getBounds().contains(clickPos)) {
-                draggingModule = true;
-                if (e.getWidget() == this) // Otherwise, it's a synthetic mouse event being sent from the ModuleMenu
-                {
-                    saveState(false);
-                }
-                lastPos = clickPos;
-                repaint();
-                return;
-            }
-        }
-
-        // See if the mouse was pressed on an unselected module.
-        for (int i = modules.size() - 1; i >= 0; i--) {
-            var mod = modules.get(i);
-            if (!selectedModules.contains(mod) && mod.getBounds().contains(clickPos)) {
-                draggingModule = true;
-                saveState(false);
-                if (!e.isShiftDown()) {
-                    selectedModules.clear();
-                    selectedLinks.clear();
-                }
-                selectedModules.add(mod);
-                lastPos = clickPos;
-                repaint();
-                updateMenus();
-                return;
-            }
-        }
-
-        // See if the mouse was pressed on a link.
-        int tol = 2;
-        for (var link: proc.getLinks()) {
-            var curve = createBezierCurve(link);
-            if (!curve.intersects(new Rectangle(clickPos.x - tol, clickPos.y - tol, 2 * tol, 2 * tol))) {
-                continue;
-            }
-            if (!e.isShiftDown()) {
-                selectedModules.clear();
-                selectedLinks.clear();
-            }
-            selectedLinks.add(link);
-            repaint();
-            updateMenus();
-            return;
-        }
-
-        // Erase the selection if the shift key is not held down.
-        if (!e.isShiftDown()) {
-            selectedModules.clear();
-            selectedLinks.clear();
-        }
-        draggingBox = true;
-        repaint();
-        updateMenus();
-    }
-
-    protected void mouseReleased() {
-        if (draggingLink) {
-            draggingLink = false;
-            if (dragToPort != null) {
-                saveState(false);
-                if (draggingMultiple) {
-                    // Connect up multiple input and output ports.
-
-                    int numLinks = proc.getLinks().length;
-                    IOPort outputPort = (dragFromPort.getType() == IOPort.OUTPUT ? dragFromPort : dragToPort);
-                    IOPort inputPort = (dragFromPort.getType() == IOPort.INPUT ? dragFromPort : dragToPort);
-                    IOPort[] outputs = outputPort.getModule().getOutputPorts();
-                    IOPort[] inputs = inputPort.getModule().getInputPorts();
-                    int outputIndex = outputPort.getIndex();
-                    int inputIndex = inputPort.getIndex();
-                    for (int i = 0; i < outputs.length; i++) {
-                        int j = i - outputIndex + inputIndex;
-                        if (j >= 0 && j < inputs.length && !inputPort.getModule().inputConnected(j)) {
-                            addLink(outputs[i], inputs[j]);
-                        }
-                    }
-                    Link[] allLinks = proc.getLinks();
-                    for (int i = numLinks; i < allLinks.length; i++) {
-                        selectedLinks.add(allLinks[i]);
-                    }
-                } else {
-                    addLink(dragFromPort, dragToPort);
-                }
-                updatePreview();
-            }
-            repaint();
-            return;
-        }
-        if (draggingBox) {
-            if (lastPos == null) {
-                draggingBox = false;
-                repaint();
-                return;
-            }
-            Rectangle rect = getRectangle(clickPos, lastPos);
-            for (var mod: proc.getModules()) {
-                if (mod.getBounds().intersects(rect)) {
-                    selectedModules.add(mod);
-                }
-            }
-            draggingBox = false;
-            repaint();
-            updateMenus();
-            return;
-        }
-        if (draggingModule) {
-            draggingModule = false;
-        }
-        repaint();
-    }
-
-    /**
-     * Deal with mouse drags.
-     */
-    protected void mouseDragged(MouseDraggedEvent e) {
-        Point pos = e.getPoint();
-
-        if (draggingBox) {
-            // A selection box is being dragged.
-
-            Graphics g = getComponent().getGraphics();
-            Rectangle rect;
-            g.setColor(Color.black);
-            g.setXORMode(Color.white);
-            if (lastPos != null) {
-                rect = getRectangle(clickPos, lastPos);
-                g.drawRect(rect.x, rect.y, rect.width, rect.height);
-            }
-            lastPos = pos;
-            rect = getRectangle(clickPos, lastPos);
-            g.drawRect(rect.x, rect.y, rect.width, rect.height);
-            g.dispose();
-            return;
-        }
-        if (draggingLink) {
-            // A link is being dragged.  If the mouse was previously dragged to another port,
-            // and is still over it, simply return.
-
-            if (dragToPort != null && dragToPort.contains(pos)) {
-                return;
-            }
-
-            // See whether the mouse is now over a port.
-            boolean isInput = (dragFromPort.getType() == IOPort.INPUT);
-            if (dragToPort != null) {
-                dragToPort = null;
-            }
-
-            for (var mod: proc.getModules()) {
-                IOPort[] port = isInput ? mod.getOutputPorts() : mod.getInputPorts();
-                for (int j = 0; j < port.length; j++) {
-                    if (isInput || !mod.inputConnected(j)) {
-                        if (port[j].getValueType() == dragFromPort.getValueType() && port[j].contains(pos)) {
-                            dragToPort = port[j];
-                        }
-                    }
-                }
-                if (dragToPort != null) {
-                    break;
-                }
-            }
-            if (!isInput) {
-                for (var mod: proc.getOutputModules()) {
-                    IOPort[] port = mod.getInputPorts();
-                    for (int j = 0; j < port.length; j++) {
-                        if (!mod.inputConnected(j)) {
-                            if (port[j].getValueType() == dragFromPort.getValueType() && port[j].contains(pos)) {
-                                dragToPort = port[j];
-                            }
-                        }
-                    }
-                    if (dragToPort != null) {
-                        break;
-                    }
-                }
-            }
-
-            // If the mouse is now over a port, we need to show its info box.
-            if (dragToPort != null) {
-                InfoBox info = isInput ? outputInfo : inputInfo;
-                Rectangle rect = info.getBounds();
-                pos = dragToPort.getPosition();
-                if (isInput) {
-                    info.setPosition(pos.x - rect.width - 10, pos.y - rect.height / 2);
-                } else {
-                    info.setPosition(pos.x + 10, pos.y - rect.height / 2);
-                }
-                info.setText(dragToPort.getDescription());
-            }
-            lastPos = pos;
-            repaint();
-            return;
-        }
-
-        // Move any selected modules.
-        if (!draggingModule) {
-            return;
-        }
-        int dx = 0;
-        int dy = 0;
-        if (lastPos != null) {
-            dx = pos.x - lastPos.x;
-            dy = pos.y - lastPos.y;
-        }
-        for (var mod: selectedModules) {
-            Rectangle rect = mod.getBounds();
-            mod.setPosition(rect.x + dx, rect.y + dy);
-        }
-        repaint();
-        lastPos = pos;
-    }
-
-    /**
-     * Start dragging a link.
-     */
-    private void startDragLink(IOPort port) {
-        boolean isInput = (port.getType() == IOPort.INPUT);
-        InfoBox info = isInput ? inputInfo : outputInfo;
-        Point pos = port.getPosition();
-
-        draggingLink = true;
-        draggingModule = false;
-        dragFromPort = port;
-        dragToPort = null;
-        clickPos = port.getPosition();
-        info.setText(port.getDescription());
-        Rectangle rect = info.getBounds();
-        if (isInput) {
-            info.setPosition(pos.x + 10, pos.y - rect.height / 2);
-        } else {
-            info.setPosition(pos.x - rect.width - 10, pos.y - rect.height / 2);
-        }
-        Graphics g = getComponent().getGraphics();
-        info.draw(g);
-        g.dispose();
-
-        // If this is an input port which is already connected to something, don't actually
-        // drag a link.
-        if (isInput) {
-            var  module = port.getModule();
-            IOPort[] inputs = module.getInputPorts();
-            for (int i = 0; i < inputs.length; i++) {
-                if (inputs[i] == port && module.inputConnected(i)) {
-                    draggingLink = false;
-                }
-            }
-        }
+        Optional.ofNullable(preview).ifPresent(owner::updatePreview);
     }
 
     /**
@@ -956,38 +451,558 @@ public class ProcedureEditor extends CustomWidget {
         saveState(false);
 
         // First select any links which are connected to selected modules, since they will also need to be deleted.
-        for (var link: proc.getLinks()) {
+        for(var link: proc.getLinks()) {
             if (selectedModules.contains(link.from().getModule()) || selectedModules.contains(link.to().getModule())) {
                 selectedLinks.add(link);
             }
         }
 
         // Delete any selected links.
-        selectedLinks.forEach(sl -> proc.deleteLink(sl));
+        selectedLinks.forEach(proc::deleteLink);
 
         // Now delete any selected modules.
-        selectedModules.forEach(mod -> proc.deleteModule(mod));
+        selectedModules.forEach(proc::deleteModule);
         selectedModules.clear();
+
         selectedLinks.clear();
         updatePreview();
-        repaint();
+        canvas.repaint();
         updateMenus();
     }
 
     /**
-     * Utility function to create a Rectangle from two Points.
+     * The canvas widget that displays the procedure modules and links, and handles
+     * mouse interaction with them.
      */
-    private static Rectangle getRectangle(Point p1, Point p2) {
-        int x;
-        int y;
-        int width;
-        int height;
+    public class ProcedureCanvas extends CustomWidget {
 
-        x = Math.min(p1.x, p2.x);
-        y = Math.min(p1.y, p2.y);
-        width = Math.abs(p1.x - p2.x);
-        height = Math.abs(p1.y - p2.y);
-        return new Rectangle(x, y, width, height);
+        private static final Dimension size = new Dimension(1000, 1000);
+
+        private final InfoBox inputInfo = new InfoBox();
+        private final InfoBox outputInfo = new InfoBox();
+
+        private boolean draggingLink;
+        private boolean draggingModule;
+        private boolean draggingBox;
+        private boolean draggingMultiple;
+
+        private Point clickPos;
+        private Point lastPos;
+
+        private IOPort dragFromPort;
+        private IOPort dragToPort;
+
+        ProcedureCanvas() {
+            addEventLink(MousePressedEvent.class, this, "mousePressed");
+            addEventLink(MouseReleasedEvent.class, this, "mouseReleased");
+            addEventLink(MouseClickedEvent.class, this, "mouseClicked");
+            addEventLink(MouseDraggedEvent.class, this, "mouseDragged");
+            addEventLink(RepaintEvent.class, this, "paint");
+        }
+
+        /**
+         * Utility function to create a Rectangle from two Points.
+         */
+        private static Rectangle getRectangle(Point p1, Point p2) {
+            int x;
+            int y;
+            int width;
+            int height;
+
+            x = Math.min(p1.x, p2.x);
+            y = Math.min(p1.y, p2.y);
+            width = Math.abs(p1.x - p2.x);
+            height = Math.abs(p1.y - p2.y);
+            return new Rectangle(x, y, width, height);
+        }
+
+        @Override
+        public Dimension getPreferredSize() {
+            return size;
+        }
+
+        @SuppressWarnings("java:S1144")
+        private void paint(RepaintEvent ev) {
+            paint(ev.getGraphics());
+        }
+
+        private void paint(Graphics2D g) {
+            OutputModule[] output = proc.getOutputModules();
+
+            int divider = output[0].getBounds().x - 5;
+
+            // Draw the line marking off the output modules.
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(ProcedureEditorTheme.outputBackgroundColor);
+            g.fillRoundRect(divider, 5, size.width - divider - 10, size.height - 10, 8, 8);
+
+            // Draw the output modules.
+            Arrays.stream(output).forEach(mod -> {
+                drawModule(mod, g, false);
+                Arrays.stream(mod.getInputPorts()).forEach(port -> drawPort(port, g));
+                mod.drawContents(g);
+            });
+
+            // Draw the modules.
+            for (var mod: proc.getModules()) {
+                drawModule(mod, g, selectedModules.contains(mod));
+                Arrays.stream(mod.getInputPorts()).forEach(port -> drawPort(port, g));
+                Arrays.stream(mod.getOutputPorts()).forEach(port -> drawPort(port, g));
+                mod.drawContents(g);
+            }
+
+
+            // Draw the unselected links.
+
+            g.setStroke(ProcedureEditorTheme.bold);
+            for (var link: proc.getLinks()) {
+                if(selectedLinks.contains(link)) continue;
+                g.setColor(link.from().getValueType() == IOPort.NUMBER ? ProcedureEditorTheme.darkLinkColor : ProcedureEditorTheme.blueLinkColor);
+                var curve = createBezierCurve(link);
+                g.draw(curve);
+            }
+
+            // Draw the selected links.
+            g.setColor(ProcedureEditorTheme.selectedLinkColor);
+            selectedLinks.forEach(link -> {
+                var curve = createBezierCurve(link);
+                g.draw(curve);
+            });
+
+            g.setStroke(ProcedureEditorTheme.normal);
+
+            // If we are in the middle of dragging something, draw the thing being dragged.
+            if (draggingLink) {
+                // Draw the info boxes on the input and output ports.
+
+                boolean isInput = (dragFromPort.getType() == IOPort.INPUT);
+                if (isInput || dragToPort != null) {
+                    inputInfo.draw(g);
+                }
+                if (!isInput || dragToPort != null) {
+                    outputInfo.draw(g);
+                }
+            }
+            g.setColor(Color.BLACK);
+            if (draggingBox && lastPos != null) {
+                // Draw the selection box.
+
+                Rectangle rect = getRectangle(clickPos, lastPos);
+                g.drawRect(rect.x, rect.y, rect.width, rect.height);
+            }
+            if (draggingLink && lastPos != null) {
+                if (dragToPort == null) {
+                    // Draw lines from the origin port(s) to the current mouse position.
+
+                    if (draggingMultiple) {
+                        int dx = lastPos.x - clickPos.x;
+                        int dy = lastPos.y - clickPos.y;
+                        IOPort[] ports = (dragFromPort.getType() == IOPort.OUTPUT ? dragFromPort.getModule().getOutputPorts() : dragFromPort.getModule().getInputPorts());
+                        for (IOPort port: ports) {
+                            if (port.getType() == IOPort.OUTPUT || !port.getModule().inputConnected(port.getIndex())) {
+                                g.drawLine(port.getPosition().x, port.getPosition().y, port.getPosition().x + dx, port.getPosition().y + dy);
+                            }
+                        }
+                    } else {
+                        g.drawLine(clickPos.x, clickPos.y, lastPos.x, lastPos.y);
+                    }
+                } else {
+                    // Draw lines between the origin and target port(s).
+
+                    if (draggingMultiple) {
+                        IOPort outputPort = (dragFromPort.getType() == IOPort.OUTPUT ? dragFromPort : dragToPort);
+                        IOPort inputPort = (dragFromPort.getType() == IOPort.INPUT ? dragFromPort : dragToPort);
+                        IOPort[] outputs = outputPort.getModule().getOutputPorts();
+                        IOPort[] inputs = inputPort.getModule().getInputPorts();
+                        int outputIndex = outputPort.getIndex();
+                        int inputIndex = inputPort.getIndex();
+                        for (int i = 0; i < outputs.length; i++) {
+                            int j = i - outputIndex + inputIndex;
+                            if (j >= 0 && j < inputs.length && !inputPort.getModule().inputConnected(j)) {
+                                g.drawLine(outputs[i].getPosition().x, outputs[i].getPosition().y, inputs[j].getPosition().x, inputs[j].getPosition().y);
+                            }
+                        }
+                    } else {
+                        Point pos = dragToPort.getPosition();
+                        g.drawLine(clickPos.x, clickPos.y, pos.x, pos.y);
+                    }
+                }
+            }
+        }
+
+        private static void drawPort(IOPort port, Graphics2D g) {
+            g.setColor(Color.BLUE);
+            if (port.getValueType() == IOPort.NUMBER) {
+                g.setColor(Color.BLACK);
+            }
+            int x = port.x;
+            int y = port.y;
+
+            switch (port.getLocation()) {
+                case IOPort.TOP:
+                    g.fillPolygon(new int[]{x + SIZE, x - SIZE, x}, new int[]{y, y, y + SIZE}, 3);
+                    break;
+                case IOPort.BOTTOM:
+                    g.fillPolygon(new int[]{x + SIZE, x - SIZE, x}, new int[]{y, y, y - SIZE}, 3);
+                    break;
+                case IOPort.LEFT:
+                    g.fillPolygon(new int[]{x, x, x + SIZE}, new int[]{y + SIZE, y - SIZE, y}, 3);
+                    break;
+                case IOPort.RIGHT:
+                    g.fillPolygon(new int[]{x - SIZE, x - SIZE, x}, new int[]{y + SIZE, y - SIZE, y}, 3);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private static void drawModule(Module<?> module, Graphics2D g, boolean selected) {
+            Rectangle bounds = module.getBounds();
+
+            Stroke currentStroke = g.getStroke();
+            g.setColor(Color.lightGray);
+            g.fillRoundRect(bounds.x + 1, bounds.y + 1, bounds.width - 2, bounds.height - 2, 3, 3);
+            g.setColor(selected ? ProcedureEditorTheme.selectedColor : ProcedureEditorTheme.outlineColor);
+            g.setStroke(ProcedureEditorTheme.contourStroke);
+            g.drawRoundRect(bounds.x - 1, bounds.y - 1, bounds.width + 2, bounds.height + 2, 4, 4);
+            g.setStroke(currentStroke);
+
+        }
+
+        private static Shape createBezierCurve(Link link) {
+            int x1 = link.from().getPosition().x;
+            int y1 = link.from().getPosition().y;
+            int x2 = link.to().getPosition().x;
+            int y2 = link.to().getPosition().y;
+            double ctrlX1;
+            double ctrlY1;
+            double ctrlX2;
+            double ctrlY2;
+            if (link.from().getLocation() == IOPort.LEFT || link.from().getLocation() == IOPort.RIGHT) {
+                ctrlX1 = (x2 - x1) * ProcedureEditorTheme.BEZIER_HARDNESS + x1;
+                ctrlY1 = y1;
+            } else {
+                ctrlX1 = x1;
+                ctrlY1 = (y2 - y1) * ProcedureEditorTheme.BEZIER_HARDNESS + y1;
+            }
+            if (link.to().getLocation() == IOPort.LEFT || link.to().getLocation() == IOPort.RIGHT) {
+                ctrlX2 = (1 - ProcedureEditorTheme.BEZIER_HARDNESS) * (x2 - x1) + x1;
+                ctrlY2 = y2;
+            } else {
+                ctrlX2 = x2;
+                ctrlY2 = (1 - ProcedureEditorTheme.BEZIER_HARDNESS) * (y2 - y1) + y1;
+            }
+            return new CubicCurve2D.Double(x1, y1, ctrlX1, ctrlY1, ctrlX2, ctrlY2, x2, y2);
+        }
+
+        /**
+         * Respond to mouse clicks.
+         */
+        @SuppressWarnings("java:S1144")
+        private void mouseClicked(MouseClickedEvent e) {
+            Point pos = e.getPoint();
+            if (e.getClickCount() == 2) {
+                // See if the click was on a module.  If so, call its edit() method.
+
+                for (var mod: proc.getModules()) {
+                    if (mod.getBounds().contains(pos)) {
+                        saveState(false);
+                        if (mod.edit(ProcedureEditor.this, scene)) {
+                            this.repaint();
+                            updatePreview();
+                        } else {
+                            undo();
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+
+        /**
+         * Respond to mouse presses.
+         */
+        protected void mousePressed(MousePressedEvent e) {
+
+            var  modules = proc.getModules();
+
+            requestFocus();
+            clickPos = e.getPoint();
+            lastPos = null;
+            draggingMultiple = false;
+
+            // First see if the mouse was pressed on a port.
+            for (var mod: modules) {
+            var port = mod.getClickedPort(clickPos);
+                if (port != null) {
+                    startDragLink(port);
+                    draggingMultiple = e.isShiftDown();
+                    return;
+                }
+            }
+            for (var output: proc.getOutputModules()) {
+            // Take in account that Output module always have only one input port
+            var port = output.getInputPorts()[0];
+            if (port.contains(clickPos)) {
+                    startDragLink(port);
+                    draggingMultiple = e.isShiftDown();
+                    return;
+                }
+            }
+
+            // See if the mouse was pressed on a selected module.
+        for (int i = modules.size() - 1; i >= 0; i--) {
+                var mod = modules.get(i);
+                if (selectedModules.contains(mod) && mod.getBounds().contains(clickPos)) {
+                    draggingModule = true;
+                    if (e.getWidget() == this) // Otherwise, it's a synthetic mouse event being sent from the ModuleMenu
+                    {
+                        saveState(false);
+                    }
+                    lastPos = clickPos;
+                    this.repaint();
+                    return;
+                }
+            }
+
+            // See if the mouse was pressed on an unselected module.
+        for (int i = modules.size() - 1; i >= 0; i--) {
+                var mod = modules.get(i);
+                if (!selectedModules.contains(mod) && mod.getBounds().contains(clickPos)) {
+                    draggingModule = true;
+                    saveState(false);
+                    if (!e.isShiftDown()) {
+                        selectedModules.clear();
+                        selectedLinks.clear();
+                    }
+                    selectedModules.add(mod);
+                    lastPos = clickPos;
+                    this.repaint();
+                    updateMenus();
+                    return;
+                }
+            }
+
+            // See if the mouse was pressed on a link.
+            int tol = 2;
+            for (var link: proc.getLinks()) {
+                var curve = createBezierCurve(link);
+                if (!curve.intersects(new Rectangle(clickPos.x - tol, clickPos.y - tol, 2 * tol, 2 * tol))) {
+                    continue;
+                }
+                if (!e.isShiftDown()) {
+                    selectedModules.clear();
+                    selectedLinks.clear();
+                }
+                selectedLinks.add(link);
+                this.repaint();
+                updateMenus();
+                return;
+            }
+
+            // Erase the selection if the shift key is not held down.
+            if (!e.isShiftDown()) {
+                selectedModules.clear();
+                selectedLinks.clear();
+            }
+            draggingBox = true;
+            this.repaint();
+            updateMenus();
+        }
+
+        protected void mouseReleased() {
+            if (draggingLink) {
+                draggingLink = false;
+                if (dragToPort != null) {
+                    saveState(false);
+                    if (draggingMultiple) {
+                        // Connect up multiple input and output ports.
+
+                        int numLinks = proc.getLinks().length;
+                        IOPort outputPort = (dragFromPort.getType() == IOPort.OUTPUT ? dragFromPort : dragToPort);
+                        IOPort inputPort = (dragFromPort.getType() == IOPort.INPUT ? dragFromPort : dragToPort);
+                        IOPort[] outputs = outputPort.getModule().getOutputPorts();
+                        IOPort[] inputs = inputPort.getModule().getInputPorts();
+                        int outputIndex = outputPort.getIndex();
+                        int inputIndex = inputPort.getIndex();
+                        for (int i = 0; i < outputs.length; i++) {
+                            int j = i - outputIndex + inputIndex;
+                            if (j >= 0 && j < inputs.length && !inputPort.getModule().inputConnected(j)) {
+                                addLink(outputs[i], inputs[j]);
+                            }
+                        }
+                        var allLinks = proc.getLinks();
+                        for (int i = numLinks; i < allLinks.length; i++) {
+                            selectedLinks.add(allLinks[i]);
+                        }
+                    } else {
+                        addLink(dragFromPort, dragToPort);
+                    }
+                    updatePreview();
+                }
+                this.repaint();
+                return;
+            }
+            if (draggingBox) {
+                if (lastPos == null) {
+                    draggingBox = false;
+                    this.repaint();
+                    return;
+                }
+                Rectangle rect = getRectangle(clickPos, lastPos);
+                for (var mod : proc.getModules()) {
+                    if (mod.getBounds().intersects(rect)) {
+                        selectedModules.add(mod);
+                    }
+                }
+                draggingBox = false;
+                this.repaint();
+                updateMenus();
+                return;
+            }
+            if (draggingModule) {
+                draggingModule = false;
+            }
+            this.repaint();
+        }
+
+        /**
+         * Deal with mouse drags.
+         */
+        protected void mouseDragged(MouseDraggedEvent e) {
+            Point pos = e.getPoint();
+
+            if (draggingBox) {
+                // A selection box is being dragged.
+
+                Graphics g = getComponent().getGraphics();
+                Rectangle rect;
+                g.setColor(Color.black);
+                g.setXORMode(Color.white);
+                if (lastPos != null) {
+                    rect = getRectangle(clickPos, lastPos);
+                    g.drawRect(rect.x, rect.y, rect.width, rect.height);
+                }
+                lastPos = pos;
+                rect = getRectangle(clickPos, lastPos);
+                g.drawRect(rect.x, rect.y, rect.width, rect.height);
+                g.dispose();
+                return;
+            }
+            if (draggingLink) {
+                // A link is being dragged.  If the mouse was previously dragged to another port,
+                // and is still over it, simply return.
+
+                if (dragToPort != null && dragToPort.contains(pos)) {
+                    return;
+                }
+
+                // See whether the mouse is now over a port.
+                boolean isInput = (dragFromPort.getType() == IOPort.INPUT);
+                if (dragToPort != null) {
+                    dragToPort = null;
+                }
+
+                for (var mod: proc.getModules()) {
+                    IOPort[] port = isInput ? mod.getOutputPorts() : mod.getInputPorts();
+                    for (int j = 0; j < port.length; j++) {
+                        if (isInput || !mod.inputConnected(j)) {
+                            if (port[j].getValueType() == dragFromPort.getValueType() && port[j].contains(pos)) {
+                                dragToPort = port[j];
+                            }
+                        }
+                    }
+                    if (dragToPort != null) {
+                        break;
+                    }
+                }
+                if (!isInput) {
+                    for (var mod: proc.getOutputModules()) {
+                        IOPort[] port = mod.getInputPorts();
+                        for (int j = 0; j < port.length; j++) {
+                            if (!mod.inputConnected(j)) {
+                                if (port[j].getValueType() == dragFromPort.getValueType() && port[j].contains(pos)) {
+                                    dragToPort = port[j];
+                                }
+                            }
+                        }
+                        if (dragToPort != null) {
+                            break;
+                        }
+                    }
+                }
+
+                // If the mouse is now over a port, we need to show its info box.
+                if (dragToPort != null) {
+                    InfoBox info = isInput ? outputInfo : inputInfo;
+                    Rectangle rect = info.getBounds();
+                    pos = dragToPort.getPosition();
+                    if (isInput) {
+                        info.setPosition(pos.x - rect.width - 10, pos.y - rect.height / 2);
+                    } else {
+                        info.setPosition(pos.x + 10, pos.y - rect.height / 2);
+                    }
+                    info.setText(dragToPort.getDescription());
+                }
+                lastPos = pos;
+                this.repaint();
+                return;
+            }
+
+            // Move any selected modules.
+            if (!draggingModule) {
+                return;
+            }
+            int dx = 0;
+            int dy = 0;
+            if (lastPos != null) {
+                dx = pos.x - lastPos.x;
+                dy = pos.y - lastPos.y;
+            }
+            for (var mod: selectedModules) {
+                Rectangle rect = mod.getBounds();
+                mod.setPosition(rect.x + dx, rect.y + dy);
+            }
+            this.repaint();
+            lastPos = pos;
+        }
+
+        /**
+         * Start dragging a link.
+         */
+        private void startDragLink(IOPort port) {
+            boolean isInput = (port.getType() == IOPort.INPUT);
+            InfoBox info = isInput ? inputInfo : outputInfo;
+            Point pos = port.getPosition();
+
+            draggingLink = true;
+            draggingModule = false;
+            dragFromPort = port;
+            dragToPort = null;
+            clickPos = port.getPosition();
+            info.setText(port.getDescription());
+            Rectangle rect = info.getBounds();
+            if (isInput) {
+                info.setPosition(pos.x + 10, pos.y - rect.height / 2);
+            } else {
+                info.setPosition(pos.x - rect.width - 10, pos.y - rect.height / 2);
+            }
+            Graphics g = getComponent().getGraphics();
+            info.draw(g);
+            g.dispose();
+
+            // If this is an input port which is already connected to something, don't actually
+            // drag a link.
+            if (isInput) {
+                var module = port.getModule();
+                IOPort[] inputs = module.getInputPorts();
+                for (int i = 0; i < inputs.length; i++) {
+                    if (inputs[i] == port && module.inputConnected(i)) {
+                        draggingLink = false;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -1049,7 +1064,7 @@ public class ProcedureEditor extends CustomWidget {
             }
 
             // Add the links.
-            for (Link ln : link) {
+            for (Link ln: link) {
                 int from;
                 int to;
                 for (from = 0; module[from] != ln.from().getModule(); from++)
@@ -1087,7 +1102,7 @@ public class ProcedureEditor extends CustomWidget {
             @Override
             public void drop(DropTargetDropEvent event) {
                 try {
-                    Module module = (Module)event.getTransferable().getTransferData(ProceduralModule.moduleFlavor);
+                    var module = (Module)event.getTransferable().getTransferData(ProceduralModule.moduleFlavor);
                     module.setPosition(event.getLocation().x, event.getLocation().y);
                     ProcedureEditor.this.addModule(module); // Wrap into undoable action
                     repaint();
