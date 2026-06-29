@@ -458,7 +458,7 @@ public final class ProcedureEditor extends BFrame {
         }
 
         // Delete any selected links.
-        selectedLinks.forEach(sl -> proc.deleteLink(sl));
+        selectedLinks.forEach(proc::deleteLink);
 
         // Now delete any selected modules.
         selectedModules.forEach(proc::deleteModule);
@@ -468,22 +468,6 @@ public final class ProcedureEditor extends BFrame {
         updatePreview();
         canvas.repaint();
         updateMenus();
-    }
-
-    /**
-     * Utility function to create a Rectangle from two Points.
-     */
-    private static Rectangle getRectangle(Point p1, Point p2) {
-        int x;
-        int y;
-        int width;
-        int height;
-
-        x = Math.min(p1.x, p2.x);
-        y = Math.min(p1.y, p2.y);
-        width = Math.abs(p1.x - p2.x);
-        height = Math.abs(p1.y - p2.y);
-        return new Rectangle(x, y, width, height);
     }
 
     /**
@@ -514,6 +498,22 @@ public final class ProcedureEditor extends BFrame {
             addEventLink(MouseClickedEvent.class, this, "mouseClicked");
             addEventLink(MouseDraggedEvent.class, this, "mouseDragged");
             addEventLink(RepaintEvent.class, this, "paint");
+        }
+
+        /**
+         * Utility function to create a Rectangle from two Points.
+         */
+        private static Rectangle getRectangle(Point p1, Point p2) {
+            int x;
+            int y;
+            int width;
+            int height;
+
+            x = Math.min(p1.x, p2.x);
+            y = Math.min(p1.y, p2.y);
+            width = Math.abs(p1.x - p2.x);
+            height = Math.abs(p1.y - p2.y);
+            return new Rectangle(x, y, width, height);
         }
 
         @Override
@@ -831,7 +831,7 @@ public final class ProcedureEditor extends BFrame {
                                 addLink(outputs[i], inputs[j]);
                             }
                         }
-                        Link[] allLinks = proc.getLinks();
+                        var allLinks = proc.getLinks();
                         for (int i = numLinks; i < allLinks.length; i++) {
                             selectedLinks.add(allLinks[i]);
                         }
