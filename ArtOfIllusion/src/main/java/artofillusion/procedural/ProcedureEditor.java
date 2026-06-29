@@ -68,18 +68,8 @@ public final class ProcedureEditor extends BFrame {
     private BMenuItem clearItem;
     private BTextField nameField;
 
-    private Set<Module<?>> selectedModules = new HashSet<>();
-    private Set<Link> selectedLinks = new HashSet<>();
-
-
-
-    private Point clickPos;
-    private Point lastPos;
-
-
-
-    private IOPort dragFromPort;
-    private IOPort dragToPort;
+    private final Set<Module<?>> selectedModules = new HashSet<>();
+    private final Set<Link> selectedLinks = new HashSet<>();
 
     private MaterialPreviewer preview;
 
@@ -461,12 +451,9 @@ public final class ProcedureEditor extends BFrame {
         saveState(false);
 
         // First select any links which are connected to selected modules, since they will also need to be deleted.
-        var  modules = proc.getModules();
-        Link[] link = proc.getLinks();
-        for (int i = 0; i < link.length; i++) {
-            if (selectedModules.contains(link[i].from().getModule())
-                || selectedModules.contains(link[i].to().getModule())) {
-                selectedLinks.add(link[i]);
+        for(var link: proc.getLinks()) {
+            if (selectedModules.contains(link.from().getModule()) || selectedModules.contains(link.to().getModule())) {
+                selectedLinks.add(link);
             }
         }
 
@@ -474,12 +461,9 @@ public final class ProcedureEditor extends BFrame {
         selectedLinks.forEach(sl -> proc.deleteLink(sl));
 
         // Now delete any selected modules.
-        for (int i = modules.size() - 1; i >= 0; i--) {
-            if (selectedModules.contains(modules.get(i))) {
-                proc.deleteModule(i);
-            }
-        }
+        selectedModules.forEach(proc::deleteModule);
         selectedModules.clear();
+
         selectedLinks.clear();
         updatePreview();
         canvas.repaint();
@@ -517,6 +501,12 @@ public final class ProcedureEditor extends BFrame {
         private boolean draggingModule;
         private boolean draggingBox;
         private boolean draggingMultiple;
+
+        private Point clickPos;
+        private Point lastPos;
+
+        private IOPort dragFromPort;
+        private IOPort dragToPort;
 
         ProcedureCanvas() {
             addEventLink(MousePressedEvent.class, this, "mousePressed");
