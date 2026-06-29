@@ -71,10 +71,8 @@ public final class ProcedureEditor extends BFrame {
     private Set<Module<?>> selectedModules = new HashSet<>();
     private Set<Link> selectedLinks = new HashSet<>();
 
-    private boolean draggingLink;
-    private boolean draggingModule;
-    private boolean draggingBox;
-    private boolean draggingMultiple;
+
+
     private Point clickPos;
     private Point lastPos;
 
@@ -515,6 +513,11 @@ public final class ProcedureEditor extends BFrame {
         private final InfoBox inputInfo = new InfoBox();
         private final InfoBox outputInfo = new InfoBox();
 
+        private boolean draggingLink;
+        private boolean draggingModule;
+        private boolean draggingBox;
+        private boolean draggingMultiple;
+
         ProcedureCanvas() {
             addEventLink(MousePressedEvent.class, this, "mousePressed");
             addEventLink(MouseReleasedEvent.class, this, "mouseReleased");
@@ -715,7 +718,7 @@ public final class ProcedureEditor extends BFrame {
                     if (mod.getBounds().contains(pos)) {
                         saveState(false);
                         if (mod.edit(ProcedureEditor.this, scene)) {
-                            canvas.repaint();
+                            this.repaint();
                             updatePreview();
                         } else {
                             undo();
@@ -767,7 +770,7 @@ public final class ProcedureEditor extends BFrame {
                         saveState(false);
                     }
                     lastPos = clickPos;
-                    canvas.repaint();
+                    this.repaint();
                     return;
                 }
             }
@@ -784,7 +787,7 @@ public final class ProcedureEditor extends BFrame {
                     }
                     selectedModules.add(mod);
                     lastPos = clickPos;
-                    canvas.repaint();
+                    this.repaint();
                     updateMenus();
                     return;
                 }
@@ -802,7 +805,7 @@ public final class ProcedureEditor extends BFrame {
                     selectedLinks.clear();
                 }
                 selectedLinks.add(link);
-                canvas.repaint();
+                this.repaint();
                 updateMenus();
                 return;
             }
@@ -813,7 +816,7 @@ public final class ProcedureEditor extends BFrame {
                 selectedLinks.clear();
             }
             draggingBox = true;
-            canvas.repaint();
+            this.repaint();
             updateMenus();
         }
 
@@ -847,13 +850,13 @@ public final class ProcedureEditor extends BFrame {
                     }
                     updatePreview();
                 }
-                canvas.repaint();
+                this.repaint();
                 return;
             }
             if (draggingBox) {
                 if (lastPos == null) {
                     draggingBox = false;
-                    canvas.repaint();
+                    this.repaint();
                     return;
                 }
                 Rectangle rect = getRectangle(clickPos, lastPos);
@@ -863,14 +866,14 @@ public final class ProcedureEditor extends BFrame {
                     }
                 }
                 draggingBox = false;
-                canvas.repaint();
+                this.repaint();
                 updateMenus();
                 return;
             }
             if (draggingModule) {
                 draggingModule = false;
             }
-            canvas.repaint();
+            this.repaint();
         }
 
         /**
@@ -952,7 +955,7 @@ public final class ProcedureEditor extends BFrame {
                     info.setText(dragToPort.getDescription());
                 }
                 lastPos = pos;
-                canvas.repaint();
+                this.repaint();
                 return;
             }
 
@@ -970,7 +973,7 @@ public final class ProcedureEditor extends BFrame {
                 Rectangle rect = mod.getBounds();
                 mod.setPosition(rect.x + dx, rect.y + dy);
             }
-            canvas.repaint();
+            this.repaint();
             lastPos = pos;
         }
 
@@ -1001,7 +1004,7 @@ public final class ProcedureEditor extends BFrame {
             // If this is an input port which is already connected to something, don't actually
             // drag a link.
             if (isInput) {
-                var  module = port.getModule();
+                var module = port.getModule();
                 IOPort[] inputs = module.getInputPorts();
                 for (int i = 0; i < inputs.length; i++) {
                     if (inputs[i] == port && module.inputConnected(i)) {
@@ -1109,7 +1112,7 @@ public final class ProcedureEditor extends BFrame {
             @Override
             public void drop(DropTargetDropEvent event) {
                 try {
-                    Module module = (Module)event.getTransferable().getTransferData(ProceduralModule.moduleFlavor);
+                    var module = (Module)event.getTransferable().getTransferData(ProceduralModule.moduleFlavor);
                     module.setPosition(event.getLocation().x, event.getLocation().y);
                     ProcedureEditor.this.addModule(module); // Wrap into undoable action
                     repaint();
