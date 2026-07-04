@@ -1339,11 +1339,11 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     /**
-     * Get a collection of all selected objects.
+     * Get a list of all selected objects.
      */
-    public Collection<ObjectInfo> getSelectedObjects() {
-        ArrayList<ObjectInfo> objects = new ArrayList<>();
-        for (int index : theScene.getSelection()) {
+    public List<ObjectInfo> getSelectedObjects() {
+        List<ObjectInfo> objects = new ArrayList<>();
+        for (int index: theScene.getSelection()) {
             objects.add(theScene.getObject(index));
         }
         return objects;
@@ -1837,7 +1837,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             obj[0].getObject().setSize(size.x, size.y, size.z);
             theScene.objectModified(obj[0].getObject());
             obj[0].getObject().sceneChanged(obj[0], theScene);
-            theScene.applyTracksAfterModification(Collections.singleton(obj[0]));
+            theScene.applyTracksAfterModification(List.of(obj[0]));
         } else {
             dlg = new TransformDialog(this, Translate.text("objectLayoutTitleMultiple"), false, false);
             if (!dlg.clickedOk()) {
@@ -1998,7 +1998,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             info = theScene.getObject(sel[i]);
             theScene.objectModified(info.getObject());
         }
-        ArrayList<ObjectInfo> modified = new ArrayList<>();
+        List<ObjectInfo> modified = new ArrayList<>();
         for (int index : sel) {
             modified.add(theScene.getObject(index));
         }

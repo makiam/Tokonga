@@ -33,18 +33,22 @@ import lombok.extern.slf4j.Slf4j;
 public class ObjectPropertiesPanel extends ColumnContainer {
 
     private final LayoutWindow window;
-    private final BTextField nameField;
-    private final ValueField xPosField;
-    private final ValueField yPosField;
-    private final ValueField zPosField;
-    private final ValueField xRotField;
-    private final ValueField yRotField;
-    private final ValueField zRotField;
-    private final BComboBox textureChoice;
-    private final BComboBox materialChoice;
+
+    private final BTextField nameField = new BTextField();
+
+    private final ValueField xPosField = new ValueField(0.0);
+    private final ValueField yPosField = new ValueField(0.0);
+    private final ValueField zPosField = new ValueField(0.0);
+    private final ValueField xRotField = new ValueField(0.0);
+    private final ValueField yRotField = new ValueField(0.0);
+    private final ValueField zRotField = new ValueField(0.0);
+
+    private final BComboBox textureChoice = new BComboBox();
+    private final BComboBox materialChoice = new BComboBox();
+
     //private final AWTWidget materialAppender;
     private PropertyEditor[] propEditor;
-    private ObjectInfo[] objects;
+    private List<ObjectInfo> objects;
     private Property[] properties;
     private Object3D[] previousObjects;
     private boolean ignoreNextChange;
@@ -53,15 +57,8 @@ public class ObjectPropertiesPanel extends ColumnContainer {
 
     public ObjectPropertiesPanel(LayoutWindow window) {
         this.window = window;
-        nameField = new BTextField();
-        xPosField = new ValueField(0.0, ValueField.NONE, 1);
-        yPosField = new ValueField(0.0, ValueField.NONE, 1);
-        zPosField = new ValueField(0.0, ValueField.NONE, 1);
-        xRotField = new ValueField(0.0, ValueField.NONE, 1);
-        yRotField = new ValueField(0.0, ValueField.NONE, 1);
-        zRotField = new ValueField(0.0, ValueField.NONE, 1);
-        textureChoice = new BComboBox();
-        materialChoice = new BComboBox();
+
+
         //materialAppender = new AWTWidget(new MenuButton(AppIcon.INSTANCE.getAppIcon()));
         paramChangeProcessor = new ActionProcessor();
         rebuildContents();
@@ -74,8 +71,10 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         xRotField.addEventLink(ValueChangedEvent.class, this, "coordinatesChanged");
         yRotField.addEventLink(ValueChangedEvent.class, this, "coordinatesChanged");
         zRotField.addEventLink(ValueChangedEvent.class, this, "coordinatesChanged");
+
         textureChoice.addEventLink(ValueChangedEvent.class, this, "textureChanged");
         materialChoice.addEventLink(ValueChangedEvent.class, this, "materialChanged");
+
         ListChangeListener listener = new ListChangeListener() {
             @Override
             public void itemAdded(int index, Object obj) {
@@ -109,25 +108,21 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         }
         // Find the selected objects.
 
-        Scene scene = window.getScene();
-        int[] sel = window.getSelectedIndices();
-        objects = new ObjectInfo[sel.length];
-        for (int i = 0; i < sel.length; i++) {
-            objects[i] = scene.getObject(sel[i]);
-        }
-        boolean objectsChanged = (previousObjects == null || objects.length != previousObjects.length);
-        for (int i = 0; i < objects.length && !objectsChanged; i++) {
-            objectsChanged |= (objects[i].getObject() != previousObjects[i]);
+        objects = window.getSelectedObjects();
+
+        boolean objectsChanged = previousObjects == null || objects.size() != previousObjects.length;
+        for (int i = 0; i < objects.size() && !objectsChanged; i++) {
+            objectsChanged |= (objects.get(i).getObject() != previousObjects[i]);
         }
         if (objectsChanged) {
-            previousObjects = new Object3D[objects.length];
-            for (int i = 0; i < objects.length; i++) {
-                previousObjects[i] = objects[i].getObject();
+            previousObjects = new Object3D[objects.size()];
+            for (int i = 0; i < objects.size(); i++) {
+                previousObjects[i] = objects.get(i).getObject();
             }
         }
 
         // If nothing is selected, just place a message in the panel.
-        if (objects.length == 0) {
+        if (objects.isEmpty()) {
             if (objectsChanged) {
                 removeAll();
                 add(Translate.label("noObjectsSelected"));
@@ -142,41 +137,43 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         }
 
         // Set the name.
-        if (objects.length == 1) {
-            nameField.setText(objects[0].getName());
+        var head = objects.get(0);
+        if (objects.size() == 1) {
+            nameField.setText(head.getName());
         }
 
         // Set the position and orientation.
-        Vec3 origin = objects[0].getCoords().getOrigin();
+        Vec3 origin = head.getCoords().getOrigin();
         xPosField.setValue(origin.x);
         yPosField.setValue(origin.y);
         zPosField.setValue(origin.z);
-        double[] angles = objects[0].getCoords().getRotationAngles();
+        double[] angles = head.getCoords().getRotationAngles();
         xRotField.setValue(angles[0]);
         yRotField.setValue(angles[1]);
         zRotField.setValue(angles[2]);
-        for (int i = 1; i < objects.length; i++) {
-            origin = objects[i].getCoords().getOrigin();
+        for (int i = 1; i < objects.size(); i++) {    //Starting 1'st position!!!
+            origin = objects.get(i).getCoords().getOrigin();
             checkFieldValue(xPosField, origin.x);
             checkFieldValue(yPosField, origin.y);
             checkFieldValue(zPosField, origin.z);
-            angles = objects[i].getCoords().getRotationAngles();
+            angles = objects.get(i).getCoords().getRotationAngles();
             checkFieldValue(xRotField, angles[0]);
             checkFieldValue(yRotField, angles[1]);
             checkFieldValue(zRotField, angles[2]);
         }
 
         // Set the texture.
-        Texture tex = objects[0].getObject().getTexture();
-        boolean canSetTexture = objects[0].getObject().canSetTexture();
+        Texture tex = head.getObject().getTexture();
+        boolean canSetTexture = head.getObject().canSetTexture();
         boolean sameTexture = true;
-        for (int i = 1; i < objects.length; i++) {
-            Texture thisTex = objects[i].getObject().getTexture();
+        for (int i = 1; i < objects.size(); i++) { //Starting 1'st position!!!
+            Texture thisTex = objects.get(i).getObject().getTexture();
             if (thisTex != tex) {
                 sameTexture = false;
             }
-            canSetTexture &= objects[i].getObject().canSetTexture();
+            canSetTexture &= objects.get(i).getObject().canSetTexture();
         }
+        Scene scene = window.getScene();
         if (canSetTexture) {
             Vector<String> names = new Vector<>();
             int selected = -1;
@@ -201,15 +198,15 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         }
 
         // Set the material.
-        Material mat = objects[0].getObject().getMaterial();
-        boolean canSetMaterial = objects[0].getObject().canSetMaterial();
+        Material mat = head.getObject().getMaterial();
+        boolean canSetMaterial = head.getObject().canSetMaterial();
         boolean sameMaterial = true;
-        for (int i = 1; i < objects.length; i++) {
-            Material thisMat = objects[i].getObject().getMaterial();
+        for (int i = 1; i < objects.size(); i++) { //Starting 1'st position!!!
+            Material thisMat = objects.get(i).getObject().getMaterial();
             if (thisMat != mat) {
                 sameMaterial = false;
             }
-            canSetMaterial &= objects[i].getObject().canSetMaterial();
+            canSetMaterial &= objects.get(i).getObject().canSetMaterial();
         }
         if (canSetMaterial) {
             Vector<String> names = new Vector<>();
@@ -250,7 +247,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         lastEventSource = null;
         removeAll();
         LayoutInfo fillLayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(2, 2, 2, 2), null);
-        if (objects.length == 1) {
+        if (objects.size() == 1) {
             add(Translate.label("Name"));
             add(nameField, fillLayout);
         }
@@ -320,9 +317,9 @@ public class ObjectPropertiesPanel extends ColumnContainer {
      * Find the list of object properties to display.
      */
     private void findProperties() {
-        properties = objects[0].getObject().getProperties();
-        for (int i = 1; i < objects.length; i++) {
-            Property[] otherProperty = objects[i].getObject().getProperties();
+        properties = objects.get(0).getObject().getProperties();
+        for (int i = 1; i < objects.size(); i++) {
+            Property[] otherProperty = objects.get(i).getObject().getProperties();
             boolean same = (properties.length == otherProperty.length);
             for (int j = 0; j < properties.length && same; j++) {
                 if (!properties[j].equals(otherProperty[j])) {
@@ -345,11 +342,11 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         }
         Object[] values = new Object[propEditor.length];
         for (int i = 0; i < values.length; i++) {
-            values[i] = objects[0].getObject().getPropertyValue(i);
+            values[i] = objects.get(0).getObject().getPropertyValue(i);
         }
-        for (int i = 1; i < objects.length; i++) {
+        for (int i = 1; i < objects.size(); i++) {
             for (int j = 0; j < values.length; j++) {
-                if (values[j] != null && !values[j].equals(objects[i].getObject().getPropertyValue(j))) {
+                if (values[j] != null && !values[j].equals(objects.get(i).getObject().getPropertyValue(j))) {
                     values[j] = null;
                 }
             }
@@ -385,7 +382,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
             angles[2] = getNewValue(angles[2], zRotField.getValue());
             coords.setOrientation(angles[0], angles[1], angles[2]);
         }
-        window.getScene().applyTracksAfterModification(Arrays.asList(objects));
+        window.getScene().applyTracksAfterModification(objects);
         lastEventSource = ev.getWidget();
         if (undo != null) {
             window.setUndoRecord(undo);
@@ -407,10 +404,10 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         if (ev instanceof KeyPressedEvent event && event.getKeyCode() != KeyEvent.VK_ENTER) {
             return;
         }
-        if (objects.length == 0 || objects[0].getName().equals(nameField.getText())) {
+        if (objects.isEmpty() || objects.get(0).getName().equals(nameField.getText())) {
             return;
         }
-        int which = window.getScene().indexOf(objects[0]);
+        int which = window.getScene().indexOf(objects.get(0));
         UndoableEdit edit = new ObjectRenameEdit(window, which, nameField.getText()).execute();
         window.setUndoRecord(new UndoRecord(window, false, edit));
 
@@ -470,7 +467,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         int index = materialChoice.getSelectedIndex();
         Scene scene = window.getScene();
         Material mat = null;
-        boolean noMaterial = (index == scene.getNumMaterials());
+        boolean noMaterial = index == scene.getNumMaterials();
         if (index < scene.getNumMaterials()) {
             mat = scene.getMaterial(index);
         } else if (index > scene.getNumMaterials()) {
@@ -492,7 +489,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         }
         if (noMaterial || mat != null) {
             UndoRecord undo = new UndoRecord(window);
-            for (ObjectInfo object : objects) {
+            for (ObjectInfo object: objects) {
                 if (object.getObject().getMaterial() != mat) {
                     undo.addCommand(UndoRecord.COPY_OBJECT, object.getObject(), object.getObject().duplicate());
                     object.setMaterial(mat, noMaterial ? null : mat.getDefaultMapping(object.getObject()));
