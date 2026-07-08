@@ -16,6 +16,8 @@ import artofillusion.PluginRegistry;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 
 /**
  *
@@ -23,23 +25,16 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  */
 public class RegisterTestResources implements BeforeAllCallback {
 
-    private static int ref = 0;
-
-    protected void before() {
-        if (ref != 0) {
-            return;
-        }
-        ref++;
-        try {
-            PluginRegistry.registerResource("TranslateBundle", "artofillusion", ArtOfIllusion.class.getClassLoader(), "artofillusion", null);
-        } catch (IllegalArgumentException iae) {
-            ref++;
-        }
-
-    }
+    private static final AtomicBoolean registered = new AtomicBoolean(false);
 
     @Override
     public void beforeAll(ExtensionContext context) {
-        before();
+        if (registered.compareAndSet(false, true)) {
+            try {
+                PluginRegistry.registerResource("TranslateBundle", "artofillusion", ArtOfIllusion.class.getClassLoader(), "artofillusion", null);
+            } catch (IllegalArgumentException iae) {
+                // Already registered by application startup or previous test class
+            }
+        }
     }
 }
