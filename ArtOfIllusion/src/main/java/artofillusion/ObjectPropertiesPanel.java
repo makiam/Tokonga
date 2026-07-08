@@ -75,6 +75,9 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         textureChoice.addEventLink(ValueChangedEvent.class, this, "textureChanged");
         materialChoice.addEventLink(ValueChangedEvent.class, this, "materialChanged");
 
+        materialChoice.getComponent().addActionListener(this::materialSelected);
+        textureChoice.getComponent().addActionListener(this::textureSelected);
+
         ListChangeListener listener = new ListChangeListener() {
             @Override
             public void itemAdded(int index, Object obj) {
@@ -99,6 +102,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
      * Rebuild the contents of the panel.
      */
     protected void rebuildContents() {
+        log.info("RC");
         if (ignoreNextChange) {
             ignoreNextChange = false;
             return;
@@ -114,6 +118,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         for (int i = 0; i < objects.size() && !objectsChanged; i++) {
             objectsChanged |= (objects.get(i).getObject() != previousObjects[i]);
         }
+
         if (objectsChanged) {
             previousObjects = new Object3D[objects.size()];
             for (int i = 0; i < objects.size(); i++) {
@@ -190,11 +195,14 @@ public class ObjectPropertiesPanel extends ColumnContainer {
                 selected = names.size();
                 names.add(Translate.text("layeredTexture"));
             }
-
+            log.info("RC: ADD TEXTURE");
             PluginRegistry.getPlugins(Texture.class).forEach(texture -> names.add(Translate.text("newTextureOfType", texture.getTypeName())));
+            log.info("RC: ADD TEXTURE: DONE");
 
+            log.info("RC: Textures Set Model");
             textureChoice.setModel(new DefaultComboBoxModel<>(names));
             textureChoice.setSelectedIndex(selected);
+            log.info("RC: Textures Set Model: DONE");
         }
 
         // Set the material.
@@ -224,17 +232,20 @@ public class ObjectPropertiesPanel extends ColumnContainer {
                 selected = names.size();
             }
             names.add(Translate.text("none"));
-
+            log.info("RC: ADD MATERIAL");
             PluginRegistry.getPlugins(Material.class).forEach(material -> names.add(Translate.text("newMaterialOfType", material.getTypeName())));
+            log.info("RC: ADD MATERIAL DONE");
 
+            log.info("RC: Materials Set Model");
             materialChoice.setModel(new DefaultComboBoxModel<>(names));
             materialChoice.setSelectedIndex(selected);
+            log.info("RC: Materials Set Model Done");
         }
 
         // See whether the list of properties has changed.
         Property[] oldProperties = properties;
         findProperties();
-        boolean propertiesChanged = (oldProperties == null || properties.length != oldProperties.length);
+        boolean propertiesChanged = oldProperties == null || properties.length != oldProperties.length;
         for (int i = 0; i < properties.length && !propertiesChanged; i++) {
             propertiesChanged = !properties[i].equals(oldProperties[i]);
         }
@@ -305,12 +316,11 @@ public class ObjectPropertiesPanel extends ColumnContainer {
             getParent().layoutChildren();
         }
         repaint();
+        log.info("RC: DONE");
     }
 
     private void checkFieldValue(ValueField field, double value) {
-        if (field.getValue() != value) {
-            field.setValue(Double.NaN);
-        }
+        if (field.getValue() != value) field.setValue(Double.NaN);
     }
 
     /**
@@ -318,18 +328,19 @@ public class ObjectPropertiesPanel extends ColumnContainer {
      */
     private void findProperties() {
         properties = objects.get(0).getObject().getProperties();
-        for (int i = 1; i < objects.size(); i++) {
+
+        for (int i = 1; i < objects.size(); i++) { //Starting 1'st position!!!
             Property[] otherProperty = objects.get(i).getObject().getProperties();
-            boolean same = (properties.length == otherProperty.length);
+            boolean same = properties.length == otherProperty.length;
+
             for (int j = 0; j < properties.length && same; j++) {
-                if (!properties[j].equals(otherProperty[j])) {
-                    same = false;
-                }
+                if (properties[j].equals(otherProperty[j])) continue;
+                same = false;
             }
-            if (!same) {
-                properties = new Property[0];
-                return;
-            }
+
+            if (same) continue;
+            properties = new Property[0];
+            return;
         }
     }
 
@@ -382,12 +393,13 @@ public class ObjectPropertiesPanel extends ColumnContainer {
             angles[2] = getNewValue(angles[2], zRotField.getValue());
             coords.setOrientation(angles[0], angles[1], angles[2]);
         }
+
         window.getScene().applyTracksAfterModification(objects);
         lastEventSource = ev.getWidget();
-        if (undo != null) {
-            window.setUndoRecord(undo);
-        } else {
+        if (undo == null) {
             window.setModified();
+        } else {
+            window.setUndoRecord(undo);
         }
         window.updateImage();
     }
@@ -421,6 +433,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
      */
     @SuppressWarnings("unused")
     private void textureChanged() {
+        log.info("Texture changed old");
         int index = textureChoice.getSelectedIndex();
         Scene scene = window.getScene();
         Texture tex = null;
@@ -464,6 +477,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
      */
     @SuppressWarnings("unused")
     private void materialChanged() {
+
         int index = materialChoice.getSelectedIndex();
         Scene scene = window.getScene();
         Material mat = null;
@@ -561,5 +575,13 @@ public class ObjectPropertiesPanel extends ColumnContainer {
     @Override
     public Dimension getMinimumSize() {
         return new Dimension();
+    }
+
+    private void materialSelected(ActionEvent event) {
+        log.info("MS");
+    }
+
+    private void textureSelected(ActionEvent event) {
+        //log.info("TS");
     }
 }
