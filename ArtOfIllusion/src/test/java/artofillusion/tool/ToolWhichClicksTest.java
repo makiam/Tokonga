@@ -1,4 +1,4 @@
-/* Copyright (C) 2022-2023 by Maksim Khramov
+/* Copyright (C) 2022-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -58,13 +58,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @DisplayName("Tool Which Clicks Test")
 @ExtendWith({SetupLocale.class, SetupLookAndFeel.class, RegisterTestResources.class, SetupTheme.class})  
 class ToolWhichClicksTest {
-
-    @BeforeAll
-    public static void setUpClass() {
-        PluginRegistry.registerResource("TranslateBundle", "artofillusion", ArtOfIllusion.class.getClassLoader(), "artofillusion", null);
-        PluginRegistry.registerResource("UITheme", "default", ArtOfIllusion.class.getClassLoader(), "artofillusion/Icons/defaultTheme.xml", null);
-        ThemeManager.initThemes();
-    }
 
     @Test
     @DisplayName("Test Create Camera Tool Check Which Click Value")
