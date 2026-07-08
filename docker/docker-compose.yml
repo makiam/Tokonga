@@ -1,0 +1,67 @@
+# Tokonga Development & Testing
+#
+# Quick start:
+#   make -C docker build          # build Docker image (~2 min first time)
+#   make -C docker test           # run all tests (~90s)
+#   make -C docker dev            # interactive shell
+#
+# Or from repo root:
+#   make -f docker/Makefile test
+
+services:
+  test:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: tokonga-dev:latest
+    working_dir: /workspace
+    volumes:
+      - ..:/workspace
+      - gradle-cache:/root/.gradle
+    environment:
+      - DISPLAY=:99
+      - LIBGL_ALWAYS_SOFTWARE=1
+      - GALLIUM_DRIVER=llvmpipe
+      - GRADLE_OPTS=-Xmx6g
+    mem_limit: 8g
+    shm_size: '2gb'
+
+  build:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: tokonga-dev:latest
+    working_dir: /workspace
+    volumes:
+      - ..:/workspace
+      - gradle-cache:/root/.gradle
+    environment:
+      - DISPLAY=:99
+      - LIBGL_ALWAYS_SOFTWARE=1
+      - GRADLE_OPTS=-Xmx4g
+    command: ["./gradlew", "--no-daemon", "assemble"]
+    mem_limit: 6g
+    shm_size: '1gb'
+
+  dev:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: tokonga-dev:latest
+    working_dir: /workspace
+    volumes:
+      - ..:/workspace
+      - gradle-cache:/root/.gradle
+    environment:
+      - DISPLAY=:99
+      - LIBGL_ALWAYS_SOFTWARE=1
+      - GALLIUM_DRIVER=llvmpipe
+      - GRADLE_OPTS=-Xmx6g
+    command: ["/bin/bash"]
+    stdin_open: true
+    tty: true
+    mem_limit: 8g
+    shm_size: '2gb'
+
+volumes:
+  gradle-cache:
