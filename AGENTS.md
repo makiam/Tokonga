@@ -414,6 +414,28 @@ public class Example
 - **Logging**: use `@Slf4j` annotation, then `log.info(...)`, `log.atError().setCause(ex).log(...)`.
 - **i18n**: use `Translate.text("key")` for user-visible strings, `Translate.menu("key")` for menus.
 
+### Copyright Headers
+
+Every new or substantially modified Java file **must** start with the project's GPL-2.0+ copyright header:
+
+```java
+/* Copyright (C) YYYY by Original Author Name
+ *  Changes copyright (C) YYYY by <Your Real Name>
+
+   This program is free software; you can redistribute it and/or modify it under the
+   terms of the GNU General Public License as published by the Free Software
+   Foundation; either version 2 of the License, or (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+   PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+```
+
+- When creating a **new file**, use `Copyright (C) YYYY by <Your Real Name>` as the sole author.
+- When modifying an **existing file**, keep the original `Copyright` line and add `Changes copyright (C) YYYY by <Your Real Name>`.
+- Use your real name, not a GitHub handle.
+- See `Polymesh/src/main/java/artofillusion/polymesh/AdvancedBevelExtrudeTool.java` for an example.
+
 ---
 
 ## 8. Pitfalls & Gotchas
