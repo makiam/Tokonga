@@ -1,6 +1,19 @@
 plugins {
 	id 'base'
     id 'java'
+    id 'checkstyle'
+}
+
+checkstyle {
+    toolVersion = '10.17.0'
+    configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+    ignoreFailures = true
+    maxWarnings = Integer.MAX_VALUE
+    showViolations = true
+}
+
+tasks.withType(Checkstyle).configureEach {
+    configDirectory.set(rootProject.file('config/checkstyle'))
 }
 
 java {
@@ -42,7 +55,7 @@ dependencies {
 
     testCompileOnly libs.lombok
     testAnnotationProcessor libs.lombok
-    
+
     implementation libs.buoy
 
     testImplementation("org.junit.jupiter:junit-jupiter:6.0.3")
@@ -56,7 +69,7 @@ dependencies {
 
 }
 
-javadoc { 
+javadoc {
     failOnError false
 }
 

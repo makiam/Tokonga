@@ -1,0 +1,9 @@
+services:
+  lint:
+    build:
+      context: .
+      dockerfile: Dockerfile.lint
+    volumes:
+      - gradle-cache:/root/.gradle
+volumes:
+  gradle-cache:
