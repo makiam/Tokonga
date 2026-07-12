@@ -13,8 +13,6 @@
 package artofillusion;
 
 import artofillusion.ui.EditingWindow;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 
 /**

@@ -13,7 +13,6 @@ package artofillusion;
 
 import artofillusion.ui.Translate;
 
-import buoy.widget.BMenu;
 import lombok.extern.slf4j.Slf4j;
 import org.greenrobot.eventbus.Subscribe;
 

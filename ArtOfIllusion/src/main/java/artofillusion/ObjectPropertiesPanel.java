@@ -36,14 +36,10 @@ public class ObjectPropertiesPanel extends ColumnContainer {
     public static final LayoutInfo FILL_LAYOUT = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(2, 2, 2, 2), null);
 
     private final List<Material> materials = PluginRegistry.getPlugins(Material.class);
-    private final List<String> matTypes = new ArrayList<>(); {
-        materials.forEach(mat -> matTypes.add(Translate.text("newMaterialOfType", mat.getTypeName())));
-    }
+    private final List<String> matTypes = new ArrayList<>();
 
     private final List<Texture> textures = PluginRegistry.getPlugins(Texture.class);
-    private final List<String> texTypes = new ArrayList<>(); {
-        textures.forEach(tex -> texTypes.add(Translate.text("newTextureOfType", tex.getTypeName())));
-    }
+    private final List<String> texTypes = new ArrayList<>();
 
     private final LayoutWindow window;
 
@@ -65,15 +61,17 @@ public class ObjectPropertiesPanel extends ColumnContainer {
     private Property[] properties;
     private Object3D[] previousObjects;
     private boolean ignoreNextChange;
-    private Widget lastEventSource;
-    private final ActionProcessor paramChangeProcessor;
+    private Widget<?> lastEventSource;
+    private final ActionProcessor paramChangeProcessor = new ActionProcessor();
 
     public ObjectPropertiesPanel(LayoutWindow window) {
         this.window = window;
 
+        materials.forEach(mat -> matTypes.add(Translate.text("newMaterialOfType", mat.getTypeName())));
+        textures.forEach(tex -> texTypes.add(Translate.text("newTextureOfType", tex.getTypeName())));
 
         //materialAppender = new AWTWidget(new MenuButton(AppIcon.INSTANCE.getAppIcon()));
-        paramChangeProcessor = new ActionProcessor();
+
         rebuildContents();
         window.addEventLink(SceneChangedEvent.class, this, "rebuildContents");
         nameField.addEventLink(FocusLostEvent.class, this, "nameChanged");
@@ -310,7 +308,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
             if (propEditor[i].getLabel() != null) {
                 add(new BLabel(propEditor[i].getLabel()));
             }
-            Widget widget = propEditor[i].getWidget();
+            var widget = propEditor[i].getWidget();
             widget.addEventLink(ValueChangedEvent.class, this, "parameterChanged");
             if (widget instanceof ValueSelector || widget instanceof BCheckBox || widget instanceof ValueField) {
                 add(widget, CENTER_LAYOUT);
@@ -589,10 +587,10 @@ public class ObjectPropertiesPanel extends ColumnContainer {
     }
 
     private void materialSelected(ActionEvent event) {
-        log.info("MS");
+        // TBD: On Pure Swing Migration
     }
 
     private void textureSelected(ActionEvent event) {
-        //log.info("TS");
+        // TBD: On Pure Swing Migration
     }
 }
