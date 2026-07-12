@@ -13,7 +13,6 @@ package artofillusion;
 
 import artofillusion.ui.Translate;
 
-import buoy.widget.BMenu;
 import lombok.extern.slf4j.Slf4j;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -37,6 +36,6 @@ public final class LayoutFileMenu extends LayoutMenu {
 
     @Subscribe
     public void onSceneChangedEvent(SceneChangedEvent event) {
-        log.info("On Scene changed {} ", this.getLayout() == event.getWindow() ? "this" : "other");
+        log.info("On Scene changed {} ", this.getLayout() == event.window() ? "this" : "other");
     }
 }

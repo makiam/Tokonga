@@ -229,12 +229,12 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * ones. It also applies a subset of the animation tracks on the modified objects
      * themselves to reflect their dependencies on other parts of the scene.
      */
-    public void applyTracksAfterModification(Collection<ObjectInfo> changedObjects) {
+    public void applyTracksAfterModification(List<ObjectInfo> changedObjects) {
         boolean[] changed = new boolean[objects.size()];
         boolean[] processed = new boolean[objects.size()];
 
         // First, apply a subset of the tracks of the modified objects.
-        for (ObjectInfo info : changedObjects) {
+        for (ObjectInfo info: changedObjects) {
             int index = indexOf(info);
             changed[index] = processed[index] = true;
 

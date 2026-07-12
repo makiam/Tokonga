@@ -44,7 +44,7 @@ public abstract class ObjectEditorWindow extends BFrame implements EditingWindow
     protected UndoStack undoStack;
     protected Preferences preferences;
     private boolean hasNotifiedPlugins, sceneChangePending;
-    private final SceneChangedEvent sceneChangedEvent;
+    private final SceneChangedEvent sceneChangedEvent = new SceneChangedEvent(this);
 
     protected static boolean lastShowAxes, lastShowGrid, lastSnapToGrid;
     protected static int lastNumViews = 4, lastGridSubdivisions = 10;
@@ -54,7 +54,7 @@ public abstract class ObjectEditorWindow extends BFrame implements EditingWindow
     public ObjectEditorWindow(EditingWindow parent, String title, ObjectInfo obj) {
         super(title);
         parentWindow = parent;
-        sceneChangedEvent = new SceneChangedEvent(this);
+
         objInfo = obj.duplicate(obj.getObject().duplicate());
         objInfo.getCoords().setOrigin(new Vec3());
         objInfo.getCoords().setOrientation(Vec3.vz(), Vec3.vy());

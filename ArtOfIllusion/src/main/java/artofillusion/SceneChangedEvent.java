@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2009 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -13,8 +13,6 @@
 package artofillusion;
 
 import artofillusion.ui.EditingWindow;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 
 /**
@@ -23,12 +21,9 @@ import lombok.Getter;
  * properties of individual objects, textures, the list of currently selected objects, etc.
  */
 
-@AllArgsConstructor
-public final class SceneChangedEvent {
 
+public record SceneChangedEvent(EditingWindow window) {
     public EditingWindow getWindow() {
         return window;
     }
-
-    private EditingWindow window;
 }

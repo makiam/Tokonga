@@ -141,7 +141,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     private boolean sceneChangePending;
     private boolean objectListShown;
     private final KeyEventPostProcessor keyEventHandler;
-    private final SceneChangedEvent sceneChangedEvent;
+
+    private final SceneChangedEvent sceneChangedEvent = new SceneChangedEvent(this);
 
     protected final Preferences preferences;
     private boolean hasNotifiedPlugins;
@@ -160,7 +161,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
         score = new Score(this);
 
-        sceneChangedEvent = new SceneChangedEvent(this);
+
         uiEventProcessor = new ActionProcessor();
 
         objectListShown = true;
@@ -453,19 +454,17 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     private void createFileMenu() {
 
-        BMenu importMenu, exportMenu;
-        List<Translator> translators = PluginRegistry.getPlugins(Translator.class);
-
         getMenuBar().add(fileMenu);
-        importMenu = Translate.menu("import");
-        exportMenu = Translate.menu("export");
-
 
         fileMenu.add(recentFilesMenu = Translate.menu("openRecent"));
         RecentFiles.createMenu(recentFilesMenu);
 
         fileMenu.add(Translate.menuItem("close", event -> closeSceneAction()));
         fileMenu.addSeparator();
+
+        BMenu importMenu = Translate.menu("import");
+        BMenu exportMenu = Translate.menu("export");
+        List<Translator> translators = PluginRegistry.getPlugins(Translator.class);
         translators.sort(Comparator.comparing(Translator::getName));
         translators.forEach(translator -> {
             if (translator.canImport()) importMenu.add(new ImportAction(this, translator));
@@ -478,6 +477,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         if (exportMenu.getChildCount() > 0) {
             fileMenu.add(exportMenu);
         }
+
         fileMenu.add(Translate.menuItem("linkExternal", event -> linkExternalCommand()));
         fileMenu.addSeparator();
         fileMenu.add(fileMenuItem);
@@ -1339,11 +1339,11 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     /**
-     * Get a collection of all selected objects.
+     * Get a list of all selected objects.
      */
-    public Collection<ObjectInfo> getSelectedObjects() {
-        ArrayList<ObjectInfo> objects = new ArrayList<>();
-        for (int index : theScene.getSelection()) {
+    public List<ObjectInfo> getSelectedObjects() {
+        List<ObjectInfo> objects = new ArrayList<>();
+        for (int index: theScene.getSelection()) {
             objects.add(theScene.getObject(index));
         }
         return objects;
@@ -1781,7 +1781,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         int[] sel = getSelectedIndices();
         TransformDialog dlg;
         ObjectInfo[] obj = new ObjectInfo[sel.length];
-        Vec3 orig, size;
+        Vec3 orig;
+        Vec3 size;
         double[] angles;
         double[] values;
 
@@ -1837,7 +1838,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             obj[0].getObject().setSize(size.x, size.y, size.z);
             theScene.objectModified(obj[0].getObject());
             obj[0].getObject().sceneChanged(obj[0], theScene);
-            theScene.applyTracksAfterModification(Collections.singleton(obj[0]));
+            theScene.applyTracksAfterModification(List.of(obj[0]));
         } else {
             dlg = new TransformDialog(this, Translate.text("objectLayoutTitleMultiple"), false, false);
             if (!dlg.clickedOk()) {
@@ -1998,7 +1999,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             info = theScene.getObject(sel[i]);
             theScene.objectModified(info.getObject());
         }
-        ArrayList<ObjectInfo> modified = new ArrayList<>();
+        List<ObjectInfo> modified = new ArrayList<>();
         for (int index : sel) {
             modified.add(theScene.getObject(index));
         }
@@ -2198,7 +2199,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     public void convertToTriangleCommand() {
         int[] sel = getSelectedIndices();
-        Object3D obj, mesh;
+        Object3D obj;
+        Object3D mesh;
         ObjectInfo info;
 
         if (sel.length != 1) {
