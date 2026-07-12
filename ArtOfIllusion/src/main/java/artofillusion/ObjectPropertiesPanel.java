@@ -32,6 +32,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ObjectPropertiesPanel extends ColumnContainer {
 
+    public static final LayoutInfo CENTER_LAYOUT = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(2, 2, 2, 2), null);
+    public static final LayoutInfo FILL_LAYOUT = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(2, 2, 2, 2), null);
+
+    private final List<Material> materials = PluginRegistry.getPlugins(Material.class);
+    private final List<String> matTypes = new ArrayList<>(); {
+        materials.forEach(mat -> matTypes.add(Translate.text("newMaterialOfType", mat.getTypeName())));
+    }
+
+    private final List<Texture> textures = PluginRegistry.getPlugins(Texture.class);
+    private final List<String> texTypes = new ArrayList<>(); {
+        textures.forEach(tex -> texTypes.add(Translate.text("newTextureOfType", tex.getTypeName())));
+    }
+
     private final LayoutWindow window;
 
     private final BTextField nameField = new BTextField();
@@ -188,25 +201,25 @@ public class ObjectPropertiesPanel extends ColumnContainer {
                     selected = i;
                 }
             }
-            if (!sameTexture) {
+            if (sameTexture) {
+                if (tex instanceof LayeredTexture) {
+                    selected = names.size();
+                    names.add(Translate.text("layeredTexture"));
+                }
+            } else {
                 selected = names.size();
                 names.add("");
-            } else if (tex instanceof LayeredTexture) {
-                selected = names.size();
-                names.add(Translate.text("layeredTexture"));
             }
-            log.info("RC: ADD TEXTURE");
-            PluginRegistry.getPlugins(Texture.class).forEach(texture -> names.add(Translate.text("newTextureOfType", texture.getTypeName())));
-            log.info("RC: ADD TEXTURE: DONE");
 
-            log.info("RC: Textures Set Model");
+            names.addAll(texTypes);
+
             textureChoice.setModel(new DefaultComboBoxModel<>(names));
             textureChoice.setSelectedIndex(selected);
-            log.info("RC: Textures Set Model: DONE");
         }
 
         // Set the material.
-        Material mat = head.getObject().getMaterial();
+        Material mat = head.getObject().getMaterial(); // Get first selection item material
+
         boolean canSetMaterial = head.getObject().canSetMaterial();
         boolean sameMaterial = true;
         for (int i = 1; i < objects.size(); i++) { //Starting 1'st position!!!
@@ -225,21 +238,20 @@ public class ObjectPropertiesPanel extends ColumnContainer {
                     selected = i;
                 }
             }
-            if (!sameMaterial) {
+            if (sameMaterial) {
+                if (mat == null) {
+                    selected = names.size();
+                }
+            } else {
                 selected = names.size();
                 names.add("");
-            } else if (mat == null) {
-                selected = names.size();
             }
             names.add(Translate.text("none"));
-            log.info("RC: ADD MATERIAL");
-            PluginRegistry.getPlugins(Material.class).forEach(material -> names.add(Translate.text("newMaterialOfType", material.getTypeName())));
-            log.info("RC: ADD MATERIAL DONE");
+            names.addAll(matTypes);
 
-            log.info("RC: Materials Set Model");
             materialChoice.setModel(new DefaultComboBoxModel<>(names));
             materialChoice.setSelectedIndex(selected);
-            log.info("RC: Materials Set Model Done");
+
         }
 
         // See whether the list of properties has changed.
@@ -257,42 +269,41 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         }
         lastEventSource = null;
         removeAll();
-        LayoutInfo fillLayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.HORIZONTAL, new Insets(2, 2, 2, 2), null);
+
         if (objects.size() == 1) {
             add(Translate.label("Name"));
-            add(nameField, fillLayout);
+            add(nameField, FILL_LAYOUT);
         }
         add(Translate.label("Position"));
         FormContainer positions = new FormContainer(new double[]{0, 1, 0, 1, 0, 1}, new double[1]);
         positions.add(new BLabel("X"), 0, 0);
-        positions.add(xPosField, 1, 0, fillLayout);
+        positions.add(xPosField, 1, 0, FILL_LAYOUT);
         positions.add(new BLabel(" Y"), 2, 0);
-        positions.add(yPosField, 3, 0, fillLayout);
+        positions.add(yPosField, 3, 0, FILL_LAYOUT);
         positions.add(new BLabel(" Z"), 4, 0);
-        positions.add(zPosField, 5, 0, fillLayout);
-        add(positions, fillLayout);
+        positions.add(zPosField, 5, 0, FILL_LAYOUT);
+        add(positions, FILL_LAYOUT);
         add(Translate.label("Orientation"));
         FormContainer orientation = new FormContainer(new double[]{0, 1, 0, 1, 0, 1}, new double[1]);
         orientation.add(new BLabel("X"), 0, 0);
-        orientation.add(xRotField, 1, 0, fillLayout);
+        orientation.add(xRotField, 1, 0, FILL_LAYOUT);
         orientation.add(new BLabel(" Y"), 2, 0);
-        orientation.add(yRotField, 3, 0, fillLayout);
+        orientation.add(yRotField, 3, 0, FILL_LAYOUT);
         orientation.add(new BLabel(" Z"), 4, 0);
-        orientation.add(zRotField, 5, 0, fillLayout);
-        add(orientation, fillLayout);
+        orientation.add(zRotField, 5, 0, FILL_LAYOUT);
+        add(orientation, FILL_LAYOUT);
         if (canSetTexture) {
             add(Translate.label("Texture"));
-            add(textureChoice, fillLayout);
+            add(textureChoice, FILL_LAYOUT);
 
         }
         if (canSetMaterial) {
             add(Translate.label("Material"));
-            add(materialChoice, fillLayout);
+            add(materialChoice, FILL_LAYOUT);
             //add(materialAppender, fillLayout);
         }
 
         // Build widgets for object parameters.
-        LayoutInfo centerLayout = new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.NONE, new Insets(2, 2, 2, 2), null);
         propEditor = new PropertyEditor[properties.length];
         for (int i = 0; i < propEditor.length; i++) {
             propEditor[i] = new PropertyEditor(properties[i], null);
@@ -302,9 +313,9 @@ public class ObjectPropertiesPanel extends ColumnContainer {
             Widget widget = propEditor[i].getWidget();
             widget.addEventLink(ValueChangedEvent.class, this, "parameterChanged");
             if (widget instanceof ValueSelector || widget instanceof BCheckBox || widget instanceof ValueField) {
-                add(widget, centerLayout);
+                add(widget, CENTER_LAYOUT);
             } else {
-                add(widget, fillLayout);
+                add(widget, FILL_LAYOUT);
             }
         }
         showParameterValues();
@@ -324,7 +335,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
     }
 
     /**
-     * Find the list of object properties to display.
+     * Collect the list of object properties to display in the Properties panel from the list of selected objects
      */
     private void findProperties() {
         properties = objects.get(0).getObject().getProperties();
@@ -433,27 +444,27 @@ public class ObjectPropertiesPanel extends ColumnContainer {
      */
     @SuppressWarnings("unused")
     private void textureChanged() {
-        log.info("Texture changed old");
+
         int index = textureChoice.getSelectedIndex();
         Scene scene = window.getScene();
         Texture tex = null;
         if (index < scene.getNumTextures()) {
             tex = scene.getTexture(index);
         } else {
-            List<Texture> textureTypes = PluginRegistry.getPlugins(Texture.class);
-            if (index < scene.getNumTextures() + textureTypes.size()) {
+
+            if (index < scene.getNumTextures() + textures.size()) {
                 try {
-                    tex = textureTypes.get(index - scene.getNumTextures()).getClass().getDeclaredConstructor().newInstance();
+                    tex = textures.get(index - scene.getNumTextures()).duplicate();
                     int j = 0;
                     String name;
                     do {
                         j++;
-                        name = "Untitled " + j;
+                        name = "Untitled " + tex.getTypeName() + " Texture " + j;
                     } while (scene.getTexture(name) != null);
                     tex.setName(name);
                     scene.addTexture(tex);
-                    tex.edit((WindowWidget)window, scene);
-                } catch (ReflectiveOperationException | SecurityException ex) {
+                    tex.edit(window, scene);
+                } catch (SecurityException ex) {
                     log.atError().setCause(ex).log("Error changing texture: {}", ex.getMessage());
                 }
             }
@@ -485,19 +496,19 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         if (index < scene.getNumMaterials()) {
             mat = scene.getMaterial(index);
         } else if (index > scene.getNumMaterials()) {
-            List<Material> materialTypes = PluginRegistry.getPlugins(Material.class);
+
             try {
-                mat = materialTypes.get(index - scene.getNumMaterials() - 1).getClass().getDeclaredConstructor().newInstance();
+                mat = materials.get(index - scene.getNumMaterials() - 1).duplicate();
                 int j = 0;
                 String name = "";
                 do {
                     j++;
-                    name = "Untitled " + j;
+                    name = "Untitled " + mat.getTypeName() + " Material " + j;
                 } while (scene.getMaterial(name) != null);
                 mat.setName(name);
                 scene.addMaterial(mat);
-                mat.edit((WindowWidget)window, scene);
-            } catch (ReflectiveOperationException | SecurityException ex) {
+                mat.edit(window, scene);
+            } catch (SecurityException ex) {
                 log.atError().setCause(ex).log("Error changing material: {}", ex.getMessage());
             }
         }
