@@ -413,7 +413,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         window.updateImage();
     }
 
-    private double getNewValue(double oldValue, double newValue) {
+    private static double getNewValue(double oldValue, double newValue) {
         return Double.isNaN(newValue) ? oldValue : newValue;
     }
 
@@ -451,20 +451,18 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         } else {
 
             if (index < scene.getNumTextures() + textures.size()) {
-                try {
-                    tex = textures.get(index - scene.getNumTextures()).duplicate();
-                    int j = 0;
-                    String name;
-                    do {
-                        j++;
-                        name = "Untitled " + tex.getTypeName() + " Texture " + j;
-                    } while (scene.getTexture(name) != null);
-                    tex.setName(name);
-                    scene.addTexture(tex);
-                    tex.edit(window, scene);
-                } catch (SecurityException ex) {
-                    log.atError().setCause(ex).log("Error changing texture: {}", ex.getMessage());
-                }
+
+                tex = textures.get(index - scene.getNumTextures()).duplicate();
+                int j = 0;
+                String name;
+                do {
+                    j++;
+                    name = "Untitled " + tex.getTypeName() + " texture " + j;
+                } while (scene.getTexture(name) != null);
+                tex.setName(name);
+                scene.addTexture(tex);
+                tex.edit(window, scene);
+
             }
         }
         if (tex != null) {
@@ -495,20 +493,17 @@ public class ObjectPropertiesPanel extends ColumnContainer {
             mat = scene.getMaterial(index);
         } else if (index > scene.getNumMaterials()) {
 
-            try {
-                mat = materials.get(index - scene.getNumMaterials() - 1).duplicate();
-                int j = 0;
-                String name = "";
-                do {
-                    j++;
-                    name = "Untitled " + mat.getTypeName() + " Material " + j;
-                } while (scene.getMaterial(name) != null);
-                mat.setName(name);
-                scene.addMaterial(mat);
-                mat.edit(window, scene);
-            } catch (SecurityException ex) {
-                log.atError().setCause(ex).log("Error changing material: {}", ex.getMessage());
-            }
+            mat = materials.get(index - scene.getNumMaterials() - 1).duplicate();
+            int j = 0;
+            String name = "";
+            do {
+                j++;
+                name = "Untitled " + mat.getTypeName() + " material " + j;
+            } while (scene.getMaterial(name) != null);
+            mat.setName(name);
+            scene.addMaterial(mat);
+            mat.edit(window, scene);
+
         }
         if (noMaterial || mat != null) {
             UndoRecord undo = new UndoRecord(window);
