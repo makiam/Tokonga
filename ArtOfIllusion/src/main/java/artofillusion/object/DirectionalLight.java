@@ -32,7 +32,7 @@ public class DirectionalLight extends Light {
     static final WireframeMesh mesh;
     static final int SEGMENTS = 8;
     private static final Property[] PROPERTIES = new Property[]{
-        new Property(Translate.text("lightColor"), new RGBColor(1.0, 1.0, 1.0)),
+        new ColorProperty("lightColor"),
         new Property(Translate.text("Intensity"), -Double.MAX_VALUE, Double.MAX_VALUE, 1.0),
         new Property(Translate.text("AngularRadius"), 0.0, 45.0, 1.0),
         new Property(Translate.text("lightType"),

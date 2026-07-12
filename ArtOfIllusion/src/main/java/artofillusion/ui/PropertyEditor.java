@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2009 by Peter Eastman
-   Changes copyright (C) 2025 by Maksim Khramov
+   Changes copyright (C) 2025-2026 by Maksim Khramov
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
@@ -14,6 +14,7 @@ import buoy.widget.*;
 import buoy.event.*;
 import artofillusion.*;
 import artofillusion.math.*;
+import lombok.Getter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,9 +25,18 @@ import java.awt.*;
  * it represents and the allowed values. The Widget dispatches a ValueChangedEvent
  * whenever its value changes.
  */
+@Getter
 public class PropertyEditor {
 
+    /**
+     * -- GETTER --
+     *  Get the Property this editor is for.
+     */
     private final Property property;
+    /**
+     * -- GETTER --
+     *  Get the Widget representing the user interface for editing the Property.
+     */
     private final Widget widget;
 
     /**
@@ -42,12 +52,7 @@ public class PropertyEditor {
         } else if (property.getType() == Property.INTEGER) {
             widget = new ValueField(0.0, ValueField.INTEGER);
             final Property prop = property;
-            ((ValueField) widget).setValueChecker(new ValueChecker() {
-                @Override
-                public boolean isValid(double val) {
-                    return (val >= prop.getMinimum() && val <= prop.getMaximum());
-                }
-            });
+            ((ValueField) widget).setValueChecker(val -> (val >= prop.getMinimum() && val <= prop.getMaximum()));
         } else if (property.getType() == Property.BOOLEAN) {
             widget = new BCheckBox(property.getName(), false);
         } else if (property.getType() == Property.STRING) {
@@ -66,20 +71,6 @@ public class PropertyEditor {
         if (value != null) {
             setValue(value);
         }
-    }
-
-    /**
-     * Get the Property this editor is for.
-     */
-    public Property getProperty() {
-        return property;
-    }
-
-    /**
-     * Get the Widget representing the user interface for editing the Property.
-     */
-    public Widget getWidget() {
-        return widget;
     }
 
     /**
@@ -157,7 +148,7 @@ public class PropertyEditor {
             setPreferredSize(new Dimension(30, 15));
             setMaximumSize(new Dimension(30, 15));
             setBackground(color.getColor());
-            ((JComponent) getComponent()).setBorder(BorderFactory.createLoweredBevelBorder());
+            getComponent().setBorder(BorderFactory.createLoweredBevelBorder());
             addEventLink(MouseClickedEvent.class, this);
         }
 

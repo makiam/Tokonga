@@ -155,36 +155,6 @@ public class Property {
         return allowedValues.clone();
     }
 
-    /**
-     * Determine whether an object represents a legal value for this property.
-     */
-    public boolean isLegalValue(Object value) {
-        if (type == DOUBLE) {
-            if (value instanceof Double double1) {
-                double val = double1;
-                return (val >= min && val <= max);
-            }
-        } else if (type == INTEGER) {
-            if (value instanceof Integer integer) {
-                int val = integer;
-                return (val >= min && val <= max);
-            }
-        } else if (type == BOOLEAN) {
-            return (value instanceof Boolean);
-        } else if (type == STRING) {
-            return (value instanceof String);
-        } else if (type == COLOR) {
-            return (value instanceof RGBColor);
-        } else if (type == ENUMERATION) {
-            for(var allowedValue: allowedValues) {
-                if(allowedValue == value) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Property)) {
