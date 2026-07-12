@@ -25,7 +25,9 @@ import artofillusion.texture.UniformTexture;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+/*
+ *  NB. Current implementation does not add material/texture/image implicitly
+ */
 class SceneImplicitItemAddTest {
 
     private Scene scene;

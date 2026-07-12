@@ -113,7 +113,6 @@ public class ObjectPropertiesPanel extends ColumnContainer {
      * Rebuild the contents of the panel.
      */
     protected void rebuildContents() {
-        log.info("RC");
         if (ignoreNextChange) {
             ignoreNextChange = false;
             return;
@@ -325,7 +324,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
             getParent().layoutChildren();
         }
         repaint();
-        log.info("RC: DONE");
+
     }
 
     private void checkFieldValue(ValueField field, double value) {
