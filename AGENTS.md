@@ -91,38 +91,46 @@ Scene
  └── ObjectWrapper → Actor, ExternalObject
 ```
 
-### Plugin System (`PluginRegistry.java`, 617 lines)
+### Plugin System
 
-```
-Startup: scanPlugins() → scan Plugins/*.jar → read extensions.xml
-         → instantiate classes → registerPlugin() → check instanceof categories
-         → notify APPLICATION_STARTING
-```
+Tokonga is built around plugins. The core (`ArtOfIllusion/`) provides the scene graph, windows, and base types. Everything else — renderers, tools, import/export, filters, procedural modules — lives in plugin modules that compile into `Plugins/*.jar`.
 
-**Plugin categories** (registered in `ArtOfIllusion.main()`):
-`Plugin`, `Renderer`, `Translator`, `ModellingTool`, `Texture`, `Material`, `TextureMapping`, `MaterialMapping`, `ImageFilter`, `Module`, `PreferencesEditor`
+**Full reference**: [`docs/PLUGINS.md`](docs/PLUGINS.md)
 
-**extensions.xml format** (parsed by XStream):
+**Lifecycle hooks** (`artofillusion.Plugin`):
+
+| Message | When |
+|---|---|
+| `APPLICATION_STARTING` | After init, before first window |
+| `APPLICATION_STOPPING` | Shutdown |
+| `SCENE_WINDOW_CREATED` | LayoutWindow ready |
+| `SCENE_WINDOW_CLOSING` | LayoutWindow closing |
+| `SCENE_SAVED` | Scene written to disk |
+
+**Extension points** (registered via `PluginRegistry.addCategory()` in core, or `<category class="..."/>` in a plugin's `extensions.xml`):
+`Plugin`, `Renderer`, `Translator`, `ModellingTool`, `Texture`, `Material`, `TextureMapping`, `MaterialMapping`, `ImageFilter`, `Module`, `PreferencesEditor`, `PrimitiveFactory`, `RTObjectFactory`, `PhotonSourceFactory`
+
+**extensions.xml** (parsed by XStream):
 ```xml
 <extension name="Tools" version="3.0">
     <author>Peter Eastman</author>
+    <import name="Translators"/>                           <!-- cross-plugin dependency -->
+    <category class="mypackage.MyInterface"/>              <!-- new extension point -->
     <plugin class="artofillusion.tools.ExtrudeTool">
         <export method="extrudeCurve" id="artofillusion.tools.ExtrudeTool.extrudeCurve"/>
     </plugin>
-    <plugin class="artofillusion.tools.LatheTool"/>
+    <resource type="TranslateBundle" id="Tools" name="Bundle"/>
 </extension>
 ```
 
-### Plugin Convention (buildSrc)
+**Building**: use `aoi.plugin-conventions` → adds dependency on core + outputs JAR to `Plugins/`.
 
-Any module using `aoi.plugin-conventions` auto-produces a JAR in `Plugins/`:
-```groovy
-plugins { id 'aoi.java-conventions' }
-dependencies { implementation project(':ArtOfIllusion') }
-tasks.withType(Jar) {
-    destinationDirectory = file("${rootProject.projectDir}/Plugins")
-}
-```
+**Critical rules for agents:**
+- **Classloader isolation**: each plugin JAR has its own classloader. Use `<import>` for cross-plugin classes. Use `ArtOfIllusion.getClass(name)`, NOT `Class.forName()`.
+- **Runtime vs compile deps**: `<import>` in extensions.xml controls runtime classloader linking. Gradle `dependencies` controls compile-time visibility. They are independent.
+- **Minimal functional set**: app requires `StandardTheme` (hangs at splash screen without it) and is useless without `Renderers`, `Tools`, `PrimitiveProviders`, `StandardModules`.
+- **Dependency chain**: `Polymesh` → `Translators` (compile+runtime) + `PreferencesPlugin` (runtime). All other plugins are independent.
+- **Blacklist**: `Plugins/blacklist` (JAR filenames) disables plugins at startup.
 
 ---
 
