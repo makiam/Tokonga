@@ -28,6 +28,7 @@ import buoyx.docking.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.greenrobot.eventbus.Subscribe;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -137,6 +138,12 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      */
     @Getter
     BPopupMenu popupMenu;
+
+    @VisibleForTesting
+    UndoStack getUndoStack() {
+        return undoStack;
+    }
+
     private final UndoStack undoStack = new UndoStack();
     int numViewsShown, currentView;
     private final ActionProcessor uiEventProcessor;
@@ -150,6 +157,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     protected final Preferences preferences;
     private boolean hasNotifiedPlugins;
     private BMenu recentScriptMenu;
+
 
 
     /**
