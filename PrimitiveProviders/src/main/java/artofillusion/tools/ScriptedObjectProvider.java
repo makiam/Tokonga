@@ -30,7 +30,12 @@ public class ScriptedObjectProvider implements PrimitiveFactory {
 
     @Override
     public Optional<Object3D> create() {
-        ScriptedObject obj = new ScriptedObject("", ScriptRunner.Language.GROOVY.name());
+        ScriptedObject obj = new ScriptedObject("", ScriptRunner.Language.GROOVY.name);
         return Optional.of(obj);
+    }
+
+    @Override
+    public String getObjectName() {
+        return "Scripted object";
     }
 }
