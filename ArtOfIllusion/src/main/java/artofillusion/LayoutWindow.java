@@ -2337,61 +2337,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         sceneExplorer.repaint();
     }
 
-    public void createScriptObjectCommand() {
-        // Prompt the user to select a name and, optionally, a predefined script.
-
-        BTextField nameField = new BTextField(Translate.text("Script"));
-        BComboBox scriptChoice = new BComboBox();
-        scriptChoice.add(Translate.text("newScript"));
-        String[] files = new File(ArtOfIllusion.OBJECT_SCRIPT_DIRECTORY).list();
-        ArrayList<String> scriptNames = new ArrayList<>();
-        if (files != null) {
-            for (String file : files) {
-                if (ScriptRunner.getLanguageForFilename(file) != ScriptRunner.UNKNOWN_LANGUAGE) {
-                    scriptChoice.add(file.substring(0, file.lastIndexOf(".")));
-                    scriptNames.add(file);
-                }
-            }
-        }
-        ComponentsDialog dlg = new ComponentsDialog(this, Translate.text("newScriptedObject"),
-                new Widget[]{nameField, scriptChoice}, new String[]{Translate.text("Name"), Translate.text("Script")});
-        if (!dlg.clickedOk()) {
-            return;
-        }
-
-        // If they are using a predefined script, load it.
-        String scriptText = "";
-        String language;
-        if (scriptChoice.getSelectedIndex() > 0) {
-            try {
-                File f = new File(ArtOfIllusion.OBJECT_SCRIPT_DIRECTORY, scriptNames.get(scriptChoice.getSelectedIndex() - 1));
-                scriptText = ArtOfIllusion.loadFile(f);
-                language = ScriptRunner.getLanguageForFilename(f.getName());
-                if (language == ScriptRunner.UNKNOWN_LANGUAGE) {
-                    // Predefined scripts are supposed to have a correct extension,
-                    // so it's ok to throw an exception here
-                    throw new IOException("Unrecognized extension for " + f.getName());
-                }
-            } catch (IOException ex) {
-                new BStandardDialog("", new String[]{Translate.text("errorReadingScript"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(this);
-                return;
-            }
-        } else {
-            // Default language : Beanshell
-            language = ScriptRunner.Language.BEANSHELL.name;
-        }
-        ScriptedObject obj = new ScriptedObject(scriptText, language);
-        ObjectInfo info = new ObjectInfo(obj, new CoordinateSystem(), nameField.getText());
-        UndoRecord undo = new UndoRecord(this);
-        int[] sel = getSelectedIndices();
-        addObject(info, undo);
-        undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);
-        setSelection(theScene.getNumObjects() - 1);
-        setUndoRecord(undo);
-        updateImage();
-        editObjectCommand();
-    }
-
     public void jumpToTimeCommand() {
         ValueField timeField = new ValueField(theScene.getTime(), ValueField.NONE);
         ComponentsDialog dlg = new ComponentsDialog(this, Translate.text("jumpToTimeTitle"),
