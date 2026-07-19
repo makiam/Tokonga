@@ -115,7 +115,10 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     @Getter
     BMenu scriptMenu;
 
-    BMenu addTrackMenu, positionTrackMenu, rotationTrackMenu, distortionMenu;
+    BMenu addTrackMenu;
+    BMenu positionTrackMenu;
+    BMenu rotationTrackMenu;
+    BMenu distortionMenu;
 
     private final BMenuItem fileMenuItem = Translate.menuItem("save", event -> saveCommand());
 
@@ -130,7 +133,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     private BCheckBoxMenuItem[] displayItem;
     /**
      * -- GETTER --
-     *  Get the popup menu.
+     * Get the popup menu.
      */
     @Getter
     BPopupMenu popupMenu;
@@ -223,17 +226,17 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         docks[2] = new DockingContainer(docks[1], BTabbedPane.BOTTOM);
         docks[3] = new DockingContainer(docks[2], BTabbedPane.TOP);
         setContent(docks[3]);
-        for(var dock: docks) {
+        for (var dock : docks) {
             dock.setHideSingleTab(true);
             dock.addEventLink(DockingEvent.class, this, "dockableWidgetMoved");
             BSplitPane split = dock.getSplitPane();
             split.setContinuousLayout(true);
             split.setOneTouchExpandable(true);
             BTabbedPane.TabPosition pos = dock.getTabPosition();
-            split.setResizeWeight(pos == BTabbedPane.TOP || pos == BTabbedPane.LEFT ? 1.0: 0.0);
+            split.setResizeWeight(pos == BTabbedPane.TOP || pos == BTabbedPane.LEFT ? 1.0 : 0.0);
             split.addEventLink(ValueChangedEvent.class, this, "updateMenus");
         }
-        
+
         BScrollPane propertiesScroller = new BScrollPane(new ObjectPropertiesPanel(this), BScrollPane.SCROLLBAR_NEVER, BScrollPane.SCROLLBAR_AS_NEEDED);
         propertiesScroller.getVerticalScrollBar().setUnitIncrement(10);
         propertiesScroller.setBackground(ThemeManager.getAppBackgroundColor());
@@ -268,7 +271,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }
         tools.setDefaultTool(defaultTool);
         tools.selectTool(defaultTool);
-        for(var view: theView) {
+        for (var view : theView) {
             view.setMetaTool(metaTool);
             view.setAltTool(altTool);
             view.setScrollTool(scrollTool);
@@ -390,9 +393,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      */
     private void dockableWidgetMoved() {
         StringBuilder config = new StringBuilder();
-        for(var dock: docks) {
-            for(int j = 0; j < dock.getTabCount(); j++) {
-                for(int k = 0; k < dock.getTabChildCount(j); k++) {
+        for (var dock : docks) {
+            for (int j = 0; j < dock.getTabCount(); j++) {
+                for (int k = 0; k < dock.getTabChildCount(j); k++) {
                     DockableWidget w = dock.getChild(j, k);
                     config.append(w.getContent().getClass().getName());
                     config.append('\t');
@@ -422,9 +425,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
         // Make a table of all DockableWidgets.
         HashMap<String, DockableWidget> widgets = new HashMap<>();
-        for(var dock: docks) {
-            for(Widget next: dock.getChildren()) {
-                if(next instanceof DockableWidget w) {
+        for (var dock : docks) {
+            for (Widget<?> next : dock.getChildren()) {
+                if (next instanceof DockableWidget w) {
                     widgets.put(w.getContent().getClass().getName() + '\t' + w.getLabel(), w);
                 }
             }
@@ -433,17 +436,17 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         // Rearrange them.
         String[] lines = config.split("\n");
         int container = 0, tab = 0, index = 0;
-        for(var line: lines) {
-            if(line.isEmpty()) {
+        for (var line : lines) {
+            if (line.isEmpty()) {
                 tab++;
                 index = 0;
-            } else if("-".equals(line)) {
+            } else if ("-".equals(line)) {
                 container++;
                 tab = 0;
                 index = 0;
             } else {
                 DockableWidget w = widgets.get(line);
-                if(w != null) {
+                if (w != null) {
                     docks[container].addDockableWidget(w, tab, index++);
                     widgets.remove(line);
                 }
@@ -522,12 +525,12 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         objectMenu.add(objectMenuItem[6] = Translate.menuItem("convertToTriangle", event -> convertToTriangleCommand()));
         objectMenu.add(objectMenuItem[7] = Translate.menuItem("convertToActor", event -> convertToActorCommand()));
         objectMenu.addSeparator();
-        objectMenu.add(objectMenuItem[8] = Translate.menuItem("hideSelection",  event -> setObjectVisibility(false, true)));
+        objectMenu.add(objectMenuItem[8] = Translate.menuItem("hideSelection", event -> setObjectVisibility(false, true)));
         objectMenu.add(objectMenuItem[9] = Translate.menuItem("showSelection", event -> setObjectVisibility(true, true)));
         objectMenu.add(Translate.menuItem("showAll", event -> setObjectVisibility(true, false)));
         objectMenu.addSeparator();
         objectMenu.add(objectMenuItem[10] = Translate.menuItem("lockSelection", event -> setObjectsLocked(true, true)));
-        objectMenu.add(objectMenuItem[11] = Translate.menuItem("unlockSelection",  event -> setObjectsLocked(false, true)));
+        objectMenu.add(objectMenuItem[11] = Translate.menuItem("unlockSelection", event -> setObjectsLocked(false, true)));
         objectMenu.add(Translate.menuItem("unlockAll", (ActionEvent e) -> setObjectsLocked(false, false)));
         objectMenu.addSeparator();
         objectMenu.add(new PrimitivesMenu(this));
@@ -543,7 +546,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         for (String language : ScriptRunner.getLanguageNames()) {
             BMenuItem item = new BMenuItem(language);
             item.getComponent().putClientProperty("language", language);
-            item.getComponent().addActionListener(e -> newScriptCommand(new CommandEvent(item, 0,0)));
+            item.getComponent().addActionListener(e -> newScriptCommand(new CommandEvent(item, 0, 0)));
 
             newScriptMenu.add(item);
         }
@@ -598,7 +601,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         displayMenu.add(displayItem[4] = Translate.checkboxMenuItem("transparentDisplay", event -> setViewMode(ViewerCanvas.RENDER_TRANSPARENT), renderMode == ViewerCanvas.RENDER_TRANSPARENT));
         displayMenu.add(displayItem[5] = Translate.checkboxMenuItem("renderedDisplay", event -> setViewMode(ViewerCanvas.RENDER_RENDERED), renderMode == ViewerCanvas.RENDER_RENDERED));
 
-        for(var di: displayItem) displayModesGroup.add(di.getComponent());
+        for (var di : displayItem) displayModesGroup.add(di.getComponent());
 
         viewMenu.add(viewMenuItem[0] = Translate.menuItem("fourViews", event -> toggleViewsCommand()));
         viewMenu.add(Translate.menuItem("grid", event -> setGridCommand()));
@@ -607,7 +610,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         viewMenu.add(Translate.menuItem("setTemplate", event -> setTemplateCommand()));
         viewMenu.addSeparator();
         viewMenu.add(viewMenuItem[4] = Translate.menuItem("fitToSelection", event -> fitToSelectionAction()));
-        viewMenu.add(viewMenuItem[5] = Translate.menuItem("fitToAll",  event -> fitToAllAction()));
+        viewMenu.add(viewMenuItem[5] = Translate.menuItem("fitToAll", event -> fitToAllAction()));
         viewMenu.add(viewMenuItem[6] = Translate.menuItem("alignWithClosestAxis", event -> alignWithClosestAxisAction()));
         viewMenu.addSeparator();
         viewMenu.add(viewMenuItem[1] = Translate.menuItem("hideObjectList", event -> setObjectListVisible(objectListShown = !objectListShown)));
@@ -759,24 +762,24 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
         canConvert = canSetTexture = (sel.length > 0);
         canHide = canShow = canLock = canUnlock = hasChildren = false;
-        for(var o: sel) {
+        for (var o : sel) {
             info = (ObjectInfo) o;
             obj = info.getObject();
-            if(obj.canConvertToTriangleMesh() == Object3D.CANT_CONVERT) {
+            if (obj.canConvertToTriangleMesh() == Object3D.CANT_CONVERT) {
                 canConvert = false;
             }
-            if(!obj.canSetTexture()) {
+            if (!obj.canSetTexture()) {
                 canSetTexture = false;
             }
-            if(info.getChildren().length > 0) {
+            if (info.getChildren().length > 0) {
                 hasChildren = true;
             }
-            if(info.isVisible()) {
+            if (info.isVisible()) {
                 canHide = true;
             } else {
                 canShow = true;
             }
-            if(info.isLocked()) {
+            if (info.isLocked()) {
                 canUnlock = true;
             } else {
                 canLock = true;
@@ -967,7 +970,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
                 hasParent = true;
             }
         }
-        for (var st: selTrack) {
+        for (var st : selTrack) {
             if (st.isEnabled()) {
                 disable = true;
             } else {
@@ -979,14 +982,14 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
         editMenuItem[2].setEnabled(numSelObjects > 0); // Cut
         editMenuItem[3].setEnabled(numSelObjects > 0); // Copy
-        
+
         editMenuItem[5].setEnabled(numSelObjects > 0); // Clear
         editMenuItem[6].setEnabled(hasChildren); // Select Children
         editMenuItem[8].setEnabled(numSelObjects > 0); // Deselect All
         editMenuItem[9].setEnabled(numSelObjects > 0); // Make Live Duplicates
         editMenuItem[10].setEnabled(numSelObjects > 0); // Sever Duplicates
         if (numSelObjects == 0) {
-            for (var omi: objectMenuItem) omi.setEnabled(false);
+            for (var omi : objectMenuItem) omi.setEnabled(false);
         } else {
             obj = ((ObjectInfo) sel[0]).getObject();
             objectMenuItem[0].setEnabled(numSelObjects == 1 && obj.isEditable()); // Edit Object
@@ -1029,8 +1032,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     private void dumpSelection(Object[] sel) {
         //log.info("Do dump Selection");
         var so = Set.of(sel);
-        if(so.size() != sel.length) throw new RuntimeException("Some selection items doubled");
-        for(Object o : sel) {
+        if (so.size() != sel.length) throw new RuntimeException("Some selection items doubled");
+        for (Object o : sel) {
             if (o instanceof ObjectInfo) continue;
             throw new RuntimeException("Some selection items are not Scene Objects");
         }
@@ -1127,7 +1130,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             @Override
             public void run() {
                 sceneExplorer.setUpdateEnabled(true);
-                for(var sceneViewer: theView) {
+                for (var sceneViewer : theView) {
                     sceneViewer.rebuildCameraList();
                 }
                 score.rebuildList();
@@ -1160,8 +1163,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             @Override
             public void run() {
                 sceneExplorer.setUpdateEnabled(true);
-                for(var sceneViewer: theView) {
-                    if(sceneViewer.getBoundCamera() == info) {
+                for (var sceneViewer : theView) {
+                    if (sceneViewer.getBoundCamera() == info) {
                         sceneViewer.setOrientation(ViewerCanvas.VIEW_OTHER);
                     }
                     sceneViewer.rebuildCameraList();
@@ -1177,7 +1180,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     public void setObjectName(int which, String name) {
         theScene.getObject(which).setName(name);
         sceneExplorer.repaint();
-        for(var sceneViewer: theView) {
+        for (var sceneViewer : theView) {
             sceneViewer.rebuildCameraList();
         }
         score.rebuildList();
@@ -1219,7 +1222,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      */
     @Override
     public ViewerCanvas[] getAllViews() {
-        return (ViewerCanvas[]) theView.clone();
+        return theView.clone();
     }
 
     /**
@@ -1343,7 +1346,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      */
     public List<ObjectInfo> getSelectedObjects() {
         List<ObjectInfo> objects = new ArrayList<>();
-        for (int index: theScene.getSelection()) {
+        for (int index : theScene.getSelection()) {
             objects.add(theScene.getObject(index));
         }
         return objects;
@@ -1380,7 +1383,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         sceneExplorer.setUpdateEnabled(false);
         clearSelection();
         theScene.setSelection(which);
-        for(int j: which) {
+        for (int j : which) {
             sceneExplorer.setSelected(theScene.getObject(j), true);
         }
         sceneExplorer.setUpdateEnabled(true);
@@ -1891,19 +1894,23 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     public void transformObjectCommand() {
-        int i;
         int[] sel = getSelectedIndices();
-        TransformDialog dlg;
-        ObjectInfo info;
-        Object3D obj;
-        CoordinateSystem coords;
-        Vec3 orig, size, center;
-        double[] values;
-        Mat4 m;
 
         if (sel.length == 0) {
             return;
         }
+
+        TransformDialog dlg;
+        ObjectInfo info;
+        Object3D obj;
+        CoordinateSystem coords;
+        Vec3 orig;
+        Vec3 size;
+        Vec3 center;
+        double[] values;
+        Mat4 m;
+
+
         if (sel.length == 1) {
             dlg = new TransformDialog(this, Translate.text("transformObjectTitle", theScene.getObject(sel[0]).getName()),
                     new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0}, true, true);
@@ -1918,7 +1925,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
         // Find the center of all selected objects.
         BoundingBox bounds = null;
-        for (i = 0; i < sel.length; i++) {
+
+        for (int i = 0; i < sel.length; i++) {
             info = theScene.getObject(sel[i]);
             if (bounds == null) {
                 bounds = info.getBounds().transformAndOutset(info.getCoords().fromLocal());
@@ -1943,8 +1951,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             m = m.times(Mat4.zrotation(values[5] * Math.PI / 180.0));
         }
         UndoRecord undo = new UndoRecord(this);
-        HashSet<Object3D> scaledObjects = new HashSet<>();
-        for (i = 0; i < sel.length; i++) {
+        Set<Object3D> scaledObjects = new HashSet<>();
+        for (int i = 0; i < sel.length; i++) {
             info = theScene.getObject(sel[i]);
             obj = info.getObject();
             coords = info.getCoords();
@@ -1995,7 +2003,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
                 scaledObjects.add(obj);
             }
         }
-        for (i = 0; i < sel.length; i++) {
+        for (int i = 0; i < sel.length; i++) {
             info = theScene.getObject(sel[i]);
             theScene.objectModified(info.getObject());
         }
@@ -2009,25 +2017,31 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     public void alignObjectsCommand() {
-        int i;
         int[] sel = getSelectedIndices();
+
+        if (sel.length == 0) {
+            return;
+        }
+
         ComponentsDialog dlg;
         ObjectInfo info;
         CoordinateSystem coords;
         Vec3 alignTo;
         Vec3 orig;
         Vec3 center;
-        BComboBox xchoice, ychoice, zchoice;
-        RowContainer px = new RowContainer(), py = new RowContainer(), pz = new RowContainer();
+        BComboBox xChoice;
+        BComboBox yChoice;
+        BComboBox zChoice;
+        RowContainer px = new RowContainer();
+        RowContainer py = new RowContainer();
+        RowContainer pz = new RowContainer();
         ValueField vfx;
         ValueField vfy;
         ValueField vfz;
         BoundingBox bounds;
 
-        if (sel.length == 0) {
-            return;
-        }
-        px.add(xchoice = new BComboBox(new String[]{
+
+        px.add(xChoice = new BComboBox(new String[]{
                 Translate.text("doNotAlign"),
                 Translate.text("Right"),
                 Translate.text("Center"),
@@ -2036,7 +2050,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }));
         px.add(Translate.label("alignTo"));
         px.add(vfx = new ValueField(Double.NaN, ValueField.NONE, 5));
-        py.add(ychoice = new BComboBox(new String[]{
+        py.add(yChoice = new BComboBox(new String[]{
                 Translate.text("doNotAlign"),
                 Translate.text("Top"),
                 Translate.text("Center"),
@@ -2045,7 +2059,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }));
         py.add(Translate.label("alignTo"));
         py.add(vfy = new ValueField(Double.NaN, ValueField.NONE, 5));
-        pz.add(zchoice = new BComboBox(new String[]{
+        pz.add(zChoice = new BComboBox(new String[]{
                 Translate.text("doNotAlign"),
                 Translate.text("Front"),
                 Translate.text("Center"),
@@ -2063,7 +2077,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
         // Determine the position to align the objects to.
         alignTo = new Vec3();
-        for (i = 0; i < sel.length; i++) {
+
+        for (int i = 0; i < sel.length; i++) {
             info = theScene.getObject(sel[i]);
             coords = info.getCoords();
             bounds = info.getBounds();
@@ -2072,42 +2087,42 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             orig = coords.getOrigin();
             if (!Double.isNaN(vfx.getValue())) {
                 alignTo.x += vfx.getValue();
-            } else if (xchoice.getSelectedIndex() == 1) {
+            } else if (xChoice.getSelectedIndex() == 1) {
                 alignTo.x += bounds.maxx;
-            } else if (xchoice.getSelectedIndex() == 2) {
+            } else if (xChoice.getSelectedIndex() == 2) {
                 alignTo.x += center.x;
-            } else if (xchoice.getSelectedIndex() == 3) {
+            } else if (xChoice.getSelectedIndex() == 3) {
                 alignTo.x += bounds.minx;
-            } else if (xchoice.getSelectedIndex() == 4) {
+            } else if (xChoice.getSelectedIndex() == 4) {
                 alignTo.x += orig.x;
             }
             if (!Double.isNaN(vfy.getValue())) {
                 alignTo.y += vfy.getValue();
-            } else if (ychoice.getSelectedIndex() == 1) {
+            } else if (yChoice.getSelectedIndex() == 1) {
                 alignTo.y += bounds.maxy;
-            } else if (ychoice.getSelectedIndex() == 2) {
+            } else if (yChoice.getSelectedIndex() == 2) {
                 alignTo.y += center.y;
-            } else if (ychoice.getSelectedIndex() == 3) {
+            } else if (yChoice.getSelectedIndex() == 3) {
                 alignTo.y += bounds.miny;
-            } else if (ychoice.getSelectedIndex() == 4) {
+            } else if (yChoice.getSelectedIndex() == 4) {
                 alignTo.y += orig.y;
             }
             if (!Double.isNaN(vfz.getValue())) {
                 alignTo.z += vfz.getValue();
-            } else if (zchoice.getSelectedIndex() == 1) {
+            } else if (zChoice.getSelectedIndex() == 1) {
                 alignTo.z += bounds.maxz;
-            } else if (zchoice.getSelectedIndex() == 2) {
+            } else if (zChoice.getSelectedIndex() == 2) {
                 alignTo.z += center.z;
-            } else if (zchoice.getSelectedIndex() == 3) {
+            } else if (zChoice.getSelectedIndex() == 3) {
                 alignTo.z += bounds.minz;
-            } else if (zchoice.getSelectedIndex() == 4) {
+            } else if (zChoice.getSelectedIndex() == 4) {
                 alignTo.z += orig.z;
             }
         }
         alignTo.scale(1.0 / sel.length);
 
         // Now transform all of the objects.
-        for (i = 0; i < sel.length; i++) {
+        for (int i = 0; i < sel.length; i++) {
             info = theScene.getObject(sel[i]);
             coords = info.getCoords();
             bounds = info.getBounds();
@@ -2115,36 +2130,36 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             center = bounds.getCenter();
             orig = coords.getOrigin();
             undo.addCommand(UndoRecord.COPY_COORDS, coords, coords.duplicate());
-            if (xchoice.getSelectedIndex() == 1) {
+            if (xChoice.getSelectedIndex() == 1) {
                 orig.x += alignTo.x - bounds.maxx;
-            } else if (xchoice.getSelectedIndex() == 2) {
+            } else if (xChoice.getSelectedIndex() == 2) {
                 orig.x += alignTo.x - center.x;
-            } else if (xchoice.getSelectedIndex() == 3) {
+            } else if (xChoice.getSelectedIndex() == 3) {
                 orig.x += alignTo.x - bounds.minx;
-            } else if (xchoice.getSelectedIndex() == 4) {
+            } else if (xChoice.getSelectedIndex() == 4) {
                 orig.x += alignTo.x - orig.x;
             }
-            if (ychoice.getSelectedIndex() == 1) {
+            if (yChoice.getSelectedIndex() == 1) {
                 orig.y += alignTo.y - bounds.maxy;
-            } else if (ychoice.getSelectedIndex() == 2) {
+            } else if (yChoice.getSelectedIndex() == 2) {
                 orig.y += alignTo.y - center.y;
-            } else if (ychoice.getSelectedIndex() == 3) {
+            } else if (yChoice.getSelectedIndex() == 3) {
                 orig.y += alignTo.y - bounds.miny;
-            } else if (ychoice.getSelectedIndex() == 4) {
+            } else if (yChoice.getSelectedIndex() == 4) {
                 orig.y += alignTo.y - orig.y;
             }
-            if (zchoice.getSelectedIndex() == 1) {
+            if (zChoice.getSelectedIndex() == 1) {
                 orig.z += alignTo.z - bounds.maxz;
-            } else if (zchoice.getSelectedIndex() == 2) {
+            } else if (zChoice.getSelectedIndex() == 2) {
                 orig.z += alignTo.z - center.z;
-            } else if (zchoice.getSelectedIndex() == 3) {
+            } else if (zChoice.getSelectedIndex() == 3) {
                 orig.z += alignTo.z - bounds.minz;
-            } else if (zchoice.getSelectedIndex() == 4) {
+            } else if (zChoice.getSelectedIndex() == 4) {
                 orig.z += alignTo.z - orig.z;
             }
             coords.setOrigin(orig);
         }
-        ArrayList<ObjectInfo> modified = new ArrayList<>();
+        List<ObjectInfo> modified = new ArrayList<>();
         for (int index : sel) {
             modified.add(theScene.getObject(index));
         }
@@ -2301,7 +2316,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         UndoRecord undo = new UndoRecord(this);
         if (selectionOnly) {
             int[] sel = getSelectedIndices();
-            for(int j: sel) {
+            for (int j : sel) {
                 ObjectInfo info = theScene.getObject(j);
                 undo.addCommand(UndoRecord.COPY_OBJECT_INFO, info, info.duplicate());
                 info.setVisible(visible);
@@ -2337,61 +2352,6 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         sceneExplorer.repaint();
     }
 
-    public void createScriptObjectCommand() {
-        // Prompt the user to select a name and, optionally, a predefined script.
-
-        BTextField nameField = new BTextField(Translate.text("Script"));
-        BComboBox scriptChoice = new BComboBox();
-        scriptChoice.add(Translate.text("newScript"));
-        String[] files = new File(ArtOfIllusion.OBJECT_SCRIPT_DIRECTORY).list();
-        ArrayList<String> scriptNames = new ArrayList<>();
-        if (files != null) {
-            for (String file : files) {
-                if (ScriptRunner.getLanguageForFilename(file) != ScriptRunner.UNKNOWN_LANGUAGE) {
-                    scriptChoice.add(file.substring(0, file.lastIndexOf(".")));
-                    scriptNames.add(file);
-                }
-            }
-        }
-        ComponentsDialog dlg = new ComponentsDialog(this, Translate.text("newScriptedObject"),
-                new Widget[]{nameField, scriptChoice}, new String[]{Translate.text("Name"), Translate.text("Script")});
-        if (!dlg.clickedOk()) {
-            return;
-        }
-
-        // If they are using a predefined script, load it.
-        String scriptText = "";
-        String language;
-        if (scriptChoice.getSelectedIndex() > 0) {
-            try {
-                File f = new File(ArtOfIllusion.OBJECT_SCRIPT_DIRECTORY, scriptNames.get(scriptChoice.getSelectedIndex() - 1));
-                scriptText = ArtOfIllusion.loadFile(f);
-                language = ScriptRunner.getLanguageForFilename(f.getName());
-                if (language == ScriptRunner.UNKNOWN_LANGUAGE) {
-                    // Predefined scripts are supposed to have a correct extension,
-                    // so it's ok to throw an exception here
-                    throw new IOException("Unrecognized extension for " + f.getName());
-                }
-            } catch (IOException ex) {
-                new BStandardDialog("", new String[]{Translate.text("errorReadingScript"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(this);
-                return;
-            }
-        } else {
-            // Default language : Beanshell
-            language = ScriptRunner.Language.BEANSHELL.name;
-        }
-        ScriptedObject obj = new ScriptedObject(scriptText, language);
-        ObjectInfo info = new ObjectInfo(obj, new CoordinateSystem(), nameField.getText());
-        UndoRecord undo = new UndoRecord(this);
-        int[] sel = getSelectedIndices();
-        addObject(info, undo);
-        undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);
-        setSelection(theScene.getNumObjects() - 1);
-        setUndoRecord(undo);
-        updateImage();
-        editObjectCommand();
-    }
-
     public void jumpToTimeCommand() {
         ValueField timeField = new ValueField(theScene.getTime(), ValueField.NONE);
         ComponentsDialog dlg = new ComponentsDialog(this, Translate.text("jumpToTimeTitle"),
@@ -2415,21 +2375,21 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         int[] sel = getSelectedIndices();
 
         UndoRecord undo = new UndoRecord(this);
-        for(int k: sel) {
+        for (int k : sel) {
             ObjectInfo info = theScene.getObject(k);
-            if(info.getParent() == null) {
+            if (info.getParent() == null) {
                 continue;
             }
             Skeleton s = info.getParent().getSkeleton();
             ObjectRef relObj = new ObjectRef(info.getParent());
-            if(s != null) {
+            if (s != null) {
                 double nearest = Double.MAX_VALUE;
 
                 Vec3 pos = info.getCoords().getOrigin();
-                for(var joint: s.getJoints()) {
+                for (var joint : s.getJoints()) {
                     ObjectRef r = new ObjectRef(info.getParent(), joint);
                     double dist = r.getCoords().getOrigin().distance2(pos);
-                    if(dist < nearest) {
+                    if (dist < nearest) {
                         relObj = r;
                         nearest = dist;
                     }
@@ -2508,7 +2468,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         theScene.setGridSubdivisions((int) divField.getValue());
         theScene.setShowGrid(showBox.getState());
         theScene.setSnapToGrid(snapBox.getState());
-        for(var sceneViewer: theView) {
+        for (var sceneViewer : theView) {
             sceneViewer.setGrid(theScene.getGridSpacing(), theScene.getGridSubdivisions(), theScene.getShowGrid(), theScene.getSnapToGrid());
         }
         updateImage();
@@ -2523,10 +2483,10 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         BoundingBox bb = null;
 
         if (selectionOnly) {
-            for(int j: sel) {
+            for (int j : sel) {
                 ObjectInfo info = theScene.getObject(j);
                 BoundingBox bounds = info.getBounds().transformAndOutset(info.getCoords().fromLocal());
-                if(bb == null) {
+                if (bb == null) {
                     bb = bounds;
                 } else {
                     bb = bb.merge(bounds);
@@ -2548,7 +2508,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         if (numViewsShown == 1) {
             theView[currentView].frameBox(bb);
         } else {
-            for(var sceneViewer: theView) sceneViewer.frameBox(bb);
+            for (var sceneViewer : theView) sceneViewer.frameBox(bb);
         }
         updateImage();
     }
@@ -2578,16 +2538,17 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         String language = null;
         try {
             language = ScriptRunner.getLanguageForFilename(f.getName());
-            if (language == ScriptRunner.UNKNOWN_LANGUAGE) // Predefined scripts are supposed to have a correct extension,
-            // so it's ok to throw an exception here
-            {
+            if (language.equals(ScriptRunner.UNKNOWN_LANGUAGE)) {
+                // Predefined scripts are supposed to have a correct extension,
+                // so it's ok to throw an exception here
                 throw new IOException("Unrecognized extension for " + f.getName());
             }
             String scriptText = ArtOfIllusion.loadFile(f);
             ToolScript script = ScriptRunner.parseToolScript(language, scriptText);
             script.execute(this);
         } catch (IOException ex) {
-            new BStandardDialog("", new String[]{Translate.text("errorReadingScript"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(this);
+            var es = new String[] {Translate.text("errorReadingScript"), ex.getMessage() == null ? "" : ex.getMessage()};
+            new BStandardDialog("", es, BStandardDialog.ERROR).showMessageDialog(this);
             return;
         } catch (Exception e) {
             ScriptRunner.displayError(language, e);
