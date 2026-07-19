@@ -115,7 +115,10 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     @Getter
     BMenu scriptMenu;
 
-    BMenu addTrackMenu, positionTrackMenu, rotationTrackMenu, distortionMenu;
+    BMenu addTrackMenu;
+    BMenu positionTrackMenu;
+    BMenu rotationTrackMenu;
+    BMenu distortionMenu;
 
     private final BMenuItem fileMenuItem = Translate.menuItem("save", event -> saveCommand());
 
@@ -423,7 +426,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         // Make a table of all DockableWidgets.
         HashMap<String, DockableWidget> widgets = new HashMap<>();
         for (var dock : docks) {
-            for (Widget next : dock.getChildren()) {
+            for (Widget<?> next : dock.getChildren()) {
                 if (next instanceof DockableWidget w) {
                     widgets.put(w.getContent().getClass().getName() + '\t' + w.getLabel(), w);
                 }
@@ -1219,7 +1222,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
      */
     @Override
     public ViewerCanvas[] getAllViews() {
-        return (ViewerCanvas[]) theView.clone();
+        return theView.clone();
     }
 
     /**
@@ -1891,19 +1894,23 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     public void transformObjectCommand() {
-        int i;
         int[] sel = getSelectedIndices();
-        TransformDialog dlg;
-        ObjectInfo info;
-        Object3D obj;
-        CoordinateSystem coords;
-        Vec3 orig, size, center;
-        double[] values;
-        Mat4 m;
 
         if (sel.length == 0) {
             return;
         }
+
+        TransformDialog dlg;
+        ObjectInfo info;
+        Object3D obj;
+        CoordinateSystem coords;
+        Vec3 orig;
+        Vec3 size;
+        Vec3 center;
+        double[] values;
+        Mat4 m;
+
+
         if (sel.length == 1) {
             dlg = new TransformDialog(this, Translate.text("transformObjectTitle", theScene.getObject(sel[0]).getName()),
                     new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0}, true, true);
@@ -1918,7 +1925,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
         // Find the center of all selected objects.
         BoundingBox bounds = null;
-        for (i = 0; i < sel.length; i++) {
+
+        for (int i = 0; i < sel.length; i++) {
             info = theScene.getObject(sel[i]);
             if (bounds == null) {
                 bounds = info.getBounds().transformAndOutset(info.getCoords().fromLocal());
@@ -1943,8 +1951,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             m = m.times(Mat4.zrotation(values[5] * Math.PI / 180.0));
         }
         UndoRecord undo = new UndoRecord(this);
-        HashSet<Object3D> scaledObjects = new HashSet<>();
-        for (i = 0; i < sel.length; i++) {
+        Set<Object3D> scaledObjects = new HashSet<>();
+        for (int i = 0; i < sel.length; i++) {
             info = theScene.getObject(sel[i]);
             obj = info.getObject();
             coords = info.getCoords();
@@ -1995,7 +2003,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
                 scaledObjects.add(obj);
             }
         }
-        for (i = 0; i < sel.length; i++) {
+        for (int i = 0; i < sel.length; i++) {
             info = theScene.getObject(sel[i]);
             theScene.objectModified(info.getObject());
         }
@@ -2009,25 +2017,31 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     public void alignObjectsCommand() {
-        int i;
         int[] sel = getSelectedIndices();
+
+        if (sel.length == 0) {
+            return;
+        }
+
         ComponentsDialog dlg;
         ObjectInfo info;
         CoordinateSystem coords;
         Vec3 alignTo;
         Vec3 orig;
         Vec3 center;
-        BComboBox xchoice, ychoice, zchoice;
-        RowContainer px = new RowContainer(), py = new RowContainer(), pz = new RowContainer();
+        BComboBox xChoice;
+        BComboBox yChoice;
+        BComboBox zChoice;
+        RowContainer px = new RowContainer();
+        RowContainer py = new RowContainer();
+        RowContainer pz = new RowContainer();
         ValueField vfx;
         ValueField vfy;
         ValueField vfz;
         BoundingBox bounds;
 
-        if (sel.length == 0) {
-            return;
-        }
-        px.add(xchoice = new BComboBox(new String[]{
+
+        px.add(xChoice = new BComboBox(new String[]{
                 Translate.text("doNotAlign"),
                 Translate.text("Right"),
                 Translate.text("Center"),
@@ -2036,7 +2050,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }));
         px.add(Translate.label("alignTo"));
         px.add(vfx = new ValueField(Double.NaN, ValueField.NONE, 5));
-        py.add(ychoice = new BComboBox(new String[]{
+        py.add(yChoice = new BComboBox(new String[]{
                 Translate.text("doNotAlign"),
                 Translate.text("Top"),
                 Translate.text("Center"),
@@ -2045,7 +2059,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }));
         py.add(Translate.label("alignTo"));
         py.add(vfy = new ValueField(Double.NaN, ValueField.NONE, 5));
-        pz.add(zchoice = new BComboBox(new String[]{
+        pz.add(zChoice = new BComboBox(new String[]{
                 Translate.text("doNotAlign"),
                 Translate.text("Front"),
                 Translate.text("Center"),
@@ -2063,7 +2077,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
         // Determine the position to align the objects to.
         alignTo = new Vec3();
-        for (i = 0; i < sel.length; i++) {
+
+        for (int i = 0; i < sel.length; i++) {
             info = theScene.getObject(sel[i]);
             coords = info.getCoords();
             bounds = info.getBounds();
@@ -2072,42 +2087,42 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             orig = coords.getOrigin();
             if (!Double.isNaN(vfx.getValue())) {
                 alignTo.x += vfx.getValue();
-            } else if (xchoice.getSelectedIndex() == 1) {
+            } else if (xChoice.getSelectedIndex() == 1) {
                 alignTo.x += bounds.maxx;
-            } else if (xchoice.getSelectedIndex() == 2) {
+            } else if (xChoice.getSelectedIndex() == 2) {
                 alignTo.x += center.x;
-            } else if (xchoice.getSelectedIndex() == 3) {
+            } else if (xChoice.getSelectedIndex() == 3) {
                 alignTo.x += bounds.minx;
-            } else if (xchoice.getSelectedIndex() == 4) {
+            } else if (xChoice.getSelectedIndex() == 4) {
                 alignTo.x += orig.x;
             }
             if (!Double.isNaN(vfy.getValue())) {
                 alignTo.y += vfy.getValue();
-            } else if (ychoice.getSelectedIndex() == 1) {
+            } else if (yChoice.getSelectedIndex() == 1) {
                 alignTo.y += bounds.maxy;
-            } else if (ychoice.getSelectedIndex() == 2) {
+            } else if (yChoice.getSelectedIndex() == 2) {
                 alignTo.y += center.y;
-            } else if (ychoice.getSelectedIndex() == 3) {
+            } else if (yChoice.getSelectedIndex() == 3) {
                 alignTo.y += bounds.miny;
-            } else if (ychoice.getSelectedIndex() == 4) {
+            } else if (yChoice.getSelectedIndex() == 4) {
                 alignTo.y += orig.y;
             }
             if (!Double.isNaN(vfz.getValue())) {
                 alignTo.z += vfz.getValue();
-            } else if (zchoice.getSelectedIndex() == 1) {
+            } else if (zChoice.getSelectedIndex() == 1) {
                 alignTo.z += bounds.maxz;
-            } else if (zchoice.getSelectedIndex() == 2) {
+            } else if (zChoice.getSelectedIndex() == 2) {
                 alignTo.z += center.z;
-            } else if (zchoice.getSelectedIndex() == 3) {
+            } else if (zChoice.getSelectedIndex() == 3) {
                 alignTo.z += bounds.minz;
-            } else if (zchoice.getSelectedIndex() == 4) {
+            } else if (zChoice.getSelectedIndex() == 4) {
                 alignTo.z += orig.z;
             }
         }
         alignTo.scale(1.0 / sel.length);
 
         // Now transform all of the objects.
-        for (i = 0; i < sel.length; i++) {
+        for (int i = 0; i < sel.length; i++) {
             info = theScene.getObject(sel[i]);
             coords = info.getCoords();
             bounds = info.getBounds();
@@ -2115,36 +2130,36 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             center = bounds.getCenter();
             orig = coords.getOrigin();
             undo.addCommand(UndoRecord.COPY_COORDS, coords, coords.duplicate());
-            if (xchoice.getSelectedIndex() == 1) {
+            if (xChoice.getSelectedIndex() == 1) {
                 orig.x += alignTo.x - bounds.maxx;
-            } else if (xchoice.getSelectedIndex() == 2) {
+            } else if (xChoice.getSelectedIndex() == 2) {
                 orig.x += alignTo.x - center.x;
-            } else if (xchoice.getSelectedIndex() == 3) {
+            } else if (xChoice.getSelectedIndex() == 3) {
                 orig.x += alignTo.x - bounds.minx;
-            } else if (xchoice.getSelectedIndex() == 4) {
+            } else if (xChoice.getSelectedIndex() == 4) {
                 orig.x += alignTo.x - orig.x;
             }
-            if (ychoice.getSelectedIndex() == 1) {
+            if (yChoice.getSelectedIndex() == 1) {
                 orig.y += alignTo.y - bounds.maxy;
-            } else if (ychoice.getSelectedIndex() == 2) {
+            } else if (yChoice.getSelectedIndex() == 2) {
                 orig.y += alignTo.y - center.y;
-            } else if (ychoice.getSelectedIndex() == 3) {
+            } else if (yChoice.getSelectedIndex() == 3) {
                 orig.y += alignTo.y - bounds.miny;
-            } else if (ychoice.getSelectedIndex() == 4) {
+            } else if (yChoice.getSelectedIndex() == 4) {
                 orig.y += alignTo.y - orig.y;
             }
-            if (zchoice.getSelectedIndex() == 1) {
+            if (zChoice.getSelectedIndex() == 1) {
                 orig.z += alignTo.z - bounds.maxz;
-            } else if (zchoice.getSelectedIndex() == 2) {
+            } else if (zChoice.getSelectedIndex() == 2) {
                 orig.z += alignTo.z - center.z;
-            } else if (zchoice.getSelectedIndex() == 3) {
+            } else if (zChoice.getSelectedIndex() == 3) {
                 orig.z += alignTo.z - bounds.minz;
-            } else if (zchoice.getSelectedIndex() == 4) {
+            } else if (zChoice.getSelectedIndex() == 4) {
                 orig.z += alignTo.z - orig.z;
             }
             coords.setOrigin(orig);
         }
-        ArrayList<ObjectInfo> modified = new ArrayList<>();
+        List<ObjectInfo> modified = new ArrayList<>();
         for (int index : sel) {
             modified.add(theScene.getObject(index));
         }
@@ -2523,7 +2538,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         String language = null;
         try {
             language = ScriptRunner.getLanguageForFilename(f.getName());
-            if (language == ScriptRunner.UNKNOWN_LANGUAGE) {
+            if (language.equals(ScriptRunner.UNKNOWN_LANGUAGE)) {
                 // Predefined scripts are supposed to have a correct extension,
                 // so it's ok to throw an exception here
                 throw new IOException("Unrecognized extension for " + f.getName());
