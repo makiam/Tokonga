@@ -87,6 +87,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         materialChoice.addEventLink(ValueChangedEvent.class, this, "materialChanged");
 
         materialChoice.getComponent().addActionListener(this::materialSelected);
+        materialChoice.getComponent().addItemListener(this::materialItemChanged);
         textureChoice.getComponent().addActionListener(this::textureSelected);
 
         ListChangeListener listener = new ListChangeListener() {
@@ -464,18 +465,20 @@ public class ObjectPropertiesPanel extends ColumnContainer {
 
             }
         }
-        if (tex != null) {
-            UndoRecord undo = new UndoRecord(window);
-            for (ObjectInfo object : objects) {
-                if (object.getObject().getTexture() != tex) {
-                    undo.addCommand(UndoRecord.COPY_OBJECT, object.getObject(), object.getObject().duplicate());
-                    object.setTexture(tex, tex.getDefaultMapping(object.getObject()));
-                }
+        
+        if (tex == null) { return; }
+
+        UndoRecord undo = new UndoRecord(window);
+        for (ObjectInfo object : objects) {
+            if (object.getObject().getTexture() == tex) {
+                continue;
             }
-            window.setUndoRecord(undo);
-            window.updateImage();
-            window.getScore().tracksModified(false);
+            undo.addCommand(UndoRecord.COPY_OBJECT, object.getObject(), object.getObject().duplicate());
+            object.setTexture(tex, tex.getDefaultMapping(object.getObject()));
         }
+        window.setUndoRecord(undo);
+        window.updateImage();
+        window.getScore().tracksModified(false);
     }
 
     /**
@@ -504,13 +507,28 @@ public class ObjectPropertiesPanel extends ColumnContainer {
             mat.edit(window, scene);
 
         }
-        if (noMaterial || mat != null) {
+        if (noMaterial) {
             UndoRecord undo = new UndoRecord(window);
-            for (ObjectInfo object: objects) {
-                if (object.getObject().getMaterial() != mat) {
-                    undo.addCommand(UndoRecord.COPY_OBJECT, object.getObject(), object.getObject().duplicate());
-                    object.setMaterial(mat, noMaterial ? null : mat.getDefaultMapping(object.getObject()));
+            for(ObjectInfo object: objects) {
+                if (object.getObject().getMaterial() == mat) {
+                    continue;
                 }
+                undo.addCommand(UndoRecord.COPY_OBJECT, object.getObject(), object.getObject().duplicate());
+
+                object.setMaterial(mat, null);
+            }
+            window.setUndoRecord(undo);
+            window.updateImage();
+            window.getScore().tracksModified(false);
+        } else if (mat != null) {
+            UndoRecord undo = new UndoRecord(window);
+            for(ObjectInfo object: objects) {
+                if (object.getObject().getMaterial() == mat) {
+                    continue;
+                }
+                undo.addCommand(UndoRecord.COPY_OBJECT, object.getObject(), object.getObject().duplicate());
+                var mm = mat.getDefaultMapping(object.getObject());
+                object.setMaterial(mat, mm);
             }
             window.setUndoRecord(undo);
             window.updateImage();
@@ -582,6 +600,11 @@ public class ObjectPropertiesPanel extends ColumnContainer {
 
     private void materialSelected(ActionEvent event) {
         // TBD: On Pure Swing Migration
+        log.info("MS");
+    }
+    private void materialItemChanged(ItemEvent event) {
+        if(event.getStateChange() != ItemEvent.DESELECTED) log.info("MC {}", event);
+
     }
 
     private void textureSelected(ActionEvent event) {

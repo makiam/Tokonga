@@ -11,9 +11,7 @@
 package artofillusion.object;
 
 import artofillusion.TextureParameter;
-import artofillusion.texture.ConstantParameterValue;
-import artofillusion.texture.ParameterValue;
-import artofillusion.texture.Texture;
+import artofillusion.texture.*;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -82,4 +80,16 @@ public class Object3DTestSetTexture  {
         Assertions.assertEquals(obj.getParameterValues().length, 0);
     }
 
+    @Test
+    @DisplayName("Set Object Texture with Layered mapping. Actual texture takes from mapping")
+    void setTextureWithLayeredMapping() {
+        Object3D obj = new Dummy3DObject();
+        Texture tex1 = new DummyTexture();
+        Texture actual = new LayeredTexture(obj);
+
+        var lm = new LayeredMapping(obj, actual);
+        obj.setTexture(tex1, lm);
+
+        Assertions.assertEquals(actual, obj.getTexture());
+    }
 }
