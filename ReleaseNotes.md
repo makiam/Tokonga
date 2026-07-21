@@ -1,3 +1,26 @@
+### Release #77 (14.07.2026)
+* Layout window properties panel updated: https://github.com/makiam/Tokonga/pull/312
+* docs: Add AGENTS.md for AI-assisted development by @simba87: https://github.com/makiam/Tokonga/pull/294
+* Add Checkstyle linting harness by @simba87: https://github.com/makiam/Tokonga/pull/294
+* Add docker test infra by @simba87: https://github.com/makiam/Tokonga/pull/295
+* Logging library updated from 1.5.37 to 1.5.38: https://github.com/makiam/Tokonga/pull/309
+* Groovy library update from 5.0.6 to 5.0.7: https://github.com/makiam/Tokonga/pull/293
+
+### Release #76 (29.06.2026)
+* Refactor Procedure and Procedure Editor code
+* Logging library updated from 1.5.34 to 1.5.27
+
+### Release #75 (13.06.2026)
+* Minimal support for import PLY format files: https://github.com/makiam/Tokonga/pull/282
+* Refactor code for Procedure Editor: https://github.com/makiam/Tokonga/pull/285
+* Bump version for SyntaxEditor library: https://github.com/makiam/Tokonga/pull/281
+
+### Release #74 (15.05.2026)
+* Fixed regression in Polymesh code: https://github.com/makiam/Tokonga/pull/275
+* Backport Default renderers are separate instances fix from upstream AOI: https://github.com/makiam/Tokonga/pull/276
+* Layout import/export menu updated: https://github.com/makiam/Tokonga/pull/277
+* Add un-registration code in Layout: https://github.com/makiam/Tokonga/pull/274
+
 ### Release #73 (12.05.2026)
 * PM Mirror dialog extracted to separate class by @makiam in https://github.com/makiam/Tokonga/pull/270
 * Fixed memory leak error by @makiam in https://github.com/makiam/Tokonga/pull/264
