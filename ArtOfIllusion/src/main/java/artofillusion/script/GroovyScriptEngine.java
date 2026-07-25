@@ -23,16 +23,42 @@ import java.util.*;
  */
 public class GroovyScriptEngine implements ScriptEngine {
 
+    @SuppressWarnings("java:S3416")
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ArtOfIllusion.class);
+
     private final CompilerConfiguration config = new CompilerConfiguration();
     private final GroovyShell shell;
-    private final StringBuilder imports;
+    private final StringBuilder imports = new StringBuilder();
     private int numImports = 0;
 
     private final Map<String, Script> cache = new HashMap<>();
 
     public GroovyScriptEngine(ClassLoader parent) {
-        shell = new GroovyShell(parent, new Binding(), config);
-        imports = new StringBuilder();
+        var binding = new Binding();
+        binding.setVariable("undo", new WindowApiClosure(null) {
+            public Void doCall() {
+                getLayout().undoCommand();
+                return null; }
+        });
+        binding.setVariable("redo", new WindowApiClosure(null) {
+            public Void doCall() {
+                getLayout().redoCommand();
+                return null; }
+        });
+        binding.setVariable("log", new groovy.lang.Closure<Void>(null) {
+
+            public Void doCall() { return null; }
+            public Void doCall(String format, Object... arguments) {
+                logger.info(format, arguments);
+                return null;
+            }
+            public Void doCall(Object... arguments) {
+                logger.info("Args: {}", Arrays.toString(arguments));
+                return null;
+            }
+        });
+        shell = new GroovyShell(parent, binding, config);
+
     }
 
     @Override
@@ -136,6 +162,23 @@ public class GroovyScriptEngine implements ScriptEngine {
         public void execute(ScriptedObjectController controller) {
             script.setProperty("script", controller);
             script.run();
+        }
+    }
+
+    private class WindowApiClosure extends Closure<Void> {
+
+        LayoutWindow getLayout() {
+            return (LayoutWindow) shell.getContext().getVariable("window");
+        }
+
+        /**
+         * Constructor used when the "this" object for the Closure is null.
+         * This is rarely the case in normal Groovy usage.
+         *
+         * @param owner the Closure owner
+         */
+        public WindowApiClosure(Object owner) {
+            super(owner);
         }
     }
 }
