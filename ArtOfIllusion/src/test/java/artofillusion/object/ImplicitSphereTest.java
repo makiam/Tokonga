@@ -32,24 +32,15 @@ class ImplicitSphereTest {
     private static final List<TestPair> pairs = new ArrayList<>();
 
     @DisplayName("Test Pair")
-    private static class TestPair {
-
-        public final ImplicitSphere sphere;
-
-        public final Vec3 point;
-
-        public TestPair(ImplicitSphere sp, Vec3 pnt) {
-            sphere = sp;
-            point = pnt;
-        }
+        private record TestPair(ImplicitSphere sphere, Vec3 point) {
 
         @Override
-        public String toString() {
-            return "TestPair: {" + "Point: " + point + ", Length: " + point.length() + " Implicit Sphere: radius: " + sphere.getRadius() + " Influence radius: " + sphere.getInfluenceRadius() + "}";
+            public String toString() {
+                return "TestPair: {" + "Point: " + point + ", Length: " + point.length() + " Implicit Sphere: radius: " + sphere.getRadius() + " Influence radius: " + sphere.getInfluenceRadius() + "}";
+            }
+
+
         }
-
-
-    }
 
     @BeforeAll
     static void setup_spheres_and_test_points() {

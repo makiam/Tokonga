@@ -1,5 +1,5 @@
 /* Copyright (C) 2002-2013 by Peter Eastman
-   Changes copyright (C) 2023-2024 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -13,6 +13,7 @@ package artofillusion.script;
 
 import artofillusion.*;
 import artofillusion.animation.*;
+import artofillusion.api.ImplementationVersion;
 import artofillusion.object.*;
 import artofillusion.ui.*;
 import lombok.Getter;
@@ -24,6 +25,7 @@ import java.awt.*;
 /**
  * This class represents an Object3D whose properties are defined by a script.
  */
+@ImplementationVersion
 public class ScriptedObject extends ObjectCollection {
 
     /**
@@ -51,7 +53,7 @@ public class ScriptedObject extends ObjectCollection {
     }
 
     /**
-     * Beanshell is the default when no language is specified.
+     * BeanShell is the default when no language is specified.
      *
      * @param scriptText
      */
@@ -115,12 +117,6 @@ public class ScriptedObject extends ObjectCollection {
         return paramValue[i];
     }
 
-    /**
-     * Set the name of the i'th parameter.
-     */
-    public void setParameterName(int i, String name) {
-        paramName[i] = name;
-    }
 
     /**
      * Set the value of the i'th parameter.
