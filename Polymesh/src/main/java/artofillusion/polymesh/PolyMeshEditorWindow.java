@@ -4032,16 +4032,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         new ControlledSmoothingDialog(this).setVisible(true);
     }
 
-    /**
-     * Finds appropriate seams in the mesh
-     *
-     */
-    private void doFindSeams() {
-        ((PolyMesh) objInfo.object).findSeams();
-        objectChanged();
-        updateImage();
-    }
-
     private void doMarkSelAsSeams(ActionEvent event) {
         if (selectMode == EDGE_MODE) {
             boolean[] seams = new boolean[selected.length];
