@@ -20,6 +20,8 @@ import org.greenrobot.eventbus.Subscribe;
 import javax.swing.*;
 import lombok.Getter;
 
+import java.util.Objects;
+
 @Slf4j
 public final class LayoutEditMenu extends LayoutMenu {
 
@@ -36,8 +38,11 @@ public final class LayoutEditMenu extends LayoutMenu {
 
         undoItem = Translate.menuItem("undo", e -> layout.undoCommand());
         undoItem.setEnabled(false);
+        undoItem.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/artofillusion/layout-icons/icons8-undo-16.png"))));
+
         redoItem = Translate.menuItem("redo", e -> layout.redoCommand());
         redoItem.setEnabled(false);
+        redoItem.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/artofillusion/layout-icons/icons8-redo-16.png"))));
 
         this.add(undoItem);
         this.add(redoItem);
@@ -46,6 +51,7 @@ public final class LayoutEditMenu extends LayoutMenu {
         pasteItem = new BMenuItem(Translate.text("menu.paste"));
         pasteItem.setEnabled(ArtOfIllusion.getClipboardSize() > 0);
         pasteItem.getComponent().addActionListener(event -> layout.pasteCommand());
+        pasteItem.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/artofillusion/layout-icons/icons8-paste-16.png"))));
     }
 
     private void initBus() {

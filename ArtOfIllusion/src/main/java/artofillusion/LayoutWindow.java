@@ -491,6 +491,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
         fileMenu.add(Translate.menuItem("linkExternal", event -> linkExternalCommand()));
         fileMenu.addSeparator();
+        fileMenuItem.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/artofillusion/layout-icons/icons8-save-16.png"))));
         fileMenu.add(fileMenuItem);
         fileMenu.add(Translate.menuItem("saveas", event -> saveAsCommand()));
         fileMenu.addSeparator();
@@ -504,9 +505,12 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         editMenuItem = new BMenuItem[11];
 
         editMenu.add(editMenuItem[2] = Translate.menuItem("cut", event -> cutCommand()));
+        editMenuItem[2].setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/artofillusion/layout-icons/icons8-cut-16.png"))));
         editMenu.add(editMenuItem[3] = Translate.menuItem("copy", event -> copyCommand()));
+        editMenuItem[3].setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/artofillusion/layout-icons/icons8-copy-16.png"))));
         editMenu.add(editMenu.getPasteItem());
         editMenu.add(editMenuItem[5] = Translate.menuItem("clear", event -> clearCommand()));
+        editMenuItem[5].setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/artofillusion/layout-icons/icons8-delete-16.png"))));
         editMenu.addSeparator();
         editMenu.add(editMenuItem[6] = Translate.menuItem("selectChildren", event -> selectChildrenAction()));
         editMenu.add(editMenuItem[7] = Translate.menuItem("selectAll", event -> selectAllCommand()));
@@ -515,7 +519,10 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         editMenu.add(editMenuItem[9] = Translate.menuItem("duplicate", event -> duplicateCommand()));
         editMenu.add(editMenuItem[10] = Translate.menuItem("sever", event -> severCommand()));
         editMenu.addSeparator();
-        editMenu.add(Translate.menuItem("preferences", event -> preferencesCommand()));
+
+        var pim = Translate.menuItem("preferences", event -> preferencesCommand());
+        pim.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/artofillusion/layout-icons/icons8-settings-16.png"))));
+        editMenu.add(pim);
 
     }
 

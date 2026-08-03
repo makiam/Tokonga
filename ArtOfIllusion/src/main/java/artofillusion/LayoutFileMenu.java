@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.greenrobot.eventbus.Subscribe;
 
 import javax.swing.*;
+import java.util.Objects;
 
 @Slf4j
 public final class LayoutFileMenu extends LayoutMenu {
@@ -24,10 +25,12 @@ public final class LayoutFileMenu extends LayoutMenu {
     LayoutFileMenu(LayoutWindow layout) {
         super(layout, "menu.file");
 
-        this.add(Translate.menuItem("new", event -> {
+        var mi = Translate.menuItem("new", event -> {
             layout.savePreferences();
             SwingUtilities.invokeLater(ArtOfIllusion::newWindow);
-        }));
+        });
+        mi.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/artofillusion/layout-icons/icons8-new-16.png"))));
+        this.add(mi);
         this.add(Translate.menuItem("open", event -> {
             layout.savePreferences();
             SwingUtilities.invokeLater(() -> ArtOfIllusion.openScene(layout));
