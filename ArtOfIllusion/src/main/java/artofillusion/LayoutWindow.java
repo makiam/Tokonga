@@ -478,8 +478,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         List<Translator> translators = PluginRegistry.getPlugins(Translator.class);
         translators.sort(Comparator.comparing(Translator::getName));
         translators.forEach(translator -> {
-            if (translator.canImport()) importMenu.add(new ImportAction(this, translator));
-            if (translator.canExport()) exportMenu.add(new ExportAction(this, translator));
+            if (translator.canImport()) { importMenu.add(new ImportAction(this, translator)); }
+            if (translator.canExport()) { exportMenu.add(new ExportAction(this, translator)); }
         });
 
         if (importMenu.getChildCount() > 0) {
@@ -616,7 +616,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         displayMenu.add(displayItem[4] = Translate.checkboxMenuItem("transparentDisplay", event -> setViewMode(ViewerCanvas.RENDER_TRANSPARENT), renderMode == ViewerCanvas.RENDER_TRANSPARENT));
         displayMenu.add(displayItem[5] = Translate.checkboxMenuItem("renderedDisplay", event -> setViewMode(ViewerCanvas.RENDER_RENDERED), renderMode == ViewerCanvas.RENDER_RENDERED));
 
-        for (var di : displayItem) displayModesGroup.add(di.getComponent());
+        for (var di : displayItem) { displayModesGroup.add(di.getComponent()); }
 
         viewMenu.add(viewMenuItem[0] = Translate.menuItem("fourViews", event -> toggleViewsCommand()));
         viewMenu.add(Translate.menuItem("grid", event -> setGridCommand()));
@@ -1004,7 +1004,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         editMenuItem[9].setEnabled(numSelObjects > 0); // Make Live Duplicates
         editMenuItem[10].setEnabled(numSelObjects > 0); // Sever Duplicates
         if (numSelObjects == 0) {
-            for (var omi : objectMenuItem) omi.setEnabled(false);
+            for (var omi : objectMenuItem) { omi.setEnabled(false); }
         } else {
             obj = ((ObjectInfo) sel[0]).getObject();
             objectMenuItem[0].setEnabled(numSelObjects == 1 && obj.isEditable()); // Edit Object
@@ -1047,9 +1047,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     private void dumpSelection(Object[] sel) {
         //log.info("Do dump Selection");
         var so = Set.of(sel);
-        if (so.size() != sel.length) throw new RuntimeException("Some selection items doubled");
+        if (so.size() != sel.length) { throw new RuntimeException("Some selection items doubled"); }
         for (Object o : sel) {
-            if (o instanceof ObjectInfo) continue;
+            if (o instanceof ObjectInfo) { continue; }
             throw new RuntimeException("Some selection items are not Scene Objects");
         }
     }
@@ -2523,7 +2523,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         if (numViewsShown == 1) {
             theView[currentView].frameBox(bb);
         } else {
-            for (var sceneViewer : theView) sceneViewer.frameBox(bb);
+            for (var sceneViewer : theView) { sceneViewer.frameBox(bb); }
         }
         updateImage();
     }

@@ -12,7 +12,7 @@
 package artofillusion;
 
 import artofillusion.ui.Translate;
-import buoy.widget.BMenu;
+
 import buoy.widget.BMenuItem;
 import lombok.extern.slf4j.Slf4j;
 import org.greenrobot.eventbus.Subscribe;
@@ -61,7 +61,7 @@ public final class LayoutEditMenu extends LayoutMenu {
 
     @Subscribe
     public void onUndoChangedEvent(UndoChangedEvent event) {
-        if(event.getRecord().getView() != this.getLayout()) return;
+        if (event.getRecord().getView() != this.getLayout()) { return; }
         var stack = event.stack();
         SwingUtilities.invokeLater(() -> {
            undoItem.setEnabled(stack.canUndo());
