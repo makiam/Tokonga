@@ -21,10 +21,10 @@ public class LayoutSceneMenu extends BMenu {
     LayoutSceneMenu(LayoutWindow layout) {
         super(Translate.text("menu.scene"));
 
-        add(Translate.menuItem("renderScene", e -> edt(() -> new RenderSetupDialog(layout,layout.getScene()))));
+        add(Translate.menuItem("renderScene", e -> edt(() -> new RenderSetupDialog(layout, layout.getScene()))));
         add(Translate.menuItem("renderImmediately", e -> edt(() -> RenderSetupDialog.renderImmediately(layout, layout.getScene()))));
         this.addSeparator();
-        this.add(Translate.menuItem("textures", e->  edt(() ->  new TexturesAndMaterialsDialog(layout, layout.getScene()))));
+        this.add(Translate.menuItem("textures", e ->  edt(() ->  new TexturesAndMaterialsDialog(layout, layout.getScene()))));
         this.add(Translate.menuItem("images", e -> edt(() -> new ImagesDialog(layout, layout.getScene()))));
         this.add(Translate.menuItem("environment", e -> edt(() -> new EnvironmentPropertiesDialog(layout))));
     }
