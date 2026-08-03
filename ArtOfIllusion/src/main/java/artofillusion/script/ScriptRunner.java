@@ -113,6 +113,18 @@ public class ScriptRunner {
     }
 
     /**
+     * Execute a script.
+     */
+    public static void executeScript(String language, String script) {
+        try {
+            getScriptEngine(language).executeScript(script, Map.of());
+        } catch (ScriptException ex) {
+            log.atError().setCause(ex).log("Error in line {}: {}", ex.getLineNumber(), ex.getMessage());
+        }
+    }
+
+
+    /**
      * Parse a Tool script.
      */
     public static ToolScript parseToolScript(String language, String script) throws Exception {

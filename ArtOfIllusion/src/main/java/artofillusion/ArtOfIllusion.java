@@ -322,7 +322,7 @@ public class ArtOfIllusion {
         if (null == files) {
             return;
         }
-        HashMap<String, Object> variables = new HashMap<>();
+
 
         for (String file : files) {
             String language = ScriptRunner.getLanguageForFilename(file);
@@ -331,7 +331,7 @@ public class ArtOfIllusion {
             } else {
                 try {
                     String script = loadFile(new File(STARTUP_SCRIPT_DIRECTORY, file));
-                    ScriptRunner.executeScript(language, script, variables);
+                    ScriptRunner.executeScript(language, script);
                 } catch (IOException ex) {
                     log.atError().setCause(ex).log("Unable to load script file {} due {}", file, ex.getMessage());
                 } catch(NoClassDefFoundError ex) {
