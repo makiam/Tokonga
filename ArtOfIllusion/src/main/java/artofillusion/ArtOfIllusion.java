@@ -334,7 +334,7 @@ public class ArtOfIllusion {
                     ScriptRunner.executeScript(language, script);
                 } catch (IOException ex) {
                     log.atError().setCause(ex).log("Unable to load script file {} due {}", file, ex.getMessage());
-                } catch(NoClassDefFoundError ex) {
+                } catch (NoClassDefFoundError ex) {
                     log.atError().setCause(ex).log("Unable to execute script file {} due {}", file, ex.getMessage());
                 }
             }
@@ -437,7 +437,7 @@ public class ArtOfIllusion {
         Preferences pref = Preferences.userNodeForPackage(ArtOfIllusion.class);
         javax.swing.filechooser.FileFilter filter = pref.getBoolean("FilterSceneFiles", true) ? sceneFilter : chooser.getAcceptAllFileFilter();
         chooser.setFileFilter(filter);
-        if(chooser.showOpenDialog(fr.getComponent()) != JFileChooser.APPROVE_OPTION) {
+        if (chooser.showOpenDialog(fr.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
 
@@ -453,7 +453,7 @@ public class ArtOfIllusion {
     public static void openScene(File file, BFrame frame) {
         // Open the file and read the scene.
 
-        try(LoadEventListener el = new LoadEventListener()) {
+        try (LoadEventListener el = new LoadEventListener()) {
 
             Scene scene = new Scene(file, true);
             List<String> errors = scene.getErrors();
@@ -567,7 +567,9 @@ public class ArtOfIllusion {
 
         // First, add any new image maps to the scene.
         for (ImageMap map : clipboardImage) {
-            if(scene.getImages().stream().anyMatch(image -> image.getID() == map.getID()))  continue;
+            if (scene.getImages().stream().anyMatch(image -> image.getID() == map.getID())) {
+                continue;
+            }
             scene.addImage(map);
         }
 
@@ -614,7 +616,9 @@ public class ArtOfIllusion {
 
         // Finally, add the objects to the scene.
 
-        for (ObjectInfo obj: ObjectInfo.duplicateAll(clipboardObject)) win.addObject(obj, undo);
+        for (ObjectInfo obj : ObjectInfo.duplicateAll(clipboardObject)) {
+            win.addObject(obj, undo);
+        }
         undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);
     }
 
@@ -643,7 +647,9 @@ public class ArtOfIllusion {
     private static ParameterValue[] copyObjectParameters(Object3D object)  {
         ParameterValue[] oldParamValues = object.getParameterValues();
         ParameterValue[] newParamValues = new ParameterValue[oldParamValues.length];
-        for (int k = 0; k < newParamValues.length; k++) newParamValues[k] = oldParamValues[k].duplicate();
+        for (int k = 0; k < newParamValues.length; k++) {
+            newParamValues[k] = oldParamValues[k].duplicate();
+        }
         return newParamValues;
     }
 
@@ -667,7 +673,9 @@ public class ArtOfIllusion {
         @Override
         public void onApplicationStarting() {
             Path path = Paths.get(ArtOfIllusion.APP_DIRECTORY, "Textures and Materials");
-            if(!Files.exists(path)) path.toFile().mkdir();
+            if (!Files.exists(path)) {
+                path.toFile().mkdir();
+            }
         }
 
     }
@@ -683,7 +691,6 @@ public class ArtOfIllusion {
             this.setContext(lc);
             rootLogger.addAppender(this);
             this.start();
-            
         }
 
         @Override
