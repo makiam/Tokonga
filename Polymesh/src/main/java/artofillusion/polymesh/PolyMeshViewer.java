@@ -1293,7 +1293,7 @@ public class PolyMeshViewer extends MeshViewer {
 
     @Override
     public void setPerspective(boolean perspective) {
-        for(var manipulator: manipulatorArray) manipulator.setPerspective(perspective);
+        for(var manipulator : manipulatorArray) manipulator.setPerspective(perspective);
         super.setPerspective(perspective);
     }
 

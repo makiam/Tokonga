@@ -58,6 +58,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.prefs.Preferences;
 import javax.swing.*;
 import javax.swing.JSpinner.NumberEditor;
 import javax.swing.event.ChangeEvent;
@@ -896,11 +897,32 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     private void doStoreDefaultProperties(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
+        var preferences = Preferences.userRoot().node("artofillusion.polymesh");
+
+        preferences.putInt("vertColor_red", mesh.getVertColor().getRed());
+        preferences.putInt("vertColor_green", mesh.getVertColor().getGreen());
+        preferences.putInt("vertColor_blue", mesh.getVertColor().getBlue());
+
+        preferences.putInt("selectedVertColor_red", mesh.getSelectedVertColor().getRed());
+        preferences.putInt("selectedVertColor_green", mesh.getSelectedVertColor().getGreen());
+        preferences.putInt("selectedVertColor_blue", mesh.getSelectedVertColor().getBlue());
+
+        preferences.putInt("edgeColor_red", mesh.getEdgeColor().getRed());
+        preferences.putInt("edgeColor_green", mesh.getEdgeColor().getGreen());
+        preferences.putInt("edgeColor_blue", mesh.getEdgeColor().getBlue());
+
+        preferences.putInt("selectedEdgeColor_red", mesh.getSelectedEdgeColor().getRed());
+        preferences.putInt("selectedEdgeColor_green", mesh.getSelectedEdgeColor().getGreen());
+        preferences.putInt("selectedEdgeColor_blue", mesh.getSelectedEdgeColor().getBlue());
+
+        preferences.put("useCustomColors", Boolean.toString(mesh.useCustomColors()));
+        preferences.putInt("handleSize", mesh.getHandleSize());
         mesh.storeDisplayPropertiesAsReferences();
     }
 
     private void doResetDefaultProperties(ActionEvent event) {
         PolyMesh mesh = (PolyMesh) objInfo.object;
+        var preferences = Preferences.userRoot().node("artofillusion.polymesh");
         mesh.resetDisplayPropertiesPreferences();
         updateImage();
     }

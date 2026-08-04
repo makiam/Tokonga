@@ -68,6 +68,8 @@ import lombok.extern.slf4j.Slf4j;
 @ImplementationVersion(current = 10)
 public final class PolyMesh extends Object3D implements FacetedMesh {
 
+    private static final Color defaultSelectedFaceColor = new Color(255, 102, 255);
+
     private BoundingBox bounds; //the bounds enclosing the mesh
 
     /**
@@ -501,18 +503,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      *
      */
     public void storeDisplayPropertiesAsReferences() {
-        preferences.putInt("vertColor_red", vertColor.getRed());
-        preferences.putInt("vertColor_green", vertColor.getGreen());
-        preferences.putInt("vertColor_blue", vertColor.getBlue());
-        preferences.putInt("selectedVertColor_red", selectedVertColor.getRed());
-        preferences.putInt("selectedVertColor_green", selectedVertColor.getGreen());
-        preferences.putInt("selectedVertColor_blue", selectedVertColor.getBlue());
-        preferences.putInt("edgeColor_red", edgeColor.getRed());
-        preferences.putInt("edgeColor_green", edgeColor.getGreen());
-        preferences.putInt("edgeColor_blue", edgeColor.getBlue());
-        preferences.putInt("selectedEdgeColor_red", selectedEdgeColor.getRed());
-        preferences.putInt("selectedEdgeColor_green", selectedEdgeColor.getGreen());
-        preferences.putInt("selectedEdgeColor_blue", selectedEdgeColor.getBlue());
+
         preferences.putInt("seamColor_red", seamColor.getRed());
         preferences.putInt("seamColor_green", seamColor.getGreen());
         preferences.putInt("seamColor_blue", seamColor.getBlue());
@@ -525,8 +516,8 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         preferences.putInt("selectedFaceColor_red", selectedFaceColor.getRed());
         preferences.putInt("selectedFaceColor_green", selectedFaceColor.getGreen());
         preferences.putInt("selectedFaceColor_blue", selectedFaceColor.getBlue());
-        preferences.putInt("handleSize", handleSize);
-        preferences.put("useCustomColors", Boolean.toString(useCustomColors));
+
+
     }
 
     /**
@@ -12111,7 +12102,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         out.writeInt(smoothingMethod);
         out.writeInt(vertices.length);
 
-        for (var vertex: vertices) {
+        for (var vertex : vertices) {
             vertex.r.writeToFile(out);
             out.writeInt(vertex.edge);
             out.writeInt(vertex.ikJoint);
@@ -12119,7 +12110,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             out.writeShort(vertex.type);
         }
         out.writeInt(edges.length);
-        for (var edge: edges) {
+        for (var edge : edges) {
             out.writeInt(edge.vertex);
             out.writeInt(edge.hedge);
             out.writeInt(edge.face);
@@ -12928,7 +12919,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         if (useCustomColors) {
             return selectedFaceColor;
         } else {
-            return new Color(255, 102, 255);
+            return defaultSelectedFaceColor;
         }
     }
 
@@ -12992,7 +12983,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         if (useCustomColors) {
             return vertColor;
         } else {
-            return new Color(0, 0, 255);
+            return Color.BLUE;
         }
     }
 
