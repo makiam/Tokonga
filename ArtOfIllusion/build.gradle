@@ -2,12 +2,12 @@ plugins {
     id 'aoi.java-conventions'
 
     id 'application'
-    id "com.palantir.git-version" version "3.4.0"
-    id 'edu.sc.seis.launch4j' version '3.0.7'
+    id 'edu.sc.seis.launch4j' version '4.0.0'
+    id "com.palantir.git-version" version "5.0.0"
+
+
     id "kr.motd.sphinx" version "2.10.1"
     id 'jacoco'
-    id 'maven-publish'
-    id "com.github.ben-manes.versions" version "0.54.0"
 }
 
 application {
@@ -15,6 +15,7 @@ application {
             "-Dsun.java2d.noddraw=true"
     ]
 }
+
 description = 'Art Of Illusion'
 
 ext {
@@ -59,27 +60,6 @@ jar {
     }
 }
 
-task createAssetsFolder() {
-        ext {
-            buildDir = layout.buildDirectory.dir('assets')
-        }
-        doFirst {
-            File.createTempDir().with {
-                new File(buildDir.get().asFile, 'Textures And Materials').mkdirs()
-                new File(buildDir.get().asFile, 'Scripts/Tools').mkdirs()
-                new File(buildDir.get().asFile, 'Scripts/Objects').mkdirs()
-                new File(buildDir.get().asFile, 'Scripts/Startup').mkdirs()
-            }
-        }
-        outputs.dir(buildDir)
-}
-
-tasks.assembleDist.configure {
-  dependsOn('createAssetsFolder')
-}
-
-
-
 createExe {
   bundledJrePath = '%JAVA_HOME%;%PATH%'
   mainClassName = "$mainClass"
@@ -89,38 +69,53 @@ createExe {
   libraryDir = "../lib"  
 }
 
-
-assemble.dependsOn subprojects.jar, createExe
-installDist.dependsOn subprojects.jar, createExe
-distZip.dependsOn subprojects.jar, createExe
-
-
-tasks.withType(Zip).configureEach {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+//This section suppresses TAR file generation
+tasks.withType(Tar).configureEach {
+    enabled = false
 }
 
+startScripts.dependsOn jar
+
+//This passes to startup scripts classpath of main class only as other passed through jar metadata
+startScripts {
+    classpath = files("${jar.archiveFileName.get()}")
+}
+
+tasks.register('collect', Copy) {
+    group = 'Distribution'
+    description = 'Copies plugin jar to the Plugins folder'
+    dependsOn rootProject.subprojects.findAll { sub -> sub.plugins.hasPlugin('aoi.plugin-conventions') }.collect { it.tasks.named('build') }
+}
+
+tasks.named('run') {
+    dependsOn 'collect'
+}
+
+tasks.distZip.configure {
+  dependsOn 'collect', createExe
+}
+
+
 distributions {
+
     main.contents {
             it.exclude("*macosx*").exclude("*android*")
             from("$buildDir/${createExe.outputDir.get()}/${createExe.outfile.get()}") { into("bin") }
             from("${rootDir}/Plugins") { into("Plugins") }
-            from("../Scripts") { into("Scripts") }
-            from tasks.createAssetsFolder {
-                    includeEmptyDirs = true
-            } 
-            from("../Textures And Materials") { into("Textures And Materials") }
+            from("${rootDir}/Scripts") { into("Scripts") }
+            from("${rootDir}/Textures And Materials") { into("Textures And Materials") }
     }
 
-    mac.contents {        
+    mac.contents {
         into("${description}.app/Contents") { from("${rootProject.projectDir}/InstallerSrc/apple/") {
                 include "Info.plist"
                 expand VERSION: "3.2.0", JAR: file(jar.archiveFileName.get()).name, APPCLASS: "${mainClass}"
-            } 
+            }
         }
         into("${description}.app/Contents/MacOS") { from("${rootProject.projectDir}/InstallerSrc/apple/") {
                 include "universalJavaApplicationStub.sh"
                 eachFile { fileCopyDetails ->
-                    fileCopyDetails.mode = 0755
+                    fileCopyDetails.permissions { unix(0755) }
                 }
             }
         }
@@ -130,21 +125,15 @@ distributions {
         into("${description}.app/Contents/Resources/Plugins") { from("${rootDir}/Plugins") }
         into("${description}.app/Contents/Resources/Scripts") { from("../Scripts") }
         into("${description}.app/Contents/Resources/Textures And Materials") { from("../Textures And Materials") }
-        
     }
-    
 }
 
-//This section suppresses TAR file generation
-tasks.withType(Tar) {
-    enabled = false
+tasks.named("macDistZip") {
+    dependsOn 'collect'
 }
 
-startScripts.dependsOn jar
-
-//This passes to startup scripts classpath of main class only as other passed through jar metadata
-startScripts {
-    classpath = files("${jar.archiveFileName.get()}")
+tasks.named("installMacDist") {
+    dependsOn 'collect'
 }
 
 sphinx {
@@ -170,21 +159,3 @@ tasks.register("createMacVolume", Exec) {
             println "Bypass Mac DMG... This requred to run macos hdiutil application"
         }
 }
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'org.artofillusion'
-            artifactId = 'artofillusion'
-            version = '3.2.0'
-
-            from components.java
-        }
-    }
-}
-
-//rewrite {
-//    activeRecipe("org.openrewrite.java.migrate.UpgradeBuildToJava17")
-//    activeRecipe("org.openrewrite.staticanalysis.InstanceOfPatternMatch")
-//    setExportDatatables(true)
-//}
