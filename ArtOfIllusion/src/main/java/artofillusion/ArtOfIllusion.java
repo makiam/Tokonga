@@ -30,7 +30,7 @@ import ch.qos.logback.core.AppenderBase;
 import groovy.lang.GroovyShell;
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
+
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
@@ -672,10 +672,14 @@ public class ArtOfIllusion {
 
         @Override
         public void onApplicationStarting() {
-            Path path = Paths.get(ArtOfIllusion.APP_DIRECTORY, "Textures and Materials");
-            if (!Files.exists(path)) {
-                path.toFile().mkdir();
-            }
+            var path = Paths.get(ArtOfIllusion.APP_DIRECTORY, "Textures and Materials");
+            path.toFile().mkdirs();
+            path = Paths.get(ArtOfIllusion.APP_DIRECTORY, "Scripts", "Objects");
+            path.toFile().mkdirs();
+            path = Paths.get(ArtOfIllusion.APP_DIRECTORY, "Scripts", "Tools");
+            path.toFile().mkdirs();
+            path = Paths.get(ArtOfIllusion.APP_DIRECTORY, "Scripts", "Startup");
+            path.toFile().mkdirs();
         }
 
     }
