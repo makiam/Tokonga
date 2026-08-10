@@ -348,7 +348,7 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
         double minY = Double.MAX_VALUE;
         double maxY = -Double.MAX_VALUE;
 
-        for(double v: y) {
+        for (double v : y) {
             if (v < minY) {
                 minY = v;
             }
@@ -474,7 +474,7 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
 
         static final int HANDLE_SIZE = 5;
 
-        public EditingDialog(ProcedureEditor editor) {
+        EditingDialog(ProcedureEditor editor) {
             super(editor.getParentFrame(), "Function", true);
             this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
@@ -563,7 +563,7 @@ public class FunctionModule extends ProceduralModule<FunctionModule> {
             }
             minY = Double.MAX_VALUE;
             maxY = -Double.MAX_VALUE;
-            for(double v: y) {
+            for (double v : y) {
                 if (v < minY) {
                     minY = v;
                 }

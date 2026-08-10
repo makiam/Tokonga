@@ -60,7 +60,9 @@ public class RGBToHSVModule extends ProceduralModule<RGBToHSVModule> {
 
         double saturation = (max == 0.0) ? 0.0 : delta / max;
 
-        if (hue < 0.0) hue += 360.0;
+        if (hue < 0.0) {
+            hue += 360.0;
+        }
         return new HSVColor(hue, saturation, max);
     }
 

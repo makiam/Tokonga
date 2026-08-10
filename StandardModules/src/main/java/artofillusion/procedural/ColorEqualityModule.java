@@ -32,10 +32,14 @@ public class ColorEqualityModule extends ProceduralModule<ColorEqualityModule> {
 
     @Override
     public double getAverageValue(int which, double blur) {
-        var colorOne = new RGBColor(1.0,1.0,1.0);
-        var colorTwo = new RGBColor(0.0,0.0,0.0);
-        if(linkFrom[0] != null) linkFrom[0].getColor(0, colorOne, 0.0);
-        if(linkFrom[1] != null) linkFrom[1].getColor(1, colorTwo, 0.0);
+        var colorOne = new RGBColor(1.0, 1.0, 1.0);
+        var colorTwo = new RGBColor(0.0, 0.0, 0.0);
+        if (linkFrom[0] != null) {
+            linkFrom[0].getColor(0, colorOne, 0.0);
+        }
+        if (linkFrom[1] != null) {
+            linkFrom[1].getColor(1, colorTwo, 0.0);
+        }
         return colorOne == colorTwo ? 1.0 : 0.0;
     }
 }

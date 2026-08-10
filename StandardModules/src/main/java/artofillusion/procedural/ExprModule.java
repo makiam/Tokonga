@@ -133,7 +133,7 @@ class Token {
         return fm;
     }
 
-    public Token(char c) {
+    Token(char c) {
         ty = c;
     }
 
@@ -617,7 +617,7 @@ public class ExprModule extends ProceduralModule<ExprModule> {
         link (parent, right, 1);*/
         log.atDebug().log("Creating binOp: {} ({}, {})", parentClass.getName(), left, right);
         addModule(parentM);
-        return parent;//new OPort (parent);
+        return parent; //new OPort (parent);
     }
 
     void link(OPort consumer, OPort producer, int inIdx) {

@@ -302,7 +302,7 @@ public class SpectrumModule extends ProceduralModule<SpectrumModule> {
         static final int HANDLE_SIZE = 5;
         static final int INSET = 3;
 
-        public EditingDialog(ProcedureEditor editor) {
+        EditingDialog(ProcedureEditor editor) {
             super(editor.getParentFrame(), "Function", true);
             this.getComponent().setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             this.getComponent().setIconImage(ArtOfIllusion.APP_ICON.getImage());
