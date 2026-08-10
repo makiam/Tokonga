@@ -220,24 +220,24 @@ public class TriMeshSimplifier implements Runnable {
         // Update surface parameters.
         ParameterValue[] paramValue = mesh.getParameterValues();
         if (paramValue != null) {
-            for(ParameterValue parameterValue: paramValue) {
+            for (ParameterValue parameterValue : paramValue) {
                 if (parameterValue instanceof VertexParameterValue value) {
                     double[] oldValue = value.getValue();
                     double[] newValue = new double[vertex.length];
-                    for(int j = 0; j < newValue.length; j++) {
+                    for (int j = 0; j < newValue.length; j++) {
                         newValue[index[j]] = oldValue[j];
                     }
                     value.setValue(newValue);
                 } else if (parameterValue instanceof FaceParameterValue value) {
                     double[] oldValue = value.getValue();
                     double[] newValue = new double[faces];
-                    for(int j = 0; j < newValue.length; j++) {
+                    for (int j = 0; j < newValue.length; j++) {
                         newValue[j] = oldValue[face[j].origIndex];
                     }
                     value.setValue(newValue);
                 } else if (parameterValue instanceof FaceVertexParameterValue value) {
                     double[][] newValue = new double[faces][3];
-                    for(int j = 0; j < newValue.length; j++) {
+                    for (int j = 0; j < newValue.length; j++) {
                         newValue[j][0] = value.getValue(face[j].origIndex, 0);
                         newValue[j][1] = value.getValue(face[j].origIndex, 1);
                         newValue[j][2] = value.getValue(face[j].origIndex, 2);
@@ -797,7 +797,7 @@ public class TriMeshSimplifier implements Runnable {
             if (ed.f2 != null) {
                 MeshEdge[] star = vertex[ed.v1].star;
                 boolean v1IsBoundary = false;
-                for(MeshEdge meshEdge: star) {
+                for (MeshEdge meshEdge : star) {
                     if (meshEdge.f2 == null) {
                         v1IsBoundary = true;
                         break;
@@ -805,7 +805,7 @@ public class TriMeshSimplifier implements Runnable {
                 }
                 if (v1IsBoundary) {
                     star = vertex[ed.v2].star;
-                    for(MeshEdge meshEdge: star) {
+                    for (MeshEdge meshEdge : star) {
                         if (meshEdge.f2 == null) {
                             ed.cost = tol;
                             return;
@@ -822,21 +822,21 @@ public class TriMeshSimplifier implements Runnable {
      up the sorting of edges (since many edges will have identical costs). */
     private double findCost(MeshEdge ed) {
         VertexInfo v1 = vertex[ed.v1];
-        VertexInfo v2 = vertex[ed.v2];
-        MeshFace f;
+        final VertexInfo v2 = vertex[ed.v2];
+
         Zone zone = v2.zone;
         double cost;
         double max = 0.0;
-        int i;
+
 
         if (!ed.selected) {
             return tol;
         }
 
         // First calculate the local tesselation error.
-        for (i = 0; i < v2.faces; i++) {
+        for (int i = 0; i < v2.faces; i++) {
             if (v2.crown[i] != ed.f1 && v2.crown[i] != ed.f2) {
-                f = v2.crown[i];
+                var f = v2.crown[i];
                 if (vertex[f.v1] == v2) {
                     findNormal(v1.pos, vertex[f.v2].pos, vertex[f.v3].pos, temp3);
                 } else if (vertex[f.v2] == v2) {
@@ -856,7 +856,7 @@ public class TriMeshSimplifier implements Runnable {
 
         // Now calculate the local geometric error.
         while (zone != null) {
-            for (i = 0; i < zone.constraints; i++) {
+            for (int i = 0; i < zone.constraints; i++) {
                 cost = zone.con[i].a * v1.pos.x + zone.con[i].b * v1.pos.y + zone.con[i].c * v1.pos.z + zone.con[i].d;
                 cost *= cost;
                 if (cost >= tol) {

@@ -93,8 +93,8 @@ public class SceneCamera extends Object3D {
         vert[5] = new Vec3(0.25, -0.15, 0.0);
         vert[6] = new Vec3(0.25, 0.15, 0.0);
         vert[7] = new Vec3(-0.25, 0.15, 0.0);
-        f = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3,};
-        t = new int[]{1, 2, 3, 0, 5, 6, 7, 4, 4, 5, 6, 7,};
+        f = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3};
+        t = new int[]{1, 2, 3, 0, 5, 6, 7, 4, 4, 5, 6, 7};
         for (i = 0; i < f.length; i++, index++) {
             from[index] = f[i];
             to[index] = t[i];
@@ -413,13 +413,15 @@ public class SceneCamera extends Object3D {
         // in one UndoRecord. If both dialogs were exited by Cancel, the record
         // is empty and will not be added to history.
 
-        if(undo.getCommands().size() > 0)
+        if (undo.getCommands().size() > 0) {
             parent.setUndoRecord(undo);
+        }
 
         // The rest of the ignored Runnable.
 
-        if(parent.getScene() != null)
+        if (parent.getScene() != null) {
             parent.getScene().objectModified(SceneCamera.this);
+        }
         parent.updateImage();
         parent.updateMenus();
     }
@@ -445,7 +447,7 @@ public class SceneCamera extends Object3D {
         // The filter dialog has reverted any edited values back
         // to what they were.
 
-        if(!filtDlg.isClickedOk()) {
+        if (!filtDlg.isClickedOk()) {
             return;
         }
 
@@ -510,7 +512,7 @@ public class SceneCamera extends Object3D {
         super(in, theScene);
 
         short version = in.readShort();
-        if(version < 1) {
+        if (version < 1) {
             throw new InvalidObjectException("SceneCamera version 0 is no more supported since release 13.05.2025");
         }
         if (version > 4) {
@@ -531,7 +533,7 @@ public class SceneCamera extends Object3D {
 
         var filtersCount = in.readInt();
 
-        if(version <= 3) {
+        if (version <= 3) {
             SceneCamera.loadFiltersV3(in, theScene, this, filtersCount);
         } else {
             SceneCamera.loadFiltersV4(in, theScene, this, filtersCount);
@@ -554,25 +556,25 @@ public class SceneCamera extends Object3D {
                 filterData = new byte[filterDataSize];
                 in.read(filterData);
 
-            } catch(IOException ie) {
+            } catch (IOException ie) {
                 throw ie;
             }
             //Now try to discover ImageFilter class. On exception, we cannot recover filter, but can bypass it
             try {
                 Class<?> filterClass = ArtOfIllusion.getClass(filterClassName);
-                if(null == filterClass) {
+                if (null == filterClass) {
                     bus.post(new BypassEvent(scene, "Scene camera filter: " + filterClassName + " was not found"));
                     continue;
                 }
                 filter = (ImageFilter) filterClass.getDeclaredConstructor().newInstance();
-            } catch(ReflectiveOperationException cne) {
+            } catch (ReflectiveOperationException cne) {
                 bus.post(new BypassEvent(scene, "Filter class: " + filterClassName + " was not found or cannot instantiate", cne));
                 continue;
             }
             //On exception, we cannot recover filter, but can bypass it
             try {
                 filter.initFromStream(new DataInputStream(new ByteArrayInputStream(filterData)), scene);
-            } catch(IOException ie) {
+            } catch (IOException ie) {
                 bus.post(new BypassEvent(scene, "Scene camera filter: " + filterClassName + " initialization error", ie));
                 continue;
             }
@@ -589,7 +591,7 @@ public class SceneCamera extends Object3D {
                 var filterClassName = in.readUTF();
                 log.debug("Restoring: {}", filterClassName);
                 Class<?> filterClass = ArtOfIllusion.getClass(filterClassName);
-                if(null == filterClass) {
+                if (null == filterClass) {
                     throw new IOException("Application cannot find given scene filter class: " + filterClassName);
                 }
                 var filter = (ImageFilter) filterClass.getDeclaredConstructor().newInstance();

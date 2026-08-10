@@ -111,8 +111,8 @@ public class TriMeshBeveler {
 
         // Copy over smoothness values for edges.
         Edge[] newe = mesh.getEdges();
-        for(Edge edge: e) {
-            for(int j: mesh.getVertex(edge.v1).getEdges()) {
+        for (Edge edge : e) {
+            for (int j : mesh.getVertex(edge.v1).getEdges()) {
                 if (newe[j].v1 == edge.v2 || newe[j].v2 == edge.v2) {
                     newe[j].smoothness = edge.smoothness;
                     break;
@@ -122,7 +122,7 @@ public class TriMeshBeveler {
 
         // Record which faces should be selected.
         newSelection = new boolean[mesh.getFaces().length];
-        for(Integer index: newIndex) {
+        for (Integer index : newIndex) {
             newSelection[index] = true;
         }
         return mesh;
@@ -154,8 +154,7 @@ public class TriMeshBeveler {
                 e3.normalize();
                 normal = e1.cross(e2);
                 length = normal.length();
-                if (length == 0.0) // A degenerate triangle.
-                {
+                if (length == 0.0) { // A degenerated triangle.
                     faceInsets[i][0] = faceInsets[i][1] = faceInsets[i][2] = new Vec3();
                 } else {
                     normal.scale(height / length);
@@ -440,29 +439,29 @@ public class TriMeshBeveler {
 
         // Whew!  Done with that.  Now we need to add two faces for each edge which is at the
         // end of a group.
-        for(int[] bev: bevel) {
-            if(beveled[bev[1]]) {
+        for (int[] bev : bevel) {
+            if (beveled[bev[1]]) {
                 continue;
             }
             beveled[bev[1]] = true;
             int j = e[bev[1]].v1;
             int k = e[bev[1]].v2;
-            if((f[bev[0]].v1 == k && f[bev[0]].v2 == j) || (f[bev[0]].v2 == k && f[bev[0]].v3 == j) || (f[bev[0]].v3 == k && f[bev[0]].v1 == j)) {
+            if ((f[bev[0]].v1 == k && f[bev[0]].v2 == j) || (f[bev[0]].v2 == k && f[bev[0]].v3 == j) || (f[bev[0]].v3 == k && f[bev[0]].v1 == j)) {
                 m = j;
                 j = k;
                 k = m;
             }
             tempFace = face.get(bev[0]);
-            if(f[bev[0]].v1 == j) {
+            if (f[bev[0]].v1 == j) {
                 m = tempFace[0];
-            } else if(f[bev[0]].v2 == j) {
+            } else if (f[bev[0]].v2 == j) {
                 m = tempFace[1];
             } else {
                 m = tempFace[2];
             }
-            if(f[bev[0]].v1 == k) {
+            if (f[bev[0]].v1 == k) {
                 n = tempFace[0];
-            } else if(f[bev[0]].v2 == k) {
+            } else if (f[bev[0]].v2 == k) {
                 n = tempFace[1];
             } else {
                 n = tempFace[2];
@@ -476,9 +475,9 @@ public class TriMeshBeveler {
 
         // Copy over smoothness values for edges.
         Edge[] newe = mesh.getEdges();
-        for(Edge edge: e) {
-            for(int j: mesh.getVertex(edge.v1).getEdges()) {
-                if(newe[j].v1 == edge.v2 || newe[j].v2 == edge.v2) {
+        for (Edge edge : e) {
+            for (int j : mesh.getVertex(edge.v1).getEdges()) {
+                if (newe[j].v1 == edge.v2 || newe[j].v2 == edge.v2) {
                     newe[j].smoothness = edge.smoothness;
                     break;
                 }
@@ -487,7 +486,7 @@ public class TriMeshBeveler {
 
         // Record which faces should be selected.
         newSelection = new boolean[mesh.getFaces().length];
-        for(Integer index: newIndex) {
+        for (Integer index : newIndex) {
             newSelection[index] = true;
         }
         return mesh;
@@ -690,11 +689,11 @@ public class TriMeshBeveler {
 
         // Copy over smoothness values for edges.
         Edge[] newe = mesh.getEdges();
-        for(Edge edge: e) {
+        for (Edge edge : e) {
             int v1 = vertIndex[edge.v1];
             int v2 = vertIndex[edge.v2];
-            for(int j: mesh.getVertex(v1).getEdges()) {
-                if(newe[j].v1 == v2 || newe[j].v2 == v2) {
+            for (int j : mesh.getVertex(v1).getEdges()) {
+                if (newe[j].v1 == v2 || newe[j].v2 == v2) {
                     newe[j].smoothness = edge.smoothness;
                     break;
                 }
@@ -791,29 +790,31 @@ public class TriMeshBeveler {
             // Look at the edges intersecting this vertex, and determine how far along them to bevel.
             int[] edges = vertEdgeIndex[i];
             double[] offsetDist = new double[edges.length];
-            for(int edge: edges) {
-                if(selected[edge]) {
+            for (int edge : edges) {
+                if (selected[edge]) {
                     // Calculate the offsets based on beveling this particular edge.
 
                     Vec3 offsetDir = extrudeDir[edge];
                     double[] dot = new double[edges.length];
                     double minDot = 1.0;
-                    for(int k = 0; k < edges.length; k++) {
-                        if(!selected[edges[k]]) {
-                            Vec3 dir = edgeDir[vertEdgeIndex[i][k]];
-                            dot[k] = Math.abs(offsetDir.dot(dir));
-                            if(dot[k] < minDot) {
-                                minDot = dot[k];
-                            }
+                    for (int k = 0; k < edges.length; k++) {
+                        if (selected[edges[k]]) {
+                            continue;
+                        }
+                        Vec3 dir = edgeDir[vertEdgeIndex[i][k]];
+                        dot[k] = Math.abs(offsetDir.dot(dir));
+                        if (dot[k] < minDot) {
+                            minDot = dot[k];
                         }
                     }
                     double bevelDist = width / Math.tan(Math.acos(minDot));
-                    for(int k = 0; k < edges.length; k++) {
-                        if(!selected[edges[k]]) {
-                            double dist = (dot[k] == 0.0 ? width: bevelDist / dot[k]);
-                            if(dist > offsetDist[k]) {
-                                offsetDist[k] = dist;
-                            }
+                    for (int k = 0; k < edges.length; k++) {
+                        if (selected[edges[k]]) {
+                            continue;
+                        }
+                        double dist = (dot[k] == 0.0 ? width : bevelDist / dot[k]);
+                        if (dist > offsetDist[k]) {
+                            offsetDist[k] = dist;
                         }
                     }
                 }
@@ -941,9 +942,9 @@ public class TriMeshBeveler {
             int[] edges = vertEdgeIndex[i];
 
             // Find all the ideal positions (as offsets from the current vertex position) and edge indices.
-            for(int ej: edges) {
-                if(selected[ej]) {
-                    ideal[num] = (e[ej].v1 == i ? idealEndPos[ej][0]: idealEndPos[ej][1]);
+            for (int ej : edges) {
+                if (selected[ej]) {
+                    ideal[num] = (e[ej].v1 == i ? idealEndPos[ej][0] : idealEndPos[ej][1]);
                     ideal[num].subtract(v[i].r);
                     ideal[num].add(extrudeDir[ej].times(height));
                     index[num] = ej;
@@ -1063,7 +1064,7 @@ public class TriMeshBeveler {
             if (faceList.length > 1) {
                 faceList[1] = e[i].f2;
             }
-            for(int value: faceList) {
+            for (int value : faceList) {
                 int v0;
                 int v1;
                 int v2;
@@ -1071,18 +1072,18 @@ public class TriMeshBeveler {
                 v0 = vertIndex[e[i].v1];
                 v3 = vertIndex[e[i].v2];
                 v1 = v2 = -1;
-                for(int k = 0; k < vertFaceIndex[e[i].v1].length && v1 == -1; k++) {
-                    if(vertFaceIndex[e[i].v1][k] == value) {
+                for (int k = 0; k < vertFaceIndex[e[i].v1].length && v1 == -1; k++) {
+                    if (vertFaceIndex[e[i].v1][k] == value) {
                         v1 = faceVertIndex[e[i].v1][k];
                     }
                 }
-                for(int k = 0; k < vertFaceIndex[e[i].v2].length && v2 == -1; k++) {
-                    if(vertFaceIndex[e[i].v2][k] == value) {
+                for (int k = 0; k < vertFaceIndex[e[i].v2].length && v2 == -1; k++) {
+                    if (vertFaceIndex[e[i].v2][k] == value) {
                         v2 = faceVertIndex[e[i].v2][k];
                     }
                 }
                 Face fc = f[value];
-                if((fc.v1 == e[i].v1 && fc.v3 == e[i].v2) || (fc.v2 == e[i].v1 && fc.v1 == e[i].v2) || (fc.v3 == e[i].v1 && fc.v2 == e[i].v2)) {
+                if ((fc.v1 == e[i].v1 && fc.v3 == e[i].v2) || (fc.v2 == e[i].v1 && fc.v1 == e[i].v2) || (fc.v3 == e[i].v1 && fc.v2 == e[i].v2)) {
                     face.add(new int[]{v0, v1, v2, -1});
                     face.add(new int[]{v2, v3, v0, -1});
                 } else {
@@ -1097,11 +1098,11 @@ public class TriMeshBeveler {
 
         // Copy over smoothness values for edges.
         Edge[] newe = mesh.getEdges();
-        for(Edge edge: e) {
+        for (Edge edge : e) {
             int v1 = vertIndex[edge.v1];
             int v2 = vertIndex[edge.v2];
-            for(int j: mesh.getVertex(v1).getEdges()) {
-                if(newe[j].v1 == v2 || newe[j].v2 == v2) {
+            for (int j : mesh.getVertex(v1).getEdges()) {
+                if (newe[j].v1 == v2 || newe[j].v2 == v2) {
                     newe[j].smoothness = edge.smoothness;
                     break;
                 }

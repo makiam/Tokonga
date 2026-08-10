@@ -80,22 +80,22 @@ public class CSGModeller {
         face2 = new Vector<>();
         TriangleMesh.Vertex[] vert = (TriangleMesh.Vertex[]) obj1.getVertices();
         Mat4 trans = coords1.fromLocal();
-        for(var vertex: vert) {
+        for (var vertex : vert) {
             vert1.add(new VertexInfo(trans.times(vertex.r), vertex.smoothness, null));
         }
         vert = (TriangleMesh.Vertex[]) obj2.getVertices();
         trans = coords2.fromLocal();
-        for(var vertex: vert) {
+        for (var vertex : vert) {
             vert2.add(new VertexInfo(trans.times(vertex.r), vertex.smoothness, null));
         }
         TriangleMesh.Edge[] edge = obj1.getEdges();
         TriangleMesh.Face[] face = obj1.getFaces();
         if (obj1.getSmoothingMethod() == Mesh.NO_SMOOTHING) {
-            for(TriangleMesh.Face value: face) {
+            for (TriangleMesh.Face value : face) {
                 face1.add(new FaceInfo(value.v1, value.v2, value.v3, vert1, 0.0f, 0.0f, 0.0f));
             }
         } else {
-            for(var value: face) {
+            for (var value : face) {
                 face1.add(new FaceInfo(value.v1, value.v2, value.v3, vert1,
                         edge[value.e1].smoothness, edge[value.e2].smoothness, edge[value.e3].smoothness));
             }
@@ -103,11 +103,11 @@ public class CSGModeller {
         edge = obj2.getEdges();
         face = obj2.getFaces();
         if (obj2.getSmoothingMethod() == Mesh.NO_SMOOTHING) {
-            for(var value: face) {
+            for (var value : face) {
                 face2.add(new FaceInfo(value.v1, value.v2, value.v3, vert2, 0.0f, 0.0f, 0.0f));
             }
         } else {
-            for(var value: face) {
+            for (var value : face) {
                 face2.add(new FaceInfo(value.v1, value.v2, value.v3, vert2, edge[value.e1].smoothness, edge[value.e2].smoothness, edge[value.e3].smoothness));
             }
         }
@@ -147,28 +147,28 @@ public class CSGModeller {
         }
 
         // Add the faces from object 1.
-        for(var f: face1) {
-            if(f.type == INSIDE && op == CSGObject.INTERSECTION) {
+        for (var f : face1) {
+            if (f.type == INSIDE && op == CSGObject.INTERSECTION) {
                 addPolygon(f, false, vert1, allVert, index1, faceIndex, faceSmoothness);
-            } else if((f.type == INSIDE || f.type == OPPOSITE) && op == CSGObject.DIFFERENCE21) {
+            } else if ((f.type == INSIDE || f.type == OPPOSITE) && op == CSGObject.DIFFERENCE21) {
                 addPolygon(f, true, vert1, allVert, index1, faceIndex, faceSmoothness);
-            } else if(f.type == OUTSIDE && (op == CSGObject.UNION || op == CSGObject.DIFFERENCE12)) {
+            } else if (f.type == OUTSIDE && (op == CSGObject.UNION || op == CSGObject.DIFFERENCE12)) {
                 addPolygon(f, false, vert1, allVert, index1, faceIndex, faceSmoothness);
-            } else if(f.type == SAME && (op == CSGObject.UNION || op == CSGObject.INTERSECTION)) {
+            } else if (f.type == SAME && (op == CSGObject.UNION || op == CSGObject.INTERSECTION)) {
                 addPolygon(f, false, vert1, allVert, index1, faceIndex, faceSmoothness);
-            } else if(f.type == OPPOSITE && op == CSGObject.DIFFERENCE12) {
+            } else if (f.type == OPPOSITE && op == CSGObject.DIFFERENCE12) {
                 addPolygon(f, false, vert1, allVert, index1, faceIndex, faceSmoothness);
             }
         }
         faces1 = faceIndex.size();
 
         // Add the faces from object 2.
-        for(var f: face2) {
-            if(f.type == INSIDE && op == CSGObject.INTERSECTION) {
+        for (var f : face2) {
+            if (f.type == INSIDE && op == CSGObject.INTERSECTION) {
                 addPolygon(f, false, vert2, allVert, index2, faceIndex, faceSmoothness);
-            } else if(f.type == INSIDE && op == CSGObject.DIFFERENCE12) {
+            } else if (f.type == INSIDE && op == CSGObject.DIFFERENCE12) {
                 addPolygon(f, true, vert2, allVert, index2, faceIndex, faceSmoothness);
-            } else if(f.type == OUTSIDE && (op == CSGObject.UNION || op == CSGObject.DIFFERENCE21)) {
+            } else if (f.type == OUTSIDE && (op == CSGObject.UNION || op == CSGObject.DIFFERENCE21)) {
                 addPolygon(f, false, vert2, allVert, index2, faceIndex, faceSmoothness);
             }
         }
@@ -199,32 +199,32 @@ public class CSGModeller {
         }
         TriangleMesh.Edge[] edge = mesh.getEdges();
         TriangleMesh.Face[] face = mesh.getFaces();
-        for(var value: edge) {
-            for(int k = 0; k < 2; k++) {
-                int j = (k == 0 ? value.f1: value.f2);
-                if(j == -1) {
+        for (var value : edge) {
+            for (int k = 0; k < 2; k++) {
+                int j = (k == 0 ? value.f1 : value.f2);
+                if (j == -1) {
                     continue;
                 }
                 float[] smoothness = faceSmoothness.get(j);
                 float s;
-                if(face[j].v1 == value.v1 && face[j].v2 == value.v2) {
+                if (face[j].v1 == value.v1 && face[j].v2 == value.v2) {
                     s = smoothness[0];
-                } else if(face[j].v1 == value.v2 && face[j].v2 == value.v1) {
+                } else if (face[j].v1 == value.v2 && face[j].v2 == value.v1) {
                     s = smoothness[0];
-                } else if(face[j].v2 == value.v1 && face[j].v3 == value.v2) {
+                } else if (face[j].v2 == value.v1 && face[j].v3 == value.v2) {
                     s = smoothness[1];
-                } else if(face[j].v2 == value.v2 && face[j].v3 == value.v1) {
+                } else if (face[j].v2 == value.v2 && face[j].v3 == value.v1) {
                     s = smoothness[1];
-                } else if(face[j].v3 == value.v1 && face[j].v1 == value.v2) {
+                } else if (face[j].v3 == value.v1 && face[j].v1 == value.v2) {
                     s = smoothness[2];
-                } else if(face[j].v3 == value.v2 && face[j].v1 == value.v1) {
+                } else if (face[j].v3 == value.v2 && face[j].v1 == value.v1) {
                     s = smoothness[2];
                 } else {
                     continue;
                 }
                 value.smoothness = Math.min(value.smoothness, s);
             }
-            if((value.f1 < faces1 && value.f2 >= faces1) || (value.f2 < faces1 && value.f1 >= faces1)) {
+            if ((value.f1 < faces1 && value.f2 >= faces1) || (value.f2 < faces1 && value.f1 >= faces1)) {
                 value.smoothness = 0.0f; // This edge is part of the boundary.
             }
         }
@@ -1186,8 +1186,8 @@ public class CSGModeller {
                 }
             }
 
-            if (firstDist == Double.MAX_VALUE || firstDist > -Double.MAX_VALUE && secondDist - firstDist > TOL) // A reliable result was found. Exit from for-n loop
-            {
+            if (firstDist == Double.MAX_VALUE || firstDist > -Double.MAX_VALUE && secondDist - firstDist > TOL) {
+                // A reliable result was found. Exit from for-n loop
                 break;
             }
 
@@ -1486,14 +1486,14 @@ public class CSGModeller {
         final double[] param;
         int type;
 
-        public VertexInfo(Vec3 r, float smoothness, double[] param) {
+        VertexInfo(Vec3 r, float smoothness, double[] param) {
             this.r = r;
             this.smoothness = smoothness;
             this.param = param;
             type = UNKNOWN;
         }
 
-        public VertexInfo(Vec3 r, float smoothness, double[] param, int type) {
+        VertexInfo(Vec3 r, float smoothness, double[] param, int type) {
             this.r = r;
             this.smoothness = smoothness;
             this.param = param;
@@ -1514,7 +1514,7 @@ public class CSGModeller {
         double min;
         double max;
 
-        public FaceInfo(int v1, int v2, int v3, List<VertexInfo> vertices, float s1, float s2, float s3) {
+        FaceInfo(int v1, int v2, int v3, List<VertexInfo> vertices, float s1, float s2, float s3) {
             Vec3 vert1 = vertices.get(v1).r;
             Vec3 vert2 = vertices.get(v2).r;
             Vec3 vert3 = vertices.get(v3).r;
@@ -1527,7 +1527,7 @@ public class CSGModeller {
             init(v1, v2, v3, vertices, s1, s2, s3, normal, dist);
         }
 
-        public FaceInfo(int v1, int v2, int v3, List<VertexInfo> vertices, float s1, float s2, float s3, Vec3 norm, double distRoot) {
+        FaceInfo(int v1, int v2, int v3, List<VertexInfo> vertices, float s1, float s2, float s3, Vec3 norm, double distRoot) {
             init(v1, v2, v3, vertices, s1, s2, s3, norm, distRoot);
         }
 
