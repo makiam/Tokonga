@@ -34,7 +34,7 @@ public class AbsModule extends ProceduralModule<AbsModule> {
                 new IOPort[]{new IOPort(IOPort.NUMBER, IOPort.OUTPUT, IOPort.RIGHT, "Output")},
                 position);
     }
-    
+
     @Override
     public void init(PointInfo p) {
         signOk = false;
