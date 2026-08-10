@@ -194,7 +194,9 @@ public class SkeletonTool extends EditingTool {
                 j = new Joint(new CoordinateSystem(clickPos, zDir, yDir), parent, "Bone " + s.getNextJointID());
                 s.addJoint(j, parent.id);
             }
-            for(var allView: allViews) ((MeshViewer) allView).setSelectedJoint(j.id);
+            for (var allView : allViews) {
+                ((MeshViewer) allView).setSelectedJoint(j.id);
+            }
 
             boolean[] moving = new boolean[s.getNumJoints()];
             moving[s.findJointIndex(j.id)] = true;
@@ -235,7 +237,9 @@ public class SkeletonTool extends EditingTool {
         if (i == joint.length) {
             // No joint was clicked on, so deselect the selected joint.
 
-            for(var allView: allViews) ((MeshViewer) allView).setSelectedJoint(-1);
+            for (var allView : allViews) {
+                ((MeshViewer) allView).setSelectedJoint(-1);
+            }
 
             theWindow.updateImage();
             theWindow.updateMenus();
@@ -244,7 +248,7 @@ public class SkeletonTool extends EditingTool {
         if (e.isShiftDown()) {
             // Toggle whether this joint is locked.
 
-            for(var allView: allViews) {
+            for (var allView : allViews) {
                 MeshViewer v = (MeshViewer) allView;
                 if (v.isJointLocked(joint[i].id)) {
                     v.unlockJoint(joint[i].id);
@@ -257,7 +261,9 @@ public class SkeletonTool extends EditingTool {
         }
 
         // Make it the selected joint, and prepare to drag it.
-        for(ViewerCanvas allView: allViews) ((MeshViewer) allView).setSelectedJoint(joint[i].id);
+        for (ViewerCanvas allView : allViews) {
+            ((MeshViewer) allView).setSelectedJoint(joint[i].id);
+        }
 
         clickPos = joint[i].coords.getOrigin();
         theWindow.updateImage();

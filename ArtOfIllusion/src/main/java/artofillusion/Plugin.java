@@ -98,7 +98,7 @@ public interface Plugin {
             case Plugin.OBJECT_WINDOW_CLOSING -> onObjectWindowClosing((ObjectEditorWindow) args[0]);
             case Plugin.SCENE_SAVED -> onSceneSaved((java.io.File) args[0], (LayoutWindow) args[1]);
 
-            default -> {}
+            default -> { }
         }
     }
 

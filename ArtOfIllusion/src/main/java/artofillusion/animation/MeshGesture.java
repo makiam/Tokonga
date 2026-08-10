@@ -159,7 +159,7 @@ public abstract class MeshGesture implements Gesture {
             }
             TextureParameter[] params = mesh.getParameters();
             if (params != null) {
-                for(TextureParameter param: params) {
+                for (TextureParameter param : params) {
                     ParameterValue val = average.getTextureParameter(param);
                     if (val instanceof ConstantParameterValue tv) {
                         ConstantParameterValue kv = (ConstantParameterValue) key.getTextureParameter(param);
@@ -167,21 +167,21 @@ public abstract class MeshGesture implements Gesture {
                     } else if (val instanceof VertexParameterValue vertexParameter) {
                         double[] tv = vertexParameter.getValue();
                         double[] kv = ((VertexParameterValue) key.getTextureParameter(param)).getValue();
-                        for(int m = 0; m < tv.length; m++) {
+                        for (int m = 0; m < tv.length; m++) {
                             tv[m] += weight[i] * (kv[m] - tv[m]);
                         }
                         vertexParameter.setValue(tv);
                     } else if (val instanceof FaceParameterValue faceParameter) {
                         double[] tv = faceParameter.getValue();
                         double[] kv = ((FaceParameterValue) key.getTextureParameter(param)).getValue();
-                        for(int m = 0; m < tv.length; m++) {
+                        for (int m = 0; m < tv.length; m++) {
                             tv[m] += weight[i] * (kv[m] - tv[m]);
                         }
                         faceParameter.setValue(tv);
                     } else if (val instanceof FaceVertexParameterValue tv) {
                         FaceVertexParameterValue kv = (FaceVertexParameterValue) getTextureParameter(param);
-                        for(int m = 0; m < tv.getFaceCount(); m++) {
-                            for(int n = 0; n < tv.getFaceVertexCount(m); n++) {
+                        for (int m = 0; m < tv.getFaceCount(); m++) {
+                            for (int n = 0; n < tv.getFaceVertexCount(m); n++) {
                                 tv.setValue(m, n, tv.getValue(m, n) + weight[i] * (kv.getValue(m, n) - tv.getValue(m, n)));
                             }
                         }

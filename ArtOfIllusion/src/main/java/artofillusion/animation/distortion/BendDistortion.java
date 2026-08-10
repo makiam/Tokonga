@@ -109,19 +109,19 @@ public class BendDistortion extends Distortion {
         // Find the range along the appropriate axis.
         double min = Double.MAX_VALUE;
         double max = Double.MIN_VALUE;
-        for(Vec3 vec3: newvert) {
+        for (Vec3 vec3 : newvert) {
             double value;
-            if(axis == X_AXIS) {
+            if (axis == X_AXIS) {
                 value = vec3.x;
             } else if(axis == Y_AXIS) {
                 value = vec3.y;
             } else {
                 value = vec3.z;
             }
-            if(value < min) {
+            if (value < min) {
                 min = value;
             }
-            if(value > max) {
+            if (value > max) {
                 max = value;
             }
         }
@@ -139,13 +139,13 @@ public class BendDistortion extends Distortion {
         if (Math.abs(theta) > 1e-10) {
             if (axis == X_AXIS) {
                 if (direction == Y_AXIS) {
-                    for(Vec3 vec3: newvert) {
+                    for (Vec3 vec3 : newvert) {
                         double a = scale * (vec3.x - min);
                         double b = vec3.y - origin.y - radius;
                         vec3.set(min - Math.sin(a) * b, origin.y + radius + Math.cos(a) * b, vec3.z);
                     }
                 } else {
-                    for(Vec3 vec3: newvert) {
+                    for (Vec3 vec3 : newvert) {
                         double a = scale * (vec3.x - min);
                         double b = vec3.z - origin.z - radius;
                         vec3.set(min - Math.sin(a) * b, vec3.y, origin.z + radius + Math.cos(a) * b);
@@ -153,13 +153,13 @@ public class BendDistortion extends Distortion {
                 }
             } else if (axis == Y_AXIS) {
                 if (direction == X_AXIS) {
-                    for(Vec3 vec3: newvert) {
+                    for (Vec3 vec3 : newvert) {
                         double a = scale * (vec3.y - min);
                         double b = vec3.x - origin.x - radius;
                         vec3.set(origin.x + radius + Math.cos(a) * b, min - Math.sin(a) * b, vec3.z);
                     }
                 } else {
-                    for(Vec3 vec3: newvert) {
+                    for (Vec3 vec3 : newvert) {
                         double a = scale * (vec3.y - min);
                         double b = vec3.z - origin.z - radius;
                         vec3.set(vec3.x, min - Math.sin(a) * b, origin.z + radius + Math.cos(a) * b);
@@ -167,13 +167,13 @@ public class BendDistortion extends Distortion {
                 }
             } else {
                 if (direction == X_AXIS) {
-                    for(Vec3 vec3: newvert) {
+                    for (Vec3 vec3 : newvert) {
                         double a = scale * (vec3.z - min);
                         double b = vec3.x - origin.x - radius;
                         vec3.set(origin.x + radius + Math.cos(a) * b, vec3.y, min - Math.sin(a) * b);
                     }
                 } else {
-                    for(Vec3 vec3: newvert) {
+                    for (Vec3 vec3 : newvert) {
                         double a = scale * (vec3.z - min);
                         double b = vec3.y - origin.y - radius;
                         vec3.set(vec3.x, origin.y + radius + Math.cos(a) * b, min - Math.sin(a) * b);
@@ -182,7 +182,9 @@ public class BendDistortion extends Distortion {
             }
         }
         if (postTransform != null) {
-            for(Vec3 vec3: newvert) postTransform.transform(vec3);
+            for (Vec3 vec3 : newvert) {
+                postTransform.transform(vec3);
+            }
         }
         newmesh.setVertexPositions(newvert);
         return newmesh;

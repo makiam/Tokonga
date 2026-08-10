@@ -435,7 +435,7 @@ public class PluginRegistry {
         JarInfo(File file) throws IOException {
             this.file = file;
 
-            try(ZipFile zf = new ZipFile(file)) {
+            try (ZipFile zf = new ZipFile(file)) {
                 ZipEntry ze = zf.getEntry("extensions.xml");
                 if (ze != null) {
                     InputStream in = new BufferedInputStream(zf.getInputStream(ze));
@@ -468,8 +468,10 @@ public class PluginRegistry {
             categories.addAll(ext.getCategoryList().stream().map(Category::getCategory).toList());
 
             ext.getImports().forEach(def -> {
-                if(def.getName() == null) {
-                    if(def.getUrl() == null) return;
+                if (def.getName() == null) {
+                    if (def.getUrl() == null) {
+                        return;
+                    }
                     searchPath.add(def.getUrl());
                 } else {
                     imports.add(def.getName());

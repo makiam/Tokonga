@@ -314,10 +314,10 @@ public class TextureTrack extends Track<TextureTrack> {
         out.writeBoolean(enabled);
 
         out.writeInt(smoothingMethod);
-        out.writeShort(param == null ? 0: param.length);
+        out.writeShort(param == null ? 0 : param.length);
 
-        int[] index = new int[param == null ? 0: param.length];
-        if(param != null) {
+        int[] index = new int[param == null ? 0 : param.length];
+        if (param != null) {
             for (int i = 0; i < param.length; i++) {
                 for (int j = 0; j < texParam.length; j++) {
                     if (param[i].equals(texParam[j])) {

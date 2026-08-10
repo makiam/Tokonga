@@ -5,8 +5,8 @@
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful, but WITHOUT ANY 
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.animation;
@@ -200,7 +200,7 @@ public class EditKeyframesDialog {
 
         // Prepare an undo record.
         UndoRecord undo = new UndoRecord(window);
-        for(var value: track) {
+        for (var value : track) {
             Object parent = value.getParent();
             Track dup;
             if (parent instanceof ObjectInfo info) {
@@ -212,11 +212,11 @@ public class EditKeyframesDialog {
         }
 
         // Perform the operation.
-        for(var value: track) {
+        for (var value : track) {
             // Delete existing keyframes in the target region.
 
             double[] t = value.getKeyTimes();
-            for(int j = t.length - 1; j >= 0; j--) {
+            for (int j = t.length - 1; j >= 0; j--) {
                 if (t[j] > targetStart && t[j] < targetEnd) {
                     value.deleteKeyframe(j);
                 }
@@ -231,30 +231,30 @@ public class EditKeyframesDialog {
             Smoothness[] s = tc.getSmoothness();
             t = value.getKeyTimes();
             if (operation == MOVE || operation == RESCALE || operation == DELETE) {
-                for(int j = t.length - 1; j >= 0; j--) {
+                for (int j = t.length - 1; j >= 0; j--) {
                     if (t[j] >= start && t[j] <= end) {
                         value.deleteKeyframe(j);
                     }
                 }
             }
             if (operation == MOVE || operation == COPY) {
-                for(int j = 0; j < t.length; j++) {
+                for (int j = 0; j < t.length; j++) {
                     if (t[j] >= start && t[j] <= end) {
                         value.setKeyframe(roundTime(t[j] - start + extra, fps), key[j].duplicate(), s[j]);
                     }
                 }
             }
             if (operation == RESCALE) {
-                for(int j = 0; j < t.length; j++) {
+                for (int j = 0; j < t.length; j++) {
                     if (t[j] >= start && t[j] <= end) {
                         value.setKeyframe(roundTime(scaleStart + scaleFactor * (t[j] - start), fps), key[j].duplicate(), s[j]);
                     }
                 }
             }
             if (operation == LOOP) {
-                for(int j = 0; j < t.length; j++) {
+                for (int j = 0; j < t.length; j++) {
                     if (t[j] >= start && t[j] <= end) {
-                        for(int k = 1; k < numLoops; k++) {
+                        for (int k = 1; k < numLoops; k++) {
                             value.setKeyframe(roundTime(t[j] + k * (end - start), fps), key[j].duplicate(), s[j]);
                         }
                     }

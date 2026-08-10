@@ -216,7 +216,7 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
         blendChoice = new BComboBox(new String[]{
             Translate.text("blend"),
             Translate.text("overlay"),
-            Translate.text("overlayBumpsAdd"),});
+            Translate.text("overlayBumpsAdd")});
         blendChoice.addEventLink(ValueChangedEvent.class, this, "blendTypeChanged");
         blendRow.add(blendChoice);
 
@@ -588,15 +588,15 @@ public class ObjectTextureDialog extends BDialog implements ListChangeListener {
         TextureParameter[] param = editObj.getObject().getParameters();
         ParameterValue[] paramValue = editObj.getObject().getParameterValues();
         UndoRecord undo = new UndoRecord(window);
-        for(var info: obj) {
+        for (var info: obj) {
             undo.addCommand(UndoRecord.COPY_OBJECT, info.getObject(), info.getObject().duplicate());
-            if(editObj.getObject().getTexture() instanceof LayeredTexture) {
+            if (editObj.getObject().getTexture() instanceof LayeredTexture) {
                 LayeredMapping m = (LayeredMapping) editObj.getObject().getTextureMapping().duplicate(info.getObject(), editObj.getObject().getTexture());
                 info.setTexture(new LayeredTexture(m), m);
             } else {
                 info.setTexture(editObj.getObject().getTexture(), editObj.getObject().getTextureMapping().duplicate());
             }
-            for(int j = 0; j < param.length; j++) {
+            for (int j = 0; j < param.length; j++) {
                 info.getObject().setParameterValue(param[j], paramValue[j].duplicate());
             }
         }

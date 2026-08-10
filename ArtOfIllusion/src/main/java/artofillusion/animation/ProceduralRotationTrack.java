@@ -538,9 +538,9 @@ public class ProceduralRotationTrack extends Track<ProceduralRotationTrack> impl
         }
         parameter = newparams;
 
-        for(var keyframe: tc.getValues()) {
+        for (var keyframe : tc.getValues()) {
             double[] newval = new double[parameter.length];
-            for(int j = 0; j < newval.length; j++) {
+            for (int j = 0; j < newval.length; j++) {
                 if (index[j] > -1) {
                     newval[j] = ((ArrayKeyframe) keyframe).val[index[j]];
                 } else {
@@ -574,7 +574,9 @@ public class ProceduralRotationTrack extends Track<ProceduralRotationTrack> impl
         BComboBox jointChoice = new BComboBox();
         jointChoice.add(Translate.text("objectOrigin"));
         if (joints != null) {
-            for(var value: joints) jointChoice.add(value.name);
+            for (var value : joints) {
+                jointChoice.add(value.name);
+            }
             for (int i = 0; i < joints.length; i++) {
                 if (joints[i].id == joint) {
                     jointChoice.setSelectedIndex(i + 1);

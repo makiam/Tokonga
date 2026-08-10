@@ -268,7 +268,7 @@ public class Skeleton {
      * Scale the skeleton by the specified amount along each axis.
      */
     public void scale(double x, double y, double z) {
-        for(Joint joint: joints) {
+        for (Joint joint : joints) {
             Vec3 pos = joint.coords.getOrigin();
             pos.x *= x;
             pos.y *= y;
@@ -288,7 +288,7 @@ public class Skeleton {
             }
             joint.coords.setOrientation(zdir, updir);
         }
-        for(Joint value: joints) {
+        for (Joint value : joints) {
             if (value.parent == null) {
                 value.calcAnglesFromCoords(true);
             } else {
@@ -306,7 +306,7 @@ public class Skeleton {
      * @param weight the weights for the different Skeletons
      */
     public void blend(Skeleton average, Skeleton[] s, double[] weight) {
-        for(Joint joint: joints) {
+        for (Joint joint : joints) {
             Joint javg = average.getJoint(joint.id);
             Vec3 pos = null;
             Vec3 newpos = null;
@@ -323,7 +323,7 @@ public class Skeleton {
             javg.angle2.pos = joint.angle2.pos;
             javg.twist.pos = joint.twist.pos;
             javg.length.pos = joint.length.pos;
-            for(int j = 0; j < s.length; j++) {
+            for (int j = 0; j < s.length; j++) {
                 Joint jother = s[j].getJoint(joint.id);
                 if (jother == null) {
                     continue;
@@ -543,7 +543,7 @@ public class Skeleton {
     public void writeToStream(DataOutputStream out) throws IOException {
         out.writeShort(0); // Version number
         out.writeInt(joints.length);
-        for(Joint j: joints) {
+        for (Joint j : joints) {
             // Write the information about this joint.
 
             out.writeInt(j.id);
@@ -555,7 +555,7 @@ public class Skeleton {
             j.length.writeToStream(out);
             out.writeInt(j.parent == null ? -1 : j.parent.id);
             out.writeInt(j.children.length);
-            for(int k = 0; k < j.children.length; k++) {
+            for (int k = 0; k < j.children.length; k++) {
                 out.writeInt(j.children[k].id);
             }
         }
