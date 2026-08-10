@@ -56,7 +56,7 @@ public class TubeEditorWindow extends CurveEditorWindow {
         tools.addTool(altTool = new RotateViewTool(this));
         tools.setDefaultTool(defaultTool);
         tools.selectTool(defaultTool);
-        for(var viewerCanvas: theView) {
+        for (var viewerCanvas: theView) {
             MeshViewer view = (MeshViewer) viewerCanvas;
             view.setMetaTool(metaTool);
             view.setAltTool(altTool);

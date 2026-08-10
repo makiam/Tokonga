@@ -73,7 +73,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         tools.addTool(altTool = new RotateViewTool(this));
         tools.setDefaultTool(defaultTool);
         tools.selectTool(defaultTool);
-        for(var viewerCanvas: theView) {
+        for (var viewerCanvas : theView) {
             MeshViewer view = (MeshViewer) viewerCanvas;
             view.setMetaTool(metaTool);
             view.setAltTool(altTool);
@@ -339,11 +339,11 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         SplineMesh obj = (SplineMesh) mesh;
 
         setObject(obj);
-        for(var viewerCanvas: theView) {
-            if(selectMode == POINT_MODE && selected.length != obj.getVertices().length) {
+        for (var viewerCanvas : theView) {
+            if (selectMode == POINT_MODE && selected.length != obj.getVertices().length) {
                 selected = new boolean[obj.getVertices().length];
             }
-            if(selectMode == EDGE_MODE && selected.length != obj.getUSize() + obj.getVSize()) {
+            if (selectMode == EDGE_MODE && selected.length != obj.getUSize() + obj.getVSize()) {
                 selected = new boolean[obj.getUSize() + obj.getVSize()];
             }
             ((SplineMeshViewer) viewerCanvas).visible = new boolean[obj.getVertices().length];
@@ -366,7 +366,9 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
             setSelectionMode(modes.getSelection());
             theView[currentView].getCurrentTool().activate();
         } else {
-            for(var viewerCanvas: theView) viewerCanvas.setTool(tool);
+            for (var viewerCanvas : theView) {
+                viewerCanvas.setTool(tool);
+            }
             currentTool = tool;
         }
     }
@@ -383,12 +385,12 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
     public void updateMenus() {
         super.updateMenus();
         SplineMesh theMesh = (SplineMesh) objInfo.getObject();
-        boolean curvemode = (selectMode == EDGE_MODE);
+        boolean curveMode = (selectMode == EDGE_MODE);
         MeshViewer view = (MeshViewer) theView[currentView];
         int count = 0;
 
-        for(boolean b: selected) {
-            if(b) {
+        for (boolean b : selected) {
+            if (b) {
                 count++;
             }
         }
@@ -396,19 +398,21 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
             editMenuItem[0].setEnabled(true); // Extend
             editMenuItem[1].setEnabled(true); // Invert
             editMenuItem[2].setEnabled(true); // Deselect
-            meshMenuItem[0].setEnabled(curvemode);
-            meshMenuItem[1].setEnabled(curvemode);
+            meshMenuItem[0].setEnabled(curveMode);
+            meshMenuItem[1].setEnabled(curveMode);
             meshMenuItem[2].setEnabled(true);
             meshMenuItem[3].setEnabled(true);
             meshMenuItem[4].setEnabled(true);
             meshMenuItem[5].setEnabled(true);
-            meshMenuItem[6].setEnabled(curvemode && count == 1);
-            meshMenuItem[7].setEnabled(curvemode);
+            meshMenuItem[6].setEnabled(curveMode && count == 1);
+            meshMenuItem[7].setEnabled(curveMode);
         } else {
             editMenuItem[0].setEnabled(false); // Extend
             editMenuItem[1].setEnabled(false); // Invert
             editMenuItem[2].setEnabled(false); // Deselect
-            for(var bMenuItem: meshMenuItem) bMenuItem.setEnabled(false);
+            for (var bMenuItem : meshMenuItem) {
+                bMenuItem.setEnabled(false);
+            }
         }
         Skeleton s = theMesh.getSkeleton();
         Joint selJoint = s.getJoint(view.getSelectedJoint());
@@ -421,7 +425,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         // This should go to the super class, but some plugin editors can not handle it
         boolean[] selected = getSelection();
         boolean enable = (view.getSelectedJoint() > 0);
-        for(boolean b: selected) {
+        for (boolean b : selected) {
             enable = (b ? true: enable);
         }
         fitToSelItem.setEnabled(enable);
@@ -567,7 +571,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
     }
 
     private void skeletonDetachedChanged() {
-        for(var viewerCanvas: theView) {
+        for (var viewerCanvas : theView) {
             ((SplineMeshViewer) viewerCanvas).setSkeletonDetached(((BCheckBoxMenuItem) skeletonMenuItem[6]).getState());
         }
     }
@@ -739,11 +743,17 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         SplineMesh theMesh = (SplineMesh) objInfo.getObject();
         MeshVertex[] vt = theMesh.getVertices();
         float[] us = theMesh.getUSmoothness(), vs = theMesh.getVSmoothness(), newus, newvs;
-        boolean[] newsel, splitu, splitv;
+        boolean[] newSel;
+        boolean[] splitU;
+        boolean[] splitV;
         MeshVertex[][] v, newv;
         double[][][] param, newparam;
-        int i, j, usplitcount = 0, vsplitcount = 0;
-        int usize = theMesh.getUSize(), vsize = theMesh.getVSize();
+        int i;
+        int j;
+        int uSplitCount = 0;
+        int vSplitCount = 0;
+        int uSize = theMesh.getUSize();
+        int vSize = theMesh.getVSize();
         int numParam = (theMesh.getParameters() == null ? 0 : theMesh.getParameters().length);
 
         if (selectMode != EDGE_MODE) {
@@ -756,62 +766,62 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
 
         // Determine which parts need to be subdivided.
         if (theMesh.isUClosed()) {
-            splitu = new boolean[usize];
+            splitU = new boolean[uSize];
         } else {
-            splitu = new boolean[usize - 1];
+            splitU = new boolean[uSize - 1];
         }
-        for (i = 0; i < splitu.length; i++) {
-            if (selected[i] && selected[(i + 1) % usize]) {
-                splitu[i] = true;
-                usplitcount++;
+        for (i = 0; i < splitU.length; i++) {
+            if (selected[i] && selected[(i + 1) % uSize]) {
+                splitU[i] = true;
+                uSplitCount++;
             }
         }
         if (theMesh.isVClosed()) {
-            splitv = new boolean[vsize];
+            splitV = new boolean[vSize];
         } else {
-            splitv = new boolean[vsize - 1];
+            splitV = new boolean[vSize - 1];
         }
-        for (i = 0; i < splitv.length; i++) {
-            if (selected[i + usize] && selected[(i + 1) % vsize + usize]) {
-                splitv[i] = true;
-                vsplitcount++;
+        for (i = 0; i < splitV.length; i++) {
+            if (selected[i + uSize] && selected[(i + 1) % vSize + uSize]) {
+                splitV[i] = true;
+                vSplitCount++;
             }
         }
-        newus = new float[usize + usplitcount];
-        newvs = new float[vsize + vsplitcount];
-        newsel = new boolean[selected.length + usplitcount + vsplitcount];
+        newus = new float[uSize + uSplitCount];
+        newvs = new float[vSize + vSplitCount];
+        newSel = new boolean[selected.length + uSplitCount + vSplitCount];
 
         // Do the subdivision along the u direction.
-        v = new MeshVertex[vsize][usize];
-        for (i = 0; i < usize; i++) {
-            for (j = 0; j < vsize; j++) {
-                v[j][i] = vt[i + j * usize];
+        v = new MeshVertex[vSize][uSize];
+        for (i = 0; i < uSize; i++) {
+            for (j = 0; j < vSize; j++) {
+                v[j][i] = vt[i + j * uSize];
             }
         }
-        newv = new MeshVertex[vsize][usize + usplitcount];
-        param = new double[vsize][usize][numParam];
+        newv = new MeshVertex[vSize][uSize + uSplitCount];
+        param = new double[vSize][uSize][numParam];
         for (int k = 0; k < numParam; k++) {
             if (theMesh.getParameterValues()[k] instanceof VertexParameterValue value) {
                 double[] val = value.getValue();
-                for (i = 0; i < usize; i++) {
-                    for (j = 0; j < vsize; j++) {
-                        param[j][i][k] = val[i + usize * j];
+                for (i = 0; i < uSize; i++) {
+                    for (j = 0; j < vSize; j++) {
+                        param[j][i][k] = val[i + uSize * j];
                     }
                 }
             }
         }
-        newparam = new double[vsize][usize + usplitcount][numParam];
-        splitOneAxis(v, newv, us, newus, splitu, param, newparam, theMesh.isUClosed());
+        newparam = new double[vSize][uSize + uSplitCount][numParam];
+        splitOneAxis(v, newv, us, newus, splitU, param, newparam, theMesh.isUClosed());
 
         // Do the subdivision along the v direction.
-        v = new MeshVertex[usize + usplitcount][vsize];
+        v = new MeshVertex[uSize + uSplitCount][vSize];
         for (i = 0; i < v.length; i++) {
             for (j = 0; j < v[i].length; j++) {
                 v[i][j] = newv[j][i];
             }
         }
-        newv = new MeshVertex[usize + usplitcount][vsize + vsplitcount];
-        param = new double[usize + usplitcount][vsize][numParam];
+        newv = new MeshVertex[uSize + uSplitCount][vSize + vSplitCount];
+        param = new double[uSize + uSplitCount][vSize][numParam];
         for (i = 0; i < param.length; i++) {
             for (j = 0; j < param[i].length; j++) {
                 for (int k = 0; k < param[i][j].length; k++) {
@@ -819,25 +829,25 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
                 }
             }
         }
-        newparam = new double[usize + usplitcount][vsize + vsplitcount][numParam];
-        splitOneAxis(v, newv, vs, newvs, splitv, param, newparam, theMesh.isVClosed());
+        newparam = new double[uSize + uSplitCount][vSize + vSplitCount][numParam];
+        splitOneAxis(v, newv, vs, newvs, splitV, param, newparam, theMesh.isVClosed());
 
         // Determine the new selection, and update the mesh.
-        for (i = 0, j = 0; i < usize; i++) {
+        for (i = 0, j = 0; i < uSize; i++) {
             if (selected[i]) {
-                newsel[j] = true;
+                newSel[j] = true;
             }
-            if (i < splitu.length && splitu[i]) {
-                newsel[++j] = true;
+            if (i < splitU.length && splitU[i]) {
+                newSel[++j] = true;
             }
             j++;
         }
-        for (i = 0, j = 0; i < vsize; i++) {
-            if (selected[i + usize]) {
-                newsel[j + usize + usplitcount] = true;
+        for (i = 0, j = 0; i < vSize; i++) {
+            if (selected[i + uSize]) {
+                newSel[j + uSize + uSplitCount] = true;
             }
-            if (i < splitv.length && splitv[i]) {
-                newsel[++j + usize + usplitcount] = true;
+            if (i < splitV.length && splitV[i]) {
+                newSel[++j + uSize + uSplitCount] = true;
             }
             j++;
         }
@@ -855,7 +865,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
             }
         }
         setMesh(theMesh);
-        setSelection(newsel);
+        setSelection(newSel);
     }
 
     // Perform the subdivision along one axis of the mesh.
@@ -958,8 +968,9 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
     void extractCurveCommand() {
         SplineMesh theMesh = (SplineMesh) objInfo.getObject();
         MeshVertex[] vt = theMesh.getVertices();
-        int usize = theMesh.getUSize(), vsize = theMesh.getVSize();
-        int i, which;
+        int uSize = theMesh.getUSize();
+        int vSize = theMesh.getVSize();
+        int which;
 
         if (selectMode != EDGE_MODE) {
             return;
@@ -973,23 +984,23 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         boolean closed;
         Vec3[] v;
         float[] smoothness;
-        if (which < usize) {
+        if (which < uSize) {
             closed = theMesh.isVClosed();
-            v = new Vec3[vsize];
+            v = new Vec3[vSize];
         } else {
             closed = theMesh.isUClosed();
-            v = new Vec3[usize];
+            v = new Vec3[uSize];
         }
         smoothness = new float[v.length];
-        float[] usmoothness = theMesh.getUSmoothness();
-        float[] vsmoothness = theMesh.getVSmoothness();
-        for (i = 0; i < v.length; i++) {
-            if (which < usize) {
-                v[i] = vt[which + i * usize].r;
-                smoothness[i] = vsmoothness[i];
+        float[] uSmoothness = theMesh.getUSmoothness();
+        float[] vSmoothness = theMesh.getVSmoothness();
+        for (int i = 0; i < v.length; i++) {
+            if (which < uSize) {
+                v[i] = vt[which + i * uSize].r;
+                smoothness[i] = vSmoothness[i];
             } else {
-                v[i] = vt[(which - usize) * usize + i].r;
-                smoothness[i] = usmoothness[i];
+                v[i] = vt[(which - uSize) * uSize + i].r;
+                smoothness[i] = uSmoothness[i];
             }
         }
         Curve cv = new Curve(v, smoothness, theMesh.getSmoothingMethod(), closed);
@@ -1008,8 +1019,8 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
 
     void setSmoothnessCommand() {
         final SplineMesh theMesh = (SplineMesh) objInfo.getObject();
-        SplineMesh oldMesh = (SplineMesh) theMesh.duplicate();
-        final float[] usmoothness = theMesh.getUSmoothness(), vsmoothness = theMesh.getVSmoothness();
+        SplineMesh oldMesh = theMesh.duplicate();
+        final float[] uSmoothness = theMesh.getUSmoothness(), vSmoothness = theMesh.getVSmoothness();
         float value;
         int i;
 
@@ -1021,9 +1032,9 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
             return;
         }
         if (i < theMesh.getUSize()) {
-            value = usmoothness[i];
+            value = uSmoothness[i];
         } else {
-            value = vsmoothness[i - theMesh.getUSize()];
+            value = vSmoothness[i - theMesh.getUSize()];
         }
         value = 0.001f * (Math.round(value * 1000.0f));
         final ValueSlider smoothness = new ValueSlider(0.0, 1.0, 100, (double) value);
@@ -1033,13 +1044,13 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
                 for (int i = 0; i < selected.length; i++) {
                     if (selected[i]) {
                         if (i < theMesh.getUSize()) {
-                            usmoothness[i] = s;
+                            uSmoothness[i] = s;
                         } else {
-                            vsmoothness[i - theMesh.getUSize()] = s;
+                            vSmoothness[i - theMesh.getUSize()] = s;
                         }
                     }
                 }
-                theMesh.setSmoothness(usmoothness, vsmoothness);
+                theMesh.setSmoothness(uSmoothness, vSmoothness);
                 objectChanged();
                 updateImage();
             }
@@ -1067,7 +1078,7 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         SplineMesh theMesh = (SplineMesh) objInfo.getObject();
 
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, theMesh.duplicate()));
-        for(BCheckBoxMenuItem bCheckBoxMenuItem: smoothItem) {
+        for (var bCheckBoxMenuItem : smoothItem) {
             bCheckBoxMenuItem.setState(false);
         }
         smoothItem[method - 2].setState(true);
@@ -1094,7 +1105,9 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
     public void adjustDeltas(Vec3[] delta) {
         int[] dist = getSelectionDistance(), count = new int[delta.length];
         SplineMesh theMesh = (SplineMesh) objInfo.getObject();
-        int maxDistance = getTensionDistance(), usize = theMesh.getUSize(), vsize = theMesh.getVSize();
+        int maxDistance = getTensionDistance();
+        int uSize = theMesh.getUSize();
+        int vSize = theMesh.getVSize();
         double tension = getMeshTension();
         double[] scale = new double[maxDistance + 1];
 
@@ -1107,45 +1120,45 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
             for (int j = 0; j < count.length; j++) {
                 count[j] = 0;
             }
-            for (int j = 0; j < usize; j++) {
-                for (int k = 0; k < vsize; k++) {
-                    if (dist[j + k * usize] == i) {
+            for (int j = 0; j < uSize; j++) {
+                for (int k = 0; k < vSize; k++) {
+                    if (dist[j + k * uSize] == i) {
                         if (j == 0) {
-                            if (theMesh.isUClosed() && dist[usize - 1 + k * usize] == i + 1) {
-                                count[usize - 1 + k * usize]++;
-                                delta[usize - 1 + k * usize].add(delta[j + k * usize]);
+                            if (theMesh.isUClosed() && dist[uSize - 1 + k * uSize] == i + 1) {
+                                count[uSize - 1 + k * uSize]++;
+                                delta[uSize - 1 + k * uSize].add(delta[j + k * uSize]);
                             }
-                        } else if (dist[j - 1 + k * usize] == i + 1) {
-                            count[j - 1 + k * usize]++;
-                            delta[j - 1 + k * usize].add(delta[j + k * usize]);
+                        } else if (dist[j - 1 + k * uSize] == i + 1) {
+                            count[j - 1 + k * uSize]++;
+                            delta[j - 1 + k * uSize].add(delta[j + k * uSize]);
                         }
-                        if (j == usize - 1) {
-                            if (theMesh.isUClosed() && dist[k * usize] == i + 1) {
-                                count[k * usize]++;
-                                delta[k * usize].add(delta[j + k * usize]);
+                        if (j == uSize - 1) {
+                            if (theMesh.isUClosed() && dist[k * uSize] == i + 1) {
+                                count[k * uSize]++;
+                                delta[k * uSize].add(delta[j + k * uSize]);
                             }
-                        } else if (dist[j + 1 + k * usize] == i + 1) {
-                            count[j + 1 + k * usize]++;
-                            delta[j + 1 + k * usize].add(delta[j + k * usize]);
+                        } else if (dist[j + 1 + k * uSize] == i + 1) {
+                            count[j + 1 + k * uSize]++;
+                            delta[j + 1 + k * uSize].add(delta[j + k * uSize]);
                         }
                         if (k == 0) {
-                            if (theMesh.isVClosed() && dist[j + (vsize - 1) * usize] == i + 1) {
-                                count[j + (vsize - 1) * usize]++;
-                                delta[j + (vsize - 1) * usize].add(delta[j + k * usize]);
+                            if (theMesh.isVClosed() && dist[j + (vSize - 1) * uSize] == i + 1) {
+                                count[j + (vSize - 1) * uSize]++;
+                                delta[j + (vSize - 1) * uSize].add(delta[j + k * uSize]);
                             }
-                        } else if (dist[j + (k - 1) * usize] == i + 1) {
-                            count[j + (k - 1) * usize]++;
-                            delta[j + (k - 1) * usize].add(delta[j + k * usize]);
+                        } else if (dist[j + (k - 1) * uSize] == i + 1) {
+                            count[j + (k - 1) * uSize]++;
+                            delta[j + (k - 1) * uSize].add(delta[j + k * uSize]);
                         }
-                        if (k == vsize - 1) {
+                        if (k == vSize - 1) {
                             if (theMesh.isVClosed() && dist[j] == i + 1) {
-                                dist[j + k * usize] = i + 1;
+                                dist[j + k * uSize] = i + 1;
                                 count[j]++;
-                                delta[j].add(delta[j + k * usize]);
+                                delta[j].add(delta[j + k * uSize]);
                             }
-                        } else if (dist[j + (k + 1) * usize] == i + 1) {
-                            count[j + (k + 1) * usize]++;
-                            delta[j + (k + 1) * usize].add(delta[j + k * usize]);
+                        } else if (dist[j + (k + 1) * uSize] == i + 1) {
+                            count[j + (k + 1) * uSize]++;
+                            delta[j + (k + 1) * uSize].add(delta[j + k * uSize]);
                         }
                     }
                 }

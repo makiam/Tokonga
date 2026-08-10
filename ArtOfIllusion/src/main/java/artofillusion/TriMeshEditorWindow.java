@@ -83,7 +83,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         content.add(helpText = new BLabel(), 0, 1, 2, 1);
         content.add(viewsContainer, 1, 0);
         RowContainer buttons = new RowContainer();
-        buttons.add(Translate.button("ok", vent -> doOk()));
+        buttons.add(Translate.button("ok", event -> doOk()));
         buttons.add(Translate.button("cancel", event -> doCancel()));
         content.add(buttons, 0, 2, 2, 1, new LayoutInfo());
         FormContainer toolsContainer = new FormContainer(new double[]{1}, new double[]{1, 0});
@@ -110,7 +110,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         tools.addTool(altTool = new RotateViewTool(this));
         tools.setDefaultTool(defaultTool);
         tools.selectTool(defaultTool);
-        for(var viewerCanvas: theView) {
+        for (var viewerCanvas : theView) {
             MeshViewer view = (MeshViewer) viewerCanvas;
             view.setMetaTool(metaTool);
             view.setAltTool(altTool);
@@ -290,16 +290,16 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         setObject(obj);
         this.mesh = obj;
         hideVert = new boolean[mesh.getVertices().length];
-        for(var viewerCanvas: theView) {
-            if(getSelectionMode() == POINT_MODE && selected.length != obj.getVertices().length) {
+        for (var viewerCanvas : theView) {
+            if (getSelectionMode() == POINT_MODE && selected.length != obj.getVertices().length) {
                 selected = new boolean[obj.getVertices().length];
                 ((TriMeshViewer) viewerCanvas).visible = new boolean[obj.getVertices().length];
             }
-            if(getSelectionMode() == EDGE_MODE && selected.length != obj.getEdges().length) {
+            if (getSelectionMode() == EDGE_MODE && selected.length != obj.getEdges().length) {
                 selected = new boolean[obj.getEdges().length];
                 ((TriMeshViewer) viewerCanvas).visible = new boolean[obj.getEdges().length];
             }
-            if(getSelectionMode() == FACE_MODE && selected.length != obj.getFaces().length) {
+            if (getSelectionMode() == FACE_MODE && selected.length != obj.getFaces().length) {
                 selected = new boolean[obj.getFaces().length];
                 ((TriMeshViewer) viewerCanvas).visible = new boolean[obj.getFaces().length];
             }
@@ -345,7 +345,9 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
             setSelectionMode(modes.getSelection());
             theView[currentView].getCurrentTool().activate();
         } else {
-            for(var viewerCanvas: theView) viewerCanvas.setTool(tool);
+            for (var viewerCanvas : theView) {
+                viewerCanvas.setTool(tool);
+            }
             currentTool = tool;
         }
     }
@@ -415,8 +417,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         selectMenuItem[1].setEnabled(any);
         selectMenuItem[2].setEnabled(any && selectMode == EDGE_MODE);
         selectMenuItem[3].setEnabled(any && selectMode == EDGE_MODE);
-        Skeleton s = theMesh.getSkeleton();
-        Joint selJoint = s.getJoint(view.getSelectedJoint());
+
+        Joint selJoint = theMesh.getSkeleton().getJoint(view.getSelectedJoint());
         skeletonMenuItem[0].setEnabled(selJoint != null);
         skeletonMenuItem[1].setEnabled(selJoint != null && selJoint.children.length == 0);
         skeletonMenuItem[2].setEnabled(selJoint != null);
@@ -719,7 +721,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                 int originalEdge = (first.v1 == v2 || first.v2 == v2 ? vertEdges[0] : vertEdges[vertEdges.length - 1]);
 
                 // Record this for all of the subdivided edges.
-                for(var item: sequential) {
+                for (var item : sequential) {
                     projectedEdge[item] = originalEdge;
                 }
             }
@@ -835,15 +837,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
 
         // Give every candidate edge a score for how close the adjoining faces are to forming
         // a rectangle.
-        class EdgeScore implements Comparable<EdgeScore> {
-
-            public final int edge;
-            public final double score;
-
-            public EdgeScore(int edge, double score) {
-                this.edge = edge;
-                this.score = score;
-            }
+        record EdgeScore(int edge, double score) implements Comparable<EdgeScore> {
 
             @Override
             public int compareTo(@NotNull EdgeScore o) {
@@ -913,15 +907,14 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         }
 
         // Sort them.
-        
         EdgeScore[] score = scoreVec.toArray(EdgeScore[]::new);
         Arrays.sort(score);
 
         // Mark which edges to hide.
         boolean[] hasHiddenEdge = new boolean[f.length];
-        for(var edgeScore: score) {
+        for (var edgeScore : score) {
             Edge ed = e[edgeScore.edge];
-            if(hasHiddenEdge[ed.f1] || hasHiddenEdge[ed.f2]) {
+            if (hasHiddenEdge[ed.f1] || hasHiddenEdge[ed.f2]) {
                 continue;
             }
             hideEdge[edgeScore.edge] = true;
@@ -1040,7 +1033,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
      * Calculate the distance (in edges) between each vertex and the nearest selected vertex.
      */
     void findSelectionDistance() {
-        int i, j;
+        int i;
         TriangleMesh mesh = (TriangleMesh) getObject().getObject();
         int[] dist = new int[mesh.getVertices().length];
         Edge[] e = mesh.getEdges();
@@ -1076,7 +1069,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
 
         // Now extend this outward up to maxDistance.
         for (i = 0; i < maxDistance; i++) {
-            for (j = 0; j < e.length; j++) {
+            for (int j = 0; j < e.length; j++) {
                 if (hideEdge[j]) {
                     continue;
                 }
@@ -1124,7 +1117,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
     }
 
     private void skeletonDetachedChanged() {
-        for(var viewerCanvas: theView) {
+        for (var viewerCanvas : theView) {
             ((TriMeshViewer) viewerCanvas).setSkeletonDetached(((BCheckBoxMenuItem) skeletonMenuItem[6]).getState());
         }
     }
@@ -1377,25 +1370,25 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
 
         // Make sure this will still be a valid object.
         boolean multipleBreaks = false;
-        for(var vertex: vert) {
+        for (var vertex : vert) {
             int[] e = vertex.getEdges();
             int f;
             int fprev = edge[e[0]].f1;
             int breaks = 0;
-            for(int j = 1; j < e.length; j++) {
-                f = (edge[e[j]].f1 == fprev ? edge[e[j]].f2: edge[e[j]].f1);
-                if(f == -1) {
+            for (int j = 1; j < e.length; j++) {
+                f = (edge[e[j]].f1 == fprev ? edge[e[j]].f2 : edge[e[j]].f1);
+                if (f == -1) {
                     break;
                 }
-                if(!deleteFace[fprev] && deleteFace[f]) {
+                if (!deleteFace[fprev] && deleteFace[f]) {
                     breaks++;
                 }
                 fprev = f;
             }
-            if(!deleteFace[fprev] && (edge[e[0]].f2 == -1 || deleteFace[edge[e[0]].f1])) {
+            if (!deleteFace[fprev] && (edge[e[0]].f2 == -1 || deleteFace[edge[e[0]].f1])) {
                 breaks++;
             }
-            if(breaks > 1) {
+            if (breaks > 1) {
                 multipleBreaks = true;
             }
         }
@@ -1427,8 +1420,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                 newVertCount++;
             }
         }
-        for(boolean b: deleteFace) {
-            if(b) continue;
+        for (boolean b: deleteFace) {
+            if (b) continue;
             newFaceCount++;
         }
         Vertex[] v = new Vertex[newVertCount];
@@ -1494,12 +1487,12 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         newmesh.setParameterValues(newParamVal);
 
         // Copy over the smoothness values for edges.
-        for(var value: edge) {
+        for (var value : edge) {
             int r1 = newVertIndex[value.v1];
             int r2 = newVertIndex[value.v2];
-            if(r1 > -1) {
-                for(int j: newmesh.getVertex(r1).getEdges()) {
-                    if((r1 == newedge[j].v1 && r2 == newedge[j].v2) || (r1 == newedge[j].v2 && r2 == newedge[j].v1)) {
+            if (r1 > -1) {
+                for (int j : newmesh.getVertex(r1).getEdges()) {
+                    if ((r1 == newedge[j].v1 && r2 == newedge[j].v2) || (r1 == newedge[j].v2 && r2 == newedge[j].v1)) {
                         newedge[j].smoothness = value.smoothness;
                     }
                 }
@@ -1730,7 +1723,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
             // Add one "selected boundary" for every continuous run of selected edges.
 
             int start;
-            for (start = ints.length - 1; start > 0 && selected[ints[start]]; start--) ;
+            for (start = ints.length - 1; start > 0 && selected[ints[start]]; start--);
             List<Integer> current = null;
             int j = start;
             do {
@@ -1783,7 +1776,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         // For each boundary, add new faces to close it.
         int faceIndex = fc.length;
         int vertIndex = vt.length;
-        for(int[] ints: boundaryList) {
+        for (int[] ints : boundaryList) {
             if (ints.length < 2) {
                 continue;
             }
@@ -1794,7 +1787,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                 // Add a single new face spanning the two edges.
 
                 Face f = fc[ed0.f1];
-                int thirdVert = (ed0.v1 == ed1.v1 || ed0.v2 == ed1.v1 ? ed1.v2: ed1.v1);
+                int thirdVert = (ed0.v1 == ed1.v1 || ed0.v2 == ed1.v1 ? ed1.v2 : ed1.v1);
                 if ((f.v1 == ed0.v1 && f.v2 == ed0.v2) || (f.v2 == ed0.v1 && f.v3 == ed0.v2) || (f.v3 == ed0.v1 && f.v1 == ed0.v2)) {
                     newface[faceIndex++] = new int[]{ed0.v2, ed0.v1, thirdVert};
                 } else {
@@ -1804,11 +1797,11 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                 // Add a single vertex in the center, and faces surrounding it.
 
                 Vec3 center = new Vec3();
-                int j = (ed0.v1 == ed1.v1 || ed0.v1 == ed1.v2 ? ed0.v2: ed0.v1);
-                for(int index: ints) {
+                int j = (ed0.v1 == ed1.v1 || ed0.v1 == ed1.v2 ? ed0.v2 : ed0.v1);
+                for (int index : ints) {
                     center.add(vt[j].r);
                     Edge e = ed[index];
-                    j = (e.v1 == j ? e.v2: e.v1);
+                    j = (e.v1 == j ? e.v2 : e.v1);
                 }
                 if (closed) {
                     center.scale(1.0 / ints.length);
@@ -1817,7 +1810,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                     center.scale(1.0 / (ints.length + 1));
                 }
                 newvert[vertIndex] = center;
-                for(int index: ints) {
+                for (int index : ints) {
                     Edge e = ed[index];
                     Face f = fc[e.f1];
                     if ((f.v1 == e.v1 && f.v2 == e.v2) || (f.v2 == e.v1 && f.v3 == e.v2) || (f.v3 == e.v1 && f.v1 == e.v2)) {
@@ -1895,11 +1888,11 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         for (int i = 0; i < vt.length; i++) {
             newvt[i].smoothness = vt[i].smoothness;
         }
-        for(var edge: newed) {
-            if(edge.v1 >= vt.length || edge.v2 >= vt.length) {
+        for (var edge : newed) {
+            if (edge.v1 >= vt.length || edge.v2 >= vt.length) {
                 continue;
             }
-            for(Edge value: ed) {
+            for (var value : ed) {
                 if ((edge.v1 == value.v1 && edge.v2 == value.v2) || (edge.v1 == value.v2 && edge.v2 == value.v1)) {
                     edge.smoothness = value.smoothness;
                 }
@@ -2150,8 +2143,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                 for (int j = 0; j < oldval.length; j++) {
                     newval[j] = oldval[j];
                 }
-                if (param[i] == getFaceIndexParameter()) // The parameter added by the editor window to record face indices
-                {
+                if (param[i] == getFaceIndexParameter()) { // The parameter added by the editor window to record face indices
                     for (int j = oldval.length; j < newval.length; j++) {
                         newval[j] = j;
                     }
@@ -2182,11 +2174,11 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         for (int i = 0; i < vt.length; i++) {
             newvt[i].smoothness = vt[i].smoothness;
         }
-        for(var edge: newed) {
-            if(edge.v1 >= vt.length || edge.v2 >= vt.length) {
+        for (var edge : newed) {
+            if (edge.v1 >= vt.length || edge.v2 >= vt.length) {
                 continue;
             }
-            for(Edge value: ed) {
+            for (var value : ed) {
                 if ((edge.v1 == value.v1 && edge.v2 == value.v2) || (edge.v1 == value.v2 && edge.v2 == value.v1)) {
                     edge.smoothness = value.smoothness;
                 }
@@ -2246,8 +2238,8 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
                 vertexEdgeCount[edge.v2]++;
             }
         }
-        for(int k: vertexEdgeCount) {
-            if(k != 0 && k != 2) {
+        for (int k : vertexEdgeCount) {
+            if (k != 0 && k != 2) {
                 new BStandardDialog("", Translate.text("illegalExtract"), BStandardDialog.ERROR).showMessageDialog(this);
                 return;
             }
@@ -2413,7 +2405,7 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
             value = ed[i].smoothness;
         }
         value = 0.001f * (Math.round(value * 1000.0f));
-        smoothness = new ValueSlider(0.0, 1.0, 100, (double) value);
+        smoothness = new ValueSlider(0.0, 1.0, 100, value);
         smoothness.addEventLink(ValueChangedEvent.class, new Object() {
             void processEvent() {
                 processor.addEvent(new Runnable() {
@@ -2461,7 +2453,9 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         TriangleMesh theMesh = (TriangleMesh) objInfo.getObject();
 
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, theMesh.duplicate()));
-        for(BCheckBoxMenuItem bCheckBoxMenuItem: smoothItem) bCheckBoxMenuItem.setState(false);
+        for (var bCheckBoxMenuItem: smoothItem) {
+            bCheckBoxMenuItem.setState(false);
+        }
 
         smoothItem[method].setState(true);
         theMesh.setSmoothingMethod(method);
@@ -2492,11 +2486,11 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
             for (int j = 0; j < count.length; j++) {
                 count[j] = 0;
             }
-            for(var value: edge) {
-                if(dist[value.v1] == i && dist[value.v2] == i + 1) {
+            for (var value: edge) {
+                if (dist[value.v1] == i && dist[value.v2] == i + 1) {
                     count[value.v2]++;
                     delta[value.v2].add(delta[value.v1]);
-                } else if(dist[value.v2] == i && dist[value.v1] == i + 1) {
+                } else if (dist[value.v2] == i && dist[value.v1] == i + 1) {
                     count[value.v1]++;
                     delta[value.v1].add(delta[value.v2]);
                 }

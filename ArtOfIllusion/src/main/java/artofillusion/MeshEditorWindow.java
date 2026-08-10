@@ -78,7 +78,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
      * This is invoked to create each of the ViewerCanvases in the window.
      *
      * @param index the index of the canvas to create (from 0 to 3)
-     * @param controls the contain to which the canvas should add its controls
+     * @param controls the container to which the canvas should add its controls
      */
     @Override
     protected ViewerCanvas createViewerCanvas(int index, RowContainer controls) {
@@ -109,7 +109,9 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         displayMenu.add(displayItem[4] = Translate.checkboxMenuItem("transparentDisplay", event -> setViewMode(ViewerCanvas.RENDER_TRANSPARENT), view.getRenderMode() == ViewerCanvas.RENDER_TRANSPARENT));
         displayMenu.add(displayItem[5] = Translate.checkboxMenuItem("renderedDisplay", event -> setViewMode(ViewerCanvas.RENDER_RENDERED), view.getRenderMode() == ViewerCanvas.RENDER_RENDERED));
 
-        for(var di: displayItem) displayModesGroup.add(di.getComponent());
+        for (var di : displayItem) {
+            displayModesGroup.add(di.getComponent());
+        }
 
         if (getObject().getObject().canSetTexture()) {
             viewMenu.add(colorSurfaceMenu = createColorSurfaceMenu());
@@ -298,11 +300,11 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
 
     private void coordinateSystemChanged(WidgetEvent ev) {
         Widget source = ev.getWidget();
-        for(var bCheckBoxMenuItem: coordsItem) {
+        for (var bCheckBoxMenuItem : coordsItem) {
             bCheckBoxMenuItem.setState(source == bCheckBoxMenuItem);
         }
         lastUseWorldCoords = source == coordsItem[1];
-        for(var viewerCanvas: theView) {
+        for (var viewerCanvas : theView) {
             ((MeshViewer) viewerCanvas).setUseWorldCoords(lastUseWorldCoords);
         }
         savePreferences();
@@ -310,7 +312,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
     }
 
     protected final void toggleSceneVisible(ActionEvent event) {
-        var state = ((JCheckBoxMenuItem)event.getSource()).isSelected();
+        var state = ((JCheckBoxMenuItem) event.getSource()).isSelected();
         MeshViewer view = (MeshViewer) theView[currentView];
         view.setSceneVisible(lastShowScene[currentView] = state);
         savePreferences();
@@ -363,7 +365,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
      */
     public void setFreehand(boolean freehand) {
         lastFreehand = freehand;
-        for(var viewerCanvas: theView) {
+        for (var viewerCanvas : theView) {
             ((MeshViewer) viewerCanvas).setFreehandSelection(freehand);
         }
         savePreferences();
@@ -649,7 +651,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         theMesh.setVertexPositions(points);
 
         Optional.ofNullable(theMesh.getSkeleton()).ifPresent((Skeleton skeleton) -> {
-            for(var value: skeleton.getJoints()) {
+            for (var value : skeleton.getJoints()) {
                 value.coords.setOrigin(value.coords.getOrigin().minus(center));
             }
         });
@@ -784,11 +786,11 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
 
             VertexParameterValue xparamVal, yparamVal, zparamVal;
             double[] xvalList, yvalList, zvalList;
-            ValueField xfield;
-            ValueField yfield;
-            ValueField zfield;
+            ValueField xField;
+            ValueField yField;
+            ValueField zField;
 
-            public ResetButton() {
+            ResetButton() {
                 super(Translate.text("Reset"));
                 addEventLink(CommandEvent.class, this);
             }
@@ -797,15 +799,15 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
                 if (type == TextureParameter.X_COORDINATE) {
                     xparamVal = (VertexParameterValue) paramValue[index];
                     xvalList = xparamVal.getValue();
-                    xfield = field;
+                    xField = field;
                 } else if (type == TextureParameter.Y_COORDINATE) {
                     yparamVal = (VertexParameterValue) paramValue[index];
                     yvalList = yparamVal.getValue();
-                    yfield = field;
+                    yField = field;
                 } else if (type == TextureParameter.Z_COORDINATE) {
                     zparamVal = (VertexParameterValue) paramValue[index];
                     zvalList = zparamVal.getValue();
-                    zfield = field;
+                    zField = field;
                 }
             }
 
@@ -825,27 +827,27 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
                             xvalList[ind] = vert[ind].r.x;
                             if (Double.isNaN(xval)) {
                                 xval = vert[ind].r.x;
-                                xfield.setValue(xval);
+                                xField.setValue(xval);
                             } else if (xval != vert[ind].r.x) {
-                                xfield.setValue(Double.NaN);
+                                xField.setValue(Double.NaN);
                             }
                         }
                         if (yparamVal != null) {
                             yvalList[ind] = vert[ind].r.y;
                             if (Double.isNaN(yval)) {
                                 yval = vert[ind].r.y;
-                                yfield.setValue(yval);
+                                yField.setValue(yval);
                             } else if (yval != vert[ind].r.y) {
-                                yfield.setValue(Double.NaN);
+                                yField.setValue(Double.NaN);
                             }
                         }
                         if (zparamVal != null) {
                             zvalList[ind] = vert[ind].r.z;
                             if (Double.isNaN(zval)) {
                                 zval = vert[ind].r.z;
-                                zfield.setValue(zval);
+                                zField.setValue(zval);
                             } else if (zval != vert[ind].r.z) {
-                                zfield.setValue(Double.NaN);
+                                zField.setValue(Double.NaN);
                             }
                         }
                     }
@@ -1195,8 +1197,8 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         }
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_SKELETON, theMesh.getSkeleton(), theMesh.getSkeleton().duplicate()));
         s.deleteJoint(view.getSelectedJoint());
-        for(var viewerCanvas: theView) {
-            ((MeshViewer) viewerCanvas).setSelectedJoint(j.parent == null ? -1: j.parent.id);
+        for (var viewerCanvas : theView) {
+            ((MeshViewer) viewerCanvas).setSelectedJoint(j.parent == null ? -1 : j.parent.id);
         }
         updateImage();
         updateMenus();
@@ -1472,7 +1474,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         Scene theScene = getScene();
         class TreeElem extends ObjectTreeElement {
 
-            public TreeElem(ObjectInfo info, TreeElement parent, TreeList tree) {
+            TreeElem(ObjectInfo info, TreeElement parent, TreeList tree) {
                 super(info, parent, tree, false);
                 selectable = (info != ((MeshViewer) theView[currentView]).thisObjectInScene && info.getSkeleton() != null);
                 for (int i = 0; i < info.getChildren().length; i++) {
@@ -1490,6 +1492,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
                 return false;
             }
         }
+
         for (ObjectInfo info : theScene.getObjects()) {
             if (info.getParent() == null) {
                 tree.addElement(new TreeElem(info, null, tree));

@@ -37,7 +37,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
 
     final LayoutWindow window;
     final Scene scene;
-    
+
     private final TreeList theList;
     final TimeAxis theAxis;
     private final List<TrackDisplay> graphs;
@@ -252,14 +252,17 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
 
         for (SelectionInfo item : newSelection) {
             int j;
-            for (j = 0; j < selection.length; j++)
+            for (j = 0; j < selection.length; j++) {
                 if (item.key == selection[j].key) {
-                    for (int k = 0; k < item.selected.length; k++)
+                    for (int k = 0; k < item.selected.length; k++) {
                         selection[j].selected[k] |= item.selected[k];
+                    }
                     break;
                 }
-            if (j == selection.length)
+            }
+            if (j == selection.length) {
                 currentSelection.add(item);
+            }
         }
 
         selection = currentSelection.toArray(SelectionInfo[]::new);
@@ -273,7 +276,9 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         List<SelectionInfo> filtered = new Vector<>();
 
         for (SelectionInfo selectionInfo : selection) {
-            if (selectionInfo.key == key) continue;
+            if (selectionInfo.key == key) {
+                continue;
+            }
             filtered.add(selectionInfo);
         }
         selection = filtered.toArray(SelectionInfo[]::new);
@@ -329,7 +334,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
             el.addTracks();
         }
 
-        for(TreeElement treeElement: allEl) {
+        for (TreeElement treeElement : allEl) {
             TreeElement el = theList.findElement(treeElement.getObject());
             if (el == null) {
                 continue;
@@ -339,7 +344,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         }
 
         allEl = theList.getElements();
-        for(TreeElement treeElement: allEl) {
+        for (TreeElement treeElement : allEl) {
             treeElement.setSelectable(treeElement instanceof TrackTreeElement);
         }
         theList.setUpdateEnabled(true);
@@ -557,8 +562,8 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         List<SelectionInfo> v = new Vector<>();
         Track[] sel = getSelectedTracks();
 
-        for(SelectionInfo selectionInfo: selection) {
-            for(Track track: sel) {
+        for (SelectionInfo selectionInfo : selection) {
+            for (Track track : sel) {
                 if (selectionInfo.track == track) {
                     v.add(selectionInfo);
                     break;
@@ -585,7 +590,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      */
     public void tracksModified(boolean updateScene) {
         graphs.forEach(td -> {
-            if(td instanceof TrackGraph gi) {
+            if (td instanceof TrackGraph gi) {
                 gi.tracksModified();
             } else {
                 ((Widget) td).repaint();
@@ -598,13 +603,15 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
 
         // Find the list of tracks with selected keyframes.
         List<Track> v = new Vector<>();
-        for(var selectionInfo: selection) {
-            if (v.contains(selectionInfo.track)) continue;
+        for (var selectionInfo : selection) {
+            if (v.contains(selectionInfo.track)) {
+                continue;
+            }
             v.add(selectionInfo.track);
         }
 
         // Now update them.
-        for(Track tr: v) {
+        for (Track tr : v) {
             Object parent = tr.getParent();
             while (parent != null && parent instanceof Track) {
                 parent = ((Track) parent).getParent();
@@ -620,7 +627,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
      * Repaint all of the graphs.
      */
     public void repaintGraphs() {
-        for(TrackDisplay trackDisplay: graphs) {
+        for (TrackDisplay trackDisplay : graphs) {
             Widget gr = (Widget) trackDisplay;
             gr.repaint();
             if (gr instanceof TrackGraph graph) {
@@ -682,7 +689,9 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
             return;
         }
         theList.setYOffset(-pos);
-        for (TrackDisplay graph : graphs) graph.setYOffset(-pos);
+        for (TrackDisplay graph : graphs) {
+            graph.setYOffset(-pos);
+        }
 
         theList.repaint();
         repaintGraphs();
@@ -776,7 +785,7 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         UndoRecord undo = new UndoRecord(window);
         List<ObjectInfo> owners = new Vector<>();
 
-        for(Object o: sel) {
+        for (Object o : sel) {
             if (o instanceof Track tr) {
                 Object parent = tr.getParent();
                 while (parent instanceof Track) {
@@ -860,7 +869,9 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
                 }
                 undo.addCommand(UndoRecord.SET_TRACK, info, j, tr.duplicate(info));
                 Keyframe k = tr.setKeyframeIfModified(time);
-                if (k == null) continue;
+                if (k == null) {
+                    continue;
+                }
 
                 newKeys.add(new SelectionInfo(tr, k));
                 if (tr instanceof PositionTrack pt) {
@@ -917,7 +928,9 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         rebuildList();
         for (Track track : addedTrack) {
             TreeElement el = theList.findElement(track);
-            if (el == null) continue;
+            if (el == null) {
+                continue;
+            }
             el.setSelected(true);
         }
         repaintGraphs();
@@ -957,11 +970,13 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         int[] sel = window.getSelectedIndices();
 
         theList.setUpdateEnabled(false);
-        for(int k: sel) {
+        for (int k : sel) {
             ObjectInfo info = theScene.getObject(k);
             TreeElement el = theList.findElement(info);
-            if (el == null) continue;
-            for(int j = 0; j < el.getNumChildren(); j++) {
+            if (el == null) {
+                continue;
+            }
+            for (int j = 0; j < el.getNumChildren(); j++) {
                 theList.setSelected(el.getChild(j), true);
             }
         }
@@ -1005,14 +1020,16 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
             for (ObjectInfo info : Score.filterTargets(obj)) {
                 if (trackClass == PoseTrack.class) {
                     Object3D posable = info.getObject().getPosableObject();
-                    if (posable == null)
+                    if (posable == null) {
                         continue;
+                    }
                     if (posable != info.getObject()) {
                         String[] options = new String[]{Translate.text("Yes"), Translate.text("No")};
                         BStandardDialog dlg = new BStandardDialog("", UIUtilities.breakString(Translate.text("mustConvertToActor", info.getName())), BStandardDialog.QUESTION);
                         int choice = dlg.showOptionDialog(window, options, options[0]);
-                        if (choice == 1)
+                        if (choice == 1) {
                             continue;
+                        }
                         scene.replaceObject(info.getObject(), posable, undo);
                     }
                 }
@@ -1152,7 +1169,9 @@ public class Score extends BorderContainer implements EditingWindow, PopupMenuMa
         }
         if (mode != modeTools.getSelection()) {
             mode = modeTools.getSelection();
-            for (TrackDisplay graph : graphs) graph.setMode(mode);
+            for (TrackDisplay graph : graphs) {
+                graph.setMode(mode);
+            }
             setHelpText(MODE_HELP_TEXT[mode]);
         }
     }

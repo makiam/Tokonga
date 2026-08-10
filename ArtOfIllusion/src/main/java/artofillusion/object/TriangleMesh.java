@@ -2947,7 +2947,7 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
         for (int i = 0; i < norm.length; i++) {
             norm[i] = new Vec3();
         }
-        for(var value: face) {
+        for (var value: face) {
             Vec3 edge1 = vertex[value.v2].r.minus(vertex[value.v1].r);
             Vec3 edge2 = vertex[value.v3].r.minus(vertex[value.v1].r);
             Vec3 edge3 = vertex[value.v3].r.minus(vertex[value.v2].r);
@@ -2985,7 +2985,9 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
             norm[value.v2].add(faceNorm.times(Math.acos(dot2)));
             norm[value.v3].add(faceNorm.times(Math.acos(dot3)));
         }
-        for(var vec3: norm) vec3.normalize();
+        for (var vec3: norm) {
+            vec3.normalize();
+        }
         return norm;
     }
 
@@ -3178,7 +3180,7 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
                 numEdges[swapVert[best][3]]++;
                 for (int i = 0; i < 4; i++) {
                     int[] vertEdges = vertex[swapVert[best][i]].getEdges();
-                    for(int vertEdge: vertEdges) {
+                    for (int vertEdge : vertEdges) {
                         if (candidate[vertEdge]) {
                             score[vertEdge] = calcSwapScore(minAngle[vertEdge], swapVert[vertEdge], numEdges, onBoundary);
                         }
@@ -3187,35 +3189,37 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
             }
 
             // We now know which edges we want to swap.  Create the new mesh.
-            int[][] newface = new int[face.length][];
+            int[][] newFace = new int[face.length][];
             int next = 0;
-            for(Face f: face) {
-                if (!swap[f.e1] && !swap[f.e2] && !swap[f.e3]) {
-                    newface[next++] = new int[]{f.v1, f.v2, f.v3};
+            for (Face f : face) {
+                if (swap[f.e1] || swap[f.e2] || swap[f.e3]) {
+                    continue;
                 }
+                newFace[next++] = new int[]{f.v1, f.v2, f.v3};
             }
             int firstSplit = next;
             for (int i = 0; i < edge.length; i++) {
                 if (swap[i]) {
-                    newface[next++] = new int[]{swapVert[i][2], swapVert[i][0], swapVert[i][3]};
-                    newface[next++] = new int[]{swapVert[i][2], swapVert[i][3], swapVert[i][1]};
+                    newFace[next++] = new int[]{swapVert[i][2], swapVert[i][0], swapVert[i][3]};
+                    newFace[next++] = new int[]{swapVert[i][2], swapVert[i][3], swapVert[i][1]};
                 }
             }
-            newmesh = new TriangleMesh(vertex, newface);
+            newmesh = new TriangleMesh(vertex, newFace);
 
             // Copy over edge smoothness values.
             Vertex[] newvert = (Vertex[]) newmesh.getVertices();
             Edge[] newedge = newmesh.getEdges();
             for (int i = 0; i < edge.length; i++) {
-                if (!swap[i] && edge[i].smoothness != 1.0) {
-                    int[] edges2 = newvert[edge[i].v1].getEdges();
-                    Edge e1 = edge[i];
-                    for(int j: edges2) {
-                        Edge e2 = newedge[j];
-                        if ((e1.v1 == e2.v1 && e1.v2 == e2.v2) || (e1.v1 == e2.v2 && e1.v2 == e2.v1)) {
-                            e2.smoothness = e1.smoothness;
-                            break;
-                        }
+                if (swap[i] || edge[i].smoothness == 1.0) {
+                    continue;
+                }
+                int[] edges2 = newvert[edge[i].v1].getEdges();
+                Edge e1 = edge[i];
+                for (int j : edges2) {
+                    Edge e2 = newedge[j];
+                    if ((e1.v1 == e2.v1 && e1.v2 == e2.v2) || (e1.v1 == e2.v2 && e1.v2 == e2.v1)) {
+                        e2.smoothness = e1.smoothness;
+                        break;
                     }
                 }
             }
@@ -3269,7 +3273,7 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
      */
     public void autosmoothMeshEdges(double angle) {
         double cutoff = Math.cos(angle);
-        for(Edge value: edge) {
+        for (Edge value : edge) {
             if (value.f2 == -1) {
                 value.smoothness = 1.0f;
                 continue;
