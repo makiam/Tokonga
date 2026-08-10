@@ -1,12 +1,12 @@
 /*
  *  Copyright (C) 2007 by François Guillet
  *  Modifications Copyright (C) 2019 by Petri Ihalainen
- *  Changes copyright (C) 2023-2025 by Maksim Khramov
- *  This program is free software; you can redistribute it and/or modify it under the 
- *  terms of the GNU General Public License as published by the Free Software 
- *  Foundation; either version 2 of the License, or (at your option) any later version. 
- *  This program is distributed in the hope that it will be useful, but WITHOUT ANY 
- *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ *  Changes copyright (C) 2023-2026 by Maksim Khramov
+ *  This program is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later version.
+ *  This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  *  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  */
 
@@ -22,9 +22,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.awt.*;
-
 import java.util.ArrayList;
-
+import java.util.List;
 /**
  * Manipulator used to manipulate mesh pieces
  *
@@ -64,13 +63,15 @@ public class UVMappingManipulator {
     private boolean draggingHandle;
     private int anchor; //index of the anchor vertex, when set using ctrl drag center handle
     private boolean globalScaling; //true if the user moves all pieces at once (shift right drag)
-    private boolean globalMoving;//true if the user scales all pieces at once(ctrl right drag)
+    private boolean globalMoving; //true if the user scales all pieces at once(ctrl right drag)
     private boolean[] curSelection;
-    private final ArrayList<Integer> selection;
-    public final static short U_MOVE = 0;
-    public final static short U_SCALE = 1;
-    public final static short V_MOVE = 2;
-    public final static short V_SCALE = 3;
+    private final List<Integer> selection;
+
+    public static final short U_MOVE = 0;
+    public static final short U_SCALE = 1;
+    public static final short V_MOVE = 2;
+    public static final short V_SCALE = 3;
+
     private static final int HANDLE_SIZE = 12;
     private static final int IMAGE_MARGIN = 6;
     private static final int CENTER_HANDLE = 0;
@@ -439,8 +440,8 @@ public class UVMappingManipulator {
                     break;
 
                 case ROTATE_HANDLE:
-                    if (numSel < 2) // Drawing the rotation sector to just one vertex would seem silly
-                    {
+                    if (numSel < 2) {
+                        // Drawing the rotation sector to just one vertex would seem silly
                         return;
                     }
                     Vec2 disp = new Vec2(currentPt.x - click.x, currentPt.y - click.y);

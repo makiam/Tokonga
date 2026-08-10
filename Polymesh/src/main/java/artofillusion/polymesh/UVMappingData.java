@@ -91,9 +91,9 @@ public class UVMappingData {
             int numTex = scene.getNumTextures();
             out.writeInt(textures.size());
 
-            for(Integer texture: textures) {
+            for (var texture : textures) {
                 boolean found = false;
-                for(int j = 0; j < numTex; j++) {
+                for (int j = 0; j < numTex; j++) {
                     tex = scene.getTexture(j);
                     if (tex.getID() == texture.intValue()) {
                         out.writeInt(j);
@@ -107,9 +107,11 @@ public class UVMappingData {
             }
 
             out.writeInt(v.length);
-            for(Vec2[] vec2s: v) {
+            for (Vec2[] vec2s : v) {
                 out.writeInt(vec2s.length);
-                for(Vec2 vec2: vec2s) vec2.writeToFile(out);
+                for (Vec2 vec2 : vec2s) {
+                    vec2.writeToFile(out);
+                }
             }
             out.writeInt(edgeColor.getRed());
             out.writeInt(edgeColor.getGreen());
@@ -204,11 +206,15 @@ public class UVMappingData {
     public void writeToFile(DataOutputStream out, Scene scene) throws IOException {
         out.writeShort(0);
         out.writeInt(meshes.length);
-        for(UnfoldedMesh mesh: meshes) mesh.writeToFile(out);
+        for (UnfoldedMesh mesh : meshes) {
+            mesh.writeToFile(out);
+        }
 
         out.writeInt(mappings.size());
-        for(UVMeshMapping mapping: mappings) mapping.writeToFile(out, scene);
-        
+        for (UVMeshMapping mapping : mappings) {
+            mapping.writeToFile(out, scene);
+        }
+
         out.writeInt(sampling);
     }
 
@@ -269,8 +275,10 @@ public class UVMappingData {
         for (int i = 0; i < meshes.length; i++) {
             int count = 0;
             UnfoldedVertex[] vert = meshes[i].vertices;
-            for(UnfoldedVertex unfoldedVertex: vert) {
-                if (unfoldedVertex.id == -1) continue;
+            for (UnfoldedVertex unfoldedVertex : vert) {
+                if (unfoldedVertex.id == -1) {
+                    continue;
+                }
                 count++;
             }
             displayed[i] = count;

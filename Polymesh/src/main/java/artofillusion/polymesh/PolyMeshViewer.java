@@ -194,7 +194,9 @@ public class PolyMeshViewer extends MeshViewer {
             }
         }
         // Now draw manipulators
-        for(Manipulator manipulator: manipulatorArray) manipulator.draw();
+        for (Manipulator manipulator : manipulatorArray) {
+            manipulator.draw();
+        }
     }
 
     /**
@@ -289,13 +291,17 @@ public class PolyMeshViewer extends MeshViewer {
         boolean mirror = false;
         int[] invVertTable = mesh.getInvMirroredVertices();
 
-        if (mesh.getMirrorState() != PolyMesh.NO_MIRROR) mirror = true;
+        if (mesh.getMirrorState() != PolyMesh.NO_MIRROR) {
+            mirror = true;
+        }
 
 
         int handleSize = mesh.getHandleSize();
         for (int i = 0; i < screenVert.length; i++) {
 
-            if(!visible[i]) continue;
+            if (!visible[i]) {
+                continue;
+            }
 
             int ref = mirror ? invVertTable[i] : i;
             Color color = selected[ref] ? selectedVertColor : vertColor;
@@ -379,7 +385,7 @@ public class PolyMeshViewer extends MeshViewer {
             for (int i = 0; i < trueFaces.length; i++) {
                 int[] fe = mesh.getFaceEdges(trueFaces[i]);
                 if (selected[i]) {
-                    for(int value: fe) {
+                    for (int value : fe) {
                         int k = value;
                         if (k >= trueEdges.length / 2) {
                             k = trueEdges[k].hedge;
@@ -579,7 +585,7 @@ public class PolyMeshViewer extends MeshViewer {
     protected void mouseMoved(WidgetMouseEvent e) {
         activeTool = currentTool;
         if (activeTool instanceof AdvancedEditingTool) {
-            for(var manipulator: manipulatorArray) {
+            for (var manipulator : manipulatorArray) {
                 if (manipulator.mouseMoved(e)) {
                     return;
                 }
@@ -632,9 +638,9 @@ public class PolyMeshViewer extends MeshViewer {
         // Left button actions
         activeTool = currentTool;
 
-        if(activeTool instanceof AdvancedEditingTool) {
-            for(Manipulator manipulator: manipulatorArray) {
-                if(manipulator.mousePressed(e)) {
+        if (activeTool instanceof AdvancedEditingTool) {
+            for (Manipulator manipulator : manipulatorArray) {
+                if (manipulator.mousePressed(e)) {
                     dragging = true;
                     return;
                 }
@@ -1235,7 +1241,7 @@ public class PolyMeshViewer extends MeshViewer {
 
                 int[] vf = viewMesh.getFaceVertices(fc[i]);
                 boolean whole = true;
-                for(int k: vf) {
+                for (int k : vf) {
                     whole |= visible[k];
                 }
                 if (!whole) {
@@ -1248,7 +1254,7 @@ public class PolyMeshViewer extends MeshViewer {
 
                 polygon = new Polygon();
                 Vec3 bary = new Vec3();
-                for(int k: vf) {
+                for (int k : vf) {
                     vv = k;
                     polygon.addPoint(screenVert[vv].x, screenVert[vv].y);
                     bary.add(vt[vv].r);
@@ -1284,7 +1290,7 @@ public class PolyMeshViewer extends MeshViewer {
     }
 
     protected void keyPressed(KeyPressedEvent e) {
-        for(Manipulator manipulator: manipulatorArray) {
+        for (Manipulator manipulator : manipulatorArray) {
             if (manipulator.keyPressed(e)) {
                 return;
             }
@@ -1293,7 +1299,9 @@ public class PolyMeshViewer extends MeshViewer {
 
     @Override
     public void setPerspective(boolean perspective) {
-        for(var manipulator: manipulatorArray) manipulator.setPerspective(perspective);
+        for (var manipulator: manipulatorArray) {
+            manipulator.setPerspective(perspective);
+        }
         super.setPerspective(perspective);
     }
 
@@ -1359,7 +1367,9 @@ public class PolyMeshViewer extends MeshViewer {
 
     private boolean isFaceVisible(int index) {
         boolean visibleOnly = (controller instanceof PolyMeshEditorWindow ? ((PolyMeshEditorWindow) controller).isFrontSelectionOn() : false);
-        if (!visibleOnly) return true;
+        if (!visibleOnly) {
+            return true;
+        }
 
         Vec3 viewDir = getCamera().getViewToWorld().timesDirection(Vec3.vz());
         PolyMesh mesh = (PolyMesh) getController().getObject().getObject();

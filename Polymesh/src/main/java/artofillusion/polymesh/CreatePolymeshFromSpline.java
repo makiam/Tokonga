@@ -28,7 +28,9 @@ public final class CreatePolymeshFromSpline implements UndoableEdit {
     @Override
     public void undo() {
         var ii = layout.getScene().getObjects().indexOf(item);
-        if(ii == -1) return;
+        if (ii == -1) {
+            return;
+        }
         layout.removeObject(ii, null);
     }
 

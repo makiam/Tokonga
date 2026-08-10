@@ -19,7 +19,9 @@ public class PMAssetsWatcher implements Plugin {
     @Override
     public void onApplicationStarting() {
         var path = Paths.get(ArtOfIllusion.PLUGIN_DIRECTORY, "PolyMeshTemplates");
-        if(Files.exists(path)) return;
+        if (Files.exists(path)) {
+            return;
+        }
         path.toFile().mkdirs();
     }
 }

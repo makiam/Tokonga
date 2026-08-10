@@ -254,9 +254,9 @@ public class MeshUnfolder {
             int anglesIndex = i * 3;
             double alpha = angles[anglesIndex];
             addToConstraints(constraints, i, face.v1, face.v2, face.v3, alpha, ntri, nint);
-            alpha = angles[anglesIndex+1];
+            alpha = angles[anglesIndex + 1];
             addToConstraints(constraints, i, face.v2, face.v3, face.v1, alpha, ntri, nint);
-            alpha = angles[anglesIndex+2];
+            alpha = angles[anglesIndex + 2];
             addToConstraints(constraints, i, face.v3, face.v1, face.v2, alpha, ntri, nint);
 
             addToMatTMat(newMat, newMatTMat, i, face.v1, face.v2, face.v3, anglesIndex, ntri, nint);
@@ -477,7 +477,7 @@ public class MeshUnfolder {
     }
 
     private void addToConstraints(double[] constraints, int faceIndex, int v1, int v2, int v3, double alpha, int ntri, int nint) {
-        
+
         double lsa = Math.log(Math.sin(alpha));
         int interiorVertV1 = invInteriorTable[v1];
         int interiorVertV2 = invInteriorTable[v2];
@@ -666,10 +666,7 @@ public class MeshUnfolder {
                         break;
 
                 }
-//			v1 = faces[i].v1;
-//			v2 = faces[i].v2;
-//			v3 = faces[i].v3;
-                //System.out.println(v1 + " " + v2 + " " +v3 + " " + a1 + " " + a2 + " " + a3);
+
                 s = Math.sin(a2); // / Math.sin(a3);
                 cs1 = s * Math.cos(a1);
                 sn1 = s * Math.sin(a1);
@@ -774,15 +771,12 @@ public class MeshUnfolder {
         }
         DenseVector vsol = new DenseVector(nvars);
         SparseVector mtb = new SparseVector(nvars);
-        //for (int i = 0; i < 6*faces.length; i++)
-        //	System.out.println("b("+i+") : "+b.get(i));
+
         mtb = (SparseVector) mat.transMult(b, mtb);
-        //for (int i = 0; i < nvars; i++)
-        //	System.out.println("righthand("+i+") : "+mtb.get(i));
+
         CG qmr = new CG(mtb);
         qmr.solve(matTmat, mtb, vsol);
-        //for (int i = 0; i < nvars; i++)
-        //	System.out.println("sol("+i+") : "+vsol.get(i));
+
         Vec2 center = new Vec2();
         for (int i = 2; i < vertices.length; i++) {
             vertices[i].r.x = vsol.get((i - 2) * 2);
@@ -803,7 +797,7 @@ public class MeshUnfolder {
         if (!leftHanded) {
             center.y *= -1;
         }
-        for(var vertex: vertices) {
+        for (var vertex : vertices) {
             if (!leftHanded) {
                 vertex.r.y *= -1;
             }
@@ -816,28 +810,28 @@ public class MeshUnfolder {
      * Given an edge and a face, this method checks the 3rd vertex as being
      * unfolded if's not already checked
      */
-    private void computeFace(int e, int f, UnfoldedEdge[] uedges, UnfoldedFace[] ufaces, boolean[] unfoldedFace, boolean[] unfoldedVerts,
+    private void computeFace(int e, int f, UnfoldedEdge[] uEdges, UnfoldedFace[] uFaces, boolean[] unfoldedFace, boolean[] unfoldedVerts,
             List<Integer> vertList, List<Integer> faceList) {
         int v1, v2, v3;
-        v1 = ufaces[f].v1;
-        v2 = ufaces[f].v2;
-        v3 = ufaces[f].v3;
-        if ((uedges[e].v1 == v1 && uedges[e].v2 == v2) || (uedges[e].v1 == v2 && uedges[e].v2 == v1)) {
+        v1 = uFaces[f].v1;
+        v2 = uFaces[f].v2;
+        v3 = uFaces[f].v3;
+        if ((uEdges[e].v1 == v1 && uEdges[e].v2 == v2) || (uEdges[e].v1 == v2 && uEdges[e].v2 == v1)) {
             // add v3
-            if (!unfoldedVerts[ufaces[f].v3]) {
-                unfoldedVerts[ufaces[f].v3] = true;
+            if (!unfoldedVerts[uFaces[f].v3]) {
+                unfoldedVerts[uFaces[f].v3] = true;
                 vertList.add(v3);
             }
-        } else if ((uedges[e].v1 == v2 && uedges[e].v2 == v3) || (uedges[e].v1 == v3 && uedges[e].v2 == v2)) {
-            if (!unfoldedVerts[ufaces[f].v1]) {
+        } else if ((uEdges[e].v1 == v2 && uEdges[e].v2 == v3) || (uEdges[e].v1 == v3 && uEdges[e].v2 == v2)) {
+            if (!unfoldedVerts[uFaces[f].v1]) {
                 // add v1
-                unfoldedVerts[ufaces[f].v1] = true;
+                unfoldedVerts[uFaces[f].v1] = true;
                 vertList.add(v1);
             }
         } else {
-            if (!unfoldedVerts[ufaces[f].v2]) {
+            if (!unfoldedVerts[uFaces[f].v2]) {
                 // add v2
-                unfoldedVerts[ufaces[f].v2] = true;
+                unfoldedVerts[uFaces[f].v2] = true;
                 vertList.add(v2);
             }
         }

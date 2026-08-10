@@ -5,8 +5,8 @@ This program is free software; you can redistribute it and/or modify it under th
 terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY 
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.polymesh;
@@ -214,7 +214,7 @@ public class PMCreateFaceTool extends EditingTool {
                     vppt = new Point((int) Math.round(vp.x), (int) Math.round(vp.y));
                     view.drawLine(vpp, vppt, Color.black);
                 }
-                for(var clickPoint: clickPoints) {
+                for (var clickPoint : clickPoints) {
                     vp = canvas.getCamera().getObjectToScreen().timesXY(clickPoint);
                     vpp = new Point((int) Math.round(vp.x), (int) Math.round(vp.y));
                     view.drawBox(vpp.x - PolyMeshViewer.HANDLE_SIZE / 2, vpp.y - PolyMeshViewer.HANDLE_SIZE / 2, PolyMeshViewer.HANDLE_SIZE, PolyMeshViewer.HANDLE_SIZE, Color.red);

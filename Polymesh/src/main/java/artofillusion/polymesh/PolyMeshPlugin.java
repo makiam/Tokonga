@@ -83,10 +83,12 @@ public class PolyMeshPlugin implements Plugin {
             BStandardDialog dlg = new BStandardDialog(Translate.text("polymesh:triangleToPolyTitle"), Translate.text("polymesh:convertToQuads"), BStandardDialog.QUESTION);
             String[] options = new String[]{Translate.text("polymesh:findQuadsDistance"), Translate.text("polymesh:findQuadsAngular"), Translate.text("polymesh:keepTriangles")};
 
-            //NB!!! optionDefault is not match to any option button defined above... 
+            //NB!!! optionDefault is not match to any option button defined above...
             String optionDefault = Translate.text("polymesh:convertToQuads");
             var objects = window.getSelectedObjects();
-            if(objects.isEmpty()) return;
+            if (objects.isEmpty()) {
+                return;
+            }
 
             CompoundUndoableEdit convert = new CompoundUndoableEdit();
 

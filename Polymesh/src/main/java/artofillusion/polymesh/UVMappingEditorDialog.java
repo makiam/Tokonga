@@ -3,11 +3,11 @@
  *  Modifications Copyright (C) 2019 by Petri Ihalainen
  *  Changes copyright (C) 2022-2026 by Maksim Khramov
 
- *  This program is free software; you can redistribute it and/or modify it under the 
- *  terms of the GNU General Public License as published by the Free Software 
- *  Foundation; either version 2 of the License, or (at your option) any later version. 
- *  This program is distributed in the hope that it will be useful, but WITHOUT ANY 
- *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ *  This program is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later version.
+ *  This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  *  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  */
 
@@ -165,8 +165,8 @@ public class UVMappingEditorDialog extends BDialog {
         if (texList != null) {
             for (int i = 0; i < texList.size(); i++) {
                 boolean hasTexture = false;
-                for (int j = 0; j < mappingData.mappings.size(); j++) {
-                    for(Integer texture: mappingData.mappings.get(j).textures) {
+                for (var cmap : mappingData.mappings) {
+                    for (var texture : cmap.textures) {
                         if (getTextureFromID(texture) == i) {
                             hasTexture = true;
                         }
@@ -282,7 +282,9 @@ public class UVMappingEditorDialog extends BDialog {
         div.setContinuousLayout(true);
         content.add(div, BorderContainer.CENTER, new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, new Insets(2, 2, 2, 2), new Dimension(0, 0)));
 
-        for(var unfoldedMesh: mappingData.getMeshes()) pieceList.add(unfoldedMesh.getName());
+        for (var unfoldedMesh : mappingData.getMeshes()) {
+            pieceList.add(unfoldedMesh.getName());
+        }
 
         pieceList.setMultipleSelectionEnabled(false);
         pieceList.setSelected(0, true);
@@ -355,8 +357,8 @@ public class UVMappingEditorDialog extends BDialog {
 
         pack();
 
-        // This was entirely unexpected: The next four lines seem to bring the crazy pane split  
-        // sizes back to their senses. The size increase needs to be at least 2x2 pixels. 
+        // This was entirely unexpected: The next four lines seem to bring the crazy pane split
+        // sizes back to their senses. The size increase needs to be at least 2x2 pixels.
         // Without this the window split is badly off, zoom center may be outside the canvas etc...
         // - Q: Is this platform dependent? Via the look and feel and hence the frame sizes?
         // - To consider: WindowResizedEvent to launch recalculation of the sizes.
@@ -448,18 +450,18 @@ public class UVMappingEditorDialog extends BDialog {
 
 
     private void doShowSelection(ActionEvent event) {
-        boolean state = ((JCheckBoxMenuItem)event.getSource()).getState();
+        boolean state = ((JCheckBoxMenuItem) event.getSource()).getState();
         preview.setShowSelection(state);
         mappingCanvas.setSelection(mappingCanvas.getSelection());
     }
 
     private void toggleBoldEdgesAction(ActionEvent event) {
-        boolean state = ((JCheckBoxMenuItem)event.getSource()).getState();
+        boolean state = ((JCheckBoxMenuItem) event.getSource()).getState();
         mappingCanvas.setBoldEdges(state);
     }
 
     private void toggleLiveUpdateAction(ActionEvent event) {
-        boolean state = ((JCheckBoxMenuItem)event.getSource()).getState();
+        boolean state = ((JCheckBoxMenuItem) event.getSource()).getState();
         preview.setShowSelection(state);
         manipulator.setLiveUpdate(state);
     }
@@ -940,7 +942,7 @@ public class UVMappingEditorDialog extends BDialog {
                 exportDialog.useMappingColor(),
                 exportDialog.textureOnly());
 
-        // Let's make sure it is .png. This could be more sophisticated, 
+        // Let's make sure it is .png. This could be more sophisticated,
         // but at least it eliminates mistakes
         String fullPath = outputFile.getAbsolutePath();
         boolean extensionChanged = false;
@@ -1024,9 +1026,9 @@ public class UVMappingEditorDialog extends BDialog {
             for (int i = 0; i < meshes.length; i++) {
                 Vec2[] v = currentMapping.v[i];
 
-                for(UnfoldedEdge unfoldedEdge: meshes[i].getEdges()) {
-                    if (unfoldedEdge.hidden) // What is this? Need another user choice?
-                    {
+                for (UnfoldedEdge unfoldedEdge : meshes[i].getEdges()) {
+                    if (unfoldedEdge.hidden) {
+                        // What is this? Need another user choice?
                         continue;
                     }
                     g.draw(new Line2D.Double(v[unfoldedEdge.v1].x, v[unfoldedEdge.v1].y, v[unfoldedEdge.v2].x, v[unfoldedEdge.v2].y));
@@ -1327,7 +1329,8 @@ public class UVMappingEditorDialog extends BDialog {
             super(parent, true);
             this.getComponent().addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override
-                public void windowClosing(java.awt.event.WindowEvent evt) {dispose();
+                public void windowClosing(java.awt.event.WindowEvent evt) {
+                    dispose();
                 }
             });
 

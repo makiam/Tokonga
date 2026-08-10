@@ -40,8 +40,7 @@ import java.awt.event.KeyEvent;
  * This is the manipulator responsible for moving, resizing and rotating selections (2D).
  * SSMR = Select Scale Move Rotate
  */
-public class SSMR3DManipulator
-        extends SSMRManipulator {
+public class SSMR3DManipulator extends SSMRManipulator {
 
     private final Rectangle[] boxes;
     private Rectangle extraUVBox;
@@ -267,8 +266,8 @@ public class SSMR3DManipulator
             Polygon p = new Polygon(x, y, x.length);
             view.drawShape(p, Color.darkGray);
             view.fillShape(p, Color.gray);
-        } //draw scale feedback if appropriate
-        else if (dragging && (handle == X_SCALE || handle == Y_SCALE || handle == Z_SCALE)) {
+        } else if (dragging && (handle == X_SCALE || handle == Y_SCALE || handle == Z_SCALE)) {
+            //draw scale feedback if appropriate
             Vec3 pos = null;
             Vec3 handlePos = null;
             Vec2 screenPos;
@@ -323,8 +322,8 @@ public class SSMR3DManipulator
             screenHandle = cam.getObjectToScreen().timesXY(handlePos);
             view.drawLine(centerPoint, new Point((int) screenPos.x, (int) screenPos.y), Color.black);
             view.drawImage(ghostScale, (int) (screenHandle.x - HANDLE_SIZE / 2), (int) (screenHandle.y - HANDLE_SIZE / 2));
-        } //center drag
-        else if (dragging && handle == CENTER) {
+        } else if (dragging && handle == CENTER) {
+            //center drag
             view.drawImage(centerHandle, centerLocation.x - HANDLE_SIZE / 2, centerLocation.y - HANDLE_SIZE / 2);
 
         }
@@ -407,11 +406,11 @@ public class SSMR3DManipulator
                 break;
         }
 
-        for(RotationHandle rotHandle: rotHandles) {
-            for(int j = 0; j < rotHandle.points3d.length; j++) {
+        for (RotationHandle rotHandle : rotHandles) {
+            for (int j = 0; j < rotHandle.points3d.length; j++) {
                 rotHandle.points2d[j] = cam.getObjectToScreen().timesXY(center.plus(rotHandle.points3d[j].times(len)));
             }
-            for(int j = 0; j < rotHandle.points3d.length - 1; j++) {
+            for (int j = 0; j < rotHandle.points3d.length - 1; j++) {
                 view.drawLine(new Point((int) rotHandle.points2d[j].x, (int) rotHandle.points2d[j].y),
                         new Point((int) rotHandle.points2d[j + 1].x, (int) rotHandle.points2d[j + 1].y), rotHandle.color);
             }
@@ -492,7 +491,7 @@ public class SSMR3DManipulator
             default -> null;
         };
         //and detect if click happened in one of them
-        for(RotationHandle rotHandle: rotHandles) {
+        for (RotationHandle rotHandle : rotHandles) {
             if ((rotSegment = rotHandle.findClickTarget(p, view.getCamera())) != -1) {
                 currentRotationHandle = rotHandle;
                 handle = ROTATE;
@@ -550,7 +549,7 @@ public class SSMR3DManipulator
             default -> null;
         };
         //and detect if movement happened in one of them
-        for(RotationHandle rotHandle: rotHandles) {
+        for (RotationHandle rotHandle : rotHandles) {
             if ((rotSegment = rotHandle.findClickTarget(p, view.getCamera())) != -1) {
                 rotateToolTip.processEvent(e);
                 return true;
@@ -918,7 +917,7 @@ public class SSMR3DManipulator
                 case SPECIFIC_MODE -> specificRotHandles;
                 default -> null;
             };
-            for(RotationHandle rotHandle: rotHandles) {
+            for (RotationHandle rotHandle : rotHandles) {
                 if ((rotSegment = rotHandle.findClickTarget(p, view.getCamera())) != -1) {
                     currentRotationHandle = rotHandle;
                     handle = ROTATE;
